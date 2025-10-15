@@ -1,270 +1,222 @@
-Return-Path: <linux-kernel+bounces-853527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D633BDBE61
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:15:17 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA94BDBE3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B374B189A760
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:15:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 012C235389C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BF81C5D55;
-	Wed, 15 Oct 2025 00:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A26514D29B;
+	Wed, 15 Oct 2025 00:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="GBU2bMK8"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012048.outbound.protection.outlook.com [52.101.53.48])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dw5YYCqx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC78156230;
-	Wed, 15 Oct 2025 00:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760487250; cv=fail; b=V+NliXMnbk8VBsGyfM6P6Zc/qCCofUHGzbigrG5JkRlvqnIY2ZFcDOpEMMXCjrWSSvED9ALCzdwatRr3KmUqjrdw3qJPWujqNqz/L93/IaugLhCrAhieVLzKGYi5A/zPkwI+Ks7dd0Tj86ZIWNS7RxloeWLH+Nwl3e8s6y8adQY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760487250; c=relaxed/simple;
-	bh=5oNDDhVikm+Z8v47ipIQ20u8AYxoppyPWYIaZ4gCVBc=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WE+FebPVAXYYGMXc5tSO1aeg9QTxM/t4IG6e7C66WQkxIH5Im7WWzHUBCtQtMW0oXuZjbP3Wv20UUjC+1on//vdMtIGRF0g2LH8nFqcq5RSDcL8xOPxwwacCAWdlm22d97JfNzuk3FncNnLL2O31EBmpxx64o3oYSj6m6URisMY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=GBU2bMK8; arc=fail smtp.client-ip=52.101.53.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CFcU8DFwg8JNJrU3TR0lJQTN8uccKc5YRhP54eanAJL8xZ5YwhYS2CdzZvL37VBcZYpDdWmippkCvLyBFXRT1UnuME4Oo3AY6gTjL7GzUz2FSYsMkHMKif5KXfHja+OX6DwYaiNNrGDfYzJK0gfFTbqG6Rl+lBbip8xZi9GyjVh4OvThGX9sd85eZb7vZfokMHGRFqIc4kqGLTesA5p0PAqtjCLDkVXTwhwQeS9UyT2m4D93hNf2R2Joo39QFrqbr+C8kMLukI/ReWEXB3ya3wMvY5ZX306LiH0sLKgkutE6UxnQTGrR0L1xdYGzXCOP47n9veJ3xQiuRvsePLFxDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PlWYANzYDcEGg3U6IJro/d7DCnxZl6CBDhTkE5itUaA=;
- b=EZTHEMr4oHxbCxPXutjm+aF3cpnFVzh2Z8aVIHdKQjAdRTtTo6B1QqBYZPsFrMb/crybfAurIfH0RRanSJbW/TgczG/gIkqkqJ9h3oI46lRv15ncZjqqM93DvlSKbo1PNtm1JUkb3g0vEAtyEeSyFglE5bIT6Wh3m385GOjteOP3MKHCE/MGrhZP1wW9NXY+VQNWt8SrHmNZHz2sU4BPb4vhhivBf1wlFjQ758rqOukXmOfNjcRM/uoidzNLl0sHVuTdIR21721BTBW0Mv9lD2TGlwSwYPKCy2q3xS2iyYPxpgpAfaXRBj1RqRhKZ7SxUqdx1KIe5EYDjj+CGkCvZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PlWYANzYDcEGg3U6IJro/d7DCnxZl6CBDhTkE5itUaA=;
- b=GBU2bMK81o+KG7+eTV/M3Q2i229EYzyVPv1/jwvmwgToAwbVL/9fTaRxqTjOfAreo7ylch0s3Xp78BEueRfFDwMr43LyHBgjaPok+dUDBAn5ijQmE5CjJx4rgzjHlNm0bm8izxe2RWHBaTpmMWE/bHi3qBXumq3CugsLqFwfv9OF20wR8KNm5ilB3d3G0tXrUTDnvKJ6C8cKNMWXe6jDKgyBsKzee8dsTxrkKjz6NbZ/dRv1PosmluB3CEuGFgjSCZMaqePfL0JbRY3rtHHzhmIuk/DuxxAnJ1iPwCnwfHezeZVmRI1mG1s8iH0GJlixFGmxD+m+GhW3B0yKS2MB0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by BN9PR03MB6041.namprd03.prod.outlook.com (2603:10b6:408:136::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.11; Wed, 15 Oct
- 2025 00:14:06 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 00:14:06 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	dmaengine@vger.kernel.org (open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
-	linux-mtd@lists.infradead.org (open list:CADENCE NAND DRIVER),
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
-	Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-Subject: [PATCH 3/3] arm64: dts: socfpga: agilex5: Add SMMU nodes
-Date: Wed, 15 Oct 2025 08:13:39 +0800
-Message-Id: <166b08f5eede0a1124df938ecd7a031b67d829c3.1760486497.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1760486497.git.khairul.anuar.romli@altera.com>
-References: <cover.1760486497.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR16CA0001.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::14) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0390D81ACA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760487231; cv=none; b=EP5yR8c7f17hBthbwEPjJ/B1O4f0eGVYDwOCdVurL9mHG+PmKe8ZUAN9SWqMtHs/c3tFXsdGE/ivW1INmYibuQJ5kKAJH/FnbWW1EV5Qs/ny2OWw/IqUd2MgoaceEJLbcZ2o4wJJH7haQ77AQ8tQw6JtOshQ+pN1BeqBsSGCSQw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760487231; c=relaxed/simple;
+	bh=cKDkNRbRQye9SCobwds6hQHh61wV4VK31p1ghM3oL0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWbOeWCqoEEe4ac4rlzjUNwAQjy0mvtwi+H756V9pgdOtMBBruXkeh9MFEY7HBouFxh7VZsglqsr/fslwZZdPnMOtvMG8tSa9lQLwGPzXYPXNiBDpiGR5R7t0IjbbsMuKQqkyLu4yu2rMkEZbs3cJgJ/rPeeH/B+gsWIH0Bs5sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dw5YYCqx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EKR5g0005486
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:13:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=iARUFZXc8gCMdc7i/8Ow9Fiz
+	sPpC/ZIAW4HsDsCSfj8=; b=Dw5YYCqxvnj3ZC2jc5aiKPIs+0jY0O2OQ3TIMR+m
+	/DR91rsvOah5UhCyPSuBeADZeIgiCvmIRsfnGanoHQED4qVT/RDwCQoCU5S2oC1s
+	Zj880rry9Kx985EuvkakShpPizAkGTMD3CVPBzIyKtPA2F9Id2nqr7N8vIr2cYh7
+	rnOmMEW4d/GD9q7w90sjw/ZldAfHWxBLfjfbupk7DbotdZMw28zbUNLt3hHUxf0o
+	jBeQ+c+Ma7ZKUkppd1iDeOEPH7SJmit8olHijGcffqCWl4R7nNp+zN1AfSTaam2E
+	ihq4oRH4Qr3vVNfCc1ruwkjjmQJN61ZMSrtbNYZ6skzNDw==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa8ager-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:13:48 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-857003e911fso3010090285a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:13:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760487227; x=1761092027;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iARUFZXc8gCMdc7i/8Ow9FizsPpC/ZIAW4HsDsCSfj8=;
+        b=GJGwiDJWL6Al7ccSEIy4RAZ2vKXQ+hTj7qLI1PBjISMEziQe/PcVHdL8pVVN0wUys6
+         cWJRFo2bZYtIyJlxRkq9I8Gc119Bhe1QBTGYhnXUaGwYEmf80jadC2UdDvqqm4l+kqea
+         Hde48RcDlznk09yd9BlXnUeicanP4tuTrtORo6QzNQYxMwSEY2ILHZXTBqdqgaY3mCSS
+         Hw+8tRRD5AwRU47NX9xt11iEXFcYMiilcUOVDWHNb7D+1yQtwkrO2GlGz2MmUEfRA2YR
+         Ur3ZlPknwbISJPukzOc52ek12MZtQyCt1mVwnmnixtvO2dnlkSz4pel7fuQ/3V4rb+5K
+         3M/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXRik/geXz8EzFWCSlbuHlOZfPENEaUaDXpineyUpkp8l2fVt8JjO4gd+2VATnIQD0PNFHQ7qlFCA+RaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUeveri6NnAeGO15KuSC3uxUGPC0ZMNujKgJ1DIqgX3V+9REwb
+	5I84ERoMPRhvpxviJp75wWw2JFkSBT1rOnBCWavRFoW7LS01DLuS3sMcSEWjX0gVY8t3IxqBU/k
+	YPtBEjppX6c2ZiYXxBtaKs3wnf5nke3ZmJ0bqrtep0+E+i0qIfpyjbEHJL7hEpfXx+VJ1TzZEJQ
+	Q=
+X-Gm-Gg: ASbGnctxMD/KNXDV/iSBBCh5ZyRycpomWocEO+PJPrIEUPPn2tjTqGkgLLn5jalISRA
+	nLuha6up8xoOOenMZtWCSCBT7ghgl0+KZUK97/wQwF9XTY3V7W5QJvMs7Oegi/G216enq9gk7tk
+	KoTjbBdjmo2EY53pfzUdBjnR/eBY3bZru//lqpNEpnZBxqCtp9eRV4yLbE0D/OJaXrXjWKGtP8q
+	DxZgc+yhD0ASxSrYvqZVMy/szLXNY3pBPSvJEmT8pPTsi/YESXEu1kbiMulx1N8Qi2k7ZM+tNEz
+	41RGhfP3og2h/jxVWR6iBeV+mERV1llaaItuu0X3ugc8pC0XsBvhaQipgtwr/CW4NX6AzItMJgT
+	+ec5upA+ArcfdQnvlPDfGKTVlrCiGltNUJDv/FKCzwsj8A7egWt4q
+X-Received: by 2002:a05:620a:710d:b0:827:e9b0:2761 with SMTP id af79cd13be357-883521db96dmr3761788685a.49.1760487227539;
+        Tue, 14 Oct 2025 17:13:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdSyBkINIZUcXEQ2ol35aZyHvOmzevhJoA60ezIDdbGsbeJ7tDiBuc1768MTDcgexRTxuHAg==
+X-Received: by 2002:a05:620a:710d:b0:827:e9b0:2761 with SMTP id af79cd13be357-883521db96dmr3761786185a.49.1760487227048;
+        Tue, 14 Oct 2025 17:13:47 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea3b31bsm43141211fa.47.2025.10.14.17.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 17:13:46 -0700 (PDT)
+Date: Wed, 15 Oct 2025 03:13:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/8] media: iris: stop copying r/o data
+Message-ID: <j5za2knx6qmv6c7j6tszwpzawu5iugcnbgkfxptfxorm5zkzh4@ih3ylae7fngs>
+References: <20251013-iris-sc7280-v3-0-f3bceb77a250@oss.qualcomm.com>
+ <20251013-iris-sc7280-v3-3-f3bceb77a250@oss.qualcomm.com>
+ <b97c5e01-f1d2-c3c9-8b9a-b5bb9a0c556e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|BN9PR03MB6041:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6f79140f-df41-4d40-3abd-08de0b7fc0b2
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fBH3YtKPDd0mWm6zOnDKw4xsFqDs5L83UJnm5q8u1iQEqrA4v/9FX5KPAf7a?=
- =?us-ascii?Q?TG3Wt6p4lOuIJqcQK8A2ZEURBKaGvZ3aFKGAWvT7P2O7T5DSc5lLP1BPGsFw?=
- =?us-ascii?Q?KKHIniGLb9qIFvjpAjt9R+7kUaknXyjKMeiXZjB6tGwuX/QkOe3D0WCFLStt?=
- =?us-ascii?Q?OEDQSU3B1X9iW4u610vUzMZjVfBraDImY5TI9K9X8khUxq7lU0QMbCEcUi5U?=
- =?us-ascii?Q?E7XXI1hMHW2G2rpVjzxjvEnfLL2p7vkRtPMJD3Us1qv+/q9Ce5MDBMkXqvOh?=
- =?us-ascii?Q?En3t3b9p3IH0gfV3x/ZWkcPqrZJCP/p6+INb96HC8BxHotPxFmQXtAt8y5Ez?=
- =?us-ascii?Q?e54ODpo8CAEmq3WaDUWtZ6d7HWl4bqfY6RNw2RToJAcd10rXOgEsla9kua90?=
- =?us-ascii?Q?BVYYPsY8Ft/z3nxkvFUw0EHhIi9oqNX9L9/4/D9J8GbczMCZmLHKIUIwUt/a?=
- =?us-ascii?Q?QeVrlmfMSOuIEK4Mn15DbttQc0QHB6jEdktj1B3L83DndYKe7YH57Z1JSBwm?=
- =?us-ascii?Q?gl8Pv2tU8lAZUpkevgQR4yc6kHAgpwEXVOMCTxfSP8cAQPtzDhBDL+XOiAmy?=
- =?us-ascii?Q?9TG7Rk5aTDdpmxrg+RlswUGPsG2iQOt6r/FE3MBOl8kmXku0g2BTbXBGoMNI?=
- =?us-ascii?Q?pflmAUJloWmKok8CyRlGFVYa8jWGDVC0Uq4BqL2Ey5nTZF3Ogew9iD9SRaqz?=
- =?us-ascii?Q?F4F3f+pDJGHkG+MXEXCt2VhrgomQV/ygc7kzpg1YNprw5xDcZWrJK7fL4BnV?=
- =?us-ascii?Q?wXOd+CHh3dSMb0/pp9rDLQj5Qiqp7OrAtriercMbmyRcUmXS6KPDEzOIw/X6?=
- =?us-ascii?Q?UnohFi1ODEGJ7AFZ8UQ1xcDqC9VLDjwTQvKdSQPiGduzbQfMlEz0VBm9obkO?=
- =?us-ascii?Q?ALSuD2LBtkMDJJz5UUF/TzuBkWn9FUYJ/9wgweJtuqf2Tal1Hk2M5ZzM+DMM?=
- =?us-ascii?Q?fykFPQv59y3CZUF6IBatQGZN28+MbT7Z0bHbhcqg5wnnJa77LwiqP8jxO0Xv?=
- =?us-ascii?Q?i19xH4K55fKo1b/AUp96RcA8FOprtbg/f+jSprHWYtpAgSJIusHKteW6QeQR?=
- =?us-ascii?Q?rKArEYZe3edL60PmOzVSIsjHUfheO/vslEqQCBB5eZufLPvqMEEyVcVdfASA?=
- =?us-ascii?Q?47cuvY8Kgum2qrPlWoLCY3Vl4EWnf8eg30kE3w8Qr06RlnKl4oum3T0nYyt1?=
- =?us-ascii?Q?TR3g0bj05NURxwoJISmJm/qlzXRiPNrPqJBWwmvov40MyxINfqDT288PTRV5?=
- =?us-ascii?Q?wGjU6DynaVLhGKSeIvmMCNSTH+VOsovSNypQgmE1VuCW2ZXxFHomUtKGdKTh?=
- =?us-ascii?Q?FKohcl3lGJYZLJ4b4PA1OJ1JxxjlIJF6xrid3KeD5TEXYTiYEEugBVw1FaMr?=
- =?us-ascii?Q?2cIUBwYC0HDFpQwrtZSyEBKeeH2shbPUIYBUmreMRhYSFc2FH5gw0snFgxQf?=
- =?us-ascii?Q?FlKSqulViZ5/7KtYTk/QWsLmagIK1vzigRNKSCtbUG9ry1Pl4zl85WLsLVW5?=
- =?us-ascii?Q?AOzemmkHWuuG6kI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ThbF0A4IJgSpTxAoNs147jEGOQJEDhYCPtb+hIRlJvV/A+9X59ZptGHIf6cT?=
- =?us-ascii?Q?bf9+lND9S8rFzpFF8WpvCDrBejcYJA3H+Y9KCugXAF8OdPvjntZR6sgESDeO?=
- =?us-ascii?Q?mmgPycb17m5g5W2RANHaXYn3oEcqJno4Bn7rtdV3Cz64Mx8nSnrxtYfJOAwC?=
- =?us-ascii?Q?N77t0N3DOMjlYgoDCL9GzTjX7Zgdkxc0veA8XIGjyen3iLAZvn0dssDqvYB6?=
- =?us-ascii?Q?2C2O0CMz2ofZnrG6jdHUjeru228ODzss3+iUtFxiU32iUtqOTjWuoI/0e5+3?=
- =?us-ascii?Q?EhiMl6uP/bm1prDN0n2bvqbYBnLoX++K7wISiIs+dOzsDs6IW3fTOl9Tvn8G?=
- =?us-ascii?Q?+uyM/u7JMstlIYxgHZ2gegToxAgQtcpbU/c4I1xtQMGJTj+xGtq+DhJCxErL?=
- =?us-ascii?Q?LX5AsfKFShcI2QCmDLdb2RWIhTMkdU1/g5FBvH9ESpZh3ujodGnajGcP6H6H?=
- =?us-ascii?Q?lZCLSuODdTMhWjX9pTlLT4nQ3iPy8Bb6JFuEZARX8qpdyuqe9qiEB5bW9bfA?=
- =?us-ascii?Q?XEDyUQ+odtqYwtkfmwPh1pSmUsMsPWwk+gGBSNdm/Xnc7Cxtg+tIi9wNwUNs?=
- =?us-ascii?Q?gjy2MZhSw21PXAI2SQD2MnBHC5iCrMkYk++22rX3IGMybQ9skX0GlBaRCHC5?=
- =?us-ascii?Q?j4LG1j7x1V5SHlQtCy/O5WOWvdGkgMnk1A6ynyAmMQwQ1ekR1E126A8ESOnZ?=
- =?us-ascii?Q?mXQg5d1zORTstS0WoLo8Vqp0X7tzD2R6Pl/vw7V1O5BWYs21fW7fKbFtu1j5?=
- =?us-ascii?Q?zxpiFciDTXhLiuRNAEslDghREf5xvK5wIMwpxnJJ8ixLzRQIPPoiW4YGa+U7?=
- =?us-ascii?Q?NswFWrxKf+ViS+izom/R/j2i9BnN8aEMdueFmFfcybzgS9mpSrdqv0lTL1ra?=
- =?us-ascii?Q?RJlePWb1tyBYbkBu0E7Hnj+go3ucofg66TGA653Z7nB/Kv+PWQvuMAhd0f9P?=
- =?us-ascii?Q?adgdIoWW6KOF/hyT9EDKn33FWQ6JfIR2BDM7vGAKffvhehjtNxh5DmOJ8Ann?=
- =?us-ascii?Q?JqM3rybuEmEl22KGb3YanPQnK242qznK16Q75jhBiQUNNfXFhIWhM/uP0DvG?=
- =?us-ascii?Q?KOxa710nbKvo6iqUZA7QQPwEzzY2+2vPYh2VAIl8sEC6GsNoLwMwBz8bwmQF?=
- =?us-ascii?Q?yt8F1gzvjEU/Dxhyt9RArA/fLqJ98dJ6p4jiavz+PtqHwehSuRAjeE5E0GTF?=
- =?us-ascii?Q?TdWw5bthRkKPmo9/HWklF6MfKFh6l1Xzvb+ek3a1xYZiUEEfpN/yJtR/kpLI?=
- =?us-ascii?Q?8zcG8IuHT0cg83eEfbLO9SKH2kXUJDQ96bjQnUW1k+XQUbCD/0jHs2oJy1NN?=
- =?us-ascii?Q?UZsxgaz+fEflgmrd5duG3Jp8a0U3MFFXYFQeR5dFKulpvoQlMwdIb65cL/+s?=
- =?us-ascii?Q?0KRJhaGxsdTff+g0A6QuG1EWO2PoZpjxORAdpgrYDexXgyhnvoJuSe5zmuVq?=
- =?us-ascii?Q?mV1N++R42U7SxCQ8bha69AuPGrv9TjdrJRpiOC/+8zjxO/4Mm3NpuFL6VtmF?=
- =?us-ascii?Q?scdNZPCTEG/9Vur+KCCL/EZUj1ErhU3jd9XP9YhvYIvqG8Fycbis0DeOk8Le?=
- =?us-ascii?Q?qQ51qKXkR16YrYNrVw/daOb0pvhWK0YOxHJX2Q0V0C0JWwAjgerEjttVbl4n?=
- =?us-ascii?Q?IQ=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f79140f-df41-4d40-3abd-08de0b7fc0b2
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 00:14:06.2731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XG3d8rfu6uaQx7Jmd0cH5IRlH6Z++1GZSTVqKfvVYphOMU08F4BiYC9Yx+Rf3fJAwHbE6vh7tsl4Ue8Bi7AxHNZ7q07gvKqsaFd8uy6YFks=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR03MB6041
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b97c5e01-f1d2-c3c9-8b9a-b5bb9a0c556e@oss.qualcomm.com>
+X-Proofpoint-GUID: OgwyMsmnQHW3Il3cT5Koa5esyO3ykJ0O
+X-Proofpoint-ORIG-GUID: OgwyMsmnQHW3Il3cT5Koa5esyO3ykJ0O
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX21kiEiv2KmYi
+ eKgqAPb63+J/EWAQmt/xGLxM3Hk0xO1GZT52c6bsufMJdnTAEfLg9kflLF0SYpeG69pnvo2VsR5
+ UxAygfyC0g68FS7Y4Igwe6z/8Opdb6X5qJQOQ/JMIOeU9VfvX/jewHtizfmlegLBvxmAcbg+v2K
+ ryjkQ8PaxZc+eUVRfxYfbUuxIfG3FKufWP8uGkDVh8cIzPggVGBdOF16ODOfK7K55IS9hxZrkih
+ 4S6OtOywApxxlJMOLJh2b41VmhF5vtpti84kqc6V5kZqNmtWjHvcg2v2xdMjFaYfXFk/OzPpelK
+ giocR/JQ8BfYsrbnALft3vaqiBzZpzRx9fxHwzlAj2F1yQ4atlkxOjTWur8AiysnTCekU8LD3/G
+ ksmJqhOHzUMmzkefvzXgrGJfQ5kQMw==
+X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68eee73c cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=F1KjMKo46gj8V_haTSgA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
 
-Agilex5 includes an ARM SMMU v3 (System Memory Management Unit) to provide
-address translation and memory protection for DMA-capable devices such as
-PCIe, USB, and other peripherals.
+On Tue, Oct 14, 2025 at 01:34:59PM +0530, Vikash Garodia wrote:
+> 
+> On 10/13/2025 7:38 AM, Dmitry Baryshkov wrote:
+> > Most of the platform_inst_caps data is read-only. In order to lower the
+> > amount of memory consumed by the driver, store the value and the
+> > corresponding index in the read-write data and use the rest via the
+> > pointer to r/o capability data.
+> > 
+> > Keep all read-only flags inside platform_inst_fw_cap.flags and transform
+> > CAP_FLAG_CLIENT_SET (which is being set per-instance once the client
+> > changes any of the controls) into the boolean field inside struct
+> > platform_inst_fw_cap_value.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > ---
+> >  drivers/media/platform/qcom/iris/iris_core.h       |   4 +-
+> >  drivers/media/platform/qcom/iris/iris_ctrls.c      | 238 ++++++++++-----------
+> >  drivers/media/platform/qcom/iris/iris_instance.h   |   3 +-
+> >  .../platform/qcom/iris/iris_platform_common.h      |   8 +-
+> >  drivers/media/platform/qcom/iris/iris_vdec.c       |   5 +-
+> >  drivers/media/platform/qcom/iris/iris_venc.c       |   5 +-
+> >  6 files changed, 135 insertions(+), 128 deletions(-)
+> > 
+> > @@ -312,14 +317,8 @@ void iris_session_init_caps(struct iris_core *core)
+> >  		if (!iris_valid_cap_id(cap_id))
+> >  			continue;
+> >  
+> > -		core->inst_fw_caps_dec[cap_id].cap_id = caps[i].cap_id;
+> > -		core->inst_fw_caps_dec[cap_id].min = caps[i].min;
+> > -		core->inst_fw_caps_dec[cap_id].max = caps[i].max;
+> > -		core->inst_fw_caps_dec[cap_id].step_or_mask = caps[i].step_or_mask;
+> > +		core->inst_fw_caps_dec[cap_id].idx = i;
+> 
+> Consider a case when one of the cap is not present for a target, then idx and
+> cap_id would not match, and any further usage to map each other would go wrong.
+> Please keep idx and cap_id in sync so that driver can use it as key to pull out
+> from inst_fw_caps.
+> 
+> >  		core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+> > -		core->inst_fw_caps_dec[cap_id].flags = caps[i].flags;
+> > -		core->inst_fw_caps_dec[cap_id].hfi_id = caps[i].hfi_id;
+> > -		core->inst_fw_caps_dec[cap_id].set = caps[i].set;
+> >  	}
+> >  
+> >  	caps = core->iris_platform_data->inst_fw_caps_enc;
+> > @@ -330,29 +329,23 @@ void iris_session_init_caps(struct iris_core *core)
+> >  		if (!iris_valid_cap_id(cap_id))
+> >  			continue;
+> >  
+> > -		core->inst_fw_caps_enc[cap_id].cap_id = caps[i].cap_id;
+> > -		core->inst_fw_caps_enc[cap_id].min = caps[i].min;
+> > -		core->inst_fw_caps_enc[cap_id].max = caps[i].max;
+> > -		core->inst_fw_caps_enc[cap_id].step_or_mask = caps[i].step_or_mask;
+> > +		core->inst_fw_caps_enc[cap_id].idx = i;
+> 
+> The above comment is directly seen on encoder, where the cap_id in platform data
+> is not available in serial order for the given SOC.
+> 
+> For SM8250, the cap_id 3 is not present in the platform data, so when idx 3 is
+> used as cap_idx to pick the cap from inst_fw_caps, it returns 0 as the cap_id,
+> which is incorrect as it points to first cap in inst_fw_caps. This happens for
+> all cases when idx is used for cap_id which is not defined for that SOC.
+> 
+> [ 1234.157453] iris_session_init_caps: cap_id: 9 idx: 0
+> [ 1234.167761] iris_session_init_caps: cap_id: 1 idx: 1
+> [ 1234.178240] iris_session_init_caps: cap_id: 2 idx: 2
+> 
+> ===> cap_id: 3 would have idx:0
 
-This commit adds the SMMU node to the Agilex5 device tree with compatible
-string "arm,smmu-v3", along with its register space and interrupts.
+I see. And this is the reason why cap_ids starts enumeration from 1:
+this way all missing entries have core->inst_fw_caps_*[id].cap_id = 0
+and are ignored by the rest of the driver.
 
-The SMMU is required to:
-- Enable DMA address translation for devices that cannot directly access
-  the full physical memory space.
-- Provide isolation and memory protection by restricting device access
-  to specific regions of memory, improving system security.
-- Support virtualization use cases by enabling safe and isolated device
-  passthrough to guest VMs.
-- Align with ARM platform architecture requirements for IOMMU support.
+I will see what is the best way to handle it in the driver.
 
-By describing the SMMU in the device tree, the Linux IOMMU framework
-can probe and initialize it during boot. Devices in the system can then
-bind to the SMMU via the `iommus` property, enabling memory translation
-and protection features as expected.
+> 
+> [ 1234.188498] iris_session_init_caps: cap_id: 4 idx: 3
+> [ 1234.198734] iris_session_init_caps: cap_id: 5 idx: 4
+> [ 1234.208954] iris_session_init_caps: cap_id: 16 idx: 5
+> [ 1234.219354] iris_session_init_caps: cap_id: 18 idx: 6
+> [ 1234.229735] iris_session_init_caps: cap_id: 20 idx: 7
+> 
+> >  		core->inst_fw_caps_enc[cap_id].value = caps[i].value;
+> > -		core->inst_fw_caps_enc[cap_id].flags = caps[i].flags;
+> > -		core->inst_fw_caps_enc[cap_id].hfi_id = caps[i].hfi_id;
+> > -		core->inst_fw_caps_enc[cap_id].set = caps[i].set;
+> >  	}
+> >  }
+> >  
 
-The following devices are updated to reference the SMMU:
-- NAND controller
-- DMA controller
-- SPI controller
-
-This change is a necessary step toward full enablement high-speed
-peripherals on Agilex5.
-
-Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
----
-Changes in v3:
-	- Rewrite commit messages with detailed hardware descriptions.
-Changes in v2:
-	- Follow revision of the patch series from v1->v2.
----
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index 04e99cd7e74b..a22cf6a211e2 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -272,6 +272,7 @@ nand: nand-controller@10b80000 {
- 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clkmgr AGILEX5_NAND_NF_CLK>;
- 			cdns,board-delay-ps = <4830>;
-+			iommus = <&smmu 4>;
- 			status = "disabled";
- 		};
- 
-@@ -298,6 +299,7 @@ dmac0: dma-controller@10db0000 {
- 			snps,block-size = <32767 32767 32767 32767>;
- 			snps,priority = <0 1 2 3>;
- 			snps,axi-max-burst-len = <8>;
-+			iommus = <&smmu 8>;
- 		};
- 
- 		dmac1: dma-controller@10dc0000 {
-@@ -315,6 +317,7 @@ dmac1: dma-controller@10dc0000 {
- 			snps,block-size = <32767 32767 32767 32767>;
- 			snps,priority = <0 1 2 3>;
- 			snps,axi-max-burst-len = <8>;
-+			iommus = <&smmu 9>;
- 		};
- 
- 		rst: rstmgr@10d11000 {
-@@ -323,6 +326,18 @@ rst: rstmgr@10d11000 {
- 			#reset-cells = <1>;
- 		};
- 
-+		smmu: iommu@16000000 {
-+			compatible = "arm,smmu-v3";
-+			reg = <0x16000000 0x30000>;
-+			interrupts = <GIC_SPI 134 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 129 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 132 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "eventq", "gerror", "priq";
-+			dma-coherent;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		spi0: spi@10da4000 {
- 			compatible = "snps,dw-apb-ssi";
- 			reg = <0x10da4000 0x1000>;
-@@ -423,6 +438,7 @@ usb0: usb@10b00000 {
- 			phy-names = "usb2-phy";
- 			resets = <&rst USB0_RESET>, <&rst USB0_OCP_RESET>;
- 			reset-names = "dwc2", "dwc2-ecc";
-+			iommus = <&smmu 6>;
- 			clocks = <&clkmgr AGILEX5_USB2OTG_HCLK>;
- 			clock-names = "otg";
- 			status = "disabled";
 -- 
-2.35.3
-
+With best wishes
+Dmitry
 
