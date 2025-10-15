@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-854501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FC0BDE85D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:44:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02713BDE866
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D072D19C4BF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:44:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB719401254
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9472DA751;
-	Wed, 15 Oct 2025 12:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147AD1C3BE0;
+	Wed, 15 Oct 2025 12:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXIRVnnX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W1w2oEvu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0860B39FCE;
-	Wed, 15 Oct 2025 12:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DE31AA1F4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760532238; cv=none; b=r1Sv9pgwrowy9fCaEs1KPtOhut0dRC6QHpwvtA4W03DhMTt0MLo+VuvcrWmK9b9BMg34iRv86roj8CT520bxJHSriueNzp6zv9Llf0VgHeKFUWqhI7CX+gEeBy4CbV9pPI/LSeZiSu0Yoy2YHjApJzLsH2Q89Z66mxfy9EvKtrY=
+	t=1760532275; cv=none; b=cuZoLBqY+fE3lP/uvnD5H/clfMvmpQyTFH2z15kUYnQ41cZNy1MFItc/wHEvd1dm9GQkhB3oOuKJZr5CBEVNuhODVRNTrk/Hb2QrutGowxasivE3nuOyXHioeonfoYZMQeioUn+yq/VfXx21U96QsXJT8BsN2h7SKLNogjvKPgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760532238; c=relaxed/simple;
-	bh=Rv/WTcy0mNMm+uRot/GU/7Fbs+K4qxalPuCtaq1ElJ0=;
+	s=arc-20240116; t=1760532275; c=relaxed/simple;
+	bh=kpLsOrDrUNBhGk5fqunCMyPWPwglI2qmrJl16Ox9DXU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m6dIR5sTC6nhZwmFzxn+DIN/vkSf/tmDyWr81zvrzcfsD/S8QwsVTdmj2TSs63+r7yCSz1c0x9nSirKQN13zImeeEF+Is4sdoi5FcXLLdneKt6yIrQ/mIMMXNojGW/SBJ/JeXPGf4mproRV+awYl/v1rt37gGb72lwIDo3uk57M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXIRVnnX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5362DC4CEF8;
-	Wed, 15 Oct 2025 12:43:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760532237;
-	bh=Rv/WTcy0mNMm+uRot/GU/7Fbs+K4qxalPuCtaq1ElJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aXIRVnnX1DKzvIv1B6Y3BFLJbfCl+l7UBPd4iL2xwtSnN+cZL6OtcgShLadRkxhuK
-	 CPemmyAY+8iEQiMjSq0J64kBB2mJTgtuKkDF1MbRZAfmyJGpAT2CcyMUnaPBFlVnG8
-	 +RnWbNmsHeX3KAnSbxy2xUWIXly6N5NuddQAkm7w0qWHxdDfiOOqkuppPuS70weaIT
-	 UTk5zxeRhYiMKl8gKtgC7R4myMQBofR2hCp8CDo9ldjljHX66+Poifj02PoPPjaYVe
-	 nkZbTG74SRlPUeyhg3r70EAAp3vzy60TvuIyp+KkqMo3VAhWjdyNX52JuIQhC9tmWE
-	 I0oQiebGdts3Q==
-Date: Wed, 15 Oct 2025 07:43:55 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Abraham I <kishon@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: Update the email address for
- Manivannan Sadhasivam
-Message-ID: <176053223303.3202616.6553332621383327286.robh@kernel.org>
-References: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
- <20251010-pci-binding-v1-1-947c004b5699@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j80+Z6mKQDdxf6FoYaOOxS068rHv9LWx5GLTgPwm8q6JozFoYt3uxE2+AOOnRUYq0w/X3IF/D5SpbWrO0626ZssQuh3o3AOAX3to3L+TxH2FJ1lHeJZs0b8vVBvyWpNZhnua0zlSIX3rKbeYxeutOOW8If++DXfBKbnnp6MQgGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W1w2oEvu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=/3aQ15XZfFR1YHBXPfrlBpXsyAFL3oyFZPgvIQ/26iI=; b=W1w2oEvuhzmAX3+Ay2mCgzR5DK
+	rszpH9tyPfP3IAYfcc2U4Cq1VZP64hp7jO2srCJJqQMFj8bWw5QN35BsgNpOQWKWxnAQNlH/w7VIV
+	f9bHuQZY3GvM27viXxn9IoRgm/DH2gG29ciL9jr9+WqPmfQ58ze3Ekak1IWAVL1G3BFaYdp9p9Wpv
+	V+0FzkpU0ueeDF4IaLyhAc51wivRJBFDAIQelm1oY8jpjG57KC0hJFRhyowVIeXUgDOfo2H/4aH1n
+	IuhS6psfd6+u4wxhqnRjENnARt4ZHHrjbvJzARjR3G4yaRgWyuZWFbTMggtpeBRY/ERt1zG37DU6O
+	sORKiftQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v90rd-0000000FThH-1dZe;
+	Wed, 15 Oct 2025 12:44:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2D83E300220; Wed, 15 Oct 2025 14:44:22 +0200 (CEST)
+Date: Wed, 15 Oct 2025 14:44:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Peng Wang <peng_wang@linux.alibaba.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, vdavydov.dev@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Clear ->h_load_next after hierarchical load
+Message-ID: <20251015124422.GD3419281@noisy.programming.kicks-ass.net>
+References: <bc08fcd528bad11311cd25de37962eb1ce0e7879.1760530739.git.peng_wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251010-pci-binding-v1-1-947c004b5699@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bc08fcd528bad11311cd25de37962eb1ce0e7879.1760530739.git.peng_wang@linux.alibaba.com>
 
+On Wed, Oct 15, 2025 at 08:19:50PM +0800, Peng Wang wrote:
 
-On Fri, 10 Oct 2025 11:25:47 -0700, Manivannan Sadhasivam wrote:
-> My linaro email id is no longer active. So switch to kernel.org one.
+> We found that the task_group corresponding to the problematic se
+> is not in the parent task_group’s children list, indicating that
+> h_load_next points to an invalid address. Consider the following
+> cgroup and task hierarchy:
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/pci/pci-ep.yaml             | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml       | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml  | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml  | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.yaml  | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8150.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8250.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8350.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8550.yaml   | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 2 +-
->  Documentation/devicetree/bindings/pci/qcom,pcie.yaml          | 2 +-
->  15 files changed, 15 insertions(+), 15 deletions(-)
+>          A
+>         / \
+>        /   \
+>       B     E
+>      / \    |
+>     /   \   t2
+>    C     D
+>    |     |
+>    t0    t1
 > 
+> Here follows a timing sequence that may be responsible for triggering
+> the problem:
+> 
+> CPU X                   CPU Y                   CPU Z
+> wakeup t0
+> set list A->B->C
+> traverse A->B->C
+> t0 exits
+> destroy C
+>                         wakeup t2
+>                         set list A->E           wakeup t1
+>                                                 set list A->B->D
+>                         traverse A->B->C
+>                         panic
+> 
+> CPU Z sets ->h_load_next list to A->B->D, but due to arm64 weaker memory
+> ordering, Y may observe A->B before it sees B->D, then in this time window,
+> it can traverse A->B->C and reach an invalid se.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Hmm, I rather think we should ensure update_cfs_rq_h_load() is
+serialized against unregister_fair_sched_group().
 
+And I'm thinking that really shouldn't be hard; note how
+sched_unregister_group() already has an RCU grace period. So all we need
+to ensure is that task_h_load() is called in a context that stops RCU
+grace periods (rcu_read_lock(), preempt_disable(), local_irq_disable(),
+local_bh_disable()).
+
+A very quick scan makes me think at the very least the usage in
+
+  task_numa_migrate()
+    task_numa_find_cpu()
+      task_h_load()
+
+fails here; probably more.
 
