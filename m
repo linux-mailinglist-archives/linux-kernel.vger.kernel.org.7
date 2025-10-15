@@ -1,78 +1,164 @@
-Return-Path: <linux-kernel+bounces-854740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B00BDF485
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:10:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E68BDF48B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A38353AB3DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:08:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 911154FEE9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F51F2D839E;
-	Wed, 15 Oct 2025 15:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A822D77E8;
+	Wed, 15 Oct 2025 15:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8YdF2oi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YZz3+rS6"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BCA2046BA;
-	Wed, 15 Oct 2025 15:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB677272E67
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540880; cv=none; b=j62xgUx/mDGp0gFpYdzZduONCF3S0WgLwWaMOO91KBgLKTE0U5UmiBwzDJsn1xVC7lO6amy/3dRDBlpqCSRV+Bp+2LgQyMDWKWkpsa58r3rocyBS68Pm7UdFX3JodQpynOqwR2PU9B6c5HZ/U46LCsSMEfhuoFESQbklgun0/3M=
+	t=1760540942; cv=none; b=J4IVx/jHGte737JARaeelMcAqndSXHglDqKXIH7EJD2NPHjYPpGWo+49wEZxoQbwoz9FAB8KWUnO8Aoiy2AlfliGc9mRxtlBdPB2H6jpHn2jBzo3PRuIa9nNDw18OTf64myPVV/d+W3PcSPbVU8XhQhFkZdSWjdEK12kpndx1jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540880; c=relaxed/simple;
-	bh=mfGYqBWMpy61FLzM35bGAz19zpqDlWoRSurCanrcS5U=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hKRfQzxX+jhPMxneMr30SoV6KiNbbgqCYEc7tnAsKloiShGrRw5p1PykQZg3vFcynoECAqZ3qyU+VvBVBQK04MTD6WdSKABunsnOWMtJTGmQrDXqcx8UUiJMcym8X8mb9W20WEGG/iu984T9gHjTFLmVXERUwZ9+ImjNOmYdXEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8YdF2oi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C8B7C4CEF8;
-	Wed, 15 Oct 2025 15:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760540880;
-	bh=mfGYqBWMpy61FLzM35bGAz19zpqDlWoRSurCanrcS5U=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=t8YdF2oir/rrBO+nnneU+G5C6K3tnLVbl3+vB63wxK3oG8QXd17BLZQ40ynh+XW/g
-	 oc94USIlkuz8e8vmgvFlp0xeTJWjK5E8jDr/lFMZE9rLtHr8SUged84gjwxvzy9s74
-	 ks1iXfEqWdOwqq0xREOggFBXF+l9LSANPdXKjv9dtzAzhoMOYHoaN9KitliHNbrppp
-	 sUJ3PeXwJougzGVvbT6Rp6qorZzQYiqUYCDScWS5YUBZqny+xi9WzgKUlHXuIyXELk
-	 4QPN/CupfJvsinVquMdd0TVyt1nvIg+d+GkYQjtcn3IqJX0uAfL76w3CvyAApfn0Gk
-	 LM2pEnmTzpVkw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343C3380CFEF;
-	Wed, 15 Oct 2025 15:07:46 +0000 (UTC)
-Subject: Re: [GIT PULL] ext4 bug fixes for 6.18-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251015032810.GA780453@mit.edu>
-References: <20251015032810.GA780453@mit.edu>
-X-PR-Tracked-List-Id: <linux-ext4.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251015032810.GA780453@mit.edu>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git ext4_for_linus-6.18-rc2
-X-PR-Tracked-Commit-Id: c065b6046b3493a878c2ceb810aed845431badb4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 66f8e4df003e61b72fdc794ed0ec8378d74a9a4a
-Message-Id: <176054086468.913671.17001476697419747013.pr-tracker-bot@kernel.org>
-Date: Wed, 15 Oct 2025 15:07:44 +0000
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Developers List <linux-kernel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>
+	s=arc-20240116; t=1760540942; c=relaxed/simple;
+	bh=Q2lMLAck0x/n3cJUdTjHi/CuJoocw7lXdMZnrU40qWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sDZHwkG2sh7c2vB/JDKP3mMX2ZXSF4gCTrwr3Lk3lgi9QSo5c4fBkTP4y0JUWdySR2Vsanw/LSllIrjHfvIOIs3BpV/7U9WfUrgjmwHOFlDVdpU/EyNSunCdT0Ui8KCqNtNO2GX2gPfRsYPKTxXQWEKtxnbsTI7LsgDwpEcsa1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YZz3+rS6; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.72.64] ([218.1.208.81])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59FF8L4Y2512510
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 15 Oct 2025 08:08:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59FF8L4Y2512510
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1760540904;
+	bh=pdSz7+XM6G/TGN9xniPtAy75kR4fmy0446HP5aTfZU8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YZz3+rS6IJW0iV9CqLI+KFOqVmcbPPA3pyaCgz3cNsWMi0wg+xgunIgAvnWylo+ci
+	 tf+fqZbQ29tl+AKuq8+0GQJ+e+Vaj/IHjU9Y+arEIHh/ZcSUXMsHg5ZfpuNBDFR+gm
+	 qvUfOogptOkrX7d6+MxWwJOly3Cec/Q+6Y8KCiuE1C3UeOAO/jvtCPoz+bfiiTPhqJ
+	 YB3HiXDs04vn2EK1IeZm5f60c3lGKNzXRcyac+D5WSITUfgdxSYry1206+M8ipNmSN
+	 HBBljukELWVh9gK8AOZg1E18eYVxAdN4NWH37+bSjkZD0ZnXSe2d2eePS9imkZAxtt
+	 pXngTl7VGh4Bg==
+Message-ID: <2dd4dbee-dc7d-4118-be6d-94bd6d0d5030@zytor.com>
+Date: Wed, 15 Oct 2025 23:08:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpufeatures: Correct LKGS feature flag description
+To: Borislav Petkov <bp@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Xin Li <xin3.li@intel.com>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Borislav Petkov (AMD)" <bp@alien8.de>
+References: <20251015103548.10194-1-bp@kernel.org>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20251015103548.10194-1-bp@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Tue, 14 Oct 2025 23:28:10 -0400:
+On 10/15/2025 6:35 PM, Borislav Petkov wrote:
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+> 
+> Quotation marks in cpufeatures.h comments are special and when the
+> comment begins with a quoted string, that string lands in /proc/cpuinfo,
+> turning it into a user-visible one.
+> 
+> The LKGS comment doesn't begin with a quoted string but just in case
+> drop the quoted "kernel" in there to avoid confusion. And while at it,
+> simply change the description into what the LKGS instruction does for
+> more clarity.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> ---
+>   arch/x86/include/asm/cpufeatures.h       | 2 +-
+>   tools/arch/x86/include/asm/cpufeatures.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 80b68f4726e7..4fb5e12dbdbf 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -320,7 +320,7 @@
+>   #define X86_FEATURE_FSRS		(12*32+11) /* Fast short REP STOSB */
+>   #define X86_FEATURE_FSRC		(12*32+12) /* Fast short REP {CMPSB,SCASB} */
+>   #define X86_FEATURE_FRED		(12*32+17) /* "fred" Flexible Return and Event Delivery */
+> -#define X86_FEATURE_LKGS		(12*32+18) /* Load "kernel" (userspace) GS */
+> +#define X86_FEATURE_LKGS		(12*32+18) /* MSR_KERNEL_GS_BASE = GS.base */
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git ext4_for_linus-6.18-rc2
+Yes, the assignment is more clearer to us programmers.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/66f8e4df003e61b72fdc794ed0ec8378d74a9a4a
+I'm just not sure if "correct" in the shortlog is accurate; it sounds the
+existing one is wrong.  Otherwise,
 
-Thank you!
+Reviewed-by: Xin Li (Intel) <xin@zytor.com>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
+
+
+
+
+>   #define X86_FEATURE_WRMSRNS		(12*32+19) /* Non-serializing WRMSR */
+>   #define X86_FEATURE_AMX_FP16		(12*32+21) /* AMX fp16 Support */
+>   #define X86_FEATURE_AVX_IFMA            (12*32+23) /* Support for VPMADD52[H,L]UQ */
+> diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+> index bd655e100395..d5f091babf96 100644
+> --- a/tools/arch/x86/include/asm/cpufeatures.h
+> +++ b/tools/arch/x86/include/asm/cpufeatures.h
+> @@ -320,7 +320,7 @@
+>   #define X86_FEATURE_FSRS		(12*32+11) /* Fast short REP STOSB */
+>   #define X86_FEATURE_FSRC		(12*32+12) /* Fast short REP {CMPSB,SCASB} */
+>   #define X86_FEATURE_FRED		(12*32+17) /* "fred" Flexible Return and Event Delivery */
+> -#define X86_FEATURE_LKGS		(12*32+18) /* Load "kernel" (userspace) GS */
+> +#define X86_FEATURE_LKGS		(12*32+18) /* MSR_KERNEL_GS_BASE = GS.base */
+>   #define X86_FEATURE_WRMSRNS		(12*32+19) /* Non-serializing WRMSR */
+>   #define X86_FEATURE_AMX_FP16		(12*32+21) /* AMX fp16 Support */
+>   #define X86_FEATURE_AVX_IFMA            (12*32+23) /* Support for VPMADD52[H,L]UQ */
+
 
