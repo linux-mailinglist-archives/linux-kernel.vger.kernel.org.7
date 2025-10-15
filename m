@@ -1,308 +1,235 @@
-Return-Path: <linux-kernel+bounces-853853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE5BBDCC4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:40:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD3CBDCC34
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3E023B54FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E509418978C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6036B31327C;
-	Wed, 15 Oct 2025 06:40:36 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18EE3126A6;
+	Wed, 15 Oct 2025 06:39:10 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BD43126CE;
-	Wed, 15 Oct 2025 06:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE8302178
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510434; cv=none; b=tlHskyFuxrX4PZESdCL6dlmdE174+WIHQoHv8H8TLjQ1ud1lLPqLdnS/vIe3x1nKIz9mHA+9Iq7o9Bb44cTBmGoooxRykBYpSvBeIgaOO3jLI7wlUH9gfmcJgs8fGGevTMqatQAW3gqc0OybcemLny0V98ZaSH/JEJG7fn7EPoY=
+	t=1760510350; cv=none; b=PcFdAM9Bc/05ywdhb97p5VUDRqhBb9q4IWOlkp+4eFKRD0id8XuK0mjbmKPOzuvDj7TXjEA8DDDbf6eA3kLs4gG/r2j7I4aiRUsXqfUcRb4FFD2sx9niCEkiWJMutPJodCQgUCPIZTby1e/+ST9II+zVa2Zp+zoXEwTBCYZeUB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510434; c=relaxed/simple;
-	bh=WKmoCAdhwJeXGa3LefrmfEnCthO+1fO4s7DJYsIMQTA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S0tfa3xL5fsHoYl2XY2UiVb1jlWUq0lZzmwlCiep68kdBZLOD9DNeacLfYl3XR2RmpkewhcN37StpCwwb3vGrVoWqnzsCOCQz6Q5Z86a+x4sTRz5VZhkycsbOW2/ztYKcr7R9Czj+B51SMf1azFBJ9L2M1f0lMSCHib+5mrV+3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Lance Yang
-	<lance.yang@linux.dev>, Masami Hiramatsu <mhiramat@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux-doc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <wireguard@lists.zx2c4.com>,
-	<netdev@vger.kernel.org>, <linux-kselftest@vger.kernel.org>, Li RongQing
-	<lirongqing@baidu.com>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Anshuman Khandual <anshuman.khandual@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	David Hildenbrand <david@redhat.com>, Florian Wesphal <fw@strlen.de>, Jakub
- Kacinski <kuba@kernel.org>, "Jason A . Donenfeld" <jason@zx2c4.com>, Joel
- Granados <joel.granados@kernel.org>, Joel Stanley <joel@jms.id.au>, Jonathan
- Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, Liam Howlett
-	<liam.howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Petr Mladek <pmladek@suse.com>, Phil
- Auld <pauld@redhat.com>, Randy Dunlap <rdunlap@infradead.org>, Russell King
-	<linux@armlinux.org.uk>, Shuah Khan <shuah@kernel.org>, Simon Horman
-	<horms@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Steven Rostedt
-	<rostedt@goodmis.org>
-Subject: [PATCH][v4] hung_task: Panic when there are more than N hung tasks at the same time
-Date: Wed, 15 Oct 2025 14:36:15 +0800
-Message-ID: <20251015063615.2632-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1760510350; c=relaxed/simple;
+	bh=IYD1jN5WkZj4VgxNMFXq2HVKXVKvIXQ7z1epo6PKEZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pqEK/GfggV8g1LtvJqGjBgXl4oFS8F8RH/dpwZVPYH5aaObvMlRdsFYPGDfk5finKEtsarKvfMgrFCMz7FzjBTwYuGF3DDBEWxnwgssD/2cRO+Wx/e0iqeNrrZraffiikBsA3oI81/506ZDc7Mwepwng+oQzT/hSALcaeP/n2ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
+X-QQ-mid: zesmtpgz1t1760510334tf939942d
+X-QQ-Originating-IP: od4bNRLOLfQkHFiv6vxwr/aDip+WTs/jGF3/NVLsJ6I=
+Received: from GPU-Server-A6000.. ( [202.201.1.132])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 15 Oct 2025 14:38:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7569591979002680664
+EX-QQ-RecipientCnt: 14
+From: Yuan Tan <tanyuan@tinylab.org>
+To: arnd@arndb.de,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	palmer@dabbelt.com,
+	linux-kbuild@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	i@maskray.me,
+	tanyuan@tinylab.org,
+	falcon@tinylab.org,
+	ronbogo@outlook.com,
+	z1652074432@gmail.com,
+	lx24@stu.ynu.edu.cn
+Subject: [PATCH v2/resend 0/8] dce, riscv: Unused syscall trimming with PUSHSECTION and conditional KEEP()
+Date: Wed, 15 Oct 2025 14:38:43 +0800
+Message-ID: <30C972B6393DBAC5+cover.1760463245.git.tanyuan@tinylab.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
+References: <cover.1760463245.git.tanyuan@tinylab.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc9.internal.baidu.com (172.31.3.19) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: M8Zk4Li7PoFiTw+NQSaUVPSNuBAlU1et83LHIW2ei/gwxZrxBYbsJIAJ
+	tkRYF4XEhGwYukpv6nzAfQ6gVD3VUynrhZoLjFPhx05mDmJ/kI8gYhPqZSYt2cNkDOeBJjY
+	CXdi3xeVmTnrD2KReso7+/Khs8TiEq1He3eaCEGD6geMvYDiWoMVbaAOi2Dgc0e1kmXteqI
+	gjOX7mujNKCuuB9n32EBd8Z01JJk/oN6uVn6W2/IxRDqId1pOSDYZJXmjSfxLnI7bOMyAG2
+	0GSEbzwWcXMqLtyY4+rxpeDVDoYuw+wkLefeVvvVglSATMXbMWVuQyhs8XbvtwUBlQGQmui
+	CIdfRvOunG2F3qPdXi3lcgjmfSRNMrZWrz1KNalmJbw4WhB8YT0k3lWdck05mUWNXGB/QId
+	wnZ/guLNW6GBUbOr9a37Pa56f4d+qe1H328rNG44z3IvywEWk45AyuJUKMg8Wc8ECR2R4nK
+	mNiAL+68UU5fJ1C1p4lNYguHXGYskQyKfigDgctUiZDfX2KePfY7bjqOPkx1pTOMI9JvKXE
+	bIZpAe2XefUR1wP8E0E8TR5+GpgPQAG3LK/+IXzvQlZAxRNahB4zNr3Jsdb5WV5HGA0yi7C
+	H4enj8xULOEXBYIPmYoa9g9yjGJXIFhT2bi95XwotRsk78+zRtrbKk3h+dJTVt8rBd8WaTp
+	obqiuBWt3deU4A3AoEzlwzgGiPXUEn8X/cPJFl2hKStwKIYaDqD/Nd6swAewq12RIxPTRwJ
+	gu3F6UqIG5K++0yG4qMhfOcT+uT6WJJ8xxJtq6gybZs+a3HxIHKNWqkICFbObzQccdWMVIb
+	UYUpJ1KNx210+dMcLUHjNoAvw8Nwggmi75fAI+GwBzrnRJdOqqH29qtpiJI33K2Ydp3IDbD
+	pOhCoSN0b5sJow5MMaSOTb4T+H6Br8JbnRQtMP09pTTn6e0Xpct1Dh+b8XuQHOIpx0oC4lw
+	LFBMasQyCHA4hR8EoR3386NSjaOOiVbxTNCyxuc0OVj5gLidLqVbvQHtdT6nT3rF3q2EM8c
+	DQMF2qJaWCOSL6WhCoIf26sAlWZfA=
+X-QQ-XMRINFO: OJlEh3abS6gXi5NWrXbD0WI=
+X-QQ-RECHKSPAM: 0
 
-From: Li RongQing <lirongqing@baidu.com>
+Hi all,
 
-Currently, when 'hung_task_panic' is enabled, the kernel panics
-immediately upon detecting the first hung task. However, some hung
-tasks are transient and allow system recovery, while persistent hangs
-should trigger a panic when accumulating beyond a threshold.
+Sorry for the noise — it looks like my mail provider rewrote the Message-ID
+of the cover letter, which broke the thread. I'm resending the cover letter
+to make the series appear correctly threaded on lore.
 
-Extend the 'hung_task_panic' sysctl to accept a threshold value
-specifying the number of hung tasks that must be detected before
-triggering a kernel panic. This provides finer control for environments
-where transient hangs may occur but persistent hangs should be fatal.
+This series aims to introduce syscall trimming support based on dead code
+and data elimination (DCE). This can reduce the final image size, which is
+particularly useful for embedded devices, while also reducing the attack
+surface. It might further benefit specialized scenarios such as unikernels
+or LTO builds, and could potentially help shrink the instruction cache
+footprint.
 
-The sysctl now accepts:
-- 0: don't panic (maintains original behavior)
-- 1: panic on first hung task (maintains original behavior)
-- N > 1: panic after N hung tasks are detected in a single scan
+Besides that, this series also introduces a new PUSHSECTION macro. This
+wrapper allows sections created by .pushsection to have a proper reference
+relationship with their callers, so that --gc-sections can safely work
+without requiring unconditional KEEP() entries in linker scripts.
 
-This maintains backward compatibility while providing flexibility for
-different hang scenarios.
+Since the new syscalltbl.sh infrastructure has been merged, I think it’s a
+good time to push this patchsetTODO? forward.
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Florian Wesphal <fw@strlen.de>
-Cc: Jakub Kacinski <kuba@kernel.org>
-Cc: Jason A. Donenfeld <jason@zx2c4.com>
-Cc: Joel Granados <joel.granados@kernel.org>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Lance Yang <lance.yang@linux.dev>
-Cc: Liam Howlett <liam.howlett@oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: "Paul E . McKenney" <paulmck@kernel.org>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Phil Auld <pauld@redhat.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Simon Horman <horms@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>
-Cc: Steven Rostedt <rostedt@goodmis.org>
----
-diff with v3: comments modification, suggested by Lance, Masami, Randy and Petr
-diff with v2: do not add a new sysctl, extend hung_task_panic, suggested by Kees Cook
+Patch 1–3 introduce the infrastructure for TRIM_UNUSED_SYSCALLS, mainly
+allowing syscalltbl.sh to decide which syscalls to keep according to
+USED_SYSCALLS.
+Patch 4 enables TRIM_UNUSED_SYSCALLS for the RISC-V architecture. With
+syscalltbl.sh now available, this feature should be applicable to all
+architectures that support LD_DEAD_CODE_DATA_ELIMINATION and use
+syscalltbl.sh, but let’s focus on RISC-V first.
+Patch 5–8 address the dependency inversion problem caused by sections
+created with .pushsection that are forcibly retained by KEEP() in linker
+scripts.
 
- Documentation/admin-guide/kernel-parameters.txt      | 20 +++++++++++++-------
- Documentation/admin-guide/sysctl/kernel.rst          |  9 +++++----
- arch/arm/configs/aspeed_g5_defconfig                 |  2 +-
- kernel/configs/debug.config                          |  2 +-
- kernel/hung_task.c                                   | 15 ++++++++++-----
- lib/Kconfig.debug                                    |  9 +++++----
- tools/testing/selftests/wireguard/qemu/kernel.config |  2 +-
- 7 files changed, 36 insertions(+), 23 deletions(-)
+Here is an example to illustrate the problem:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a51ab46..492f0bc 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1992,14 +1992,20 @@
- 			the added memory block itself do not be affected.
- 
- 	hung_task_panic=
--			[KNL] Should the hung task detector generate panics.
--			Format: 0 | 1
-+			[KNL] Number of hung tasks to trigger kernel panic.
-+			Format: <int>
-+
-+			When set to a non-zero value, a kernel panic will be triggered if
-+			the number of detected hung tasks reaches this value.
-+
-+			0: don't panic
-+			1: panic immediately on first hung task
-+			N: panic after N hung tasks are detected in a single scan
- 
--			A value of 1 instructs the kernel to panic when a
--			hung task is detected. The default value is controlled
--			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
--			option. The value selected by this boot parameter can
--			be changed later by the kernel.hung_task_panic sysctl.
-+			The default value is controlled by the
-+			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value
-+			selected by this boot parameter can be changed later by the
-+			kernel.hung_task_panic sysctl.
- 
- 	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
- 				terminal devices. Valid values: 0..8
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index f3ee807..0065a55 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -397,13 +397,14 @@ a hung task is detected.
- hung_task_panic
- ===============
- 
--Controls the kernel's behavior when a hung task is detected.
-+When set to a non-zero value, a kernel panic will be triggered if the
-+number of hung tasks found during a single scan reaches this value.
- This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
- 
--= =================================================
-+= =======================================================
- 0 Continue operation. This is the default behavior.
--1 Panic immediately.
--= =================================================
-+N Panic when N hung tasks are found during a single scan.
-+= =======================================================
- 
- 
- hung_task_check_count
-diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
-index 61cee1e..c3b0d5f 100644
---- a/arch/arm/configs/aspeed_g5_defconfig
-+++ b/arch/arm/configs/aspeed_g5_defconfig
-@@ -308,7 +308,7 @@ CONFIG_PANIC_ON_OOPS=y
- CONFIG_PANIC_TIMEOUT=-1
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
--CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
- CONFIG_WQ_WATCHDOG=y
- # CONFIG_SCHED_DEBUG is not set
- CONFIG_FUNCTION_TRACER=y
-diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
-index e81327d..9f6ab7d 100644
---- a/kernel/configs/debug.config
-+++ b/kernel/configs/debug.config
-@@ -83,7 +83,7 @@ CONFIG_SLUB_DEBUG_ON=y
- #
- # Debug Oops, Lockups and Hangs
- #
--# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=0
- # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
- CONFIG_DEBUG_ATOMIC_SLEEP=y
- CONFIG_DETECT_HUNG_TASK=y
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index b2c1f14..84b4b04 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -81,7 +81,7 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
-  * hung task is detected:
-  */
- static unsigned int __read_mostly sysctl_hung_task_panic =
--	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
-+	CONFIG_BOOTPARAM_HUNG_TASK_PANIC;
- 
- static int
- hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
-@@ -218,8 +218,11 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
- }
- #endif
- 
--static void check_hung_task(struct task_struct *t, unsigned long timeout)
-+static void check_hung_task(struct task_struct *t, unsigned long timeout,
-+		unsigned long prev_detect_count)
- {
-+	unsigned long total_hung_task;
-+
- 	if (!task_is_hung(t, timeout))
- 		return;
- 
-@@ -229,9 +232,10 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 	 */
- 	sysctl_hung_task_detect_count++;
- 
-+	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
- 	trace_sched_process_hang(t);
- 
--	if (sysctl_hung_task_panic) {
-+	if (sysctl_hung_task_panic && total_hung_task >= sysctl_hung_task_panic) {
- 		console_verbose();
- 		hung_task_show_lock = true;
- 		hung_task_call_panic = true;
-@@ -300,6 +304,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	int max_count = sysctl_hung_task_check_count;
- 	unsigned long last_break = jiffies;
- 	struct task_struct *g, *t;
-+	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
- 
- 	/*
- 	 * If the system crashed already then all bets are off,
-@@ -320,7 +325,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 			last_break = jiffies;
- 		}
- 
--		check_hung_task(t, timeout);
-+		check_hung_task(t, timeout, prev_detect_count);
- 	}
-  unlock:
- 	rcu_read_unlock();
-@@ -389,7 +394,7 @@ static const struct ctl_table hung_task_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
-+		.extra2		= SYSCTL_INT_MAX,
- 	},
- 	{
- 		.procname	= "hung_task_check_count",
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 3034e294..3976c90 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1258,12 +1258,13 @@ config DEFAULT_HUNG_TASK_TIMEOUT
- 	  Keeping the default should be fine in most cases.
- 
- config BOOTPARAM_HUNG_TASK_PANIC
--	bool "Panic (Reboot) On Hung Tasks"
-+	int "Number of hung tasks to trigger kernel panic"
- 	depends on DETECT_HUNG_TASK
-+	default 0
- 	help
--	  Say Y here to enable the kernel to panic on "hung tasks",
--	  which are bugs that cause the kernel to leave a task stuck
--	  in uninterruptible "D" state.
-+	  When set to a non-zero value, a kernel panic will be triggered
-+	  if the number of hung tasks found during a single scan reaches
-+	  this value.
- 
- 	  The panic can be used in combination with panic_timeout,
- 	  to cause the system to reboot automatically after a
-diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
-index 936b18b..0504c11 100644
---- a/tools/testing/selftests/wireguard/qemu/kernel.config
-+++ b/tools/testing/selftests/wireguard/qemu/kernel.config
-@@ -81,7 +81,7 @@ CONFIG_WQ_WATCHDOG=y
- CONFIG_DETECT_HUNG_TASK=y
- CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
- CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
--CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
- CONFIG_PANIC_TIMEOUT=-1
- CONFIG_STACKTRACE=y
- CONFIG_EARLY_PRINTK=y
+void fun2(void);
+
+void fun1(void) {
+	asm volatile (
+		".pushsection .text.pushed,\"ax\"\n\t" "call fun2\n\t"
+		".popsection\n\t"
+	);
+}
+
+If fun1() is used, .text.fun1 is kept alive, but .text.pushed has no
+reference to .text.fun1, so --gc-sections may incorrectly discard
+.text.pushed. To avoid this, the kernel traditionally wraps such sections
+with KEEP() in the linker script. However, KEEP() introduces a dependency
+inversion: if fun1() and fun2() are unused, .text.fun1, .text.fun2 and
+.text.pushed should be removed, but KEEP() forces .text.pushed to stay,
+which even keeps .text.fun2. As a result, sections that should be
+eliminated are retained unnecessarily.
+
+In Linux, sections such as ex_table, jump_table, bug_table, and alternative
+are created by .pushsection and suffer from this issue. They prevent some
+syscalls from being trimmed.
+
+Ideally, .text.fun1 and .text.pushed should share the same fate: if fun1()
+is not referenced, .text.pushed should be discarded as well. To achieve
+this, we can establish a relocation with a directive between the caller and
+the section created by .pushsection:
+
+.section .text.fun1,"ax"
+.reloc ., BFD_RELOC_NONE, pushedlabel
+.pushsection .text.pushed,"ax" pushedlabel:
+	call fun2
+.popsection
+
+Based on this idea, we introduce the PUSHSECTION macro. This macro emits a
+relocation directive and a new label automatically, while remaining fully
+compatible with all existing .pushsection parameters. With this macro, all
+current uses of .pushsection (and even .section) in the kernel can be
+replaced, significantly reducing the number of KEEP() in linker scripts and
+enabling --gc-sections to work more effectively.
+
+Without PUSHSECTION, there are 56 syscalls that cannot be trimmed in
+defconfig and TRIM_UNUSED_SYSCALLS enabled. With PUSHSECTION, all syscalls
+can now be properly trimmed.
+
+We have tested enabling TRIM_UNUSED_SYSCALLS while keeping all syscalls
+listed in USED_SYSCALLS and successfully booted Ubuntu on a configuration
+based on v6.18-rc1 defconfig. The detailed configuration is provided in
+[1]. This confirms that the trimming mechanism functions correctly under a
+standard kernel setup.
+
+The vmlinux size with tinyconfig is as follows:
+
+|                                 | syscall remain | vmlinux size   | vmlinux after strip |
+| ------------------------------- | -------------- | -------------- | ------------------- |
+| enable DCE                      | 188            | 1437008        | 915160              |
+| enable DCE and syscall trimming | 3              | 1263528 (-12%) | 800472 (-13%)       |
+
+
+Changes in v2:
+- Rebased on the unified syscalltbl.sh infrastructure for syscall trimming.
+USED_SYSCALLS now accepts only syscall names to avoid confusion, whereas v1
+also allowed entry point symbols.
+- Uses the .reloc directive to establish dependencies.
+Compared with previous proposals using SHF_LINK_ORDER or SHF_GROUP, this
+approach provides a generic, parameter-compatible macro for all
+.pushsection usages without side effects.
+
+
+Previous versions:
+- RFC: https://lore.kernel.org/lkml/cover.1676594211.git.falcon@tinylab.org/
+- v1 part 1: https://lore.kernel.org/lkml/cover.1695679700.git.falcon@tinylab.org/
+- v1 part 2: https://lore.kernel.org/lkml/cover.1699025537.git.tanyuan@tinylab.org/
+
+Links:
+[1] https://pastebin.com/St51bk2K
+
+
+Yuan Tan (4):
+  kconfig: add CONFIG_PUSHSECTION_WITH_RELOC for relocation support
+  compiler.h: introduce PUSHSECTION macro to establish proper references
+  vmlinux.lds.h: support conditional KEEP() in linker script
+  riscv: use PUSHSECTION in ex_table, jump_table, bug_table and
+    alternatives
+
+Yuhang Zheng (4):
+  init/Kconfig: add CONFIG_TRIM_UNUSED_SYSCALLS and related options
+  scripts/syscalltbl.sh: add optional --used-syscalls argument for
+    syscall trimming
+  scripts/Makefile.asm-headers: pass USED_SYSCALLS to syscalltbl.sh
+  riscv: enable HAVE_TRIM_UNUSED_SYSCALLS when toolchain supports DCE
+
+ arch/riscv/Kconfig                          |  1 +
+ arch/riscv/include/asm/alternative-macros.h |  8 ++--
+ arch/riscv/include/asm/asm-extable.h        | 10 +++--
+ arch/riscv/include/asm/bug.h                |  2 +-
+ arch/riscv/include/asm/jump_label.h         |  3 +-
+ arch/riscv/kernel/vmlinux.lds.S             |  9 +++-
+ include/asm-generic/vmlinux.lds.h           | 12 ++++-
+ include/linux/compiler.h                    | 43 +++++++++++++++++-
+ include/linux/compiler_types.h              |  8 ++--
+ init/Kconfig                                | 49 +++++++++++++++++++++
+ scripts/Makefile.asm-headers                |  4 ++
+ scripts/syscalltbl.sh                       | 19 +++++++-
+ 12 files changed, 150 insertions(+), 18 deletions(-)
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+prerequisite-patch-id: 7af3175326df94637f04a050dee7356416eb1edd
 -- 
-2.9.4
+2.43.0
 
 
