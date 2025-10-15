@@ -1,113 +1,111 @@
-Return-Path: <linux-kernel+bounces-854767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30ADBDF552
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:24:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3323EBDF55B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 55DB9350076
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:24:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBAD24E277A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CA42FBE1C;
-	Wed, 15 Oct 2025 15:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D0E2FC00A;
+	Wed, 15 Oct 2025 15:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OTrVNAKi"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E4AF2c6T"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBEC2C21F4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAC42517AC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541853; cv=none; b=kjUFbT0++8KtusLDLes06fMniq1YTvKEUzDHbMcxqYdodEXl1ZvsuHEfqKgyRwnUJry6HOxsroS3CHPZpaQaTx/UMdkCsLB9kwGhr+cc6guA6z9pVTMUc70CmZgGXQFLOFTHJyaRdQmNo6EErfPmLOJFjbg+/Mdk6fuuGNCP4ec=
+	t=1760541893; cv=none; b=frGEJX9iT1iWCgGfVDO7uh77CE69zN+FNiHBpaT9YCkNRT6bpFmj2CMh7pUbd7ICLZoBGCZLmXu3L0RTy3LuoXMqGD9xRzMyCop6lT3LVs/OwWG/Ew8VKiRggOTJUXVziKPH9EXDrsjRIjVXyLXF3Sm8wMO34bmq5GDU9+EyimI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541853; c=relaxed/simple;
-	bh=fHi4Sy6ZO6219mNkkAMO1NN3Q4Mdyg5IgRsuybnGRaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSqUKlo66rSbqnfPuolC07a+svkml4iloBDswoHaHS6WuqHp7Rcfna9HxD7vw3tfm09gbOvan+P211ixN1wrjWrkIp/EBk+EWBoXcbXZEZ57e/CVWTR+O2QRIkgl2VB5IWzREJbvy1Q1gtuavxdU7fpFlQqgFxPTf5V3um5y2q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OTrVNAKi; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3737d09d123so52200801fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760541848; x=1761146648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GSysKNFqHQrm7HW9ou4XnQTMAOsGZaUAittjs2tbdIc=;
-        b=OTrVNAKiUj4qeasqNWzZ42f8ThURb98tRuuQiiRi9i22KyrfK9OaHx/EVt5x58t1gZ
-         KD+YvoJB/8Eb4jVu/ECj+0iD39uQwpcNJcGFBuEeB8EoDOknVSzObH8RxQ/KGiviBBSs
-         77euI61oMwKrh1mGcXqviIYaTHO8zJjouJq4r5QfSMEfQd54GfoP2v0v6IcLFJzuqJE/
-         J/AFAYncprUW99IS5Hv8MtLjHLEp3ZL6EXQPztB60er91EmJrdjUxEoT6BF7pYUgoUpF
-         kBfEo5rFtV3boCiHiPvxM9nc1j2eXlm5j4lMZwQDEsCKb8gWeW/i7CRo0vpWt6V+7ozO
-         uqSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760541848; x=1761146648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GSysKNFqHQrm7HW9ou4XnQTMAOsGZaUAittjs2tbdIc=;
-        b=Oh+BIKHIUPhWdWbehbFPX45LNXprxUnj4aswN4h6GaNrEWTubUDDtShWGHCq4wg/6Z
-         AFFUhi07PJhZRAMoQhCi2WOhCjBPqkgIPoRKwYBLy7Wg745DO8bo9QWstXrFS7YZSVyq
-         RUGQgEYM17iJlaW2ZAOWhyjvn3LdzqWE2j4IBa1qJWSvglFM0oKbGZ8JaeoDqdRwNber
-         qOe1+BN2VJtomaBpvF24MpG5eJG698XJ31p36oLvXFPBrPx7PpDXrF+0dkIP4HZJYhyg
-         osvjybtCQGAmzMVbvj4dFiL9bTCdrWczqiu/bpUHOQevdhkXTUgxJTQGmxRS5N5D7g3n
-         BMvA==
-X-Gm-Message-State: AOJu0YzmC2MbMEA2fmxLCjgoua2qoO+ZpuExF96zDAKRzpmOys7OKjnP
-	SZUBrYVmAd7ePqK12qg732Rm22uFuSLVXv9/cNcu0EwbsUi2zeRIspw7zTQOaKo6OcuV+m35oVq
-	2ShY7sqq0rm8k1SeJRb2PxR2C7+T2NOHKI3H1pT2Nlg==
-X-Gm-Gg: ASbGnctpbZqp2cUoBcjuZaeR7I8Q4m1LuxjQBMx8kKiHN5h+Iy5UpA+NzMRGINF0MBE
-	5PMmeLhMsaOZuN9PFKV/WMa1q1pbGHSXgP7J6KFlnI/am/BAIkM6FCYjCNvbE2ajpJU6LaIrA9F
-	KyFWbz/e/BsnjPiux6sixIHgW/yDBBy4vyP2r0q/LrNTbR8x9WB5tHi/62TeZ0Tr1ZVazT9Eqip
-	RKEbNaJVs6xH3V5z5CGCg7F5PeubrXmLqNwbjFpljVbPw0xoCXo5YAZJfo=
-X-Google-Smtp-Source: AGHT+IHrIpnmA3PfhS5F43KKvrlsIpMZQHo0Y4ikDQOz1PFqFFjsj/VrWWbwy50E1b37KRiZ2S09Lm6qe0KfxZLGVVM=
-X-Received: by 2002:a2e:a541:0:b0:336:bd8c:5e53 with SMTP id
- 38308e7fff4ca-37609cc2d6fmr78271231fa.5.1760541848431; Wed, 15 Oct 2025
- 08:24:08 -0700 (PDT)
+	s=arc-20240116; t=1760541893; c=relaxed/simple;
+	bh=R+9xeFP8T9Y1PDPc8AHwS5k4vLdR7rxRhYeU2jVPwFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jx7otr1nC2rhSo3W/BqnxDX7e+tbueWXdbr9C/hrYS01eSILQQE09/EB/gswERmqcfDCr7QY79zY6yRMY/WzanpdvPfVJAwsJT8Q6lmziXRcpO2MGLVa4wmH4ROHUVdM8kTedZBxBXZrvKmxsHqmXIv2pX0R9tyf4Bl/eTecHRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=E4AF2c6T; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8M2G3XjviaSq0AtCIIi8Utl5wZlVcAd+EccrjLXECpc=; b=E4AF2c6TKEFfMOhJx71+z1jm8/
+	+7Ax+h9/m/uIJ3eBkMuZhDOpYDGGZHvEnVYXYlVpuyfnSIEZYYkyTIxRRTYdQc8M7TqJie3VfyY/G
+	bksnMRmKzSYQNC81R7rD/G1OXTfBHbKVsbyDGDIwCskVl+CnNDRC1GmdKTotHywCiKbEWbpW4OvzQ
+	TM2Boj4IkKZVFS+0akGtsrPsPOsfq67Gy2DgQg85f06hCxYiWd3XwBaLxd1himxQ4DdhoCnMBlLVN
+	HzLtyz0cc7ni7konZUszMTjjmqIOfwOWBOITjoNInEzZ1ZDy7rIWZOrdXFP0/xqfh6nVSRsdG7zXI
+	AiqUsLcQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v93MB-000000061L2-3cd5;
+	Wed, 15 Oct 2025 15:24:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CEFE030023C; Wed, 15 Oct 2025 17:24:02 +0200 (CEST)
+Date: Wed, 15 Oct 2025 17:24:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Jianyong Wu <jianyong.wu@outlook.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Tingyin Duan <tingyin.duan@gmail.com>,
+	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
+	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
+	Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
+	Libo Chen <libo.chen@oracle.com>,
+	Adam Li <adamli@os.amperecomputing.com>,
+	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/19] sched/fair: Identify busiest sched_group for
+ LLC-aware load balancing
+Message-ID: <20251015152402.GE3168635@noisy.programming.kicks-ass.net>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+ <fcdf37780eeb409cf10925f8b8dcef486c92b218.1760206683.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929155053.400342-1-marco.crivellari@suse.com> <176054173655.179445.8487996832699914920.b4-ty@kernel.org>
-In-Reply-To: <176054173655.179445.8487996832699914920.b4-ty@kernel.org>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Wed, 15 Oct 2025 17:23:57 +0200
-X-Gm-Features: AS18NWBvKtm51_JvZYvvvcOsZcx-fI7s4PuiuLPeUZyiDl7r4VqZO-UJmhBVZGc
-Message-ID: <CAAofZF4_0+ZK5hefqbDksxtSe96ZnR18uQrr3Xw17zvYd_fMmw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/1] ASoC: change system_wq with system_dfl_wq
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fcdf37780eeb409cf10925f8b8dcef486c92b218.1760206683.git.tim.c.chen@linux.intel.com>
 
-On Wed, Oct 15, 2025 at 5:22=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
-> [..]
-> Applied to
->
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-=
-next
->
-> Thanks!
->
-> [1/1] ASoC: replace use of system_wq with system_dfl_wq
->       commit: 0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4
->
+On Sat, Oct 11, 2025 at 11:24:48AM -0700, Tim Chen wrote:
 
-Many thanks, Mark!
+> @@ -11035,6 +11059,17 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+>  	     sds->local_stat.group_type != group_has_spare))
+>  		return false;
+>  
+> +	/* deal with prefer LLC load balance, if failed, fall into normal load balance */
+> +	if (update_llc_busiest(env, busiest, sgs))
+> +		return true;
+> +
+> +	/*
+> +	 * If the busiest group has tasks with LLC preference,
+> +	 * skip normal load balance.
+> +	 */
+> +	if (busiest->group_llc_balance)
+> +		return false;
+> +
+>  	if (sgs->group_type > busiest->group_type)
+>  		return true;
 
---=20
+This feels weird.. should we really override things like group_imbalance
+or group_misfit_task ?
 
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
 
