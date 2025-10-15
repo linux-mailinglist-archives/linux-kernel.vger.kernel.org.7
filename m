@@ -1,167 +1,197 @@
-Return-Path: <linux-kernel+bounces-854888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E89BDFB00
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705CCBDFB0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C617F503DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB573C6C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A63376B9;
-	Wed, 15 Oct 2025 16:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BAA3376B0;
+	Wed, 15 Oct 2025 16:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oC8FmeTe"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qKChBuF+"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFC328D8DA
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC5B29BDB9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546191; cv=none; b=rngzjGtnbEzZ2VhSIsnqKn48ywv4GVS9Iz89nUlPEwoEkNJjS2doits2Q/49P/9CMlow65EefB68Wg6nnrZ/fO+Ts+DwHnu034ARWNbmEXOValp+p8KNcKUks5u0kr1UYOWSIMzlhzWJE6sqhOFXP96c8PyO6caYSCO1zUz/eoU=
+	t=1760546244; cv=none; b=Y1HKOboOt9Fozb3vZP5BN6uQmmw5jhniXlKd77r3u8mTUwdmO7q81367AbiGLgPugtzIUsdsveXEh2DspROg3TJBBEGMOEdLTBbTMS2WdsvmflNA38E3d0CBQyTch4hbYSAn5a+FY84rm0HA6PLujCJ3daOcawEYBoC4hHh2+2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546191; c=relaxed/simple;
-	bh=xyZHNhiJS/pHhq2vsxbLXqxnAxxt00CfAgWHeW4ulKQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=uGcJKmpq5jduQsgh6fVpT6h7w7v6pMLX6sDCy8PaHvqbrbJpyA1HraWCE/9hulH7pRckNHmdB1TdzdAT2WPX+zaqourryTN+DjBKtoYFYD0LcpCNXcYsq5npnPu7lfgAhUIMBRui/DKGeANrnnBYNGfQbm+8Lw6pyzzWK6KBs8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oC8FmeTe; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f7469so47316325e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760546187; x=1761150987; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/6PIHQYpxFdcD3g1Rb8LKFnlbKq4ABhAEEAfugnKj4=;
-        b=oC8FmeTeCyfVOQsBN63xBIgkfByxyiOlGP51OSIMZqCLycjDVO0Tv2ejEKLyEbyuGR
-         YoP0Wn4P+g52AEG6x1em/qhXtvtssv6DVeycUqZpQfngKgL7Uz4Is+07LiGgb5zu3tuH
-         oPDDvbF3+ipN9NUQS0ymPARy0P2HYyOcpfSlCV2IJLw1Wb1+kTdUZzNne9syb9TdEyTN
-         OJ8u5GPZioMlNa9nH2HGvgTNsPOeP9IvuOuD+O/uJ+sLe6jfFna1olKNMejsJMUqi50x
-         +qUaqmxWsbd/92MrnuTKuGpsttnJD+ZypNN3j2z602nDwV5iQN/hSXdDE+c3Pl20CaEs
-         MTpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760546187; x=1761150987;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=J/6PIHQYpxFdcD3g1Rb8LKFnlbKq4ABhAEEAfugnKj4=;
-        b=lzN5cHC6LpQLBGrewc3hLWEQkTE/P0u7GFCHZguNMEAt+W2Sc1+79HA6fCpvHERvz+
-         z50Qxsjd944Jd5mzaWVqjSXb++uwIWNAGzjWoQY4bQKbM77UkDt4T87YwL6R48DWYktp
-         AwM21HVDigHfSRyHYTGKNaCmtYgoworj+zrv+aHIRGqJ2b5Q1AYOF7VdhJDCjuDsKogO
-         1PF26gU3sudSpfPCQkJ1aZvCfboJVC20TR8bug1sSKbjoknIfOmOFruCBeKldi6wpfB/
-         tgji1nfOIXyIoa3rbXLM+FikjnVyotdJdRDh9pUeR7unr1cQSXJjeCIzxTBBiZFoYOvt
-         jXFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXl+xSWcparDTp9+ibgO0VGCuK6JK8JsQTwaa73R0WEQzU5okrKuPiUARg0TOzwB0AXx0aP1ogpf3rMAsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUP9Q49RUwMSTAQx47VJZ7bioQ8NbcK5R8s2f2foGVKIIPWmUr
-	mZJioj62cluKCF7VCL1uC5Kb0CK9AhlO746pZVB5QdYuYCYxlLbMh88KoLzhnD0P5iVxkjAr5AF
-	JzsDm
-X-Gm-Gg: ASbGncvb26tb9unc6R0+bzvJMrGCVwgtl63Mpm4ws0/Tc7NXGNyk529f63cB1pPzLzK
-	6fmmHHEHIvRMEVdRshiglylmnZUSCsDu50zmSGP5zvjw7LiRnUFw9vgpojkaxJUqB5wBglNrmhe
-	xY9msJzzwBEUZE33RgqqqU2Hdhoe2a6DbDQ5+cX2DxprQXTBslFtOznyWkIf8z6WCsE48E7lfLV
-	3a4pugA4mkfVU2kr4NPj3fhCmwlj/X4LGXOrDWRLDTOkIA+Ij9pwAf1BiXbLBDHwx/TeAQJx5E9
-	rmg9M+9cajn0uYGiRZbmk4QoFWdQGhubyt9iZ0gzx1BwR4HdLoTeFTXGE8yoDDdk1kZW98SUiXV
-	dcCNFLT+p8yCG4YRVNdO9sgOid1oa2IZZjNaLKbtrC3M0fgXL
-X-Google-Smtp-Source: AGHT+IGVsX4Z6gvhEdWFe8CVNUsZF7cB3CGnm3rlIg452iDvItLU2/Uzxwubc3knG3XtRNgXtynQjw==
-X-Received: by 2002:a05:6000:2910:b0:405:3028:1bf2 with SMTP id ffacd0b85a97d-4266e8db2abmr17050645f8f.62.1760546187091;
-        Wed, 15 Oct 2025 09:36:27 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:da1:8747:bd91:8232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d3b9sm30734345f8f.11.2025.10.15.09.36.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 09:36:26 -0700 (PDT)
+	s=arc-20240116; t=1760546244; c=relaxed/simple;
+	bh=Ym3B/0H4USnvVL7IHlJUmg7fUVukV8KmIrHtGsUHGGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nGD7a5aedz6IWy6DMDNbA78aT+c1CWCXMsclh7esV8NOHcFec/pdntNDNu8WRP/lUGKLXbqHhcBgKjXC2cyyQKrAAwMkHzlHF97ehsczLwL/UerAhtmGNkGUCUNg9+thvIoRi5cvwbADJ6OVINJuHqfsQwFh/tVUddG9QziB6LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qKChBuF+; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FDhQK0021832;
+	Wed, 15 Oct 2025 16:36:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BOt3zN
+	h/px6+Lk6ezJYoXvE6qO/ttZQsZh8qIl1wPUg=; b=qKChBuF+BlPsTszV5TjC6Q
+	erV9W9yx7QFHCQY2NYvwcPoqxqiU0qyh61evm96GOwBZzeEgetVvxnnNVCbhsJ1N
+	EcJyFrSo2rehrmmrqOywg0Z9J1HZRxnh80u3na6njiVfyOa2QF2Xvk4HGkppvtaq
+	yEoQQRz091ODP0tlq3S+A36vFtnpRgHl1SKaxe2GAAGsrT7HdfZibXczQCoX3ylj
+	a/aMvwUVreuGxdMRjOpNLRKJrElktQOg6eSpo1LhpikbCrPvpOsxXo3UQ/9DWrmj
+	YiFo5RjcO4NRfIhbpwm58zC5DtHpspBlW0imkgoazOA5/kWJd/cnHwSSJf1Qm1HQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew04usk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 16:36:48 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59FFjCRV028760;
+	Wed, 15 Oct 2025 16:36:48 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew04usf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 16:36:48 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59FFBIAh015002;
+	Wed, 15 Oct 2025 16:36:47 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r3sjh4rn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 16:36:46 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59FGajVr36110642
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 16:36:45 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4F67C200D2;
+	Wed, 15 Oct 2025 16:36:45 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08ECB200D1;
+	Wed, 15 Oct 2025 16:36:40 +0000 (GMT)
+Received: from [9.124.218.242] (unknown [9.124.218.242])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 15 Oct 2025 16:36:39 +0000 (GMT)
+Message-ID: <6007f50a-7abd-46c8-8934-f1b09df57479@linux.ibm.com>
+Date: Wed, 15 Oct 2025 22:06:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Oct 2025 17:36:25 +0100
-Message-Id: <DDJ1JCEPQA0S.2BS91YGW605E5@linaro.org>
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Vinod Koul" <vkoul@kernel.org>
-Cc: "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Patrick Lai"
- <plai@qti.qualcomm.com>, "Annemarie Porter" <annemari@quicinc.com>,
- <srinivas.kandagatla@oss.qualcomm.com>, <linux-sound@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>, <kernel@oss.qualcomm.com>,
- "Ekansh Gupta" <ekansh.gupta@oss.qualcomm.com>, "Pierre-Louis Bossart"
- <pierre-louis.bossart@linux.dev>
-Subject: Re: [PATCH v3 1/3] ALSA: compress: add raw opus codec define and
- opus decoder structs
-X-Mailer: aerc 0.20.0
-References: <20250917-opus_codec_rfc_v1-v3-0-7737ad40132e@linaro.org>
- <20250917-opus_codec_rfc_v1-v3-1-7737ad40132e@linaro.org>
- <aMuTyZy50IvpAEG9@vaman>
-In-Reply-To: <aMuTyZy50IvpAEG9@vaman>
-
-On Thu Sep 18, 2025 at 6:08 AM BST, Vinod Koul wrote:
-> On 17-09-25, 08:32, Alexey Klimov wrote:
->> Adds a raw opus codec define and raw opus decoder structs.
->> This is for raw OPUS packets not packed in any type of container
->> (for instance OGG container). The decoder struct fields are
->> taken from corresponding RFC document: RFC 7845 Section 5.
->>=20
->> Cc: Srinivas Kandagatla <srini@kernel.org>
->> Cc: Vinod Koul <vkoul@kernel.org>
->> Co-developed-by: Annemarie Porter <annemari@quicinc.com>
->> Signed-off-by: Annemarie Porter <annemari@quicinc.com>
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  include/uapi/sound/compress_params.h | 43 +++++++++++++++++++++++++++++=
-++++++-
->>  1 file changed, 42 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/c=
-ompress_params.h
->> index bc7648a30746f4632ecf6695868e79550a431dfa..faf4fa911f7fc2830c3ae42b=
-93650fe40d8a776b 100644
->> --- a/include/uapi/sound/compress_params.h
->> +++ b/include/uapi/sound/compress_params.h
->> @@ -43,7 +43,8 @@
->>  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
->>  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
->>  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
->> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
->> +#define SND_AUDIOCODEC_OPUS_RAW              ((__u32) 0x00000011)
->> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_OPUS_RAW
->> =20
->>  /*
->>   * Profile and modes are listed with bit masks. This allows for a
->> @@ -324,6 +325,45 @@ struct snd_dec_ape {
->>  	__u32 seek_table_present;
->>  } __attribute__((packed, aligned(4)));
->> =20
->> +/**
->> + * struct snd_dec_opus - Opus decoder parameters (raw opus packets)
->> + * @version: Usually should be '1' but can be split into major (4 upper=
- bits)
->> + * and minor (4 lower bits) sub-fields.
->
-> Please clarify, if that should be 1.0 so a value of 0x10
-
-Sorry for the delay.
-So the spec says that the value must be '1' for 8-bit field for that
-version of specification which it seems it should be 0x1.
-The spliting into two 4-bit fields is for backward compatibility and
-in such case any version in minor fields will be accepted (15 or less).
-Anything starting with version 16 or 0x10 is treated as incompatible
-version for this version of spec.
-
-Well, at least that's how I understand the spec.
-Value 0x10 in this case seems to signal incompatibility unless I am
-missing something?
-
-Thanks,
-Alexey
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/19] sched/fair: Introduce a static key to enable cache
+ aware only for multi LLCs
+To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+        "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+        Hillf Danton <hdanton@sina.com>, Jianyong Wu <jianyong.wu@outlook.com>,
+        Yangyu Chen <cyy@cyyself.name>, Tingyin Duan <tingyin.duan@gmail.com>,
+        Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
+        Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
+        Chen Yu <yu.chen.surf@gmail.com>,
+        Adam Li <adamli@os.amperecomputing.com>,
+        Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+ <ef136e6a6f5a2ef840b1f9571c47411f04705b6a.1760206683.git.tim.c.chen@linux.intel.com>
+ <20251015110450.GO3289052@noisy.programming.kicks-ass.net>
+ <15b871f2-49b8-4b62-926d-31f93ad49f51@intel.com>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <15b871f2-49b8-4b62-926d-31f93ad49f51@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: oEoAAacKuOuAvk2q1P9GGsqlbRJhBpKQ
+X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68efcda0 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=hyIIqotkGnHO3MzI:21 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8 a=vzhER2c_AAAA:8
+ a=Rr0q3t3VzmWdSmMSGToA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=0YTRHmU2iG2pZC6F1fw2:22 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
+ a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfXzbru1ZRddg5V
+ pzyvRF0uYWUzqP+HvQbzIPsrncyWI9joBUaiUaW9l90wzjaNJh12L5g0UsMX6rLqQ2qqrDmHJtW
+ GwZPbd7fSyVm0uZmyrQXng84jMfX7RC2dRHxDBHkmJAau7MyU6JkKij5ZDrOrwRu8j2eaOV09Tl
+ pit5HY7lswkp5TxzQZ52bpzlb+8aazwJ/nq5gsV/IeUPMjTXECZ9utq9QWAYy1zN7L55fcN08Zs
+ j3vDtK8FMZfiiwFdUzy/XKBUnPaXBbNcYlKfNOp0dhDLBNThd4pPQ2oRynjmew8UYt7cFmy6C9Y
+ Vlmk7oaen4jfXxaXUdA40XsqyhWaSxWg6ssZojWSbGmm1m6MnDizO4zsP1vezTeUBBO3b1eQyfe
+ 1jaMEZv8sSsNSDpvYpOKu5lTefoOCw==
+X-Proofpoint-GUID: -GKxfyfwXuPGca4oKq9HZkuNcv5J7QCS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_06,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 impostorscore=0
+ phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
 
 
+On 10/15/25 9:55 PM, Chen, Yu C wrote:
+> On 10/15/2025 7:04 PM, Peter Zijlstra wrote:
+>> On Sat, Oct 11, 2025 at 11:24:41AM -0700, Tim Chen wrote:
+>>> From: Chen Yu <yu.c.chen@intel.com>
+>>>
+>>> Enable cache-aware load balancing only if at least 1 NUMA node has
+>>> more than one LLC.
+>>>
+>>> Suggested-by: Libo Chen <libo.chen@oracle.com>
+>>> Suggested-by: Adam Li <adamli@os.amperecomputing.com>
+>>> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+>>> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+>>> ---
+>>>   kernel/sched/fair.c     | 15 ++++++++++++---
+>>>   kernel/sched/sched.h    |  1 +
+>>>   kernel/sched/topology.c | 14 ++++++++++++--
+>>>   3 files changed, 25 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index cd080468ddc9..3d643449c48c 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -1208,6 +1208,14 @@ static s64 update_se(struct rq *rq, struct 
+>>> sched_entity *se)
+>>>   __read_mostly unsigned int llc_overload_pct       = 50;
+>>>   __read_mostly unsigned int llc_imb_pct            = 20;
+>>> +DEFINE_STATIC_KEY_FALSE(sched_cache_allowed);
+>>> +
+>>> +static inline bool sched_cache_enabled(void)
+>>> +{
+>>> +    return sched_feat(SCHED_CACHE) &&
+>>> +        static_branch_likely(&sched_cache_allowed);
+>>> +}
+>>
+>> Urgh; do we really need _2_ static keys stacked for this? I'm thinking
+>> one should be well enough.
+> 
+> SCHED_CACHE allows user space to turn on/off the feature at runtime,
+> while sched_cache_allow is a hardware capability. This capability is
+
+isn't it possible use only static_branch_likely(&sched_cache_allowed) at runtime?
+
+Enable that key only if FEAT is set. Disable when unset.
+That way you could use only one static branch at runtime.
+
+Also, I am not sure if the FEATURE should be true by default. I know it maybe unused but
+IMO it should be true by default only when its proven there are no regression.
+One should be aware of their topology to enable it.
+>   disabled if there are no multiple LLCs within one node. I’m not sure
+> if using one key could support the above two scenarios.
+>It is possible to have multiple NUMA nodes. One node may have multiple LLC while other
+one may have only 1 LLC. what happens in that case?
+
+I am yet to go through the series(hopefully this week). Maybe its handled already.
 
