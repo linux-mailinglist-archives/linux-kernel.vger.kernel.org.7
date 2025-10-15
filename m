@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-854952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DFDBDFD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30460BDFA6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5D419A5C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1DC1881DCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2A4338F36;
-	Wed, 15 Oct 2025 17:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1106A337691;
+	Wed, 15 Oct 2025 16:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtbOsK9z"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IqEniJ4P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B520296A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96C5149C6F;
+	Wed, 15 Oct 2025 16:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760548771; cv=none; b=YRPVAZEOP68Dw6O6pG0xCXUqH8LutmFVgUtPyos04dfbn+KzGiNgrIbV/Bjk6x8z8wc8ZgGz5TMaPrCm0YCG5iJU6Ipv3OuSLJAQqyuLgbdtF34BI6g4iGlOCmRAT9eJZtNLKHwBWh9TWg1TqZOuNvmSPkb7JtmuqQKZfi58AGQ=
+	t=1760545628; cv=none; b=YVXvYGYgdn1UAzLYhVgSw/oZbZet0z/m/b4lDkIxSiZTDDT9vIuxbeVRT10G4qcmuAmkotMle6Nz5B5UAsj5rH9VRD1eOln+hInXWArgqEwM88UQivqEeymE4Yg+XKpmiEG7r307LilzTOW/jY0bfa89MqC0+QuTcg+N12lI7cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760548771; c=relaxed/simple;
-	bh=TMIy3qhByr4KuTXyATX/wSL3AQldOezxzFv9eiIqO8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u0ZSfuOHLBB39SsZ1+Lg/R2Vgf8HFPQ95cio8Du/SV20vCIaIecSaRDCma4NVb0I7VY/7x3zxn8RAP/SHL5VHBHwAQjuniknvuzaPcbeKDSrcOhkasRaRuAIFozLJayDv2TBeZCmrHtHHh+PHtK1BMfZ2rxkgFKC4r7Ps1YXCd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtbOsK9z; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8572d7b2457so241801385a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:19:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760548767; x=1761153567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vOrazw55riCP/Aur0rBmo9Q0amixGsabgjSNwoheBcY=;
-        b=dtbOsK9zX3ftRUWYXOlAcOAq6syAC1JxQAY+h3fEhtKPro8OVp4jw36eyOwjGcnETh
-         iOZx2q8dB6+3GBmJ63J9HvqH5OZqZ89j1tEst1rJFd6UKfnk+AZbYLaRAYbuUknYFUA3
-         Q9NklHAJi7vnLkmLZp1td/l62XR2dYVRWG8QCdmSmYMoo0qAJRH7e3z5jAR9HvmbB08v
-         c/1RNVJVKC3cKqJAhIzjHAhsGrGxXo/5MWO4Q4ZNa6BivV6t17ECYsq44p1I1SyX0fzu
-         9PpF3RfLcbfusyogJlqFMff/U0YgVah/yAWYRDJ16eY5cpuQUtTywUYyULWXdJa2WGCg
-         2SEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760548767; x=1761153567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vOrazw55riCP/Aur0rBmo9Q0amixGsabgjSNwoheBcY=;
-        b=HDKZcYtHc84TqlE2AOhNoTIRBrfx62ELHZK3JaSbz8//0KgoEd59K/UkzNMAIDshzP
-         lfIVeCblYA0IpvVCAcmlBPxYGjZcPNEPU4di5dos1YOLAIl6e06tJEEJhRwrlcJmaR4m
-         g9kWlEIdTp7ZKoDfiT9x/NvJfqHrVcyZA8jbtkFBYQ6p/qB9Ztr/2znEhNbQpU8stRxf
-         IU4OyBa0/NOnztG9Mmu59+v3BvIaYwgYC5mUUKMfhGefqxdoT77Vbd/MLkeHbwlLJcZM
-         uarQEGCwCyAGpel8gcGqFcJzWGrxnSxtgnoXxiEOs4ENk9tts7zW5umYjNoEToBWWyp0
-         MPNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvVtV8Ajwj4T6egN4lIkSlJ75IvoQqLoBCugCfNZE9dqrN9S7O9Wjo1uRjsROIvSNjKE+s2EM0zGFwzN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4PoI6xHAdDE+eGjY3hgAn/jBEDwSz5dN/FRbZhITHFo7NWHbl
-	A3CdSPIk+PodKVSbwCL30WOT23YvX+PVLhXPdJY5CnFCp32hSTAJv4WOUN8C4qGp37NWfHheSns
-	sZi21FWVkEP1N5tMrM4r1nDKGyJ2Bh69PSoZyjsw=
-X-Gm-Gg: ASbGnct3DNAy3e8DTw8ZTavkxz5vkQXoH6c1ntVHZn5ScD4USgIMqANxe6GB5df5gML
-	U/0lazhrNTrd1SMCmt8VPQJTFLVMDVwAN6HZIUxvjImxb4BqlzGopZQhsmQmuejH54dtUqhvnOJ
-	os9sTmFrvecwlqc+szqUqISZGvbwGxyNYSnyC36XPyO/ZFwiv9y+ZkbcKzTnm5EFClhrjByXGRx
-	nvcd7vFZG4kghbNLiYbdRQUXfh9rPSIOYYW32jcRy3euDTpRAWnZZMhXz3Lb69bt3qd
-X-Google-Smtp-Source: AGHT+IHMj8/0q217RxAjVF44oXg9hw5QCyqlGhPqFPzXru4QZfXmi2OzppAQuQ/NtBJj1yQoYjWFFacwFm5yovuLvqY=
-X-Received: by 2002:ac8:588c:0:b0:4b6:cbd:8c91 with SMTP id
- d75a77b69052e-4e890dc9f08mr13347691cf.5.1760548767352; Wed, 15 Oct 2025
- 10:19:27 -0700 (PDT)
+	s=arc-20240116; t=1760545628; c=relaxed/simple;
+	bh=yK9oF6CYaPLoaUMJ1QvkEM3Rfv/quSGkZrTgNKqB3fs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ji7hjf6pT4k8EmHTKl//grrgyaxKhFo3Dnhb488gXVmqxQf5bXe5c5axA2291fxLx598R12b+rshM5zfUpFSk0aoGOBYFMCd3W5nw+9DKki/Vh4Ty9A4LBdv+diorXuhaYRR1n8rsRbzlcISPj+GqvBaj0tfeD2dOtO6sLqBAsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IqEniJ4P; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760545627; x=1792081627;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yK9oF6CYaPLoaUMJ1QvkEM3Rfv/quSGkZrTgNKqB3fs=;
+  b=IqEniJ4PzlzB8GjErmFEAO8F6h4LTx60OueBqAvtQ4QloWfEOg8wOVLA
+   CZWi0f3xa4OsybGkP2po7DY95iGUVy3nHnPZ0HpL9u4MOZL19QLcG9iUJ
+   H1784nnoWlVwtt64SPZpDIKwl/UO0annJuaSICW4rWHTfBl4nHqn5SJRI
+   KtmH+1JY57y7oLMTx8sYZk0BEBoRyCCuTBPto1wWE6zReeZ0ZMiMt2hj+
+   3E2hE44/JC47pJCOUk3GHhPOFbW/En61/je3UJAyZj0KxRSHKGPBMjtMF
+   nd5uwkXh4fYfNKqPi57kucajrcXv9CVfyyfoTnGZC4amypWvmeoKhvqP5
+   g==;
+X-CSE-ConnectionGUID: /9qFkqckRy6zN8+Z7+BxHA==
+X-CSE-MsgGUID: yjlRnbloTSi6Sghpz27KPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="66378903"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="66378903"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 09:27:05 -0700
+X-CSE-ConnectionGUID: 8W26nCeyT5CXQUJkPI88JQ==
+X-CSE-MsgGUID: +1ETIbURQCm4bwilqvAZuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="205919492"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Oct 2025 09:27:00 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: James Clark <james.clark@linaro.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] perf tools annotate: fix a crash when annotate the same symbol with 's' and 'T'
+Date: Thu, 16 Oct 2025 01:20:17 +0800
+Message-ID: <20251015172017.2115213-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <baea1e93-5e30-404e-8a5d-8b1d20cf8761@linaro.org>
+References: <baea1e93-5e30-404e-8a5d-8b1d20cf8761@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
- <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
- <aO6N-g-y6VbSItzZ@bfoster> <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
- <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
-In-Reply-To: <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 15 Oct 2025 10:19:15 -0700
-X-Gm-Features: AS18NWBU-7oqcttbWL37aBsF3LCTdQr-uxEvWrZ9A49oBhcJ3MZfXn2aiHE1LH4
-Message-ID: <CAJnrk1b=UMb9GrU0oiah986of_dgwLiRsZKvodwBoO1PSUaP7w@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: lu gu <giveme.gulu@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bernd Schubert <bernd@bsbernd.com>, 
-	Brian Foster <bfoster@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 7:09=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Wed, 15 Oct 2025 at 06:00, lu gu <giveme.gulu@gmail.com> wrote:
-> >
-> > >  Attaching a test patch, minimally tested.
-> > Since I only have a test environment for kernel 5.15, I ported this
-> > patch to the FUSE module in 5.15. I ran the previous LTP test cases
-> > more than ten times, and the data inconsistency issue did not reoccur.
-> > However, a deadlock occur. Below is the specific stack trace.
->
-> This is does not reproduce for me on 6.17 even after running the test
-> for hours.  Without seeing your backport it is difficult to say
-> anything about the reason for the deadlock.
->
-> Attaching an updated patch that takes care of i_wb initialization on
-> CONFIG_CGROUP_WRITEBACK=3Dy.
+When perf report with annotation for a symbol, press 's' and 'T', then exit
+the annotate browser. Once annotate the same symbol, the annotate browser
+will crash.
 
-I think now we'll also need to always set
-mapping_set_writeback_may_deadlock_on_reclaim(), eg
+The browser.arch was required to be correctly updated when data type
+feature was enabled by 'T'. Usually it was initialized by symbol__annotate2
+function. If a symbol has already been correctly annotated at the first
+time, it should not call the symbol__annotate2 function again, thus the
+browser.arch will not get initialized. Then at the second time to show the
+annotate browser, the data type needs to be displayed but the browser.arch
+is empty.
 
-@@ -3125,8 +3128,7 @@ void fuse_init_file_inode(struct inode *inode,
-unsigned int flags)
+Stack trace as below:
 
-        inode->i_fop =3D &fuse_file_operations;
-        inode->i_data.a_ops =3D &fuse_file_aops;
--       if (fc->writeback_cache)
--               mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_dat=
-a);
-+       mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
+Perf: Segmentation fault
+-------- backtrace --------
+    #0 0x55d365 in ui__signal_backtrace setup.c:0
+    #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
+    #2 0x570f08 in arch__is perf[570f08]
+    #3 0x562186 in annotate_get_insn_location perf[562186]
+    #4 0x562626 in __hist_entry__get_data_type annotate.c:0
+    #5 0x56476d in annotation_line__write perf[56476d]
+    #6 0x54e2db in annotate_browser__write annotate.c:0
+    #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
+    #8 0x54dc9e in annotate_browser__refresh annotate.c:0
+    #9 0x54c03d in __ui_browser__refresh browser.c:0
+    #10 0x54ccf8 in ui_browser__run perf[54ccf8]
+    #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
+    #12 0x552293 in do_annotate hists.c:0
+    #13 0x55941c in evsel__hists_browse hists.c:0
+    #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
+    #15 0x42ff02 in cmd_report perf[42ff02]
+    #16 0x494008 in run_builtin perf.c:0
+    #17 0x494305 in handle_internal_command perf.c:0
+    #18 0x410547 in main perf[410547]
+    #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
+    #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
+    #21 0x410b75 in _start perf[410b75]
 
+Fixes: 1d4374afd000 ("perf annotate: Add 'T' hot key to toggle data type display")
+Reviewed-by: James Clark <james.clark@linaro.org>
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+---
+ tools/perf/ui/browsers/annotate.c | 3 +++
+ tools/perf/util/annotate.c        | 2 +-
+ tools/perf/util/annotate.h        | 2 ++
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-Does this completely get rid of the race? There's a fair chance I'm
-wrong here but doesn't the race still happen if the read invalidation
-happens before the write grabs the folio lock? This is the scenario
-I'm thinking of:
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 8fe699f98542..3b27ef1e8490 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -1161,6 +1161,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 			if (!annotation__has_source(notes))
+ 				ui__warning("Annotation has no source code.");
+ 		}
++	} else if (evsel__get_arch(evsel, &browser.arch)) {
++		ui__error("Couldn't get architecture for event '%s'", evsel->name);
++		return -1;
+ 	}
+ 
+ 	/* Copy necessary information when it's called from perf top */
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a2e34f149a07..39d6594850f1 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
+ 	annotation__calc_percent(notes, evsel, symbol__size(sym));
+ }
+ 
+-static int evsel__get_arch(struct evsel *evsel, struct arch **parch)
++int evsel__get_arch(struct evsel *evsel, struct arch **parch)
+ {
+ 	struct perf_env *env = evsel__env(evsel);
+ 	const char *arch_name = perf_env__arch(env);
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index eaf6c8aa7f47..d4990bff29a7 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
+ int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
+ 			     int num_aggr, struct evsel *evsel);
+ int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
++
++int evsel__get_arch(struct evsel *evsel, struct arch **parch);
+ #endif	/* __PERF_ANNOTATE_H */
+-- 
+2.47.1
 
-Thread A (read):
-read, w/ auto inval and a outdated mtime triggers invalidate_inode_pages2()
-generic_file_read_iter() is called, which calls filemap_read() ->
-filemap_get_pages() -> triggers read_folio/readahead
-read_folio/readahead fetches data (stale) from the server, unlocks folios
-
-Thread B (writethrough write):
-fuse_perform_write() -> fuse_fill_write_pages():
-grabs the folio lock and copies new write data to page cache, sets
-writeback flag and unlocks folio, sends request to server
-
-Thread A (read):
-the read data that was fetched from the server gets copied to the page
-cache in filemap_read()
-overwrites the write data in the page cache with the stale data
-
-Am i misanalyzing something in this sequence?
-
-Thanks,
-Joanne
->
-> Thanks,
-> Miklos
 
