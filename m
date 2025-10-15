@@ -1,211 +1,156 @@
-Return-Path: <linux-kernel+bounces-853813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F98BDCA86
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:08:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7152FBDCA8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A3D14E2CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:08:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253574E0664
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F36302CAB;
-	Wed, 15 Oct 2025 06:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE67302CCD;
+	Wed, 15 Oct 2025 06:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSfr6Fsk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkS/Vlca"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690072FB0B6
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC2C2FB0B6
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760508489; cv=none; b=l64njEhzVcSHfKY2ufmK9fxr+JRRCAWGXgdA02JiaYw74NUUfVeKfdjiYoJHOpGmiX3YP+cpc/yeso/WqfnfdjmuXk2/f6lrKuXQwTwU854GEn2RZ6lgbk0NU+mQOE+8TVVO9fsKWy4FLgTEihX5HipRXcBg5Y48cUDvXycZg24=
+	t=1760508555; cv=none; b=LKXvJl90XADWlES3t+CAb46lNJmOZix9vZwgtOEtqDH/tHLHymn4g1dvqS4PmfVd95e/WI4M2dCFX1AOln3MQIfcBIT3SBgqV/igXo5BNR0hcCdHRFynfNhRN7aXArSPIJkiQZvOwK+H3FK+HbuBoFObtiDa0QV9cNAHjwoeaLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760508489; c=relaxed/simple;
-	bh=NJiRt76dTbkJ4xrmV7ry3jBdOkRCmOO9abjget4+0ZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNLcU4D7/ifBzhftOzSlfovhn9fw7Jt+HI6x/Or3rdNTcKt/EbHhf1ghkhfTiIOiIQHxD+m5ZmXfFDox/E4l+o14FHNrPgFZ4hGXX9w/TONeLlVVTEM8baQr3KHmp3dfYkekepY72VhH4hEu5zp8i8gkxiUAZ3XyDhyMbrtfOaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSfr6Fsk; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1760508555; c=relaxed/simple;
+	bh=7yHb7V7FxR4Anis0rw9S3yBVPwoAcym+T5NuHmX3i+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZdhAWJTsFjZ99RjwnYpNxadxOicnJrWP7YZ+3b0re65DLPYIpbM5oCzk3I1RsxsO9dydLJtV1WKNGQezUASS5T/XDFTknQaepCov9J1UnvdUd4ycw4iTpJr2wrZNEPKoO3w6MQca9Xosb8ntV7q9JNDTekJYubKAcLy1g9sG9PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CkS/Vlca; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760508486;
+	s=mimecast20190719; t=1760508552;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MIFmfXL90OL8IaHK+O7WfgGi7yW4MSc3y23FO0z51Bw=;
-	b=MSfr6FskXBSRvxtGHcc4o9rFAEw2rJi5JspOXs3q1k+tFEU10ddZpPGMIgQCFDflF6+Yzu
-	DugiHxn49QuUdQiuuAO3EtkILl41biNHTPlsA6kv5R7RcS2r/ax1ij3BrAhzL43IgwYZFV
-	r2RfiQLxBGABIZ8DyO6Z614CurymMqI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=XBi3qvybR9EFvEz+7rVsJKcgMhvZptbfiLDD5q6qnlg=;
+	b=CkS/VlcanluH4uKbvEgEhV04R1mSFhexVJ2lb4flmkdH1RKEbfi8jhYO8UHF0iB2BKhJIo
+	V7LGSq5UzyxqGjflvfXL7JwXXrqDfQBIUVxc4+RjQR49OWaeRkAsbExOzw3cq0eVfSnMjA
+	iWyCXKJvycors3Vccz9oPdcBFuwppEU=
+Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com
+ [74.125.224.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-QGLIHILAPXm3jGvs4wvSiA-1; Wed, 15 Oct 2025 02:08:02 -0400
-X-MC-Unique: QGLIHILAPXm3jGvs4wvSiA-1
-X-Mimecast-MFC-AGG-ID: QGLIHILAPXm3jGvs4wvSiA_1760508481
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-426ce339084so4479375f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:08:02 -0700 (PDT)
+ us-mta-331-3xbSsqicP86MUYYHEBdlIQ-1; Wed, 15 Oct 2025 02:09:10 -0400
+X-MC-Unique: 3xbSsqicP86MUYYHEBdlIQ-1
+X-Mimecast-MFC-AGG-ID: 3xbSsqicP86MUYYHEBdlIQ_1760508550
+Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-636d73ba36bso11747741d50.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:09:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760508481; x=1761113281;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIFmfXL90OL8IaHK+O7WfgGi7yW4MSc3y23FO0z51Bw=;
-        b=MY34pB4XbE++Ej0lg0QSRsZMQPttScCk1IFsoT0lGgq/H3UZvo7f9zaCWoHOKztwfD
-         9bWlYaCxJbIfbUSZ+iSZOEcMEfmXC+WOwLUI7gYcLgKNxHVxyRE2e6gAljJt65QgveH5
-         1BDgIQB2JZsSheOr/0hU4NXDh6LbHQLnnxyROFt/SdZqJVWKkj1se0elYuc3K+gXwCxZ
-         bkIn+Ic+roYV3Kv48tbprlNwSUjM8DmACNQQcJ8MQRKo7ZqR/2JBie9trRla+uVarLzU
-         wRVeZKIz/PApQrUvGuVysZC1E1fpdaeGiBUzJw/TdPveX6luvqGrRMxZQcJc7E9x0VFE
-         TZjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEU9CmOyRgY7VUyTvPGiHMU1kkzNOAtKtCMQ5V7odoTFPr7IS9uKMGd50kTr4qyTbivPzcDOdiZSra2pY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkGylLwMFOPP6W6EBnW2fMMG5xCGRI5orfEVISRQeGnIiojKWa
-	RsXCvzUXZcR1WCyLEFUNdQ7JC+JfMrKypLC2pJ5/g3wLrsFLWKiZgm2FzGcsyPnXPgZGKs9+dhd
-	/76ZyPx+ZsPx/3xRARQ1j34fk1IZbTQiNpeit4xdIrEDFgP2zhKApkmKuGLNh8kpdKA==
-X-Gm-Gg: ASbGnctLhmuzX1eWYitZ9ay8xH+Un1nSWNxDwpku5H76inzq1wONV2uNsFdN1xz3ZRX
-	DPwYqviozunQ4WJPFvUDCIo3YYXkw9t6rKcbrksvjdgSb6flpHQ7s45YeiFLF/HtZCpd4WNgMOr
-	edw+95MUSxgqnI6aqA3Kd5+dSF1ASV/T9+TXUL/dTQ+Q4oVGe5gaVjRqrHvmt/X6et00hJB7lsj
-	r9LWA4Hi5s/nuD+dKTmnKFCPm45bNiqzzjRCRY1+etBBUKsO9sf17ahEk+IFlER2T9YEBupOBd/
-	3oQz/Azg92u4eyOd0/PDDTBcq9kS2txJuQ==
-X-Received: by 2002:a05:6000:4205:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-4266f752fb9mr16997286f8f.43.1760508481220;
-        Tue, 14 Oct 2025 23:08:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHo4zy/2ZSFghJwm9U3Fa/LOQMyZhQqIGJ9fyNuM2dBeXBWUD0UpUGr6S550pkPgJhtuk1XzQ==
-X-Received: by 2002:a05:6000:4205:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-4266f752fb9mr16997267f8f.43.1760508480741;
-        Tue, 14 Oct 2025 23:08:00 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582a9csm27152693f8f.12.2025.10.14.23.07.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 23:08:00 -0700 (PDT)
-Date: Wed, 15 Oct 2025 02:07:57 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Maxime Coquelin <mcoqueli@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Dragos Tatulea DE <dtatulea@nvidia.com>
-Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
-Message-ID: <20251015020717-mutt-send-email-mst@kernel.org>
-References: <20251007130622.144762-1-eperezma@redhat.com>
- <20251007130622.144762-2-eperezma@redhat.com>
- <20251014042459-mutt-send-email-mst@kernel.org>
- <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
- <20251014051537-mutt-send-email-mst@kernel.org>
- <CAO55cswTyMBsKdpn7becsY4Ry+ZUoEfgP+2Q+DkhZ090VK_-2A@mail.gmail.com>
- <CACGkMEsqD1qAgt8qfV=fwj1OeBeXzoOF1wXdqzJaWYR2A=C+UA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1760508549; x=1761113349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XBi3qvybR9EFvEz+7rVsJKcgMhvZptbfiLDD5q6qnlg=;
+        b=Y9slyOjIxTZZ7G72ac/hsQeMfjcyOv9fK+94Uowx5h2r5JqZUEsinDW1ut2vdXwzqQ
+         k7sVBqHwzW5fxBHxFSi81sfMFVLb/9D/rzAyAIvY97uVzx/sQbGhChGrsS1y/WJi2gEE
+         ovPnhG7K/EA7YBk7vV2OJKtY1bORO3w/ClH5Tqr7y5XCVxERvcdnwxLXieJCU/eBG/hz
+         gFXe5Fukxw4IAvv7ZBKtg+LvbDQPMsRWU8XHBdTEIyOrQX5q8GHOgPk1/eh8ymhgnyJ0
+         dWD8r8hC5MTploui+A7AJh1u8a1G1ahZb7VKxoS0/sZpW/a8vXs5lwAs+fPABno1U/uC
+         T+bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcuwLByh2hm54nal4YdlKSPqe3fnlluFvimUqCd99o7Xk+ZR9xfVK5Vb6hvsk2r2CuJfZnMMYAxNfZkj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtDn9bn13rSuguaiJtQJPDHj92YguTgT/jVKtsAro4HUV1dhz7
+	l7pzpN2Tdh493Jj8H72PmGHo3VL8k7m6Xg4HjdXJcUOiSDLhklACs0/oCOo0tdODb4PqBXNRQ/f
+	A+Rgd7j7ey/VbjBvjPN5wxRDPs7+mD65CXB39INw8eItpMOEliWPfcTNNgbKvknU7BA+BNEq5Ru
+	vU9VdyjEatpvIWm/kU4jRj1P7pad62S45Ltmfc4/L3xTZGnnsY/uc=
+X-Gm-Gg: ASbGnct23pyOLe7LrcX3JnQ/IjBHhrPXcRUVTT2FE6SechCxQs8/ob/r3aFV0dN8g1i
+	3dMRSYxW2oNQBSqa21k3ujN9i7sBaNNk/l++SBeGmRfyIQ8y0s5e8RMkRPBgOxjFv/7QWXFh7LQ
+	r08GhTtd7mnSezYHYMTOZRgI3Q2kelEdgjlg/aUp4SF+9jrwIKk6vkAJVhyZrJ0ff8k42pSsdMR
+	wwBvTwc
+X-Received: by 2002:a53:8650:0:b0:604:3849:9bd1 with SMTP id 956f58d0204a3-63ccb851a6cmr18577920d50.17.1760508549344;
+        Tue, 14 Oct 2025 23:09:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7NrkJrmsbjMLLIbQGJdNBHE3ddxwQ7lrfGtO7MVJtAW5Fm9WJ0LeQC7cXH02MDz8p0wTJ+RfvcMHcPMLKJOI=
+X-Received: by 2002:a53:8650:0:b0:604:3849:9bd1 with SMTP id
+ 956f58d0204a3-63ccb851a6cmr18577914d50.17.1760508548996; Tue, 14 Oct 2025
+ 23:09:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEsqD1qAgt8qfV=fwj1OeBeXzoOF1wXdqzJaWYR2A=C+UA@mail.gmail.com>
+References: <20251007130622.144762-1-eperezma@redhat.com> <20251007130622.144762-2-eperezma@redhat.com>
+ <20251014042459-mutt-send-email-mst@kernel.org> <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
+ <20251014051537-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20251014051537-mutt-send-email-mst@kernel.org>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 15 Oct 2025 08:08:31 +0200
+X-Gm-Features: AS18NWAssLwaCeDys0qGLVAgspxlbGwh6Vs-twVmCChXDZBs4fMs1s_gyf1-be0
+Message-ID: <CAJaqyWe-mn4e+1egNCH+R1x4R7DB6U1SZ-mRAXYPTtA27hKCVA@mail.gmail.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 12:44:47PM +0800, Jason Wang wrote:
-> On Tue, Oct 14, 2025 at 6:21 PM Maxime Coquelin <mcoqueli@redhat.com> wrote:
-> >
-> > On Tue, Oct 14, 2025 at 11:25 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+On Tue, Oct 14, 2025 at 11:25=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
+> wrote:
+>
+> On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
+> > On Tue, Oct 14, 2025 at 10:29=E2=80=AFAM Michael S. Tsirkin <mst@redhat=
+.com> wrote:
 > > >
-> > > On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
-> > > > On Tue, Oct 14, 2025 at 10:29 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > >
-> > > > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio Pérez wrote:
-> > > > > > An userland device implemented through VDUSE could take rtnl forever if
-> > > > > > the virtio-net driver is running on top of virtio_vdpa.  Let's break the
-> > > > > > device if it does not return the buffer in a longer-than-assumible
-> > > > > > timeout.
-> > > > >
-> > > > > So now I can't debug qemu with gdb because guest dies :(
-> > > > > Let's not break valid use-cases please.
-> > > > >
-> > > > >
-> > > > > Instead, solve it in vduse, probably by handling cvq within
-> > > > > kernel.
-> > > >
-> > > > Would a shadow control virtqueue implementation in the VDUSE driver work?
-> > > > It would ack systematically messages sent by the Virtio-net driver,
-> > > > and so assume the userspace application will Ack them.
-> > > >
-> > > > When the userspace application handles the message, if the handling fails,
-> > > > it somehow marks the device as broken?
-> > > >
-> > > > Thanks,
-> > > > Maxime
+> > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio P=C3=A9rez wrote:
+> > > > An userland device implemented through VDUSE could take rtnl foreve=
+r if
+> > > > the virtio-net driver is running on top of virtio_vdpa.  Let's brea=
+k the
+> > > > device if it does not return the buffer in a longer-than-assumible
+> > > > timeout.
 > > >
-> > > Yes but it's a bit more convoluted  than just acking them.
-> > > Once you use the buffer you can get another one and so on
-> > > with no limit.
-> > > One fix is to actually maintain device state in the
-> > > kernel, update it, and then notify userspace.
+> > > So now I can't debug qemu with gdb because guest dies :(
+> > > Let's not break valid use-cases please.
+> > >
+> > >
+> > > Instead, solve it in vduse, probably by handling cvq within
+> > > kernel.
 > >
-> > I agree, this is the way to go.
+> > Would a shadow control virtqueue implementation in the VDUSE driver wor=
+k?
+> > It would ack systematically messages sent by the Virtio-net driver,
+> > and so assume the userspace application will Ack them.
 > >
-> > Thanks for your insights,
+> > When the userspace application handles the message, if the handling fai=
+ls,
+> > it somehow marks the device as broken?
+> >
+> > Thanks,
 > > Maxime
-> 
-> A timeout still needs to be considered in this case. Or I may miss something?
-> 
-> Thanks
+>
+> Yes but it's a bit more convoluted  than just acking them.
+> Once you use the buffer you can get another one and so on
+> with no limit.
+> One fix is to actually maintain device state in the
+> kernel, update it, and then notify userspace.
+>
 
-Not as such, kernel can use buffers (semi) predictably.
+I thought of implementing this approach at first, but it has two drawbacks.
 
-> >
-> > >
-> > >
-> > > > >
-> > > > > > A less agressive path can be taken to recover the device, like only
-> > > > > > resetting the control virtqueue.  However, the state of the device after
-> > > > > > this action is taken races, as the vq could be reset after the device
-> > > > > > writes the OK.  Leaving TODO anyway.
-> > > > > >
-> > > > > > Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> > > > > > ---
-> > > > > >  drivers/net/virtio_net.c | 10 ++++++++++
-> > > > > >  1 file changed, 10 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > > > index 31bd32bdecaf..ed68ad69a019 100644
-> > > > > > --- a/drivers/net/virtio_net.c
-> > > > > > +++ b/drivers/net/virtio_net.c
-> > > > > > @@ -3576,6 +3576,7 @@ static bool virtnet_send_command_reply(struct virtnet_info *vi, u8 class, u8 cmd
-> > > > > >  {
-> > > > > >       struct scatterlist *sgs[5], hdr, stat;
-> > > > > >       u32 out_num = 0, tmp, in_num = 0;
-> > > > > > +     unsigned long end_time;
-> > > > > >       bool ok;
-> > > > > >       int ret;
-> > > > > >
-> > > > > > @@ -3614,11 +3615,20 @@ static bool virtnet_send_command_reply(struct virtnet_info *vi, u8 class, u8 cmd
-> > > > > >
-> > > > > >       /* Spin for a response, the kick causes an ioport write, trapping
-> > > > > >        * into the hypervisor, so the request should be handled immediately.
-> > > > > > +      *
-> > > > > > +      * Long timeout so a malicious device is not able to lock rtnl forever.
-> > > > > >        */
-> > > > > > +     end_time = jiffies + 30 * HZ;
-> > > > > >       while (!virtqueue_get_buf(vi->cvq, &tmp) &&
-> > > > > >              !virtqueue_is_broken(vi->cvq)) {
-> > > > > >               cond_resched();
-> > > > > >               cpu_relax();
-> > > > > > +
-> > > > > > +             if (time_after(end_time, jiffies)) {
-> > > > > > +                     /* TODO Reset vq if possible? */
-> > > > > > +                     virtio_break_device(vi->vdev);
-> > > > > > +                     break;
-> > > > > > +             }
-> > > > > >       }
-> > > > > >
-> > > > > >  unlock:
-> > > > > > --
-> > > > > > 2.51.0
-> > > > >
-> > >
-> >
+The first one: it's racy. Let's say the driver updates the MAC filter,
+VDUSE timeout occurs, the guest receives the fail, and then the device
+replies with an OK. There is no way for the device or VDUSE to update
+the driver.
+
+The second one, what to do when the VDUSE cvq runs out of descriptors?
+While the driver has its descriptor returned with VIRTIO_NET_ERR, the
+VDUSE CVQ has the descriptor available. If this process repeats to
+make available all of the VDUSE CVQ descriptors, how can we proceed?
+
+I think both of them can be solved with the DEVICE_NEEDS_RESET status
+bit, but it is not implemented in the drivers at this moment.
 
 
