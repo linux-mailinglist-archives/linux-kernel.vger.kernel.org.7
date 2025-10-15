@@ -1,207 +1,171 @@
-Return-Path: <linux-kernel+bounces-853974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1442DBDD319
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:47:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D1DBDD322
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB66E4EB5D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:47:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41199350B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0832C026F;
-	Wed, 15 Oct 2025 07:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765CC31327D;
+	Wed, 15 Oct 2025 07:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GTGvq6sc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Pq+2ekRO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PP8As33C"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F8E2BE041
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C019478;
+	Wed, 15 Oct 2025 07:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760514456; cv=none; b=cC/zIOvu2o4YNKqDpuAt551wK37lsn+StcphzXB30peV4WjURFGkcubTKetMekGQ1jBGj6ZioFdMQUSAR4jXOOueBbDVKoVVCKicmNlLqVFf5Lzyx1ZkLlLwFUgfOKGQ8/PltOfLn6PIJxMvJyrl2U9nOxTP9Dp0shIq9ixsU4c=
+	t=1760514500; cv=none; b=GPIrtnG5oFHbTUm7EPTSY+TztxhhDXdaIMZhoxuzRVypZ6vs6lbvh/CW4hFiJUfmpo61iRMu5QRNeuLdxOysMDFMllRlJRIgNpfglFkGokspAT5q70WxfB8JxLd0lrVDznU8sUzrrtVxlzcaF1LRSzl/7cwfBcCQNzi0znqxYm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760514456; c=relaxed/simple;
-	bh=JBySYm7jCnLNR7S47OJWMx5tSg66aDYRas2A7H3BfRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G2F/Pfu4Nm0aUBxc9G1AY1b4m8b3SDBopjFEVgwEo+6bOUiBCF3iZQi6TsMy5JSNQqiJVxuSv4SN/J3bUrY7F2ICHsDpQdbDtyFP2Vg0tL6aNOyPNQyk9rGU+lfmaBNm5x6fohfSuusOASgu1ZEUmQaLqJhCmCfgY32tmjCSKUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GTGvq6sc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F2sDBn014770
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3wzEuS4KgwUf/si4HCRP4Xjfg9FTP53VK8rld0Pt2hw=; b=GTGvq6sc6JxH0BRj
-	ATrPrb5KfpdAAosrchw3H6kaMELoxGWp3yqbmmH/y8D0AjUvLOxzprSudsU1bZ+Q
-	TxBCCCTKBjaI+EbGlJyNHNMwPGIDwH5Yq/0K58KY45PtKXZtRE0EtZUy/BiR9bdB
-	7RfKDLwEGUEoLtyTJztloXRJp5obqdVQWiYMSUyr4qsnc+iyh27XpAyRk+n6bbBf
-	i99KG671HDGIGK8V9oiQ+AFQo2ieOzwDQVXf+HCFcS/uAtIJR/bLuJCyUVulwGCF
-	iWatMZCyif/690rRFP6oj6A8romXj3CPAjlRaWDSVFR1BzUDFyvbObTo1uhbBSub
-	m8pakw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfbj3jms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:47:34 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-27ee41e062cso141978925ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:47:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760514453; x=1761119253;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3wzEuS4KgwUf/si4HCRP4Xjfg9FTP53VK8rld0Pt2hw=;
-        b=tuxtyZkUd0/s4pznGKmfunBA094/IWS36Sy4iRpomepYCS83vVKf0rBpSTR9XV8FwL
-         XTorF5P9JjmmeM8iNCJGwHWW4Lwtk+sMZgQG5uHsKG+k6guFSjg/usEyvCCV6X4hmpqc
-         dq8A0rW81OXpkGycLIQubKwfZmAiC75G25+dlVBt2YaPufrLC3Zr4HHUaZJYY20RfxGG
-         r9lyX+usNdNQTeIAWE4MPvDT+bQOqzHUms4VCk/ejLJKgK/v9l+Rgy8PeP0Hh2DV4vr+
-         TGwuqeZ//zDyGV5v1PN0dwI6B4qn9rp3+ZKBhxF3Ay/Y/FCs9nN2qs+Vh6Eh+NvflrJ3
-         +T3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWOGk+4WAU/mIJoAAvbQv9yAYqvc8314BLMJvuNINieisjrarZJn6puch1N6VrBJ/oARzgj6Y3cXFBz+6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj8UDPSO2smutKIGiKx9YCInTbqh5lzIsSRXjD+PM4tNBZ7feq
-	wirekVA3nP9cRFYbuRD6IBgC/OmbXrT7Lt/Nc4NfS8q/O/0B/LGHJ6TV3B01n26mJRrCqouWxBy
-	IxwwcMZOJbS0QxsVQAcTG/Js3/Qpa/L+3sxaBIFYVKqEgDgEGtcwiJ60r/2kEB52yAYY=
-X-Gm-Gg: ASbGncs/12HwBGgs4LViKmKrKneC01zJihVOXWMyAjGCF1D6O+FSiTVrpW7WydOlTWw
-	BsRueXvuMVqOl8vWyflfquGQg1nWE/PQZF89UOsSL4hfxUOFgeHs25Gh0JjOc6uOhfqHmZ5scdc
-	UUvbMgjYnJVqvdzFEsl3uwJEvnsNAjhi6Ks+SJvsIMHwkn+OGSk8mEvPor9niVYr5dJk+CKHGW2
-	qxMWRAs+dtb4E/NKy2yWuFe3dat7L/3liJPKm4CW/8yLZaJoWhm0D+zt99il0cu76sRGO+FQsb2
-	pnshuK0YkHpJMNlmpPsONMz1iefGIesyxLfZzFTJG+f05CGJO4avHshOJuiefAD3ctqY3kAjnA=
-	=
-X-Received: by 2002:a17:903:2343:b0:248:fc2d:3a21 with SMTP id d9443c01a7336-29027290194mr277067335ad.4.1760514452621;
-        Wed, 15 Oct 2025 00:47:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhzyOtK2t73BdHuEH9yQdQ6LRCYOnKx0D9BJpdqWj+pdvXaadxnVohWazYDT43ZnK/Q6nPCw==
-X-Received: by 2002:a17:903:2343:b0:248:fc2d:3a21 with SMTP id d9443c01a7336-29027290194mr277066685ad.4.1760514451980;
-        Wed, 15 Oct 2025 00:47:31 -0700 (PDT)
-Received: from [10.216.0.133] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de658bsm187706535ad.22.2025.10.15.00.47.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 00:47:31 -0700 (PDT)
-Message-ID: <1bf62073-fae9-dd49-c908-193c06cdda84@oss.qualcomm.com>
-Date: Wed, 15 Oct 2025 13:17:01 +0530
+	s=arc-20240116; t=1760514500; c=relaxed/simple;
+	bh=Q8le+30L67JnqHzyVz6EUJ3Z7+QstWCPGdsdpO6AnNM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=OeN7xKlyeplo9H/yAEkMyy0r5RcdCbR1E1AqUpJQK19MOo9qP1xp80t9yQBd51DFUZpNNacShfEtTMq8W2itVbzgpLwH3qhkACC9T0G5aJ1rjoykqNQ6LoT5hr6F6rjZpNrpKqm2CeufAgCOw/nP0tEj1jmaGmwCH5f6QWTd6NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Pq+2ekRO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PP8As33C; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id CAD2C7A01B8;
+	Wed, 15 Oct 2025 03:48:17 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 15 Oct 2025 03:48:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760514497;
+	 x=1760600897; bh=RPb7u4xx/8qqCuf2oUI5wjlc24oyWMuCecmZxoE4X84=; b=
+	Pq+2ekRObjZTvtZI7FGIsKHXZ7rTbxjIXIeXLHekKKFmJglgIlgL/G3JVVKS2cPq
+	zmt+s1bJVdERsg24Ov8++y87RCvGIhKTAOZx9XPYADKYar/0rqtZCFz1FcV+iTJ9
+	SP9byB1UdPGjXxa3PETMNIeVa/7+SdOt2NQxAwAyC2bxJ77mQ+Yc2Xy0xei0mGls
+	dVENzhycADwBQCJM9jKH+aDfz+v92TV6GU3d3Ps4Jx8ohdQ3i7erHqSdN/cZy8GC
+	8wgf/RxY3/KNBaUdoR1dWyVtPZJioASGLf908ZdxTr/ASl04cAsEuBChfD2D9lif
+	HFVwZp7GONk2shTsHYWrpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760514497; x=
+	1760600897; bh=RPb7u4xx/8qqCuf2oUI5wjlc24oyWMuCecmZxoE4X84=; b=P
+	P8As33CD5/IVeoE5nDPaUB08USXI3sb0M8eLdwrJ/xa666ST4nxkdPU/820fjm9d
+	cadcQmKuC+jMNdiNsUSKF3p3Ih5jtqRClvOH2citjgFU8lcqVwdGay75uNeF/T5U
+	P0ToLFsESgxZx3udHJVJWqWEKBrvKGYcsa74+ce3csDBcKV2kCvHx5b+gXK2cnJW
+	pR4QygXrl8Gw31vrpGS9ap7CHLpga/R56PHTDbD3F85irFCk73HtPNyTekEAVRD+
+	4tpym6B56tn0/nz2/PqyoddWhIc5M6rrLTb+oDrdpkqIZ8UiLjusKl19dbUUPZc4
+	fd3ZIAntYp3YYLeGI6MZg==
+X-ME-Sender: <xms:v1HvaF1eoori7IPYSnFkTHnRFQMj1BjLOOuctp9sLUBli-Ih2bmbSA>
+    <xme:v1HvaG6PNGcjuDfQr4mxHFSUC1rzYJbTJw3TsF_tiNNjKlC4i3MwlAy_1OJay-vHO
+    680_rJLK_A_ADNBg1OUXcDkanDl1KYndVZBYp6xz2hJRaYAZTvyn_o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddvkeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhope
+    iiudeihedvtdejgeegfedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrshgrhhhi
+    rhhohieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgr
+    uggvrggurdhorhhgpdhrtghpthhtohepihesmhgrshhkrhgrhidrmhgvpdhrtghpthhtoh
+    eprhhonhgsohhgohesohhuthhlohhokhdrtghomhdprhgtphhtthhopehlgidvgeesshht
+    uhdrhihnuhdrvgguuhdrtghnpdhrtghpthhtohepfhgrlhgtohhnsehtihhnhihlrggsrd
+    horhhg
+X-ME-Proxy: <xmx:v1HvaHGhZmoNBMd1kYBSezIFtgDlQJhQoeDAmRm8ZjtbdWMODQvFmg>
+    <xmx:v1HvaAvDypVvQShhy7wsGqQYcrx8Doz1ApqeFWMsNx-OYB8pNGJ4ug>
+    <xmx:v1HvaNl-cI05bZPbO9fJsBJe_h29tuGHTXu4P_SjJF7MfM8VzqJvhA>
+    <xmx:v1HvaDMNHvClW8XavlcxP4ut7l3HfEmziXf88sKkVS7ouAlId7m79A>
+    <xmx:wVHvaP4mykMyhdrihqGaClJRS0DTgfIa8AZQPYxcPVi1I8sJh8yWF1Io>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8177B700054; Wed, 15 Oct 2025 03:48:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v16 07/14] firmware: psci: Implement vendor-specific
- resets as reboot-mode
-Content-Language: en-US
-To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Umang Chheda <umang.chheda@oss.qualcomm.com>
-References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
- <20251015-arm-psci-system_reset2-vendor-reboots-v16-7-b98aedaa23ee@oss.qualcomm.com>
- <3978e740-0589-4872-8f2f-1162084d3818@quicinc.com>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <3978e740-0589-4872-8f2f-1162084d3818@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX8bGNa1dV490R
- 5Seh/6EoMXiJFw7UaeKz29LEoLfwZ54Yxf2fe0O4LnOXnT8YBaUwOV27vQXiyyDhqQ0Jm0Rz+KW
- eVwAy6GbpzEeyh7SGe1NvhujqLOpx2rFk9TG/L5FzAuKRSLy+OW+eDakFBz91rk8KSWUWFq0Il7
- ZafRsSHBCTtgpoK4D6BzCKXbbGE7J4PtjBA1dKG3zuCVfyU/DqBo7XmTCdCr08W1NcNvwFNJh32
- oTdnIpAan1rBquHoPFM00cphtDXouZGmhoZFJpQlTD+li99TY2E+3mO47cmYi7nG10Srm3xKPuR
- 7ZH3vSkROjGsSWjyUIWjmMdlwAckLwRZ33ZfWc8oH73sZ6FiGvW6IHlRUbfKVCeBS9lXBqZwnRp
- S711m3vBTvII3Fs16brudVZ4a5kBhw==
-X-Proofpoint-ORIG-GUID: PFzBJ-1vngeymIZC5x2g3r2Bu0oQGYPn
-X-Authority-Analysis: v=2.4 cv=bodBxUai c=1 sm=1 tr=0 ts=68ef5196 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=R8NOTgI61i89tWg-cvsA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: PFzBJ-1vngeymIZC5x2g3r2Bu0oQGYPn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
+X-ThreadId: A-HrBBL8x6OF
+Date: Wed, 15 Oct 2025 09:47:11 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yuan Tan" <tanyuan@tinylab.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, linux-kbuild@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ i@maskray.me, "Zhangjin Wu" <falcon@tinylab.org>, ronbogo@outlook.com,
+ z1652074432@gmail.com, lx24@stu.ynu.edu.cn
+Message-Id: <33333fdd-2aa2-4ce0-8781-92222829ea12@app.fastmail.com>
+In-Reply-To: <30C972B6393DBAC5+cover.1760463245.git.tanyuan@tinylab.org>
+References: <30C972B6393DBAC5+cover.1760463245.git.tanyuan@tinylab.org>
+Subject: Re: [PATCH v2 0/8] dce, riscv: Unused syscall trimming with PUSHSECTION and
+ conditional KEEP()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 15, 2025, at 08:16, Yuan Tan wrote:
+> Hi all,
+>
+> This series aims to introduce syscall trimming support based on dead c=
+ode
+> and data elimination (DCE). This can reduce the final image size, whic=
+h is
+> particularly useful for embedded devices, while also reducing the atta=
+ck
+> surface. It might further benefit specialized scenarios such as uniker=
+nels
+> or LTO builds, and could potentially help shrink the instruction cache
+> footprint.
+>
+> Besides that, this series also introduces a new PUSHSECTION macro. This
+> wrapper allows sections created by .pushsection to have a proper refer=
+ence
+> relationship with their callers, so that --gc-sections can safely work
+> without requiring unconditional KEEP() entries in linker scripts.
+>
+> Since the new syscalltbl.sh infrastructure has been merged, I think it=
+=E2=80=99s a
+> good time to push this patchsetTODO? forward.
+>
+> Patch 1=E2=80=933 introduce the infrastructure for TRIM_UNUSED_SYSCALL=
+S, mainly
+> allowing syscalltbl.sh to decide which syscalls to keep according to
+> USED_SYSCALLS.
+> Patch 4 enables TRIM_UNUSED_SYSCALLS for the RISC-V architecture. With
+> syscalltbl.sh now available, this feature should be applicable to all
+> architectures that support LD_DEAD_CODE_DATA_ELIMINATION and use
+> syscalltbl.sh, but let=E2=80=99s focus on RISC-V first.
+> Patch 5=E2=80=938 address the dependency inversion problem caused by s=
+ections
+> created with .pushsection that are forcibly retained by KEEP() in link=
+er
+> scripts.
 
+Thanks a lot for your work on this. I think it is indeed valuable to
+be able to optimize kernels with a smaller subset of system calls for
+known workloads, and have as much dead code elimination as possible.
 
-On 10/15/2025 12:25 PM, Pavan Kondeti wrote:
-> On Wed, Oct 15, 2025 at 10:08:22AM +0530, Shivendra Pratap wrote:
->> +static int __init psci_init_vendor_reset(void)
->> +{
->> +	struct reboot_mode_driver *reboot;
->> +	struct device_node *psci_np;
->> +	struct device_node *np;
->> +	int ret;
->> +
->> +	if (!psci_system_reset2_supported)
->> +		return -EINVAL;
->> +
->> +	psci_np = of_find_compatible_node(NULL, NULL, "arm,psci-1.0");
->> +	if (!psci_np)
->> +		return -ENODEV;
->> +
->> +	np = of_find_node_by_name(psci_np, "reboot-mode");
->> +	if (!np) {
->> +		of_node_put(psci_np);
->> +		return -ENODEV;
->> +	}
->> +
->> +	ret = atomic_notifier_chain_register(&panic_notifier_list, &psci_panic_block);
->> +	if (ret)
->> +		goto err_notifier;
->> +
->> +	reboot = kzalloc(sizeof(*reboot), GFP_KERNEL);
->> +	if (!reboot) {
->> +		ret = -ENOMEM;
->> +		goto err_kzalloc;
->> +	}
->> +
->> +	reboot->write = psci_set_vendor_sys_reset2;
->> +	reboot->driver_name = "psci";
->> +
->> +	ret = reboot_mode_register(reboot, of_fwnode_handle(np));
->> +	if (ret)
->> +		goto err_register;
->> +
-> 
-> minor nit: np and psci_np reference must be dropped since we are done
-> using it.
+However, I continue to think that the added scripting with a known
+set of syscall names is fundamentally the wrong approach to get to
+this list: This adds complexity to the build process in one of
+the areas that is already too complicated, and it duplicates what
+we can already do with Kconfig for a subset of the system calls.
 
-Ack. Sure. thanks. Will update this.
+I think the way we should configure the set of syscalls instead is
+to add more Kconfig symbols guarded by CONFIG_EXPERT that turn
+classes of syscalls on or off. You have obviously done the research
+to come up with a list of used/unused entry points for one or more
+workloads. Can you share those lists?
 
-thanks,
-Shivendra
+      Arnd
 
