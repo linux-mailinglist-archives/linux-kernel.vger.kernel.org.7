@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-854961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22353BDFD9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:28:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE36BDFD8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61EE0487F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECAD0189DE3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B3133A035;
-	Wed, 15 Oct 2025 17:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DBF33A036;
+	Wed, 15 Oct 2025 17:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/AIKjGH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C42KKnd+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72372FE07B;
-	Wed, 15 Oct 2025 17:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD4B338F21;
+	Wed, 15 Oct 2025 17:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549293; cv=none; b=VxKR4xBDVPDG28bl43FAPHeNHXM9L7S7Gcee5qh/vHDNK8U4uwWeOdJUCn71aSkstF5oAR22WODT0O+VsLPUplMTwYVGYxjfEVlFr/biJQ/LYziImSTDaVQn6B1KfPv6TfZ3s1SzBf+9CE+JCKcAUWfLWjPgYJ8D5i+h8ihPM8g=
+	t=1760549283; cv=none; b=IHeXvx41Orf/U4bH65KTlqJck1HR5PInm8caub+PZ/IczC3rFHYRehwa9wSoA71y9rB+bBusixRESInOp/cfGmV7Eh+1vbcCeXFCBJ9QwZ9CTNCxnMUYbwF7jA8+9PIKl3hWWK0Lfm1K9ufWxsz4cEnToAWptIfEGU5bpGjrB2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549293; c=relaxed/simple;
-	bh=SteCyTVyUvd5t3RD83PO1wrdCW5g5IW/RATf7eMhNkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/R/qyWDRrXwODB9a2KtMI6zavP+4ZwshgRaQ/oxO2j+72WCm/tDq3gbqKtttIAMS1Fn1NAB54ewwYaOByMn80FTpa0sVp2BGoyJ2nNkzQ9+3TcTN3GnJWGY8TcAVllVj3SZ4DOndc7fq1qjknERJTCo2hC8oYhWpxZgtU1/tpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O/AIKjGH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=OHD1PbWJgOF9XOuL5HA73G273J12JtIymtajQ7fqsQ4=; b=O/AIKjGH3q2vAiI35ZMnFpDXL9
-	C+s4LMohbjn1T1gowDff1QATHCAKFtMlK/vQLkE6V3EMtM4PyVK7+qNjjH8p/SMgAOrlYDh7E5JNj
-	s6YHmSgHX3PZeq5i2cQTrpXa6f/EsBMgS+kaQRLCyHVc51UqP5td4HDZnJ8pJHHOP2BQCs6Kdb3dl
-	hDdhTVC23HoZ8cjO9DV1mJas9/6i26NP5x/fG5klzP8VqwqGrFQpNOM+S4KcTQZO8AUi9LAwkUeyi
-	W84rWDUlfmhJWd6nz90Jtg0an/C/x6jqBk720u/RVEgVMVk7m7XzfqEOkFEtR41Jp2xUsiPZ+01/Z
-	FUrLjK/g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v95I1-00000002tYN-00lF;
-	Wed, 15 Oct 2025 17:27:53 +0000
-Date: Wed, 15 Oct 2025 18:27:52 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: =?iso-8859-1?Q?Lo=EFc?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?utf-8?Q?Miko=C5=82aj?= Wasiak <mikolaj.wasiak@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Christopher Healy <healych@amazon.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v4 03/13] drm/shmem-helper: Map huge pages in fault
- handlers
-Message-ID: <aO_ZmA6yoqbzTKt9@casper.infradead.org>
-References: <20251015153018.43735-1-loic.molinari@collabora.com>
- <20251015153018.43735-4-loic.molinari@collabora.com>
+	s=arc-20240116; t=1760549283; c=relaxed/simple;
+	bh=ygYSReZYoQQfbRjOy+h8AzmtWJKt0WboxvKPa7Hw9C8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=iu+K5Yah6LzoCazl6WbSqAzqJlU1586SfTqcRRdkeT9dMaXrcabB/tA0VbYkFf6ORFGZ13qchrNDItZMftBB//7azuK0ulj56eOYMtgmopBtzuWl3dPAbV4HHmYe9uwMv3sEYIFCicWFjJLQ5C0Gzu9zq40bsR9hC0xIx+o24po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C42KKnd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FACCC4CEF8;
+	Wed, 15 Oct 2025 17:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760549282;
+	bh=ygYSReZYoQQfbRjOy+h8AzmtWJKt0WboxvKPa7Hw9C8=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=C42KKnd+nGR/z5rWWtWTRKMwIyDtCmvAvMXP14LddLR2sL6+TwO8GN+u29mr1Nkdh
+	 4yajPj7C8oVRQvwMv/WwFRaeMMyx0M6W6sGtzwbmqjCNQfsnKsp9w3txsQKqDe1Dy4
+	 cqcVuloPCf34TxVjHhAfM2YM6rS0DXVLmvj1Ms9dwGdlYBRDPzwbJURQGDdJC1YKwd
+	 617REbHxu3TnQjqno/csNuPZSJ7wmjVFCje28musun5pQKuQH6fUbFuDX29Vii5k3I
+	 Z37tgPS39MmqXXoHBmwMJC0ssoc8bGHG15KGTaFSNrsQSODuTVLvTIAo3Jr4v4lZ2u
+	 w4osYN5QgxYJA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251015153018.43735-4-loic.molinari@collabora.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 Oct 2025 19:27:57 +0200
+Message-Id: <DDJ2MSQ0UJQL.199XI9U29HPXL@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Lee Jones" <lee@kernel.org>, "Pavel
+ Machek" <pavel@kernel.org>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-leds@vger.kernel.org>
+To: "Markus Probst" <markus.probst@posteo.de>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
+References: <20251012145221.172116-1-markus.probst@posteo.de>
+ <20251012145221.172116-3-markus.probst@posteo.de>
+ <aO1GM4WXs37Zpm0G@google.com>
+ <7de58fd25b52dd5195c8ac06ed4df5a1e60e5070.camel@posteo.de>
+ <DDIZC4MK2CFW.1DPDIJR4HPKGY@kernel.org>
+ <25f3fd337ce5e58915125c4e2eb85ef4d7af3627.camel@posteo.de>
+In-Reply-To: <25f3fd337ce5e58915125c4e2eb85ef4d7af3627.camel@posteo.de>
 
-On Wed, Oct 15, 2025 at 05:30:07PM +0200, Loïc Molinari wrote:
+On Wed Oct 15, 2025 at 5:02 PM CEST, Markus Probst wrote:
+> Not necessarily every, like I said `container::Device` itself also
+> would implement `device::Container` (still allowing &Device<Bound>).
 
-This looks fine, no need to resend to fix this, but if you'd written
-the previous patch slightly differently, you'd've reduced the amount of
-code you moved around in this patch, which would have made it easier to
-review.
+Sure, but eventually we'll need all bus devices to implement it because you=
+ want
+to be able to use this class device on any bus.
 
-> +	/* Map a range of pages around the faulty address. */
-> +	do {
-> +		pfn = page_to_pfn(pages[start_pgoff]);
-> +		ret = vmf_insert_pfn(vma, addr, pfn);
-> +		addr += PAGE_SIZE;
-> +	} while (++start_pgoff <= end_pgoff && ret == VM_FAULT_NOPAGE);
+> We already know the address of it with the `struct led_classdev`-
+>`parent` field, we just need to substract the offset from `<T as
+> Container>::Offset`, and we have the address of the device container
+> (like `struct i2c_client`). No Box needed.
 
-It looks to me like we have an opportunity to do better here by
-adding a vmf_insert_pfns() interface.  I don't think we should delay
-your patch series to add it, but let's not forget to do that; it can
-have very good performnce effects on ARM to use contptes.
+Yeah, that should work.
 
-> @@ -617,8 +645,9 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
-[...]
->  
-> -		ret = vmf_insert_pfn(vma, vmf->address, page_to_pfn(page));
-> +	if (drm_gem_shmem_map_pmd(vmf, vmf->address, pages[page_offset])) {
-> +		ret = VM_FAULT_NOPAGE;
-> +		goto out;
->  	}
+What I still don't like about it (and didn't like back then when I thought =
+about
+something similar) is that this provides a publicly accessible unsafe way t=
+o
+upcast from a generic device to a bus device.
 
-Does this actually work?
+However, I do see the ergonomic advantage for drivers. Even though I'd say =
+it's
+minor, it is indeed nice that the class device callbacks can already carry =
+the
+actual parent bus device.
+
+So, I'm fine giving this a shot. If go for an implementation, please name t=
+he
+trait something along the lines of device::IntoBusDevice, device::Container=
+ is
+too generic. Only bus devices have a DeviceContext.
 
