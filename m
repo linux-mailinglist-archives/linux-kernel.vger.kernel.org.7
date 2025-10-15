@@ -1,259 +1,108 @@
-Return-Path: <linux-kernel+bounces-855239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35E6BE094C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:09:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06848BE0946
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2ED219C5CC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:09:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD6974E1C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B364830C34B;
-	Wed, 15 Oct 2025 20:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A071E30BB8B;
+	Wed, 15 Oct 2025 20:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TOu9DTL8"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="ER+FfBxf"
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E5341C71
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FD141C71
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760558966; cv=none; b=sXilo+MRSZLlBVFzVdV46AmrGq1TGwjMbj9XAoPb7EOI5vMCsv3OrZTHAMYaByaHyhsCGMlNmyeXs/3MBljvqk4Wz5caDSQ89enIa+URdc+5HOpbdHgiuq1icN4SVHL8MYwxEZPVIeBc8M/dV/F1l3y8wmcW47p1qaVZ8SAtYDQ=
+	t=1760558949; cv=none; b=WgLvevsjghqsKYf+PjND3Nn8sJJLQUBkpFZTv7VUzbpf9qWLRWeAgXokclQIygHR1RzYMZzIKvjxUO0JMqzjzKKMWrT6za9TEwdsL+qHyHkJub8ZjRdAHG5HXAFNyXaW09E+HS/31zFIH8MPMKmWurpHjISHrV/5WrfUgj77kbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760558966; c=relaxed/simple;
-	bh=ZfS61qzCJIlBncsiXl1+EnuoBtylS9ciBXVYCu6ZmrY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Tg984XO8YqYo7PewEoOy+8HFm9mN5bkjMQWe0tKiSrTo1FYvJzHb/tccMmlXULOWBMQSZ/m8QtGdzg03dZCRaaeds+IGTBxr1L0P+z9Q0JiCK8Obd6V00pKhaAUwUl/56bQCIjQ9Ecjgar6ZC5UibBpSNgA3qPVbgLL0xR32jZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TOu9DTL8; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 77D864E410E2;
-	Wed, 15 Oct 2025 20:09:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3A4E660673;
-	Wed, 15 Oct 2025 20:09:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EB584102F22E1;
-	Wed, 15 Oct 2025 22:09:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760558960; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qvamg92yY+Cln5Bdf/HdLAJCwnNFOVVJbhQMKT2qyig=;
-	b=TOu9DTL8PSkrbLKe7Lxkh4xe+uusSXKXVy9xVsoDz5z0KBllXdstSaCuv9g0QRnnt3S502
-	LLHRaoHlk1bHK69ba6M4KU1lGuJrARmohnXcNINkTfa52MdOBClX09/6usXQ90vAet5FQY
-	D2h3EFodV+tFi7nkpuidzzn7jSyt6SEsEOpc1zkpkUXVbjN1MYuccC0AdhoLHng1UbyHK6
-	YN5bNBrB/mB8sGt2LeDXpRr3oYf2nWszysuvMLktKzN7b8t2KJ0AWfk0cqxmJPSmxxZ4mI
-	AiyayBX4b5gcC2VQtAMbnbW6/WMyS9Uph/UwS6Ck70lKVJdGiBRbrs7evoYRiw==
+	s=arc-20240116; t=1760558949; c=relaxed/simple;
+	bh=hmNyvKf1an5yiOX+KKVIWVcA5Hai3VlOJtsPf67znUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iboVLbOq0GYt4WOqyN/vVBzHri/LaXFf7Gb+QWt4uUEHfHNAmRpc/4y422TsfJcKfcuWWTotmP1xawPUMpvBdi0PWgaaLj7DzcaXJUf7u+ECRZjaRW+v84V2TtnrmTTtzh+T7Vsce/zvgVmHX9emdl/ep+Mnk+WnbDUykuhpyVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=ER+FfBxf; arc=none smtp.client-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id 69C46932EF;
+	Wed, 15 Oct 2025 20:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1760558942;
+	bh=QE9+6/UqXy7fEFgnk3w2iHUsxl9kOSZaT4yz9NSkM4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ER+FfBxfjxx+qQF+sKdm5eOSvgvyKc/qweUgWMKkQV4OH4mCoyHiQTcSxNfC7POen
+	 iTn1wloJ0iGmGu3mujVFGrzAj9aI1UVzaFZ0eTwlr2l42+w4wqmN0M7M84cqeZWUPq
+	 JEsfeT0drWKpkCLAcWWWd4YKCh74AUmCEs9UNj+M=
+Date: Wed, 15 Oct 2025 20:09:01 +0000
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
+	Chris Li <chrisl@kernel.org>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kiryl Shutsemau <kas@kernel.org>,
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	hughd@google.com, yangge1116@126.com, david@redhat.com
+Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
+Message-ID: <aO__XXIJShKz3-Tn@shell.ilvokhin.com>
+References: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+ <ltvv3v4vibvlglpch6urayotenavpzxc7klbcyowjb4wrv3e7z@pzovtvtbmnsp>
+ <aOaoD0HQk7YPeLkE@shell.ilvokhin.com>
+ <20251015125911.0f0ebf87b278324667c4dfc5@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Oct 2025 22:08:59 +0200
-Message-Id: <DDJ623AGI83R.ESC0V9XXWXFN@bootlin.com>
-Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/display: bridge_connector: get/put the stored
- bridges
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Marek Szyprowski" <m.szyprowski@samsung.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.1
-References: <20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com> <CGME20251015082254eucas1p23fc961e7a49f4a29ca7a18d3e2817f86@eucas1p2.samsung.com> <336fbfdd-c424-490e-b5d1-8ee84043dc80@samsung.com>
-In-Reply-To: <336fbfdd-c424-490e-b5d1-8ee84043dc80@samsung.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015125911.0f0ebf87b278324667c4dfc5@linux-foundation.org>
 
-Hello Marek,
+On Wed, Oct 15, 2025 at 12:59:11PM -0700, Andrew Morton wrote:
+> On Wed, 8 Oct 2025 18:06:07 +0000 Dmitry Ilvokhin <d@ilvokhin.com> wrote:
+> 
+> > > > +		 * They might be still in mlock_fbatch waiting to be processed
+> > > > +		 * and activating it here might interfere with
+> > > > +		 * mlock_folio_batch(). __mlock_folio() will fail
+> > > > +		 * folio_test_clear_lru() check and give up. It happens because
+> > > > +		 * __folio_batch_add_and_move() clears LRU flag, when adding
+> > > > +		 * folio to activate batch.
+> > > > +		 */
+> > > 
+> > > This makes sense as activating an mlocked folio should be a noop but I
+> > > am wondering why we are seeing this now. By this, I mean mlock()ed
+> > > memory being delayed to get to unevictable LRU. Also I remember Hugh
+> > > recently [1] removed the difference betwen mlock percpu cache and other
+> > > percpu caches of clearing LRU bit on entry. Does you repro work even
+> > > with Hugh's changes or without it?
+> > >
+> > 
+> > Thanks Shakeel for mentioning Hugh's patch, I was not aware of it.
+> > Indeed, I could not reproduce problem on top of Hugh's patch anymore,
+> > which totally make sense, because folio_test_clear_lru() is gone from
+> > __folio_batch_add_and_move().
+> > 
+> > Now I wonder does folio_test_mlocked() check still make sense in the
+> > current codebase?
+> > 
+> > > [1] https://lore.kernel.org/all/05905d7b-ed14-68b1-79d8-bdec30367eba@google.com/
+> 
+> So I take it that this patch ("mm: skip folio_activate() for mlocked
+> folios") is no longer needed?
 
-On Wed Oct 15, 2025 at 10:22 AM CEST, Marek Szyprowski wrote:
-> Hi Luca,
->
-> On 26.09.2025 16:59, Luca Ceresoli wrote:
->> drm_bridge_connector_init() takes eight pointers to various bridges, som=
-e
->> of which can be identical, and stores them in pointers inside struct
->> drm_bridge_connector. Get a reference to each of the taken bridges and p=
-ut
->> it on cleanup.
->>
->> This is tricky because the pointers are currently stored directly in the
->> drm_bridge_connector in the loop, but there is no nice and clean way to =
-put
->> those pointers on error return paths. To overcome this, store all pointe=
-rs
->> in temporary local variables with a cleanup action, and only on success
->> copy them into struct drm_bridge_connector (getting another ref while
->> copying).
->>
->> Additionally four of these pointers (edid, hpd, detect and modes) can be
->> written in multiple loop iterations, in order to eventually store the la=
-st
->> matching bridge. However, when one of those pointers is overwritten, we
->> need to put the reference that we got during the previous assignment. Ad=
-d a
->> drm_bridge_put() before writing them to handle this.
->>
->> Finally, there is also a function-local panel_bridge pointer taken insid=
-e
->> the loop and used after the loop. Use a cleanup action as well to ensure=
- it
->> is put on return.
->>
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->
-> This patch landed recently in linux-next as commit 2be300f9a0b6
-> ("drm/display: bridge_connector: get/put the stored bridges"). In my
-> tests I found that it causes the following NULL pointer dereference on
-> DragonBoard410c (arch/arm64/boot/dts/qcom/apq8016-sbc.dts):
->
-> --->8---
->
->  =C2=A0msm_mdp 1a01000.display-controller: bound 1c00000.gpu (ops a3xx_op=
-s [msm])
->  =C2=A0msm_mdp 1a01000.display-controller: [drm:mdp5_kms_init [msm]] MDP5
-> version v1.6
->  =C2=A0msm_mdp 1a01000.display-controller: fall back to the other CTL
-> category for INTF 1!
->  =C2=A0Unable to handle kernel NULL pointer dereference at virtual addres=
-s
-> 0000000000000110
->  =C2=A0...
->  =C2=A0Internal error: Oops: 0000000096000004 [#1]=C2=A0 SMP
->  =C2=A0Modules linked in: qcom_wcnss_pil(+) cpufreq_powersave
-> cpufreq_conservative coresight_stm stm_core coresight_replicator
-> coresight_cpu_debug coresight_funnel coresight_tmc coresight_cti
-> coresight_tpiu adv7511 nfc coresight rfkill msm snd_soc_lpass_apq8016
-> snd_soc_lpass_cpu snd_soc_apq8016_sbc snd_soc_msm8916_digital
-> snd_soc_msm8916_analog snd_soc_lpass_platform snd_soc_qcom_common
-> snd_soc_core qrtr snd_compress snd_pcm_dmaengine qcom_camss
-> qcom_spmi_temp_alarm snd_pcm qcom_q6v5_mss qcom_pil_info ubwc_config
-> qcom_q6v5 videobuf2_dma_sg llcc_qcom v4l2_fwnode rtc_pm8xxx ocmem
-> venus_core v4l2_async qcom_sysmon qcom_common qcom_spmi_vadc drm_gpuvm
-> qcom_vadc_common qcom_pon v4l2_mem2mem snd_timer drm_exec
-> videobuf2_memops gpu_sched videobuf2_v4l2 snd qcom_glink_smem
-> drm_dp_aux_bus videodev soundcore mdt_loader qmi_helpers
-> drm_display_helper qnoc_msm8916 videobuf2_common qcom_stats mc qcom_rng
-> rpmsg_ctrl rpmsg_char ramoops reed_solomon display_connector socinfo
-> rmtfs_mem ax88796b asix usbnet phy_qcom_usb_hs ipv6
->  =C2=A0CPU: 2 UID: 0 PID: 42 Comm: kworker/u16:1 Tainted: G W
-> 6.17.0-rc6+ #16051 PREEMPT
->  =C2=A0Tainted: [W]=3DWARN
->  =C2=A0Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
->  =C2=A0Workqueue: events_unbound deferred_probe_work_func
->  =C2=A0pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
->  =C2=A0pc : drm_bridge_connector_hdmi_cec_init+0x8/0x38 [drm_display_help=
-er]
->  =C2=A0lr : drmm_connector_hdmi_cec_register+0xf8/0x1c8 [drm_display_help=
-er]
->  =C2=A0sp : ffff8000843d3560
->  =C2=A0x29: ffff8000843d3560 x28: 0000000000000000 x27: 0000000000000000
->  =C2=A0x26: ffff000010c14400 x25: ffff00000c034b68 x24: ffff00003b82a020
->  =C2=A0x23: ffff00000c030000 x22: ffff0000097bf7d0 x21: ffff0000042e6a60
->  =C2=A0x20: ffff80007c162af8 x19: ffff00000c034080 x18: 00000000ffffffff
->  =C2=A0x5 : 00000000000007ff x4 : ffff800083cc5c50 x3 : 0000000000000000
->  =C2=A0x2 : 0000000000000000 x1 : ffff00000c034080 x0 : 0000000000000000
->  =C2=A0Call trace:
->  =C2=A0 drm_bridge_connector_hdmi_cec_init+0x8/0x38 [drm_display_helper] =
-(P)
->  =C2=A0 drm_bridge_connector_init+0x6b4/0x6d4 [drm_display_helper]
->  =C2=A0 msm_dsi_manager_connector_init+0x9c/0xf0 [msm]
->  =C2=A0 msm_dsi_modeset_init+0x60/0xe8 [msm]
->  =C2=A0 modeset_init+0x3c4/0x4c0 [msm]
->  =C2=A0 mdp5_kms_init+0x3cc/0x670 [msm]
->  =C2=A0 msm_drm_kms_init+0x40/0x33c [msm]
->  =C2=A0 msm_drm_init+0x1c4/0x284 [msm]
->  =C2=A0 msm_drm_bind+0x30/0x3c [msm]
->  =C2=A0 try_to_bring_up_aggregate_device+0x168/0x1d4
->  =C2=A0 __component_add+0xa8/0x170
->  =C2=A0 component_add+0x14/0x20
->  =C2=A0 dsi_dev_attach+0x20/0x2c [msm]
->  =C2=A0 dsi_host_attach+0x58/0x98 [msm]
->  =C2=A0 devm_mipi_dsi_attach+0x34/0x90
->  =C2=A0 adv7533_attach_dsi+0x8c/0x104 [adv7511]
->  =C2=A0 adv7511_probe+0x764/0x988 [adv7511]
->  =C2=A0 i2c_device_probe+0x154/0x350
->  =C2=A0 really_probe+0xbc/0x298
->  =C2=A0 __driver_probe_device+0x78/0x12c
->  =C2=A0 driver_probe_device+0xdc/0x164
->  =C2=A0 __device_attach_driver+0xb8/0x138
->  =C2=A0 bus_for_each_drv+0x80/0xdc
->  =C2=A0 __device_attach+0xa8/0x1b0
->  =C2=A0 device_initial_probe+0x14/0x20
->  =C2=A0 bus_probe_device+0xb0/0xb4
->  =C2=A0 deferred_probe_work_func+0x8c/0xc8
->  =C2=A0 process_one_work+0x208/0x60c
->  =C2=A0 worker_thread+0x244/0x388
->  =C2=A0 kthread+0x150/0x228
->  =C2=A0 ret_from_fork+0x10/0x20
->  =C2=A0Code: d50323bf d65f03c0 aa0003e1 f945e400 (f9408802)
->  =C2=A0---[ end trace 0000000000000000 ]---
-
-Thanks for testing and reporting.
-
-I'm afraid I have no hardware where the same bug can be reproduced, but by
-code inspection the root cause is clear given the call chain:
-
-  drm_bridge_connector_init() [1]
-   -> drmm_connector_hdmi_cec_register() [2]
-       -> funcs->init() =3D drm_bridge_connector_hdmi_cec_init() [3]
-
-[1] used to set bridge_connector->bridge_hdmi_cec before calling [2], now
-it does it afterwards. But [3] expects it to be set already.
-
-I have overlooked this when writing the patch. My apologies.
-
-> This can be easily fixed by adding the following check:
->
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c
-> b/drivers/gpu/drm/display/drm_bridge_connector.c
-> index 7b18be3ff9a3..222ecbc98155 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -601,7 +601,7 @@ static int drm_bridge_connector_hdmi_cec_init(struct
-> drm_connector *connector)
->
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bridge =3D bridge_connector->=
-bridge_hdmi_cec;
->
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!bridge->funcs->hdmi_cec_init)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!bridge || !bridge->funcs->hdmi=
-_cec_init)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return 0;
->
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return bridge->funcs->hdmi_ce=
-c_init(bridge, connector);
->
->
-> However I don't know the internals of the related code to judge that
-> such check is the proper way to fix this issue.
-
-I'm afraid this is not a correct solution. When this function is called,
-the bridge_hdmi_cec is already known, but (after my patch) not yet set
-where it is expected to be. So skipping the bridge->funcs->hdmi_cec_init()
-call would make the code behave differently for no good reason.
-
-I'm looking at how to properly fix this bug ASAP.
-
-Best regards,
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yes, this is my understanding as well. Hugh's patch addressed initial
+problem and this patch is no longer needed.
 
