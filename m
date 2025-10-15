@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-854186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38577BDDC95
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:30:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480EEBDDD89
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC0A3A87F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:30:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E68B64F6433
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA4430C631;
-	Wed, 15 Oct 2025 09:30:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D21319D8A7;
-	Wed, 15 Oct 2025 09:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAF631B117;
+	Wed, 15 Oct 2025 09:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="ZF/M/Ju1"
+Received: from mail-m1973180.qiye.163.com (mail-m1973180.qiye.163.com [220.197.31.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6D07262F;
+	Wed, 15 Oct 2025 09:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760520643; cv=none; b=AsDJRsLMhylZMeIj+IQlIZooF2hOvksNYCr7np0CzEXLVjkosZhalYikPJThLXYwyYlvcHFvDCoTz1xEkyQsU/suRmciOvfKSExXvaziFtLYjjrtXKWpJMu7FYhDbkmj2+uHug7LHnyf9wqMUu9fbKQCExJz258NF8vMCYmBhM0=
+	t=1760521586; cv=none; b=XrRfmjVb/eiikCq+yOxPT3mDMAbG+8szZKirFknvsNEe9cZ/rCOlT5cUNS6zGSo/9LxhmLXvzF9XT89I8HtAvQ6Uggrngvkl/XCt2iIPeH5aPGkZuONtI/E/XWb3962PfgLOiMKc02ze9Unvk7ffbcL2pT5qIffzQzXqMS67Z8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760520643; c=relaxed/simple;
-	bh=L/zNEk9bn0tDLRCXSdg1Jppg2iskv6UAUr3H9yp4q+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHjRZ2Y05ulwqpQsMkx4Pp0Rkmcysf6Z/n+m3s0YPuspDM3AUUV5EBnCuUdkMD3ghWMLgcSNIgBKS2yvynUcZLSuatbDOK5EHW6PkjbO79BcO9BdybtZTEppfo1gkqF1oEMvqeiRsPsanKE2RausfcG94Xsy41EQDiLkXE2O1pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BC9916A3;
-	Wed, 15 Oct 2025 02:30:32 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 688043F6A8;
-	Wed, 15 Oct 2025 02:30:39 -0700 (PDT)
-Date: Wed, 15 Oct 2025 10:30:37 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: hupu <hupu.gm@gmail.com>
-Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com, nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	justinstitt@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RFC] perf build: Allow passing extra Clang flags via
- EXTRA_CLANG_FLAGS
-Message-ID: <20251015093037.GA109737@e132581.arm.com>
-References: <20251013080609.2070555-1-hupu.gm@gmail.com>
- <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
- <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
- <20251013161429.GE77665@e132581.arm.com>
- <CADHxFxQg2ZKwLEOa6wic_KP49PRBp=hF=cY16aVmR0O0pa8ZkA@mail.gmail.com>
+	s=arc-20240116; t=1760521586; c=relaxed/simple;
+	bh=EeTz9XPuu7BAUwUtkubwAobfgHHacbYpZdkwkkjlacY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hROJz8KPKY5owbJ+fQulYFt22TYuWeBCSW2MpaK2+IQxyRWD7NDxB7fj3snBoLLclkW+ymX+2ZFb5yQiviIobkF4RZoLdoNTv52RF2PcnC4p0N3H3bTSKM+kNz2cSJjSI3pceaswgotPFya2Uk3dV77O1eAuTdb/uk2o8D11KeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=ZF/M/Ju1; arc=none smtp.client-ip=220.197.31.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
+Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25feb775a;
+	Wed, 15 Oct 2025 17:31:03 +0800 (GMT+08:00)
+From: Albert Yang <yangzh0906@thundersoft.com>
+To: robh@kernel.org
+Cc: adrian.hunter@intel.com,
+	arnd@arndb.de,
+	bst-upstream@bstai.top,
+	catalin.marinas@arm.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gordon.ge@bst.ai,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	ulf.hansson@linaro.org,
+	will@kernel.org,
+	yangzh0906@thundersoft.com
+Subject: Re: [PATCH 4/9] dt-bindings: mmc: add binding for BST DWCMSHC SDHCI controller
+Date: Wed, 15 Oct 2025 17:31:02 +0800
+Message-ID: <20251015093102.1554881-1-yangzh0906@thundersoft.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <175862238966.2427901.366123788055800395.robh@kernel.org>
+References: <175862238966.2427901.366123788055800395.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADHxFxQg2ZKwLEOa6wic_KP49PRBp=hF=cY16aVmR0O0pa8ZkA@mail.gmail.com>
+X-HM-Tid: 0a99e735723809cckunmdf24c7d565021a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTB4ZVktJQ0oeSEJMTE4YQ1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
+	tLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=ZF/M/Ju14bJoKl5y4eEJGYP+s0aqD7uGcfvw6nQhqPmgd7COTxeBT+TFvcHvOjbd8kJlLRbTfVAIQR7H7D34x6MAH3qImVJ9geDT/PWlOacYoRi3t7NIuEmCumdyE++j2qtKrIPtAP27XwQqUMtyCXGaJHhsFv/xvD77YW+8EPQ=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=kazy95w4NqQW9hygc2OcQJl8bs8aQ8rm5/DSPqHwz30=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi hupu,
+Hi Rob,
 
-On Tue, Oct 14, 2025 at 10:31:55AM +0800, hupu wrote:
+Thank you for running the dt_binding_check on this patch!
 
-[...]
-
-> > I am not 100% sure, could you execute install kernel headers and then
-> > build perf ?
-> >
-> >   make headers_install
-> >
+On Tue, Sep 23, 2025 at 05:13:09AM -0500, Rob Herring (Arm) wrote:
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> I am currently building perf for arm64 in an Ubuntu environment using
-> a cross toolchain, rather than compiling the entire perf directly with
-> Clang. Clang is only invoked during the build process when the BPF
-> option is enabled — as shown below where bpf is detected as on:
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.example.dtb: /example-0/bus/mmc@22200000: failed to match any schema with compatible: ['bst,c1200-dwcmshc-sdhci']
 
-Have you installed the GCC cross packages ?
+This error occurred because in v4, while I updated the dts compatible property 
+definition to "bst,c1200-sdhci" (as requested in review), I failed to update 
+the compatible string in the example node accordingly. The example was still 
+using the old "bst,c1200-dwcmshc-sdhci", causing the schema validation to fail.
 
- $ sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
- $ sudo apt-get install libc6-dev-aarch64-cross linux-libc-dev-aarch64-cross
- $ sudo apt-get install libc6-dev-arm64-cross linux-libc-dev-arm64-cross
+I have now corrected the example's compatible string from:
+    compatible = "bst,c1200-dwcmshc-sdhci";
+to:
+    compatible = "bst,c1200-sdhci";
 
-My understanding is arm64 cross compilation tries to find headers in the
-path /usr/aarch64-linux-gnu/include/ (I confirmed this on Ubuntu/Debian
-distros).  After install GCC cross packages, the headers should appear
-in the folder.
+Following your suggestion, I've upgraded dtschema:
+    pip3 install dtschema --upgrade
 
-Thanks,
-Leo
+and verified the fix with:
+    make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/bst,c1200-sdhci.yaml
+
+The binding now passes all validation checks. This fix will be included in v5.
+
+Best regards,
+Albert Yang
 
