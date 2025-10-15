@@ -1,141 +1,110 @@
-Return-Path: <linux-kernel+bounces-854607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C68BDED89
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF801BDED8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BBF3B2B22
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDB73E6AEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7ED231836;
-	Wed, 15 Oct 2025 13:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfVBeOK1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BD1A26B;
-	Wed, 15 Oct 2025 13:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1295231A41;
+	Wed, 15 Oct 2025 13:51:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26732264B1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760536259; cv=none; b=EdZhhRft4+RCSKBNms1jVnvvl6kPSU0zRFmeDnH9L6ZHjoS//O5+94L6t35/q8mItcIJjdEsUsEhdj62YmBDNg651NNktI8tBWUgAhKyaNP1xFX6+adFE7xJO5I48WGLUNul1FA6rfDP5Ryf2A/KgKf1emGNtPl20aztM20FCes=
+	t=1760536289; cv=none; b=pmY6WoHwliaur7odREsujbZDpAgJgzMLaY01TrZNYenf2waACFVG+ZrWPk2O/m6sivNctuT7qlXtPYPaoDejgc/1/wj7XkIJhrhdxeBPyK/TO9noe8RzYTIcC5p4QAn82ODQMJe8IMyctDUE8f55IsrKgzg3YEzgv+L2pHlSbM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760536259; c=relaxed/simple;
-	bh=as7iEayxt+kAwUNIYVoz5KT/GcFxr4dpxoRVI7uNMHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LXp6Z+26OVTAhRQUTVbsFebTwqqiErVZOGcY5BjN4gcAKwMCQLM9nPzTO220hk3el5dV4tHUEoDa31d6Snr3TgSmMECjbIWBQNq9DRDf64KGcmgTRmGbs8CCSWnZfDbNtoWjNd4XSD/lf+YIaNU5kaaf5fv/xqrxAjf3DEhxYJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfVBeOK1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 710F6C4CEF8;
-	Wed, 15 Oct 2025 13:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760536259;
-	bh=as7iEayxt+kAwUNIYVoz5KT/GcFxr4dpxoRVI7uNMHg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GfVBeOK15wWRF9rhCWFXbDFRlA9PjXO4b7dPIUxqn6JIsvVbYY5lO98LaWpu1CkYf
-	 3CRprkZAg1ORrND9clrGkf6dQmC0MS8wcuQmoF81udQRQZxUMQRdAHgvq1C2UpTQFH
-	 b/FXxEvZdtFBKCm3fb9e8BHISfypXYcx6V2dxPjUjUusS9Mmhoe8p6fAooaO0liQ7H
-	 P0ehOjDK1adxqeLFqmhFrjFtSnBjyxfoqGAWco1aYCPPcQeWnsrfr3iT//38WKHn3h
-	 EqseA4mC7UHgSZZyqSukCaNcCJ4NQXLQOiCR9DB9tW0co7HATjSaTN3KWLN69q9pVC
-	 kl1EYXhxNALWA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Subject: [PATCH v1] cpufreq: intel_pstate: Improve printing of debug messages
-Date: Wed, 15 Oct 2025 15:50:56 +0200
-Message-ID: <8609836.T7Z3S40VBb@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1760536289; c=relaxed/simple;
+	bh=9KliX0Fwm0mxs+TvtbruCt12qrdzG68qq9h/Z4Zuejc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T38rYPgPXtHi+hdcOdZjpSAIQ/sZvTKz1+AmAQWPZ61SPVo/2tjnuapDnIiIyKJkr+N6jo1eClWJ/HFcfXuxPVC0+gWResQi/ERuU2BDK7Lzp6+mwpivUNVylius5wHR7JbwQgLtwqTAWbT8iIhm/JlAm5fMhVfwTWfBI8SAlg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CCE2106F;
+	Wed, 15 Oct 2025 06:51:19 -0700 (PDT)
+Received: from [10.57.36.191] (unknown [10.57.36.191])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C10573F6A8;
+	Wed, 15 Oct 2025 06:51:25 -0700 (PDT)
+Message-ID: <b48193a4-a37b-41ba-b4ba-8b5c67d812bd@arm.com>
+Date: Wed, 15 Oct 2025 14:51:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
+To: Mostafa Saleh <smostafa@google.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, will@kernel.org, joro@8bytes.org,
+ jgg@ziepe.ca, praan@google.com, Jason Gunthorpe <jgg@nvidia.com>
+References: <20250929155001.3287719-1-smostafa@google.com>
+ <20250929155001.3287719-5-smostafa@google.com>
+ <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com> <aO9vI1aEhnyZx1PL@google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <aO9vI1aEhnyZx1PL@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 2025-10-15 10:53 am, Mostafa Saleh wrote:
+[...]
+>>> +		KUNIT_FAIL(test, "");						\
+>>> +		kunit_err(test, "selftest: test failed for fmt idx %d\n", (i));	\
+>>
+>> This looks suspect - AFAICS open-coded kunit_err() is intended for test
+>> infrastucture errors (like the allocation in the next hunk below), while for
+>> an actual test report message it seems it should just be:
+>>
+>> 	KUNIT_FAIL(test, "selftest: test failed for fmt idx %d\n", (i));
+> 
+> I see, I used kunit_err, as KUNIT_FAIL adds extra information which was
+> noisy to be printed more than once as:
+>    # arm_lpae_do_selftests: EXPECTATION FAILED at drivers/iommu/io-pgtable-arm-selftests.c:91
+> I will check if there is a better way to do this.
 
-Some debug messages generated by intel_pstate on a given hybrid system
-are only printed for some CPUs which is confusing, so modify the driver
-to print them for all CPUs.  Also change those messages to avoid
-printing local variable names in them.
+But isn't that exactly what we want? The tests should not fail, but if 
+they ever do then inevitably you're going to be asked to debug it from 
+nothing more than a dmesg snippet in a forwarded email. Loud and 
+detailed is good ;)
 
-Moreover, some debug messages printed by intel_pstate are quite hard
-to understand without looking at the code printing them, so make them
-somewhat clearer while at it.
+If anything we can trim the generic message to just the minimal useful 
+information about the format, if KUnit can now provide the rest of the 
+attribution for us. Ultimately we should aim to log all the test 
+conditions together in one place (and probably only upon a failure, such 
+that normal successful runs are quiet), but that can be a job for the 
+future follow-up refactoring.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+[...]
+>>> +	dev = kunit_device_register(test, "io-pgtable-test");
+>>> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, dev);
+>>
+>> Conversely, this is infrastructure, not an actual test of expected
+>> io-pgtable behaviour, so I think just:
+>>
+>> 	cfg.iommu_dev = kunit_device_register(test, "io-pgtable-test");
+>> 	if (IS_ERR(cfg.iommu_dev))
+>> 		return;
+>>
+>> (it doesn't return NULLs either)
+>>
+> 
+> Yes, I was not sure about this one, when checking the code base, every test
+> handles kunit_device_register() failure differently, this seemed the
+> most strict one so I used it, I will update that in the next version.
 
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -575,13 +575,18 @@ static void intel_pstate_hybrid_hwp_adju
- 	int scaling = cpu->pstate.scaling;
- 	int freq;
- 
--	pr_debug("CPU%d: perf_ctl_max_phys = %d\n", cpu->cpu, perf_ctl_max_phys);
--	pr_debug("CPU%d: perf_ctl_turbo = %d\n", cpu->cpu, perf_ctl_turbo);
--	pr_debug("CPU%d: perf_ctl_scaling = %d\n", cpu->cpu, perf_ctl_scaling);
-+	pr_debug("CPU%d: PERF_CTL max_phys = %d\n", cpu->cpu, perf_ctl_max_phys);
-+	pr_debug("CPU%d: PERF_CTL turbo = %d\n", cpu->cpu, perf_ctl_turbo);
-+	pr_debug("CPU%d: PERF_CTL scaling = %d\n", cpu->cpu, perf_ctl_scaling);
- 	pr_debug("CPU%d: HWP_CAP guaranteed = %d\n", cpu->cpu, cpu->pstate.max_pstate);
- 	pr_debug("CPU%d: HWP_CAP highest = %d\n", cpu->cpu, cpu->pstate.turbo_pstate);
- 	pr_debug("CPU%d: HWP-to-frequency scaling factor: %d\n", cpu->cpu, scaling);
- 
-+	if (scaling == perf_ctl_scaling)
-+		return;
-+
-+	hwp_is_hybrid = true;
-+
- 	cpu->pstate.turbo_freq = rounddown(cpu->pstate.turbo_pstate * scaling,
- 					   perf_ctl_scaling);
- 	cpu->pstate.max_freq = rounddown(cpu->pstate.max_pstate * scaling,
-@@ -1044,9 +1049,9 @@ static void hybrid_set_cpu_capacity(stru
- 
- 	topology_set_cpu_scale(cpu->cpu, arch_scale_cpu_capacity(cpu->cpu));
- 
--	pr_debug("CPU%d: perf = %u, max. perf = %u, base perf = %d\n", cpu->cpu,
--		 cpu->capacity_perf, hybrid_max_perf_cpu->capacity_perf,
--		 cpu->pstate.max_pstate_physical);
-+	pr_debug("CPU%d: capacity perf = %u, base perf = %u, sys max perf = %u\n",
-+		 cpu->cpu, cpu->capacity_perf, cpu->pstate.max_pstate_physical,
-+		 hybrid_max_perf_cpu->capacity_perf);
- }
- 
- static void hybrid_clear_cpu_capacity(unsigned int cpunum)
-@@ -2344,11 +2349,10 @@ static void intel_pstate_set_min_pstate(
- 
- static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
- {
--	int perf_ctl_max_phys = pstate_funcs.get_max_physical(cpu->cpu);
- 	int perf_ctl_scaling = pstate_funcs.get_scaling();
- 
-+	cpu->pstate.max_pstate_physical = pstate_funcs.get_max_physical(cpu->cpu);
- 	cpu->pstate.min_pstate = pstate_funcs.get_min(cpu->cpu);
--	cpu->pstate.max_pstate_physical = perf_ctl_max_phys;
- 	cpu->pstate.perf_ctl_scaling = perf_ctl_scaling;
- 
- 	if (hwp_active && !hwp_mode_bdw) {
-@@ -2356,10 +2360,7 @@ static void intel_pstate_get_cpu_pstates
- 
- 		if (pstate_funcs.get_cpu_scaling) {
- 			cpu->pstate.scaling = pstate_funcs.get_cpu_scaling(cpu->cpu);
--			if (cpu->pstate.scaling != perf_ctl_scaling) {
--				intel_pstate_hybrid_hwp_adjust(cpu);
--				hwp_is_hybrid = true;
--			}
-+			intel_pstate_hybrid_hwp_adjust(cpu);
- 		} else {
- 			cpu->pstate.scaling = perf_ctl_scaling;
- 		}
+Yeah, my impression is that those have likely been copied from the 
+lib/kunit/ code where it is actually testing its own API. I've now sent 
+a patch for the example in the docs...
 
-
-
+Cheers,
+Robin.
 
