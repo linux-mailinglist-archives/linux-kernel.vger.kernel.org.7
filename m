@@ -1,176 +1,149 @@
-Return-Path: <linux-kernel+bounces-853803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A3BBDCA13
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE65BDCA16
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1163B8E56
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F303A0122
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49CB2494ED;
-	Wed, 15 Oct 2025 05:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610D7272E4E;
+	Wed, 15 Oct 2025 05:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClQKqN/8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oEspjceI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096FA303CA4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BE8E555
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760507050; cv=none; b=Flzfi5qR+SdI3ZOQzNIKyI7fsRs6uDWia4uPC4573JNaY0ghhzw3514bPvvKqQe4cqKhcj8u3kThKetZb1srKznoI6vVw9fqL0yo9IlxD20qcBMdZedU+/FPHfLH1lS+B57Cv04K9AA/1nTRN/sQbr+nQYB7/Vq2whp4luxm+WE=
+	t=1760507124; cv=none; b=oNzlTvkilZjW3g6eBUtKN0509l3icshKUTRuQRl9vgMzs1yLGhaAlx4IxjbOKb+GmhrUCZuozBuFceq+nOdbjlLNl9PpN4teZhQP/FqwC0ctAJVxxMaaMt0Ba7chjf1I3BeueeQ952ffHXg0A+/0/hqjFDfFtY/qGwhgmwl/skQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760507050; c=relaxed/simple;
-	bh=GVlZDNYjq1s3cVnBfknhY5bLXf9IalVhWvKScVdciXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fKNmQw7XG7r21dLc1YuMskBRMVRNoaWQ9RYhiLPygS2IHtKImMME4ee6Njr31pr3LCDYGVXVdC1h9t5r+/374e81aCu4gnKeHMtIGIrhtJHU7zv9Vbq4VZ/mduCrKijQ1Hih36w7EHYGfbDeYzepabOAk8uN3IPZs87GUniwu50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClQKqN/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92111C116B1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760507049;
-	bh=GVlZDNYjq1s3cVnBfknhY5bLXf9IalVhWvKScVdciXE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ClQKqN/8wPvhKwojSg1BSZM2ZveboyUc97qHFP13hpn9CTXQwUIXJUEtDO5m6eB7t
-	 p3KHcAUyrTkMF1fIJ6DqlKSf5zSIlx3ZEqeijC64GCD5Hs7jkFZELmzhVe0ncCxMXl
-	 lgOtqpL1sEo+tcOV7F+iYBqZORY35oTcoD0c1BjVvxuEegii2k6arUAiIPUxwQdYTM
-	 el+BjvUhSVlknN3bAN4DAkn4su6SV0+IDdS+rQH2EljQrbqJlGk9YxnY5ZsowY3vpy
-	 Y/fMu+9YFpKoXK3q3ZJJglYOb0ZexHmRxpMKkzcx8B6a8MmPsMCIT/3kUbHvVhHYWm
-	 JEaEKosSVccmw==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3ee18913c0so989170166b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:44:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7jqLnbXT0yuGC0if0uKrmnUdYAL2EZYv58z6gu5fLefodsruSVS7iPjWmlsYVdS6MKZHQVz53TruizB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDczauTrn8eIPiZmV3Km5Igvyhxi6fEv+YHMv50Wg+4v/tXFf7
-	vKfkbGgoEcX1z2B1PAKrqnmp/pV3sjodVfk8XyGF+xogqhyHi8M5M1kDup/Txl/PYVRiw+3c1G4
-	Bl+JIBv5PvJ3+dxHFuMFSX8cSFsKgDS0=
-X-Google-Smtp-Source: AGHT+IEWvSXZubKOaiM32KLLroSnv9MqhPpdUc/GdRTxP9G0CYD9+vYTI9V7Z2IU7kmAEHMPP2/d8SwlicHiKWS7me4=
-X-Received: by 2002:a17:906:fa0e:b0:b55:a883:63c4 with SMTP id
- a640c23a62f3a-b55a8841f25mr1872492166b.10.1760507048110; Tue, 14 Oct 2025
- 22:44:08 -0700 (PDT)
+	s=arc-20240116; t=1760507124; c=relaxed/simple;
+	bh=7t4WHmGMZOMUvkBaKzuB50AlbNaTvFFiF6i/fWevqf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FtjjfpwGYhmNfFZc0RBZojZqwGdqLWzTQaC0wfMx0gdzkNOiq5a/D0xa3zmvSmdRaPk0NyXPzY5NpnbtQT77hSSU1o0AvdTjfbazb6rfESFhjuCqEJlStK2KnVhKCMdtmiYqzNrmn2HrKruTzqVa3rUmVXeG8m2gTz/qoANW5O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oEspjceI; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760507123; x=1792043123;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7t4WHmGMZOMUvkBaKzuB50AlbNaTvFFiF6i/fWevqf4=;
+  b=oEspjceI1iV8NnZA2bsQMDA2IIqH34yk4+opXgRDrcZ+pTPh6enDydgQ
+   6tRzEYPYeqSDaNN8Ax5K+t0njPu4I/0immULoxSNEJQijAY+LzjaG5L/4
+   1pfV8cTokipux3O/mGJrZhMvDsuJO6RX9iwMN+jzsdwHH0u2HgON2r7MY
+   YwVeMJNDoWbUwVqpsBzu35zHW/3CwM1bc6GswGsgtOgj5cMekrWDWPaXK
+   D/FT+CQkbdrN4PYmharbfYF20qM/jrHNEoNGCu6zOWdA9pUazZdGIM02z
+   YrY5aGMy8CgQQVmjHTzGDRllay/bpXGVqXMRP/CV9/aHQ9GAwiFrCcWKq
+   Q==;
+X-CSE-ConnectionGUID: gaM+xAaZR7KuW+M/c8YXRg==
+X-CSE-MsgGUID: a70lN4FpQBCe1cgVQ6dBlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="65294033"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="65294033"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:45:21 -0700
+X-CSE-ConnectionGUID: rXO3+RVUTyCu6YukaLG17w==
+X-CSE-MsgGUID: LbxYOTXbR16gXOZDUB9aHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="205776314"
+Received: from nneronin-mobl1.ger.corp.intel.com (HELO [10.94.249.136]) ([10.94.249.136])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:45:19 -0700
+Message-ID: <20b455f6-829a-43e8-83a8-5ee0eb9bbaf0@linux.intel.com>
+Date: Wed, 15 Oct 2025 08:45:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 15 Oct 2025 14:43:56 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9GtfRDe50P2PGPOuy3LEnf5hMVAAfeKXYHN_+XY37ZVA@mail.gmail.com>
-X-Gm-Features: AS18NWA5KrbTsr1Lnqc8dzysiebpRMxsn5PXElwNVmntQ_T2SoEOujIg-9OjHuE
-Message-ID: <CAKYAXd9GtfRDe50P2PGPOuy3LEnf5hMVAAfeKXYHN_+XY37ZVA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/22] smb: fix some bugs, move duplicate definitions
- to common header file
-To: chenxiaosong.chenxiaosong@linux.dev
-Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
-	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
-	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
-	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Suspend regression in v6.18-rc1
+To: Phillip Susi <phill@thesusis.net>, linux-kernel@vger.kernel.org
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <871pn5j6vm.fsf@vps.thesusis.net>
+Content-Language: en-US
+From: "Neronin, Niklas" <niklas.neronin@linux.intel.com>
+In-Reply-To: <871pn5j6vm.fsf@vps.thesusis.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 4:20=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
-v> wrote:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> Emails from previous address were often not received (went to the spam
-> folder or other reasons), and the cover letter wasn't linked to the
-> patches. So yesterday I requested chenxiaosong.chenxiaosong@linux.dev
-> account and have now sent v3.
->
-> Fix some bugs of smb server.
->
-> In order to maintain the code more easily, move some duplicate definition=
-s
-> to common header file.
->
-> Add some MS documentation references for macro and struct definitions.
-I have applied 0001, 0002 patches to #ksmbd-for-next-next as they are
-obvious bug fixes.
-I will give you feedback on the remaining patches soon.
-Thanks.
->
-> v2->v3:
->   - Update patch #06: use "Suggested-by:" instead of "Reviewed-by:"
->
-> v1->v2:
->   - Update patch #06 according to Christophe JAILLET's suggestions: https=
-://lore.kernel.org/all/d03c64d2-46c0-42d8-8f88-28669e921c95@wanadoo.fr/
->
-> v2:
->   - cover-letter: https://lore.kernel.org/all/40F04A8E2145E761+2025101216=
-1749.2994033-1-chenxiaosong@chenxiaosong.com/
->   - patches: https://lore.kernel.org/all/47508024F79AE36C+20251012161749.=
-2994033-2-chenxiaosong@chenxiaosong.com/
->
-> v1:
->   - cover-letter: https://lore.kernel.org/all/76A15C078023E21F+2025101215=
-0915.2992220-1-chenxiaosong@chenxiaosong.com/
->   - patches: https://lore.kernel.org/all/029014EF18C9D322+20251012150915.=
-2992220-2-chenxiaosong@chenxiaosong.com/
->   - RESEND cover-letter: https://lore.kernel.org/all/37DF3D711BAD3621+202=
-51012152247.2992573-1-chenxiaosong@chenxiaosong.com/
->   - RESEND patches: https://lore.kernel.org/all/9836A3F274B62345+20251012=
-152247.2992573-2-chenxiaosong@chenxiaosong.com/
->
-> ZhangGuoDong (10):
->   smb/server: fix possible memory leak in smb2_read()
->   smb/server: fix possible refcount leak in smb2_sess_setup()
->   smb: move some duplicate definitions to common/cifsglob.h
->   smb: move smb_version_values to common/cifsglob.h
->   smb: move get_rfc1002_len() to common/cifsglob.h
->   smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
->   smb: move some duplicate definitions to common/smb2pdu.h
->   smb: move smb_sockaddr_in and smb_sockaddr_in6 to common/smb2pdu.h
->   smb: move copychunk definitions to common/smb2pdu.h
->   smb: move resume_key_ioctl_rsp to common/smb2pdu.h
->
-> ChenXiaoSong (12):
->   smb: move smb2_file_network_open_info to common/smb2pdu.h
->   smb: move some duplicate definitions to common/cifspdu.h
->   smb: move file access permission bits definitions to common/cifspdu.h
->   smb: move SMB frame definitions to common/cifspdu.h
->   smb: move FILE_SYSTEM_ATTRIBUTE_INFO to common/cifspdu.h
->   smb: move FILE_SYSTEM_DEVICE_INFO to common/cifspdu.h
->   smb: move FILE_SYSTEM_INFO to common/cifspdu.h
->   smb: move FILE_DIRECTORY_INFO to common/cifspdu.h
->   smb: move FILE_FULL_DIRECTORY_INFO to common/cifspdu.h
->   smb: move FILE_BOTH_DIRECTORY_INFO to common/cifspdu.h
->   smb: move SEARCH_ID_FULL_DIR_INFO to common/cifspdu.h
->   smb: move FILE_SYSTEM_POSIX_INFO to common/cifspdu.h
->
->  fs/smb/client/cifsacl.c       |   4 +-
->  fs/smb/client/cifsglob.h      |  47 +---
->  fs/smb/client/cifspdu.h       | 436 +-------------------------------
->  fs/smb/client/cifssmb.c       |  10 +-
->  fs/smb/client/cifstransport.c |   8 +-
->  fs/smb/client/connect.c       |   2 +-
->  fs/smb/client/misc.c          |   2 +-
->  fs/smb/client/smb2ops.c       |  18 +-
->  fs/smb/client/smb2pdu.h       |  80 +-----
->  fs/smb/common/cifsglob.h      |  68 +++++
->  fs/smb/common/cifspdu.h       | 464 ++++++++++++++++++++++++++++++++++
->  fs/smb/common/smb2pdu.h       |  98 ++++++-
->  fs/smb/server/smb2misc.c      |   2 +-
->  fs/smb/server/smb2ops.c       |  32 +--
->  fs/smb/server/smb2pdu.c       | 114 +++++----
->  fs/smb/server/smb2pdu.h       |  67 -----
->  fs/smb/server/smb_common.c    |  10 +-
->  fs/smb/server/smb_common.h    | 304 +---------------------
->  fs/smb/server/smbacl.c        |   2 +-
->  fs/smb/server/vfs.c           |   2 +-
->  20 files changed, 735 insertions(+), 1035 deletions(-)
->  create mode 100644 fs/smb/common/cifsglob.h
->  create mode 100644 fs/smb/common/cifspdu.h
->
-> --
-> 2.43.0
->
+
+
+On 15/10/2025 4.22, Phillip Susi wrote:
+> I have a suspend regression in v6.18-rc1 that results in this in my
+> dmesg when I try to suspend:
+> 
+> [   36.739259] Freezing remaining freezable tasks
+> [   36.740378] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> [   36.740414] printk: Suspending console(s) (use no_console_suspend to debug)
+> [   36.783363] xhci_hcd 0000:51:00.0: Root hub is not suspended
+> [   36.783366] xhci_hcd 0000:51:00.0: PM: pci_pm_suspend(): hcd_pci_suspend [usbcore] returns -16
+> [   36.783378] xhci_hcd 0000:51:00.0: PM: dpm_run_callback(): pci_pm_suspend returns -16
+> [   36.783383] xhci_hcd 0000:51:00.0: PM: failed to suspend async: error
+> -16
+> 
+> I have bisected it to this commit:
+> 
+> commit 719de070f764e079cdcb4ddeeb5b19b3ddddf9c1 (HEAD)
+> Author: Niklas Neronin <niklas.neronin@linux.intel.com>
+> Date:   Thu Sep 18 00:07:22 2025 +0300
+> 
+>     usb: xhci-pci: add support for hosts with zero USB3 ports
+>     
+>     Add xhci support for PCI hosts that have zero USB3 ports.
+>     Avoid creating a shared Host Controller Driver (HCD) when there is only
+>     one root hub. Additionally, all references to 'xhci->shared_hcd' are now
+>     checked before use.
+>     
+>     Only xhci-pci.c requires modification to accommodate this change, as the
+>     xhci core already supports configurations with zero USB3 ports. This
+>     capability was introduced when xHCI Platform and MediaTek added support
+>     for zero USB3 ports.
+>     
+>     Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220181
+>     Tested-by: Nick Nielsen <nick.kainielsen@free.fr>
+>     Tested-by: grm1 <grm1@mailbox.org>
+>     Signed-off-by: Niklas Neronin <niklas.neronin@linux.intel.com>
+>     Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>     Link: https://lore.kernel.org/r/20250917210726.97100-4-mathias.nyman@linux.intel.com
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> It sounds like it may be related to these errors that I have had on this
+> system since I built it last year:
+> 
+> Oct 14 20:55:36 faldara kernel: hub 10-0:1.0: USB hub found
+> Oct 14 20:55:36 faldara kernel: hub 10-0:1.0: config failed, hub doesn't
+> have any ports! (err -19)
+> 
+> I believe this system has a usb hub with "zero ports" that this patch
+> was meant to fix, but up until now, has only resulted in this beign
+> dmesg error.  I no longer see this error after this commit.
+> 
+> This is an ASrock 650E Taichi Lite motherboard I built last year.
+> 
+> What additional information can I provide?
+
+Hi,
+
+Thank you for reporting.
+
+I believe this might be related to the issue in this thread:
+https://lore.kernel.org/linux-usb/CABpa4MA9unucCoKtSdzJyOLjHNVy+Cwgz5AnAxPkKw6vuox1Nw@mail.gmail.com/
+
+The specific fix:
+https://lore.kernel.org/linux-usb/20251013100424.42d5b9d2.michal.pecio@gmail.com/
+
+Best Regards,
+Niklas
+
 
