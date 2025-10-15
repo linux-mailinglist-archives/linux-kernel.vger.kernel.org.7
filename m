@@ -1,453 +1,533 @@
-Return-Path: <linux-kernel+bounces-854818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5488BDF783
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:47:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F66BDF795
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A493A9E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:47:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63D814EC0E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFFD334393;
-	Wed, 15 Oct 2025 15:47:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CDD33439A;
-	Wed, 15 Oct 2025 15:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760543259; cv=none; b=iDG2U/TkzmmQYWwYL8V5RrlIj9Z6Ed2fQWfLYlRif4In3+Z09k1wanlRruJ/Ve7ughJwb/VG9PXNLpvP2gqvojeZq647KMpZnkLhfnQWeIgNQ1X3OTkdnV/YuSRvwHg5elSQ6qrJOEHrclz2DjwI1t21XpIoiE0MdRFH984yjPM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760543259; c=relaxed/simple;
-	bh=1W7JHzvb54X6GZ7sokRcUkDYJUp/Vs+ihCtYgI/Tc+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAV+bdmHMV1CCFsU4pQ6e20JZkTJyItjY26aDd+dpnkR5NvjuvhZFLsmjavKRnyPbuzHqrQYyGZ5BGhBBT+0vQMe2VxNpkrzcFdEJMKuBmHHEL16IxlbxAd4ropMcvPducF9HQOLmi5DieShY3XCeMS2GwUWxGuuEutkxmeVJ6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A51E1655;
-	Wed, 15 Oct 2025 08:47:28 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA6013F738;
-	Wed, 15 Oct 2025 08:47:33 -0700 (PDT)
-Date: Wed, 15 Oct 2025 16:47:30 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Luck, Tony" <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aO/CEuyaIyZ5L28d@e133380.arm.com>
-References: <20250902162507.18520-1-Dave.Martin@arm.com>
- <aNFliMZTTUiXyZzd@e133380.arm.com>
- <aNXJGw9r_k3BB4Xk@agluck-desk3>
- <aNqQAy8nOkLRYx4F@e133380.arm.com>
- <d15d97d1-286c-4857-8688-4d8369271c2c@intel.com>
- <aNv53UmFGDBL0z3O@e133380.arm.com>
- <1c4b6b46-16f9-4887-93f5-e0f5e7f30a6f@intel.com>
- <aO0Oazuxt54hQFbx@e133380.arm.com>
- <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A367D335BA2;
+	Wed, 15 Oct 2025 15:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ON3TSYLQ"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013019.outbound.protection.outlook.com [52.101.72.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995526561D;
+	Wed, 15 Oct 2025 15:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760543326; cv=fail; b=qONmTKJdoQqK53656MXy+3UY4fCMHpkHCE1zsROcBVe8gL9dBLQTpU4EW0Q8rkBCvYPy7+g/Zka8YTrQZuzwoBOArfP6kFERABQqiDtRNrJALXvpz5asL3Q1M0bYRAsbX6okCCeoF+UiVgXcuDRMb371L4bLUkU+lQxlTyzwTeA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760543326; c=relaxed/simple;
+	bh=80bPDAB2YKGGj73XgT7+c+i+s9Yk08s6k3tOrcPHwH8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=C5Yb/87nLmpwSnVTqkgIOPXhsroinPPwt3SQHuAQg+LBM7e+LtOsORo5eF21WJVahbQ76dEpRgDZEeiEOH5uXUrnuwtwQhWC1nswUPgQ0GB87lMQHXMmbq0G7TO6cXFG41/loDih6qUfl86Jpdb9yR+pxVQsEQ0ebT7MXed0wp8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ON3TSYLQ; arc=fail smtp.client-ip=52.101.72.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IsqkfKtczUYHwUMbS1veO14vq4REDfbV6hHxRwnkGwN4/xyAHjh5lnHL+8nzYvJSFW6mfyKSLgzh3YWo49UTetW/HYSB79T+73/POKF2osJwwvFHIDyDPrLTGVDXQN0dwRP8wdToP4sdv3/WDr4FUPmCMkc9uMb2cCdVBuhgO7nHUqZPsEK7YwFzEsckeAN7UIiN5U7nk6hRpuoBxR3GFqM9e90r7hAyLCHM612kVJj21o4iZ7RyGLB80db7Nk7nY0/LrQg4YMZ6GSgenPcZzIeaE3RTlyTf0eIVFrbisuFMyfWfnZUmBQLQyLHu41FNlc3GsUjjF/UGp3VqdIHSLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FMOjJ8d8hTnPNNguN8Jxq9BT3/wDAZ9qLJtBgO7hhkU=;
+ b=r95H21S6DppVG7hNfM8yPsyhcG1w7rOKYhGltVirIPdRXZ6sBSslhAdcgWvnTEIXzSfDiFEDGzmopkX/AGFcrfs098tuwl+lZ2+lkHMbjWwOs+cQJ1ogFGlvwjTIsA0DLZFN4H9JE6A0oAEHTgOhKNi8QSBV7XufVpf6QDadJIe32APiJXDsckn6UljE8fBlOGhwiMwn5vdFLQDFTMWkABY2N/hp+n6Yr85x/Qpas6btyD9Tq+ZG075Uw/IDtKDscBpvglBqXszwcROh/4pDXoRp+/SFJKVtJnPbqQ4FzRASt54ZzTWvGuh1wMJ+EbVek0g456zUr8Qs+ZVFwXQa9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FMOjJ8d8hTnPNNguN8Jxq9BT3/wDAZ9qLJtBgO7hhkU=;
+ b=ON3TSYLQy95hBseDxL34HK3izG0Izkmpox2tqKZmDkb1oXEA0M5dCqMsxkPixVBtDivRbp2VQNzTEGaW77cWCE49rnJI3XLtMDnDLt1eW0/okZ9dsxgwxNMR4cGdZressP/YNn0kyS1sLQIuem+8Q0PTwUicNvab27Z84uLfdPjalRFXE4qjtLZTFliQXFxj3aEN6qApD4yYqKRsTDXRdQ/kWgOK2HpE0bhxZ9o+p0G/TxEu+HzoWDfeqbL/pWNreSAz+s8odDqBD9mZ5j/zUneGlG3wIwzRAPdmrm4yHNbfOf8iu2gCTUXua/SU80lYFQxP7rrgcXbCB7eG6AWMcw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by GVXPR04MB11631.eurprd04.prod.outlook.com (2603:10a6:150:2c1::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Wed, 15 Oct
+ 2025 15:48:34 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
+ 15:48:34 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tim Harvey <tharvey@gateworks.com>,
+	linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: media: convert nxp,tda1997x.txt to yaml format
+Date: Wed, 15 Oct 2025 11:48:11 -0400
+Message-Id: <20251015154817.2500601-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM4PR0302CA0024.eurprd03.prod.outlook.com
+ (2603:10a6:205:2::37) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GVXPR04MB11631:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35ddb52c-b9fa-4c86-fd40-08de0c024c13
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|366016|376014|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?MHRWkIwrdwVzLbDumHuyrVm106g2dwB7zdBkEqodX/zbgKgu7O/4vj2Hn3Hh?=
+ =?us-ascii?Q?+BY+dw23eelMA5NvZlWXSs3m0WUGMnF/dx/BjaL3ugxw5rRUtvamaBOv1sAi?=
+ =?us-ascii?Q?7Az77iNTSN43j9W8zDYj/vSFCyApWQ0+loC8o1sMFcTwRLPL/DN+4igmCSaJ?=
+ =?us-ascii?Q?QTd4ItJepo90nfPOY0v47jnDUDguHGHHJ2fxMIIfWfqHUWRwh8Cp/WlV1xFw?=
+ =?us-ascii?Q?6yXAX/eQSDLUtLdAUCNHi5bWtBi6xoaVn4PU5mnKJ6h9vXLGArwME+HVFevz?=
+ =?us-ascii?Q?vLUXri9SJ779qz9Tz4u/G4RoIT+LP6yRGshVvoEu3bqG/rtoIo3Ses4rgaIi?=
+ =?us-ascii?Q?01x4SK3EXh1vy9h6XkvxbxnPP0KIEmDBaWThVJm2yBZJNV9wjODLRnWYMeJY?=
+ =?us-ascii?Q?e0s6mMfIMxzQ091yRMQ6rHx9w/tNLICh+ErwPo+SX6j7FQtyFq/qJ9jvo/0O?=
+ =?us-ascii?Q?l1fxkjDqTMzZ0jFUR1+e1xg3QrvbaBFPIqtK/ttL2dskIa7t+V6W6+lkvVG9?=
+ =?us-ascii?Q?KBJ0RlykpQHy+BuC19m+CG3O7x8wEPemvuU3CiHv6uaMf2ehQY3LvoWwUQqx?=
+ =?us-ascii?Q?tump/g17TAIOtYplkZdCdfEBsTbkca4OQ18wOCrJLbjVOmsTaG8+V5gkKVs8?=
+ =?us-ascii?Q?19SJJkUZZ5+aWA61euIMDwckug5EJu26DO8W5U0ZiiEc6my/lE9XAH9S7IX/?=
+ =?us-ascii?Q?Exr/wM17gcstNJ6ksy5sivL9u5xetCRUu3IJV8qJ+7aNnECLEALf8Qaikrgo?=
+ =?us-ascii?Q?QdY+RtUxBilfJF/3MU/KhTnrzSf92if8T0q7noMXOZ7uRv5F3RS1vhzIni+K?=
+ =?us-ascii?Q?OymzvMS0ZTkKaKz7cjHUdtTAyvTzVdVnoIUYEyDxyUi4QQLa3o0LmRwJbK1C?=
+ =?us-ascii?Q?nrxLVKjFkqhipD0ntVZQXRjoBbG7RIaa5EuoXPnsMaOOE7Fqw8MtK67gKZkB?=
+ =?us-ascii?Q?ZJGb84/95xq9iWpanHqtm8Swch2ZAXhIIVAoGgdiedcBl3rKFoAlBNi7KGVt?=
+ =?us-ascii?Q?OLsb8sR7WPncfDJgfTDUaPOe4ttm9cHQyopJFgW0xzZljSopT3uZp3Egje3s?=
+ =?us-ascii?Q?cQDsMmXiXOwQ/PeYMasNwJlls8+M+qr9G1oKoM2YnjgURTwPTGmAYOEiFBtA?=
+ =?us-ascii?Q?yvqL5SEa9R550QNp9VwMweyH+Hn7tlzMl+IABMdxgv+ccFgtQt4BA5lC4yO8?=
+ =?us-ascii?Q?UlwC2SDtY/uRRnw9Wmg2Q5W0hM0pxjh3OBoB8my/nWwWh0QvVpD7ZWXZpUcs?=
+ =?us-ascii?Q?KG3jN25xOI7NZKemvD/bG5N1nFzus/R/2MXfnUtxCibuWHskKiYA476DsBa+?=
+ =?us-ascii?Q?oGcjTsC4WZ8H0M3h4EXTD9E03v3PYglL9hp755cBnv3XmzIncrBZf/KQTkeB?=
+ =?us-ascii?Q?cQjZ1e0Xtp/G+tF4C84a4Nwv5fo20hTqJfK8NmU8mK2BuRRQUbD6fOotarsJ?=
+ =?us-ascii?Q?0guiiXTFXmmw9kRttswwSL96WUN3E5sjOlw8Axk+5o01YaAtpjkjYA=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?R0IMCzp2sBSZxD0m8wzICKbTHX+VtmUw3VR2l74Pde8fQkNRfx9MWW6mFvUN?=
+ =?us-ascii?Q?VhOVVi6dkuBuNue0Lq7BDBxuMkNHCVLfcN+9I4+2ZyEqdOHwi7v5DbOnRgE4?=
+ =?us-ascii?Q?t/xGSJPSrmnvYN437hGnHb1utfu3cofdPQqgwxD9SDPCDmMN13fuQ5ID6veG?=
+ =?us-ascii?Q?90bdgLs/sQyrRBEwmIH4NNnfm/TZTiOfMzLKrPceTZ14wV79lfFCP7M4Ovvk?=
+ =?us-ascii?Q?94/JGFGX2sH1Ro6roz/3iM+EH7HhBucWmBOkt4yFGkOCPp5yL24cQPfjgGFS?=
+ =?us-ascii?Q?FeYGYFwJbG+dbM77z0mUNtnqMFrO8uG6KRHTPn4Xa/QpPNiNVaeWsnMTYjWD?=
+ =?us-ascii?Q?/WPvbM6Sun9xmfpTCDL6BKgV0KDuUUeE2o4Yc1LbjraABT6NaUlS0mti+WBp?=
+ =?us-ascii?Q?5H7Ndf3wkWvkx9zHAO1YgBdnFJKSUnZqb8MmFjRziMFotFY2Xv7SlzWDZ7sW?=
+ =?us-ascii?Q?mqwtoQHhR1zhccOeDK0RTrjYfZAVeqNrRTgH+rXCeQwNyzw9ZQSXsQfOoHVC?=
+ =?us-ascii?Q?/TgSXJENQmGELKtSt58BOEkSPWJ/UWZRemkIf0qUeRmk2plYRyqe2gLvCeH+?=
+ =?us-ascii?Q?tbHoS8ObF2wNsqcJ45J+sYvb1FpIb/9eCbJfuKQUpimUogxyzgTjITpKS9Lg?=
+ =?us-ascii?Q?Q8lasbFZHaf47Cp+/lQHRuj0HaUSn1o707XmTj4L/CMjrSdOXUMMFvgZdQe2?=
+ =?us-ascii?Q?NDuEdybaG9Dzk0TI0TLRJDbF3juKX4iP7L/87tpDIITR2xSEPfsb+kW4IPRF?=
+ =?us-ascii?Q?7dmWt8AbXI51alwyau/1n6tr/a8VK7A34aFwA9cX5ubobvVtzF880JARlUBg?=
+ =?us-ascii?Q?esObS7587FFrxd9lgffbKg0SW22N0zMP+XdsHA2tM9n6sfxpV30HGAPo7yr1?=
+ =?us-ascii?Q?Wza7aIkNHO1XB62FcD74+rkY2FZps3ssZGPgcmwzGKax48S9lvCfZ3pPXEiI?=
+ =?us-ascii?Q?rDNoGt5E+yAaxXVQdM14QBWeO7+UEYJ7EF+Yq/woVWu3c0UZICt+vfsD7G6+?=
+ =?us-ascii?Q?vgswrjeCkIcKTyrkFVSOhGOginpEcac5nDL9FuvEKSXUIExhTyTBI1U9A2/P?=
+ =?us-ascii?Q?tZgS6S3s0oEa/rdUWxIb7jdr9NjnNGmI1Ht9RsbTDpQ4WOwuzcd/57Trp9yG?=
+ =?us-ascii?Q?PeNgD12vP3MRE5x/RZHlS1SSLmrMrqmDFkOk1zS8+PgIW3Xmv4DXPGIzLrWo?=
+ =?us-ascii?Q?vy4waiIk218lyzF56+piPRv72C9YQdTIOfMBOxv9qyIgRNo3O1NfzdlgEyfr?=
+ =?us-ascii?Q?pXEMFtDQT/vaabY77EjTOs4+dLCnArdAGvYPocV0qFOaPVEqnTahHQ78BkS4?=
+ =?us-ascii?Q?UOG+kOtu1YsAAk5RF90JvcGDrMP6mf8IAYVKGsb8zdvSjC2cpnlOG7uQZcH2?=
+ =?us-ascii?Q?pBdBazMDVWVSkQSWlzWskdbB+vRKaSoqou3mA7Ztscbux2OjidFB/eZ+ILng?=
+ =?us-ascii?Q?d/LTFLefVuwV5Jb8zk/12+ufCZrmtAvpXQrnQuAbdH4hNBVokNRnddfu776z?=
+ =?us-ascii?Q?2R5kb8k4ao0J6TtctEskXk//SWmhOZ9r3UJPD9kegfD3IFdMQ0mz0uxWnS3V?=
+ =?us-ascii?Q?c4agJ6JxVD/aD+rVAyg=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35ddb52c-b9fa-4c86-fd40-08de0c024c13
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 15:48:34.2124
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4wo03ozFYIcDAaOHb8uFTKGTHE6f78OJDWNqPDL3SzPow4VFdNhzwbRDA4Mn+riWQQIgBNTa/uBLZ6nYMhlEIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11631
 
-Hi Reinette,
+Convert nxp,tda1997x.txt to yaml format
 
-On Tue, Oct 14, 2025 at 03:55:40PM -0700, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> On 10/13/25 7:36 AM, Dave Martin wrote:
-> > Hi Reinette,
-> > 
-> > On Fri, Oct 10, 2025 at 09:48:21AM -0700, Reinette Chatre wrote:
-> >> Hi Dave,
-> >>
-> >> On 9/30/25 8:40 AM, Dave Martin wrote:
-> >>> On Mon, Sep 29, 2025 at 09:09:35AM -0700, Reinette Chatre wrote:
-> >>>> On 9/29/25 6:56 AM, Dave Martin wrote:
-> > 
-> > [...]
-> > 
-> >>>> 1) Commented schema are "inactive"
-> >>>> This is unclear to me. In the MB example the commented lines show the 
-> >>>> finer grained controls. Since the original MB resource is an approximation
-> >>>> and the hardware must already be configured to support it, would the #-prefixed
-> >>>> lines not show the actual "active" configuration?
-> >>>
-> >>> They would show the active configuration (possibly more precisely than
-> >>> "MB" does).
-> >>
-> >> That is how I see it also. This is specific to MB as we try to maintain
-> >> backward compatibility.
-> >>
-> >> If we are going to make user interface changes to resource allocation then
-> >> ideally it should consider all known future usage. I am trying to navigate
-> >> and understand the discussion on how resctrl can support MPAM and this
-> >> RDT region aware requirements. 
-> >>
-> >> I scanned the MPAM spec and from what I understand a resource may support
-> >> multiple controls at the same time, each with its own properties, and then
-> >> there was this:
-> >>
-> >> 	When multiple partitioning controls are active, each affects the partition’s
-> >> 	bandwidth usage. However, some combinations of controls may not make sense,
-> >> 	because the regulation of that pair of controls cannot be made to work in concert.
-> >>
-> >> resctrl may thus present an "active configuration" that is not a configuration
-> >> that "makes sense" ... this may be ok as resctrl would present what hardware
-> >> supports combined with what user requested.
-> > 
-> > This is analogous to what the MPAM spec says, though if resctrl offers
-> > two different schemata for the same hardware control, the control cannot be
-> > configured with both values simultaneously.
-> > 
-> > For the MPAM hardware controls affecting the same hardware resource,
-> > they can be programmed to combinations of values that have no sensible
-> > interpretation, and the values can be read back just fine.  The
-> > performance effects may not be what the user expected / wanted, but
-> > this is not directly visible to resctrl.
-> > 
-> > So, if we offer independent schemata for MBW_MIN and MBW_MAX, the user
-> > can program MBW_MIN=75% and MBW_MAX=25% for the same PARTID, and that
-> > will read back just as programmed.  The architecture does not promise
-> > what the performance effect of this will be, but resctrl does not need
-> > to care.
-> 
-> The same appears to be true for Intel RDT where the spec warns ("Undesirable
-> and undefined performance effects may result if cap programming guidelines
-> are not followed.") but does not seem to prevent such configurations. 
+Additional changes:
+- update audio width to 8, 16, 24, 32.
+- keep one example only.
 
-Right.  We _could_ block such a configuration from reaching the hardware,
-if the arch backend overrides the MIN limit when the MAX limit is
-written and vice-versa, when not doing to would result in crossed-over
-bounds.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change in v2
+- add empty line
+- add description for matrix's col. add limit for first index. But not
+sure how to limit it to unique id.
+---
+ .../bindings/media/i2c/nxp,tda19971.yaml      | 162 ++++++++++++++++
+ .../bindings/media/i2c/nxp,tda1997x.txt       | 178 ------------------
+ 2 files changed, 162 insertions(+), 178 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
 
-If software wants to program both bounds, then that would be fine: in:
+diff --git a/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml b/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+new file mode 100644
+index 0000000000000..477e59316dfa4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+@@ -0,0 +1,162 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/i2c/nxp,tda19971.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP TDA1997x HDMI receiver
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++description: |
++  The TDA19971/73 are HDMI video receivers.
++
++  The TDA19971 Video port output pins can be used as follows:
++   - RGB 8bit per color (24 bits total): R[11:4] B[11:4] G[11:4]
++   - YUV444 8bit per color (24 bits total): Y[11:4] Cr[11:4] Cb[11:4]
++   - YUV422 semi-planar 8bit per component (16 bits total): Y[11:4] CbCr[11:4]
++   - YUV422 semi-planar 10bit per component (20 bits total): Y[11:2] CbCr[11:2]
++   - YUV422 semi-planar 12bit per component (24 bits total): - Y[11:0] CbCr[11:0]
++   - YUV422 BT656 8bit per component (8 bits total): YCbCr[11:4] (2-cycles)
++   - YUV422 BT656 10bit per component (10 bits total): YCbCr[11:2] (2-cycles)
++   - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
++
++  The TDA19973 Video port output pins can be used as follows:
++   - RGB 12bit per color (36 bits total): R[11:0] B[11:0] G[11:0]
++   - YUV444 12bit per color (36 bits total): Y[11:0] Cb[11:0] Cr[11:0]
++   - YUV422 semi-planar 12bit per component (24 bits total): Y[11:0] CbCr[11:0]
++   - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
++
++  The Video port output pins are mapped via 4-bit 'pin groups' allowing
++  for a variety of connection possibilities including swapping pin order within
++  pin groups. The video_portcfg device-tree property consists of register mapping
++  pairs which map a chip-specific VP output register to a 4-bit pin group. If
++  the pin group needs to be bit-swapped you can use the *_S pin-group defines.
++
++properties:
++  compatible:
++    enum:
++      - nxp,tda19971
++      - nxp,tda19973
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  DOVDD-supply: true
++
++  DVDD-supply: true
++
++  AVDD-supply: true
++
++  '#sound-dai-cells':
++    const: 0
++
++  port:
++    $ref: /schemas/graph.yaml#/$defs/port-base
++    unevaluatedProperties: false
++
++    properties:
++      endpoint:
++        $ref: /schemas/media/video-interfaces.yaml#
++        unevaluatedProperties: false
++
++  nxp,vidout-portcfg:
++    $ref: /schemas/types.yaml#/definitions/uint32-matrix
++    minItems: 1
++    maxItems: 4
++    items:
++      items:
++        - description: Video Port control registers index.
++          maximum: 8
++          minimum: 0
++        - description: pin(pinswapped) groups
++
++    description:
++      array of pairs mapping VP output pins to pin groups.
++
++  nxp,audout-format:
++    enum:
++      - i2s
++      - spdif
++
++  nxp,audout-width:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [8, 16, 24, 32]
++    description:
++      width of audio output data bus.
++
++  nxp,audout-layout:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
++    description:
++      data layout (0=AP0 used, 1=AP0/AP1/AP2/AP3 used).
++
++  nxp,audout-mclk-fs:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Multiplication factor between stream rate and codec mclk.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - DOVDD-supply
++  - AVDD-supply
++  - DVDD-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/media/tda1997x.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        hdmi-receiver@48 {
++            compatible = "nxp,tda19971";
++            reg = <0x48>;
++            pinctrl-names = "default";
++            pinctrl-0 = <&pinctrl_tda1997x>;
++            interrupt-parent = <&gpio1>;
++            interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
++            DOVDD-supply = <&reg_3p3v>;
++            AVDD-supply = <&reg_1p8v>;
++            DVDD-supply = <&reg_1p8v>;
++            /* audio */
++            #sound-dai-cells = <0>;
++            nxp,audout-format = "i2s";
++            nxp,audout-layout = <0>;
++            nxp,audout-width = <16>;
++            nxp,audout-mclk-fs = <128>;
++            /*
++             * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
++             * and Y[11:4] across 16bits in the same pixclk cycle.
++             */
++            nxp,vidout-portcfg =
++                /* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
++                < TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
++                /* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
++                < TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
++                /* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
++                < TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
++                /* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
++                < TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
++
++            port {
++                endpoint {
++                    remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
++                    bus-width = <16>;
++                    hsync-active = <1>;
++                    vsync-active = <1>;
++                    data-active = <1>;
++                };
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt b/Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
+deleted file mode 100644
+index e76167999d76c..0000000000000
+--- a/Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
++++ /dev/null
+@@ -1,178 +0,0 @@
+-Device-Tree bindings for the NXP TDA1997x HDMI receiver
+-
+-The TDA19971/73 are HDMI video receivers.
+-
+-The TDA19971 Video port output pins can be used as follows:
+- - RGB 8bit per color (24 bits total): R[11:4] B[11:4] G[11:4]
+- - YUV444 8bit per color (24 bits total): Y[11:4] Cr[11:4] Cb[11:4]
+- - YUV422 semi-planar 8bit per component (16 bits total): Y[11:4] CbCr[11:4]
+- - YUV422 semi-planar 10bit per component (20 bits total): Y[11:2] CbCr[11:2]
+- - YUV422 semi-planar 12bit per component (24 bits total): - Y[11:0] CbCr[11:0]
+- - YUV422 BT656 8bit per component (8 bits total): YCbCr[11:4] (2-cycles)
+- - YUV422 BT656 10bit per component (10 bits total): YCbCr[11:2] (2-cycles)
+- - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
+-
+-The TDA19973 Video port output pins can be used as follows:
+- - RGB 12bit per color (36 bits total): R[11:0] B[11:0] G[11:0]
+- - YUV444 12bit per color (36 bits total): Y[11:0] Cb[11:0] Cr[11:0]
+- - YUV422 semi-planar 12bit per component (24 bits total): Y[11:0] CbCr[11:0]
+- - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
+-
+-The Video port output pins are mapped via 4-bit 'pin groups' allowing
+-for a variety of connection possibilities including swapping pin order within
+-pin groups. The video_portcfg device-tree property consists of register mapping
+-pairs which map a chip-specific VP output register to a 4-bit pin group. If
+-the pin group needs to be bit-swapped you can use the *_S pin-group defines.
+-
+-Required Properties:
+- - compatible          :
+-  - "nxp,tda19971" for the TDA19971
+-  - "nxp,tda19973" for the TDA19973
+- - reg                 : I2C slave address
+- - interrupts          : The interrupt number
+- - DOVDD-supply        : Digital I/O supply
+- - DVDD-supply         : Digital Core supply
+- - AVDD-supply         : Analog supply
+- - nxp,vidout-portcfg  : array of pairs mapping VP output pins to pin groups.
+-
+-Optional Properties:
+- - nxp,audout-format   : DAI bus format: "i2s" or "spdif".
+- - nxp,audout-width    : width of audio output data bus (1-4).
+- - nxp,audout-layout   : data layout (0=AP0 used, 1=AP0/AP1/AP2/AP3 used).
+- - nxp,audout-mclk-fs  : Multiplication factor between stream rate and codec
+-                         mclk.
+-
+-The port node shall contain one endpoint child node for its digital
+-output video port, in accordance with the video interface bindings defined in
+-Documentation/devicetree/bindings/media/video-interfaces.txt.
+-
+-Optional Endpoint Properties:
+-  The following three properties are defined in video-interfaces.txt and
+-  are valid for the output parallel bus endpoint:
+-  - hsync-active: Horizontal synchronization polarity. Defaults to active high.
+-  - vsync-active: Vertical synchronization polarity. Defaults to active high.
+-  - data-active: Data polarity. Defaults to active high.
+-
+-Examples:
+- - VP[15:0] connected to IMX6 CSI_DATA[19:4] for 16bit YUV422
+-   16bit I2S layout0 with a 128*fs clock (A_WS, AP0, A_CLK pins)
+-	hdmi-receiver@48 {
+-		compatible = "nxp,tda19971";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_tda1997x>;
+-		reg = <0x48>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+-		DOVDD-supply = <&reg_3p3v>;
+-		AVDD-supply = <&reg_1p8v>;
+-		DVDD-supply = <&reg_1p8v>;
+-		/* audio */
+-		#sound-dai-cells = <0>;
+-		nxp,audout-format = "i2s";
+-		nxp,audout-layout = <0>;
+-		nxp,audout-width = <16>;
+-		nxp,audout-mclk-fs = <128>;
+-		/*
+-		 * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
+-		 * and Y[11:4] across 16bits in the same pixclk cycle.
+-		 */
+-		nxp,vidout-portcfg =
+-			/* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
+-			< TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
+-			/* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
+-			< TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
+-			/* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
+-			< TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
+-			/* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
+-			< TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
+-
+-		port {
+-			tda1997x_to_ipu1_csi0_mux: endpoint {
+-				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
+-				bus-width = <16>;
+-				hsync-active = <1>;
+-				vsync-active = <1>;
+-				data-active = <1>;
+-			};
+-		};
+-	};
+- - VP[15:8] connected to IMX6 CSI_DATA[19:12] for 8bit BT656
+-   16bit I2S layout0 with a 128*fs clock (A_WS, AP0, A_CLK pins)
+-	hdmi-receiver@48 {
+-		compatible = "nxp,tda19971";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_tda1997x>;
+-		reg = <0x48>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+-		DOVDD-supply = <&reg_3p3v>;
+-		AVDD-supply = <&reg_1p8v>;
+-		DVDD-supply = <&reg_1p8v>;
+-		/* audio */
+-		#sound-dai-cells = <0>;
+-		nxp,audout-format = "i2s";
+-		nxp,audout-layout = <0>;
+-		nxp,audout-width = <16>;
+-		nxp,audout-mclk-fs = <128>;
+-		/*
+-		 * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
+-		 * and Y[11:4] across 16bits in the same pixclk cycle.
+-		 */
+-		nxp,vidout-portcfg =
+-			/* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
+-			< TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
+-			/* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
+-			< TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
+-			/* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
+-			< TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
+-			/* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
+-			< TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
+-
+-		port {
+-			tda1997x_to_ipu1_csi0_mux: endpoint {
+-				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
+-				bus-width = <16>;
+-				hsync-active = <1>;
+-				vsync-active = <1>;
+-				data-active = <1>;
+-			};
+-		};
+-	};
+- - VP[15:8] connected to IMX6 CSI_DATA[19:12] for 8bit BT656
+-   16bit I2S layout0 with a 128*fs clock (A_WS, AP0, A_CLK pins)
+-	hdmi-receiver@48 {
+-		compatible = "nxp,tda19971";
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_tda1997x>;
+-		reg = <0x48>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+-		DOVDD-supply = <&reg_3p3v>;
+-		AVDD-supply = <&reg_1p8v>;
+-		DVDD-supply = <&reg_1p8v>;
+-		/* audio */
+-		#sound-dai-cells = <0>;
+-		nxp,audout-format = "i2s";
+-		nxp,audout-layout = <0>;
+-		nxp,audout-width = <16>;
+-		nxp,audout-mclk-fs = <128>;
+-		/*
+-		 * The 8bpp BT656 mode outputs YCbCr[11:4] across 8bits over
+-		 * 2 pixclk cycles.
+-		 */
+-		nxp,vidout-portcfg =
+-			/* YCbCr[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
+-			< TDA1997X_VP24_V15_12 TDA1997X_R_CR_CBCR_11_8 >,
+-			/* YCbCr[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
+-			< TDA1997X_VP24_V11_08 TDA1997X_R_CR_CBCR_7_4 >,
+-
+-		port {
+-			tda1997x_to_ipu1_csi0_mux: endpoint {
+-				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
+-				bus-width = <16>;
+-				hsync-active = <1>;
+-				vsync-active = <1>;
+-				data-active = <1>;
+-			};
+-		};
+-	};
+-- 
+2.34.1
 
-# cat <<-EOF >/sys/fs/resctrl/schemata
-	MB_MAX: 0=128
-EOF
-
-# cat <<-EOF >/sys/fs/resctrl/schemata
-	MB_MIN: 0=256
-	MB_MAX: 0=1024
-EOF
-
-... internally programming some value >=256 before programming the
-hardware with the new min bound would not stop the final requested
-change to MB_MAX from working as userspace expected.
-
-(There will be inevitable regulation glitches unless the hardware
-provides a way to program both bounds atomically.  MPAM doesn't; I
-don't think RDT does either?)
-
-
-But we only _need_ to do this if the hardware architecture forbids
-programming cross bounds or says that it is unsafe to do so.  So, I am
-thinking that the generic code doesn't need to handle this.
-
-[...]
-
-> >> To be specific, the original proposal [1] introduced a set of files for
-> >> a numeric control and that seems to work for existing and upcoming 
-> >> schema that need a value in a range. Different controls need different
-> >> parameters so to integrate this solution I think it needs another parameter
-> >> (presented as a directory, a file, or within a file) that indicates the
-> >> type of the control so that user space knows which files/parameters to expect
-> >> and how to interpret them. 
-> > 
-> > Agreed.  I wasn't meaning to imply that this proposal shouldn't be
-> > integrated into something more general.  If we want a richer
-> > description than the current one, it makes sense to incorporate bitmap
-> > controls -- this just wasn't my focus.
-> 
-> Understood.
-> 
-> > 
-> >> Since different controls have different parameters we need to consider
-> >> whether it is easier to create/parse unique files for each control or
-> >> present all the parameters within one file with another file noting the type
-> >> of control.
-> > 
-> > Separate files works quite well for low-tech tooling built using shell
-> > scripts, and this seems to follow the sysfs philosophy.  Since there is
-> > no need to keep re-reading these parameters, simplicity feels more
-> > important than efficiency?
-> > 
-> > But we could equally have a single file with multiple pieces of
-> > information in it.
-> > 
-> > I don't have a strong view on this.
-> 
-> If by sysfs philosophy you men "one value per file" then resctrl split from that from
-> the beginning (with the schemata file). I am also not advocating for one or the other
-> at this time but believe we have some flexibility when faced with implementation
-> options/challenges.
-
-Agreed -- it works either way.
-
-[...]
-
-> >> At this time I am envisioning the proposal to result in something like below where
-> >> there is one resource directory and one directory per schema entry with a (added by me)
-> >> "schema_type" file to help user find out what the schema type is to know which files are present:
-> >>
-> >> MB
-> >> ├── bandwidth_gran
-> >> ├── delay_linear
-> >> ├── MB
-> >> │   ├── map
-> >> │   ├── max
-> >> │   ├── min
-> >> │   ├── scale
-> >> │   ├── schema_type
-> >> │   └── unit
-> >> ├── MB_HW
-> >> │   ├── map
-
-[...]
-
-> >> ├── min_bandwidth
-> >> ├── num_closids
-> >> └── thread_throttle_mode
-> > 
-> > I see no reason not to do that.  Either way, older userspace just
-> > ignores the new files and directories.
-> > 
-> > Perhaps add an intermediate subdirectory to clarify the relationship
-> > between the resource dir and the individual schema descriptions?
-> > 
-> > This may also avoid the new descriptions getting mixed up with the old
-> > description files.
-> > 
-> > Say,
-> > 
-> >   info
-> >   ├── MB
-> >   │   ├── resource_schemata
-> >   │   │   ├── MB
-> >   │   │   │   ├── map
-> >   │   │   │   ├── max
-> >   │   ┆   │   ├── min
-> >   │       │   ┆
-> >   ┆       │
-> >           ├── MB_HW
-> >           │   ├── map
-> >           │   ┆
-> >           ┆
-> 
-> Looks good to me.
-
-OK
-
-> >> Something else related to control that caught my eye in MPAM spec is this gem:
-> >> 	MPAM provides discoverable vendor extensions to permit partners
-> >> 	to invent partitioning controls.
-> > 
-> > Yup.
-> > 
-> > Since we have no way to know what vendor-specific controls look like or
-> > what they mean, we can't do much about this.
-> > 
-> > So, it's the vendor's job to implement support for it, and we might
-> > still say no (if there is no sane way to integrate it).
-> 
-> ack.
-> 
-> > 
-> >>> MB may be hard to describe in a useful way, though -- at least in the
-> >>> MPAM case, where the number of steps does not divide into 100, and the
-> >>> AMD cases where the meaning of the MB control values is different.
-> >>
-> >> Above I do assume that MB would be represented in a new interface since it
-> >> is a schema entry, if that causes trouble then we could drop it.
-> > 
-> > Since MB is described by the existing files and the documentation,
-> > perhaps this it doesn't need an additional description.
-> > 
-> > Alternatively though, could we just have a special schema_type for this,
-> > and omit the other properties?  This would mean that we at least have
-> > an entry for every schema.
-> 
-> We could do this, yes.
-
-I guess I'll go with this approach, then, and see if anyone objects.
-
-[...]
-
-> >>> MB: 0=50, 1=50
-> >>> # MB_HW: 0=32, 1=32
-> >>> # MB_MIN: 0=16, 1=16
-> >>> # MB_MAX: 0=32, 1=32
-> >>
-> >> Could/should resctrl uncomment the lines after userspace modified them?
-> > 
-> > The '#' wasn't meant to be a state that gets turned on and off.
-> 
-> Thank you for clarifying. 
-> 
-> > Rather, userspace would use this to indicate which entries are
-> > intentionally being modified.
-> 
-> I see. I assume that we should not see many of these '#' entries and expect
-> the ones we do see to shadow the legacy schemata entries. New schemata entries
-> (that do not shadow legacy ones) should not have the '#' prefix even if
-> their initial support does not include all controls.
-> > So long as the entries affecting a single resource are ordered so that
-> > each entry is strictly more specific than the previous entries (as
-> > illustrated above), then reading schemata and stripping all the hashes
-> > would allow a previous configuration to be restored; to change just one
-> > entry, userspace can uncomment just that one, or write only that entry
-> > (which is what I think we should recommend for new software).
-> 
-> This is a good rule of thumb.
-
-To avoid printing entries in the wrong order, do we want to track some
-parent/child relationship between schemata.
-
-In the above example,
-
-	* MB is the parent of MB_HW;
-
-	* MB_HW is the parent of MB_MIN and MB_MAX.
-
-(for MPAM, at least).
-
-When schemata is read, parents should always be printed before their
-child schemata.  But really, we just need to make sure that the
-rdt_schema_all list is correctly ordered.
-
-
-Do you think that this relationship needs to be reported to userspace?
-
-Since the "#" convention is for backward compatibility, maybe we should
-not use this for new schemata, and place the burden of managing
-conflicts onto userspace going forward.  What do you think?
-
-> >>> (For hardware-specific reasons, the MPAM driver currently internally
-> >>> programs the MIN bound to be a bit less than the MAX bound, when
-> >>> userspace writes an "MB" entry into schemata.  The key thing is that
-> >>> writing MB may cause the MB_MIN/MB_MAX entries to change -- at the
-> >>> resctrl level, I don't that that we necessarily need to make promises
-> >>> about what they can change _to_.  The exact effect of MIN and MAX
-> >>> bounds is likely to be hardware-dependent anyway.)
-> >>
-> >> MPAM has the "HARDLIM" distinction associated with these MAX values
-> >> and from what I can tell this is per PARTID. Is this something that needs
-> >> to be supported? To do this resctrl will need to support modifying
-> >> control properties per resource group.
-> > 
-> > Possibly.  Since this is a boolean control that determines how the
-> > MBW_MAX control is applied, we could perhaps present it as an
-> > additional schema -- if so, it's basically orthogonal.
-> > 
-> >  | MB_HARDMAX: 0=0, 1=1, 2=1, 3=0 [...]
-> > 
-> > or
-> > 
-> >  | MB_HARDMAX: 0=off, 1=on, 2=on, 3=off [...]
-> > 
-> > Does this look reasonable?
-> 
-> It does.
-
-OK -- note, I don't think we have any immediate plan to support this in
-the MPAM driver, but it may land eventually in some form.
-
-[...]
-
-> >>> Regarding new userspce:
-> >>>
-> >>> Going forward, we can explicitly document that there should be no
-> >>> conflicting or "passenger" entries in a schemata write: don't include
-> >>> an entry for somehing that you don't explicitly want to set, and if
-> >>> multiple entries affect the same resource, we don't promise what
-> >>> happens.
-> >>>
-> >>> (But sadly, we can't impose that rule on existing software after the
-> >>> fact.)
-> >>
-> >> It may thus not be worth it to make such a rule.
-> > 
-> > Ack.  Perhaps we could recommend it, though.
-> 
-> We could, yes.
-
-OK
-
-[...]
-
-> >> MPAM allows per-PARTID configurations for secure/non-secure, physical/virtual,
-> >> ... ? Is it expected that MPAM's support of these should be exposed via resctrl?
-> > 
-> > Probably not.  These are best regarded as entirely separate instances
-> > of MPAM; the PARTID spaces are separate.  The Non-secure physical
-> > address space is the only physical address space directly accessible to
-> > Linux -- for the others, we can't address the MMIO registers anyway.
-> > 
-> > For now, the other address spaces are the firmware's problem.
-> 
-> Thank you.
-
-No worries -- it's not too obvious from the spec!
-
-> >> Have you considered how to express if user wants hardware to have different
-> >> allocations for, for example, same PARTID at different execution levels?
-> >>
-> >> Reinette
-> >>
-> >> [1] https://lore.kernel.org/lkml/aNFliMZTTUiXyZzd@e133380.arm.com/
-> > 
-> > MPAM doesn't allow different controls for a PARTID depending on the
-> > exception level, but it is possible to program different PARTIDs for
-> > hypervisor/kernel and userspace (i.e., EL2/EL1 and EL0).
-> 
-> I misunderstood this from the spec. Thank you for clarifying.
-> 
-> > 
-> > I think that if we wanted to go down that road, we would want to expose
-> > additional "task IDs" in resctrlfs that can be placed into groups
-> > independently, say
-> > 
-> > 	echo 14161:kernel >>.../some_group/tasks
-> > 	echo 14161:user >>.../other_group/tasks
-> > 
-> > However, inside the kernel, the boundary between work done on behalf of
-> > a specific userspace task, work done on behalf of userspace in general,
-> > and autonomous work inside the kernel is fuzzy and not well defined.
-> > 
-> > For this reason, we currently only configure the PARTID for EL0.  For
-> > EL1 (and EL2 if the kernel uses it), we just use the default PARTID (0).
-> > 
-> > Hopefully this is orthogonal to the discussion of schema descriptions,
-> > though ...?
-> 
-> Yes.
-
-OK; I suggest that we put this on one side, for now, then.
-
-There is a discussion to be had on this, but it feels like a separate
-thing.
-
-
-I'll try to pull the state of this discussion together -- maybe as a
-draft update to the documentation, describing the interface as proposed
-so far.  Does that work for you?
-
-Cheers
---Dave
 
