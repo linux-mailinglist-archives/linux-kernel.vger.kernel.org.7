@@ -1,232 +1,185 @@
-Return-Path: <linux-kernel+bounces-853783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED815BDC971
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:17:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76289BDC977
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C854B1922094
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:17:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF3684EA88D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DC5302148;
-	Wed, 15 Oct 2025 05:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D7F302749;
+	Wed, 15 Oct 2025 05:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KkQBWon8"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rx59igDn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFFA302153;
-	Wed, 15 Oct 2025 05:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202761DFE22;
+	Wed, 15 Oct 2025 05:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505443; cv=none; b=Zt8TMMs65TjRN2DbaXOT/dzNWJA8bNmjVk2Va2BIKcVlJtsXPXhdEqiq070YQvtCC+fwHI1YFimmdmSC0bfrzz2gbGiRy2yE5HzLNf+0EYnMES7zU9e3Svthn0yZkgeQ01JmzAe7ZutOeBOGPN7pgBuSM9Aks3mbe4Q1skq3jW0=
+	t=1760505622; cv=none; b=AK6TFwldlH9q5ZyIjnrywH4uloCx5zfDUBpoh8MNlj2BlPx5GkqB51HI2DFETA+o/By4j9ZKUr8gQKnqaI8ptzCEqhlFu3ZLbzrLS4PUKoBu5ZDjCDt1uuTJ5qzx+1gwkGpUb1TbIVcr3vIHP5fR6QMd5F2Rb8p+W/jhHuTIVEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505443; c=relaxed/simple;
-	bh=KBn1NI0MslRpwkIKjP85hfKxUr3ZH8ZbEaOfqOowPxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mo0jVgDnI7Uuqe7G9aaPaKOGzlK1M9OP+zQ4eDE7I3Ia+8xQ1WWC0RtLDGL7o+1R0gm2yP8N+9WA8e96AUsLSnx4CjvLClU3ytv3co4TcxP0Hlt7hcL7xGs7ja9yrCGX4z5M3ekC2y4kWicr15H11VFP6KTk1Ftiy/1VPudUIgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KkQBWon8; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59ELSglJ001958;
-	Wed, 15 Oct 2025 05:16:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=v3CUfn
-	qMmIPljFIbsPFL2OQA8vjZLUfTEyKegPKIrzo=; b=KkQBWon82D+wiaD1HlUFcS
-	sfNihuC/2JFjUGSLJU84CyOdTnos1wwW6AkZG1EDQP5ykhcOrBMysQc1yKOnY/9o
-	aZLjn0NZJhbQd35rw7LbuaIBROu9fm1SFETak86zp25dcLWN1ld9Rr6mIxBbhZ9l
-	7UqIiY10/mp7dYSVAEdsa+jLdp7c4eiCW8j7xoPHXwoGJKKr+hDvi7RofS1bEXQc
-	iU+lxe/mVXMXklDFQN1aIPPV/+cmga4ozVMP1P0kIfuCYB2aUyI2Dfgvstz/4y3a
-	+2mkej5nlyBhUkC57kLj9IddhXzx35CErSPOQ0vG7DZPk37pyZOrqWjvKgum78dg
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew01t18-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 05:16:58 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59F1sqO0003613;
-	Wed, 15 Oct 2025 05:16:58 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xxxrwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 05:16:58 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59F5Gjsq7209600
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 Oct 2025 05:16:46 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 980BD5805F;
-	Wed, 15 Oct 2025 05:16:57 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D01958051;
-	Wed, 15 Oct 2025 05:16:53 +0000 (GMT)
-Received: from [9.61.83.49] (unknown [9.61.83.49])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 Oct 2025 05:16:53 +0000 (GMT)
-Message-ID: <4b8aab6f-f341-49af-9ccb-d592e1a40fe5@linux.ibm.com>
-Date: Wed, 15 Oct 2025 10:46:51 +0530
+	s=arc-20240116; t=1760505622; c=relaxed/simple;
+	bh=lb8DEPjuEO/X+Y+/tZytyx3QgBM917fmrE4/Glvc+Xk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ISXKlUWy/khyOF5PmLRN0uRe//mxeJNzxAm6XAoDbo13yWLpxWoU/ivW+lSxZVnH2qlVee8NHaBaIIhzbMyUQj7j+wQuXZFRw7KHy9hk+WKZKK+VY0AUaB53l03EM0gSE/pibQH5/G2z2emLhGXcUfWWAC16mhcQLfCvM4biu2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rx59igDn; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760505620; x=1792041620;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lb8DEPjuEO/X+Y+/tZytyx3QgBM917fmrE4/Glvc+Xk=;
+  b=Rx59igDnn4heSbqgN9UNuf8Vrg2Lr8eMm2UB3KVp9oP+zcNGYqgurNvr
+   66dBhe6H1jR3FD68xutxF4rMV1JH3uKxJhlwJyaFMrKk+bgXs0B4dLxOY
+   nfZ3Q0gapfY3WdGZfsY0s/oqhdm07MuOFARRmSKu+GNlLGHaCfPKB4VN0
+   VvjYi+n1/t9k8/pf2b7xPRLguFsztrTSDWnZW3YNHQlPRaiaw8Aq6g5vD
+   61H6gOGkPxZgGuh2031pZNc3D+QNRhFoWIRomWeiiK2AsLWXNv3NivbsE
+   shLzsL0dkn7vjh4JE0Me6b8aHa7cPRG+Grg/RPXzbiFBBwbj9fhBD12e0
+   g==;
+X-CSE-ConnectionGUID: ThVmTQfJSpahl9Sf+fYyfg==
+X-CSE-MsgGUID: d0RF9Md9TPSEjd5skxaBpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62823445"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="62823445"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:20:19 -0700
+X-CSE-ConnectionGUID: GM4uPHDVRjaRnLyK8DLq2w==
+X-CSE-MsgGUID: RxORUPVbQDmy6x3AcBs8qQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182503930"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Oct 2025 22:20:16 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Octavia Togami <octavia.togami@gmail.com>
+Subject: [PATCH] perf: Fix system hang caused by cpu-clock
+Date: Wed, 15 Oct 2025 13:18:28 +0800
+Message-Id: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] blk-rq-qos: fix possible deadlock
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <hailan@yukuai.org.cn>
-Cc: Yu Kuai <yukuai3@huawei.com>, tj@kernel.org, josef@toxicpanda.com,
-        axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com,
-        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20251014022149.947800-1-yukuai3@huawei.com>
- <d4fe218b-9fc5-4466-ac56-0d4c5a8ccd96@linux.ibm.com>
- <e5e7ac3f-2063-473a-aafb-4d8d43e5576e@yukuai.org.cn>
- <aO78EFfuT_o5Gcng@fedora>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <aO78EFfuT_o5Gcng@fedora>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ON7qE31g4JazAWBRM_nHlsyVuuSpgzFm
-X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68ef2e4a cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=MnOlfWbweaj5Mct8PNcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=HhbK4dLum7pmb74im6QT:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=pHzHmUro8NiASowvMSCR:22
- a=Ew2E2A-JSTLzCXPT_086:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX6Y/eZd3s/iP7
- cJKOKvSctiN2l7z6DubL1XW5Ir+Q2XalnSU5Lql4o9Gvd3MkI0CUjFkzcbuVR8eqKyTI1+SliMo
- fZsP3Hxa4mHuxpqXVO3zPzsxVV1+z8PUZz2Og0VJVjmUpWuqmq+E8GKVKuONkXl3nVnMDzgoa3G
- t8HIUBYJGIesjdqIdvcwJoVMBJ2YDAakLZfP7t5Job0nhraCBN17Dfs2Nt9bNA38UNTsFnx8ZPD
- a9zuhy8W0VaIQBq9bTpTKrpt2PsdHVQzQJLJjlntxP7q3UKTZ6jyHTVUZuCrEmBqYZLFqMptZLO
- 20/YSlQWPm3hOijK+NS1JtfTYYklFnDVq2cVWnOpw1G37lYIA4qvD+JHmvctc93W9pMvG0tJuAN
- wNojyxcF4xDX17CR/4QP4OR5RVDhMw==
-X-Proofpoint-GUID: ON7qE31g4JazAWBRM_nHlsyVuuSpgzFm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
- phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
+A system hang issue caused by cpu-clock is reported and bisection
+indicates the commit 18dbcbfabfff ("perf: Fix the POLL_HUP delivery
+ breakage") causes this issue.
 
+The root cause of the hang issue is that cpu-clock is a specific SW
+event which relies on the hrtimer. The __perf_event_overflow()
+is invoked from the hrtimer handler for cpu-clock event, and
+__perf_event_overflow() tries to call event stop callback
+(cpu_clock_event_stop()) to stop the event, and cpu_clock_event_stop()
+calls htimer_cancel() to cancel the hrtimer. But unfortunately the
+hrtimer callback is currently executing and then traps into deadlock.
 
-On 10/15/25 7:12 AM, Ming Lei wrote:
-> On Tue, Oct 14, 2025 at 07:14:16PM +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/10/14 18:58, Nilay Shroff 写道:
->>>
->>> On 10/14/25 7:51 AM, Yu Kuai wrote:
->>>> Currently rq-qos debugfs entries is created from rq_qos_add(), while
->>>> rq_qos_add() requires queue to be freezed. This can deadlock because
->>>>
->>>> creating new entries can trigger fs reclaim.
->>>>
->>>> Fix this problem by delaying creating rq-qos debugfs entries until
->>>> it's initialization is complete.
->>>>
->>>> - For wbt, it can be initialized by default of by blk-sysfs, fix it by
->>>>    delaying after wbt_init();
->>>> - For other policies, they can only be initialized by blkg configuration,
->>>>    fix it by delaying to blkg_conf_end();
->>>>
->>>> Noted this set is cooked on the top of my other thread:
->>>> https://lore.kernel.org/all/20251010091446.3048529-1-yukuai@kernel.org/
->>>>
->>>> And the deadlock can be reporduced with above thead, by running blktests
->>>> throtl/001 with wbt enabled by default. While the deadlock is really a
->>>> long term problem.
->>>>
->>> While freezing the queue we also mark GFP_NOIO scope, so doesn't that
->>> help avoid fs-reclaim? Or maybe if you can share the lockdep splat
->>> encountered running throtl/001?
->>
->> Yes, we can avoid fs-reclaim if queue is freezing, however,
->> because debugfs is a generic file system, and we can't avoid fs reclaim from
->> all context. There is still
->>
->> Following is the log with above set and wbt enabled by default, the set acquire
->> lock order by:
->>
->> freeze queue -> elevator lock -> rq_qos_mutex -> blkcg_mutex
->>
->> However, fs-reclaim from other context cause the deadlock report.
->>
->>
->> [   45.632372][  T531] ======================================================
->> [   45.633734][  T531] WARNING: possible circular locking dependency detected
->> [   45.635062][  T531] 6.17.0-gfd4a560a0864-dirty #30 Not tainted
->> [   45.636220][  T531] ------------------------------------------------------
->> [   45.637587][  T531] check/531 is trying to acquire lock:
->> [   45.638626][  T531] ffff9473884382b0 (&q->rq_qos_mutex){+.+.}-{4:4}, at: blkg_
->> conf_start+0x116/0x190
->> [   45.640416][  T531]
->> [   45.640416][  T531] but task is already holding lock:
->> [   45.641828][  T531] ffff9473884385d8 (&q->elevator_lock){+.+.}-{4:4}, at: blkg
->> _conf_start+0x108/0x190
->> [   45.643322][  T531]
->> [   45.643322][  T531] which lock already depends on the new lock.
->> [   45.643322][  T531]
->> [   45.644862][  T531]
->> [   45.644862][  T531] the existing dependency chain (in reverse order) is:
->> [   45.646046][  T531]
->> [   45.646046][  T531] -> #5 (&q->elevator_lock){+.+.}-{4:4}:
->> [   45.647052][  T531]        __mutex_lock+0xd3/0x8d0
->> [   45.647716][  T531]        blkg_conf_start+0x108/0x190
->> [   45.648395][  T531]        tg_set_limit+0x74/0x300
->> [   45.649046][  T531]        kernfs_fop_write_iter+0x14a/0x210
->> [   45.649813][  T531]        vfs_write+0x29e/0x550
->> [   45.650413][  T531]        ksys_write+0x74/0xf0
->> [   45.651032][  T531]        do_syscall_64+0xbb/0x380
->> [   45.651730][  T531] entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Not sure why elevator lock is grabbed in throttle code, which looks a elevator lock
-> misuse, what does the elevator try to protect here?
-> 
-> The comment log doesn't explain the usage too:
-> 
-Lets go back to the history:
-The ->elevator_lock was first added in the wbt code path under this commit 
-245618f8e45f ("block: protect wbt_lat_usec using q->elevator_lock"). It was
-introduced to protect the wbt latency and state updates which could be 
-simultaneously accessed from elevator switch path and from sysfs write method
-(queue_wb_lat_store()) as well as from cgroup (ioc_qos_write()).
+To avoid this deadlock, use hrtimer_try_to_cancel() instead of
+hrtimer_cancel() to cancel the hrtimer, and set PERF_HES_STOPPED flag
+for the stopping events. perf_swevent_hrtimer() would stop the event
+hrtimer once it detects the PERF_HES_STOPPED flag.
 
-Later above change caused a lockdep splat and then we updated the code 
-to fix locking order between ->freeze_lock, ->elevator_lock and ->rq_qos_mutex
-and that was implemented in this commit 9730763f4756 ("block: correct locking
-order for protecting blk-wbt parameters"). With this change we set the 
-locking order as follows: 
-->freeze_lock ->elevator_lock ->rq_qos_mutex
+Reported-by: Octavia Togami <octavia.togami@gmail.com>
+Closes: https://lore.kernel.org/all/CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com/
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Fixes: 18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage")
+Tested-by: Octavia Togami <octavia.togami@gmail.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+ kernel/events/core.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-Then later on under this commit 78c271344b6f ("block: move wbt_enable_default()
-out of queue freezing from sched ->exit()") we moved the wbt latency/stat
-update code out of the ->freeze_lock and ->elevator_lock from elevator switch
-path. So essentially with this commit now in theory we don't need to acquire
-->elevator_lock while updating wbt latency/stat values. In fact, we also removed
-->elevator_lock  from queue_wb_lat_store() in this commit but I think we missed
-to remove ->elevator_lock from cgroup (ioc_qos_write()). 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7541f6f85fcb..f90105d5f26a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11773,7 +11773,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
+ 
+ 	event = container_of(hrtimer, struct perf_event, hw.hrtimer);
+ 
+-	if (event->state != PERF_EVENT_STATE_ACTIVE)
++	if (event->state != PERF_EVENT_STATE_ACTIVE ||
++	    event->hw.state & PERF_HES_STOPPED)
+ 		return HRTIMER_NORESTART;
+ 
+ 	event->pmu->read(event);
+@@ -11819,15 +11820,18 @@ static void perf_swevent_cancel_hrtimer(struct perf_event *event)
+ 	struct hw_perf_event *hwc = &event->hw;
+ 
+ 	/*
+-	 * The throttle can be triggered in the hrtimer handler.
+-	 * The HRTIMER_NORESTART should be used to stop the timer,
+-	 * rather than hrtimer_cancel(). See perf_swevent_hrtimer()
++	 * The event stop can be triggered in the hrtimer handler.
++	 * So use hrtimer_try_to_cancel() instead of hrtimer_cancel()
++	 * to stop the hrtimer() to avoid trapping into a dead loop.
++	 * Simultaneously the event would be set PERF_HES_STOPPED flag,
++	 * perf_swevent_hrtimer() would stop the event hrtimer once it
++	 * detects the PERF_HES_STOPPED flag.
+ 	 */
+ 	if (is_sampling_event(event) && (hwc->interrupts != MAX_INTERRUPTS)) {
+ 		ktime_t remaining = hrtimer_get_remaining(&hwc->hrtimer);
+ 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
+ 
+-		hrtimer_cancel(&hwc->hrtimer);
++		hrtimer_try_to_cancel(&hwc->hrtimer);
+ 	}
+ }
+ 
+@@ -11871,12 +11875,14 @@ static void cpu_clock_event_update(struct perf_event *event)
+ 
+ static void cpu_clock_event_start(struct perf_event *event, int flags)
+ {
++	event->hw.state = 0;
+ 	local64_set(&event->hw.prev_count, local_clock());
+ 	perf_swevent_start_hrtimer(event);
+ }
+ 
+ static void cpu_clock_event_stop(struct perf_event *event, int flags)
+ {
++	event->hw.state = PERF_HES_STOPPED;
+ 	perf_swevent_cancel_hrtimer(event);
+ 	if (flags & PERF_EF_UPDATE)
+ 		cpu_clock_event_update(event);
+@@ -11950,12 +11956,14 @@ static void task_clock_event_update(struct perf_event *event, u64 now)
+ 
+ static void task_clock_event_start(struct perf_event *event, int flags)
+ {
++	event->hw.state = 0;
+ 	local64_set(&event->hw.prev_count, event->ctx->time);
+ 	perf_swevent_start_hrtimer(event);
+ }
+ 
+ static void task_clock_event_stop(struct perf_event *event, int flags)
+ {
++	event->hw.state = PERF_HES_STOPPED;
+ 	perf_swevent_cancel_hrtimer(event);
+ 	if (flags & PERF_EF_UPDATE)
+ 		task_clock_event_update(event, event->ctx->time);
 
-> 
-> I think it is still order issue between queue freeze and q->rq_qos_mutex
-> first, which need to be solved first.
-> 
-So yes we should first target to get rid off the use of ->elevator_lock
-from ioc_qos_write(). Later we can decide on locking order between
-->freeze_lock, ->rq_qos_mutex and ->debugfs_mutex. 
-
-Thanks,
---Nilay
-
-
-
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.34.1
 
 
