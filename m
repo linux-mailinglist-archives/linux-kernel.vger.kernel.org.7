@@ -1,342 +1,276 @@
-Return-Path: <linux-kernel+bounces-853724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA77BDC6F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1AEBDC6FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F9D1924C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEB33B8BA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BD92F1FDB;
-	Wed, 15 Oct 2025 04:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4DE2E8E04;
+	Wed, 15 Oct 2025 04:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iaZyFl+U"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PCt+019X"
+Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com [209.85.214.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0142DE1E4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E74B1DFE22
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760501523; cv=none; b=DRCQF1XJY6FNqUmjDuKG3Bq/ZJwG/yqiUMUbKuYJiav9BVav3mGPVfSXwkgOpb5PQIEpRt+JH+oQ4XBOJCOexIxOlxhmpWybNohGdnflPLnY2HU7BIlHUNNPZa0ji+ntmKpgyowxF8CLrnPhe6fxBfFjVFU8AlieJvgj9Le6IDw=
+	t=1760501739; cv=none; b=gYijQyEQdwizhClxMM6LfeIoJ25GZF8egIvW4ZJGak1EVy4+UYJF+U8HvQA3FmBpeCtp6W5R+inOdkU4vVZbbfpCV+2PtxNuOThhnzjkz8+MV+ZMMeMmTahZDOZq3k5St+LvHQaUafLg+rRxUoY+tllWkgykUFjSZrnTAuCeYhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760501523; c=relaxed/simple;
-	bh=3aezUMPvQFpq1U+cW4DsMSQzxrvfO6B4WxS2uYIK4FE=;
+	s=arc-20240116; t=1760501739; c=relaxed/simple;
+	bh=xGR3PJwkScUQHOonO6YlHOjQGfm0KNqk04kmdHPc23M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L8UVTyktCDYdgD0r9rvCsKN3WXgXRi4mACkgzyQ6k/4Fo4gCN6G9KEvY5gNqEZrzOgBNpJawGFn54IyU5XOHcQu7HpUj9VDc0UKKYcpzXRDmMwpEgeqzUI8CopN0obQ1w9IA3NjeJNcabEXnUgBcUf3QfK9yYQSZqCX/fiAAgPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iaZyFl+U; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-43fb60c5f75so1188348b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760501519; x=1761106319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ee/uLZ22R8yUcyezN/3VYpGFoULdJ/79+GYW7D3DpvI=;
-        b=iaZyFl+UIYoJf+194awlh4sWpviBdzbCQb0aotTbxFj0Ell4N6/f2+l0pywBoj+Ihw
-         Mw6qv1/NVy/HgFqTXwgqV73el2D7RZ7wdn/Ncgvr3YWOdBhvhf/jX0nNgGBCd+2dmXWR
-         oGXf+zvv8mBFNITFBlI86XZX6TbGvQj9tgRYWa74aeeXfvRziV4AgQauOIhBRjSsRmnh
-         kPUf1TlAQQlSTr4ocpmF5i7eZNWrd50K1CMgr+9JBl7q+9CxSUHLrIs+9urAYUIgc3Fc
-         vRpLVq/BWdI5LZ8pSTQQBcZDcWh/4tSIHx4RJ/zlnLIYOhS8nKky/j+facM5WXkkzqNK
-         p1tg==
+	 To:Cc:Content-Type; b=VjWnggwhTtoN86UApZdHcUBnlqPOPxoafIqnYXG/X3sJdQMxVuDMdykZV0JcpXKeiVC0hv0aywWtCCkwS/s9w1AjulAGD/MbrDSsBMCL3+7j95DwyQfm5cbh8b08QCj47zxWHyNo2QoKoNI/7GbNH+ebsg2FRXjw92JirWTHeXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PCt+019X; arc=none smtp.client-ip=209.85.214.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f227.google.com with SMTP id d9443c01a7336-2907948c1d2so21896235ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:15:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760501519; x=1761106319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ee/uLZ22R8yUcyezN/3VYpGFoULdJ/79+GYW7D3DpvI=;
-        b=IfGW+TRhDNE9ABSx4JsBF5URKnXeF91wx5Jn1NLE3DbwsaDog+dcaJFwOV3cJfYOeP
-         o9ih2bsRBXw/S1eNwOWCjLLyHpE5rLZ/H+QHy3iTyyu4rBqQQZ0GYQ2gr6tdU+w32qPX
-         B9LxobS8w9VodJ5Zx2JMwnnZz2ULSOLQFm8ij+GaMDc5I0M6inzJZ88aRodes3QOG92B
-         mAbsAEuRvay9rc7KFwC3f28s/5/8mGJg/lTqONDXiiSJkSTdBX5s7whdFnnFGKQcKC5C
-         hWwCGhvICGqfZklYEFI7Dtpg140iG1ooqPSRiPhfjSSagDX4tViAOL0KE2dmCQFguK1W
-         Df8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZn8R3nTd+NTEhM8VErySFUXyGo4OtoYMkqZR1Q7uAiwVo2Jbazq+8OfmG+DOIn5tFlCeO5qhlRU4Io60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnPMWAZ9g29D0bLlHDUy442UGqrqDNo6jQY9TQ/LbnpnR/lh+G
-	zYwqMDGG3pm8nzNKzs6TrOqQHOqgt/Y1LMFGy94+6FBP28sLh/hzoSohXsVG9Ze2GcD1iWO1zOr
-	i7RDLMGkZ3+i3ayMQ2IStCmcj4+e1lT9l3SFZJW49
-X-Gm-Gg: ASbGncvO/KLhIDlb2BiQUU1INHOvOZO+mTDI9/1WKxnxmy5Nz1Pl4FT5yoS52jlA7tl
-	joLfkQv/1Vk9Z213W3gzAY4V/nf3YY/v+NMUXizDO09DKBcUGwgybC8LJjXKPm8L84wmF6R80a3
-	sIVeyh9hjA1DjTWvCskCnnro/Xo5SqnBaQKi7KVZnHNKLqMrJTUVTzrOpuBBlZhTCKPbgd0fIBd
-	g6DpIncpnkoqVj7XtPA32drSj/c4jL3KaZg2zBhoBAU+JWiVjgG4VFL1pFXrkFtr7DXKVXTLQ==
-X-Google-Smtp-Source: AGHT+IHrprG5RaNI8hm+Vn3v7lBRDhd2kOfjtowRr+cXme5az+TAz9o3ncG95bx1kbJOhzxcWoV92MmCmJLvQdcJ0o4=
-X-Received: by 2002:a05:6808:e83:b0:441:8f74:e85 with SMTP id
- 5614622812f47-4418f74275fmr9422350b6e.63.1760501518921; Tue, 14 Oct 2025
- 21:11:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760501737; x=1761106537;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=i9IWWHhprMFPWLWhwLUKKAl0GC/xvZmwkhKQlZ1UySE=;
+        b=iE8IUCN3rlkbUg8p8elt5MyBJKVM3ixJvzKjEWLiGUk5W13Lm4/jYkJeBbeDeusm7Y
+         z0Hze5lWPJp4XWBGEqIQ6f4unQaoH1ib2rHCSibPpGHLNnBYhmOjv/NoxM3p4lvBuuM3
+         yNsBdFK8R0YvDH86ki++TT5MQvjK3MQI/nK443fP0gJX2/qFG9nSUzY5KK/v4z1mMPnr
+         hlO6CmS7uQUhahMNT/1zaCkb24K7tFTjpN3pFFunXlzLXJSt076eekY8BasHXIQGS69C
+         lLBUs4noFT0zkUvRdJGebVMrNrAiOF0vH3ewloVafuxvDEyMpzYtK+tz2XVvDXeDbUDJ
+         D/Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYyNVA9XifYrabj+PuU+GsFsIalZoBrRjCVyMm8M3PXxSZQ1l9KAm19prB0JG0MfM0Zahf+roi2M35U9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnH2VlskFFqgUpiwOv98KCx1ofnsLHEPH6jvKuk8WVnjKKhMuw
+	Yrq+zor3chue3iLWRqkYRxeaYtCdK7jC9TaHKjnZlIRHXXorFchSUqJXi5INTXOjat9M3gKNpN+
+	RRW0KrZanEiaWvpVJSSiHOiN/YHMPAm8ppco5erdUSDjt297Ge3YCvtYEgecxOS6cYS82RHYajc
+	Gcr7IwT6wZKeeA/pvyabnU2pWfixdAt2ZurlA7xuAQj9V+zFoqoa/loKAkHalvFOzXyUO6YcXZE
+	HgrR3sHsCnHkZfOGYc=
+X-Gm-Gg: ASbGnct2EXf0Uw93xA/fev8jKj8ggVjCVy48Hx0Ielt/r8jul48yqbo6e6kVYrkeXx0
+	mJxT0i8Ge+MVJH7FrgHZxdOo9dKfAxXOGx5V84IaIE07dBKGqATDlTJQPcnNCRFdPGWMmp7SSOF
+	WFG+23ihuX64Hf1goaRu9Iwi28Llud3fvYhVmhQdE+TNfpblKNqeRRcOwyict958kUmBgkMhR8B
+	nJ3AOcqRbIWZf8lcyluSmMEjamntmz49vzN50d3r3oA74pQMMdt6AEtn9B85bT9opKtHM8zfN3Q
+	LL2waynRCgzRZigx+Z4/X24pM78/tI04rdhcoXm2c0OmdWhRvBPco8cmrekNwvK1YXfDngtzE1q
+	gknqoGhW2j8k9MiG2zaifZwxX3WRF/WyGCeSWoBgd29RhK/s5UnNHzEBHZNKh3LHOuC+e8Vggqd
+	EvSg==
+X-Google-Smtp-Source: AGHT+IG8IFFj4qLcblkLLpQD69z/p4x2TY3QpejLG8vRzeMyHePPlSNm6aaLuwjhayHfe2KWBOiXbc1+2dv4
+X-Received: by 2002:a17:903:94f:b0:27e:c27f:b834 with SMTP id d9443c01a7336-290272f7e6fmr360750075ad.56.1760501737414;
+        Tue, 14 Oct 2025 21:15:37 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29034df0dd6sm15701925ad.8.2025.10.14.21.15.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Oct 2025 21:15:37 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29053c82f8fso76641215ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:15:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1760501736; x=1761106536; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9IWWHhprMFPWLWhwLUKKAl0GC/xvZmwkhKQlZ1UySE=;
+        b=PCt+019X5CUyDSlS9I5LjfPeCNKU817HyFaJbq2VYe4NBlvrSB78WmFNmCNXlxH5Zj
+         5h7f0Y4wDqAovCLpeFK4STkriW1E/1IH9Y0yoLbMC8AHWgKOW78+/B3RM/Ll3+mz084W
+         RoRNDo+QDb30j3RgHUrAeYoqLgvkYN6Mwh+8Q=
+X-Forwarded-Encrypted: i=1; AJvYcCXi/nNUxutJ9WhIzmbMuh3a0gQBgNdehtvGuECS6wB8vkQM96viPVSzxU9xIJEL9gFg/VSJbi/0r/pxkss=@vger.kernel.org
+X-Received: by 2002:a17:903:3c68:b0:246:80b1:8c87 with SMTP id d9443c01a7336-290272dfb4fmr334680495ad.43.1760501735637;
+        Tue, 14 Oct 2025 21:15:35 -0700 (PDT)
+X-Received: by 2002:a17:903:3c68:b0:246:80b1:8c87 with SMTP id
+ d9443c01a7336-290272dfb4fmr334680225ad.43.1760501735239; Tue, 14 Oct 2025
+ 21:15:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015040607.3005975-1-badhri@google.com> <20251015040607.3005975-2-badhri@google.com>
-In-Reply-To: <20251015040607.3005975-2-badhri@google.com>
-From: Badhri Jagan Sridharan <badhri@google.com>
-Date: Tue, 14 Oct 2025 21:11:22 -0700
-X-Gm-Features: AS18NWCihkB7XIPGMyRBhu6dr6bKmikGXczFPtU_OQbIRiqsASJZpytv_ZIfAVc
-Message-ID: <CAPTae5+sAAj+j1Ob=Xy93rbs21SiSkKm0gHLmF0kxue_HoOGuQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] usb: typec: pd: Register SPR AVS caps with
- usb_power_delivery class
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
-	badhri@google.com
-Cc: amitsd@google.com, kyletso@google.com, rdbabiera@google.com, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20251014164736.5890-1-bigalex934@gmail.com>
+In-Reply-To: <20251014164736.5890-1-bigalex934@gmail.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Wed, 15 Oct 2025 09:45:23 +0530
+X-Gm-Features: AS18NWAV5Vn9RHYJmX-BnhpIC6ONHWP2lvrrRC0RFSN8dykniWsKO-sQEdwee00
+Message-ID: <CALs4sv0KUtxAK2vPh5rOsPG5xpBv3tG979V2KL+ncKh7KYsy1g@mail.gmail.com>
+Subject: Re: [PATCH net v2] tg3: prevent use of uninitialized remote_adv and
+ local_adv variables
+To: Alexey Simakov <bigalex934@gmail.com>
+Cc: Michael Chan <mchan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Nithin Nayak Sujir <nsujir@broadcom.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org, Alexandr Sapozhnikov <alsp705@gmail.com>
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000099ce3006412ac0dd"
+
+--00000000000099ce3006412ac0dd
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 9:06=E2=80=AFPM Badhri Jagan Sridharan
-<badhri@google.com> wrote:
+On Tue, Oct 14, 2025 at 10:18=E2=80=AFPM Alexey Simakov <bigalex934@gmail.c=
+om> wrote:
 >
-> usb_power_delivery class will now display AVS cap as
-> `spr_adjustable_voltage_supply`. `maximum_current_9V_to_15V` and
-> `maximum_current_15V_to_20V` shows the corresponding current limits
-> in mA. `peak_current` follows the same convention as fixed_supply
-> where the value reported in the capabilities message is displayed
-> as is.
+> Some execution paths that jump to the fiber_setup_done label
+> could leave the remote_adv and local_adv variables uninitialized
+> and then use it.
 >
-> Sample output with an SPR AVS capable PD charger:
-> $cat /sys/class/usb_power_delivery/pd1/source-capabilities/5:spr_adjustab=
-le_voltage_supply/maximum_current_9V_to_15V
-> 4000mA
+> Initialize this variables at the point of definition to avoid this.
 >
-> $cat /sys/class/usb_power_delivery/pd1/source-capabilities/5:spr_adjustab=
-le_voltage_supply/maximum_current_15V_to_20V
-> 3350mA
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 >
-> $cat /sys/class/usb_power_delivery/pd1/source-capabilities/5:spr_adjustab=
-le_voltage_supply/peak_current
-> 0
->
-> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+> Fixes: 85730a631f0c ("tg3: Add SGMII phy support for 5719/5718 serdes")
+> Co-developed-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+> Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+
+LGTM.
+Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
+
 > ---
->  .../testing/sysfs-class-usb_power_delivery    | 28 ++++++
->  drivers/usb/typec/pd.c                        | 95 ++++++++++++++++++-
->  drivers/usb/typec/tcpm/tcpm.c                 |  2 +-
->  3 files changed, 119 insertions(+), 6 deletions(-)
 >
-> diff --git a/Documentation/ABI/testing/sysfs-class-usb_power_delivery b/D=
-ocumentation/ABI/testing/sysfs-class-usb_power_delivery
-> index 61d233c320ea..c754458a527e 100644
-> --- a/Documentation/ABI/testing/sysfs-class-usb_power_delivery
-> +++ b/Documentation/ABI/testing/sysfs-class-usb_power_delivery
-> @@ -254,3 +254,31 @@ Contact:   Heikki Krogerus <heikki.krogerus@linux.in=
-tel.com>
->  Description:
->                 The PPS Power Limited bit indicates whether or not the so=
-urce
->                 supply will exceed the rated output power if requested.
-> +
-> +Standard Power Range (SPR) Adjustable Voltage Supplies
-> +
-> +What:          /sys/class/usb_power_delivery/.../<capability>/<position>=
-:spr_adjustable_voltage_supply
-> +Date:          Oct 2025
-> +Contact:       Badhri Jagan Sridharan <badhri@google.com>
-> +Description:
-> +               Adjustable Voltage Supply (AVS) Augmented PDO (APDO).
-> +
-> +What:          /sys/class/usb_power_delivery/.../<capability>/<position>=
-:spr_adjustable_voltage_supply/maximum_current_9V_to_15V
-> +Date:          Oct 2025
-> +Contact:       Badhri Jagan Sridharan <badhri@google.com>
-> +Description:
-> +               Maximum Current for 9V to 15V range in milliamperes.
-> +
-> +What:          /sys/class/usb_power_delivery/.../<capability>/<position>=
-:spr_adjustable_voltage_supply/maximum_current_15V_to_20V
-> +Date:          Oct 2025
-> +Contact:       Badhri Jagan Sridharan <badhri@google.com>
-> +Description:
-> +               Maximum Current for greater than 15V till 20V range in
-> +               milliamperes.
-> +
-> +What:          /sys/class/usb_power_delivery/.../<capability>/<position>=
-:spr_adjustable_voltage_supply/peak_current
-> +Date:          Oct 2025
-> +Contact:       Badhri Jagan Sridharan <badhri@google.com>
-> +Description:
-> +               This file shows the value of the Adjustable Voltage Suppl=
-y Peak Current
-> +               Capability field.
-> diff --git a/drivers/usb/typec/pd.c b/drivers/usb/typec/pd.c
-> index d78c04a421bc..67f20b5ffdf4 100644
-> --- a/drivers/usb/typec/pd.c
-> +++ b/drivers/usb/typec/pd.c
-> @@ -359,6 +359,84 @@ static const struct device_type sink_pps_type =3D {
->         .groups =3D sink_pps_groups,
->  };
+> v2 - remove bogus lines with initialization of variables in function,
+> since its initialized at definition point now.
 >
-> +/* ---------------------------------------------------------------------=
------ */
-> +/* Standard Power Range (SPR) Adjustable Voltage Supply (AVS) */
-> +
-> +static ssize_t
-> +spr_avs_9v_to_15v_max_current_show(struct device *dev,
-> +                                  struct device_attribute *attr, char *b=
-uf)
-> +{
-> +       return sysfs_emit(buf, "%umA\n",
-> +                         pdo_spr_avs_apdo_9v_to_15v_max_current_ma(to_pd=
-o(dev)->pdo));
-> +}
-> +
-> +static ssize_t
-> +spr_avs_15v_to_20v_max_current_show(struct device *dev,
-> +                                   struct device_attribute *attr, char *=
-buf)
-> +{
-> +       return sysfs_emit(buf, "%umA\n",
-> +                         pdo_spr_avs_apdo_15v_to_20v_max_current_ma(to_p=
-do(dev)->pdo));
-> +}
-> +
-> +static ssize_t
-> +spr_avs_src_peak_current_show(struct device *dev,
-> +                             struct device_attribute *attr, char *buf)
-> +{
-> +       return sysfs_emit(buf, "%u\n",
-> +                         pdo_spr_avs_apdo_src_peak_current(to_pdo(dev)->=
-pdo));
-> +}
-> +
-> +static struct device_attribute spr_avs_9v_to_15v_max_current_attr =3D {
-> +       .attr =3D {
-> +               .name =3D "maximum_current_9V_to_15V",
-> +               .mode =3D 0444,
-> +       },
-> +       .show =3D spr_avs_9v_to_15v_max_current_show,
-> +};
-> +
-> +static struct device_attribute spr_avs_15v_to_20v_max_current_attr =3D {
-> +       .attr =3D {
-> +               .name =3D "maximum_current_15V_to_20V",
-> +               .mode =3D 0444,
-> +       },
-> +       .show =3D spr_avs_15v_to_20v_max_current_show,
-> +};
-> +
-> +static struct device_attribute spr_avs_src_peak_current_attr =3D {
-> +       .attr =3D {
-> +               .name =3D "peak_current",
-> +               .mode =3D 0444,
-> +       },
-> +       .show =3D spr_avs_src_peak_current_show,
-> +};
-> +
-> +static struct attribute *source_spr_avs_attrs[] =3D {
-> +       &spr_avs_9v_to_15v_max_current_attr.attr,
-> +       &spr_avs_15v_to_20v_max_current_attr.attr,
-> +       &spr_avs_src_peak_current_attr.attr,
-> +       NULL
-> +};
-> +ATTRIBUTE_GROUPS(source_spr_avs);
-> +
-> +static const struct device_type source_spr_avs_type =3D {
-> +       .name =3D "pdo",
-> +       .release =3D pdo_release,
-> +       .groups =3D source_spr_avs_groups,
-> +};
-> +
-> +static struct attribute *sink_spr_avs_attrs[] =3D {
-> +       &spr_avs_9v_to_15v_max_current_attr.attr,
-> +       &spr_avs_15v_to_20v_max_current_attr.attr,
-> +       NULL
-> +};
-> +ATTRIBUTE_GROUPS(sink_spr_avs);
-> +
-> +static const struct device_type sink_spr_avs_type =3D {
-> +       .name =3D "pdo",
-> +       .release =3D pdo_release,
-> +       .groups =3D sink_spr_avs_groups,
-> +};
-> +
->  /* ---------------------------------------------------------------------=
------ */
+> link to v1: https://lore.kernel.org/netdev/20251002091224.11-1-alsp705@gm=
+ail.com/
 >
->  static const char * const supply_name[] =3D {
-> @@ -368,7 +446,8 @@ static const char * const supply_name[] =3D {
->  };
+>  drivers/net/ethernet/broadcom/tg3.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 >
->  static const char * const apdo_supply_name[] =3D {
-> -       [APDO_TYPE_PPS]  =3D "programmable_supply",
-> +       [APDO_TYPE_PPS]      =3D "programmable_supply",
-> +       [APDO_TYPE_SPR_AVS]  =3D "spr_adjustable_voltage_supply",
->  };
+> diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/b=
+roadcom/tg3.c
+> index 7f00ec7fd7b9..d78cafdb2094 100644
+> --- a/drivers/net/ethernet/broadcom/tg3.c
+> +++ b/drivers/net/ethernet/broadcom/tg3.c
+> @@ -5803,7 +5803,7 @@ static int tg3_setup_fiber_mii_phy(struct tg3 *tp, =
+bool force_reset)
+>         u32 current_speed =3D SPEED_UNKNOWN;
+>         u8 current_duplex =3D DUPLEX_UNKNOWN;
+>         bool current_link_up =3D false;
+> -       u32 local_adv, remote_adv, sgsr;
+> +       u32 local_adv =3D 0, remote_adv =3D 0, sgsr;
 >
->  static const struct device_type *source_type[] =3D {
-> @@ -378,7 +457,8 @@ static const struct device_type *source_type[] =3D {
->  };
+>         if ((tg3_asic_rev(tp) =3D=3D ASIC_REV_5719 ||
+>              tg3_asic_rev(tp) =3D=3D ASIC_REV_5720) &&
+> @@ -5944,9 +5944,6 @@ static int tg3_setup_fiber_mii_phy(struct tg3 *tp, =
+bool force_reset)
+>                 else
+>                         current_duplex =3D DUPLEX_HALF;
 >
->  static const struct device_type *source_apdo_type[] =3D {
-> -       [APDO_TYPE_PPS]  =3D &source_pps_type,
-> +       [APDO_TYPE_PPS]     =3D &source_pps_type,
-> +       [APDO_TYPE_SPR_AVS] =3D &source_spr_avs_type,
->  };
+> -               local_adv =3D 0;
+> -               remote_adv =3D 0;
+> -
+>                 if (bmcr & BMCR_ANENABLE) {
+>                         u32 common;
 >
->  static const struct device_type *sink_type[] =3D {
-> @@ -388,7 +468,8 @@ static const struct device_type *sink_type[] =3D {
->  };
->
->  static const struct device_type *sink_apdo_type[] =3D {
-> -       [APDO_TYPE_PPS]  =3D &sink_pps_type,
-> +       [APDO_TYPE_PPS]     =3D &sink_pps_type,
-> +       [APDO_TYPE_SPR_AVS] =3D &sink_spr_avs_type,
->  };
->
->  /* REVISIT: Export when EPR_*_Capabilities need to be supported. */
-> @@ -407,8 +488,12 @@ static int add_pdo(struct usb_power_delivery_capabil=
-ities *cap, u32 pdo, int pos
->         p->object_position =3D position;
->
->         if (pdo_type(pdo) =3D=3D PDO_TYPE_APDO) {
-> -               /* FIXME: Only PPS supported for now! Skipping others. */
-> -               if (pdo_apdo_type(pdo) > APDO_TYPE_PPS) {
-> +               /*
-> +                * FIXME: Only PPS, SPR_AVS supported for now!
-> +                * Skipping others.
-> +                */
-> +               if (pdo_apdo_type(pdo) !=3D APDO_TYPE_PPS &&
-> +                   pdo_apdo_type(pdo) !=3D APDO_TYPE_SPR_AVS) {
->                         dev_warn(&cap->dev, "Unknown APDO type. PDO 0x%08=
-x\n", pdo);
->                         kfree(p);
->                         return 0;
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.=
-c
-> index 6e6c27df3c2e..c65aa8104950 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -831,7 +831,7 @@ static void tcpm_log_source_caps(struct tcpm_port *po=
-rt)
->                                 scnprintf(msg, sizeof(msg),
->                                           "EPR AVS %u-%u mV %u W peak_cur=
-rent: %u",
->                                           pdo_epr_avs_apdo_min_voltage_mv=
-(pdo),
-> -                                         pdo_epr_avs_apdo_min_voltage_mv=
-(pdo),
-> +                                         pdo_epr_avs_apdo_max_voltage_mv=
-(pdo),
-
-Hi all,
-
-Apologies, kindly disregard the v1. I incorrectly squashed a fix.
-Sending out v2.
-
-Regards,
-Badhri
-
->                                           pdo_epr_avs_apdo_pdp_w(pdo),
->                                           pdo_epr_avs_apdo_src_peak_curre=
-nt(pdo));
->                         else if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_SPR_=
-AVS)
 > --
-> 2.51.0.858.gf9c4a03a3a-goog
->
+> 2.34.1
+
+--00000000000099ce3006412ac0dd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+/HTPxpDrr4vzZL0yoc9XefyCbdiwfyFl99oBekp+1ZxXc5bZsVhRPVyEWFtCys66nqu5cU2GPT3a
+ySQEHOtIKyGGgzMVvitOzO2suQkoMvu/swsftfgCY/PObdlBZhv0BD97+WwR6CQJh/YEuDDEHYCy
+NDeiVtF3/jwT04bHB7lR9n+AiCSLr9wlgBHGdBFIOmT/XMX3K8fuMMGLq9PpGQEMvYa9QTkE9+zc
+MddiNNh1xtCTG0+kC7KIttdXTnffisXKsX44B8ECAwEAAaOCAd0wggHZMA4GA1UdDwEB/wQEAwIF
+oDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDovL3Nl
+Y3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5BggrBgEF
+BQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUGA1Ud
+IAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUFBwIB
+FiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzBBBgNVHR8EOjA4MDagNKAy
+hjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWltZWNhMjAyMy5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNVHQ4EFgQUxJ6fps/yOGneJRYDWUKPuLPk
+miYwDQYJKoZIhvcNAQELBQADggIBAI2j2qBMKYV8SLK1ysjOOS54Lpm3geezjBYrWor/BAKGP7kT
+QN61VWg3QlZqiX21KLNeBWzJH7r+zWiS8ykHApTnBlTjfNGF8ihZz7GkpBTa3xDW5rT/oLfyVQ5k
+Wr2OZ268FfZPyAgHYnrfhmojupPS4c7bT9fQyep3P0sAm6TQxmhLDh/HcsloIn7w1QywGRyesbRw
+CFkRbTnhhTS9Tz3pYs5kHbphHY5oF3HNdKgFPrfpF9ei6dL4LlwvQgNlRB6PhdUBL80CJ0UlY2Oz
+jIAKPusiSluFH+NvwqsI8VuId34ug+B5VOM2dWXR/jY0as0Va5Fpjpn1G+jG2pzr1FQu2OHR5GAh
+6Uw50Yh3H77mYK67fCzQVcHrl0qdOLSZVsz/T3qjRGjAZlIDyFRjewxLNunJl/TGtu1jk1ij7Uzh
+PtF4nfZaVnWJowp/gE+Hr21BXA1nj+wBINHA0eufDHd/Y0/MLK+++i3gPTermGBIfadXUj8NGCGe
+eIj4fd2b29HwMCvfX78QR4JQM9dkDoD1ZFClV17bxRPtxhwEU8DzzcGlLfKJhj8IxkLoww9hqNul
+Md+LwA5kUTLPBBl9irP7Rn3jfftdK1MgrNyomyZUZSI1pisbv0Zn/ru3KD3QZLE17esvHAqCfXAZ
+a2vE+o+ZbomB5XkihtQpb/DYrfjAMYICVzCCAlMCAQEwYjBSMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xvYmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0Eg
+MjAyMwIMClwVCDIzIfrgd31IMA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCBGmVJN
+HDKbgCv9R+VKgZ74lo47kA/sJb3X69dNckT/HDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
+CSqGSIb3DQEJBTEPFw0yNTEwMTUwNDE1MzZaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEq
+MAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCG
+SAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC6UVvhd57urxDnl8mm/JSZnQyi22XdQ5g5L8EQpJaL
+SKRhno3EKBJN8xMfAOCCCsgLoJ1PaR8fKgKnn/reZyQ2NtfSQU8hrJNt8ObfUdJEeJBca+OJk5lA
+p33Hllx6L3cN/uj614SWlTH9SFbnoyZW0lOI37aOi+Heq07z6ycmGVX1zKKjiz/khZBP0KJ0J/A1
+27N7JsuQBvBjBkrIcx0fJaBPFA4KbnMrOGbRx8UWpLaOS3AZcIf/Qxp9kGj96U2zsvNwserHrIuO
+zq7BERxx3GBrlYpsmvfyG2DlQrGJ2vZTYseIW6QkigWkIy8x+mzfWgpBYJCLk1w0ZwxRmZHn
+--00000000000099ce3006412ac0dd--
 
