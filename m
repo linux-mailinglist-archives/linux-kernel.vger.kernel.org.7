@@ -1,113 +1,243 @@
-Return-Path: <linux-kernel+bounces-853529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC77BDBE7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A2BBDBE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6789518A4569
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D673C6607
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3EA1B040B;
-	Wed, 15 Oct 2025 00:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577601D5ACE;
+	Wed, 15 Oct 2025 00:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoEDLvVM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ROeNfe4s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B282C17DFE7;
-	Wed, 15 Oct 2025 00:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760487718; cv=none; b=tsrKmj/o0CuiTgnR/p+dyJqqLez+lg2nnLX5kyyeLLAdem+W5frfhXSjuS4tkyxMeinJVLK37xnShO/u3xxdbpZRLQruQIPx1XTyLW0Jf7GoyK/i88Us81IzDLYhJ8uRucjjex6FqhqlFs+pFUVL/8dKALQq/qP2uliG9lYOTbM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760487718; c=relaxed/simple;
-	bh=oLFIibXnPFOJz0MzV3NAkJL/mBUsPSV9HGDX9rhCWkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ub9+91PACcPO5M9I1YOx5uFk0Wu13S6ERqe9OOKaiNX2UquGPuRA7fbsNu/kV019PhXzj1SJTqViESpeK5oGqUwhdLe/G7iCbdEd1YwpQJIPqYuN0xRCwayB/ebc9xyMAPMHpJDVrBda4irGogbkJn4a5uaH381nEf/YKx4XUEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoEDLvVM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A30DC4CEE7;
-	Wed, 15 Oct 2025 00:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760487718;
-	bh=oLFIibXnPFOJz0MzV3NAkJL/mBUsPSV9HGDX9rhCWkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uoEDLvVMBYvbxbaqRExO4mBuOXW8xK+xBsM3YpN8BU1lvBX4p3ZAdfzt2L3+iF0GN
-	 WG1/B5BcjO6G5oQtvfsi/xChcW18K/a54r1fdPVQsmPwbbPFnAXEa4+7w5bzq4flhf
-	 6VHS/tdoIl0wngQjxhoS3nTFA8kCFfDp3DcveH/+FyeZcZo2KjS0k+8Ypk97Xtmuun
-	 8K2iC6fX/3DXfiRfPJuvJbT3N1ZJXjBgUU19rx60Zsxgh/AO9zi2sWjzPrju9lComF
-	 gSaIX68xorVOyC+xLeGk3YYnNWC6eRkJurprqsPEMD5vPVxi8cCVp0VHEmEfLgQjp+
-	 O1BtSRYMnbkCg==
-Date: Tue, 14 Oct 2025 17:21:54 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Vishal Chourasia <vishalc@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, maddy@linux.ibm.com,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	clang-built-linux@googlegroups.com,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Subject: Re: [PATCH] arch/powerpc: Remove .interp section in vmlinux
-Message-ID: <20251015002154.GA2300901@ax162>
-References: <eeaf8fd6628a75d19872ab31cf7e7179e2baef5e.1751366959.git.christophe.leroy@csgroup.eu>
- <20251013040148.560439-1-vishalc@linux.ibm.com>
- <2b4a3215-1620-40c9-a00c-ca833ebbb7b6@csgroup.eu>
- <aOypxKMzsLR5tAtv@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BE01A5BA2;
+	Wed, 15 Oct 2025 00:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760487742; cv=fail; b=AtTQZrL235FxIraU7BRMT5x4DbYaapQ0GwPgU5ru/5v4XyjbmZZrHGR5DSpAt0CnfUcGppOim6+JWJfP57FKC1CQYviMxV9bYsaPAqdGJY9V5nqTuC6qPpKe1edj2LuULcjz0XFDuoxSgptLrKK3YIsTjf1d7DYIKEYlCcGS/1U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760487742; c=relaxed/simple;
+	bh=K9wo4RbxCxYyb+bG579BjEpZjPtC0DVVLxDA8vSTP7g=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=SHER/QwflURaZ+mcCiAwcghd7qH4XrFPtd3OSvQmGcqKFG1xp5A5LGWIGVOWoLD8phwF6ZqDkLKskl5wf8kZ0hcEvl8NavuYR2CuA/4Ly8JXuxMw1IOMvE+A0cdg3GJJhwhHGtyUokpGhU1BL8zqGF8K3vYhUTz6piSa5ukdHhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ROeNfe4s; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760487740; x=1792023740;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=K9wo4RbxCxYyb+bG579BjEpZjPtC0DVVLxDA8vSTP7g=;
+  b=ROeNfe4sBbvy/BcINjsGI6mxOuw8R578CEx71R95CDGoiAroPkzmTFF0
+   nRV5kEypXCgnOnPl9y+IwKkfWy5KXESss570xcrq0vx2QABWcdws+wupz
+   HXfaUCQIsV4YgjgYxOCENXrNC5q6MJCbBXjkXGQBSMyh55H7+fUp04ri8
+   U+rUQzcwjdj5rWKcnT/F8pCLB+op19bnhn+JzADoT6/yyDITxrQK6qKKz
+   SiV1Tck5JDHu4WA27GAJ4t1Aw8SqVC8y7Rx10kj0kj6DgK8bI8+oarD5o
+   alPeq/5zIS8BWrdaD+n0AC6YdygrsFB5KeZ6MYKbQZbWF4/Ai0AZDtesp
+   A==;
+X-CSE-ConnectionGUID: 30qRnK/QSXqqJyFnMow+nA==
+X-CSE-MsgGUID: GcekE0HPRWOVqZ8QTxusLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="61864101"
+X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
+   d="scan'208";a="61864101"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 17:22:19 -0700
+X-CSE-ConnectionGUID: GVGOCeAISAq5IVR+JbML8Q==
+X-CSE-MsgGUID: 4GHsR1lmRvea/tR5xHUpQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
+   d="scan'208";a="187329863"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 17:22:19 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 14 Oct 2025 17:22:19 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 14 Oct 2025 17:22:19 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.51) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 14 Oct 2025 17:22:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eJoofdCcNOXRDjRUuoKMCq3s7DNXbw6XjmvXigITAr3ltX48USmqrDFu0KLU6evIhp64Rkli6JtFuterM10p1q7T+b1ohwJUbp0tQT2C+wxrX3CzNf/eLK+8DbeTKqZw6ctc9V2VXjhHPYQWgBf+oJSl3XmhQeds7zh5lyN4CDzdVQnC3Je3K01O3lxZYF0/r4X60rfMdUIgFZfl6+4ysJDotD69nKIZkXnVCg+7mI9OoDY18VfTWj1khGJ5Gt4ydqfe6+fFQjM05uioap9Avu4Lz0Fnz06/sMPU2K5jwP9GcQPHJkjv5ju3Eu4Cu+xfrSKMKYWQZiwBfbhYrOWzxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1vhLUvJXPqHzB1oY8kjHFUf/+rmrTchad64rJTdrivk=;
+ b=ZXxdO7s47dHICbhY2z/qBX3kVnkLEMWT+HXk9HFcrdukNe4TvMew0/caclUVROuqt4N/y+7y6ZswwQGr3sTyhTPJBh59MywTtfIgia4JDAZZFrWzUv+KQ83PShMrhsh4lNfN/0CUbOYIqrus6fEarcMShpI4upqeWmrE79RCMf4q8oHujCBOkoN4Fmy6H6H4MdAfpntUEJfzJQa+E4z7zVlFU7Kp+EU1DWU+0FMwJ6i5CPIa+Z0FPABPmz5O4Yg3jHDjdUbDqb5qyJwoGzaouQOZ4PkDSsSAw9EU2Nfl3dL5LozpokMf4EqCA9AnQhGUQ0PQDyT6SPDuXuo7Gs0fvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by IA3PR11MB8987.namprd11.prod.outlook.com (2603:10b6:208:574::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Wed, 15 Oct
+ 2025 00:22:17 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::1ff:1e09:994b:21ff]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::1ff:1e09:994b:21ff%4]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
+ 00:22:17 +0000
+From: <dan.j.williams@intel.com>
+Date: Tue, 14 Oct 2025 17:22:10 -0700
+To: Sean Christopherson <seanjc@google.com>, Sean Christopherson
+	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Kai Huang
+	<kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe
+	<rick.p.edgecombe@intel.com>
+Message-ID: <68eee932c6ef_2f89910045@dwillia2-mobl4.notmuch>
+In-Reply-To: <20251014231042.1399849-1-seanjc@google.com>
+References: <20251014231042.1399849-1-seanjc@google.com>
+Subject: Re: [PATCH] KVM: VMX: Inject #UD if guest tries to execute SEAMCALL
+ or TDCALL
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: SJ0PR05CA0083.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::28) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aOypxKMzsLR5tAtv@linux.ibm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA3PR11MB8987:EE_
+X-MS-Office365-Filtering-Correlation-Id: b77a09e0-5b62-45ac-09e6-08de0b80e57d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Y1hXZW9JbXUxdWlIVmFjRGlxTGNSZTBScW9obGRpQmJwWTRhbkZYU1ArSUc2?=
+ =?utf-8?B?SjdTVEU1Mk9ra2R3ZUhES2ZMTmJzYUdNTUNKQ0NKaFRyMW5qRDRMQkJnUGtJ?=
+ =?utf-8?B?Z1JvNWhxQnJaQVlJU0NiNXhLTEF4dmUxdit0TlAxQnMvMlpaaVpRRzR1Rm0y?=
+ =?utf-8?B?cG9zb0lOYlllU1FhNGhFRnBMajRPamlGMDJLeUZNOHEyVE5DWTJtdjdNYnBz?=
+ =?utf-8?B?eFVwYUtKQVJEODdTbkRGQnhKa01IK3FobTlvZ1BiVlJKYURhenZyN3I5MkV4?=
+ =?utf-8?B?TC8wR0RVeDJuRnBsZS85Tlg4TTFUeklkZ1BEUmFnamhiV01tOTI1YndkQjNk?=
+ =?utf-8?B?d3F1L1A3KzljWE9IZS85cnFDR0ZXeWE3OSs1cm5oQlpCSTRUVjByN3FJeEhy?=
+ =?utf-8?B?aWc5ekpLYnhTUjhmci9NbEF4eTNqdXFORlFVeDBJbWRmRlJqMEpqTWJEYURh?=
+ =?utf-8?B?Nnovd29IdE12TjlKcGIrOUFZSnNvekdIUjVTYVc2TThyRlJpaHdZK3NLNGo3?=
+ =?utf-8?B?U21uR1FaaTdISU5wbHdQRmkyWDhCVzRrRmViN3pOV1BxdUJ2WFVUb2xJTHp2?=
+ =?utf-8?B?WDl6Z0ZHWnFPNnFPbWxha3c1UHcxc24xMG1DRUhOOEs4c2JFRmxiNzNaenY4?=
+ =?utf-8?B?bnF3dnhvS21xT1IzQmZSaDFYZ1Y4akVOcmtYR0ZUYVhjK1BFd29PbzhmQm9x?=
+ =?utf-8?B?U2NBdGhGcUhFUkxjaUtSVHkvQmM5b09CTjZzaVdoSTdWYjU0cC9WcXQ2SmNv?=
+ =?utf-8?B?R3ZrbGM4Y1JWalNDSklabXp4ak9sV3pyR1A3c3VDODhSK2lKSjJrMWdnUTlw?=
+ =?utf-8?B?bUZuR3NJaTRKSzE3TEpDUlBweXFlMGszVDJCa1hWc1BRdmdnbE40S3dFWHZr?=
+ =?utf-8?B?NzB5eWc2S1dQVDVnSjhCTVg0TWNCYVJZRm9iVUZJOXgxSnprR3pOanRwbkZt?=
+ =?utf-8?B?RW9JbUNqRnc1UlZIUUgxeno2WlAzdnJ4UzdsUC8vNWR3ZWY3TVhiS095anpJ?=
+ =?utf-8?B?VVNQRVJBMnk5SVZMVkVhMjRYc0tyZkY2aGJvSnhDSjYyYlpvTEx0cWtXMVFT?=
+ =?utf-8?B?dUYwVnp6OEE1NjdJaEJLZVJBdW56VmZsUjJ0MS8rTVJ5NWxVZkNlcjMrNWhq?=
+ =?utf-8?B?Nko4V0lTNjhVNGtJUVRDWEZoTWczTUoweTU0NTloRmJiZVc2SitRLzR2OS9G?=
+ =?utf-8?B?RmJTUm5YaUhDampsa2gzaDgvaGQ2WFZUelVHNEZmRjZkOXdYOGJja0dNQlZV?=
+ =?utf-8?B?VE1xQXowcnV4T1JYNEJQMEJNT296Ly9BRmpHUE9kT0R5dHdNb0ZrTGczY2Zj?=
+ =?utf-8?B?eDArMzRDNXZGckdLcUpiajQ1K0xVaUVmd004M29JRjk5ODJESGZvNWhURlJN?=
+ =?utf-8?B?eXMrcmdYVk84Zy9Cem9ia1BpcGpLMlFPZnQybHMxYmo4cTFTanUwajB6Yzlh?=
+ =?utf-8?B?WG1JaGs1NjlJR1RqUWNpb1FsQUMxL282VkNGN1Q0MjVNUE85cVJnNktaSktj?=
+ =?utf-8?B?NTVwaVpCRmN2b0J3NThRZ2dxSmc1WEdYNk1SV1BLQVdZOElSb3NnbjhxdVBC?=
+ =?utf-8?B?VU5OeSs0M0EwYzkzQXRnUWhXM3JNSjQzcGJ3Ym8zVDFmdE9aNGF0SkF3U3Jm?=
+ =?utf-8?B?dHB0WGN5NTY1VXExajlvckxuWGhwRVh2ZndVNXd0amNwbW9kVmZGMEN2NDdD?=
+ =?utf-8?B?SjNXWGJpTVFJb3JQMDN5SWNzUGNUSk54U0p5SVA3ek9FTWxkM2ZvWk84STZF?=
+ =?utf-8?B?U0tzYVRKWEtGVDdNN2hGd2IwMGswVE4yY05XK1pCZ0x5SlBqWnVDWmI1bUoy?=
+ =?utf-8?B?OWRyallIWXVoQjJwOW1TbzJDZ210WVJITlZEQ1cyaGxFVE40MXNSMDQ1dmxk?=
+ =?utf-8?B?aTlPZXpSY3o2ajY0S2k5VHdKYUxIbm9vdzQxYzdLREdlb0hMZzdKdUZHYlow?=
+ =?utf-8?Q?MNEKkNqnUgyIft8YnAC+gZMAr2Xw6lqO?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UmlaRnZ2UVdRSStxangzTnZPVFhwRk15NUVzT1NCSzlKcU14RlF0elA2aTBB?=
+ =?utf-8?B?MUhpMHV2YUlucXU5a05CVG5UakZPOXNpSFlxZFlSdFNMK21IK0kvazIvZjFt?=
+ =?utf-8?B?Zk9HZ283ZmxMZEFoMk9najdraytCbzYralhHeDNTTmlqTXVFeG9TcDFVYW1C?=
+ =?utf-8?B?eHR3cVhlazc3SGtpT0xCTHBTRkFaWk4xVVVvaklDU1FPaXBjb0Nyc1MzYmpx?=
+ =?utf-8?B?MW9CUXJiaWpJNmw3Nk80aG5xMTgxWjFsOC9BOXlTYWFxSjNtWnFJRnRtOG9t?=
+ =?utf-8?B?UWtxUU9BaEZpRk9vUnlPdG9LdC9qeXljVG80K1N2MWd0YUUvenZxWnJ0MkZa?=
+ =?utf-8?B?YXh6aEpFRjRXN3NtZVNGSTY0TFp3TXVudnB5cGpBbDhFUm9BNnE2NVlhSW5Q?=
+ =?utf-8?B?OHd4NU9GTkZCbXIvQlZuVWZoMTR5Q2FhNFI0aEh3enNtOXhxRjFZZG1hR0Vk?=
+ =?utf-8?B?RVh4U3BHaXc2czVPR212NjhSODVURnh1RTFxR3BiQUZoRjFwOFhtU053WmF1?=
+ =?utf-8?B?d0dKSEl0R3BGZkhhc1g0QzdUb05NZEpUL3RicGhtTXZGcTg5SEtKa1I4bFBH?=
+ =?utf-8?B?M2paTmU1dzF0M3FSTCtrb3ZQZ3czK2d1REdsU1VmVUNuZmY5VzM4SUdTcjEv?=
+ =?utf-8?B?LzRhK0dhQ09kdnAwa2c0MWZ2TjgvSHZyOGhaaXJ3MXF6Y1RZM3Q0YVhVZW1P?=
+ =?utf-8?B?Sk5FTzR1M3JPN0ZZYVJ6LzZnT2U4YXU2a0J5N2xNdzFITEZNN3hlRFIwRTU2?=
+ =?utf-8?B?QS8rWjhoRmNMUFFONGhUUkpWTXRTZzZDaFJXSUw0RU1pUGtwSFhIQTFBS3E3?=
+ =?utf-8?B?VkhIcndoam9kd2JubThpVWVYdHliR1FhRVRmQjZVeTJ2L1FMMkU4cXJTaVRU?=
+ =?utf-8?B?WDFMcmtLTzFZR05GRitkL1lJWGRCM1E3YlZKZjdTN01VRTlkNjRyV1lCbkd1?=
+ =?utf-8?B?YnhiTXkvQkYwOXV5WEVFc2p1Y1ExMlU3T1NlcDNLR3VMNGJ5VDNUdFF6b3dR?=
+ =?utf-8?B?TWN4SVNZQjk4eU5yWDkwUGpNL0V3eHgrRlA0VDFFbFljelkzNTZNOE1qaEUv?=
+ =?utf-8?B?RjExY1U3WnZYcWZoOFAxaUY4OTA1bGc4L3U4SDV5NVlzVzFsTjZBS3l2Y1Bo?=
+ =?utf-8?B?WC9BNWNCdE1Hb1Z2RzNERUdTTEFPV3ovaTF5SVdrbDh4cHV0Z3d5d3pSRndJ?=
+ =?utf-8?B?NU5tV0t0Nk9iUEcrWWsxSjJFUVA1eWcyNytET2dKZ2MzaWc5SHJkdCtyUkpY?=
+ =?utf-8?B?WFlGWHVOMEw1SXdXcXFKVTArMGl0dXBoRkhYa0tjcm1EbWIrRjlhUHNHY0RR?=
+ =?utf-8?B?WlNNdXdkaVJJMTByN1ZMOWhuUjN4MlBaaE9NWWlVUWNKcTEvYUdMeFllRG5z?=
+ =?utf-8?B?UGVodFVpaUlSOGcwOU9wY1B6eXNzWGFZWUM5dzdFUkhBZ0JZVWV2OUg5T0Rj?=
+ =?utf-8?B?cjBZdTk4M1M2VGlYRFNFcXdBNTlYMkloNFlKYWkwK0RRNE5NMDNEdm50d2w4?=
+ =?utf-8?B?cnpzZHZwUkxNcm9hS3IxbmV3aVJkc2JNUEFCbkhPd2ltaXE4R1IzQkFNWUZs?=
+ =?utf-8?B?V1VLN0U4dEI1SWVTOGlqSHluZ2dQVUFNcXgvNXJ5R0xSZE1nTVRTUkIreHFL?=
+ =?utf-8?B?ZnlCUlVRM0k2Y0YzczVZZHF6amQwenQ5elpHOWRnZUxXTG9aYnozeFBvb2pn?=
+ =?utf-8?B?TXAvWVU2S2RrWGNKc2dDNm5NWGZkbWtVM3lKbWRUN0gyd3pNV2taK3pWQVhL?=
+ =?utf-8?B?UUMrK3RLb2p3QVJZc2ZxZDE4ZTJ3bHduVkQ5dkpCWEtmQXMycGZBZmF5RURZ?=
+ =?utf-8?B?cVZRbHpVR0xZOVprZUExMUdBNzk1aGxSTmRFc1FSOUpFZk43SWF6SEorVFpB?=
+ =?utf-8?B?YVdHUGp2YzVKK0pWdjhKMHlrSDBCUGdaM2IyZzFQRlBvQm5yOW5MMGxwZWZh?=
+ =?utf-8?B?cmpsL1lOTmlRUUhteEJ5V3o1aEhwUEU4czIvZXAyMnk0ME9IQlhDKzExSGVO?=
+ =?utf-8?B?ZDZmeGJEcnY3SXRJWVRZVmJFeDd6aWd6MlR2aWp5ayt2KzJ0ZGF3UGJGVzhn?=
+ =?utf-8?B?VUV3eGE5WW9WcVpLUmx6bkw0OXVwNlZYalR4a2MrOUlhd0ZodWRESStZZE5R?=
+ =?utf-8?B?MzU4ZGlMQWtqZTA5ak9OS0ZCVUp0VkREU2FqUUV4QitjS2crTXlHRHBxeE5y?=
+ =?utf-8?B?K2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b77a09e0-5b62-45ac-09e6-08de0b80e57d
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 00:22:17.0235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oWIFEsN9T+awHZ1A1OxtHPKEDwL38o3PMWlZTDq7JMD2dW6rnahpS7Chl6lgRFvK924i54YQisAXeE+W2v5l/+LXHRvonnmJ/qDYavyfluI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB8987
+X-OriginatorOrg: intel.com
 
-Hi Vishal,
+Sean Christopherson wrote:
+> Add VMX exit handlers for SEAMCALL and TDCALL, and a SEAMCALL handler for
+> TDX, to inject a #UD if a non-TD guest attempts to execute SEAMCALL or
+> TDCALL, or if a TD guest attempst to execute SEAMCALL.  Neither SEAMCALL
+> nor TDCALL is gated by any software enablement other than VMXON, and so
+> will generate a VM-Exit instead of e.g. a native #UD when executed from
+> the guest kernel.
+>=20
+> Note!  No unprivilege DoS of the L1 kernel is possible as TDCALL and
+> SEAMCALL #GP at CPL > 0, and the CPL check is performed prior to the VMX
+> non-root (VM-Exit) check, i.e. userspace can't crash the VM. And for a
+> nested guest, KVM forwards unknown exits to L1, i.e. an L2 kernel can
+> crash itself, but not L1.
+>=20
+> Note #2!  The Intel=C2=AE Trust Domain CPU Architectural Extensions spec'=
+s
+> pseudocode shows the CPL > 0 check for SEAMCALL coming _after_ the VM-Exi=
+t,
+> but that appears to be a documentation bug (likely because the CPL > 0
+> check was incorrectly bundled with other lower-priority #GP checks).
+> Testing on SPR and EMR shows that the CPL > 0 check is performed before
+> the VMX non-root check, i.e. SEAMCALL #GPs when executed in usermode.
 
-On Mon, Oct 13, 2025 at 12:57:00PM +0530, Vishal Chourasia wrote:
-> On Mon, Oct 13, 2025 at 08:46:48AM +0200, Christophe Leroy wrote:
-> > +CLANG ppl
-> > 
-> > Hi,
-> > 
-> > Le 13/10/2025 à 06:01, Vishal Chourasia a écrit :
-> > > While debugging a ppc64le QEMU guest on an x86_64 host, I observed GDB crashes
-> > > when attempting to attach to the remote target:
-> > > 
-> > > (gdb) target remote :1234
-> > > 
-> > > Investigation revealed that cross-compiling the Linux kernel for ppc64le on an
-> > > x86_64 host using Clang produces a vmlinux binary containing an empty .interp
-> > > section. This empty .interp section is responsible for the GDB crashes.
-> > 
-> > Which version of CLANG is it ?
-> (i) ❯ clang --version
-> clang version 21.0.0git (https://github.com/llvm/llvm-project.git a80bccc6847be104948f46d313f03ac6b9ccb292)
-> 
-> > 
-> > > 
-> > > This issue does not occur when:
-> > > - Building for ppc64le target using GCC on x86_64 host
-> > > - Building for ppc64le target using Clang on ppc64le host
-> > 
-> > Is it the same CLANG version ?
-> # clang --version
-> clang version 22.0.0git (https://github.com/llvm/llvm-project.git 2f755c543ab357bd83235592fcee37fa391cdd9d)
-> 
-> > 
-> > > - Building for ppc64le target using GCC on ppc64le host
-> > > 
-> > > For details refer [1]
-> > > 
-> > > [1] https://sourceware.org/bugzilla/show_bug.cgi?id=33481
+Filed an errata for this.
 
-In this bug report, you mention using LLVM=1. Does the issue happen if
-you use GNU ld (ld.bfd) via LD (i.e., LD=powerpc64le-linux-gnu-ld or
-equivalent) over ld.lld from LLVM=1? This sounds more likely to be a
-linker difference rather than a compiler difference.
+> Note #3!  The aforementioned Trust Domain spec uses confusing pseudocde
+> that says that SEAMCALL will #UD if executed "inSEAM", but "inSEAM"
+> specifically means in SEAM Root Mode, i.e. in the TDX-Module.  The long-
+> form description explicitly states that SEAMCALL generates an exit when
+> executed in "SEAM VMX non-root operation".
 
-Cheers,
-Nathan
+This one I am not following. Is this mixing the #UD and exit cases? The
+long form says inSEAM generates #UD and that is consistent with the
+"64-Bit Mode Exceptions" table.
+
+For exit it says: "When invoked in SEAM VMX non-root operation or legacy
+VMX non-root operation, this instruction can cause a VM exit".=
 
