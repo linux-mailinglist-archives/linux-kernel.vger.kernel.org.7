@@ -1,90 +1,53 @@
-Return-Path: <linux-kernel+bounces-853609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527EABDC16D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:58:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4FA4BDC17A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E7CB4FA4D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A5C3B01E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1172FE050;
-	Wed, 15 Oct 2025 01:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gms9TMQ+"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3502FFDE4;
+	Wed, 15 Oct 2025 02:00:53 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D022E30B522
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA62C28751D;
+	Wed, 15 Oct 2025 02:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760493449; cv=none; b=VoguOjSEC2xmFzatKismb+f1RDiwSmEl7y/mBlnK0G00ZQfm18CJ0a2R6yjyAZ004TIBviXGNYn2zsh6YiZ7xMW7KOjk8CxujiJInEMS2+GRs4fVDVDvFhyjwuCTl+XDCjTKoBmsUYqfAiIm9s/FaPGQ+or92xKyhcUthI9wl6g=
+	t=1760493653; cv=none; b=b4D2He9ppLDd1H29HWU3hYi3WaEHquqIkDFOw9jyl9zkdBwJxOAHmMYd/Ia0Xxt3bqf5P2bNqM1dezPGGqUqH5nicrzYJx1kWoEVEf95+rjffbp7r82DQwvLkQCL9+SfEynzpDS06ppQsTt4Y2T8emhPEo/x2MmBFlGQzyj1XuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760493449; c=relaxed/simple;
-	bh=/BSLQzf79K8YjA55SgVazeGrHOKkHhMaTZfY0pm3GIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=efwnAOM0+xe1NLYmz/vKxZdeVaT0vGs4/4SwKqTMW3Ve5jQSRgJN93a0JCdO77n+Djdap2ztm0CC2VUgKiRHo6zWL+F33/9FiUL5xHGBE3aw5ukT6tIhEXVXGHmbfe12b9QzedBdHX5897/TfSnM6i+oOPQ3XoV76kUu+KuxzzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gms9TMQ+; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-430a5fe0c5cso9463435ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760493446; x=1761098246; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kfy/oxYw5mHWfy3Ol4PqQ+MIIdhvIhrM+JuIAEsu+JE=;
-        b=Gms9TMQ+6Bpa303oLzABXk/yJ5Nme7Wt/ZldJh2vd5ktl42lVi0UvFZ4zno8GI08OX
-         Tj4D0g9pnvYbx7tuMI2BSOE1PPXUPp4/WBaO4QYGaQvCEkN3tmLs/v+tKjdXWh2I5DYz
-         /pTIM8FABsGaFYjLDc0FyFCzZnBZv70m1J9PTvFrLQdruQ3SBCL8a2AbVhqdzaDb1fBf
-         qxEmld3TEY90lIrZYczab1gBNdB/6K5iOze2mHgwuriK7b9Axba413hkI0n1weEva0rh
-         6QkOPq4mJdjGQrr0Z93wmV8kX13oa4KhLsw9+A7ous7FGz2jECFahiago7REwCWBm29u
-         zeog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760493446; x=1761098246;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kfy/oxYw5mHWfy3Ol4PqQ+MIIdhvIhrM+JuIAEsu+JE=;
-        b=VQAS+KJLYqrI7H/Llem2ee6OAEUH2NEvEpLhNEtw00Xn8NBRItOOsB/HAgpgGgmkL+
-         v66G7jkaOEDUYM+20Fof8mRRypl4bT4+Noy9XUc1ll/2MaZXvFO7hMAwEHFNm1Pq3hi8
-         AIlnc1d8LFpbadlot5lx9QssHVaJHNlFgK9Y1f5OgnUwmUvnCAPeim3VM1DotYad+OUs
-         TDldiwW9e+rv5njgeFGQLZR+1D/4TxikIbszhCcM7JUF5wqv2qnArbN+DVI336lgeMAE
-         8lvaEkz/J+tnROGgUE0RrXV319MWLnQwy4bSAzxUVxwBKbKii5DNnnXVuZzkhnBoIiBJ
-         22Gw==
-X-Gm-Message-State: AOJu0YwidntBOExPmoawL9oOdIpMkJrSg5Ix/0BZ++WWn8Jco/hnkFVI
-	PG8SCA74iFArE9loh3KUjKPBtp6ueMdiTLEAM/9hZDfE9sGDlCcb5WjObccDjbld
-X-Gm-Gg: ASbGncsOO0IMWYH4lLpkw1piO00rXg9LONq59NdknmalCJmcWjTzRN1NdurQy3e5zHb
-	6TUeEN71FKwGxFAaXgbObad3S/kgSE875wDF+Fbbv1MB3LhUCitHdu7Zs+C8bAH/R2L9E9+cRPg
-	DPXXbFNTzscRIHewGsIY2otvqT0i25YYjPXAgP9/Jl1DqtFtKU2FxKXWAhIeoGqb/leeDRSou5a
-	qDd+RnKGuVYVUJvicM64PVFbJg9Gw2ZLuXc5ni+vNvQUwUn0l522OPWyVGKpnJOEMZRyqnxgna9
-	5iFT5wNibEqT5YecgUqXykyjCEBkc67yJ4Q3sso53hupsMNGXphRuBERvswGcws7y2nAk4umrw+
-	pcQvFMEea7/neYE12E2XQkjBOJKkM33MDYvOC+W+J9QKHbn1POWmM7wqI/eeJlY9HqCbx6wdmx3
-	erIeGe5udvQxXNMdQitmeWGgh7tZw84cArfFuHTIIn
-X-Google-Smtp-Source: AGHT+IHoHm7OIsLNSw9UZYSWOfTx9Q3mnIA/UPbQube6wsYu3uzcOKDlT1wBkt3R1ipv+t6LL2eR0A==
-X-Received: by 2002:a05:6e02:97:b0:42f:8ae9:280c with SMTP id e9e14a558f8ab-42f8ae92afemr303366915ab.26.1760493446122;
-        Tue, 14 Oct 2025 18:57:26 -0700 (PDT)
-Received: from newton-fedora-MZ01GC9H (c-68-45-22-229.hsd1.in.comcast.net. [68.45.22.229])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f6c496ed8sm5254772173.13.2025.10.14.18.57.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 18:57:25 -0700 (PDT)
-From: Ryan Newton <rrnewton@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: sched-ext@lists.linux.dev,
-	tj@kernel.org,
-	arighi@nvidia.com,
-	rrnewton@gmail.com,
-	newton@meta.com
-Subject: [PATCH v4 2/2] sched_ext: Add a selftest for scx_bpf_dsq_peek
-Date: Tue, 14 Oct 2025 21:57:12 -0400
-Message-ID: <20251015015712.3996346-3-rrnewton@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251015015712.3996346-1-rrnewton@gmail.com>
-References: <20251015015712.3996346-1-rrnewton@gmail.com>
+	s=arc-20240116; t=1760493653; c=relaxed/simple;
+	bh=LoWZyV9TIG//UZOryn5NkQWigvSilMfG1lx1cySBq+o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZKE5cXg6RRGPFh/BREvV2i6xDfDCP+MFqBZzB8Y7HBKyLZZZeQOszpnLGz2ZFXAuFihab+ukuJObwH81l9EgUUf4rLLa0qAJZ0HyRZAmy9mgUxuCBj9NEAaE9W1q8m4XEzVHz59PROdAkbp5sy5tFlGMuS26hYLUbZE/3CpNO+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201613.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202510151000403718;
+        Wed, 15 Oct 2025 10:00:40 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ Jtjnmail201613.home.langchao.com (10.100.2.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 15 Oct 2025 10:00:41 +0800
+Received: from inspur.com (10.100.2.108) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 15 Oct 2025 10:00:41 +0800
+Received: from localhost.localdomain.com (unknown [10.94.16.205])
+	by app4 (Coremail) with SMTP id bAJkCsDwRLVIAO9oJb4JAA--.1703S4;
+	Wed, 15 Oct 2025 10:00:40 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <kwankhede@nvidia.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH v3 0/1] Fix spelling typo in samples/vfio-mdev
+Date: Wed, 15 Oct 2025 09:59:53 +0800
+Message-ID: <20251015015954.2363-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,534 +55,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: bAJkCsDwRLVIAO9oJb4JAA--.1703S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5K7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aV
+	CY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF
+	04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
+	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUdEfOUUUUU=
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?9SBcU5RRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KWU3Ui6uP5DxCJj7wM2rXsXhmP1DiyZeOIe5ZDWagPqcMm4TJJGdl0nV0olMO4yl54T6
+	3zbp2K7sPle4sGem6lU=
+Content-Type: text/plain
+tUid: 20251015100040fd29fc35393e0cdef76562a7e0910ed7
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-From: Ryan Newton <newton@meta.com>
+Fixes for some spelling errors in vfio-mdev
 
-This is the most basic unit test: make sure an empty queue peeks as
-empty, and when we put one element in the queue, make sure peek returns
-that element.
 
-However, even this simple test is a little complicated by the different
-behavior of scx_bpf_dsq_insert in different calling contexts:
- - insert is for direct dispatch in enqueue
- - insert is delayed when called from select_cpu
+v3:
+ - The vfio-mdev module patch as a separate thread
 
-In this case we split the insert and the peek that verifies the
-result between enqueue/dispatch.
+v2:
+ - Merge into a single commit 
+ (https://lore.kernel.org/all/20251014060849.3074-1-chuguangqing@inspur.com/
+)
+v1:
+ (https://lore.kernel.org/all/20251014023450.1023-1-chuguangqing@inspur.com/)
 
-Note: An alternative would be to call `scx_bpf_dsq_move_to_local` on an
-empty queue, which in turn calls `flush_dispatch_buf`, in order to flush
-the buffered insert. Unfortunately, this is not viable within the
-enqueue path, as it attempts a voluntary context switch within an RCU
-read-side critical section.
+Chu Guangqing (1):
+  vfio/mtty: Fix spelling typo in samples/vfio-mdev
 
-Signed-off-by: Ryan Newton <newton@meta.com>
----
- tools/testing/selftests/sched_ext/Makefile    |   1 +
- .../selftests/sched_ext/peek_dsq.bpf.c        | 251 ++++++++++++++++++
- tools/testing/selftests/sched_ext/peek_dsq.c  | 222 ++++++++++++++++
- 3 files changed, 474 insertions(+)
- create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.bpf.c
- create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.c
+ samples/vfio-mdev/mtty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
-index 9d9d6b4c38b0..5fe45f9c5f8f 100644
---- a/tools/testing/selftests/sched_ext/Makefile
-+++ b/tools/testing/selftests/sched_ext/Makefile
-@@ -174,6 +174,7 @@ auto-test-targets :=			\
- 	minimal				\
- 	numa				\
- 	allowed_cpus			\
-+	peek_dsq			\
- 	prog_run			\
- 	reload_loop			\
- 	select_cpu_dfl			\
-diff --git a/tools/testing/selftests/sched_ext/peek_dsq.bpf.c b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-new file mode 100644
-index 000000000000..65e3f688ea39
---- /dev/null
-+++ b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-@@ -0,0 +1,251 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * A BPF program for testing DSQ operations and peek in particular.
-+ *
-+ * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
-+ * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
-+ */
-+
-+#include <scx/common.bpf.h>
-+#include <scx/compat.bpf.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+UEI_DEFINE(uei); /* Error handling */
-+
-+#define MAX_SAMPLES 100
-+#define MAX_CPUS 512
-+#define DSQ_POOL_SIZE 8
-+int max_samples = MAX_SAMPLES;
-+int max_cpus = MAX_CPUS;
-+int dsq_pool_size = DSQ_POOL_SIZE;
-+
-+/* Global variables to store test results */
-+int dsq_peek_result1 = -1;
-+long dsq_inserted_pid = -1;
-+int insert_test_cpu = -1; /* Set to the cpu that performs the test */
-+long dsq_peek_result2 = -1;
-+long dsq_peek_result2_pid = -1;
-+long dsq_peek_result2_expected = -1;
-+int test_dsq_id = 1234; /* Use a simple ID like create_dsq example */
-+int real_dsq_id = 1235; /* DSQ for normal operation */
-+int enqueue_count = -1;
-+int dispatch_count = -1;
-+bool debug_ksym_exists;
-+
-+/* DSQ pool for stress testing */
-+int dsq_pool_base_id = 2000;
-+int phase1_complete = -1;
-+int total_peek_attempts = -1;
-+int successful_peeks = -1;
-+
-+/* BPF map for sharing peek results with userspace */
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, MAX_SAMPLES);
-+	__type(key, u32);
-+	__type(value, long);
-+} peek_results SEC(".maps");
-+
-+static int get_random_dsq_id(void)
-+{
-+	u64 time = bpf_ktime_get_ns();
-+
-+	return dsq_pool_base_id + (time % DSQ_POOL_SIZE);
-+}
-+
-+static void record_peek_result(long pid)
-+{
-+	u32 slot_key;
-+	long *slot_pid_ptr;
-+	int ix;
-+
-+	if (pid <= 0)
-+		return;
-+
-+	/* Find an empty slot or one with the same PID */
-+	bpf_for(ix, 0, 10) {
-+		slot_key = (pid + ix) % MAX_SAMPLES;
-+		slot_pid_ptr = bpf_map_lookup_elem(&peek_results, &slot_key);
-+		if (!slot_pid_ptr)
-+			continue;
-+
-+		if (*slot_pid_ptr == -1 || *slot_pid_ptr == pid) {
-+			*slot_pid_ptr = pid;
-+			break;
-+		}
-+	}
-+}
-+
-+/* Scan all DSQs in the pool and try to move a task to local */
-+static int scan_dsq_pool(void)
-+{
-+	struct task_struct *task;
-+	int moved = 0;
-+	int i;
-+
-+	bpf_for(i, 0, DSQ_POOL_SIZE) {
-+		int dsq_id = dsq_pool_base_id + i;
-+
-+		total_peek_attempts++;
-+
-+		task = __COMPAT_scx_bpf_dsq_peek(dsq_id);
-+		if (task) {
-+			successful_peeks++;
-+			record_peek_result(task->pid);
-+
-+			/* Try to move this task to local */
-+			if (!moved && scx_bpf_dsq_move_to_local(dsq_id) == 0) {
-+				moved = 1;
-+				break;
-+			}
-+		}
-+	}
-+	return moved;
-+}
-+
-+/* Struct_ops scheduler for testing DSQ peek operations */
-+void BPF_STRUCT_OPS(peek_dsq_enqueue, struct task_struct *p, u64 enq_flags)
-+{
-+	struct task_struct *peek_result;
-+	int last_insert_test_cpu, cpu;
-+
-+	enqueue_count++;
-+	cpu = bpf_get_smp_processor_id();
-+	last_insert_test_cpu = __sync_val_compare_and_swap(&insert_test_cpu, -1, cpu);
-+
-+	/* Phase 1: Simple insert-then-peek test (only on first task) */
-+	if (last_insert_test_cpu == -1) {
-+		bpf_printk("peek_dsq_enqueue beginning phase 1 peek test on cpu %d", cpu);
-+
-+		/* Test 1: Peek empty DSQ - should return NULL */
-+		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-+		dsq_peek_result1 = (long)peek_result; /* Should be 0 (NULL) */
-+
-+		/* Test 2: Insert task into test DSQ for testing in dispatch callback */
-+		dsq_inserted_pid = p->pid;
-+		scx_bpf_dsq_insert(p, test_dsq_id, 0, enq_flags);
-+		dsq_peek_result2_expected = (long)p; /* Expected the task we just inserted */
-+	} else if (!phase1_complete) {
-+		/* Still in phase 1, use real DSQ */
-+		scx_bpf_dsq_insert(p, real_dsq_id, 0, enq_flags);
-+	} else {
-+		/* Phase 2: Random DSQ insertion for stress testing */
-+		int random_dsq_id = get_random_dsq_id();
-+
-+		scx_bpf_dsq_insert(p, random_dsq_id, 0, enq_flags);
-+	}
-+}
-+
-+void BPF_STRUCT_OPS(peek_dsq_dispatch, s32 cpu, struct task_struct *prev)
-+{
-+	dispatch_count++;
-+
-+	/* Phase 1: Complete the simple peek test if we inserted a task but
-+	 * haven't tested peek yet
-+	 */
-+	if (insert_test_cpu == cpu && dsq_peek_result2 == -1) {
-+		struct task_struct *peek_result;
-+
-+		bpf_printk("peek_dsq_dispatch completing phase 1 peek test on cpu %d", cpu);
-+
-+		/* Test 3: Peek DSQ after insert - should return the task we inserted */
-+		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-+		/* Store the PID of the peeked task for comparison */
-+		dsq_peek_result2 = (long)peek_result;
-+		dsq_peek_result2_pid = peek_result ? peek_result->pid : -1;
-+
-+		/* Now consume the task since we've peeked at it */
-+		scx_bpf_dsq_move_to_local(test_dsq_id);
-+
-+		/* Mark phase 1 as complete */
-+		phase1_complete = 1;
-+		bpf_printk("Phase 1 complete, starting phase 2 stress testing");
-+	} else if (!phase1_complete) {
-+		/* Still in phase 1, use real DSQ */
-+		scx_bpf_dsq_move_to_local(real_dsq_id);
-+	} else {
-+		/* Phase 2: Scan all DSQs in the pool and try to move a task */
-+		if (!scan_dsq_pool()) {
-+			/* No tasks found in DSQ pool, fall back to real DSQ */
-+			scx_bpf_dsq_move_to_local(real_dsq_id);
-+		}
-+	}
-+}
-+
-+s32 BPF_STRUCT_OPS_SLEEPABLE(peek_dsq_init)
-+{
-+	s32 err;
-+	int i;
-+
-+	/* Always set debug values so we can see which version we're using */
-+	debug_ksym_exists = bpf_ksym_exists(scx_bpf_dsq_peek) ? 1 : 0;
-+
-+	/* Initialize state first */
-+	insert_test_cpu = -1;
-+	enqueue_count = 0;
-+	dispatch_count = 0;
-+	phase1_complete = 0;
-+	total_peek_attempts = 0;
-+	successful_peeks = 0;
-+
-+	/* Create the test and real DSQs */
-+	err = scx_bpf_create_dsq(test_dsq_id, -1);
-+	if (err) {
-+		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
-+	return err;
-+	}
-+	err = scx_bpf_create_dsq(real_dsq_id, -1);
-+	if (err) {
-+		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
-+		return err;
-+	}
-+
-+	/* Create the DSQ pool for stress testing */
-+	bpf_for(i, 0, DSQ_POOL_SIZE) {
-+		int dsq_id = dsq_pool_base_id + i;
-+
-+		err = scx_bpf_create_dsq(dsq_id, -1);
-+		if (err) {
-+			scx_bpf_error("Failed to create DSQ pool entry %d: %d", dsq_id, err);
-+			return err;
-+		}
-+	}
-+
-+	/* Initialize the peek results map */
-+	bpf_for(i, 0, MAX_SAMPLES) {
-+		u32 key = i;
-+		long pid = -1;
-+
-+		bpf_map_update_elem(&peek_results, &key, &pid, BPF_ANY);
-+	}
-+
-+	return 0;
-+}
-+
-+void BPF_STRUCT_OPS(peek_dsq_exit, struct scx_exit_info *ei)
-+{
-+	int i;
-+
-+	/* Destroy the primary DSQs */
-+	scx_bpf_destroy_dsq(test_dsq_id);
-+	scx_bpf_destroy_dsq(real_dsq_id);
-+
-+	/* Destroy the DSQ pool */
-+	bpf_for(i, 0, DSQ_POOL_SIZE) {
-+		int dsq_id = dsq_pool_base_id + i;
-+
-+		scx_bpf_destroy_dsq(dsq_id);
-+	}
-+
-+	UEI_RECORD(uei, ei);
-+}
-+
-+SEC(".struct_ops.link")
-+struct sched_ext_ops peek_dsq_ops = {
-+	.enqueue = (void *)peek_dsq_enqueue,
-+	.dispatch = (void *)peek_dsq_dispatch,
-+	.init = (void *)peek_dsq_init,
-+	.exit = (void *)peek_dsq_exit,
-+	.name = "peek_dsq",
-+};
-diff --git a/tools/testing/selftests/sched_ext/peek_dsq.c b/tools/testing/selftests/sched_ext/peek_dsq.c
-new file mode 100644
-index 000000000000..f1c72b898979
---- /dev/null
-+++ b/tools/testing/selftests/sched_ext/peek_dsq.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test for DSQ operations including create, destroy, and peek operations.
-+ *
-+ * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
-+ * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
-+ */
-+#include <bpf/bpf.h>
-+#include <scx/common.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <string.h>
-+#include <sched.h>
-+#include "peek_dsq.bpf.skel.h"
-+#include "scx_test.h"
-+
-+#define NUM_WORKERS 4
-+
-+static bool workload_running = true;
-+static pthread_t workload_threads[NUM_WORKERS];
-+
-+/**
-+ * Background workload thread that sleeps and wakes rapidly to exercise
-+ * the scheduler's enqueue operations and ensure DSQ operations get tested.
-+ */
-+static void *workload_thread_fn(void *arg)
-+{
-+	while (workload_running) {
-+		/* Sleep for a very short time to trigger scheduler activity */
-+		usleep(1000); /* 1ms sleep */
-+		/* Yield to ensure we go through the scheduler */
-+		sched_yield();
-+	}
-+	return NULL;
-+}
-+
-+static enum scx_test_status setup(void **ctx)
-+{
-+	struct peek_dsq *skel;
-+
-+	skel = peek_dsq__open();
-+	SCX_FAIL_IF(!skel, "Failed to open");
-+	SCX_ENUM_INIT(skel);
-+	SCX_FAIL_IF(peek_dsq__load(skel), "Failed to load skel");
-+
-+	*ctx = skel;
-+
-+	return SCX_TEST_PASS;
-+}
-+
-+static int print_observed_pids(struct bpf_map *map, int max_samples, const char *dsq_name)
-+{
-+	long count = 0;
-+
-+	printf("Observed %s DSQ peek pids:\n", dsq_name);
-+	for (int i = 0; i < max_samples; i++) {
-+		long pid;
-+		int err;
-+
-+		err = bpf_map_lookup_elem(bpf_map__fd(map), &i, &pid);
-+		if (err == 0) {
-+			if (pid == 0) {
-+				printf("  Sample %d: NULL peek\n", i);
-+			} else if (pid > 0) {
-+				printf("  Sample %d: pid %ld\n", i, pid);
-+				count++;
-+			}
-+		} else {
-+			printf("  Sample %d: error reading pid (err=%d)\n", i, err);
-+		}
-+	}
-+	printf("Observed ~%ld pids in the %s DSQ(s)\n", count, dsq_name);
-+	return count;
-+}
-+
-+static enum scx_test_status run(void *ctx)
-+{
-+	struct peek_dsq *skel = ctx;
-+	bool failed = false;
-+	int seconds = 3;
-+	int err;
-+
-+	/* Enable the scheduler to test DSQ operations */
-+	printf("Enabling scheduler to test DSQ insert operations...\n");
-+
-+	struct bpf_link *link =
-+		bpf_map__attach_struct_ops(skel->maps.peek_dsq_ops);
-+
-+	if (!link) {
-+		SCX_ERR("Failed to attach struct_ops");
-+		return SCX_TEST_FAIL;
-+	}
-+
-+	printf("Starting %d background workload threads...\n", NUM_WORKERS);
-+	workload_running = true;
-+	for (int i = 0; i < NUM_WORKERS; i++) {
-+		err = pthread_create(&workload_threads[i], NULL, workload_thread_fn, NULL);
-+		if (err) {
-+			SCX_ERR("Failed to create workload thread %d: %s", i, strerror(err));
-+			/* Stop already created threads */
-+			workload_running = false;
-+			for (int j = 0; j < i; j++)
-+				pthread_join(workload_threads[j], NULL);
-+			bpf_link__destroy(link);
-+			return SCX_TEST_FAIL;
-+		}
-+	}
-+
-+	printf("Waiting for enqueue events.\n");
-+	sleep(seconds);
-+	while (skel->data->enqueue_count <= 0) {
-+		printf(".");
-+		fflush(stdout);
-+		sleep(1);
-+		seconds++;
-+		if (seconds >= 30) {
-+			printf("\n\u2717 Timeout waiting for enqueue events\n");
-+			/* Stop workload threads and cleanup */
-+			workload_running = false;
-+			for (int i = 0; i < NUM_WORKERS; i++)
-+				pthread_join(workload_threads[i], NULL);
-+			bpf_link__destroy(link);
-+			return SCX_TEST_FAIL;
-+		}
-+	}
-+
-+	workload_running = false;
-+	for (int i = 0; i < NUM_WORKERS; i++) {
-+		err = pthread_join(workload_threads[i], NULL);
-+		if (err) {
-+			SCX_ERR("Failed to join workload thread %d: %s", i, strerror(err));
-+			bpf_link__destroy(link);
-+			return SCX_TEST_FAIL;
-+		}
-+	}
-+	printf("Background workload threads stopped.\n");
-+
-+	SCX_EQ(skel->data->uei.kind, EXIT_KIND(SCX_EXIT_NONE));
-+
-+	/* Detach the scheduler */
-+	bpf_link__destroy(link);
-+
-+	printf("Enqueue/dispatch count over %d seconds: %d / %d\n", seconds,
-+		skel->data->enqueue_count, skel->data->dispatch_count);
-+	printf("Debug: ksym_exists=%d\n",
-+	       skel->bss->debug_ksym_exists);
-+
-+	/* Check DSQ insert result */
-+	printf("DSQ insert test done on cpu: %d\n", skel->data->insert_test_cpu);
-+	if (skel->data->insert_test_cpu != -1)
-+		printf("\u2713 DSQ insert succeeded !\n");
-+	else {
-+		printf("\u2717 DSQ insert failed or not attempted\n");
-+		failed = true;
-+	}
-+
-+	/* Check DSQ peek results */
-+	printf("  DSQ peek result 1 (before insert): %d\n",
-+	       skel->data->dsq_peek_result1);
-+	if (skel->data->dsq_peek_result1 == 0)
-+		printf("\u2713 DSQ peek verification success: peek returned NULL!\n");
-+	else {
-+		printf("\u2717 DSQ peek verification failed\n");
-+		failed = true;
-+	}
-+
-+	printf("  DSQ peek result 2 (after insert): %ld\n",
-+	       skel->data->dsq_peek_result2);
-+	printf("  DSQ peek result 2, expected: %ld\n",
-+	       skel->data->dsq_peek_result2_expected);
-+	if (skel->data->dsq_peek_result2 ==
-+	    skel->data->dsq_peek_result2_expected)
-+		printf("\u2713 DSQ peek verification success: peek returned the inserted task!\n");
-+	else {
-+		printf("\u2717 DSQ peek verification failed\n");
-+		failed = true;
-+	}
-+
-+	printf("  Inserted test task -> pid: %ld\n", skel->data->dsq_inserted_pid);
-+	printf("  DSQ peek result 2 -> pid: %ld\n", skel->data->dsq_peek_result2_pid);
-+
-+	int pid_count;
-+
-+	pid_count = print_observed_pids(skel->maps.peek_results,
-+					skel->data->max_samples, "DSQ pool");
-+
-+	if (skel->bss->debug_ksym_exists && pid_count == 0) {
-+		printf("\u2717 DSQ pool test failed: no successful peeks in native mode\n");
-+		failed = true;
-+	}
-+	if (skel->bss->debug_ksym_exists && pid_count > 0)
-+		printf("\u2713 DSQ pool test success: observed successful peeks in native mode\n");
-+
-+	if (failed)
-+		return SCX_TEST_FAIL;
-+	else
-+		return SCX_TEST_PASS;
-+}
-+
-+static void cleanup(void *ctx)
-+{
-+	struct peek_dsq *skel = ctx;
-+
-+	if (workload_running) {
-+		workload_running = false;
-+		for (int i = 0; i < NUM_WORKERS; i++)
-+			pthread_join(workload_threads[i], NULL);
-+	}
-+
-+	peek_dsq__destroy(skel);
-+}
-+
-+struct scx_test peek_dsq = {
-+	.name = "peek_dsq",
-+	.description =
-+		"Test DSQ create/destroy operations and future peek functionality",
-+	.setup = setup,
-+	.run = run,
-+	.cleanup = cleanup,
-+};
-+REGISTER_SCX_TEST(&peek_dsq)
 -- 
-2.51.0
+2.43.7
 
 
