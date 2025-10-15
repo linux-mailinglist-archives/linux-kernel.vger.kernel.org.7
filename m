@@ -1,146 +1,152 @@
-Return-Path: <linux-kernel+bounces-853994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2D2BDD440
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B801BDD417
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C8CAB353C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:00:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AC687353B93
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9313161A5;
-	Wed, 15 Oct 2025 08:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5143161B1;
+	Wed, 15 Oct 2025 07:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNse4HvJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xvzOw+Zz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNse4HvJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xvzOw+Zz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYmKSUzM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857C7315D39
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554F131577D;
+	Wed, 15 Oct 2025 07:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760515201; cv=none; b=vCiZuTceVXvAE6R12OSPWGz0/N/eDYWEfYL+rnIN8e1ixf0WoJ8mjdXw338sJdG05+PdGbqiAAfTfudXunBF2WlHBNaTJf/6BR0m/ISf7BTLarPyFgQtS6ODW4WGpVtSHo7daWzroUa647f/NAJoBfE6mqPV9sGEqRK7st2rPsM=
+	t=1760515038; cv=none; b=HIH5N7aeKhs/OH2PmqdrxOVR8wIDGu3AWNiL3WjhnHe8UYpjkcloRp2AZ1PVZ8rc0WCdWaW46uWQez2MM3W1QkKTL2+yH18CShs/IVWcgyP0yvC1Rk1B9MQQeUStMfe/nPQsr88YsxegKOMT7uk66EnpT6lGbiU/l/an8v7icL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760515201; c=relaxed/simple;
-	bh=ySWBIPTKNqdzBxcuPAFf4SAyKo7DjMdWV4luwQPD5FY=;
-	h=From:Date:Subject:To:Cc:Message-Id; b=Mxi/4vrk2oZQa0m9Uv5Lps8BGowkcKuFbyuod6GJNHN4pI1jvxGG9szAZsX10aTyhIoxY0H6aPqkTKfIh6v20Sz5UtsVasza80HjhYgNwcO9dsxTG5jE6S7DW6MMa2+bpNksC5inQUJ4eumPFEivd2J++FHkZVjqDcy8F9Rd9Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNse4HvJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xvzOw+Zz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNse4HvJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xvzOw+Zz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from lion.mk-sys.cz (unknown [10.100.200.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AF01F38D00;
-	Wed, 15 Oct 2025 07:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760515197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
-	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
-	b=sNse4HvJ0k1Vd/XtzAwPt3pQEHgfssLgpnSfX3QuX2ho0O1tbU0zdBYD2JP8A+IoLxdXKk
-	thheFxky+yCaEkhFBfCkaOm0D+xeJUwsuVpEdZD7JN0TmIZCPfBPJfAXzgP2hLgIrZ+wvr
-	5uRs0qXYeoNcve+W04BqnJIA/hVX8ck=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760515197;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
-	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
-	b=xvzOw+Zz1sRCIxivhzGtX37Z9IFFqYT7D1n5d9Ao5dYU/ng4cUM4Wcu3/Xvy3AEW9nUyHY
-	sIPmi1VAoz6gE2BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760515197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
-	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
-	b=sNse4HvJ0k1Vd/XtzAwPt3pQEHgfssLgpnSfX3QuX2ho0O1tbU0zdBYD2JP8A+IoLxdXKk
-	thheFxky+yCaEkhFBfCkaOm0D+xeJUwsuVpEdZD7JN0TmIZCPfBPJfAXzgP2hLgIrZ+wvr
-	5uRs0qXYeoNcve+W04BqnJIA/hVX8ck=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760515197;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
-	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
-	b=xvzOw+Zz1sRCIxivhzGtX37Z9IFFqYT7D1n5d9Ao5dYU/ng4cUM4Wcu3/Xvy3AEW9nUyHY
-	sIPmi1VAoz6gE2BQ==
-Received: by lion.mk-sys.cz (Postfix, from userid 1000)
-	id 8F40620057; Wed, 15 Oct 2025 09:59:57 +0200 (CEST)
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Wed, 15 Oct 2025 09:56:31 +0200
-Subject: [PATCH] power: supply: use ktime_divns() to avoid 64-bit division
-To: Sebastian Reichel <sre@kernel.org>,
-    linux-pm@vger.kernel.org
-Cc: Hans de Goede <hansg@kernel.org>,
-    Linus Walleij <linus.walleij@linaro.org>,
-    linux-kernel@vger.kernel.org
-Message-Id: <20251015075957.8F40620057@lion.mk-sys.cz>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	R_BAD_CTE_7BIT(3.50)[7bit];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	URIBL_BLOCKED(0.00)[lion.mk-sys.cz:mid,lion.mk-sys.cz:helo,suse.cz:email];
-	MISSING_XM_UA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.80
+	s=arc-20240116; t=1760515038; c=relaxed/simple;
+	bh=oVjglxA2YVL+EWAe8G0L/QPujTzNnzrVGFjD3bYF2Go=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lreFI3plv4joxOMafdJIORKEcKNCQ9CHpMQGuK14dYTcWEp0jFkEvnAmX/tmGnJNZ/E/R8QyQXG345gCOTVCi0vM9ZzZttSKWNUU2v1Wf45sfiJF9IxOnNyusOetvg0rrXFWNRmXVApLgDsczpSSRL5t606dZiWaOiRhGDw/eO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYmKSUzM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 25BB0C4CEF8;
+	Wed, 15 Oct 2025 07:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760515038;
+	bh=oVjglxA2YVL+EWAe8G0L/QPujTzNnzrVGFjD3bYF2Go=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=kYmKSUzME7qid6TgJhqyUEK302Ta71PZvWeDgogzPPK80DMuHwXKHR2+QPObZaw6H
+	 mft+4Hb4nh/b2CeAivUtkBzpOz/dLMAyJVIGGu5ZMIw9uCCOblhRddfvgRacdj62Hp
+	 MMQlL6UyAUfc5WDDlL5MDn7T/pQ1XqFw5e/P3RsK6AEPyQA9R6aNTwys2FZtoDEacp
+	 7AzyaJg8YM+fTrI0AVQgp+Ks4N8YMjBzT5TIlURWV5YUCrcv+2Nxji9zes57+Cd3nP
+	 eu7zlXlfCSVJbrUAI/4Gpi+94wLergrWJGbsr4IpeP4bqEReYnA7l0YDE33qXfKN1/
+	 oAtqu8Tz29Zpg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14752CCD18E;
+	Wed, 15 Oct 2025 07:57:18 +0000 (UTC)
+From: Prasad Kumpatla via B4 Relay <devnull+prasad.kumpatla.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v3 0/5] Add Audio Support for Kaanapali MTP Boards
+Date: Wed, 15 Oct 2025 13:27:14 +0530
+Message-Id: <20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANpT72gC/03MSw6DIBSF4a0Yxr2Ep9aOuo+mgxvAShShoKaJc
+ e8lHXVykm9w/oMUl70r5NYcJLvdFx+XCnlpiBlxeTnwtpoIJjRnXMG0JMDN+gi7gB5l12lhrOG
+ a1EvKbvCfX+7xrB5yDLCO2eFfhPVcyVYpKkXfCnYFDiljQUunLSRcZ7zHUuh7w9nEEGgdcp5fK
+ /Z7DaoAAAA=
+X-Change-ID: 20251014-knp-audio-v2-9a37752cdc15
+To: Srinivas Kandagatla <srini@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+ Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760515036; l=2706;
+ i=prasad.kumpatla@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
+ bh=oVjglxA2YVL+EWAe8G0L/QPujTzNnzrVGFjD3bYF2Go=;
+ b=6v34mFGcATJ0yTodD94cdvkszAGp2RJ7NLQbNiAVtOYGS2We3CTlm4YnUqX0oqBwxwDO+ZJTn
+ W/+3gQVz8sIAtgwa7d+LGBzCwoIcwmNuqOe0zGhGTzYtKMBwelJKgrb
+X-Developer-Key: i=prasad.kumpatla@oss.qualcomm.com; a=ed25519;
+ pk=I3mn8JNlYnnm7frqMGXms1Rm2H+0gpAfknMlnBYqCzw=
+X-Endpoint-Received: by B4 Relay for
+ prasad.kumpatla@oss.qualcomm.com/20251014 with auth_id=541
+X-Original-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Reply-To: prasad.kumpatla@oss.qualcomm.com
 
-The build of intel_dc_ti_battery module on i386 (32-bit) fails with
+Add audio support for Kaanapali MTP boards. Introduces supporting
+dependencies required to enable audio functionality on MTP platforms.
+These changes have been validated on Kaanapali MTP hardware.
 
-ERROR: modpost: "__udivdi3" [drivers/power/supply/intel_dc_ti_battery.ko]
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 
-This is caused by 64-bit division of ktime values by NSEC_PER_USEC. Use
-ktime_divns() helper which handles the division correctly on 32-bit
-architectures.
+Changes in [v3]:
+	- Correct SoB chain, comments from Krzysztof.
+	- Link to v2: https://lore.kernel.org/linux-arm-msm/20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com/
 
-Fixes: 8c5795fe5527 ("power: supply: Add new Intel Dollar Cove TI battery driver")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+Changes in [v2]:
+	- Addressed compilation issue for lpass version check patch.
+	- Sorted compatible string in machine driver.
+	- Link to v1: https://lore.kernel.org/linux-arm-msm/20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com/
+
+Konrad Dybcio (1):
+  ASoC: codecs: va-macro: Rework version checking
+
+Prasad Kumpatla (4):
+  ASoC: dt-bindings: qcom,sm8250: Add kaanapali sound card
+  ASoC: qcom: sc8280xp: Add support for Kaanapali
+  dt-bindings: soundwire: qcom: Add SoundWire v2.2.0 compatible
+  ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro codecs
+
+ .../bindings/sound/qcom,lpass-rx-macro.yaml   |  1 +
+ .../bindings/sound/qcom,lpass-tx-macro.yaml   |  1 +
+ .../bindings/sound/qcom,lpass-va-macro.yaml   |  1 +
+ .../bindings/sound/qcom,lpass-wsa-macro.yaml  |  1 +
+ .../bindings/sound/qcom,sm8250.yaml           |  1 +
+ .../bindings/soundwire/qcom,soundwire.yaml    |  1 +
+ sound/soc/codecs/lpass-va-macro.c             | 90 +++++++++++++------
+ sound/soc/qcom/sc8280xp.c                     |  1 +
+ 8 files changed, 70 insertions(+), 27 deletions(-)
+
+--
+2.34.1
+
 ---
- drivers/power/supply/intel_dc_ti_battery.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Konrad Dybcio (1):
+      ASoC: codecs: va-macro: Rework version checking
 
-diff --git a/drivers/power/supply/intel_dc_ti_battery.c b/drivers/power/supply/intel_dc_ti_battery.c
-index 56b0c92e9d28..c26209ef9577 100644
---- a/drivers/power/supply/intel_dc_ti_battery.c
-+++ b/drivers/power/supply/intel_dc_ti_battery.c
-@@ -141,7 +141,7 @@ static int dc_ti_battery_get_voltage_and_current_now(struct power_supply *psy, i
- 	if (ret)
- 		goto out_err;
- 
--	cnt_start_usec = ktime_get_ns() / NSEC_PER_USEC;
-+	cnt_start_usec = ktime_divns(ktime_get_ns(), NSEC_PER_USEC);
- 
- 	/* Read Vbat, convert IIO mV to power-supply ųV */
- 	ret = iio_read_channel_processed_scale(chip->vbat_channel, volt, 1000);
-@@ -149,7 +149,7 @@ static int dc_ti_battery_get_voltage_and_current_now(struct power_supply *psy, i
- 		goto out_err;
- 
- 	/* Sleep at least 3 sample-times + slack to get 3+ CC samples */
--	now_usec = ktime_get_ns() / NSEC_PER_USEC;
-+	now_usec = ktime_divns(ktime_get_ns(), NSEC_PER_USEC);
- 	sleep_usec = 3 * SMPL_INTVL_US + SLEEP_SLACK_US - (now_usec - cnt_start_usec);
- 	if (sleep_usec > 0 && sleep_usec < 1000000)
- 		usleep_range(sleep_usec, sleep_usec + SLEEP_SLACK_US);
+Prasad Kumpatla (4):
+      ASoC: dt-bindings: qcom,sm8250: Add kaanapali sound card
+      ASoC: qcom: sc8280xp: Add support for Kaanapali
+      dt-bindings: soundwire: qcom: Add SoundWire v2.2.0 compatible
+      ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro codecs
+
+ .../bindings/sound/qcom,lpass-rx-macro.yaml        |  1 +
+ .../bindings/sound/qcom,lpass-tx-macro.yaml        |  1 +
+ .../bindings/sound/qcom,lpass-va-macro.yaml        |  1 +
+ .../bindings/sound/qcom,lpass-wsa-macro.yaml       |  1 +
+ .../devicetree/bindings/sound/qcom,sm8250.yaml     |  1 +
+ .../bindings/soundwire/qcom,soundwire.yaml         |  1 +
+ sound/soc/codecs/lpass-va-macro.c                  | 90 +++++++++++++++-------
+ sound/soc/qcom/sc8280xp.c                          |  1 +
+ 8 files changed, 70 insertions(+), 27 deletions(-)
+---
+base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
+change-id: 20251014-knp-audio-v2-9a37752cdc15
+
+Best regards,
 -- 
-2.51.0
+Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+
 
 
