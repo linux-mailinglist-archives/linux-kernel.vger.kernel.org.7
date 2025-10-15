@@ -1,235 +1,222 @@
-Return-Path: <linux-kernel+bounces-853851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD3CBDCC34
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:39:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D133BDCC3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E509418978C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:39:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A183E4F8941
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18EE3126A6;
-	Wed, 15 Oct 2025 06:39:10 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3823021CC5A;
+	Wed, 15 Oct 2025 06:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jE3xKu67"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE8302178
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A661B3128D7
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510350; cv=none; b=PcFdAM9Bc/05ywdhb97p5VUDRqhBb9q4IWOlkp+4eFKRD0id8XuK0mjbmKPOzuvDj7TXjEA8DDDbf6eA3kLs4gG/r2j7I4aiRUsXqfUcRb4FFD2sx9niCEkiWJMutPJodCQgUCPIZTby1e/+ST9II+zVa2Zp+zoXEwTBCYZeUB0=
+	t=1760510355; cv=none; b=ntL6Mao2u5yjlOgwo1xVl1zAJzQAgZ+sofSZBRXTfBr9Zzk84csmKqhK1qgL++u0vw/n/SnPt1gPdqjHOeCMT6LUgmZUy62TcbYnXW1qVci7X8fgYPzGML0bUjbsPTsWEHdoYRFjyPI6U0/ZIixIHtDjDdGPtcSaySR7t7A2xlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510350; c=relaxed/simple;
-	bh=IYD1jN5WkZj4VgxNMFXq2HVKXVKvIXQ7z1epo6PKEZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pqEK/GfggV8g1LtvJqGjBgXl4oFS8F8RH/dpwZVPYH5aaObvMlRdsFYPGDfk5finKEtsarKvfMgrFCMz7FzjBTwYuGF3DDBEWxnwgssD/2cRO+Wx/e0iqeNrrZraffiikBsA3oI81/506ZDc7Mwepwng+oQzT/hSALcaeP/n2ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
-X-QQ-mid: zesmtpgz1t1760510334tf939942d
-X-QQ-Originating-IP: od4bNRLOLfQkHFiv6vxwr/aDip+WTs/jGF3/NVLsJ6I=
-Received: from GPU-Server-A6000.. ( [202.201.1.132])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 15 Oct 2025 14:38:51 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7569591979002680664
-EX-QQ-RecipientCnt: 14
-From: Yuan Tan <tanyuan@tinylab.org>
-To: arnd@arndb.de,
-	masahiroy@kernel.org,
-	nathan@kernel.org,
-	palmer@dabbelt.com,
-	linux-kbuild@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	i@maskray.me,
-	tanyuan@tinylab.org,
-	falcon@tinylab.org,
-	ronbogo@outlook.com,
-	z1652074432@gmail.com,
-	lx24@stu.ynu.edu.cn
-Subject: [PATCH v2/resend 0/8] dce, riscv: Unused syscall trimming with PUSHSECTION and conditional KEEP()
-Date: Wed, 15 Oct 2025 14:38:43 +0800
-Message-ID: <30C972B6393DBAC5+cover.1760463245.git.tanyuan@tinylab.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
-References: <cover.1760463245.git.tanyuan@tinylab.org>
+	s=arc-20240116; t=1760510355; c=relaxed/simple;
+	bh=u8e4JWFCFnh7H9/29cWjqArFxpug4mrQezkIEidS3TE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pm+ZYSjZSDsb6D7CfiE+bjt1qvRNY2vFoGSVnKDeELHMfz+73LJa7UAG3ZpOoUuxx8cM45ltSJXJm7DbzlqYyqEkI7iZZC6ArDwPWGW1WcOpZnxyqtewRW9RsPEofdy6eKxFa0Sxin+nfY+Mj3BqIMoG8EDleYCt0Sr3zkthtxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jE3xKu67; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-87a092251eeso11378506d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760510351; x=1761115151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bsukMYa0AUCqYEvcLXRhuapsU2hd6Y80454Ux1AAjL4=;
+        b=jE3xKu67I8l7hnrtOK2eT11G8SXY9iP93v+Af2PO/YaQoNBGITcg2MpnpnS+qAKCiq
+         FaDoYj19a8hlUbQZV5mCYIItZ3iMurOoyMww13fC828qFYpJkbGTmsvMNOEGD+d40DLe
+         kUp0hV3ELWOIjDoCScx68YCvV+RCpaM5UyX3dwRehoIeuNpMYjuyV9fcZfYh/O7SyDfY
+         onh6GkjEcjIgLggnzs3optEDl+KorDFecPxh6IEdxV17IXKwqxdLRqzXE7VS5vWQ2P3R
+         J+QEMr2fh9wapgquSvBC1MCWV2qABApfHHtRghy7gf862xTtxK+jnLv8trcS4ys6WaHD
+         xqZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760510351; x=1761115151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bsukMYa0AUCqYEvcLXRhuapsU2hd6Y80454Ux1AAjL4=;
+        b=lf46yDwLK5GPIbB02dIrVmgQRyyVzdJ3rsJqbR1LaSL757EISxDsKzJb9L05ERjoqs
+         qE3m2R98PfJXHACmakM24devp2ORMeE/N3jytcsCYk748oz+bAin4DvJKHLJNp6vy1Sx
+         TKCkGo0zLhvfKRXRSB9jdIkI+7rJCVhs5B/ijs+P5TSoc1AOZ18GwPdC3EBX1uoEaDSF
+         7CaSu6YwLh13zt0hJiKmGwGe8JNT1EkKYDGHm98oS8Xc1rQyfBLA8w0TmEibhV3WF7Rz
+         0qmRN44BhTB6/4qbB0v94T7N1CJIfyGqEL6frro43G6y2pW692O97bsO9JFc5ats5n+1
+         028Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQeGzvoT0fyYKEl12jpW8UcXCMxib5Wtim/fGSU5Itl0jvsFpLzaFbI5w5lxZh10n5uigsaaIHmdtKZok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+7OHCUtOkgsSYPfG4LRvrYvJvYX2kgAyCMpHxKlFAZKyjaiL7
+	sb0jDGjhxDEaNVVOAZyFtBEpzU+3Kj6MolI3CgkOsVS5FIg3rFs8xcIc9dVKO/Nftgy/QqbinZF
+	bzu0rqnqSAOQIJkqm8cv+OQSHT9GfIpvZqrsUm5Ob
+X-Gm-Gg: ASbGnctuIn0xFYdNzIXqD3rN/9K4CsGNLwhwEueQNG7lpkzPJkgcslip75lYeKoVoSS
+	ZpA9VERAhYMNPzHSviXcFxEvcBEDEmuckGKO3xJEL/wymYOj7ony5HxD0VfRBPY2JCB1hcX1J97
+	4GsiAcP/TBt4anT2/+vG+HQ+k6C7RcLBqPMBzPqU0I5bPvFenVXTuRdN+NiECPcEC1wr3xsLPv/
+	1vNLASkcY8YnxpxXSVi4xBc96V++klHVA==
+X-Google-Smtp-Source: AGHT+IFK/RWWMbmryZERBFoMRzd6/kz9EwXNSWCusWT0Lc+3vQtZfacIx3bleY22OD0BqECfDUYhjeSl5kCs+LlgdPM=
+X-Received: by 2002:ac8:4799:0:b0:4d1:212f:6689 with SMTP id
+ d75a77b69052e-4e6eb068d71mr314051311cf.41.1760510351122; Tue, 14 Oct 2025
+ 23:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: M8Zk4Li7PoFiTw+NQSaUVPSNuBAlU1et83LHIW2ei/gwxZrxBYbsJIAJ
-	tkRYF4XEhGwYukpv6nzAfQ6gVD3VUynrhZoLjFPhx05mDmJ/kI8gYhPqZSYt2cNkDOeBJjY
-	CXdi3xeVmTnrD2KReso7+/Khs8TiEq1He3eaCEGD6geMvYDiWoMVbaAOi2Dgc0e1kmXteqI
-	gjOX7mujNKCuuB9n32EBd8Z01JJk/oN6uVn6W2/IxRDqId1pOSDYZJXmjSfxLnI7bOMyAG2
-	0GSEbzwWcXMqLtyY4+rxpeDVDoYuw+wkLefeVvvVglSATMXbMWVuQyhs8XbvtwUBlQGQmui
-	CIdfRvOunG2F3qPdXi3lcgjmfSRNMrZWrz1KNalmJbw4WhB8YT0k3lWdck05mUWNXGB/QId
-	wnZ/guLNW6GBUbOr9a37Pa56f4d+qe1H328rNG44z3IvywEWk45AyuJUKMg8Wc8ECR2R4nK
-	mNiAL+68UU5fJ1C1p4lNYguHXGYskQyKfigDgctUiZDfX2KePfY7bjqOPkx1pTOMI9JvKXE
-	bIZpAe2XefUR1wP8E0E8TR5+GpgPQAG3LK/+IXzvQlZAxRNahB4zNr3Jsdb5WV5HGA0yi7C
-	H4enj8xULOEXBYIPmYoa9g9yjGJXIFhT2bi95XwotRsk78+zRtrbKk3h+dJTVt8rBd8WaTp
-	obqiuBWt3deU4A3AoEzlwzgGiPXUEn8X/cPJFl2hKStwKIYaDqD/Nd6swAewq12RIxPTRwJ
-	gu3F6UqIG5K++0yG4qMhfOcT+uT6WJJ8xxJtq6gybZs+a3HxIHKNWqkICFbObzQccdWMVIb
-	UYUpJ1KNx210+dMcLUHjNoAvw8Nwggmi75fAI+GwBzrnRJdOqqH29qtpiJI33K2Ydp3IDbD
-	pOhCoSN0b5sJow5MMaSOTb4T+H6Br8JbnRQtMP09pTTn6e0Xpct1Dh+b8XuQHOIpx0oC4lw
-	LFBMasQyCHA4hR8EoR3386NSjaOOiVbxTNCyxuc0OVj5gLidLqVbvQHtdT6nT3rF3q2EM8c
-	DQMF2qJaWCOSL6WhCoIf26sAlWZfA=
-X-QQ-XMRINFO: OJlEh3abS6gXi5NWrXbD0WI=
-X-QQ-RECHKSPAM: 0
+References: <20251013101636.69220-1-21cnbao@gmail.com> <aO11jqD6jgNs5h8K@casper.infradead.org>
+ <CAGsJ_4x9=Be2Prbjia8-p97zAsoqjsPHkZOfXwz74Z_T=RjKAA@mail.gmail.com>
+ <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
+ <CAGsJ_4xGSrfori6RvC9qYEgRhVe3bJKYfgUM6fZ0bX3cjfe74Q@mail.gmail.com>
+ <CANn89iKSW-kk-h-B0f1oijwYiCWYOAO0jDrf+Z+fbOfAMJMUbA@mail.gmail.com>
+ <CAGsJ_4wJHpD10ECtWJtEWHkEyP67sNxHeivkWoA5k5++BCfccA@mail.gmail.com>
+ <CANn89iKC_y6Fae9E5ETOE46y-RCqD6cLHnp=7GynL_=sh3noKg@mail.gmail.com> <CAGsJ_4x5v=M0=jYGOqy1rHL9aVg-76OgiE0qQMdEu70FhZcmUg@mail.gmail.com>
+In-Reply-To: <CAGsJ_4x5v=M0=jYGOqy1rHL9aVg-76OgiE0qQMdEu70FhZcmUg@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 14 Oct 2025 23:39:00 -0700
+X-Gm-Features: AS18NWDMOlh0tBS4TlU64c6PgouY_kRH71v_bFl3FqJI9-6cAzN_kZLryiaCnBA
+Message-ID: <CANn89iJYaNZ+fkKosRVx+8i17HJAB4th645ySMWQEAo6WoCg3w@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
+To: Barry Song <21cnbao@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Huacai Zhou <zhouhuacai@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Oct 14, 2025 at 1:17=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Tue, Oct 14, 2025 at 6:39=E2=80=AFPM Eric Dumazet <edumazet@google.com=
+> wrote:
+> >
+> > On Tue, Oct 14, 2025 at 3:19=E2=80=AFAM Barry Song <21cnbao@gmail.com> =
+wrote:
+> > >
+> > > > >
+> > > > > >
+> > > > > > I think you are missing something to control how much memory  c=
+an be
+> > > > > > pushed on each TCP socket ?
+> > > > > >
+> > > > > > What is tcp_wmem on your phones ? What about tcp_mem ?
+> > > > > >
+> > > > > > Have you looked at /proc/sys/net/ipv4/tcp_notsent_lowat
+> > > > >
+> > > > > # cat /proc/sys/net/ipv4/tcp_wmem
+> > > > > 524288  1048576 6710886
+> > > >
+> > > > Ouch. That is insane tcp_wmem[0] .
+> > > >
+> > > > Please stick to 4096, or risk OOM of various sorts.
+> > > >
+> > > > >
+> > > > > # cat /proc/sys/net/ipv4/tcp_notsent_lowat
+> > > > > 4294967295
+> > > > >
+> > > > > Any thoughts on these settings?
+> > > >
+> > > > Please look at
+> > > > https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+> > > >
+> > > > tcp_notsent_lowat - UNSIGNED INTEGER
+> > > > A TCP socket can control the amount of unsent bytes in its write qu=
+eue,
+> > > > thanks to TCP_NOTSENT_LOWAT socket option. poll()/select()/epoll()
+> > > > reports POLLOUT events if the amount of unsent bytes is below a per
+> > > > socket value, and if the write queue is not full. sendmsg() will
+> > > > also not add new buffers if the limit is hit.
+> > > >
+> > > > This global variable controls the amount of unsent data for
+> > > > sockets not using TCP_NOTSENT_LOWAT. For these sockets, a change
+> > > > to the global variable has immediate effect.
+> > > >
+> > > >
+> > > > Setting this sysctl to 2MB can effectively reduce the amount of mem=
+ory
+> > > > in TCP write queues by 66 %,
+> > > > or allow you to increase tcp_wmem[2] so that only flows needing big
+> > > > BDP can get it.
+> > >
+> > > We obtained these settings from our hardware vendors.
+> >
+> > Tell them they are wrong.
+>
+> Well, we checked Qualcomm and MTK, and it seems both set these values
+> relatively high. In other words, all the AOSP products we examined also
+> use high values for these settings. Nobody is using tcp_wmem[0]=3D4096.
+>
 
-Sorry for the noise — it looks like my mail provider rewrote the Message-ID
-of the cover letter, which broke the thread. I'm resending the cover letter
-to make the series appear correctly threaded on lore.
+The (fine and safe) default should be PAGE_SIZE.
 
-This series aims to introduce syscall trimming support based on dead code
-and data elimination (DCE). This can reduce the final image size, which is
-particularly useful for embedded devices, while also reducing the attack
-surface. It might further benefit specialized scenarios such as unikernels
-or LTO builds, and could potentially help shrink the instruction cache
-footprint.
+Perhaps they are dealing with systems with PAGE_SIZE=3D65536, but then
+the skb_page_frag_refill() would be a non issue there, because it would
+only allocate order-0 pages.
 
-Besides that, this series also introduces a new PUSHSECTION macro. This
-wrapper allows sections created by .pushsection to have a proper reference
-relationship with their callers, so that --gc-sections can safely work
-without requiring unconditional KEEP() entries in linker scripts.
+> We=E2=80=99ll need some time to understand why these are configured this =
+way in
+> AOSP hardware.
+>
+> >
+> > >
+> > > It might be worth exploring these settings further, but I can=E2=80=
+=99t quite see
+> > > their connection to high-order allocations, since high-order allocati=
+ons are
+> > > kernel macros.
+> > >
+> > > #define SKB_FRAG_PAGE_ORDER     get_order(32768)
+> > > #define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MAS=
+K)
+> > > #define PAGE_FRAG_CACHE_MAX_ORDER       get_order(PAGE_FRAG_CACHE_MAX=
+_SIZE)
+> > >
+> > > Is there anything I=E2=80=99m missing?
+> >
+> > What is your question exactly ? You read these macros just fine. What
+> > is your point ?
+>
+> My question is whether these settings influence how often high-order
+> allocations occur. In other words, would lowering these values make
+> high-order allocations less frequent? If so, why?
 
-Since the new syscalltbl.sh infrastructure has been merged, I think it’s a
-good time to push this patchsetTODO? forward.
+Because almost all of the buffers stored in TCP write queues are using
+order-3 pages
+on arches with 4K pages.
 
-Patch 1–3 introduce the infrastructure for TRIM_UNUSED_SYSCALLS, mainly
-allowing syscalltbl.sh to decide which syscalls to keep according to
-USED_SYSCALLS.
-Patch 4 enables TRIM_UNUSED_SYSCALLS for the RISC-V architecture. With
-syscalltbl.sh now available, this feature should be applicable to all
-architectures that support LD_DEAD_CODE_DATA_ELIMINATION and use
-syscalltbl.sh, but let’s focus on RISC-V first.
-Patch 5–8 address the dependency inversion problem caused by sections
-created with .pushsection that are forcibly retained by KEEP() in linker
-scripts.
+I am a bit confused because you posted a patch changing skb_page_frag_refil=
+l()
+without realizing its first user is TCP.
 
-Here is an example to illustrate the problem:
+Look for sk_page_frag_refill() in tcp_sendmsg_locked()
 
-void fun2(void);
-
-void fun1(void) {
-	asm volatile (
-		".pushsection .text.pushed,\"ax\"\n\t" "call fun2\n\t"
-		".popsection\n\t"
-	);
-}
-
-If fun1() is used, .text.fun1 is kept alive, but .text.pushed has no
-reference to .text.fun1, so --gc-sections may incorrectly discard
-.text.pushed. To avoid this, the kernel traditionally wraps such sections
-with KEEP() in the linker script. However, KEEP() introduces a dependency
-inversion: if fun1() and fun2() are unused, .text.fun1, .text.fun2 and
-.text.pushed should be removed, but KEEP() forces .text.pushed to stay,
-which even keeps .text.fun2. As a result, sections that should be
-eliminated are retained unnecessarily.
-
-In Linux, sections such as ex_table, jump_table, bug_table, and alternative
-are created by .pushsection and suffer from this issue. They prevent some
-syscalls from being trimmed.
-
-Ideally, .text.fun1 and .text.pushed should share the same fate: if fun1()
-is not referenced, .text.pushed should be discarded as well. To achieve
-this, we can establish a relocation with a directive between the caller and
-the section created by .pushsection:
-
-.section .text.fun1,"ax"
-.reloc ., BFD_RELOC_NONE, pushedlabel
-.pushsection .text.pushed,"ax" pushedlabel:
-	call fun2
-.popsection
-
-Based on this idea, we introduce the PUSHSECTION macro. This macro emits a
-relocation directive and a new label automatically, while remaining fully
-compatible with all existing .pushsection parameters. With this macro, all
-current uses of .pushsection (and even .section) in the kernel can be
-replaced, significantly reducing the number of KEEP() in linker scripts and
-enabling --gc-sections to work more effectively.
-
-Without PUSHSECTION, there are 56 syscalls that cannot be trimmed in
-defconfig and TRIM_UNUSED_SYSCALLS enabled. With PUSHSECTION, all syscalls
-can now be properly trimmed.
-
-We have tested enabling TRIM_UNUSED_SYSCALLS while keeping all syscalls
-listed in USED_SYSCALLS and successfully booted Ubuntu on a configuration
-based on v6.18-rc1 defconfig. The detailed configuration is provided in
-[1]. This confirms that the trimming mechanism functions correctly under a
-standard kernel setup.
-
-The vmlinux size with tinyconfig is as follows:
-
-|                                 | syscall remain | vmlinux size   | vmlinux after strip |
-| ------------------------------- | -------------- | -------------- | ------------------- |
-| enable DCE                      | 188            | 1437008        | 915160              |
-| enable DCE and syscall trimming | 3              | 1263528 (-12%) | 800472 (-13%)       |
-
-
-Changes in v2:
-- Rebased on the unified syscalltbl.sh infrastructure for syscall trimming.
-USED_SYSCALLS now accepts only syscall names to avoid confusion, whereas v1
-also allowed entry point symbols.
-- Uses the .reloc directive to establish dependencies.
-Compared with previous proposals using SHF_LINK_ORDER or SHF_GROUP, this
-approach provides a generic, parameter-compatible macro for all
-.pushsection usages without side effects.
-
-
-Previous versions:
-- RFC: https://lore.kernel.org/lkml/cover.1676594211.git.falcon@tinylab.org/
-- v1 part 1: https://lore.kernel.org/lkml/cover.1695679700.git.falcon@tinylab.org/
-- v1 part 2: https://lore.kernel.org/lkml/cover.1699025537.git.tanyuan@tinylab.org/
-
-Links:
-[1] https://pastebin.com/St51bk2K
-
-
-Yuan Tan (4):
-  kconfig: add CONFIG_PUSHSECTION_WITH_RELOC for relocation support
-  compiler.h: introduce PUSHSECTION macro to establish proper references
-  vmlinux.lds.h: support conditional KEEP() in linker script
-  riscv: use PUSHSECTION in ex_table, jump_table, bug_table and
-    alternatives
-
-Yuhang Zheng (4):
-  init/Kconfig: add CONFIG_TRIM_UNUSED_SYSCALLS and related options
-  scripts/syscalltbl.sh: add optional --used-syscalls argument for
-    syscall trimming
-  scripts/Makefile.asm-headers: pass USED_SYSCALLS to syscalltbl.sh
-  riscv: enable HAVE_TRIM_UNUSED_SYSCALLS when toolchain supports DCE
-
- arch/riscv/Kconfig                          |  1 +
- arch/riscv/include/asm/alternative-macros.h |  8 ++--
- arch/riscv/include/asm/asm-extable.h        | 10 +++--
- arch/riscv/include/asm/bug.h                |  2 +-
- arch/riscv/include/asm/jump_label.h         |  3 +-
- arch/riscv/kernel/vmlinux.lds.S             |  9 +++-
- include/asm-generic/vmlinux.lds.h           | 12 ++++-
- include/linux/compiler.h                    | 43 +++++++++++++++++-
- include/linux/compiler_types.h              |  8 ++--
- init/Kconfig                                | 49 +++++++++++++++++++++
- scripts/Makefile.asm-headers                |  4 ++
- scripts/syscalltbl.sh                       | 19 +++++++-
- 12 files changed, 150 insertions(+), 18 deletions(-)
-
-
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-prerequisite-patch-id: 7af3175326df94637f04a050dee7356416eb1edd
--- 
-2.43.0
-
+> I=E2=80=99m not a network expert, apologies if the question sounds naive.
+>
+> >
+> > We had in the past something dynamic that we removed
+> >
+> > commit d9b2938aabf757da2d40153489b251d4fc3fdd18
+> > Author: Eric Dumazet <edumazet@google.com>
+> > Date:   Wed Aug 27 20:49:34 2014 -0700
+> >
+> >     net: attempt a single high order allocation
+>
+> Thanks
+> Barry
 
