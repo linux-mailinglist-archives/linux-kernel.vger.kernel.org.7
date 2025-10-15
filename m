@@ -1,184 +1,230 @@
-Return-Path: <linux-kernel+bounces-855153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC695BE067B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:30:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E616CBE0687
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7838C3583BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:30:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6F814FE5D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBA631282E;
-	Wed, 15 Oct 2025 19:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFB130EF9C;
+	Wed, 15 Oct 2025 19:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="lQ2U3HIw"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9i+8bul"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313D3312806;
-	Wed, 15 Oct 2025 19:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1801312834
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760556380; cv=none; b=GXoadhGNZnK1QkBmVl2cAhfnmv1lmu46UTq/gXZ6eO4wTeSflfTCzqoGwMnzUZe6ra5nA3QnNhXk3RVuZ281+/1nmGLEB67K1Zzff51GQBwp6WGvnF76NCBkaBgK8wssLP14D8yTwo9RBHXzeQhZegTOnf/R+4dOBMtl+U5lSwc=
+	t=1760556388; cv=none; b=mNJPoMNucJxdLn8z/qnYibTCymRFjgK+yAW/A31dFHVq5KO6OrKdjSPt8PyUstPVAr1GMuJfFQolrYjBDg7GTaBWbwurRB3YDqJTpcLzn6UtaLDltzFYLW52t33xW97Fd07RVoi+VamKoQ/HmIOt7CIfG6SglHeNP2P6cNMQE60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760556380; c=relaxed/simple;
-	bh=xhfDdaq1Unc9cMN6QLpxDObmPMdU8+NHNrOG5vZMpdo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FcQJP4MpnCOL+KbLlpmuNlqsnMNfU0LQY5dWqASfAhMpY23NesF41Iwb4UD/UBu+SpoBs1q1QEwaI1+v8yk3LlyGlebhpFD2wRB014WaMLH0cSIqAVqV/BL2Qm/4uLwGiB3lS3LezzbA73qD80++lWtIQ01f8R2mkfhdZMMy0u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=lQ2U3HIw; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1760556371; x=1761161171; i=w_armin@gmx.de;
-	bh=ScWlLT1GiFErwwquhnT9AoBOwr4/DPgnWqg0xKL77io=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lQ2U3HIw4BnenCAIL2dxs2JehWWf9ZCCoBUz6/TMZC/GLSTGQconYhthustLA1SI
-	 sJ/1woW4uPCyTlAFmSZHCa0yUIvXWEz0mULLBPiRcBkyN6YUrGZ5ucac/QGyUimpE
-	 7E+i4UmkGndJjkoX9t4UAA8ZPszTO9ZhSDH2gwqmecTtc59MMHKL982EpdblSX1rw
-	 6O6eR1cQYYFfkRD3kJPak0Ci88HOfcIE/+CvQyYNWOn/yrN2KSRhJfxgsb8KgibAd
-	 Ex5y9n4yVDm8hfwwjcs/JDP8QrweZFuCFwBEOeoFrTrZ6TBrWNhRI7U3Efw25CEEe
-	 VPIhygTc3Y3DbIV9SQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.fritz.box ([93.202.247.91]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MTiU3-1uf2be1xMr-00YnHm; Wed, 15 Oct 2025 21:26:11 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: jlee@suse.com,
-	basak.sb2006@gmail.com,
-	faiz.faadhillah@gmail.com,
-	rayanmargham4@gmail.com
-Cc: kuurtb@gmail.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] platform/x86: acer-wmi: Add support for PHN16-72
-Date: Wed, 15 Oct 2025 21:25:51 +0200
-Message-Id: <20251015192551.321200-5-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251015192551.321200-1-W_Armin@gmx.de>
-References: <20251015192551.321200-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1760556388; c=relaxed/simple;
+	bh=XWIWVLbIdLBV3+v5u5QWw9/N7RG5Abk3Fr1zTbfDR+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gy5K+rdNIWjSrgiWW6/zZt8euajDPeMDKRWqcY2SyUlzK3CU4LYb4bW/SExKm1CIhV95Ruf9Ru2z0Amsm/mFNib3fVQbG8v0fnd1gcpQSIBgQS5RI1xVwew090a8mpshG6LwM7Xr4gFseTOITCOdAazn1P53/4sUZ9Y26rNiT3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9i+8bul; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b6271ea39f4so4795868a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760556385; x=1761161185; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nDVfpgjWNTkgshrfBSIkTd28bSn0/t7hIZGP8bEifOk=;
+        b=i9i+8bulONV/Fe1f8aVzvHsQIB3OarA2jSpTcrsizV5OgvaJuyFqb1BNiXt33Sfq4k
+         GE2AiLUNtRA/pJgtSu9LgcZz3rjlGHCOn48zvH83GNC1uI9fCcNqOmyQaEeXOZdP7aTB
+         IeeNx0tCoQE0utmEoQ0e6N8liXa0u2/3D+ZeLVsv93240v2bj4jHfQ8FurqfVAl0cAks
+         rc4vRaSpk4X5uOnZjU2C+JCAwrcRJnfIMKrI7DCY6yoOxKTsqiwU/9HMfVWHeqU4NKlj
+         EQvQYTryamex26WBeKOymGpmYOl54Uf2nSZHbkOLKUq6b8IYnzIMgKrINpJS/U+Rxvwy
+         1xog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760556385; x=1761161185;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nDVfpgjWNTkgshrfBSIkTd28bSn0/t7hIZGP8bEifOk=;
+        b=j55+QZutdOlCUl+nia2yss4ROT5QyE5NDQlmQbIDulBl/y5YPkOhyRJfYlpQnNMUGd
+         PlqGO8nGtFfAlDkrXA9nf+rWURr6CO6UdLKBXw0V4zEDSky/M4N+RkWOBcAtyv9M7cHJ
+         oCFqvaVHaq/uATbxBZY19FixHSw7quwMKlO8ZN8NjKdMtQ1lDnAjP9GGQNZzsIr6qJNk
+         ov0VFeajTPBnQUWWWUi8oQPE7FlfBFL2K6WDjW1+5GxGEGrXdWwDdEb39gNakbyCHOLV
+         gPQBVuefzvlOsv/Slaked0TDdwfvG+9y7r0wFWIeTP/g9+RNuvMC/vhO8l9nNcAMb7HU
+         Kbyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6eHEHPTtNBHD0Nu98OmTLzVhsEKIdu8Wyl3Ndf8XML0A6dGyDew+LGOrb6he4/kbwsThsTKkmktvTia4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcFEeXkEC/L6iF5CwOIxqRXFwO3F1bT5yiqCv7wcMTQauTWOH/
+	Nd0jQlXMz/90QzP4Ip2jIqTwdsA5AwmdvdAD6FIHwBLJ7oIcLT+81b1l
+X-Gm-Gg: ASbGnctchrG+hEtGIITwF66/YwrStjzkfjC4rVm/3ebZX78nLRoLMJmqQg8vN0nYXst
+	Gci4WTbFRAR4+3NlAnoRagqEKmcuPEmmrUl/KI39w+jQbAqDUyOmvT/BjN0d8N8+Ty4l1CFq9lQ
+	V4BPlERn0DeG8Qkmm5faJsGoGr+d8D5zH1M3PIFRMv76Fk3Cxi2Otoip21yVuOBZc7OQHVQWu7G
+	xnuOe1KcLnpDksn/r5U4vpYFhaDJXso8nbpTlY+ZuRvjRxXiK/iHeDmcNo79PUpy0BS9gVTf0TN
+	ZrcWtHfXOaqibEe8afM9iwrM+7S8apO5UoxFDBcQabxCiBXEhiQwzeXdGohW5x7ZWnJVPF8rTAb
+	VO2+XAp49tiJMFYxuyp2E/iPjuj0l6SG+0LFSammsfGrWaIGvrQLDPjM7YJFFbjz77z3+RsCKIJ
+	16p5ufsezNTI6+z0nOTIYgrQvEPWPQ1+bQvMHbZx+8Rqg=
+X-Google-Smtp-Source: AGHT+IG/2RGIvnUlwhvRDKAbkNVBWO3Xn73wZNztecEYo6j0q//PBHfIYwwln5qR7o46Yt1zH+ZUwg==
+X-Received: by 2002:a17:903:94f:b0:250:643e:c947 with SMTP id d9443c01a7336-290273ee209mr370284695ad.28.1760556385119;
+        Wed, 15 Oct 2025 12:26:25 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c07:c7d3:f449:63fb:7005:808e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290993102c9sm4427005ad.24.2025.10.15.12.26.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 12:26:24 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver support for the Renesas RZ/V2H(P) SoC
+Date: Wed, 15 Oct 2025 20:26:04 +0100
+Message-ID: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:usPbr6ILaDvi1VkfyVjWQCvpZeu9vk27qmzwaaybndSdKEHMr5Q
- rntiGOJ1IO5oZL3//WcK7GtY6V1uWX/k7aMrmDqQakTeCdkhZDmIyB0TF1sMvfW/AcY7OoX
- 19jqSLNuouXaF4kssmUil1Mg4gT7w9MhUIDb4FM0MbMbjDrtZvqZiW2gEVTYPNVuoBtD6Gj
- q6lRpJjGn9lvfDfZQ382A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kV7mfXvo1Ig=;GHKpGFsqbwAuB9msFvhaA3GKX2G
- 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
- ufr6Q==
+Content-Transfer-Encoding: 8bit
 
-A user reported that the config of the PH16-72 also works on
-the PHN16-72. Add support for this new device as well.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Suggested-by: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/acer-wmi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi All,
 
-diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
-mi.c
-index 4e7d52bc1917..2acb854eb00a 100644
-=2D-- a/drivers/platform/x86/acer-wmi.c
-+++ b/drivers/platform/x86/acer-wmi.c
-@@ -692,6 +692,15 @@ static const struct dmi_system_id acer_quirks[] __ini=
-tconst =3D {
- 		},
- 		.driver_data =3D &quirk_acer_predator_ph16_72,
- 	},
-+	{
-+		.callback =3D dmi_matched,
-+		.ident =3D "Acer Predator Helios Neo 16",
-+		.matches =3D {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Predator PHN16-72"),
-+		},
-+		.driver_data =3D &quirk_acer_predator_ph16_72,
-+	},
- 	{
- 		.callback =3D dmi_matched,
- 		.ident =3D "Acer Predator PH18-71",
-=2D-=20
-2.39.5
+This patch series adds DU/DSI clocks and provides support for the
+MIPI DSI interface on the RZ/V2H(P) SoC.
+
+v10->v11:
+- Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
+- Updated rzv2h_cpg_plldsi_div_determine_rate()
+  while iterating over the divider table
+- Added Acked-by tag from Tomi for patch 2/7 and 3/7
+- Added Reviewed-by tag from Geert for patch 2/7 and 3/7
+
+v9->v10:
+- Dropped rzv2h_get_pll_div_pars() helper and opencoded instead.
+- Dropped rzv2h_get_pll_dtable_pars() helper and opencoded instead.
+- Added dummy helpers rzv2h_get_pll_pars() and rzv2h_get_pll_divs_pars()
+  in renesas.h for !CONFIG_CLK_RZV2H case.
+- Dropped selecting CLK_RZV2H for DSI driver.
+
+v8->v9:
+- Dropped `renesas-rzv2h-cpg-pll.h` header and merged into `renesas.h`
+- Exported the symbols for PLL calculation apis
+- Updated commit message for patch 2
+- Dropped reviewed-by tags for patch 2
+- Updated to use renesas.h
+- Updated Kconfig to select CLK_RZV2H
+- Added reviewed-by tag from Tomi for patch 5 and 6
+
+v7->v8:
+- Added reviewed-by tags from Tomi, Geert and Biju
+- Dropped rzv2h_get_pll_dsi_info() helper and opencoded instead.
+- Dropped is_plldsi parameter from rzv2h_cpg_pll_clk_register()
+- Updated commit message for patch 5/6 and 6/6
+- Switched to use devm_clk_get() instead of devm_clk_get_optional()
+  as lpclk clock is available on all SoCs.
+- Simplified check in rzv2h_mipi_dsi_dphy_init() for PLL parameters
+- Renamed start_index member to base_value in struct rzv2h_mipi_dsi_timings
+- Added comments in the code for DSI arrays and their usage
+- Added comments in the code for sleeps
+- Rebased the changes on next-20250902
+
+v6->v7:
+- Renamed pllclk to pllrefclk in DT binding
+- Added a new patch to add instance field to struct pll
+- Renamed rzv2h_pll_div_limits to rzv2h_pll_limits
+- Included fout_min and fout_max in the rzv2h_pll_limits structure
+- Renamed rzv2h_plldsi_parameters to rzv2h_pll_div_pars and re-structured
+  for readability
+- Dropped rzv2h_dsi_get_pll_parameters_values() instead added modular apis
+  to calculate the PLL parameters ie rzv2h_get_pll_pars/
+  rzv2h_get_pll_div_pars/rzv2h_get_pll_dtable_pars
+- Dropped plldsi_limits from rzv2h_cpg_info structure
+- Updated the DSI driver to use the new PLL APIs
+- Included the LPCLK patch
+- Rebased the changes on next-20250728
+
+v5-> v6:
+- Renamed CPG_PLL_STBY_SSCGEN_WEN to CPG_PLL_STBY_SSC_EN_WEN
+- Updated CPG_PLL_CLK1_DIV_K, CPG_PLL_CLK1_DIV_M, and
+  CPG_PLL_CLK1_DIV_P macros to use GENMASK
+- Updated req->rate in rzv2h_cpg_plldsi_div_determine_rate()
+- Dropped the cast in rzv2h_cpg_plldsi_div_set_rate()
+- Dropped rzv2h_cpg_plldsi_round_rate() and implemented
+  rzv2h_cpg_plldsi_determine_rate() instead
+- Made use of FIELD_PREP()
+- Moved CPG_CSDIV1 macro in patch 2/4
+- Dropped two_pow_s in rzv2h_dsi_get_pll_parameters_values()
+- Used mul_u32_u32() while calculating output_m and output_k_range
+- Used div_s64() instead of div64_s64() while calculating
+  pll_k
+- Used mul_u32_u32() while calculating fvco and fvco checks
+- Rounded the final output using DIV_U64_ROUND_CLOSEST()
+- Renamed CLK_DIV_PLLETH_LPCLK to CLK_CDIV4_PLLETH_LPCLK
+- Renamed CLK_CSDIV_PLLETH_LPCLK to CLK_PLLETH_LPCLK_GEAR
+- Renamed CLK_PLLDSI_SDIV2 to CLK_PLLDSI_GEAR
+- Renamed plldsi_sdiv2 to plldsi_gear
+- Preserved the sort order (by part number).
+- Added reviewed tag from Geert.
+- Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
+  PHYTCLKSETR_* and PHYTHSSETR_* macros.
+- Replaced 10000000UL with 10 * MEGA
+- Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
+- Replaced `i -= 1;` with `i--;`
+- Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (7):
+  clk: renesas: rzv2h-cpg: Add instance field to struct pll
+  clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
+  clk: renesas: rzv2h-cpg: Add support for DSI clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+  dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+    RZ/V2N
+  drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
+  drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+
+ .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++-
+ drivers/clk/renesas/r9a09g057-cpg.c           |  62 +++
+ drivers/clk/renesas/rzv2h-cpg.c               | 512 +++++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               |  29 +-
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 453 ++++++++++++++++
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
+ include/linux/clk/renesas.h                   | 145 +++++
+ 7 files changed, 1315 insertions(+), 40 deletions(-)
+
+-- 
+2.43.0
 
 
