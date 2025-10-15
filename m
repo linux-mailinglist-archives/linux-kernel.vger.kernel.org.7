@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-855033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0890EBDFFEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076DEBDFFFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5CAA4F8AEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BB919C77C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F2D338F5D;
-	Wed, 15 Oct 2025 18:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75C0303A32;
+	Wed, 15 Oct 2025 18:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k77Pvm3u"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KU4u6g3X"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C930147D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC41D3009FA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551590; cv=none; b=auEEUuHt7rlRVrfBWKZbtsMW79Zjx6akeg4Ld7ysONIKKtxRcj41KdC5hg5n9jXGbuerYp6HS6urtlcBhL9Wc50ZCN3G5M7NU3RrxWB/16Sv/Hn6g9RCUPcjnoFmzgUvkkRu7AMDjh5m8TOCApN+pG6R391v/vgdUwtdwfmsTIE=
+	t=1760551604; cv=none; b=V6i+7wNwZ0wnfB2/G+PGNx1tLjYBEX4p260LSiibgbtQ95GKHNYxNvhkbH1rJ9xpekVHklxP+LD5W43qgzng39YUXNS7GcKVEsonXQgFaEvb2NkopSR7BAM+ixBOXCu8dnMhZai90N5l9lHwfR+XJXSWqQ+8ZdHrzaM00Uy0tQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551590; c=relaxed/simple;
-	bh=jCQT9rzR0PGk0TwlODkGp1o4DOlgrfcR726BSpIb9+A=;
+	s=arc-20240116; t=1760551604; c=relaxed/simple;
+	bh=0WpsZOIGxI95gzJAoZvCSpzF+V+dgMO9D9tFVdnnDFU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=U0eEyJ+afdVOVA44UwdyOcuEGrhhMaE3c7lHa88t+08kHlBPpbAJBBbRR6a/z5T5uxT3JUgFJ/qO6w13Esb6rE0vLbPMxkgEJy1O0X7ZjpRmnyFBRTQkTITwPdYnmkVVD6N8ZJYgMZhfypgGoMHqS13bk6sjzYHn5Is9kl2NYYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k77Pvm3u; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=NV0ERat+CJQ4l6nLuJKUm8gmxCZwOz91VDp3KeReEGMUiI145ICIAdn1ILgYqQUUdpXiRieAYEOMBLzmBtRa9a8QFHPDNzCd6ZZyL2Lc9L8+PcveLx1KDCHKOJEqmscmbc8RnpAv78E2K5Nj+1a7PwBbhcfvGwD6UkV3QebH9iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KU4u6g3X; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2697410e7f9so242763785ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:06:28 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269af520712so116931945ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760551588; x=1761156388; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kfndc0ENoTTfepY9TJZDH63d6SpRDMFgibtbVYkYO9Q=;
-        b=k77Pvm3uHy7lx2jlytJ5SLv7+JRewDe16CoFZKLuUS8umrFHPZFpgNCvx5nf/cAOzS
-         sJDTw/SWR7VdqIjiWOSUCSyt2Jyo51vSPEjLzEKW2NkzUNBQFrhprTJxxRcfJO71iDf+
-         vX6jlOEXptTBk/u95OtVcju5KJ/8NrnxASw+LMgZoKMyFmJimqdxO9qNQf6T6xCCWkF9
-         OvPxlah/P1h2uev6ugLLoYfWx464q20gUKfR3VGpOGkKKvn0vRwkazShK2Eux8Z0aB0/
-         HMifCyN/y3qGl0wWzoKElOG9yUdnun654wsvbDKGJKB4IMTXvrKFLDsXXdeHz3vrEr0h
-         txYg==
+        d=google.com; s=20230601; t=1760551602; x=1761156402; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XErphyN+JzD2Xx6NUwRPhsh1p5MuT3QNYB/D7xXWYjk=;
+        b=KU4u6g3Xi8/1wr8xQOCit00dGB4xQLtcZiG3KHAk0GbE+IgOQjj4Ug9c9ycUVZkAn3
+         JNPsUNIsH6BxDde8/xRfxv6B2sky2Ka/nzH0xISQuo/mFYx3xLa9H3JSzlrFaqHLZ34T
+         xj9Km/VY+q1Oj+KojkopN6DjPoOCYCiB1aEGW74W9F/WXFrYQ/PC8sFlbdI1Eur7Nup5
+         cgV4jjykjiaIAeqvvtRHAKvl1XMBMtr8M3+p+0RD2a52G/EbzvZQDOJLWTZfDxcCZE1Y
+         e0AWGRbcJGeKduF+9oHwwqGS740hC/Gq7DONE8PxOIIUjGMzc2dYNk5ckr2M/Y1BHYk0
+         siMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551588; x=1761156388;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kfndc0ENoTTfepY9TJZDH63d6SpRDMFgibtbVYkYO9Q=;
-        b=rv1dyS6H6VlQ//Yt/7RG6cujET84H0TqjOKRuPUGfnhQdeqZfj35F5HHsuuFm6CKky
-         vcizj3afnuZ1Q08Unh+m06KDd7F09L29xAv/MohlMOcQkaaRGSRBQp3eB8NQyaFq/07e
-         n1ZJYY2KqlbcHNgXX3Wmk6YcjmuuotfEJE9UgKs+R7PthImVOLO3gONXjd4zYsi97+9l
-         TPFQj+ue4AA0hKloL26fORr2HjYdDNz7vly/sWTDN7J/r2XEki557oAMYb9wY6jsrcIQ
-         wFi+mP4aKBDwn4el/yP3u/MkG+GcmXhDq37tRwzTjBLnE3Lap5JZrxng5jiyyu64UfLC
-         xpog==
-X-Forwarded-Encrypted: i=1; AJvYcCU3pJO9EXhPhUVs6A75gyPCShEmwrokJ70b9Hi8x+G2S3WxyKaEqmfJKknOjnFQ3OwUO/Rd30d983kjaGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq06t/0fhi1WkgKJUhdtgSDaAZvmdm5dYkCMmqGtDMHnAIDaS4
-	6ZxOtGeUw+6isBH65LVV+khLQajHAQmUohUNYLmX+dD8luaDhB2KYW22lZbuufZdT3cr3cBhULH
-	m/8bsiw==
-X-Google-Smtp-Source: AGHT+IEFikS4cpk1gJ+ktd6gIEZmHmDT2uGZui1IjDGD50V9+QyIzANKYLSdF5afaqE0Z1KaLae3FikYyE0=
-X-Received: from pjbgc13.prod.google.com ([2002:a17:90b:310d:b0:330:49f5:c0b1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ccc4:b0:250:bd52:4cdb
- with SMTP id d9443c01a7336-290272c1971mr327416285ad.32.1760551588419; Wed, 15
- Oct 2025 11:06:28 -0700 (PDT)
-Date: Wed, 15 Oct 2025 11:02:52 -0700
-In-Reply-To: <20250922162935.621409-1-jmattson@google.com>
+        d=1e100.net; s=20230601; t=1760551602; x=1761156402;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XErphyN+JzD2Xx6NUwRPhsh1p5MuT3QNYB/D7xXWYjk=;
+        b=RbaaMVdj2vx/0t1gIi9hVp7XNbfEzxLh19GkuztUUNbAXOL8xlF6jyKNrYBN5WbWuB
+         qLUBCOdJutISX3CPXJNUjD82haUC1MxVuqX3xCmuksMgCOmf8dVapgU/yv7tz6iBk3IY
+         xxCcw+QSFwNeNabAf5bL/i/g1XNIiNj7nuifPeJ7ScAo4ibQLjiKccAopkMTH6cDnc+o
+         o6ckHY735bxU7Pf047wR96n37OLYDNTgO18MvVfsv5utxBGj6Rj7fntippImFl9zLCHm
+         5uS1EvWNkez/thZQnAk1hUETzjpNLrqZ2fwAnIjbfTFE20oTyxvlM8RMooMPE6DiysdE
+         TYqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeerjNrdIQDHxOtaMUa5k59vtzIfew1QHgpqQlS90iqN6LjTtw4xFOfEhfOcAOBtRPZwJwNyibfPnTDhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWu1moWg0Wd6lmM2yyJCHeCG0fGraZ6pXaz/CIE3wePVC4YPeN
+	383/Oi7Bh4NU1GzPBquJLOVrlTEGNZyMz2qqi42z1pDqe9NccX07EWmqItJOd9bdR+ylFxwxLCZ
+	BuFGPYw==
+X-Google-Smtp-Source: AGHT+IHlakRU4nPx/jipQbR53rq+2o27cd14m0xgJaDIBpqYbWuzPcu6OCgdGEa0Hop6qlgIboGtL1yDOiU=
+X-Received: from pjph8.prod.google.com ([2002:a17:90a:9c08:b0:32e:b34b:92e8])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:380d:b0:26d:e984:8157
+ with SMTP id d9443c01a7336-29027356ab2mr323031385ad.8.1760551602229; Wed, 15
+ Oct 2025 11:06:42 -0700 (PDT)
+Date: Wed, 15 Oct 2025 11:02:54 -0700
+In-Reply-To: <20250926155724.1619716-1-dmaluka@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250922162935.621409-1-jmattson@google.com>
+References: <20250926155724.1619716-1-dmaluka@chromium.org>
 X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <176055125879.1529816.3450355285833031488.b4-ty@google.com>
-Subject: Re: [PATCH 0/2] KVM: SVM: Aggressively clear vmcb02 clean bits
+Message-ID: <176055118442.1528733.6525818620715365939.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: VMX: Remove stale vmx_set_dr6() declaration
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Dmytro Maluka <dmaluka@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Mon, 22 Sep 2025 09:29:21 -0700, Jim Mattson wrote:
-> It is unlikely that L1 will toggle the MSR intercept bit in vmcb02,
-> or that L1 will change its own IA32_PAT MSR. However, if it does,
-> the affected fields in vmcb02 should not be marked clean.
-> 
-> An alternative approach would be to implement a set of mutators for
-> vmcb02 fields, and to clear the associated clean bit whenever a field
-> is modified.
-> 
-> [...]
+On Fri, 26 Sep 2025 17:57:24 +0200, Dmytro Maluka wrote:
+> Remove leftover after commit 80c64c7afea1 ("KVM: x86: Drop
+> kvm_x86_ops.set_dr6() in favor of a new KVM_RUN flag") which removed
+> vmx_set_dr6().
 
-Applied to kvm-x86 svm, thanks!
+Applied to kvm-x86 vmx, thanks!
 
-[1/2] KVM: SVM: Mark VMCB_PERM_MAP as dirty on nested VMRUN
-      https://github.com/kvm-x86/linux/commit/93c9e107386d
-[2/2] KVM: SVM: Mark VMCB_NPT as dirty on nested VMRUN
-      https://github.com/kvm-x86/linux/commit/7c8b465a1c91
+[1/1] KVM: VMX: Remove stale vmx_set_dr6() declaration
+      https://github.com/kvm-x86/linux/commit/0152e049bd76
 
 --
 https://github.com/kvm-x86/linux/tree/next
