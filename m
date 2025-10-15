@@ -1,131 +1,192 @@
-Return-Path: <linux-kernel+bounces-855346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC36BE0F88
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7105BE0F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1477C4E1587
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:46:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0270B1893343
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0C5314D3B;
-	Wed, 15 Oct 2025 22:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023143161A8;
+	Wed, 15 Oct 2025 22:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgiPusAT"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jkh12GVV"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B026C3081B7
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9D314D35
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760568380; cv=none; b=cZz4vVucy4F5bpWskH2rfwi9wpwtdR0hIqXOazYRD6UfzZWHbC0qLCKuJQ6lYYLJovQGt+Jul479fWsi4Yq9YlqibWhc3HQ6/OaiSonagw2vYJZ3sw+J1Iy+e1wrSCHY8C7MWxAx1Dzf4wT4Nf4z+di8nCfwivQ4CNZOD6Bw04A=
+	t=1760568522; cv=none; b=TMKTm9CEM0yguMKMliN3/1dcKu2exY3WP+qqOgbLZyx50ZCHUB6HVQxi2foeU7p3pgAT9VcowHqQCEumIbjZDqZPlia20S0bn8U4Ni1o3HsH/d9hJBT3iEztqynNgjz70zXtrbpZ6PqtsazQQBWpQ5+hLimrN6JtItbKl990RmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760568380; c=relaxed/simple;
-	bh=gn+jrn4+7QL3Axwt5qY/3ILmL/rIrIqQI1AE38f9NE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dbqXrSAh90j0pqgyHWaWmjE1CvH3NUfzp1Ik2jEgdBLaig6VrNVXSsY7Utn+STvBx6yIdExYG2DYi7oomw225qLn+56T3SswufX5Gt/aylNsFXGzLK0r18dg8vWONks6IxFyZMe9+JqORqMvYxM/uSG8cLGEEElI6Dh96/acXzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XgiPusAT; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4256866958bso47931f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:46:18 -0700 (PDT)
+	s=arc-20240116; t=1760568522; c=relaxed/simple;
+	bh=Zt/pWqHt/iqQ+2OV/rzrh0fmDpxk2J2y6d2dSCcAMnQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D0cnFu7qLHz4RNKch/4HQ9bVy5TcBAV93pg/W9wXpT9mmg0LHhYyFjykf+RrmZ8FgZye3F+GBb2H/rxF4cIGfM9I4aaf1FNFtceyxjFr7TfrDwVi1x5ob5GCkq7M3b7WdfhBnkvhP6XvytcBQow28Zu5QXNvgybogoei1wckq/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jkh12GVV; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b60968d52a1so96571a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760568377; x=1761173177; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LFKGoddm59QoTZnWfmZZLtnAiNTcYZnAo8RKS4lX25U=;
-        b=XgiPusAT8KSHDeK6P+zgcm9mDgaHjVahyirDtpigJDdASvWwb3T3gMJ3onOhsD9QNf
-         ShZzWpSfpI6HtW9td5PghNLRNfoA9bXDebChQbfmtiXEUfk2qrtdB7Nle56YZ/wGjc9n
-         qTYl2++NzTM+YBXQEoxv8m54LZqD3FVoPT3xSd0s/caswc5bhx1oK7LHu1xYCDiY85tb
-         qiLwwesAluS/UNR4k4uDuAw1ewVutJBcNVomeZxOYLLMvZQdTOEbTQs0kT+0eVDg4yN4
-         h6DMMr5DdmIFDC+3ihJtAn1uP9C8JaXdtkNBgNMEzJ+V2l607CJrukrfFdgOpV7qDH1Q
-         Ut6Q==
+        d=google.com; s=20230601; t=1760568520; x=1761173320; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VfHhobHRKUrZuY035WUhQS9GUM0Uyoej5h99Za9ASAY=;
+        b=jkh12GVVDciv67h9o1dtfoMkgiOUJERwhdlF5WW0DfKfbPBii8OggGWqbZRHnhgWPe
+         AB6XcScbLiyO2cSib7BCFJIDpFsX1bVfL3KLVyYyxFPzKKSmS5B9BOtiDD/pCMFczU89
+         zJAnZNpg5bPN4Ke4M7GGQZUxPTpqYvrAfT137m69QawpSbia2QD8iaz+sLfpY4U1LITr
+         wsqe473g5ZT9Ua1e5f4PSE+pPNpAjKYj4eE3vpH2q9N2PegoBnC1I7JXAvyLUQ0t36f8
+         sq72oxgiyWPWq8UbXoOe6hZsGznOLdeoYgScyFvy2ET082yX+8+Mt5qsXRuav4V7u6bE
+         Nvpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760568377; x=1761173177;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LFKGoddm59QoTZnWfmZZLtnAiNTcYZnAo8RKS4lX25U=;
-        b=LcE2vTdQ0slIYhF/ozRze2AjFXgMiffe3ZbYf5c7DAuEsktLQQ5r42oBYQfGOeAuV/
-         O/gTo6LJ0olBRviZRUys45riGXlJEm911AJVhUZAPorCy7pGwzRQznzLFKN7rsCQgzLD
-         7mPG1+7OFmKSki3kNVn2Uad3KsqMTxBXJ63k/FQoYODp6StnUDO6hFMeATWja35K/MzK
-         yZZBWIuho0DD8egarxysTbR6m5CN8GZXWexPJlrw4VrRYlN7grEe29cvZhVYrv2KsLir
-         a0/eOrdiFLqEB0ObWIPmRksAZ7Y62MFpM3tpayF/rc7s1SZpSqv0cK60DjY3wlf/Xeo+
-         TtsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU736bsdWuq82KGJhs3c66KTXAM61pmH5RkvS7GePwfTuUIzyjuc4t2GRfgKpQyUMC9qymwr22FJGvPwmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQwLzZjqNGTd6PtmIEVMsKZ+d3DVm/tEH+ABJYkYKMacLtppcc
-	8ReUtHJFPYpYMSNLqxPQaseErF+42XtkGJzmPgpK+dHsawWPAphN92ny
-X-Gm-Gg: ASbGnctJKqLh6UcBy4UGphCftCnJpKfHwiwVnxnMh2slufL1QMr1CLIO62zJV1nMc+B
-	8RGrI8ry18y56i1KGqzs/nJgfCD8QsN2kInximMOiMWvuDR+USjvEADq/nHoQtzqcibM3urx14s
-	VM9We/9pewaFIMwSqwtn7nPY5TNeFc60Sy2ac5w3JofrsQYY8FOznY4l4Lk+qxbs1km8EXB+45N
-	SQQWxoQhL3StwjAeMqrr9AODjEdX4xkMDzZmVwwAmsFbx0bnRX+83HGqtpz8Ni5m4KY0HQYWdh2
-	QIWnnlQOEPoWeUdHgBx1MaTtUNeJE+DPCqCFvfzr4DKNQz+3ukNATz2Ftq+JDNwChOT7kaOJu/L
-	MvlxWyGkZ9aQc3EKPA78VwCmoxT5iNfR7a+NucIiNylzavu0CLwLUTYPjPMj6IvW51EJNKQ==
-X-Google-Smtp-Source: AGHT+IGDAo0cT2+uD/d095c1GDJkVJ/8fi2Txwb/AFql1WXRzzbLwuRU1peuUU2qA3ABNJ3YnTjhYQ==
-X-Received: by 2002:a05:6000:310a:b0:414:a552:86b1 with SMTP id ffacd0b85a97d-4266e8e48ccmr20078648f8f.63.1760568376783;
-        Wed, 15 Oct 2025 15:46:16 -0700 (PDT)
-Received: from fedora ([31.94.20.38])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426f3fa3bdasm9095798f8f.46.2025.10.15.15.46.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 15:46:16 -0700 (PDT)
-Date: Wed, 15 Oct 2025 15:46:13 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] mempool: clarify behavior of mempool_alloc_preallocated()
-Message-ID: <aPAkNZDr_HAA_d75@fedora>
-References: <20251014-mempool-doc-v1-1-bc9ebf169700@linutronix.de>
- <aO_taH9CKxmJPnhV@fedora>
- <20251015192717.HvwzCChE@linutronix.de>
+        d=1e100.net; s=20230601; t=1760568520; x=1761173320;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VfHhobHRKUrZuY035WUhQS9GUM0Uyoej5h99Za9ASAY=;
+        b=AKGG4hJORDdxbj4nl1Sxc7hGz6knuzC8NhkPG1IEFjwnHXL7qXElVXkj9ZRct3SEBn
+         L0qYK0qv8b7DvDYYBaXa92bIzBwhhDoNPPUnoJxdYeXLcePqxKLhhvOB7MwhPUwT61/5
+         y1C5WloRg/qUejwJ+zh0GceRa+lgaA23EuYBX7b96LwLhJwznIkyKuwHKuWmUXx20MEd
+         HbEdIKdJ95QdTfmqucraedA/OxpKG4A56mFqrx5YvVBw4mYsVao9tf8t38WxxX2Wgqom
+         nCOU5qGkA3c6j2ehDtEVQMotQfUTJTAQ8FZ33oVDOZNn23b+WvN3IOHge1J2AobYOE4n
+         fVUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTAAVd6iDPBvlZNISYYwjKPz1apVlzW3FQFpTBkBCy2KWGVE30/j+BfiX3XTK9zjCw0pw614Ha91ggVxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwghZDWslCyeRSOG27GLAYbgEsKuC6XKO5RZr+cV7vSpDWGu2Up
+	XnxdV4RiVXl9eEmiJPeHrDhQOiy5xQhm779QR/dwkAM2l1Sslp9vqJkWiwvHFnG8Xb1iwqSbx2N
+	bzIdzvA==
+X-Google-Smtp-Source: AGHT+IEyb34/gE6QWzF0uzhcKPL3N9PV8BEpaNWr9b3Rp3K51ypbe1jmOBzkgqmwgOny3WdOfUFKvL+VZBw=
+X-Received: from pjz11.prod.google.com ([2002:a17:90b:56cb:b0:33b:a35b:861])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7351:b0:251:c33d:2783
+ with SMTP id adf61e73a8af0-32da813ce42mr40108259637.23.1760568519460; Wed, 15
+ Oct 2025 15:48:39 -0700 (PDT)
+Date: Wed, 15 Oct 2025 15:48:38 -0700
+In-Reply-To: <aPAWFQyFLK4EKWVK@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015192717.HvwzCChE@linutronix.de>
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-9-shivankg@amd.com>
+ <aNVQJqYLX17v-fsf@google.com> <aNbrO7A7fSjb4W84@google.com> <aPAWFQyFLK4EKWVK@gourry-fedora-PF4VCD3F>
+Message-ID: <aPAkxp67-R9aQ8oN@google.com>
+Subject: Re: [f2fs-dev] [PATCH kvm-next V11 6/7] KVM: guest_memfd: Enforce
+ NUMA mempolicy using shared policy
+From: Sean Christopherson <seanjc@google.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: Shivank Garg <shivankg@amd.com>, jgowans@amazon.com, mhocko@suse.com, jack@suse.cz, 
+	kvm@vger.kernel.org, david@redhat.com, linux-btrfs@vger.kernel.org, 
+	aik@amd.com, papaluri@amd.com, kalyazin@amazon.com, peterx@redhat.com, 
+	linux-mm@kvack.org, clm@fb.com, ddutile@redhat.com, 
+	linux-kselftest@vger.kernel.org, shdhiman@amd.com, gshan@redhat.com, 
+	ying.huang@linux.alibaba.com, shuah@kernel.org, roypat@amazon.co.uk, 
+	matthew.brost@intel.com, linux-coco@lists.linux.dev, zbestahu@gmail.com, 
+	lorenzo.stoakes@oracle.com, linux-bcachefs@vger.kernel.org, 
+	ira.weiny@intel.com, dhavale@google.com, jmorris@namei.org, 
+	willy@infradead.org, hch@infradead.org, chao.gao@intel.com, tabba@google.com, 
+	ziy@nvidia.com, rientjes@google.com, yuzhao@google.com, xiang@kernel.org, 
+	nikunj@amd.com, serge@hallyn.com, amit@infradead.org, thomas.lendacky@amd.com, 
+	ashish.kalra@amd.com, chao.p.peng@intel.com, yan.y.zhao@intel.com, 
+	byungchul@sk.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com, 
+	michael.roth@amd.com, bfoster@redhat.com, bharata@amd.com, 
+	josef@toxicpanda.com, Liam.Howlett@oracle.com, ackerleytng@google.com, 
+	dsterba@suse.com, viro@zeniv.linux.org.uk, jefflexu@linux.alibaba.com, 
+	jaegeuk@kernel.org, dan.j.williams@intel.com, surenb@google.com, 
+	vbabka@suse.cz, paul@paul-moore.com, joshua.hahnjy@gmail.com, 
+	apopple@nvidia.com, brauner@kernel.org, quic_eberman@quicinc.com, 
+	rakie.kim@sk.com, cgzones@googlemail.com, pvorel@suse.cz, 
+	linux-erofs@lists.ozlabs.org, kent.overstreet@linux.dev, 
+	linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	pankaj.gupta@amd.com, linux-security-module@vger.kernel.org, 
+	lihongbo22@huawei.com, linux-fsdevel@vger.kernel.org, pbonzini@redhat.com, 
+	akpm@linux-foundation.org, vannapurve@google.com, suzuki.poulose@arm.com, 
+	rppt@kernel.org, jgg@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Oct 15, 2025 at 09:27:17PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-10-15 11:52:24 [-0700], Vishal Moola (Oracle) wrote:
-> > > --- a/mm/mempool.c
-> > > +++ b/mm/mempool.c
-> > > @@ -461,8 +461,8 @@ EXPORT_SYMBOL(mempool_alloc_noprof);
-> > >   *             mempool_create().
-> > >   *
-> > >   * This function is similar to mempool_alloc, but it only attempts allocating
-> > > - * an element from the preallocated elements. It does not sleep and immediately
-> > > - * returns if no preallocated elements are available.
-> > > + * an element from the preallocated elements. It only takes a single spinlock_t
+On Wed, Oct 15, 2025, Gregory Price wrote:
+> On Fri, Sep 26, 2025 at 12:36:27PM -0700, Sean Christopherson via Linux-f2fs-devel wrote:
+> > > 
+> > > static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+> > > 					     unsigned long addr, pgoff_t *pgoff)
+> > > {
+> > > 	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
+> > > 
+> > > 	return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
 > > 
-> > Might it make more sense to say "It may sleep" instead of "takes a
-> > single spinlock_t"?
+> > Argh!!!!!  This breaks the selftest because do_get_mempolicy() very specifically
+> > falls back to the default_policy, NOT to the current task's policy.  That is
+> > *exactly* the type of subtle detail that needs to be commented, because there's
+> > no way some random KVM developer is going to know that returning NULL here is
+> > important with respect to get_mempolicy() ABI.
+> > 
 > 
-> May sleep usually refers to something that can not be used in an
-> interrupt handler.
+> Do_get_mempolicy was designed to be accessed by the syscall, not as an
+> in-kernel ABI.
 
-Gotcha. 
+Ya, by "get_mempolicy() ABI" I meant the uABI for the get_mempolicy syscall.
 
-> > I feel like the fact that we take a spinlock isn't the important part
-> > here (especially because we always drop it before returning).
-> It actually is. A spinlock_t can not be acquired in hardirq context or
-> when interrupts are explicitly disabled via local_irq_disable().
-> Therefore you should use the function in a local_irq_disable() section.
+> get_task_policy also returns the default policy if there's nothing
+> there, because that's what applies.
+> 
+> I have dangerous questions:
 
-As someone not too familiar with how the locking intertwines with the
-scheduler contexts, seeing something like that makes much more sense
-to me than seeing "it only takes a single spinlock_t."
+Not dangerous at all, I find them very helpful!
+
+> why is __kvm_gmem_get_policy using
+> 	mpol_shared_policy_lookup()
+> instead of
+> 	get_vma_policy()
+
+With the disclaimer that I haven't followed the gory details of this series super
+closely, my understanding is...
+
+Because the VMA is a means to an end, and we want the policy to persist even if
+the VMA goes away.
+
+With guest_memfd, KVM effectively inverts the standard MMU model.  Instead of mm/
+being the primary MMU and KVM being a secondary MMU, guest_memfd is the primary
+MMU and any VMAs are secondary (mostly; it's probably more like 1a and 1b).  This
+allows KVM to map guest_memfd memory into a guest without a VMA, or with more
+permissions than are granted to host userspace, e.g. guest_memfd memory could be
+writable by the guest, but read-only for userspace.
+
+But we still want to support things like mbind() so that userspace can ensure
+guest_memfd allocations align with the vNUMA topology presented to the guest,
+or are bound to the NUMA node where the VM will run.  We considered adding equivalent
+file-based syscalls, e.g. fbind(), but IIRC the consensus was that doing so was
+unnecessary (and potentially messy?) since we were planning on eventually adding
+mmap() support to guest_memfd anyways.
+
+> get_vma_policy does this all for you
+
+I assume that doesn't work if the intent is for new VMAs to pick up the existing
+policy from guest_memfd?  And more importantly, guest_memfd needs to hook
+->set_policy so that changes through e.g. mbind() persist beyond the lifetime of
+the VMA.
+
+> struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
+>                                  unsigned long addr, int order, pgoff_t *ilx)
+> {
+>         struct mempolicy *pol;
+> 
+>         pol = __get_vma_policy(vma, addr, ilx);
+>         if (!pol)
+>                 pol = get_task_policy(current);
+>         if (pol->mode == MPOL_INTERLEAVE ||
+>             pol->mode == MPOL_WEIGHTED_INTERLEAVE) {
+>                 *ilx += vma->vm_pgoff >> order;
+>                 *ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
+>         }
+>         return pol;
+> }
+> 
+> Of course you still have the same issue: get_task_policy will return the
+> default, because that's what applies.
+> 
+> do_get_mempolicy just seems like the completely incorrect interface to
+> be using here.
 
