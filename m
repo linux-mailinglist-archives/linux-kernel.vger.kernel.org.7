@@ -1,164 +1,200 @@
-Return-Path: <linux-kernel+bounces-854741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E68BDF48B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:10:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9694BBDF491
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 911154FEE9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6881E405C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A822D77E8;
-	Wed, 15 Oct 2025 15:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE5C2D7DED;
+	Wed, 15 Oct 2025 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YZz3+rS6"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W1vsJaOS"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB677272E67
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F76D2D641D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540942; cv=none; b=J4IVx/jHGte737JARaeelMcAqndSXHglDqKXIH7EJD2NPHjYPpGWo+49wEZxoQbwoz9FAB8KWUnO8Aoiy2AlfliGc9mRxtlBdPB2H6jpHn2jBzo3PRuIa9nNDw18OTf64myPVV/d+W3PcSPbVU8XhQhFkZdSWjdEK12kpndx1jk=
+	t=1760540959; cv=none; b=BoA7Fp8QU2rIc8pLO7eMhSY+rL4FHkfKltIjTxEGffyjsMR18yf/in3rhrBoM7yKTHfLQvEkOeoFGcPIp5p9yEXutbXTY5JMAKdB3LswOAs9pErnUUaH84Oy6KB84a8nSsDZ75ohYfspWMDcSoBkH0WbgrgLRpu+81j/vHKmaRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540942; c=relaxed/simple;
-	bh=Q2lMLAck0x/n3cJUdTjHi/CuJoocw7lXdMZnrU40qWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sDZHwkG2sh7c2vB/JDKP3mMX2ZXSF4gCTrwr3Lk3lgi9QSo5c4fBkTP4y0JUWdySR2Vsanw/LSllIrjHfvIOIs3BpV/7U9WfUrgjmwHOFlDVdpU/EyNSunCdT0Ui8KCqNtNO2GX2gPfRsYPKTxXQWEKtxnbsTI7LsgDwpEcsa1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YZz3+rS6; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.72.64] ([218.1.208.81])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59FF8L4Y2512510
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 15 Oct 2025 08:08:23 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59FF8L4Y2512510
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025092201; t=1760540904;
-	bh=pdSz7+XM6G/TGN9xniPtAy75kR4fmy0446HP5aTfZU8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YZz3+rS6IJW0iV9CqLI+KFOqVmcbPPA3pyaCgz3cNsWMi0wg+xgunIgAvnWylo+ci
-	 tf+fqZbQ29tl+AKuq8+0GQJ+e+Vaj/IHjU9Y+arEIHh/ZcSUXMsHg5ZfpuNBDFR+gm
-	 qvUfOogptOkrX7d6+MxWwJOly3Cec/Q+6Y8KCiuE1C3UeOAO/jvtCPoz+bfiiTPhqJ
-	 YB3HiXDs04vn2EK1IeZm5f60c3lGKNzXRcyac+D5WSITUfgdxSYry1206+M8ipNmSN
-	 HBBljukELWVh9gK8AOZg1E18eYVxAdN4NWH37+bSjkZD0ZnXSe2d2eePS9imkZAxtt
-	 pXngTl7VGh4Bg==
-Message-ID: <2dd4dbee-dc7d-4118-be6d-94bd6d0d5030@zytor.com>
-Date: Wed, 15 Oct 2025 23:08:17 +0800
+	s=arc-20240116; t=1760540959; c=relaxed/simple;
+	bh=8G0Msy2CRW0casaw6KM30j2ia8xgPXPrWhuKzBHXeL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuY+itV8PXqPQzI6X0CFnDJzOubFMgl2gJT6eLiyhTpqVNlpz6mwAYpfhEihPR8qOWuyzCBXUnNLzSm4Ur0TDQfv1ye2psn79DKGxovdAVjUFB+D+ih9sSjlAs8hObxMGvUjPZ57y3wOloubVM7de4UdQxuYj7y7kKqdQBkBjjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W1vsJaOS; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=h6A4rCyjZU1GtoVAZKenUtMFBFfNdztnaxVrMwFUzSM=; b=W1vsJaOSn7wDUpOopVmJuJmJCf
+	xs84kTrE++nMsXYss54Ei21LpEyD/g9ssPpldQmtd6CtOU6H/3B6zsKl7VCDHTkBRj9iwrOl1MOVM
+	MxGH86DK35kNoKiJtM1ZakoBvsCOGZvd6vW4xMRtgfTSADYGPOmknIQHEgpfLIzMv5cXghxt7TVdr
+	NIkJkPHOfHS3Ov1LvkSvjI/nwdCuz/bmFlZbm9jBcNsX+98GumDycm0/gHp4j0964mwHUc9cJ8+yX
+	sI8x069lkVWeBt1ph8yp2/QbfNNZBIObQND0u5VnA7JqaZHVgqSJTGSDo/fyzB7nRWfFC9rmUD+H1
+	Uv5T0dUw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v937N-00000000bT8-2huL;
+	Wed, 15 Oct 2025 15:08:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 666D830023C; Wed, 15 Oct 2025 17:08:46 +0200 (CEST)
+Date: Wed, 15 Oct 2025 17:08:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Jianyong Wu <jianyong.wu@outlook.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Tingyin Duan <tingyin.duan@gmail.com>,
+	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
+	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
+	Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
+	Libo Chen <libo.chen@oracle.com>,
+	Adam Li <adamli@os.amperecomputing.com>,
+	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/19] sched/fair: Prioritize tasks preferring
+ destination LLC during balancing
+Message-ID: <20251015150846.GB3168635@noisy.programming.kicks-ass.net>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+ <ca1946de63ad9f0ae99e079a74d70c55879cc0b6.1760206683.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpufeatures: Correct LKGS feature flag description
-To: Borislav Petkov <bp@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Xin Li <xin3.li@intel.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Borislav Petkov (AMD)" <bp@alien8.de>
-References: <20251015103548.10194-1-bp@kernel.org>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20251015103548.10194-1-bp@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca1946de63ad9f0ae99e079a74d70c55879cc0b6.1760206683.git.tim.c.chen@linux.intel.com>
 
-On 10/15/2025 6:35 PM, Borislav Petkov wrote:
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Sat, Oct 11, 2025 at 11:24:47AM -0700, Tim Chen wrote:
+> During LLC load balancing, first check for tasks that prefer the
+> destination LLC and balance them to it before others.
 > 
-> Quotation marks in cpufeatures.h comments are special and when the
-> comment begins with a quoted string, that string lands in /proc/cpuinfo,
-> turning it into a user-visible one.
+> Mark source sched groups containing tasks preferring non local LLCs
+> with the group_llc_balance flag. This ensures the load balancer later
+> pulls or pushes these tasks toward their preferred LLCs.
 > 
-> The LKGS comment doesn't begin with a quoted string but just in case
-> drop the quoted "kernel" in there to avoid confusion. And while at it,
-> simply change the description into what the LKGS instruction does for
-> more clarity.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Co-developed-by: Chen Yu <yu.c.chen@intel.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 > ---
->   arch/x86/include/asm/cpufeatures.h       | 2 +-
->   tools/arch/x86/include/asm/cpufeatures.h | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
+
+For me this patch is cut too fine; it only sets group_llc_balance but
+then we don't see how it is used.
+
+>  kernel/sched/fair.c | 43 +++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 41 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 80b68f4726e7..4fb5e12dbdbf 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -320,7 +320,7 @@
->   #define X86_FEATURE_FSRS		(12*32+11) /* Fast short REP STOSB */
->   #define X86_FEATURE_FSRC		(12*32+12) /* Fast short REP {CMPSB,SCASB} */
->   #define X86_FEATURE_FRED		(12*32+17) /* "fred" Flexible Return and Event Delivery */
-> -#define X86_FEATURE_LKGS		(12*32+18) /* Load "kernel" (userspace) GS */
-> +#define X86_FEATURE_LKGS		(12*32+18) /* MSR_KERNEL_GS_BASE = GS.base */
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index cbd1e97bca4b..af7b578eaa06 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9822,8 +9822,7 @@ static __maybe_unused enum llc_mig can_migrate_llc_task(int src_cpu, int dst_cpu
+>  	else
+>  		return mig_unrestricted;
+>  
+> -	return can_migrate_llc(src_cpu, dst_cpu,
+> -			       task_util(p), to_pref);
+> +	return can_migrate_llc(src_cpu, dst_cpu, task_util(p), to_pref);
+>  }
+>  
+>  #else
+> @@ -10394,6 +10393,7 @@ struct sg_lb_stats {
+>  	enum group_type group_type;
+>  	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
+>  	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
+> +	unsigned int group_llc_balance;		/* Tasks should be moved to preferred LLC */
+>  	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
+>  #ifdef CONFIG_NUMA_BALANCING
+>  	unsigned int nr_numa_running;
+> @@ -10849,11 +10849,45 @@ static void record_sg_llc_stats(struct lb_env *env,
+>  	if (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
+>  		WRITE_ONCE(sd_share->capacity, sgs->group_capacity);
+>  }
+> +
+> +/*
+> + * Do LLC balance on sched group that contains LLC, and have tasks preferring
+> + * to run on LLC in idle dst_cpu.
+> + */
+> +static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
+> +			       struct sched_group *group)
+> +{
+> +	struct sched_domain *child = env->sd->child;
+> +	int llc;
+> +
+> +	if (!sched_cache_enabled())
+> +		return false;
+> +
+> +	if (env->sd->flags & SD_SHARE_LLC)
+> +		return false;
+> +
+> +	/* only care about task migration among LLCs */
+> +	if (child && !(child->flags & SD_SHARE_LLC))
+> +		return false;
+> +
+> +	llc = llc_idx(env->dst_cpu);
+> +	if (sgs->nr_pref_llc[llc] > 0 &&
 
-Yes, the assignment is more clearer to us programmers.
+Nit: s/> 0// would be the same, right?
 
-I'm just not sure if "correct" in the shortlog is accurate; it sounds the
-existing one is wrong.  Otherwise,
+> +	    can_migrate_llc(env->src_cpu, env->dst_cpu, 0, true) == mig_llc)
+> +		return true;
+> +
+> +	return false;
+> +}
+>  #else
+>  static inline void record_sg_llc_stats(struct lb_env *env, struct sg_lb_stats *sgs,
+>  				       struct sched_group *group)
+>  {
+>  }
+> +
+> +static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
+> +			       struct sched_group *group)
+> +{
+> +	return false;
+> +}
+>  #endif
+>  
+>  /**
+> @@ -10954,6 +10988,11 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>  	sgs->group_type = group_classify(env->sd->imbalance_pct, group, sgs);
+>  
+>  	record_sg_llc_stats(env, sgs, group);
+> +
+> +	/* Check for tasks in this group can be moved to their preferred LLC */
+> +	if (!local_group && llc_balance(env, sgs, group))
+> +		sgs->group_llc_balance = 1;
 
-Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+We now have 3 (or so) branches that start with:
 
+	if (!local_group &&
 
+perhaps collate that some?
 
-
-
-
->   #define X86_FEATURE_WRMSRNS		(12*32+19) /* Non-serializing WRMSR */
->   #define X86_FEATURE_AMX_FP16		(12*32+21) /* AMX fp16 Support */
->   #define X86_FEATURE_AVX_IFMA            (12*32+23) /* Support for VPMADD52[H,L]UQ */
-> diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-> index bd655e100395..d5f091babf96 100644
-> --- a/tools/arch/x86/include/asm/cpufeatures.h
-> +++ b/tools/arch/x86/include/asm/cpufeatures.h
-> @@ -320,7 +320,7 @@
->   #define X86_FEATURE_FSRS		(12*32+11) /* Fast short REP STOSB */
->   #define X86_FEATURE_FSRC		(12*32+12) /* Fast short REP {CMPSB,SCASB} */
->   #define X86_FEATURE_FRED		(12*32+17) /* "fred" Flexible Return and Event Delivery */
-> -#define X86_FEATURE_LKGS		(12*32+18) /* Load "kernel" (userspace) GS */
-> +#define X86_FEATURE_LKGS		(12*32+18) /* MSR_KERNEL_GS_BASE = GS.base */
->   #define X86_FEATURE_WRMSRNS		(12*32+19) /* Non-serializing WRMSR */
->   #define X86_FEATURE_AMX_FP16		(12*32+21) /* AMX fp16 Support */
->   #define X86_FEATURE_AVX_IFMA            (12*32+23) /* Support for VPMADD52[H,L]UQ */
-
+> +
+>  	/* Computing avg_load makes sense only when group is overloaded */
+>  	if (sgs->group_type == group_overloaded)
+>  		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
+> -- 
+> 2.32.0
+> 
 
