@@ -1,161 +1,165 @@
-Return-Path: <linux-kernel+bounces-855005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75085BDFE6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:39:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1167BBDFE90
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 991BB354FED
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B5F3A3CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DA32FF172;
-	Wed, 15 Oct 2025 17:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE942FDC30;
+	Wed, 15 Oct 2025 17:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tkyeFNOh"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fj2vMLZC"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D661327E05F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEDC2F60CB
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549950; cv=none; b=jrmVJCnrypChZ9jIqp5W+HmMwYP46r3cJYtyrZ10r3lLqLPmR7InBO40caDsYuY9+xrzi58NuR2923pSF1QmkxGDPVK3PuvcnaWQBIuWf7/G2Ee022cUdd/g23AsHaAxMN7l1oANuKvnA9OWjiX2yNpdXcmxX0ROpkzZOZIkOFo=
+	t=1760550032; cv=none; b=G0UuEyr7Zwk3MudrsSYdAdfpuCeicBfn9oLQryJOpms4jFtbjikwx9lo/Z4rM0xpx+VzcY2FraEoTy6FC/G9BkH9gb8nXRxw4o4E3NusG+e+jnbUBsFOLny9ui72XynIH8HPbouTmOCrvVMZv4A6BhMaICmlQotcA6yz4vdp+ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549950; c=relaxed/simple;
-	bh=QqFjS0dofGd23R/Vl/Q9AbMhq0HpMlDoOWoGpFbXhOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=ngiGTBN4KAaR7LQeTYGYZcRzvIHFw5rtw26jzxywQGlPAWstEg9oAcwqymaiRqldngUa6OcHeJkLEZKirIqbMFgLjWVcTvkhzch8p9Mpq5h+XsI8pgpItvXFjausmmt97GfEMWlBgtCiLzz5JonigFB3gK9Oue1JPtRJvYqVye4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tkyeFNOh; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-471076f819bso6267735e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:39:07 -0700 (PDT)
+	s=arc-20240116; t=1760550032; c=relaxed/simple;
+	bh=S1FtdcUcmIeQ998wpbQfLf/uCQbI5Kp2wTYdVUeqhYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BWkiiQVvb9OfdgYpAZpVQJ7FVgZ0vtfHOJZdHANHIrsM2dZbO9hpR/bcBOeju8mik9/LC0ZOGgd5qzvBhlZpltHQA+pXhAiVIg4GYJat3jEHbIBJjV3QgiJcy9NfNiBIivfrgeMP9Ovuvuf54BLnrKsaiuL/Kvor/y+FO4OTn7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fj2vMLZC; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b6a0a7f3a47so1003668a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760549946; x=1761154746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AxF13IYBqPGtR5vpSfjG+eCrKpOfLtPiG/9JvCrM9vU=;
-        b=tkyeFNOhi0s2A/VVrwm6TCyxzNo6xWqdQ4huZO615R8SgpGbJX3p16R38dHpyCLNAh
-         1ZsA1vCLJAnT3F+VOwBSHVa2TfTDNRKTdkNS2usWLUYhYcbWAok1y25WoZJqSeEbGlMi
-         mnWyk/JmwQWGhZxFOQip4Ti/G5qKLSU6zaahWvcTs6vBE+LKjt4+fJsQZb3gMbNaA7wZ
-         3HKQ4xR8+DvLzYQm+UtM0+Yi6OcKHUJDB9QmFFB2QF5UDx18P4lgSU84/5ar63h7j8y5
-         IqJCE7qUis/6+W/4V4uB+BQI2GVdjgWZuhYnAS1X+VYLzhdRbFCEAvEgsSDcOjd5hMqx
-         XJPA==
+        d=google.com; s=20230601; t=1760550031; x=1761154831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xkp4QiQO+ZGOJJIskGqlgSdH1DbycxG+pl4uWz6LL4o=;
+        b=Fj2vMLZCnTOp+ubOpX09XI3jLcZ90M5IVrMZVpZkEyUltJy/M/XYqI9uK4b0koX94U
+         6qXBvyWXH/79qgI3wRcJeADYvR+beO+R2NULk8xTWbjlurBRrUnGfBgdxKwEYnXQOgXk
+         R5SapVE7kWDiL2HFrpFkfNumIY96e95PZBt+iI4HlqjKVwTK7/gzuTtkTloAbL8qOMfu
+         KsQUotmLq+hDI0B8RpTonoNDPlTTjoVH5MrYX3oMsasHQwPCODhugld5ZAuYORYAJtxk
+         QdTWnpgygHP5MEz9RPAOTuZQsNW1GxwuSISGZU8xGn9J+/L5RYVctcvd07Cxag/0608O
+         K9Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760549946; x=1761154746;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AxF13IYBqPGtR5vpSfjG+eCrKpOfLtPiG/9JvCrM9vU=;
-        b=My0mya5e2ZlgC1ms/6emooai1/65TXpg9AZsAjHExrYsJCHom2Ni4sxAd6FRIHRfoY
-         QUCCotfl/DSJijIwFxEIu3MWwNyv/l5A5rt5dVh1BrqWUD9BEvpS6GWS/MX/xkMdgc6v
-         +vNviSQau/YwZlygJpNSDfFmR2AuLk0Nriuj3TwD3zRkvLFb3X140tznhPGKTx5g88na
-         0Km0zyi45Klbl9yxx8WB1qg6E+Mi1A7W4fmgAFbbysdJFWPuy0e1g0FYEs/UIU9sc7c6
-         ZhnQ/Jgd3ZPFj7W+kyWFiJaCJq/cvPEzkThWVeWQGBWIJ8pe44i66YllNmcLcaoODCbg
-         dgkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMbJg6Ld6E08hqHD6x2yAv6l31QXnmkAi1UFi2WORkPZBhLiWkosrTNBt2sp+C4I/65HkQ4ynV9sJ2wvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynYatwq+R8PdHc43glWvD25bAql7X6hkpSsBhvpIk+8k33aSg9
-	JGnTWgf0JLVPM6hxhWX4PudxHarZ3duydgSEQHCUr5b6ftKFd56kg/t0U1x8zpLtwqo=
-X-Gm-Gg: ASbGnctzbyxwaRwbSbudCyKeXaxKZE3IRvgK9VPcOd0hownxX+HOQUoHVWjz8YMd1fq
-	U7uxj90Uq+K5KiDAwnlGPEUa/5XbcSv1jKpMIF169L32uQbpE1FiDSCTdPkF7TJklAzxvlbRlCy
-	KMTmmgppC+WGiryD+y/5QmY5kqHwJchgWRYYvjeaPd5II+J+jGylqnupA1M8f72QBfL/EdZdC98
-	OVcCGQOy+L1Fl4Vs1LBsMtTvi2R46mZcSXoCuPnI/m9SHQ1B57mdWl/RKqSaEb+IUq9xoXN2vAT
-	KN7Tb8G+UhcNejsyTfQ7kPIiwD5Bbq/3M3vP7V39pgl8tbduk05NFWwyH4dWU/uZI6YiNE7Eibb
-	Y4NhUXyaWNI/si70dql6LRxk4ZXuop6m/37eHDLmWJgSULDANMYmbXHS001AJKw==
-X-Google-Smtp-Source: AGHT+IFpK9jgy1axnrHwt8bxNrIDpfIAGB6jxP21sfrlK0Qs+Bqe9AnJfPR/yP9WWp76Use+S0n0eg==
-X-Received: by 2002:a05:600c:3e15:b0:471:a3b:56d with SMTP id 5b1f17b1804b1-4710a3b063bmr5658705e9.34.1760549945781;
-        Wed, 15 Oct 2025 10:39:05 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb55ac08dsm302624115e9.13.2025.10.15.10.39.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 10:39:05 -0700 (PDT)
-Message-ID: <a9f3b996-4fb4-463a-8392-16115862903a@linaro.org>
-Date: Wed, 15 Oct 2025 18:39:04 +0100
+        d=1e100.net; s=20230601; t=1760550031; x=1761154831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xkp4QiQO+ZGOJJIskGqlgSdH1DbycxG+pl4uWz6LL4o=;
+        b=Hj8FIz6PHGPj9LPi+iYpOzukNqkonCfJDkgRSzsMcM//Ol1EMiqKZ3eseyoolvYy06
+         E46miLH177fjn3M5dKB9erAElFRCVIXqb5HE0qdZ47F0twWPCHBAkTp3h2bmj5ki1E5m
+         1wus0T5G4HxcP9Rjd0jCaF0a238PMTGXvUJsxhNQtUgVNrZ6J2kBGefFXNiYXbRJ9AOs
+         Nkb8UyaelmlsUOqpzIPAVzRGiR8CJC0B8+3Lz9NBE16mxinpuwoqXNevB9Rd5iOgKJgy
+         akU3eHSTOj74ElgSJjLrzF07FAEBtvM7vlOWIYGmovU1SPE5mFEEDYChC1xQpSzg09Nd
+         J3wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzmaITwEepTFGvvRsYJwkbMz1XVs6yf4Fs8FLd7XmEUBO2HnbhOtFg9ZA/0iOtKGvunDEabObPVWZ8DTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTlkmPC/4WOokJRTEfIp3sGdqpbrvKe6Jzx2qe3OtCrWaGKLdf
+	6zcqSrqNQSX1756i8XXwd9K8z4uVwIDuI0cl8+lID3BDphAe9czfgr2a9CHWCiE5qTmMuHWg6lk
+	/KZlFUg+nbg1Rhx143dNjl++MOeNjeObmn7cfGHPh
+X-Gm-Gg: ASbGncsMsTvOYWD2m04B+3ZD+AbS/wHfajHPA3f7l00IeS1vOQqVMQqqfpLANJSdauC
+	/1cXK45RTrPAFnnZ/r09C3nbp9l+u0MP+oe4pJGAZIIV4o0oqX39j0LBP97mq1b5vO2RnU7qUbM
+	8ouNGSxit5b1U6KfoV/HF0cadiZ1OT6qGs8cqm/bEJ4WCoxENaxeoA7Caha72DtUL+Y3rx1b3OL
+	ywXZep4NExI1VwDsyFmKu4S7uL5ymqTie/68gHgJhy4iP4ewR+QPyXJ+cKfClS+YA==
+X-Google-Smtp-Source: AGHT+IGtM8hvN4lqZlO0WHIvTbL3D48lIHd91NHDkSwH6JM5GHtQa8Pa5RXv0ZasuodiKcuODGfruyjdLC0lq/iK870=
+X-Received: by 2002:a17:902:e94e:b0:279:daa1:6780 with SMTP id
+ d9443c01a7336-2902741cf99mr376217665ad.52.1760550030102; Wed, 15 Oct 2025
+ 10:40:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/27] Legacy hardware/cache events as json
-To: Namhyung Kim <namhyung@kernel.org>
-References: <20251005182430.2791371-1-irogers@google.com>
- <176054362630.22559.13423487878652916137.b4-ty@kernel.org>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>,
- Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Atish Patra <atishp@rivosinc.com>,
- Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>,
- Vince Weaver <vincent.weaver@maine.edu>, Ian Rogers <irogers@google.com>
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <176054362630.22559.13423487878652916137.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251010201607.1190967-1-royluo@google.com> <20251010201607.1190967-3-royluo@google.com>
+ <20251015002744.sntua4kqidgusafo@synopsys.com>
+In-Reply-To: <20251015002744.sntua4kqidgusafo@synopsys.com>
+From: Roy Luo <royluo@google.com>
+Date: Wed, 15 Oct 2025 10:39:53 -0700
+X-Gm-Features: AS18NWDkbrVxIDG8dAIZI0TtKFaXgEljVUvTQC724DiczltW9oPtD4sVlkXhIBk
+Message-ID: <CA+zupgxbGjU_01JSFR_-2humZAyxwcVT5JR6h6mTVUT=3fFQ6Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 14, 2025 at 5:28=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys=
+.com> wrote:
+>
+> Hi,
+>
+> On Fri, Oct 10, 2025, Roy Luo wrote:
+> > +#endif /* CONFIG_PM */
+> > +
+> > +static const struct dev_pm_ops dwc3_google_dev_pm_ops =3D {
+> > +     SET_SYSTEM_SLEEP_PM_OPS(dwc3_google_pm_suspend, dwc3_google_pm_re=
+sume)
+> > +     SET_RUNTIME_PM_OPS(dwc3_google_runtime_suspend, dwc3_google_runti=
+me_resume,
+> > +                        dwc3_google_runtime_idle)
+>
+> Can we use the new pm_ptr() and *_PM_OPS macros to get rid of the ifdef
+> CONFIG_PM guards?
 
+Yes, will replace it with pm_ptr in the next patch.
+P.S. The kernel test robot is also complaining about it. [1]
 
-On 15/10/2025 4:53 pm, Namhyung Kim wrote:
-> On Sun, 05 Oct 2025 11:24:03 -0700, Ian Rogers wrote:
-> 
->> Mirroring similar work for software events in commit 6e9fa4131abb
->> ("perf parse-events: Remove non-json software events"). These changes
->> migrate the legacy hardware and cache events to json.  With no hard
->> coded legacy hardware or cache events the wild card, case
->> insensitivity, etc. is consistent for events. This does, however, mean
->> events like cycles will wild card against all PMUs. A change doing the
->> same was originally posted and merged from:
->> https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
->> and reverted by Linus in commit 4f1b067359ac ("Revert "perf
->> parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
->> his dislike for the cycles behavior on ARM with perf record. Earlier
->> patches in this series make perf record event opening failures
->> non-fatal and hide the cycles event's failure to open on ARM in perf
->> record, so it is expected the behavior will now be transparent in perf
->> record on ARM. perf stat with a cycles event will wildcard open the
->> event on all PMUs, however, with default events the cycles event will
->> only be opened on core PMUs.
->>
->> [...]
-> 
-> Applied to perf-tools-next, thanks!
-> 
-> Best regards,
-> Namhyung
-> 
+[1] https://lore.kernel.org/linux-usb/202510111335.oyOAs9MB-lkp@intel.com/
 
-Hi Namhyung,
+>
+> > +     .complete =3D dwc3_google_complete,
+> > +     .prepare =3D dwc3_google_prepare,
+> > +};
+> > +
+> > +static const struct of_device_id dwc3_google_of_match[] =3D {
+> > +     { .compatible =3D "google,gs5-dwc3" },
+> > +     { }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, dwc3_google_of_match);
+> > +
+> > +static struct platform_driver dwc3_google_driver =3D {
+> > +     .probe          =3D dwc3_google_probe,
+> > +     .remove         =3D dwc3_google_remove,
+> > +     .driver         =3D {
+> > +             .name   =3D "google-dwc3",
+> > +             .pm     =3D &dwc3_google_dev_pm_ops,
+> > +             .of_match_table =3D dwc3_google_of_match,
+> > +     },
+> > +};
+> > +
+> > +module_platform_driver(dwc3_google_driver);
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_DESCRIPTION("DesignWare DWC3 Google Glue Driver");
+> > --
+> > 2.51.0.740.g6adb054d12-goog
+> >
+>
+> Give me some time, and I'll review the rest of this patch.
 
-I'm still getting the build failure that I mentioned on patch 5. This 
-only seems to happen with out of source builds:
+Thanks Thinh! and a heads up, I'm splitting this patset into
+two separate series as Krzysztof suggested; one for the
+controller and one for the phy, so the series title might
+change in the next version.
 
-   $ make -C tools/perf O=../build/local/ V=1
+Regards,
+Roy Luo
 
-
-   static const struct pmu_sys_events pmu_sys_event_tables[] = {
-         {
--               .event_table = {
--                       .pmus = pmu_events__test_soc_sys,
--                       .num_pmus = ARRAY_SIZE(pmu_events__test_soc_sys)
--               },
--               .name = "pmu_events__test_soc_sys",
--       },
--       {
-                 .event_table = { 0, 0 },
-                 .metric_table = { 0, 0 },
-         },
-make[3]: *** [pmu-events/Build:54: 
-/home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log] 
-Error 1
-
-Thanks
-James
-
+>
+> Thanks,
+> Thinh
 
