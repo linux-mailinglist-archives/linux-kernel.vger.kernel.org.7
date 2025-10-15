@@ -1,81 +1,39 @@
-Return-Path: <linux-kernel+bounces-854841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6D9BDF8A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A28EABDF8AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2356B1A605DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5D01A60927
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ABC29A9C8;
-	Wed, 15 Oct 2025 16:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DTMYRDGb"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9681186E40
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121082D6625;
+	Wed, 15 Oct 2025 16:05:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693332BE647;
+	Wed, 15 Oct 2025 16:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760544303; cv=none; b=P1CZR0z/nCvz6JWOWCSKkkeWvqcWLkA0KyOQQM0idzZo5VMZeTAIZXnaUnFVTLridKm921eL2EqjBb4Fi5b1VkVZNsVEBiCjNUwVgOdZp8DgaxvDTLKo/NGqDHrr41O2uRiGq65IIhKwSMIPMf2wEPPVH56DeV4EH0ziDbnifGI=
+	t=1760544331; cv=none; b=bXkClDiMeqBJa/Hkk8PEvv5KVaGy3VAtRhC0MYafx1N9ItlcDabc7E+0aeMxF07QgS3qtGoodrfGOSKsaduMHWIzkcJkXRDLnHHoE/BjwUHO/AqI3QqK+lmWONLKWT1Qa8m7D/DhgRAJKuk4Il2O6ho4xqR9CdYO9/hFTe5dvfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760544303; c=relaxed/simple;
-	bh=16eBxg7txFfBsqUuajXpRFF59e1zCPC6RLyurv+78h8=;
+	s=arc-20240116; t=1760544331; c=relaxed/simple;
+	bh=OtZArIgGOVFPBOubdpx8vP6JRc8vzh/BwBc+DxxyLUQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g3qpe9ENFmqQ+pKHpELxQxNJTk2hMp7PHNHgkJrSxJ1oCZ428vb7txJzZAIa6J08HyqwCYmo9ZGaXK0stmKn6Uxi/5NJb1ZGgWogUqFkp1wDDJpV177dSz7spCN9fJhhg77SMna8FVEZn3s69YyvYiHm4/rz6qClXC8HRVh/3VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DTMYRDGb; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FDhs4b001980;
-	Wed, 15 Oct 2025 16:02:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=5opmQQ
-	rcs+iQAYIWBtfey0J/RoSdwtl4mYe2y0r2Ztg=; b=DTMYRDGbbruCsK1hiGXePi
-	NbuXJV52I8gbDdNY9W5EKuZLmSAQBDEHUcH2r6peMBVF2Oh/kCdqsMc6mxNJQeGk
-	Aw/B6GpRKQu9tbPPJPJ5RcRbuXlQxkNIz3azQRk3KPsJdXHGfHlzxPt5XjgVOFvx
-	BQ0/nhlzIIbQQbXnf7MtSdlfo00TmjjfcvDlThYf6U71fY5o3fDsIjTJh+vcOdIU
-	dYavP4hNgCW5L+atWQrgXhGeac0cJhNwANNxfuvecdQnBk3x2YFd+dKpK2iMiVYX
-	HZrFxNrwGZjChtL00YRH1UN34CxwbVQLSiBfOUaLpbw6E+d0LxTAOcF+Z6tH/v8Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp80e96-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 16:02:30 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59FFxv93008767;
-	Wed, 15 Oct 2025 16:02:29 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp80e90-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 16:02:29 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59FDu6dv003626;
-	Wed, 15 Oct 2025 16:02:27 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xy1a38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 16:02:27 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59FG2Pc631261170
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 Oct 2025 16:02:25 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3D48E200E6;
-	Wed, 15 Oct 2025 16:02:25 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 34465200DB;
-	Wed, 15 Oct 2025 16:02:11 +0000 (GMT)
-Received: from [9.124.218.242] (unknown [9.124.218.242])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 Oct 2025 16:02:10 +0000 (GMT)
-Message-ID: <9901f2e8-653e-42f4-9344-03b2f70846bb@linux.ibm.com>
-Date: Wed, 15 Oct 2025 21:32:10 +0530
+	 In-Reply-To:Content-Type; b=Jjf8sHNy4gujLXfY9YWS0JznKbK8fBt7c8cqCSaSK8quIw7+1+vu8w3hHkua5VmlRVJ90VfLcfjU0hPV6aDPguZYdyn3LEmx+GH7nwAPdaN6CNNFXV9meq3zlbFctYPPadYF8SFTdJC2G/dquGIXffRgV46nWDJD3tlupcvQsoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A1D51655;
+	Wed, 15 Oct 2025 09:05:20 -0700 (PDT)
+Received: from [10.57.66.88] (unknown [10.57.66.88])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79CBA3F66E;
+	Wed, 15 Oct 2025 09:05:25 -0700 (PDT)
+Message-ID: <965b11fd-3e29-4f29-a1bf-b8e98940b322@arm.com>
+Date: Wed, 15 Oct 2025 18:05:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,101 +41,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/21] paravirt: Remove asm/paravirt_api_clock.h
-To: Juergen Gross <jgross@suse.com>
-Cc: Ajay Kaher <ajay.kaher@broadcom.com>,
-        Alexey Makhalov <alexey.makhalov@broadcom.com>,
-        Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
-        Russell King
- <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux.dev,
-        loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org
-References: <20251006074606.1266-1-jgross@suse.com>
- <20251006074606.1266-6-jgross@suse.com>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <20251006074606.1266-6-jgross@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 1/2] arm64/mm: Allow __create_pgd_mapping() to
+ propagate pgtable_alloc() errors
+To: Linu Cherian <linu.cherian@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Yang Shi <yang@os.amperecomputing.com>,
+ Chaitanya S Prakash <chaitanyas.prakash@arm.com>, stable@vger.kernel.org
+References: <20251015112758.2701604-1-linu.cherian@arm.com>
+ <20251015112758.2701604-2-linu.cherian@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <20251015112758.2701604-2-linu.cherian@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9ZUK4UeNEA3M63-5xIUdjnNRJmI9KQSO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA4NCBTYWx0ZWRfX90a/KFqHOFA4
- 3LTXuANmdsGxWyQx7Ukevm3RyFSkQJ9pXc2oVr8K5uv/q7SJflj3vhk6rgQPg5a2e4JMHRcokhT
- E+w6CfzUtDgCzNqO7x7Qz0iPi2Udyp1mB5qOlV79KYdYo8wEkzexJTGI0NvxBMb9zp2anqktjy6
- x7dXmTESXxwuIWmKuQwlY9VJQdv5AweqVNhod++KR+c5UndqULhfyI4H+V7In+JTOm9GWN4E92e
- bZgooNZopePk7kVmv+pt2VQaWzIRRgwHx3+Ivefade+IPstSVao1M49g8pQuFBZku8ozOWBjVco
- XGxbdE4m67DWVP6wWkyIRV4aUp8gC4N6DdEGT4oMISQu4RWJ20yslN8ham/g8aBzCSTrxBcUSHp
- 17smtvjqfZzcfkxRb2PzijiKsYbetw==
-X-Proofpoint-GUID: dV8tQT4HDH7j4wsc4MFx6qXJyZuneU1L
-X-Authority-Analysis: v=2.4 cv=af5sXBot c=1 sm=1 tr=0 ts=68efc596 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=iox4zFpeAAAA:8 a=JfrnYn6hAAAA:8 a=VnNF1IyMAAAA:8 a=RR7mTWzPQ-4l2d7n_HwA:9
- a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=1CNFftbPRP8L7MoqJWF3:22
- a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510120084
 
+On 15/10/2025 13:27, Linu Cherian wrote:
+> From: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+>
+> arch_add_memory() is used to hotplug memory into a system but as a part
+> of its implementation it calls __create_pgd_mapping(), which uses
+> pgtable_alloc() in order to build intermediate page tables. As this path
+> was initally only used during early boot pgtable_alloc() is designed to
+> BUG_ON() on failure. However, in the event that memory hotplug is
+> attempted when the system's memory is extremely tight and the allocation
+> were to fail, it would lead to panicking the system, which is not
+> desirable. Hence update __create_pgd_mapping and all it's callers to be
+> non void and propagate -ENOMEM on allocation failure to allow system to
+> fail gracefully.
+>
+> But during early boot if there is an allocation failure, we want the
+> system to panic, hence create a wrapper around __create_pgd_mapping()
+> called early_create_pgd_mapping() which is designed to panic, if ret
+> is non zero value. All the init calls are updated to use this wrapper
+> rather than the modified __create_pgd_mapping() to restore
+> functionality.
+>
+> Fixes: 4ab215061554 ("arm64: Add memory hotplug support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
 
+A couple more nits below (sorry I didn't catch them earlier), but otherwise:
 
-On 10/6/25 1:15 PM, Juergen Gross wrote:
-> All architectures supporting CONFIG_PARAVIRT share the same contents
-> of asm/paravirt_api_clock.h:
-> 
->    #include <asm/paravirt.h>
-> 
-> So remove all incarnations of asm/paravirt_api_clock.h and remove the
-> only place where it is included, as there asm/paravirt.h is included
-> anyway.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Kevin Brodsky <kevin.brodsky@arm.com>
+
 > ---
->   arch/arm/include/asm/paravirt_api_clock.h       | 1 -
->   arch/arm64/include/asm/paravirt_api_clock.h     | 1 -
->   arch/loongarch/include/asm/paravirt_api_clock.h | 1 -
->   arch/powerpc/include/asm/paravirt_api_clock.h   | 2 --
->   arch/riscv/include/asm/paravirt_api_clock.h     | 1 -
->   arch/x86/include/asm/paravirt_api_clock.h       | 1 -
->   kernel/sched/sched.h                            | 1 -
->   7 files changed, 8 deletions(-)
->   delete mode 100644 arch/arm/include/asm/paravirt_api_clock.h
->   delete mode 100644 arch/arm64/include/asm/paravirt_api_clock.h
->   delete mode 100644 arch/loongarch/include/asm/paravirt_api_clock.h
->   delete mode 100644 arch/powerpc/include/asm/paravirt_api_clock.h
->   delete mode 100644 arch/riscv/include/asm/paravirt_api_clock.h
->   delete mode 100644 arch/x86/include/asm/paravirt_api_clock.h
-> 
+> Changelog:
+>
+> v3:
+> * Fixed a maybe-uninitialized case in alloc_init_pud
+> * Added Fixes tag and CCed stable
+> * Few other trivial cleanups
+>
+>  arch/arm64/mm/mmu.c | 210 ++++++++++++++++++++++++++++----------------
+>  1 file changed, 132 insertions(+), 78 deletions(-)
+>
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index b8d37eb037fc..638cb4df31a9 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -49,6 +49,8 @@
+>  #define NO_CONT_MAPPINGS	BIT(1)
+>  #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+>  
+> +#define INVALID_PHYS_ADDR	(-1ULL)
+> +
+>  DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
+>  
+>  u64 kimage_voffset __ro_after_init;
+> @@ -194,11 +196,11 @@ static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+>  	} while (ptep++, addr += PAGE_SIZE, addr != end);
+>  }
+>  
+> -static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+> -				unsigned long end, phys_addr_t phys,
+> -				pgprot_t prot,
+> -				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -				int flags)
+> +static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+> +			       unsigned long end, phys_addr_t phys,
+> +			       pgprot_t prot,
+> +			       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +			       int flags)
+>  {
+>  	unsigned long next;
+>  	pmd_t pmd = READ_ONCE(*pmdp);
+> @@ -213,6 +215,8 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  			pmdval |= PMD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pte_phys = pgtable_alloc(TABLE_PTE);
+> +		if (pte_phys == INVALID_PHYS_ADDR)
+> +			return -ENOMEM;
+>  		ptep = pte_set_fixmap(pte_phys);
+>  		init_clear_pgtable(ptep);
+>  		ptep += pte_index(addr);
+> @@ -244,12 +248,15 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  	 * walker.
+>  	 */
+>  	pte_clear_fixmap();
+> +
+> +	return 0;
+>  }
+>  
+> -static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> -		     phys_addr_t phys, pgprot_t prot,
+> -		     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
+> +static int init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> +		    phys_addr_t phys, pgprot_t prot,
+> +		    phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
+>  {
+> +	int ret;
 
-For powerpc, scheduler bits
+Nit: that could be added to the else block instead (makes it clearer
+it's not used for the final return, that got me confused when re-reading
+this patch).
 
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+>  	unsigned long next;
+>  
+>  	do {
+> @@ -269,22 +276,27 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  			BUG_ON(!pgattr_change_is_safe(pmd_val(old_pmd),
+>  						      READ_ONCE(pmd_val(*pmdp))));
+>  		} else {
+> -			alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+> -					    pgtable_alloc, flags);
+> +			ret = alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+> +						  pgtable_alloc, flags);
+> +			if (ret)
+> +				return ret;
+>  
+>  			BUG_ON(pmd_val(old_pmd) != 0 &&
+>  			       pmd_val(old_pmd) != READ_ONCE(pmd_val(*pmdp)));
+>  		}
+>  		phys += next - addr;
+>  	} while (pmdp++, addr = next, addr != end);
+> +
+> +	return 0;
+>  }
+>  
+> [...]
+>
+> @@ -1178,9 +1226,10 @@ static int __init __kpti_install_ng_mappings(void *__unused)
+>  		// covers the PTE[] page itself, the remaining entries are free
+>  		// to be used as a ad-hoc fixmap.
+>  		//
+> -		__create_pgd_mapping_locked(kpti_ng_temp_pgd, __pa(alloc),
+> -					    KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> -					    kpti_ng_pgd_alloc, 0);
+> +		if (__create_pgd_mapping_locked(kpti_ng_temp_pgd, __pa(alloc),
+> +						KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> +						kpti_ng_pgd_alloc, 0))
+
+Nit: it would be slightly more readable to have ret =
+__create_pgd_mapping_locked(...); if (ret)
+
+- Kevin
+
+> +			panic("Failed to create page tables\n");
+>  	}
+>  
+>  	cpu_install_idmap();
+>
+> [...]
 
