@@ -1,155 +1,168 @@
-Return-Path: <linux-kernel+bounces-854955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA94FBDFD5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:23:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1486BDFD69
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA4B19C537D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D8E486C52
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1E7338F2C;
-	Wed, 15 Oct 2025 17:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5E4338F21;
+	Wed, 15 Oct 2025 17:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LGLmBhLc"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="PIR457Mw"
+Received: from mail-vs1-f100.google.com (mail-vs1-f100.google.com [209.85.217.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340B21B9F5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32452D5957
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549029; cv=none; b=pK6AdfQd5HmobQsoOLeuqje57NDxrkQLlBwbROblVyNNTZomRLCYhV1DVKaVi0qObO44OwKC8Ja5ytzdp0YRWXXlyhvxn6fMNBQpEvsMnKlqWsMRawNC2/5vNqQfyAlO3e5ebrE0YWmJbBknBpG0nP6YYGL4Ki5OG/9x4Gud/FI=
+	t=1760549161; cv=none; b=R6TJ4WqtU7qlxPxlth2KUg5bKVLGxtwNB+eqxP3jpVu6LR48DP9krfqle/ll+lDmhT2aGQ7DDt0IVOcGhinIcNooU6cD+SultI500mX0xwQS0ZJcKu7n2t1csSLPiye0azezrZjVQQfBIHMZNWjc1aQ+CGm5KJIA9upVekr9qxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549029; c=relaxed/simple;
-	bh=kfrhw/u3a1k3S4QwLhulWsjxn5BLxbZb/aFjwKek2l4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHg1pL/S3AbmvmB8JB29AfvwwM60YBEjFm2Ljz1pohDtJVUEjaYNMrl6fO59s8o3sLsCNkSW1nCMUa0jGTq74zaZbmIm+3mKE2PquBeNmoYnxjoDGL5eli3sEOjWOuGaJIPlE/6V17bXWNimVZdG25XgVXPbNryt03z9DSDtOZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LGLmBhLc; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f2bac92d-53ea-4db3-a96b-460eb64d7863@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760549024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wupYv6V09Im+EcynNunwUTgjS1xSgd5MLbHN6/dYi9k=;
-	b=LGLmBhLcTjtRx9K/Unhu+m7ftR8/FVRtS2vgP5W9OYuEncOYPSEX+GZ2prmWD4lM5vgDQc
-	f+csHaDPMWI8M5agCF761U7XZx3cagppdYW1qYzhjsE+tA4zyM2QIkjAbcp2BfmT0JXX59
-	/Rbvy3TLFNJjeWOWE+E0mpWs2d4nTfo=
-Date: Thu, 16 Oct 2025 01:23:29 +0800
+	s=arc-20240116; t=1760549161; c=relaxed/simple;
+	bh=JB5oFzqmNqnAnPByzKv3TD4SI4/gUXMe6Yt/XtVTZxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EZIoubtdtIdwM81WJsFDrn3xEj8zwsYrZwavqDIJLjAHM450v72uO/o6MRzvzeeh+eRc3AWJ1s9tR95CR9bV+RCJgH2NwJXL0XFxFV1Jmvlo8cXgOeRxdSRTnoupTfAw87ThnhhclGO+KY0gAPIWYjCBDeuBGTVwnO1cVh2A/G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=PIR457Mw; arc=none smtp.client-ip=209.85.217.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-vs1-f100.google.com with SMTP id ada2fe7eead31-57f496e96d6so451287137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1760549159; x=1761153959; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8a0FBTWbRkzlovsTrElybeARL/kMTLRwEd+6K2uwZkE=;
+        b=PIR457MwBUzF9YGnn9XoWgp1FewRVHpdJFvQpOPbAOXOWIS5J8cyBezuLCfUc05kUN
+         0+BLS1xVgnkOrQAOqHRgZqjDW+5HzYNBcnk8aIkXrbcPesw/YBFp8vn0oat8DZiQuM8C
+         6knu0QmINxALoyiB5tCgQVCR4Zh+OLNdVM8vIsTo05sd0ZpJQOiVlE/arGsY0nCTHE7c
+         lg14OmuKDSQDEl0unTWOvMDLWhJgKuoJedejpLTQKD9AskcEiKGSTfjBi8cyf6dveRem
+         K3/oS0CgqKAE4X/BzozaDh4duoafrTcV5Rhuo49w5X4TgxkwtWYbIz73FKu4PFkDJbwT
+         sMKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760549159; x=1761153959;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8a0FBTWbRkzlovsTrElybeARL/kMTLRwEd+6K2uwZkE=;
+        b=S4k8k5F8kOqGHzOvv5aPZXTFopu9I73Knxk0rlqSx6Wu57x7+MrPBWN5ncLHgmZG5/
+         6H1fH5UvmrTQBSmXf+fi4STZ6QSL8sAdOptdQ5v8e4DZLlO/t5/wn3RPk/Evzwiq+uxp
+         VJKoiiYZqasrhRw9C7Fv0hSe8l5aVdyknHdvWz3vw5wHGHi6lFDFU84pRlq8g2FXwnqR
+         09Vs+FAd9fnUBM+pKajj0TGtda60xqQ/VXpy6fXAvSP9siMVNwOeSGH4xLvamnA/n2Bm
+         JD2auWYFrUrcfZyWPL1wq9cmZNjpZry/I6Ze8n8p3kgp/Q+WtODbVpKwsjaKGY0rS1Gt
+         1BnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVS+3BfahA5SaYR+gk2n0sKhbSP1idcNTuWtbrZXpIeokwYiHb9izPRvKZymMVTILhRChLX11h4By/nkJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW8nHrcdNSuDKq1xZvuQ6XTEX3bqpMqNPYW4XXRncFywe1+/t/
+	gFpN6J2lvrXgngUDEETXCpzUgGmZoN3fjdvOsBBVE+lO3slhf+BmmVFiaqQijCPei39SL2E/Qk9
+	sDBEVH6F1MzOOQZsEPZjDy/HMoamMLQbyDCnH
+X-Gm-Gg: ASbGncsWSkQOtUOPNyHzMouESgCSgDXJMuxMlHWlMbtIaPjQ4d9BjbggxPEajuocgCS
+	vVj8ZTmVKm2QoErV0schPgk1obyHoqG+dRQ97uCiYviYMVZiFRg9DcvQhxmNPJuzPGGLYzcCqia
+	mnNFPBen3Nx5nWmgmGeby4PTaVkvqs7QrA32OgejfLhcAM0ObKNghddeDW/x//1pITu1srVQYSU
+	uGuGkl4+Ho+Gsy3kTE3UrZloT4M7Og0cAxYurVAiCOoXNL6BH6t3fg3QbvFFlKdf1Q0f8JPtpLW
+	xi7I16gLxv9enA2Rt++SVs72pzos92cUbyrUWnyPaMBw0HKgxSq4HE+E7nmTtnu2TjRUnpO0
+X-Google-Smtp-Source: AGHT+IEyCGl9AhptKS4IDg6E1CU4cRmqkZiT6EIc5uRSVlidSgZPLElf0iGy34FDQOT0X6ZobQurYjmqAj3u
+X-Received: by 2002:a05:6102:3581:b0:55d:b35e:7a67 with SMTP id ada2fe7eead31-5d5e21f14famr5081188137.2.1760549158620;
+        Wed, 15 Oct 2025 10:25:58 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id ada2fe7eead31-5d5fc4d87cfsm2010256137.0.2025.10.15.10.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 10:25:58 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E7560340576;
+	Wed, 15 Oct 2025 11:25:57 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id E03A3E41EAD; Wed, 15 Oct 2025 11:25:57 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/memmap: return bool from io_mem_alloc_compound()
+Date: Wed, 15 Oct 2025 11:25:54 -0600
+Message-ID: <20251015172555.2797238-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.1 0/6] fix invalid sleeping in detect_cache_attributes()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jon Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1759251543.git.wen.yang@linux.dev>
- <2025101509-bucktooth-reawake-5176@gregkh>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <2025101509-bucktooth-reawake-5176@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+io_mem_alloc_compound() returns either ERR_PTR(-ENOMEM) or a virtual
+address for the allocated memory, but its caller just checks whether the
+result is an error. Return a bool success value instead.
 
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/memmap.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-On 10/15/25 16:43, Greg Kroah-Hartman wrote:
-> On Wed, Oct 01, 2025 at 01:27:25AM +0800, Wen Yang wrote:
->> commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection
->> in the CPU hotplug path")
->> adds a call to detect_cache_attributes() to populate the cacheinfo
->> before updating the siblings mask. detect_cache_attributes() allocates
->> memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
->> kernels, on secondary CPUs, this triggers a:
->>    'BUG: sleeping function called from invalid context'
->> as the code is executed with preemption and interrupts disabled:
->>
->>   | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
->>   | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
->>   | preempt_count: 1, expected: 0
->>   | RCU nest depth: 1, expected: 1
->>   | 3 locks held by swapper/111/0:
->>   |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
->>   |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
->>   |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
->>   | irq event stamp: 0
->>   | hardirqs last  enabled at (0):  0x0
->>   | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
->>   | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
->>   | softirqs last disabled at (0):  0x0
->>   | Preemption disabled at:
->>   |  migrate_enable+0x30/0x130
->>   | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
->>   | Call trace:
->>   |  __kmalloc+0xbc/0x1e8
->>   |  detect_cache_attributes+0x2d4/0x5f0
->>   |  update_siblings_masks+0x30/0x368
->>   |  store_cpu_topology+0x78/0xb8
->>   |  secondary_start_kernel+0xd0/0x198
->>   |  __secondary_switched+0xb0/0xb4
->>
->>
->> Pierre fixed this issue in the upstream 6.3 and the original series is follows:
->> https://lore.kernel.org/all/167404285593.885445.6219705651301997538.b4-ty@arm.com/
->>
->> We also encountered the same issue on 6.1 stable branch,  and need to backport this series.
->>
->> Pierre Gondois (6):
->>    cacheinfo: Use RISC-V's init_cache_level() as generic OF
->>      implementation
->>    cacheinfo: Return error code in init_of_cache_level()
->>    cacheinfo: Check 'cache-unified' property to count cache leaves
->>    ACPI: PPTT: Remove acpi_find_cache_levels()
->>    ACPI: PPTT: Update acpi_find_last_cache_level() to
->>      acpi_get_cache_info()
->>    arch_topology: Build cacheinfo from primary CPU
-> 
-> This series seems to have broken existing systems, as reported here:
-> 	https://lore.kernel.org/r/046f08cb-0610-48c9-af24-4804367df177@nvidia.com
-> 
-> so I'm going to drop it from the queue at this point in time.  Please
-> work to resolve this before resubmitting it.
-> 
-
-Hi Jon,
-
-Thank you for testing. The root cause here is that this series has 
-exposed previously hidden bugs (such as those in 
-arch/arm64/boot/dts/nvidia/tgra194.dtsi).
-
-We may need to further backport the following patches:
-
-ommit 27f1568b1d5fe35014074f92717b250afbe67031
-Author: Pierre Gondois <pierre.gondois@arm.com>
-Date:   Mon Nov 7 16:57:08 2022 +0100
-
-     arm64: tegra: Update cache properties
-
-     The DeviceTree Specification v0.3 specifies that the cache node
-     'compatible' and 'cache-level' properties are 'required'. Cf.
-     s3.8 Multi-level and Shared Cache Nodes
-     The 'cache-unified' property should be present if one of the
-     properties for unified cache is present ('cache-size', ...).
-
-
-But I don't have a Tegra device right now. Could you please apply the 
-patch above and verify it again?
-
---
-Best wishes,
-Wen
-
-
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index 2e99dffddfc5..b53733a54074 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -13,30 +13,30 @@
+ #include "memmap.h"
+ #include "kbuf.h"
+ #include "rsrc.h"
+ #include "zcrx.h"
+ 
+-static void *io_mem_alloc_compound(struct page **pages, int nr_pages,
+-				   size_t size, gfp_t gfp)
++static bool io_mem_alloc_compound(struct page **pages, int nr_pages,
++				  size_t size, gfp_t gfp)
+ {
+ 	struct page *page;
+ 	int i, order;
+ 
+ 	order = get_order(size);
+ 	if (order > MAX_PAGE_ORDER)
+-		return ERR_PTR(-ENOMEM);
++		return false;
+ 	else if (order)
+ 		gfp |= __GFP_COMP;
+ 
+ 	page = alloc_pages(gfp, order);
+ 	if (!page)
+-		return ERR_PTR(-ENOMEM);
++		return false;
+ 
+ 	for (i = 0; i < nr_pages; i++)
+ 		pages[i] = page + i;
+ 
+-	return page_address(page);
++	return true;
+ }
+ 
+ struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages)
+ {
+ 	unsigned long start, end, nr_pages;
+@@ -157,18 +157,16 @@ static int io_region_allocate_pages(struct io_ring_ctx *ctx,
+ {
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN;
+ 	size_t size = (size_t) mr->nr_pages << PAGE_SHIFT;
+ 	unsigned long nr_allocated;
+ 	struct page **pages;
+-	void *p;
+ 
+ 	pages = kvmalloc_array(mr->nr_pages, sizeof(*pages), gfp);
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+-	p = io_mem_alloc_compound(pages, mr->nr_pages, size, gfp);
+-	if (!IS_ERR(p)) {
++	if (io_mem_alloc_compound(pages, mr->nr_pages, size, gfp)) {
+ 		mr->flags |= IO_REGION_F_SINGLE_REF;
+ 		goto done;
+ 	}
+ 
+ 	nr_allocated = alloc_pages_bulk_node(gfp, NUMA_NO_NODE,
+-- 
+2.45.2
 
 
