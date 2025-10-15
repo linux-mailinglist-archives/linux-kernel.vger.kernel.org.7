@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-855224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9FEBE08E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:55:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4718FBE08FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 040F4352B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:55:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 648AE5063E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F2830103F;
-	Wed, 15 Oct 2025 19:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A97303C9E;
+	Wed, 15 Oct 2025 19:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HeMcYhWp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mx3opPMl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="OgACmLgj"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C421DB13A;
-	Wed, 15 Oct 2025 19:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2EE2FE57F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760558101; cv=none; b=A8q+FCXeYj13nob4RYyuheU+U4ha14NR2tXM2fVwuOynY88GhkOBdvy7aOmAeYI+DzfSUPQTfpTb9dPSbE0sA8+Gqo0vQwrMDMnSllxoJbnD+GOsn4bLDbFrcEJh69KZCE6i0Hm6khtYmJV7mGNJ7aBx7NyUePVPswH2Cy6qCYM=
+	t=1760558236; cv=none; b=TjxtPemI51NlcFOmRaliL9v99RKBIfT3DO8t7P7Of6Iy6ijjZE+ZZ7usXSEfF2bGWWXae6bYBgOIUT7hTv86Bfu33nAzzrjYThN8RWOiR6vlOSjJpFjeWZ3Q1bYlMyUXLjOzONjXCwceNyzmO0Ca5NDchezq+id82Oy/UoMl3qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760558101; c=relaxed/simple;
-	bh=VNPqcrlLsUfyayWVK9JAUMrRoqyHcPylLKS5IiJz0HQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QARC8+CalYLWbwwmSDtKv6WkXlyRLunPgXcv2w805F/6cDa9XvRBPGdQJmTIEqxhBj/zKHxRs4Te3q9RZa0Ep1NAdBT5e2icRW8aNOUaWMFknBZAOk0CXEyCzFbl+4+XSlw03iWaDzbJVlexfUTH9aKAz5VhjuokXfLb++hwbPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HeMcYhWp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mx3opPMl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 15 Oct 2025 19:54:55 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760558097;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmYkG6tJpnRfUjvD88sq/h0E6tCqvF1OTKGkOFYcjYs=;
-	b=HeMcYhWpfrDbk9gRC8mQY7eJTn6Y8iklhljLuVRhB/K3fAjuuf/THMxNbvZPbJrzedO8zx
-	plnJxHttPOWR/fdZuUnmDV5epQ4nRVnK1mxBvcHN2sdVcpTfDOXEEif/RTRWR6IEcSAuhQ
-	qc40Qh99MfGQTs3Or1x+ormEj6w3ciCIAKQuhHi7WmClOCg0PXnNnsDTHdfgi6JAP8MwpK
-	a4J9UY0mdz6mMwyFv+ZsN0hA3WLHDxfdr+9Pi3Z1dQCDnLuyOBZiv6sTL3zBVBb1W1A1F3
-	oNLSwEnWxp+n0fzE9TE7PI/oju+1+vz2C7kh3VcqDFdwOHNLadvLuNxtRYZ14w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760558097;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmYkG6tJpnRfUjvD88sq/h0E6tCqvF1OTKGkOFYcjYs=;
-	b=mx3opPMlFZRAxAaufg3QV4AVkHGHLtYIOfiVBnU3eMclcGsIvMXAUVXOEVszEZe+hfEIx4
-	4lycNcXj6sFUGuDQ==
-From: "tip-bot2 for Rong Zhang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/CPU/AMD: Prevent reset reasons from being
- retained across reboot
-Cc: Rong Zhang <i@rong.moe>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- "Mario Limonciello (AMD)" <superm1@kernel.org>,
- Yazen Ghannam <yazen.ghannam@amd.com>,  <stable@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251010165959.49737-1-i@rong.moe>
-References: <20251010165959.49737-1-i@rong.moe>
+	s=arc-20240116; t=1760558236; c=relaxed/simple;
+	bh=PVOIGqVH2GNx8nbEhC4N+iemqePBsXVLOXVAi645cLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sYvhlRVb0aQ0i4SLxY2BoMtqelddue2iSgANOuzUYTJdlyqEiFdMnR0fLeBuUObV4ckBmOhjmCrtd63aKNQPIUaTixALyq87jwOzCq0v5VUswTZOrS3zWQH9lD1YTksGjB7PLFtCQcmKD36QpFr3Fxrcb5s2NdY4XbgJ0uceGrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=OgACmLgj; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so19757b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1760558234; x=1761163034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jf1D+pXD9ez3LgtyDQn5W7bDLQYXqMdDa0ed4ybggHE=;
+        b=OgACmLgj3Fqlk35hYcWGYLV9ZYj1vDR3GxyavGzVbpLSIwWbxNBmc9Mal+A9WSH7Nm
+         J2oyyIDU7wlWMl8i+16+rc+ZhO6uGfgU4GsXW61dyC7YRpQR8AfpRTDTcAWYtJt1ePen
+         VTW6EOib+7U4fUV72KMvPVQnA2PYFXKwmGDBfFBjjvRiiuSxByMCoROukQAWem9WJb2n
+         2YghAb/cAgFD5HAKMkurjTKA6m7z34MVn8yT5+wsXr4ex8lVhl/jhNsX9h5TMc62tP04
+         jHjSOi2oVz75K/CLm//a3Tn7GEtC+w3A+kvahEsDNSCaZhxuZ3WC0wyLRhHuXLSjlnWA
+         G/lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760558234; x=1761163034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jf1D+pXD9ez3LgtyDQn5W7bDLQYXqMdDa0ed4ybggHE=;
+        b=YLCL4pLEhHMne9HNcPyYk6OoYKTscvU0WCyNElZ8DRL808pwR3cCvFY2UsRU9YiiLL
+         gru3GqYDuYSKNZGXCEqlHfvN7t5ByZmIP6C74f22JRT1CeV720X/ui/h1kQVyItTq+Z7
+         X6uCpHHBjDn8KEqecjK5COZxdB4vbHUqnl/uVs+d3Okop6vH5rrMj1v55OoNqlHnYpId
+         ixgBEUQEu+mTIxSSewDMRygjJfrCrHNg1j9rcKh1ITmNV+55lmD4YBxTF6DrRohbskzr
+         M+zjNAN9+bozWG+5DVLBxjL008YqjAXQYgrQmcOeUm1cwy4RS9s/tJsJvzVTIiPO46OB
+         Qe1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW6xyFfiixMWpUaTAg6/d2F6RiyPgoItd9Y5tFQIzh7DcFBp2IZesY0jhfJzg3yk3hLBq3MIhne4+pmIuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8NGj46V2iplqL6oL8LvG5NeRI0nJY0K/xwwILN9RKFqyDhja6
+	NO0Oxgy6YWQofnn8Ie9tx3xXkaJS6aWeSBCdpI/25XRIabN0kaB5JsjP/rUDrhYuQNWGBUvCWT2
+	VU1t7
+X-Gm-Gg: ASbGncvW56XfLT7ToC0E295nGLkXUjtAaYqRhASa46+beRDDGgGSk53LdVh4u41A9Mm
+	y3H1dnaSzQpAwkvryTuqZhxLgukPJKpsCOqu3k1GbFGI0uXpXtatu6lJsKeIlu0lOMvRaUZmHBQ
+	JaGM/GgKrJaa7dCozNvJZoOP2JCvs8FWJdgFxrPSAKDyuDhdUWMKjO2RDC8RSl1ZxppAX/sj7ha
+	C2Dpa5xoNfkhQQge4s8lTutbSWtbK4ZFyhTxbzlLSzTX3ToFpJBsa0xrQTbGavewAR6SmadzIgf
+	KsScAO1yPk7dZRFeuqvRoX0hU0nsVlayW+RkNGFtlDbszNyZ6V/wQgC7Gi2uXaNTeQWXEOWb4X7
+	PnRL58M/QBwkC3F0yCge7UodMHgCoX/3iDECWyIkW/4p4W5M+WTt0x6rGIoQ+21OGZOV6lyWdSw
+	Mi94Adqu//zL+/1rOxCVyS/A==
+X-Google-Smtp-Source: AGHT+IHwZvjxinrfQrnbeoDgW7hQBq/oQ8eKuyKeD7xr+PW/nsvJq8jqNBQZpbLuAC6y9e8iYnyRbg==
+X-Received: by 2002:a05:6a00:464e:b0:780:fff4:f7db with SMTP id d2e1a72fcca58-793874402c2mr37486934b3a.15.1760558233936;
+        Wed, 15 Oct 2025 12:57:13 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b06075fsm20151322b3a.17.2025.10.15.12.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 12:57:13 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-kernel@vger.kernel.org,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org,
+	Paul Walmsley <pjw@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Subject: [PATCH 0/4] irqchip/riscv-imsic: IRQ handling optimizations
+Date: Wed, 15 Oct 2025 12:55:11 -0700
+Message-ID: <20251015195712.3813004-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176055809535.709179.9375426508386127359.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+This series includes a small cleanup to imsic_irq_set_affinity() and a
+series of optimizations to the IMSIC IRQ handling hot path.
 
-Commit-ID:     e6416c2dfe23c9a6fec881fda22ebb9ae486cfc5
-Gitweb:        https://git.kernel.org/tip/e6416c2dfe23c9a6fec881fda22ebb9ae48=
-6cfc5
-Author:        Rong Zhang <i@rong.moe>
-AuthorDate:    Sat, 11 Oct 2025 00:59:58 +08:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 15 Oct 2025 21:38:06 +02:00
+Benchmarks on a SiFive P470-based board (95% confidence interval):
+  perf bench sched messaging: 5.20% to  7.08% improvement
+  perf bench sched pipe     : 8.47% to 13.85% improvement
 
-x86/CPU/AMD: Prevent reset reasons from being retained across reboot
 
-The S5_RESET_STATUS register is parsed on boot and printed to kmsg.
-However, this could sometimes be misleading and lead to users wasting a
-lot of time on meaningless debugging for two reasons:
+Samuel Holland (4):
+  irqchip/riscv-imsic: Remove redundant irq_data lookups
+  irqchip/riscv-imsic: Embed the vector array in lpriv
+  irqchip/riscv-imsic: Inline imsic_vector_from_local_id()
+  irqchip/riscv-imsic: Remove irq_desc lookup from hot path
 
-* Some bits are never cleared by hardware. It's the software's
-responsibility to clear them as per the Processor Programming Reference
-(see [1]).
+ drivers/irqchip/irq-riscv-imsic-early.c    | 11 +++-----
+ drivers/irqchip/irq-riscv-imsic-platform.c | 11 ++++----
+ drivers/irqchip/irq-riscv-imsic-state.c    | 30 +++++-----------------
+ drivers/irqchip/irq-riscv-imsic-state.h    |  8 +++---
+ 4 files changed, 19 insertions(+), 41 deletions(-)
 
-* Some rare hardware-initiated platform resets do not update the
-register at all.
+-- 
+2.47.2
 
-In both cases, a previous reboot could leave its trace in the register,
-resulting in users seeing unrelated reboot reasons while debugging random
-reboots afterward.
-
-Write the read value back to the register in order to clear all reason bits
-since they are write-1-to-clear while the others must be preserved.
-
-  [1]: https://bugzilla.kernel.org/show_bug.cgi?id=3D206537#attach_303991
-
-  [ bp: Massage commit message. ]
-
-Fixes: ab8131028710 ("x86/CPU/AMD: Print the reason for the last reset")
-Signed-off-by: Rong Zhang <i@rong.moe>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/all/20250913144245.23237-1-i@rong.moe/
----
- arch/x86/kernel/cpu/amd.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 5398db4..ccaa51c 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -1355,11 +1355,23 @@ static __init int print_s5_reset_status_mmio(void)
- 		return 0;
-=20
- 	value =3D ioread32(addr);
--	iounmap(addr);
-=20
- 	/* Value with "all bits set" is an error response and should be ignored. */
--	if (value =3D=3D U32_MAX)
-+	if (value =3D=3D U32_MAX) {
-+		iounmap(addr);
- 		return 0;
-+	}
-+
-+	/*
-+	 * Clear all reason bits so they won't be retained if the next reset
-+	 * does not update the register. Besides, some bits are never cleared by
-+	 * hardware so it's software's responsibility to clear them.
-+	 *
-+	 * Writing the value back effectively clears all reason bits as they are
-+	 * write-1-to-clear.
-+	 */
-+	iowrite32(value, addr);
-+	iounmap(addr);
-=20
- 	for (i =3D 0; i < ARRAY_SIZE(s5_reset_reason_txt); i++) {
- 		if (!(value & BIT(i)))
+base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
+branch: up/imsic-opt
 
