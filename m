@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-853821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C76BDCAC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:18:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EECBDCACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4FAF234B1C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:18:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 999C34E7698
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC832FF667;
-	Wed, 15 Oct 2025 06:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="X+6mwWPD"
-Received: from mail-m19731119.qiye.163.com (mail-m19731119.qiye.163.com [220.197.31.119])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1482FF16B;
+	Wed, 15 Oct 2025 06:18:09 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9575F23236D;
-	Wed, 15 Oct 2025 06:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4571623ABA8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509074; cv=none; b=lHsvth66JkIXcRkmyPDOQ2SdLHmhMKRdbLMEn8W9m2l+yx6cpDbmV0izKCLtZbFeK6ZxANmgQ2ZJlIEAEfGkJyFpzb9RWMvuQw6VtungX5xYNfo987RzkcIU9SuacywrB55kDPkMOF6ZhvMra0GhNSNP3j1/5qJBZwHdRxy7b8M=
+	t=1760509088; cv=none; b=DVQiPvc/f1tg6oTTRTA1m/KuYxWHSZalMuhYsVog8gkuPJSMmljcF+ZG3XjFKqItNZsynelc0Kim1zvFT6to2yKtMnL3sw/c6ng9EdIhzgOBBNo254hv9yg6V4r0/D7wThI9L6hXEu6uiibxjmamxClNpsYiR5Srtotauzq7/lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509074; c=relaxed/simple;
-	bh=3DUiQzMFuD1q7gKq6cx3qFgLAsWUcWiBw2JF2wM1HGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBtOQbvb2IY6qji/Q956saFeju+taIRiwoyO8SBqyS88P847WDX0OuuOMnNGiEd0A4x54jb/5kYIF/HI5m8qge1X39+Z+93cDgCbfxaTCOJU0Hjy5kpuHjHtW67aU34s5aqQcYdbrdGRU55atvH3f6p/WPNE3kc+sv2rCEduhKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=X+6mwWPD; arc=none smtp.client-ip=220.197.31.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.149] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 25f6e32a2;
-	Wed, 15 Oct 2025 14:17:39 +0800 (GMT+08:00)
-Message-ID: <4c9ec1ab-8833-4e07-a39c-ba502117866f@rock-chips.com>
-Date: Wed, 15 Oct 2025 14:17:29 +0800
+	s=arc-20240116; t=1760509088; c=relaxed/simple;
+	bh=00vkzuLktB6wmqLHFAXh0IaPTK1wbG12G/QsgWkAQr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fPeZzydR6B2GMwYxHmBRKEHKbBBvJ2iv0fqGt4lE9D9MgpN3ZVGGd3hbDpCw9Sr0DicTwaGh1GowcZlbcr6EwC01LggrY7v4K+Z9Y17hZr4p+Vzq/xH8PcMxtd2qd9uRfSkjD9GLV+KW4Z2MQn8/qnlvDqm0a9eulN1krmrRyMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
+X-QQ-mid: esmtpgz13t1760509078t710fc538
+X-QQ-Originating-IP: fKuI2SoLTPBzi9ZxhQ0J1CaSp3/phsZPssuIEn3Y994=
+Received: from GPU-Server-A6000.. ( [202.201.1.132])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 15 Oct 2025 14:17:56 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13976680870695852025
+EX-QQ-RecipientCnt: 14
+From: Yuan Tan <tanyuan@tinylab.org>
+To: arnd@arndb.de,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	palmer@dabbelt.com,
+	linux-kbuild@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	i@maskray.me,
+	tanyuan@tinylab.org,
+	falcon@tinylab.org,
+	ronbogo@outlook.com,
+	z1652074432@gmail.com,
+	lx24@stu.ynu.edu.cn
+Subject: [PATCH v2 2/8] scripts/syscalltbl.sh: add optional --used-syscalls argument for syscall trimming
+Date: Wed, 15 Oct 2025 14:17:49 +0800
+Message-ID: <B120EFEBD27B9B67+6751ec7c12d04aafe1de79502b984ed65013f6cf.1760463245.git.tanyuan@tinylab.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
+References: <cover.1760463245.git.tanyuan@tinylab.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: dwmac-rk: No need to check the return value
- of the phy_power_on()
-To: Lizhe <sensor1010@163.com>, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- rmk+kernel@armlinux.org.uk, jonas@kwiboo.se, david.wu@rock-chips.com
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251015040847.6421-1-sensor1010@163.com>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <20251015040847.6421-1-sensor1010@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a99e684616903abkunm8d7d969e2bd29d
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkkaQlYdGk1LHkkaQ0IZQx1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=X+6mwWPDH1PC0JAJsCEXtIDwEPnM6bx7ESrZL/FdgaTzkrXtRUD2nl2I9dKoOxJwyNrorco6P6jLawdEl7PWM7IgvOxAJ6SOVRfxslkY9V3GXAquDUmE5j76Qe1utfOMfRd5ku8G7P6h7+B0MRHl3lqjPuOb0KhZvyVlCVUJlFs=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=q8XaJ9YCp4W+b7drspa/wsyUFTPtmL0PalpV0e9ymoU=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: OdpilHhB3Diujx6EYo5q9GAN9mQcXgCX/4RNI2R8qvLGIdAMNIl4enbk
+	AsHLUmw1w6RnvGHCchSkfkO/OA7KY/Mo0wuW7bIJ3DBTbPKjyE4DhGwpBNuu08792jXdkHr
+	qoyPEEDtFOzO+9T9fJei3xJk97Yj7/3XWD5P/QlOSg6qcOFWqbmttwmffAnSx8isIcgdKxZ
+	64bfzpjO7Ju8t7Ing8YzOThSdmVSiy6J/Au/IMHiJdHWtgBIkTLxHvNC9llG9ZTGBu6D2he
+	OT/C4ZWMG1UQlQAfZa6Wq1y81SOyMBkvHVMpUGVV7PrxP2OYuOAhi+lra+xKJfQUEx9ZIF5
+	2W8/NQBZnxcyqfcvhSzmxzFkm1rrbQ6eWVi/jtyJhl8FVsv7hqTHZ6Wr4p4S4jHG4PIvvyl
+	fl8DZCjFOuuLIKmKHZThDOxhFP1ofqSifYvvRk1dwl+0jG836Xx+TA9g7QfPQECqMLCpFmK
+	n+8cpj4ldP+Lp24aAENDqf088+7AK7vK2j19diR1g+wF1t1RInLhdYGrVc57DwcnuZUAbWB
+	9NnpP1/bK5SoEdBTTVpPKY7RSOwyhEnXJR1sqM5p4IkYlGgxa7vpUMEeuyM/tQJzbQWo2u3
+	u+j4v4u1gHFggadj2LaWYHL5fUXB5t7Qbw71O9gmxqgtll2gLpGnhiDln81i/lVL8GO62fA
+	q/K3xo5Ny+eVOE2Bev5+AxgDq6LkvCFrr2GsJJqDcWpcO15Km2p6yBgbDrxuUbNUfYiHrlG
+	67oEpjBOp8BOlVPPZlCnsZwCeiWhBoJwFJB8X/mVyJq34Vx59+uYFb26wGgyH3hVb1MUm3J
+	0tiCHato75MlnSiIqEx0Wcxeb4e6CuoUCxx9zoBh7kAfJYp3bixGhVw3S0yYubzcebdxwyT
+	wdvVPQ92Bh5wTslbaoVuEz6sanCuQn8x5ZPGvfu7zGZOstNcp4oceEwlQCG1rToO4juEL0o
+	wiDrBoLf6ue1xZFLMU0n6w1fLtF1CMtjr4JTYvatLYZNS/qGKIywSOmX2MRFvN3gD+cQ=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On 10/15/2025 12:08 PM, Lizhe wrote:
+From: Yuhang Zheng <z1652074432@gmail.com>
 
-> 'phy_power_on' is a local scope one within the driver, since the return
-> value of the phy_power_on() function is always 0, checking its return
-> value is redundant.
->
-> the function name 'phy_power_on()' conflicts with the existing
-> phy_power_on() function in the PHY subsystem. a suitable alternative
-> name would be rk_phy_power_set(), particularly since when the second
-> argument is false, this function actually powers off the PHY
->
-> Signed-off-by: Lizhe <sensor1010@163.com>
-> ---
->   drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 17 ++++-------------
->   1 file changed, 4 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> index 51ea0caf16c1..9d296bfab013 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> @@ -1461,23 +1461,18 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
->   	return 0;
->   }
->   
-> -static int phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
-> +static void rk_phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
->   {
->   	struct regulator *ldo = bsp_priv->regulator;
->   	struct device *dev = bsp_priv->dev;
-> -	int ret;
->   
->   	if (enable) {
-> -		ret = regulator_enable(ldo);
-> -		if (ret)
-> +		if (regulator_enable(ldo))
->   			dev_err(dev, "fail to enable phy-supply\n");
->   	} else {
-> -		ret = regulator_disable(ldo);
-> -		if (ret)
-> +		if (regulator_disable(ldo))
->   			dev_err(dev, "fail to disable phy-supply\n");
->   	}
-> -
-> -	return 0;
->   }
->   
->   static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
-> @@ -1655,11 +1650,7 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
->   		dev_err(dev, "NO interface defined!\n");
->   	}
->   
-> -	ret = phy_power_on(bsp_priv, true);
-> -	if (ret) {
-> -		gmac_clk_enable(bsp_priv, false);
+Add support for an optional `--used-syscalls` argument to
+scripts/syscalltbl.sh. When provided, the argument takes a comma-separated
+list of syscall names that should remain enabled in the generated syscall
+table. Any syscall not present in the list will be replaced with a
+`__SYSCALL(nr, sys_ni_syscall)` entry.
 
-Is gmac_clk_enable() also redundant?
+This enables selective system call table generation when
+CONFIG_TRIM_UNUSED_SYSCALLS is set.
 
+Signed-off-by: Yuhang Zheng <z1652074432@gmail.com>
+Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
+Signed-off-by: Zhangjin Wu <falcon@tinylab.org>
+---
+ scripts/syscalltbl.sh | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-> -		return ret;
-> -	}
-> +	rk_phy_power_on(bsp_priv, true);
->   
->   	pm_runtime_get_sync(dev);
->   
-
+diff --git a/scripts/syscalltbl.sh b/scripts/syscalltbl.sh
+index 6a903b87a7c2..27d8dfce5748 100755
+--- a/scripts/syscalltbl.sh
++++ b/scripts/syscalltbl.sh
+@@ -22,12 +22,14 @@ usage() {
+ 	echo >&2 "  OUTFILE   output header file"
+ 	echo >&2
+ 	echo >&2 "options:"
+-	echo >&2 "  --abis ABIS        ABI(s) to handle (By default, all lines are handled)"
++	echo >&2 "  --abis ABIS                ABI(s) to handle (By default, all lines are handled)"
++	echo >&2 "  --used-syscalls SYSCALLS   Keep only the specified syscall; trim others"
+ 	exit 1
+ }
+ 
+ # default unless specified by options
+ abis=
++used_syscalls=
+ 
+ while [ $# -gt 0 ]
+ do
+@@ -35,6 +37,14 @@ do
+ 	--abis)
+ 		abis=$(echo "($2)" | tr ',' '|')
+ 		shift 2;;
++    --used-syscalls=*)
++        used_syscalls_raw=${1#--used-syscalls=}
++        if [ -z "$used_syscalls_raw" ]; then
++            used_syscalls='^$'
++        else
++            used_syscalls=$(echo "$used_syscalls_raw" | tr ',' '|')
++        fi
++        shift;;
+ 	-*)
+ 		echo "$1: unknown option" >&2
+ 		usage;;
+@@ -52,6 +62,7 @@ outfile="$2"
+ 
+ nxt=0
+ 
++
+ grep -E "^[0-9]+[[:space:]]+$abis" "$infile" | {
+ 
+ 	while read nr abi name native compat noreturn; do
+@@ -66,6 +77,12 @@ grep -E "^[0-9]+[[:space:]]+$abis" "$infile" | {
+ 			nxt=$((nxt + 1))
+ 		done
+ 
++		if [ -n "$used_syscalls" ] && ! echo "$name" | grep -qwE "$used_syscalls"; then
++			echo "__SYSCALL($nr, sys_ni_syscall)"
++			nxt=$((nr + 1))
++			continue
++		fi
++
+ 		if [ "$compat" = "-" ]; then
+ 			unset compat
+ 		fi
 -- 
-Best,
-Chaoyi
+2.43.0
 
 
