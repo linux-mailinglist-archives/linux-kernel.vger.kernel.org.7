@@ -1,238 +1,321 @@
-Return-Path: <linux-kernel+bounces-854510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659ABBDE8E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:55:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A58BDE91C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28143B1734
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2BF427926
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D22F1A38F9;
-	Wed, 15 Oct 2025 12:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B7932E720;
+	Wed, 15 Oct 2025 12:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpD2JpGJ"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VqJshW5g"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D20A1DDC08
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760532947; cv=none; b=Ne3P3NviVvIfmGksujyRleJDf8rmPctfvWhFDb+ftxYtY/vUFjVO7GkbxwwWKQlayT8ThoNMpH7bJM621fgpzibY3l02e6YqFnkllXbrXDb7uHFZ+wqxn+OLZb5qTktNn5dYLsQrEJHfIO7QwiT59M/u1SCfNUHFQkMnTXQXpxA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760532947; c=relaxed/simple;
-	bh=Uz9vn7rcmIwn6i0tqcTn5bYssbsKorpt5cvKeKxZkjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFhwOzhYa0k50/wxzUK7AEzyuzDeqv2+DcHDBW7FqT1myF8yJpzlnqhp81oqTZRDKJgh91k/p+FZBJ8iEJljTumStZM4Ky9tXDWgzPzHTNmxDYkSpRK8HU5irNasdIFX2dqqvvrNyuxz0XQJNwVLp18YxYgTymJl0fup635sBrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gpD2JpGJ; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6318855a83fso14612718a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760532944; x=1761137744; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yPwsFmftjsCu1r4rEdgmSbyTSppcZYsUBCmBP/cNfX8=;
-        b=gpD2JpGJttkHeaYUPIw4QsJT9/yWUHAWRyM9iie2rtUktmVbjlhhCFotEyATyD5VWL
-         RVgt3syrnwFYqeO/GaOqV9OJ++ACQ8VSQ/XUfHcWMWgOA7j6x4OpIMBy9jx0QWZqv48T
-         NEP5htlBNSk3BryvrInOSwWLlz8fay2fifetLPmPXOnhYUUwdSbJL/IQ9iOXQSgHUAyw
-         H9bmjenSWIuDO83XEEzro3sk0XEFqhpIKixfw0759RljofjbMljmjCvupJJ1vNFEUdMH
-         P+Oblz4yzmxdnaSwNUTomrIl9lJ2A3Ml2UHbPT42IytFvgjwPsmQBE8pYxhAoG/4qdnl
-         Xhfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760532944; x=1761137744;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yPwsFmftjsCu1r4rEdgmSbyTSppcZYsUBCmBP/cNfX8=;
-        b=n5uMZf613RuBTLpGwJKCCXYelPNdrI7AsJWf6vzpGL2pBUKQjiiGCnxd4tuwUTP2aR
-         TIW751P+bKxSMWJZ9q7qfDIGUt/+WuIrpOF4QHi7BmxUWZI3QVROmDz+grT9O5HGLJ3A
-         Ne3hD+TJ4RmFWLdZLwLF2oB+z0SUhtyZYK+j6Cpgas8derEdMuMu6+TtDpxNHYERFimC
-         QaBLPYQZpJgtwxVb7zsS/hi8BpsNVoqOx9ebeS6TXvgDCaVR6/eCyVhgZCt1gXoiFSbP
-         MkxGv9q9oCp7J28ezLnfcX93YAze3xSMHhtlAXaDIU+4wUYmVKqVCFFN5Xohw1S5l+xt
-         el/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVYzJbZ5WZFjoQj0MdmQ+pKzJJlCJGSD4Dahm7cu/TpGYNuQwoS8ixqhAW81d2PWKVFgHTfeHbJDfIVnJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBgRYQQGy1+uCVbYtu6gU0hZhugwbc0I3ybINtSZU1f0CJtDk4
-	5sULR/hFTTahOAUCdhkbFFm3oFg9j69FlwHJcgiXvcv0DihHQ3kHhflv
-X-Gm-Gg: ASbGncsEfDyqASwes9GT+QRg2x7+xosCr2BY/nXxVfzTC1zHr3Uvey7Vt/mPyDjjyzS
-	UYCafb5EtPhKXPy12cb0UW8mpVn2yuCVShwysXZLZNWqB5RjYRjWDWJ6vx1yT/k0rTfrtK+LA/a
-	HN4pxwvpooxqs5h8WnZodWCpqBN3rqkIzBBodYKG4471wa00vWrUewaf0i0F7HaO/MT691lxvh4
-	uLTQLj0mSt1aR3TzQi6Bb59zNfhnv9ZYW5mgaEY2py07M4d9yhVT6a8JGckeMRIW3EmGoIeos+/
-	BfuG24TGoOQznlGcHWrqvvsbpCrEM2U4zqZs4lEZTYD1ZOYLpc/Hb401MLm5oiehnDVsntd0UsT
-	2cezuawJu+dJ+6CnaQHG3Nf7ith9txEJre0vS4Wp/mXru8HdXgtNAq3Ae6m9JhwU2L0npOECjmY
-	kaCEp3I94tpxtovS+xCWQ=
-X-Google-Smtp-Source: AGHT+IFPmVnwrdUH0AaXcNBVVpT7odSzD/MA2yjUQqiuRk8y1WRUilesmSuJ2NFLYUJFWJPhPBgpHA==
-X-Received: by 2002:a05:6402:5203:b0:62e:e722:a3c7 with SMTP id 4fb4d7f45d1cf-639d5b8b60emr26613009a12.9.1760532943620;
-        Wed, 15 Oct 2025 05:55:43 -0700 (PDT)
-Received: from localhost.localdomain ([46.10.223.24])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63be969163csm2115271a12.13.2025.10.15.05.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 05:55:43 -0700 (PDT)
-Date: Wed, 15 Oct 2025 15:55:40 +0300
-From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org, 
-	syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Subject: Re: [PATCH] f2fs: Perform sanity check before unlinking directory
- inode
-Message-ID: <wtrkydtrovhsw6azexwq576aoq36ut62y2elhzvsq3ansk477y@2rzc56l46pka>
-References: <20251003134731.470392-1-zlatistiv@gmail.com>
- <839306c1-5f7a-4e89-b2cf-7534d279a03c@kernel.org>
- <gupgic53ouhmdwrglwdviw2mzeaqfjsvyr47u3ebu2ztayswy4@4oxvnu252rdb>
- <9d0fef9d-4093-4a80-af3f-6dc45ffe886c@kernel.org>
- <zomib7dzvmnggqqy6aqlwij3zihbvzkzrnfvzhk7tcp2mdgh34@tjjugevo4q4a>
- <235adbae-cc45-4b84-b712-1ba9e5a48dce@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554F232BF48;
+	Wed, 15 Oct 2025 12:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760533045; cv=fail; b=ZYLjbIG5xEboz3ZQFJ6J2lL2t6EwAJTHpt8PHx4hzyTgvvrISS1SUKyQnDiF5JyLMLp+3/wvXr20iCPnDB+tLzIYzUpX45KDL1hZwnQgke4mcPA/Xgf2eKBIcM7McZHicXXcdbcUDuawc6MgrrMfjtuvmvUT75Qwl44buMk5Keg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760533045; c=relaxed/simple;
+	bh=jyvMAKfRHDrWYd2PG6Nqz044dhl9YW4ZJlTAu+hst9U=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XFiMdk+zHCH2vcnLFscr4a5GCS18Ia/soA6h6TiNK1RzsUmILeP7SFlOAV7PArWT7N94TR6ux4nogmgS8N3APn47kMxJ9OSKRjdTg3/Y2wsRYicPrVlKauy8Z07SAGqhiSsXHL2Qv2DeIsyU3jj3rrXVGe+s9KJjr2xUo2A6nSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VqJshW5g; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAFqSd015399;
+	Wed, 15 Oct 2025 14:57:05 +0200
+Received: from am0pr02cu008.outbound.protection.outlook.com (mail-westeuropeazon11013058.outbound.protection.outlook.com [52.101.72.58])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 49r0t084v8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 14:57:05 +0200 (MEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=teXMUR7NOEPGlAJdURTVPkn9dy1AmF3sKoVxXgP3BZZJqmILZHW+V0IY0o/4HjcVqsrucwhjfYRrpEt31KUVyCcz1tJoN9Y7ngjHlAgy6TyyzEueFEV7bKhYj4HZQOqj4sHeyOfkXUHo8BFEcCJCpeEg9u5bfNJL2Cd7BBoNDcYGpi9a00AV2gxjKM97psiGwG18gEZr+1jh6fufPuMmn2P8eZXAZ8pgqOXsGDDnN+VoFpHbKAKuPFaM2B+gxTLTPWu0oi/Pvzesao8ODTA5ESxYrwd+6jkj2vzmXD7CsWPR3X0PEiBEVsxh7Ivvh1Jv+QpHbl6Fk7oymDbC0GAo8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jyvMAKfRHDrWYd2PG6Nqz044dhl9YW4ZJlTAu+hst9U=;
+ b=oEG+7g3940qpqTV6LXXGJr9HnRskfHogD+qV1FVpeuvsm02MO4PSGofQXLe0flDS1oqMGPSi9qICfKEl5YelAqhHvKpjTWBSaZovgCuMNVG0uAjkKurd+JaS4vJrv5N8uONUpT1XEfsvNPQowOkkqFqI2s+L3GwKG/5PbiZnKb75L2LBIRLdiWEyZ2yoHvvbp7tp7gLf1sh8nP70U4it1lbsZAPFzsz0Gwy51Vr+VQVcupbbNtroehp3CT/Fhg/RJcJwZ9PAOEU9udr5yAgd6hn3iIqgxhk+7lt8yCXbtHDAklBcnn6Gfg8aMDgVejusGS/fsczDYvrS+D9TLSk3ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.43) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jyvMAKfRHDrWYd2PG6Nqz044dhl9YW4ZJlTAu+hst9U=;
+ b=VqJshW5gnIn7HwVjEu/ZX5yfbsnApZD3ujW06E1L0P3+cxLF2JZCliNqBLN0xXm/2AM65EnBAWwP3Hj3mpHYJ4MYwDSnAO9X3RtWluY/3UcUitFfOrO037XGZMUoiFSt8ISYBi8qHqs7lJvfoA/lL8nM7Ra0tJmHwRdD5fHVdP92POsm26qJjFTh24rxLA5qE5rbGViGnWdeeR5PppZn913JMWKM5Fkl6j/3Z6rYDDbQKhPdLNxADWdbj6c+PSQ9Sr9y1+V8jouoZ/vsEr1wzNoLibT4yCbOQ0H7fydmezXnQMoLXCzmgf8Elo8PmiJLPmcLfOpGxXfGc6M/mcQPYQ==
+Received: from DU2PR04CA0025.eurprd04.prod.outlook.com (2603:10a6:10:3b::30)
+ by DB9PR10MB5426.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:335::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Wed, 15 Oct
+ 2025 12:57:02 +0000
+Received: from DU6PEPF0000A7DF.eurprd02.prod.outlook.com
+ (2603:10a6:10:3b:cafe::3c) by DU2PR04CA0025.outlook.office365.com
+ (2603:10a6:10:3b::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Wed,
+ 15 Oct 2025 12:57:02 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.43)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.43 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.43; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.43) by
+ DU6PEPF0000A7DF.mail.protection.outlook.com (10.167.8.36) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 12:57:01 +0000
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
+ (10.250.44.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 15 Oct
+ 2025 14:54:35 +0200
+Received: from [192.168.8.15] (10.48.86.11) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 15 Oct
+ 2025 14:56:57 +0200
+Message-ID: <b4eca95eaa0e6f27fc07479d5eab2131d20eb270.camel@foss.st.com>
+Subject: Re: [PATCH v3 09/10] dt-bindings: pinctrl: stm32: Support I/O
+ synchronization parameters
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Fabien Dessenne
+	<fabien.dessenne@foss.st.com>,
+        Valentin Caron <valentin.caron@foss.st.com>
+Date: Wed, 15 Oct 2025 14:56:56 +0200
+In-Reply-To: <20251014-affection-voltage-8b1764273a06@spud>
+References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
+	 <20251014140451.1009969-10-antonio.borneo@foss.st.com>
+	 <20251014-affection-voltage-8b1764273a06@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <235adbae-cc45-4b84-b712-1ba9e5a48dce@kernel.org>
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7DF:EE_|DB9PR10MB5426:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b3f6be1-5644-4f19-7644-08de0bea5579
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eGVhd0JmRUoxbzFFV29FVEpRTHNzRmxBQ3dDMnU4VVFnQlhEd0ZqVnR3VUF0?=
+ =?utf-8?B?RFV6VERoZlVlSjNzTDA2dmRrb09KRDJHaE5GZzNEU2diK3ltU1RITExXWmJD?=
+ =?utf-8?B?ekhTSGNvb3JmQ0RTVDdpL0txemVPZWo4Q1R5TUNweE1sRDdyRlZwWnAxNzAy?=
+ =?utf-8?B?OTZtZy9UVGx1cW5VQ3JJSUhKTmRUZVQ0TnZPZElVT3R1QUY0OUFlbzQxcnRZ?=
+ =?utf-8?B?T1hkR0NIUU1rREhKaitsa2lGb0c2V1BiSGFOMmJmb1R5QmJMV0kwWW10T3Fa?=
+ =?utf-8?B?MEVKQVpPdk44Y1hEdGRHVjY1bE9mT1VkMFlxbitNUnRHdk96eXJKNTd5anpL?=
+ =?utf-8?B?OUpFOTF4OEVOYWxTdkRiWlI5dVNad1V6MGxRWmwvdXc4Y1lKajNrWHBvbVBC?=
+ =?utf-8?B?S0VDYVJGQ09EWHpPcWJaS3VyUjMyR1pUSTlvekFBaGc4YVk1VlM2OVFyK0FI?=
+ =?utf-8?B?aHBldnpTUkIzbnBRV1kxbG42dVQvV1ppNTFBN1F1RzNhazl5Z3dPN3dQY0JY?=
+ =?utf-8?B?c0ZIMU03Z2xTamZLUERObGliMFhuRnJ5ZVE0QTQxTzBFWFpKTmtWMngwRFI2?=
+ =?utf-8?B?Zk4rVjNZS2tKSk5IaGo3ZkRVUm5CZmRtWmFMcHJFbHp0b0U4anpGMm42a2lG?=
+ =?utf-8?B?Y2llbkZUS0c4NXk5b2J2bVVjbWRpMXlpUENhY2ZOWGFRVkxGOEZhb24wTWlQ?=
+ =?utf-8?B?ajRkellYL25sRnM4WC9LZUpHcXg0SHhoeXdoWFl2NUhmdFMrVnk2K0QvRVVv?=
+ =?utf-8?B?NkQ4Uk9vTU9hNkRyK1U0eHFDL0lQU2tjSTRqRzVQajlxNE9kNWo0TWVhcjNH?=
+ =?utf-8?B?dStQOHlWQ1NYZFVtOGkzWXIzVW50YlVPajdzOHptSGN5MEw4UkszeThJK0Vs?=
+ =?utf-8?B?U0UvWEVMR3NWQTM3czVJUUlqK0VZYmxqaFp2cTgySHVwd0toNTlkNlRPazZH?=
+ =?utf-8?B?cnBtSnRzSEpla3RjazduZ2ZhNDZsd0l0amIvSzJnY0FyWXdnWDRhSXovd0lW?=
+ =?utf-8?B?VndmUCtUc0xobDVLbEwrNGFzdU9XMjFxYVd1dGM1ak41UldNWUp2WCtFOE5K?=
+ =?utf-8?B?YjZjbjFUak5OT2FmR1dzYmpDQ0NmN2h4eDlDZXRPWWFYNStRM01yRkI5TDBh?=
+ =?utf-8?B?UTk2Wm02UHVRVTBmSnk4LzVhTnNOcCttM01idmo4endKMFBGTDQxVXd5YnRC?=
+ =?utf-8?B?UDRWeGJkRlZyQmxkWHFUdnZoMFkrN0oyV0htRGt3OUsvcjZLWjBya2lNbmVa?=
+ =?utf-8?B?U0V3N09uUEtxMlZJQVpFQi9UTjR4Q1RHZ2VoTVdUZDFKTGFYSzgrUXNmZlBO?=
+ =?utf-8?B?cTJyMXlXZlJiaTJydk5aZ2ZNdDBUMGpRS1NGTGt6TzVwMVJYTWpaMGUwcWQ2?=
+ =?utf-8?B?KzFRS2NEZkdNTWxLaGZNdHFhSTM2a3hwRisrVE9XbXk4T25GZm9YdWlJUkNy?=
+ =?utf-8?B?ajhZZTA3SVJKN1REVGt3UHYxZGdnODI3NFZXcUhTY2ZJRlJQTFhwUDlTbVND?=
+ =?utf-8?B?YXBVUVRnMjM3c3NHOFQvZ2FpZXRFcjNjbkdML2FqdzYrQWlFTTYyeFpnMEsz?=
+ =?utf-8?B?eVVUTkNlZHdvSVh4b1N1WXA5VUJ5blRtYURCT2FlVUJ1NWtKckRNRUhkQ1JK?=
+ =?utf-8?B?RjRrT1BCSDNmNXZBUlZNZnprRGdiQktHWlFpRkExRSsyeVkvU2xuSlZYRTlG?=
+ =?utf-8?B?azU1TVphVGVlOE02R2xUa2poV1dWQmlKRGRHNjZRRHp5anZYT1hTTktUcWNI?=
+ =?utf-8?B?YkkzRmZ4NGZaWUx1cDNwb2N2clhzNHN4Qmp1Y2g1MjNjNnBHR2xQYU1lbExC?=
+ =?utf-8?B?bjRFc3FmZms4NkloanREalhWMlI5WkNuOG1vWk9ZMDZVbUpWd1JWQXBjbUxI?=
+ =?utf-8?B?WHQ5SE8rZmhOWCtOSUtkd0g2UVlFZVdLSkRQUC9TZE4rUHNiZmYwaDhtRVJ3?=
+ =?utf-8?B?VzNGbXFGdlBkRHdRVk1DZ3lBSkJrNGo4YVpmdTA1Qks0ekNQck9oYlJjU0xS?=
+ =?utf-8?B?VzcrUk5LYk1sVW9kZ3g5OWtlTWtBUC9rSzZ5Mlo5VXpTU2hFY2ErRnRiVEVY?=
+ =?utf-8?B?M0hMc3V1cDJkVGR1Q0tKeWRZMG51b2xnSW1VU21DaitoQm40eExOMld4TzQr?=
+ =?utf-8?Q?LPE0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.43;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 12:57:01.5933
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b3f6be1-5644-4f19-7644-08de0bea5579
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.43];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000A7DF.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5426
+X-Proofpoint-GUID: x9BCwQYSntDcnMC2IykdZQZSlJ7b1NYf
+X-Proofpoint-ORIG-GUID: x9BCwQYSntDcnMC2IykdZQZSlJ7b1NYf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDEzMyBTYWx0ZWRfX+naVKyFL1lJU
+ O64xocA6rShxU/R2qmdCqd/rIRmFvo68tw7RyE336Bq57OPD/M9KJv9pZOyIKeoiuN0Al3xZktz
+ /qWGOiBBSTZ1LvmlY0tkuSqVjilCV+vTX0muMkqdLLQJtg6GBfnFHfkHu+j6FeCg/CK0IPN7MMh
+ AmddHh+rRsfHyFbIgqzr/9vPwYhgpkPmx0UAvKK4mMLneUuHNwa8f1XdUoEO7scsR3zBgeTHLfK
+ JeQUH5Aoh3KJTpYXR0ah/0G46KY1hAAHIgYPhImdZ05BX9L7iQ07NNO5sCC8HBiq0Uf5BB/yaF7
+ quP3iMaeWvKSxDepv5forq4PyLHWJ0ekEMsoHW/b1uXJAg29Y7zZ91NImDFPMqMDWFNod25woy4
+ 02S8lXTbz0G/YOz3gDua7M1OyiHbqw==
+X-Authority-Analysis: v=2.4 cv=dY6NHHXe c=1 sm=1 tr=0 ts=68ef9a21 cx=c_pps
+ a=yfwLCzQb6LAjxR0fyU1Vyg==:117 a=peP7VJn1Wk7OJvVWh4ABVQ==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=y9YUpebZf6kA:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=8b9GpE9nAAAA:8 a=h7Fg50VY3SLHUFNu3gEA:9
+ a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 phishscore=0 suspectscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110133
 
-On Wed, Oct 15, 2025 at 02:41:53PM +0800, Chao Yu wrote:
-> On 10/14/25 20:17, Nikola Z. Ivanov wrote:
-> > On Mon, Oct 13, 2025 at 08:53:04PM +0800, Chao Yu wrote:
-> >> On 10/13/25 05:19, Nikola Z. Ivanov wrote:
-> >>> On Thu, Oct 09, 2025 at 10:54:40AM +0800, Chao Yu wrote:
-> >>>> On 10/3/2025 9:47 PM, Nikola Z. Ivanov wrote:
-> >>>>> Current i_nlink corruption check does not take into account
-> >>>>> directory inodes which have one additional i_nlink for their "." entry.
-> >>>>>
-> >>>>> Add additional check and a common corruption path.
-> >>>>>
-> >>>>> Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-> >>>>> Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
-> >>>>> Fixes: 81edb983b3f5 ("f2fs: add check for deleted inode")
-> >>>>> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
-> >>>>> ---
-> >>>>>   fs/f2fs/namei.c | 28 ++++++++++++++++++++--------
-> >>>>>   1 file changed, 20 insertions(+), 8 deletions(-)
-> >>>>>
-> >>>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> >>>>> index b882771e4699..68b33e8089b0 100644
-> >>>>> --- a/fs/f2fs/namei.c
-> >>>>> +++ b/fs/f2fs/namei.c
-> >>>>> @@ -502,12 +502,14 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
-> >>>>>   		goto out;
-> >>>>>   	}
-> >>>>> -	if (inode->i_nlink == 0) {
-> >>>>> +	if (unlikely(inode->i_nlink == 0)) {
-> >>>>>   		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
-> >>>>>   			  __func__, inode->i_ino);
-> >>>>> -		err = -EFSCORRUPTED;
-> >>>>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-> >>>>> -		goto out_iput;
-> >>>>> +		goto corrupted;
-> >>>>> +	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
-> >>>>> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
-> >>>>> +			  __func__, inode->i_ino);
-> >>>>> +		goto corrupted;
-> >>>>
-> >>>> Can we detect such corruption in sanity_check_inode() as well? So that if
-> >>>> f2fs internal flow calls f2fs_iget() on corrupted inode, we can set SBI_NEED_FSCK
-> >>>> flag and then triggering fsck repairment later.
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>   	}
-> >>>>>   	if (IS_ENCRYPTED(dir) &&
-> >>>>> @@ -533,6 +535,9 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
-> >>>>>   	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
-> >>>>>   				ino, IS_ERR(new) ? PTR_ERR(new) : err);
-> >>>>>   	return new;
-> >>>>> +corrupted:
-> >>>>> +	err = -EFSCORRUPTED;
-> >>>>> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-> >>>>>   out_iput:
-> >>>>>   	iput(inode);
-> >>>>>   out:
-> >>>>> @@ -572,10 +577,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
-> >>>>>   	if (unlikely(inode->i_nlink == 0)) {
-> >>>>>   		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
-> >>>>>   			  __func__, inode->i_ino);
-> >>>>> -		err = -EFSCORRUPTED;
-> >>>>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-> >>>>> -		f2fs_folio_put(folio, false);
-> >>>>> -		goto fail;
-> >>>>> +		goto corrupted;
-> >>>>> +	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
-> >>>>> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
-> >>>>> +			  __func__, inode->i_ino);
-> >>>>> +		goto corrupted;
-> >>>>>   	}
-> >>>>>   	f2fs_balance_fs(sbi, true);
-> >>>>> @@ -601,6 +607,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
-> >>>>>   	if (IS_DIRSYNC(dir))
-> >>>>>   		f2fs_sync_fs(sbi->sb, 1);
-> >>>>> +
-> >>>>> +	goto fail;
-> >>>>> +corrupted:
-> >>>>> +	err = -EFSCORRUPTED;
-> >>>>> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-> >>>>> +	f2fs_folio_put(folio, false);
-> >>>>>   fail:
-> >>>>>   	trace_f2fs_unlink_exit(inode, err);
-> >>>>>   	return err;
-> >>>>
-> >>>
-> >>> Hi Chao,
-> >>>
-> >>> Thank you for the suggestion.
-> >>> I will add this to sanity_check_inode and remove it
-> >>> from f2fs_lookup as it becomes redundant since f2fs_lookup
-> >>> obtains the inode through f2fs_iget. For f2fs_unlink I will
-> >>> move the i_nlink == 1 check to f2fs_rmdir.
-> >>
-> >> Hi Nikola,
-> >>
-> >> I meant we can move the i_nlink == 1 check from both f2fs_lookup() and
-> >> f2fs_unlink() to sanity_check_inode(), because before we create in-memory
-> >> inode, we will always call sanity_check_inode().
-> >>
-> >> Let me know if you have other concerns.
-> >>
-> >> Thanks,
-> >>
-> > 
-> > The issue here is that sanity_check_inode will be called only when 
-> > we initially read the inode off disk, not when it's already in the cache
-> > 
-> > The syzkaller repro does something like this:
-> > Creates a directory structure /dir1/dir2 where dir1 has
-> > i_nlink == 2, which is one less than it should. It then does
-> > rmdir(/dir1/dir2) followed by rmdir(/dir1) which leads to the warning.
-> 
-> Oh, I missed this case.
-> 
-> > 
-> > In such case what would you say should happen, should the second rmdir
-> > fail and report the corruption, or do we close our eyes and just drop
-> > i_nlink to 0 and possibly log a message that something isn't quite right?
-> 
-> I agreed that we should keep i_nlink == 1 check in f2fs_unlink().
-> 
-> Thanks,
-> 
+T24gVHVlLCAyMDI1LTEwLTE0IGF0IDE5OjEwICswMTAwLCBDb25vciBEb29sZXkgd3JvdGU6Cj4g
+T24gVHVlLCBPY3QgMTQsIDIwMjUgYXQgMDQ6MDQ6NTBQTSArMDIwMCwgQW50b25pbyBCb3JuZW8g
+d3JvdGU6Cj4gPiBEb2N1bWVudCB0aGUgc3VwcG9ydCBvZiB0aGUgSS9PIHN5bmNocm9uaXphdGlv
+biBwYXJhbWV0ZXJzOgo+ID4gLSBza2V3LWRlbGF5LWlucHV0Owo+ID4gLSBza2V3LWRlbGF5LW91
+dHB1dDsKPiA+IC0gc3QsaW8tc3luYy4KPiA+IAo+ID4gRm9yYmlkICdza2V3LWRlbGF5LWlucHV0
+JyBhbmQgJ3NrZXctZGVsYXktb3V0cHV0JyB0byBiZSBib3RoCj4gPiBwcmVzZW50IG9uIHRoZSBz
+YW1lIHBpbi4KPiA+IEFsbG93IHRoZSBuZXcgcHJvcGVydGllcyBvbmx5IHdpdGggY29tcGF0aWJs
+ZXMgdGhhdCBzdXBwb3J0IHRoZW0uCj4gPiBBZGQgYW4gZXhhbXBsZSB0aGF0IHVzZXMgdGhlIG5l
+dyBwcm9wZXJ0aWVzLgo+ID4gCj4gPiBDby1kZXZlbG9wZWQtYnk6IEZhYmllbiBEZXNzZW5uZSA8
+ZmFiaWVuLmRlc3Nlbm5lQGZvc3Muc3QuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogRmFiaWVuIERl
+c3Nlbm5lIDxmYWJpZW4uZGVzc2VubmVAZm9zcy5zdC5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBB
+bnRvbmlvIEJvcm5lbyA8YW50b25pby5ib3JuZW9AZm9zcy5zdC5jb20+Cj4gPiAtLS0KPiA+IMKg
+Li4uL2JpbmRpbmdzL3BpbmN0cmwvc3Qsc3RtMzItcGluY3RybC55YW1swqDCoMKgIHwgOTggKysr
+KysrKysrKysrKysrKysrKwo+ID4gwqAxIGZpbGUgY2hhbmdlZCwgOTggaW5zZXJ0aW9ucygrKQo+
+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bp
+bmN0cmwvc3Qsc3RtMzItcGluY3RybC55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL3BpbmN0cmwvc3Qsc3RtMzItcGluY3RybC55YW1sCj4gPiBpbmRleCAyZGYxNDFlZDcy
+MjJkLi4wMDEwNzYyMTI3YzA1IDEwMDY0NAo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL3BpbmN0cmwvc3Qsc3RtMzItcGluY3RybC55YW1sCj4gPiArKysgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9zdCxzdG0zMi1waW5jdHJsLnlh
+bWwKPiA+IEBAIC0yMjAsMTIgKzIyMCw4OSBAQCBwYXR0ZXJuUHJvcGVydGllczoKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBtaW5pbXVtOiAwCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgbWF4aW11bTogMwo+ID4gwqAKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqAgc2tldy1kZWxheS1p
+bnB1dDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlc2NyaXB0aW9uOiB8Cj4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgSU8gc3luY2hyb25pemF0aW9uIHNrZXcgcmF0ZSBhcHBs
+aWVkIHRvIHRoZSBpbnB1dCBwYXRoCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMDog
+Tm8gZGVsYXkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxOiBEZWxheSAwLjMwIG5z
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMjogRGVsYXkgMC41MCBucwo+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDM6IERlbGF5IDAuNzUgbnMKPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA0OiBEZWxheSAxLjAwIG5zCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgNTogRGVsYXkgMS4yNSBucwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDY6IERlbGF5IDEuNTAgbnMKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA3OiBEZWxh
+eSAxLjc1IG5zCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgODogRGVsYXkgMi4wMCBu
+cwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDk6IERlbGF5IDIuMjUgbnMKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxMDogRGVsYXkgMi41MCBucwo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDExOiBEZWxheSAyLjc1IG5zCj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgMTI6IERlbGF5IDMuMDAgbnMKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCAxMzogRGVsYXkgMy4yNSBucwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWluaW11
+bTogMAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWF4aW11bTogMTMKPiA+ICsKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqAgc2tldy1kZWxheS1vdXRwdXQ6Cj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBkZXNjcmlwdGlvbjogfAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIElP
+IHN5bmNocm9uaXphdGlvbiBsYXRjaCBkZWxheSBhcHBsaWVkIHRvIHRoZSBvdXRwdXQgcGF0aAo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDA6IE5vIGRlbGF5Cj4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgMTogRGVsYXkgMC4zMCBucwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIDI6IERlbGF5IDAuNTAgbnMKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCAzOiBEZWxheSAwLjc1IG5zCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNDogRGVs
+YXkgMS4wMCBucwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDU6IERlbGF5IDEuMjUg
+bnMKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA2OiBEZWxheSAxLjUwIG5zCj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNzogRGVsYXkgMS43NSBucwo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDg6IERlbGF5IDIuMDAgbnMKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCA5OiBEZWxheSAyLjI1IG5zCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgMTA6IERlbGF5IDIuNTAgbnMKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxMTog
+RGVsYXkgMi43NSBucwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDEyOiBEZWxheSAz
+LjAwIG5zCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTM6IERlbGF5IDMuMjUgbnMK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1pbmltdW06IDAKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIG1heGltdW06IDEzCj4gCj4gU2FtZSBjb21tZW50cyBoZXJlIGFzIG9uIHRoZSBl
+YXJsaWVyIHBhdGNoLiBJIHdvdWxkIGxpa2UgdG8gc2VlIHRpbWVzCj4gdXNlZCBuYXRpdmVseS4K
+ClllcywgSSByZXBsaWVkIHRvIHRoZSBlYXJsaWVyIHBhdGNoLgoKPiBwdy1ib3Q6IGNoYW5nZXMt
+cmVxdWVzdGVkCj4gCj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIHN0LGlvLXN5bmM6Cj4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkZXNjcmlwdGlvbjogfAo+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIElPIHN5bmNocm9uaXphdGlvbiB0aHJvdWdoIHJlLXNhbXBsaW5nIG9y
+IGludmVyc2lvbgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDA6IGRhdGEgb3IgY2xv
+Y2sgR1BJTyBwYXNzLXRocm91Z2gKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxOiBj
+bG9jayBHUElPIGludmVydGVkCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMjogZGF0
+YSBHUElPIHJlLXNhbXBsZWQgb24gY2xvY2sgcmlzaW5nIGVkZ2UKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAzOiBkYXRhIEdQSU8gcmUtc2FtcGxlZCBvbiBjbG9jayBmYWxsaW5nIGVk
+Z2UKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA0OiBkYXRhIEdQSU8gcmUtc2FtcGxl
+ZCBvbiBib3RoIGNsb2NrIGVkZ2VzCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAkcmVmOiAv
+c2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy91aW50MzIKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIGVudW06IFswLCAxLCAyLCAzLCA0XQo+IAo+IEkgcmVhbGx5IGRvbid0IGxpa2Ug
+dGhpcyBraW5kcyBvZiBwcm9wZXJ0aWVzIHRoYXQgbGVhZCB0byAicmFuZG9tIgo+IG51bWJlcnMg
+aW4gZGV2aWNldHJlZS4gSSdkIG11Y2ggcmF0aGVyIHNlZSBhIHN0cmluZyBsaXN0IGhlcmUuCgpB
+Z3JlZSEKSSBqdXN0IG5lZWQgdG8gZmlndXJlIG91dCBzb21lIHJlYXNvbmFibHkgc2hvcnQgYnV0
+IHN0aWxsIG1lYW5pbmdmdWwKc3RyaW5nIGZvciB0aGVtLgoKVGhhbmtzIGZvciB0aGUgcmV2aWV3
+IQpBbnRvbmlvCgo+IAo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoCByZXF1aXJlZDoKPiA+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIC0gcGlubXV4Cj4gPiDCoAo+ID4gK8KgwqDCoMKgwqDCoMKgICMg
+Tm90IGFsbG93ZWQgYm90aCBza2V3LWRlbGF5LWlucHV0IGFuZCBza2V3LWRlbGF5LW91dHB1dAo+
+ID4gK8KgwqDCoMKgwqDCoMKgIGlmOgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoCByZXF1aXJlZDoK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC0gc2tldy1kZWxheS1pbnB1dAo+ID4gK8KgwqDC
+oMKgwqDCoMKgIHRoZW46Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIHByb3BlcnRpZXM6Cj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBza2V3LWRlbGF5LW91dHB1dDogZmFsc2UKPiA+ICsKPiA+
+IMKgYWxsT2Y6Cj4gPiDCoMKgIC0gJHJlZjogcGluY3RybC55YW1sIwo+ID4gwqAKPiA+ICvCoCAt
+IGlmOgo+ID4gK8KgwqDCoMKgwqAgbm90Ogo+ID4gK8KgwqDCoMKgwqDCoMKgIHByb3BlcnRpZXM6
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIGNvbXBhdGlibGU6Cj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBjb250YWluczoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbnVtOgo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtIHN0LHN0bTMybXAyNTctcGluY3Ry
+bAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtIHN0LHN0bTMybXAyNTctei1w
+aW5jdHJsCj4gPiArwqDCoMKgIHRoZW46Cj4gPiArwqDCoMKgwqDCoCBwYXR0ZXJuUHJvcGVydGll
+czoKPiA+ICvCoMKgwqDCoMKgwqDCoCAnLVswLTldKiQnOgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oCBwYXR0ZXJuUHJvcGVydGllczoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICdecGlucyc6
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcHJvcGVydGllczoKPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2tldy1kZWxheS1pbnB1dDogZmFsc2UKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2tldy1kZWxheS1vdXRwdXQ6IGZhbHNlCj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0LGlvLXN5bmM6IGZhbHNlCj4gPiArCj4g
+PiDCoHJlcXVpcmVkOgo+ID4gwqDCoCAtIGNvbXBhdGlibGUKPiA+IMKgwqAgLSAnI2FkZHJlc3Mt
+Y2VsbHMnCj4gPiBAQCAtMzA2LDQgKzM4MywyNSBAQCBleGFtcGxlczoKPiA+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4gPiDCoMKg
+wqDCoCB9Owo+ID4gwqAKPiA+ICvCoCAtIHwKPiA+ICvCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRp
+bmdzL3BpbmN0cmwvc3RtMzItcGluZnVuYy5oPgo+ID4gK8KgwqDCoCAvL0V4YW1wbGUgNCBza2V3
+LWRlbGF5IGFuZCBzdCxpby1zeW5jCj4gPiArwqDCoMKgwqDCoCBwaW5jdHJsOiBwaW5jdHJsQDQ0
+MjQwMDAwIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxlID0gInN0
+LHN0bTMybXAyNTctcGluY3RybCI7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgI2Fk
+ZHJlc3MtY2VsbHMgPSA8MT47Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgI3NpemUt
+Y2VsbHMgPSA8MT47Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmFuZ2VzID0gPDAg
+MHg0NDI0MDAwMCAweGEwNDAwPjsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBldGgzX3JnbWlpX3BpbnNfYTogZXRoMy1yZ21paS0wIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcGluczEgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcGlubXV4ID0gPFNUTTMy
+X1BJTk1VWCgnQScsIDYsIEFGMTQpPjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0LGlvLXN5bmMgPSA8ND47Cj4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHBpbnMyIHsKPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHBpbm11eCA9
+IDxTVE0zMl9QSU5NVVgoJ0gnLCAyLCBBRjE0KT47Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBza2V3LWRlbGF5LW91dHB1dCA9
+IDwyPjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfTsK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+ID4gK8KgwqDCoMKgwqAgfTsKPiA+
+ICsKPiA+IMKgLi4uCj4gPiAtLSAKPiA+IDIuMzQuMQo+ID4gCgo=
 
-Hi Chao,
-
-Just to make sure we're on the same page, do you mean to keep the check 
-in f2fs_unlink as well as sanity_check_inode, or only do it in f2fs_unlink?
-
-> > 
-> > Thank you,
-> > 
-> >>>
-> >>> I will send v2 as soon as I do some more testing.
-> >>
-> 
 
