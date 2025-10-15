@@ -1,150 +1,180 @@
-Return-Path: <linux-kernel+bounces-855271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C26BE0AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:43:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677EDBE0AE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E7B90344AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:43:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAEBC4F201E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDE430DEC9;
-	Wed, 15 Oct 2025 20:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF4C289811;
+	Wed, 15 Oct 2025 20:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BKC/iDJ4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lc/RRzVh"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384BF2C234A;
-	Wed, 15 Oct 2025 20:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F48A3254BB
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760561005; cv=none; b=KshwHEBeMcDzgzPf5XACrcWhuuQfjLkIT0q5MUt7GekLOeKLClaqErzzFQExoKN53AnoE9bNpNlOjUuGHwunyacNZD4GSYNVtiC5aqwC8WY/+AR4VTCyqMTbw55OSj6qPXUHJTpyJxkW4i5RBDHCdnRGtIedYgv5CQri+ZIERbI=
+	t=1760561179; cv=none; b=TTijnsCnfW0wm/zmHY5COQqcyBPhrQBU1XrCiNmRj9WfnFJP9xVWcO5I317NBRBoKSn4GifA+Xn5RTf7nPd0TkVTTkXd29sC4paOCnf9h5XkH4cWKJIFu4+dr/e/u6hks5gwZ+jbIoiT4VSiAHfmdpTAMJ7vzF9qK4f1QSfRNa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760561005; c=relaxed/simple;
-	bh=nbraoOwWe4PNPThBo2qaIsamy/rLuxohmkGO+zYeQiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uA4RnXHLSSuJMxtZSDg+5IaQNmcjZaopiCzhpRKANZIwdQOtAQroilRQjUtpxcRN8Q2HqG/3y4UcjsHPRhd5nvdQj/P8hhRIF4iVCQlhTO8wA9ghCXR2GDCAUj3U6JJdLqzGbpt/tGeHUFMin7aXAvjA3W8QHbdJ+Xpok//7XTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BKC/iDJ4; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760561004; x=1792097004;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nbraoOwWe4PNPThBo2qaIsamy/rLuxohmkGO+zYeQiI=;
-  b=BKC/iDJ44wVsVFO18QE14u7DT6kYd5pXTYwqAjBswg+NtzMhRRNDRn6K
-   ZldHa87VNqs294yMOQt8q4JxrxqqEC/kWm38kid+MSazsXp7tkN6j2Mdl
-   7lgxYZj15aBDSODhRRo+nEmdvgpgg7fdjGfnTiXJ3VRtrIiP2XRgVIojS
-   MCEUPXKoaQzwUDdy55g4Gp2Jc/CXyI9GvS+Wb3lRnz0DqQZioRR4tQ0Th
-   B83qNGp51NAxNzFFm7CEJxvbn/YsIaM40mcW2odlOD2w2RlIdCYbSM89E
-   dOGBiKQPztq7GbC5I94ereiPMBnTB/M+n7fWYvS4ZJM7Gx7BzpLivbezq
-   g==;
-X-CSE-ConnectionGUID: mltIE3uATUq8AWqL47q2Lw==
-X-CSE-MsgGUID: +39/hWfXSt2u7OO30uWnqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62455131"
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="62455131"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:43:24 -0700
-X-CSE-ConnectionGUID: xICJh/jeSGuDN5oCr5w1Bg==
-X-CSE-MsgGUID: VmnTP0irSNyf8BnK83CQ9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="186531482"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.111.202]) ([10.125.111.202])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:43:24 -0700
-Message-ID: <af0ce2a2-8a7d-4a67-a58b-33d01099e75b@intel.com>
-Date: Wed, 15 Oct 2025 13:43:23 -0700
+	s=arc-20240116; t=1760561179; c=relaxed/simple;
+	bh=Ejw/H1Qkf/Ij8udtsLD4+jTQjoLBNkVZ+VaR9c95Dug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oPU8OXchKdL5D7DywIW81WLQUHxuMWmIGE1rf/hT1qu1Dsx9lpAk/1g9cuu8A83s1f77c1siumRi4uwf0Ho5t0VcLVhvZwqBX4JKAwG6kx40Fw/cfKZ5MA2GiySxyeBE1MVlXdnOOasNuT5Nks78tzsDHN9BWJPCMuEQOIi470s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lc/RRzVh; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 15 Oct 2025 13:46:04 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760561170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLsontaXNMVQKPHfGbAAEY3guiak8DJs9osRf8Re/hc=;
+	b=Lc/RRzVhCca2HURiHaH2zb+dCgSPEKV4/LU3ySTM6zRMTXik4BlvlJOQgpkx5pojkqUQG/
+	Vj6JrSoHjsKYJJE5sJMq4B1LSX6kS0GBA/nd8e+3vAkHKUu7E7udLhUnGX8XjyG9N1xVTT
+	MHgR6FS8Y2uD2FLBqZQYxc3OTdpbIiQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: JP Kobryn <inwardvessel@gmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, mkoutny@suse.com, 
+	yosryahmed@google.com, hannes@cmpxchg.org, tj@kernel.org, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org, 
+	kernel-team@meta.com, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev
+Subject: Re: [PATCH v2 0/2] memcg: reading memcg stats more efficiently
+Message-ID: <uxpsukgoj5y4ex2sj57ujxxcnu7siez2hslf7ftoy6liifv6v5@jzehpby6h2ps>
+References: <20251015190813.80163-1-inwardvessel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 2/5] x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN
- feature flag
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
- mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
- chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
- bondarn@google.com, scott.raynor@intel.com,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20251010085346.292287-1-elena.reshetova@intel.com>
- <20251010085346.292287-3-elena.reshetova@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251010085346.292287-3-elena.reshetova@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015190813.80163-1-inwardvessel@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/10/25 01:52, Elena Reshetova wrote:
-> diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-> index 06fc0479a23f..30761c905b7d 100644
-> --- a/tools/arch/x86/include/asm/cpufeatures.h
-> +++ b/tools/arch/x86/include/asm/cpufeatures.h
-> @@ -495,6 +495,7 @@
->  #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TSA-SQ */
->  #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TSA-L1 */
->  #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers using VERW before VMRUN */
-> +#define X86_FEATURE_SGX_EUPDATESVN	(21*32+16) /* Support for ENCLS[EUPDATESVN] instruction */
+Cc memcg maintainers.
 
-Sorry I didn't catch this before, but we don't patch this tools/ file
-for individual features. We just sync the main copy over to here from
-time to time. This hunk needs to die.
+On Wed, Oct 15, 2025 at 12:08:11PM -0700, JP Kobryn wrote:
+> When reading cgroup memory.stat files there is significant kernel overhead
+> in the formatting and encoding of numeric data into a string buffer. Beyond
+> that, the given user mode program must decode this data and possibly
+> perform filtering to obtain the desired stats. This process can be
+> expensive for programs that periodically sample this data over a large
+> enough fleet.
+> 
+> As an alternative to reading memory.stat, introduce new kfuncs that allow
+> fetching specific memcg stats from within cgroup iterator based bpf
+> programs. This approach allows for numeric values to be transferred
+> directly from the kernel to user mode via the mapped memory of the bpf
+> program's elf data section. Reading stats this way effectively eliminates
+> the numeric conversion work needed to be performed in both kernel and user
+> mode. It also eliminates the need for filtering in a user mode program.
+> i.e. where reading memory.stat returns all stats, this new approach allows
+> returning only select stats.
+> 
+> An experiment was setup to compare the performance of a program using these
+> new kfuncs vs a program that uses the traditional method of reading
+> memory.stat. On the experimental side, a libbpf based program was written
+> which sets up a link to the bpf program once in advance and then reuses
+> this link to create and read from a bpf iterator program for 1M iterations.
 
-Second, please don't send things during the merge window. That's both
-because we're busy, but also because I'm going to merge your code on top
-of $VERSION-rc1. I'm not sure what you rebased to, but things don't
-apply cleanly now.
+I am getting a bit confused on the terminology. You mentioned libbpf
+program, bpf program, link. Can you describe each of them? Think of
+explaining this to someone with no bpf background.
 
-Can you please fix the tools/ thing, rebase this on -rc1, retest and resend?
+(BTW Yonghong already explained to me these details but I wanted the
+commit message to be self explanatory).
+
+> Meanwhile on the control side, a program was written to open the root
+> memory.stat file
+
+How much activity was on the system? I imagine none because I don't see
+flushing in the perf profile. This experiment focuses on the
+non-flushing part of the memcg stats which is fine.
+
+> and repeatedly read 1M times from the associated file
+> descriptor (while seeking back to zero before each subsequent read). Note
+> that the program does not bother to decode or filter any data in user mode.
+> The reason for this is because the experimental program completely removes
+> the need for this work.
+
+Hmm in your experiment is the control program doing the decode and/or
+filter or no? The last sentence in above para is confusing. Yes, the
+experiment program does not need to do the parsing or decoding in
+userspace but the control program needs to do that. If your control
+program is not doing it then you are under-selling your work.
+
+> 
+> The results showed a significant perf benefit on the experimental side,
+> outperforming the control side by a margin of 80% elapsed time in kernel
+> mode. The kernel overhead of numeric conversion on the control side is
+> eliminated on the experimental side since the values are read directly
+> through mapped memory of the bpf program. The experiment data is shown
+> here:
+> 
+> control: elapsed time
+> real    0m13.062s
+> user    0m0.147s
+> sys     0m12.876s
+> 
+> experiment: elapsed time
+> real    0m2.717s
+> user    0m0.175s
+> sys     0m2.451s
+
+These numbers are really awesome.
+
+> 
+> control: perf data
+> 22.23% a.out [kernel.kallsyms] [k] vsnprintf
+> 18.83% a.out [kernel.kallsyms] [k] format_decode
+> 12.05% a.out [kernel.kallsyms] [k] string
+> 11.56% a.out [kernel.kallsyms] [k] number
+>  7.71% a.out [kernel.kallsyms] [k] strlen
+>  4.80% a.out [kernel.kallsyms] [k] memcpy_orig
+>  4.67% a.out [kernel.kallsyms] [k] memory_stat_format
+>  4.63% a.out [kernel.kallsyms] [k] seq_buf_printf
+>  2.22% a.out [kernel.kallsyms] [k] widen_string
+>  1.65% a.out [kernel.kallsyms] [k] put_dec_trunc8
+>  0.95% a.out [kernel.kallsyms] [k] put_dec_full8
+>  0.69% a.out [kernel.kallsyms] [k] put_dec
+>  0.69% a.out [kernel.kallsyms] [k] memcpy
+> 
+> experiment: perf data
+> 10.04% memcgstat bpf_prog_.._query [k] bpf_prog_527781c811d5b45c_query
+>  7.85% memcgstat [kernel.kallsyms] [k] memcg_node_stat_fetch
+>  4.03% memcgstat [kernel.kallsyms] [k] __memcg_slab_post_alloc_hook
+>  3.47% memcgstat [kernel.kallsyms] [k] _raw_spin_lock
+>  2.58% memcgstat [kernel.kallsyms] [k] memcg_vm_event_fetch
+>  2.58% memcgstat [kernel.kallsyms] [k] entry_SYSRETQ_unsafe_stack
+>  2.32% memcgstat [kernel.kallsyms] [k] kmem_cache_free
+>  2.19% memcgstat [kernel.kallsyms] [k] __memcg_slab_free_hook
+>  2.13% memcgstat [kernel.kallsyms] [k] mutex_lock
+>  2.12% memcgstat [kernel.kallsyms] [k] get_page_from_freelist
+> 
+> Aside from the perf gain, the kfunc/bpf approach provides flexibility in
+> how memcg data can be delivered to a user mode program. As seen in the
+> second patch which contains the selftests, it is possible to use a struct
+> with select memory stat fields. But it is completely up to the programmer
+> on how to lay out the data.
+
+I remember you plan to convert couple of open source program to use this
+new feature. I think below [1] and oomd [2]. Adding that information
+would further make your case strong. cAdvisor[3] is another open source
+tool which can take benefit from this work.
+
+[1] https://github.com/facebookincubator/below
+[2] https://github.com/facebookincubator/oomd
+[3] https://github.com/google/cadvisor
+
 
