@@ -1,422 +1,206 @@
-Return-Path: <linux-kernel+bounces-854985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C76DBDFE1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBE0BDFE29
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D21B3A35A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBFD3A9F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8AF343D90;
-	Wed, 15 Oct 2025 17:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DBD2F99A6;
+	Wed, 15 Oct 2025 17:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rfvJgKOO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9BZze9kB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zQ/N+zK2"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F1E343D63
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C5628BAB9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549404; cv=none; b=G2E6XbgbkHBonMcq/HFelsSCtTyDuNPJEJE2sg/xg6oYvrGD0M/kMcb0BEdqpOFnlxbRTj+h6k0dQea58/HNkNT+4oNCTfX39f6JEi3g7zhz8kFLTlDGfiSQ5UE/YR4uJeWR3PKCA34GeRKXepABtwGjY0cqV3gj9madhwv6ZXk=
+	t=1760549451; cv=none; b=UDHsBYBmOdVCHY78lWrdr1JK7Tmd9ngwaDTRLGOJGYvNZbFmHnWJmyblu+f8x9J89x1hp6+2ZEHne7dgBpvsOHz/m/+qX42xezzd/F8md4e/Fl5C3afL7FiVSE4nF6l2vlFClFJczSLVN073b353K6obPPNSfhisgHJwfdZe27k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549404; c=relaxed/simple;
-	bh=0K4fv2AJCUkhxe48bYIU/vRDtRk+pFjMr73nL2NLOfs=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=bB57W8NJMYZKwspXD6D9hIzcTqa/llG/r1r7OuXLErLjnqTmGRqef8k2kCYZIxv4MWWb/WAOebc6I5peolCZ+29yXT2sd9SCq9GmzOmJf2rQ1AVyMBYaAg6UZxWRAi6wsImrZpKC9T7OZRq64xNfhhs8L/NcngZjtEtoI9U1qww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rfvJgKOO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9BZze9kB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251015172835.497158969@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760549401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=IdbvqWwp2x8aghZk+yjpSDK9ScBW1vSPmZGBckMJu2I=;
-	b=rfvJgKOOrDlfCYaYh3nA31pEKPhbII0ykbyWZz5VvN3feaWZp0RPPB1rxQIZRV54GQ57Gv
-	fGnvM+iAEFsKtwpyS/YcuAd+mRsqWC2lxFqAmSC+ezguq4u/yia6jEIbjKAZHS5ghPGX5I
-	Tv0xliMMhIKgJQAnRvXN1rNUPj/ip4hCDMTJZI77YwYr1CRofd+yXSQp9jrq3U9FkYXprh
-	2Ef3mVPS+irWC6+OE/VMxfjr1uMlaBqUg++Zv2tY6BkF0kDWhMpNrrkkqpwXpqe6hWbi4x
-	g6hFdu8553z7AVH8FjpmAb/Ja9QgxPadF8doNygsnUnWODBI1GT7VHm6z+ynng==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760549401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=IdbvqWwp2x8aghZk+yjpSDK9ScBW1vSPmZGBckMJu2I=;
-	b=9BZze9kBBuumu38EXdZHTd5bzBZ+zc4ccAEDlzPVbIfHZ2ZF3El92jMte+PDSMZIabs+Ky
-	Qt5IB1D1yfATnaDA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Gabriele Monaco <gmonaco@redhat.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Jeanson <mjeanson@efficios.com>,
- Jens Axboe <axboe@kernel.dk>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Florian Weimer <fweimer@redhat.com>,
- Tim Chen <tim.c.chen@intel.com>,
- TCMalloc Team <tcmalloc-eng@google.com>
-Subject: [patch 19/19] sched/mmcid: Switch over to the new mechanism
-References: <20251015164952.694882104@linutronix.de>
+	s=arc-20240116; t=1760549451; c=relaxed/simple;
+	bh=V0wrARj4KWv4xJSe64DNiDyHKIsl+Venk5aa5zheHW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I3KMCtaB5fut9YZGir+JnziKtCYHVPk1wuohOwjHGXzyzCid4bRvvKhxdwmglVasWfcC8XNxkOcXFqHYn8VQkj3uU7dc7yP2AbNe7SBWumtFmMisiEcr6VGogsVtbDXFwY/C8CWxz2QIfXSnZTkHV1K+dra0ryVie69gRqXNN/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zQ/N+zK2; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso5076587f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:30:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760549448; x=1761154248; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NDcNZGtS8KzGIECWrjIMP0Q7h9U4tn90v5She1AYbvQ=;
+        b=zQ/N+zK2Xa39coKE3klolHn6CGjH35x+R1sX1v3N0m2J+JTlLAKM9K6TxGuBUPEZwj
+         dQpTZL/tDHtxULoDOEOjf20I3CyQ+L2N7XBViuE1USNVc13SOisIGFi+EMXrJPAHPaiz
+         O1vxvj/VGRB8ZAWEOM7lOoaMsgpc2G2C+O9ezFkLEBv92g4OmV9X8mk5BKBKTg832mvw
+         ozD/2mkfqqZ57XF2DYcgbb+o1EPRlAK3YkJMAlghG9WU4FLsxaWwtomzBmaJb7jiS5YE
+         NWcRwWEjOl2gSlrUidWKROMz4T0Z9Vow9v0An84jKyCy8aB1lWY37ej3ccv1H6d8Gjtd
+         8whA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760549448; x=1761154248;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NDcNZGtS8KzGIECWrjIMP0Q7h9U4tn90v5She1AYbvQ=;
+        b=A6KvmOPCH8NY1EnK0cnj5SHvuy5o7akm52hB1R33GYTjbAI0bXAWOGLsiGB0OYHmvQ
+         FrCk/Anh2/yW/ZRBpFAJAuXkTGX5ahiF3eHJmRVbJzBFBAiMZAxcuuB+T4hDiuZjrqDk
+         HjRcJs40FH75+KAWuIxTahYRyG+WvkfW7+1ZQuM6sU9E8Ez5Rbqi4nnieunR0dCbi8RD
+         9gaS//VPPirBICWzIaDHYYj2MCJ2zyOJqB/WzRU1+ULLWNptc3gL04UYYWzvQPXuwo9o
+         PUWUCYQQMFQGo/7ZBoH1UvHnzSUnyhD8MoWBSSBlhoqXt62Q+SY4ylchhy9bbFEdUkF0
+         k9pA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYFsJMI6YDLsbLhwx13bBPUKNwDdo/rHLqoi3yo8thNxDanWQWByY/aX23POZunXi+JOvWQIfRfyI5IFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD5a6Njih6hfRsFf/wZ/GB0Gk/d13FkrsgSWVdWjpOcrlKuMU2
+	yShcaDVsmKQ30JOXyUjwZFXkQ2sZaDolBrbYSadQKg+D5vnOEyYOlJLErhThTNAa36U=
+X-Gm-Gg: ASbGncvlJiWJdgD/Aw/qzxWIO4+INGFhMmeM7CfA1SB1bWls+Y5lJXv3jnX39yNi5IM
+	lcNisXsuuCU2kVdVBfk+HG9Yx9gDCR046BFFCbXexqObfw9S3zHXbhEm7AI+3TanIn0XVrq0BGq
+	QwOHIRpFMi39shRoEYQImWIMkEwVcIfAVGGeJPZCo6XC8W46uIb+OQaPugLz3+0K1cpp/LbFPN1
+	K5WHBIE4SE6fxsALZO+MsaOwpTlkUK05/iycK8YA1aH2txg+WJn34Uh6iqGX3dqbg5hCXqa9vMF
+	HKMjJhWq8X828QiXiH+T0k+Uhgrd9Vt04v+7m1qeOOrbsa3bGtOQtqTfRzDQBtaK23/5TxAHlJo
+	qzfI7N6+lIaRwQJg55/11r0GpHmXteUvvjMMUzEwc6B+Zln9EpQPNbIVwvVK3PQ==
+X-Google-Smtp-Source: AGHT+IE15Ue4wkQtE4rhbm/mVXaDKMWSJhGFsg8zWWcs9wH28c9LW5s7l8v+up0OURuqO3XiGGFr7Q==
+X-Received: by 2002:a05:6000:4210:b0:3f2:b077:94bc with SMTP id ffacd0b85a97d-42666ac4119mr17087793f8f.4.1760549448027;
+        Wed, 15 Oct 2025 10:30:48 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce589b3dsm30716389f8f.24.2025.10.15.10.30.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 10:30:47 -0700 (PDT)
+Message-ID: <4151e2e4-b7df-4c04-b038-71ff2612ee8d@linaro.org>
+Date: Wed, 15 Oct 2025 18:30:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Oct 2025 19:30:00 +0200 (CEST)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf tools annotate: fix a crash when annotate the
+ same symbol with 's' and 'T'
+To: Tianyou Li <tianyou.li@intel.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Ravi Bangoria
+ <ravi.bangoria@amd.com>, wangyang.guo@intel.com, pan.deng@intel.com,
+ zhiguo.zhou@intel.com, jiebin.sun@intel.com, thomas.falcon@intel.com,
+ dapeng1.mi@intel.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <baea1e93-5e30-404e-8a5d-8b1d20cf8761@linaro.org>
+ <20251015172017.2115213-1-tianyou.li@intel.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20251015172017.2115213-1-tianyou.li@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Now that all pieces are in place, change the implementations of
-sched_mm_cid_fork() and sched_mm_cid_exit() to adhere to the new strict
-ownership scheme and switch context_switch() over to use the new
-mm_cid_schedin() functionality.
 
-The common case is that there is no mode change required, which makes
-fork() and exit() just update the user count and the constraints.
 
-In case that a new user would exceed the CID space limit the fork() context
-handles the transition to per CPU mode with mm::mm_cid::mutex held. exit()
-handles the transition back to per task mode when the user count drops
-below the switch back threshold. fork() might also be forced to handle a
-deferred switch back to per task mode, when a affinity change increased the
-number of allowed CPUs enough.
+On 15/10/2025 6:20 pm, Tianyou Li wrote:
+> When perf report with annotation for a symbol, press 's' and 'T', then exit
+> the annotate browser. Once annotate the same symbol, the annotate browser
+> will crash.
+> 
+> The browser.arch was required to be correctly updated when data type
+> feature was enabled by 'T'. Usually it was initialized by symbol__annotate2
+> function. If a symbol has already been correctly annotated at the first
+> time, it should not call the symbol__annotate2 function again, thus the
+> browser.arch will not get initialized. Then at the second time to show the
+> annotate browser, the data type needs to be displayed but the browser.arch
+> is empty.
+> 
+> Stack trace as below:
+> 
+> Perf: Segmentation fault
+> -------- backtrace --------
+>      #0 0x55d365 in ui__signal_backtrace setup.c:0
+>      #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
+>      #2 0x570f08 in arch__is perf[570f08]
+>      #3 0x562186 in annotate_get_insn_location perf[562186]
+>      #4 0x562626 in __hist_entry__get_data_type annotate.c:0
+>      #5 0x56476d in annotation_line__write perf[56476d]
+>      #6 0x54e2db in annotate_browser__write annotate.c:0
+>      #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
+>      #8 0x54dc9e in annotate_browser__refresh annotate.c:0
+>      #9 0x54c03d in __ui_browser__refresh browser.c:0
+>      #10 0x54ccf8 in ui_browser__run perf[54ccf8]
+>      #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
+>      #12 0x552293 in do_annotate hists.c:0
+>      #13 0x55941c in evsel__hists_browse hists.c:0
+>      #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
+>      #15 0x42ff02 in cmd_report perf[42ff02]
+>      #16 0x494008 in run_builtin perf.c:0
+>      #17 0x494305 in handle_internal_command perf.c:0
+>      #18 0x410547 in main perf[410547]
+>      #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
+>      #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
+>      #21 0x410b75 in _start perf[410b75]
+> 
+> Fixes: 1d4374afd000 ("perf annotate: Add 'T' hot key to toggle data type display")
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+> ---
+>   tools/perf/ui/browsers/annotate.c | 3 +++
+>   tools/perf/util/annotate.c        | 2 +-
+>   tools/perf/util/annotate.h        | 2 ++
+>   3 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+> index 8fe699f98542..3b27ef1e8490 100644
+> --- a/tools/perf/ui/browsers/annotate.c
+> +++ b/tools/perf/ui/browsers/annotate.c
+> @@ -1161,6 +1161,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+>   			if (!annotation__has_source(notes))
+>   				ui__warning("Annotation has no source code.");
+>   		}
+> +	} else if (evsel__get_arch(evsel, &browser.arch)) {
+> +		ui__error("Couldn't get architecture for event '%s'", evsel->name);
+> +		return -1;
+>   	}
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/rseq.h       |   19 -------
- include/linux/rseq_types.h |    8 +--
- kernel/fork.c              |    1 
- kernel/sched/core.c        |  109 ++++++++++++++++++++++++++++++++++++++-------
- kernel/sched/sched.h       |   78 --------------------------------
- 5 files changed, 99 insertions(+), 116 deletions(-)
+symbol_annotate() only fails for negative return values of 
+evsel__get_arch(), but evsel__get_arch() has at least two positive error 
+return values.
 
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -82,24 +82,6 @@ static __always_inline void rseq_sched_s
- 	t->rseq.event.ids_changed = true;
- }
- 
--/*
-- * Invoked from switch_mm_cid() in context switch when the task gets a MM
-- * CID assigned.
-- *
-- * This does not raise TIF_NOTIFY_RESUME as that happens in
-- * rseq_sched_switch_event().
-- */
--static __always_inline void rseq_sched_set_task_mm_cid(struct task_struct *t, unsigned int cid)
--{
--	/*
--	 * Requires a comparison as the switch_mm_cid() code does not
--	 * provide a conditional for it readily. So avoid excessive updates
--	 * when nothing changes.
--	 */
--	if (t->rseq.ids.mm_cid != cid)
--		t->rseq.event.ids_changed = true;
--}
--
- /* Enforce a full update after RSEQ registration and when execve() failed */
- static inline void rseq_force_update(void)
- {
-@@ -177,7 +159,6 @@ static inline void rseq_handle_slowpath(
- static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
- static inline void rseq_sched_switch_event(struct task_struct *t) { }
- static inline void rseq_sched_set_ids_changed(struct task_struct *t) { }
--static inline void rseq_sched_set_task_mm_cid(struct task_struct *t, unsigned int cid) { }
- static inline void rseq_force_update(void) { }
- static inline void rseq_virt_userspace_exit(void) { }
- static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
---- a/include/linux/rseq_types.h
-+++ b/include/linux/rseq_types.h
-@@ -100,18 +100,18 @@ struct rseq_data { };
- /**
-  * struct sched_mm_cid - Storage for per task MM CID data
-  * @active:	MM CID is active for the task
-- * @cid:	The CID associated to the task
-- * @last_cid:	The last CID associated to the task
-+ * @cid:	The CID associated to the task either permanently or
-+ *		borrowed from the CPU
-  */
- struct sched_mm_cid {
- 	unsigned int		active;
- 	unsigned int		cid;
--	unsigned int		last_cid;
- };
- 
- /**
-  * struct mm_cid_pcpu - Storage for per CPU MM_CID data
-- * @cid:	The CID associated to the CPU
-+ * @cid:	The CID associated to the CPU either permanently or
-+ *		while a task with a CID is running
-  */
- struct mm_cid_pcpu {
- 	unsigned int	cid;
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -956,7 +956,6 @@ static struct task_struct *dup_task_stru
- 
- #ifdef CONFIG_SCHED_MM_CID
- 	tsk->mm_cid.cid = MM_CID_UNSET;
--	tsk->mm_cid.last_cid = MM_CID_UNSET;
- 	tsk->mm_cid.active = 0;
- #endif
- 	return tsk;
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5339,7 +5339,7 @@ context_switch(struct rq *rq, struct tas
- 		}
- 	}
- 
--	switch_mm_cid(prev, next);
-+	mm_cid_schedin(next);
- 
- 	/*
- 	 * Tell rseq that the task was scheduled in. Must be after
-@@ -10632,7 +10632,7 @@ static bool mm_cid_fixup_task_to_cpu(str
- 	return true;
- }
- 
--static void __maybe_unused mm_cid_fixup_tasks_to_cpus(void)
-+static void mm_cid_fixup_tasks_to_cpus(void)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct task_struct *p, *t;
-@@ -10682,14 +10682,42 @@ static bool sched_mm_cid_add_user(struct
- void sched_mm_cid_fork(struct task_struct *t)
- {
- 	struct mm_struct *mm = t->mm;
-+	bool percpu;
- 
- 	WARN_ON_ONCE(!mm || t->mm_cid.cid != MM_CID_UNSET);
- 
- 	guard(mutex)(&mm->mm_cid.mutex);
--	scoped_guard(raw_spinlock, &mm->mm_cid.lock) {
--		sched_mm_cid_add_user(t, mm);
--		/* Preset last_cid for mm_cid_select() */
--		t->mm_cid.last_cid = mm->mm_cid.max_cids - 1;
-+	scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
-+		struct mm_cid_pcpu *pcp = this_cpu_ptr(mm->mm_cid.pcpu);
-+
-+		/* First user ? */
-+		if (!mm->mm_cid.users) {
-+			sched_mm_cid_add_user(t, mm);
-+			t->mm_cid.cid = mm_get_cid(mm);
-+			/* Required for execve() */
-+			pcp->cid = t->mm_cid.cid;
-+			return;
-+		}
-+
-+		if (!sched_mm_cid_add_user(t, mm)) {
-+			if (!mm->mm_cid.percpu)
-+				t->mm_cid.cid = mm_get_cid(mm);
-+			return;
-+		}
-+
-+		/* Handle the mode change and transfer current's CID */
-+		percpu = !!mm->mm_cid.percpu;
-+		if (!percpu)
-+			mm_cid_transfer_to_task(current, pcp);
-+		else
-+			mm_cid_transfer_to_cpu(current, pcp);
-+	}
-+
-+	if (percpu) {
-+		mm_cid_fixup_tasks_to_cpus();
-+	} else {
-+		mm_cid_fixup_cpus_to_tasks(mm);
-+		t->mm_cid.cid = mm_get_cid(mm);
- 	}
- }
- 
-@@ -10701,6 +10729,30 @@ static bool sched_mm_cid_remove_user(str
- 	return mm_update_max_cids(t->mm);
- }
- 
-+static bool __sched_mm_cid_exit(struct task_struct *t)
-+{
-+	struct mm_struct *mm = t->mm;
-+
-+	if (!sched_mm_cid_remove_user(t))
-+		return false;
-+	/*
-+	 * Contrary to fork() this only deals with a switch back to per
-+	 * task mode either because the above decreased users or an
-+	 * affinity change increased the number of allowed CPUs and the
-+	 * deferred fixup did not run yet.
-+	 */
-+	if (WARN_ON_ONCE(mm->mm_cid.percpu))
-+		return false;
-+	/*
-+	 * A failed fork(2) cleanup never gets here, so @current must have
-+	 * the same MM as @t. That's true for exit() and the failed
-+	 * pthread_create() cleanup case.
-+	 */
-+	if (WARN_ON_ONCE(current->mm != mm))
-+		return false;
-+	return true;
-+}
-+
- /*
-  * When a task exits, the MM CID held by the task is not longer required as
-  * the task cannot return to user space.
-@@ -10711,10 +10763,43 @@ void sched_mm_cid_exit(struct task_struc
- 
- 	if (!mm || !t->mm_cid.active)
- 		return;
-+	/*
-+	 * Ensure that only one instance is doing MM CID operations within
-+	 * a MM. The common case is uncontended. The rare fixup case adds
-+	 * some overhead.
-+	 */
-+	scoped_guard(mutex, &mm->mm_cid.mutex) {
-+		/* mm_cid::mutex is sufficient to protect mm_cid::users */
-+		if (likely(mm->mm_cid.users > 1)) {
-+			scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
-+				if (!__sched_mm_cid_exit(t))
-+					return;
-+				/* Mode change required. Transfer currents CID */
-+				mm_cid_transfer_to_task(current, this_cpu_ptr(mm->mm_cid.pcpu));
-+			}
-+			mm_cid_fixup_cpus_to_tasks(mm);
-+			return;
-+		}
-+		/* Last user */
-+		scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
-+			/* Required across execve() */
-+			if (t == current)
-+				mm_cid_transfer_to_task(t, this_cpu_ptr(mm->mm_cid.pcpu));
-+			/* Ignore mode change. There is nothing to do. */
-+			sched_mm_cid_remove_user(t);
-+		}
-+	}
- 
--	guard(mutex)(&mm->mm_cid.mutex);
--	scoped_guard(raw_spinlock, &mm->mm_cid.lock)
--		sched_mm_cid_remove_user(t);
-+	/*
-+	 * As this is the last user (execve(), process exit or failed
-+	 * fork(2)) there is no concurrency anymore.
-+	 *
-+	 * Synchronize eventally pending work to ensure that there are no
-+	 * dangling references left. @t->mm_cid.users is zero so nothing
-+	 * can queue this work anymore.
-+	 */
-+	irq_work_sync(&mm->mm_cid.irq_work);
-+	cancel_work_sync(&mm->mm_cid.work);
- }
- 
- /* Deactivate MM CID allocation across execve() */
-@@ -10727,18 +10812,12 @@ void sched_mm_cid_before_execve(struct t
- void sched_mm_cid_after_execve(struct task_struct *t)
- {
- 	sched_mm_cid_fork(t);
--	guard(preempt)();
--	mm_cid_select(t);
- }
- 
- static void mm_cid_work_fn(struct work_struct *work)
- {
- 	struct mm_struct *mm = container_of(work, struct mm_struct, mm_cid.work);
- 
--	/* Make it compile, but not functional yet */
--	if (!IS_ENABLED(CONFIG_NEW_MM_CID))
--		return;
--
- 	guard(mutex)(&mm->mm_cid.mutex);
- 	/* Did the last user task exit already? */
- 	if (!mm->mm_cid.users)
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3704,84 +3704,8 @@ static __always_inline void mm_cid_sched
- 	else
- 		mm_cid_from_cpu(next, cpu_cid);
- }
--
--/* Active implementation */
--static inline void init_sched_mm_cid(struct task_struct *t)
--{
--	struct mm_struct *mm = t->mm;
--	unsigned int max_cid;
--
--	if (!mm)
--		return;
--
--	/* Preset last_mm_cid */
--	max_cid = min_t(int, READ_ONCE(mm->mm_cid.nr_cpus_allowed), atomic_read(&mm->mm_users));
--	t->mm_cid.last_cid = max_cid - 1;
--}
--
--static inline bool __mm_cid_get(struct task_struct *t, unsigned int cid, unsigned int max_cids)
--{
--	struct mm_struct *mm = t->mm;
--
--	if (cid >= max_cids)
--		return false;
--	if (test_and_set_bit(cid, mm_cidmask(mm)))
--		return false;
--	t->mm_cid.cid = t->mm_cid.last_cid = cid;
--	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
--	return true;
--}
--
--static inline bool mm_cid_get(struct task_struct *t)
--{
--	struct mm_struct *mm = t->mm;
--	unsigned int max_cids;
--
--	max_cids = READ_ONCE(mm->mm_cid.max_cids);
--
--	/* Try to reuse the last CID of this task */
--	if (__mm_cid_get(t, t->mm_cid.last_cid, max_cids))
--		return true;
--
--	/* Try to reuse the last CID of this mm on this CPU */
--	if (__mm_cid_get(t, __this_cpu_read(mm->mm_cid.pcpu->cid), max_cids))
--		return true;
--
--	/* Try the first zero bit in the cidmask. */
--	return __mm_cid_get(t, find_first_zero_bit(mm_cidmask(mm), nr_cpu_ids), max_cids);
--}
--
--static inline void mm_cid_select(struct task_struct *t)
--{
--	/*
--	 * mm_cid_get() can fail when the maximum CID, which is determined
--	 * by min(mm->nr_cpus_allowed, mm->mm_users) changes concurrently.
--	 * That's a transient failure as there cannot be more tasks
--	 * concurrently on a CPU (or about to be scheduled in) than that.
--	 */
--	for (;;) {
--		if (mm_cid_get(t))
--			break;
--	}
--}
--
--static inline void switch_mm_cid(struct task_struct *prev, struct task_struct *next)
--{
--	if (prev->mm_cid.active) {
--		if (prev->mm_cid.cid != MM_CID_UNSET)
--			clear_bit(prev->mm_cid.cid, mm_cidmask(prev->mm));
--		prev->mm_cid.cid = MM_CID_UNSET;
--	}
--
--	if (next->mm_cid.active) {
--		mm_cid_select(next);
--		rseq_sched_set_task_mm_cid(next, next->mm_cid.cid);
--	}
--}
--
- #else /* !CONFIG_SCHED_MM_CID: */
--static inline void mm_cid_select(struct task_struct *t) { }
--static inline void switch_mm_cid(struct task_struct *prev, struct task_struct *next) { }
-+static inline void mm_cid_schedin(struct task_struct *next) { }
- #endif /* !CONFIG_SCHED_MM_CID */
- 
- extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
+If symbol_annotate() is wrong and it should be != 0 like you have, then 
+maybe symbol_annotate() should be fixed in another commit in the same 
+patchset as this one. Otherwise you have two calls to the same thing 
+right next to each other that handle errors differently.
+
+>   
+>   	/* Copy necessary information when it's called from perf top */
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index a2e34f149a07..39d6594850f1 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
+>   	annotation__calc_percent(notes, evsel, symbol__size(sym));
+>   }
+>   
+> -static int evsel__get_arch(struct evsel *evsel, struct arch **parch)
+> +int evsel__get_arch(struct evsel *evsel, struct arch **parch)
+>   {
+>   	struct perf_env *env = evsel__env(evsel);
+>   	const char *arch_name = perf_env__arch(env);
+> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> index eaf6c8aa7f47..d4990bff29a7 100644
+> --- a/tools/perf/util/annotate.h
+> +++ b/tools/perf/util/annotate.h
+> @@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
+>   int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
+>   			     int num_aggr, struct evsel *evsel);
+>   int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
+> +
+> +int evsel__get_arch(struct evsel *evsel, struct arch **parch);
+>   #endif	/* __PERF_ANNOTATE_H */
 
 
