@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-854573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D50DBDEC36
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:29:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E07FBDEC45
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD244083E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:29:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84D234F4DF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5902220766E;
-	Wed, 15 Oct 2025 13:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF741225408;
+	Wed, 15 Oct 2025 13:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="AoLPHUbg"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6ci1stX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F6B1F2361;
-	Wed, 15 Oct 2025 13:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15886221DB6;
+	Wed, 15 Oct 2025 13:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760534975; cv=none; b=XKVVtLRmdQuNgYeJMUWrAVe+xeFIJfeOcASscAd3V5j7j2lyUQB4FznE3JyVFMdL5knpunhRpczdD8dKnGn/A2a8RRFHwBFQzQyJPu9tDtRKjOaCPOTAQHjFr6XHGT++x6M2/4JXSOv5JuopafS1SegFEQFInLrUmdURcM8aPck=
+	t=1760535023; cv=none; b=CJp39Kv9ff/4ZIq7/g3XJ23kWwR1GmjUU6fdGqFbyGMWG+UMa85sRznuemzDujFM4kh1z7SVEca91/NA5V8nQV1G1bHqhx8umTjN5AGevOMpfcj17rPe4V8FDPsDtf5LQiTX8xOsVsovoniF0S7ibPMEcmonlvia/emBn9R4Jo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760534975; c=relaxed/simple;
-	bh=2hmMvyH8KAC2yhT2Ax5Nx8K1FAV9uq1Qg41rzGl0+Sg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=dSGqucfgzpH+kHQMep12DH2k3FvR8MnPfe9oqV9M08qyCaCS6qVdcaSaP/Y45eQ/GLsPfAhcDeT71EXrBI2fgE0Ds+z+t2VOMFJ3CvKSVJdV9flZTvPuhattmPa3bNgyWAkaCLzAaSBJktTbckCplfO6Mf7K1W5gkKPd/bqX6xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=AoLPHUbg; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=s2K7GHGVKyAUUpmTe3FDfYNRYK/z1701QaUyzv3V8Bk=; b=AoLPHUbgLksgoj0K49hCkx+uRb
-	qARH+UxQl33YfSHLev1gfxrnblxG7tOE+50CzE5Vt+ceUCU+GGPIIu88Q7OPjmaifo8/m2mkdvyb+
-	Ap5R0k1VrOZiblWEM8ZyqOtw8mbU4bL/hfYHwEHjirrQQn1h4p6r5EYAzQ93WrYy+eZqoZ/l9TJFt
-	nFDBoZNcqE6ETJphRGP40R7dtZqpZQ3KV/ayLxhxFmmJNvOYuF7FRbaDagJOSjFkZbygu+YKs428U
-	at6+zbWmwH7K64Fu48WMla9D0+XzIcAiTMkcGcnZsTXdTI0JhzYGy6Kp3MKPpwJP/5EtXNsG9whdM
-	BnYuZ0gw==;
-Received: from [122.175.9.182] (port=34500 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1v91ZK-00000006HKz-2vEc;
-	Wed, 15 Oct 2025 09:29:30 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 92F2F17823F4;
-	Wed, 15 Oct 2025 18:59:26 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 7C0F617820AC;
-	Wed, 15 Oct 2025 18:59:26 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DEQ94I0dxhEn; Wed, 15 Oct 2025 18:59:26 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id EF5711781F3C;
-	Wed, 15 Oct 2025 18:59:25 +0530 (IST)
-Date: Wed, 15 Oct 2025 18:59:25 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: parvathi <parvathi@couthit.com>, tony <tony@atomide.com>, 
-	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
-	conor+dt <conor+dt@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	linux-omap <linux-omap@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, danishanwar <danishanwar@ti.com>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>, 
-	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
-	afd <afd@ti.com>, m-karicheri2 <m-karicheri2@ti.com>
-Message-ID: <1064878067.81811.1760534965853.JavaMail.zimbra@couthit.local>
-In-Reply-To: <8cfc5ece-6c2e-48d9-a65c-3edbcc9edc39@lunn.ch>
-References: <20251013125401.1435486-1-parvathi@couthit.com> <20251013125401.1435486-2-parvathi@couthit.com> <8cfc5ece-6c2e-48d9-a65c-3edbcc9edc39@lunn.ch>
-Subject: Re: [PATCH 1/2] arm: dts: ti: Adds device tree nodes for PRU Cores,
- IEP and eCAP modules of PRU-ICSS2 Instance.
+	s=arc-20240116; t=1760535023; c=relaxed/simple;
+	bh=A4j7EyyUEQAH/++sFjjOscr7TYVqFzYtv6RZBE5pQNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cP1a2R9THZC3ASwBTIfBZy1coV9hF2YcmzHOYdtW5KX57kclrWm+96qDC4xkF8cbFn1HSlI04rGq2gKZlYW7vjt3/xH07RfZMkRcNGePaNBMMYz2s4d6mf7MTQjHIGl0qbe7KUaniIqhxt3uRCSXzKk+CR/+VAlKVtH9lgqTsEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6ci1stX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B283CC4CEFE;
+	Wed, 15 Oct 2025 13:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760535022;
+	bh=A4j7EyyUEQAH/++sFjjOscr7TYVqFzYtv6RZBE5pQNE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=b6ci1stXqNKhV16bQZUz2RKyXZlZu/XYFYpCzaE+LYx/QRiRt9Jy59YuGmxqUoF/i
+	 sZQjJcJaIvwIy+xtYGruCM2hrR7Yzju5OJqzfVb/Q62yi6S5kJXs2GmmxDsPicrq80
+	 z78Vm4Ikoezi+QIy4EMXK/VXJxVqC/p8oDMGG6sdPBDrbS8AEelVtc8aPNJoNgEy5x
+	 srfEllTzNfWkG8OB/UFi7ZlQwxeoD+KdQUhR/rDUMaIBvEZhRfYKbEH6G/DWBmMl+w
+	 SO98xbxHlaLZk4RMMSiNRAoHeYExrixS5LTfTnnMvizdwz6Qa9nAaMBFTz1VKDXMbv
+	 fEhG9pPWVdb1g==
+Message-ID: <9adec627-e3f5-4664-881c-9e93f029e189@kernel.org>
+Date: Wed, 15 Oct 2025 14:30:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: qcom,qcs8300-camss: Add
+ missing power supplies
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+References: <20251015130130.2790829-1-quic_vikramsa@quicinc.com>
+ <20251015130130.2790829-2-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251015130130.2790829-2-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: Adds device tree nodes for PRU Cores, IEP and eCAP modules of PRU-ICSS2 Instance.
-Thread-Index: E3LIn1f4mOg6FaK5tJjNCk6cQUoE5Q==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Hi,
-
->> +				interrupt-names = "rx", "emac_ptp_tx",
->> +								"hsr_ptp_tx";
+On 15/10/2025 14:01, Vikram Sharma wrote:
+> Add support for vdda-phy-supply and vdda-pll-supply in the QCS8300
+> CAMSS binding to reflect camera sensor hardware requirements.
 > 
-> Something looks wrong with the indentation here. The same happens in
-> at least one other place.
+> Co-developed-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+> Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   .../bindings/media/qcom,qcs8300-camss.yaml          | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml b/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
+> index 80a4540a22dc..dce0a1fcb10c 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
+> @@ -120,6 +120,14 @@ properties:
+>       items:
+>         - const: top
+>   
+> +  vdda-phy-supply:
+> +    description:
+> +      Phandle to a regulator supply to PHY core block.
+> +
+> +  vdda-pll-supply:
+> +    description:
+> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
+> +
+>     ports:
+>       $ref: /schemas/graph.yaml#/properties/ports
+>   
+> @@ -160,6 +168,8 @@ required:
+>     - power-domains
+>     - power-domain-names
+>     - ports
+> +  - vdda-phy-supply
+> +  - vdda-pll-supply
+>   
+>   additionalProperties: false
+>   
+> @@ -328,6 +338,9 @@ examples:
+>               power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
+>               power-domain-names = "top";
+>   
+> +            vdda-phy-supply = <&vreg_l4a_0p88>;
+> +            vdda-pll-supply = <&vreg_l1c_1p2>;
+> +
+>               ports {
+>                   #address-cells = <1>;
+>                   #size-cells = <0>;
 
-we will correct the indentation of the interrupt-names property to properly
-align the continuation line as shown below.
+This needs a Fixes: tag
 
-interrupt-names = "rx", "emac_ptp_tx",
-                  "hsr_ptp_tx";
-
-We will make sure to address this in all the applicable places and include
-this fix in the next version.
-
-
->> +&pruss2_mdio {
->> +	status = "okay";
->> +	pruss2_eth0_phy: ethernet-phy@0 {
->> +		reg = <0>;
->> +		interrupt-parent = <&gpio3>;
->> +		interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
->> +	};
->> +
->> +	pruss2_eth1_phy: ethernet-phy@1 {
->> +		reg = <1>;
->> +		interrupt-parent = <&gpio3>;
->> +		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
->> +	};
-> 
-> 
-> PHY interrupts are 99% level, not edge, because they represent an
-> interrupt controller in the PHY, and you need to clear all the
-> interrupts in the controller before it deasserts the interrupt pin.
-> 
->    Andrew
-
-
-Sure, we will check and come back with more details on this.
-
-
-Thanks and Regards,
-Parvathi.
+---
+bod
 
