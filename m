@@ -1,255 +1,160 @@
-Return-Path: <linux-kernel+bounces-854951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD9DBDFD23
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:14:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DFDBDFD45
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9927B485B2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5D419A5C22
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DBE33A01C;
-	Wed, 15 Oct 2025 17:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2A4338F36;
+	Wed, 15 Oct 2025 17:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YWzWa9J3"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtbOsK9z"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A2338F3D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B520296A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760548446; cv=none; b=GsSJ+rFTOjwmfxrbqmIMhLBVTBE9osY3D1zxZV4HUdMzlm9tQqoaqnroHjkIVm9b3J8XFHA6nRaTIiz4Pv/n5rmpfYTH3M0BLT4JaBqDwGuaQOk96N+U4742gXM3sAx5xfcoB/w3tHrkz8xD8hg/o5lq67GWlijyunC7OkQm56k=
+	t=1760548771; cv=none; b=YRPVAZEOP68Dw6O6pG0xCXUqH8LutmFVgUtPyos04dfbn+KzGiNgrIbV/Bjk6x8z8wc8ZgGz5TMaPrCm0YCG5iJU6Ipv3OuSLJAQqyuLgbdtF34BI6g4iGlOCmRAT9eJZtNLKHwBWh9TWg1TqZOuNvmSPkb7JtmuqQKZfi58AGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760548446; c=relaxed/simple;
-	bh=Hab7fHDfDjE0Y/wHSkX4u0aYBvabsid/PwoR0nxnWmc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qcXZX6TVTEMxhj3ylmo9+paE+HFqGDuOoVfraBDZSeoB5Qk21wRQYbWEt2Oe51hB8YuP0Z8W6SivTtamBLwFKhVA1rrRfvl/SP9s0rvH1yAjggdv94srPkCBSRXVcHW8TP4n0Hv5jAiKofmQtwOvBFLeGT/AIxtTFXfTkggb7eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YWzWa9J3; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3ee1365964cso6994774f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:14:04 -0700 (PDT)
+	s=arc-20240116; t=1760548771; c=relaxed/simple;
+	bh=TMIy3qhByr4KuTXyATX/wSL3AQldOezxzFv9eiIqO8E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u0ZSfuOHLBB39SsZ1+Lg/R2Vgf8HFPQ95cio8Du/SV20vCIaIecSaRDCma4NVb0I7VY/7x3zxn8RAP/SHL5VHBHwAQjuniknvuzaPcbeKDSrcOhkasRaRuAIFozLJayDv2TBeZCmrHtHHh+PHtK1BMfZ2rxkgFKC4r7Ps1YXCd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtbOsK9z; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8572d7b2457so241801385a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:19:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760548443; x=1761153243; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BUc6JEVovpC/n0lisIRRlrZC5viDRiRLArSH+3NnX+g=;
-        b=YWzWa9J3/c5HJNrC+m5dJ6IT7IQpPkb3TFFlhFe7lrV9NjMXFS49/wCGY/O4vo/M7A
-         43/ftYcFBJCB/aIVa/U000pH06QV5i9RTv0nQ8RkEHO2g4l1cNklv3Sh/6jap1US2ajD
-         mYWFMmlgoLVotyGZvPKC+t1nMirDbyF5Dw+iEoNXgAsod1IHobww/XCC+wQN362lZiEv
-         DQcandmIoAvNtxXuDDv4R/3JzLFCgsJwE+qq+2qbG46jIzfEs/ambt3GtKkxUNZaRbWa
-         Sd61TG0fS+lp2zGu2P73CX8IJ0DvzOZng6/bEBbhGBpvmXmbPPyoPex3xOXtn+GzT71v
-         VeXQ==
+        d=gmail.com; s=20230601; t=1760548767; x=1761153567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOrazw55riCP/Aur0rBmo9Q0amixGsabgjSNwoheBcY=;
+        b=dtbOsK9zX3ftRUWYXOlAcOAq6syAC1JxQAY+h3fEhtKPro8OVp4jw36eyOwjGcnETh
+         iOZx2q8dB6+3GBmJ63J9HvqH5OZqZ89j1tEst1rJFd6UKfnk+AZbYLaRAYbuUknYFUA3
+         Q9NklHAJi7vnLkmLZp1td/l62XR2dYVRWG8QCdmSmYMoo0qAJRH7e3z5jAR9HvmbB08v
+         c/1RNVJVKC3cKqJAhIzjHAhsGrGxXo/5MWO4Q4ZNa6BivV6t17ECYsq44p1I1SyX0fzu
+         9PpF3RfLcbfusyogJlqFMff/U0YgVah/yAWYRDJ16eY5cpuQUtTywUYyULWXdJa2WGCg
+         2SEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760548443; x=1761153243;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BUc6JEVovpC/n0lisIRRlrZC5viDRiRLArSH+3NnX+g=;
-        b=cy+yXMbHoqlivgAUXPl31gyzn876AwblBIqAveyHIeX9VufVff6GkSicSWNFsD/0Oc
-         8IMoESxmC/iCEfOPUikCCyR3kzJ2ixL6kfLa2CeLTiDft09fU23Bbcu8yH7zYr/GLWr2
-         bUKbkS9NcvF7Tn3uQERopKPrbzhM/FcRBXtNHJM1e51bRLR0xjTNrnyKGi/ZGGPrgNKz
-         hfami7lnm4ugtAhFbUqhmFgA6eaI3xAkLSYbbp+kT4TSAvwz4rF0vL30DLI8LIDGoXeG
-         GnArGIg//TrmNk/p9UHQKNQOjjT1CHNSlKmNuiKMQF7ut2YRtzDDp3LF3LUnSBdMNiMl
-         FqdA==
-X-Gm-Message-State: AOJu0YxUHj4ha17Q5C0h79dAtJ2l0CLHef8mAZXKzD9wqf/qvzRpo60b
-	Fsu1komLN0XdJ8T1ejH9NyKfQfti2sL7Fcjo1lMY2lOLK9kzlenOaU9qPItyns8IJLzuA9oGiMF
-	VZvfHG7pTLyazrw==
-X-Google-Smtp-Source: AGHT+IHBr6W0XUlE5qvroBz9EmQK5wN/7aWoshMW5hIgeTFZ2bOcdfRnDTjCDcamT99WzGXInPIRcaoc1n1zgw==
-X-Received: from wruk18.prod.google.com ([2002:a5d:6292:0:b0:424:21b0:f156])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:26cc:b0:425:8134:706 with SMTP id ffacd0b85a97d-42667177f6emr20491027f8f.16.1760548443016;
- Wed, 15 Oct 2025 10:14:03 -0700 (PDT)
-Date: Wed, 15 Oct 2025 17:13:55 +0000
+        d=1e100.net; s=20230601; t=1760548767; x=1761153567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vOrazw55riCP/Aur0rBmo9Q0amixGsabgjSNwoheBcY=;
+        b=HDKZcYtHc84TqlE2AOhNoTIRBrfx62ELHZK3JaSbz8//0KgoEd59K/UkzNMAIDshzP
+         lfIVeCblYA0IpvVCAcmlBPxYGjZcPNEPU4di5dos1YOLAIl6e06tJEEJhRwrlcJmaR4m
+         g9kWlEIdTp7ZKoDfiT9x/NvJfqHrVcyZA8jbtkFBYQ6p/qB9Ztr/2znEhNbQpU8stRxf
+         IU4OyBa0/NOnztG9Mmu59+v3BvIaYwgYC5mUUKMfhGefqxdoT77Vbd/MLkeHbwlLJcZM
+         uarQEGCwCyAGpel8gcGqFcJzWGrxnSxtgnoXxiEOs4ENk9tts7zW5umYjNoEToBWWyp0
+         MPNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvVtV8Ajwj4T6egN4lIkSlJ75IvoQqLoBCugCfNZE9dqrN9S7O9Wjo1uRjsROIvSNjKE+s2EM0zGFwzN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4PoI6xHAdDE+eGjY3hgAn/jBEDwSz5dN/FRbZhITHFo7NWHbl
+	A3CdSPIk+PodKVSbwCL30WOT23YvX+PVLhXPdJY5CnFCp32hSTAJv4WOUN8C4qGp37NWfHheSns
+	sZi21FWVkEP1N5tMrM4r1nDKGyJ2Bh69PSoZyjsw=
+X-Gm-Gg: ASbGnct3DNAy3e8DTw8ZTavkxz5vkQXoH6c1ntVHZn5ScD4USgIMqANxe6GB5df5gML
+	U/0lazhrNTrd1SMCmt8VPQJTFLVMDVwAN6HZIUxvjImxb4BqlzGopZQhsmQmuejH54dtUqhvnOJ
+	os9sTmFrvecwlqc+szqUqISZGvbwGxyNYSnyC36XPyO/ZFwiv9y+ZkbcKzTnm5EFClhrjByXGRx
+	nvcd7vFZG4kghbNLiYbdRQUXfh9rPSIOYYW32jcRy3euDTpRAWnZZMhXz3Lb69bt3qd
+X-Google-Smtp-Source: AGHT+IHMj8/0q217RxAjVF44oXg9hw5QCyqlGhPqFPzXru4QZfXmi2OzppAQuQ/NtBJj1yQoYjWFFacwFm5yovuLvqY=
+X-Received: by 2002:ac8:588c:0:b0:4b6:cbd:8c91 with SMTP id
+ d75a77b69052e-4e890dc9f08mr13347691cf.5.1760548767352; Wed, 15 Oct 2025
+ 10:19:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAFLW72gC/3XMQQ6CMBCF4auQWTuGAYqVlfcwLGqZQhOkpMVGQ
- 3p3K3uX/0vet0NgbzlAV+zgOdpg3ZKjOhWgJ7WMjHbIDVVZCSqpxkeDM20GV/Z6feHlWpMko4S UDeTT6tnY9wHe+9yTDZvzn8OP9Fv/UpGQcGiFFnXbsiJ1G50bZz5r94Q+pfQFZY3yBK0AAAA=
-X-Change-Id: 20251013-b4-l1tf-percpu-793181fa5884
-X-Mailer: b4 0.14.2
-Message-ID: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
-Subject: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Brendan Jackman <jackmanb@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+ <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
+ <aO6N-g-y6VbSItzZ@bfoster> <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
+ <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
+In-Reply-To: <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 15 Oct 2025 10:19:15 -0700
+X-Gm-Features: AS18NWBU-7oqcttbWL37aBsF3LCTdQr-uxEvWrZ9A49oBhcJ3MZfXn2aiHE1LH4
+Message-ID: <CAJnrk1b=UMb9GrU0oiah986of_dgwLiRsZKvodwBoO1PSUaP7w@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: lu gu <giveme.gulu@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bernd Schubert <bernd@bsbernd.com>, 
+	Brian Foster <bfoster@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently the tracking of the need to flush L1D for L1TF is tracked by
-two bits: one per-CPU and one per-vCPU.
+On Wed, Oct 15, 2025 at 7:09=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Wed, 15 Oct 2025 at 06:00, lu gu <giveme.gulu@gmail.com> wrote:
+> >
+> > >  Attaching a test patch, minimally tested.
+> > Since I only have a test environment for kernel 5.15, I ported this
+> > patch to the FUSE module in 5.15. I ran the previous LTP test cases
+> > more than ten times, and the data inconsistency issue did not reoccur.
+> > However, a deadlock occur. Below is the specific stack trace.
+>
+> This is does not reproduce for me on 6.17 even after running the test
+> for hours.  Without seeing your backport it is difficult to say
+> anything about the reason for the deadlock.
+>
+> Attaching an updated patch that takes care of i_wb initialization on
+> CONFIG_CGROUP_WRITEBACK=3Dy.
 
-The per-vCPU bit is always set when the vCPU shows up on a core, so
-there is no interesting state that's truly per-vCPU. Indeed, this is a
-requirement, since L1D is a part of the physical CPU.
+I think now we'll also need to always set
+mapping_set_writeback_may_deadlock_on_reclaim(), eg
 
-So simplify this by combining the two bits.
+@@ -3125,8 +3128,7 @@ void fuse_init_file_inode(struct inode *inode,
+unsigned int flags)
 
-The vCPU bit was being written from preemption-enabled regions. For
-those cases, use raw_cpu_write() (via a variant of the setter function)
-to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
-CPU that gets its bit set in these paths is not important; vcpu_load()
-must always set it on the destination CPU before the guest is resumed.
+        inode->i_fop =3D &fuse_file_operations;
+        inode->i_data.a_ops =3D &fuse_file_aops;
+-       if (fc->writeback_cache)
+-               mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_dat=
+a);
++       mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
 
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
-Changes in v2:
-- Moved the bit back to irq_stat
-- Fixed DEBUG_PREEMPT issues by adding a _raw variant
-- Link to v1: https://lore.kernel.org/r/20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com
----
- arch/x86/include/asm/hardirq.h  |  6 ++++++
- arch/x86/include/asm/kvm_host.h |  3 ---
- arch/x86/kvm/mmu/mmu.c          |  2 +-
- arch/x86/kvm/vmx/nested.c       |  2 +-
- arch/x86/kvm/vmx/vmx.c          | 20 +++++---------------
- arch/x86/kvm/x86.c              |  6 +++---
- 6 files changed, 16 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index f00c09ffe6a95f07342bb0c6cea3769d71eecfa9..8a5c5deadb5912cc9ae080740c8a7372e6ef7577 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -2,6 +2,7 @@
- #ifndef _ASM_X86_HARDIRQ_H
- #define _ASM_X86_HARDIRQ_H
- 
-+#include <linux/percpu.h>
- #include <linux/threads.h>
- 
- typedef struct {
-@@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
- 	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
- }
- 
-+static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
-+{
-+	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-+}
-+
- static __always_inline void kvm_clear_cpu_l1tf_flush_l1d(void)
- {
- 	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 0);
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 48598d017d6f3f07263a2ffffe670be2658eb9cb..fcdc65ab13d8383018577aacf19e832e6c4ceb0b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1055,9 +1055,6 @@ struct kvm_vcpu_arch {
- 	/* be preempted when it's in kernel-mode(cpl=0) */
- 	bool preempted_in_kernel;
- 
--	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
--	bool l1tf_flush_l1d;
--
- 	/* Host CPU on which VM-entry was most recently attempted */
- 	int last_vmentry_cpu;
- 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 667d66cf76d5e52c22f9517914307244ae868eea..8c0dce401a42d977756ca82d249bb33c858b9c9f 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4859,7 +4859,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
- 	 */
- 	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 	if (!flags) {
- 		trace_kvm_page_fault(vcpu, fault_address, error_code);
- 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 76271962cb7083b475de6d7d24bf9cb918050650..1d376b4e6aa4abc475c1aac2ee937dbedb834cb1 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3880,7 +3880,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 		goto vmentry_failed;
- 
- 	/* Hide L1D cache contents from the nested guest.  */
--	vmx->vcpu.arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d_raw();
- 
- 	/*
- 	 * Must happen outside of nested_vmx_enter_non_root_mode() as it will
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 546272a5d34da301710df1d89414f41fc9b24a1f..6515beefa1fc8da042c0b66c207250ccf79c888e 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6673,26 +6673,16 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
--		bool flush_l1d;
--
- 		/*
--		 * Clear the per-vcpu flush bit, it gets set again if the vCPU
-+		 * Clear the per-cpu flush bit, it gets set again if the vCPU
- 		 * is reloaded, i.e. if the vCPU is scheduled out or if KVM
- 		 * exits to userspace, or if KVM reaches one of the unsafe
--		 * VMEXIT handlers, e.g. if KVM calls into the emulator.
-+		 * VMEXIT handlers, e.g. if KVM calls into the emulator,
-+		 * or from the interrupt handlers.
- 		 */
--		flush_l1d = vcpu->arch.l1tf_flush_l1d;
--		vcpu->arch.l1tf_flush_l1d = false;
--
--		/*
--		 * Clear the per-cpu flush bit, it gets set again from
--		 * the interrupt handlers.
--		 */
--		flush_l1d |= kvm_get_cpu_l1tf_flush_l1d();
--		kvm_clear_cpu_l1tf_flush_l1d();
--
--		if (!flush_l1d)
-+		if (!kvm_get_cpu_l1tf_flush_l1d())
- 			return;
-+		kvm_clear_cpu_l1tf_flush_l1d();
- 	}
- 
- 	vcpu->stat.l1d_flush++;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4b8138bd48572fd161eda73d2dbdc1dcd0bcbcac..dc886c4b9b1fe3d63a4c255ed4fc533d20fd1962 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5190,7 +5190,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 
- 	if (vcpu->scheduled_out && pmu->version && pmu->event_count) {
- 		pmu->need_cleanup = true;
-@@ -8000,7 +8000,7 @@ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
- 				unsigned int bytes, struct x86_exception *exception)
- {
- 	/* kvm_write_guest_virt_system can pull in tons of pages. */
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d_raw();
- 
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
- 					   PFERR_WRITE_MASK, exception);
-@@ -9396,7 +9396,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		return handle_emulation_failure(vcpu, emulation_type);
- 	}
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d_raw();
- 
- 	if (!(emulation_type & EMULTYPE_NO_DECODE)) {
- 		kvm_clear_exception_queue(vcpu);
+Does this completely get rid of the race? There's a fair chance I'm
+wrong here but doesn't the race still happen if the read invalidation
+happens before the write grabs the folio lock? This is the scenario
+I'm thinking of:
 
----
-base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
-change-id: 20251013-b4-l1tf-percpu-793181fa5884
+Thread A (read):
+read, w/ auto inval and a outdated mtime triggers invalidate_inode_pages2()
+generic_file_read_iter() is called, which calls filemap_read() ->
+filemap_get_pages() -> triggers read_folio/readahead
+read_folio/readahead fetches data (stale) from the server, unlocks folios
 
-Best regards,
--- 
-Brendan Jackman <jackmanb@google.com>
+Thread B (writethrough write):
+fuse_perform_write() -> fuse_fill_write_pages():
+grabs the folio lock and copies new write data to page cache, sets
+writeback flag and unlocks folio, sends request to server
 
+Thread A (read):
+the read data that was fetched from the server gets copied to the page
+cache in filemap_read()
+overwrites the write data in the page cache with the stale data
+
+Am i misanalyzing something in this sequence?
+
+Thanks,
+Joanne
+>
+> Thanks,
+> Miklos
 
