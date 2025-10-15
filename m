@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-854762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6378BDF507
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F39FDBDF501
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA9119C6FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A1119C7119
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5892F3C07;
-	Wed, 15 Oct 2025 15:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4728C14BFA2;
+	Wed, 15 Oct 2025 15:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="irKBQwEC"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="udULT81v"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B962FCC16
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80BC2FB985
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541561; cv=none; b=lMUSpLjXbwfCZVqhj6PvsrFjROSJIURTUxNe3PwgxWketLAyl0TyqEdPpIfOqdMhKVNs8I0C7LtMreFAlo3u6Bbi2W9sowmauH03adjit31cCnNRnqouNDshLmKGBm1x2+X0dUi34mSuv7Y+/xdJO5DkodChj42HZJ6Z8L2Ok3g=
+	t=1760541559; cv=none; b=gyuYOjA6CzKRndFrivAWn90fwpLVE0yny8PFZcu0gBwGwaHzrRwhKpqtvHNbGvjCneZYDPlpOZ4Boe5eOF3OeAWyR6vAcBh+GS//nR/isDO6g3qBouCwTLdSyRNQtvn5E0halw+RlRUNxRvK3Po+Nl7N1O3CbhsIT7oGr9uej7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541561; c=relaxed/simple;
-	bh=pscgKDfCia+syY3l6wEPcO0AE3fzka4Z4JqRlh3DALw=;
+	s=arc-20240116; t=1760541559; c=relaxed/simple;
+	bh=a9xKhDk+BGtJ4JiaTrGo1b0mvMJxDoS0zpI5Gu5pD4Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jF9VfuQb4/ydM7AB6fZ9Dqh24Z8X1tLuzt4G6HbE7uIYRkkobSYpsOpmvWQlRBALHyA+pU/qV1XAUxn3QzNmGFL5/OoGP6GwrZekX2v3kgFZ+5GOC6NlHgI4SpmOm2I3F8dB2dw+I+U38HCWGOqScv8jWVl6q7PtxtM2wxaMKb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=irKBQwEC; arc=none smtp.client-ip=91.218.175.174
+	 MIME-Version; b=u3E/Yj+h2fD1f2CU1/dMDNUts100TpiRjXPeA/r6lmLrplBi1kB8De+H8p0vzt4K+3xUZqMmyWiol/oOYaI+BkRX+5roIR+fVdZJdf+FpJ2I6QjBjmhFSxgBnKgJ+KC/xvv45g+9Swwk1DL7NKkz5nCK3BWpRGZE4o01ECEJryw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=udULT81v; arc=none smtp.client-ip=95.215.58.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760541547;
+	t=1760541553;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EkxSFdBzl73HGr1Q2yVRL9dvH+HdlU7w2ZgBc5WvZlA=;
-	b=irKBQwECLz+WuW3cLITnf9FssMNx5L1m9UcTADex5qzCYpJ+nRZ8CFv1jhQB1nRVYxcBn0
-	fUo2c1/FwWfdXN2HBQYf2WcYUgeUEhc0BS6QHlcDaeVXJy5E+Jo6HMajEtrP66HxUU6VcX
-	etM13fcc5b3QRZDWHCqT1yu6maQb2n0=
+	bh=FSAoHN+I0q5gvwL07/+w9FpvcidtI68SZ5LkGFNNr6w=;
+	b=udULT81vHIEVtIBF5XvtutmVrlGPzNupoyXCUuAEkSjJ5KIHh+zFjEWykswdr5yVjG9eAv
+	S2y3mltUcBCzV9/DoUrxNsqRQtreuXr4DGXKGSwGIkjWff9qBg0OHS/MKV/rZEW9VL59DF
+	c2ZDhOOd2eIZ1QLTvCqFHicpK3drHjk=
 From: Dawei Li <dawei.li@linux.dev>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org
@@ -48,9 +48,9 @@ Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	dawei.li@linux.dev,
 	set_pte_at@outlook.com
-Subject: [PATCH v5 2/3] rpmsg: char: Implement eptdev based on anonymous inode
-Date: Wed, 15 Oct 2025 23:17:17 +0800
-Message-Id: <20251015151718.3927-3-dawei.li@linux.dev>
+Subject: [PATCH v5 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Date: Wed, 15 Oct 2025 23:17:18 +0800
+Message-Id: <20251015151718.3927-4-dawei.li@linux.dev>
 In-Reply-To: <20251015151718.3927-1-dawei.li@linux.dev>
 References: <20251015151718.3927-1-dawei.li@linux.dev>
 Precedence: bulk
@@ -62,126 +62,127 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Introduce new eptdev abstraction based on anonymous inode. The new API
-is exactly same with legacy one except:
+Implement RPMSG_CREATE_EPT_FD_IOCTL, new uAPI for rpmsg ctrl, which
+shares most of operations of RPMSG_CREATE_EPT_IOCTL except that it
+returns fd representing eptdev to userspace directly.
 
-- It's anonymous and devnode/path free.
-- Its fops->open() is empty.
+Possible calling procedures for userspace are:
+- fd = open("/dev/rpmsg_ctrlX")
+- ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &info);
+- fd_ep = info.fd
+- operations on fd_ep(write, read, poll ioctl)
+- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+- close(fd_ep)
+- close(fd)
 
 Signed-off-by: Dawei Li <dawei.li@linux.dev>
 ---
- drivers/rpmsg/rpmsg_char.c | 49 ++++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_char.h | 23 ++++++++++++++++++
- 2 files changed, 72 insertions(+)
+ drivers/rpmsg/rpmsg_ctrl.c | 35 ++++++++++++++++++++++++++++-------
+ include/uapi/linux/rpmsg.h | 27 ++++++++++++++++++++++++++-
+ 2 files changed, 54 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 85154a422e9d..34b35ea74aab 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -13,6 +13,7 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
-+#include <linux/anon_inodes.h>
- #include <linux/cdev.h>
- #include <linux/device.h>
- #include <linux/fs.h>
-@@ -517,6 +518,54 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
- }
- EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
- 
-+static const struct file_operations rpmsg_anonymous_eptdev_fops = {
-+	.owner = THIS_MODULE,
-+	.release = rpmsg_eptdev_release,
-+	.read_iter = rpmsg_eptdev_read_iter,
-+	.write_iter = rpmsg_eptdev_write_iter,
-+	.poll = rpmsg_eptdev_poll,
-+	.unlocked_ioctl = rpmsg_eptdev_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
-+};
-+
-+int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-+				  struct rpmsg_channel_info chinfo, unsigned int flags,
-+				  int *pfd)
-+{
-+	struct rpmsg_eptdev *eptdev;
-+	int ret, fd;
-+
-+	/* Anonymous inode only supports these file flags */
-+	if (flags & ~(O_ACCMODE | O_NONBLOCK | O_CLOEXEC))
-+		return -EINVAL;
-+
-+	eptdev = rpmsg_eptdev_alloc(rpdev, parent, false);
-+	if (IS_ERR(eptdev))
-+		return PTR_ERR(eptdev);
-+
-+	ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
-+	if (ret) {
-+		dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-+		return ret;
-+	}
-+
-+	fd = anon_inode_getfd("rpmsg-eptdev", &rpmsg_anonymous_eptdev_fops, eptdev, flags);
-+	if (fd < 0) {
-+		put_device(&eptdev->dev);
-+		return fd;
-+	}
-+
-+	mutex_lock(&eptdev->ept_lock);
-+	ret = __rpmsg_eptdev_open(eptdev);
-+	mutex_unlock(&eptdev->ept_lock);
-+
-+	if (!ret)
-+		*pfd = fd;
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(rpmsg_anonymous_eptdev_create);
-+
- static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+index 28f57945ccd9..efb207506e5c 100644
+--- a/drivers/rpmsg/rpmsg_ctrl.c
++++ b/drivers/rpmsg/rpmsg_ctrl.c
+@@ -75,19 +75,30 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+ 				unsigned long arg)
  {
+ 	struct rpmsg_ctrldev *ctrldev = fp->private_data;
++	struct rpmsg_endpoint_fd_info ept_fd_info;
+ 	void __user *argp = (void __user *)arg;
+ 	struct rpmsg_endpoint_info eptinfo;
  	struct rpmsg_channel_info chinfo;
-diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
-index 117d9cbc52f0..70ce2c511f13 100644
---- a/drivers/rpmsg/rpmsg_char.h
-+++ b/drivers/rpmsg/rpmsg_char.h
-@@ -19,6 +19,22 @@
- int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
- 			       struct rpmsg_channel_info chinfo);
+ 	struct rpmsg_device *rpdev;
+ 	int ret = 0;
+ 
+-	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
+-		return -EFAULT;
+-
+-	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
+-	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
+-	chinfo.src = eptinfo.src;
+-	chinfo.dst = eptinfo.dst;
++	if (cmd == RPMSG_CREATE_EPT_FD_IOCTL) {
++		if (copy_from_user(&ept_fd_info, argp, sizeof(ept_fd_info)))
++			return -EFAULT;
++
++		memcpy(chinfo.name, ept_fd_info.name, RPMSG_NAME_SIZE);
++		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
++		chinfo.src = ept_fd_info.src;
++		chinfo.dst = ept_fd_info.dst;
++	} else {
++		if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
++			return -EFAULT;
++
++		memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
++		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
++		chinfo.src = eptinfo.src;
++		chinfo.dst = eptinfo.dst;
++	}
+ 
+ 	mutex_lock(&ctrldev->ctrl_lock);
+ 	switch (cmd) {
+@@ -110,6 +121,16 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+ 				chinfo.name, ret);
+ 		break;
+ 
++	case RPMSG_CREATE_EPT_FD_IOCTL:
++		ret = rpmsg_anonymous_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo,
++						    ept_fd_info.flags, &ept_fd_info.fd);
++		if (ret)
++			break;
++
++		if (copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info)))
++			ret = -EFAULT;
++		break;
++
+ 	default:
+ 		ret = -EINVAL;
+ 	}
+diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+index f0c8da2b185b..02befb298f71 100644
+--- a/include/uapi/linux/rpmsg.h
++++ b/include/uapi/linux/rpmsg.h
+@@ -29,7 +29,8 @@ struct rpmsg_endpoint_info {
+ #define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
+ 
+ /**
+- * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL.
++ * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL
++ * or RPMSG_CREATE_EPT_FD_IOCTL.
+  */
+ #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
+ 
+@@ -53,4 +54,28 @@ struct rpmsg_endpoint_info {
+  */
+ #define RPMSG_SET_INCOMING_FLOWCONTROL _IOR(0xb5, 0x6, int)
  
 +/**
-+ * rpmsg_anonymous_eptdev_create() - register anonymous device and its associated
-+ *                                   fd based on an endpoint
-+ * @rpdev:  prepared rpdev to be used for creating endpoints
-+ * @parent: parent device
-+ * @chinfo: associated endpoint channel information.
-+ * @flag: file flag
-+ * @pfd: fd in represent of endpoint device
-+ *
-+ * This function create a new rpmsg endpoint device and its associated fd to instantiate a new
-+ * endpoint based on chinfo information.
++ * struct rpmsg_endpoint_fd_info - endpoint & fd info representation
++ * @name: name of service
++ * @src: local address. To set to RPMSG_ADDR_ANY if not used.
++ * @dst: destination address. To set to RPMSG_ADDR_ANY if not used.
++ * @flags: file flags of endpoint device, valid flags:
++ *         O_RDONLY/O_WRONLY/O_RDWR
++ *         O_NONBLOCK
++ *         O_CLOEXEC
++ * @fd: fd returned from driver
 + */
-+int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-+				  struct rpmsg_channel_info chinfo, unsigned int flags,
-+				  int *pfd);
++struct rpmsg_endpoint_fd_info {
++	char name[32];
++	__u32 src;
++	__u32 dst;
++	__u32 flags;
++	__s32 fd;
++};
 +
- /**
-  * rpmsg_chrdev_eptdev_destroy() - destroy created char device endpoint.
-  * @data: private data associated to the endpoint device
-@@ -36,6 +52,13 @@ static inline int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct
- 	return -ENXIO;
- }
- 
-+static inline int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-+						struct rpmsg_channel_info chinfo,
-+						unsigned int flags, int *pfd)
-+{
-+	return -ENXIO;
-+}
++/**
++ * Instantiate a new rmpsg endpoint which is represented by fd
++ */
++#define RPMSG_CREATE_EPT_FD_IOCTL _IOWR(0xb5, 0x7, struct rpmsg_endpoint_fd_info)
 +
- static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
- {
- 	return -ENXIO;
+ #endif
 -- 
 2.25.1
 
