@@ -1,312 +1,140 @@
-Return-Path: <linux-kernel+bounces-853873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5763BDCCA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:49:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC19BDCC6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BE714FC9F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789FF3B6F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D797931578E;
-	Wed, 15 Oct 2025 06:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="APi4AqAi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D153128D7;
+	Wed, 15 Oct 2025 06:45:12 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E352313E12;
-	Wed, 15 Oct 2025 06:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45AD313260
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510813; cv=none; b=RBhphPl91ilXPufl/bd6b1X3R6xVMiOBG2ZKYYFYYW5Jfvrli5ZVFcysdIYM22TWlIC/f1ZIhtaZj2Wbvjs8QCnPpDx2d2NCN34qmHYI0oQH29MRBeVs6/8MT2Ccx1Y5n9VlS8FgmUMRIXiFwCfjEfoZpUeD3kMonXYYvBiwP2U=
+	t=1760510712; cv=none; b=EcBG0OzOBg1E4g2Sj/sZHHz1SIDXcneImvDQcF3Ws41gwvpQb4DroAJ5sGwRAI5Z3p/Vca/KaBxjuEfp+EiElWFimXblbaHz+KPQ9P8R0WA9T1jrCnj/FvBJ3h2YWM/1HGchw54z/FLj1fdkrGB56DY8ojqtdLROWUFgpGEmw0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510813; c=relaxed/simple;
-	bh=YH7cWjIgJOSY4JRaG58kIx3JYMKM7wEq7jyKSPz5E7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jbmPMokPLi8uZyE3yXWDh+OyWR+m1zGkUwG3tA93zN6uYlHB+yGUFeOh93owKUTdAv8G3kg6pr3BISFF78qRSioS4ERmL4UPmNRzhsfRQwJnPQIGBPutMmxwzKmlK6/qKis3kTRFdnb6bGTZxknPcRb1HFRN3nahcnExheQfXik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=APi4AqAi; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760510811; x=1792046811;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YH7cWjIgJOSY4JRaG58kIx3JYMKM7wEq7jyKSPz5E7g=;
-  b=APi4AqAi7zZUsKpZZxpd3nbL6oqfN69s4bW0jrQ2emCT9YTBjrN5w7lX
-   eft35eF5IR5gOIDHR7vcgcpDJJak1UISa9eLxodoWbU0hjBDxXHD/+eX7
-   a4KzLgrCDWEyaHSsl2o1wkKjjgRfWnsUNUB+wzBwlyz1tZAe7bPsVX4xJ
-   3uiMn+zcaYdszNdWaG6fSSFrFl+Qt5SZuiDrlANbwKFMuVJbfsAsBzQG0
-   U+YjAfUQtajNN+C7PfT5DatlLiMArYTcDmYSeCjiSj/VkLHawx4XhFPgi
-   XsO8QY/OrdigAgyyAJ9V1jGPN1KkzrUdLGxcpTRV3sIz/i1Pa7yoJb4nf
-   Q==;
-X-CSE-ConnectionGUID: l6bsOZxnQQCf/40YGGn1Jw==
-X-CSE-MsgGUID: MBpv4VhAQzirO3OGgp1MEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="50242529"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="50242529"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 23:46:51 -0700
-X-CSE-ConnectionGUID: QFCEmy6JS8adFgLOO7/hoQ==
-X-CSE-MsgGUID: 8skpqFG4R62SHzW+gt/VRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="182029994"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa006.fm.intel.com with ESMTP; 14 Oct 2025 23:46:47 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v8 12/12] perf/x86/intel: Add counter group support for arch-PEBS
-Date: Wed, 15 Oct 2025 14:44:22 +0800
-Message-Id: <20251015064422.47437-13-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
-References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1760510712; c=relaxed/simple;
+	bh=3lASPHjG4j+oazMSCIU77VQWHw8pDPkPIIeliWHUARU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qVOOtQn6Envo369H9Oo8dJVJa8OCH6yoOYCgzao3KqwplnxkUeuMR1jdTNRqJKJ5N9GHcWvLONJHfPj2w95J1GjoHI2QgOoYV+qyleXnB4uyK1ZxdlO9Shls7/tWLBCivo6+M1lnsoefhykJr1rDoArWylnUi4TyhfXXuLMJT4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42f90f65922so112127615ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:45:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760510710; x=1761115510;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sKf77kmViLg0HSX/TWeb0BbwS+kVSLfsM9DAP1VaUiw=;
+        b=FUg0mp+k2WfkuMZkfeLGbDqiYMdHJQCzEC6Vo+cqbC3j6Drv+do1KDh3ZUT80OEugG
+         WnxcQvqHlGn6bxULwsILw9DQggXiXb5nmMTcVV1Bhp/POK28a9vX9Mg2CS+WaKcfpfXJ
+         rSXTg1MiX51Xh1E/nSQcaqku4RbrC2UUdCSGWvvDCcRcTAI0md+JaG581u4kDpgKmDoE
+         gc3EjQtNGI3HqP8DiuWtKu+RQApE021SeXwMeRs7dvpxPFx/EtZ6Iq09B4VZoWod4c3j
+         JMugYbPRxxeOC5eydzMpzp7fuxmakmgNW1eBmUS255HnZ2RFv5yAnD9rIrBO8q6KMKM8
+         I3hA==
+X-Gm-Message-State: AOJu0YzBC28OxO8/wjy4jbFGBmpzyp8bcMdPTuN7D0fvo468WD66TwfC
+	R5OJOcTp8H9EyzTkOlKJRnyFC9NXX2Buw0j/gvcUZqZvdjOSqD+v4wZ3ACxL64kTnMVnvkDg8ao
+	kt4lUx7na1wtqYrVskfOPnTvOmt6d8jezttOMsWCqab4FCP1zy4HX0tklOMg=
+X-Google-Smtp-Source: AGHT+IHP9+IqCevJUobyEpWvndvh9Roiel99R82uO7CtjQvv4ixvM6vdkORUkccTaGZ+IQjSUBlyq7Pw5l+Nechmh3oihLlVjMkF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2785:b0:42f:9eb7:7595 with SMTP id
+ e9e14a558f8ab-42f9eb7762amr182467635ab.22.1760510709883; Tue, 14 Oct 2025
+ 23:45:09 -0700 (PDT)
+Date: Tue, 14 Oct 2025 23:45:09 -0700
+In-Reply-To: <68ef030a.050a0220.91a22.022b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ef42f5.050a0220.91a22.0232.GAE@google.com>
+Subject: Forwarded: [PATCH] ocfs2: validate chain list count before use in ocfs2_reserve_suballoc_bits
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Base on previous adaptive PEBS counter snapshot support, add counter
-group support for architectural PEBS. Since arch-PEBS shares same
-counter group layout with adaptive PEBS, directly reuse
-__setup_pebs_counter_group() helper to process arch-PEBS counter group.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+***
+
+Subject: [PATCH] ocfs2: validate chain list count before use in ocfs2_reserve_suballoc_bits
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+
+
+Add validation to check if the chain list count (cl_count) is zero
+before using the chain list in ocfs2_reserve_suballoc_bits(). When
+cl_count is zero, the cl_recs array is empty, but the code attempts
+to access cl_recs[0] in subsequent operations, leading to an
+out-of-bounds array access.
+
+The issue was discovered by syzbot using a corrupted filesystem image
+where cl_count was set to 0. This triggers a UBSAN array-index-out-of-
+bounds error when ocfs2_block_group_fill() attempts to access the
+first chain record.
+
+By adding this validation early in ocfs2_reserve_suballoc_bits(), we
+catch the corruption before any allocation operations begin. The
+filesystem will fail to mount with a clear error message directing
+users to run fsck.ocfs2.
+
+This follows the existing pattern in the function where similar
+validation checks (like OCFS2_CHAIN_FL) are performed on the
+allocator inode before use.
+
+Link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+Reported-by:syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- arch/x86/events/intel/core.c      | 38 ++++++++++++++++++++++++++++---
- arch/x86/events/intel/ds.c        | 29 ++++++++++++++++++++---
- arch/x86/include/asm/msr-index.h  |  6 +++++
- arch/x86/include/asm/perf_event.h | 13 ++++++++---
- 4 files changed, 77 insertions(+), 9 deletions(-)
+ fs/ocfs2/suballoc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+---
+ fs/ocfs2/suballoc.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index c8cd490aa539..52bf3b4bc938 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3014,6 +3014,17 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index 6ac4dcd54588..57ec07f9751a 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -778,6 +778,7 @@ static int ocfs2_reserve_suballoc_bits(struct ocfs2_super *osb,
+ 	struct buffer_head *bh = NULL;
+ 	struct ocfs2_dinode *fe;
+ 	u32 free_bits;
++	struct ocfs2_chain_list *cl;
  
- 			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
- 				ext |= ARCH_PEBS_LBR & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_GP & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_FIXED & cap.caps;
-+
-+			if (pebs_data_cfg & PEBS_DATACFG_METRICS)
-+				ext |= ARCH_PEBS_CNTR_METRICS & cap.caps;
- 		}
+ 	alloc_inode = ocfs2_get_system_file_inode(osb, type, slot);
+ 	if (!alloc_inode) {
+@@ -800,7 +801,14 @@ static int ocfs2_reserve_suballoc_bits(struct ocfs2_super *osb,
+ 	ac->ac_alloc_slot = slot;
  
- 		if (cpuc->n_pebs == cpuc->n_large_pebs)
-@@ -3038,6 +3049,9 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
- 		}
- 	}
- 
-+	if (is_pebs_counter_event_group(event))
-+		ext |= ARCH_PEBS_CNTR_ALLOW;
-+
- 	if (cpuc->cfg_c_val[hwc->idx] != ext)
- 		__intel_pmu_update_event_ext(hwc->idx, ext);
- }
-@@ -4323,6 +4337,20 @@ static bool intel_pmu_is_acr_group(struct perf_event *event)
- 	return false;
- }
- 
-+static inline bool intel_pmu_has_pebs_counter_group(struct pmu *pmu)
-+{
-+	u64 caps;
-+
-+	if (x86_pmu.intel_cap.pebs_format >= 6 && x86_pmu.intel_cap.pebs_baseline)
-+		return true;
-+
-+	caps = hybrid(pmu, arch_pebs_cap).caps;
-+	if (x86_pmu.arch_pebs && (caps & ARCH_PEBS_CNTR_MASK))
-+		return true;
-+
-+	return false;
-+}
-+
- static inline void intel_pmu_set_acr_cntr_constr(struct perf_event *event,
- 						 u64 *cause_mask, int *num)
- {
-@@ -4471,8 +4499,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	}
- 
- 	if ((event->attr.sample_type & PERF_SAMPLE_READ) &&
--	    (x86_pmu.intel_cap.pebs_format >= 6) &&
--	    x86_pmu.intel_cap.pebs_baseline &&
-+	    intel_pmu_has_pebs_counter_group(event->pmu) &&
- 	    is_sampling_event(event) &&
- 	    event->attr.precise_ip)
- 		event->group_leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-@@ -5420,6 +5447,8 @@ static inline void __intel_update_large_pebs_flags(struct pmu *pmu)
- 	x86_pmu.large_pebs_flags |= PERF_SAMPLE_TIME;
- 	if (caps & ARCH_PEBS_LBR)
- 		x86_pmu.large_pebs_flags |= PERF_SAMPLE_BRANCH_STACK;
-+	if (caps & ARCH_PEBS_CNTR_MASK)
-+		x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
- 
- 	if (!(caps & ARCH_PEBS_AUX))
- 		x86_pmu.large_pebs_flags &= ~PERF_SAMPLE_DATA_SRC;
-@@ -7133,8 +7162,11 @@ __init int intel_pmu_init(void)
- 	 * Many features on and after V6 require dynamic constraint,
- 	 * e.g., Arch PEBS, ACR.
- 	 */
--	if (version >= 6)
-+	if (version >= 6) {
- 		x86_pmu.flags |= PMU_FL_DYN_CONSTRAINT;
-+		x86_pmu.late_setup = intel_pmu_late_setup;
+ 	fe = (struct ocfs2_dinode *) bh->b_data;
+-
++	cl = &fe->id2.i_chain;
++	/* Validate chain list before use */
++	if (le16_to_cpu(cl->cl_count) == 0) {
++		status = ocfs2_error(alloc_inode->i_sb,
++			 "Chain allocator %llu has invalid chain list (cl_count=0)\n",
++			 (unsigned long long)le64_to_cpu(fe->i_blkno));
++		goto bail;
 +	}
-+
- 	/*
- 	 * Install the hw-cache-events table:
- 	 */
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index becdc9a53d10..3dedf7a0acf6 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1530,13 +1530,20 @@ pebs_update_state(bool needed_cb, struct cpu_hw_events *cpuc,
- 
- u64 intel_get_arch_pebs_data_config(struct perf_event *event)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	u64 pebs_data_cfg = 0;
-+	u64 cntr_mask;
- 
- 	if (WARN_ON(event->hw.idx < 0 || event->hw.idx >= X86_PMC_IDX_MAX))
- 		return 0;
- 
- 	pebs_data_cfg |= pebs_update_adaptive_cfg(event);
- 
-+	cntr_mask = (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT) |
-+		    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT) |
-+		    PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS;
-+	pebs_data_cfg |= cpuc->pebs_data_cfg & cntr_mask;
-+
- 	return pebs_data_cfg;
- }
- 
-@@ -2441,6 +2448,24 @@ static void setup_arch_pebs_sample_data(struct perf_event *event,
- 		}
- 	}
- 
-+	if (header->cntr) {
-+		struct arch_pebs_cntr_header *cntr = next_record;
-+		unsigned int nr;
-+
-+		next_record += sizeof(struct arch_pebs_cntr_header);
-+
-+		if (is_pebs_counter_event_group(event)) {
-+			__setup_pebs_counter_group(cpuc, event,
-+				(struct pebs_cntr_header *)cntr, next_record);
-+			data->sample_flags |= PERF_SAMPLE_READ;
-+		}
-+
-+		nr = hweight32(cntr->cntr) + hweight32(cntr->fixed);
-+		if (cntr->metrics == INTEL_CNTR_METRICS)
-+			nr += 2;
-+		next_record += nr * sizeof(u64);
-+	}
-+
- 	/* Parse followed fragments if there are. */
- 	if (arch_pebs_record_continued(header)) {
- 		at = at + header->size;
-@@ -3116,10 +3141,8 @@ static void __init intel_ds_pebs_init(void)
- 			break;
- 
- 		case 6:
--			if (x86_pmu.intel_cap.pebs_baseline) {
-+			if (x86_pmu.intel_cap.pebs_baseline)
- 				x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
--				x86_pmu.late_setup = intel_pmu_late_setup;
--			}
- 			fallthrough;
- 		case 5:
- 			x86_pmu.pebs_ept = 1;
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index f1ef9ac38bfb..65cc528fbad8 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -334,12 +334,18 @@
- #define ARCH_PEBS_INDEX_WR_SHIFT	4
- 
- #define ARCH_PEBS_RELOAD		0xffffffff
-+#define ARCH_PEBS_CNTR_ALLOW		BIT_ULL(35)
-+#define ARCH_PEBS_CNTR_GP		BIT_ULL(36)
-+#define ARCH_PEBS_CNTR_FIXED		BIT_ULL(37)
-+#define ARCH_PEBS_CNTR_METRICS		BIT_ULL(38)
- #define ARCH_PEBS_LBR_SHIFT		40
- #define ARCH_PEBS_LBR			(0x3ull << ARCH_PEBS_LBR_SHIFT)
- #define ARCH_PEBS_VECR_XMM		BIT_ULL(49)
- #define ARCH_PEBS_GPR			BIT_ULL(61)
- #define ARCH_PEBS_AUX			BIT_ULL(62)
- #define ARCH_PEBS_EN			BIT_ULL(63)
-+#define ARCH_PEBS_CNTR_MASK		(ARCH_PEBS_CNTR_GP | ARCH_PEBS_CNTR_FIXED | \
-+					 ARCH_PEBS_CNTR_METRICS)
- 
- #define MSR_IA32_RTIT_CTL		0x00000570
- #define RTIT_CTL_TRACEEN		BIT(0)
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 3b3848f0d339..7276ba70c88a 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -141,16 +141,16 @@
- #define ARCH_PERFMON_EVENTS_COUNT			7
- 
- #define PEBS_DATACFG_MEMINFO	BIT_ULL(0)
--#define PEBS_DATACFG_GP	BIT_ULL(1)
-+#define PEBS_DATACFG_GP		BIT_ULL(1)
- #define PEBS_DATACFG_XMMS	BIT_ULL(2)
- #define PEBS_DATACFG_LBRS	BIT_ULL(3)
--#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR	BIT_ULL(4)
-+#define PEBS_DATACFG_METRICS	BIT_ULL(5)
-+#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR_SHIFT	32
- #define PEBS_DATACFG_CNTR_MASK	GENMASK_ULL(15, 0)
- #define PEBS_DATACFG_FIX_SHIFT	48
- #define PEBS_DATACFG_FIX_MASK	GENMASK_ULL(7, 0)
--#define PEBS_DATACFG_METRICS	BIT_ULL(5)
- 
- /* Steal the highest bit of pebs_data_cfg for SW usage */
- #define PEBS_UPDATE_DS_SW	BIT_ULL(63)
-@@ -603,6 +603,13 @@ struct arch_pebs_lbr_header {
- 	u64 ler_info;
- };
- 
-+struct arch_pebs_cntr_header {
-+	u32 cntr;
-+	u32 fixed;
-+	u32 metrics;
-+	u32 reserved;
-+};
-+
- /*
-  * AMD Extended Performance Monitoring and Debug cpuid feature detection
-  */
+ 	/* The bh was validated by the inode read inside
+ 	 * ocfs2_inode_lock().  Any corruption is a code bug. */
+ 	BUG_ON(!OCFS2_IS_VALID_DINODE(fe));
 -- 
-2.34.1
+2.43.0
 
 
