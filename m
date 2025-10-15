@@ -1,131 +1,175 @@
-Return-Path: <linux-kernel+bounces-854551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E214BDEAF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:13:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD57ABDEB35
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1286F1887B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:13:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0106E505B18
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1AB327783;
-	Wed, 15 Oct 2025 13:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEF032BF55;
+	Wed, 15 Oct 2025 13:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m8Ob9jb/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UCuH9asw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ABB13C8EA
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0491732BF24;
+	Wed, 15 Oct 2025 13:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760533984; cv=none; b=LHgYRbwa51ZdeG3XHyoVP8/sGm55Vn2dsjw8B6cz9f7E6YpAAzby/hqQr25KpcOjuYTgAuFaNlXaVIzX3ZtKMG/6ouXPUAcJJlbQJUEUL+pYgZgb0z+HnFGyuwIpwMJOUqYtkiw7g++9/APQ4mxdEBBD6UnS8Qch/GzJUZxAZqY=
+	t=1760534015; cv=none; b=C3m55i2xitSclUQe9O0L/KJgvCSzjTR/ch+CfijufUIpEY5pf+Ze9kG6jm7aRD+7QpoM8XjjjwV7fUt6jDDnw2vQbApmIMNTA1tBds/UdoDKbe3dCTwhfhlsk93fbBfbqF2BZ+48bibNZRfZY753i6XF/FLZX0XHahcI/pQSiN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760533984; c=relaxed/simple;
-	bh=CbnARJ1NcaAYMxMWl6wrepneykP7YTXb9rnB9JY3DjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AZv9AZKp6xdlYnaFagh9v0UC9jXN+JBOXqBWfKHNr9XPBxpOtG/4lAqlWgSKRgB1b+byKFqPEA1ImXiN9CEfdsFXNjQPMpfZBVJpmWIoTQa9YI/3gNcSRsAep0/UpNSj731q5aBcjLW6HPuZS6+4d9rOP+vf0qylX9sipCDfXng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m8Ob9jb/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760533979;
-	bh=CbnARJ1NcaAYMxMWl6wrepneykP7YTXb9rnB9JY3DjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m8Ob9jb/yqmdZN5gbXCzgVebh2Me0gTPCS7skTCvVHKVKZb+E7d3Ne+V6rwVXRlDt
-	 VYSG1AI2Zntyba9pSD9ieku+zAV8xZnQZKl1w135SeDH5V4jRI+7aCCI29CMlO7vgi
-	 EB2NhMEXtEfUYG/7m5wKCKYVi2mOj9ZciBV77NvzD2jEhcQknQBWaf5TS/Gqz67Q2G
-	 6WKnH7+N7X6nLqyebw7YxBL1E6GQZIu4uWTpxiRS5TaV9n6PV6zCSts1MNZuwssU6O
-	 IGZzlxOQrCxo4Rfk1xY97c/4o8aeVa8stN4cxnQC+n8Zo7D1h0zeDOcmkFdwD1x9B8
-	 boa/A3UcsyrGg==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 27C4F17E05FE;
-	Wed, 15 Oct 2025 15:12:58 +0200 (CEST)
-Date: Wed, 15 Oct 2025 15:12:55 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Christopher Healy <healych@amazon.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- linux-mm@kvack.org, kernel@collabora.com
-Subject: Re: [PATCH v3 07/10] drm/panthor: Introduce huge tmpfs mount point
- option
-Message-ID: <20251015151255.6f314a11@fedora>
-In-Reply-To: <6f1fb1a5-5d6f-4ebf-bf12-3481d360fb7f@collabora.com>
-References: <20251004093054.21388-1-loic.molinari@collabora.com>
-	<20251004093054.21388-8-loic.molinari@collabora.com>
-	<20251006092856.02fbfd9e@fedora>
-	<6f1fb1a5-5d6f-4ebf-bf12-3481d360fb7f@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760534015; c=relaxed/simple;
+	bh=OhP5z+uhLIeIW1QADkJmlGQZetbZLVoAvU3kSxsRFsk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eXCtMuinqs1BogbWbflY70JiE//1c7+cAwWlpS2jN1lRnRZz6FsohcbZ+7ArMHCzyuMEFoK9p599bXS3ouFgDZ/MW1zvwEYMKa9a7p0l7X4B/COAQ3F5skqKm7GH6E0YMCl2pNHvaFkLiyp6ZxzKiX7sGJ+U6ACHOFe5ZMKVXh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UCuH9asw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAoGS2003541;
+	Wed, 15 Oct 2025 13:13:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=L9FZVV8ifs53cNZY1ESFco
+	2sDL4YiPzh0mjjUAVy2tI=; b=UCuH9aswW28wybTqAB1WOE4kU3YUtW1z2UWTFT
+	7/Rbv/ZZYa4zacJVJdkF1H4e82Uq+73gMzSI1fpk0kz0+tF37UDLUdckv/zsYiXs
+	wxOqmUiH5JZ2gWS2+S+oUyG+wqN1lIhfmY3VYOKdobyUVbj0j19NNLO1NqPpM5vE
+	pLz2+rY8tNEs2p11fr2BqN9yg3zgCtuwOVRKToKqisWFJ//qsUcoUPpwAiil1LfX
+	N8hqie9dCTcbJ7hnielRqcadiFrV3SY+tIF6uL0uhGbgR6xdw1c0zjUoe0++JhF/
+	QlvXW+sdpaUg2wrJagUuBgoYNfP2LEkvYfa0X/UAzMW6RGyg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49sua8k3cy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 13:13:24 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59FDDNFt004956
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 13:13:23 GMT
+Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Wed, 15 Oct 2025 06:13:18 -0700
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+To: <bryan.odonoghue@linaro.org>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
+        <quic_vikramsa@quicinc.com>, <quic_nihalkum@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] Add CCI and imx577 sensor support for monaco evk
+Date: Wed, 15 Oct 2025 18:43:00 +0530
+Message-ID: <20251015131303.2797800-1-quic_vikramsa@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wEWTZE-niR1qI16psjOeZ6KVFFqdoMVd
+X-Authority-Analysis: v=2.4 cv=e5MLiKp/ c=1 sm=1 tr=0 ts=68ef9df4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=RVIg9llbwysgEqpyqKEA:9
+ a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE0MDEzNCBTYWx0ZWRfX6wigO97PcB51
+ Ge8XW3keTS7UxsaTGO3UPw4vjE4YDrBhMVg7kG4vAUgZx2cl/mkgk7w68cHnu0J41K7eZ81Ur4X
+ 0Y1djEBGAQU+XwL01thuihc3J/S9p0NNYGKbThar15YiprocGP4BqCwk0cA0u/agxagUd+yzQsI
+ lR8m8am7TEDacdz5i0gYIEtYoOTHCOP/AGlyzXBenZgXjurrr4+rGRgjobFid/tBVHaleoBn0uB
+ wzWx6WJ1SXZX1u4LkIJbNckbxBToSHAQzuUp0o6Olg1DhIHUsJGuEdADKIteCXD79z7tk7xfE01
+ 9b1kK03eLosvaSSsW3FB5qTbaYeFJvjd9HBND2Iz/DBxcKpA+T1o4SvhBf3mLE7yN76GG1GO8XH
+ 5I8x03bnTKUVDLrcnuOEBxJmD3CibQ==
+X-Proofpoint-ORIG-GUID: wEWTZE-niR1qI16psjOeZ6KVFFqdoMVd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510140134
 
-On Wed, 15 Oct 2025 15:09:31 +0200
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+From: Nihal Kumar Gupta <nihalkum@qti.qualcomm.com>
 
-> On 06/10/2025 09:28, Boris Brezillon wrote:
-> > On Sat,  4 Oct 2025 11:30:50 +0200
-> > Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
-> >  =20
-> >> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/p=
-anthor/panthor_drv.c
-> >> index fdbe89ef7f43..a2be3b904ca2 100644
-> >> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> >> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> >> @@ -1623,6 +1624,12 @@ static const struct drm_driver panthor_drm_driv=
-er =3D {
-> >>   #endif
-> >>   };
-> >>  =20
-> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >> +bool panthor_transparent_hugepage;
-> >> +module_param_named(transparent_hugepage, panthor_transparent_hugepage=
-, bool, 0400);
-> >> +MODULE_PARM_DESC(transparent_hugepage, "Use a dedicated tmpfs mount p=
-oint with Transparent Hugepage enabled (false =3D default)"); =20
-> >=20
-> > nit: I'd go for a slightly shorter name, like [panthor_]enable_thp. =20
->=20
-> For v4, in order to be consistent with the "transparent_hugepage*"=20
-> kernel parameters, I'd prefer to keep the "panthor.transparent_hugepage"=
-=20
-> (and "panfrost.transparent_hugepage") module parameter name
->=20
-> I could keep the parameter name as is and change the variable name though.
+Monaco EVK is a single-board computer based on the Qualcomm QCS8300 SoC.
+It lacks a camera sensor in its default configuration.
+This series adds CCI support and enables the IMX577 sensor via CSIPHY1
+through device tree overlay.
 
-Fair enough. Let's just keep things as they are in this version.
+We have tested IMX577 Sensor on CCI1 with following commands:
+- media-ctl --reset
+- media-ctl -V '"imx577 3-001a":0[fmt:SRGGB10/4056x3040 field:none]'
+- media-ctl -V '"msm_csiphy1":0[fmt:SRGGB10/4056x3040]'
+- media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
+- media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
+- media-ctl -l '"msm_csiphy1":1->"msm_csid0":0[1]'
+- media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+- yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video1
+---
 
->=20
-> > The patch is
-> >=20
-> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> >=20
-> > regardless.
-> >  =20
+This patch series depends on patch series:
+https://lore.kernel.org/all/20251015130130.2790829-1-quic_vikramsa@quicinc.com
+
+Bindings for Supplies are added by below patch:
+https://lore.kernel.org/all/20251015130130.2790829-1-quic_vikramsa@quicinc.com
+
+Changes in v4:
+- Remove the AXI source clock from the CCI node - Konrad
+- Updated the qcs8300-camss device tree binding.
+- Link to v3:
+  https://lore.kernel.org/all/20250917130647.1701883-1-quic_vikramsa@quicinc.com
+
+Changes in v3:
+- Updated and Wrapped commit messages for [PATCH v2 1/3] and [PATCH v2 2/3] - Rob
+- Link to v2:
+  https://lore.kernel.org/all/20250912141134.2799078-1-quic_vikramsa@quicinc.com
+
+Changes in v2:
+- Remove the patch that adds PHY supply documentation in the qcs8300 CAMSS. 
+  bindings. This change should be submitted together with the qcs8300 bindings patch.
+- Fix indentation and regulator node name - Krzysztof.
+- Update commit message as suggested - Dmitry.
+- Link to v1:
+  https://lore.kernel.org/lkml/20250909114241.840842-1-quic_vikramsa@quicinc.com
+
+Used following tools for the sanity check of these changes.
+- make -j32 W=1
+- checkpatch.pl
+- make DT_CHECKER_FLAGS=-m W=1 DT_SCHEMA_FILES=i2c/qcom,i2c-cci.yaml dt_binding_check
+- make CHECK_DTBS=y W=1 DT_SCHEMA_FILES=i2c/qcom,i2c-cci.yaml
+- make DT_CHECKER_FLAGS=-m W=1 DT_SCHEMA_FILES=media/qcom,qcs8300-camss.yaml dt_binding_check
+- make CHECK_DTBS=y W=1 DT_SCHEMA_FILES=media/qcom,qcs8300-camss.yaml
+
+Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+
+Nihal Kumar Gupta (3):
+  dt-bindings: i2c: qcom-cci: Document qcs8300 compatible
+  arm64: dts: qcom: qcs8300: Add CCI definitions
+  arm64: dts: qcom: monaco-evk-camera: Add DT overlay
+
+ .../devicetree/bindings/i2c/qcom,i2c-cci.yaml |   2 +
+ arch/arm64/boot/dts/qcom/Makefile             |   4 +
+ .../dts/qcom/monaco-evk-camera-imx577.dtso    |  96 ++++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 303 ++++++++++++++++++
+ 4 files changed, 405 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk-camera-imx577.dtso
+
+-- 
+2.34.1
 
 
