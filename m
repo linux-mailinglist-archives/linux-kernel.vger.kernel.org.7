@@ -1,226 +1,142 @@
-Return-Path: <linux-kernel+bounces-855029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA64BDFFDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B28BE0010
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9765E548461
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E08858210C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5E630147F;
-	Wed, 15 Oct 2025 18:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84192221DAD;
+	Wed, 15 Oct 2025 18:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhLX5V4m"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VPO5zguY"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1862FF66A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14A83009E7
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551567; cv=none; b=TdiJrxxAm60GtAen4sA1+o8FvzdwQVi6zMgLjHXa1hHWrzKKhLTZjDsMYiQUhzpL+4LAhfUNzyFBb5GmruPrNjeoVXgddhJy33faDk/B1HT72vUl/iG3YFfcBSj3jv/l0PAfxEbqNQ+KmD8f9Yuo+SpooxyXR6bkc3A/F+RoBg0=
+	t=1760551631; cv=none; b=dw/KhpmN9ycLVr8PYt2ujsvb8tAJ8d8wXzvTlg8dWseCPkH5dTbjSzqDqNPRCLfn1q5h1H/+eAk+gskLVl3V1RirXTccnCBoyfq0/ZJCoVmjL+vQafRKSHx2Lz1HvN9VpsyretmMaKv0NetuYdPeDsVMIPhs2HL5UZYRYPyNUk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551567; c=relaxed/simple;
-	bh=saXVXN/G1RmY/0tPS6bMXu5JGYHAEvpDgnNRPxaVDqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gs63VREPKscbYXfVLEMej4M8oBYYEW48zC9uYVG5dbIQmmAkbbV5TK73ZxMbkz/Poj8w9n5Qmc4yM9xFSUxDEJJ/vQUeV7+/NK+2WpVh55mAZPR/HS7KyllPi4+11hH5PEH9yF7yPbOsugLROoXNrQ5HHZsomeyRzGMf8cPWKK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhLX5V4m; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88e371e3cbfso158018485a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:06:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760551563; x=1761156363; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0l6MkKaSifnnXj5OTlg2FyNdCV8jBiow9l/iWjkN4k=;
-        b=DhLX5V4mF40kTqtfKGDpSNaV2ZPxVLUSu/0YL0hTon77xOX8uxuB4gaVguQjBNv7QE
-         y+h2y8uSPuYqjepuYRCoqBgY8J5B5oGXoK5GcbgChC3GatGt56L/ZXjUhJ6L7v/oP2tc
-         Oq2M60AM+rx8ZVthzo8S8UQRp8NwmBlS2TP+4/wTa4CdJ7PN45WE6VRlV3OmnAAy0U9y
-         X5eLAOTfjQdYFHVt3PX52cKMFWBRxcsJhJpFZSy72/9akVuwOWVcJDrBsq9aU/7TKh7T
-         INManWUS9hOb8FQODaRAuWmB5ldcYbbVug7SeN8PqwkajVGakv8WV4Ec3vWQ9hV1pgm9
-         zrHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551563; x=1761156363;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O0l6MkKaSifnnXj5OTlg2FyNdCV8jBiow9l/iWjkN4k=;
-        b=oTVF145DTHNvCDCffO2BkdX1kmyq/+nRNu4rw6cGouBDjMZFR8rEKiin5F2UAwEgB2
-         e3sUTCe0+cVtdYUkeaZKP4zpnzkAjNd74Bwioq0c9ceCkyHEx/Bpfvxt9MM1h8tW2Vok
-         YSfRAXnnmxDOYeN513putRHmPD1alneSNAnI86JrlpJwc5CY6ItOHjCfKofgeAjFd4k1
-         FrLMXrhTYXDCAqM9N5KudN5O76W5IQzLUZw/o/A64NY740EcrhFAIBqEd3uS+61DsFHs
-         7XYPcuJfY6WgUXTChZFM8+NpapWvDgCEWr8dvlD/cdbUQur77ITBDH3e1Q27f58a2BGU
-         rPew==
-X-Gm-Message-State: AOJu0YzK8LGPChFVTIXYiUsGYSQCzGWfxpURkeXarNAOHGgev9ty2kGH
-	9z+/LMv31b8Eg/KbG1SSR/t4CE+WKZwBgOZ5nKdcZj9WQffVYJxlIcSk
-X-Gm-Gg: ASbGncvIgfxgXemNC0PEGkPFsmWe3LiOy9s6/NGl6XYOmeuAgTaFjcwKorTFCh15qEg
-	OAUpTJrdp/1fFjtS9KCRNIeGdHUxNmva1dISV0wxGuxzlSDIRexdvm6lTUI3FyWdWzIoLSzsVBj
-	UXFGHkWStiT0BY2leiPiCAnkO2YwubAV0WbgBcsGj+i9+6eq5WjNM2puoSYh9sUsQ2GV7DN472r
-	cJsFDl1EeD50uajgfGfDQbw3H6VdoxgfUau6tB9Jt2fxvqs+TdjYQdCqHgBvK2K6Wkap2yz+sbS
-	xruZq8BiOC+anuyFhi7m0fUlNfSdLA9mN1sQeE8128P+blcjUhs5ju9Ima6a/Iu11FOTi8Z6FaB
-	E0Xz1v1S1CCOYxOAZq8dFYtzPcXbO6QCvU7a6Og==
-X-Google-Smtp-Source: AGHT+IH07pUTWfoILeAURCrXsbdCzX9r9za0TXbpl6sdSzuVgHj1Z35BAP4re0250XF4/DIhG+m8HA==
-X-Received: by 2002:a05:622a:20f:b0:4e8:8ed6:9be2 with SMTP id d75a77b69052e-4e88ed69fb9mr27068601cf.83.1760551562889;
-        Wed, 15 Oct 2025 11:06:02 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e881d294e1sm23265111cf.39.2025.10.15.11.06.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 11:06:01 -0700 (PDT)
-Date: Wed, 15 Oct 2025 14:06:00 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	TCMalloc Team <tcmalloc-eng@google.com>
-Subject: Re: [patch 07/19] cpumask: Introduce cpumask_or_weight()
-Message-ID: <aO_iiKKVyKSlXeF2@yury>
-References: <20251015164952.694882104@linutronix.de>
- <20251015172834.757776587@linutronix.de>
- <aO_c3lTmvJyzsOdE@yury>
+	s=arc-20240116; t=1760551631; c=relaxed/simple;
+	bh=pB57hIiFPwCLApeodBVwZjuaklMNrPippJeaU883e0k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=lWpItUnVC9q35BTa195eqGEDqAr+gpwtBAJtzXmPBHpxKqOrkhzYE9SXNYJX9f1BP0nOILY7Q/VOLDDGjtw7XAhR52Xg3CKhvnKe1nRLHIVwZTCDxjNtSXdoXq0T2KkjX+x6nt9w2fyx4/GVWnnF9qkPbhzdB/DPwbTKBsLqSQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VPO5zguY; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251015180707euoutp01d518e1fec337f453332932c6381d9a30~uvGCRMS5m2802328023euoutp01Y
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:07:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251015180707euoutp01d518e1fec337f453332932c6381d9a30~uvGCRMS5m2802328023euoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760551627;
+	bh=1unSNZI8VVG1hZT1k2vqCzNyKxvx74sReaYy4ZaeWcg=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=VPO5zguYIuPc3B21jKCzpb0qhISKYcuWR+BTY97+2WnhUCqsJUWtDKzyeMMsrWZjG
+	 bmokn3srqhoHGqfKNvDbBSfI22W+K0pwXmH3SZ5rgGppmvZWTE3uTQgmKujT9pA8/k
+	 +3DI6mQ+7L4Dr7MQQeowNoSnv4GyKEAVLXkpTb0M=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251015180706eucas1p2a2d2e1bcde06b30e15194fe089f1b980~uvGBhsboA1744017440eucas1p2B;
+	Wed, 15 Oct 2025 18:07:06 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251015180705eusmtip1e1fd7a667aef662fa645684ccf6bfd3a~uvGAWHpMN0945709457eusmtip1P;
+	Wed, 15 Oct 2025 18:07:05 +0000 (GMT)
+Message-ID: <0da1d4cc-1984-4813-9265-7f10aa1542f2@samsung.com>
+Date: Wed, 15 Oct 2025 20:07:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO_c3lTmvJyzsOdE@yury>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
+	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>, Daniel Almeida
+	<daniel.almeida@collabora.com>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, Elle Rhumsaa
+	<elle@weathered-steel.dev>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+In-Reply-To: <99a41538-ce1a-4130-a093-d0c600e63d16@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251015180706eucas1p2a2d2e1bcde06b30e15194fe089f1b980
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d
+X-EPHeader: CA
+X-CMS-RootMailID: 20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d
+References: <CGME20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d@eucas1p2.samsung.com>
+	<20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
+	<ayuqnx7fjfe3zwicvdbdr3qsgb4w6s2gwjt7r3m5ikzrylmium@hsrxazwelnvp>
+	<99a41538-ce1a-4130-a093-d0c600e63d16@samsung.com>
 
-On Wed, Oct 15, 2025 at 01:41:50PM -0400, Yury Norov wrote:
-> Hi Tomas,
+
+
+On 10/15/25 19:52, Michal Wilczynski wrote:
 > 
-> On Wed, Oct 15, 2025 at 07:29:36PM +0200, Thomas Gleixner wrote:
-> > CID management OR's two cpumasks and then calculates the weight on the
-> > result. That's inefficient as that has to walk the same stuff twice. As
-> > this is done with runqueue lock held, there is a real benefit of speeding
-> > this up.
-> > 
-> > Provide cpumask_or_weight() and the corresponding bitmap functions which
-> > return the weight of the OR result right away.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Yury Norov <yury.norov@gmail.com>
-> > ---
-> >  include/linux/bitmap.h  |   15 +++++++++++++++
-> >  include/linux/cpumask.h |   16 ++++++++++++++++
-> >  lib/bitmap.c            |   17 +++++++++++++++++
-> >  3 files changed, 48 insertions(+)
-> > 
-> > --- a/include/linux/bitmap.h
-> > +++ b/include/linux/bitmap.h
-> > @@ -45,6 +45,7 @@ struct device;
-> >   *  bitmap_copy(dst, src, nbits)                *dst = *src
-> >   *  bitmap_and(dst, src1, src2, nbits)          *dst = *src1 & *src2
-> >   *  bitmap_or(dst, src1, src2, nbits)           *dst = *src1 | *src2
-> > + *  bitmap_or_weight(dst, src1, src2, nbits)    *dst = *src1 | *src2. Returns Hamming Weight of dst
-> >   *  bitmap_xor(dst, src1, src2, nbits)          *dst = *src1 ^ *src2
-> >   *  bitmap_andnot(dst, src1, src2, nbits)       *dst = *src1 & ~(*src2)
-> >   *  bitmap_complement(dst, src, nbits)          *dst = ~(*src)
-> > @@ -165,6 +166,8 @@ bool __bitmap_and(unsigned long *dst, co
-> >  		 const unsigned long *bitmap2, unsigned int nbits);
-> >  void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
-> >  		 const unsigned long *bitmap2, unsigned int nbits);
-> > +unsigned int __bitmap_or_weight(unsigned long *dst, const unsigned long *bitmap1,
-> > +				const unsigned long *bitmap2, unsigned int nbits);
-> >  void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
-> >  		  const unsigned long *bitmap2, unsigned int nbits);
-> >  bool __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
-> > @@ -338,6 +341,18 @@ void bitmap_or(unsigned long *dst, const
-> >  }
-> >  
-> >  static __always_inline
-> > +unsigned int bitmap_or_weight(unsigned long *dst, const unsigned long *src1,
-> > +			      const unsigned long *src2, unsigned int nbits)
-> > +{
-> > +	if (small_const_nbits(nbits)) {
-> > +		*dst = *src1 | *src2;
-> > +		return hweight_long(*dst & BITMAP_LAST_WORD_MASK(nbits));
-> > +	} else {
-> > +		return __bitmap_or_weight(dst, src1, src2, nbits);
-> > +	}
-> > +}
-> > +
-> > +static __always_inline
-> >  void bitmap_xor(unsigned long *dst, const unsigned long *src1,
-> >  		const unsigned long *src2, unsigned int nbits)
-> >  {
-> > --- a/include/linux/cpumask.h
-> > +++ b/include/linux/cpumask.h
-> > @@ -729,6 +729,22 @@ void cpumask_or(struct cpumask *dstp, co
-> >  }
-> >  
-> >  /**
-> > + * cpumask_or_weight - *dstp = *src1p | *src2p and return the weight of the result
-> > + * @dstp: the cpumask result
-> > + * @src1p: the first input
-> > + * @src2p: the second input
-> > + *
-> > + * Return: The number of bits set in the resulting cpumask @dstp
-> > + */
-> > +static __always_inline
-> > +unsigned int cpumask_or_weight(struct cpumask *dstp, const struct cpumask *src1p,
-> > +			       const struct cpumask *src2p)
-> > +{
-> > +	return bitmap_or_weight(cpumask_bits(dstp), cpumask_bits(src1p),
-> > +				cpumask_bits(src2p), small_cpumask_bits);
-> > +}
-> > +
-> > +/**
-> >   * cpumask_xor - *dstp = *src1p ^ *src2p
-> >   * @dstp: the cpumask result
-> >   * @src1p: the first input
-> > --- a/lib/bitmap.c
-> > +++ b/lib/bitmap.c
-> > @@ -253,6 +253,23 @@ void __bitmap_or(unsigned long *dst, con
-> >  }
-> >  EXPORT_SYMBOL(__bitmap_or);
-> >  
-> > +unsigned int __bitmap_or_weight(unsigned long *dst, const unsigned long *bitmap1,
-> > +				const unsigned long *bitmap2, unsigned int bits)
-> > +{
-> > +	unsigned int k, w = 0;
-> > +
-> > +	for (k = 0; k < bits / BITS_PER_LONG; k++) {
-> > +		dst[k] = bitmap1[k] | bitmap2[k];
-> > +		w += hweight_long(dst[k]);
-> > +	}
-> > +
-> > +	if (bits % BITS_PER_LONG) {
-> > +		dst[k] = bitmap1[k] | bitmap2[k];
-> > +		w += hweight_long(dst[k] & BITMAP_LAST_WORD_MASK(bits));
-> > +	}
-> > +	return w;
-> > +}
 > 
-> We've got bitmap_weight_and() and bitmap_weight_andnot() already. Can
-> you align naming with the existing scheme: bitmap_weight_or().
-> 
-> Also, for outline implementation, can you employ the BITMAP_WEIGHT()
-> macro?
+> On 10/13/25 18:48, Uwe Kleine-König wrote:
+>>
+>> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+>> index c9fd1d8d17bc..a5666052b7ce 100644
+>> --- a/drivers/pwm/pwm_th1520.rs
+>> +++ b/drivers/pwm/pwm_th1520.rs
+>> @@ -121,6 +121,7 @@ fn round_waveform_tohw(
+>>          wf: &pwm::Waveform,
+>>      ) -> Result<pwm::RoundedWaveform<Self::WfHw>> {
+>>          let data = chip.drvdata();
+>> +        let status = 0;
+>>  
+>>          if wf.period_length_ns == 0 {
+>>              dev_dbg!(chip.device(), "Requested period is 0, disabling PWM.\n");
+>> @@ -141,18 +142,13 @@ fn round_waveform_tohw(
+>>          if period_cycles == 0 {
+>>              dev_dbg!(
+>>                  chip.device(),
+>> -                "Requested period {} ns is too small for clock rate {} Hz, disabling PWM.\n",
+>> +                "Requested period {} ns is too small for clock rate {} Hz, rounding up.\n",
+>>                  wf.period_length_ns,
+>>                  rate_hz
+>>              );
+>>  
+>> -            return Ok(pwm::RoundedWaveform {
+>> -                status: 0,
+>> -                hardware_waveform: Th1520WfHw {
+>> -                    enabled: false,
+>> -                    ..Default::default()
+>> -                },
+>> -            });
+>> +            period_cycles = 1;
+>> +            status = 1;
 
-Ok, I see now. You want to do a regular cpumask_or(), but return the
-hweight() of the result, instead of a boolean.
+Well status and period_cycles need to be mutable obviously, will change
+that.
 
-The cpumask_or_weight() may be really confused with cpumask_weight_or().
-Can you try considering a different naming? (I am seemingly can't.)
 
-Can you describe the performance impact you've mentioned in the commit
-message in more details?
-
-Anyways, for the approach:
-
-Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
