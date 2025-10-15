@@ -1,83 +1,45 @@
-Return-Path: <linux-kernel+bounces-853838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5455BBDCB97
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8573BDCBB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0491920614
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A123C8213
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E0E30FC18;
-	Wed, 15 Oct 2025 06:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB5E30FF00;
+	Wed, 15 Oct 2025 06:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eOAmWuIK"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010012.outbound.protection.outlook.com [52.101.193.12])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A0mQOTUw"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D0B29D26E;
-	Wed, 15 Oct 2025 06:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509651; cv=fail; b=abWbTA2AU2YJPipB8iesualdOho4T7jcKX/oTbkl1WMv2kVJuT+7LPa4jsPYvneM5t/LjhQ+hQYVJ4tdZYXQsmBcb0EuysuSB8Vm06wgkSd9L7lyTjr5GP0okmkk295uHJAFT9I9vRYYnQGjoq2m7kMGZwZxK8AKl2Mk5J0HKLE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509651; c=relaxed/simple;
-	bh=tBmflYVQ3OYbaC4Xj4Gyl4kmbkXzBsJ6VTHIgIomcWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bs9xZ7CdlEe1A6+zgBNgRaKkAtZbkNCEo/LFlGOy4HgfZqpzF2du7S618IcUmDNGgwgK8za604YnVvwAHyF1cGuYjB4kEpaJgP1DVHzcESV3HJupMVYc93IFaMoBsAo25h3kXK5A7WVLNWjJfSaRJad3BZAXlC/3gEIY/7hAqeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eOAmWuIK; arc=fail smtp.client-ip=52.101.193.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MhPBAWB01U6wGlQV03exkKq33ti8rVbAOsis8PzxMZr7B2qjjtE+XjXIfUbWqwfUOji5iZYMsZEfr5/NOnKrvU0XpAK8gfIBgCrqVu6ohKbd+nN/KKSZCBDtxmqKDWnnm3plHo8wbZRWHPqIOBsLhwTBA6TJFC4kJBvOrgCNZDD5XSaIy632dtznN2oKN3kLnhtJ6o34Blkq2GQ+MchI0vguwMZDPEccyPSLH7ad6NQd778mZkwDj4Ar26R/tWmGi+AQcixbTddQo1QhDnFwM4EBsBsBK5ZYF0UZl2OcbWerW4EZF2iR9BRmOmWnORqSCe7g3IHF9tjbqmM9KSFxiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5U97JVDeJ8BFOj3SpWqYyCaslwkcG6gV/ZxXWSYAPl8=;
- b=VGwtwZZAsU2YxHlU0hSaa2hb8mpOT8ApmDmMR5mdgBpX5/CJwBd8Azp8xEU2q8NfRieevS8tqNsFKeLLczXaiCtOZPmuIxVlZH7SbiDgP/hwQl3UPNTbx/7A6WYrPWn9fNJt3yMD5NMJ07Jbi5LpCE3jvKaKX+I1JXDEKdt14vJTEcICl3cZ9rOXt3BsTwqv/Q+OBoQyzuYjpwPeLz4qJIA0eRLwS2nDAoTNRcLiNZXJU7PnAb0zHMNoXP5ehNU8Q0G6XY7+4aVwuGODsbBZMs1eZZn7/lsdIxbTFk49rgOl4D74yY/SDAFvOb2uwqgI1/wH+ohj8xwDrBmt7DTZdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5U97JVDeJ8BFOj3SpWqYyCaslwkcG6gV/ZxXWSYAPl8=;
- b=eOAmWuIKbKWmvYeUvzqmZZJF4zER0s6v7QDOxArT+YHFPJUpzfytgT9UGY6nLJmFp+nw77Xt81gsjOwTPphhKDVNABiSfNqY5NKXxJ8CyM4tIUHeU0meB3TLqQ892eMAE+hVFSBt2pXnwQES++eFQoo+632ISR90m7qXfLrvPUQ=
-Received: from DM6PR01CA0004.prod.exchangelabs.com (2603:10b6:5:296::9) by
- BL1PR12MB5801.namprd12.prod.outlook.com (2603:10b6:208:391::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
- 2025 06:27:25 +0000
-Received: from CY4PEPF0000EDD2.namprd03.prod.outlook.com
- (2603:10b6:5:296:cafe::73) by DM6PR01CA0004.outlook.office365.com
- (2603:10b6:5:296::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.12 via Frontend Transport; Wed,
- 15 Oct 2025 06:27:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CY4PEPF0000EDD2.mail.protection.outlook.com (10.167.241.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 06:27:25 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 14 Oct
- 2025 23:27:24 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 14 Oct
- 2025 23:27:24 -0700
-Received: from [172.31.184.125] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 14 Oct 2025 23:27:20 -0700
-Message-ID: <fe9320d4-9da0-4de8-8e1e-ec03ecf582a1@amd.com>
-Date: Wed, 15 Oct 2025 11:57:19 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F78326FD84;
+	Wed, 15 Oct 2025 06:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760509762; cv=none; b=qyXtu7osgs3CoZu2OtzhkS1aM3b4IB3IbVtfTH9mzvsV74hD31tOqpTqOWo/Fhn/Tq2y9F3A0X7J3JNheyibHzCpfRTq0b93Ix4ehpRTaCnlyaWcU54nfJ0UfkbMzbbvusRn4youbycnTVZKm3MiQN37AnRs2lG6498Aa+r8sMM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760509762; c=relaxed/simple;
+	bh=iezWRS8yvUvdTBT7iwBhic4M/CXdCiQL0UFtWijk8LM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QfTSSCIgp3tq/yy3Lsz9yiKFm2MMpWt/TqDiomaEJmzB/jMY/XsJn1Zc2himZIN4awogEw0ruhdC+UIzB8BLOyqoiNZ0wNieFlOOKKYpdAoCc2tFWdy9O42LTBAkHUIU+CeJw1/bXg6nxV1m673LnsfQ9LTmzIiZ596TW3JWvfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A0mQOTUw; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760509750; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bbP6wfltIs9nIK3nD5iSabINDJ6NIt6iMczHxBUfYUU=;
+	b=A0mQOTUwa+qs9fLoqAZllb5fY5OEsoEPkaSOzLN/xv43TH7G8795Dq/uYNPDUPK+cPL3OaF4fRm441FYRH96G5M55c5u+qVOFDUo6xKayXvAtXE2h7MWCHeeFN2zv8L79Pu1baEwao7hKZoWcxrRB2T7ZdJpqgmEeoqTDxlCHiI=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqF7sLp_1760509747 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Oct 2025 14:29:08 +0800
+Message-ID: <b6353617-048a-4e12-a1d4-6d1484619927@linux.alibaba.com>
+Date: Wed, 15 Oct 2025 14:29:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,124 +47,273 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6.12] sched/fair: Block delayed tasks on throttled
- hierarchy during dequeue
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Sasha Levin <sashal@kernel.org>, <stable@vger.kernel.org>, Matt Fleming
-	<matt@readmodwrite.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, <linux-kernel@vger.kernel.org>, "Dietmar
- Eggemann" <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, "Valentin
- Schneider" <vschneid@redhat.com>, <kernel-team@cloudflare.com>, Matt Fleming
-	<mfleming@cloudflare.com>, Oleg Nesterov <oleg@redhat.com>, John Stultz
-	<jstultz@google.com>, Chris Arges <carges@cloudflare.com>
-References: <CAENh_SRj9pMyMLZAM0WVr3tuD5ogMQySzkPoiHu4SRoGFkmnZw@mail.gmail.com>
- <20251015060359.34722-1-kprateek.nayak@amd.com>
- <2025101516-skeletal-munchkin-0e85@gregkh>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <2025101516-skeletal-munchkin-0e85@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD2:EE_|BL1PR12MB5801:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88716db4-f92d-4d20-3ef4-08de0bb3e823
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Nis4SzgvU1lTd2ZjaHd1Wks5cHo1Skt0QURxV0xJZVp2aVQwUlRscHJEcEJW?=
- =?utf-8?B?RERPaEhJa3F6OWQ4Y3V4MkxWdXFGZjd6aHI2SU9UUGQ2eUtMSUhRd1pwbzM1?=
- =?utf-8?B?YUptcmhXL1R6N1pJTHZqNyt2Rkd6R1BBNVpOc0p4eWo1ckdnUFc1Z05ma2Q4?=
- =?utf-8?B?ODB6eGRUSXN6WUw2YkI5RjlPSm9CZUxRcCt1VWdhS3c2OVB3SjhhQjJCWHBn?=
- =?utf-8?B?N3BPOHVFZ3hSMThrbVlQcDdaMmI2UHRzQzNEWGtQcnZkTThKYTdoNmVkTkxT?=
- =?utf-8?B?eGF3dHBaZUxoOHpmbVRPTC96Y25MMVlrVjVtSlpZQ1FMVnQ5NTBndm1sUklS?=
- =?utf-8?B?OSs5TjRNNU1lYVFabnR3QXhGbEhqeHp4SkdYNXFhK0lQTXlSMVBsRjBqOXJU?=
- =?utf-8?B?Y3lkWHlxREgweFpJNVlJS2VZbjdTVGU5VUVFdStOcCsrS3lHN0FLTXArcFVu?=
- =?utf-8?B?Rk9vMGFPWGYzM3V2QWJkL2VSY1RBQ1RnQlhMQ0FMejF0WVdicTBlVGtZOVpK?=
- =?utf-8?B?eGVNaGV3ajh4VnJ0TUlCWU81c0EvRWlrVXMrRG9mU0NsRDdFaDF2VlNlaVpD?=
- =?utf-8?B?VVNDWHg2M2owZlQ1bTllWVo1VmxJMis5TjlIa0dZMDgzYkxqTmYxNS85N3pX?=
- =?utf-8?B?WFl0aU52SEZzNEZQUUlCdTZZeVlwZTNYVEhrRk9MZUxjd0pUR3FtRWhxN05o?=
- =?utf-8?B?R3BPZXBoZmpvS2hkaklpQ2NSYVI2cUFybVdWZ0hvSEhSQ2MxOVM1UjBpQ1ll?=
- =?utf-8?B?UmNFS2lkN015RUQvclVsbHBVdVVRemdNOFNaWmNKRmtla1pkd09KaDVRM1B6?=
- =?utf-8?B?dlBDSkpvVnFoZmVjWjg4MkwvTGh0VW5CZk5YY01QcjBuVDhndVlyd1hWV1Fw?=
- =?utf-8?B?TWxxMkNZRVVuczhMWEh4M0NWaWRXK1d1UktoeXovekhxY3RGNk04UnNMQlRo?=
- =?utf-8?B?OFM4bDVwUENEcC8wMkd2N09NMFNnajNuWjkvd3JPVWZ0TUtCZkE1d2ZXcFlM?=
- =?utf-8?B?VHVRR2Z1OHkvZExORUttMThUdFdqMGZydXhYVXE0d3VhM1J5ejFXaS9QVkRB?=
- =?utf-8?B?WC84TlVzNHNUQ3B3U2dFV0F6SlM4V3ZOVXhXTG9FdiswYkVTSm5UY2o2VlZW?=
- =?utf-8?B?QzNjbEFIZENoUWZwZGZDRHVvbllYajFLSFZ6dC9FV0hWN3ZWUEFVV0J1MVJC?=
- =?utf-8?B?RzlQZEsvVkpUNjZmVWxqRmR6K1JhUWF1c1BOWUcvaktJMXZpcmF1ZzhlSTZj?=
- =?utf-8?B?a0M1Y2tMbWRUVW9Nc3l0dlh4REV2YTB5dmtkeThVUk0rc3NlZ2kxdmRBa2xO?=
- =?utf-8?B?dFQ4WWN4SVhpbEx1UXAyNUNRMEREd2xjY0xDSFpXeXFNc095R1lmb3hpOWhn?=
- =?utf-8?B?Z3kyTkpkSXVvOFpLbzFwS1AyZ2VBTVF5TXNUSDczaWNQUjJ6bkRCTmkyUjc0?=
- =?utf-8?B?bHVLd3lGbzJDT3N2UHNKc1BRbnZyTnl4anVkZEtGc3Y0ZVl3RzJjZEtuZjZk?=
- =?utf-8?B?MXRFKytuV1J4clQyVjlvcXFDejJ1NVpmNjh3K3lQQXBPQmd0SDV6V05BazJJ?=
- =?utf-8?B?bkN3cXUyZi9ZWGVHMEFtNWxZUWtHM2hUaHFBVHZwN3JCWkNsWmt3ekxxZE9C?=
- =?utf-8?B?ZEJFblh6Um5wYytlQUJGUUdhd3lZdFl3VFE4VkphWkpkMDZUWTgyRjVpazB4?=
- =?utf-8?B?aWxsN2xiTjBQNUo2cVNsRnJxOGxpeXFZbGlLTXQrR21INkgyU3lQbE9wRjh5?=
- =?utf-8?B?RmRKSk91MUlQa3g4amRuYTd4WmQrS3RTcEJGZHpFbWM0bHY2R09haTZoeWVU?=
- =?utf-8?B?aWpHMWpmR1h5UmtzSzFVeVdqZWVYMXhxcjFJQ2JJc0dTQlAzb1JPTWsxMTFS?=
- =?utf-8?B?YlYyR3czazEwVEo2RDYxNkxOcndrODJQbTZkS3FBTTZRVHgzUEFKYXJwWWRR?=
- =?utf-8?B?bWJVWDJpTHBHMFYyRWtqSDNGbFJGdVBqVzFNMDA2RjdoRVpYVVBGTEFhQ0gy?=
- =?utf-8?B?YXdRYWw4TEY4NnB4ak0rT1FPMHh0NTl1L3I3bmxVUEJkcm5JdEJ6SVIxZXNm?=
- =?utf-8?B?N2EwVFpYMWdreTlCdHdLeGw5eWhnTktjeGYvNTdTVXJMVnVQTU5HOEdnMmg2?=
- =?utf-8?Q?SrlI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 06:27:25.3978
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88716db4-f92d-4d20-3ef4-08de0bb3e823
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5801
+Subject: Re: [PATCH v12 1/3] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
+ Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
+ bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
+ anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
+ tianruidong@linux.alibaba.com
+References: <20251014123159.57764-1-xueshuai@linux.alibaba.com>
+ <20251014123159.57764-2-xueshuai@linux.alibaba.com>
+ <20251014114029.4c59bb1a@gandalf.local.home>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20251014114029.4c59bb1a@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Greg,
 
-On 10/15/2025 11:44 AM, Greg Kroah-Hartman wrote:
->> Greg, Sasha,
->>
->> This fix cleanly applies on top of v6.16.y and v6.17.y stable kernels
->> too when cherry-picked from v6.12.y branch (or with 'git am -3'). Let me
->> know if you would like me to send a seperate patch for each.
->>
->> As mentioned above, the upstream fixes this as a part of larger feature
->> and we would only like these bits backported. If there are any future
->> conflicts in this area during backporting, I would be more than happy to
->> help out resolve them.
+
+在 2025/10/14 23:40, Steven Rostedt 写道:
+> On Tue, 14 Oct 2025 20:31:57 +0800
+> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
 > 
-> Why not just backport all of the mainline changes instead?  As I say a
-> lot, whenever we do these "one off" changes, it's almost always wrong
-> and causes problems over the years going forward as other changes around
-> the same area can not be backported either.
+>> Hotplug events are critical indicators for analyzing hardware health,
+>> and surprise link downs can significantly impact system performance and
+>> reliability.
+>>
+>> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
+>> for hotplug event to help health checks. Add enum pci_hotplug_event in
+>> include/uapi/linux/pci.h so applications like rasdaemon can register
+>> tracepoint event handlers for it.
+>>
+>> The following output is generated when a device is hotplugged:
+>>
+>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+>> $ cat /sys/kernel/debug/tracing/trace_pipe
+>>     irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_PRESENT
+>>
+>>     irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_UP
+>>
+>> Suggested-by: Lukas Wunner <lukas@wunner.de>
+>> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> ---
+>>   drivers/pci/Makefile              |  3 ++
+>>   drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
+>>   drivers/pci/trace.c               | 11 ++++++
+>>   include/trace/events/pci.h        | 63 +++++++++++++++++++++++++++++++
+>>   include/uapi/linux/pci.h          |  7 ++++
+>>   5 files changed, 109 insertions(+), 6 deletions(-)
+>>   create mode 100644 drivers/pci/trace.c
+>>   create mode 100644 include/trace/events/pci.h
+>>
+>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+>> index 67647f1880fb..58a4e4ea76b0 100644
+>> --- a/drivers/pci/Makefile
+>> +++ b/drivers/pci/Makefile
+>> @@ -45,3 +45,6 @@ obj-y				+= controller/
+>>   obj-y				+= switch/
+>>   
+>>   subdir-ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+>> +
+>> +CFLAGS_trace.o := -I$(src)
+>> +obj-$(CONFIG_TRACING)		+= trace.o
+>> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+>> index bcc938d4420f..7805f697a02c 100644
+>> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+>> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/types.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/pci.h>
+>> +#include <trace/events/pci.h>
+>>   
+>>   #include "../pci.h"
+>>   #include "pciehp.h"
+>> @@ -244,12 +245,20 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+>>   	case ON_STATE:
+>>   		ctrl->state = POWEROFF_STATE;
+>>   		mutex_unlock(&ctrl->state_lock);
+>> -		if (events & PCI_EXP_SLTSTA_DLLSC)
+>> +		if (events & PCI_EXP_SLTSTA_DLLSC) {
+>>   			ctrl_info(ctrl, "Slot(%s): Link Down\n",
+>>   				  slot_name(ctrl));
+>> -		if (events & PCI_EXP_SLTSTA_PDC)
+>> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
+>> +					   slot_name(ctrl),
+>> +					   PCI_HOTPLUG_LINK_DOWN);
 > 
-> So please, try to just backport the original commits.
+> I know this is v12 and I don't remember if I suggested this before and you
+> gave me a reason already, but why not simply pass in "ctrl" and have the
+> TRACE_EVENT() denote the names?
+> 
+>> +		}
+>> +		if (events & PCI_EXP_SLTSTA_PDC) {
+>>   			ctrl_info(ctrl, "Slot(%s): Card not present\n",
+>>   				  slot_name(ctrl));
+>> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
+>> +					   slot_name(ctrl),
+>> +					   PCI_HOTPLUG_CARD_NOT_PRESENT);
+>> +		}
+>>   		pciehp_disable_slot(ctrl, SURPRISE_REMOVAL);
+>>   		break;
+>>   	default:
+>> @@ -269,6 +278,9 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+>>   					      INDICATOR_NOOP);
+>>   			ctrl_info(ctrl, "Slot(%s): Card not present\n",
+>>   				  slot_name(ctrl));
+>> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
+>> +					   slot_name(ctrl),
+>> +					   PCI_HOTPLUG_CARD_NOT_PRESENT);
+>>   		}
+>>   		mutex_unlock(&ctrl->state_lock);
+>>   		return;
+>> @@ -281,12 +293,19 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+>>   	case OFF_STATE:
+>>   		ctrl->state = POWERON_STATE;
+>>   		mutex_unlock(&ctrl->state_lock);
+>> -		if (present)
+>> +		if (present) {
+>>   			ctrl_info(ctrl, "Slot(%s): Card present\n",
+>>   				  slot_name(ctrl));
+>> -		if (link_active)
+>> -			ctrl_info(ctrl, "Slot(%s): Link Up\n",
+>> -				  slot_name(ctrl));
+>> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
+>> +					   slot_name(ctrl),
+>> +					   PCI_HOTPLUG_CARD_PRESENT);
+>> +		}
+>> +		if (link_active) {
+>> +			ctrl_info(ctrl, "Slot(%s): Link Up\n", slot_name(ctrl));
+>> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
+>> +					   slot_name(ctrl),
+>> +					   PCI_HOTPLUG_LINK_UP);
+>> +		}
+>>   		ctrl->request_result = pciehp_enable_slot(ctrl);
+>>   		break;
+>>   	default:
+>> diff --git a/drivers/pci/trace.c b/drivers/pci/trace.c
+>> new file mode 100644
+>> index 000000000000..cf11abca8602
+>> --- /dev/null
+>> +++ b/drivers/pci/trace.c
+>> @@ -0,0 +1,11 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Tracepoints for PCI system
+>> + *
+>> + * Copyright (C) 2025 Alibaba Corporation
+>> + */
+>> +
+>> +#include <linux/pci.h>
+>> +
+>> +#define CREATE_TRACE_POINTS
+>> +#include <trace/events/pci.h>
+>> diff --git a/include/trace/events/pci.h b/include/trace/events/pci.h
+>> new file mode 100644
+>> index 000000000000..208609492c06
+>> --- /dev/null
+>> +++ b/include/trace/events/pci.h
+>> @@ -0,0 +1,63 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#undef TRACE_SYSTEM
+>> +#define TRACE_SYSTEM pci
+>> +
+>> +#if !defined(_TRACE_HW_EVENT_PCI_H) || defined(TRACE_HEADER_MULTI_READ)
+>> +#define _TRACE_HW_EVENT_PCI_H
+>> +
+>> +#include <linux/tracepoint.h>
+>> +
+>> +#define PCI_HOTPLUG_EVENT						\
+>> +	EM(PCI_HOTPLUG_LINK_UP,			"LINK_UP")		\
+>> +	EM(PCI_HOTPLUG_LINK_DOWN,		"LINK_DOWN")		\
+>> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"CARD_PRESENT")		\
+>> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"CARD_NOT_PRESENT")
+>> +
+>> +/* Enums require being exported to userspace, for user tool parsing */
+>> +#undef EM
+>> +#undef EMe
+>> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
+>> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
+>> +
+>> +PCI_HOTPLUG_EVENT
+>> +
+>> +/*
+>> + * Now redefine the EM() and EMe() macros to map the enums to the strings
+>> + * that will be printed in the output.
+>> + */
+>> +#undef EM
+>> +#undef EMe
+>> +#define EM(a, b)	{a, b},
+>> +#define EMe(a, b)	{a, b}
+>> +
+>> +TRACE_EVENT(pci_hp_event,
+>> +
+>> +	TP_PROTO(const char *port_name,
+>> +		 const char *slot,
+>> +		 const int event),
+>> +
+>> +	TP_ARGS(port_name, slot, event),
+>> +
+>> +	TP_STRUCT__entry(
+>> +		__string(	port_name,	port_name	)
+>> +		__string(	slot,		slot		)
+>> +		__field(	int,		event	)
+>> +	),
+> 
+> 	TP_PROTO(struct controller *ctrl, int event),
+> 
+> 	TP_ARGS(ctrl, event),
+> 
+> 	TP_STRUCT__entry(
+> 		__string(	port_name,	pci_name(ctrl->pcie->port)	)
+> 		__string(	slot,		slot_name(ctrl)			)
+> 		__field(	int,		event				)
+> 	),
+> 
+> It would move the work out of the calling path.
+> 
+> -- Steve
+> 
 
-Peter was in favor of backporting just the necessary bits in
-https://lore.kernel.org/all/20250929103836.GK3419281@noisy.programming.kicks-ass.net/
+Hi, Steve,
 
-Backporting the whole of per-task throttle feature is lot more heavy
-handed with the core changes adding:
+Thank you for your suggestion about passing the controller directly to
+the trace event. I investigated this approach, but unfortunately we
+cannot implement it due to structural limitations in the PCI hotplug
+subsystem.
 
- include/linux/sched.h |   5 +
- kernel/sched/core.c   |   3 +
- kernel/sched/fair.c   | 451 ++++++++++++++++++++++++------------------
- kernel/sched/pelt.h   |   4 +-
- kernel/sched/sched.h  |   7 +-
- 5 files changed, 274 insertions(+), 196 deletions(-)
+The issue is that `struct controller` is not standardized across
+different PCI hotplug drivers. Each driver defines its own version:
 
-And a few more fixes that will add to the above before v6.18. I'll defer
-to Peter to decide the best course of action.
+- pciehp has its own struct controller
+- cpqphp has a different struct controller
+- ibmphp and shpchp also have their own variants
 
--- 
-Thanks and Regards,
-Prateek
+This leads to naming conflicts. For example, both pciehp and cpqphp
+define a slot_name() function, but with different signatures:
 
+// In pciehp:
+static inline const char *slot_name(struct controller *ctrl)
+{
+     return hotplug_slot_name(&ctrl->hotplug_slot);
+}
+
+// In cpqphp:
+static inline const char *slot_name(struct slot *slot)
+
+Additionally, `struct hotplug_slot` is not a common field across all
+controller variants, making it impossible to have a unified way to
+extract the slot name from a generic controller pointer in the trace
+event.
+
+Since we want these trace events to be generic and usable across all PCI
+hotplug drivers (not just pciehp), we need to pass the already-resolved
+strings rather than driver-specific structures. This ensures
+compatibility and avoids the complexity of handling multiple controller
+types within the trace infrastructure.
+
+I understand this means doing the name resolution in the calling path,
+but it's necessary to maintain a generic interface that works across all
+PCI hotplug implementations.
+
+Best Regards,
+Shuai
 
