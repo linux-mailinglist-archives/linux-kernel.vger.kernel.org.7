@@ -1,103 +1,163 @@
-Return-Path: <linux-kernel+bounces-854822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDCABDF7AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:50:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BF7BDF7A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64CFC4FF6B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DB6403AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9114F330D41;
-	Wed, 15 Oct 2025 15:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0E2335BBA;
+	Wed, 15 Oct 2025 15:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jsDJblCZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttyfpz0d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5FB30C363
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0010432F771;
+	Wed, 15 Oct 2025 15:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760543372; cv=none; b=QqCIKkeoglDt8cVXh59ova6RHMYdTINPGNeZYnysBxp6yvdS2Nwb0rMc6iT7gwAN/p00j8OLa2Zz1tvE7UBuF4Afi5YWLSS5fnupJ25CFFfL+mDPiucOewhnYdo0CZeEgG3sy9IhgtVY8PqE1CKIutNY8ECVcjJ9QvdjXILeoOQ=
+	t=1760543379; cv=none; b=bLOcYMJwRrrz90uAH8XTYcIYfUYrcI7WN8tIHJ3MIoVu/GjT1EB9i/XHKfYlWuInN49xKBBr8x4fQSTtUAZSMmJCjEuhqJWVzmK8l/p6qWXwU0Be5hEGve3uiNNNIkSkDDCDWF68Ia1d7r4fii24zJjIdqGB+ovIb9fWE95htTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760543372; c=relaxed/simple;
-	bh=nvq9xBefH03JXdQMqIE12FVgBtG0T1sD1lw8rRTtYnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZZyLk3gAEl7lXECFOKpDwU1aDr3m/Y4OfpX8dCw+/muUvZHNkRfyqhmiSCnxKHYPV30UdQaG9/PknaWVjl/yuqpITkPqVMlWeb+FvaZlpwNz0xHYXlD2Sxr2wnrT7WwgNOYw74QHNfNCRSelxjXu+AukZ6jdkaDIueW94Uqtco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jsDJblCZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4A97740E016E;
-	Wed, 15 Oct 2025 15:49:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mMEpHj1_WwcJ; Wed, 15 Oct 2025 15:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760543363; bh=ky0ptVsEtlR8ayqd1hVyH4+Uu0fakQE2sbFkoDvJ7vA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsDJblCZeHZhbOaw40gnPmVPMSTJ63uvCgLOl1kau7ImlF4oeI5L7btCZVu0rdO1a
-	 RCVo21DezD+ycVVn8tpvAE8ehA7Fgx7sWLRjA7pJvTZgyw537gV8w8vGr+71LxDyHK
-	 Q/0OSp2FCjVoNdM/mDlGVneP7CNpYUCVGPK2tj2qhVDaThiy4xlyqpKPXg3OW3OlPG
-	 pje3lgfJek7IlIudCAKvQ4grZR+iKAAsUmbxVqSFqhF2pgOqmuKCNtydMh9OvK1Hrx
-	 ffCm/OTIpxeoxewA6eYlkWHzEjaHWuorKWK6RFFsIGCP9S4F3T47EdRXMoWOxxTRqy
-	 uER5R5M0QtO3Bne6gUYtLbXxm1oJTHupqZ6MgM8+T/1dLKCEuz9G+fJOJ31fe09UW1
-	 DSr4Rlnbw3bjty9tR7je7OvQc1t+TGAZ3Q0WAPLvYEeMZ+lOQXHG68yrXMrS/TuvWr
-	 nKHA3wOsBNk5PujucvJ0aw0oqowgG3L25sTylX2stteBa/9xsgxn6d6JsYj5v9tBMo
-	 3nGNDO2pTtKlOmH3doxQrte8VWEwUppUzMPwUe/HBdzVfHWJ+KPGPRCTwBY8t8udAZ
-	 fBkFJckzU5+gYQQW0Es5xEfeKrbRfLE5rRwXDzFFHeEui+p6J1xO/AnadmI06ae6TK
-	 XM7BCYbpnfOoiYDbOYVVHMjg=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5864440E019B;
-	Wed, 15 Oct 2025 15:49:17 +0000 (UTC)
-Date: Wed, 15 Oct 2025 17:49:11 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Xin Li <xin@zytor.com>, Borislav Petkov <bp@kernel.org>,
-	Xin Li <xin3.li@intel.com>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/cpufeatures: Correct LKGS feature flag description
-Message-ID: <20251015154911.GCaO_Cd0XNyE8bi5Db@fat_crate.local>
-References: <20251015103548.10194-1-bp@kernel.org>
- <2dd4dbee-dc7d-4118-be6d-94bd6d0d5030@zytor.com>
- <329BCA65-5152-4892-AFEA-DF72DCCE80B6@zytor.com>
- <b632fc82-bef4-456b-ba62-939bda5a4361@zytor.com>
- <B72756BE-F15B-46D6-B44E-2FBC79E837C3@zytor.com>
- <530c3c1a-5fab-4798-830b-1fe0e8522bc9@zytor.com>
- <9B0843ED-5207-4A42-A95B-1DB5314DE747@zytor.com>
+	s=arc-20240116; t=1760543379; c=relaxed/simple;
+	bh=SvJQkrxK8S2FzNYqFRInIPoqJAGTOO1/f98SdCFBCtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J/6RZif0+BHyE+MTmB6seGK3Ix5t0pb9BbK8ziSDeQGJyVuECa6KF65VhDwiQL2T6Ykk6tDfIiOvzaAPL7XkJ7TH/doG8j0yK7FWRuIPkKSYz2O1sHEPh1u06yQPu7dGsJu0+tUZwNjhokCHB5MpOCAYXyM0+f4oGQUqIzHvez4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttyfpz0d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39411C4CEF8;
+	Wed, 15 Oct 2025 15:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760543378;
+	bh=SvJQkrxK8S2FzNYqFRInIPoqJAGTOO1/f98SdCFBCtE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ttyfpz0d22MFc/WgqeuQ8VFQn6uGy9JK9dsvqaD3esJ6yrCwGhnD6IIa3LdZu22jE
+	 td5ZqWtRx+nBq30Q5ihELYPpQCO03WatZ+NIQ1Qc/52pOY5ZBMLmMoHrSrRo6Kgoq9
+	 2k82RaLJoAaQSCjdD90QX9GAZfCc12No1us3ylGTCTN3wUupOjY42X2G5PhplZbJ8H
+	 2fmWV860hNDNJjyXp83gNbDV2KcpKmOwSSvtyIA27EuLmxj+hu1KQllN2NcL7pkjDk
+	 Mtpf1ciOvbkJWhVAXrsONBa0hFyn9DYe/1IEybzb6MojkaaedNJZARErJHvS0ykjDs
+	 y4Daadk2JiIlQ==
+Message-ID: <0eb4c357-aafd-42bd-a4fd-687a91831bf4@kernel.org>
+Date: Wed, 15 Oct 2025 17:49:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9B0843ED-5207-4A42-A95B-1DB5314DE747@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250: always disable IRQ during THRE test
+To: Peng Zhang <zhangpeng.00@bytedance.com>, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ songmuchun@bytedance.com, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, buytenh@arista.com,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20251014114727.1186-1-zhangpeng.00@bytedance.com>
+ <94d19d6d-5bb5-4156-8499-0be3d227f478@bytedance.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <94d19d6d-5bb5-4156-8499-0be3d227f478@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 08:44:55AM -0700, H. Peter Anvin wrote:
-> >> Except that that is also wrong, because that's not all of what the instruction does. "Load user space GS" is really what it does, despite the initiate historical naming.
-> >> 
-> >
-> >Do you mean the load of GS attributes by LKGS is still missing?
+On 14. 10. 25, 14:19, Peng Zhang wrote:
 > 
-> Yes. It's really a modified MOV GS,... instruction that loads the base, limit, selector, and attributes; it just loads the base into a different place.
+> 
+> 在 2025/10/14 19:47, Peng Zhang 写道:
+>> commit 039d4926379b ("serial: 8250: Toggle IER bits on only after irq
+>> has been set up") moved IRQ setup before the THRE test, so the interrupt
+>> handler can run during the test and race with its IIR reads. This can
+>> produce wrong THRE test results and cause spurious registration of the
+>> serial8250_backup_timeout timer. Unconditionally disable the IRQ for the
+>> short duration of the test and re-enable it afterwards to avoid the race.
+>>
+>> Fixes: 039d4926379b ("serial: 8250: Toggle IER bits on only after irq 
+>> has been set up")
+>> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+>> ---
+>>   drivers/tty/serial/8250/8250_port.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/ 
+>> serial/8250/8250_port.c
+>> index 719faf92aa8a..addeef7a0d59 100644
+>> --- a/drivers/tty/serial/8250/8250_port.c
+>> +++ b/drivers/tty/serial/8250/8250_port.c
+>> @@ -2147,8 +2147,7 @@ static void serial8250_THRE_test(struct 
+>> uart_port *port)
+>>       if (up->port.flags & UPF_NO_THRE_TEST)
+>>           return;
+>> -    if (port->irqflags & IRQF_SHARED)
+>> -        disable_irq_nosync(port->irq);
+>> +    disable_irq_nosync(port->irq);
+> disable_irq_nosync() may need to be changed to disable_irq() to prevent 
+> interrupts that are currently being handled.
 
-Ok, "Load user space GS base" it is. Considering how you can't load any other
-GS.base due to it GPing for CPL > 0.
+Make sense to me. Care to Cc the people from 039d4926379b next time, so 
+that they can comment?
+
+>>       /*
+>>        * Test for UARTs that do not reassert THRE when the transmitter 
+>> is idle and the interrupt
+>> @@ -2170,8 +2169,7 @@ static void serial8250_THRE_test(struct 
+>> uart_port *port)
+>>           serial_port_out(port, UART_IER, 0);
+>>       }
+>> -    if (port->irqflags & IRQF_SHARED)
+>> -        enable_irq(port->irq);
+>> +    enable_irq(port->irq);
+>>       /*
+>>        * If the interrupt is not reasserted, or we otherwise don't 
+>> trust the iir, setup a timer to
+> 
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+js
+suse labs
 
