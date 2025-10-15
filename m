@@ -1,191 +1,197 @@
-Return-Path: <linux-kernel+bounces-853554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07039BDBF64
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:12:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0958FBDBF6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FB1192811F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:12:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5B93C17C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE582F744B;
-	Wed, 15 Oct 2025 01:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F0C2F7AB1;
+	Wed, 15 Oct 2025 01:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DN9cCPHj"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSbdghoN"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5492F5A1B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6989F2F6193
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760490745; cv=none; b=FozGEouM4m8Xc8M056DWltOIDpAuHSEzYBGIqmPV6on1CT4/hnsEk8ZEWWGiA0RajAx+D/BQlQhdjWxdEYJFu+uqd+YJk6FkNkuzRc+5MaAf+jWty8Skg892wjEAEGGDuaeFkLMlPSgajuxTiXimF/8rK3qZwxSwBg70BuEgkPM=
+	t=1760490783; cv=none; b=LksUwfXHQmWEFvpBggQEVz5WWmHvVfs9gHOrdq4GWF3pXydQ7dFcDWqBqcKNU8kkPJFeh4nV5iZSLkRlue1MAZpyHdkDfIfPqtD7yM6tzw2/wzLjWNF7agrZL5EWxLI6yksg/M+KcEB4o6lNBljL8wopVOzZUkgYm14PN/Jiptc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760490745; c=relaxed/simple;
-	bh=VRM97CWlsOT8ZJdTMoTW/+GjecPCqzJ3uGuQi6pJdPs=;
+	s=arc-20240116; t=1760490783; c=relaxed/simple;
+	bh=5W2+85pd06ZV1M+prtFXZf89M0U1ODNJHDrAbYVfZbU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WiSrTixWe/6qLgtRcacrnx/DRMwlsXA0efnzZobz5xGK9DlHIg/lK5DG4f8cJz/Daxq4aP1dj2HBD8Yyg6hHtsH48/gcGakbTkZn5XS0N0pE2WmjtHh/2b1GtmF5ZyvUHSAJZParvpA5xEh7QE8EZyyy9YrKyVx0/WxpvmdMssE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DN9cCPHj; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=cEyq/9Ihbo3oQ44CBkcGZZkE7MlCKczZQ7bvJjC34YK9mW+hWZcQCRmsC+zA6kp/FymJry+WNlgK4SKc3miAiFDM5Gxm/V7bx8tkdUuY+UpjoaxY5USrfyhuQkPjl8mj32r/dvYbGSmapIBgGCqfYrTUa/9dgKTe4Hg2LbZr4lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSbdghoN; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-58120c35d47so1100036e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:12:21 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-637e74e9104so2157578a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:13:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760490740; x=1761095540; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760490779; x=1761095579; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VRM97CWlsOT8ZJdTMoTW/+GjecPCqzJ3uGuQi6pJdPs=;
-        b=DN9cCPHj7kPBJpIkbatm1S2JVDRD4nGArTozt6OK5J+u9sR0iMRLj0NlSmnfOnFPq5
-         sH0jXDX7CuxD+KlZ0pSYi2H6CjEC3i6lVcGvuQBEJyQvXSeqqTjWv9EaOUCRt9aGaDNX
-         zCkRW80rB8zpvPUMBpP6TYDGQdjTgsgj3YqEqC81NG4hjivbq38MQnbsWi08yC0GXbw9
-         DWsY5LsqgC8GJRMFsm2Ac0fVZJ7S1xG0JJqfFagTg9Myvk0X3frarEtGG88mq1oMbrL4
-         jO5RCqSblUvNUgWTfEv23VihZkUE7KcR1Up3MOll9zG7UWRqIwtztft73eXxNC8SnyZI
-         nGnw==
+        bh=HIFg9Y651C6jYHMRNt/SIA9hUcF2F84+cqC9exRdD80=;
+        b=FSbdghoNHTUpCFOAMeJqrcZqqJDgr9P1/ErK4bPUmj01c9dLJPOWedDg8DQQnsqpwd
+         Kz8riTAL5TbjEWkDHmsqw9CL922KYh4POKILk3Laraycb9/+0Cf/sg3IbhypxKXorpmb
+         vJ9Lo8QwghHDO0j/vy9nzAO8WvPpwi8BcMLcj4fa60FP8enUP3RgDaN+azHSRTddS3nl
+         Y+coSrkz7GpE+oQl+MIOOtebmgH7Vvpn/FdWjRdlJogrZ+bo+Pt7iWqvSMjfuVU5rzMf
+         +7M2K82tngIJLbhNO3/32pevBDfwO9tfuf9stJhHc/M5R8yresTwewLaiA6aFmNe7sS5
+         li8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760490740; x=1761095540;
+        d=1e100.net; s=20230601; t=1760490779; x=1761095579;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VRM97CWlsOT8ZJdTMoTW/+GjecPCqzJ3uGuQi6pJdPs=;
-        b=DRlXpa3BAAMlmLjaDBYTBoVy3L1lGMGUchsyNRQPUK8sJAXI8pjvvQ+6rbzBHrfqXz
-         gz0AQEdP5ZltF3c2AAncCFFyLryyRlSftEOUce94saby/O8ki4K4TredCeNqhUOm40aA
-         V8Zm9FmSXNm42s7U4sLqFjJ6cQUZMEZPasr3Fd5iuQ+z4bqN+ITTqVMqlomV1nwFnDnB
-         rIcE+wCFNZqA+WJFngk/jTGBmK+bwzjnK3UsKoJIw2EB2m1m2CjqDGaP9Nv42l2crMLV
-         Dl1LfBklKEWSPX97IA1LD/9N78GrG3ji5c+u3cFwKdzR52PTvLMuivu6eZazngRuDQ9T
-         My1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0G7hYmU3YJwtqmLunVIli+c/ph0os/9n05mw6xSyLSUKlHfKEhNrvUfULPbZyzCU0X+AFA2oXJPNVpkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUA56iYN8jK3wi+bHhs9Mpc70iK4JOzJWadArXqIry/LqhUYbc
-	o9x4ShUCwnL17uBsslqmx2stMK2+j9neLq5LkAibym+VlF6gfRVWzZq0xFXDu9uSJNsdHOrEZMb
-	9K5cSix+VJmBsgK2IyVIWyJ2V0ExgtCo=
-X-Gm-Gg: ASbGncvtFDBGGvjwwtD5Cd8c/avnasVeDEIbe+Z4AqahNFrCW9C2DtxAIOdaFow5uii
-	LE9htnrjoO6f+B161/j3UyS4EqaTiWwUEafCsdm8D1OFP/bYDRHz/tXdtxtFuFRTwoliQ+3Bcwl
-	AIXKHalCqfyvcGJIa6SDERhVp2o5jQYJTJP8aBOqBi123cm7cFmN2ep1dRWtUVJegIsLPlbp4u8
-	atB/ieN46LiyPgaBWfvEty0THRj+L5LfK/FRQ==
-X-Google-Smtp-Source: AGHT+IH/YU1kpB0Wn/4zP9l5pqChZfQXv1sm3d4LmsjcWXKZ0Ktc3UNXw8IIJzlfWpkxIJ+KKbvjrd6UrdDNej2f8Fk=
-X-Received: by 2002:a05:6512:23e9:b0:586:15ea:53c8 with SMTP id
- 2adb3069b0e04-591c8faf0b0mr151534e87.2.1760490739902; Tue, 14 Oct 2025
- 18:12:19 -0700 (PDT)
+        bh=HIFg9Y651C6jYHMRNt/SIA9hUcF2F84+cqC9exRdD80=;
+        b=IMjyw/e4zAPM6OCBcgYL06Ov4wVEQFyzf5UUXlMC819Y0OnqPaYCkE/EgWbU7RCXSd
+         7f5hrlfxOJSOwsXVqAsiTHnPD8yFIhCdh2v83OZdgcm9zLWgwPuG7cb/JqxOlyJxzjmc
+         cFeS1K1HSLEe0nqdHHzMQ9vELdwv3H1Tgvm2dm5VAGP0bBBro17JYCTINODDrYh5viOg
+         Ll8dep2yWtJhbv6hyHkzjbFAQBek5CXFuXaCcXtgHQvLw+AISvreOhACSDNChLYYBKJi
+         MHRSjRwzSpjHVaDtuT+pS8pf7teGgZ6EfrupE0xBRTnIZDAgWL+nBfUQIrTODb8Jyru4
+         kRlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMff8A+Ntmx4JaTAbb+du9ouyX1VKX6s93KEyDSyGZp32bSfG/2VNs4aL1OXGTZWC9ukty4mgDO1LFqqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeYkcSEOP1SUsCIfdIPAU784e3vu8UgXqiDfcGiUcxA2OV19Pt
+	v0am/u53qKs+dJf8H5HdRcDaE5CeKmwqc7W9SUjSCusYB6ZxXrzQr4NWR3AAKsXJ+/IByuxBc3G
+	d2Uc5AlGxA5AkeA9daAibdziNQ2T8Tk8=
+X-Gm-Gg: ASbGncuvOfeRaPO4UIMANNKyIqZ3lpE+8K/zrS4OycjzA/ZZWOgk0ERki8M9Rf7f+sx
+	F/V8sdkzWZex6g/ftIOgUVxWhiA0zxjqB6v3UsKBFGgSvJYTKt309ZT17aFIX9WDsXNfMDq19m0
+	rBRnsZN2mhSQU2ucEUN+6PEfznSMbzpuVrsWfBXvIbr+rnl4HuNKK8q8WAzT2ke8n0soyxhT9LQ
+	qb3tq6Xv1dde7YoCDpEANQ/35+p9AgjzRbKevyAR5EJcO8Z
+X-Google-Smtp-Source: AGHT+IEMqjPapD9eRQP/uxVQXUUIw7oKODkqd8+sXPMIUZbAd8hTgbXCVRklJtg/rXMz7OFgPnLe7Y2s5OJF7DIXxLc=
+X-Received: by 2002:a05:6402:13d1:b0:626:4774:2420 with SMTP id
+ 4fb4d7f45d1cf-639d5c320c0mr24548232a12.20.1760490778582; Tue, 14 Oct 2025
+ 18:12:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
- <20251014083230.1181072-3-zhaoyang.huang@unisoc.com> <87953097-a105-4775-88a5-9b3a676ff139@amd.com>
- <CAGWkznGN7W-txq_G+xpZ6DtH_1DNorYc=CxqUjebo7qfB4Sxsw@mail.gmail.com>
- <ecba7133-699c-4f3e-927c-bad5bd4c36a3@amd.com> <20251014171003.57bbfd63@mordecai.tesarici.cz>
- <97da9924-9489-4d30-a858-8ee5c87bc031@amd.com>
-In-Reply-To: <97da9924-9489-4d30-a858-8ee5c87bc031@amd.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Wed, 15 Oct 2025 09:12:07 +0800
-X-Gm-Features: AS18NWDwKUa99eX_upbZCKKbzQIUyuG-r_RZ364dCpA2z_s2W1WiiM3YMGbpa3o
-Message-ID: <CAGWkznGnmb=8GgcrfDvY2REHdRZYVXZy=F3thXhK0FaSoiK7tw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for
- order-0 allocation
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Petr Tesarik <ptesarik@suse.com>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Mel Gorman <mgorman@techsingularity.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
+ <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+ <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
+ <CAEf4BzaZ=UC9Hx_8gUPmJm-TuYOouK7M9i=5nTxA_3+=H5nEiQ@mail.gmail.com>
+ <CAADnVQLC22-RQmjH3F+m3bQKcbEH_i_ukRULnu_dWvtN+2=E-Q@mail.gmail.com>
+ <CAErzpmtCxPvWU03fn1+1abeCXf8KfGA+=O+7ZkMpQd-RtpM6UA@mail.gmail.com>
+ <CAADnVQ+2JSxb7Uca4hOm7UQjfP48RDTXf=g1a4syLpRjWRx9qg@mail.gmail.com>
+ <CAErzpmu0Zjo0+_r-iBWoAOUiqbC9=sJmJDtLtAANVRU9P-pytg@mail.gmail.com> <7f770a27-6ca6-463f-9145-5c795e0b3f40@oracle.com>
+In-Reply-To: <7f770a27-6ca6-463f-9145-5c795e0b3f40@oracle.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 15 Oct 2025 09:12:47 +0800
+X-Gm-Features: AS18NWC2l2vIG6SIpnIJhDffpTLpm2QvUXu3kXYxlJNoEm_ngJOG4oOMkQlG3Ic
+Message-ID: <CAErzpmvKtM5Abb9jKUg4KV0zwOpJL5Yy4nWEnxUpjRFUeeci3Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
+ btf_find_by_name_kind lookup
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 11:52=E2=80=AFPM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
+On Tue, Oct 14, 2025 at 4:06=E2=80=AFPM Alan Maguire <alan.maguire@oracle.c=
+om> wrote:
 >
-> On 14.10.25 17:10, Petr Tesarik wrote:
-> > On Tue, 14 Oct 2025 15:04:14 +0200
-> > Christian K=C3=B6nig <christian.koenig@amd.com> wrote:
-> >
-> >> On 14.10.25 14:44, Zhaoyang Huang wrote:
-> >>> On Tue, Oct 14, 2025 at 7:59=E2=80=AFPM Christian K=C3=B6nig
-> >>> <christian.koenig@amd.com> wrote:
+> On 14/10/2025 05:53, Donglin Peng wrote:
+> > On Tue, Oct 14, 2025 at 10:48=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> >>
+> >> On Mon, Oct 13, 2025 at 6:54=E2=80=AFPM Donglin Peng <dolinux.peng@gma=
+il.com> wrote:
+> >>>
+> >>> On Tue, Oct 14, 2025 at 8:22=E2=80=AFAM Alexei Starovoitov
+> >>> <alexei.starovoitov@gmail.com> wrote:
 > >>>>
-> >>>> On 14.10.25 10:32, zhaoyang.huang wrote:
-> >>>>> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> >>>> On Mon, Oct 13, 2025 at 5:15=E2=80=AFPM Andrii Nakryiko
+> >>>> <andrii.nakryiko@gmail.com> wrote:
 > >>>>>
-> >>>>> The size of once dma-buf allocation could be dozens MB or much more
-> >>>>> which introduce a loop of allocating several thousands of order-0 p=
-ages.
-> >>>>> Furthermore, the concurrent allocation could have dma-buf allocatio=
-n enter
-> >>>>> direct-reclaim during the loop. This commit would like to eliminate=
- the
-> >>>>> above two affections by introducing alloc_pages_bulk_list in dma-bu=
-f's
-> >>>>> order-0 allocation. This patch is proved to be conditionally helpfu=
-l
-> >>>>> in 18MB allocation as decreasing the time from 24604us to 6555us an=
-d no
-> >>>>> harm when bulk allocation can't be done(fallback to single page
-> >>>>> allocation)
+> >>>>> On Mon, Oct 13, 2025 at 4:53=E2=80=AFPM Alexei Starovoitov
+> >>>>> <alexei.starovoitov@gmail.com> wrote:
+> >>>>>>
+> >>>>>> On Mon, Oct 13, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
+> >>>>>> <andrii.nakryiko@gmail.com> wrote:
+> >>>>>>>
+> >>>>>>> Just a few observations (if we decide to do the sorting of BTF by=
+ name
+> >>>>>>> in the kernel):
+> >>>>>>
+> >>>>>> iirc we discussed it in the past and decided to do sorting in paho=
+le
+> >>>>>> and let the kernel verify whether it's sorted or not.
+> >>>>>> Then no extra memory is needed.
+> >>>>>> Or was that idea discarded for some reason?
+> >>>>>
+> >>>>> Don't really remember at this point, tbh. Pre-sorting should work
+> >>>>> (though I'd argue that then we should only sort by name to make thi=
+s
+> >>>>> sorting universally useful, doing linear search over kinds is fast,
+> >>>>> IMO). Pre-sorting won't work for program BTFs, don't know how
+> >>>>> important that is. This indexing on demand approach would be
+> >>>>> universal. =C2=AF\_(=E3=83=84)_/=C2=AF
+> >>>>>
+> >>>>> Overall, paying 300KB for sorted index for vmlinux BTF for cases wh=
+ere
+> >>>>> we repeatedly need this seems ok to me, tbh.
 > >>>>
-> >>>> Well that sounds like an absolutely horrible idea.
-> >>>>
-> >>>> See the handling of allocating only from specific order is *exactly*=
- there to avoid the behavior of bulk allocation.
-> >>>>
-> >>>> What you seem to do with this patch here is to add on top of the beh=
-avior to avoid allocating large chunks from the buddy the behavior to alloc=
-ate large chunks from the buddy because that is faster.
-> >>> emm, this patch doesn't change order-8 and order-4's allocation
-> >>> behaviour but just to replace the loop of order-0 allocations into
-> >>> once bulk allocation in the fallback way. What is your concern about
-> >>> this?
+> >>>> If pahole sorting works I don't see why consuming even 300k is ok.
+> >>>> kallsyms are sorted during the build too.
+> >>>
+> >>> Thanks. We did discuss pre-sorting in pahole in the threads:
+> >>>
+> >>> https://lore.kernel.org/all/CAADnVQLMHUNE95eBXdy6=3D+gHoFHRsihmQ75GZv=
+Gy-hSuHoaT5A@mail.gmail.com/
+> >>> https://lore.kernel.org/all/CAEf4BzaXHrjoEWmEcvK62bqKuT3de__+juvGctR3=
+=3De8avRWpMQ@mail.gmail.com/
+> >>>
+> >>> However, since that approach depends on newer pahole features and
+> >>> btf_find_by_name_kind is already being called quite frequently, I sug=
+gest
+> >>> we first implement sorting within the kernel, and subsequently add pr=
+e-sorting
+> >>> support in pahole.
 > >>
-> >> As far as I know the bulk allocation favors splitting large pages into=
- smaller ones instead of allocating smaller pages first. That's where the p=
-erformance benefit comes from.
-> >>
-> >> But that is exactly what we try to avoid here by allocating only certa=
-in order of pages.
+> >> and then what? Remove it from the kernel when pahole is newer?
+> >> I'd rather not do this churn in the first place.
 > >
-> > This is a good question, actually. Yes, bulk alloc will split large
-> > pages if there are insufficient pages on the pcp free list. But islates=
-t
-> > dma-buf indeed trying to avoid it, or is it merely using an inefficient
-> > API? And does it need the extra speed? Even if it leads to increased
-> > fragmentation?
->
-> DMA-buf-heaps is completly intentionally trying rather hard to avoid spli=
-tting large pages. That's why you have the distinction between HIGH_ORDER_G=
-FP and LOW_ORDER_GFP as well.
-Could you please check the alloc_pages_bulk_noprof in the patch 1/2 of
-this series. According to my understanding, it try to get the order-0
-page from pcplist firstly and then fallback to normal
-alloc_pages(order-0) as same as what current dma-buf do. That is to
-say no extra large pages splitting introduced by this commit.
->
-> Keep in mind that this is mostly used on embedded system with only small =
-amounts of memory.
-Actually, dma-buf is the main consumer for driver's memory allocation
-in the android world(multimedia, camera, npu etc) which could use even
-half of the system RAM with dozens MB for once allocation.
->
-> Not entering direct reclaim and instead preferring to split large pages u=
-ntil they are used up is an absolutely no-go for most use cases as far as I=
- can see.
-Yes. This behaviour would NOT be changed under this commit.
->
-> Could be that we need to make this behavior conditional, but somebody wou=
-ld need to come up with some really good arguments to justify the complexit=
-y.
-ok, should we use CONFIG_DMA_BUF_BULK_ALLOCATION or a variable
-controlled by sysfs interface?
->
-> Regards,
-> Christian.
->
+> > Apologies for the formatting issues in my previous email=E2=80=94sendin=
+g this again
+> >  for clarity.
 > >
-> > Petr T
+> > Thank you for your feedback. Your concerns are completely valid.
+> >
+> > I=E2=80=99d like to suggest a dual-mechanism approach:
+> > 1. If BTF is generated by a newer pahole (with pre-sorting support), th=
+e
+> >     kernel would use the pre-sorted data directly.
+> > 2. For BTF from older pahole versions, the kernel would handle sorting
+> >     at load time or later.
+> >
+> > This would provide performance benefits immediately while preserving
+> >  backward compatibility. The kernel-side sorting would remain intact
+> > moving forward, avoiding future churn.
+> >
 >
+> If you're taking the approach of doing both - which is best I think -
+> I'd suggest it might be helpful to look at the bpf_relocate.c code; it's
+> shared between libbpf and kernel, so you could potentially add shared
+> code to do sorting in libbpf (which pahole would use) and the kernel
+> would use too; this would help ensure the behaviour is identical.
+>
+> Maybe for pahole/libbpf sorting could be done via a new BTF dedup()
+> option, since dedup is the time we finalize the BTF representation?
+
+Thanks for the suggestion. I'll look into that.
+>
+> Alan
 
