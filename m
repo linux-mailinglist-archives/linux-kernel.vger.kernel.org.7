@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-854135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4D1BDDA06
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C566FBDDA18
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62D9F4ECC1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477A41920CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1705C30BBA1;
-	Wed, 15 Oct 2025 09:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA0330BB9E;
+	Wed, 15 Oct 2025 09:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mDMzLVri"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/fn/Q7E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C442E298991;
-	Wed, 15 Oct 2025 09:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D6B298991;
+	Wed, 15 Oct 2025 09:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519513; cv=none; b=FNINY5UxMy1PI5hLxcXLO+8ahMk/HZ+5JiwivulVTGBmIUG/RDxnGS0zCdbdvNnZy+Ule9KQMgnXvM8t3rhm76W8YRQwXuJa54kl5PQ/JAFq+lmZhaBbrtb25zmQcwpxMzfAD/+G17X5oeSdzpognnI9cUX1m/5YYUroczmwx2g=
+	t=1760519589; cv=none; b=HanzYuve6EgCSNIsvyhGO3QT2csxkcB5xNYy9bGwQGElpHlR+MjWjxalrne5SLbWsmi5EJ0nccBiibG9P4B8+La3Z6F+t+j2WW1J11XhFISTMxGxvzx8q17jd2AiF0cuR0/gT793vkn9BnuArsOAf1lHZ4omIA63k4WVezeFVNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519513; c=relaxed/simple;
-	bh=yIc3Hrk4tw3lboKyQb1HiKcmGJHpBDQKrDnQimq9iUg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CheerICRvsNk54bu+t5qR87h16r3X7q9fZsdsbl0InHh1TSTyzsuvJM34jPk0hNYOpX7JB9PkUe1+X9yr+fstpKS0m8hqZ4WI6L3RHq91vGcR/EuCvpQrxbUHnF67ecyHS0UnX5Oe77V98n8yp8OGGGafa2xjJRZEHqvhdx08Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mDMzLVri; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760519511; x=1792055511;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=yIc3Hrk4tw3lboKyQb1HiKcmGJHpBDQKrDnQimq9iUg=;
-  b=mDMzLVrivTRJIwPppNEg+tzIoI/d0BqHWWjvtSAUMoaSpSHHAAbgkIg5
-   R6FzOkiZLQLyRyPYKx03o4EdFZLcMUhu7i1XyBemPNBnN2lAyK3meg8KQ
-   teoNiUzsgI3izwhCkSZBvpoGHrPx+cvrkN7oqbwXs9if/uXK6guwYU25v
-   QIHAPxGrI9DloIaUfnrhQ4tUhKQC3znwZszd7mvAZB3KdOd7oIUGjHO6B
-   SDL3rbLoItHllCEKdcrmaJ27eJ1EVPCcuBn//GPNLBgg/SIzacMe58tbs
-   H/IOB/rG+VbhW9XrSCNFo5rIpO0QsL8gmDLq2ZSDS8ZDBlLvBIrGcEssB
-   w==;
-X-CSE-ConnectionGUID: gUJ8H7VuQ7yGiS4Wy4m3WA==
-X-CSE-MsgGUID: RijQ+T+bSZ2YFfV0qvtgqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="61897115"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="61897115"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:11:50 -0700
-X-CSE-ConnectionGUID: LZuTajTxSqiieHBzMkzxpA==
-X-CSE-MsgGUID: aY6EUY27R4SW6Hh0AQI+wQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="181683914"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:11:44 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 15 Oct 2025 12:11:40 +0300 (EEST)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
-    Derek John Clark <derekjohn.clark@gmail.com>, 
-    =?ISO-8859-15?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>, 
-    Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
-In-Reply-To: <20251015084414.1391595-7-lkml@antheas.dev>
-Message-ID: <de1f9cd3-183e-7b01-72aa-23fa4d30334e@linux.intel.com>
-References: <20251015084414.1391595-1-lkml@antheas.dev> <20251015084414.1391595-7-lkml@antheas.dev>
+	s=arc-20240116; t=1760519589; c=relaxed/simple;
+	bh=ywR7wdHo9iJDPAMnOLxx2KSfcpdMYgaVYoeQgeEMVE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZHyCeU7uvFcnjiWkFUPfmd2Chjd5/pSDqcrgc0b8qlE5fwCUb367tTeM3CfTc780AfX7ruNQXkiMLkJhxJ/KpTRLE1HLOoJUTGT5wiaeKuyIscXcFkLzqlTHARHrIQVFw71tR1meoRWn9iTP+/S99Eo92qJDLNLZzO28EAUVDKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/fn/Q7E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5DDC4CEF8;
+	Wed, 15 Oct 2025 09:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760519588;
+	bh=ywR7wdHo9iJDPAMnOLxx2KSfcpdMYgaVYoeQgeEMVE0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T/fn/Q7Et3W/XoUP2+BW/BncjyLdn9Q59dx4I+uKrVGVx83N3CoqpvJHFxWuqRsC+
+	 XdbXTMel6OirvBhxiFjPLifrL1qZ1WA1GV0CfnbnyJ0gLcqjgJlrUBUk085bytleC1
+	 Ps1/U8qadzNDPEXTFtbAw3rfhPCKp+JJvyNHVNWiVzxBuTqLX4e1h0uwpfnG6FXSGu
+	 ahv0t+DTPlJs6QFO33ojzLxd9DpyMUAoYg7u/ZEvqC360GdrnKWc4kvzqrKjjOzNyu
+	 sfpnfCdbcfzoWkUMqnORIpnF4VZ9xrYID8Bc3PCTstBRCa5sVe3z7x9f1ejmwsSTxY
+	 9ePteT4berpfg==
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Geoff Levand <geoff@infradead.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	xen-devel@lists.xenproject.org,
+	linux-alpha@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	Magnus Lindholm <linmag7@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: [PATCH v5 00/14] Remove DMA map_page/map_resource and their unmap callbacks
+Date: Wed, 15 Oct 2025 12:12:46 +0300
+Message-ID: <20251015-remove-map-page-v5-0-3bbfe3a25cdf@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251015-remove-map-page-a28302e6cc7d
+X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
+This series is a combination of previous two steps [1, 2] to reduce
+number of accesses to struct page in the code "below" DMA layer.
 
-> The Ayaneo EC resets after hibernation, losing the charge control state.
-> Add a small PM hook to restore this state on hibernation resume.
-> 
-> The fan speed is also lost during hibernation, but since hibernation
-> failures are common with this class of devices, setting a low fan speed
-> when the userspace program controlling the fan will potentially not
-> take over could cause the device to overheat, so it is not restored.
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/ayaneo-ec.c | 42 ++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-> index 73e9dd39c703..8529f6f8dc69 100644
-> --- a/drivers/platform/x86/ayaneo-ec.c
-> +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -37,6 +37,8 @@
->  #define AYANEO_MODULE_LEFT	BIT(0)
->  #define AYANEO_MODULE_RIGHT	BIT(1)
->  
-> +#define AYANEO_CACHE_LEN	1
-> +
->  struct ayaneo_ec_quirk {
->  	bool has_fan_control;
->  	bool has_charge_control;
-> @@ -47,6 +49,8 @@ struct ayaneo_ec_platform_data {
->  	struct platform_device *pdev;
->  	struct ayaneo_ec_quirk *quirks;
->  	struct acpi_battery_hook battery_hook;
-> +
-> +	u8 cache[AYANEO_CACHE_LEN];
->  };
->  
->  static const struct ayaneo_ec_quirk quirk_fan = {
-> @@ -464,10 +468,48 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static int ayaneo_freeze(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> +	int ret, i = 0;
-> +
-> +	if (data->quirks->has_charge_control) {
-> +		ret = ec_read(AYANEO_CHARGE_REG, &data->cache[i]);
-> +		if (ret)
-> +			return ret;
-> +		i++;
+In this series, the DMA .map_page/.map_resource/.unmap_page/.unmap_resource
+callbacks are converted to newly introduced .map_phys/.unmap_phys interfaces.
 
-What is this for?
+Thanks
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ayaneo_thaw(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> +	int ret, i = 0;
-> +
-> +	if (data->quirks->has_charge_control) {
-> +		ret = ec_write(AYANEO_CHARGE_REG, data->cache[i]);
-> +		if (ret)
-> +			return ret;
-> +		i++;
+[1] https://lore.kernel.org/all/cover.1758203802.git.leon@kernel.org
+[2] https://lore.kernel.org/all/cover.1759071169.git.leon@kernel.org
 
-Same question here.
+---
+Leon Romanovsky (14):
+      dma-mapping: prepare dma_map_ops to conversion to physical address
+      dma-mapping: convert dummy ops to physical address mapping
+      ARM: dma-mapping: Reduce struct page exposure in arch_sync_dma*()
+      ARM: dma-mapping: Switch to physical address mapping callbacks
+      xen: swiotlb: Switch to physical address mapping callbacks
+      dma-mapping: remove unused mapping resource callbacks
+      alpha: Convert mapping routine to rely on physical address
+      MIPS/jazzdma: Provide physical address directly
+      parisc: Convert DMA map_page to map_phys interface
+      powerpc: Convert to physical address DMA mapping
+      sparc: Use physical address DMA mapping
+      x86: Use physical address for DMA mapping
+      xen: swiotlb: Convert mapping routine to rely on physical address
+      dma-mapping: remove unused map_page callback
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops ayaneo_pm_ops = {
-> +	.freeze = ayaneo_freeze,
-> +	.thaw = ayaneo_thaw,
-> +};
-> +
->  static struct platform_driver ayaneo_platform_driver = {
->  	.driver = {
->  		.name = "ayaneo-ec",
->  		.dev_groups = ayaneo_ec_groups,
-> +		.pm = &ayaneo_pm_ops,
->  	},
->  	.probe = ayaneo_ec_probe,
->  };
-> 
+ arch/alpha/kernel/pci_iommu.c            |  48 ++++-----
+ arch/arm/mm/dma-mapping.c                | 180 +++++++++----------------------
+ arch/mips/jazz/jazzdma.c                 |  20 ++--
+ arch/powerpc/include/asm/iommu.h         |   8 +-
+ arch/powerpc/kernel/dma-iommu.c          |  22 ++--
+ arch/powerpc/kernel/iommu.c              |  14 +--
+ arch/powerpc/platforms/ps3/system-bus.c  |  33 +++---
+ arch/powerpc/platforms/pseries/ibmebus.c |  15 +--
+ arch/powerpc/platforms/pseries/vio.c     |  21 ++--
+ arch/sparc/kernel/iommu.c                |  30 ++++--
+ arch/sparc/kernel/pci_sun4v.c            |  31 +++---
+ arch/sparc/mm/io-unit.c                  |  38 +++----
+ arch/sparc/mm/iommu.c                    |  46 ++++----
+ arch/x86/kernel/amd_gart_64.c            |  19 ++--
+ drivers/parisc/ccio-dma.c                |  54 +++++-----
+ drivers/parisc/iommu-helpers.h           |  10 +-
+ drivers/parisc/sba_iommu.c               |  54 +++++-----
+ drivers/xen/grant-dma-ops.c              |  20 ++--
+ drivers/xen/swiotlb-xen.c                |  63 +++++------
+ include/linux/dma-map-ops.h              |  14 +--
+ kernel/dma/dummy.c                       |  13 ++-
+ kernel/dma/mapping.c                     |  26 +----
+ kernel/dma/ops_helpers.c                 |  12 ++-
+ 23 files changed, 361 insertions(+), 430 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251015-remove-map-page-a28302e6cc7d
 
--- 
- i.
+Best regards,
+--  
+Leon Romanovsky <leon@kernel.org>
 
 
