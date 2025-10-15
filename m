@@ -1,164 +1,108 @@
-Return-Path: <linux-kernel+bounces-853892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D305BDCD48
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53B6BDCD33
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17333E1893
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EAD3BA032
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2821313282;
-	Wed, 15 Oct 2025 07:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A2E2FE577;
+	Wed, 15 Oct 2025 07:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QcI6kY0q"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vsox0Qt3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAD13128D5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2938320B7EE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760512160; cv=none; b=jR+UPJ7QKKMBlgq31k++ksiFpisSnKF2utsZl+DioSQCCjG4fgU87XVUT0PrC4HbwqkwbwpT16zIuE/MD/ffI0X20mbh/Us220DvL0ixGe+dQYsUNIl/XBkozCk+nmM0bxUaD1NexLAPx4yCAFr1wgfeYYQu1cvE7qfhC7VStQA=
+	t=1760512147; cv=none; b=gWkY5a5dD6wgyklz2XS3JSYTuqGpRxNePelIJvDDOAYkoCJyyBnj0Ke5cOJkUl9rxn10FmCYB1IJCvUc4BvRsJCbqcqF0CW7RSeULXwXiAWB1XIYQV2fepEu53ZJw+8nxMXuFtSXrkVNpuNewzAD2yhCwJ+c1FtCQ9YjeJH+1cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760512160; c=relaxed/simple;
-	bh=yd03i++/xv88QJgZo0ZPNbQK9vi5VCi99MKHAR0GtX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aoyYjCW2w6dEJCKs4HqwVblwL65BFLA/QJK7UaDr6KAO4QkVON11nWlRZ904jqRxTtiFfS9H8dzj91IigQqo0yZNPY/u9nU5PCDdnzK2d2vP60tSEJni79jASEnUKXDtXPppOX/2ezOnhv+rDEt7mAvfgw2GOC4TIAPifKxtFlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QcI6kY0q; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3ee18913c0so1000763466b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:09:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760512157; x=1761116957; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+Xzhf/EFNne2mEAT5tPrrO/yOV+bjpVxO1xTpLKaG4=;
-        b=QcI6kY0qbUbz8Ug3dXubOLDfLs9mt3HYi16UDdTcjdId67R8GCJQVTdP9MvT5a2+9T
-         NRfihVnPc2ZSUmCOgW5EZyw3dJJuobkiDdjqwUv2L5msE45UiY8q1TUahpS1g6KbshFo
-         XVO7bMkGND2ylJWOOM1Lqeognb4Y0HuCBOIvso/2bCPPOpf0nxJFEOnu11bPPBEefgNN
-         Trp0BfCeMRXUCAq4jpCI/edshoKP7BTXV7SQv2ySHTrSp1v3c4CY/han68RztRDq0zCn
-         j7EBe+hI2EaWsoM6y0XLI8lxsP0HCgCQTgDdJouVE/et0FTfp0nWnLXFHjULP3ZQ4XWe
-         NkbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760512157; x=1761116957;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R+Xzhf/EFNne2mEAT5tPrrO/yOV+bjpVxO1xTpLKaG4=;
-        b=AtBJuVlqOpLW1ZZ8k69MjS1wJT5P/iNhyjz9dM19VFy2eDmjvCbHsowxciJPlI99YP
-         ciwhWj7C/hiNkpNduzK0WF74tCYVOsqsSUqCe12MNtx9xMdx5ek4L5SJH6zu4o6t8/+G
-         Wr4kMZZQRrjoHN5a6RIzaGFftqdYiiy3K8jXE8HAuMhH3YthU/GgpT4C00+qFtPhrM2O
-         RUPoXaFjH6UFpM+b0YsaX1p+8QHs8ku6lYnfVJPpMglPpgz8rRlD4qKbpGIigJ6BGRTE
-         d3QiEkHyBTmwu1jqkSBuQUwCg7V90HeTqt/JYEHbfMjiDl3pB9r0nJsRw+j+m2YvV49T
-         RMVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgeG/RSbHhykQzpCFCMXga2b+64kpsLWzTL12iahHXK+MTgFu0pV+5vR3EFj6M0s+0RMOlXaJZpopaIUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh2yGyTGb4RAPR0fjY2rb9D0LE8vaTjNtVkP5hNXrn1EA4lYFu
-	WlArmFjbL3Wl69HMF1k1k5gQpfm+WSnnTNFBRKH3O+aHiRknt0/D/MGg
-X-Gm-Gg: ASbGnctdCkMC/W/yBQ/mJWghO3X8RK+EMVRdam4Vs7ZaAReVr+FAinh40hexvgKiWdn
-	HjPxjm9zqYi5CclUp4ora2NXyLFueUiRmiQHGED0oQID9DjdqrQsAUv5ygrnp2+VUDgggc7qi48
-	wzrL5FRvoqcF9nj7SGQCZ6ZanJaxq1ATQiNHnNk/68iux9B6bRbT2CoRlKkGOP+/PmoTDmsK0eV
-	xH8gL9uLyzYhIdnDwQP6TSWWOPEXfHjqFuy7jqdiMChuvXSCitgllAu2Y0ayMLzz9Qy+JEmkE6d
-	wn2TUZhW+/ouQbYGiYs5FxD2KlfL3Swr4WBg15KvxnTyLzqrQ5NFXty88vWxtNpviVQmDVpwg0S
-	fzFLpCujnWzQca//pzzZkHrzl4oXCEtS3VdF2zOWdVNf0b8/xHjGKSfBC+0QyNa1zupLdaCgMW4
-	1Zg+3us6zjW3w57vWSvmohOQ==
-X-Google-Smtp-Source: AGHT+IGi4c772T1EvouKGzfpRwCrJWZt2fsMF2Lmdp3HYx9/OqUd/nTP8dW704aXN7545LxIfOBBMQ==
-X-Received: by 2002:a17:906:4788:b0:b0c:fdb7:4df5 with SMTP id a640c23a62f3a-b50aa08f7f4mr3152911866b.18.1760512156566;
-        Wed, 15 Oct 2025 00:09:16 -0700 (PDT)
-Received: from localhost (dslb-002-205-018-108.002.205.pools.vodafone-ip.de. [2.205.18.108])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccaaba9sm157597666b.55.2025.10.15.00.09.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 00:09:15 -0700 (PDT)
-From: Jonas Gorski <jonas.gorski@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: dsa: tag_brcm: legacy: fix untagged rx on unbridged ports for bcm63xx
-Date: Wed, 15 Oct 2025 09:08:54 +0200
-Message-ID: <20251015070854.36281-1-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760512147; c=relaxed/simple;
+	bh=cbFWr/aeVAGwQ8W4iJ9elJFtP7YdZfaqIxqQ0SovTjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WgV5JlsSEvX1F8FshzxBG+6WS+mJfn+0EuSA/eUDkTkZlPfxg3z+6DbiUHkf7Yj9KnBmy4MKZzQz+EZDcLC6cc5TUAsdFQh9t0kmoNgvS/ebTZx6SlkUH+Qx1luvHT5UabiIjGRx8Fm9Xvh6Y9mR8vewit3t70utqoSEHw1ssBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vsox0Qt3; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760512145; x=1792048145;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=cbFWr/aeVAGwQ8W4iJ9elJFtP7YdZfaqIxqQ0SovTjY=;
+  b=Vsox0Qt3TMq6oeRVigRqTbqpWyoN8jVmmvmMbK70fkyp2vprC4z1Kttu
+   MvQdsF5WTUInJwTmCvfk0Rk4ET6FHY3TqidpdTgfL9gFMxByBp//liAfH
+   uQkZAUbyoNQsAKxOw5eecaFtDUl3pK28pTDrIE/Av16n3L0g0U9iSVbIz
+   jKFBzYMTNjtEhAkNKmFSjPawVkzqi5IUG0/W3E84UPtnB5lZWepQ/I9vF
+   zww5x9AjseaBWAa6G5cAQYh1g74NPGA5nXTiX/e854EklAJsXmRprgrfi
+   H+6c4c7NezWLhuhvVv2UDAj6Lm9yItoo/Em96HCjdHCpPVyZbNjb8AfLe
+   Q==;
+X-CSE-ConnectionGUID: eojKYf2pTG2XmqBusI7Z1g==
+X-CSE-MsgGUID: Js0PwM9oTcifJpsykK221g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62830767"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="62830767"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 00:09:04 -0700
+X-CSE-ConnectionGUID: XqKoxdnFQoGmbpHy8/Ld3Q==
+X-CSE-MsgGUID: 2+bJnW6hRr+eJkAGjwFlzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182871151"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 15 Oct 2025 00:09:03 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8vd7-0003Yr-0V;
+	Wed, 15 Oct 2025 07:09:01 +0000
+Date: Wed, 15 Oct 2025 15:08:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Feng Chen <feng.chen@amlogic.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: alpha-linux-ld: drivers/spi/spi-amlogic-spifc-a4.c:289:undefined
+ reference to `__ffsdi2'
+Message-ID: <202510151522.iQuRChZM-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The internal switch on BCM63XX SoCs will unconditionally add 802.1Q VLAN
-tags on egress to CPU when 802.1Q mode is enabled. We do this
-unconditionally since commit ed409f3bbaa5 ("net: dsa: b53: Configure
-VLANs while not filtering").
+Hi Feng,
 
-This is fine for VLAN aware bridges, but for standalone ports and vlan
-unaware bridges this means all packets are tagged with the default VID,
-which is 0.
+First bad commit (maybe != root cause):
 
-While the kernel will treat that like untagged, this can break userspace
-applications processing raw packets, expecting untagged traffic, like
-STP daemons.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9b332cece987ee1790b2ed4c989e28162fa47860
+commit: 4670db6f32e9379f5ab6c9bb2a6787cd9b9230a9 spi: amlogic: add driver for Amlogic SPI Flash Controller
+date:   5 weeks ago
+config: alpha-randconfig-r123-20251014 (https://download.01.org/0day-ci/archive/20251015/202510151522.iQuRChZM-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151522.iQuRChZM-lkp@intel.com/reproduce)
 
-This also breaks several bridge tests, where the tcpdump output then
-does not match the expected output anymore.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510151522.iQuRChZM-lkp@intel.com/
 
-Since 0 isn't a valid VID, just strip out the VLAN tag if we encounter
-it, unless the priority field is set, since that would be a valid tag
-again.
+All errors (new ones prefixed by >>):
 
-Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
----
- net/dsa/tag_brcm.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+   `xe_configfs_exit' referenced in section `.data.rel.ro' of drivers/gpu/drm/xe/xe_module.o: defined in discarded section `.exit.text' of drivers/gpu/drm/xe/xe_configfs.o
+   alpha-linux-ld: drivers/spi/spi-amlogic-spifc-a4.o: in function `aml_sfc_set_bus_width':
+   drivers/spi/spi-amlogic-spifc-a4.c:289:(.text+0x5ec): undefined reference to `__ffsdi2'
+>> alpha-linux-ld: drivers/spi/spi-amlogic-spifc-a4.c:289:(.text+0x5f0): undefined reference to `__ffsdi2'
 
-diff --git a/net/dsa/tag_brcm.c b/net/dsa/tag_brcm.c
-index 26bb657ceac3..32879d1b908b 100644
---- a/net/dsa/tag_brcm.c
-+++ b/net/dsa/tag_brcm.c
-@@ -224,12 +224,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
- {
- 	int len = BRCM_LEG_TAG_LEN;
- 	int source_port;
-+	__be16 *proto;
- 	u8 *brcm_tag;
- 
- 	if (unlikely(!pskb_may_pull(skb, BRCM_LEG_TAG_LEN + VLAN_HLEN)))
- 		return NULL;
- 
- 	brcm_tag = dsa_etype_header_pos_rx(skb);
-+	proto = (__be16 *)(brcm_tag + BRCM_LEG_TAG_LEN);
- 
- 	source_port = brcm_tag[5] & BRCM_LEG_PORT_ID;
- 
-@@ -237,8 +239,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
- 	if (!skb->dev)
- 		return NULL;
- 
--	/* VLAN tag is added by BCM63xx internal switch */
--	if (netdev_uses_dsa(skb->dev))
-+	/* The internal switch in BCM63XX SoCs will add a 802.1Q VLAN tag on
-+	 * egress to the CPU port for all packets, regardless of the untag bit
-+	 * in the VLAN table.  VID 0 is used for untagged traffic on unbridged
-+	 * ports and vlan unaware bridges. If we encounter a VID 0 tagged
-+	 * packet, we know it is supposed to be untagged, so strip the VLAN
-+	 * tag as well in that case.
-+	 */
-+	if (proto[0] == htons(ETH_P_8021Q) && proto[1] == 0)
- 		len += VLAN_HLEN;
- 
- 	/* Remove Broadcom tag and update checksum */
-
-base-commit: 7f0fddd817ba6daebea1445ae9fab4b6d2294fa8
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
