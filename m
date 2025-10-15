@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-853968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29A4BDD2C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:41:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5BABDD2E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50BF188C08A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:41:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCD3D503527
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BFC31355A;
-	Wed, 15 Oct 2025 07:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952BB248F57;
+	Wed, 15 Oct 2025 07:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jhp0dbfd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ggOhvzE/"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A635A248F57;
-	Wed, 15 Oct 2025 07:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A667F2153E7;
+	Wed, 15 Oct 2025 07:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760514037; cv=none; b=E7yuzW0rLGNDyQkvaCVJiTRXSBxGBhkkCSknQYYk9Tndf01lIdRxVjVDF8ru8s3ZYAiQtT63Po7IhTYVHQP3mRD4I35uxNqGuWGgHpdwxQJ0ncFOmmgVJgIYeEi8dePmsoKlzmXQm7Y7lF7asdg8fL8XD1tnBk7qMP8ilmk3fvQ=
+	t=1760514050; cv=none; b=YcnDswQM4czpSsI0e2xABtj22QyKVED7z4z43qHRCblYUmuTjPxdd1it4rNGgCqPKXxNc/I5jxMgnYZyGacHOLoyIpwUK0i47wQQIFMxSGHlwK+DLrhQn7po/kHeVPPkCC3dpMeJpeaphGNRqe4SDei7MZhqXQ5lctnhRoXfDgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760514037; c=relaxed/simple;
-	bh=aezqpQtdc2IZVeJjr14RhvvsN/PyWhP34fokKeuwJ1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhjkUzenqjoXuIuSXa++PYs8D4+X6oFTxoOwYjGRojOnKJ7p1SRE3yHYtmXdZ3BRlSoyrzvCcctU2neFQObR5cKrQ71y+fSx6IMET8/YiMvAyyftFJk2G2VyDlatuG+hjfFlqgD/02+cD0UEWKleIt+hUw6C9qL/jWBOmsDFlSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jhp0dbfd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8505C4CEF9;
-	Wed, 15 Oct 2025 07:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760514037;
-	bh=aezqpQtdc2IZVeJjr14RhvvsN/PyWhP34fokKeuwJ1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jhp0dbfdB9IfysKdHQfz5NWlOzPWwmQ31A4BFqUFwFEbgY1eP0BBN14FnFDk9XzXx
-	 nWFkCjbnGV5+64K9IzHbL59dmPD9vHWDT4V4schr0SYd8WuodbFoMyBUONgfvuAOpm
-	 6Z9xN1pYdvTtWmbqirbLzbvwQZVcZzO7n+8NQNzG6RfqAwYlrDnpX3s7w2cox7NgSb
-	 Uw86vUseBdw0jPzVaWjSlBZ8nHhX/CzRJBmd2GMIS2VV/r4rMT7z7cdLQbQOEBACZ2
-	 sNAVxx2WLUczpUvj1aQxw8/vQmnUtA1fHsV0daueMemmscUJen2SQ0v/Rv8XtQ7Snf
-	 b2TcwOJLkfdwQ==
-Date: Wed, 15 Oct 2025 09:40:30 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
-	Ray Jui <rjui@broadcom.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Frank Li <Frank.Li@nxp.com>,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v2 3/4] PCI: iproc: Implement MSI controller node
- detection with of_msi_xlate()
-Message-ID: <aO9P7rRW0o9UmFz1@lpieralisi>
-References: <20251014095845.1310624-1-lpieralisi@kernel.org>
- <20251014095845.1310624-4-lpieralisi@kernel.org>
+	s=arc-20240116; t=1760514050; c=relaxed/simple;
+	bh=dt30EklpSZi/7lhcJZNz9S2gIHGZWvqZN5FUmUz3/jw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=K5XVLJFP4ofYGscBtc1KXg9E30fapWbIoWRBAce+C5QDIrboektgOpLoaUAhDHcOr2UNDkN29/h6gjOHTUf8qR2TvQM13uG8L7FNmnRjdsOyIBb4wtrU9JO33BR60mlVHs0koeiERtC4qtXJFfkw7W9/1X2/NFVtsmyObx6RReU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ggOhvzE/; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 84E1D1D001A0;
+	Wed, 15 Oct 2025 03:40:47 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Wed, 15 Oct 2025 03:40:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760514047; x=1760600447; bh=Hjz+mqNYfvzjq/YJEYihb4TnZiLmD1Lj/yX
+	vDrOsq5A=; b=ggOhvzE/7YVP9rUtx9NtsXRkOsnCUJ/qt2NFNUpu3oXu6ci9usU
+	9FwZHtgU8LRnAIO5s/IJdmxbLYqCd4rJ7HVVWQFb8CiHDKnWZ/dtofEKyw8Ol9Rp
+	r7X5qfX/MWWAvOgwFDggReiRiF0ATQnyLtA0A0YVo/2x9znfosycZ3+Gk1rhOvld
+	1KqZ2UdWKYLrWL5DiEvSQOC3NMr0jriN3wtE6sQpLaQxyNdm+ge1G4M0ecc6S0m4
+	R4p27Nf9FgXyAf4dmTSc68BrRw2zSneIax+fd1n7ed9PGcFwPWkO58mv3Fn76KjZ
+	ZWlZ1Q14tRmXqjvTdJ9BeA1KlGsQfp6Sokw==
+X-ME-Sender: <xms:_k_vaFvQ6j6nUU9Bz9OmIrnvm1b43RCX6IjtYMrvOQCRcb7LZSuGCQ>
+    <xme:_k_vaCJs1lzijUQR7-Bpe29tzk0vmejTwk-v6rAZ6-0k_oDo6yoSkfSiPzXp3-FAT
+    N_PV6kOM9MmxreuEIjdWXogP-WCvC-aAmg5xjE-xlVBahfIdqt8JQ>
+X-ME-Received: <xmr:_k_vaBbkQR-x7xV9LEBBoGKY9rkzilWsr14DSBEIvCzTDxOG02osw2ak1iaUkq3vm2wEBmsHRhIj8-35Ve35BrXtXM-IFGmjB-Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddvkeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedufedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuh
+    igsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggu
+    rdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    grkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsgho
+    qhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfi
+    hnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhr
+    tghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:_k_vaNkowgqRDxU0NrAP6HZs27XEnrfVUnwK4cWX2Ev_9_WkFonUbQ>
+    <xmx:_k_vaHXi1PoUukZyiT8j65TiGM3flKikc39SU7PKTnoemtd_VuXg6w>
+    <xmx:_k_vaPLIE-igCSJb_mDiNimE5GR9xSzZNvdI_UIPlDwllRy0ikDQDg>
+    <xmx:_k_vaHuOiZS341r5sWdGZlxWEwoLz_Q9W5uXweooNJh2ZLbBDZfUeQ>
+    <xmx:_0_vaETJOQMYxuBxhK-52T5aaFOLCH365KBvspjjxybBzPmgyHp2i3km>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 15 Oct 2025 03:40:43 -0400 (EDT)
+Date: Wed, 15 Oct 2025 18:40:39 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+    linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
+    linux-doc@vger.kernel.org
+Subject: Re: [RFC v3 1/5] documentation: Discourage alignment assumptions
+In-Reply-To: <20251014112359.451d8058@pumpkin>
+Message-ID: <f5f939ae-f966-37ba-369d-be147c0642a3@linux-m68k.org>
+References: <cover.1759875560.git.fthain@linux-m68k.org> <76571a0e5ed7716701650ec80b7a0cd1cf07fde6.1759875560.git.fthain@linux-m68k.org> <20251014112359.451d8058@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014095845.1310624-4-lpieralisi@kernel.org>
+Content-Type: text/plain; charset=us-ascii
 
-On Tue, Oct 14, 2025 at 11:58:44AM +0200, Lorenzo Pieralisi wrote:
-> The functionality implemented in the iproc driver in order to detect an
-> OF MSI controller node is now fully implemented in of_msi_xlate().
+
+On Tue, 14 Oct 2025, David Laight wrote:
+
+> On Wed, 08 Oct 2025 09:19:20 +1100
+> Finn Thain <fthain@linux-m68k.org> wrote:
 > 
-> Replace the current msi-map/msi-parent parsing code with of_msi_xlate().
+> > Discourage assumptions that simply don't hold for all Linux ABIs.
+> > Exceptions to the natural alignment rule for scalar types include
+> > long long on i386 and sh.
+> > ---
+> >  Documentation/core-api/unaligned-memory-access.rst | 7 -------
+> >  1 file changed, 7 deletions(-)
+> > 
+> > diff --git a/Documentation/core-api/unaligned-memory-access.rst b/Documentation/core-api/unaligned-memory-access.rst
+> > index 5ceeb80eb539..1390ce2b7291 100644
+> > --- a/Documentation/core-api/unaligned-memory-access.rst
+> > +++ b/Documentation/core-api/unaligned-memory-access.rst
+> > @@ -40,9 +40,6 @@ The rule mentioned above forms what we refer to as natural alignment:
+> >  When accessing N bytes of memory, the base memory address must be evenly
+> >  divisible by N, i.e. addr % N == 0.
+> >  
+> > -When writing code, assume the target architecture has natural alignment
+> > -requirements.
 > 
-> Since of_msi_xlate() is also a deviceID mapping API, pass in a fictitious
-> 0 as deviceID - the driver only requires detecting the OF MSI controller
-> node not the deviceID mapping per-se (of_msi_xlate() return value is
-> ignored for the same reason).
+> I think I'd be more explicit, perhaps:
+> Note that not all architectures align 64bit items on 8 byte boundaries or
+> even 32bit items on 4 byte boundaries.
 > 
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Scott Branden <sbranden@broadcom.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-> ---
->  drivers/pci/controller/pcie-iproc.c | 22 +++++-----------------
->  1 file changed, 5 insertions(+), 17 deletions(-)
 
-Heads-up (I will have to respin anyway), of_msi_xlate() needs to be
-exported for this to work when compiled as a module, kbuild-bot barfed
-at it, I have fixed it already - if anyone can help me test it anyway
-that would be great.
+That's what the next para is alluding to...
 
-Thanks,
-Lorenzo
+> > In reality, only a few architectures require natural alignment on all sizes
+> > of memory access. However, we must consider ALL supported architectures; 
+> > writing code that satisfies natural alignment requirements is the easiest way 
+> > to achieve full portability.
 
-> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-> index 22134e95574b..ccf71993ea35 100644
-> --- a/drivers/pci/controller/pcie-iproc.c
-> +++ b/drivers/pci/controller/pcie-iproc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/irqchip/arm-gic-v3.h>
->  #include <linux/platform_device.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_irq.h>
->  #include <linux/of_pci.h>
->  #include <linux/of_platform.h>
->  #include <linux/phy/phy.h>
-> @@ -1337,29 +1338,16 @@ static int iproc_pcie_msi_steer(struct iproc_pcie *pcie,
->  
->  static int iproc_pcie_msi_enable(struct iproc_pcie *pcie)
->  {
-> -	struct device_node *msi_node;
-> +	struct device_node *msi_node = NULL;
->  	int ret;
->  
->  	/*
->  	 * Either the "msi-parent" or the "msi-map" phandle needs to exist
->  	 * for us to obtain the MSI node.
->  	 */
-> -
-> -	msi_node = of_parse_phandle(pcie->dev->of_node, "msi-parent", 0);
-> -	if (!msi_node) {
-> -		const __be32 *msi_map = NULL;
-> -		int len;
-> -		u32 phandle;
-> -
-> -		msi_map = of_get_property(pcie->dev->of_node, "msi-map", &len);
-> -		if (!msi_map)
-> -			return -ENODEV;
-> -
-> -		phandle = be32_to_cpup(msi_map + 1);
-> -		msi_node = of_find_node_by_phandle(phandle);
-> -		if (!msi_node)
-> -			return -ENODEV;
-> -	}
-> +	of_msi_xlate(pcie->dev, &msi_node, 0);
-> +	if (!msi_node)
-> +		return -ENODEV;
->  
->  	/*
->  	 * Certain revisions of the iProc PCIe controller require additional
-> -- 
-> 2.50.1
+How about this?
+
+"In reality, only a few architectures require natural alignment for all 
+sizes of memory access. That is, not all architectures need 64-bit values 
+to be aligned on 8-byte boundaries and 32-bit values on 4-byte boundaries. 
+However, when writing code intended to achieve full portability, we must 
+consider all supported architectures."
+
+> > @@ -103,10 +100,6 @@ Therefore, for standard structure types you can always rely on the compiler
+> >  to pad structures so that accesses to fields are suitably aligned (assuming
+> >  you do not cast the field to a type of different length).
+> >  
+> > -Similarly, you can also rely on the compiler to align variables and function
+> > -parameters to a naturally aligned scheme, based on the size of the type of
+> > -the variable.
+> > -
+> >  At this point, it should be clear that accessing a single byte (u8 or char)
+> >  will never cause an unaligned access, because all memory addresses are evenly
+> >  divisible by one.
+> 
 > 
 
