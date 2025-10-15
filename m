@@ -1,77 +1,82 @@
-Return-Path: <linux-kernel+bounces-859347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B754BED56B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39F4BED55C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF8D19A7861
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7913B42E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2FA260588;
-	Sat, 18 Oct 2025 17:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AE5257AEC;
+	Sat, 18 Oct 2025 17:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDM0n6Qh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8vlXFY8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F271260563;
-	Sat, 18 Oct 2025 17:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C95A1F4606;
+	Sat, 18 Oct 2025 17:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760808769; cv=none; b=Cc7GOJd1pz9g63yhD5+VrxKqe8AjI9vBMSncJgsANAGMyBTIkXDxivEIUjzC20/oq642oIg4BFxQ78jRRmsLVrYXcrMHkiqIq49rXbyGv+VXRkDfl+0DtphY6niTj7tk+ObtPEgs34WHU2fVuaqg/r05Su0p3Mb25AoXtrrfLdE=
+	t=1760808744; cv=none; b=qpRvYhEA+1pTbOC82+q+U2x384UE6IVXgH6iT+eVTgKbQ3/2DZs8ghmjnwhevsJD05AmEzNIc2DpugZQUA2DhQK3K9m5Z5/FgoNIvncS1KuikhzRzbxq9nAd8ImA6MFheno7/slEKNYDwLe3sJi95drgBX1/kcTNpsf7uiwHaho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760808769; c=relaxed/simple;
-	bh=NxIbPa2fH1pdp+reelXrlh0jLg7Vwo3mY9xsEwoBBQ0=;
+	s=arc-20240116; t=1760808744; c=relaxed/simple;
+	bh=/X1M7r+VXHWyfIydfI8CBDXxttbvnP9OJALMfohK/Ds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttwmqYeA0IHMdOx9stXn+uuIQxCWIv8vfQQ56H0AWWHgv/KJFvSQxgKImQD69PMiSHLqBCL2KONvCJKlnOIe0aZKSpf6PHQuLlv/TM2GLpsGa8lYVEBDzUGWn4vLaEttrjMDvdhJwAV71PeUxgOLSckoPiiaT1Hk9qWBIRDlu8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDM0n6Qh; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKC5AemHHnS+4K1wxsyKSTTCaYooxhXzgglu/CKKk1Lnf5fBhHXI7Ms6Rfxc3rLi322GeaROBpyjakpYwTg7xZ3+qYXJ4w3adLzV2MOIZTvYo0hDSfBSxoU4IYvsFsfSloFYDgQjfjrcg2FWFS7BoDwcd1ewx9kNH7ruI+tYN44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8vlXFY8; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760808768; x=1792344768;
+  t=1760808743; x=1792344743;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=NxIbPa2fH1pdp+reelXrlh0jLg7Vwo3mY9xsEwoBBQ0=;
-  b=RDM0n6QhbDdWUjLLu80yc28Fw2UeY5+ZW1I5a5ZaPo64/A3CNxFUj05I
-   qcCLkROrd0EWAJCbFHp65/OmoKJW0ktDMJ0oO5WSTsX4tu6v/lX39BW4a
-   C2oLu95p9Vz5/V8P5wc1PPvZnmR9XupgxNe7mlN2vUw9iSqVZCBdgqu2T
-   MfZtct6avWUJNbj4HR4u6qVYLQ06MrtJgspdNsN5g49XHlkfmPQjzXT7S
-   vK3CIgS5De1T3ZAv2xWxYaRem1q2iSfnMNex12MWO5gJqaVRCNZ+sYc/e
-   2Gt5mswfC74gAA+kxOtvJwll7xkHJH6ZB6Bz47N9/cgS7zYMtPJoIcLxH
-   Q==;
-X-CSE-ConnectionGUID: o6PbxRWzS6OItY4elOAxwQ==
-X-CSE-MsgGUID: R2aSZA21RTOmTakC6eVJCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65614217"
+  bh=/X1M7r+VXHWyfIydfI8CBDXxttbvnP9OJALMfohK/Ds=;
+  b=W8vlXFY8SxXiV48pd3wOiHgI3QmEhbgAs6QfvHHx+IONdELWKmxqwejK
+   6uFF+alJLOr1LhrhuqMVJU2Skn4WKe3wN0QLi5u8WO9zn2XB3VHEiJakX
+   /ITe5dyw1IggxGDvYR+nHaRV8RZ88wM4sBogGDNb1M3+AU7W/Qb0iMmWc
+   fmoPQ5Tq43V0uiSC3PyGFuK+Omsm5iE9C1l20owyaDT78biRZN6l1r9N0
+   ohrvr0zQF+UVSoewu9sBEhcPaneJCdDbqUQ9ZSOXfP4XdpP3WU3+WSFD0
+   YJNxGtBNf80fIBhJygOuVKwhGCHWEl6Y1d6sOdHDvVSUyH/MI7TA4kkmK
+   w==;
+X-CSE-ConnectionGUID: FcWYkVkhTMiuBEe9MK+bXQ==
+X-CSE-MsgGUID: 9f2O+fmOQLi6g5S3AlBtzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62206488"
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="65614217"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:46 -0700
-X-CSE-ConnectionGUID: nM4SffQDTw2pkVETXRGMIA==
-X-CSE-MsgGUID: puUU3YVuTWyHBZyz6vXh0A==
+   d="scan'208";a="62206488"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:22 -0700
+X-CSE-ConnectionGUID: Z4LfH32PTkiD+JQhk97cNQ==
+X-CSE-MsgGUID: EgBKw2JHRoKc+V/4GB2qVg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="187413443"
+   d="scan'208";a="206700795"
 Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:45 -0700
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:19 -0700
 Received: from andy by ashevche-desk with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1v94TZ-00000000Me0-09KN;
-	Wed, 15 Oct 2025 19:35:45 +0300
-Date: Wed, 15 Oct 2025 19:35:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Artem Shimko <a.shimko.dev@gmail.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH] serial: 8250_dw: handle reset control deassert error
-Message-ID: <aO_NYGFCKb0J2uqK@smile.fi.intel.com>
-References: <20251009081309.2021600-1-a.shimko.dev@gmail.com>
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1v94bT-00000000MiY-1MCc;
+	Wed, 15 Oct 2025 19:43:55 +0300
+Date: Wed, 15 Oct 2025 19:43:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org, krzk+dt@kernel.org, linux-iio@vger.kernel.org,
+	s32@nxp.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, chester62515@gmail.com,
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com
+Subject: Re: [PATCH v4 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <aO_PSisFmsYb84r0@smile.fi.intel.com>
+References: <20250919135618.3065608-1-daniel.lezcano@linaro.org>
+ <20250919135618.3065608-3-daniel.lezcano@linaro.org>
+ <20250920102742.4cadb734@jic23-huawei>
+ <0ac22118-fd0f-49c0-9aa8-5739925587d2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,23 +85,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009081309.2021600-1-a.shimko.dev@gmail.com>
+In-Reply-To: <0ac22118-fd0f-49c0-9aa8-5739925587d2@linaro.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 09, 2025 at 11:13:08AM +0300, Artem Shimko wrote:
-> Check the return value of reset_control_deassert() in the probe
-> function to prevent continuing probe when reset deassertion fails.
-> 
-> Previously, reset_control_deassert() was called without checking its
-> return value, which could lead to probe continuing even when the
-> device reset wasn't properly deasserted.
-> 
-> The fix checks the return value and returns an error with dev_err_probe()
-> if reset deassertion fails, providing better error handling and
-> diagnostics.
+On Wed, Oct 15, 2025 at 09:17:40AM +0200, Daniel Lezcano wrote:
+> On 9/20/25 11:27, Jonathan Cameron wrote:
 
-If it's not applied yet, it deserves the Fixes tag, I believe.
+[ ... ]
+
+>         ceocfr = readl(NXP_SAR_ADC_CEOCFR0(info->regs));
+> -       if (!(ceocfr & NXP_SAR_ADC_EOC_CH(chan)))
+> +
+> +       /* FIELD_GET() can not be used here because EOC_CH is not constant
+> */
+> +       if (!(NXP_SAR_ADC_EOC_CH(chan) & ceocfr))
+>                 return -EIO;
+
+Make field_get() public in bitfield.h and use it. We have a handful copies
+already which deserves someone actually does that for all.
+
+>         cdr = readl(NXP_SAR_ADC_CDR(info->regs, chan));
+> -       if (!(cdr & NXP_SAR_ADC_CDR_VALID))
+> +       if (!(FIELD_GET(NXP_SAR_ADC_CDR_VALID, cdr)))
+>                 return -EIO;
+> 
+> -       return cdr & NXP_SAR_ADC_CDR_CDATA_MASK;
+> +       return FIELD_GET(NXP_SAR_ADC_CDR_CDATA_MASK, cdr);
 
 -- 
 With Best Regards,
