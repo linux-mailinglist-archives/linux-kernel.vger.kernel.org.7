@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-853875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8D4BDCCAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:51:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69ACBDCCB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0ABA3A4895
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:51:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CCBE4F1966
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4107313263;
-	Wed, 15 Oct 2025 06:51:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59767310771
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0877431281E;
+	Wed, 15 Oct 2025 06:51:34 +0000 (UTC)
+Received: from out198-4.us.a.mail.aliyun.com (out198-4.us.a.mail.aliyun.com [47.90.198.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39879310771
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760511061; cv=none; b=U6RdPTn5ey3+v2FZ7j2A6I5cCHfvTORHM3zJIFmjsgxNAErUVTqRb9E04lnAxY8+KRFkavo5pSCZaWStUMEXjk1qZDr0H+MUJBKoUW8/N4+w5KZO15PQ3I53CHRgb5zxDeP3vCD9GobhmCIqUkn/eD7unKc5I6U9QRqGFOEVoNk=
+	t=1760511093; cv=none; b=UotUVKctAwCveyOJ7b3KriaJGwnxpNb7CFnYpncFEz2MZ67I8BN1K6Q4VSmnq5dudZ6fGoUbjutwqz/EMK85fuAd+TrVRSE5QZ2aHsjj5YT1WXfZiUQ6g1OfFEa5/FVvUr7S/R4WjwyJrTwtw/AzvOTX6yw/na0ni1pjB1KKByY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760511061; c=relaxed/simple;
-	bh=k/l99g2DMhOXivwXETyV0lCBacqRU31kteEqdOBea9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9YTTMdKdimMvl/3kcU2WowhVmFXBWPaFhYZnu9FVD0i2CdRX9mOOAH1gEfwYrKiEL0lm1tDKCGcfnkokioYLfDDT+WBI8v6/7DkJuFjuqxXYtIvoJsxy1IhBJiJxOZ2janoEY5RChlWWB4ohBZVw0svIRztGcVEUK+9NLAEreg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAF671A32;
-	Tue, 14 Oct 2025 23:50:50 -0700 (PDT)
-Received: from [10.163.67.182] (unknown [10.163.67.182])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FE483F6A8;
-	Tue, 14 Oct 2025 23:50:54 -0700 (PDT)
-Message-ID: <eaa67b0d-e256-4db6-82e7-c4d56df70c09@arm.com>
-Date: Wed, 15 Oct 2025 12:20:51 +0530
+	s=arc-20240116; t=1760511093; c=relaxed/simple;
+	bh=apkylMRgyanDNynz4jQ9GVpsBDGWQusLXDjccYPVnSE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FlbrNGAPd6ml6hhCluz2b7zRhVW8VDfL44P1+trUMeOPh/flZcCpaqvlyPx4COEiNSeJXah9jYlCKa+ec+LxOy+xfkxljRU3DzILlUp6viizuSo0S44DWd9I4dNpwcupB4lgR5OZshSWR40qr5oA3FupvCstKW/tfYEDqrZ4a9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com; spf=pass smtp.mailfrom=allwinnertech.com; arc=none smtp.client-ip=47.90.198.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allwinnertech.com
+Received: from SunxiBot.allwinnertech.com(mailfrom:michael@allwinnertech.com fp:SMTPD_---.f-xpKI-_1760511065 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Oct 2025 14:51:08 +0800
+From: Michael Wu <michael@allwinnertech.com>
+To: myungjoo.ham@samsung.com,
+	cw00.choi@samsung.com,
+	andriy.shevchenko@linux.intel.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2] extcon: Fixed sysfs duplicate filename issue
+Date: Wed, 15 Oct 2025 14:51:02 +0800
+Message-Id: <20251015065102.70422-1-michael@allwinnertech.com>
+X-Mailer: git-send-email 2.29.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: mm: relax VM_ALLOW_HUGE_VMAP if BBML2_NOABORT
- is supported
-To: Yang Shi <yang@os.amperecomputing.com>, ryan.roberts@arm.com,
- cl@gentwo.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251013232803.3065100-1-yang@os.amperecomputing.com>
- <20251013232803.3065100-3-yang@os.amperecomputing.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251013232803.3065100-3-yang@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+With current extcon_dev_unregister() timing, ida_free is before
+device_unregister(), that may cause current id re-alloc to another
+device in extcon_dev_register() context but sysfs filename path not
+removal completed yet.
 
-On 14/10/25 4:57 am, Yang Shi wrote:
-> When changing permissions for vmalloc area, VM_ALLOW_HUGE_VMAP area is
-> exclueded because kernel can't split the va mapping if it is called on
-> partial range.
-> It is no longer true if the machines support BBML2_NOABORT after commit
-> a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full").
-> So we can relax this restriction and update the comments accordingly.
->
-> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
-> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-> ---
->   arch/arm64/mm/pageattr.c | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-> index c21a2c319028..b4dcae6273a8 100644
-> --- a/arch/arm64/mm/pageattr.c
-> +++ b/arch/arm64/mm/pageattr.c
-> @@ -157,13 +157,13 @@ static int change_memory_common(unsigned long addr, int numpages,
->   
->   	/*
->   	 * Kernel VA mappings are always live, and splitting live section
-> -	 * mappings into page mappings may cause TLB conflicts. This means
-> -	 * we have to ensure that changing the permission bits of the range
-> -	 * we are operating on does not result in such splitting.
-> +	 * mappings into page mappings may cause TLB conflicts on the machines
-> +	 * which don't support BBML2_NOABORT.
->   	 *
->   	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
-> -	 * Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
-> -	 * mappings are updated and splitting is never needed.
-> +	 * Disallow VM_ALLOW_HUGE_VMAP mappings if the systems don't support
-> +	 * BBML2_NOABORT to guarantee that only page mappings are updated and
-> +	 * splitting is never needed on those machines.
->   	 *
->   	 * So check whether the [addr, addr + size) interval is entirely
->   	 * covered by precisely one VM area that has the VM_ALLOC flag set.
-> @@ -171,7 +171,8 @@ static int change_memory_common(unsigned long addr, int numpages,
->   	area = find_vm_area((void *)addr);
->   	if (!area ||
->   	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
-> -	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
-> +	    !(area->flags & VM_ALLOC) || ((area->flags & VM_ALLOW_HUGE_VMAP) &&
-> +	    !system_supports_bbml2_noabort()))
->   		return -EINVAL;
->   
->   	if (!numpages)
+The right timing shows below:
+on extcon_dev_register: ida_alloc() -> device_register()
+on extcon_dev_unregister: device_unregister() -> ida_free()
 
-This will conflict with my upcoming vmalloc-huge series, so best to leave it to me,
-I already have this included :)
+stack information when an error occurs:
+sysfs: cannot create duplicate filename '/class/extcon/extcon1'
+Call trace:
+ dump_backtrace+0xe8/0x108
+ show_stack+0x18/0x28
+ dump_stack_lvl+0x50/0x6c
+ dump_stack+0x18/0x24
+ sysfs_warn_dup+0x68/0x88
+ sysfs_do_create_link_sd+0x94/0xdc
+ sysfs_create_link+0x30/0x48
+ device_add_class_symlinks+0xb4/0x12c
+ device_add+0x1e0/0x48c
+ device_register+0x20/0x34
+ extcon_dev_register+0x3b8/0x5c4
+ devm_extcon_dev_register+0x4c/0x94
+
+Fixes: 7bba9e81a6fb ("extcon: Use unique number for the extcon device ID")
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Michael Wu <michael@allwinnertech.com>
+---
+ChangeLog:
+V1 -> V2: Update commit msg, suggested by Markus Elfring
+V1: https://lore.kernel.org/all/20251011053719.87055-1-michael@allwinnertech.com/
+---
+---
+ drivers/extcon/extcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index e7f55c021e562..c08f642d7f5ee 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -1371,10 +1371,10 @@ void extcon_dev_unregister(struct extcon_dev *edev)
+ 		return;
+ 	}
+ 
+-	ida_free(&extcon_dev_ids, edev->id);
+-
+ 	device_unregister(&edev->dev);
+ 
++	ida_free(&extcon_dev_ids, edev->id);
++
+ 	if (edev->mutually_exclusive && edev->max_supported) {
+ 		for (index = 0; edev->mutually_exclusive[index];
+ 				index++)
+-- 
+2.29.0
 
 
