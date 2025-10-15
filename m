@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-853786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DD2BDC980
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:23:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01823BDC9A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2209434D064
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:23:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD571922AFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF90030277E;
-	Wed, 15 Oct 2025 05:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2FA30276F;
+	Wed, 15 Oct 2025 05:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQMy/0jU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BrCmE8kR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27450302742
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0589F14B96E;
+	Wed, 15 Oct 2025 05:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505832; cv=none; b=Xs858NyUJiqhe/r19yM0V+BzhXk4Z7vjUFbO7ckO6IiCkXKWElFABNuLJy2YP7manQHylSvjhcbCN/hQBoRFZhO/j69UiSItAHYBgqcgHLlocl5NBL19QGJeibE+w0uCTk02rwB7Ueu5Xq+h7Gr2SUg6L6t5SRF35V9AygPrmCs=
+	t=1760506261; cv=none; b=WP+YHc4qSGpZnSHjyLs8juEdWm9dhyhx2Waed1Dojr4PR2/J+YbfAkg++jxMn0qvqG8tdGwvwC3CKLL5gmcnViGidr6pPz+2LW5p30fsVBZ5RFRkA7RNE4c53oebccBtItOtM1IFCYp4/bivXQy1GbszGHic4QvJcrh8UQyJkpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505832; c=relaxed/simple;
-	bh=Y8W6GMzQJCTy0WdazAXCGfrxQoa7TUygfSxQG7gH54Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=AlBk5vdNRobdZ0896ZA965HRpNB8BONZEKZ35+i8GoMhf/my6j/9cONzUbVEN5wv92WOQQvll/aKBd3984ou+JAGFjuiaPsxDhhQNeMQcKG90okCXJ/IAiXUKiG47nRWjBF5r8WJectU9Z2anlZzybmqNpuX0YHvCWloZYur6yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQMy/0jU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4334C4CEFE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760505831;
-	bh=Y8W6GMzQJCTy0WdazAXCGfrxQoa7TUygfSxQG7gH54Q=;
-	h=From:Date:Subject:To:From;
-	b=pQMy/0jUq03RPNP6Ap4Hr7HszrgXpTj9Pq6kDYmHU/T17j9GygoY/ti4WLmLreNbP
-	 h1tpMJRASCkRPoT6F24sWhCkFnhoY+pOPKi36ES5mJc7adIMXuW1Sl+mb8K9i86UaG
-	 PDCgqtElqyzCANYEQMEK6oGUG0WMN7GwAJIdQLmgYpj4d+qhqffjB33h4W6JjHcPYZ
-	 flY9wGCHE6yX/KqH33lKxZ3n20TMPc6Oe4rhqEpYu0QWv/rkvqJQv4vuwKJ/IrubF7
-	 SZ46nmJymV+gT5vOPuBdZMv46wNYVuys/uqPqBVg8NRM3rm5N2obaiEy0hQSoE+dlG
-	 EQ98L+/SI1IxQ==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso241240566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:23:51 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yyb1TAjo/mcF97k/+iHJPu+y8WELzPBVzOEaKaEs1yhtKB6poZz
-	ENYD3VdwftZLcAhkyePEIdONtrq0qGSul3tNtEzrm7J9JccJUuPie42Y7u9nMPvw+2LnNeOyVIY
-	9Tf5GnSwTm99QrUFsSUoawMGkbQIDAMg=
-X-Google-Smtp-Source: AGHT+IEUPHiSWgq5faqpmwL8xJofNXM/lE4J2CeNTMOWn1cghhM0lpXSpaWufPEH6LZhD2zU5fD2fAcuJbGez70kiuw=
-X-Received: by 2002:a17:907:7f93:b0:b04:b446:355 with SMTP id
- a640c23a62f3a-b50aca01315mr2812821166b.59.1760505829916; Tue, 14 Oct 2025
- 22:23:49 -0700 (PDT)
+	s=arc-20240116; t=1760506261; c=relaxed/simple;
+	bh=UdFVOB8YwL0d1UrDbtT+D6OMH5FrPX5LdCbM/cY0tvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UW1EkuAEm+YKq9wurEGgNWDMANOe9B49QNAgLjkPCssOdLPte4VmoWJDN9WVGo0IP1lLcm76iVSRxaTxgN+hOPvuT2QmEH0a4z4BDWeGWqWMlDqVgoOqA+VIvM5moEqJkDdLM50XQStSH3FrcsiX0222JtKpWq1XseMJ4oeVE2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BrCmE8kR; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760506260; x=1792042260;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UdFVOB8YwL0d1UrDbtT+D6OMH5FrPX5LdCbM/cY0tvg=;
+  b=BrCmE8kRM88mitizmAAxZbW+0zASVL4Xkt5U2TWS2zRdKiC6mAkMbVLG
+   JaWJkR1XpzmxL07SXMtx1hy2CFhucSGsdGqA8snfDPcyJIxX65LhrOaMK
+   vXHZF7Eaji+WCzzhHqKgCBbcmiQ2VZ6w7N1L33cZx+BPvmJTbW4EXuRGh
+   4BUem/y2FGGiTX6fI/oOs8XDk2hHxWqidHpouKQRCk6nIj4yAG99QnEwp
+   AnR6vA5kwegoPaoBydY2coNKcYYT7p9c7t+Ga/xnnivzhpAumGm9ZmrHu
+   DyxUsRAXlK5aw/Fw9/fivXLqvk8Y3M9/F2WnCF+xAd6XMvJBJPzLZK+xK
+   A==;
+X-CSE-ConnectionGUID: Ee87s+KXSi2GSaktAa3z6w==
+X-CSE-MsgGUID: TnVzDlK3Sfe+jZqWi+6jPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="73274122"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="73274122"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:30:59 -0700
+X-CSE-ConnectionGUID: uGf6XeUXTMCo8JDM4txokg==
+X-CSE-MsgGUID: /dOghRkNQGyfgjw0vbzMjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="181206716"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 14 Oct 2025 22:30:55 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8u5D-0003Tl-26;
+	Wed, 15 Oct 2025 05:30:02 +0000
+Date: Wed, 15 Oct 2025 13:23:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Praveen K Paladugu <prapal@linux.microsoft.com>, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	anbelski@linux.microsoft.com, prapal@linux.microsoft.com,
+	easwar.hariharan@linux.microsoft.com,
+	nunodasneves@linux.microsoft.com, skinsburskii@linux.microsoft.com
+Subject: Re: [PATCH v2 2/2] hyperv: Enable clean shutdown for root partition
+ with MSHV
+Message-ID: <202510151359.vRXcys2P-lkp@intel.com>
+References: <20251014164150.6935-3-prapal@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 15 Oct 2025 14:23:38 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8OsoXbJTybYwFTvUe+utUyi9Lw3SMdObgCA82S-b-mQA@mail.gmail.com>
-X-Gm-Features: AS18NWDtNB4XBKJsk9bsIWtu3RKLDyGHNNp0REg0bc-1G4yzVEhvLrBLs_i9XO4
-Message-ID: <CAKYAXd8OsoXbJTybYwFTvUe+utUyi9Lw3SMdObgCA82S-b-mQA@mail.gmail.com>
-Subject: [ANNOUNCE] exfatprogs-1.3.0 version released
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Goldwyn Rodrigues <rgoldwyn@suse.com>, 
-	Nicolas Boos <nicolas.boos@wanadoo.fr>, sedat.dilek@gmail.com, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Luca Stefani <luca.stefani.ge1@gmail.com>, 
-	Matthieu CASTET <castet.matthieu@free.fr>, Sven Hoexter <sven@stormbind.net>, 
-	Ethan Sommer <e5ten.arch@gmail.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>, 
-	Eric Sandeen <sandeen@sandeen.net>, 3394797836@qq.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014164150.6935-3-prapal@linux.microsoft.com>
 
-Hi folks,
+Hi Praveen,
 
-In this release, a new tool, defrag.exfat, has been added to perform
-defragmentation on exFAT volumes, featuring the following command-line options:
+kernel test robot noticed the following build warnings:
 
-  - defrag.exfat    /dev/sdX: Perform defragmentation with "fsck warning"
-  - defrag.exfat -f /dev/sdX: Force defragmentation (skip fsck warning)
-  - defrag.exfat -a /dev/sdX: Assess current fragmentation status
+[auto build test WARNING on tip/x86/core]
+[also build test WARNING on linus/master v6.18-rc1 next-20251014]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Additionally, the quick format time of mkfs has been significantly improved:
-in the worst-case scenario of a 2TB partition with a 512B cluster size,
-the time was reduced from 3 minutes to just 9 seconds.
+url:    https://github.com/intel-lab-lkp/linux/commits/Praveen-K-Paladugu/hyperv-Add-definitions-for-MSHV-sleep-state-configuration/20251015-004650
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20251014164150.6935-3-prapal%40linux.microsoft.com
+patch subject: [PATCH v2 2/2] hyperv: Enable clean shutdown for root partition with MSHV
+config: i386-randconfig-006-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151359.vRXcys2P-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151359.vRXcys2P-lkp@intel.com/reproduce)
 
-Any feedback is welcome!:)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510151359.vRXcys2P-lkp@intel.com/
 
-NEW FEATURES :
- * defrag.exfat: add a tool to defragment an exFAT
-   filesystem or assess its fragmentation status.
-   See a man page.
+All warnings (new ones prefixed by >>):
 
-CHANGES :
- * mkfs.exfat: minimize zero-out initialization work
-   in quick format mode to reduce I/O time.
- * fsck.exfat: set the entry after an unused entry as unused.
+>> drivers/hv/hv_common.c:944:5: warning: no previous prototype for function 'hv_sleep_notifiers_register' [-Wmissing-prototypes]
+     944 | int hv_sleep_notifiers_register(void)
+         |     ^
+   drivers/hv/hv_common.c:944:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     944 | int hv_sleep_notifiers_register(void)
+         | ^
+         | static 
+   1 warning generated.
 
-BUG FIXES :
- * mkfs.exfat: fix incorrect FAT byte length calculation.
- * mkfs.exfat: avoid setting physical sector size into sector_size field.
- * fsck.exfat: fix a memory leaks in an error path.
 
-The git tree is at:
-      https://github.com/exfatprogs/exfatprogs
+vim +/hv_sleep_notifiers_register +944 drivers/hv/hv_common.c
 
-The tarballs can be found at:
-      https://github.com/exfatprogs/exfatprogs/releases/download/1.3.0/exfatprogs-1.3.0.tar.gz
+   943	
+ > 944	int hv_sleep_notifiers_register(void)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
