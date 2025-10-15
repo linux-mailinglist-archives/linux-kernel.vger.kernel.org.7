@@ -1,158 +1,116 @@
-Return-Path: <linux-kernel+bounces-854438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779DEBDE5DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FD1BDE5EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 970F33B4C54
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317E8480F26
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47F32D7810;
-	Wed, 15 Oct 2025 12:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4402324B3F;
+	Wed, 15 Oct 2025 12:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QS694sIf"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnenWbwb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF652C21E8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBEB21323C;
+	Wed, 15 Oct 2025 12:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760529651; cv=none; b=Iuzu0PyWaTmw5HttRzbnI6cE57vmF3yFQ0gQ9a9IuJjswFPhNeAam4nWcXbKiAKU0OYvkBr0Ci0qZa6nWz1dlu9npdWLC70IZqURD+e4fH+utrB4uLYKgr5OvY5DLLNXajQatMcEusMARUSGr5fv6n2F9pTKgRHUjEopD1AAGm0=
+	t=1760529694; cv=none; b=EXiI3C/qxwFpk0w2bRu6XeGQxeDS+r15steHDJVIbTKG7G0P/7z0YetJ9R6s2ZpU/oMl209A3zrLyJ2tWVkJ4ZR+sjDa/PlVJG/EqjQbH+Z08G42VFkerCPziNz6t8cNOlo5lrOwa1BCcbFNsbojFnoe8JCZxgzyUjx9rc3Ocyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760529651; c=relaxed/simple;
-	bh=kLZr9sVPGysJ0WQNoZMtdptiRKlUbGQ7h3wzqBzYq1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=en0gHyMT3o1Un3beeLZBUnVOVP14aOouXas4zlmJYoC+Eaea/W0LHAofq5vD12OpfKnZncinUImqZnK1H2QqFgigK9w5Mi4LB/ri7oxrrxLeW/m3NcmvNbqBL6wMhpgAsjNBOxSznuLnOxalMXbv5GKsvxdhoFPL4uwJfbbL60w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QS694sIf; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso5597391f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760529647; x=1761134447; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vlCxjgb1MucHfxVVzfW5HOJJxIf6rICYOJSm1xFlMWI=;
-        b=QS694sIfTd1baPvqfukpQG0xmzeTkCbOUo7542vNRgtwAGMTNypfwLOVKNNKc+Ou/+
-         CjqOyUsRSocw6d/PQhaFBXd4R2QB/qBOJt3biWpmidR/nqdVNM/uYLhfeHraCcDoxHXF
-         BmG8b3bW6xfS/i9qTDgLopKW2Mgr/pG3k/0WRa1SeASaAU8YW8tLMLfFQlQ/jQrozYkl
-         SBCT+gweRauxLm3BDL2uvwyN4O7D9mHpeNOR5MQFQBg9IL0HCPd2qCAJvZGB3329ssE4
-         tJr0e+ny8dyEZQ9DYSHdHwVI5qDE/juLw8Wrw7pDsjFFDGosn9X38SNTNonWTyefIb5Q
-         joDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760529647; x=1761134447;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vlCxjgb1MucHfxVVzfW5HOJJxIf6rICYOJSm1xFlMWI=;
-        b=eRA6TOE20msulpoX7LVJ5Lkpd+ZXYpr4cflpimSCmEyKhcyP7fIyQ25cUwLgBbHkg4
-         i8AtI1sKxIdAdxXz0MaHEJOlmqQSxwWBzrvrFZ1zffUdjdtGnpcS5/t/X9cDNk6BvdMV
-         f1PeMNy+029xR0cAJhNr1OjBINl29AUhRUNcDQmD/zsbLtoz30Ey2EDg2hE3mtk+Tdv9
-         gy/pQIRAQTicDabUbWe/FWkLU+F4YsjeOx+UQDPDCG8AHkr+aD0M/vIEId2CV5XjbG4e
-         Q5B3PAjjX70cmIOgRMdMo6YkPl7oPcsql1kJl+ZtBhJDps3RTOUUcI57abC8s1bzfIZj
-         h0tw==
-X-Gm-Message-State: AOJu0Yz6l/FIh7nkQTmAKgEGNMg4e+oXQizto/tKECVwTGKWMKhfp7Nl
-	Mzu8AfhjK1fBXb5Lr+iad97fUrLKSOCHPwlkl7PLzIemIauocR+XpmsbRLjOeA==
-X-Gm-Gg: ASbGncuaGrMN4tChTkWACUPOwgzTqDycTy5lDBRjM+MQZEtHSphAc9MohLVnppjwn2d
-	eSXJO9+Hqiq7mrNl/HgtH0vBGZBzCSYtZ95EBheSvnK7rfoRsDnia7lp3ekivcWyIoHq1ZaAHam
-	LPP9nbx+lhkxlzVADklTJ4pRC9kmP7Cu/XoOlz6SitVWQ+z74zo14wKSXpC9j2PDyLDbAG0WEdW
-	pxazlXUQ2lYfFaouwS18+pNsx/aY/277wk3iti53CVR5vx0I38/Up6E0UoDhhDvxdgKVPeIW5Xh
-	VOAGw4T/yTOvjIDIihmfI8BY8fffkLUzFkg1di6J5iiQJV1LJJrhPVsFoWNEpdduvD1iIk0w0zO
-	LfXv2JDJNACmGC2IlOStOuXt8aeCLKx/Eq/o2Mv1aMH7/cEeznwYNzB8BNuI7lN2G3A==
-X-Google-Smtp-Source: AGHT+IGsluqt3NGItIElnIoNT1i96LzPn1A4gXtu1b0U/YlCjJywSFxvMtfWVaqSmOialU+8CAzA6w==
-X-Received: by 2002:a05:6000:240d:b0:421:a112:4010 with SMTP id ffacd0b85a97d-4266e8e8f53mr17557550f8f.55.1760529647378;
-        Wed, 15 Oct 2025 05:00:47 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5d015esm29587532f8f.33.2025.10.15.05.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 05:00:47 -0700 (PDT)
-Message-ID: <97c56897-ed9b-4d4d-ba54-d6e2abbc8b0d@gmail.com>
-Date: Wed, 15 Oct 2025 14:00:46 +0200
+	s=arc-20240116; t=1760529694; c=relaxed/simple;
+	bh=8s7fvMHxfTzM3EvYSwYFuo1FYbApecy9Axtad/xbwF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0ktPTY63627rWyGY3DzCOgvZIRNxMJ34GzeO/2DJRKjKGM5/sIizmWC/cbX/XkL0nsA4hSbVie41rtZx49Tgg3VJ1v9b7ONb2YBEcfY15Pe9hcVBj1o8nAAL1+B2f2rnQ4cWXT+L1mkVb0a0Jm2tao0thorRmNhEBEc6JQV9hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnenWbwb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A904C4CEF8;
+	Wed, 15 Oct 2025 12:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760529693;
+	bh=8s7fvMHxfTzM3EvYSwYFuo1FYbApecy9Axtad/xbwF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pnenWbwbRYAwQnGlnDiEWfsP5P1Y0vu7dJcIutQilEDGqNQiTjIOiA2isbC6SO+ne
+	 AFW/Ntp0NL+PkJLkoAT/vmw+scXjLjUZJfxbNcctuf3BD8lji3tOsnOdtF4HzOXBvq
+	 IOkLK0ADuQexcABtAxOWCqJdZ7sWqtYzHcny9HE3Z79bW0Aq1ialA8DnoHQX4ZlZam
+	 n4C0cMl0SDDVcI3QBGggJXvPjgTmbuTE8f9cdCwh84H9tV5bbCGpGMdxvXdOLtD5ru
+	 i+s60/aHGEa0CaGHIvTxOVyuIp/Cq60blCDCyVUSaxTqxwv4hRN5DGny4/oIg2nkRs
+	 ocaTioFYt6OBg==
+Date: Wed, 15 Oct 2025 13:01:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
+Message-ID: <409ad505-8846-443e-8d71-baca3c9aef21@sirena.org.uk>
+References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
+ <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
+ <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 0/9] platform/x86: Add asus-armoury driver
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>, "Luke D . Jones" <luke@ljones.dev>,
- Alok Tiwari <alok.a.tiwari@oracle.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
-References: <20251015014736.1402045-1-benato.denis96@gmail.com>
- <0752fcde-6c25-4cde-b35f-2204e24ff0f1@amd.com>
- <8e381c36-3bdf-a1d6-8e51-53243ba8bf4d@linux.intel.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <8e381c36-3bdf-a1d6-8e51-53243ba8bf4d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ujXhcrR05EXINnYo"
+Content-Disposition: inline
+In-Reply-To: <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
+X-Cookie: Long life is in store for you.
 
 
-On 10/15/25 11:38, Ilpo Järvinen wrote:
-> On Wed, 15 Oct 2025, Mario Limonciello wrote:
->> On 10/14/2025 8:47 PM, Denis Benato wrote:
->>> Hi all,
->>>
->>> the TL;DR:
->>> 1. Introduce new module to contain bios attributes, using
->>> fw_attributes_class
->>> 2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
->>> 3. Remove those in the next LTS cycle
->>>
->>> The idea for this originates from a conversation with Mario Limonciello
->>> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
->>>
->>> It is without a doubt much cleaner to use, easier to discover, and the
->>> API is well defined as opposed to the random clutter of attributes I had
->>> been placing in the platform sysfs. Given that Derek is also working on a
->>> similar approach to Lenovo in part based on my initial work I'd like to
->>> think
->>> that the overall approach is good and may become standardised for these
->>> types
->>> of things.
->>>
->>> Regarding PPT: it is intended to add support for "custom" platform profile
->>> soon. If it's a blocker for this patch series being accepted I will drop the
->>> platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
->>> separately to avoid holding the bulk of the series up. Ideally I would like
->>> to get the safe limits in so users don't fully lose functionality or
->>> continue
->>> to be exposed to potential instability from setting too low, or be mislead
->>> in to thinking they can set limits higher than actual limit.
->>>
->>> The bulk of the PPT patch is data, the actual functional part is relatively
->>> small and similar to the last version.
->>>
->>> Unfortunately I've been rather busy over the months and may not cover
->>> everything in the v7 changelog but I've tried to be as comprehensive as I
->>> can.
->>>
->>> Regards,
->>> Luke
->> As a general comment that applies to a few patches in the series.
->>
->> The S-o-b means that YOU sign off on them, it's like a chain of custody.
->>
->> Any patches that you're sending need your own S-o-B, even if they're 100% the
->> same as the original from Luke.
-> There's also Co-developed-by tag which may be appropriate in cases where 
-> both have touched the patch.
->
-I have re-read the submission documentation and confirmed I need at least
-S-o-b for all of them. Is it acceptable if I simply answer to the email with my S-o-b
-and Co-developed-by (on patches I have touched) or do I need to resend
-the whole patchset creating a v15?
+--ujXhcrR05EXINnYo
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Denis
+On Wed, Oct 15, 2025 at 11:16:01AM +0100, Nuno S=E1 wrote:
+> On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
+
+> > =A0=A0=A0=A0=A0=A0=A0 controller=A0=A0=A0 < data bits <=A0=A0=A0=A0 per=
+ipheral
+> > =A0=A0=A0=A0=A0=A0=A0 ----------=A0=A0 ----------------=A0=A0 ----------
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 SDI 0=A0=A0=A0 0-0-0-1-0-0-0-1=A0=A0=
+=A0 SDO 0
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 SDI 1=A0=A0=A0 1-0-0-0-1-0-0-0=A0=A0=
+=A0 SDO 1
+
+> Out of curiosity, how does this work for devices like AD4030 where the sa=
+me word
+> is kind of interleaved between SDO lines? I guess it works the same (in t=
+erms of
+> SW) and is up to some IP core (typically in the FPGA) to "re-assemble" th=
+e word?
+
+So combined with the existing parallel SPI support?
+
+--ujXhcrR05EXINnYo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjvjRIACgkQJNaLcl1U
+h9CF1wf/dUWV9762+d8pAi8WCNY/L16hRGTQEWpyX0h5rV275wGLwBXjSQ+yyTAz
+pgmyxhAnLdiNaIL39xa+Ri2xEYBxIGMrwk7KdPBDbioZRAP+niC8yTjPdK2wm5Ex
+wVTP6376LsvDGLD50I0k+MHAYNiCOYlWXqiwBMIwMrwhWeEY3wzKC1hvdWyEkSA9
+m1Ecl+TmfJaT5UvO/lxMU8WRttC5kOZysC/yBPffrWE325P7negBBypwTuP5vIXZ
+eii0rnPykREF4clc3d1R79kZPjyytBywvD4lmQQcDWd1jGNCqjHDgdBqFBeJpKC4
+Qo48A0C8QxFmE0E3LICNJcau0QtZHA==
+=P/qz
+-----END PGP SIGNATURE-----
+
+--ujXhcrR05EXINnYo--
 
