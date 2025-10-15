@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-853558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380C5BDBFA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:23:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71EDBDBFCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 702C434F26A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:23:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C66B4E1F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ADE2F8BF1;
-	Wed, 15 Oct 2025 01:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0TcGRxhC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04877223DF1;
+	Wed, 15 Oct 2025 01:32:29 +0000 (UTC)
+Received: from vps.thesusis.net (vps.thesusis.net [34.202.238.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E9141C71;
-	Wed, 15 Oct 2025 01:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B1118024
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.238.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760491371; cv=none; b=GUi9Qy38Unry4uS2IX6A6oNla0byvO4acbynjIdFKDWj0BA8HDlIa2APZ7VnK9j0a9+1y3B1d6x+hq6JM9g0gkAVwNfmpcPgtqDBjgRpC4kkBHtCfBRWa7MMj8BTMfoT9vSgabeFzR1ZaNrrC+hS8RFzm7WqP9/X+tR1+0w2Pl4=
+	t=1760491948; cv=none; b=AFjDZ7iXJ8oR4QKbe75AYTS9yw3DFW8GUZIjuBaRmccTkFRJUzgNpD95EIS3sT27RJ6YS1V3NwT7Zjk0FDv6rYnwf3QIztSvqqv5HgwrJ/524IoClevWrOz+LVwMdrWuBJgfr2Ld2wG5y2uRPP2Ri2TtrGbzJ0JVkQts1lAB64o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760491371; c=relaxed/simple;
-	bh=Yc5XGXuuN+qN0hyc0ljp9Q9Ff4KoJTRT8Q/X5IibrHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMLa6/BvKnWrLNYwU+nLb0riJf6EU9syqBE1lbrv0+iVL9BpAMRtFfMBw8OSh1oNlrcD8B+pmxvPKnTX2Z0ReY5gHGBZ+09nmiXDlDhbP1phYlkR7ZE+UE/r9QpOIWbrQEpPSpkgHUVWDsXZGnXX8KSvXyf/zFvVvcIfl7ZfZh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0TcGRxhC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=THZdcb8DllowJHnhCUQvYqJQSPdZJPLsVnMT6SOtwf4=; b=0TcGRxhCKoq89Ni7iOr5qY1ewO
-	grLd3vPzNtuEDYvS+35V9FbmaHJHb6TWqqNIcofOHjvn2F6Ph3JwHXbzEAWRMh8NlqANhOkwqOKnk
-	Ttazm8vEYz7pkvcpBe7aPkr833cz09ATTZkNHXg655xNpjnaCRZd7b8x1hGHx1Q0S+fOUtphQJmbT
-	UoG9EQeFBgk3mBJN9Lnwab1zy3SjBIvRsjpDPvrW5p1zDVMxnUoqs/e6ztSPBrTYcCBcl8P1xI49z
-	yPzx+evc8byqhj5Sn6kXUZhl4/pG0/Qbj79COwo1tBVuaVTLzjvID8ze9iJhuKkZz+Z7gzg8HdSQl
-	aazYgT0Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8qDy-000000009Qi-01Ha;
-	Wed, 15 Oct 2025 01:22:42 +0000
-Date: Tue, 14 Oct 2025 18:22:41 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Anand Jain <anajain.sg@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>
-Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
- origin
-Message-ID: <aO73YTmDIhHkg3XB@infradead.org>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014015707.129013-2-andrealmeid@igalia.com>
- <aO3T8BGM6djYFyrz@infradead.org>
- <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
+	s=arc-20240116; t=1760491948; c=relaxed/simple;
+	bh=MQesz4Y9pPUgeDHQgGlnKXTkwEj2Kkzga3lWDS72h+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tg8cMeIg4iJZ/TC0NNv41X9ueJYW9R9svtD8MEJG7X5LvyriAR3P/TDQJYVAhlvvdLpZwvbNLKt/29WV2x0QeqznIiU2DpnhoxKDjrF2FsdYclmwEESK64SfaW3F3IS5yAW8pQUngi2Fcj7sDsHuEeC58KIT2EsFboxvnETal20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net; spf=pass smtp.mailfrom=thesusis.net; arc=none smtp.client-ip=34.202.238.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thesusis.net
+Received: by vps.thesusis.net (Postfix, from userid 1000)
+	id 01522B823B; Tue, 14 Oct 2025 21:22:53 -0400 (EDT)
+From: Phillip Susi <phill@thesusis.net>
+To: linux-kernel@vger.kernel.org
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>, Mathias Nyman
+ <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Suspend regression in v6.18-rc1
+Date: Tue, 14 Oct 2025 21:22:53 -0400
+Message-ID: <871pn5j6vm.fsf@vps.thesusis.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
 
-On Wed, Oct 15, 2025 at 07:46:34AM +0800, Anand Jain wrote:
-> We needed cloned device mount support for an A/B testing
-> use case, but changing the on-disk UUID defeats the purpose.
-> 
-> Right now, ext4 and Btrfs can mount identical devices,
-> but XFS can't. How about extending this to the common
-> VFS layer and adding a parameter to tell apart a cloned
-> device from the same device accessed through multiple
-> paths? I haven't looked into the details yet, but I can
-> dig it further.
+I have a suspend regression in v6.18-rc1 that results in this in my
+dmesg when I try to suspend:
 
-If you clone a device you need to change the user visible uuid/fsid,
-and you need to do that explicitly to a known either saved or user
-controlled value.  Assigning a random ID is highly dangerous as seen
-here.
+[   36.739259] Freezing remaining freezable tasks
+[   36.740378] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[   36.740414] printk: Suspending console(s) (use no_console_suspend to debug)
+[   36.783363] xhci_hcd 0000:51:00.0: Root hub is not suspended
+[   36.783366] xhci_hcd 0000:51:00.0: PM: pci_pm_suspend(): hcd_pci_suspend [usbcore] returns -16
+[   36.783378] xhci_hcd 0000:51:00.0: PM: dpm_run_callback(): pci_pm_suspend returns -16
+[   36.783383] xhci_hcd 0000:51:00.0: PM: failed to suspend async: error
+-16
+
+I have bisected it to this commit:
+
+commit 719de070f764e079cdcb4ddeeb5b19b3ddddf9c1 (HEAD)
+Author: Niklas Neronin <niklas.neronin@linux.intel.com>
+Date:   Thu Sep 18 00:07:22 2025 +0300
+
+    usb: xhci-pci: add support for hosts with zero USB3 ports
+    
+    Add xhci support for PCI hosts that have zero USB3 ports.
+    Avoid creating a shared Host Controller Driver (HCD) when there is only
+    one root hub. Additionally, all references to 'xhci->shared_hcd' are now
+    checked before use.
+    
+    Only xhci-pci.c requires modification to accommodate this change, as the
+    xhci core already supports configurations with zero USB3 ports. This
+    capability was introduced when xHCI Platform and MediaTek added support
+    for zero USB3 ports.
+    
+    Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220181
+    Tested-by: Nick Nielsen <nick.kainielsen@free.fr>
+    Tested-by: grm1 <grm1@mailbox.org>
+    Signed-off-by: Niklas Neronin <niklas.neronin@linux.intel.com>
+    Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+    Link: https://lore.kernel.org/r/20250917210726.97100-4-mathias.nyman@linux.intel.com
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+It sounds like it may be related to these errors that I have had on this
+system since I built it last year:
+
+Oct 14 20:55:36 faldara kernel: hub 10-0:1.0: USB hub found
+Oct 14 20:55:36 faldara kernel: hub 10-0:1.0: config failed, hub doesn't
+have any ports! (err -19)
+
+I believe this system has a usb hub with "zero ports" that this patch
+was meant to fix, but up until now, has only resulted in this beign
+dmesg error.  I no longer see this error after this commit.
+
+This is an ASrock 650E Taichi Lite motherboard I built last year.
+
+What additional information can I provide?
 
