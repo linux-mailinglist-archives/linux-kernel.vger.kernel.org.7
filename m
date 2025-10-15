@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-854081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D881BDD7FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F313BDD7E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956AE19A4F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F48189C969
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C9931960F;
-	Wed, 15 Oct 2025 08:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FE4318136;
+	Wed, 15 Oct 2025 08:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="mfOe8X4H"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="QeWYWTkb"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C18C31690E;
-	Wed, 15 Oct 2025 08:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E9D31690D;
+	Wed, 15 Oct 2025 08:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518005; cv=none; b=iLsfhceeXD6BPfg317HkLXJM3k+lC7DvBEmHwuLi8A+tBZb7LhXZDBmiIU5oZLP0F7DHiMywGLukoiFK1iR55y/fAId3JJveLwjmkCgqWS7I1NZdm6NJZ9aPKmC/LDvZMAWY3vlge3oc4PQFDmUcrqpYHbBaHX+KN2A8bgiYZoM=
+	t=1760518002; cv=none; b=Hu2baEX+PCIpI5KgHC0B1FpYiDIdFeEVFk3xRj1LQ0Fl9EX09r7mbj9Sei0UlHzVWCMoMsLCO99qTM0E7okvRgIinzMLx4w69xHi4kFOAx7X6VJK/8vRlR5qLCosnmH2XPwCVQ46y75F8N9Ru7LXTVylfeB/zLnsXf4W0kqJUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518005; c=relaxed/simple;
-	bh=FA4Em+hL8eYFHWx+CkmuzHQihWTQh8GAUQaOv2C36jI=;
+	s=arc-20240116; t=1760518002; c=relaxed/simple;
+	bh=CG81GUh4GUO5ZQxcFMuSE3z1Q+jDnttN5+TYKdFoxEE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pdlhAzPzgqIs8gfdwKQ9wLdfamnwy0wYm22GqscmQ71v09myj11Qid+o0uU1m8GO9zuefvcqXBc1mzmCnmOoCt+74wHpT12oJKVZpB8UibyH+SKA4yJrIzqyx9eT725WMVfAsftGIHDtUax1zEM+OdKRqNxRx/I2b4SKBpwdwJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=mfOe8X4H; arc=none smtp.client-ip=88.99.38.195
+	 MIME-Version; b=CEfjXG1I3GnQ35rcVWkoKt5F+XvpWYcZhaQv2GNEcHM98K/pYjeObFNDCWcITIP29fhGaC07cqKH3fWTB47mNXDWmAvvhU0/bGXqO2wnZHTgysK0VgMkvDaVwO6CSxbU4z93cDTpgb+Ei2p5h2LBOk7mH0uEv5LWJDjH2Q3Nrzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=QeWYWTkb; arc=none smtp.client-ip=78.46.171.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id 53752BD9E0;
-	Wed, 15 Oct 2025 11:46:36 +0300 (EEST)
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 7505BC5546;
+	Wed, 15 Oct 2025 11:46:38 +0300 (EEST)
 Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id BCA41BDAA7;
-	Wed, 15 Oct 2025 11:46:35 +0300 (EEST)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id BFA02C56B9;
+	Wed, 15 Oct 2025 11:46:37 +0300 (EEST)
 Received: from antheas-z13 (x5996a8de.customers.hiper-net.dk [89.150.168.222])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id CF49D200A8C;
-	Wed, 15 Oct 2025 11:46:33 +0300 (EEST)
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id D3ED4200A81;
+	Wed, 15 Oct 2025 11:46:35 +0300 (EEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760517995;
-	bh=aiIpJlHk4qSmwTPNGmk1NA68aArD73CnQ8C4MX03jh8=; h=From:To:Subject;
-	b=mfOe8X4HCcA6mzDAgeXQPOUopAyVteONBsg8BRz7BFqy6MyGktpsOqZrt0VhfydeB
-	 syNBr1uOV6sEkOFhEsfnBhJxsTgS0h7BdohlYlSk1KKD7FSN4eoiPsAWtcJJnLMkc2
-	 YzcfRUiPn8K6fmlhj21mavVT8zt9r7lXVn/U48A/34eMr4QOmM/RtbO4AVVOJsYNts
-	 0AwAEH7xrc3cLCGIk0HfwbgVX9RLCOeEDa224vGMQt47W7TSL32nIjaBFCGduDY1c0
-	 SlUyPJtTEYpPgfFWtMdjoHDEalL73mV+n0Sm6jY6CEQMcoD8icvDdVDdrjiOALwQdj
-	 FvQeVqQ06sqAw==
+	s=default; t=1760517997;
+	bh=cQwxQxc6TruRuBos9LalVuLShmHa9nKoYG/4GYxYSlk=; h=From:To:Subject;
+	b=QeWYWTkbAUaBeEzcZWCuUOxXkSgiwo8bVdvVv5NeWnlFYtmEIgJ8xuz/oujMKPgx5
+	 TYCOzc6X3NRbtlL7GaS7ogHuewz5+MA68SlOyAtQmheuEu3i00MTX7V1lbge2uhwIr
+	 n4Xx52s+sxyJrpwhcHf3aPZCgETcHGHpI9CbfSSOZ1i3EKCATSD3ES+BTw4nL04CKZ
+	 IbsbkdNVyzAC8kMHtOSXmfc//R6ISlxQqa/9q2XLM1SzkCTcGhyNHLFX3WdZZ0lyPx
+	 t2/F4dK17JXSrClpm9GawH6cfY0noCZowcw1fZX+liHlt0XzacNLrnPYjtr5dN7IPS
+	 UdHHd+riRd+Vg==
 Authentication-Results: linux3247.grserver.gr;
 	spf=pass (sender IP is 89.150.168.222) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
 Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
@@ -65,9 +65,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
 	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v2 3/6] platform/x86: ayaneo-ec: Add charge control support
-Date: Wed, 15 Oct 2025 10:44:11 +0200
-Message-ID: <20251015084414.1391595-4-lkml@antheas.dev>
+Subject: [PATCH v2 4/6] platform/x86: ayaneo-ec: Add controller power and
+ modules attributes
+Date: Wed, 15 Oct 2025 10:44:12 +0200
+Message-ID: <20251015084414.1391595-5-lkml@antheas.dev>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251015084414.1391595-1-lkml@antheas.dev>
 References: <20251015084414.1391595-1-lkml@antheas.dev>
@@ -79,196 +80,211 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-PPP-Message-ID: 
- <176051799542.920943.4632876775525167142@linux3247.grserver.gr>
+ <176051799744.921006.3548139830714446726@linux3247.grserver.gr>
 X-PPP-Vhost: antheas.dev
 X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
 X-Virus-Status: Clean
 
-Ayaneo devices support charge inhibition via the EC. This inhibition
-only works while the device is powered on, and resets between restarts.
-However, it is maintained across suspend/resume cycles.
+The Ayaneo 3 features hot-swappable controller modules. The ejection
+and management is done through HID. However, after ejecting the modules,
+the controller needs to be power cycled via the EC to re-initialize.
 
-The EC does not support charge threshold control. Instead, userspace
-software on Windows manually toggles charge inhibition depending on
-battery level.
+For this, the EC provides a variable that holds whether the left or
+right modules are connected, and a power control register to turn
+the controller on or off. After ejecting the modules, the controller
+should be turned off. Then, after both modules are reinserted,
+the controller may be powered on again to re-initialize.
+
+This patch introduces two new sysfs attributes:
+ - `controller_modules`: a read-only attribute that indicates whether
+   the left and right modules are connected (none, left, right, both).
+ - `controller_power`: a read-write attribute that allows the user
+   to turn the controller on or off (with '1'/'0').
+
+Therefore, after ejection is complete, userspace can power off the
+controller, then wait until both modules have been reinserted
+(`controller_modules` will return 'both') to turn on the controller.
 
 Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 ---
- drivers/platform/x86/Kconfig     |   1 +
- drivers/platform/x86/ayaneo-ec.c | 111 +++++++++++++++++++++++++++++++
- 2 files changed, 112 insertions(+)
+ .../ABI/testing/sysfs-platform-ayaneo         |  19 ++++
+ MAINTAINERS                                   |   1 +
+ drivers/platform/x86/ayaneo-ec.c              | 100 ++++++++++++++++++
+ 3 files changed, 120 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index f132a87fcee9..f5b2edc6bc67 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -320,6 +320,7 @@ config AYANEO_EC
- 	tristate "Ayaneo EC platform control"
- 	depends on X86
- 	depends on ACPI_EC
-+	depends on ACPI_BATTERY
- 	depends on HWMON
- 	help
- 	  Enables support for the platform EC of Ayaneo devices. This
+diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo b/Documentation/ABI/testing/sysfs-platform-ayaneo
+new file mode 100644
+index 000000000000..1fa32ba60fd0
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-platform-ayaneo
+@@ -0,0 +1,19 @@
++What:		/sys/devices/platform/<platform>/controller_power
++Date:		Oct 2025
++KernelVersion:	6.9
++Contact:	"Antheas Kapenekakis" <lkml@antheas.dev>
++Description:
++		Current controller power state. Allows turning on and off
++		the controller power (e.g. for power savings). Write 1 to
++		turn on, 0 to turn off. File is readable and writable.
++
++What:		/sys/devices/platform/<platform>/controller_modules
++Date:		Oct 2025
++KernelVersion:	6.9
++Contact:	"Antheas Kapenekakis"  <lkml@antheas.dev>
++Description:
++		Shows which controller modules are currently connected to
++		the device. Possible values are "left", "right" and "both".
++		File is read-only. The Windows software for this device
++		will only set controller power to 1 if both module sides
++		are connected (i.e. this file returns "both").
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8c4d0c26ca77..3dfa004555dd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4191,6 +4191,7 @@ AYANEO PLATFORM EC DRIVER
+ M:	Antheas Kapenekakis <lkml@antheas.dev>
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
++F:	Documentation/ABI/testing/sysfs-platform-ayaneo
+ F:	drivers/platform/x86/ayaneo-ec.c
+ 
+ AZ6007 DVB DRIVER
 diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-index 9884eed0cc84..23c283f5eb61 100644
+index 23c283f5eb61..363b61fc6e12 100644
 --- a/drivers/platform/x86/ayaneo-ec.c
 +++ b/drivers/platform/x86/ayaneo-ec.c
-@@ -14,6 +14,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <acpi/battery.h>
+@@ -30,9 +30,17 @@
+ #define AYANEO_CHARGE_VAL_AUTO		0xaa
+ #define AYANEO_CHARGE_VAL_INHIBIT	0x55
  
- #define AYANEO_PWM_ENABLE_REG	 0x4A
- #define AYANEO_PWM_REG		 0x4B
-@@ -22,17 +23,27 @@
- 
- #define AYANEO_FAN_REG		 0x76
- 
-+#define EC_CHARGE_CONTROL_BEHAVIOURS                         \
-+	(BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO) |           \
-+	 BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE))
-+#define AYANEO_CHARGE_REG		0x1e
-+#define AYANEO_CHARGE_VAL_AUTO		0xaa
-+#define AYANEO_CHARGE_VAL_INHIBIT	0x55
++#define AYANEO_POWER_REG	0x2d
++#define AYANEO_POWER_OFF	0xfe
++#define AYANEO_POWER_ON		0xff
++#define AYANEO_MODULE_REG	0x2f
++#define AYANEO_MODULE_LEFT	BIT(0)
++#define AYANEO_MODULE_RIGHT	BIT(1)
 +
  struct ayaneo_ec_quirk {
  	bool has_fan_control;
-+	bool has_charge_control;
+ 	bool has_charge_control;
++	bool has_magic_modules;
  };
  
  struct ayaneo_ec_platform_data {
- 	struct platform_device *pdev;
- 	struct ayaneo_ec_quirk *quirks;
-+	struct acpi_battery_hook battery_hook;
- };
- 
+@@ -44,6 +52,7 @@ struct ayaneo_ec_platform_data {
  static const struct ayaneo_ec_quirk ayaneo3 = {
  	.has_fan_control = true,
-+	.has_charge_control = true,
+ 	.has_charge_control = true,
++	.has_magic_modules = true,
  };
  
  static const struct dmi_system_id dmi_table[] = {
-@@ -161,11 +172,102 @@ static const struct hwmon_chip_info ayaneo_ec_chip_info = {
- 	.info = ayaneo_ec_sensors,
- };
+@@ -262,6 +271,96 @@ static int ayaneo_remove_battery(struct power_supply *battery,
+ 	return 0;
+ }
  
-+static int ayaneo_psy_ext_get_prop(struct power_supply *psy,
-+				const struct power_supply_ext *ext,
-+				void *data,
-+				enum power_supply_property psp,
-+				union power_supply_propval *val)
++static ssize_t controller_power_store(struct device *dev,
++			    struct device_attribute *attr, const char *buf,
++			    size_t count)
++{
++	bool value;
++	int ret;
++
++	ret = kstrtobool(buf, &value);
++	if (ret)
++		return ret;
++
++	ret = ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYANEO_POWER_OFF);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++static ssize_t controller_power_show(struct device *dev,
++			   struct device_attribute *attr, char *buf)
 +{
 +	int ret;
-+	u8 tmp;
++	u8 val;
 +
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
-+		ret = ec_read(AYANEO_CHARGE_REG, &tmp);
-+		if (ret)
-+			return ret;
++	ret = ec_read(AYANEO_POWER_REG, &val);
++	if (ret)
++		return ret;
 +
-+		if (tmp == AYANEO_CHARGE_VAL_INHIBIT)
-+			val->intval = POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE;
-+		else
-+			val->intval = POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO;
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
++	return sysfs_emit(buf, "%d\n", val == AYANEO_POWER_ON);
 +}
 +
-+static int ayaneo_psy_ext_set_prop(struct power_supply *psy,
-+				const struct power_supply_ext *ext,
-+				void *data,
-+				enum power_supply_property psp,
-+				const union power_supply_propval *val)
++static DEVICE_ATTR_RW(controller_power);
++
++static ssize_t controller_modules_show(struct device *dev,
++				       struct device_attribute *attr, char *buf)
 +{
-+	u8 raw_val;
++	bool left, right;
++	char *out;
++	int ret;
++	u8 val;
 +
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
-+		switch (val->intval) {
-+		case POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO:
-+			raw_val = AYANEO_CHARGE_VAL_AUTO;
-+			break;
-+		case POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE:
-+			raw_val = AYANEO_CHARGE_VAL_INHIBIT;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		return ec_write(AYANEO_CHARGE_REG, raw_val);
-+	default:
-+		return -EINVAL;
-+	}
++	ret = ec_read(AYANEO_MODULE_REG, &val);
++	if (ret)
++		return ret;
++
++	left = !(val & AYANEO_MODULE_LEFT);
++	right = !(val & AYANEO_MODULE_RIGHT);
++
++	if (left && right)
++		out = "both";
++	else if (left)
++		out = "left";
++	else if (right)
++		out = "right";
++	else
++		out = "none";
++
++	return sysfs_emit(buf, "%s\n", out);
 +}
 +
-+static int ayaneo_psy_prop_is_writeable(struct power_supply *psy,
-+				     const struct power_supply_ext *ext,
-+				     void *data,
-+				     enum power_supply_property psp)
-+{
-+	return true;
-+}
++static DEVICE_ATTR_RO(controller_modules);
 +
-+static const enum power_supply_property ayaneo_psy_ext_props[] = {
-+	POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR,
++static struct attribute *aya_mm_attrs[] = {
++	&dev_attr_controller_power.attr,
++	&dev_attr_controller_modules.attr,
++	NULL
 +};
 +
-+static const struct power_supply_ext ayaneo_psy_ext = {
-+	.name			= "ayaneo-charge-control",
-+	.properties		= ayaneo_psy_ext_props,
-+	.num_properties		= ARRAY_SIZE(ayaneo_psy_ext_props),
-+	.charge_behaviours	= EC_CHARGE_CONTROL_BEHAVIOURS,
-+	.get_property		= ayaneo_psy_ext_get_prop,
-+	.set_property		= ayaneo_psy_ext_set_prop,
-+	.property_is_writeable	= ayaneo_psy_prop_is_writeable,
-+};
-+
-+static int ayaneo_add_battery(struct power_supply *battery,
-+			   struct acpi_battery_hook *hook)
++static umode_t aya_mm_is_visible(struct kobject *kobj,
++				 struct attribute *attr, int n)
 +{
-+	struct ayaneo_ec_platform_data *data =
-+		container_of(hook, struct ayaneo_ec_platform_data, battery_hook);
++	struct device *dev = kobj_to_dev(kobj);
++	struct platform_device *pdev = to_platform_device(dev);
++	struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
 +
-+	return power_supply_register_extension(battery, &ayaneo_psy_ext,
-+					       &data->pdev->dev, NULL);
-+}
-+
-+static int ayaneo_remove_battery(struct power_supply *battery,
-+			      struct acpi_battery_hook *hook)
-+{
-+	power_supply_unregister_extension(battery, &ayaneo_psy_ext);
++	if (data->quirks->has_magic_modules)
++		return attr->mode;
 +	return 0;
 +}
++
++static const struct attribute_group aya_mm_attribute_group = {
++	.is_visible = aya_mm_is_visible,
++	.attrs = aya_mm_attrs,
++};
++
++static const struct attribute_group *ayaneo_ec_groups[] = {
++	&aya_mm_attribute_group,
++	NULL
++};
 +
  static int ayaneo_ec_probe(struct platform_device *pdev)
  {
  	const struct dmi_system_id *dmi_entry;
- 	struct ayaneo_ec_platform_data *data;
- 	struct device *hwdev;
-+	int ret;
- 
- 	dmi_entry = dmi_first_match(dmi_table);
- 	if (!dmi_entry)
-@@ -186,6 +288,15 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
- 			return PTR_ERR(hwdev);
- 	}
- 
-+	if (data->quirks->has_charge_control) {
-+		data->battery_hook.add_battery = ayaneo_add_battery;
-+		data->battery_hook.remove_battery = ayaneo_remove_battery;
-+		data->battery_hook.name = "Ayaneo Battery";
-+		ret = devm_battery_hook_register(&pdev->dev, &data->battery_hook);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
+@@ -303,6 +402,7 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
+ static struct platform_driver ayaneo_platform_driver = {
+ 	.driver = {
+ 		.name = "ayaneo-ec",
++		.dev_groups = ayaneo_ec_groups,
+ 	},
+ 	.probe = ayaneo_ec_probe,
+ };
 -- 
 2.51.0
 
