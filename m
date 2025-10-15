@@ -1,303 +1,214 @@
-Return-Path: <linux-kernel+bounces-854212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC9BDDD50
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3ACBDDD5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7CB84FC545
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:42:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B41F4E1104
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A94F3176EF;
-	Wed, 15 Oct 2025 09:41:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC795239E7D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3B726B2D2;
+	Wed, 15 Oct 2025 09:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSVBijxE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADE32BCF7F;
+	Wed, 15 Oct 2025 09:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521315; cv=none; b=LDeQG2tFTiRT8qZ7FaQNetIfDUD3A7VT1jgDz59Kzd0BPPLJZeAiEUGJ98CAh8uOIopKipU+hX2qvNa0SRLnXPIkhUxVnSZgZniRkux1Vqb8/d3x/SDkGRfGYgq6ueTXZY/KGty07vn6XkDrjUANtFJuRtXQRNAGWPsbVYtKpCo=
+	t=1760521403; cv=none; b=IQgt0gGTMQDerwUV2ja86WDjaDvIU/vQGrLBWfnBrJlBbYxjEjPTw8TngtBCgDxyW2E++rHh3RcFEaLHwBwhIGcHxcrjUSlIClvU+3/+8J1PaChPEqPRZsTGQkqDOY0xBlCiNrypPicmMLOM3XQo9NN9eGbbtasT+VBpObFYbHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521315; c=relaxed/simple;
-	bh=jDK3wY41Y7yvUrK8211NgAoyyzvMcoyeGVytmAiwrIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=paezYy+VLKWhWEf63NRmpxCICM7uelta19i+eVWNCO2BgZpkzaaUy5BqWo8wcRcqGQQUYHiSps5mqYLG+5iaXQ3wYG6Dik0R81kS1tSeZLkj/pwNAAZXnyJ+JvUOywKV9hKCb+dE4gXPjcllqOogBlt/oOfGy3oFqxOrhxtm0Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 390DE16A3;
-	Wed, 15 Oct 2025 02:41:45 -0700 (PDT)
-Received: from [10.1.32.75] (e127648.arm.com [10.1.32.75])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 689F43F6A8;
-	Wed, 15 Oct 2025 02:41:52 -0700 (PDT)
-Message-ID: <69bda5d0-50fd-4508-95e0-d39bf2704255@arm.com>
-Date: Wed, 15 Oct 2025 10:41:50 +0100
+	s=arc-20240116; t=1760521403; c=relaxed/simple;
+	bh=ohU9p2wj4W925yjMw6YOgURwMS4OKHFNYtatSsax8Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgArI9wufETc2D3lrGJWZiOIFJ65x9EzSuInoOkavISnzf/VI98RHITK1yzojzG62H5Yc5LAsSyNtwUl1Hw7j6zjGMOSqtNMgRAbSF/91rbjiSu3CXAzR3Sel4dpDgoXQzjTOjQUWA8qr8o6zxNVQ+LDcww170XAHJtOIT+dOkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSVBijxE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B427C4CEF8;
+	Wed, 15 Oct 2025 09:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760521403;
+	bh=ohU9p2wj4W925yjMw6YOgURwMS4OKHFNYtatSsax8Zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jSVBijxENX5rGNw3FqGWtQjw84u1qLNtOFXu2j+AGJI7Cqh5Sr2ec3rzfmGIYfGGF
+	 bg2eQ5kBAfmjbmjFxV8bMOx/dh2sZh2Bny2IGuh0HUusCBF2mfYYzrjzAu09mz+R8P
+	 8dEnM9AR/Md1hWK2jPW3Pl2dSvSIjELA2jKS+gSq5vWQvQXOm5Wg1qnrDnMDH9cFAw
+	 KtrZryZNPL5NJNyM8QE3b5jHa15rEjotRyWsGtUXqEBUzQYKeVIBKwNI1fSt6UJ+wH
+	 /rHyTFTonsvVUouTuL2hIVB2d8Qv/QlCuhnMwo/7irr6uXEI1r0KLevfXPO+g4rQUl
+	 rnoxSJcKjPc6Q==
+Date: Wed, 15 Oct 2025 15:13:06 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	manivannan.sadhasivam@oss.qualcomm.com, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, 
+	Kai-Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Chia-Lin Kao <acelan.kao@canonical.com>, 
+	Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org, regressions@lists.linux.dev, 
+	FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <armtyxe7yab6l3sqiu6tsnnnuhzhhv6k63x2w4vdpenvramgof@26cqfazuyfog>
+References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
+ <20251014184905.GA896847@bhelgaas>
+ <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
+ <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+ <7ugvxl3g5szxhc5ebxnlfllp46lhprjvcg5xp75mobsa44c6jv@h2j3dvm5a4lq>
+ <a9ca7843-b780-45aa-9f62-3f443ae06eee@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] sched_ext: Add a selftest for scx_bpf_dsq_peek
-To: Ryan Newton <rrnewton@gmail.com>, linux-kernel@vger.kernel.org
-Cc: sched-ext@lists.linux.dev, tj@kernel.org, arighi@nvidia.com,
- newton@meta.com
-References: <20251015015712.3996346-1-rrnewton@gmail.com>
- <20251015015712.3996346-3-rrnewton@gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20251015015712.3996346-3-rrnewton@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9ca7843-b780-45aa-9f62-3f443ae06eee@rock-chips.com>
 
-On 10/15/25 02:57, Ryan Newton wrote:
-> From: Ryan Newton <newton@meta.com>
+On Wed, Oct 15, 2025 at 05:11:39PM +0800, Shawn Lin wrote:
+> Hi Mani
 > 
-> This is the most basic unit test: make sure an empty queue peeks as
-> empty, and when we put one element in the queue, make sure peek returns
-> that element.
+> 在 2025/10/15 星期三 15:50, Manivannan Sadhasivam 写道:
+> > On Wed, Oct 15, 2025 at 04:13:41PM +0900, FUKAUMI Naoki wrote:
+> > > Hi,
+> > > 
+> > > On 10/15/25 15:26, Manivannan Sadhasivam wrote:
+> > > > On Tue, Oct 14, 2025 at 01:49:05PM -0500, Bjorn Helgaas wrote:
+> > > > > [+cc regressions]
+> > > > > 
+> > > > > On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
+> > > > > > Hi Manivannan Sadhasivam,
+> > > > > > 
+> > > > > > I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on the
+> > > > > > Rockchip RK3588(S) SoC.
+> > > > > > 
+> > > > > > When running Linux v6.18-rc1 or linux-next since 20250924, the kernel either
+> > > > > > freezes or fails to probe M.2 Wi-Fi modules. This happens with several
+> > > > > > different modules I've tested, including the Realtek RTL8852BE, MediaTek
+> > > > > > MT7921E, and Intel AX210.
+> > > > > > 
+> > > > > > I've found that reverting the following commit (i.e., the patch I'm replying
+> > > > > > to) resolves the problem:
+> > > > > > commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
+> > > > > 
+> > > > > Thanks for the report, and sorry for the regression.
+> > > > > 
+> > > > > Since this affects several devices from different manufacturers and (I
+> > > > > assume) different drivers, it seems likely that there's some issue
+> > > > > with the Rockchip end, since ASPM probably works on these devices in
+> > > > > other systems.  So we should figure out if there's something wrong
+> > > > > with the way we configure ASPM, which we could potentially fix, or if
+> > > > > there's a hardware issue and we need some king of quirk to prevent
+> > > > > usage of ASPM on the affected platforms.
+> > > > > 
+> > > > 
+> > > > I believe it is the latter. The Root Port is having trouble with ASPM.
+> > > > 
+> > > > FUKAUMI Naoki, could you please share the 'sudo lspci -vv' output so that we
+> > > > know what kind of Root Port we are dealing with? You can revert the offending
+> > > > patch and share the output.
+> > > 
+> > > Here is dmesg/lspci output on ROCK 5A(RK3588S):
+> > >   https://gist.github.com/RadxaNaoki/1355a0b4278b6e51a61d89df7a535a5d
+> > > 
+> > 
+> > Thanks! Could you please try the below diff with f3ac2ff14834 applied?
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 214ed060ca1b..0069d06c282d 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -2525,6 +2525,15 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+> >    */
+> >   DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+> > 
+> > +
+> > +static void quirk_disable_aspm_all(struct pci_dev *dev)
+> > +{
+> > +       pci_info(dev, "Disabling ASPM\n");
+> > +       pci_disable_link_state(dev, PCIE_LINK_STATE_ALL);
+> > +}
+> > +
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ROCKCHIP, 0x3588, quirk_disable_aspm_all);
 > 
-> However, even this simple test is a little complicated by the different
-> behavior of scx_bpf_dsq_insert in different calling contexts:
->  - insert is for direct dispatch in enqueue
->  - insert is delayed when called from select_cpu
+> That's not true from my POV. Rockchip platform supports all ASPM policy
+> after mass production verification. I also verified current upstream
+> code this morning with RK3588-EVB and can check L0s/L1/L1ss work fine.
 > 
-> In this case we split the insert and the peek that verifies the
-> result between enqueue/dispatch.
+> The log and lspci output could be found here:
+> https://pastebin.com/qizeYED7
 > 
-> Note: An alternative would be to call `scx_bpf_dsq_move_to_local` on an
-> empty queue, which in turn calls `flush_dispatch_buf`, in order to flush
-> the buffered insert. Unfortunately, this is not viable within the
-> enqueue path, as it attempts a voluntary context switch within an RCU
-> read-side critical section.
+> Moreover, I disscussed this issue with FUKAUMI today off-list and his
+> board seems to work when only disable L1ss by patching:
 > 
-> Signed-off-by: Ryan Newton <newton@meta.com>
-> ---
->  tools/testing/selftests/sched_ext/Makefile    |   1 +
->  .../selftests/sched_ext/peek_dsq.bpf.c        | 251 ++++++++++++++++++
->  tools/testing/selftests/sched_ext/peek_dsq.c  | 222 ++++++++++++++++
->  3 files changed, 474 insertions(+)
->  create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.bpf.c
->  create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.c
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -813,7 +813,7 @@ static void pcie_aspm_override_default_link_state(struct
+> pcie_link_state *link)
 > 
-> diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
-> index 9d9d6b4c38b0..5fe45f9c5f8f 100644
-> --- a/tools/testing/selftests/sched_ext/Makefile
-> +++ b/tools/testing/selftests/sched_ext/Makefile
-> @@ -174,6 +174,7 @@ auto-test-targets :=			\
->  	minimal				\
->  	numa				\
->  	allowed_cpus			\
-> +	peek_dsq			\
->  	prog_run			\
->  	reload_loop			\
->  	select_cpu_dfl			\
-> diff --git a/tools/testing/selftests/sched_ext/peek_dsq.bpf.c b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-> new file mode 100644
-> index 000000000000..65e3f688ea39
-> --- /dev/null
-> +++ b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-> @@ -0,0 +1,251 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * A BPF program for testing DSQ operations and peek in particular.
-> + *
-> + * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
-> + * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
-> + */
-> +
-> +#include <scx/common.bpf.h>
-> +#include <scx/compat.bpf.h>
-> +
-> +char _license[] SEC("license") = "GPL";
-> +
-> +UEI_DEFINE(uei); /* Error handling */
-> +
-> +#define MAX_SAMPLES 100
-> +#define MAX_CPUS 512
-> +#define DSQ_POOL_SIZE 8
-> +int max_samples = MAX_SAMPLES;
-> +int max_cpus = MAX_CPUS;
-> +int dsq_pool_size = DSQ_POOL_SIZE;
-> +
-> +/* Global variables to store test results */
-> +int dsq_peek_result1 = -1;
-> +long dsq_inserted_pid = -1;
-> +int insert_test_cpu = -1; /* Set to the cpu that performs the test */
-> +long dsq_peek_result2 = -1;
-> +long dsq_peek_result2_pid = -1;
-> +long dsq_peek_result2_expected = -1;
-> +int test_dsq_id = 1234; /* Use a simple ID like create_dsq example */
-> +int real_dsq_id = 1235; /* DSQ for normal operation */
-> +int enqueue_count = -1;
-> +int dispatch_count = -1;
-> +bool debug_ksym_exists;
-> +
-> +/* DSQ pool for stress testing */
-> +int dsq_pool_base_id = 2000;
-> +int phase1_complete = -1;
-> +int total_peek_attempts = -1;
-> +int successful_peeks = -1;
-> +
-> +/* BPF map for sharing peek results with userspace */
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_ARRAY);
-> +	__uint(max_entries, MAX_SAMPLES);
-> +	__type(key, u32);
-> +	__type(value, long);
-> +} peek_results SEC(".maps");
-> +
-> +static int get_random_dsq_id(void)
-> +{
-> +	u64 time = bpf_ktime_get_ns();
-> +
-> +	return dsq_pool_base_id + (time % DSQ_POOL_SIZE);
-> +}
-> +
-> +static void record_peek_result(long pid)
-> +{
-> +	u32 slot_key;
-> +	long *slot_pid_ptr;
-> +	int ix;
-> +
-> +	if (pid <= 0)
-> +		return;
-> +
-> +	/* Find an empty slot or one with the same PID */
-> +	bpf_for(ix, 0, 10) {
-> +		slot_key = (pid + ix) % MAX_SAMPLES;
-> +		slot_pid_ptr = bpf_map_lookup_elem(&peek_results, &slot_key);
-> +		if (!slot_pid_ptr)
-> +			continue;
-> +
-> +		if (*slot_pid_ptr == -1 || *slot_pid_ptr == pid) {
-> +			*slot_pid_ptr = pid;
-> +			break;
-> +		}
-> +	}
-> +}
-> +
-> +/* Scan all DSQs in the pool and try to move a task to local */
-> +static int scan_dsq_pool(void)
-> +{
-> +	struct task_struct *task;
-> +	int moved = 0;
-> +	int i;
-> +
-> +	bpf_for(i, 0, DSQ_POOL_SIZE) {
-> +		int dsq_id = dsq_pool_base_id + i;
-> +
-> +		total_peek_attempts++;
-> +
-> +		task = __COMPAT_scx_bpf_dsq_peek(dsq_id);
-> +		if (task) {
-> +			successful_peeks++;
-> +			record_peek_result(task->pid);
-> +
-> +			/* Try to move this task to local */
-> +			if (!moved && scx_bpf_dsq_move_to_local(dsq_id) == 0) {
-> +				moved = 1;
-> +				break;
-> +			}
-> +		}
-> +	}
-> +	return moved;
-> +}
-> +
-> +/* Struct_ops scheduler for testing DSQ peek operations */
-> +void BPF_STRUCT_OPS(peek_dsq_enqueue, struct task_struct *p, u64 enq_flags)
-> +{
-> +	struct task_struct *peek_result;
-> +	int last_insert_test_cpu, cpu;
-> +
-> +	enqueue_count++;
-> +	cpu = bpf_get_smp_processor_id();
-> +	last_insert_test_cpu = __sync_val_compare_and_swap(&insert_test_cpu, -1, cpu);
-> +
-> +	/* Phase 1: Simple insert-then-peek test (only on first task) */
-> +	if (last_insert_test_cpu == -1) {
-> +		bpf_printk("peek_dsq_enqueue beginning phase 1 peek test on cpu %d", cpu);
-> +
-> +		/* Test 1: Peek empty DSQ - should return NULL */
-> +		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-> +		dsq_peek_result1 = (long)peek_result; /* Should be 0 (NULL) */
-> +
-> +		/* Test 2: Insert task into test DSQ for testing in dispatch callback */
-> +		dsq_inserted_pid = p->pid;
-> +		scx_bpf_dsq_insert(p, test_dsq_id, 0, enq_flags);
-> +		dsq_peek_result2_expected = (long)p; /* Expected the task we just inserted */
-> +	} else if (!phase1_complete) {
-> +		/* Still in phase 1, use real DSQ */
-> +		scx_bpf_dsq_insert(p, real_dsq_id, 0, enq_flags);
-> +	} else {
-> +		/* Phase 2: Random DSQ insertion for stress testing */
-> +		int random_dsq_id = get_random_dsq_id();
-> +
-> +		scx_bpf_dsq_insert(p, random_dsq_id, 0, enq_flags);
-> +	}
-> +}
-> +
-> +void BPF_STRUCT_OPS(peek_dsq_dispatch, s32 cpu, struct task_struct *prev)
-> +{
-> +	dispatch_count++;
-> +
-> +	/* Phase 1: Complete the simple peek test if we inserted a task but
-> +	 * haven't tested peek yet
-> +	 */
-> +	if (insert_test_cpu == cpu && dsq_peek_result2 == -1) {
-> +		struct task_struct *peek_result;
-> +
-> +		bpf_printk("peek_dsq_dispatch completing phase 1 peek test on cpu %d", cpu);
-> +
-> +		/* Test 3: Peek DSQ after insert - should return the task we inserted */
-> +		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-> +		/* Store the PID of the peeked task for comparison */
-> +		dsq_peek_result2 = (long)peek_result;
-> +		dsq_peek_result2_pid = peek_result ? peek_result->pid : -1;
-> +
-> +		/* Now consume the task since we've peeked at it */
-> +		scx_bpf_dsq_move_to_local(test_dsq_id);
-> +
-> +		/* Mark phase 1 as complete */
-> +		phase1_complete = 1;
-> +		bpf_printk("Phase 1 complete, starting phase 2 stress testing");
-> +	} else if (!phase1_complete) {
-> +		/* Still in phase 1, use real DSQ */
-> +		scx_bpf_dsq_move_to_local(real_dsq_id);
-> +	} else {
-> +		/* Phase 2: Scan all DSQs in the pool and try to move a task */
-> +		if (!scan_dsq_pool()) {
-> +			/* No tasks found in DSQ pool, fall back to real DSQ */
-> +			scx_bpf_dsq_move_to_local(real_dsq_id);
-> +		}
-> +	}
-> +}
-> +
-> +s32 BPF_STRUCT_OPS_SLEEPABLE(peek_dsq_init)
-> +{
-> +	s32 err;
-> +	int i;
-> +
-> +	/* Always set debug values so we can see which version we're using */
-> +	debug_ksym_exists = bpf_ksym_exists(scx_bpf_dsq_peek) ? 1 : 0;
-> +
-> +	/* Initialize state first */
-> +	insert_test_cpu = -1;
-> +	enqueue_count = 0;
-> +	dispatch_count = 0;
-> +	phase1_complete = 0;
-> +	total_peek_attempts = 0;
-> +	successful_peeks = 0;
-> +
-> +	/* Create the test and real DSQs */
-> +	err = scx_bpf_create_dsq(test_dsq_id, -1);
-> +	if (err) {
-> +		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
-> +	return err;
+>         /* For devicetree platforms, enable all ASPM states by default */
+>         if (of_have_populated_dt()) {
+> -               link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> +               link->aspm_default = PCIE_LINK_STATE_L0S |
+> PCIE_LINK_STATE_L1;
+>                 override = link->aspm_default & ~link->aspm_enabled;
+>                 if (override)
+>                         pci_info(pdev, "ASPM: DT platform,
+> 
+> 
 
-indentation
-The rest looks okay to me.
+Thanks a lot for debugging the issue. Now it is clear that the board routing is
+on play and ASPM works fine on Rockchip Root Ports.
+
+> So, is there a proper way to just disable this feature for spec boards
+> instead of this Soc?
+> 
+
+Below should work:
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 214ed060ca1b..9864b2c91399 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -29,6 +29,7 @@
+ #include <linux/ktime.h>
+ #include <linux/mm.h>
+ #include <linux/nvme.h>
++#include <linux/of.h>
+ #include <linux/platform_data/x86/apple.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/sizes.h>
+@@ -2525,6 +2526,19 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+  */
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+
++
++static void quirk_disable_aspm_radxa(struct pci_dev *dev)
++{
++       if (of_machine_is_compatible("radxa,rock-5a") ||
++          (of_machine_is_compatible("radxa,rock-5b"))) {
++               pci_info(dev, "Disabling ASPM L1ss\n");
++               pci_disable_link_state(dev, PCIE_LINK_STATE_L1_1 |
++                                      PCIE_LINK_STATE_L1_2);
++       }
++}
++
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ROCKCHIP, 0x3588, quirk_disable_aspm_radxa);
++
+ /*
+  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
+  * Link bit cleared after starting the link retrain process to allow this
+
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
