@@ -1,282 +1,290 @@
-Return-Path: <linux-kernel+bounces-854673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2C5BDF17E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:34:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD49BDF128
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5551F4860F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8169819C2FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1F12C2377;
-	Wed, 15 Oct 2025 14:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AA11EC01B;
+	Wed, 15 Oct 2025 14:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fIOWQqQQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I11VRqau"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B53A2BD024
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D02247284
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760538686; cv=none; b=Zpk50wsOkwADSiurwNcNk52fMbTX1gpc8L2iIcFZB8NzWebCEkSOFW7vlm363QNlt/a3FSjqohGqa39L3O9miJO4OBofNzTjbqbB6lbVKwNh46q9X6N3zEKzQNrF1ah/q+OLT9mvq55B3T12SeBnPuTCOl1iBwQSuS7SoZzE5+Y=
+	t=1760538737; cv=none; b=Ej7CO3kt9dh835FrKn+TEUDj2roMTeA4bdPF8mf1aUTsLBd+qga3oPeTonSru8NginSwcZ3Q+/MQyeibmWW33M8nCnOIaJ3GUOfGQA7hsDMSSXsYWVCxY/qequ3XIjEN5Ff7Qb20Qx+e9Pe5+Q2yZW9MXp+gdR+BVhE1j+JNlHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760538686; c=relaxed/simple;
-	bh=AcY2f4MlAAdbgw8jaDNOVSExq4kwIaO5QnCF7RkLa3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=txAPRDjiPBmTMxBrNXQVO+eHaau+RUoUJABtm4OddsnyM3q64FIK9MpRavgqeBBx758147P5fsUD4aXR7UQfpv1wI7bARdBKi+EyOb5yNWPvzajFJyZc4royOrFqKTMsviHWaTNU6rWdfjoajzArQpNk8Ua/qUt7cyH4UiZWsg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fIOWQqQQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760538682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MZ3PbqPH/LPP3qCouoXc35gFS4lh1EqDc5ueYOQ4ME8=;
-	b=fIOWQqQQUkEb5PbZ72I+PXZWopZY98tHBw/nsLnCsxiChOcep1y4QFD7Z6fOFGUzVOiQkb
-	KftmHLkAG/O2HA5mY6A01YTcKS5K2e9KHbYB5H7+yJ7uRmKKxZPSEK6v4v6dk4/VRcvVoA
-	h/HbuvTbzTo+UnltStoT2kRM+PhugvY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-299-O_v8hcflMDeZtdjQCdpIow-1; Wed, 15 Oct 2025 10:31:21 -0400
-X-MC-Unique: O_v8hcflMDeZtdjQCdpIow-1
-X-Mimecast-MFC-AGG-ID: O_v8hcflMDeZtdjQCdpIow_1760538680
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-47107fcb257so3219945e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:31:21 -0700 (PDT)
+	s=arc-20240116; t=1760538737; c=relaxed/simple;
+	bh=zgjScSg8gxQVegmaLTY1qc+sG3oeDoXkbobmP8U+jSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ze4OiGLEaksZcnAyGUCvlLxDhxcrNiU/2o07G0VLo9VShsdYwKEBp9MRh6e7hiIpr2BdsbUNS0POGLZo+N66blVko5Qi0h3yXwHBGF8p3V0V//bhtidLDlfoDQ4/geAVXoxJahLpdtVl8ctFdXO8Do4Moyonid9bU/KMgrCOdLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I11VRqau; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b54f55a290cso944764966b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:32:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760538732; x=1761143532; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/GGPPAy1fHT4f0hgkyN0lKffg2M7YAAILDfIXtiBKFM=;
+        b=I11VRqauvz2Md9yzxVKhi/ql4GEIbHYh68mXiqzbEUpeacbu6x9biKT1X45i9OkPia
+         WQP+kNhDx22Yq0SxvtFyyI2nUVjA9mQT4/lWSXkz4sm4DRIMPaXX1BpJcB5VJ4fWakhF
+         k1pwi7zoOxyLLZY1nqGemhzvD3mdgVFoIP1MmFRBm2ePgnB+N8JGuaP3cWOOLPx8klwl
+         as2Ox4LQQy02EuCw6nS6PFveJ8+a3SRAH1D4PY7EhA1Pu6Qy4iYxtYwUFmTyJYnzWpZq
+         b86gi50olKDJzNmieFJjSC9YmCZ5IONirampH5uQMR4LOLiPYNv46ckKbVhL7FLa2j16
+         QY9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760538680; x=1761143480;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZ3PbqPH/LPP3qCouoXc35gFS4lh1EqDc5ueYOQ4ME8=;
-        b=xTXsRZzzLp7k1xvBq7eSE8b4lxIaejtAywa7VAnAvd1PRgQv3S2BUIePLSL+/MTTg8
-         JQ/hlqdcqWtuBesGsx0oic64diYZXLS1recBZgLTVsguE5+3ShMjPFxAvGQFNF5xny/R
-         hRrOR9UUl3tnJdwJwwpTg8XysxF63stnc7dF9E+UVS5WSyEXwvmZVflC9gZIILmnu4f/
-         PwXCNDa2/O6j3Tc2DsMBYKVz/viIyEiln5VDQ8Atr4RcMeEslg7oIXzaTHzOIvmdnbqQ
-         SH+40wtcmbKS/8fsSGDL51oY8DRlSDWHVQhJm467F3fhHwtAyXyqMcPjYyfwR+kEE0Y2
-         gq0w==
-X-Gm-Message-State: AOJu0Yy0wSLVOsoeld34ILTHguGKlvaeFVEjhjYHxpKwKAALcG8G4tiy
-	fsHf6yf6oUd7lnJkFyMWizG/RTfUg1E45rCN9gcBI0qhrPYrbLa2+Y7Njzh2F/Y3AV5U24EjAnj
-	bIuSg+1K93bIkKSH5aSocW0YwpqgVJlIm96dPkjclrs7TZMlhxsmJ87lrlqH2ZBUVC89DzXMKw7
-	qE9nJ50KrMiBpKhwsbY6SB0mqU6KiiThRTxFgwpxHABaoCqxHmiM0J
-X-Gm-Gg: ASbGncsEk0ZlYHNia7dMl/tn3q8ek9m7V3H1dY1NEm4ftKgIjv2UmI1Msz4ES3/Urt3
-	13LZpkKZ/00GWPwdzuX7wp2B4eItrNWdGQxmlsK4QIf8nzPfduzZzlV2/c5COl2eZgF4EC1kfuW
-	aG6sUgGLw7MLxreX92Y7dMX9e8n8ZKqz/dIwteVKHjiwyIeelcIeQLcqQBzc1D5WEcW2uft9yk5
-	pc6QwhLHXfN1yeX1sl33sC+iXjY4pFxaTrvCFJle4YtgefO/vE4AiHqjkHyAA9OIYW3hjShKpKd
-	oJs12gUISiq4MK8PqB4oLDU7jaYIwib7NJ9S+6hCNy7oTMOn5UH0JAs=
-X-Received: by 2002:a05:600d:420d:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46fa9af9041mr215935025e9.22.1760538679926;
-        Wed, 15 Oct 2025 07:31:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLp6f6711sgQUKuizHpqV871t5JrC5QuuNz5v7X1cxT23Pw64P4dbArMvd8WIxfdbe/kLA1w==
-X-Received: by 2002:a05:600d:420d:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46fa9af9041mr215934555e9.22.1760538679364;
-        Wed, 15 Oct 2025 07:31:19 -0700 (PDT)
-Received: from holism.lzampier.com ([2a06:5900:814a:ab00:c1c7:2e09:633d:e94e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47101c02377sm32617005e9.6.2025.10.15.07.31.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 07:31:18 -0700 (PDT)
-From: Lucas Zampieri <lzampier@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Charles Mirabile <cmirabil@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <dramforever@live.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Zhang Xincheng <zhangxincheng@ultrarisc.com>,
-	Lucas Zampieri <lzampier@redhat.com>
-Subject: [PATCH v4 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
-Date: Wed, 15 Oct 2025 15:31:07 +0100
-Message-ID: <20251015143108.441291-4-lzampier@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251015143108.441291-1-lzampier@redhat.com>
-References: <20251015143108.441291-1-lzampier@redhat.com>
+        d=1e100.net; s=20230601; t=1760538732; x=1761143532;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/GGPPAy1fHT4f0hgkyN0lKffg2M7YAAILDfIXtiBKFM=;
+        b=abKBQNBr5Q/YRAXC12ADxyyiH3UzXEV538Jde6VFKx1xQLsyCoM7ETgZ5UO8xjExPd
+         fHSSmDOSsnbHmKHlrgm14gjYi47VY/HWmA6MuWcXGVqprigw6+4Hu32fA0DjvfQiUbeW
+         ozWj+jv32ggwB9JBCYahRN7yiTntD1PXq6B6MrOMa8uRb9LrEc1W4DqkgujjsatyzufL
+         eihEVPpEj+BFZ6fV5s0ef8F8msD0H9bAPQk2jr+n6YiweuiNwGpE3GEdwNhbHPuI0/9S
+         Ogo6ncwX/TPQ4pLojv1lbw+keG3WBjfewWwkAyMu/hbSYrS5FGz8qXyu0Od7Bmxqqo9U
+         ZL9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXySckOQ2nxplCEUk5AMexw5Tm2x44jlN8KivYEdw2EppvnT8EjrWNz2VPNKzmJqfT7FO0rtukX8r5obA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytZ7jIgZWZouocMXtbO5zqeq07tCbwB7ZIBntSKxqGEoN7VPXS
+	U3bH2Ci84So2hGusujnFJTwM5c5h8rlUKpysA8/JWdqf5BIfZld0IhwwE7JFvzgMw12pWDBGm0V
+	r9hfZu7luiBBaRM/ma1v/D8Jeyo4H6ZrVcjQWp7ME3w==
+X-Gm-Gg: ASbGnctCw9lZMvXQAOKQ3daWL0JVFnqKE9de/RRVTZgJ07x9+L+NlKiByZdZDEUNE4+
+	DiDiSDOaibbxtYNArbW0NyS91cq52ibWugsCuuHMhHKOmIK4pnTyAFCswQvM+GXvCq1LbSg4IWW
+	iSI9rNHgLhQ27/LZMB7ndklHqbbhm70LGIQXlCPJCNn3JGwgSeHtjSpEtdqOREuJb6KGPws+2fA
+	JQJe6ZqL1JUlytrL01hpHQhQ83TmKlbanB8GM6A6cca9QuoNc6b98J8ZUrPp5vn7OwfjZ2J
+X-Google-Smtp-Source: AGHT+IGvbF9vBWEbG0yxHrHoIRF115LWGGkIrcNil1qvyPeGnU0jWQdwZ6i5CqfPgqW4PnBPT+plyU0IoAr45ong62E=
+X-Received: by 2002:a17:907:9448:b0:b40:a71b:151f with SMTP id
+ a640c23a62f3a-b50ac1c4e7cmr3318624966b.30.1760538732189; Wed, 15 Oct 2025
+ 07:32:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
+ <20251015-arm-psci-system_reset2-vendor-reboots-v16-1-b98aedaa23ee@oss.qualcomm.com>
+In-Reply-To: <20251015-arm-psci-system_reset2-vendor-reboots-v16-1-b98aedaa23ee@oss.qualcomm.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Wed, 15 Oct 2025 16:32:01 +0200
+X-Gm-Features: AS18NWDYlSPyX3_l7fQSeSlc4Ni_BqTNtU4UYXiSbDcs8VqP7UVRqIDp11dg6gU
+Message-ID: <CACMJSeu_Y2Rra8x22kWN0B38jKZEwq7=B9C75zH18QdjDHAWqg@mail.gmail.com>
+Subject: Re: [PATCH v16 01/14] power: reset: reboot-mode: Synchronize list traversal
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Souvik Chakravarty <Souvik.Chakravarty@arm.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Yan <andy.yan@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Moritz Fischer <moritz.fischer@ettus.com>, John Stultz <john.stultz@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Stephen Boyd <swboyd@chromium.org>, 
+	Andre Draszik <andre.draszik@linaro.org>, 
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	Elliot Berman <quic_eberman@quicinc.com>, Srinivas Kandagatla <srini@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Charles Mirabile <cmirabil@redhat.com>
+On Wed, 15 Oct 2025 at 06:38, Shivendra Pratap
+<shivendra.pratap@oss.qualcomm.com> wrote:
+>
+> List traversals must be synchronized to prevent race conditions
+> and data corruption. The reboot-mode list is not protected by a
+> lock currently, which can lead to concurrent access and race.
+>
+> Introduce a mutex lock to guard all operations on the reboot-mode
+> list and ensure thread-safe access. The change prevents unsafe
+> concurrent access on reboot-mode list.
+>
+> Fixes: 4fcd504edbf7 ("power: reset: add reboot mode driver")
+> Fixes: ca3d2ea52314 ("power: reset: reboot-mode: better compatibility with DT (replace ' ,/')")
+>
+> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> ---
+>  drivers/power/reset/reboot-mode.c | 96 +++++++++++++++++++++------------------
+>  include/linux/reboot-mode.h       |  4 ++
+>  2 files changed, 57 insertions(+), 43 deletions(-)
+>
+> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
+> index fba53f638da04655e756b5f8b7d2d666d1379535..8fc3e14638ea757c8dc3808c240ff569cbd74786 100644
+> --- a/drivers/power/reset/reboot-mode.c
+> +++ b/drivers/power/reset/reboot-mode.c
+> @@ -29,9 +29,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
+>         if (!cmd)
+>                 cmd = normal;
+>
+> -       list_for_each_entry(info, &reboot->head, list)
+> -               if (!strcmp(info->mode, cmd))
+> -                       return info->magic;
+> +       scoped_guard(mutex, &reboot->rb_lock) {
+> +               list_for_each_entry(info, &reboot->head, list)
+> +                       if (!strcmp(info->mode, cmd))
+> +                               return info->magic;
+> +       }
+>
+>         /* try to match again, replacing characters impossible in DT */
+>         if (strscpy(cmd_, cmd, sizeof(cmd_)) == -E2BIG)
+> @@ -41,9 +43,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
+>         strreplace(cmd_, ',', '-');
+>         strreplace(cmd_, '/', '-');
+>
+> -       list_for_each_entry(info, &reboot->head, list)
+> -               if (!strcmp(info->mode, cmd_))
+> -                       return info->magic;
+> +       scoped_guard(mutex, &reboot->rb_lock) {
+> +               list_for_each_entry(info, &reboot->head, list)
+> +                       if (!strcmp(info->mode, cmd_))
+> +                               return info->magic;
+> +       }
+>
+>         return 0;
+>  }
+> @@ -78,46 +82,50 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
+>
+>         INIT_LIST_HEAD(&reboot->head);
+>
+> -       for_each_property_of_node(np, prop) {
+> -               if (strncmp(prop->name, PREFIX, len))
+> -                       continue;
+> -
+> -               info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
+> -               if (!info) {
+> -                       ret = -ENOMEM;
+> -                       goto error;
+> -               }
+> -
+> -               if (of_property_read_u32(np, prop->name, &info->magic)) {
+> -                       dev_err(reboot->dev, "reboot mode %s without magic number\n",
+> -                               info->mode);
+> -                       devm_kfree(reboot->dev, info);
+> -                       continue;
+> -               }
+> -
+> -               info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+> -               if (!info->mode) {
+> -                       ret =  -ENOMEM;
+> -                       goto error;
+> -               } else if (info->mode[0] == '\0') {
+> -                       kfree_const(info->mode);
+> -                       ret = -EINVAL;
+> -                       dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
+> -                               prop->name);
+> -                       goto error;
+> +       mutex_init(&reboot->rb_lock);
+> +
+> +       scoped_guard(mutex, &reboot->rb_lock) {
+> +               for_each_property_of_node(np, prop) {
+> +                       if (strncmp(prop->name, PREFIX, len))
+> +                               continue;
+> +
+> +                       info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
+> +                       if (!info) {
+> +                               ret = -ENOMEM;
+> +                               goto error;
+> +                       }
+> +
+> +                       if (of_property_read_u32(np, prop->name, &info->magic)) {
+> +                               dev_err(reboot->dev, "reboot mode %s without magic number\n",
+> +                                       info->mode);
+> +                               devm_kfree(reboot->dev, info);
+> +                               continue;
+> +                       }
+> +
+> +                       info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+> +                       if (!info->mode) {
+> +                               ret =  -ENOMEM;
+> +                               goto error;
+> +                       } else if (info->mode[0] == '\0') {
+> +                               kfree_const(info->mode);
+> +                               ret = -EINVAL;
+> +                               dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
+> +                                       prop->name);
+> +                               goto error;
+> +                       }
+> +
+> +                       list_add_tail(&info->list, &reboot->head);
 
-Add a new compatible for the plic found in UltraRISC DP1000 with a quirk to
-work around a known hardware bug with IRQ claiming in the UR-CP100 cores.
+This seems to be the only call that actually needs synchronization.
+All of the above can be run outside the critical section.
 
-When claiming an interrupt on UR-CP100 cores, all other interrupts must be
-disabled before the claim register is accessed to prevent incorrect
-handling of the interrupt. This is a hardware bug in the CP100 core
-implementation, not specific to the DP1000 SoC.
+>                 }
+>
+> -               list_add_tail(&info->list, &reboot->head);
+> -       }
+> -
+> -       reboot->reboot_notifier.notifier_call = reboot_mode_notify;
+> -       register_reboot_notifier(&reboot->reboot_notifier);
+> +               reboot->reboot_notifier.notifier_call = reboot_mode_notify;
+> +               register_reboot_notifier(&reboot->reboot_notifier);
+>
+> -       return 0;
+> +               return 0;
+>
+>  error:
+> -       list_for_each_entry(info, &reboot->head, list)
+> -               kfree_const(info->mode);
+> +               list_for_each_entry(info, &reboot->head, list)
+> +                       kfree_const(info->mode);
+> +       }
+>
+>         return ret;
+>  }
+> @@ -133,8 +141,10 @@ int reboot_mode_unregister(struct reboot_mode_driver *reboot)
+>
+>         unregister_reboot_notifier(&reboot->reboot_notifier);
+>
+> -       list_for_each_entry(info, &reboot->head, list)
+> -               kfree_const(info->mode);
+> +       scoped_guard(mutex, &reboot->rb_lock) {
+> +               list_for_each_entry(info, &reboot->head, list)
+> +                       kfree_const(info->mode);
+> +       }
 
-When the PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM flag is present, a specialized
-handler (plic_handle_irq_cp100) saves the enable state of all interrupts,
-disables all interrupts except for the first pending one before reading the
-claim register, and then restores the interrupts before further processing of
-the claimed interrupt continues.
+Please destroy the mutex here.
 
-The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
-SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
-This has no impact on other platforms.
+Bart
 
-Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-Acked-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
----
- drivers/irqchip/irq-sifive-plic.c | 94 ++++++++++++++++++++++++++++++-
- 1 file changed, 93 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index bf69a4802b71..0428e9f3423d 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -49,6 +49,8 @@
- #define CONTEXT_ENABLE_BASE		0x2000
- #define     CONTEXT_ENABLE_SIZE		0x80
- 
-+#define PENDING_BASE                    0x1000
-+
- /*
-  * Each hart context has a set of control registers associated with it.  Right
-  * now there's only two: a source priority threshold over which the hart will
-@@ -63,6 +65,7 @@
- #define	PLIC_ENABLE_THRESHOLD		0
- 
- #define PLIC_QUIRK_EDGE_INTERRUPT	0
-+#define PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM	1
- 
- struct plic_priv {
- 	struct fwnode_handle *fwnode;
-@@ -394,6 +397,89 @@ static void plic_handle_irq(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static bool cp100_isolate_pending_irq(int nr_irq_groups, u32 ie[],
-+				       void __iomem *pending,
-+				       void __iomem *enable)
-+{
-+	u32 pending_irqs = 0;
-+	int i, j;
-+
-+	/* Look for first pending interrupt */
-+	for (i = 0; i < nr_irq_groups; i++) {
-+		pending_irqs = ie[i] & readl_relaxed(pending + i * sizeof(u32));
-+		if (pending_irqs)
-+			break;
-+	}
-+
-+	if (!pending_irqs)
-+		return false;
-+
-+	/* Disable all interrupts but the first pending one */
-+	for (j = 0; j < nr_irq_groups; j++) {
-+		u32 new_mask = 0;
-+
-+		if (j == i)
-+			/* Extract mask with lowest set bit */
-+			new_mask = (pending_irqs & -pending_irqs);
-+
-+		writel_relaxed(new_mask, enable + j * sizeof(u32));
-+	}
-+
-+	return true;
-+}
-+
-+static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
-+					void __iomem *claim)
-+{
-+	void __iomem *enable = handler->enable_base;
-+	void __iomem *pending = handler->priv->regs + PENDING_BASE;
-+	int nr_irqs = handler->priv->nr_irqs;
-+	int nr_irq_groups = DIV_ROUND_UP(nr_irqs, 32);
-+	int i;
-+	irq_hw_number_t hwirq = 0;
-+
-+	raw_spin_lock(&handler->enable_lock);
-+
-+	/* Save current interrupt enable state */
-+	for (i = 0; i < nr_irq_groups; i++)
-+		handler->enable_save[i] = readl_relaxed(enable + i * sizeof(u32));
-+
-+	if (!cp100_isolate_pending_irq(nr_irq_groups, handler->enable_save, pending, enable))
-+		goto out;
-+
-+	hwirq = readl(claim);
-+
-+	/* Restore previous state */
-+	for (i = 0; i < nr_irq_groups; i++)
-+		writel_relaxed(handler->enable_save[i], enable + i * sizeof(u32));
-+out:
-+	raw_spin_unlock(&handler->enable_lock);
-+	return hwirq;
-+}
-+
-+static void plic_handle_irq_cp100(struct irq_desc *desc)
-+{
-+	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	void __iomem *claim = handler->hart_base + CONTEXT_CLAIM;
-+	irq_hw_number_t hwirq;
-+
-+	WARN_ON_ONCE(!handler->present);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	while ((hwirq = cp100_get_hwirq(handler, claim))) {
-+		int err = generic_handle_domain_irq(handler->priv->irqdomain,
-+						    hwirq);
-+		if (unlikely(err)) {
-+			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
-+					    handler->priv->fwnode, hwirq);
-+		}
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
- static void plic_set_threshold(struct plic_handler *handler, u32 threshold)
- {
- 	/* priority must be > threshold to trigger an interrupt */
-@@ -430,6 +516,8 @@ static const struct of_device_id plic_match[] = {
- 	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
- 	{ .compatible = "thead,c900-plic",
- 	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-+	{ .compatible = "ultrarisc,cp100-plic",
-+	  .data = (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
- 	{}
- };
- 
-@@ -664,12 +752,16 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 		}
- 
- 		if (global_setup) {
-+			void (*handler_fn)(struct irq_desc *) = plic_handle_irq;
-+			if (test_bit(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM, &handler->priv->plic_quirks))
-+				handler_fn = plic_handle_irq_cp100;
-+
- 			/* Find parent domain and register chained handler */
- 			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
- 			if (domain)
- 				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
- 			if (plic_parent_irq)
--				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
-+				irq_set_chained_handler(plic_parent_irq, handler_fn);
- 
- 			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 					  "irqchip/sifive/plic:starting",
--- 
-2.51.0
-
+>
+>         return 0;
+>  }
+> diff --git a/include/linux/reboot-mode.h b/include/linux/reboot-mode.h
+> index 4a2abb38d1d612ec0fdf05eb18c98b210f631b7f..b73f80708197677db8dc2e43affc519782b7146e 100644
+> --- a/include/linux/reboot-mode.h
+> +++ b/include/linux/reboot-mode.h
+> @@ -2,11 +2,15 @@
+>  #ifndef __REBOOT_MODE_H__
+>  #define __REBOOT_MODE_H__
+>
+> +#include <linux/mutex.h>
+> +
+>  struct reboot_mode_driver {
+>         struct device *dev;
+>         struct list_head head;
+>         int (*write)(struct reboot_mode_driver *reboot, unsigned int magic);
+>         struct notifier_block reboot_notifier;
+> +       /*Protects access to reboot mode list*/
+> +       struct mutex rb_lock;
+>  };
+>
+>  int reboot_mode_register(struct reboot_mode_driver *reboot);
+>
+> --
+> 2.34.1
+>
 
