@@ -1,146 +1,91 @@
-Return-Path: <linux-kernel+bounces-855355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A798BE0FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E08C2BE0FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D72F54E491F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:59:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC30C4E4A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5453161A1;
-	Wed, 15 Oct 2025 22:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E923164C2;
+	Wed, 15 Oct 2025 23:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TlTsnq2I"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKp6h8Y9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134F1311580
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AF02FC00E;
+	Wed, 15 Oct 2025 23:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760569181; cv=none; b=obgneohgNbg2qHJYWlndIO2cRy1aPNsg4UcpGbKikLmVj7I17of6zfGJJiaVN1oxAIk4thjVmt/ACTqG1SL1ZjUmaxZOittcaxNoVGaQVYajg/0nr91yt3N0grK8nMgoKTM7ucul9kZzQO4Zir8jnsOelh3Lpes56HhwXKxlZxg=
+	t=1760569332; cv=none; b=L3BA9SqyLZkERdQU24oVL28xXn0N0PeslEaQmRkNvigp02YZY1KAYOEOQTeZRlQMqkJb/DpVS+oo/YWOiPQAsw+Gx1pDosfxgkRr8HLMaqRAlfZiTDVICkdkZP6t1CAEnYsmHyNiHHNR7pQA3l+7BCQN+PwzSUbNiLkXsT2GzhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760569181; c=relaxed/simple;
-	bh=uhIo156uzC/C4McltMdP+aVo/99Tv7FEMfHjn0Xc2u8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DDfu+Ud/zLtAdY9uaZgustNn6fbWOvlVEOwtq/ejjW0W/smiJWKHmue4og2FtOSEbnzbi01TAqhKnLv44PalEZX+zgAAQiyYz88PfVojKiuDEkW8XxNJNBYGXBsa+w33uWY1vJ27c1uJALPMj+RtepkSBCJRxX+ii9d01YbBTIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TlTsnq2I; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27ee41e062cso1403365ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760569179; x=1761173979; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2LRH5L+16QIKbxjXKX20mFwNdwlQNo9WYUAb9uwRrg=;
-        b=TlTsnq2IE+m97uHZ8IGKTgj+mqd7JcXEXgPM2N49I9GaQorS/0DbcVwvGO7c1zGm5j
-         qJYvk/STzAgLzBfnqqcOJFOUiIlg51qKc8Tbc0wMCFF9nLU9kXn3orxcjAZqKhpTFgZT
-         bcd4tzBfDmaXE3+/aZP40Dnj0lEOu9XqcJSf44C57/oAI12T6Q82x6JAhA8Ql3w9W6fO
-         ye3lCtUtaKjeMzQ/YetEdlvyfjDPSsCEO2W3XRGrhV8FLG96RGd8AiJYik+1lpqLB4B/
-         NyXvSM9Y2GVb6LZshU4lwcPWYSLxbSRhlnfIQNV2KgnEmN3CCHkl78DCQ5Le2Wb0NDBE
-         Zvuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760569179; x=1761173979;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2LRH5L+16QIKbxjXKX20mFwNdwlQNo9WYUAb9uwRrg=;
-        b=oXBjX2+We+z6HdxLCES6GdMvhO63noShmPk1blJQW7egDAXxMweMlcS9vsRK2I1h8j
-         KFt7UyCO62S6U5xAMigSBKkQp9l3Gl0tQVBJfScj/oPtw41vg4W5XhoDqgxCUQbzq0ck
-         4He+vrFSRbggYLGLxV+CjIguF32HSkfmJeucPSkdGLIUlmbjsqn+FaplvBc2abpht0wO
-         u1E0+UgFvOk88hLexHDpGTK0qD8QbGfrOSYG1aQffOQLPmg5vDWxaGNAPCrAJTCNqW3B
-         Fe7lBIPJJj4eVlVXNIW37nLefvopbTl2kNnM95H2WoaxvN9d72cWfSAuXzCN+od8uIiB
-         KIJg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2gRcHbdOkoOnDz6t+9j3thDvc/fQKYoe4CVWgoMbFGQo4p8A6xD0na6ui9cx9MuDlknkkd/iaQhfGGMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRJjgMN8DqylCaZV2ZNoD+ZuZsCOW0eQZ5v/OMHyvcuSkUVcFq
-	y7Nt6aMkx+s34EBWz5LCvirppqd6hwg4z8oS7Qxw4qtIjieht3RcTa8OXBcRkhMV1X9yRijT9S7
-	T0kMeWA==
-X-Google-Smtp-Source: AGHT+IGoYbQG/kFlbXk1E9FFiTS2zpFW21guzDiQfytJdFWQ7OVs1otemGZlW7GIwzVAo56e8nErvwtJawM=
-X-Received: from pljj17.prod.google.com ([2002:a17:902:c3d1:b0:290:28e2:ce6c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3d0e:b0:25c:46cd:1dc1
- with SMTP id d9443c01a7336-2902734491dmr362859195ad.33.1760569179459; Wed, 15
- Oct 2025 15:59:39 -0700 (PDT)
-Date: Wed, 15 Oct 2025 15:59:37 -0700
-In-Reply-To: <20250917215031.2567566-4-jmattson@google.com>
+	s=arc-20240116; t=1760569332; c=relaxed/simple;
+	bh=ucocps56wr1kLrXEhr30Oi2Y2Ck6q/vgoOIs0oP616k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Dvv077aNHK2RwXMa3cpT+iOxdKJKhhJ87cAPpbABdb+xZn34WEzE3sRAc+e4LA21cI8mxs2vSdQSoxi7d48OMRz4qeKd3szzl1o9bHrdAMD6R1lX/tH5ABLbtkc1F7Ik8D5F9CmTKBBq3eB4seGJotm0eAVKuJMBs3RkC6Lj5jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKp6h8Y9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2427EC4CEF8;
+	Wed, 15 Oct 2025 23:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760569331;
+	bh=ucocps56wr1kLrXEhr30Oi2Y2Ck6q/vgoOIs0oP616k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=oKp6h8Y9AOa9RmNo6f9nGVkWZn06X4q78/VdJfgLr4A/UciljMSQodejaxO5oPpA+
+	 yNr/rYcEWtWDC0OyHVLmrGet+xVA+HrfStJRXCUF1Yg5LHv85z5iHc/Yoi+/phyhzK
+	 +0RgO1nZ6LO2Tx9f924jvXIvS/ql9udjyCaEQRW31O1saXeeD99tGSJcoOP2surfA3
+	 3mgBtQlrUe3/H3wBN1+OmnDowYAMy4Ct/zM+6lX5ctag39jLcqzlQY5/eBcXtmFvIU
+	 yhJvppYPVPunA5o8g8S2Rwa7rmCDrdwsjLlRZKJ0TVpI3kgaKhqHn0XcK7udWgI6cb
+	 wjfB0wglqMkwQ==
+Date: Wed, 15 Oct 2025 18:02:09 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: bhelgaas@google.com, kwilczynski@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] rust: pci: move IRQ infrastructure to separate file
+Message-ID: <20251015230209.GA960343@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250917215031.2567566-1-jmattson@google.com> <20250917215031.2567566-4-jmattson@google.com>
-Message-ID: <aPAnWWmo555uB0-H@google.com>
-Subject: Re: [PATCH 3/4] KVM: selftests: Add VM_MODE_PXXV57_4K VM mode
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Andrew Jones <ajones@ventanamicro.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	"Pratik R. Sampat" <prsampat@amd.com>, Kai Huang <kai.huang@intel.com>, 
-	Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015182118.106604-4-dakr@kernel.org>
 
-On Wed, Sep 17, 2025, Jim Mattson wrote:
-> Add a new VM mode, VM_MODE_PXXV57_4K, to support tests that require
-> 5-level paging on x86. This mode sets up a 57-bit virtual address
-> space and sets CR4.LA57 in the guest.
-> @@ -358,6 +360,25 @@ struct kvm_vm *____vm_create(struct vm_shape shape)
->  		vm->va_bits = 48;
->  #else
->  		TEST_FAIL("VM_MODE_PXXV48_4K not supported on non-x86 platforms");
-> +#endif
-> +		break;
-> +	case VM_MODE_PXXV57_4K:
-> +#ifdef __x86_64__
-> +		kvm_get_cpu_address_width(&vm->pa_bits, &vm->va_bits);
-> +		kvm_init_vm_address_properties(vm);
-> +		/*
-> +		 * For 5-level paging, KVM requires LA57 to be enabled, which
-> +		 * requires a 57-bit virtual address space.
-> +		 */
-> +		TEST_ASSERT(vm->va_bits == 57,
-> +			    "Linear address width (%d bits) not supported for VM_MODE_PXXV57_4K",
-> +			    vm->va_bits);
-> +		pr_debug("Guest physical address width detected: %d\n",
-> +			 vm->pa_bits);
-> +		vm->pgtable_levels = 5;
-> +		vm->va_bits = 57;
-> +#else
-> +		TEST_FAIL("VM_MODE_PXXV57_4K not supported on non-x86 platforms");
->  #endif
+On Wed, Oct 15, 2025 at 08:14:31PM +0200, Danilo Krummrich wrote:
+> Move the PCI interrupt infrastructure to a separate sub-module in order
+> to keep things organized.
 
-That's a lot of copy+paste, especially given the #ifdefs.  How about this (untested)?
+> +++ b/rust/kernel/pci/irq.rs
 
-	case VM_MODE_PXXV48_4K:
-	case VM_MODE_PXXV57_4K:
-#ifdef __x86_64__
-		kvm_get_cpu_address_width(&vm->pa_bits, &vm->va_bits);
-		kvm_init_vm_address_properties(vm);
+> +pub enum IrqType {
+> +    /// INTx interrupts.
+> +    Intx,
+> +    /// Message Signaled Interrupts (MSI).
+> +    Msi,
+> +    /// Extended Message Signaled Interrupts (MSI-X).
+> +    MsiX,
+> +}
 
-		/*
-		 * Ignore KVM support for 5-level paging (vm->va_bits == 57) if
-		 * the target mode is 4-level paging (48-bit virtual address
-		 * space), as 5-level paging only takes effect if CR4.LA57=1.
-		 */
-		TEST_ASSERT(vm->va_bits == 57 ||
-			    (vm->va_bits == 48 && vm->mode == VM_MODE_PXXV48_4K),
-			    "Linear address width (%d bits) not supported",
-			    vm->va_bits);
-		pr_debug("Guest physical address width detected: %d\n",
-			 vm->pa_bits);
-		if (vm->mode == VM_MODE_PXXV48_4K) {
-			vm->pgtable_levels = 4;
-			vm->va_bits = 48;
-		} else {
-			vm->pgtable_levels = 5;
-			vm->va_bits = 57;
-		}
-#else
-		TEST_FAIL("VM_MODE_PXXV{48,57}_4K not supported on non-x86 platforms");
-#endif
-		break;
+> +impl IrqTypes {
+> +    /// Create a set containing all IRQ types (MSI-X, MSI, and Legacy).
+> ...
+> +    /// // Create a set with only MSI and MSI-X (no legacy interrupts).
+> ...
+> +    /// The allocation will use MSI-X, MSI, or legacy interrupts based on the `irq_types`
+> +    /// parameter and hardware capabilities. When multiple types are specified, the kernel
+> +    /// will try them in order of preference: MSI-X first, then MSI, then legacy interrupts.
+> ...
+> +    /// // Allocate MSI or MSI-X only (no legacy interrupts).
+
+Again, just a move, but could s/Legacy/INTx/ to make them all match.
 
