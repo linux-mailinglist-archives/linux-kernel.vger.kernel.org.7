@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-854766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24903BDF54C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B30ADBDF552
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEAFD3464F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:23:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 55DB9350076
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D31E21ABC9;
-	Wed, 15 Oct 2025 15:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CA42FBE1C;
+	Wed, 15 Oct 2025 15:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m56r7RMK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OTrVNAKi"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A112FBE1A;
-	Wed, 15 Oct 2025 15:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBEC2C21F4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541809; cv=none; b=MO814qEK871Y6SaPhFp8FHrGhSODuqCPBxafzQaXLb9VcNQLgzNB0jma8REcVjaUFEwyK/CIiSTYeoofZEeibzQZkdYHZAAOfjlp8dKORqG0TT97TgQFfQZP1+wRQtrn0I8hEQJLcWySCevMXm07K/IiLHt6tqAeSobLeZh0ZsY=
+	t=1760541853; cv=none; b=kjUFbT0++8KtusLDLes06fMniq1YTvKEUzDHbMcxqYdodEXl1ZvsuHEfqKgyRwnUJry6HOxsroS3CHPZpaQaTx/UMdkCsLB9kwGhr+cc6guA6z9pVTMUc70CmZgGXQFLOFTHJyaRdQmNo6EErfPmLOJFjbg+/Mdk6fuuGNCP4ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541809; c=relaxed/simple;
-	bh=l6kPATXhIfK9tJGsY5Si9o4/LJ8jrOYvZVE72ylEkQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oj3Kw32+Cw/7EnJrIiHGq38KjkVYF+gI5FQZltgVEr9gvx1Tt6uTxW/HigDnkEUD+xAu0r07blHrTrs7kXI8b7ByUcctQijeEJbi2kxs3fT6x7uviEDJQ/qOnS/Q0OH1LfG9Mvb8dbfDQsEapo5eW9NfyXYMkxA7np9Uy9XUf+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m56r7RMK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA51C4CEF8;
-	Wed, 15 Oct 2025 15:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760541808;
-	bh=l6kPATXhIfK9tJGsY5Si9o4/LJ8jrOYvZVE72ylEkQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m56r7RMKJqSqhNWNldofgC9LBpvSoO9uy0ccsWg+V9BC3NJhuu5N5FVlHjHi02vl9
-	 Q5O4dn1PUTlgoJnAecjyynFt18RZenLAQ2F7bD3F3+M8lNYItYO1HUd19ZGZvFMBFd
-	 NfAuH8olcN61gpWJJtHkNB3/hgCPuYMHDXC5f0KJuoVsHjPFKAB1E9STJg08bkiggE
-	 /KBhLX6YoJGe8EgODNQm8rtxNndVVYLUJrkvN/GQt9X+yzunFmfzPf+18jliilGcgK
-	 AN8YKNhxnYZ34QJFDaECcPJ5MCNMwagbbYW56rcau3UGCLGmVpEVj+2ML23MhbDB2q
-	 w31CY1wFk0vQw==
-Date: Wed, 15 Oct 2025 17:23:21 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	manivannan.sadhasivam@oss.qualcomm.com,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev,
-	FUKAUMI Naoki <naoki@radxa.com>
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <aO-8aeJdvApesEqi@ryzen>
-References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
- <20251014184905.GA896847@bhelgaas>
- <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
- <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
- <7ugvxl3g5szxhc5ebxnlfllp46lhprjvcg5xp75mobsa44c6jv@h2j3dvm5a4lq>
- <a9ca7843-b780-45aa-9f62-3f443ae06eee@rock-chips.com>
- <aO9tWjgHnkATroNa@ryzen>
- <ud72uxkobylkwy5q5gtgoyzf24ewm7mveszfxr3o7tortwrvw5@kc3pfjr3dtaj>
- <aO-Q3QsxPBXbFieG@ryzen>
- <7df0bf91-8ab1-4e76-83fa-841a4059c634@rock-chips.com>
+	s=arc-20240116; t=1760541853; c=relaxed/simple;
+	bh=fHi4Sy6ZO6219mNkkAMO1NN3Q4Mdyg5IgRsuybnGRaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QSqUKlo66rSbqnfPuolC07a+svkml4iloBDswoHaHS6WuqHp7Rcfna9HxD7vw3tfm09gbOvan+P211ixN1wrjWrkIp/EBk+EWBoXcbXZEZ57e/CVWTR+O2QRIkgl2VB5IWzREJbvy1Q1gtuavxdU7fpFlQqgFxPTf5V3um5y2q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OTrVNAKi; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3737d09d123so52200801fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760541848; x=1761146648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GSysKNFqHQrm7HW9ou4XnQTMAOsGZaUAittjs2tbdIc=;
+        b=OTrVNAKiUj4qeasqNWzZ42f8ThURb98tRuuQiiRi9i22KyrfK9OaHx/EVt5x58t1gZ
+         KD+YvoJB/8Eb4jVu/ECj+0iD39uQwpcNJcGFBuEeB8EoDOknVSzObH8RxQ/KGiviBBSs
+         77euI61oMwKrh1mGcXqviIYaTHO8zJjouJq4r5QfSMEfQd54GfoP2v0v6IcLFJzuqJE/
+         J/AFAYncprUW99IS5Hv8MtLjHLEp3ZL6EXQPztB60er91EmJrdjUxEoT6BF7pYUgoUpF
+         kBfEo5rFtV3boCiHiPvxM9nc1j2eXlm5j4lMZwQDEsCKb8gWeW/i7CRo0vpWt6V+7ozO
+         uqSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760541848; x=1761146648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GSysKNFqHQrm7HW9ou4XnQTMAOsGZaUAittjs2tbdIc=;
+        b=Oh+BIKHIUPhWdWbehbFPX45LNXprxUnj4aswN4h6GaNrEWTubUDDtShWGHCq4wg/6Z
+         AFFUhi07PJhZRAMoQhCi2WOhCjBPqkgIPoRKwYBLy7Wg745DO8bo9QWstXrFS7YZSVyq
+         RUGQgEYM17iJlaW2ZAOWhyjvn3LdzqWE2j4IBa1qJWSvglFM0oKbGZ8JaeoDqdRwNber
+         qOe1+BN2VJtomaBpvF24MpG5eJG698XJ31p36oLvXFPBrPx7PpDXrF+0dkIP4HZJYhyg
+         osvjybtCQGAmzMVbvj4dFiL9bTCdrWczqiu/bpUHOQevdhkXTUgxJTQGmxRS5N5D7g3n
+         BMvA==
+X-Gm-Message-State: AOJu0YzmC2MbMEA2fmxLCjgoua2qoO+ZpuExF96zDAKRzpmOys7OKjnP
+	SZUBrYVmAd7ePqK12qg732Rm22uFuSLVXv9/cNcu0EwbsUi2zeRIspw7zTQOaKo6OcuV+m35oVq
+	2ShY7sqq0rm8k1SeJRb2PxR2C7+T2NOHKI3H1pT2Nlg==
+X-Gm-Gg: ASbGnctpbZqp2cUoBcjuZaeR7I8Q4m1LuxjQBMx8kKiHN5h+Iy5UpA+NzMRGINF0MBE
+	5PMmeLhMsaOZuN9PFKV/WMa1q1pbGHSXgP7J6KFlnI/am/BAIkM6FCYjCNvbE2ajpJU6LaIrA9F
+	KyFWbz/e/BsnjPiux6sixIHgW/yDBBy4vyP2r0q/LrNTbR8x9WB5tHi/62TeZ0Tr1ZVazT9Eqip
+	RKEbNaJVs6xH3V5z5CGCg7F5PeubrXmLqNwbjFpljVbPw0xoCXo5YAZJfo=
+X-Google-Smtp-Source: AGHT+IHrIpnmA3PfhS5F43KKvrlsIpMZQHo0Y4ikDQOz1PFqFFjsj/VrWWbwy50E1b37KRiZ2S09Lm6qe0KfxZLGVVM=
+X-Received: by 2002:a2e:a541:0:b0:336:bd8c:5e53 with SMTP id
+ 38308e7fff4ca-37609cc2d6fmr78271231fa.5.1760541848431; Wed, 15 Oct 2025
+ 08:24:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7df0bf91-8ab1-4e76-83fa-841a4059c634@rock-chips.com>
+References: <20250929155053.400342-1-marco.crivellari@suse.com> <176054173655.179445.8487996832699914920.b4-ty@kernel.org>
+In-Reply-To: <176054173655.179445.8487996832699914920.b4-ty@kernel.org>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 15 Oct 2025 17:23:57 +0200
+X-Gm-Features: AS18NWBvKtm51_JvZYvvvcOsZcx-fI7s4PuiuLPeUZyiDl7r4VqZO-UJmhBVZGc
+Message-ID: <CAAofZF4_0+ZK5hefqbDksxtSe96ZnR18uQrr3Xw17zvYd_fMmw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/1] ASoC: change system_wq with system_dfl_wq
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 09:00:41PM +0800, Shawn Lin wrote:
-> For now, this is a acceptable option if default ASPM policy enable L1ss
-> w/o checking if the HW could supports it... But how about adding
-> supports-clkreq stuff to upstream host driver directly? That would help
-> folks enable L1ss if the HW is ready and they just need adding property
-> to the DT.
+On Wed, Oct 15, 2025 at 5:22=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+> [..]
+> Applied to
+>
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-=
+next
+>
+> Thanks!
+>
+> [1/1] ASoC: replace use of system_wq with system_dfl_wq
+>       commit: 0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4
+>
 
-I like your idea, if you have time, please send a patch.
+Many thanks, Mark!
 
-However, adding (working) support for L1 substates (via 'supports-clkreq')
-is new code, and should thus be queued for next release instead of v6.18.
+--=20
 
-For now, pcie-dw-rockchip.c is broken for a lot of PCIe devices, so the
-fix should be minimal and target v6.18, i.e. something like:
-https://lore.kernel.org/linux-pci/20251015123142.392274-2-cassel@kernel.org/
+Marco Crivellari
 
-Support for L1 substates via 'supports-clkreq' can be added on top of that
-patch (while targeting v6.19).
-
-
-Kind regards,
-Niklas
+L3 Support Engineer, Technology & Product
 
