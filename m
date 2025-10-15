@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-854453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A28BDE6D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:15:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62421BDE6D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E00CE501536
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:15:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C52053573CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D06326D76;
-	Wed, 15 Oct 2025 12:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9918326D74;
+	Wed, 15 Oct 2025 12:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mp/u9j+q"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oE3Z9E/q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7946E324B27;
-	Wed, 15 Oct 2025 12:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C81324B23;
+	Wed, 15 Oct 2025 12:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530511; cv=none; b=jbRZyPfO74k1Row5g6D4pOJ5LV1Hk2eV3sIlpsDxyfh6Y0BNETmZdX3rKBI3uNSURjMGA/xhDrdCJCGQssjCF6NQeRV2fNg3YqU75sQHls8lchc0kswt8IGKcWullYrExAQhPIYOJjxdRgIjJrzyMTCAmftCY/7iee+IsBtNvps=
+	t=1760530525; cv=none; b=mK8Qkxib+qdDUF6HcpVwoi/pb5akq6dxh6ZxypahH0fiWFuWoqZnCxu8sx1yt01mMseG5vNmVB8FJy4gnXZP62Toz4ENkqARgSDtIeZWGL3pF2WQKBd82B9LVe3TOWHkJUDiKSr4yLGw73kjtLig8EVCcyHWDLCoeprMVFZL01M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530511; c=relaxed/simple;
-	bh=c9aTXp+I+4A3k1DvpeXMIzErotkE9GitHiUWRAQ2v2s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihSLSUC8goPy+jB9nHWI0o7UL5j12hzf33N93ldJUSTLX/v7Jrf/L8VpYVHnJOeCEPr2enFy0lKqnlj5/As0R2/V73GyGi8RSMzv/M3ca3lGNcbsh8L9Umualqh2e10BoK3H63ctVjWq1pDqT2k2B08ghAuDg5KWBw4Uej9MM+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mp/u9j+q; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59FCEs301313169;
-	Wed, 15 Oct 2025 07:14:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760530494;
-	bh=2OkkNCfu4YnFSj7smPfoU7koyJr+GcXCwTUxoqvzw+Q=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=mp/u9j+qM8SGyPJRAIYEryWwjOZQHt6KJB6YWdyGwKb3jPB6PWHrWT3SHrYFQNA24
-	 sN2G2zAEgOS4ZMfMZJhmXr9dm38adp+cCLbC1qYS3cLHaaG4LA3+HVTfeoL5CtNZCT
-	 qFUGsP559oVqrekDfEbDMjB4KUIHLu/PmJdcyblY=
-Received: from DLEE212.ent.ti.com (dlee212.ent.ti.com [157.170.170.114])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59FCEs4E392056
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 15 Oct 2025 07:14:54 -0500
-Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE212.ent.ti.com
- (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
- 2025 07:14:53 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE201.ent.ti.com
- (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 15 Oct 2025 07:14:53 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59FCEqFo1878736;
-	Wed, 15 Oct 2025 07:14:53 -0500
-Date: Wed, 15 Oct 2025 17:44:52 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Bryan Brattlof <bb@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Andrew
- Davis <afd@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony
- Lindgren <tony@atomide.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        <linux-gpio@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 1/4] dt-bindings: arm: ti: Add binding for AM62L SoCs
-Message-ID: <20251015121452.7cmsi4tceezroxsa@lcpd911>
-References: <20250912-am62lx-v6-0-29d5a6c60512@ti.com>
- <20250912-am62lx-v6-1-29d5a6c60512@ti.com>
+	s=arc-20240116; t=1760530525; c=relaxed/simple;
+	bh=YPswrlQwwLu8FYXnYOzGnvarrdjVr/9DyXQlG/aeEh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtnuoUDViVZVJQyKDgNoz1B6/rEvhrUibQWntBQ/etNehct7W32Df6+HriFuZiBMs41FBtccnot/O34wBNaKECHSJ6Oyo9OhNdWzy2Ca1qhBxVlmE1L4c6vy5o5my1lw7S1S7OkAy/9hLR61bfPRmvZzD8c386URwLrTc4zIGgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oE3Z9E/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE25C4CEF8;
+	Wed, 15 Oct 2025 12:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760530524;
+	bh=YPswrlQwwLu8FYXnYOzGnvarrdjVr/9DyXQlG/aeEh4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oE3Z9E/qzX4Azx46kjXyfx12jewfSNXslmQj9nf7WKVKQlvR7NMVXSvyKUsQc51lA
+	 tpsB+kkpzKorbFD+Vbk8ZrsxBBtKalcAaMMEBBcaQSSJFZWeTe+AkgzXT5JOZUsLo1
+	 bzdQQNvU7vDjXDP9Loq0vuTiG0L9MzzRARU1evidnlmXa5nlDyODZN6IGCEOwf8C5J
+	 bk2FjEpmEuhOJKdybL8wrafqIXtLlxTHlBl4ej2OvfLAghdDrmqhoWoJDKBmUTiMRO
+	 BzCi1zyAnIl9iFlpoj4TPiLmD2tOV3bBe7Ln3il8OZM2tq6bS5OEiuHK4GbqjRbkCM
+	 HtIZQNUJL3X4w==
+Date: Wed, 15 Oct 2025 13:15:19 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] net: Convert proto_ops bind() callbacks to use
+ sockaddr_unspec
+Message-ID: <aO-QV3kSxaYMaZqc@horms.kernel.org>
+References: <20251014223349.it.173-kees@kernel.org>
+ <20251014224334.2344521-3-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912-am62lx-v6-1-29d5a6c60512@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20251014224334.2344521-3-kees@kernel.org>
 
-On Sep 12, 2025 at 10:40:40 -0500, Bryan Brattlof wrote:
-> Add the binding for TI's AM62L family of devices.
+On Tue, Oct 14, 2025 at 03:43:25PM -0700, Kees Cook wrote:
+> Update all struct proto_ops bind() callback function prototypes from
+> "struct sockaddr *" to "struct sockaddr_unspec *" to avoid lying to the
+> compiler about object sizes. Calls into struct proto handlers gain casts
+> that will be removed in the struct proto conversion patch.
 > 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Bryan Brattlof <bb@ti.com>
-> ---
-> Changes in v1:
->  - separated out devicetree bindings
-> ---
->  Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> No binary changes expected.
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> index e80c653fa4382acef964e182ecc4ae5445088936..d916c627eb619d16124772df5aacac9354126808 100644
-> --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> @@ -37,6 +37,12 @@ properties:
->            - const: phytec,am62a-phycore-som
->            - const: ti,am62a7
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+...
+
+> diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
+> index b99ba14f39d2..0a795901e4f2 100644
+> --- a/net/mctp/af_mctp.c
+> +++ b/net/mctp/af_mctp.c
+> @@ -49,7 +49,7 @@ static bool mctp_sockaddr_ext_is_ok(const struct sockaddr_mctp_ext *addr)
+>  	       !addr->__smctp_pad0[2];
+>  }
 >  
-> +      - description: K3 AM62L3 SoC and Boards
-> +        items:
-> +          - enum:
-> +              - ti,am62l3-evm
-> +          - const: ti,am62l3
-> +
->        - description: K3 AM62P5 SoC and Boards
+> -static int mctp_bind(struct socket *sock, struct sockaddr *addr, int addrlen)
+> +static int mctp_bind(struct socket *sock, struct sockaddr_unspec *addr, int addrlen)
+>  {
+>  	struct sock *sk = sock->sk;
+>  	struct mctp_sock *msk = container_of(sk, struct mctp_sock, sk);
+> @@ -128,7 +128,7 @@ static int mctp_bind(struct socket *sock, struct sockaddr *addr, int addrlen)
+>  /* Used to set a specific peer prior to bind. Not used for outbound
+>   * connections (Tag Owner set) since MCTP is a datagram protocol.
+>   */
+> -static int mctp_connect(struct socket *sock, struct sockaddr *addr,
+> +static int mctp_connect(struct socket *sock, struct sockaddr_unspec *addr,
+>  			int addrlen, int flags)
+>  {
+>  	struct sock *sk = sock->sk;
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Hi Kees,
+
+The change to mctp_connect() results GCC 15.2.0 warning as follows:
+
+net/mctp/af_mctp.c:632:27: error: initialization of 'int (*)(struct socket *, struct sockaddr *, int,  int)' from incompatible pointer type 'int (*)(struct socket *, struct sockaddr_unspec *, int,  int)' [-Wincompatible-pointer-types]
+  632 |         .connect        = mctp_connect,
+      |                           ^~~~~~~~~~~~
+
+As I don't see other _connect functions updated in this patch,
+perhaps it is out of place here and should be dropped from this patch.
+
+...
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+pw-bot: cr
 
