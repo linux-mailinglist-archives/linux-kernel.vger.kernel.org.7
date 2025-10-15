@@ -1,143 +1,221 @@
-Return-Path: <linux-kernel+bounces-853688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84F0BDC56B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 007FFBDC571
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31DF140407E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD853B22BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365092C0293;
-	Wed, 15 Oct 2025 03:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9695029D27D;
+	Wed, 15 Oct 2025 03:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Il2Bji5q"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LJv22Fqd"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A446F299AAF;
-	Wed, 15 Oct 2025 03:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A10A29B78F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760498790; cv=none; b=knlEUqNacDhnV5BFxCH9wh1QnoLeRAbeoHt/yd+wK/LyuziIPsOe7L5ZmMb2OBBNHcL8DsBckjOjuEGLvm7JvxvrF4UGg+srCQZDkoiJF+PKaygMjQcg9C/8U0c2CzQRdIRBKAy0YcVpI9obe3q5G3T4KHWOic8StRc0NjV+vZY=
+	t=1760498899; cv=none; b=hhg9Bw21TdklvIcuM3EftWK20TUGnZEHoO9ord139G9X93dxF8InkpM9uWKJpV3i827LH6l/P0uA373oRpDlLk1al1DMryjhF1JIkFF6hwKqwCU4tNj9qKiWBmhSdLwAT3PyJyWw8NlPTNfb6HKapgaHrAz6arMQ4w5QlgQUTmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760498790; c=relaxed/simple;
-	bh=WtSvoLNsAxKoxW7blJdRHMjowr6CW7E556wE1B7WnZU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ksn1V6GKhKsNClVwe94sW6w5cG071M0x73tRzVhhtPfAh3Z5Mu22OoDWuFr/3Pwp+8zhMygJ4t1xZq/pa5mUlpdLZlpIthEEnguyO/AMLRi5z1SUFq2FQQy8C2bRvQ0EZKe9e/TPuA8SBjl/9n6vCdSMP8W6faY50Qc8Ju3EphA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Il2Bji5q; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b7f557c0a97611f0b33aeb1e7f16c2b6-20251015
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=KL2SbvG0s1BFoUBmW3PHmXT6JxteiGRugU92tkqCr4s=;
-	b=Il2Bji5q+J3Bbkxeth2OTsPUxIkGOgjqo20MFvHPV260q0KDWCRXKz5vDnbkZVB9Y1iy7UK2ahOxRzxlz7feuuvmGuMiCeCzOiTbWK4TqeNLN8ufHLsSJrW0je4lGTEmLh4ke2pjBXY4QPXZwfcDnP0pRQiEpQ01t1frtDijod4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:ad547d34-2845-41af-a5f4-074b5454c4d4,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:d1a81151-c509-4cf3-8dc0-fcdaad49a6d3,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: b7f557c0a97611f0b33aeb1e7f16c2b6-20251015
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <zhengnan.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1528142288; Wed, 15 Oct 2025 11:26:20 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 15 Oct 2025 11:26:18 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Wed, 15 Oct 2025 11:26:18 +0800
-From: Zhengnan Chen <zhengnan.chen@mediatek.com>
-To: Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will
- Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <iommu@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Zhengnan Chen
-	<zhengnan.chen@mediatek.com>
-Subject: [PATCH v2 5/5] iommu/mediatek: mt8189: Add MM IOMMUs support
-Date: Wed, 15 Oct 2025 11:24:21 +0800
-Message-ID: <20251015032509.5057-6-zhengnan.chen@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20251015032509.5057-1-zhengnan.chen@mediatek.com>
-References: <20251015032509.5057-1-zhengnan.chen@mediatek.com>
+	s=arc-20240116; t=1760498899; c=relaxed/simple;
+	bh=qH9EBqbfeSqqcPyfWFX24676N86ZkdD2YciNFP2TwWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gkLtlcITcpxCs8JECmagNvgofKntxjTHNvzpqLOFdfuZe/td4B06FAvVVn/cBw/mFgtH/sHMfBSldeYRL/7Q17N4s+a1q/n/gXN9QedEfHx3TwLzdZqraamUolYNr33Lj66cxjP6Xy+Ma8cknVFhfEtXkNImAWBsW6+ja2i2n3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LJv22Fqd; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-113-184.bstnma.fios.verizon.net [173.48.113.184])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59F3SBdM006355
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 23:28:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1760498892; bh=imxYGjKfN6hBHRxVh0v6B9uYgdXS9ORTOJugxIL1QM8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=LJv22FqdDckl7BFBLtyC3VemBj8wxClznisgRRavXKTK2LA5YCBd/MKj6jAbT+q9r
+	 K3gWo0bqyX00i25qnJkwxZbUduBzb3P+jWb1pHCDYW3CobDhnxhKt/wKZDFWZGWIqE
+	 dxyM9gHjSDMpAmh4CpK+QtpFSHOdP7LS4JGfnt4v5KoQfMgFPEbewMZa74nK/1nDBu
+	 kiLxdkNIDO58e5kHsOKIW4HJ4+0x3eyu7r7GLHr1JJbIJDHltpISpsmrwhUfhjoBVC
+	 CEKsZFROYTC/MDEyThTbOdUa2YUZ7iakfSBHkYIs6ImND2GJfBqK+01tK6T+5+gSJ4
+	 ef4rmuaemKv/A==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id E5B9C2E00D9; Tue, 14 Oct 2025 23:28:10 -0400 (EDT)
+Date: Tue, 14 Oct 2025 23:28:10 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Subject: [GIT PULL] ext4 bug fixes for 6.18-rc2
+Message-ID: <20251015032810.GA780453@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add support for mt8189 MM IOMMUs.
+The following changes since commit acf943e9768ec9d9be80982ca0ebc4bfd6b7631e:
 
-Signed-off-by: Zhengnan Chen <zhengnan.chen@mediatek.com>
----
- drivers/iommu/mtk_iommu.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+  ext4: fix checks for orphan inodes (2025-09-26 08:36:08 -0400)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 2eb62a073a58..64b641f43298 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -1771,6 +1771,33 @@ static const struct mtk_iommu_plat_data mt8189_data_infra = {
- 	.iova_region_nr	= ARRAY_SIZE(single_domain),
- };
- 
-+static const u32 mt8189_larb_region_msk[MT8192_MULTI_REGION_NR_MAX][MTK_LARB_NR_MAX] = {
-+	[0] = {~0, ~0, ~0, [22] = BIT(0)},	/* Region0: all ports for larb0/1/2 */
-+	[1] = {[3] = ~0, [4] = ~0},		/* Region1: all ports for larb4(3)/7(4) */
-+	[2] = {[5] = ~0, [6] = ~0,		/* Region2: all ports for larb9(5)/11(6) */
-+	       [7] = ~0, [8] = ~0,		/* Region2: all ports for larb13(7)/14(8) */
-+	       [9] = ~0, [10] = ~0,		/* Region2: all ports for larb16(9)/17(10) */
-+	       [11] = ~0, [12] = ~0,		/* Region2: all ports for larb19(11)/20(12) */
-+	       [21] = ~0},			/* Region2: larb21 fake GCE larb */
-+};
-+
-+static const struct mtk_iommu_plat_data mt8189_data_mm = {
-+	.m4u_plat	= M4U_MT8189,
-+	.flags		= HAS_BCLK | HAS_SUB_COMM_3BITS | OUT_ORDER_WR_EN |
-+			  WR_THROT_EN | IOVA_34_EN | MTK_IOMMU_TYPE_MM |
-+			  PGTABLE_PA_35_EN | DL_WITH_MULTI_LARB,
-+	.hw_list	= &m4ulist,
-+	.inv_sel_reg	= REG_MMU_INV_SEL_GEN2,
-+	.banks_num	= 5,
-+	.banks_enable	= {true, false, false, false, false},
-+	.iova_region	= mt8192_multi_dom,
-+	.iova_region_nr	= ARRAY_SIZE(mt8192_multi_dom),
-+	.iova_region_larb_msk = mt8189_larb_region_msk,
-+	.larbid_remap	= {{0}, {1}, {21/* GCE_D */, 21/* GCE_M */, 2},
-+			   {19, 20, 9, 11}, {7}, {4},
-+			   {13, 17}, {14, 16}},
-+};
-+
- static const struct mtk_iommu_plat_data mt8192_data = {
- 	.m4u_plat       = M4U_MT8192,
- 	.flags          = HAS_BCLK | HAS_SUB_COMM_2BITS | OUT_ORDER_WR_EN |
-@@ -1874,6 +1901,7 @@ static const struct of_device_id mtk_iommu_of_ids[] = {
- 	{ .compatible = "mediatek,mt8188-iommu-vpp",   .data = &mt8188_data_vpp},
- 	{ .compatible = "mediatek,mt8189-iommu-apu",   .data = &mt8189_data_apu},
- 	{ .compatible = "mediatek,mt8189-iommu-infra", .data = &mt8189_data_infra},
-+	{ .compatible = "mediatek,mt8189-iommu-mm",    .data = &mt8189_data_mm},
- 	{ .compatible = "mediatek,mt8192-m4u", .data = &mt8192_data},
- 	{ .compatible = "mediatek,mt8195-iommu-infra", .data = &mt8195_data_infra},
- 	{ .compatible = "mediatek,mt8195-iommu-vdo",   .data = &mt8195_data_vdo},
--- 
-2.46.0
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git ext4_for_linus-6.18-rc2
+
+for you to fetch changes up to c065b6046b3493a878c2ceb810aed845431badb4:
+
+  Use CONFIG_EXT4_FS instead of CONFIG_EXT3_FS in all of the defconfigs (2025-10-13 21:50:40 -0400)
+
+----------------------------------------------------------------
+Ext4 bug fixes for 6.18-rc2, including
+
+ * Fix regression caused by removing CONFIG_EXT3_FS when testing some
+   very old defconfigs
+ * Avoid a BUG_ON when opening a file on a maliciously corrupted file system
+ * Avoid mm warnings when freeing a very large orphan file metadata
+ * Avoid a theoretical races between metadata wrtteback and checkpoints.
+   (It's very hard to hit in practice, since the race requires that the
+   writeback take a very long time.)
+
+----------------------------------------------------------------
+Deepanshu Kartikey (1):
+      ext4: detect invalid INLINE_DATA + EXTENTS flag combination
+
+Jan Kara (1):
+      ext4: free orphan info with kvfree
+
+Theodore Ts'o (1):
+      Use CONFIG_EXT4_FS instead of CONFIG_EXT3_FS in all of the defconfigs
+
+Zeno Endemann (1):
+      ext4, doc: fix and improve directory hash tree description
+
+Zhang Yi (2):
+      jbd2: ensure that all ongoing I/O complete before freeing blocks
+      ext4: wait for ongoing I/O to complete before freeing blocks
+
+ Documentation/filesystems/ext4/directory.rst | 63 +++++++++++++++++++++++++++++-----------------------------
+ arch/arc/configs/axs101_defconfig            |  2 +-
+ arch/arc/configs/axs103_defconfig            |  2 +-
+ arch/arc/configs/axs103_smp_defconfig        |  2 +-
+ arch/arc/configs/hsdk_defconfig              |  2 +-
+ arch/arc/configs/vdk_hs38_defconfig          |  2 +-
+ arch/arc/configs/vdk_hs38_smp_defconfig      |  2 +-
+ arch/arm/configs/axm55xx_defconfig           |  2 +-
+ arch/arm/configs/bcm2835_defconfig           |  4 ++--
+ arch/arm/configs/davinci_all_defconfig       |  2 +-
+ arch/arm/configs/dove_defconfig              |  4 ++--
+ arch/arm/configs/ep93xx_defconfig            |  4 ++--
+ arch/arm/configs/imx_v6_v7_defconfig         |  6 +++---
+ arch/arm/configs/ixp4xx_defconfig            |  4 ++--
+ arch/arm/configs/mmp2_defconfig              |  2 +-
+ arch/arm/configs/moxart_defconfig            |  2 +-
+ arch/arm/configs/multi_v5_defconfig          |  2 +-
+ arch/arm/configs/mv78xx0_defconfig           |  4 ++--
+ arch/arm/configs/mvebu_v5_defconfig          |  2 +-
+ arch/arm/configs/nhk8815_defconfig           |  2 +-
+ arch/arm/configs/omap1_defconfig             |  2 +-
+ arch/arm/configs/omap2plus_defconfig         |  2 +-
+ arch/arm/configs/orion5x_defconfig           |  4 ++--
+ arch/arm/configs/pxa_defconfig               |  6 +++---
+ arch/arm/configs/qcom_defconfig              |  2 +-
+ arch/arm/configs/rpc_defconfig               |  2 +-
+ arch/arm/configs/s3c6400_defconfig           |  6 +++---
+ arch/arm/configs/sama7_defconfig             |  2 +-
+ arch/arm/configs/socfpga_defconfig           |  2 +-
+ arch/arm/configs/spear13xx_defconfig         |  4 ++--
+ arch/arm/configs/spear3xx_defconfig          |  4 ++--
+ arch/arm/configs/spear6xx_defconfig          |  4 ++--
+ arch/arm/configs/spitz_defconfig             |  4 ++--
+ arch/arm/configs/stm32_defconfig             |  2 +-
+ arch/arm/configs/tegra_defconfig             |  6 +++---
+ arch/arm/configs/u8500_defconfig             |  2 +-
+ arch/arm/configs/vexpress_defconfig          |  2 +-
+ arch/hexagon/configs/comet_defconfig         |  6 +++---
+ arch/loongarch/configs/loongson3_defconfig   |  6 +++---
+ arch/m68k/configs/stmark2_defconfig          |  6 +++---
+ arch/microblaze/configs/mmu_defconfig        |  2 +-
+ arch/mips/configs/bigsur_defconfig           |  6 +++---
+ arch/mips/configs/cobalt_defconfig           |  6 +++---
+ arch/mips/configs/decstation_64_defconfig    |  6 +++---
+ arch/mips/configs/decstation_defconfig       |  6 +++---
+ arch/mips/configs/decstation_r4k_defconfig   |  6 +++---
+ arch/mips/configs/fuloong2e_defconfig        |  2 +-
+ arch/mips/configs/ip22_defconfig             |  6 +++---
+ arch/mips/configs/ip27_defconfig             |  6 +++---
+ arch/mips/configs/ip28_defconfig             |  6 +++---
+ arch/mips/configs/ip30_defconfig             |  6 +++---
+ arch/mips/configs/ip32_defconfig             |  6 +++---
+ arch/mips/configs/jazz_defconfig             |  2 +-
+ arch/mips/configs/lemote2f_defconfig         |  6 +++---
+ arch/mips/configs/loongson1b_defconfig       |  6 +++---
+ arch/mips/configs/loongson1c_defconfig       |  6 +++---
+ arch/mips/configs/loongson2k_defconfig       |  6 +++---
+ arch/mips/configs/loongson3_defconfig        |  6 +++---
+ arch/mips/configs/malta_defconfig            |  2 +-
+ arch/mips/configs/malta_kvm_defconfig        |  2 +-
+ arch/mips/configs/malta_qemu_32r6_defconfig  |  2 +-
+ arch/mips/configs/maltaaprp_defconfig        |  2 +-
+ arch/mips/configs/maltasmvp_defconfig        |  6 +++---
+ arch/mips/configs/maltasmvp_eva_defconfig    |  2 +-
+ arch/mips/configs/maltaup_defconfig          |  2 +-
+ arch/mips/configs/maltaup_xpa_defconfig      |  2 +-
+ arch/mips/configs/mtx1_defconfig             |  6 +++---
+ arch/mips/configs/rm200_defconfig            |  2 +-
+ arch/openrisc/configs/or1klitex_defconfig    |  2 +-
+ arch/openrisc/configs/virt_defconfig         |  4 ++--
+ arch/parisc/configs/generic-32bit_defconfig  |  4 ++--
+ arch/parisc/configs/generic-64bit_defconfig  |  4 ++--
+ arch/sh/configs/ap325rxa_defconfig           |  6 +++---
+ arch/sh/configs/apsh4a3a_defconfig           |  2 +-
+ arch/sh/configs/apsh4ad0a_defconfig          |  2 +-
+ arch/sh/configs/ecovec24_defconfig           |  6 +++---
+ arch/sh/configs/edosk7760_defconfig          |  2 +-
+ arch/sh/configs/espt_defconfig               |  2 +-
+ arch/sh/configs/landisk_defconfig            |  2 +-
+ arch/sh/configs/lboxre2_defconfig            |  2 +-
+ arch/sh/configs/magicpanelr2_defconfig       |  4 ++--
+ arch/sh/configs/r7780mp_defconfig            |  2 +-
+ arch/sh/configs/r7785rp_defconfig            |  2 +-
+ arch/sh/configs/rsk7264_defconfig            |  2 +-
+ arch/sh/configs/rsk7269_defconfig            |  2 +-
+ arch/sh/configs/sdk7780_defconfig            |  4 ++--
+ arch/sh/configs/sdk7786_defconfig            |  2 +-
+ arch/sh/configs/se7343_defconfig             |  2 +-
+ arch/sh/configs/se7712_defconfig             |  2 +-
+ arch/sh/configs/se7721_defconfig             |  2 +-
+ arch/sh/configs/se7722_defconfig             |  2 +-
+ arch/sh/configs/se7724_defconfig             |  6 +++---
+ arch/sh/configs/sh03_defconfig               |  4 ++--
+ arch/sh/configs/sh2007_defconfig             |  2 +-
+ arch/sh/configs/sh7757lcr_defconfig          |  2 +-
+ arch/sh/configs/sh7763rdp_defconfig          |  2 +-
+ arch/sh/configs/sh7785lcr_32bit_defconfig    |  2 +-
+ arch/sh/configs/sh7785lcr_defconfig          |  2 +-
+ arch/sh/configs/shx3_defconfig               |  2 +-
+ arch/sh/configs/titan_defconfig              |  4 ++--
+ arch/sh/configs/ul2_defconfig                |  2 +-
+ arch/sh/configs/urquell_defconfig            |  2 +-
+ arch/sparc/configs/sparc64_defconfig         |  6 +++---
+ arch/xtensa/configs/audio_kc705_defconfig    |  2 +-
+ arch/xtensa/configs/cadence_csp_defconfig    |  2 +-
+ arch/xtensa/configs/generic_kc705_defconfig  |  2 +-
+ arch/xtensa/configs/nommu_kc705_defconfig    |  2 +-
+ arch/xtensa/configs/smp_lx200_defconfig      |  2 +-
+ arch/xtensa/configs/virt_defconfig           |  2 +-
+ arch/xtensa/configs/xip_kc705_defconfig      |  2 +-
+ fs/ext4/ext4_jbd2.c                          | 11 ++++++++--
+ fs/ext4/inode.c                              |  8 ++++++++
+ fs/ext4/orphan.c                             |  4 ++--
+ fs/jbd2/transaction.c                        | 13 ++++++++----
+ 114 files changed, 242 insertions(+), 221 deletions(-)
 
