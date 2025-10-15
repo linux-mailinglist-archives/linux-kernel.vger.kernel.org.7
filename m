@@ -1,264 +1,144 @@
-Return-Path: <linux-kernel+bounces-854556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90128BDEB29
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47EB6BDEAFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B723ABA53
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5493A8018
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9037632ED35;
-	Wed, 15 Oct 2025 13:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BB82F5A01;
+	Wed, 15 Oct 2025 13:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UZrwIeig"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="HtqcSAey"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAB232ED2D;
-	Wed, 15 Oct 2025 13:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304CF13C8EA;
+	Wed, 15 Oct 2025 13:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760534033; cv=none; b=RzekQIOCvBtxDZYxMfxw4T17NxMNvFd5Ae51eiNBJqey6C+njfmdA4F7YTw1TNdlxqC5Hxqee3JRCzE/+MgKEjgE62tyO4b6F49HBj6DvgvWpj/PLfmtNTCo/+0kXqAX9Ia1wnCiaIAwlrGKjC+CMvGcR+X/aRdrvPOEpd10ZXo=
+	t=1760534011; cv=none; b=oNK9xAX7lFHXq76Dc5WszNKKrybMR2i+CYWP0sXcIIeB/zNLTJfqfmqosyS2IGrSvJ6P7jF9THQEJ5fuB9r3M4qBAWMln2EIXVFar+X0bu2FUKbesJYi+PVdXcpMntQtvM2P+N9TSMGRQkwigBil5anXxLTLI+cQOYQui+MgAt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760534033; c=relaxed/simple;
-	bh=ooewIjBhyvTwCZSTCoRQM/QWA6RIZRzk0Y+0zHMe4uc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DLtQ2efNIZSyY5lVIDoxqH+zLUGHMzdm3gDNQkhmLAuRngwtL3dyOcpakhkcx1tIeFIv+SYcsRxpqnu0Ohjw1V8IuJT3eIxt3oAujtGreaSLRusdnl1VIDZjFjUJiKuDdQULQyjEZKnLcW2JV8X6uZm56N05IbtCRHE9PBfWmw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UZrwIeig; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAtknE016695;
-	Wed, 15 Oct 2025 13:13:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dZIz1JVvXwwCvQ5KmmtLT9pXfGy/6Pb9v1cxXYgaiGo=; b=UZrwIeigukCkICpv
-	gW8W0ayLXyX3LglAXPodoI7Bk06HujuedD5HbqcdBOG8ilOwu7lrQftbD4Ap9wbn
-	njZ9VJRcd7EgYdDDKBghYDebdWc2MC/ATzDTkjI4xx5kmTsNsCV8HqYv7RavmEsQ
-	ED9zuw0OsNOO/dIgccu9P0Wb8WNSvMHIvQebj6ONS7G2NDZTjb9+D6CzuCxO5mto
-	8HkWzArKMOdTA51mxjlYy8h56QVv4nouHUkPpW7tdOW/XgqvmK6ujIcnvhOzNacR
-	uswejXa8Mea2R2CcWXjaW7ErgG++ISndliEpxTxctwtlm5NPmhsalmzHGWdwaBk3
-	luYdkg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rtrt9e4q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 13:13:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59FDDeRN013407
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 13:13:40 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Wed, 15 Oct 2025 06:13:34 -0700
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <bryan.odonoghue@linaro.org>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
-        <quic_vikramsa@quicinc.com>, <quic_nihalkum@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ravi Shankar
-	<quic_rshankar@quicinc.com>,
-        Vishal Verma <quic_vishverm@quicinc.com>
-Subject: [PATCH v4 3/3] arm64: dts: qcom: monaco-evk-camera: Add DT overlay
-Date: Wed, 15 Oct 2025 18:43:03 +0530
-Message-ID: <20251015131303.2797800-4-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251015131303.2797800-1-quic_vikramsa@quicinc.com>
-References: <20251015131303.2797800-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1760534011; c=relaxed/simple;
+	bh=/HTyDAF1e6eJk2ErVtVowTYwP6ibHxtUi90C3ENQr1U=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Vg6VWyLRCTTx+EddeWIOWPTc6dh+T4Vgda/ofGcSOFV+9Oz5JEU4ALBoAHQQA6q09YMqq3dzJ1tkcEOqqjc9tqB7Y2yQ0D7Py/MOWowzHfBOdQcZzOkvGFJJKgATAQ+KV8QkT+sGhn/DSYjXOFYoWym8MQsqHIWw/U4K3VU7TdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=HtqcSAey; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=nD/qaTtow8Q89DPjb/8t60PsJmnPZQHdlhIu+PVjjgQ=; b=HtqcSAey/6ko8FKLtXQ3X8DMjK
+	pVAQXPvAQxnDwt8F3cRRP8KpKspxlYRn/DU76auJmwMCyAaIOAwzUCyGu+rGZ/pQ/fAzeQQ7DjYOA
+	Eysd1CAClSmC7lWKcA1wxJwNOweSs4uh0mg/1okrFFAm9306mg/zBhb3ZWTRxRN7aon1p5qM8eVba
+	C253+B1/nrV1hSBBS5H+3fjyDqEOTHLQ2tyFzWAkqoVEi6skcl3if802pgyRrXzwvYWkJJIwq/R9E
+	4TyHRCr0HtIfieY0FNRBJ7CBIqzG4XlbI0hEZKODZcrx8phCzUWIXdKr0v6QVUKpGqZM1qyukJjJW
+	b1/X/J7g==;
+Received: from [122.175.9.182] (port=15860 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v91Jg-00000006H3p-1bAk;
+	Wed, 15 Oct 2025 09:13:20 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 781BC1781F3C;
+	Wed, 15 Oct 2025 18:43:16 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 603C417820AC;
+	Wed, 15 Oct 2025 18:43:16 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cAZHz3sRBBnu; Wed, 15 Oct 2025 18:43:16 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 339211781F3C;
+	Wed, 15 Oct 2025 18:43:16 +0530 (IST)
+Date: Wed, 15 Oct 2025 18:43:16 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Md Danish Anwar <a0501179@ti.com>
+Cc: parvathi <parvathi@couthit.com>, tony <tony@atomide.com>, 
+	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
+	conor+dt <conor+dt@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	linux-omap <linux-omap@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	netdev <netdev@vger.kernel.org>, danishanwar <danishanwar@ti.com>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>, 
+	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
+	afd <afd@ti.com>, m-karicheri2 <m-karicheri2@ti.com>
+Message-ID: <1337524174.81738.1760533996123.JavaMail.zimbra@couthit.local>
+In-Reply-To: <463668d1-a6a7-4606-af05-25384eb97caa@ti.com>
+References: <20251013125401.1435486-1-parvathi@couthit.com> <20251013125401.1435486-2-parvathi@couthit.com> <463668d1-a6a7-4606-af05-25384eb97caa@ti.com>
+Subject: Re: [PATCH 1/2] arm: dts: ti: Adds device tree nodes for PRU Cores,
+ IEP and eCAP modules of PRU-ICSS2 Instance.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hnyg7KFWbtCdR_EydHRivDyf7_7Idtwt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyMiBTYWx0ZWRfXxbyBOQW/ywM0
- +oUqfrkt8ifeyQrTQqX8o/VkoPvWb4fk2xpyybvzGGs8Pr9DHqER7CfIjK8Kiq+e04Wd2nv1D5Z
- xz8URiXZ3ymEh7mHnnJJhA+ccobx83/t3my0DVgmuakbUY3uGsF1+98zULTK+pfwDqYHk1nOwMQ
- a45KrMuY34pNLxwCM4766MM7TVI74C5d+JNdU6IIxEGS6E7DonGeH1AUHjtIj7ouBm4mZHAOUa7
- ZUV5ZDGo+3Z/A/6lSRbdSKu4+sU449fh7yTtdVz91tiVkBuP4Uox3uxlBeTGWndXg2DqdCP6olK
- DiAXvMLFbqPsKoKPqTetsHZyEr8xApk8EsqVvM+tJgs1vGvP1BXohY/cTgs003Vnb5qt7ThrICt
- BmLzRf1PGfXP8Z7oZBEzBQuPL79U9g==
-X-Authority-Analysis: v=2.4 cv=SfD6t/Ru c=1 sm=1 tr=0 ts=68ef9e05 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=COk6AnOGAAAA:8 a=1o0OAiIl6arAuPHRMUsA:9 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: hnyg7KFWbtCdR_EydHRivDyf7_7Idtwt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130022
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: Adds device tree nodes for PRU Cores, IEP and eCAP modules of PRU-ICSS2 Instance.
+Thread-Index: 6wT71ZEhJaxNH4mGwD2FOGh3nzOuFg==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+Hi,
 
-Monaco EVK board does not include a camera sensor in its default hardware
-configuration. Introducing a device tree overlay to support optional
-integration of the IMX577 sensor via CSIPHY1.
 
-Camera reset is handled through an I2C expander, and power is enabled
-via TLMM GPIO74.
+> On 10/13/2025 6:22 PM, Parvathi Pudi wrote:
+>> From: Roger Quadros <rogerq@ti.com>
+>> 
+>> The TI Sitara AM57xx series of devices consists of 2 PRU-ICSS instances
+>> (PRU-ICSS1 and PRU-ICSS2). This patch adds the device tree nodes for the
+>> PRU-ICSS2 instance to support DUAL-MAC mode of operation.
+>> 
+>> Each PRU-ICSS instance consists of two PRU cores along with various
+>> peripherals such as the Interrupt Controller (PRU_INTC), the Industrial
+>> Ethernet Peripheral(IEP), the Real Time Media Independent Interface
+>> controller (MII_RT), and the Enhanced Capture (eCAP) event module.
+>> 
+>> am57-pruss.dtsi - Adds IEP and eCAP peripheral as child nodes of
+>> the PRUSS subsystem node.
+>> 
+>> am57xx-idk-common.dtsi - Adds PRU-ICSS2 instance node along with
+>> PRU eth port information and corresponding port configuration. It includes
+>> interrupt mapping for packet reception, HW timestamp collection, and
+>> PRU Ethernet ports in MII mode.
+>> 
+>> am571x-idk.dts, am572x-idk.dts and am574x-idk.dts - GPIO configuration
+>> along with delay configuration for individual PRU Ethernet port.
+>> 
+>> Reviewed-by: Mohan Reddy Putluru <pmohan@couthit.com>
+> 
+> Please don't carry internal review tags in upstream patches.
+> 
 
-An example media-ctl pipeline for the imx577 is:
+Sure, we will remove the tag in the next version.
 
-media-ctl --reset
-media-ctl -V '"imx577 3-001a":0[fmt:SRGGB10/4056x3040 field:none]'
-media-ctl -V '"msm_csiphy1":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -l '"msm_csiphy1":1->"msm_csid0":0[1]'
-media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video1
 
-Co-developed-by: Ravi Shankar <quic_rshankar@quicinc.com>
-Signed-off-by: Ravi Shankar <quic_rshankar@quicinc.com>
-Co-developed-by: Vishal Verma <quic_vishverm@quicinc.com>
-Signed-off-by: Vishal Verma <quic_vishverm@quicinc.com>
-Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
----
- arch/arm64/boot/dts/qcom/Makefile             |  4 +
- .../dts/qcom/monaco-evk-camera-imx577.dtso    | 96 +++++++++++++++++++
- 2 files changed, 100 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk-camera-imx577.dtso
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 296688f7cb26..4df3044639a4 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -36,6 +36,10 @@ lemans-evk-camera-csi1-imx577-dtbs	:= lemans-evk.dtb lemans-evk-camera-csi1-imx5
- 
- dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-camera-csi1-imx577.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
-+
-+monaco-evk-camera-imx577-dtbs	:= monaco-evk.dtb monaco-evk-camera-imx577.dtbo
-+dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk-camera-imx577.dtb
-+
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
-diff --git a/arch/arm64/boot/dts/qcom/monaco-evk-camera-imx577.dtso b/arch/arm64/boot/dts/qcom/monaco-evk-camera-imx577.dtso
-new file mode 100644
-index 000000000000..2237f0fc4a14
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/monaco-evk-camera-imx577.dtso
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+&{/} {
-+	vreg_cam1_2p8: vreg-cam1-2p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_cam1_2p8";
-+		startup-delay-us = <10000>;
-+		enable-active-high;
-+		gpio = <&tlmm 74 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&camss {
-+	vdda-phy-supply = <&vreg_l4a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			csiphy1_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&imx577_ep1>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci1 {
-+	pinctrl-0 = <&cci1_i2c0_default>;
-+	pinctrl-1 = <&cci1_i2c0_sleep>;
-+
-+	status = "okay";
-+};
-+
-+&cci1_i2c0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	camera@1a {
-+		compatible = "sony,imx577";
-+		reg = <0x1a>;
-+
-+		reset-gpios = <&expander2 1 GPIO_ACTIVE_LOW>;
-+		pinctrl-0 = <&cam1_default>;
-+		pinctrl-names = "default";
-+
-+		clocks = <&camcc CAM_CC_MCLK1_CLK>;
-+		assigned-clocks = <&camcc CAM_CC_MCLK1_CLK>;
-+		assigned-clock-rates = <24000000>;
-+
-+		avdd-supply = <&vreg_cam1_2p8>;
-+
-+		port {
-+			imx577_ep1: endpoint {
-+				clock-lanes = <7>;
-+				link-frequencies = /bits/ 64 <600000000>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&csiphy1_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&tlmm {
-+	cam1_default: cam1-default-state {
-+		mclk-pins {
-+			pins = "gpio68";
-+			function = "cam_mclk";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+
-+		ldo-avdd-pins {
-+			pins = "gpio74";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+	};
-+};
--- 
-2.34.1
+Thanks and Regards,
+Parvathi.
 
 
