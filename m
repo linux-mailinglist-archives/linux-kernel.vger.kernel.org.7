@@ -1,171 +1,114 @@
-Return-Path: <linux-kernel+bounces-853768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B43BDC904
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:00:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E46CBDC8E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423953C5887
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2853C5361
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CED2FF675;
-	Wed, 15 Oct 2025 04:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8161A2FF16D;
+	Wed, 15 Oct 2025 04:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MTJkBb5a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YUD0feHE"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66F12FE05A;
-	Wed, 15 Oct 2025 04:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E8C28FFFB;
+	Wed, 15 Oct 2025 04:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760504386; cv=none; b=icg5CfULTPBLIF6EEgWZ9xWLfOu3U9iUTzCT78qRJrAMTcQxYEQI/5uwuKD6rMMln5bf/IeWc92SzzgOAthKOAHjYyDpevNTq6l+l8z3lQOmAc5v7YPL5Hq4D1wJbONoFwCo53+7IoT7tv2z9KZkKuUOPP/+lQTTDezEu7PnBW0=
+	t=1760504340; cv=none; b=kZZL7+jUMUFaXcYTBsRQsFUS1eVSD2Y/FNDRUk7yaFJJ2w+yIrvC8qu9ytdtxlg05+QvFx+y1WTZxX6KjkTD06rv2edLEHGS5IgLtSOBBFK4imsbRMLxVpmFgIEGrgsXIreHrZQSFCuMCEyT+CLk5Qq13tugdn9A43WYyWkXt1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760504386; c=relaxed/simple;
-	bh=mBZApl/59Et12ONLpDjECT+EoDB4h0Soj3EWX4Z5OeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lvx3xsJQYyuDGo6rvjR6CpNO3cVAaDZEJ0vvATXgWfNAz6nFB3Gk2TXJtbMr8DWVfDkxThF15nE6eC+d2eTkn/C7p90CKoDU0uKzClQcyw/QZRTJp7+MuimJct+YWntTUT00MHTym/PAkuQ7e0TQO/v0ekx/D4uDDoVVDrB82dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MTJkBb5a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F2sE8I016271;
-	Wed, 15 Oct 2025 04:59:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ajh9QU4pxOw
-	ob02eQ9ZtkQhntGe/G91CpkoWzkRfVTA=; b=MTJkBb5acgH8ynmQto8AZ7iDl+R
-	JsqQnRgoUf+RK/XSRTi0krXgf1CpgWe00YNAt7E3IL2EZHYaB9PhBlIHPot2DcFq
-	hFwLPVIKg97oz06E7Plfg8xZg/IB+eZX73W8FPJePE/aeOMDgnvkK6QEOt8zwbzM
-	g9WAYudKTcAFBm3RY0z5viAtigiZwfqpC2ZuKWJUiQidqoK9SIihMVmGXcgxPv63
-	Icnd3C7AtgjbHZ+a0wmrDkE2Gxd/biKoAyj+Dus9P+IMObtcSHEz8w+Leh73xFRZ
-	B9Wu1PwnczBT2VPxhpKovKXcg6F5J49g+g3JDB+7V5ZUZnRNnmsf4Hd8wHA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdkb4b4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 04:59:38 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59F4xZkA022618;
-	Wed, 15 Oct 2025 04:59:35 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 49qgambme2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 04:59:35 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59F4xZb1022612;
-	Wed, 15 Oct 2025 04:59:35 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-kpallavi-hyd.qualcomm.com [10.147.243.7])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 59F4xYVJ022610
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 04:59:35 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4720299)
-	id 03C0853B; Wed, 15 Oct 2025 10:29:34 +0530 (+0530)
-From: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
-To: kpallavi@qti.qualcomm.com, srini@kernel.org, amahesh@qti.qualcomm.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>, quic_bkumar@quicinc.com,
-        ekansh.gupta@oss.qualcomm.com, linux-kernel@vger.kernel.org,
-        quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, jingyi.wang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, ktadakam@qti.qualcomm.com
-Subject: [PATCH v2 3/3] misc: fastrpc: Update dma_mask for CDSP support on Kaanapali SoC
-Date: Wed, 15 Oct 2025 10:27:02 +0530
-Message-Id: <20251015045702.3022060-4-kumari.pallavi@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251015045702.3022060-1-kumari.pallavi@oss.qualcomm.com>
-References: <20251015045702.3022060-1-kumari.pallavi@oss.qualcomm.com>
+	s=arc-20240116; t=1760504340; c=relaxed/simple;
+	bh=qM1aYAgMdOp/DAeBDMg2FxvR5/rP1mT9Bp6FUbFmyb0=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GkH8Pk6roY40VceAnzE49uOQ3C74vQt4oTq2R0tcLQm8C3HJLnp2I7escmtjGb2LaKT/GTuo07fArN7iTeSokhL4js8+c2IgIM77sPaIYlraLX5f/CFxEm6V1v2K6tzy4ZDC8xyKu2qmg/nhxfWyrsVnoQqPbMa+s4wpeKjpPTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YUD0feHE; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59F4wmum1318058;
+	Tue, 14 Oct 2025 23:58:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760504328;
+	bh=qM1aYAgMdOp/DAeBDMg2FxvR5/rP1mT9Bp6FUbFmyb0=;
+	h=Subject:From:To:CC:Date:In-Reply-To:References;
+	b=YUD0feHE/X0dHO2pNZp/TxEyKJSxN8mI7i6Rk6MygplaXV6IRjkBv61m/ClLg2MDi
+	 valbzwyavkTHkCfc6bh4sVHY4H+OwFecoH34YRkClax/dAo71ke7Vv1etYOTA/J6OU
+	 YYDUMmKT6Zctyk7fpDKw2MgseokLNwbxx22xovng=
+Received: from DLEE200.ent.ti.com (dlee200.ent.ti.com [157.170.170.75])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59F4wmui551616
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 Oct 2025 23:58:48 -0500
+Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Oct
+ 2025 23:58:48 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 23:58:48 -0500
+Received: from [10.24.73.74] (uda0492258.dhcp.ti.com [10.24.73.74])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59F4wisn1323981;
+	Tue, 14 Oct 2025 23:58:45 -0500
+Message-ID: <1b2b23293b01cec8161bc749bb864b18b3d41678.camel@ti.com>
+Subject: Re: [PATCH v3 0/5] TI-K3-DTS: Cleanup CPSW DT Nodes
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Dominik Haller <d.haller@phytec.de>
+CC: "nm@ti.com" <nm@ti.com>, "vigneshr@ti.com" <vigneshr@ti.com>,
+        "kristo@kernel.org" <kristo@kernel.org>,
+        "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "srk@ti.com" <srk@ti.com>, "s-vadapalli@ti.com" <s-vadapalli@ti.com>
+Date: Wed, 15 Oct 2025 10:28:51 +0530
+In-Reply-To: <df6acbfe5d30956ed66e2768fa595c36d2ebe98a.camel@phytec.de>
+References: <20251014125349.3408784-1-s-vadapalli@ti.com>
+	 <df6acbfe5d30956ed66e2768fa595c36d2ebe98a.camel@phytec.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8sDC42sr0cleISRs5KS_T5T0QQ76vLqA
-X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68ef2a3b cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=vdkB0UXvyYWMEW_6SW4A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 8sDC42sr0cleISRs5KS_T5T0QQ76vLqA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX+6PzGXVB09uC
- IQxFlubL7FCzUkD0RyVEMr6JdAmwx0MBrFue4JoEiVlKgfd3XhcW+EHuy1A4fW3EFvjPfn8Gp5J
- J6yDE4dLXA60iW02hzVkd0Yp/K/YCITgYwBKYX61270YDqayS3ecF+UoydCXw/RlcHFZ3Ox6gLF
- HCQKRg3Mo3gr1y2QELGnIH4oyJj8rxjzgfwcSVRhGPCVmXPQ+s1MRK1hozn6KJy7l3T05tch18l
- sR6RSetGgAoiA9gGXNxYHi1GLl1kkDJ8qEVmQ2LN1IDHskeVgen6w4VfQEjEyUkA3EAx5zP3O1y
- K/bnXzbSU5U3vhS5Mwzov95Fru10rae74zjPRoXUrCVoeIsgucwgOV1txslaTVUxwBh9N7LqJQ1
- nLD+Tffn5U1QTGr93aPTmN4c+KAUlw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-DSP currently supports 32-bit IOVA (32-bit PA + 4-bit SID) for
-both Q6 and user DMA (uDMA) access. This is being upgraded to
-34-bit PA + 4-bit SID due to a hardware revision in CDSP for
-Kaanapali SoC, which expands the DMA addressable range.
-Update DMA mask configuration in the driver to support CDSP on
-Kaanapali SoC. Set the default `dma_mask` to 32-bit and update
-it to 34-bit based on CDSP and SoC-specific compatible string.
+On Tue, 2025-10-14 at 17:07 +0000, Dominik Haller wrote:
+> On Di, 2025-10-14 at 18:23 +0530, Siddharth Vadapalli wrote:
+> > Hello,
+> >=20
+> > This series cleans up the CPSW Device-tree nodes by updating the SoC
+> > and
+> > board files to keep CPSW disabled in the SoC files and enable it only
+> > in
+> > the board files.
+> >=20
+> > The following is a summary of the SoCs, CPSW instance and the Boards
+> > that
+> > this series affects:
+> Hello Siddharth,
+>=20
+> please also enable cpsw3g in our k3-am62-phycore-som.dtsi and mcu_cpsw
+> in our k3-am68-phyboard-izar.dts.
+> Unless I'm missing some other patches you're turning off ethernet on
+> those two both platforms too.
 
-Signed-off-by: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
----
- drivers/misc/fastrpc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Thank you for pointing it out. I will include them and post the v4 series.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 1a5d620b23f2..f2e5e53e9067 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -267,6 +267,7 @@ struct fastrpc_session_ctx {
- 
- struct fastrpc_soc_data {
- 	u32 sid_pos;
-+	u32 cdsp_dma_mask;
- };
- 
- struct fastrpc_channel_ctx {
-@@ -2178,6 +2179,7 @@ static int fastrpc_cb_probe(struct platform_device *pdev)
- 	int i, sessions = 0;
- 	unsigned long flags;
- 	int rc;
-+	u32 dma_mask = 32;
- 
- 	cctx = dev_get_drvdata(dev->parent);
- 	if (!cctx)
-@@ -2197,6 +2199,9 @@ static int fastrpc_cb_probe(struct platform_device *pdev)
- 	sess->dev = dev;
- 	dev_set_drvdata(dev, sess);
- 
-+	if (cctx->domain_id == CDSP_DOMAIN_ID)
-+		dma_mask = cctx->soc_data->cdsp_dma_mask;
-+
- 	if (of_property_read_u32(dev->of_node, "reg", &sess->sid))
- 		dev_info(dev, "FastRPC Session ID not specified in DT\n");
- 
-@@ -2211,9 +2216,9 @@ static int fastrpc_cb_probe(struct platform_device *pdev)
- 		}
- 	}
- 	spin_unlock_irqrestore(&cctx->lock, flags);
--	rc = dma_set_mask(dev, DMA_BIT_MASK(32));
-+	rc = dma_set_mask(dev, DMA_BIT_MASK(dma_mask));
- 	if (rc) {
--		dev_err(dev, "32-bit DMA enable failed\n");
-+		dev_err(dev, "%u-bit DMA enable failed\n", dma_mask);
- 		return rc;
- 	}
- 
--- 
-2.34.1
-
+Regards,
+Siddharth.
 
