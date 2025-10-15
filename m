@@ -1,215 +1,422 @@
-Return-Path: <linux-kernel+bounces-854196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62411BDDCDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:36:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE55BDDCE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957AA188C55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566223BD988
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3099931A547;
-	Wed, 15 Oct 2025 09:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FD931A81B;
+	Wed, 15 Oct 2025 09:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fWZ0mDmW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M1JiCGtq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NV6mw7MY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M1JiCGtq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NV6mw7MY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49421314D0C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494C72BE031
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760520957; cv=none; b=po8kJxrcTPlWgRk8xmqbnuc3Ds16Hl72kGqNV09kLJKP2xpAFtXjLxQtFh4Cg6LhLPPOrOK3Nles93BYH+eSq8KQ25nJQRrRCIPcZFxZ5HgSkEy8ma8RSJaow2b8sxQ3SYUqjH6JZ5Q5IcunsPVr9JX1b/x3ez28JAKi2nrRnAM=
+	t=1760520983; cv=none; b=Tdqs7lXuoouICCJyb9wcMgKps+VLvibc22yzmtpJmxqDDFZLWVY+N7tl2LmapIhWIkrBxchdFqDWzkKtoFRncxAJbWI+BLOu8SJJjkUqycjs+uz+CuDhh5Q7Y3F6pCFkDxwrxqsbl0fCR+iHkniXQ4HMNn1rt4DwzTKXissSbpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760520957; c=relaxed/simple;
-	bh=SAaTWTuJrcCmTfoeIHIkseoTyj7SdD+WNtx1Vu6HZB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dw8wPhloShI5yzN1IUndOkwYV5iEtAdGRYmEc7MZURtRuI7ieuraOCoRKDYND/NRRYP92SRpk4Do5/xmyjHNAIJ+sbGLPvSWqW7YhLxY9gOB3O//XWws0Ltp9HsPsjDF6WOL9reZhFbc/X/quP9XxBWT2WSFqM7ZyZq+pjMOPEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fWZ0mDmW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760520954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QnjbAAE44cfcG2WtQ64BW6kWGfa583/EFbUPiE8s7Ao=;
-	b=fWZ0mDmWFLnU3CNtfbK61YeXtKx/Yw+ED93Bwbxy/VrLQAuUAbXKntUjsYRi3fSP9L01jW
-	7R/0Wm90uYvPSbNrNn3Tzgfrp3VTG8bZF5I4VKHqBZqGirgu9E3slaNA5KMnLBrWwe0VLc
-	drxvuEOKPkdifR0umZeWmVnLgMG2pgY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-NygKqNEeNwO-eR4980q27g-1; Wed, 15 Oct 2025 05:35:52 -0400
-X-MC-Unique: NygKqNEeNwO-eR4980q27g-1
-X-Mimecast-MFC-AGG-ID: NygKqNEeNwO-eR4980q27g_1760520951
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e3ef2dd66so4943475e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:35:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760520951; x=1761125751;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnjbAAE44cfcG2WtQ64BW6kWGfa583/EFbUPiE8s7Ao=;
-        b=NEpa4Y0L8jg79Xi2fyia4VJRBa/iHLrkjrCQJBF+12KSdTy/odQi+tj10mt9G4A0+h
-         hGi2dCd577jjQ7nMEJ5/PanD9IWS9nzVWHQmIVgTr8C7O/oKprS1hlUgVwi2yy699uAp
-         G+mBysuU7Q3NZeh1sNmt/3PFeTt8QbQLrtKfy87OtXMBqkafbmEeSgknUgTQNYCQ6Nbl
-         nR5lh1ymexMY1uege3qi0Hrex08Yg6nV8ymtAix//iV9arKNGNnlMBeFmcdHvy+IDHNa
-         jpr+oYAeys31GE9jHpWbpDiryZUU00nfkwrJB65IBKVh6a3Uo12drXMBhnYq1Ib0grUI
-         eaGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi4JPaT28tIRanRjj5s+BpM7Xri2uzB3qSszREjFSJmNQIWFjlWsgXr2n1XT/m5saCgVXjn+Co6dBKtHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/6DupRDyiRMSTR/sXPaKR3GObAMMD5cqqMRimkfuzBS7fBaGZ
-	KPqLwuLnbeRrcvdpOLwKkDD6ox5iXbGYlM+x2EfQbjjX8akSzkUIemFWQQ5OrRsm4jSu9DeKbD8
-	yIgUlmlg+8fRyScfqakz1j1nlXvwk0HpjzXu5VB+szp4EoPBR3M51IgXABCOuCnn+0w==
-X-Gm-Gg: ASbGncuUE1VEEo+0M05b342iH6CQm5nIQ0N/FyYxxY+vg68Al0Q75drUcGg7SuG8SE3
-	hxMa9L84NIlbKibNgENOn+c5dnLHe20Bq2IiACGSGissvwf3UHditYXBrgtj5INjDFN0CTqzKtR
-	rQpjQXzNqbq7qo8sU1+QqRvSkep0H8brsPZfJ31lDvaoj4Vg4/2F6J6++SXqzzoHB2o254dub3b
-	UrW0Nv5JqRkRW0C1X6nm/h9ZHgb+K3QlDduICkLYzHMjz0jXIo0BFORnusUZkmuEEz41i9lwK72
-	5pQY6xh04dxdIf45a22zt5AmhIptL1ZZZStRc0n4TcN4fEDr8u1q21x6mUgO9WRHqgb/FI9R
-X-Received: by 2002:a05:600c:6592:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-46fa9ec796bmr209102855e9.16.1760520951384;
-        Wed, 15 Oct 2025 02:35:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGo13nIXlK6rrWAan5FpCkuO3+ZaZ3UhcIAxykoRd6It7aH9TFCFv4gquDLwOTrZuC+/GypTg==
-X-Received: by 2002:a05:600c:6592:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-46fa9ec796bmr209102585e9.16.1760520950935;
-        Wed, 15 Oct 2025 02:35:50 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47101c03644sm19989865e9.8.2025.10.15.02.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 02:35:50 -0700 (PDT)
-Date: Wed, 15 Oct 2025 11:35:48 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Pingfan Liu <piliu@redhat.com>
-Cc: Pierre Gondois <pierre.gondois@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH] sched/deadline: Derive root domain from active cpu in
- task's cpus_ptr
-Message-ID: <aO9q9EJbUw0QqbXv@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250929133602.32462-1-piliu@redhat.com>
- <20250929135347.GH3289052@noisy.programming.kicks-ass.net>
- <CAF+s44Q4SDXPRfYc4Ms5TcJgRU07QJB5H5VOHvyrZ31x9z49nw@mail.gmail.com>
- <aNuEpt8IkvtkH9na@jlelli-thinkpadt14gen4.remote.csb>
- <20250930090441.GJ4067720@noisy.programming.kicks-ass.net>
- <45e40d5e-f0b9-4c77-af1e-6ac915518acc@arm.com>
- <aOOyF3EvIG5HKEel@jlelli-thinkpadt14gen4.remote.csb>
- <3408aca5-e6c9-434a-9950-82e9147fcbba@arm.com>
- <CAF+s44Tv1n0b1GSghSPP3xDPK4qzbzc629XMB9btzXuKgfKvcA@mail.gmail.com>
+	s=arc-20240116; t=1760520983; c=relaxed/simple;
+	bh=NasT/wB870yeYgGUl/tJbYabJAVTbSRwqBkAwkRzyIo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HnzNXCnZ0poTIBjlpcVByTd1E2ePDfUmcjmzTu8IG1vfh+5kfHKYrhJf9qiaQqbcR3qD4Uiu86Qrb1MaVHFUxkDHmbjRv02QAneZMh+00NCpEEKaY39s9T2uv0fCt97Y5+8yTff/ViNgVM2ceT1P/3s7FHAupTCCflYxjO6K44A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M1JiCGtq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NV6mw7MY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M1JiCGtq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NV6mw7MY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D732336FE;
+	Wed, 15 Oct 2025 09:36:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760520979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=80A1Lbr2NHiPkBntBorRErvGsi3gTVaNEMpxg0hKVq0=;
+	b=M1JiCGtqfDItkObOopZ1LVrM+PJsLp+qZJd71MfmL3JBqRgiRQOXikWN4FNdd0QIzfqpwf
+	klwqyT+TLihCDCIWK3Vkd986wrSkRCKO3m1JhN21unmqN+4b32MwllRSVtzeSYgJCMCqQx
+	NambhUg67OahjLimB8B8ZqsmaU0WkCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760520979;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=80A1Lbr2NHiPkBntBorRErvGsi3gTVaNEMpxg0hKVq0=;
+	b=NV6mw7MYsffpkCKgPqSIhvbF+2OwrI7NzkOA4G6YHMtL9P2yaYhpKgbI2vuU670iNXjgdY
+	Sfzfq5JgfOGC/jAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760520979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=80A1Lbr2NHiPkBntBorRErvGsi3gTVaNEMpxg0hKVq0=;
+	b=M1JiCGtqfDItkObOopZ1LVrM+PJsLp+qZJd71MfmL3JBqRgiRQOXikWN4FNdd0QIzfqpwf
+	klwqyT+TLihCDCIWK3Vkd986wrSkRCKO3m1JhN21unmqN+4b32MwllRSVtzeSYgJCMCqQx
+	NambhUg67OahjLimB8B8ZqsmaU0WkCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760520979;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=80A1Lbr2NHiPkBntBorRErvGsi3gTVaNEMpxg0hKVq0=;
+	b=NV6mw7MYsffpkCKgPqSIhvbF+2OwrI7NzkOA4G6YHMtL9P2yaYhpKgbI2vuU670iNXjgdY
+	Sfzfq5JgfOGC/jAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4B96113A42;
+	Wed, 15 Oct 2025 09:36:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KsUhEhNr72hLXAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 09:36:19 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Wed, 15 Oct 2025 11:36:09 +0200
+Subject: [PATCH] mm/page_alloc: simplify and cleanup pcp locking
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF+s44Tv1n0b1GSghSPP3xDPK4qzbzc629XMB9btzXuKgfKvcA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251015-b4-pcp-lock-cleanup-v1-1-878e0e7dcfb2@suse.cz>
+X-B4-Tracking: v=1; b=H4sIAAhr72gC/x3MQQqAIBBA0avErBtQUaSuEi3UphoKE6UIorsnL
+ d/i/wcKZaYCffNAposLH7FCtg2E1cWFkKdqUEIZKaRBrzGFhPsRNgw7uXgm7LwVXkvrlCCoZco
+ 08/1fh/F9PwSWo1VlAAAA
+X-Change-ID: 20251015-b4-pcp-lock-cleanup-9b70b417a20e
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+ Zi Yan <ziy@nvidia.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9526; i=vbabka@suse.cz;
+ h=from:subject:message-id; bh=NasT/wB870yeYgGUl/tJbYabJAVTbSRwqBkAwkRzyIo=;
+ b=owEBiQF2/pANAwAIAbvgsHXSRYiaAcsmYgBo72sPbcVCy/SfheCgWSGhnX5BYcdD+C5EsuNJp
+ gUAy1xaVa+JAU8EAAEIADkWIQR7u8hBFZkjSJZITfG74LB10kWImgUCaO9rDxsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDIACgkQu+CwddJFiJrsvggApkI/Ljfg2Qx1tdo/EzBJgEuL76suJ08
+ xi60fKPYENSkzcfknl2ehq5PiuwjW0oxMk838N627tv7vP8j+0vNqBW8OYkIgNFi/lXzf8Vjz6F
+ ixBRyOsvikoLIK3VIxuMT+lQfZ8K+lHrfiPJcE93h2XoJcJzuDsHYLsZGkMW1+hiU0ltNMMZ6HH
+ PEhjhMyAdxtRBUNj8TMXp8T3fRAl74QjBjU/gQzLb+gnETDovGn5vA0UhRE1+iPzJXttknnHCLU
+ NnL+7A4ADwAcMfHZ11nVnpY+vhnL5hzVu9EmKiWHrYEmM6S3DXOWfuq2+mCtJ3yN5EjsaVPRlCQ
+ qScvh7Z/eHg==
+X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
+ fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On 14/10/25 21:09, Pingfan Liu wrote:
-> Hi Pierre,
-> 
-> Thanks for sharing your perspective.
-> 
-> On Sat, Oct 11, 2025 at 12:26 AM Pierre Gondois <pierre.gondois@arm.com> wrote:
-> >
-> >
-> > On 10/6/25 14:12, Juri Lelli wrote:
-> > > On 06/10/25 12:13, Pierre Gondois wrote:
-> > >> On 9/30/25 11:04, Peter Zijlstra wrote:
-> > >>> On Tue, Sep 30, 2025 at 08:20:06AM +0100, Juri Lelli wrote:
-> > >>>
-> > >>>> I actually wonder if we shouldn't make cppc_fie a "special" DEADLINE
-> > >>>> tasks (like schedutil [1]). IIUC that is how it is thought to behave
-> > >>>> already [2], but, since it's missing the SCHED_FLAG_SUGOV flag(/hack),
-> > >>>> it is not "transparent" from a bandwidth tracking point of view.
-> > >>>>
-> > >>>> 1 -https://elixir.bootlin.com/linux/v6.17/source/kernel/sched/cpufreq_schedutil.c#L661
-> > >>>> 2 -https://elixir.bootlin.com/linux/v6.17/source/drivers/cpufreq/cppc_cpufreq.c#L198
-> > >>> Right, I remember that hack. Bit sad its spreading, but this CPPC thing
-> > >>> is very much like the schedutil one, so might as well do that I suppose.
-> > >> IIUC, the sugov thread was switched to deadline to allow frequency updates
-> > >> when deadline tasks start to run. I.e. there should be no point updating the
-> > >> freq. after the deadline task finished running, cf [1] and [2]
-> > >>
-> > >> The CPPC FIE worker should not require to run that quickly as it seems to be
-> > >> more like a freq. maintenance work (the call comes from the sched tick)
-> > >>
-> > >> sched_tick()
-> > >> \-arch_scale_freq_tick() / topology_scale_freq_tick()
-> > >>    \-set_freq_scale() / cppc_scale_freq_tick()
-> > >>      \-irq_work_queue()
-> > > OK, but how much bandwidth is enough for it (on different platforms)?
-> > > Also, I am not sure the worker follows cpusets/root domain changes.
-> > >
-> > >
-> > To share some additional information, I could to reproduce the issue by
-> > creating as many deadline tasks with a huge bandwidth that the platform
-> > allows it:
-> > chrt -d -T 1000000 -P 1000000 0 yes > /dev/null &
-> >
-> > Then kexec to another kernel. The available bandwidth of the root domain
-> > gradually decreases with the number of CPUs unplugged.
-> > At some point, there is not enough bandwidth and an overflow is detected.
-> > (Same call stack as in the original message).
+The pcp locking relies on pcp_spin_trylock() which has to be used
+together with pcp_trylock_prepare()/pcp_trylock_finish() to work
+properly on !SMP !RT configs. This is tedious and error-prone.
 
-I seem to agree with Pingfan below, kexec (kernel crash?) is a case
-where all guarantees are out of the window anyway, so really no point in
-keeping track of bandwidth and failing hotplug. Guess we should be
-adding an ad-hoc check/bail for this case.
+We can remove pcp_spin_lock() and underlying pcpu_spin_lock() because we
+don't use it. Afterwards pcpu_spin_unlock() is only used together with
+pcp_spin_trylock(). Therefore we can add the UP_flags parameter to them
+and handle pcp_trylock_prepare()/finish() within them.
 
-> > So I'm not sure this is really related to the cppc_fie thread.
-> > I think it's more related to checking the available bandwidth in a context
-> > which is not appropriate. The deadline bandwidth might lack when the
-> > platform
-> > is reset, but this should not be that important.
-> >
-> 
-> I think there are two independent issues.
-> 
-> In your experiment, as CPUs are hot-removed one by one, at some point
-> the hot-removal will fail due to insufficient DL bandwidth. There
-> should be a warning message to inform users about what's happening,
-> and users can then remove some DL tasks to continue the CPU
-> hot-removal.
-> 
-> Meanwhile, in the kexec case, this checking can be skipped since the
-> system cannot roll back to a working state anyway
-> 
-> 
-> Thanks,
-> 
-> Pingfan
-> > ---
-> >
-> > Question:
-> > Since the cppc_fie worker doesn't have the SCHED_FLAG_SUGOV flag,
-> > is this comment actually correct ?
-> > /*
-> >   * Fake (unused) bandwidth; workaround to "fix"
-> >   * priority inheritance.
-> >   */
-> >
-> > ---
-> >
-> > On a non-deadline related topic, the CPPC drivers creates a cppc_fie
-> > worker in
-> > case the CPPC counters to estimate the current frequency are in PCC
-> > channels.
-> > Accessing these channels requires to go through sleeping sections,
-> > that's why a worker is used.
-> >
-> > However, CPPC counters might be accessed through FFH, which doesn't go
-> > through
-> > sleeping sections. In such case, the cppc_fie worker is never used and never
-> > removed, so it would be nice to remote it.
-> >
-> 
+Additionally for the configs where pcp_trylock_prepare() is a no-op (SMP
+|| RT) make it pass &UP_flags to a no-op inline function. This ensures
+typechecking and makes the local variable "used" so we can remove the
+__maybe_unused attributes.
+
+In my compile testing, bloat-o-meter reported no change on SMP config,
+so the compiler is capable of optimizing away the no-ops same as before,
+and we have simplified the code using pcp_spin_trylock().
+
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+based on mm-new
+---
+ mm/page_alloc.c | 99 +++++++++++++++++++++++----------------------------------
+ 1 file changed, 40 insertions(+), 59 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 0155a66d7367..2bf707f92d83 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -99,9 +99,12 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
+ /*
+  * On SMP, spin_trylock is sufficient protection.
+  * On PREEMPT_RT, spin_trylock is equivalent on both SMP and UP.
++ * Pass flags to a no-op inline function to typecheck and silence the unused
++ * variable warning.
+  */
+-#define pcp_trylock_prepare(flags)	do { } while (0)
+-#define pcp_trylock_finish(flag)	do { } while (0)
++static inline void __pcp_trylock_prepare(unsigned long *flags) { }
++#define pcp_trylock_prepare(flags) __pcp_trylock_prepare(&(flags))
++#define pcp_trylock_finish(flags)	do { } while (0)
+ #else
+ 
+ /* UP spin_trylock always succeeds so disable IRQs to prevent re-entrancy. */
+@@ -129,15 +132,6 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
+  * Generic helper to lookup and a per-cpu variable with an embedded spinlock.
+  * Return value should be used with equivalent unlock helper.
+  */
+-#define pcpu_spin_lock(type, member, ptr)				\
+-({									\
+-	type *_ret;							\
+-	pcpu_task_pin();						\
+-	_ret = this_cpu_ptr(ptr);					\
+-	spin_lock(&_ret->member);					\
+-	_ret;								\
+-})
+-
+ #define pcpu_spin_trylock(type, member, ptr)				\
+ ({									\
+ 	type *_ret;							\
+@@ -157,14 +151,21 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
+ })
+ 
+ /* struct per_cpu_pages specific helpers. */
+-#define pcp_spin_lock(ptr)						\
+-	pcpu_spin_lock(struct per_cpu_pages, lock, ptr)
+-
+-#define pcp_spin_trylock(ptr)						\
+-	pcpu_spin_trylock(struct per_cpu_pages, lock, ptr)
++#define pcp_spin_trylock(ptr, UP_flags)					\
++({									\
++	struct per_cpu_pages *__ret;					\
++	pcp_trylock_prepare(UP_flags);					\
++	__ret = pcpu_spin_trylock(struct per_cpu_pages, lock, ptr);	\
++	if (!__ret)							\
++		pcp_trylock_finish(UP_flags);				\
++	__ret;								\
++})
+ 
+-#define pcp_spin_unlock(ptr)						\
+-	pcpu_spin_unlock(lock, ptr)
++#define pcp_spin_unlock(ptr, UP_flags)					\
++({									\
++	pcpu_spin_unlock(lock, ptr);					\
++	pcp_trylock_finish(UP_flags);					\
++})
+ 
+ #ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
+ DEFINE_PER_CPU(int, numa_node);
+@@ -2887,13 +2888,10 @@ static bool free_frozen_page_commit(struct zone *zone,
+ 		if (to_free == 0 || pcp->count == 0)
+ 			break;
+ 
+-		pcp_spin_unlock(pcp);
+-		pcp_trylock_finish(*UP_flags);
++		pcp_spin_unlock(pcp, *UP_flags);
+ 
+-		pcp_trylock_prepare(*UP_flags);
+-		pcp = pcp_spin_trylock(zone->per_cpu_pageset);
++		pcp = pcp_spin_trylock(zone->per_cpu_pageset, *UP_flags);
+ 		if (!pcp) {
+-			pcp_trylock_finish(*UP_flags);
+ 			ret = false;
+ 			break;
+ 		}
+@@ -2904,8 +2902,7 @@ static bool free_frozen_page_commit(struct zone *zone,
+ 		 * returned in an unlocked state.
+ 		 */
+ 		if (smp_processor_id() != cpu) {
+-			pcp_spin_unlock(pcp);
+-			pcp_trylock_finish(*UP_flags);
++			pcp_spin_unlock(pcp, *UP_flags);
+ 			ret = false;
+ 			break;
+ 		}
+@@ -2937,7 +2934,7 @@ static bool free_frozen_page_commit(struct zone *zone,
+ static void __free_frozen_pages(struct page *page, unsigned int order,
+ 				fpi_t fpi_flags)
+ {
+-	unsigned long __maybe_unused UP_flags;
++	unsigned long UP_flags;
+ 	struct per_cpu_pages *pcp;
+ 	struct zone *zone;
+ 	unsigned long pfn = page_to_pfn(page);
+@@ -2973,17 +2970,15 @@ static void __free_frozen_pages(struct page *page, unsigned int order,
+ 		add_page_to_zone_llist(zone, page, order);
+ 		return;
+ 	}
+-	pcp_trylock_prepare(UP_flags);
+-	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
++	pcp = pcp_spin_trylock(zone->per_cpu_pageset, UP_flags);
+ 	if (pcp) {
+ 		if (!free_frozen_page_commit(zone, pcp, page, migratetype,
+ 						order, fpi_flags, &UP_flags))
+ 			return;
+-		pcp_spin_unlock(pcp);
++		pcp_spin_unlock(pcp, UP_flags);
+ 	} else {
+ 		free_one_page(zone, page, pfn, order, fpi_flags);
+ 	}
+-	pcp_trylock_finish(UP_flags);
+ }
+ 
+ void free_frozen_pages(struct page *page, unsigned int order)
+@@ -2996,7 +2991,7 @@ void free_frozen_pages(struct page *page, unsigned int order)
+  */
+ void free_unref_folios(struct folio_batch *folios)
+ {
+-	unsigned long __maybe_unused UP_flags;
++	unsigned long UP_flags;
+ 	struct per_cpu_pages *pcp = NULL;
+ 	struct zone *locked_zone = NULL;
+ 	int i, j;
+@@ -3039,8 +3034,7 @@ void free_unref_folios(struct folio_batch *folios)
+ 		if (zone != locked_zone ||
+ 		    is_migrate_isolate(migratetype)) {
+ 			if (pcp) {
+-				pcp_spin_unlock(pcp);
+-				pcp_trylock_finish(UP_flags);
++				pcp_spin_unlock(pcp, UP_flags);
+ 				locked_zone = NULL;
+ 				pcp = NULL;
+ 			}
+@@ -3059,10 +3053,8 @@ void free_unref_folios(struct folio_batch *folios)
+ 			 * trylock is necessary as folios may be getting freed
+ 			 * from IRQ or SoftIRQ context after an IO completion.
+ 			 */
+-			pcp_trylock_prepare(UP_flags);
+-			pcp = pcp_spin_trylock(zone->per_cpu_pageset);
++			pcp = pcp_spin_trylock(zone->per_cpu_pageset, UP_flags);
+ 			if (unlikely(!pcp)) {
+-				pcp_trylock_finish(UP_flags);
+ 				free_one_page(zone, &folio->page, pfn,
+ 					      order, FPI_NONE);
+ 				continue;
+@@ -3085,10 +3077,8 @@ void free_unref_folios(struct folio_batch *folios)
+ 		}
+ 	}
+ 
+-	if (pcp) {
+-		pcp_spin_unlock(pcp);
+-		pcp_trylock_finish(UP_flags);
+-	}
++	if (pcp)
++		pcp_spin_unlock(pcp, UP_flags);
+ 	folio_batch_reinit(folios);
+ }
+ 
+@@ -3339,15 +3329,12 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 	struct per_cpu_pages *pcp;
+ 	struct list_head *list;
+ 	struct page *page;
+-	unsigned long __maybe_unused UP_flags;
++	unsigned long UP_flags;
+ 
+ 	/* spin_trylock may fail due to a parallel drain or IRQ reentrancy. */
+-	pcp_trylock_prepare(UP_flags);
+-	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
+-	if (!pcp) {
+-		pcp_trylock_finish(UP_flags);
++	pcp = pcp_spin_trylock(zone->per_cpu_pageset, UP_flags);
++	if (!pcp)
+ 		return NULL;
+-	}
+ 
+ 	/*
+ 	 * On allocation, reduce the number of pages that are batch freed.
+@@ -3357,8 +3344,7 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 	pcp->free_count >>= 1;
+ 	list = &pcp->lists[order_to_pindex(migratetype, order)];
+ 	page = __rmqueue_pcplist(zone, order, migratetype, alloc_flags, pcp, list);
+-	pcp_spin_unlock(pcp);
+-	pcp_trylock_finish(UP_flags);
++	pcp_spin_unlock(pcp, UP_flags);
+ 	if (page) {
+ 		__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+ 		zone_statistics(preferred_zone, zone, 1);
+@@ -5045,7 +5031,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 			struct page **page_array)
+ {
+ 	struct page *page;
+-	unsigned long __maybe_unused UP_flags;
++	unsigned long UP_flags;
+ 	struct zone *zone;
+ 	struct zoneref *z;
+ 	struct per_cpu_pages *pcp;
+@@ -5139,10 +5125,9 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 		goto failed;
+ 
+ 	/* spin_trylock may fail due to a parallel drain or IRQ reentrancy. */
+-	pcp_trylock_prepare(UP_flags);
+-	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
++	pcp = pcp_spin_trylock(zone->per_cpu_pageset, UP_flags);
+ 	if (!pcp)
+-		goto failed_irq;
++		goto failed;
+ 
+ 	/* Attempt the batch allocation */
+ 	pcp_list = &pcp->lists[order_to_pindex(ac.migratetype, 0)];
+@@ -5159,8 +5144,8 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 		if (unlikely(!page)) {
+ 			/* Try and allocate at least one page */
+ 			if (!nr_account) {
+-				pcp_spin_unlock(pcp);
+-				goto failed_irq;
++				pcp_spin_unlock(pcp, UP_flags);
++				goto failed;
+ 			}
+ 			break;
+ 		}
+@@ -5171,8 +5156,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 		page_array[nr_populated++] = page;
+ 	}
+ 
+-	pcp_spin_unlock(pcp);
+-	pcp_trylock_finish(UP_flags);
++	pcp_spin_unlock(pcp, UP_flags);
+ 
+ 	__count_zid_vm_events(PGALLOC, zone_idx(zone), nr_account);
+ 	zone_statistics(zonelist_zone(ac.preferred_zoneref), zone, nr_account);
+@@ -5180,9 +5164,6 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ out:
+ 	return nr_populated;
+ 
+-failed_irq:
+-	pcp_trylock_finish(UP_flags);
+-
+ failed:
+ 	page = __alloc_pages_noprof(gfp, 0, preferred_nid, nodemask);
+ 	if (page)
+
+---
+base-commit: 550b531346a7e4e7ad31813d0d1d6a6d8c10a06f
+change-id: 20251015-b4-pcp-lock-cleanup-9b70b417a20e
+
+Best regards,
+-- 
+Vlastimil Babka <vbabka@suse.cz>
 
 
