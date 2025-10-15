@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-854452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE02BDE6C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A28BDE6D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2648E505082
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:14:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E00CE501536
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0160C326D4D;
-	Wed, 15 Oct 2025 12:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D06326D76;
+	Wed, 15 Oct 2025 12:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOirjg0l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mp/u9j+q"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565953277AA;
-	Wed, 15 Oct 2025 12:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7946E324B27;
+	Wed, 15 Oct 2025 12:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530450; cv=none; b=Ffi/xWN2SruzZLYGAO4JLYcMSJRh3HCuSHmDAsTCny+L7aPrNdzU+q44tLBvB4AcjkbMpds/hT/cvbWg1FN9ku2l7g5/Fdvt3MiE/HUQUI598TdnTnN+MnuuZmMoZ+9AYOcP63UDBUsZJATo/UvNnmuXPD4HU6uIjnE4XmGdSNs=
+	t=1760530511; cv=none; b=jbRZyPfO74k1Row5g6D4pOJ5LV1Hk2eV3sIlpsDxyfh6Y0BNETmZdX3rKBI3uNSURjMGA/xhDrdCJCGQssjCF6NQeRV2fNg3YqU75sQHls8lchc0kswt8IGKcWullYrExAQhPIYOJjxdRgIjJrzyMTCAmftCY/7iee+IsBtNvps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530450; c=relaxed/simple;
-	bh=YaK0FjfQd03YPkhRuDa5SE7w6ZhYlyHmOr00FCJp9sY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LfYYrsjV9S87QTDEWoP2t6o4Y8evyZeb4eKkOJQNrUCcDGFFGYZRT/gEEe+pKTqRDOx3/zFw29sHcz4EQgm4YGLAwWRj0n5qBrhmag7C58dM4udl5irFaaft8UqtvAY1XstJuNQxiDTulqFzrD7z32GUEEXazW7Bd/QPH1cUUp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOirjg0l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D108CC116B1;
-	Wed, 15 Oct 2025 12:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760530448;
-	bh=YaK0FjfQd03YPkhRuDa5SE7w6ZhYlyHmOr00FCJp9sY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bOirjg0l6LuAUs8zJi8wDWaS6wMqWqVtFR0OcznISmSeqtrqtS3C9NWJShCgvlrnD
-	 VfJrtBCNuGQlNcLJMP6zcyKFtolFbxBnrPOQLxL5OuIAkZf8e0b46eb9JL+TyxSEmY
-	 2LJGp5fsdWterB7mC2Iz5YGrz31LdA3Tnu7MVt1Yq5RTN4UzGxNA8sXzwORSeGKkeV
-	 F/19iBhpvLQmpUCeNd/Dx/udm8oS+yo/ILPsL54bHoBom4xJ48MqFg9SWnx6W5Nenq
-	 GUmOT9ijpGsLom7+phoh7skx3hMbe4Wn+xUu7LU0j+QZ39qn0lRB7v9aOwLrA3Xr1w
-	 p0ZFzleduRKIA==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: Axel Haslam <ahaslam@baylibre.com>, jic23@kernel.org, 
- nuno.sa@analog.com, dlechner@baylibre.com, andy@kernel.org, 
- marcelo.schmitt1@gmail.com
-In-Reply-To: <cd315e95c0bd8523f00e91c400abcd6a418e5924.1759760519.git.marcelo.schmitt@analog.com>
-References: <cd315e95c0bd8523f00e91c400abcd6a418e5924.1759760519.git.marcelo.schmitt@analog.com>
-Subject: Re: [PATCH v4 1/1] spi: offload: Add offset parameter
-Message-Id: <176053044658.105519.915414342804429574.b4-ty@kernel.org>
-Date: Wed, 15 Oct 2025 13:14:06 +0100
+	s=arc-20240116; t=1760530511; c=relaxed/simple;
+	bh=c9aTXp+I+4A3k1DvpeXMIzErotkE9GitHiUWRAQ2v2s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ihSLSUC8goPy+jB9nHWI0o7UL5j12hzf33N93ldJUSTLX/v7Jrf/L8VpYVHnJOeCEPr2enFy0lKqnlj5/As0R2/V73GyGi8RSMzv/M3ca3lGNcbsh8L9Umualqh2e10BoK3H63ctVjWq1pDqT2k2B08ghAuDg5KWBw4Uej9MM+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mp/u9j+q; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59FCEs301313169;
+	Wed, 15 Oct 2025 07:14:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760530494;
+	bh=2OkkNCfu4YnFSj7smPfoU7koyJr+GcXCwTUxoqvzw+Q=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=mp/u9j+qM8SGyPJRAIYEryWwjOZQHt6KJB6YWdyGwKb3jPB6PWHrWT3SHrYFQNA24
+	 sN2G2zAEgOS4ZMfMZJhmXr9dm38adp+cCLbC1qYS3cLHaaG4LA3+HVTfeoL5CtNZCT
+	 qFUGsP559oVqrekDfEbDMjB4KUIHLu/PmJdcyblY=
+Received: from DLEE212.ent.ti.com (dlee212.ent.ti.com [157.170.170.114])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59FCEs4E392056
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 15 Oct 2025 07:14:54 -0500
+Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
+ 2025 07:14:53 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE201.ent.ti.com
+ (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Oct 2025 07:14:53 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59FCEqFo1878736;
+	Wed, 15 Oct 2025 07:14:53 -0500
+Date: Wed, 15 Oct 2025 17:44:52 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Andrew
+ Davis <afd@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tony
+ Lindgren <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        <linux-gpio@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v6 1/4] dt-bindings: arm: ti: Add binding for AM62L SoCs
+Message-ID: <20251015121452.7cmsi4tceezroxsa@lcpd911>
+References: <20250912-am62lx-v6-0-29d5a6c60512@ti.com>
+ <20250912-am62lx-v6-1-29d5a6c60512@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-96507
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250912-am62lx-v6-1-29d5a6c60512@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 06 Oct 2025 11:25:41 -0300, Marcelo Schmitt wrote:
-> Add an offset parameter that can be passed in the periodic trigger.
-> This is useful for example when ADC drivers implement a separate periodic
-> signal to trigger conversion and need offload to read the result with
-> some delay. While at it, add some documentation to offload periodic trigger
-> parameters.
+On Sep 12, 2025 at 10:40:40 -0500, Bryan Brattlof wrote:
+> Add the binding for TI's AM62L family of devices.
 > 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
+> ---
+> Changes in v1:
+>  - separated out devicetree bindings
+> ---
+>  Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> [...]
+> diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> index e80c653fa4382acef964e182ecc4ae5445088936..d916c627eb619d16124772df5aacac9354126808 100644
+> --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> @@ -37,6 +37,12 @@ properties:
+>            - const: phytec,am62a-phycore-som
+>            - const: ti,am62a7
+>  
+> +      - description: K3 AM62L3 SoC and Boards
+> +        items:
+> +          - enum:
+> +              - ti,am62l3-evm
+> +          - const: ti,am62l3
+> +
+>        - description: K3 AM62P5 SoC and Boards
 
-Applied to
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: offload: Add offset parameter
-      commit: b83fb1b14c06bdd765903ac852ba20a14e24f227
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
