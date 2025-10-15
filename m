@@ -1,104 +1,142 @@
-Return-Path: <linux-kernel+bounces-855128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D95DBE051A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C82CBE053B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41FEB42789A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE58342837C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC76303A0C;
-	Wed, 15 Oct 2025 19:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE63A3019B2;
+	Wed, 15 Oct 2025 19:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mb9w4PZa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuNCKEzm"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B752BDC3B;
-	Wed, 15 Oct 2025 19:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655B627A135
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760555379; cv=none; b=Yzj8FaU7IOndW7HvtlQ7YfnosOrcGxIfmQQZF9sc2voFwzjZOkQn3qBj9FJYXH7yyflMmsCPS/xtAJWx9U1qarge30TLmNWlbRN3wzbCv17s9cqamXF9v4Oluf+r14dMW/18LpCmKkFiG3THKcSYxHArtquqx27Y9K/XNxTNTL0=
+	t=1760555568; cv=none; b=Pn+N9YAPhsP7LVLvmfpz2PB8f0viKQjiX/n/dzSynVFQ0TEAY6UwAZWuVtZwzGQtMt8v5sVyiAn83ULljlW7yffC6KmBtYYppNxXVD/wbz2ZU38c8K4b3svyL4k9+jC9Iz5n6S6s1n5C1Wfau3F8NTOADHo63wdo8U04pRmXs7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760555379; c=relaxed/simple;
-	bh=WwwXtbAybha3ZLb6O/IGC6PpjE2KyRiKGEVICuAujsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpf5imTZ6srmuUWjCmx3b+6WSj9iCaFeOAgVk29qlmG9Lpc9DTdBM0FMdSkrSTNMbXsIsk22pw4gdPzbHX/Aw1CFmQXXJWIH01lOinU+rgAuoneu6R5Sp24ZrvuJvtigizsoMccRI4G6ylmGOmSVgeb/GiTqJjvQrYz/90UaO6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mb9w4PZa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02FAC4CEF8;
-	Wed, 15 Oct 2025 19:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760555379;
-	bh=WwwXtbAybha3ZLb6O/IGC6PpjE2KyRiKGEVICuAujsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mb9w4PZamSvMwkj5Q/1eUT1San+uCbMMNeL6JIjr4yT4V9EI4C0j1UjLBWKn+7HvL
-	 ZAS841iK6XpqRVu62Enyamca4tOQE/2gtb8vkrkj6xJDDMUv7BeZequoGSkkKB4ZsI
-	 Arb4TTjQFhS28CSRqSkmS6UGA6xZFtjhtcqFEQ/p6rIGtU9jmrIAR/3aafQcuicdhY
-	 VV6BYOydBosXSCizIFmfOlPhb+cJtaD8OYgZnwIsmfhz3Rwok+sr+kGlX39VebwENQ
-	 6teBLyPhs17sB5gDQ/j4PRWXFsfDi8BIYE/GAEDyFUJlQMBHp8yuFD0UHcV0zyF+MK
-	 oPGncWYI28v4w==
-Date: Wed, 15 Oct 2025 20:09:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Subject: Re: [PATCH v3 0/4] rpmh-regulators: Update rpmh-regulator driver and
- dt-bindings for Glymur
-Message-ID: <022305e8-a2ea-4013-9ee0-41e83e5f41bc@sirena.org.uk>
-References: <20250918-glymur-rpmh-regulator-driver-v3-0-184c09678be3@oss.qualcomm.com>
+	s=arc-20240116; t=1760555568; c=relaxed/simple;
+	bh=MvR+0JKXb5CBAEei5A2lB3ToTgOiUAvcquMmLPEYUy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=os2GT4qZy93Jz6kISjdJ++G4rVWEyj1mV0juU1K1RE+SA/hRkACk3qjkQl6wzcyE9oRp8OtR3HUWeeb1xmm7zXjYC3EgYwjXCZ6UrpSOG8ChZUqXOIPBjNuF2JAcKtsjgPOX5k+L4upbGarqlRg38F7R5iNvRTKtfbvtVkRs6aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CuNCKEzm; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e2826d5c6so42820655e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760555565; x=1761160365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OhyinuDlZwKREDWmNx8hCk7tI9XdjStorfWj2UhFgTY=;
+        b=CuNCKEzmNNFm8QiEk1EemTNCB6eJcJOl2G6kmRrvOOPZeNuHHc/nuUrKRbByMYG9s1
+         srbVteVPPFS+W06BULQrxd2QQu9RmE1kf4nT0JG0sEJ1MrRh4wvGSBfiAEbqdJYe3ft+
+         RjUR5zktBIwXWG3dCodcI/Kj57YsJBJt+/z+mcJmEFpBxaCLMVonjNdRtZCWZuZxp9/E
+         3MKLDqoTibeQ6y02BvALO+5X/ko+kKbojFMjtp3/5mCRo645aBYCLyUQKvQX1qcX8Mku
+         w2Pp2Nk73XqO5jFn7A7CDyRYeg75hJDZLKwDZQLv17wioIEH6takbzzcPl5I9jepR/1q
+         d8tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760555565; x=1761160365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OhyinuDlZwKREDWmNx8hCk7tI9XdjStorfWj2UhFgTY=;
+        b=IUW2nRXN8QY6m0Igm0KgCZIq6UZt5dGA8EH8c1Oupuk28t/yHk45zzNvV3P1Rt4Zf2
+         OXAFUoQmQhro2tqfICISOniE60s1RNyxRg9G1ttO8aXKJD9I9XT7pEyEXcQgCf+o3isG
+         X913Eihl+wBNBP+pd1VA58/JWm41BA5t4GgQUwlqEEXjiYHXsf31S3V7FbXw8ydbz6Xq
+         aRBSQ88FoOGfmRFscR4IKq7Wv+MBZ2Tssy7IMXWr9veg2GYz8krdooQdHnwP1tSX8RlJ
+         H58BjPbQWumRbF2eI+hoxRbTcy6GRnc2FJtrl32aAL6exTknWl26DEkcbi7oSaKSkNy+
+         b2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt87Gp57AoQqaAtyX6aYUQrAcfAZeTKmef3JHocKxwcS3I9ihu0uI66xww7OuFXeVz2Z//vNMyLT1X3/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGYV0et7Li8kkZO2FMxaMMhmM1KaYKMc4l0hvVGw17/iX1O4/n
+	sLD/J9d083/GdRl43Np46oKhi9RuT7UmmXGd/A2Qfn2VW9RhSuJ30lh9Q3gTib0LNJ209xDXNaL
+	cMpvXYxRTk/qvcOLP5dAsMqGGCcur/o8=
+X-Gm-Gg: ASbGncs1Aekr1UVrZ2QRH24Er2u12WVEJehQ86bbiHWseejSx4aQSH2ybF/dFyekvkn
+	PfcYJQIW0LFwOfZqFWgFe++4eSGZhtsS8192/F9AydzhzXRhXHZemAp7XQllcINJTpmoUqCo3mg
+	NYDgZBIPi+RK82+VNr/vtYYgXgQbMqoJcQZ02h0nX10KLJ25HZuZhI8hwhfvV44GQnqornj9bIB
+	5Gm+lYOlww/QLWAikfVOnWGFV5Wm6xZpMeUw9CMPCXUbc8ac1cU7DLTz1o7
+X-Google-Smtp-Source: AGHT+IGptweOAxfQob9Jd4H5eNxPIDoVFH0g644LiyqMYerOmNSPqkAZdQtC7+4FweyrZZizKJf/AjDZCN535DWV0k8=
+X-Received: by 2002:a05:6000:2c0c:b0:3f1:5bdd:190a with SMTP id
+ ffacd0b85a97d-42666ac3a16mr18451032f8f.3.1760555564585; Wed, 15 Oct 2025
+ 12:12:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ASrrcNOedjRtYOLD"
-Content-Disposition: inline
-In-Reply-To: <20250918-glymur-rpmh-regulator-driver-v3-0-184c09678be3@oss.qualcomm.com>
-X-Cookie: Long life is in store for you.
+References: <20251014153314.177300-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUBthNYYOg4WHjt+gJRL=g00wmiqCsx+La_3NCUrCJ9gg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUBthNYYOg4WHjt+gJRL=g00wmiqCsx+La_3NCUrCJ9gg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 15 Oct 2025 20:12:18 +0100
+X-Gm-Features: AS18NWCeX_juiZImnilmkiUrbUqjiLLajME51FAEENFN1IPwAIZdGkxwJx_QjPc
+Message-ID: <CA+V-a8vUKJDFCwQ3tMyhuMEaoR1DhpEhhHfwRnmMwNerdBM49w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: rzt2h-n2h-evk: Add VCC supply for EEPROM
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux I2C <linux-i2c@vger.kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Geert,
 
---ASrrcNOedjRtYOLD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Oct 15, 2025 at 4:36=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> CC at24, regulator
+>
+> On Tue, 14 Oct 2025 at 17:33, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > The R1EX24016 EEPROM on the RZ/T2H-N2H Evaluation Kit is powered from
+> > the 3.3V rail. Add the regulator phandle for the VCC supply to reflect
+> > this in the device tree and avoid the fallback to the dummy regulator:
+> >
+> >     at24 0-0050: supply vcc not found, using dummy regulator
+> >
+> > Fixes: 0176c9e82e10 ("arm64: dts: renesas: rzt2h-n2h-evk-common: Enable=
+ EEPROM on I2C0")
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+> > @@ -160,6 +160,7 @@ eeprom: eeprom@50 {
+> >                 compatible =3D "renesas,r1ex24016", "atmel,24c16";
+> >                 reg =3D <0x50>;
+> >                 pagesize =3D <16>;
+> > +               vcc-supply =3D <&reg_3p3v>;
+> >         };
+> >  };
+>
+> "vcc-supply" is not a required property, according to the DT bindings,
+> and I believe the 3.3V supply can be considered always-on (but see
+> below to encounter dragons).
+> I was always under the impression that these "supply not found, using
+> dummy regulator"-messages are just informational, and can be ignored,
+> but they are at the KERN_WARNING level.
+> So should we add real dummy supplies to DTS, or not?
+>
+Agreed, I get your point. Let's drop this patch.
 
-On Thu, Sep 18, 2025 at 02:57:00PM +0530, Kamal Wadhwa wrote:
-> This series contains patches to update rpmh-regulator driver and
-> dt-bindings for supporting the PMIC voltage regulators present on the
-> boards with Qualcomm's next gen compute SoC - Glymur.
-
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---ASrrcNOedjRtYOLD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjv8WwACgkQJNaLcl1U
-h9AARwf+P2aR6rY0tK0PJGHF5nRvv5/IN1Tp/IS6+yqv8I8YqGUbUeoKbZIngyCS
-a131hECghbQXTgxfwlB1R6fltTtSRkGlyDjQJvToxNWKn+S+UWqUfcgnh8dppypu
-t5pGvr0RFRbIEFvgWVkNUy+8H1w4PCCSV4jQQlJMGCeJxrIdLIB0jzcPd1pji6os
-4QBU0zm5/wrciZtkfu5hAJZIw7qFpbIESMcl/hBfAMHjamGSxIUCPbADsbJY1aGY
-ZvUSJjlow7mbUkxaK6kHRv4TUPimRFdZe8Ap06Zfl1YzmZM6vhbbbTlYNItPgVvr
-NDqr5M+8OhEhyv84/sUD//hFrRyo1g==
-=AZ3I
------END PGP SIGNATURE-----
-
---ASrrcNOedjRtYOLD--
+Cheers,
+Prabhakar
 
