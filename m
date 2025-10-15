@@ -1,203 +1,381 @@
-Return-Path: <linux-kernel+bounces-854234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D12EBDDE04
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:53:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1784BDDE07
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C29F188A2B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:53:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5E9A4EE570
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406A131B803;
-	Wed, 15 Oct 2025 09:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673A131B801;
+	Wed, 15 Oct 2025 09:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="R1r9qTW4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OakFG2EL"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BCv8TeJ2"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4152308F2E;
-	Wed, 15 Oct 2025 09:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA1D31B11C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521992; cv=none; b=qTLv8XWBQTN2SMiARpKeSuIrmgYjzJq3QCCoSzf0lvi9HPQ8xVRbaP72m0Mx8KsWS98ZgVbZwDpAiMF8ynKFp1BmbVJdLBaTXjYtt1H42jzgZzd7r6vFt0QicGY2bwfsdgdTqcdIXyxzeJBYLKuUV0pIPNJihRv8OPXzadJIp3M=
+	t=1760522027; cv=none; b=Z0t04HgCgcsGpwja6UZVecvGZZjF8L2UGaeIlzitmplaY2PnMSJRNEhILiCM2ptUjQ2s14U/qIZAv89hUDpUSnxMAnOyeWK9olzqFT+K5mTaR+cU79M12LsR4/6yzVMeV6q4JZ10Z9b0Nsf/vH9PbKnFVPuyxtUZY+YOMixpnMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521992; c=relaxed/simple;
-	bh=iziB5jyiF6mHDkiY6ZCk+Wow33XGRZNsyWDK/NaIZQE=;
+	s=arc-20240116; t=1760522027; c=relaxed/simple;
+	bh=hIpIf/kcDm0kf0s0kJz+D/awRvsLxaY8T7qYUgQsLLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUJylbaEVQeHZxtPLKJvaLb6VApUUayJ/gUDw+rOKEbdFQ5hI1ljdtSyF9tdszqX283hCTqYGjBV57qCf90DLItmL/pE7OTVS5YU2U7zhDiBOvzTTTUwa9mrfFV6EHbQuycrQqdItfGQz5ODfmNjr6lQmJYmzOnCcO9uque3eys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=R1r9qTW4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OakFG2EL; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id C8894EC0110;
-	Wed, 15 Oct 2025 05:53:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 15 Oct 2025 05:53:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1760521987; x=
-	1760608387; bh=ZRcJTFRWGK7NOr5KnRDlG6z7tyzDX/Z+zt3DwkntsFA=; b=R
-	1r9qTW4ibBV4NbFPgVBitEjstKh6c7MHolCH0qVsCyEqZmp+3ae/R0glqvb4gQSz
-	G5VM5Y1Vw4Bsp4dJhRs6lzBkKIGuKj1QGzyCEt99q3Q/8WV6U0NG4nngyEsRx2I0
-	+TAQCJS8TcRXTNtWj4Z2vAaO83ZO6b0p2EUc6L+SUMqDRCOYVsgGPCcjJnFCh4bT
-	LhUldd58ZeOKVFBqr6MgzOCbDUse0V02o9eTgmkfB++2fCzHQD7X/wk7Jm1BtDU5
-	0b9D2GfzXM6b8EIifPZywoHrhq6DQSNxvJsG2tlqErzAtdtVFNsRaY2foJXN+xX1
-	cmxLhpV80vYGRS2XDQ1aw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760521987; x=1760608387; bh=ZRcJTFRWGK7NOr5KnRDlG6z7tyzDX/Z+zt3
-	DwkntsFA=; b=OakFG2EL23EDKU0Aiuh6rFoSz3h7uE+h2JUUo92X/j4lsaGOQrw
-	t1OM7Vj1zEFaFnlaRLE0qxNknyzURm8HF/InI/dnuDG4FX40gVK3Yx7qJF0PPwZW
-	nn09l/7Alqtb3j9Mubi17QEzDmhGMon/+3i2z3CpP6d7ujZD6U1Bl7RbaXD9ROEv
-	frOhZGxOmEgByROBxJ45Wut9DmeExgHQczH1vqNcHRSjegiZrc3EQ7Kqjz8ZEZJk
-	VZ/2m1Gs66qebDRYznALwsykaLFxxqzQjDI6SwYR6XDP6BJbbyFVQib/Du16lLCp
-	tW3M/KzRp8f4kbdbedE6rLExKtQ5m7GE8Jw==
-X-ME-Sender: <xms:Am_vaCTqocvZRgtz9fiW0XvRu5Ol0lveXTGovW8sH0d0bgxF_kIQeg>
-    <xme:Am_vaJVGK3BDWr0CRcvFCJv_DnLsy62l3WwmbcpLasms6YTOYhnAGTzDtAjcKUtpL
-    0sMr4jGl3zjo9DcvLEjHljP8XfA2ukxcgxP6BEveSqS06qGGA6vTtw>
-X-ME-Received: <xmr:Am_vaPGBvTG2QKbZkR1V9-YRyAdM0eeGkPXI0LBfc0CFo0k0lj4Swe0FiYvT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefuddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
-    hushhpvggtthffohhmrghinhculdegledmnecujfgurhepfffhvfevuffkfhggtggujges
-    thdtredttddtjeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqh
-    huvggrshihshhnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepveekhffgtddvveej
-    vedvgffffeeftedtfefhtdfgueetgeevuefftdffhfduhedvnecuffhomhgrihhnpehshi
-    iikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpdhgohhoghhlvggrphhishdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqh
-    huvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehsthgvfhhfvghnrdhklhgrshhsvghrthesshgvtghunh
-    gvthdrtghomhdprhgtphhtthhopehshiiisghothdohegtugeivdellegvuggvgegugehf
-    jedtleekjegssehshiiikhgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtg
-    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughu
-    mhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhgvrhgsvghrthesghhonh
-    guohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehhohhrmhhssehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Am_vaEermWOTEaHSXCemuj5res_AHg5uzYJwEjrE7n9uUwZQpDDTng>
-    <xmx:Am_vaArFXLnncdG7io31n2ZDW_U0SrSFOozS-EfP3hamUc56Z3mVog>
-    <xmx:Am_vaNBfKenHPKIPyoe_zUqnwPg8xC3Vz2j5xzuBh-ZmkjT9FBAGvQ>
-    <xmx:Am_vaBfNYqPwIW0_K9Oswa4FjG6n_QFXfbreCspptYWNbGCUqGTXCg>
-    <xmx:A2_vaJ9L5nzLrXNwURqQBoq1i6TdFkK4dBA6HYXSxjtbDkaX4O_hJnlr>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 05:53:05 -0400 (EDT)
-Date: Wed, 15 Oct 2025 11:53:04 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: syzbot <syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com>,
-	davem@davemloft.net, edumazet@google.com,
-	herbert@gondor.apana.org.au, horms@kernel.org, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_migrate (2)
-Message-ID: <aO9vAIsmgNx4j1Sf@krikkit>
-References: <68e2ad62.a00a0220.2ba410.0018.GAE@google.com>
- <aO5PnU4dhUuzM34e@krikkit>
- <aO9QkNNkZ1JLnnIl@secunet.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlNq72/Sbo/SdVkAn3ytyqRxwNV5sDJtfSBJjrcZzzgbO8deCk2JTUuw4I11CR6z4C0wjQOsk3kjWnzaOG1I3gWMA5s4Z2qg5CwlJ4hRnlDcB/ChdX8YGhlp0r/kIzwzfTyNQIX6G8uN+DmcEFgm3yE1/naAd2xxbc/xFD0YgOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BCv8TeJ2; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47105bbb8d9so23135e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760522023; x=1761126823; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UC129mfOqt4svCEhsCGr7Ui4bow4e4J9G+P0XmQlpKM=;
+        b=BCv8TeJ2atdhYi+2SRK3GeZ6lX6nygLDnbY+RyQ65h4eEyephrk5aji00QauFtDQHi
+         xG8VZ50XN6dQGyU/iAYva5bXkw9uGsiAlnRr6BeoX+yDI/hSgIazB9HWSSdr9M77/tSo
+         SuNLkh5tuYSoO3iKdMpNbSR0kJIqy+9684AhMc7tk0i/yJfvz1oC3fH6AP3ur4HuoIoh
+         EqnFNAmwbeHObRIVkwhqPouRmsVqXsl4530gF/mpgsp926D/2mZYvJi1uGl0Wr9ofQmi
+         GM4BeW9AD1pbPRCil5jSqs5+T+FQ5XZXlMb/Ek6oIlH9lVlEHvz9YNRJC39cHK0b2z7u
+         wpWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760522023; x=1761126823;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UC129mfOqt4svCEhsCGr7Ui4bow4e4J9G+P0XmQlpKM=;
+        b=QdOY9y37oQmxrJdV0NA5cr69CQr2Hxvm6q30lqVaFWT2Aec9Ti0bWFkst5qtpHgZ1o
+         NfGZLR/2HoidBHYLFSMFGSehuhN+PrJJV0Un86SQzsuvgjUIeBVn03Z5xXHwOWvX1eUN
+         8p8U4To2eRVv/LDP0CINRMHhy+apX+aQo/4yU6xE+lE1DWjViL546pKXER+0inrcH5pj
+         Vt01SFfFb6MH/uZn7MqX/uM8CuqritTDoPN9/jtkpBeEnJUP9XNR0yQViUo/ZzzFeokx
+         pdp9llQehRc87ataYSPJ6ZAcfODLsKE1AlrDDfRaMjkFUPzPUUEbzSvcXom1JKXhhp5z
+         kSFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXv7vrufK9HXEjOrGs6seo8gowvRp6a4WHD9xsfFggna1PH50aW7bifK2Wh/RKg5yl48TGPR0RIRDpOlu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6ku8A8ZK5a0SXHXis63YqItnd380CsXpZZZcK8vOOhbiguoYt
+	cvNKcRPDxHk6BqFO2ZDXPmRb3lQptKJtPOhcS5kMAsEfYWv1dpYw8Sx3REjB1hCQhg==
+X-Gm-Gg: ASbGncvLhIyg7laMjoVj7oamCB+fYjh0DcEh0g56AIM6xbDI4q/liouUfAKnWNrTlvm
+	2tI7wgjONuRVuLwjOMewYx3LIX4t7kh0ervAl6UAYnvGuZthIu3ZhCSqa2LQ603csit/Va1OvE9
+	VJ9QAiSC6JzdSIalUsYpRGcwgZdZzl8p4BypA2TVNr8EGRHybEvB1FtKppFGpAczh+jHEWsqGr3
+	gNUm0cElc552YIEtKMW6dVOTYxL+DX4U5XZK9lSGbTaPQxO492OxmBJPXAM9ZoaWULZgsXTZ38u
+	H+0bRj4AhWvKbWkYBEvjy83GaMvIKm5X7P46Q2+2l0k5K5497ge+twNOq4/bljG8BNHlXwXGZDv
+	EFO0VBfHK3ddrVaktBLcGRMUVhQEhsajOUY+EfWJsVKWyryAoRZyCr5PJI9lBbraiR8NY2XRh7b
+	kwP7UKKtfBOLNSvcGGWYOW
+X-Google-Smtp-Source: AGHT+IHe1E1s7HUbEkXph4hxdxNH+oQJI3gWsBL77vTsMzihUgBJOr2SIJMGce02dMVTe2csEDSXCQ==
+X-Received: by 2002:a05:600c:4706:b0:45f:2940:d194 with SMTP id 5b1f17b1804b1-470fd61e6dbmr1731065e9.2.1760522023158;
+        Wed, 15 Oct 2025 02:53:43 -0700 (PDT)
+Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482b9absm332974755e9.2.2025.10.15.02.53.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 02:53:42 -0700 (PDT)
+Date: Wed, 15 Oct 2025 09:53:39 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org, joro@8bytes.org,
+	jgg@ziepe.ca, praan@google.com, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
+Message-ID: <aO9vI1aEhnyZx1PL@google.com>
+References: <20250929155001.3287719-1-smostafa@google.com>
+ <20250929155001.3287719-5-smostafa@google.com>
+ <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aO9QkNNkZ1JLnnIl@secunet.com>
+In-Reply-To: <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
 
-2025-10-15, 09:43:12 +0200, Steffen Klassert wrote:
-> On Tue, Oct 14, 2025 at 03:26:53PM +0200, Sabrina Dubroca wrote:
-> > 2025-10-05, 10:39:46 -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    4b946f6bb7d6 selftests/bpf: Fix realloc size in bpf_get_ad..
-> > > git tree:       bpf
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=13be46e2580000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=5cd6299ede4d4f70987b
-> > > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> > > 
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > 
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/f0ef71bdead6/disk-4b946f6b.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/0c8251d5df12/vmlinux-4b946f6b.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/29bad3cdad16/bzImage-4b946f6b.xz
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com
-> > > 
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 __xfrm_state_destroy net/xfrm/xfrm_state.c:800 [inline]
-> > > WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_put include/net/xfrm.h:928 [inline]
-> > > WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_migrate+0x13bc/0x1b10 net/xfrm/xfrm_state.c:2165
+On Tue, Oct 14, 2025 at 02:43:53PM +0100, Robin Murphy wrote:
+> On 2025-09-29 4:49 pm, Mostafa Saleh wrote:
+> > Integrate the selftests as part of kunit.
 > > 
-> > Steffen, this looks like we simply forgot to set XFRM_STATE_DEAD
-> > before the final put() in the error path of xfrm_state_migrate (and
-> > xfrm_state_clone_and_setup):
+> > Now instead of the test only being run at boot, it can run:
 > > 
+> > - With CONFIG_IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST=y
+> >    It will automatically run at boot as before.
 > > 
-> > diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> > index 9ea1d45b79e3..7ae10fac7b31 100644
-> > --- a/net/xfrm/xfrm_state.c
-> > +++ b/net/xfrm/xfrm_state.c
-> > @@ -2074,6 +2074,7 @@ static struct xfrm_state *xfrm_state_clone_and_setup(struct xfrm_state *orig,
-> >  	return x;
-> >  
-> >   error:
-> > +	x->km.state = XFRM_STATE_DEAD;
-> >  	xfrm_state_put(x);
-> >  out:
-> >  	return NULL;
-> > @@ -2163,6 +2164,7 @@ struct xfrm_state *xfrm_state_migrate(struct xfrm_state *x,
-> >  
-> >  	return xc;
-> >  error:
-> > +	xc->km.state = XFRM_STATE_DEAD;
-> >  	xfrm_state_put(xc);
-> >  	return NULL;
-> >  }
+> > - Otherwise with CONFIG_IOMMU_IO_PGTABLE_KUNIT_TEST=m:
+> >    1) on module load:
+> >       Once the module load the self test will run
+> >       # modprobe io-pgtable-arm-selftests
 > > 
+> >    2) debugfs
+> >       With CONFIG_KUNIT_DEBUGFS=y You can run the test with
+> >       # echo 1 > /sys/kernel/debug/kunit/io-pgtable-arm-test/run
 > > 
-> > Does that look reasonable? The state was never add()/insert()'ed, so
-> > it goes through put()/destroy() without delete() first that would set
-> > XFRM_STATE_DEAD.
+> >    3) Using kunit.py
+> >       You can also use the helper script which uses Qemu in the background
+> > 
+> >       # ./tools/testing/kunit/kunit.py run --build_dir build_kunit_arm64 --arch arm64 \
+> >         --make_options LLVM=1 --kunitconfig ./kunit/kunitconfig
+> >        [18:01:09] ============= io-pgtable-arm-test (1 subtest) ==============
+> >        [18:01:09] [PASSED] arm_lpae_do_selftests
+> >        [18:01:09] =============== [PASSED] io-pgtable-arm-test ===============
+> >        [18:01:09] ============================================================
+> > 
+> > Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > Reviewed-by: Pranjal Shrivastava <praan@google.com>
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > ---
+> >   drivers/iommu/Kconfig                    | 11 ++--
+> >   drivers/iommu/Makefile                   |  2 +-
+> >   drivers/iommu/io-pgtable-arm-selftests.c | 82 +++++++++++++-----------
+> >   3 files changed, 51 insertions(+), 44 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> > index 553522ef3ca9..d50685433347 100644
+> > --- a/drivers/iommu/Kconfig
+> > +++ b/drivers/iommu/Kconfig
+> > @@ -40,12 +40,13 @@ config IOMMU_IO_PGTABLE_LPAE
+> >   	  sizes at both stage-1 and stage-2, as well as address spaces
+> >   	  up to 48-bits in size.
+> > -config IOMMU_IO_PGTABLE_LPAE_SELFTEST
+> > -	tristate "LPAE selftests"
+> > -	depends on IOMMU_IO_PGTABLE_LPAE
+> > +config IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST
+> > +	tristate "KUnit tests for LPAE"
+> > +	depends on IOMMU_IO_PGTABLE_LPAE && KUNIT
+> > +	default KUNIT_ALL_TESTS
+> >   	help
+> > -	  Enable self-tests for LPAE page table allocator. This performs
+> > -	  a series of page-table consistency checks during boot.
+> > +	  Enable kunit tests for LPAE page table allocator. This performs
+> > +	  a series of page-table consistency checks.
+> >   	  If unsure, say N here.
+> > diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> > index 5250a2eea13f..ac3851570303 100644
+> > --- a/drivers/iommu/Makefile
+> > +++ b/drivers/iommu/Makefile
+> > @@ -12,7 +12,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+> >   obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+> >   obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+> >   obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
+> > -obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST) += io-pgtable-arm-selftests.o
+> > +obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST) += io-pgtable-arm-selftests.o
+> >   obj-$(CONFIG_IOMMU_IO_PGTABLE_DART) += io-pgtable-dart.o
+> >   obj-$(CONFIG_IOMMU_IOVA) += iova.o
+> >   obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
+> > diff --git a/drivers/iommu/io-pgtable-arm-selftests.c b/drivers/iommu/io-pgtable-arm-selftests.c
+> > index 32c6a5c7af53..b61849a8a685 100644
+> > --- a/drivers/iommu/io-pgtable-arm-selftests.c
+> > +++ b/drivers/iommu/io-pgtable-arm-selftests.c
+> > @@ -6,7 +6,8 @@
+> >    *
+> >    * Author: Will Deacon <will.deacon@arm.com>
+> >    */
+> > -#include <linux/device/faux.h>
+> > +#include <kunit/device.h>
+> > +#include <kunit/test.h>
+> >   #include <linux/io-pgtable.h>
+> >   #include <linux/kernel.h>
+> > @@ -47,13 +48,14 @@ static void arm_lpae_dump_ops(struct io_pgtable_ops *ops)
+> >   		cfg->pgsize_bitmap, cfg->ias, cfg->oas);
+> >   }
+> > -#define __FAIL(ops, i)	({						\
+> > -		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
+> > -		arm_lpae_dump_ops(ops);					\
+> > -		-EFAULT;						\
+> > +#define __FAIL(test, ops, i)	({						\
+> > +		KUNIT_FAIL(test, "");						\
+> > +		kunit_err(test, "selftest: test failed for fmt idx %d\n", (i));	\
 > 
-> Right. Looks like this is broken since the migrate API exists.
+> This looks suspect - AFAICS open-coded kunit_err() is intended for test
+> infrastucture errors (like the allocation in the next hunk below), while for
+> an actual test report message it seems it should just be:
 > 
-> > It also looks like we're missing a xfrm_dev_state_delete if
-> > xfrm_state_migrate -> xfrm_state_add fails, since
-> > xfrm_dev_state_delete gets called during __xfrm_state_delete, and this
-> > new state will only see xfrm_state_put/__xfrm_state_destroy:
-> > 
-> > @@ -2159,10 +2159,13 @@ struct xfrm_state *xfrm_state_migrate(struct xfrm_state *x,
-> >  		xfrm_state_insert(xc);
-> >  	} else {
-> >  		if (xfrm_state_add(xc) < 0)
-> > -			goto error;
-> > +			goto error_add;
-> >  	}
-> >  
-> >  	return xc;
-> > +error_add:
-> > +	if (xuo)
-> > +		xfrm_dev_state_delete(xc);
-> 
-> This is correct as well. Thanks for catching these!
+> 	KUNIT_FAIL(test, "selftest: test failed for fmt idx %d\n", (i));
 
-Thanks for confirming. I'll post the patches (with a few other fixes I
-have) today or tomorrow.
+I see, I used kunit_err, as KUNIT_FAIL adds extra information which was
+noisy to be printed more than once as:
+  # arm_lpae_do_selftests: EXPECTATION FAILED at drivers/iommu/io-pgtable-arm-selftests.c:91
+I will check if there is a better way to do this.
 
--- 
-Sabrina
+> 
+> > +		arm_lpae_dump_ops(ops);						\
+> > +		-EFAULT;							\
+> >   })
+> > -static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> > +static int arm_lpae_run_tests(struct kunit *test, struct io_pgtable_cfg *cfg)
+> >   {
+> >   	static const enum io_pgtable_fmt fmts[] = {
+> >   		ARM_64_LPAE_S1,
+> > @@ -69,7 +71,7 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> >   		cfg_cookie = cfg;
+> >   		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
+> >   		if (!ops) {
+> > -			pr_err("selftest: failed to allocate io pgtable ops\n");
+> > +			kunit_err(test, "selftest: failed to allocate io pgtable ops\n");
+> >   			return -ENOMEM;
+> >   		}
+> > @@ -78,13 +80,13 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> >   		 * Empty page tables shouldn't provide any translations.
+> >   		 */
+> >   		if (ops->iova_to_phys(ops, 42))
+> > -			return __FAIL(ops, i);
+> > +			return __FAIL(test, ops, i);
+> >   		if (ops->iova_to_phys(ops, SZ_1G + 42))
+> > -			return __FAIL(ops, i);
+> > +			return __FAIL(test, ops, i);
+> >   		if (ops->iova_to_phys(ops, SZ_2G + 42))
+> > -			return __FAIL(ops, i);
+> > +			return __FAIL(test, ops, i);
+> >   		/*
+> >   		 * Distinct mappings of different granule sizes.
+> > @@ -97,16 +99,16 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> >   					   IOMMU_READ | IOMMU_WRITE |
+> >   					   IOMMU_NOEXEC | IOMMU_CACHE,
+> >   					   GFP_KERNEL, &mapped))
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			/* Overlapping mappings */
+> >   			if (!ops->map_pages(ops, iova, iova + size, size, 1,
+> >   					    IOMMU_READ | IOMMU_NOEXEC,
+> >   					    GFP_KERNEL, &mapped))
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			iova += SZ_1G;
+> >   		}
+> > @@ -117,18 +119,18 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> >   			size = 1UL << j;
+> >   			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			if (ops->iova_to_phys(ops, iova + 42))
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			/* Remap full block */
+> >   			if (ops->map_pages(ops, iova, iova, size, 1,
+> >   					   IOMMU_WRITE, GFP_KERNEL, &mapped))
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+> > -				return __FAIL(ops, i);
+> > +				return __FAIL(test, ops, i);
+> >   			iova += SZ_1G;
+> >   		}
+> > @@ -144,11 +146,11 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> >   				   IOMMU_READ | IOMMU_WRITE |
+> >   				   IOMMU_NOEXEC | IOMMU_CACHE,
+> >   				   GFP_KERNEL, &mapped))
+> > -			return __FAIL(ops, i);
+> > +			return __FAIL(test, ops, i);
+> >   		if (mapped != size)
+> > -			return __FAIL(ops, i);
+> > +			return __FAIL(test, ops, i);
+> >   		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+> > -			return __FAIL(ops, i);
+> > +			return __FAIL(test, ops, i);
+> >   		free_io_pgtable_ops(ops);
+> >   	}
+> > @@ -156,7 +158,7 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> >   	return 0;
+> >   }
+> > -static int arm_lpae_do_selftests(void)
+> > +static void arm_lpae_do_selftests(struct kunit *test)
+> >   {
+> >   	static const unsigned long pgsize[] = {
+> >   		SZ_4K | SZ_2M | SZ_1G,
+> > @@ -169,18 +171,19 @@ static int arm_lpae_do_selftests(void)
+> >   	};
+> >   	int i, j, k, pass = 0, fail = 0;
+> > -	struct faux_device *dev;
+> > +	struct device *dev;
+> >   	struct io_pgtable_cfg cfg = {
+> >   		.tlb = &dummy_tlb_ops,
+> >   		.coherent_walk = true,
+> >   		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
+> >   	};
+> > -	dev = faux_device_create("io-pgtable-test", NULL, 0);
+> > -	if (!dev)
+> > -		return -ENOMEM;
+> > +	dev = kunit_device_register(test, "io-pgtable-test");
+> > +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, dev);
+> 
+> Conversely, this is infrastructure, not an actual test of expected
+> io-pgtable behaviour, so I think just:
+> 
+> 	cfg.iommu_dev = kunit_device_register(test, "io-pgtable-test");
+> 	if (IS_ERR(cfg.iommu_dev))
+> 		return;
+> 
+> (it doesn't return NULLs either)
+> 
+
+Yes, I was not sure about this one, when checking the code base, every test
+handles kunit_device_register() failure differently, this seemed the
+most strict one so I used it, I will update that in the next version.
+
+> Otherwise, there's clearly scope for plenty more follow-up work streamlining
+> and breaking the whole thing up into KUnit idioms, pulling the v7s test in,
+> etc... However as a first step to at least set things firmly on the right
+> KUnit-shaped path, I agree this seems enough for now.
+> 
+
+I agree, ultimately every configuration should be a test, which can be
+even broken down to smaller cases. I will look in to that next.
+
+Thanks,
+Mostafa
+
+> Thanks,
+> Robin.
+> 
+> > +	if (IS_ERR_OR_NULL(dev))
+> > +		return;
+> > -	cfg.iommu_dev = &dev->dev;
+> > +	cfg.iommu_dev = dev;
+> >   	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
+> >   		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
+> > @@ -189,9 +192,9 @@ static int arm_lpae_do_selftests(void)
+> >   				cfg.pgsize_bitmap = pgsize[i];
+> >   				cfg.ias = address_size[k];
+> >   				cfg.oas = address_size[j];
+> > -				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
+> > -					pgsize[i], cfg.ias, cfg.oas);
+> > -				if (arm_lpae_run_tests(&cfg))
+> > +				kunit_info(test, "selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
+> > +					   pgsize[i], cfg.ias, cfg.oas);
+> > +				if (arm_lpae_run_tests(test, &cfg))
+> >   					fail++;
+> >   				else
+> >   					pass++;
+> > @@ -199,17 +202,20 @@ static int arm_lpae_do_selftests(void)
+> >   		}
+> >   	}
+> > -	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
+> > -	faux_device_destroy(dev);
+> > -
+> > -	return fail ? -EFAULT : 0;
+> > +	kunit_info(test, "selftest: completed with %d PASS %d FAIL\n", pass, fail);
+> >   }
+> > -static void arm_lpae_exit_selftests(void)
+> > -{
+> > -}
+> > +static struct kunit_case io_pgtable_arm_test_cases[] = {
+> > +	KUNIT_CASE(arm_lpae_do_selftests),
+> > +	{},
+> > +};
+> > +
+> > +static struct kunit_suite io_pgtable_arm_test = {
+> > +	.name = "io-pgtable-arm-test",
+> > +	.test_cases = io_pgtable_arm_test_cases,
+> > +};
+> > +
+> > +kunit_test_suite(io_pgtable_arm_test);
+> > -subsys_initcall(arm_lpae_do_selftests);
+> > -module_exit(arm_lpae_exit_selftests);
+> >   MODULE_DESCRIPTION("io-pgtable-arm library selftest");
+> >   MODULE_LICENSE("GPL");
 
