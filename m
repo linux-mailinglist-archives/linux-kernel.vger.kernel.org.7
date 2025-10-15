@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-854937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC76BDFC56
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:53:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B527EBDFCAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE82A19A8627
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D60F3A8EDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31FA338F4B;
-	Wed, 15 Oct 2025 16:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81583338F5D;
+	Wed, 15 Oct 2025 16:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuLepWye"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAts8Yss"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53667171C9;
-	Wed, 15 Oct 2025 16:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC28325333F;
+	Wed, 15 Oct 2025 16:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760547208; cv=none; b=t3CQcfVaBSpbWkcEvAH71O9ugxYLFbc2dY15MVQWH4QH8f1O9dgaOaQnqtQqHuB560ihGwuYGZaC5eBZdIoeCM+Xc35zMURSwP30p75uCZ3173NNTcGPHMovzWTfgqo9R9RI+7B/eJVv6IYQX/6Xy3HQ79NeaN20ZHnoyjF1Z5A=
+	t=1760547410; cv=none; b=mNmJW9wJFEcP2Kd8qTSXepVoN3hxKHGINN7X8gi6IM6ThoLubpvPz+NcBprpDiRGF4PahRSqG3YpZ6vofOKsTBTBpqYk7larsaE4kb5e2mF9m9G6qLudeuKSgk1KJKtXJkIgm/FhLEceRo4pBwVSbDo+/U7sThXRqobQ5TNcEIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760547208; c=relaxed/simple;
-	bh=jfLpot06FE2yE/7OOI4eokBahaIFNhBiW5Lzzi2nHW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nnIcEfC626bM44U+LTjD79Ixoine959rba4vcJevOzY4uehfF3ZEu9DPOIkgKoC+a3Slcpl9Yij2NUc3GqiHaXzklVOQurn/pjwm4Ep+hdJ0fwgQmKkHOKaDNvUMvBSrIL61WucO3ijCv5eMXHbEPuODYsdf3LuiF0bH557mN7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuLepWye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFE8DC4CEF8;
-	Wed, 15 Oct 2025 16:53:27 +0000 (UTC)
+	s=arc-20240116; t=1760547410; c=relaxed/simple;
+	bh=PYKbb6/RZIWzCrEnMTs12oUuOVy9ens2ny2rUF7vKEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D11DPPMPjN+r6ZJqBtF6boq7tNipfa/5og3My+IKAaqtYrTdvH6QR3SSGxYyIfna/r8/Zv8I8d95QQpiyKLFFzfNPx6agtmYlC3SRc0PH5Aap6PFC7NfNcF463F5EohHnbQEYeySBI+48zWxCfjmAXsK/2G96TVbSZrRGQut/l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAts8Yss; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C58C4CEF8;
+	Wed, 15 Oct 2025 16:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760547207;
-	bh=jfLpot06FE2yE/7OOI4eokBahaIFNhBiW5Lzzi2nHW4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BuLepWyeJxoFyT6eRY/8PHfOCstzfGt0BXhXqufvZttDBIZYUtopb81lvDySN3q8z
-	 TQ6y616KKDEnA8rt3EjPsycr+Ker9qK4u82OnRKwnqjuOT0N1qiihnnYBLowuAvTWh
-	 Ij5PFEfGGMFou2gn2agC0lRzo/1YmrkAWpS686hODhRwQB8HoKrYyDbzSTfvdCpyIP
-	 jUtvuX3LrUJJs5ENelFZ07g2NfmPXp4lmzq1Tkt4xbhNBZBQ3xRPy5mJhCZSfgybQp
-	 th1UXDg4vaa7xjhopSoWnlMkvMi0mCLMytfP6InpQg/Njf8+2orpWHCHoOqnbHiH5m
-	 eyprbPVMMU9RA==
-Date: Wed, 15 Oct 2025 11:53:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vincent Liu <vincent.liu@nutanix.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"dakr@kernel.org" <dakr@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v2] driver core: Check drivers_autoprobe for all added
- devices
-Message-ID: <20251015165326.GA945703@bhelgaas>
+	s=k20201202; t=1760547410;
+	bh=PYKbb6/RZIWzCrEnMTs12oUuOVy9ens2ny2rUF7vKEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QAts8YsscOIQN6mvshK+dJ4WK0P2No3eEfWjNJEn3XWuPSB8D5tkyax7LAHR1HLvi
+	 LkipiPKybNksMMIOnV4i5TkglxnLyefQaFUCmZ6Ex9G5Pm28Cq/azwFUHKWEXLLObR
+	 Gsdgw70CbD6Ys+62Syr0wgJGAQe5OBuTGtSF39cmf3oNfpENdcJpQOcqS1vlYjO3+d
+	 JrwIJ6mN1sJLwefAjfMKLyT865RsBX/4ZmG7jzhbzvl9ICnEChkJCHeQwkGuP9q/Ha
+	 fwpQihHTEja8wL5Uw0VPPbgHWD34eaCwJl1CbKl2IOQTPs1UNTV0VdssaBT5i3cvw3
+	 vCilP+gEcvhgQ==
+Date: Wed, 15 Oct 2025 11:56:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Nam Tran <trannamatk@gmail.com>
+Cc: lee@kernel.org, pavel@kernel.org, gregkh@linuxfoundation.org,
+	rdunlap@infradead.org, christophe.jaillet@wanadoo.fr,
+	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v16 1/3] dt-bindings: leds: add TI/National Semiconductor
+ LP5812 LED Driver
+Message-ID: <20251015165648.GA4046261-robh@kernel.org>
+References: <20251013173551.108205-1-trannamatk@gmail.com>
+ <20251013173551.108205-2-trannamatk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7C5EF578-B0CA-4FCB-86F7-470EDD27240D@nutanix.com>
+In-Reply-To: <20251013173551.108205-2-trannamatk@gmail.com>
 
-On Wed, Oct 15, 2025 at 10:23:20AM +0000, Vincent Liu wrote:
-> On 14 Oct 2025, at 21:07, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > 
-> >> In particular for the PCI devices, only
-> >> hot-plugged PCIe devices/VFs should be affected as the default value of
-> >> pci/drivers_autoprobe remains 1 and can only be cleared from userland.
-> > 
-> > I'm not sure what this last sentence is telling us.  Does
-> > "pci/drivers_autoprobe" refer to struct pci_sriov.drivers_autoprobe?
-> > If so, can you elaborate on the connection with struct
-> > subsys_private.drivers_autoprobe, which this patch tests?  I don't see
-> > anything in this patch related to pci_sriov.
+On Tue, Oct 14, 2025 at 12:35:49AM +0700, Nam Tran wrote:
+> The LP5812 is a 4x3 RGB LED driver with an autonomous animation
+> engine and time-cross-multiplexing (TCM) support for up to 12 LEDs
+> or 4 RGB LEDs. It supports both analog (256 levels) and PWM (8-bit)
+> dimming, including exponential PWM for smooth brightness control.
 > 
-> No this patch has nothing to do with pci_sriov.drivers_autoprobe, this is
-> generic for all (pci) devices. pci/drivers_autoprobe refers to the
-> drivers_autoprobe sysfs attribute on the pci bus.
+> Signed-off-by: Nam Tran <trannamatk@gmail.com>
+> ---
+>  .../devicetree/bindings/leds/ti,lp5812.yaml   | 249 ++++++++++++++++++
+>  MAINTAINERS                                   |   6 +
+>  2 files changed, 255 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
 > 
-> The last sentence is saying that this setting should only affect hot-plugged
-> devices because I think there is no way for pci/drivers_autoprobe to be 0 
-> for cold plugged devices? But thinking more about this, I don’t think this
-> adds much value to the commit message because the drivers_autoprobe
-> is not intended for cold-plugged devices anyway. I’ll remove it.
-> 
-> > As far as I can tell, this patch is generic with respect to
-> > conventional PCI vs PCIe.  If so, I'd use "PCI" everywhere instead of
-> > a mix of PCI and PCIe.
-> 
-> Yes you are right, this is generic. I used PCIe purely because of the
-> “hot-plugging”, but happy to use PCI everywhere.
-> 
-> > Add "()" after function names to make them easily recognizable as
-> > functions.
-> > 
-> > s/respsect/respect/
-> > s/but this should be the/which is the/  # maybe? not sure what you intend
-> 
-> Ok.
-> 
-> Below is a rephrased commit message to incorporate the feedback.
-> 
-> Thanks,
-> Vincent
-> 
-> -- >8 --
-> 
-> Subject: [PATCH v2] driver core: Check drivers_autoprobe for all added devices
-> 
-> When a device is hot-plugged, the drivers_autoprobe sysfs attribute is
-> not checked (at least for PCI devices). This means that
-> drivers_autoprobe is not working as intended, e.g. hot-plugged PCI
-> devices will still be autoprobed and bound to drivers even with
-> drivers_autoprobe disabled.
-> 
-> Make sure all devices check drivers_autoprobe by pushing the
-> drivers_autoprobe check into device_initial_probe(). This will only
-> affect devices on the PCI bus for now as device_initial_probe() is only
-> called by pci_bus_add_device() and bus_probe_device(), but
-> bus_probe_device() already checks for autoprobe, so callers of
-> bus_probe_device() should not observe changes on autoprobing.
-> 
-> Any future callers of device_initial_probe() will respect the
-> drivers_autoprobe sysfs attribute, which is the intended purpose of
-> drivers_autoprobe.
-> 
-> Signed-off-by: Vincent Liu <vincent.liu@nutanix.com>
-> 
-> Link: https://lore.kernel.org/20251001151508.1684592-1-vincent.liu@nutanix.com
+> diff --git a/Documentation/devicetree/bindings/leds/ti,lp5812.yaml b/Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+> new file mode 100644
+> index 000000000000..5208ddb3bdac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+> @@ -0,0 +1,249 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/ti,lp5812.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI LP5812 4x3 Matrix RGB LED Driver with Autonomous Control
+> +
+> +maintainers:
+> +  - Nam Tran <trannamatk@gmail.com>
+> +
+> +description: |
+> +  The LP5812 is a 4x3 matrix RGB LED driver with I2C interface
+> +  and autonomous animation engine control.
+> +  For more product information please see the link below:
+> +  https://www.ti.com/product/LP5812#tech-docs
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,lp5812
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,scan-mode:
+> +    description: |
+> +      Selects the LED scan mode of the LP5812. The device supports
+> +      three modes:
+> +        - Direct-drive mode ("direct_mode") drives up to 4 LEDs directly
+> +        by internal current sinks (LED0-LED3).
+> +        - TCM-drive mode ("tcm:<n>:<order...>") drives up to 12 LEDs
+> +        (4 RGB) using 1-4 scan multiplexing. The <n> specifies the number
+> +        of scans (1-4), and <order...> defines the scan order of the outputs.
+> +        - Mix-drive mode ("mix:<n>:<direct>:<order...>") combines
+> +        direct-drive and TCM-drive outputs. The <n> specifies the number
+> +        of scans, <direct> selects the direct-drive outputs, and <order...>
+> +        defines the scan order.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    oneOf:
+> +      - const: direct_mode
 
-Thanks, that reads much better to me.
+My suggestion was to drop direct_mode and make no 'ti,scan-mode' 
+property present mean 'use direct mode'. As direct mode is essentially 
+what every other LED driver IC supports, supporting it as the 
+default with no property makes sense.
+
+> +      - pattern: '^(tcm|mix):[1-4](:[0-3]){1,4}$'
 
