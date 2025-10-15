@@ -1,467 +1,245 @@
-Return-Path: <linux-kernel+bounces-854459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73770BDE713
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:18:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FF5BDE6E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D4D3BCC6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:18:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F9B19284EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E96B326D68;
-	Wed, 15 Oct 2025 12:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC43277BA;
+	Wed, 15 Oct 2025 12:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FrIvQzNT"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GeT0aQvn"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F05322A15
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED5732779D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530674; cv=none; b=AEc1tlhuV9L/+gfirEVVqEUIK97a0t/w2VlytYbnC/laifAvDAlYKWZfHxOw+CB2vLBaF/Z2cnTg+3OwPSY4cKb5Wc5JUACPCvPKl8OqVzS6dL+2826K/ORDjmMIew7REFwPRUa0FANhqkQgA7f8/QomedMHVa0K88KrglPR5JM=
+	t=1760530542; cv=none; b=G7DKS0gEz32AjL/YR4/pet1QX9J9ltHy6SLmIJCnCz3gjoKcJHtpzP6GolKSkg0s+pTcPjHViByiM9ifWEm8RuRmCqo5OKKzhVKZKuroHfqRUaKjVtav2SataiwjtoCMHQZBjGaYHKOchsLwC0CjG1KUG8QwwnyS2/4JSgYh0BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530674; c=relaxed/simple;
-	bh=dCTT2fs6ic/bCOWtF8JUpsWGQDrSJwW66arMFkorMz0=;
-	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:
-	 References:In-Reply-To; b=lYmPYvFsaHFnlL8Af0U+XNPSMu27rIPkEo0FGSSmMDSaAd40xg8pqAnxk/RtpirprMXxg0FDA7qmjpGLwLix7LNloQVa/8m9vAHTEqRWShBswj57godK8mq5+mVOh9vWKdYyjWIIwiSCapb1IVuENvdnA/jWXWr4MCi5LdThks4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FrIvQzNT; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1760530542; c=relaxed/simple;
+	bh=VStyme2WGFC5nzLQgSu6EqVplLj1Zfy/hLTQGyfhIP0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=of6hmP+fJZ1UaUjJ7xu162iLStZdl8jCwo3BiWZVpsKtNKgPiM1kj/XV3h87EqUKoF7Bm0b1aBJLUBPqUgiRnWDXYqDONupb5etKUn/uzKDnbjrVyUMQ0O6aVD6Drl3FixkBjKSyqXKIP7LEPQBU8mjjhrnHqTh9FrgtHo1Bw5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GeT0aQvn; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b463f986f80so435389566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:17:51 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e234fcd4bso1065351766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760530670; x=1761135470; darn=vger.kernel.org;
-        h=in-reply-to:content-language:references:to:subject:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sUJkY475DA/qNVNVaebzOSyM75nDkkuj5XdVQ/q55AI=;
-        b=FrIvQzNToAlqB9r5073tE6v10lId2us3fWcq/SetC8fE++/aMdT1UQInsly8MOMV8H
-         4txQ4Vdhsa5FTCGAchlPlfwOU2uq3lHaqeY/ToKgBUsyTFeA8ecI8w6XKLzAz3fTlMBM
-         D/JTLO2cFrQjgop467qSOctdlGLyIZYyLfLic/0cNeHTga7y+oau/YxJYO5DQFUPOgz5
-         VQg7S2w9e7tSJ8YEU8Uh5h3uxHNpjb4+fAvv2fb63I2l0Meq8kC7VXLrCXNXtSoVnkcR
-         qM5sUi25BWU5eqrrxdBmlJQ0g1NYlnQTWsSS8hDytSzJhogmBAW11yGcCDZdcBICtA0c
-         MLOw==
+        d=suse.com; s=google; t=1760530539; x=1761135339; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=S81YGrxPeLeHeMdfRUBH53cdbRUFL96MyZ7J9EKhJdo=;
+        b=GeT0aQvnmCgdhdE/Rq+Li0jKkXgZbcM3AX6qRb3UoJPigTN7zzjZ5Z/zkDE+ZZJoOw
+         aflUPSP4PoCnZJaErkoqPbkXr4TMmKS34nxNEyWUAX1c7ptkcnrQh1ZE0IsBe0CMwnRj
+         AtanoTzdIWsr6Ka0RHZ2knzg6sMl4DapamQg1lPRCSBLA5lKnL5THdJwn50W8ojH5bRr
+         IiQDWJOtIiMj27gErX0TtxRy1iqRqIw3umuouCghihI05ZMExf60SR1cMZCfoI+xeuBb
+         X0NLxOIVB3xPXSH4TBrBasJWrcaAU41v3uiRBpEWHvEiyxJXyuFedSpkltq0mCko4mfd
+         JGvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760530670; x=1761135470;
-        h=in-reply-to:content-language:references:to:subject:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sUJkY475DA/qNVNVaebzOSyM75nDkkuj5XdVQ/q55AI=;
-        b=b1jWoe/PTp7uIM4eyCi06MwTxY7d1rJcOQiHM3lmAyqBt17FY5+bfM/FXre8cMA/hZ
-         B0sdirdwiUkhpCaIOek13/Txhu8fhKkvkv8TwGhznrofztYsdGqe/wLEyML3hdm7bsuZ
-         tiPA/umiSvR+KAOkPl2CCyIhZ3KGfzJUsJ6DbhI45cGwZ7elOW1yDFSmPWygeb8M+2V9
-         ks1Ll1KfAkR9t6q8Zt4gBnxxKbGSFB2xql24XCUiegEYzP7W9maKhZ9ABuy40brLv2RG
-         E7cc9pjM5TNs99UbXFHMtVEgicsjWlaxzNZ5bcOo1UwXeRHkPN+xTMXqVpvJl/37/TNY
-         JRXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJWcHrMGOBoIviLMCueeISa4Q4gUSkibORXPxW85bfXL8uozxHvAT7oY6IFf9Lbech0/7/NsfZk2qP3jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwu2aiNZDSPq+7f3Uz9J3kmBIHPzUtwYLe+FP7ZCDiF6IsrGuW
-	P6FbR6mEbYn1M+m+3qF3YSEk3JewfcAnlqio3K1uafun0KklPIValfAGsLTG1Fcdh7c=
-X-Gm-Gg: ASbGncvOB+e4sgpFipyS/P19lJD7hTxAvnGsY7XyixB0FOhcHC+Rl0PCX/0WhXa5d4F
-	wZ29WpgaVX28J/Nzy/FMPCEvHYMfIgyYOzIYMBcdQOU1lj4shUNcNxlP0ku9SOPSrb9+swiukwe
-	2sGMXPMGcrUaOa9LoqbQu9YVm5ap+f9SeWUYhoJzVo9oXF2kZUy+xflti/UQlquak+R3iYIzWKV
-	gSOWumlAzS+mT/O/AzCYs50P+OzvN/qp9N2RRfqP/dwr51JizOCfF0gQWPlGN4dnFtWoKbWf9Kx
-	eGmlEZaFx5bQKko4N+Ug8UL+Bxz5VOhzJgRwKQG2EAmQ7I5/GENw1yn5fTwEXak/LdSZHlroKj3
-	MJXgaDc/48KGvLVk5fLSQdZTOZC5g5/mdUc1yESDuVi77WlW7EH7wqMIoANtuzJyn522430+ojY
-	JREnPAxQ==
-X-Google-Smtp-Source: AGHT+IF17O9xdIVrdiPjUGT8gLMFSldogp9OG817w51t9D1qZ6/Guz5Ub5UcYExZmPttaGSzX0pk0Q==
-X-Received: by 2002:a17:907:3d8f:b0:afe:b311:a274 with SMTP id a640c23a62f3a-b50abfd68a6mr3246714166b.46.1760530669163;
-        Wed, 15 Oct 2025 05:17:49 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1331:5701:bd02:72b8:f4d3:91c? ([2001:a61:1331:5701:bd02:72b8:f4d3:91c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cba06a5b3sm216697466b.29.2025.10.15.05.17.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 05:17:48 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------ZY6MLU2afbK0jXl912AgSgwf"
-Message-ID: <35e0f3f4-def7-4a94-a982-549b6203c6e2@suse.com>
+        d=1e100.net; s=20230601; t=1760530539; x=1761135339;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S81YGrxPeLeHeMdfRUBH53cdbRUFL96MyZ7J9EKhJdo=;
+        b=iz1HMqyBPRH/xWRkC94Vsn/r+2vAt3iVtGLNoNhbAPlhEeAdeUpKFpGRB+8Zi/vYsi
+         oa6i1CI/a6bYP6n27Qo1IXkl572OuPeLrriZNxdAuHm2rQlJbwZG6wG9FfuH/5+4E65y
+         OdxLZo5x4CklV8oKN/o+Di+N1+j5l8BgpGWjNlgEsELrqRuMIZ7BWwd+/DQEbUxdP+hN
+         yKq5j0LnVbJY6r5XpvYJf6/Kfnh+hLf2K6RHF/AYJfqR0fMPyGSmmWZaSLXxTchnYMsG
+         EedPLwq93p7miHPt60YP+YjJ9Iylv2xIAgut70hXhA3psNMkWdwEzOjRUVCun38Ej267
+         5Z6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXArt/GKppCqqUI6MTp6R/P+oq/aJbysSjJFrHzZTbEf4lJ3Wx3ZydcZiGlni0vmWoKP1HTm0epjnrR51I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaM56UMuHtYqLiLL8SftWEYZNK+xD4V1y0gjyHWGjetTDR+o5d
+	PxnX+yvOEnccnxf+sgi4kGqBizFqFlY9DOHvrtZkoeF8yahWOA3pjUz3T8fCuO9aKSA=
+X-Gm-Gg: ASbGncsgr7X+mvT0ZV78fNUXhP9Cl01ci83YV2xAVlvy+IaARUPz1honZy4tRe+kpvB
+	ENCnmfqi/ILecw/sAtqHg0wrYhVLmjEHid1uY7tdtm/iQZaq5H9DFfYzGpNkiLxM1phPKUzUZn6
+	Pp58h+sLYlKd6gdL6K291oXnLdE6Gl6h/O2PKyepKL5jcQSxisbdZgNqVdpB9SmQ34W+P7xmnAU
+	UmvfPd7banGHwvE6kRMJ/ti7KnF/7SzpgoEMMk5NZgcjYVda0BaXpgUdJYZDBxJUGedWJpmvPX4
+	s3+pcFC22cA4KOoXVkQeyeJ+xJORYbtjOQloBUjk4jyCvWSNNmc8C/RjX9U+Z8IuYG13aLc7tzA
+	a3gjZA+TZBrECZ/1+g3M4UUPsxuc292krqo16sPz5RGxF68zK2LIFI8UykIqAL5Wo3zB8J6IHj2
+	M7LPkL1JyreQNSnvCD
+X-Google-Smtp-Source: AGHT+IGkix6V3HHgZ9jFLmO3/fnOWGYAxFfttJM/PDcnY7nztBAeVvDuGIrDEMQI/LqfF2xlEMAlIw==
+X-Received: by 2002:a17:906:ee89:b0:b04:25ae:6c76 with SMTP id a640c23a62f3a-b50ac8e51eamr2725062066b.47.1760530538553;
+        Wed, 15 Oct 2025 05:15:38 -0700 (PDT)
+Received: from localhost (host-87-9-62-200.retail.telecomitalia.it. [87.9.62.200])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cb965c324sm212887566b.7.2025.10.15.05.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 05:15:38 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
 Date: Wed, 15 Oct 2025 14:17:47 +0200
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iivanov@suse.de, svarbanov@suse.de,
+	mbrugger@suse.com, Phil Elwell <phil@raspberrypi.com>
+Subject: Re: [PATCH] of: reserved_mem: Add heuristic to validate reserved
+ memory regions
+Message-ID: <aO-Q6xMDd8Bfeww2@apocalypse>
+References: <20251014073403.32134-1-andrea.porta@suse.com>
+ <CAL_Jsq+CugQrswhOWntK5RiRBSKkWRNUoB0pB8HoKPmym2e65w@mail.gmail.com>
+ <aO5dtNJrF3vduSyJ@apocalypse>
+ <CAL_JsqKsK+Bf6n=5YHmC681wxJjszkrdiryhP2+02=KGgPcM9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Oliver Neukum <oneukum@suse.com>
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-out-of-bounds Read in
- mcp2221_raw_event (2)
-To: syzbot <syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com>,
- bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68ee6a3f.050a0220.91a22.021b.GAE@google.com>
-Content-Language: en-US
-In-Reply-To: <68ee6a3f.050a0220.91a22.021b.GAE@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKsK+Bf6n=5YHmC681wxJjszkrdiryhP2+02=KGgPcM9w@mail.gmail.com>
 
-This is a multi-part message in MIME format.
---------------ZY6MLU2afbK0jXl912AgSgwf
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Rob,
 
-#syz test: upstream 3a8660878839
+On 11:25 Tue 14 Oct     , Rob Herring wrote:
+> On Tue, Oct 14, 2025 at 9:24 AM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
+> >
+> > Hi Rob,
+> >
+> > On 08:12 Tue 14 Oct     , Rob Herring wrote:
+> > > On Tue, Oct 14, 2025 at 2:32 AM Andrea della Porta
+> > > <andrea.porta@suse.com> wrote:
+> > > >
+> > > > When parsing static reserved-memory DT nodes, any node with a reg property
+> > > > length that is not perfectly conformant is discarded.
+> > > > Specifically, any reg property whose length is not a multiple of the parent's
+> > > > (#address-cells + #size-cells) is dropped.
+> > > >
+> > > > Relax this condition (while still treating perfect multiples as having higher
+> > > > precedence) by allowing regions that are subsets of the parent's addressable
+> > > > space to be considered for inclusion.
+> > > > For example, in the following scenario:
+> > > >
+> > > > / {
+> > > >         #address-cells = <0x02>;
+> > > >         #size-cells = <0x02>;
+> > > >         ...
+> > > >
+> > > >         reserved-memory {
+> > > >                 #address-cells = <0x02>;
+> > > >                 #size-cells = <0x02>;
+> > > >                 ...
+> > > >
+> > > >                 nvram {
+> > > >                         reg = <0x00 0x3fd16d00 0x37>;
+> > > >                         ...
+> > > >                 };
+> > > >         };
+> > > > };
+> > > >
+> > > > Even though the reg property of the nvram node is not well-formed from a DT
+> > > > syntax perspective, it still references a perfectly valid memory region of
+> > > > 0x37 bytes that should be reserved.
+> > >
+> > > No it isn't. I could just as easily argue that the reserved size
+> > > should be 0x37_00000000 because it's BE data. I have little interest
+> > > in supporting incorrect DTs especially generically where we have no
+> > > clue what platform needs it and whether we still have to carry the
+> > > code. There's enough of that crap with ancient PPC and Sparc systems.
+> >
+> > I understand the pain, but IIUC the example you mentioned (0x37 0x00) deals
+> > with an incorrect size value (due to endianness) over a correct size length
+> > (#size-cells = 2), while the case this patch tries to address is the opposite,
+> > i.e. correct size values (corrected by the fw) over an incorrect size length.
+> > For the former issue, the actual kernel code does not have an answer yet. For
+> > the latter I propose this patch.
+> 
+> No, my point was who is to say the error is not 'reg' was treated as
+> if #size-cells was 1, but rather 'reg' was truncated by 1 cell by
+> mistake. You don't know (in general) which one it is.
 
-On 14.10.25 17:20, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    3a8660878839 Linux 6.18-rc1
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12a705e2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1018672fe70298606e5f
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132ebb34580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140fe52f980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e767e8931970/disk-3a866087.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/4cb12bdcfcea/vmlinux-3a866087.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b08acfae954d/bzImage-3a866087.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in mcp2221_raw_event+0x1070/0x10a0 drivers/hid/hid-mcp2221.c:948
-> Read of size 1 at addr ffff8880721cbfff by task kworker/0:7/6094
-> 
-> CPU: 0 UID: 0 PID: 6094 Comm: kworker/0:7 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->   <IRQ>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->   print_address_description mm/kasan/report.c:378 [inline]
->   print_report+0xcd/0x630 mm/kasan/report.c:482
->   kasan_report+0xe0/0x110 mm/kasan/report.c:595
->   mcp2221_raw_event+0x1070/0x10a0 drivers/hid/hid-mcp2221.c:948
->   __hid_input_report.constprop.0+0x314/0x450 drivers/hid/hid-core.c:2139
->   hid_irq_in+0x35e/0x870 drivers/hid/usbhid/hid-core.c:286
->   __usb_hcd_giveback_urb+0x38b/0x610 drivers/usb/core/hcd.c:1661
->   usb_hcd_giveback_urb+0x39b/0x450 drivers/usb/core/hcd.c:1745
->   dummy_timer+0x1809/0x3a00 drivers/usb/gadget/udc/dummy_hcd.c:1995
->   __run_hrtimer kernel/time/hrtimer.c:1777 [inline]
->   __hrtimer_run_queues+0x202/0xad0 kernel/time/hrtimer.c:1841
->   hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1858
->   handle_softirqs+0x219/0x8e0 kernel/softirq.c:622
->   __do_softirq kernel/softirq.c:656 [inline]
->   invoke_softirq kernel/softirq.c:496 [inline]
->   __irq_exit_rcu+0x109/0x170 kernel/softirq.c:723
->   irq_exit_rcu+0x9/0x30 kernel/softirq.c:739
->   instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
->   sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1052
->   </IRQ>
->   <TASK>
->   asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-> RIP: 0010:kasan_check_range+0x12/0x1b0 mm/kasan/generic.c:199
-> Code: 00 00 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 40 d6 48 85 f6 0f 84 64 01 00 00 48 89 f8 41 54 <44> 0f b6 c2 48 01 f0 55 53 0f 82 d7 00 00 00 eb 0f cc cc cc 48 b8
-> RSP: 0018:ffffc900037b6b60 EFLAGS: 00000202
-> RAX: ffff888077da86b0 RBX: ffff888077da8668 RCX: ffffffff819803ae
-> RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888077da86b0
-> RBP: ffff888077da86b0 R08: 0000000000000002 R09: 0000000000000000
-> R10: ffff888077da866f R11: 0000000000000000 R12: ffffffff8c6df2a0
-> R13: ffffffff9ae57620 R14: 0000000000000000 R15: ffff888026709978
->   instrument_atomic_write include/linux/instrumented.h:82 [inline]
->   atomic_set include/linux/atomic/atomic-instrumented.h:67 [inline]
->   osq_lock_init include/linux/osq_lock.h:25 [inline]
->   __mutex_init+0xae/0x120 kernel/locking/mutex.c:53
->   i2c_register_adapter+0x15d/0x1370 drivers/i2c/i2c-core-base.c:1544
->   i2c_add_adapter drivers/i2c/i2c-core-base.c:1673 [inline]
->   i2c_add_adapter+0x10a/0x1b0 drivers/i2c/i2c-core-base.c:1653
->   devm_i2c_add_adapter+0x1b/0x90 drivers/i2c/i2c-core-base.c:1845
->   mcp2221_probe+0x5f1/0xc50 drivers/hid/hid-mcp2221.c:1289
->   __hid_device_probe drivers/hid/hid-core.c:2775 [inline]
->   hid_device_probe+0x5ba/0x8d0 drivers/hid/hid-core.c:2812
->   call_driver_probe drivers/base/dd.c:581 [inline]
->   really_probe+0x241/0xa90 drivers/base/dd.c:659
->   __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
->   driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
->   __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
->   bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
->   __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
->   bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
->   device_add+0x1148/0x1aa0 drivers/base/core.c:3689
->   hid_add_device+0x31b/0x5c0 drivers/hid/hid-core.c:2951
->   usbhid_probe+0xd38/0x13f0 drivers/hid/usbhid/hid-core.c:1435
->   usb_probe_interface+0x303/0xa40 drivers/usb/core/driver.c:396
->   call_driver_probe drivers/base/dd.c:581 [inline]
->   really_probe+0x241/0xa90 drivers/base/dd.c:659
->   __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
->   driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
->   __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
->   bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
->   __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
->   bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
->   device_add+0x1148/0x1aa0 drivers/base/core.c:3689
->   usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
->   usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
->   usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
->   call_driver_probe drivers/base/dd.c:581 [inline]
->   really_probe+0x241/0xa90 drivers/base/dd.c:659
->   __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
->   driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
->   __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
->   bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
->   __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
->   bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
->   device_add+0x1148/0x1aa0 drivers/base/core.c:3689
->   usb_new_device+0xd07/0x1a60 drivers/usb/core/hub.c:2694
->   hub_port_connect drivers/usb/core/hub.c:5566 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
->   port_event drivers/usb/core/hub.c:5870 [inline]
->   hub_event+0x2f34/0x4fe0 drivers/usb/core/hub.c:5952
->   process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
->   process_scheduled_works kernel/workqueue.c:3346 [inline]
->   worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
->   kthread+0x3c5/0x780 kernel/kthread.c:463
->   ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->   </TASK>
-> 
-> Allocated by task 5918:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:77
->   poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
->   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:417
->   kmalloc_noprof include/linux/slab.h:957 [inline]
->   kzalloc_noprof include/linux/slab.h:1094 [inline]
->   ipv6_add_addr+0x4e3/0x1fe0 net/ipv6/addrconf.c:1120
->   add_addr+0xde/0x350 net/ipv6/addrconf.c:3201
->   add_v4_addrs+0x642/0x980 net/ipv6/addrconf.c:3263
->   addrconf_gre_config net/ipv6/addrconf.c:3545 [inline]
->   addrconf_init_auto_addrs+0x51a/0x810 net/ipv6/addrconf.c:3559
->   addrconf_notify+0xe93/0x19e0 net/ipv6/addrconf.c:3740
->   notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
->   call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
->   call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
->   call_netdevice_notifiers net/core/dev.c:2281 [inline]
->   __dev_notify_flags+0x12c/0x2e0 net/core/dev.c:9676
->   netif_change_flags+0x108/0x160 net/core/dev.c:9705
->   do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3151
->   rtnl_changelink net/core/rtnetlink.c:3769 [inline]
->   __rtnl_newlink net/core/rtnetlink.c:3928 [inline]
->   rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4065
->   rtnetlink_rcv_msg+0x95e/0xe90 net/core/rtnetlink.c:6954
->   netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
->   netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->   netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
->   netlink_sendmsg+0x8c8/0xdd0 net/netlink/af_netlink.c:1896
->   sock_sendmsg_nosec net/socket.c:727 [inline]
->   __sock_sendmsg net/socket.c:742 [inline]
->   __sys_sendto+0x4a3/0x520 net/socket.c:2244
->   __do_sys_sendto net/socket.c:2251 [inline]
->   __se_sys_sendto net/socket.c:2247 [inline]
->   __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2247
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The buggy address belongs to the object at ffff8880721cbc00
->   which belongs to the cache kmalloc-cg-512 of size 512
-> The buggy address is located 583 bytes to the right of
->   allocated 440-byte region [ffff8880721cbc00, ffff8880721cbdb8)
-> 
-> The buggy address belongs to the physical page:
-> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x721c8
-> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-> page_type: f5(slab)
-> raw: 00fff00000000040 ffff88813ff30140 ffffea0001e68c00 dead000000000002
-> raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-> head: 00fff00000000040 ffff88813ff30140 ffffea0001e68c00 dead000000000002
-> head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-> head: 00fff00000000002 ffffea0001c87201 00000000ffffffff 00000000ffffffff
-> head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5796, tgid 5796 (sshd-session), ts 52056965840, free_ts 15121629475
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1850
->   prep_new_page mm/page_alloc.c:1858 [inline]
->   get_page_from_freelist+0x10a3/0x3a30 mm/page_alloc.c:3884
->   __alloc_frozen_pages_noprof+0x25f/0x2470 mm/page_alloc.c:5183
->   alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
->   alloc_slab_page mm/slub.c:3039 [inline]
->   allocate_slab mm/slub.c:3212 [inline]
->   new_slab+0x24a/0x360 mm/slub.c:3266
->   ___slab_alloc+0xdc4/0x1ae0 mm/slub.c:4636
->   __slab_alloc.constprop.0+0x63/0x110 mm/slub.c:4755
->   __slab_alloc_node mm/slub.c:4831 [inline]
->   slab_alloc_node mm/slub.c:5253 [inline]
->   __do_kmalloc_node mm/slub.c:5626 [inline]
->   __kmalloc_node_track_caller_noprof+0x4db/0x8a0 mm/slub.c:5736
->   kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:601
->   __alloc_skb+0x166/0x380 net/core/skbuff.c:670
->   alloc_skb include/linux/skbuff.h:1383 [inline]
->   alloc_skb_with_frags+0xe0/0x860 net/core/skbuff.c:6671
->   sock_alloc_send_pskb+0x7f9/0x980 net/core/sock.c:2965
->   unix_stream_sendmsg+0x39f/0x1340 net/unix/af_unix.c:2455
->   sock_sendmsg_nosec net/socket.c:727 [inline]
->   __sock_sendmsg net/socket.c:742 [inline]
->   sock_write_iter+0x566/0x610 net/socket.c:1195
->   new_sync_write fs/read_write.c:593 [inline]
->   vfs_write+0x7d3/0x11d0 fs/read_write.c:686
->   ksys_write+0x1f8/0x250 fs/read_write.c:738
-> page last free pid 1 tgid 1 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1394 [inline]
->   __free_frozen_pages+0x7df/0x1160 mm/page_alloc.c:2906
->   __free_pages mm/page_alloc.c:5302 [inline]
->   free_contig_range+0x183/0x4b0 mm/page_alloc.c:7146
->   destroy_args+0xb69/0x12e0 mm/debug_vm_pgtable.c:958
->   debug_vm_pgtable+0x1a32/0x3640 mm/debug_vm_pgtable.c:1345
->   do_one_initcall+0x123/0x6e0 init/main.c:1283
->   do_initcall_level init/main.c:1345 [inline]
->   do_initcalls init/main.c:1361 [inline]
->   do_basic_setup init/main.c:1380 [inline]
->   kernel_init_freeable+0x5c8/0x920 init/main.c:1593
->   kernel_init+0x1c/0x2b0 init/main.c:1483
->   ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> 
-> Memory state around the buggy address:
->   ffff8880721cbe80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8880721cbf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> ffff8880721cbf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->                                                                  ^
->   ffff8880721cc000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->   ffff8880721cc080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ==================================================================
-> ----------------
-> Code disassembly (best guess):
->     0:	00 00                	add    %al,(%rax)
->     2:	00 00                	add    %al,(%rax)
->     4:	0f 1f 40 00          	nopl   0x0(%rax)
->     8:	90                   	nop
->     9:	90                   	nop
->     a:	90                   	nop
->     b:	90                   	nop
->     c:	90                   	nop
->     d:	90                   	nop
->     e:	90                   	nop
->     f:	90                   	nop
->    10:	90                   	nop
->    11:	90                   	nop
->    12:	90                   	nop
->    13:	90                   	nop
->    14:	90                   	nop
->    15:	90                   	nop
->    16:	90                   	nop
->    17:	90                   	nop
->    18:	0f 1f 40 d6          	nopl   -0x2a(%rax)
->    1c:	48 85 f6             	test   %rsi,%rsi
->    1f:	0f 84 64 01 00 00    	je     0x189
->    25:	48 89 f8             	mov    %rdi,%rax
->    28:	41 54                	push   %r12
-> * 2a:	44 0f b6 c2          	movzbl %dl,%r8d <-- trapping instruction
->    2e:	48 01 f0             	add    %rsi,%rax
->    31:	55                   	push   %rbp
->    32:	53                   	push   %rbx
->    33:	0f 82 d7 00 00 00    	jb     0x110
->    39:	eb 0f                	jmp    0x4a
->    3b:	cc                   	int3
->    3c:	cc                   	int3
->    3d:	cc                   	int3
->    3e:	48                   	rex.W
->    3f:	b8                   	.byte 0xb8
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
+Ok, general case can have ambiguity, got it. Since this seems to be a dead end,
+I will abandon the heuristic path in favor of fixing the specific (Rpi5) case.
 
---------------ZY6MLU2afbK0jXl912AgSgwf
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-hid-mcp2221-validate-message-length.patch"
-Content-Disposition: attachment;
- filename="0001-hid-mcp2221-validate-message-length.patch"
-Content-Transfer-Encoding: base64
+> 
+> > The point is that the potential erroneous regions we could introduce with this
+> > patch are just a subset of the regions that can be erroneously introduced in
+> > the actual kernel, so no additional harm could be done.
+> 
+> There's little reason for us to handle such an error as there is
+> little excuse for getting it wrong. We have multiple tools that check
+> this including the kernel evidently.
+> 
+> > > Furthermore, this looks like an abuse of /reserved-memory which should
+> > > *only* be holes in what /memory node(s) define. I don't think we
+> > > enforce that and I imagine there is lots of abuse.
+> >
+> > AFAIK the only enforcement in the kernel is being an integer multiple of the
+> > root address + size cells. As you already pointed out, this means easy abuse
+> > but this is still a fact with the current kernel, not something that would
+> > be exploitable more easily with this patch.
+> >
+> > >
+> > > > This has at least one real-world equivalent on the Raspberry Pi 5, for example,
+> > > > on which the firmware incorrectly overwrites the nvram node's reg property
+> > > > without taking into account the actual value of the parent's #size-cells.
+> > >
+> > > If we have to support this broken firmware, the kernel should fixup
+> > > the entry to be correct.
+> >
+> > This is what I first thought of, but it has several issues that complicates
+> > its implementation:
+> >
+> > - I guess there's no current infrastructure to execute fw specific code in
+> >   the reserved-memory node (something that resembles PCI quirks?)
+> 
+> Not there specifically, but PPC does do a number of fixups.
+> 
+> > - Finding out whether a fix is required depends on identifying the fw, which is
+> >   possible only reading its fingerprint through the reserved-memory region
+> >   itself. This is kinda of a recursive problem...
+> 
+> If RPi5, then check and fix 'reg' length in /reserved-memory nodes.
+> That doesn't seem hard.
 
-RnJvbSA0MTIxNmEwMzg1YjlkMmZmMWY0MmE4NjAxMDliYmEyODZmZTlkMjhiIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29t
-PgpEYXRlOiBXZWQsIDE1IE9jdCAyMDI1IDEzOjQ5OjA1ICswMjAwClN1YmplY3Q6IFtQQVRD
-SF0gaGlkLW1jcDIyMjE6IHZhbGlkYXRlIG1lc3NhZ2UgbGVuZ3RoCgpUaGUgbWVzc2FnZSBw
-YXNzZWQgdG8gcmF3X2V2ZW50IGlzIG9mIGluZGV0ZXJtaW5hdGUgbGVuZ3RoLgpDaGVjayBm
-b3IgbGVuZ3RoIGJlZm9yZSBhY2Nlc3NpbmcgbWVtYmVycy4KClNpZ25lZC1vZmYtYnk6IE9s
-aXZlciBOZXVrdW0gPG9uZXVrdW1Ac3VzZS5jb20+Ci0tLQogZHJpdmVycy9oaWQvaGlkLW1j
-cDIyMjEuYyB8IDQ0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQog
-MSBmaWxlIGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2hpZC9oaWQtbWNwMjIyMS5jIGIvZHJpdmVycy9oaWQvaGlkLW1j
-cDIyMjEuYwppbmRleCAzMzYwM2IwMTlmOTcuLmQ1ZTlmN2VmOGJhOCAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9oaWQvaGlkLW1jcDIyMjEuYworKysgYi9kcml2ZXJzL2hpZC9oaWQtbWNwMjIy
-MS5jCkBAIC04NDksMTIgKzg0OSwxOCBAQCBzdGF0aWMgaW50IG1jcDIyMjFfcmF3X2V2ZW50
-KHN0cnVjdCBoaWRfZGV2aWNlICpoZGV2LAogCXU4ICpidWY7CiAJc3RydWN0IG1jcDIyMjEg
-Km1jcCA9IGhpZF9nZXRfZHJ2ZGF0YShoZGV2KTsKIAorCWlmIChzaXplIDw9IDApCisJCWdv
-dG8gYmFpbDsKKwogCXN3aXRjaCAoZGF0YVswXSkgewogCiAJY2FzZSBNQ1AyMjIxX0kyQ19X
-Ul9EQVRBOgogCWNhc2UgTUNQMjIyMV9JMkNfV1JfTk9fU1RPUDoKIAljYXNlIE1DUDIyMjFf
-STJDX1JEX0RBVEE6CiAJY2FzZSBNQ1AyMjIxX0kyQ19SRF9SUFRfU1RBUlQ6CisJCWlmIChz
-aXplIDwgMikKKwkJCWdvdG8gYmFpbDsKKwogCQlzd2l0Y2ggKGRhdGFbMV0pIHsKIAkJY2Fz
-ZSBNQ1AyMjIxX1NVQ0NFU1M6CiAJCQltY3AtPnN0YXR1cyA9IDA7CkBAIC04NjYsNiArODcy
-LDggQEAgc3RhdGljIGludCBtY3AyMjIxX3Jhd19ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAq
-aGRldiwKIAkJYnJlYWs7CiAKIAljYXNlIE1DUDIyMjFfSTJDX1BBUkFNX09SX1NUQVRVUzoK
-KwkJaWYgKHNpemUgPCA0KQorCQkJZ290byBiYWlsOwogCQlzd2l0Y2ggKGRhdGFbMV0pIHsK
-IAkJY2FzZSBNQ1AyMjIxX1NVQ0NFU1M6CiAJCQlpZiAoKG1jcC0+dHhidWZbM10gPT0gTUNQ
-MjIyMV9JMkNfU0VUX1NQRUVEKSAmJgpAQCAtODczLDYgKzg4MSw4IEBAIHN0YXRpYyBpbnQg
-bWNwMjIyMV9yYXdfZXZlbnQoc3RydWN0IGhpZF9kZXZpY2UgKmhkZXYsCiAJCQkJbWNwLT5z
-dGF0dXMgPSAtRUFHQUlOOwogCQkJCWJyZWFrOwogCQkJfQorCQkJaWYgKHNpemUgPCAyMSkK
-KwkJCQlnb3RvIGJhaWw7CiAJCQlpZiAoZGF0YVsyMF0gJiBNQ1AyMjIxX0kyQ19NQVNLX0FE
-RFJfTkFDSykgewogCQkJCW1jcC0+c3RhdHVzID0gLUVOWElPOwogCQkJCWJyZWFrOwpAQCAt
-ODg5LDEyICs4OTksMTkgQEAgc3RhdGljIGludCBtY3AyMjIxX3Jhd19ldmVudChzdHJ1Y3Qg
-aGlkX2RldmljZSAqaGRldiwKIAkJYnJlYWs7CiAKIAljYXNlIE1DUDIyMjFfSTJDX0dFVF9E
-QVRBOgorCQlpZiAoc2l6ZSA8IDIpCisJCQlnb3RvIGJhaWw7CisKIAkJc3dpdGNoIChkYXRh
-WzFdKSB7CiAJCWNhc2UgTUNQMjIyMV9TVUNDRVNTOgorCQkJaWYgKHNpemUgPCAzKQorCQkJ
-CWdvdG8gYmFpbDsKIAkJCWlmIChkYXRhWzJdID09IE1DUDIyMjFfSTJDX0FERFJfTkFDSykg
-ewogCQkJCW1jcC0+c3RhdHVzID0gLUVOWElPOwogCQkJCWJyZWFrOwogCQkJfQorCQkJaWYg
-KHNpemUgPCA0KQorCQkJCWdvdG8gYmFpbDsKIAkJCWlmICghbWNwX2dldF9pMmNfZW5nX3N0
-YXRlKG1jcCwgZGF0YSwgMikKIAkJCQkmJiAoZGF0YVszXSA9PSAwKSkgewogCQkJCW1jcC0+
-c3RhdHVzID0gMDsKQEAgLTkwNiw3ICs5MjMsOSBAQCBzdGF0aWMgaW50IG1jcDIyMjFfcmF3
-X2V2ZW50KHN0cnVjdCBoaWRfZGV2aWNlICpoZGV2LAogCQkJfQogCQkJaWYgKGRhdGFbMl0g
-PT0gTUNQMjIyMV9JMkNfUkVBRF9DT01QTCB8fAogCQkJICAgIGRhdGFbMl0gPT0gTUNQMjIy
-MV9JMkNfUkVBRF9QQVJUSUFMKSB7Ci0JCQkJaWYgKCFtY3AtPnJ4YnVmIHx8IG1jcC0+cnhi
-dWZfaWR4IDwgMCB8fCBkYXRhWzNdID4gNjApIHsKKwkJCQlpZiAoIW1jcC0+cnhidWYgfHwK
-KwkJCQkgICAgbWNwLT5yeGJ1Zl9pZHggPCAwIHx8IGRhdGFbM10gPiA2MCB8fAorCQkJCSAg
-ICBkYXRhWzNdID4gc2l6ZSAtIDQgKSB7CiAJCQkJCW1jcC0+c3RhdHVzID0gLUVJTlZBTDsK
-IAkJCQkJYnJlYWs7CiAJCQkJfQpAQCAtOTI1LDggKzk0NCwxMyBAQCBzdGF0aWMgaW50IG1j
-cDIyMjFfcmF3X2V2ZW50KHN0cnVjdCBoaWRfZGV2aWNlICpoZGV2LAogCQlicmVhazsKIAog
-CWNhc2UgTUNQMjIyMV9HUElPX0dFVDoKKwkJaWYgKHNpemUgPCAyKQorCQkJZ290byBiYWls
-OworCiAJCXN3aXRjaCAoZGF0YVsxXSkgewogCQljYXNlIE1DUDIyMjFfU1VDQ0VTUzoKKwkJ
-CWlmIChtY3AtPmdwX2lkeCA8IHNpemUpCisJCQkJZ290byBiYWlsOwogCQkJaWYgKChkYXRh
-W21jcC0+Z3BfaWR4XSA9PSBNQ1AyMjIxX0FMVF9GX05PVF9HUElPVikgfHwKIAkJCQkoZGF0
-YVttY3AtPmdwX2lkeCArIDFdID09IE1DUDIyMjFfQUxUX0ZfTk9UX0dQSU9EKSkgewogCQkJ
-CW1jcC0+c3RhdHVzID0gLUVOT0VOVDsKQEAgLTk0Miw4ICs5NjYsMTMgQEAgc3RhdGljIGlu
-dCBtY3AyMjIxX3Jhd19ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAqaGRldiwKIAkJYnJlYWs7
-CiAKIAljYXNlIE1DUDIyMjFfR1BJT19TRVQ6CisJCWlmIChzaXplIDwgMikKKwkJCWdvdG8g
-YmFpbDsKKwogCQlzd2l0Y2ggKGRhdGFbMV0pIHsKIAkJY2FzZSBNQ1AyMjIxX1NVQ0NFU1M6
-CisJCQlpZiAoc2l6ZSA8IG1jcC0+Z3BfaWR4KQorCQkJCWdvdG8gYmFpbDsKIAkJCWlmICgo
-ZGF0YVttY3AtPmdwX2lkeF0gPT0gTUNQMjIyMV9BTFRfRl9OT1RfR1BJT1YpIHx8CiAJCQkJ
-KGRhdGFbbWNwLT5ncF9pZHggLSAxXSA9PSBNQ1AyMjIxX0FMVF9GX05PVF9HUElPVikpIHsK
-IAkJCQltY3AtPnN0YXR1cyA9IC1FTk9FTlQ7CkBAIC05NTgsNiArOTg3LDkgQEAgc3RhdGlj
-IGludCBtY3AyMjIxX3Jhd19ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAqaGRldiwKIAkJYnJl
-YWs7CiAKIAljYXNlIE1DUDIyMjFfU0VUX1NSQU1fU0VUVElOR1M6CisJCWlmIChzaXplIDwg
-MikKKwkJCWdvdG8gYmFpbDsKKwogCQlzd2l0Y2ggKGRhdGFbMV0pIHsKIAkJY2FzZSBNQ1Ay
-MjIxX1NVQ0NFU1M6CiAJCQltY3AtPnN0YXR1cyA9IDA7CkBAIC05NjksOCArMTAwMSwxMyBA
-QCBzdGF0aWMgaW50IG1jcDIyMjFfcmF3X2V2ZW50KHN0cnVjdCBoaWRfZGV2aWNlICpoZGV2
-LAogCQlicmVhazsKIAogCWNhc2UgTUNQMjIyMV9HRVRfU1JBTV9TRVRUSU5HUzoKKwkJaWYg
-KHNpemUgPCAyKQorCQkJZ290byBiYWlsOworCiAJCXN3aXRjaCAoZGF0YVsxXSkgewogCQlj
-YXNlIE1DUDIyMjFfU1VDQ0VTUzoKKwkJCWlmIChzaXplIDwgMjIgKyA0KQorCQkJCWdvdG8g
-YmFpbDsKIAkJCW1lbWNweSgmbWNwLT5tb2RlLCAmZGF0YVsyMl0sIDQpOwogI2lmIElTX1JF
-QUNIQUJMRShDT05GSUdfSUlPKQogCQkJbWNwLT5kYWNfdmFsdWUgPSBkYXRhWzZdICYgR0VO
-TUFTSyg0LCAwKTsKQEAgLTk4NCw2ICsxMDIxLDggQEAgc3RhdGljIGludCBtY3AyMjIxX3Jh
-d19ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAqaGRldiwKIAkJYnJlYWs7CiAKIAljYXNlIE1D
-UDIyMjFfUkVBRF9GTEFTSF9EQVRBOgorCQlpZiAoc2l6ZSA8IDIpCisJCQlnb3RvIGJhaWw7
-CiAJCXN3aXRjaCAoZGF0YVsxXSkgewogCQljYXNlIE1DUDIyMjFfU1VDQ0VTUzoKIAkJCW1j
-cC0+c3RhdHVzID0gMDsKQEAgLTk5Nyw2ICsxMDM2LDggQEAgc3RhdGljIGludCBtY3AyMjIx
-X3Jhd19ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAqaGRldiwKICNpZiBJU19SRUFDSEFCTEUo
-Q09ORklHX0lJTykKIAkJCXsKIAkJCQl1OCB0bXA7CisJCQkJaWYgKHNpemUgPCA4KQorCQkJ
-CQlnb3RvIGJhaWw7CiAJCQkJLyogREFDIHNjYWxlIHZhbHVlICovCiAJCQkJdG1wID0gRklF
-TERfR0VUKEdFTk1BU0soNywgNiksIGRhdGFbNl0pOwogCQkJCWlmICgoZGF0YVs2XSAmIEJJ
-VCg1KSkgJiYgdG1wKQpAQCAtMTAyMSw2ICsxMDYyLDcgQEAgc3RhdGljIGludCBtY3AyMjIx
-X3Jhd19ldmVudChzdHJ1Y3QgaGlkX2RldmljZSAqaGRldiwKIAkJYnJlYWs7CiAKIAlkZWZh
-dWx0OgorYmFpbDoKIAkJbWNwLT5zdGF0dXMgPSAtRUlPOwogCQljb21wbGV0ZSgmbWNwLT53
-YWl0X2luX3JlcG9ydCk7CiAJfQotLSAKMi41MS4wCgo=
+Maybe we can workaround this by just checking if the reserved node has 
+"raspberrypi,bootloader-config" in the compatible list *and* the reg property
+is not aligned with the #size-cells advertised by the parent. In this case we
+are surely dealing with the misbehaving fw and we can act accordingly.
+Thanks for the heads-up.
 
---------------ZY6MLU2afbK0jXl912AgSgwf--
+> 
+> > - The reserved memory parsing function is invoked very early in the boot process,
+> >   so we cannot rely on a driver module to amend that
+> 
+> Does it need to be? If the region truly isn't in DRAM, then we don't
+> really need to fix it early.
+
+I think we should. The reseved memory regions are outlined during the first-pass
+parsing of the fdt and the nvmem-rmem driver will not work if it wouldn't find
+a matching region. I think there's no point in rewriting this logic, let's just
+fix the entry sooner rather than later. As an added benefit, whoever will need
+to dump the fdt at later time can do so and have the reg property matching its
+live tree counterpart. Need to do some testing to verify whether its already doable
+or if it needs some new helper functions to deal with the fdt.
+
+> 
+> > I will try to cook up something on this line, but I guess it will not be easy.
+> 
+> I pushed a branch, dt/fixup-infrastruct, to my kernel.org tree. It's a
+> prototype that we ended up not using. It won't work for you if we need
+> to fixup the fdt rather than the unflattened tree.
+
+Thanks for that. As said above though, I'd rather fix it early in the fdt rather
+than in the live tree, although the actions in your proposed branch have direct
+equivalent in the fdt world (or at least they should, I need to verify), so the
+trace is still good to follow.
+I'll bake something and come back with a renovate V2.
+
+Many thanks,
+Andrea
+
+> 
+> Rob
 
