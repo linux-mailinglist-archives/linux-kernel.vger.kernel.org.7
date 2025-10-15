@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-854868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC5ABDFA34
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:25:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C20BDFA41
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692431A21328
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:25:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03ED44FCEB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFB9337687;
-	Wed, 15 Oct 2025 16:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED16337687;
+	Wed, 15 Oct 2025 16:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAOl7XQD"
-Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rMUJmEWT"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EDB3375A5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6F83375A5;
+	Wed, 15 Oct 2025 16:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760545488; cv=none; b=i1ZhHDbSoHiV2d5x/dCzp5y7JhDDdfl6/ubd95BzIOlD+GakHHq9zJQyi48pIeOdrhEeMEc88bMu+5ou+WT1MjNYT6TmrdVGr/zV78to8J/gKtOXlZqhvOqsEzuF1e0MZCYue90BSfU7ZSXiA4If7A8VyE69pBeK3+oXNCYFLGY=
+	t=1760545509; cv=none; b=mJ1SBl1L38AjugpK6Nw/MpaZFHYr+dzniManEPgNXgwvwJhX359ekmk9IYYkt6SAp9b2RFuSPcxaxsw88Jerjem9O5LzhPzWgUVDImh2h0RTLAh9Ryt7CE5otKh6bouibTICMsZqwzLWv2lkS2NiAB2Sdv1HMhuVMlk/IQqeALE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760545488; c=relaxed/simple;
-	bh=5dmSHYaCSlL5DE484eUuB+gCCkzOeT/39M3pRYLgteA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IAH3xEMLV/9AoHL7IFBfcisMAWPTo1LufjQVD6IrMT8PYMv+QurFBg1Vj/Jvx9B2+4rJE5dp74ihcoso6aBXJV0P083QXh1Gd4o+jHZz6XzDFizs5awPbzHE61HGVarwSgmXzi5aReIw7QQe3/7p6D4W79ljuNTh55wr5jcPLTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAOl7XQD; arc=none smtp.client-ip=74.125.224.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-63d97bcb898so878710d50.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760545485; x=1761150285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oca03mfHwwbupYnaH4z5NUyICPNpnwdM0yH9k7Bfwcg=;
-        b=MAOl7XQDi3AWkwANc8dyL7U63h+UtqUWw8xFTDn7nJByDOsiDC4vQrxN5yA3wpRwsp
-         JMvLV5Dr4aZ2EA854j0X5ESnKYySJOFknY+t7frXKP6Emyc45N20Vk5azF2OPjLSfFHS
-         q0bWJmyr2WcACk3aKQWXsj4+pZCNAJuxpod1b79XP+EgmrX0i+Md8vRWYGk3xdHDWAmY
-         0hRp9fN2dbtNBXj8r2bWksC7Utm6DbSZ1DIeXE0fNV5oHIph5LIn7I6AK7tveXN7pPWC
-         kioGNGVe6ChXPg38lnMUw8GpSobvYFa6HRuN3Vf0xkYxMxLoMxrZjSOmOr+4SKhG7SZa
-         bf4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760545485; x=1761150285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oca03mfHwwbupYnaH4z5NUyICPNpnwdM0yH9k7Bfwcg=;
-        b=P60JPRUcbNyxyDZdiI/SNg6W738R/WGDnVfCP2CWBJFido6HI+8YAQlDY74gY8oj99
-         JdPWG2aZugAoY4kqTf/pi2sv3b4pQSlg3p4V4FlwtSzlZHfvZlua2jKrv3VqIb91fiWT
-         Zl/mTJEt/oDnaqRDjXT2CoeuLtUjjrPNxe3Oufe6N6WOuEyKGI38CRqE5mYUMn0YjDEO
-         OdH9OvPDZWpNk3m1fe95xLzoT+iLVEQ/ZHqBIztrV7phuIoLC0/5V7fbPrGXsSDQ2BJX
-         GLn4HlrQ7gahSRvsOIgZU1dvvbGCAP0uLBcZNiClJtChcAkkN33FsQD/x5hS6hGK8ZVH
-         DvTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbtFGtTayZ+zBP1rNdNUKmYDvBo40Fkf7MN1/UyRRlemcDzE3CZdBmqfgnitnV21k/QM4k60PiuOxts78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj0AMkY76Zu0IIJgAUWUdx4KQvPwGJbkHjR+oZ62vQSm3B3Dco
-	Z4N00ouwBVFWQj7PA1CQlybMZ5Z3ltHPIqfXsEjis0xIOR/DGKZtElJ2CRiP6rFQSzT9Liovy5n
-	GiEzbIzF2IYKK6IrXllI4F1e2J0d3zU8=
-X-Gm-Gg: ASbGncseo/2TCuFSxDXX8MJ8z5odybqnDYYXGAiFI0KYQEix/ygtModSz+nHkkPErgP
-	jmF1Bux0P9S+HGfND5syOwtTlR8fHcWmOp5TCS0BK9uvSRUJIoPerOtK/2QWXCy+1qm+Sp/GT00
-	Bu883dmk8gH46GGzgW+HTaX/FRLcOu5h5zl+gQt1BsovbR5t7bXiegU1p8U5KTEGTjh3DG83T4A
-	SakMnqsmca4tOtXnha41aSv
-X-Google-Smtp-Source: AGHT+IFfqn8fLPcF2mb1gVi+G41RV2YT7DE1gzY6TrJFfSruChGkTvfZPHEqftOuvKHznTZtaSaFI1V7ACaXcJIiywE=
-X-Received: by 2002:a05:690e:108e:b0:5f3:317e:40af with SMTP id
- 956f58d0204a3-63e08fd5e43mr308137d50.19.1760545484844; Wed, 15 Oct 2025
- 09:24:44 -0700 (PDT)
+	s=arc-20240116; t=1760545509; c=relaxed/simple;
+	bh=Kwgs6flM+VOjdwp/hKSdsQrrl/FgQz4PU+UuNc7sZjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ea4sQHc5FE7TQM0bKedwqUY2qB8u6jWrKs9kGlPJo8jTMCA5+rZWr2AZUK4JxL2y6tBqlnWOjJp0D7hxJd0I7DcvLTzi//gJi4LJKDL6MlcjrFNPUCykz/+hjoSN8nB9Ab7WaknKTyLW+yMf6VGtdgA+koZKVH5OE2VHyseT7S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rMUJmEWT; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760545503; x=1761150303; i=markus.elfring@web.de;
+	bh=YYJoI5I02ny4wVnuhsS6zAtI1EfJ/BTpbBtlel7UDls=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=rMUJmEWTXt6MQJPyBvnJarXLCH6SsAFt4GJNT6b+FXZh0MN5cPMmfWSGeh2sutwU
+	 aokkmU7mIqaAuA48cPjkx6VoeYfWxBsdKciQQ+iZkF3QCGJRfkfn9h1uJdWhjtVWB
+	 dwzyZgwlUTt8TaLi4/Vr2/MoYEayTFuT+rd8mPliU/ykUjNtxgw9wBUFI9LpkUVKT
+	 ZJVaKfJj6BQ2rYqz/CrxaE2nhktRItvX8ctowQ4TQBORG7OO9xYJ1qJqymP5cfTnf
+	 C/OkpLAWBPHGxA/er+PzFDpnTw+fJyq3BB7nT40r2Inrr1R2bSZ+ZFG6HcQIzE6L/
+	 WyuU++/VL0/fJniuZQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.181]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsaS7-1uF1wS0rf9-017ZAS; Wed, 15
+ Oct 2025 18:25:03 +0200
+Message-ID: <6eeec2b6-ef28-4280-a854-cc22d2df55ed@web.de>
+Date: Wed, 15 Oct 2025 18:25:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015070854.36281-1-jonas.gorski@gmail.com> <aO_H6187Oahh24IX@horms.kernel.org>
-In-Reply-To: <aO_H6187Oahh24IX@horms.kernel.org>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Wed, 15 Oct 2025 18:24:33 +0200
-X-Gm-Features: AS18NWB5lthoC5h8fYZc_CEg6WuMBx-FRcGPGIiwRRyZzUYMwsRaOF117HRUBPs
-Message-ID: <CAOiHx=nbRAkFW2KMHwFoF3u6yoN28_LbMrar1BoF37SA=Mz4gg@mail.gmail.com>
-Subject: Re: [PATCH net] net: dsa: tag_brcm: legacy: fix untagged rx on
- unbridged ports for bcm63xx
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	=?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smb: Fix refcount leak for cifs_sb_tlink
+To: Shuhao Fu <sfual@cse.ust.hk>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org
+Cc: Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <aOzRF9JB9VkBKapw@osx.local>
+ <6599bf31-1099-426d-a8e5-902c3d98e032@web.de> <aO/DLq/OtAjvkgcY@chcpu18>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aO/DLq/OtAjvkgcY@chcpu18>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:30EQJqlPxbR40CcOnLo2c9jAPOtC2viQwddlZGg3tVuuIp/4f4d
+ 6Z2ucPy9Avaw3Q6/NQbv+5W0WzgKE10nVg6ep1YiUtBqotT7ReniAbHXbP1jrTW959donEa
+ 0uE5wKW0kgjAq7wxbI15NBrnIR8MieT9FQ4UdWf+3SW6gO9iV0eYYda8LT5F/vjCZQHSWn3
+ CMjcDpTiPs/zAvr7nVO+Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:U+Gmw03Zo08=;P73bPuUgvrgZYY4I2b1lyyqtjIg
+ iGzV3qLQXDZLi3XXWBU3kabQWH2nl+FhQsP46DGHpMYOExAj1NcZqQm1SnwWRLmx2fh1R/B1i
+ CtjB/7U0zK4faIhwmPnM7lJSiBiDxvaRpLBxvzpMokV1euuyQ4SFP95BzlXLD5vm0SN9e2zFb
+ pu0XluSKkxUU7hrzOn1+mr/xGBDbn3wn5/tF/ZHS6apbI5rxYYorPOhR4QzFaWg1J4x6E50rQ
+ 5grI3ZO6J6XJqnMYH0ylE7RpQ+0yWNAGLCcE65gz1ZMpBRYS4oh+DykNH/kfC3OLgdAcyGNJi
+ eXqmdhLjfcHMeSaQiFDt4/3mlefERN1kwlfZWKug8E8mgEWAG2fi9MU3y8gN27dDXBjAmQORn
+ WXLclMfRPvU/K4ShB3nfX/vF15bdUX1zYfD2H5qnO3zmLMHkyNObSbQNCQGqLMtsaRC7NcFNk
+ 9Yq6CwpVHekFfzTa1EOmiMPIBat0H9jv3WPhOrKcTqGxaoY76MnscTtggObzP0nDFRjbWNW+w
+ eQ2xdMcaYJ1BCMLg1yCJ3nl0FQEU4AoUMmDoe6KD29vRZzmmYvi3SX/SHv8VN/k/7wwg6C5DA
+ +mCk0JIqKdmHE2woWjTmNYGjVLgoQSRsXlzD0ng9vfEtJSEjBHs15woS9ckKdIsPdH+iDrVgP
+ qdZXxzQpQgOWSgo89XRbBr1BllrivttOO6YYjj9x2sB61JTQgK3oFPnGWUgAHt33+bzwalBjO
+ h2AghKTzadehL4KOx+E5tA62hOLw97z5ykxDOwnjE2YorNxObdtNAe4/FKnkxwrhYQwQQ9a2t
+ CebK2zKhAzYMFrhS37ovHFt7gYsthQAUZi0QZRkgvOH0H63tKkWxX2l8eC8IEhIqWfhmHh50l
+ /FQ2aPd8oq7UkJdJhB05y5gFYZHCjqG1TohuGbDdM8HMveBknfXmwiMJo4CNHycRohKx+Cegs
+ +Pp99aw4Q/jmlijl4+ysfKVrgPQ1uV5kzVNBBNOd4KlYVfsGBjx63sEyBeOktIybS1BCuqNN3
+ rND8/ThWtk49p/cSclwv3D09i7T6XnMmJtpwDCnXNsH5CMgCPu4wwEpV3mJccdWGlbhojVzYi
+ Ojh3EPGioBvxHgeICYVb5tsH7+OUZSCh2sRGAyQ7UXZDiU2SUs3cc6XAUNwD7GOklFcyyyw3b
+ pWy/Ab6BgjaozftOlUF2KWkN/6iuStyd2LFT5A80HfjZFJeXtfUaOqn9MHMdEM+AhkZYytGHL
+ paY6MrEBEoq2RQteAimqJ9+4bZGcCGxSBI6/cojBC59f5EAPywl9eMe9awfRDW9rFsp6f4db0
+ nRaHwOrguo+bVsEKOCUWJ8NKKA7PAnwaRVX2wUjAE6HkuA7LEE2/PqitalYjJG7oIUGVI9n4g
+ yl0jMqaQQb2zkE484RtXaGU5MZXbfHe3TZUPQALieTw0EYNkwI46DqH+HgzAmRr760EjuJ4Hr
+ /lHviQ9dvZt1qqlcYcd78TXTfPwOf5Bj+czn3EsuJF9lKowUol3R91Dm7pcAhN8ZymhsE8Hpz
+ crzYjKb+r6AHzM/isJ54MBdpc659tR1lrUBGpA9maALGOtYgD/pn95mOewxByU++wMmwJElgX
+ y+/a2HQ25dr00JDKOAXlYL1QFyStxsiQfwgWCYhicqVVTJQ6wu+kMJCbeOwLU1CZV+lB8JdjM
+ dJmqykt2Icnf9+Y2gtMIUbIMAtrYor3iPnGqkw9NIGS+mF2Upux2mldYbw408Au9FEZnXQwph
+ p0IFzvPzDpgL4HJhuDIgDIufbCvH6FFBtOtIGQsJgRhNred+4+QcJKV8LnlVzgmeuW82mlXA3
+ 4TVZVTqlgD11P7UCuvYlHKlLVdwjJYr8szeVG5Ourr58jX88ZhRbydBnJljR148HWZEzT90bk
+ NQb0d8Y/hoPeKnGmLIzzZQy6nFaFUh09S2mznqlnsWh6x8z5cPQqpvgoaYDstU+CGP+PvDfBt
+ E63Gkda8TJxdNh6am46BEn77rzPU2DcbNzjpK6tusSVASkDNKZg1/lDcMPv1TC+be7LhP4ofp
+ hM8xkFJrccRXKPp2Q/HAA2aCkhd2xsGHeTwgnyrCSlIm99rj9il89PdMhEnW39sung1ILrluC
+ nBj1ZXWGo5cnmuzbSI8m09/YcwrvljuV6Kl4jVDcf9zhRyQTcQg+cGqhPmkaI9iAj7rDGjjPn
+ aOEopaHrmhjW2L9mPdplAIkGq5o8Z61oOGVKutDwwpQauzfwOl/3GstWwQ7p45gIQkt8qdyhd
+ 2BXYpTrVemH4nI5mRzzg/K7smATwJpBjwIR+CQClUCrMgwHb3ebar9elA0pyfBmPCQc0f+bKY
+ /VPlkWGgE3pfh/vwRH6bzudoN6nLxdmmj2/rFLEOjCbZdMVAMd679I47yjdq0z3EPxURRpnB7
+ R1TSLl+1HGJoQJ+Ab2TVypI5oU3RiPpVUMpeIPAk0a5Hnj6576aLq141fmpvOxnIekQeH5Fp6
+ 2e0NienLahg7kB4aQoOb5MC63Kqx2X/nMZngoJ5Roep+9GZHWePTaaKyM7qGnQGT9TU4KF1Tz
+ z620YcgAmRRBBzQ8wgMnmiwUDuI9u3IcNb42GmB9mmDbEI5WZpXR9CFSdBvrWNkkn5K7Rp6HJ
+ xdYg7r5R9hNL3dQPRWBf0rlzmRBIvrIX4D9rW1SM99TxB+AJ6xefBLWle5F/v6s2ho3469HtB
+ NA485V79CPj2LsheSRo9L/rTwE8m8rlJXRUXJgxzhJEDaFb/UTV/sGGBCOooSFHYUc/w/cWXv
+ Vtz4xzmr3/m9MpelVtLgG2xtow7nOeG/PWHI6qMRSnQC6siozgmsu4aHv8gjlcjN8VLHfF/mL
+ 4Lz34TOJbb6Q5QxKXjZR58MWxmh3O4qSxE8vc54q4+Ji+PdyQ3Q0Dhmkm0soFzzxsVbxXNVZM
+ 4htHFbOk5868+kAWSRBTVQNhBD77sQWZoTOcPrvJcIr5Ji9myCeS99sRl313ssy6/AKQVTZib
+ etc00/6XvzGHt9vLhc93O8uEzt6fWyC5zBz55IDRzhm5veVfJRG5xlDmYJrrxnLEo7JZQyRe6
+ Zeimb5OE/YdpLv5u2gdocKI0wZYtX8AxObFMwSMAf+EnfxLhI7Ot5ljwHVkd/Rf/yHz8jaq1B
+ C8Y24nwg/QDeN4k1aE9MHVgKX7GvMkXF2qk0bR5D6TZDJ2TrSXQP8Cb5gzGkUNzNHU4GP2acJ
+ JFMkxMF1JnK7/mAGowjoHZLGdZKN2Sfh81yfqse5ZveipLd9xQmEcf6FMYZFO0E6i/Syh3/w2
+ 6QZtFVQirh23NPDGJj20bLqc2gSuBpCtT+ZGc0fy3zdYI7DhiQcfLkzLNYcPCi+hbdO2EBgJ3
+ AQmYfcOytEZ3Njr/cSrzdNiiMBP/3okhHBTY31cS4qYu3mIPB8p2GenXLBHjSyEK6+tvpQAMP
+ xXxQKtae6HgijnPTiidOg1siIBj4UP3tgoTfvNmVjyBP07rqaWnlyalcG5uV2ZyEZkVg/cwpe
+ he4CMa7mSvm7feqj6scHUDpqwUDZH3g6cRk+N9VXEg5rDsBR68HcS8/VknesIKz4h9B5mMe5o
+ WpYje7XPmSUXh6v1zUuj2WSP8SDXLI2zU5StA4HB8uk4jx2yZzyiOipQTLzWq1r3nmgqRUCIM
+ zxwN570oYz9dtcroUBC7evPfJmO6CUXS4cqeu+NbVf9hZkbevycGtBv+ZmTFFkr+dOKNP0g01
+ OrCsKgkMhns2lSerb+yQHnPgJVIM3hXNtIO/LIMcZwNRSLphHvkrm53siHTI54kgCYX1y8wz2
+ 1Ay4tZK26HswG4ahA2D4ngIKBUYeMJpSIDRUbhM6/RmFmewR+z8k2Ld+leKyOSvfXwuSkn1x3
+ /I/0iCaKbkdw3tzpopSlZL/boMFHasUjZzCk/E71lOhLz7vWgZyz2xrj3HzqxGeMa+3M+VMAB
+ 83N8VdAqOITpV1TRKgmr7ZAGrOZXP7EVAew1hx+2jfwOk3WgMh+lqCnZ33AtIfCXtwezL2XuF
+ w4IrRjUpTtRK+zB7gu0QJt1mIeOF3oTh4qzceLUTF3YbcfpiOeCHCDjo0zJg+WoO9fu/401R1
+ qmNQsQoOz2P8sdwTt5Iuk0y5RryhIVEXXTx5dWFnPJoISYEqf4PgSpgMc+tkOytI7WPCIkFVI
+ 7ZpnKMd7PmdVA6SV09Jk04pDZYlASxxYR/nVeuCrjTISwQPzJRXw50DZ6gfcPD9NAwy1k3Z6Z
+ 5JiAlrWaurfmb04Jmxk9FyYKf0NGZG1/nk3QpkT+1SMUK8No31s4qEdapDDLdKZPIgKmiRC3t
+ Wf+iJWPmkjyfWRnz5hTFCjDgEjZggnHCiJqzB0xi734EAiIQEJABRe9S2W9mYfA/YD4sBTkq4
+ /qI5wAzdEh/EyJGbsWRZUslstIU/UzOvq6oCdItIYVh3hdiYyB4B4OsjVT188MuiuTBkUV5hN
+ Q1Wl6lFnm2j7YYfd8qgS8+A8CQ+53+i1N28T01JIW64tOAeBxw7lPDa5eGrTAD2QNw0qhKsBW
+ PLx91pd6Mtc56PUKUfDu4rnvzqSsE4jHiUJfaQ4QCTA5eyIYRWZNJSoVgIIVTuCHAh+hNlaJf
+ VmPRQXHP2hy7tcbJP2nGNQgg5WRV1R+nymtWhldzoy6lr6XGVAQmCKyAKU6S6au449G0QsfZI
+ hbQCeOlBk225vWCwwZTwCXXa1JMT4zCdnMhTX+zoM3d1mxwKMILPuNR9C7F2eYV0++ARzemMm
+ fFrnCWI7kdpXkG/vp/7FyvOoz0TGd+qWVcSdmsZ7jNsQkXloKvv4pBAVnTLOYriPexZFdapdl
+ /n4H+4abngS6azRZP9aT2Vlyjcf7SkEiAhBAjiEkQVtE+M57g0senxXwmFM9K4Vnkwm5aJ2gZ
+ LeAS/OYdBjc21+YNZQ3e3Iyk1khHueSdqdZbstmdFidL6eTs3q/iZh6jn1f7kmtT1FxxS6bIE
+ e9pFKGVgDzah+8aFnwK1ONAkmp4oO0fOg0xK6bcACiubgpSEPHViaXZYN5zF5ytrh
 
-On Wed, Oct 15, 2025 at 6:12=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
-te:
->
-> On Wed, Oct 15, 2025 at 09:08:54AM +0200, Jonas Gorski wrote:
-> > The internal switch on BCM63XX SoCs will unconditionally add 802.1Q VLA=
-N
-> > tags on egress to CPU when 802.1Q mode is enabled. We do this
-> > unconditionally since commit ed409f3bbaa5 ("net: dsa: b53: Configure
-> > VLANs while not filtering").
-> >
-> > This is fine for VLAN aware bridges, but for standalone ports and vlan
-> > unaware bridges this means all packets are tagged with the default VID,
-> > which is 0.
-> >
-> > While the kernel will treat that like untagged, this can break userspac=
-e
-> > applications processing raw packets, expecting untagged traffic, like
-> > STP daemons.
-> >
-> > This also breaks several bridge tests, where the tcpdump output then
-> > does not match the expected output anymore.
-> >
-> > Since 0 isn't a valid VID, just strip out the VLAN tag if we encounter
-> > it, unless the priority field is set, since that would be a valid tag
-> > again.
-> >
-> > Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
-> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
->
-> ...
->
-> > @@ -237,8 +239,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_=
-buff *skb,
-> >       if (!skb->dev)
-> >               return NULL;
-> >
-> > -     /* VLAN tag is added by BCM63xx internal switch */
-> > -     if (netdev_uses_dsa(skb->dev))
-> > +     /* The internal switch in BCM63XX SoCs will add a 802.1Q VLAN tag=
- on
-> > +      * egress to the CPU port for all packets, regardless of the unta=
-g bit
-> > +      * in the VLAN table.  VID 0 is used for untagged traffic on unbr=
-idged
-> > +      * ports and vlan unaware bridges. If we encounter a VID 0 tagged
-> > +      * packet, we know it is supposed to be untagged, so strip the VL=
-AN
-> > +      * tag as well in that case.
->
-> Maybe it isn't important, but here it is a TCI 0 that is being checked:
-> VID 0, PCP 0, and DEI 0.
+> Fix three refcount inconsistency issues related to `cifs_sb_tlink`.=20
 
-Right, that is intentional (I tried to convey it in the commit
-message, though should probably also extend it here).
+I suggest to omit this introduction.
 
-If any of the fields is non-zero, then the tag is meaningful, and we
-don't want to strip it (e.g. 802.1p tagged packets).
 
-Best regards,
-Jonas
+> Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be
+
+                             ()?
+
+
+> called after successful calls to `cifs_sb_tlink`. Three callsites fail
+
+                                                          call sites?
+
+
+> to update refcount accordingly, leading to possible resource leaks.
+
+* Do we prefer the term =E2=80=9Creference count=E2=80=9D?
+
+* Is the word =E2=80=9Cpossible=E2=80=9D really relevant here?
+  (Would you find corresponding case distinctions more helpful?)
+
+* How do you think about to increase the application of scope-based resour=
+ce management?
+
+
+Regards,
+Markus
 
