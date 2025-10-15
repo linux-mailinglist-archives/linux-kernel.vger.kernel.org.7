@@ -1,188 +1,164 @@
-Return-Path: <linux-kernel+bounces-854299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F95BDE08A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:35:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352D5BDE0A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2681927016
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:36:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4283C500BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECF030BB9A;
-	Wed, 15 Oct 2025 10:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A16731B119;
+	Wed, 15 Oct 2025 10:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZifL0Bsf"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C6E4Ie4N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAF92494ED
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDFA31BC99;
+	Wed, 15 Oct 2025 10:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760524551; cv=none; b=JdCqn+gEF+1U6nLXiNw/1Od7zjcMGmHQs6IIWtGLqm1tkZjcGWBuIc6tx7ihAsQoU+o+TDvPmRQSYDM/A7wM8DvN2oKX/o/I1+zNzixzWOpxIThSEbSX9dNbaWK8wR+5GxFvsEHuuo+uXDxb2KidNMj/mw4HqWMRF7wvkmVmIc8=
+	t=1760524608; cv=none; b=hTS2N/BTmrCLjMKOl0MOirFimxhdKsjItChLrR/ujwIoxeHBUWC3pLLTRnW5EauRtP/KO89dCV+OL+zyc5m//v+9Q8hs/uEN54LVAwQq2f3dmIswxh0q624drAozHMaTCaxgBBMJ4CCet1Q8XeiE+PNcmnPMV9Ja+RgazHJ6bys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760524551; c=relaxed/simple;
-	bh=L4wLsqvaNKifFb9kXN1voIWzjV4ev9i8DnZdeTEPjgA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IqvXyQ0wKz2bKs8dWMHLVP1nLxx0bsI5YgOm4yQODJKjPMpCPA76IHxvv8TCUmlNx/GOrwol/qcE8YKRotcNM0Qtu6E3NBJcUQ03LlJsRVzNetxIPJMDoD6rcc2F9Zvk8oteCm+Cb5VHI4S+bUSq7FA98XrhvHL8u3R+5qqgt4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZifL0Bsf; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710683a644so3203545e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760524548; x=1761129348; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7QNXCpktIYAb1DPjGOe7dO+9+h/oG2Y1WU2nDERyLWo=;
-        b=ZifL0BsfiFIMHz/ld2J9irwBtjZlex3rBImlrXEtgVACHZK1as8pZARWpbGup2LRcD
-         i4d9iTXIuH+GtiJhJ/rFfzttMHa5+WUYTCBOMU+5eoIE+NcnGhc24FtQz2WbZ8LbrkZc
-         CL6gJIKGcgUevB+D1wKpUESM4qfDvT2yTA6MtZblelCLB657hgGtDPH7RkCbvnductmp
-         hBSeUBYblMWbpZJagvD/38jmCF7JoCB2I523YLYF0VZfeUvMRYvT1K03Jwbd9fsaYXUK
-         /bhGEfcbRpel98FB9LNOfJLH8lMRyadhTT24XnycfIA3AL9Xyy/OLf2LzCtFdUcc1w53
-         tuHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760524548; x=1761129348;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7QNXCpktIYAb1DPjGOe7dO+9+h/oG2Y1WU2nDERyLWo=;
-        b=qrS9X1K0xJLpZWfvkVw4lYiHUpqLeABWXeCNQYsR2iL2IGpIDOeHxF1N2YxlLMl/5a
-         CpQCHG7X/70FY1fQ4+VRt2njRpdcVSa29xnWu4O+cdis05OPOcwCYoKhqLj/vOCmfzeJ
-         yAWR4bzoaZ+CYiYUlaPhwYIuEbdsaB7h+C0cLeSap6SV85aRYq5/B7OOeU+b5WRstUU1
-         Bh4tZ7wYkAmlXKfH+7375eVJT/OiARJN4bYS+TtU8eSqijg/PkpejEEEAP8JxYE+lPKY
-         qTFCJHg3kqhboxCakLQSYZfCFNx5AeLRfWRkrdVsiYYsUPCsRKiJGAbZn+tonMJlQyvw
-         +sow==
-X-Forwarded-Encrypted: i=1; AJvYcCV5azr90Hljqwt27tXgJx2fBkLgml1BCJwKV08YFjWfTpGJI7OYizRYo5uwB3G5Li0bN6zcK9cZhQpv8Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ1P7RVOTRop+EL6h+KxIwxtv++ltFuaHyjKhK+HSN63TySFwD
-	VxSgNTdaU0Iw8peFOgryZqyA3JTgatw98m5Al1L3HBqBzhDn56GyjKIe
-X-Gm-Gg: ASbGncvfCNVk8h7ReiJQ7xSX17vZ1fRwx1UpaBOV/G/BnPvGT4JwA6aGPdhodR27P+H
-	wuIAn+RbdypoWoJrArh0EJbnVIC4Y9xy7/JdXbarng1qBBlOMohQPz72HD/+C0MKhE4FOgTGwCy
-	slngc194g2nHtSm4vjTwzy6ET2Ofa7dFE/jY4hnKeosaq/3P1HsB/G6kzD2HtP2zkAsr2Rj7acE
-	x2xAmOcKyt6FYKmnsA4S7r0EOxqCYdFTGegXy1GZIqQ8ZapMaGqh/prEO6hndznyk8ywMaCuHD/
-	ZrHE7KcaXHexDZinzBH86kOiI5gm7fVlGA+LOF78U6WX2xVvUO5I6d5nO436NTrG3klfgdVAl0H
-	fbXYGWOAoRcaPsQ63CBpHebVl6FhgCFBqLffyyHRA0JFHXcwxcVKnB27NNixn
-X-Google-Smtp-Source: AGHT+IERvd+DCsAGw5wufhvSoXWWpJyqmq8RwH0h8dyTRRhpT1w1j/81EeNMDn3zr7X5Guqk61mo0A==
-X-Received: by 2002:a05:600c:450e:b0:46e:1a60:c995 with SMTP id 5b1f17b1804b1-46fa9e8dcc7mr223056895e9.2.1760524548098;
-        Wed, 15 Oct 2025 03:35:48 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47101c23a52sm19972125e9.12.2025.10.15.03.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 03:35:47 -0700 (PDT)
-Message-ID: <ef452c01679bee2c8bdbefe1df4775c432f8b345.camel@gmail.com>
-Subject: Re: [PATCH 6/6] iio: adc: ad7380: Add support for multiple SPI buses
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Michael Hennerich
- <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=	
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko	
- <andy@kernel.org>
-Cc: Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Wed, 15 Oct 2025 11:36:20 +0100
-In-Reply-To: <20251014-spi-add-multi-bus-support-v1-6-2098c12d6f5f@baylibre.com>
-References: 
-	<20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
-	 <20251014-spi-add-multi-bus-support-v1-6-2098c12d6f5f@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1760524608; c=relaxed/simple;
+	bh=fUlSYicpE9MZa5y54+x5r10gV2XnjF5BdKi3VtpBJiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qx6JZnqyfEaCsHntCR/ZdwK2XTyvWfPF68/rw14HanYLSXe8e2/dPHw5Pgv0i/PAfQgJ2kKG15/t2Yfy3HnMue3UpuLVNWDmE+dxY0QnQTICFMENJf82jJD/2AgwU33uSlbYJkFqopNUOeuxH/MW8AvZYko/lYmU4glr+mjPSM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C6E4Ie4N; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760524606; x=1792060606;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fUlSYicpE9MZa5y54+x5r10gV2XnjF5BdKi3VtpBJiU=;
+  b=C6E4Ie4Nv87jnAXX/f2DYH5MrSfPtDrB+v+MvbSIxrn3VR4xS3/fSUP0
+   AWZO/SalnwWSK1twwc94FnX5ehNuOsAIeqBR/vzp22zc0o5cQ5GHs13Mz
+   Ix1uFxYp4kTj3qj1so4uW7RK1yPKz3pV8xr59ks8kmEm2bhelhUVOp/2O
+   k4Nrgd7qoDZxlEKMZrtgSAbBExmlKw/oDcj9WC8M7tmGafS/kzS7sRjxE
+   kbX19Xs0d8rNKTSTm9iniDMAVRd7ig2RnqiePsp2GMdR9TOppH71u9847
+   dvXofHz16FLT4G36wd46lSrd9lSPJTHhTHALsYzeMnN9hPQGS71VV6uRX
+   Q==;
+X-CSE-ConnectionGUID: HP/EhljmTWGsqDQKP0ZFOQ==
+X-CSE-MsgGUID: Q8OzLJvjRGyhHjxLshkSYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="66348956"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="66348956"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 03:36:45 -0700
+X-CSE-ConnectionGUID: n9Wl9IVaRV6cuJ1TJszFWA==
+X-CSE-MsgGUID: RNSe2GrQQAucs//U4DLnOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="182132717"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 03:36:42 -0700
+Message-ID: <b12f4ba6-bf52-4378-a107-f519eb575281@intel.com>
+Date: Wed, 15 Oct 2025 18:36:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: VMX: Inject #UD if guest tries to execute SEAMCALL
+ or TDCALL
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kai Huang <kai.huang@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
+References: <20251014231042.1399849-1-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20251014231042.1399849-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
-> Add support for multiple SPI buses to increase throughput. The AD7380
-> family of ADCs have multiple SDO lines on the chip that can be used to
-> read each channel on a separate SPI bus. If wired up to a SPI controller
-> that supports it, the driver will now take advantage of this feature.
-> This allows reaching the maximum sample rate advertised in the datasheet
-> when combined with SPI offloading.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On 10/15/2025 7:10 AM, Sean Christopherson wrote:
+> Add VMX exit handlers for SEAMCALL and TDCALL, and a SEAMCALL handler for
+> TDX, to inject a #UD if a non-TD guest attempts to execute SEAMCALL or
+> TDCALL, or if a TD guest attempst to execute SEAMCALL.  
+
+> Neither SEAMCALL
+> nor TDCALL is gated by any software enablement other than VMXON, and so
+> will generate a VM-Exit instead of e.g. a native #UD when executed from
+> the guest kernel.
+
+It's true only on the hardware with SEAM support.
+
+On older hardware without SEAM support, SEAMCALL/TDCALL gets native #UD.
+
+> Note!  No unprivilege DoS of the L1 kernel is possible as TDCALL and
+> SEAMCALL #GP at CPL > 0, and the CPL check is performed prior to the VMX
+> non-root (VM-Exit) check, i.e. userspace can't crash the VM. And for a
+> nested guest, KVM forwards unknown exits to L1, i.e. an L2 kernel can
+> crash itself, but not L1.
+> 
+> Note #2!  The Intel® Trust Domain CPU Architectural Extensions spec's
+> pseudocode shows the CPL > 0 check for SEAMCALL coming _after_ the VM-Exit,
+> but that appears to be a documentation bug (likely because the CPL > 0
+> check was incorrectly bundled with other lower-priority #GP checks).
+> Testing on SPR and EMR shows that the CPL > 0 check is performed before
+> the VMX non-root check, i.e. SEAMCALL #GPs when executed in usermode.
+> 
+> Note #3!  The aforementioned Trust Domain spec uses confusing pseudocde
+> that says that SEAMCALL will #UD if executed "inSEAM", but "inSEAM"
+> specifically means in SEAM Root Mode, i.e. in the TDX-Module.  The long-
+> form description explicitly states that SEAMCALL generates an exit when
+> executed in "SEAM VMX non-root operation".
+> 
+> Cc: stable@vger.kernel.org
+> Cc: Kai Huang <kai.huang@intel.com>
+> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
+>   arch/x86/include/uapi/asm/vmx.h | 1 +
+>   arch/x86/kvm/vmx/nested.c       | 8 ++++++++
+>   arch/x86/kvm/vmx/tdx.c          | 3 +++
+>   arch/x86/kvm/vmx/vmx.c          | 8 ++++++++
+>   4 files changed, 20 insertions(+)
+> 
+> diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
+> index 9792e329343e..1baa86dfe029 100644
+> --- a/arch/x86/include/uapi/asm/vmx.h
+> +++ b/arch/x86/include/uapi/asm/vmx.h
+> @@ -93,6 +93,7 @@
+>   #define EXIT_REASON_TPAUSE              68
+>   #define EXIT_REASON_BUS_LOCK            74
+>   #define EXIT_REASON_NOTIFY              75
+> +#define EXIT_REASON_SEAMCALL            76
+>   #define EXIT_REASON_TDCALL              77
+>   #define EXIT_REASON_MSR_READ_IMM        84
+>   #define EXIT_REASON_MSR_WRITE_IMM       85
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 76271962cb70..f64a1eb241b6 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -6728,6 +6728,14 @@ static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu,
+>   	case EXIT_REASON_NOTIFY:
+>   		/* Notify VM exit is not exposed to L1 */
+>   		return false;
+> +	case EXIT_REASON_SEAMCALL:
+> +	case EXIT_REASON_TDCALL:
+> +		/*
+> +		 * SEAMCALL and TDCALL unconditionally VM-Exit, but aren't
+> +		 * virtualized by KVM for L1 hypervisors, i.e. L1 should
+> +		 * never want or expect such an exit.
+> +		 */
 
-One minor thing. With it,
+The i.e. part is confusing? It is exactly forwarding the EXITs to L1, 
+while it says L1 should never want or expect such an exit.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> +		return true;
+>   	default:
+>   		return true;
+>   	}
 
-> =C2=A0drivers/iio/adc/ad7380.c | 41 ++++++++++++++++++++++++++++---------=
-----
-> =C2=A01 file changed, 28 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> index
-> bfd908deefc0f40b42bd8a44bfce7a2510b2fdf1..36abe95852006a81f7e31f8034699e5=
-9292a
-> f79e 100644
-> --- a/drivers/iio/adc/ad7380.c
-> +++ b/drivers/iio/adc/ad7380.c
-> @@ -77,8 +77,7 @@
-> =C2=A0#define AD7380_CONFIG1_REFSEL		BIT(1)
-> =C2=A0#define AD7380_CONFIG1_PMODE		BIT(0)
-> =C2=A0
-> -#define AD7380_CONFIG2_SDO2		GENMASK(9, 8)
-> -#define AD7380_CONFIG2_SDO		BIT(8)
-> +#define AD7380_CONFIG2_SDO		GENMASK(9, 8)
-> =C2=A0#define AD7380_CONFIG2_RESET		GENMASK(7, 0)
-> =C2=A0
-> =C2=A0#define AD7380_CONFIG2_RESET_SOFT	0x3C
-> @@ -92,11 +91,6 @@
-> =C2=A0#define T_CONVERT_X_NS 500		/* xth conversion start time
-> (oversampling) */
-> =C2=A0#define T_POWERUP_US 5000		/* Power up */
-> =C2=A0
-> -/*
-> - * AD738x support several SDO lines to increase throughput, but driver
-> currently
-> - * supports only 1 SDO line (standard SPI transaction)
-> - */
-> -#define AD7380_NUM_SDO_LINES		1
-> =C2=A0#define AD7380_DEFAULT_GAIN_MILLI	1000
-> =C2=A0
-> =C2=A0/*
-> @@ -1084,7 +1078,7 @@ static int ad7380_set_ch(struct ad7380_state *st,
-> unsigned int ch)
-> =C2=A0	if (oversampling_ratio > 1)
-> =C2=A0		xfer.delay.value =3D T_CONVERT_0_NS +
-> =C2=A0			T_CONVERT_X_NS * (oversampling_ratio - 1) *
-> -			st->chip_info->num_simult_channels /
-> AD7380_NUM_SDO_LINES;
-> +			st->chip_info->num_simult_channels / st->spi-
-> >num_data_bus;
-> =C2=A0
-> =C2=A0	return spi_sync_transfer(st->spi, &xfer, 1);
-> =C2=A0}
-> @@ -1113,7 +1107,7 @@ static int ad7380_update_xfers(struct ad7380_state =
-*st,
-> =C2=A0	if (oversampling_ratio > 1)
-> =C2=A0		t_convert =3D T_CONVERT_0_NS + T_CONVERT_X_NS *
-> =C2=A0			(oversampling_ratio - 1) *
-> -			st->chip_info->num_simult_channels /
-> AD7380_NUM_SDO_LINES;
-> +			st->chip_info->num_simult_channels / st->spi-
-> >num_data_bus;
-> =C2=A0
-> =C2=A0	if (st->seq) {
-> =C2=A0		xfer[0].delay.value =3D xfer[1].delay.value =3D t_convert;
-> @@ -1124,6 +1118,7 @@ static int ad7380_update_xfers(struct ad7380_state =
-*st,
-> =C2=A0			AD7380_SPI_BYTES(scan_type) *
-> =C2=A0			st->chip_info->num_simult_channels;
-> =C2=A0		xfer[3].rx_buf =3D xfer[2].rx_buf + xfer[2].len;
-> +		xfer[3].multi_bus_mode =3D xfer[2].multi_bus_mode;
-
-Why not doing the above once during probe?
-
-- Nuno S=C3=A1
 
 
