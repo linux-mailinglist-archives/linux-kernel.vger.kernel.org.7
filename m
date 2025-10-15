@@ -1,187 +1,228 @@
-Return-Path: <linux-kernel+bounces-855302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E806EBE0CE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:25:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8837BE0CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061BA19C6502
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B3F13B3402
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B112F7457;
-	Wed, 15 Oct 2025 21:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0E32F7457;
+	Wed, 15 Oct 2025 21:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aUHAPlzB"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JAHsTxCf"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65CB2DC79E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1477B2F49FB
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760563495; cv=none; b=oblNlZXZXJ7sH5VN0dl/lhrnVY7jY4kI62HNh9d+ktOL28hhuix8cZZofSd03dRmNallyEkfLaP4nOmdt//jQ4Kae1/fAVnlvnkrt3l0fyQwQbXIFloXaYU2Q1mR4ww0frHrma4QZ+G5+jV9AoQnvG9S2GCgjZwnebiD/Wd6Oik=
+	t=1760563519; cv=none; b=CyYRixmQT8wjpXNLNSh7R51zc+4Ct5e7xCDgTjqXqL0+qKDXkqP/h0mrntZ/wNx45554PZNrcgexUP7myYG5LEpUkcNrvVhaS4g2GpX8aOG4T9/OZ24h3mNMbyj7gYDLMzq/TzqBlQcsg3teoPcqVVy/VI3U69XtOOz2DP7wlSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760563495; c=relaxed/simple;
-	bh=W1g4/t3DMHUeDcN2igXiKHkc93YpFK6eSsbRMAAyTns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b606Gv2507g2JmPt0JUqWfAg3Cz8umFMVx+qPaYWAC9HN+GRTrAZpQXQ9yL5YfuvZ3/5IUfkm+vD7p7QrUu1O5ASqeh7rwvO9V8UZ9Tg/X58OW7bHBEjCtDgnz7skIhvczdyvAMNPZJEv4J0T8DtYFaJgRpAuFSjDQEFD7eUC4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aUHAPlzB; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2681645b7b6so15045ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:24:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760563493; x=1761168293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HFOj+Y3JzrGlsyh+9lR59Vs13yNcy5DdHPtE8235H5Q=;
-        b=aUHAPlzBQnMPcVy2ggFMHxkUaK1Yda6Lqgc4W1qbFvN7SqamfpAO3oVpbHG+6VZgq6
-         mMnrOvo49t2y2tOt/9PS+ZIw6i2q91BvbwlMuSt2hhwFc28H0oFKlZ0zufZ1qpsXEXU/
-         K7yU/dJjt6R6IxplC4+jYsNW24ShOZ+r0lmHqUktDlHxup9hM+AIlTTziZ7EZQ44XoH8
-         Td0X4+G66vyH1nTAShYzKya0vpEgYEs0E8juWuWbbzXdvlgt6By1EVOtWCUmt7+2BtBB
-         QeTEhLqrg5uT6mpTRYaWcPMGvosOM4JJHwUdRseVQ77fU016Ant1m0LWAFzmi8NUMnRO
-         S8Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760563493; x=1761168293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HFOj+Y3JzrGlsyh+9lR59Vs13yNcy5DdHPtE8235H5Q=;
-        b=dWGgYiQYEVBqGi8gaJJ5HmkBgBeMI0P6hmCJ7xzFRZ2Eejoc3YOiEFWiOEnTsOXXsI
-         +5UDw/HaRLPCsISSXoqCBf40FjJE/wtoyob5kpjSkVm8SmqCxSAhF4MQQqgE0pfyD4IS
-         c+fba8bCjeob8l9iePkiY9aPX0pnIwylykgccDpgTeDO3HxOBCImGWkGdmsvtZsXi7UO
-         3i1a6Fhhc4VGfv8tZP7oHyJ+jbYKIkTKvyMR9E9dKzRPvPDOl9E4Th/4aXEeAWPJpC7D
-         ircrIoxqSmf8RMWpfPEg1fycY7DJhTaqO+0rNc0U01rL4s4pMySjHOG6D8KYjtNZ2+0z
-         BGAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcLl9D5vDnnqNNTAYjD3NBVc0RgoNCTw/EFZBXqOBNiiXxp+0rJVEc1yZ4kJVGZxyv6Ff5p+cDeLyY5jM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ1t/f9usp0uKWY4rj+iLHfyjXLf9rVRPBd2mOsmFaRr7TAAgO
-	KpzOaqnQpyniJXJSBt24PRwyELstvOiDPX/oCaTaa0YA8vM8AySB368ZDW5dYRB5LqX6Agk8THS
-	xpTWAROk4g9+NM7ybtIg+h9FT9pGFubz5cfOprw77
-X-Gm-Gg: ASbGnctPvV2wFrN9WtcYU1mv4hgBSyHax5PmXlclUW5oTkT9MZQ+zK9QQ9ITiGhBZ+e
-	67in480QXZx3y9QAl78+anoRY9wDKMbBNdpp8AP0sTP2oSlSF0dZLHG9fkcJX8e0JBx8NvFkANO
-	wR06sYf5tpykGm1OgmvfH7ocbFny7WAtV99cz9WIJepFGCkCTKOvLk4Uvz9VYoCIOhXap7awddp
-	KvoiBbkS6C6sNVbk6muNC7S6uOfF0tKMfoKEdU4BFgfgiZJaTgugkU43kqkVn2hD09Tb4CRXBSB
-	xY+O85XImk7ca5a+A25lZDADA9Vz3edg
-X-Google-Smtp-Source: AGHT+IEW5YPLjBUnEmpkq2n072rZTOEa3bB8A8FX6Qjm4Df+twFjbBIiYmmxKWceu6WF8JREJH8kbhCKirJwZ9Ey/fg=
-X-Received: by 2002:a17:903:3884:b0:266:b8a2:f605 with SMTP id
- d9443c01a7336-29088b3a4e6mr6336795ad.3.1760563492415; Wed, 15 Oct 2025
- 14:24:52 -0700 (PDT)
+	s=arc-20240116; t=1760563519; c=relaxed/simple;
+	bh=vlperFRmGm5rMepd+J5F6AuE/+fROGgAHN/Gu6ExyzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jUjfylXh8HjrJMOCza818dElPlPUjLcE/BMxSQufGoiCgOYXwHuGKA1TWgo0AoJSMaCCcSpyUr2QVS3UZZPoJVqxbF90sUXmUwjnfjeEiXafYz1donvGG6cAmlIOhfzKpSPC8ZuTpYjfzi06MXAjjB7Im/LDm3hv99J4c+itsaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JAHsTxCf; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 15 Oct 2025 21:25:03 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760563512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tn/3KXYx81kR8zr8zH3iYa7nW5h+i0lrVU0IbFeu+KY=;
+	b=JAHsTxCfH6C4SHupYo8m49eFdiXIBEHTpwieWaypQuGhmYoAS52ZEzbiEM+jWHALUR3Ss/
+	xhD2NKwvypJIolIolfJkRX0DYAg8jdCCkUA2zIzsLWH9ZjL8+M05m7u3dvmXoB7LsCXGMB
+	Jmz+Aq0/MktXPAK6PwfbpT3U69Wql0g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 3/4] KVM: selftests: Add VM_MODE_PXXV57_4K VM mode
+Message-ID: <2mtjboekfjxmuougyiypg4azeurhqxlk7fovzacv5c74hrmzrb@krfinussf2zd>
+References: <20250917215031.2567566-1-jmattson@google.com>
+ <20250917215031.2567566-4-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005182430.2791371-1-irogers@google.com> <176054362630.22559.13423487878652916137.b4-ty@kernel.org>
- <a9f3b996-4fb4-463a-8392-16115862903a@linaro.org>
-In-Reply-To: <a9f3b996-4fb4-463a-8392-16115862903a@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 15 Oct 2025 14:24:40 -0700
-X-Gm-Features: AS18NWDXk7S0rdGhapkXDUl7AG-b9T2LxalgMsX3Hw5djZFKJRshjXgu_HXKANM
-Message-ID: <CAP-5=fX8ZV6WTmKcrrfPo0MUFiruJoWhYeUk3JrToEP=9-aPCA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/27] Legacy hardware/cache events as json
-To: James Clark <james.clark@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917215031.2567566-4-jmattson@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 15, 2025 at 10:39=E2=80=AFAM James Clark <james.clark@linaro.or=
-g> wrote:
->
->
->
-> On 15/10/2025 4:53 pm, Namhyung Kim wrote:
-> > On Sun, 05 Oct 2025 11:24:03 -0700, Ian Rogers wrote:
-> >
-> >> Mirroring similar work for software events in commit 6e9fa4131abb
-> >> ("perf parse-events: Remove non-json software events"). These changes
-> >> migrate the legacy hardware and cache events to json.  With no hard
-> >> coded legacy hardware or cache events the wild card, case
-> >> insensitivity, etc. is consistent for events. This does, however, mean
-> >> events like cycles will wild card against all PMUs. A change doing the
-> >> same was originally posted and merged from:
-> >> https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
-> >> and reverted by Linus in commit 4f1b067359ac ("Revert "perf
-> >> parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
-> >> his dislike for the cycles behavior on ARM with perf record. Earlier
-> >> patches in this series make perf record event opening failures
-> >> non-fatal and hide the cycles event's failure to open on ARM in perf
-> >> record, so it is expected the behavior will now be transparent in perf
-> >> record on ARM. perf stat with a cycles event will wildcard open the
-> >> event on all PMUs, however, with default events the cycles event will
-> >> only be opened on core PMUs.
-> >>
-> >> [...]
-> >
-> > Applied to perf-tools-next, thanks!
-> >
-> > Best regards,
-> > Namhyung
-> >
->
-> Hi Namhyung,
->
-> I'm still getting the build failure that I mentioned on patch 5. This
-> only seems to happen with out of source builds:
->
->    $ make -C tools/perf O=3D../build/local/ V=3D1
->
->
->    static const struct pmu_sys_events pmu_sys_event_tables[] =3D {
->          {
-> -               .event_table =3D {
-> -                       .pmus =3D pmu_events__test_soc_sys,
-> -                       .num_pmus =3D ARRAY_SIZE(pmu_events__test_soc_sys=
-)
-> -               },
-> -               .name =3D "pmu_events__test_soc_sys",
-> -       },
-> -       {
->                  .event_table =3D { 0, 0 },
->                  .metric_table =3D { 0, 0 },
->          },
-> make[3]: *** [pmu-events/Build:54:
-> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log]
-> Error 1
+On Wed, Sep 17, 2025 at 02:48:39PM -0700, Jim Mattson wrote:
+> Add a new VM mode, VM_MODE_PXXV57_4K, to support tests that require
+> 5-level paging on x86. This mode sets up a 57-bit virtual address
+> space and sets CR4.LA57 in the guest.
+> 
+> Signed-off-by: Jim Mattson <jmattson@google.com>
+> ---
+>  .../testing/selftests/kvm/include/kvm_util.h  |  1 +
+>  tools/testing/selftests/kvm/lib/kvm_util.c    | 21 +++++++++++++++++
+>  .../testing/selftests/kvm/lib/x86/processor.c | 23 ++++++++++++-------
+>  tools/testing/selftests/kvm/lib/x86/vmx.c     |  7 +++---
+>  4 files changed, 41 insertions(+), 11 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+> index 23a506d7eca3..b6ea5d966715 100644
+> --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> @@ -175,6 +175,7 @@ enum vm_guest_mode {
+>  	VM_MODE_P40V48_16K,
+>  	VM_MODE_P40V48_64K,
+>  	VM_MODE_PXXV48_4K,	/* For 48bits VA but ANY bits PA */
+> +	VM_MODE_PXXV57_4K,	/* For 48bits VA but ANY bits PA */
+>  	VM_MODE_P47V64_4K,
+>  	VM_MODE_P44V64_4K,
+>  	VM_MODE_P36V48_4K,
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index c3f5142b0a54..6b0e499c6e91 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -232,6 +232,7 @@ const char *vm_guest_mode_string(uint32_t i)
+>  		[VM_MODE_P40V48_16K]	= "PA-bits:40,  VA-bits:48, 16K pages",
+>  		[VM_MODE_P40V48_64K]	= "PA-bits:40,  VA-bits:48, 64K pages",
+>  		[VM_MODE_PXXV48_4K]	= "PA-bits:ANY, VA-bits:48,  4K pages",
+> +		[VM_MODE_PXXV57_4K]	= "PA-bits:ANY, VA-bits:57,  4K pages",
+>  		[VM_MODE_P47V64_4K]	= "PA-bits:47,  VA-bits:64,  4K pages",
+>  		[VM_MODE_P44V64_4K]	= "PA-bits:44,  VA-bits:64,  4K pages",
+>  		[VM_MODE_P36V48_4K]	= "PA-bits:36,  VA-bits:48,  4K pages",
+> @@ -259,6 +260,7 @@ const struct vm_guest_mode_params vm_guest_mode_params[] = {
+>  	[VM_MODE_P40V48_16K]	= { 40, 48,  0x4000, 14 },
+>  	[VM_MODE_P40V48_64K]	= { 40, 48, 0x10000, 16 },
+>  	[VM_MODE_PXXV48_4K]	= {  0,  0,  0x1000, 12 },
+> +	[VM_MODE_PXXV57_4K]	= {  0,  0,  0x1000, 12 },
+>  	[VM_MODE_P47V64_4K]	= { 47, 64,  0x1000, 12 },
+>  	[VM_MODE_P44V64_4K]	= { 44, 64,  0x1000, 12 },
+>  	[VM_MODE_P36V48_4K]	= { 36, 48,  0x1000, 12 },
+> @@ -358,6 +360,25 @@ struct kvm_vm *____vm_create(struct vm_shape shape)
+>  		vm->va_bits = 48;
+>  #else
+>  		TEST_FAIL("VM_MODE_PXXV48_4K not supported on non-x86 platforms");
 
-Sorry for the issue. Is this happening when you don't do a clean
-first? I tried recreating your output path, but I can't reproduce the
-issue on a clean build. The diff above indicates some issue with the
-Makefile processing tools/perf/pmu-events/arch/test/test_soc/. This
-directory should be copied to
-../build/local/pmu-events/arch/test/test_soc/ and so I wonder if the
-copy failed for some reason.
+We should probably update TEST_ASSERT(vm->va_bits == 48 || vm->va_bits == 57)
+above to only assert 48 bits now, right?
 
-The copy rule is:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/pmu-events/Build?h=3Dperf-tools-next#n33
-```
-# Copy checked-in json for generation.
-$(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
-$(call rule_mkdir)
-$(Q)$(call echo-cmd,gen)cp $< $@
-```
-
-The mapping of file names happens in the patsubst in:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/pmu-events/Build?h=3Dperf-tools-next#n42
-```
-GEN_JSON =3D $(patsubst %,$(OUTPUT)%,$(JSON)) $(LEGACY_CACHE_JSON)
-```
-
-Those files are dependencies for the empty-pmu-events.c test so I'm
-not sure how this can be failing for you.
-
-Thanks,
-Ian
+> +#endif
+> +		break;
+> +	case VM_MODE_PXXV57_4K:
+> +#ifdef __x86_64__
+> +		kvm_get_cpu_address_width(&vm->pa_bits, &vm->va_bits);
+> +		kvm_init_vm_address_properties(vm);
+> +		/*
+> +		 * For 5-level paging, KVM requires LA57 to be enabled, which
+> +		 * requires a 57-bit virtual address space.
+> +		 */
+> +		TEST_ASSERT(vm->va_bits == 57,
+> +			    "Linear address width (%d bits) not supported for VM_MODE_PXXV57_4K",
+> +			    vm->va_bits);
+> +		pr_debug("Guest physical address width detected: %d\n",
+> +			 vm->pa_bits);
+> +		vm->pgtable_levels = 5;
+> +		vm->va_bits = 57;
+> +#else
+> +		TEST_FAIL("VM_MODE_PXXV57_4K not supported on non-x86 platforms");
+>  #endif
+>  		break;
+>  	case VM_MODE_P47V64_4K:
+> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
+> index 433365c8196d..d566190ea488 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> @@ -124,10 +124,11 @@ bool kvm_is_tdp_enabled(void)
+>  
+>  void virt_arch_pgd_alloc(struct kvm_vm *vm)
+>  {
+> -	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K, "Attempt to use "
+> -		"unknown or unsupported guest mode, mode: 0x%x", vm->mode);
+> +	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K ||
+> +		    vm->mode == VM_MODE_PXXV57_4K,
+> +		    "Unknown or unsupported guest mode: 0x%x", vm->mode);
+>  
+> -	/* If needed, create page map l4 table. */
+> +	/* If needed, create the top-level page table. */
+>  	if (!vm->pgd_created) {
+>  		vm->pgd = vm_alloc_page_table(vm);
+>  		vm->pgd_created = true;
+> @@ -187,8 +188,9 @@ void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
+>  	uint64_t *pte = &vm->pgd;
+>  	int current_level;
+>  
+> -	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K,
+> -		    "Unknown or unsupported guest mode, mode: 0x%x", vm->mode);
+> +	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K ||
+> +		    vm->mode == VM_MODE_PXXV57_4K,
+> +		    "Unknown or unsupported guest mode: 0x%x", vm->mode);
+>  
+>  	TEST_ASSERT((vaddr % pg_size) == 0,
+>  		    "Virtual address not aligned,\n"
+> @@ -279,8 +281,9 @@ uint64_t *__vm_get_page_table_entry(struct kvm_vm *vm, uint64_t vaddr,
+>  	TEST_ASSERT(*level >= PG_LEVEL_NONE && *level < PG_LEVEL_NUM,
+>  		    "Invalid PG_LEVEL_* '%d'", *level);
+>  
+> -	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K, "Attempt to use "
+> -		"unknown or unsupported guest mode, mode: 0x%x", vm->mode);
+> +	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K ||
+> +		    vm->mode == VM_MODE_PXXV57_4K,
+> +		    "Unknown or unsupported guest mode: 0x%x", vm->mode);
+>  	TEST_ASSERT(sparsebit_is_set(vm->vpages_valid,
+>  		(vaddr >> vm->page_shift)),
+>  		"Invalid virtual address, vaddr: 0x%lx",
+> @@ -481,7 +484,9 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_sregs sregs;
+>  
+> -	TEST_ASSERT_EQ(vm->mode, VM_MODE_PXXV48_4K);
+> +	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K ||
+> +		    vm->mode == VM_MODE_PXXV57_4K,
+> +		    "Unknown or unsupported guest mode: 0x%x", vm->mode);
+>  
+>  	/* Set mode specific system register values. */
+>  	vcpu_sregs_get(vcpu, &sregs);
+> @@ -495,6 +500,8 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
+>  	sregs.cr4 |= X86_CR4_PAE | X86_CR4_OSFXSR;
+>  	if (kvm_cpu_has(X86_FEATURE_XSAVE))
+>  		sregs.cr4 |= X86_CR4_OSXSAVE;
+> +	if (vm->pgtable_levels == 5)
+> +		sregs.cr4 |= X86_CR4_LA57;
+>  	sregs.efer |= (EFER_LME | EFER_LMA | EFER_NX);
+>  
+>  	kvm_seg_set_unusable(&sregs.ldt);
+> diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> index d4d1208dd023..1b6d4a007798 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> @@ -401,11 +401,12 @@ void __nested_pg_map(struct vmx_pages *vmx, struct kvm_vm *vm,
+>  	struct eptPageTableEntry *pt = vmx->eptp_hva, *pte;
+>  	uint16_t index;
+>  
+> -	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K, "Attempt to use "
+> -		    "unknown or unsupported guest mode, mode: 0x%x", vm->mode);
+> +	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K ||
+> +		    vm->mode == VM_MODE_PXXV57_4K,
+> +		    "Unknown or unsupported guest mode: 0x%x", vm->mode);
+>  
+>  	TEST_ASSERT((nested_paddr >> 48) == 0,
+> -		    "Nested physical address 0x%lx requires 5-level paging",
+> +		    "Nested physical address 0x%lx is > 48-bits and requires 5-level EPT",
+>  		    nested_paddr);
+>  	TEST_ASSERT((nested_paddr % page_size) == 0,
+>  		    "Nested physical address not on page boundary,\n"
+> -- 
+> 2.51.0.470.ga7dc726c21-goog
+> 
 
