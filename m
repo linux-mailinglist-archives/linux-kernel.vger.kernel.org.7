@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-854735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B05BDF443
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:07:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF93BDF425
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A59C487FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C031888C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFFC2D6E63;
-	Wed, 15 Oct 2025 15:03:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DDC2D3EFD
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562062D837E;
+	Wed, 15 Oct 2025 15:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aYGsImU3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F33B2046BA;
+	Wed, 15 Oct 2025 15:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540588; cv=none; b=CK1iot8ZPYSLUlJ0Vs5z4r3RWANE0KUKHCRTp9RzSah0DXGf5YMssKzNP9iIjFHuxsgoCCWXpHKzKOwyobxcigg2V4pLZlv6Yw9/KGQ4rviC9TgMJmvPdQrbfX9NZHYvUpUCLwq79je4s7TvgkSApqqpjeJCKhe57fxhZgcz59Q=
+	t=1760540702; cv=none; b=QCOr22Dt9Gu8fyC2a+Vop28Ik5KmbWKnj21A1Al691Gi+2L0qZhBTZGSOR6K99Qv/RPovZueVPJfI/JpwyU922xANs+MC0BFBc2DLguLR8gJh1RT3HRM9deh6bmvCsXSkRELo1LFYREf/8aR/BOHTIRh+BJJEXeRL1NcZmA60fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540588; c=relaxed/simple;
-	bh=aHvrE4xI7TMRv5VI6ZiXUpZFy/NUBy1khN24mx1a1X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fhJwQsNDEAIK3HfuuVcUDQQeAsNeJIYI+KJG2bl0P3niMTBH5qk1V9Is2V/7LlvhkSxVb2hpLzl+UgtTdLkJzu5cYQ3ysH148xY6FbUYm/Hdn67jOqbUfFul+jK2wWY1d7+/e/CKLs4ioV6DhZmEaEXbRFILJ79BSXssvUB4Iaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12F1A1655;
-	Wed, 15 Oct 2025 08:02:58 -0700 (PDT)
-Received: from [10.1.38.178] (XHFQ2J9959.cambridge.arm.com [10.1.38.178])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7C073F738;
-	Wed, 15 Oct 2025 08:03:03 -0700 (PDT)
-Message-ID: <dc1d3d1f-4d72-41b0-a9a5-9d2b7e2784b1@arm.com>
-Date: Wed, 15 Oct 2025 16:03:02 +0100
+	s=arc-20240116; t=1760540702; c=relaxed/simple;
+	bh=Wdbu91UHG7NXXe6k08cBk3T/+pvUqlyl9VvW3phwgNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZcUN7JG+uA06W536WkbobNGVp6FD9q4dMVetKp+WFbc4Sju1Uk++AadgP5iCrr9JjpmofIakMi3sg4cP1hkHAG130FfveH710CmflnkfzVlZQFB+isHGvml5CxgRMHNCMVSkABCsEYxBVyFBdueHgnYBHVq/huvIQRAM2QvOXTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aYGsImU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842CFC4CEF8;
+	Wed, 15 Oct 2025 15:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760540701;
+	bh=Wdbu91UHG7NXXe6k08cBk3T/+pvUqlyl9VvW3phwgNc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aYGsImU3Per5JLsRWKEDgSU53GVias3oxkv3lcMOJyTF2/c5lzyw2mtJxaYSCavuH
+	 wbaCEkmbUtHKcgzV8+Rd9HkAU542mDJJNLVv7ZLIwh7hHX65uxF02j6/qf+HBCWCr5
+	 a3SDnYLcIaJLj3CG8shPVh1uDD9PGHxB0uwfo6dsz01FKRPCdWlYOJ5Fr2Ur+oEy8m
+	 HzxrY4ov7Z1kbMBdW2sPJBcEDJVajDnhRpxhR69uKn2pllOAh6ktBWAQvIYb8QmygG
+	 i9hUEjmhdzalFSGO5bNoADPFDFBTlJjew3xdACovDj0EokV3my/h3MUgQn0EZN/yiO
+	 mzmbfLOBm1LVw==
+Date: Wed, 15 Oct 2025 08:04:59 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?0K/QvdCwINCR0LDRiNC70YvQutC+0LLQsA==?= <yana2bsh@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nathan
+ Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+ Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-riscv@lists.infradead.org, bpf@vger.kernel.org, llvm@lists.linux.dev,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH 6.1 00/15] genetlink: Test Netlink subsystem of Linux
+ v6.1
+Message-ID: <20251015080459.6e681582@kernel.org>
+In-Reply-To: <CAEP49o+-=HeW4NgB5a0H6gM9tPJg=oNeUA1iCbXq_1qZPPaGnA@mail.gmail.com>
+References: <20250912195339.20635-1-yana2bsh@gmail.com>
+	<20250912131722.74658ec0@kernel.org>
+	<CAEP49o+-=HeW4NgB5a0H6gM9tPJg=oNeUA1iCbXq_1qZPPaGnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64/mm: Rename try_pgd_pgtable_alloc_init_mm
-Content-Language: en-GB
-To: Linu Cherian <linu.cherian@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yang Shi <yang@os.amperecomputing.com>
-References: <20251015112758.2701604-1-linu.cherian@arm.com>
- <20251015112758.2701604-3-linu.cherian@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251015112758.2701604-3-linu.cherian@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 15/10/2025 12:27, Linu Cherian wrote:
-> With BUG_ON in pgd_pgtable_alloc_init_mm moved up to higher layer,
-> gfp flags is the only difference between try_pgd_pgtable_alloc_init_mm
-> and pgd_pgtable_alloc_init_mm. Hence rename the "try" version
-> to pgd_pgtable_alloc_init_mm_gfp.
-> 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
+On Wed, 15 Oct 2025 17:49:22 +0300 =D0=AF=D0=BD=D0=B0 =D0=91=D0=B0=D1=88=D0=
+=BB=D1=8B=D0=BA=D0=BE=D0=B2=D0=B0 wrote:
+> The motivation for this work is to improve the test coverage and
+> reliability of the Netlink subsystem, specifically for the core
+> af_netlink.c and genetlink.c components. While the subsystem is
+> critical for kernel-userspace communication, its coverage by the
+> existing selftests is quite limited.
+>=20
+> To quantify the improvement, these new selftests achieve the following
+> line coverage (as measured by gcov):
+> - net/netlink/af_netlink.c: 84.0%
+> - net/netlink/genetlink.c: 88.8%
 
-LGTM:
+For what it's worth syzbot has:
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+    af_netlink.c  91%
+    genetlink.c   68%
 
-> ---
-> Changelog
-> v3:
-> * Update  pgd_pgtable_alloc_init_mm to make use of 
->   pgd_pgtable_alloc_init_mm_gfp
-> 
->  arch/arm64/mm/mmu.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 638cb4df31a9..80786d3167e7 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -559,7 +559,7 @@ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
->  }
->  
->  static phys_addr_t
-> -try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
-> +pgd_pgtable_alloc_init_mm_gfp(enum pgtable_type pgtable_type, gfp_t gfp)
->  {
->  	return __pgd_pgtable_alloc(&init_mm, gfp, pgtable_type);
->  }
-> @@ -567,7 +567,7 @@ try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
->  static phys_addr_t __maybe_unused
->  pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
->  {
-> -	return __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
-> +	return pgd_pgtable_alloc_init_mm_gfp(pgtable_type, GFP_PGTABLE_KERNEL);
->  }
->  
->  static phys_addr_t
-> @@ -594,7 +594,7 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
->  	pte_t *ptep;
->  	int i;
->  
-> -	pte_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PTE, gfp);
-> +	pte_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PTE, gfp);
->  	if (pte_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	ptep = (pte_t *)phys_to_virt(pte_phys);
-> @@ -639,7 +639,7 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
->  	pmd_t *pmdp;
->  	int i;
->  
-> -	pmd_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PMD, gfp);
-> +	pmd_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PMD, gfp);
->  	if (pmd_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	pmdp = (pmd_t *)phys_to_virt(pmd_phys);
+Without a line of code added to the kernel. Of course it's not
+functional testing.
 
+> Integrating these tests into the upstream suite will provide long-term
+> stability and make it safer to refactor or add new features to the
+> Netlink core in the future.
+
+Happy to hear from others if they disagree but what kernel tests get
+merged into the tree is pretty subjective. Do we have a lot of bugs=20
+in genetlink? Are you planning to do major development in this area
+and want to catch regressions? If the answers to both of those questions
+is "no" IMHO this 7kLoC is not worth carrying in the tree.
 
