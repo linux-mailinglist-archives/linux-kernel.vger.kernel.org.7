@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel+bounces-854668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF28BDF0CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241CCBDF157
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E37C34EC111
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC1AD480FED
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD932D0627;
-	Wed, 15 Oct 2025 14:30:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAE31EC01B;
+	Wed, 15 Oct 2025 14:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RJj61mCL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CAE288514
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CF62848A7
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760538626; cv=none; b=M141MEUNOU/Agxf5NUunpnopWb5xoqp6B7pepdcA9Wn8MtbwMdsr/cd3KRLFW9K8IuR0HTA/6fSUtG3c2WrDRRlB62Fpo5z4xYbvaBmrM+CcIlp/L3Gc0LcghuyAcDaCitw188ceIDIn1DgBWjDOhoqugETKlLWaiqIKABMiJcw=
+	t=1760538679; cv=none; b=efgNroNGRY0BYDI8rV98ilY0rxptAlOZAnU+E9wm7LhOeJb8aQI5CUEnbJsb1SqAltE54/S4q4mIFHNiTmf8uC6ZawM8Sdkr8wKhM3rer08YPre+6BjF6cLBJcBM6sx/DnrKlvuZJVYwUDPd2KxHY8TXfKYGaYxgssadrlbRVys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760538626; c=relaxed/simple;
-	bh=K1Tvo+DSqF9WNYYWJ+n9c3j2ga4uXkmmj4T88S0x2LA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M5oYq0YD27Ypbhgk56LUYiBl9uaGScQQSbBkboESmT954JK9Fwf6cuezE8S/9VKjyjvBGKQr4iyBEkPPcvL4DT1zTxmoqOrW2HFPqiu8VABqC8zJA3bI41Fc4Vu6DJSS7otUhGXBMOnryGdfO6p4kPPbkrffLWuJa7fPzk167w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v92W2-0007UK-Qi; Wed, 15 Oct 2025 16:30:10 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v92W2-003jpM-04;
-	Wed, 15 Oct 2025 16:30:10 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v92W1-00000000BcA-3x2x;
-	Wed, 15 Oct 2025 16:30:09 +0200
-Message-ID: <c4996204c8b72f10324af87516b92a3a2819091c.camel@pengutronix.de>
-Subject: Re: [RFC PATCH] reset: always bail out on missing RESET_GPIO driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Krzysztof
- Kozlowski	 <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org
-Date: Wed, 15 Oct 2025 16:30:09 +0200
-In-Reply-To: <20251015112921.19535-2-wsa+renesas@sang-engineering.com>
-References: <20251015112921.19535-2-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760538679; c=relaxed/simple;
+	bh=ZDWsZO0VBNM+JKWzLoQH/nGF8tar0wIZvwPA84ypqx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FV4cFgYj3lp/g/Sd4+eDIjUrQvhndG4+2ji/HFfToy58sAPcdwBR2U4/90kYPFZogM4/TZKRARZvuu4ZULSZTSifKx2EndWyEWniyNxkB2rpV22LqveOoF8LHvrCMIIs6iwR1/AR9gDeOphlzVoYVqyu1tNuCsOT7i8dIlQSzE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RJj61mCL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760538677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J5M2mmh4Ds9HKwtTLyTklITpPz82TYqRilJSnlAqd+M=;
+	b=RJj61mCLxT2PT7CNAoquBN0aU3y1H/6t2FkvJ2yXaZmGnmM2OFTLC5iF3LQJLSIWNha/vD
+	UOPLl3K0qutYAWgDgsbjTazxEfeqqjOVmYL6MXqU/LmRC38yGs2m0nIKcamanK1RGEXZfu
+	Xz2kBE9Hc6+1UPV2OnGNC3R8Ql6gJ/I=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-509-UNGW0TWpPZa4yNLYZjPQwg-1; Wed, 15 Oct 2025 10:31:16 -0400
+X-MC-Unique: UNGW0TWpPZa4yNLYZjPQwg-1
+X-Mimecast-MFC-AGG-ID: UNGW0TWpPZa4yNLYZjPQwg_1760538675
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-426d2cd59e4so3977165f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:31:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760538675; x=1761143475;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J5M2mmh4Ds9HKwtTLyTklITpPz82TYqRilJSnlAqd+M=;
+        b=Oyps6PBXkm5RlV+8S8jb/+LsjhsOQu0bj4U0KPF4q9v8oi+MMljqJIl7OdMZpaZFpu
+         J9lpOeA6nQcQBR+EpZW99ERPqq8H1KjBsBte0ZCTB5JxoKqB3kOfQt2nk0VqBnGM7C9t
+         s5t8fAHbST4HeT2I8IQwr8FqCwHeyEKATeUrXyOj5wYuLQynd3tC3GS7s3NC9Yv24jC/
+         F5C2Vny+icJznqOFDEqjXYEd91gAtVO/pjQfxmNvHa+j7ekcuRm12+24wc1B11/l2S0Z
+         0my4IdLoN/7nezY28TWsiOOX5iStF23/DeRqnEZn+y7iIRYgv4rRPzSBH55q8g/Hw1un
+         hmDg==
+X-Gm-Message-State: AOJu0YxrknvU8Dk6c5nwxsT8f5ZSsni5R/Wrf1RUhDyrj56Xdim280FV
+	FjfnuiLg78Qu+GWdSAAlFLKAMPyF6h/pSgiS1UB678PGg4X9G2YjqbkZ8vGiLUKgOnMjtR6+2qd
+	bnffE0CQ5ZnBw2HhA3rADNReRRCiq45BP88oAJD1qbJ6CmJhwW3lO+xUPPWhlmN1P1jL4/IAJg4
+	WfyFy8o2AjvjNSn9EeMXBxwwU3Rj+4//2g/wSmjq5d+QGsyaKUpmC4
+X-Gm-Gg: ASbGncu9GzwMOGFkCUSwvW++rWM4Cx0KIUVxcz3UvYuEjv20WvZ3Q+mMbmxbKYyovx3
+	FOcbfD7c8WYdcJy25hV9qrCJt1eY9i/yuD9oogXWScrrGVpNmhYNrz3Bu1jVbYI/80fAv+m7P6A
+	MoErLnQHPmlqTB6tDf0WtwO3Qik/gg7xwqZ+3BS5rlI1EJbf1JXRAcnUcYCNWSMWHxxgADzC1U+
+	Q0vn5ReNqbJPg1FrE259LppnzITNdizxeOYakcSyDoH0fM+R9/5WKjl4jxYGqEapS37nF4KdE98
+	j0YGZqFriOPqvqTVl55pkkR70EW6xEwOQb12pYQ+EeRQICNcRDncix0=
+X-Received: by 2002:a05:6000:608:b0:3ee:1125:fb6d with SMTP id ffacd0b85a97d-4266e7ced08mr14869607f8f.9.1760538674729;
+        Wed, 15 Oct 2025 07:31:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmA242wjCu8aNX4QT+rftauK8lKZ1A4bt1SE1thTeCnke23rZ0LcaSiVmzhHvTvt87sNNPuw==
+X-Received: by 2002:a05:6000:608:b0:3ee:1125:fb6d with SMTP id ffacd0b85a97d-4266e7ced08mr14869567f8f.9.1760538674014;
+        Wed, 15 Oct 2025 07:31:14 -0700 (PDT)
+Received: from holism.lzampier.com ([2a06:5900:814a:ab00:c1c7:2e09:633d:e94e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47101c02377sm32617005e9.6.2025.10.15.07.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 07:31:13 -0700 (PDT)
+From: Lucas Zampieri <lzampier@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <dramforever@live.com>,
+	Charles Mirabile <cmirabil@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v4 0/3] Add UltraRISC DP1000 PLIC support
+Date: Wed, 15 Oct 2025 15:31:04 +0100
+Message-ID: <20251015143108.441291-1-lzampier@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+This series adds support for the PLIC implementation in the UltraRISC
+DP1000 SoC. The UR-CP100 cores used in the DP1000 have a hardware bug in
+their PLIC claim register where reading it while multiple interrupts are
+pending can return the wrong interrupt ID. The workaround temporarily
+disables all interrupts except the first pending one before reading the
+claim register, then restores the previous state.
 
-On Mi, 2025-10-15 at 13:28 +0200, Wolfram Sang wrote:
-> Optional GPIOs mean they can be omitted. If they are described, a
-> failure in acquiring them still needs to be reported. When the
-> RESET_GPIO is not enabled so the reset core cannot provide its assumed
-> fallback, the user should be informed about it. So, not only bail out
-> but also give a hint how to fix the situation.
->=20
-> Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Closes: https://lore.kernel.org/r/87a51um1y1.wl-kuninori.morimoto.gx@rene=
-sas.com
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> This happened because of this (in general) nice cleanup patch for the
-> pca954x driver (690de2902dca ("i2c: muxes: pca954x: Use reset controller
-> only")). Our .config didn't have the RESET_GPIO enabled before, so sound
-> regressed on some boards.
+The driver matches on "ultrarisc,cp100-plic" (CPU core compatible), allowing
+the quirk to apply to all SoCs using UR-CP100 cores (currently DP1000,
+potentially future SoCs).
 
-Ouf, I should have noticed and asked if RESET_GPIO is enabled on all
-affected platforms when that patch was proposed.
+Charles Mirabile (2):
+  dt-bindings: interrupt-controller: add UltraRISC DP1000 PLIC
+  irqchip/plic: add support for UltraRISC DP1000 PLIC
 
-> Actually, my preferred solution would be to make the reset-gpio driver
-> 'obj-y' but I guess its dependency on GPIOLIB makes this a no-go?
+Lucas Zampieri (1):
+  dt-bindings: vendor-prefixes: add UltraRISC
 
-I think so, yes. Also it's only needed in (currently) a very small
-number of cases.
+Changes in v4:
+- 0002: Simplified commit message to focus on hardware bug (feedback from Conor Dooley)
+- 0002: Added Conor's Acked-by
+- 0003: Renamed PLIC_QUIRK_CLAIM_REGISTER to PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM
+  to be more specific (feedback from Samuel Holland)
+- 0003: Added Samuel's Acked-by
 
-> On the other hand, the fallback is a really nice feature which could
-> remove duplicated code. But if the fallback is not present by default,
-> it makes it cumbersome to use IMO.
+Changes in v3:
+- 0002: Updated commit message to clarify that DP1000 is an SoC and CP100
+  is a core (feedback from Conor Dooley)
+- 0003: Renamed dp1000_* functions to cp100_* and updated commit message to
+  clarify the hardware bug is in the UR-CP100 core implementation, not
+  specific to the DP1000 SoC
+- 0003: Moved quirk check out of hot interrupt path by creating separate
+  plic_handle_irq_cp100() function and selecting handler at probe time
+- 0003: Use existing handler->enable_save[] array instead of stack allocation
+- 0003: Use readl_relaxed()/writel_relaxed() for better performance
 
-And it's not easy to automatically determine whether RESET_GPIO is
-actually required, because that depends on both device tree and
-individual drivers.
+Changes in v2:
+- 0002: Changed compatible string pattern to SoC+core: ultrarisc,dp1000-plic
+  with ultrarisc,cp100-plic fallback (suggested by Krzysztof and Vivian)
+- 0003: Driver now matches on ultrarisc,cp100-plic (core) instead of dp1000 (SoC)
+- All patches: Added submitter Signed-off-by to complete DCO chain
 
-> Has this been discussed before? I couldn't find any pointers...
+ .../sifive,plic-1.0.0.yaml                    |  3 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+ drivers/irqchip/irq-sifive-plic.c             | 94 ++++++++++++++++++-
+ 3 files changed, 98 insertions(+), 1 deletion(-)
 
-I don't remember this being discussed before.
+-- 
+2.51.0
 
-> Happy hacking, everyone!
->=20
->=20
->  drivers/reset/core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 22f67fc77ae5..8a0f41963f6b 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -1028,8 +1028,10 @@ __of_reset_control_get(struct device_node *node, c=
-onst char *id, int index,
->  	if (ret =3D=3D -EINVAL)
->  		return ERR_PTR(ret);
->  	if (ret) {
-> -		if (!IS_ENABLED(CONFIG_RESET_GPIO))
-> -			return optional ? NULL : ERR_PTR(ret);
-> +		if (!IS_ENABLED(CONFIG_RESET_GPIO)) {
-> +			pr_warn("%s(): RESET_GPIO driver not enabled, cannot fall back\n", __=
-func__);
-> +			return ERR_PTR(ret);
-> +		}
-> =20
->  		/*
->  		 * There can be only one reset-gpio for regular devices, so
-
-The reset-gpios phandle check should be done first, then. The warning
-only makes sense if that property exist, and returning -ENOENT for an
-optional reset is wrong if neither phandle property exists in the DT.
-
-I think putting the IS_ENABLED check first was intended to save an
-unnecessary "reset-gpios" phandle lookup on kernels with
-CONFIG_RESET_GPIO=3Dn.
-
-In short, if both of_parse_phandle_with_args() return -ENOENT, we
-should continue to silently return (optional ? NULL : -ENOENT), even if
-CONFIG_RESET_GPIO=3Dn.
-
-I think the message should be pr_err() level if we return an error that
-will cause the consumer driver probe to fail.
-
-regards
-Philipp
 
