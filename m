@@ -1,100 +1,228 @@
-Return-Path: <linux-kernel+bounces-853856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2418DBDCC64
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA83BDCC7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E213B6874
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5A9188E8CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB2F31280E;
-	Wed, 15 Oct 2025 06:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B813126CE;
+	Wed, 15 Oct 2025 06:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0xFHOo/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8cOtCDz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3449621A447;
-	Wed, 15 Oct 2025 06:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE673313293;
+	Wed, 15 Oct 2025 06:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510656; cv=none; b=PAWpH3cOZZVRJn4qz21QnKMZne1a1twDPy5K5+K2UC4yeG+kjF70YWYBisAM7AJdEvL+auSthnwZt5zBATm2p74gJ9WJ7I9w3QDjBIgIBfVDfNywYWriRIgyURdp0jQi0R2eGBO9pSYeJFyVvBNct9k+J7vlC3BL+4YARsfxhPQ=
+	t=1760510780; cv=none; b=uPNfQWdmipqGUNXXvHwHUuNKofrz/dhdUIA39x3gQ5RaaY/w/Q9L6hQram78OnFLJKMZ4TaghaG+20gLVMhu/lBb2B4HlWSmhO2sUQKfxZl/3qV3B2xw4paEYL8TUCXekoV0AL8Uv9+zfK8AG+tUHZ2L9oVd9Yw6ERscFUI7fAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510656; c=relaxed/simple;
-	bh=Ng/TpONxqJIcYfHCXWiNhUnJ8g9KU2/KbXEEA1wmwyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jnkTRj0ufxxT511rvoefE21b9wUmpXPdn+TzJNSKZUgZ4XOFt5Cv5w6ghVodn1f9yZ2XdjrFwqmAAZIAjGogpbGmYnK5ZC5xjei5Z8JKhUmOehzLtP+SSx55sOtsMjdFQ9rtzQTows4gIICiIFg38KDTJv615iaJQyDRKlL2Q84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0xFHOo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A47FC4CEF8;
-	Wed, 15 Oct 2025 06:44:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760510655;
-	bh=Ng/TpONxqJIcYfHCXWiNhUnJ8g9KU2/KbXEEA1wmwyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a0xFHOo/AodCLJYuRhRDGNzyP0paUpB7BlbhboayGDkqaPpBf2LUvibc9K3xiWAsg
-	 nZU8URiUNXMeQpHnVJ+BIygtX0nOCdJcZHhOSYHXr1vrLYkvM+/ZAF9qVHpsK/Ty7+
-	 cV331e+Xpi92a4efrSS3XoxTq5XD8shJWnm1cQRl/hyUIgQCfV4QDsZKVB36cO60U4
-	 r1GZFJjGj2E90EF36n3p+J2zO+oATDtSXGIeLCyc8Tl846NMAawQ0j1WHBzQeOoQM6
-	 zAS8LLHydG0A2Xp0dqQA9TlmBmd/ZNoj3o994bLTsx8M0Y5tNneBcJmpSgnPKMjieE
-	 OOl6e2KdPSqKg==
-Date: Wed, 15 Oct 2025 09:44:11 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH 4/4] nvme-pci: unmap MMIO pages with appropriate interface
-Message-ID: <20251015064411.GA6393@unreal>
-References: <cover.1760369219.git.leon@kernel.org>
- <6522567376d50f71425ccc4950552fca48e4f57f.1760369219.git.leon@kernel.org>
- <20251015042053.GC7073@lst.de>
+	s=arc-20240116; t=1760510780; c=relaxed/simple;
+	bh=PKOvLA1nOJSddxzqXGtRq7POOj0ei/pXhYyYAX3aUaw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O25gIWYeuHGKXc3OB0XAUcbo/MVhG6e7Qj0e5vEhIQd+yP3HOiN1MmnaD6w05JGT+2HSNl4jF0F8Y6TaWymRH+I3BORQXtOEsMxMSyJcis4i/DbQC6zt5FllbKqH9K7xGLX5VYbbN72Qd7BFuXNQhtTyLOgjtiU7BBQKGoAZRV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8cOtCDz; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760510779; x=1792046779;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=PKOvLA1nOJSddxzqXGtRq7POOj0ei/pXhYyYAX3aUaw=;
+  b=n8cOtCDzips3/gswZxd8oyT86JeIRb9tEGfmJ7vo7XN8uFuKJLWUBffQ
+   29WtoW+xVkIXMSGiMJA9JGjk+AVEbVFphILqQF+PTT/P4RCgeG1qpXmLu
+   lCVEXXBCa6VeIgGq6O0hN+5VQ12ur5fuIUKspfuDCch/huYBu+FVFS48u
+   rk6/HoQbNpU7SCYiZImGtmWxxcCeAZmkyO/CpKGRx2/v6o2wdpuXdyrHP
+   Gn/sZnbjJZ4W2Tp/qg/WIPBWCDNS87NNgkIwOZ+vCHvpT7s0HnvW9zrAm
+   2KXMN0e4IDFT7S5+f4mE28jovLBHR3sQdhEYPKevzMCgP5I4+PD4FyEmM
+   Q==;
+X-CSE-ConnectionGUID: b8mPwlawQmSmPho7shfQ9A==
+X-CSE-MsgGUID: /3mL3C8PRyyhI519F0hliA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="50242457"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="50242457"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 23:46:18 -0700
+X-CSE-ConnectionGUID: Iv32JucjRP6UgisB1+q87g==
+X-CSE-MsgGUID: WlF3FDn7Tz+f67PV2g5+fg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182029891"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by fmviesa006.fm.intel.com with ESMTP; 14 Oct 2025 23:46:14 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [Patch v8 02/12] perf/x86/intel: Fix NULL event access and potential PEBS record loss
+Date: Wed, 15 Oct 2025 14:44:12 +0800
+Message-Id: <20251015064422.47437-3-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
+References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015042053.GC7073@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 06:20:53AM +0200, Christoph Hellwig wrote:
-> On Mon, Oct 13, 2025 at 06:34:12PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Block layer maps MMIO memory through dma_map_phys() interface
-> > with help of DMA_ATTR_MMIO attribute. There is a need to unmap
-> > that memory with the appropriate unmap function, something which
-> > wasn't possible before adding new REQ attribute to block layer in
-> > previous patch.
-> 
-> This should go into the same patch that switches to dma_map_phys.
+When intel_pmu_drain_pebs_icl() is called to drain PEBS records, the
+perf_event_overflow() could be called to process the last PEBS record.
 
-I don't think so, dma_map_phys() patch [1] doesn't change any behavior
-and dma_map_page() is equal to dma_map_phys(... , attr = 0),
+While perf_event_overflow() could trigger the interrupt throttle and
+stop all events of the group, like what the below call-chain shows.
 
-> Unless I'm missing something it also misses passing the flag for
-> the metadata mapping.
+perf_event_overflow()
+  -> __perf_event_overflow()
+    ->__perf_event_account_interrupt()
+      -> perf_event_throttle_group()
+        -> perf_event_throttle()
+          -> event->pmu->stop()
+            -> x86_pmu_stop()
 
-Yes, I didn't realize that same request can have both metadata and data
-payloads.
+The side effect of stopping the events is that all corresponding event
+pointers in cpuc->events[] array are cleared to NULL.
 
-> 
-> Btw, where is all this going?  Are you trying to remove the auto
-> detection of P2P in the low-level dma mapping routines?  If so that
-> should probably go into at very least the cover lttter, but probably also
-> the commit logs.
+Assume there are two PEBS events (event a and event b) in a group. When
+intel_pmu_drain_pebs_icl() calls perf_event_overflow() to process the
+last PEBS record of PEBS event a, interrupt throttle is triggered and
+all pointers of event a and event b are cleared to NULL. Then
+intel_pmu_drain_pebs_icl() tries to process the last PEBS record of
+event b and encounters NULL pointer access.
 
-It is an outcome of multiple things:
-1. We missed setting of IOMMU_MMIO flag in dma-iommu.c flow for p2p pages
-and for that we need some external indication as memory type is already
-known to the callers.
-2. Robin expressed concerns about overloading DMA_ATTR_SKIP_CPU_SYNC.
+To avoid this NULL event access and potential PEBS record loss, snapshot
+cpuc->events[] into a local events[] before drian_pebs() helper calling
+perf_event_overflow() and then use the local events[] to process the
+left PEBS records.
 
-[1] https://lore.kernel.org/all/a40705f38a9f3c757f30228b9b848ce0a87cbcdd.1760369219.git.leon@kernel.org/
-[2] https://lore.kernel.org/all/751e7ece-8640-4653-b308-96da6731b8e7@arm.com/
+Besides intel_pmu_drain_pebs_nhm() has similar issue and fix it as well.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
+Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+Suggested-by: Kan Liang <kan.liang@linux.intel.com>
+Tested-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+ arch/x86/events/intel/ds.c | 36 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index c0b7ac1c7594..259a0ff807eb 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2487,6 +2487,7 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
+ 
+ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_data *data)
+ {
++	struct perf_event *events[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {NULL};
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	struct debug_store *ds = cpuc->ds;
+ 	struct perf_event *event;
+@@ -2526,9 +2527,11 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 
+ 		/* PEBS v3 has more accurate status bits */
+ 		if (x86_pmu.intel_cap.pebs_format >= 3) {
+-			for_each_set_bit(bit, (unsigned long *)&pebs_status, size)
++			for_each_set_bit(bit, (unsigned long *)&pebs_status, size) {
+ 				counts[bit]++;
+-
++				if (counts[bit] && !events[bit])
++					events[bit] = cpuc->events[bit];
++			}
+ 			continue;
+ 		}
+ 
+@@ -2566,19 +2569,31 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 		 * If collision happened, the record will be dropped.
+ 		 */
+ 		if (pebs_status != (1ULL << bit)) {
+-			for_each_set_bit(i, (unsigned long *)&pebs_status, size)
++			for_each_set_bit(i, (unsigned long *)&pebs_status, size) {
+ 				error[i]++;
++				if (error[i] && !events[i])
++					events[i] = cpuc->events[i];
++			}
+ 			continue;
+ 		}
+ 
+ 		counts[bit]++;
++		/*
++		 * perf_event_overflow() called by below __intel_pmu_pebs_events()
++		 * could trigger interrupt throttle and clear all event pointers of
++		 * the group in cpuc->events[] to NULL. So snapshot the event[] before
++		 * it could be cleared. This avoids the possible NULL event pointer
++		 * access and PEBS record loss.
++		 */
++		if (counts[bit] && !events[bit])
++			events[bit] = cpuc->events[bit];
+ 	}
+ 
+ 	for_each_set_bit(bit, (unsigned long *)&mask, size) {
+ 		if ((counts[bit] == 0) && (error[bit] == 0))
+ 			continue;
+ 
+-		event = cpuc->events[bit];
++		event = events[bit];
+ 		if (WARN_ON_ONCE(!event))
+ 			continue;
+ 
+@@ -2603,6 +2618,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 
+ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_data *data)
+ {
++	struct perf_event *events[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {NULL};
+ 	short counts[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {};
+ 	void *last[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS];
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+@@ -2655,6 +2671,16 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+ 						       setup_pebs_adaptive_sample_data);
+ 			}
+ 			last[bit] = at;
++
++			/*
++			 * perf_event_overflow() called by below __intel_pmu_pebs_last_event()
++			 * could trigger interrupt throttle and clear all event pointers of
++			 * the group in cpuc->events[] to NULL. So snapshot the event[] before
++			 * it could be cleared. This avoids the possible NULL event pointer
++			 * access and PEBS record loss.
++			 */
++			if (counts[bit] && !events[bit])
++				events[bit] = cpuc->events[bit];
+ 		}
+ 	}
+ 
+@@ -2662,7 +2688,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+ 		if (!counts[bit])
+ 			continue;
+ 
+-		event = cpuc->events[bit];
++		event = events[bit];
+ 
+ 		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
+ 					    counts[bit], setup_pebs_adaptive_sample_data);
+-- 
+2.34.1
+
 
