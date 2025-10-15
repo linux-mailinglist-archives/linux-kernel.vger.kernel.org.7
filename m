@@ -1,273 +1,140 @@
-Return-Path: <linux-kernel+bounces-854964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E38BDFDB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC01BDFDB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 053214F1850
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:29:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BD8B4F1573
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E4D33A015;
-	Wed, 15 Oct 2025 17:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0847333EAE2;
+	Wed, 15 Oct 2025 17:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="WPIM0HV/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XQls8kp2"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jI4v02vF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADA338F3D;
-	Wed, 15 Oct 2025 17:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFDC33CEB9;
+	Wed, 15 Oct 2025 17:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549349; cv=none; b=M5bX4KoJuzwYlJg0wbEGLLJ7HfrHVm7QjG3B4QaCEDPriUTOkMsgoiPS76g/jHC/iw4/zDHewu9Nzs4FIrVpU4JY9fpeuQRdiqvfsyHdRDAA0nNtag9HylYQWgvzt2XvEVrxQb7aLrNL8DneHjTgnSX2Xoq4y0iYVrHQmLCgCvQ=
+	t=1760549351; cv=none; b=cOVaqIlD0Joq75N4fwzoBxVk20W/HMrQW4rBqhjNESoVUBnWAmYZGADkwryCoWsf0U1uU0uV/RQkobh2bwZRAMuqFdbc2Jvys/4+2aCROfWnRjxrffshSfdK2kZCZnjy1bQghWICIkos/f9MgfspbWcozvnQ6jxKmJVjkLuw498=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549349; c=relaxed/simple;
-	bh=5H8mfESP3dxIzl/iGvVR1gvFW1pHz/AkUxhDW0bj/NQ=;
+	s=arc-20240116; t=1760549351; c=relaxed/simple;
+	bh=SpeBYhbxHCk163KaUkm/ZEz17U9C1brxzNHZXCH8osY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZasA8rKcP+dEJpli9H2ErqCuolnvKF21C07HFu4jldmc8uji9PbWN8yPqSBwpuzWCFv39WiN6kW8JvTx9Cxh/h/QPR2b/xtQMcjxup1V2/rxRs6NlC+HvroLbvn0IPJn5QngEVGYotjEdFjN0wQJ+6iajp4xZKccQYYOeX2icc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=WPIM0HV/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XQls8kp2; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 107D17A01A5;
-	Wed, 15 Oct 2025 13:29:06 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Wed, 15 Oct 2025 13:29:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1760549345;
-	 x=1760635745; bh=JpHOjUlmPxlqLmVUG2wnIN2rAbw2kC6v6XhYhWuP4pc=; b=
-	WPIM0HV/YDsmOKB57DoRVOa9p+h6xRElVYHaTLnYrzCdpolPFSuW5LetWEfjEdm8
-	Yk9mKBIdDwTtqhpyFILhEKfbB86s00z4lLtWfOt5LHV9zdreNn1k2GJF5lCuZIsc
-	96sdeE1gKZpJnIOG7LTjF0O59MoEJNTaZino2aE4wmt2S0AnY8Zpio8DDfwGUpuM
-	lqZ18HZ+p0ws+wbn9v1ROMZJE1AbW4Ru3C4jJWQ//qjcD74Tt+hbzTQy2aaqCW3H
-	6EJeZqTfjFSao7bOt4m4VZaChAjtBYth1iBCbEUzVID0lJs173aTPRqpicmzOZWE
-	AQHYxjDGQmUwM6ciRqwyBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760549345; x=
-	1760635745; bh=JpHOjUlmPxlqLmVUG2wnIN2rAbw2kC6v6XhYhWuP4pc=; b=X
-	Qls8kp2kGS2gsJ6UBWJfeBqhRESqK4AnCrj52xoxcY8dh2tEQN5U9zSaxp4EqFaw
-	QoYCdonF2qAXwVzIbywIqBshGFYWGhoEPjxaNCWQ7QnNhL6QWaKUByMbDp7M+bbc
-	XpIBMfgGumKyHizR3fvx25q01Bv0GXkXb/Ozqiyjv0wBGDK70NZghVm4HuU+Acw4
-	VO3QsB0EbQHaJ+WRnU7UmUgva22s5ihTnSf+gx0L61FgDkf0Zwr+3GxPJkfl2Yal
-	6ZIsX+lH0shVvgCPbAI9a2HdyQCNaMB7nMLYqWHvAJxtYhErsI7F9J3BG4ZNOvW4
-	adt5+jHZB2gUobT7PJlTQ==
-X-ME-Sender: <xms:4dnvaFHgNBwQpMRfdh1f5760-9POHqWdIg02h5epcHD0f0zfjydQEA>
-    <xme:4dnvaP6na0BiSCKYqvUojZIHU0VOno9SO5Z5YVzAhSwJ_-eDPcrAthqbUaOEDWhUt
-    oWQ81jsOIZ61KlEgbpkL3Eq7yTeFsEfVzgDuIodOvmxoCJaOqaUoA>
-X-ME-Received: <xmr:4dnvaAtDPl1bB8-SRFZvSOHY1OBOGa5fSGV5QIVNRHPUrQtYXq5AJYCo4FTqFbvA8v_mN8YVHIQnYAFIXDPvR7-fP4X_7Yk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdegtdduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
-    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
-    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedunecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
-    rghtvggthhdrshgvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepphhrrggshhgrkhgrrhdrtghsvghnghhgsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepphgruhhlsehpsggrrhhkvghrrdguvghvpdhrtghpthhtoheprghnughrvg
-    ifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghm
-    lhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
-    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehsvghrghgvihdrshhhthihlhihoh
-    hvsegtohhgvghnthgvmhgsvgguuggvugdrtghomhdprhgtphhtthhopehnvghtuggvvhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:4dnvaL-raNsBfOhWZBHhp5cbl-Vckd1jwwy0bYPHb6RYtWrfJsMhkA>
-    <xmx:4dnvaCnW7uEosx3o1ZHykNHE3r4sKsBShP92a0ygy1-4Ja6YaBC82w>
-    <xmx:4dnvaDNRTJTXrhP3K_jAMn9ubeMdD4axH9k0cy_rwTW3R9I1_oNapQ>
-    <xmx:4dnvaJKidZpH4I9-5QmxiQ9VoeGCQc7mxcIhNLRKn1vSy35wvOGp1w>
-    <xmx:4dnvaJLfXXUblAWzjyZ51qBVKItq5mmjmAEd6yw_d-h5Bw4kn8uNwcQi>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 13:29:05 -0400 (EDT)
-Date: Wed, 15 Oct 2025 19:29:04 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: ravb: Make DBAT entry count configurable per-SoC
-Message-ID: <20251015172904.GH439570@ragnatech.se>
-References: <20251015150026.117587-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251015150026.117587-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251015153556.GC439570@ragnatech.se>
- <CA+V-a8vRXN+2CDQu=FkN_teTDLywzGPn_=8obvKC+3tmwYo4hA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUXrDq5CXON1UTFX9xDdgzIazJ7vk00lI1gpX7HMpD78EuBZzn8X7JWRzP4cA185EgTascE/CslEvW7gJGwQuAh4Q1L0sC5FRiXhxUKSsxM3y6rNSfsVw8y2q94cReMiWrEGOR3dbxKejAP5ZprLn23UGL4+5izRGlSY3CDvGL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jI4v02vF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A98BC4CEF8;
+	Wed, 15 Oct 2025 17:29:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760549351;
+	bh=SpeBYhbxHCk163KaUkm/ZEz17U9C1brxzNHZXCH8osY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jI4v02vFvJPi/v5kjOhzuQBLbsh4KfUZHKpZEI7YBssQyPQVsyGZ/spxjdEs/74QC
+	 4fLCeOleRYhOrB4EqK9LYDrpf0lOjvMZsuipLGIL3Nu79DeUHY2Tut/zQrPc1UlCvS
+	 ktj7vOvARIq0rBfyfHNUwBfJl6d9GwNEP4qr7Y5gXNn6q+cvxnRr7bx6gxPXOt3PnW
+	 nPv6gRT97SIA+YNC3h6W3+wXPRM8ARhb48YPvlCKJ+XkkCBE2fLIusZIOW/GVg6kJ2
+	 u8cnuJYhLFWPdB9vVAKG75/rIzmKpq7pul3NIOQW66wfAXMtdnTMxJN49HglBcAkYh
+	 sXg/94uj1Pxxw==
+Date: Wed, 15 Oct 2025 10:29:06 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, John Crispin <john@phrozen.org>,
+	Alexey Gladkov <legion@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] kbuild: modules.builtin is empty on architectures without
+ CONFIG_ARCH_VMLINUX_NEEDS_RELOCS
+Message-ID: <20251015172906.GA1630960@ax162>
+References: <aO-kDdBybaHSn62G@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8vRXN+2CDQu=FkN_teTDLywzGPn_=8obvKC+3tmwYo4hA@mail.gmail.com>
+In-Reply-To: <aO-kDdBybaHSn62G@makrotopia.org>
 
-On 2025-10-15 18:05:34 +0100, Lad, Prabhakar wrote:
-> Hi Niklas,
-> 
-> Thank you for the review.
-> 
-> On Wed, Oct 15, 2025 at 4:36 PM Niklas Söderlund
-> <niklas.soderlund@ragnatech.se> wrote:
-> >
-> > Hi Prabhakar,
-> >
-> > Thanks for your work.
-> >
-> > On 2025-10-15 16:00:24 +0100, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > The number of CDARq (Current Descriptor Address Register) registers is not
-> > > fixed to 22 across all SoC variants. For example, the GBETH implementation
-> > > uses only two entries. Hardcoding the value leads to incorrect resource
-> > > allocation on such platforms.
-> > >
-> > > Pass the DBAT entry count through the per-SoC hardware info struct and use
-> > > it during probe instead of relying on a fixed constant. This ensures
-> > > correct descriptor table sizing and initialization across different SoCs.
-> > >
-> > > Fixes: feab85c7ccea ("ravb: Add support for RZ/G2L SoC")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > I have not verified with documentation the setting of 2 for
-> > gbeth_hw_info. But the change itself is good.
-> >
-> > > ---
-> > >  drivers/net/ethernet/renesas/ravb.h      | 2 +-
-> > >  drivers/net/ethernet/renesas/ravb_main.c | 9 +++++++--
-> > >  2 files changed, 8 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-> > > index 7b48060c250b..d65cd83ddd16 100644
-> > > --- a/drivers/net/ethernet/renesas/ravb.h
-> > > +++ b/drivers/net/ethernet/renesas/ravb.h
-> > > @@ -1017,7 +1017,6 @@ enum CSR2_BIT {
-> > >  #define CSR2_CSUM_ENABLE (CSR2_RTCP4 | CSR2_RUDP4 | CSR2_RICMP4 | \
-> > >                         CSR2_RTCP6 | CSR2_RUDP6 | CSR2_RICMP6)
-> > >
-> > > -#define DBAT_ENTRY_NUM       22
-> > >  #define RX_QUEUE_OFFSET      4
-> > >  #define NUM_RX_QUEUE 2
-> > >  #define NUM_TX_QUEUE 2
-> > > @@ -1062,6 +1061,7 @@ struct ravb_hw_info {
-> > >       u32 rx_max_frame_size;
-> > >       u32 rx_buffer_size;
-> > >       u32 rx_desc_size;
-> > > +     u32 dbat_entry_num;
-> >
-> > I have been wondering for some time if we shall not start to document
-> > these fields as they always take so much time to get back to what each
-> > of them represent. How do you feel about starting a header?
-> >
-> > /**
-> >  * dbat_entry_num: Describe me here.
-> >  */
-> >
-> I agree, let's take this separately into a different patch as it will
-> make things easier to backport. What do you think?
+Hi Daniel,
 
-Works for me.
+Thanks for the report!
 
+On Wed, Oct 15, 2025 at 02:39:25PM +0100, Daniel Golle wrote:
+> While build todays net-next tree on a Lantiq-based board I use for
+> testing I run into a weird problem which gave me some headaches. It
+> turns there is a regression introduced in commit 39cfd5b12160 ("kbuild:
+> extract modules.builtin.modinfo from vmlinux.unstripped") which causes
+> both modules.builtin and modules.builtin.modinfo to be empty files on
+> certain architectures.
 > 
-> Cheers,
-> Prabhakar
+> AFFECTED SCOPE:
+> ===============
+> This bug affects all architectures where:
+>   1. CONFIG_ARCH_VMLINUX_NEEDS_RELOCS is NOT set, AND
+>   2. The architecture uses the standard ELF_DETAILS macro in its linker
+>      script (which places .modinfo at address 0 as a non-allocatable
+>      section)
 > 
-> > Without, but preferably with, this added.
-> >
-> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> >
-> > >       unsigned aligned_tx: 1;
-> > >       unsigned coalesce_irqs:1;       /* Needs software IRQ coalescing */
-> > >
-> > > diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> > > index 9d3bd65b85ff..69d382e8757d 100644
-> > > --- a/drivers/net/ethernet/renesas/ravb_main.c
-> > > +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> > > @@ -2694,6 +2694,7 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
-> > >       .rx_buffer_size = SZ_2K +
-> > >                         SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
-> > >       .rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-> > > +     .dbat_entry_num = 22,
-> > >       .aligned_tx = 1,
-> > >       .gptp = 1,
-> > >       .nc_queues = 1,
-> > > @@ -2717,6 +2718,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
-> > >       .rx_buffer_size = SZ_2K +
-> > >                         SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
-> > >       .rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-> > > +     .dbat_entry_num = 22,
-> > >       .internal_delay = 1,
-> > >       .tx_counters = 1,
-> > >       .multi_irqs = 1,
-> > > @@ -2743,6 +2745,7 @@ static const struct ravb_hw_info ravb_gen4_hw_info = {
-> > >       .rx_buffer_size = SZ_2K +
-> > >                         SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
-> > >       .rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-> > > +     .dbat_entry_num = 22,
-> > >       .internal_delay = 1,
-> > >       .tx_counters = 1,
-> > >       .multi_irqs = 1,
-> > > @@ -2769,6 +2772,7 @@ static const struct ravb_hw_info ravb_rzv2m_hw_info = {
-> > >       .rx_buffer_size = SZ_2K +
-> > >                         SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
-> > >       .rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-> > > +     .dbat_entry_num = 22,
-> > >       .multi_irqs = 1,
-> > >       .err_mgmt_irqs = 1,
-> > >       .gptp = 1,
-> > > @@ -2794,6 +2798,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
-> > >       .rx_max_frame_size = SZ_8K,
-> > >       .rx_buffer_size = SZ_2K,
-> > >       .rx_desc_size = sizeof(struct ravb_rx_desc),
-> > > +     .dbat_entry_num = 2,
-> > >       .aligned_tx = 1,
-> > >       .coalesce_irqs = 1,
-> > >       .tx_counters = 1,
-> > > @@ -3025,7 +3030,7 @@ static int ravb_probe(struct platform_device *pdev)
-> > >       ravb_parse_delay_mode(np, ndev);
-> > >
-> > >       /* Allocate descriptor base address table */
-> > > -     priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
-> > > +     priv->desc_bat_size = sizeof(struct ravb_desc) * info->dbat_entry_num;
-> > >       priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
-> > >                                           &priv->desc_bat_dma, GFP_KERNEL);
-> > >       if (!priv->desc_bat) {
-> > > @@ -3035,7 +3040,7 @@ static int ravb_probe(struct platform_device *pdev)
-> > >               error = -ENOMEM;
-> > >               goto out_rpm_put;
-> > >       }
-> > > -     for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
-> > > +     for (q = RAVB_BE; q < info->dbat_entry_num; q++)
-> > >               priv->desc_bat[q].die_dt = DT_EOS;
-> > >
-> > >       /* Initialise HW timestamp list */
-> > > --
-> > > 2.43.0
-> > >
-> >
-> > --
-> > Kind Regards,
-> > Niklas Söderlund
+> This includes at least MIPS (32-bit and 64-bit) and likely several other
+> architectures. The issue does NOT affect architectures with
+> CONFIG_ARCH_VMLINUX_NEEDS_RELOCS=y (e.g., x86 with certain
+> configurations, parisc, s390).
+> 
+> OBSERVED BEHAVIOR:
+> ==================
+> After a successful kernel build with the affected configuration:
+>   - modules.builtin: 0 bytes (empty)
+>   - modules.builtin.modinfo: 0 bytes (empty)
+>   - vmlinux.o: contains .modinfo section (verified with readelf)
+>   - vmlinux.unstripped: .modinfo section is MISSING (verified with
+>     readelf)
+...
+> REPRODUCTION:
+> =============
+> 1. Configure a kernel for MIPS (or any other architecture without
+>    CONFIG_ARCH_VMLINUX_NEEDS_RELOCS)
+> 2. Ensure CONFIG_MODULES=y is set
+> 3. Build the kernel: make
+> 4. Observe: ls -lh modules.builtin modules.builtin.modinfo
+>    Both files will be 0 bytes
 
--- 
-Kind Regards,
-Niklas Söderlund
+I cannot reproduce this with a simple defconfig build for either mips or
+arm64 using GCC 15.2.0 / binutils 2.45 from kernel.org [1]:
+
+  $ git show -s --pretty=kernel
+  5a6f65d15025 ("Merge tag 'bitmap-for-v6.18-rc2' of https://github.com/norov/linux")
+
+  $ make -skj"$(nproc)" ARCH=mips CROSS_COMPILE=mips-linux- clean defconfig all
+  ...
+
+  $ scripts/config -s MODULES -s ARCH_VMLINUX_NEEDS_RELOCS
+  y
+  undef
+
+  $ ls -hl modules.builtin{,.modinfo}
+  -rw-r--r-- 1 nathan nathan 8.7K Oct 15 10:19 modules.builtin
+  -rwxr-xr-x 1 nathan nathan 146K Oct 15 10:19 modules.builtin.modinfo
+
+  $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux- clean virtconfig all
+
+  $ scripts/config -s MODULES -s ARCH_VMLINUX_NEEDS_RELOCS
+  y
+  undef
+
+  $ ls -hl modules.builtin{,.modinfo}
+  -rw-r--r-- 1 nathan nathan  18K Oct 15 10:23 modules.builtin
+  -rw-r--r-- 1 nathan nathan 284K Oct 15 10:23 modules.builtin.modinfo
+
+What version of GCC and binutils are you using? Your configuration may
+be helpful for reproducing as well.
+
+[1]: https://kernel.org/pub/tools/crosstool/
+
+Cheers,
+Nathan
 
