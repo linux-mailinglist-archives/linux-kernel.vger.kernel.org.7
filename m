@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-854222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43ECBDDDB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:49:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DAFBDDDC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F54B19A82DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 679083BEAEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F7831BC9E;
-	Wed, 15 Oct 2025 09:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD1531B133;
+	Wed, 15 Oct 2025 09:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sWas1ByB"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECyxHhE2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C8F1A23B9;
-	Wed, 15 Oct 2025 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA2831AF21;
+	Wed, 15 Oct 2025 09:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521718; cv=none; b=EwkhiHbtdkVP2OTCGi+C53YlG2YxLnb+aeyPo2dBNwjMrekGmvALB+GoqDSBSB6CNocVKZjSL8XgLTBF/ln/CA9eZmDrbmHKFbMDP1t/MTKPXJxqycmrvfT6JomBVJa+7vp+nWeIj3pVBYlc1ZAtskyJpfyCmspL09V+bqf9D0E=
+	t=1760521791; cv=none; b=GAPHTNFewb1XFaMh5tDr1Asmy5Xj7NmE/ApS5z+jqvzI3ovsAYNtOzz8sR45XrSgmH/ZcqXUsdohvN5pc0eQJRq6Fv+N4fvLTso+syBFkLjIBgRCHXw07s7fKghLhTd8WtmcLDmTlRCUG1svJVM2xgDGA/oySQep1UUdup1QZmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521718; c=relaxed/simple;
-	bh=NFGnU8x9lnrS2wxj8pS1t+Oz6cPjut0jLD7+R+/8HxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJZc502uLzUKEsQD4Sd7tUcpoVAUM8M8Kgqiiv2IShVJedHDHW31vV+o2z/aHboKmPkTtGRLpAH6oI/ZSxPvlayoTHw3OFllvF7E1fYz0FBm5gUVk8HKQff3UIJJCTKt+j5gWVZJQOVNG0wQUsDeiKUiqyK8FDKdgNUryRYkBps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sWas1ByB; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nms/uf1fDtw2HCTch0VpFbmftAd//60CvgRED5bBFXg=; b=sWas1ByBD3WT0lWsd7v10GP4+M
-	wXa7if2yM4Nyg40a0ELo2/k/RnN3N9/aP5PKmIZjs6yjLFRkz382IqB5nHGi9Vk0Ypd+GM5/y1w8w
-	n6y0O6wqnLI1abtit5W3odZzuc1dyPZF+9oj+o1fHUVmgPp39Afajrj6L7/xIrlbHiclykI2Jw9Af
-	xspa9jmxzTAHFtj7LYc98xqGvPPUQGdCfxoC28NjgM6q40VV+3WYKNAHufo5jR4k134PnY47DrY9D
-	VYwmbFY2PXoO7B4Emv+sW2cagxu/DAHaFgf72U3cvizEkITvN2eDMPsdQ3v+YiYERZd8dzraiPyY2
-	qb/KpAMg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57256)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v8y7M-000000004KT-3ori;
-	Wed, 15 Oct 2025 10:48:24 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v8y7J-000000002Aa-3qzR;
-	Wed, 15 Oct 2025 10:48:21 +0100
-Date: Wed, 15 Oct 2025 10:48:21 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Buday Csaba <buday.csaba@prolan.hu>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] net: mdio: reset PHY before attempting to access
- registers in fwnode_mdiobus_register_phy
-Message-ID: <aO9t5TWNDpIe3q9g@shell.armlinux.org.uk>
-References: <20251013135557.62949-1-buday.csaba@prolan.hu>
- <20251013135557.62949-2-buday.csaba@prolan.hu>
- <e4dbb9e0-4447-485a-8b64-911c6a3d0a29@bootlin.com>
- <aO9kN_UgU6RpOYn2@debianbuilder>
+	s=arc-20240116; t=1760521791; c=relaxed/simple;
+	bh=NJZvW+JYKZcvHAok/gYBcGxTybf9PkX3/50tqo3ey38=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Wl+wesZSwpAVSkuxCXS6QrIx6MPeFEcu2xKmYPAqIc+4RnpwW7xVoTwpXNBZHzxa2Fajr6Wm9uZl5dsJ/VYwK7fV8moEJuP3gSCIQxNbGObk2MZzvSF+WugPo7ST8TtADahvXmuvqxwnRAC+3V+GN0QMjH76RoGUMBL5rmLeyaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECyxHhE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C451C4CEF8;
+	Wed, 15 Oct 2025 09:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760521791;
+	bh=NJZvW+JYKZcvHAok/gYBcGxTybf9PkX3/50tqo3ey38=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ECyxHhE2CgnU38zjNUREyLuuvYEny0b2nr81cS0njxwtyESpV/L2UBdbpXrIZQc2U
+	 VRIfjrqMS2wcoXDRsM0Sjf9hXWxLGNpn265UNQYd3b/qVScb79TndN+3dJ8iD8ndjQ
+	 8m2HKsaKjAWy9wKmj9w6LndxIePCUkP68jAb/xVdnBRa74zhlsSTh50ccHuG5dHUDd
+	 4+0emSWU/aVqPQxP+0rBaKxys17Dwlljx9+/al9l8iBPCxEO3pWXfSjj2dU0KbSpAj
+	 +w+07O0iajTCTdtkCiGnmWLZ7K1yxVJv2OaWyI906gChGwuHeTKtxqiH4//FAcEpVL
+	 pLgoAS+1q3OZA==
+From: Mark Brown <broonie@kernel.org>
+To: tiwai@suse.de, Baojun Xu <baojun.xu@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, 13916275206@139.com, 
+ alsa-devel@alsa-project.org, shenghao-ding@ti.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, devicetree@vger.kernel.org, k-yi@ti.com, 
+ henry.lo@ti.com, robinchen@ti.com, jesse-ji@ti.com, will-wang@ti.com, 
+ jim.shil@goertek.com, toastcheng@google.com, chinkaiting@google.com
+In-Reply-To: <20251002072925.26242-1-baojun.xu@ti.com>
+References: <20251002072925.26242-1-baojun.xu@ti.com>
+Subject: Re: [PATCH v4 1/2] ASoC: tas2781: Support more newly-released
+ amplifiers tas58xx in the driver
+Message-Id: <176052178677.20166.7273787337857943286.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 10:49:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO9kN_UgU6RpOYn2@debianbuilder>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-96507
 
-On Wed, Oct 15, 2025 at 11:07:03AM +0200, Buday Csaba wrote:
-> On Mon, Oct 13, 2025 at 04:31:10PM +0200, Maxime Chevallier wrote:
-> > Hi,
-> > 
-> > On 13/10/2025 15:55, Buday Csaba wrote:
-> > > When the ID of an ethernet PHY is not provided by the 'compatible'
-> > > string in the device tree, its actual ID is read via the MDIO bus.
-> > > For some PHYs this could be unsafe, since a hard reset may be
-> > > necessary to safely access the MDIO registers.
-> > > This patch makes it possible to hard-reset an ethernet PHY before
-> > > attempting to read the ID, via a new device tree property, called:
-> > > `reset-phy-before-probe`.
-> > > 
-> > > There were previous attempts to implement such functionality, I
-> > > tried to collect a few of these (see links).
-> > > 
-> > > Link: https://lore.kernel.org/lkml/1499346330-12166-2-git-send-email-richard.leitner@skidata.com/
-> > > Link: https://lore.kernel.org/all/20230405-net-next-topic-net-phy-reset-v1-0-7e5329f08002@pengutronix.de/
-> > > Link: https://lore.kernel.org/netdev/20250709133222.48802-4-buday.csaba@prolan.hu/
-> > > Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
-> > 
-> > This should probably be accompanied by a DT binding update,
-> > with some justification that this is indeed HW description
-> > and not OS confguration.
-> > 
+On Thu, 02 Oct 2025 15:29:24 +0800, Baojun Xu wrote:
+> TAS5802/TAS5815/TAS5828 has on-chip DSP without current/voltage feedback.
 > 
-> I have the corresponding patch ready, I just wanted this to be accepted
-> first. My description was to be:
+> 
 
-Please see Documentation/devicetree/bindings/submitting-patches.rst
-point 5.
+Applied to
 
-Basically, don't submit code that introduces a new undocumented DT
-property without also including the binding update in the patch set.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks.
+Thanks!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+[1/2] ASoC: tas2781: Support more newly-released amplifiers tas58xx in the driver
+      commit: 53a3c6e222836a23e8e0693395584aefc456dca6
+[2/2] ASoC: tas2781: Update ti,tas2781.yaml for adding tas58xx
+      commit: 7e6cfa3e94cf8278ee3170dc0b81fc6db1287e28
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
