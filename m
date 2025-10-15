@@ -1,54 +1,95 @@
-Return-Path: <linux-kernel+bounces-854035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A79BDD677
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FF7BDD69E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EA7D4EDE08
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E01400FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA233304984;
-	Wed, 15 Oct 2025 08:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA0302147;
+	Wed, 15 Oct 2025 08:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FvLfJ/xJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pjlFy6pX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hK0+5+uH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pjlFy6pX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hK0+5+uH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0352C30496A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693411F4295
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760516892; cv=none; b=OzNuxk/yPug+L2CzJ1s5XhKm9twp2Gv6jbPvgnpXDTIDzOUmCZkNrjylkciEKTy6qOJr8n/mGp+AdvPstiqCkMP4/eRj0gDBAryCQrRgOW2OzrAXH6h+tZzvkqTi7BT43fe0oKfMJg4SPyQ/+ei3OPiGrXcDb+u02QKHY6R/esM=
+	t=1760516912; cv=none; b=rji2dA839JIxLYjYJe0xJFucEYgVVKVllheB+6FCCz8G68Wdv23BXDU8yM5HBHGUH1aSl8jEViUX4h1VXpeCAf9IuMT2itmfP6W7G3pwVBjFcD9hYeyB4wIk50D/F6pSvsXWwr36AhQFYBIpYd9lu+59cwt/sP4i4WYcZQ6AQkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760516892; c=relaxed/simple;
-	bh=DUUJBOVgAjUbcI8pA66M3DD2k8SXU/r4JDMSjC3z394=;
+	s=arc-20240116; t=1760516912; c=relaxed/simple;
+	bh=Gjfb+IfhJc7M4yBtisKJV3diOk9SmHxVJeO0O6rUyrw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A5nT3+cfs8LhIHo1hapLclIXkNhIUaatm/Nia/cx5NlXzO1ERZlDLn4eBQTY8jdMXF4EYSISuynHoS87osNuF+r70tqy5uEid0pOOOCHHUFu4wuq46l/5yibiT6Qzoi8Rjvcg4S215LQGIbpkeslGXQIexHv0H0kk0YknENO8eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FvLfJ/xJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760516888;
-	bh=DUUJBOVgAjUbcI8pA66M3DD2k8SXU/r4JDMSjC3z394=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FvLfJ/xJxx6wLRijUOEzPZKYFnfRPvS8dcWujwZlm1EE0BZjj9YXqI0xdky7904+c
-	 N3FhXaK2aCHPLv8+BcOH/wUoyfsFM4kxVtmbzbQcgM3UFej0JzPUUDQ2SNM4WgL2hZ
-	 bNCV6B4tvYIk8wQDGV56rSqEi8q9g/SB0ZffvP8ePDKuFbbc5A/JytuBf1BQ5ifqrO
-	 ZiH/XG5OGjvblENgJz/9oE6jcA4ZEV7fYsg7sceTVaHFV+X4py8caZw5JCGSSJYmJ/
-	 CHLhhgHDkWaiG1GOQi0baQCZaoos5xAZceVxPVCpn/1SuEmPIR/V5N5VsWm8yUp/F+
-	 EZv80MmWNG8vw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 In-Reply-To:Content-Type; b=V7ubkuvn6lzNOR5jNnjF9ZAbNI5FcUYv0PFh/L7JQjhxBaRussgRjOu2bFWww7+E2p2xyu/6HgU0BlNndetoKWonoOlf0KSIAwGAFabB9+qdzUVDB/VugvlFs/cF9/lXntvtrECVyW+4FBs0DQv4kddUb4DOEu2xO+cL1IqOvII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pjlFy6pX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hK0+5+uH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pjlFy6pX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hK0+5+uH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F047917E1305;
-	Wed, 15 Oct 2025 10:28:07 +0200 (CEST)
-Message-ID: <234053da-7f1c-4642-b410-21d24a28a936@collabora.com>
-Date: Wed, 15 Oct 2025 10:28:07 +0200
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EF38033853;
+	Wed, 15 Oct 2025 08:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760516900; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
+	b=pjlFy6pXzOkp3UeHPyDVqKWq9KsbuPMvTIb3bv7vOlOqeLyuV/sXYenidAZvrR4OSD8x+b
+	EPnXyqq9UM2enEebsWDHZYLdU4VHA/dKVqiUuLxuZ59xoyueaUPfiGV3h7yRvmPEhFWnWc
+	VKaGl9/NZUpyNgkUyYdEBnywiugsjH4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760516900;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
+	b=hK0+5+uHgMQWFZQ68x2XXGlC6RvBH5phfiJzz4rdXIv4uOxA1NRVSPSUG9bDcnj5YhJrXs
+	AuipeVS4RGN/izAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pjlFy6pX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hK0+5+uH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760516900; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
+	b=pjlFy6pXzOkp3UeHPyDVqKWq9KsbuPMvTIb3bv7vOlOqeLyuV/sXYenidAZvrR4OSD8x+b
+	EPnXyqq9UM2enEebsWDHZYLdU4VHA/dKVqiUuLxuZ59xoyueaUPfiGV3h7yRvmPEhFWnWc
+	VKaGl9/NZUpyNgkUyYdEBnywiugsjH4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760516900;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
+	b=hK0+5+uHgMQWFZQ68x2XXGlC6RvBH5phfiJzz4rdXIv4uOxA1NRVSPSUG9bDcnj5YhJrXs
+	AuipeVS4RGN/izAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D135D13A29;
+	Wed, 15 Oct 2025 08:28:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eSL4LiNb72j4cwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 08:28:19 +0000
+Message-ID: <86eb8759-426f-4460-8bde-1d88e70e266f@suse.cz>
+Date: Wed, 15 Oct 2025 10:28:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,98 +97,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/12] Some Panfrost fixes and improvements
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Steven Price <steven.price@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com
-References: <20251015000930.356073-1-adrian.larumbe@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] mempool: clarify behavior of mempool_alloc_preallocated()
 Content-Language: en-US
-In-Reply-To: <20251015000930.356073-1-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+ <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+References: <20251014-mempool-doc-v1-1-bc9ebf169700@linutronix.de>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251014-mempool-doc-v1-1-bc9ebf169700@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: EF38033853
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-Il 15/10/25 02:09, Adrián Larumbe ha scritto:
-> This is v6 of https://lore.kernel.org/dri-devel/20251007150216.254250-1-adrian.larumbe@collabora.com/
+On 10/14/25 14:17, Thomas Weißschuh wrote:
+> The documentation of that function promises to never sleep.
+> However on PREEMPT_RT a spinlock_t might in fact sleep.
 > 
-> This patch series is a collection of minor fixes and improvements I came up
-> with while working on driver related stuff.
+> Reword the documentation so users can predict its behavior better.
 > 
+> mempool could also replace spinlock_t with raw_spinlock_t which doesn't
+> sleep even on PREEMPT_RT but that would take away the improved
+> preemptibility of sleeping locks.
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Whole series is
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-> Changelog:
->   v6:
->    - Don't optimise page range walk in the event of a double MMU fault
->    - Handle some minots and minor style changes
->    - Rebase patch series onto latest drm-misc-next
->   v5:
->   - Move devfreq record keeping further down job submission function to
->   keep busy count balanced in case of an early bail-out.
->   - In MMU page fault ISR, bail out when sgt for 2MiB page is not assigned,
->   rather than when the page array is populated. Add new commit for this.
->   - Add commit with myself as a new Panfrost maintainer
+> ---
+>  mm/mempool.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->   v4:
->    - Rebased older patch series onto latest drm-misc-next
->    - Added patch for renaming JM functions to reflect their actual role
->    - Fixed treatment of error code in perfcnt when enabling sample buffer AS
+> diff --git a/mm/mempool.c b/mm/mempool.c
+> index 1c38e873e546fadcc594f041874eb42774e3df16..cceb09b75ebe35f263a5fb95ff6d400221ecbdd5 100644
+> --- a/mm/mempool.c
+> +++ b/mm/mempool.c
+> @@ -461,8 +461,8 @@ EXPORT_SYMBOL(mempool_alloc_noprof);
+>   *             mempool_create().
+>   *
+>   * This function is similar to mempool_alloc, but it only attempts allocating
+> - * an element from the preallocated elements. It does not sleep and immediately
+> - * returns if no preallocated elements are available.
+> + * an element from the preallocated elements. It only takes a single spinlock_t
+> + * and immediately returns if no preallocated elements are available.
+>   *
+>   * Return: pointer to the allocated element or %NULL if no elements are
+>   * available.
 > 
->   v3:
->    - Minor convenience fixes to patches 3 and 4 in the series
->    - Move unmapping of maped range of BO to the function's error path
->    in case of BO mapping failure, also for putting BO's pages
->    - Split patch 6/8 into two: one makes sure the Job IRQ enablement mask
->    isn't recalculated at every device reset and uses the same expression
->    everywhere in the driver, and another one that breaks the enablement
->    function into two stages.
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251014-mempool-doc-625dd4996110
 > 
->   v2:
->    - Removed commit that provided an explicit fence cleanup function
->    - Added commit for removing unused Panfrost device structure member
->    - Refactored how optional job interrupt reenabling during reset is handled
->    - Make the way errors and successful return values are delivered from inside
->     panfrost_mmu_as_get more according to standard.
->    - Simplify unmapping of already mapped area when mapping the pages of a BO
->    - Fixing management of runtime-PM reference counts when failing HW job submission.
-> 
-> Adrián Larumbe (12):
->    drm/panfrost: Replace DRM driver allocation method with newer one
->    drm/panfrost: Handle inexistent GPU during probe
->    drm/panfrost: Handle job HW submit errors
->    drm/panfrost: Handle error when allocating AS number
->    drm/panfrost: Check sgt to know whether pages are already mapped
->    drm/panfrost: Handle page mapping failure
->    drm/panfrost: Don't rework job IRQ enable mask in the enable path
->    drm/panfrost: Make re-enabling job interrupts at device reset optional
->    drm/panfrost: Add forward declaration and types header
->    drm/panfrost: Remove unused device property
->    drm/panfrost: Rename panfrost_job functions to reflect real role
->    MAINTAINERS: Panfrost: Add Steven Price and Adrian Larumbe
-> 
->   MAINTAINERS                                   |   3 +-
->   drivers/gpu/drm/panfrost/panfrost_devfreq.c   |   4 +-
->   drivers/gpu/drm/panfrost/panfrost_device.c    |  68 +++++----
->   drivers/gpu/drm/panfrost/panfrost_device.h    |  13 +-
->   drivers/gpu/drm/panfrost/panfrost_drv.c       |  78 ++++------
->   drivers/gpu/drm/panfrost/panfrost_dump.c      |   8 +-
->   drivers/gpu/drm/panfrost/panfrost_gem.c       |   8 +-
->   .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   4 +-
->   drivers/gpu/drm/panfrost/panfrost_gpu.c       |  64 ++++----
->   drivers/gpu/drm/panfrost/panfrost_job.c       | 139 +++++++++---------
->   drivers/gpu/drm/panfrost/panfrost_job.h       |  15 +-
->   drivers/gpu/drm/panfrost/panfrost_mmu.c       | 112 +++++++++-----
->   drivers/gpu/drm/panfrost/panfrost_mmu.h       |   3 +-
->   drivers/gpu/drm/panfrost/panfrost_perfcnt.c   |  26 ++--
->   14 files changed, 301 insertions(+), 244 deletions(-)
-> 
-> 
-> base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
-> --
-> 2.51.0
-
+> Best regards,
 
 
