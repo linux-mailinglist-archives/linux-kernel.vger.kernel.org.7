@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-853962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F4C0BDD262
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BCD1BDD25F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA143C7348
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366173C6EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4583148C2;
-	Wed, 15 Oct 2025 07:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F240A3148BA;
+	Wed, 15 Oct 2025 07:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MqmgDj7S"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2hOcqS5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73B0304BBA;
-	Wed, 15 Oct 2025 07:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C237233D85;
+	Wed, 15 Oct 2025 07:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760513846; cv=none; b=ju6EqBgwG1IhddvFXEayJq90848Zseu1azkj76c9eDFENbm418EzFUBPFMMIkMYDxlnO65aCDdJhjT8eRm5yRHfuyQDS/ovE5LHZeyBu+7HBr4bDQtAojeSFK4hmvwN/i1aKD5Mj+ecPscMZSk6CD+vWhlf1qjQJ34ZO9L99SRE=
+	t=1760513846; cv=none; b=YGceZctsaKbuBFEqIWFOxbzMS8Qy8Yjg+idi/l8D122giK0fKfNdvOzzWJE2rc2bmS9WjPUvsNXSJDPn3zrCSTeED9hndLw09P9n3EekFqe0JoBcNc/Rm+kBvw2g7hlXWizylRe5cauU0cTFvAPPgtGNVrzuIQMrpV2Bv/1YPzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760513846; c=relaxed/simple;
-	bh=usd1O1gWSARVzS39vvkdNKA/0m34I6mskKXhBcUW4JE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjTSi33AVhOeDBqS79Ku9N6IvAhEaoCVqUNWtPx68g8b6GVSstyoMp+NsMK9wA5F2f4xHw2+CHHyWUI51Q5kSIqeoqG1MvT6WKP7zmMaCrZcZeje/zAyaGCgh4+pm6f3iepR4iV13zOILDZUn3laTNvu+/1/dVeGfHHvAfzvoxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MqmgDj7S; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=K0Byfm25HAm+hkuPU/+MWl6Aww3n7DOCSkjI/zRPF4w=; b=MqmgDj7SwmG2m7iemtBBl9O0WI
-	ICtTPOLnsUcUEE4QyBZjiakIuKfaL+DI/SdBoajINUi8s4JFhUj8jouZ2qRnSmxvH8zv4QrAgQwJz
-	sOml5c8u2hWLB+BaJgIfH8xYKmDE847NLIBewcea/0pgau3GjKmrVc+9OzvXNxsSM/XoMk/dz3nRg
-	exDTpN2rGq5/7FPem/jALj6GOaYzvaUXXbxh0DYGbV0COAW1BETkq/VNK9VRhQESH23SGL/Im0QA3
-	aGidDeS4PVbzj8jqZEoaUBqx0iYkA5zpd+f52FuSEaKjF7v6HxMkp56PwgFA/7wBrC3VGjf5uXwY9
-	VQcd+Z4g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8w4D-0000000A8y5-3wOB;
-	Wed, 15 Oct 2025 07:37:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A4D59300325; Wed, 15 Oct 2025 09:37:01 +0200 (CEST)
-Date: Wed, 15 Oct 2025 09:37:01 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: nathan@kernel.org, Matt.Kelly2@boeing.com, akpm@linux-foundation.org,
-	andrew.j.oppelt@boeing.com, anton.ivanov@cambridgegreys.com,
-	ardb@kernel.org, arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
-	chuck.wolber@boeing.com, dave.hansen@linux.intel.com,
-	dvyukov@google.com, hpa@zytor.com, jinghao7@illinois.edu,
-	johannes@sipsolutions.net, jpoimboe@kernel.org,
-	justinstitt@google.com, kees@kernel.org, kent.overstreet@linux.dev,
-	linux-arch@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	llvm@lists.linux.dev, luto@kernel.org, marinov@illinois.edu,
-	masahiroy@kernel.org, maskray@google.com,
-	mathieu.desnoyers@efficios.com, matthew.l.weber3@boeing.com,
-	mhiramat@kernel.org, mingo@redhat.com, morbo@google.com,
-	ndesaulniers@google.com, oberpar@linux.ibm.com, paulmck@kernel.org,
-	richard@nod.at, rostedt@goodmis.org, samitolvanen@google.com,
-	samuel.sarkisian@boeing.com, steven.h.vanderleest@boeing.com,
-	tglx@linutronix.de, tingxur@illinois.edu, tyxu@illinois.edu,
-	wentaoz5@illinois.edu, x86@kernel.org
-Subject: Re: [RFC PATCH 0/4] Enable Clang's Source-based Code Coverage and
- MC/DC for x86-64
-Message-ID: <20251015073701.GZ3419281@noisy.programming.kicks-ass.net>
-References: <20250829181007.GA468030@ax162>
- <20251014232639.673260-1-sashal@kernel.org>
+	bh=Oi5QOWrlBOX6yjuVT9iWF7d8j671eUjkCoZ0gfy4CMQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HbRk7vrq1agc6o/rv1M+O6NaemocgJU/7diyyVTjf4vcqRHyQ3p0gGc8Gw473jyzhrJRuE3I3oAwT5EAD5R0pulpHU8luX3SXnXhjhN3Y9FJEhlmaINiY4BDIXaaZ1Zthc9ZFnLH1JsYb8ZIskpvau4/Ou2X8TmciwA7VIMBXsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2hOcqS5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A5758C4CEF8;
+	Wed, 15 Oct 2025 07:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760513845;
+	bh=Oi5QOWrlBOX6yjuVT9iWF7d8j671eUjkCoZ0gfy4CMQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=A2hOcqS57kZ4iJbJ55KoJcKe+geXFHO0h7z6Jsw15/tWyfCBebXPQtbLCYwlrSlDA
+	 6A345Y7S7IYHL0sDB9Zn6MK9qedrUPfxN7tdK03nDOcygnhV5Q7P5m7QgPt8LpJs1b
+	 V6Og/aN6uH/syRscNZk4ljy5dPuqnh5hqfspd1HKkpOuPG42HwLhsyyp0YzNNf7Imf
+	 H+XfRormyGxMG/hgzYwYYVPjJkg4MatRqWE9pjza3lB9IoSssUJDruxeKsQfrxtHQJ
+	 cZcZo7WHBeW/jBs/UOjlLzYaugQR7HAOxwbDCESmZmv0iINwVDmuoEp3p0qENhJBEv
+	 RzyXaEsKMa16g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B90CCCD185;
+	Wed, 15 Oct 2025 07:37:25 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH v4 0/2] phy: add basic support for NXPs TJA1145 CAN
+ transceiver
+Date: Wed, 15 Oct 2025 09:37:07 +0200
+Message-Id: <20251015-tja1145-support-v4-0-4d3ca13c8881@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014232639.673260-1-sashal@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACNP72gC/23N0Q6CIBTG8VdpXEeDA6h01Xu0LhSOSStxYK7mf
+ PfQrdqyy/+3nd8ZScTgMJL9ZiQBBxedb1PI7YaYpmzPSJ1NTYCBYjlktL+UnEtF473rfOipzYy
+ xRlqwpSDpqgtYu8ciHk+pGxd7H57Lg4HP69sqVtbAKaNY2UJqaZVU5nB1WDUYws74G5m5Ab5EA
+ XpNQCIypnVeCyh0rv8Q4kNwxsWaEImQpbYgVY0sy3+IaZpejYzTjjcBAAA=
+X-Change-ID: 20250726-tja1145-support-d6ccdc4d2da3
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760513844; l=1889;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=Oi5QOWrlBOX6yjuVT9iWF7d8j671eUjkCoZ0gfy4CMQ=;
+ b=mPtPFEbP4lBXsbQ5kzDNF6r8woIMJ57Bjg3T/ImFi75H7cQwfG6o+SE6c571+dwh9D3G/2nG9
+ CrfMlvJiIVXB60dK0CgTrpHMofbu0z3gGbrJrI0jIeQy+OOuc3uUikf
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-On Tue, Oct 14, 2025 at 07:26:35PM -0400, Sasha Levin wrote:
-> This series adds support for Clang's Source-based Code Coverage to the
-> Linux kernel, enabling more accurate coverage measurement at the source
-> level compared to gcov. This is particularly valuable for safety-critical
-> use cases (automotive, medical, aerospace) where MC/DC coverage is required
-> for certification.
-> 
-> Changes since previous patchset [1]:
-> - Rebased on v6.18-rc1
-> - Adapted to lib/crypto reorganization (curve25519 exclusion moved to
->   lib/crypto/Makefile)
-> - Minor correctness fixes throughout the codebase
-> 
-> The implementation has been tested with a kernel build using Clang 18+ and
-> boots successfully in a KVM environment with instrumentation enabled.
-> 
-> [1] https://lore.kernel.org/all/20240905043245.1389509-1-wentaoz5@illinois.edu/
-> 
-> Wentao Zhang (4):
->   llvm-cov: add Clang's Source-based Code Coverage support
->   llvm-cov: add Clang's MC/DC support
->   x86: disable llvm-cov instrumentation
->   x86: enable llvm-cov support
-> 
->  Makefile                          |   9 ++
->  arch/Kconfig                      |   1 +
->  arch/x86/Kconfig                  |   2 +
->  arch/x86/crypto/Makefile          |   1 +
->  arch/x86/kernel/vmlinux.lds.S     |   2 +
->  include/asm-generic/vmlinux.lds.h |  36 +++++
->  kernel/Makefile                   |   1 +
->  kernel/llvm-cov/Kconfig           | 121 ++++++++++++++
->  kernel/llvm-cov/Makefile          |   8 +
->  kernel/llvm-cov/fs.c              | 253 ++++++++++++++++++++++++++++++
->  kernel/llvm-cov/llvm-cov.h        | 157 ++++++++++++++++++
->  lib/crypto/Makefile               |   3 +-
->  scripts/Makefile.lib              |  23 +++
->  scripts/mod/modpost.c             |   2 +
+Add basic driver support for NXPs TJA1145 CAN transceiver which brings the
+PHY up/down by switching to normal/standby mode using SPI commands.
 
-I'm thinking I'm going to NAK this based on the fact that I'm not
-interested in playing file based games. As long as this thing doesn't
-honour noinstr I don't want this near x86.
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+---
+Changes in v4:
+- Change compatible to: nxp,tja1145 (Connor)
+- Mark spi-cpha as required (Connor)
+- Switch from unevaluatedProperties: false to
+  additionalProperties: false (Connor)
+- Remove double newline after tja1145_rd_table (Marc)
+- Link to v3: https://lore.kernel.org/r/20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com
 
-And we have kcov support, and gcov and now llvm-cov, surely 3 coverage
-solutions is like 2 too many?
+Changes in v3:
+- bindings: fix SPI bus unit address format error
+- bindings: added resolution of discussion into commit msg
+- Checked binding with:
+  make dt_binding_check DT_SCHEMA_FILES=nxp,tja1145-can.yaml
+  Missed it for V2, didn't do it intentionally. Sorry.
+- Link to v2: https://lore.kernel.org/r/20250829-tja1145-support-v2-0-60997f328979@liebherr.com
+
+Changes in v2:
+- bindings: Change node name in example to can-phy
+- bindings: Fix order of properties, reg property is second
+- bindings: Change compatible to match filename
+- change compatible to nxp,tja1145-can
+- Link to v1: https://lore.kernel.org/r/20250728-tja1145-support-v1-0-ebd8494d545c@liebherr.com
+
+---
+Dimitri Fedrau (2):
+      dt-bindings: phy: add support for NXPs TJA1145 CAN transceiver
+      phy: add basic support for NXPs TJA1145 CAN transceiver
+
+ .../devicetree/bindings/phy/nxp,tja1145.yaml       |  80 +++++++++
+ drivers/phy/Kconfig                                |  10 ++
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-nxp-tja1145.c                      | 184 +++++++++++++++++++++
+ 4 files changed, 275 insertions(+)
+---
+base-commit: 920852baf6bdffb2818c0de8ff3437d8f6570dc2
+change-id: 20250726-tja1145-support-d6ccdc4d2da3
+
+Best regards,
+-- 
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
+
 
