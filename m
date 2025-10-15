@@ -1,195 +1,297 @@
-Return-Path: <linux-kernel+bounces-854123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8B7BDD98E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:04:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091DABDD99D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5ECD84FB574
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424E319A6106
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C96630648B;
-	Wed, 15 Oct 2025 09:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEB630AAD6;
+	Wed, 15 Oct 2025 09:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0mZj2Iko"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010057.outbound.protection.outlook.com [40.93.198.57])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z6RQXwVK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6306E30B506;
-	Wed, 15 Oct 2025 09:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519077; cv=fail; b=hwSP7LeD/kKuVJeAyTBjw8AazOL5Vafw2GGSULDnBkmkktEku3BpG5OiFjcRHdY3LjH23TgYbmqoE+I/idLBSEnTtLGpVxHuNgoHPlZ3EIIXi5SmSV+/pfbQdHvursggPKhOJY0UmiCq3UtarYyGhX9cElpC5PCAQNl7rjgH3z8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519077; c=relaxed/simple;
-	bh=HEXr3WgOIBIwXL9zpYgeehZ1LPmEp5SIbMDBnPd1GMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tsR3l0Kr7bGBYmS6oorJ1+OWNkBHyMTUeN/9tUxpduK5/S4/mCjM94Gld0sPGF6uL3ur7cPwdxIuJAyPwMAiMfUb0y2LmwAEodlWoBjsKd09F6q3D5Bv2/Gg5+y5zklmlU+H/aWJdiveEg+kHKHMrEk0K4G49wFiXSVAG2ajSiQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0mZj2Iko; arc=fail smtp.client-ip=40.93.198.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rKm5g3Lh/x8htim2omvMbSyyby8NVGvRswyvNrJFHTpSqXOr3r1CohPnERLCmETiV8QUiZ72BmKn+0tKDYMhwpkHoajmoAuHgP1gOfsHfJQwHA97+1nbewRo5X6JhQDpeaNHuLRYORdWEN+lkaLUeJGuplT0VfBO7njtnDFp+NirCh/wHEHK69L6B6hv7xklD/SBQPf0BdY/M4lvivRwfu0IAWr1o7h9b4gQhS918wh9vR6MCnXiFS4CAPQzZ+vrsr1qOukECP20HaJ4Q1kF0lmDLBqTe3T0ac/2TrGT/5d/uZZT+hF8h7+5SwJCHPfTo78XhY6Qz5g/N9xXKb9LXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=36X2nJluymi46Q4i/tfYsOvRStIwSxQC4dQqEM5I3TM=;
- b=ZfR6MpYN7XAGu4lACLUZesxGxiKjgdBnTDGgl9Z272/g3ZEnEWtam2xVyBO4q/BUqVJEiD9r34eeBOAYvTN9k+5VmEhnzy4yR9EAuWXZcZH4WfPVeSYJezTYqpdultkKSqONXHKuIy2GZCuhk04iTiPxcQsPsiUX+4j64DaITawH3hQO8KCVuHRNhRIO6vLL0+c1BMvLOIJO0ZEIWd7+KC0s01bNOWmJLOyx8nd0yoa0SeXFbVtXK/6DY98lhnNGCeWBbj9m56bDTQkDp37Bf8ovgu1ntSNAE3RBZ2kSt+IcPY5xxpnwFv5BV/M7FLwuCBbg4b3NlOclTYvWlsofxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=36X2nJluymi46Q4i/tfYsOvRStIwSxQC4dQqEM5I3TM=;
- b=0mZj2IkoXIUHJDdFwhOpPTwjec95Y8/ysz7mfozapmrhtH63VIv/Lmcwbfgh6mO5Ji/HT+gK6NyWuaf3Xtwi5QkvVaSaMvqhETz1cwd0UtaTBSwT6EamBtX7XYSMS7o171IggGTPuq44yUX62s+mZfvpJ1jfWgqmDpjuK/yqkrI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- PH7PR12MB5926.namprd12.prod.outlook.com (2603:10b6:510:1d9::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.11; Wed, 15 Oct 2025 09:04:34 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 09:04:34 +0000
-Date: Wed, 15 Oct 2025 14:34:26 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: "Mario Limonciello (AMD)" <superm1@kernel.org>
-Cc: Perry Yuan <perry.yuan@amd.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 5/6] cpufreq/amd-pstate: Fix some whitespace issues
-Message-ID: <aO9jmtcU5iOA6DtE@BLRRASHENOY1.amd.com>
-References: <20251009161756.2728199-1-superm1@kernel.org>
- <20251009161756.2728199-6-superm1@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009161756.2728199-6-superm1@kernel.org>
-X-ClientProxiedBy: PN3PR01CA0031.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:97::20) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5642C235F;
+	Wed, 15 Oct 2025 09:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760519134; cv=none; b=ZCflFMVGRRIjqc4/T6jEkNiOb+PCJBYWIl1DJp8T6uEwqH3+mgZmEFBouMhbZvUkEHdKVCcOHcJ5W9OkXgZW0h2bZsQM/ftxJu4ZdbfYBjsZc7ldWYZOoccvhPBa+7jRbprTok09gcAg3+Xc28dyL9L0qXF47AERwD6G5QfWop4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760519134; c=relaxed/simple;
+	bh=ubEEufVnWuSQm0LGTyGQ86YiBsw1/5sOVCuzEyDvrC4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cOZ1MCvpNyK4xYAZudG89cPGvlKIskKCbtS6g2gkVeWyzJYm767JDtwF4Y63PaEUeGqGqR5c7XsnwkDRIpDd/+POiyE8NPUDAFsakJeBi+UpT77GjXSfeMhB88YYMtRUZN/uzCaDROd0+nDjIp05xjRTbAjsKTOMfBGgXJDwLrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z6RQXwVK; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760519132; x=1792055132;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ubEEufVnWuSQm0LGTyGQ86YiBsw1/5sOVCuzEyDvrC4=;
+  b=Z6RQXwVKldwNlA/DYXvZFAvrVMaHjGuQ+CoUAjwNdAxICtENh/snC54f
+   dCyP7O9ztv/Yi4e5BxRe/nYLD7edNLlUtW/khuNrgBnfGZzUOdR0VTvHv
+   NC4XWQlmOi0DPNAPAPVijndG2EIdyR3+rF2SO7IJ9uafRj6k0uPIQLjKx
+   Ka+KD/+J6BgZcnk/42Vxve2uZIDRSSfZ2AqM3w67D6wWfnVKdSn34aXR5
+   ZaDEdDzB/zzw7l15oXP3fZDqlJ2aAUXdFL4/d9vhfSJyIvnYOvmxP3MHX
+   bYiTXiUlSdnjZmFlOJiu+h4dtOgc0CI3UlNoTBPkiX3GdusSBkfei0mZX
+   w==;
+X-CSE-ConnectionGUID: CfxyjWHAQmu6ag06XNTQxA==
+X-CSE-MsgGUID: gBNjuT0zTAaVO9isAf6xCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="61896291"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="61896291"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:05:32 -0700
+X-CSE-ConnectionGUID: tXbBDd9ATSSxRn/mlMAx+w==
+X-CSE-MsgGUID: D8iNAAdjTJC2Ig8wSqm/CQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="181681390"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:05:28 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 15 Oct 2025 12:05:24 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
+    Derek John Clark <derekjohn.clark@gmail.com>, 
+    =?ISO-8859-15?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>, 
+    Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 4/6] platform/x86: ayaneo-ec: Add controller power
+ and modules attributes
+In-Reply-To: <20251015084414.1391595-5-lkml@antheas.dev>
+Message-ID: <9c482e01-88be-af7e-8a73-1e07b8781354@linux.intel.com>
+References: <20251015084414.1391595-1-lkml@antheas.dev> <20251015084414.1391595-5-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|PH7PR12MB5926:EE_
-X-MS-Office365-Filtering-Correlation-Id: a687ffaf-c102-4658-8de1-08de0bc9dba4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9ElS8FD5Ap5f+vqorMoeD05cLwv4bAYA1AKP/Oxhv0ofozstwlbRYgjLMK2U?=
- =?us-ascii?Q?hCZdNkAhobVP2fedw/CMrO3dIqEPI4Hi9GCVS1hLshm0GP9dsMgAJweGTxTj?=
- =?us-ascii?Q?d6HQyFgUmlWp30BvkO1+jgmaXODBat7fyGy/9lY9hPn35a7LElN8TryOncSZ?=
- =?us-ascii?Q?vcdhMIbPvLtEzpAi0yCEEfUuxTVEYkF5iZb+BD2AIXdm0r0cHZTBCacSfcD0?=
- =?us-ascii?Q?141pGdg7sNEDdjEmEuvByw4ifLrsGTUVKuLS/uU3GzZBrOARNTtSEYw8r1UB?=
- =?us-ascii?Q?3FnTCDrhnPqXKkegqH/WZk3NMKL3UA8d4oecldZH+DE1JZmI27ibwG3BIO3J?=
- =?us-ascii?Q?YOzr1tPY3rrHl5bRZJcsbCDRMbiZxWr8Pqv3Q5caynUKYsMZ5meqU/1PVMqA?=
- =?us-ascii?Q?q/bNb7UEtFzznVTOf1o26d6InvFNr2Hr58KJtCpulXZOY2Kr5x5NFHAYPIiO?=
- =?us-ascii?Q?In0HY5LQf0I52QI8luAA00txt+lQBP3emA9Zr7325Y/uWCKBn3R1lPZAlwWa?=
- =?us-ascii?Q?MPVh4Zh1z95fzIDCTq0qytb/R/SXhrtRe7UoqsYkaxQZklPt8PAspmf0GYGn?=
- =?us-ascii?Q?MQ36lqpTh0WGRJqIYa/ucXvexc0BK0mi3vUoIEQSh6M/vouzOnlZH806AOSV?=
- =?us-ascii?Q?XRFNjmqBH4NOLgdff6u1Wq58+cIUNzx6dPCuN6aKP0GlXs4Metr+dak/jb/d?=
- =?us-ascii?Q?BACCmdAsdT+8fT+QJBLdZ7nSc4ydrRnq5h/dZ1bEcLPr8f5NDroAy4D9uq5L?=
- =?us-ascii?Q?D+H1757rVP9U+P007/xJ9aC0PwG6a3vdZWwnGAh21AUomXCciWZiQzU+jJ4s?=
- =?us-ascii?Q?YSVzAZD8ANxxYxCG4IzJpHTyAprsOexiKPtYYg3bHXkuvp4IXC3WSg180+bM?=
- =?us-ascii?Q?0SZhDOqf2fFe6p1zZBa8W9aMePblM5ZOzbQLW55TsSHslBNaVvgeEIlmiCGl?=
- =?us-ascii?Q?pLMlBgtQHGOyXMzKEi/aFz/ZkMbqEJ5G6iR41Ss+F9QJtCicyiMjZ+BJExR5?=
- =?us-ascii?Q?FIKkwcCCpVnZIyOq+IYRuPpQuvxJCxUYMvBDKaHGi2XxQKCSOIZUxnvwNLIg?=
- =?us-ascii?Q?dP9mABzcYsmBvmJZEd8H/qfEpY1GEmMcCu07UfamTAdCGLLMTI4WDyv+D9JD?=
- =?us-ascii?Q?sIQVT6pCy+6jR5onSGTgo9UI0lKtKknxaNOgu+rJ5Baqa7zdeZJEzxBJp5sU?=
- =?us-ascii?Q?Zaey5teLaaLNWTMceNJP7GewE6QCJt12Tv2uldKNCHL26xGO9R1yvAqxtF2u?=
- =?us-ascii?Q?L2ze/HVITDGk6Glx+Hew+xNVzvPH0Jo+xRpgdEExTvPz39GBkMl9cqLYlrxn?=
- =?us-ascii?Q?Z4H/djFQGpavsAblXGLFTiOmprSd0adkhI3RWGzZMgU/H9zl099M5fegCrQI?=
- =?us-ascii?Q?+r5erbVRtBE0d705pqEnhpDhcjuTqUh18mGq1YNvi0ZPglBs3EKHjgoV7fx3?=
- =?us-ascii?Q?laqzBYwd0o78nRvzzux2PnQejdQYyD2L?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?311AoLu9XlvocBc7gj0HFiwtdWdfMy861BoYmL2Mx04n4UHTlcz/YVDrCW4m?=
- =?us-ascii?Q?uahWbGz82qxyC6LCqP9QiwlCTSHrHP2UjkMfSzgnwInQEQg+Hx0ho0rot9Uz?=
- =?us-ascii?Q?TaceMA00pFsdf0mkt4EuHrwzQ+kPxsir1hBrKdB+7RzXwGGd+eGKQDzHLXjC?=
- =?us-ascii?Q?I0tSt0Xa+ADBqX3E/0mkbVeh8ZR+Cgn4ftFMVBY1EQJYMcW7et093cMuhsI9?=
- =?us-ascii?Q?WY7i4gtHzb8nralhvntb6+5xToSq7WhWtiEiMazkSuH8UO6ZU7EQB39PS4az?=
- =?us-ascii?Q?35wIZzkTZRyPjhETKjAsXElTRkhu9pbge3C0oXbU15/qEfXQLE7fmYsMkkNM?=
- =?us-ascii?Q?LfoLll3epdlFUGnApnFe+6sqnucA3mZ6mv8ibTyZOn2yKGof6aiFT1zxVgB+?=
- =?us-ascii?Q?K+NDNZ4VVaT+pDABWJcaSG/x06KTzh9pUUfXDmwHAsjfx2toZIYhe+4uCaKk?=
- =?us-ascii?Q?MP8KMs+0FhCGmQZE1ctTta8azL+SuxivzeRimyTm4OTdSl/crrQ2F7JR8Zhp?=
- =?us-ascii?Q?8SPrSrgcT0lhTkhb/BgbN0UhJDZyCKzqskC9Xgumt3ZoRvTwsvBTIvmof9MK?=
- =?us-ascii?Q?pM6v/mceYs1TqR4sP1JImzoUXJOjghRR0MgB44fQp9ycytdR8m2EaPyTJ5vW?=
- =?us-ascii?Q?05LwHduIBcEn2BZeViNDwBpCtR/qHHWeEsP0Olo83jijSS+u+9TMD5gTWj7c?=
- =?us-ascii?Q?+FaT5wL1A7M09UK7gY6nFyTtLck+bNGU1dBrewTd96HCbqp9YlSLFMfHK2Mo?=
- =?us-ascii?Q?VY/1AzIY1oIgoYaHePgb6V10NuKiiKp5iHTgcIm9Ows/CZg5eRvky3XH887Z?=
- =?us-ascii?Q?6A1xv1TtjvKDEweTGun/aUZ8FrP4Vftqwa1e69CyRShS/LajJrGxtlERwrwl?=
- =?us-ascii?Q?1AKLtzrrRZX/X3RO5j7f/lTnJNTClKXG/Egnh0tnkDJp4EC1tZSlhM1l+n15?=
- =?us-ascii?Q?5MVFzhT1gYxjstaHSUdE46D8oe5oJrwDX6AhYeFLL63NVxxBMNyn+aboArCO?=
- =?us-ascii?Q?iuNxpt6UvTOMHQs95OljqrE+VnQHby8XM2r09l+rpAMrMsdaDwG4eOsqMJmf?=
- =?us-ascii?Q?q8KNKpWXgvnxtTvbQvCxR0caAmgoY3FOh8QgMHltypp5IKzEpLUAZVrUZ+RU?=
- =?us-ascii?Q?N3qx2YlhJ+uNXaxho/w31VJaH5x2h58tAHfwAzV15B+6OsvN9rf+ewMfQ70d?=
- =?us-ascii?Q?K5xYzocVe9YLCJnVSeYFxgsK3W6eZHC7CJ4TLXyhRs2cf/jC/ZGkslz2Nf/S?=
- =?us-ascii?Q?4/LxyataGWgYzL3xcS6ScvzE8t1qGYdG6gp7fRMmuK8mSZPiLdyWF0Jw56+Q?=
- =?us-ascii?Q?1ggFFp1zSCK8hopKRmccZjQXGlZhgsCh3qJRP0n9pnRt0S1IrpNGFeBsk2Ho?=
- =?us-ascii?Q?D8kYKPCDLtZMBLdRo9fTg+w9B9bgQxM84EInobmKmwt+0fdhbO61UsBzdWBc?=
- =?us-ascii?Q?oBPYlXJH++6gjmtQet3rwFk5ssTWJ4TMU7J9xp0Uo+aYiWCHLhNLSLMP4Ibc?=
- =?us-ascii?Q?TGjt2U9pqi+Yo8UR5FPTnhBI0m2PFQpWSPY+vGTRdf7Lmo+P0/zleGSGpe+i?=
- =?us-ascii?Q?QzUwCcRSiRb9BGMTesAYAqkYb53ZSAWUGHG1X/KH?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a687ffaf-c102-4658-8de1-08de0bc9dba4
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 09:04:33.8661
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +tcQfmcOlySFY1PgZ0upF8r0fPtIAruU/xCf7z/F4525+CUcJccA/5g0A/Sb2Un/dN6LNnfKR3Fd8is7KoPVXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5926
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 09, 2025 at 11:17:55AM -0500, Mario Limonciello (AMD) wrote:
-> Add whitespace around the equals and remove leading space.
->
-Thanks for cleaning this up.
+On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-
-> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> The Ayaneo 3 features hot-swappable controller modules. The ejection
+> and management is done through HID. However, after ejecting the modules,
+> the controller needs to be power cycled via the EC to re-initialize.
+> 
+> For this, the EC provides a variable that holds whether the left or
+> right modules are connected, and a power control register to turn
+> the controller on or off. After ejecting the modules, the controller
+> should be turned off. Then, after both modules are reinserted,
+> the controller may be powered on again to re-initialize.
+> 
+> This patch introduces two new sysfs attributes:
+>  - `controller_modules`: a read-only attribute that indicates whether
+>    the left and right modules are connected (none, left, right, both).
+>  - `controller_power`: a read-write attribute that allows the user
+>    to turn the controller on or off (with '1'/'0').
+> 
+> Therefore, after ejection is complete, userspace can power off the
+> controller, then wait until both modules have been reinserted
+> (`controller_modules` will return 'both') to turn on the controller.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 > ---
->  drivers/cpufreq/amd-pstate.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  .../ABI/testing/sysfs-platform-ayaneo         |  19 ++++
+>  MAINTAINERS                                   |   1 +
+>  drivers/platform/x86/ayaneo-ec.c              | 100 ++++++++++++++++++
+>  3 files changed, 120 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo
 > 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 2d2ef53d12447..a0f21ac1205af 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -126,7 +126,7 @@ static unsigned int epp_values[] = {
->  	[EPP_INDEX_BALANCE_PERFORMANCE] = AMD_CPPC_EPP_BALANCE_PERFORMANCE,
->  	[EPP_INDEX_BALANCE_POWERSAVE] = AMD_CPPC_EPP_BALANCE_POWERSAVE,
->  	[EPP_INDEX_POWERSAVE] = AMD_CPPC_EPP_POWERSAVE,
-> - };
-> +};
+> diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo b/Documentation/ABI/testing/sysfs-platform-ayaneo
+> new file mode 100644
+> index 000000000000..1fa32ba60fd0
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-platform-ayaneo
+> @@ -0,0 +1,19 @@
+> +What:		/sys/devices/platform/<platform>/controller_power
+> +Date:		Oct 2025
+> +KernelVersion:	6.9
+> +Contact:	"Antheas Kapenekakis" <lkml@antheas.dev>
+> +Description:
+> +		Current controller power state. Allows turning on and off
+> +		the controller power (e.g. for power savings). Write 1 to
+> +		turn on, 0 to turn off. File is readable and writable.
+> +
+> +What:		/sys/devices/platform/<platform>/controller_modules
+> +Date:		Oct 2025
+> +KernelVersion:	6.9
+> +Contact:	"Antheas Kapenekakis"  <lkml@antheas.dev>
+> +Description:
+> +		Shows which controller modules are currently connected to
+> +		the device. Possible values are "left", "right" and "both".
+> +		File is read-only. The Windows software for this device
+> +		will only set controller power to 1 if both module sides
+> +		are connected (i.e. this file returns "both").
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8c4d0c26ca77..3dfa004555dd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4191,6 +4191,7 @@ AYANEO PLATFORM EC DRIVER
+>  M:	Antheas Kapenekakis <lkml@antheas.dev>
+>  L:	platform-driver-x86@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/ABI/testing/sysfs-platform-ayaneo
+>  F:	drivers/platform/x86/ayaneo-ec.c
 >  
->  typedef int (*cppc_mode_transition_fn)(int);
+>  AZ6007 DVB DRIVER
+> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
+> index 23c283f5eb61..363b61fc6e12 100644
+> --- a/drivers/platform/x86/ayaneo-ec.c
+> +++ b/drivers/platform/x86/ayaneo-ec.c
+> @@ -30,9 +30,17 @@
+>  #define AYANEO_CHARGE_VAL_AUTO		0xaa
+>  #define AYANEO_CHARGE_VAL_INHIBIT	0x55
 >  
-> @@ -182,7 +182,7 @@ static inline int get_mode_idx_from_str(const char *str, size_t size)
->  {
->  	int i;
+> +#define AYANEO_POWER_REG	0x2d
+> +#define AYANEO_POWER_OFF	0xfe
+> +#define AYANEO_POWER_ON		0xff
+> +#define AYANEO_MODULE_REG	0x2f
+> +#define AYANEO_MODULE_LEFT	BIT(0)
+> +#define AYANEO_MODULE_RIGHT	BIT(1)
+> +
+>  struct ayaneo_ec_quirk {
+>  	bool has_fan_control;
+>  	bool has_charge_control;
+> +	bool has_magic_modules;
+>  };
 >  
-> -	for (i=0; i < AMD_PSTATE_MAX; i++) {
-> +	for (i = 0; i < AMD_PSTATE_MAX; i++) {
->  		if (!strncmp(str, amd_pstate_mode_string[i], size))
->  			return i;
->  	}
-> -- 
-> 2.43.0
-> 
+>  struct ayaneo_ec_platform_data {
+> @@ -44,6 +52,7 @@ struct ayaneo_ec_platform_data {
+>  static const struct ayaneo_ec_quirk ayaneo3 = {
+>  	.has_fan_control = true,
+>  	.has_charge_control = true,
+> +	.has_magic_modules = true,
+>  };
+>  
+>  static const struct dmi_system_id dmi_table[] = {
+> @@ -262,6 +271,96 @@ static int ayaneo_remove_battery(struct power_supply *battery,
+>  	return 0;
+>  }
+>  
+> +static ssize_t controller_power_store(struct device *dev,
+> +			    struct device_attribute *attr, const char *buf,
+> +			    size_t count)
+> +{
+> +	bool value;
+> +	int ret;
+> +
+> +	ret = kstrtobool(buf, &value);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYANEO_POWER_OFF);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t controller_power_show(struct device *dev,
+> +			   struct device_attribute *attr, char *buf)
+> +{
+> +	int ret;
+> +	u8 val;
+> +
+> +	ret = ec_read(AYANEO_POWER_REG, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "%d\n", val == AYANEO_POWER_ON);
+> +}
+> +
+> +static DEVICE_ATTR_RW(controller_power);
+> +
+> +static ssize_t controller_modules_show(struct device *dev,
+> +				       struct device_attribute *attr, char *buf)
+> +{
+> +	bool left, right;
+> +	char *out;
+> +	int ret;
+> +	u8 val;
+> +
+> +	ret = ec_read(AYANEO_MODULE_REG, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	left = !(val & AYANEO_MODULE_LEFT);
+> +	right = !(val & AYANEO_MODULE_RIGHT);
+> +
+> +	if (left && right)
+> +		out = "both";
+> +	else if (left)
+> +		out = "left";
+> +	else if (right)
+> +		out = "right";
+> +	else
+> +		out = "none";
+
+I suggest using switch/case for this so you don't need the internal 
+booleans at all.
+
+BTW, I appreciate it very much this series is split per feature, it's so 
+much less daunting to start a review when I know I can actually finish 
+before the next interruption (and having to flush context from my
+mind). :-)
 
 -- 
-Thanks and Regards
-gautham.
+ i.
+
+
+> +
+> +	return sysfs_emit(buf, "%s\n", out);
+> +}
+> +
+> +static DEVICE_ATTR_RO(controller_modules);
+> +
+> +static struct attribute *aya_mm_attrs[] = {
+> +	&dev_attr_controller_power.attr,
+> +	&dev_attr_controller_modules.attr,
+> +	NULL
+> +};
+> +
+> +static umode_t aya_mm_is_visible(struct kobject *kobj,
+> +				 struct attribute *attr, int n)
+> +{
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
+> +
+> +	if (data->quirks->has_magic_modules)
+> +		return attr->mode;
+> +	return 0;
+> +}
+> +
+> +static const struct attribute_group aya_mm_attribute_group = {
+> +	.is_visible = aya_mm_is_visible,
+> +	.attrs = aya_mm_attrs,
+> +};
+> +
+> +static const struct attribute_group *ayaneo_ec_groups[] = {
+> +	&aya_mm_attribute_group,
+> +	NULL
+> +};
+> +
+>  static int ayaneo_ec_probe(struct platform_device *pdev)
+>  {
+>  	const struct dmi_system_id *dmi_entry;
+> @@ -303,6 +402,7 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
+>  static struct platform_driver ayaneo_platform_driver = {
+>  	.driver = {
+>  		.name = "ayaneo-ec",
+> +		.dev_groups = ayaneo_ec_groups,
+>  	},
+>  	.probe = ayaneo_ec_probe,
+>  };
+> 
 
