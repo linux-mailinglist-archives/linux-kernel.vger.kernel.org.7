@@ -1,159 +1,126 @@
-Return-Path: <linux-kernel+bounces-853600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01383BDC13E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCEBBDC14C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B4C64F5AD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:54:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974BC4231BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A0830BF67;
-	Wed, 15 Oct 2025 01:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C172FD7A3;
+	Wed, 15 Oct 2025 01:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYUOoQYA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czvnqr0N"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843B22FFDE4;
-	Wed, 15 Oct 2025 01:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2186E25A2A4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760493282; cv=none; b=ZxZfqYBBVwpxolzDcPIqW77+PbZa5qoOSE+WA99BgOBxm+z9ERxkjPvSEbyKK9jmBnM6AO+doxR9sD1Rw2v4UXWNSe8QPjdPQa3AjcZG3F7MfXmRp0+wzwBD9frJGn5NV218ejC4ATGuXw3hKPHRGKycvXod+PqRdE8dumTU3RA=
+	t=1760493296; cv=none; b=DPTluJbcHPFb76NIswrkf2fSEQ12/ByVp9Op4MqYDpdCp7b+fjG7efBbkV9rPHzl5+BQc9T1nj5d58jT199rgIQ0MQlex2Ds9qawfv4ZbjdjeK9UvnrOlQuv9iP+fWAuxi8716sVAQTp6Nemalw6ohuBhkjmUetawS04+P4z5is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760493282; c=relaxed/simple;
-	bh=twQe4lNSb8Ip4QtBohU/pM2tdRR+fK+3N/4cynHxS1A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JICBhjVqu51EumT1UoLvLiwb2Zcm8WaztW4dhRssEY5dTejFuL87ZAC83Fyj296yzz2CKkzDDsc41WTgK1Qo5TLliPNVmD8TTfBv0eqtaPH6HQfY4dGu1JUoriZ0wFAS6qIfjTC5UDDrLPlFc35UMSBpVhRdRhznkMzk5HbESPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYUOoQYA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 25F92C16AAE;
-	Wed, 15 Oct 2025 01:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760493282;
-	bh=twQe4lNSb8Ip4QtBohU/pM2tdRR+fK+3N/4cynHxS1A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=SYUOoQYAK5XqvmYxOH6VSFDK8m8Do+gteO/TandYpLlIHydkZI78qPb5FH9kAosCW
-	 uFnHeSd7C8C76tvGCeG/OShbtevCr4IMh70POjgcTk9A3Mc+X+6s/8QQOkfR1ZPDzt
-	 e65V+F0mumdIjqLb0qt7/ez0jonKjkENs8lWgjxo7cfzbI/kMa/3dOGujcAHPQf7k9
-	 s7jpNY6w9I4pJxpluM/oIK631dvztQM6r008GhgofpFohhBwlgva4FXzp301OEZlNK
-	 pbBLdm1Jpba+UUgijbTLmPlVTbkpfIyLXjS6Nh98fntecTuHtHeTF0SUrfv0VA3xDs
-	 dvd750ITyrVzg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14481CCD194;
-	Wed, 15 Oct 2025 01:54:42 +0000 (UTC)
-From: Xiangxu Yin via B4 Relay <devnull+xiangxu.yin.oss.qualcomm.com@kernel.org>
-Date: Wed, 15 Oct 2025 09:53:20 +0800
-Subject: [PATCH v4 3/3] arm64: dts: qcom: qcs615-ride: Enable DisplayPort
+	s=arc-20240116; t=1760493296; c=relaxed/simple;
+	bh=XurOG7TpFv0gfvogsJdszOTmGbj6A3F6k9kfoi2F3GA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWRZuNCnK/T3sOx1ri3Nwq/iftjYY4KiDv7XcdHpY4lGpFRYjtvJ9qyvuabrk4ExZEWpKZtMwm3hxG5XO+T68K7+SEm6CRmLJgSxUP9nPITZ/Q1Gn1GqzIo4nm/sUwByEkIn+l9+KGrU/IXv+ChbGqgjBMI57wfva7GlXFqqwRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czvnqr0N; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e2e363118so50406065e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760493292; x=1761098092; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=26KQWOidOOOMncfnnCBb0/0PyMIloM67l5dPnBfFpNI=;
+        b=czvnqr0N+eerJQJje/D9zgReXoCqNulL2VXNWGCfXQVudLbXRhpBBF7YmuXQPPZsX/
+         gwqPz+dRamW8b0IrM7qXvag9sTtTB2Kinrl5LVOlkK0Pd410p1o083PYQyoRp7Hyik5Y
+         6IzUg42K36rOajl5Mo72GBm0excCb2CflRNcpQVCAxGzfeId4zFPyKW9uJG7w5ktjiEl
+         UTBQyVVaNNzheeSZe7o7Z+7c5JNRTT8cT0FEptwWGE/WsANYHPdXXxbuy9IM7NAMw6cX
+         Oy8MR0Snt33xXmbduFw6CcYDhWw5eO2VPXkGnZL0zTdrkDrv6hUWxeXQsmLhBf3RDocf
+         bfrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760493292; x=1761098092;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=26KQWOidOOOMncfnnCBb0/0PyMIloM67l5dPnBfFpNI=;
+        b=OYu71plkNJGLaq5ejpjBgh0EaSDHMbnBNYqV6ZkmtFZeOWQi1BC7e6rXKKsb4kZ3zW
+         0MpK7hA/ISMkDBpfbvZyjtJ5HtlHpe0VvVGgnbcBf93k7gtjYWShKawFhWZRq5t7cxiG
+         VeWO1IWBxy/CPhtafIb7NzG2gBc+IE2IO5EHC9Ewas9IN3qtghu40lT+h7zfWB9rCYHp
+         DvolZI6tEvPowQA22krfYKSowvFHDdIdfcS59w8bcTg/MBkbwgex1RcrYSrHhry/wDr5
+         l1jabLI4atHAyVuCg8oss1hjRAAr5Sir98dT5hVIN40RC5uFzS0CP3JMu76RZ6JjKBFd
+         2QNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWI0bdxC8K4cFVPqu0eTE49xEVeHXJz5E1PYaUzQxSl2t9bz1H1KZexm1e1kiNUcwj5qqxlikU0hfVpA8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfP+pDy6iXp5KlDAbjwsx600akqPfL2dJdIvik/hKyk9XySpNC
+	mgt149ae3AWff3WzZUjAJ1ZR9HrdWykb5WlmdqDyaeY6mlFHHrX3fGvWnzcWvDoA8unDlx3eOd1
+	qlAWax/RYG5klkPpRkRRgbDKw71mLfTc=
+X-Gm-Gg: ASbGncuyosWq50CsC8+bUhzoDBFDiApo7htruDLms5sXgf/973P/cs9u4aSsdVncUE5
+	cNeLjsDt5Jj4z1NxFUjHRePldaOTO0JO4OvtA/EZt2dZvUyDtwmQHNtIEHoXvdK+J7hQBsHMXA0
+	jb5ov4DywTdcIwhZwxA0qu1dNrn3rVDLFHw0/MraBVmvSz8q/3OfFd30QKC3Yq69DXcZz2R+9GU
+	j0e0880gJSGfv3M1LVL2zMSI4U3rV0sYsfKQ3ASC6cA51vdGWcem3oH7h3aaFrAAKy+M7T19JsO
+	gX3R
+X-Google-Smtp-Source: AGHT+IFwtktUuLWBY0+rVfzsz1di7iWK0c6AtHOqKHIJNThUvRz/7fvIWwgTANA7fSwebNkxx9UvlZXTBs5LRF3356I=
+X-Received: by 2002:a05:600c:529a:b0:46e:4912:d02a with SMTP id
+ 5b1f17b1804b1-46fa9aef4cbmr167355365e9.23.1760493291529; Tue, 14 Oct 2025
+ 18:54:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251015-add-displayport-support-to-qcs615-devicetree-v4-3-aa2cb8470e9d@oss.qualcomm.com>
-References: <20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com>
-In-Reply-To: <20251015-add-displayport-support-to-qcs615-devicetree-v4-0-aa2cb8470e9d@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, fange.zhang@oss.qualcomm.com, 
- yongxing.mou@oss.qualcomm.com, li.liu@oss.qualcomm.com, 
- Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760493278; l=1548;
- i=xiangxu.yin@oss.qualcomm.com; s=20241125; h=from:subject:message-id;
- bh=d+cJKrXD4tfTqdXBaY3G1wbp7JyY9CM0nzg66HGu5Rc=;
- b=5hm9x33yHefPI2x0XBMqblgJfCbItC5qN6Hz9DeShMLuP/9I3VYkMY6Zv1gcLnIOU6tYnx5+H
- Fyj27Ghd1dPB+Yym4haixCYI5CVOcX275qygSfb0QC4Rl4xgdQarS6T
-X-Developer-Key: i=xiangxu.yin@oss.qualcomm.com; a=ed25519;
- pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
-X-Endpoint-Received: by B4 Relay for xiangxu.yin@oss.qualcomm.com/20241125
- with auth_id=542
-X-Original-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Reply-To: xiangxu.yin@oss.qualcomm.com
+References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
+ <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+ <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
+ <CAEf4BzaZ=UC9Hx_8gUPmJm-TuYOouK7M9i=5nTxA_3+=H5nEiQ@mail.gmail.com>
+ <CAADnVQLC22-RQmjH3F+m3bQKcbEH_i_ukRULnu_dWvtN+2=E-Q@mail.gmail.com>
+ <CAErzpmtCxPvWU03fn1+1abeCXf8KfGA+=O+7ZkMpQd-RtpM6UA@mail.gmail.com>
+ <CAADnVQ+2JSxb7Uca4hOm7UQjfP48RDTXf=g1a4syLpRjWRx9qg@mail.gmail.com> <CAErzpmu0Zjo0+_r-iBWoAOUiqbC9=sJmJDtLtAANVRU9P-pytg@mail.gmail.com>
+In-Reply-To: <CAErzpmu0Zjo0+_r-iBWoAOUiqbC9=sJmJDtLtAANVRU9P-pytg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 14 Oct 2025 18:54:40 -0700
+X-Gm-Features: AS18NWCKhuwcHSlUElwUIAzX8T7zdY15gvsdXmPJO09MLBADQKHWSXQwuUBXyho
+Message-ID: <CAADnVQLr0iSzV24Cyis0pconxyhZJKAuw-YQVoahxy-AvdNTvQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
+ btf_find_by_name_kind lookup
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+On Mon, Oct 13, 2025 at 9:53=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
+m> wrote:
+>
+> I=E2=80=99d like to suggest a dual-mechanism approach:
+> 1. If BTF is generated by a newer pahole (with pre-sorting support), the
+>     kernel would use the pre-sorted data directly.
+> 2. For BTF from older pahole versions, the kernel would handle sorting
+>     at load time or later.
 
-Add DP connector node and configure MDSS DisplayPort controller for
-QCS615 Ride platform. Include PHY supply settings to support DP output.
+The problem with 2 is extra memory consumption for narrow
+use case. The "time cat trace" example shows that search
+is in critical path, but I suspect ftrace can do it differently.
+I don't know why it's doing the search so much.
+Everyelse in bpf we don't call it that often.
+So optimizing the search is nice, but not at the expense
+of so much extra memory.
+Hence I don't think 2 is worth doing.
 
-Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> Regarding the pahole changes: this is now my highest priority. I=E2=80=99=
+ve
+> already incorporated it into my development plan and will begin
+> working on the patches shortly.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 9ac1dd3483b56f9d1652f8a38f62d759efa92b6a..bb0f4b8265e4807e50d067aed8b21557d97b20dd 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -39,6 +39,20 @@ xo_board_clk: xo-board-clk {
- 		};
- 	};
- 
-+	dp0-connector {
-+		compatible = "dp-connector";
-+		label = "DP0";
-+		type = "mini";
-+
-+		hpd-gpios = <&io_expander 8 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			dp0_connector_in: endpoint {
-+				remote-endpoint = <&mdss_dp0_out>;
-+			};
-+		};
-+	};
-+
- 	dp-dsi0-connector {
- 		compatible = "dp-connector";
- 		label = "DSI0";
-@@ -423,6 +437,15 @@ &mdss {
- 	status = "okay";
- };
- 
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000>;
-+	remote-endpoint = <&dp0_connector_in>;
-+};
-+
- &mdss_dsi0 {
- 	vdda-supply = <&vreg_l11a>;
- 	status = "okay";
-@@ -623,6 +646,13 @@ &usb_qmpphy {
- 	status = "okay";
- };
- 
-+&usb_qmpphy_2 {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
-
--- 
-2.34.1
-
-
+let's land pahole changes first.
 
