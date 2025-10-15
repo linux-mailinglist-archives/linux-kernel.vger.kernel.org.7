@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-853679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B7FBDC523
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:20:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B24BDC520
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A2DB4F7C18
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:20:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 732564F1C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C152F278157;
-	Wed, 15 Oct 2025 03:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749B8274FE8;
+	Wed, 15 Oct 2025 03:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="qWqRPe6t"
-Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1hNNWJ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFFA1A9F93;
-	Wed, 15 Oct 2025 03:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF41325487C;
+	Wed, 15 Oct 2025 03:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760498428; cv=none; b=A0fKz8+jSdNsCth3yyZHzl8uOyhK1p6Qzjrc10YqWVq5AH924Ap+nx2blvmXUSEmC7Lje+x7zAnGDLsO4HDgoRJpnaFtFNN1FDhUrNUuwPt7GrpWQdSn9fQbzqjDRNDuTm1dBfVPdfHulfmGAnsq3uLp/bmXhnObLbFCk6DElgA=
+	t=1760498397; cv=none; b=MztKiCYdvu/aQBNgpZ7kUe5BzdSz/OJZi5tJG7bHUnOsJjrwqUQ7C2XwYXjnpf+JWEjGREWiZ/1gLEPkhaEeOb2LQCXfpxd/O8oggRgzi8NbRMbZxXyo0R6adDXR/UWtYVPVQ27s2sY7r1XgY0JfeY3JU0GcxbZOPLRYx+MlK9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760498428; c=relaxed/simple;
-	bh=fFWtcqbYqwSuAfaIbZBKUxXweqQB3D5s5ZgdU0zniP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ARzKKKjKasBgrNR4Cy+c+ZEVuYlYSjqeZVlXAbbvAwYCMe+Ly837I7Pvq7dP/rTB8Ia2zNQVzAK8kX6ACpPexNI4XJzOgCg9nS52BOBmVpa041N9224RXUnpd3n+LjutKscTf0qjkyfkm1dzrZanh2j9dMhpNk7TkO3VpT96ix8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=qWqRPe6t; arc=none smtp.client-ip=51.81.35.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 7B8FC2248E;
-	Wed, 15 Oct 2025 03:20:25 +0000 (UTC)
-Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [151.80.165.199])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id CB9A92636A;
-	Wed, 15 Oct 2025 03:20:16 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay2.mymailcheap.com (Postfix) with ESMTPS id 932D03E88F;
-	Wed, 15 Oct 2025 03:20:08 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 3EFE740099;
-	Wed, 15 Oct 2025 03:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1760498406; bh=fFWtcqbYqwSuAfaIbZBKUxXweqQB3D5s5ZgdU0zniP0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qWqRPe6tMkyVt24L4TQxEokd9xxbIlS5nPQZHmqN93YdMm9uG4Vyi2MOpEzAAC5fU
-	 yms65895aXhnWBAYzlOyX4+QA5sNOUa+RQ/LRLgLIQuCS7z85svNozjlpvdOT/++T1
-	 edWLKoXTE5kAyCqm105Hi4a6rBlFhUWANv7W4VcY=
-Received: from [198.18.0.1] (unknown [223.76.243.206])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 40A7440D62;
-	Wed, 15 Oct 2025 03:20:00 +0000 (UTC)
-Message-ID: <7ead454c-8807-4e50-800c-5a646d88fa25@aosc.io>
-Date: Wed, 15 Oct 2025 11:19:52 +0800
+	s=arc-20240116; t=1760498397; c=relaxed/simple;
+	bh=2Cxa/q4DAu5r+A3h1YX2ECqhE765wvQqU/Vghauoc90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k+XJ17pR2ZTJ82XNmDUdphnQPNUu/FYyCKZjEGt4oyskigvBBB/XnjKmpRanzrEsQAieAnIQi9qc/NGVrgLNyiCIlgjQXNDNHcNnV4dACbMrgMvw9B5WYhtcU1raFuSxR3hUNnVfmNj3FgwmYumJMxMGTbJ/tGJYcdSskZ9rNQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1hNNWJ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 624CDC4CEE7;
+	Wed, 15 Oct 2025 03:19:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760498397;
+	bh=2Cxa/q4DAu5r+A3h1YX2ECqhE765wvQqU/Vghauoc90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G1hNNWJ4hbV0VooC6mwGjO+pWzOlBkEEL2sceR7ZyaR6Kuo1361elr8drRICwAVmb
+	 v7d44Y08nzHp0zzI+/KzQUwhKpfd+xwkulSKRRhs9yLaGW2lsfjFuXg1cHltLnnHMS
+	 awHTFgjIJuQ2etc4yiaqSNkBsRXxLOG8gbIdQGIeIjs50+fMWwmXykOqm8YXJYBnSz
+	 dlko8OIdS1RxyTWQHg/C+/7QFR/jn7zDJzpxMA47RjfGA25MPFAdQvTbSIV3jVdGUH
+	 tEO91W3X+WO6zHeLljRxxvnwrvpDAiY5hLmZDV3Mdgh64NKN1Af+BV0GorXBtHzx1Z
+	 Etmn3XgeReX8w==
+Date: Tue, 14 Oct 2025 20:19:52 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] usb: uhci: Work around bogus clang shift overflow
+ warning from DMA_BIT_MASK(64)
+Message-ID: <20251015031952.GA2975353@ax162>
+References: <20251014-usb-uhci-avoid-bogus-clang-shift-warning-v1-1-826585eed055@kernel.org>
+ <c0d1dc65-6f55-40b9-bbfa-09e8639a28e0@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rust: Add -fno-isolate-erroneous-paths-dereference to
- bindgen_skip_c_flags
-To: Xi Ruoyao <xry111@xry111.site>, Nathan Chancellor <nathan@kernel.org>
-Cc: loongarch@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Huacai Chen <chenhuacai@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>,
- "open list:RUST" <rust-for-linux@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
- <llvm@lists.linux.dev>
-References: <20251015022037.14535-2-xry111@xry111.site>
-Content-Language: en-US
-From: Mingcong Bai <jeffbai@aosc.io>
-In-Reply-To: <20251015022037.14535-2-xry111@xry111.site>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 3EFE740099
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [1.40 / 10.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[lkml];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,xry111.xry111.site:server fail];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
-	FREEMAIL_CC(0.00)[lists.linux.dev,kernel.org,gmail.com,garyguo.net,protonmail.com,google.com,umich.edu,loongson.cn,vger.kernel.org];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Action: no action
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0d1dc65-6f55-40b9-bbfa-09e8639a28e0@rowland.harvard.edu>
 
-Hi Ruoyao,
-
-在 2025/10/15 10:20, Xi Ruoyao 写道:
-> It's used to work around an objtool issue since commit abb2a5572264
-> ("LoongArch: Add cflag -fno-isolate-erroneous-paths-dereference"), but
-> it's then passed to bindgen and cause an error because Clang does not
-> have this option.
+On Tue, Oct 14, 2025 at 11:07:27PM -0400, Alan Stern wrote:
+> On Tue, Oct 14, 2025 at 04:38:19PM -0700, Nathan Chancellor wrote:
+> > After commit 18a9ec886d32 ("usb: uhci: Add Aspeed AST2700 support"),
+> > clang incorrectly warns:
+> > 
+> >   In file included from drivers/usb/host/uhci-hcd.c:855:
+> >   drivers/usb/host/uhci-platform.c:69:32: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+> >      69 | static const u64 dma_mask_64 = DMA_BIT_MASK(64);
+> >         |                                ^~~~~~~~~~~~~~~~
+> >   include/linux/dma-mapping.h:93:54: note: expanded from macro 'DMA_BIT_MASK'
+> >      93 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+> >         |                                                      ^ ~~~
+> > 
+> > clang has a long outstanding and complicated problem [1] with generating
+> > a proper control flow graph at global scope, resulting in it being
+> > unable to understand that this shift can never happen due to the
+> > 'n == 64' check.
+> > 
+> > Restructure the code to do the DMA_BIT_MASK() assignments within
+> > uhci_hcd_platform_probe() (i.e., function scope) to avoid this global
+> > scope issue.
+> > 
+> > Closes: https://github.com/ClangBuiltLinux/linux/issues/2136
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/92 [1]
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
 > 
-> Fixes: abb2a5572264 ("LoongArch: Add cflag -fno-isolate-erroneous-paths-dereference")
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->   rust/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Do you think you could instead copy the approach used in:
 > 
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 23c7ae905bd2..0676b1194a62 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -289,7 +289,7 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
->   	-fno-inline-functions-called-once -fsanitize=bounds-strict \
->   	-fstrict-flex-arrays=% -fmin-function-alignment=% \
->   	-fzero-init-padding-bits=% -mno-fdpic \
-> -	--param=% --param asan-%
-> +	--param=% --param asan-% -fno-isolate-erroneous-paths-dereference
->   
->   # Derived from `scripts/Makefile.clang`.
->   BINDGEN_TARGET_x86	:= x86_64-linux-gnu
+> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?id=274f2232a94f6ca626d60288044e13d9a58c7612
+> 
+> IMO it is cleaner, and it also moves the DMA_BIT_MASK() computations 
+> into a function scope.
 
-Tested good applied atop v6.18-rc1, which includes the aforementioned 
-abb2a5572264.
+Sure, would something like this be what you had in mind?
 
-Tested-by: Mingcong Bai <jeffbai@aosc.io>
+diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
+index 37607f985cc0..5e02f2ceafb6 100644
+--- a/drivers/usb/host/uhci-platform.c
++++ b/drivers/usb/host/uhci-platform.c
+@@ -65,13 +65,10 @@ static const struct hc_driver uhci_platform_hc_driver = {
+ 	.hub_control =		uhci_hub_control,
+ };
+ 
+-static const u64 dma_mask_32 = DMA_BIT_MASK(32);
+-static const u64 dma_mask_64 = DMA_BIT_MASK(64);
+-
+ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	const u64 *dma_mask_ptr;
++	bool dma_mask_64 = false;
+ 	struct usb_hcd *hcd;
+ 	struct uhci_hcd	*uhci;
+ 	struct resource *res;
+@@ -85,11 +82,11 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+ 	 * Since shared usb code relies on it, set it here for now.
+ 	 * Once we have dma capability bindings this can go away.
+ 	 */
+-	dma_mask_ptr = (u64 *)of_device_get_match_data(&pdev->dev);
+-	if (!dma_mask_ptr)
+-		dma_mask_ptr = &dma_mask_32;
++	if (of_device_get_match_data(&pdev->dev))
++		dma_mask_64 = true;
+ 
+-	ret = dma_coerce_mask_and_coherent(&pdev->dev, *dma_mask_ptr);
++	ret = dma_coerce_mask_and_coherent(&pdev->dev,
++		dma_mask_64 ? DMA_BIT_MASK(64) : DMA_BIT_MASK(32));
+ 	if (ret)
+ 		return ret;
+ 
+@@ -200,7 +197,7 @@ static void uhci_hcd_platform_shutdown(struct platform_device *op)
+ static const struct of_device_id platform_uhci_ids[] = {
+ 	{ .compatible = "generic-uhci", },
+ 	{ .compatible = "platform-uhci", },
+-	{ .compatible = "aspeed,ast2700-uhci", .data = &dma_mask_64},
++	{ .compatible = "aspeed,ast2700-uhci", .data = (void *)1 },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, platform_uhci_ids);
 
-Best Regards,
-Mingcong Bai
+The
 
+  const struct of_device_id *match;
+
+  match = of_match_device(dev->dev.driver->of_match_table, &dev->dev);
+  if (match && match->data)
+
+part of the change you linked to is equivalent to
+
+  if (of_device_get_match_data(&dev->dev))
+
+if someone wanted to do a further clean up.
+
+Cheers,
+Nathan
 
