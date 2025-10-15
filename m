@@ -1,305 +1,531 @@
-Return-Path: <linux-kernel+bounces-854733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAC4BDF402
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10164BDF404
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422D4188CA44
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642391A60761
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4DC2D739D;
-	Wed, 15 Oct 2025 15:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="ICrcqYps"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C642AC17
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE802D8780;
+	Wed, 15 Oct 2025 15:02:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07B7254B18;
+	Wed, 15 Oct 2025 15:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540567; cv=none; b=c/BXvq63zVkfnZUtIfvTEJIDjb38Pix+UikftXrq4bv4EE698mozpI/PC1kwzYa307Sixypgtw9EinGPVbvAkf0LwKP9ucW3fCiiigWxcm4pYAAg5hluN7y553LMERKO9fCOn1NN5RDYFbdgl72A28Wbt4NzVeYzEIc8+CTobJM=
+	t=1760540573; cv=none; b=AN3zNYvYjETz/GcM6r7V64XdAAwPseysSUkF4cxXy3V7Z8kLfs3+r6UneZOPCgvXTRxvr/2ELoLc3CbDK8aCAOjfp/zZMj+QDHieGxnvMRJ9zqKCmxi3HHkeh4TnwhlW8EDPlDey59hC8DaLQb26r4cfNtov9+Gz1T3KpsAk6ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540567; c=relaxed/simple;
-	bh=hHvO7+pAuANETqlkdKcLeY8V60XOi07rOreJSG/Jdp4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S1n/Du8q4CZA5NeapW1VWRp9Oj2fLqKBR0A4wMfj2EqRroKaphWVxFFFaEGFFoknHIVNOImge/39T2YHWtiP++WmhhgIMCtnP7iWMLLA6Pj30YqoW2AzlMOei75TrUby/Ubb2lOKoMk7dy3Iyf6TaswTlm0M1GyLioJpDPDow+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=ICrcqYps; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 598D4240028
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:02:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760540561; bh=7vRn8VJxRxqVRWolykt9lD+vLVOYMFlK1KobOslfuNw=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
-	b=ICrcqYpsQ7GNY5y1C0CaOCKAzodxxE/OYFBqv588qpjnO0qnFlE344Qw/2DGgSZ5a
-	 zO6q+mUGMiVFRbK+6mowhXU69KOi23wyAjkg4904DqzoRddeGWjFsq9OKA5oadqhZ5
-	 UBPmVPCwJo0Hc7AXohBogV4j37FzzgEShV13YhxzgkhQ2yKgY1pTIZzdx1ukVElRF7
-	 idebzus40Tso/yAtldu/3pO3OqPusZXSU04ff3+1Iac6XI/XG1SargBVPpZlIIZs+4
-	 UC0chboiMYuZ+MRKAAbvEKaBKnA+ekARP57dzAettoWm2fG0pPJUfXE6BsXL3zJHuR
-	 hdzqQKv3b/DMA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cmvTC3NSqz9rxP;
-	Wed, 15 Oct 2025 17:02:39 +0200 (CEST)
-Message-ID: <25f3fd337ce5e58915125c4e2eb85ef4d7af3627.camel@posteo.de>
-Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
-From: Markus Probst <markus.probst@posteo.de>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek
- <pavel@kernel.org>,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"	
- <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, Boqun Feng	
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com,  Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Date: Wed, 15 Oct 2025 15:02:40 +0000
-In-Reply-To: <DDIZC4MK2CFW.1DPDIJR4HPKGY@kernel.org>
-References: <20251012145221.172116-1-markus.probst@posteo.de>
-	 <20251012145221.172116-3-markus.probst@posteo.de>
-	 <aO1GM4WXs37Zpm0G@google.com>
-	 <7de58fd25b52dd5195c8ac06ed4df5a1e60e5070.camel@posteo.de>
-	 <DDIZC4MK2CFW.1DPDIJR4HPKGY@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760540573; c=relaxed/simple;
+	bh=02rpJ5AQAI1jNvcnqJlCOiGYXOnV1rR9beYRVt635GI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Skordj6wm2B/vBZbXO5bM3VYFO/YNFgtzUH9Qf9MImbjTlXJ+8+Wq4QY802PZKfSygjJwg6qKwbbLDDBDU856M+Hdw9NOvOAhu9wqmQmybEZEebn5+ZgfpudACITHeoRrdgUpYR4RcWQWT30fmKjpNMPY1+A/jMXbHEtGCDBwC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8F671655;
+	Wed, 15 Oct 2025 08:02:39 -0700 (PDT)
+Received: from [10.1.38.178] (XHFQ2J9959.cambridge.arm.com [10.1.38.178])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F01B3F738;
+	Wed, 15 Oct 2025 08:02:44 -0700 (PDT)
+Message-ID: <f40f285b-9828-41fd-a004-3422915b8024@arm.com>
+Date: Wed, 15 Oct 2025 16:02:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64/mm: Allow __create_pgd_mapping() to
+ propagate pgtable_alloc() errors
+Content-Language: en-GB
+To: Linu Cherian <linu.cherian@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Yang Shi <yang@os.amperecomputing.com>,
+ Chaitanya S Prakash <chaitanyas.prakash@arm.com>, stable@vger.kernel.org
+References: <20251015112758.2701604-1-linu.cherian@arm.com>
+ <20251015112758.2701604-2-linu.cherian@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20251015112758.2701604-2-linu.cherian@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-15 at 16:52 +0200, Danilo Krummrich wrote:
-> On Wed Oct 15, 2025 at 3:44 PM CEST, Markus Probst wrote:
-> > On Mon, 2025-10-13 at 18:34 +0000, Alice RyhlV wrote:
-> > > On Sun, Oct 12, 2025 at 02:52:39PM +0000, Markus Probst wrote:
-> > > > Implement the core abstractions needed for led class devices,
-> > > > including:
-> > > >=20
-> > > > * `led::LedOps` - the trait for handling leds, including
-> > > > =C2=A0 `brightness_set`, `brightness_get` and `blink_set`
-> > > >=20
-> > > > * `led::InitData` - data set for the led class device
-> > > >=20
-> > > > * `led::Device` - a safe wrapper around `led_classdev`
-> > > >=20
-> > > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> > >=20
-> > > > +pub trait LedOps: Send + 'static + Sized {
-> > > > +=C2=A0=C2=A0=C2=A0 /// If set true, [`LedOps::brightness_set`] and
-> > > > [`LedOps::blink_set`] must not sleep
-> > > > +=C2=A0=C2=A0=C2=A0 /// and perform the operation immediately.
-> > > > +=C2=A0=C2=A0=C2=A0 const BLOCKING: bool;
-> > > > +=C2=A0=C2=A0=C2=A0 /// The max brightness level
-> > > > +=C2=A0=C2=A0=C2=A0 const MAX_BRIGHTNESS: u32;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0 /// Sets the brightness level.
-> > > > +=C2=A0=C2=A0=C2=A0 ///
-> > > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
-> > > > +=C2=A0=C2=A0=C2=A0 fn brightness_set(&self, brightness: u32) -> Re=
-sult<()>;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0 /// Gets the current brightness level.
-> > > > +=C2=A0=C2=A0=C2=A0 fn brightness_get(&self) -> u32 {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEF=
-AULT_ERROR)
-> > > > +=C2=A0=C2=A0=C2=A0 }
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0 /// Activates hardware accelerated blinking.
-> > > > +=C2=A0=C2=A0=C2=A0 ///
-> > > > +=C2=A0=C2=A0=C2=A0 /// delays are in milliseconds. If both are zer=
-o, a
-> > > > sensible
-> > > > default should be chosen.
-> > > > +=C2=A0=C2=A0=C2=A0 /// The caller should adjust the timings in tha=
-t case and
-> > > > if
-> > > > it can't match the values
-> > > > +=C2=A0=C2=A0=C2=A0 /// specified exactly. Setting the brightness t=
-o 0 will
-> > > > disable the hardware accelerated
-> > > > +=C2=A0=C2=A0=C2=A0 /// blinking.
-> > > > +=C2=A0=C2=A0=C2=A0 ///
-> > > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
-> > > > +=C2=A0=C2=A0=C2=A0 fn blink_set(&self, _delay_on: &mut usize, _del=
-ay_off:
-> > > > &mut
-> > > > usize) -> Result<()> {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEF=
-AULT_ERROR)
-> > > > +=C2=A0=C2=A0=C2=A0 }
-> > >=20
-> > > These functions should probably take a &Device<Bound> argument so
-> > > that
-> > > they can use methods that require a bound device (such as IO).
-> > How about instead something like
-> >=20
-> > mod device {
-> >=20
-> > =C2=A0 unsafe trait Container<Ctx: DeviceContext>: AsRef<Device<Ctx>> {
-> > =C2=A0=C2=A0=C2=A0 const Offset: usize;
-> >=20
-> > =C2=A0=C2=A0=C2=A0 unsafe fn from_device(dev: &Device<Ctx>) -> &Self {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <implementation here>
-> > =C2=A0=C2=A0=C2=A0 }
-> > =C2=A0 }
-> >=20
-> > =C2=A0 unsafe impl Device<Ctx> for Container<Ctx> {
-> > =C2=A0=C2=A0=C2=A0 const Offset: usize =3D 0;
-> > =C2=A0 }
-> >=20
-> > }
-> >=20
-> > And instead of passing &Device<Bound> to the functions, we should
-> > add a
-> > type parameter to LedOps, e.g.:
-> >=20
-> > trait LedOps<T: device::Container<device::Bound>> {
-> >=20
-> > =C2=A0 ...
-> >=20
-> > =C2=A0 fn brightness_set(&self, dev: &T, brightness: u32) -> Result<()>=
-;
-> >=20
-> > =C2=A0 ...
-> >=20
-> > }
-> >=20
-> > impl<T: LedOps<E>, E: device::Container<device::Bound>> Device<T> {
-> >=20
-> > =C2=A0 pub fn new<'a>(
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 parent: &'a E,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 init_data: InitData<'a>,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ops: T,
-> > =C2=A0=C2=A0=C2=A0 ) -> impl PinInit<Devres<Self>, Error> + 'a {
-> > =C2=A0=C2=A0=C2=A0=C2=A0 ...
-> > =C2=A0 }
-> >=20
-> > =C2=A0 ...
-> >=20
-> > }
-> >=20
-> > In the example of i2c (or any other container for `struct device`),
-> > we
-> > implement the device::Container trait:
-> >=20
-> > mod i2c {
-> >=20
-> > =C2=A0 unsafe impl device::Container for I2cClient {
-> > =C2=A0=C2=A0=C2=A0 const Offset: usize =3D offset_of!(bindings::i2c_cli=
-ent, dev);
-> > =C2=A0 }
-> >=20
-> > }
-> > This allows the LedOps function to use any functions from the
-> > I2cClient
-> > or any other device container which may be used (removing the need
-> > to
-> > store it inside the LedOps implementations struct). It still allows
-> > Device<Bound> to be used, as it also would implement
-> > device::Container.
->=20
-> I had a similar idea in the past, but it has some disadvantages:
->=20
-> =C2=A0 (1) You have to implement the upcast from a generic device to a bu=
-s
-> device for
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 every bus device.
-Not necessarily every, like I said `container::Device` itself also
-would implement `device::Container` (still allowing &Device<Bound>).
+On 15/10/2025 12:27, Linu Cherian wrote:
+> From: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+> 
+> arch_add_memory() is used to hotplug memory into a system but as a part
+> of its implementation it calls __create_pgd_mapping(), which uses
+> pgtable_alloc() in order to build intermediate page tables. As this path
+> was initally only used during early boot pgtable_alloc() is designed to
+> BUG_ON() on failure. However, in the event that memory hotplug is
+> attempted when the system's memory is extremely tight and the allocation
+> were to fail, it would lead to panicking the system, which is not
+> desirable. Hence update __create_pgd_mapping and all it's callers to be
+> non void and propagate -ENOMEM on allocation failure to allow system to
+> fail gracefully.
+> 
+> But during early boot if there is an allocation failure, we want the
+> system to panic, hence create a wrapper around __create_pgd_mapping()
+> called early_create_pgd_mapping() which is designed to panic, if ret
+> is non zero value. All the init calls are updated to use this wrapper
+> rather than the modified __create_pgd_mapping() to restore
+> functionality.
+> 
+> Fixes: 4ab215061554 ("arm64: Add memory hotplug support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
 
->=20
-> =C2=A0 (2) You have to store a Box<dyn T> in the Rust LED class device;
-> the C struct
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device can't carry the fat pointer.
-Why carry a fat pointer (assuming you mean pointers to unsized types)?
-We already know the address of it with the `struct led_classdev`-
->`parent` field, we just need to substract the offset from `<T as
-Container>::Offset`, and we have the address of the device container
-(like `struct i2c_client`). No Box needed.
+LGTM:
 
-Thanks
-- Markus Probst
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
+> ---
+> Changelog:
+> 
+> v3:
+> * Fixed a maybe-uninitialized case in alloc_init_pud
+> * Added Fixes tag and CCed stable
+> * Few other trivial cleanups
+> 
+>  arch/arm64/mm/mmu.c | 210 ++++++++++++++++++++++++++++----------------
+>  1 file changed, 132 insertions(+), 78 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index b8d37eb037fc..638cb4df31a9 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -49,6 +49,8 @@
+>  #define NO_CONT_MAPPINGS	BIT(1)
+>  #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+>  
+> +#define INVALID_PHYS_ADDR	(-1ULL)
+> +
+>  DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
+>  
+>  u64 kimage_voffset __ro_after_init;
+> @@ -194,11 +196,11 @@ static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+>  	} while (ptep++, addr += PAGE_SIZE, addr != end);
+>  }
+>  
+> -static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+> -				unsigned long end, phys_addr_t phys,
+> -				pgprot_t prot,
+> -				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -				int flags)
+> +static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+> +			       unsigned long end, phys_addr_t phys,
+> +			       pgprot_t prot,
+> +			       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +			       int flags)
+>  {
+>  	unsigned long next;
+>  	pmd_t pmd = READ_ONCE(*pmdp);
+> @@ -213,6 +215,8 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  			pmdval |= PMD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pte_phys = pgtable_alloc(TABLE_PTE);
+> +		if (pte_phys == INVALID_PHYS_ADDR)
+> +			return -ENOMEM;
+>  		ptep = pte_set_fixmap(pte_phys);
+>  		init_clear_pgtable(ptep);
+>  		ptep += pte_index(addr);
+> @@ -244,12 +248,15 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+>  	 * walker.
+>  	 */
+>  	pte_clear_fixmap();
+> +
+> +	return 0;
+>  }
+>  
+> -static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> -		     phys_addr_t phys, pgprot_t prot,
+> -		     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
+> +static int init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+> +		    phys_addr_t phys, pgprot_t prot,
+> +		    phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
+>  {
+> +	int ret;
+>  	unsigned long next;
+>  
+>  	do {
+> @@ -269,22 +276,27 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  			BUG_ON(!pgattr_change_is_safe(pmd_val(old_pmd),
+>  						      READ_ONCE(pmd_val(*pmdp))));
+>  		} else {
+> -			alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+> -					    pgtable_alloc, flags);
+> +			ret = alloc_init_cont_pte(pmdp, addr, next, phys, prot,
+> +						  pgtable_alloc, flags);
+> +			if (ret)
+> +				return ret;
+>  
+>  			BUG_ON(pmd_val(old_pmd) != 0 &&
+>  			       pmd_val(old_pmd) != READ_ONCE(pmd_val(*pmdp)));
+>  		}
+>  		phys += next - addr;
+>  	} while (pmdp++, addr = next, addr != end);
+> +
+> +	return 0;
+>  }
+>  
+> -static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+> -				unsigned long end, phys_addr_t phys,
+> -				pgprot_t prot,
+> -				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -				int flags)
+> +static int alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+> +			       unsigned long end, phys_addr_t phys,
+> +			       pgprot_t prot,
+> +			       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +			       int flags)
+>  {
+> +	int ret;
+>  	unsigned long next;
+>  	pud_t pud = READ_ONCE(*pudp);
+>  	pmd_t *pmdp;
+> @@ -301,6 +313,8 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+>  			pudval |= PUD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pmd_phys = pgtable_alloc(TABLE_PMD);
+> +		if (pmd_phys == INVALID_PHYS_ADDR)
+> +			return -ENOMEM;
+>  		pmdp = pmd_set_fixmap(pmd_phys);
+>  		init_clear_pgtable(pmdp);
+>  		pmdp += pmd_index(addr);
+> @@ -320,20 +334,26 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+>  		    (flags & NO_CONT_MAPPINGS) == 0)
+>  			__prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>  
+> -		init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
+> +		ret = init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
+> +		if (ret)
+> +			goto out;
+>  
+>  		pmdp += pmd_index(next) - pmd_index(addr);
+>  		phys += next - addr;
+>  	} while (addr = next, addr != end);
+>  
+> +out:
+>  	pmd_clear_fixmap();
+> +
+> +	return ret;
+>  }
+>  
+> -static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+> -			   phys_addr_t phys, pgprot_t prot,
+> -			   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -			   int flags)
+> +static int alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+> +			  phys_addr_t phys, pgprot_t prot,
+> +			  phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +			  int flags)
+>  {
+> +	int ret = 0;
+>  	unsigned long next;
+>  	p4d_t p4d = READ_ONCE(*p4dp);
+>  	pud_t *pudp;
+> @@ -346,6 +366,8 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  			p4dval |= P4D_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		pud_phys = pgtable_alloc(TABLE_PUD);
+> +		if (pud_phys == INVALID_PHYS_ADDR)
+> +			return -ENOMEM;
+>  		pudp = pud_set_fixmap(pud_phys);
+>  		init_clear_pgtable(pudp);
+>  		pudp += pud_index(addr);
+> @@ -375,8 +397,10 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  			BUG_ON(!pgattr_change_is_safe(pud_val(old_pud),
+>  						      READ_ONCE(pud_val(*pudp))));
+>  		} else {
+> -			alloc_init_cont_pmd(pudp, addr, next, phys, prot,
+> -					    pgtable_alloc, flags);
+> +			ret = alloc_init_cont_pmd(pudp, addr, next, phys, prot,
+> +						  pgtable_alloc, flags);
+> +			if (ret)
+> +				goto out;
+>  
+>  			BUG_ON(pud_val(old_pud) != 0 &&
+>  			       pud_val(old_pud) != READ_ONCE(pud_val(*pudp)));
+> @@ -384,14 +408,18 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+>  		phys += next - addr;
+>  	} while (pudp++, addr = next, addr != end);
+>  
+> +out:
+>  	pud_clear_fixmap();
+> +
+> +	return ret;
+>  }
+>  
+> -static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+> -			   phys_addr_t phys, pgprot_t prot,
+> -			   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -			   int flags)
+> +static int alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+> +			  phys_addr_t phys, pgprot_t prot,
+> +			  phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +			  int flags)
+>  {
+> +	int ret;
+>  	unsigned long next;
+>  	pgd_t pgd = READ_ONCE(*pgdp);
+>  	p4d_t *p4dp;
+> @@ -404,6 +432,8 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+>  			pgdval |= PGD_TABLE_PXN;
+>  		BUG_ON(!pgtable_alloc);
+>  		p4d_phys = pgtable_alloc(TABLE_P4D);
+> +		if (p4d_phys == INVALID_PHYS_ADDR)
+> +			return -ENOMEM;
+>  		p4dp = p4d_set_fixmap(p4d_phys);
+>  		init_clear_pgtable(p4dp);
+>  		p4dp += p4d_index(addr);
+> @@ -418,8 +448,10 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+>  
+>  		next = p4d_addr_end(addr, end);
+>  
+> -		alloc_init_pud(p4dp, addr, next, phys, prot,
+> -			       pgtable_alloc, flags);
+> +		ret = alloc_init_pud(p4dp, addr, next, phys, prot,
+> +				     pgtable_alloc, flags);
+> +		if (ret)
+> +			goto out;
+>  
+>  		BUG_ON(p4d_val(old_p4d) != 0 &&
+>  		       p4d_val(old_p4d) != READ_ONCE(p4d_val(*p4dp)));
+> @@ -427,15 +459,19 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+>  		phys += next - addr;
+>  	} while (p4dp++, addr = next, addr != end);
+>  
+> +out:
+>  	p4d_clear_fixmap();
+> +
+> +	return ret;
+>  }
+>  
+> -static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+> -					unsigned long virt, phys_addr_t size,
+> -					pgprot_t prot,
+> -					phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -					int flags)
+> +static int __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+> +				       unsigned long virt, phys_addr_t size,
+> +				       pgprot_t prot,
+> +				       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +				       int flags)
+>  {
+> +	int ret;
+>  	unsigned long addr, end, next;
+>  	pgd_t *pgdp = pgd_offset_pgd(pgdir, virt);
+>  
+> @@ -444,7 +480,7 @@ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+>  	 * within a page, we cannot map the region as the caller expects.
+>  	 */
+>  	if (WARN_ON((phys ^ virt) & ~PAGE_MASK))
+> -		return;
+> +		return -EINVAL;
+>  
+>  	phys &= PAGE_MASK;
+>  	addr = virt & PAGE_MASK;
+> @@ -452,25 +488,45 @@ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+>  
+>  	do {
+>  		next = pgd_addr_end(addr, end);
+> -		alloc_init_p4d(pgdp, addr, next, phys, prot, pgtable_alloc,
+> -			       flags);
+> +		ret = alloc_init_p4d(pgdp, addr, next, phys, prot, pgtable_alloc,
+> +				     flags);
+> +		if (ret)
+> +			return ret;
+>  		phys += next - addr;
+>  	} while (pgdp++, addr = next, addr != end);
+> +
+> +	return 0;
+>  }
+>  
+> -static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+> -				 unsigned long virt, phys_addr_t size,
+> -				 pgprot_t prot,
+> -				 phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -				 int flags)
+> +static int __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+> +				unsigned long virt, phys_addr_t size,
+> +				pgprot_t prot,
+> +				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +				int flags)
+>  {
+> +	int ret;
+> +
+>  	mutex_lock(&fixmap_lock);
+> -	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
+> -				    pgtable_alloc, flags);
+> +	ret = __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
+> +					  pgtable_alloc, flags);
+>  	mutex_unlock(&fixmap_lock);
+> +
+> +	return ret;
+>  }
+>  
+> -#define INVALID_PHYS_ADDR	(-1ULL)
+> +static void early_create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+> +				     unsigned long virt, phys_addr_t size,
+> +				     pgprot_t prot,
+> +				     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +				     int flags)
+> +{
+> +	int ret;
+> +
+> +	ret = __create_pgd_mapping(pgdir, phys, virt, size, prot, pgtable_alloc,
+> +				   flags);
+> +	if (ret)
+> +		panic("Failed to create page tables\n");
+> +}
+>  
+>  static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
+>  				       enum pgtable_type pgtable_type)
+> @@ -511,21 +567,13 @@ try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
+>  static phys_addr_t __maybe_unused
+>  pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
+>  {
+> -	phys_addr_t pa;
+> -
+> -	pa = __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
+> -	BUG_ON(pa == INVALID_PHYS_ADDR);
+> -	return pa;
+> +	return __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
+>  }
+>  
+>  static phys_addr_t
+>  pgd_pgtable_alloc_special_mm(enum pgtable_type pgtable_type)
+>  {
+> -	phys_addr_t pa;
+> -
+> -	pa = __pgd_pgtable_alloc(NULL, GFP_PGTABLE_KERNEL, pgtable_type);
+> -	BUG_ON(pa == INVALID_PHYS_ADDR);
+> -	return pa;
+> +	return  __pgd_pgtable_alloc(NULL, GFP_PGTABLE_KERNEL, pgtable_type);
+>  }
+>  
+>  static void split_contpte(pte_t *ptep)
+> @@ -903,8 +951,8 @@ void __init create_mapping_noalloc(phys_addr_t phys, unsigned long virt,
+>  			&phys, virt);
+>  		return;
+>  	}
+> -	__create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
+> -			     NO_CONT_MAPPINGS);
+> +	early_create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
+> +				 NO_CONT_MAPPINGS);
+>  }
+>  
+>  void __init create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
+> @@ -918,8 +966,8 @@ void __init create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
+>  	if (page_mappings_only)
+>  		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>  
+> -	__create_pgd_mapping(mm->pgd, phys, virt, size, prot,
+> -			     pgd_pgtable_alloc_special_mm, flags);
+> +	early_create_pgd_mapping(mm->pgd, phys, virt, size, prot,
+> +				 pgd_pgtable_alloc_special_mm, flags);
+>  }
+>  
+>  static void update_mapping_prot(phys_addr_t phys, unsigned long virt,
+> @@ -931,8 +979,8 @@ static void update_mapping_prot(phys_addr_t phys, unsigned long virt,
+>  		return;
+>  	}
+>  
+> -	__create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
+> -			     NO_CONT_MAPPINGS);
+> +	early_create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
+> +				 NO_CONT_MAPPINGS);
+>  
+>  	/* flush the TLBs after updating live kernel mappings */
+>  	flush_tlb_kernel_range(virt, virt + size);
+> @@ -941,8 +989,8 @@ static void update_mapping_prot(phys_addr_t phys, unsigned long virt,
+>  static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
+>  				  phys_addr_t end, pgprot_t prot, int flags)
+>  {
+> -	__create_pgd_mapping(pgdp, start, __phys_to_virt(start), end - start,
+> -			     prot, early_pgtable_alloc, flags);
+> +	early_create_pgd_mapping(pgdp, start, __phys_to_virt(start), end - start,
+> +				 prot, early_pgtable_alloc, flags);
+>  }
+>  
+>  void __init mark_linear_text_alias_ro(void)
+> @@ -1178,9 +1226,10 @@ static int __init __kpti_install_ng_mappings(void *__unused)
+>  		// covers the PTE[] page itself, the remaining entries are free
+>  		// to be used as a ad-hoc fixmap.
+>  		//
+> -		__create_pgd_mapping_locked(kpti_ng_temp_pgd, __pa(alloc),
+> -					    KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> -					    kpti_ng_pgd_alloc, 0);
+> +		if (__create_pgd_mapping_locked(kpti_ng_temp_pgd, __pa(alloc),
+> +						KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> +						kpti_ng_pgd_alloc, 0))
+> +			panic("Failed to create page tables\n");
+>  	}
+>  
+>  	cpu_install_idmap();
+> @@ -1233,9 +1282,9 @@ static int __init map_entry_trampoline(void)
+>  
+>  	/* Map only the text into the trampoline page table */
+>  	memset(tramp_pg_dir, 0, PGD_SIZE);
+> -	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
+> -			     entry_tramp_text_size(), prot,
+> -			     pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
+> +	early_create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
+> +				 entry_tramp_text_size(), prot,
+> +				 pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
+>  
+>  	/* Map both the text and data into the kernel page table */
+>  	for (i = 0; i < DIV_ROUND_UP(entry_tramp_text_size(), PAGE_SIZE); i++)
+> @@ -1877,23 +1926,28 @@ int arch_add_memory(int nid, u64 start, u64 size,
+>  	if (force_pte_mapping())
+>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>  
+> -	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
+> -			     size, params->pgprot, pgd_pgtable_alloc_init_mm,
+> -			     flags);
+> +	ret = __create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
+> +				   size, params->pgprot, pgd_pgtable_alloc_init_mm,
+> +				   flags);
+> +	if (ret)
+> +		goto err;
+>  
+>  	memblock_clear_nomap(start, size);
+>  
+>  	ret = __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
+>  			   params);
+>  	if (ret)
+> -		__remove_pgd_mapping(swapper_pg_dir,
+> -				     __phys_to_virt(start), size);
+> -	else {
+> -		/* Address of hotplugged memory can be smaller */
+> -		max_pfn = max(max_pfn, PFN_UP(start + size));
+> -		max_low_pfn = max_pfn;
+> -	}
+> +		goto err;
+> +
+> +	/* Address of hotplugged memory can be smaller */
+> +	max_pfn = max(max_pfn, PFN_UP(start + size));
+> +	max_low_pfn = max_pfn;
+> +
+> +	return 0;
+>  
+> +err:
+> +	__remove_pgd_mapping(swapper_pg_dir,
+> +			     __phys_to_virt(start), size);
+>  	return ret;
+>  }
+>  
 
->=20
-> The alternative would be to provide a safe method for bus devices to
-> upgrade to
-> a bound device by presenting its corresponding &Device<Bound> base
-> device, for
-> instance:
->=20
-> 	impl I2cClient {
-> 	=C2=A0=C2=A0=C2=A0 pub fn into_bound<'a>(&'a self, &'a Device<Bound>) ->
-> Result<&'a I2cClient<Bound>> {
-> 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // Fails if the presented `&D=
-evice<Bound` is not the
-> base device of `self`.
-> 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
-> 	=C2=A0=C2=A0=C2=A0 }
-> 	}
->=20
-> The advantage is that this can easily be implemented with a macro for
-> all bus
-> devices.
->=20
-> There is a slight downside in ergonomics due to the into_bound() call
-> though:
->=20
-> 	fn brightness_set(&self, parent: &Device<Bound>, brightness:
-> u32) -> Result {
-> 	=C2=A0=C2=A0=C2=A0 let i2c: &I2cClient<Bound> =3D
-> self.i2c.into_bound(parent)?;
->=20
-> 	=C2=A0=C2=A0=C2=A0 ...
-> 	}
 
