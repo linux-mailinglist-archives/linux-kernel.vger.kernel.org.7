@@ -1,191 +1,249 @@
-Return-Path: <linux-kernel+bounces-855256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E04BE0A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EC5BE0A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCFBC4FE1EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA10B4274AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D53305E04;
-	Wed, 15 Oct 2025 20:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E918030C363;
+	Wed, 15 Oct 2025 20:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="a11Kg6bh"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011019.outbound.protection.outlook.com [40.107.130.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkMvNiZr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAB4302742;
-	Wed, 15 Oct 2025 20:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760560487; cv=fail; b=pZtWit6mI8bPRPbjm2l1EP1ce0SIjyvHIxGl6rO+EIiC/OaPj9xiugSzkDEBDt/NimHqcbOnoaqm+R+63Dwm7mDrrd1rcXAI+oFfoRUxgJlUWu66c7POg4tkXDqzLyP/remK3GvuGoIdootd0tIZlAJUn0tQD+c1QEZARadMWRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760560487; c=relaxed/simple;
-	bh=RpkNFtikYsCTlTctzNA5YBJWwIvRQQ1pflhR7aEhXQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ozu6sCrwMxByzZ+Att2gBw/O/G7pVUZajumWP2xqmUpYsRts9Ufqe0dLRhwqwDmmqz0PE2dBlaxNt4qmECn+H9aAscESa/KjPRebEXYrFZdJv0fLl9KAm6nHLyUJj/0tt0mfmBmuDfYmttaHTMI5MqspT1SCmRwuUJ1uE4WP9qU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=a11Kg6bh; arc=fail smtp.client-ip=40.107.130.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MvSLLJ3hHoK9Qe0O289TBMY8zbcNuDQ5sN89OKe4kazDXo2hnslETantgd4dPUUbG8KO1ssY5JNYUQn/7qBYyu40G8ccpORA+Hfg8wnXTYTJHlDm/DD/mMAz/y09KI6I4GLLkazBAaAURm44X+Zj4nrlA8xoy8Oy+rH1xXH9vNwnHYAEk3Es88vPlMBhkSc2yR7iO62iYGMnmofGB3WYkDDmafEYcWtuIFxJTVf9P57HIJ/E/+1g69XOZPKx3Xf6xS2VLPMkkKRl9ByaRk8OloybRF6Cz+uhF4CXRmXpmZOOvngCfaZSU6UejlTWsEVFVuG5bRxULwJJ/lmrS4/T3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wm6Yveb7TURE5rbYKACzY/hFToFCMld1KacmyH10qsY=;
- b=Vg+VVYjbAR3etx3QDBAvddZIAaeot+b2IP1Lz0ZM9U5dzB/EEjaPZVlDaUZMnXrB2dM/SUDfhNN9f0sQCwBaSWdyO/uo7LBK6te6TCI51S39qv/fUJPSOMsgaB3rGVq0pCEgDATrU3ZEjYtmMA88ODWyJ0bNlFYeWzAef3HC3HsXGeMqvz5vMtRfH8AKxkMpnEPnUvCRVYHz3rSkib9L0KsSSzT0edWDLYN/g/xb1r8/GA65W7ZftoX3F1R6Iz/60RE35/5g7Q3z6vB3eA7tYGCJhn1w54xChoR8vysF3oUmJthS2wtuYemTnXvJdJ4/BKx+6HciCouyEEUhm7JZCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wm6Yveb7TURE5rbYKACzY/hFToFCMld1KacmyH10qsY=;
- b=a11Kg6bhwuOAqa2lN9PkfmifXqOYJD5T1kSKPHc832WBTO19w4HHIp50wpCSoZeesuKzvBeqsVSHedvkPQm1kiEZhFw34Go6VYNg8GfENHhqFpJoSz4cpyDkiAp7P/IrDUZs41MAFMvx9TpGP3OZ14a/kRVObV/g7WJY5tlkU5iAv6nJ2330qOjQUf34ZjRjH8Anxprsthl8TzWMn8Y6clhcZHmKT5bG+nCo5sPAW6+q1q6W4w5fwBDHuDLft3qLljHZXOsHajL1dGiweVB/3Jpz+R3IcHG4EuE6Uh4qDdqZnEqISzok0907LoYEUcwJLX6HTQy2+arNxoU0foYgww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by PAXPR04MB8768.eurprd04.prod.outlook.com (2603:10a6:102:20f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Wed, 15 Oct
- 2025 20:34:41 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
- 20:34:41 +0000
-Date: Wed, 15 Oct 2025 16:34:34 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/11] ARM: dts: imx6: rename touch-thermal0 to
- touch-0-thermal
-Message-ID: <aPAFWuJCfvTcK8hz@lizhi-Precision-Tower-5810>
-References: <20251015-imx6_dts_cleanup-v2-0-41a7281b98c6@nxp.com>
- <20251015-imx6_dts_cleanup-v2-2-41a7281b98c6@nxp.com>
- <aO_9Tw1s7VcHauNh@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO_9Tw1s7VcHauNh@shell.armlinux.org.uk>
-X-ClientProxiedBy: PH0PR07CA0014.namprd07.prod.outlook.com
- (2603:10b6:510:5::19) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309BA306B33
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760560579; cv=none; b=fjtOZcvL2NTwNcXWSCQIEA4CjrQBkXMh9A8dkjZ2zRubFFMTdb+L5xaUnmUlxFTCDhmcJJyyZtkjxK9hyR19YOZiNx/Xc/M/9F9Bb5OKnD5+S6KjzlgI9C7D+niMGXR/bUXEQQSwGIdrgIvdcQkb1GUkPqy2utLrgdrr97IHT2c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760560579; c=relaxed/simple;
+	bh=md7oGPOSa0xnbd4TtXfgOqRdp4X3wI06jm34scplTI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pbg56lqhkqOL+HQ0z8CHF3UcCPNFXlvQyRz3UJz7BbQz/c9VIx4AE3EcReNJqHtPDOoI+S7a0GwSgJPI4sDFx2LEh5PYl2TcbcF17owHEnGthshGfIPpiVmgk+TON58d4XLn5RW6rKsnk8Kn64SrphOrv/UG9jB5A4CcxxF3DG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkMvNiZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD391C19423
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760560578;
+	bh=md7oGPOSa0xnbd4TtXfgOqRdp4X3wI06jm34scplTI0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WkMvNiZrqpVASBo6Y1Jdsdj4XC1FXGpozd/+qYto2IZNCal5cyuVHZK7rxHe7TBjx
+	 bL0eH7NaNvXWbV9xasC5BT4SYDAUxQavXIy+kAfX4UZxSKLN2/c5dz3z81a3YbFbb4
+	 1es+lzfqXEthrncO03/AbmGAy5YYkfU8vewOs7XULwsNE3laMBwu3FSerJf9Q36eXS
+	 bcB8NiTsS8ZdPL0KlYuUXXqx3UKCbBJrAo9hi6kCo98o/RG9J5L1ua8IrRVp09bOtL
+	 UePKr5Ep5kGEINjmEAovqNGlr1mEo7Hr93UqhbNB/NpBWCyr0sVxgj66o50AIe58Zh
+	 DJQ79hXoT9RwA==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b50206773adso245399466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:36:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWTEac8JRU+XCQ5/E85ltFoL2OZ8vc6vZZQsrdgctZ0kMLC2/aMA5y/izIg45B+G1UJTJViN1Tsz3frfp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZRj+6qE7aAVd+YYyuUCreUOaEvS4TYoSz2Lz+iFZkW5+ummuC
+	zPr+xUnsWem07ZBzYIU5CWqY8gE3/VOpOtj6HSv3s2nNlJH+ZeE5AjCBhBHo9uLkQ0wOfwJvwDJ
+	F9zoEngAcZU0FkcBSGLxfZwegotBkcg==
+X-Google-Smtp-Source: AGHT+IHanfPp1aQvqSwf2sXxxoYj2/nZjpy0k09q6j9Kw3Drf0RM9sdzWliM8DjGkucRkyyEJ6rYMj8ZjfP4jDx5X8c=
+X-Received: by 2002:a17:907:3e16:b0:b0e:83e7:f6e1 with SMTP id
+ a640c23a62f3a-b60530575abmr191496666b.15.1760560577064; Wed, 15 Oct 2025
+ 13:36:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PAXPR04MB8768:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3312e933-6cd5-431d-cc1c-08de0c2a44db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|52116014|19092799006|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Uri0J0sBVSlImiQPPCmt7I2i9XeB00467BthiFa1QVwE2MhNqf+JXf28carD?=
- =?us-ascii?Q?KF+fuDHRDVjxOdOF7Tbjo+XSza609Nb4Tl/C/2aUayMluKIxWj8ytH1RTKuJ?=
- =?us-ascii?Q?aYIow5DBjYyj5RS0xM0GQBIyrQspIrRbzj7XNw7zjTmV/yyqUxq4PkZ6eUrm?=
- =?us-ascii?Q?juI5brpFZUzmSFn7Zirb0/B61vnkibH6QSU9DmU9vfAiWHNx/wPxbTPS0t8k?=
- =?us-ascii?Q?vWU93cuxqPJYzwIsL+BHVka3O/Vo8q4Nss8Shz2ocg60bdp6Hd+XdytgAjV0?=
- =?us-ascii?Q?3PKjLZBVNBzUxKs/MAKJyzL/82mUn61DMGipcV6Iyob9Pua9k59xHap72+sx?=
- =?us-ascii?Q?JX4Y776QoGFbFxJn1RTDqcfPUI0RN7U0xCesvYDhKg95SrG2zITwdmVJz3r8?=
- =?us-ascii?Q?dq17khXTWTIdYOtc3l8VFIhdX63qawH0+SuXvN0Zn5ta1r5ayRvuMX6QqQCD?=
- =?us-ascii?Q?aoH6Gwq7dIJekcGiA/WoCRs7jM6llEBBNGaWxif92IYVgzNaf4KjcEQIyC1t?=
- =?us-ascii?Q?FNB6D++1nhNyONufVCFX0jqJLfyaACVPdRucHSO4quaU8Z/utkLbRqNE8hzw?=
- =?us-ascii?Q?sLm/jEL1VUCrbbOXYqbP8Fs72CnzVsm3GDPPtvX40+ylQDm5qhn+oCSBDgSO?=
- =?us-ascii?Q?YwYAbGVwL6UjCQcI1Tk4jKugouc1178kyhYbE0I9NM65FrCDnoqqpwRGhXhN?=
- =?us-ascii?Q?ifgA2C3tNuf5CKzhVX0btO1e2Cz5I1p7ff3ZUtgPzXAW05P13SObYDcvJPf0?=
- =?us-ascii?Q?nWWbCNYhwZCeUeTP+A+F8ICZ91/ZG6eD79ENBD0Afq7wYyB/bPGedV/7bUhV?=
- =?us-ascii?Q?9/3VAVwcXth0p50E5hnQ0OlBKxXVUk8xJSh9rpKN8GR/e98ncbCeR0eXqpHq?=
- =?us-ascii?Q?k3dr7Um4mdqiAOgdDlKblW53UG83acarjo76dgpriFWshUyH6X9cbNPQeT+8?=
- =?us-ascii?Q?Zrb2wgX+MqKA/AqLxnefvHs2wlzYYPfthnbgrtJpWx+yCqkZi5ubt8Jd/39i?=
- =?us-ascii?Q?nxJuZRfPOzTyKY+uZRNm34g/83HuziqKmx5floCYD53iukgMwJ4YBjhPX21R?=
- =?us-ascii?Q?ryeLO7n/Wn/c8VGP6KtRRBXHm0evUf72iXcJB18a9eFzsAGrnbXn29QHfTq2?=
- =?us-ascii?Q?xVsSOJQI0q0ooKff0j5l7zxy9fQFnUExPwGeUXJsmw9zpp0b4CjgoFAjC94I?=
- =?us-ascii?Q?CkIPQQvgxW5bgt0KCaRNl/6at7Yv9ytMdyONSUSG6SnASXZXTHF7PUan2xuY?=
- =?us-ascii?Q?DwMuCjAOLrDUpohvsUkHb5djE2KACtOwHKU45kQb1o+cwEtLukE2Agweb6LC?=
- =?us-ascii?Q?zuitnTzfr7Upz0QUBxukxcmBA9+Cd88Po2RP2Y4Yh2b9iWQVgz0ewfuSfjZx?=
- =?us-ascii?Q?lisYc6a0KMvFni1i3HLGBihODujENym7KrMI3b1lsbh6r+L8JJa9xx0C6YYD?=
- =?us-ascii?Q?sCmuk8vVsKw2Ltf6HXUm+OEWMK22e9vp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(52116014)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zTx9HGPcnHTy0RcMAsWm4ot+S5pWdi8jKcD02XmIGHIoD25uWHB51tS6q0MF?=
- =?us-ascii?Q?h79KmCkJDvx9zZ+Qwn0YUh8YqwBXHiSLe95UqEycz+nQg59t1MPgg74BaZsd?=
- =?us-ascii?Q?FeNlil4Ta61cSNlEY/nx+0aTvlZ+ND8/AGQmOGaTdJx2a0kubJDhdcBi/aEV?=
- =?us-ascii?Q?3C6gw0afz8269jd/9R62AQ0OCOoOZB7tjNh1glOI8V0OycLd7Is4FKcpmUX5?=
- =?us-ascii?Q?cxziO8oFmF0HgdAtGe6q+zL50Orh0+oxBCx0nvZ5wYYOYGYR7nta38jyvP6h?=
- =?us-ascii?Q?TOumWyEEH+mJw7DwhoH++dvJa2vyWAjVWLujq+sQcPPHTVe8dilVQ1Kj6RMM?=
- =?us-ascii?Q?37MJcpfBTwAJMacYjwVFh6Q7MxFpDculkeLc9sHQ+Pd4Dpp0tTFAd2GrLijW?=
- =?us-ascii?Q?3K+A9LpvUfvECu9QmHjufZn65LqyPv4dXZTJdGr1gWHlpZv2JLAMzkLpy913?=
- =?us-ascii?Q?NdDn3gjK4Zp5LcELxZlZXGXjO/y4cTZ8zIUT+u2wjgL5IOjWUqeK3W44yl/4?=
- =?us-ascii?Q?KwgyRnibnuW9P936LfUeOH6fJ32A+5+nC2vDuB5cCxIGkCf9Fl/EHVi2LeVv?=
- =?us-ascii?Q?pFeejO8qpdH/WNEjwBJb78Zt2C5XUGTJL/iUgkzXXITWC8YobaBCCWfvkjAn?=
- =?us-ascii?Q?JOwZC/O5z+Ql01UnEj/AI86GKIh4f4zBt55Y+s3ZnJdCzN59cEuH2rvrSpTZ?=
- =?us-ascii?Q?Gxsfv9PaYNTQBCEcvcm1+vHt424uUhpo57MpBVi6/xrisIUS+JN9M/LrVELr?=
- =?us-ascii?Q?26VXptRaeIeTPsHNS+TD1jWHOWw/hAeV8ySqtkmVF7QztR2YSowrz2DjAayl?=
- =?us-ascii?Q?p34jAdQcslzLVtlVOtyBY6oA51kBIWAIcUsRpa/BoN1CjXLcJUnFrEljbYt5?=
- =?us-ascii?Q?hW6M6cgNlznwgNedkndrF3DKimUvGGhcgPhIhKPFIaVrtKHOSoM2yUH90JPI?=
- =?us-ascii?Q?hNubSdqbsyHOWnOSTijqpJnDrAHS6jtu1sqfI65o/ZlVAo7Nynx9Kh9BfNix?=
- =?us-ascii?Q?HmO1bEG4ooHl8BxgxfwlXIVvPJu3b+Avo4aG61lSgnwqOjM3/LnCMGVWu7FW?=
- =?us-ascii?Q?IYmC6jxRr/kaJYzAQxoGh+sRMPl3+73MCXuSO1YRPsQx7dQxF10dWqHGOUlj?=
- =?us-ascii?Q?rArRU6ymF3TD/M5iYhLrySq+HlvHSAlxo+C5JkA4ov6p2/E9a0YHzDaKC0iA?=
- =?us-ascii?Q?GZwZSQp2tJGDSlOu80kSUpo07l1dip2i1C9G5s+YX54LExlgrAfiUX4EKWRT?=
- =?us-ascii?Q?9U9YjDVUC1svhlKYtW2QISnV33hfyJ5u+47ovEjD9dzydt6oocPYO8mNHrIi?=
- =?us-ascii?Q?9uo+zIaTrcrH5hoxPO4RGr/iX9JH0Mg1jP6NX73s2mZyt2vzJ4SD7eIQuk4i?=
- =?us-ascii?Q?efs3NeKQnK6Or+lBfRwhdb4PjDS37ucVT1BV9S1s0gd+a/9EPgl0YOw7RYpE?=
- =?us-ascii?Q?uuvNTrunO9MkhHLfoCHPMjlOA1ZLOx8qizncuZZrZ6mMnl0QZYSOYs3QFOxY?=
- =?us-ascii?Q?FcomBRB76GBe588dzCGaReb9X+xlySg2BcqCZtsG+3mXqpZZ/QBrgYvOWM9O?=
- =?us-ascii?Q?fGfl+z8XcJXppdhwrUI=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3312e933-6cd5-431d-cc1c-08de0c2a44db
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 20:34:41.7844
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tplKDGgqH7rvbQEK8ssH4ockHEpfnTGqb7ZDNojUQZ4pFVEjhqBBZCbXi5Asg9ivog5m8TvvK5BIgRH36JXJAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8768
+References: <20251015-ethos-v4-0-81025a3dcbf3@kernel.org> <20251015-ethos-v4-2-81025a3dcbf3@kernel.org>
+ <aO/4cQ8+eLnwqFSh@lizhi-Precision-Tower-5810>
+In-Reply-To: <aO/4cQ8+eLnwqFSh@lizhi-Precision-Tower-5810>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 15 Oct 2025 15:36:05 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+L2RHgP9FaEpxzzVRybyjeNr84xgEBbU4KEyZtrz63FA@mail.gmail.com>
+X-Gm-Features: AS18NWAQqPDQMMnqBwUDObugcrZ2Q-fcA0YRercJNknG6zrODakK3RAlBsIaPZY
+Message-ID: <CAL_Jsq+L2RHgP9FaEpxzzVRybyjeNr84xgEBbU4KEyZtrz63FA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] accel: Add Arm Ethos-U NPU driver
+To: Frank Li <Frank.li@nxp.com>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
+	Daniel Stone <daniel@fooishbar.org>, Sui Jingfeng <sui.jingfeng@linux.dev>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 09:00:15PM +0100, Russell King (Oracle) wrote:
-> On Wed, Oct 15, 2025 at 12:44:27PM -0400, Frank Li wrote:
-> > -		touch-thermal0 {
-> > +		touch0-thermal {
-> ...
-> > -		touch-thermal1 {
-> > +		touch1-thermal {
-> ...
-> > -		touch-thermal0 {
-> > +		touch-0-thermal {
-> ...
-> > -		touch-thermal1 {
-> > +		touch-1-thermal {
-> ...
-> > -		touch-thermal0 {
-> > +		touch-0-thermal {
-> ...
-> > -		touch-thermal1 {
-> > +		touch-1-thermal {
+On Wed, Oct 15, 2025 at 2:39=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
 >
-> Is it touch-N-thermal or touchN-thermal?
-
-What's difference? I suppose both naming should be okay.
-
-Frank
+> On Wed, Oct 15, 2025 at 12:47:40PM -0500, Rob Herring (Arm) wrote:
+> > Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
+> > relatively simple interface with single command stream to describe
+> > buffers, operation settings, and network operations. It supports up to =
+8
+> > memory regions (though no h/w bounds on a region). The Ethos NPUs
+> > are designed to use an SRAM for scratch memory. Region 2 is reserved
+> > for SRAM (like the downstream driver stack and compiler). Userspace
+> > doesn't need access to the SRAM.
+> >
+> > The h/w has no MMU nor external IOMMU and is a DMA engine which can
+> > read and write anywhere in memory without h/w bounds checks. The user
+> > submitted command streams must be validated against the bounds of the
+> > GEM BOs. This is similar to the VC4 design which validates shaders.
+> >
+> > The job submit is based on the rocket driver for the Rockchip NPU
+> > utilizing the GPU scheduler. It is simpler as there's only 1 core rathe=
+r
+> > than 3.
+> >
+> > Tested on i.MX93 platform (U65) and FVP (U85) with WIP Mesa Teflon
+> > support.
+> >
+> > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
 >
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> How to test this driver?
+
+You need to add the DT node to i.MX93 .dts like the example, build the
+mesa ethosu branch, and then run tflite with it pointed to the mesa
+delegate.
+
+I can send an i.MX93 dts patch after this is merged.
+
+> > v4:
+> > - Use bulk clk API
+> > - Various whitespace fixes mostly due to ethos->ethosu rename
+> > - Drop error check on dma_set_mask_and_coherent()
+> > - Drop unnecessary pm_runtime_mark_last_busy() call
+> > - Move variable declarations out of switch (a riscv/clang build failure=
+)
+> > - Use lowercase hex in all defines
+> > - Drop unused ethosu_device.coherent member
+> > - Add comments on all locks
+> >
+> ...
+> > diff --git a/drivers/accel/ethosu/ethosu_device.h b/drivers/accel/ethos=
+u/ethosu_device.h
+> > new file mode 100644
+> > index 000000000000..69d610c5c2d7
+> > --- /dev/null
+> > +++ b/drivers/accel/ethosu/ethosu_device.h
+> > @@ -0,0 +1,190 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only or MIT */
+> > +/* Copyright 2025 Arm, Ltd. */
+> > +
+> > +#ifndef __ETHOSU_DEVICE_H__
+> > +#define __ETHOSU_DEVICE_H__
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +#include <drm/drm_device.h>
+> > +#include <drm/gpu_scheduler.h>
+> > +
+> > +#include <drm/ethosu_accel.h>
+> > +
+> > +struct clk;
+> > +struct gen_pool;
+>
+> Supposed should include clk.h instead declear a struct.
+
+Headers should only use a forward declaration if that's all they need.
+It keeps the struct opaque for starters.
+
+> ...
+> > +
+> > +static int ethosu_open(struct drm_device *ddev, struct drm_file *file)
+> > +{
+> > +     int ret =3D 0;
+> > +     struct ethosu_file_priv *priv;
+> > +
+> > +     if (!try_module_get(THIS_MODULE))
+> > +             return -EINVAL;
+> > +
+> > +     priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv) {
+> > +             ret =3D -ENOMEM;
+> > +             goto err_put_mod;
+> > +     }
+> > +     priv->edev =3D to_ethosu_device(ddev);
+> > +
+> > +     ret =3D ethosu_job_open(priv);
+> > +     if (ret)
+> > +             goto err_free;
+> > +
+> > +     file->driver_priv =3D priv;
+>
+> slice simple.
+>
+> struct ethosu_file_priv __free(kfree) *priv =3D NULL;
+> ...
+> priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+
+Linus has voiced his opinion that the above should not be done. It
+should be all one line *only*. But now we allow C99 declarations, so
+we can move it down. We can't get rid of the goto for module_put(), so
+it only marginally helps here.
+
+> ...
+>
+> file->driver_priv =3D no_free_ptr(priv);
+>
+>
+> > +     return 0;
+> > +
+> > +err_free:
+> > +     kfree(priv);
+> > +err_put_mod:
+> > +     module_put(THIS_MODULE);
+> > +     return ret;
+> > +}
+> > +
+> ...
+> > +
+> > +
+> > +static int ethosu_init(struct ethosu_device *ethosudev)
+> > +{
+> > +     int ret;
+> > +     u32 id, config;
+> > +
+> > +     ret =3D devm_pm_runtime_enable(ethosudev->base.dev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D pm_runtime_resume_and_get(ethosudev->base.dev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     pm_runtime_set_autosuspend_delay(ethosudev->base.dev, 50);
+> > +     pm_runtime_use_autosuspend(ethosudev->base.dev);
+> > +
+> > +     /* If PM is disabled, we need to call ethosu_device_resume() manu=
+ally. */
+> > +     if (!IS_ENABLED(CONFIG_PM)) {
+> > +             ret =3D ethosu_device_resume(ethosudev->base.dev);
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+>
+> I think it should call ethosu_device_resume() unconditional before
+> devm_pm_runtime_enable();
+>
+> ethosu_device_resume();
+> pm_runtime_set_active();
+> pm_runtime_set_autosuspend_delay(ethosudev->base.dev, 50);
+> devm_pm_runtime_enable();
+
+Why do you think this? Does this do a get?
+
+I don't think it is good to call the resume hook on our own, but we
+have no choice with !CONFIG_PM. With CONFIG_PM, we should only use the
+pm_runtime API.
+
+Rob
 
