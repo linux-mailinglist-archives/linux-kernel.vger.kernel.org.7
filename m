@@ -1,152 +1,228 @@
-Return-Path: <linux-kernel+bounces-853504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02450BDBD9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:59:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C9BBDBDB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF0124E72C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:59:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01CC54F2FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5207E2EBB86;
-	Tue, 14 Oct 2025 23:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCBE78F3E;
+	Wed, 15 Oct 2025 00:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZqwDYKuk"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="eNvsGT62"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F1F2E5B11
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF718F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760486385; cv=none; b=lyiWa0CXwa7j0vY2xvKSPVe936+6uCsXqZxEcWRIzzAiX6T5uAjSNvOcH7IfX30fOX5RGfqwu41WTQ/ZmEXvlUffQ8ez0TuQ4WlPoke+HbbuHBH05MWGP/aEjPR8+ZnGNlczoIN6WG65KxCjP5TyG0qi1qE/0yL34Nc9UmMs/d8=
+	t=1760486541; cv=none; b=IdxMr7jx2g+tj97kGheoi4HbeFLuVGRT+S4LyudcuRUFitkpF+YhWN+U0AxvP3f2lW/CedUZEwW5wY0h2VNUlkajYfeaaGB6FiEtoXqWTVVpfM8aHI0fDp+QxxleIzgUKeRt91vTjgYlZOJjnExERhDQoyrsMILyM8xsK9YeOJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760486385; c=relaxed/simple;
-	bh=PZScohF8tudD9f+zO9rGSAWZ8mUMGG9nExolI4eclrM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IErc+aUvXiVihQxn9LRKmlR0TdgWdJ2mzHa3+HMb4uzwy0/WUjmjh8Qax1yw+hrC78elm0XyGBW/1EyBQBQoI9+MPKeNI2i04uoX4Bx+35SSCMtL7jIsNxs3+Tcnb16+3BIGFj6okc0eCk28XbG9qVsNYWcmDccpNG/njWsIgpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZqwDYKuk; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-339ee7532b9so26733320a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:59:44 -0700 (PDT)
+	s=arc-20240116; t=1760486541; c=relaxed/simple;
+	bh=GJVi7Uls4ieWZ3bCIzyejkrCVwWN+vWqRyC0z9mQwkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+Zg5sMdHeRKtYZjJ0GuR67/Qjf/JcbXqbAQXyhXGlTdrluntOs7F9f3mzAcGbCnwlEOSq+muYgFdJq+mnU7mSAUC7ToURZk8XxYKikjQklnDC0qiR+y+YHrin8hYzUbA8978pBE9ynCjY0jJzJ5lHAQSGaAmalDUJF7vQjJpG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=eNvsGT62; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32ec291a325so4310198a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760486383; x=1761091183; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IaDUFIHlyK8oYHhDqlcGNw1DLz8hjMou12ZxOFyoEoI=;
-        b=ZqwDYKukY4t/uCkRtSBl2TalvZxH8e8xUH+N+0WRXH8h+7Ct6R4+zfYXoc42E/blUg
-         kAjOceNXeeoquWrElJHKWGXLmwuZXuSSnuviIQuM3zW2nFPv8octqYVz9kAc0Y3eqJg2
-         ptlz3CYeQpKdi1P2jIc2RsNwh7pGzyFpC15fiXq16J5MWXVtPtJZIa5pRDxpNs0IGEwP
-         5BtL6nGPzfClPx+fmqqZFesGJohZJabrSizVDGgEAee5p/6FG5wh95FEv0INZrFCfTXv
-         JYuopgZG4f9SuMSRV11gS/t9bspWPygAK+SHX65OdLIGYDmONHQ64NvmqkUt3FulmK8l
-         6WfQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760486538; x=1761091338; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5lWnsuwkzpeApWk2ViOA5FQ8lFTBV0LeMgWGpahdtj0=;
+        b=eNvsGT620FsuqNk3mQttW1M9Tz0dvDGYG3obDZzkYv76UULuvqq6pmbJt41Exq1ftT
+         OFaJ2uVM7FVyVg/XqTniQzbXxRyiSGtWfLzLvnpgJ0+srLasKhRVGALb/ADwS9h1kgQC
+         Y+wk4C3rPvUA+Fhgzj72jmz8koRmj8xyWnsLYx0bJFJo34+TM5vLziRE7748uIW6KHZh
+         pCyiGYaLAgeICDO1ta5v/ivQz5jQbhjmJlSitGwuqfzqpY2ZtXuf8SJlPv8pzehu4pSq
+         R9MU4LtWzZGPAajjEYeGZjgYLN9a1yKiExVYHPTj3FJ8ph06LZ6s7DOQEnuFLZv2ThzF
+         p3sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760486383; x=1761091183;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IaDUFIHlyK8oYHhDqlcGNw1DLz8hjMou12ZxOFyoEoI=;
-        b=dpna9HSF8lcpt1K5lR9USwlFXjC6QiAZW0UvylF3mT4d8dWXhY+q/2GkbRIGWbGE4Q
-         iN1Qew+Ez0tcsK/HJkOTBlhoRQBGMwlQ+bXlUc/zUtIlO2sUW/QsGIRS3o6Z6V2HnwJT
-         S0bSYNo8fqnWkuI/1/OuiM/kR95k9NwSMG9CfaSCP4QO1Bbq5Leobg7rzR6jglCHCAYk
-         MSjD482vWJnIbo+PHaN1HceJT77aZCXZYp2hh+q+2p4rHqG97qUZe/UCBhmLDIBHWQ4T
-         EapHfyMFtqgBuP33/4ZWZ6HZXDT0hzWMNE7CsNh5GqgtJi7V0JF9MCeoTa+fCet3KRVU
-         1Wjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXduyfcBRhsBpe0965KdS24OE/xKnaUdcDmG3P5D3RDNYbvL1L0LvotwXSaBP5jlCat+8FIWYngu0R0r/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5BacTWuQ5OPk3QDDYmLMpZ18/GrC8MpsTvogtnu6e96L4FZPs
-	HJJZzoc9TM/Vh1I2rMhHWgG/1gCj2SItT+Lt41p3d7xo6G6SXpCTDZvQMQc8gAIx14Zof8TlPH8
-	XspRQvg==
-X-Google-Smtp-Source: AGHT+IHupnMvdgg7F4xvQA/ZOSwtyV+kZZn6LLBAFH6j1PMVTq9dC6yLTtq/O6EeIeGcLmGol6eOpAXKW6k=
-X-Received: from pjbci17.prod.google.com ([2002:a17:90a:fc91:b0:33b:51fe:1a7f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38ce:b0:32e:23fe:fa51
- with SMTP id 98e67ed59e1d1-33b511188e7mr35344102a91.9.1760486383558; Tue, 14
- Oct 2025 16:59:43 -0700 (PDT)
-Date: Tue, 14 Oct 2025 16:59:42 -0700
-In-Reply-To: <20250819152027.1687487-1-lei.chen@smartx.com>
+        d=1e100.net; s=20230601; t=1760486538; x=1761091338;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5lWnsuwkzpeApWk2ViOA5FQ8lFTBV0LeMgWGpahdtj0=;
+        b=mmBOwyizIcUWehDN+pdN9gy+6hCb7bXK5umMPg9Ez3wopLtT5WbEgygfPXky2IuVzs
+         CzFc/NtfGWpRMqySyaNp/bufL6l2BXNLKwn+chXO8lGCp5bwEwahlBJ4Os6rLLpiMVQ1
+         7l9ADkBcK7r9kvm4ydIPwvbHrm12zVxWePrN/OOPWAbrLzll9PvvVUAZpDzrOCsqaEpC
+         aIJCw/ux7kYSDAuBGQctqIJwI0hY99vVDe6KNf8I485ogPj/SyCxrpJQq9Je956vH+n+
+         +DaIjuSBKE+Okxy9SCoFkdHsh+y/+SDRU1pLOTDa01sfwjzfACAV+oBXOrezfWJBEvPx
+         ic4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXoJr+EVN+4ilAM2QCywKdxZLU9Pgiq4e5Upymr+1owXGrwG8P7JzcF8sPMaaXaO2GeL2xr1g7WwIvU+nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+T/6/UW4OXNo1Ozyf6Ah214Vdx/ji4E/cEOzRpKO28AcdVuSS
+	EgmcJDLM9C8FiVzM7ukigLR/eSz9acOzmA/i7vdCIPeZ0JZ7Jb80qFz6HP+mleErQQ8=
+X-Gm-Gg: ASbGncuoqm9Q6mh8jR+uXU97VKWT8o1i9XcKB/OrmId4MHrRvNfMAsHnXmGcgPYJDUj
+	zmtsoVu3/LqB1nvzhU7XmBJyQfM0AEzJuZWIMBGFVE4cjqlfWggDdmnBIWa1HXK266kKAZi9MMN
+	CZWdviCLGakPpSwlZgmBFEbxsgaO0rZy6igOujGRzC0avD/mMAF7rDQxmnnMnDsc3gYl3sJN1Iy
+	w2p5ttaCVo4qCbjO9l7qDVoip8PXXWGB37tZd/P+KfPhPk0yz+ZA3R81acfSLLnanEDqCtddXt7
+	jPnvssJkvYO5mQs8yjr+7/0F0UYMS8yloGDRteMEqvjLjjn2uxg6oS1FkFnUQkJfBi7m8gDJevT
+	fRPGwwdubY7TvBghKr3C4KfGUzPlatzAkDYFxD0OcOgSf0yx3rWUxqZLnUpGkhCqtFitHWDzVJk
+	t1/y9M9LIvWzZedYVD
+X-Google-Smtp-Source: AGHT+IGoMUjacqS/V8o1WNbZPsHJJvFetdCeeZRacPCwQ/XYo2nNnoscuKOLgAnWu1qaNz9uyKQLiQ==
+X-Received: by 2002:a17:90b:4a84:b0:32e:a10b:ce48 with SMTP id 98e67ed59e1d1-33b51114f9emr38707009a91.12.1760486538088;
+        Tue, 14 Oct 2025 17:02:18 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61b11ca9sm17310305a91.24.2025.10.14.17.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 17:02:17 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1v8oy6-0000000EvuK-45Dp;
+	Wed, 15 Oct 2025 11:02:14 +1100
+Date: Wed, 15 Oct 2025 11:02:14 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
+Message-ID: <aO7khoBHdfPlEBAE@dread.disaster.area>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
+ <20251009075929.1203950-14-mjguzik@gmail.com>
+ <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
+ <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819152027.1687487-1-lei.chen@smartx.com>
-Message-ID: <aO7j7lcqmL-n599m@google.com>
-Subject: Re: [PATCH v1 0/3] kvm:x86: simplify kvmclock update logic
-From: Sean Christopherson <seanjc@google.com>
-To: Lei Chen <lei.chen@smartx.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com>
 
-On Tue, Aug 19, 2025, Lei Chen wrote:
-> This patch series simplifies kvmclock updating logic by reverting
-> related commits.
+On Fri, Oct 10, 2025 at 05:40:49PM +0200, Mateusz Guzik wrote:
+> On Fri, Oct 10, 2025 at 4:41 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
+> > > Change generated with coccinelle and fixed up by hand as appropriate.
+> > >
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> >
+> > ...
+> >
+> > > @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
+> > >        */
+> > >       xfs_setup_iops(tmpfile);
+> > >       xfs_finish_inode_setup(tmpfile);
+> > > -     VFS_I(tmpfile)->i_state |= I_LINKABLE;
+> > > +     inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
+> > >
+> > >       *wip = tmpfile;
+> > >       return 0;
+> > > @@ -2330,7 +2330,7 @@ xfs_rename(
+> > >                * flag from the inode so it doesn't accidentally get misused in
+> > >                * future.
+> > >                */
+> > > -             VFS_I(du_wip.ip)->i_state &= ~I_LINKABLE;
+> > > +             inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
+> > >       }
+> > >
+> > >  out_commit:
+> >
+> > These two accesses look fishy (not your fault but when we are doing this
+> > i_state exercise better make sure all the places are correct before
+> > papering over bugs with _raw function variant). How come they cannot race
+> > with other i_state modifications and thus corrupt i_state?
+> >
 > 
-> Now we have three requests about time updating:
-> 
-> 1. KVM_REQ_CLOCK_UPDATE:
-> The function kvm_guest_time_update gathers info from  master clock
-> or host.rdtsc() and update vcpu->arch.hvclock, and then kvmclock or hyperv
-> reference counter.
-> 
-> 2. KVM_REQ_MASTERCLOCK_UPDATE: 
-> The function kvm_update_masterclock updates kvm->arch from
-> pvclock_gtod_data(a global var updated by timekeeping subsystem), and
-> then make KVM_REQ_CLOCK_UPDATE request for each vcpu.
-> 
-> 3. KVM_REQ_GLOBAL_CLOCK_UPDATE:
-> The function kvm_gen_kvmclock_update makes KVM_REQ_CLOCK_UPDATE
-> request for each vcpu.
-> 
-> In the early implementation, functions mentioned above were
-> synchronous. But things got complicated since the following commits.
-> 
-> 1. Commit 7e44e4495a39 ("x86: kvm: rate-limit global clock updates")
-> intends to use kvmclock_update_work to sync ntp corretion
-> across all vcpus kvmclock, which is based on commit 0061d53daf26f
-> ("KVM: x86: limit difference between kvmclock updates")
-> 
-> 
-> 2. Commit 332967a3eac0 ("x86: kvm: introduce periodic global clock
-> updates") introduced a 300s-interval work to periodically sync
-> ntp corrections across all vcpus.
-> 
-> I think those commits could be reverted because:
-> 1. Since commit 53fafdbb8b21 ("KVM: x86: switch KVMCLOCK base to
-> monotonic raw clock"), kvmclock switched to mono raw clock,
-> Those two commits could be reverted.
-> 
-> 2. the periodic work introduced from commit 332967a3eac0 ("x86:
-> kvm: introduce periodic global clock updates") always does 
-> nothing for normal scenarios. If some exceptions happen,
-> the corresponding logic makes right CLOCK_UPDATE request for right vcpus.
-> The following shows what exceptions might happen and how they are
-> handled.
-> (1). cpu_tsc_khz changed
->    __kvmclock_cpufreq_notifier makes KVM_REQ_CLOCK_UPDATE request
-> (2). use/unuse master clock 
->    kvm_track_tsc_matching makes KVM_REQ_MASTERCLOCK_UPDATE, which means
->    KVM_REQ_CLOCK_UPDATE for each vcpu.
-> (3). guest writes MSR_IA32_TSC
->    kvm_synchronize_tsc will handle it and finally call
->    kvm_track_tsc_matching to make everything well.
-> (4). enable/disable tsc_catchup
->    kvm_arch_vcpu_load and bottom half of vcpu_enter_guest makes
->    KVM_REQ_CLOCK_UPDATE request
-> 
-> Really happy for your comments, thanks.
-> 
-> Related links:
-> https://lkml.indiana.edu/hypermail/linux/kernel/2310.0/04217.html
-> https://patchew.org/linux/20240522001817.619072-1-dwmw2@infradead.org/20240522001817.619072-20-dwmw2@infradead.org/
+> I asked about this here:
+> https://lore.kernel.org/linux-xfs/CAGudoHEi05JGkTQ9PbM20D98S9fv0hTqpWRd5fWjEwkExSiVSw@mail.gmail.com/
 
-I would love, love, *love* to kill of this code, and the justification looks sane
-to me, but I am genuinely not knowledgeable enough in this area to judge whether
-or not this is correct/desirable going forward.
+Yes, as I said, we can add locking here if necessary, but locking
+isn't necessary at this point in time because nothing else can
+change the state of the newly allocated whiteout inode until we
+unlock it.
 
-Paolo?
+Keep in mind the reason why we need I_LINKABLE here - it's not
+needed for correctness - it's needed to avoid a warning embedded
+in inc_nlink() because filesystems aren't trusted to implement
+link counts correctly anymore.
+
+Now we're being told that "it is too dangerous to let filesystems
+manage inode state themselves" and so we have to add extra overhead
+to code that we were forced to add to avoid VFS warnings added
+because the VFS doesn't trust filesystems to maintain some other
+important inode state....
+
+So, if you want to get rid of XFS using I_LINKABLE here, please fix
+the nlink VFS api to allow us to call inc_nlink_<something>() on a
+zero link inode without I_LINKABLE needing to be set. We do actually
+know what we are doing here, and as such needing I_LINKABLE here is
+nothing but a hacky workaround for inflexible, trustless VFS APIs...
+
+> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > index caff0125faea..ad94fbf55014 100644
+> > > --- a/fs/xfs/xfs_iops.c
+> > > +++ b/fs/xfs/xfs_iops.c
+> > > @@ -1420,7 +1420,7 @@ xfs_setup_inode(
+> > >       bool                    is_meta = xfs_is_internal_inode(ip);
+> > >
+> > >       inode->i_ino = ip->i_ino;
+> > > -     inode->i_state |= I_NEW;
+> > > +     inode_state_set_raw(inode, I_NEW);
+
+"set" is wrong and will introduce a regression. This must be an
+"add" operation as inode->i_state may have already been modified
+by the time we get here. From 2021:
+
+commit f38a032b165d812b0ba8378a5cd237c0888ff65f
+Author: Dave Chinner <dchinner@redhat.com>
+Date:   Tue Aug 24 19:13:04 2021 -0700
+
+    xfs: fix I_DONTCACHE
+
+    Yup, the VFS hoist broke it, and nobody noticed. Bulkstat workloads
+    make it clear that it doesn't work as it should.
+
+    Fixes: dae2f8ed7992 ("fs: Lift XFS_IDONTCACHE to the VFS layer")
+    Signed-off-by: Dave Chinner <dchinner@redhat.com>
+    Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+    Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index a3fe4c5307d3..f2210d927481 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -84,8 +84,9 @@ xfs_inode_alloc(
+                return NULL;
+        }
+
+-       /* VFS doesn't initialise i_mode! */
++       /* VFS doesn't initialise i_mode or i_state! */
+        VFS_I(ip)->i_mode = 0;
++       VFS_I(ip)->i_state = 0;
+
+        XFS_STATS_INC(mp, vn_active);
+        ASSERT(atomic_read(&ip->i_pincount) == 0);
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 0ff0cca94092..a607d6aca5c4 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1344,7 +1344,7 @@ xfs_setup_inode(
+        gfp_t                   gfp_mask;
+
+        inode->i_ino = ip->i_ino;
+-       inode->i_state = I_NEW;
++       inode->i_state |= I_NEW;
+
+        inode_sb_list_add(inode);
+        /* make the inode look hashed for the writeback code */
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
