@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-854225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C12BDDDC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F055FBDDDCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8E519C08BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:50:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A1D64EE0AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4152E31B81E;
-	Wed, 15 Oct 2025 09:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CECA31BC9F;
+	Wed, 15 Oct 2025 09:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTeK69x6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfPNMN2A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A50331B808;
-	Wed, 15 Oct 2025 09:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988BA31B83A;
+	Wed, 15 Oct 2025 09:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521793; cv=none; b=F97nRc2GH1FsGwxsKEhkYhi2QliHqI8HAcmR1QbBn40LAD4V+L4gsAE6pIQYY3VF0Id8kIUGFDBBgDc+GeUH9doJjE9IEJVh0ET+RCZjcbc3FH1bpjZ/gWX9YBph+jzZbcJwechmXV1Fzzoo26JT9LiCHRkWltTLbrIuE+y9N9c=
+	t=1760521795; cv=none; b=bCnM+nhTqw1omdLx4W4Yc7yS8Tgi8WWo7alcrUWOPD7sdgNkYSm8R9qSuQdWypLWmReJD98PPhP8ZZoomZ/LUSs5LW+b0+f2lebWqs50557JSGArn6ZIIQ2KVavevbzXPAGUAW4oSp7rXdrvIqLDjOpfQ2aPSvEw5dcXYInFRyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521793; c=relaxed/simple;
-	bh=pBp/QyOGmP5rArjDtS4MzOlQfCPMlfzP91YadPYMuT4=;
+	s=arc-20240116; t=1760521795; c=relaxed/simple;
+	bh=OYMROCoZHnaqO33sOfdV6rng2d1cxkIwSoOiiT3CysM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A/ZjfVhXYjmAXQzz41CmzGNDNSqhWHDBgkqDWtBysGxCEuKfHITUTx+24nIlFcRHl95D1Z6lwWjKmgpX0GybnwDHKVezsM/ChuInwRx5c6pa71xh1C4iIyCl7hMFNdjszn//vuf5LIpsivnnlcDXj53ySjYFRXqmeX5mpYuH15E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTeK69x6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C40C4CEFE;
-	Wed, 15 Oct 2025 09:49:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=lS90GSMdQaeH+uVsiv3uhWYrweYp/HaOW/RbmZGbzg/gwpIxiv/SUY0li919ObD43lQ3MZMIXvj9XGNhpxSy9G1VrHoxFaLhBjE9Pv7Of04BPo1RJAlxjLCXNA5EMzRSAnW3SWMmIzXI958S9qfzNkW8TwlMJMYr1x0h52w7PVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfPNMN2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD430C116C6;
+	Wed, 15 Oct 2025 09:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760521793;
-	bh=pBp/QyOGmP5rArjDtS4MzOlQfCPMlfzP91YadPYMuT4=;
+	s=k20201202; t=1760521795;
+	bh=OYMROCoZHnaqO33sOfdV6rng2d1cxkIwSoOiiT3CysM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mTeK69x6/13KL3cFADBj3yurhZkD05UtW1MD+To/Vr8hno5fqvnjwwatQogkjQSHL
-	 mg0oRyyOtjrmZ8JgeC32sgKtTLglcMMDUrpc/eY5FjGUCqZeTWybE8EYESDKOi4c1I
-	 3YhOBrHh0GcsVFpNB20eshXPaFicyl0hVqjH4TR2DmaLOezHM3Z8CeyNvxWsVTzAeX
-	 1ZACRhU/+4p64I1yvp2wpa6cUCFvJgOGyhJN1n7elJz+MKfxDzE5rdyO3wAZXBpo96
-	 LrLttBVrsxSpaP2RTzfKqf795WWSHboGbIe0saWJsKXDKMFQJBx7bYsGC7QTFpLr/L
-	 UfkAXasHE4O4w==
+	b=TfPNMN2A+laHEU3k6WAoHxQo9wZwhS7RHBFZZSf8NF0VGd9wWGEX2CyVkHAlOu0ri
+	 HU9Ztb20QWjGKYc34aYl24/saulMqeRE5GUv2pql5lv+1NLP24aV/kxS8HfsVHulHg
+	 R06yqKS9FSpBqDqiiB9C9QvkiM13tFXmPt9xkPGjzHD+QhkcfHteDHT4fb1LS3x1xg
+	 qKGy6JeBt7CR+sLlzSwfabVXxOhLL2SuCHSQ5T6UFasXjfdCGvCzJgM2uVNC+S2SQ2
+	 NxzmwQJvHeRd8vObMh/8yGFY/MzBStJ570C/1whki6rqOX+tavErZwGZyxY1expNvR
+	 ieqVIdwy00qRA==
 From: Mark Brown <broonie@kernel.org>
-To: shenghao-ding@ti.com, kevin-lu@ti.com, baojun.xu@ti.com, 
- lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- tangbinzy <tangbin@cmss.chinamobile.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250930093349.1934-1-tangbin@cmss.chinamobile.com>
-References: <20250930093349.1934-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoc: tas2783A: Remove unneeded variable assignment
-Message-Id: <176052179120.20166.8951798015757905021.b4-ty@kernel.org>
-Date: Wed, 15 Oct 2025 10:49:51 +0100
+To: srini@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ TangBin <tangbin@cmss.chinamobile.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
+References: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: codecs: Fix the error of excessive semicolons
+Message-Id: <176052179341.20166.15683915200114042850.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 10:49:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,9 +60,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-96507
 
-On Tue, 30 Sep 2025 17:33:49 +0800, tangbinzy wrote:
-> In the function tas2783_update_calibdata, 'i' to 0 is repeated,
-> thus delete one.
+On Tue, 30 Sep 2025 17:41:03 +0800, TangBin wrote:
+> Remove unnecessary semicolons in the function
+> pm4125_codec_enable_adc and pm4125_micbias_control.
 > 
 > 
 
@@ -72,8 +72,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoc: tas2783A: Remove unneeded variable assignment
-      commit: 3c89238ca35bfe176ba34bc688541f90f6fa7bdb
+[1/1] ASoC: codecs: Fix the error of excessive semicolons
+      commit: 5e537031f322d55315cd384398b726a9a0748d47
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
