@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-854779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D67BDF5F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:30:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A76ABDF61E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45EC44E3ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF37119C7E5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E665301709;
-	Wed, 15 Oct 2025 15:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122363054F6;
+	Wed, 15 Oct 2025 15:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VHdkIRj7"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eHAmHCJq"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85951547D2;
-	Wed, 15 Oct 2025 15:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F3A302CC7;
+	Wed, 15 Oct 2025 15:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542231; cv=none; b=i1ARhRdIDN0o0TUJbKCjmWLPsgfVJEqtisxMHpGExnb9Rmg0Jzt+UhhC4LbtQmLgB7oXuNIu8aKaVytEdnK4lP+L2xDnZql615dssmh1TdWM7vB9DkGmvkNigpK+5TyJ+oHPfX/jsc1OItaAdKBybLwPk6pu9o40MMPWO+1O4Sc=
+	t=1760542235; cv=none; b=FgknN1GZx7gQBuojlnZS5d1ooaB5DUPXRcSQB3t99ntQTb74mfDLe8e7TghxvPSR7at2dPphyff37NaLLvNFnEWS7ojweJ97Gcf9HHvdmgQcCYlttrvIxw9WIomX3t3xvuLyV+mEjRs9RkEW0xcXD+2yjwS1LYGtZe2AAEIcjXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542231; c=relaxed/simple;
-	bh=sQcBV/ZWlVLGeAwivyndjv3Kv+k/mZS823qVLbIeFmg=;
+	s=arc-20240116; t=1760542235; c=relaxed/simple;
+	bh=KQV7Ou7tPtnCCwHJMiVJOpNVyDdq8Ql41g0y4SHmXds=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z1Umb48aCU96uQ/dzRLsN8OnpgX1sBbu3+T2MBoPMukLi2GWqscf9efcac0MYyyLWQtOs7E1sxZiqNP1hKwHSwvRBrnWalWkH0IROxdg1+8NnXCsdCK62EgP5XjyN+cyE1Jf2tcVzkwogTS+Kl8t6pZqS/YXV0l8Sf5ZwPJYpK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VHdkIRj7; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=fJuJJXQtmLzOyl4k4PHHUS1rfY+tdqjQGxvCjslthVtnbWGvf5tK6Rb5a9OCkdTtFnSzqileuifr7URLY/zc/cYpejAEq47L68+aeW38DeBE4PFKbtuO0YgY/IT+g8kvfZzr8QiMSrYkQluhRLV5m4S9leXxLhZ4IKFaQ4QFn5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eHAmHCJq; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760542227;
-	bh=sQcBV/ZWlVLGeAwivyndjv3Kv+k/mZS823qVLbIeFmg=;
+	s=mail; t=1760542230;
+	bh=KQV7Ou7tPtnCCwHJMiVJOpNVyDdq8Ql41g0y4SHmXds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VHdkIRj7sg4VwSgsQanwXYtbK/UcvTe7EmUkEqqxHkXOqGzYygtHQ7zYKzTzN0BW0
-	 DVlMfVVHuUVa4r3IHy86HYMx7KYMhmY6osKmaU4PMNbo+WlYSZefsYM7zb639o0aA/
-	 ywmDIaSM8jVfaDD9GVr7KGmxiAMWOMnqZJI4O5IeZq7EcOlIu749ykkS7wXJ2xxBD4
-	 Qb3umxLKhtjCGU/3anoP0khorYvpn7lF4YwEktiPC00IvTmS5qwmS1vf0pjGegIhmI
-	 cxfqel3TgrUMeNW//bU37J3wRhpV55lJlZy1Qeq8HVTySPa4FIJHJRhrHnwvayxp17
-	 yopEYsaDRwSIA==
+	b=eHAmHCJq9CHmEpVjvgz1qigTjIVJFFK9ZhUOKlaOXjDfZD2eF49vJtX3YAl+J4qG5
+	 dEOcBvyK4cfnxwjrhL2CZslgUJNpEnIhuJY67F8Ok+Kt1pUTHwIsQzThMUEY59EDLx
+	 9W7FHK5G5o2bk8opmpCRQU57tGjObB4fdsOpm6EabsOEkP6r0nIrjiJcLnSuD/NmiM
+	 hHVcEqg/Wy4+yOf5+6exKsv8odBVsInQoQGmsORy1pXP8E0xwImciHf65R8gewSSXy
+	 n3N/G7Phsqm286vuMG05Z/YZT/xKLbzRzl8UaI/cP6lqItS/4OG6gMSgngdmNgYg+q
+	 VKp6Xyv4Rq+Jw==
 Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:826d:bc07:e98c:84a])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0BD0E17E1340;
-	Wed, 15 Oct 2025 17:30:27 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E5BF917E00A3;
+	Wed, 15 Oct 2025 17:30:29 +0200 (CEST)
 From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH v4 01/13] drm/shmem-helper: Simplify page offset calculation in fault handler
-Date: Wed, 15 Oct 2025 17:30:05 +0200
-Message-ID: <20251015153018.43735-2-loic.molinari@collabora.com>
+Subject: [PATCH v4 02/13] drm/shmem-helper: Implement map_pages fault-around handler
+Date: Wed, 15 Oct 2025 17:30:06 +0200
+Message-ID: <20251015153018.43735-3-loic.molinari@collabora.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251015153018.43735-1-loic.molinari@collabora.com>
 References: <20251015153018.43735-1-loic.molinari@collabora.com>
@@ -97,37 +97,102 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-For a fault at address addr, the page offset is
-  page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT
-              = ((addr & PAGE_MASK) - vma->vm_start) >> PAGE_SHIFT
-	      = (addr - vma->vm_start) >> PAGE_SHIFT
+This gives the mm subsystem the ability to increase fault handling
+performance by proposing the insertion of a range of pages around the
+faulty address in a single batch.
 
-Since the faulty logical page offset based on VMA is
-  vmf->pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT)
-
-We can slightly simplify the calculation using
-  page_offset = vmf->pgoff - vma->vm_pgoff
+v4:
+- Implement map_pages instead of huge_fault
 
 Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
 ---
- drivers/gpu/drm/drm_gem_shmem_helper.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 53 +++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index dc94a27710e5..be89be1c804c 100644
+index be89be1c804c..e151262332f9 100644
 --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
 +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -577,8 +577,8 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
+@@ -567,24 +567,66 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ }
+ EXPORT_SYMBOL_GPL(drm_gem_shmem_dumb_create);
+ 
+-static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
++static bool drm_gem_shmem_fault_is_valid(struct drm_gem_object *obj,
++					 pgoff_t pgoff)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	if (drm_WARN_ON_ONCE(obj->dev, !shmem->pages) ||
++	    pgoff >= (obj->size >> PAGE_SHIFT) ||
++	    shmem->madv < 0)
++		return false;
++
++	return true;
++}
++
++static vm_fault_t drm_gem_shmem_map_pages(struct vm_fault *vmf,
++					  pgoff_t start_pgoff,
++					  pgoff_t end_pgoff)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj = vma->vm_private_data;
+ 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+-	loff_t num_pages = obj->size >> PAGE_SHIFT;
++	unsigned long addr, pfn;
+ 	vm_fault_t ret;
++
++	start_pgoff -= vma->vm_pgoff;
++	end_pgoff -= vma->vm_pgoff;
++	addr = vma->vm_start + (start_pgoff << PAGE_SHIFT);
++
++	dma_resv_lock(shmem->base.resv, NULL);
++
++	if (unlikely(!drm_gem_shmem_fault_is_valid(obj, start_pgoff))) {
++		ret = VM_FAULT_SIGBUS;
++	} else {
++		/* Map a range of pages around the faulty address. */
++		do {
++			pfn = page_to_pfn(shmem->pages[start_pgoff]);
++			ret = vmf_insert_pfn(vma, addr, pfn);
++			addr += PAGE_SIZE;
++		} while (++start_pgoff <= end_pgoff && ret == VM_FAULT_NOPAGE);
++	}
++
++	dma_resv_unlock(shmem->base.resv);
++
++	return ret;
++}
++
++static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct drm_gem_object *obj = vma->vm_private_data;
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
  	struct page *page;
  	pgoff_t page_offset;
++	vm_fault_t ret;
  
--	/* We don't use vmf->pgoff since that has the fake offset */
--	page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
-+	/* Offset to faulty address in the VMA (without the fake offset). */
-+	page_offset = vmf->pgoff - vma->vm_pgoff;
+ 	/* Offset to faulty address in the VMA (without the fake offset). */
+ 	page_offset = vmf->pgoff - vma->vm_pgoff;
  
  	dma_resv_lock(shmem->base.resv, NULL);
  
+-	if (page_offset >= num_pages ||
+-	    drm_WARN_ON_ONCE(obj->dev, !shmem->pages) ||
+-	    shmem->madv < 0) {
++	if (unlikely(!drm_gem_shmem_fault_is_valid(obj, page_offset))) {
+ 		ret = VM_FAULT_SIGBUS;
+ 	} else {
+ 		page = shmem->pages[page_offset];
+@@ -632,6 +674,7 @@ static void drm_gem_shmem_vm_close(struct vm_area_struct *vma)
+ }
+ 
+ const struct vm_operations_struct drm_gem_shmem_vm_ops = {
++	.map_pages = drm_gem_shmem_map_pages,
+ 	.fault = drm_gem_shmem_fault,
+ 	.open = drm_gem_shmem_vm_open,
+ 	.close = drm_gem_shmem_vm_close,
 -- 
 2.47.3
 
