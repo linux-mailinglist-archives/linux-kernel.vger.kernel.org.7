@@ -1,229 +1,141 @@
-Return-Path: <linux-kernel+bounces-854461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA34BDE722
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:19:10 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13282BDE731
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE1134FEC18
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:19:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74B7134E01E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3628D326D5D;
-	Wed, 15 Oct 2025 12:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E724326D43;
+	Wed, 15 Oct 2025 12:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X5siGw88"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s/r6r2rZ"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5572C3276;
-	Wed, 15 Oct 2025 12:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD54322541
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530744; cv=none; b=d/f8oNeVc0HJRdEaKPRpmbAHkmzH8TuYGvj2C35eUmvTCxerIcQHyHZOWIUcP7/hj1fMlEvEoyrWtfGiXpOdsjpztgzLSwPi75Ws8hQsUZG3d3iDrJBOVeH/1wrcztn+2OU1K2qTg28Vyz8xOi/uV1VNmjRD/e6n+R2VPWUR7ts=
+	t=1760530839; cv=none; b=J7p6NMcF+5bN5jNC9MWei+ty98R3Cs9lfExFjEvqgzehIF1d8/ups6WdbT9oS+Ytayg0YBcGG8nlpaC3cVdp4ARKAwCvlUMXmLiOiGn87hrR/x/8cWvlUhQRgEAvuJqmrJ/rVaGd87EaGQ7KtbwAC8N9RQNOMdVK2TYUit8evmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530744; c=relaxed/simple;
-	bh=SNfAT6Qi2YRkuxaiDCzuRehdTEWuoCDQmIGd3jVCIFg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qpFrtR4a4uyOqU5AczndC2sLBTkF7irMhAKPqzl1x1cMXhIC+rWu9GGOoid8E3wcr0v28KquByEWIzeoMGRPWK81tyBP7xq2ViFKTrE4941jP0MyA+ZnyHLnrtx1+kQcIouQENdpwnz34Zg2GiIJYgiuebrnTk4/r0Gga4gPLIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X5siGw88; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760530742; x=1792066742;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=SNfAT6Qi2YRkuxaiDCzuRehdTEWuoCDQmIGd3jVCIFg=;
-  b=X5siGw885Pqh3iZ2psnOj4Vu3QbC211d0UxOGiOcKKxlSF4X5wDo1L8j
-   Bg+Cj9mFQno+TPCsZwXCnEQgv2FM7TFnQPhTvJBRw2ZRVvs6Rryu0Av2x
-   IaRakihrRDZ/yAsOaHPU80gKKeENIpUtBHoZxPTI4tMDbyfTa3XghOU2U
-   1xcHLxdIGjtyRSPFBwJri5FHj+AQnubW6EXGHGUWdeaYclt/cU9SvD8cp
-   BmFj+ZE9bb0x9VebStOaqIUbsuJLrpUlAGB//WhFWfXmySjsU0OX785eo
-   zBgzt9ELHBAd65ySxbrarnQ34zfbbsNvlDbxNFe3cefz9PqvtwEV6JU73
-   g==;
-X-CSE-ConnectionGUID: O7K/CJXgQRmOIdSBnFIDkg==
-X-CSE-MsgGUID: p1gOTzK4TMSGBvvbDTV0wQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66531623"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="66531623"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 05:19:00 -0700
-X-CSE-ConnectionGUID: P279CeMpQfmkJ8dPe1BsAQ==
-X-CSE-MsgGUID: 4ECa931ARhu0KwNTHsYZ8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="182151147"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 05:18:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 15 Oct 2025 15:18:53 +0300 (EEST)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
-    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    Denis Benato <benato.denis96@gmail.com>
-Subject: Re: [PATCH v6 6/7] platform/x86: asus-wmi: add keyboard brightness
- event handler
-In-Reply-To: <20251013201535.6737-7-lkml@antheas.dev>
-Message-ID: <4e4af3e9-26d3-ad03-7868-7fd7dbd541f3@linux.intel.com>
-References: <20251013201535.6737-1-lkml@antheas.dev> <20251013201535.6737-7-lkml@antheas.dev>
+	s=arc-20240116; t=1760530839; c=relaxed/simple;
+	bh=WlGTt3znWOuiY8APyZ6bKKme1iVZn+uffh4oy4xAiE0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TwIetpvAHNc5T0QLcfwFFpFndKyyKu0Wh1r4Zs3csjV/Uo6AD1xyrjb5er2TPMSExxQJ3mR+u4nNeacrvWQy3PeE3AGLo0rKT3f+opdf0AsVKoAi+/2Qe5TzLIHp6nZb+PeFMyb8hEtp3GtzNdxkNLnDWyfh7NgJDh0cgch4MZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s/r6r2rZ; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760530827; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=16rkdxmK9NxzqaSu4ODoUDuGnFHD5WQmcoOMO7trPww=;
+	b=s/r6r2rZfEKO8p+jW1nkM+GINUr3iKEUzSOxM20fETUb7TNMiIYcBAdTpCY4h+DdUVIgivxb4YYN+z238kxStB71zoimRD4q6a/V0X66gGhtVnU/8/GbFubu3zT253eb8PIqR/Lufg7ZYrzQUMgHV4oH0flc16M8EUG5pM22lAA=
+Received: from localhost(mailfrom:peng_wang@linux.alibaba.com fp:SMTPD_---0WqGH8O0_1760530808 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Oct 2025 20:20:27 +0800
+From: Peng Wang <peng_wang@linux.alibaba.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	vdavydov.dev@gmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/fair: Clear ->h_load_next after hierarchical load
+Date: Wed, 15 Oct 2025 20:19:50 +0800
+Message-Id: <bc08fcd528bad11311cd25de37962eb1ce0e7879.1760530739.git.peng_wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
+An invalid pointer dereference bug was reported on arm64 cpu, and has
+not yet been seen on x86. A partial oops looks like:
 
-> Currenlty, the keyboard brightness control of Asus WMI keyboards is
+ Call trace:
+  update_cfs_rq_h_load+0x80/0xb0
+  wake_affine+0x158/0x168
+  select_task_rq_fair+0x364/0x3a8
+  try_to_wake_up+0x154/0x648
+  wake_up_q+0x68/0xd0
+  futex_wake_op+0x280/0x4c8
+  do_futex+0x198/0x1c0
+  __arm64_sys_futex+0x11c/0x198
 
-There's a typo here but preferrably avoid "currently" altogether where 
-possible.
+Link: https://lore.kernel.org/all/20251013071820.1531295-1-CruzZhao@linux.alibaba.com/
 
-> handled in the kernel, which leads to the shortcut going from
-> brightness 0, to 1, to 2, and 3.
-> 
-> However, for HID keyboards it is exposed as a key and handled by the
-> user's desktop environment. For the toggle button, this means that
-> brightness control becomes on/off. In addition, in the absence of a
-> DE, the keyboard brightness does not work.
-> 
-> Therefore, expose an event handler for the keyboard brightness control
-> which can then be used by hid-asus.
-> 
-> Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> Tested-by: Luke D. Jones <luke@ljones.dev>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/asus-wmi.c            | 41 +++++++++++++++++++++-
->  include/linux/platform_data/x86/asus-wmi.h | 13 +++++++
->  2 files changed, 53 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index a2a7cd61fd59..58407a3b6d41 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -1579,6 +1579,45 @@ void asus_hid_unregister_listener(struct asus_hid_listener *bdev)
->  }
->  EXPORT_SYMBOL_GPL(asus_hid_unregister_listener);
->  
-> +static void do_kbd_led_set(struct led_classdev *led_cdev, int value);
-> +
-> +int asus_hid_event(enum asus_hid_event event)
-> +{
-> +	unsigned long flags;
-> +	int brightness;
-> +
-> +	spin_lock_irqsave(&asus_ref.lock, flags);
-> +	if (!asus_ref.asus || !asus_ref.asus->kbd_led_registered) {
+We found that the task_group corresponding to the problematic se
+is not in the parent task_group’s children list, indicating that
+h_load_next points to an invalid address. Consider the following
+cgroup and task hierarchy:
 
-Please add a local variable for asus_ref.asus. Check other 
-patches/functions too if its use is repeated in some function many times, 
-the local var seems to be in order.
+         A
+        / \
+       /   \
+      B     E
+     / \    |
+    /   \   t2
+   C     D
+   |     |
+   t0    t1
 
-> +		spin_unlock_irqrestore(&asus_ref.lock, flags);
+Here follows a timing sequence that may be responsible for triggering
+the problem:
 
-Use guard() instead.
+CPU X                   CPU Y                   CPU Z
+wakeup t0
+set list A->B->C
+traverse A->B->C
+t0 exits
+destroy C
+                        wakeup t2
+                        set list A->E           wakeup t1
+                                                set list A->B->D
+                        traverse A->B->C
+                        panic
 
-> +		return -EBUSY;
-> +	}
-> +	brightness = asus_ref.asus->kbd_led_wk;
-> +
-> +	switch (event) {
-> +	case ASUS_EV_BRTUP:
-> +		brightness += 1;
-> +		break;
-> +	case ASUS_EV_BRTDOWN:
-> +		brightness -= 1;
-> +		break;
-> +	case ASUS_EV_BRTTOGGLE:
-> +		if (brightness >= ASUS_EV_MAX_BRIGHTNESS)
-> +			brightness = 0;
-> +		else
-> +			brightness += 1;
-> +		break;
-> +	}
-> +
-> +	do_kbd_led_set(&asus_ref.asus->kbd_led, brightness);
-> +	led_classdev_notify_brightness_hw_changed(&asus_ref.asus->kbd_led,
-> +						  asus_ref.asus->kbd_led_wk);
-> +
-> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(asus_hid_event);
-> +
->  /*
->   * These functions actually update the LED's, and are called from a
->   * workqueue. By doing this as separate work rather than when the LED
-> @@ -1878,7 +1917,7 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
->  	asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
->  	asus->kbd_led.brightness_set = kbd_led_set;
->  	asus->kbd_led.brightness_get = kbd_led_get;
-> -	asus->kbd_led.max_brightness = 3;
-> +	asus->kbd_led.max_brightness = ASUS_EV_MAX_BRIGHTNESS;
->  	asus->kbd_led_avail = !kbd_led_read(asus, &led_val, NULL);
->  
->  	if (asus->kbd_led_avail)
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 1f85d76387a8..e78e0fbccede 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -168,6 +168,14 @@ struct asus_hid_listener {
->  	void (*brightness_set)(struct asus_hid_listener *listener, int brightness);
->  };
->  
-> +enum asus_hid_event {
-> +	ASUS_EV_BRTUP,
-> +	ASUS_EV_BRTDOWN,
-> +	ASUS_EV_BRTTOGGLE,
+CPU Z sets ->h_load_next list to A->B->D, but due to arm64 weaker memory
+ordering, Y may observe A->B before it sees B->D, then in this time window,
+it can traverse A->B->C and reach an invalid se.
 
-Where does "BRT" come from. To me it doesn't associate with brightness 
-(might be due to me being non-native). If there's a good reason why it's 
-that way, fine but otherwise I suggest changing it so that it becomes 
-easier to understand.
+We can avoid stale pointer accesses by clearing ->h_load_next for
+earlier break.
 
-It's not a big problem as is because the context in the code above allows 
-decrypting the meaning but without the other names, I'd have been totally 
-lost what it means.
+Fixes: 685207963be9 ("sched: Move h_load calculation to task_h_load()")
+Cc: <stable@vger.kernel.org>
+Co-developed-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
+Signed-off-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
+Signed-off-by: Peng Wang <peng_wang@linux.alibaba.com>
+---
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +};
-> +
-> +#define ASUS_EV_MAX_BRIGHTNESS 3
-> +
->  #if IS_REACHABLE(CONFIG_ASUS_WMI)
->  void set_ally_mcu_hack(enum asus_ally_mcu_hack status);
->  void set_ally_mcu_powersave(bool enabled);
-> @@ -176,6 +184,7 @@ int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
->  
->  int asus_hid_register_listener(struct asus_hid_listener *cdev);
->  void asus_hid_unregister_listener(struct asus_hid_listener *cdev);
-> +int asus_hid_event(enum asus_hid_event event);
->  #else
->  static inline void set_ally_mcu_hack(enum asus_ally_mcu_hack status)
->  {
-> @@ -200,6 +209,10 @@ static inline int asus_hid_register_listener(struct asus_hid_listener *bdev)
->  static inline void asus_hid_unregister_listener(struct asus_hid_listener *bdev)
->  {
->  }
-> +static inline int asus_hid_event(enum asus_hid_event event)
-> +{
-> +	return -ENODEV;
-> +}
->  #endif
->  
->  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
-> 
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index bc0b7ce8a65d..da7baba35e60 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9847,6 +9847,7 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ 	}
+ 
+ 	while ((se = READ_ONCE(cfs_rq->h_load_next)) != NULL) {
++		WRITE_ONCE(cfs_rq->h_load_next, NULL);
+ 		load = cfs_rq->h_load;
+ 		load = div64_ul(load * se->avg.load_avg,
+ 			cfs_rq_load_avg(cfs_rq) + 1);
 -- 
- i.
+2.27.0
 
 
