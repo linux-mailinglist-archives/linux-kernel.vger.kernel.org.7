@@ -1,187 +1,248 @@
-Return-Path: <linux-kernel+bounces-855236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D40BE092B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:03:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1BEBE093A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120F3540439
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:03:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BF7D4EC69B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7C530149C;
-	Wed, 15 Oct 2025 20:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581A230649A;
+	Wed, 15 Oct 2025 20:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bs8wcxe8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3zkL1SR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C7524E4A1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC4F28BA81;
+	Wed, 15 Oct 2025 20:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760558622; cv=none; b=JvhOQjl0zcmDrVjk5SO44W8szrNe7BaOBYGzg3WzV4vOosbyQzsMQqh0BeiKQs42ULe6+EYfRXOKsYRizxBOxhStC/XEdQQUiCmnJwtvYEqUO27udB2opOZ34ndDpey/XtJrietcEW3IQePp9tvRXV/5SYInWOHYBtsXe2vNdHU=
+	t=1760558676; cv=none; b=rYFlU9cp/w2hWhh/R6/zFV+Ww7Td6qmqXairZ76g7HrTCLUY7ML7Wv8Df//vgP4eEEkDp8FlnwPrYYUAkPrSssWeOuMx6NAMyWWLmkZEYY/ZZmh1h+iV7gM6kO+4qL4V2+yV/6QjQD6QXzAOLJ5GwGpTunw4+dmPfXq1f0XxSXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760558622; c=relaxed/simple;
-	bh=j5sdgCzht4rlbyou56t6ect0CTM6jPISyoBjrAXYx/g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n3C9GaJoTjOYqwGmkHyaerOuV4V/O62OFV2r5GIbex+PNA6bPxaGMXGUgqoj2dCSx0mvAAqTb604S6y7F8vROMTZoOXJ5kmhGjdYCVEgktm3m13kj3bxMUWGVXLgyTv+xc5zu+t7Q0YT9giQQUNsVewNd9EYkedIsffMB5p2Yh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bs8wcxe8; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760558620; x=1792094620;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=j5sdgCzht4rlbyou56t6ect0CTM6jPISyoBjrAXYx/g=;
-  b=Bs8wcxe8PoZoL5+R8hTUyThYYSot4MEayUxuB9r8lZrXoodmE5QAQHWD
-   IfmRCl1o76ORz2Jx3RvRksGkad5JRKPy6xYQZ34c3Goiat/u/V/OiFClU
-   5PNWYudcokBynHmWYs9RUd9qP5BFI5feLWqwCaWBEdUPA54HWWsHu6CKI
-   OZKvl2GiH2eOESIUxhD9yIsPNvsWDmkineEK8owuMssYmSukH0xeWJBK2
-   hCodDVRlnpTT/txwG8evAfZ4gnCNXU1ZT/jTxMnzB7GZF8e3TeRipVHUs
-   HyHkLtta6tbUfxfUG+KH6GQGyjh93vQrsuvX4/etd7+5Fwy78SF6mTpk8
-   Q==;
-X-CSE-ConnectionGUID: yDwh9oV7QjervdJ6FkaKEg==
-X-CSE-MsgGUID: 5Wh36gw/QPmLq2NI8rzlVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="73855819"
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="73855819"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:03:38 -0700
-X-CSE-ConnectionGUID: RrBatm4RRwaA+U3LxgKyxQ==
-X-CSE-MsgGUID: 1jZ+CNp8TCiwjl7JDeZgJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="182049971"
-Received: from unknown (HELO [10.241.242.248]) ([10.241.242.248])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:03:38 -0700
-Message-ID: <60fb91a69466e84d2367c11a4f0dd38511788bcb.camel@linux.intel.com>
-Subject: Re: [PATCH 07/19] sched/fair: Track LLC-preferred tasks per runqueue
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>,  "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
- <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
- <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
- <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
- <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
- <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Chen Yu	
- <yu.c.chen@intel.com>, Libo Chen <libo.chen@oracle.com>, Adam Li	
- <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 15 Oct 2025 13:03:37 -0700
-In-Reply-To: <20251015120523.GT3289052@noisy.programming.kicks-ass.net>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
-	 <ccbfda37200b66177a1c1add4715a49b863ac84d.1760206683.git.tim.c.chen@linux.intel.com>
-	 <20251015120523.GT3289052@noisy.programming.kicks-ass.net>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760558676; c=relaxed/simple;
+	bh=cyqnG9m8jI8VahDq8BIoiXhfaLpfWMHxWNT4baxcHG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aKQsZ//xrATQuDiX3esCmYrfRoXaLMuwp+uyu7CzjH3vWnEaPerCOYrK8M+Xfzwv5NIirGbEydLQat4pV/oHw1bHWV05RIf7VndAFI3gUznNQTa+VfI1pujhHF3wKvvzXceugmzxeEVsoUB/ehuf70Gu8LBgHhHlJJsdSi+jLFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3zkL1SR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9FAC4CEF8;
+	Wed, 15 Oct 2025 20:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760558675;
+	bh=cyqnG9m8jI8VahDq8BIoiXhfaLpfWMHxWNT4baxcHG0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G3zkL1SRn1gY62J1obluivrTEiJWWoCBDVoDCDgyxSUyE/6aEpGvGj71GzyRDeE/e
+	 jvP6DbfHUOEipUR7/uQNUfm27cAyZ2BlLBq6p/5AxzCp7mOSFwzk9T8XEt/fpy2Ewk
+	 nBuZxzrVgXNVbp7xTU5ConkKncp3w+OcTIJ3uAyeFtkpdyDH/Y5VnUd/VJh9cK40FO
+	 CWrF4jP0Vv/aIyL0TmicuR3vDdavkMy+as+9VUIXjQKkH8MEV2FFn2mweEPie6PibP
+	 SKpRMgR+yiYZJurZOJcHpA8yO584g4JTlD+Cth0uBZaR74KUpdoJ9uWE8PFS2Fbt60
+	 oT7JDz0qiR81g==
+Message-ID: <409f2f03-2bc2-4cb8-9ca7-4e30f82077ff@kernel.org>
+Date: Wed, 15 Oct 2025 22:04:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nova-core: Solve mentions of `CoherentAllocation`
+ improvements [COHA]
+To: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org
+References: <20251015194936.121586-1-delcastillodelarosadaniel@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251015194936.121586-1-delcastillodelarosadaniel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-15 at 14:05 +0200, Peter Zijlstra wrote:
-> On Sat, Oct 11, 2025 at 11:24:44AM -0700, Tim Chen wrote:
-> > @@ -3999,6 +4038,7 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, str=
-uct sched_entity *se)
-> >  		struct rq *rq =3D rq_of(cfs_rq);
-> > =20
-> >  		account_numa_enqueue(rq, task_of(se));
-> > +		account_llc_enqueue(rq, task_of(se));
-> >  		list_add(&se->group_node, &rq->cfs_tasks);
->=20
-> Here and...
->=20
-> >  	}
-> >  	cfs_rq->nr_queued++;
-> > @@ -4010,9 +4050,14 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, st=
-ruct sched_entity *se)
-> >  	update_load_sub(&cfs_rq->load, se->load.weight);
-> >  	if (entity_is_task(se)) {
-> >  		account_numa_dequeue(rq_of(cfs_rq), task_of(se));
-> > +		account_llc_dequeue(rq_of(cfs_rq), task_of(se));
->=20
-> ... here, could you please check the compiler is doing CSE of task_of()?
+Hi Daniel,
 
-Will consolidate those task_of(se).=20
+On 10/15/25 9:49 PM, Daniel del Castillo wrote:
+> This patch solves the existing mentions of COHA, a task
+> in the Nova task list about improving the `CoherentAllocation` API.
+> I confirmed by talking to Alexandre Courbot, that the reading/writing
+> methods in `CoherentAllocation` can never be safe, so
+> this patch doesn't actually change `CoherentAllocation`, but rather
+> tries to solve the existing references to [COHA].
 
->=20
-> >  		list_del_init(&se->group_node);
-> >  	}
-> >  	cfs_rq->nr_queued--;
-> > +
-> > +	/* safeguard to clear the cache aware data */
-> > +	if (!parent_entity(se) && !cfs_rq->nr_queued)
-> > +		reset_llc_stats(rq_of(cfs_rq));
->=20
-> I'm confused -- why?
+This patch seems to address two different TODOs. Please split up the patch
+accordingly.
 
-Was put here in early code development to make
-sure things would not go haywire.  Will remove
-them.  Probably some warning of having tasks
-preferring some LLC when there're no task in queue
-is more appropriate.
+> Signed-off-by: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+> ---
+>  drivers/gpu/nova-core/dma.rs            |  20 ++---
+>  drivers/gpu/nova-core/firmware/fwsec.rs | 104 ++++++++++--------------
+>  2 files changed, 50 insertions(+), 74 deletions(-)
+> 
+> diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
+> index 94f44bcfd748..639a99cf72c4 100644
+> --- a/drivers/gpu/nova-core/dma.rs
+> +++ b/drivers/gpu/nova-core/dma.rs
+> @@ -25,21 +25,11 @@ pub(crate) fn new(dev: &device::Device<device::Bound>, len: usize) -> Result<Sel
+>      }
+>  
+>      pub(crate) fn from_data(dev: &device::Device<device::Bound>, data: &[u8]) -> Result<Self> {
+> -        Self::new(dev, data.len()).map(|mut dma_obj| {
+> -            // TODO[COHA]: replace with `CoherentAllocation::write()` once available.
+> -            // SAFETY:
+> -            // - `dma_obj`'s size is at least `data.len()`.
+> -            // - We have just created this object and there is no other user at this stage.
+> -            unsafe {
+> -                core::ptr::copy_nonoverlapping(
+> -                    data.as_ptr(),
+> -                    dma_obj.dma.start_ptr_mut(),
+> -                    data.len(),
+> -                );
+> -            }
+> -
+> -            dma_obj
+> -        })
+> +        let mut dma_obj = Self::new(dev, data.len())?;
+> +        // SAFETY: We have just created this object and there is no other user at this stage.
 
-Tim
+The safety comment should rather confirm that it is guaranteed that the device
+won't access this memory concurrently.
+
+> +        unsafe { dma_obj.write(data, 0)? };
+> +
+> +        Ok(dma_obj)
+>      }
+>  }
+>  
+> diff --git a/drivers/gpu/nova-core/firmware/fwsec.rs b/drivers/gpu/nova-core/firmware/fwsec.rs
+> index 8edbb5c0572c..cc5a6200d0de 100644
+> --- a/drivers/gpu/nova-core/firmware/fwsec.rs
+> +++ b/drivers/gpu/nova-core/firmware/fwsec.rs
+> @@ -11,12 +11,12 @@
+>  //! - The ucode signature, so the GSP falcon can run FWSEC in HS mode.
+>  
+>  use core::marker::PhantomData;
+> -use core::mem::{align_of, size_of};
+> +use core::mem::size_of;
+>  use core::ops::Deref;
+>  
+>  use kernel::device::{self, Device};
+>  use kernel::prelude::*;
+> -use kernel::transmute::FromBytes;
+> +use kernel::transmute::{AsBytes, FromBytes};
+>  
+>  use crate::dma::DmaObject;
+>  use crate::driver::Bar0;
+> @@ -70,6 +70,8 @@ struct FalconAppifDmemmapperV3 {
+>  }
+>  // SAFETY: any byte sequence is valid for this struct.
+>  unsafe impl FromBytes for FalconAppifDmemmapperV3 {}
+> +// SAFETY: any byte sequence is valid and it contains no padding nor kernel pointers.
+> +unsafe impl AsBytes for FalconAppifDmemmapperV3 {}
+>  
+>  #[derive(Debug)]
+>  #[repr(C, packed)]
+> @@ -82,6 +84,8 @@ struct ReadVbios {
+>  }
+>  // SAFETY: any byte sequence is valid for this struct.
+>  unsafe impl FromBytes for ReadVbios {}
+> +// SAFETY: any byte sequence is valid and it contains no padding nor kernel pointers.
+
+The full safety requirement is "Values of this type may not contain any
+uninitialized bytes. This type must not have interior mutability.
+
+Additional NIT: Please start sentences with a capital letter (Unfortunately the
+comment above missed this as well).
+
+Same for the cases below.
+
+> +unsafe impl AsBytes for ReadVbios {}
+>  
+>  #[derive(Debug)]
+>  #[repr(C, packed)]
+> @@ -94,6 +98,8 @@ struct FrtsRegion {
+>  }
+>  // SAFETY: any byte sequence is valid for this struct.
+>  unsafe impl FromBytes for FrtsRegion {}
+> +// SAFETY: any byte sequence is valid and it contains no padding nor kernel pointers.
+> +unsafe impl AsBytes for FrtsRegion {}
+>  
+>  const NVFW_FRTS_CMD_REGION_TYPE_FB: u32 = 2;
+>  
+> @@ -104,6 +110,8 @@ struct FrtsCmd {
+>  }
+>  // SAFETY: any byte sequence is valid for this struct.
+>  unsafe impl FromBytes for FrtsCmd {}
+> +// SAFETY: any byte sequence is valid and it contains no padding nor kernel pointers.
+> +unsafe impl AsBytes for FrtsCmd {}
+>  
+>  const NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS: u32 = 0x15;
+>  const NVFW_FALCON_APPIF_DMEMMAPPER_CMD_SB: u32 = 0x19;
+> @@ -149,24 +157,9 @@ impl FirmwareSignature<FwsecFirmware> for Bcrt30Rsa3kSignature {}
+>  ///
+>  /// Callers must ensure that the region of memory returned is not written for as long as the
+>  /// returned reference is alive.
+> -///
+> -/// TODO[TRSM][COHA]: Remove this and `transmute_mut` once `CoherentAllocation::as_slice` is
+> -/// available and we have a way to transmute objects implementing FromBytes, e.g.:
+> -/// https://lore.kernel.org/lkml/20250330234039.29814-1-christiansantoslima21@gmail.com/
+> -unsafe fn transmute<'a, 'b, T: Sized + FromBytes>(
+> -    fw: &'a DmaObject,
+> -    offset: usize,
+> -) -> Result<&'b T> {
+> -    if offset + size_of::<T>() > fw.size() {
+> -        return Err(EINVAL);
+> -    }
+> -    if (fw.start_ptr() as usize + offset) % align_of::<T>() != 0 {
+> -        return Err(EINVAL);
+> -    }
+> -
+> -    // SAFETY: we have checked that the pointer is properly aligned that its pointed memory is
+> -    // large enough the contains an instance of `T`, which implements `FromBytes`.
+> -    Ok(unsafe { &*(fw.start_ptr().add(offset).cast::<T>()) })
+> +unsafe fn transmute<T: Sized + FromBytes>(fw: &DmaObject, offset: usize) -> Result<&T> {
+> +    // SAFETY: Guaranteed by the safety requirements of the function.
+
+Please mention what is guaranteed and how it is guaranteed by the safety
+requirements of the function (even if it seems trivial).
+
+> +    T::from_bytes(unsafe { fw.as_slice(offset, size_of::<T>())? }).ok_or(EINVAL)
+>  }
+>  
+>  /// Reinterpret the area starting from `offset` in `fw` as a mutable instance of `T` (which must
+> @@ -176,20 +169,12 @@ unsafe fn transmute<'a, 'b, T: Sized + FromBytes>(
+>  ///
+>  /// Callers must ensure that the region of memory returned is not read or written for as long as
+>  /// the returned reference is alive.
+> -unsafe fn transmute_mut<'a, 'b, T: Sized + FromBytes>(
+> -    fw: &'a mut DmaObject,
+> +unsafe fn transmute_mut<T: Sized + FromBytes + AsBytes>(
+> +    fw: &mut DmaObject,
+>      offset: usize,
+> -) -> Result<&'b mut T> {
+> -    if offset + size_of::<T>() > fw.size() {
+> -        return Err(EINVAL);
+> -    }
+> -    if (fw.start_ptr_mut() as usize + offset) % align_of::<T>() != 0 {
+> -        return Err(EINVAL);
+> -    }
+> -
+> -    // SAFETY: we have checked that the pointer is properly aligned that its pointed memory is
+> -    // large enough the contains an instance of `T`, which implements `FromBytes`.
+> -    Ok(unsafe { &mut *(fw.start_ptr_mut().add(offset).cast::<T>()) })
+> +) -> Result<&mut T> {
+> +    // SAFETY: Guaranteed by the safety requirements of the function.
+
+Same here.
+
+> +    T::from_bytes_mut(unsafe { fw.as_slice_mut(offset, size_of::<T>())? }).ok_or(EINVAL)
+>  }
 
