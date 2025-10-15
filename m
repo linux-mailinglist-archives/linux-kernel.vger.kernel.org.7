@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-854471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6C0BDE76A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:27:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE813BDE77C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 091F51899FB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:27:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A51D74F908D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E51B326D4B;
-	Wed, 15 Oct 2025 12:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A3F327783;
+	Wed, 15 Oct 2025 12:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kggi3Oau"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bAAGjbmu"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBFD326D5C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257592C21FC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760531245; cv=none; b=LddydoA5AP4s3AcoWfP2u0WDO8myxg0srySgEZnvw2SotV5mk4OBFLM3+JaWy2AgFYsVm2LLX2VfJ/9VCXpEZC4P7TxBzrAG3/nrsqjDtf8yiE2h/P0j2wJvg5yDCCw4v7wUYb3y3t5GECvSlAMpg5yqE3GRCdCus8BzEX+PMDM=
+	t=1760531316; cv=none; b=djQeL7A+agoV/94r09J3tzY1b1mrNmLy13p3LxUxNBFIa4fa3c0vZOX0aVGDECV9noL6UVRi3KDAhuAgC66xc175jfuhWWzYKj+p93Elh4kTtVBe0ufHdiRQBYsIy1Io04Qpp809lviJCQ2SwVCgLnOikHu/8nNc+XujThdDW3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760531245; c=relaxed/simple;
-	bh=aUedLoKamCVVxyfQfUAMTvYhMOssaT/HBZaPQZ62VXU=;
+	s=arc-20240116; t=1760531316; c=relaxed/simple;
+	bh=afCqx+CQdwNgyrn3VQMC5E0JpWv9LcUIgdXKfpYJL34=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SroY2ErsI9dHhDiZO1SuF9OqnYlag7eVic8KRFwLorPfZ9WDOCnrpdxHRKyeSZ/mPbFB06NNogzzIW0d9Z8VixHCaOdVpTu7z0R5oRK3TeLFIFy34x9sEwAyB+NkiEP89/huqe79MDppWVj3HlCFfP7nI+p7+RP23tuudpOvaMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kggi3Oau; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so3904502f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:27:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760531242; x=1761136042; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wjoMwghPIohukayZuKoD3nhrdjl4TgPiMFjbi9Rs2ZQ=;
-        b=kggi3OausfVTItOIOXYoMEOqhRi8NYmPY3ahpQC1RmvWivK/BuwGKF2deu79YDnZ8/
-         BLXC+yS12xXtRNzg7+A2hl6xBtXeqDMN6IPaXzBSWmKb7pFRjXB6GQ1Uunz2lszcYhzZ
-         KrPmuBM9xrHh1CQ9VDeQuLYmgHAHNnyu936+WhKHAm2OIqqe7+XaBlXpspLrWUnrB9KQ
-         +ZfvcQgxjsqdUWE8hv4ldikppo/msRcYCF9LFiaIGWzf/GunwY9tGpKrS8S3VeuoT0ov
-         +ro2nHRbhgvpMmCQPcjWEMpD0jJ5Z+c2YH1peYGjR1Bmen1kXlipzaNYK1ZMD/hs/zDf
-         P5JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760531242; x=1761136042;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wjoMwghPIohukayZuKoD3nhrdjl4TgPiMFjbi9Rs2ZQ=;
-        b=mT+hzUqfhAblfDECTDmNnLGvZv2f6ZeSXVYZqPfsZVAijutz0EdlDZLmuDZmbdULtO
-         SFV+98nH6VtvADjt5BOK03987NLKBnfyFEOJ9YtRQHMY7NMaGJWw5Q+kvkki3zwQTuBD
-         EMX96FMkhQBe/5IzRfWsXb/Cu1vq7YBOjgmRVEHRDM17p7RnP9ZIn7PCd/9g4A7wAmjq
-         Pjb1xJVKrxGbrGX1EO/ZpqSQ3DoDW6vkdATMCjBObITLC5+2YUIVwg3KYg8vtj20TjQi
-         2URSCaB2OPd9w1091gHq1a7g7TOTXpi5aEvtqVO1zfJSkbLhqYUOy1YwRlgPbEJ4gmL7
-         Pj+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXs3z92tNiBGhzJNR3YBjfc6VFHz3mZp+e+Hqao3+AfB9gCYEOP2CvzRGJGJgm5IxoHGXZ/F2grqW/B5c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0u8LDZGQOk/WhwNrW/lx+aJ0pNNZ429hV3hFamTVUeIrSKa5A
-	b3nva+OzDur2MmtIf84X/zHm7BcvxaT4pV/Jz3C9X2y6v8Hv9NxO1jm+PbgO5w==
-X-Gm-Gg: ASbGnct2r8dk4qD6wVmDurYFW/qWLLEhZ6GI+xZjWh9YRbWk14ayBWfs2zbh187cd9X
-	4GKNhyWXf0gMmu9XQQrfTMiMbpmz9uEYW874HmatEQ3+yYUy0TjhMILdDAmOJLBfMHxp1l3Bljt
-	3a7GCW9J7DooYyyGYfVfgZ6RyRhM6N7YRhAQNTPNWwBmlQWAJcnh18Pw5q0XegKmsRKDl9ltVni
-	mCayWXf1xuOnbGi1WHsbuUqtbOMDNls++XUrWwUt9dBC6UvoApT70KxKlxVKvRMn5FlZNijwixZ
-	WaMHJ42ADXth5mEbOEg3uxGTLC+QY8FrvJhckJGpM9iOuCRNxf6ZRNbWApLSnIYp9HGthFhaIC0
-	EzUXrOqrZD8S7/LYHrweoZzJWPkDvVhZsjRmqzJMcdLuUliATkFp/GldDOG+xUKF41A==
-X-Google-Smtp-Source: AGHT+IGI57IQUmf9nN0SU1CXBFc9/Ki3m5/W+fcXygdYAFCm/ofKw82VShjxAzRHnUdy1iKY85Q3rw==
-X-Received: by 2002:a05:6000:25c6:b0:3fa:5925:4b11 with SMTP id ffacd0b85a97d-4266e8dd4a0mr18552082f8f.42.1760531242037;
-        Wed, 15 Oct 2025 05:27:22 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57cc0esm29129909f8f.6.2025.10.15.05.27.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 05:27:20 -0700 (PDT)
-Message-ID: <ada4c640-1d35-4e79-bc00-e88bc60f646d@gmail.com>
-Date: Wed, 15 Oct 2025 14:27:20 +0200
+	 In-Reply-To:Content-Type; b=bdlFBbHew/JPOZr0KXbbBHJCLn4OM5FgzCpvr+uZNqQKPrEAKco9s+DTrB8htBO85wkU1LPuSSyufDXZmwrUmI3F52NBIba5QneHFOHL3WQgUm+RPbHeCbBYQr+Onn5rCV6qq9sSFnatSvt7JpZCu8bluoI2zMasrJdtWD2nduk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bAAGjbmu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F5v1N4014420;
+	Wed, 15 Oct 2025 12:28:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QAcHt1
+	dapQ840Ot11Ijs6OU/pMU2QO8FW6tPLQhHtAg=; b=bAAGjbmuT1IDIGkly3yRks
+	eQbNqM7L76cDvCOCYZEQZzp2igyVW2n1rYXipXHIQUhBY9GTJjf4CE6Z4TqSWzqz
+	WhHBQapX689ColD4op2WTmI4R/fj92pFolFMWOsbbv9EP9MQ3HWAsoLOezWySaAu
+	vSRLGEYmFA3NDPfMnp0cdmILGUGMIuhCYUYkrUsHnzIoEe/tVdFWuBJKKZdkloI1
+	jXIjd8RtEDChqEPFgMkkyWHA52xHPg43WZ3pBIsSv+yIxCSUogEeTXpOqxFVD333
+	V0Ze8yVQUSSTHHuQ1pqqDkM40ikAMVYNCsPxipZW6K7rR25DTLweKQIbbDnCZwug
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qcnrbwdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 12:28:09 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59FCS8s5007728;
+	Wed, 15 Oct 2025 12:28:08 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qcnrbwdm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 12:28:08 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAb0aH003626;
+	Wed, 15 Oct 2025 12:28:07 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xy0cfx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 12:28:07 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59FCS6rC40632730
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 12:28:06 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 31ECD58059;
+	Wed, 15 Oct 2025 12:28:06 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D46B258043;
+	Wed, 15 Oct 2025 12:27:59 +0000 (GMT)
+Received: from [9.109.215.183] (unknown [9.109.215.183])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 15 Oct 2025 12:27:59 +0000 (GMT)
+Message-ID: <5af4bc20-1809-4389-afe2-987f547cc8f3@linux.ibm.com>
+Date: Wed, 15 Oct 2025 17:57:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,93 +83,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 0/9] platform/x86: Add asus-armoury driver
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
- LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>, "Luke D . Jones" <luke@ljones.dev>,
- Alok Tiwari <alok.a.tiwari@oracle.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
-References: <20251015014736.1402045-1-benato.denis96@gmail.com>
- <0752fcde-6c25-4cde-b35f-2204e24ff0f1@amd.com>
- <8e381c36-3bdf-a1d6-8e51-53243ba8bf4d@linux.intel.com>
- <97c56897-ed9b-4d4d-ba54-d6e2abbc8b0d@gmail.com>
- <66bb61ca-94ae-7f0a-ce9f-f5c13b51eb01@linux.intel.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <66bb61ca-94ae-7f0a-ce9f-f5c13b51eb01@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/2] drivers/base/node: Fold register_node() into
+ register_one_node()
+To: kernel test robot <lkp@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Cc: oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Aboorva Devarajan <aboorvad@linux.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rafael@kernel.org, Danilo Krummrich <dakr@kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>
+References: <910853c9dd61f7a2190a56cba101e73e9c6859be.1760097207.git.donettom@linux.ibm.com>
+ <202510151130.JYajIJuM-lkp@intel.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <202510151130.JYajIJuM-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=M5ZA6iws c=1 sm=1 tr=0 ts=68ef9359 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=anyJmfQTAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=qCTGczElb8rRS6Tj57UA:9 a=QEXdDO2ut3YA:10
+ a=mmqRlSCDY2ywfjPLJ4af:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: bAX_B4dOnV7v2Y31hobP-XuOn-6zcZlL
+X-Proofpoint-ORIG-GUID: Q30cX-kcGhGWVz-Y0VR0bYuPk7QQATV7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEwMDE0MCBTYWx0ZWRfX3hkaKjg3bS+B
+ VeTAzgD+CRnKJnq40pTHKqA7X9Rp8T+290hlMDS1zQnTI0ADrP/Glw4tQdau7VTmSyPeU3DQFpE
+ 5TgrLDc0oKaAtDO/6MzyFIptSKEGqLiJh6LDc0B6+7xucN9akBdVjOeKKx3SBni4qQNEhja7GZH
+ r2g670bIVASNqqHZcrJ33EwFaSlNmokBQTIwEVXyrwAld0I9zjXqDC7ZaJx36s92+9QwJZZ6RIJ
+ E8E+oXuFNqaRH8pFeW00ek959q3xXYSSQU+8J/xr8Bx6ODymUFtVpA1mszW13wwKaDsuNuiRA2k
+ iUz9ImSFJzoqFe2qai4fwuLBZxg/jUy7yGd+XKScdeOkK+PGKZ2+Mk8LeMpWR3k4a7GPl8Ka25T
+ W8nOA1pMxMKafEosuADFS6Hb57R22g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 spamscore=0 clxscore=1011 impostorscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510100140
 
 
-On 10/15/25 14:06, Ilpo Järvinen wrote:
-> On Wed, 15 Oct 2025, Denis Benato wrote:
+On 10/15/25 9:23 AM, kernel test robot wrote:
+> Hi Donet,
 >
->> On 10/15/25 11:38, Ilpo Järvinen wrote:
->>> On Wed, 15 Oct 2025, Mario Limonciello wrote:
->>>> On 10/14/2025 8:47 PM, Denis Benato wrote:
->>>>> Hi all,
->>>>>
->>>>> the TL;DR:
->>>>> 1. Introduce new module to contain bios attributes, using
->>>>> fw_attributes_class
->>>>> 2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
->>>>> 3. Remove those in the next LTS cycle
->>>>>
->>>>> The idea for this originates from a conversation with Mario Limonciello
->>>>> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
->>>>>
->>>>> It is without a doubt much cleaner to use, easier to discover, and the
->>>>> API is well defined as opposed to the random clutter of attributes I had
->>>>> been placing in the platform sysfs. Given that Derek is also working on a
->>>>> similar approach to Lenovo in part based on my initial work I'd like to
->>>>> think
->>>>> that the overall approach is good and may become standardised for these
->>>>> types
->>>>> of things.
->>>>>
->>>>> Regarding PPT: it is intended to add support for "custom" platform profile
->>>>> soon. If it's a blocker for this patch series being accepted I will drop the
->>>>> platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
->>>>> separately to avoid holding the bulk of the series up. Ideally I would like
->>>>> to get the safe limits in so users don't fully lose functionality or
->>>>> continue
->>>>> to be exposed to potential instability from setting too low, or be mislead
->>>>> in to thinking they can set limits higher than actual limit.
->>>>>
->>>>> The bulk of the PPT patch is data, the actual functional part is relatively
->>>>> small and similar to the last version.
->>>>>
->>>>> Unfortunately I've been rather busy over the months and may not cover
->>>>> everything in the v7 changelog but I've tried to be as comprehensive as I
->>>>> can.
->>>>>
->>>>> Regards,
->>>>> Luke
->>>> As a general comment that applies to a few patches in the series.
->>>>
->>>> The S-o-b means that YOU sign off on them, it's like a chain of custody.
->>>>
->>>> Any patches that you're sending need your own S-o-B, even if they're 100% the
->>>> same as the original from Luke.
->>> There's also Co-developed-by tag which may be appropriate in cases where 
->>> both have touched the patch.
->>>
->> I have re-read the submission documentation and confirmed I need at least
->> S-o-b for all of them. Is it acceptable if I simply answer to the email with my S-o-b
->> and Co-developed-by (on patches I have touched) or do I need to resend
->> the whole patchset creating a v15?
-> Hi Denis,
+> kernel test robot noticed the following build warnings:
 >
-> Please wait a bit with v15, I'll try to take a look at this series 
-> hopefully before the end of this week and I suspect there will be more 
-> changes needed as a result (not to doubt your effort but it's long time 
-> since I've looked at it).
->
-Sure! I will fix everything that needs fixing! I'm just happy seeing progress
-since this is a work that is both extensively used (valve and other distros)
-and very requested.
+> [auto build test WARNING on akpm-mm/mm-everything]
+> [also build test WARNING on powerpc/fixes linus/master v6.18-rc1 next-20251014]
+> [cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus powerpc/next tip/x86/mm rppt-memblock/for-next rppt-memblock/fixes]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
 
-Thanks for your time!
+This patch is based on the mm-new branch. It is not applying cleanly on 
+target branch because the target branches are missing some patches that 
+are present in mm-new.
+
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Donet-Tom/drivers-base-node-Fold-register_node-into-register_one_node/20251015-000850
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/910853c9dd61f7a2190a56cba101e73e9c6859be.1760097207.git.donettom%40linux.ibm.com
+> patch subject: [PATCH v2 1/2] drivers/base/node: Fold register_node() into register_one_node()
+> config: s390-randconfig-001-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151130.JYajIJuM-lkp@intel.com/config)
+> compiler: s390-linux-gcc (GCC) 12.5.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151130.JYajIJuM-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510151130.JYajIJuM-lkp@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+>>> Warning: drivers/base/node.c:889 function parameter 'nid' not described in 'register_node'
 
