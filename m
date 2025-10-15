@@ -1,148 +1,303 @@
-Return-Path: <linux-kernel+bounces-854211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF65BDDD4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:42:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC9BDDD50
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D22C9502262
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:41:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7CB84FC545
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A0D308F2E;
-	Wed, 15 Oct 2025 09:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZvNzTtSd"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67CB239E7D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A94F3176EF;
+	Wed, 15 Oct 2025 09:41:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC795239E7D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521304; cv=none; b=DhZiwzjkGYGBZ0Y+dC9Bx5Smrr/aBI6Es6y14b08lxQ9UONtioMYgXC+fSifj4+8K+UsJO/dZVAjD9n0qZjpQumJ8JtdPnVjUfUMCphgzp4UBgnwXdiicxbHE3qCSVJstQLLRNAxpCdIqfSBDyTaufIIBinTv7+h/5Q0B1Db4vY=
+	t=1760521315; cv=none; b=LDeQG2tFTiRT8qZ7FaQNetIfDUD3A7VT1jgDz59Kzd0BPPLJZeAiEUGJ98CAh8uOIopKipU+hX2qvNa0SRLnXPIkhUxVnSZgZniRkux1Vqb8/d3x/SDkGRfGYgq6ueTXZY/KGty07vn6XkDrjUANtFJuRtXQRNAGWPsbVYtKpCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521304; c=relaxed/simple;
-	bh=xCvkHIm7qec+IuTZyhD3i3j8fJiu+BYGzrZ6a014T/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mht/wJ1TtHHcnMpUkh2vnqH+0/uazjPP5FyKBXEk9urWGgy0cMOjgVoyyqF52EO7r3HHXI9cJ1YtiTSJ88PPderQEm3C11JmQTbt82y6QcHaKuCExSOecA8zkDqR1+vRe33TPzGxvRoDy/E1A62Bm9onetbKHkQR9TBrykjos2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZvNzTtSd; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47105bbb8d9so18715e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:41:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760521300; x=1761126100; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B7gNIafNOAAdT8vVW1v+tnHUrlaQMtRV3mgcHVHcyVA=;
-        b=ZvNzTtSd7juU7pESOZd8aV7zewRPdNV2xpoc5v2BH2KBZk/NCGc/ZswjYX5qg+0S4w
-         jo4PJDXSOhe/ouxP6u5PqJBX1h4Ylqu/Qi/mxPrXljqj44n5pvKrIe6t9RVMNpJQkk7C
-         b9NUFFHG5xp8IX2js+bvtxd6Gf0PX6MuK24GbRcxKaJZ4mnv2B6t4BY/lrmKAZ6ipMOl
-         YMtBzvdP3Jg5CE9LrryYnudfu/Qi/Gg4aKx+LXCgiUtU4+JTWpkVl5s4kWY9rmxUjwQD
-         N6kRfHSEZU2XPYG4RVdhr0p8kXFpcYaqAbBdcNHwl66zD2JRzDFeHsHc4bkB3OeBsMTQ
-         QoVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760521300; x=1761126100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B7gNIafNOAAdT8vVW1v+tnHUrlaQMtRV3mgcHVHcyVA=;
-        b=GHhoDW8UWyT2QJpe6q0YGUE3PGJOCtQRIyA5e+tQryXOYggpFqcmsaGPedv2vhIlP4
-         0YvS1P3Fi2/ODWzfWuZSBEiMTJXd/LjhenlC8NKuDQDRPw0/16mlEY7fqtpb+TooEmdb
-         TjTvi6NKtGFXWB32IJGMFgqn8lTY9WOtw50uRjWIQeqbWdopiAmyWh1tKgR0Vy5YyD7e
-         XtfiCbDV/IgLW/xJjyQTY1fgGbdM+A3IBfzGLlt+7R4cj9RRyk5/XIgkdrndqZwFBaJr
-         ou/Im/8rMiQTl+xBjtysEauGDlbF3pTMo+5fzZ+KcEWTUlN2PsZZHYZV2KTtd8y6drnq
-         9/3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVEeixKKHMFL8Q0FXQ+JYFQvvDGSFHCXQPJRoTgnVWyAQpvLlswE+ViALoSnkQRd91fmfFEBD/Tr7KZSYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1SYJ29s/aAwQD5o7xY6DZBm4+Xy19NGEN6kLT1/6B/etGP/Eh
-	Lj7pN4gEsmwFexj+6evuzpXro6/BQviE/tQHd+28CnlkfBTpnNlAOVNLnaMlqSpBMw==
-X-Gm-Gg: ASbGncvZWxsjgWPTRwOtE+sKipMjFeylp3xTwkwvB2bBEMd8c3FHIoQx9lXFha0T9kW
-	h7JE0ayTL9QVnCCEJaG/kDM1WNNXOKaEmmCID6fPtZtt/Xz2EI/1e7MJhqwu3nB/K5k6y63NG+Y
-	8RO223vASW4ktSUZMOPOJb9gDyEHn3R8QyuFp+BdB1YCf91XUL4Cus2sAPHqgaJsS194BkWatbR
-	bSXOJC4AWhqqoY/26N3DXhHFEDIfIIBv6vzBClZ8FlfXnEmsEJZZGSwKQCYluaCVYMtquHCrxEE
-	TK2VcLU1kGfneAW2FjkLc0+sNN4fkIlpP4+lsijxZFYUWgNPQrggkb1uX0E/6CUDysbBoofK/7O
-	kRcTL5yTzR6Mbo+Sd96SR+OK5yekMfN7uyGxCj+MQ5WKeRaNDLQ5vAeK6OFKAcLV+re0rP5e+vU
-	7AIewMUnPzAw==
-X-Google-Smtp-Source: AGHT+IHR5pyr1xnwIimpgjpOhjIZXkvm+AJq3ntKDNIiM5QNlOCKNqqBRMSb2N3JBImOJuWcOi7CEA==
-X-Received: by 2002:a05:600c:a316:b0:45a:2861:3625 with SMTP id 5b1f17b1804b1-470fd76ca76mr1181095e9.4.1760521300016;
-        Wed, 15 Oct 2025 02:41:40 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5d0006sm28388114f8f.34.2025.10.15.02.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 02:41:39 -0700 (PDT)
-Date: Wed, 15 Oct 2025 09:41:36 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, will@kernel.org, joro@8bytes.org,
-	jgg@ziepe.ca, praan@google.com, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v5 1/4] iommu/io-pgtable-arm: Simplify error prints for
- selftests
-Message-ID: <aO9sUNYmOg9W2Vru@google.com>
-References: <20250929155001.3287719-1-smostafa@google.com>
- <20250929155001.3287719-2-smostafa@google.com>
- <526186fa-d17a-4b79-b51d-83492b19c941@arm.com>
+	s=arc-20240116; t=1760521315; c=relaxed/simple;
+	bh=jDK3wY41Y7yvUrK8211NgAoyyzvMcoyeGVytmAiwrIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=paezYy+VLKWhWEf63NRmpxCICM7uelta19i+eVWNCO2BgZpkzaaUy5BqWo8wcRcqGQQUYHiSps5mqYLG+5iaXQ3wYG6Dik0R81kS1tSeZLkj/pwNAAZXnyJ+JvUOywKV9hKCb+dE4gXPjcllqOogBlt/oOfGy3oFqxOrhxtm0Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 390DE16A3;
+	Wed, 15 Oct 2025 02:41:45 -0700 (PDT)
+Received: from [10.1.32.75] (e127648.arm.com [10.1.32.75])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 689F43F6A8;
+	Wed, 15 Oct 2025 02:41:52 -0700 (PDT)
+Message-ID: <69bda5d0-50fd-4508-95e0-d39bf2704255@arm.com>
+Date: Wed, 15 Oct 2025 10:41:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <526186fa-d17a-4b79-b51d-83492b19c941@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] sched_ext: Add a selftest for scx_bpf_dsq_peek
+To: Ryan Newton <rrnewton@gmail.com>, linux-kernel@vger.kernel.org
+Cc: sched-ext@lists.linux.dev, tj@kernel.org, arighi@nvidia.com,
+ newton@meta.com
+References: <20251015015712.3996346-1-rrnewton@gmail.com>
+ <20251015015712.3996346-3-rrnewton@gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20251015015712.3996346-3-rrnewton@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 12:09:56PM +0100, Robin Murphy wrote:
-> On 2025-09-29 4:49 pm, Mostafa Saleh wrote:
-> > At the moment, if the self test fails it prints a lot of information
-> > about the page table (size, levels...) this requires access to many
-> > internals, which has to be exposed in the next patch moving the
-> > tests out.
-> > 
-> > Instead, we can simplify the print, using ias, oas, pgsize_bitmap
-> > and fmt is enough to identify the failed case, and the rest can
-> > be deduced from the code.
+On 10/15/25 02:57, Ryan Newton wrote:
+> From: Ryan Newton <newton@meta.com>
 > 
-> That is the same cfg information already logged at the start of the test, so
-> if it's not useful to dump the actual internal details of the ops then just
-> remove the whole function and make life even simpler. (Otherwise export it
-> or turn it into a callback.)
-
-I see, I think it's better to just remove the whole function.
-
-Thanks,
-Mostafa
-
+> This is the most basic unit test: make sure an empty queue peeks as
+> empty, and when we put one element in the queue, make sure peek returns
+> that element.
 > 
-> Thanks,
-> Robin.
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> > ---
-> >   drivers/iommu/io-pgtable-arm.c | 10 +++-------
-> >   1 file changed, 3 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> > index 7e8e2216c294..00218af5d5f7 100644
-> > --- a/drivers/iommu/io-pgtable-arm.c
-> > +++ b/drivers/iommu/io-pgtable-arm.c
-> > @@ -1299,14 +1299,10 @@ static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
-> >   static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
-> >   {
-> > -	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> > -	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-> > +	struct io_pgtable_cfg *cfg = &io_pgtable_ops_to_pgtable(ops)->cfg;
-> > -	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
-> > -		cfg->pgsize_bitmap, cfg->ias);
-> > -	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
-> > -		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
-> > -		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
-> > +	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit oas %u-bit\n",
-> > +		cfg->pgsize_bitmap, cfg->ias, cfg->oas);
-> >   }
-> >   #define __FAIL(ops, i)	({						\
+> However, even this simple test is a little complicated by the different
+> behavior of scx_bpf_dsq_insert in different calling contexts:
+>  - insert is for direct dispatch in enqueue
+>  - insert is delayed when called from select_cpu
 > 
+> In this case we split the insert and the peek that verifies the
+> result between enqueue/dispatch.
+> 
+> Note: An alternative would be to call `scx_bpf_dsq_move_to_local` on an
+> empty queue, which in turn calls `flush_dispatch_buf`, in order to flush
+> the buffered insert. Unfortunately, this is not viable within the
+> enqueue path, as it attempts a voluntary context switch within an RCU
+> read-side critical section.
+> 
+> Signed-off-by: Ryan Newton <newton@meta.com>
+> ---
+>  tools/testing/selftests/sched_ext/Makefile    |   1 +
+>  .../selftests/sched_ext/peek_dsq.bpf.c        | 251 ++++++++++++++++++
+>  tools/testing/selftests/sched_ext/peek_dsq.c  | 222 ++++++++++++++++
+>  3 files changed, 474 insertions(+)
+>  create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.bpf.c
+>  create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.c
+> 
+> diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
+> index 9d9d6b4c38b0..5fe45f9c5f8f 100644
+> --- a/tools/testing/selftests/sched_ext/Makefile
+> +++ b/tools/testing/selftests/sched_ext/Makefile
+> @@ -174,6 +174,7 @@ auto-test-targets :=			\
+>  	minimal				\
+>  	numa				\
+>  	allowed_cpus			\
+> +	peek_dsq			\
+>  	prog_run			\
+>  	reload_loop			\
+>  	select_cpu_dfl			\
+> diff --git a/tools/testing/selftests/sched_ext/peek_dsq.bpf.c b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
+> new file mode 100644
+> index 000000000000..65e3f688ea39
+> --- /dev/null
+> +++ b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
+> @@ -0,0 +1,251 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * A BPF program for testing DSQ operations and peek in particular.
+> + *
+> + * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
+> + * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
+> + */
+> +
+> +#include <scx/common.bpf.h>
+> +#include <scx/compat.bpf.h>
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +UEI_DEFINE(uei); /* Error handling */
+> +
+> +#define MAX_SAMPLES 100
+> +#define MAX_CPUS 512
+> +#define DSQ_POOL_SIZE 8
+> +int max_samples = MAX_SAMPLES;
+> +int max_cpus = MAX_CPUS;
+> +int dsq_pool_size = DSQ_POOL_SIZE;
+> +
+> +/* Global variables to store test results */
+> +int dsq_peek_result1 = -1;
+> +long dsq_inserted_pid = -1;
+> +int insert_test_cpu = -1; /* Set to the cpu that performs the test */
+> +long dsq_peek_result2 = -1;
+> +long dsq_peek_result2_pid = -1;
+> +long dsq_peek_result2_expected = -1;
+> +int test_dsq_id = 1234; /* Use a simple ID like create_dsq example */
+> +int real_dsq_id = 1235; /* DSQ for normal operation */
+> +int enqueue_count = -1;
+> +int dispatch_count = -1;
+> +bool debug_ksym_exists;
+> +
+> +/* DSQ pool for stress testing */
+> +int dsq_pool_base_id = 2000;
+> +int phase1_complete = -1;
+> +int total_peek_attempts = -1;
+> +int successful_peeks = -1;
+> +
+> +/* BPF map for sharing peek results with userspace */
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_ARRAY);
+> +	__uint(max_entries, MAX_SAMPLES);
+> +	__type(key, u32);
+> +	__type(value, long);
+> +} peek_results SEC(".maps");
+> +
+> +static int get_random_dsq_id(void)
+> +{
+> +	u64 time = bpf_ktime_get_ns();
+> +
+> +	return dsq_pool_base_id + (time % DSQ_POOL_SIZE);
+> +}
+> +
+> +static void record_peek_result(long pid)
+> +{
+> +	u32 slot_key;
+> +	long *slot_pid_ptr;
+> +	int ix;
+> +
+> +	if (pid <= 0)
+> +		return;
+> +
+> +	/* Find an empty slot or one with the same PID */
+> +	bpf_for(ix, 0, 10) {
+> +		slot_key = (pid + ix) % MAX_SAMPLES;
+> +		slot_pid_ptr = bpf_map_lookup_elem(&peek_results, &slot_key);
+> +		if (!slot_pid_ptr)
+> +			continue;
+> +
+> +		if (*slot_pid_ptr == -1 || *slot_pid_ptr == pid) {
+> +			*slot_pid_ptr = pid;
+> +			break;
+> +		}
+> +	}
+> +}
+> +
+> +/* Scan all DSQs in the pool and try to move a task to local */
+> +static int scan_dsq_pool(void)
+> +{
+> +	struct task_struct *task;
+> +	int moved = 0;
+> +	int i;
+> +
+> +	bpf_for(i, 0, DSQ_POOL_SIZE) {
+> +		int dsq_id = dsq_pool_base_id + i;
+> +
+> +		total_peek_attempts++;
+> +
+> +		task = __COMPAT_scx_bpf_dsq_peek(dsq_id);
+> +		if (task) {
+> +			successful_peeks++;
+> +			record_peek_result(task->pid);
+> +
+> +			/* Try to move this task to local */
+> +			if (!moved && scx_bpf_dsq_move_to_local(dsq_id) == 0) {
+> +				moved = 1;
+> +				break;
+> +			}
+> +		}
+> +	}
+> +	return moved;
+> +}
+> +
+> +/* Struct_ops scheduler for testing DSQ peek operations */
+> +void BPF_STRUCT_OPS(peek_dsq_enqueue, struct task_struct *p, u64 enq_flags)
+> +{
+> +	struct task_struct *peek_result;
+> +	int last_insert_test_cpu, cpu;
+> +
+> +	enqueue_count++;
+> +	cpu = bpf_get_smp_processor_id();
+> +	last_insert_test_cpu = __sync_val_compare_and_swap(&insert_test_cpu, -1, cpu);
+> +
+> +	/* Phase 1: Simple insert-then-peek test (only on first task) */
+> +	if (last_insert_test_cpu == -1) {
+> +		bpf_printk("peek_dsq_enqueue beginning phase 1 peek test on cpu %d", cpu);
+> +
+> +		/* Test 1: Peek empty DSQ - should return NULL */
+> +		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
+> +		dsq_peek_result1 = (long)peek_result; /* Should be 0 (NULL) */
+> +
+> +		/* Test 2: Insert task into test DSQ for testing in dispatch callback */
+> +		dsq_inserted_pid = p->pid;
+> +		scx_bpf_dsq_insert(p, test_dsq_id, 0, enq_flags);
+> +		dsq_peek_result2_expected = (long)p; /* Expected the task we just inserted */
+> +	} else if (!phase1_complete) {
+> +		/* Still in phase 1, use real DSQ */
+> +		scx_bpf_dsq_insert(p, real_dsq_id, 0, enq_flags);
+> +	} else {
+> +		/* Phase 2: Random DSQ insertion for stress testing */
+> +		int random_dsq_id = get_random_dsq_id();
+> +
+> +		scx_bpf_dsq_insert(p, random_dsq_id, 0, enq_flags);
+> +	}
+> +}
+> +
+> +void BPF_STRUCT_OPS(peek_dsq_dispatch, s32 cpu, struct task_struct *prev)
+> +{
+> +	dispatch_count++;
+> +
+> +	/* Phase 1: Complete the simple peek test if we inserted a task but
+> +	 * haven't tested peek yet
+> +	 */
+> +	if (insert_test_cpu == cpu && dsq_peek_result2 == -1) {
+> +		struct task_struct *peek_result;
+> +
+> +		bpf_printk("peek_dsq_dispatch completing phase 1 peek test on cpu %d", cpu);
+> +
+> +		/* Test 3: Peek DSQ after insert - should return the task we inserted */
+> +		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
+> +		/* Store the PID of the peeked task for comparison */
+> +		dsq_peek_result2 = (long)peek_result;
+> +		dsq_peek_result2_pid = peek_result ? peek_result->pid : -1;
+> +
+> +		/* Now consume the task since we've peeked at it */
+> +		scx_bpf_dsq_move_to_local(test_dsq_id);
+> +
+> +		/* Mark phase 1 as complete */
+> +		phase1_complete = 1;
+> +		bpf_printk("Phase 1 complete, starting phase 2 stress testing");
+> +	} else if (!phase1_complete) {
+> +		/* Still in phase 1, use real DSQ */
+> +		scx_bpf_dsq_move_to_local(real_dsq_id);
+> +	} else {
+> +		/* Phase 2: Scan all DSQs in the pool and try to move a task */
+> +		if (!scan_dsq_pool()) {
+> +			/* No tasks found in DSQ pool, fall back to real DSQ */
+> +			scx_bpf_dsq_move_to_local(real_dsq_id);
+> +		}
+> +	}
+> +}
+> +
+> +s32 BPF_STRUCT_OPS_SLEEPABLE(peek_dsq_init)
+> +{
+> +	s32 err;
+> +	int i;
+> +
+> +	/* Always set debug values so we can see which version we're using */
+> +	debug_ksym_exists = bpf_ksym_exists(scx_bpf_dsq_peek) ? 1 : 0;
+> +
+> +	/* Initialize state first */
+> +	insert_test_cpu = -1;
+> +	enqueue_count = 0;
+> +	dispatch_count = 0;
+> +	phase1_complete = 0;
+> +	total_peek_attempts = 0;
+> +	successful_peeks = 0;
+> +
+> +	/* Create the test and real DSQs */
+> +	err = scx_bpf_create_dsq(test_dsq_id, -1);
+> +	if (err) {
+> +		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
+> +	return err;
+
+indentation
+The rest looks okay to me.
 
