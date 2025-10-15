@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-854432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0D4BDE59A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:57:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798A9BDE5A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A11C14E572C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF8E427378
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0E6323417;
-	Wed, 15 Oct 2025 11:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042D7324B32;
+	Wed, 15 Oct 2025 11:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9PDrK/v"
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tNx9mFAY"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A62321F42
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E174324B07;
+	Wed, 15 Oct 2025 11:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760529459; cv=none; b=lSzl0lffcgSlzbyeHOkY8VCCv3WFCusdT5hZOyxWvS4YNIad7pV6ttVPDiCYrd4YHn+PQN1WMhvQQCXkRLj8FMSJ8SUPdLMxH40fYGBEiAuxscUc+Bhel7OZ2smw9eP4odp/J68Gz4cnhZTVsag/HUUqDNfB6oC66hOV4vrdQpg=
+	t=1760529460; cv=none; b=oDJIWwAukSMYmCrKOVBscaz/X0r8bmi6iCP24bhwnZI6VIgiPwAu6lQ8mEQZzS3oyJko2gT9Dl3qpG+7kYz97Y+cQYYBfipoESf8fhZMDRurnWy1pxDYwV7RPjEFEWYwZmkMLjtYG/3LtzsQAOIVB0d49YdSVG+l20dkSTfLOoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760529459; c=relaxed/simple;
-	bh=e6nUalP9hfTJgsbidLIuHQleVlwtT+pTzZf78d6vMo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWT40F0hCOhEeGcMr1q4i9zrItgH2OThT2CzjSa2Cgo0+WNWBe1PuKgxaXolxTo41yEoTdjvqCv2LRa5fPrbroA9jfDhlSu6PNvcDlddgK6sh05IukqMkvtd51WdjfdGtiT29AKYfG0SEXwT2vI0cIpdL9R67I88hrILhdWal6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9PDrK/v; arc=none smtp.client-ip=74.125.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63cf081f87fso4527630d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760529456; x=1761134256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ieaWzRWGII3uqPa4WyCaS/MYjwfMUCH1mb2GlldqZ1k=;
-        b=C9PDrK/vD5sfdAleE1YJqbiaZDCk3UKsiZsOMbaTVEo4p9TJcaUcF/iVUSjORcK05N
-         uq9OYwDo93B5Me2AZZfkRLSNIgMD8c38jCbmXMmGf8J8pGal5D/47O2Q9ku5DEywZqwG
-         OmXg4Yv1a5eizEVWwb7gHCJ9w8llHco7v9w3IfCX3OEEDskF4I664w9/GygTbbzZlj0c
-         MraauNS2NeOujQpQJyTFM3412kqHaGAXayyE5wxPMWAPedomUGIVPr6w8O78jABSFzO2
-         wHJUv9YltP6R4K/r2E61rQHqLYZZWmGi3Qy6x11f+NBcXm6IkpO0r2Ljk+oaeQ4GAI6K
-         M5HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760529456; x=1761134256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ieaWzRWGII3uqPa4WyCaS/MYjwfMUCH1mb2GlldqZ1k=;
-        b=kKmwJJTYPyhX5qUdg1yaATjJM6hUhESBsMlWlX89ojLp3OCIPfr0PGQWmvByTCWVX4
-         D1nCN4Mim0CWmhzF6FoEWv9f7GCsK7hcu57C9ya5HwRn+1yoEriLJqDz8YIueF9FbVrX
-         WlLSuKUxy3Ul9Y7f3p2ngwzBYCJXYItVNiom8c0lkYyRp/tWzcr5XL9hx5/6GZePKAKW
-         P1OtoLdehFRFowwDAg9xlJe2lHjgSYVJtrwkwyz+ZjI9iaTdtj7nUv93EGR1oBnyGvE6
-         QaNr+Y04qOBKDqTdHxubTD11PUmyFAob8jjuXjZs6zgb0qR1hhUbTryBqApO+9NEqGHl
-         LODA==
-X-Forwarded-Encrypted: i=1; AJvYcCXo9d4bdh0KV7GiZHu6vMzjyfC+6C/MXGg51vhFDHNlz+6c69feUHJ6TgBhPgRZOETjkTQau1nV2DWBgvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwetnzzMX7ABG+5KEk/h4fHriHv1F2zhQTV/UcMijx52CO7MXkk
-	QKEINv1PvNVgN0lyOx2EtSr3lmt6L8Ypx9VwIWFmAdPzgimaWwMO3R85HARMIk+XQ2tZzMwHfz/
-	U+3IoVII6CgsfZMXyb4zy2RSKjbXh0n0=
-X-Gm-Gg: ASbGncvvceTNCCPxfxeefugEAsbwlm7wDQql7qr90+dzPT9CYN26gJAOdhHfNM+Sgeb
-	nZsQPNMs00s64MGZJiRhqQvD/peyCgRSCWohfWLMN+q6B3cyx/Bo0r1NxYJNg7ynamLn4r8ar4P
-	dhnhzj7CrzZrOhgsmRYnEPJDJBXglkpB7gt6VfGRos2JmqsMEKtBbQw6vMqLwLXTMpGz78ho9lV
-	F/pQj/D7BohXs3zH/FvhQrOyA==
-X-Google-Smtp-Source: AGHT+IFNe9SeQx840UU/MTW2ly7whPTiSlZ0Fatcdl+zHeGnhTcfrwo2zlexd/EV4UoupspsKkcGV6yrEL5HlrHNkQM=
-X-Received: by 2002:a53:ceca:0:b0:63c:f5a7:3ff with SMTP id
- 956f58d0204a3-63cf5a709f6mr9503871d50.67.1760529456518; Wed, 15 Oct 2025
- 04:57:36 -0700 (PDT)
+	s=arc-20240116; t=1760529460; c=relaxed/simple;
+	bh=ATeC9gj4S446/SpUnSdOaIpTGhUndKhEaNaAW6fDr+k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/CZMBjGSL2gGC2d6psvJJtiW+rNA451CAxSj+7OG4+G03xWnnBYGs949rWJeYTcQmI8k8UqJLNQgDjtA1grvbAP/C07k8sykYrjU9Vx6+TI6UOmr8wB0HhyBqUjmy8v0Iw3fVMKC0Zes+KbG03iqDV8T2rqyZ27p86JP+w/snI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tNx9mFAY; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59FBvVmN1394747;
+	Wed, 15 Oct 2025 06:57:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760529451;
+	bh=A71VNqtYzCF1KmkfjOwAYiWADn/MUPCfX0D+lW9Z52c=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=tNx9mFAY8N98fw5w4y7bej8GRvHwwqbv1pgYGzNMVo9Eiah6JACpLMYTqjnM/uBQg
+	 qIzPYMU+RmGE3CoT3yMvfLrY30vjnCNXWzbk7t+lb9lRmPayLfEvnmkdCidi25nouG
+	 WHWtSI9oVa6u3hgUJxrHS7845GeY63Nbs/mgpc8A=
+Received: from DFLE205.ent.ti.com (dfle205.ent.ti.com [10.64.6.63])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59FBvVNX382728
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 15 Oct 2025 06:57:31 -0500
+Received: from DFLE214.ent.ti.com (10.64.6.72) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
+ 2025 06:57:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE214.ent.ti.com
+ (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Oct 2025 06:57:31 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59FBvUN51853984;
+	Wed, 15 Oct 2025 06:57:30 -0500
+Date: Wed, 15 Oct 2025 17:27:29 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Michal Kubecek <mkubecek@suse.cz>
+CC: Sebastian Reichel <sre@kernel.org>, <linux-pm@vger.kernel.org>,
+        Hans de
+ Goede <hansg@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] power: supply: use ktime_divns() to avoid 64-bit division
+Message-ID: <20251015115729.64eglmp262u7g3so@lcpd911>
+References: <20251015075957.8F40620057@lion.mk-sys.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-st7920-v3-0-4f89d656fa03@gmail.com> <20251006-st7920-v3-1-4f89d656fa03@gmail.com>
- <bf207d35-3ca9-40a2-807a-0dbb0d1504de@kernel.org>
-In-Reply-To: <bf207d35-3ca9-40a2-807a-0dbb0d1504de@kernel.org>
-From: Iker Pedrosa <ikerpedrosam@gmail.com>
-Date: Wed, 15 Oct 2025 13:57:25 +0200
-X-Gm-Features: AS18NWDRb-G3sUnj4rnpU7SKnuODhp_u2ZhjVPW2nZFhRMfdfCfjUZN2mnbd71w
-Message-ID: <CABdCQ=O-WSt9f_cbwUhRw1uy5a-P3-dEcJfcq8Y8thDAzVuS9g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: display: sitronix,st7920: Add DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251015075957.8F40620057@lion.mk-sys.cz>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-El mar, 7 oct 2025 a las 11:12, Krzysztof Kozlowski
-(<krzk@kernel.org>) escribi=C3=B3:
->
-> On 07/10/2025 02:48, Iker Pedrosa wrote:
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: sitronix,st7920
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 600000
-> > +
->
-> Datasheet I found on the web clearly stats you have at least VDD and XRES=
-ET.
->
-> Your binding is still not complete (and I asked...), while it should be
-> complete (See writing bindings doc).
+On Oct 15, 2025 at 09:56:31 +0200, Michal Kubecek wrote:
+> The build of intel_dc_ti_battery module on i386 (32-bit) fails with
+> 
+> ERROR: modpost: "__udivdi3" [drivers/power/supply/intel_dc_ti_battery.ko]
+> 
+> This is caused by 64-bit division of ktime values by NSEC_PER_USEC. Use
+> ktime_divns() helper which handles the division correctly on 32-bit
+> architectures.
+> 
+> Fixes: 8c5795fe5527 ("power: supply: Add new Intel Dollar Cove TI battery driver")
+> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+> ---
 
-Thanks for the information. You're correct; I'll add the two suggested
-properties, XRESET and VDD, to the binding. I'll also implement the
-XRESET handling in the driver.
+Good catch!
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
-I missed the XRESET pin because my testing setup was working without
-it. For VDD, it's currently connected to the RPi's 5V output.
-
-While other Sitronix display bindings in the kernel don't currently
-define a supply property (running "git grep -i supply
-Documentation/devicetree/bindings/display/sitronix*" confirmed this),
-I agree it should be included for a complete binding. I'll define it
-as a fixed-regulator in my display DT node.
-
->
->
-> Best regards,
-> Krzysztof
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
