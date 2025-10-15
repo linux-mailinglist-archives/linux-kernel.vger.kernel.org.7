@@ -1,144 +1,87 @@
-Return-Path: <linux-kernel+bounces-853780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 047CEBDC961
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150D6BDC958
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1610A4E9B2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A2C518A67A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC74302155;
-	Wed, 15 Oct 2025 05:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IZCxiCu/"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76CD3009C8;
+	Wed, 15 Oct 2025 05:15:14 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD23016E2;
-	Wed, 15 Oct 2025 05:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5352FF664
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505391; cv=none; b=u03syqfzKD8qLKVbp8/FfTRdfh5kHrPWUo7jKranwopVZW28HHitQexkYNrzWPFGGvNQzZAHbLJSotomCr+nlQwqaCra1oerqDAcf0Jui42nyCHCAnKTFuirIw7wm1//qsPUoQHY4R1Jkzh6tKQY/OAujq29fsVJvUROiXTJYMM=
+	t=1760505313; cv=none; b=ueaT3bkgZ5N7frNa+xFST85bohEZtAjMVfvhmwW/chxX6WW90Ztb75DI7ocqmYXP8bHNfvt00mcBU2Fg1WiUYA3/lybQZBNH4ghhAAXi7gr/JPyOJCcZ0sMWLK9KAxw5w1Ucg4v53TPhOmEDgqqYy6GgECbq8nMSxFs3PT6hHSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505391; c=relaxed/simple;
-	bh=wgKM6x3Yhy8jmtIn6xOwrUMNqwYV8Rli1qUtnZeVb54=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Fw1o6pmgCazPm7nxkzTSSrEfqTRFGMTa/zWqSwjHsHKnq449J9S6YpwqaQ6Fcl08sREoV1euJd3jonFlxXvx1gmrKE+0xUcWx1Z0k06z0qT6wxN0U6ldATaVBbj656qm4jdowGZsks8xaUdQOOiRaFs8SRIyPEPkUIb89zRasxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IZCxiCu/; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=vkfC6oyc+tLRX6p
-	AwVB+5VChWivTatMtNmzCnEAtV8E=; b=IZCxiCu/r6Hb/EqJWciCLAtIAxvXOZp
-	mcNdDpjjx/DQqiT0He8sYn6aK/VnrTICv5kjxM3e/38lGkunTWsv4Ix2bpHcWNK1
-	o1Lewgfy3VxxtMkdIclIkVsRLDogrEOXlwucgVA+OsTW/m8LkwGFWsuxZOVV705n
-	4ydacRZzF2zk=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgB3A5TILe9ovbHOAA--.30995S2;
-	Wed, 15 Oct 2025 13:15:06 +0800 (CST)
-From: Lizhe <sensor1010@163.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	rmk+kernel@armlinux.org.uk,
-	jonas@kwiboo.se,
-	chaoyi.chen@rock-chips.com,
-	david.wu@rock-chips.com
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Lizhe <sensor1010@163.com>
-Subject: [PATCH net-next] net: dwmac-rk: No need to check the return value of phy_power_on()
-Date: Tue, 14 Oct 2025 22:14:46 -0700
-Message-Id: <20251015051446.2677-1-sensor1010@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:PygvCgB3A5TILe9ovbHOAA--.30995S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww4xKw13WFyfXr15Gr4fGrg_yoW8tr13pa
-	93GF9Fyr1kXa4xGa12yFsrZa45C3y3try0qF1xA34ruF13AF1Dtr10yryFvF1j9rykXFya
-	yr4UAF1xC3Z8ur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRrb1bUUUUU=
-X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiKBrnq2jvHAA8gQABsZ
+	s=arc-20240116; t=1760505313; c=relaxed/simple;
+	bh=bpOptZxwtBLsuwhQhUObx0ayGRyT8Ow4gBAaDLEGUMc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BQJi7Rz9T4qrVjJ7FUqnIGdjAoP+9OUYqTIR3sWG348Rz/QXkWfUBcUxHKCOM2XGxjMFCjFjuLZF0BCWS5PyZsHQXrH5htSizCmMHjSfytDamdrFsYcdF9TadNylZe8q12yM3lo7dc//COZSy/XvClig5PFt3Ptvuh12RHX+fLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-927f4207211so1751379539f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:15:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760505304; x=1761110104;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KcDokxHq+ry0kiEaB6ip5WGwa5ukwm71Hip72n257fU=;
+        b=CUHwc5MBQ0/ynC7N3Dr5pymZW1w3xwZV7JcPid55JbIdIlSygeVqcSOUs+t8DFmGhJ
+         hT2MzIe3ABlX6lLdEEM+9WSCAe5PdoLRnQfrkgszIjZwHIGDewDGVLVpKW+33g8ncH+X
+         5T4M2AZ26cSoL+WGIapJpJxOsRLCVRYOBCmJpcNbCRDiyrbF36NfA3Aq1kBL+NCwZt+5
+         cFJhTDPf7Kps4D/IiwGRqlw7bbmCiJrORrNyS54w1ZGlefsCtqP7ry4vNa3EmivOuIa1
+         35VsAKeQ1gwE3d5sKXv38qu4ogPyGF8yXxpqnPkBa/vaEusuZTMHsNgA8JXXIg1L5IxW
+         EdIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRVuBzqoQuY/QalL/D5xhbl8t0bkZdXainuTAITpvfqWGWNRgsWy3St4qnqyZQzKo5tv7j1eVBaVnD8so=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD/z8mNpIHSIv9SAXqm0A4ZhFrSNyb3wdy82IXQMSYq+XZkja8
+	kn+t/rqFIJ1hGyjfa3/j1xh/HPRWLPj2wfFBiS1cjSszR2tW/dDbZB+QoLIHunyIiJqQnnNeS6c
+	oPf15LPzPsyy8WYymV3zNzW3J1xTHLAjmsfGrbasgqwzkWhP/v4NYbJbBUAc=
+X-Google-Smtp-Source: AGHT+IHDFDJ/DGYMi/VBF/eUBMAfrneF7lTSVrMGo2E4wVjyyRjgz/e+QUN6kdMk5CnlwhtA/OFQ5fVfhosCy5P1E7pzCZYSxCdI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:481b:b0:42f:a60a:8538 with SMTP id
+ e9e14a558f8ab-42fa60a8b0dmr174656055ab.16.1760505304523; Tue, 14 Oct 2025
+ 22:15:04 -0700 (PDT)
+Date: Tue, 14 Oct 2025 22:15:04 -0700
+In-Reply-To: <20251015044637.4721-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ef2dd8.050a0220.1186a4.00a6.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-'phy_power_on' is a local scope one within the driver, since the
-return value of the phy_power_on() function is always 0, checking
-its return value is redundant.
+Hello,
 
-the function name 'phy_power_on()' conflicts with the existing
-phy_power_on() function in the PHY subsystem. a suitable alternative
-name would be rk_phy_power_set(), particularly since when the
-second argument is false, this function actually powers off the PHY
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Lizhe <sensor1010@163.com>
----
- .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 51ea0caf16c1..ac3324430b2d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1461,23 +1461,18 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
- 	return 0;
- }
- 
--static int phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
-+static void rk_phy_power_set(struct rk_priv_data *bsp_priv, bool enable)
- {
- 	struct regulator *ldo = bsp_priv->regulator;
- 	struct device *dev = bsp_priv->dev;
--	int ret;
- 
- 	if (enable) {
--		ret = regulator_enable(ldo);
--		if (ret)
-+		if (regulator_enable(ldo))
- 			dev_err(dev, "fail to enable phy-supply\n");
- 	} else {
--		ret = regulator_disable(ldo);
--		if (ret)
-+		if (regulator_disable(ldo))
- 			dev_err(dev, "fail to disable phy-supply\n");
- 	}
--
--	return 0;
- }
- 
- static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
-@@ -1655,11 +1650,7 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 		dev_err(dev, "NO interface defined!\n");
- 	}
- 
--	ret = phy_power_on(bsp_priv, true);
--	if (ret) {
--		gmac_clk_enable(bsp_priv, false);
--		return ret;
--	}
-+	rk_phy_power_set(bsp_priv, true);
- 
- 	pm_runtime_get_sync(dev);
- 
-@@ -1676,7 +1667,7 @@ static void rk_gmac_powerdown(struct rk_priv_data *gmac)
- 
- 	pm_runtime_put_sync(gmac->dev);
- 
--	phy_power_on(gmac, false);
-+	rk_phy_power_set(gmac, false);
- 	gmac_clk_enable(gmac, false);
- }
- 
--- 
-2.17.1
+Tested on:
 
+commit:         13863a59 Add linux-next specific files for 20251014
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11fc7b34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76790fe131481879
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=167985e2580000
+
+Note: testing is done by a robot and is best-effort only.
 
