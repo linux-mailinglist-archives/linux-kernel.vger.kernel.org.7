@@ -1,150 +1,164 @@
-Return-Path: <linux-kernel+bounces-856911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6CAABE569F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:38:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698ACBE56A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0BA540EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:38:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95A334E876B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE2C2E06C9;
-	Thu, 16 Oct 2025 20:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514E02DE1E6;
+	Thu, 16 Oct 2025 20:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMO/9uoz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuE1nlka"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AE12DCC08
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372031EBFE0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760647131; cv=none; b=gt8yf6cQ01pK78EtIWvFyhYxrMFGCoYZngAcKfZPfpJQDdpPUE3ZF9j65ILo/dmVs7EeLUqFBCphr6gt9lvIIhXgWMhBwSi64zKXJ9wEtljG5NWlRYnsHXzCwYCklkYY2MqFjsKFWigUwupYfwYwX0Z4T0bg9qkeKm/VjRfVOEM=
+	t=1760647176; cv=none; b=V4Qevrs11qXKElidqAooXyVdKCMR2zaua/IVGAlX7Vk4OUo++AOSxNhqzEFFMfyiUXejpHiJLXQ1mtO1/RnYVT23NMJZjLuLHa6oeLjohSWfOW8msOEcG3d7/ju6JTxZSWp1uS4QZFhSfz7LF4FnRPVFsq+WThhq1n+JqGI6pSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760647131; c=relaxed/simple;
-	bh=XTIlb00y7jKvl1Otn5ZrCsdMlwiiEfx7RWVXZYlBVac=;
+	s=arc-20240116; t=1760647176; c=relaxed/simple;
+	bh=j47gUxbffwQzSI5QkRAi1UGxgKVvkhYsy8R9Lk2cIp4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Skrt4BV8lAY0OZLplW+cyn1fjPJOz9ERmWHXqbRrbiCs1QAwDTONGnNwQ0147qqFDce144JOM+UPYTPNe3oE2h1xCAT8NX9zd58Di1bSvRQIHEOMTBzaOfCqRYJwWXcYfhkZrwbJEI0GlmFIIe9FGivPid1OXgwF9+c0hunJ+0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMO/9uoz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A32C116D0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760647128;
-	bh=XTIlb00y7jKvl1Otn5ZrCsdMlwiiEfx7RWVXZYlBVac=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IMO/9uoz9402Rq/72H+fzGiweWdOTANK8n3P07wAJEwSUsdk1cojA6DdXdoUReOuM
-	 9yRQuePM2+cOtswdJoYIhd/7qJV8nzqzQSJr2+dDcU5u4y1GrU+vcOIl/iZf87rDak
-	 1COlMuvVJcUWEIg+dtRJ6YLOZPkcURXFwMbqrTAPjjlOi95k0KYUPg3eegkG/zv7BR
-	 +nYcP+d7q9IMmogzk+uLypcyOnxtrMpX2A9mvGunrLvmyGD3Y02hiRRZ7aP6U22+13
-	 OJxP5Q7aWOdRqJ+giiFiywbX8RpK9G0JyZn8Azgu8ZdjUv+A+sNGckCq0Jg7xWwDMu
-	 RzhQzyAeNNRXA==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-43f5ec02724so354872b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:38:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXi72qhcAe6hmhWxyT2u5mUF44mzMv44dlBJJxCveoMhwzezpJwH60mbJCsI+3V5oMhYE8FxEWCUO+B4Fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/QfFXdHDxChm0Sko4eX7CNNIozasjhU7cMw1A2uGMUbMSXklE
-	rNkeZt8lPHEV5Kc78chrv4+fj5oyY0DaTdZuxkoWAibUJSRFz3FVXRhlEVOnqJb5svi1iXTZg1x
-	5xv8mk+y76DzXTYt6IiVhMSodnvrAXkI=
-X-Google-Smtp-Source: AGHT+IHeni4wRtDvxXTKZAACGsTAPxwB1YyN0NYvoLAG+cyBLP79pAf7CDk+uKKMzHt4n9NJ/Pkc8WVtYd2NS5a16ZU=
-X-Received: by 2002:a05:6808:6f8e:b0:43f:7dee:468b with SMTP id
- 5614622812f47-443a2dcb6d3mr672131b6e.4.1760647127720; Thu, 16 Oct 2025
- 13:38:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=bg42g+hVpTuAWawJFyn/SLuSxpfVdAuee50HKznrQnREuA5L7ET/+UntvQ7xtZkvdv3UPAUufxbPPUHBJ/q/z3Vl953DMMKdzMQ0vwH5e06BK2r3YPnKWY9aeQzywx0Rn2NtMbQOwpK643U6J9xMG3hfZ4EV+TMhxcupXgtgRak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MuE1nlka; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33ba8d20888so1247245a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760647174; x=1761251974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EsEecsSQDVQd72weWcRmXLR+hYEbzg7jxqkKrhdHLo8=;
+        b=MuE1nlkaMBgUExM+2ri3mzDg0HeqleVSO5rzkIiI51vVivw8OR8Dl/jtYYRRJYuOyY
+         92kOxdZA5ZBR+9KXQN2AF7OhzphkmOBNFE2CBWkDusrQnNwSyLxjC4XzJSXT4Ws9nPii
+         RrVOfXLmp7np+HzkqUw+qs2BWN/SvTOXUJKK/lA1s9PyUp+Z7jcVuQpWoZLA36KFJP+t
+         uN6WJNWQIDl1xLgDPiy3DO65xrEQPv/xijIHEPd+pbpDbNUCZhyMJCIJ9cICrFIRkeQ9
+         eWgWIjSIAh5KHkJxq2asnlVDXevBqgZdLtj2OHLSuAHtlyGJQ1xbx7PCk3Izz9Jq9uZb
+         fKow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760647174; x=1761251974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EsEecsSQDVQd72weWcRmXLR+hYEbzg7jxqkKrhdHLo8=;
+        b=UEucTEkJ4Z3BH7MO2vfzVylqH9B47t1EQMnLVfYaSiqVKgwDMrygPBXgH9PDUltxS+
+         T8eV06Gs8fAuqTj7ncL+K3upXZfIZYDvhVErznW3wPF6oIli6J+SsCcPRssqjaDQDtxM
+         Vl83JgiVlLcDPAPKby5ybx+Vvmq3Ez1SrjAoyuodRSTC8uRHTcmqHUmgJy69GUF9CcEj
+         pIYLkq3s6drG1/R1GXn2E6A1JMQUDyuP808a8yEPq7B/LGGjzAhfxgfVAgjsBA4KZ72o
+         p4chYvajrelsMfEMwy2cmD2uwY4EQwXIw5RBXZfvv6z7C2lngvos/Gc1Uj7Aj/8N2a3y
+         l0Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZp8NNof57xsHFRunvvrNTD9pKOs1044viUMyfbrw9NbZlbOEt2NjPpnB3yhD24e78qqhIRSBGdnxiAUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Bb+L1gbHHM8bei3mnwbgrXjwZA7+juzbW+4uVlmeFl9ZHAjm
+	hVguExaLb458iBmMF/Ln+6UzUjWRCRPqOnRUJPsm2C7eiIuOQhcST7CB1WJZZD9Qrem7kONMlz7
+	wu7qZk+2IwggaHX3Lb93kT4JlifGtL18=
+X-Gm-Gg: ASbGncvlO+F9lBDZ4O/EPYo6d369mR7ihRzU4YRdy2gBWUPUbEcu8li+LdSHFmKHJxy
+	gAZNjPnw9ywAvO5alUmliN+8CFBDhyXGBn9hxNlTZW+UrngbN3L7nGCM6RofdRB12oXtCqInSSm
+	vE2oyp8nVOJzRG1nIR1PrHv5enFj2GH6V2AI03ZwY0ijVXa9xS0FLdngxcbpomZALaWUyi3C8iM
+	z2qXypSL31zn8ud9yOLZBJC1kDRfOIF8VKaefxtKJX3lSg6epDloRB2HgPk0jfBn0XRCWMsySoe
+	gTqT4oxrMOw=
+X-Google-Smtp-Source: AGHT+IHDr5J0KFk161wPAYc7kYj7KAxZHJ299Vu5BgTI/wRioKfbYD47CRXPhpJbNq7ELZ17QmNTDJWYHON81DsIz/o=
+X-Received: by 2002:a17:90b:54c6:b0:32e:dcc6:cd3f with SMTP id
+ 98e67ed59e1d1-33b9e28a808mr6232546a91.14.1760647174299; Thu, 16 Oct 2025
+ 13:39:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3925484.kQq0lBPeGt@rafael.j.wysocki> <cc21a74c-905f-4223-95a8-d747ef763081@baylibre.com>
- <875xce7m11.wl-tiwai@suse.de> <12765144.O9o76ZdvQC@rafael.j.wysocki> <68f14b5b6a92_2a2b10018@dwillia2-mobl4.notmuch>
-In-Reply-To: <68f14b5b6a92_2a2b10018@dwillia2-mobl4.notmuch>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 16 Oct 2025 22:38:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iZJFQeBhA7tM-sWuJDtisvrHGjPPdQHrC-eXXF1xJpbA@mail.gmail.com>
-X-Gm-Features: AS18NWCN60rGQYTojeNqhxmPLJuY9IXf_MfoZ5rdwA1XGpcY1kgT-SGMUWeS1hQ
-Message-ID: <CAJZ5v0iZJFQeBhA7tM-sWuJDtisvrHGjPPdQHrC-eXXF1xJpbA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] PM: runtime: Introduce PM_RUNTIME_ACQUIRE_OR_FAIL()
- macro
-To: dan.j.williams@intel.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>, 
-	David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PCI <linux-pci@vger.kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>
+References: <20251014100128.2721104-1-chen.dylane@linux.dev>
+ <20251014100128.2721104-3-chen.dylane@linux.dev> <aO4-jAA5RIUY2yxc@krava> <CAADnVQLoF49pu8CT81FV1ddvysQzvYT4UO1P21fVxnafnO5vrQ@mail.gmail.com>
+In-Reply-To: <CAADnVQLoF49pu8CT81FV1ddvysQzvYT4UO1P21fVxnafnO5vrQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 16 Oct 2025 13:39:20 -0700
+X-Gm-Features: AS18NWA45dPZ_Bqm8aVj24uKxev9XFt4-GQ7iuJ9EiK13dkTykni87M8kGxIHSA
+Message-ID: <CAEf4BzbAt_3co0s-+DspnHuJryG2DKPLP9OwsN0bWWnbd5zsmQ@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next v2 2/2] bpf: Pass external callchain entry to get_perf_callchain
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Tao Chen <chen.dylane@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 9:45=E2=80=AFPM <dan.j.williams@intel.com> wrote:
+On Tue, Oct 14, 2025 at 8:02=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> Rafael J. Wysocki wrote:
-> [..]
-> > > > [1]: https://lore.kernel.org/all/CAHk-=3Dwhn07tnDosPfn+UcAtWHBcLg=
-=3DKqA16SHVv0GV4t8P1fHw@mail.gmail.com/
+> On Tue, Oct 14, 2025 at 5:14=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
+ote:
+> >
+> > On Tue, Oct 14, 2025 at 06:01:28PM +0800, Tao Chen wrote:
+> > > As Alexei noted, get_perf_callchain() return values may be reused
+> > > if a task is preempted after the BPF program enters migrate disable
+> > > mode. Drawing on the per-cpu design of bpf_perf_callchain_entries,
+> > > stack-allocated memory of bpf_perf_callchain_entry is used here.
 > > >
-> > > Yeah, I myself also find it suboptimal, hence it wasn't really
-> > > proposed...  It's a limit of macro, unfortunately.
+> > > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> > > ---
+> > >  kernel/bpf/stackmap.c | 19 +++++++++++--------
+> > >  1 file changed, 11 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> > > index 94e46b7f340..acd72c021c0 100644
+> > > --- a/kernel/bpf/stackmap.c
+> > > +++ b/kernel/bpf/stackmap.c
+> > > @@ -31,6 +31,11 @@ struct bpf_stack_map {
+> > >       struct stack_map_bucket *buckets[] __counted_by(n_buckets);
+> > >  };
+> > >
+> > > +struct bpf_perf_callchain_entry {
+> > > +     u64 nr;
+> > > +     u64 ip[PERF_MAX_STACK_DEPTH];
+> > > +};
+> > > +
+
+we shouldn't introduce another type, there is perf_callchain_entry in
+linux/perf_event.h, what's the problem with using that?
+
+> > >  static inline bool stack_map_use_build_id(struct bpf_map *map)
+> > >  {
+> > >       return (map->map_flags & BPF_F_STACK_BUILD_ID);
+> > > @@ -305,6 +310,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, reg=
+s, struct bpf_map *, map,
+> > >       bool user =3D flags & BPF_F_USER_STACK;
+> > >       struct perf_callchain_entry *trace;
+> > >       bool kernel =3D !user;
+> > > +     struct bpf_perf_callchain_entry entry =3D { 0 };
 > >
-> > The macro from the $subject patch can be split along the lines of the a=
-ppended
-> > patch to avoid the "disgusting syntax" issue, although it then becomes =
-less
-> > attractive as far as I'm concerned.  It still allows the details unrela=
-ted to
-> > the rest of the code to be hidden though.
+> > so IIUC having entries on stack we do not need to do preempt_disable
+> > you had in the previous version, right?
 > >
-> > ---
-> >  drivers/acpi/acpi_tad.c |   10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > --- a/drivers/acpi/acpi_tad.c
-> > +++ b/drivers/acpi/acpi_tad.c
-> > @@ -31,6 +31,12 @@ MODULE_DESCRIPTION("ACPI Time and Alarm
-> >  MODULE_LICENSE("GPL v2");
-> >  MODULE_AUTHOR("Rafael J. Wysocki");
-> >
-> > +#define PM_RUNTIME_ACQUIRE_ACTIVE(dev)       \
-> > +     ACQUIRE(pm_runtime_active_try, pm_runtime_active_guard_var)(dev)
-> > +
-> > +#define PM_RUNTIME_ACQUIRE_ACTIVE_ERR        \
-> > +     ACQUIRE_ERR(pm_runtime_active_try, &pm_runtime_active_guard_var)
-> > +
-> >  /* ACPI TAD capability flags (ACPI 6.2, Section 9.18.2) */
-> >  #define ACPI_TAD_AC_WAKE     BIT(0)
-> >  #define ACPI_TAD_DC_WAKE     BIT(1)
-> > @@ -264,8 +270,8 @@ static int acpi_tad_wake_set(struct devi
-> >       args[0].integer.value =3D timer_id;
-> >       args[1].integer.value =3D value;
-> >
-> > -     ACQUIRE(pm_runtime_active_try, pm)(dev);
-> > -     if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-> > +     PM_RUNTIME_ACQUIRE_ACTIVE(dev);
-> > +     if (PM_RUNTIME_ACQUIRE_ACTIVE_ERR)
-> >               return -ENXIO;
+> > I saw Andrii's justification to have this on the stack, I think it's
+> > fine, but does it have to be initialized? it seems that only used
+> > entries are copied to map
 >
-> This defeats one of the other motivations for ACQUIRE() vs
-> scoped_cond_guard() in that it drops the error code from
-> pm_runtime_active_try.
+> No. We're not adding 1k stack consumption.
 
-No, it doesn't.  PM_RUNTIME_ACQUIRE_ACTIVE_ERR is that error code.  Or
-did I misunderstand what you said?
+Right, and I thought we concluded as much last time, so it's a bit
+surprising to see this in this patch.
 
-> Maybe it is the case that failure is always
-> -ENXIO, but from a future code evolution standpoint do you want to
-> commit to always translating _try errors to a local error code?
+Tao, you should go with 3 entries per CPU used in a stack-like
+fashion. And then passing that entry into get_perf_callchain() (to
+avoid one extra copy).
 
-No, I don't.
-
-> Btw, was acpi_tad_wake_set() buggy previously for ignoring
-> pm_runtime_get_sync() errors, or is it a regression risk now for
-> honoring errors?
-
-You may call it buggy strictly speaking, but it just assumed that if
-the runtime resume failed, the subsequent operation would just fail
-either, so -EIO would be returned to the caller.
-
-This change allows distinguishing resume errors from I/O errors.
+>
+> pw-bot: cr
 
