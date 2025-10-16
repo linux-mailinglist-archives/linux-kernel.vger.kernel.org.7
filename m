@@ -1,116 +1,262 @@
-Return-Path: <linux-kernel+bounces-856156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065B6BE3405
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:09:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7DDBE3445
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BC53B1B51
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D4E1A61A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E743254A6;
-	Thu, 16 Oct 2025 12:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2D732BF32;
+	Thu, 16 Oct 2025 12:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="bByt4urM"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9yMkyc2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49541324B1E
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0C3306496;
+	Thu, 16 Oct 2025 12:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760616527; cv=none; b=iOm82tJYm1jEp3/v7frae1MAcDb/mskT5/tMETxQD5x2v7cdFde2dV6p92EFJOfuQdt1tJP/+onoA32bgzrt0W2Q1Enegk4tXs22F0dR7vA0ehHQoRhVvaT67mjWV4RzCwxxTu9udYRG3gbAcu8MvRtEpkrc38xgUcz0ViALKiI=
+	t=1760616711; cv=none; b=jD+2TRuYxp4TzMRL9fI+hlAKhBCtlV23B+mQ0wJaMNohVPE2kv6+SBLqSvmIzXmpx998R7PhZoDnLHSDVYK1vJzRz30Fm4iZx5mGzOYW9tNhd2fCIfJM+35y9vPCMCH1lDrACeG7txzcuODw56DZBDxaUwU3Xz4lN7qggNXbhSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760616527; c=relaxed/simple;
-	bh=pWlF+KPQTQ5T7UHWILRFGoRUa5cKcyGpU+QQR1XzEpw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nQP1hVdH0iomZDrtkev82pb4+MsofiCvnTnjdWzQgBzhL/u7lA3kgWWXddxLibbEpguk2XLz38wDV6axKVHnn26lr90npdsNzXs02CJvc4atow/T9nNZhhya5or3Yvmsw3lmf1aSNRObF2kWH7EOyUyduuEpDRJlLl5axDcdLvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=bByt4urM; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id CD9FF686023;
-	Thu, 16 Oct 2025 14:08:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1760616523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pWlF+KPQTQ5T7UHWILRFGoRUa5cKcyGpU+QQR1XzEpw=;
-	b=bByt4urMHNgWZXLyOGD94iwaWF0NhFgdosbEia2gZ7JgG7sQViZRPrDF2IXS2Qduc6H83K
-	o6KzXoVMQ25lH/vlSGAYj8ozxliQGh4SvQBRQB4MYzrFjfN+kgWl1u4SewDO2A+uwiVdqM
-	pqXERkNQ/lKDoRmecdeQgGhvuN/KmGCKZ3B9oM6I9RNTQ8T0yG/DC1637c681wO7hBmR0k
-	ywxc/HnlLg/deIb+hT5lq037b0mwBMM4mW2s9KCkdA0SaA51pF3GHcAMip0JA8ZLJ5Xy6+
-	SxpsyU+f2gW2wl+I9Nt3qdwhCmUsXBhAD07Ec6c8AVTR9h55sFb4fZ3qecDRnA==
-Message-ID: <187bc058ff944dbde0e876efa6e72046bcc2a124.camel@svanheule.net>
-Subject: Re: [PATCH v3] regmap: add cache validity to REGCACHE_FLAT
-From: Sander Vanheule <sander@svanheule.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	 <rafael@kernel.org>, linux-kernel@vger.kernel.org
-Date: Thu, 16 Oct 2025 14:08:41 +0200
-In-Reply-To: <ca528e3e-39f1-41cc-9f46-ad787af48a77@sirena.org.uk>
-References: <20250109180256.6269-1-sander@svanheule.net>
-	 <a2f7e2c3-f072-40f7-a865-5693b82b636e@sirena.org.uk>
-	 <0b2fa71f1ccd49d66ca02b6c44ba8fe2135e9b6f.camel@svanheule.net>
-	 <ca528e3e-39f1-41cc-9f46-ad787af48a77@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760616711; c=relaxed/simple;
+	bh=QMMq7ETdtjTgnDNtAlTjnkOPZVCN6eYABiSBB0vfLLQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=utYEqjcYRQpQXfaXRnpyN7Ef4JHqz5fVCUdH3CFNRcTs3CZKB0LQ2F9Btb3xQwS0NmyV5BL/t3g50dBbafdZP6J3AZiesvvZlLokAo0120QcdZ8x8grnGFBUns3TXUQTt/NyqbqwWw2q9pLdgtSPPOtQk5NI16eqVJ2bTYotLB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9yMkyc2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B90BC4CEF1;
+	Thu, 16 Oct 2025 12:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760616710;
+	bh=QMMq7ETdtjTgnDNtAlTjnkOPZVCN6eYABiSBB0vfLLQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=n9yMkyc2tj8S/WI8tnTdMbETm0ap6JHP5dyIRsPDzWMrHtHjLdsc6wCUEiCbfSgNT
+	 5wjkzOpCbxWP3n1ZmjRo6/DjKrmff4jtr2zAjGYe1S4jiluB41ZhQCHlCTTIMz3cDH
+	 KGzHiJkwTUiBPVejxI/Nwiu2Kiebwk1xDgemmukC9VbWVx3CVPK9QBAF8lfAP3Dqey
+	 dRgfVsmhb45ADD/us7wjBXXqqI19MFcJK3DNrTh0pftAHWrvyDhu6trNkUuaTeitNW
+	 qSeKgoP6PTCbakpoRn3egW79ZbN7GA2mLFdZtAl95MFb5FM1hGqBXWmk9PjWY5KVVg
+	 sDdCyPfKjT5TQ==
+Date: Thu, 16 Oct 2025 07:11:48 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Frank Wang <frank.wang@rock-chips.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Diederik de Haas <didi.debian@cknow.org>, 
+ Amit Sunil Dhamne <amitsd@google.com>, Johan Jonker <jbx6244@gmail.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, 
+ dri-devel@lists.freedesktop.org, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org, 
+ Peter Robinson <pbrobinson@gmail.com>, David Airlie <airlied@gmail.com>, 
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
+ linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org, 
+ Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Yubing Zhang <yubing.zhang@rock-chips.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Maxime Ripard <mripard@kernel.org>
+To: Chaoyi Chen <kernel@airkyi.com>
+In-Reply-To: <20251016022741.91-1-kernel@airkyi.com>
+References: <20251016022741.91-1-kernel@airkyi.com>
+Message-Id: <176061621163.2563037.16885169757150775717.robh@kernel.org>
+Subject: Re: [PATCH v6 0/8] Add Type-C DP support for RK3399 EVB IND board
 
-On Thu, 2025-10-16 at 12:53 +0100, Mark Brown wrote:
-> On Thu, Oct 16, 2025 at 10:46:33AM +0200, Sander Vanheule wrote:
->=20
-> > Would you be open to providing a new type of flat cache with sparse
-> > initalisation (e.g. REGCACHE_FLAT_SPARSE) to provide the behavior provi=
-ded
-> > by
-> > this patches? Most of the code could be shared with REGCACHE_FLAT.
->=20
-> Taking a step back for a minute, what's the actual problem you're trying
-> to solve here?=C2=A0 Why use a flat cache rather than a maple tree cache =
-for
-> your application?
 
-The device I want to use this for has a small contiguous register space, so=
- a
-flat cache should be sufficient. The driver can also works with maple (or R=
-B-
-tree) cache.
+On Thu, 16 Oct 2025 10:27:33 +0800, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> 
+> This series focuses on adding Type-C DP support for USBDP PHY and DP
+> driver. The USBDP PHY and DP will perceive the changes in cable status
+> based on the USB PD and Type-C state machines provided by TCPM. Before
+> this, the USBDP PHY and DP controller of RK3399 sensed cable state
+> changes through extcon, and devices such as the RK3399 Gru-Chromebook
+> rely on them. This series should not break them.
+> 
+> ====
+> 1. DisplayPort HPD status notify
+> 
+> Before v4, I implemented a variety of DP HPD status notify. However,
+> they all had various problems and it was difficult to become a common
+> solution.
+> 
+> Under Dmitry's guidance, I try to add default DRM AUX HPD device when
+> register DisplayPort altmode in patch 1. That makes it redundant for
+> each Type-C chip driver to implement a similar registration process
+> in embedded scenarios.
+> 
+> ====
+> 2. Altmode switching and orientation switching for USBDP PHY
+> 
+> For USB Type-C interfaces, an external Type-C controller chip assists
+> by detecting cable attachment, determining plug orientation, and
+> reporting USB PD message. The USB/DP combo PHY supports software
+> configurable pin mapping and DisplayPort lane assignment. Based on
+> these message, the combo PHY can perform both altmode switching and
+> orientation switching via software.
+> 
+> The RK3399 EVB IND board has a Type-C interface DisplayPort. It use
+> fusb302 chip as Type-C controller. The connection diagram is shown below:
+> 
+> fusb302 chip +---> USB2.0 PHY ----> DWC3 USB controller
+>              |
+>              +---> USB/DP PHY0 +--> CDN-DP controller
+>                                |
+>                                +--> DWC3 USB controller
+> 
+> ====
+> 3. Multiple bridge model for RK3399 CDN-DP
+> 
+> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+> the CDN-DP can be switched to output to one of the PHYs.
+> 
+> USB/DP PHY0 ---+
+>                | <----> CDN-DP controller
+> USB/DP PHY1 ---+
+> 
+> In previous versions, if both PHY ports were connected to DP,
+> the CDN-DP driver would select the first PHY port for output.
+> 
+> On Dmitry's suggestion, we introduced a multi-bridge model to support
+> flexible selection of the output PHY port. For each PHY port, a
+> separate encoder and bridge are registered.
+> 
+> The change is based on the DRM AUX HPD bridge, rather than the
+> extcon approach. This requires the DT to correctly describe the
+> connections between the first bridge in bridge chain and DP
+> controller. And Once the first bridge is obtained, we can get the
+> last bridge corresponding to the USB-C connector, and then set the
+> DRM connector's fwnode to the corresponding one to enable HPD
+> notification.
+> 
+> ====
+> Patch1 add default HPD device when register Displayport altmode.
+> Patch2 add new Type-C mode switch for RK3399 USBDP phy binding.
+> Patch3 add typec_mux and typec_switch for RK3399 USBDP PHY.
+> Patch4 add DRM AUX bridge support for RK3399 USBDP PHY.
+> Patch5 drops CDN-DP's extcon dependency when Type-C is present.
+> Patch6 add multiple bridges to support PHY port selection.
+> Patch7 add missing dp_out port for RK3399 CDN-DP.
+> Patch8 add Type-C DP support for RK3399 EVB IND board.
+> 
+> Changes in v6:
+> - Link to V5: https://lore.kernel.org/all/20251011033233.97-1-kernel@airkyi.com/
+> - Fix depend in Kconfig.
+> - Check DP svid in tcphy_typec_mux_set().
+> - Remove mode setting in tcphy_orien_sw_set().
+> - Rename some variable names.
+> - Attach the DP bridge to the next bridge.
+> 
+> Changes in v5:
+> - Link to V4: https://lore.kernel.org/all/20250922012039.323-1-kernel@airkyi.com/
+> - Remove the calls related to `drm_aux_hpd_bridge_notify()`.
+> - Place the helper functions in the same compilation unit.
+> - Add more comments about parent device.
+> - Add DRM AUX bridge support for RK3399 USBDP PHY
+> - By parsing the HPD bridge chain, set the connector's of_node to the
+> of_node corresponding to the USB-C connector.
+> - Return EDID cache when other port is already enabled.
+> 
+> Changes in v4:
+> - Link to V3: https://lore.kernel.org/all/20250729090032.97-1-kernel@airkyi.com/
+> - Add default HPD device for DisplayPort altmode.
+> - Introduce multiple bridges for CDN-DP.
+> - ...
+> 
+> Changes in v3:
+> - Link to V2: https://lore.kernel.org/all/20250718062619.99-1-kernel@airkyi.com/
+> - Add more descriptions to clarify the role of the PHY in switching.
+> - Fix wrong vdo value.
+> - Fix port node in usb-c-connector.
+> 
+> Changes in v2:
+> - Link to V1: https://lore.kernel.org/all/20250715112456.101-1-kernel@airkyi.com/
+> - Reuse dp-port/usb3-port in rk3399-typec-phy binding.
+> - Fix compile error when CONFIG_TYPEC is not enabled.
+> - Notify DP HPD state by USB/DP PHY.
+> - Ignore duplicate HPD events.
+> - Add endpoint to link DP PHY and DP controller.
+> - Fix devicetree coding style.
+> 
+> Chaoyi Chen (8):
+>   usb: typec: Add default HPD device when register DisplayPort altmode
+>   dt-bindings: phy: rockchip: rk3399-typec-phy: Support mode-switch
+>   phy: rockchip: phy-rockchip-typec: Add typec_mux/typec_switch support
+>   phy: rockchip: phy-rockchip-typec: Add DRM AUX bridge
+>   drm/rockchip: cdn-dp: Support handle lane info without extcon
+>   drm/rockchip: cdn-dp: Add multiple bridges to support PHY port
+>     selection
+>   arm64: dts: rockchip: Add missing dp_out port for RK3399 CDN-DP
+>   arm64: dts: rockchip: rk3399-evb-ind: Add support for DisplayPort
+> 
+>  .../phy/rockchip,rk3399-typec-phy.yaml        |   6 +
+>  arch/arm64/boot/dts/rockchip/rk3399-base.dtsi |  10 +-
+>  .../boot/dts/rockchip/rk3399-evb-ind.dts      | 146 ++++++
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c        | 354 ++++++++++++---
+>  drivers/gpu/drm/rockchip/cdn-dp-core.h        |  24 +-
+>  drivers/phy/rockchip/Kconfig                  |   3 +
+>  drivers/phy/rockchip/phy-rockchip-typec.c     | 420 +++++++++++++++++-
+>  drivers/usb/typec/Kconfig                     |   2 +
+>  drivers/usb/typec/class.c                     |  26 ++
+>  include/linux/usb/typec_altmode.h             |   2 +
+>  10 files changed, 911 insertions(+), 82 deletions(-)
+> 
+> --
+> 2.49.0
+> 
+> 
+> 
 
-The problem with the current flat cache, is that it provides different cach=
-ing
-behavior than the other cache types. I want to keep the register values wri=
-tten
-by the bootloader, so I can't provide defaults. That means a flat cache wil=
-l
-seed these registers with 0x00 values, which don't reflect the hardware sta=
-te.
-Any RMW operation can then cause the part of the register to be cleared, as=
- the
-read comes from the (invalid) cache.
 
-This difference in caching behavior isn't (wasn't) immediately clear to me =
-from
-the documentation. Don't the different cache types exist to optimize speed =
-or
-memory for different use-cases? Because then I would only expect difference=
-s in
-memory/speed, not in way the cache is initialized.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Best,
-Sander
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.18-rc1-18-g924aa1d9e0ae (exact match)
+ Base: tags/v6.18-rc1-18-g924aa1d9e0ae (use --merge-base to override)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20251016022741.91-1-kernel@airkyi.com:
+
+arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: syscon@ff770000 (rockchip,rk3399-grf): usb2phy@e450: 'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: syscon@ff770000 (rockchip,rk3399-grf): usb2phy@e450: Unevaluated properties are not allowed ('port' was unexpected)
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: usb2phy@e450 (rockchip,rk3399-usb2phy): 'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/phy/rockchip,inno-usb2phy.yaml#
+arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: /sound: failed to match any schema with compatible: ['rockchip,rk3399-gru-sound']
+
+
+
+
+
 
