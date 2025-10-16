@@ -1,107 +1,178 @@
-Return-Path: <linux-kernel+bounces-856456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 262EDBE4312
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:22:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF51BE4327
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501E519A3B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:22:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A2A1358B5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A4350276;
-	Thu, 16 Oct 2025 15:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313AC33EAF9;
+	Thu, 16 Oct 2025 15:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Vx1Go4EP"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eBOZSI+m"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010057.outbound.protection.outlook.com [52.101.46.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97C54C9D;
-	Thu, 16 Oct 2025 15:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760628086; cv=none; b=MjOronKNqYcDOZqphmjKh4GV0wwFr3lSoofX0+KSTOXEGLpCTD2mSU2NfuQsN5XprbrDx8QFOFyMlKPYXYlHDTB3hnaqWAyYJlRCMvUP9Wjbkx6xRcFQ4kQvdYiHZJfSZ1vJ0CITq3LTh26GnBmqKoPqCLtIy7lgm0Hm0y3UoV8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760628086; c=relaxed/simple;
-	bh=z8MA8LUyae+lGsjF1gwHLGWRBNQCFSy54sXprN2LxaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LySeApiiYDWI2kJxPCQWX3W3gE/HhmuhsVZbYwkJEaYkqq/a5SYN4xatd2hQJL0k/b5GBVPK1rnF7t71EeE47SNDoJZv4lF600eQKXBlfPRJvymujJRKPFTCES9ejG+DLJvqSs/R+SdKQM2GnStVgvSs+S5q8Km44DQ5wQVsOh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Vx1Go4EP; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zufCpAXCVEwDc/8p4UXog53BnP9tM+43qUpcW1f09iM=; b=Vx1Go4EP3OHyeVIlzAQWHe7TrA
-	q4PyEtofbcg/a89657ONYBOhGme8m01o1I4N46htjcrOUWTIS1p0SAFYDwisxemju5McrvW2L416n
-	5n8LYFZkwTfi0eFEWEZmAbMvNlJkCT5NnT6FaFRcVUEWGRRdUh/GjTkOramECPR1pCz3g5C8Qswte
-	OwJX/mInR0Yhwg3khITa/XhHcy3PEKxW8KogItiPrJSjyOJahDKru1jM/BG+BJ/PHMtqfkxvxt5ax
-	SThwSwUPE4eUEBMVn+vMFMohFFliLU5O44lKMpVZRChieBgc4IlYMUQLXtotPU2knjiWFkcQKd2v+
-	2OCeEeng==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56116)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v9Pn3-000000006dM-2UPG;
-	Thu, 16 Oct 2025 16:21:17 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v9Pn1-000000003NP-2Vov;
-	Thu, 16 Oct 2025 16:21:15 +0100
-Date: Thu, 16 Oct 2025 16:21:15 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux@ew.tq-group.com
-Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
-Message-ID: <aPENa90OS4ZZA5Rc@shell.armlinux.org.uk>
-References: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87414C9D;
+	Thu, 16 Oct 2025 15:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760628156; cv=fail; b=boMmrWdlGy30L9gKTuW7HeZXJBUa37OYMui1PfxJOY2VUpC4r11tleMPySFYm4gD2gJqzGWUjvfZ4s1rzyBvXvHPeh8FdDHqoDwojbvPjDuu1Vwq4NSta3HnGPf5h7K5hgnmmUZxJ/mjJftvlB9doe68Q/oq99QuySZwXWd0vCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760628156; c=relaxed/simple;
+	bh=4pzezHOOI2aPcvAb22U11XNZHKdn1xtxhpBoNOf1p3U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpPhFiE/b62uhZsWPIJmW1LSA/guFRmGc9r1/ulIUMLUrnbCBX41t3XHX4dxPuEtTdW13abwV0yfnfw/mk+R3mZpk8laKb50r7/Nog14ozkOtmzG/R2J9klVvjjNimS1z2mLJMvSCih/u8eISbM7WLd0lD5A+xNAeFgipgRbtaU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eBOZSI+m; arc=fail smtp.client-ip=52.101.46.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a0CS1bVxkCSD5JbSLWECCgPb29lFiAbr0BYqqPbvn6WpjcgI/Nn2Gxq0pqHoygyh9ZXwyYqlH3BCF0zijwR7UHkiGw8OTQZJ596FH2WR58pkylEO1Y3fAGDR5vlPPELGGWyEmS3472KBTZwQQN+/YsP34tZC0gsdXStpqDHriS5s7XHXfJLdjaYAXy4a1ebvlLoi5kkFn+PtEfEsJPnF4q77yREHdpsBZWQRIXfQ1251OxWAOs82NejgBga/BHU5fdmLEiFjtZpAaBrUEWfx3+lJ9h5LL1rFVBXpM5Kj+K1ALJXs3RDoOp8r0Y5UU7JTsIdpAgNzClVTBViP4TWEig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p8tYLxsfCD6uVPBGHv6AcKUvMSDzwj2PAo6zQl3bvEM=;
+ b=MwxhdTv9f5vc9rDX2nB54gyHHAdpDwOtxJ8RL2mCGXh19inK8IBsA1gOH/zBljD34eOQF8lpYWjQ7Nzs41/iwGH6f/T3iMiYW+awxBdrpufm51T6X5dF0HkgvOrbfOvndSmTjVxbtvMr9ncfeTzrpG9WSJiPYD6gg7NNW4WqHB0QhipEInUV4rI+m7u6Ir9fhFCYnCrs6U9Fuv8n3PVouj85kZgr/3g0ds4O75ifn6ULU8Ep9N0efQPZ/vaLuDzERYOOWlcgmak5ibUsrcjyar4E+RAAgSAlb2efWno1vc+LWu3yVMDGW67AMcVVKIYuiVj9FtsyiWIvpr+nKzzg8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p8tYLxsfCD6uVPBGHv6AcKUvMSDzwj2PAo6zQl3bvEM=;
+ b=eBOZSI+m5RaB77Xc1IbopV+dcxrDgPpX/z5foUvAa/JOgZhQtQSAyNsnOSb7R2aj3Emo4toPkqpH4j5ZFr2FUV8agN+5bbpLMI8l509PsIcNLOPhqG3EAGaN5tpbNEiiYQkavYyIkf7PCNnkENi7urVCa4RcokARNU7wJY23N9zEc/1/mYgH+DZfv+RiGDPCzUtf7E2TNn3MZzIRXIyGiPXgyNfa9fekzd+xyIv4bgeZJxGV9VKXCSbcOjht0dFVKapj9vkYR/OMTLEBXS7bcsSB3ijYgYN63DD6gY3FKh3BSI0pJ3yR1mHLmVH+TRfnb9UAvYAzvBXNSfoZN43jqw==
+Received: from BLAPR03CA0129.namprd03.prod.outlook.com (2603:10b6:208:32e::14)
+ by PH7PR12MB6761.namprd12.prod.outlook.com (2603:10b6:510:1ab::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Thu, 16 Oct
+ 2025 15:22:27 +0000
+Received: from BN1PEPF00004683.namprd03.prod.outlook.com
+ (2603:10b6:208:32e:cafe::1f) by BLAPR03CA0129.outlook.office365.com
+ (2603:10b6:208:32e::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Thu,
+ 16 Oct 2025 15:22:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00004683.mail.protection.outlook.com (10.167.243.89) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 15:22:26 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Thu, 16 Oct
+ 2025 08:22:10 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 16 Oct
+ 2025 08:22:09 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 16 Oct 2025 08:22:09 -0700
+Date: Thu, 16 Oct 2025 08:22:07 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Alessandro Zanni <alessandrozanni.dev@gmail.com>
+CC: "Tian, Kevin" <kevin.tian@intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "alessandro.zanni87@gmail.com"
+	<alessandro.zanni87@gmail.com>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH rc] iommufd/selftest: Fix ioctl return value in
+ _test_cmd_trigger_vevents()
+Message-ID: <aPENnxVR+wtlGVAJ@Asurada-Nvidia>
+References: <20251014214847.1113759-1-nicolinc@nvidia.com>
+ <BN9PR11MB5276834E90A7990269EBBF608CE9A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <gn4l62kroj74d765uojx2vmu4tugxbmwnhodckfbath2pafeuz@nw2kudzcucv2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <gn4l62kroj74d765uojx2vmu4tugxbmwnhodckfbath2pafeuz@nw2kudzcucv2>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004683:EE_|PH7PR12MB6761:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee92dad4-846e-4d4b-007d-08de0cc7d08a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MHFccf+jbshrJ3sWmh6489mDLd4A2VolxBf2RxMyIR89SUsDdkZ4tmFe2Nxt?=
+ =?us-ascii?Q?ETGbuRnARTgjkvbiVMcwFqJGRotVL58XIY6tTJHwHS3+nWQe8hgT8km0fD/w?=
+ =?us-ascii?Q?nNEwYfJmXWoI19Cqtck5lPfyekdhtcPZYQqpNlw0BYcEanbTesWetOq1tIHK?=
+ =?us-ascii?Q?SqGiHIYILValWFzQPhXrZudCxhQVhcyInsMLGc8u4h5oODr0ZIoShvKDrno7?=
+ =?us-ascii?Q?G3t4BwFztWAyPnUQxSgMuu8spIrmuqYO+X+d5y9FVrOiG04cyQMT6/DAMdPn?=
+ =?us-ascii?Q?e/wnLD9gTEZG8zIYuzeiUrfWY3O0FXVINdUYUn0guEzPaj6fd1da4xNRMs0Y?=
+ =?us-ascii?Q?bVvwuRomIpUO01/4YHE48uJPijSuOaRruYOllR3jTEHL2o4f2nDUB2reti/Z?=
+ =?us-ascii?Q?q0ygwXeWfAkJeXmlLOn7cARWdcZlwgtTNmeEGnhY8Nv1WzoHpIN81k3V0iyx?=
+ =?us-ascii?Q?XM56STUsnHjLfcldBA4DWxYrBoT1/j3WJDuh0iP0XfoAZXvSGvfhxCLNOVsu?=
+ =?us-ascii?Q?zzViHj5ErgmB3iL8ymdZSZPGJ5jaAKk+Ix1Wbp5WSTBm6nwm2wFsh60Vj+cN?=
+ =?us-ascii?Q?TtuEAiAB48a2dFov43cgwUf2+oW94wMdn/IcKDjRMq9WCq1IeTDJpQLEFf9x?=
+ =?us-ascii?Q?Yyl1//2ARo9nGTDXrIs9pe8dje9/SIuezYitMneiM+EVZliJ6uD19z20Rx8T?=
+ =?us-ascii?Q?Hom1yk/m5DvFwkFrWtRjNcuWOiwGfAuHc2xA45vtz47ZJxLHDUGJ/7+FmCoH?=
+ =?us-ascii?Q?pKlj2faF/2YGhkXIkrPpnHfTp1YV+OCyh0i3jFIUfw3L/VbWt/JEbJz8WKsd?=
+ =?us-ascii?Q?tj//oBlCHOnWa2kSicZbxe91V+JLtuTNb8tgOmzuTCFImLb462o+I4hylNEg?=
+ =?us-ascii?Q?o7g3H/vldYhnC98vrEeQMgHiTPx4ZjLUFC+JqPfhKTCArCpSJo3/IsSj/wvz?=
+ =?us-ascii?Q?WvhPfU8sz/nnGrsUCCFFmSzwx/Zu8kKzru39+xjLpeSAsiCSz4aOY6IkJMgt?=
+ =?us-ascii?Q?KhOBSpegyzW9uu5sbS5HrrQiSlqysZ8nCUyjvklRA4Qn052WQr+fBu9o785q?=
+ =?us-ascii?Q?L38l/2r9p2NFNX2NCjwO7gVVzLiaIpq+P569Bqtw2cEmGkQtItm5XW8etXZi?=
+ =?us-ascii?Q?47khkNmeR8gbaI4QBLIbRDNP6Y7tk0qETo2B/N22MBqIKYPAlBEuLU87Xjww?=
+ =?us-ascii?Q?kJZOfpJeoEf7PIJJD4HCRbl7CG87oHUuXRcHvqHiFWhBNmSpNHrSow6duEKu?=
+ =?us-ascii?Q?cO1qQIgwDZeb+SxmDUD737x63A86Ir7+zhrD2/j0v8JIOjLRHeoh4iZU9NzR?=
+ =?us-ascii?Q?VsLYihVizMSxgJniEdqVYWs+PNFNwpTLz9XwNj8RzJKPdkV2WbATg40wQfJL?=
+ =?us-ascii?Q?qn1ua2yne2EdFMHo6Wvebm8wTBpq6QGEGz+MMlS3RMtVZA7zaqk0mPcyJ8UM?=
+ =?us-ascii?Q?4NKeZkQciFBy+Hi58itW4Cpb90HHndIi6rWYiwzQcy70rSejo83glp18EvTW?=
+ =?us-ascii?Q?nwONiTG+JZ9Xh5WhAyuxHslx6kK/zr8G2dszw4NwilsRjBzWQbilrB7DXZrt?=
+ =?us-ascii?Q?SlU/PjG7sqkKx/GN3xI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:22:26.8029
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee92dad4-846e-4d4b-007d-08de0cc7d08a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004683.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6761
 
-On Thu, Oct 16, 2025 at 01:37:30PM +0200, Matthias Schiffer wrote:
-> -	if (!sport->have_rtscts)
-> +	if (!sport->have_rtscts && !sport->have_rtsgpio)
+On Thu, Oct 16, 2025 at 11:09:59AM +0200, Alessandro Zanni wrote:
+> On Thu, Oct 16, 2025 at 07:47:20AM +0000, Tian, Kevin wrote:
+> > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > Sent: Wednesday, October 15, 2025 5:49 AM
+> > > 
+> > > The ioctl returns 0 upon success, so !0 returning -1 breaks the selftest.
+> > > 
+> > > Drop the '!' to fix it.
+> > > 
+> > > Fixes: 1d235d849425 ("iommu/selftest: prevent use of uninitialized variable")
+> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > 
+> > Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> 
+> With this fix a positive value returned by the ioctl() ends the loop and returns -1
+> to the assert.
 
-This is fine...
+Not with this particular ioctl(). And in fact, I don't recall we
+have an ioctl in iommufd uAPI that returns a positive value. All
+the other ioctls in selftest check "if (ret)".
 
-> -	} else if (termios->c_cflag & CRTSCTS) {
-> +	} else if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts) {
-
-This adds extra parens that do nothing to aid readability. Too many
-parens actually hurt readability.
-
-> -	if (termios->c_cflag & CRTSCTS)
-> +	if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts)
-
-Same here.
-
-Maybe change these to:
-
-	if (sport->have_rtscts && termios->c_cflag & CRTSCTS)
-
-?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Nicolin
 
