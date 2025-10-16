@@ -1,212 +1,312 @@
-Return-Path: <linux-kernel+bounces-856976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9E5BE591C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 787FABE5910
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C12D73B8ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61FE488208
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDB62E0407;
-	Thu, 16 Oct 2025 21:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0D42E425E;
+	Thu, 16 Oct 2025 21:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ny5z38IZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lR7BcZwL"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3048641C71;
-	Thu, 16 Oct 2025 21:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760649966; cv=fail; b=HO/tHa7bZGo3F6Nrx79+/bbisMC/bYJ2bEeinki7zntw/GSwbwh1nu+wGkRgJpKxkfl3th9H+3tUCj6i0xknRHv5RTl5OLXsnEzwNJfz/r2jeSVoHoTuh0Wz5PoAflxxLyY6PVcrxn5Wb8TbtgPWwfbmhtJJ41jJsm5cXRsn8MA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760649966; c=relaxed/simple;
-	bh=lkC4IL63z506BpsgCqybOutIFMZIa2jV8FfGUgDEJY0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WtDursT0Wntf1ubgYA9u8OIe+uksprkmVVeyewclgdgoa6meg97jkSh1dgzvM64sYXg0SH79i/uvpCZmVCGSp2fO0ZjzQ4geFms6gEzoZZQ2+zJp281SSexyxu6IAyHP5nd3u2M7RW/+Mb4sE4PyHQQIGu4gHUsroaO4ouwY6gk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ny5z38IZ; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760649965; x=1792185965;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=lkC4IL63z506BpsgCqybOutIFMZIa2jV8FfGUgDEJY0=;
-  b=ny5z38IZc8vGq4RDliayTB26chAaJ4bJPSkiFIx8MqklnomFJ5R385WM
-   dFFiCDUcRg1UOR3IbW9lQPFOqizlpghK0a7PGJ1ZZb60V43V+oC4K7VlL
-   PYHpHmeK2P1krF3EoKR6pn4OAR7kAjHtlUcfeQVtRf7vRjpIPg/GGPimq
-   Q8nyJQKnrOlVxhU27a3hh7pJjc0OCVWMx4RW4VGaU1qxTeqkmynzh8dBi
-   bSjObFYkfNijp4HnDffdhJogoz1nV4a7FwHJhHjqF1Ug5W78LPRryJ1aW
-   DKAYN3Ema8rs+ZLKJ7TM20yPhiHaCgDGusT6dkp4HS9sm3UC9XwYWc0bF
-   w==;
-X-CSE-ConnectionGUID: sGYptaZ1S6ufC9ktqDr1Jw==
-X-CSE-MsgGUID: 3bOTkTRPQv+QTZTkat8FKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="61887865"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="61887865"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 14:26:03 -0700
-X-CSE-ConnectionGUID: OL88yyq2SZiXwxdvvFgxOw==
-X-CSE-MsgGUID: NLuvp8HoSQKzH1JLwaXcIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="206262661"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 14:26:03 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 16 Oct 2025 14:26:03 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 16 Oct 2025 14:26:03 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.17) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 16 Oct 2025 14:26:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UNSEnjM81YYgRwTNtJq4TVLkJ5fd9z+f2qvDKJ4H3qRidoIWgy0M5LdSRcMwgn6jE5zD1JbHYStbFg8arcwdogXCVg4QWx2FaiPccnM9sY3rHha3rfN0oeOGt0wt8FAMAsNVipYqtB8VjjXMkElwb9nRG9AXXVK+2ERVGCgjlvKk6Z13G4PTzcLt1bhWf2ybFn+HTJExqibW4ULAbOm26o1vchFcFqSulf3c1y0TjmJFE/X9LAOBBD2CAOclS8G6Fh2mfChM0C5jVzz1pecJA8VpoXZzOP/SWtGFLuVhBhW5vF81WhvKcDu7lk5k3DvBFGu3A2C3J+AkkA0rgRBagg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fVPetM7DZr7UQlB746ZL4LE0VDTOvQ33WgRTkJOfg/c=;
- b=h46akbAmASs5MHk7Pzv+6//mzmGiDyeVJtGjpQKE49g/TeF6018ihR5380eDrld5YixzDFdjok4E09IE469iG5ZopdrfOZZ1Ob4F4BK2Ed/Sjtkp4mtA50tdtPj7wiVWHDy7NWNEXAvxh3o+rMl7ZjR1Z3V0RYouQJOUJmcS4RAncn+0PCENWGOcsEq/1X2dTqkQGgi4rAV0TAfkFz+7GvYARMqDLUzBy4MlQTjIXsLIddZnCW9hzx/BkgI8ExPEp82ylz0wdPLAN468R2CFGJyS2GyLq2mwb7dDDvOF3fYSE51UrroZRIebXQAkYEcWnpmYv8GxXbW+15PDK/R/Mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by IA4PR11MB9082.namprd11.prod.outlook.com (2603:10b6:208:56a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
- 2025 21:25:58 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
- 21:25:58 +0000
-Date: Thu, 16 Oct 2025 14:25:57 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Jonathan Perry <yonch@yonch.com>
-CC: Reinette Chatre <reinette.chatre@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, James Morse
-	<james.morse@arm.com>, Roman Storozhenko <romeusmeister@gmail.com>
-Subject: Re: [PATCH 0/8] resctrl: Add perf PMU for resctrl monitoring
-Message-ID: <aPFi5eQt1CmYXg_X@agluck-desk3>
-References: <20251016144656.74928-1-yonch@yonch.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251016144656.74928-1-yonch@yonch.com>
-X-ClientProxiedBy: BY5PR13CA0009.namprd13.prod.outlook.com
- (2603:10b6:a03:180::22) To SJ1PR11MB6083.namprd11.prod.outlook.com
- (2603:10b6:a03:48a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973EF2DA742
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760649897; cv=none; b=aVQASNpBmWw+bj8ASVzK4gqZ4JmMHsx+bVjq5fDSIIcUoxPSCAXPTKA9aVb/VK5iGkEIiQZCLI6MPN7T9URLFtYmnF2Wd9pCAprqF/bn/WGAWfaFRaWRv4vmDDyaf/17PorEi5hxTJ4e92Kk1fO54vsb2vpklGi/xxRd3GlPs0g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760649897; c=relaxed/simple;
+	bh=jfu5ly7hYCH7M6FPpJ9TWxzmAmpRDYMQzPgHkXlldhc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XGVHONEG3uCnzcvTDTvKm04k+YnhrpqxmZT6RG6u8g+Bw/R4YJqGpjsNrDmfOVqbml3c5MsN9q5VpiWtejjt7GgxLcIRF581Ma0dD2oXR1F5VJj3VY+1N2Pr4IZ7zMAQ4qWsUGUIAB+0Ed0GuJLqf5D5oqeVbMe+IxTRHKbwxUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lR7BcZwL; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-78f3bfe3f69so1151104b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:24:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760649895; x=1761254695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zd/3SMts5DKBfe91ys3jWrhKDCgkhqpFgsK5gsCZVIQ=;
+        b=lR7BcZwLPkv+OH43TkVXdHDKbSEPuCx2igXyLrWr34Pd1mzEjZeWXctI2DvKl9uvfG
+         VBQ1S+AMvQhZo4sZ15RqzrMVpqhxKWXeB6vOxyr/msnsAj/xT61lSQPXuF29gh8LklK1
+         erAFwDE72BWDQrrUdTWbYyQ2Wpbgtfn6ST3TX67q7JQSnxFki3E2O6GmTdqBqwdQ6dPf
+         3FI/JjhXpmHQTIEWzmEvooD6kTH8zXEANiT5/G1YKNicHHwpiRgBmX0mj9apTDsNlhw9
+         Im1SfsuDGsJQM16kLxU6uw6ucOano2mF6SHAyTiWl3Wq6Nh1GUq1X52uVKK0mmFAcFR6
+         AKAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760649895; x=1761254695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zd/3SMts5DKBfe91ys3jWrhKDCgkhqpFgsK5gsCZVIQ=;
+        b=RXnc/69zxExGxt6XhQtDw4YogNL9pE4Puw+I72naBHGwk5WzU8kPMWuvXygOGkYt0V
+         oKDSfKaKuVrMO19d+eUzvvCLdpSx1vwUytaNspR9FT+MOkgEqr4xWQ1D7XCH4IZUly+z
+         TLvvQ1SuY2RfDLx45TVB+khuh5m5kRI/cbma/jS4V34Pg1iLCswHnV7Gqt5bJDXu5ymC
+         R9dsRpqdVxP8aNiI3TeJDx3arsotpp9xfOhkfrCCHxwHyCEbJnW2Xot2WIambhyRlR4Z
+         SeppVj3YMDs6bElyE0E/SotagMOE+Y+5TnwoIpZlpmhO9g2306Pj+jtakFhpkWT2a4gk
+         WfZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdpbqJpoUMGmpVCz7dqYYOm8fMkdTRMrVsD0OhPX+z4ZBYSjIUkJIm2xYT/Iw3/Am+npuTVQ54LmrlYWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4bJQdbIwkGTgXOF6xr/haPfW6Je251UbaukNQhWCdxoL4CYu/
+	b5JqJ6Qe64TTrLhx3ocNXE8md+rFl/NwuTCFvIRF14uA/hOJOOcbyABTh+pC9VMM
+X-Gm-Gg: ASbGncsA3tXe0KEcWc2FKASxFRfiOVrPOo3Osdkhxbj/R21We3AP/uEphvQCYHiB+7E
+	zrX8uqSSzNzIylnZWN83bw0UKy6H/x8yUr4yBk+xDh6A5bIIzHng+IJVJ2nnj34vopYdkXgxuwU
+	yzrsKEES3sOtXwX8hweqxFb2pgdHeuDa1CfJYfFXADd4cBS5ON5MNxxEzlnwud75PT2IWU0OcXR
+	Da2TafyEdShAJwWePnFqKVrgImpR2thp3vZ129qC3XmMx+Qliti3pg8J5dIN7trPyhSstCv5P6I
+	GGJv+ZuvgoXd5lIj9pnyg/4FbrovNQkPuRQ/S5zzkz1q3mcatvqu8nEJJCi2WBBxe1EUyWQOcGs
+	B2QzFWvLIEfydPXpld4YpXN/8AJCwqFMZwne48nuu26iOOQmLx8832U4C7yhpa2kcsC/pyEThx2
+	bsvOKChHA2OsxzEuNPQuPJ4DLL
+X-Google-Smtp-Source: AGHT+IFCaV6xglyKst+oFUXgvZM2Y+I/mFeCUZu1bLy7lDUbpg0VgGAYl951jYFBFM2GACulIHnn6Q==
+X-Received: by 2002:a05:6a00:130e:b0:781:15d0:8848 with SMTP id d2e1a72fcca58-7a2208eec13mr1621582b3a.13.1760649894512;
+        Thu, 16 Oct 2025 14:24:54 -0700 (PDT)
+Received: from [172.16.0.242] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0965c3sm23431038b3a.52.2025.10.16.14.24.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 14:24:54 -0700 (PDT)
+Message-ID: <831744c6-ba89-4029-a035-9a70c3f57465@gmail.com>
+Date: Thu, 16 Oct 2025 14:28:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|IA4PR11MB9082:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5971c59c-5b9e-4ae4-6b5f-08de0cfa9948
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EuYj2eM6c1mub//ejisgCPZtc3eksCzgKANA1V9SvykcQo2/qWt0h1431eS0?=
- =?us-ascii?Q?f8k/admw0sunr1oFNHucU73vYbW2Zvffagk6m6Npksw91am9ZDml62pMtb72?=
- =?us-ascii?Q?KSGTBtDAuablqlJLLas591KkeRA0xx7PKRoR3KDp2/MdFy0lDjyGRbfT/yfE?=
- =?us-ascii?Q?U+MHeenlaULec2qC6ryYObKzixudIHj2MdaoPYRQ5ARvw77Xh3rIuHFFBBFL?=
- =?us-ascii?Q?0NJXY7SwXzwNTqPMeBIgfvcrNIttHGGMC9rCByDR4h52/Uwg5A5P1txxMYVq?=
- =?us-ascii?Q?PgjU29vd3aFlrVCOmUQBuO8Fl6AfKOMCimV9ySd8NHaAFbGFoG1Ypp5ZirCy?=
- =?us-ascii?Q?Opmr+FNmneaSKsiYqTMNxzJHuqm/WvIUcDW06muEuxumZOTyz1jjcwIew2ab?=
- =?us-ascii?Q?adMBivmS+gTdt818of5XYl1uYRLGCLHNVAPdkyYiuHmdj9/P61PJS5zug+NC?=
- =?us-ascii?Q?F/WOQij8iph+a/YxFYzeHYBzGg0NCwPUlKSLaSPYemD9cNSRH0LTTJvhScUs?=
- =?us-ascii?Q?KAFjvtOv/vKR63gZ8JowVAUGg7bzpFegr6X+ILdriehVWnrtjJq3OYveFFdZ?=
- =?us-ascii?Q?jPJF8bsZ8H8BhiByHapCcVYUJ1hgWl8uBr6OtFtx3d4aaOWhEVTVVB1nqsdJ?=
- =?us-ascii?Q?p5P1TS0YaTsIcnT0T8aqhSlVd2L5a4n7PiSWgUdugC2W/LRPag6yX9mv2eai?=
- =?us-ascii?Q?PQGafTnZvsDLM/d4qjtvdoU0xO/TuOI8xmY1gRAbTVU2JJalUd9cI99fX1Xe?=
- =?us-ascii?Q?WsSdXK5oA3hZAH5V/73XddckLamYjD2/NTgydyeRqGzFE5j2bol+2C4Tq5CT?=
- =?us-ascii?Q?DVwtJuTgleFzJTntBXL4SR75t4+ht/moQAsO75812Sty6WCjQjb7AN/766/R?=
- =?us-ascii?Q?p3yI69ENGK/WH3uiSpqgP9TIHZ6Zd9VnSPmpICcvILXrCjDYaqRASJq5tbyV?=
- =?us-ascii?Q?Yw6rPDEcR6jG3C9W2Vl18M88iS9KgLEFwYgOPXiSHTj6scQOQF/8ZXW8wSBQ?=
- =?us-ascii?Q?AsydEG4CYtul9KK0VtVTSydZDFT77DvJLRqxMofkPk8xpho8CFYOQZuiIMzj?=
- =?us-ascii?Q?X7XQuA6dLJ8cYD81ikcnvpOVT5n+TVl9VVPB/k4AbnMJN9TNQ1MdUZOJS+xp?=
- =?us-ascii?Q?Okf7RP9yrXPTQR/wPpA+Wpf3Kw7LA2zL2II98brzRxGynMdBanIwhZsibNSp?=
- =?us-ascii?Q?W/H1sxt1Lp7eqq7ezK16v2bjy9jB4O6/Rth8hhnSQmmV2zIGtXNC72qjk2Je?=
- =?us-ascii?Q?FydXcsz7vorwqS442EtbSWkKtK2W80H5i+X1T0NVyPJbwJkqDSUbJ4GKb1iW?=
- =?us-ascii?Q?FNslB2a2O8NcCB0vWSA21pBTS+67AU70cf4EqwPppNB7ysbdU9JP/ltj7OTZ?=
- =?us-ascii?Q?+yR/AwHuAMVPsSsk0elOMSNTmmpU+C2F3I1gIhms6CTCmPB65d7pTYGcTvqX?=
- =?us-ascii?Q?Y/bjQyIEaavzjCEsckpM9Eg/28Dzvdis?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6n+8d1RdfeQdIJQG3i8I86sga1QeYgVZbz1SkA6KEZKO4bcgtXj2vUYDeLIb?=
- =?us-ascii?Q?xVqtENQThqQx1Jxd7sIALOZDfxPZ8AYZdf5UmD78rAULQ2txIdAXctTcQQvF?=
- =?us-ascii?Q?kkJ43qQBmrO1BgR/NuLqVNbeadhs20cFrUQubARIL4T5BwPJMI/fj8VemeAo?=
- =?us-ascii?Q?jgC67TY/1odQqMn+cEek/02hI0kssw8Sb0UJ1mUx0xKDS7xjA7CSIxw494wH?=
- =?us-ascii?Q?MPRw3dfDTL88BybsavSVqrtQZJ1QVsvhozeadOSB8/EyaUQ5c/oOmRFJG40N?=
- =?us-ascii?Q?gNrdNXnR6tapC9SepBFJYxi1WrLDaC/sq02kWjbUHX7tCF+A3g2ePtK99UaP?=
- =?us-ascii?Q?4IJLBQmgzh5KR3yHoP7sG9tHgGzHsZ4DpQZvjboX58PMFtfEqrf6tTs/A5F7?=
- =?us-ascii?Q?EY+N/YwbnldItJFijDvIcWmaw4kU8cLES7zcFq6k2kcqxRG59feYzyaVp/mm?=
- =?us-ascii?Q?o7AUVo4wCzOPTG59AiDXLsP3jBcV4KCuUkKLUodnMKIeIsX/pXvwCzPcCcdR?=
- =?us-ascii?Q?P2Hz7GixRSuPDlJPvFqox8oRA9MJMGBPTjMszdx9+dy5CaNi++/X7Jy6U3oN?=
- =?us-ascii?Q?l8RPQMiE1yU9hFMH95fGrOb8pprparXUYfykxVQWk71pjIXO3L7WQUJwC3Ee?=
- =?us-ascii?Q?bmujD7g8hPBfB32Twf6Jv75i1dhZhCg/Y7Ooh6GOJLAIdhKHLX1/MFhoKi6g?=
- =?us-ascii?Q?Hz3fP54xOhZiLnWHQAgcy1lBknxYzoKGHck7jfOa6dmeAajFX15THcN5oBfc?=
- =?us-ascii?Q?0wT8Dqn9nUirBfd6RFbtpcdeZexbgI8iPDWel2ocBs/UTewxB6Qgi9De/lSs?=
- =?us-ascii?Q?k2Rup7tUNnFt6UxVPr+VhuZn/qAZRJ6/dhc/HKRUSD/8kZdEv00euZhEgwKO?=
- =?us-ascii?Q?tPhRtuj/0PzPoFrLE1iFOlvZVnYSjqkA7MVLeD84+oo7TFAXrjqfrz6rh5nz?=
- =?us-ascii?Q?9K0fnqVVgrsFkjzmXJ6Djp8TZFtTtvySPcpHgFVXT/ghBkM6Tqy9l+k2PbAz?=
- =?us-ascii?Q?l175ssFrsRxUZZbHSXVWBDRam3XVnEgDSXu9mebdLh7gQFm116afCYfQ32jx?=
- =?us-ascii?Q?42OW6tR8J3fGXKDMjqXn98uz63A2r32oHkKFfpZVwhmBIldot2RkEia0NxBL?=
- =?us-ascii?Q?Cfgzgj+1Mw8LaRzf21HWBHYFEtinn6bU/uPnM+MqoItKsWWus/Ko4bcaQ4P6?=
- =?us-ascii?Q?xb28uY8uVKWrUhZ52v81myDhH1TXZtDpebpeLlRc/hhSJH0GAYYUdhVtB7GE?=
- =?us-ascii?Q?3sCQ0tbnWbIOqrofv+8qyao1pZFP6WsDyFgarNooRSwvgXm8eZ2bpri50VQm?=
- =?us-ascii?Q?0Hng0TegbXTv+XcCLJO+/eeF7EqLF+BhnPdxBvQhSL5D+zcbTaNAyqkqjDMT?=
- =?us-ascii?Q?sSb7WRQPJ4i4k6xRdOm4U1U8Cun6gLkJiZ+DgUgbqclBjwOrwRXpRoeM4y5H?=
- =?us-ascii?Q?8gmY0JOpWQKO5DyQsbNP2hmrIqDPn+hw0ifBnTgGGLWQqjp82yr9cc9MsNXR?=
- =?us-ascii?Q?/1d5IqEheidvp2uqHjHl9WN6AOYYHYVafV3q4VRNZCVyacpl6W3P9eRZnWC1?=
- =?us-ascii?Q?fkYZCDyTuPopfUvy0PPRnO5EDA1l7MkAUm7dK8Ys?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5971c59c-5b9e-4ae4-6b5f-08de0cfa9948
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 21:25:58.8163
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ll0u94U7jHFsHUu/tljJLS08k905c4gBA3LiJe5dFV7zxcA+Qfho//JL1cb5ERLDIXoqsrB0jrckilWMwpxEbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9082
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000
+ PLIC
+To: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Charles Mirabile <cmirabil@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vivian Wang <dramforever@live.com>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Zhang Xincheng <zhangxincheng@ultrarisc.com>
+References: <20251016084301.27670-1-lzampier@redhat.com>
+ <20251016084301.27670-4-lzampier@redhat.com>
+Content-Language: en-US
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20251016084301.27670-4-lzampier@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 16, 2025 at 09:46:48AM -0500, Jonathan Perry wrote:
-> Motivation: perf support enables measuring cache occupancy and memory 
-> bandwidth metrics on hrtimer (high resolution timer) interrupts via eBPF.
-> Compared with polling from userspace, hrtimer-based reads remove 
-> scheduling jitter and context switch overhead. Further, PMU reads can be 
-> parallel, since the PMU read path need not lock resctrl's rdtgroup_mutex.
-> Parallelization and reduced jitter enable more accurate snapshots of
-> cache occupancy and memory bandwidth. [1] has more details on the 
-> motivation and design.
+Hi Lucas, Charles,
 
-This parallel read without rdtgroup_mutex looks worrying.
+I just realized your last reply and sorry about the messy formatting.
+Please disregard the previous one from me and use this one.
 
-The h/w counters have limited width (24-bits on older Intel CPUs,
-32-bits on AMD and Intel >= Icelake). So resctrl takes the raw
-value and in get_corrected_val() figures the increment since the
-previous read of the MSR to figure out how much to add to the
-running per-RMID count of "chunks".
+On 10/16/25 01:42, Lucas Zampieri wrote:
+> From: Charles Mirabile <cmirabil@redhat.com>
+> 
+> Add a new compatible for the plic found in UltraRISC DP1000 with a quirk to
+> work around a known hardware bug with IRQ claiming in the UR-CP100 cores.
+> 
+> When claiming an interrupt on UR-CP100 cores, all other interrupts must be
+> disabled before the claim register is accessed to prevent incorrect
+> handling of the interrupt. This is a hardware bug in the CP100 core
+> implementation, not specific to the DP1000 SoC.
+> 
+> When the PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM flag is present, a specialized
+> handler (plic_handle_irq_cp100) saves the enable state of all interrupts,
+> disables all interrupts except for the first pending one before reading the
+> claim register, and then restores the interrupts before further processing of
+> the claimed interrupt continues.
+> 
+> The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
+> SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
+> This has no impact on other platforms.
+> 
+> Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
+> Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
+> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+> Acked-by: Samuel Holland <samuel.holland@sifive.com>
+> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
+> ---
+>   drivers/irqchip/irq-sifive-plic.c | 94 ++++++++++++++++++++++++++++++-
+>   1 file changed, 93 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index bf69a4802b71..0428e9f3423d 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -49,6 +49,8 @@
+>   #define CONTEXT_ENABLE_BASE		0x2000
+>   #define     CONTEXT_ENABLE_SIZE		0x80
+>   
+> +#define PENDING_BASE                    0x1000
+> +
+>   /*
+>    * Each hart context has a set of control registers associated with it.  Right
+>    * now there's only two: a source priority threshold over which the hart will
+> @@ -63,6 +65,7 @@
+>   #define	PLIC_ENABLE_THRESHOLD		0
+>   
+>   #define PLIC_QUIRK_EDGE_INTERRUPT	0
+> +#define PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM	1
+>   
+>   struct plic_priv {
+>   	struct fwnode_handle *fwnode;
+> @@ -394,6 +397,89 @@ static void plic_handle_irq(struct irq_desc *desc)
+>   	chained_irq_exit(chip, desc);
+>   }
+>   
+> +static bool cp100_isolate_pending_irq(int nr_irq_groups, u32 ie[],
+> +				       void __iomem *pending,
+> +				       void __iomem *enable)
+> +{
+> +	u32 pending_irqs = 0;
+> +	int i, j;
+> +
+> +	/* Look for first pending interrupt */
+> +	for (i = 0; i < nr_irq_groups; i++) {
+> +		pending_irqs = ie[i] & readl_relaxed(pending + i * sizeof(u32));
+> +		if (pending_irqs)
+> +			break;
 
-That's all inherently full of races. If perf does this at the
-same time that resctrl does, then things will be corrupted
-sooner or later.
+No need to start from group 0. Only readl on the group with ie[i] != 0
 
-You might fix it with a per-RMID spinlock in "struct arch_mbm_state"?
+> +	}
+> +
+> +	if (!pending_irqs)
+> +		return false;
+> +
+> +	/* Disable all interrupts but the first pending one */
+> +	for (j = 0; j < nr_irq_groups; j++) {
+> +		u32 new_mask = 0;
+> +
+> +		if (j == i) {
+> +			/* Extract mask with lowest set bit */
+> +			new_mask = (pending_irqs & -pending_irqs);
+> +		}
+> +
+> +		writel_relaxed(new_mask, enable + j * sizeof(u32));
 
--Tony
+
+There's no need to write the register if the value isn't changing. You can
+check new_mask with the value in ie[].
+
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
+> +					void __iomem *claim)
+> +{
+> +	int nr_irq_groups = DIV_ROUND_UP(handler->priv->nr_irqs, 32);
+> +	void __iomem *pending = handler->priv->regs + PENDING_BASE;
+> +	void __iomem *enable = handler->enable_base;
+> +	irq_hw_number_t hwirq = 0;
+> +	int i;
+> +
+> +	guard(raw_spinlock)(&handler->enable_lock);
+> +
+> +	/* Save current interrupt enable state */
+> +	for (i = 0; i < nr_irq_groups; i++)
+> +		handler->enable_save[i] = readl_relaxed(enable + i * sizeof(u32));
+
+
+I see that you start to use handler->enable_save to track HW in the last reply.
+I'm about to suggest that. Please send out a new patch, so people can properly
+review it. There's change to common code path.
+
+> +
+> +	if (!cp100_isolate_pending_irq(nr_irq_groups, handler->enable_save, pending, enable))
+> +		return 0;
+> +
+> +	hwirq = readl(claim);
+
+Possibly missing a io barrier. readl isn't going to enforce the ordering of
+readl/writel_relaxed above and itself. There could be other barriers missing.
+Please check.
+
+> +
+> +	/* Restore previous state */
+> +	for (i = 0; i < nr_irq_groups; i++)
+> +		writel_relaxed(handler->enable_save[i], enable + i * sizeof(u32));
+> +
+> +	return hwirq;
+> +}
+> +
+> +static void plic_handle_irq_cp100(struct irq_desc *desc)
+> +{
+> +	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	void __iomem *claim = handler->hart_base + CONTEXT_CLAIM;
+> +	irq_hw_number_t hwirq;
+> +
+> +	WARN_ON_ONCE(!handler->present);
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	while ((hwirq = cp100_get_hwirq(handler, claim))) {
+> +		int err = generic_handle_domain_irq(handler->priv->irqdomain, hwirq);
+> +
+> +		if (unlikely(err)) {
+> +			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
+> +					    handler->priv->fwnode, hwirq);
+> +		}
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+>   static void plic_set_threshold(struct plic_handler *handler, u32 threshold)
+>   {
+>   	/* priority must be > threshold to trigger an interrupt */
+> @@ -430,6 +516,8 @@ static const struct of_device_id plic_match[] = {
+>   	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>   	{ .compatible = "thead,c900-plic",
+>   	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+> +	{ .compatible = "ultrarisc,cp100-plic",
+> +	  .data = (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
+>   	{}
+>   };
+>   
+> @@ -664,12 +752,16 @@ static int plic_probe(struct fwnode_handle *fwnode)
+>   		}
+>   
+>   		if (global_setup) {
+> +			void (*handler_fn)(struct irq_desc *) = plic_handle_irq;
+> +
+> +			if (test_bit(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM, &handler->priv->plic_quirks))
+> +				handler_fn = plic_handle_irq_cp100;
+> +
+>   			/* Find parent domain and register chained handler */
+>   			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
+>   			if (domain)
+>   				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
+>   			if (plic_parent_irq)
+> -				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
+> +				irq_set_chained_handler(plic_parent_irq, handler_fn);
+>   
+>   			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
+>   					  "irqchip/sifive/plic:starting",
+
+My rationale of the above comments is to achieve minimal overhead with this
+"read pending[] -> disable IE[] -> claim -> enable IE[]" approach. In general,
+the fewer interrupts enabled on a hart, the lower the overhead. If there's only
+1 interrupt enabled for a give hart, then there's zero reading/writing of IE[],
+and you can further optimize away the reading of pending register.
+
+I'd imagine that if the user truly want to avoid the overhead of this quirk,
+they can chose to spread out the irq groups onto different harts to alleviate
+the slow down, or better isolate a single irq to a given hart, and we should
+make it possible.
+
+Feel free to point out any of my misunderstandings.
+
+Bo
 
