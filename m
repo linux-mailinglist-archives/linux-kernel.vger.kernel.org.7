@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-856916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411A0BE5708
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:47:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29214BE5711
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42711A62D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A839F1A665B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A640D2DE6F4;
-	Thu, 16 Oct 2025 20:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AE32DC793;
+	Thu, 16 Oct 2025 20:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4NYKUR/"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAsYphbZ"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8B02580FF
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102D22DC78D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760647633; cv=none; b=mHpzneldjaRGX4pNOWxnK7c8exHAhpWYFl88ORiFZzmAn4jmRcsEjQSxebvHyARpIz1293fp3ql0SkqAHCambK783uYKh81Cu6vZ1oS8ZKVp/e3hnvcp5mjNhbDQjOlogwuzajVwf+0NaEhEddqHV2icYy9hRSSlJ/zwQHxJki4=
+	t=1760647677; cv=none; b=tLkqPD/VJEEkKHRFozODKsos0revs9tLrdxylt2/lQ7djyY3HulOL2bd23456r3grNgIKIVP1tHWtVmfFpuYa9+keOmA+VrHZGVIotI3s1mUv3TL8VhEOqkgSUvB8oWck63S6ZCEeybWroGFJ4GBeOXpXROXC3IOKBgNN37o5/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760647633; c=relaxed/simple;
-	bh=SZ3VwLpPvbuumhkSyMRDao9a+3CAOTAOynz06g6NFLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CWQYYCb3eiFl/UIY2R5iylpFv45ibOJ/hUnkewRf/xGpuqQ9sVmWVkeqGu10jPXtcxO94fLMWs8QD2zQOQjFtRru5V8jM84iyKauQjR9HBLac7GiZz/ogKM7G5X3AYDB+QKmwfaQ7ZJWVkSurOvFuyUQEw8FTZBJmYFItkTTeOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4NYKUR/; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1760647677; c=relaxed/simple;
+	bh=ndgdnL4NvZXc2YXbgp6JkfbQHOsj4MuJcCkc5VpFe/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cy2YXW9r6DtRjO7YZeGXxD+/AnVhK/RbdorqqoBISaxQ3gM/6M2BOLRlWwf7BWkM01hUIP8fDTb1Tp+egnPShjwJuP5DjmQrayXOc3GIkyLhalBd3QUqAmUDGQSc68OnpW6VWhJX+6426qZIWZtL1b8f5UylNzEQ8GYidt0wyvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAsYphbZ; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee12807d97so1133918f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:47:11 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-339d53f4960so1241665a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760647629; x=1761252429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1BaWBVzmCroQjkChpezmuVIfaDJZO7tG78XkiTqoyPc=;
-        b=h4NYKUR/4Q9vWnwuxD+5+w49snMsDRmfn+rZ2Puawcycpgk2nT+8ZB3JzdNovYDvA1
-         gveCcNwopuLdkjbfWRPKXg/rUhZRaERBVtUijmV8iDjXpmg5FMPuoiytmZHbpu3uyO9B
-         kJ1mwFuQPb/rgFCNMMCNp+UlWDHx+gsleA1PRNbUk7JfC7X+uFqCvRQCB+tNiqMnfIrh
-         RwbriaHcdAnJJagdmPxu6knf5BIw3cvlrT7gBY7STOwcMe0f2YOXzCrRnwKTl5KfQAuR
-         fv69ePRCeNhqaJT93qrgUCNPFIJ9JTFw9kYzbgRqDceT5BtYLOsl9hLv+sgQ5+jwgSCL
-         Io4A==
+        d=gmail.com; s=20230601; t=1760647675; x=1761252475; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=onqj4CjIVJRLh43lyfVP55yMWDw9oV4qH8HlU6gjd2U=;
+        b=UAsYphbZ4MRTWb6nOF2oYdTwBM7kMjqt3H5KRekV1snBYxE/SwbQfN7wge5KyO/PY8
+         83gMgfYuD5ePzwm5dnfRiOovj2f2xMJvBK/nVrcXkk1I9HPIZKOhy4XgxDRYedCwaqSY
+         Qt3W+raQA6SFeD8aFEDciCGljFlf9QrF+yuRtUeH8CH3qHO/72boG3SGgxrsPywOz+VB
+         tqZ2p9vNZd5epbHdlQJa9zg7dlOtszigehn3JHyezeBbljes4hCBUUZ7C/V6gt6yOCN3
+         c90pGCgVX1V+XpQy5s0rVkPoKp+lj1FaBxwjqeblBwmC+mtMPQokFNb3wcWc/26D+N56
+         +0qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760647629; x=1761252429;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760647675; x=1761252475;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1BaWBVzmCroQjkChpezmuVIfaDJZO7tG78XkiTqoyPc=;
-        b=WmZ5jx7ON9G4AmJ+6rsnWxqoOyJAgGf9lG2grXsoeuRp+ePkekzyXBNS7bVs0fc+OB
-         jOvOEHdVnnSoU63LxzQJBkSlqxU2UGXTXgHdC2zyTC+kvB4tNFvAnxKi16+wfOmeGHgj
-         lUSipehpRmE3FJjK7A6Y1zGH7Tq0p1xcK7MAGF52Nz5G+weM6/rSO3Qrfwr1+j9HKPCF
-         fjnyOJKJ5Voy2pHpF2dbWBJc921RKW9ciAvkoKQyqWmcFPpTX/3k5OvTnokm+SAI74dN
-         G4zVlTeMfgAfeIuOYz4dI/YV2SObVKXtlI+dzqyG7fN5lip1CnauLoVhpLs9NeBTLOUY
-         tDEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUigIfjDWvFb97/5qewSnJOfb32pYVu/f+8cnQL4qKSe5l9t7rHL8+FiWksweifk5AcCkZeNeKwSO/gvyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdN7uESnKkVQTJON1qH/+SKV+UfKO/GxW4nbzkrZhyxk8SVJu0
-	90m7+t3gqlP7IEaTyOmsit5KERd0PacQzmG+fW5cpKPPIYwtyv08gwVI
-X-Gm-Gg: ASbGnct0YsQvqsY1dVxQJM9E16edRwryzGOOgXBS2mpSeeJt0zhcvPaA789R8JB2u4Y
-	HwPWMaREdhTB37gH279Us/xJF6DRjZUDM3l4x9oX7ucsMzjCYz+QILCCIwrhJZgU2f5WrcPixvu
-	n7mp8MmKa9yK2VDdV7OonIzjsU8Rtkor9r8JkDk4/ZZFBG8Qg+EUcI6jIC1PGCxpwEsmMMGw1BW
-	PKv7XobAWHP78e7evNBJSRlK5+Hb6euRKkdG4YGNgPwo2S5BvURotNn5s4vKh16X8dhHfFLKfcs
-	oZoSAGK0IUWK+WTzgDC+6OYMcz1exNOnxbNYm/coxN21PZ4D+Rt0Wcvgu/hPl6hayx8KffYZP7x
-	uNduaTP+gf9uwDkPExZh9S8LpaeDyD6uqyr8K8DI90keLwDaJM4YPtbkZV+/r+P+ssdj/Nsbct2
-	T85D93txIM/EhobXp1MF2OUJ+Op8w6aGwS0302iEMGT48uADsusdLbOryFOJt1O2Y=
-X-Google-Smtp-Source: AGHT+IGDOna4lVF1hUlbzkP+Y7qxbh38Qj418e9wBhFyw8Fwh1BtEEEnac13VNZybKlLGFbX+xrsaQ==
-X-Received: by 2002:a05:6000:25ee:b0:427:697:c2db with SMTP id ffacd0b85a97d-4270697c302mr24980f8f.20.1760647629344;
-        Thu, 16 Oct 2025 13:47:09 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711441f975sm45547375e9.4.2025.10.16.13.47.09
+        bh=onqj4CjIVJRLh43lyfVP55yMWDw9oV4qH8HlU6gjd2U=;
+        b=NdeiSQwhAsubQPFYmqKqJw8X87DaM+X9tGGTGTDB4m4HKT6n/4vFhodF1kDONyScWT
+         oIET91lCSspTPqqKTiekKphRslbnE/7BjdsDDIOoK45etNTyN8UBZsFuOxrQgrfPqrov
+         61Wwv8JAXJeu+VD4UNviE7f+s97zgvbbD3rELGKHo1p/jfxsXyn7B4fP2tu2Yt3U9KZu
+         WmxeuTVJX+CFfxwWHT0h81QYzsJdUe2cYdhZ8qwGFTyU+WMEb2IFnW2M1+cJqSapsVN3
+         zc25mXKT7ya2PFHK6TM/QrVEmlW5bB8e+xM8M95hcsvxI3rr/u897LMGkDrWgVyL3ypx
+         o76g==
+X-Forwarded-Encrypted: i=1; AJvYcCUt6tG3MdDgh0pJPAdJDte6cw1V0FEUavJ8O/8ozVJLJsSPIPSLvHfYmCX8u+o9hkn1mX9b/Qfp/DR+Alk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2skhHAOCB3UPxoc2zI7p7OQbpISVfrvNGYTn2UI8y6PU6dcSM
+	OqWTWFsNHJSqkezZlHpeSSUyG6mQN4bGGM2j6u194LE56XHmQg++wcRl
+X-Gm-Gg: ASbGncv1VAVxdCKzBcIFWGV/U1VOuyEVCY6pTZZ3EImSNNvJny0RvhVFz9BToNIZ4kW
+	79TaO/BBr9opejXGf/1NT4FjEOFMiGqSG6Tnyckgg009BjCNFxjJ8+AYZjQa2PiA616yj6hMYpb
+	GeUn3c7AQaBf6iM00eDTcXSy/FLoi3YtT1NlXuX2BjSO7qp9p4oKw2bMUWR4LogdBaAglm179e5
+	PbcJFyFtjOH4FvO9QG8biHfGIOHgG7Lw5yku63Xp6w/ZBKumdQmdbnI9t/3qV2ZnOb/7yXkXFeg
+	v/gqNGsfHufOsaQ/PnP8PUUcm6frxBZOTxIA9785IBjDB4WVhkXstt0gnA8hjVqEtcrxPxpAmIR
+	4j3eD3lf5mwrbwKZA39WVY2u2tN+/qirej+HTXq+afbbhM9sede1vymtn4cxR0Zk56NU/TPGv6n
+	BKSCPzLYViRqWY
+X-Google-Smtp-Source: AGHT+IH4G3cPfsZSOD6swv+Nr/r1bSZCKg8w/Ox7KOwwd15eIqRctEk/RfdSNTo8Nh6NWlqwEHC1PQ==
+X-Received: by 2002:a17:90b:4b0f:b0:32e:8c14:5cd2 with SMTP id 98e67ed59e1d1-33bcf8faac8mr1245917a91.28.1760647675393;
+        Thu, 16 Oct 2025 13:47:55 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a22bb5b8fsm3746596a12.37.2025.10.16.13.47.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 13:47:09 -0700 (PDT)
-Date: Thu, 16 Oct 2025 21:47:07 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Kevin Locke <kevin@kevinlocke.name>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
- Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: fix == bashism in kernel-chktaint
-Message-ID: <20251016214707.5c3d373b@pumpkin>
-In-Reply-To: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
-References: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Thu, 16 Oct 2025 13:47:54 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 16 Oct 2025 13:47:52 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ankan Biswas <spyjetfayed@gmail.com>
+Cc: jdelvare@suse.com, corbet@lwn.net, skhan@linuxfoundation.org,
+	khalid@kernel.org, david.hunter.linux@gmail.com,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] docs/hwmon: Fix broken links warnings in lm90.rst
+Message-ID: <dff61b90-31fc-4c96-9bc7-0f8aa8404689@roeck-us.net>
+References: <20251016103049.2573-1-spyjetfayed@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016103049.2573-1-spyjetfayed@gmail.com>
 
-On Sat, 11 Oct 2025 15:04:26 -0600
-Kevin Locke <kevin@kevinlocke.name> wrote:
-
-> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
-> at least one argument may produce error messages such as the following
-> (produced by [dash] with argument 1024):
+On Thu, Oct 16, 2025 at 04:00:47PM +0530, Ankan Biswas wrote:
+> This patch fixes warnings in Documentation/hwmon/lm90.rst reported when
+> running 'make linkcheckdocs'.
 > 
->     ./kernel-chktaint: 22: [: 1024x: unexpected operator
->     ./kernel-chktaint: 22: [: 1024x: unexpected operator
+> On 2011-09-23 National Semiconductors became part of Texas Instruments
+> and national.com is no longer accessible. The datasheet resources for
+> the chips are now available at Texas Instruments website and have been
+> updated for lm90.
 > 
-> This occurs because the == operator is not specified for [test in POSIX]
-> and is not supported by all shells, as noted by shellcheck [SC3014].
+> In 2021, Maxim Integrated was acquired by Analog Devices and maxim-ic.com
+> redirects to analog.com. The chip datasheets are now available at
+> Analog Devices and have been updated accordingly.
 > 
-> To fix the issue and avoid the error message, replace == with =.
+> Some additional broken or unavailable links have been replaced with
+> equivalents hosted by DigiKey.
 > 
-> [dash]: https://git.kernel.org/pub/scm/utils/dash/dash.git
-> [test in POSIX]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
-> [SC3014]: https://www.shellcheck.net/wiki/SC3014
-> 
-> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
-> ---
->  tools/debugging/kernel-chktaint | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
-> index e7da0909d0970..051608a63d9f1 100755
-> --- a/tools/debugging/kernel-chktaint
-> +++ b/tools/debugging/kernel-chktaint
-> @@ -19,7 +19,7 @@ EOF
->  }
->  
->  if [ "$1"x != "x" ]; then
-> -	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
-> +	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
+> Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
 
-Ugg - one of the reasons for adding an x is to stop the string being treated as
-an operator - but you need to to add at the front, not the end.
-You don't need one to avoid an empty string - the quotes to that.
+Applied.
 
-Although, IIRC, the posix standard requires the 3-operand expressions
-be evaluated 'as expected' even if the first is (say) "-n".
-ISTR that the 5-operand [ a = b -o c = d ] is also required to be parsed.
-But, in any case, you can do:
-	if [ "x$1" = x--help -o "x$1" = x-h ]; then
-
-  David
-
-
->  		usage
->  		exit 1
->  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
-
+Thanks,
+Guenter
 
