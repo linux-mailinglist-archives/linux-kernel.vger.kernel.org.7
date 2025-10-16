@@ -1,148 +1,202 @@
-Return-Path: <linux-kernel+bounces-855787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92EEBE24FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F48ABE2514
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 948054F9736
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33FD43BF030
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265B23161AD;
-	Thu, 16 Oct 2025 09:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93763164AF;
+	Thu, 16 Oct 2025 09:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Snl+kGbU"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BF/BJoL9"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5911929C323
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9258231159C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760605933; cv=none; b=YsT5OUxqD88Iki74hybEBbbDUwrC2RTwov/rlnjil+s9TKO3VGG11DAgxV9NSRDl3roGBpdrunfRv+mDcfMgdIiahi66YWkQGkflNVm/2XWxl10wLgTIldjgpLIhIumSrL+8/mWHebYcCwsFZvs6clSPsLjvwlKmZUQ7S3Ay6FA=
+	t=1760605979; cv=none; b=p8utrzu/oWusxwP8cD0CFpLBqNeTv8aplEfuP5UkpJjsyIsRmwGTQpOpYOq00GpptginQn0+rcLnN/q49WI1Z3VbeqnOTy/DGMUMh5+qbAXSQsjxwuKR+MYXic/JlrEKC+2GkqRGqzrAhUiYgn/Js3kW3Y9B9EZg5LADKCODh10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760605933; c=relaxed/simple;
-	bh=76/qTp2LLY7E/n5OGiql3qCuNp8iwug83W1yS/8TCQ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=S7kd+6E8RVNunaPjwBML1qVZ/AosWt9EoXJ1N2bKnGu7yA1bTPDUEICwBr9FasLjIGUyNmoqUthQ7x8Y+tX/S0ebf8ThS2IMp6rNvw7TmCtupyGaP4CuWDY2zJjUNXsmELECLY38tegECJI72DjjkDZgmkOia6mENfYr0xUnXS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Snl+kGbU; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760605928; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=fgeHUBnnzn4F0XCj9WH4FTp3VMCD901IrDDVgd7Moos=;
-	b=Snl+kGbUrO5YQeWS29XK8USkMp0cRBiOJnktoTDqiQagezzPzH+eja3Fkwhm81TIwrPvHXWpBVJZ3GCNsjJ4RJaEsKm2FYYQ5RvUUyS/sACmQaOFv7N3cTvBJQwCfQJJ+GGlwmnmVFpDH9jsHoKGWZSIm/Ifo93IKxoD0dIASV8=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WqJqvSn_1760605925 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 16 Oct 2025 17:12:06 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>,  Catalin Marinas
- <catalin.marinas@arm.com>,  Will Deacon <will@kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Vlastimil Babka <vbabka@suse.cz>,  Zi Yan
- <ziy@nvidia.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,  Ryan
- Roberts <ryan.roberts@arm.com>,  Yang Shi <yang@os.amperecomputing.com>,
-  "Christoph Lameter (Ampere)" <cl@gentwo.org>,  Dev Jain
- <dev.jain@arm.com>,  Barry Song <baohua@kernel.org>,  Anshuman Khandual
- <anshuman.khandual@arm.com>,  Yicong Yang <yangyicong@hisilicon.com>,
-  Kefeng Wang <wangkefeng.wang@huawei.com>,  Kevin Brodsky
- <kevin.brodsky@arm.com>,  Yin Fengwei <fengwei_yin@linux.alibaba.com>,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org
-Subject: Re: [PATCH -v2 1/2] mm: add spurious fault fixing support for huge pmd
-In-Reply-To: <3fc642be-b8f3-4fcb-b13c-3359cd52e921@lucifer.local> (Lorenzo
-	Stoakes's message of "Thu, 16 Oct 2025 09:25:12 +0100")
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
-	<20251013092038.6963-2-ying.huang@linux.alibaba.com>
-	<4c453dcc-2837-4f1a-905b-3462270f5e31@lucifer.local>
-	<87ldlcpnbx.fsf@DESKTOP-5N7EMDA>
-	<d748bc6b-2aff-4cee-a233-008f4d2555fa@lucifer.local>
-	<87bjm7lh4u.fsf@DESKTOP-5N7EMDA>
-	<3fc642be-b8f3-4fcb-b13c-3359cd52e921@lucifer.local>
-Date: Thu, 16 Oct 2025 17:12:04 +0800
-Message-ID: <87o6q7i523.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760605979; c=relaxed/simple;
+	bh=GGEUW6KOaLX1UlGivWjcTY6fgAcKRSv+ggwdMcd5xFI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=jRdPgrpwRXVrULNLu+sv7ERQ/UGIXjawMZPw7euQCg7FicZZCdGR90BNpwW8Zcc3R3RgzqaTQo+TmU8QVy/UnhPezqxMoUMAFinhGWIWo78EdG/BMhpicV/f3Mfq0Gzog2Xs4Cy6B28q8OMGAINa2C+FMs9RT6jPgZAOCv1wZg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BF/BJoL9; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-36f13d00674so373947fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760605976; x=1761210776; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dy4LI72X5M+MuvyXzIBRU1PdeSk9XBJhqjZ4dH7N3+A=;
+        b=BF/BJoL9ITXW6cVnPD3uV97iH6V9onQfOpRCBVlXiZzU4vFZAoNwTM0vIbxPZ5+jJQ
+         pH6rpL+NFItGZ62xLy60v+0an4xUeHMWWC3ORt0olIYt6tQ2zy+5OHLlphz477CIlldv
+         qGcX11c6rFlvybJ/T4JT5WcpUgZkemJDPMochyNsrIp5gdLSi2WqhuUwD7P9hkoKPj7E
+         D26CwZ5bJ8zpP8aH3lmrzf1cKsKlvZCEKUHSLXjB+u1GnDYxJONOZ4gWfYRN1+nzqHgr
+         ACIoLEdM6g7Q/Pnjvo+qiomSJJ5glYu044ZD84TwbtuG6bevWatGHRpBm+7fR9OiNvRk
+         +pPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760605976; x=1761210776;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dy4LI72X5M+MuvyXzIBRU1PdeSk9XBJhqjZ4dH7N3+A=;
+        b=f0+Kbc2otxNXUT6Zh2DRi/pQ/ScO3wPxfjUnZLZyB/rFtZAOmk/AZ69cXd02vwEOri
+         b4pvRXs+UtR8yxC5gPuh2OCegjW/81v7fZHoQmbwi7fH++yEKrSS82gOdkCxPKgEQ5Hd
+         vMl3lKDMpqcVUph1GM8WJ2Bf9ApYPGFnuxBRDFt+ZfVMt/ZFbB3ImjuJNdGyVA8MOkfP
+         7U6HHMvaAYe6btTNecoQxnfgDYHMYrowa5lhocqqiYeE2lQm/XOZ2PTye+mNqQeNvWF6
+         Gf380Ybqc+eyKjBfxEebKUh7T67usy5r7zMAxTm8CyAtvbNvBhwuXpDYAGPzgug33bhL
+         aGLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPwad0n0oOrBVK5ULR3sqVaMGfR2/rgo+AFLX16LBmJ1TOW3uFidIw5xDo4DSOLGrbHVMB8ZNKwjf/haI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0DhpORjLGlRSSAi3dTsPzjFWoy0jHl1kShzD45IQm5zbGoVVG
+	wtQo2LYXGP7AxdsWPVmSn942TeeJcDrF0wRq1dGDAO02yvFpydeJU4OdkLBSPnDxuNnig21WYl6
+	tuUO+yetlBL4GtNfzZ6m2XTDuwacpL/n4ViGS
+X-Gm-Gg: ASbGncsyoEgMH9nqPCLzA72rPqyEn+2H9N3qjIy85sHdbKoyOML30Zr3C9Vh2yE6nfp
+	XgexPosuDoYknsi/UzRQ4YnajYRhC/1Gll85sLrtgOD/BJqYYfhzM/HF1RsaSqDFwtvOKf1vEM2
+	30qGoOEQBvqet5nkzYJhRlvshMhuxjQBkQxwc6FYVexMKCHBPLc1HLodlZh8jRQ9eaWqsGv2Us3
+	Nd4knZkPixBu+6NJ/kihfeRJzdKyR2/hDA5PpF3rQpgvnyRv7rgAjr0z0UlYDDQrZjbelEQUwzg
+	ajSe9KQDJyVQbJf5zSDuW7EL2w==
+X-Google-Smtp-Source: AGHT+IHfYpaDwbZicHiKXMwiEdTDiYPjCUL8oMAPlA3iukvSjByLOjP1KViIlQWUfEfwTsqBbfQbhxijoyuuRP6KxVI=
+X-Received: by 2002:a05:6870:4688:b0:395:b63a:520a with SMTP id
+ 586e51a60fabf-3c0f6d3d4e5mr15094463fac.22.1760605976500; Thu, 16 Oct 2025
+ 02:12:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 16 Oct 2025 17:12:20 +0800
+X-Gm-Features: AS18NWDBnnTJr-RaCzpBeJW6Pe-tjeTQo9kyzhNbqEpulebVD7iGbdjXceFntUE
+Message-ID: <CAAfSe-uGLQ5fC31BggZ73P1vp5YckvntOy5CH_MGD3S+cp_TtQ@mail.gmail.com>
+Subject: Impact of RISC-V C Extension on Linux Kernel Size
+To: linux-riscv@lists.infradead.org, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
+Hi,
 
-> On Thu, Oct 16, 2025 at 10:22:57AM +0800, Huang, Ying wrote:
->> Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
->>
->> > On Wed, Oct 15, 2025 at 04:43:14PM +0800, Huang, Ying wrote:
->> > OK this is great, let's put it all in the kdoc for the new shared spurious
->> > faulting function! :) and additionally add it to the commit message.
->>
->> Sure.  Will do it in the next version.
->
-> Thanks!
->
->>
->> [snip]
->>
->> >> >>
->> >> >> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->> >> >> index 32e8457ad535..341622ec80e4 100644
->> >> >> --- a/include/linux/pgtable.h
->> >> >> +++ b/include/linux/pgtable.h
->> >> >> @@ -1232,6 +1232,10 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
->> >> >>  #define flush_tlb_fix_spurious_fault(vma, address, ptep) flush_tlb_page(vma, address)
->> >> >>  #endif
->> >> >>
->> >> >> +#ifndef flush_tlb_fix_spurious_fault_pmd
->> >> >> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, ptep) do { } while (0)
->> >> >> +#endif
->> >> >
->> >> > flush_tlb_fix_spurious_fault(), when the arch doesn't declare it, defaults to
->> >> > flush_tlb_page() - why do we just do nothing in this case here?
->> >>
->> >> Because all architectures do nothing for the spurious PMD page fault
->> >> fixing until the [2/2] of this series.  Where, we make it necessary to
->> >> flush the local TLB for spurious PMD page fault fixing on arm64
->> >> architecture.
->> >>
->> >> If we follow the design of flush_tlb_fix_spurious_fault(), we need to
->> >> change all architecture implementation to do nothing in this patch to
->> >> keep the current behavior.  I don't think that it's a good idea.  Do
->> >> you agree?
->> >
->> > Yeah probably we should keep the same behaviour as before, which is
->> > obviously, prior to this series, we did nothing.
->> >
->> > I guess in the PTE case we _always_ want to flush the TLB, whereas in the
->> > PMD case we otherwise don't have any need to at the point at which the
->> > spurious flush is performed.
->> >
->> > But from your explanation above re: the stale TLB entry this _only_ needs
->> > to be done for architectures which might encounter this problem rather than
->> > needing a TLB flush in general.
->> >
->> > Given we're generalising the code and one case always flushes the TLB and
->> > the other doesn't maybe it's worth putting a comment in the generalised
->> > function mentioning this?
->>
->> I'm not sure whether it's a good idea to document architecture behaviors
->> in the general code.  The behavior may be changed architecture by
->> architecture in the future.
->
-> Right, but we are unconditionaly doing a TLB flush in the PTE case but not PMD
-> so let's document that to be clear :)
+I was recently asked how much the RISC-V C extensions can shrink the
+Linux kernel size. I looked it up online and could only roughly
+predict a 25% reduction in theory. But I couldn't find more specific
+data on the Linux kernel program. So I compiled a few kernel images
+with or without RISC-V C extension and would like to share the data
+and analysis. Maybe someone will also be interested.
 
-Sure.  Will do this.
+The kernel version is v6.18-rc1, toolchain is
+riscv64-glibc-ubuntu-22.04-gcc-nightly-2025.09.28-nightly.
 
->>
->> [snip]
+Compile with C extension is the default, so to disable C extension on
+riscv64, I hacked two Makefiles like below:
 
----
-Best Regards,
-Huang, Ying
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index ecf2fcce2d92..e51810608695 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -61,7 +61,6 @@ endif
+ riscv-march-$(CONFIG_ARCH_RV32I)       := rv32ima
+ riscv-march-$(CONFIG_ARCH_RV64I)       := rv64ima
+ riscv-march-$(CONFIG_FPU)              := $(riscv-march-y)fd
+-riscv-march-$(CONFIG_RISCV_ISA_C)      := $(riscv-march-y)c
+ riscv-march-$(CONFIG_RISCV_ISA_V)      := $(riscv-march-y)v
+
+ ifneq ($(CONFIG_RISCV_ISA_C),y)
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index f60fce69b725..0c93c397fed0 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -46,6 +46,7 @@ endif
+ always-$(KBUILD_BUILTIN) += vmlinux.lds
+
+ obj-y  += head.o
++AFLAGS_head.o  += -march=rv64gc
+ obj-y  += soc.o
+ obj-$(CONFIG_RISCV_ALTERNATIVE) += alternative.o
+ obj-y  += cpu.o
+
+
+First with C extension (default):
+
+    $ make defconfig
+    $ time make vmlinux -j32
+       real 4m27.219s
+       user 57m28.761s
+       sys 5m19.494s
+    $ size vmlinux
+        text     data     bss       dec      hex  filename
+    13294359  6288266  423589  20006214  1314546  vmlinux
+
+Without C extension:
+
+    $ make clean
+    $ time make vmlinux -j32
+       real 4m34.450s
+       user 58m52.848s
+       sys 5m25.042s
+    $ size vmlinux
+        text     data     bss       dec      hex  filename
+    17728589  6288586  423589  24440764  174efbc  vmlinux
+
+Build time for both is close, and we can get 25% and 18% for text
+section and vmlinux size reduction respectively with C extension
+support.
+
+I also get performance test results with perf on Pioneer Board, which
+is running kernel 6.6.111,
+
+With C extension,
+
+Performance counter stats for 'netperf' (3 runs):
+
+          9,966.81 msec task-clock                       #    0.995
+CPUs utilized               ( +-  0.04% )
+               780      context-switches                 #   78.260
+/sec                        ( +-  1.74% )
+                35      cpu-migrations                   #    3.512
+/sec                        ( +-  3.30% )
+               121      page-faults                      #   12.140
+/sec                        ( +-  5.86% )
+    19,924,390,238      cycles                           #    1.999
+GHz                         ( +-  0.04% )
+     7,681,821,013      instructions                     #    0.39
+insn per cycle              ( +-  0.88% )
+                 0      branches                         #    0.000
+/sec
+                 0      branch-misses
+
+          10.01376 +- 0.00290 seconds time elapsed  ( +-  0.03% )
+
+Without C extension,
+
+Performance counter stats for 'netperf' (3 runs):
+
+          9,967.98 msec task-clock                       #    0.995
+CPUs utilized               ( +-  0.02% )
+               772      context-switches                 #   77.448
+/sec                        ( +-  1.78% )
+                33      cpu-migrations                   #    3.311
+/sec                        ( +-  4.63% )
+               126      page-faults                      #   12.640
+/sec                        ( +-  2.12% )
+    19,925,181,546      cycles                           #    1.999
+GHz                         ( +-  0.02% )
+     6,639,648,698      instructions                     #    0.33
+insn per cycle              ( +-  0.96% )
+                 0      branches                         #    0.000
+/sec
+                 0      branch-misses
+
+          10.01589 +- 0.00309 seconds time elapsed  ( +-  0.03% )
+
+IPC from 0.33 (without C) to 0.39 (with C), IPC is improved by 18%.
+
+Thanks,
+Chunyan
 
