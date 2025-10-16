@@ -1,194 +1,178 @@
-Return-Path: <linux-kernel+bounces-855428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD36ABE12FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F58BE1305
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD0E34E3D0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614F63B84C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCA11A314B;
-	Thu, 16 Oct 2025 01:50:04 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826F1E51EB;
+	Thu, 16 Oct 2025 01:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnucBwCJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAA31624D5
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCA31A256E;
+	Thu, 16 Oct 2025 01:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760579404; cv=none; b=qXBaVxfgVbuAQktwcK3zD9kYS5LsBPMuXT5+wwSs18tEnUCvniZb8xaP9f98/Rpq5wmSPsAReFmGrLq33DFDH33jkFqREC8t03Jal5CKmGuKNGowBnxfaGtuiN93wjItvLL8UnosQwgpiDaL1rpR2sLh7ZXwxOZ7QyQ4VgUpTUI=
+	t=1760579503; cv=none; b=o9V+ZBEfMRJnXBibTb+tp1hZE61sxiQ98HWtPaz0YrS93//Xf5zBXhU0KjeJXZOhZaIVgpWFVnS6PTe59EmUNk8RRes3vnMHMERYGBunh9szIYIxPRpFLVVu5EywW/MQU4Hc2+oaPHx+IqetD8Fu8LTI4CRjOg5Vgs0zcvqdxsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760579404; c=relaxed/simple;
-	bh=smR6v+ff/r0coSvOcaPEQ0oDal1iOPDs8EprmE7tLI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bYZzl0oaWhAA27vjep9LCXF6HPtABz2gwZrNQ3oQP4RLJ8CWZDAuIFXg7H86hx2SRxdMi9CrqPtnf2+5JD03avC74nll4TF9GOYSoPAf4IzvNww1zv9ua6RxL2ZFmhkYxDbR2omDZSgn80RSFTDAibE3jbGLjJ7CyuM3LaTsqA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip3t1760579391tb10b6e15
-X-QQ-Originating-IP: yqCawthjtTuw90dLvCzQouxE5b7tCEkQY6aMY/TtTzg=
-Received: from [IPV6:240f:10b:7440:1:8198:2f89 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 16 Oct 2025 09:49:45 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7959665287398781306
-Message-ID: <AE0735A6C797CCFF+10496d73-7c0a-4884-9561-24721305a24f@radxa.com>
-Date: Thu, 16 Oct 2025 10:49:44 +0900
+	s=arc-20240116; t=1760579503; c=relaxed/simple;
+	bh=S8oBMhKAT6w97NZObBqNnSz/L32t2Ezjd0QEjrghIng=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JUPgeaB/V1jnSwINkNlFqYKXc2o2pB4+DJYMmZjthFLuwMsHFrird6whXQvugaec8u6avD5O1n8rdQWOT2Gs6ettz4sZ1mcjD8KWIkhiKxPigFetvNxErdR24OqnP9FATqunJ0pY6QOxigm8u16PWmVTXDGNBvBtv+kOse1ziQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnucBwCJ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760579502; x=1792115502;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=S8oBMhKAT6w97NZObBqNnSz/L32t2Ezjd0QEjrghIng=;
+  b=fnucBwCJPva4JkQh1lrEwemnywDoJGB5MWsxW0T5bODQuzpiSdW2KwiD
+   bkapTWU1+Nb62k3Qv+Fjydd7L75k+ZPHccs7ZibJDK1Ti/3BRZ8qQ/iai
+   eGWZXZ/22OhYKkryapCuI7cL8b/CPAtZulkvEGh+0buDuIvqKaT/+BaPv
+   6ZmwY1lz6L5X/Png9jtCJBFDhW2h//TRR0l8oIe+4YZE3qtf3pa6WPs9x
+   Bh/Zo4vg2BfS0yKcibPcBi1iYU0rStN/rtL3+Jx1dbxXGZ1vKw1O1W9kn
+   0FOr4mKgcBPuoB5eYRQcR2D1C88K4QaFV7tRUbKLiuIHx5Dt1ZI+B4K++
+   Q==;
+X-CSE-ConnectionGUID: jJ/c+6oxSlaD29D+X35+0g==
+X-CSE-MsgGUID: VE/ZnBrOQ+apAqkZZzIgZg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="85382908"
+X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
+   d="scan'208";a="85382908"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 18:51:41 -0700
+X-CSE-ConnectionGUID: Cs0DyJWsTja9Kx5uhBTxKg==
+X-CSE-MsgGUID: BhTi85ymSZ+ditOBoVoZww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
+   d="scan'208";a="213279849"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO desk) ([10.124.223.20])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 18:51:40 -0700
+Date: Wed, 15 Oct 2025 18:51:39 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: [PATCH v2 0/3] VMSCAPE optimization for BHI variant
+Message-ID: <20251015-vmscape-bhb-v2-0-91cbdd9c3a96@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAA1P8GgC/1WNPQ+CMBRF/wp5syVt5SN10rg4OrgZBqCv8hIop
+ MUGQ/jvNjg5nntzz13BoyP0cEpWcBjI02gjyEMCbVfbFzLSkUFymXMlChYG39YTsqZrmC51Vih
+ VlkYaiIvJoaFltz3hfnlcb1DFuCM/j+6zfwSxlz+dzP50QTDOdJ0Lw1GoY6bPPdn3kpKdsU/bc
+ YBq27Yv+8BEgrMAAAA=
+X-Change-ID: 20250916-vmscape-bhb-d7d469977f2f
+X-Mailer: b4 0.14.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] Add Radxa CM5 module and IO board dts
-To: Joseph Kogut <joseph.kogut@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jimmy Hon <honyuenkwun@gmail.com>, Steve deRosier <derosier@cal-sierra.com>,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
- <57969F385B5AF318+653dac83-8227-4987-84c6-f3e08b10085c@radxa.com>
- <CAMWSM7iHtAxewW4JkRqRsifVnccqeFviaCgeOyprKDr92FOurg@mail.gmail.com>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <CAMWSM7iHtAxewW4JkRqRsifVnccqeFviaCgeOyprKDr92FOurg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OSjQccS6YHkH6Tny5937SKGZBr7mu+FWh9K9Eiz1QB4Hvs0VpyoaKNbY
-	+dT8pkCV/D8MG5OYlqM2QGgEdoMIber7EoW/py52twUw8QyFA60LUB8jYBseSAc+b9IRTr0
-	N5jXbdkUcHdHArB6d3jqCNhyZnMRTUB4XNeihlvHxE3/hWhhXHeDCJLw8DOMSfmd6AeNLXP
-	rXUhKcIXAGQwFJyZZHChVoKneys56+PI7uz/iuGQspwyovesDxWV3jx4FEwqJYRrq+1VSGN
-	DjGPYl1UYdUU8eFakUHVO/gq0rfHfysE/juSndQyOk8eYL0R/ctdnfp/TRWdbWFmqeQ6PN3
-	2gdsbHwKpHHYAxWKuE/c6CcEFT2BBT6mSNOiQ2ENp2+CugfTpuyEFn/ZvEZ49mML+R1W4Tn
-	i4IT52btMfCt6cT5f+t8FZWTPXcI8ayscN5n05kyLmIiSoIOTErK5nYAUAk7V3jCMrT3Bi0
-	0DNG/3lKZP/sMc5b/vct+YtayfWLik75QCa4YL7kS2x+TJ8OtUJdaacwBPNLckAEZjXl8fQ
-	4/iI0qOAAMOBsML44K4ISXqZE8Sa6opzFr8cQHKAh9WDjab3vT5CwRReqfvroAH1CFZWhb0
-	KYl2ZU9t49G4HWPaSc8RqFKU4O/0Aunrj4N59MpxaPS4jS+t+iHVxR1Y9q0yRXejkWnS/hm
-	BIOQQoOH6UPJuVBEFSu6wiitYPRDM77pOB3htzRcV6Nn4IfmGakJBb5ejLBi7eG/Pmp/Ra2
-	VYhr2iB/PM2WMlOp9N0a0e9GNqNdHcVsmrKZnVBObQYbQZ/OqV85o0depY1yNl99sBEaVRA
-	vxWgBWtVaytUibTk6c4c4Y9wjRIWEOzX+STf6LcpBBK1tB+8xjNN60hho9I5wTr5F2257YI
-	kQuhTDz9ChXjRc0fpvNIFIW7XtadBpcqcXl5HqswUQsMgUd+O1g9oElzzOQWDYq1w8XdeOs
-	h0LIWl0aTO31pedj7FeTrqz87jWzFU6gsnoAcsIbAkDyMNny2dXn7OP0vddv7NwwUULoy0+
-	R3raLdzarDrzzmaEtXkJ236jMF7J5ZszA9eb1Vhw==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Joseph,
+v2:
+- Added check for IBPB feature in vmscape_select_mitigation(). (David)
+- s/vmscape=auto/vmscape=on/ (David)
+- Added patch to remove LFENCE from VMSCAPE BHB-clear sequence.
+- Rebased to v6.18-rc1.
 
-On 10/16/25 08:39, Joseph Kogut wrote:
-> Hello Naoki,
-> 
-> 
-> On Wed, Sep 3, 2025 at 1:28 AM FUKAUMI Naoki <naoki@radxa.com> wrote:
->>
->> Hi Joseph,
->>
->> I'm thinking of continuing your work, so if you've already done
->> something, please let me know.
->>
-> 
-> I've not followed up on this series yet, but I'm planning on picking
-> it back up this week. I'm happy to collaborate with you, do let me
-> know if you've made any progress or improvements, and thank you for
-> your review earlier.
+v1: https://lore.kernel.org/r/20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com
 
-I've already almost finished the work. Unfortunately, a problem(*1) 
-caused the work to stop for a few weeks, but the problem has been 
-resolved(*2), so I can continue working. I'll post a patch soon once 
-some minor tweaking and testing is complete.
+Hi All,
 
-By the way, at some point I switched from "continuing your work" to 
-"recreating a new one based on my current work." The results of my 
-current work(*3) have changed significantly.
+These patches aim to improve the performance of a recent mitigation for
+VMSCAPE[1] vulnerability. This improvement is relevant for BHI variant of
+VMSCAPE that affect Alder Lake and newer processors.
 
-*1 
-https://patchwork.kernel.org/project/linux-pci/patch/20250922-pci-dt-aspm-v2-1-2a65cf84e326@oss.qualcomm.com/#26603499
-*2 
-https://patchwork.kernel.org/project/linux-rockchip/patch/20251015123142.392274-2-cassel@kernel.org/
-*3 https://github.com/RadxaNaoki/u-boot/commits/radxa-cm5-io/
+The current mitigation approach uses IBPB on kvm-exit-to-userspace for all
+affected range of CPUs. This is an overkill for CPUs that are only affected
+by the BHI variant. On such CPUs clearing the branch history is sufficient
+for VMSCAPE, and also more apt as the underlying issue is due to poisoned
+branch history.
+
+Roadmap:
+
+- First patch introduces clear_bhb_long_loop() for processors with larger
+  branch history tables.
+- Second patch replaces IBPB on exit-to-userspace with branch history
+  clearing sequence.
+
+Below is the iPerf data for transfer between guest and host, comparing IBPB
+and BHB-clear mitigation. BHB-clear shows performance improvement over IBPB
+in most cases.
+
+Platform: Emerald Rapids
+Baseline: vmscape=off
+
+(pN = N parallel connections)
+
+| iPerf user-net | IBPB    | BHB Clear |
+|----------------|---------|-----------|
+| UDP 1-vCPU_p1  | -12.5%  |   1.3%    |
+| TCP 1-vCPU_p1  | -10.4%  |  -1.5%    |
+| TCP 1-vCPU_p1  | -7.5%   |  -3.0%    |
+| UDP 4-vCPU_p16 | -3.7%   |  -3.7%    |
+| TCP 4-vCPU_p4  | -2.9%   |  -1.4%    |
+| UDP 4-vCPU_p4  | -0.6%   |   0.0%    |
+| TCP 4-vCPU_p4  |  3.5%   |   0.0%    |
+
+| iPerf bridge-net | IBPB    | BHB Clear |
+|------------------|---------|-----------|
+| UDP 1-vCPU_p1    | -9.4%   |  -0.4%    |
+| TCP 1-vCPU_p1    | -3.9%   |  -0.5%    |
+| UDP 4-vCPU_p16   | -2.2%   |  -3.8%    |
+| TCP 4-vCPU_p4    | -1.0%   |  -1.0%    |
+| TCP 4-vCPU_p4    |  0.5%   |   0.5%    |
+| UDP 4-vCPU_p4    |  0.0%   |   0.9%    |
+| TCP 1-vCPU_p1    |  0.0%   |   0.9%    |
+
+| iPerf vhost-net | IBPB    | BHB Clear |
+|-----------------|---------|-----------|
+| UDP 1-vCPU_p1   | -4.3%   |   1.0%    |
+| TCP 1-vCPU_p1   | -3.8%   |  -0.5%    |
+| TCP 1-vCPU_p1   | -2.7%   |  -0.7%    |
+| UDP 4-vCPU_p16  | -0.7%   |  -2.2%    |
+| TCP 4-vCPU_p4   | -0.4%   |   0.8%    |
+| UDP 4-vCPU_p4   |  0.4%   |  -0.7%    |
+| TCP 4-vCPU_p4   |  0.0%   |   0.6%    |
+
+[1] https://comsec.ethz.ch/research/microarch/vmscape-exposing-and-exploiting-incomplete-branch-predictor-isolation-in-cloud-environments/
+
+---
+Pawan Gupta (3):
+      x86/bhi: Add BHB clearing for CPUs with larger branch history
+      x86/vmscape: Replace IBPB with branch history clear on exit to userspace
+      x86/vmscape: Remove LFENCE from BHB clearing long loop
+
+ Documentation/admin-guide/hw-vuln/vmscape.rst   |  8 ++++
+ Documentation/admin-guide/kernel-parameters.txt |  4 +-
+ arch/x86/entry/entry_64.S                       | 63 ++++++++++++++++++-------
+ arch/x86/include/asm/cpufeatures.h              |  1 +
+ arch/x86/include/asm/entry-common.h             | 12 +++--
+ arch/x86/include/asm/nospec-branch.h            |  5 +-
+ arch/x86/kernel/cpu/bugs.c                      | 53 +++++++++++++++------
+ arch/x86/kvm/x86.c                              |  5 +-
+ 8 files changed, 110 insertions(+), 41 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20250916-vmscape-bhb-d7d469977f2f
 
 Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
-> Best,
-> Joseph
-> 
->> Best regards,
->>
->> --
->> FUKAUMI Naoki
->> Radxa Computer (Shenzhen) Co., Ltd.
->>
->> On 6/18/25 07:11, Joseph Kogut wrote:
->>> This patch series adds initial device tree support for the Radxa CM5 SoM
->>> and accompanying IO board.
->>>
->>> V4 -> V5:
->>>     Patch (2/3), per Jimmy:
->>>     - Alias eMMC to mmc0
->>>     - Remove unused sdio alias
->>>     - Move gmac, hdmi0 nodes to carrier board dts
->>>
->>>     Patch (3/3), per Jimmy:
->>>     - Enable hdmi0_sound and i2s5_8ch
->>>     - Remove redundant enablement of sdhci
->>>     - Enable usb_host2_xhci
->>>
->>>     - Tested HDMI audio
->>>
->>> V3 -> V4:
->>>     - Fixed XHCI initialization bug by changing try-power-role from source
->>>       to sink
->>>
->>> V2 -> V3:
->>>     - Addressed YAML syntax error in dt binding (per Rob)
->>>     - Fixed whitespace issue in dts reported by checkpatch.pl
->>>     - Split base SoM and carrier board into separate patches
->>>     - Added further details about the SoM and carrier to the commit
->>>       messages
->>>
->>> V1 -> V2:
->>>     - Added copyright header and data sheet links
->>>     - Removed non-existent property
->>>     - Sorted alphabetically
->>>     - Removed errant whitespace
->>>     - Moved status to the end of each node
->>>     - Removed pinctrl-names property from leds (indicated by CHECK_DTBS)
->>>     - Removed delays from gmac with internal delay
->>>
->>> - Link to v4: https://lore.kernel.org/r/20250605-rk3588s-cm5-io-dts-upstream-v4-0-8445db5ca6b0@gmail.com
->>>
->>> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
->>> ---
->>> Joseph Kogut (3):
->>>         dt-bindings: arm: rockchip: Add Radxa CM5 IO board
->>>         arm64: dts: rockchip: Add rk3588 based Radxa CM5
->>>         arm64: dts: rockchip: Add support for CM5 IO carrier
->>>
->>>    .../devicetree/bindings/arm/rockchip.yaml          |   7 +
->>>    arch/arm64/boot/dts/rockchip/Makefile              |   1 +
->>>    .../boot/dts/rockchip/rk3588s-radxa-cm5-io.dts     | 486 +++++++++++++++++++++
->>>    .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 ++++++
->>>    4 files changed, 629 insertions(+)
->>> ---
->>> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
->>> change-id: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
->>>
->>> Best regards,
->>
-> 
+-- 
+Pawan
 
 
 
