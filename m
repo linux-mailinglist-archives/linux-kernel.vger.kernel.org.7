@@ -1,266 +1,147 @@
-Return-Path: <linux-kernel+bounces-857000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C80BE59D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC485BE59D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DBB1A66247
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374681A66305
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFE32E8884;
-	Thu, 16 Oct 2025 21:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB722E8DF5;
+	Thu, 16 Oct 2025 21:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kxsh1Hpt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UiEPN4T0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="reobcTYy"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9642E62BE;
-	Thu, 16 Oct 2025 21:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8492E8B73
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760651604; cv=none; b=G62cmjs5TQsMnsSA32IaivZbCEX47Mg5BfTCqMjjSWbxok9rCrLoXPcMOBTv3AkPtL6frMj7QJqGoBeGkLMY57RwFWHS5875ceeFD84CWNe962ePSUMG2gNXUPKvH50zZuQ/x59dAZhFYamX4jiQsynh/dNpkV1BsDKiW2VMcwk=
+	t=1760651607; cv=none; b=nlLF8fYkocGNx2tZcJXXUnREozswJWRmsSvgraBfBbcrB+R7yXr9VL1RqxkdYwnzDPVEXTFp+znRpOGMENldNPRwPqpFFeIeaufoIwQ8v8AACNqBfRTPStlMalxWWdz//i0EFyjVv7HEQQDC8JFyWbzcN+hwPOG/lCqKIGgR5b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760651604; c=relaxed/simple;
-	bh=4XfhsPe71HOvfoKLrFaRgtPRINsI4RfNulG53/xATy8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=J9HpJ4A3JT4WDk8KRm57Wtev4UwUYynuCvopMHL4BfZHOScoOOhFyIFY8vkk2QqDLAia61vOYm9907MPK/ITOSks3XhDhygJqjN9KllSYIbZ76by+Q9maQxN/pgclrFrfLG1SAhAxbFKJF6xXBJgznEztrX8k5HuAM27cB7Yev4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kxsh1Hpt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UiEPN4T0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 21:53:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760651601;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G3R1FWEUgQl4tJuXL7xEa/XFPiApTaFTleLxmgDbc7k=;
-	b=kxsh1HptOl23O7KxJ9QYd7qPIGOzU31haS5X3sy740Uui7iNAkYoCv9q3pLsO5/SKCgMQA
-	ESiPyizKkTYhVbrqc1hxfWSm3VYH73y2MMlJe59ZcD2d5wbj6FvOAgjKtBxvzUc6Dg1Zhr
-	U7EJYj5vGQbUsqSMoamHzyLZiyjkqPGZhnnH7b1JBnmQ8q/lOYHQ/42Hn4eR9hKMvmgmtz
-	2FBYFdvdAJYhk01fUZnApR87Z3QSvQlTmvxGy8VHnOrd5mZWPDfJ7DFwo2VmNohF7Ds9Yu
-	bEqXsB4yAzNxZJY3prn1NMZmdffadSHp5pGHquRIls2dDylkzuLs09XImycMgg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760651601;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G3R1FWEUgQl4tJuXL7xEa/XFPiApTaFTleLxmgDbc7k=;
-	b=UiEPN4T0DPn1sxvmEC9YRpy2cI79DvDJIOT+wHJZKCGHuy8u396PCterDXKk+5dEEJhw82
-	iEhr1UW1+XS0sQDQ==
-From: "tip-bot2 for Elena Reshetova" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/sgx] x86/sgx: Introduce functions to count the sgx_(vepc_)open()
-Cc: Sean Christopherson <seanjc@google.com>,
- Elena Reshetova <elena.reshetova@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Nataliia Bondarevska <bondarn@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251016131314.17153-2-elena.reshetova@intel.com>
-References: <20251016131314.17153-2-elena.reshetova@intel.com>
+	s=arc-20240116; t=1760651607; c=relaxed/simple;
+	bh=1YgxJ/4RLuaRvWUjGGZ2dNvhLcQPJpPPz0ZEw45IfPo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=fHmtxhNTwkFfo5O4xvaAkdOy6sx2I43BnLKPwkzC+K4VTXnTASQEBzsFg2mecyfcngwrQQtRammcMYSuNCGt+RBGtX6I5M3C16rKbcyX0I4JkXS6/mHTTdTP6Z/3PBtjWCWhA4TinD5ElbGYpGfNFyyLDgDBu44MGKJgGEdILWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=citrix.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=reobcTYy; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=citrix.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so10666535e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:53:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1760651604; x=1761256404; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1YgxJ/4RLuaRvWUjGGZ2dNvhLcQPJpPPz0ZEw45IfPo=;
+        b=reobcTYyKL3Y6aW0NtLf5O8YLHnXt64nhzbLgnGi+V8H7Xy3GNHrs4IxVpmI3uGtCA
+         IaX3Y0fijKoWxC0gj0hAAOrElOIYzEKSyF58Y/MDHmSa2XEtwfxrCOa5Y/do6GE7wyKJ
+         QkuA0bDTqvEWtN5jrY024bvMDFYcOKrfUe3JE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760651604; x=1761256404;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1YgxJ/4RLuaRvWUjGGZ2dNvhLcQPJpPPz0ZEw45IfPo=;
+        b=THNdG0ae+58QXFcr9JwZjXP04eyYKsyH9ed4e+KgP+8GjSpR4EwbLdbVwHQHkBrjgd
+         QdH35pCf8UnAg34uJHeyHJlcpIfpViGuiKhJd97lfyXJgr6qsnKOMnEpPpCsbG7yPgwq
+         RSE0Iaxs+wqCezJ90esV94tbr/YlTldzA3IQWMNW3COWbcilbPVY93KeiOiTmZbR8Ao4
+         9lePeryqMi4KakQ9/4ejOMk3ByEZvcpnwNU6jNVSsrnNHfaQFMBoztYyJgMKQ2UOG0gj
+         wWbpGgHgKhvDdTVzl7x6QNgfDwqCWp+UD4/E+wDHPH23GdX2U2PSL0eufF2aj12F3/85
+         gORA==
+X-Forwarded-Encrypted: i=1; AJvYcCV842Su64eWhPRJi/D4PDc9Kz4oVtWHsg5RfPp/KeMw9SlzJsMBUuL+h0Uu3xQLDLtw1vkEOHbzFUzbhXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJLgw5TE00r5Fh2QYpW6VOr6WNQmrW54kfsu8mvmeCGvAygspu
+	XHVDl7Pk2svoV6L6nTqHnDDaZnTnGPv6+Wfg0vzHzULiL7z3f9fBeVQHk9GJ3KrFVZg=
+X-Gm-Gg: ASbGncu6KL/cPp98Gjp8T9vh++hf7GGDx1VoyP5dQ/3bcecG873w5g4H5uSMCkCERdp
+	2cU9cbP74HmqZrNvfdBnV/7ySsgrHwtVrf0p4OejagCsQI0oVhODxMMulJ8UWYAyTdvy0vkCdFw
+	SjLtAeQs6sw/zu2R6vmrHH8ZyBNphihndio5zeLtHvsLWkxkty5q0q6SiHXnT0q4OCIo4OuXi21
+	kP+5IC5aps05BnwLufdxvWNdttK1vSFM6Yg2p9XhDYwmTsb4ontM93Y0MJR0JsxzRa+2aqMYsia
+	21+ITvgc8HgB2EuMUWDazfCskxnl07UNiXt+Mow2CLU8W04O8/D45f/sKA1T+haIJryPJGEJZYU
+	B6FNMA7gPuiCGSH/t4J/Q2mLG/pE0eenf+lVk02ZVNu1RqCLGDNu4kn/dmX+ireVc/P09tyx0PW
+	p9JIwgXHohzvzm9HaJXne0guqKeKwn0ylxxqq6ow==
+X-Google-Smtp-Source: AGHT+IGm2dRPq6DFvbxIS/F9QGIIpJHwmg54eEmLAjbdoN+VtjYoGMRz90eb1nFzrki2I7b38Wz+nw==
+X-Received: by 2002:a05:600c:8b66:b0:46e:428a:b4c7 with SMTP id 5b1f17b1804b1-471179120ccmr10476885e9.23.1760651604144;
+        Thu, 16 Oct 2025 14:53:24 -0700 (PDT)
+Received: from [192.168.1.183] (host-92-22-57-86.as13285.net. [92.22.57.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710f29da7fsm29002655e9.9.2025.10.16.14.53.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 14:53:23 -0700 (PDT)
+Message-ID: <e2924e3a-33a8-4fa7-8e08-bd0c3fc8e668@citrix.com>
+Date: Thu, 16 Oct 2025 22:53:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176065160002.709179.1846480163550291641.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: peterz@infradead.org
+Cc: David.Kaplan@amd.com, boris.ostrovsky@oracle.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, graf@amazon.com, hpa@zytor.com,
+ jpoimboe@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+ pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de, x86@kernel.org,
+ Andrew Cooper <amc96@srcf.net>
+References: <20251016185811.GH3289052@noisy.programming.kicks-ass.net>
+Subject: Re: [RFC PATCH 40/56] x86/alternative: Use sync_core_nmi_safe()
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20251016185811.GH3289052@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/sgx branch of tip:
+>> Ok. Btw, how long has Intel supported SERIALIZE?
+> I'm not sure.. its fairly new, so
 
-Commit-ID:     483fc19e9cb1256b6521266a3c62907f5912089a
-Gitweb:        https://git.kernel.org/tip/483fc19e9cb1256b6521266a3c62907f591=
-2089a
-Author:        Elena Reshetova <elena.reshetova@intel.com>
-AuthorDate:    Thu, 16 Oct 2025 16:11:04 +03:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Thu, 16 Oct 2025 14:42:08 -07:00
+Serialise was introduced in GLC/GMT, so AlderLake and Sapphire Rapids. 
+It's not even 4 years old.
 
-x86/sgx: Introduce functions to count the sgx_(vepc_)open()
-
-Currently, when SGX is compromised and the microcode update fix is applied,
-the machine needs to be rebooted to invalidate old SGX crypto-assets and
-make SGX be in an updated safe state. It's not friendly for the cloud.
-
-To avoid having to reboot, a new ENCLS[EUPDATESVN] is introduced to update
-SGX environment at runtime. This process needs to be done when there's no
-SGX users to make sure no compromised enclaves can survive from the update
-and allow the system to regenerate crypto-assets.
-
-For now there's no counter to track the active SGX users of host enclave
-and virtual EPC. Introduce such counter mechanism so that the EUPDATESVN
-can be done only when there's no SGX users.
-
-Define placeholder functions sgx_inc/dec_usage_count() that are used to
-increment and decrement such a counter. Also, wire the call sites for
-these functions. Encapsulate the current sgx_(vepc_)open() to
-__sgx_(vepc_)open() to make the new sgx_(vepc_)open() easy to read.
-
-The definition of the counter itself and the actual implementation of
-sgx_inc/dec_usage_count() functions come next.
-
-Note: The EUPDATESVN, which may fail, will be done in
-sgx_inc_usage_count(). Make it return 'int' to make subsequent patches
-which implement EUPDATESVN easier to review. For now it always returns
-success.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Tested-by: Nataliia Bondarevska <bondarn@google.com>
----
- arch/x86/kernel/cpu/sgx/driver.c | 19 ++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/encl.c   |  1 +
- arch/x86/kernel/cpu/sgx/main.c   | 10 ++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h    |  3 +++
- arch/x86/kernel/cpu/sgx/virt.c   | 20 +++++++++++++++++++-
- 5 files changed, 51 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/drive=
-r.c
-index 7f8d1e1..79d6020 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -14,7 +14,7 @@ u64 sgx_attributes_reserved_mask;
- u64 sgx_xfrm_reserved_mask =3D ~0x3;
- u32 sgx_misc_reserved_mask;
-=20
--static int sgx_open(struct inode *inode, struct file *file)
-+static int __sgx_open(struct inode *inode, struct file *file)
- {
- 	struct sgx_encl *encl;
- 	int ret;
-@@ -41,6 +41,23 @@ static int sgx_open(struct inode *inode, struct file *file)
- 	return 0;
- }
-=20
-+static int sgx_open(struct inode *inode, struct file *file)
-+{
-+	int ret;
-+
-+	ret =3D sgx_inc_usage_count();
-+	if (ret)
-+		return ret;
-+
-+	ret =3D __sgx_open(inode, file);
-+	if (ret) {
-+		sgx_dec_usage_count();
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int sgx_release(struct inode *inode, struct file *file)
- {
- 	struct sgx_encl *encl =3D file->private_data;
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 308dbba..cf149b9 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -765,6 +765,7 @@ void sgx_encl_release(struct kref *ref)
- 	WARN_ON_ONCE(encl->secs.epc_page);
-=20
- 	kfree(encl);
-+	sgx_dec_usage_count();
- }
-=20
- /*
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 2de01b3..3a5cbd1 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -917,6 +917,16 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
-=20
-+int sgx_inc_usage_count(void)
-+{
-+	return 0;
-+}
-+
-+void sgx_dec_usage_count(void)
-+{
-+	return;
-+}
-+
- static int __init sgx_init(void)
- {
- 	int ret;
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index d2dad21..f594039 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -102,6 +102,9 @@ static inline int __init sgx_vepc_init(void)
- }
- #endif
-=20
-+int sgx_inc_usage_count(void);
-+void sgx_dec_usage_count(void);
-+
- void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
-=20
- #endif /* _X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/virt.c b/arch/x86/kernel/cpu/sgx/virt.c
-index 7aaa365..b649c06 100644
---- a/arch/x86/kernel/cpu/sgx/virt.c
-+++ b/arch/x86/kernel/cpu/sgx/virt.c
-@@ -255,10 +255,11 @@ static int sgx_vepc_release(struct inode *inode, struct=
- file *file)
- 	xa_destroy(&vepc->page_array);
- 	kfree(vepc);
-=20
-+	sgx_dec_usage_count();
- 	return 0;
- }
-=20
--static int sgx_vepc_open(struct inode *inode, struct file *file)
-+static int __sgx_vepc_open(struct inode *inode, struct file *file)
- {
- 	struct sgx_vepc *vepc;
-=20
-@@ -273,6 +274,23 @@ static int sgx_vepc_open(struct inode *inode, struct fil=
-e *file)
- 	return 0;
- }
-=20
-+static int sgx_vepc_open(struct inode *inode, struct file *file)
-+{
-+	int ret;
-+
-+	ret =3D sgx_inc_usage_count();
-+	if (ret)
-+		return ret;
-+
-+	ret =3D  __sgx_vepc_open(inode, file);
-+	if (ret) {
-+		sgx_dec_usage_count();
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static long sgx_vepc_ioctl(struct file *file,
- 			   unsigned int cmd, unsigned long arg)
- {
+~Andrew
 
