@@ -1,92 +1,109 @@
-Return-Path: <linux-kernel+bounces-857016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB8BE5A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:20:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44082BE5A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E59C24E44D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:20:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CA8FE357051
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92E12DCBEB;
-	Thu, 16 Oct 2025 22:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3742580FF;
+	Thu, 16 Oct 2025 22:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkfRktec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W/qLemFU"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B6242D95;
-	Thu, 16 Oct 2025 22:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908B42D3725
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760653222; cv=none; b=G/RJxTDQzkKrPZjhK4iad+oHy9IAd23J8ohnLaFJ6NpXmh6t2Ka6VJ8sTEW0+pcLdFHdXXBhtxqy7wMmdIGYkfnzyC/dNuLA0tIJVFoQtFqcvCvggYZ1/9A/OR8C3TEMmXYdwM2VRbtljmlmGRkm/N+8BwKo9gSOL+ablVCsc9I=
+	t=1760653366; cv=none; b=J4oISmPOm8ftOEA0+aS8ujujd3Ew8rM1/hF/3BEJp63oOWzsFA5pbuMD2dFy1aNiGvqV/eI4VsVaqJVSdlKqSwErvfenhDvhhvA77jwxpFTOh8aZBjFoN2yZK4SKGq6BVvhVVOYy6xyjqCh1M3ZS/H+QVoB+1PaZd2rhKkkXq4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760653222; c=relaxed/simple;
-	bh=s5fu+uXQ5u4l/JEK8DPW0QEVlCFSvZTtTu+d2PH75Y8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KOVtaoMdgEQ3/sSrk8RBBXo74pdtSXPMxkxunmtha1Ph5HICxp2CCala62ehGpg/Rt6OwaIqt5glhlanQ6uUeoSsl2j+zmyO9QAeLyX+J9KFi998c58rBCihRhOISaSQ31ng4Xl+TwW4yJqE/2GRzsv4A9iew7O77YJIAGWHcWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkfRktec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3458C4CEF1;
-	Thu, 16 Oct 2025 22:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760653221;
-	bh=s5fu+uXQ5u4l/JEK8DPW0QEVlCFSvZTtTu+d2PH75Y8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XkfRktecNgkxb4dXMFpJAqAefTdY3oJ22/0buu0x2yKqn7zrbC+9wtLPTkZCNelhh
-	 55N2RoqHuXbOsf5IBGVczRbwlbhgz9TSXdWizFzcqvNlfRBhkiqeMQQgeG+06VrLNB
-	 SS1/sDijQw7LKBTX67RJZNCGIiGVUIdo61clMGpXOl6S65reNKXQ52F7IU+iELngV9
-	 LMTHejVgKKr6/UNyBuXQJC9kmQuUpFfQeumOgEPKNGNVwAuZVKvS9iY0yD12CTKFXf
-	 IvrfCzg/5JMHJiLeCzgTQZAtsLuF6gCm1Mjjny5pVRvqNmjp08h1mhqCi+Y8I5efrJ
-	 apcslkQ9ZYmVw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE0139D0C23;
-	Thu, 16 Oct 2025 22:20:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760653366; c=relaxed/simple;
+	bh=h/6P2i0cPvl1J3nh7FAXduqaTOGYo5LitTzF2sPHYB8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=p3+OoEhB0+RHDXduq3L41uqIYqOOzMJrwF7FrKgKHUJnOh9cXa8MDjMkZ/+fLfQxUDsqREjQwXNf1gc3v17kslJpkCiGg2G408zfrGZZXKON4LOjVdfjGa0e7gfTVfJK42PYZrMk7/G9chOUMPWMgRen/NKWm9et3psWC6KC4G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W/qLemFU; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-77f714293fdso18789017b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760653363; x=1761258163; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d5ZqdTnxovh0hUBVUFIGbIIEhwvnBK/idgJz2iuPnZY=;
+        b=W/qLemFUjMWMjZjcGG7VFeQ+Wx4NvFhHKjlIyRieFAtxdhPSttciO0iTWDYaKKzz5A
+         Gis1WDxsxYBpDnoIYeWEQkipJOD0X9IUJ6b2eGUMu9pTy1eWLIjZ8gMCpnNxC85SxbBR
+         4uXrxWsoLArgKqGisCSko7PaqEzHYPGAf/LZ8L2Kh+31B69efp6Ve6IwpbpgzZZ1Ife8
+         UahrcAItaRuCl5gG8ozfhcFvjM3F8MD/jxrDfwDPbMUuCp/Pd2x8j/TlyqY92PJwIirX
+         Fa2RynwWrng2J7IF90QqIfdPKL6YXcp7xoVqaL+wcEe81DwWwnnMuq2z8Tx8xa83Y6tr
+         rmPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760653363; x=1761258163;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d5ZqdTnxovh0hUBVUFIGbIIEhwvnBK/idgJz2iuPnZY=;
+        b=LKKnDU53PH0/+5xBnCeXwrNF0aBXZPKNRW85kITpMvWXQPEdRI5jaSrxPi8xAc/ejS
+         XnWRWEkZ1KwucToqpG4PxpHXBI4h0fMlB4dMYi/lfNBjphdNbiiaayZrQG+/JP1EqQC0
+         c84BYi9Dm+bbSC6YlbX5GCm00kKXkQS9lRblMwZ7S/pGl/+LJYrxp0WAtNLBaXU7QsJM
+         w+wlki85kdYivIMD0NK4IfT33p5fPhi8WFtgyCnYUqyEZEesiXtID5wu4q3hg82M5bsj
+         CSscYqarZXD87rfO8GTJuKc17T744/5jpVQuAAUsTzOE8UMeH0w8lG3mKrWFxYVEsC9J
+         bAYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMEoLCRvDMoWNPGPZu5KmR/fLi1sLj2kRXy08oFsSqh3q/XgHeHVtjaLI7XWer8lgaNT97M/KxUiKnc5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3wyOFjybipnm7Z0O36PP8kp2MOhPAOPXoawmyIKEfXpbdglgv
+	szf7iWpaUT20+oCmfsD2q2883mdt1gjhYfeGhRzTdZCJAlbuCK7t8zd8bvTMb6PI4XS7D6jh1yN
+	sRH1vK7hj/Q==
+X-Google-Smtp-Source: AGHT+IH7rIhiWtNcNSddMDz4ZQ6msPTZBWWqVy1DCILgFpuRoFpqJwboZJJvtLR58rz3R/egD1Wu4uXQsidx
+X-Received: from ywii19.prod.google.com ([2002:a05:690c:a053:b0:773:30c6:516b])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:6183:b0:780:f506:b1cb
+ with SMTP id 00721157ae682-7836d1c5a81mr15877807b3.16.1760653363607; Thu, 16
+ Oct 2025 15:22:43 -0700 (PDT)
+Date: Thu, 16 Oct 2025 15:22:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: usb: rtl8150: Fix frame padding
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176065320577.1926380.4043534150079861289.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Oct 2025 22:20:05 +0000
-References: <20251014203528.3f9783c4.michal.pecio@gmail.com>
-In-Reply-To: <20251014203528.3f9783c4.michal.pecio@gmail.com>
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: petkan@nucleusys.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-usb@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, horms@kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251016222228.2926870-1-irogers@google.com>
+Subject: [PATCH v1 1/3] perf ilist: Don't display deprecated events
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Howard Chu <howardchu95@gmail.com>, Gautam Menghani <gautam@linux.ibm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Unsupported legacy events are flagged as deprecated. Don't display
+these events in ilist as they won't open and there are over 1,000
+legacy cache events.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/python/ilist.py | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Tue, 14 Oct 2025 20:35:28 +0200 you wrote:
-> TX frames aren't padded and unknown memory is sent into the ether.
-> 
-> Theoretically, it isn't even guaranteed that the extra memory exists
-> and can be sent out, which could cause further problems. In practice,
-> I found that plenty of tailroom exists in the skb itself (in my test
-> with ping at least) and skb_padto() easily succeeds, so use it here.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v2] net: usb: rtl8150: Fix frame padding
-    https://git.kernel.org/netdev/net/c/75cea9860aa6
-
-You are awesome, thank you!
+diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
+index 9d6465c60df3..69005a88872e 100755
+--- a/tools/perf/python/ilist.py
++++ b/tools/perf/python/ilist.py
+@@ -439,6 +439,8 @@ class IListApp(App):
+                 pmu_node = pmus.add(pmu_name)
+                 try:
+                     for event in sorted(pmu.events(), key=lambda x: x["name"]):
++                        if "deprecated" in event:
++                            continue
+                         if "name" in event:
+                             e = event["name"].lower()
+                             if "alias" in event:
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0.858.gf9c4a03a3a-goog
 
 
