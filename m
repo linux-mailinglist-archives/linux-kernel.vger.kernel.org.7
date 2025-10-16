@@ -1,236 +1,143 @@
-Return-Path: <linux-kernel+bounces-856447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C03BE42DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:19:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF301BE42F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB17189C28D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:20:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 121295089E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901E03469FE;
-	Thu, 16 Oct 2025 15:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33D62D2499;
+	Thu, 16 Oct 2025 15:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eyMzW4rQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLp36Y8N"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9F44C9D;
-	Thu, 16 Oct 2025 15:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4442D374F
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627966; cv=none; b=h52LeK5v58PGthjz9SEvYI7YiTkhGdvoFqKgr+ZwCqQIenip0WqdCFNJ0GMxoNikkReE1bN+EUMc4Idmf4HgyLHq2FV8AkC3Tra6lvTf1p63Qr0UHr7l+7BRbdloBAu7YQ4uXGmvOvi34orQ5+gSD2UnAqUt3ojTKHdDEbQeqB8=
+	t=1760627982; cv=none; b=lCEXj/2Xs4LWOgTVMqrAa/SaBdH25tIl8fEWED/Ace8Z3iz/Qq/Gt3fQi+n4AKMQgyRF64vCFh/Y2n3eaZM9u6DZOpZGN5++4T9G8lcN0eFSwScJ2fnVJuH/vTGpH4AAZLqeKloYC4wMaUuxUbKgs40Oxjyd1HKqcoOQYO+bVi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627966; c=relaxed/simple;
-	bh=ati0KgDtCv8PEJWIbHhO/9CBCvu0ooHMQ92xaU79xmk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f9+xFlAfKZSP7ZMMm+EFlePaf5vNYoUqYvcvzOA/IoUsP1S/D9aO/ttNoS9wWy9OACzdE8PnJtMTypBRM2jDPoW+PXaIvqEwrL+BRNFPDnDjuFoDTbzo9TIk+gYtZS3jQnFmXmuSKUdRK+YUg9vLG75MrO5DyR9Qjqg7WnGSnAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eyMzW4rQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760627962;
-	bh=ati0KgDtCv8PEJWIbHhO/9CBCvu0ooHMQ92xaU79xmk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=eyMzW4rQLHVjAGqM0OkLEpY4VZFJWE3w9WApY6ZgKLoh+Q4yWD3UmKac5seip3q1G
-	 ZznepgwbmLiplpUFmhtGssykMO6LT53ekQB58MjzKaDZ0+IoIeU776UGgs+9iQ29lu
-	 rUDv5twJb29FF6pHWrGk+3H7VjxQ0PvD3OSbixH+vFLJniw72c5zLA24KKmVxGHtJv
-	 enz5u8ruG5zNpukj3DiwESj7b8UyWo/ot72UKR+f2svZEyWVU4/Nk9JzKsW5syUEnA
-	 rndPCpt6jorI5VXDLNZNIiyfv51L6idtB7ZudXXxUwtYiRImf5HIQvrnfWA/SZtrMY
-	 30i/81QAhXWzg==
-Received: from [IPv6:2606:6d00:17:ebd3::5ac] (unknown [IPv6:2606:6d00:17:ebd3::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E50C517E10C8;
-	Thu, 16 Oct 2025 17:19:19 +0200 (CEST)
-Message-ID: <f5956178a0e5d91dabc12e89f666eac2140f141e.camel@collabora.com>
-Subject: Re: [PATCH v4 4/8] media: mediatek: vcodec: Add core-only VP9
- decoding support for MT8189
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Kyrie Wu <kyrie.wu@mediatek.com>, Tiffany Lin
- <tiffany.lin@mediatek.com>,  Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger	
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Hans Verkuil
- <hverkuil@xs4all.nl>,  Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Sebastian Fricke <sebastian.fricke@collabora.com>, Nathan Hebert	
- <nhebert@chromium.org>, Arnd Bergmann <arnd@arndb.de>, Irui Wang	
- <irui.wang@mediatek.com>, George Sun <george.sun@mediatek.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
-	 <andrzejtp2010@gmail.com>
-Date: Thu, 16 Oct 2025 11:19:18 -0400
-In-Reply-To: <20251016060747.20648-5-kyrie.wu@mediatek.com>
-References: <20251016060747.20648-1-kyrie.wu@mediatek.com>
-	 <20251016060747.20648-5-kyrie.wu@mediatek.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-Rz6sMYc0nh24Zfb5X2O5"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760627982; c=relaxed/simple;
+	bh=bXZfrNMwK/JEBIJii72HKvh714OrPuqLNT0U44y47ys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MQWCLjkYs6WK2XIcY8ycF6mTFwnDZrSxGcPCVWpsZREUI85rzyRT57C6uRYqRtW4NpuxQwqN72VVh9mr4MeKBrI+f75h1lAzWdqCUxryR+NRngg6Su2J2ILCCpLHv3GhPr42gNV1vy7F/WOWbBLX2qISQMgHvqV75GAVwqv4+zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JLp36Y8N; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57992ba129eso1084192e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760627979; x=1761232779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xfE5Yv9GjpyVRnSQN/vkaNj6o8FU3n/+3ZZi8MZ8XTI=;
+        b=JLp36Y8NnYHdbv+nwmoaC5TGcott196FvpaWO5r+43l1bbfJ5eGakl+SmWfDbJ8E2O
+         fpEDZ06XwrGt7IKioD6YrSS/onE8lmaulHnVSQT/Dto1FmZlghoZFCxkK0LR3RcNNxDj
+         JWwRFYc5MbjawzpFT8Jamyyc88gS7syIbW+XdFw4mzFDGkNDkO8l0wwwRXDR7KsQaHyt
+         ADlLanX7T6YQVpAey7hCaGkZysWSeA1idnI+PlXgs9Vjgp2H3PK6MaoGOM7tFL3ZFhI5
+         zUj/otT83WWwIilwcpVtaI1xrpjpkotgHlNZxiOxKO2yctxGLSOkCje5P94dMUghnmBy
+         VkUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760627979; x=1761232779;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xfE5Yv9GjpyVRnSQN/vkaNj6o8FU3n/+3ZZi8MZ8XTI=;
+        b=udgREfULZb0nC32r8nV2/vHSo53pK14VDBf1rS6BqlLnRltclXk+XMArzQ2GRZbEXI
+         +cHr8piZN+0mRzykv17TevQIwVOWU+ISUrXwT/wIyGpgFmFFOz9BbBNQGoIQrj5j3q2A
+         Y9DNljcS/+uQ9z6pnWM6DEelmFIw75r5NtlF9Xl/o3yoE9Hdj3mCLXjcoINajsMruv4I
+         n8F2wNmip18JmxPZsNv3WmE2iEP5EH1RGMpRegvBi3FWaWwO+AAKtcVKxfnMIlAh4b9a
+         cqZUYSp+lRT2fHFgMTZ2VOQsZbdKAgZITiaL+iIxtREOYHUH9R0TzHmb8IDxoSuTewR+
+         +mBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGuxN7fDvX3kx8VvzfSoYnz+nuK+1VrK2Ol1gf368vHltJuBMUkMip2qdbkvbuyHEUc48InAWLG4IM9+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWALroV6fycTRIq6fyLzWZlJ0+floqgyRNdAdrxTTQfK7mdwQT
+	GjA49wjK+MPjqUpbrv8lgi9pJRnydBPP8pbWdxQHHK0nppzfdT+S9yFdyQbsGSPjWA0=
+X-Gm-Gg: ASbGncuU2GfWNr3CKsl70I8VyRynz0S/WN2saaS3fzzTYFAERjUuWWIwI8H/FRM830H
+	+1PDdBuy0tIe5idBqL1NKqrxAVXU7koVeY2XbD4UU9KPHeEIgkCUGxi9Ni51D2U3BRZQJqjtRhU
+	2qpoOEcl9YvfJBuRxoTCSK3PRH3awujAaujWO0jeC/z1BEWvJsRw7pSiPF8xW1T3EdQviagl5E3
+	1pUr8KuOTRpNqP1y0MnYBOCXaCLigFsjAMaERPFP0viXNliWW4W2Azb2dh0mAOeBvtc8ziOBFoU
+	9sH0GG5a18PGYCcWuao0SjkWZT6IR2r8nTcJOZp6QFBWpa3sTK7N4XDQ3jHcS4c0MdWx2mB/3nK
+	gsOxhNKXMVK/UjOzM238I4c8mde4hr4yM6P5iga1K2dVV/xGMUFdtVwcLZpNn+leiIc6Bf8L2Ml
+	6/pDflNWDpd4NeyKXRynx0fz/Cdhkcpcq7cUTamO+UWXWnDAQqUl+6YtKcoglYqC7OITAuSUE=
+X-Google-Smtp-Source: AGHT+IGJ/UeSvxa0sZ1dZIRgN6jHQ6/U9J7iOW7lWKiGpynUlxR2v6ZbJGaga2S8TYpFoWWTEX9NiA==
+X-Received: by 2002:a2e:9a14:0:b0:372:8d1d:6952 with SMTP id 38308e7fff4ca-37797986b26mr2274531fa.41.1760627979247;
+        Thu, 16 Oct 2025 08:19:39 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5908856397csm7150663e87.75.2025.10.16.08.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 08:19:38 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] PM: QoS: Introduce a CPU system-wakeup QoS limit for s2idle
+Date: Thu, 16 Oct 2025 17:19:20 +0200
+Message-ID: <20251016151929.75863-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+Changes in v2:
+	- Limit the new QoS to CPUs  and make some corresponding renaming of the
+	functions along with name of the device node for user space.
+	- Make sure we deal with the failure/error path correctly when there are
+	no state available for s2idle.
+	- Add documentation.
+
+Some platforms supports multiple low-power states for CPUs that can be used
+when entering system-wide suspend and s2idle in particular. Currently we are
+always selecting the deepest possible state for the CPUs, which can break the
+system-wakeup latency constraint that may be required for some use-cases.
+
+Therefore, this series suggests to introduce a new interface for user-space,
+allowing us to specify the CPU system-wakeup QoS limit. The QoS limit is then
+taken into account when selecting a suitable low-power state for s2idle.
+
+Kind regards
+Ulf Hansson
 
 
---=-Rz6sMYc0nh24Zfb5X2O5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ulf Hansson (4):
+  PM: QoS: Introduce a CPU system-wakeup QoS limit
+  pmdomain: Respect the CPU system-wakeup QoS limit during s2idle
+  sched: idle: Respect the CPU system-wakeup QoS limit for s2idle
+  Documentation: power/cpuidle: Document the CPU system-wakeup latency
+    QoS
 
-Hi,
+ Documentation/admin-guide/pm/cpuidle.rst |   7 ++
+ Documentation/power/pm_qos_interface.rst |   9 +-
+ drivers/cpuidle/cpuidle.c                |  12 +--
+ drivers/pmdomain/core.c                  |  10 ++-
+ drivers/pmdomain/governor.c              |  27 ++++++
+ include/linux/cpuidle.h                  |   6 +-
+ include/linux/pm_domain.h                |   1 +
+ include/linux/pm_qos.h                   |   5 ++
+ kernel/power/qos.c                       | 102 +++++++++++++++++++++++
+ kernel/sched/idle.c                      |  12 +--
+ 10 files changed, 173 insertions(+), 18 deletions(-)
 
-Le jeudi 16 octobre 2025 =C3=A0 14:07 +0800, Kyrie Wu a =C3=A9crit=C2=A0:
-> Implemented core-only VP9 decoding functions for MT8189.
+-- 
+2.43.0
 
-What does "core-only" means ? Did you mean single core ?
-
->=20
-> Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
-> ---
-> =C2=A0.../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 27 +++++++++++-----=
----
-> =C2=A01 file changed, 16 insertions(+), 11 deletions(-)
->=20
-> diff --git
-> a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if=
-.c
-> b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if=
-.c
-> index fa0f406f7726..04197164fb82 100644
-> ---
-> a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if=
-.c
-> +++
-> b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if=
-.c
-> @@ -23,6 +23,7 @@
-> =C2=A0
-> =C2=A0#define VP9_TILE_BUF_SIZE 4096
-> =C2=A0#define VP9_PROB_BUF_SIZE 2560
-> +#define VP9_PROB_BUF_4K_SIZE 3840
-> =C2=A0#define VP9_COUNTS_BUF_SIZE 16384
-> =C2=A0
-> =C2=A0#define HDR_FLAG(x) (!!((hdr)->flags & V4L2_VP9_FRAME_FLAG_##x))
-> @@ -616,7 +617,10 @@ static int vdec_vp9_slice_alloc_working_buffer(struc=
-t
-> vdec_vp9_slice_instance *i
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	if (!instance->prob.va) {
-> -		instance->prob.size =3D VP9_PROB_BUF_SIZE;
-> +		instance->prob.size =3D ((ctx->dev->chip_name =3D=3D
-> MTK_VDEC_MT8196) ||
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (ctx->dev->chip_name =3D=3D
-> MTK_VDEC_MT8189)) ?
-> +					VP9_PROB_BUF_4K_SIZE :
-> VP9_PROB_BUF_SIZE;
-
-I feel like this will keep growing, then you'll move to 8K and it will cont=
-inue.
-You already match every SoC in the driver, you should come up with SoC
-configuration data structure so you don't have to add doc check conditions =
-all
-over the place. This change is also not reflected in the commit message.
-
-> +
-> =C2=A0		if (mtk_vcodec_mem_alloc(ctx, &instance->prob))
-> =C2=A0			goto err;
-> =C2=A0	}
-> @@ -696,21 +700,22 @@ static int vdec_vp9_slice_tile_offset(int idx, int
-> mi_num, int tile_log2)
-> =C2=A0	return min(offset, mi_num);
-> =C2=A0}
-> =C2=A0
-> -static
-> -int vdec_vp9_slice_setup_single_from_src_to_dst(struct
-> vdec_vp9_slice_instance *instance)
-> +static int vdec_vp9_slice_setup_single_from_src_to_dst(struct
-> vdec_vp9_slice_instance *instance,
-> +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mtk_vcodec_mem
-> *bs,
-> +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct vdec_fb *fb)
-> =C2=A0{
-> -	struct vb2_v4l2_buffer *src;
-> -	struct vb2_v4l2_buffer *dst;
-> +	struct mtk_video_dec_buf *src_buf_info;
-> +	struct mtk_video_dec_buf *dst_buf_info;
-> =C2=A0
-> -	src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
-> -	if (!src)
-> +	src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_buffer);
-> +	if (!src_buf_info)
-> =C2=A0		return -EINVAL;
-> =C2=A0
-> -	dst =3D v4l2_m2m_next_dst_buf(instance->ctx->m2m_ctx);
-> -	if (!dst)
-> +	dst_buf_info =3D container_of(fb, struct mtk_video_dec_buf,
-> frame_buffer);
-> +	if (!dst_buf_info)
-> =C2=A0		return -EINVAL;
-> =C2=A0
-> -	v4l2_m2m_buf_copy_metadata(src, dst, true);
-> +	v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb, &dst_buf_info-
-> >m2m_buf.vb, true);
-> =C2=A0
-> =C2=A0	return 0;
-> =C2=A0}
-> @@ -1800,7 +1805,7 @@ static int vdec_vp9_slice_setup_single(struct
-> vdec_vp9_slice_instance *instance,
-> =C2=A0	struct vdec_vp9_slice_vsi *vsi =3D &pfc->vsi;
-> =C2=A0	int ret;
-> =C2=A0
-> -	ret =3D vdec_vp9_slice_setup_single_from_src_to_dst(instance);
-> +	ret =3D vdec_vp9_slice_setup_single_from_src_to_dst(instance, bs, fb);
-
-This entire change is not explained in the commit message at all. Explain w=
-hy
-this is needed, what difference it makes. There is no clear indication we a=
-re in
-an MT8189 code path, so this change could have a incidence on all single co=
-re
-SoC (if any).
-
-Nicolas
-
-> =C2=A0	if (ret)
-> =C2=A0		goto err;
-> =C2=A0
-
---=-Rz6sMYc0nh24Zfb5X2O5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaPEM9gAKCRDZQZRRKWBy
-9AB+AQCgeocVLaEndCMfX388SHPaflaLqJbYBY0d0ZHr7NpAOAEA7g9JD1WWMOrd
-Z+Pd5ov2tTNoe3q+1HvqeNDXlNyUOQs=
-=+EQ2
------END PGP SIGNATURE-----
-
---=-Rz6sMYc0nh24Zfb5X2O5--
 
