@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-855922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BABCBE29C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:03:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F422BE2A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 24260356BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:02:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7C4334BDDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C58B346A0A;
-	Thu, 16 Oct 2025 09:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567FD3332E6;
+	Thu, 16 Oct 2025 09:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pq9gR8cY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JdAPrI2f"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E/tBovmk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Lnu/4Sdf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AB8335BD7;
-	Thu, 16 Oct 2025 09:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A583376AD;
+	Thu, 16 Oct 2025 09:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608404; cv=none; b=Zu/XwkW4QKTAUKbwJBgxFLG81r186a65Es1EshJnmZEUVhV8yuijBtLNIaFRnG1Wt8nl95mN6JRqE/KfA3uaiAeXl0f7+MQXz2UnHri4I1fkMloW9kQgwj/HMC+hLmPPkQ5Q1U1K6qod5l+bHK/OmMud+X7qLlZtzE/a33+WsSQ=
+	t=1760608410; cv=none; b=kvld3KFTW2bCROaqNr/gzUwoLqzB+MpbgidFNypU5PfxxRJGn41z15r0M0l1slFST1LQk+aLIwJYQnR3511PgiAmFr35nY/eO7M66t9Of+6brR2eEg6wci7bm8zAVdTpHKSgrecO/uIcUVbixC72C19mCmNGVlyyvc/CO/mfRkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608404; c=relaxed/simple;
-	bh=CKC1sY1MWJmSwXmOkrVfkB2ylHA70aGcZd33LrrQRYQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=rYUvoH0e3NEf5z8jnrbxoX+bEM/jW1U7HlJTSLiXGGU+PFnOX/AY7iHWe0eA0RQP2sCExiw2miKjls/EBpyPEZlgZcQeebkqecGX2+3nhVWd/xnODg26YGyKjAAATn/uXzrNeT+sYtlXycb+KDmnSME0/708YV5SEhIi7wPMvFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pq9gR8cY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JdAPrI2f; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1760608410; c=relaxed/simple;
+	bh=3Nhm6Z9e56FttrvP6m3iIJIOtDgwNrbbtup/fd+Fk0E=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=RDfiO3WRe/9XKGt5O6bqM5w/TpiqPFvrY8/HCEcL2e/sooh9x2hSTn92mOZabSkLdVlwRRdJ4D8gigXNxvT3h/xtwGIa2x011vRCPhDdvz8d0XSLFKCleksRN0D2HwnWX5BZ07d2qn9bK06VmgbG0xs0fRzuL8eVS5ncFKuces8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E/tBovmk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Lnu/4Sdf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:53:10 -0000
+Date: Thu, 16 Oct 2025 09:53:15 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760608392;
+	s=2020; t=1760608397;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=EAUIC14diCyo3jvNgxJUEzDPFzkjGkHNB/E4PmK4+Vg=;
-	b=pq9gR8cYPjGtMWt5pw1sRa+0wKefd3iaENReeZMBpl4Kh+2Wrf6Cgsrd2ZCZAS2hOUlV5I
-	z9Z3TUjh9WZakVQW0qe59aDnlIrjBI42hR6z1+rYPj9HEvi+A+xhbj30s83d8JsTCGIY5u
-	zfaywJrydbuLyvqjDPEVndjYiysIR89C6v9wMY9E4/tBDy22/7e0GxGzX9KRyYkVwRPe8+
-	mOABPpVyDhJLbi7ZtrtAq3+SsTkF6sjiiyvlyuq9aZzjfkiQaLMxqtr5raDRRzY7Ig3JTT
-	w6EcuFyiXaR+zsbKqOLjVpX72OHzVbldXhkr2Lt7OU+w3+DLqrjlggi8uTrFGQ==
+	bh=mJgMDrsDBvHsncf54mdydrpL/AzM6376CYAzTwoTAW4=;
+	b=E/tBovmkR/LFmQoZ0IIpqF0OtB6AHIvD/x72OMD7gotxBnlbTcX3/g1y0CVArvvBOqdyZB
+	r2FfiUCZXgrL40GfUbHLa4bsNAyVWc6GaAHlqGOGYIZMdw6lScVUjcf7DS3wsky9sr7Vgr
+	Kv95X13NEX3dJLt7L1JaStB2/fIQ9FXqKzR2q1mNm1BQQ2GE5VfU25jKBGTOwRt7sSuL6X
+	TT2VqLrf1zNn1WoWErY4q7TNW/xq8v2THzFwqdVFjIqz2D5LfiZ4Z5sRxfLLRpvf5aRZIV
+	Ye/w649sVnVUzWqW/8Vw20TZ++raEmm19MNuFlWRb1Xpzua210DWhSDoTPjTXg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760608392;
+	s=2020e; t=1760608397;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=EAUIC14diCyo3jvNgxJUEzDPFzkjGkHNB/E4PmK4+Vg=;
-	b=JdAPrI2fWyegSeaaqVZZGxPVnubCoUgW8oVgkX93Rb1A6FdH/s5fT+SLfV7zhD1PE8AaPV
-	cMQ/sCxa6QEwOvCw==
+	bh=mJgMDrsDBvHsncf54mdydrpL/AzM6376CYAzTwoTAW4=;
+	b=Lnu/4Sdf1ytpHKD70/7vhLKI0fFsQnQyynb8O+wEjDB65dC0WGLLsb+33NtmdVVYu9cooe
+	oIL+AamdVSKxMADg==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: objtool/core] kbuild: Remove 'kmod_' prefix from __KBUILD_MODNAME
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+ [tip: objtool/core] x86/kprobes: Remove STACK_FRAME_NON_STANDARD annotation
+Cc: Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060839079.709179.15078148436703060232.tip-bot2@tip-bot2>
+Message-ID: <176060839577.709179.15457781058454266907.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -75,64 +75,48 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     6717e8f91db71641cb52855ed14c7900972ed0bc
-Gitweb:        https://git.kernel.org/tip/6717e8f91db71641cb52855ed14c7900972=
-ed0bc
+Commit-ID:     122679ebf90eeff97c5f793ed9a289197e0fbb2c
+Gitweb:        https://git.kernel.org/tip/122679ebf90eeff97c5f793ed9a289197e0=
+fbb2c
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Wed, 17 Sep 2025 09:03:16 -07:00
+AuthorDate:    Wed, 17 Sep 2025 09:03:12 -07:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 14 Oct 2025 14:45:22 -07:00
+CommitterDate: Tue, 14 Oct 2025 14:45:21 -07:00
 
-kbuild: Remove 'kmod_' prefix from __KBUILD_MODNAME
+x86/kprobes: Remove STACK_FRAME_NON_STANDARD annotation
 
-In preparation for the objtool klp diff subcommand, remove the arbitrary
-'kmod_' prefix from __KBUILD_MODNAME and instead add it explicitly in
-the __initcall_id() macro.
+Since commit 877b145f0f47 ("x86/kprobes: Move trampoline code into
+RODATA"), the optprobe template code is no longer analyzed by objtool so
+it doesn't need to be ignored.
 
-This change supports the standardization of "unique" symbol naming by
-ensuring the non-unique portion of the name comes before the unique
-part.  That will enable objtool to properly correlate symbols across
-builds.
-
-Cc: Masahiro Yamada <masahiroy@kernel.org>
 Acked-by: Petr Mladek <pmladek@suse.com>
 Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- include/linux/init.h | 3 ++-
- scripts/Makefile.lib | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/kprobes/opt.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 17c1bc7..4033192 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -200,12 +200,13 @@ extern struct module __this_module;
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index 0aabd4c..6f826a0 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -103,7 +103,6 @@ static void synthesize_set_arg1(kprobe_opcode_t *addr, un=
+signed long val)
 =20
- /* Format: <modname>__<counter>_<line>_<fn> */
- #define __initcall_id(fn)					\
-+	__PASTE(kmod_,						\
- 	__PASTE(__KBUILD_MODNAME,				\
- 	__PASTE(__,						\
- 	__PASTE(__COUNTER__,					\
- 	__PASTE(_,						\
- 	__PASTE(__LINE__,					\
--	__PASTE(_, fn))))))
-+	__PASTE(_, fn)))))))
+ asm (
+ 			".pushsection .rodata\n"
+-			"optprobe_template_func:\n"
+ 			".global optprobe_template_entry\n"
+ 			"optprobe_template_entry:\n"
+ #ifdef CONFIG_X86_64
+@@ -160,9 +159,6 @@ asm (
+ 			"optprobe_template_end:\n"
+ 			".popsection\n");
 =20
- /* Format: __<prefix>__<iid><id> */
- #define __initcall_name(prefix, __iid, id)			\
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 1d581ba..b955602 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -20,7 +20,7 @@ name-fix-token =3D $(subst $(comma),_,$(subst -,_,$1))
- name-fix =3D $(call stringify,$(call name-fix-token,$1))
- basename_flags =3D -DKBUILD_BASENAME=3D$(call name-fix,$(basetarget))
- modname_flags  =3D -DKBUILD_MODNAME=3D$(call name-fix,$(modname)) \
--		 -D__KBUILD_MODNAME=3Dkmod_$(call name-fix-token,$(modname))
-+		 -D__KBUILD_MODNAME=3D$(call name-fix-token,$(modname))
- modfile_flags  =3D -DKBUILD_MODFILE=3D$(call stringify,$(modfile))
-=20
- _c_flags       =3D $(filter-out $(CFLAGS_REMOVE_$(target-stem).o), \
+-void optprobe_template_func(void);
+-STACK_FRAME_NON_STANDARD(optprobe_template_func);
+-
+ #define TMPL_CLAC_IDX \
+ 	((long)optprobe_template_clac - (long)optprobe_template_entry)
+ #define TMPL_MOVE_IDX \
 
