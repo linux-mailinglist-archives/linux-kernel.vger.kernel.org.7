@@ -1,403 +1,182 @@
-Return-Path: <linux-kernel+bounces-855796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37B0BE259C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D17FDBE25E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7823AC60E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:24:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD60C3BD63D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0B231691C;
-	Thu, 16 Oct 2025 09:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF09318157;
+	Thu, 16 Oct 2025 09:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEpy0kNm"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7sFHNFp"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912930100A
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46772E62AD
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760606649; cv=none; b=R5BQrMWDYEcVxAM0aaqVrmc3skhH+0CnQbJBi7YyQ0+lwc2uj5xd1you6E9eu+TO0qpKfU2Sc1XOrH6t5wxGR+ooTwy7uAnoH21gmfF0PhuKfDKvnyS/9OyL/L72VwZZuX9PJTtWn+CQMoV/96wdAr56HBUkL9pALDv2Nc4J1ek=
+	t=1760606769; cv=none; b=a8NJ9WhwxZvPo5L68dIsC2X3dZjGBb/EI+8dbhDvvru3fJgtt7szcRT1kpsKRqVV3UPfLRPc/3hQtlEjiWfcrIOlF4N0hi9LVfQDOddXojBZsZyoV27cJimZucyGQnV8RHHXT3Xl0ZSnZhPWkgxL5y2Qd1vUCTskggBWET+yu1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760606649; c=relaxed/simple;
-	bh=dtdYSFzxl4ZLf2m3mmaBJjWZIDIL1b9t2J/uPFgCe9M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ufor33pDXouhEJjoVIK8bRdVnXAdFSj/MFIYgK/XOB/1FHu2oMc763HyZ7njIlDJqenQsPNUnvrK3JwQgR/kGJtDvj5w+V4krFIteBszzuvkNgXktUzqfzYbKkmQX8Xb5V8fvk72R4qKCqu8Gefy6/HCcHXQykul4k/VeqRFAyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEpy0kNm; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1760606769; c=relaxed/simple;
+	bh=iBze3ddOIKfLFzK1PdZekaZ25CQzX4/eyJkqv/S9OE8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WKLkYgOvY4tnoLvOgmKrvzw9xB0ewpmUpiWWIr9KDtd2ZQSXNkfu1rJGPXEPom9uYqTIuryAeC7tQ/UpFg78Fh9gjUfxoumPkM3Mp3QPOckR9c9SmsB+8sK4t9uo46FLq2hehcZs2SBEYW9yUYSY2Igyl49L8FRKoskCoxHod+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7sFHNFp; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so5405705e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:24:06 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77f5d497692so733650b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760606645; x=1761211445; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wN5GriOc5joXaZ2V++iE2SjCJaPtC87zNIqvbkuQmbs=;
-        b=VEpy0kNmDouy4Xnbmr+9VNMHxYXnxEj6hFs9v3DbW7CBRDn+TstTbQpIRNKEwVvcp1
-         vbu+HX0tYA59GalQ84mifK8eeLIdcJ1fkFbT4X3oKwyuyagy/T0x40ilBbgI0Tmbp0SP
-         +7ZFqLaVxU4nUVe+ECRlCkskVVM5nU2+KRLYkYVmsBRZ9WisdG0gZJS4IYQYakK2H8PC
-         7YYG9knKjDTnakYZYyrDdscFiIyCrBwRR5g9dZjPMSxYYgIrgahhJB3oDHVOGFVodQFx
-         muAXdy2eIrPuVJwJyI6GPZ+1sbGGJl+/scdLN0XXeEelrC6SlXKv6tnpKOkOm3ohbLSC
-         qKlw==
+        d=gmail.com; s=20230601; t=1760606767; x=1761211567; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Qk2LA4WjclYE0CKmbUH1V37mhz7MI29tST0rKIcgrs=;
+        b=c7sFHNFpNu3v0X4f8ofeTAqwCvknT8qwOus8U1fcSkrAQg/uRWnP3ZgteZlCVUfULX
+         i1T/NmU7qDf1tE2MS8Uuap8Cy40p2EdhhyRrL2UUQMnwQyzLOl03bIo9bMiOc2Ebi5nD
+         ZeelpYRHMf7B4SGCtC7CJkq+kJ6kiQf/V3Npmh1+jF8nd5ghPGLYwVXaeBRKhHUOWJ5r
+         t035Y9AK+eQ5QXGDTdxjRSjhSIcNWvjhlxbQjF3GYWHZ97SMPt4fRbz0Et4KXkQyDgc4
+         A5xmwwTfVCayW1ZRXbagqpMNa3p6YMKzkLGhwckTDBh77x+hpMWrOiPax5JrBORwNUqy
+         ZVpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760606645; x=1761211445;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wN5GriOc5joXaZ2V++iE2SjCJaPtC87zNIqvbkuQmbs=;
-        b=VwA3UN+yRGDo2CyVxnJrR1FSLijfZzZKU/U4pb9oIAYf4thWbFlbT5/DSeCKPh7GoJ
-         4o4YpOP3U85XueWOLCN0p4hm2oNtDJOWFj3WxMlWkPdSzVry2B707SRUJ+LMSACQf59A
-         ElhK/0/pJmOu33o86Afjh+TKGZGYzZ/W/vE3qeKY3J2UBTATsrmqj3veqSMOBFdUZWJL
-         M8+WCescmv3e9UvCU4gpacVZ0MDerOMZGiq+B13g5mTWCeqUHCkNMrJIUkyjp3+E23xK
-         x9v4b2VuO1VYK++87YD/phriLaw+/MeV27gZsuzwGSmgGSLmhzSKlqhII5HluQ7Y2v4i
-         ZJqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5W9odQ6aieqjNApnjjLQUMTcO+sHJu7qnjUDYjoazS5NnUQ8j6+z8/b9VooYV9pFxlETAh6K7VlpLBw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/M10c+u2EbdtZ2IBA91DWQ59w0hWINgO2wQNLM/vTxfMOakdW
-	ZPhWUtyr+tlP4Esv0Yr1RAJODdS4auZo+CTYKooUokWIwqa9N8KycOg2
-X-Gm-Gg: ASbGncu/O9Trwzq+4oR13SghdOnUzBiPt1S/4BNsBVVg9QBZ0/DLYAT/RG7MYNTyYsG
-	ybmrq81vqrS2/t/sAHG75rC8CDVHIwxetxow3i1EWGSaQiCZ8ZIhQK7nGmyenGJ7rXyAwavmglI
-	RfO1/gCdbfiDRXsY55Gojcl+i7c+xyDkIJrVYlBWCUbM1coXTDEPC/WZ0hiEcOjj373BBpBqILT
-	WUf4goQXO4hxPuZPMZH61t3JXGHK1xX5I6Au/IpbhNXX1BjWukdsxzlBYF/Z+hS6z7kakeuZvTw
-	nF1IGMZPwSc1pbzo/j4PxVgGhMwLJKVd4BgPSkpaP8HjYdTVAQTav6Vw43wPUqbFhReFtgjS0Ws
-	7j59x2DUUiBQu+GM6H9itzzpkQYgCqo+9AOmaWJXyvJK2L0Z5nWACiHw/d7m9ETu2C9IFpp4AcI
-	0Sehs8hEmJ
-X-Google-Smtp-Source: AGHT+IFM/eDs5DimbOjgvhNjhvWS6XPVfEwodHiPhgaUg+nD8JwAoHYzOT5T+xC5UzBHiITSk+szgw==
-X-Received: by 2002:a05:600c:5028:b0:46e:428a:b4c7 with SMTP id 5b1f17b1804b1-46fa9af2ff1mr222490415e9.23.1760606645180;
-        Thu, 16 Oct 2025 02:24:05 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c91sm13762335e9.11.2025.10.16.02.24.03
+        d=1e100.net; s=20230601; t=1760606767; x=1761211567;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1Qk2LA4WjclYE0CKmbUH1V37mhz7MI29tST0rKIcgrs=;
+        b=W40OzzWugV4N8MNSVMOoV9br2Yf0d+/oxlrlvgOdEE5Ry43svH1XbK81Hs+TNt2D7I
+         T7aAjuiNKmXc9B0oYmONZ6gUUD/E7tC6ybuRitEh61hH88G0SPQAXHADGS672swjVO0V
+         M8877Wk1/gkVXrOBjgrCS1xoxV3LBiZluQDdM5CWWREdOd/WPCTlKEou5ZTIYAzQqdEk
+         l2MLVmuQPC+7AXoGGrBr+9rGniZj8H5/TGe2j1nJL6FM6FWYUXe0AkzWkt+oJrqyBjlR
+         un6wmuQjw5507ulnX0tSRR1NQJcfnA0wDQU+Y9QQbd4PL3IecJlLgypfHblZ5QfcPcep
+         4cvw==
+X-Gm-Message-State: AOJu0YyujXkD1BmcZ2WCxyeRhvEhoQrLtg6E5xuAT9nR2wP0ahQV7vkk
+	yZGE4Pt+DAcpFcgWmlYWQ675Ncjn8KVATZYZZYlZknRqTHh3G39X/i+g
+X-Gm-Gg: ASbGncsDYeIgu1WMa4/Nn4E9o68NEkOIkGDvVh4wPIQ9EZ6gS59IrqIoPE+olUabnst
+	B6NjuGTYCnceeFtAXfmueLw+OOjTZeRPsBqDqKRUWX0bviLABDhLcin8CfdEEH1inhEn9xzKn/4
+	4Q04/5v3zUqLdoMthAhS5JiS0dbxrs0qGWZ/ZNYw4XMcaujmFL3qNmFl6v83ccJNtkI5ggB48ow
+	dQH+NDDVmK+Bwe30DkwiRLY0zzXMP5kY6C7DqB3QlUAwnjC1+ov0j5NVM3YCEH9pt1hz9mcZn+l
+	oUAknW8XqK/rtZYvyQYYtHo6BD9eUwM2BGXxkCGOwh5gFwjzAcIixQtM604Fn1oViaQtPeObXfv
+	R/fYUv4lnHJWrTmzHZChs3HWeclTrOVZIEIeWU7pKMksgCSmDeAFYDtlPe+nfIHPGQ07d7fNVVj
+	3DT/ezEDbI2/sWAw==
+X-Google-Smtp-Source: AGHT+IG1PdmRmxoRDMSi5DK2MpnEmPqGVIP2q7n1nkEAGkLjqVGAPOgqQssfSdw9ZAOJvcdpLJzgcg==
+X-Received: by 2002:a05:6a00:13a6:b0:78f:6b8c:132 with SMTP id d2e1a72fcca58-79387c18f0amr39958615b3a.29.1760606766779;
+        Thu, 16 Oct 2025 02:26:06 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060a38sm21903407b3a.5.2025.10.16.02.26.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 02:24:04 -0700 (PDT)
-Message-ID: <de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron	
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown	
- <broonie@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Date: Thu, 16 Oct 2025 10:24:36 +0100
-In-Reply-To: <20251015211420.031c61fa@bootlin.com>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	 <20251015142816.1274605-3-herve.codina@bootlin.com>
-	 <1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
-	 <20251015211420.031c61fa@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+        Thu, 16 Oct 2025 02:26:06 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 761B640C0938; Thu, 16 Oct 2025 16:26:02 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: Subash Abhinov Kasiviswanathan <subash.a.kasiviswanathan@oss.qualcomm.com>,
+	Sean Tranchetti <sean.tranchetti@oss.qualcomm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH net-next] net: rmnet: Use section heading for packet format subsections
+Date: Thu, 16 Oct 2025 16:25:52 +0700
+Message-ID: <20251016092552.27053-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2856; i=bagasdotme@gmail.com; h=from:subject; bh=iBze3ddOIKfLFzK1PdZekaZ25CQzX4/eyJkqv/S9OE8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkfdp4z4zP/tXdvtJUyw70JEnz/uQySsze9La/wfti74 g9H0oK2jlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzkNwPDPzML4VeKWoEz70nO eHasyOLtJ82FE1y8245+yzv0qrr060mG/17LJ6TLhfvMj5rMJpKa38DaOOdChJ31ZzPZ6ouC5ao nmQE=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-10-15 at 21:14 +0200, Herve Codina wrote:
-> Hi Nuno,
->=20
-> On Wed, 15 Oct 2025 16:21:09 +0100
-> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
->=20
-> ...
-> >=20
-> > > +static int rzn1_adc_enable(struct rzn1_adc *rzn1_adc)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	ret =3D rzn1_adc_core_power_on(&rzn1_adc->adc_core[0]);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret =3D rzn1_adc_core_power_on(&rzn1_adc->adc_core[1]);
-> > > +	if (ret)
-> > > +		goto poweroff_adc_core0;
-> > > +
-> > > +	ret =3D clk_prepare_enable(rzn1_adc->pclk);
-> > > +	if (ret)
-> > > +		goto poweroff_adc_core1;
-> > > +
-> > > +	ret =3D clk_prepare_enable(rzn1_adc->adc_clk);
-> > > +	if (ret)
-> > > +		goto disable_pclk;
-> > > +
-> > > +	ret =3D rzn1_adc_power(rzn1_adc, true);
-> > > +	if (ret)
-> > > +		goto disable_adc_clk;=C2=A0=20
-> >=20
-> > Can we use devm_actions() on the above to avoid the complex error path =
-plus
-> > the
-> > .remove() callback?
->=20
-> rzn1_adc_enable() is used by the driver pm_runtime_resume() function.
->=20
-> I don't think that devm_add_actions_or_reset() will help here.
->=20
-> In my understanding, devm_* functions are use to perform some operations
-> automatically on device removal.
->=20
-> The purpose of the error path here is to restore a correct state if
-> rzn1_adc_enable() failed when it is called from pm_runtime_resume().
->=20
-> In that case no device removal is involved to trig any action set by
-> devm_add_actions_or_reset().
->=20
-> Maybe I am wrong. Did I miss something?
+Format subsections of "Packet format" section as reST subsections.
 
-Nope, I see now what's your intent.
+Link: https://lore.kernel.org/linux-doc/aO_MefPIlQQrCU3j@horms.kernel.org/
+Suggested-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ .../cellular/qualcomm/rmnet.rst               | 20 +++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
->=20
-> >=20
-> > > +
-> > > +	return 0;
-> > > +
-> > > +disable_adc_clk:
-> > > +	clk_disable_unprepare(rzn1_adc->adc_clk);
-> > > +disable_pclk:
-> > > +	clk_disable_unprepare(rzn1_adc->pclk);
-> > > +poweroff_adc_core1:
-> > > +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[1]);
-> > > +poweroff_adc_core0:
-> > > +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[0]);
-> > > +	return ret;
-> > > +}
-> > > +
->=20
-> ...
->=20
-> > > +static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
-> > > +					 struct iio_dev *indio_dev)
-> > > +{
-> > > +	int adc_used;
-> > > +
-> > > +	adc_used =3D rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
-> > > +	adc_used |=3D rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
-> > > +
-> > > +	switch (adc_used) {
-> > > +	case 0x01:
-> > > +		indio_dev->channels =3D rzn1_adc1_channels;
-> > > +		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc1_channels);
-> > > +		return 0;
-> > > +	case 0x02:
-> > > +		indio_dev->channels =3D rzn1_adc2_channels;
-> > > +		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc2_channels);
-> > > +		return 0;
-> > > +	case 0x03:
-> > > +		indio_dev->channels =3D rzn1_adc1_adc2_channels;
-> > > +		indio_dev->num_channels =3D
-> > > ARRAY_SIZE(rzn1_adc1_adc2_channels);
-> > > +		return 0;
-> > > +	default:
-> > > +		break;
-> > > +	}
-> > > +
-> > > +	dev_err(rzn1_adc->dev, "Failed to set IIO channels, no ADC core
-> > > used\n");
-> > > +	return -ENODEV;=C2=A0=20
-> >=20
-> > dev_err_probe()?
->=20
-> Why? the error returned is a well known value: -ENODEV.
->=20
-> dev_err_probe() should be involved when -EPROBE_DEFER is a potential erro=
-r
-> code.
->=20
-> IMHO, dev_err() here is correct.
+diff --git a/Documentation/networking/device_drivers/cellular/qualcomm/rmnet.rst b/Documentation/networking/device_drivers/cellular/qualcomm/rmnet.rst
+index 289c146a829153..1115606496b67d 100644
+--- a/Documentation/networking/device_drivers/cellular/qualcomm/rmnet.rst
++++ b/Documentation/networking/device_drivers/cellular/qualcomm/rmnet.rst
+@@ -27,7 +27,8 @@ these MAP frames and send them to appropriate PDN's.
+ 2. Packet format
+ ================
+ 
+-a. MAP packet v1 (data / control)
++A. MAP packet v1 (data / control)
++---------------------------------
+ 
+ MAP header fields are in big endian format.
+ 
+@@ -53,7 +54,8 @@ Multiplexer ID is to indicate the PDN on which data has to be sent.
+ Payload length includes the padding length but does not include MAP header
+ length.
+ 
+-b. Map packet v4 (data / control)
++B. MAP packet v4 (data / control)
++---------------------------------
+ 
+ MAP header fields are in big endian format.
+ 
+@@ -106,7 +108,8 @@ over which checksum is computed.
+ 
+ Checksum value, indicates the checksum computed.
+ 
+-c. MAP packet v5 (data / control)
++C. MAP packet v5 (data / control)
++---------------------------------
+ 
+ MAP header fields are in big endian format.
+ 
+@@ -133,7 +136,8 @@ Multiplexer ID is to indicate the PDN on which data has to be sent.
+ Payload length includes the padding length but does not include MAP header
+ length.
+ 
+-d. Checksum offload header v5
++D. Checksum offload header v5
++-----------------------------
+ 
+ Checksum offload header fields are in big endian format.
+ 
+@@ -154,7 +158,10 @@ indicates that the calculated packet checksum is invalid.
+ 
+ Reserved bits must be zero when sent and ignored when received.
+ 
+-e. MAP packet v1/v5 (command specific)::
++E. MAP packet v1/v5 (command specific)
++--------------------------------------
++
++Packet format::
+ 
+     Bit             0             1         2-7      8 - 15           16 - 31
+     Function   Command         Reserved     Pad   Multiplexer ID    Payload length
+@@ -176,7 +183,8 @@ Command types
+ 3 is for error during processing of commands
+ = ==========================================
+ 
+-f. Aggregation
++F. Aggregation
++--------------
+ 
+ Aggregation is multiple MAP packets (can be data or command) delivered to
+ rmnet in a single linear skb. rmnet will process the individual
 
-If I'm not missing nothing this function is called during probe so I do thi=
-nk
-dev_err_probe() should be used. Not only unifies logging style during probe=
- it
-also has the small benefit of doing:
+base-commit: cb85ca4c0a349e246cd35161088aa3689ae5c580
+-- 
+An old man doll... just what I always wanted! - Clara
 
-return dev_err_probe(...) saving a line of code.
-
-You can see that, at least in IIO, we even have some patches just convertin=
-g
-drivers probe() to use dev_err_probe().
-
->=20
-> >=20
-> > > +}
-> > > +
-> > > +static int rzn1_adc_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct device *dev =3D &pdev->dev;
-> > > +	struct iio_dev *indio_dev;
-> > > +	struct rzn1_adc *rzn1_adc;
-> > > +	int ret;
-> > > +
-> > > +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*rzn1_adc));
-> > > +	if (!indio_dev)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	rzn1_adc =3D iio_priv(indio_dev);
-> > > +	rzn1_adc->dev =3D dev;
-> > > +	mutex_init(&rzn1_adc->lock);=C2=A0=20
-> >=20
-> > devm_mutex_init()
->=20
-> Yes, I will update in the next iteration.
->=20
-> >=20
-> > > +
-> > > +	rzn1_adc->regs =3D devm_platform_ioremap_resource(pdev, 0);
-> > > +	if (IS_ERR(rzn1_adc->regs))
-> > > +		return PTR_ERR(rzn1_adc->regs);
-> > > +
-> > > +	rzn1_adc->pclk =3D devm_clk_get(dev, "pclk");
-> > > +	if (IS_ERR(rzn1_adc->pclk))
-> > > +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk),
-> > > "Failed to
-> > > get pclk\n");
-> > > +
-> > > +	rzn1_adc->adc_clk =3D devm_clk_get(dev, "adc-clk");
-> > > +	if (IS_ERR(rzn1_adc->pclk))
-> > > +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk),
-> > > "Failed to
-> > > get adc-clk\n");
-> > > +
-> > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-
-> > > >adc_core[0],
-> > > +					=C2=A0=C2=A0 "adc1-avdd", "adc1-vref");
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-
-> > > >adc_core[1],
-> > > +					=C2=A0=C2=A0 "adc2-avdd", "adc2-vref");
-> > > +	if (ret)
-> > > +		return ret;=C2=A0=20
-> >=20
-> > Hmm, is avdd really an optional regulator? I mean can the ADC power up =
-at
-> > all
-> > without a supply in AVDD? Even vref seems to be mandatory as we can't
-> > properly
-> > scale the sample without it.
->=20
-> Where do you see that avdd is an optional regulator?
-
-You are using devm_regulator_get_optional(). That's for optional regulators=
-.
-
->=20
-> >=20
-> > Also, can't we have getting and enabling the regulator together? Then, =
-we
-> > could
-> > use some of the modern helpers to simplify the code (ok I see you use t=
-hem
-> > in
-> > the PM callbacks).
->=20
-> Yes, I rely on PM callbacks to handle those regulators.
->=20
-> >=20
-> > > +
-> > > +	platform_set_drvdata(pdev, indio_dev);
-> > > +
-> > > +	indio_dev->name =3D dev_name(dev);=C2=A0=20
-> >=20
-> > dev_name() should not be used for the above. It's typically the part na=
-me so
-> > I
-> > guess in here "rzn1-adc" would be the appropriate one.
->=20
-> I thought it was more related to the instance and so having a different n=
-ame
-> for each instance was better.
->=20
-> Some other IIO drivers use dev_name() here.
->=20
-> But well, if you confirm that a fixed string should be used and so all
-> instances have the same string, no problem, I will update my indio_dev->n=
-ame.
-
-It is a fixed string, typically the part name. David Lechner not that long =
-ago
-actually sent some patch or documented somewhere why not to use dev_name().=
- To
-identify different instances we have a 'label' property.
-
->=20
-> >=20
-> > > +	indio_dev->info =3D &rzn1_adc_info;
-> > > +	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> > > +	ret =3D rzn1_adc_set_iio_dev_channels(rzn1_adc, indio_dev);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret =3D rzn1_adc_enable(rzn1_adc);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	pm_runtime_set_autosuspend_delay(dev, 500);
-> > > +	pm_runtime_use_autosuspend(dev);
-> > > +	pm_runtime_get_noresume(dev);
-> > > +	pm_runtime_set_active(dev);
-> > > +	pm_runtime_enable(dev);=C2=A0=20
-> >=20
-> > There's a devm_pm_runtime_enable() API now.
->=20
-> Will look to use it in the next iteration.
->=20
-> >=20
-> > > +
-> > > +	ret =3D devm_iio_device_register(dev, indio_dev);
-> > > +	if (ret)
-> > > +		goto disable;
-> > > +
-> > > +	pm_runtime_mark_last_busy(dev);
-> > > +	pm_runtime_put_autosuspend(dev);
-> > > +
-> > > +	return 0;
-> > > +
-> > > +disable:
-> > > +	pm_runtime_disable(dev);
-> > > +	pm_runtime_put_noidle(dev);
-> > > +	pm_runtime_set_suspended(dev);
-> > > +	pm_runtime_dont_use_autosuspend(dev);
-> > > +
-> > > +	rzn1_adc_disable(rzn1_adc);
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static void rzn1_adc_remove(struct platform_device *pdev)
-> > > +{
-> > > +	struct iio_dev *indio_dev =3D platform_get_drvdata(pdev);
-> > > +	struct rzn1_adc *rzn1_adc =3D iio_priv(indio_dev);
-> > > +
-> > > +	pm_runtime_disable(rzn1_adc->dev);
-> > > +	pm_runtime_set_suspended(rzn1_adc->dev);
-> > > +	pm_runtime_dont_use_autosuspend(rzn1_adc->dev);
-> > > +
-> > > +	rzn1_adc_disable(rzn1_adc);
-> > > +}=C2=A0=20
-> >=20
-> > I'm fairly confident we can sanely go without .remove().
->=20
-> Will see what I can be do for the next iteration.
->=20
-> Maybe I will ask some questions if I need some clarification around
-> pm_runtime but let me first try to go further in that direction.
-
-Yeah, maybe you can come up with something but given how you use pm to
-enable/disable stuff I'm also not sure the above is easily doable.
-
-- Nuno S=C3=A1
 
