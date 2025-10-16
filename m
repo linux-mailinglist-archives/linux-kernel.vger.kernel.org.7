@@ -1,154 +1,174 @@
-Return-Path: <linux-kernel+bounces-856749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E22BE4F5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:00:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20750BE4F60
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36DD1A684FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:00:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407E35E3719
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0722A23185D;
-	Thu, 16 Oct 2025 17:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C587E23EAA8;
+	Thu, 16 Oct 2025 17:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HT1UX00a"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eaSWTO8C"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE137222575
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971512253EF
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760637519; cv=none; b=qkEA+tmxZpTccmWEk59Tvc73zV8qupQvN18ueltRrAy5ZfhGIMtF7L6K3T6NT6lSX3Pg3Y1zM2a6+oesloKrVt3I+vaj7dFVrdQmKcl72ETqNxuk8MVSVGWMGnY1Tq1SnMEX+wd5L2EXsO9RkEj96k1ypZs1jTx6LR65+a4G+30=
+	t=1760637548; cv=none; b=djQ0V/YKhCtkhnAIVWpcWrUwMJuypFMOKuykHD+i18zOf4WjyHaJSUXBNf48gbeu9WKIMvlccyBO08Wzej2sNphSPx92wKf64SIP68CpDtefheFuIfpvgqaQmREx/TCci5xY0/itYnDmPwqvq2XYz5j3dq0O3hgcet7GvDscAX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760637519; c=relaxed/simple;
-	bh=R3RwGP6QHDreMcxjaLIw71PUQygCZwdeGhPBMRoSyzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TqB6z1IFOFNFYjyBXn2MRaFj6hOsUPTPQ1Pz8r6RgO7Jq83uUd1nCnYDx838Juyf5Bqe49zHqo4t2jFho1kWjfpMgJ1WgmsDDWDcny5zwL7UsvU1H0mcWMVfib9qhmMwPWVheAUKpFVn4thMM+dVIX1ziFHvWnBhskFl48uYjag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HT1UX00a; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3c2db014easo230214266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:58:36 -0700 (PDT)
+	s=arc-20240116; t=1760637548; c=relaxed/simple;
+	bh=vZiHA8Y6AfsK9IF3c2KBtymTA2sTHdPbid5+P3xm/ZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=arMSAI5EdVaQQpe2GfSXKmvrYzVHk/Yzzq9P5Kff8p0wSUX3CWxOgZfyd0dP3kmesD/avGBwkXXyD1EVaEtiSWOP0qdBnOLpq7tQixQUO2WDKTsQviREJ5qMNR8aXAlIoRTFjEtitYHzyUXCRHhpNV1pGtY+ZybP0Arw+S4eLTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eaSWTO8C; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so11910555e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1760637515; x=1761242315; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fZNdo6IOExcFVFfhr7rwkSFSNClAo0oWYAwloq7HC0g=;
-        b=HT1UX00aRfcMEXc0Co8J+L4FNA7f+AQFJERoYX6Ye8Ecc3y5RyWAbFIBCdGtRQFVhE
-         1iwvIUtgmuHJJsbTiudjRSNIVbWd4LR953x9VP71CePdtqLyfg/ByRpd9HSRdwv7w9zM
-         k8lpxRS09zmrDgM6ILJbL6AsSDutfwPWySlF0=
+        d=linaro.org; s=google; t=1760637544; x=1761242344; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5VBbCb5Q+IqNb5arOkvExMS59Z+aWDiwCrWUaHKJ2ko=;
+        b=eaSWTO8ClQkn216SzgahyyuszyhLkuApsf8WAp6tjIAmN0tz4tVom4qJB3NXATdOgB
+         axiF/5N73KKWZmbs5xvdbpk0biAjbQU5A2rem9wH5YBKGRxi5VehOH2mDOSZAD1MwvXX
+         r7tXKBz23BhyuOiVXhazcaGFrbvBfvHUZK3g/9FoU5AHZ5VcrrMss7XrwrzjntJOLD9v
+         zUMs6jo7vwZS+NhTEqtHyibPRXgilP6llZsjgln3vdQrXJd7Mz8j0XhgeEEhc2s3Z8ad
+         1Ubctegn0J03TmcxHV6T8LmJbir+06s2MJOFR441Z63jh3mycg+Pz2DFPiRPlaMF0DLB
+         YIyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760637515; x=1761242315;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760637544; x=1761242344;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fZNdo6IOExcFVFfhr7rwkSFSNClAo0oWYAwloq7HC0g=;
-        b=UMzDOKDvzJYkxM/J6T5WyLxkIOC5gKycygjDm7v1G1znv8Iz5gRukgTGaSyGfnRN/f
-         dO797PQV6bfgdg5a6QpkNqw8KF08vCzv24V03X3WBB+hftwasvyI8J7eKsY5qqr6t2uf
-         riRz5EP7IP9EH0rNyKDtenRj7ak7OmyT5X93Az2I7nLJfWykNhqCbAkHpT+iHbJkq1AC
-         PylgcMdWWSeer3JbRFTpigCacn61a1CQF9breFWHBK4Eq/AyNaRN4AzH1REa8ngsD1sm
-         QxtMzSeE7TNzvk6iYUFER2ksnQ43mSH6uinS7VsY+D9fiEzW1WDvrRLwaKCzX2Jgd+Cd
-         ec4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV4CPod+7NajDtRqZ9uFNeBGSj7DXx7lGxSt4+NV+bk2Z3rVTrB9HZj6A9bT1Sqcv2uNbBoNpwoCFfWp+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw78vx0WYyd5yBSRDmGuiL2zAmLe6utSxQYcjPsyCsN4Q5pX3zr
-	AYPOIt8cwxg8T9ZzrNOmo75wszDQV5ot8qiHuA46f55YMJNk+v08HhzzAnNk6JdRjjEwz2C6JHh
-	RxZWgsuw=
-X-Gm-Gg: ASbGncsCQc0n8IHxtLjNN2ptT06ZoCXYALrweR1IEjEVMf/v8a26V2+tJJb3FvWYJD6
-	ixMO7im0niGoCNQzncJy0vAkpsNnzzlY4i1P5/VUBOSub9K+cQD8X9jNzUQXQK7wN8K0sEl7ABr
-	F+R7Zfw1bHc7JMFgiRIdlxsD3WkFWbrsQ4Kww6X49EPriA7q3uT32nxTqFhpraVdl8VBpWXOj7C
-	/9s0FMuMtifsCGvaecWdyIjPP753Yo0Em+2jbsu5khszf3+ptf0nYDPD6pDdP8NiUE5AQacHorq
-	LH8bZC8GzOLSh9nmfQI/EAOO78HZxCKfKqfndrfOfznqLJcBy0zva/ir0cHmO3pjV4Kw2XUK9+/
-	rw/ef5YMcJf44ZRi6uF0mp+3bF3bHzEz/UfwpEI+NJreWjVSeWiTdqGKSBb09PxJOj9k/yDf86k
-	BG/92vWkwBlrzaxkxpLfgEGlRMBVSaqov3vhbLXJ9SRbBoReBHGw==
-X-Google-Smtp-Source: AGHT+IEwrSaz/69FIx0ighy/r+69ioHUHVdMflPYhvIqytKSSSBLl+3Os8z5Odkq747sqkewa6J4gg==
-X-Received: by 2002:a17:907:26c1:b0:b5c:753a:e022 with SMTP id a640c23a62f3a-b6473630cadmr89212766b.29.1760637515005;
-        Thu, 16 Oct 2025 10:58:35 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccd4beb62sm562434266b.72.2025.10.16.10.58.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 10:58:34 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-637e9f9f9fbso1947362a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:58:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVKwv+3NOU16Eu12wQbPaa30sczdyxINGwNb8SNH7fFDFKdgWZcqegCpJ2p//OxMVI+vKOwYjL9l8Dr3qc=@vger.kernel.org
-X-Received: by 2002:a05:6402:280a:b0:63b:f4b4:a005 with SMTP id
- 4fb4d7f45d1cf-63c1f6419c0mr820839a12.10.1760637513765; Thu, 16 Oct 2025
- 10:58:33 -0700 (PDT)
+        bh=5VBbCb5Q+IqNb5arOkvExMS59Z+aWDiwCrWUaHKJ2ko=;
+        b=HuY9rCCiTemFKVZkY/x6gw1ll1m7qbRhSKpW5SujIBSR4ZQQdJ3nKSyFmq2zT/kKWF
+         IjJn7IA9R80+pAsPmSF6qecD/m7XZOKhkq8992b+FRH9OeHa4Aw7iygHJR4DIuIl668A
+         B7Tc34tEN8KVT/dRCj0LchM8L2Tx5rzyGBtETemcRCwJwd4urPfWC+81Ie81zcKpGiHp
+         Jp2QW5mx7Iutx0MJvmf9fGxxLYThwIe3Di2SrTh9cuppG4yYHCc8ctD/WXafiBWy8TRF
+         LAJgKK/CGUppzqIDiJHIe8ovazp2sCMINu+eMui/kNPG4aY7X3NtpcsrA64xPbJynoL+
+         u7VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ9nQByci50uDxGnNAYr8OZmWFZS1RZl96CC/3DsB25SwMyt8dEK5SOt5QH2IGl3QYRRy/on/KtQSa/HU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Dz57D1zt6Kb14kzT8nC1fUfxxT1MJT6CC7vR9u9kokvfSSPF
+	iYbUoU5p5FAryifnBLf2sPwIwZIcttuyXONTKtrUARzdP3NLa14hjHPRy+T1+tyviFN0ka5Z1ic
+	VfXj4
+X-Gm-Gg: ASbGncsWrzTbEF9OWk0oJESB3XVqkf3ixvcX8XB7Y5vkYtAgkdhZ6uAVdBtRMhTxVEl
+	0FCzhzg5z323PuG6vdm51o2fXHkXzk2ESRwBsXw8eH+jdjpTK+0ag7NcJ9S/5XmUCTD3h4DB76U
+	8pXa9BSUDkHjSuDukzpGZiH+gOJ/4wzRPckgKls0N4QvjZcL0FWZ7966jmMIHXyhoKmK8MNposR
+	dZWyjK91TBUk08e5todNgjybthLTp0OSbGBoWvvPB8uxmH2QSDDdN85emKDzqMEU9q3VZYo3/Da
+	zcBz2vDGdrliPWVzj05n1EaTD2rAJAphjtitBFmYjPBgITT7GwVMWhco6MKm1uDcAdRIMtFZyaC
+	JWY6sWDrEo7ol7jUwoj36iS9jf54k/4Dfoz1DFVVKW1lfjdfaxpuzT71XszK9uwu+fQzyYZdas6
+	mXYwYeaCH+VxnoVS4/wLF2YmC/nts=
+X-Google-Smtp-Source: AGHT+IGNC4j+STHgH8JMZXaAiTHwQ+buEodAeaVzalRybmL2VUhCMjzU9+Zk9Y0sAYL9ikB7GrJ2sw==
+X-Received: by 2002:a05:600c:4507:b0:46f:c55a:5a8d with SMTP id 5b1f17b1804b1-4711787276dmr7996365e9.4.1760637543660;
+        Thu, 16 Oct 2025 10:59:03 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-471144239f4sm40779015e9.2.2025.10.16.10.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 10:59:03 -0700 (PDT)
+Date: Thu, 16 Oct 2025 20:58:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	kartikey406@gmail.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev
+Subject: Re: Forwarded: [PATCH] ntfs3: add debug warnings for run_lock
+ initialization
+Message-ID: <202510170051.yMGKcZjz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1760633129.git.dsterba@suse.com>
-In-Reply-To: <cover.1760633129.git.dsterba@suse.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 16 Oct 2025 10:58:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiiysgAErOobR02zECiniaM69AacAHjTOSKsv3yDF2R+A@mail.gmail.com>
-X-Gm-Features: AS18NWCW69bbQCilJuwzNh2MGEz8nRlr1ju2SK0ZTD_7Tzbzhzpwc98VIVLFRSk
-Message-ID: <CAHk-=wiiysgAErOobR02zECiniaM69AacAHjTOSKsv3yDF2R+A@mail.gmail.com>
-Subject: Re: [GIT PULL] Btrfs fixes for 6.18-rc2
-To: David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68ee38b5.050a0220.ac43.00fd.GAE@google.com>
 
-On Thu, 16 Oct 2025 at 10:00, David Sterba <dsterba@suse.com> wrote:
->
-> - reorder send context structure to avoid -Wflex-array-member-not-at-end
->   warning
 
-Ok, I took a look because this sounded like a bad bug, but that flex
-array member really isn't a flex array at all.
+Hi syzbot,
 
-It's clearly intended to be a fixed-size inline array, just using a
-flex array for syntacting reasons.
+kernel test robot noticed the following build warnings:
 
-And that not only resulted in that warning, it also means that the
-compilers can't actually check the *real* size of the array and won't
-realize if there's some actual overflow problem that they might
-otherwise have been able to see.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I do see why it's done that way, but it's not wonderful.
+url:    https://github.com/intel-lab-lkp/linux/commits/syzbot/Forwarded-PATCH-ntfs3-add-debug-warnings-for-run_lock-initialization/20251014-195051
+base:   v6.18-rc1
+patch link:    https://lore.kernel.org/r/68ee38b5.050a0220.ac43.00fd.GAE%40google.com
+patch subject: Forwarded: [PATCH] ntfs3: add debug warnings for run_lock initialization
+config: i386-randconfig-141-20251015 (https://download.01.org/0day-ci/archive/20251017/202510170051.yMGKcZjz-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
 
-I'm trying to think of a way to do this cleanly - we have some similar
-things elsewhere (like the DNAME_INLINE_LEN for the dentry, which has
-a similar kind of use-case).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202510170051.yMGKcZjz-lkp@intel.com/
 
-But in the dentry - exactly to avoid using a flex array when it really
-isn't - we have that ugly "calculate things by hand" (and the whole
-union shortname_store, so that you can also treat it as an array or
-words, but that's a separate independent optimization).
+smatch warnings:
+fs/ntfs3/inode.c:590 ntfs_iget5() warn: variable dereferenced before IS_ERR check 'inode' (see line 590)
 
-Sadly, I can't think of a way to have the compiler just calculate the
-right size at structure definition time without just having to repeat
-the whole structure definition twice.
+vim +/inode +590 fs/ntfs3/inode.c
 
-So that flex array may be the best approach even if it has these downsides.
+82cae269cfa9530 Konstantin Komarov 2021-08-13  562  struct inode *ntfs_iget5(struct super_block *sb, const struct MFT_REF *ref,
+82cae269cfa9530 Konstantin Komarov 2021-08-13  563                           const struct cpu_str *name)
+82cae269cfa9530 Konstantin Komarov 2021-08-13  564  {
+82cae269cfa9530 Konstantin Komarov 2021-08-13  565      struct inode *inode;
+9ca11d2cd5f563e syzbot             2025-10-14  566      unsigned long ino = ino_get(ref);
+82cae269cfa9530 Konstantin Komarov 2021-08-13  567      
+9ca11d2cd5f563e syzbot             2025-10-14  568      if (ino == 25) {
+9ca11d2cd5f563e syzbot             2025-10-14  569          printk(KERN_ERR "DEEPANSHU: ntfs_iget5 START for inode 25\n");
+9ca11d2cd5f563e syzbot             2025-10-14  570          //dump_stack();
+9ca11d2cd5f563e syzbot             2025-10-14  571      }
+9ca11d2cd5f563e syzbot             2025-10-14  572      
+9ca11d2cd5f563e syzbot             2025-10-14  573      inode = iget5_locked(sb, ino, ntfs_test_inode, ntfs_set_inode,
+82cae269cfa9530 Konstantin Komarov 2021-08-13  574                           (void *)ref);
+9ca11d2cd5f563e syzbot             2025-10-14  575      
+82cae269cfa9530 Konstantin Komarov 2021-08-13  576      if (unlikely(!inode))
+82cae269cfa9530 Konstantin Komarov 2021-08-13  577          return ERR_PTR(-ENOMEM);
+82cae269cfa9530 Konstantin Komarov 2021-08-13  578      
+9ca11d2cd5f563e syzbot             2025-10-14  579      if (inode->i_ino == 25) {
+9ca11d2cd5f563e syzbot             2025-10-14  580          printk(KERN_ERR "DEEPANSHU: After iget5_locked for inode 25, I_NEW=%d, i_state=0x%x\n", 
+9ca11d2cd5f563e syzbot             2025-10-14  581                 !!(inode->i_state & I_NEW), inode->i_state);
+9ca11d2cd5f563e syzbot             2025-10-14  582          //dump_stack();
+9ca11d2cd5f563e syzbot             2025-10-14  583      }
+9ca11d2cd5f563e syzbot             2025-10-14  584      
+82cae269cfa9530 Konstantin Komarov 2021-08-13  585      /* If this is a freshly allocated inode, need to read it now. */
+9ca11d2cd5f563e syzbot             2025-10-14  586      if (inode->i_state & I_NEW) {
+9ca11d2cd5f563e syzbot             2025-10-14  587          if (inode->i_ino == 25)
+9ca11d2cd5f563e syzbot             2025-10-14  588              printk(KERN_ERR "DEEPANSHU: Calling ntfs_read_mft for inode 25\n");
+82cae269cfa9530 Konstantin Komarov 2021-08-13  589          inode = ntfs_read_mft(inode, name, ref);
+9ca11d2cd5f563e syzbot             2025-10-14 @590          if (inode->i_ino == 25 && IS_ERR(inode))
+                                                                ^^^^^^^^^^^^                 ^^^^^
+"inode" dereferenced before an IS_ERR() check...
 
-Does anybody know of some C language trick to get the remaining
-padding size without repeating the struct definition?
+9ca11d2cd5f563e syzbot             2025-10-14  591              printk(KERN_ERR "DEEPANSHU: ntfs_read_mft FAILED for inode 25\n");
+9ca11d2cd5f563e syzbot             2025-10-14  592      } else if (ref->seq != ntfs_i(inode)->mi.mrec->seq) {
+9ca11d2cd5f563e syzbot             2025-10-14  593          if (inode->i_ino == 25)
+9ca11d2cd5f563e syzbot             2025-10-14  594              printk(KERN_ERR "DEEPANSHU: inode 25 seq mismatch\n");
+1fd21919de6de24 Konstantin Komarov 2024-08-22  595          iput(inode);
+1fd21919de6de24 Konstantin Komarov 2024-08-22  596          inode = ERR_PTR(-ESTALE);
+9ca11d2cd5f563e syzbot             2025-10-14  597      } else if (inode->i_ino == 25) {
+9ca11d2cd5f563e syzbot             2025-10-14  598          printk(KERN_ERR "DEEPANSHU: inode 25 found in CACHE, skipping ntfs_read_mft!\n");
+9ca11d2cd5f563e syzbot             2025-10-14  599          //dump_stack();
+82cae269cfa9530 Konstantin Komarov 2021-08-13  600      }
+82cae269cfa9530 Konstantin Komarov 2021-08-13  601  
+1fd21919de6de24 Konstantin Komarov 2024-08-22  602      if (IS_ERR(inode))
+0e8235d28f3a0e9 Konstantin Komarov 2022-10-10  603          ntfs_set_state(sb->s_fs_info, NTFS_DIRTY_ERROR);
+0e8235d28f3a0e9 Konstantin Komarov 2022-10-10  604  
+82cae269cfa9530 Konstantin Komarov 2021-08-13  605      return inode;
+82cae269cfa9530 Konstantin Komarov 2021-08-13  606  }
 
-"offsetof()" sadly does not work until the structure has been fully
-defined, so you can't use the "obvious" trick
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-    char buffer[256 - offsetof(struct .., buffer)];
-
-and anonymous structure members not only don't name the container, the
-strcture type also cannot be named, so you can't do
-
-  struct outer {
-      struct inner {
-       ..
-      };
-      char buffer[256 - sizeof(struct inner)];
-  };
-
-to create that buffer.
-
-Oh well.
-
-                 Linus
 
