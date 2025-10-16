@@ -1,145 +1,202 @@
-Return-Path: <linux-kernel+bounces-855709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C53FBE20CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0676BE20C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54D1A4F8918
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC65405907
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332B52FD7A3;
-	Thu, 16 Oct 2025 07:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08A42FE04B;
+	Thu, 16 Oct 2025 07:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIGJbW7H"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F6bmnbrS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B06E23C4F4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95882BDC34
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760601322; cv=none; b=hu1Zz5WWnv/vKM5nswVn2+mvwe7aG2clZJlaYq5ZiLYVmek/tB9GI8vUEwJqO4bwv/o6gulJhC51F2POdLDn0A+Akk+kk/YtASI+UGRSmxvdp7mTlckzepyDikHhRUBJbweKazw/j0+6jbygkvjvRjdjRW37qDMc9/QDwAD7VPo=
+	t=1760601404; cv=none; b=O2F+MWUGavaekJs4S5apEqn0w0tjDJ4sZ95/2xu/E6+NkxEuncJU6rogkIVv4zRd+FzIWfyK/sEbVfKpt0+zaNVmxOQB863phzl0fEFn4lT1LqnX2sd3lhaqpNykGQt57uLictkGQz++w0icTdBy6IYQ59tlQO0frMPUOU4nsoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760601322; c=relaxed/simple;
-	bh=l8JMG+ysDeFr5TZgA8X0KLJsxexULhV0axAKW6Rb+V8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aUcwOzNicD/lxh59UfePYnUBDX0t/kMYHu17a3/jlvo3pUXMWh/tGILfiJb3fh1NuiFHhjy2D9gnWkKZW+bNq0hc24XMPq9+g3MbLNaggOdSNp9m7J7PRO+KqPyFXCPBUERjlc+nSb128cweTPW59MIoA7VXvQaruK+GAoq6Fzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIGJbW7H; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-26a0a694ea8so3421735ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760601320; x=1761206120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u6tiWu7yuQ3XN00VI86rkfRhwxpMpuXvOvXa99SVFc4=;
-        b=lIGJbW7HEceFokdsumJ6iIpSIbFrcm5B8BhR7fmTqUkm9/x6OfB6JRGvdqWlMLkFBp
-         UwLxHHHRiQKp9E/bWeqHks752Zgc5snhyZYxT+9zAUaGR8elFVgrGAJ78MPL+Sl9EMNX
-         JL1FcQ0E4bGnfsLp/xvl/VSP6KO5MaDhZqIjJbrXDJp5e+G6R5mEmYwVgwqMhaW6Qgh2
-         xtUhU6ZKWWcwLOiairHGR0xckrFwReEdgh5Gge7kfYzvAXinqQxbGIoGucxUdH5Am1ZK
-         USWXpb7RHu3TrdQKBE8wnosbL/tUKGL3++uiotf4oSXln0YvD4W9YKyrTXMjyOhFWQPe
-         blag==
+	s=arc-20240116; t=1760601404; c=relaxed/simple;
+	bh=Jh1z2qwS+DdEu4z545f3xi+xVgiwgZciXQlB+qgqp6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QsYIdpMP/i5pXwghILk6vI1TgDM/MrukONBNDT6swmQcvkDT879M9hw0NlwyTu+inVCITU/M/chnsfU/8Kx4+nEDm6VbmmfBlEmGMDh/O2AvU+MZyhmnUIukPWRprUT+xKGthfDM4NYOX3LKERfjP6opMk3Td3AYnNufFGPfd+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F6bmnbrS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G7PsXw003752
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:56:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u4HgNC7aJrqDGVyNBmRY6dlyNS/Fi4BfzYUKhOJfqN0=; b=F6bmnbrSrzGPZ0Tf
+	Dp1aRK2t/IlRZOCD9IFw7m5t1ia7V3sdnJpne5pfBMgyHE1e+SwRZEpPntd+OZA4
+	1QDGc7OtFosRWbe5dV1ZKMQZdt00Ix0+qTQKl1aitCb5RmM4n3MDfbcI9rF/sKTk
+	QwFhT+64/cjG4HPcJtkJelCWeX+sgUtsYVKbF4SID29AAeJ+YjDJTsDS4KYZKj/G
+	m4kKjpVLCEUI2E1JNtzXPnh35eR4J+RxsrzcYqd7ofopnMt6NemwhzESrUVshhQI
+	9klBz0BKLsSqE1Dp5jIkbZ7TcmS4jkLYWIxPggoMUW+MKDJZEglkwIHdXGfxPL//
+	itzVlA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd97j02-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:56:42 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8572f379832so14359085a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:56:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760601320; x=1761206120;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u6tiWu7yuQ3XN00VI86rkfRhwxpMpuXvOvXa99SVFc4=;
-        b=Ia8lbG4kiYO+4AaSNL2y5I+vbM687XHfBc3MKoo1D2+zHsLFGRQmpGbbMzCZoFtAW6
-         fRIyNg/DO2RQJii/Ayf7MsnvFV0RvJmnPFwGZysthW0rpMOGzXTVyNsP4iJIikviHQ1s
-         bzPCaWBsWiS8rZ7JSy0g1IpwRf7NHajqMQiipBUSnScWtsPFIiw3GNQpxQok25bFGD+X
-         qod+A44y/8nc9EvxfLZPKBwz/Be4rwtp+5N7D9btfI4stGbE7or+/pGKUxyRaQhZZ5GL
-         YZaJqTyCZJKs0bRjjUFgB4TV00Kjl5cXkSfMlNqnyTYe1nvLEnEIu34heVILKhZU41k/
-         Xh1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXeHO7z2ewlEyyqgJ5z+U9zRfKdelcAJP/cuAjWi30DCn8JAI5tIrRCU7+yBth0arjcS2FF/YQ6y2aCOkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySEkxRTlVgGvQxZndoKZrN/WN29i3CQRCxwjydzHB6liaaviS/
-	yrs7MzONbzB2s/6XeJg38bC/mSsE7620IYIVL83xvMIB73EGf3C6hRWJ
-X-Gm-Gg: ASbGncvxK71cOUimvTFHeaXpqA3kKSNYOowDarrjh462p+DsyIshja47Ty1ph/kWBlZ
-	yAS5zwUOXQwU0W0zVBNLVnn0JJ7nJojeYmwM0ZleYtNIhwg54sHGp3xEG07RW105fOGU6xzyEHw
-	oqxvFED+6AmBsaCEUbEHgiauYxzDCS3HuBUYCrw4FVhBYN3Gyb2czz/mP4KY1LLGqfUpQURuJt5
-	j3LbvQdIklPxlOwPBVDrfDUBnUKFylGirxX2E2C2s20mxt9089ZwJY8KcvYP6p3HyVM7oNs+UYu
-	l26EFiFOB7KgrCnm7nrNyYNY9RRNtekP0cTvyjaqCo4Yw7mzA0I8Mlsw0ESzm53JWaRwivMhPRt
-	/iHumOV6CLZNSZyC7Yohw7IUsobmeZJKQhL+jXNcgaMGnUh94aUpRo8x5HWSaBpgLufYdDAI589
-	+Us0w=
-X-Google-Smtp-Source: AGHT+IEo/63Yi6BDxpvQRpnjxo8HKcEDZGgx4k5ciYuENj4di6XHI29o7bd4su5DW6K/ds9jybazWQ==
-X-Received: by 2002:a17:902:ea07:b0:290:b8c7:e6ee with SMTP id d9443c01a7336-290b8c7eb5amr6060835ad.55.1760601320330;
-        Thu, 16 Oct 2025 00:55:20 -0700 (PDT)
-Received: from pc.. ([116.177.28.66])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099afe0aasm20263975ad.111.2025.10.16.00.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 00:55:20 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrei Vagin <avagin@gmail.com>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] docs: scheduler: completion: Document complete_on_current_cpu()
-Date: Thu, 16 Oct 2025 15:55:07 +0800
-Message-ID: <20251016-complete_on_current_cpu_doc-v3-1-8ae5d346ea45@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1760601401; x=1761206201;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4HgNC7aJrqDGVyNBmRY6dlyNS/Fi4BfzYUKhOJfqN0=;
+        b=slJU7I3aMll8bUACHjBC4xDQv9t9cfnGgyafVWnzZET0C6fOCcpassSgviyckNtXsG
+         vIJEbY4zq6WKO5T1WSZtOXb4Yt70MlOKoLrtRDt211RPU/bL3NhmtX3rgzlq7eoPJjw7
+         J4FhNjX19M4uwArLoq1j7aqe4Wf1GQYThuHbc9GifDl8pcQIx3CduNkFYq1QQNtJ6Plb
+         eZOns9k3Cqk24ZrgjkgvsGYp+KLgDfMRvWBzI8DsmW0nIwTVxvtg1gwrJLcubqGD2054
+         FyjC5a6LX7bzRHsJkilVWDEGGEYQ8QQ8E8iXkEXX2HamwZIqcqQh01TuG7hf61pJi0Lk
+         FLlw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4YJ+6A43mtbi7gVtLwLoZVy1IBsyihwYfcITohPyf50/ArezUBkOzWhpTC08PFe4kkrN0ID61AonYTW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhMOooCWD+ta1ZxqXJT7OjK9KR0tQYKuh/eRQYYiJhuPPN7GhM
+	ti4oCNtQpx79boMm14yYuNCEXlrAOrk7eGz4gumbe9KhEecr6O+VldxP7ZFX2MPamZGXXZMTR4S
+	FweQiI4ID1/rqken2XpJyVKWxhxAdZks8UliS1ZXdull22GIAciwdTaA/M0bQ2FjeQHU=
+X-Gm-Gg: ASbGncsOyGHBPhBUcITiuqHql0sCaf/mE4Wv42b3bWhERqMGcllaBSC+lM3e9FAnohJ
+	djP04OKnweRkcGeIXcPQsUlU3XbuObvbxjpD6jhSLsvTQhHeOEgrNLYQTWleiIjFxDKCti0zqUw
+	Yp79EAOTcoXiMFx9RBh/rdwxrymiyUhM00kFPTyAK7ZNq3lvt5MOOtuG6htuWzW5+ML+qOUBLXn
+	C5BPW3lO4XL4huassa2AVSoP6gUH1JUBXM7HY4FLLczkowwpbwtNaeNOKo+n/d9xT517eW2fXmr
+	ldhsFIuKwTO5U7YOO68GK8eQgFEELBm+1SGQ/7qLwnDTmiT4R/CS1iGL4LmkEFPrepd1vsDVEqf
+	yHpxDHmmU9RIuQEFAf0PRKzgneRGUyX0jbTj17dJnZEv81NKqAxzvzJC/
+X-Received: by 2002:ac8:5f14:0:b0:4ce:8b2e:feaa with SMTP id d75a77b69052e-4e6eacc8772mr273177251cf.6.1760601400649;
+        Thu, 16 Oct 2025 00:56:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEVX7ZQEtzFyJmnhIE9yt6cHr2wIqLsibKBKtjRREvjjvyyBcO5SEJwCNH5bR44oCWeIBhpyQ==
+X-Received: by 2002:ac8:5f14:0:b0:4ce:8b2e:feaa with SMTP id d75a77b69052e-4e6eacc8772mr273177161cf.6.1760601400213;
+        Thu, 16 Oct 2025 00:56:40 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63be969163csm4142038a12.13.2025.10.16.00.56.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 00:56:39 -0700 (PDT)
+Message-ID: <abc9d825-1e98-4838-9e9c-ca18ba191e11@oss.qualcomm.com>
+Date: Thu, 16 Oct 2025 09:56:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Change-ID: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
-X-Mailer: b4 0.15-dev-e44bb
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760600878; l=1679; i=javier.carrasco.cruz@gmail.com; s=20250209; h=from:subject:message-id; bh=V8LHqLfTQM+om9jJqbfR5TNDEnoucqEKULLH17WOmVs=; b=nB9zaQLTD8o7SLsyK5sIzt2yQE1oWj3q71Q8W9uDER1H4jx82nU5tqkvfbj3jLZl7ivgRQGor AidOK6vTlTRDa95nV/TumgNHNZpvjQrBCfuj3nL8ZmC9xDWGKkbbP8I
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519; pk=/1fPZTF8kAIBZPO3D8IhqidB0sgYzPDkljBZXsXJZM8=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: i2c: qcom-cci: Document Kaanapali
+ compatible
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251014-add-support-for-camss-on-kaanapali-v2-0-f5745ba2dff9@oss.qualcomm.com>
+ <20251014-add-support-for-camss-on-kaanapali-v2-1-f5745ba2dff9@oss.qualcomm.com>
+ <e2c43a8c-a9cc-46a1-9ddd-5d6dfc7e917b@linaro.org>
+ <49eaf7ec-ac71-4bf3-9a4e-25fa633d815e@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <49eaf7ec-ac71-4bf3-9a4e-25fa633d815e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: hTnTD3DhACNr3izQ9FPMtrKBcq2Hvmtg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX2YqAN81wEYWA
+ 9Ai6KAQCdXXNbMj2EkU8qP+7r5yUJFuEW3ZkTx5vLt9WM9EudoJcalMp3L3G2sbYXhs1OCqs3LB
+ kS8VzZhjLg4dmV7ki/npAKUjc3+2i2qvMqAR3Mje0zSG1oQ6NoIXbnskjO1MStuNQt06H6BlLE6
+ 1MO1wnL2pM/+MOdhnwsmeFHeriHqnCYFmeZrxAhAQ++FYrOAvpcK9H4dfG0ySZZu/Bp8Ef1EpOm
+ Lm+dJ6h/icA6IZT21mNd281OLhiJXHq/CSubCz+lKRDX9reUIdeSXwZ3yDg7lpelns5E6rVXmS7
+ TFBC+2LQV7t2fkefHAUzIJcBCn+hEpF/+2PrC5D6ImI7ZyxSsWEoOws4mLDteosAIYddEdMK4fZ
+ P8eSSDPWDy3adVOEJE6IBMOZ/qEL3w==
+X-Proofpoint-GUID: hTnTD3DhACNr3izQ9FPMtrKBcq2Hvmtg
+X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68f0a53a cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=UKwaH1GiQmKLMY0bYhoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the
-current cpu") introduced this new function to the completion API that
-has not been documented yet.
+On 10/16/25 3:56 AM, Hangxiang Ma wrote:
+> On 10/16/2025 3:30 AM, Vladimir Zapolskiy wrote:
+> 
+>> On 10/15/25 05:56, Hangxiang Ma wrote:
+>>> Add Kaanapali compatible consistent with CAMSS CCI interfaces. The list
+>>> of clocks for Kaanapali requires its own compat string 'cam_top_ahb',
+>>> aggregated into 'qcom,qcm2290-cci' node.
+>>>
+>>> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 6 +++++-
+>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+>>> index 9bc99d736343..0140c423f6f4 100644
+>>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+>>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+>>> @@ -25,6 +25,7 @@ properties:
+>>>         - items:
+>>>             - enum:
+>>> +              - qcom,kaanapali-cci
+>>>                 - qcom,qcm2290-cci
+>>>                 - qcom,sa8775p-cci
+>>>                 - qcom,sc7280-cci
+>>> @@ -128,6 +129,7 @@ allOf:
+>>>           compatible:
+>>>             contains:
+>>>               enum:
+>>> +              - qcom,kaanapali-cci
+>>>                 - qcom,qcm2290-cci
+>>>       then:
+>>>         properties:
+>>> @@ -136,7 +138,9 @@ allOf:
+>>>             maxItems: 2
+>>>           clock-names:
+>>>             items:
+>>> -            - const: ahb
+>>> +            - enum:
+>>> +                - ahb
+>>> +                - cam_top_ahb
+>>
+>> Why is not to give the clock "ahb" name like on QCM2290?
+>>
+>> On QCM2290 the macro in front of the vlaue is GCC_CAMSS_TOP_AHB_CLK,
+>> and name "ahb" is good for both, I believe.
+>>
+>>>               - const: cci
+>>>     - if:
+>>>
+>>
+> 
+> On Kaanapali the macro has been changed to CAM_CC_CAM_TOP_AHB_CLK. GCC clock domain doesn't manage the AHB clock but CAMCC does. I think it's better to create a new and more complete clock name to denote the differences between them.
 
-Document complete_on_current_cpu() explaining what it does and when its
-usage is justified.
+Are there any other "AHB" clocks going to this block?
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Changes in v3:
-- Rebase onto v6.18-rc1
-- Document the scenario where the gain is relevant (Andrei Vagin)
-- Link to v2: https://lore.kernel.org/r/20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com/
+If not, then this is more confusing instead
 
-Changes in v2:
-- Rebase onto v6.17-rc1
-- Fix patch formatting (drop --- before the Signed-off-by tag).
-- Link to v1: https://lore.kernel.org/r/20250703-complete_on_current_cpu_doc-v1-1-262dc859b38a@gmail.com
----
- Documentation/scheduler/completion.rst | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/scheduler/completion.rst b/Documentation/scheduler/completion.rst
-index adf0c0a56d02..139700c56964 100644
---- a/Documentation/scheduler/completion.rst
-+++ b/Documentation/scheduler/completion.rst
-@@ -272,6 +272,11 @@ Signaling completion from IRQ context is fine as it will appropriately
- lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never
- sleep.
- 
-+Use complete_on_current_cpu() to wake up the task on the current CPU.
-+It makes use of the WF_CURRENT_CPU flag to move the task to be woken up
-+to the current CPU, achieving faster context switches. For this optimization
-+to be effective, the current task must be about to go to sleep right after
-+waking the target task.
- 
- try_wait_for_completion()/completion_done():
- --------------------------------------------
-
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
-
-Best regards,
---  
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+Konrad
 
