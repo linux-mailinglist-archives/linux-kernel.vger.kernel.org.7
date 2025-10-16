@@ -1,216 +1,269 @@
-Return-Path: <linux-kernel+bounces-856356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF52ABE3F87
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:42:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AEDBE3F90
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A769B19A7B92
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618F619A80AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15852340DB6;
-	Thu, 16 Oct 2025 14:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E819F340DB5;
+	Thu, 16 Oct 2025 14:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VTAD340t"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="FIVSwzKc"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050F30F933;
-	Thu, 16 Oct 2025 14:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18E91DF982
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760625748; cv=none; b=JsJZNEuLrR0xMv4PfLpfmi46dYi7R+dhsZP2up9aYXTb6BP8BwkiCurxylNxZ1sPP2edzq8l76bGw7x5DwqlNLfXJcGQP4G+nO+HOaXFnAuFpvSmfHYW4PIG4vfavXK9CZk1G31tU1ot+AJo4NkKbBaF+BW0ZGloC+xbubREeR0=
+	t=1760625864; cv=none; b=kbjIBTo2LKGPCNA05wIH78GIBOeWA3QLxifDAkOuM+St5ufJBqpo/mozApN1KEUGR9bUmpE6fnoRP7GOughdnUjdoWfzh2iUDqHpNClV1mtJ92e3YAYHnyi5J+sla179xYrB2jz9qafFhjJC3pvrsS3rb9sApLH5PBxGZw2yRSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760625748; c=relaxed/simple;
-	bh=jjl0am6Ty1/jZDMPoiRz5vbe7o1TNwBWQRFz2urTlFU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BG+jJa5eR07ayeNzaVJKc6SaCAyasNAPHjf5u92dVdP6WiWyXTqmcbiSqYCAQY67uhI59rdkyrdkZYOs9XlYER9BViMaEyZtN+YkAAdFxz7NthAqu4dEN5ZZWrOIsT9KKpX/4mFLIhnHqJwIFDb48UU7cWVvF06Eo47CrxpxpYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VTAD340t; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760625744;
-	bh=jjl0am6Ty1/jZDMPoiRz5vbe7o1TNwBWQRFz2urTlFU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VTAD340tY1BwVmnfMhCJIsVuvW6/Y46pDQdugpP/XT0gWfNqbrO1uZ+aC2JfLquFk
-	 WBbIyNjK+rzQHWsSok+vclEY3RnJU45GJ0OsnYHBZiCbbQbOCfzCy+LHq7Xcu8DHcF
-	 Ihqkn/njaxWIesEmtusS8EhYfLgvPcHYs8OvmtDHLfHDE+FbyUD0ik8mX0QqXZlXtO
-	 TubExDvHADOCNmNXz5fcx38GrPEhaunjfvTaOQSRzwFCEPGuCDzVyxAzJfbkmJcVfU
-	 ffeD84/F3fE200JtXdfmEohmNZlS8BMYNK1KP70q4+4G50UQHghyBgTk+Tp+g0piPj
-	 I922IQ6O1JtEg==
-Received: from [IPv6:2606:6d00:17:ebd3::5ac] (unknown [IPv6:2606:6d00:17:ebd3::5ac])
+	s=arc-20240116; t=1760625864; c=relaxed/simple;
+	bh=OpQASccCsM7AUQf2vs22kzss0As7QfZrra2pCCdlUUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kvNFlq9giCXycsKsziwGKzGA6eyKHNysi7OEXpb9ikGcr0WvZXlIKfk6HEHUW/Tvv7JgB1iaCacAwmoW6yfuz8i6PN39ZvRJTeD6h4UK1gpae3Tc18hCBzYXi87zgikRILx9WrWE/bMex1Y5MI+m3v5T1rFD0DTEwstNEwatvKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=FIVSwzKc; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id F1F16BDD0B
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:44:17 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7BAAD17E0CF8;
-	Thu, 16 Oct 2025 16:42:21 +0200 (CEST)
-Message-ID: <eeda0221acbe0a70219fb7d87603d3dfec73f56f.camel@collabora.com>
-Subject: Re: [PATCH v4 0/8] Enable video decoder & encoder for MT8189
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Kyrie Wu <kyrie.wu@mediatek.com>, Tiffany Lin
- <tiffany.lin@mediatek.com>,  Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger	
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Hans Verkuil
- <hverkuil@xs4all.nl>,  Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Sebastian Fricke <sebastian.fricke@collabora.com>, Nathan Hebert	
- <nhebert@chromium.org>, Arnd Bergmann <arnd@arndb.de>, Irui Wang	
- <irui.wang@mediatek.com>, George Sun <george.sun@mediatek.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
-	 <andrzejtp2010@gmail.com>
-Date: Thu, 16 Oct 2025 10:42:19 -0400
-In-Reply-To: <20251016060747.20648-1-kyrie.wu@mediatek.com>
-References: <20251016060747.20648-1-kyrie.wu@mediatek.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-AbDKkJujBZd+Yb/YkvVa"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by relay12.grserver.gr (Proxmox) with ESMTPS id C4C66BD9AA
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:44:16 +0300 (EEST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 4A8751FFC15
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:44:16 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760625856;
+	bh=JNrM61GTnoPRhEpFEnOGQ9cXg1SAqHsg//wSftI+AbM=;
+	h=Received:From:Subject:To;
+	b=FIVSwzKceAsIekizlP7CCJbwUmWZP55eD9in6ZV5gaa21xZcas5ue6w0ZdT6W1XR/
+	 HVPpLgmXw+rjMsOm5xJBppdMOChNA8Zp8GnkyJhe3CUjs+qMYH6lE6HKyG+DMzoLhu
+	 oLUMjBPoSxM88xShrD/XPmeRagulzoSheQuRzpUK6PmO2otJwWh5/ZhxYfbLueBjcm
+	 onE39sZi0VT+qMOHCQvLu9kl0CeZ3i8wZcbzslg9buFJ7zK4jxDeuflpEWcm6P5bB3
+	 yumBVtiiY+mmEVKpZYGZPq2DO413RppPE84/CfkyLIixoZDb1aTRbXRRJVNziiT+tL
+	 /Lz7w1tUCcYxw==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f180.google.com with SMTP id
+ 38308e7fff4ca-36d77de259bso6088031fa.3
+        for <linux-kernel@vger.kernel.org>;
+ Thu, 16 Oct 2025 07:44:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV3bxPBSGXl1RDy0RpuJzuv6jJPZhvEqM/z9akR5cbQ1gYsDRyZPfcs8I+xH87rSvD8pra0N6oQjrk3jxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYalf+qiAANb/aiIuKFKIoF9za778l2FYkXhgASB0yysAvEF/E
+	LsiAhgR7mWSCGh9ATil1Au4jssTO2uLbcxwlftk+UVof3uu0ndhgB3Wv/YCMJmsj7FdO/oDKblK
+	sebFmgmkKPdAPmiuFzWEqS7cr3pDH+jo=
+X-Google-Smtp-Source: 
+ AGHT+IF8UbzeOVrx1gjDmT5wKfCZV3WQzZ0+XY2mS2iVdJ3brPnipsfvUlOhwT8himupC70s/xo3zsiBSDaAkqiT/Z0=
+X-Received: by 2002:a2e:a803:0:b0:360:e364:bb3d with SMTP id
+ 38308e7fff4ca-37797637a81mr1742621fa.0.1760625855670; Thu, 16 Oct 2025
+ 07:44:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-AbDKkJujBZd+Yb/YkvVa
+References: <20251013201535.6737-1-lkml@antheas.dev>
+ <160c3adf-9333-4486-ba4c-d3359ea73337@gmail.com>
+ <CAGwozwGzOQ-LCk6B202-CuKq=gepn6Mt4LitJJZ7dfMLaDVs7Q@mail.gmail.com>
+ <ce8cc332-54ec-4e12-aa7c-a6d5e2b4fa9d@gmail.com>
+ <CAGwozwHrWxxE_vyswe39W=ui8N6ej4ZPFvuKVueyw4xLL8C4ZQ@mail.gmail.com>
+ <13c53469-58fd-462a-a462-626975d6055f@gmail.com>
+ <CAGwozwHmTUb3Bcbn9Zc44sqe7DHtnnk0chvhjN7jJNrmePr8fw@mail.gmail.com>
+ <f43f4f0e-9b98-4629-872e-b623bfc9b6b1@gmail.com>
+In-Reply-To: <f43f4f0e-9b98-4629-872e-b623bfc9b6b1@gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 16 Oct 2025 16:44:04 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwECtoh-7uK9RuB+WSbognjwHiBx7iXi6OJwyasoAfHemw@mail.gmail.com>
+X-Gm-Features: AS18NWCZSpO4GvS6WW5OzbHZNR9iPtHYTX84Y1BNHfsG5adNVbBfJczpHK_q02s
+Message-ID: 
+ <CAGwozwECtoh-7uK9RuB+WSbognjwHiBx7iXi6OJwyasoAfHemw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] HID: asus: Fix ASUS ROG Laptop's Keyboard
+ backlight handling
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	fooqux@proton.me
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176062585649.3730110.11587896991965678502@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Hi,
+On Thu, 16 Oct 2025 at 16:32, Denis Benato <benato.denis96@gmail.com> wrote:
+>
+>
+> On 10/16/25 14:51, Antheas Kapenekakis wrote:
+> > On Thu, 16 Oct 2025 at 14:46, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>
+> >> On 10/16/25 14:28, Antheas Kapenekakis wrote:
+> >>> On Thu, 16 Oct 2025 at 14:19, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>> On 10/16/25 14:14, Antheas Kapenekakis wrote:
+> >>>>> On Thu, 16 Oct 2025 at 13:57, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>>>> On 10/13/25 22:15, Antheas Kapenekakis wrote:
+> >>>>>>> This is a two part series which does the following:
+> >>>>>>>   - Clean-up init sequence
+> >>>>>>>   - Unify backlight handling to happen under asus-wmi so that all Aura
+> >>>>>>>     devices have synced brightness controls and the backlight button works
+> >>>>>>>     properly when it is on a USB laptop keyboard instead of one w/ WMI.
+> >>>>>>>
+> >>>>>>> For more context, see cover letter of V1. Since V5, I removed some patches
+> >>>>>>> to make this easier to merge.
+> >>>>>>>
+> >>>>>>> All comments with these patches had been addressed since V4.
+> >>>>>> I have loaded this patchset for users of asus-linux project to try out.
+> >>>>>>
+> >>>>>> One of them opened a bug report about a kernel bug that happens
+> >>>>>> consistently when closing the lid of his laptop [1].
+> >>>>>>
+> >>>>>> He also sent another piece of kernel log, but didn't specify anything more
+> >>>>>> about this [2].
+> >>>>>>
+> >>>>>> [1] https://pastebin.com/akZx1w10
+> >>>>>> [2] https://pastebin.com/sKdczPgf
+> >>>>> Can you provide a link to the bug report? [2] seems unrelated.
+> >>>> The log in [2] was posted without additional context in the same
+> >>>> discord message as [1].
+> >>> Link me the kernel sources. Is it linux-g14 in the AUR?
+> >> Someone has replicated it on the AUR but it's just an out-of-sync replica.
+> >>
+> >> The true source code is here:
+> >> https://gitlab.com/asus-linux/linux-g14 branch 6.17
+> > Ok, lets wait for the user to replicate on a stock kernel
+> >
+> User said "yes I just confirmed it: it is only on the asus kernel, mainline doesn't have this issue".
+>
+> With "asus kernel" he is referring to -g14.
+>
+> I added him in CC.
 
-Le jeudi 16 octobre 2025 =C3=A0 14:07 +0800, Kyrie Wu a =C3=A9crit=C2=A0:
-> This series have the follow changing:
-> Firstly add mt8189 video decoder compatible, profile and level to support
-> MT8189 kernel driver.
-> Secondly fix some bugs, including vp 4K profile2 and media device node
-> number bug.
-> Lastly, add mt8189 video encoder compatible.
->=20
-> This series has been tested with MT8189 tast test.
-> Encoding and decoding worked for this chip.
->=20
-> Patches 1-2 Add decoder compatible.
-> Patches 3 Add profile and level supporting.
-> Patches 4 Add core-only VP9 decoding supporting.
-> Patches 5-6 fix some bugs.
-> Patches 7-8 Adds encoder compatible.
->=20
-> ---
-> H264 test results:
-> ./fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -j1 -t 90
-> =C2=A0=C2=A0=C2=A0=C2=A0 JVT-AVC_V1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 9=
-4/135
+If possible, try the bazzite kernel, its linux-bazzite-bin. It has
+this series + another older armoury series. If it still happens with
+that, we can cut a release with just this series to begin isolating
+this issue
 
-Your set indicates that this SoC supports more then H.264, any reason to om=
-it
-other codecs ? Also, why not -j2, does it mean concurrent decoding is broke=
-n ?
->=20
-> v4l2-compliance test results:
-> Compliance test for mtk-vcodec-enc device /dev/video2:
-> Total for mtk-vcodec-enc device /dev/video2: 47, Succeeded: 46, Failed: 1=
-, Warnings: 0
-> Compliance test for mtk-vcodec-dec device /dev/video3:
-> Total for mtk-vcodec-dec device /dev/video3: 48, Succeeded: 48, Failed: 0=
-, Warnings: 0
->=20
-> scp upstream link:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20250811015922.=
-32680-1-huayu.zong@mediatek.com/
->=20
-> Changes compared with v3:
-> --add reviewer to commit messages
-> --Rebased on top of the latest media tree
->=20
-> Changes compared with v2:
-> --add H264 fluster test results
-> --reorder compatible string for dt-bindings
->=20
-> Changes compared with v1:
-> --add v4l2-compliance test results
-> --add scp upstream link
-> --add HW difference discriptions for dt-bindings commit messages
->=20
-> This series patches dependent on:
-> [1]
-> https://patchwork.linuxtv.org/project/linux-media/cover/20250510075357.11=
-761-1-yunfei.dong@mediatek.com/
-> [2]
-> https://patchwork.linuxtv.org/project/linux-media/cover/20250814085642.17=
-343-1-kyrie.wu@mediatek.com/
+Antheas
 
-It could be nice to quote the subjects, so we can decide to open the links =
-or
-not. I suppose you opted for sending the DTS separately, I don't have the H=
-W,
-but if my chances someone wanted to test that, he's need a these, can you l=
-ink
-them please ?
+> >>>> I think I will tell the user to open a proper bug report because
+> >>>> I do agree on the fact that it's looking unrelated.
+> >>>>> As for [1], it looks like a trace that stems from a sysfs write to
+> >>>>> brightness stemming from userspace that follows the same chain it
+> >>>>> would on a stock kernel and times out. Is it present on a stock
+> >>>>> kernel?
+> >>>> I have asked more details to the user. The user is not online ATM
+> >>>> so I will get to you with more details when I can.
+> >>>>> Ilpo should know more about this, could the spinlock be interfering?
+> >>>>> My testing on devices that have WMI led controls is a bit limited
+> >>>>> unfortunately. However, most of our asus users have been happy with
+> >>>>> this series for around half a year now.
+> >>>> Unless they have looked to kernel logs they won't be able to tell
+> >>>> since apparently there are no visible consequences.
+> >>>>> Antheas
+> >>>>>
+> >>>>>>> ---
+> >>>>>>> V5: https://lore.kernel.org/all/20250325184601.10990-1-lkml@antheas.dev/
+> >>>>>>> V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@antheas.dev/
+> >>>>>>> V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@antheas.dev/
+> >>>>>>> V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@antheas.dev/
+> >>>>>>> V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
+> >>>>>>>
+> >>>>>>> Changes since V5:
+> >>>>>>>   - It's been a long time
+> >>>>>>>   - Remove addition of RGB as that had some comments I need to work on
+> >>>>>>>   - Remove folio patch (already merged)
+> >>>>>>>   - Remove legacy fix patch 11 from V4. There is a small chance that
+> >>>>>>>     without this patch, some old NKEY keyboards might not respond to
+> >>>>>>>     RGB commands according to Luke, but the kernel driver does not do
+> >>>>>>>     RGB currently. The 0x5d init is done by Armoury crate software in
+> >>>>>>>     Windows. If an issue is found, we can re-add it or just remove patches
+> >>>>>>>     1/2 before merging. However, init could use the cleanup.
+> >>>>>>>
+> >>>>>>> Changes since V4:
+> >>>>>>>   - Fix KConfig (reported by kernel robot)
+> >>>>>>>   - Fix Ilpo's nits, if I missed anything lmk
+> >>>>>>>
+> >>>>>>> Changes since V3:
+> >>>>>>>   - Add initializer for 0x5d for old NKEY keyboards until it is verified
+> >>>>>>>     that it is not needed for their media keys to function.
+> >>>>>>>   - Cover init in asus-wmi with spinlock as per Hans
+> >>>>>>>   - If asus-wmi registers WMI handler with brightness, init the brightness
+> >>>>>>>     in USB Asus keyboards, per Hans.
+> >>>>>>>   - Change hid handler name to asus-UNIQ:rgb:peripheral to match led class
+> >>>>>>>   - Fix oops when unregistering asus-wmi by moving unregister outside of
+> >>>>>>>     the spin lock (but after the asus reference is set to null)
+> >>>>>>>
+> >>>>>>> Changes since V2:
+> >>>>>>>   - Check lazy init succeds in asus-wmi before setting register variable
+> >>>>>>>   - make explicit check in asus_hid_register_listener for listener existing
+> >>>>>>>     to avoid re-init
+> >>>>>>>   - rename asus_brt to asus_hid in most places and harmonize everything
+> >>>>>>>   - switch to a spinlock instead of a mutex to avoid kernel ooops
+> >>>>>>>   - fixup hid device quirks to avoid multiple RGB devices while still exposing
+> >>>>>>>     all input vendor devices. This includes moving rgb init to probe
+> >>>>>>>     instead of the input_configured callbacks.
+> >>>>>>>   - Remove fan key (during retest it appears to be 0xae that is already
+> >>>>>>>     supported by hid-asus)
+> >>>>>>>   - Never unregister asus::kbd_backlight while asus-wmi is active, as that
+> >>>>>>>   - removes fds from userspace and breaks backlight functionality. All
+> >>>>>>>   - current mainline drivers do not support backlight hotplugging, so most
+> >>>>>>>     userspace software (e.g., KDE, UPower) is built with that assumption.
+> >>>>>>>     For the Ally, since it disconnects its controller during sleep, this
+> >>>>>>>     caused the backlight slider to not work in KDE.
+> >>>>>>>
+> >>>>>>> Changes since V1:
+> >>>>>>>   - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
+> >>>>>>>   - Fix ifdef else having an invalid signature (reported by kernel robot)
+> >>>>>>>   - Restore input arguments to init and keyboard function so they can
+> >>>>>>>     be re-used for RGB controls.
+> >>>>>>>   - Remove Z13 delay (it did not work to fix the touchpad) and replace it
+> >>>>>>>     with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
+> >>>>>>>     keyboard rename into it.
+> >>>>>>>   - Unregister brightness listener before removing work queue to avoid
+> >>>>>>>     a race condition causing corruption
+> >>>>>>>   - Remove spurious mutex unlock in asus_brt_event
+> >>>>>>>   - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
+> >>>>>>>     relocking the mutex and causing a deadlock when unregistering leds
+> >>>>>>>   - Add extra check during unregistering to avoid calling unregister when
+> >>>>>>>     no led device is registered.
+> >>>>>>>   - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
+> >>>>>>>     the driver to create 4 RGB handlers per device. I also suspect some
+> >>>>>>>     extra events sneak through (KDE had the @@@@@@).
+> >>>>>>>
+> >>>>>>> Antheas Kapenekakis (7):
+> >>>>>>>   HID: asus: refactor init sequence per spec
+> >>>>>>>   HID: asus: prevent binding to all HID devices on ROG
+> >>>>>>>   platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+> >>>>>>>   HID: asus: listen to the asus-wmi brightness device instead of
+> >>>>>>>     creating one
+> >>>>>>>   platform/x86: asus-wmi: remove unused keyboard backlight quirk
+> >>>>>>>   platform/x86: asus-wmi: add keyboard brightness event handler
+> >>>>>>>   HID: asus: add support for the asus-wmi brightness handler
+> >>>>>>>
+> >>>>>>>  drivers/hid/hid-asus.c                     | 235 +++++++++++----------
+> >>>>>>>  drivers/platform/x86/asus-wmi.c            | 157 ++++++++++++--
+> >>>>>>>  include/linux/platform_data/x86/asus-wmi.h |  69 +++---
+> >>>>>>>  3 files changed, 291 insertions(+), 170 deletions(-)
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+>
 
-Nicolas
-
->=20
-> Kyrie Wu (8):
-> =C2=A0 dt-bindings: media: mediatek: decoder: Add MT8189
-> =C2=A0=C2=A0=C2=A0 mediatek,vcodec-decoder
-> =C2=A0 media: mediatek: vcodec: add decoder compatible to support MT8189
-> =C2=A0 media: mediatek: vcodec: add profile and level supporting for MT81=
-89
-> =C2=A0 media: mediatek: vcodec: Add core-only VP9 decoding support for MT=
-8189
-> =C2=A0 media: mediatek: vcodec: fix vp9 4096x2176 fail for profile2
-> =C2=A0 media: mediatek: vcodec: fix media device node number
-> =C2=A0 dt-bindings: media: Add MT8189 mediatek,vcodec-encoder
-> =C2=A0 media: mediatek: encoder: Add MT8189 encoder compatible data
->=20
-> =C2=A0.../media/mediatek,vcodec-encoder.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 2 ++
-> =C2=A0.../media/mediatek,vcodec-subdev-decoder.yaml |=C2=A0 1 +
-> =C2=A0.../vcodec/decoder/mtk_vcodec_dec_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 9 +++++-
-> =C2=A0.../vcodec/decoder/mtk_vcodec_dec_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 1 +
-> =C2=A0.../vcodec/decoder/mtk_vcodec_dec_stateless.c |=C2=A0 4 +++
-> =C2=A0.../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 32 ++++++++++++----=
----
-> =C2=A0.../vcodec/encoder/mtk_vcodec_enc_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 14 ++++++++
-> =C2=A07 files changed, 50 insertions(+), 13 deletions(-)
-
---=-AbDKkJujBZd+Yb/YkvVa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaPEESwAKCRDZQZRRKWBy
-9MMZAP0X3arp/YBTkXCva98lZDaCapBcw7wktlkZxAITnn8/ZQEA6FRrYm+LQmxk
-nPsXbosVPXzbjXK40/SFXm7EwWdetAw=
-=UGwt
------END PGP SIGNATURE-----
-
---=-AbDKkJujBZd+Yb/YkvVa--
 
