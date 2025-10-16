@@ -1,131 +1,194 @@
-Return-Path: <linux-kernel+bounces-855427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4C2BE12FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:49:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD36ABE12FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DCE19C7C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:49:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD0E34E3D0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FD31C84BC;
-	Thu, 16 Oct 2025 01:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CKVukdgi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCA11A314B;
+	Thu, 16 Oct 2025 01:50:04 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C098A1624D5;
-	Thu, 16 Oct 2025 01:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAA31624D5
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760579363; cv=none; b=Tkw+CYSJpdLnBX8S3Lc7SS+233d1dqk2bKlM/vLgGdAJA8KeDrMa1FVh8tmJVVVwH98OgaKnAiNAx+GJ2E/D8jACr2XcFa1pA3uUgifepxXiXrEvAfzBnrJ2Vvf0yFMimm5aYlCw+a5OcSkwoq4Pz5qJ4gFbxfyK0wgwgnge8vs=
+	t=1760579404; cv=none; b=qXBaVxfgVbuAQktwcK3zD9kYS5LsBPMuXT5+wwSs18tEnUCvniZb8xaP9f98/Rpq5wmSPsAReFmGrLq33DFDH33jkFqREC8t03Jal5CKmGuKNGowBnxfaGtuiN93wjItvLL8UnosQwgpiDaL1rpR2sLh7ZXwxOZ7QyQ4VgUpTUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760579363; c=relaxed/simple;
-	bh=+SJQe74DEmGx0h7tE1/KwhEqZvEV7qa0uH417xTizd0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QRJqGQGs19eEDy2CcIWMhI6nFz6ArTWfJG4FubM41qPZFdCPwWIgsl8Qi1Up2RSvVLm7Z7MlHBKKYHiotuF6ecDIucBwxQQoRCN4hm25OeSuiNOwe72w4R9vALJi+yFTv7c8JasO9V2DQTTCn0gpBrTnzBvTGaik+P59AEVPquU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CKVukdgi; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760579361; x=1792115361;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+SJQe74DEmGx0h7tE1/KwhEqZvEV7qa0uH417xTizd0=;
-  b=CKVukdgiHvdkJAXnWLRDSdB0z5ni0uKUdZ4+dGOxaByxgjxchFt1spSW
-   evw/+wO/VBSEsFkHULMQYsC+ItWdGfz1rwINQgodHJfI8SdBWRANRN6jB
-   cnG3eiC50UFT9FFggU90ShbhbYhLfVBlUSZEgD089W4WZGsdn0I6Bmr0X
-   NuckFNMYgisvSdMMMWTf89UhpVJru4dH+9OTlxDUEElPNdwgXJVdARZcZ
-   v8T2sPo7dSVguv5lz42dRaJeO9QVxesXsqinklExv9j6B8r3bkhwg7uo3
-   4nRBLFr7nfQsVg10fxGWsWMhY3KyaqGkMLoz7QqAtehZv560KEi3d3VIy
-   w==;
-X-CSE-ConnectionGUID: lPeH3NaFSxmTYOnlI5YiyQ==
-X-CSE-MsgGUID: HHBtWQXPQvW618wOlQA2RQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="66626758"
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="66626758"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 18:49:20 -0700
-X-CSE-ConnectionGUID: xKixhDlnTDqABrliovr50Q==
-X-CSE-MsgGUID: N8dZ9f18Rvifle2KM8YdcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="219477475"
-Received: from junjie-nuc14rvs.bj.intel.com ([10.238.152.29])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 18:49:17 -0700
-From: Junjie Cao <junjie.cao@intel.com>
-To: linux-wireless@vger.kernel.org,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	pagadala.yesu.anjaneyulu@intel.com,
-	shaul.triebitz@intel.com,
-	yedidya.ben.shimol@intel.com,
-	junjie.cao@intel.com
-Subject: [PATCH] wifi: iwlwifi: fix aux ROC time event iterator usage
-Date: Thu, 16 Oct 2025 09:49:19 +0800
-Message-ID: <20251016014919.383565-1-junjie.cao@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760579404; c=relaxed/simple;
+	bh=smR6v+ff/r0coSvOcaPEQ0oDal1iOPDs8EprmE7tLI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bYZzl0oaWhAA27vjep9LCXF6HPtABz2gwZrNQ3oQP4RLJ8CWZDAuIFXg7H86hx2SRxdMi9CrqPtnf2+5JD03avC74nll4TF9GOYSoPAf4IzvNww1zv9ua6RxL2ZFmhkYxDbR2omDZSgn80RSFTDAibE3jbGLjJ7CyuM3LaTsqA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip3t1760579391tb10b6e15
+X-QQ-Originating-IP: yqCawthjtTuw90dLvCzQouxE5b7tCEkQY6aMY/TtTzg=
+Received: from [IPV6:240f:10b:7440:1:8198:2f89 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 16 Oct 2025 09:49:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7959665287398781306
+Message-ID: <AE0735A6C797CCFF+10496d73-7c0a-4884-9561-24721305a24f@radxa.com>
+Date: Thu, 16 Oct 2025 10:49:44 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] Add Radxa CM5 module and IO board dts
+To: Joseph Kogut <joseph.kogut@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jimmy Hon <honyuenkwun@gmail.com>, Steve deRosier <derosier@cal-sierra.com>,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
+ <57969F385B5AF318+653dac83-8227-4987-84c6-f3e08b10085c@radxa.com>
+ <CAMWSM7iHtAxewW4JkRqRsifVnccqeFviaCgeOyprKDr92FOurg@mail.gmail.com>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <CAMWSM7iHtAxewW4JkRqRsifVnccqeFviaCgeOyprKDr92FOurg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OSjQccS6YHkH6Tny5937SKGZBr7mu+FWh9K9Eiz1QB4Hvs0VpyoaKNbY
+	+dT8pkCV/D8MG5OYlqM2QGgEdoMIber7EoW/py52twUw8QyFA60LUB8jYBseSAc+b9IRTr0
+	N5jXbdkUcHdHArB6d3jqCNhyZnMRTUB4XNeihlvHxE3/hWhhXHeDCJLw8DOMSfmd6AeNLXP
+	rXUhKcIXAGQwFJyZZHChVoKneys56+PI7uz/iuGQspwyovesDxWV3jx4FEwqJYRrq+1VSGN
+	DjGPYl1UYdUU8eFakUHVO/gq0rfHfysE/juSndQyOk8eYL0R/ctdnfp/TRWdbWFmqeQ6PN3
+	2gdsbHwKpHHYAxWKuE/c6CcEFT2BBT6mSNOiQ2ENp2+CugfTpuyEFn/ZvEZ49mML+R1W4Tn
+	i4IT52btMfCt6cT5f+t8FZWTPXcI8ayscN5n05kyLmIiSoIOTErK5nYAUAk7V3jCMrT3Bi0
+	0DNG/3lKZP/sMc5b/vct+YtayfWLik75QCa4YL7kS2x+TJ8OtUJdaacwBPNLckAEZjXl8fQ
+	4/iI0qOAAMOBsML44K4ISXqZE8Sa6opzFr8cQHKAh9WDjab3vT5CwRReqfvroAH1CFZWhb0
+	KYl2ZU9t49G4HWPaSc8RqFKU4O/0Aunrj4N59MpxaPS4jS+t+iHVxR1Y9q0yRXejkWnS/hm
+	BIOQQoOH6UPJuVBEFSu6wiitYPRDM77pOB3htzRcV6Nn4IfmGakJBb5ejLBi7eG/Pmp/Ra2
+	VYhr2iB/PM2WMlOp9N0a0e9GNqNdHcVsmrKZnVBObQYbQZ/OqV85o0depY1yNl99sBEaVRA
+	vxWgBWtVaytUibTk6c4c4Y9wjRIWEOzX+STf6LcpBBK1tB+8xjNN60hho9I5wTr5F2257YI
+	kQuhTDz9ChXjRc0fpvNIFIW7XtadBpcqcXl5HqswUQsMgUd+O1g9oElzzOQWDYq1w8XdeOs
+	h0LIWl0aTO31pedj7FeTrqz87jWzFU6gsnoAcsIbAkDyMNny2dXn7OP0vddv7NwwUULoy0+
+	R3raLdzarDrzzmaEtXkJ236jMF7J5ZszA9eb1Vhw==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-The list_for_each_entry() iterator must not be used outside the loop.
-Even though we break and check for NULL, doing so still violates kernel
-iteration rules and triggers Coccinelle's use_after_iter.cocci warning.
+Hi Joseph,
 
-Cache the matched entry in aux_roc_te and use it consistently after the
-loop. This follows iterator best practices, resolves the warning, and
-makes the code more maintainable.
+On 10/16/25 08:39, Joseph Kogut wrote:
+> Hello Naoki,
+> 
+> 
+> On Wed, Sep 3, 2025 at 1:28 AM FUKAUMI Naoki <naoki@radxa.com> wrote:
+>>
+>> Hi Joseph,
+>>
+>> I'm thinking of continuing your work, so if you've already done
+>> something, please let me know.
+>>
+> 
+> I've not followed up on this series yet, but I'm planning on picking
+> it back up this week. I'm happy to collaborate with you, do let me
+> know if you've made any progress or improvements, and thank you for
+> your review earlier.
 
-Signed-off-by: Junjie Cao <junjie.cao@intel.com>
----
- .../net/wireless/intel/iwlwifi/mvm/time-event.c    | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+I've already almost finished the work. Unfortunately, a problem(*1) 
+caused the work to stop for a few weeks, but the problem has been 
+resolved(*2), so I can continue working. I'll post a patch soon once 
+some minor tweaking and testing is complete.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-index 0c9c2492d8a7..0b12ee8ad618 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/time-event.c
-@@ -463,7 +463,7 @@ static int iwl_mvm_aux_roc_te_handle_notif(struct iwl_mvm *mvm,
- 	if (!aux_roc_te) /* Not a Aux ROC time event */
- 		return -EINVAL;
- 
--	iwl_mvm_te_check_trigger(mvm, notif, te_data);
-+	iwl_mvm_te_check_trigger(mvm, notif, aux_roc_te);
- 
- 	IWL_DEBUG_TE(mvm,
- 		     "Aux ROC time event notification  - UID = 0x%x action %d (error = %d)\n",
-@@ -475,14 +475,14 @@ static int iwl_mvm_aux_roc_te_handle_notif(struct iwl_mvm *mvm,
- 		/* End TE, notify mac80211 */
- 		ieee80211_remain_on_channel_expired(mvm->hw);
- 		iwl_mvm_roc_finished(mvm); /* flush aux queue */
--		list_del(&te_data->list); /* remove from list */
--		te_data->running = false;
--		te_data->vif = NULL;
--		te_data->uid = 0;
--		te_data->id = TE_MAX;
-+		list_del(&aux_roc_te->list); /* remove from list */
-+		aux_roc_te->running = false;
-+		aux_roc_te->vif = NULL;
-+		aux_roc_te->uid = 0;
-+		aux_roc_te->id = TE_MAX;
- 	} else if (le32_to_cpu(notif->action) == TE_V2_NOTIF_HOST_EVENT_START) {
- 		set_bit(IWL_MVM_STATUS_ROC_AUX_RUNNING, &mvm->status);
--		te_data->running = true;
-+		aux_roc_te->running = true;
- 		ieee80211_ready_on_channel(mvm->hw); /* Start TE */
- 	} else {
- 		IWL_DEBUG_TE(mvm,
--- 
-2.43.0
+By the way, at some point I switched from "continuing your work" to 
+"recreating a new one based on my current work." The results of my 
+current work(*3) have changed significantly.
+
+*1 
+https://patchwork.kernel.org/project/linux-pci/patch/20250922-pci-dt-aspm-v2-1-2a65cf84e326@oss.qualcomm.com/#26603499
+*2 
+https://patchwork.kernel.org/project/linux-rockchip/patch/20251015123142.392274-2-cassel@kernel.org/
+*3 https://github.com/RadxaNaoki/u-boot/commits/radxa-cm5-io/
+
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> Best,
+> Joseph
+> 
+>> Best regards,
+>>
+>> --
+>> FUKAUMI Naoki
+>> Radxa Computer (Shenzhen) Co., Ltd.
+>>
+>> On 6/18/25 07:11, Joseph Kogut wrote:
+>>> This patch series adds initial device tree support for the Radxa CM5 SoM
+>>> and accompanying IO board.
+>>>
+>>> V4 -> V5:
+>>>     Patch (2/3), per Jimmy:
+>>>     - Alias eMMC to mmc0
+>>>     - Remove unused sdio alias
+>>>     - Move gmac, hdmi0 nodes to carrier board dts
+>>>
+>>>     Patch (3/3), per Jimmy:
+>>>     - Enable hdmi0_sound and i2s5_8ch
+>>>     - Remove redundant enablement of sdhci
+>>>     - Enable usb_host2_xhci
+>>>
+>>>     - Tested HDMI audio
+>>>
+>>> V3 -> V4:
+>>>     - Fixed XHCI initialization bug by changing try-power-role from source
+>>>       to sink
+>>>
+>>> V2 -> V3:
+>>>     - Addressed YAML syntax error in dt binding (per Rob)
+>>>     - Fixed whitespace issue in dts reported by checkpatch.pl
+>>>     - Split base SoM and carrier board into separate patches
+>>>     - Added further details about the SoM and carrier to the commit
+>>>       messages
+>>>
+>>> V1 -> V2:
+>>>     - Added copyright header and data sheet links
+>>>     - Removed non-existent property
+>>>     - Sorted alphabetically
+>>>     - Removed errant whitespace
+>>>     - Moved status to the end of each node
+>>>     - Removed pinctrl-names property from leds (indicated by CHECK_DTBS)
+>>>     - Removed delays from gmac with internal delay
+>>>
+>>> - Link to v4: https://lore.kernel.org/r/20250605-rk3588s-cm5-io-dts-upstream-v4-0-8445db5ca6b0@gmail.com
+>>>
+>>> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+>>> ---
+>>> Joseph Kogut (3):
+>>>         dt-bindings: arm: rockchip: Add Radxa CM5 IO board
+>>>         arm64: dts: rockchip: Add rk3588 based Radxa CM5
+>>>         arm64: dts: rockchip: Add support for CM5 IO carrier
+>>>
+>>>    .../devicetree/bindings/arm/rockchip.yaml          |   7 +
+>>>    arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>>>    .../boot/dts/rockchip/rk3588s-radxa-cm5-io.dts     | 486 +++++++++++++++++++++
+>>>    .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 ++++++
+>>>    4 files changed, 629 insertions(+)
+>>> ---
+>>> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+>>> change-id: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
+>>>
+>>> Best regards,
+>>
+> 
+
 
 
