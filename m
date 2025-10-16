@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-856831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D6ABE5321
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:11:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085F4BE5333
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CD163B686B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:11:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6985A356230
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9B28A3F2;
-	Thu, 16 Oct 2025 19:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1156328A3FA;
+	Thu, 16 Oct 2025 19:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sOZqgV4y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="s4Ocho4l"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC3C2882CF;
-	Thu, 16 Oct 2025 19:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900F723C4F4
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760641897; cv=none; b=fwN5vdPAJOG9V4hMC6JCdp8BIUJqPEwB0vd8ipc49mHvk/ObJnzZRL//ApbfYdVoG97C6z5suCL8Tz4MfwsPrGUF7ut0NG6YZpKZfeq6m4YWccqwwyFVJ90RSV/6GFXyADhRU8X5v3A4f4I2V5iPVHqwFYLHm0253wEqDqrLCR0=
+	t=1760641957; cv=none; b=ALihK0YAPNlnXckFhv7SzwjO2dB0VVsIxwVtZirTc08uCa2cujHQGo2nMEpLscErQBzIQlKW0KGpIE60qa/R7s7V/zdfQu8iFvzfUrthJdT53XSGc0fSXTEAUz2w8xPcnDMIfKXbQgmBaEsUwZeRaaSB67sz+BpjNhskmaUvue0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760641897; c=relaxed/simple;
-	bh=UbCNphhlaX3wHmv2o+SwlseSHS5o1cCnf8JhScRwRus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IMZjSbyvr3ZaxFBitYo0WZfw/NcQnUDHdbTaT5I3uyJVaXR6yttzFnNl9m4Yq8nnUU1kBc8PMKM6eOlUv54MgDQTa5A1Gce3siiYuZMjTqbULCbdXSxLB0wsj5pTb25rcAKbWmgpafNkCym8hifbSCgW7xKYfblW+tytZA/++yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sOZqgV4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1469C4CEF9;
-	Thu, 16 Oct 2025 19:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760641896;
-	bh=UbCNphhlaX3wHmv2o+SwlseSHS5o1cCnf8JhScRwRus=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sOZqgV4y36NberIi8tTTtKQylExhiBNOKDDzIkQ4wI+3Noig3A2BZS/BalgDcsoCW
-	 Gae6DVh7gyUtO9shWmoMJzEvvZsGevbqRnfd3UVURcWbJFQualNZwF/NIJeGeEsVQx
-	 PAuomMcahDA9958NpwRvQime7KLtXhNMBDJzgKftvh+3s3tpHCudxOg/by+Vae+95J
-	 s0bF2na/zG1X8wDwnFTzHnrc6LBpWdcKYZmH9JXpU+/LxQ4leJGoF5upQ14gZNu3vS
-	 24MNI0aJ9oas7WGty/WRUwoIsXkaUYVWC1N2YB7YVxs5Xwc9ol0OMPiyyKgYM+Z4W/
-	 /wWbZrBdNPNlQ==
-Message-ID: <44d6ea9f-8559-464d-ac39-20495375bf0e@kernel.org>
-Date: Thu, 16 Oct 2025 21:11:32 +0200
+	s=arc-20240116; t=1760641957; c=relaxed/simple;
+	bh=oOozblnTVlgXmAtgaZk3kUik4BWU7TMOnrv67VelEsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaqDZbqJvnIlCG2gr7EAR+rx986hUlfq24hc2t8R1yO6+QnlMtnDOh7oQQ7Tb50VuyinEfe0zuFpU8L+jbmZRN66SnQ3IQ270OQCaGnHTRKIu9x8fuumnhFoPaR7rLJygAkU56zQSTAV5G1JRjmqgaaX+yOA4jEA1FWaIGwD9vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=s4Ocho4l; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-81fdd5d7b59so16727236d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1760641954; x=1761246754; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQNxV14oMdvtVXEEmpkzU7J9wlei8oikZdqc5XqRtHU=;
+        b=s4Ocho4lBQJ3ccU3ePOJ3DkqF5Y869sKyUxTLa3IGqemm0DyoVxi2RLUEC5Z0tJ27u
+         bazBmQQ+ihQ8wROPwwad+vINHmWB0HjPfweLc+B97Zx/Fmxxu9It/G4ES9aXqlo+ZYG4
+         RSAhtO0BhB0svKSpOfVOLqIanK3qXqL59eubsti2Dm03I4qDajOOqIh7zLf0qMAJE4fg
+         kT+LbwuoisYsS1gL3shXAicsE/pLSGcGX7WlYr0YGazB5k4sdxWWD1IZlLXc6Hauue0z
+         6kjEkX4yIUPclJcIjng65dNbdH/Aw1ZyW7mfRY8AOOURVBxLTfY1JEjSnKN4DmLZQHaN
+         a+6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760641954; x=1761246754;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQNxV14oMdvtVXEEmpkzU7J9wlei8oikZdqc5XqRtHU=;
+        b=pf78Zbk/4X7Thz33nkJPP5FsQZRbkiNTXWw5nei5qNsyQH3rzzEEDcHTwKrRlRsAju
+         RWOqvJDCrCS0n32Byq3U0+OmcYAniQsaK9HbpiRTRLY6ohe+snsUsGQygaY1NL/dbu5q
+         M0DMxca1KQ218M7RJ74WpSu6DfSMruF5DF1uTEC1AZtFFwjUN58K5AmLsbw41lXrQtJ6
+         tocfTDDoCsc1bJZcJ6lA4ygZO57+kGPLEzak91B5S74tLEMF40IBi555HRn86wjTyJuk
+         PSW9LZnu+Ds7em2lTMc/5cjKqmJEMx9XU5DmWfH4K9jQZ+fJBgdSHbkPWEi06yWsqwg2
+         s69g==
+X-Gm-Message-State: AOJu0YxYNSw/LABxiSu9pV0L1vFTKoihsw4+QW182sJqCnVNwaasCez4
+	Pf6FoPGmblXIA+Esgvdi5ffOWs9GPiwGXiSGOH8805OTAjUesbZyVVMbXePkPbgsERI=
+X-Gm-Gg: ASbGncvlefCE8z8LMPYc3Tu7iXMTtdlXk3A6RrgfLA/MYD8NlLsjB2R8N982wd3fVAN
+	0QihOgukjCxjTszXZxeN1z4gFc6qikOvmSQQJVFL3UYUlDgLI4/k+uA8ff3+/jlDN99R6MHp0ZI
+	Avb4sF0QMnAAqL6OTv9IPb20ZBpVCqxGovnJ0F3IVWzhllLZc/KjgALcj7IiDR3uDGyp8bfELAy
+	WMvXMHGRpHXsfeGQD9OshvWZDNU2BLBQUD++BbBSJ+5aZD5xEakVMrpRgOcYdJ6uaedWdFRWIon
+	KqmCMqWYywzEfZXKvhkclosDUvFTWJTTUSlG9/EdQtbqeW7CcEhAkr4ogWdVdmjyt8YFEv9cIx0
+	yVdQwME7E6ipJpj0X0geyi2JiL+9oj8qX/ltJCtFQ0ky0ck0P0JEAEs41Q2cBKAC2wa9H2cnnEm
+	2p1NNkm5J29HxCIjOd8MxD5Va+rQ//1gcqgXGNVktfcJgTA75dTRcno5tBMVwCxctOpk2FpA==
+X-Google-Smtp-Source: AGHT+IEsD2ILKIHNJPld9BRX5aE5fP1A9+zkS21n9Wd/GD33/P/fMWpS1ih3YMfeLtpbkSftfD5r0g==
+X-Received: by 2002:a05:6214:1cc8:b0:820:a83:eaff with SMTP id 6a1803df08f44-87c2064999fmr15479326d6.64.1760641954260;
+        Thu, 16 Oct 2025 12:12:34 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c22122a54sm3163526d6.16.2025.10.16.12.12.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 12:12:33 -0700 (PDT)
+Date: Thu, 16 Oct 2025 15:12:31 -0400
+From: Gregory Price <gourry@gourry.net>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	peterz@infradead.org, mario.limonciello@amd.com, riel@surriel.com,
+	yazen.ghannam@amd.com, me@mixaill.net, kai.huang@intel.com,
+	sandipan.das@amd.com, darwi@linutronix.de, stable@kernel.org
+Subject: Re: [PATCH] x86/amd: Disable RDSEED on AMD Zen5 Turin because of an
+ error.
+Message-ID: <aPFDn-4Cm6n0_3_e@gourry-fedora-PF4VCD3F>
+References: <20251016182107.3496116-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: upboard: fix module alias
-To: Thomas Richard <thomas.richard@bootlin.com>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
-References: <20251016-leds-upboard-fix-module-alias-v1-1-be63bafcf250@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251016-leds-upboard-fix-module-alias-v1-1-be63bafcf250@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016182107.3496116-1-gourry@gourry.net>
 
-On 16/10/2025 15:28, Thomas Richard wrote:
-> Fix module alias for auto-loading.
-
-Fix what exactly? It was a completely correct alias. Please describe
-here bug (so WHY you are doing this) not what you are doing.
-
+On Thu, Oct 16, 2025 at 02:21:07PM -0400, Gregory Price wrote:
+> Under unknown architectural conditions, Zen5 chips running rdseed
+> can produce (val=0,CF=1) as a "random" result over 10% of the time
+> (when rdseed is successful).  CF=1 indicates success, while val=0
+> is typically only produced when rdseed fails (CF=0).
 > 
-> Fixes: 0ef2929a0181 ("leds: Add AAEON UP board LED driver")
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+> This suggests there is an architectural issue which causes rdseed
+> to misclassify a failure as a success under unknown conditions.
+> 
+> This was reproduced reliably by launching 2-threads per available
+> core, 1-thread per for hamming on RDSEED, and 1-thread per core
+> collectively eating and hammering on ~90% of memory.
+> 
+> Fix was modeled after a different RDSEED issue in Zen2 Cyan Skillfish.
+> 
+> Link: https://lore.kernel.org/all/20250715130819.461718765@linuxfoundation.org/
+> Cc: <stable@kernel.org>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
 > ---
->  drivers/leds/leds-upboard.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/x86/kernel/cpu/amd.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
-> index b350eb294280fd68535c47843417f4282f97b423..12989b2f195309cc930095ecc5f855065e88d9aa 100644
-> --- a/drivers/leds/leds-upboard.c
-> +++ b/drivers/leds/leds-upboard.c
-> @@ -123,4 +123,4 @@ MODULE_AUTHOR("Gary Wang <garywang@aaeon.com.tw>");
->  MODULE_AUTHOR("Thomas Richard <thomas.richard@bootlin.com>");
->  MODULE_DESCRIPTION("UP Board LED driver");
->  MODULE_LICENSE("GPL");
-> -MODULE_ALIAS("platform:upboard-led");
-> +MODULE_ALIAS("platform:upboard-leds");
-Best regards,
-Krzysztof
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index 5398db4dedb4..9c3b2f010f8c 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -1037,6 +1037,12 @@ static void init_amd_zen4(struct cpuinfo_x86 *c)
+>  
+>  static void init_amd_zen5(struct cpuinfo_x86 *c)
+>  {
+> +	/* Disable RDSEED on AMD Turin because of an error. */
+> +	if (c->x86_model == 0x11 && c->x86_stepping == 0x0) {
+
+After re-examining the results, this was also observed on
+
+  c->x86_model == 0x2
+
+Maybe this should just be disabled for all of Zen5?
+I will wait for comment.
+
+In a stress test (link) I found that my Zen5 chips have a bizarrely
+low rdseed success rate anyway - so it doesn't even seem useful.
+
+./rdseed_stress_single_core
+RDRAND: 100.00%, RDSEED: 3.48%
+
+./rdseed_stress_multi_thread
+RDRAND: 99.99%, RDSEED: 0.33%
+
+Link: https://lore.kernel.org/all/Zbjw5hRHr_E6k18r@zx2c4.com/
+
+---
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 9c3b2f010f8c..54f07514674a 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1038,7 +1038,8 @@ static void init_amd_zen4(struct cpuinfo_x86 *c)
+ static void init_amd_zen5(struct cpuinfo_x86 *c)
+ {
+        /* Disable RDSEED on AMD Turin because of an error. */
+-       if (c->x86_model == 0x11 && c->x86_stepping == 0x0) {
++       if ((c->x86_model == 0x11 || c->x86_model == 0x2) &&
++           (c->x86_stepping == 0x0)) {
+                clear_cpu_cap(c, X86_FEATURE_RDSEED);
+                msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
+                pr_emerg("RDSEED is not reliable on this platform; disabling.\n");
 
