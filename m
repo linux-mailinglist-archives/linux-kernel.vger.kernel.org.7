@@ -1,254 +1,172 @@
-Return-Path: <linux-kernel+bounces-856402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F21FBE4101
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:00:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F7DBE4122
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 95D19359004
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:00:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE5BD358F64
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6944734AB1D;
-	Thu, 16 Oct 2025 14:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308262E2EF9;
+	Thu, 16 Oct 2025 15:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZY3ZmRSY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IXcoEnzI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZY3ZmRSY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IXcoEnzI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ioBINfQ3"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A334AB10
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA63A2E172D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626771; cv=none; b=RvE3qtjGMClrdePnSVGMXjaYdIcHMRgcEyh4WCKaQuDh9VPhn/23V9tobYh/0I+yefWpZMl+uLDEu0B619C6xAZbbEuRgOsAGOCQlnIDchzybzppYd92oMnlca9c2/pbuH1xXoC63m8KljK0deUAtoj2p9hXVPrYMB59Y3MTR9w=
+	t=1760626889; cv=none; b=kt4/M+lzZFUOtNQSohxwdBhKBMznoF+sJWppaHdQVPbG/QTXJ9uM0DkQXJdYJd14gBMZfXZI2hj/RE0OejKgeQuq4ezBbUMvmBb8YwyI+DjyGQfu0nR6J0QDCNVM0+kmYFMlYAg9CjESQ5KteTaerMdO9UH+C5nAvk5csjfJGEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626771; c=relaxed/simple;
-	bh=1NnJGh3RgfjkpW6AGtdLPzcmmHHio1yCKYsVEWhVt/k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=evqHA1NXV+/w8mB4zaWFWFLZOMTeDmRRqG4Dl42xjXB8TOcKhEtX8qQan/lb/5SGcoURCcqBTvlBKyeM01dWEE+WetFDSoc2/SkieluWwDQQxvdF5637vsPmgFVSV0akGbQrdjk1HA9lmMUhUkTMwpRXvKz7S+a8ZyZ7+soMQjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZY3ZmRSY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IXcoEnzI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZY3ZmRSY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IXcoEnzI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 828C41F8AA;
-	Thu, 16 Oct 2025 14:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760626767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ixrx72sjYHSlYxDM5wooi8Ni2tWQmng+Sqj/d0kRtTw=;
-	b=ZY3ZmRSYTsrKhVYLgYUjHUgcZrbbU+DWvmCBvOERCkqI+edLlFNv6lvaJlVieP96uk+8T1
-	S0Lp1B13B56uI4BF6sdU/tjOL33bgsoyYECh78SiM1if8sVmIEacqsstxfR/++cOogo/bE
-	hjakvCGQ7Yb0C9s21psekOEw1Hj5ufQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760626767;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ixrx72sjYHSlYxDM5wooi8Ni2tWQmng+Sqj/d0kRtTw=;
-	b=IXcoEnzIDqdlAVD6rMvrz3sgvWCkG9o1UT93EX57TJ2r03hWkRO5pQWPwIjb3laAoe9YHs
-	Aap8hRIvhJblHKDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZY3ZmRSY;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=IXcoEnzI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760626767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ixrx72sjYHSlYxDM5wooi8Ni2tWQmng+Sqj/d0kRtTw=;
-	b=ZY3ZmRSYTsrKhVYLgYUjHUgcZrbbU+DWvmCBvOERCkqI+edLlFNv6lvaJlVieP96uk+8T1
-	S0Lp1B13B56uI4BF6sdU/tjOL33bgsoyYECh78SiM1if8sVmIEacqsstxfR/++cOogo/bE
-	hjakvCGQ7Yb0C9s21psekOEw1Hj5ufQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760626767;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ixrx72sjYHSlYxDM5wooi8Ni2tWQmng+Sqj/d0kRtTw=;
-	b=IXcoEnzIDqdlAVD6rMvrz3sgvWCkG9o1UT93EX57TJ2r03hWkRO5pQWPwIjb3laAoe9YHs
-	Aap8hRIvhJblHKDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1100C1376E;
-	Thu, 16 Oct 2025 14:59:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9jnkAk8I8WjlHwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 16 Oct 2025 14:59:27 +0000
-Date: Thu, 16 Oct 2025 16:59:26 +0200
-Message-ID: <87ikge7v01.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux PCI <linux-pci@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Zhang Qilong <zhangqilong3@huawei.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Dhruva Gole <d-gole@ti.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linux ACPI <linux-acpi@vger.kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Lechner <dlechner@baylibre.com>,
-	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>
-Subject: Re: [PATCH v1 1/3] PM: runtime: Introduce PM_RUNTIME_ACQUIRE_OR_FAIL() macro
-In-Reply-To: <CAJZ5v0iOgbkJbdRzgrBUaaYL+S_8BZD7XuXdK5vs2gMG3ug1KA@mail.gmail.com>
-References: <3925484.kQq0lBPeGt@rafael.j.wysocki>
-	<3324926.5fSG56mABF@rafael.j.wysocki>
-	<20251016133854.00003669@huawei.com>
-	<CAJZ5v0iOgbkJbdRzgrBUaaYL+S_8BZD7XuXdK5vs2gMG3ug1KA@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1760626889; c=relaxed/simple;
+	bh=5xa681f2Wy7I1+GCjfTAXTfl0IqG1LYTDdggpyeF6Xw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RqlHOOASkb4QEr/+MnmQcSY2nSqLIwQ8rXa/Ik6K9r8fLDuRuXNfInTgn4TmiOogQ0sCB25LU6X/CsZkqsWt4sGqQNHsgqmnpHFPpSoasID4mddM+gsEhzvL9uRTFVurn04nnAAXTpd1Cg2A+6EBvZh9BGv38NTQim023GW5ayU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ioBINfQ3; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-40fd1b17d2bso584653f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760626886; x=1761231686; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EttKU3B9Wqu5R2WSYHFS6Mo9lEK4v9PvPliANhh8ahA=;
+        b=ioBINfQ3sEjfR21NZtFF0zSOp2ND+1ysNux1pyZ++lkiqg7E0SG/dOD/H45JH9Vupy
+         Xx5W0iQH1CGV1qjLyy9XwCX7yeZpBj0e+3yf1sQC+hVvFfqE6uhFRq7gPwBcNNN/K/W3
+         E58uppNWUFRruQcFNanN/X5sRg969t1EsrBxHfoENv/CXeCGKYQ6BzoVeN8gNyUuSx6N
+         8+Cag6dDUyyyMyWHKNnySD4h8uhj1fwpe3fDF5lz+U8/7tEKCCpo6xhJm8fYoABkVgjE
+         pl4vLvphgBz93O2oDPeELq98s6tSlXXB2VHmGIfM78KH3d6uAxHOfE1iVrbpLK8TsptF
+         vB0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760626886; x=1761231686;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EttKU3B9Wqu5R2WSYHFS6Mo9lEK4v9PvPliANhh8ahA=;
+        b=wOjQbtCyN4uccr0gUyl/jw8xibqBcB7t4fIeFqp7mzSR0wnlK7gIjfhEBPmFGXkkWG
+         SRUTJcwIOxgygaFtgfdb+k5yzepw2ThUuoEbh/vtf/FCx258OIPozDKv2WrxfjLYYj1K
+         KIq4goK7SCSAqZx3raGZAOCzTmqKcxrUP4Fi9yVO3YBkoM+0MQHtzLZ6yctKR8oR2Vqb
+         GoL3hAFwUijSNw7fwbtp/zZ11fRHbVX641EqSLuqesD0hNh4EqH2IBTvQ3wybCuSLbHP
+         I1Q3+sx4GmziD0bqyvmO9j/5x/rK76NeFotBi58LfKhBXzRhBtz+DCf53qNwuO8feQsL
+         4sGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaPnL77zLe4HdvkcsXfs72efKgyKDHUyHqqTDds2u6d2/8FuKcmagmS1DUvO3ArF8XFuG+Sx4oflFj1nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEBiKNetTHvlyOe5RRSP8ypx8rKfp8BF5DYHUJ7Ya59yCiBbFv
+	31sDXePBC4UfEoBpUcA+AvOjQ4c8u/yMHj18oDMEbgUSnCeozPT1EzNfGe7CyADputb5RHzACWZ
+	tFJiipoh7oE9J9kG5CQ==
+X-Google-Smtp-Source: AGHT+IHurrt5tf8cx12gEfNHRF260x4BHSkP0VT8R37ilUuWpW5OS1X89vvCHVuaNuNe6MMS4xP/qSvWBLAU6Us=
+X-Received: from wrnx18.prod.google.com ([2002:adf:ec12:0:b0:426:db53:5260])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2287:b0:3ea:80ec:8552 with SMTP id ffacd0b85a97d-42704e0eda4mr264130f8f.57.1760626886194;
+ Thu, 16 Oct 2025 08:01:26 -0700 (PDT)
+Date: Thu, 16 Oct 2025 15:01:25 +0000
+In-Reply-To: <20251015182118.106604-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 828C41F8AA
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,huawei.com:email,intel.com:email,suse.de:dkim,suse.de:mid];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+Mime-Version: 1.0
+References: <20251015182118.106604-1-dakr@kernel.org> <20251015182118.106604-2-dakr@kernel.org>
+Message-ID: <aPEIxYlh98exA2vn@google.com>
+Subject: Re: [PATCH 1/3] rust: pci: implement TryInto<IrqRequest<'a>> for IrqVector<'a>
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: bhelgaas@google.com, kwilczynski@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 16 Oct 2025 15:46:08 +0200,
-Rafael J. Wysocki wrote:
+On Wed, Oct 15, 2025 at 08:14:29PM +0200, Danilo Krummrich wrote:
+> Implement TryInto<IrqRequest<'a>> for IrqVector<'a> to directly convert
+> a pci::IrqVector into a generic IrqRequest, instead of taking the
+> indirection via an unrelated pci::Device method.
 > 
-> On Thu, Oct 16, 2025 at 2:39 PM Jonathan Cameron
-> <jonathan.cameron@huawei.com> wrote:
-> >
-> > On Wed, 15 Oct 2025 16:02:02 +0200
-> > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> >
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > There appears to be an emerging pattern in which guard
-> > > pm_runtime_active_try is used for resuming the given device and
-> > > incrementing its runtime PM usage counter if the resume has been
-> > > successful, that is followed by an ACQUIRE_ERR() check on the guard
-> > > variable and if that triggers, a specific error code is returned, for
-> > > example:
-> > >
-> > >       ACQUIRE(pm_runtime_active_try, pm)(dev);
-> > >       if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-> > >               return -ENXIO
-> > >
-> > > Introduce a macro called PM_RUNTIME_ACQUIRE_OR_FAIL() representing the
-> > > above sequence of statements that can be used to avoid code duplication
-> > > wherever that sequence would be used.
-> > >
-> > > Use this macro right away in the PCI sysfs code where the above pattern
-> > > is already present.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >
-> > > Admittedly, the new macro is slightly on the edge, but it really helps
-> > > reduce code duplication, so here it goes.
-> >
-> > Fully agree with the 'on the edge'.
-> >
-> > This looks somewhat like the some of the earlier attempts to come up with
-> > a general solution before ACQUIRE().  Linus was fairly clear on his opinion of
-> > a proposal that looked a bit similar to this
-> > cond_guard(mutex_intr, return -EINTR, &mutex);
-> >
-> > https://lore.kernel.org/all/CAHk-=win7bwWhPJ=iuW4h-sDTqbX6v9_LJnMaO3KxVfPSs81bQ@mail.gmail.com/
-> >
-> > +CC a few people who might have better memories of where things went than I do.
-> >
-> > The solution you have here has the benefit of clarity that all it can do is
-> > return the error code.
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/pci.rs | 38 ++++++++++++++++++--------------------
+>  1 file changed, 18 insertions(+), 20 deletions(-)
 > 
-> Well, I could call the macro PM_RUNTIME_ACQUIRE_OR_RETURN_ERROR(), but
-> FAIL is just shorter. :-)
-> 
-> Seriously though, the odd syntax bothers me, but it has come from
-> looking at the multiple pieces of code that otherwise would have
-> repeated exactly the same code pattern including the guard name in two
-> places and the pm variable that has no role beyond guarding.
+> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> index d91ec9f008ae..c6b750047b2e 100644
+> --- a/rust/kernel/pci.rs
+> +++ b/rust/kernel/pci.rs
+> @@ -596,6 +596,20 @@ fn index(&self) -> u32 {
+>      }
+>  }
+>  
+> +impl<'a> TryInto<IrqRequest<'a>> for IrqVector<'a> {
+> +    type Error = Error;
+> +
+> +    fn try_into(self) -> Result<IrqRequest<'a>> {
+> +        // SAFETY: `self.as_raw` returns a valid pointer to a `struct pci_dev`.
+> +        let irq = unsafe { bindings::pci_irq_vector(self.dev.as_raw(), self.index()) };
+> +        if irq < 0 {
+> +            return Err(crate::error::Error::from_errno(irq));
+> +        }
+> +        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&self`.
+> +        Ok(unsafe { IrqRequest::new(self.dev.as_ref(), irq as u32) })
+> +    }
+> +}
+> +
+>  /// Represents an IRQ vector allocation for a PCI device.
+>  ///
+>  /// This type ensures that IRQ vectors are properly allocated and freed by
+> @@ -675,31 +689,15 @@ pub fn iomap_region<'a>(
+>          self.iomap_region_sized::<0>(bar, name)
+>      }
+>  
+> -    /// Returns an [`IrqRequest`] for the given IRQ vector.
+> -    pub fn irq_vector(&self, vector: IrqVector<'_>) -> Result<IrqRequest<'_>> {
+> -        // Verify that the vector belongs to this device.
+> -        if !core::ptr::eq(vector.dev.as_raw(), self.as_raw()) {
+> -            return Err(EINVAL);
+> -        }
+> -
+> -        // SAFETY: `self.as_raw` returns a valid pointer to a `struct pci_dev`.
+> -        let irq = unsafe { crate::bindings::pci_irq_vector(self.as_raw(), vector.index()) };
+> -        if irq < 0 {
+> -            return Err(crate::error::Error::from_errno(irq));
+> -        }
+> -        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&self`.
+> -        Ok(unsafe { IrqRequest::new(self.as_ref(), irq as u32) })
+> -    }
+> -
+>      /// Returns a [`kernel::irq::Registration`] for the given IRQ vector.
+>      pub fn request_irq<'a, T: crate::irq::Handler + 'static>(
+>          &'a self,
+> -        vector: IrqVector<'_>,
+> +        vector: IrqVector<'a>,
+>          flags: irq::Flags,
+>          name: &'static CStr,
+>          handler: impl PinInit<T, Error> + 'a,
+>      ) -> Result<impl PinInit<irq::Registration<T>, Error> + 'a> {
+> -        let request = self.irq_vector(vector)?;
+> +        let request = vector.try_into()?;
+>  
+>          Ok(irq::Registration::<T>::new(request, flags, name, handler))
+>      }
+> @@ -707,12 +705,12 @@ pub fn request_irq<'a, T: crate::irq::Handler + 'static>(
+>      /// Returns a [`kernel::irq::ThreadedRegistration`] for the given IRQ vector.
+>      pub fn request_threaded_irq<'a, T: crate::irq::ThreadedHandler + 'static>(
+>          &'a self,
+> -        vector: IrqVector<'_>,
+> +        vector: IrqVector<'a>,
+>          flags: irq::Flags,
+>          name: &'static CStr,
+>          handler: impl PinInit<T, Error> + 'a,
+>      ) -> Result<impl PinInit<irq::ThreadedRegistration<T>, Error> + 'a> {
+> -        let request = self.irq_vector(vector)?;
+> +        let request = vector.try_into()?;
 
-While I see the benefit of simplification, IMO, embedding a code
-flow control inside the macro argument makes it really harder to
-follow.
+The resulting change to the lifetime semantics is curious, but seems
+right.
 
-Is the problem about the messy ACQUIRE_ERR() invocation?  If so, it
-could be replaced with something shorter (and without extra type),
-e.g. replace 
-	ret = ACQUIRE_ERR(pm_runtime_active_try, &pm);
-with
-	ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
-
-Since all runtime PM guard usage is to the same object, we can have a
-common macro.
-
-Also, in the past, I thought of a macro like below that stores the
-error code in the given variable ret:
-
-#define __guard_cond_ret(_name, _var, _ret, _args)	\
-	CLASS(_name, _var)(_args);			\
-	(_ret) = __guard_err(_name)(&_var)
-#define guard_cond_ret(_name, _ret, _args) \
-	__guard_cond_ret(_name, __UNIQUE_ID(guard), _ret, _args)
-
-... so that it'd work for runtime PM like:
-
-	int ret;
-
-	guard_cond_ret(pm_runtime_active, ret)(dev);
-	if (ret)
-		return ret;
-	
-Of course, a clear drawback is that the assignment of ret isn't
-obvious, but the code flow isn't skewed much in this way.
-
-
-thanks,
-
-Takashi
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
