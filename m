@@ -1,208 +1,405 @@
-Return-Path: <linux-kernel+bounces-855959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF35BE2BAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:22:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CD0BE2A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98944484930
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DCC1A62F68
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA4232D7CE;
-	Thu, 16 Oct 2025 10:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3933332D7D4;
+	Thu, 16 Oct 2025 10:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QVXTragP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="2azKSV/L"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C762E0B58
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14222D0C7D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609204; cv=none; b=iedEV0N8fVtHoMTZSBr0I4tFqV/eGRnhOSpFLIfNLgJlW1X0ei0FrB6/KLmASiyz9jv00ZZNfJiH2bDb/XYh4e6oSQQXGVmeFO38gZr8gN/3hcFsFpvq5mCvOA/A+IhI8ASJDZUUeP7usMzXPAA2zrPr9kTunzszgaJQSDrY20c=
+	t=1760609230; cv=none; b=O120L45XtVmOLzvTgAdzoMdkvR53rni/h8a+/nhqKuXmFJN28E3kP3dbtVebPzOhLxn3lFdpAIZPjnrEEpL9yc02omnKqvoO5WdDsZRybzQ0Aq7BIVYDa1HAOPtCcKA7Uyu/mqkCLQRO5xH6Vy7RfPi0cNkGA4ODwVkAj9ey7QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609204; c=relaxed/simple;
-	bh=xpmb1rSKDBYVs0ZMo28LoKbxEVeTzVqOi0abcXdHxtA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mLurANKXa8K7GPRjgBPkegJITDJHqsNexsWE+qlyt36u/FPsX5HyTwiKNweRQiZFGRgZek9hx3W/OyfiZCZbBQmNLai8PrL7OZ5JlqhutO9WWGSX7Tq4CUEjkIjtTutHkmvk+Oy9es+LPSv0jKYyax6d7+VWsr4uatYBoz2vC94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QVXTragP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G6YNJ6024767
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:06:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	btLg6GN9YLzsz1xX+GGVP3PQNjxmkDe+f1IkrCL/lTU=; b=QVXTragPiypYlM/7
-	h5oJHjRNN+N8hp9RgH1BhOBNzsGy75QmyIfZa6ZnMLuQqxpk/Stnbo1lLzYWpmsC
-	p9wilW16SxOn3in3IervbDZLFCOa03v3CvGZK0IhuR0bxk+pdi/NxFdpguR02UnE
-	VXVkObkSSAgW9GnXWuhrMsq2rTMFZqYoh8Gl0hAjy6AhzgCf5zRoqOH0pkAC3dml
-	VYfGaYaEj4KiwPBhlte5sRSHho6SpPQDSezUPUJ3DvWVTC6vuLy8XrYLTEtwP/mG
-	2BHUmDbDF4Pq3yoNSypQ3Ex3nCymZpsM3DX4nEh48dT8u3zxqS0O4OwiWanHx+IT
-	eHW2SA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qff0yu4h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:06:42 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-873eac0465eso1921566d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:06:41 -0700 (PDT)
+	s=arc-20240116; t=1760609230; c=relaxed/simple;
+	bh=wo/Ya1/qS4gmb5ns1qZf/PbPtAozVGLxnCxAaNcd6IY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2JqbQsnBW8kxpE2XHvsUcoNINCC3+coK3rqiDl94poVSxM2hAdVhyArhIlkJ+t36Lo1X8dN5BAXuWzYT9MOxXiZFkYmyP5/Pe191GrjnAnwlDfhXjPqTYnf2NcK2GLwU5jX+9215bkR6d9tfQi3qn4fpVJBsZHSwRAjKnrT8cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=2azKSV/L; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-273a0aeed57so24436015ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1760609226; x=1761214026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJ4V0WDk+Fmgl27pDuIUO845Eexs2tBhWb+HgzxSkGw=;
+        b=2azKSV/LJlYLD9kHtl3N3D1Oej3nQerp/NmrZYimh5syH1FHulEheQKuayi9ueD06m
+         4Dk/pj0GBAQOis22XCJzMtD0xL3vqHO/esdi/Wku9//Df2bOve3e7umEJRlfqdR/arVf
+         7ThqDB11nGkSaZGMBmITwSJq/Dqj+8Tl14eLpXSLRHtZd7xhaxCmHIOPFZ0lzS8wQKCG
+         uTMpkTwquu7YstepC1DHdk6RpQBnbTHhh5xk1zYEFfkS07L4OVx04B16FnwcC+A/6t6D
+         7KOSymXghX5yasz0tuxEXsAc0f8yZzFlwIgvR9+V8bi93qSz6KIwpxJBn+lQOfEV5vt+
+         R4dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760609201; x=1761214001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=btLg6GN9YLzsz1xX+GGVP3PQNjxmkDe+f1IkrCL/lTU=;
-        b=hCnDqYylTMSqBTltTSveCKWCXQY1JWfAd0rIYcc3kWsJzN8RP3S78/V62NCSFqY8//
-         IaMmTxxUJFwVQGK7auUZZ6mDnkPpV3iHBemQ00Pa9TBQcnH1AGzyH9gwGT8sfYzFDESq
-         3g6cT8UqXhOyhYr9p+nkcpRzjI3pneW6q6vhzSvSuFBKMJysFHMV6r49iqLWIPyipCnK
-         y6hI19wsV09W4L+MbC/f/8PvN5iLO/qMwNzA5n2ECMMYmzelp1nupiGugLPUb0fQJJUe
-         jdRAc2PAF+NiyTRocKvnIR84uNtQopNjhUMCDye1aiCEecT/iuRUwvocCrp3WYoFzbDy
-         LAtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXO7GICQBBgcTrKhaYt9HV/D8CIkw984rIJgQYfZ3V80f3q3yfwl8hc2ocAV92JgDgnNR0K6KUpPJEdoqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd4CzMWhgIEA6+uqGS79Hgfqrwe34BN4RDVktSPEJ06OyJKG79
-	Icb1px3m/EIKH0tiQQQ+KMxUKy1elbC8hxxnErRFg9/phF7k/JvkDFTR00oovv9xk+VUtVuzZIh
-	rPchVJyfiGhy2us8aTluqSaSasD/tLUB++0DNP7aHdFVALTBU3XFZVObFE2hV/VZ7X6WFqLCRNk
-	8=
-X-Gm-Gg: ASbGncuZ/xv+I3wu7yJ/etaASrWeAqejfa8Wi3xOYZ1fI4mEP52JUjfaZf+7ePbBzci
-	GLNShBijW+k6MWHjwO/JMzBmSziEYnU+LrZV/vxC2Q+CSJdBFzgI7WXgAkxzWct20EdBbkwGRS+
-	0lhKPr/tprBW+GgAMxIntrzv42p48vnx0POBxq0KARUTxdvfg1DiyuhELgC3KAKOwAX8pYP7Kak
-	9lbYp4eA7FVHvG7wUX23LPx47rflJQwDPU3HLct7QttnSrbXo2TkdPBIfHXYPF1GO/rmQ7SKTMx
-	t9QmQ2sKnJgoQLjU1K84B7wf26d6hP8YK4PhHWWAabbDdhBOCFv4Qg3ihNaWHwldPMtBt21u02E
-	zfHUdZxVrA7hVXXqJVgqUQU1oDxt13h/RpAsWiWqnkhb/fZkeambacSvi
-X-Received: by 2002:ac8:5890:0:b0:4b5:e4dc:1ee5 with SMTP id d75a77b69052e-4e6eac94c8fmr330023461cf.3.1760609200460;
-        Thu, 16 Oct 2025 03:06:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFA3ifaqe1DGct9SvZ69E0sm18fTKOHfHo1FLVxYmFpMb1EB/sg+To9f+tLAZtWy+wviEjOMQ==
-X-Received: by 2002:ac8:5890:0:b0:4b5:e4dc:1ee5 with SMTP id d75a77b69052e-4e6eac94c8fmr330023151cf.3.1760609199881;
-        Thu, 16 Oct 2025 03:06:39 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5235dccfsm15435695a12.9.2025.10.16.03.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 03:06:39 -0700 (PDT)
-Message-ID: <8bd5486f-38a9-4104-8d09-234f642b45fe@oss.qualcomm.com>
-Date: Thu, 16 Oct 2025 12:06:37 +0200
+        d=1e100.net; s=20230601; t=1760609226; x=1761214026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rJ4V0WDk+Fmgl27pDuIUO845Eexs2tBhWb+HgzxSkGw=;
+        b=eFnAJCq7Gwqnq09cHPrJldAkbS9VahMmPoUxveRMLyratsb8BsFTgpb0e6Y76vn0m/
+         Xf9FwB58qQN8Mp/jw2FWsEPOUR7GZy/DerUkv0uDlr4uGT5Dzqf9TdCXt2XJ2NmZ/8nS
+         0AEDi59CmKVqPYmaB5/kGgRDB4R8nw2lq9uCtBGDsLzFIv3ASN0k3M0GM9q0qBRPnEra
+         V0qtT+cTSjWTRrHswS7zHa8hfbHvpIXbhhBYKlsCsLS8YvwOW73+H7Swp3C6LO77kgNu
+         R8qDdPAHMRr6fNhkaub2JMcK2OQRj+wZxeWHoaoHGFDUL1u+FTBWKYuLH5CzkimECltC
+         HOVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTn/87OV4tblstoGLMl5gkXVDb4SAryM8lmdfo6LOr3cudkMK4iNCg4mybat8TJKCXm1WSfqPAx4Z4sa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPmy/ynDNepVviuDEZ8ADL3UFjl8LDzKnvucswGE6wHFz4Dg7d
+	QYuW/GlvyZxu4Qqf/Q0DimWgWfyV/udz3mpCxEbMm+jHsSXryXGElD5eat3OGEXMVcg=
+X-Gm-Gg: ASbGncudDSs0HIKRnlLsoZesV2zv8t4/vPVuwJMMf9wYUuzu3S1N4khfy0jZ7Q+PHqk
+	S/D9RsgY+nkzGwA9mRyYed1Sb+tWQfMG0iLEaxoljc/O3a7U/aHmGTR1n+1iS/uiksE117KKe1M
+	DQ+eQOIp/ZK5R0D9nOyeh6hfgM5bYzSpLJpitT7OcSqftKgBBf8EBlM74CY/qZEFOrAHZFH9gul
+	//tn8P2qAykiIbYeiwUZbX7e8k6AMPCEPD8tle5iX7WLYv3etm39INZEojEWhUsLkbwvGh38nvR
+	Z4nCaAc/g3gHtjqqAxiIsTNbRIXS88rY6FfeWq3IvGsO1tMFmPc9vM2lB0o8bEiHFG5LtxNcWIo
+	jadPOP4DnDu9m/7hDoSdLCsDlCsQ+d5rQ9+J3CwwmDDRCD1oz6ET+JxAvwxluFG9AI/ljS0bZgk
+	g4ihZVXceTXL0Nz/MtzYXS
+X-Google-Smtp-Source: AGHT+IGke+4JqtDfjsb4VQIaIJ/VTkox7Sn1ZBEWyV9e2LxX0qBRZQ/9OBuguQWM1BsPb4D7ktTbDQ==
+X-Received: by 2002:a17:903:41c6:b0:24c:db7c:bc34 with SMTP id d9443c01a7336-29091b02a61mr44434505ad.13.1760609225745;
+        Thu, 16 Oct 2025 03:07:05 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:9edb:1072:a6d:3ebf])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7c255sm24626915ad.70.2025.10.16.03.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 03:07:05 -0700 (PDT)
+Date: Thu, 16 Oct 2025 18:07:00 +0800
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	akpm@linux-foundation.org, axboe@kernel.dk,
+	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
+	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
+	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
+	xiubli@redhat.com
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
+ lookup tables
+Message-ID: <aPDDxEGon1Q82pIJ@wu-Pro-E500-G6-WS720T>
+References: <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+ <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+ <20251005181803.0ba6aee4@pumpkin>
+ <aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
+ <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
+ <20251007192327.57f00588@pumpkin>
+ <aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
+ <20251010105138.0356ad75@pumpkin>
+ <aOzLQ2KSqGn1eYrm@wu-Pro-E500-G6-WS720T>
+ <20251014091420.173dfc9c@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: r0q: add touchscreen support
-To: Ghatto <ghatto404@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251014044135.177210-1-ghatto404@gmail.com>
- <20251014044135.177210-4-ghatto404@gmail.com>
- <e114504e-4bdd-46b9-b708-8eebc3075163@oss.qualcomm.com>
- <CAMQHOhfjsi1L+3j3TrcjEjPp3xkn94KOdsrVZvJCyUDFBBSeqg@mail.gmail.com>
- <d06a254f-bf54-4bdf-bd09-3ee5e5b31bad@oss.qualcomm.com>
- <CAMQHOhe=WYhtsjHMcRnJOi8UhnNNBfveTWRGSZ_bg24gFysAEw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAMQHOhe=WYhtsjHMcRnJOi8UhnNNBfveTWRGSZ_bg24gFysAEw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX5gQKtE9SmeD8
- wRoQwLKIfpawyTGn7D0nmXo4F2+HgiNtOJmDbIfHES+hyhMXhvz3kBDKB3Zz5Mm4O2ZKzq8FgrO
- qeV6OA/15h+L9Zm7ZcxodFzS1WJVnkKK2ujlOKOARI3ZSjL4GZztEjpPaTKXGerBEg0wwzl1l+P
- llsIdtx2A+fHoFP9Iwkdh/N5FZftSFwY1a3NT5V1TWZOUhgjYoFCebfiCBFbBhJWeZi5b+9s1JP
- ciPj2cMdfvVCoEZkhnH3UwnCLm8OzbGJdE2bSR1u2xVtvv9hRJeQ+5OjX7ArM0fYE05W/nOIice
- mjtScDOXjeoQL6Ymxdfltts2nLyeJZkoQ6bSaSgQg==
-X-Proofpoint-GUID: Vd-R7WczX4yqGbaGoeOSLnSVl6L0GJlj
-X-Authority-Analysis: v=2.4 cv=PriergM3 c=1 sm=1 tr=0 ts=68f0c3b2 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=NEAV23lmAAAA:8 a=fGO4tVQLAAAA:8 a=EUspDBNiAAAA:8 a=6DzVY7LKAAAA:8
- a=Z3UwoYWmb9_2lah6h-gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22 a=C-ghHgbq7mZpV9eKepqE:22 a=poXaRoVlC6wW9_mwW8W4:22
- a=pHzHmUro8NiASowvMSCR:22 a=nt3jZW36AmriUCFCBwmW:22
-X-Proofpoint-ORIG-GUID: Vd-R7WczX4yqGbaGoeOSLnSVl6L0GJlj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014091420.173dfc9c@pumpkin>
 
+On Tue, Oct 14, 2025 at 09:14:20AM +0100, David Laight wrote:
+> On Mon, 13 Oct 2025 17:49:55 +0800
+> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> 
+> > On Fri, Oct 10, 2025 at 10:51:38AM +0100, David Laight wrote:
+> > > On Thu, 9 Oct 2025 20:25:17 +0800
+> > > Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> > > 
+> > > ...  
+> > > > As Eric mentioned, the decoder in fs/crypto/ needs to reject invalid input.  
+> > > 
+> > > (to avoid two different input buffers giving the same output)
+> > > 
+> > > Which is annoyingly reasonable.
+> > >   
+> > > > One possible solution I came up with is to first create a shared
+> > > > base64_rev_common lookup table as the base for all Base64 variants.
+> > > > Then, depending on the variant (e.g., BASE64_STD, BASE64_URLSAFE, etc.), we
+> > > > can dynamically adjust the character mappings for position 62 and position 63
+> > > > at runtime, based on the variant.
+> > > > 
+> > > > Here are the changes to the code:
+> > > > 
+> > > > static const s8 base64_rev_common[256] = {
+> > > > 	[0 ... 255] = -1,
+> > > > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+> > > > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+> > > > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+> > > > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+> > > > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+> > > > };
+> > > > 
+> > > > static const struct {
+> > > > 	char char62, char63;
+> > > > } base64_symbols[] = {
+> > > > 	[BASE64_STD] = { '+', '/' },
+> > > > 	[BASE64_URLSAFE] = { '-', '_' },
+> > > > 	[BASE64_IMAP] = { '+', ',' },
+> > > > };
+> > > > 
+> > > > int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
+> > > > {
+> > > > 	u8 *bp = dst;
+> > > > 	u8 pad_cnt = 0;
+> > > > 	s8 input1, input2, input3, input4;
+> > > > 	u32 val;
+> > > > 	s8 base64_rev_tables[256];
+> > > > 
+> > > > 	/* Validate the input length for padding */
+> > > > 	if (unlikely(padding && (srclen & 0x03) != 0))
+> > > > 		return -1;  
+> > > 
+> > > There is no need for an early check.
+> > > Pick it up after the loop when 'srclen != 0'.
+> > >  
+> > 
+> > I think the early check is still needed, since I'm removing the
+> > padding '=' first.
+> > This makes the handling logic consistent for both padded and unpadded
+> > inputs, and avoids extra if conditions for padding inside the hot loop.
+> 
+> The 'invalid input' check will detect the padding.
+> Then you don't get an extra check if there is no padding (probably normal).
+> I realised I didn't get it quite right - updated below.
+> 
+> > 
+> > > > 
+> > > > 	memcpy(base64_rev_tables, base64_rev_common, sizeof(base64_rev_common));  
+> > > 
+> > > Ugg - having a memcpy() here is not a good idea.
+> > > It really is better to have 3 arrays, but use a 'mostly common' initialiser.
+> > > Perhaps:
+> > > #define BASE64_REV_INIT(ch_62, ch_63) = { \
+> > > 	[0 ... 255] = -1, \
+> > > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+> > > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
+> > > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
+> > > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
+> > > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+> > > 	[ch_62] = 62, [ch_63] = 63, \
+> > > }
+> > > 
+> > > static const s8 base64_rev_maps[][256] = {
+> > > 	[BASE64_STD] = BASE64_REV_INIT('+', '/'),
+> > > 	[BASE64_URLSAFE] = BASE64_REV_INIT('-', '_'),
+> > > 	[BASE64_IMAP] = BASE64_REV_INIT('+', ',')
+> > > };
+> > > 
+> > > Then (after validating variant):
+> > > 	const s8 *map = base64_rev_maps[variant];
+> > >  
+> > 
+> > Got it. I'll switch to using three static tables with a common initializer
+> > as you suggested.
+> > 
+> > > > 
+> > > > 	if (variant < BASE64_STD || variant > BASE64_IMAP)
+> > > > 		return -1;
+> > > > 
+> > > > 	base64_rev_tables[base64_symbols[variant].char62] = 62;
+> > > > 	base64_rev_tables[base64_symbols[variant].char63] = 63;
+> > > > 
+> > > > 	while (padding && srclen > 0 && src[srclen - 1] == '=') {
+> > > > 		pad_cnt++;
+> > > > 		srclen--;
+> > > > 		if (pad_cnt > 2)
+> > > > 			return -1;
+> > > > 	}  
+> > > 
+> > > I'm not sure I'd to that there.
+> > > You are (in some sense) optimising for padding.
+> > > From what I remember, "abcd" gives 24 bits, "abc=" 16 and "ab==" 8.
+> > >   
+> > > > 
+> > > > 	while (srclen >= 4) {
+> > > > 		/* Decode the next 4 characters */
+> > > > 		input1 = base64_rev_tables[(u8)src[0]];
+> > > > 		input2 = base64_rev_tables[(u8)src[1]];
+> > > > 		input3 = base64_rev_tables[(u8)src[2]];
+> > > > 		input4 = base64_rev_tables[(u8)src[3]];  
+> > > 
+> > > I'd be tempted to make src[] unsigned - probably be assigning the parameter
+> > > to a local at the top of the function.
+> > > 
+> > > Also you have input3 = ... src[2]...
+> > > Perhaps they should be input[0..3] instead.
+> > >  
+> > 
+> > OK, I'll make the changes.
+> > 
+> > > > 
+> > > > 		val = (input1 << 18) |
+> > > > 		      (input2 << 12) |
+> > > > 		      (input3 << 6) |
+> > > > 		      input4;  
+> > > 
+> > > Four lines is excessive, C doesn't require the () and I'm not sure the
+> > > compilers complain about << and |.
+> > >   
+> > 
+> > OK, I'll make the changes.
+> > 
+> > > > 
+> > > > 		if (unlikely((s32)val < 0))
+> > > > 			return -1;  
+> > > 
+> > > Make 'val' signed - then you don't need the cast.
+> ...
+> > > Or, if you really want to use the code below the loop:
+> > > 			if (!padding || src[3] != '=')
+> > > 				return -1;
+> > > 			padding = 0;
+> > > 			srclen -= 1 + (src[2] == '=');
+> > > 			break;
+> 
+> That is missing a test...
+> Change to:
+> 			if (!padding || srclen != 4 || src[3] != '=')
+> 				return -1;
+> 			padding = 0;
+> 			srclen = src[2] == '=' ? 2 : 3;
+> 			break;
+> 
+> The compiler will then optimise away the first checks after the
+> loop because it knows they can't happen.
+> 
+> > > 
+> > >   
+> > > > 
+> > > > 		*bp++ = (u8)(val >> 16);
+> > > > 		*bp++ = (u8)(val >> 8);
+> > > > 		*bp++ = (u8)val;  
+> > > 
+> > > You don't need those casts.
+> > >  
+> > 
+> > OK, I'll make the changes.
+> > 
+> > > > 
+> > > > 		src += 4;
+> > > > 		srclen -= 4;
+> > > > 	}
+> > > > 
+> > > > 	/* Handle leftover characters when padding is not used */  
+> > > 
+> > > You are coming here with padding.
+> > > I'm not sure what should happen without padding.
+> > > For a multi-line file decode I suspect the characters need adding to
+> > > the start of the next line (ie lines aren't required to contain
+> > > multiples of 4 characters - even though they almost always will).
+> > >   
+> > 
+> > Ah, my mistake. I forgot to remove that comment.
+> > Based on my observation, base64_decode() should process the entire input
+> > buffer in a single call, so I believe it does not need to handle
+> > multi-line input.
+> 
+> I was thinking of the the case where it is processing the output of
+> something like base64encode.
+> The caller will have separated out the lines, but I don't know whether
+> every line has to contain a multiple of 4 characters - or whether the
+> lines can be arbitrarily split after being encoded (I know that won't
+> normally happen - but you never know). 
+>
 
+I believe the splitting should be aligned to multiples of 4,
+since Base64 encoding operates on 4-character blocks that represent 3 bytes
+of data.
+If it's split arbitrarily, the decoded result may differ from the original
+data or even become invalid.
 
-On 10/14/25 9:04 PM, Ghatto wrote:
-> On Tue, Oct 14, 2025 at 11:18 AM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 10/14/25 5:10 PM, Ghatto wrote:
->>> On Tue, Oct 14, 2025 at 7:01 AM Konrad Dybcio
->>> <konrad.dybcio@oss.qualcomm.com> wrote:
->>>>
->>>> On 10/14/25 6:41 AM, Eric Gonçalves wrote:
->>>>> Enable the ST-Microelectronics FTS2BA61Y touchscreen. This patch
->>>>> depends on "Input: add support for the STM FTS2BA61Y touchscreen".
->>>>
->>>> The second sentence doesn't really make sense to be included in
->>>> the git log
->>> I'll keep it to the cover letter then
->>>>
->>>>> The device has an issue where SPI 8 (the bus which the touchscreen is
->>>>> connected to) is not working properly right now, so
->>>>> spi-gpio is used instead.
->>>>
->>>> Some Samsung devices used to use spi/i2c-gpio intentionally, also
->>>> on downstream. I'm assuming this isn't the case for r0q.
->>> It isn't, the device uses fts2ba61y on the spi8 bus - I hosted the
->>> DT at https://github.com/ghatt-o/ss_experiments/blob/main/r0q.dts if you
->>> want to take a look.
->>>>
->>>> Did you enable gpi_dma1, qupv3_id_1 before spi8, when testing
->>> The driver probes, but it fails to recognize the touchscreen device
->>
->> Could you post a complete dmesg and the precise DT diff you used?
-> https://pastebin.com/QkYa8nMp (android dmesg) mainline dmesg doesn't have
+Best regards,
+Guan-Chun
 
-The link has expired 🙁
-
-> any relevant information other than spi/i2c probing, however, I've noticed
-> both on deviceinfohw.ru and the dmesg that for some reason the touchscreen
-> is on spi0.0 (even though DT says 8) and I'm not sure if that means it's on SPI
-> but on a bugged out bus or if it's really just spi on bus 0
-
-It means that it's on the SPI bus that probed first (index 0) 
-
-[...]
-
-> +&spi8 {
-> +       spi-max-frequency = <5000000>;
-> +
-> +       touchscreen@0 {
-> +               compatible = "st,fts2ba61y";
-> +               reg = <0>;
-> +
-> +               vdd-supply = <&vreg_l8c_1p8>;
-> +               avdd-supply = <&vreg_l11c_3p0>;
-> +
-> +               interrupt-parent = <&tlmm>;
-> +               interrupts = <46 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +               pinctrl-names = "default", "sleep";
-> +               pinctrl-0 = <&tsp_int_active>;
-> +               pinctrl-1 = <&tsp_int_sleep>;
-> +
-> +               status = "okay";
-> +       };
-> +
-> +
-> +       status = "okay";
-> +};
-
-this won't compile ^
-
-Konrad
-
+> > 
+> > Best regards,
+> > Guan-Chun
+> > 
+> > > > 	if (srclen > 0) {
+> > > > 		switch (srclen) {  
+> > > 
+> > > You don't need an 'if' and a 'switch'.
+> > > srclen is likely to be zero, but perhaps write as:
+> > > 	if (likely(!srclen))
+> > > 		return bp - dst;
+> > > 	if (padding || srclen == 1)
+> > > 		return -1;
+> > > 
+> > > 	val = base64_rev_tables[(u8)src[0]] << 12 | base64_rev_tables[(u8)src[1]] << 6;
+> > > 	*bp++ = val >> 10;
+> > > 	if (srclen == 1) {
+> Obviously should be (srclen == 2)
+> > > 		if (val & 0x800003ff)
+> > > 			return -1;
+> > > 	} else {
+> > > 		val |= base64_rev_tables[(u8)src[2]];
+> > > 		if (val & 0x80000003)
+> > > 			return -1;
+> > > 		*bp++ = val >> 2;
+> > > 	}
+> > > 	return bp - dst;
+> > > }
+> > > 
+> > > 	David
+> 
+> 	David
+> 
+> > >   
+> > > > 		case 2:
+> > > > 			input1 = base64_rev_tables[(u8)src[0]];
+> > > > 			input2 = base64_rev_tables[(u8)src[1]];
+> > > > 			val = (input1 << 6) | input2; /* 12 bits */
+> > > > 			if (unlikely((s32)val < 0 || val & 0x0F))
+> > > > 				return -1;
+> > > > 
+> > > > 			*bp++ = (u8)(val >> 4);
+> > > > 			break;
+> > > > 		case 3:
+> > > > 			input1 = base64_rev_tables[(u8)src[0]];
+> > > > 			input2 = base64_rev_tables[(u8)src[1]];
+> > > > 			input3 = base64_rev_tables[(u8)src[2]];
+> > > > 
+> > > > 			val = (input1 << 12) |
+> > > > 			      (input2 << 6) |
+> > > > 			      input3; /* 18 bits */
+> > > > 			if (unlikely((s32)val < 0 || val & 0x03))
+> > > > 				return -1;
+> > > > 
+> > > > 			*bp++ = (u8)(val >> 10);
+> > > > 			*bp++ = (u8)(val >> 2);
+> > > > 			break;
+> > > > 		default:
+> > > > 			return -1;
+> > > > 		}
+> > > > 	}
+> > > > 
+> > > > 	return bp - dst;
+> > > > }
+> > > > Based on KUnit testing, the performance results are as follows:
+> > > > 	base64_performance_tests: [64B] decode run : 40ns
+> > > > 	base64_performance_tests: [1KB] decode run : 463ns
+> > > > 
+> > > > However, this approach introduces an issue. It uses 256 bytes of memory
+> > > > on the stack for base64_rev_tables, which might not be ideal. Does anyone
+> > > > have any thoughts or alternative suggestions to solve this issue, or is it
+> > > > not really a concern?
+> > > > 
+> > > > Best regards,
+> > > > Guan-Chun
+> > > >   
+> > > > > > 
+> > > > > > Best,
+> > > > > > Caleb    
+> > > > >     
+> > >   
+> 
 
