@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-856070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DCABE3009
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C5ABE300C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E582A19C41F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24D619C60A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A9F26E717;
-	Thu, 16 Oct 2025 11:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pRpluJdy"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5512D94AC;
+	Thu, 16 Oct 2025 11:05:37 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B300526CE17
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8217C261B60
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760612702; cv=none; b=SCItEdhyfx9LLt29nCn/x4ErMtEAKawECA84t7I7Vde18KfYifUb1vLuTQwPmIzdO1my2X4dpomDHc7iRhPNg6ra5jj2rtvSfM0PoOvs9mxuuTCPZ7Sl9Lw8p47OlALrlaaQo+YeIPcdPeDLNmAy6FrnbaF1GAEFStOIKRNiNDU=
+	t=1760612737; cv=none; b=UxvPzYYrXpIwBej5iixQU26QN157McQueRhNMCO1+15txuNHnuOE99l4KGHN1uV5krFM3J3jiMfhWdGdxXNKSGUkoCawzLxBergkgrtlnEMarxLD1cY0BtcEcf30tQrnPe1o7/Y2IeP9gHMU/eb7TOTBHgqXdCE9AG9/V6zkooE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760612702; c=relaxed/simple;
-	bh=yNh22VpgcD5iZWVVFSioXx5eXaPdBuNnJFKRzPH5pTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kHlW/o7DfAIY8Y8hV2O6KyPKSWMoxMYEF0sLeZ2pMDNlyhheTb+UxVvzybjPFZMRMJalp0yVDL0PMTa7mgAyQ6jNd06cHdRLZ1gNTxHuIzcEhXRNQoY9+NZ80W7/FIpRP3LF4s9ApKYUXZdnSFwpteH/AShlKAXTBmQdxbodH2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pRpluJdy; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so770789e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 04:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760612699; x=1761217499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yNh22VpgcD5iZWVVFSioXx5eXaPdBuNnJFKRzPH5pTU=;
-        b=pRpluJdy3S+CmDzXCmPjKSBJfhuP8TPPFH+u7ATDkyoMP4R+1l2RoPyVSN67iquszO
-         o4uB/WoV0GiLeWx3LNUficLXtDZf9+DTS7qZp5r6FyZoI6UGU/oJV26rioeFEIdxdq0y
-         4u5vJiFENGLNf0xFDUyhD2pasms+CSYyW/T4H5SkdsTXToFJJH+WcvyYDho6hgeJIwZ0
-         /P0Nvx4GD9Y8DzA4RtPNCo5UBJoh/wFx4LZjE8ECuRJqRNaUQzUNu7p2tP58RlxzBA+V
-         CfVmdl4S62YC3zNQhwHKlA8JpONHFDxSrUjfy1KxGo76NQw8edj65PWMQfocxX4/JBue
-         trzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760612699; x=1761217499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yNh22VpgcD5iZWVVFSioXx5eXaPdBuNnJFKRzPH5pTU=;
-        b=fnMa76muz4TMcS46pGY4m3C9L9vRNYzgUweD9N0evkQkJBcQB6PIqPTY6Xayk3JGyR
-         gQ5Z5kLpEfUM08afwB6zpxp+qnFbLjMepJ5soKYKPz7X3xigY6PEwViNvgqa7uXtbpJt
-         4Ye0+1ol0V6nZferxyYyw5bQX5eITeMpUEz/0Y+go20igydPTqRRnGgWpqCWfjI5ZWdE
-         +qHawR4creXKkywOBO4Db1licaXDLDjCUOFLK1YFK19jgU3BgTSCZLNt3nNB7qycn/gJ
-         4mN6T6LOxYiSlXIzW5BgRyP6ixp8Fl3LgUvl5UVt6NWNywE5YNTrO0htLdrJNy4QbsUf
-         2/BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQMzCaSbBGwgFwgsSXr9mFZWXeIfpDzZPntq30X/ZCsMqo72ey64oI+u02r4+ZCdT4BF2TnxHIgJRQ9Lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN1Aq7CeshTZLH/1LgTTJnHWHYAkTMr1VlVDkzSM5DK2Ze6kEc
-	o+97h7gT88cvm5Pnl4Sj/qF5ZU1cC7Q5509f0ZO0bKCMa8VGuUjDLSqeq+x43/RDXTOQ3twu3kU
-	d1cgeUUngqb2mWA2RZbm6PPKY8Ipy3tO3u3hTxv44vA==
-X-Gm-Gg: ASbGncunDt5Q12JD9MgvZ7doDPHfKBkDWGeezrztH1yhJPaHQtAykjQBlUF+tuAxMOK
-	vWAuZQk/dTE5Tf5V2yzhEsacF5Anr+fpmXM2c8wOTa2rdsKdrG/RtBX94twBKO4dK8Ds6CoEGj9
-	PHDk/eVMe77F3cTLozRbCMCD8AbSoq9Vx7BIlTv40pjvlxMgNXRsZBRe/rGH7nH+TiQ4szYtNR9
-	Tt/vJmcK4oRn9syTgxdp2oYMIKaN+sr/YMalDDKNAVbZnXgNmbqzhzDm05iYXK8dAc9uAPJjFkg
-	4S3F/IoVuqozp1yq18Qm5+7CJjg=
-X-Google-Smtp-Source: AGHT+IFayaCD0pSGBkneNyn/a6xVpthdUoJp6sRMc3xLlMt0uMSjEDaswBOJxo1hM6bEJaYHKB510/0SUrWtiIUFhV4=
-X-Received: by 2002:a05:6512:1510:10b0:591:c2f8:9a60 with SMTP id
- 2adb3069b0e04-591c2f89da8mr2767654e87.31.1760612698712; Thu, 16 Oct 2025
- 04:04:58 -0700 (PDT)
+	s=arc-20240116; t=1760612737; c=relaxed/simple;
+	bh=jPC8Nx7wvkqWufAjN2EFZU8gEQG6OMWyfaBgrJ9pUfQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EXHgfEigNMNmEYW0Zj7C+d4i5NVd9iH2d9iZvZLraueumQ7aAma+0R9MHiweK7nN0l1aWK7HHSrk1M4rQ9mkzBxpTZHu3jK1BTjelw4+V8FJ/6EnIod2IaPzA4+1RCU2PmDchBw6xVpi//PDomcq8tKfHfJsXxjX23bA1zJdw+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 16 Oct
+ 2025 14:05:22 +0300
+Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 16 Oct
+ 2025 14:05:22 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: <syzbot+af53dea94b16396bc646@syzkaller.appspotmail.com>, Ian Abbott
+	<abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: Re: [syzbot] [kernel?] divide error in comedi_inc_scan_progress
+Date: Thu, 16 Oct 2025 14:05:08 +0300
+Message-ID: <20251016110511.3460094-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <686d5adb.050a0220.1ffab7.001a.GAE@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759824376.git.mazziesaccount@gmail.com> <ed65074dbedaf2b503d789b38bd9710926d08a55.1759824376.git.mazziesaccount@gmail.com>
-In-Reply-To: <ed65074dbedaf2b503d789b38bd9710926d08a55.1759824376.git.mazziesaccount@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 16 Oct 2025 13:04:46 +0200
-X-Gm-Features: AS18NWBwUA24uaqVHxHl7BqIfjkNE89oORmb5j7GI3HGq5QpCdYV7wiF_boIXL4
-Message-ID: <CAMRc=Mcv3Mt1HHBtJtC4ZQt-RL=0UPODxWmab8Sn0-TA1fTtzg@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/13] gpio: Support ROHM BD72720 gpios
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Andreas Kemnade <andreas@kemnade.info>, 
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Tue, Oct 7, 2025 at 10:34=E2=80=AFAM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
->
-> The ROHM BD72720 has 6 pins which may be configured as GPIOs. The
-> GPIO1 ... GPIO5 and EPDEN pins. The configuration is done to OTP at the
-> manufacturing, and it can't be read at runtime. The device-tree is
-> required to tell the software which of the pins are used as GPIOs.
->
-> Keep the pin mapping static regardless the OTP. This way the user-space
-> can always access the BASE+N for GPIO(N+1) (N =3D 0 to 4), and BASE + 5
-> for the EPDEN pin. Do this by setting always the number of GPIOs to 6,
-> and by using the valid-mask to invalidate the pins which aren't configure=
-d
-> as GPIOs.
->
-> First two pins can be set to be either input or output by OTP. Direction
-> can't be changed by software. Rest of the pins can be set as outputs
-> only. All of the pins support generating interrupts.
->
-> Support the Input/Output state getting/setting and the output mode
-> configuration (open-drain/push-pull).
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
+> Oops: divide error: 0000 [#1] SMP KASAN PTI
+> CPU: 0 UID: 0 PID: 11660 Comm: irq/7-comedi_pa Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> RIP: 0010:comedi_inc_scan_progress+0x1a4/0x430 drivers/comedi/drivers.c:563
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi,
+
+I would like to solicit advice on how to properly address this
+issue [1], if no one minds.
+
+First, I think both [1] and [2] problems are similar in the way
+they are triggered. While there are no syzkaller-side reproducers for
+either of them (even console logs do not have proper traces of what
+combinations of syscalls provoked wrong division), the blame clearly
+lies with comedi driver-specific interrupt handlers
+(parport_interrupt, das16m1_interrupt etc.).
+
+Syzkaller at its current state manages to fuzz select comedi drivers
+by manually configuring them via COMEDI_DEVCONFIG ioctl. In the course
+of do_devconfig_ioctl() and, for instance, parport_attach() functions,
+specific irq handlers are enabled (parport_interrupt) and these
+handlers in turn interact with async->cmd->XXX values such as
+async->cmd->chanlist_len.
+
+However, in the absence of ioctls related to cmd setup, simply
+after a single COMEDI_DEVCONFIG, async (and async->cmd) is
+initialized in __comedi_device_postconfig_async() with kzalloc.
+
+Thus, when there is an irq is to be dealt with, these "empty"
+comedi_async objects and, specifically async->cmd->XXX, are
+processed leading to erroneous divisions like in [1] and [2].
+
+The easiest solution, similar to one suggested in [2], is to check for
+divisor with zero values. In case of [1], comedi_inc_scan_progress
+would look something like this:
+
+    ...
+    if (!(s->subdev_flags & SDF_PACKED) && (cmd->chanlist_len != 0)) {
+	async->cur_chan += comedi_bytes_to_samples(s, num_bytes);
+	async->cur_chan %= cmd->chanlist_len;
+    }
+    ...
+
+Any suggestions are greatly appreciated!
+
+P.S. To reiterate, I've failed to reproduce this error and this flawed
+analysis is theoretical only.
+
+[1] https://syzkaller.appspot.com/bug?extid=af53dea94b16396bc646
+[2] https://syzkaller.appspot.com/bug?extid=f6c3c066162d2c43a66c
+
+Regards,
+Nikita
 
