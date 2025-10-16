@@ -1,138 +1,116 @@
-Return-Path: <linux-kernel+bounces-856794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA83BE5195
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE2ABE51A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC33E58608A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:47:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B511A619F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4761519A6;
-	Thu, 16 Oct 2025 18:47:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A032C23B0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B67C221D96;
+	Thu, 16 Oct 2025 18:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0/nYnl6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC53DDD2;
+	Thu, 16 Oct 2025 18:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760640442; cv=none; b=RcauSvkdcH9KRshsTLHlfROFu6+Mk2dSMwupAyY7omve/0/5+z/lnUZW3fFVm5eWEXXa9MSxyoRbrAxHhwbTedKZ8AMGqYJSoVQiphKVwCWhv32I/iMk/tllV3SY4mxmMbir4xXAnz321pBvORcU3IgerjNdoMbdYGg/ojzx2HQ=
+	t=1760640544; cv=none; b=OiWzaY1XeF25ZpP0pUlMZpA1zvyEjJ2QDRfLnIRhgcZCZhSMrggiRMC1Y6wvG5214zR1Ti4XTAKfgvc/9qraMOMAUpZ26x4ANTSt1BeYvZ6BX4jA8o6YUQqCD3y6YtclblFztmqPAJT8EGEFFw24lScBcQSmQc/zQA8ShVFqrZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760640442; c=relaxed/simple;
-	bh=ePExnfyRrFDVPrFHq+McVtgXlvaydmbVEEMYyG45JFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WCAFkGiN8kD6XtVErfw3JNfqe0Saaq+Lmx/+RT/hFrNO7m4BQiWbS2JrdeQtOawcjYz2Oz3RUAG2ldIwzQnAt4e8w4jKI/GxfSPTruy9QHEkovii//oGVLCi62/Ed9CCgOEOYhvOOLQKf5hB/ghXWIHqPcTRnGAXnxiDY3fY45o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09F4F1688;
-	Thu, 16 Oct 2025 11:47:12 -0700 (PDT)
-Received: from [10.163.66.205] (unknown [10.163.66.205])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D55E3F738;
-	Thu, 16 Oct 2025 11:47:17 -0700 (PDT)
-Message-ID: <07a70cbf-dbb5-4444-8393-24c49e53a93f@arm.com>
-Date: Fri, 17 Oct 2025 00:17:13 +0530
+	s=arc-20240116; t=1760640544; c=relaxed/simple;
+	bh=1TvsNySS/ii619yRBomO8Shvk95ED2emXEbjTPkgA+4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dzKk4EJya6xrxcMRWeiNhZTy7fzftGTIbp74NGGcb45kylxyPQCyPYRaSJd0Iz/+/CKJ0Do/oLZ4TJcx7D4wMwfB1wFWr3J+Gmqaf/XfACKmhSRjYY6uMNrB+Njym4KIZkLhU8mxc5mo+g3xsPe6YmBpcZiEucpqjIoJ3DFewBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0/nYnl6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E14C4CEF1;
+	Thu, 16 Oct 2025 18:49:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760640544;
+	bh=1TvsNySS/ii619yRBomO8Shvk95ED2emXEbjTPkgA+4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=K0/nYnl6qvn+UNnZq1lrw10RG/Gdx6hWYCLPnyOt7ZIyaBKZLw6e3+qg+B7WVo5Y3
+	 YTibjb6/jRBuqzbjtdFbWKL37Fl39IaXtn1MkPmPsr6E4UZipnV0LEwb5CdrBO6wIT
+	 Jxfbm8UTeEdFJnGI0+uYokyxMgZomw1AQhNFZ/EVgSQcrsJPMFaMeet6msUQMrTPeb
+	 zHS7dXku+iXLSYBjrR8JFlVA3EmOFWLhTPA049mSPY2YAOHFLewNjpw5qIrL6NCeK5
+	 GyI+D/5frdSk81snrtmXgCGjYOHIVxS6DL42bLh8jwlSZSRLUg7yg29lddVCTJAemr
+	 eByPYIRjnOwpw==
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Andy Shevchenko <andy@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
+In-Reply-To: <20251012121707.2296160-1-mikhail.kshevetskiy@iopsys.eu>
+References: <20251012121707.2296160-1-mikhail.kshevetskiy@iopsys.eu>
+Subject: Re: (subset) [PATCH v10 00/16] spi: airoha: driver fixes &
+ improvements
+Message-Id: <176064054115.223781.11856902416382505599.b4-ty@kernel.org>
+Date: Thu, 16 Oct 2025 19:49:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: mm: make linear mapping permission update more
- robust for patial range
-To: Yang Shi <yang@os.amperecomputing.com>, ryan.roberts@arm.com,
- cl@gentwo.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251013232803.3065100-1-yang@os.amperecomputing.com>
- <20251013232803.3065100-2-yang@os.amperecomputing.com>
- <00bf0498-8f11-466e-9f2a-f7e656ecddf9@arm.com>
- <8943fe0e-0bf7-49a4-bf58-efe08bfd037d@os.amperecomputing.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <8943fe0e-0bf7-49a4-bf58-efe08bfd037d@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
+On Sun, 12 Oct 2025 15:16:51 +0300, Mikhail Kshevetskiy wrote:
+> This patch series greatly improve airoha snfi driver and fix a
+> number of serious bugs.
+> 
+> Fixed bugs:
+>  * Fix reading/writing of flashes with more than one plane per lun
+>  * Fill the buffer with 0xff before writing
+>  * Fix reading of flashes supporting continuous reading mode
+>  * Fix error paths
+> 
+> [...]
 
-On 17/10/25 12:15 am, Yang Shi wrote:
->
->
-> On 10/14/25 11:46 PM, Dev Jain wrote:
->>
->> On 14/10/25 4:57 am, Yang Shi wrote:
->>> The commit fcf8dda8cc48 ("arm64: pageattr: Explicitly bail out when 
->>> changing
->>> permissions for vmalloc_huge mappings") made permission update for
->>> partial range more robust. But the linear mapping permission update
->>> still assumes update the whole range by iterating from the first page
->>> all the way to the last page of the area.
->>>
->>> Make it more robust by updating the linear mapping permission from the
->>> page mapped by start address, and update the number of numpages.
->>>
->>> Fixes: fcf8dda8cc48 ("arm64: pageattr: Explicitly bail out when 
->>> changing permissions for vmalloc_huge mappings")
->>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->>> ---
->>>   arch/arm64/mm/pageattr.c | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->>> index 5135f2d66958..c21a2c319028 100644
->>> --- a/arch/arm64/mm/pageattr.c
->>> +++ b/arch/arm64/mm/pageattr.c
->>> @@ -148,7 +148,6 @@ static int change_memory_common(unsigned long 
->>> addr, int numpages,
->>>       unsigned long size = PAGE_SIZE * numpages;
->>>       unsigned long end = start + size;
->>>       struct vm_struct *area;
->>> -    int i;
->>>         if (!PAGE_ALIGNED(addr)) {
->>>           start &= PAGE_MASK;
->>> @@ -184,8 +183,9 @@ static int change_memory_common(unsigned long 
->>> addr, int numpages,
->>>        */
->>>       if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
->>>                   pgprot_val(clear_mask) == PTE_RDONLY)) {
->>> -        for (i = 0; i < area->nr_pages; i++) {
->>> - __change_memory_common((u64)page_address(area->pages[i]),
->>> +        unsigned long idx = (start - (unsigned long)area->addr) >> 
->>> PAGE_SHIFT;
->>> +        for (int i = 0; i < numpages; i++) {
->>> + __change_memory_common((u64)page_address(area->pages[idx++]),
->>>                              PAGE_SIZE, set_mask, clear_mask);
->>
->> Why not just use idx as the iterator in the for loop? Using i and 
->> then incrementing
->> idx is confusing.
->
-> You meant something like:
->
-> while (idx < idx + numpages)
->
-> It is fine to me.
+Applied to
 
-for loop is simpler :)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
 
->
->>
->> As noted by Ryan, the fixes commit is wrong. The issues persists from 
->> commit c55191e.
->>
->> After fixing these:
->>
->> Reviewed-by: Dev Jain <dev.jain@arm.com>
->
-> Thank you.
->
-> Yang
->
->>
->>>           }
->>>       }
->
+[01/16] spi: airoha: return an error for continuous mode dirmap creation cases
+        commit: 4314ffce4eb81a6c18700af1b6e29b6e0c6b9e37
+[03/16] spi: airoha: add support of dual/quad wires spi modes to exec_op() handler
+        commit: edd2e261b1babb92213089b5feadca12e3459322
+[05/16] spi: airoha: switch back to non-dma mode in the case of error
+        commit: 20d7b236b78c7ec685a22db5689b9c829975e0c3
+[06/16] spi: airoha: fix reading/writing of flashes with more than one plane per lun
+        commit: 0b7d9b25e4bc2e478c9d06281a65f930769fca09
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
