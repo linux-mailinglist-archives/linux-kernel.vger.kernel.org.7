@@ -1,170 +1,148 @@
-Return-Path: <linux-kernel+bounces-856083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051E8BE307E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:17:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3562EBE307C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D0819A7A22
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E360C425321
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3134130F7E2;
-	Thu, 16 Oct 2025 11:17:26 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27E0257853;
+	Thu, 16 Oct 2025 11:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hxewQKBU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01868328619;
-	Thu, 16 Oct 2025 11:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2203C165F13;
+	Thu, 16 Oct 2025 11:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613445; cv=none; b=qQW+Xj5u0lLvaA5bhzDpJ/oNyt34Wv8zGTQ2KDjMEEnm8jP/KamdA5aFLeujjLZ2VbeXylr0IZQmrjNL02gKi/KxFhyjuZr3SyU0lNkasUjfXYlXHnK/kJDIcqweFu0Rx8CIq840e+AjZJWmQqmaxd8L+eeE0zMpqbZkI9Vkibg=
+	t=1760613433; cv=none; b=JhT2K2wZk2KcpR2W+cdwAwppZmHkhGKt2xDTbCAj0jQhTGSh9TIWOKZ6TzK/vNjmvL7LSTREd3Idk9m3JmBjN4x9K2HHBwOfjgcFAZ3JYeFiZkslpOEZWaucSo+QaWCyAODj0T5GqWUbXKBFfMP3ZpvrB6t9M+vvZEc/QT4JlKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613445; c=relaxed/simple;
-	bh=MZYkKkorzjs2AyVDuXTTrCkl4SEuv4JZG9Dfc8N2vlE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYNiaxnr9H1F5Oa5udReXBILtVCKkqEZzuAyPe18R2sKCKrH8nZ77xoWqtUKirLTK6lczlyGmOTXkzJAsY54zX0VpRJYWiR0tHHYU2nRN53qh5zzxPQQW+VH5STR9oPQ3Xqhn/ZVH6uQbIoA30mxUmNrAG8MSfsewJ/AZ0p4vFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=unknown smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 59GBCfS4020808
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Oct 2025 19:12:41 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
- with Microsoft SMTP Server id 14.3.498.0; Thu, 16 Oct 2025 19:12:41 +0800
-Date: Thu, 16 Oct 2025 19:12:36 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: Niklas Cassel <cassel@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <jingoohan1@gmail.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alex@ghiti.fr>,
-        <aou@eecs.berkeley.edu>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <ben717@andestech.com>,
-        <inochiama@gmail.com>, <thippeswamy.havalige@amd.com>,
-        <namcao@linutronix.de>, <shradha.t@samsung.com>, <pjw@kernel.org>,
-        <randolph.sklin@gmail.com>, <tim609@andestech.com>
-Subject: Re: [PATCH v6 1/5] PCI: dwc: Allow adjusting the number of ob/ib
- windows in glue driver
-Message-ID: <aPDTJKwmpxolGEyj@swlinux02>
-References: <20251003023527.3284787-1-randolph@andestech.com>
- <20251003023527.3284787-2-randolph@andestech.com>
- <aO4bWRqX_4rXud25@ryzen>
+	s=arc-20240116; t=1760613433; c=relaxed/simple;
+	bh=DSWwjOXOC7bi7nAeIFr1fihi8RD0f4mgzm3t1e4srsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cs68DFeuRw8I3rbY1HKJQ+6/6fTBsk+lp6IYbxsKi/qVTI20RYYLySKFCv36M3oepC9eK/aXnS44gGNsLcf68lgu2SWCNDteky3ZFOdWsO5A6qji6swDu6xEvX34K3plyt0llh9y53av/OPPigY1QfPkKXjWczCIvpy8myVY7xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hxewQKBU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760613429;
+	bh=DSWwjOXOC7bi7nAeIFr1fihi8RD0f4mgzm3t1e4srsw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hxewQKBU4XBHVdn3n/KWzRglcS5kWQfTmJoEpRWVU198WIarQ/E/+omVH/nlKQX86
+	 zAeUuogdHv/xjZLpNQ5nYCedzd5JkS8lINjMIOZ+2UbMzQLQO2ie1ZhE/JJ8+rSr1t
+	 gU6UQhHE0FeXHYklZgaWiD7c4UI1m1YLcHSrqe/gcID9ypINTXCRdjOjrQU9APyPJh
+	 IQ7djMFdCLeplC77JE9a1JNCPjJPBYOGMzeQ7JOk2pHwdEnPDqf8t9CWC5Mm6/lqIk
+	 +WSWiXPyBreEMGKgPGQZPAEGB887tu0Is9V//WxznJuFGUUVk/Z5bfYL3y1/LCK1en
+	 jE954CUpZbWmQ==
+Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0F59C17E0C54;
+	Thu, 16 Oct 2025 13:17:08 +0200 (CEST)
+Message-ID: <f564735b-7cbd-486c-9dd4-a4555e73edde@collabora.com>
+Date: Thu, 16 Oct 2025 13:17:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aO4bWRqX_4rXud25@ryzen>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 59GBCfS4020808
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/13] drm/shmem-helper: Map huge pages in fault
+ handlers
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Miko=C5=82aj_Wasiak?=
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>,
+ Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Christopher Healy <healych@amazon.com>, Bagas Sanjaya
+ <bagasdotme@gmail.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, kernel@collabora.com
+References: <20251015153018.43735-1-loic.molinari@collabora.com>
+ <20251015153018.43735-4-loic.molinari@collabora.com>
+ <aO_ZmA6yoqbzTKt9@casper.infradead.org>
+Content-Language: fr
+From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
+Organization: Collabora Ltd
+In-Reply-To: <aO_ZmA6yoqbzTKt9@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Niklas,
+Hi Matthew,
 
-On Tue, Oct 14, 2025 at 11:43:53AM +0200, Niklas Cassel wrote:
-> [EXTERNAL MAIL]
+On 15/10/2025 19:27, Matthew Wilcox wrote:
+> On Wed, Oct 15, 2025 at 05:30:07PM +0200, Loïc Molinari wrote:
 > 
-> On Fri, Oct 03, 2025 at 10:35:23AM +0800, Randolph Lin wrote:
-> > The number of ob/ib windows is determined through write-read loops
-> > on registers in the core driver. Some glue drivers need to adjust
-> > the number of ob/ib windows to meet specific requirements,such as
+> This looks fine, no need to resend to fix this, but if you'd written
+> the previous patch slightly differently, you'd've reduced the amount of
+> code you moved around in this patch, which would have made it easier to
+> review.
 > 
-> Missing space after comma.
+>> +	/* Map a range of pages around the faulty address. */
+>> +	do {
+>> +		pfn = page_to_pfn(pages[start_pgoff]);
+>> +		ret = vmf_insert_pfn(vma, addr, pfn);
+>> +		addr += PAGE_SIZE;
+>> +	} while (++start_pgoff <= end_pgoff && ret == VM_FAULT_NOPAGE);
 > 
-> 
+> It looks to me like we have an opportunity to do better here by
+> adding a vmf_insert_pfns() interface.  I don't think we should delay
+> your patch series to add it, but let's not forget to do that; it can
+> have very good performnce effects on ARM to use contptes.
 
-Thanks a lot. I will fix it in the next patch.
-
-> > hardware limitations. This change allows the glue driver to adjust
-> > the number of ob/ib windows to satisfy platform-specific constraints.
-> > The glue driver may adjust the number of ob/ib windows, but the values
-> > must stay within hardware limits.
-> 
-> Could we please get a better explaination than "satisfy platform-specific
-> constraints" ?
-> 
-
-Due to this SoC design, only iATU regions with mapped addresses within the
-32-bits address range need to be programmed. However, this SoC has a design
-limitation in which the maximum region size supported by a single iATU
-entry is restricted to 4 GB, as it is based on a 32-bits address region.
-
-For most EP devices, we can only define one entry in the "ranges" property
-of the devicetree that maps an address within the 32-bit range,
-as shown below:
-	ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>;
-
-For EP devices that require 64-bits address mapping (e.g., GPUs), BAR
-resources cannot be assigned.
-To support such devices, an additional entry for 64-bits address mapping is
-required, as shown below:
-	ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>,
-		 <0x43000000 0x1 0x00000000 0x1 0x00000000 0x7 0x00000000>;
-
-In the current common implementation, all ranges entries are programmed to
-the iATU. However, the size of entry for 64-bit address mapping exceeds the
-maximum region size that a single iATU entry can support. As a result, an
-error is reported during iATU programming, showing that the size of 64-bit
-address entry exceeds the region limit.
-
-In this SoC design, 64-bit addresses are hard-wired and can skip iATU
-programming. Thus, the driver needs to recount the "ranges" entries whose
-size fits within the 4GB platform limit.
-
-There are four scenarios:
-32-bits address, size < 4GB: program to iATU
-64-bits address, size < 4GB: program to iATU
-32-bits address, size > 4GB: assuming this condition does not exist
-64-bits address, size > 4GB: skip case
-
-We will recount how many outbound windows will be programmed to the iATU; 
-this is why we need to adjust the number of entries programmed to the iATU.
-
-> Your PCIe controller is synthesized with a certain number of {in,out}bound
-> windows, and I assume that dw_pcie_iatu_detect() correctly detects the number
-> of {in,out}bound windows, and initializes num_ob_windows/num_ib_windows
-> accordingly.
-> 
-> So, is the problem that because of some errata, you cannot use all the
-> {in,out}bound windows of the iATU?
->
-
-Similar to the erratum, all inbound and outbound windows remain functional,
-as long as each iATU entry complies with the 4 GB size constraint.
-
-> Because it is hard to understand what kind of "hardware limit" that would
-> cause your SoC to not be able to use all the available {in,out}bound windows.
-> 
-> Because it is simply a mapping in the iATU (internal Address Translation Unit).
-> 
-> In fact, in many cases, e.g. the NVMe EPF driver, then number of {in,out}bound
-> windows is a major limiting factor of how many outstanding I/Os you can have,
-> so usually, you really want to be able to use the maximum that the hardware
-> supports.
-> 
-> 
-> TL;DR: to modify this common code, I think your reasoning has to be more
-> detailed.
-> 
-
-I will include additional explanations along with the application scenarios of
-this SoC, and refactor the commit message.
+Agreed. I initially wanted to provide such an interface based on 
+set_ptes() to benefit from arm64 contptes but thought it'd better be a 
+distinct patch series.
 
 > 
+>> @@ -617,8 +645,9 @@ static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
+> [...]
+>>   
+>> -		ret = vmf_insert_pfn(vma, vmf->address, page_to_pfn(page));
+>> +	if (drm_gem_shmem_map_pmd(vmf, vmf->address, pages[page_offset])) {
+>> +		ret = VM_FAULT_NOPAGE;
+>> +		goto out;
+>>   	}
 > 
-> Kind regards,
-> Niklas
+> Does this actually work?
 
-Sincerely,
-Randolph
+Yes, it does. Huge pages are successfully mapped from both map_pages and 
+fault handlers. Anything wrong with it?
+
+
+There seems to be an another issue thought. There are failures [1], all 
+looking like that one [2]. I think it's because map_pages is called with 
+the RCU read lock taken and the DRM GEM map_pages handler must lock the 
+GEM object before accessing pages with dma_resv_lock(). The locking doc 
+says: "If it's not possible to reach a page without blocking, filesystem 
+should skip it.". Unlocking the RCU read lock in the handler seems wrong 
+and doing without a map_pages implementation would be unfortunate. What 
+would you recommend here?
+
+Loïc
+
+[1] https://patchwork.freedesktop.org/series/156001/
+[2] 
+https://intel-gfx-ci.01.org/tree/drm-tip/Patchwork_156001v1/bat-dg1-7/igt@vgem_basic@dmabuf-mmap.html
 
