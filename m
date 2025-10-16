@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-856442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDA2BE42AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:17:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9ACBE42C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67553189162E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:17:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD2D2508D49
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2840E32860A;
-	Thu, 16 Oct 2025 15:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607633469F5;
+	Thu, 16 Oct 2025 15:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="q9toGj9r"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011063.outbound.protection.outlook.com [40.93.194.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLlhVTgx"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2897619E81F;
-	Thu, 16 Oct 2025 15:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627817; cv=fail; b=WI00n4ci2knEws45g9NBD8SbWbSpXtfJt9z/c7zot2dOkSLSCUuGolXukSFC/4+Ecf8TekU0lNEOkfdNea7dkzbp9GDnpWUGcGu3g93lLja1ARfDrknYr7KZPXEY00Ajx2VB59idgxS3Nv2lDMC+6Qm6LBPVdkiUtLoy3Kl6uxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627817; c=relaxed/simple;
-	bh=CHPW+ZJAOxODTxSnsB20GkLCZ7yIEE17UhVC/KlAZOQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=TVFfpUyaUy+BOwzoTvMDdXRAICWbbfComUQl68+kJjC8uMrKq6c2CjMBvYdasKr0uw1goSxgQMRS7q77ANc/25d3vwjxaZguRTUeKHjswpZPR+KTs65xrE+nxdCCMzsYfLcFgN50QnP18tVTj3qTcXqb+UawX4+JmbW1zB7/ygY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=q9toGj9r; arc=fail smtp.client-ip=40.93.194.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w0/Dwwi1rQln0Ij1qb2vsaTVdHKMj23N365PPWtvR8giz0blNfq0cq43/V6WYlr47R8bs24bZZWlej0rgPWikxSg9ACX2DWEnbujslXEuSmAXsgljHfUEZR7M4uupskPAI8B6jtw4dIBqIVtBVIKexviDrOzlKdgRsvtkNlrqsHwqAfOD7gjq51G/9BE5ZxIqONTyZ8pDyHkYp4cTDi/uPnQf3S1Sr6+u4vsyX/YrWjVX2Ot00mhnBG3lw1T+0l65Fw9Yb8rObozD5UATiTTbfAsy26VGSwkbdewsGoZtDFrlJc5t2RPiTRVdiRMbxwPAsYqi2CypF1e9e5yJtRAWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uz2fEuYgTOx++cZrDH5IghXxukbCYD5NQwbAVzh9NoI=;
- b=GmxFDEcPYx5LKeI8zaXxjRy0SoSWygl/DB1tM5HtWdqKjLSmp55b4suJU4xsNBF3SBpCi1GFEUn2/PyhXlFiwJIgH3+yJHAtxjVQEfG4gc01J/svS8fzLRewraye8ICYOwGxkiW9dqmgsV9iPU8p/sOa3N/hFnDjtncRJ6dStm2hAzq3XIpJyuJElvApqc8nd/MxFOXwwo5sR8HnEUC+uGrF8M9uG5tYiX7qG7Gw2SR3SkHrOD/bfOYoxqDTCDGkrN6dvcmoDc2liHxqAzSU047VN4tQeTNCA4KNOU2kutfO1kXUjswvKshtXgFwNb5Rkct7njJ4TTHkOepVgy/gdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.cz smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uz2fEuYgTOx++cZrDH5IghXxukbCYD5NQwbAVzh9NoI=;
- b=q9toGj9rGMJ/sdIkLGev2V4+H5EaW80AGGderE8bKDfxIQykNGvagAiXJ7scDnDoOO72Sn7vs0Z2nTUSaDyJ1L5o5rFMvsg4qK6/U5BO/DaOIP/hCAhQjt0+I+4zDP8FrcPxBYic8STU2PxqwnqR8YlOJMWzh+nBiXfHWrIzTyc=
-Received: from SN7PR04CA0064.namprd04.prod.outlook.com (2603:10b6:806:121::9)
- by DS0PR12MB7875.namprd12.prod.outlook.com (2603:10b6:8:14d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
- 2025 15:16:50 +0000
-Received: from SA2PEPF000015CD.namprd03.prod.outlook.com
- (2603:10b6:806:121::4) by SN7PR04CA0064.outlook.office365.com
- (2603:10b6:806:121::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.11 via Frontend Transport; Thu,
- 16 Oct 2025 15:16:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SA2PEPF000015CD.mail.protection.outlook.com (10.167.241.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 15:16:49 +0000
-Received: from [10.252.200.214] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 16 Oct
- 2025 08:16:41 -0700
-Message-ID: <262c742f-dc0c-4adc-b23c-047cd3298a5e@amd.com>
-Date: Thu, 16 Oct 2025 20:46:29 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632583451CC
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760627798; cv=none; b=oBJyJ69mOhVdhbJfyxxtxGhahICYJDSvT0lSZQkUKD21ldl7Y9fYJKx89NPyRfOxnI7DpWlKsR4BkTBd9T6p1q478XQD78dy68iSPBRGVVGG5+piqxjF8f66UMdQJoiInhuaQXrc60An3enQS7MISmXBiWVwQMMscHHlOU6Foxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760627798; c=relaxed/simple;
+	bh=oa7K0JZTewj+HSuTTd/Uvc+SWhVmeZPCcOMWUVCfbyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O9dn8KptDwwRAtNUyXLDU42yNoRNe9T9Cea7GBdbhd7T1a3B05KNTj7RPNQNLQkth++EPHUDhHY8gZ7ZgMrQqLv1DNM1uCba4JPhKDT9XLGcyoPu4tHwSafkkIq3MsluBo2UUgwUKhBKq+XNTIVo0Oy9jvJ9sDapG+0q9+uVsfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLlhVTgx; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-427015003eeso499817f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760627794; x=1761232594; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZNj5a9vYHSqnXPzE3bW6USYGveDnBdGISqnkFGhWQt4=;
+        b=kLlhVTgxFOkajDAdntMEh84Z1xkVoctECcxbl2La9rRn2MFmin4isjoFRbIrzL+SYk
+         wRXOqf1GIt1T56FMepwLgr8VKkyNSPbX8lPdFpW5UVRzCQTTPpUqDh73k6gwb7U8ffuw
+         6o3i1cVxwVDGR3FFPT6dSa4Pv0d4uPF1bIxuERSQt3XAu90hL8V+1cLQwyqxPK7/J6QO
+         G5OIU0Svkt1DBOlPlQhfLiJ/J+XA9mDc2EOp2elBe4VwQrVdrTu2ikGDdr3GmPcHpcNa
+         zDqZKkCUNflpUaeDskc4f2TwqXK+Vj/f68XxxpljvIVUfKDNX91rxSZpfDSmswFuBcvo
+         T41Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760627794; x=1761232594;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZNj5a9vYHSqnXPzE3bW6USYGveDnBdGISqnkFGhWQt4=;
+        b=XFxdDRY5a1DWLk05tXJVCojYlz1g5YfyumiSrRgNOSWolVwh42Lt4uLvcEefhcr0K9
+         Ys3Z0R7/Av8Tux8p4c/Aq4ZOwrDA8y9Vc49GCUfmYR0w0rrviDjn95Z/iQ6FeoEMhOmm
+         PQVLGKouo66Xbdddm1ZyrQOS4p9LJ/b93GJQOf/bclMSD5q9EHlkNXFTLOm2XT78SF9V
+         6kjIefFd5rMfjEQszA9Dwl2t+A8MebqwcHV5KF7WZjI2m8qD48P05MTVskuvrCW2oM2p
+         fzFbjfE85edSXFY98xqkUfeGYoBNGlJHL/LgeXQ2G3X5HcCvsAMpG0t3UUGIVFiKsdsQ
+         AnTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG1XMtZY+LhLAEh5bpcYmJycQyDUw4SL/OOfrw25kRGUwOVOuemEjB1OQ/aDmvuInQSUqnd/jLWl1RJ6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA8L4LwfKtmg4rXcPAcY0Sv2Qu9pcN5lbE2wBW9wgM2BzdX8xe
+	+hMxLrr/FY7vn2+1UXv9jvWgmXFbj2I+WR7z82kjQrOPOxoBlXexaOo/
+X-Gm-Gg: ASbGncuyN1t36+hHeweqO7KDK9dtk6BFQuoZqSdTEaJJkNvecijCGrHMPJLeMgGj/hs
+	Iu3ZBznD85WGD6EMZhzbFcoHhUw48b+zNO8OEBUICEX/relo66LUws1jMxXubXEW6l4d9XoajEI
+	6RXhUAPyylIrlEMCi2VQAGPUSyJ8aE1G27t3tYtKt6MNPyXxHLgYys6OzaVYWsJvzMyisSEnGFS
+	uZR9dEyUd8vN5/r4rf443jsO4JxvP4Gu3YPx3uEbyL1MDNtI9OyTLq7V9uLjAaJDCoJ/utnXqIo
+	G+DhaTCfYIc7SfZZoWt4jc6yTGzoGaE0pPzfvYuqJPIUAwk1biC8qBLHwAsxI2LxP8QV26ugUql
+	SRZPmc3tdlGsC9ND5sHuIcCj007mRUtzG8zHp9n8V5laaMmoSUX/zeH/vLjSnCfufo/VrdRVgOB
+	GWJzumdReVcuP29jRDfCuDMIlqnvwMv53kjRU=
+X-Google-Smtp-Source: AGHT+IGtwe+2MYniCJX8mJ89r3l4ed7+hu/JJ/nkz0HhOJVzWSHynZlE5+GXyj4xNSbiMDajzHmpgA==
+X-Received: by 2002:a05:6000:4381:b0:426:f10e:718e with SMTP id ffacd0b85a97d-42704db9ec2mr384173f8f.46.1760627794261;
+        Thu, 16 Oct 2025 08:16:34 -0700 (PDT)
+Received: from [192.168.1.121] ([176.206.100.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42704a929acsm938510f8f.18.2025.10.16.08.16.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 08:16:33 -0700 (PDT)
+Message-ID: <fbf2fd7a-de03-448f-a6e4-890ecf8a4b3c@gmail.com>
+Date: Thu, 16 Oct 2025 17:16:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,224 +82,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: "D, Suneeth" <Suneeth.D@amd.com>
-Subject: Re: [PATCH v8 15/23] maple_tree: use percpu sheaves for
- maple_node_cache
-To: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
-	<cl@gentwo.org>, David Rientjes <rientjes@google.com>
-CC: Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo
-	<harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, Sidhartha Kumar
-	<sidhartha.kumar@oracle.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <rcu@vger.kernel.org>,
-	<maple-tree@lists.infradead.org>
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-15-ca3099d8352c@suse.cz>
-X-Mozilla-News-Host: news://nntp.lore.kernel.org
-Content-Language: en-US
-In-Reply-To: <20250910-slub-percpu-caches-v8-15-ca3099d8352c@suse.cz>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v6 0/7] HID: asus: Fix ASUS ROG Laptop's Keyboard
+ backlight handling
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ fooqux@proton.me
+References: <20251013201535.6737-1-lkml@antheas.dev>
+ <160c3adf-9333-4486-ba4c-d3359ea73337@gmail.com>
+ <CAGwozwGzOQ-LCk6B202-CuKq=gepn6Mt4LitJJZ7dfMLaDVs7Q@mail.gmail.com>
+ <ce8cc332-54ec-4e12-aa7c-a6d5e2b4fa9d@gmail.com>
+ <CAGwozwHrWxxE_vyswe39W=ui8N6ej4ZPFvuKVueyw4xLL8C4ZQ@mail.gmail.com>
+ <13c53469-58fd-462a-a462-626975d6055f@gmail.com>
+ <CAGwozwHmTUb3Bcbn9Zc44sqe7DHtnnk0chvhjN7jJNrmePr8fw@mail.gmail.com>
+ <f43f4f0e-9b98-4629-872e-b623bfc9b6b1@gmail.com>
+ <CAGwozwECtoh-7uK9RuB+WSbognjwHiBx7iXi6OJwyasoAfHemw@mail.gmail.com>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <CAGwozwECtoh-7uK9RuB+WSbognjwHiBx7iXi6OJwyasoAfHemw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CD:EE_|DS0PR12MB7875:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53c9176f-9df3-4c4f-b8aa-08de0cc70795
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QjZyd0J5UjJ5VWlTQkZ2RkROY0pmSzVLVFZvVXE5czdNKzBodWFMUXkwMmQy?=
- =?utf-8?B?TG9sWDArYkl5RURlS3JJZ1lOSTVDT2ZRSUNnL2hSZVN3TUcyRTlaL3I5MTVP?=
- =?utf-8?B?M0dyZ1YybFVyWFN4ZEtNZk56S1UzQTgzUGlrQk9hZ3JGQXZGN1VqNFU1YXlW?=
- =?utf-8?B?a1g3WEJMSUprV0hNemZlRVJIVWI3bDB0VEJEL0REQjNMaDA0aGtyc3ovdFZW?=
- =?utf-8?B?eElQWkRRL1lNMThSRnpDSyt2OTJyTjZIaUlqclowL05zeVF1dGJhMmtzRG4v?=
- =?utf-8?B?QWtLWTdkd0p2NU54ajE2VkJkaTJuQnpWbTIrMEoyTVhLMm5PT21TQnpLdnBX?=
- =?utf-8?B?Ny9KSG9RVEFwSytYcUN1WFZXa2E3ZVAzLzI3b1Z3c0hMd1ZnTy9vcktKUVcx?=
- =?utf-8?B?MEF3ZzNTVmZTZ1lyeEdGakpDalU2WmVmbnBFZnJKbVhyTENlWWpCMFpQczUv?=
- =?utf-8?B?SW9TQTFRdmovMzVBdEdWVzkwMTFkUmhVOXZEWWxnTDhyK1ZpTDY1bzNjWGM1?=
- =?utf-8?B?cTRhNUNoSGtTdkhjQlBVOWFpNm1QdFgrRHJyRXhwT0d3Rm1zay9nUUdvKzg3?=
- =?utf-8?B?KytKdzN1UjZVdm96OHlWTWdCMkJSSmhqcHdzdjh6aFh0dHVKRmUyOFJGdUVT?=
- =?utf-8?B?UjJOYW5kL0FNenk0NkdpZzFieWd3V3IzUk9SazBxdUdsY3dQb1llWUVkNitP?=
- =?utf-8?B?MzVtQzQ5M3NZZ2N2ekJ5V2RFVUJ1NzlLRUZsSVUwaitiTXFsWVNBVkYyUklD?=
- =?utf-8?B?Y002UHpOcWxlMU9OK0NtWUtlbVhMVDVvUndlNUJJZGRWaFdqRDV3S0h0UFRB?=
- =?utf-8?B?d0JKTDhtbjVKUElxWFVST3BBbXRvQm44WWc5NjUvSEdZN29HMDJJOWw3K2dw?=
- =?utf-8?B?TmUySXRhY1RRcE05ZkxZTmw2WXhhS0dheUg1dnZMVW8yWFVXQUZ3NWVsUFl3?=
- =?utf-8?B?YVZCOXJCU2hpTmF6UUR3Q2NpeW1xMlFMZ0VPaTVhMjdaT2dHam5lYjQ4NGEy?=
- =?utf-8?B?WDg2bjNsWGE0V3pMdW5LQlIwV2dxejdIRHo5azhRenlpdzhYS2RJTFFMVnpT?=
- =?utf-8?B?UUxnKzkzY1VRWUlBbFVseTdETFYyL1VMQW9zZlNuREdGUVVCc0tQS3p2aERD?=
- =?utf-8?B?UUd5bkdaK2VoeE8wN0NTQXpvaTBGWS9veE5ZMEVKVE1HeFdRVkEzcVVUMW8y?=
- =?utf-8?B?amp0RWVRdy9mSVIyRTlnL3gyZmp6Zjd0bUtHWDNtQUNWNXBJS29iMTQyVEtW?=
- =?utf-8?B?VUxOWVcxOVd2NGgyN2ZlVVgxdFBXR292TnpOWWJhcVdRQjB5d0twZWVtL0VN?=
- =?utf-8?B?SE1hWW9xaHlMN3A5WDQ4ODhUVFpxSnM2RzREU3lOcDZYMmhoWnRoVnplU2Jy?=
- =?utf-8?B?TFNQS2NXUk12S2ZaTFhOZ3BLbHprVThMTjFDRkZTWkNaeElsRk1DUUFLdnNZ?=
- =?utf-8?B?Um94cVlsOVVZL1dCK3MyL0VjSzl0UUFkb2xOSnFvM1dWbFZ6aGQ2N2t4WHp1?=
- =?utf-8?B?K1dRRzUxWFhqU1FVUTNUL0E4dHZlMEZZamNxRGxuWlF4eDZPTko2enZaSW9q?=
- =?utf-8?B?cUtzTFBvK2Q0c1RLY0VyZ0trdlJnRmFXb1kyVGE2eXkvNlBpZ0ZJVSt5L3JJ?=
- =?utf-8?B?cjhmV2dFN3ZJdUl3MlZ5VEpQZWJ6aFJrREtudzhVbUJ2UVI5THJvMGNFaEFN?=
- =?utf-8?B?TVREVWUxZjhLNDRmMVd5d2xWcjBaVnhVeGhiRHdsNDNkVmNPdDRBNXFDWE1M?=
- =?utf-8?B?SFIvdWZUMUplSkdtZC9FNFVRRTRkeGh6cEJ6RFNFT21aRWNQZ1lIZWRrSkJB?=
- =?utf-8?B?MjRUNTdnZ0Y2R1NtbXUrSGhGWkFhYVcxbzc5M05QNHgzMVVBKzF3Qk9wTXVL?=
- =?utf-8?B?aHU5dHZXejY2cWVwbHF6dFNSdGJZRzVnTWdzQnI2bDJ2cG5qZ21aUndRRS9s?=
- =?utf-8?B?U2h1TldoUHhTRkhaeXVIUkdZMU9yRmp1emNNN05mV0N4NXdIZ3V6bGpQdlBx?=
- =?utf-8?B?cDZ2MC9nVW9iUzAxOXA3UVlWSjZOOEVPa1l1Rnpmd0M5Zlc0Y0xDUVFXMjls?=
- =?utf-8?B?M1RnaEZyRWlGUGw5WGlIb2E3bStkN1pERXZSc3ZCMnkxekI2czhVVVh4WHh2?=
- =?utf-8?Q?+TmWNhHNo520nANKhpbHypcI8?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:16:49.7787
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53c9176f-9df3-4c4f-b8aa-08de0cc70795
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CD.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7875
-
-Hi Vlastimil Babka,
-
-On 9/10/2025 1:31 PM, Vlastimil Babka wrote:
-> Setup the maple_node_cache with percpu sheaves of size 32 to hopefully
-> improve its performance. Note this will not immediately take advantage
-> of sheaf batching of kfree_rcu() operations due to the maple tree using
-> call_rcu with custom callbacks. The followup changes to maple tree will
-> change that and also make use of the prefilled sheaves functionality.
-> 
 
 
-We run will-it-scale-process-mmap2 micro-benchmark as part of our weekly 
-CI for Kernel Performance Regression testing between a stable vs rc 
-kernel. In this week's run we were able to observe severe regression on 
-AMD platforms (Turin and Bergamo) with running the micro-benchmark 
-between the kernels v6.17 and v6.18-rc1 in the range of 12-13% (Turin) 
-and 22-26% (Bergamo). Bisecting further landed me onto this commit 
-(59faa4da7cd4565cbce25358495556b75bb37022) as first bad commit. The 
-following were the machines' configuration and test parameters used:-
+On 10/16/25 16:44, Antheas Kapenekakis wrote:
+> On Thu, 16 Oct 2025 at 16:32, Denis Benato <benato.denis96@gmail.com> wrote:
+>>
+>> On 10/16/25 14:51, Antheas Kapenekakis wrote:
+>>> On Thu, 16 Oct 2025 at 14:46, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>> On 10/16/25 14:28, Antheas Kapenekakis wrote:
+>>>>> On Thu, 16 Oct 2025 at 14:19, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>>>> On 10/16/25 14:14, Antheas Kapenekakis wrote:
+>>>>>>> On Thu, 16 Oct 2025 at 13:57, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>>>>>> On 10/13/25 22:15, Antheas Kapenekakis wrote:
+>>>>>>>>> This is a two part series which does the following:
+>>>>>>>>>   - Clean-up init sequence
+>>>>>>>>>   - Unify backlight handling to happen under asus-wmi so that all Aura
+>>>>>>>>>     devices have synced brightness controls and the backlight button works
+>>>>>>>>>     properly when it is on a USB laptop keyboard instead of one w/ WMI.
+>>>>>>>>>
+>>>>>>>>> For more context, see cover letter of V1. Since V5, I removed some patches
+>>>>>>>>> to make this easier to merge.
+>>>>>>>>>
+>>>>>>>>> All comments with these patches had been addressed since V4.
+>>>>>>>> I have loaded this patchset for users of asus-linux project to try out.
+>>>>>>>>
+>>>>>>>> One of them opened a bug report about a kernel bug that happens
+>>>>>>>> consistently when closing the lid of his laptop [1].
+>>>>>>>>
+>>>>>>>> He also sent another piece of kernel log, but didn't specify anything more
+>>>>>>>> about this [2].
+>>>>>>>>
+>>>>>>>> [1] https://pastebin.com/akZx1w10
+>>>>>>>> [2] https://pastebin.com/sKdczPgf
+>>>>>>> Can you provide a link to the bug report? [2] seems unrelated.
+>>>>>> The log in [2] was posted without additional context in the same
+>>>>>> discord message as [1].
+>>>>> Link me the kernel sources. Is it linux-g14 in the AUR?
+>>>> Someone has replicated it on the AUR but it's just an out-of-sync replica.
+>>>>
+>>>> The true source code is here:
+>>>> https://gitlab.com/asus-linux/linux-g14 branch 6.17
+>>> Ok, lets wait for the user to replicate on a stock kernel
+>>>
+>> User said "yes I just confirmed it: it is only on the asus kernel, mainline doesn't have this issue".
+>>
+>> With "asus kernel" he is referring to -g14.
+>>
+>> I added him in CC.
+> If possible, try the bazzite kernel, its linux-bazzite-bin. It has
+> this series + another older armoury series. If it still happens with
+> that, we can cut a release with just this series to begin isolating
+> this issue
 
-Model name:           AMD EPYC 128-Core Processor [Bergamo]
-Thread(s) per core:   2
-Core(s) per socket:   128
-Socket(s):            1
-Total online memory:  258G
+If deemed necessary I will provide the user a kernel matching exactly
+what doesn't give him the error and add to it this patch series.
 
-Model name:           AMD EPYC 64-Core Processor [Turin]
-Thread(s) per core:   2
-Core(s) per socket:   64
-Socket(s):            1
-Total online memory:  258G
+However the problem does appear to be tied to the use of spinlock,
+so perhaps it's better to try a version with some other type of locking.
 
-Test params:
-
-     nr_task: [1 8 64 128 192 256]
-     mode: process
-     test: mmap2
-     kpi: per_process_ops
-     cpufreq_governor: performance
-
-The following are the stats after bisection:-
-(the KPI used here is per_process_ops)
-
-kernel_versions      					 per_process_ops
----------------      					 ---------------
-v6.17.0 	                                       - 258291
-v6.18.0-rc1 	                                       - 225839
-v6.17.0-rc3-59faa4da7                                  - 212152
-v6.17.0-rc3-3accabda4da1(one commit before bad commit) - 265054
-
-Recreation steps:
-
-1) git clone https://github.com/antonblanchard/will-it-scale.git
-2) git clone https://github.com/intel/lkp-tests.git
-3) cd will-it-scale && git apply 
-lkp-tests/programs/will-it-scale/pkg/will-it-scale.patch
-4) make
-5) python3 runtest.py mmap2 25 process 0 0 1 8 64 128 192 256
-
-NOTE: [5] is specific to machine's architecture. starting from 1 is the 
-array of no.of tasks that you'd wish to run the testcase which here is 
-no.cores per CCX, per NUMA node/ per Socket, nr_threads.
-
-I also ran the micro-benchmark with tools/testing/perf record and 
-following is the collected data:-
-
-# perf diff perf.data.old perf.data
-No kallsyms or vmlinux with build-id 
-0fc9c7b62ade1502af5d6a060914732523f367ef was found
-Warning:
-43 out of order events recorded.
-Warning:
-54 out of order events recorded.
-# Event 'cycles:P'
-#
-# Baseline  Delta Abs  Shared Object           Symbol
-# ........  .........  ...................... 
-..............................................
-#
-               +51.51%  [kernel.kallsyms]       [k] 
-native_queued_spin_lock_slowpath
-               +14.39%  [kernel.kallsyms]       [k] perf_iterate_ctx
-                +2.52%  [kernel.kallsyms]       [k] unmap_page_range
-                +1.75%  [kernel.kallsyms]       [k] mas_wr_node_store
-                +1.47%  [kernel.kallsyms]       [k] __pi_memset
-                +1.38%  [kernel.kallsyms]       [k] mt_free_rcu
-                +1.36%  [kernel.kallsyms]       [k] free_pgd_range
-                +1.10%  [kernel.kallsyms]       [k] __pi_memcpy
-                +0.96%  [kernel.kallsyms]       [k] __kmem_cache_alloc_bulk
-                +0.92%  [kernel.kallsyms]       [k] __mmap_region
-                +0.79%  [kernel.kallsyms]       [k] mas_empty_area_rev
-                +0.74%  [kernel.kallsyms]       [k] __cond_resched
-                +0.73%  [kernel.kallsyms]       [k] mas_walk
-                +0.59%  [kernel.kallsyms]       [k] mas_pop_node
-                +0.57%  [kernel.kallsyms]       [k] perf_event_mmap_output
-                +0.49%  [kernel.kallsyms]       [k] mas_find
-                +0.48%  [kernel.kallsyms]       [k] mas_next_slot
-                +0.46%  [kernel.kallsyms]       [k] kmem_cache_free
-                +0.42%  [kernel.kallsyms]       [k] mas_leaf_max_gap
-                +0.42%  [kernel.kallsyms]       [k] 
-__call_rcu_common.constprop.0
-                +0.39%  [kernel.kallsyms]       [k] entry_SYSCALL_64
-                +0.38%  [kernel.kallsyms]       [k] mas_prev_slot
-                +0.38%  [kernel.kallsyms]       [k] kmem_cache_alloc_noprof
-                +0.37%  [kernel.kallsyms]       [k] mas_store_gfp
-
-
-> Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->   lib/maple_tree.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 4f0e30b57b0cef9e5cf791f3f64f5898752db402..d034f170ac897341b40cfd050b6aee86b6d2cf60 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -6040,9 +6040,14 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
->   
->   void __init maple_tree_init(void)
->   {
-> +	struct kmem_cache_args args = {
-> +		.align  = sizeof(struct maple_node),
-> +		.sheaf_capacity = 32,
-> +	};
-> +
->   	maple_node_cache = kmem_cache_create("maple_node",
-> -			sizeof(struct maple_node), sizeof(struct maple_node),
-> -			SLAB_PANIC, NULL);
-> +			sizeof(struct maple_node), &args,
-> +			SLAB_PANIC);
->   }
->   
->   /**
-> 
-
----
-Thanks and Regards
-Suneeth D
-
+> Antheas
+>
+>>>>>> I think I will tell the user to open a proper bug report because
+>>>>>> I do agree on the fact that it's looking unrelated.
+>>>>>>> As for [1], it looks like a trace that stems from a sysfs write to
+>>>>>>> brightness stemming from userspace that follows the same chain it
+>>>>>>> would on a stock kernel and times out. Is it present on a stock
+>>>>>>> kernel?
+>>>>>> I have asked more details to the user. The user is not online ATM
+>>>>>> so I will get to you with more details when I can.
+>>>>>>> Ilpo should know more about this, could the spinlock be interfering?
+>>>>>>> My testing on devices that have WMI led controls is a bit limited
+>>>>>>> unfortunately. However, most of our asus users have been happy with
+>>>>>>> this series for around half a year now.
+>>>>>> Unless they have looked to kernel logs they won't be able to tell
+>>>>>> since apparently there are no visible consequences.
+>>>>>>> Antheas
+>>>>>>>
+>>>>>>>>> ---
+>>>>>>>>> V5: https://lore.kernel.org/all/20250325184601.10990-1-lkml@antheas.dev/
+>>>>>>>>> V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@antheas.dev/
+>>>>>>>>> V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@antheas.dev/
+>>>>>>>>> V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@antheas.dev/
+>>>>>>>>> V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
+>>>>>>>>>
+>>>>>>>>> Changes since V5:
+>>>>>>>>>   - It's been a long time
+>>>>>>>>>   - Remove addition of RGB as that had some comments I need to work on
+>>>>>>>>>   - Remove folio patch (already merged)
+>>>>>>>>>   - Remove legacy fix patch 11 from V4. There is a small chance that
+>>>>>>>>>     without this patch, some old NKEY keyboards might not respond to
+>>>>>>>>>     RGB commands according to Luke, but the kernel driver does not do
+>>>>>>>>>     RGB currently. The 0x5d init is done by Armoury crate software in
+>>>>>>>>>     Windows. If an issue is found, we can re-add it or just remove patches
+>>>>>>>>>     1/2 before merging. However, init could use the cleanup.
+>>>>>>>>>
+>>>>>>>>> Changes since V4:
+>>>>>>>>>   - Fix KConfig (reported by kernel robot)
+>>>>>>>>>   - Fix Ilpo's nits, if I missed anything lmk
+>>>>>>>>>
+>>>>>>>>> Changes since V3:
+>>>>>>>>>   - Add initializer for 0x5d for old NKEY keyboards until it is verified
+>>>>>>>>>     that it is not needed for their media keys to function.
+>>>>>>>>>   - Cover init in asus-wmi with spinlock as per Hans
+>>>>>>>>>   - If asus-wmi registers WMI handler with brightness, init the brightness
+>>>>>>>>>     in USB Asus keyboards, per Hans.
+>>>>>>>>>   - Change hid handler name to asus-UNIQ:rgb:peripheral to match led class
+>>>>>>>>>   - Fix oops when unregistering asus-wmi by moving unregister outside of
+>>>>>>>>>     the spin lock (but after the asus reference is set to null)
+>>>>>>>>>
+>>>>>>>>> Changes since V2:
+>>>>>>>>>   - Check lazy init succeds in asus-wmi before setting register variable
+>>>>>>>>>   - make explicit check in asus_hid_register_listener for listener existing
+>>>>>>>>>     to avoid re-init
+>>>>>>>>>   - rename asus_brt to asus_hid in most places and harmonize everything
+>>>>>>>>>   - switch to a spinlock instead of a mutex to avoid kernel ooops
+>>>>>>>>>   - fixup hid device quirks to avoid multiple RGB devices while still exposing
+>>>>>>>>>     all input vendor devices. This includes moving rgb init to probe
+>>>>>>>>>     instead of the input_configured callbacks.
+>>>>>>>>>   - Remove fan key (during retest it appears to be 0xae that is already
+>>>>>>>>>     supported by hid-asus)
+>>>>>>>>>   - Never unregister asus::kbd_backlight while asus-wmi is active, as that
+>>>>>>>>>   - removes fds from userspace and breaks backlight functionality. All
+>>>>>>>>>   - current mainline drivers do not support backlight hotplugging, so most
+>>>>>>>>>     userspace software (e.g., KDE, UPower) is built with that assumption.
+>>>>>>>>>     For the Ally, since it disconnects its controller during sleep, this
+>>>>>>>>>     caused the backlight slider to not work in KDE.
+>>>>>>>>>
+>>>>>>>>> Changes since V1:
+>>>>>>>>>   - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
+>>>>>>>>>   - Fix ifdef else having an invalid signature (reported by kernel robot)
+>>>>>>>>>   - Restore input arguments to init and keyboard function so they can
+>>>>>>>>>     be re-used for RGB controls.
+>>>>>>>>>   - Remove Z13 delay (it did not work to fix the touchpad) and replace it
+>>>>>>>>>     with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
+>>>>>>>>>     keyboard rename into it.
+>>>>>>>>>   - Unregister brightness listener before removing work queue to avoid
+>>>>>>>>>     a race condition causing corruption
+>>>>>>>>>   - Remove spurious mutex unlock in asus_brt_event
+>>>>>>>>>   - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
+>>>>>>>>>     relocking the mutex and causing a deadlock when unregistering leds
+>>>>>>>>>   - Add extra check during unregistering to avoid calling unregister when
+>>>>>>>>>     no led device is registered.
+>>>>>>>>>   - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
+>>>>>>>>>     the driver to create 4 RGB handlers per device. I also suspect some
+>>>>>>>>>     extra events sneak through (KDE had the @@@@@@).
+>>>>>>>>>
+>>>>>>>>> Antheas Kapenekakis (7):
+>>>>>>>>>   HID: asus: refactor init sequence per spec
+>>>>>>>>>   HID: asus: prevent binding to all HID devices on ROG
+>>>>>>>>>   platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+>>>>>>>>>   HID: asus: listen to the asus-wmi brightness device instead of
+>>>>>>>>>     creating one
+>>>>>>>>>   platform/x86: asus-wmi: remove unused keyboard backlight quirk
+>>>>>>>>>   platform/x86: asus-wmi: add keyboard brightness event handler
+>>>>>>>>>   HID: asus: add support for the asus-wmi brightness handler
+>>>>>>>>>
+>>>>>>>>>  drivers/hid/hid-asus.c                     | 235 +++++++++++----------
+>>>>>>>>>  drivers/platform/x86/asus-wmi.c            | 157 ++++++++++++--
+>>>>>>>>>  include/linux/platform_data/x86/asus-wmi.h |  69 +++---
+>>>>>>>>>  3 files changed, 291 insertions(+), 170 deletions(-)
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 
