@@ -1,386 +1,188 @@
-Return-Path: <linux-kernel+bounces-856480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D115BE4453
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:35:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B33BE4424
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46A295412C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:33:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4CD5F34FCD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071F134DCDB;
-	Thu, 16 Oct 2025 15:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D83234DCC0;
+	Thu, 16 Oct 2025 15:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="Jq5SJE6P"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9RZ2NKD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9DE3451B0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907EC3451B0;
+	Thu, 16 Oct 2025 15:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760628779; cv=none; b=kG2BHLkJEPUk3enTT5oDVcKmn6vuMEXr0gzZmzYt37fIkSRl6McYAIZ1M0LXj6YdtdcMYaC301vXwfljbmyIuEU52Tnk32AHg8Xur6TIR8eintge4wzcsuDg4jMTo5/PTx2dDGoqlOLrK+BvhA2okTiZ3Xjp32rjGK0Bu8D/3sU=
+	t=1760628786; cv=none; b=YEqiVWeDvidrtvGB2Q4ooku1stXE6Vw2jBpK9/QeHbhOiB5k4gxGLchqwuq4pLmu42zVNR9qH3BEoIk1v/4Fcb9ZLf4pcTQDpMyTB0Z3YQ+f04VA+kTbXNno1lBcaz70+Ate4q9lBNhwrBdNuVs5Q5APvL5JHedcSTjsZPWfsSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760628779; c=relaxed/simple;
-	bh=+vfLAUgKF6uvsarRDRcDQR9Kpy31ISdblD7kabJJs3c=;
+	s=arc-20240116; t=1760628786; c=relaxed/simple;
+	bh=9w4ldvS/v8mZpOqFATR9RwRH4Sxmge8BG7AOwopND6I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AR60S2Rh2LOE5mIMDPkeQ4cz0eUobtWuENHtGLHTj9TA888kMD1U5ezj1cKKILQzg2WOD4j6es8J855JodL2P6aglTGKEbSV1NPiZT3R+mHYLcCJq1Lh29Bx7NoIAEFLXuLm9wh3LedAaxIOoLqLE0jFwqjqz/DdPfhRBoRvISA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=Jq5SJE6P; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso598294a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1760628777; x=1761233577; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3jxedNOWKQXyjZn7DBAQ8SlEmIZ51OVh5Hh6uRAtw9w=;
-        b=Jq5SJE6PzU6fHlU7nHEmD0umujif+eUamOZBvKKQurj651w7qVSZR+hZV4ekbHXBug
-         gKBxxF5h7uMjeauLG/DkDxWRwRiTMwS0PnF74pk2YndifB8831Y2RXD/QewITQF3bB7B
-         F6OA5CA2b6afNo8Q115MU09+XRm7n/kRev0QhVdZjZvKNKo5d3FjkssJ0Ea2gHDigK2m
-         jF6YL7SAZb9GCGkxvZ2IMjidbHCr/SVGJwEIlc4oNv6IyuYdoUCEkuMM5yw+nGoG92O2
-         ugteOetqbIiW9OFHsIZtOOYsC5PtP8FT3Fi9WjRgORLcpWzXAiCS8l0YArIiZXH/O1No
-         sz9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760628777; x=1761233577;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jxedNOWKQXyjZn7DBAQ8SlEmIZ51OVh5Hh6uRAtw9w=;
-        b=s/8dSuWAKQDa/MJP8IrhXj7BLAVMS/1Q6QPRJJBkS+mOBDREVQhZ2YGu39tx2rSTOv
-         7xlR550TV+V5bSfgx/61O2eOiiW86Ym7GxZrmHjE1fwT126lRuujoupBjYKfNpaESz7E
-         jl2ew6+sc/yFOdW9ZepyJlnhNLiK4JoH9/RJ4jyTRjJQJk6gl94IIhnyy9TjGtR2A8Ve
-         7iCclkRxODLeNYVnc0+2JSSKMeGaC//SbTyabVe3xEA9cfAO6r36/VbQJATDx3SJw7ub
-         UfZiXteg2Fp7tyGrliLbDN2yFD3RgbtqVnH1JMpLmMD8Ep/xEjNd+X6nUD+YuAn4AtBv
-         oJNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWv+QiACh6FWqgSC8KbYYlsv6JrEkb4U7Y4PPQHRfTlA2d/UgPYYLJQIf9GfCsRuA7nb9AF88v/bQBPwlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjH4ZvhFFyNo9AlHDE9Y/5fx+51NdrAXt+2JgOt+bcZR8pFGKH
-	oxWUjTaf/E9C7zo3C1ISlb9f8MNMvPPE4b9MXa8vjHd+gdra6r1SVZVVvqCZmFWOsiw=
-X-Gm-Gg: ASbGncuEbH6yl6/uyZXS/qy1IEL9tjGjCoxAt7BwE7NFGNW++5qsUD4hyQSGoD2lAVZ
-	PwboooE0W/DmXYCkkw6Isp8YXWj4pDpK6LVqOyv+BJp6W9uMiqaQgiAepLfQC6b/KGLcTvpfUy+
-	IP45dpums9zzKQWIH/bwaqW6aBfjPe2qcyTrWkyOKgH1Fr0iE1Cu10Q8itRq+8Hy4Yrbq47qDky
-	KWyb+TjExdRTHZMw0IfsqrkXosePJhPn8FWwIkQGWjdJJ1IKOEKHu/a/uUGVufTnQVtO/NuRP07
-	16Whk0UofaRXSgCcCBvqEyICqQnvnzDXEDzQ9n1ebo/qAaYGiWrGC16Gn/7z02Q2dV74xoGeOmu
-	gFVLqwb08CgBcip2bRqugQRYNlKBWZHWS0Qm3YebJNXMwGuTVYihvnk/BIqBbm0xh/4+pe1oKCh
-	lKiLh/yGM7wQ==
-X-Google-Smtp-Source: AGHT+IH84DeIB8c+VjuQrVSzDzT3x6nsRergbVWw29DX9ZseotGG3dDJsziVEnyxGDiXthj0SuB12g==
-X-Received: by 2002:a17:902:d483:b0:265:47:a7b0 with SMTP id d9443c01a7336-290c9c896a5mr3550315ad.10.1760628776645;
-        Thu, 16 Oct 2025 08:32:56 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099348afcsm34256915ad.37.2025.10.16.08.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 08:32:56 -0700 (PDT)
-Date: Thu, 16 Oct 2025 08:32:53 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Zong Li <zong.li@sifive.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com,
-	richard.henderson@linaro.org, jim.shu@sifive.com,
-	andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
-	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v20 24/28] arch/riscv: dual vdso creation logic and
- select vdso based on hw
-Message-ID: <aPEQJTbADjH9AKUf@debug.ba.rivosinc.com>
-References: <20251013-v5_user_cfi_series-v20-0-b9de4be9912e@rivosinc.com>
- <20251013-v5_user_cfi_series-v20-24-b9de4be9912e@rivosinc.com>
- <CANXhq0rVGisy33n6gB-P8B0ALiB2LqqYbKsSqgJLCNNRecP9TA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDsEuf6JMv9ZVetk9xpAnlZB/aUR2OnBBxS2fuBc0Wh6ihVntCfIz5EtkB/hPGoOXDhSr30AMk7G7NMmAAMm3MDEWJnjLu+mBbyiLM9NaBPRT6bni1552qEqyyBYS4x7IATStw1LkA6xmZsOJ3TUxb4yH5QG5tc9Lj+AlF6Q2i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9RZ2NKD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF41C2BC86;
+	Thu, 16 Oct 2025 15:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760628786;
+	bh=9w4ldvS/v8mZpOqFATR9RwRH4Sxmge8BG7AOwopND6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p9RZ2NKDfomcr6Rsn1H0XWisSH8fUmiWTbcVtNBnEpNN9VRa42AGUzhrb1rClvZP7
+	 NQDvxrdL0EJXxGaS+4O2UcaApQ7G/YrFg+BVFBKeDjakZFOx6V4ghTSNXKNTRVCISn
+	 hmH2W60TBUQTg0U0Hpw18I7HMr07wUWh4eHjCxJbvt9Ve8qt9l0erJqe6fheoOI01e
+	 VlqXyEbQDqkvmlgh3XWCwOT6d/UPo/MkHBc0nyvQjGaUJaILFvwNJ/E8zJeuOKEu73
+	 i0d9M5pmsTcaVIasZr5FvXEfErNHzH8zfp3CAHjOJLgaMPaAzuxfH9XxG07GabFZbP
+	 PJ/POwOHJNwYw==
+Date: Thu, 16 Oct 2025 16:33:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Cc: neil.armstrong@linaro.org, jessica.zhang@oss.qualcomm.com,
+	airlied@gmail.com, simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dianders@chromium.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: display: panel: Add Tianma
+ TL121BVMS07-00 panel
+Message-ID: <20251016-coke-viability-3caac4bc9d9d@spud>
+References: <20251016095043.1694736-1-yelangyan@huaqin.corp-partner.google.com>
+ <20251016095043.1694736-2-yelangyan@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A13/o+hd7ASE21iW"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANXhq0rVGisy33n6gB-P8B0ALiB2LqqYbKsSqgJLCNNRecP9TA@mail.gmail.com>
+In-Reply-To: <20251016095043.1694736-2-yelangyan@huaqin.corp-partner.google.com>
 
-On Thu, Oct 16, 2025 at 04:32:08PM +0800, Zong Li wrote:
->On Tue, Oct 14, 2025 at 5:57 AM Deepak Gupta <debug@rivosinc.com> wrote:
->>
->> Shadow stack instructions are taken from zimop (mandated on RVA23).
->> Any hardware prior to RVA23 profile will fault on shado stack instruction.
->
->I notice that there is a typo for shado"w" stack instruction.
 
-Aah yes. Sorry about it and thanks.
-Again upto Paul, if he wants me to send another. I'll do that.
+--A13/o+hd7ASE21iW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Deepak
+On Thu, Oct 16, 2025 at 05:50:42PM +0800, Langyan Ye wrote:
+> Add device tree bindings for the Tianma TL121BVMS07-00 12.1-inch
+> MIPI-DSI TFT LCD panel. The panel is based on the Ilitek IL79900A
+> controller.
+>=20
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+> ---
+>  .../display/panel/ilitek,il79900a.yaml        | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/ilite=
+k,il79900a.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,il799=
+00a.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.=
+yaml
+> new file mode 100644
+> index 000000000000..4e3c5afd4584
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/ilitek,il79900a.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Ilitek IL79900a based MIPI-DSI panels
+> +
+> +maintainers:
+> +  - Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - tianma,il79900a
 
->
->> Any userspace with shadow stack instruction in it will fault on such
->> hardware. Thus such userspace can't be brought onto such a hardware.
->>
->> It's not known how userspace will respond to such binary fragmentation.
->> However in order to keep kernel portable across such different hardware,
->> `arch/riscv/kernel/vdso_cfi` is created which has logic (Makefile) to
->> compile `arch/riscv/kernel/vdso` sources with cfi flags and then changes
->> in `arch/riscv/kernel/vdso.c` for selecting appropriate vdso depending
->> on whether underlying hardware(cpu) implements zimop extension. Offset
->> of vdso symbols will change due to having two different vdso binaries,
->> there is added logic to include new generated vdso offset header and
->> dynamically select offset (like for rt_sigreturn).
->>
->> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> ---
->>  arch/riscv/Makefile                        |  3 +++
->>  arch/riscv/include/asm/vdso.h              |  7 ++++++-
->>  arch/riscv/kernel/Makefile                 |  1 +
->>  arch/riscv/kernel/vdso.c                   |  7 +++++++
->>  arch/riscv/kernel/vdso/Makefile            | 29 ++++++++++++++++++++---------
->>  arch/riscv/kernel/vdso/gen_vdso_offsets.sh |  4 +++-
->>  arch/riscv/kernel/vdso_cfi/Makefile        | 25 +++++++++++++++++++++++++
->>  arch/riscv/kernel/vdso_cfi/vdso-cfi.S      | 11 +++++++++++
->>  8 files changed, 76 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
->> index f60c2de0ca08..b74b63da16a7 100644
->> --- a/arch/riscv/Makefile
->> +++ b/arch/riscv/Makefile
->> @@ -176,6 +176,8 @@ ifeq ($(CONFIG_MMU),y)
->>  prepare: vdso_prepare
->>  vdso_prepare: prepare0
->>         $(Q)$(MAKE) $(build)=arch/riscv/kernel/vdso include/generated/vdso-offsets.h
->> +       $(if $(CONFIG_RISCV_USER_CFI),$(Q)$(MAKE) \
->> +               $(build)=arch/riscv/kernel/vdso_cfi include/generated/vdso-cfi-offsets.h)
->>         $(if $(CONFIG_COMPAT),$(Q)$(MAKE) \
->>                 $(build)=arch/riscv/kernel/compat_vdso include/generated/compat_vdso-offsets.h)
->>
->> @@ -183,6 +185,7 @@ endif
->>  endif
->>
->>  vdso-install-y                 += arch/riscv/kernel/vdso/vdso.so.dbg
->> +vdso-install-$(CONFIG_RISCV_USER_CFI)  += arch/riscv/kernel/vdso_cfi/vdso-cfi.so.dbg
->>  vdso-install-$(CONFIG_COMPAT)  += arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg
->>
->>  BOOT_TARGETS := Image Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst Image.xz loader loader.bin xipImage vmlinuz.efi
->> diff --git a/arch/riscv/include/asm/vdso.h b/arch/riscv/include/asm/vdso.h
->> index f80357fe24d1..3fc8f72b8bfb 100644
->> --- a/arch/riscv/include/asm/vdso.h
->> +++ b/arch/riscv/include/asm/vdso.h
->> @@ -18,9 +18,13 @@
->>
->>  #ifndef __ASSEMBLER__
->>  #include <generated/vdso-offsets.h>
->> +#include <generated/vdso-cfi-offsets.h>
->>
->>  #define VDSO_SYMBOL(base, name)                                                        \
->> -       (void __user *)((unsigned long)(base) + __vdso_##name##_offset)
->> +       ((IS_ENABLED(CONFIG_RISCV_USER_CFI) &&                                  \
->> +         riscv_has_extension_unlikely(RISCV_ISA_EXT_ZIMOP)) ?                  \
->> +         (void __user *)((unsigned long)(base) + __vdso_##name##_cfi_offset) : \
->> +         (void __user *)((unsigned long)(base) + __vdso_##name##_offset))
->>
->>  #ifdef CONFIG_COMPAT
->>  #include <generated/compat_vdso-offsets.h>
->> @@ -33,6 +37,7 @@ extern char compat_vdso_start[], compat_vdso_end[];
->>  #endif /* CONFIG_COMPAT */
->>
->>  extern char vdso_start[], vdso_end[];
->> +extern char vdso_cfi_start[], vdso_cfi_end[];
->>
->>  #endif /* !__ASSEMBLER__ */
->>
->> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
->> index 2d0e0dcedbd3..9026400cba10 100644
->> --- a/arch/riscv/kernel/Makefile
->> +++ b/arch/riscv/kernel/Makefile
->> @@ -72,6 +72,7 @@ obj-y += vendor_extensions/
->>  obj-y  += probes/
->>  obj-y  += tests/
->>  obj-$(CONFIG_MMU) += vdso.o vdso/
->> +obj-$(CONFIG_RISCV_USER_CFI) += vdso_cfi/
->>
->>  obj-$(CONFIG_RISCV_MISALIGNED) += traps_misaligned.o
->>  obj-$(CONFIG_RISCV_MISALIGNED) += unaligned_access_speed.o
->> diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
->> index 3a8e038b10a2..bf080e519101 100644
->> --- a/arch/riscv/kernel/vdso.c
->> +++ b/arch/riscv/kernel/vdso.c
->> @@ -98,6 +98,13 @@ static struct __vdso_info compat_vdso_info __ro_after_init = {
->>
->>  static int __init vdso_init(void)
->>  {
->> +       /* Hart implements zimop, expose cfi compiled vdso */
->> +       if (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
->> +               riscv_has_extension_unlikely(RISCV_ISA_EXT_ZIMOP)) {
->> +               vdso_info.vdso_code_start = vdso_cfi_start;
->> +               vdso_info.vdso_code_end = vdso_cfi_end;
->> +       }
->> +
->>         __vdso_init(&vdso_info);
->>  #ifdef CONFIG_COMPAT
->>         __vdso_init(&compat_vdso_info);
->> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
->> index 272f1d837a80..a842dc034571 100644
->> --- a/arch/riscv/kernel/vdso/Makefile
->> +++ b/arch/riscv/kernel/vdso/Makefile
->> @@ -20,6 +20,10 @@ endif
->>  ifdef VDSO_CFI_BUILD
->>  CFI_MARCH = _zicfilp_zicfiss
->>  CFI_FULL = -fcf-protection=full
->> +CFI_SUFFIX = -cfi
->> +OFFSET_SUFFIX = _cfi
->> +ccflags-y += -DVDSO_CFI=1
->> +asflags-y += -DVDSO_CFI=1
->>  endif
->>
->>  # Files to link into the vdso
->> @@ -48,13 +52,20 @@ endif
->>  CFLAGS_hwprobe.o += -fPIC
->>
->>  # Build rules
->> -targets := $(obj-vdso) vdso.so vdso.so.dbg vdso.lds
->> +vdso_offsets := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),)-offsets.h
->> +vdso_o := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).o
->> +vdso_so := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).so
->> +vdso_so_dbg := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).so.dbg
->> +vdso_lds := vdso.lds
->> +
->> +targets := $(obj-vdso) $(vdso_so) $(vdso_so_dbg) $(vdso_lds)
->> +
->>  obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
->>
->> -obj-y += vdso.o
->> -CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
->> +obj-y += vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).o
->> +CPPFLAGS_$(vdso_lds) += -P -C -U$(ARCH)
->>  ifneq ($(filter vgettimeofday, $(vdso-syms)),)
->> -CPPFLAGS_vdso.lds += -DHAS_VGETTIMEOFDAY
->> +CPPFLAGS_$(vdso_lds) += -DHAS_VGETTIMEOFDAY
->>  endif
->>
->>  # Disable -pg to prevent insert call site
->> @@ -63,12 +74,12 @@ CFLAGS_REMOVE_getrandom.o = $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
->>  CFLAGS_REMOVE_hwprobe.o = $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
->>
->>  # Force dependency
->> -$(obj)/vdso.o: $(obj)/vdso.so
->> +$(obj)/$(vdso_o): $(obj)/$(vdso_so)
->>
->>  # link rule for the .so file, .lds has to be first
->> -$(obj)/vdso.so.dbg: $(obj)/vdso.lds $(obj-vdso) FORCE
->> +$(obj)/$(vdso_so_dbg): $(obj)/$(vdso_lds) $(obj-vdso) FORCE
->>         $(call if_changed,vdsold_and_check)
->> -LDFLAGS_vdso.so.dbg = -shared -soname=linux-vdso.so.1 \
->> +LDFLAGS_$(vdso_so_dbg) = -shared -soname=linux-vdso.so.1 \
->>         --build-id=sha1 --eh-frame-hdr
->>
->>  # strip rule for the .so file
->> @@ -79,9 +90,9 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
->>  # Generate VDSO offsets using helper script
->>  gen-vdsosym := $(src)/gen_vdso_offsets.sh
->>  quiet_cmd_vdsosym = VDSOSYM $@
->> -       cmd_vdsosym = $(NM) $< | $(gen-vdsosym) | LC_ALL=C sort > $@
->> +       cmd_vdsosym = $(NM) $< | $(gen-vdsosym) $(OFFSET_SUFFIX) | LC_ALL=C sort > $@
->>
->> -include/generated/vdso-offsets.h: $(obj)/vdso.so.dbg FORCE
->> +include/generated/$(vdso_offsets): $(obj)/$(vdso_so_dbg) FORCE
->>         $(call if_changed,vdsosym)
->>
->>  # actual build commands
->> diff --git a/arch/riscv/kernel/vdso/gen_vdso_offsets.sh b/arch/riscv/kernel/vdso/gen_vdso_offsets.sh
->> index c2e5613f3495..bd5d5afaaa14 100755
->> --- a/arch/riscv/kernel/vdso/gen_vdso_offsets.sh
->> +++ b/arch/riscv/kernel/vdso/gen_vdso_offsets.sh
->> @@ -2,4 +2,6 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>
->>  LC_ALL=C
->> -sed -n -e 's/^[0]\+\(0[0-9a-fA-F]*\) . \(__vdso_[a-zA-Z0-9_]*\)$/\#define \2_offset\t0x\1/p'
->> +SUFFIX=${1:-""}
->> +sed -n -e \
->> +'s/^[0]\+\(0[0-9a-fA-F]*\) . \(__vdso_[a-zA-Z0-9_]*\)$/\#define \2'$SUFFIX'_offset\t0x\1/p'
->> diff --git a/arch/riscv/kernel/vdso_cfi/Makefile b/arch/riscv/kernel/vdso_cfi/Makefile
->> new file mode 100644
->> index 000000000000..8ebd190782b0
->> --- /dev/null
->> +++ b/arch/riscv/kernel/vdso_cfi/Makefile
->> @@ -0,0 +1,25 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +# RISC-V VDSO CFI Makefile
->> +# This Makefile builds the VDSO with CFI support when CONFIG_RISCV_USER_CFI is enabled
->> +
->> +# setting VDSO_CFI_BUILD triggers build for vdso differently
->> +VDSO_CFI_BUILD := 1
->> +
->> +# Set the source directory to the main vdso directory
->> +src := $(srctree)/arch/riscv/kernel/vdso
->> +
->> +# Copy all .S and .c files from vdso directory to vdso_cfi object build directory
->> +vdso_c_sources := $(wildcard $(src)/*.c)
->> +vdso_S_sources := $(wildcard $(src)/*.S)
->> +vdso_c_objects := $(addprefix $(obj)/, $(notdir $(vdso_c_sources)))
->> +vdso_S_objects := $(addprefix $(obj)/, $(notdir $(vdso_S_sources)))
->> +
->> +$(vdso_S_objects): $(obj)/%.S: $(src)/%.S
->> +       $(Q)cp $< $@
->> +
->> +$(vdso_c_objects): $(obj)/%.c: $(src)/%.c
->> +       $(Q)cp $< $@
->> +
->> +# Include the main VDSO Makefile which contains all the build rules and sources
->> +# The VDSO_CFI_BUILD variable will be passed to it to enable CFI compilation
->> +include $(src)/Makefile
->> diff --git a/arch/riscv/kernel/vdso_cfi/vdso-cfi.S b/arch/riscv/kernel/vdso_cfi/vdso-cfi.S
->> new file mode 100644
->> index 000000000000..d426f6accb35
->> --- /dev/null
->> +++ b/arch/riscv/kernel/vdso_cfi/vdso-cfi.S
->> @@ -0,0 +1,11 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright 2025 Rivos, Inc
->> + */
->> +
->> +#define        vdso_start      vdso_cfi_start
->> +#define        vdso_end        vdso_cfi_end
->> +
->> +#define __VDSO_PATH "arch/riscv/kernel/vdso_cfi/vdso-cfi.so"
->> +
->> +#include "../vdso/vdso.S"
->>
->> --
->> 2.43.0
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Per the commit message, this is for a "Tianma TL121BVMS07-00 12.1-inch
+MIPI-DSI TFT LCD panel". The compatible you've chosen looks like a
+copy-paste mistake. Please change it to match the name of the device.
+
+> +      - const: ilitek,il79900a
+> +
+> +  reg: true
+
+Missing constraints here, right? Unlike backlight, panel-common.yaml
+doesn't define this property.
+
+pw-bot: changes-requested
+
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +    description: GPIO specifier for the enable pin
+> +
+> +  avdd-supply:
+> +    description: Positive analog voltage supply (AVDD)
+> +
+> +  avee-supply:
+> +    description: Negative analog voltage supply (AVEE)
+> +
+> +  pp1800-supply:
+> +    description: 1.8V logic voltage supply
+> +
+> +  backlight: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - enable-gpios
+> +  - avdd-supply
+> +  - avee-supply
+> +  - pp1800-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    dsi {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        panel@0 {
+> +            compatible =3D "tianma,il79900a", "ilitek,il79900a";
+> +            reg =3D <0>;
+> +            enable-gpios =3D <&pio 25 0>;
+> +            avdd-supply =3D <&reg_avdd>;
+> +            avee-supply =3D <&reg_avee>;
+> +            pp1800-supply =3D <&reg_pp1800>;
+> +            backlight =3D <&backlight>;
+> +        };
+> +    };
+> +
+> +...
+> --=20
+> 2.34.1
+>=20
+
+--A13/o+hd7ASE21iW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEQLAAKCRB4tDGHoIJi
+0lSjAQCkisR+5hpzHQjyvKPCFV2oOqswv94hlbDoUWI+Sh/32wD9FcRnRoWMLQeH
+LsAcmdzr/o6VvU7XZu0fYiogYktyjAQ=
+=fU/P
+-----END PGP SIGNATURE-----
+
+--A13/o+hd7ASE21iW--
 
