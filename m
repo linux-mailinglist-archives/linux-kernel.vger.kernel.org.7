@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-855953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59795BE2A9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7151BE2C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98AAB4F7F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 198EF5E3D6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC44432D7C8;
-	Thu, 16 Oct 2025 10:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A32328630;
+	Thu, 16 Oct 2025 10:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IvIkSAKq"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SE/hmiK2"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9140332D439
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A120232860C;
+	Thu, 16 Oct 2025 10:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608845; cv=none; b=mNOa7GP+U7YqSAJ8B8d8ua0YpXdiMDgX5oy1YHv/X+JRnQ/WPiQN8mVNwE5xLId7R2937jHwIqoS19qtuQkCLrx8F/O5rTnRyHM/usaJx3QL/sj3kHFf+PA8oPNGSwQP2qHyI6l8/D91iC+vAIvmTsC81iSbvvwYBegRDCP5U2Y=
+	t=1760609484; cv=none; b=VBf4z9qBp/HhavOkiAbSapQRjEpa+ENr6vAp0hDbw4S8QBhC6oTCQLiT/KLyB9H3H8PvdkixZ4VQ0DM6tJB/nPKAcYw3OxscvVxa7nOUkeVtqAjR3DlQcOeTRaLte3WT1A3UMn8wI2lnEF/6R6DljVP8+VPTMUsbKE4AGDnfgYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608845; c=relaxed/simple;
-	bh=GuHdpaWnWYFigwpENImVEQ8FLU6LX49o1UO74ZnhrBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kAP/JUZ2doDFkzutjfh4ZuUPGCuYhYhlA7dDh4h8LB1Hhxt3wPBTH7o5aLS4kqXG4zmV4iiWbVhXHT62zyfZauR8jtjLM/huPsUAjs7CjVbZCNyGNdQ2472l0x7CC0cj1HUw/525bABjuR+G2L73ovINzPtNnRhN8ybVFTz2P6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IvIkSAKq; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29091d29fc8so6411015ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:00:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760608843; x=1761213643; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzhZSXVDw5HBXWXhpgNz8QGmIpqR91GrblzBsUR2jdE=;
-        b=IvIkSAKqs0wrbYgEtNn+G2fPOcEq+fFL8J57V83XpTZ71hxTH0Xy0ur0iZNhpcTIuj
-         zeZJUDyLzmaAaEw2jF8pf7RIQ0GtDJSp4l/JPtefL6Gfz+uS7QZBfJazqXCrmA4Iho+D
-         9Xm6sNIF4efqGmwI9Ww4ok8op3ivPC2qLzWH8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760608843; x=1761213643;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uzhZSXVDw5HBXWXhpgNz8QGmIpqR91GrblzBsUR2jdE=;
-        b=EDtu3OdfIoyAaVtwoiksWUMZQ0TJzvHE+F5i6/71WTDlkdUNW+d4R59zZrjzHIZSWI
-         gDv8HPQalyX34o/GFslUoVLPcdJ5ErU+NKW3fLgSlxjpHB95xDF+ZS4g1yjg32Jwdid6
-         M/DJVUQ5blQTk7D/D54ed6C7565J9R+OpoTcTw5hLL/P+WH6ai4hWkttyEyk9oi876h+
-         etGau40uTVkuPIWV3FLCAyLjMJIXGc7uhccqJZ70vs1l165IS9b7WARQtmJ6QjjAHRmB
-         WaxzQa6W8Gb+Qb2ihr7CgWkxb9GaW5VO/Y7y0W+Zl4U1sZUBEfzDb7OgnU0mD2r7PS4z
-         g+NA==
-X-Forwarded-Encrypted: i=1; AJvYcCW42uim7jtp9RA+Jfi9JA2zMeKbn7EJmtOtaCFsUx4uawBS228hhOTrSuHcUK4HwfHUwQTfTHa44VVcmFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6APlAk4GaY35lmjznpWBOLHQbgdV5dqvd2RGUaRs5MfOaf3Ew
-	3kTxGQM2L7ZH9H98h+V52w24dJk0k1jkttfVR9czYJF6WFjuYvMSezyLVq17DkKhtQ==
-X-Gm-Gg: ASbGncvyQAtpd15cm/1unPnny56UL9s/Ss5z3IHdkl2QGxY1qE9BzaCTeYOtfAPR7nm
-	qFFyYyABJdOly7GZ8OG4/oUk6rFce987RFY/h4obfbNPxLUqAPbSJCGXhBHQ/l6tiZ5fSkF3EIx
-	TI8f0r4jaNIgHH+CtDfos4t5Wtr0Ji2fuuEvlFt6CChPX4n2+a1sv8o8lWg6NQz8D3y8zhdqR1M
-	Yn1f7OE8/5Whlmbo5U78qyTuVdIx/yOIZRP/1AFb0kJKElvHHprwoRddB/wNzfS7s04Qi98Vazn
-	eFOix2mfG41RX8/7A86B+CKtvvzxVWgZs+mxwQxGRYGwbqn0vPz0Z4+UaahEIYwl/P4XqNfPzo2
-	6Ms5lEUkZ5GYxwesTChTOsAGNH921mm+kK5/F87cChmMcORuK9ESVaerHrsOWp8eX0wdEkw66s2
-	s5p4yibISOTcqDyw==
-X-Google-Smtp-Source: AGHT+IFuKHF70rg9myfkHvvqf8ak7ClXze86hhc+4ZWu7glDGpK14qjiuk/CiRAUD3qVgrKVbYIklQ==
-X-Received: by 2002:a17:903:2388:b0:290:94ed:1841 with SMTP id d9443c01a7336-29094ed1a6dmr39122505ad.41.1760608842794;
-        Thu, 16 Oct 2025 03:00:42 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:98b0:109e:180c:f908])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909934a8e6sm24587115ad.30.2025.10.16.03.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 03:00:42 -0700 (PDT)
-Date: Thu, 16 Oct 2025 19:00:36 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Doug Smythies <dsmythies@telus.net>, Christian Loehle <christian.loehle@arm.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Sasha Levin <sashal@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-Message-ID: <ytv4w7uw23fwdkihbgrpegmco6yzkxmzjbakmxtricreou6p6k@rhwxcjq3jvnv>
-References: <8da42386-282e-4f97-af93-4715ae206361@arm.com>
- <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi>
- <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com>
- <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
- <7ctfmyzpcogc5qug6u3jm2o32vy2ldo3ml5gsoxdm3gyr6l3fc@jo7inkr3otua>
- <001601dc3d85$933dd540$b9b97fc0$@telus.net>
- <sw4p2hk4ofyyz3ncnwi3qs36yc2leailqmal5kksozodkak2ju@wfpqlwep7aid>
- <001601dc3ddd$a19f9850$e4dec8f0$@telus.net>
- <ewahdjfgiog4onnrd2i4vg4ucbrchesrkksrqqpr7apyy6b76p@uznmxhbcwctw>
- <CAJZ5v0inu-Ty-hh0owS0z0Q+d1Ck7KUR_kHQvUCVOc1SZFqyjw@mail.gmail.com>
+	s=arc-20240116; t=1760609484; c=relaxed/simple;
+	bh=k2NpyI9RmFby/yaqAAqwGJeOocMBe7R2rRobxSohU14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVKJAFCBZ1JECJfre4hiGxaafQLyWmBZT/vbe6l+FDbI7GUOlVd8YlEacwANO5tdIcB7w8kx8Zb8PZThPWuQvTHJT0Cw1CIgbwuevQNm3UclC1AeDQIUWvLKt5dfOoofzs246X/KgrpI7w21kmk/MoyxotJvwkNlmXcVwet87kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SE/hmiK2; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cnNyY5TKcz9tfn;
+	Thu, 16 Oct 2025 12:11:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760609477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a/tOjK6pACwAgNC2kmOtml/HInlThyeM9X9FND8NF44=;
+	b=SE/hmiK2ZWwrXfDW5vM1H5yLCRlREMu6lhTShQr/X4/KzvN4Yi2H8KAX8zpyqNIdAkpg3h
+	1u6RNFxp0v25XF/YtCqnkL2R3vo0m2nzfpWVlCO8PlTT8zfXYtKAFC5120bF37N6ZA4Y72
+	3m1Yw9D41WaBREoR2YnqOC3hzkBHtQ+CL2yNaqKe5cD8OLTH5Qmnx96zZMBqM4JfM+O5aY
+	HXkgjHY0UZ4jQ4hQoo8u0cN1Hn5OQsSzL5G0Jrw7LdyZbxf9pM5lnwzLPkgfSCGI3eNL8+
+	KnCuqoO6iCPaXXYB6W/vME9lETfq5psX6LLzyJb8xU7m1Pjp5ZhWCecdO6Dn5Q==
+Message-ID: <cd2764e1-b966-4f00-82a2-4e6f65605523@mailbox.org>
+Date: Thu, 16 Oct 2025 12:01:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0inu-Ty-hh0owS0z0Q+d1Ck7KUR_kHQvUCVOc1SZFqyjw@mail.gmail.com>
+Subject: Re: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec driver
+To: Nas Chung <nas.chung@chipsnmedia.com>, Ming Qian <ming.qian@nxp.com>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ dl-linux-imx <linux-imx@nxp.com>, "jackson.lee"
+ <jackson.lee@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>
+References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
+ <f03d0ae0-d28b-4b06-8f63-9d06f15c0522@mailbox.org>
+ <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
+ <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
+ <59e87d8e346bb16b225382b9a4500e1b16bbf776.camel@ndufresne.ca>
+ <PAXPR04MB825499BA447B4000AB8329A6E703A@PAXPR04MB8254.eurprd04.prod.outlook.com>
+ <2c431e9a-9e2f-4583-bf03-142b56439a47@mailbox.org>
+ <SL2P216MB12469FADA7A4A6872D1C5D05FBE8A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+ <efa2f3e6-fa36-48a3-a85a-68c7c1335ba5@mailbox.org>
+ <SL2P216MB1246CB5B9EA0A6A63236FE19FBE9A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <SL2P216MB1246CB5B9EA0A6A63236FE19FBE9A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 15deb012ddd5bedb724
+X-MBO-RS-META: kuc5pb669abqccebs9xefxjoenf5gw49
 
-On (25/10/16 11:48), Rafael J. Wysocki wrote:
-> All right, let's see what RAPL on that system has to say.
+On 10/16/25 6:01 AM, Nas Chung wrote:
+
+Hello Nas,
+
+>>>>> Would you please share the stream to me? I want to test this
+>> resolution-
+>>>> change case too.
+>>>> How can we proceed with the wave6 driver upstreaming ?
+>>>
+>>> Patch v3 was posted before you replied to v2. I plan to post v4
+>>> shortly and will include your Tested-by tag.
+>>
+>> Can you please put me on CC with this email address ?
 > 
-> Please send the output of "grep .
-> /sys/class/powercap/intel-rapl/intel-rapl:0/constraint_*"
-
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_max_power_uw:6000000
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_name:long_term
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw:6000000
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_time_window_us:27983872
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_1_max_power_uw:0
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_1_name:short_term
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_1_power_limit_uw:12000000
-/sys/class/powercap/intel-rapl/intel-rapl:0/constraint_1_time_window_us:976
+> Sure, I’ll add you to CC on future revisions.
+Thank you
 
