@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-855673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96028BE1EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2C9BE1EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40E674EC336
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:32:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79F954E9F53
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FC02FAC18;
-	Thu, 16 Oct 2025 07:32:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2578727E066;
-	Thu, 16 Oct 2025 07:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF7A1DC985;
+	Thu, 16 Oct 2025 07:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IHjGYpVV"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF3F241686
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760599952; cv=none; b=pzRKBMT3SK+CqL4jbXPO+AzdCU3/ec5zYw8Eef0ya8CM9UCSzX+xLof4Nftf8z6qbIjy9I25p1egG3zuqNY8WltVu6KQ3EJpWNcQ4x6fAJpdDdZP8FX616pxTNlibPOm/BVZmQ1NXXlJjgRtC/Fno1xLHPnzXo1HFem34wapWzI=
+	t=1760599951; cv=none; b=QESSvhXtoUm3CiuESMSEk5TfHvcVP85ACkddiZK2oZuSUFVqpT8LspZng7P/9aCsJuFhiUHUNWqOiAisUWj3sliwFxB78pyZTIy2hcb+dUgteRBeFqMBMR5PjD/2zh5uf7OZMohQYosFYEBr1qIRsmbuGF34eBMoWi21T4m88hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760599952; c=relaxed/simple;
-	bh=MEzUQpgjiFwNN3xQOvmqg23wAzgVCnaWuW1tomJiGNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Up3t+8+kEAGOuzrsj6ydi2XB83dn5fceZKQjQQGBTX8b7MDwoBaO/6Yz/KOwLdZeNpXcW/VDu8ch/G4ctyF+dDEzzoypsxmQLxFUs3zX3FvIxOn4t9I+tEhuA7S0CG2DXUUKvLKfHoD9ywfdfixexYl7TcHwaRCNh309cGUeOKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B64F21688;
-	Thu, 16 Oct 2025 00:32:20 -0700 (PDT)
-Received: from [10.57.65.134] (unknown [10.57.65.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F1683F6A8;
-	Thu, 16 Oct 2025 00:32:20 -0700 (PDT)
-Message-ID: <54f183bb-33ce-4b9c-91a9-827a6ed198d6@arm.com>
-Date: Thu, 16 Oct 2025 09:32:13 +0200
+	s=arc-20240116; t=1760599951; c=relaxed/simple;
+	bh=+xd28qTXSCcc8ok1niwAqU0DCbcQjRi1sND69W3gViw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=skFdqQUe/xmSQV9nnAOg8Dw/vVjKNAZ93oCU25u01NgF9LKqMWOkCi0rQg8s1fRo4atHO6m/2XEZzOalF6cQ1zAhhbRclYRkEpFdUJPP7iJ3VzCDRjTXpVzrxaMgLj5yZWUAqU+Kw+P5c5JimU4tOGwKjEwhYX06ZPSdOxa/VrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IHjGYpVV; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=yXa+
+	322mydREfaXen6L4SlMOyElKyFYLFnucwI7kpWM=; b=IHjGYpVVDdyxxjlVxBEd
+	hrMdOkp/v8xr6wQg8OoS+V1ott8EFJG3bid7Clv7UejYjJ/lrLjoRtGq4UpOSfoB
+	Bvm+pF8IyzeONLiWl/F2ztR68c6udtsiD4uKXrx9vU/ikZ0mpBVmB7pFC/6O5Whx
+	+YCmAEVNK+Hkbx9lBYPqjTEolZHg8E4TAx7YK4nmacj41F9q2/6DJ290mOvU3l8w
+	kiaFGZtSmpVlbO0Shhr6HT4t9XlD1VamRs6SyarE71c+CnBDgaACLQkWT6P4Q/lb
+	PAuy6o4ucjhghZRoWR5rywlGI5LmCdoK2wOdVYpbYOyES2NxVGZci24bUihI0YSp
+	tQ==
+Received: (qmail 3708801 invoked from network); 16 Oct 2025 09:32:25 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Oct 2025 09:32:25 +0200
+X-UD-Smtp-Session: l3s3148p1@VIpNnkFBltQgAwDPXwQHAL/S9V79e5yL
+Date: Thu, 16 Oct 2025 09:32:24 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Jonas =?utf-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v1 0/2 RESEND] i2c: muxes: Add GPIO-detected hotplug I2C
+Message-ID: <aPCfiJxyKOXsgNJe@shikoro>
+References: <20251013060018.43851-1-clamor95@gmail.com>
+ <w3bn5bqxqjhf4uvxov47rwlvmnbic6xnlk25xbpnbmi2eyup7q@tjuiu7pl3mmo>
+ <CAPVz0n1-jN5WLFq4e0CZrneExrN_A=GNeGTwGHTCj14NAta+jQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/13] x86/xen: simplify flush_lazy_mmu()
-To: Dave Hansen <dave.hansen@intel.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-3-kevin.brodsky@arm.com>
- <35d9cf4f-135e-4786-a4e3-fd3a4a18b800@intel.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <35d9cf4f-135e-4786-a4e3-fd3a4a18b800@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uEiwKgHyXhHzOFYb"
+Content-Disposition: inline
+In-Reply-To: <CAPVz0n1-jN5WLFq4e0CZrneExrN_A=GNeGTwGHTCj14NAta+jQ@mail.gmail.com>
 
-On 15/10/2025 18:52, Dave Hansen wrote:
-> On 10/15/25 01:27, Kevin Brodsky wrote:
->> While at it, we can also avoid preempt_disable() if we are not
->> in lazy MMU mode - xen_get_lazy_mode() should tolerate preemption.
-> ...
->>  static void xen_flush_lazy_mmu(void)
->>  {
->> -	preempt_disable();
->> -
->>  	if (xen_get_lazy_mode() == XEN_LAZY_MMU) {
->> -		arch_leave_lazy_mmu_mode();
->> -		arch_enter_lazy_mmu_mode();
->> +		preempt_disable();
->> +		xen_mc_flush();
->> +		preempt_enable();
->>  	}
-> But xen_get_lazy_mode() does:
->
-> 	this_cpu_read(xen_lazy_mode);
->
-> Couldn't preemption end up doing the 'xen_lazy_mode' read and the
-> xen_mc_flush() on different CPUs?
->
-> That seems like a problem. Is there a reason it's safe?
 
-You're right, I was thinking in terms of task, but xen_mc_flush() does
-operate on the current CPU (and it's called when context-switching).
-Will restore the original order in v4.
+--uEiwKgHyXhHzOFYb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-- Kevin
+Hi Svyatoslav,
 
+> Herve and Luca did not come up with anything meaningful, they provided
+> just a few rough ideas. It will take an inconsiderate amount of time
+
+Well, IIRC they said that your use case can be mapped onto their
+approach. Which is meaningful in my book.
+
+> before there will be any consensus between them and schema
+> maintainers, and even more time would be requited to settle this into
+> schemas and implement into drivers. Why should I suffer from this? Why
+> should changes I need be halted due to some incomplete 'ideas'? This
+> driver uses existing i2c mux framework and fits into it just fine.
+
+I am sorry to bring you bad news, but you need to suffer because this is
+how development goes. If I get presented a generic solution (see Herve's
+mail) and a specific solution (your driver), for this case I as a
+maintainer will prefer the generic solution. Generic solutions need more
+time because there are more things to handle, of course. This is typical
+for development, I would say, it is not Linux or Free Software specific.
+
+I appreciate that you tackled your issue and were open to share it with
+the community. I see the work being done there. However, there are so
+many things going on independently that I can't really prevent double
+development from happening despite it having a high priority for me. As
+soon as I get aware of people working on similar issues, I connect them.
+That's what I did here as well.
+
+So, if you want upstream supported I2C hot-plugging, you need to wait
+for Luca's and Herve's work being accepted. Or provide a superior
+solution. Or, if you want, join the ride. You already have experience in
+this field (and hardware plus use case), you would be a very welcome
+contributor, I would say.
+
+All the best,
+
+   Wolfram
+
+
+--uEiwKgHyXhHzOFYb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjwn4gACgkQFA3kzBSg
+KbbYDBAAmGNkfML0PzlhNVB+YEhIWwu71dtzkZRexdYYq6v84h5Q5GvzUJhbhlF9
+XI5lxCEkPoMxPd5+5WzQr559IBOydhwig0OBgx21yS3H+fU6X5eMihCImyHbv3ud
+AMT6GOCTZzWu4Ds8j/cxUVSRiYb7feGxUuQgZgi4qjiOQqYchAfXQJxuC8XE7+Ne
+2RUQT8xj9Y+tadbC7jGRXcEqXLyRxAjhX/xM4ZNXBEF8ANGj5WO7uLIlmY9i6bkW
+mGEfMF+W3d1FPyn76iCY8FnKgs2cEChZZChnw/EWNt53Lu2KwDIz8+0zUzWZ+otO
+3EU6TIpgS66TaSIPc+OlIznDNjS1QCfVy2vULwjSHnPD7uRE2LtwKXATeEGhBMYi
+Xq14MSY3etMbhb1X17Y1n/ghRbtaTLKAmu4CRrn69/7MAkq3bWUXdzlHQkRWZe9P
+s+gVYK4uUOcDtpFSL3KVloqZjMlzyOWRrugtuFTo8klctZjABezBd9pbpXnnEKci
+nlDAR/aNLwVHC4U53c5j9Rgbj38ka+kmqYLorz+snzTmxjH5OvpqwvpIubirn8Jh
+15gt4Sxsd+hIwN0fzc93pSTNilS6+dA+I9h4hl140iq0YKhPvU4aUCsDfWu9XHBD
+djidWfetN9v/TEIgnaCeSBauwZNHjonpkBhS6AHq9a0mY9Q8jWY=
+=+hG4
+-----END PGP SIGNATURE-----
+
+--uEiwKgHyXhHzOFYb--
 
