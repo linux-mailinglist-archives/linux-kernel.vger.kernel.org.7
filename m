@@ -1,195 +1,193 @@
-Return-Path: <linux-kernel+bounces-855737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40429BE225F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:29:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5A0BE227D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 229024EBFC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B92919A43C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A1330504C;
-	Thu, 16 Oct 2025 08:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EFB3054F6;
+	Thu, 16 Oct 2025 08:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnmQVCPg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NUet8qN5"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C32FDC4E
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0954B305953
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760603366; cv=none; b=o4eY+foie5BYH9WQJAJi9u+Fo9jwe1aqLbpxr9Vy1OwNBv5WwzuQdzp5XIT0RM5T12KJgFQjadp6YtPXueZ5UgqbtsqbgTuHmWAfiBx7MLoL6Bv0aUzfy7pQnBud9mlL7TUci1OK8cNY++QiEA/MYH3IFe7yBFkFQMlKj6SnFOE=
+	t=1760603404; cv=none; b=ds2AMly1QPknAIHqHoOXMyhtEn1Kn9vBgB8iEjoFX3+yHKiVv8Uu7Erac1zzkquGrK1ntPCXwkOhookD3viGcgzLU6abwJI33OOdHsV07v8KjsEOMrqA66k3dyxydl7EMf441t48QeVR+g+4jyKM4wvJ911xUQCUB0Bo1+7qOxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760603366; c=relaxed/simple;
-	bh=NRqMCO2UD2ZElId4/sDDauUesnj09RgQKU3DA85pH7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXWT+QGeAcXQAhGeEWwEPi7pT/pbYr6U1HcjrmjgDpE/tTR6Jm0OoXgdZS+ubPS++yYP7X0Pg20xMFlhst4ECPh4sFd5mItbD1OtAfE09TwqQ5c+UwsCBMpNMcjhTgt1+8YIu3sreqS+wynXjNrluU7RH3LcUGFEGqL2Ad7R3/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnmQVCPg; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760603364; x=1792139364;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NRqMCO2UD2ZElId4/sDDauUesnj09RgQKU3DA85pH7U=;
-  b=YnmQVCPg0TZu5QsQzi0yA/QRzjYTBNgg95i+s6WORwOo76od/w0xeQhx
-   tvi3xBa8LlcsICcwcj5w+yuj6JzfNv1CaGumaQRJNY+f7BT+YmQvahBJJ
-   NHn5zljbPjkjXWEWLI6mOPXsYzosdH0UXbQYr7TYfDwaqjzMr7AhjFfaF
-   slt4rLvg41rN0vMMoJisPtoB6jdMTdAzl6+CMHsnb4Y2ZNqvDARliOVYM
-   aGuJTVjnvoYMHEj34Q2JtZdDg4C08f7rXWh1vzrWeDE1QtvwsWTj9sgG4
-   XvyAMF3npbgalSZXQSJ4PAGCz5+cp3K9y5ubPw98BeFE8ilE4dYIwugbe
-   g==;
-X-CSE-ConnectionGUID: 9cB6qO53T1y1cAX+mS3pfA==
-X-CSE-MsgGUID: KG/PyJ8ISHy6c/2vqIjqtQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="66439708"
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="66439708"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 01:29:23 -0700
-X-CSE-ConnectionGUID: m0sBl1kLTqOn+kmk8/YFNg==
-X-CSE-MsgGUID: hmBJhFAFSheM3NYWWDHmJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="182072902"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 16 Oct 2025 01:29:20 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9JML-0004bH-2v;
-	Thu, 16 Oct 2025 08:29:17 +0000
-Date: Thu, 16 Oct 2025 16:29:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev, nd@arm.com,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 06/10] drm/panthor: Implement L2 power on/off via
- PWR_CONTROL
-Message-ID: <202510161626.f3OG4u62-lkp@intel.com>
-References: <20251014094337.1009601-7-karunika.choo@arm.com>
+	s=arc-20240116; t=1760603404; c=relaxed/simple;
+	bh=k42KT1WkRBHWgkIIkqFIrWGAaoELe9bfpMASrrF8Y1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ag2Ih7kfRbJDi0qxb4Yqdwap72+Acuh/eZfuEfbUSFyY44nsb5bLCh1UEnQK2djFXkH/LyCZ/6kez9PhRIMunPmS1Uc3AodFl/K0XhfnHpgu7BnHGBjHqC3V1pGHeJHyz3fymyI5uTyMNEhvlyzMhhj12NGGK3BOYRaNFuyQsuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NUet8qN5; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63babfdb52cso706193a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1760603400; x=1761208200; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3dZ3zNJcojA/sJlGgESgs39Z0uRLTeXYPBFHIy0pECs=;
+        b=NUet8qN5qrIYpFMgTvxdLdaHAI3OmmhKtR6iYJUENg83HZukG96jRvxXWHpp7fsboa
+         duwILzd8rnxNUv4SU1zkws1Ubu68LmBtvJ+js4M1KWNXYmXN4aZxH2Hys3d17hGSe8QI
+         fncCtCpiimHCjHeGzhXiAOSFDhnHHLWQtz/cWbkzUdC9W4vDRsHwMC3Dw8GDvWA9phj5
+         anl4TlmUvZnmvsY76VWE395cAdPlRewMgJWu6C1ceDKOlrJs9dDkmHWFSYaXPULnwFFO
+         5bRjd9HJH8BvZ0JVkePiRFYyX8WskpSp4KqCDBErpH+sybEokKD8wbI66Po4KnAM0OsG
+         EIwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760603400; x=1761208200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3dZ3zNJcojA/sJlGgESgs39Z0uRLTeXYPBFHIy0pECs=;
+        b=XehAArQ69DPW4r110q65fFPCJj8KHE0FzzV0bz9e0bS9Iej1jMs9TXakgCtZ4/mOny
+         wh7MVkK6FPgK4RUtjN8yyfeCC7RkU0nBW9mZumoYhl3UylueNPxBy64C5G2PQrhZ3QgN
+         HITzEFdHw+qXxXF70AlaSWTUujE2WhtSoWUYQpTAlLQFnvwPJm9fs3ppvn5pNh94Bupm
+         fY6TsY9ay7+vjpmVqoraD9Xmt24DwqBmS4ip9608b3uCPYdPYyAyDTojUvcak0CoeZVr
+         y/a1zdwv5aLISIWv0PkHBVIUiVo8vKVsmyK55h5XAmL8nd8AbsuPsTCNEWcdwmDM/MKm
+         2g+A==
+X-Forwarded-Encrypted: i=1; AJvYcCV0x5E+R9sKbHQQk58K2WyhPRA2bC6q+C1FLPB6m+B/KrmGAmTkyAJm2o36aKJ2qs0Zw2KE4aIqqjef4AM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGd62DuCRv4629/OMkHPT2K/b3NuJJtckkobleT8Lu7UAzBHHs
+	vZ0gQnOGR63CwyiJG7eVUBF27m49Wt9OvEHyNtTzupf4712KLkfXZhUPXxM62X0aL/Z7YRc4CNx
+	i+gnJ4CCeepV4BIhoef084L/+HkFVO2gpuwBDU++LGw==
+X-Gm-Gg: ASbGnctwOB8iQTkatRk3eIgFqBu2MwUHDTAdJcU/+/vu15SicSUrzIm8LqzFkD0dE2B
+	F1ip94+WaLLAdTA4yqx71HeQQ+6JYNkdRf/MHE+Cvnr/R32PIxvh6J+TANFRNMFVs393BQGUcjS
+	SoosgkgwJoEd6QSkLzam4p0TNuP6l0tCipuvI6iNfEua/2+nm+ssVZ9e5ADeaBlaSYj7hGQEr04
+	SfF/F6igJXbXtdotuk4TtwH0buGxLKeUWR9H/0amFo1Yow8Vl0xg2BUnsoFtoVeScZPXCn+Eg==
+X-Google-Smtp-Source: AGHT+IGyB7jwp1R/sb2SSrLIrlHDUB3Rfhzku7rZfdn97lwiX7fw79YoDZXn2zqSu6ScM4J5e0VHXW4a+hMbV7/+6J0=
+X-Received: by 2002:a05:6402:35d2:b0:63b:dff7:8956 with SMTP id
+ 4fb4d7f45d1cf-63bdff78c26mr7390999a12.7.1760603400109; Thu, 16 Oct 2025
+ 01:30:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014094337.1009601-7-karunika.choo@arm.com>
+References: <20251015-v5_user_cfi_series-v21-0-6a07856e90e7@rivosinc.com> <20251015-v5_user_cfi_series-v21-25-6a07856e90e7@rivosinc.com>
+In-Reply-To: <20251015-v5_user_cfi_series-v21-25-6a07856e90e7@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Thu, 16 Oct 2025 16:29:48 +0800
+X-Gm-Features: AS18NWC3gX9SfykK7BeQoaaUJU9Tso-y_BcITA4tZMgogw7A7IijvQhu4Ma2nRQ
+Message-ID: <CANXhq0qHT=nnwG3SX3s_D3G2QqKGmQBbdzFwiQ5MMkimxCHJHQ@mail.gmail.com>
+Subject: Re: [PATCH v21 25/28] riscv: create a config for shadow stack and
+ landing pad instr support
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Karunika,
+On Thu, Oct 16, 2025 at 2:14=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> This patch creates a config for shadow stack support and landing pad inst=
+r
+> support. Shadow stack support and landing instr support can be enabled by
+> selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` wire=
+s
+> up path to enumerate CPU support and if cpu support exists, kernel will
+> support cpu assisted user mode cfi.
+>
+> If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS`,
+> `ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/Kconfig                  | 21 +++++++++++++++++++++
+>  arch/riscv/configs/hardening.config |  4 ++++
+>  2 files changed, 25 insertions(+)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0c6038dc5dfd..aed033e2b526 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -1146,6 +1146,27 @@ config RANDOMIZE_BASE
+>
+>            If unsure, say N.
+>
+> +config RISCV_USER_CFI
+> +       def_bool y
+> +       bool "riscv userspace control flow integrity"
+> +       depends on 64BIT && $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zic=
+fiss)
+> +       depends on RISCV_ALTERNATIVE
+> +       select RISCV_SBI
+> +       select ARCH_HAS_USER_SHADOW_STACK
+> +       select ARCH_USES_HIGH_VMA_FLAGS
+> +       select DYNAMIC_SIGFRAME
+> +       help
+> +         Provides CPU assisted control flow integrity to userspace tasks=
+.
+> +         Control flow integrity is provided by implementing shadow stack=
+ for
+> +         backward edge and indirect branch tracking for forward edge in =
+program.
+> +         Shadow stack protection is a hardware feature that detects func=
+tion
+> +         return address corruption. This helps mitigate ROP attacks.
+> +         Indirect branch tracking enforces that all indirect branches mu=
+st land
+> +         on a landing pad instruction else CPU will fault. This mitigate=
+s against
+> +         JOP / COP attacks. Applications must be enabled to use it, and =
+old user-
+> +         space does not get protection "for free".
+> +         default n.
 
-kernel test robot noticed the following build warnings:
+Maybe it is default 'y' instead of 'n'
 
-[auto build test WARNING on drm-misc/drm-misc-next]
-[also build test WARNING on drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip linus/master v6.18-rc1 next-20251015]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Karunika-Choo/drm-panthor-Factor-out-GPU_ID-register-read-into-separate-function/20251014-174729
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20251014094337.1009601-7-karunika.choo%40arm.com
-patch subject: [PATCH v1 06/10] drm/panthor: Implement L2 power on/off via PWR_CONTROL
-config: arm-randconfig-r132-20251016 (https://download.01.org/0day-ci/archive/20251016/202510161626.f3OG4u62-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251016/202510161626.f3OG4u62-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510161626.f3OG4u62-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/gpu/drm/panthor/panthor_pwr.c:153:13: warning: shift count >= width of type [-Wshift-count-overflow]
-     152 |         ret = gpu_read64_poll_timeout(ptdev, pwrtrans_reg, val,
-         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     153 |                                       !(PWR_ALL_CORES_MASK & val), 100,
-         |                                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     154 |                                       timeout_us);
-         |                                       ~~~~~~~~~~~
-   drivers/gpu/drm/panthor/panthor_pwr.c:26:29: note: expanded from macro 'PWR_ALL_CORES_MASK'
-      26 | #define PWR_ALL_CORES_MASK              GENMASK(63, 0)
-         |                                         ^
-   include/linux/bits.h:51:24: note: expanded from macro 'GENMASK'
-      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
-         |                                 ^
-   include/linux/bits.h:49:20: note: expanded from macro 'GENMASK_TYPE'
-      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-         |                           ^
-   drivers/gpu/drm/panthor/panthor_device.h:533:37: note: expanded from macro 'gpu_read64_poll_timeout'
-     533 |         read_poll_timeout(gpu_read64, val, cond, delay_us, timeout_us, false,   \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     534 |                           dev, reg)
-         |                           ~~~~~~~~~
-   include/linux/iopoll.h:145:36: note: expanded from macro 'read_poll_timeout'
-     145 |         poll_timeout_us((val) = op(args), cond, sleep_us, timeout_us, sleep_before_read)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/iopoll.h:49:7: note: expanded from macro 'poll_timeout_us'
-      49 |                 if (cond) { \
-         |                     ^~~~
-   drivers/gpu/drm/panthor/panthor_pwr.c:260:13: warning: shift count >= width of type [-Wshift-count-overflow]
-     259 |         ret = gpu_read64_poll_timeout(ptdev, PWR_STATUS, val,
-         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     260 |                                       !(PWR_STATUS_RETRACT_PENDING & val), 0,
-         |                                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     261 |                                       PWR_RETRACT_TIMEOUT_US);
-         |                                       ~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/panthor/panthor_regs.h:249:40: note: expanded from macro 'PWR_STATUS_RETRACT_PENDING'
-     249 | #define   PWR_STATUS_RETRACT_PENDING                    BIT(43)
-         |                                                         ^
-   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
-       7 | #define BIT(nr)                 (UL(1) << (nr))
-         |                                        ^
-   drivers/gpu/drm/panthor/panthor_device.h:533:37: note: expanded from macro 'gpu_read64_poll_timeout'
-     533 |         read_poll_timeout(gpu_read64, val, cond, delay_us, timeout_us, false,   \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     534 |                           dev, reg)
-         |                           ~~~~~~~~~
-   include/linux/iopoll.h:145:36: note: expanded from macro 'read_poll_timeout'
-     145 |         poll_timeout_us((val) = op(args), cond, sleep_us, timeout_us, sleep_before_read)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/iopoll.h:49:7: note: expanded from macro 'poll_timeout_us'
-      49 |                 if (cond) { \
-         |                     ^~~~
-   2 warnings generated.
-
-
-vim +153 drivers/gpu/drm/panthor/panthor_pwr.c
-
-   144	
-   145	static int panthor_pwr_domain_wait_transition(struct panthor_device *ptdev, u32 domain,
-   146						      u32 timeout_us)
-   147	{
-   148		u32 pwrtrans_reg = get_domain_pwrtrans_reg(domain);
-   149		u64 val;
-   150		int ret = 0;
-   151	
-   152		ret = gpu_read64_poll_timeout(ptdev, pwrtrans_reg, val,
- > 153					      !(PWR_ALL_CORES_MASK & val), 100,
-   154					      timeout_us);
-   155		if (ret) {
-   156			drm_err(&ptdev->base, "%s domain power in transition, pwrtrans(0x%llx)",
-   157				get_domain_name(domain), val);
-   158			return ret;
-   159		}
-   160	
-   161		return 0;
-   162	}
-   163	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+>  endmenu # "Kernel features"
+>
+>  menu "Boot options"
+> diff --git a/arch/riscv/configs/hardening.config b/arch/riscv/configs/har=
+dening.config
+> new file mode 100644
+> index 000000000000..089f4cee82f4
+> --- /dev/null
+> +++ b/arch/riscv/configs/hardening.config
+> @@ -0,0 +1,4 @@
+> +# RISCV specific kernel hardening options
+> +
+> +# Enable control flow integrity support for usermode.
+> +CONFIG_RISCV_USER_CFI=3Dy
+>
+> --
+> 2.43.0
+>
 
