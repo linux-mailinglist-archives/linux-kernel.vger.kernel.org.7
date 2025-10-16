@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-855413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B5BBE125A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55416BE1279
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508843ADBE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781D43BDA3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BADE1FBC8E;
-	Thu, 16 Oct 2025 01:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E60E1FDE19;
+	Thu, 16 Oct 2025 01:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvfkfAf5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UjNeyfN1"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BAB20322;
-	Thu, 16 Oct 2025 01:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCE81F8677
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760576430; cv=none; b=pT4NeyQFOag0uXmAWZmIfzKW97lKMxWHdZD5o1U/DX403P48GdwzGhr2SWfZ35pWLAswAzFujtB3WtCwsiau8NKrbppbebxzjvmanQy6NCZ9dcU8YQgORNA7ptFxXCboX9dd6r1uee57KeTLuNxwZ4o4UKfuSZzt25m9JmHR9+I=
+	t=1760577075; cv=none; b=oxiN0ylX0w+NZvshhxf3sHRcSfhFPq0jZgFNS1S4SF5fF1oa3GOApLCm3RCEYZ2HevWwFrNg60CqCz3AmLCMc4++6VyHO/VXAHOHFe/7chg9/PqqB2w5AkzwxysYUEx7nRqLcgyHjoDtyT4Gei+pU/mM2QrYER5QcPOf276G3X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760576430; c=relaxed/simple;
-	bh=Ik8aIuKUMfuZH3qbBcQ8N1NbTvwJaLiUhd31QH0CPF8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bfovYFT1vd4WuNxiie1UtcHcx4imUau1DUUQoOVVPbQgXR1yu0DbHI7dMbR7bdg0b4lnz31LGyJGfMc9n8eIypLrWMpXjU9rha3HtPmr1XoSew4syXgc/+vLO6zILYGq0dgv3kxR1X6AW6i2n5F/DZKmV9hm5mqtSyLUMxaPw50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvfkfAf5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A665C4CEF8;
-	Thu, 16 Oct 2025 01:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760576430;
-	bh=Ik8aIuKUMfuZH3qbBcQ8N1NbTvwJaLiUhd31QH0CPF8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rvfkfAf59/UgphYfysr5J0587v/W/U0QoRxHKOW5L13gI9lrO8TGNHyY+TqfoWMa1
-	 SNL70DKe7NRKb83JLE5a4Awpikj0WZyrpmovHJFZ7AMeNQb7eNb2pPg4hytjbtTwHL
-	 5nsuMU5yVWWq9D4mk1c2qJbz12ReSyzBjpCn4t/2ZXh/9P3HsJjrzPhesL289ZRva0
-	 AEU3SXFcEYmpE/hCQUaomFROsQ3rSvwIhhUZHydLvNi5z/H6IXRWIMT6S6lsmKDG6N
-	 URHO12sNqls+tPwYfLiRgDKF+36TmLv9x0KWBTefSRiSrOtTsad3QC7qeSZSgLZENL
-	 LwFafd6GAQNNw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1A1380DBE9;
-	Thu, 16 Oct 2025 01:00:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760577075; c=relaxed/simple;
+	bh=9eWglOj1q+AvMecMj1okWvapeunhbN56i+AV+BTzGlg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fnoEDnxQboXVqIjwBZgcWz0tuldB4NHLabvXabequoMVZ4NiERoNPCHkQ3QJ2OkOrJIEkNWAt7QDZqis2wjufjZJbTGKa0PIDISGKcqt1/cqSZO/pdVw0r/8bIKLgFgMAHglXpSkmnDi7kP9LungsCS41nTmiQEwdnxgzP1mhmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UjNeyfN1; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760577060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9eWglOj1q+AvMecMj1okWvapeunhbN56i+AV+BTzGlg=;
+	b=UjNeyfN1lT1QbHQB+SBjn0crZxw3AICe3s9vXl69EmVdsbWMGRugblFUU+RtOSrApnbuYn
+	qsCHcCG9o2C7orU+K/C7S5ix0iMllM0rqLx3c0zQqw3cXquoFBBCtvZMdJqdhRfToEAkVd
+	8vY7AV0p6MJ6tuTF+BMvv/UuTc+Bd7M=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: JP Kobryn <inwardvessel@gmail.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,  andrii@kernel.org,
+  ast@kernel.org,  mkoutny@suse.com,  yosryahmed@google.com,
+  hannes@cmpxchg.org,  tj@kernel.org,  akpm@linux-foundation.org,
+  linux-kernel@vger.kernel.org,  cgroups@vger.kernel.org,
+  linux-mm@kvack.org,  bpf@vger.kernel.org,  kernel-team@meta.com,
+  mhocko@kernel.org,  muchun.song@linux.dev
+Subject: Re: [PATCH v2 0/2] memcg: reading memcg stats more efficiently
+In-Reply-To: <e102f50a-efa5-49b9-927a-506b7353bac0@gmail.com> (JP Kobryn's
+	message of "Wed, 15 Oct 2025 17:21:46 -0700")
+References: <20251015190813.80163-1-inwardvessel@gmail.com>
+	<uxpsukgoj5y4ex2sj57ujxxcnu7siez2hslf7ftoy6liifv6v5@jzehpby6h2ps>
+	<e102f50a-efa5-49b9-927a-506b7353bac0@gmail.com>
+Date: Wed, 15 Oct 2025 18:10:52 -0700
+Message-ID: <87wm4v7isj.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/3] Preserve PSE PD692x0 configuration across
- reboots
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176057641475.1117105.7388328544884653333.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Oct 2025 01:00:14 +0000
-References: 
- <20251013-feature_pd692x0_reboot_keep_conf-v2-0-68ab082a93dd@bootlin.com>
-In-Reply-To: 
- <20251013-feature_pd692x0_reboot_keep_conf-v2-0-68ab082a93dd@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: o.rempel@pengutronix.de, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- thomas.petazzoni@bootlin.com, kernel@pengutronix.de,
- dentproject@linuxfoundation.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+JP Kobryn <inwardvessel@gmail.com> writes:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> On 10/15/25 1:46 PM, Shakeel Butt wrote:
+>> Cc memcg maintainers.
+>> On Wed, Oct 15, 2025 at 12:08:11PM -0700, JP Kobryn wrote:
+>>> When reading cgroup memory.stat files there is significant kernel overhead
+>>> in the formatting and encoding of numeric data into a string buffer. Beyond
+>>> that, the given user mode program must decode this data and possibly
+>>> perform filtering to obtain the desired stats. This process can be
+>>> expensive for programs that periodically sample this data over a large
+>>> enough fleet.
+>>>
+>>> As an alternative to reading memory.stat, introduce new kfuncs that allow
+>>> fetching specific memcg stats from within cgroup iterator based bpf
+>>> programs. This approach allows for numeric values to be transferred
+>>> directly from the kernel to user mode via the mapped memory of the bpf
+>>> program's elf data section. Reading stats this way effectively eliminates
+>>> the numeric conversion work needed to be performed in both kernel and user
+>>> mode. It also eliminates the need for filtering in a user mode program.
+>>> i.e. where reading memory.stat returns all stats, this new approach allows
+>>> returning only select stats.
 
-On Mon, 13 Oct 2025 16:05:30 +0200 you wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> 
-> Previously, the driver would always reconfigure the PSE hardware on
-> probe, causing a port matrix reflash that resulted in temporary power
-> loss to all connected devices. This change maintains power continuity
-> by preserving existing configuration when the PSE has been previously
-> initialized.
-> 
-> [...]
+It seems like I've most of these functions implemented as part of
+bpfoom: https://lkml.org/lkml/2025/8/18/1403
 
-Here is the summary with links:
-  - [net-next,v2,1/3] net: pse-pd: pd692x0: Replace __free macro with explicit kfree calls
-    https://git.kernel.org/netdev/net-next/c/f197902cd21a
-  - [net-next,v2,2/3] net: pse-pd: pd692x0: Separate configuration parsing from hardware setup
-    https://git.kernel.org/netdev/net-next/c/6fa1f8b64a47
-  - [net-next,v2,3/3] net: pse-pd: pd692x0: Preserve PSE configuration across reboots
-    https://git.kernel.org/netdev/net-next/c/8f3d044b34fe
+So I definitely find them useful. Would be nice to merge our efforts.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks!
 
