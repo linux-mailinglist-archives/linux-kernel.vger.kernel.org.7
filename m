@@ -1,124 +1,87 @@
-Return-Path: <linux-kernel+bounces-856592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A78CBE48ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:24:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25138BE48F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3ED5506476
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FA24086A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48557329C46;
-	Thu, 16 Oct 2025 16:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1C2329C48;
+	Thu, 16 Oct 2025 16:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yu52fW7J"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcHK45yR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3274C23EAB4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4A823EAB5;
+	Thu, 16 Oct 2025 16:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631636; cv=none; b=Bo861O1uzYV2GLPBRJuwXXXBmty6MZ9VsX5oeZemqP7XWnlXD0ftXQUaJH2o/VT0KOYPLxM875kMtopIz4E3wB9irIE4wUuF121kCfpFKyFvoZ6mKIFy2CnJAPW5lk6JHsvwGD1ZaumqRzNlmFGE/qwvA7fqU2pjMBu1NHpp/gM=
+	t=1760631655; cv=none; b=ZUZ6nmmWMOD2dstT75vsEZfimfwh5oqTxttPW8BUVNAZRqvgNC2OA4Q5jchYQ7SlcFKKrzIVUHQ6XtnG0e3e5TB1JshIHXumjzX8nkmjZAlyypDJxD8DCkesguppGl1C4S14uSU4W12eHDBnbj3lPdVcPCpn5U95cfphvcnVqqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631636; c=relaxed/simple;
-	bh=odHyk61nJmeo6+J+Zx1z4MHCgB/EH+RBahpkCczJc1I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HCqwdQJrbxH16u+UQkXMzeYoTVjZ+KCIgCN7ZhlLDhYWfpTLhw7YfW6roV1tXptHuQ6WHAELHXlbtMWVnwzrA2vKNRzHo8r+9+9b2v/9/jrOtEfn3M9RBZ3pD0cpBiqBS5TwY8ISqHNqmDZjweB0bXVuwq/i1Jd/gUYvFrS45vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yu52fW7J; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-290ab8f5af6so7370935ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760631634; x=1761236434; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=opgpSi9HCyYeb5QaoJFK0+KAYLm9MmQJSNhZlyWP97E=;
-        b=yu52fW7J9oXJmywPsNE8LoS0ZrHec3QpeZ7SuN9hXu6C5+DoUjilfz9A4LlTojFawU
-         x1JEyS4CYdP7KvKcJHcZu3CKFLR83dYjKRZBsugie06KgRMVT0vSBx0Ra5Q5C4amXRxx
-         50+yYfeZ6jQPHK/bZI+EbCQpQSSBPyQfOK0tW03BYlZ8eLILYPI0D1awiOKdRIBZE0Ub
-         VrLzX4rMYRNCRAvYXZ1ieqsTHewpDOHy6G2bYElQziJreKN3es8GqBe/1Y6IzjPcotb8
-         Sdf6uEpdXhIW2ey0EACqIY+3PgT92qmdYIZfmam5tgpPvUIkMdZgwocvmM/oQLiz2Wo4
-         Yb7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760631634; x=1761236434;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=opgpSi9HCyYeb5QaoJFK0+KAYLm9MmQJSNhZlyWP97E=;
-        b=pVI0aYIJy0DAL82gIru1BizEpzo6S+kUeKsh0WjVYfQHhQVvHQU/NJnCgoCTpPW/Ti
-         rZHkVBfp3VNLPuoy9d6I0KyN7vsf+w0cbxnwQLr/I2IPJPgmvl9/GQqO9U3vO4q9IGUr
-         VNf5jDEDTgGOPGO06SStiX5uuc2A9gHKpKAuIQWQyCA03WleoNigEMtJY5E8YQHg3DxC
-         Eu4MpFeUMGXWyQqG2zbGPJob3jrWx5cdjxDNBn5mWY2NYD1Feq04CG1FwRd6nXExcNzg
-         o1Atzu4YDSt19utzuyev28EQau+CXwyt97R2Ry1LjQMhc12QXuqH40FKpJNC8pjtRJao
-         YIUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn4YzRsr2Mw2RJSyDeWJqr26l1agdLopY8eRe402udy4uQiaeyJmzvkJr8mHr9CRaxIMCbx6hSVh8vnRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhHPUfhhgZ4DYK7LhyQlQf/ZOEqa2TEFBRnbAXos3Hi+Z/UZqD
-	7ANfeXyeQfihyNl/se7OGLQKNJCAGEguLPdqXVyu873B3yx9LvoJXDUkxYMpekAPz3VNK+aXkn9
-	y1Gp9u86M39wNgQ==
-X-Google-Smtp-Source: AGHT+IEAchZCEYXbzttQRhqLO9QAGbSjjSUxUK9QNMdzsGd5ULRJQFOzo2z7Urwl/wXb5vQxCHwQk2cCqD9wJg==
-X-Received: from plbms6.prod.google.com ([2002:a17:903:ac6:b0:290:258e:f666])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2408:b0:27e:ea82:5ce8 with SMTP id d9443c01a7336-290c9ca6afbmr7175385ad.14.1760631634376;
- Thu, 16 Oct 2025 09:20:34 -0700 (PDT)
-Date: Thu, 16 Oct 2025 16:19:41 +0000
+	s=arc-20240116; t=1760631655; c=relaxed/simple;
+	bh=BEu9qaRzk35340E/96dwUIzN9WPKSPh9nRuOEb2g2gE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=luCz/ISGp7HQiZkmnbz1+562UECKrrNCcX0I7mE/XtuvhhfYoECPLnohWzNwFJeyr6jvqgntROuwLonBJTL+e5J6c+HklZ+X9isPd6Gef8cQqWMO7lpTgLVLeNZ2RVOMO7K2MPU1qqR89JdX4etZtmO4qn2FHR72HeepNo5/iC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcHK45yR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D068EC4CEF1;
+	Thu, 16 Oct 2025 16:20:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760631655;
+	bh=BEu9qaRzk35340E/96dwUIzN9WPKSPh9nRuOEb2g2gE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=lcHK45yRniJFxnBn73icMlpa6vj4BEUpjOB/t68h9di+dUoyq53q3gg2c+Jfn2s4+
+	 EUVVzjl/qkNyjJiTsu2/ZSHHAFtKWGI5iZqd4WSY1068hE8guOR2LJbq+ZLAb9lkAa
+	 KXYQzcDz2nDxRujGIQKRpiESTuv72dDHNLdA1NREFKrjjAZyUm/v7fYRgrg62/dMnU
+	 YwVi0RlnJVDeMf6kOj/WUA8PWJd1GrHlaqmK8w89AaE5MoZcpYQUAFUWHrVnfXA74v
+	 VjLesI254N/ygbXuLtDZqJoSXEGJDXk64ykRKQws2sYXBr63SE/KNokPANV3KYzjJJ
+	 ZgfWNPba3m/yA==
+Date: Thu, 16 Oct 2025 18:20:52 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Bastien Nocera <hadess@hadess.net>, 
+    =?ISO-8859-15?Q?Filipe_La=EDns?= <lains@riseup.net>
+Subject: Re: [PATCH] HID: logitech-hidpp: Add
+ HIDPP_QUIRK_RESET_HI_RES_SCROLL
+In-Reply-To: <20251006010726.189197-2-stuart.a.hayhurst@gmail.com>
+Message-ID: <s208042q-64pp-99sp-49qs-10640n7opn0o@xreary.bet>
+References: <20251006010726.189197-2-stuart.a.hayhurst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
-Message-ID: <20251016162009.3270784-1-cmllamas@google.com>
-Subject: [PATCH] selftests/futex: skip tests if shmget unsupported
-From: Carlos Llamas <cmllamas@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Shuah Khan <shuah@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On systems where the shmget() syscall is not supported, tests like
-anon_page and shared_waitv will fail. Skip these tests in such cases to
-allow the rest of the test suite to run.
+On Mon, 6 Oct 2025, Stuart Hayhurst wrote:
 
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- tools/testing/selftests/futex/functional/futex_wait.c  | 2 ++
- tools/testing/selftests/futex/functional/futex_waitv.c | 2 ++
- 2 files changed, 4 insertions(+)
+> The Logitech G502 Hero Wireless's high resolution scrolling resets after
+> being unplugged without notifying the driver, causing extremely slow
+> scrolling.
+> 
+> The only indication of this is a battery update packet, so add a quirk to
+> detect when the device is unplugged and re-enable the scrolling.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218037
+> Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+> ---
+> 
+> I assume this affects more than just my mouse, but I don't have the hardware
+> to find out which other mice need this too.
 
-diff --git a/tools/testing/selftests/futex/functional/futex_wait.c b/tools/testing/selftests/futex/functional/futex_wait.c
-index 152ca4612886..1269642bb662 100644
---- a/tools/testing/selftests/futex/functional/futex_wait.c
-+++ b/tools/testing/selftests/futex/functional/futex_wait.c
-@@ -71,6 +71,8 @@ TEST(anon_page)
- 	/* Testing an anon page shared memory */
- 	shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
- 	if (shm_id < 0) {
-+		if (errno == ENOSYS)
-+			ksft_exit_skip("shmget syscall not supported\n");
- 		perror("shmget");
- 		exit(1);
- 	}
-diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools/testing/selftests/futex/functional/futex_waitv.c
-index c684b10eb76e..3bc4e5dc70e7 100644
---- a/tools/testing/selftests/futex/functional/futex_waitv.c
-+++ b/tools/testing/selftests/futex/functional/futex_waitv.c
-@@ -86,6 +86,8 @@ TEST(shared_waitv)
- 		int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
- 
- 		if (shm_id < 0) {
-+			if (errno == ENOSYS)
-+				ksft_exit_skip("shmget syscall not supported\n");
- 			perror("shmget");
- 			exit(1);
- 		}
+We will find out about more devices later for sure.
+
+Thanks, now applied to hid.git#for-6.18/upstream-fixes.
+
 -- 
-2.51.0.869.ge66316f041-goog
+Jiri Kosina
+SUSE Labs
 
 
