@@ -1,211 +1,122 @@
-Return-Path: <linux-kernel+bounces-855618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8400BE1C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:39:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02027BE1C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253204FAB88
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1F33B2003
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03902DF14E;
-	Thu, 16 Oct 2025 06:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490B52DF13B;
+	Thu, 16 Oct 2025 06:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CLzNuuZi"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010036.outbound.protection.outlook.com [52.101.69.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEtwsKIb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3045A2DF149;
-	Thu, 16 Oct 2025 06:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760596711; cv=fail; b=ejrmXeVJ9fYfFw8y7AzSL2UmFtbb4A4yX2q6uGajGJ6X9VBicBOYJ9MTqEnTMp629eb95Ntki9pU7yBV0fsfvyQz82tFkPHJdJ+VOQPHFQIAMljowz750mOTmuYqaafVjYCGwCeTaHMWvwCVmOXSoMHssStIkVjF3S26KPZ68CI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760596711; c=relaxed/simple;
-	bh=C6Kqv30l7mOcaP4LX17Uet7UyNZ6Vf311+tbLSATIQU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CRQy7BM90zNa2tbIb3/9kD9elA0LKWMec9jEBTTBcK5y3idpIcj+Qj4NXkppY4EBAm06Mnzwcj/KJ8zO6GLhyVnPO9MvFIDaTezPpkeZaL8J6TAloUN7aH1b46FhVvM+N3KTyOEP8/3Yvnztp7KGvgI3gTRK6xh2kOOrb/VbFTw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CLzNuuZi; arc=fail smtp.client-ip=52.101.69.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dY298wMxgwIeEXzCkEMiVm2uWz2FTSGQb1fQE0h4BW8RthoKLMQQf+LLYd+FpFQVph68LapxyvPRwO+DO7sRIWxK4PhZv1x9DZwftZH/U9Dh9J/TZPakm/k5xn6TfCQswL45slT1xxnZHn0Qy2jk1a7Id8CJ9APmdCKjT1sQ5bVpDcYsjEljn0CtMqdC3eC+OD1OV2dmTDO87C5RX6XD8E8SynLaOAqZ1vic7Ay1Y0dRcqdvs9BYyXi9W9iS8dJ6wxBpSmG+0Fgua3v63/kzyuGM1xr7CgHjfbELkdnmPJVIW+hEchlmWwJVcZtAVbWvTHu43RpVesSKbNp7lLQNKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6FSdROnQLupTIgkQKF+JQxVqrABJAoaLEIlbmBU4k7c=;
- b=P/DaIiRNTzfkfYs3i5GVnJZVnNkzw4tR3pN+oLCXqW7673Mj2sn5aHyuusqVAHNVPaVBVykXDzxwShdHhyOVIZCU1IyYJTAlcuFsEGWGeXVOvWmUt/pZ77dfXnGcYtt1Wo1nOz45X3NQWsf2N4pZcNcLZgMxS2dbhoEMmspkDbfs79h0khfwrtG96OBTgFYm3rBp21ikJ/3Aln5lAfgJXzBVhp8aAUbqaMy9/LIvX7dtoI6DF3MOukmZ5N/PyUqt770MreT9Nc2wr46SPHgboz/xKqMldo+PR7spDPKJp4QUF5OP+IfCjRK1AkVMopTLkCyVTs6OSHel9DgiudAWdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6FSdROnQLupTIgkQKF+JQxVqrABJAoaLEIlbmBU4k7c=;
- b=CLzNuuZi6SWpfADSS9XVbIm3UvXhJMywcJpOh0RNVqC4FgxvM0dLtRceSKCb2Vc40RCncr8xDIaP9jRtLRj3NRT1rL/6EwkezsS+Q5iFR8ZTHFPFCz8/MY9x74nAGGy2iuz9pTRiUtszx4oA0a90YGIl5zIWcLphLhiInXUT9cAsicwaH1KIpqoQB+cp4WC00SRFe+40xdfT6BO0sQxluAB2OV4jVaKltznoYoWwtPVZhnU5Syv0ZjOc+V6MkQEWLTFCrfv+8gJlGCe8pk2bLxDRC/oXS7EPxJIV4gwR06StYRBQO+oLSd0ZKlCSihHLrtL4SFb3Tc7OhbihL6Eofg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DBAPR04MB7270.eurprd04.prod.outlook.com (2603:10a6:10:1af::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Thu, 16 Oct
- 2025 06:38:26 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
- 06:38:26 +0000
-Message-ID: <ffc12213-db40-4c10-8a6e-57003d85f4df@nxp.com>
-Date: Thu, 16 Oct 2025 14:38:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/14] MAINTAINERS: Add i.MX8qxp prefetch engine DT
- binding files
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@mailbox.org>,
- Frank Li <Frank.Li@nxp.com>
-References: <20251016-imx8-dc-prefetch-v4-0-dfda347cb3c5@nxp.com>
- <20251016-imx8-dc-prefetch-v4-3-dfda347cb3c5@nxp.com>
- <51b72003-e9a5-4f34-ad08-249fc24b3041@kernel.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <51b72003-e9a5-4f34-ad08-249fc24b3041@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG3P274CA0007.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::19)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6532DECCB;
+	Thu, 16 Oct 2025 06:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760596791; cv=none; b=eZ5qh3Y2fU/A4TEuK/Xoy35EOfYcpJ9ZM76v0S4+ZeJxfdPktNaSFdhwK3r29HJTa3QQE7WBxVk6Qeku8o9CMJkwyaZu1iPx6ytgXyHMYQopmaxRsAJ09b8+RqQqyvVegdiO72zIgWry7xcnpMlEKgD1wL+Skgrb5CZER+QqPc8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760596791; c=relaxed/simple;
+	bh=qjD4cNX8IC2EA7rEjGiIZKrjj+Tbdm4iYKK470rzebs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bBBJpU9H8laLq2yj7PHA7i/9wmK3+tVniS4VOVA9zgJbeSKeBHPcCo6C/O4y17+vNJwkmgGTAWRrhZuQnZzMhhiF+dDWHbt+4bxZN2em5LRCM1ZdFF+k1CjPbyX8EGveLXiS25SZ3yH5aNL0zfcG5emZUFcy9W+eoW9x1W0HFT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEtwsKIb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3673DC4CEF1;
+	Thu, 16 Oct 2025 06:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760596790;
+	bh=qjD4cNX8IC2EA7rEjGiIZKrjj+Tbdm4iYKK470rzebs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sEtwsKIbQxNx9uxEWRSNS1A1HpwO/e9Sf+KAGUJ2nnzfN55/pEQNI3s7Oh+iarzpM
+	 toiS9l0IVlzQGbheiIsFVuXu0kh+0GYYJixFN/8MUKfMMTOzH9zcoW0e23dsvsHDXG
+	 ClJF6x9EUaSINcHIwUy7Uk1tLPAgubYhQOdBMoTKUOoYNP0yDUjXwZkzO3kpfAHGYF
+	 lQpaIiy7NuzPrXIRqQnij/a5YOxSC/zeRK5S8+xnA95lCGWZvDO2PdWxGXr9SeCWeg
+	 SimkMkx4CtYvh0NojWiuSuvimqh+i4ZLyDC+TPh6xJnevj9aSK6MVJ4NFGAvjqOCz0
+	 RqX5tipIkE18w==
+Message-ID: <39c07233-e153-4453-ae27-7d6498c9a4f7@kernel.org>
+Date: Thu, 16 Oct 2025 08:39:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DBAPR04MB7270:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb0631f2-15c6-4432-c4c6-08de0c7e9c3d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|19092799006|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZVI2NUd3VkhzdklqeDBLdWpwVmNpMEtrYmM3TCtaYlovNms5RmhtQ3pZY1dH?=
- =?utf-8?B?S0Z6eE41eUk3c2F4MWlRU3BhOWpKdG92Y2EwRTc0Q3crSUZXRDZlL09JQUJ0?=
- =?utf-8?B?eFNlWjl3WGpxZHhvVlNsSTljRUhpRjJFV0pOcWVKR29wajkzSGxlcUV5ZXJo?=
- =?utf-8?B?NmZVenZ3cUdXc1o5eWtiSHVhTTBId210UVdNYmNlVm5qZG1HQkd1SHd1Q2JK?=
- =?utf-8?B?YzJKSVMyZk4xc2hxMitNNFVJeU9uTXFZeTBBZ3M5eC9ReU81dlE4T1pmT1dp?=
- =?utf-8?B?WE4ycVRMRHZIMDJ0SzlwZ0l6c3htR0JUay85UXY1dk92V0F3ekNpVjZCQWd5?=
- =?utf-8?B?aS9ZS0prbzdwczBnUXlCcHJUMlRlaW1aaFJDa3U1TkV5dlZCVmRWM1FYcktE?=
- =?utf-8?B?UVNGU2hkVzV3SldGRFEwSjdGZlhXOEtMcGI0akpDNkRZbnB1YVhBbnY5VmMw?=
- =?utf-8?B?NjR6VWpIeUFuZVNtRW1GYUpubmQwMmNrQnQ4dnE3TnFFbHZ1SSs4eGwrcmJZ?=
- =?utf-8?B?UFNpSlA0Nkd5U2RlRXNBSWhoLzY5TC8ycFFVNEwrZmZ1V092bHB3Zy9aYTE0?=
- =?utf-8?B?R3NRT2RZTDRDZjM5UitWMjBxcWhRaTdxekQzbEROYm40ZU9sa2hQQ1lDVThF?=
- =?utf-8?B?bmh5OEViY2ZsZWlPemN3UTBITUJJbWhDT3N3TG9oejIxT2RwYTJsc2RUdHZ4?=
- =?utf-8?B?M0hMcTNXRWVZR2lUcHpHQUhHZ0ZQZVQ0M3hRSVA1ZCtUN1RoUUxiMWVrSERm?=
- =?utf-8?B?SFBYQk9lRmsvTmlCa1RWRWdJMWF5SXd6TUpWL0pjSzltT3NPbm1acENhZlRM?=
- =?utf-8?B?RG4vdFdScjluNFBQUVRKZzlSY0hUdHVET1R1NktNenhpWFQ4cG5mcTZxcFl4?=
- =?utf-8?B?QUI0dUFuZHVGYlN6VmkrQ1B4L0xZM0VITjJ6cCt3bG1ydktrVldPNm9oVTBC?=
- =?utf-8?B?WUlwWk96MWRITVM1SWYvRFp0M2FxalAwcDVOa1BIZDlBTzhzV0xqOS8wQWd1?=
- =?utf-8?B?ekhCbklkRHdMbmcwOC9oMUUzQ0NZVnhTeDRoZjRxMGxHUVJTRXhHeWI3a3Rm?=
- =?utf-8?B?N00xaFhKY3U1eFJxK0lXMUpkODI2RWJwWklMVG8wT2E3aFZOcWFTakJwSEc1?=
- =?utf-8?B?VDc3cWlObmczUWp2VE5CclRtM2UvNWJlQm1yc1NLblpoWHZqSFVZTHFFaDN2?=
- =?utf-8?B?ckRwQ0NFaDVOaDkyMnBiUm5YaTBaZ1BGZlFlelBBRW94blI3T2xVQ3dYNFEv?=
- =?utf-8?B?QWswSFkrZkQ5RERHUk1IKy91Z2I2dTNQdTIxSGhyYjJ0TGx4TUdLM2Jjd3M1?=
- =?utf-8?B?RFQ2WnZObUFlaG1FMkVmV295ajV5eFpzcHRncEdpRkgwdVFGNGsrSlRaZ3Ew?=
- =?utf-8?B?M2ZpSG9YZmdyNHhQaGRxWTY4U3AzakRZZlF2OXpSQmhhcmNKaEJxTTloU3lq?=
- =?utf-8?B?UzdCQUFtUGE5a0hpQnB2Y3ZXWk9mellxaEtMOXJvaTdnSFRWc2NWanl4MWY1?=
- =?utf-8?B?dEtGdFBGOHZIS0NFdGZPY1lxYVc4bWdSYzZPR2g5MjgyTW41blB4Q0Vva1I1?=
- =?utf-8?B?UkpkcklTb09VM0ROMGl1MFRBOFlrUkJRclV6Nllwd3czQm9Ecm0vcWFQSUFt?=
- =?utf-8?B?aXBoVklaZ1RLYnEzMzVQaDVtQ28wa1hFeXE1eEdZV3Z5TEZHZkJEWGdDM3FQ?=
- =?utf-8?B?aDF5YjY2aHprdzUrVkYxc3RQckJycDArZmd2RUlpVkFUbVBranI1YXFRTTJt?=
- =?utf-8?B?d2plVllaZWNiOWFadERXRFZFUFB6b1pPMXJETWxXUllDLzRFSW5lMXdrNENM?=
- =?utf-8?B?a3lmOHZEQm5yNXNvYUJRUm1pWlJuTFc0cjhOSEdQK2xjbnl4U1FocVpVcmhp?=
- =?utf-8?B?WjBUMVRYUzdqRDBkb1htL0dFQktYck1DZEwrT01Va3h3UUV0NmRKSVJZT3JQ?=
- =?utf-8?B?RWE4dmgvVytJeWJjK0dIdTdsSThZdE5MeFJVVzRDV0grZlNFV0drc3FUYktI?=
- =?utf-8?Q?QF49PXDCNbgazB8A/NTjlxsZqvNaj0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(19092799006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RzRNbEVQcFNTZysva2YwTlo0aEZEVDY0anRLVXZOa1locXE2WllaWkZFV0pj?=
- =?utf-8?B?anR3dzlZUUdNZDd3NlNKRTBVeFFjMURqSFhHa1pzVXk5VzgvNXVNZDZiME5s?=
- =?utf-8?B?MTJOTXF6T0lYOTFoS0tWMlIyblBieWRFcDZVd040LytLekZOanhHaGUzb0FM?=
- =?utf-8?B?M3lITnpBM0NreGN3WHRJaWZKK1I4SEZ2Q2NkWE83V1JDQm5lQk5DTytpLzh3?=
- =?utf-8?B?ZTM5NFBpZVczZVBtSWV2MGJ0ZGdkSkEya3RpQWlHTzUzTkE3OHIvbTJ2TnJQ?=
- =?utf-8?B?YnNYaDNVY0NNd3czYzczZ3R0N0dBejVWMGkrMit6M21PY2VvanNUM1JPVm9J?=
- =?utf-8?B?TTkyV3JnT1NLNW9SZ3FRMHZmcloxWmFtMEt0ZCt6clVqU0RtY0hycG5relNF?=
- =?utf-8?B?MEtLVkkrL2kwTDcyeHRXMmhESWJkOG9iTWNmZUZBaWlvaDhDZk5yZ3RvMWdp?=
- =?utf-8?B?N0kxU0haeTlHY0l0ZjhqNWhMeGp4TFlheDNQd3BEdDd4Vk4rUGJQdXI5dDZB?=
- =?utf-8?B?Tnh1S2hDRWtwWXp5YktTNG8rZHZzbzdvMEV4WDR6WDc1M1dMQmZGNy9IcW5K?=
- =?utf-8?B?TUhLZ0FJUUZpcEkxMVFuZWtjdTFiUTc3TFFBd1VTWVlVbDV4QnVsWC92Mnd0?=
- =?utf-8?B?R3dWMjFyYzltVzlIajFLbkVMTVIwK05Ub1V5TlBzRm0xUThHOElKYlZMRFJU?=
- =?utf-8?B?NDQzWnIvYTk3alhEWVlGeWZ2RVBiTjc2VldxUzNKVklaSlo3SEhEYWZqclEr?=
- =?utf-8?B?bzYzRS9CUklpR0tZeUV3K2phZTk2bEtlZFc2V1NkajZlTWlnWlkxOTY4dFpy?=
- =?utf-8?B?MDNEaU81RS8xeDBWV3Fuc1VvVytzYytXNDJmaldWL0RJZEJLV1cyS25MR0tG?=
- =?utf-8?B?cXlSZ1pGVkZOai9FQXIxeTF3a3czYSt5NWJDdHlkanNJMENRNVlWTGo0czhr?=
- =?utf-8?B?TWloV3hsbThWc0dRWFJiVmh4clY2YXN3R3RGNkFJYUxDbERTSmU5Rk1STmth?=
- =?utf-8?B?N2wyZUovOFJTOHIwakVRcGxscWxJbzJHTlEwRzJSYnNvamlQY0h1bmIxMUhO?=
- =?utf-8?B?a292YXdIbGtOQXFINnREbFRwRDczYTI5Tlh6cXRlTG1Fa3pxRTlMekUzVUM0?=
- =?utf-8?B?SkpmaUxqcmR3QWxVUjlUdkUyNG9QWjVVZURNQmdnMnpYZFNXTUVlVW5TUFV5?=
- =?utf-8?B?SmF4SVZzQUxRQzVCRFFyQnFuQlpMNkkxbUJEakxId1hGYmxURVVWb0VFVzVa?=
- =?utf-8?B?bXFRdHc5akRLblZOVDhTRTd6Q2kvNTRKNC8xRkpTeWVmRXRvYjZ1N2VqakNU?=
- =?utf-8?B?RG5uWUJtZ3RyTlNpN0s4Z2l2VWlRT3l1M3JEMDcwU21tUFBFWXBlV3RnaVpJ?=
- =?utf-8?B?RzV4NDlodWRySW1RMVpxd1hiSmQwUDdMQnpkSWJxRVUweFYyYnVKMFdJR1Vh?=
- =?utf-8?B?UVpHanZaS243WUZhUkdKUDBCZEN4dC9HbmpiWHVHL0p2VlFwNHk3ZVJtdFI0?=
- =?utf-8?B?REdpWGVMVWVvZ3NMSnpiNm96R1RyR292WDh5VHZHdGhocUpCa2NtWmN1a01w?=
- =?utf-8?B?T24ySVlGQnhrYkordnN1S3VjOVZuVGJ6TnpmV1I1V1o1Q0wyODc4UkRHbjBF?=
- =?utf-8?B?TE9ZakJQRlJNSzlBYzBud3AxL1lOU1ViekJvdmw5MDVUdWZqYytPUWRXb0RO?=
- =?utf-8?B?eTQ3UDJqRWJUcmJRcG0yUHN2RThwWHE1SXhLVHVaUWVPSTFQLzJ6MDJaY2xI?=
- =?utf-8?B?b0hERmtzcnA0TVRmSmVubFVLWEl4MVArQk56dFNKNVhKRlM1eVU3Z1FPNnQ3?=
- =?utf-8?B?elFwSVY1cHRmWnVjODNNcXZUQ3N5b0ptK1VhS0R3SVdlcXlVOG81VTNIWnoz?=
- =?utf-8?B?czJpTlNTcmlsd0pvQnVmdTBiOVNyWjhjekxUN0hYWHV2aXZUZmZrUmhRd25F?=
- =?utf-8?B?TFlSZzcwN01BMWsvNHJMK0djSE1rNHAvTkk4bXhYSnZKRHUzcUtEMUhLemR3?=
- =?utf-8?B?REZRWmFYQ0FxQWVkNmRSbHVGa0VBR05maGJhaFdIUWhVY1NOR1pENWdwUlVB?=
- =?utf-8?B?aTdaRjh0MldSNUVaK2RNMlRvSHNmdXhLNi9UWGltU2h5L1ZrckhQSlBWRzQ4?=
- =?utf-8?Q?Q55+s8OAFzvubLKcVoEoB0gJQ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb0631f2-15c6-4432-c4c6-08de0c7e9c3d
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 06:38:26.3490
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yVmybxS6TK0bb50UWV8qdV2/TG2dMthOVcBD/EGl08Q9vePtgPOxrgX+0egNNjL3UoKpnFXxNEYFau35/ss1OQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7270
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 2/7] dt-bindings: media: platform: visconti: Add
+ Toshiba Visconti Video Input Interface
+To: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>,
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251016-visconti-viif-v13-0-ceca656b9194@toshiba.co.jp>
+ <20251016-visconti-viif-v13-2-ceca656b9194@toshiba.co.jp>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251016-visconti-viif-v13-2-ceca656b9194@toshiba.co.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/16/2025, Krzysztof Kozlowski wrote:
-> On 16/10/2025 08:32, Liu Ying wrote:
->> Add i.MX8qxp prefetch engine DT binding files to
->> 'DRM DRIVERS FOR FREESCALE IMX8 DISPLAY CONTROLLER' section.
->>
->> Reviewed-by: Frank Li <Frank.Li@nxp.com>
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->> v2:
->> - Collect Frank's R-b tag.
+On 16/10/2025 04:24, Yuji Ishikawa wrote:
+> Adds the Device Tree binding documentation that allows to describe
+> the Video Input Interface found in Toshiba Visconti SoCs.
 > 
-> This should be squashed in each respective commit. This MAKES NO SENSE
-> as separate commit, stop inflating the patchset.
+> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
 
-Sure.  Thanks for pointing this out.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> 
-> Best regards,
-> Krzysztof
-
-
--- 
-Regards,
-Liu Ying
+Best regards,
+Krzysztof
 
