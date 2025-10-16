@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-856366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D90FBE3FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:48:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8BEBE3FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B4A1A655AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:48:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40E7B4E3C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A62C3469FB;
-	Thu, 16 Oct 2025 14:47:10 +0000 (UTC)
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605B53469E3;
+	Thu, 16 Oct 2025 14:47:09 +0000 (UTC)
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE203451B8
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8943451D4
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626029; cv=none; b=dEdkKpXfff8afgOaDgOMq7SJt3GmRa+5cTBnEi72oHoQC7cPoTvcu2Uw2cP2zaBCo4JbbRSpSmAXgXTeZDztW7kpHv/OwpTJkjkO5cRLNcRn4JW7/YlfiAMe4Gs3K70yPnyVFaEypYFNyHM2s6rWVEjh9W3kgQPhU3WOQ7D2fUk=
+	t=1760626028; cv=none; b=q+y7i87o0QgcvVQdbrTWiWGEa1rsdODqf+jGo7NMp37bb5Q4la8EM6ORjKANNcJdnn3IWoofVFq70mvyCP2US5dJMsmY1AtBrdwVwwWB4ZwR1nhgugwCGd9/HfEDWSZCnfEMZ9bsi8BSmm7VOHPIP1vsz7jkO2eGaJXThQpDhVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626029; c=relaxed/simple;
-	bh=vxd5viqIAF53p9qHcx2+SSC6DWLKIshKJ2YVAGNmP6A=;
+	s=arc-20240116; t=1760626028; c=relaxed/simple;
+	bh=qrYx4OQbtVttMxYPNSKZyKUM/2EziepE/DMT9sZuO9M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ez2UUf1tbJFYzUSyhSnSySZuA/30wLPhYiGnnk38Zv/iALLmN9VGXqG3tFPP1yIyHdjdHC3vbXQ2UG8styOuJNjsmxkmm0F7YU3lSy1PQi7kOoMDQJ377ByBCmj5GoULnAsksEtgjKnOcBMyiq9xEhXUsPj0ebZzKx/2ru8md8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=yonch.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.45
+	 MIME-Version; b=MkDipp+oaAqHfO27lZ8qwPopnkpZbbSw8VG2TUPfE26ONobi87cI0d/9DJUObPsgSzdMqOYrF2SAcFZ53rSd+uAElbDdJ/XD6W0MA4xaHHWrE6iQy4BFeavyl2e/WgJ41uj2WzbRGx6PrVMrTDmEQEYy0pnd/jmRYN4YjKOhSd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=yonch.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=yonch.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3c972dec6easo517756fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:47:06 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-651c521980cso201222eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:47:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760626025; x=1761230825;
+        d=1e100.net; s=20230601; t=1760626026; x=1761230826;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WkeQ5GVzAIUDDgYC2BBLNxE47r9RQHz/6gTcvpiCb7E=;
-        b=WEyuGW7fOZ5FtQ5vTzRpceyv/k6s1sZ4Nb5JyMiXdTASPdlTYBrJUbPeTGub9RUcfU
-         Dr1879doOxONdt7wTxtmkv78ocBSX/lypUwxqDi0O7PD1xyIUYWQefEqKOEb0myrjqPa
-         L/w5P5azM4qs3Ou+WhknSCfkspKut7qPvuDE6XZUhREV8H5Skx71JA73sz0LTFweVtaj
-         +WKDkdQ1Pywbdz5helAPjpbCFAzKpyXeA97bYrtSn2bCsn7IC+m49npljH8tBVZ6lBPt
-         nkyhGj1pw2+3kIHhPUe8mc41RZ9gmoQvO6ybVNNbMWnAnY5YhcpALvXc5UHwUUKhpRUp
-         fy4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX4o8DNIHZGaiHbVx+zRrv0Gdw3PzbJE2cein3cyYZEMEoBXkbjcHI0H8y766HbVpcJ2RSMUDj1hDni7vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOzPrZxEIEj1EYNlfjlYM/pmy8VSirnsvZd15He73MdHHEXw9T
-	VKAhskxbvavxmxMttgy0kTt+ZDKO4/QRdRDvxpz8vYY8KGA8JViojVU1
-X-Gm-Gg: ASbGnct11Hm36cFPfGtHxCcQempNOKs+qgSltcM4zmUNZ4GvsqoPHMaKkfRSa79jKFz
-	DhkUtfXROCdSsqYuC3sX/P1qkqKQ5mHuu1bbLaJnBrHASXN235u/Yz1gIa6+58gluBA9rHQlff6
-	yiHlrOcc0uEPsAqWhM+qq4fJiosLkspfjWFa/2oIs7aM4kGGuxPN9C9XDPe7ENsqKXBBhCI2OEB
-	xjbD3qqcrKBb75MlBIkewtf6dc8qdCFjVoKRamhujaGx3APjImyVUj2Wi0Hbbhlz0RCQ/j2t8jg
-	btyeoQ95N7JFdJ25w4MsLLEx2IKqPeAt1pokrVGKGxbufbi9kCfY+ILqRvga931+ANjJIZBPr4K
-	rni4+Ijn7A0xQM/YjIDpWd/kcWaUlm6M4ERzBNkGhbD45PgbwJ4/qn3Fz4h6A4kIxkgVzObDNoz
-	J8p68u3db2oJMHd3DHnwCj7uBkzupRa+FAgd34SqkOqO6HrOZ2lsX4ZPd6
-X-Google-Smtp-Source: AGHT+IHad8QU7400Suvztwz7R3TknwRXuPTBhGJThjhex4bA27wajLbo4tHyKKwflCEojRIUm28PFg==
-X-Received: by 2002:a05:6808:14c5:b0:43f:507f:ced2 with SMTP id 5614622812f47-443a2f1b8camr127533b6e.23.1760626025484;
-        Thu, 16 Oct 2025 07:47:05 -0700 (PDT)
+        bh=P6FTC4pXxezWlArm57ZmRQwBfAYH7sPfczRlTm0tzCY=;
+        b=KJ+EGm9BsgG/veLP+hLNS51rIoOSHDkUyxwHy7KHUrudKGUcxfvnYzSm6UCAVkk6Pu
+         uBSSBZXBjHbu2ZXT0TfC8DUi8Fpeg9E9LSeLp0lh7UJpRq7V1HyeeqwAPZytmHwh1/hU
+         sLImSicyMeUEiP/tGHt0fcb6Sm8hkvLdPinLETlBTTMa0lGBjvBoN9N1adLaa7p3MLrQ
+         okamhjqndIBJPIt2hH8LwZC60a1CF6gP2F9ghsmkFyTmnerFBO+5dh0PGNci1XL3GYpm
+         qG5TP+orTDFk/9o5UA2HHxrbIDvAy65IP23xnKzL/RjEUdoqND/fSg7YPXCuWM/nXTf8
+         +olQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnB5Coeqxr5Ftd3A//00NxSq4On7FsmV8YuN6mqOhLKLieygWkVZv1s6wFfIXtOvs9ocU64eYXw9Ef1aY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbrR/yBxQx4mqT36TftrVD4DEu0IMIOpPJhGYfiOkOFHjKFHuW
+	OFxOwfR8HMugE6Enb6EO8P1BnMLqABmeOcB4YtvMVjUkI8uMz31KdBZk
+X-Gm-Gg: ASbGncuSPZBvgn+lg1FTq596VH1rX8sRrycpHvuBAnnr1XJqpovqqQLigSVCp9vXER8
+	1huKiHm+0hLE7syk4K3ygZJEVO5wCDzEh3vzXIC/E647seljIYE0Pj0LHQBjpEAZPF4h7Sh0q+G
+	e/60K1qaa4nEk1QqLcMLnrnUE0aUR19VdKcR7eG11G7OMrCO5tQ2Mw9JBvw9ySDq+TbzL439ww4
+	cIsWodIWv1ICy+DINNoiduRvnKuxTT0IEIbSQZ82p9ZzVMmm6cA/bqIM187P6fA/NR9ZZFb7Tvo
+	aE0CPNsQYZg9Qvm2EDAGaUM24q5JvoAi44V6q6RbiRAP6uPi6Q4nJhq9G9+4uGBrkQwOmJKIWvf
+	H6s5MMsuxpgWXok86KpHiZiTMn2lXbkv/+y/EvANC8F7UgKvy3RSgp4LiYzR2yfjS88i9B9rsx/
+	FCkaFKdfB18DoIDuHL662EF6ax/ANG1DfhRlvi6hwBeX2DiHOtovyHDFYsV1iXHXhikQI=
+X-Google-Smtp-Source: AGHT+IEqY0Itcc1XjdzEUHZg7NibgLkNaNHb6IF/rm8TnzxUng5S0hLv2Izsxr0tjhoHkMDieMlXEQ==
+X-Received: by 2002:a05:6808:4f0a:b0:441:fb07:c178 with SMTP id 5614622812f47-443a2ed0503mr112853b6e.8.1760626026415;
+        Thu, 16 Oct 2025 07:47:06 -0700 (PDT)
 Received: from localhost.localdomain (syn-067-079-108-173.biz.spectrum.com. [67.79.108.173])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-441cc812f24sm3678018b6e.12.2025.10.16.07.47.04
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-441cc812f24sm3678018b6e.12.2025.10.16.07.47.05
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 16 Oct 2025 07:47:05 -0700 (PDT)
+        Thu, 16 Oct 2025 07:47:06 -0700 (PDT)
 From: Jonathan Perry <yonch@yonch.com>
 To: Tony Luck <tony.luck@intel.com>,
 	Reinette Chatre <reinette.chatre@intel.com>,
@@ -69,9 +69,9 @@ Cc: linux-kselftest@vger.kernel.org,
 	James Morse <james.morse@arm.com>,
 	Roman Storozhenko <romeusmeister@gmail.com>,
 	Jonathan Perry <yonch@yonch.com>
-Subject: [PATCH 4/8] resctrl/mon: Create mon_event_setup_read() helper
-Date: Thu, 16 Oct 2025 09:46:52 -0500
-Message-ID: <20251016144656.74928-5-yonch@yonch.com>
+Subject: [PATCH 5/8] resctrl: Propagate CPU mask validation error via rr->err
+Date: Thu, 16 Oct 2025 09:46:53 -0500
+Message-ID: <20251016144656.74928-6-yonch@yonch.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20251016144656.74928-1-yonch@yonch.com>
 References: <20251016144656.74928-1-yonch@yonch.com>
@@ -83,140 +83,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refactor the selection of monitored event from the kernfs seq_show
-handler to a helper function. This provides a single setup path that
-the resctrl PMU will reuse.
+When __mon_event_count() rejects a CPU because it is not in the
+domain's mask (or does not match the cacheinfo domain), it returned
+-EINVAL but did not set rr->err. mon_event_count() then discarded the
+return value, which made failures harder to diagnose.
 
-Add mon_event_setup_read() to encapsulate domain lookup,
-rmid_read_init(), and selection of the valid CPU mask for the read.
-Rework rdtgroup_mondata_show() to call the helper before reading.
-
-No functional change intended.
+Set rr->err = -EINVAL before returning in both validation checks so
+the error is visible to callers and can trigger WARN_ONCE() in the
+PMU .read path.
 
 Signed-off-by: Jonathan Perry <yonch@yonch.com>
 ---
- fs/resctrl/ctrlmondata.c | 71 ++++++++++++++++++++++------------------
- fs/resctrl/internal.h    |  2 ++
- 2 files changed, 41 insertions(+), 32 deletions(-)
+ fs/resctrl/monitor.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index f28328c49479..d1e4cf6f2128 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -594,32 +594,16 @@ void mon_event_read(struct rmid_read *rr, cpumask_t *cpumask)
- 		resctrl_arch_mon_ctx_free(rr->r, rr->evtid, rr->arch_mon_ctx);
- }
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index 4076336fbba6..4d19c2ec823f 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -445,8 +445,10 @@ static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
  
--int rdtgroup_mondata_show(struct seq_file *m, void *arg)
-+int mon_event_setup_read(struct rmid_read *rr, cpumask_t **cpumask,
-+			 struct mon_data *md, struct rdtgroup *rdtgrp)
- {
--	struct kernfs_open_file *of = m->private;
- 	enum resctrl_res_level resid;
- 	enum resctrl_event_id evtid;
- 	struct rdt_domain_hdr *hdr;
--	struct rmid_read rr = {0};
- 	struct rdt_mon_domain *d;
--	struct rdtgroup *rdtgrp;
--	int domid, cpu, ret = 0;
- 	struct rdt_resource *r;
- 	struct cacheinfo *ci;
--	struct mon_data *md;
--	cpumask_t *cpumask;
--
--	rdtgrp = rdtgroup_kn_lock_live(of->kn);
--	if (!rdtgrp) {
--		ret = -ENOENT;
--		goto out;
--	}
--
--	md = of->kn->priv;
--	if (WARN_ON_ONCE(!md)) {
--		ret = -EIO;
--		goto out;
--	}
-+	int domid, cpu;
- 
- 	resid = md->rid;
- 	domid = md->domid;
-@@ -639,30 +623,53 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 				ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
- 				if (!ci)
- 					continue;
--				rmid_read_init(&rr, r, NULL, rdtgrp,
--						     evtid, false, ci);
--				cpumask = &ci->shared_cpu_map;
--				goto perform;
-+				rmid_read_init(rr, r, NULL, rdtgrp,
-+					       evtid, false, ci);
-+				*cpumask = &ci->shared_cpu_map;
-+				return 0;
- 			}
- 		}
--		ret = -ENOENT;
--		goto out;
-+		return -ENOENT;
- 	} else {
- 		/*
- 		 * This file provides data from a single domain. Search
- 		 * the resource to find the domain with "domid".
- 		 */
- 		hdr = resctrl_find_domain(&r->mon_domains, domid, NULL);
--		if (!hdr || WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN)) {
--			ret = -ENOENT;
--			goto out;
--		}
-+		if (!hdr || WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN))
-+			return -ENOENT;
-+
- 		d = container_of(hdr, struct rdt_mon_domain, hdr);
--		rmid_read_init(&rr, r, d, rdtgrp, evtid, false, NULL);
--		cpumask = &d->hdr.cpu_mask;
-+		rmid_read_init(rr, r, d, rdtgrp, evtid, false, NULL);
-+		*cpumask = &d->hdr.cpu_mask;
-+		return 0;
+ 	if (rr->d) {
+ 		/* Reading a single domain, must be on a CPU in that domain. */
+-		if (!cpumask_test_cpu(cpu, &rr->d->hdr.cpu_mask))
++		if (!cpumask_test_cpu(cpu, &rr->d->hdr.cpu_mask)) {
++			rr->err = -EINVAL;
+ 			return -EINVAL;
++		}
+ 		if (rr->is_mbm_cntr)
+ 			rr->err = resctrl_arch_cntr_read(rr->r, rr->d, closid, rmid, cntr_id,
+ 							 rr->evtid, &tval);
+@@ -462,8 +464,10 @@ static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
  	}
-+}
  
--perform:
-+int rdtgroup_mondata_show(struct seq_file *m, void *arg)
-+{
-+	struct kernfs_open_file *of = m->private;
-+	struct rmid_read rr = {0};
-+	struct rdtgroup *rdtgrp;
-+	int ret = 0;
-+	struct mon_data *md;
-+	cpumask_t *cpumask;
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+	if (!rdtgrp) {
-+		ret = -ENOENT;
-+		goto out;
+ 	/* Summing domains that share a cache, must be on a CPU for that cache. */
+-	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map))
++	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map)) {
++		rr->err = -EINVAL;
+ 		return -EINVAL;
 +	}
-+
-+	md = of->kn->priv;
-+	if (WARN_ON_ONCE(!md)) {
-+		ret = -EIO;
-+		goto out;
-+	}
-+
-+	ret = mon_event_setup_read(&rr, &cpumask, md, rdtgrp);
-+	if (ret)
-+		goto out;
- 	mon_event_read(&rr, cpumask);
  
  	/*
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index dcc0b7bea3ac..486cbca8d0ec 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -366,6 +366,8 @@ void rdtgroup_mondata_release(struct kernfs_open_file *of);
- void rmid_read_init(struct rmid_read *rr, struct rdt_resource *r,
- 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
- 		    int evtid, int first, struct cacheinfo *ci);
-+int mon_event_setup_read(struct rmid_read *rr, cpumask_t **cpumask,
-+			 struct mon_data *md, struct rdtgroup *rdtgrp);
- void mon_event_read(struct rmid_read *rr, cpumask_t *cpumask);
- 
- int resctrl_mon_resource_init(void);
+ 	 * Legacy files must report the sum of an event across all
 
