@@ -1,104 +1,89 @@
-Return-Path: <linux-kernel+bounces-856797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB026BE51C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:51:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6312BE51C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF4D58843F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:51:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4CFD4EC6F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB182222C2;
-	Thu, 16 Oct 2025 18:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0508823958C;
+	Thu, 16 Oct 2025 18:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J7RanfJx"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RO5o/lOd"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAE290F;
-	Thu, 16 Oct 2025 18:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FC2290F
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760640712; cv=none; b=gAZFV9wRdGhSbaalKDxY3dyJnXessjnRcXbAw0++LO2IlBDGqB3SlfV01DbAruPKSV1T1olVVI4wAuVj/mgSTJTwsvL10U1UOdVVtU7bd7h9K3L5yD6j0QR8z+C43TvlCgseVoqmgTZgPvNs2HmPmE1sX1lgPo0pxvdWjx4exdU=
+	t=1760640776; cv=none; b=nGiVoJvqU7rORLcpy6HwiaBGvsrpWuBBree5BVDt8fjLvhCI2QwixESWH6cb50exJNpK9hhRw8tumFv/dYCLCiYl55AaZGuVxx4/uS8L9rJmHyPosW216/PGY2iO/fe87QB14Cjmm3n0CY5iyPWEP4XzxEpuieAR7LHIPsKpJfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760640712; c=relaxed/simple;
-	bh=1rASaJG6EY5HKd8Wp0j/bvff1gZOgkW+0jAm7wCZJZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPJjNM+X9ODoBbMOjykMfGaaYXlSS11n2hA1RWpUO9qFqfhBVln8dU2/zg5+o7o0v6sKHukoPOIB2O8DcUwBaUFwt6LLoVCnK5h/Au9OVBDZSKhgeKPno5FtQR0W2PEh+ufY8OhbnmKR7tNjLFSMu0b0kA9kJjRsDRf36D2BzlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J7RanfJx; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1760640776; c=relaxed/simple;
+	bh=WueHvcKr5EsUw/kTPGTDIhGZhyMzxa3z14GoKAIVh0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdsOXhP78pMMLEWG4+fVhkF56w74KswIR1CaZIQPvpqAd6gzygIbYLtpU/ZyTwffk1ifJGDVoXyTw8c+nX5tNCNrGcf57gUoWCKWpt4QFlRy5O85ssQxBCFTluQDB4xRRbwkQ5UafZ0LVaAGHXH4Ooce+Sz1dTiuqj9Nc1hO6og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RO5o/lOd; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Z6u2Qohb/FdORfWoAU/xcVQhrvWbKQssHR/jj3k2Qx0=; b=J7RanfJxne1LwZgG7lCJ8um7fG
-	XNI6OzlG2YJ3m40XsfXG6a9q6ko4TO6fDVBn+cL6FeYYff8B4wW4SrU9f0gap0sfjM5WnNdU1lYsb
-	uceSziZ2RSxtAebv3ozEVlcpePrLTAsK2CDVnC77eneykRJKhoAmd2y4QUD29rw659uwfabwkUQtb
-	SkekCuJxRYUOoNborE8mkmuQJu1r2dqXLVkfGL0Dfxemr5yQL7DaBkJEtBq9Jygh3sz7NbQUH/0sv
-	4yJ7YfQcKBiJzPHmYwCOBmr3co5vlm1zrD4EhEpDyZGIrRE0kIBOGHxMVLIagu4aAx1BmfUzrJejO
-	MHLCnyWw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9T4n-00000005jRQ-3Cgk;
-	Thu, 16 Oct 2025 18:51:49 +0000
-Message-ID: <add429f4-0c22-4228-8cf7-4dfe21630823@infradead.org>
-Date: Thu, 16 Oct 2025 11:51:49 -0700
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KPO4OMUOafFZ2/AA6OLS6t9Dy0t7EiEKxJlM5HXbLk4=; b=RO5o/lOdn1P1loSyGKNkI0TeHX
+	VwK9O/wZKYoAZoFTs7+31wLT5tUFdecbSCfPiIesbcLcL2DXQFzN6LETONrgXRp1OnHilP+1iBVd+
+	WvZpzcPcwsZky3YiP+Z9Y2hoDcW0B9RgpUK6sdP6SdjPZQ40DHaZq+Qi9/7DpLN/FmGp2c/MCJ/Iv
+	H6PmO6TqbwlLCkTNj+MlZxtU+Y5OPDnme9WzugbOgp56axjUFbmgUiwaXdKkrCLCeOcypgCSYSzOe
+	wS5bV3GGn+4fOeoHAYQ/b0rXmFPzeqX3p46zeKGCnhQUKT2veMSuQwysDQy9bSTOiL4m4S3GLJ+UU
+	nrqA681w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9T5e-00000006xkD-2rj2;
+	Thu, 16 Oct 2025 18:52:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 91864300220; Thu, 16 Oct 2025 20:52:41 +0200 (CEST)
+Date: Thu, 16 Oct 2025 20:52:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 40/56] x86/alternative: Use sync_core_nmi_safe()
+Message-ID: <20251016185241.GG3289052@noisy.programming.kicks-ass.net>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-41-david.kaplan@amd.com>
+ <20251016103549.GD3289052@noisy.programming.kicks-ass.net>
+ <DS0PR12MB9273D987B842D9E80081261A94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
+ <20251016144730.GC3245006@noisy.programming.kicks-ass.net>
+ <DS0PR12MB92731E9877D21E36EC3EE4ED94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: sysrq: Remove contradicting sentence on
- extra /proc/sysrq-trigger characters
-To: Tomas Mudrunka <tomas.mudrunka@gmail.com>, corbet@lwn.net
-Cc: bagasdotme@gmail.com, cengiz@kernel.wtf, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- mail@anselmschueler.com
-References: <87wm4xbkim.fsf@trenco.lwn.net>
- <20251016101758.1441349-1-tomas.mudrunka@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251016101758.1441349-1-tomas.mudrunka@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS0PR12MB92731E9877D21E36EC3EE4ED94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
 
-Hi,
+On Thu, Oct 16, 2025 at 03:34:14PM +0000, Kaplan, David wrote:
 
-On 10/16/25 3:17 AM, Tomas Mudrunka wrote:
-> Hi. I am author of that sentence and this is NACK from me.
-> 
->> I'm not sure this is right - there is a warning here that additional
->> characters may acquire a meaning in the future, so one should not
->> develop the habit of writing them now.
-> 
-> As you've said... I don't see anything confusing about that.
-> The warning was added for a reason, because there was discussion
-> about some people writing extra characters in there, which might
-> cause issues down the line if we refactor the code in future.
+> I will note that on AMD, MFENCE has the required serializing
+> properties (like SERIALIZE).  On AMD, we could use MFENCE in
+> sync_core() which is probably faster that iret_to_self().  But
+> again...do we really care.
 
-You have already provided a way to write (enter) multiple characters
-to /proc/sysrq-trigger. Are you suggesting that someone may come
-along and add yet another way to write multiple characters and that
-this paragraph is present in case that happens?
-
-
->> After all these years, I think
->> the chances of fundamental sysrq changes are pretty small,
-> 
-> Actualy it is not that long since the underscore mode was added...
-> 
->> but I still don't see why we would take the warning out?
-> 
-> Exactly. Thank you.
-> 
-
--- 
-~Randy
-
+About faster, no. But MFENCE has the benefit of not causing VMEXITs and
+also not being IRET, so I'm not opposed to you using that as an AMD
+version of SERIALIZE for the time being.
 
