@@ -1,128 +1,158 @@
-Return-Path: <linux-kernel+bounces-856714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA1DBE4DD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0275FBE4DE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DBAA562D84
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF365E0F12
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C98350D44;
-	Thu, 16 Oct 2025 17:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biocjUso"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E22721A434;
+	Thu, 16 Oct 2025 17:36:43 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8713934F470;
-	Thu, 16 Oct 2025 17:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6061933469D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760635832; cv=none; b=sQRnoWM25tsrmRhHjTTcDVgtdA2ApyVfogAWM3w4jczi9nm0XWoweTSZTaXjSpmm3nQ0qguJdHLGXOURCoYr0mRvLdnTCeEKixjLxZs77g7QI7SBBhZcWVZVOf5zF6rsmuaulJXpiqqybx2ayuMkVA0dBK9bHqPEK1gVwASTaGg=
+	t=1760636202; cv=none; b=cBCu3Seb9Scnm7UHz5Yi6LmsuqmMIlYFZ3rCkg81N3XxcZOhGzt42zaqBSJ4tQEJLuO9Yb50NqUCy2fmKOjaHXafGyAdndIDgtcNvxT693Yp9yZyzLkvVw8iKGXrLvKXedm/xQHlmHyP/deUFs56axzWWeej5YbmVWKUA65XD+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760635832; c=relaxed/simple;
-	bh=O1PeDs+ueaf6tTqY3uTzigyg4af7TbN5NLCGU6ditm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrCJZ3rHaEQVoO3OBA5RSr4MMyk+4m/lriYrIVt0SxHtCRBIl22EsV7FghyhqlRBGF+4IggTSje1tuzxSA3rp0aJtiRrJXUpi8/N44+jpeJEO9a8/Q8G5cqE6rRWhtZRuwA/uf+b+HDsZSaHYbp9KTcqN95WtRsD06/fwLRGfHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biocjUso; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A100FC4CEFE;
-	Thu, 16 Oct 2025 17:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760635832;
-	bh=O1PeDs+ueaf6tTqY3uTzigyg4af7TbN5NLCGU6ditm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=biocjUsoQunlT8LPzGwXoaMftmMLyNtQUGK0upt4nFv+6zS5o/8KHL/QlKhW7RNT2
-	 lMMpYFTZJJFVzKc3ct/vaGiAtKMfUGXWP5RVolXqJafCGbcmeeI1xHQuv9tFduCxpK
-	 lI9LD2YQdSwYy7rZ62XcwPFSfYGqakBf64Q5+oVvFkR68zODKNu1Z//HuEJe8YiPqF
-	 aLEhCGh6/z7jqnre8xvXnUaWEdvV9OX9JwdlqPIcQI2jKnMFCg27Ar2PT4IC+bexEQ
-	 C+WbCmS1vDnv6k1Yrt9Lvf240+FMRYUZ1PzmG10etWJrf6es0p9lot8KZHSvVd7vrO
-	 V5AtGDnq1aN3A==
-Date: Thu, 16 Oct 2025 20:30:24 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org
-Subject: Re: [PATCH v5 6/7] liveupdate: kho: move to kernel/liveupdate
-Message-ID: <aPErsBFxgxJ5VntU@kernel.org>
-References: <20251007033100.836886-1-pasha.tatashin@soleen.com>
- <20251007033100.836886-7-pasha.tatashin@soleen.com>
- <aO9WvF_WMkKKqYo5@kernel.org>
- <CA+CK2bBC57v_CYdpT-Jcu4LX4MxZZ5CyAJBVTZVXdMnCXR-AmA@mail.gmail.com>
+	s=arc-20240116; t=1760636202; c=relaxed/simple;
+	bh=TBg2vuYK+cI708IVZhElHlvtTpxB7rymoyb3gUuQl80=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oC4p9GG1ltZiu9kaOA8dTr8C4Uk+MmrUFAp4ZsGn0kpxd9yikSpIfCKWdmwB8cUpwKNSUsdmw5C4RYOCEMsGudBWeSn5xOyIPJbZjq+WAHYN3QXvSJeu1G58szimTHpDV0UwMSYnPBH152cGDtEL7ujAeWzYisU6a7bV7bRRsSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430c684035eso4007375ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:36:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760636200; x=1761241000;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oPg0d6zIbA8VuWeZ8yHui07CalWA9zc91ILN9XOQsus=;
+        b=I8izd+R9cNUdhhkG1pqewcv2rEqQjoV3EmrjSYNms4Tdwug9RQG54OpAPMdnWleDHI
+         yrWkVuK5bYCEPzpGqh5ryY0b0bDQCOm0uRnT9ZBFEeueR5m9ljcHlSK4dD3g2DE7GEme
+         065JN6tc7ZLnjCg2iQLix3MpX81/pazZsMRGW4pT0g+W/UWINNQc1f3CUuri3XOhFOcn
+         XhbXrqanIVtjRkN0j61t/gbL7cqzRl2RClH9LBNroHE1SCStFnhE2xrX6wOk9yTRpjNf
+         ul4vO6dIFOXTawN1w0f1/oGehR+BZpNUrr7zziNqCkKv/R4hKLyJmNCA6MW41SLzBTTX
+         kXkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzE9Nxl7m43SWx7aDKVTERoVnMk//BWEnqxZbuZYn8hPwKaX7Ubb6+1LoqMNb5fJqPpgomljllhY15UEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7862oW/gEXOoCxnsp/24cPQnCPYu3KF2+k7QjHOjsxsHWm+3r
+	fR/p/62Cruns7th31V9TD71Ysc/F7YvNQooRIzAQQiU298Bykv0l1P8Ip67vMEEaQrMxyDWxqeR
+	yNBOdFQzJoJoMECceZzEyNAtGm5rqN6O4g9DdSmNCiDMgLEQjntC2PrHI69g=
+X-Google-Smtp-Source: AGHT+IFWCdxDVKR2wxpQsS4V4HPZ4HeJTiJl1MbDy1JWhyEbXz5dtfHxcDEmhBMfwShky/EcTgO0v32wGyNp0aulmZ8JemCCuFJz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bBC57v_CYdpT-Jcu4LX4MxZZ5CyAJBVTZVXdMnCXR-AmA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:3c04:b0:430:b467:1af8 with SMTP id
+ e9e14a558f8ab-430c526fd94mr13929805ab.2.1760636200452; Thu, 16 Oct 2025
+ 10:36:40 -0700 (PDT)
+Date: Thu, 16 Oct 2025 10:36:40 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f12d28.050a0220.1186a4.03dd.GAE@google.com>
+Subject: [syzbot] [ext4?] WARNING in ext4_write_inode (3)
+From: syzbot <syzbot+070d9738dbe6a10fadc8@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 15, 2025 at 07:50:59AM -0400, Pasha Tatashin wrote:
-> On Wed, Oct 15, 2025 at 4:09 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > On Tue, Oct 07, 2025 at 03:30:59AM +0000, Pasha Tatashin wrote:
-> > > Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
-> > > core kernel related files to the same place.
-> > >
-> > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> >
-> > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> 
-> Thank you.
-> 
-> >
-> > One comment below.
-> >
-> > > ---
-> > >  Documentation/core-api/kho/concepts.rst       |  2 +-
-> > >  MAINTAINERS                                   |  2 +-
-> > >  init/Kconfig                                  |  2 ++
-> > >  kernel/Kconfig.kexec                          | 25 ----------------
-> > >  kernel/Makefile                               |  3 +-
-> > >  kernel/liveupdate/Kconfig                     | 30 +++++++++++++++++++
-> > >  kernel/liveupdate/Makefile                    |  4 +++
-> > >  kernel/{ => liveupdate}/kexec_handover.c      |  6 ++--
-> > >  .../{ => liveupdate}/kexec_handover_debug.c   |  0
-> > >  .../kexec_handover_internal.h                 |  0
-> > >  10 files changed, 42 insertions(+), 32 deletions(-)
-> > >  create mode 100644 kernel/liveupdate/Kconfig
-> > >  create mode 100644 kernel/liveupdate/Makefile
-> > >  rename kernel/{ => liveupdate}/kexec_handover.c (99%)
-> > >  rename kernel/{ => liveupdate}/kexec_handover_debug.c (100%)
-> > >  rename kernel/{ => liveupdate}/kexec_handover_internal.h (100%)
-> > >
-> > > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> > > new file mode 100644
-> > > index 000000000000..522b9f74d605
-> > > --- /dev/null
-> > > +++ b/kernel/liveupdate/Kconfig
-> > > @@ -0,0 +1,30 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > +
-> > > +menu "Live Update"
-> >
-> > KHO can be used without Live Update, let's make this "Kexec HandOver and
-> > Live Update"
-> 
-> IMO the current menu name is OK, as it is an option presented only to
-> users configuring the kernel, my rational for that thinking is that
-> KHO is an independent module, but it should be enabled as a dependency
-> by other kernel features that require it.
+Hello,
 
-I think that we should allow enabling KHO on its own. For example, preserving
-tracing data in reserve_mem usecase does not have a strict dependency on
-KHO and it surely does not drive it. 
+syzbot found the following issue on:
 
--- 
-Sincerely yours,
-Mike.
+HEAD commit:    67029a49db6c Merge tag 'trace-v6.18-3' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=165f3304580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=070d9738dbe6a10fadc8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-67029a49.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/462968d248b4/vmlinux-67029a49.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9b7dac7b9874/bzImage-67029a49.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+070d9738dbe6a10fadc8@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 78 at fs/ext4/inode.c:5698 ext4_write_inode+0x545/0x620 fs/ext4/inode.c:5698
+Modules linked in:
+CPU: 0 UID: 0 PID: 78 Comm: kswapd0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ext4_write_inode+0x545/0x620 fs/ext4/inode.c:5698
+Code: 8b 05 cf b4 18 10 48 3b 44 24 30 75 5a 44 89 e0 48 83 c4 38 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc e8 1c 18 47 ff 90 <0f> 0b 90 eb cf e8 11 18 47 ff 41 bc fb ff ff ff eb c2 e8 04 18 47
+RSP: 0018:ffffc9000102ec60 EFLAGS: 00010293
+RAX: ffffffff82793b74 RBX: 0000000000000800 RCX: ffff88801fbec900
+RDX: 0000000000000000 RSI: 0000000000000800 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff8f9e3177 R09: 1ffffffff1f3c62e
+R10: dffffc0000000000 R11: ffffffff82793630 R12: 0000000000000000
+R13: ffff888036b70298 R14: ffff888036b70298 R15: ffff88801fbec900
+FS:  0000000000000000(0000) GS:ffff88808d301000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcf30301010 CR3: 000000000df38000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ write_inode fs/fs-writeback.c:1564 [inline]
+ __writeback_single_inode+0x6f1/0xff0 fs/fs-writeback.c:1784
+ writeback_single_inode+0x1f9/0x6a0 fs/fs-writeback.c:1840
+ write_inode_now+0x160/0x1d0 fs/fs-writeback.c:2903
+ iput_final fs/inode.c:1901 [inline]
+ iput+0x830/0xc50 fs/inode.c:1966
+ __dentry_kill+0x209/0x660 fs/dcache.c:669
+ dput+0x19f/0x2b0 fs/dcache.c:911
+ ovl_destroy_inode+0x42/0x150 fs/overlayfs/super.c:209
+ destroy_inode fs/inode.c:396 [inline]
+ evict+0x7c2/0x9c0 fs/inode.c:834
+ __dentry_kill+0x209/0x660 fs/dcache.c:669
+ shrink_kill+0xa9/0x2c0 fs/dcache.c:1114
+ shrink_dentry_list+0x2e0/0x5e0 fs/dcache.c:1141
+ prune_dcache_sb+0x10e/0x180 fs/dcache.c:1222
+ super_cache_scan+0x369/0x4b0 fs/super.c:222
+ do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+ shrink_slab_memcg mm/shrinker.c:550 [inline]
+ shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+ shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+ shrink_many mm/vmscan.c:5016 [inline]
+ lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+ shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+ kswapd_shrink_node mm/vmscan.c:6941 [inline]
+ balance_pgdat mm/vmscan.c:7124 [inline]
+ kswapd+0x147c/0x2800 mm/vmscan.c:7389
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
