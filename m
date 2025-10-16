@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-855979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1BBBBE2D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:32:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D3EBE2B85
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254805E3F36
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:16:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B28FA502345
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8972DF3EC;
-	Thu, 16 Oct 2025 10:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D666F2E1C61;
+	Thu, 16 Oct 2025 10:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwQLh13k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amnLWnjS"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749B328603
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4609328603
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609572; cv=none; b=EcK++/ceFVf7dYdTdn5zVQbKwW1rg93ZM5Cl9NhAZ3ca1Zz63KX85PR3gHm5jruhB99xLNrD84Ak9s6mDqKUH0yvIqczCMVm7N2w7qh78hlCX0r6/GnJYSBUkqzdahT37Yb9jwDY2N8YMEp82L8vtRi15vjuptCW1KsfPq4apRI=
+	t=1760609634; cv=none; b=tntMTWLTcLqNtlJoqV8aM5N6K2MUJm11mhaiEEbdTQWtXOCyNrbCoaCq+rZsZZeHkupecO7Gna8rMoP4brl+0k4fAJSOi0EqKpTV/C3VjhPgRhCCn2x3A4i24ToqBQR6IEOpILpOFHN1VbIvQgqCGg22mD+JQcYx7Pd6gJ75qzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609572; c=relaxed/simple;
-	bh=ep4WvnFaJAInijuwafHJ8Dba++c9UHnZ3qrBY8flBas=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HG4wOlQKotMBf9Mofth7ifFC3yUYWxseT68S3LoFZ4/PQqmZ3MW/yBVM4XJqbdUHTuJG9hOyb419lI2cDkaNmHTPs7xwX+SL90dYbFBWfDfU/SWqi7DYiI62TtBEqYyi4VVujH7iVmIvyjcOLEp49GMLPGO47njuWMiJbh4D6dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwQLh13k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C74F9C4CEF1;
-	Thu, 16 Oct 2025 10:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760609572;
-	bh=ep4WvnFaJAInijuwafHJ8Dba++c9UHnZ3qrBY8flBas=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=hwQLh13kZZvuUZKDsuIEU8ZcTAkEFJ1miK2LYvy/sN0Q0BIV75752Zj4Z+GOjMiTo
-	 FKo5K8Sq6HI8KCXGqGNc0kXdQQtp8b+kY+WYmfIfEyt+mFxAxYCiBm9N56xl0L6kK0
-	 Qt6DELb7cUFUEGhpTrRM/4XG95+F4QfKsJXETCZ1z7YBTvbeaHzfsNM7SQtl2ghwrj
-	 KWI0lnMNOUGJZ9P8zdZa3E7njr7Ki/5mE08yIUVl0Yoo6v3LJGfJARp0uUh1EyM9Lz
-	 +hEEVV8nr/XYxAUwv+bYIj6J2AihdA9euJNUKZpPq0vpefAXkuUWMixqtBQ9gsNraZ
-	 SgRmf5SQXJRyA==
-Message-ID: <5257fece-d947-4a33-8f66-4db5e8b73a28@kernel.org>
-Date: Thu, 16 Oct 2025 18:12:46 +0800
+	s=arc-20240116; t=1760609634; c=relaxed/simple;
+	bh=Jl788zXICHJ5acrAZyD/a37MrSRcVADO7fQVKMuIvDc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X0pZnUDnYYqTOgqN6ReYjZeuWE0Xj4HXCJZe74B9zChWRLxyE57f4ri+9pHPeo7jTO+88dTqVIDrQVxRjRKlWRwCF8mQC3hYRPbofro9N41wP4kxBhJJ3ZTm2apZxwhWDi1WpMn/8QgcNSmdGPyOhkJkmlbQkXhgfqTi/HnxM5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amnLWnjS; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7810289cd4bso587752b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760609632; x=1761214432; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jq8OW6TGbxrBXRjrgbfzJXwoQLqOW1xHiJ8eAh8jstY=;
+        b=amnLWnjSbbOqvsSnLuFG7s1CoRvBEF8bvBuGqo3mxlP/XaxLuG+QTb6sikwtGcyxNa
+         GegbH3fFt6JGPT46BcNXXKNVj4VKjw/lZKhy5BHW07os4eHr+LrRRsZ324J+A3E59nXD
+         CeB+tuQu3WHHLXoQqhzMS4Ku3O3VlNGbCEUKLztWqtLrJRz8gFd9oR3axgEcjrYTaIP9
+         //GSmZE9LsHKenWR8FuaWM/gX8f+Rx/Ew09lxMISmZ1BpoZhXN1Hnufy2RwwdeW4eHyy
+         nM9Wv5WVnNquxmUSbUzVUrB+qgWnHvd3F2K7wJ0BRkKBWOIEzjh+e30OJC7CS5LpVq0T
+         J52Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760609632; x=1761214432;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jq8OW6TGbxrBXRjrgbfzJXwoQLqOW1xHiJ8eAh8jstY=;
+        b=iuZRdqW5HXnC2dVr+OTXLta8w/psu+pgNaW8NjcWZkyYwE/rqlKVfWMqAWtO00IJSp
+         3hyV9rJXSExWBz222S9KFzyjTgSyigK92k6M3MPrDz1cJYrqRNhS1/4HjVNXmAZMUXPj
+         9mSlLktAvbQnw4Efm/1nmld8l9UGjsl/Ln+6fGFv66TOmyVTnA5EDu6OKPZW7Zg3RwTj
+         RMiNzXKsROn0QDy2GM3BiTW52S0DSvEbtP7L32HdatMbsyPnBQ8Qba+/t94+bGKMFPS9
+         pwpcZEv3KdJxoqt1X/UPy5ICFZ5loi88mT4jBArKa/+l8RIz0sMArEdgGMD/IPoDQ06Q
+         CgxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+6udaPybfUE7264h+MLdIBQs0OZG2BUh6pvtEgD0LoOb/ohSGQhFBvmOFxIl4bflMsnszKTZne0RLDyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTojcEiU6kUriNwJXgUmNFSRlWtpZXF2VlecpcpYUUdXz561g7
+	vYAbO9c8XrvhGaLxjXOLBGjyIUpN7qj5AUCAWIDEEtHyxaaJAqK7HNIr
+X-Gm-Gg: ASbGncs1/eN8OiVK7T41ZBZSvrkQgxwutrKxIkd1OM0q0uoQ57l05eCbVQtpl6r29r4
+	s3SNU8E+UH+ye+xdnZLHprHhj1faUIbM6wUBX8DBqbFNWUoZTx0OMjjaBJt4M8Em6nIpyYm7lYQ
+	CtcKfcKU2p/FiOV/Lwv5p8cRmT9QpkSlYfb/MmU7zqIIDsz32VTaHSk3z5BlYS5O1KNRHXoZX//
+	4WX4u6GmLiEUaKRvC3zsIQ5ToJphfS+8SfmpcVg4QO1jT2mBkEZhuMnLofgItEKy8BBaTqbaCqj
+	Sj71i5gxDKYyAMPmWT6Pb8gzLsS3pXrgqe5TCPB3dFRK7JZa+KhnN4f+UljWdtKPumZsImxpjOr
+	NjWdV/YCtDKlWJgOjqtva1W4UD2oJVGz6dF19eUz9mgB/1+zixivRnimPTwblhivjkYU9f5ovew
+	==
+X-Google-Smtp-Source: AGHT+IG8QZYlL4nYUg/eotHES9Ezn/ZamnzArtEteyIfhrKsS2XovswaFPXwaQddIH+JOobnNopYuQ==
+X-Received: by 2002:a05:6a20:6a29:b0:2b1:c9dc:6da0 with SMTP id adf61e73a8af0-32da845f7afmr43305814637.46.1760609631920;
+        Thu, 16 Oct 2025 03:13:51 -0700 (PDT)
+Received: from Shardul.. ([223.185.43.66])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a2288bd55sm2354263a12.9.2025.10.16.03.13.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 03:13:51 -0700 (PDT)
+From: Shardul Bankar <shardulsb08@gmail.com>
+To: bpf@vger.kernel.org
+Cc: shardulsb08@gmail.com,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf 0/1] Follow-up fix for potential error pointer dereference in propagate_to_outer_instance()
+Date: Thu, 16 Oct 2025 15:43:41 +0530
+Message-Id: <20251016101343.325924-1-shardulsb08@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, jeuk20.kim@samsung.com,
- d_hyun.kwon@samsung.com, gyusun.lee@samsung.com, hyenc.jeong@samsung.com,
- j-young.choi@samsung.com, jaemyung.lee@samsung.com, jieon.seol@samsung.com,
- keosung.park@samsung.com, wone.jung@samsung.com
-Subject: Re: [PATCH] f2fs: serialize writeback for inline-crypto inodes
-To: Jeuk Kim <jeuk20.kim@gmail.com>, jaegeuk@kernel.org
-References: <20251016051621.7425-1-jeuk20.kim@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20251016051621.7425-1-jeuk20.kim@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/16/2025 1:16 PM, Jeuk Kim wrote:
-> From: Jeuk Kim <jeuk20.kim@samsung.com>
-> 
-> Inline encryption derives DUN from <inode, file offset>,
-> so bios from different inodes can't merge. With multi-threaded
-> buffered O_SYNC writes where each thread writes to its own file,
-> 4KiB-per-page LBA allocation interleaves across inodes and
-> causes bio split. Serialize writeback for fscrypt inline-crypto
-> inodes via __should_serialize_io() to keep foreground writeback
-> focused on one inode and avoid split.
-> 
-> Test: fio --name=wb_osync --rw=write --bs=1M \
->        --time_based=1 --runtime=60s --size=2G \
->        --ioengine=psync --direct=0 --sync=1 \
->        --numjobs=8 --thread=1 --nrfiles=1 \
->        --filename_format='wb_osync.$jobnum'
-> 
-> device: UFS
-> 
-> Before -
->    write throughput: 675MiB/s
->    device I/O size distribution (by count, total 1027414):
->      4 KiB:  923139 (89.9%)
->      8 KiB:  84798 (8.3%)
->      ≥512 KiB: 453 (0.0%)
-> 
-> After -
->    write throughput: 1760MiB/s
->    device I/O size distribution (by count, total 231750):
->      4 KiB:  16904 (7.3%)
->      8 KiB:  72128 (31.1%)
->      ≥512 KiB: 118900 (51.3%)
-> 
-> Signed-off-by: Jeuk Kim <jeuk20.kim@samsung.com>
-> ---
->   fs/f2fs/data.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index ef38e62cda8f..ae6fb435d576 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3217,6 +3217,8 @@ static inline bool __should_serialize_io(struct inode *inode,
->   
->   	if (f2fs_need_compress_data(inode))
->   		return true;
-> +	if (fscrypt_inode_uses_inline_crypto(inode))
-> +		return true;
->   	if (wbc->sync_mode != WB_SYNC_ALL)
->   		return true;
->   	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+Hi BPF maintainers,
 
-Jeuk,
+This patch follows up on my previous submission:
 
-Can you please try tuning /sys/fs/f2fs/<dev>/min_seq_blocks to see whether it
-can achive the goal?
+  [PATCH v2 bpf] bpf: Fix memory leak in __lookup_instance error path
+  Link: https://patchwork.kernel.org/project/netdevbpf/list/?series=1012189&state=*
+
+During the review and CI discussions for that patch, a potential issue was
+identified in propagate_to_outer_instance(), where get_outer_instance() may
+return an ERR_PTR (e.g. -ENOMEM) that is not currently checked before use.
+
+This patch adds a simple IS_ERR() guard and returns the error code to prevent
+dereferencing the error pointer.
 
 Thanks,
+Shardul
+
+---
+
+Shardul Bankar (1):
+  bpf: liveness: Handle ERR_PTR from get_outer_instance() in
+    propagate_to_outer_instance()
+
+ kernel/bpf/liveness.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+-- 
+2.34.1
 
 
