@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-857001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC485BE59D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:54:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFB4BE59DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374681A66305
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6EF1A660A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB722E8DF5;
-	Thu, 16 Oct 2025 21:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A442E3B11;
+	Thu, 16 Oct 2025 21:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="reobcTYy"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=airmail.cc header.i=@airmail.cc header.b="Jmi9JU/s"
+Received: from mail.cock.li (mail.cock.li [37.120.193.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8492E8B73
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29AB2DF3E7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.193.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760651607; cv=none; b=nlLF8fYkocGNx2tZcJXXUnREozswJWRmsSvgraBfBbcrB+R7yXr9VL1RqxkdYwnzDPVEXTFp+znRpOGMENldNPRwPqpFFeIeaufoIwQ8v8AACNqBfRTPStlMalxWWdz//i0EFyjVv7HEQQDC8JFyWbzcN+hwPOG/lCqKIGgR5b4=
+	t=1760651703; cv=none; b=OUotwOxboN9klbGDMsS/0o+MSY60rI4bkCjLJQ6uudlfuVL6Fk3x05+zFlZB8VuUw3hCFJF1DuBiJIsG+I6krBonPmcH8+nBWB4oshQPUTPKswrdAuS5/ODY5my5w6FaJgTNAiO6D37l/tVgxTzFwWAi/MuHdSKvREw9emTwrP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760651607; c=relaxed/simple;
-	bh=1YgxJ/4RLuaRvWUjGGZ2dNvhLcQPJpPPz0ZEw45IfPo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=fHmtxhNTwkFfo5O4xvaAkdOy6sx2I43BnLKPwkzC+K4VTXnTASQEBzsFg2mecyfcngwrQQtRammcMYSuNCGt+RBGtX6I5M3C16rKbcyX0I4JkXS6/mHTTdTP6Z/3PBtjWCWhA4TinD5ElbGYpGfNFyyLDgDBu44MGKJgGEdILWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=citrix.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=reobcTYy; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=citrix.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so10666535e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:53:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1760651604; x=1761256404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1YgxJ/4RLuaRvWUjGGZ2dNvhLcQPJpPPz0ZEw45IfPo=;
-        b=reobcTYyKL3Y6aW0NtLf5O8YLHnXt64nhzbLgnGi+V8H7Xy3GNHrs4IxVpmI3uGtCA
-         IaX3Y0fijKoWxC0gj0hAAOrElOIYzEKSyF58Y/MDHmSa2XEtwfxrCOa5Y/do6GE7wyKJ
-         QkuA0bDTqvEWtN5jrY024bvMDFYcOKrfUe3JE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760651604; x=1761256404;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1YgxJ/4RLuaRvWUjGGZ2dNvhLcQPJpPPz0ZEw45IfPo=;
-        b=THNdG0ae+58QXFcr9JwZjXP04eyYKsyH9ed4e+KgP+8GjSpR4EwbLdbVwHQHkBrjgd
-         QdH35pCf8UnAg34uJHeyHJlcpIfpViGuiKhJd97lfyXJgr6qsnKOMnEpPpCsbG7yPgwq
-         RSE0Iaxs+wqCezJ90esV94tbr/YlTldzA3IQWMNW3COWbcilbPVY93KeiOiTmZbR8Ao4
-         9lePeryqMi4KakQ9/4ejOMk3ByEZvcpnwNU6jNVSsrnNHfaQFMBoztYyJgMKQ2UOG0gj
-         wWbpGgHgKhvDdTVzl7x6QNgfDwqCWp+UD4/E+wDHPH23GdX2U2PSL0eufF2aj12F3/85
-         gORA==
-X-Forwarded-Encrypted: i=1; AJvYcCV842Su64eWhPRJi/D4PDc9Kz4oVtWHsg5RfPp/KeMw9SlzJsMBUuL+h0Uu3xQLDLtw1vkEOHbzFUzbhXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJLgw5TE00r5Fh2QYpW6VOr6WNQmrW54kfsu8mvmeCGvAygspu
-	XHVDl7Pk2svoV6L6nTqHnDDaZnTnGPv6+Wfg0vzHzULiL7z3f9fBeVQHk9GJ3KrFVZg=
-X-Gm-Gg: ASbGncu6KL/cPp98Gjp8T9vh++hf7GGDx1VoyP5dQ/3bcecG873w5g4H5uSMCkCERdp
-	2cU9cbP74HmqZrNvfdBnV/7ySsgrHwtVrf0p4OejagCsQI0oVhODxMMulJ8UWYAyTdvy0vkCdFw
-	SjLtAeQs6sw/zu2R6vmrHH8ZyBNphihndio5zeLtHvsLWkxkty5q0q6SiHXnT0q4OCIo4OuXi21
-	kP+5IC5aps05BnwLufdxvWNdttK1vSFM6Yg2p9XhDYwmTsb4ontM93Y0MJR0JsxzRa+2aqMYsia
-	21+ITvgc8HgB2EuMUWDazfCskxnl07UNiXt+Mow2CLU8W04O8/D45f/sKA1T+haIJryPJGEJZYU
-	B6FNMA7gPuiCGSH/t4J/Q2mLG/pE0eenf+lVk02ZVNu1RqCLGDNu4kn/dmX+ireVc/P09tyx0PW
-	p9JIwgXHohzvzm9HaJXne0guqKeKwn0ylxxqq6ow==
-X-Google-Smtp-Source: AGHT+IGm2dRPq6DFvbxIS/F9QGIIpJHwmg54eEmLAjbdoN+VtjYoGMRz90eb1nFzrki2I7b38Wz+nw==
-X-Received: by 2002:a05:600c:8b66:b0:46e:428a:b4c7 with SMTP id 5b1f17b1804b1-471179120ccmr10476885e9.23.1760651604144;
-        Thu, 16 Oct 2025 14:53:24 -0700 (PDT)
-Received: from [192.168.1.183] (host-92-22-57-86.as13285.net. [92.22.57.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710f29da7fsm29002655e9.9.2025.10.16.14.53.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 14:53:23 -0700 (PDT)
-Message-ID: <e2924e3a-33a8-4fa7-8e08-bd0c3fc8e668@citrix.com>
-Date: Thu, 16 Oct 2025 22:53:22 +0100
+	s=arc-20240116; t=1760651703; c=relaxed/simple;
+	bh=OzbV6V2UrOakoVLDre1ObAY+8/mBt6xFPW0LyFljjK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EonzWjRivDXidAMOdzn7no1mGlqa7E70qoOQHMpLntcjVz8jjLM7IDCxBamrW6lp7U2u9ja21OVDNfdDGMq6Xdci3rlRRb63zThJOSZnIcVXkyMuFzIgn5WjfY50VlxqpvxReJww7iBAHqWkQ7o3EaaWtS7EOVQ3MXtiKEim0iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=airmail.cc; spf=pass smtp.mailfrom=airmail.cc; dkim=pass (2048-bit key) header.d=airmail.cc header.i=@airmail.cc header.b=Jmi9JU/s; arc=none smtp.client-ip=37.120.193.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=airmail.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airmail.cc
+Message-ID: <f9e9e33b-3338-44bc-abbf-5a9328719601@airmail.cc>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=airmail.cc; s=mail;
+	t=1760651697; bh=OzbV6V2UrOakoVLDre1ObAY+8/mBt6xFPW0LyFljjK8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jmi9JU/sHxktO1Jxdxb4TX9INRPqybwHwF4ZZ6ZpKaDhJGk+VSIiVzIt3Qm9WADCq
+	 /Gso+9FPWLrEa8UDMhBS1wUwVPK1TcraSDZ+0j8d+qQvjIBkPPp4TGnwyK+ldc+OC9
+	 djnXQU88hg0vFI3d0n4t/Optn2zfHhwzeBeY6f5SmJJnp8mP2Y1yplUED5m7eNslAU
+	 JrBk21LtYxS368uBQ0C7vV7iGbmBCHdk+fl8O40hQXC8u7Tk9NgIXz/btJM1GbGQ3A
+	 8M7VBl7xgLlubMF4Ou4rnvpN1IQt1smuuDWAHYNldpFyBgnD1AfLaZuhp5dVglEC+N
+	 vu1DkTqZ/GLoA==
+Date: Thu, 16 Oct 2025 21:54:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: peterz@infradead.org
-Cc: David.Kaplan@amd.com, boris.ostrovsky@oracle.com, bp@alien8.de,
- dave.hansen@linux.intel.com, graf@amazon.com, hpa@zytor.com,
- jpoimboe@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
- pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de, x86@kernel.org,
- Andrew Cooper <amc96@srcf.net>
-References: <20251016185811.GH3289052@noisy.programming.kicks-ass.net>
-Subject: Re: [RFC PATCH 40/56] x86/alternative: Use sync_core_nmi_safe()
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20251016185811.GH3289052@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] ksm: use range-walk function to jump over holes in
+ scan_get_next_rmap_item
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20251016012236.4189-1-pedrodemargomes@gmail.com>
+ <20251016140735.d7d4c282f0fbf22954a4b4ee@linux-foundation.org>
+From: craftfever <craftfever@airmail.cc>
+In-Reply-To: <20251016140735.d7d4c282f0fbf22954a4b4ee@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->> Ok. Btw, how long has Intel supported SERIALIZE?
-> I'm not sure.. its fairly new, so
 
-Serialise was introduced in GLC/GMT, so AlderLake and Sapphire Rapids. 
-It's not even 4 years old.
 
-~Andrew
+Andrew Morton wrote:
+> On Wed, 15 Oct 2025 22:22:36 -0300 Pedro Demarchi Gomes <pedrodemargomes@gmail.com> wrote:
+> 
+>> Currently, scan_get_next_rmap_item() walks every page address in a VMA
+>> to locate mergeable pages. This becomes highly inefficient when scanning
+>> large virtual memory areas that contain mostly unmapped regions.
+>>
+>> This patch replaces the per-address lookup with a range walk using
+>> walk_page_range(). The range walker allows KSM to skip over entire
+>> unmapped holes in a VMA, avoiding unnecessary lookups.
+>> This problem was previously discussed in [1].
+>>
+>> ...
+>>
+>> Reported-by: craftfever <craftfever@airmail.cc>
+>> Closes: https://lkml.kernel.org/r/020cf8de6e773bb78ba7614ef250129f11a63781@murena.io
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+>> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+> 
+> Is Fixes: b1d3e9bbccb4 ("mm/ksm: convert scan_get_next_rmap_item() from
+> follow_page() to folio_walk") appropriate?
+> 
+> The problem which is being addressed seems pretty serious.  What do
+> people think about proposing a -stable backport of this fix?
+> 
+> It would be better if this changelog were to describe the user-visible
+> effects of the problem.  A copy-n-paste from
+> https://bugzilla.kernel.org/show_bug.cgi?id=220599 would suffice.
+
+Emergency Update:
+
+A moment ago I had ksmd crashed, so patch really needs further work. Trace:
+
+[ 2472.174930] BUG: Bad page map in process ksmd  pte:fffffffffffff600
+[ 2472.174938] pgd:11394a067 p4d:11394a067 pud:100f96067 pmd:102c68067
+[ 2472.174941] addr:00007f2ae1511000 vm_flags:c8100073 
+anon_vma:ffff8ab79bcea1a0 mapping:0000000000000000 index:7f2ae1511
+[ 2472.174944] file:(null) fault:0x0 mmap:0x0 mmap_prepare: 0x0 
+read_folio:0x0
+[ 2472.174978] CPU: 2 UID: 0 PID: 52 Comm: ksmd Tainted: G S  BU     OE 
+      6.18.0-rc1-1-git-00014-g1f4a222b0e33-dirty #4 PREEMPT(voluntary) 
+b9513c77908d39edabd314a5ac9b34ef2c53c2c8
+[ 2472.174984] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [U]=USER, 
+[O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[ 2472.174985] Hardware name: FUJITSU LIFEBOOK AH532/G21/FJNBB1D, BIOS 
+Version 1.12 06/10/2019
+[ 2472.174987] Sched_ext: 
+rusty_1.0.16_ge25cc6e5_dirty_x86_64_unknown_linux_gnu (enabled+all), 
+task: runnable_at=-5ms
+[ 2472.174989] Call Trace:
+[ 2472.174990]  <TASK>
+[ 2472.174992]  dump_stack_lvl+0x5d/0x80
+[ 2472.174997]  print_bad_page_map.cold+0x26d/0x355
+[ 2472.175000]  ? ___pte_offset_map+0x1b/0x160
+[ 2472.175005]  vm_normal_page+0xf4/0x100
+[ 2472.175010]  ksm_pmd_entry+0x1cf/0x2f0
+[ 2472.175014]  walk_pgd_range+0x5a2/0xb50
+[ 2472.175020]  __walk_page_range+0x6e/0x1e0
+[ 2472.175025]  walk_page_range_mm+0x150/0x210
+[ 2472.175030]  ksm_scan_thread+0x166/0x2080
+[ 2472.175037]  ? __pfx_ksm_scan_thread+0x10/0x10
+[ 2472.175042]  kthread+0xfc/0x240
+[ 2472.175046]  ? __pfx_kthread+0x10/0x10
+[ 2472.175050]  ret_from_fork+0x1c2/0x1f0
+[ 2472.175053]  ? __pfx_kthread+0x10/0x10
+[ 2472.175057]  ret_from_fork_asm+0x1a/0x30
+[ 2472.175062]  </TASK>
+[ 2472.175132] BUG: Bad page map in process ksmd  pte:fffffffffffff600
+[ 2472.175139] pgd:11394a067 p4d:11394a067 pud:100f96067 pmd:11989b067
+[ 2472.175143] addr:00007f2ae1712000 vm_flags:c8100073 
+anon_vma:ffff8ab79bcea1a0 mapping:0000000000000000 index:7f2ae1712
+
+
+
+KSM crashed.
 
