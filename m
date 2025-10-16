@@ -1,91 +1,392 @@
-Return-Path: <linux-kernel+bounces-856590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D57BE4929
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D510BE48D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0208546718
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84075E6020
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA61329C44;
-	Thu, 16 Oct 2025 16:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AACA32AABC;
+	Thu, 16 Oct 2025 16:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="khc0T9rn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eA+cpOsg"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmNfP4s0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE1D32D0FE;
-	Thu, 16 Oct 2025 16:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDB232D0FE;
+	Thu, 16 Oct 2025 16:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631551; cv=none; b=ESQM9BSKl2yjGI2iYl2Yb/L2Lz3WoIJoSgwjBmZztHHPYCvkjYrLlCfCj86RUxJsPhwhKWnMv/KQta//nnS7XBQKRaBLoemIITFTisfMWTOhH6hxQAzYw3xkBtNhtmPchGOimb0F88hsIB9rsJPAyUyHeo4OCRz/YkB7HHL6aRg=
+	t=1760631564; cv=none; b=ImeQOLG8szHbKLS7l02sffH+PO8EBCAyaI4vHbtQWBGV20l+UZbhqgUm58Xt2FWrBbc55Tp5z/GZnN0yRRdUZBN7IB33PgjsZ0Hfmq6kN/szWJwDU/afpI0XO9udKzjO9bP4uQiYVUgjYyqE/Z5FakKXgYmXMYlGVfxfVDRkyRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631551; c=relaxed/simple;
-	bh=TG1LH9f0ugAp6QShBhpVnT0/N/Vk86GE7yOip/fY3E0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DE21/TrYcxwC+OPFunf1ucCMM0+mgJ7ZV/oIZvienGkPiLtSEImU/lXuiS5SMnDYMXAd+1TTGtw46nrlZ33qAjKSPaeouZZGISziJipnwiZdT54OZdLAIhAa3zrq9v6HkyviX9/YPtChBOQE1/Bnpm4qwYVbZNfzivfCz1qAw0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=khc0T9rn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eA+cpOsg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760631546;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbacNbZ8PoU0CnMy/mXPEaA+xmgiFkgVX5e5fxm4LWM=;
-	b=khc0T9rnmavU9b+3ItRiXXAVIIVushGALKxP4I/GbGC6+FviyntGDGgex68FQJVq6j696u
-	qDtlMoCjW8Zr/Gaii32D0S6t79g0b6DETd4M149a+miAE9Y8O6pieqVbiDCjaheG7vwXRd
-	Nun51YWy5jnQB5a5UIn4KRR4MPD6ebR4ww2Ev/FgLZjZWQLmgoeXIHPGj7oC7f8cd663z2
-	xkkNZncz0QFQxVanqc6XcmnYWEBLYwp+gd2LAeZU1vCTUVr47XRYwqnmFNboNhX5NVpsXr
-	aJf3/eeXtWEKLRbM5ox5ZaAYP0Cy1noOO55LICEBPyVbksGW3BLv0ug2qN1RpQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760631546;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbacNbZ8PoU0CnMy/mXPEaA+xmgiFkgVX5e5fxm4LWM=;
-	b=eA+cpOsgn/jbHG+8XNVXKn8vDPbj1e5R0+MSNvW326TFlz1xPOe/cNwiUlfpALLOFoF+Zc
-	pi0H4+R6hFrww2Dg==
-To: Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Florian Fainelli
- <florian.fainelli@broadcom.com>, Changhuang Liang
- <changhuang.liang@starfivetech.com>, x86@kernel.org
-Subject: Re: [tip: irq/drivers] irqchip: Pass platform device to platform
- drivers
-In-Reply-To: <aPEVtDo1CHibAGxn@hovoldconsulting.com>
-References: <20251013094611.11745-12-johan@kernel.org>
- <176062960151.709179.10135307807179758941.tip-bot2@tip-bot2>
- <aPEVtDo1CHibAGxn@hovoldconsulting.com>
-Date: Thu, 16 Oct 2025 18:19:05 +0200
-Message-ID: <87jz0u251i.ffs@tglx>
+	s=arc-20240116; t=1760631564; c=relaxed/simple;
+	bh=rhBuyltnRldTiBa1avsLIjFQMD9CKcgHEk++kIOoC/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mh1Jhuwu6IeKmf8lKwmCiHt9DFxaUo5FcinmcJWq+rsR+n10aSMx9wyN2HvABxTgg/lXuLkmEv1DSIJ+UAylIby5fBjEx5/VPJvnftP1XE+EgvrRyJ1p8TI6+x5jA3OMnAwLFIdsZ0xPA1rC7vXMTysUjpzuSlUvDJ5SLhbieW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmNfP4s0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0396C4CEF1;
+	Thu, 16 Oct 2025 16:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760631564;
+	bh=rhBuyltnRldTiBa1avsLIjFQMD9CKcgHEk++kIOoC/k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cmNfP4s0Z3BHf7yml9NcVJIlUyEPS1BB8up+irtDwhKI0HlXmKFZRVTmE9gmL4uTk
+	 yFDdbOhZoHhmIDfl6SdBOLoMb+5HYy4cLaVgdD5ScN5gTbbqBPcsV1+LDt/2smJIeH
+	 cNHy7jR4uU0qhP6tyJKOeml+jmH2ZOU3LTCJm9c7RaGrg2dOXZhkj26yLgZZa9inv6
+	 cPZKtPUTe4g69IeucRUJhF6xTNIzvbwi9d6R0OT4NPzFGCORPWZqtnOa3PB4WIdTjl
+	 u20rs8pK6Aoh7bAsloM9iPqP5kAMYeWU+rkwJ4ePVjFVY0o5hxBoZu8cT93yoOO+qJ
+	 jz1Z+5SVBe38w==
+Date: Thu, 16 Oct 2025 17:19:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ariana Lazar <ariana.lazar@microchip.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: adding support for PAC1711
+Message-ID: <20251016-idealist-railway-c9e94e22ef3c@spud>
+References: <20251015-pac1711-v1-0-976949e36367@microchip.com>
+ <20251015-pac1711-v1-1-976949e36367@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7HVN5qN8TvfPexH6"
+Content-Disposition: inline
+In-Reply-To: <20251015-pac1711-v1-1-976949e36367@microchip.com>
 
-On Thu, Oct 16 2025 at 17:56, Johan Hovold wrote:
-> On Thu, Oct 16, 2025 at 03:46:41PM -0000, tip-bot2 for Johan Hovold wrote:
->> The following commit has been merged into the irq/drivers branch of tip:
->> @@ -296,10 +296,9 @@ static const struct imx_mu_dcfg imx_mu_cfg_imx8ulp = {
->>  		  },
->>  };
->>  
->> -static int imx_mu_of_init(struct device_node *dn, struct device_node *parent,
->> -			  const struct imx_mu_dcfg *cfg)
->> +static int imx_mu_of_probe(struct platform_device *pdev, struct device_node *parent,
->> +			   const struct imx_mu_dcfg *cfg)
->
-> There's still an editing mistake here; the new name should just be
-> 'imx_mu_probe'.
 
-Not my day today. Even enabling the correct config knob is too complicated it
-seems....
+--7HVN5qN8TvfPexH6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hey,
+
+On Wed, Oct 15, 2025 at 01:12:15PM +0300, Ariana Lazar wrote:
+> This is the device tree schema for Microchip PAC1711 single-channel power
+> monitor with accumulator. The device uses 12-bit resolution for voltage a=
+nd
+> current measurements and 24 bits power calculations. The device supports
+> one 56-bit accumulator register.
+>=20
+> PAC1711 measures up to 42V Full-Scale Range.
+>=20
+> Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+> ---
+>  .../bindings/iio/adc/microchip,pac1711.yaml        | 195 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |   6 +
+>  2 files changed, 201 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,pac1711.=
+yaml b/Documentation/devicetree/bindings/iio/adc/microchip,pac1711.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..67edd778981c2f0ed21dda02f=
+14e383a153169b1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,pac1711.yaml
+> @@ -0,0 +1,195 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/microchip,pac1711.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip PAC1711 Power Monitors with Accumulator
+> +
+> +maintainers:
+> +  - Ariana Lazar <ariana.lazar@microchip.com>
+> +
+> +description: |
+> +  This device is part of the Microchip family of Power Monitors with Acc=
+umulator.
+> +  The datasheet for PAC1711 can be found here:
+> +  https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/Produc=
+tDocuments/PAC1711-Data-Sheet-DS20007058.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,pac1711
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+
+There are no child nodes here, so I don't think size or address cells are
+needed.
+
+> +
+> +  gpio-controller:
+> +    description: Marks the device node as a GPIO controller.
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +    description:
+> +      The first cell is the GPIO number and the second cell specifies
+> +      GPIO flags, as defined in <dt-bindings/gpio/gpio.h>.
+> +
+> +  powerdown-gpios:
+> +    description:
+> +      Active low puts the device in power-down state. When the PWRDN pin=
+ is
+> +      pulled high, measurement and accumulation will resume using the de=
+fault
+> +      register settings.
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    description:
+> +      Could be triggered by overvoltage, undervoltage, overcurrent, over=
+power,
+> +      undercurrent, step limit, accumulator overflow and accumulator cou=
+nt
+> +      overflow.
+> +    items:
+> +      - const: alert0
+> +      - const: alert1
+
+This won't allow using alert0 but not alert1, or vice versa. Is that
+intended? I would imagine that only using one of the interrupt pins is a
+valid behaviour.
+
+> +
+> +  shunt-resistor-micro-ohms:
+> +    description:
+> +      Value in micro Ohms of the shunt resistor connected between
+> +      the VSENSEP and VSENSEN inputs, across which the current is measur=
+ed.
+> +      Value is needed to compute the scaling of the measured current.
+> +
+> +  label:
+> +    description: Unique name to identify which device this is.
+> +
+> +  microchip,gpio:
+> +    type: boolean
+> +    description:
+> +      In default mode, A0 pin is a GPIO 0 input pin, respectively A1 pin=
+ is
+> +      GPIO 1. The pins can be used for the SLOW function, the device wil=
+l sample
+> +      at 8 samples/second if pulled high. A0 also function as the Alert0=
+ and A1
+> +      as Alert1, but can no longer be used to control conversion rate or=
+ SLOW.
+
+This description provides zero detail about what the property actually
+does. The driver doesn't appear to use it either, so no hints for me
+there. If it is something to do with deciding if pins are interrupts or
+are free for gpio use, can't that just be determined based on what
+interrupts are in use?
+
+> +
+> +  microchip,vbus-input-range-microvolt:
+> +    description: |
+> +      Specifies the voltage range in microvolts chosen for the voltage f=
+ull
+> +      scale range (FSR). The range should be set as <minimum, maximum> by
+> +      hardware design and should not be changed during runtime.
+> +
+> +      The VBUS could be configured into the following full scale range:
+> +        -  VBUS has unipolar 0V to 42V FSR (default)
+> +        -  VBUS has bipolar -42V to 42V FSR
+> +        -  VBUS has bipolar -21V to 21V FSR
+> +    items:
+> +      - enum: [-42000000, -21000000, 0]
+> +      - enum: [21000000, 42000000]
+> +
+> +  microchip,vsense-input-range-microvolt:
+> +    description: |
+> +      Specifies the voltage range in microvolts chosen for the current f=
+ull
+> +      scale range (FSR). The current is calculated by dividing the vsense
+> +      voltage by the value of the shunt resistor. The range should be se=
+t as
+> +      <minimum, maximum> by hardware design and it should not be changed=
+ during
+> +      runtime.
+> +
+> +      The VSENSE could be configured into the following full scale range:
+> +        -  VSENSE has unipolar 0 mV to 100V FSR (default)
+> +        -  VSENSE has bipolar -100 mV to 100 mV FSR
+> +        -  VSENSE has bipolar -50 mV to 50 mV FSR
+> +    items:
+> +      - enum: [-100000, -50000, 0]
+> +      - enum: [50000, 100000]
+> +
+> +  microchip,accumulation-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      The Hardware Accumulator may be used to accumulate VPOWER, VSENSE =
+or
+> +      VBUS values for any channel. By setting the accumulator for a chan=
+nel
+> +      to accumulate the VPOWER values gives a measure of accumulated pow=
+er
+> +      into a time period, which is equivalent to energy. Setting the
+> +      accumulator for a channel to accumulate VSENSE values gives a meas=
+ure
+> +      of accumulated current, which is equivalent to charge.
+> +
+> +      The Hardware Accumulator could be configured as:
+> +       <0>  -  Accumulator accumulates VPOWER (default)
+> +       <1>  -  Accumulator accumulates VSENSE
+> +       <2>  -  Accumulator accumulates VBUS
+
+Please make this a string, probably with values "vpower", "vsense" and
+"vbus".
+
+> +    maximum: 2
+> +    default: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +  - shunt-resistor-micro-ohms
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,pac1711
+
+This is the only compatible, using an if/then/else section here is not
+required. This should be describable in the property itself.
+
+> +    then:
+> +      properties:
+> +        microchip,vbus-input-range-microvolt:
+> +          oneOf:
+> +            - items:
+> +                - const: 0
+> +                - const: 42000000
+> +            - items:
+> +                - const: -42000000
+> +                - const: 42000000
+> +            - items:
+> +                - const: -21000000
+> +                - const: 21000000
+> +          default:
+> +            items:
+> +              - const: 0
+> +              - const: 42000000
+> +
+> +        microchip,vsense-input-range-microvolt:
+> +          oneOf:
+> +            - items:
+> +                - const: 0
+> +                - const: 100000
+> +            - items:
+> +                - const: -100000
+> +                - const: 100000
+> +            - items:
+> +                - const: -50000
+> +                - const: 50000
+> +          default:
+> +            items:
+> +              - const: 0
+> +              - const: 100000
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        pac1711@10 {
+
+"pac1711" is not a class of device, so probably dac@10?
+
+pw-bot: changes-requested
+
+> +            compatible =3D "microchip,pac1711";
+> +            reg =3D <0x10>;
+> +
+> +            shunt-resistor-micro-ohms =3D <10000>;
+> +            label =3D "VDD3V3";
+> +            vdd-supply =3D <&vdd>;
+> +            microchip,vbus-input-range-microvolt =3D <(-21000000) 210000=
+00>;
+> +            microchip,vsense-input-range-microvolt =3D <(-50000) 50000>;
+> +            microchip,accumulation-mode =3D <0>;
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a92290fffa163f9fe8fe3f04bf66426f9a894409..7686e2516c90442aa3e23d19c=
+fb08e280a44ba76 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16337,6 +16337,12 @@ F:	Documentation/devicetree/bindings/nvmem/micro=
+chip,sama7g5-otpc.yaml
+>  F:	drivers/nvmem/microchip-otpc.c
+>  F:	include/dt-bindings/nvmem/microchip,sama7g5-otpc.h
+> =20
+> +MICROCHIP PAC1711 DAC DRIVER
+> +M:	Ariana Lazar <ariana.lazar@microchip.com>
+
+I also work for Microchip (in the FPGA BU), so whenever I see people
+=66rom Microchip whose name I don't recognise I look them up. I noticed
+that Teams lists you as being an intern, so I have to ask what your plan
+is for maintaining this after your internship has completed. Do you
+intend passing it over to someone else from your team or continuing
+yourself? If it's the former, it'd be good to CC them and/or add them
+here as a co-maintainer.
+
+Cheers,
+Conor.
+
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/iio/adc/microchip,pac1711.yaml
+> +
+>  MICROCHIP PAC1921 POWER/CURRENT MONITOR DRIVER
+>  M:	Matteo Martelli <matteomartelli3@gmail.com>
+>  L:	linux-iio@vger.kernel.org
+>=20
+> --=20
+> 2.43.0
+>=20
+
+--7HVN5qN8TvfPexH6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEbBwAKCRB4tDGHoIJi
+0gSvAQCBF/6HaKvqqyEh/ff9b2A+B67fmJ7VliDhUrfsBvrfPwD/ZMme/QIleR9c
++UNEtePhn3IdlFWqxebquWgYXMSzZgg=
+=LMII
+-----END PGP SIGNATURE-----
+
+--7HVN5qN8TvfPexH6--
 
