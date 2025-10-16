@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-855712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF46BE2110
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:00:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6957ABE2166
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BA11A60A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:00:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0BBD4E43FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77C5302CD0;
-	Thu, 16 Oct 2025 07:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB6F2FFDCF;
+	Thu, 16 Oct 2025 08:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yRfFkKU5"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mehtNlDq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4702FFF9F;
-	Thu, 16 Oct 2025 07:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD1D1B4257;
+	Thu, 16 Oct 2025 08:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760601592; cv=none; b=LR466AtCFkAh1EmdE2fe6E3oAi8aPqwGhZAWZ0Abtl2v8LltQFmuSV/z7BI3V95m38TuBmleaOno6el96rOMjCunTvTpi9JpeSfuYEh3Jo7eL5Vyvm3xnmL89PnNRPoLGXvHXX7SfA+t27+JYyofo9wSbHTk3gwU+eGneFhNlQw=
+	t=1760601880; cv=none; b=BSwIV5K8Oku9/doOCpycdrofNAhH6MO/Bz8lag34wwNSss98S7SpHHmUgYlskixleqQ0oCg3DKWR555DmYhbO/wBkAYIJLp36z2HCjCqB50OBHgTC3mIUlxInxTA1A1LrvPdSQazMT4Xy36izi0j2F3Qfo60+LxTJTMT50sVlA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760601592; c=relaxed/simple;
-	bh=+vKJQP1mIQMNYZf++4ZYhUdYx+YT07eIKK3wxNp2eZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocrswmy3Mu5aM+w0c7P6FTonu2IMR6DuzlktXxg4muYOn6D17UbIFSPLx6qi+sDKsQY1oV6qMnmdF7ZsI2EjvljYhzV9rLSd5BrfHpWO0EA2Ptf54j70tMV+V7S8KeTeLX6ThL0Vlf1sCJK4rOX2tlxApjxSKpGEt3aRPYg04LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yRfFkKU5; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id DCD021D0015C;
-	Thu, 16 Oct 2025 03:59:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 16 Oct 2025 03:59:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760601587; x=
-	1760687987; bh=wVqgocYI0n8kgCp0cVXx1uCWfFzvoA7KTcrmb8YK+08=; b=y
-	RfFkKU5JijraOUbNjh6inSU1k8sULCj/OmFqlTRWEsD4YwZ3zfaBJzDmTONprw6o
-	RLHA0mtymgHdULBY/DYJoMfIe9p+iLYMgmXZ1PxZDt0dkJLYcwZGC+gDRNrDfwN/
-	RB3vQg2Py9kYwr4NKX/AZLnPTa2Olw7p522GbXBB6YgH/Jtdv1/cMejjXMh+TVMT
-	rTtsH6Q3oYmUcB+AOWuA00gLaguw96TCu6LaOrgWVEyZ/sdmglDyUz6u+7d6uUQY
-	3iR12WnjZhJ/FQmv9G7I6UtjIQxl5jy5AAr+s3oz8w/ICeJLcJ3n6TCYL9s4DY16
-	2pDMbn5CYP5Er9v8XTGIQ==
-X-ME-Sender: <xms:8qXwaJJTany_uT-PPHttB2bzj8N06UwExF4vztgfrdyCvPdqP_I_ew>
-    <xme:8qXwaBGAN3D4jGhMKRgUKILb8hti7z_DFASEP0kxcny0SrrQrq9PKvPe6bIbwhSzS
-    Gb7oC50CG-L4vRLmFjRhC4sn1H_I4F_sgaC71qilVOE8i4Jwked>
-X-ME-Received: <xmr:8qXwaH1pPjV93IhbQ4ykNlMQogY5EGB8OQxbY2FIbpL-hs7CJAV21fQB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdehjeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefkughoucfu
-    tghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeegheekuddvueejvddtvdfgtddvgfevudektddtteevuddvkeetveeftdevueej
-    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiug
-    hoshgthhesihguohhstghhrdhorhhgpdhnsggprhgtphhtthhopedujedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepjhhohhgrnhhnvghsrdifihgvshgsohgvtghksegrih
-    hsvggtrdhfrhgruhhnhhhofhgvrhdruggvpdhrtghpthhtohepuggrvhgvmhesuggrvhgv
-    mhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtoh
-    hmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggs
-    vghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepkhhunhhihihusehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehsughfsehfohhmihgthhgvvhdrmhgvpdhrtghpthhtohepshhhrgifrdhlvghonhesgh
-    hmrghilhdrtghomh
-X-ME-Proxy: <xmx:8qXwaAwRO4YW0r5nsoQD3wdrEmq6JCOt_XvzGQLNZ69s7LgdwwE2JQ>
-    <xmx:8qXwaOi8RmTOEArw2qwbL7INBsjnSaiDLSJVO0uTZe0mWzjNZT69-Q>
-    <xmx:8qXwaHx63zLDd6loTzk3AfcjGLpdwQIqbznXyllp8enyGkr2I_qePg>
-    <xmx:8qXwaEyuIS7cCsySSbdPaosOFHkgLg-zA39tp_UhfwyzyQhGhOLnfg>
-    <xmx:86XwaMJ0BtddSqnTgfvTDAFdYWsFZvptt0bXxhJoouzZ4sRUsscCFUpq>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Oct 2025 03:59:46 -0400 (EDT)
-Date: Thu, 16 Oct 2025 10:59:44 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Johannes =?iso-8859-1?Q?Wiesb=F6ck?= <johannes.wiesboeck@aisec.fraunhofer.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Xiao Liang <shaw.leon@gmail.com>,
-	Vlad Yasevich <vyasevic@redhat.com>,
-	Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	gyroidos@aisec.fraunhofer.de, sw@simonwunderlich.de,
-	Michael =?iso-8859-1?Q?Wei=DF?= <michael.weiss@aisec.fraunhofer.de>,
-	Harshal Gohel <hg@simonwunderlich.de>
-Subject: Re: [PATCH net v2] rtnetlink: Allow deleting FDB entries in user
- namespace
-Message-ID: <aPCl8EO8xkRVzaQi@shredder>
-References: <20251015201548.319871-1-johannes.wiesboeck@aisec.fraunhofer.de>
+	s=arc-20240116; t=1760601880; c=relaxed/simple;
+	bh=ffNPg05OO9ZQ+iVrLLpApjwzhDydYcOe6ZOBkwVV7T0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kY2tvthMgDnmApl8Kp8N3gjuY+G4/lVUslsVTuhIodzzsEvjYEkp0aMa1bMfSNvz4g+FoG2WtZZOqAfZcQ7VjzuVxQfvZfZyqhY7sxNMpGHqckuOnStnwYT/FLDUj8xsudOV9odTft+AR3bDBKvWfGWlD59pGZKJ+Lt/OPmR6s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mehtNlDq; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760601879; x=1792137879;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ffNPg05OO9ZQ+iVrLLpApjwzhDydYcOe6ZOBkwVV7T0=;
+  b=mehtNlDq38p7LqQtOw3B7XtD3t0NS5nPePXMkhVCbyUzTHEkePE3LQCf
+   H8+PEuWEkLUo9vzx3QcG6XdowybTAX7xl0uYQPa6WmJfa8tgKNkdprelR
+   sZW5aZob9jnkEpDhsEaMb2AW3xub1YVD24eQu6zvaNPqtlupsuu07l6gn
+   HpxrNcPNYPAggnPWcULGF/qnNq9p68h3w6CS40sUZsvtLRRaMNJ+2A4Bu
+   /Oig5KYtm6Z+Ki32P0JUplLuJgjmnnXdZv268HJ3KorgsS6+htdXhsZAU
+   Jb4nSgOy38qanhixpR2r6+3ixORv98tcJ+Dfei19l5QHofpjekHfUe9jc
+   w==;
+X-CSE-ConnectionGUID: a95UtrVdQ8qkhS7g6AQiqA==
+X-CSE-MsgGUID: qYQ8f2TXTkSRjT2c8I1ljA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62830276"
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="62830276"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 01:04:38 -0700
+X-CSE-ConnectionGUID: cA4TqZ1TSxyq3V7qZWSmMQ==
+X-CSE-MsgGUID: I4mYOUFQTfaDa93MhgX5nQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="187674419"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 01:04:29 -0700
+Message-ID: <8cdb459f-f7d1-4ca0-a6a0-5c83d5092cd8@linux.intel.com>
+Date: Thu, 16 Oct 2025 16:00:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251015201548.319871-1-johannes.wiesboeck@aisec.fraunhofer.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot ci] Re: Fix stale IOTLB entries for kernel address space
+To: Dave Hansen <dave.hansen@intel.com>,
+ syzbot ci <syzbot+cid009622971eb4566@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, apopple@nvidia.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, david@redhat.com, iommu@lists.linux.dev,
+ jannh@google.com, jean-philippe@linaro.org, jgg@nvidia.com, joro@8bytes.org,
+ kevin.tian@intel.com, liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, luto@kernel.org,
+ mhocko@kernel.org, mingo@redhat.com, peterz@infradead.org,
+ robin.murphy@arm.com, rppt@kernel.org, security@kernel.org,
+ stable@vger.kernel.org, tglx@linutronix.de, urezki@gmail.com,
+ vasant.hegde@amd.com, vbabka@suse.cz, will@kernel.org, willy@infradead.org,
+ x86@kernel.org, yi1.lai@intel.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <68eeb99e.050a0220.91a22.0220.GAE@google.com>
+ <89146527-3f41-4f1e-8511-0d06e169c09e@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <89146527-3f41-4f1e-8511-0d06e169c09e@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 15, 2025 at 10:15:43PM +0200, Johannes Wiesböck wrote:
-> Creating FDB entries is possible from a non-initial user namespace when
-> having CAP_NET_ADMIN, yet, when deleting FDB entries, processes receive
-> an EPERM because the capability is always checked against the initial
-> user namespace. This restricts the FDB management from unprivileged
-> containers.
+On 10/16/25 00:25, Dave Hansen wrote:
+> Here's the part that confuses me:
 > 
-> Drop the netlink_capable check in rtnl_fdb_del as it was originally
-> dropped in c5c351088ae7 and reintroduced in 1690be63a27b without
-> intention.
+> On 10/14/25 13:59, syzbot ci wrote:
+>> page last free pid 5965 tgid 5964 stack trace:
+>>   reset_page_owner include/linux/page_owner.h:25 [inline]
+>>   free_pages_prepare mm/page_alloc.c:1394 [inline]
+>>   __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2906
+>>   pmd_free_pte_page+0xa1/0xc0 arch/x86/mm/pgtable.c:783
+>>   vmap_try_huge_pmd mm/vmalloc.c:158 [inline]
+> ...
 > 
-> This patch was tested using a container on GyroidOS, where it was
-> possible to delete FDB entries from an unprivileged user namespace and
-> private network namespace.
+> So, vmap_try_huge_pmd() did a pmd_free_pte_page(). Yet, somehow, the PMD
+> stuck around so that it *could* be used after being freed. It _looks_
+> like pmd_free_pte_page() freed the page, returned 0, and made
+> vmap_try_huge_pmd() return early, skipping the pmd pmd_set_huge().
 > 
-> Fixes: 1690be63a27b ("bridge: Add vlan support to static neighbors")
-> Reviewed-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
-> Tested-by: Harshal Gohel <hg@simonwunderlich.de>
-> Signed-off-by: Johannes Wiesböck <johannes.wiesboeck@aisec.fraunhofer.de>
+> But I don't know how that could possibly happen.
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+The reported issue is only related to this patch:
+
+- [PATCH v6 3/7] x86/mm: Use 'ptdesc' when freeing PMD pages
+
+It appears that the pmd_ptdesc() helper can't be used directly here in
+this patch. pmd_ptdesc() retrieves the page table page that the PMD
+entry resides in:
+
+static inline struct page *pmd_pgtable_page(pmd_t *pmd)
+{
+         unsigned long mask = ~(PTRS_PER_PMD * sizeof(pmd_t) - 1);
+         return virt_to_page((void *)((unsigned long) pmd & mask));
+}
+
+static inline struct ptdesc *pmd_ptdesc(pmd_t *pmd)
+{
+         return page_ptdesc(pmd_pgtable_page(pmd));
+}
+
+while, in this patch, we need the page descriptor that a pmd entry
+points to. Perhaps we should roll back to the previous approach used in
+v5?
+
+I'm sorry that I didn't discover this during my development testing.
+Fortunately, I can reproduce it stably on my development machine now.
+
+Thanks,
+baolu
 
