@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-856161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3338ABE345C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:12:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763F0BE348C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1D481A61EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:12:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B424502DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6056A32D456;
-	Thu, 16 Oct 2025 12:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F056324B16;
+	Thu, 16 Oct 2025 12:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaJ4N0Ns"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eV95y6Mw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A476732D434;
-	Thu, 16 Oct 2025 12:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82E22FD1CC;
+	Thu, 16 Oct 2025 12:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760616714; cv=none; b=Y7Y3HcAGQYRiELy6hFXTO7N07Vc1/QWXcIgxL/m/NPxxKRZL6YIo0EeFjMPS4TiXoXKln/4M7prtD45CamPXLTRS+rICZ9Ot7CAdt5HzbBF3LjxiQHf0WEdyfwV64D2KYW1IovQHfTm8udqOi9afi9qd1N0UuABE3yQP6bQQ3nw=
+	t=1760616802; cv=none; b=C+sZ+X0UgMrFAJT9Tx1p0UzmDbcgjU5h0GQFiuSlHjd5m0XVj38oZNgS3qV/AWLK5SUUaQtmayLEz7DBI6RYCFiLABeUcQX0LoEl5Rw0jZXXkQvJ8KnYtbSPcb+0EsTnBCcjU6zFtBIfjgXNIfApCLuraTWCnI+g49UszD1X7Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760616714; c=relaxed/simple;
-	bh=ZXNk4YglJtvzFZyiYMePoPZbDD+4ywlWfdCuaIVrXLk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=EZsuYtfKUdSsPo/h0q7g3FauZXO/+zXubA4U4UPCdJqHWpziDm3pBjdEFdY+6DrMzLy2EeHLZSpWJGe0n/jgdSWUuN2wxujQx/bgjUggrZEBqqdSZEaQHIaXxN1TrVa1e9MfC36619cutMp0pek4OTXnhgHAXppMxfYFeyIzWi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaJ4N0Ns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFCBC116B1;
-	Thu, 16 Oct 2025 12:11:53 +0000 (UTC)
+	s=arc-20240116; t=1760616802; c=relaxed/simple;
+	bh=s9LjxPAebn33cLNi1oNeKaoMwXWOOe3q8lk+/+DLrek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PGwLh+GkgNvGbJP9mMfZmKLszcUfHC5Ew+WdSK1WCHnqbledFY1N3y7FqkD8Mn0uhkDt0AaDBbpKjnBdY8r+wCBGJfg0HindY6C+UqffRc2HHDaQARbXNBu21a3NKkzc8C6YvFwidBsF734O7eZH9D/sD5uTCITxuyEmfHNHrCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eV95y6Mw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343C0C113D0;
+	Thu, 16 Oct 2025 12:13:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760616714;
-	bh=ZXNk4YglJtvzFZyiYMePoPZbDD+4ywlWfdCuaIVrXLk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=LaJ4N0Ns+egy+9FtsEzZBQVa+jaCC3CW9cay5EwU3Q9gFJaSP3FgujE1tsvtQJvtg
-	 zoG+gCqlQQ8s7AVoJrXQbAxm+U0yks7kEL7nMQWW/t/UQmmcMjxAl5WcPucMgHMr+n
-	 icOX9a8K1RW58ERywvJqoHQduvcBwnJ42ZDsrs/BT123ybTYMOBjGP/+i9m1mvPera
-	 9TTcKRi4zYQtKaHFcqGjRzm07EJUubGBso+yUtqMABabGUQ2+Tib+0TyZX/McZex9F
-	 si3SUELRFEc90RgNCenBcKA21uwfpaEymkSFQfrYcC/LCqh2LB2poxZO/Gc02d0bWh
-	 FITTHFpi9xf+A==
-Date: Thu, 16 Oct 2025 07:11:52 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1760616802;
+	bh=s9LjxPAebn33cLNi1oNeKaoMwXWOOe3q8lk+/+DLrek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eV95y6MwSFBbHcm9RdZ9+q+5xCdL2eftk5/mfYFU2ob/nJzYmxzOQfrriOFqPjIpF
+	 mxXQBdc4Vwcf1u+KuG61Acxpb/KV6RaQUDiOm39+RFNfsfgIY9jk8XAA3Z3Tjd7DL6
+	 bkLMP9i56JfTfaMP5CIE/dpLIKNnu874T7K7n28WnCex+v+HZkI8jYV7ysdjCveOo1
+	 jt7K50HnucWxD94XwpW/N3zOARhmXXmCNYmdz4KinakEjueVOgoLW3jW/lzPHsgAXB
+	 M6Ep+27XCgd19Ai4kdTkAHB//aiZFwt5dW/Em8A9tiyhwhcwPAbQRhVEkB4VBf0EUo
+	 mcxZMIF8GLe3w==
+Date: Thu, 16 Oct 2025 13:13:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Takashi Iwai <tiwai@suse.de>, tiwai@suse.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH 05/11] ALSA: hda/cs35l56: Create sysfs files for factory
+ calibration
+Message-ID: <d4e94837-6e0b-4b47-896d-d0dd3a59a39b@sirena.org.uk>
+References: <20251016104242.157325-1-rf@opensource.cirrus.com>
+ <20251016104242.157325-6-rf@opensource.cirrus.com>
+ <871pn3860a.wl-tiwai@suse.de>
+ <37e0f08b-ce35-450b-9abf-d3be09d2863f@sirena.org.uk>
+ <14617d69-7312-418f-abd9-3c65a84f8421@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, nfraprado@collabora.com, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Eric Biggers <ebiggers@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, Nishanth Menon <nm@ti.com>, 
- Melody Olvera <melody.olvera@oss.qualcomm.com>, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-To: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <fac1a1a1-43a9-4bec-a6be-812e7d97e807@oss.qualcomm.com>
-References: <20251015105231.2819727-1-krishna.kurapati@oss.qualcomm.com>
- <20251015105231.2819727-2-krishna.kurapati@oss.qualcomm.com>
- <80c71cfd-e12a-4707-ad03-e03b0ac48838@oss.qualcomm.com>
- <fac1a1a1-43a9-4bec-a6be-812e7d97e807@oss.qualcomm.com>
-Message-Id: <176061621332.2563222.17561073478578680773.robh@kernel.org>
-Subject: Re: [PATCH v7 1/4] arm64: dts: qcom: sm8750: Add USB support to
- SM8750 SoCs
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UJFub6DXM0e0JKXW"
+Content-Disposition: inline
+In-Reply-To: <14617d69-7312-418f-abd9-3c65a84f8421@opensource.cirrus.com>
+X-Cookie: Whoever dies with the most toys wins.
 
 
-On Thu, 16 Oct 2025 13:21:19 +0530, Krishna Kurapati PSSNV wrote:
-> 
-> 
-> On 10/16/2025 12:59 PM, Konrad Dybcio wrote:
-> > On 10/15/25 12:52 PM, Krishna Kurapati wrote:
-> >> From: Wesley Cheng <quic_wcheng@quicinc.com>
-> >>
-> >> Add the base USB devicetree definitions for SM8750 platforms.  The overall
-> >> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
-> >> (rev. v8) and M31 eUSB2 PHY.  The major difference for SM8750 is the
-> >> transition to using the M31 eUSB2 PHY compared to previous SoCs.
-> >>
-> >> Enable USB support on SM8750 MTP and QRD variants. SM8750 has a QMP combo
-> >> PHY for the SSUSB path, and a M31 eUSB2 PHY for the HSUSB path.
-> >>
-> >> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> >> Signed-off-by: Melody Olvera <melody.olvera@oss.qualcomm.com>
-> >> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> >> ---
-> >
-> > [...]
-> >
-> >> +		usb_1: usb@a6f8800 {
-> >> +			compatible = "qcom,sm8750-dwc3", "qcom,dwc3";
-> >> +			reg = <0x0 0x0a6f8800 0x0 0x400>;
-> >
-> > Please resend this using the flattened model
-> >
-> 
-> Hi Konrad,
-> 
->   I didn't want to disturb an ACKed series and hence I just tested and
-> resent the patches as it. I will flatten it out once this is merged.
-> Hope that would be fine.
-> 
-> Regards,
-> Krishna,
-> 
-> 
+--UJFub6DXM0e0JKXW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Thu, Oct 16, 2025 at 12:58:15PM +0100, Richard Fitzgerald wrote:
+> On 16/10/2025 12:27 pm, Mark Brown wrote:
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+> > This feels like it might be a better fit for debugfs or possibly
+> > configfs?  It's not really within the sysfs rules, and especially
+> > debugfs is a lot more relaxed about everything.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+> debugfs is an easy change in the driver but more complex for the
+> tooling. Unlike sysfs there's no standard layout or naming convention
+> for the ASoC debugfs tree, so it's more troublesome to locate the amp
+> entries.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+> ASoC creates a debugfs root by default if DEBUGFS is enabled. But HDA
+> doesn't have its own debugfs. There is an ALSA debugfs enabled by
+> CONFIG_SND_DEBUG, which is normally disabled. But enabling
+> CONFIG_SND_DEBUG has other side-effects, it enables more than debugfs.
 
-  pip3 install dtschema --upgrade
+> Or we could create a new debugfs node specifically for Cirrus Logic
+> directly in /sys/kernel/debug.
 
+Dunno about Takashi but for this application I'd be happy for you to
+just put something in the root of debugfs.
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.18-rc1 (exact match)
- Base: tags/v6.18-rc1 (use --merge-base to override)
+--UJFub6DXM0e0JKXW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+-----BEGIN PGP SIGNATURE-----
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for fac1a1a1-43a9-4bec-a6be-812e7d97e807@oss.qualcomm.com:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjw4VwACgkQJNaLcl1U
+h9Bxmgf/YVcEu7vWQoRhnKscIrN8UWYWrbHG/1znMaJ7ZzLbQHbHgUu2gdkihoFm
+JTUW1QNoEZcqyKfjhHd6zX5wHnynmtvwRT2Ek19HROIyT0O7ZICYfxyLqq7/sb2O
+cMcLNsAf0WPqwFBmEn6IcpaZCsqm9u0t5dDcG9QGCRJIkXp8Gr4B5rUgFwZWTkhc
+6tAeZpzQiky8LDskMQrjnbyRDY3yqtFyFK/D+plE02Tpa0sU2aZqgnGASrP1hGp9
+75ZlJWZosc7irI009nMajf2uGnGogPD3EfecaUmiQd1zMOWnaB6YM3/BgsM0o0Mi
+9vGyHPikvKRg5rNgp96qRgrElHRZYw==
+=P2GX
+-----END PGP SIGNATURE-----
 
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: usb@a6f8800 (qcom,sm8750-dwc3): clock-names: ['cfg_noc', 'core', 'iface', 'sleep', 'mock_utmi'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: usb@a6f8800 (qcom,sm8750-dwc3): clocks: [[36, 11], [36, 156], [36, 3], [36, 161], [36, 158]] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: usb@a6f8800 (qcom,sm8750-dwc3): clock-names: ['cfg_noc', 'core', 'iface', 'sleep', 'mock_utmi'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: usb@a6f8800 (qcom,sm8750-dwc3): clocks: [[36, 11], [36, 156], [36, 3], [36, 161], [36, 158]] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-
-
-
-
-
+--UJFub6DXM0e0JKXW--
 
