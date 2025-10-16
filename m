@@ -1,81 +1,170 @@
-Return-Path: <linux-kernel+bounces-856081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E72BE3060
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:13:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051E8BE307E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6CE4FC98B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D0819A7A22
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D1E308F0C;
-	Thu, 16 Oct 2025 11:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUjlV0Ol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3134130F7E2;
+	Thu, 16 Oct 2025 11:17:26 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587E33064AF;
-	Thu, 16 Oct 2025 11:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01868328619;
+	Thu, 16 Oct 2025 11:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613151; cv=none; b=mO+TSXAweBRJtU+WmjD76Jt0KeSz084DDR5e4DHckoR6YnE4s7lZURxqDhx1vNr3PJiaynZuiuYUYfuUcKWDRB3Q7T6FuTgJ9jaj6EL8CjS9Q/X395dHUAb43gJaUho+sq30YtNEC+E6OT7ydAO8qOuZ/w0kAUSFqGgXd5RKrfk=
+	t=1760613445; cv=none; b=qQW+Xj5u0lLvaA5bhzDpJ/oNyt34Wv8zGTQ2KDjMEEnm8jP/KamdA5aFLeujjLZ2VbeXylr0IZQmrjNL02gKi/KxFhyjuZr3SyU0lNkasUjfXYlXHnK/kJDIcqweFu0Rx8CIq840e+AjZJWmQqmaxd8L+eeE0zMpqbZkI9Vkibg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613151; c=relaxed/simple;
-	bh=qWN5jRJyu+ZfS0Mz8q6YyNusK6HtE9esHiV2Q5N3IP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VMaMo6UMbouMZUceK7cCTkfq8BXbMADrftqrLE32TLOupbYgG4P7MlQcZeOaepgWLG1B59HxDVoKFWc/E6fCZzfjjK/g3qKq6ygjd30DbJtdnMfb04rPK5sYSI3yKE98p61HxFwjLthDXz/1W4UEtOMvvWGd/J0NxHDTdqlJYDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUjlV0Ol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1FE7C4CEF9;
-	Thu, 16 Oct 2025 11:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760613150;
-	bh=qWN5jRJyu+ZfS0Mz8q6YyNusK6HtE9esHiV2Q5N3IP8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QUjlV0OlifcMFLBZMW1oR2N63lZhedrxldkjDhwxZ4zRPkVgLLR8tx+no/WpXJrFy
-	 NetRxqKtgSplF5tAbjn+PiAQ4mNefzam7iHz6lGy9D3bXh+afCYs5mObf3Q7aphVSx
-	 FSkM6Dr9dF0j9cfWO/tQorUxgxuUGiqS97BLnHf6mTKs0pWcKXpi5Y3XzdzBng2Zno
-	 m41+gk6UMNdyiuNJrmFTfy9jx/Spuz7PRXXsu+nugGvHoAPynHAuT31K+XwAUJ7PWA
-	 TVpAaDcQ5G5/RRECXWyr487iLgB3bPf7T3Vkm56WYNGNrnrgz3wwqDi5HCBBCzDhlb
-	 y/zaFZPmFyQZw==
-From: William Breathitt Gray <wbg@kernel.org>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
-Date: Thu, 16 Oct 2025 20:12:19 +0900
-Message-ID: <176061309838.174790.14380642459338947302.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251014145905.4862-1-ilpo.jarvinen@linux.intel.com>
-References: <20251014145905.4862-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1760613445; c=relaxed/simple;
+	bh=MZYkKkorzjs2AyVDuXTTrCkl4SEuv4JZG9Dfc8N2vlE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aYNiaxnr9H1F5Oa5udReXBILtVCKkqEZzuAyPe18R2sKCKrH8nZ77xoWqtUKirLTK6lczlyGmOTXkzJAsY54zX0VpRJYWiR0tHHYU2nRN53qh5zzxPQQW+VH5STR9oPQ3Xqhn/ZVH6uQbIoA30mxUmNrAG8MSfsewJ/AZ0p4vFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=unknown smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 59GBCfS4020808
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 16 Oct 2025 19:12:41 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
+ with Microsoft SMTP Server id 14.3.498.0; Thu, 16 Oct 2025 19:12:41 +0800
+Date: Thu, 16 Oct 2025 19:12:36 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: Niklas Cassel <cassel@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <jingoohan1@gmail.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alex@ghiti.fr>,
+        <aou@eecs.berkeley.edu>, <palmer@dabbelt.com>,
+        <paul.walmsley@sifive.com>, <ben717@andestech.com>,
+        <inochiama@gmail.com>, <thippeswamy.havalige@amd.com>,
+        <namcao@linutronix.de>, <shradha.t@samsung.com>, <pjw@kernel.org>,
+        <randolph.sklin@gmail.com>, <tim609@andestech.com>
+Subject: Re: [PATCH v6 1/5] PCI: dwc: Allow adjusting the number of ob/ib
+ windows in glue driver
+Message-ID: <aPDTJKwmpxolGEyj@swlinux02>
+References: <20251003023527.3284787-1-randolph@andestech.com>
+ <20251003023527.3284787-2-randolph@andestech.com>
+ <aO4bWRqX_4rXud25@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=368; i=wbg@kernel.org; h=from:subject:message-id; bh=9nxdi0icLV2/6ycaKJr/4F7sVcSCO09YFZnRpoQS+/Q=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBkfLn2a5leQ2nRVP8p3/5WtUiFO6im77loluS/+KrTWc oIuq7VlRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjCRrwcY/oebHbl/yczpmuaB RiOTdYssjwTmrAtg1P0inPrhTop5/lJGhoOKgVoHvrVFXbh979B1xlQJzpux+extxRrX1sx0YWJ LZAYA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aO4bWRqX_4rXud25@ryzen>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59GBCfS4020808
 
+Hi Niklas,
 
-On Tue, 14 Oct 2025 17:59:05 +0300, Ilpo Järvinen wrote:
-> Jarkko's address is going to bounce soon and I agreed to be the new
-> maintainer.
+On Tue, Oct 14, 2025 at 11:43:53AM +0200, Niklas Cassel wrote:
+> [EXTERNAL MAIL]
+> 
+> On Fri, Oct 03, 2025 at 10:35:23AM +0800, Randolph Lin wrote:
+> > The number of ob/ib windows is determined through write-read loops
+> > on registers in the core driver. Some glue drivers need to adjust
+> > the number of ob/ib windows to meet specific requirements,such as
+> 
+> Missing space after comma.
 > 
 > 
 
-Applied, thanks!
+Thanks a lot. I will fix it in the next patch.
 
-[1/1] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
-      commit: b462fcd08dd589d9cf9eb7f9d8fc7777b5c5521d
+> > hardware limitations. This change allows the glue driver to adjust
+> > the number of ob/ib windows to satisfy platform-specific constraints.
+> > The glue driver may adjust the number of ob/ib windows, but the values
+> > must stay within hardware limits.
+> 
+> Could we please get a better explaination than "satisfy platform-specific
+> constraints" ?
+> 
 
-Best regards,
--- 
-William Breathitt Gray <wbg@kernel.org>
+Due to this SoC design, only iATU regions with mapped addresses within the
+32-bits address range need to be programmed. However, this SoC has a design
+limitation in which the maximum region size supported by a single iATU
+entry is restricted to 4 GB, as it is based on a 32-bits address region.
+
+For most EP devices, we can only define one entry in the "ranges" property
+of the devicetree that maps an address within the 32-bit range,
+as shown below:
+	ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>;
+
+For EP devices that require 64-bits address mapping (e.g., GPUs), BAR
+resources cannot be assigned.
+To support such devices, an additional entry for 64-bits address mapping is
+required, as shown below:
+	ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>,
+		 <0x43000000 0x1 0x00000000 0x1 0x00000000 0x7 0x00000000>;
+
+In the current common implementation, all ranges entries are programmed to
+the iATU. However, the size of entry for 64-bit address mapping exceeds the
+maximum region size that a single iATU entry can support. As a result, an
+error is reported during iATU programming, showing that the size of 64-bit
+address entry exceeds the region limit.
+
+In this SoC design, 64-bit addresses are hard-wired and can skip iATU
+programming. Thus, the driver needs to recount the "ranges" entries whose
+size fits within the 4GB platform limit.
+
+There are four scenarios:
+32-bits address, size < 4GB: program to iATU
+64-bits address, size < 4GB: program to iATU
+32-bits address, size > 4GB: assuming this condition does not exist
+64-bits address, size > 4GB: skip case
+
+We will recount how many outbound windows will be programmed to the iATU; 
+this is why we need to adjust the number of entries programmed to the iATU.
+
+> Your PCIe controller is synthesized with a certain number of {in,out}bound
+> windows, and I assume that dw_pcie_iatu_detect() correctly detects the number
+> of {in,out}bound windows, and initializes num_ob_windows/num_ib_windows
+> accordingly.
+> 
+> So, is the problem that because of some errata, you cannot use all the
+> {in,out}bound windows of the iATU?
+>
+
+Similar to the erratum, all inbound and outbound windows remain functional,
+as long as each iATU entry complies with the 4 GB size constraint.
+
+> Because it is hard to understand what kind of "hardware limit" that would
+> cause your SoC to not be able to use all the available {in,out}bound windows.
+> 
+> Because it is simply a mapping in the iATU (internal Address Translation Unit).
+> 
+> In fact, in many cases, e.g. the NVMe EPF driver, then number of {in,out}bound
+> windows is a major limiting factor of how many outstanding I/Os you can have,
+> so usually, you really want to be able to use the maximum that the hardware
+> supports.
+> 
+> 
+> TL;DR: to modify this common code, I think your reasoning has to be more
+> detailed.
+> 
+
+I will include additional explanations along with the application scenarios of
+this SoC, and refactor the commit message.
+
+> 
+> 
+> Kind regards,
+> Niklas
+
+Sincerely,
+Randolph
 
