@@ -1,125 +1,174 @@
-Return-Path: <linux-kernel+bounces-856379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1F1BE401A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:50:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A25BE402C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39F034F598E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:50:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86DA04FB88D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510D634AAE7;
-	Thu, 16 Oct 2025 14:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5723431F6;
+	Thu, 16 Oct 2025 14:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MywwBi5l"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="d0mYgGm0"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC7F34AAEE
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F3F3469F7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626126; cv=none; b=J5rNWu0I/RsKGMQjHhSc10s0VZ51qkkSA39y4fYiEMzD5p51ukCyTkwMOqv+Vm6imj3Gpch+DNN0Z5scZCtgjIuzjzuWpfPKlrjvUKSOsx6gQdCRuKwq2JH2yMSlSaxWImlyoLdqZvDvjPR5ArHh2thC13ndNqsJDZh0FNQbRf0=
+	t=1760626208; cv=none; b=NoOzUVKMUfJnn4Na/MxP8J+HP5BV0CbSZRMXRusQMpimPnFpip4A9+L0BM7WcV5dfVVrQ1ztQ/oDl8U4lWto2to7hK6TQzBb0lZhs7xiRJMHvjYr5GZFpZJIULedDUiV3L5HcHUfhLjmMYQ+sAnWVpbqM4VtysC3QHIEnpYNIhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626126; c=relaxed/simple;
-	bh=fEYTH53YDZJZ8C2Er8bOzHta7ybr+V5+FzGrUdlcHBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZDGmh/WP7CJlM1M75+UIZfDvxZRpa6+2jsnZ65Iwdfxj3eP1INPczMLBiw8ss++WsAsfxdfOxAbE6VgG3VWKgAtXvgM8yYy98lRCCIC/XTp1dW1HlMOq6bHk33B1Ndk0QgA5Xrg+GMW+m6JBHbRT9rnRW4e1a8ZWUvkTp4c8bS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MywwBi5l; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee1381b835so722691f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:48:36 -0700 (PDT)
+	s=arc-20240116; t=1760626208; c=relaxed/simple;
+	bh=ceE35F0eeLyXyX75I3zz7X0OUIsSe1yIknedUv+jJk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgJQN0fK/dMcscEkbwE7XDHG1f4Vz6rn6X21hDMWa6Lb9p53DAVf7XZsJ5qypowq+CWKVkNICdCMI6i1grs2NF5mRiJWDfU9vWJnN9bw0tSorazGEDRhitZiaZsjy7kUHaLLHsIUNAmozq8d7FvGgiO70zEoSkxO9Nt8dM7a/tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=d0mYgGm0; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4256866958bso569466f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:49:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760626114; x=1761230914; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=il5/r0fmHwvIVU3+4q4zkfdvIMAREkRpbu6Q9Q7Tig4=;
-        b=MywwBi5lmsOrpsCmmOV7nsIsxLrHGlTjFrIL4fvXm1GqGyoTm843ZETfE08u+w1whG
-         Pd6itPgMW/hVeJSiobWZt4ZB/69aeq4PnEAvH0W5wWV9I++qCvK0hclteTx8rPbg0li/
-         UECLKcUbJ6bsohZ9z0fC3GOby2FZtqSQVJOF76rdw9zc5NqUSlNHBUNrvu7aNdgfZP6L
-         71UD1mDeKkrNLRX/brgQqU6sXugpZl+YIhHoSzEZkol3xU1yzH+ThXGULoSOvzBH049j
-         wkgpLSoN4VA8Be25FHV1XILDwwuuyX486uJl6aWr3dkUEPrU1gdBFNPEOq6NuZppdUNu
-         iiJg==
+        d=suse.com; s=google; t=1760626193; x=1761230993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W6F4mIwBhj9doOK9z7k7FEumR2hjJ0tw1xmmCLD9hKA=;
+        b=d0mYgGm0jeLBY6XkH009SFT5IoCGQ4f/ho1kYxw+2mSsG+rkGwXJ1EOCjP0WVyxddF
+         x6yRI2EGOBsPNZ29kT0HPGlL9jTOopAIyG8ndIQr/71652VDFpnAccsqXvSu8regb2Bn
+         tCG2owwRU4j05AdQ2HYQRj7oYdNn3jCtM38gcBLmMNLlbf8f7LCSXZiiTJRgfDciGsAT
+         pp1s8IftBcGQ6LACwym9fYNUm6pMD70uwnfPzBP8z0oSoooKLL4r7mkU7BOowZG1AEI/
+         JLjmD1kCdiQH22f2yNpKyLsUR4yguqvA5sdSmDtbDlbsXpsB8CFOBDDJAAbgSPs3HkA6
+         B92w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760626114; x=1761230914;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=il5/r0fmHwvIVU3+4q4zkfdvIMAREkRpbu6Q9Q7Tig4=;
-        b=LS37p5s/Z88ewa29CXpKLqxuFHPpYjOHn+vJVk0AncZBsgL31aSAMI7uySf9pzXbOl
-         I0E0OivcgvhpZg9T966KBzRjRYn6HfmVilB4K9foO4zyaY6y4B3CLKMs9TS9bz/Ggzh4
-         jDGhKVo+XzDndD96HHPkpH+JGN7gDNj7InQJIYBP/O1Yxm1WCAPo9zGQWZDUaOonvo2s
-         dWgj9RM3ZdEzelfvaRjqu29L5oFKviiI5IPH8SZlG/ONBLW8biEu9/8xktxd1J/UDkmq
-         Z8YE6qeEPGkTQo+Flu9skx+O70S3vHQOPS1D64h7496d9czN+Qlf3d954DdNWJkKEYDi
-         sEqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXB4dovJ34JObyVmwta6HO1Z4V7n+ugVqN/jTwmg6cLMJj90Ge5zDXhW34I9k08u5m4Ddd5Fh2Hju0XFi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR2WM0cukzyCihH4PJLov31rHpKvH4h/2P9VJEAQYTfo/39U1N
-	idIuh2CJmf7wkJqANH6TC9kkcsiV8/g0yw/cUHEysaIUeYymuf95FKrRr5qUVJ8JJYg=
-X-Gm-Gg: ASbGncsgwb82TTF+5GB1WiudMnveACygAKypobyKl+NZ8FnMX4/ZLgV5B2YmtIC+U5l
-	9ira7xHCvVxx4iL9xp5riVqlvt/6oHY9crT2iHdx/3zCUtAeP8uDoyHETsgOes1syJZQ5TfCABk
-	UGpC6VxmjsWhVFwgOPJps39vIwO8dFG1zHb9B9KunG8HtDgqBXo7KqFaOLH1V3qyvPIi9iSh0jN
-	9A1/0hoFAg4VYGDM9cOKLN5GV77QRuGkYziBurNdNiKOOj1kXKLWLZPRknofX+fmglzN89XKTPg
-	s6I99bbgdMMt1q1EOnDiIesfJCuBIvgdruaSfUcCZdusmBKjBkziD7XbaVI+vJ3327pSGXk7sE+
-	JAShkvjZDdoBdR41G2YgZeuphdmJMI+/0PTNSChQBYVBdCmdXhqFbpPUa8tsR6SBZzoN24FmcW3
-	EHVQ==
-X-Google-Smtp-Source: AGHT+IGU+UUv23rPnRMVt1yR35zGCx+QFDbX2GlDTl3HK/z3KL4fSupr6QTfss0me53/F+Mqd2QUFg==
-X-Received: by 2002:a5d:588f:0:b0:425:8591:8f5b with SMTP id ffacd0b85a97d-42704da4b6amr311746f8f.59.1760626114003;
-        Thu, 16 Oct 2025 07:48:34 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ef97:57cb:86cb:f7c4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426e6f03a76sm19507158f8f.36.2025.10.16.07.48.22
+        d=1e100.net; s=20230601; t=1760626193; x=1761230993;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W6F4mIwBhj9doOK9z7k7FEumR2hjJ0tw1xmmCLD9hKA=;
+        b=qQqh5U/zmbT7mqg+K38f1/PC4gP+CDUzdL/l/qAwnygdv5RBYC9Tv8+uPaehAwMOzr
+         YGUwuNKRQyncPQvCIhsw5W4gXZpoh4yvEY3LJDduIcX4u6XdB2XLJfFElHwrNMpyAYlk
+         3p/8TMAKlZ63hNXzhBRSyySUjhQOzNPyCdvOvzRIc+/gjUMACdNr6a+5WQtQcRiGD4yF
+         pmWFrmmvBxo7hecJosBloFtlcK4daJ92rcDjfbZq26uChN4MKOQWoZ5iFihYEW//wl7p
+         fQ53OoTor9tKK0GQQTWXOQU3WJL8EhJEUdXFQ3j8mR03XD8hoC0UDtUVZ3v9AT+QhggO
+         lRtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXv/vxRU/zYlA4GcyDYzQQkgIELMMm7mbzLGDc0DQfW7XvfZRvxCPkQNTyikeh1bJxowXmMUrtOYrhGs+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVUD2mKI23SCfdYkzB1iMk9gy+MvgSBQiufzQLebxktl3kpmMQ
+	Bl6F2XanxxYhKUOIy772jyO1VMk6HEJ4T9Hvh1ZnnniIKhVH2OTW4Dc05cUVsMhOWLg=
+X-Gm-Gg: ASbGncuQSWW7qf/Fx3lnWw9V+fg5ki1g3uJ6vYvweXOE6Lwv9RHr5KjqIfOTskLUoXi
+	MrahT3wNT7p2i1SLYVQu8d5Y5Sd3y9Fkmne7l6ucUKZVETdO031q1k2RJcI7cLHq7VXBxA9RgvD
+	izzznmJadcUKHLIpQ2rc8GBYEHpiN0EOdiexw9n4ohhKyesb0Ln8YJVYBbnQw2Q81Kw4w6POENm
+	J8qH4WSqclfXcCcPPqfiAUojlytDnJrZyU8/NsqD/AJY3BM4/DC30Al+XmmhDFOy3ZXJm7M7o74
+	bI0/3aV2PrA1h6YZ2W4LR8GWYTXgXMkJXw2d9iZ5lKcNBYLM+ZrtjXo63NmBIPVbp5LrWk7ehuX
+	dBzGHDUVU62b74SKQZgQyUye0Y4I6mzszz5Y9Qco+cDACuoRjDLddOpYFJ0ikOfdrxhSzz7MdJL
+	1NMbaqbOVH6Uh5cpC10ZCauw==
+X-Google-Smtp-Source: AGHT+IGar8v0iDTZx8UCaPIvELr3VKoaD/nSBrLLGFgIXeQYGbPyAEaN93A5aaeOEz6VqjytwYSZcw==
+X-Received: by 2002:a5d:5885:0:b0:3f0:4365:1d36 with SMTP id ffacd0b85a97d-42704d8cde9mr319882f8f.16.1760626192708;
+        Thu, 16 Oct 2025 07:49:52 -0700 (PDT)
+Received: from localhost (109-81-16-57.rct.o2.cz. [109.81.16.57])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce5e0a03sm35522625f8f.37.2025.10.16.07.49.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 07:48:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH 1/2] gpio: mm-lantiq: Drop legacy-of-mm-gpiochip.h header from GPIO driver
-Date: Thu, 16 Oct 2025 16:48:21 +0200
-Message-ID: <176062606134.122017.14455806740339775356.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <c7415e2870b3bd9109f95bab3784d48e708e30e6.1760360638.git.christophe.leroy@csgroup.eu>
-References: <c7415e2870b3bd9109f95bab3784d48e708e30e6.1760360638.git.christophe.leroy@csgroup.eu>
+        Thu, 16 Oct 2025 07:49:52 -0700 (PDT)
+Date: Thu, 16 Oct 2025 16:49:51 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mm/vmscan: Add retry logic for cgroups with
+ memory.low in kswapd
+Message-ID: <aPEGDwiA_LhuLZmX@tiehlicka>
+References: <20251014081850.65379-1-jiayuan.chen@linux.dev>
+ <aO4Y35l12Cav-xr4@tiehlicka>
+ <a6cd4eb712f3b9f8898e9a2e511b397e8dc397fc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6cd4eb712f3b9f8898e9a2e511b397e8dc397fc@linux.dev>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Mon, 13 Oct 2025 15:07:14 +0200, Christophe Leroy wrote:
-> Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-> file provides an OF API that's deprecated. There is no agnostic
-> alternatives to it and we have to open code the logic which was
-> hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-> drivers are using their own labeling schemas and resource retrieval
-> that only a few may gain of the code deduplication, so whenever
-> alternative is appear we can move drivers again to use that one.
+On Tue 14-10-25 12:56:06, Jiayuan Chen wrote:
+> October 14, 2025 at 17:33, "Michal Hocko" <mhocko@suse.com mailto:mhocko@suse.com?to=%22Michal%20Hocko%22%20%3Cmhocko%40suse.com%3E > wrote:
 > 
-> [...]
+> 
+> > 
+> > On Tue 14-10-25 16:18:49, Jiayuan Chen wrote:
+> > 
+> > > 
+> > > We can set memory.low for cgroups as a soft protection limit. When the
+> > >  kernel cannot reclaim any pages from other cgroups, it retries reclaim
+> > >  while ignoring the memory.low protection of the skipped cgroups.
+> > >  
+> > >  Currently, this retry logic only works in direct reclaim path, but is
+> > >  missing in the kswapd asynchronous reclaim. Typically, a cgroup may
+> > >  contain some cold pages that could be reclaimed even when memory.low is
+> > >  set.
+> > >  
+> > >  This change adds retry logic to kswapd: if the first reclaim attempt fails
+> > >  to reclaim any pages and some cgroups were skipped due to memory.low
+> > >  protection, kswapd will perform a second reclaim pass ignoring memory.low
+> > >  restrictions.
+> > >  
+> > >  This ensures more consistent reclaim behavior between direct reclaim and
+> > >  kswapd. By allowing kswapd to reclaim more proactively from protected
+> > >  cgroups under global memory pressure, this optimization can help reduce
+> > >  the occurrence of direct reclaim, which is more disruptive to application
+> > >  performance.
+> > > 
+> > Could you describe the problem you are trying to address in more details
+> > please? Because your patch is significantly changing the behavior of the
+> > low limit. I would even go as far as say it breaks its expecations
+> > because low limit should provide a certain level of protection and
+> > your patch would allow kswapd to reclaim from those cgroups much sooner
+> > now. If this is really needed then we need much more detailed
+> > justification and also evaluation how that influences existing users.
+> > 
+> 
+> 
+> Thanks Michal, let me explain the issue I encountered:
+> 
+> 1. When kswapd is triggered and there's no reclaimable memory (sc.nr_reclaimed == 0),
+> this causes kswapd_failures counter to continuously accumulate until it reaches
+> MAX_RECLAIM_RETRIES. This makes the kswapd thread stop running until a direct memory
+> reclaim is triggered.
 
-Awesome work! Thanks for doing it, we really need to keep getting rid of all
-these legacy intefaces. Queued for v6.19.
+While the definition of low limit is rather vague:
+        Best-effort memory protection.  If the memory usage of a
+        cgroup is within its effective low boundary, the cgroup's
+        memory won't be reclaimed unless there is no reclaimable
+        memory available in unprotected cgroups.
+        Above the effective low boundary (or
+        effective min boundary if it is higher), pages are reclaimed
+        proportionally to the overage, reducing reclaim pressure for
+        smaller overages.
+which doesn't explicitly rule out reclaim from the kswapd context but
+historically we relied on the direct reclaim to detect the "no
+reclaimable memory" situation as it is much easier to achieve in that
+context. Also you do not really explain why backing off kswapd when all
+the reclaimable memory is low limit protected is bad.
 
-[1/2] gpio: mm-lantiq: Drop legacy-of-mm-gpiochip.h header from GPIO driver
-      https://git.kernel.org/brgl/linux/c/8d0d46da40c878d082b92771355faba8036aecc7
-[2/2] gpiolib: of: Get rid of <linux/gpio/legacy-of-mm-gpiochip.h>
-      https://git.kernel.org/brgl/linux/c/eba11116f39533d2e38cc5898014f2c95f32d23a
+> 2. We observed a phenomenon where kswapd is triggered by watermark_boost rather
+> than by actual memory watermarks being insufficient. For boost-triggered
+> reclamation, the maximum priority can only be DEF_PRIORITY - 2, making memory
+> reclamation more difficult compared to when priority is 1.
 
-Best regards,
+Do I get it right that you would like to break low limits on
+watermark_boost reclaim? I am not sure I follow your priority argument.
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Michal Hocko
+SUSE Labs
 
