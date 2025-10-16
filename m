@@ -1,127 +1,281 @@
-Return-Path: <linux-kernel+bounces-856009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF280BE2DD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:42:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF760BE2DE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C87C424EC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 190E44265F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C155231961E;
-	Thu, 16 Oct 2025 10:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9CC2FFDFB;
+	Thu, 16 Oct 2025 10:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FlokTebt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqAteGMy"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE5F2E091D;
-	Thu, 16 Oct 2025 10:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1A431A810
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760611180; cv=none; b=IinT8LDW9Xj46NeEKy6MxRmAhmVnGW76R1Sz1JtVwdPlvLVdJ8aUr3Xrw3gWSmRoikmi0CNhqm64US5X2ZfJt1yzyMhTVg1gDtJEQFnVrQQgYav1G4HlLgFNaiKR1aSJVl7ov5hgrBMOurTQ0iIYrc8anVZivGKVvvd4RuqejcU=
+	t=1760611184; cv=none; b=spU3uIbcTZCbQX2gUeD9YX2vWGhMrCM2olE+RZFWlg0NEyeEZfBJRsJRrrAhWHsqZYlmqBtok53MwTOQcVEPfcRlQsjvyxuoq/Gm9bzBgXVDzOQdbH1/vq6HiDp42Q93aeiRHCy9EHUhh1P0Dor0oNGhQ6Dx5owj4lECQY8yOto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760611180; c=relaxed/simple;
-	bh=6A/4cU9W/5zTIgE22chfzcnwvKLqW2rXf1QX34J4BgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BHGdDGARxeCpD9KUMj+5RRjsFt4oOhEn9RaTqCV4SjY+5YTLK4M8rxWFzFP3WF9T6nG6c12e7Rb+So4wVHgrHsSTWsXYduDTmUlC3hkXt12CV/fR8bGUsWSbNekWJ7Lz6wtIVXbY2I1zfEAVpR0Oasd5n7p1P0KSa1dEXStpTkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FlokTebt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5E7C4CEF9;
-	Thu, 16 Oct 2025 10:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760611178;
-	bh=6A/4cU9W/5zTIgE22chfzcnwvKLqW2rXf1QX34J4BgE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FlokTebtU9fRECB8/vQOoNiKbJug/ifJbguv7PyTO4U+ixySj+7UXtTXhbGCBcIeG
-	 TNYr9or5ay7tI+ytrTPDsidu6T4RLIHWKI20jyrWY2wW0RAAHDSoU5ZYfvNF91h/cm
-	 awWbpg2FmNqcm4lBC/GdfrwK0R17ofxs2yH8McY/em8KfS0LyIVmsMWq3mhN+HasVD
-	 1U0g4ij3Qqc7NujaoAYSQMl5jRovgSck+l2sAyHQUVbgl6rmUHdt2fo5hwKXswL6Xh
-	 cXhvN6AeW+fO/DomCifXQW6+Tg9gqOsC6kqD+HQfkbcuTgYzahdgH6JLCPZDw+Aerw
-	 B8vJvUS2wqT6A==
-Message-ID: <0aba21da-c193-4604-ab9c-7ec7b7fe92a5@kernel.org>
-Date: Thu, 16 Oct 2025 12:39:31 +0200
+	s=arc-20240116; t=1760611184; c=relaxed/simple;
+	bh=o6KG93bnRAiru8U6pU0HfZ6fKR0huOQZE3kUNMaJOB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2x2O3MtEwiGoySnU/j+RgXB6saEWsTkITeNyFKFLgxdvdJqlE3+igpzB57j4Y+mwnkeatW3N3G6cu7UHEnbvN3i+ZQA0z28YOB9D96TdErwEMPIs6lamupo3I3IAb3KYh4BPDaDr7uUmyNyWHPQgjT1Yg1IckCVX5Xqd9Ejr+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqAteGMy; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b5e19810703so79218166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760611180; x=1761215980; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+PyD2pId0cRD4lpdgaX4aev4MljXrDVFLeLRpaj411c=;
+        b=lqAteGMy6kg54mNeKZGQTkrCyVEf/F0zB13bCWDUsf5+FeQt9IR0OrxBAO8cXp1lL9
+         ARwberFQUx4x+zcfCQBnjv9aUec47L+AxicGlwi2hY1U1VaG9+KhaH1JGFzzDUx1plse
+         4JduHx7InGEhjdIz0MbCJNI/DhD4GqSmTSm2/q1qGS53l2vJBvPkLdVoZOqL1V0maqpm
+         f0kImLvAPASJ3Ct2c1lpmLDekYkrPkEqr/HrJ5hpp7uki3toXU9bp3daMkF5KIHFVzXy
+         3v0OgroYSieLAHWmAc+NZuRlE9lsgGys+G2ffedsn50UMxyxZTJQgrfMgju0GEoZU86D
+         OgGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760611180; x=1761215980;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+PyD2pId0cRD4lpdgaX4aev4MljXrDVFLeLRpaj411c=;
+        b=XXWa4cvieRHvG46xzTlXXWnXpVyzHEjGrijEUuu6OuXnNQPGzTIHHK9+HikIowk1rD
+         u+NFBN8FwDnC2x+fWRaXYqbeqVZODLWgNQz2Cukh6QmvtXcCXeLX9DVK88pLG2LuUVcA
+         buXaxPoh3Fbgr6IrHppfU5UNLnfPUQpinxSCojn+mXvpkrFH2CGx8e9+6IWOWJ1DQu7F
+         DZ846SNMDZvGPd5gISGPyA2uhnYV44dJ2F9LoewOSRgB2v8ERram9PQkGU7v8sSTH8qf
+         vPXhYXg8PvHWcV9vjkWGeqoRUNoEMlq3q+q0P8+PygF6F1PSQLTbx9VyZaPLB2V1sioL
+         c8rA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnd5eaIPwuHJQ29ads669Zo21ALAQrzWW5iAvw+hyqV8Agm8n8L4IJJzeg9Fj3epZ7SKf6Gf3IICIvNYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkIEaTsaequV72SHRNRgn2k6PgHUlNOtv/NvuyoUQFJSqGRjU9
+	lgAVvssH2FiWvqfY9tvY9PKfG6QgZ5suEZmTJlcGu6NXr3JtI8TkOtUQphw7Pd2z
+X-Gm-Gg: ASbGncvUzIQHA6X7dQIsrIxW8pse2kv8GQkGXhphDmJ4YsQWD2yk61q/nHnmrK9PEZa
+	MRx/RK890ZbiwRXeKSf/WlUBUeTvxIdIHWH009JpIid3pQyEY6VC98Bs2wK6saLptni3g1+4ifL
+	oFfQWLwC2+ZYVKIvLb+nkGIT7aFCymTMQQ0ZNsvj36+0wv9kG1Dk71E0m7YlT1TZo/f/Xhy6Yh4
+	CWJxKlPzdURnXs2eBVLYwsnedppH1RDWW5+uLk60geepRGURjkQRbk4Vv/lCiKdzxxVoWJutmSQ
+	HZdTbTmf1sWfvBO1hkKptpe0hYqu++Dp4g5DBuCt4HH0tx2Jipd6x6On1c2eDC3Y1k4bC3Q+nkT
+	9iMZK1hhV2rX7eMjL3/UwU8+YXIAgIz1fU104iisEvp2UpHItMKPX1LYZibWpxJROThYtzIsx4C
+	1vpcZL8p/ROT2nDi+9X1eR1bEM+M0gVV2RAPi6K+ZBbo11gJNOubYwcgo=
+X-Google-Smtp-Source: AGHT+IEwpeLQIEArthLh+TbKTTxGx2vNT5P6HwfiGcItarmMdcoptDjdpfU+FMQFpiI8Q5JIgvPtOQ==
+X-Received: by 2002:a17:907:94c3:b0:b45:8370:eefd with SMTP id a640c23a62f3a-b50a9a6be43mr3153979966b.5.1760611179938;
+        Thu, 16 Oct 2025 03:39:39 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccd6b457esm481206866b.76.2025.10.16.03.39.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 03:39:38 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 191E1BE2DE0; Thu, 16 Oct 2025 12:39:38 +0200 (CEST)
+Date: Thu, 16 Oct 2025 12:39:38 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Jens Axboe <axboe@kernel.dk>, Kevin Lumik <kevin@xf.ee>
+Cc: 1116358@bugs.debian.org, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [regression] Regression from 90bfb28d5fa8 ("io_uring/rw: drop
+ -EOPNOTSUPP check in __io_complete_rw_common()"): LVM snapshots causing I/O
+ errors in KVM guest with aio=io_uring set
+Message-ID: <aPDLahi_-_GaA-tv@eldamar.lan>
+References: <f6e2bd310293b720cad7d193b3fdf8369d6bb3ac.camel@xf.ee>
+ <aO07Gt9ZtECKuGkJ@eldamar.lan>
+ <cceb723c-051b-4de2-9a4c-4aa82e1619ee@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs8300: Add support for camss
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, bryan.odonoghue@linaro.org
-References: <20251015130130.2790829-1-quic_vikramsa@quicinc.com>
- <20251015130130.2790829-3-quic_vikramsa@quicinc.com>
- <b4207e22-8d9c-4223-8b28-272d2650661f@linaro.org>
- <8966ddaf-9c10-4626-a4cc-36efd3fc93e2@kernel.org>
- <ad05ed96-80fb-448a-a264-f4b4befc5d30@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ad05ed96-80fb-448a-a264-f4b4befc5d30@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cceb723c-051b-4de2-9a4c-4aa82e1619ee@kernel.dk>
 
-On 16/10/2025 11:52, Vladimir Zapolskiy wrote:
+Hi Jens,
 
-> The same order is supposed to be kept.
+On Mon, Oct 13, 2025 at 12:04:12PM -0600, Jens Axboe wrote:
+> On 10/13/25 11:47 AM, Salvatore Bonaccorso wrote:
+> > Hi Jens,
+> > 
+> > Kevin Lumik reported in Debian the following issue (not exactly a
+> > minimal reproducer, but bisection results follows):
+> > 
+> > On Fri, Sep 26, 2025 at 10:34:22AM +0300, Kevin Lumik wrote:
+> >  
+> >> Dear Maintainer,
+> >>
+> >> After upgrading from Debian Bookworm to Trixie, an issue within KVM guests when creating an LVM snapshot of its volume
+> >> has surfaced. When a LVM snapshot is taken from the host, the guest starts to get I/O errors. The issue seems to only
+> >> appear when aio=io_uring is specified in the KVM drive parameters and also seems to resolve when downgrading the kernel
+> >> package down to 6.1. The issue is also not reproducible when using aio=native. 
+> >>
+> >> KVM args for the drive: "-drive id=drive-
+> >> virtio0,format=raw,file=/dev/dom/vps_testsql,cache=none,aio=io_uring,index=0,media=disk,if=virtio"
+> >>
+> >> An IO workload is being created in the VM using "fio --randrepeat=1 --ioengine=io_uring --direct=1 --gtod_reduce=1 --
+> >> name=randwrite --filename=/root/test.bin --bs=4k --iodepth=64 --runtime=60 --numjobs=32 --readwrite=randwrite --size=1G
+> >> --rwmixread=75 --group_reporting"
+> >>
+> >> After running "lvcreate -s /dev/dom/vps_testsql -n test -L 1G" on the host we can observe fio erroring out:
+> >>
+> >> ...
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=46977024, buflen=4096
+> >> fio: pid=7367, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=261505024, buflen=4096
+> >> fio: pid=7374, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=973840384, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=9637888, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=159965184, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=857505792, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=90787840, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=26427392, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=955621376, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=96169984, buflen=4096
+> >> fio: pid=7372, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: pid=7362, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=203702272, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=814649344, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=91467776, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=948256768, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=105295872, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=75247616, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=1062293504, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=111955968, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=942563328, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=117354496, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=1050402816, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=125419520, buflen=4096
+> >> fio: io_u error on file /root/test.bin: Input/output error: write offset=129044480, buflen=4096
+> >> fio: pid=7369, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: pid=7373, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: pid=7348, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: pid=7375, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: pid=7358, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >> fio: pid=7359, err=5/file:io_u.c:1876, func=io_u error, error=Input/output error
+> >>
+> >> randwrite: (groupid=0, jobs=32): err= 5 (file:io_u.c:1876, func=io_u error, error=Input/output error): pid=7344: Thu Sep
+> >> 25 16:28:30 2025
+> >>   write: IOPS=194k, BW=758MiB/s (795MB/s)(3976MiB/5244msec); 0 zone resets
+> >>    bw (  KiB/s): min=657104, max=1009816, per=100.00%, avg=785345.80, stdev=4331.73, samples=320
+> >>    iops        : min=164276, max=252454, avg=196336.40, stdev=1082.93, samples=320
+> >>   cpu          : usr=0.33%, sys=1.07%, ctx=18912, majf=0, minf=455
+> >>   IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=99.8%
+> >>      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+> >>      complete  : 0=0.1%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
+> >>      issued rwts: total=0,1019955,0,0 short=0,0,0,0 dropped=0,0,0,0
+> >>      latency   : target=0, window=0, percentile=100.00%, depth=64
+> >>
+> >> Run status group 0 (all jobs):
+> >>   WRITE: bw=758MiB/s (795MB/s), 758MiB/s-758MiB/s (795MB/s-795MB/s), io=3976MiB (4169MB), run=5244-5244msec
+> >>
+> >> Disk stats (read/write):
+> >>   vda: ios=1/1001361, merge=0/2, ticks=0/10314531, in_queue=10314549, util=97.82%
+> >> Bus error
+> >>
+> >> ---
+> >>
+> >> And the error is also visible in the kernel error log of the VM:
+> >> [  361.962970] I/O error, dev vda, sector 83277192 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.963945] I/O error, dev vda, sector 83067480 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964489] I/O error, dev vda, sector 82881208 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964499] I/O error, dev vda, sector 83031976 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964501] I/O error, dev vda, sector 83089832 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964503] I/O error, dev vda, sector 83156184 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964522] I/O error, dev vda, sector 83183384 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964524] I/O error, dev vda, sector 83310704 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964525] I/O error, dev vda, sector 83311144 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >> [  361.964532] I/O error, dev vda, sector 83315272 op 0x1:(WRITE) flags 0x8800 phys_seg 1 prio class 2
+> >>
+> >> The host does not generate any erros, they only seem to occur within the VM.
+> > 
+> > Now I asked Kevin if a bisection is possible, and the following
+> > results was found (https://bugs.debian.org/1116358#41):
+> > 
+> > I've identified the first bad commit using git bisect:
+> > 
+> > 90bfb28d5fa8127a113a140c9791ea0b40ab156a is the first bad commit
+> > commit 90bfb28d5fa8127a113a140c9791ea0b40ab156a
+> > Author: Jens Axboe <axboe@kernel.dk>
+> > Date:   Tue Sep 10 08:57:04 2024 -0600
+> > 
+> >     io_uring/rw: drop -EOPNOTSUPP check in __io_complete_rw_common()
+> > 
+> >     A recent change ensured that the necessary -EOPNOTSUPP -> -EAGAIN
+> >     transformation happens inline on both the reader and writer side,
+> >     and hence there's no need to check for both of these anymore on
+> >     the completion handler side.
+> > 
+> >     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > 
+> >  io_uring/rw.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > 
+> > Here is the git bisect log as well:
+> > 
+> > git bisect start
+> > # status: waiting for both good and bad commits
+> > # good: [98f7e32f20d28ec452afb208f9cffc08448a2652] Linux 6.11
+> > git bisect good 98f7e32f20d28ec452afb208f9cffc08448a2652
+> > # status: waiting for bad commit, 1 good commit known
+> > # bad: [59b723cd2adbac2a34fc8e12c74ae26ae45bf230] Linux 6.12-rc6
+> > git bisect bad 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+> > # bad: [de848da12f752170c2ebe114804a985314fd5a6a] Merge tag 'drm-next-2024-09-19' of https://gitlab.freedesktop.org/drm/kernel
+> > git bisect bad de848da12f752170c2ebe114804a985314fd5a6a
+> > # bad: [7b17f5ebd5fc5e9275eaa5af3d0771f2a7b01bbf] Merge tag 'soc-dt-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+> > git bisect bad 7b17f5ebd5fc5e9275eaa5af3d0771f2a7b01bbf
+> > # good: [64dd3b6a79f0907d36de481b0f15fab323a53e5a] Merge tag 'for-linus-non-x86' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+> > git bisect good 64dd3b6a79f0907d36de481b0f15fab323a53e5a
+> > # bad: [daa394f0f9d3cb002c72e2d3db99972e2ee42862] Merge tag 'core-debugobjects-2024-09-16' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> > git bisect bad daa394f0f9d3cb002c72e2d3db99972e2ee42862
+> > # good: [effdcd5275ed645f6e0f8e8ce690b97795722197] Merge tag 'affs-for-6.12-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+> > git bisect good effdcd5275ed645f6e0f8e8ce690b97795722197
+> > # bad: [26bb0d3f38a764b743a3ad5c8b6e5b5044d7ceb4] Merge tag 'for-6.12/block-20240913' of git://git.kernel.dk/linux
+> > git bisect bad 26bb0d3f38a764b743a3ad5c8b6e5b5044d7ceb4
+> > # bad: [3a4d319a8fb5a9bbdf5b31ef32841eb286b1dcc2] Merge tag 'for-6.12/io_uring-20240913' of git://git.kernel.dk/linux
+> > git bisect bad 3a4d319a8fb5a9bbdf5b31ef32841eb286b1dcc2
+> > # good: [df2825e98507d10cb037a308087ecd7cb3f6688d] btrfs: always pass readahead state to defrag
+> > git bisect good df2825e98507d10cb037a308087ecd7cb3f6688d
+> > # good: [69a3a0a45a2f72412c2ba31761cc9193bb746fef] Merge tag 'erofs-for-6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs
+> > git bisect good 69a3a0a45a2f72412c2ba31761cc9193bb746fef
+> > # good: [ecd5c9b29643f383d39320e30d21b8615bd893da] io_uring/kbuf: add io_kbuf_commit() helper
+> > git bisect good ecd5c9b29643f383d39320e30d21b8615bd893da
+> > # good: [f011c9cf04c06f16b24f583d313d3c012e589e50] io_uring/sqpoll: do not allow pinning outside of cpuset
+> > git bisect good f011c9cf04c06f16b24f583d313d3c012e589e50
+> > # bad: [84eacf177faa605853c58e5b1c0d9544b88c16fd] io_uring/io-wq: inherit cpuset of cgroup in io worker
+> > git bisect bad 84eacf177faa605853c58e5b1c0d9544b88c16fd
+> > # bad: [90bfb28d5fa8127a113a140c9791ea0b40ab156a] io_uring/rw: drop - EOPNOTSUPP check in __io_complete_rw_common()
+> > git bisect bad 90bfb28d5fa8127a113a140c9791ea0b40ab156a
+> > # good: [c0a9d496e0fece67db777bd48550376cf2960c47] io_uring/rw: treat - EOPNOTSUPP for IOCB_NOWAIT like -EAGAIN
+> > git bisect good c0a9d496e0fece67db777bd48550376cf2960c47
+> > # first bad commit: [90bfb28d5fa8127a113a140c9791ea0b40ab156a] io_uring/rw: drop -EOPNOTSUPP check in __io_complete_rw_common()
+> > 
+> > #regzbot introduced: 90bfb28d5fa8127a113a140c9791ea0b40ab156a
+> > #regzbot link: https://bugs.debian.org/1116358
+> > 
+> > Does thi ring any bell?
 > 
+> Thanks to both of you, this is very useful! I guess the original commit
+> is mistaken, there's still a bubbling up of EOPNOTSUPP there. I'd say
+> let's just revert that commit, I will do that upstream and have it buble
+> down to the stable kernels too.
+> 
+> I can always look into this later and reintroduce it, if need be.
 
-But you do not ask to keep the same order. You asked to sort it by name.
-That's the problem.
+Thanks a lot for that. Is this enough for you or do you want still as
+well an explicit ack from Kevin that only applying the revert on top
+of 6.12.48 fixes the issue (i.e. to exclude any other side effects
+from commits inbetween; still while the bisect points at that specific
+one)?
 
-
-Best regards,
-Krzysztof
+Regards,
+Salvatore
 
