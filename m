@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-856401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B314BE40FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AB3BE40E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C95F3594FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:00:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85E6C3588C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D48345739;
-	Thu, 16 Oct 2025 14:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAF134573F;
+	Thu, 16 Oct 2025 14:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OrT0bf9P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HiN9j2zB"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531113451DF
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23512345753
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626767; cv=none; b=aYFx00vI5JlWYW3pwA8ndFCH/lsx6lcrq3W+yGQcvWjZcC1KlzM8w5kTkw4qeMT0cDktMFSHmrcQHtxlJ/55YMG8HnlVBVlrQOX+6qlfravmBoKX0QvvzYtNG3KCwZqKpEj1Q8a44/wqJjroPyVTMUxCjQWd6p5mdTiuh82l65I=
+	t=1760626752; cv=none; b=M6cBENt3XDx1v+ZxlvbYAQfQoKVpj4zwO7KDA9OJfwyE87ZUvY+HcQc6kdJ4SN02O5U/I0MEIyE0VuBVQFCf5lbAeXMZ0qcc6nXwdS0kWTyAaK6oV1xS2gegGMnLo/toxdv7csD+rtJhzkwSpU0Coqm3HTUo8gjIIt7dV5lziqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626767; c=relaxed/simple;
-	bh=dz3MewSgWHCphMS4dpC0S69SCdi+UPMKOnXlykr7jUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s2e/YmU0KByr/5YlVnujvaKc+f5dYmcB0QadtwXu7I2AK3Ki6jDg2H3Rh5uDtKzETZaqkO/PHdxWpiLigp3gL9txZMVZHqvsY+pFFJf44VqTquZMfvANNffMUNtJu4LgB9KKTJxIAFNTb0XYupuy9r3jrR352tt2/IBzjLLh6i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OrT0bf9P; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760626765; x=1792162765;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=dz3MewSgWHCphMS4dpC0S69SCdi+UPMKOnXlykr7jUo=;
-  b=OrT0bf9PIBqUbtFXPUvfXhVCC+++h5oFQfu84+Ng0+W1/M8DIFOTYBEQ
-   t6Cyw58QRwYwz/bjFWOyO5W6PQLhbbhIFGmyrDgWOf+7Oe6DyOSReJxx5
-   DmEQsv+wU9T3HLqFQoSJDYZjNp0/yhPKNdOhuZwFfh+C/5bVLUOs6+txM
-   rdwl0zfstnmwU0/+ovdWmVv9GRFFijcuuIEs7xvYIOkrgI7cvUPz+81wX
-   QpkztDreKMo1fvNB1gc6WpwsjwlTDO7yeEwHwRJ4nnN5HviObxQRewUdn
-   SYzRIzl/Z/RBvMcqU5qodxEAQ1PTrGTBHdShhwlDEVXw6NkT3BmiLe9H9
-   w==;
-X-CSE-ConnectionGUID: 6WyUMZixTGy9snHrtzjcZg==
-X-CSE-MsgGUID: AsaT0YIITSGeyoplYIQ8yg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62721878"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="62721878"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 07:59:24 -0700
-X-CSE-ConnectionGUID: N66yCT/tRLKuHBINi1WGOA==
-X-CSE-MsgGUID: uVSe5penQB+x3PqQQ10YBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="183275465"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 16 Oct 2025 07:59:22 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9PRn-0004wH-1R;
-	Thu, 16 Oct 2025 14:59:19 +0000
-Date: Thu, 16 Oct 2025 22:58:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: [tip:irq/drivers 11/18] drivers/irqchip/irq-imx-mu-msi.c:419:9:
- error: call to undeclared function 'imx_mu_probe'; ISO C99 and later do not
- support implicit function declarations
-Message-ID: <202510162256.hpgem8Ii-lkp@intel.com>
+	s=arc-20240116; t=1760626752; c=relaxed/simple;
+	bh=aqoyK5b4pV8L0+QOWtOd8nJmahq+LYPH19Z5q3W5EyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=On/k0kVWukLgIjaF0Tl9KLmKh8oeTjKZlLRpY2+MEO4lbi0OnYagKO92V/4QD9cuI2FkhMDePDm88RB1E7kTmuEY9v35zM7i4bkQUXVSzxdLpvghvcHL/K7dbqgdTQXhKYOMJ6zjWtAqWGq2/AS7ZA2koM3Vn2hbrwCjfCd7j4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HiN9j2zB; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-591c7a913afso106199e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760626748; x=1761231548; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l3SCwf4QRuIuRCKS4d3mSdP9dIfExgcs4ZcKTP0uVC8=;
+        b=HiN9j2zBvYHcpFFU4vMtcBGHlVjh7Vj+59BH7QPNBwJGin4FqNBswoK36npdq/VaKt
+         rnq6kDvIe/NC0Dc9jpagBwMtWCNIWDa+4w0MJojA5OLwXjx3jIHIVNPSH5QQLV4RzsDe
+         IpRjhlpZL3p61MD+2YcbI7gjZOTKebWJFK80f9eiarq/mB5eVL60LPYCcKKYQkIrsaPI
+         xYzzc6Ey4u0CAYtHN+viHWzv8Iiw+oFrad0oglv4xOmkRQIt31AJ7Z50GAtOyE0a4eDo
+         sCd2NLlOLz6ou+auLKJVUxLJFhzDipgBytREaEucrLxRzXM0OpceYtoeHtw/Kibr3q5p
+         HPpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760626748; x=1761231548;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l3SCwf4QRuIuRCKS4d3mSdP9dIfExgcs4ZcKTP0uVC8=;
+        b=HLU0TnbbguYKhr8tfbsp9Q+edscjygtYR+QEUeMK5wxaBpw2Izhg1NVSqH6AeupM1a
+         6W4rdfoCHAzN+M0xSaToIkML3/35L42vuduhrIkN86rpGpJ3Uv5EzI8kIzJSiXxpF9tT
+         q0wVH5ITPecr5bWuS2CPPvFtincOCz+yFr/+lVz5WrKg4nA3R5oZRrqKvTrSzOKpxWaV
+         wzBfUI/gX1sTSETmbM7SNjwqx1NGTx2DJxz7Ryll9YpQ10XsihPnp+LA4JPezzkPjYO8
+         jstCOxKl0Ejuo+D6CyjWvY7WNnXREdFjbUUOMhsGMVLG6aVIguTTiOqBmTjFyDWCorjg
+         yC6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVXwvDgjwt/7iH+4NsGKYLm4AqprhAL8UAsESlL1T8J5P2qiYsZADyo5TkOUtnQqdW5lJbpIRTezgkb0gI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQLLCEjCZEDeFstaKo5Gj+SjeT0QIwwy1YPmPfhnFHTBlf05cS
+	MeEIfW65fYliV61+AK4VzG59+/a0LE8JGoTq5r9LWwQ28WX6MECFN3H15cueQLLjiWK9GvulEVH
+	zKPRf
+X-Gm-Gg: ASbGncvVdId58fIWv/I6h8rLOJe3ID9ipNTDgqzejPlfwHHBDwt9h6/7dcjayaYq/Hh
+	BTRhR2qO+TZwlASmSJmiAGf7niwd8nktrX8sf04kcez3to85mKvludlrPXGnc+Jzxi4M9HinvQD
+	d0c+2m5f7bev4ksGtHmer7bh1dVyky+F/IiiHLnxoxmUe8moH2XVcmDscZZZkYF4yKZVg8GeVeh
+	8c5GLljuvBlJsqXq5P0YkfQvvuxRAgzKXnVeu/kJKbY5l9Qn861y/f4xYflen7XfcsrN+2ZiQMU
+	wwZKTJ7b/Q9Tte7ShmaN/V3VEUnkUeZDVw/PH7W9NfteXSnFuT0LxJ40g947ik1jn3mwFMnZ2fI
+	YM/aQuUitDM3Py1hbCxegGK8tu27gxsRUrU667HB/ociejm6Utj6Xxpqjvz5o/hXRW8R0PwLwDz
+	NGVPrqEX07HULgdpwVqeE+RyVWyHWR2GLn8m7l5SyFIWhkrqq5p7FBs5WT71XSD7AJWOz6nA==
+X-Google-Smtp-Source: AGHT+IGdNDgtmwm6+LARkC9Pg+AOicIgMi7tFiszGJ9W+MAY//8AYywpy9+uYECJSeW8kXaGcH2ugw==
+X-Received: by 2002:a05:6512:2398:b0:55f:433b:e766 with SMTP id 2adb3069b0e04-591d874d51fmr56008e87.7.1760626746704;
+        Thu, 16 Oct 2025 07:59:06 -0700 (PDT)
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5908820d20bsm7161649e87.54.2025.10.16.07.59.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 07:59:06 -0700 (PDT)
+Message-ID: <628b0080-9977-4230-85ca-8685562e3fa6@linaro.org>
+Date: Thu, 16 Oct 2025 17:59:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Enable setting the rate to
+ camnoc_rt_axi clock
+Content-Language: ru-RU
+To: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com>
+ <9984bc23-05ef-4d46-aeb8-feb0a18e5762@kernel.org>
+ <bc0caeb8-c99b-4bef-a69e-5ce433e6b890@oss.qualcomm.com>
+ <c4fd6bfc-cc9a-4f37-99b3-f36466691a1e@linaro.org>
+ <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-head:   45f8fdcfbf4e49075172cf1a3fd812b90160e903
-commit: 4265aed28d7de2a643b8e441bc25344f421f2f78 [11/18] irqchip: Pass platform device to platform drivers
-config: arm-randconfig-003-20251016 (https://download.01.org/0day-ci/archive/20251016/202510162256.hpgem8Ii-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 754ebc6ebb9fb9fbee7aef33478c74ea74949853)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251016/202510162256.hpgem8Ii-lkp@intel.com/reproduce)
+On 10/16/25 15:22, Loic Poulain wrote:
+> On Thu, Oct 16, 2025 at 1:50 PM Bryan O'Donoghue
+> <bryan.odonoghue@linaro.org> wrote:
+>>>>>
+>>>>> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+>>>>> index ee08dbbddf88..09b29ba383f1 100644
+>>>>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+>>>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>>>>> @@ -914,7 +914,8 @@ static int vfe_match_clock_names(struct vfe_device *vfe,
+>>>>>      return (!strcmp(clock->name, vfe_name) ||
+>>>>>              !strcmp(clock->name, vfe_lite_name) ||
+>>>>>              !strcmp(clock->name, "vfe_lite") ||
+>>>>> -           !strcmp(clock->name, "camnoc_axi"));
+>>>>> +           !strcmp(clock->name, "camnoc_axi") ||
+>>>>> +           !strcmp(clock->name, "camnoc_rt_axi"));
+>>>>
+>>>> Just use camnoc_axi for both. Look at your bindings - why do you keep
+>>>> different names for same signal?
+>>>
+>>> I think the correct question to ask is:
+>>>
+>>> Is camnoc_axi going to represent the other (NRT) clock in this
+>>> setting?
+>>>
+>>> Konrad
+>>
+>> I'm - perhaps naively - assuming this clock really is required ... and
+>> that both will be needed concurrently.
+> 
+> AFAIU, the NRT clock is not in use for the capture part, and only
+> required for the offline processing engine (IPE, OPE), which will
+> likely be described as a separated node.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510162256.hpgem8Ii-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/irqchip/irq-imx-mu-msi.c:419:9: error: call to undeclared function 'imx_mu_probe'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     419 |         return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
-         |                ^
-   drivers/irqchip/irq-imx-mu-msi.c:419:9: note: did you mean 'imx_mu_write'?
-   drivers/irqchip/irq-imx-mu-msi.c:73:13: note: 'imx_mu_write' declared here
-      73 | static void imx_mu_write(struct imx_mu_msi *msi_data, u32 val, u32 offs)
-         |             ^
-   drivers/irqchip/irq-imx-mu-msi.c:424:9: error: call to undeclared function 'imx_mu_probe'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     424 |         return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx6sx);
-         |                ^
-   drivers/irqchip/irq-imx-mu-msi.c:429:9: error: call to undeclared function 'imx_mu_probe'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     429 |         return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx8ulp);
-         |                ^
-   3 errors generated.
-
-
-vim +/imx_mu_probe +419 drivers/irqchip/irq-imx-mu-msi.c
-
-   416	
-   417	static int imx_mu_imx7ulp_probe(struct platform_device *pdev, struct device_node *parent)
-   418	{
- > 419		return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
-   420	}
-   421	
+Does it mean the clock handling should be removed from QCM2290 or
+X1E80100 VFEx resources? Has it been tested/verified?
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best wishes,
+Vladimir
 
