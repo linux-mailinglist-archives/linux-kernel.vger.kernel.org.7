@@ -1,136 +1,145 @@
-Return-Path: <linux-kernel+bounces-856598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC43BE4914
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA93BE4920
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 313354EFD8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:25:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39666508CFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26437329C54;
-	Thu, 16 Oct 2025 16:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746BD329C6B;
+	Thu, 16 Oct 2025 16:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNMUAcW1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDb8Huj+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCF81DF982;
-	Thu, 16 Oct 2025 16:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC06A23EABA;
+	Thu, 16 Oct 2025 16:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631921; cv=none; b=daER27UTGR8ukUguWEccaaVfUQ16J+HnFDrIFiUPcM+LHLWJ/hrm1uM5Zp+36Ql1/Vp08f2xd+g/HKF/3d5lCZILcpuDj+MVQTPNsuMF5iiFCvFGE/1EZu6wOblhc4g4cjoj+NZBB0nhIULsmBY1+amctxLqjcG1dmMiFFC0Rvw=
+	t=1760631939; cv=none; b=twqaNaIZ8c3Rq2lngbsFWNiOYG3GBGYI8YYP0ijYurHrEQtA4XkPyen+fvj040VdPcbJNfbIx35EPsKErOU6TE8OVMdAdBPM+upmD91bOM4p2i7UjuUk1LkFZrDwkftlM1EoXSE7FzHRP4CCNAllq6KGowPVBNCM+HpUAmax9uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631921; c=relaxed/simple;
-	bh=Ur8b/tBAj1XMiE3ZQhEMBO4X4i1WG2QSesZ1qm4qfIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=taJYb2HOpEfOzuF6HM4NdQfZ662Xay+Vk5SemKLcl2pjFOHzEIje2+SD5tAmT01eS0suVVY2pJG2MDmneRdNrL/SDDJuQtrOjqYSA0VdXf2LOGgPI2lI3Jjoug5oMe8k8qogP6jljktHQNcuZEFPLdhT1MyjWjr97RMpYhbi0kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNMUAcW1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EC2C4CEF1;
-	Thu, 16 Oct 2025 16:25:20 +0000 (UTC)
+	s=arc-20240116; t=1760631939; c=relaxed/simple;
+	bh=XY16fYS6OOP9xjM5VB6SenXMoSMfGpwGBh+ou4x3omo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DMZAvCBlCKdkvSU6kD8HgrQ7eKFqZI56A2uX3mDUMbTHz3lrzEpPeer29gIfbNioQBPly2vhk8/8FITZDy4HNKIkQFEkw8P2DK5V8MMmV41cddz0v5GSeQ+fvMM0+Ahypx5Z2riz4J2tx+XpQtBBnOySXjcD7vJgEAangnTWREo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDb8Huj+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8154DC4CEF1;
+	Thu, 16 Oct 2025 16:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760631921;
-	bh=Ur8b/tBAj1XMiE3ZQhEMBO4X4i1WG2QSesZ1qm4qfIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MNMUAcW19ecxw3OiDXsL6iBuz17YQJ3jHC1TflaDqkXNrfQwUl3AGUTqlP1ceRiB0
-	 +4tUjwaIiiUEjQ/livemBkzoAgAhlghkZn5UvcEIEGkbKh5zU6d30oFM2n9ggbYkPv
-	 y9qnfotoxUeZ1hyB2ecky4aS+HjZ2tXT/csQTJ4YiU2x9vcAk/rg5QhLfxKOxYWEnP
-	 nGLE+AKCsTMxvKw6q0d2RGBdYgFZQyOhkSoHsY+Q11NkZZ/S3Zm4j8KGNZv8L180YH
-	 3M4qDWKmPpj35eSfHd3wg4i72qNvZ1Xm29cqfM7FRPfZ2eNL9arvwtmVxI1XQcUDby
-	 K5k2CUmsIp0Qg==
-Date: Thu, 16 Oct 2025 09:25:20 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Carlos Maiolino <cem@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Oleksandr Natalenko <oleksandr@natalenko.name>,
-	Pavel Reichl <preichl@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: [PATCH 4/3] xfs: fix locking in xchk_nlinks_collect_dir
-Message-ID: <20251016162520.GB3356773@frogsfrogsfrogs>
-References: <20251015050133.GV6188@frogsfrogsfrogs>
+	s=k20201202; t=1760631939;
+	bh=XY16fYS6OOP9xjM5VB6SenXMoSMfGpwGBh+ou4x3omo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cDb8Huj+Nb1b74dUMKRfDINKIB0wlM5mMXrFYZP2igHn5sUTdKiC5/pE1ACZRpMRH
+	 z5V92wh/zu4WKGzjMW3UUnWi+5vf/GhgPhpml5tnX947zVb29UCoLwlmtVtB4NW03I
+	 QBktHZKavXf66oJOqsgTSqDmWjAH6XexGOirVAvqMvX+aVUL72B0mzcULIxnOH8q54
+	 3NnISlgr6J6u8WLe2peZxDlTz+ERw8R4DQcW1Tw41Bc/kqGb9X0liYKaDjm7mN4TNk
+	 ySJFh2NlrOX6N/10NkidA+chc8A0zjBvRpWR3kgwO5ZkHLgbfibmL2ZIb3CMLhkD8m
+	 cCnf2UqfeLb8g==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Tomasz Figa <tfiga@chromium.org>, Doug Smythies <dsmythies@telus.net>
+Subject:
+ [PATCH v1] cpuidle: governors: menu: Predict longer idle time when in doubt
+Date: Thu, 16 Oct 2025 18:25:35 +0200
+Message-ID: <4687373.LvFx2qVVIh@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015050133.GV6188@frogsfrogsfrogs>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-From: Darrick J. Wong <djwong@kernel.org>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On a filesystem with parent pointers, xchk_nlinks_collect_dir walks both
-the directory entries (data fork) and the parent pointers (attr fork) to
-determine the correct link count.  Unfortunately I forgot to update the
-lock mode logic to handle the case of a directory whose attr fork is in
-btree format and has not yet been loaded *and* whose data fork doesn't
-need loading.
+It is reported that commit 85975daeaa4d ("cpuidle: menu: Avoid discarding
+useful information") led to a performance regression on Intel Jasper Lake
+systems because it reduced the time spent by CPUs in idle state C7 which
+is correlated to the maximum frequency the CPUs can get to because of an
+average running power limit [1].
 
-This leads to a bunch of assertions from xfs/286 in xfs_iread_extents
-because we only took ILOCK_SHARED, not ILOCK_EXCL.  You'd need the rare
-happenstance of a directory with a large number of non-pptr extended
-attributes set and enough memory pressure to cause the directory to be
-evicted and partially reloaded from disk.
+Before that commit, get_typical_interval() would have returned UINT_MAX
+whenever it had been unable to make a high-confidence prediction which
+had led to selecting the deepest available idle state too often and
+both power and performance had been inadequate as a result of that in
+some cases.  This was not a problem on systems with relatively
+aggressive average running power limits, like the Jasper Lake systems
+in question, because on those systems it was compensated by the ability
+to run CPUs at relatively higher frequencies.
 
-I /think/ this only started in 6.18-rc1 because I've started seeing OOM
-errors with the maple tree slab using 70% of memory, and this didn't
-happen in 6.17.  Yay dynamic systems!
+Commit 85975daeaa4d addressed that by causing get_typical_interval() to
+return a number based on the recent idle duration information available
+to it in those cases, but that number is usually smaller than the
+maximum idle duration observed recently which may be regarded as an
+overly optimistic choice.
 
-Cc: <stable@vger.kernel.org> # v6.10
-Fixes: 77ede5f44b0d86 ("xfs: walk directory parent pointers to determine backref count")
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+Namely, it may be argued that when the samples considered by
+get_typical_interval() are spread too much for a high-confidence
+prediction to be made, the function should fall back to returning a
+number that is likely to be an upper bound for the duration of the
+upcoming idle interval and that number needs to be at least equal to
+the maximum recently observed idle time.  Otherwise, the governor may
+miss an oportunity to reduce power without hurting performance in a
+noticeable way.  Of course, it may also be argued the other way around,
+but the available data indicate that get_typical_interval() should
+rather tend to return larger numbers as that causes the governor to
+behave more closely to its past behavior from before the problematic
+commit.
+
+Accordingly, modify get_typical_interval() to return the maximum
+recently observed idle time when it is unable to make a high-
+confidence prediction.
+
+Fixes: 85975daeaa4d ("cpuidle: menu: Avoid discarding useful information")
+Closes: https://lore.kernel.org/linux-pm/36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7/ [1]
+Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Tested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- fs/xfs/scrub/nlinks.c |   22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ drivers/cpuidle/governors/menu.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/scrub/nlinks.c b/fs/xfs/scrub/nlinks.c
-index 26721fab5cab42..dcd57c3f65dfdc 100644
---- a/fs/xfs/scrub/nlinks.c
-+++ b/fs/xfs/scrub/nlinks.c
-@@ -376,6 +376,24 @@ xchk_nlinks_collect_pptr(
- 	return error;
- }
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -116,6 +116,7 @@ static void menu_update(struct cpuidle_d
+ static unsigned int get_typical_interval(struct menu_device *data)
+ {
+ 	s64 value, min_thresh = -1, max_thresh = UINT_MAX;
++	unsigned int max_overall = 0;
+ 	unsigned int max, min, divisor;
+ 	u64 avg, variance, avg_sq;
+ 	int i;
+@@ -151,6 +152,9 @@ again:
+ 	if (!max)
+ 		return UINT_MAX;
  
-+static uint
-+xchk_nlinks_ilock_dir(
-+	struct xfs_inode	*ip)
-+{
-+	uint			lock_mode = XFS_ILOCK_SHARED;
++	if (max_overall < max)
++		max_overall = max;
 +
-+	if (xfs_need_iread_extents(&ip->i_df))
-+		lock_mode = XFS_ILOCK_EXCL;
-+
-+	if (xfs_has_parent(ip->i_mount) && xfs_inode_has_attr_fork(ip) &&
-+	    xfs_need_iread_extents(&ip->i_af))
-+		lock_mode = XFS_ILOCK_EXCL;
-+
-+	lock_mode |= XFS_IOLOCK_SHARED;
-+	xfs_ilock(ip, lock_mode);
-+	return lock_mode;
-+}
-+
- /* Walk a directory to bump the observed link counts of the children. */
- STATIC int
- xchk_nlinks_collect_dir(
-@@ -394,8 +412,7 @@ xchk_nlinks_collect_dir(
- 		return 0;
+ 	if (divisor == INTERVALS) {
+ 		avg >>= INTERVAL_SHIFT;
+ 		variance >>= INTERVAL_SHIFT;
+@@ -198,7 +202,7 @@ again:
+ 		 * maximum, so return the latter in that case.
+ 		 */
+ 		if (divisor >= INTERVALS / 2)
+-			return max;
++			return max_overall;
  
- 	/* Prevent anyone from changing this directory while we walk it. */
--	xfs_ilock(dp, XFS_IOLOCK_SHARED);
--	lock_mode = xfs_ilock_data_map_shared(dp);
-+	lock_mode = xchk_nlinks_ilock_dir(dp);
- 
- 	/*
- 	 * The dotdot entry of an unlinked directory still points to the last
-@@ -452,7 +469,6 @@ xchk_nlinks_collect_dir(
- 	xchk_iscan_abort(&xnc->collect_iscan);
- out_unlock:
- 	xfs_iunlock(dp, lock_mode);
--	xfs_iunlock(dp, XFS_IOLOCK_SHARED);
- 	return error;
- }
- 
+ 		return UINT_MAX;
+ 	}
+
+
+
 
