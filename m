@@ -1,226 +1,215 @@
-Return-Path: <linux-kernel+bounces-855485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB16BE1640
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:50:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421E2BE162A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3739E540637
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1403519C34E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510152147F9;
-	Thu, 16 Oct 2025 03:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB18218ACA;
+	Thu, 16 Oct 2025 03:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G9e7XpR9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eIQbq1SI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D5156F20
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09042A1CF
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760586620; cv=none; b=D+zqpNHd/QwM0/2B+0fQHLWvJQQx8e6d9sZSpWfsdk5j04bpzTumF03wRN72ejXcoBedV/dWF8wuPwgFo1rOG3lTmAnxJ8pzCiFzCR4c9OcTeEtwSu+PUtYCf7/+qPmqku7kKVkGGFGbZrk1XmXyHSGK+YLepAiRnEYYQ1xHvQg=
+	t=1760586409; cv=none; b=o3xnV1n/gcvbs1Ay6JY/uV/7zW1B3UnrXu0OKETjn22nBv6RrhCNiyziW3ov+Mvh0kM5vU26yDurWlxcBEMXiPLci7ziaAS1+xc1aGQU12PWyaGteZ0eG53bgqQXJwrhsAI1NPBg1qSPqFlyWimwBzoguHmHJMqhqX1IXSmm+ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760586620; c=relaxed/simple;
-	bh=IxmHoaGhL0xNI3WXnFEL2hTY96YyAEssrwkJ2eZDazQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sygfx/VpaL2QvAGodeDBQw2NjofjT0xsUYQIADmrIgVsqUcpGdpV4DcDwUBiBrH7n5zb0KCTXtxo2F+kAA5ckArWz+nCSO7lH/IgyYTxdxCZypSmzcNGCid+fY+8plGpPl3dwKD9YUEisU8j+6Vk0DpI6NUbM8xqrHkVC9ZUuaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G9e7XpR9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760586617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/cAm9vGIddtchQXr3hlgf4GWUVB1Eu3MqRMvwPeSn5k=;
-	b=G9e7XpR9hGcYRC8eREpfFKnQB+onkf4v68RZRTEOVAc+5KQfd/+2MmdPgpKNzM0sibSbkv
-	Hgx+1AAknnQP26VdOi4vUwLoKBMupRTCihtXWPP+IHLVq8WtX1eSIDJvi1EUsyP9gLRIgC
-	Hz/zDtv64xM9cVxl4NXs1F8H6V2cca8=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-472-mINPSPRYPnSBYIbW1W23EQ-1; Wed, 15 Oct 2025 23:50:16 -0400
-X-MC-Unique: mINPSPRYPnSBYIbW1W23EQ-1
-X-Mimecast-MFC-AGG-ID: mINPSPRYPnSBYIbW1W23EQ_1760586615
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33428befbbaso414462a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:50:16 -0700 (PDT)
+	s=arc-20240116; t=1760586409; c=relaxed/simple;
+	bh=bJPo7L8epy+g4bqxcLXBIlhestqPQYX6FEF5Gq1U5pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RUpVKhIWL56sHjQH3So3k5i5lxFZ9BtENvx+fo3hW2gMY6MeElruf/KW3ka6J7x3I7IO/3qlY/Ukwagab3Awln5ebbpJnQCh/CtbymabTZS18wx6axEDFqYAmAuIHzWMKKqm9Oo5yViyS76orJkWxIQtUxAyYwekps9UAcGaUEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eIQbq1SI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FKog4l005263
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:46:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MGTgW6j4BwUGWXfqHUc5yYYRAKlvIbby7H5r4Mivrcs=; b=eIQbq1SICN9HG5wf
+	stkAI1Wt3m7VqM9Xf9HOrJiRN4baTQQuCoCoVvmzhm+RitAwVdxJKwRuBed93xI9
+	A6Txh/o4po8N3rlUq7U+dWYt4zQet+Rxv+ExmnbOY+HZbI5GRHstrGTvWcynU6S+
+	s3Ik/gVqk+bKNAWvYuKo6LYRnC3DOQNu9KXduP6d91kXAX49Yh/kGuaNI1UEPLIg
+	EeJ7fpnx56MFrRGjXlwQFIVKNYLCv5r4r1kbJMnf3GZm6c1PIPusaJIW7FAQH2KW
+	oiTBqLwPIvXykAiZECsONLURDdMiDBJJPV0c/9NQqpS+wOiNhX8YNKHDAiqNVjg2
+	oGSLRA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1ak47e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:46:47 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-28a5b8b12bbso7285685ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:46:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760586615; x=1761191415;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/cAm9vGIddtchQXr3hlgf4GWUVB1Eu3MqRMvwPeSn5k=;
-        b=AdPMKEQ5kPtpa/Bq92+EhEW6wM0ggZSo8QiqnuilCQdwd+cn7K5JsIgX5WewOjAWz1
-         RZKdySeP2Uzn8SyW1Zsp3fULIqjlzwbuyhbGFdEtpy9664MTmqmET9P4jXClimKvxUhL
-         EFi0/ksquHzU1r3AuHK2kQmvcj95wH449+ECEDY5KnzrucXtTyVyFMkO7zdn8AipOhX7
-         TAQIChABnGRKr2ulIXlBu4o5Iu2QK13/f9dfEjmZFoixzZHyiYXuwSkXYH2OY+x+C77v
-         /d6/U0RiJYazHxrssdW9duAanve0zcpSBRb17yoihQvD5mSSi3lPXLcF+VZLtuRCXMHk
-         jlDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkcVq+cJlPXlTj/82LZVXe5Az+G/3IJnLyzgILU4w5+KH4osfZ2xJSrQQRWVcNz4HihCVk+ba7PPrg7c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKEI+0z4S1+pz+tQLsbWaOOD5MegCCt6JfZo03dSFhcM3DPLwE
-	4SJpT9WcjsXX56q270jraveLlSJVP2nzVbvk0ArnWnVBv+vV1Ma5yFpJaw3pS1XkzuC9qrX1MJj
-	2VIduMTKtY4mc9zA3bhODVQnXlBKtickyvWr2W5drIupVShdazuAXZZWOxIER5JwLeg==
-X-Gm-Gg: ASbGncvSd6bnAAlaPiG2WVWwjJ+s0I4wg5MVKPzYZeMnz8s5aREpXPcSgs3s+gqdy0M
-	i3OcAhCuzV0amTlgPRZ57Rr5eclxYVpb4CCsjwt9zirIIGK9dVf6B5FiLSjXcAIXD1uY5FRUd08
-	YUfaJTGwM0exDYvITCv+dm5wyq/ik83dl46exznbiu4u/3dQxNYb3uxuaTBQPuouI+yvRyc9obs
-	f+spWx2BzpdJnt2YzQHDvuvJJHFZAwTb27bPV8oJEtXJy2XgGzFVaF56C7DZRUJGaQzqj0kph5+
-	K8Ted3TiRpagBmdBpXGxWoffY1RqvTIO3dAdpegx897pI144s2Iwr4xk8QITD1Cajg==
-X-Received: by 2002:a17:90b:1a8a:b0:327:f216:4360 with SMTP id 98e67ed59e1d1-33b510ff6a6mr44197262a91.8.1760586614897;
-        Wed, 15 Oct 2025 20:50:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLIHTOeRj4rQrdogrwKp08L69Jq0bkoicobjktGlWCYKjygr0kGOABSqkcnYlCdD4w/AS+Vg==
-X-Received: by 2002:a17:90b:1a8a:b0:327:f216:4360 with SMTP id 98e67ed59e1d1-33b510ff6a6mr44197206a91.8.1760586614225;
-        Wed, 15 Oct 2025 20:50:14 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33ba9222d26sm496344a91.0.2025.10.15.20.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 20:50:13 -0700 (PDT)
-Date: Thu, 16 Oct 2025 11:46:10 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Karel Srot <ksrot@redhat.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-Message-ID: <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-References: <20250928030358.3873311-1-coxu@redhat.com>
- <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
- <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1760586406; x=1761191206;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MGTgW6j4BwUGWXfqHUc5yYYRAKlvIbby7H5r4Mivrcs=;
+        b=GL9/kqroL34ArmMMtOwas+jzTjWM7wIuZWCU//G8AJISMOnV4X+W9WMEvHAuVFt6vK
+         RoZXg4vuQ9Rpi6BInGsENid4V7Ko+i995K4Z6pH9cmQvXeBvoGVIBeJiXIdd8r9+3Khm
+         Ioi+1l6IHwVT5kIer50Nv0UJg5ge5262Eb/Wjbhi52FDYuN+ohDLqEdgUeDo6w7XmDvE
+         L9xfsaHGVJIUZtGsHxPH93yLo7vz/YdJpWNzZHuVubMnpJbqSZvEMIZc3gapbIn86F9o
+         CmUzImYgos9ZwZmFeDDRNZlP2o334e1wrF3ZuC34ANxrBrTtg/ZyzdJISuTlnToLmgSP
+         0rYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAFGHdgD4v4/VxHzMb4Bo0OI2i+qxdHPhQMKEbrWkGbzdUOMlkJkTDi57r1qRG7h1SMvHNjQrGXNsuguk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLVs8rmjMEvSGxPkrklWm/5l/COvW0ZmA47SRpcDHByjdVXYNS
+	1cpRpvNflskNeOJ4rgI5eUZMx9T9iWPKhjmpqP+C6ezJetOofFVut416WQFHYUzoJC5ZgeR/LHy
+	lhM2OUrxkIdVAlpSANPH2hyaZMBcTBHEC4n9ZrQd/pt8AIEs9n0dg0nT9+JOrk/ShnY4=
+X-Gm-Gg: ASbGncvQxzA83i7VxR84k4aGOsnFYwfTDhqn0/S2PSRXvTSVETt7UZLnN+0b1X189aq
+	31nxA7PgUkyq1UYcgj/mtNhdSulbMYDyBgOSreIh8OcoTEh2y/ulnM9F92NTI6Qwrb2o7Wx0GY6
+	EsiYch+QFjZ9jZbXXpEDrLD8DKczcYasqCoHkFB4Zwxgax++N/4UAhm01ijATvmrKCoKBq2MQxE
+	jp3T4sNA2XdfmDlrLVN1/rB+vzNXypE9pQHLyZfKddpjlwZvi8esrboo96VaCKxx1pqYt75NT/y
+	wTuIGzChXzHj5qlYTtZy30o82DgIZ6+vPSc5Iro3cH2RM3CgKCjalMOd0nV1wl3hoeozPJWCNFW
+	qiM3ba9ou1afX0B19Bm1EsZ/0fzsLfw==
+X-Received: by 2002:a17:903:2c0d:b0:269:b2ff:5c0e with SMTP id d9443c01a7336-290273ffa54mr419948615ad.46.1760586406216;
+        Wed, 15 Oct 2025 20:46:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECrjW1cqPBNCEcpo2wlLgL0bF8Aw5ZIvKRkZrZUayiubVGdoGasv05AYsxFUK4g/KjMzTWFg==
+X-Received: by 2002:a17:903:2c0d:b0:269:b2ff:5c0e with SMTP id d9443c01a7336-290273ffa54mr419948165ad.46.1760586405736;
+        Wed, 15 Oct 2025 20:46:45 -0700 (PDT)
+Received: from [192.168.1.57] ([98.148.145.183])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099aba3fcsm12296275ad.99.2025.10.15.20.46.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 20:46:45 -0700 (PDT)
+Message-ID: <62a3f09b-50d6-4ace-8229-d71585378ae1@oss.qualcomm.com>
+Date: Wed, 15 Oct 2025 20:46:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] dt-bindings: media: camss: Add
+ qcom,kaanapali-camss binding
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251014-add-support-for-camss-on-kaanapali-v2-0-f5745ba2dff9@oss.qualcomm.com>
+ <20251014-add-support-for-camss-on-kaanapali-v2-2-f5745ba2dff9@oss.qualcomm.com>
+ <dce1018c-6165-407c-8f3d-40859cb36b11@linaro.org>
+ <0b6c157a-3d8d-4251-a704-31f8369f6a4e@linaro.org>
+ <a0d9389b-67a5-458a-858b-ffdd95f7ccc6@linaro.org>
+Content-Language: en-US
+From: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>
+In-Reply-To: <a0d9389b-67a5-458a-858b-ffdd95f7ccc6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68f06aa7 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=BiHMn5M11h/vNwziJwzFrg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=CagpHDX3wZ8s8GLuJqoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: mT2gXbBEiv50lyuDhbffa-n4xAvh0WhQ
+X-Proofpoint-ORIG-GUID: mT2gXbBEiv50lyuDhbffa-n4xAvh0WhQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfX/Z8ATaAGanly
+ bCZNJ2FQOejGCIyjFZXZVRoers20jhIdJBosjCi7Mwnpu4ppSZqFpSpbVswGdWPYP1z7rml4DVc
+ Q3b8v3X+YpqONpbLArn3F53LbIOsBLITzix1ow4H3HnDNR+sCy8fGxxp3qLIWZpDtB2vBwhvk9I
+ lv6I5MSnrhpst54nQuIht/dZg63rTaZTVqZaVWryLC+QCo9vwu4WDgbsn08BAXKbG4grCMfb9ta
+ pWc2tQvHWd3vu53QTMMKgxT1D70IidsS5B0OUdUMW3VM+Xx8B4amatxBVnA58iOhfwCiM796uj5
+ uVtrfz5ZpKrmlQn68qvAsczk3kJMg5Mx0s4l1NYixahVAvngc2Yy+yntcYn+jf87/UVhrD/TwAF
+ R7HsRyVT06EMD64sTIlIC1VavKG+JQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 clxscore=1011 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
 
-On Tue, Sep 30, 2025 at 04:28:14PM -0400, Mimi Zohar wrote:
->On Tue, 2025-09-30 at 09:57 -0400, Mimi Zohar wrote:
->> On Sun, 2025-09-28 at 11:03 +0800, Coiby Xu wrote:
->> > Currently, for any IMA policy that requires appraisal for kernel modules
->> > e.g. ima_policy=secure_boot, PowerPC architecture specific policy,
->> > booting will fail because IMA will reject a kernel module which will
->> > be decompressed in the kernel space and then have its signature
->> > verified.
->> >
->> > This happens because when in-kernel module decompression
->> > (CONFIG_MODULE_DECOMPRESS) is enabled, kmod will use finit_module
->> > syscall instead of init_module to load a module. And IMA mandates IMA
->> > xattr verification for finit_module unless appraise_type=imasig|modsig
->> > is specified in the rule.  However currently initramfs doesn't support
->> > xattr. And IMA rule "func=MODULE_CHECK appraise_type=imasig|modsig"
->> > doesn't work either because IMA will treat to-be-decompressed kernel
->> > module as not having module signature as it can't decompress kernel
->> > module to check if signature exists.
->> >
->> > So fall back to default kernel module signature verification when we have
->> > no way to verify IMA xattr.
->> >
->> > Reported-by: Karel Srot <ksrot@redhat.com>
->> > Signed-off-by: Coiby Xu <coxu@redhat.com>
->> > ---
->> > Another approach will be to make IMA decompress the kernel module to
->> > check the signature. This requires refactoring kernel module code to
->> > make the in-kernel module decompressing feature modular and seemingly
->> > more efforts are needed. A second disadvantage is it feels
->> > counter-intuitive to verify the same kernel module signature twice. And
->> > we still need to make ima_policy=secure_boot allow verifying appended
->> > module signature.
->> >
->> > Anyways, I'm open to suggestions and can try the latter approach if
->> > there are some benefits I'm not aware of or a better approach.
+
+On 10/15/2025 4:32 PM, Vladimir Zapolskiy wrote:
+> On 10/16/25 00:43, Bryan O'Donoghue wrote:
+>> On 15/10/2025 20:45, Vladimir Zapolskiy wrote:
+>>>> +  power-domains:
+>>>> +    items:
+>>>> +      - description:
+>>>> +          TFE0 GDSC - Thin Front End, Global Distributed Switch
+>>>> Controller.
+>>>> +      - description:
+>>>> +          TFE1 GDSC - Thin Front End, Global Distributed Switch
+>>>> Controller.
+>>>> +      - description:
+>>>> +          TFE2 GDSC - Thin Front End, Global Distributed Switch
+>>>> Controller.
+>>>> +      - description:
+>>>> +          Titan GDSC - Titan ISP Block Global Distributed Switch
+>>>> Controller.
+>>>> +
+>>>> +  power-domain-names:
+>>>> +    items:
+>>>> +      - const: tfe0
+>>>> +      - const: tfe1
+>>>> +      - const: tfe2
+>>>
+>>> Please remove all 'tfeX' power domains, they are not going to be 
+>>> utilized
+>>> any time soon.
+>>>
+>>> When 'power-domains' list is just a single Titan GDSC, 
+>>> 'power-domain-names'
+>>> property is not needed.
 >>
->> Coiby, there are multiple issues being discussed here.  Before deciding on an
->> appropriate solution, let's frame the issues(s) properly.
-
-Hi Mimi,
-
-Thanks for listing and framing the issues! Sorry, it took me a while to
-go through your feedback as I also had a 8-day holiday.
-
+>> Each one of these TFEs powers an individually power-collapsible TFEs.
 >>
->> 1. The finit_module syscall eventually calls init_module_from_file() to read the
->> module into memory and then decompress it.  The problem is that the kernel
->> module signature verification occurs during the kernel_read_file(), before the
->> kernel module is decompressed.  Thus, the appended kernel module signature
->> cannot be verified.
-
-Since IMA only accesses a kernel module as a fd or struct file*, even if
-IMA hook is triggerd after kernel module is decompressed, IMA still
-doesn't know the default verification has passed or can't access the
-decompressed kernel buffer [2] to do the verification by itself.
-
-[2] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/module/main.c?h=v6.17#n3689
-
->>
->> 2. CPIO doesn't have xattr support. There were multiple attempts at including
->> xattrs in CPIO, but none were upstreamed [1].  If file signatures stored in
->> security.ima were available in the initramfs, then finit_module() could verify
->> them, as opposed to the appended kernel module signature.
-
-Thanks you for pointing me to the work [1]. I'll take a more careful
-look at [1]. I think CPIO supporting xattr can be a long-term solution
-and also close a important security gap.
-
->>
->> 3. The issues described above are generic, not limited to Power.  When
->> CONFIG_MODULE_SIG is configured, the arch specific IMA policy rules do not
->> include an "appraise func=MODULE_CHECK".
-
-Yes, the issue is not limited to Power. And thanks for correcting me
-that Power arch specific IMA policy rules don't have this problem! Sorry
-I misread the code.
-
->>
->> 4. Unlike the arch specific IMA policy rules, the built-in secure boot IMA
->> policy, specified on the boot command line as "ima_policy=secure_boot", always
->> enforces the IMA signature stored in security.ima.
->>
->> Partial solutions without kernel changes:
->> - Enable CONFIG_MODULE_SIG  (Doesn't solve 4)
->> - Disable kernel module compression.
->>
->> Complete solution:
->> - Pick up and upstream Roberto Sassu's last version of initramfs support [1].
->> - Somehow prevent kernel_read_file() from failing when the kernel_read_file_id
->> enumeration is READING_MODULE and the kernel module is compressed.  The change
->> might be limited to ima_post_read_file().
+>> This is also so with the other xFE power-domains on previous SoC
+>> generations.
 >
->or perhaps not totally.
+> This is false, for instance there is no management of SFEx power domains
+> in SM8550 or X1E80100 CAMSS in the upstrem, neither there is no 
+> management
+> of SBI, IPE, BPS, CPP and so on GDSC power domans given by CAMCCs.
 >
->init_module_from_file() doesn't pass the flags variable to kernel_read_file().
->You might want to consider defining a new kernel_read_file_id enumeration named
->READING_COMPRESSED_MODULE.
-
-Thanks for suggesting the solutions! I like the solution of CPIO
-supporting xattr but it seems it won't land in upstream soon. So I
-prefer the last approach. I've implemented one [3] by defining a new
-kernel_read_file_id enumeration, would you like me to post the patches
-to the mailing list directly?
-
-[3] https://github.com/coiby/linux/tree/in_kernel_decompression_ima
-
->
->Mimi
->
->>
->> [1] [PATCH v4 0/3] initramfs: add support for xattrs in the initial ram disk
->> https://lore.kernel.org/linux-fsdevel/20190523121803.21638-1-roberto.sassu@huawei.com/
->>
->>
+> TFEx is no more special, if it's unused, then it should not be added.
+I agree with Bryan, if I understood the original comment correctly. This 
+is no different to the IFE0/1/2 GDSCs on SM8550. All the other modules 
+listed above (SFE, IPE, BPS etc.) are not supported by the CAMSS driver 
+and hence there is no management. However, we need to manage the TOP and 
+TFE0/1/2 GDSCs for the real time RDI paths.
 >
 >
-
--- 
-Best regards,
-Coiby
+>>
+>> You'll need the TFEx power-domain to process any data on TFEx with the
+>> 'lite' versions being tied to the TOP GDSC.
+>
+> When it is needed, the documentation will be updated accordingly, 
+> right now
+> it is unknown what a data processing on TFEx looks like, it might happen
+> that there will be separate device tree nodes for TFEx.
+>
+> TFEx power domains shall be removed right now, unti; a usecase in the 
+> upstream
+> CAMSS appears to use them, I haven't seen such code at the moment.
+>
+We attach these power power domains by name in the corresponding driver. 
+For instance, the VFE driver attaches the TFE power domains mentioned 
+here and are exercised from vfe_set_power() -> vfe_get() 
+->vfe_pm_domain_on(). You can also see the related codes with '.has_pd' 
+and '.pd_name' properties in the CAMSS subdev resource structures. Hope 
+this clarifies.
 
 
