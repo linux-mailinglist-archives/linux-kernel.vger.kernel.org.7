@@ -1,405 +1,120 @@
-Return-Path: <linux-kernel+bounces-856316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2509BBE3D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:02:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83646BE3D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9E9F4E1974
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE56188D336
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355D133438C;
-	Thu, 16 Oct 2025 14:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979462DFF18;
+	Thu, 16 Oct 2025 14:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fx9/b6XS"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="fkSWMqHi"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035904A21;
-	Thu, 16 Oct 2025 14:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC07186284
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760623339; cv=none; b=oj8pTWAJ68vCSBXlfETBdvZyIbDVqgAPM54wKn3RZh2Gx00P4ihdUV+UtYa+mxPzprXREvy7V1bNJG05MwPlkI89DvmrnOwfspUTUPhYkQzJUFom/qBSDsp0WURo9Eg5oq/+g6cJDnNPIJm9sut9lS6LDAd1MPu1QBSnw9ZWw+U=
+	t=1760623349; cv=none; b=RMcUY/qXoxukmK7MKkI6ZTYbW3pKicLQvmg+hY3QEM1xxBFfxtcsQRO9mZ+8M80pOlUxpET006w9i+v42emG6SznryU7UTpliMVC/tRZnd0D9U1RDqTWX4pDJpiE6Lpczh9InGI/O+diyEajPNVWkC3bljO1/+AlVymgtzD51eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760623339; c=relaxed/simple;
-	bh=si2FzUDU748XftQ5EDd5liBfLdLMuh7tapZfv/ImxNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pkKW/Oj1cEr3aH3VxVF4Y/fYjAiYLRKmDV7a9LQ+sLesoHJiXsr+k+cbrF247LX5o3fl/4GkB1ce4hlCmoreMrzp6lOC91dDWFBjRtNE4UeOeyv54m1TRemS917k9COSnaV6Fr4IR0CK6kp4ZYQcsNXq0ccF3A8vjoFC0NEdFrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fx9/b6XS; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id AD49E1A1425;
-	Thu, 16 Oct 2025 14:02:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 806D36062C;
-	Thu, 16 Oct 2025 14:02:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B96A102F230E;
-	Thu, 16 Oct 2025 16:02:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760623331; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2bFoA8MyaDvl/5Ycj1d2n5W5Ke/JKZq4XyHicBpLuzA=;
-	b=Fx9/b6XSSYXEOlKl4J76sNSG9A+rZkfvsEKvKNHZw359FJFe4EA10bl0/mDXFNeveUk4Xc
-	ywQXeynu+1l1EyXZ4TCA1BJat/h7mP6JY86ksoSjHaUnP3t4YtiuostLtuEdlcWUrzZkwG
-	14bquoeeYKcjPZNW83RX2M+YQRaI0PPebjjfo8BxpIa0Xr9JsIFD9Z5q9ibRt4TgdvDBBY
-	DvGHBWTLCz5rtAA1woB010WlYYp5vFpM8LJpfkLBV/vvEKsyrDIsBfYCX0H8/WsxJSzdEO
-	MgYnX1vcwgx2/ceZ0qDiRDqV8je09jG1UErXiJRPGZ1P3Dk6XoQH1ysaGZPHnA==
-Date: Thu, 16 Oct 2025 16:02:02 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron	
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?=	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley	 <conor+dt@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-Message-ID: <20251016160202.3d4d0a5e@bootlin.com>
-In-Reply-To: <de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	<20251015142816.1274605-3-herve.codina@bootlin.com>
-	<1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
-	<20251015211420.031c61fa@bootlin.com>
-	<de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760623349; c=relaxed/simple;
+	bh=eZTc0v+n4Ua79esR/aVwyPQTbVR5jty9LbpzOItjq/Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DqfyLCjV8IFnu99tHZCxPaRPOD6atn6rwrwOO865YajVEuos4+w//YLbnbqHxl+JiHymp0uRQiPlLgPDve87sbmtsL5vdx68k29dFp8AHVOkaXnvMHHfABaCZEXgI44kPHpBX0bFrv41TZ/xINsScrhacgmr7RLtbeF+krYLFGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=fkSWMqHi; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=olaNr81UT3i0XgE7r39ZIOMvOjEJR62WYdjIOT7ahzU=;
+	b=fkSWMqHiDBDAH7Mt9zDgehSnE9WBou3iEPzz+XFM/xtmJrLnN65EzekUOZXGZzOkITDZzkEGt
+	QxdoquzGoWQBuVv3tz2+BY0gy04kXzEDqwT36tOboaep4za9bN0CtwFKBm+kjPEtiRPsdoORVQ4
+	A15p9HG/dvEEFtIzqObSjgQ=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cnV4n3sHrzKm5G;
+	Thu, 16 Oct 2025 22:02:01 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 709011A0188;
+	Thu, 16 Oct 2025 22:02:22 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 16 Oct 2025 22:02:21 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <linmiaohe@huawei.com>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>
+CC: <will@kernel.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<liaohua4@huawei.com>, <lilinjie8@huawei.com>, <xieyuanbin1@huawei.com>
+Subject: [PATCH RESEND] mm/memory-failure: not select MEMORY_ISOLATION
+Date: Thu, 16 Oct 2025 22:02:18 +0800
+Message-ID: <20251016140218.15579-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-Hi Nuno,
+We added that "select MEMORY_ISOLATION" in commit ee6f509c3274 ("mm:
+factor out memory isolate functions").
+However, in commit add05cecef80 ("mm: soft-offline: don't free target
+page in successful page migration") we remove the need for it,
+where we removed the calls to set_migratetype_isolate() etc.
 
-On Thu, 16 Oct 2025 10:24:36 +0100
-Nuno Sá <noname.nuno@gmail.com> wrote:
+What CONFIG_MEMORY_FAILURE soft-offline support wants is migrate_pages()
+support. But that comes with CONFIG_MIGRATION.
+And isolate_folio_to_list() has nothing to do with CONFIG_MEMORY_ISOLATION.
 
-> On Wed, 2025-10-15 at 21:14 +0200, Herve Codina wrote:
-> > Hi Nuno,
-> > 
-> > On Wed, 15 Oct 2025 16:21:09 +0100
-> > Nuno Sá <noname.nuno@gmail.com> wrote:
-> > 
-> > ...  
-> > >   
-> > > > +static int rzn1_adc_enable(struct rzn1_adc *rzn1_adc)
-> > > > +{
-> > > > +	int ret;
-> > > > +
-> > > > +	ret = rzn1_adc_core_power_on(&rzn1_adc->adc_core[0]);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	ret = rzn1_adc_core_power_on(&rzn1_adc->adc_core[1]);
-> > > > +	if (ret)
-> > > > +		goto poweroff_adc_core0;
-> > > > +
-> > > > +	ret = clk_prepare_enable(rzn1_adc->pclk);
-> > > > +	if (ret)
-> > > > +		goto poweroff_adc_core1;
-> > > > +
-> > > > +	ret = clk_prepare_enable(rzn1_adc->adc_clk);
-> > > > +	if (ret)
-> > > > +		goto disable_pclk;
-> > > > +
-> > > > +	ret = rzn1_adc_power(rzn1_adc, true);
-> > > > +	if (ret)
-> > > > +		goto disable_adc_clk;    
-> > > 
-> > > Can we use devm_actions() on the above to avoid the complex error path plus
-> > > the
-> > > .remove() callback?  
-> > 
-> > rzn1_adc_enable() is used by the driver pm_runtime_resume() function.
-> > 
-> > I don't think that devm_add_actions_or_reset() will help here.
-> > 
-> > In my understanding, devm_* functions are use to perform some operations
-> > automatically on device removal.
-> > 
-> > The purpose of the error path here is to restore a correct state if
-> > rzn1_adc_enable() failed when it is called from pm_runtime_resume().
-> > 
-> > In that case no device removal is involved to trig any action set by
-> > devm_add_actions_or_reset().
-> > 
-> > Maybe I am wrong. Did I miss something?  
-> 
-> Nope, I see now what's your intent.
+Therefore, we can remove "select MEMORY_ISOLATION" of MEMORY_FAILURE.
 
-Ok, no change planned for the next iteration related to this error path.
+Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Acked-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ mm/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-> 
-> >   
-> > >   
-> > > > +
-> > > > +	return 0;
-> > > > +
-> > > > +disable_adc_clk:
-> > > > +	clk_disable_unprepare(rzn1_adc->adc_clk);
-> > > > +disable_pclk:
-> > > > +	clk_disable_unprepare(rzn1_adc->pclk);
-> > > > +poweroff_adc_core1:
-> > > > +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[1]);
-> > > > +poweroff_adc_core0:
-> > > > +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[0]);
-> > > > +	return ret;
-> > > > +}
-> > > > +  
-> > 
-> > ...
-> >   
-> > > > +static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
-> > > > +					 struct iio_dev *indio_dev)
-> > > > +{
-> > > > +	int adc_used;
-> > > > +
-> > > > +	adc_used = rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
-> > > > +	adc_used |= rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
-> > > > +
-> > > > +	switch (adc_used) {
-> > > > +	case 0x01:
-> > > > +		indio_dev->channels = rzn1_adc1_channels;
-> > > > +		indio_dev->num_channels = ARRAY_SIZE(rzn1_adc1_channels);
-> > > > +		return 0;
-> > > > +	case 0x02:
-> > > > +		indio_dev->channels = rzn1_adc2_channels;
-> > > > +		indio_dev->num_channels = ARRAY_SIZE(rzn1_adc2_channels);
-> > > > +		return 0;
-> > > > +	case 0x03:
-> > > > +		indio_dev->channels = rzn1_adc1_adc2_channels;
-> > > > +		indio_dev->num_channels =
-> > > > ARRAY_SIZE(rzn1_adc1_adc2_channels);
-> > > > +		return 0;
-> > > > +	default:
-> > > > +		break;
-> > > > +	}
-> > > > +
-> > > > +	dev_err(rzn1_adc->dev, "Failed to set IIO channels, no ADC core
-> > > > used\n");
-> > > > +	return -ENODEV;    
-> > > 
-> > > dev_err_probe()?  
-> > 
-> > Why? the error returned is a well known value: -ENODEV.
-> > 
-> > dev_err_probe() should be involved when -EPROBE_DEFER is a potential error
-> > code.
-> > 
-> > IMHO, dev_err() here is correct.  
-> 
-> If I'm not missing nothing this function is called during probe so I do think
-> dev_err_probe() should be used. Not only unifies logging style during probe it
-> also has the small benefit of doing:
-> 
-> return dev_err_probe(...) saving a line of code.
-> 
-> You can see that, at least in IIO, we even have some patches just converting
-> drivers probe() to use dev_err_probe().
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 034a1662d8c1..0e26f4fc8717 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -742,21 +742,20 @@ config DEFAULT_MMAP_MIN_ADDR
+ 	  This value can be changed after boot using the
+ 	  /proc/sys/vm/mmap_min_addr tunable.
+ 
+ config ARCH_SUPPORTS_MEMORY_FAILURE
+ 	bool
+ 
+ config MEMORY_FAILURE
+ 	depends on MMU
+ 	depends on ARCH_SUPPORTS_MEMORY_FAILURE
+ 	bool "Enable recovery from hardware memory errors"
+-	select MEMORY_ISOLATION
+ 	select RAS
+ 	help
+ 	  Enables code to recover from some memory failures on systems
+ 	  with MCA recovery. This allows a system to continue running
+ 	  even when some of its memory has uncorrected errors. This requires
+ 	  special hardware support and typically ECC memory.
+ 
+ config HWPOISON_INJECT
+ 	tristate "HWPoison pages injector"
+ 	depends on MEMORY_FAILURE && DEBUG_KERNEL && PROC_FS
+-- 
+2.48.1
 
-Right, I will use dev_err_probe() in the next iteration.
-
-> 
-> >   
-> > >   
-> > > > +}
-> > > > +
-> > > > +static int rzn1_adc_probe(struct platform_device *pdev)
-> > > > +{
-> > > > +	struct device *dev = &pdev->dev;
-> > > > +	struct iio_dev *indio_dev;
-> > > > +	struct rzn1_adc *rzn1_adc;
-> > > > +	int ret;
-> > > > +
-> > > > +	indio_dev = devm_iio_device_alloc(dev, sizeof(*rzn1_adc));
-> > > > +	if (!indio_dev)
-> > > > +		return -ENOMEM;
-> > > > +
-> > > > +	rzn1_adc = iio_priv(indio_dev);
-> > > > +	rzn1_adc->dev = dev;
-> > > > +	mutex_init(&rzn1_adc->lock);    
-> > > 
-> > > devm_mutex_init()  
-> > 
-> > Yes, I will update in the next iteration.
-> >   
-> > >   
-> > > > +
-> > > > +	rzn1_adc->regs = devm_platform_ioremap_resource(pdev, 0);
-> > > > +	if (IS_ERR(rzn1_adc->regs))
-> > > > +		return PTR_ERR(rzn1_adc->regs);
-> > > > +
-> > > > +	rzn1_adc->pclk = devm_clk_get(dev, "pclk");
-> > > > +	if (IS_ERR(rzn1_adc->pclk))
-> > > > +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk),
-> > > > "Failed to
-> > > > get pclk\n");
-> > > > +
-> > > > +	rzn1_adc->adc_clk = devm_clk_get(dev, "adc-clk");
-> > > > +	if (IS_ERR(rzn1_adc->pclk))
-> > > > +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk),
-> > > > "Failed to
-> > > > get adc-clk\n");
-> > > > +
-> > > > +	ret = rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-  
-> > > > >adc_core[0],  
-> > > > +					   "adc1-avdd", "adc1-vref");
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	ret = rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-  
-> > > > >adc_core[1],  
-> > > > +					   "adc2-avdd", "adc2-vref");
-> > > > +	if (ret)
-> > > > +		return ret;    
-> > > 
-> > > Hmm, is avdd really an optional regulator? I mean can the ADC power up at
-> > > all
-> > > without a supply in AVDD? Even vref seems to be mandatory as we can't
-> > > properly
-> > > scale the sample without it.  
-> > 
-> > Where do you see that avdd is an optional regulator?  
-> 
-> You are using devm_regulator_get_optional(). That's for optional regulators.
-> 
-
-Indeed I use devm_regulator_get_optional().
-
-We have two similar function to get regulators:
-- devm_regulator_get() and
-- devm_regulator_get_optional().
-
-devm_regulator_get() returns a dummy regulator if the regulator is not
-described in the device-tree. The calling code has no way to known if
-the regulator was present or not.
-
-On the other hand, devm_regulator_get_optional() returns -ENODEV when the
-regulator is not described.
-
-That's pretty confusing but it is the reality.
-
-I use devm_regulator_get_optional() but check for -ENODEV to see if the
-regulator is provided or not.
-
-In order to use the ADC core (is_used flag), I need both the AVDD and the
-VREF regulator available.
-
-> >   
-> > > 
-> > > Also, can't we have getting and enabling the regulator together? Then, we
-> > > could
-> > > use some of the modern helpers to simplify the code (ok I see you use them
-> > > in
-> > > the PM callbacks).  
-> > 
-> > Yes, I rely on PM callbacks to handle those regulators.
-> >   
-> > >   
-> > > > +
-> > > > +	platform_set_drvdata(pdev, indio_dev);
-> > > > +
-> > > > +	indio_dev->name = dev_name(dev);    
-> > > 
-> > > dev_name() should not be used for the above. It's typically the part name so
-> > > I
-> > > guess in here "rzn1-adc" would be the appropriate one.  
-> > 
-> > I thought it was more related to the instance and so having a different name
-> > for each instance was better.
-> > 
-> > Some other IIO drivers use dev_name() here.
-> > 
-> > But well, if you confirm that a fixed string should be used and so all
-> > instances have the same string, no problem, I will update my indio_dev->name.  
-> 
-> It is a fixed string, typically the part name. David Lechner not that long ago
-> actually sent some patch or documented somewhere why not to use dev_name(). To
-> identify different instances we have a 'label' property.
-
-Right, I will set indio_dev->name to the "rzn1-adc" fixed string.
-
-> 
-> >   
-> > >   
-> > > > +	indio_dev->info = &rzn1_adc_info;
-> > > > +	indio_dev->modes = INDIO_DIRECT_MODE;
-> > > > +	ret = rzn1_adc_set_iio_dev_channels(rzn1_adc, indio_dev);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	ret = rzn1_adc_enable(rzn1_adc);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	pm_runtime_set_autosuspend_delay(dev, 500);
-> > > > +	pm_runtime_use_autosuspend(dev);
-> > > > +	pm_runtime_get_noresume(dev);
-> > > > +	pm_runtime_set_active(dev);
-> > > > +	pm_runtime_enable(dev);    
-> > > 
-> > > There's a devm_pm_runtime_enable() API now.  
-> > 
-> > Will look to use it in the next iteration.
-> >   
-> > >   
-> > > > +
-> > > > +	ret = devm_iio_device_register(dev, indio_dev);
-> > > > +	if (ret)
-> > > > +		goto disable;
-> > > > +
-> > > > +	pm_runtime_mark_last_busy(dev);
-> > > > +	pm_runtime_put_autosuspend(dev);
-> > > > +
-> > > > +	return 0;
-> > > > +
-> > > > +disable:
-> > > > +	pm_runtime_disable(dev);
-> > > > +	pm_runtime_put_noidle(dev);
-> > > > +	pm_runtime_set_suspended(dev);
-> > > > +	pm_runtime_dont_use_autosuspend(dev);
-> > > > +
-> > > > +	rzn1_adc_disable(rzn1_adc);
-> > > > +	return ret;
-> > > > +}
-> > > > +
-> > > > +static void rzn1_adc_remove(struct platform_device *pdev)
-> > > > +{
-> > > > +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> > > > +	struct rzn1_adc *rzn1_adc = iio_priv(indio_dev);
-> > > > +
-> > > > +	pm_runtime_disable(rzn1_adc->dev);
-> > > > +	pm_runtime_set_suspended(rzn1_adc->dev);
-> > > > +	pm_runtime_dont_use_autosuspend(rzn1_adc->dev);
-> > > > +
-> > > > +	rzn1_adc_disable(rzn1_adc);
-> > > > +}    
-> > > 
-> > > I'm fairly confident we can sanely go without .remove().  
-> > 
-> > Will see what I can be do for the next iteration.
-> > 
-> > Maybe I will ask some questions if I need some clarification around
-> > pm_runtime but let me first try to go further in that direction.  
-> 
-> Yeah, maybe you can come up with something but given how you use pm to
-> enable/disable stuff I'm also not sure the above is easily doable.
-> 
-
-Hum, do you think it's worth a try?
-
-Best regards,
-Hervé
 
