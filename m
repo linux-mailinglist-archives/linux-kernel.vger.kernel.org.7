@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-855681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4DDBE1F66
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:43:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D24DBE1F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF0284F609E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:42:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD7C19A8381
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B29D2FF652;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED94B2FFFAD;
 	Thu, 16 Oct 2025 07:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLCFyX/C"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVrVt1w/"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66032FB97B
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950FC2FD1D6
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760600547; cv=none; b=r8tW0STb1bpQtKmiYnnhxgbCp8JrxcuglH6v0y6Dx5c5XMBVJjXvh7eeSRCOpnbqSIZcOIbldTxJvLANVy8QtJJYfks2OK9pdfHRQnxk3UaodOyI31NzapL7WvkeIs39kzz8VGf1m+WLgGk7/Y/wpgBhxJ3JiJwcgkA+GSk1+ow=
+	t=1760600548; cv=none; b=kDdiK84w/TiHS8c45CW4ZXI4TIlzH+pBaRwcYGvQUJtglw+8Z6a07giz8fOuZzkNv1Tr+c4EjbClgxp5GkXzwqYDLlvGVqAcnRERhjvfs+Dg1mHf+fHVjhX5ezBc+BAXycAKvowc3+ZuXuZZoEzZsBj9ocCK8LFWT73K2sBkq1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760600547; c=relaxed/simple;
-	bh=xB0LZwMzhZT5j2b0jjsQ2KFZrgTIo41/jiusVXvcdes=;
+	s=arc-20240116; t=1760600548; c=relaxed/simple;
+	bh=ze79z0cIlNbaKQa0MA4ljsXZPan0FmaR8mcmgo52yBs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MS0h3MxxCrpItF8U565TCgRzTFo1ifPF2iwfLsr3tisxfYFFG93nfmXB0gnLAuXnTV/a+Qcf2OSbfXnIYQzPelD5RYM53ZQRpU95MJGWFFjJC6e6nKpWVZrv8aohZyU6aZ9iDnAHLuzBc4JZI90K1vFR8GLFErjbNqicXhfENYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLCFyX/C; arc=none smtp.client-ip=209.85.208.172
+	 MIME-Version; b=CMkUzc4gJlVvxzXSfgZGtzyGKWz3F4zzg/W7iEmBD/J1X6lzmypGXFgigI07ezLzW0sE5lFs9dfj9107i0g5TaqBlq3YwoPvZ546/Cn9uD1ublZ9HqIcrfXgRBzIhNIL1W34Os77E6yR2jYq7OpEcWRvIIqF5N7YNUqsYktd9Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVrVt1w/; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-36453927ffaso3516801fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:42:25 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3737d0920e6so4180571fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760600544; x=1761205344; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760600545; x=1761205345; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GtovmNeUjM/Ta3qpNFjKfyT/fym1ZwzATHtxvDM0Z+Q=;
-        b=mLCFyX/CvWF7iJbpNR6LtsGMSmXNsBXtOP0rToZOH0SXChJFoAfLVxME6t6GbaCEVl
-         gDwBk80VKRnF1UgPc9jBqYviHWL1Mo/F7gkNphuszXUklAjhv5+O32vBvg/WpXjHJiXa
-         fo+R27mRzUlGOXOxitFMz5nQ2y4WvWwk60ticGe1+CbVzmyb95XszSJBsji06/NX1MwL
-         J18+Eo7vK7Me4y6vZacJiM8Q/c5hHwSxFVSVKZ0K1TPy6vy0VPek/mdB7FwEluU3FnjR
-         wf2EybZfjYg/0gvJuw35NPO88E032vUZ32GyVIYX6Ca1HVSyjmnp5mH+x8i+ce4CIigS
-         U16A==
+        bh=WWYu3otYisP3loE3ZY8+Cvk4qkPP9PP2d80k16BNDdo=;
+        b=OVrVt1w/jVJWAbag+iuzqOadfBK33RiogSzzPZtfvmMdO703SDl3gGwxOswYDNzJ6k
+         bHvz18OtmM1An1owpnDPDsiEJDLwT5RGg9JJOT19I5ckH6T1vZvoNUzQ2hA8929Y0h2K
+         Ey3TLLEhQZ+0rxp4lb1XVJJBfPTDmOdTx4RxzbXpH2fQAIOblZha+wxsPfdUdCWJ0g75
+         CEKZYoYL5k2ARLmgcDglOlyEFpoS1fIiRvohl+89i+Y25xns24lUUdp+P6aSS0ZqReBK
+         nEwFes+7TVGHQniKaxgTWwdnN28bpiVADI5/uMTNvr0dJHtm9QYTONrAhigxBxNqXVgI
+         sA7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760600544; x=1761205344;
+        d=1e100.net; s=20230601; t=1760600545; x=1761205345;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GtovmNeUjM/Ta3qpNFjKfyT/fym1ZwzATHtxvDM0Z+Q=;
-        b=WUcmodIjOZhBeGY8pjjscFVa35dQHf2NOoa+gDC2nNchsP/1cQMH+3wRt7+CtTOyrQ
-         FZKtzybariFN84WN4Ik+jdSTD5sp4B//FTo2W7PiRlsbrTfQWCc7qfnBNkG0J7Ckmlmm
-         1kl/Jvonzxxcd9ilNltcn2dHyrjbGsmrh5xKrHzx/x+ummu8XEDVDC/+xbGqMu+/lovO
-         uqEh5Hsc4ek4pl0vqOYiFOa/Vwob/nvRrQ7uEg5xMqioJW0VpuiMxiCw58+t+aqqTGGN
-         VZJ9veDQpe3iYF2RsTwjsSa3Kp94HHtzAP4xT6c6sm8NdTi5DmHE/h4Jzop7BF9KTkBC
-         ab8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVslr/+TY/axGXk/FhqTCpvG4npPbVp0SU+JxtxRYGYHl1sjK7tNsKATtKY4129wLQQotCfQPljPbvQri8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEdev5sD/0t5if2n9HRxt1UouCnwp/McnAj1N2+/GsJru2CQev
-	4rYhabE/IumNF2KXdk9ooT99C4sO1MRs9oOmGCHt06Bcn/Z2Wn0/Rwtj
-X-Gm-Gg: ASbGncv7K0+n/M7vc3bbOgzq9QKA7WVpnsp+AD3YtdhN8Qxh9NFg+qsAydoeIfYFsZL
-	XBOx4B32DHONDkPBhn77k3YkzgTL8foZaM9OALbj3DnEsSBB8tzEpL0AdbHff4Zqi/G+LzMHzN+
-	+HjDZKV8KBH/2GKIiW8r1A4shp5KQzfeTzb1qN+6kNgKfFqSQNJW2P5sXpTojktz/X/J/vXF6bt
-	ua+UUigbyBTfIIWIZUtDzqKMtd/riXvdN78vgc2Cisk2JqcM0s35ST7/oYE88FJfzCl1edEI8os
-	jcuTRpnirDQ0+6D1xlDDWmU3RDSEIvFDq+fLU1ornPC6qXIXtafSJAP38RpEimi6pcSt4clyk2o
-	Og0bxFIYlCjn9KrnPXwE7uxeNssm98lCF182zqa5twJuepQFrPla9slJMlPDbAt5GJUU=
-X-Google-Smtp-Source: AGHT+IFbllf5hFrxaT2o/OaVZ8Ngh/7DhF2hoeMDKN0lK28m8mzh79yF6GtziaC1JfPDf0mmnNoccg==
-X-Received: by 2002:a05:651c:35cc:b0:36a:a8bb:9b81 with SMTP id 38308e7fff4ca-37609cea827mr90279441fa.5.1760600543533;
-        Thu, 16 Oct 2025 00:42:23 -0700 (PDT)
+        bh=WWYu3otYisP3loE3ZY8+Cvk4qkPP9PP2d80k16BNDdo=;
+        b=vTN7yLbMDuByFO1zhGk1OY3ATBnGlBKA7g6CRMRRsnWSzXKIbhKg1qTAKMzp/PQ3kC
+         jjFI35Tk7upYigsCI4H4KV2O8Qb1H5pN60af51NrIB41c/d6OKLARbV5dXMihVqcw5l3
+         jDeH5N5kfmqfqXqFDrIB9anlK4akCZR6q3P/Wn0IyQ4jlDVUktyvFKICwe1mkYvnTuZ7
+         rclCKIUE71zbQS0k7ty/tJ+JXZySMTAazQAw/+5QFUYY2+3sWOwa1R74sS2ttvgG1OQs
+         3pPulkH+gX2q4ayjKcYHXdRF6hNz+PykPJUiLCylpzpA6W4HWRTWRJ/5UxgUu+W91ToS
+         gZew==
+X-Forwarded-Encrypted: i=1; AJvYcCXw7Eqcy/VpsYO2UvQJ+CL/ed3PI2izhmvgbFHNMi6FCpNFNo2tO1H5JTnpoWH9F8QA48hjiLB/K93/lKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYqeexxhKZpaP3WsJLKix34xOuaap8tpC34NXZ7e7t3xeL9BTa
+	JoHQ9XQlmCrO2SR1Kf6x6LyybFg7bA0hbyiOgbXEwgGwCG0+BqcdbygB
+X-Gm-Gg: ASbGncusEIAoT4P37w5t2aFISOUoBZmBj0qGmspiP7qrXaNBMZM/ojR4k2ZiycoFlXF
+	17hiFJIbG9N3F/O9f10qXw56a4Aqp7YB+TaNsGZQfup4cuF6e2C9H9VZ7N1X2roINhNPvGXmW1U
+	rsm46WqmrjVF4iD+Ljz1fIgwivcIYpBWhaDo1yqC73PTlmuX03JB5pRZ3JmNR0WVh7h7BoGM1Wk
+	udFJwPML5XZ/CpsZdlpE9xYDH725krFeNl9Nz73vqHUkvnqsWQas2YHw/3jf6uFPVVLtpECN2H3
+	Sc4Vr0k2VlovaI3gNP5DAzEotoHZ80x1b1UP7sHPHRn/Kul+jiWMpkOISTz+u0QELkyYN2KYsHs
+	1I5jyFQrzFQju7HW4B0iLZ5sMxHfKC7AU3hhPh28oflSz4FSlTfI8EfS3eycalsnhW43IfyACAz
+	lJ3w==
+X-Google-Smtp-Source: AGHT+IGVgf6/RN8IUHFNYJOZvU23WBLAQhmiwYE6OkYEXsUUlwsCRkSsEJa3T4KsUiG0urBQytUN8w==
+X-Received: by 2002:a2e:a98a:0:b0:35f:a210:2a35 with SMTP id 38308e7fff4ca-37609cf7f62mr88037521fa.7.1760600544458;
+        Thu, 16 Oct 2025 00:42:24 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea14d46sm53226121fa.34.2025.10.16.00.42.22
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea14d46sm53226121fa.34.2025.10.16.00.42.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 00:42:23 -0700 (PDT)
+        Thu, 16 Oct 2025 00:42:24 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -83,9 +84,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/4 RESEND] ARM: tegra124: add missing HOST1X device nodes
-Date: Thu, 16 Oct 2025 10:41:51 +0300
-Message-ID: <20251016074152.8759-4-clamor95@gmail.com>
+Subject: [PATCH v5 4/4 RESEND] arm64: tegra210: drop redundant clock and reset names from TSEC node
+Date: Thu, 16 Oct 2025 10:41:52 +0300
+Message-ID: <20251016074152.8759-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251016074152.8759-1-clamor95@gmail.com>
 References: <20251016074152.8759-1-clamor95@gmail.com>
@@ -97,96 +98,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add nodes for devices on the HOST1X bus: VI, ISP, ISPB, MSENC and TSEC.
+Clock and reset names are not needed if node contains only one clocks and
+one reset.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm/boot/dts/nvidia/tegra124.dtsi | 64 ++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-index ec4f0e346b2b..ce4efa1de509 100644
---- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-@@ -103,6 +103,45 @@ host1x@50000000 {
- 
- 		ranges = <0 0x54000000 0 0x54000000 0 0x01000000>;
- 
-+		vi@54080000 {
-+			compatible = "nvidia,tegra124-vi";
-+			reg = <0x0 0x54080000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_VI>;
-+			resets = <&tegra_car 20>;
-+			reset-names = "vi";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VI>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54600000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54600000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISP>;
-+			resets = <&tegra_car TEGRA124_CLK_ISP>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54680000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54680000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISPB>;
-+			resets = <&tegra_car TEGRA124_CLK_ISPB>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2B>;
-+
-+			status = "disabled";
-+		};
-+
- 		dc@54200000 {
- 			compatible = "nvidia,tegra124-dc";
- 			reg = <0x0 0x54200000 0x0 0x00040000>;
-@@ -209,6 +248,31 @@ dsib: dsi@54400000 {
- 			#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 942e3a0f81ed..cbe54c4e5da8 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -183,9 +183,7 @@ tsec@54100000 {
+ 			reg = <0x0 0x54100000 0x0 0x00040000>;
+ 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&tegra_car TEGRA210_CLK_TSEC>;
+-			clock-names = "tsec";
+ 			resets = <&tegra_car 83>;
+-			reset-names = "tsec";
+ 			status = "disabled";
  		};
  
-+		msenc@544c0000 {
-+			compatible = "nvidia,tegra124-msenc";
-+			reg = <0x0 0x544c0000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_MSENC>;
-+			resets = <&tegra_car TEGRA124_CLK_MSENC>;
-+			reset-names = "mpe";
-+
-+			iommus = <&mc TEGRA_SWGROUP_MSENC>;
-+
-+			status = "disabled";
-+		};
-+
-+		tsec@54500000 {
-+			compatible = "nvidia,tegra124-tsec";
-+			reg = <0x0 0x54500000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_TSEC>;
-+			resets = <&tegra_car TEGRA124_CLK_TSEC>;
-+
-+			iommus = <&mc TEGRA_SWGROUP_TSEC>;
-+
-+			status = "disabled";
-+		};
-+
- 		sor@54540000 {
- 			compatible = "nvidia,tegra124-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
 -- 
 2.48.1
 
