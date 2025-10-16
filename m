@@ -1,191 +1,162 @@
-Return-Path: <linux-kernel+bounces-857012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BC3BE5A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:14:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E12CBE5A77
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5F75E766F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37AB19C710F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F922E62B4;
-	Thu, 16 Oct 2025 22:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFF02D3218;
+	Thu, 16 Oct 2025 22:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WLS+OHG2"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="NjE4FnF6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iVkCqK+h"
+Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC2199385;
-	Thu, 16 Oct 2025 22:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CF818A921;
+	Thu, 16 Oct 2025 22:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760652854; cv=none; b=cS+fCxmwopFF4xa28z4TFIpYtdEkKcLZVWyaXRRAd/2dGasuy7o7ttYPzsk48SYIouKLVFXOI0Yqi2H+azF9jBPmTzZSUyH/sDqUDIi4+W7lKn7I/03+dvG3r0xoeMnOmRLzLuKJfpI9xGb/aTwYvMcAjO8epUAxDPftN6saCk8=
+	t=1760652938; cv=none; b=DuDMQAriwg6P2XH3xpriy9Z9IC0NeS2WFwavlEB7PStuXza/9Oojzjyr3fVyJETAsg23+S6+iPhwkgsx4K7lrOwH9rLsW51ZI0j3tnPkbEIu3v4dk94Qn2Lydd5482Z7ySg1LFEEVWCxpGrxTgJn3myBqFPzgJ1LLpc7zNHyOlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760652854; c=relaxed/simple;
-	bh=ouAFygVCIM4XXtcmRJ2maxdMcDTfSelmWNvBntx9JPA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mlFxj/l//oyLjcQYCWqthZK7HRGQpQzCBgr0YYkzMTx6suVa6lUiSwtJ/gMPWetp7lMyT3dXUcE4GtfN34wE3QRUyOgskF0TImlRs/FK8mqvmL1bYc105xTxw6og/R+VOTkd7IxXAhwSqAwhRwYd448ML0QS71B1LdwPk+SawN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WLS+OHG2; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 13CF01400131;
-	Thu, 16 Oct 2025 18:14:11 -0400 (EDT)
+	s=arc-20240116; t=1760652938; c=relaxed/simple;
+	bh=iLsGMz+lQC5s46WAZOiKnbc49kyx8W/cCQalytEP0d4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2NWA5ZVZmZz6FK3+ZFvFe3jEPzn4/nG5O79RVi3GV11Vi8dz14A4WuNBO5Wa6qDrbXts2nIyy+Yvpjr51lsuHR8uSKDb76ntPz7/hFcMGkIemkbX2HEpvGxdFyT5h+mvPIFnGF50UMmHZEa59kW8XkSQOXHpplFP3BQbw/ytHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=NjE4FnF6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iVkCqK+h; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id 8715A13806A9;
+	Thu, 16 Oct 2025 18:15:36 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Thu, 16 Oct 2025 18:14:11 -0400
+  by phl-compute-04.internal (MEProxy); Thu, 16 Oct 2025 18:15:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1760652936; x=1760660136; bh=vzGgZImo0E
+	BsLEHlMR5wSNL1BxVaGZmB0ngBJ00VQ1k=; b=NjE4FnF6Z+Hv6BZwdj5D3rMGXY
+	kWOPybw+UtFAjB9c+eY7rb2ymabUocvJVuGzPJrtzsODKO4/HSLcTuiGXvyUuQjS
+	ktcTx5bCIwNyzBcXJsGwkxJsoGyET/iATGKYpLfRT1wCs/3CR++i8KafKSzJz3ua
+	Wp2s5Rww3P5DN0G2cbv7QM2lGcno5Jm4tDmiTPWwqE1LdWsUcF40UH3DnHCjwMMV
+	K5N4+kgBBgDTYI+7wM3ykOUKvGq8cNIqiLWH11ieN72wz8p6tIzgyLAvQweH2fTs
+	u9AuS7cx+Pmw+t5ds3l9vK7n0xBvwpBf5F6mCu4WRneYHvzutFzPT1kVcDZA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760652851; x=1760739251; bh=y6tbFg6I5X37u9n3geJjz7h9HCre07tUvWj
-	3JcU4nDU=; b=WLS+OHG2cZZ2eaAM0oQCkagJF8T+furTvGOUue5SsdBkVx9Nj93
-	UZ/tiTmvNNq+WEmdeQ1oS7mWfmj9t0Y/y+VzLJ6LGBpN4t4raUbizss6EkselbMs
-	cuc1sySEDISOnOhl4bL3/V7o1rFy6DCC4AbmWS/SYd5eW249YQ8dsJF7B0rzzg76
-	hMz6F3C2yHgMipDHe3Mhh2xOWIcN3tUNClrcQRsGY6UCejDgtB8luBC1CvUw5VKk
-	hoWpxaizYAcLOET0ZibH3HOZe7i+Qfvdhp0L5SH3INqndNuIICEDoQV0gtTcjWb+
-	r5NJm9A9VWSU4FzU1MZ5/7bt/aQfyFgy9Tw==
-X-ME-Sender: <xms:MW7xaBrclnajsvsLJ9Ta5a17f7a-ztDFmwAXgD6nRf-S_8Tmo21YOQ>
-    <xme:MW7xaKCRXc7biGyIJNbIAGt2o46Bv2tD72aArPHP0SGNFz_EvorffEruBDupCmNmf
-    iq9zGY8ldrXVHi68kSR_uq_YWo3RFvzWPIYF-o5FslMuLGGONSClvg>
-X-ME-Received: <xmr:MW7xaKfiHGuoeGemX-D7QCELvT7kRbrgKJPirxv9vVY_yBzJFvC372nsJfFe3245gy3a5sCMFURy_ThcTDB0gdDVgCqpMniDrqQ>
+	1760652936; x=1760660136; bh=vzGgZImo0EBsLEHlMR5wSNL1BxVaGZmB0ng
+	BJ00VQ1k=; b=iVkCqK+haRPM1XGAf9do5aP3G/azCfSHzaj9S/42bCPv7p8sjjf
+	WS7FueNNN9173kz4jxwbeQxtxZwl7De+/wQxC6m8ah9Aat6sw6WHkL0YWcQ/Uydk
+	lK02Cjpk/vc+jBI7upCVTsNmgHiADk7Xnu64LbRQ0ARY627QsiHpw6IobiQ/4Uk/
+	PU0Z3g7y8AP8zZDLgY4HzZC8JJuNgWnxK72YcpnoW8OIPWQyud+yEhaHyjeYbl6d
+	Xm2VxMUUhcaNwsgjh2dA2eMEInMDhl2mfhTY62vyepdV+5ylSPN70J1JPCaI84IO
+	lzPADqq0+HHWwYpvUI0eQaQGefi2BRocMaQ==
+X-ME-Sender: <xms:h27xaO9hR8CnI5TlTSslFVdAFlYJUxDxyYpGe4Q_e_CpTvd-Xjk6fA>
+    <xme:h27xaJt9kfzu3S0nw2iqxy2qI3R0WZHVMEnRxTIv_sBaW9HjVS3-8dY2NgzDoQRvR
+    QtcGPI08-oHEO_e5EXA9K4cZKhGUMMhn23Vp9XnzQx2iFzM5njLu-Lz>
+X-ME-Received: <xmr:h27xaKoPeERNhYMtLsQmy-_PRH1pR97SDMmmw8-CcRKpjcS7d9hjzJ712dQIvaHrXdHUPAhlKFk0FVfq-G0eU_akpwn4PsWMsko>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdejgeeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduvddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtph
-    htthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopeifihhl
-    lheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunh
-    gurghtihhonhdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdr
-    tghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopehmrg
-    hrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrh
-    gthhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:MW7xaKsqULgORCHxFG9sV7dXX-53TfnFx-t1hkfJLR46-dg6j75iVg>
-    <xmx:MW7xaJjXBbkXHwybUw77RwyMkcYlXXpwiod-TSRjZfZuWXs8wboj2g>
-    <xmx:MW7xaKun-aQLxruWKr5tViYS29Dx0ao2YuKxGZ33HTTU3WMpLDgOGw>
-    <xmx:MW7xaM_ogeAdHNrU4uLjhpGFQ19bCojqizpQOt8ikTw7keCT1ZC6jQ>
-    <xmx:M27xaOuFAyrDQTUs2FgG6VaLFsAnTdJJOtMREg_1KIkdeDB4E0sjVzOX>
-Feedback-ID: i58a146ae:Fastmail
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
+    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvd
+    ffveelgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruh
+    drnhgvthdpnhgspghrtghpthhtohepvdefpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehjtggrlhhlihhgvghrohhsleelsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsh
+    hvvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhii
+    figvihhgrdhiohdprhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtth
+    hopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgigr
+    nhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhm
+X-ME-Proxy: <xmx:h27xaEF5MuFHmTOswE20zS1DghicGhpJzvr-WZF2xSVo48mqFrHCyQ>
+    <xmx:h27xaN4sS7Hf5pDh77-7GpLz4KLRjnIVNMp2-Hh1INGmHhc6riFpIQ>
+    <xmx:h27xaHC9m0AYL11J9g3pdSkEZnHkr2B0qD-AIU8m6TJN91gOCCmUug>
+    <xmx:h27xaASVDFrl1YkzVv8b0ObLblA729vPJGVg-tiGI7bTdwRFidUQgg>
+    <xmx:iG7xaIUxPFkI7OSu-dTCWzyMp2QC4_G9BQnVqwQx5uWgx_MQtG4hHeRE>
+Feedback-ID: i47b949f6:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Oct 2025 18:14:06 -0400 (EDT)
-Date: Fri, 17 Oct 2025 09:14:09 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
-    Linux-Arch <linux-arch@vger.kernel.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
-    linux-doc@vger.kernel.org
-Subject: Re: [RFC v3 1/5] documentation: Discourage alignment assumptions
-In-Reply-To: <b80e06b8-e568-408b-8132-99565c50a0ff@app.fastmail.com>
-Message-ID: <f562193c-c4fe-334e-8d70-9fe949c9da2f@linux-m68k.org>
-References: <cover.1759875560.git.fthain@linux-m68k.org> <76571a0e5ed7716701650ec80b7a0cd1cf07fde6.1759875560.git.fthain@linux-m68k.org> <b80e06b8-e568-408b-8132-99565c50a0ff@app.fastmail.com>
+ 16 Oct 2025 18:15:34 -0400 (EDT)
+Date: Fri, 17 Oct 2025 00:15:33 +0200
+From: Janne Grunau <j@jannau.net>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-doc@vger.kernel.org, Mark Kettenis <kettenis@openbsd.org>,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v3 00/13] mfd: macsmc: add rtc, hwmon and hid subdevices
+Message-ID: <20251016221533.GD897177@robin.jannau.net>
+References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
 
-
-On Thu, 16 Oct 2025, Arnd Bergmann wrote:
-
->  On Wed, Oct 8, 2025, at 00:19, Finn Thain wrote:
-> > Discourage assumptions that simply don't hold for all Linux ABIs.
-> > Exceptions to the natural alignment rule for scalar types include
-> > long long on i386 and sh.
-> > ---
+On Tue, Oct 07, 2025 at 09:16:41PM +1000, James Calligeros wrote:
+> Hi all,
 > 
-> I think both of the paragraphs you remove are still correct and I
-> would not remove them:
+> This series adds support for the remaining SMC subdevices. These are the
+> RTC, hwmon, and HID devices. They are being submitted together as the RTC
+> and hwmon drivers both require changes to the SMC DT schema.
 > 
-
-Yes -- correct in some obscure sense, but misleading at face value.
-Hence this patch.
-
-> >  Documentation/core-api/unaligned-memory-access.rst | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/Documentation/core-api/unaligned-memory-access.rst 
-> > b/Documentation/core-api/unaligned-memory-access.rst
-> > index 5ceeb80eb539..1390ce2b7291 100644
-> > --- a/Documentation/core-api/unaligned-memory-access.rst
-> > +++ b/Documentation/core-api/unaligned-memory-access.rst
-> > 
-> > -When writing code, assume the target architecture has natural alignment
-> > -requirements.
-> > -
+> The RTC driver is responsible for getting and setting the system clock,
+> and requires an NVMEM cell. This series replaces Sven's original RTC driver
+> submission [1].
 > 
-> It is clearly important to not intentionally misalign variables
-> because that breaks on hardware that requires aligned data.
-> 
-> Assuming natural alignment is the safe choice here, but you
-> could change 'architecture' to 'hardware' here if you
-> think that is otherwise ambiguous.
-> 
+> The hwmon function is an interesting one. While each Apple Silicon device
+> exposes pretty similar sets of sensors, these all seem to be paired to
+> different SMC keys in the firmware interface. This is true even when the
+> sensors are on the SoC. For example, an M1 MacBook Pro will use different
+> keys to access the LITTLE core temperature sensors to an M1 Mac mini. This
+> necessitates describing which keys correspond to which sensors for each
+> device individually, and populating the hwmon structs at runtime. We do
+> this with a node in the device tree. This series includes only the keys
+> for sensors which we know to be common to all devices. The SMC is also
+> responsible for monitoring and controlling fan speeds on systems with fans,
+> which we expose via the hwmon driver.
 
-Do you know of any hardware that has "natural alignment requirements" in 
-the completely unqualified sense in which that the claim is made? i.e. 
-considering all of its native vector and scalar types.
+The split of the hwmon dts changes looks weird to me. It's not a lot of
+changes so squashing everything together into a single commit might be
+ok. If you want to split the commits splitting them by SoC (t8103,
+t8112, t600x, ...) and adding common sensor defines as needed might work
+better.
 
-That's a rhetorical question. I'm not trying to provide an exhaustive and 
-up-to-date list of platform quirks. With this patch, I'm merely trying to 
-discourage faulty assumptions.
+> The SMC also handles the hardware power button and lid switch. Power
+> button presses and lid opening/closing are emitted as HID events, so we
+> add an input subdevice to handle them.
 
-> > -Similarly, you can also rely on the compiler to align variables and function
-> > -parameters to a naturally aligned scheme, based on the size of the type of
-> > -the variable.
-> 
-> This also seems to refer to something else: even on m68k and i386, 
-> scalar stack and .data variables have natural alignment even though the 
-> ABI does not require that.
-> 
+The cover letter doesn't mention a merge strategy for this series. I
+don't think there are any dependencies between different parts. That
+means the dt-bindings and driver additions can be merged through their
+subsystem trees. The single line patches wiring the devices up to the
+macsmc mfd driver should be merged together through mfd tree as they
+(trivially) conflict. The dts changes will be merged through the apple
+soc tree.
 
-Then it is doubly misleading.
+Janne
 
-There is value in explaining what the compiler can and cannot be relied 
-upon to deliver, but I think the myfunc() example already serves that 
-purpose. Don't you agree?
-
-> It's probably a good idea to list the specific exceptions to
-> the struct layout rules in the previous paragraph, e.g.
-> 
-> [
->  Fortunately, the compiler understands the alignment constraints, so in the
->  above case it would insert 2 bytes of padding in between field1 and field2.
->  Therefore, for standard structure types you can always rely on the compiler
-> -to pad structures so that accesses to fields are suitably aligned (assuming
-> -you do not cast the field to a type of different length).
-> +to pad structures so that accesses to fields are suitably aligned for
-> +the CPU hardware.
-> +On all 64-bit architectures, 
-
-The poor reader: "I wonder what '64-bit architecture' means in this 
-context..."
-
-> this means that all scalar struct members
-> +are naturally aligned. However, some 32-bit ABIs including i386
-> +only align 64-bit members on 32-bit offsets, and m68k uses at most
-> +16-bit alignment. ]
-
-"... oh, okay, so anything that naturally aligns a 64-bit word is a 
-"64-bit architecture". I get it. Oh, hang-on, that doesn't make sense... 
-Why would any 32-bit architecture be expected to naturally align 64-bit 
-members? What is he talking about? CONFIG_64BIT maybe??"
-
-Moreover, you have digressed into a discussion of the ABI. The aim of this 
-document is to avoid the performance penalty for unaligned accesses. 
-
-Whereas, ABI traits would seem to be relevant to a discussion about memory 
-efficiency, like I said to David.
 
