@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-855945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FB8BE2A39
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:06:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41354BE2A40
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAC6E1A62AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:06:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13B024FCE68
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE3D328636;
-	Thu, 16 Oct 2025 09:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0967328607;
+	Thu, 16 Oct 2025 09:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kmj6npRw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HTkStwLe"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="usSb6PFQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TBd+QQ3f"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFBD320CA9;
-	Thu, 16 Oct 2025 09:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FEE338F5F;
+	Thu, 16 Oct 2025 09:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608422; cv=none; b=g/tamarcHWXKAsjJ0MSxvG+L/qqc2GqU8kspjL1d1+ROmdzUiam3X9dGWTUq9G5/xldpsgh2XzEbwj5zCftpsMTTBn1GdOtq9pZ5ox9u4FLjnOdOgRhr/m7F/9JwCvWrP8DgKeACnABmJJu+cufKpn2ffsWTUCA2RctUKU/KhwE=
+	t=1760608422; cv=none; b=VAGxvsgjDA9VHbOByKXiL0R4aUfx13SPmKH99aWRxjalS2vyQ4fWj+aBmGbqe3uMEkEGwdKZBpffvtSdXHYnTIAXY3dbT6ooCSHx3jcIudT2nJ4Z1OkntzHWNfBwUBj+8Y5WlxTvZT8FsFSDX+QtP+EQFYiIui8EBAvHgfOT0Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760608422; c=relaxed/simple;
-	bh=9Pi2dHyzX2cB/KQThIMbzBMr4zwAsIqFmifrA0CdbkM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=BVg7hdOiuXxiKEgSZb6AlIUlBZ70LILawb4fQ70MrQ0VHDvVmosNu1GV9K2VHu5+oQw8oM+zmdAK1/0FFGcPEknSq87GEQLOKshoc3V8J2jwhfhqVUYXTs3yL+DwHtFIriF8Cqudy35TqFgkEprLmomh7cKAJulEBr7Mi5wVs2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kmj6npRw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HTkStwLe; arc=none smtp.client-ip=193.142.43.55
+	bh=lJr70iuuDVKauXQJ9U4Y/CeniupY9zF6/iKl/zEXQug=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=mrjE9QL+lPp2KSBHg8St6k9yZzJC1NnWiJXJmTNpf0N2Ge2UaIJWzEqYdRHQ6TFHr63i2BeGpnkubxVqvEx0ObkQg9mRXEyw54D32xYF43a3Z4K7iKpKDmDwp/gCHw6MWcBNMBCycSC0rJEHk9P+5dfKYNogcxRa2zWMYP4NjOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=usSb6PFQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TBd+QQ3f; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:53:20 -0000
+Date: Thu, 16 Oct 2025 09:53:21 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760608401;
+	s=2020; t=1760608403;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=rRqgEvAD7W1y+pKMsyOypLfd043/FJF8Xq9Ae92jSZk=;
-	b=Kmj6npRw4Lz6SeCcIVj+HpXu0kCIcxzoYSlJhOoVCnIzux2AOHLQ4yJg3HNfB17gr0H5YR
-	iH7LOn9HCnzIkMZXBScnkPkZUsX4N9yqpIleh8VKncIpyXNToGkn+G8CBXENz7NZ2Ndxd9
-	E+p2pxsxqyqegXm73BFB89xkmOSPjn5phd8YOAnAtSFECDWhmJKvR8ss7DUseLcHPi92EY
-	xb/lv80sEY5Amn9S5nrQKM2Ks/LW0rMogjaTx9gZg2EIuq69X+PawHh4rIVRPBzChiLkEH
-	lBvhyDxGcQdyykqu4uCLQVn5ink38IOyDXCeIy8UZxieG02lfaPZMYiEbQ901w==
+	bh=vw7RzR1F+J+g6CjG/1pNgdfnXz2xBRuwE+0Slq52lrw=;
+	b=usSb6PFQj1zYt4QmR8OABE5S1yi06bzGaYgIyzzA6AAyovpb/PB+OxxN5SvDYBvsqb0Zp3
+	78zhbubclqn1sa43E49wQFVs8qw8f5tW2qXoTzWhZ3sP3WnGHk1OKrLuzcygN22Y25hw3R
+	DQzJV/qxnls7833N6w8iuc8eltS5Vxv8UTdxFL2vHUqRmQ7CdqRYkkL3ZLjs7IEP0k+2RE
+	RxDAE+peEMTZnrPuvrE5cSDYHz0EK3eVrAcV+Iowx9POHsNj4cP7sPwc6nWDBLi4QxmVhE
+	HopgNrc8tGnHCkjZ2h+GY+6SoaHe/YDpwZWHuPxw5JYjHXvWFoXzrF1X8+bKFw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760608401;
+	s=2020e; t=1760608403;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=rRqgEvAD7W1y+pKMsyOypLfd043/FJF8Xq9Ae92jSZk=;
-	b=HTkStwLemVmOIxDGKGqIg0pZ+QW1A0ukDe3HqvQT6H+2fAIsbB3A37SZCBYPPEqmNdv1XW
-	t+hK7JmkwBkuV0CQ==
-From: "tip-bot2 for Dylan Hatch" <tip-bot2@linutronix.de>
+	bh=vw7RzR1F+J+g6CjG/1pNgdfnXz2xBRuwE+0Slq52lrw=;
+	b=TBd+QQ3fpxzhGCqzd0P5O34PgXlovIcKKK8I6PWlSHRNeIPWB9kTAhFPQSst7j/wkUq/t2
+	j16o+lOltNC+dfCQ==
+From: "tip-bot2 for Pankaj Raghav" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Fix standalone --hacks=jump_label
-Cc: Dylan Hatch <dylanbhatch@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+Subject:
+ [tip: objtool/core] scripts/faddr2line: Fix "Argument list too long" error
+Cc: Pankaj Raghav <p.raghav@samsung.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
  x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,7 +64,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060840056.709179.17703718813399608345.tip-bot2@tip-bot2>
+Message-ID: <176060840170.709179.14105443112485527789.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -73,46 +74,73 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     be8374a5ba7cbab6b97df94b4ffe0b92f5c8a6d2
-Gitweb:        https://git.kernel.org/tip/be8374a5ba7cbab6b97df94b4ffe0b92f5c=
-8a6d2
-Author:        Dylan Hatch <dylanbhatch@google.com>
-AuthorDate:    Tue, 23 Sep 2025 00:49:41=20
+Commit-ID:     ff5c0466486ba8d07ab2700380e8fd6d5344b4e9
+Gitweb:        https://git.kernel.org/tip/ff5c0466486ba8d07ab2700380e8fd6d534=
+4b4e9
+Author:        Pankaj Raghav <p.raghav@samsung.com>
+AuthorDate:    Sun, 21 Sep 2025 12:03:58 +02:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 14 Oct 2025 14:45:21 -07:00
+CommitterDate: Tue, 14 Oct 2025 14:45:20 -07:00
 
-objtool: Fix standalone --hacks=3Djump_label
+scripts/faddr2line: Fix "Argument list too long" error
 
-The objtool command line 'objtool --hacks=3Djump_label foo.o' on its own
-should be expected to rewrite jump labels to NOPs. This means the
-add_special_section_alts() code path needs to run when only this option
-is provided.
+The run_readelf() function reads the entire output of readelf into a
+single shell variable. For large object files with extensive debug
+information, the size of this variable can exceed the system's
+command-line argument length limit.
 
-This is mainly relevant in certain debugging situations, but could
-potentially also fix kernel builds in which objtool is run with
---hacks=3Djump_label but without --orc, --stackval, --uaccess, or
---hacks=3Dnoinstr.
+When this variable is subsequently passed to sed via `echo "${out}"`, it
+triggers an "Argument list too long" error, causing the script to fail.
 
-Fixes: de6fbcedf5ab ("objtool: Read special sections with alts only when spec=
-ific options are selected")
-Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
+Fix this by redirecting the output of readelf to a temporary file
+instead of a variable. The sed commands are then modified to read from
+this file, avoiding the argument length limitation entirely.
+
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/check.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/faddr2line | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index a577057..b0e6479 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2563,7 +2563,8 @@ static int decode_sections(struct objtool_file *file)
- 	 * Must be before add_jump_destinations(), which depends on 'func'
- 	 * being set for alternatives, to enable proper sibling call detection.
- 	 */
--	if (opts.stackval || opts.orc || opts.uaccess || opts.noinstr) {
-+	if (opts.stackval || opts.orc || opts.uaccess || opts.noinstr ||
-+	    opts.hack_jump_label) {
- 		ret =3D add_special_section_alts(file);
- 		if (ret)
- 			return ret;
+diff --git a/scripts/faddr2line b/scripts/faddr2line
+index 7746d4a..6228753 100755
+--- a/scripts/faddr2line
++++ b/scripts/faddr2line
+@@ -111,14 +111,19 @@ find_dir_prefix() {
+=20
+ run_readelf() {
+ 	local objfile=3D$1
+-	local out=3D$(${READELF} --file-header --section-headers --symbols --wide $=
+objfile)
++	local tmpfile
++	tmpfile=3D$(mktemp)
++
++	${READELF} --file-header --section-headers --symbols --wide "$objfile" > "$=
+tmpfile"
+=20
+ 	# This assumes that readelf first prints the file header, then the section =
+headers, then the symbols.
+ 	# Note: It seems that GNU readelf does not prefix section headers with the =
+"There are X section headers"
+ 	# line when multiple options are given, so let's also match with the "Secti=
+on Headers:" line.
+-	ELF_FILEHEADER=3D$(echo "${out}" | sed -n '/There are [0-9]* section header=
+s, starting at offset\|Section Headers:/q;p')
+-	ELF_SECHEADERS=3D$(echo "${out}" | sed -n '/There are [0-9]* section header=
+s, starting at offset\|Section Headers:/,$p' | sed -n '/Symbol table .* conta=
+ins [0-9]* entries:/q;p')
+-	ELF_SYMS=3D$(echo "${out}" | sed -n '/Symbol table .* contains [0-9]* entri=
+es:/,$p')
++	ELF_FILEHEADER=3D$(sed -n '/There are [0-9]* section headers, starting at o=
+ffset\|Section Headers:/q;p' "$tmpfile")
++	ELF_SECHEADERS=3D$(sed -n '/There are [0-9]* section headers, starting at o=
+ffset\|Section Headers:/,$p' "$tmpfile" | sed -n '/Symbol table .* contains [=
+0-9]* entries:/q;p')
++	ELF_SYMS=3D$(sed -n '/Symbol table .* contains [0-9]* entries:/,$p' "$tmpfi=
+le")
++
++	rm -f -- "$tmpfile"
+ }
+=20
+ check_vmlinux() {
 
