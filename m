@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-855753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BC1BE231C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:41:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC2BBE2352
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5F3D19A777E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:42:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2444F351E19
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217F2306484;
-	Thu, 16 Oct 2025 08:41:50 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9499930102C;
+	Thu, 16 Oct 2025 08:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3TUiDsI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F192AD3D;
-	Thu, 16 Oct 2025 08:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02B23081C3;
+	Thu, 16 Oct 2025 08:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760604109; cv=none; b=E0xE9FoyuIlroC5vZI8FhtP45K0pCYDEi4vBw9I9jI9YISqbkXHfsZ+Mx0461BJMlMp9sDp0efzjrdHpTs26YfrHuDwpJsFDRyxENvu5k2znLPLMe2+n7zQo+lbMR6dtWrOboVZ1CFY1cusxnXKiRPdlfdywevSUTXEXBj2xQ6E=
+	t=1760604216; cv=none; b=rAvakXPKd/rx4+JrOw/GgjNh9wvhNuYicESeIRp6sBoerUiC+ShRDuuorsIxeIvzbmiES67wC+aye7n6l7lM8loTmnam9Hif1zEqkx+y+R67QGSeTufjaIDPqdMNVQAsBHbHRjbrMcxZxRItE46caP3RORJ+bi1Pu2asEWdSPSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760604109; c=relaxed/simple;
-	bh=Sd9Do/Jjw3NN3FGRJWI9ryug/fIT264op5LRF4M/3xE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cWojAJS2WtKEzphekse7J/yjBcXqZZXoBFCtRoMj8KTKXk5vT4+ONzyDIFAtfqPY/tFjrBJ7RaEvjeWVxlh8W/1G89TeaU6vxFdUUkKg8G4CFAteCa9UD9/Xr3+zEgKL78/zlQaqSBCB12L57+pCVPyN4FnA2dA3cJwLfSOAgow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: eb40a756aa6b11f0a38c85956e01ac42-20251016
-X-CID-CACHE: Type:Local,Time:202510161630+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:02f42891-db57-43d4-b388-6ed07773c7f2,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:a9d874c,CLOUDID:d24af52aa30fd24840d7476069b00f81,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: eb40a756aa6b11f0a38c85956e01ac42-20251016
-X-User: tanze@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <tanze@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1931016855; Thu, 16 Oct 2025 16:41:33 +0800
-From: tanze <tanze@kylinos.cn>
-To: james.clark@linaro.org,
-	leo.yan@linux.dev,
-	irogers@google.com,
-	john.g.garry@oracle.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	graham.woodward@arm.com,
-	mike.leach@linaro.org,
-	tanze <tanze@kylinos.cn>
-Subject: [PATCH v1] perf arm_spe: Add a macro definition to handle offset value
-Date: Thu, 16 Oct 2025 16:41:29 +0800
-Message-Id: <20251016084129.30587-1-tanze@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1760604216; c=relaxed/simple;
+	bh=dG2kopHePGlGHIQgkzE2Ot+qQKYP9mZ35kDCrbYxLcg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UoqiDh1itcMTsvXj/H7/2YMVM/sJGJ8Hbc6WMCST+YJGI2arTFkJWqvIHEI4VUA74SMpckOKGUp7bFeDYzATdSdC7gXnGIW0pOCkmb2Vw2bMVMFNw/pNSrWEazlsfBthwHPtzayB+7ECy2sjYXMYHSHRSLXukI/7nolyrKTrzik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3TUiDsI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC9FAC113D0;
+	Thu, 16 Oct 2025 08:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760604215;
+	bh=dG2kopHePGlGHIQgkzE2Ot+qQKYP9mZ35kDCrbYxLcg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=U3TUiDsIVhBP++dTMJkmI7FsKT3vHUGp0J0Xh/tef61JROZxCQP6IZsjdDtbYhI5u
+	 HoR4SDRmOrRiWj8z2V+I4SFhqkB4M0szqv2n8/9rnqhniAeuDphe4pXI6Z0xp6CJ3H
+	 8IeP/L79oLo70fBltRjDea8D22uJE943rBo+nNCg4BN0G/b5a9aqPOSSp/5YPDF+/r
+	 FmYB95TeCFOB2L04OW58Ztu4lryL6AkGr/gMacC0MnZWcNXO8nYYuMqLuzDQiFpF7t
+	 lVc8tbvCZwSsO6ItaN57Dq9eC+DHD3JWPArU16lOZWosmB2WH6IwNXwbBF7WzD5MZj
+	 8dAANUsgKjkPQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight
+ <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, Ingo
+ Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
+ <longman@redhat.com>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Christian
+ Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
+ Kara <jack@suse.cz>, Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+ Todd Kjos
+ <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes
+ <joelagnelf@nvidia.com>, Carlos
+ Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Jens
+ Axboe <axboe@kernel.dk>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-pci@vger.kernel.org, Tamir
+ Duberstein <tamird@gmail.com>
+Subject: Re: [PATCH v17 05/11] rnull: use `kernel::fmt`
+In-Reply-To: <20251015-cstr-core-v17-5-dc5e7aec870d@gmail.com>
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
+ <RKKuz-9d_SQ5OAoqfvdJBB9gl56enjKQXKLnKjp1A5Vuoj0ub5KkAT6VSmni4sA0uCb70U-Sj7QO3Q8NqI9imA==@protonmail.internalid>
+ <20251015-cstr-core-v17-5-dc5e7aec870d@gmail.com>
+Date: Thu, 16 Oct 2025 10:42:52 +0200
+Message-ID: <87h5vznsoj.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Add a macro definition SPE_SYNTH_ID_OFFSET to handle the offset value
-and improve readability.
+"Tamir Duberstein" <tamird@gmail.com> writes:
 
-Signed-off-by: tanze <tanze@kylinos.cn>
----
- tools/perf/util/arm-spe.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Reduce coupling to implementation details of the formatting machinery by
+> avoiding direct use for `core`'s formatting traits and macros.
+>
+> This backslid in commit d969d504bc13 ("rnull: enable configuration via
+> `configfs`") and commit 34585dc649fb ("rnull: add soft-irq completion
+> support").
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 71be979f5077..645048ac7708 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -36,6 +36,7 @@
- 
- #include "../../arch/arm64/include/asm/cputype.h"
- #define MAX_TIMESTAMP (~0ULL)
-+#define SPE_SYNTH_ID_OFFSET (1000000000ULL)
- 
- #define is_ldst_op(op)		(!!((op) & ARM_SPE_OP_LDST))
- 
-@@ -1732,7 +1733,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
- 	attr.sample_period = spe->synth_opts.period;
- 
- 	/* create new id val to be a fixed offset from evsel id */
--	id = evsel->core.id[0] + 1000000000;
-+	id = evsel->core.id[0] + SPE_SYNTH_ID_OFFSET;
- 
- 	if (!id)
- 		id = 1;
--- 
-2.25.1
+
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
 
 
