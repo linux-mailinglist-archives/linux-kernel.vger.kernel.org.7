@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-855910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFED3BE296F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:59:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A2EBE2975
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2D11A629B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:00:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C03D4F754A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD15F340D81;
-	Thu, 16 Oct 2025 09:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60988338F3A;
+	Thu, 16 Oct 2025 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mHLrv/W3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nWY/kJXU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dUb336KC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t2JHALW/"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6650232E755;
-	Thu, 16 Oct 2025 09:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7934A32ED2B;
+	Thu, 16 Oct 2025 09:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608387; cv=none; b=gYG9Ty+SlEvXaqQGYFTWUROwN+hu6BG5QOQgf+y4qA3hDGsVRFfSqAF3VWGohe8bY9Zpk5Xr3du7Q8kPcSjKMHeBr7J126VgTz5Z4SyerPEfU9ekhwq8cqbrc1ZUccAmJlIokFQOotRTwnoMNTNAiXYy3mfpbcpVSf6PBSPls8A=
+	t=1760608380; cv=none; b=omn3XkclRl3f0Yuxmo2fQN2oNnrwaPBSvOx4i2qo+APmQfdvlwg9ljVMPDY6VDUP1DyQ7a0ROonKvrTpkwoufVGMNxCXKowjqh3z0oun4A2HakeHggemMARFlXk53Wv3mKcyArr5Kze21UwfLsNNAfaDXC0wZpmAu77xOH1ve7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608387; c=relaxed/simple;
-	bh=hQZF0cx8FAvPPgo7k+OzQBERYij/4nGSTVHg+LusxB0=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=sx6seYgPhCM1BfqDQOguax0QdSNBYQlFG4BdscuBO3jsib79fDUDxY0ZtxDaefiG+8S2d1VcsXbCE1zTc3IbfJJininmkB1nxUEXm3z/0M3khxDQkvvonwnKIUA7ujZWlDYlN0FMKu0Tp0514jDANzPr34p4ANb9tdeFScPV92c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mHLrv/W3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nWY/kJXU; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1760608380; c=relaxed/simple;
+	bh=tombo2CMWoqlCv+cZGgHvoejpyBiH5RIup1hTYO1do4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=WfVrI8KeVmgNZA8Df1sfkfQOIKG5suJFqMKAR+ZA62/eMjH+fkgsQJXehwfr8tSMbXLFwZH75p76yAtFx3qLaNs1Z8AeyT900xnQY9u7JFKINVEp84hEBDhLo0HHdJQGzdPdSdDZMfQ2iUJK6tjtCCsJDhMyXjO80LOwxOuAG+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dUb336KC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t2JHALW/; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:52:42 -0000
+Date: Thu, 16 Oct 2025 09:52:44 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760608363;
+	s=2020; t=1760608366;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=cq4EeFbpTUBWGz7EBZF6X3Fto1Cf+P7cKmEMb4hhQA4=;
-	b=mHLrv/W36E5cP4vrAMsShoXeQWuE53rMWdV25fB0Z8FgYvHTFczAr/51YOkIhGDKSXo/Zr
-	xNuJT0Y5fXo037DiUC2GHZhVAfRYaeYeABcZrWjswMaYfRsDPUg/7EtBBLvXaYKafmAwm1
-	r7QLPOVNGnmqfdD6SsXFz+yU6vJnj/c3gRF7ZEokMcBkdw6Jhwzupr3ItCiNyQJ8efnQY5
-	RuF8NvCy3G9/enNW1IyFk5PWONjDOgogeQK2EG9lSugAhYfPadRxxHA/ZK5gu+6t7K1z9U
-	Ga8jTgbPjADZT4uFjEamggWbsAl1oAAcNibak+L0Y6iqWGmtOBka1CaS+J4Bpg==
+	bh=qWxz9O8QMdn7ZNQXSbdM7LfrWFiK0GjsrErZU8hLkqs=;
+	b=dUb336KCuUhjLpAoS0NVgW0PCEoFRVX1MJSgZZS/R8uboPmkpB0l7YCjmBcylAzUhH5i15
+	pHJhrpgOH4REGLvs+FF+oietEg8SuFjtwvQa24TAtoQ4XDKscRDY3hs+HfQoX7FyQXIWpu
+	J5W0m2CucEB7n6YYgFO/hdlCnM7gJw00UE8IRp12RDPXU7S7faKnLuJ6ny2jsCQXqWmeQL
+	QTnw669vBPivOuIkz/k7Ow8fS9hq6xPUSvvHO3zK1UdOZLNCXQzheCdRXuJBCbUDa7AL+P
+	5JrMeDcK819hfA1bMnxWwEAOf35+1G1+vgUsOPW1CX1ON6sw2Yot9CO04UmV9g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760608363;
+	s=2020e; t=1760608366;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=cq4EeFbpTUBWGz7EBZF6X3Fto1Cf+P7cKmEMb4hhQA4=;
-	b=nWY/kJXUgAw526LHywlhJLsgU1olb/4S8X0oDXkCEOLn1IZkW/hF8EIM2AunnbvpQ+4TSK
-	DmGLO/ziBa/WkwAQ==
+	bh=qWxz9O8QMdn7ZNQXSbdM7LfrWFiK0GjsrErZU8hLkqs=;
+	b=t2JHALW/VzN6LIVjcmY1bjXxkizKdEojUJGqKhahJ02zH4+OwoBeQHV2gDA1Xsybzq1Q/4
+	gSdtJvdq42e+rgAg==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Mark prefix functions
+Subject: [tip: objtool/core] objtool: Mark .cold subfunctions
 Cc: Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
@@ -64,7 +64,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060836216.709179.1189848202043215341.tip-bot2@tip-bot2>
+Message-ID: <176060836470.709179.4873817649228378520.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -74,88 +74,123 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     a1526bcfcb6cb7cb601b9ff8e24d08881ef9afb8
-Gitweb:        https://git.kernel.org/tip/a1526bcfcb6cb7cb601b9ff8e24d08881ef=
-9afb8
+Commit-ID:     4ea029389bf0cc44da6d3a24a520200e060ce6bf
+Gitweb:        https://git.kernel.org/tip/4ea029389bf0cc44da6d3a24a520200e060=
+ce6bf
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Wed, 17 Sep 2025 09:03:39 -07:00
+AuthorDate:    Wed, 17 Sep 2025 09:03:37 -07:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 14 Oct 2025 14:46:47 -07:00
+CommitterDate: Tue, 14 Oct 2025 14:46:46 -07:00
 
-objtool: Mark prefix functions
+objtool: Mark .cold subfunctions
 
-In preparation for the objtool klp diff subcommand, introduce a flag to
-identify __pfx_*() and __cfi_*() functions in advance so they don't need
-to be manually identified every time a check is needed.
+Introduce a flag to identify .cold subfunctions so they can be detected
+easier and faster.
 
 Acked-by: Petr Mladek <pmladek@suse.com>
 Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/check.c               | 5 +----
- tools/objtool/elf.c                 | 7 +++++++
- tools/objtool/include/objtool/elf.h | 6 ++++++
- 3 files changed, 14 insertions(+), 4 deletions(-)
+ tools/objtool/check.c               | 14 ++++++--------
+ tools/objtool/elf.c                 | 19 ++++++++++---------
+ tools/objtool/include/objtool/elf.h |  1 +
+ 3 files changed, 17 insertions(+), 17 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 86f6e4d..46b425f 100644
+index f38f4a2..1d28ff7 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -3568,10 +3568,7 @@ static int validate_branch(struct objtool_file *file, =
-struct symbol *func,
+@@ -1575,7 +1575,9 @@ static int add_jump_destinations(struct objtool_file *f=
+ile)
+ 		/*
+ 		 * Cross-function jump.
+ 		 */
+-		if (func && insn_func(jump_dest) && func !=3D insn_func(jump_dest)) {
++
++		if (func && insn_func(jump_dest) && !func->cold &&
++		    insn_func(jump_dest)->cold) {
 =20
- 		if (func && insn_func(insn) && func !=3D insn_func(insn)->pfunc) {
- 			/* Ignore KCFI type preambles, which always fall through */
--			if (!strncmp(func->name, "__cfi_", 6) ||
--			    !strncmp(func->name, "__pfx_", 6) ||
--			    !strncmp(func->name, "__pi___cfi_", 11) ||
--			    !strncmp(func->name, "__pi___pfx_", 11))
-+			if (is_prefix_func(func))
- 				return 0;
+ 			/*
+ 			 * For GCC 8+, create parent/child links for any cold
+@@ -1592,11 +1594,8 @@ static int add_jump_destinations(struct objtool_file *=
+file)
+ 			 * case where the parent function's only reference to a
+ 			 * subfunction is through a jump table.
+ 			 */
+-			if (!strstr(func->name, ".cold") &&
+-			    strstr(insn_func(jump_dest)->name, ".cold")) {
+-				func->cfunc =3D insn_func(jump_dest);
+-				insn_func(jump_dest)->pfunc =3D func;
+-			}
++			func->cfunc =3D insn_func(jump_dest);
++			insn_func(jump_dest)->pfunc =3D func;
+ 		}
 =20
- 			if (file->ignore_unreachables)
+ 		if (jump_is_sibling_call(file, insn, jump_dest)) {
+@@ -4066,9 +4065,8 @@ static bool ignore_unreachable_insn(struct objtool_file=
+ *file, struct instructio
+ 			 * If this hole jumps to a .cold function, mark it ignore too.
+ 			 */
+ 			if (insn->jump_dest && insn_func(insn->jump_dest) &&
+-			    strstr(insn_func(insn->jump_dest)->name, ".cold")) {
++			    insn_func(insn->jump_dest)->cold)
+ 				insn_func(insn->jump_dest)->ignore =3D true;
+-			}
+ 		}
+=20
+ 		return false;
 diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 5956838..775d017 100644
+index d36c0d4..5956838 100644
 --- a/tools/objtool/elf.c
 +++ b/tools/objtool/elf.c
-@@ -442,6 +442,13 @@ static void elf_add_symbol(struct elf *elf, struct symbo=
+@@ -441,6 +441,10 @@ static void elf_add_symbol(struct elf *elf, struct symbo=
 l *sym)
+ 	list_add(&sym->list, entry);
  	elf_hash_add(symbol, &sym->hash, sym->idx);
  	elf_hash_add(symbol_name, &sym->name_hash, str_hash(sym->name));
-=20
-+	if (is_func_sym(sym) &&
-+	    (strstarts(sym->name, "__pfx_") ||
-+	     strstarts(sym->name, "__cfi_") ||
-+	     strstarts(sym->name, "__pi___pfx_") ||
-+	     strstarts(sym->name, "__pi___cfi_")))
-+		sym->prefix =3D 1;
 +
- 	if (is_func_sym(sym) && strstr(sym->name, ".cold"))
- 		sym->cold =3D 1;
- 	sym->pfunc =3D sym->cfunc =3D sym;
++	if (is_func_sym(sym) && strstr(sym->name, ".cold"))
++		sym->cold =3D 1;
++	sym->pfunc =3D sym->cfunc =3D sym;
+ }
+=20
+ static int read_symbols(struct elf *elf)
+@@ -527,18 +531,15 @@ static int read_symbols(struct elf *elf)
+ 		sec_for_each_sym(sec, sym) {
+ 			char *pname;
+ 			size_t pnamelen;
+-			if (!is_func_sym(sym))
+-				continue;
+=20
+-			if (sym->pfunc =3D=3D NULL)
+-				sym->pfunc =3D sym;
+-
+-			if (sym->cfunc =3D=3D NULL)
+-				sym->cfunc =3D sym;
++			if (!sym->cold)
++				continue;
+=20
+ 			coldstr =3D strstr(sym->name, ".cold");
+-			if (!coldstr)
+-				continue;
++			if (!coldstr) {
++				ERROR("%s(): cold subfunction without \".cold\"?", sym->name);
++				return -1;
++			}
+=20
+ 			pnamelen =3D coldstr - sym->name;
+ 			pname =3D strndup(sym->name, pnamelen);
 diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objt=
 ool/elf.h
-index dbadcc8..79edf82 100644
+index f2dbcaa..dbadcc8 100644
 --- a/tools/objtool/include/objtool/elf.h
 +++ b/tools/objtool/include/objtool/elf.h
-@@ -73,6 +73,7 @@ struct symbol {
+@@ -72,6 +72,7 @@ struct symbol {
+ 	u8 frame_pointer     : 1;
  	u8 ignore	     : 1;
  	u8 nocfi             : 1;
- 	u8 cold		     : 1;
-+	u8 prefix	     : 1;
++	u8 cold		     : 1;
  	struct list_head pv_target;
  	struct reloc *relocs;
  	struct section *group_sec;
-@@ -230,6 +231,11 @@ static inline bool is_local_sym(struct symbol *sym)
- 	return sym->bind =3D=3D STB_LOCAL;
- }
-=20
-+static inline bool is_prefix_func(struct symbol *sym)
-+{
-+	return sym->prefix;
-+}
-+
- static inline bool is_reloc_sec(struct section *sec)
- {
- 	return sec->sh.sh_type =3D=3D SHT_RELA || sec->sh.sh_type =3D=3D SHT_REL;
 
