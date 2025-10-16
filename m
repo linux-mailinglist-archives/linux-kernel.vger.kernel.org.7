@@ -1,502 +1,509 @@
-Return-Path: <linux-kernel+bounces-857041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF52BE5BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03E7BE5C30
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE071188E2F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97665425F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C09C2E62BE;
-	Thu, 16 Oct 2025 22:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jENar7Ln"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CF42E36E1;
+	Thu, 16 Oct 2025 23:05:07 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839D82E610F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6459238172;
+	Thu, 16 Oct 2025 23:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760655330; cv=none; b=l/xK8YEnW9Sf1OngFGWm6YFzWAHaGOgHbViVwfnCmoVcT2ZNedzFiLqQV7fEyHGqzIZqenEm87glFQotNMYfFmxQm4Es9NpQDLy7JV0rLcOjrGoJQ/8TIRnBJBmAo6zhir43XPvaUe8l1xFELUQCqTmgmA6p3r5UpOibbAMauXE=
+	t=1760655906; cv=none; b=Ghuo4xm8kdvg3Tt247f8AEN041vPqwfDN+Z03relUyl7RdBRzxZu3SxQDBb1c1NzfQVU7rrFu72zWB02CiY+NNbcc1r4J8fEnO+YL2bCC3N9xjaDVFjJyeiWN1zX52Lkxl/uuq4OGsRRU98I4Etgj3Lid8+InE4pRRPZFWgkMec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760655330; c=relaxed/simple;
-	bh=bzS/yMy0BrNxkANc9FlKcKFLuJ+7JsOWWS3qzuCQlQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjoKpZ0YcSPoe+nhsRamu6roaTUQwodcANYUg4khoJLBZ7VxyPAx0Vk2NEe1zoAoGbk+myintAbMXFvKgPLogM30zI4Er/YTN7YRHzO2KbsaNcPnMp9CTcGV1cPPsoHQ+9MVuZUcoehE8EOs7B+C9qOj75nFYrXQZ7Qk1HriSY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jENar7Ln; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760655328; x=1792191328;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=bzS/yMy0BrNxkANc9FlKcKFLuJ+7JsOWWS3qzuCQlQ0=;
-  b=jENar7LnGI47ZecvM4OEapJrLO9PkD6W5+hnHd3HxqPBjEzGbia/5aX3
-   YdyMlan5+czVtfEiRPb7Iuo/APWM+eo+ZNm62vHnPxtYs8DOIi6WnN6M9
-   pJrQ5+vf/LVI8+gXIymK4rX9Mwbw6ZZz+5sOrpN8sYxNZ4ZjqzfgwuMkj
-   IWKgyGNcZoehfw4mMeNa1iQPZ0iELkhAxsnXveDkUMindABSb26GimeO3
-   pqGlxShZiTRWNOV3UqZg9/go1w/nYJ/UXscnd+9g0alm5QqfOu3pBJ1XE
-   5B2CMOTxpcZdC4D8TvhZ+oFSE+nL+kDIU7kff78uCqssSp3ChF+L7WwyA
-   Q==;
-X-CSE-ConnectionGUID: 3ZtGHgEcRl+9kEd1IVx5wA==
-X-CSE-MsgGUID: IeKXvTVjTfywdBaYpsBqZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62765677"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="62765677"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 15:55:27 -0700
-X-CSE-ConnectionGUID: iHx+tp+aSW2XVwdgPzyg8w==
-X-CSE-MsgGUID: 12RnpPp1SkKYFOCvEPu0qg==
-X-ExtLoop1: 1
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.12])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 15:55:23 -0700
-Date: Fri, 17 Oct 2025 01:55:21 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Yaroslav <iam@0la.ch>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Yaroslav Bolyukin <iam@lach.pw>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Wayne Lin <Wayne.Lin@amd.com>, amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 1/2] drm/edid: parse DRM VESA dsc bpp target
-Message-ID: <aPF32XpVst5mPVz7@intel.com>
-References: <20251016001038.13611-2-iam@lach.pw>
- <20251016001038.13611-4-iam@lach.pw>
- <3abc1087618c822e5676e67a3ec2e64e506dc5ec@intel.com>
- <adb2c2bd-a38e-4a40-ba1c-dcc7ad707727@0la.ch>
- <aPFZecm3PKaCpMXi@intel.com>
- <8a45cbe8-a0ed-473c-b830-1194c30d9414@0la.ch>
+	s=arc-20240116; t=1760655906; c=relaxed/simple;
+	bh=+niDfb7sQcunz3U78qcliEpPNm+6e6H3QJ7yAAnacJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mo5R9DQ+A1pe+2BYnmG7bH37Qn1aTkL69/x0x9UkKB+HG0pAmyxzlfbIbmV5+ok0iLYEBdot+XpP5ETgnyRHVwDQYqlLY5/lBC1+K1Aj6vyUI1QTDT9bozNnf9AnYVMJ9jdUfLv57z8Bt9q04gbSP9g3M4p9JBAShev59s0QfXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.26.134])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 0CF13B22042C;
+	Fri, 17 Oct 2025 00:55:34 +0200 (CEST)
+Message-ID: <7e31b240-2ffa-4946-af85-aaa45fe35199@freeshell.de>
+Date: Thu, 16 Oct 2025 15:55:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a45cbe8-a0ed-473c-b830-1194c30d9414@0la.ch>
-X-Patchwork-Hint: comment
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/7] riscv: dts: starfive: jh7110-common: Move out some
+ nodes to the board dts
+To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251016080054.12484-1-hal.feng@starfivetech.com>
+ <20251016080054.12484-5-hal.feng@starfivetech.com>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <20251016080054.12484-5-hal.feng@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 12:24:53AM +0200, Yaroslav wrote:
+
+
+On 10/16/25 01:00, Hal Feng wrote:
+> Some node in this file are not used by the upcoming VisionFive 2 Lite
+> board. Move them to the board dts to prepare for adding the new
+> VisionFive 2 Lite device tree.
 > 
+> Reviewed-by: E Shattow <e@freeshell.de>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+>  .../boot/dts/starfive/jh7110-common.dtsi      | 19 --------
+>  .../jh7110-deepcomputing-fml13v01.dts         | 46 +++++++++++++++++++
+>  .../boot/dts/starfive/jh7110-milkv-mars.dts   | 46 +++++++++++++++++++
+>  .../dts/starfive/jh7110-milkv-marscm-emmc.dts |  9 ++++
+>  .../dts/starfive/jh7110-milkv-marscm-lite.dts |  1 +
+>  .../dts/starfive/jh7110-milkv-marscm.dtsi     | 32 +++++++++++++
+>  .../dts/starfive/jh7110-pine64-star64.dts     | 46 +++++++++++++++++++
+>  .../jh7110-starfive-visionfive-2.dtsi         | 43 +++++++++++++++++
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 16 -------
+>  9 files changed, 223 insertions(+), 35 deletions(-)
 > 
-> On 2025-10-16 22:45, Ville Syrjälä wrote:
-> > On Thu, Oct 16, 2025 at 07:11:48PM +0200, Yaroslav wrote:
-> >> On 2025-10-16 18:36, Jani Nikula wrote:
-> >>   > On Thu, 16 Oct 2025, Yaroslav Bolyukin <iam@lach.pw> wrote:
-> >>   >> As per DisplayID v2.0 Errata E9 spec "DSC pass-through timing support"
-> >>   >> VESA vendor-specific data block may contain target DSC bits per pixel
-> >>   >> fields
-> >>   >
-> >>   > Thanks for the patch.
-> >>
-> >> Thanks for the quick review! :D
-> >>
-> >>   > I think there's just too much going on in a single patch. Should
-> >>   > probably be split to several patches:
-> >>   >
-> >>   > - rename drm_parse_vesa_mso_data() to drm_parse_vesa_specific_block()
-> >>   >
-> >>   > - handle DSC pass-through parts in the above, including the macros for
-> >>   >    parsing that (but nothing about timing here yet), and adding to
-> >>   >    display_info
-> >>   >
-> >>   > - note that the above would be needed to backport mso support for 7 byte
-> >>   >    vendor blocks to stable!
-> >>
-> >> Sorry, can you elaborate? Right now stable kernel just ignores
-> >> everything going after 5th byte, so it "supports 7 byte blocks" by
-> >> ignoring them.
-> >>
-> >>   > - Add the detailed timing parsing in a separate patch
-> >>   >
-> >> I'll split the patch as requested
-> >>   >>
-> >>   >> Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
-> >>   >> ---
-> >>   >>   drivers/gpu/drm/drm_displayid_internal.h |  8 ++++
-> >>   >>   drivers/gpu/drm/drm_edid.c               | 61 ++++++++++++++++--------
-> >>   >>   include/drm/drm_connector.h              |  6 +++
-> >>   >>   include/drm/drm_modes.h                  | 10 ++++
-> >>   >>   4 files changed, 64 insertions(+), 21 deletions(-)
-> >>   >>
-> >>   >> diff --git a/drivers/gpu/drm/drm_displayid_internal.h
-> >> b/drivers/gpu/drm/drm_displayid_internal.h
-> >>   >> index 957dd0619f5c..d008a98994bb 100644
-> >>   >> --- a/drivers/gpu/drm/drm_displayid_internal.h
-> >>   >> +++ b/drivers/gpu/drm/drm_displayid_internal.h
-> >>   >> @@ -97,6 +97,10 @@ struct displayid_header {
-> >>   >>   	u8 ext_count;
-> >>   >>   } __packed;
-> >>   >>
-> >>   >> +#define DISPLAYID_BLOCK_REV				GENMASK(2, 0)
-> >>   >> +#define DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT	BIT(3)
-> >>   >> +#define DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES	GENMASK(6, 4)
-> >>   >
-> >>   > These two are related to the rev of struct
-> >>   > displayid_detailed_timing_block only, and should probably be defined
-> >>   > next to it.
-> >>
-> >> BLOCK_REV is handled identically for all the displayid block types
-> >> afaik, and DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES is unrelated to the
-> >> timings block, I didn't want to spread the masks around the file, but
-> >> will do if you think that's better.
-> >>
-> >>   >> +
-> >>   >>   struct displayid_block {
-> >>   >>   	u8 tag;
-> >>   >>   	u8 rev;
-> >>   >> @@ -144,12 +148,16 @@ struct displayid_formula_timing_block {
-> >>   >>
-> >>   >>   #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
-> >>   >>   #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
-> >>   >> +#define DISPLAYID_VESA_DSC_BPP_INT	GENMASK(5, 0)
-> >>   >> +#define DISPLAYID_VESA_DSC_BPP_FRACT	GENMASK(3, 0)
-> >>   >>
-> >>   >>   struct displayid_vesa_vendor_specific_block {
-> >>   >>   	struct displayid_block base;
-> >>   >>   	u8 oui[3];
-> >>   >>   	u8 data_structure_type;
-> >>   >>   	u8 mso;
-> >>   >> +	u8 dsc_bpp_int;
-> >>   >> +	u8 dsc_bpp_fract;
-> >>   >>   } __packed;
-> >>   >>
-> >>   >>   /*
-> >>   >> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> >>   >> index e2e85345aa9a..6e42e55b41f9 100644
-> >>   >> --- a/drivers/gpu/drm/drm_edid.c
-> >>   >> +++ b/drivers/gpu/drm/drm_edid.c
-> >>   >> @@ -6524,8 +6524,8 @@ static void drm_get_monitor_range(struct
-> >> drm_connector *connector,
-> >>   >>   		    info->monitor_range.min_vfreq, info->monitor_range.max_vfreq);
-> >>   >>   }
-> >>   >>
-> >>   >> -static void drm_parse_vesa_mso_data(struct drm_connector *connector,
-> >>   >> -				    const struct displayid_block *block)
-> >>   >> +static void drm_parse_vesa_specific_block(struct drm_connector
-> >> *connector,
-> >>   >> +					  const struct displayid_block *block)
-> >>   >>   {
-> >>   >>   	struct displayid_vesa_vendor_specific_block *vesa =
-> >>   >>   		(struct displayid_vesa_vendor_specific_block *)block;
-> >>   >> @@ -6541,7 +6541,7 @@ static void drm_parse_vesa_mso_data(struct
-> >> drm_connector *connector,
-> >>   >>   	if (oui(vesa->oui[0], vesa->oui[1], vesa->oui[2]) != VESA_IEEE_OUI)
-> >>   >>   		return;
-> >>   >>
-> >>   >> -	if (sizeof(*vesa) != sizeof(*block) + block->num_bytes) {
-> >>   >> +	if (block->num_bytes < 5) {
-> >>   >>   		drm_dbg_kms(connector->dev,
-> >>   >>   			    "[CONNECTOR:%d:%s] Unexpected VESA vendor block size\n",
-> >>   >>   			    connector->base.id, connector->name);
-> >>   >> @@ -6564,28 +6564,40 @@ static void drm_parse_vesa_mso_data(struct
-> >> drm_connector *connector,
-> >>   >>   		break;
-> >>   >>   	}
-> >>   >>
-> >>   >> -	if (!info->mso_stream_count) {
-> >>   >> -		info->mso_pixel_overlap = 0;
-> >>   >> -		return;
-> >>   >> -	}
-> >>   >> +	info->mso_pixel_overlap = 0;
-> >>   >
-> >>   > Nitpick, I kind of like having this in the else path below instead of
-> >>   > first setting it to 0 and then setting it again to something else.
-> >>   >>>
-> >>   >> -	info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP,
-> >> vesa->mso);
-> >>   >> -	if (info->mso_pixel_overlap > 8) {
-> >>   >> -		drm_dbg_kms(connector->dev,
-> >>   >> -			    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
-> >>   >> -			    connector->base.id, connector->name,
-> >>   >> -			    info->mso_pixel_overlap);
-> >>   >> -		info->mso_pixel_overlap = 8;
-> >>   >> +	if (info->mso_stream_count) {
-> >>   >> +		info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP,
-> >> vesa->mso);
-> >>   >> +		if (info->mso_pixel_overlap > 8) {
-> >>   >> +			drm_dbg_kms(connector->dev,
-> >>   >> +				    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
-> >>   >> +				    connector->base.id, connector->name,
-> >>   >> +				    info->mso_pixel_overlap);
-> >>   >> +			info->mso_pixel_overlap = 8;
-> >>   >> +		}
-> >>   >>   	}
-> >>   >>
-> >>   >>   	drm_dbg_kms(connector->dev,
-> >>   >>   		    "[CONNECTOR:%d:%s] MSO stream count %u, pixel overlap %u\n",
-> >>   >>   		    connector->base.id, connector->name,
-> >>   >>   		    info->mso_stream_count, info->mso_pixel_overlap);
-> >>   >
-> >>   > Not sure we want to debug log this unless info->mso_stream_count !=
-> >>   > 0. This is a rare feature.
-> >>   >
-> >>   > Side note, we seem to be lacking the check for
-> >>   > data_structure_type. Probably my bad. I'm not asking you to fix it, but
-> >>   > hey, if you're up for it, another patch is welcome! ;)
-> >> I see, MSO overlap/stream count shouldn't be parsed for eDP, I'll do it.
-> >> Is that what you meant by "note that the above would be needed to
-> >> backport mso support for 7 byte vendor blocks to stable!"?
-> >>   >> +
-> >>   >> +	if (block->num_bytes < 7) {
-> >>   >> +		/* DSC bpp is optional */
-> >>   >> +		return;
-> >>   >> +	}
-> >>   >> +
-> >>   >> +	info->dp_dsc_bpp = FIELD_GET(DISPLAYID_VESA_DSC_BPP_INT,
-> >> vesa->dsc_bpp_int) << 4 |
-> >>   >> +			   FIELD_GET(DISPLAYID_VESA_DSC_BPP_FRACT, vesa->dsc_bpp_fract);
-> >>   >> +
-> >>   >> +	drm_dbg_kms(connector->dev,
-> >>   >> +		    "[CONNECTOR:%d:%s] DSC bits per pixel %u\n",
-> >>   >> +		    connector->base.id, connector->name,
-> >>   >> +		    info->dp_dsc_bpp);
-> >>   >>   }
-> >>   >>
-> >>   >> -static void drm_update_mso(struct drm_connector *connector,
-> >>   >> -			   const struct drm_edid *drm_edid)
-> >>   >> +static void drm_update_vesa_specific_block(struct drm_connector
-> >> *connector,
-> >>   >> +					   const struct drm_edid *drm_edid)
-> >>   >>   {
-> >>   >>   	const struct displayid_block *block;
-> >>   >>   	struct displayid_iter iter;
-> >>   >> @@ -6593,7 +6605,7 @@ static void drm_update_mso(struct
-> >> drm_connector *connector,
-> >>   >>   	displayid_iter_edid_begin(drm_edid, &iter);
-> >>   >>   	displayid_iter_for_each(block, &iter) {
-> >>   >>   		if (block->tag == DATA_BLOCK_2_VENDOR_SPECIFIC)
-> >>   >> -			drm_parse_vesa_mso_data(connector, block);
-> >>   >> +			drm_parse_vesa_specific_block(connector, block);
-> >>   >>   	}
-> >>   >>   	displayid_iter_end(&iter);
-> >>   >>   }
-> >>   >> @@ -6630,6 +6642,7 @@ static void drm_reset_display_info(struct
-> >> drm_connector *connector)
-> >>   >>   	info->mso_stream_count = 0;
-> >>   >>   	info->mso_pixel_overlap = 0;
-> >>   >>   	info->max_dsc_bpp = 0;
-> >>   >> +	info->dp_dsc_bpp = 0;
-> >>   >>
-> >>   >>   	kfree(info->vics);
-> >>   >>   	info->vics = NULL;
-> >>   >> @@ -6753,7 +6766,7 @@ static void update_display_info(struct
-> >> drm_connector *connector,
-> >>   >>   	if (edid->features & DRM_EDID_FEATURE_RGB_YCRCB422)
-> >>   >>   		info->color_formats |= DRM_COLOR_FORMAT_YCBCR422;
-> >>   >>
-> >>   >> -	drm_update_mso(connector, drm_edid);
-> >>   >> +	drm_update_vesa_specific_block(connector, drm_edid);
-> >>   >>
-> >>   >>   out:
-> >>   >>   	if (drm_edid_has_internal_quirk(connector, EDID_QUIRK_NON_DESKTOP)) {
-> >>   >> @@ -6784,7 +6797,8 @@ static void update_display_info(struct
-> >> drm_connector *connector,
-> >>   >>
-> >>   >>   static struct drm_display_mode *drm_mode_displayid_detailed(struct
-> >> drm_device *dev,
-> >>   >>   							    const struct displayid_detailed_timings_1 *timings,
-> >>   >> -							    bool type_7)
-> >>   >> +							    bool type_7,
-> >>   >> +							    int rev)
-> >>   >
-> >>   > If we added struct displayid_detailed_timing_block *block parameter
-> >>   > (between dev and timings), the function could figure it all out from
-> >>   > there instead of having to pass several parameters. Dunno which is
-> >>   > cleaner. It's also not neat to pass rev as int, when it's really data
-> >>   > that has to be parsed.
-> >>
-> >> I agree, just didn't like passing both the block and struct from the
-> >> block (timings param), but it should be fine, I'll redo it.
-> >>
-> >>   >>   {
-> >>   >>   	struct drm_display_mode *mode;
-> >>   >>   	unsigned int pixel_clock = (timings->pixel_clock[0] |
-> >>   >> @@ -6805,6 +6819,10 @@ static struct drm_display_mode
-> >> *drm_mode_displayid_detailed(struct drm_device *d
-> >>   >>   	if (!mode)
-> >>   >>   		return NULL;
-> >>   >>
-> >>   >> +	if (type_7 && FIELD_GET(DISPLAYID_BLOCK_REV, rev) >= 1)
-> >>   >> +		mode->dsc_passthrough_timings_support =
-> >>   >> +			!!(rev & DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT);
-> >>   >
-> >>   > I wonder if it would make life easier all around if we just filled the
-> >>   > dp_dsc_bpp in the mode itself, instead of having a flag and having to
-> >>   > look it up separately?
-> >>
-> >> They are stored in the separate blocks, and vesa vendor specific block
-> >> can be located after the timings blocks, meaning to do that we need to
-> >> iterate over all the mode blocks again and parse their timings support
-> >> flag from rev again to fill this data. I don't like this either, but
-> >> seems like this is the most logical implementation.
-> >>
-> >> We also have max_dsc_bpp declared in display_mode, and it should be
-> >> related to this.
-> >>
-> >> It also won't help with the fact that it is hard to handle mode flag for
-> >> the modes created at runtime (see AMDGPU patch). I believe there should
-> >> be a fancier way to do this, but this anin't it.
-> >>
-> >> I still have troubles understanding why does this flag need to exist, as
-> >> far as I can see, every device with passthrough timings doesn't have
-> >> both modes using them and not using them, and the implementation doesn't
-> >> look good due to this fact.
-> > 
-> > This looks like it would need to be handled in the same as the
-> > "420 only" stuff. But since this doesn't use the VIC it's going to
-> > be even more annoying. Basically you'd have to store the pass-through
-> > timings in eg. display info and then check against that list whenever
-> > you have to figure out if the mode you're looking at is one of these
-> > pass through modes.
-> 
-> Except right now DRM_IOCTL_MODE_SETCRTC allows userspace to create 
-> arbitrary drm_display_mode struct value (I have no idea if that even 
-> works,
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> index 5dc15e48b74b..8cfe8033305d 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -281,14 +281,8 @@ &mmc0 {
+>  	assigned-clock-rates = <50000000>;
+>  	bus-width = <8>;
+>  	bootph-pre-ram;
+> -	cap-mmc-highspeed;
+> -	mmc-ddr-1_8v;
+> -	mmc-hs200-1_8v;
+> -	cap-mmc-hw-reset;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> -	vmmc-supply = <&vcc_3v3>;
+> -	vqmmc-supply = <&emmc_vdd>;
+>  	status = "okay";
+>  };
+>  
+> @@ -298,8 +292,6 @@ &mmc1 {
+>  	assigned-clock-rates = <50000000>;
+>  	bus-width = <4>;
+>  	bootph-pre-ram;
+> -	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> -	disable-wp;
+>  	cap-sd-highspeed;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc1_pins>;
+> @@ -444,17 +436,6 @@ GPOEN_SYS_I2C6_DATA,
+>  	};
+>  
+>  	mmc0_pins: mmc0-0 {
+> -		 rst-pins {
+> -			pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> -					      GPOEN_ENABLE,
+> -					      GPI_NONE)>;
+> -			bias-pull-up;
+> -			drive-strength = <12>;
+> -			input-disable;
+> -			input-schmitt-disable;
+> -			slew-rate = <0>;
+> -		};
+> -
+>  		mmc-pins {
+>  			pinmux = <PINMUX(PAD_SD0_CLK, 0)>,
+>  				 <PINMUX(PAD_SD0_CMD, 0)>,
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> index f2857d021d68..7535d62201f1 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> @@ -11,6 +11,52 @@ / {
+>  	compatible = "deepcomputing,fml13v01", "starfive,jh7110";
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie1 {
+>  	perst-gpios = <&sysgpio 21 GPIO_ACTIVE_LOW>;
+>  	phys = <&pciephy1>;
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> index fdaf6b4557da..c2e7a91e460a 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> @@ -11,6 +11,25 @@ / {
+>  	compatible = "milkv,mars", "starfive,jh7110";
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>  	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> @@ -22,6 +41,33 @@ &i2c0 {
+>  	status = "okay";
+>  };
+>  
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie0 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> index e568537af2c4..ce95496263af 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> @@ -10,3 +10,12 @@ / {
+>  	model = "Milk-V Mars CM";
+>  	compatible = "milkv,marscm-emmc", "starfive,jh7110";
+>  };
+> +
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+> index 6c40d0ec4011..63aa94d65ab5 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+> @@ -14,6 +14,7 @@ / {
+>  &mmc0 {
+>  	bus-width = <4>;
+>  	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+>  };
+>  
+>  &mmc0_pins {
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+> index 25b70af564ee..af01d3abde2f 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+> @@ -21,6 +21,25 @@ sdio_pwrseq: sdio-pwrseq {
+>  	};
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>  	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> @@ -40,6 +59,19 @@ &i2c6 {
+>  	status = "disabled";
+>  };
+>  
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+>  &mmc1 {
+>  	#address-cells = <1>;
+>  	#size-cells = <0>;
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> index 31e825be2065..6faf3826c5c3 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> @@ -14,6 +14,25 @@ aliases {
+>  	};
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	starfive,tx-use-rgmii-clk;
+>  	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+> @@ -44,6 +63,33 @@ &i2c0 {
+>  	status = "okay";
+>  };
+>  
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie1 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index 5f14afb2c24d..9cd79fe30d19 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -13,6 +13,25 @@ aliases {
+>  	};
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	status = "okay";
+>  };
+> @@ -38,9 +57,33 @@ &i2c0 {
+>  };
+>  
+>  &mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+>  	non-removable;
+>  };
+>  
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie0 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> index 6e56e9d20bb0..a380d3dabedd 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -205,22 +205,6 @@ core4 {
+>  	cpu_opp: opp-table-0 {
+>  			compatible = "operating-points-v2";
+>  			opp-shared;
+> -			opp-375000000 {
+> -					opp-hz = /bits/ 64 <375000000>;
+> -					opp-microvolt = <800000>;
+> -			};
+> -			opp-500000000 {
+> -					opp-hz = /bits/ 64 <500000000>;
+> -					opp-microvolt = <800000>;
+> -			};
+> -			opp-750000000 {
+> -					opp-hz = /bits/ 64 <750000000>;
+> -					opp-microvolt = <800000>;
+> -			};
+> -			opp-1500000000 {
+> -					opp-hz = /bits/ 64 <1500000000>;
+> -					opp-microvolt = <1040000>;
+> -			};
+>  	};
+>  
+>  	thermal-zones {
 
-That is how it always works. The requested mode always comes straight
-from userspace, not from the kernel. Thats' why you need to do the
-lookup. And that is exactly what we do for the "420 only" stuff, and
-to figure out what VIC to put into the AVI infoframe.
+Emil, for your consideration:
 
-But those all previous cases were a bit easier since it's all based
-on the VIC/CEA modes list, so we can do the lookup against a fixed
-list. With this stuff you have to generate the list from the
-DisplayID somewhere.
+jh711x.dtsi  (formerly jh7110.dtsi)
 
-> but as far as I can see nothing prevents that in amdgpu driver 
-> implementation), and for that case there needs to be an exception in 
-> case if all the modes are passthru, because then passed mode should use 
-> dsc_bpp value regardless (i.e device only supports passthru)?
-> 
-> This behavior is not declared by spec, but based on my testing I can 
-> only assume that this flag is only a hint, and no hardware supports both 
-> modes with fixed dsc_bpp value and without it.
-> 
-> And with Jani Nikula's suggestion there is a matter of which dsc_bpp 
-> value to use, as with proposed move of this value to the mode itself, in 
-> theory there might be different values for the modes, even if during 
-> edid parsing only one value (from VESA vendor specific block) might appear.
+jh711x-common.dtsi (formerly jh7110-common.dtsi, cut opp table and paste
+to jh7110-common.dtsi, cut out mmc definitions pasted elsewhere either
+to "mmc{0,1}-card, mmc{0,1}-emmc, mmc{0,1}-sdio" dtsi snippets or
+duplicated to board files)
 
-Adding anything to the kernel modes is pretty much pointless. The
-parsed modes are just there to be passed to userspace, and then any
-additional info you stuff in there is immediately lost. The only way
-to preserve it would be extend the uapi with new data and have it be
-routed back in by userspace. But then you get into the whole "old
-userspace might not like new stuff" issue which is why the kernel eg.
-hides the stereo 3D stuff from userspace unless userspace explicitly
-says it knows what to do with it.
+jh7110-common.dtsi (includes jh711x-common.dtsi, adds opp table)
 
-> 
-> It just feels too fragile and incomplete.
-> >> On VivePro2 there is a HID command to switch between display modes:
-> >> modes without dsc_bpp are grouped, and two of the of the high resolution
-> >> modes have different dsc_bpp_x16 values on them. I believe it is just
-> >> this flag is redundant, as there are no devices in the wild having set
-> >> dsc_bpp, and the flag unset, but I try to follow the spec, and here we are.
-> >>
-> >>   >> +
-> >>   >>   	/* resolution is kHz for type VII, and 10 kHz for type I */
-> >>   >>   	mode->clock = type_7 ? pixel_clock : pixel_clock * 10;
-> >>   >>   	mode->hdisplay = hactive;
-> >>   >> @@ -6846,7 +6864,7 @@ static int
-> >> add_displayid_detailed_1_modes(struct drm_connector *connector,
-> >>   >>   	for (i = 0; i < num_timings; i++) {
-> >>   >>   		struct displayid_detailed_timings_1 *timings = &det->timings[i];
-> >>   >>
-> >>   >> -		newmode = drm_mode_displayid_detailed(connector->dev, timings,
-> >> type_7);
-> >>   >> +		newmode = drm_mode_displayid_detailed(connector->dev, timings,
-> >> type_7, block->rev);
-> >>   >>   		if (!newmode)
-> >>   >>   			continue;
-> >>   >>
-> >>   >> @@ -6893,7 +6911,8 @@ static int add_displayid_formula_modes(struct
-> >> drm_connector *connector,
-> >>   >>   	struct drm_display_mode *newmode;
-> >>   >>   	int num_modes = 0;
-> >>   >>   	bool type_10 = block->tag == DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
-> >>   >> -	int timing_size = 6 + ((formula_block->base.rev & 0x70) >> 4);
-> >>   >> +	int timing_size = 6 +
-> >>   >> +		FIELD_GET(DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES,
-> >> formula_block->base.rev);
-> >>   >
-> >>   > I think this is an unrelated change. Probably something we want, but
-> >>   > should not be in the same patch with the rest.
-> >>
-> >> I'll split the patches, would it be ok to have it in the same patchset?
-> >> Same question for mso data_structure_type.
-> >>
-> >>   >>
-> >>   >>   	/* extended blocks are not supported yet */
-> >>   >>   	if (timing_size != 6)
-> >>   >> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> >>   >> index 8f34f4b8183d..01640fcf7464 100644
-> >>   >> --- a/include/drm/drm_connector.h
-> >>   >> +++ b/include/drm/drm_connector.h
-> >>   >> @@ -837,6 +837,12 @@ struct drm_display_info {
-> >>   >>   	 */
-> >>   >>   	u32 max_dsc_bpp;
-> >>   >>
-> >>   >> +	/**
-> >>   >> +	 * @dp_dsc_bpp: DP Display-Stream-Compression (DSC) timing's target
-> >>   >> +	 * DSC bits per pixel in 6.4 fixed point format. 0 means undefined.
-> >>   >> +	 */
-> >>   >> +	u16 dp_dsc_bpp;
-> >>   >
-> >>   > It's slightly annoying that we have max_dsc_bpp which is int, and
-> >>   > dp_dsc_bpp, which is 6.4 fixed point. The drm_dp_helper.c uses _x16
-> >>   > suffix for the 6.4 bpp, so maybe do the same here, dp_dsc_bpp_x16?
-> >>
-> >> Yep, didn't notice we already have bpp value in display_info.
-> >>
-> >>   >> +
-> >>   >>   	/**
-> >>   >>   	 * @vics: Array of vics_len VICs. Internal to EDID parsing.
-> >>   >>   	 */
-> >>   >> diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
-> >>   >> index b9bb92e4b029..312e5c03af9a 100644
-> >>   >> --- a/include/drm/drm_modes.h
-> >>   >> +++ b/include/drm/drm_modes.h
-> >>   >> @@ -417,6 +417,16 @@ struct drm_display_mode {
-> >>   >>   	 */
-> >>   >>   	enum hdmi_picture_aspect picture_aspect_ratio;
-> >>   >>
-> >>   >> +	/**
-> >>   >> +	 * @dsc_passthrough_timing_support:
-> >>   >> +	 *
-> >>   >> +	 * Indicates whether this mode timing descriptor is supported
-> >>   >> +	 * with specific target DSC bits per pixel only.
-> >>   >> +	 *
-> >>   >> +	 * VESA vendor-specific data block shall exist with the relevant
-> >>   >> +	 * DSC bits per pixel declaration when this flag is set to true.
-> >>   >> +	 */
-> >>   >> +	bool dsc_passthrough_timings_support;
-> >>   >>   };
-> >>   >>
-> >>   >>   /**
-> >>
-> >> Regards,
-> >>
-> >> Lach
-> > 
+jh7110s-common.dtsi (includes jh711x-common.dtsi, adds opp table)
 
--- 
-Ville Syrjälä
-Intel
+This makes sense to me having two additional dtsi files of the CPU
+operating power points (on what is apparently binned silicon) to
+maintain for supporting 8+ boards. The decision to split or not split
+out the mmc/sdio configuration into common dtsi snippets is less clear
+to me, but we do have examples now of all the uses (card, eMMC, SDIO) on
+each of the ports mmc0 mmc1 so it might have some benefit; for sure
+keeping these assumptions about mmc0 mmc1 functionality in the one
+'-common.dtsi' is an obstacle to adding sdio module configurations.
+
+-E
 
