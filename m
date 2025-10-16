@@ -1,160 +1,96 @@
-Return-Path: <linux-kernel+bounces-857042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E53BE5BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:57:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCAFBE5BFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8845E22A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BFFD19C0639
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB3E2E613C;
-	Thu, 16 Oct 2025 22:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97E02E1EEC;
+	Thu, 16 Oct 2025 23:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5cd1znO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evx6unnT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ECB49659;
-	Thu, 16 Oct 2025 22:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144941917F1;
+	Thu, 16 Oct 2025 23:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760655467; cv=none; b=h5BEAmo9IVs2p7SLPeV6m6PdD0JiLM3+2aQvQ/9AQDQbsTx095NSthVi9FZ3K1Zao2OM7mrMZ3bt/FvfULQ/s8m57WJX07eUmz2EZ75OGq1RyNBpas45/lrJwRN5nxXFloNuvqbLMXxEf9daBSyyyDO2+QripUXv5NNnHDHZmM0=
+	t=1760655622; cv=none; b=cmEx0Oa9SP/GRK3d1H7fisPQM5qW3ASoJ39EGZUwjsyj5vTuiRQGzjiu1w00WaDCNZvh1NCj/Xk6qqy9mhC92qhVht5EFTJuVX6RkhK1X/cXI3AS8se7Hst3NGEpUIBAaB0LxAXKvuIMfqs7qqXSdrFg5Y0g5ubUBROs08DDzrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760655467; c=relaxed/simple;
-	bh=qxYdrK046z63gbrSUliCKLEJBOxAeeHOt0UZNNP8L20=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=BGr2kr6kSEpd7UBXLWOamdSyOoiBpfik8I7F7Uj1M+WBC7w6eJzUdEFw0M9kmyuKLACKR/a6QTqGXNQisKTNhIC0jzsrND0zpSxbgnZALbYPHIEGKchf4yE3ocJOf8sAQUF1JPu4xpQcNtnYI+xzOOpTzfv9XDu41hbOF69kH3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5cd1znO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE19C4CEF1;
-	Thu, 16 Oct 2025 22:57:44 +0000 (UTC)
+	s=arc-20240116; t=1760655622; c=relaxed/simple;
+	bh=y1cLi1qiNeoQW0GjMowxZf8p9EuPzw2O8V99suRom+0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=nYP+7QoPcj/LutbAVYFwgNlanxEtvT4cDfVF+/7Qf7a5oVLAcfqna7MtubqXqIGqJU0sXQzlnM1uNN+BI3u+OEiBQVPy9oT4P96VGTXElp1qmb9OazSlNv4EIwF8XuRytFuW30qCFltyIBnVFCbe0Hlg44qLVmw218UlmHfd3dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evx6unnT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5ED6C4CEF1;
+	Thu, 16 Oct 2025 23:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760655467;
-	bh=qxYdrK046z63gbrSUliCKLEJBOxAeeHOt0UZNNP8L20=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=b5cd1znOVvrQpkIa99s4hOtwnkTdIBI+AVI+dHmfg4Tj9wXSlcpP4EK06XX0byBdp
-	 THTDEGYN77/ky6tpzFUYwcmTN2VFwtQNi8QXUMpx4c06wzt84cN9JQxBT5SwCmnubd
-	 lMhopoJRhXG/V2bW3HtWzpv2Ii0t/h6sFuDUn5XSeHncdwhohL3OJNFo8DAMVTrtue
-	 RE92YAVcc3yGBPi/eQzTEDU88DexiifQWQWJ+DrKDutp0h8B+UiJQtqpfkSXpQsKHU
-	 g8g9MD7TLCvsCA9yCB7QdP+zBo64ojjJ8WrNCy/XynEFwe6UrKmn00FvMUiZHLMVNQ
-	 1F04FrIVMImjQ==
+	s=k20201202; t=1760655621;
+	bh=y1cLi1qiNeoQW0GjMowxZf8p9EuPzw2O8V99suRom+0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=evx6unnT9oSNZN3XJgzUIuD+g9AWt9P2COUA+/Vdw+WpoI8fvYtyjmvk2yIRMpmWj
+	 GSQN1ouWvTQlu7qHrYjD0aGb2kJO05lgiPSaqi4C0x9T1lc5PwNqg8VLJ6fMb1q3zz
+	 pB+70YvP5l4EqDw4jakf6BlBvhaQPAhI+ossPtYRlMBLwG9keEwbh3E7Mf7TDw975h
+	 U0fqR4z/w2pAlzkVs6rUoqvBCTfwQKP2PDcWptFwxVYa6TtZ/ubkxKdYQ/amOX6Pf4
+	 zBH3A8ehiiWZMvHpb+2oBRQksfY0c+Df9w39qW4+Eif6cJsD2Z9onrLkfryFT0vY9P
+	 I3FD3mRIBNRXg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB11D3810902;
+	Thu, 16 Oct 2025 23:00:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 17 Oct 2025 00:57:42 +0200
-Message-Id: <DDK49THLLA3Y.242R8EP6IDZJ3@kernel.org>
-Subject: Re: [PATCH 1/3] rust: pci: implement TryInto<IrqRequest<'a>> for
- IrqVector<'a>
-Cc: <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251015182118.106604-1-dakr@kernel.org>
- <20251015182118.106604-2-dakr@kernel.org>
- <20251016222420.GA1480061@joelbox2>
-In-Reply-To: <20251016222420.GA1480061@joelbox2>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: rmnet: Fix checksum offload header v5 and
+ aggregation packet formatting
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176065560576.1937406.6281512047477502044.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Oct 2025 23:00:05 +0000
+References: <20251015092540.32282-2-bagasdotme@gmail.com>
+In-Reply-To: <20251015092540.32282-2-bagasdotme@gmail.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, subash.a.kasiviswanathan@oss.qualcomm.com,
+ sean.tranchetti@oss.qualcomm.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ quic_sharathv@quicinc.com
 
-On Fri Oct 17, 2025 at 12:24 AM CEST, Joel Fernandes wrote:
-> On Wed, Oct 15, 2025 at 08:14:29PM +0200, Danilo Krummrich wrote:
->> Implement TryInto<IrqRequest<'a>> for IrqVector<'a> to directly convert
->> a pci::IrqVector into a generic IrqRequest, instead of taking the
->> indirection via an unrelated pci::Device method.
->>=20
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> ---
->>  rust/kernel/pci.rs | 38 ++++++++++++++++++--------------------
->>  1 file changed, 18 insertions(+), 20 deletions(-)
->>=20
->> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
->> index d91ec9f008ae..c6b750047b2e 100644
->> --- a/rust/kernel/pci.rs
->> +++ b/rust/kernel/pci.rs
->> @@ -596,6 +596,20 @@ fn index(&self) -> u32 {
->>      }
->>  }
->> =20
->> +impl<'a> TryInto<IrqRequest<'a>> for IrqVector<'a> {
->> +    type Error =3D Error;
->> +
->> +    fn try_into(self) -> Result<IrqRequest<'a>> {
->> +        // SAFETY: `self.as_raw` returns a valid pointer to a `struct p=
-ci_dev`.
->> +        let irq =3D unsafe { bindings::pci_irq_vector(self.dev.as_raw()=
-, self.index()) };
->> +        if irq < 0 {
->> +            return Err(crate::error::Error::from_errno(irq));
->> +        }
->> +        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&s=
-elf`.
->> +        Ok(unsafe { IrqRequest::new(self.dev.as_ref(), irq as u32) })
->> +    }
->> +}A
->
->
-> Nice change, looks good to me but I do feel it is odd to 'convert' an
-> IrqVector directly into a IrqRequest using TryInto (one is a device-relat=
-ive
-> vector index and the other holds the notion of an IRQ request).
->
-> Instead, we should convert IrqVector into something like LinuxIrqNumber
-> (using TryInto) because we're converting one number to another, and then =
-pass
-> that to a separate function to create the IrqRequest.
+Hello:
 
-Well, IrqRequest is exactly that, a representation of an IRQ number. So, th=
-is is
-already doing exactly that, converting one number to another:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-	pub struct IrqRequest<'a> {
-	    dev: &'a Device<Bound>,
-	    irq: u32,
-	}
+On Wed, 15 Oct 2025 16:25:41 +0700 you wrote:
+> Packet format for checksum offload header v5 and aggregation, and header
+> type table for the former, are shown in normal paragraphs instead.
+> 
+> Use appropriate markup.
+> 
+> Fixes: 710b797cf61b ("docs: networking: Add documentation for MAPv5")
+> Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> 
+> [...]
 
-(The reason this is called IrqRequest instead of IrqNumber is that the numb=
-er is
-an irrelevant implementation detail of how an IRQ is requested.)
+Here is the summary with links:
+  - [net] net: rmnet: Fix checksum offload header v5 and aggregation packet formatting
+    https://git.kernel.org/netdev/net/c/1b0124ad5039
 
-	pub struct IrqVector<'a> {
-	    dev: &'a Device<Bound>,
-	    index: u32,
-	}
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-So, what happens here is that we convert the vector index from IrqVector in=
-to
-the irq number in IrqRequest.
 
-> Or we can do both in a
-> vector.make_request() function (which is basically this patch but not usi=
-ng
-> TryInto).
-
-See above, there is no "both", it's the same thing. :)
-
-Regarding make_request() vs. TryInto, I think TryInto is the idiomatic thin=
-g to
-do here: Both structures have the same layout, as in they both carry the
-&Device<Bound> reference the corresponding number belongs to, plus the numb=
-er
-itself; the device reference is taken over, the number is converted.
-
-> Actually even my original code had this oddity:
-> The function irq_vector should have been called irq_request or something =
-but
-> instead was:
-> pub fn irq_vector(&self, vector: IrqVector<'_>) -> Result<IrqRequest<'_>>
->
-> I think we can incrementally improve this though, so LGTM.
->
-> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
 
