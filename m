@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-856307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24017BE3D11
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:55:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93A8BE3D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D78DE4E7EEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:55:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B51285020CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7990833CE8D;
-	Thu, 16 Oct 2025 13:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB11033CEB2;
+	Thu, 16 Oct 2025 13:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="mg7y8tH2"
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcvMWYo6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2E81A0728
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245892E7179;
+	Thu, 16 Oct 2025 13:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760622914; cv=none; b=R4kQMmccv2YSKxEmpemcUCNqTyL4+shneiKU5Y0W9bOc2Qp6FQNApi7F8FxXTPLx5kjc0Xr0MNSOQcHSxmfVxAyjX5UU3dNfAAUtaU3LejKJKfWlvyl2uKypSIRYnUGbgZcauF3dY10n8+NqU6EyW40zqycFqk2rLFQw843bz2w=
+	t=1760622926; cv=none; b=oAHtL31Yu1WYkjzZ4Rm30A8PmNefp+MCjwZM70CCJah7xJR2916AlYkVPYRYGpB6mjmD7KGXR5BjzLcJYBsu/vGiBB4lIgbVbkVIYScAQCCkEbBLr2XTmVLbR3jzeM9lu5pTsS+VtxGGScuujiuYmQsSi/TvqVXNbMvwbrEOik8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760622914; c=relaxed/simple;
-	bh=Qpv27fpsXm8jxsD0h+jONZzlfRHhtgt03BiW9Giys7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxtyoXrn+r4iLQbji+WZ90iUS8o1ceqSE0q6AVXfb43WLf3KmgiUf6av1pXWYjyRqwCZ1NGdV2RPllSIs23CoQJopxjp5i/XXhP/ypNk4qr8kwdxc4XWbRn9xdpV9/mLKVNXkSwfo4bTFhSX/R/Bm4cxALoJkj+BWQuJiH1peHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=mg7y8tH2; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=i2vvv78M0Jc0qgLmHMvHJhgChDzXNg/57Bm9I9IOT5Y=; b=mg7y8tH2N2LyqAy73ICGp6y8XD
-	nOsTybaY8oRWQhuZMkBV+gRgG6lvShhsQ5+wFKfDbM4IKD5qKiJQvUL5KULweObigQgzuSEPgGwpQ
-	reNpXxEQV7QZMzf1bFmzh2o4i35KLN2q7mtj7LnAjKr5c6rVm0UZ4DdBvqVGp2Puz598ri9I5QNCN
-	abIcHOU1ab4dbgWxd5KdwN8Vbmx5WXYhZJbm/ouFdDHeUAIb4V+rfe2EbTziOqK60MsZgXhcG54cd
-	il3U1DMqYI38QCgMOn7FfJrng/KGBMLC0WKZ2WWh/B3t7uPpfgx73RVncYcn9Wq5jMOMiX+UOVyH8
-	3RGxs6NQ==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:61866 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1v9ORj-0000000H9QG-1Ve2;
-	Thu, 16 Oct 2025 15:55:09 +0200
-Date: Thu, 16 Oct 2025 15:55:06 +0200
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Aaron Rainbolt <arraybolt3@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Xiujianfeng <xiujianfeng@huawei.com>, "xiujianfeng@huaweicloud.com" <xiujianfeng@huaweicloud.com>
-Subject: Re: [RFC PATCH 00/56] Dynamic mitigations
-Message-ID: <o5decnfriq2nfg5o23uuwptzxnsbwalltm5hjxpwgr6eje5p5s@faehapbq43rd>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251014231039.6d23008f@kf-m2g5>
- <LV3PR12MB926564CC5E88E16CE373185694E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <cnwawavsdedrp6yyylt2wqiglekwsgrofimkvh32fknj676xsh@4vyzzoky5hzd>
- <LV3PR12MB9265837FA51DFD9D2F11474D94E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <a5kvnas7cttg3pxqdxye7qhyesbtyulhhdiunl2hr5tfmecpbz@y4ggjfafqawn>
- <LV3PR12MB926513717F67A02278659F5094E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <lpv2uouli7b4zi4up5434mfdjngbvwbnn72vgyz47b76h2ac7b@uqlaa6mh7dfa>
- <DS0PR12MB9273B5438371E67441C042AA94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1760622926; c=relaxed/simple;
+	bh=UEKp1DHAqPsI6gpkgu9tC/Ox9lhUWrYCS7E0VTkLkKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lft8FyiTfu0RFdDtMp5Y0s6HrKurivCBrRxC5vCht+E6rYH9YhVQC2SWuDd+CucbK09bi0S/LyxqGRmJlqw/LW2DXnzBpQogyrNQSHdgxbIP/qWF6I2Ntm/ho0AlBdPgAUVouHzZYK0BL3X1+63myrMgLbTOkbG+W5EMD+bAODE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcvMWYo6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44DE0C4CEF1;
+	Thu, 16 Oct 2025 13:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760622925;
+	bh=UEKp1DHAqPsI6gpkgu9tC/Ox9lhUWrYCS7E0VTkLkKc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jcvMWYo6bGSIeoJKKdb+YNp0NXUn0fAq+GEtFWjhyKip2w94+ZO0nUQSCsCnc1Cjm
+	 tvaNWT34osvZA7pQbxGx+/9qinfl/czRRNmBS/RzKqi1vpADnqqEpcVpEn+Oy6CiIm
+	 lgtOYCE7iif0mFWCoStXSGRDTByDvZIV23kFwWUdokLx2iMCkTQ21gnlCh19tCA+kT
+	 4CUhGXBiSlHFJwJs2CW8OIdsqCSmuDoYQ0KyaTKNn11j1bnf5dqb8n1JYwxPj6Vb8F
+	 BzpbqWKTDfZcnMHzDkOBJwOd2E0do98bEuUHqH4Vmx2u1e3kL0ACz2L05wE8zJM80U
+	 Xcmj0IeY6QclQ==
+Message-ID: <aedc5761-75da-42bf-9147-dcde24c8e976@kernel.org>
+Date: Thu, 16 Oct 2025 14:55:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DS0PR12MB9273B5438371E67441C042AA94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] media: qcom: camss: add support for SM6150 camss
+To: Wenmeng Liu <quic_wenmliu@qualcomm.com>,
+ Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251016-sm6150-camss-v1-0-e7f64ac32370@oss.qualcomm.com>
+ <20251016-sm6150-camss-v1-2-e7f64ac32370@oss.qualcomm.com>
+ <1d4d4627-7fe9-43b2-8622-8ffc078e30a6@kernel.org>
+ <JB8KRP8D1088VuLugU36X7P6tKDpkMBU5kGjc3Ctu2fJYw-lIui1NJQiQUwjwRGSdVwJ0VlOP7LPWlKMTU7OZw==@protonmail.internalid>
+ <e4be125c-752e-46c9-9637-fe23cbf04b1a@qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <e4be125c-752e-46c9-9637-fe23cbf04b1a@qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-[snip]
-> > LOCKDOWN_DEV_MEM is an integrity reason and should not be used for this
-> > scenario.
-> > I'd rather like to add a new Lockdown reason in the confidentiality set,
-> > maybe LOCKDOWN_CPU_MITIGATION ?
-> >
-> 
-> Ok, that makes sense.  Just to clarify, would that mean something like the below:
-> 
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index 3f9410dee67c..9b4864f84146 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -691,6 +691,9 @@ ssize_t cpu_write_mitigation_options(struct device *dev,
->                                 struct device_attribute *attr,
->                                 const char *buf, size_t count)
->  {
-> +       if (security_locked_down(LOCKDOWN_CPU_MITIGATIONS))
-> +               return -EPERM;
-> +
->         /* Save and filter the provided options. */
->         cpu_filter_mitigation_opts(buf);
-> 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 92ac3f27b973..81cb52cf2111 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -153,6 +153,7 @@ enum lockdown_reason {
->         LOCKDOWN_TRACEFS,
->         LOCKDOWN_XMON_RW,
->         LOCKDOWN_XFRM_SECRET,
-> +       LOCKDOWN_CPU_MITIGATIONS,
->         LOCKDOWN_CONFIDENTIALITY_MAX,
->  };
+On 16/10/2025 13:36, Wenmeng Liu wrote:
+>>> +    case CAMSS_6150:
+>>>            regs->lane_regs = &lane_regs_qcm2290[0];
+>> You don't need to specify the array index for that.
+>>
+> Here I have only added "case CAMSS_6150:", then do I need to modify the
+> part of "&lane_regs_qcm2290[0]"?
 
-You should also add an entry to the lockdown_reasons array in
-`security/security.c` with a description of the reason.
+Hmm no I'm wrong - again.
 
-Nicolas
+Please don't be afraid to call people out on being wrong - like I am now.
+
+Existing code is:
+
+         case CAMSS_X1E80100:
+                 regs->lane_regs = &lane_regs_x1e80100[0];
+                 regs->lane_array_size = ARRAY_SIZE(lane_regs_x1e80100);
+                 regs->offset = 0x1000;
+                 break;
+         case CAMSS_8550:
+                 regs->lane_regs = &lane_regs_sm8550[0];
+                 regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
+                 regs->offset = 0x1000;
+
+Your comment is consistent with existing code.
+
+You may ignore the previous statement.
+
+---
+bod
 
