@@ -1,199 +1,167 @@
-Return-Path: <linux-kernel+bounces-855849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BB6BE279B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E92BE27BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214AA3AA8D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D403B9584
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB84631690D;
-	Thu, 16 Oct 2025 09:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7/zcc9n"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B867C30FF03
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7991C2D0608;
+	Thu, 16 Oct 2025 09:47:20 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01121DE2AF;
+	Thu, 16 Oct 2025 09:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760607771; cv=none; b=mRr52k2bubEARDMLnBeJkYVu+eUbXR4HFfMq7YQmDx/t4fHNnYauG+bMHuqLFmIyRMwbgg6GNb0uwavv2yCVXs/Fv1uAp5CjNhNjZx7UHsB+LQ/vn8rAy9XvJj0msxDXm2v1WjfAIsJzE31/1Gul0LXPQO+dc2La/TUVoZGK4TQ=
+	t=1760608040; cv=none; b=h/qRQNOBwr9Es8ylCWzrk9Qxz05w6IHWhGwKqT43h32YpmI7eUZm85+RtdbSlXYslGOMy1KzMRiQ0i+Ssp3djTKo9z1g70T0fzyO64KfhMz5BjTmclNcAtpAZy8EpKpYwxzvt0y/SM06QXBpiFyHua7+rddE838aHvGZPXApNTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760607771; c=relaxed/simple;
-	bh=/An5A5Z47gm9McZ86h5+c44EhezddxqJ6Ki8ImsDtRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjFzvmytU2TsJdY8LxEjWaTsCfZtx3A1UjetNBH6f00vzbChcnkG9rJcN0CUM9NIWr0spmD3sih+sZ9dmVSVehRCYINO42ZIebZkhOjkA0e4Ewv3OpnbPL8kz1vgxSi654D3pEcoqGmcZBGvPFLS1Ep0oH0yo6JwQ5n0Opy57J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7/zcc9n; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33255011eafso537845a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760607768; x=1761212568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LdgKKtvcfYNoBowTokM9ZaUlzxkF22P3gHH8+8NnAns=;
-        b=P7/zcc9nNDlyg58BRVJ4ReysqITJa64ORsaKVU8gRKAD+8otvgvTdJPDpbl0vSt126
-         5oE8XNQolIHWZXkNAnjI6a7wvEIc05PkGWPmcRHKKxzkSofnc1VSl/XDfSCt+iI4yrZb
-         OdKwuwo1SBj3QTvI6TdQ24aPvFx7ElQpcguOKB9NSLMpGeHstxSBENW1sp9CDIzmmGAT
-         vLwVHsujbgun1S5uTJUJ84kY6/BgY9PvZv7CwsgwMi916naHQWL8PqsOf2fkXC5Oz347
-         LZu0nB14RLzrr5XzdC9tFD+XzLHSxgljRpnTG8zr59Ijh2yYPHp6im3f/6MnXVtggIH2
-         ty7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760607768; x=1761212568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LdgKKtvcfYNoBowTokM9ZaUlzxkF22P3gHH8+8NnAns=;
-        b=oNaG3BeuM41VOt6L1I1dU9F5E9CgyIyvlbNscOcnFy6R0HLvv0CTitlR7zsvmo+gME
-         x9tXQwnBkK7SMKsEB/bezbuQIPMaGeeajuQKgmiZ+apyawlboi2LMS1x3ezb0MSXkvzN
-         VOFLWdJDem5Bguz/XWkYR9DxQY631wtSffdDZ0DHI9u17Dk9f5PKlK94A0NCJqEV5qKq
-         WYEcS9hKpnc78hXLAPAEXJqhDJWX+36e3NzwEP0n1pgi4CFzzKZ0X2xWBrzIP0U4VjoQ
-         qgMS0OtiPsq4DE1+QJMDvqkefeD1Y9jFeHGgb40jPmKH4xO1YGH2m5xmCrzi6CXxP9AC
-         Kyhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNIs9rKtPTjN2O4PqyjYjs0Atg2msucl7oSET8v3niNU0IJbc3STKZH4Prgizs/oYIcD1bWaEbhIea4Cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyK7hHTeM5tyKARGz9Guv5fOK5O1ei5cfkMLrb2iuAeh8HGN0b
-	/NXR93qgC9G+yanJzKpWPUHRmnlQjHJUyYLa5wP1vPFrtyueBRiYyoyZuxxnfqYU
-X-Gm-Gg: ASbGncts5e409ot+gjbhCZoKVEBJ876j30oDSzHNvJrLqn0/+fnyvkr1W4LnUUOEQ7a
-	5c/dHBFvTi0/j+EFSk7nbktUoGqMKxtZOe6X0eKh8OSIe3sir8lxCE3wSCbTai45i3Seu5816J3
-	7eu+jg4teihwCACyqLGez+xxJ//g67HguXDUxnC/LJvEAmvvROKPKxeaNKSem2hFr65aEaf84XV
-	Bh4XQlHLVSERyGL6e603XsIvU5dQHN/HJ4pDMVIghtVVTutscHCfmiLpZPI7hlpYko7vadPB1JB
-	D2JmN4Bzyn3wLOM8UyhTpKqqAkUbVW74M6Emdjg6c5uWv3d/HjYELLG+kDoUQchSTnReaPEdOHn
-	UYREQn/ng38zSbare23nZWc9G7hF5b+CD07bbw8nTpQ3EVljYTbqzxNkEGZ082t89IizAm3gBJk
-	/6W997NtQ=
-X-Google-Smtp-Source: AGHT+IE1fskk5Ct8giAk25LdMld1Y2juSnEz/FSK8HGfkykDmWOYPltY5Y/poj9FAus0Wc346J/rzQ==
-X-Received: by 2002:a17:90b:1a8b:b0:32d:fcd8:1a9 with SMTP id 98e67ed59e1d1-33b513e6269mr40395810a91.32.1760607767989;
-        Thu, 16 Oct 2025 02:42:47 -0700 (PDT)
-Received: from google.com ([2401:fa00:95:201:5c03:23f6:3e52:49ba])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a22887a24sm2282799a12.1.2025.10.16.02.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 02:42:47 -0700 (PDT)
-Date: Thu, 16 Oct 2025 17:42:43 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: XueBing Chen <chenxb_99091@126.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/bsearch: add mutex protection for thread-safe binary
- search
-Message-ID: <aPC-E1ZQhiLaBbWS@google.com>
-References: <20251016090640.6331-1-chenxb_99091@126.com>
+	s=arc-20240116; t=1760608040; c=relaxed/simple;
+	bh=0nTyDDXeT0vNQjEbEKsFZgcntccZIy9dUczltX+tXR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZOP3XDXEL58gZC7eZysIgTBsPE2bF6Zbn5d1ISkJq6HB9+gtzsvO97/Yy+Qcd+MxCLJ+62PUbDbKCpV9okhBVHm21gkAsbSkLybyo0glFwNb+N2jqvu9lM5MpVlZSwti1QKsgVy50BysSm9WZ4cLtZwQ3ray+ns+uTYv9zomxGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006493LT.eswin.cn (unknown [10.127.112.153])
+	by app1 (Coremail) with SMTP id TAJkCgAnTBIWv_BoTyIOAQ--.49147S4;
+	Thu, 16 Oct 2025 17:47:03 +0800 (CST)
+From: caohang@eswincomputing.com
+To: gregkh@linuxfoundation.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Thinh.Nguyen@synopsys.com,
+	p.zabel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Hang Cao <caohang@eswincomputing.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v4 0/2] Add driver support for ESWIN EIC7700 SoC USB controller
+Date: Thu, 16 Oct 2025 17:46:54 +0800
+Message-ID: <20251016094654.708-1-caohang@eswincomputing.com>
+X-Mailer: git-send-email 2.45.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016090640.6331-1-chenxb_99091@126.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgAnTBIWv_BoTyIOAQ--.49147S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXrWUWFWDCr18JF4rtFWfuFg_yoWrJry7pa
+	ykKFW5GrZ5Jryxtan2q3W8KF4fGanrXFW5Gr4Iqw1jvw4jg3W7JrWI9F4YyrWDCwn3X3yY
+	yFW3W39Yya4DArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/
 
-Hi XueBing,
+From: Hang Cao <caohang@eswincomputing.com>
 
-On Thu, Oct 16, 2025 at 05:06:40PM +0800, XueBing Chen wrote:
-> Replace the __inline_bsearch() wrapper with a full implementation
-> that includes mutex protection to ensure thread safety when
-> multiple threads call bsearch() concurrently.
+Add support for ESWIN EIC7700 USB driver controller.
 
-Adding a global mutex lock here will introduce a performance penalty
-for all users of bsearch(), even those who do not require this
-protection.
+We have removed dwc3-eic7700.c and added changes to dwc3-generic-plat.c.
 
-If a specific user needs synchronization, shouldn't they be responsible
-for implementing it? For example, by adding a lock around their call t
-bsearch() or implementing the necessary locking within their compare
-function.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509160138.P7gRM9Bt-lkp@intel.com/
 
-> 
-> The original implementation lacked synchronization, which could
-> lead to race conditions in multi-threaded environments when
-> accessing shared arrays or using non-atomic comparison functions.
+Changes in v4->v3:
+- Updates:
+  - Removed config option patch dependency from cover letter, because the patch
+    was applied.
+  - Remove dwc3-eic7700.c instead of dwc3-generic-plat.c.
 
-Could you please provide more details on the specific race condition
-you observed? What is the use case, and how does this race manifest?
+- Updates: eswin,eic7700-usb.yaml
+  - Add usb_en clock.
+  - Add usb_rst reset.
+  - Update eswin,hsp-sp-csr description.
+  - Remove the last two unused items of eswin,hsp-sp-csr.
 
-A concrete example, a reproducer, or a link to a bug report would be
-very helpful to understand the motivation for this change.
+- Updates: dwc3-generic-plat.c
+  - Add eswin,eic7700-dwc3 to the compatible table.
+  - Add the dwc3_generic_match_data structure.
+  - Add the eic7700_dwc3_bus_init function to initialize the bus.
+  - Add the init_ops callback in the probe function.
+- Link to V3: https://lore.kernel.org/all/20250915085329.2058-1-caohang@eswincomputing.com/
 
-> 
-> Signed-off-by: XueBing Chen <chenxb_99091@126.com>
-> ---
->  lib/bsearch.c | 29 ++++++++++++++++++++++++++---
->  1 file changed, 26 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/bsearch.c b/lib/bsearch.c
-> index bf86aa66f..9a5a2e949 100644
-> --- a/lib/bsearch.c
-> +++ b/lib/bsearch.c
-> @@ -1,9 +1,12 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * A generic implementation of binary search for the Linux kernel
->   *
->   * Copyright (C) 2008-2009 Ksplice, Inc.
->   * Author: Tim Abbott <tabbott@ksplice.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; version 2.
+Changes in v3->v2:
+- Updates: eswin,eic7700-usb.yaml
+  - Sort the attributes according to the DTS coding style.
+  - Remove the #address-cells and #size-cells attributes.
+  - Fold the child node into the parent.
+  - Update commit message.
 
-The addition of the full GPL-2 boilerplate text seems redundant and is
-unrelated to the patch's functional change.
+- Updates: dwc3-eic7700.c
+  - Use dwc3 core as a library.
+  - Add system and runtime pm.
+  - Use pm_ptr and remove the __maybe_unused tags.
+  - Add new author name
+  - Add prepare and complete function
+  - Update commit message.
+- Link to V2: https://lore.kernel.org/lkml/20250730073953.1623-1-zhangsenchuan@eswincomputing.com/
 
->   */
->  
->  #include <linux/export.h>
-> @@ -28,9 +31,29 @@
->   * the key and elements in the array are of the same type, you can use
->   * the same comparison function for both sort() and bsearch().
->   */
-> -void *bsearch(const void *key, const void *base, size_t num, size_t size, cmp_func_t cmp)
-> +DEFINE_MUTEX(cmp_mutex);
-> +void *bsearch(const void *key, const void *base, size_t num, size_t size,
-> +	      int (*cmp)(const void *key, const void *elt))
->  {
-> -	return __inline_bsearch(key, base, num, size, cmp);
+Changes in v2->v1:
+- Updates: eswin,eic7700-usb.yaml
+  - Drop the redundant descriptions.
+  - Supplement the constraints of resets.
+  - Replace "eswin,hsp_sp_csr" with "eswin,hsp-sp-csr"
+    and add items description.
+  - Drop numa-node-id, This is not necessary.
+  - Add patternProperties and match the rules defined
+    in the "snps,dwc3.yaml" file.
+  - Add "#address-cells" "#size-cells".
+  - Update the space indentation, remove the redundant labels,
+    and sort the attributes according to the DTS encoding style.
+  - Drop the "status = "disabled" attribute.
+  - Update the common usb node names and fold the child
+    nodes into the parent nodes.
+  - The warning detected by the robot has been resolved.
 
-This patch replaces the wrapper with a full implementation for the
-exported bsearch(), but the inline version remains unlocked.
+- Updates: dwc3-eic7700.c
+  - Remove dwc3_mode_show dwc3_mode_store dwc3_eswin_get_extcon_dev,
+    dwc3_eswin_device_notifier and dwc3_eswin_host_notifier, usb role
+    detection and switching are not supported.
+  - Remove the hub-rst attribute, remove the dwc3_hub_rst_show and
+    dwc3_hub_rst_store functions, this feature is not supported.
+  - Use syscon_regmap_lookup_by_phandle_args instead of the
+    syscon_regmap_lookup_by_phandle function.
+  - Use dev_err_probe in probe function.
+  - Drop mutex_lock, which is not required.
+  - Remove clk_prepare_enable and of_clk_get, and manage multiple
+    clocks using devm_clk_bulk_get_all_enabled.
+  - Remove the device_init_wakeup related functions, which were
+    used incorrectly.
+  - Remove MODULE_ALIAS, which is used incorrectly.
+  - The warning detected by the robot has been resolved.
+- Link to V1: https://lore.kernel.org/lkml/20250516095237.1516-1-zhangsenchuan@eswincomputing.com/
 
-Why should the non-inline version have this protection while the inline
-version does not? This creates an inconsistency.
+Hang Cao (2):
+  dt-bindings: usb: Add ESWIN EIC7700 USB controller
+  usb: dwc3: eic7700: Add EIC7700 USB driver
 
-> +	const char *pivot;
-> +	int result;
-> +
-> +	while (num > 0) {
-> +		pivot = base + (num >> 1) * size;
-> +		mutex_lock(&cmp_mutex);
-> +		result = cmp(key, pivot);
-> +		mutex_unlock(&cmp_mutex);
+ .../bindings/usb/eswin,eic7700-usb.yaml       | 99 +++++++++++++++++++
+ drivers/usb/dwc3/dwc3-generic-plat.c          | 58 +++++++++++
+ 2 files changed, 157 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
 
-If the intent is to protect a cmp function that is not re-entrant,
-shouldn't the user who provides that cmp function be responsible for
-adding the lock inside it?
+--
+2.34.1
 
-Regards,
-Kuan-Wei
-
-> +		if (result == 0)
-> +			return (void *)pivot;
-> +
-> +		if (result > 0) {
-> +			base = pivot + size;
-> +			num--;
-> +		}
-> +		num >>= 1;
-> +	}
-> +
-> +	return NULL;
->  }
->  EXPORT_SYMBOL(bsearch);
->  NOKPROBE_SYMBOL(bsearch);
-> -- 
-> 2.17.1
-> 
-> 
 
