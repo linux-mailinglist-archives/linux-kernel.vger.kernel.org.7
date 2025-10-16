@@ -1,140 +1,109 @@
-Return-Path: <linux-kernel+bounces-856817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDA1BE52A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07178BE52B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B364D1AA09EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593991AA0D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F29A23EAA2;
-	Thu, 16 Oct 2025 19:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AD8239E63;
+	Thu, 16 Oct 2025 19:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D217VmIn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p14gw84/"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8630923C516;
-	Thu, 16 Oct 2025 19:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93FC1E5215
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760641394; cv=none; b=jsDgidVci49kGN/FOQqlDj8lOuCi5UiRnaTXENkFwm0n/Sk/Qo7ApUsxu3gDEULsso+QANGk9NPAifHPXssBfHv1rI/gn5kKItPni+0tYxgWibuFJah+YIy59+opTC48w5u6B7fVE1Ol9iDEwlT0/WmMogYnPBtC8fWBMJ5pivk=
+	t=1760641608; cv=none; b=rhuuY6ky1P4p4L4djKKKSYPxB57O75ms4vMrv+jt7zizvRyCnW/KRf89nfR4MSC6zija7lfX9Ki0SvtCbR3KQuVOoHYl6xR6FGO7/DfZs3Nn/Qz66W8Llb9nu3e1GtBLAxRDtF8kdQ+heHnMLu82tWCi49FA+B1MqFqz4MDxsus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760641394; c=relaxed/simple;
-	bh=/svoWHeXOS5kyJXHlew/DzxM7PeeoVPP4zawYSZ0BBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzD4V7ijFbwr6Wqjkv3U45XnKkWm56gHvKgOYkRiiRWUtqyZGC4NOkbim2eBLfe5PG1zu2UF724WjbAXQxErSd0YNUFWfNEusehf5mjhLxods4Q1JBJnjVFio+Q3tzy5eNVX7xx4DG+aDZpacvwFUI4CPLYdBc36P/s9im7Erfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D217VmIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B287C4CEF1;
-	Thu, 16 Oct 2025 19:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760641394;
-	bh=/svoWHeXOS5kyJXHlew/DzxM7PeeoVPP4zawYSZ0BBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D217VmIns/z5GA+fv8iF5JXLetra8+kbwzk/1qKgHsww226jfwCLdSRKYCHa2zkQc
-	 Gja7iIsZ13AIs0GduApLg2/IunDfD9KXqhPwGGEjicdzyWMYh7kOk0MJQVDmJhFqI6
-	 lLi100fx2DeAwJu8U/soLf1xfZjzbOY79+k3oG6tbMz00Z3lDOEFlYZk3DX/qzOXP6
-	 w2QFy/bA+xPTP1jr2SYF6EdNEbA7+aRIbPf8lhEob59XRqr7JfxLOZfOvvRSsCZdF3
-	 id4BqbkPJMAFTEt2/q8UjQ9OFv0sTZZ7yNPEUg2tOJCBxA72rNfGZBGWzgMTDpMSFp
-	 fZ0AoJEThsvng==
-Date: Thu, 16 Oct 2025 20:03:07 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dan Nowlin <dan.nowlin@intel.com>,
-	Qi Zhang <qi.z.zhang@intel.com>, Jie Wang <jie1x.wang@intel.com>,
-	Junfeng Guo <junfeng.guo@intel.com>,
-	Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
-	Rafal Romanowski <rafal.romanowski@intel.com>
-Subject: Re: [PATCH net-next 06/14] ice: Extend PTYPE bitmap coverage for GTP
- encapsulated flows
-Message-ID: <aPFBazc43ZYNvrz7@horms.kernel.org>
-References: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
- <20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com>
- <aPDjUeXzS1lA2owf@horms.kernel.org>
- <64d3e25a-c9d6-4a43-84dd-cffe60ac9848@intel.com>
+	s=arc-20240116; t=1760641608; c=relaxed/simple;
+	bh=fHLCYT161lb+n1QIPDAmMQL9QlVrhfJ5AaY0+ax/iK8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HwODNf/y4bVg3b7l5jwKrSxcNYT952ooBa3JH/DypfT0MzIApmrHbuBoqMD1HNPRHYs57Ne71fDS51Ofh/splOyJXFVDP8sO9rPTQZbb2CW3fFDVeWSZ1vxoPwd8zyFMxjEoEKuH4o4s5nU1ZEq9xeT1Zwy0gJj/rApRwNXlXOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p14gw84/; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso787316a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:06:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760641606; x=1761246406; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iIOb/2A/2ytYzJ0QwNwSePEDACaGWltHmU20VSHfFcI=;
+        b=p14gw84/AUTFecag4h9Xe+nQBlKKMUv4RhUlLSogaPsXcjgB8nRmqO4bDZ/VzKquDh
+         lXGfsCxChLi0n9xz2UThlZrrT8uRv4oVHnFetXlTRy76dyV2IYAIqnJgz0WSMu+xxhv8
+         uW3pmSGdD7QZ0pPknj9MFC9ubHdMYrfkXlxD/XueRXY4VomapqAk9DMF3j4m0yrwZeyU
+         fB7kbKwEQ9nyfkt3IiMrHUALToJ2lPoU6SZfxIdhH0IEK5bmargsyXeVxJyZiHYBKx72
+         JzS+f1yPUIPEAatQ/BThqpHYvsKi6uXjNJqT6yeFVvdKUTsPjsr2M2dLcAnjqKRyXSDQ
+         mr8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760641606; x=1761246406;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIOb/2A/2ytYzJ0QwNwSePEDACaGWltHmU20VSHfFcI=;
+        b=XfxzbbrF8Q42+H7GKBoLs5rzViw0dawnvliGArF8zZ6BWg8r/KRltn4mDdVTokPR5A
+         7csc6PuolK9PphtkMEL12hWxAiC6QwxEK3PELBpF3qFg7vcfiXM2hdGnUQbZe94B54ZF
+         hYQlHs5CQKvH5ujVHxmc2CHqaVdoX8OkZdZH6hPU9qHphcekIdd47G0VAZ4TYmaATAKq
+         bq2hMEY/eIOseN7WVL/1e9j1JZfkrGK5Hm46HTub0phRMIOV/83kW6q4hKM/0tChywDk
+         QidOq6BwjOt0fwiEuKlKk/IxByeG4BoAOe6gwTn/qa4E5v3B9vT5V66MvNUgjY+eZ6Yj
+         iyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVW+NAkTwMnWIP4ujpWUyygL68LwtWYlWvR1W7tLVi7pnGkkJT3yk5iS/dO29q/FFouLHblQAasuEsjimk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH5H1yPsJFIl1uS1ogpGoZ3uTmB5daYMRtSrU5z9+8hYtzrS4a
+	5sCt9EI+DPdbc/JZg1XhYRTKYphprQjLr9i4dQHurD+F6FNse/fNUMlam35Y8hx1c8olyi7xoBe
+	tYoVYqA==
+X-Google-Smtp-Source: AGHT+IG1fKP9GeKfZIf01S3NDQzTVcZoj6VlwLqo9WIAlfYNBF7WNVM9ajyc3SPTpy17QR7Cj18QLLW2Q54=
+X-Received: from pjwx4.prod.google.com ([2002:a17:90a:c2c4:b0:33b:ab7c:3147])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5281:b0:330:a301:35f4
+ with SMTP id 98e67ed59e1d1-33bcf8e95dbmr1079104a91.20.1760641606031; Thu, 16
+ Oct 2025 12:06:46 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 16 Oct 2025 12:06:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64d3e25a-c9d6-4a43-84dd-cffe60ac9848@intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251016190643.80529-1-seanjc@google.com>
+Subject: [PATCH 0/3] KVM: SVM: Unregister GALog notifier on module exit
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Hou Wenlong <houwenlong.hwl@antgroup.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 16, 2025 at 10:20:25AM -0700, Jacob Keller wrote:
-> 
-> 
-> On 10/16/2025 5:21 AM, Simon Horman wrote:
-> > On Wed, Oct 15, 2025 at 12:32:02PM -0700, Jacob Keller wrote:
-> >> From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> >>
-> >> Consolidate updates to the Protocol Type (PTYPE) bitmap definitions
-> >> across multiple flow types in the Intel ICE driver to support GTP
-> >> (GPRS Tunneling Protocol) encapsulated traffic.
-> >>
-> >> Enable improved Receive Side Scaling (RSS) configuration for both user
-> >> and control plane GTP flows.
-> >>
-> >> Cover a wide range of protocol and encapsulation scenarios, including:
-> >>  - MAC OFOS and IL
-> >>  - IPv4 and IPv6 (OFOS, IL, ALL, no-L4)
-> >>  - TCP, SCTP, ICMP
-> >>  - GRE OF
-> >>  - GTPC (control plane)
-> >>
-> >> Expand the PTYPE bitmap entries to improve classification and
-> >> distribution of GTP traffic across multiple queues, enhancing
-> >> performance and scalability in mobile network environments.
-> >>
-> >> --
-> > 
-> > Hi Jacob,
-> > 
-> > Perhaps surprisingly, git truncates the commit message at
-> > the ('--') line above. So, importantly, the tags below are absent.
-> > 
-> 
-> Its somewhat surprising, since I thought you had to use '---' for that.
-> Regardless, this shouldn't be in the commit message at all.
-> > Also, the two lines below seem out of place.
-> > 
-> >>  ice_flow.c |   54 +++++++++++++++++++++++++++---------------------------
-> >>  1 file changed, 26 insertions(+), 26 deletions(-)
-> >>
-> 
-> Yep these shouldn't have been here at all. I checked, and for some
-> reason it was included in the original message id of the patch. b4
-> happily picked it up when using b4 shazam.
-> 
-> See:
-> https://lore.kernel.org/intel-wired-lan/20250915133928.3308335-5-aleksandr.loktionov@intel.com/
-> 
-> I am not sure if this is the fault of b4, though it has different
-> behavior than other git tooling here.
+Unregister KVM's GALog notifier when kvm-amd.ko is being unloaded so that
+a spurious GALog event, e.g. due to some other bug, doesn't escalate to a
+use-after-free.
 
-TBH, I am also surprised that git truncates at '--'. I also thought
-'---'. And as this is the second time it's come up recently,
-while I don't recall seeing it before, perhaps due to some tooling change
-somewhere: e.g. interaction between git and b4.
+I deliberately didn't tag this for stable@, as shuffling the setup code
+around could easily introduce more problems than it solves, e.g. the patch
+might apply cleanly to an older kernel, but blow up at runtime due to the
+ordering being wrong.
 
-> I fixed this on my end, and can resubmit after the 24hr period if needed.
+My thought/plan is to get the fix into 6.18, where avic is first enabled by
+default, but not bother getting it into older LTS kernels.
 
-FWIIW, I'd lean towards reposting after 24h if you don't hear from one of
-the maintainers.
+Sean Christopherson (3):
+  KVM: SVM: Initialize per-CPU svm_data at the end of hardware setup
+  KVM: SVM: Unregister KVM's GALog notifier on kvm-amd.ko exit
+  KVM: SVM: Make avic_ga_log_notifier() local to avic.c
 
+ arch/x86/kvm/svm/avic.c |  8 +++++++-
+ arch/x86/kvm/svm/svm.c  | 15 +++++++++------
+ arch/x86/kvm/svm/svm.h  |  2 +-
+ 3 files changed, 17 insertions(+), 8 deletions(-)
+
+
+base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
+-- 
+2.51.0.858.gf9c4a03a3a-goog
 
 
