@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-856199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54630BE3755
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52677BE3758
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07D71A6299A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2E521A62871
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A5832D7F0;
-	Thu, 16 Oct 2025 12:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB44C32E686;
+	Thu, 16 Oct 2025 12:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJA/b4q4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEBZq8YB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C3E32D7D9;
-	Thu, 16 Oct 2025 12:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E2332D7F6;
+	Thu, 16 Oct 2025 12:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760618522; cv=none; b=O5idfPYZDu4OFz74RV4NSCf4NRp0H2xSUD7NgMcMsnVGysmCFCXCAuhXjSMh2zbSrp6bMsQVDwjxTqVQuB08wrnkiRYNln4zL0vXeobQBGQrVAFkKZShR39vebQ1IybiISCGkc+z8a+CZAAsV4/LLvvOelqdes1+cT/4Dxbpi3M=
+	t=1760618523; cv=none; b=bMwnn9kL/BfE/SXZEYZ+c+/nEyw80jzhS3o9tVgmbK5jK+Vx2oaGFw/QEKiNsofbstBYR9gjUCE/ohG2xhHa4J5wHp7EuWozUJigqwlKPA6yglzCe2LDmPX3NDYf7PJmDnQ6d+klQjaDp610d56iXAwbkyGAjIOOIXWp9y2w/Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760618522; c=relaxed/simple;
-	bh=capGskoZmjMJHMDq30MZgjnjSp0ctvHfRPAsE6z4KLg=;
+	s=arc-20240116; t=1760618523; c=relaxed/simple;
+	bh=Z4aehjljSbpZSl9H+Z3fnbGHiWGdBAMuCfju2SKXtHM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RulVQiS7xrwyvJyPlTgvI5yrDCE8LAVdtnIC+2W6qJpUCaoX6laOIXwaBuSLBAPtf6DXzWS7B4Vfa8pZQ3QOHXN4iVqLiKQ4RTFGi5SwBmiHR3CLKLc2fYaalgHYdva5DEzqvNxZXS3a0UqJB6qAEnpjRgwuBS4SA6GuIG6NMsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJA/b4q4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40AC4C4CEFE;
-	Thu, 16 Oct 2025 12:41:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RwRFcH+iKyll/Bey3BfMYtsqDNIRFX7lSVFDa5os4haVNOzEAnJzj+geXGou7NDk3DX7giSyDhlaYlyis843uCVP671+GW4HX1kU6CB5t6DaNWI0vUdnEm4FgwswBXjoZGp9hf5HkW5T3IurmWX19oDiGSEuMmKdikt7rx1qQKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEBZq8YB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1858FC4CEF1;
+	Thu, 16 Oct 2025 12:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760618520;
-	bh=capGskoZmjMJHMDq30MZgjnjSp0ctvHfRPAsE6z4KLg=;
+	s=k20201202; t=1760618522;
+	bh=Z4aehjljSbpZSl9H+Z3fnbGHiWGdBAMuCfju2SKXtHM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bJA/b4q4k13X3gyyiNae7f4498AGyd+HylQrw8Cecqj4mwpf0PpHPUfSPCzPayBVb
-	 XEVdPl3yMpZ5jPeQ1bor2ur9k+JQORr65Fop06IiHoeyTBav4RenuANXsna5dzktBL
-	 ujU5Wtj8ouhPXpOmcjjZ0HwT6JqkinFjAXZX9Ypjv2qt0p6dKRzz3N+ADmX2FTncqI
-	 lpZ70XzKlKUnkFuv/fI3KaKIVlFaCHzts6ysrfF30OSJ/95iS1krKhj9wj9R5uJgn7
-	 Vxhura0Vf7nAzr71jGdFBuoNUTQ7wbwT62TyLHj5rTISaBnlnPltBLsLhFW0SC4Vy1
-	 hCK/+ZdpgtmIg==
+	b=GEBZq8YB6PBGFEhwRXBGuQ+1J0+wnb29p64QFiTZiJSHkW7aiqm/yNXAyHrepSqsn
+	 BRMHiUmwigYxHfZHEGAXpVPcKrLsEONb8DZl4Mz9MAaIch7/m0mq4V+y+AgIT1p+gF
+	 RmjDOkcukVOdifcV7AfucxKWC906xaF8uH2DIyKXb+RMRC6WIB78ZsGrsmRmFexKq1
+	 zxk5isPX56ia12KV7qNbVFkiXW56YprvFyyyxesStYFbKWnY4yqboo/nujyRWy3SDP
+	 trdomttfphjpV6BFCrIS26pw6jFfvEvPepfxJJYD/AB58hMoZCVTjX9p/OWndRmCCI
+	 oMFSRWpQzi0lg==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Le Qi <le.qi@oss.qualcomm.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@oss.qualcomm.com
-In-Reply-To: <20251009090619.1097388-1-le.qi@oss.qualcomm.com>
-References: <20251009090619.1097388-1-le.qi@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/2] ASoC: Add QCS615 sound card support
-Message-Id: <176061851800.55339.9213487570026484712.b4-ty@kernel.org>
-Date: Thu, 16 Oct 2025 13:41:58 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Seven Lee <wtli@nuvoton.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251003-nau8821-jdet-fixes-v1-0-f7b0e2543f09@collabora.com>
+References: <20251003-nau8821-jdet-fixes-v1-0-f7b0e2543f09@collabora.com>
+Subject: Re: [PATCH 0/5] ASoC: nau8821: Fix IRQ handling and improve jack
+ detection on Steam Deck
+Message-Id: <176061852083.55339.15309551722049699564.b4-ty@kernel.org>
+Date: Thu, 16 Oct 2025 13:42:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,11 +62,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-2a268
 
-On Thu, 09 Oct 2025 17:06:17 +0800, Le Qi wrote:
-> This patch series adds support for the QCS615 sound card:
-> - Updates device tree bindings for SM8250 to include QCS615.
-> - Adds QCS615 support in the SC8280XP ASoC driver.
+On Fri, 03 Oct 2025 21:03:22 +0300, Cristian Ciocaltea wrote:
+> This patch series addresses a set of issues in the Nuvoton NAU88L21
+> audio codec driver related to interrupt handling and jack hotplug
+> detection reliability.
 > 
+> The changes focus on:
+> 
+> * Eliminating race conditions between jack insertion and ejection events
+> * Ensuring interrupts are consistently and correctly cleared before
+>   unmasking
+> * Introducing a DMI-based quirk to bypass the jack debounce circuit on
+>   Valve Steam Deck, improving detection accuracy under stress
+> * Improving robustness of the IRQ handler by avoiding unnecessary
+>   blocking operations
+> 
+> [...]
 
 Applied to
 
@@ -76,10 +85,16 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: dt-bindings: qcom,sm8250: Add QCS615 sound card
-      commit: 6079165e6e027c03e06556ff3df0ed03a34d68f0
-[2/2] ASoC: qcom: sc8280xp: Add support for QCS615
-      commit: dee4ef0ebe4dee655657ead30892aeca16462823
+[1/5] ASoC: nau8821: Cancel jdet_work before handling jack ejection
+      commit: 6e54919cb541fdf1063b16f3254c28d01bc9e5ff
+[2/5] ASoC: nau8821: Generalize helper to clear IRQ status
+      commit: 9273aa85b35cc02d0953a1ba3b7bd694e5a2c10e
+[3/5] ASoC: nau8821: Consistently clear interrupts before unmasking
+      commit: a698679fe8b0fec41d1fb9547a53127a85c1be92
+[4/5] ASoC: nau8821: Add DMI quirk to bypass jack debounce circuit
+      commit: 2b4eda7bf7d8a4e2f7575a98f55d8336dec0f302
+[5/5] ASoC: nau8821: Avoid unnecessary blocking in IRQ handler
+      commit: ee70bacef1c6050e4836409927294d744dbcfa72
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
