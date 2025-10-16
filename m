@@ -1,172 +1,176 @@
-Return-Path: <linux-kernel+bounces-856446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE2EBE42D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:19:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41763BE42EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE1519C2D5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:20:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 84FAE358FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4B93469F5;
-	Thu, 16 Oct 2025 15:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B079634DCF4;
+	Thu, 16 Oct 2025 15:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8qZYiAk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x1HrFSVh"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9827D50276;
-	Thu, 16 Oct 2025 15:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCD634AB17
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627966; cv=none; b=WBf8XoiE7ntCAoYAx4RCI9K0YApuzylwa/IGqKouKkO3O/0NFfDwhl4Ja8amrTRfQ1oqc6IDMDu89pjeAHrEI4BZ0H5IPfOsqHH5IxZwlscPlDt6S/l8nUjxo7mj3JTXgjtTOSXVOF9z5p9Yz5RxFKf5p63XdKifTLpVo8FQlLA=
+	t=1760627989; cv=none; b=sKyqPIDHFGfJxu7jMXo5155sL2vs4qP1jBvVxzC3WWvXiKf6I1ZdL9dVV5adIlG7BcSOGLis4T5nJRfR8DLO4p3IDZcpRovuidd39savov3k+jkG4PrpSZDGzZhKvtSMHfWHE3k0mszhPP0xYptUN1SijqulIeVySrsLEcGxvzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627966; c=relaxed/simple;
-	bh=VP3gpaNwuyarZ13HwFY1tS/jOZyxqpse4mkf0Tx9wvE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SJ04XgsWWJ4vGEZLrFk3UxzgB5rG76un//yQf9e6ImORodidYtxOzJlYh/O9aLCNFW45mqCWP6KY9DGD9AYXjPkx3s8UEHi9YuTHSui3u7e3PTVVcSN05+RBgkioH591WVVIrFLGxmonE51xyd99oFe1cbKMbtuS2tr7nXMcWcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8qZYiAk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A22CC4CEFB;
-	Thu, 16 Oct 2025 15:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760627966;
-	bh=VP3gpaNwuyarZ13HwFY1tS/jOZyxqpse4mkf0Tx9wvE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=X8qZYiAkaMMglo/mcmYKHi1dX8R0E6VXevv/XPLGwoum8SuO8jQhsTMAss6D8LEYv
-	 nNvSC0B43y0eVQ2Pk8Q/Qv+77HdlLbj26G+HcqBY5dQwwsR8ZYusYi3gqcBaOh9Bur
-	 815BtLbMX9KEe/MCpfQmrdbEuo14dhhboTKxKYJvNqMLMRv7Qo97IBn/6bKrvBZ7mN
-	 P5EibhukS62arTMmiUOLdPC6i8CQixP9Fv4iwZeLurNC6RF+xw816TbghU8T2MhoiZ
-	 Ro6NdDcUWkoKqfiKvhgoQpApTWfktjSnWbTtRTNleLMSQYX5s5gK7+qheZhXxudO0/
-	 kzVmbImGHnz1Q==
-Message-ID: <99d95e27637c6eeb82939d98d6aa3344b7518d89.camel@kernel.org>
-Subject: Re: [GIT PULL] NFSD changes for v6.18
-From: Trond Myklebust <trondmy@kernel.org>
-To: Chuck Lever <cel@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
-  Jeff Layton <jlayton@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Date: Thu, 16 Oct 2025 11:19:24 -0400
-In-Reply-To: <b97cea29-4ab7-4fb6-85ba-83f9830e524f@kernel.org>
-References: <20251006135010.2165-1-cel@kernel.org>
-	 <CAMuHMdVYNUBH11trBr2Mo3i_fDh5sw5AzqYbPwO7_m4H6Y3sfA@mail.gmail.com>
-	 <20251013192103.GA61714@google.com>
-	 <f3a3f734-e75a-4d93-9a89-988417d5008c@kernel.org>
-	 <96e2c0717722be57011f4670b1a6b19bb5f4ef48.camel@kernel.org>
-	 <CAMuHMdX-LN-uhecx_ZJ9DokNJQ-0maGiLij_u9LVhNk9TODFVA@mail.gmail.com>
-	 <b97cea29-4ab7-4fb6-85ba-83f9830e524f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760627989; c=relaxed/simple;
+	bh=p1hkManqbLEmcUPdUEpLpgNeA8lMmi5PhV3KbHSxIjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DWXxK48rXA+2IguUNuGJ9J0XD1y2yRg/yBpco+Q2JoFSww0UgmnPWnp5/jCG8LXpX3aGW80gaC3NiEPZmUeOeffR9nT2XGoy3y8IKacL58YCU1lN+QeD2N7H3Q21m0/f1XTGQ/B37/6S12QC3Cn84KucD05yqlHubD6yR7Ucm5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x1HrFSVh; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57e03279bfeso1000410e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760627985; x=1761232785; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/XQJbOqKvDoDR3qmpupw7hVZDh6O7Rf47/OK/uAp/8=;
+        b=x1HrFSVhkga7SKFre3fy1WLK2mdoiHzjXsvSAgRNYBS9b93JyxEtkGDjd8dCFvxO7M
+         RdTbJniLjs8ZAMlzXMef09MD6nNS6S99+aEsicx7jIreA3P0PRcIIdbCPriL8MzYwll0
+         3gvxJiKtQjXQLAlIb8UA9yR3CX7DnjdGp/RHLDpLJDO34BADOaslzeN95t+WsINZK3k3
+         tv6sDDvCD7EBxU8b93WsC5HzmtqLtKWJLkdXhBK97x45lz32QdGnhbTLD/AfARwHvctc
+         aW5nClet29GTPyQ2z5hMVKytfJ98MBdL9sGZ3whzbEKOK9EUwihOBc6z1pz0UPeIzim0
+         LN1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760627985; x=1761232785;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/XQJbOqKvDoDR3qmpupw7hVZDh6O7Rf47/OK/uAp/8=;
+        b=wsUmEKavumi05Du9U+wm+shpt37+ZY1VHa7TuHp6wj73xdEroJJIIZlNc6mJcR1dBS
+         cdiS6LTT17i1BIRXaJRhK5dt5rjVgL2Wa7WgwL2+DwbH9dkCY0THJtzjWkNYbg0RzmlG
+         nFoc1MfZioTXKAHGHoweHyzgL/agQ5QYp3cqky4TxaZpkf9IDDJTX8RXBTQoxit3arDJ
+         Gqq1qUukDDAbScMJpF9DevwvbSuUOjf03rEZ2GAeewJEGI3UvuIXXh5cjJqhXx8BQ7yG
+         qn7SbI5AuoE1Un8SNqru2BFPrCyf0yQB9HHxyxT3WUlaIKTGcMw3NB+hiaU8/CcLLZZH
+         192g==
+X-Forwarded-Encrypted: i=1; AJvYcCWOD1wbvxPkCGpWN/7k8cgytHob7G3bL1tx0Or22LBC/43HT4PNecnQYYPUv07MZmsjXgLTJ2eHNdNcDH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1SoJWTcffFcwn7bLyLdWGduqIHRVLIzZFkGkAw95XH7PnYuMq
+	fslSNLennuwIbwUd3ctvCzADebyLKBZ49ualDWPTUIMUMkNfw5NeiRxFAJjdJDSRDV0=
+X-Gm-Gg: ASbGncu7aD6O4f5nLaRSADhVsF6jDJMgonjX5xSZkVHyWVFWRy9RWDRjKt5DvVm0Ge/
+	kKKzUzLdn7L8DsHddfPTnYHDAMhmaiXWeU6VmZ7+2FQSYq8boVrBrALOc3DgJ/TMj+M6+vzP+bL
+	HVMkzYHna9WUs63Ym9o+4CN8qes8kPb8OeG8wRsQxuVuKQ+eBqpXlE+4S9p6vtywCeBOYTBtyo8
+	v+HKm+Nk3l4eGFNL27Svkb4TLH+LWmGSjrQlGC9cfjnXgeP4/n4WJeOAmeGltc/AiPMDDIy2D/q
+	k1Fs+LuVLoyelMuiYY2ra6dr9TalV0TZAPbymRlFn5jPIAYBWDUkwSorsvvkO0TeKtWNpwG27wI
+	v3EPU46NePvzcpCq9Ag4UoMg0tCChadePZr+dRaqtONvulB4jc4wFuErvmo6mM1ZAiGj14YlYC1
+	8RB38PXeYs3FWOiKVFrETYJccNinxVqGQzghE0o842Bm/9oWJnkXIVBp2k8rFT
+X-Google-Smtp-Source: AGHT+IF+GI3D/A2Y8t0ukuJaRK98VfRgBctUREszulCJr3ra3+43QykgtfUE5rGgset7s3mjRIh84Q==
+X-Received: by 2002:a05:6512:681:b0:57a:9595:5b24 with SMTP id 2adb3069b0e04-591d839512emr217368e87.7.1760627984819;
+        Thu, 16 Oct 2025 08:19:44 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5908856397csm7150663e87.75.2025.10.16.08.19.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 08:19:44 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v2 4/4] Documentation: power/cpuidle: Document the CPU system-wakeup latency QoS
+Date: Thu, 16 Oct 2025 17:19:24 +0200
+Message-ID: <20251016151929.75863-5-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251016151929.75863-1-ulf.hansson@linaro.org>
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-10-16 at 11:04 -0400, Chuck Lever wrote:
-> On 10/16/25 10:36 AM, Geert Uytterhoeven wrote:
-> > Hi Jeff,
-> >=20
-> > On Thu, 16 Oct 2025 at 16:31, Jeff Layton <jlayton@kernel.org>
-> > wrote:
-> > > On Mon, 2025-10-13 at 15:37 -0400, Chuck Lever wrote:
-> > > > On 10/13/25 3:21 PM, Eric Biggers wrote:
-> > > > > On Mon, Oct 13, 2025 at 12:15:52PM +0200, Geert Uytterhoeven
-> > > > > wrote:
-> > > > > > Hi Chuck, Eric,
-> > > > > >=20
-> > > > > > On Wed, 8 Oct 2025 at 00:05, Chuck Lever <cel@kernel.org>
-> > > > > > wrote:
-> > > > > > > Eric Biggers (4):
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SUNRPC: Make RPCSEC_GSS_KRB5 s=
-elect CRYPTO instead
-> > > > > > > of depending on it
-> > > > > >=20
-> > > > > > This is now commit d8e97cc476e33037 ("SUNRPC: Make
-> > > > > > RPCSEC_GSS_KRB5
-> > > > > > select CRYPTO instead of depending on it") in v6.18-rc1.
-> > > > > > As RPCSEC_GSS_KRB5 defaults to "y", CRYPTO is now auto-
-> > > > > > enabled in
-> > > > > > defconfigs that didn't enable it before.
-> > > > >=20
-> > > > > Now the config is:
-> > > > >=20
-> > > > > =C2=A0=C2=A0=C2=A0 config RPCSEC_GSS_KRB5
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tristate "Secure RPC: =
-Kerberos V mechanism"
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on SUNRPC
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select SUNRPC_GSS
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CRYPTO
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CRYPTO_SKCIPHER
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CRYPTO_HASH
-> > > > >=20
-> > > > > Perhaps the 'default y' should be removed?
-> > > > >=20
-> > > > > Chuck, do you know why it's there?
-> > > > The "default y" was added by 2010 commit df486a25900f ("NFS:
-> > > > Fix the
-> > > > selection of security flavours in Kconfig"), then modified
-> > > > again by
-> > > > commit e3b2854faabd ("SUNRPC: Fix the SUNRPC Kerberos V
-> > > > RPCSEC_GSS
-> > > > module dependencies") in 2011.
-> > > >=20
-> > > > Copying Trond, the author of both of those patches.
-> > >=20
-> > > Looking at this a bit closer, maybe a patch like this is what we
-> > > want?
-> > > This should make it so that we only enable RPCSEC_GSS_KRB5 if
-> > > CRYPTO is
-> > > already enabled:
-> > >=20
-> > > diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
-> > > index 984e0cf9bf8a..d433626c7917 100644
-> > > --- a/net/sunrpc/Kconfig
-> > > +++ b/net/sunrpc/Kconfig
-> > > @@ -19,9 +19,8 @@ config SUNRPC_SWAP
-> > > =C2=A0config RPCSEC_GSS_KRB5
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tristate "Secure RPC: Kerb=
-eros V mechanism"
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on SUNRPC
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y if CRYPTO
-> >=20
-> > This merely controls the default, the user can still override it.
-> > Implementing your suggestion above would mean re-adding "depends on
-> > CRYPTO", i.e. reverting commit d8e97cc476e33037.
-> >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select SUNRPC_GSS
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CRYPTO
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CRYPTO_SKCIPHER
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CRYPTO_HASH
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
-> >=20
-> > Gr{oetje,eeting}s,
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Geert
-> >=20
->=20
-> The graph of dependencies and selects between NFS, NFSD, and SUNRPC
-> is
-> brittle, unfortunately. I suggest reverting d8e97cc476e33037 for now
-> while a proper solution is worked out and then tested.
->=20
+Let's document how the new CPU system-wakeup latency QoS can be used from
+user space, along with how the corresponding latency constraint gets
+respected during s2idle.
 
-Yes. The reason why I went for the weaker 'default y if ...' and
-'depends on ...' is precisely because 'select' is so brittle, and at
-the time others advised against using it for more complicated
-situations such as this. The crypto code has a number of dependencies,
-and those have been known to change both over time and across hardware
-platforms.
+Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+Changes in v2:
+	- New patch.
+
+---
+ Documentation/admin-guide/pm/cpuidle.rst | 7 +++++++
+ Documentation/power/pm_qos_interface.rst | 9 +++++----
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/admin-guide/pm/cpuidle.rst b/Documentation/admin-guide/pm/cpuidle.rst
+index 0c090b076224..3f6f79a9bc8f 100644
+--- a/Documentation/admin-guide/pm/cpuidle.rst
++++ b/Documentation/admin-guide/pm/cpuidle.rst
+@@ -580,6 +580,13 @@ the given CPU as the upper limit for the exit latency of the idle states that
+ they are allowed to select for that CPU.  They should never select any idle
+ states with exit latency beyond that limit.
+ 
++While the above CPU QoS constraints applies to a running system, user space may
++also request a CPU system-wakeup latency QoS limit, via the `cpu_wakeup_latency`
++file.  This QoS constraint is respected when selecting a suitable idle state
++for the CPUs, while entering the system-wide suspend-to-idle sleep state.
++
++Note that, in regards how to manage the QoS request from user space for the
++`cpu_wakeup_latency` file, it works according to the `cpu_dma_latency` file.
+ 
+ Idle States Control Via Kernel Command Line
+ ===========================================
+diff --git a/Documentation/power/pm_qos_interface.rst b/Documentation/power/pm_qos_interface.rst
+index 5019c79c7710..723f4714691a 100644
+--- a/Documentation/power/pm_qos_interface.rst
++++ b/Documentation/power/pm_qos_interface.rst
+@@ -55,7 +55,8 @@ int cpu_latency_qos_request_active(handle):
+ 
+ From user space:
+ 
+-The infrastructure exposes one device node, /dev/cpu_dma_latency, for the CPU
++The infrastructure exposes two separate device nodes, /dev/cpu_dma_latency for
++the CPU latency QoS and /dev/cpu_wakeup_latency for the CPU system-wakeup
+ latency QoS.
+ 
+ Only processes can register a PM QoS request.  To provide for automatic
+@@ -63,15 +64,15 @@ cleanup of a process, the interface requires the process to register its
+ parameter requests as follows.
+ 
+ To register the default PM QoS target for the CPU latency QoS, the process must
+-open /dev/cpu_dma_latency.
++open /dev/cpu_dma_latency. To register a CPU system-wakeup QoS limit, the
++process must open /dev/cpu_wakeup_latency.
+ 
+ As long as the device node is held open that process has a registered
+ request on the parameter.
+ 
+ To change the requested target value, the process needs to write an s32 value to
+ the open device node.  Alternatively, it can write a hex string for the value
+-using the 10 char long format e.g. "0x12345678".  This translates to a
+-cpu_latency_qos_update_request() call.
++using the 10 char long format e.g. "0x12345678".
+ 
+ To remove the user mode request for a target value simply close the device
+ node.
+-- 
+2.43.0
+
 
