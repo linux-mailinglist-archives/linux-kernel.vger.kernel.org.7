@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-856365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8BEBE3FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8765BE3FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40E7B4E3C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE80586C38
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605B53469E3;
-	Thu, 16 Oct 2025 14:47:09 +0000 (UTC)
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B30346A1E;
+	Thu, 16 Oct 2025 14:47:11 +0000 (UTC)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8943451D4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8258F3451BE
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626028; cv=none; b=q+y7i87o0QgcvVQdbrTWiWGEa1rsdODqf+jGo7NMp37bb5Q4la8EM6ORjKANNcJdnn3IWoofVFq70mvyCP2US5dJMsmY1AtBrdwVwwWB4ZwR1nhgugwCGd9/HfEDWSZCnfEMZ9bsi8BSmm7VOHPIP1vsz7jkO2eGaJXThQpDhVs=
+	t=1760626030; cv=none; b=l5yDJJfm9XTyfqG7OTEYFlTl/+RUF+S3rhu5X6pTP10HNaM/a8yl7hBa6qUNJ8HY7Y+o/2pTU54R23LpCBTjYs4AaH7dE+jjWgjrFv+QV0+NRsToQ5YO0iUfII1eNDoYNTw2ClGtSSCGphm3V64sxSBzi/qqWenW+wY3nlmcbFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626028; c=relaxed/simple;
-	bh=qrYx4OQbtVttMxYPNSKZyKUM/2EziepE/DMT9sZuO9M=;
+	s=arc-20240116; t=1760626030; c=relaxed/simple;
+	bh=4PkymEnoVdRtepOzzfqNBr9XSbvC+t1sAFB6PLtH3vg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MkDipp+oaAqHfO27lZ8qwPopnkpZbbSw8VG2TUPfE26ONobi87cI0d/9DJUObPsgSzdMqOYrF2SAcFZ53rSd+uAElbDdJ/XD6W0MA4xaHHWrE6iQy4BFeavyl2e/WgJ41uj2WzbRGx6PrVMrTDmEQEYy0pnd/jmRYN4YjKOhSd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=yonch.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.44
+	 MIME-Version; b=j+N+ZPz79wt8HFH2F1EcFJoW3W0uTglG1Be5YVoU0OkZMpv51zemZH3slDqx/8qt7Uzn9ZvQj2+QQeGdC2WZIC2/4vWfobpRvRs6KqoeMGHU2lfVB8CNXFZs6BWV0vYEt9HdDIgOJu+UBYN1rxweEfKCSwkK/Gvmj/xHy6I7lF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=yonch.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=yonch.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-651c521980cso201222eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:47:07 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7ae21804971so280075a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:47:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760626026; x=1761230826;
+        d=1e100.net; s=20230601; t=1760626027; x=1761230827;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P6FTC4pXxezWlArm57ZmRQwBfAYH7sPfczRlTm0tzCY=;
-        b=KJ+EGm9BsgG/veLP+hLNS51rIoOSHDkUyxwHy7KHUrudKGUcxfvnYzSm6UCAVkk6Pu
-         uBSSBZXBjHbu2ZXT0TfC8DUi8Fpeg9E9LSeLp0lh7UJpRq7V1HyeeqwAPZytmHwh1/hU
-         sLImSicyMeUEiP/tGHt0fcb6Sm8hkvLdPinLETlBTTMa0lGBjvBoN9N1adLaa7p3MLrQ
-         okamhjqndIBJPIt2hH8LwZC60a1CF6gP2F9ghsmkFyTmnerFBO+5dh0PGNci1XL3GYpm
-         qG5TP+orTDFk/9o5UA2HHxrbIDvAy65IP23xnKzL/RjEUdoqND/fSg7YPXCuWM/nXTf8
-         +olQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnB5Coeqxr5Ftd3A//00NxSq4On7FsmV8YuN6mqOhLKLieygWkVZv1s6wFfIXtOvs9ocU64eYXw9Ef1aY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbrR/yBxQx4mqT36TftrVD4DEu0IMIOpPJhGYfiOkOFHjKFHuW
-	OFxOwfR8HMugE6Enb6EO8P1BnMLqABmeOcB4YtvMVjUkI8uMz31KdBZk
-X-Gm-Gg: ASbGncuSPZBvgn+lg1FTq596VH1rX8sRrycpHvuBAnnr1XJqpovqqQLigSVCp9vXER8
-	1huKiHm+0hLE7syk4K3ygZJEVO5wCDzEh3vzXIC/E647seljIYE0Pj0LHQBjpEAZPF4h7Sh0q+G
-	e/60K1qaa4nEk1QqLcMLnrnUE0aUR19VdKcR7eG11G7OMrCO5tQ2Mw9JBvw9ySDq+TbzL439ww4
-	cIsWodIWv1ICy+DINNoiduRvnKuxTT0IEIbSQZ82p9ZzVMmm6cA/bqIM187P6fA/NR9ZZFb7Tvo
-	aE0CPNsQYZg9Qvm2EDAGaUM24q5JvoAi44V6q6RbiRAP6uPi6Q4nJhq9G9+4uGBrkQwOmJKIWvf
-	H6s5MMsuxpgWXok86KpHiZiTMn2lXbkv/+y/EvANC8F7UgKvy3RSgp4LiYzR2yfjS88i9B9rsx/
-	FCkaFKdfB18DoIDuHL662EF6ax/ANG1DfhRlvi6hwBeX2DiHOtovyHDFYsV1iXHXhikQI=
-X-Google-Smtp-Source: AGHT+IEqY0Itcc1XjdzEUHZg7NibgLkNaNHb6IF/rm8TnzxUng5S0hLv2Izsxr0tjhoHkMDieMlXEQ==
-X-Received: by 2002:a05:6808:4f0a:b0:441:fb07:c178 with SMTP id 5614622812f47-443a2ed0503mr112853b6e.8.1760626026415;
-        Thu, 16 Oct 2025 07:47:06 -0700 (PDT)
+        bh=Ur3B9LnadG5KKvwOBpgGnRJ5DQSqBj6YAeCWZFDvocU=;
+        b=EeA//vC+ZyCgtb3NyOUf4LcDlGlM2ZtHqYfDzmzJKq5WkU6fKJUPRUISR+bHhsOcHg
+         Fa5yz9BK/erJ5tUBq9+NbTr8Q49Iqzt+2Z/LrNy9UnmRNsKv1iChlm1kDOVgeWDT3wuk
+         Ur8uEG4TpDp6tndsiWYiBwKoa1UJnYzzCzSVJmy99N09Adf3VYL1f/hM0fpb00gpMzSN
+         EzFS/HVM76YmgiIXLww5MB9dc3L13+Mko3MO1z7S71tsKgja8OMmy8ihWSvsW7wPPsIO
+         YRt3M84Jo6v+dv9jKp/Uyr+H+lq0Z1vgjK9kMwC3/Ss5iG5ldpVDtc8IhH6LVQCTyHmc
+         bNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrhrHHdPekByw52jTkJHW4kAvRTaJ7v6tgS7weXqbKe9ZgDhUOURm8NKo2o699Qna+iTVY4+VIw1Dl1qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUkhgPHyptPEiAWBlfNKPq2AFDRbtk2SrQD3OgjMeYUE38k2U6
+	HGSmCNpW5NAfP8W15qKmVKOE/FTFWX1EWTjq5blFJAqDvpkejTJ5MKBl
+X-Gm-Gg: ASbGncsC7377Dw7YNpZv87iwpwdjKMFbfiTcndKgnjBjSYRJU+NDxs12ZD4LvSKp1U9
+	xHP5+2bP2/lWScR6sQPPd9WqruK8mkkpyjoeTbcfw7YHh9Y/K/TfoH+oJ+aOqwoWeDpkhkB/1DW
+	qeFulgd58itTyVC0TDBPpChPEYabXlaioszXj3s2R/+ZnUYmCm6Xj6IsbiJU4o9Ic037Y1zDEjp
+	DU+tCWRPkcIpjmb0byhBCmm4ceTgk6Ma37A8B0pqIOavZT4NLK593vYButmviZvleWtY2Ry+XKR
+	sboWbewFDy2o6WHapqRV+AhTE9AfUOCF+UaM4OoP4SzqFJE0Q4YiIVgp6keFAUDYP6OHQpFPwfy
+	cZAtGJYj8i1oQssZsH70cKu+uqnbcrKU6sc2m/GYWRwW5umT7iek5FmP2N6EkC7MmHPGsT+O5sF
+	oHnG8anOu4FMsrlRv/wsoiffxhDcQ93ynNLi/4UQrVVUVS2RPAhnJwOsmh/k2euY24YHE=
+X-Google-Smtp-Source: AGHT+IH6p3EoDt2Q2OjQfChqhrM9XWfpgsCGhAglt0qBiNiKR3HS881D+1RpYhTtN0m0f3G7oz8JfQ==
+X-Received: by 2002:a05:6808:18a7:b0:438:8ad:16b9 with SMTP id 5614622812f47-443a30d1062mr72092b6e.32.1760626027423;
+        Thu, 16 Oct 2025 07:47:07 -0700 (PDT)
 Received: from localhost.localdomain (syn-067-079-108-173.biz.spectrum.com. [67.79.108.173])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-441cc812f24sm3678018b6e.12.2025.10.16.07.47.05
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-441cc812f24sm3678018b6e.12.2025.10.16.07.47.06
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 16 Oct 2025 07:47:06 -0700 (PDT)
+        Thu, 16 Oct 2025 07:47:07 -0700 (PDT)
 From: Jonathan Perry <yonch@yonch.com>
 To: Tony Luck <tony.luck@intel.com>,
 	Reinette Chatre <reinette.chatre@intel.com>,
@@ -69,9 +69,9 @@ Cc: linux-kselftest@vger.kernel.org,
 	James Morse <james.morse@arm.com>,
 	Roman Storozhenko <romeusmeister@gmail.com>,
 	Jonathan Perry <yonch@yonch.com>
-Subject: [PATCH 5/8] resctrl: Propagate CPU mask validation error via rr->err
-Date: Thu, 16 Oct 2025 09:46:53 -0500
-Message-ID: <20251016144656.74928-6-yonch@yonch.com>
+Subject: [PATCH 6/8] resctrl/pmu: Introduce skeleton PMU and selftests
+Date: Thu, 16 Oct 2025 09:46:54 -0500
+Message-ID: <20251016144656.74928-7-yonch@yonch.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20251016144656.74928-1-yonch@yonch.com>
 References: <20251016144656.74928-1-yonch@yonch.com>
@@ -83,46 +83,522 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When __mon_event_count() rejects a CPU because it is not in the
-domain's mask (or does not match the cacheinfo domain), it returned
--EINVAL but did not set rr->err. mon_event_count() then discarded the
-return value, which made failures harder to diagnose.
+Register a read-only "resctrl" PMU and implement minimal perf hooks
+(event_init, add, del, start, stop, read, destroy). The PMU accepts a
+resctrl monitoring file descriptor via attr.config, resolves the
+rdtgroup, and pins it for the event's lifetime.
 
-Set rr->err = -EINVAL before returning in both validation checks so
-the error is visible to callers and can trigger WARN_ONCE() in the
-PMU .read path.
+Call PMU init/exit in resctrl_init()/resctrl_exit().
+
+Add a selftest to exercise PMU registration and verify that only
+allowed monitoring files can be opened via perf.
 
 Signed-off-by: Jonathan Perry <yonch@yonch.com>
 ---
- fs/resctrl/monitor.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/resctrl/Makefile                           |   2 +-
+ fs/resctrl/internal.h                         |  12 ++
+ fs/resctrl/pmu.c                              | 139 ++++++++++++
+ fs/resctrl/rdtgroup.c                         |  53 +++++
+ tools/testing/selftests/resctrl/pmu_test.c    | 202 ++++++++++++++++++
+ tools/testing/selftests/resctrl/resctrl.h     |   1 +
+ .../testing/selftests/resctrl/resctrl_tests.c |   1 +
+ 7 files changed, 409 insertions(+), 1 deletion(-)
+ create mode 100644 fs/resctrl/pmu.c
+ create mode 100644 tools/testing/selftests/resctrl/pmu_test.c
 
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index 4076336fbba6..4d19c2ec823f 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -445,8 +445,10 @@ static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
+diff --git a/fs/resctrl/Makefile b/fs/resctrl/Makefile
+index e67f34d2236a..f738b0165ccc 100644
+--- a/fs/resctrl/Makefile
++++ b/fs/resctrl/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_RESCTRL_FS)		+= rdtgroup.o ctrlmondata.o monitor.o
++obj-$(CONFIG_RESCTRL_FS)		+= rdtgroup.o ctrlmondata.o monitor.o pmu.o
+ obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
  
- 	if (rr->d) {
- 		/* Reading a single domain, must be on a CPU in that domain. */
--		if (!cpumask_test_cpu(cpu, &rr->d->hdr.cpu_mask))
-+		if (!cpumask_test_cpu(cpu, &rr->d->hdr.cpu_mask)) {
-+			rr->err = -EINVAL;
- 			return -EINVAL;
-+		}
- 		if (rr->is_mbm_cntr)
- 			rr->err = resctrl_arch_cntr_read(rr->r, rr->d, closid, rmid, cntr_id,
- 							 rr->evtid, &tval);
-@@ -462,8 +464,10 @@ static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
- 	}
+ # To allow define_trace.h's recursive include:
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index 486cbca8d0ec..b42c625569a8 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -4,6 +4,7 @@
  
- 	/* Summing domains that share a cache, must be on a CPU for that cache. */
--	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map))
-+	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map)) {
-+		rr->err = -EINVAL;
- 		return -EINVAL;
+ #include <linux/resctrl.h>
+ #include <linux/kernfs.h>
++#include <linux/fs.h>
+ #include <linux/fs_context.h>
+ #include <linux/tick.h>
+ 
+@@ -362,6 +363,17 @@ void mon_event_count(void *info);
+ int rdtgroup_mondata_show(struct seq_file *m, void *arg);
+ int rdtgroup_mondata_open(struct kernfs_open_file *of);
+ void rdtgroup_mondata_release(struct kernfs_open_file *of);
++void rdtgroup_get(struct rdtgroup *rdtgrp);
++void rdtgroup_put(struct rdtgroup *rdtgrp);
++
++/* PMU support */
++/*
++ * Get rdtgroup from a resctrl monitoring file and take a reference.
++ * Returns a valid pointer with an extra reference on success, or ERR_PTR on failure.
++ */
++struct rdtgroup *rdtgroup_get_from_file(struct file *file);
++int resctrl_pmu_init(void);
++void resctrl_pmu_exit(void);
+ 
+ void rmid_read_init(struct rmid_read *rr, struct rdt_resource *r,
+ 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+diff --git a/fs/resctrl/pmu.c b/fs/resctrl/pmu.c
+new file mode 100644
+index 000000000000..e7915a0a3520
+--- /dev/null
++++ b/fs/resctrl/pmu.c
+@@ -0,0 +1,139 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Perf event access to resctrl monitoring (cache occupancy, memory bandwidth)
++ */
++
++#define pr_fmt(fmt) "resctrl_pmu: " fmt
++
++#include <linux/kernel.h>
++#include <linux/perf_event.h>
++#include <linux/errno.h>
++#include <linux/file.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/seq_file.h>
++#include "internal.h"
++
++static struct pmu resctrl_pmu;
++
++/*
++ * Event private data - stores information about the monitored resctrl group
++ */
++struct resctrl_pmu_event {
++	struct rdtgroup *rdtgrp;	/* Reference to rdtgroup being monitored */
++};
++
++static void resctrl_event_destroy(struct perf_event *event);
++
++/*
++ * Initialize a new resctrl perf event
++ * The config field contains the file descriptor of the monitoring file
++ */
++static int resctrl_event_init(struct perf_event *event)
++{
++	struct resctrl_pmu_event *resctrl_event;
++	struct file *file;
++	struct rdtgroup *rdtgrp;
++	int fd;
++	int ret;
++
++	fd = (int)event->attr.config;
++	if (fd < 0)
++		return -EINVAL;
++
++	file = fget(fd);
++	if (!file)
++		return -EBADF;
++
++	/* Resolve rdtgroup from the monitoring file and take a reference */
++	rdtgrp = rdtgroup_get_from_file(file);
++	fput(file);
++	if (IS_ERR(rdtgrp))
++		return PTR_ERR(rdtgrp);
++
++	resctrl_event = kzalloc(sizeof(*resctrl_event), GFP_KERNEL);
++	if (!resctrl_event) {
++		rdtgroup_put(rdtgrp);
++		return -ENOMEM;
 +	}
++
++	resctrl_event->rdtgrp = rdtgrp;
++	event->pmu_private = resctrl_event;
++	event->destroy = resctrl_event_destroy;
++
++	return 0;
++}
++
++static void resctrl_event_destroy(struct perf_event *event)
++{
++	struct resctrl_pmu_event *resctrl_event = event->pmu_private;
++
++	if (resctrl_event) {
++		struct rdtgroup *rdtgrp = resctrl_event->rdtgrp;
++
++		if (rdtgrp)
++			rdtgroup_put(rdtgrp);
++
++		kfree(resctrl_event);
++		event->pmu_private = NULL;
++	}
++}
++
++static void resctrl_event_update(struct perf_event *event)
++{
++	/* Currently just a stub - would read actual cache occupancy here */
++	local64_set(&event->hw.prev_count, 0);
++}
++
++static void resctrl_event_start(struct perf_event *event, int flags)
++{
++	resctrl_event_update(event);
++}
++
++static void resctrl_event_stop(struct perf_event *event, int flags)
++{
++	if (flags & PERF_EF_UPDATE)
++		resctrl_event_update(event);
++}
++
++static int resctrl_event_add(struct perf_event *event, int flags)
++{
++	if (flags & PERF_EF_START)
++		resctrl_event_start(event, flags);
++
++	return 0;
++}
++
++static void resctrl_event_del(struct perf_event *event, int flags)
++{
++	resctrl_event_stop(event, PERF_EF_UPDATE);
++}
++
++static struct pmu resctrl_pmu = {
++	.task_ctx_nr	= perf_invalid_context,
++	.event_init	= resctrl_event_init,
++	.add		= resctrl_event_add,
++	.del		= resctrl_event_del,
++	.start		= resctrl_event_start,
++	.stop		= resctrl_event_stop,
++	.read		= resctrl_event_update,
++	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT | PERF_PMU_CAP_NO_EXCLUDE,
++};
++
++int resctrl_pmu_init(void)
++{
++	int ret;
++
++	ret = perf_pmu_register(&resctrl_pmu, "resctrl", -1);
++	if (ret) {
++		pr_err("Failed to register resctrl PMU: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++void resctrl_pmu_exit(void)
++{
++	perf_pmu_unregister(&resctrl_pmu);
++}
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 34337abe5345..4f4139edafbf 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -3428,6 +3428,53 @@ void rdtgroup_mondata_release(struct kernfs_open_file *of)
+ 	}
+ }
  
- 	/*
- 	 * Legacy files must report the sum of an event across all
++/*
++ * rdtgroup_get_from_file - Resolve rdtgroup from a resctrl mon data file
++ * @file: struct file opened on a resctrl monitoring data file
++ *
++ * Validate that @file belongs to resctrl and refers to a monitoring data
++ * file (kf_mondata_ops). Then, using the kernfs_open_file stored in the
++ * seq_file, safely fetch the rdtgroup that was pinned at open time and take
++ * an additional rdtgroup reference for the caller under rdtgroup_mutex.
++ *
++ * Returns: rdtgroup* with an extra reference on success; ERR_PTR on failure.
++ */
++struct rdtgroup *rdtgroup_get_from_file(struct file *file)
++{
++	struct rdtgroup *rdtgrp = NULL;
++	struct kernfs_open_file *of;
++	struct seq_file *seq;
++	struct inode *inode;
++
++	if (!file)
++		return ERR_PTR(-EBADF);
++
++	inode = file_inode(file);
++	/* Check the file is part of the resctrl filesystem */
++	if (!inode || !inode->i_sb || inode->i_sb->s_type != &rdt_fs_type)
++		return ERR_PTR(-EINVAL);
++
++	/* kernfs monitoring files use seq_file; seq_file->private is kernfs_open_file */
++	seq = (struct seq_file *)file->private_data;
++	if (!seq)
++		return ERR_PTR(-EINVAL);
++
++	of = (struct kernfs_open_file *)seq->private;
++	/* Check this is a monitoring file */
++	if (!of || !of->kn || of->kn->attr.ops != &kf_mondata_ops)
++		return ERR_PTR(-EINVAL);
++
++	/* Hold rdtgroup_mutex to prevent race with release callback */
++	guard(mutex)(&rdtgroup_mutex);
++
++	rdtgrp = of->priv;
++	if (!rdtgrp || (rdtgrp->flags & RDT_DELETED))
++		return ERR_PTR(-ENOENT);
++
++	rdtgroup_get(rdtgrp);
++	return rdtgrp;
++}
++
+ /**
+  * cbm_ensure_valid - Enforce validity on provided CBM
+  * @_val:	Candidate CBM
+@@ -4509,6 +4556,10 @@ int resctrl_init(void)
+ 	 */
+ 	debugfs_resctrl = debugfs_create_dir("resctrl", NULL);
+ 
++	ret = resctrl_pmu_init();
++	if (ret)
++		pr_warn("Failed to initialize resctrl PMU: %d\n", ret);
++
+ 	return 0;
+ 
+ cleanup_mountpoint:
+@@ -4558,6 +4609,8 @@ static bool resctrl_online_domains_exist(void)
+  */
+ void resctrl_exit(void)
+ {
++	resctrl_pmu_exit();
++
+ 	cpus_read_lock();
+ 	WARN_ON_ONCE(resctrl_online_domains_exist());
+ 
+diff --git a/tools/testing/selftests/resctrl/pmu_test.c b/tools/testing/selftests/resctrl/pmu_test.c
+new file mode 100644
+index 000000000000..29a0ac329619
+--- /dev/null
++++ b/tools/testing/selftests/resctrl/pmu_test.c
+@@ -0,0 +1,202 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Resctrl PMU test
++ *
++ * Test program to verify the resctrl PMU functionality.
++ * Walks resctrl filesystem and verifies only allowed files can be
++ * used with the resctrl PMU via perf_event_open.
++ */
++
++#include "resctrl.h"
++#include <fcntl.h>
++#include <dirent.h>
++
++#define RESCTRL_PMU_NAME "resctrl"
++
++static int find_pmu_type(const char *pmu_name)
++{
++	char path[256];
++	FILE *file;
++	int type;
++
++	snprintf(path, sizeof(path), "/sys/bus/event_source/devices/%s/type",
++		 pmu_name);
++
++	file = fopen(path, "r");
++	if (!file) {
++		ksft_print_msg("Failed to open %s: %s\n", path,
++			       strerror(errno));
++		return -1;
++	}
++
++	if (fscanf(file, "%d", &type) != 1) {
++		ksft_print_msg("Failed to read PMU type from %s\n", path);
++		fclose(file);
++		return -1;
++	}
++
++	fclose(file);
++	return type;
++}
++
++static bool is_allowed_file(const char *filename)
++{
++	const char *base;
++
++	/* Only exact llc_occupancy and mbm files (no *_config) are allowed */
++	base = strrchr(filename, '/');
++	base = base ? base + 1 : filename;
++
++	return (!strcmp(base, "llc_occupancy") ||
++		!strcmp(base, "mbm_total_bytes") ||
++		!strcmp(base, "mbm_local_bytes"));
++}
++
++static int test_file_safety(int pmu_type, const char *filepath)
++{
++	struct perf_event_attr pe = { 0 };
++	int fd, perf_fd;
++	bool should_succeed;
++
++	/* Try to open the file */
++	fd = open(filepath, O_RDONLY);
++	if (fd < 0) {
++		/* File couldn't be opened, skip it */
++		return 0;
++	}
++
++	should_succeed = is_allowed_file(filepath);
++
++	/* Setup perf event attributes */
++	pe.type = pmu_type;
++	pe.config = fd;
++	pe.size = sizeof(pe);
++	pe.disabled = 1;
++	pe.exclude_kernel = 0;
++	pe.exclude_hv = 0;
++
++	/* Try to open the perf event */
++	perf_fd = perf_event_open(&pe, -1, 0, -1, 0);
++
++	if (should_succeed) {
++		if (perf_fd < 0) {
++			ksft_print_msg("FAIL: unexpected - perf_event_open failed for %s: %s\n",
++				       filepath, strerror(errno));
++			close(fd);
++			return -1;
++		}
++		ksft_print_msg("PASS: Allowed file %s successfully opened perf event\n",
++			       filepath);
++		close(perf_fd);
++	} else {
++		if (perf_fd >= 0) {
++			ksft_print_msg("FAIL: unexpected - perf_event_open succeeded for %s\n",
++				       filepath);
++			close(perf_fd);
++			close(fd);
++			return -1;
++		}
++		ksft_print_msg("PASS: Blocked file %s correctly failed perf_event_open: %s\n",
++			       filepath, strerror(errno));
++	}
++
++out:
++	close(fd);
++	return 0;
++}
++
++static int walk_directory_recursive(int pmu_type, const char *dir_path)
++{
++	DIR *dir;
++	struct dirent *entry;
++	char full_path[1024];
++	struct stat statbuf;
++	int ret = 0;
++
++	dir = opendir(dir_path);
++	if (!dir) {
++		ksft_print_msg("Failed to open directory %s: %s\n", dir_path,
++			       strerror(errno));
++		return -1;
++	}
++
++	while ((entry = readdir(dir)) != NULL) {
++		/* Skip . and .. */
++		if (strcmp(entry->d_name, ".") == 0 ||
++		    strcmp(entry->d_name, "..") == 0)
++			continue;
++
++		snprintf(full_path, sizeof(full_path), "%s/%s", dir_path,
++			 entry->d_name);
++
++		if (stat(full_path, &statbuf) != 0) {
++			ksft_print_msg("Failed to stat %s: %s\n", full_path,
++				       strerror(errno));
++			continue;
++		}
++
++		if (S_ISDIR(statbuf.st_mode)) {
++			/* Recursively walk subdirectories */
++			if (walk_directory_recursive(pmu_type, full_path) != 0)
++				ret = -1;
++		} else if (S_ISREG(statbuf.st_mode)) {
++			/* Test regular files */
++			if (test_file_safety(pmu_type, full_path) != 0)
++				ret = -1;
++		}
++	}
++
++	closedir(dir);
++	return ret;
++}
++
++static int test_resctrl_pmu_safety(int pmu_type)
++{
++	ksft_print_msg("Testing resctrl PMU safety - walking all files in %s\n",
++		       RESCTRL_PATH);
++
++	/* Walk through all files and directories in /sys/fs/resctrl */
++	return walk_directory_recursive(pmu_type, RESCTRL_PATH);
++}
++
++static bool pmu_feature_check(const struct resctrl_test *test)
++{
++	return resctrl_mon_feature_exists("L3_MON", "llc_occupancy");
++}
++
++static int pmu_run_test(const struct resctrl_test *test,
++			const struct user_params *uparams)
++{
++	int pmu_type, ret;
++
++	ksft_print_msg("Testing resctrl PMU file access safety\n");
++
++	/* Find the resctrl PMU type */
++	pmu_type = find_pmu_type(RESCTRL_PMU_NAME);
++	if (pmu_type < 0) {
++		ksft_print_msg("Resctrl PMU not found - PMU is not registered?\n");
++		return -1;
++	}
++
++	ksft_print_msg("Found resctrl PMU with type: %d\n", pmu_type);
++
++	/* Run the safety test to ensure only appropriate files work */
++	ret = test_resctrl_pmu_safety(pmu_type);
++
++	if (ret == 0)
++		ksft_print_msg("Resctrl PMU safety test completed successfully\n");
++	else
++		ksft_print_msg("Resctrl PMU safety test failed\n");
++
++	return ret;
++}
++
++struct resctrl_test pmu_test = {
++	.name = "PMU",
++	.group = "pmu",
++	.resource = "L3",
++	.vendor_specific = 0,
++	.feature_check = pmu_feature_check,
++	.run_test = pmu_run_test,
++	.cleanup = NULL,
++};
+diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
+index cd3adfc14969..5b0e6074eaba 100644
+--- a/tools/testing/selftests/resctrl/resctrl.h
++++ b/tools/testing/selftests/resctrl/resctrl.h
+@@ -244,5 +244,6 @@ extern struct resctrl_test cmt_test;
+ extern struct resctrl_test l3_cat_test;
+ extern struct resctrl_test l3_noncont_cat_test;
+ extern struct resctrl_test l2_noncont_cat_test;
++extern struct resctrl_test pmu_test;
+ 
+ #endif /* RESCTRL_H */
+diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
+index 5154ffd821c4..11ba9000e015 100644
+--- a/tools/testing/selftests/resctrl/resctrl_tests.c
++++ b/tools/testing/selftests/resctrl/resctrl_tests.c
+@@ -21,6 +21,7 @@ static struct resctrl_test *resctrl_tests[] = {
+ 	&l3_cat_test,
+ 	&l3_noncont_cat_test,
+ 	&l2_noncont_cat_test,
++	&pmu_test,
+ };
+ 
+ static int detect_vendor(void)
 
