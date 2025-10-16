@@ -1,167 +1,256 @@
-Return-Path: <linux-kernel+bounces-856628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7651CBE4A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:42:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ECDBE4A47
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0DAB3A6818
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE2319A4BE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57832AADE;
-	Thu, 16 Oct 2025 16:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668D732D7F7;
+	Thu, 16 Oct 2025 16:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kt+JWI8J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rn1e3UAc"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376262DEA9E;
-	Thu, 16 Oct 2025 16:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076EF32BF24
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632885; cv=none; b=AMam6uSFa64zXUsJ8NOIk6qtGk0L2BiUMbHtVmt0p9Yw4e7rChSuogM9EaXXIE2wqul8fAS/txS1N53l6pXVkJpInXPH0+VoJV8IW0+f8oGFeJkPp9dfGXL11nkqC5ZV35Ef1zU2bq8tZ4j0i0/KflEZQV2BcMG7tOhQOqwvJoE=
+	t=1760632889; cv=none; b=We0QTxri+yflCNC/+AtnmXmzF6U4dj5XAoIsdH1VAVHBgiwUGnH3y24JNIFsZiYl06BL5LsA4D7VCVJZz4kjoElCHynNYyJZErLoYFoFuD/SvFL68fw06hTjwCW/kB1XGfeiqsmVMkb8O/PuSdevZrINnytHlwUlOB2xn7K+s88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632885; c=relaxed/simple;
-	bh=IbSqzMhYdlbV68FwRqfdNa92zx5pPJVeMmzUDWHgwuE=;
+	s=arc-20240116; t=1760632889; c=relaxed/simple;
+	bh=geONzcfOeXMyRbZUgBQXV9kWfbK6WvS2Ps7xuTXrr8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHQlKgjL2YQ175av2P48tC+Z7Jdt2hn3YLnKCZamAGAZc5sGsnC40eYZu3oD70W5++0lWTEh3AMoW/b6mbJBGaqec5f2L/pkZCqLcQ0iIaH0htaqDKeZXyw/qz6lrG1pAtmglYcIcn/XIxnv2JsFgKk2lxEGKcNcFmbB5z1/Td4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kt+JWI8J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D924C4CEF1;
-	Thu, 16 Oct 2025 16:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760632884;
-	bh=IbSqzMhYdlbV68FwRqfdNa92zx5pPJVeMmzUDWHgwuE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kt+JWI8JVliy5vV9qaxbOw6SoV6YE658FWqFxQhFrRAkUq/DzOhIBXCRDZUpDF0cU
-	 m5eTsScchLpWnrN6bS9h8E2FqnKCuHV9buVyefHeqO5bdsqa/yb5QkMK0vvHeUU7Ab
-	 dETJMK7qXwJuDRN2vBW4D7ypUc1JNM3Oc61M2qeR/ycOoedLDjmOEg2z+M+5O1S5u/
-	 dEl56e5sX0bxoJB86h6at39+IAM1HqMni35nUj4ZEh1FiN0D5Z9VVxrwHCsxe0PnaW
-	 orx6GzBFL5Qdo6qIkSlhZ81wG00rvZnR6OHPDb5z2rkIo12bJrTR6pjE6oDU5Vd3i8
-	 qqbgijwKUC7Aw==
-Date: Thu, 16 Oct 2025 17:41:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: renesas,r9a09g077: Document
- pin configuration properties
-Message-ID: <20251016-dimmed-affidavit-90bae7e162aa@spud>
-References: <20251014191121.368475-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251014191121.368475-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPYjhJuLSvLjzyWzJ9vgQM7lbPG2tY/4QljrRnEwkx1THIC6GMepkR0VsswfOd/5rjwq7p9fPwb2Xu+LAe7ZPtwyQHYnZ5LLhtGGG4U/Kc9f2hAg0vKSOlnestCJ9vQ+JwmnMCLUwbN+0wWfeJ7/FxOKmLiNHbw/6Hru4OWnOEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rn1e3UAc; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-471076f819bso7927915e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760632884; x=1761237684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WS/pSqoZp2v27HSdB+sPWCVXCPtRW0IR9akwGaRHrc0=;
+        b=Rn1e3UAcceqdZLPCj7xirs25SErAhkI0Z3/7QMZ2CzJfuf9oUfthCWaby6nn5YFTRq
+         FbO4BU69Meyy6NtzGWmPDOYPzZUI8EWE9gG2coolojtaJ3H9enNR3dSpF+n5ovX2A+Kj
+         1UVRg50Qi3FydbLmjK/gl/Tl0hPU/m8PKvpIiuUj22Dwspiks0KdRkQf49DyF5NVd4Hx
+         mbFCzJKnuo9okeUwTxBPsYASvSWWvyuyDjcyfqnjOEig9SGm9wmTrYSwZrNR9yxJL9/7
+         OkIVRQQdUdWHiJBHBLbJ4XxkbHcoz8OeVPxaUK3Cz3HhxKWrGDye/Y9ZXVs1bNXxv4iH
+         GFoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760632884; x=1761237684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WS/pSqoZp2v27HSdB+sPWCVXCPtRW0IR9akwGaRHrc0=;
+        b=h2IxzpBsWAGTgqVtL/p7467RxUnaj6hxTW1prvEDhwitIcvqUGw1cwBZ0VnylEtPGj
+         odVVE8FB/ihh+41on6EWsO3w3kfCBv84vK3GNJXVQc1HtWGYihNBKyMF9zClPHpNcXC8
+         H7XiPshVE2rfqO15PJGkcs3/vv+ZIy+wV/s04TTXymLkch0Y+XsPCkdVORr7CdSW4ATg
+         EUgcrswFU9+pHGKfVm2zq6doecnmyttRLIpcV45y2P6ZEDtn6m6fZQBptNIFAaHo3zvy
+         hNCM0NkETh/jfzyN3wb/szNEaLX8MVs53/TyRsgbgt2BSReKfy4hhHMP7HePlRviauJG
+         /1Kw==
+X-Gm-Message-State: AOJu0Yze2wKvTKtGGVE2vZUF+LGSIi4GEK5NoWbJVgI6HHaq32T7Giz2
+	FeHwLJsYNDwIVM8FREm32s43xGKDupGqCJPttrVKmbtlacqvcsEkKhFL
+X-Gm-Gg: ASbGncvsYuO0OhI/HFdYkwXAb5yoaMKcA5a82AvBBBVTl7Fl7L6poZG0IYjN++bR3Ku
+	Pa9KMBUCuPu8LTMpmUZ/btrGEidV9bVrqpoBjkt1SlUcoxkWl9vDcIbZGFa1JevX7f85drI+szu
+	SybwTylyT/m9X9f9VyXsRlRAXUPZl0BGxDmWnvEvzoDdlapARa4QYsrzIZZpkl7N+pHx+pR3A12
+	Hc6Vw5cbmIRdD/wfIB95RVkpta9P3Mo2K736r4q7DAxeh8uY4v8DIRXnLPheY3TmZYVfslWJBLT
+	V4/0tNv1KeTHIaMDo5DcKaIWtT73DdLwwSC4wcZdujXTk3L+FM9uLF/fZc6q9icnLcZ7EVkTPHq
+	BwiDvRA88oHB7D0eKmtiqZcLGBRI5l3sRmIASLcCcSsWEK7yVc1+skFTDV45XxGnMMjDPZ1vKif
+	v/H4k=
+X-Google-Smtp-Source: AGHT+IEDdSyRLOyv2HtT637C+pSe9D5FqI1HRMQ2HeqdN+8/b+MPk1AnRD+MqeeBvqKRbrjLXNPXTw==
+X-Received: by 2002:a05:600c:3581:b0:45d:d5df:ab2d with SMTP id 5b1f17b1804b1-4711790bf23mr5451505e9.26.1760632883993;
+        Thu, 16 Oct 2025 09:41:23 -0700 (PDT)
+Received: from gmail.com ([51.154.248.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c34sm40792995e9.10.2025.10.16.09.41.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 09:41:23 -0700 (PDT)
+Date: Thu, 16 Oct 2025 16:41:22 +0000
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	Jens Taprogge <jens.taprogge@taprogge.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	industrypack-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2] ipack: fix ipack.h kernel-doc warnings
+Message-ID: <aPEgMkJnnK7SgCMR@gmail.com>
+References: <20251016033543.1142049-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4cp+vOoEUFgObXur"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251014191121.368475-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251016033543.1142049-1-rdunlap@infradead.org>
 
-
---4cp+vOoEUFgObXur
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 14, 2025 at 08:11:20PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Document the pin configuration properties supported by the RZ/T2H pinctrl
-> driver. The RZ/T2H SoC supports configuring various electrical properties
-> through the DRCTLm (I/O Buffer Function Switching) registers.
->=20
-> Add documentation for the following standard properties:
-> - bias-disable, bias-pull-up, bias-pull-down: Control internal
->   pull-up/pull-down resistors (3 options: no pull, pull-up, pull-down)
-> - input-schmitt-enable, input-schmitt-disable: Control Schmitt trigger
->   input
-> - slew-rate: Control output slew rate (2 options: slow/fast)
->=20
-> Add documentation for the custom property:
-> - renesas,drive-strength: Control output drive strength using discrete
->   levels (0-3) representing low, medium, high, and ultra high strength.
->   This custom property is needed because the hardware uses fixed discrete
->   levels rather than configurable milliamp values.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, Oct 15, 2025 at 08:35:43PM -0700, Randy Dunlap wrote:
+> Fix various kernel-doc warnings in ipack.h:
+> 
+>  - Remove an empty kernel-doc comment.
+>  - Add 2 missing struct short descriptions.
+>  - Fix a typo in a description.
+>  - Add a missing struct field description.
+>  - Add some missing Return descriptions.
+>  - Clarify one function short description.
+> 
+> Warning: ../include/linux/ipack.h:73 Cannot find identifier on line:
+>  */
+> Warning: ../include/linux/ipack.h:74 Cannot find identifier on line:
+> struct ipack_region {
+> Warning: ../include/linux/ipack.h:75 Cannot find identifier on line:
+>         phys_addr_t start;
+> Warning: ../include/linux/ipack.h:76 Cannot find identifier on line:
+>         size_t      size;
+> Warning: ../include/linux/ipack.h:77 Cannot find identifier on line:
+> };
+> Warning: ../include/linux/ipack.h:78 Cannot find identifier on line:
+> 
+> Warning: ../include/linux/ipack.h:79 Cannot find identifier on line:
+> /**
+> Warning: ipack.h:80 missing initial short description on line:
+>  *      struct ipack_device
+> Warning: ipack.h:163 missing initial short description on line:
+>  *      struct ipack_bus_device
+> Warning: ipack.h:130 struct member 'id_table' not described in 'ipack_driver'
+> Warning: ipack.h:189 No description found for return value of 'ipack_bus_register'
+> Warning: ipack.h:194 No description found for return value of 'ipack_bus_unregister' ***
+> Warning: ipack.h:202 No description found for return value of 'ipack_driver_register'
+> Warning: ipack.h:221 No description found for return value of 'ipack_device_init'
+> Warning: ipack.h:236 No description found for return value of 'ipack_device_add'
+> Warning: ipack.h:271 No description found for return value of 'ipack_get_carrier'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 > ---
->  .../bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-=
-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-=
-pinctrl.yaml
-> index 36d665971484..9085d5cfb1c8 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl=
-=2Eyaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl=
-=2Eyaml
-> @@ -72,6 +72,19 @@ definitions:
->        input: true
->        input-enable: true
->        output-enable: true
-> +      bias-disable: true
-> +      bias-pull-down: true
-> +      bias-pull-up: true
-> +      input-schmitt-enable: true
-> +      input-schmitt-disable: true
-> +      slew-rate:
-> +        enum: [0, 1]
+> v2: reformat patch description with indents (Vaibhav)
+> 
+> Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+> Cc: Jens Taprogge <jens.taprogge@taprogge.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: industrypack-devel@lists.sourceforge.net
+> ---
+>  include/linux/ipack.h |   23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> --- linux-next-20251013.orig/include/linux/ipack.h
+> +++ linux-next-20251013/include/linux/ipack.h
+> @@ -70,15 +70,13 @@ enum ipack_space {
+>  	IPACK_SPACE_COUNT,
+>  };
+>  
+> -/**
+> - */
+>  struct ipack_region {
+>  	phys_addr_t start;
+>  	size_t      size;
+>  };
+>  
+>  /**
+> - *	struct ipack_device
+> + *	struct ipack_device - subsystem representation of an IPack device
+>   *
+>   *	@slot: Slot where the device is plugged in the carrier board
+>   *	@bus: ipack_bus_device where the device is plugged to.
+> @@ -89,7 +87,7 @@ struct ipack_region {
+>   *
+>   * Warning: Direct access to mapped memory is possible but the endianness
+>   * is not the same with PCI carrier or VME carrier. The endianness is managed
+> - * by the carrier board throught bus->ops.
+> + * by the carrier board through bus->ops.
+>   */
+>  struct ipack_device {
+>  	unsigned int slot;
+> @@ -124,6 +122,7 @@ struct ipack_driver_ops {
+>   * struct ipack_driver -- Specific data to each ipack device driver
+>   *
+>   * @driver: Device driver kernel representation
+> + * @id_table: Device ID table for this driver
+>   * @ops:    Callbacks provided by the IPack device driver
+>   */
+>  struct ipack_driver {
+> @@ -161,7 +160,7 @@ struct ipack_bus_ops {
+>  };
+>  
+>  /**
+> - *	struct ipack_bus_device
+> + *	struct ipack_bus_device - IPack bus representation
+>   *
+>   *	@dev: pointer to carrier device
+>   *	@slots: number of slots available
+> @@ -185,6 +184,8 @@ struct ipack_bus_device {
+>   *
+>   * The carrier board device should call this function to register itself as
+>   * available bus device in ipack.
+> + *
+> + * Return: %NULL on error or &struct ipack_bus_device on success
+>   */
+>  struct ipack_bus_device *ipack_bus_register(struct device *parent, int slots,
+>  					    const struct ipack_bus_ops *ops,
+> @@ -192,6 +193,8 @@ struct ipack_bus_device *ipack_bus_regis
+>  
+>  /**
+>   *	ipack_bus_unregister -- unregister an ipack bus
+> + *
+> + *	Return: %0
+>   */
+>  int ipack_bus_unregister(struct ipack_bus_device *bus);
+>  
+> @@ -200,6 +203,8 @@ int ipack_bus_unregister(struct ipack_bu
+>   *
+>   * Called by a ipack driver to register itself as a driver
+>   * that can manage ipack devices.
+> + *
+> + * Return: zero on success or error code on failure.
+>   */
+>  int ipack_driver_register(struct ipack_driver *edrv, struct module *owner,
+>  			  const char *name);
+> @@ -215,7 +220,7 @@ void ipack_driver_unregister(struct ipac
+>   * function.  The rest of the fields will be allocated and populated
+>   * during initalization.
+>   *
+> - * Return zero on success or error code on failure.
+> + * Return: zero on success or error code on failure.
+>   *
+>   * NOTE: _Never_ directly free @dev after calling this function, even
+>   * if it returned an error! Always use ipack_put_device() to give up the
+> @@ -230,7 +235,7 @@ int ipack_device_init(struct ipack_devic
+>   * Add a new IPack device. The call is done by the carrier driver
+>   * after calling ipack_device_init().
+>   *
+> - * Return zero on success or error code on failure.
+> + * Return: zero on success or error code on failure.
+>   *
+>   * NOTE: _Never_ directly free @dev after calling this function, even
+>   * if it returned an error! Always use ipack_put_device() to give up the
+> @@ -266,9 +271,11 @@ void ipack_put_device(struct ipack_devic
+>  	 .device = (dev)
+>  
+>  /**
+> - * ipack_get_carrier - it increase the carrier ref. counter of
+> + * ipack_get_carrier - try to increase the carrier ref. counter of
+>   *                     the carrier module
+>   * @dev: mezzanine device which wants to get the carrier
+> + *
+> + * Return: true on success.
+>   */
+>  static inline int ipack_get_carrier(struct ipack_device *dev)
+>  {
 
-What are the meanings of "0" and "1" for slew rate? Why isn't this given
-as the actual rates? The docs surely give more detail than just "slow"
-and "fast".
+Hello Randy,
 
-> +      renesas,drive-strength:
-> +        description:
-> +          Drive strength configuration value. Valid values are 0 to 3, r=
-epresenting
-> +          increasing drive strength from low, medium, high and ultra hig=
-h.
+Thank you for your changes.
 
-I see what you wrote in the commit message, but I don't really get why
-you need a custom property. I would imagine most devices only have some
-some small set of "fixed discrete levels", yet manage with milli- or
-micro-amps fine. Converting from mA to register values in a driver is
-not difficult, and I figure the documentation for the device probably
-doesn't just give vague strengths like "medium" or "ultra high", but
-probably provides currents?
+Acknowledged-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
 
-I dunno, I am just confused by the need to shove register values into
-these properties, rather than using the actual units.
+Hey Greg, could you please add this patch to your misc tree?
 
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1, 2, 3]
->      oneOf:
->        - required: [pinmux]
->        - required: [pins]
-> --=20
-> 2.43.0
->=20
-
---4cp+vOoEUFgObXur
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEgLwAKCRB4tDGHoIJi
-0lx0AP4jyo97e3Zk8i4jkScPF1zzQ+X4TFA664bvdfYVRxX59gD/RY89usrIDvLh
-Di5RCQNiqFuaDUjmLZtmBFgY6FmqQQk=
-=xYR1
------END PGP SIGNATURE-----
-
---4cp+vOoEUFgObXur--
+Thanks,
+Vaibhav
 
