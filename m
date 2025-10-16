@@ -1,143 +1,201 @@
-Return-Path: <linux-kernel+bounces-856694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B639BE4D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:23:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6202FBE4D55
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2CE61A66DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:23:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 204644E3998
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E385923EAB5;
-	Thu, 16 Oct 2025 17:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F4D21A453;
+	Thu, 16 Oct 2025 17:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=0la.ch header.i=@0la.ch header.b="Dam8LnIx";
-	dkim=permerror (0-bit key) header.d=0la.ch header.i=@0la.ch header.b="wE6pQ6aU"
-Received: from mail.0la.ch (mail.0la.ch [78.47.82.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fPhwMCj3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A78A3346AA
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.82.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D6D3346A5;
+	Thu, 16 Oct 2025 17:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760635384; cv=none; b=Odhk70MrCxUQWEq2dfSlX0HLxIhcWV8OoIkDDLBtDhEGuNPknY1DVOwSK1BEuIWbwHrUI88gmL5emhcVE25Y5Hw4wbgrWKIkyPuQGpVylQaIN2nApW31UYdg+T4UFRVq2xvZ8tZTF2ituqeu0EQSp2+JoC1RbS8ASRz9UF8DGhQ=
+	t=1760635391; cv=none; b=SKAYrRUU0+dHKPqsRgxYbf2lPSMZ80t0HyN05LXHfiKMDQa2WF/vQxTautb/GjxR3IjnriT6SXi/iI58RbZN+tLakFRnDNOMA6qMNzZLz8nxFn51JvWG8cROjxBxfMCaij1B1O8znjPrcDxJAQJw3lvXaoGw0cEPFW1qUJU4Nfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760635384; c=relaxed/simple;
-	bh=2bQhPBbrJKwN8Rjz8zL3WH3jToUotr2JDyATZUcfdGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q0e07v81PJIRaem8qcTz/GHg2xOGJtaIKXIOVCH6EfVqTvUNwZM29siBiB7Bhf5BWN++lxBeCFlv1fplKJPyFTNcDBnayH/UZZTlArqC44+e+nn6aWZ/Q88S3j3e8mqgRuUacEKf9wkxDBUyFptkQAiLLEOznPcQtTjSirkX5Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0la.ch; spf=pass smtp.mailfrom=0la.ch; dkim=pass (2048-bit key) header.d=0la.ch header.i=@0la.ch header.b=Dam8LnIx; dkim=permerror (0-bit key) header.d=0la.ch header.i=@0la.ch header.b=wE6pQ6aU; arc=none smtp.client-ip=78.47.82.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0la.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0la.ch
-DKIM-Signature: v=1; a=rsa-sha256; s=202502r; d=0la.ch; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1760635365; bh=W2hO6H2WvXcWahkquOaGCjT
-	a90qL1JlfgvTKZcNf2YE=; b=Dam8LnIxLaEwS+QfK9MVi5v3jjEFtCyUOqNhNiTwKO8B0JouO8
-	rr/DqoK2X6ArRoCzz963fJ+E2cv/Qh9fBk+kMKLEZA5Cln9MqBZ84zseQ4p5XeIzO++P5Z/HfFc
-	vBKqqLkHL4NASJuauQpdT98KVrkXK7iHV8usINto/McsHMone3IDm3BOYVzzUWR7pMCdpNoPXjf
-	ltOSxiEbJJiXBjpAa4C5EObH5CtFaxK7r22otGZBnZvpf0FrJZ12sxeb6aZADYy4Cnd59cTuju+
-	+YmyNWTJte5cCO+UexVMTkWewmH5kx9v0FX0me6j/vFZzb8Zv78jCH7Q7xhtiP7HFFg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202502e; d=0la.ch; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1760635365; bh=W2hO6H2WvXcWahkquOaGCjT
-	a90qL1JlfgvTKZcNf2YE=; b=wE6pQ6aUMwzjuVaS1ZLxuoJ+NgRncNgSvWdIVX3ighke5zo4nn
-	Ek1O9cPR3TzNOakZ2dXjxuxgE7TxY0ky/tBA==;
-Message-ID: <9c469725-acaf-4450-aff2-4b5d03f8d947@0la.ch>
-Date: Thu, 16 Oct 2025 19:22:44 +0200
+	s=arc-20240116; t=1760635391; c=relaxed/simple;
+	bh=lOFgD0LyfRpzUx+oLqOf3WVoQ7V6BqFdDH6cnaanqgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oI0kgK6Jtia/OJ1iBqjREwT+uDkJTncgZocjyUjjONissIw5/pbCf5gM5ty/kV8dFnJ3JewEZahzqjN5dyUK6t61vtc8LqUCJnXV69ip/3kT0ZPZaLabxISdDqn2ovKssFmbXFtFLEvxT9SnV/Ux8uEsXAz4BnCnEge36UjR81A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fPhwMCj3; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760635389; x=1792171389;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lOFgD0LyfRpzUx+oLqOf3WVoQ7V6BqFdDH6cnaanqgo=;
+  b=fPhwMCj3OBL59L+Z5EkAn34TrzxhNJXo8EARJepZ58c62TgDL/DqwU8q
+   IFYayBpFfkseDv8ehb3NIl2SeyEev3NVSll0C9STBi7DN9zrf8dVAznoG
+   6Y9KDxdV9/9QxC+XgO1i7kxqk6PUrE9aOlRYZLKkUx5immeAGo3P2jKsc
+   sHsHXCEsX2jo4IgMwSqTzPvgR33Pl2uTa3pDuPHxPD8fwQcngV4wVgXRX
+   HLixdREGV+0ImEGQQ0bojozjfCCj7fq0ydeqYhLKU0c7XknhRRdOOdPdi
+   1R3ym7M+MBje+MJlShv82dS2U3EvGN91jhbikZbXuTIiiDSkY9DEojTQM
+   w==;
+X-CSE-ConnectionGUID: hFz+b6OuTpu1Kfj7sFu7nA==
+X-CSE-MsgGUID: a/zmjVqmS5SvT2h3BdinnQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="85457800"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="85457800"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 10:23:09 -0700
+X-CSE-ConnectionGUID: MXhEq54OR0Kwe43Clpyhuw==
+X-CSE-MsgGUID: KZF5q4xDSRCvSLO3AjAmdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="187788426"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO desk) ([10.124.223.124])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 10:23:08 -0700
+Date: Thu, 16 Oct 2025 10:23:02 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: Re: [PATCH v2 0/3] VMSCAPE optimization for BHI variant
+Message-ID: <20251016172302.a6uin2qqqyxmufxc@desk>
+References: <20251015-vmscape-bhb-v2-0-91cbdd9c3a96@linux.intel.com>
+ <DS0PR12MB9273669FB9A3DBE8F53C51FA94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] drm/amd: use fixed dsc bits-per-pixel from edid
-To: Jani Nikula <jani.nikula@linux.intel.com>, Yaroslav Bolyukin
- <iam@lach.pw>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Wayne Lin <Wayne.Lin@amd.com>, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20251016001038.13611-2-iam@lach.pw>
- <20251016001038.13611-6-iam@lach.pw>
- <34407e8d423f0d00e949ba8c6b209cb88e8f5414@intel.com>
-Content-Language: en-US
-From: Yaroslav <iam@0la.ch>
-In-Reply-To: <34407e8d423f0d00e949ba8c6b209cb88e8f5414@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS0PR12MB9273669FB9A3DBE8F53C51FA94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
 
-On 2025-10-16 18:39, Jani Nikula wrote:
-> On Thu, 16 Oct 2025, Yaroslav Bolyukin <iam@lach.pw> wrote:
->> VESA vendor header from DisplayID spec may contain fixed bit per pixel
->> rate, it should be respected by drm driver
->>
->> Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
->> ---
->>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 14 +++++++++++++-
->>   1 file changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> index 0d03e324d5b9..ebe5bb4eecf8 100644
->> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> @@ -6521,6 +6521,11 @@ static void fill_stream_properties_from_drm_display_mode(
->>   
->>   	stream->output_color_space = get_output_color_space(timing_out, connector_state);
->>   	stream->content_type = get_output_content_type(connector_state);
->> +
->> +	/* DisplayID Type VII pass-through timings. */
->> +	if (mode_in->dsc_passthrough_timings_support && info->dp_dsc_bpp != 0) {
->> +		stream->timing.dsc_fixed_bits_per_pixel_x16 = info->dp_dsc_bpp;
->> +	}
+On Thu, Oct 16, 2025 at 03:57:56PM +0000, Kaplan, David wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> If we had mode->dp_dsc_bpp_x16 directly, or something better named, this
-> would be simpler. This will eventually be replicated in a bunch of
-> drivers.
+> > -----Original Message-----
+> > From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > Sent: Wednesday, October 15, 2025 8:52 PM
+> > To: x86@kernel.org; H. Peter Anvin <hpa@zytor.com>; Josh Poimboeuf
+> > <jpoimboe@kernel.org>; Kaplan, David <David.Kaplan@amd.com>; Sean
+> > Christopherson <seanjc@google.com>; Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: linux-kernel@vger.kernel.org; kvm@vger.kernel.org; Asit Mallick
+> > <asit.k.mallick@intel.com>; Tao Zhang <tao1.zhang@intel.com>
+> > Subject: [PATCH v2 0/3] VMSCAPE optimization for BHI variant
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > v2:
+> > - Added check for IBPB feature in vmscape_select_mitigation(). (David)
+> > - s/vmscape=auto/vmscape=on/ (David)
+> > - Added patch to remove LFENCE from VMSCAPE BHB-clear sequence.
+> > - Rebased to v6.18-rc1.
+> >
+> > v1: https://lore.kernel.org/r/20250924-vmscape-bhb-v1-0-
+> > da51f0e1934d@linux.intel.com
+> >
+> > Hi All,
+> >
+> > These patches aim to improve the performance of a recent mitigation for
+> > VMSCAPE[1] vulnerability. This improvement is relevant for BHI variant of
+> > VMSCAPE that affect Alder Lake and newer processors.
+> >
+> > The current mitigation approach uses IBPB on kvm-exit-to-userspace for all
+> > affected range of CPUs. This is an overkill for CPUs that are only affected
+> > by the BHI variant. On such CPUs clearing the branch history is sufficient
+> > for VMSCAPE, and also more apt as the underlying issue is due to poisoned
+> > branch history.
+> >
+> > Roadmap:
+> >
+> > - First patch introduces clear_bhb_long_loop() for processors with larger
+> >   branch history tables.
+> > - Second patch replaces IBPB on exit-to-userspace with branch history
+> >   clearing sequence.
+> >
+> > Below is the iPerf data for transfer between guest and host, comparing IBPB
+> > and BHB-clear mitigation. BHB-clear shows performance improvement over IBPB
+> > in most cases.
+> >
+> > Platform: Emerald Rapids
+> > Baseline: vmscape=off
+> >
+> > (pN = N parallel connections)
+> >
+> > | iPerf user-net | IBPB    | BHB Clear |
+> > |----------------|---------|-----------|
+> > | UDP 1-vCPU_p1  | -12.5%  |   1.3%    |
+> > | TCP 1-vCPU_p1  | -10.4%  |  -1.5%    |
+> > | TCP 1-vCPU_p1  | -7.5%   |  -3.0%    |
+> > | UDP 4-vCPU_p16 | -3.7%   |  -3.7%    |
+> > | TCP 4-vCPU_p4  | -2.9%   |  -1.4%    |
+> > | UDP 4-vCPU_p4  | -0.6%   |   0.0%    |
+> > | TCP 4-vCPU_p4  |  3.5%   |   0.0%    |
+> >
+> > | iPerf bridge-net | IBPB    | BHB Clear |
+> > |------------------|---------|-----------|
+> > | UDP 1-vCPU_p1    | -9.4%   |  -0.4%    |
+> > | TCP 1-vCPU_p1    | -3.9%   |  -0.5%    |
+> > | UDP 4-vCPU_p16   | -2.2%   |  -3.8%    |
+> > | TCP 4-vCPU_p4    | -1.0%   |  -1.0%    |
+> > | TCP 4-vCPU_p4    |  0.5%   |   0.5%    |
+> > | UDP 4-vCPU_p4    |  0.0%   |   0.9%    |
+> > | TCP 1-vCPU_p1    |  0.0%   |   0.9%    |
+> >
+> > | iPerf vhost-net | IBPB    | BHB Clear |
+> > |-----------------|---------|-----------|
+> > | UDP 1-vCPU_p1   | -4.3%   |   1.0%    |
+> > | TCP 1-vCPU_p1   | -3.8%   |  -0.5%    |
+> > | TCP 1-vCPU_p1   | -2.7%   |  -0.7%    |
+> > | UDP 4-vCPU_p16  | -0.7%   |  -2.2%    |
+> > | TCP 4-vCPU_p4   | -0.4%   |   0.8%    |
+> > | UDP 4-vCPU_p4   |  0.4%   |  -0.7%    |
+> > | TCP 4-vCPU_p4   |  0.0%   |   0.6%    |
+> >
+> > [1] https://comsec.ethz.ch/research/microarch/vmscape-exposing-and-exploiting-
+> > incomplete-branch-predictor-isolation-in-cloud-environments/
+> >
+> > ---
+> > Pawan Gupta (3):
+> >       x86/bhi: Add BHB clearing for CPUs with larger branch history
+> >       x86/vmscape: Replace IBPB with branch history clear on exit to userspace
+> >       x86/vmscape: Remove LFENCE from BHB clearing long loop
+> >
+> >  Documentation/admin-guide/hw-vuln/vmscape.rst   |  8 ++++
+> >  Documentation/admin-guide/kernel-parameters.txt |  4 +-
+> >  arch/x86/entry/entry_64.S                       | 63 ++++++++++++++++++-------
+> >  arch/x86/include/asm/cpufeatures.h              |  1 +
+> >  arch/x86/include/asm/entry-common.h             | 12 +++--
+> >  arch/x86/include/asm/nospec-branch.h            |  5 +-
+> >  arch/x86/kernel/cpu/bugs.c                      | 53 +++++++++++++++------
+> >  arch/x86/kvm/x86.c                              |  5 +-
+> >  8 files changed, 110 insertions(+), 41 deletions(-)
+> > ---
+> > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > change-id: 20250916-vmscape-bhb-d7d469977f2f
+> >
+> > Best regards,
+> > --
+> > Pawan
+> >
 > 
-> BR,
-> Jani.
-
-Unfortunately, that won't solve the problem that there is no good way to 
-pass this value from display_modes created from e.g 
-DRM_IOCTL_MODE_SETCRTC. I believe it would be better if there was a 
-syscall to inherit from a native mode instead of creating a new one, but 
-this is too far fetched.
-
-I'll check how this was implemented by nvidia open driver, as they have 
-added support for this value in their driver somehow.
-  >>   }
->>   
->>   static void fill_audio_info(struct audio_info *audio_info,
->> @@ -7067,6 +7072,13 @@ create_stream_for_sink(struct drm_connector *connector,
->>   					&mode, preferred_mode, scale);
->>   
->>   			preferred_refresh = drm_mode_vrefresh(preferred_mode);
->> +
->> +			/*
->> +			 * HACK: In case of multiple supported modes, we should look at the matching mode to decide this flag.
->> +			 * But what is matching mode, how should it be decided?
->> +			 * Assuming that only preferred mode would have this flag.
->> +			 */
->> +			mode.dsc_passthrough_timings_support = preferred_mode->dsc_passthrough_timings_support;
->>   		}
->>   	}
->>   
->> @@ -7756,7 +7768,7 @@ create_validate_stream_for_sink(struct drm_connector *connector,
->>   			drm_dbg_kms(connector->dev, "%s:%d Validation failed with %d, retrying w/ YUV420\n",
->>   				    __func__, __LINE__, dc_result);
->>   			aconnector->force_yuv420_output = true;
->> -		}
->> +}>>   		stream = create_validate_stream_for_sink(connector, drm_mode,
->>   							 dm_state, old_stream);
->>   		aconnector->force_yuv422_output = false;
+> Looks good to me.
 > 
+> Acked-by: David Kaplan <david.kaplan@amd.com>
 
-Regards,
-
-Lach
+Thanks.
 
