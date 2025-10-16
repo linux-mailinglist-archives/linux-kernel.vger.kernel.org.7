@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-855908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141D6BE2A18
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D9CBE2A63
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0B4582FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E5E3A7819
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC3032F76C;
-	Thu, 16 Oct 2025 09:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98BE34AB04;
+	Thu, 16 Oct 2025 09:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WZ1O6yLv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xxGZOW1F"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4eF2UFIB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eZ979ls2"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C12532BF51;
-	Thu, 16 Oct 2025 09:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4B3330D52;
+	Thu, 16 Oct 2025 09:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608385; cv=none; b=q3fA74VPSjvH+/t4xhdsyKWMXX0R5gcbc7Z28d+VGxw5QicL69A2GIvCOeTgMWoTR4OmA8Vgp/VBXDFurolmS1Z4u9Txqy9oj7fbXCf6b6hfANjkxTXCANhgLkuIwQEfrHecmA5LdDmaQn59MqTkJi8yh5Q5vi3Dfz0aN6c1qcw=
+	t=1760608402; cv=none; b=YgrOjcv3S8e4fkm+NZBW3wiXPvOzjk2n3Jm88HI5gwsQLnooTU6IotpibmNESYIFNiNHdX+b9qeA43fsclokAqU59aKykXgte1zhGYsEs+AM4zZY1Fm3dwD5+hGXa9huye1aPQevXo4K5tQfgkNlONb3IYw537UmgipOAcaks9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608385; c=relaxed/simple;
-	bh=23L4i+s+Jv2C68KsJqzjaKLJK23eQsGJ0BcGLU49sgM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=U3mcbtblG7xONks44Plli1xOa1CnujmnpVKD73gJn9u0VYLk6HK/9t7R16JOhvbSQQumO9cujVv4ea9V71iWxZe35KPQw5VR+Yfvjv+qIrj5I51Z1mdhQUU3NY3hdeM6l4OyffQAm9mf44tF1wnbtjJiV8BoV4wJmhfIh9OlPj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WZ1O6yLv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xxGZOW1F; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1760608402; c=relaxed/simple;
+	bh=cZi1rPHVL54gob0IGQAnZlWVjEn4gZcVaVNjYnkSVU0=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=hVEtr8HzSJvfWfCzjlCJ2bgHXnBbgFb08hD4CrjecA2UvbBTdbG52GT8l4Ry1CPcmjuDF8q3rUOjo1siZfP4hjV/v1WZlvqa1OQG4212L6LXjM2ZvpLEWvajUMwxVQ9zktNVs/YZBZwMr49xIlXHuj3QdRNUG3D0sHZEbJUL+58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4eF2UFIB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eZ979ls2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:52:48 -0000
+Date: Thu, 16 Oct 2025 09:52:57 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760608370;
+	s=2020; t=1760608378;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=eBXqUUZBfArwtLlXXT7UT0pURauzXrEPAobMu7fhojQ=;
-	b=WZ1O6yLvUqtX7Z8Vomgt6bl1DwMkLhz0A+dKABTqjo+KKW/pyMBndPbTDkNQlG0r/Ej7fV
-	ZPFxo9sm9WPRuDyvgb6k3n3V7hTkzWhk7busk1OAQJ5zAESwR+fApAWnG//5+MZyB+BBZC
-	tZiSUwWiuscK0OGzkl68n/5eFjevAaBHFvA/iTjT6FFchzbtaij+VC5YL4O2ekBGJe6yiu
-	e2nU5UgeaGG52CF/T3wL/LR8DEazQ7Zhh3dX0fQYopiYeaBKIinW+9po8tSEvd5gx8vB5X
-	iKa9zbmBcBJ1jeF5IC+zzrJDXnKzv4hTHzVcM6djeBbiZqrjzEVlERw3O/vbjg==
+	bh=4PIVJJnPUdTG7xo1yCyK2xYumgar8T5tX8kSzYA7Wk0=;
+	b=4eF2UFIBe56GkAvuBD7ZubthM62km2Z0HinqIZIJ2S/IGltfErw46O702+ztPPSleQGj00
+	CZvIrmyq0WTTE6i3HBsfp5lrsyvv7qcdlD4dRib9oXECJoaIOWofpWmax4yxFlhQhGFSJ4
+	NoEahY8WB/DWQfOZGV/JbdG8erFZeeltzXIvb3QF8kUszUp7JDG7+2aMSeEJdVZMUxEH2C
+	fz/6iCzS1orlV4WWjcdFm8lA3/V/4YdxCEtoZMZAhwWHcCbb6+mcqgoAXa6GoS5ojKBNxe
+	Tj/ThDUhHIM8plkbejAzeUOM2uXayvOagUGBQwlJObVKpzDV4Pl+FAtJYtKmrg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760608370;
+	s=2020e; t=1760608378;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=eBXqUUZBfArwtLlXXT7UT0pURauzXrEPAobMu7fhojQ=;
-	b=xxGZOW1FOWzZjnSLOGqRzMt7zYcw2tgmmpYl9gctu4KXz3CHQUU4dyPj+S3NhLTYO3eC+L
-	Q1JUEOOpK8hID9Aw==
+	bh=4PIVJJnPUdTG7xo1yCyK2xYumgar8T5tX8kSzYA7Wk0=;
+	b=eZ979ls2UZKrW6i9d43rFThm5tpOL9kYZQEm1e77aRRhPIQcDxt9Nep5ukISkDlIGwXmV2
+	XkZvSuzPxr7P7JDg==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Remove .parainstructions reference
+Subject: [tip: objtool/core] objtool: Fix weak symbol detection
 Cc: Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
@@ -64,7 +64,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060836873.709179.9163058243228874871.tip-bot2@tip-bot2>
+Message-ID: <176060837740.709179.15954898643494638439.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -74,41 +74,69 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     72e4b6b44e9f53990315c6dd9fae2b2fc89c021a
-Gitweb:        https://git.kernel.org/tip/72e4b6b44e9f53990315c6dd9fae2b2fc89=
-c021a
+Commit-ID:     72567c630d32bc31f671977f78228c80937ed80e
+Gitweb:        https://git.kernel.org/tip/72567c630d32bc31f671977f78228c80937=
+ed80e
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Wed, 17 Sep 2025 09:03:34 -07:00
+AuthorDate:    Wed, 17 Sep 2025 09:03:27 -07:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 14 Oct 2025 14:45:24 -07:00
+CommitterDate: Tue, 14 Oct 2025 14:45:23 -07:00
 
-objtool: Remove .parainstructions reference
+objtool: Fix weak symbol detection
 
-The .parainstructions section no longer exists since the following
-commit:
+find_symbol_hole_containing() fails to find a symbol hole (aka stripped
+weak symbol) if its section has no symbols before the hole.  This breaks
+weak symbol detection if -ffunction-sections is enabled.
 
-  60bc276b129e ("x86/paravirt: Switch mixed paravirt/alternative calls to alt=
-ernatives").
+Fix that by allowing the interval tree to contain section symbols, which
+are always at offset zero for a given section.
 
-Remove the reference to it.
+Fixes a bunch of (-ffunction-sections) warnings like:
 
+  vmlinux.o: warning: objtool: .text.__x64_sys_io_setup+0x10: unreachable ins=
+truction
+
+Fixes: 4adb23686795 ("objtool: Ignore extra-symbol code")
 Acked-by: Petr Mladek <pmladek@suse.com>
 Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/check.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/objtool/elf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 2bd35d1..61e071c 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -4468,7 +4468,6 @@ static int validate_ibt(struct objtool_file *file)
- 		    !strcmp(sec->name, ".altinstructions")		||
- 		    !strcmp(sec->name, ".ibt_endbr_seal")		||
- 		    !strcmp(sec->name, ".orc_unwind_ip")		||
--		    !strcmp(sec->name, ".parainstructions")		||
- 		    !strcmp(sec->name, ".retpoline_sites")		||
- 		    !strcmp(sec->name, ".smp_locks")			||
- 		    !strcmp(sec->name, ".static_call_sites")		||
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index c024937..d7fb3d0 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -109,7 +109,7 @@ struct symbol_hole {
+ };
+=20
+ /*
+- * Find !section symbol where @offset is after it.
++ * Find the last symbol before @offset.
+  */
+ static int symbol_hole_by_offset(const void *key, const struct rb_node *node)
+ {
+@@ -120,8 +120,7 @@ static int symbol_hole_by_offset(const void *key, const s=
+truct rb_node *node)
+ 		return -1;
+=20
+ 	if (sh->key >=3D s->offset + s->len) {
+-		if (s->type !=3D STT_SECTION)
+-			sh->sym =3D s;
++		sh->sym =3D s;
+ 		return 1;
+ 	}
+=20
+@@ -428,7 +427,8 @@ static void elf_add_symbol(struct elf *elf, struct symbol=
+ *sym)
+ 	sym->len =3D sym->sym.st_size;
+=20
+ 	__sym_for_each(iter, &sym->sec->symbol_tree, sym->offset, sym->offset) {
+-		if (iter->offset =3D=3D sym->offset && iter->type =3D=3D sym->type)
++		if (iter->offset =3D=3D sym->offset && iter->type =3D=3D sym->type &&
++		    iter->len =3D=3D sym->len)
+ 			iter->alias =3D sym;
+ 	}
+=20
 
