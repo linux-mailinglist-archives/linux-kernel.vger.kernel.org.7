@@ -1,153 +1,188 @@
-Return-Path: <linux-kernel+bounces-860304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D73DBEFCB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:06:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B387BBF00DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59353BD427
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:06:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9465D4E9463
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCF42E093C;
-	Mon, 20 Oct 2025 08:06:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31552ED16D;
+	Mon, 20 Oct 2025 08:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hysJY61T";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yphqrgjp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EpSYi1MA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jrfKw8GG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C6A23C513
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0D12EC0AE
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760947605; cv=none; b=sEfRccU8sXdXb5eFQTQwTHVFGC/ULeqNioBKS+PxbVni7KR75llDmtiHSoKdDeGhjTaZD6N8LHRd9GZTCQfgnOAy9PJRkodF0MKPxtG8Wpk8Q47S5jqV1yn0ahOlkT5QuyUu3qVjSwxRJgGCUFVQ7EG1KZwnh5oLxVu7P0zm438=
+	t=1760950611; cv=none; b=rND40x5h0QClm5su2q/ZZuZzCPE6XhNb/sS0LgUyNus7/ksbtr+8I+gN08fGIcGqcX3y/PaBeazhQLUiLd3rwpDgnsoSQmwcq+4DBKNvqZo/EY9m9u+qIRyC78WboS6Cy5K8AV4wree2h3XgprRAIaKT7I/yAj/yOad13xrtfj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760947605; c=relaxed/simple;
-	bh=humS5mB7INRpQLT/Vp5XMKHwgL7Zyqzi+uAp+7NFO88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMbTGhZWq7OgHFnZFIoqjtVJm/QRaBoMZphAfG1B8dr7YiKC3eRKEY2KCCqtAgHqT5ctcqpFGYueLLi6Y3H5IC4Yhy7tl8egsG9GGT/ATmUk1av5qrZMYVFkBWPX8/00wytQzUa8DzX8Ii3OzOxoDyosfwqkp05/hIRYbgusnMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cqnzx15GpzYQthl;
-	Mon, 20 Oct 2025 16:05:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id C864F1A0EFB;
-	Mon, 20 Oct 2025 16:06:39 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP3 (Coremail) with SMTP id _Ch0CgCn7eGP7fVoJgbhAw--.60061S2;
-	Mon, 20 Oct 2025 16:06:39 +0800 (CST)
-Message-ID: <45f0970a-b266-4286-bff5-d1c35a878a34@huaweicloud.com>
-Date: Mon, 20 Oct 2025 16:06:39 +0800
+	s=arc-20240116; t=1760950611; c=relaxed/simple;
+	bh=SQvT/VmAgOnKSszNJm2VTEpH72nC9+Uz2s0uKj8XT6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iluYwnltbypHK96OZnBP6EUdhyiPIuh+m43bdvPpg3icKuKOFxSDktTZGD7ttnmjBWcfaSFStc0pXcAjAWBR2th2KtFCTp1d+mxewjSMtqPYftqeaXVkVRQaEUYPBw1szC2u53GKaLevARUanBbdwSN1chILoHI7xqWXxScO98k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hysJY61T; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yphqrgjp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EpSYi1MA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jrfKw8GG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A1FDE211C4;
+	Mon, 20 Oct 2025 08:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760950603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
+	b=hysJY61TD2iuyWjQVvb5FPwtn981mOlDkrB441JsmqUX2OVDVI4zg/zCz1S42k7fR1cfpP
+	bjgQdVacBY/DmcwZjtCAOnBLZZ+Lr31cLe4Ufk3eOfOK0Rtiyd3v96Lb507KbggzyXLOlm
+	5e7L7Fu7xIkXn1ikN81nkjkU6FUsXkE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760950603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
+	b=yphqrgjpQ136lF9ZFjK7Fnee0a8FAXTtPw8WkJPvDwNzcE8imxq4sehvIj4b9tDbh4feKY
+	aO3kGbnh+JlzUJDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760950599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
+	b=EpSYi1MA5UN0J3n/KeHJ1nJ97rrmcBfsN9lz7pvVhcliLpA+8ReUeiuGGUaRPow5jzxg/Y
+	4HM36omUklV/9RZsO5RUPAeHULkeBdHSOYEwFvYDhJH7cSD2XiUWAq9po2Yxaj8Ppo89wU
+	8sG89rYgbei04SKZODB079q94d+ALek=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760950599;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
+	b=jrfKw8GGk70Lm1J5gwt/b6DyGS0j3iaiNjS9Gyn9IJ8GuAJZ9Kygon57sY3/AdOmIuP1A8
+	WS+2ykGKNs+yvsBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 272AD13B0B;
+	Mon, 20 Oct 2025 08:56:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HI+HCUH59WhmZQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 Oct 2025 08:56:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id ECD6FA28E4; Thu, 16 Oct 2025 18:21:19 +0200 (CEST)
+Date: Thu, 16 Oct 2025 18:21:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Aubrey Li <aubrey.li@linux.intel.com>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>, Nanhai Zou <nanhai.zou@intel.com>, 
+	Gang Deng <gang.deng@intel.com>, Tianyou Li <tianyou.li@intel.com>, 
+	Vinicius Gomes <vinicius.gomes@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
+	Chen Yu <yu.c.chen@intel.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH] mm/readahead: Skip fully overlapped range
+Message-ID: <mze6nnqy2xwwqaz5xpwkthx3x4n6yd5vgbnyateyjlyjefiwde@qclv7inpacqe>
+References: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
+ <20250922204921.898740570c9a595c75814753@linux-foundation.org>
+ <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
+ <cghebadvzchca3lo2cakcihwyoexx7fdqtibfywfm4xjo7eyp2@vbccezepgtoe>
+ <6bcf9dfe-c231-43aa-8b1c-f699330e143c@linux.intel.com>
+ <20251011152042.d0061f174dd934711bc1418b@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 07/16] cpuset: introduce
- local_partition_disable()
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250928071306.3797436-1-chenridong@huaweicloud.com>
- <20250928071306.3797436-8-chenridong@huaweicloud.com>
- <d719fdbc-515e-4386-b4d8-1d5fc0f7edf1@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <d719fdbc-515e-4386-b4d8-1d5fc0f7edf1@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCn7eGP7fVoJgbhAw--.60061S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr45tFW7tF4DZFyDtF48Xrb_yoW5Cr1xpF
-	1kJrWrtayUWFn3u347JF4kArWrGr4kJa4Utr1xXa4rJr17Jw1vqFyjv3sYgF1UJrWkJryU
-	ZF1qgr47uF1xArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1aZX5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011152042.d0061f174dd934711bc1418b@linux-foundation.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	DATE_IN_PAST(1.00)[88];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
+Sorry for not replying earlier. I wanted make up my mind about this and
+other stuff was keeping preempting me...
 
-
-On 2025/10/20 10:46, Waiman Long wrote:
-> On 9/28/25 3:12 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> The partition_disable() function introduced earlier can be extended to
->> handle local partition disablement.
->>
->> First, partition_disable() was enhanced to support local partitions by
->> properly managing the parent's nr_subparts counter and integrating
->> notification operations.
->>
->> Then, local_partition_disable() is introduced, which extracts the local
->> partition disable logic from update_parent_effective_cpumask(). It calls
->> partition_disable() to complete the disablement process.
->>
->> This refactoring establishes a clear separation between local and remote
->> partition operations while promoting code reuse through the shared
->> partition_disable() infrastructure.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 60 ++++++++++++++++++++++++++++++------------
->>   1 file changed, 43 insertions(+), 17 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 154992cdfe9a..87ba43e93540 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1576,13 +1576,20 @@ static void partition_disable(struct cpuset *cs, struct cpuset *parent,
->>                       int new_prs, enum prs_errcode prs_err)
->>   {
->>       bool isolcpus_updated;
->> +    int old_prs;
->>         lockdep_assert_held(&cpuset_mutex);
->>       WARN_ON_ONCE(new_prs > 0);
->>       WARN_ON_ONCE(!cpuset_v2());
->>   +    old_prs = cs->partition_root_state;
->>       spin_lock_irq(&callback_lock);
->>       list_del_init(&cs->remote_sibling);
->> +    if (parent && is_partition_valid(parent) &&
->> +        is_partition_valid(cs)) {
->> +        parent->nr_subparts -= 1;
->> +        WARN_ON_ONCE(parent->nr_subparts < 0);
->> +    }
->>       /* disable a partition should only delete exclusive cpus */
->>       isolcpus_updated = partition_xcpus_del(cs->partition_root_state,
->>                           parent, cs->effective_xcpus);
->> @@ -1592,6 +1599,9 @@ static void partition_disable(struct cpuset *cs, struct cpuset *parent,
->>       spin_unlock_irq(&callback_lock);
->>       update_unbound_workqueue_cpumask(isolcpus_updated);
->>       cpuset_force_rebuild();
->> +    /* Clear exclusive flag; no errors are expected */
->> +    update_partition_exclusive_flag(cs, new_prs);
->> +    notify_partition_change(cs, old_prs);
->>   }
->>   
+On Sat 11-10-25 15:20:42, Andrew Morton wrote:
+> On Tue, 30 Sep 2025 13:35:43 +0800 Aubrey Li <aubrey.li@linux.intel.com> wrote:
 > 
-> Similarly, change to partition_disable() should be done previously in patch 4 ("cpuset: factor out
-> partition_disable() function") for completeness.
+> > file_ra_state is considered a performance hint, not a critical correctness
+> > field. The race conditions on file's readahead state don't affect the
+> > correctness of file I/O because later the page cache mechanisms ensure data
+> > consistency, it won't cause wrong data to be read. I think that's why we do
+> > not lock file_ra_state today, to avoid performance penalties on this hot path.
+> > 
+> > That said, this patch didn't make things worse, and it does take a risk but
+> > brings the rewards of RocksDB's readseq benchmark.
 > 
-> Cheers,
-> Longman
+> So if I may summarize:
 > 
+> - you've identifed and addressed an issue with concurrent readahead
+>   against an fd
 
-Thank you, will update.
+Right but let me also note that the patch modifies only
+force_page_cache_ra() which is a pretty peculiar function. It's used at two
+places:
+1) When page_cache_sync_ra() decides it isn't worth to do a proper
+readahead and just wants to read that one one.
 
+2) From POSIX_FADV_WILLNEED - I suppose this is Aubrey's case.
+
+As such it seems to be fixing mostly a "don't do it when it hurts" kind of
+load from the benchmark than a widely used practical case since I'm not
+sure many programs call POSIX_FADV_WILLNEED from many threads in parallel
+for the same range.
+
+> - Jan points out that we don't properly handle concurrent access to a
+>   file's ra_state.  This is somewhat offtopic, but we should address
+>   this sometime anyway.  Then we can address the RocksDB issue later.
+
+The problem I had with the patch is that it adds more racy updates & checks
+for the shared ra state so it's kind of difficult to say whether some
+workload will not now more often clobber the ra state resulting in poor
+readahead behavior. Also as I looked into the patch now another objection I
+have is that force_page_cache_ra() previously didn't touch the ra state at
+all, it just read the requested pages. After the patch
+force_page_cache_ra() will destroy the readahead state completely. This is
+definitely something we don't want to do.
+
+								Honza
 -- 
-Best regards,
-Ridong
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
