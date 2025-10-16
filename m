@@ -1,249 +1,204 @@
-Return-Path: <linux-kernel+bounces-856342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8EFBE3EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:32:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E189BE3EC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE3D3BE7FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF62F3AE630
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F56A33EB19;
-	Thu, 16 Oct 2025 14:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3F133EB1D;
+	Thu, 16 Oct 2025 14:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CmxDICrl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyVE/RvJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED101D54FA
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79332863A;
+	Thu, 16 Oct 2025 14:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760625059; cv=none; b=HHzJqA8zVnXX/wRcmX5ilBpot86k64L85Z6meTKlHM8zs6wCF9DkUwtttTMeeplL8nYd40w11QGv3Zl+RDhGSTcPzrLQ7IhEBOIvNiqEssCIMAhoMD34FCeUwzx7pgKfYu137ME7p4VZ7sSt923jB8fxofloCC8fhBU0hho6mpg=
+	t=1760625077; cv=none; b=YJjBWfOJskqv1hFe/PsFiz0dCqDh6qMyzuUN4fHBmC2qzPkl70VcdWT98Hxghc8xnqNcYkZUt+d4R+vsqq38HRJxM3UKRu5OTnDusJdRNp5WHVZhgtpOkxv8fuJKkvU9NqktJ3NXYJcuHZNntCbSEQgVKFXZY/+nfWGcG9wxVK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760625059; c=relaxed/simple;
-	bh=Vf9afqU7EXG8hwFv191ZCiB8yGTaOBOq5291xV0z9F8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=aR+j0v3guy7J3un5JyiTVbtzrLBNKk1m1t3s5pLXm977XgAapAlrgml/IIajPPk9PWfZ0cT4gPy5NO/9t+w8BeEQb5uVQaNmmrMNL2gFKUg6QtPE7zb29BU1GknYin5qtCo9eebS4jqdh1YFUCasoU50sVpnzS0B8kjadQA0Urk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CmxDICrl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GDSjuM021062;
-	Thu, 16 Oct 2025 14:30:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=OJ5tOU
-	w8/UzVF1GEEaRRUCl/HTRiZBZEsYxOJDd0WXg=; b=CmxDICrlv3hQMiAYcaUoPc
-	ZnEXYlxVBI5MKnCb37hW5nw8nVTZKdCKpuG2oGwcOHa+9EKWPqBdFet2oTwI7h32
-	UIBFtOjrk3LdLz5X1kjQ8eHdIWQ+aHlBx7Y/u6yxhrEWG5/5N3R85R5zcovoFnXG
-	frHF/d04VkH1PFUnd0epu6xpzym+PhQ5Ji9Ey1Ooe3eg2RinNAjuOUlSJJLPuT5M
-	5mjTqm2CV9/+Eh8rxpQi1nGw6O67H6qx6FpIWcx+40mc0A7iWjwIkgZoZFzoLw7/
-	YWTyvxR4ynhWW3zYHj2KfNnDgtMqg1vmBUBT3iQVbiWOfa1X5Hpflyf4Pkq8bucw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew0a3xq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 14:30:51 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59GEBnSf028069;
-	Thu, 16 Oct 2025 14:30:50 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49tdg9dcts-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 14:30:50 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59GEUlE850725338
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Oct 2025 14:30:47 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5600E200D9;
-	Thu, 16 Oct 2025 14:30:47 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1B074200DD;
-	Thu, 16 Oct 2025 14:30:46 +0000 (GMT)
-Received: from [9.109.204.116] (unknown [9.109.204.116])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 Oct 2025 14:30:45 +0000 (GMT)
-Message-ID: <6f213521-6baa-47a3-91bd-6ec54acca076@linux.ibm.com>
-Date: Thu, 16 Oct 2025 20:00:45 +0530
+	s=arc-20240116; t=1760625077; c=relaxed/simple;
+	bh=2bhzG+sKKkEOFOeSwphvQyynAR6AvBKCikqfMOpAciQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XoqJvsau6/m05tkNfGUpfO6WSc5+438nFau6ZuQYZamFuyzmtsKBIomrOo1zUl2UwJ4FEprgtO1WVL3h1L3efaa/thAdIdOJyMmcxztiPpkvMsPvXx4QxU8KVIc+9e1rq/b/6UDf/PVNWhhUR3CGx8ZttIynp9FyioDFTdNI/wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyVE/RvJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D2EC4CEFE;
+	Thu, 16 Oct 2025 14:31:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760625075;
+	bh=2bhzG+sKKkEOFOeSwphvQyynAR6AvBKCikqfMOpAciQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=FyVE/RvJK/2Fy6vBJK14cC6uhdTzBHzaN53x2degYwI4UMv204t2YIpf0+KTR7OTi
+	 F34VxjD8AdmqyzBKDAefyatXs4L0JdivDkpQMUsRtwZD3Y3WU8SEu4zS+ZjqF8adyf
+	 5fTm+4PVv5BksLxlyYR5glLrRS2tHUUhtfk/KChrwdEB6pJE1rOxq3unMxkLCaTqhu
+	 P7053oi8Mb52BWk8OWbhoRIsghEkb0bSBYnRGsTnnvyAojRScCkdud3sYP/WUIS9z+
+	 PI9gSSVI2LFQerue2Xl2fUEk3RxFGdPoG7NXk4s0WFenkfzyd2hAyEkFCED8kQoZPF
+	 115//Vg6/ZUzQ==
+Message-ID: <96e2c0717722be57011f4670b1a6b19bb5f4ef48.camel@kernel.org>
+Subject: Re: [GIT PULL] NFSD changes for v6.18
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <cel@kernel.org>, Eric Biggers <ebiggers@kernel.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Trond Myklebust <trondmy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Date: Thu, 16 Oct 2025 10:31:14 -0400
+In-Reply-To: <f3a3f734-e75a-4d93-9a89-988417d5008c@kernel.org>
+References: <20251006135010.2165-1-cel@kernel.org>
+	 <CAMuHMdVYNUBH11trBr2Mo3i_fDh5sw5AzqYbPwO7_m4H6Y3sfA@mail.gmail.com>
+	 <20251013192103.GA61714@google.com>
+	 <f3a3f734-e75a-4d93-9a89-988417d5008c@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline]Kernel Boot Warings at arch/powerpc/mm/mem.c:341
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-References: <90937fe0-2e76-4c82-b27e-7b8a7fe3ac69@linux.ibm.com>
- <7b9f9ca0-a6d8-40d0-8195-bbf81377e866@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <7b9f9ca0-a6d8-40d0-8195-bbf81377e866@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XWs6YeKTHds7XJr-JvTYslgJYu5Zc9bq
-X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68f1019b cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=fuU_RVYCY8Oo3qyU2PcA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX5dJQRUVl/9N6
- 5GFzd2QvX26vCvv4nUnVv6ftSNHQNJ2uD3+lhu7dcW2Y8gcnsp8tyEeWUIHOvetbuXx+aNcuX2d
- usG1++ngxzaR2/l2YquEg7Aux9biW8IM/gVWyHTOWXEIOyDB2rSasWGXGVVs2whbBNvFLyoflYO
- Ohcg4x76Y0LyaOc+QDJ+H1ADf3lsZZSsrr+t8ZEQV0C8sexTpLjTJ8C1otD3DKR5LAXnxRYLUX6
- v+cTnPQ9289H7bKSZrXXf2ydtjTqkDR4kbsPsBpkkfZEwzdCh3EhNwUtY3cyNY/bnYfwQJtw/Qm
- Bc1SO6lGji+5k6HCgyIjBnSY7vEQMCkkKOAFK9azN9l0vhsYG7dg5lwNXiMteTKpzd0VjsJi/BR
- ic1u5aB0BmlLdO3KSKhVTUAwhkNNRg==
-X-Proofpoint-GUID: XWs6YeKTHds7XJr-JvTYslgJYu5Zc9bq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
- phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
-Hello Venkat,
+On Mon, 2025-10-13 at 15:37 -0400, Chuck Lever wrote:
+> On 10/13/25 3:21 PM, Eric Biggers wrote:
+> > On Mon, Oct 13, 2025 at 12:15:52PM +0200, Geert Uytterhoeven wrote:
+> > > Hi Chuck, Eric,
+> > >=20
+> > > On Wed, 8 Oct 2025 at 00:05, Chuck Lever <cel@kernel.org> wrote:
+> > > > Eric Biggers (4):
+> > > >       SUNRPC: Make RPCSEC_GSS_KRB5 select CRYPTO instead of dependi=
+ng on it
+> > >=20
+> > > This is now commit d8e97cc476e33037 ("SUNRPC: Make RPCSEC_GSS_KRB5
+> > > select CRYPTO instead of depending on it") in v6.18-rc1.
+> > > As RPCSEC_GSS_KRB5 defaults to "y", CRYPTO is now auto-enabled in
+> > > defconfigs that didn't enable it before.
+> > >=20
+> > > Gr{oetje,eeting}s,
+> > >=20
+> >=20
+> > Now the config is:
+> >=20
+> >     config RPCSEC_GSS_KRB5
+> >         tristate "Secure RPC: Kerberos V mechanism"
+> >         depends on SUNRPC
+> >         default y
+> >         select SUNRPC_GSS
+> >         select CRYPTO
+> >         select CRYPTO_SKCIPHER
+> >         select CRYPTO_HASH
+> >=20
+> > Perhaps the 'default y' should be removed?
+> >=20
+> > Chuck, do you know why it's there?
+> The "default y" was added by 2010 commit df486a25900f ("NFS: Fix the
+> selection of security flavours in Kconfig"), then modified again by
+> commit e3b2854faabd ("SUNRPC: Fix the SUNRPC Kerberos V RPCSEC_GSS
+> module dependencies") in 2011.
+>=20
+> Copying Trond, the author of both of those patches.
+>=20
 
-On 16/10/25 15:21, Sourabh Jain wrote:
->
->
-> On 10/10/25 11:15, Venkat Rao Bagalkote wrote:
->> Greetings!!!
->>
->>
->> IBM CI has reported kernel boot warnings on the mainline kernel on 
->> IBM Power11 system.
->>
->>
->> Attached is the .config file.
->>
->> Traces:
->>
->>
->> [    0.040098] plpks: POWER LPAR Platform KeyStore is not supported 
->> or enabled
->> [    0.043041] ------------[ cut here ]------------
->> [    0.043045] WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/mem.c:341 
->> add_system_ram_resources+0xfc/0x180
->> [    0.043058] Modules linked in:
->> [    0.043065] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
->> 6.17.0-auto-12607-g5472d60c129f #1 VOLUNTARY
->> [    0.043072] Hardware name: IBM,9080-HEX Power11 (architected) 
->> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
->> [    0.043078] NIP:  c00000000201de3c LR: c00000000201de34 CTR: 
->> 0000000000000000
->> [    0.043082] REGS: c000000127cef8a0 TRAP: 0700   Not tainted 
->> (6.17.0-auto-12607-g5472d60c129f)
->> [    0.043088] MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 
->> 84000840  XER: 20040010
->> [    0.043099] CFAR: c00000000017eed0 IRQMASK: 0
->> [    0.043099] GPR00: c00000000201de34 c000000127cefb40 
->> c0000000016a8100 0000000000000001
->> [    0.043099] GPR04: c00000012005aa00 0000000020000000 
->> c000000002b705c8 0000000000000000
->> [    0.043099] GPR08: 000000007fffffff fffffffffffffff0 
->> c000000002db8100 000000011fffffff
->> [    0.043099] GPR12: c00000000201dd40 c000000002ff0000 
->> c0000000000112bc 0000000000000000
->> [    0.043099] GPR16: 0000000000000000 0000000000000000 
->> 0000000000000000 0000000000000000
->> [    0.043099] GPR20: 0000000000000000 0000000000000000 
->> 0000000000000000 c0000000015a3808
->> [    0.043099] GPR24: c00000000200468c c000000001699888 
->> 0000000000000106 c0000000020d1950
->> [    0.043099] GPR28: c0000000014683f8 0000000081000200 
->> c0000000015c1868 c000000002b9f710
->> [    0.043138] NIP [c00000000201de3c] 
->> add_system_ram_resources+0xfc/0x180
->> [    0.043143] LR [c00000000201de34] add_system_ram_resources+0xf4/0x180
->> [    0.043148] Call Trace:
->> [    0.043150] [c000000127cefb40] [c00000000201de34] 
->> add_system_ram_resources+0xf4/0x180 (unreliable)
->> [    0.043157] [c000000127cefba0] [c000000000010eb4] 
->> do_one_initcall+0x60/0x36c
->> [    0.043162] [c000000127cefc80] [c0000000020068cc] 
->> do_initcalls+0x120/0x220
->> [    0.043169] [c000000127cefd30] [c000000002006cbc] 
->> kernel_init_freeable+0x23c/0x390
->> [    0.043174] [c000000127cefde0] [c0000000000112e8] 
->> kernel_init+0x34/0x26c
->> [    0.043178] [c000000127cefe50] [c00000000000df7c] 
->> ret_from_kernel_user_thread+0x14/0x1c
->> [    0.043181] ---- interrupt: 0 at 0x0
->> [    0.043186] Code: 3d02010c e9210028 e9410020 fb840010 fba40018 
->> 38685b48 3929ffff f9440000 f9240008 4a161035 60000000 54630ffe 
->> <0b030000> 39210028 39400000 39010020
->> [    0.043197] ---[ end trace 0000000000000000 ]---
->> [    0.043202] ------------[ cut here ]------------
->> [    0.043203] WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/mem.c:341 
->> add_system_ram_resources+0xfc/0x180
->> [    0.043209] Modules linked in:
->> [    0.043212] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G W      
->>      6.17.0-auto-12607-g5472d60c129f #1 VOLUNTARY
->> [    0.043217] Tainted: [W]=WARN
->> [    0.043219] Hardware name: IBM,9080-HEX Power11 (architected) 
->> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
->> [    0.043223] NIP:  c00000000201de3c LR: c00000000201de34 CTR: 
->> 0000000000000000
->> [    0.043226] REGS: c000000127cef8a0 TRAP: 0700   Tainted: G W       
->>     (6.17.0-auto-12607-g5472d60c129f)
->> [    0.043229] MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 
->> 84000440  XER: 20040010
->> [    0.043237] CFAR: c00000000017eed0 IRQMASK: 0
->> [    0.043237] GPR00: c00000000201de34 c000000127cefb40 
->> c0000000016a8100 0000000000000001
->> [    0.043237] GPR04: c00000012005a9c0 0000000020000000 
->> c000000002b705c8 0000000080000000
->> [    0.043237] GPR08: 000000257fffffff fffffffffffffff0 
->> c000000002db8100 000000011fffffff
->> [    0.043237] GPR12: c00000000201dd40 c000000002ff0000 
->> c0000000000112bc 0000000000000000
->> [    0.043237] GPR16: 0000000000000000 0000000000000000 
->> 0000000000000000 0000000000000000
->> [    0.043237] GPR20: 0000000000000000 0000000000000000 
->> 0000000000000000 c0000000015a3808
->> [    0.043237] GPR24: c00000000200468c c000000001699888 
->> 0000000000000106 c0000000020d1950
->> [    0.043237] GPR28: c0000000014683f8 0000000081000200 
->> c0000000015c1868 c000000002b9f710
->> [    0.043271] NIP [c00000000201de3c] 
->> add_system_ram_resources+0xfc/0x180
->> [    0.043276] LR [c00000000201de34] add_system_ram_resources+0xf4/0x180
->> [    0.043280] Call Trace:
->> [    0.043281] [c000000127cefb40] [c00000000201de34] 
->> add_system_ram_resources+0xf4/0x180 (unreliable)
->> [    0.043287] [c000000127cefba0] [c000000000010eb4] 
->> do_one_initcall+0x60/0x36c
->> [    0.043291] [c000000127cefc80] [c0000000020068cc] 
->> do_initcalls+0x120/0x220
->> [    0.043296] [c000000127cefd30] [c000000002006cbc] 
->> kernel_init_freeable+0x23c/0x390
->> [    0.043301] [c000000127cefde0] [c0000000000112e8] 
->> kernel_init+0x34/0x26c
->> [    0.043305] [c000000127cefe50] [c00000000000df7c] 
->> ret_from_kernel_user_thread+0x14/0x1c
->> [    0.043308] ---- interrupt: 0 at 0x0
->> [    0.043311] Code: 3d02010c e9210028 e9410020 fb840010 fba40018 
->> 38685b48 3929ffff f9440000 f9240008 4a161035 60000000 54630ffe 
->> <0b030000> 39210028 39400000 39010020
->> [    0.043322] ---[ end trace 0000000000000000 ]---
->> [    0.043520] kprobes: kprobe jump-optimization is enabled. Al
->
+Looking at this a bit closer, maybe a patch like this is what we want?
+This should make it so that we only enable RPCSEC_GSS_KRB5 if CRYPTO is
+already enabled:
 
-Please try the below fix:
-https://lore.kernel.org/all/20251016142831.144515-1-sourabhjain@linux.ibm.com/
+diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+index 984e0cf9bf8a..d433626c7917 100644
+--- a/net/sunrpc/Kconfig
++++ b/net/sunrpc/Kconfig
+@@ -19,9 +19,8 @@ config SUNRPC_SWAP
+ config RPCSEC_GSS_KRB5
+        tristate "Secure RPC: Kerberos V mechanism"
+        depends on SUNRPC
+-       default y
++       default y if CRYPTO
+        select SUNRPC_GSS
+-       select CRYPTO
+        select CRYPTO_SKCIPHER
+        select CRYPTO_HASH
+        help
 
-Thanks,
-Sourabh Jain
 
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
