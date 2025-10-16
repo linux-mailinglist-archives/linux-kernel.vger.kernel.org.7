@@ -1,95 +1,112 @@
-Return-Path: <linux-kernel+bounces-855631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66035BE1D19
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:53:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02123BE1D31
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C130F188E50E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C13424457
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EAD2F1FDB;
-	Thu, 16 Oct 2025 06:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D482F1FDA;
+	Thu, 16 Oct 2025 06:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MshjixAm"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aVpngrnT"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD761A9B46;
-	Thu, 16 Oct 2025 06:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6341AF0BB
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760597594; cv=none; b=iqgV0Lzun7RWaXc04/Dq5yA0vq03oR//LNJHRa0cW4M9wlwGM4XMVRMsifoU964+ydn682lMvkUIqDBe9GtVX4V2OAsQSmrvqvi14C6hj0BUiCwAlBS062R1masRDYmvMp+F4kXfFRZbt1mFzhfWoFWQnusjjrHWhl9uO/f5aSQ=
+	t=1760597705; cv=none; b=KM+CT3hTvAxGO/EB3rZLhAsuAvRQDSxyrh49DrMeEItruqpK5HexTWw6mKoIMwLrxzbt4mwGV/w1i9j/N915vPtcpQDKLPimGAjSlyh8kWIyVQ730fPhMpIElDDzvfk4xr5GrxisUjR12o7+H5Fu3aGSKXspyqm9KnMKD5VDDhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760597594; c=relaxed/simple;
-	bh=LoP0iL2fgdFZyWRft6p0C1mJ+sXum2DzJhkgo80tJwY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GgGH6LMVLXSsvIOPMMQfIHrdp+GV75Kl5h82Ujr/B1ez/yyO8q+J7GoCRf35IPp6YEKwTIWYxCegN72A4BAEuKl/qRC+5B4v3VE3iX2HhMmrrVA70PtA+FO6J3Rdf9N26jWdTDqUDYk1c1lJ90G83p0TMaCx6ZM45995te3BZ6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MshjixAm; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4C05014000F4;
-	Thu, 16 Oct 2025 02:53:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Thu, 16 Oct 2025 02:53:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760597589; x=1760683989; bh=tcUBI5yvDagqARx1NRhoV/Xb73Hae3sjMcC
-	zbp2ZYMI=; b=MshjixAmEDWJtMGKvrmtBxn8dNwDRLg8fCulAR/XGo3Gsrfuynv
-	pV/lk8YPlC2PY56rMG3RyG5WNNZDL5vTRTVyHg5rzDJc9adoIiGP+DBpYPWnBT/r
-	gZ1uIp/EFCIaMHdB5ncUSmXl4MD5Tub7GGKEcuCWT80VWFxKoGGJGuRS2M2ETIRw
-	/iKPKDlp6pUHYEf3LUUGHYarSNsQos2MLapnv/S3nvCM99QmFlJAmuJKA9y9kCp7
-	R/5yxrJFHn7siUrXblYkGGNI/pmTinXisoBUZj0aKNa2C3I+wAQnx8zbrYPWyskM
-	jQOF1d1SI4s6gd9T/W3wgWQmiKjQvbfEU4w==
-X-ME-Sender: <xms:VJbwaG8r2GtnqYu_SyRHYVMJCO6mTOCi-aEd2j__gZMaLjmP7_t9sQ>
-    <xme:VJbwaKYrKgw5b4WDAtVqdtM34Q2ZFD8NXrV9FANNezB_BxwEV4C3-kCDROtqVWPP1
-    g3REiOAwt1ypuKZMcNbCIA1tD4bwywQibLuaaXZMOSN7l0v9faWR4A>
-X-ME-Received: <xmr:VJbwaEoHqwlbUCRYubDX81jG181ptZlPIR8HlTq_FB-4f_EATTnaeNiietu4tjPlkLpSypcpu_NohqMID3K5AKQ_oS8gw1VZUos>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdehiedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedufedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuh
-    igsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    grkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsgho
-    qhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfi
-    hnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhr
-    tghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:VJbwaP3dFtsuOU6BbisEcqdjq5j4-7XdMeq6K7FhkpxAXaV9TFuJoQ>
-    <xmx:VJbwaMla1P6LLOpI_G6WJiwD14sEUFKkzKxaEh_n7JJyNIknZLQHpg>
-    <xmx:VJbwaLZ8ZeeRsp6rqWOIr9WhdsUOR_yC8BJ7Ejr4IZfWKcablR_3qg>
-    <xmx:VJbwaO8whWJLF9_uQWbe_M3DgeWM1Z_t9XlpDgeSBsDU1mq54U19Tw>
-    <xmx:VZbwaDgCeOhZ0pxog5aFoAFfJE_CiynmZYMXUc28LRzsN7A1vM-bgH7->
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Oct 2025 02:53:05 -0400 (EDT)
-Date: Thu, 16 Oct 2025 17:53:05 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: David Laight <david.laight.linux@gmail.com>
-cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-    linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
-    linux-doc@vger.kernel.org
-Subject: Re: [RFC v3 1/5] documentation: Discourage alignment assumptions
-In-Reply-To: <20251015145332.260eebe6@pumpkin>
-Message-ID: <29188dc5-32a3-28f9-b488-26cca713e070@linux-m68k.org>
-References: <cover.1759875560.git.fthain@linux-m68k.org> <76571a0e5ed7716701650ec80b7a0cd1cf07fde6.1759875560.git.fthain@linux-m68k.org> <20251014112359.451d8058@pumpkin> <f5f939ae-f966-37ba-369d-be147c0642a3@linux-m68k.org>
- <20251015145332.260eebe6@pumpkin>
+	s=arc-20240116; t=1760597705; c=relaxed/simple;
+	bh=FswksY2w4qfDWehUgB20Gql/cqSO7rNQQjzEPLbIeLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQkoy1HNvlPRz/ljUZGmF8PLasDNJT/66Quz5Km5GjjsRjxXY3s9AlZ+BmxhsV9W5OZZc+A/4HxPQ7KxO6L5cPbN9v6by5BY6MRs0oUrHR3qUFqLxQzsywCYb/p/+9vHcDyiwWhuR6vaeBEtBaqwW4EZsvRR22DhFgCzs7EuPAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aVpngrnT; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-789fb76b466so394430b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 23:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1760597702; x=1761202502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h7OTCRE1rj8UAVICNN5Q1s3HfYeFGt50wghYz0Xd6fI=;
+        b=aVpngrnT74oXU3fBd5O4fDOmuyxhfS+YdJrZg0KMJk864pyQGVDP+pymJUgaFv2Ku5
+         XkF2N/DNSyXHe0MTcbwmzMfCpxpuBz+cZ95wNPj4MCmhNyXWYkDk04fay/Gv0fdOkn+r
+         TBzgFKKKMOmSJ4gQHoLvIFBSZ8ex7IIMsMTaJKe/L2mrUCp++vMDtZS55aEgLm0Rwh1b
+         I39w9EuKOf0IrMvhi9pRCBVzI/t8c3uaIRXWhnxwdzgEyBjhuNSESKV/sVJhoL02BEnO
+         SrPVmoT1oKmhk/38r+WpGU5pUvH7emPXDhI7ARuAOfyls0ypGlPPehrSRjpVbHwCLW7t
+         L5Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760597702; x=1761202502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h7OTCRE1rj8UAVICNN5Q1s3HfYeFGt50wghYz0Xd6fI=;
+        b=irShaiKWed24VEQjjwWvHIfyEmNfGmEF/011rAxvjDUSa2TVaZ37uLhZf/AKhQWLsm
+         1ZMVp0pzT62HQsYhGpn4GBRe0dArZJISKeN5QMViy9fdR9DStVycgrjrS3NwdL02Jnhd
+         7ERPRpKQXxtMYwMCBRBhHHM+4VA1qrGwXFyuHQ1cHshpPh0WltTdXwme2z9cfvbAx7n/
+         2bxZ0EAu0G1Um+1knK8Ja3iEg56XNsxMyjLmHcJh3PdCf683sCwT0HQxDQTqEIHfFVwV
+         EUo28E2NjjZITVjVskzW6U/1WR8f2hcKIpZd4maQXGh1BiOoq2Fn3V+Bv1t9+qOOaD1X
+         xbSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXc12Te8gQDww0+kFUqAZFL2QL9667VSls5IqO7j/COsjuzraf+rX2b9+6ALFe3ES2TfvH4W5MS1WqmVjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdVNMUXpBq70IJ8AStkq8ViUVriOp476JMWrTNvGx7/lBefhaf
+	2GeYCIS3BMpLiIKl78QWnHvztiwPCPRLIdDCh9tP2x+ESXkXHbbcRuO2I257ZPCaUA==
+X-Gm-Gg: ASbGncucwWvyPltDzxdyRCsrAjZYZZMzfCO5egacWJkVSzl+dmatpaADf1NvztzgFfd
+	eGTHeJAakWnpozu5W1yfQmPEbGu8WiVde0TGQ0iwT/I3WY1Rp/ozDShP5R71J1PUnYGhCKSgjzh
+	5KzJl/34JL4ctHhMtD5oF6sd305NUw9Twdl9QGBvJZfpJMkLXO+Go1lYw5+zKQrseTBcKbYzzK6
+	QGTthqXWGP8zpsQ5R8v2GJsZ68VosgKVkM3MJ9mvXLx+oFhxRKYLDsVDC1sbOsUror/cnF3cFx/
+	pNQN8b/d03xgiaDbrZvh14voJ0oy+1uRAYUvNhONPxU81MQ+FDYG1Rsk0sAKN6t4smpJHRTcoVj
+	ohCa5aKUlswXJLZY0sDP1Vy1TwMOaXKtQKWMTA0JEAjIwJAS+lcPvXfE8bmZBNGddLvHQeJoLKP
+	MM2dUaN5GV6WyCFjBZ1z4mHIfvMqsNIE7nTsvH
+X-Google-Smtp-Source: AGHT+IFFEE0yDW1Kd1JfK3CIXSudLbpYc+AZpGDEQ3x+wtsIv/aOu5HWkgQZJxWD9eO1Qk/yMprR3A==
+X-Received: by 2002:a05:6a00:1827:b0:781:261b:7524 with SMTP id d2e1a72fcca58-79385ed1603mr42293554b3a.14.1760597701811;
+        Wed, 15 Oct 2025 23:55:01 -0700 (PDT)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bc13543sm21069213b3a.35.2025.10.15.23.54.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 23:55:01 -0700 (PDT)
+Date: Thu, 16 Oct 2025 14:54:38 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Hao Jia <jiahao.kernel@gmail.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
+ zero runtime_remaining
+Message-ID: <20251016065438.GA32@bytedance>
+References: <20250929074645.416-1-ziqianlu@bytedance.com>
+ <c4a1bcea-fb00-6f3f-6bf6-d876393190e4@gmail.com>
+ <20251014090728.GA41@bytedance>
+ <84382429-02c1-12d5-bdf4-23e880246cf3@gmail.com>
+ <20251014115018.GC41@bytedance>
+ <ded8b9bf-c9bb-8a41-541d-1bef354e4296@gmail.com>
+ <20251015025154.GA35@bytedance>
+ <4902f7d4-c6ee-bc29-dd7f-282d19d0b3b2@gmail.com>
+ <20251015084045.GB35@bytedance>
+ <6bcc899c-a2a5-7b77-dcff-436d2a7cc688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,54 +114,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6bcc899c-a2a5-7b77-dcff-436d2a7cc688@gmail.com>
 
-
-On Wed, 15 Oct 2025, David Laight wrote:
-
+On Wed, Oct 15, 2025 at 06:21:01PM +0800, Hao Jia wrote:
+> On 2025/10/15 16:40, Aaron Lu wrote:
+... ...
+> > Hao Jia,
+> > 
+> > Do I understand you correctly that you can only hit the newly added
+> > debug warn in tg_unthrottle_up():
+> > WARN_ON_ONCE(cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0);
+> > but not throttle triggered on unthrottle path?
+> > 
 > 
-> There are several separate alignments:
-> - The alignment the cpu needs, for most x86 instructions this is 1 byte [1].
->   Many RISC cpu require 'word' alignment (for some definition of 'word').
->   A problematic case is data that crosses page boundaries.
-> - The alignment the compiler uses for structure members; returned by _Alignof().
->   m68k only 16bit aligns 32bit values.
-> - The 'preferred' alignment returned by __alignof__().
->   32bit x86 returns 8 for 64bit types even though the ABI only 4-byte aligns them.
-> - The 'natural' alignment based on the size of the item.
->   I'd guess that 'complex double' (if supported) may only be 8 byte aligned.
-> 
-
-Those distinctions could be useful in a discussion about memory 
-efficiency. But this document is concerned with avoiding a performance 
-penalty -- it's entirely unconcerned with over-alignment and memory waste.
-Hence, "aligned" is used as shorthand for "naturally aligned".
-
-The ambiguity in this document (and my proposed change) stems from using 
-the word architecture to cover ABI, platform, CPU, ISA etc.
-I can improve upon that.
-
-> What normally matters is the ABI alignment for structure members.
-> If you mark anything 'packed' the compiler will generate shifts and masks (etc)
-> to get working code.
-> Taking the address of an item in a packed structure generates a warning
-> for very good reason. 
+> yes. but I'm not sure if there are other corner cases where
+> cfs_rq->runtime_remaining <= 0 and cfs_rq->curr is NULL.
 > 
 
-I believe the problem with 'packed' is already covered in this document.
+Right, I'm not aware of any but might be possible.
 
-> [1] I've fallen foul of gcc deciding to 'vectorise' a loop and then having
-> it crash because the buffer address was misaligned.
-> Nasty because the code worked in initial testing and I expected the loop
-> (32bit adds of a buffer) to work fine even when misaligned.
+> > BTW, I think your change has the advantage of being straightforward and
+> > easy to reason about. My concern is, it's not efficient to enqueue tasks
+> > to a cfs_rq that has no runtime left, not sure how big a deal that is
+> > though.
 > 
+> Yes, but that's what we're doing now. The case described above involves
+> enqueue a task where cfs_rq->runtime_remaining <= 0.
+> 
+> I previously tried adding a runtime_remaining check for each level of task
+> p's cfs_rq in unthrottle_cfs_rq()/tg_unthrottle_up(), but this made the code
+> strange and complicated.
 
-I think that pitfall is already discussed also, along with a remedy.
+Agree that adding a runtime_remaining check for each level in
+unthrottle_cfs_rq() looks too complex.
 
-There is also this,
+So I think you approach is fine, feel free to submit a formal patch.
+With your change, theoretically we do not need to do those
+runtime_remaining check in unthrottle_cfs_rq() but keeping that check
+could save us some unnecessary enqueues, so I'll leave it to you to
+decide if you want to keep it or not. If you want to keep it, please
+also change its comments because the current comments will be stale
+then.
 
-    ... for standard structure types you can always rely on the compiler 
-    to pad structures so that accesses to fields are suitably aligned 
-    (assuming you do not cast the field to a type of different length).
-
-So it seems to be fairly comprehensive but I may be missing something (?)
+Thanks.
 
