@@ -1,117 +1,252 @@
-Return-Path: <linux-kernel+bounces-856276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415DDBE3B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57418BE3B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC26542BB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:32:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D04581AE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA53339B36;
-	Thu, 16 Oct 2025 13:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D23A30507B;
+	Thu, 16 Oct 2025 13:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lznjt33l"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ooemfm4R"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011008.outbound.protection.outlook.com [52.101.52.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAD618A6C4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760621519; cv=none; b=r3kUluygOv17CvFmjSgvGLIeqW9N5te7ISRipept+OCqV9rdIkCuFqCiJ+vydBPxtyrZFPdaR7qtYD3RbJ6FaJjU+rKshQmEEhWMHwLWgXOHc20KS45S/+CFv5l3VtSx4KWbt+9l8xb2kgwM/aEsUXowmKh4jCK1F0FuEcQEuUY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760621519; c=relaxed/simple;
-	bh=RFh/gqvFYe3mrthIbrCFXM9FsiCYqUCmiQDRUcSGYj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KAOpRJkl5+xCAuVrO3FvoMFFnwq7MKzyMMrSRUcPuP3Cs2jP+oqIMlLr4jLGgV/vVrpyZrxuCi+1ettXpcFna2BI+71Pyw9+sFqEkBWVoiV87OLFXUkrhVAu+ACCEKsne9f0EZFd80GiYBJuo0UUKUqu2eSYJp3qSW6Fic2jZDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lznjt33l; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-58d8c50080cso86147e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760621516; x=1761226316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XVVxXst564TPeNRQIV0Zrdb17qt+RXom9Ra+osC/9Kg=;
-        b=Lznjt33lDzi8vg9xW3aQmvZ5FOGRz0ZA0fkxtRfF6xXDtriiqL6widdjmiFIH85+lz
-         +2VSOO2vt50e2hhDmYGvaJmqElcspSdumVCf9uN/kUgK3tqXDxTnR4Hf1CUyXq9ucngB
-         RXhu4oDSaZE2CQ0Ynxk5KdcNX32LI5CWRCr/iXD07xi55j9/ntVZuy0OSYTJwnSq8FV7
-         KwsEOTcWmyMVv216hXzxKhamoR8210lKSnECqmDCNGNB0mWhvVG3n7ICrxOyGu1h0ryC
-         Y8tP1ckgthMv0ZIzSiz7XCgDTj+rsVMjg0HnNdbgJ0dPROIpFKXA1r7uitDJt2hIXDmc
-         Wlbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760621516; x=1761226316;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XVVxXst564TPeNRQIV0Zrdb17qt+RXom9Ra+osC/9Kg=;
-        b=vZbCxBMfJjjZLdMWX2hXA0yNrLTK2ZH4CcyAsZKraKzO/zD889Db45uGM4VbfNIk5h
-         JSaEorE3Q7jWXoDPOUC/QCL62mSXPhRY5qllnnhj4fZPlzIFwqC2sMGbJhb/PEIZaHRE
-         E+EuJj6J5eMGvXhPPkcg6FIZ4xhCnufKCo8V+d7IxcSx4YO6eqfAnuI13LBb/U6+vO5a
-         oPtKxfYZ8VeWRT/UCkiCCz2aQmpG4REUD+HmIB8R4vvxJhb+sffO6NCnmbbdoNwjufPp
-         DSc7ZSKlEVLOE+ycn5G9H612a94ujsldyqw2cgtE7wi+4QXedLNOFB4gYdXrEca8jwLU
-         l/iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvU4UOubZTtkV/dk0Zce1Bgd7FSwKfRnG2UaM764q3OEIJsGQaDZypLHIYtSU54b7H1+B5aQD4HXAJjOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKD7e0L5Bv0h4cZyV6UbwHbANjenOdJHhPnoeVrbm0Dg38MaD2
-	smFUzuKRPT0CMx0ZIogHAN/mvPmo5vc/aXHwHkmge3UVQ7RyzuR8RShLFblMAHqJ5NBEu2RQF5D
-	S7lJ5
-X-Gm-Gg: ASbGncsCAsL3fSCeWBl7vQJ0kzpialR3PuFECWfjrkTBbHmbgzSF64i3fCd0VKn3lud
-	cAtEyXYfvg3T+x9ZFtPxma7VsBeSPI60VeABmHJI7wiXSgUNMlpp+1QDHarlnuf9IbOnmMrDbTc
-	2E/V20C+v6zU8T17F+LHCv8yfL6TUkBbRT2a5F7pDR1hnw89VHQQiNAaD+GM3sHlEd/7TskZVng
-	OLPzx4X4NDS+o4OBiXtl0+iiCSVzj+d7aLZN4c//p+NbEm+u0osJFsKz/dq6F6tNxPGdXeylL1h
-	k8h4PsneKVi2duVzV2aAAO6cSDjCjQ6HJFfiIs1M91F2pwoJ5oAv5up/A4nEV4HbwgwszQkrA6s
-	G5JWfkhs8t1u2M3GOwoWzAZogyxpdLJtqTJ8AsNw1xyeTAQXfFbnI2U+CMPV8TXxFJhpwfngPnO
-	ivcxN4NkcPefCAsc/HLIXIeCCnudTPrIr/Xi4M55Tf/LsME6jCb4LrBh5SSaach92kAc+xbg==
-X-Google-Smtp-Source: AGHT+IE1afceVs8PBuaZj9exPtYlK0QfXyVjdYDJJxq6s9C8bQx673U2F0e4V3yJkwmn8me+a4KtbA==
-X-Received: by 2002:a05:6512:2393:b0:55f:5965:e4e5 with SMTP id 2adb3069b0e04-591d85703bemr10189e87.6.1760621515969;
-        Thu, 16 Oct 2025 06:31:55 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881f91c0sm7100030e87.41.2025.10.16.06.31.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 06:31:55 -0700 (PDT)
-Message-ID: <fb491c3a-6786-4daa-b3ee-53756b3d9b44@linaro.org>
-Date: Thu, 16 Oct 2025 16:31:54 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A517B198A11
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760621680; cv=fail; b=dwZwtl9ldHkJvTSFb/IBYT0UanbDSCbEedQguYWaJ6C6bldTEQ9rKed4N5o2e2SGwxcSnGtipHGyLjnHRtFpmltoCqD3HFGKqzyZysYpCujhFhbaNXemZlJ2An5cXrv46fmk3U5UGJcbSOt7InZtEnBLPcv3IkWd9mY49PXMxPc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760621680; c=relaxed/simple;
+	bh=62lYqp+IW4E96wTZXafMykcFWA4vBjJvqELS14WFOTw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=erbwS6w5xrZlp31meyuBXUbN3lhtCx0R9t10qhRNpK5Hsv8zMpk0dRmleut7MW/hUu9q8H1uONwCGi5oT5S+13DuAnCoYeO/0e687B/X52c+tvxhXhRGa0soIoZ+fthS09xx0E7PWEJenN8ID4ramZfeuQfYJLAGjLgXdHfkFes=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ooemfm4R; arc=fail smtp.client-ip=52.101.52.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iSGuSwJadS4eHJCwS8FovJw1tyu9Z1l+bo1Zh+P/uYSWa+md+rCV7IuYEOu2ddR6qvxKmODjNBT6A6jMplHxDuIlBCZOAW7Ju8L1UDU5OoH2H3Vyxpa3SvGpkaXP2vVcZfetweOl7ZFK2EwDufWSIrX8HZeiEkoHQpFIRpPv3fWMG6pp/bSYbLuGCd0KIU8VgPWNCSsf+mFUSGwoZ7FHBQfCramyTS19cpcNmyZ/+qMJKJ7VK1aeNe5evgiH/aduGG4eCygyAMBPkp8NAcBelcOr3u14SCfPkWosEmIkLDS/0Zs9UjjvwVIQ3xuaCN1wktNJHSfMP4GG35fHAwzFOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Iif4rvbjt+IwaSa4nKPSLkoVly6WhQpcE0JenUjVXGw=;
+ b=bkPFyuYx01PkVA0ajmjX1QciJyn0k2sEd+h1khpSJAJBIOwM0z7zTNcMSHYWDn+N/DU1IQJ5YUKX3F7ADMJYRNllwezLhsT/XiRjbeZiS8zC3l3MCqcrXaEqpHUVi5UJG751/BXbi8NrwdtDz7CD/XpT/PeWpwidHeNohaFDEZECG03oviE5Dse6EDy4ohuUSSZVRUAyxNfm+wb3/2cPO1gn6nw3Cb2pl1ohUYy30ST9cFAiPVzLA/eZAzW04BFiup3zxig05K/zDFy1Mygow0ki8DBYHlhfVrQ8zI4l0k5EPJPf/RqRgR90IYuQGIqx1LxhUSJLpEEPnc13ftRQ/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Iif4rvbjt+IwaSa4nKPSLkoVly6WhQpcE0JenUjVXGw=;
+ b=ooemfm4RndON9TIhlJOciEKb668Yn8Tv8wxVwGgDGQBjNM4mybqqZU+7G9pXvOdOaCLOQRKeXXByp4MH733/GPWnJSMmlDckuDbw9agyVZXbWgjGX36GdQsRulXASbOJ3gd/H864wSg1aIKIgFyuo6b+hcJvuhUaq3pObXUrSwY=
+Received: from SJ0PR03CA0092.namprd03.prod.outlook.com (2603:10b6:a03:333::7)
+ by PH8PR12MB8431.namprd12.prod.outlook.com (2603:10b6:510:25a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Thu, 16 Oct
+ 2025 13:34:32 +0000
+Received: from CO1PEPF000075EE.namprd03.prod.outlook.com
+ (2603:10b6:a03:333:cafe::33) by SJ0PR03CA0092.outlook.office365.com
+ (2603:10b6:a03:333::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Thu,
+ 16 Oct 2025 13:34:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CO1PEPF000075EE.mail.protection.outlook.com (10.167.249.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 13:34:31 +0000
+Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 16 Oct
+ 2025 06:34:30 -0700
+From: Babu Moger <babu.moger@amd.com>
+To: <babu.moger@amd.com>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
+Subject: [PATCH v2] x86,fs/resctrl: Fix NULL pointer dereference when events force disabled while in mbm_event mode
+Date: Thu, 16 Oct 2025 08:34:19 -0500
+Message-ID: <a62e6ac063d0693475615edd213d5be5e55443e6.1760560934.git.babu.moger@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: dt-bindings: Add qcom,sm6150-camss
-Content-Language: ru-RU
-To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251016-sm6150-camss-v1-0-e7f64ac32370@oss.qualcomm.com>
- <20251016-sm6150-camss-v1-1-e7f64ac32370@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20251016-sm6150-camss-v1-1-e7f64ac32370@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075EE:EE_|PH8PR12MB8431:EE_
+X-MS-Office365-Filtering-Correlation-Id: af40ff6d-7710-47c1-eb67-08de0cb8bd1a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7qjVQb9kjrKGWXaYu6NOTpD2tF224KgKPXZfvEktfBtM585vGs/g2UGkh6Xp?=
+ =?us-ascii?Q?eQAydUleCfwyP+iGXquNo+KxLs+zIT2lSwldDpyr6/DpcrBqpWpqmDBp54Dl?=
+ =?us-ascii?Q?yatbPG2LcZ8vGTgRvVYuqPZ4XpeOvOppwoQhbG4bb1PePRF+X0D4+bJsZO1p?=
+ =?us-ascii?Q?A+LeNbr+lEI4h6c8jGy/AqC6LEPRjbYRaBoSNwAkP0CxRmeHZ9s8TC3Rdc2x?=
+ =?us-ascii?Q?4+ALs25iyz73iZSuDE9BBE2v+zyAug6ePdOIhgPliQwVm6fkZPW2lyf3zMtV?=
+ =?us-ascii?Q?YFlhYmw17JqdLqDS4ybrfMAIqdRqgHGQcwYtwMah5ASnJNMqLcT9Sp1gV6HR?=
+ =?us-ascii?Q?5T6g3PeDHoB+C01ICKNGbB06NBN/qGAA6VrmC9QxiU39fTiRv1FCeawgXtUo?=
+ =?us-ascii?Q?useflYdAo/xRtZbThQ5YELFoGBh/JaQpFBOT0vr0+HHH13u2iLdC0elvpzIL?=
+ =?us-ascii?Q?7jXZZpl54KpyqqDR3rruI3xp40Ng69o4PndZ/tPrV/6264X1boRB1X/CkNEI?=
+ =?us-ascii?Q?Hd5eJiJl27YHX4xwLS63eq081Y3RWN9oQnWWt9Otq0nVI/bnyM5cnvSrsZOO?=
+ =?us-ascii?Q?3tEz1CdSHLQcCPTEH+hUQM6etOGk1gfvdNUKwHpieDH9yyjonUqQtkMKZOiG?=
+ =?us-ascii?Q?WKdUPrkxJU0BL4zaJJ7QVUAS5lT+le2YiezwRfWi18nZVp7So/zX5k8/RpKV?=
+ =?us-ascii?Q?GY87KQXusoV4Te8oEv7qfGCt+n3iQrc0tQQhVWrDnHzCWkcI9W0/nf2txwqa?=
+ =?us-ascii?Q?xb/5QezjmSv5H4DGmPp29B4urR7zCTkZVgJIsGwSsE3smJHE1EHW4JdW/IeW?=
+ =?us-ascii?Q?5d/Nh00s6bzFjBfxgbLbSj1YuA3lKz+hsTkhV2CqkE7dzQ3Lj1QduuwY48SQ?=
+ =?us-ascii?Q?cEJlbVMWo4mBIhDXV60FBJNRA1pEKS787gDELzKrHHSYTbijglb1+5vOBCmX?=
+ =?us-ascii?Q?oI1iZnNJ1w88XkL8PO1A1GxSOBXqNTQxnqVdb+Rt5JzlXKq9lUMd1doMQ42V?=
+ =?us-ascii?Q?C11ia7uP+5IjMfuPqhR5Gzb8o7JpYg3GIhVSvtdSXMXqy/GdkDaLgBKBh4xD?=
+ =?us-ascii?Q?/NS1/VeAQZthTkrOe/m3MI3qgFOCx/FYvCMMBwNX4sbtUP1yUoCkmAO8Rrdn?=
+ =?us-ascii?Q?Jvx1X+GL5+w7+sUkL8FyGR/k2Ii4aoU+VTmQ3Z6/HMuFj/S8EW88Wyd/TlFo?=
+ =?us-ascii?Q?t2scQCZiKC3u2fEmqH0QjrIGsIaQu5jsrdGt/VxpG2oGmOrBZ3Rg5ivda3Yu?=
+ =?us-ascii?Q?24Nx4VEhCNHr99G1Do1XMwMM8+QTVkgK0UvOHZemkj5B02QK6DkQCpC8+WqA?=
+ =?us-ascii?Q?KciSNv6e+1Hkge8KkHbhFMWeuNjWsyOZQDt00WS0UpohzaRjnPZ+hMWdoAOx?=
+ =?us-ascii?Q?T+lfyQ567QS3HZAmmu2h0w7uKkGzcPhCu0sU1ett1YGzGKQkz1Mhc60vkV2S?=
+ =?us-ascii?Q?VERnXay0ArMq7+qLdWyCGbb5uhLixBnjrGmu6CcMEdymMfiTOjIP2VUHpFms?=
+ =?us-ascii?Q?J/SIRDmOMfJua2iEdw4oO2zpFzqYXS5UtIVl?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 13:34:31.7985
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: af40ff6d-7710-47c1-eb67-08de0cb8bd1a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075EE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8431
 
-On 10/16/25 13:22, Wenmeng Liu wrote:
-> Add bindings for qcom,sm6150-camss in order to support the camera
-> subsystem found in Qualcomm Talos EVK board.
-> 
-> Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+The following NULL pointer dereference is encountered on mount of resctrl
+fs after booting a system that support assignable counters with the
+"rdt=!mbmtotal,!mbmlocal" kernel parameters:
 
-Looks good, please add my RB to the next version.
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+RIP: 0010:mbm_cntr_get
+Call Trace:
+rdtgroup_assign_cntr_event
+rdtgroup_assign_cntrs
+rdt_get_tree
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Specifying the kernel parameter "rdt=!mbmtotal,!mbmlocal" effectively
+disables the legacy X86_FEATURE_CQM_MBM_TOTAL and X86_FEATURE_CQM_MBM_LOCAL
+features and thus the MBM events they represent. This results in the
+per-domain MBM event related data structures to not be allocated during
+resctrl early initialization.
 
+resctrl fs initialization follows by implicitly enabling both MBM total and
+local events on a system that supports assignable counters (mbm_event
+mode), but this enabling occurs after the per-domain data structures have
+been created.
+
+During runtime resctrl fs assumes that an enabled event can access all its
+state.  This results in NULL pointer dereference when resctrl attempts to
+access the un-allocated structures of an enabled event.
+
+Remove the late MBM event enabling from resctrl fs.
+
+This leaves a problem where the X86_FEATURE_CQM_MBM_TOTAL and
+X86_FEATURE_CQM_MBM_LOCAL features may be disabled while assignable
+counter (mbm_event) mode is enabled without any events to support.
+Switching between the "default" and "mbm_event" mode without any events
+is not practical.
+
+Create a dependency between the
+X86_FEATURE_CQM_MBM_TOTAL/X86_FEATURE_CQM_MBM_LOCAL and X86_FEATURE_ABMC
+(assignable counter) hardware features. An x86 system that supports
+assignable counters now requires support of X86_FEATURE_CQM_MBM_TOTAL or
+X86_FEATURE_CQM_MBM_LOCAL.  This ensures all needed MBM related data
+structures are created before use and that it is only possible to switch
+between "default" and "mbm_event" mode when the same events are available
+in both modes. This dependency does not exist in the hardware but this
+usage of these feature settings work for known systems.
+
+Fixes: 13390861b426e ("x86,fs/resctrl: Detect Assignable Bandwidth Monitoring feature details")
+Co-developed-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+---
+v2: Added dependancy of X86_FEATURE_CQM_MBM_TOTAL/X86_FEATURE_CQM_MBM_LOCAL for
+    X86_FEATURE_ABMC.
+    Rephrased changelog from Reinette. Thanks
+    Added Fixes, Co-developed-by, Signed-off-by tags.
+
+v1: https://lore.kernel.org/lkml/6082147693739c4514e4a650a62f805956331d51.1759263540.git.babu.moger@amd.com/
+---
+ arch/x86/kernel/cpu/resctrl/monitor.c | 11 ++++++++++-
+ fs/resctrl/monitor.c                  | 16 +++++++---------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index 8da3069936be..dffcc8307500 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -459,7 +459,16 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ 		r->mon.mbm_cfg_mask = ecx & MAX_EVT_CONFIG_BITS;
+ 	}
+ 
+-	if (rdt_cpu_has(X86_FEATURE_ABMC)) {
++	/*
++	 * resctrl assumes a system that supports assignable counters can
++	 * switch to "default" mode. Ensure that there is a "default" mode
++	 * to switch to. This enforces a dependency between the independent
++	 * X86_FEATURE_ABMC and X86_FEATURE_CQM_MBM_TOTAL/X86_FEATURE_CQM_MBM_LOCAL
++	 * hardware features.
++	 */
++	if (rdt_cpu_has(X86_FEATURE_ABMC) &&
++	    (rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL) ||
++	     rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL))) {
+ 		r->mon.mbm_cntr_assignable = true;
+ 		cpuid_count(0x80000020, 5, &eax, &ebx, &ecx, &edx);
+ 		r->mon.num_mbm_cntrs = (ebx & GENMASK(15, 0)) + 1;
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index 4076336fbba6..572a9925bd6c 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -1782,15 +1782,13 @@ int resctrl_mon_resource_init(void)
+ 		mba_mbps_default_event = QOS_L3_MBM_TOTAL_EVENT_ID;
+ 
+ 	if (r->mon.mbm_cntr_assignable) {
+-		if (!resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
+-			resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID);
+-		if (!resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
+-			resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID);
+-		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask;
+-		mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask &
+-								   (READS_TO_LOCAL_MEM |
+-								    READS_TO_LOCAL_S_MEM |
+-								    NON_TEMP_WRITE_TO_LOCAL_MEM);
++		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
++			mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask;
++		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
++			mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg = r->mon.mbm_cfg_mask &
++									   (READS_TO_LOCAL_MEM |
++									    READS_TO_LOCAL_S_MEM |
++									    NON_TEMP_WRITE_TO_LOCAL_MEM);
+ 		r->mon.mbm_assign_on_mkdir = true;
+ 		resctrl_file_fflags_init("num_mbm_cntrs",
+ 					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
 -- 
-Best wishes,
-Vladimir
+2.34.1
+
 
