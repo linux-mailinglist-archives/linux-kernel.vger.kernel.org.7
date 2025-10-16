@@ -1,107 +1,172 @@
-Return-Path: <linux-kernel+bounces-856274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6810ABE3B65
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA3DBE3B71
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9FEA5E0337
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9A93ACD64
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FE633A00F;
-	Thu, 16 Oct 2025 13:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A80339B46;
+	Thu, 16 Oct 2025 13:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="J7CgA534"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SECTnbK1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WztbAwXu"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F31339B3F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F063417A2E8;
+	Thu, 16 Oct 2025 13:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760621411; cv=none; b=dNCTmdEPufmOdA61ML/ePUynmvqokm9GGhau+44zYElLsGV5A8mptPN2ZWMYhUZ5HDarYhu+IWmoHTonvWqp14HRfTdK+0Dq/Dv/E27LqyaegsPpaBEwPtGuZqP6h+bmY6p6iyzcsqul477wxo3dhCOQczGwvpjUaqSBs1vm0QY=
+	t=1760621460; cv=none; b=QE6HVW1Guq9X+KzRApuQAfhIeYkN/dYXLyBjL+8QNvUdrcIzvHjI6YALmcwfHZNJHk5pDrdYJ8aEYwFcccvKNew1kYs9oJrBB/6RVZ/xgNmDreRZaesI/UDuebeE9kEtLcDghOv4lG0BRrHVMCU6LkMKDQ5LxEkvv2JlHpYeIXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760621411; c=relaxed/simple;
-	bh=Unf4UJue+qOxNotOiaiB/gYULcx7VawBCx2grHDb0iQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m+eVYPXJ0MmujZ0rM7kvNleXMrXp11f2bv9t3WXH1GN/n8EuWI+WqXmyI4YvOvYMhFvCFd5z5HVUfDN+2iz5mlKNpMhFjhs1ZZvxwBkWZOikK7XQYCSjeux3BDF2+ZQfbpSs1Bb4ss3FbMRZgRNq8O1hjIL3Mjo8Vo7APGsbT3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=J7CgA534; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-88fa5974432so92375685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1760621409; x=1761226209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JdflzJnMQthLv2cazH+0O/zsQRo0ZmLpj7kbUNZvQac=;
-        b=J7CgA534/qOtEhOxg341EWlJqYcd3b29vf0V+hB0LorZVopgxK6oy/+aKTP8I/HlfK
-         Al7WA4YCYF41W6l7ch03ECRMmCuY3zlkGE5s8a6VctBIedYWL/34fpfF/tXE5UGC834N
-         Xs+/LzmzvkONd4VeQ8YdB5n1HmQNua00Q9XP4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760621409; x=1761226209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JdflzJnMQthLv2cazH+0O/zsQRo0ZmLpj7kbUNZvQac=;
-        b=BisRfZu6wwXqcBMut5MYg2QTZLiwoj6KjSGF5gcbwXu5M2Lp0OTwe7oxHm8SINyUQ/
-         uWqaZEc5JKCkw9q+xIONj4Mnq8ntOkFB97Gg4kEQgjVfbX3hOx9gGsGNj0fcDQvNygWs
-         XGaA+i2HAaJaZpF91hNJqymd3Fp59EAQUWwiKod05zFcn3c8Xom6PG4t3wTeSr3bOD0p
-         zntuuyLwcUVMrew3ht4rO3CSvrRIAIPemRC0D25i7/0+dO8D8zXJHE4uMDPV2bn2NyRc
-         NhoJYdOgzFWevahd+8VezKpfHuOskUSFQ9r9l+8a1HC9Mxw1G6Ejksz5gFriCisFEM7m
-         Okmg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0bo4yyc9wYYC83Dcf0tILRm3QpUWw+5YgiSflwl1RB+VcSF+zhwBbCuKoYkYIdr8JkEfUG9WwUpuskp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeHeZoBg70NINf3bm1BB7DtUM5KLTTHYWQapsmDXbhfOJbc05V
-	KClxfr4CfBwU6gVVGNbyqd0wzK3SgW2s7gCkvsqk0kI/rYTsNjD/Rx+FC1gpkrxXfViWzB5MKFl
-	sGG320xuL8nMZAqoxbS4gCSCltorp6HuUQlxpVBVQpA==
-X-Gm-Gg: ASbGncsPbg8baPS1UTN8P2S1Vd7TNfvaracWudoEtbP1EQpMxBY877FcSeetyt1IjS0
-	JZWHyMO9nneXYyIc550hLgYzeOIHZPjG8STOeee2SwPCwghM6f6kVU4ONgYvRVQfRHZgYcKmC1A
-	RKgmeMtO+WE0Gjy1Y9wi79UYIfRjsgpSN5G6/mT4GxeXcOplR0H0mrOrfMrow/5FwVvsoMy3nG0
-	A6TH85KoS21WimXIY4n1XHoQmKD5i+ETKSoK7OShkDhoHzruFq4OTLPUEN/y6Skwzh2X5VouG+l
-	wWkSnBji7l/IpM1si2qMCKT4fb3pp+cGkPNaQMnYm1WipyppWm4DWi35QA==
-X-Google-Smtp-Source: AGHT+IGnXn2OWekqEukP5vHXZxC+ehCPf6mZptuvjHzZezwxi/p2zcouk9xm0TfVXXXAeAsJj++O7TUZcBkL3bdq60Q=
-X-Received: by 2002:ac8:5aca:0:b0:4b5:f7d4:39fa with SMTP id
- d75a77b69052e-4e89d1fe4f5mr2032761cf.12.1760621408367; Thu, 16 Oct 2025
- 06:30:08 -0700 (PDT)
+	s=arc-20240116; t=1760621460; c=relaxed/simple;
+	bh=cTsjsQ0FpIOTJ+hSMo8uPh6Cg/szULls3Pr0P8t6aWg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BpzKqMZI4uOMaSfBVoxWQYeaxXKg6ZVA9KrLomBhxGyJqK5Om5JFRmdzadQwmnHCIOm2Q1szcxz7lbTj7t+odZ+jLyW2SzZuWT9WPKSj25MnLjj/k4kuMs9tv1Xgt/aPg4J2fxncGWARA7Izq+zkMDf+Y+JlJIMvlwOSuZZYFxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SECTnbK1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WztbAwXu; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id AC23C1D00245;
+	Thu, 16 Oct 2025 09:30:56 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 16 Oct 2025 09:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760621456;
+	 x=1760707856; bh=s/MRbpBqt2yqYNof35eOW46gF9jvP1qa9ngAy/6u1w0=; b=
+	SECTnbK1aU8FmEyd68ZOtLDgNHywGuo8alcv5/f8WGv76UCcUadVPBd1L3dxwuZY
+	VtKeQdsnwgk4/GOWSC2ffXiT2rzt83NqRRJDMgqIyctbYzqZ0iXuwaUOyE6VzOcG
+	ObootchY8VxoXAp+qsiiKI62+9qMxCktNsp6wHVWlEFRfZ5mJXG+G/fXvYsmzDqn
+	7xgWUAk9ztjtHRRBbWwYUmY1rZPK4vZpAcZ0b7FYHvBxcF1z1Z041FPV94l+xd+u
+	byBMGM4KkLfwzcbLErWTsPRPF0okQDPTmYzRsm/134o8sCiU75hICrZteLMN1cPL
+	OtpXHL1sip856OFHjwg9kw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760621456; x=
+	1760707856; bh=s/MRbpBqt2yqYNof35eOW46gF9jvP1qa9ngAy/6u1w0=; b=W
+	ztbAwXuQfn3MP2FFuXP8oUUmEUdn38vVOJEiPwd49E1kT3CAAsW7BmaN+scFIL/0
+	hulMtq9M8OY8nKz6HECvhY5lI1NqPaCJ2TBnAE2XzPvIFnj8okHBazvY9Iog5Wxn
+	ScVbMZcQ2GDCuC4wlL2hmuF7XYBFA0xW1OfhQCeOkraa7QqiNMIi9scOjn/fOjkA
+	bedEn9cwi55h+hRYDxLFSwgd2/PaQyg6Fm7ijqd0Aijw0/bG0TEsO2YBHrVm5b45
+	IbuXRy6bgq84jxcF0vweGsf2yYso28NkFTL6pRNBYbGSs8RCp4prqv5+GA30d5aZ
+	J/WmzZv8S2INA38P3p1+Q==
+X-ME-Sender: <xms:j_PwaBk_hmJyYpdili7YT9OheBE3ISiao6pmR3OnZt8SMvSZxjLosw>
+    <xme:j_PwaHondES3j4cuJ4j-MdpQAY1YrNhRErT-22Ezj82CraIAPrLy8jHCCaOsbnIKc
+    2e70Gfhz-mF6Zci3fDUczz2z4bFX4Wqo9uA2fc5m8Vr2gby7_ogojQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdeigedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtth
+    hopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopehpvghtvghr
+    iiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhrtghpth
+    htohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoheptghorhgs
+    vghtsehlfihnrdhnvghtpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:kPPwaFUXktOb5IiCYIW3tun37OpNXVlbO22McvRiUi7HNyUaj4kvVQ>
+    <xmx:kPPwaMHs8_M6niyvc4-td5bvUJHucdzX3VEMFOYL_2_Dp1R9TZxgxQ>
+    <xmx:kPPwaPY-Zz76iKBLCH9ztEvorjTMGEsQn33_ZzURQ5SreS-O4YPaPw>
+    <xmx:kPPwaLEe-cCYI2fBE3k6in6e1y41qBaljbrSY8BZs0EnQXO385q4wA>
+    <xmx:kPPwaDd0eolJQdUk_daHOCIeYqnbxMcj0WnsjWo1TNdLh3CBCjHVwavc>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DFDC870006D; Thu, 16 Oct 2025 09:30:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-xdma-max-reg-v5-1-83efeedce19d@amarulasolutions.com> <176061935845.510550.12282030175889296984.b4-ty@kernel.org>
-In-Reply-To: <176061935845.510550.12282030175889296984.b4-ty@kernel.org>
-From: Anthony Brandon <anthony@amarulasolutions.com>
-Date: Thu, 16 Oct 2025 15:29:57 +0200
-X-Gm-Features: AS18NWA-hxbDFlI3b9UTsQcDU75GuNgix6cv9Elfy_HBgLGvJSUA3uP6hd50TSM
-Message-ID: <CAAD-K8bP=cC3Tn9tqqQ74UJSq5YHnkuKNU46kEEr4K4YApqKpw@mail.gmail.com>
-Subject: Re: [PATCH v5] dmaengine: xilinx: xdma: Fix regmap max_register
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
-	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, Michal Simek <michal.simek@amd.com>, 
-	Sonal Santan <sonal.santan@amd.com>, Max Zhen <max.zhen@amd.com>, dmaengine@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: AH4YsbVvINyJ
+Date: Thu, 16 Oct 2025 15:30:19 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Finn Thain" <fthain@linux-m68k.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Message-Id: <b80e06b8-e568-408b-8132-99565c50a0ff@app.fastmail.com>
+In-Reply-To: 
+ <76571a0e5ed7716701650ec80b7a0cd1cf07fde6.1759875560.git.fthain@linux-m68k.org>
+References: <cover.1759875560.git.fthain@linux-m68k.org>
+ <76571a0e5ed7716701650ec80b7a0cd1cf07fde6.1759875560.git.fthain@linux-m68k.org>
+Subject: Re: [RFC v3 1/5] documentation: Discourage alignment assumptions
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 16, 2025 at 2:56=E2=80=AFPM Vinod Koul <vkoul@kernel.org> wrote=
-:
-> Applied, thanks!
+ On Wed, Oct 8, 2025, at 00:19, Finn Thain wrote:
+> Discourage assumptions that simply don't hold for all Linux ABIs.
+> Exceptions to the natural alignment rule for scalar types include
+> long long on i386 and sh.
+> ---
+
+I think both of the paragraphs you remove are still correct and I
+would not remove them:
+
+>  Documentation/core-api/unaligned-memory-access.rst | 7 -------
+>  1 file changed, 7 deletions(-)
 >
-> [1/1] dmaengine: xilinx: xdma: Fix regmap max_register
->       commit: 81935b90b6fc9cd2dbef823a1fc0a92c00f0c6ea
->
-> Best regards,
-> --
-> ~Vinod
+> diff --git a/Documentation/core-api/unaligned-memory-access.rst 
+> b/Documentation/core-api/unaligned-memory-access.rst
+> index 5ceeb80eb539..1390ce2b7291 100644
+> --- a/Documentation/core-api/unaligned-memory-access.rst
+> +++ b/Documentation/core-api/unaligned-memory-access.rst
+> 
+> -When writing code, assume the target architecture has natural alignment
+> -requirements.
+> -
 
-Thanks, and thanks everyone for the reviews.
+It is clearly important to not intentionally misalign variables
+because that breaks on hardware that requires aligned data.
 
-Regards,
-Anthony
+Assuming natural alignment is the safe choice here, but you
+could change 'architecture' to 'hardware' here if you
+think that is otherwise ambiguous.
+
+> -Similarly, you can also rely on the compiler to align variables and function
+> -parameters to a naturally aligned scheme, based on the size of the type of
+> -the variable.
+
+This also seems to refer to something else: even on m68k
+and i386, scalar stack and .data variables have natural
+alignment even though the ABI does not require that.
+
+It's probably a good idea to list the specific exceptions to
+the struct layout rules in the previous paragraph, e.g.
+
+[
+ Fortunately, the compiler understands the alignment constraints, so in the
+ above case it would insert 2 bytes of padding in between field1 and field2.
+ Therefore, for standard structure types you can always rely on the compiler
+-to pad structures so that accesses to fields are suitably aligned (assuming
+-you do not cast the field to a type of different length).
++to pad structures so that accesses to fields are suitably aligned for
++the CPU hardware.
++On all 64-bit architectures, this means that all scalar struct members
++are naturally aligned. However, some 32-bit ABIs including i386
++only align 64-bit members on 32-bit offsets, and m68k uses at most
++16-bit alignment.
+]
+
+      Arnd
 
