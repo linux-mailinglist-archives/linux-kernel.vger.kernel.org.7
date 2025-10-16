@@ -1,405 +1,153 @@
-Return-Path: <linux-kernel+bounces-855960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CD0BE2A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB926BE2B70
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DCC1A62F68
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686BA5E0DCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3933332D7D4;
-	Thu, 16 Oct 2025 10:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1638931B82C;
+	Thu, 16 Oct 2025 10:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="2azKSV/L"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h6+kTrqJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14222D0C7D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DDF32861E;
+	Thu, 16 Oct 2025 10:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609230; cv=none; b=O120L45XtVmOLzvTgAdzoMdkvR53rni/h8a+/nhqKuXmFJN28E3kP3dbtVebPzOhLxn3lFdpAIZPjnrEEpL9yc02omnKqvoO5WdDsZRybzQ0Aq7BIVYDa1HAOPtCcKA7Uyu/mqkCLQRO5xH6Vy7RfPi0cNkGA4ODwVkAj9ey7QM=
+	t=1760609338; cv=none; b=n1buq1ZbVteXJjzsIERPY2i5Vv00KOgjUo+S7lW15uULU/CU5sWGcWZu7umWMPs+2yDFWFgmgFjdZHfzjxJit5/nfYPGs5KhERhsYS2msNMf2t4WqmAb5SWWU9k0M1inDp17fTdzbsFxFd0jlFJmQ+7T/1Irvxznd1saoWn3uS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609230; c=relaxed/simple;
-	bh=wo/Ya1/qS4gmb5ns1qZf/PbPtAozVGLxnCxAaNcd6IY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2JqbQsnBW8kxpE2XHvsUcoNINCC3+coK3rqiDl94poVSxM2hAdVhyArhIlkJ+t36Lo1X8dN5BAXuWzYT9MOxXiZFkYmyP5/Pe191GrjnAnwlDfhXjPqTYnf2NcK2GLwU5jX+9215bkR6d9tfQi3qn4fpVJBsZHSwRAjKnrT8cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=2azKSV/L; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-273a0aeed57so24436015ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1760609226; x=1761214026; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rJ4V0WDk+Fmgl27pDuIUO845Eexs2tBhWb+HgzxSkGw=;
-        b=2azKSV/LJlYLD9kHtl3N3D1Oej3nQerp/NmrZYimh5syH1FHulEheQKuayi9ueD06m
-         4Dk/pj0GBAQOis22XCJzMtD0xL3vqHO/esdi/Wku9//Df2bOve3e7umEJRlfqdR/arVf
-         7ThqDB11nGkSaZGMBmITwSJq/Dqj+8Tl14eLpXSLRHtZd7xhaxCmHIOPFZ0lzS8wQKCG
-         uTMpkTwquu7YstepC1DHdk6RpQBnbTHhh5xk1zYEFfkS07L4OVx04B16FnwcC+A/6t6D
-         7KOSymXghX5yasz0tuxEXsAc0f8yZzFlwIgvR9+V8bi93qSz6KIwpxJBn+lQOfEV5vt+
-         R4dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760609226; x=1761214026;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJ4V0WDk+Fmgl27pDuIUO845Eexs2tBhWb+HgzxSkGw=;
-        b=eFnAJCq7Gwqnq09cHPrJldAkbS9VahMmPoUxveRMLyratsb8BsFTgpb0e6Y76vn0m/
-         Xf9FwB58qQN8Mp/jw2FWsEPOUR7GZy/DerUkv0uDlr4uGT5Dzqf9TdCXt2XJ2NmZ/8nS
-         0AEDi59CmKVqPYmaB5/kGgRDB4R8nw2lq9uCtBGDsLzFIv3ASN0k3M0GM9q0qBRPnEra
-         V0qtT+cTSjWTRrHswS7zHa8hfbHvpIXbhhBYKlsCsLS8YvwOW73+H7Swp3C6LO77kgNu
-         R8qDdPAHMRr6fNhkaub2JMcK2OQRj+wZxeWHoaoHGFDUL1u+FTBWKYuLH5CzkimECltC
-         HOVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTn/87OV4tblstoGLMl5gkXVDb4SAryM8lmdfo6LOr3cudkMK4iNCg4mybat8TJKCXm1WSfqPAx4Z4sa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPmy/ynDNepVviuDEZ8ADL3UFjl8LDzKnvucswGE6wHFz4Dg7d
-	QYuW/GlvyZxu4Qqf/Q0DimWgWfyV/udz3mpCxEbMm+jHsSXryXGElD5eat3OGEXMVcg=
-X-Gm-Gg: ASbGncudDSs0HIKRnlLsoZesV2zv8t4/vPVuwJMMf9wYUuzu3S1N4khfy0jZ7Q+PHqk
-	S/D9RsgY+nkzGwA9mRyYed1Sb+tWQfMG0iLEaxoljc/O3a7U/aHmGTR1n+1iS/uiksE117KKe1M
-	DQ+eQOIp/ZK5R0D9nOyeh6hfgM5bYzSpLJpitT7OcSqftKgBBf8EBlM74CY/qZEFOrAHZFH9gul
-	//tn8P2qAykiIbYeiwUZbX7e8k6AMPCEPD8tle5iX7WLYv3etm39INZEojEWhUsLkbwvGh38nvR
-	Z4nCaAc/g3gHtjqqAxiIsTNbRIXS88rY6FfeWq3IvGsO1tMFmPc9vM2lB0o8bEiHFG5LtxNcWIo
-	jadPOP4DnDu9m/7hDoSdLCsDlCsQ+d5rQ9+J3CwwmDDRCD1oz6ET+JxAvwxluFG9AI/ljS0bZgk
-	g4ihZVXceTXL0Nz/MtzYXS
-X-Google-Smtp-Source: AGHT+IGke+4JqtDfjsb4VQIaIJ/VTkox7Sn1ZBEWyV9e2LxX0qBRZQ/9OBuguQWM1BsPb4D7ktTbDQ==
-X-Received: by 2002:a17:903:41c6:b0:24c:db7c:bc34 with SMTP id d9443c01a7336-29091b02a61mr44434505ad.13.1760609225745;
-        Thu, 16 Oct 2025 03:07:05 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:9edb:1072:a6d:3ebf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7c255sm24626915ad.70.2025.10.16.03.07.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 03:07:05 -0700 (PDT)
-Date: Thu, 16 Oct 2025 18:07:00 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	akpm@linux-foundation.org, axboe@kernel.dk,
-	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
-	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
-	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
- lookup tables
-Message-ID: <aPDDxEGon1Q82pIJ@wu-Pro-E500-G6-WS720T>
-References: <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
- <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
- <20251005181803.0ba6aee4@pumpkin>
- <aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
- <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
- <20251007192327.57f00588@pumpkin>
- <aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
- <20251010105138.0356ad75@pumpkin>
- <aOzLQ2KSqGn1eYrm@wu-Pro-E500-G6-WS720T>
- <20251014091420.173dfc9c@pumpkin>
+	s=arc-20240116; t=1760609338; c=relaxed/simple;
+	bh=Dcshxnk+HHcxt2JmE3zv3oNCpRgnSrlJo9TAu9xvBkk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mMzZpDGJxOdf5TZaFqhgN1tKKyYvoMk5f9AczJmErROToXHTVwqnKvnzgVMaToxBKeld9zrDfQaYGgGGFPq+2Dh3ASBIrP88QfnzzMkE/6UysQJbf74nMqLCYR9xEauOac+qa3SxMKawv7vVumYTODrcJkemZt2ZVfeLZQGewcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h6+kTrqJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760609334;
+	bh=Dcshxnk+HHcxt2JmE3zv3oNCpRgnSrlJo9TAu9xvBkk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=h6+kTrqJJ10AjrmI1ibLweGmZL6wrs4HbdElHedN+s5t4nz42RHrJWLTc2GcPrtA4
+	 OsVvaKEcvqtPAB7HfF7XMtGsfZeuS1TR7Qe8jW3k33ToKQkPsp7PkCu2kAGLBOqL7C
+	 FIUQJPIv+f8rlXhod9BenfBX6QQkG2mEZBxGNCaGg6UKRSGkoqRk6YuHsXafKbrPnj
+	 nTzmYveT72H81UPHOYeIuviupl3EExjY5ZGFzL12AIFpUpAKyi42TUkyXX+um7pzC4
+	 bLp9EDZzdLYW/+R61jOmZPzAjSo89Si/7ujs3DHx2URr6/jpvpgJJkEtnAdsIIKcA6
+	 5Y6KGcq77Ys7Q==
+Received: from beast.luon.net (unknown [IPv6:2a10:3781:2531::8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sjoerd)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DE3A417E1271;
+	Thu, 16 Oct 2025 12:08:53 +0200 (CEST)
+Received: by beast.luon.net (Postfix, from userid 1000)
+	id 8322F10C9C780; Thu, 16 Oct 2025 12:08:53 +0200 (CEST)
+From: Sjoerd Simons <sjoerd@collabora.com>
+Subject: [PATCH 00/15] arm64: dts: mediatek: Add Openwrt One AP
+ functionality
+Date: Thu, 16 Oct 2025 12:08:36 +0200
+Message-Id: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014091420.173dfc9c@pumpkin>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACXE8GgC/x3MMQqAMAxA0atIZgNtUUGvIg5aowYhlVSsIN7d4
+ viG/x+IpEwRuuIBpYsjB8mwZQF+G2Ul5DkbnHG1NbbBcJAkPTEIodCZgu5Ymcm3o7eTqz3k8lB
+ a+P6v/fC+HxWOhSBlAAAA
+X-Change-ID: 20251016-openwrt-one-network-40bc9ac1b25c
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ryder Lee <ryder.lee@mediatek.com>, 
+ Jianjun Wang <jianjun.wang@mediatek.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org, 
+ Daniel Golle <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>, 
+ Sjoerd Simons <sjoerd@collabora.com>
+X-Mailer: b4 0.14.3
 
-On Tue, Oct 14, 2025 at 09:14:20AM +0100, David Laight wrote:
-> On Mon, 13 Oct 2025 17:49:55 +0800
-> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> 
-> > On Fri, Oct 10, 2025 at 10:51:38AM +0100, David Laight wrote:
-> > > On Thu, 9 Oct 2025 20:25:17 +0800
-> > > Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> > > 
-> > > ...  
-> > > > As Eric mentioned, the decoder in fs/crypto/ needs to reject invalid input.  
-> > > 
-> > > (to avoid two different input buffers giving the same output)
-> > > 
-> > > Which is annoyingly reasonable.
-> > >   
-> > > > One possible solution I came up with is to first create a shared
-> > > > base64_rev_common lookup table as the base for all Base64 variants.
-> > > > Then, depending on the variant (e.g., BASE64_STD, BASE64_URLSAFE, etc.), we
-> > > > can dynamically adjust the character mappings for position 62 and position 63
-> > > > at runtime, based on the variant.
-> > > > 
-> > > > Here are the changes to the code:
-> > > > 
-> > > > static const s8 base64_rev_common[256] = {
-> > > > 	[0 ... 255] = -1,
-> > > > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-> > > > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-> > > > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-> > > > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-> > > > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
-> > > > };
-> > > > 
-> > > > static const struct {
-> > > > 	char char62, char63;
-> > > > } base64_symbols[] = {
-> > > > 	[BASE64_STD] = { '+', '/' },
-> > > > 	[BASE64_URLSAFE] = { '-', '_' },
-> > > > 	[BASE64_IMAP] = { '+', ',' },
-> > > > };
-> > > > 
-> > > > int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
-> > > > {
-> > > > 	u8 *bp = dst;
-> > > > 	u8 pad_cnt = 0;
-> > > > 	s8 input1, input2, input3, input4;
-> > > > 	u32 val;
-> > > > 	s8 base64_rev_tables[256];
-> > > > 
-> > > > 	/* Validate the input length for padding */
-> > > > 	if (unlikely(padding && (srclen & 0x03) != 0))
-> > > > 		return -1;  
-> > > 
-> > > There is no need for an early check.
-> > > Pick it up after the loop when 'srclen != 0'.
-> > >  
-> > 
-> > I think the early check is still needed, since I'm removing the
-> > padding '=' first.
-> > This makes the handling logic consistent for both padded and unpadded
-> > inputs, and avoids extra if conditions for padding inside the hot loop.
-> 
-> The 'invalid input' check will detect the padding.
-> Then you don't get an extra check if there is no padding (probably normal).
-> I realised I didn't get it quite right - updated below.
-> 
-> > 
-> > > > 
-> > > > 	memcpy(base64_rev_tables, base64_rev_common, sizeof(base64_rev_common));  
-> > > 
-> > > Ugg - having a memcpy() here is not a good idea.
-> > > It really is better to have 3 arrays, but use a 'mostly common' initialiser.
-> > > Perhaps:
-> > > #define BASE64_REV_INIT(ch_62, ch_63) = { \
-> > > 	[0 ... 255] = -1, \
-> > > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
-> > > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
-> > > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
-> > > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
-> > > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-> > > 	[ch_62] = 62, [ch_63] = 63, \
-> > > }
-> > > 
-> > > static const s8 base64_rev_maps[][256] = {
-> > > 	[BASE64_STD] = BASE64_REV_INIT('+', '/'),
-> > > 	[BASE64_URLSAFE] = BASE64_REV_INIT('-', '_'),
-> > > 	[BASE64_IMAP] = BASE64_REV_INIT('+', ',')
-> > > };
-> > > 
-> > > Then (after validating variant):
-> > > 	const s8 *map = base64_rev_maps[variant];
-> > >  
-> > 
-> > Got it. I'll switch to using three static tables with a common initializer
-> > as you suggested.
-> > 
-> > > > 
-> > > > 	if (variant < BASE64_STD || variant > BASE64_IMAP)
-> > > > 		return -1;
-> > > > 
-> > > > 	base64_rev_tables[base64_symbols[variant].char62] = 62;
-> > > > 	base64_rev_tables[base64_symbols[variant].char63] = 63;
-> > > > 
-> > > > 	while (padding && srclen > 0 && src[srclen - 1] == '=') {
-> > > > 		pad_cnt++;
-> > > > 		srclen--;
-> > > > 		if (pad_cnt > 2)
-> > > > 			return -1;
-> > > > 	}  
-> > > 
-> > > I'm not sure I'd to that there.
-> > > You are (in some sense) optimising for padding.
-> > > From what I remember, "abcd" gives 24 bits, "abc=" 16 and "ab==" 8.
-> > >   
-> > > > 
-> > > > 	while (srclen >= 4) {
-> > > > 		/* Decode the next 4 characters */
-> > > > 		input1 = base64_rev_tables[(u8)src[0]];
-> > > > 		input2 = base64_rev_tables[(u8)src[1]];
-> > > > 		input3 = base64_rev_tables[(u8)src[2]];
-> > > > 		input4 = base64_rev_tables[(u8)src[3]];  
-> > > 
-> > > I'd be tempted to make src[] unsigned - probably be assigning the parameter
-> > > to a local at the top of the function.
-> > > 
-> > > Also you have input3 = ... src[2]...
-> > > Perhaps they should be input[0..3] instead.
-> > >  
-> > 
-> > OK, I'll make the changes.
-> > 
-> > > > 
-> > > > 		val = (input1 << 18) |
-> > > > 		      (input2 << 12) |
-> > > > 		      (input3 << 6) |
-> > > > 		      input4;  
-> > > 
-> > > Four lines is excessive, C doesn't require the () and I'm not sure the
-> > > compilers complain about << and |.
-> > >   
-> > 
-> > OK, I'll make the changes.
-> > 
-> > > > 
-> > > > 		if (unlikely((s32)val < 0))
-> > > > 			return -1;  
-> > > 
-> > > Make 'val' signed - then you don't need the cast.
-> ...
-> > > Or, if you really want to use the code below the loop:
-> > > 			if (!padding || src[3] != '=')
-> > > 				return -1;
-> > > 			padding = 0;
-> > > 			srclen -= 1 + (src[2] == '=');
-> > > 			break;
-> 
-> That is missing a test...
-> Change to:
-> 			if (!padding || srclen != 4 || src[3] != '=')
-> 				return -1;
-> 			padding = 0;
-> 			srclen = src[2] == '=' ? 2 : 3;
-> 			break;
-> 
-> The compiler will then optimise away the first checks after the
-> loop because it knows they can't happen.
-> 
-> > > 
-> > >   
-> > > > 
-> > > > 		*bp++ = (u8)(val >> 16);
-> > > > 		*bp++ = (u8)(val >> 8);
-> > > > 		*bp++ = (u8)val;  
-> > > 
-> > > You don't need those casts.
-> > >  
-> > 
-> > OK, I'll make the changes.
-> > 
-> > > > 
-> > > > 		src += 4;
-> > > > 		srclen -= 4;
-> > > > 	}
-> > > > 
-> > > > 	/* Handle leftover characters when padding is not used */  
-> > > 
-> > > You are coming here with padding.
-> > > I'm not sure what should happen without padding.
-> > > For a multi-line file decode I suspect the characters need adding to
-> > > the start of the next line (ie lines aren't required to contain
-> > > multiples of 4 characters - even though they almost always will).
-> > >   
-> > 
-> > Ah, my mistake. I forgot to remove that comment.
-> > Based on my observation, base64_decode() should process the entire input
-> > buffer in a single call, so I believe it does not need to handle
-> > multi-line input.
-> 
-> I was thinking of the the case where it is processing the output of
-> something like base64encode.
-> The caller will have separated out the lines, but I don't know whether
-> every line has to contain a multiple of 4 characters - or whether the
-> lines can be arbitrarily split after being encoded (I know that won't
-> normally happen - but you never know). 
->
+This series add various peripherals to the Openwrt One, to make it
+actually useful an access point:
 
-I believe the splitting should be aligned to multiples of 4,
-since Base64 encoding operates on 4-character blocks that represent 3 bytes
-of data.
-If it's split arbitrarily, the decoded result may differ from the original
-data or even become invalid.
+* Pcie express (tested with nvme storage)
+* Wired network interfaces
+* Wireless network interfaces (2.4g, 5ghz wifi)
+* Status leds
+* SPI NOR for factory data
+
+Unsurprisingly the series is a mix of dt binding updates, extensions of
+the mt7981b and the openwrt one dtb. All driver support required is
+already available.
+
+Sadly during testing i've found various quirks requiring kernel
+arguments. Documenting those here both as note to self and making it
+easier for others to test :)
+
+* fw_devlink=permissive: the nvmem fixed-layout doesn't create a layout
+  device, so doesn't trigger fw_devlink
+* clk_ignore_unused: Needed when building CONFIG_NET_MEDIATEK_SOC as a
+  module. If the ethernet related clocks (gp1/gp2) get disabled the
+  mac ends up in a weird state causing it not to function correctly.
+* pcie_aspm: ASPM is forced to enabled in 6.18-rc1, unfortunately
+  enabling ASPM L1.1 ends up triggering unrecoverable AERs.
+
+Patches are against the mediatek trees for-next branch
+
+Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+---
+Sjoerd Simons (15):
+      arm64: dts: mediatek: mt7981b: Add labels to commonly referenced nodes
+      arm64: dts: mediatek: mt7981b-openwrt-one: Configure UART0 pinmux
+      arm64: dts: mediatek: mt7981b: Add reserved memory for TF-A
+      dt-bindings: mfd: syscon: Add mt7981-topmisc
+      dt-bindings: pci: mediatek-pcie-gen3: Add MT7981 PCIe compatible
+      dt-bindings: phy: mediatek,tphy: Add support for MT7981
+      arm64: dts: mediatek: mt7981b: Add PCIe and USB support
+      arm64: dts: mediatek: mt7981b-openwrt-one: Enable PCIe and USB
+      dt-bindings: net: mediatek,net: Correct bindings for MT7981
+      arm64: dts: mediatek: mt7981b: Add Ethernet and WiFi offload support
+      arm64: dts: mediatek: mt7981b-openwrt-one: Enable SPI NOR
+      arm64: dts: mediatek: mt7981b-openwrt-one: Enable Ethernet
+      arm64: dts: mediatek: mt7981b: Add wifi memory region
+      arm64: dts: mediatek: mt7981b-openwrt-one: Enable wifi
+      arm64: dts: mediatek: mt7981b-openwrt-one: Enable leds
+
+ Documentation/devicetree/bindings/mfd/syscon.yaml  |   1 +
+ .../devicetree/bindings/net/mediatek,net.yaml      |  16 +-
+ .../bindings/pci/mediatek-pcie-gen3.yaml           |   1 +
+ .../devicetree/bindings/phy/mediatek,tphy.yaml     |   1 +
+ .../boot/dts/mediatek/mt7981b-openwrt-one.dts      | 276 +++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7981b.dtsi          | 258 ++++++++++++++++++-
+ 6 files changed, 538 insertions(+), 15 deletions(-)
+---
+base-commit: de8df7a4c881bd0df691458680ab1e22d63d60f4
+change-id: 20251016-openwrt-one-network-40bc9ac1b25c
 
 Best regards,
-Guan-Chun
+-- 
+Sjoerd Simons <sjoerd@collabora.com>
 
-> > 
-> > Best regards,
-> > Guan-Chun
-> > 
-> > > > 	if (srclen > 0) {
-> > > > 		switch (srclen) {  
-> > > 
-> > > You don't need an 'if' and a 'switch'.
-> > > srclen is likely to be zero, but perhaps write as:
-> > > 	if (likely(!srclen))
-> > > 		return bp - dst;
-> > > 	if (padding || srclen == 1)
-> > > 		return -1;
-> > > 
-> > > 	val = base64_rev_tables[(u8)src[0]] << 12 | base64_rev_tables[(u8)src[1]] << 6;
-> > > 	*bp++ = val >> 10;
-> > > 	if (srclen == 1) {
-> Obviously should be (srclen == 2)
-> > > 		if (val & 0x800003ff)
-> > > 			return -1;
-> > > 	} else {
-> > > 		val |= base64_rev_tables[(u8)src[2]];
-> > > 		if (val & 0x80000003)
-> > > 			return -1;
-> > > 		*bp++ = val >> 2;
-> > > 	}
-> > > 	return bp - dst;
-> > > }
-> > > 
-> > > 	David
-> 
-> 	David
-> 
-> > >   
-> > > > 		case 2:
-> > > > 			input1 = base64_rev_tables[(u8)src[0]];
-> > > > 			input2 = base64_rev_tables[(u8)src[1]];
-> > > > 			val = (input1 << 6) | input2; /* 12 bits */
-> > > > 			if (unlikely((s32)val < 0 || val & 0x0F))
-> > > > 				return -1;
-> > > > 
-> > > > 			*bp++ = (u8)(val >> 4);
-> > > > 			break;
-> > > > 		case 3:
-> > > > 			input1 = base64_rev_tables[(u8)src[0]];
-> > > > 			input2 = base64_rev_tables[(u8)src[1]];
-> > > > 			input3 = base64_rev_tables[(u8)src[2]];
-> > > > 
-> > > > 			val = (input1 << 12) |
-> > > > 			      (input2 << 6) |
-> > > > 			      input3; /* 18 bits */
-> > > > 			if (unlikely((s32)val < 0 || val & 0x03))
-> > > > 				return -1;
-> > > > 
-> > > > 			*bp++ = (u8)(val >> 10);
-> > > > 			*bp++ = (u8)(val >> 2);
-> > > > 			break;
-> > > > 		default:
-> > > > 			return -1;
-> > > > 		}
-> > > > 	}
-> > > > 
-> > > > 	return bp - dst;
-> > > > }
-> > > > Based on KUnit testing, the performance results are as follows:
-> > > > 	base64_performance_tests: [64B] decode run : 40ns
-> > > > 	base64_performance_tests: [1KB] decode run : 463ns
-> > > > 
-> > > > However, this approach introduces an issue. It uses 256 bytes of memory
-> > > > on the stack for base64_rev_tables, which might not be ideal. Does anyone
-> > > > have any thoughts or alternative suggestions to solve this issue, or is it
-> > > > not really a concern?
-> > > > 
-> > > > Best regards,
-> > > > Guan-Chun
-> > > >   
-> > > > > > 
-> > > > > > Best,
-> > > > > > Caleb    
-> > > > >     
-> > >   
-> 
 
