@@ -1,197 +1,136 @@
-Return-Path: <linux-kernel+bounces-856597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CAA6BE48E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:24:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC43BE4914
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8E84A34E6A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:24:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 313354EFD8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E0523EAB4;
-	Thu, 16 Oct 2025 16:23:58 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26437329C54;
+	Thu, 16 Oct 2025 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNMUAcW1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B901E1C84D0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCF81DF982;
+	Thu, 16 Oct 2025 16:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631837; cv=none; b=CftdnObZpj1W3nGuvxU9nKj7ZrOlFqaZel6npf1PuUQ0PSMbMdmniJ0pOE4Qae0BH4C2XojGjCZfVcHzUl/r7WHmoysPIccFw6TmChKAhtTHE8EklaoGE+qQE0wN33X5fQo8T8EfCHY/SNHx4aemqCIzKqZZdWkREAX3L7sbe9g=
+	t=1760631921; cv=none; b=daER27UTGR8ukUguWEccaaVfUQ16J+HnFDrIFiUPcM+LHLWJ/hrm1uM5Zp+36Ql1/Vp08f2xd+g/HKF/3d5lCZILcpuDj+MVQTPNsuMF5iiFCvFGE/1EZu6wOblhc4g4cjoj+NZBB0nhIULsmBY1+amctxLqjcG1dmMiFFC0Rvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631837; c=relaxed/simple;
-	bh=HGQwj7krlOPJq3Cw4uxlTKzIBnqQCLlUFHtFmeVzU+c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=egy8Hze3wMS4MQ670GuYhVcJ29CrAnOEGO7Y6Bl+FA6l6eMIPV+Pf+XrbxRpDRseSAkD73CH45m8ndvEJdgBgwY4w/lncXtVY3GilrMI9X1Dd95+Vzh7bYUznsSLhO6XcjlHbiDmBLgkp2W70+SQygZ9v6VMxFVUYeQjFdend6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e5f8a8babso236274739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:23:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760631835; x=1761236635;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uH9ncuVNWrmpKccRdCmFgVg8gN7Sa+FrJMkcgErOzbI=;
-        b=HoKMAVy0Oj4gjsBvSEEuZo7UKtN8kfmKnYQM5AN6cPdpT8TLwkja+hS8uqrW69wCCH
-         6scdorq7SBKfHjNhxNKmfjCxuNKDZ03b118JdWjkA9clzEnQdQTzo6d9vAvJ+zC0E8jA
-         9EjBKb5wx0IHbQ5TT1DskZmwSnmX4c2T5CETVDoqgZw6FB9DZVGlRRhjfKce2YSgZwr0
-         o78ZaJ/eFLGgg57QoBMacqJFWOjnanWqBND14Z0iJA86Vd/iHbxh1xzW46DZbFo/m2Gd
-         nW5+s8ZWs5aljpqgQfotMjyd7O2PvgAuIcoyHS4CZQwR2lRPVUOXnkt2ds7m/+ymdH9O
-         JSHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVCElL+K09BfoN5d50nGGZ/7ee03VX90BADN0QbcLVw5PYWQJDyA4KUTDvHCxqFibVRAYyRerk8ui8TXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhxznJxZIwVhnSGmgwjI+0o6jJWKHfK5oYY+ndneBjlwIuNvOC
-	t4btANHkt5F1Skqzpu6IsgwAUiFci/9xxLbSqgnDwKIkGfA4h6OKY15r5GFwIcCq3zqIXZBaKjl
-	hG2hLegbmT5w2Vldh0rnjG2HBn+sq4ZaMuSznh66Gd5t+CTuiENF3rOZJT+g=
-X-Google-Smtp-Source: AGHT+IF0mVeBbeh6pgt7i0/MkOWl7EBWMggnxuS/B6V6XUo6s2UTse3jty2HFSlMCH44YjluTZGifEjNeS3+6UR8CA7xp8eCe2kH
+	s=arc-20240116; t=1760631921; c=relaxed/simple;
+	bh=Ur8b/tBAj1XMiE3ZQhEMBO4X4i1WG2QSesZ1qm4qfIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=taJYb2HOpEfOzuF6HM4NdQfZ662Xay+Vk5SemKLcl2pjFOHzEIje2+SD5tAmT01eS0suVVY2pJG2MDmneRdNrL/SDDJuQtrOjqYSA0VdXf2LOGgPI2lI3Jjoug5oMe8k8qogP6jljktHQNcuZEFPLdhT1MyjWjr97RMpYhbi0kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNMUAcW1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EC2C4CEF1;
+	Thu, 16 Oct 2025 16:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760631921;
+	bh=Ur8b/tBAj1XMiE3ZQhEMBO4X4i1WG2QSesZ1qm4qfIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MNMUAcW19ecxw3OiDXsL6iBuz17YQJ3jHC1TflaDqkXNrfQwUl3AGUTqlP1ceRiB0
+	 +4tUjwaIiiUEjQ/livemBkzoAgAhlghkZn5UvcEIEGkbKh5zU6d30oFM2n9ggbYkPv
+	 y9qnfotoxUeZ1hyB2ecky4aS+HjZ2tXT/csQTJ4YiU2x9vcAk/rg5QhLfxKOxYWEnP
+	 nGLE+AKCsTMxvKw6q0d2RGBdYgFZQyOhkSoHsY+Q11NkZZ/S3Zm4j8KGNZv8L180YH
+	 3M4qDWKmPpj35eSfHd3wg4i72qNvZ1Xm29cqfM7FRPfZ2eNL9arvwtmVxI1XQcUDby
+	 K5k2CUmsIp0Qg==
+Date: Thu, 16 Oct 2025 09:25:20 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Carlos Maiolino <cem@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Oleksandr Natalenko <oleksandr@natalenko.name>,
+	Pavel Reichl <preichl@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: [PATCH 4/3] xfs: fix locking in xchk_nlinks_collect_dir
+Message-ID: <20251016162520.GB3356773@frogsfrogsfrogs>
+References: <20251015050133.GV6188@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148d:b0:430:b167:3604 with SMTP id
- e9e14a558f8ab-430c5209bafmr12878615ab.4.1760631834789; Thu, 16 Oct 2025
- 09:23:54 -0700 (PDT)
-Date: Thu, 16 Oct 2025 09:23:54 -0700
-In-Reply-To: <20251016112704.179280-1-yintirui@huawei.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f11c1a.050a0220.91a22.0411.GAE@google.com>
-Subject: [syzbot ci] Re: mm: add huge pfnmap support for remap_pfn_range()
-From: syzbot ci <syzbot+ci290b7e46a3349a6e@syzkaller.appspotmail.com>
-To: abrestic@rivosinc.com, akpm@linux-foundation.org, alex@ghiti.fr, 
-	anshuman.khandual@arm.com, aou@eecs.berkeley.edu, apopple@nvidia.com, 
-	ardb@kernel.org, baohua@kernel.org, baolin.wang@linux.alibaba.com, 
-	catalin.marinas@arm.com, chenjun102@huawei.com, david@redhat.com, 
-	dev.jain@arm.com, liam.howlett@oracle.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
-	lorenzo.stoakes@oracle.com, luxu.kernel@bytedance.com, mhocko@suse.com, 
-	npache@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	rppt@kernel.org, ryan.roberts@arm.com, samuel.holland@sifive.com, 
-	surenb@google.com, vbabka@suse.cz, wangkefeng.wang@huawei.com, 
-	will@kernel.org, willy@infradead.org, yangyicong@hisilicon.com, 
-	yintirui@huawei.com, yongxuan.wang@sifive.com, ziy@nvidia.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015050133.GV6188@frogsfrogsfrogs>
 
-syzbot ci has tested the following series
+From: Darrick J. Wong <djwong@kernel.org>
 
-[v2] mm: add huge pfnmap support for remap_pfn_range()
-https://lore.kernel.org/all/20251016112704.179280-1-yintirui@huawei.com
-* [PATCH RFC 1/2] pgtable: add pte_clrhuge() implementation for arm64 and riscv
-* [PATCH RFC 2/2] mm: add PMD-level huge page support for remap_pfn_range()
+On a filesystem with parent pointers, xchk_nlinks_collect_dir walks both
+the directory entries (data fork) and the parent pointers (attr fork) to
+determine the correct link count.  Unfortunately I forgot to update the
+lock mode logic to handle the case of a directory whose attr fork is in
+btree format and has not yet been loaded *and* whose data fork doesn't
+need loading.
 
-and found the following issue:
-stack segment fault in pgtable_trans_huge_withdraw
+This leads to a bunch of assertions from xfs/286 in xfs_iread_extents
+because we only took ILOCK_SHARED, not ILOCK_EXCL.  You'd need the rare
+happenstance of a directory with a large number of non-pptr extended
+attributes set and enough memory pressure to cause the directory to be
+evicted and partially reloaded from disk.
 
-Full report is available here:
-https://ci.syzbot.org/series/d04c2914-0d99-4132-89d4-899e22abf904
+I /think/ this only started in 6.18-rc1 because I've started seeing OOM
+errors with the maple tree slab using 70% of memory, and this didn't
+happen in 6.17.  Yay dynamic systems!
 
-***
-
-stack segment fault in pgtable_trans_huge_withdraw
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      3a8660878839faadb4f1a6dd72c3179c1df56787
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/9d7864e5-ad3a-4c0d-b21d-86cfc476792e/config
-C repro:   https://ci.syzbot.org/findings/b9fca361-413d-4db1-b8b2-1849cd2c50dd/c_repro
-syz repro: https://ci.syzbot.org/findings/b9fca361-413d-4db1-b8b2-1849cd2c50dd/syz_repro
-
-Oops: stack segment: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5968 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:pgtable_trans_huge_withdraw+0x115/0x310 mm/pgtable-generic.c:188
-Code: c3 10 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 9d e9 13 00 48 8b 03 48 89 04 24 4c 8d 78 08 4c 89 fd 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 ff e8 7b e9 13 00 49 8b 07 48 8d 48
-RSP: 0018:ffffc90003717300 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffea00044848d0 RCX: ffff88816c890000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffff88816db66a23 R09: 1ffff1102db6cd44
-R10: dffffc0000000000 R11: ffffed102db6cd45 R12: ffff888112123000
-R13: dffffc0000000000 R14: ffff888112123000 R15: 0000000000000008
-FS:  000055556cb5f500(0000) GS:ffff88818e70c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000001102a4000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- zap_deposited_table mm/huge_memory.c:2169 [inline]
- zap_huge_pmd+0xa25/0xf50 mm/huge_memory.c:2197
- zap_pmd_range mm/memory.c:1926 [inline]
- zap_pud_range mm/memory.c:1975 [inline]
- zap_p4d_range mm/memory.c:1996 [inline]
- unmap_page_range+0x9fe/0x4370 mm/memory.c:2017
- unmap_single_vma mm/memory.c:2060 [inline]
- unmap_vmas+0x399/0x580 mm/memory.c:2104
- exit_mmap+0x240/0xb40 mm/mmap.c:1280
- __mmput+0x118/0x430 kernel/fork.c:1133
- copy_process+0x2910/0x3c00 kernel/fork.c:2460
- kernel_clone+0x21e/0x840 kernel/fork.c:2609
- __do_sys_clone kernel/fork.c:2750 [inline]
- __se_sys_clone kernel/fork.c:2734 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2734
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f946958eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc41c94258 EFLAGS: 00000206 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 00007f94697e5fa0 RCX: 00007f946958eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000002001000
-RBP: 00007f9469611f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 00007f94697e5fa0 R14: 00007f94697e5fa0 R15: 0000000000000006
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:pgtable_trans_huge_withdraw+0x115/0x310 mm/pgtable-generic.c:188
-Code: c3 10 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 9d e9 13 00 48 8b 03 48 89 04 24 4c 8d 78 08 4c 89 fd 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 ff e8 7b e9 13 00 49 8b 07 48 8d 48
-RSP: 0018:ffffc90003717300 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffea00044848d0 RCX: ffff88816c890000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffff88816db66a23 R09: 1ffff1102db6cd44
-R10: dffffc0000000000 R11: ffffed102db6cd45 R12: ffff888112123000
-R13: dffffc0000000000 R14: ffff888112123000 R15: 0000000000000008
-FS:  000055556cb5f500(0000) GS:ffff88818e70c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000001102a4000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	c3                   	ret
-   1:	10 48 89             	adc    %cl,-0x77(%rax)
-   4:	d8 48 c1             	fmuls  -0x3f(%rax)
-   7:	e8 03 42 80 3c       	call   0x3c80420f
-   c:	28 00                	sub    %al,(%rax)
-   e:	74 08                	je     0x18
-  10:	48 89 df             	mov    %rbx,%rdi
-  13:	e8 9d e9 13 00       	call   0x13e9b5
-  18:	48 8b 03             	mov    (%rbx),%rax
-  1b:	48 89 04 24          	mov    %rax,(%rsp)
-  1f:	4c 8d 78 08          	lea    0x8(%rax),%r15
-  23:	4c 89 fd             	mov    %r15,%rbp
-  26:	48 c1 ed 03          	shr    $0x3,%rbp
-* 2a:	42 80 7c 2d 00 00    	cmpb   $0x0,0x0(%rbp,%r13,1) <-- trapping instruction
-  30:	74 08                	je     0x3a
-  32:	4c 89 ff             	mov    %r15,%rdi
-  35:	e8 7b e9 13 00       	call   0x13e9b5
-  3a:	49 8b 07             	mov    (%r15),%rax
-  3d:	48                   	rex.W
-  3e:	8d                   	.byte 0x8d
-  3f:	48                   	rex.W
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
+Cc: <stable@vger.kernel.org> # v6.10
+Fixes: 77ede5f44b0d86 ("xfs: walk directory parent pointers to determine backref count")
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+ fs/xfs/scrub/nlinks.c |   22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/fs/xfs/scrub/nlinks.c b/fs/xfs/scrub/nlinks.c
+index 26721fab5cab42..dcd57c3f65dfdc 100644
+--- a/fs/xfs/scrub/nlinks.c
++++ b/fs/xfs/scrub/nlinks.c
+@@ -376,6 +376,24 @@ xchk_nlinks_collect_pptr(
+ 	return error;
+ }
+ 
++static uint
++xchk_nlinks_ilock_dir(
++	struct xfs_inode	*ip)
++{
++	uint			lock_mode = XFS_ILOCK_SHARED;
++
++	if (xfs_need_iread_extents(&ip->i_df))
++		lock_mode = XFS_ILOCK_EXCL;
++
++	if (xfs_has_parent(ip->i_mount) && xfs_inode_has_attr_fork(ip) &&
++	    xfs_need_iread_extents(&ip->i_af))
++		lock_mode = XFS_ILOCK_EXCL;
++
++	lock_mode |= XFS_IOLOCK_SHARED;
++	xfs_ilock(ip, lock_mode);
++	return lock_mode;
++}
++
+ /* Walk a directory to bump the observed link counts of the children. */
+ STATIC int
+ xchk_nlinks_collect_dir(
+@@ -394,8 +412,7 @@ xchk_nlinks_collect_dir(
+ 		return 0;
+ 
+ 	/* Prevent anyone from changing this directory while we walk it. */
+-	xfs_ilock(dp, XFS_IOLOCK_SHARED);
+-	lock_mode = xfs_ilock_data_map_shared(dp);
++	lock_mode = xchk_nlinks_ilock_dir(dp);
+ 
+ 	/*
+ 	 * The dotdot entry of an unlinked directory still points to the last
+@@ -452,7 +469,6 @@ xchk_nlinks_collect_dir(
+ 	xchk_iscan_abort(&xnc->collect_iscan);
+ out_unlock:
+ 	xfs_iunlock(dp, lock_mode);
+-	xfs_iunlock(dp, XFS_IOLOCK_SHARED);
+ 	return error;
+ }
+ 
 
