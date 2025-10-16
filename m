@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-856165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA5BBE3483
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:13:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BE1BE33D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B29422B58
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:13:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13CBD4FB585
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9855232C31B;
-	Thu, 16 Oct 2025 12:12:18 +0000 (UTC)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95095324B31;
+	Thu, 16 Oct 2025 12:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="L/JmjaIh"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE27323403
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760616738; cv=none; b=aVZMZ0R4s6jZkMbG60npTg7i8aIW53RV3rcCiEpd478QmgAPF8Hbc/FRfuJQ5rnrFHDhAJcLLjcFRQrB9Z7vmqB0n8zkOWGo5Py24eJnmaLjJGzKHM4DUVaau/Ba/UJ/uT33iarmU/pDhZ0P8hIXmzMx5JZbsfTmGjP3qIzUSkM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760616738; c=relaxed/simple;
-	bh=Qljm2z2l5uF20OnzQWwo+pu0aWLXVl3TFALx6BWruW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cVqKviCH3vEtDQicDLkHjrmcPFPmMw4qKF17U+fiVMeQzG27CTNY3ZvDsSDq3lIsBKKV7ddlAomlwQA49wa0VI3wQNafvD4Nr+GQ3tEnYskLIUM+JwS9tRzM0JIU2iz36/MGO4XykXwL0pxBPyiF3eA/3QhZd+XwYO3mn9mKT0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-863fa984ef5so141126985a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:12:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760616734; x=1761221534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e3GThzLUFjGbl3VuQITKYi7/BLSw+ups+ZHEY60Y/84=;
-        b=kXlGadh8j3IvUrQobULRHdc/xvPpL5v+hyyvKIElWLWDyEM14VB5P3Hsvt57PBSIpI
-         GsFnnXH7cQhC1488krw/aawOxlrZ0Pjd15EgjkervVRKofq5+NT7JoxEhVgSZ0G6axjL
-         v3Q17XDatfcfpj8ZlwUOU+Zc9ENQxWl8YKtcmpUypBpWjB5hhNad1MUz4lVrisAEddAr
-         aJZllsiL+5fXlpZnNXyj06KtMO9qtlh+ryiduASTNR8Jw3PZsWHhn7wOm0EQpPY58Use
-         qKn2zXm4g/N/Jrp/k0n4ZidHnMS+RgEy69cWcCcjZIt67ljEWV/hgrp3A3MVtSqRD//1
-         S4CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsVNM+nF+EWtFMD9OTXIp/YON3zhTHdwtcpw+xAYXsXle/BU9suFEOFpbbTgvCSAkvgI+55NHMrosH1Ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJgwmDUPaEnfoq1YoigFsDfSmtsizDP4h6TafGOWauVxYX9X6g
-	D7xwUD9g6GKXqXoc6feYFPYOLAiVyXLCJv0S4AqxaJtKfJEA8Eu6VKxPqV1T0d2F
-X-Gm-Gg: ASbGncsRdvFF0LCUkBotYs0oT/p9XCNSFTKOe8OpXJje1KhLLKb7qs96+8oqjjhiS+T
-	7xtkY1taZJWWQ0j0Xez8zc8/muH0icpD2axQhst5GYWm/pk8bN6Dyu1t9Y6uCFnjjLKEpTE7cfx
-	Y9ZgwuU+ZKSWa6qx9XZ3ntZmi5ainei1GmafF3dHu6KC+HzePVRNFO6g/TQ+WjtNyvyurTdNjKe
-	bK+bjNhFeqW92p9Ct5e2A/3iOfgmv7XAVcldLfrqbyzvCSxsYmcBTi6XEpz9mAu8b2m12eH3KsW
-	peUslBQMGa5CLoeJ82cg01uoaElrXmxHysRHMb4lKTYjyI1G0KzaOAStOZy1nUhYn6LYpMLyF/9
-	F1SG6Tm6jUwqA2EcrsaLi/OkId+jv6OpYEQSzg7PnsP3vnW9BezTRMWepeWDO5C6xd/rc6mn23p
-	/8eDnLZsj+g7yIHJPZWadREupYBwSWaEt4SZm5AwTaipLM91Jp
-X-Google-Smtp-Source: AGHT+IGLqOte5XQK39rSiHDD/apOihFan6RN+DeGCM5UX7cTn2xMKDs9dNUh18suLMQtmL8TFdry4w==
-X-Received: by 2002:a05:620a:c53:b0:84f:f3bb:e464 with SMTP id af79cd13be357-88353b33b5fmr5231161685a.50.1760616734148;
-        Thu, 16 Oct 2025 05:12:14 -0700 (PDT)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com. [209.85.219.41])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-88f35c63c47sm185556385a.15.2025.10.16.05.12.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 05:12:13 -0700 (PDT)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-87c1f3f4373so2704696d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:12:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVoPTMv90cefMUZix1nTRpKNRhlA3wwGpK89Peaxz66iaxaA/poFtcDhbcyDThvcSf8Ht/zq355QI1tj4k=@vger.kernel.org
-X-Received: by 2002:a05:6102:6c2:b0:4fb:ebe1:7db1 with SMTP id
- ada2fe7eead31-5d5e220448dmr12281536137.12.1760616407229; Thu, 16 Oct 2025
- 05:06:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF0631CA54;
+	Thu, 16 Oct 2025 12:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760616452; cv=pass; b=FgJ3DvYppN/T1gQ8TjLCzIRQ2C7YeWn7fJsR7x7OnUSk8nXT/sYXSYeCdAr9le4u3GGP516cr4NILuEuQh5Q5LlPokACQRW05HLZVJWJWpxC/9Pf5taPTHsv9lRjTVkX0uUcvyA8zgQRSwPwTVtX21d0kRI2fmYZMzTxAMOtXMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760616452; c=relaxed/simple;
+	bh=4BXUhipKa4saO2jFEeVtSyVEBdruhAlxjSMFQGg2Lk0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WKD7G5XyXk0r47qIctaRZsauqKYKZximnph0t/eRJhx1Fj6xYFKj6JAWi/h+fEoU9xoEYtmeJj4E0QyjJYCAP/r7RUOqN5eW1zZkxW3u6Gn+Nji1QIAa8TCyKka27PFvULCDD0bN0auzDFiHpmumInUaRviNlIO0bv0hYpWSvq0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=L/JmjaIh; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760616416; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=U/OY09R1Umycf387LhQRQvZWdXv8njqpy4JvwlwOh6P5/txt7dlKHGsnuow2Y6m9+L9GKo98s9rA5t+grQmppVghS9EiN4KCwAdD9YhVf6k8iDQBgoe1eqcplqdE9zHy1WewTUKkq/et05/3VlnsUPaWYX/za3S9HLlNEYnySfU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760616416; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=dxq839aAHMctLtHNxtYiJDDAjbNWx58BYY8KBjuCdF0=; 
+	b=GVSwdJmw5rqzgD1x5BxRbXFq5txk0HivTAw0atpZziWAxGR4jLn1iNJpe9d42Zxr873dBciobmGOFiKft/T5jfad8+v743K64lW2YEB1AXrueDWZ3XJwx4t5g0JlJDjBMkI/g+U/UqhaXAZrp09jL6trf65XGgWMRiymdVqpyNI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760616416;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=dxq839aAHMctLtHNxtYiJDDAjbNWx58BYY8KBjuCdF0=;
+	b=L/JmjaIh81EMz0o2ijeatci130DJ87NLZ00HdpCWEqdBE18ciO5xVau4hP8l7Xi1
+	LijPfqEiw5sgZuvGhqLPWspEAA6WlW4EO56UdCDxEjaxIXNAqE0IXCimoQHych8Nx16
+	yhISoSHJXWNGWkGHqvImOMv7wzGzbWKqlzm/lipo=
+Received: by mx.zohomail.com with SMTPS id 1760616413675917.2416629138661;
+	Thu, 16 Oct 2025 05:06:53 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v2 0/5] MediaTek UFS Cleanup and MT8196 Enablement
+Date: Thu, 16 Oct 2025 14:06:42 +0200
+Message-Id: <20251016-mt8196-ufs-v2-0-c373834c4e7a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015232015.846282-1-robh@kernel.org> <CAMuHMdVBDN8-gWVs1f=1E2NgD6Dp4=ZFUnyzqHaQj9JWPpZepw@mail.gmail.com>
- <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Oct 2025 14:06:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUUZaL6qyuTZPoRc11WSuqcoRUFNksXZNJoijTeL+vfKQ@mail.gmail.com>
-X-Gm-Features: AS18NWBH0cbPp0cJrT4sY267e4E8JBEuMEr4tkAtjK9DVXEqfelKr3ZBbd1AYGI
-Message-ID: <CAMuHMdUUZaL6qyuTZPoRc11WSuqcoRUFNksXZNJoijTeL+vfKQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANLf8GgC/22OQQ6CMBBFr0Jm7RhaQCkr72FYtGWQJkC1LQRDu
+ LsV4s7lm+S9Pyt4coY8VMkKjmbjjR0j8FMCupPjg9A0kYGnvGApy3EIJRMXnFqPmnSuhBRXKjK
+ IwtNRa5Y9dq8PdvSaYjMcR1DSE2o7DCZUyUhLwF8XvkJnfLDuvT8zs934tzszTJGJotGkykzp8
+ qZt30tlnTzHONTbtn0AtFB0eNkAAAA=
+X-Change-ID: 20251014-mt8196-ufs-cec4b9a97e53
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+ kernel@collabora.com, linux-scsi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-phy@lists.infradead.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.3
 
-Hi Rob,
+In this series, the existing MediaTek UFS binding is expanded and
+completed to correctly describe not just the existing compatibles, but
+also to introduce a new compatible in the from of the MT8196 SoC.
 
-On Thu, 16 Oct 2025 at 13:46, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Oct 16, 2025 at 2:57=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Thu, 16 Oct 2025 at 01:20, Rob Herring (Arm) <robh@kernel.org> wrote=
-:
-> > > yamllint has gained a new check which checks for inconsistent quoting
-> > > (mixed " and ' quotes within a file). Fix all the cases yamllint foun=
-d
-> > > so we can enable the check (once the check is in a release). Use
-> > > whichever quoting is dominate in the file.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >
-> > Thanks for your patch!
-> >
-> > Since you are mentioning mixed quotes, is one or the other preferred?
->
-> I have a slight preference for single quotes.
+The resets, which until now were completely absent from both the UFS
+host controller binding and the UFS PHY binding, are introduced to both.
+This also means the driver's undocumented and, in mainline, unused reset
+logic is reworked. In particular, the PHY reset is no longer a reset of
+the host controller node, but of the PHY node.
 
-OK, so outside human-readable descriptions, there should only be double
-quotes in property values, i.e. on lines ending with a comma or a
-semicolon.  Sounds like that can be scripted, or validated by scripting.
+This means the host controller can reset the PHY through the common PHY
+framework.
 
-> > Shouldn't we try to be consistent across all files?
->
-> I don't particularly care to change 915 files. And if the tools don't
-> enforce it, I'm not going to do so in reviews.
+The resets remain optional.
 
-Fair enough.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v2:
+- Reorder define in mtk_sip_svc.h
+- Use bulk reset APIs in UFS host driver
+- Link to v1: https://lore.kernel.org/r/20251014-mt8196-ufs-v1-0-195dceb83bc8@collabora.com
 
-Gr{oetje,eeting}s,
+---
+Nicolas Frattaroli (5):
+      dt-bindings: ufs: mediatek,ufs: Add mt8196-ufshci variant
+      dt-bindings: phy: Add mediatek,mt8196-ufsphy variant
+      scsi: ufs: mediatek: Move MTK_SIP_UFS_CONTROL to mtk_sip_svc.h
+      phy: mediatek: ufs: Add support for resets
+      scsi: ufs: mediatek: Rework resets
 
-                        Geert
+ .../devicetree/bindings/phy/mediatek,ufs-phy.yaml  |  16 +++
+ .../devicetree/bindings/ufs/mediatek,ufs.yaml      | 134 +++++++++++++++++++--
+ drivers/phy/mediatek/phy-mtk-ufs.c                 |  71 +++++++++++
+ drivers/ufs/host/ufs-mediatek-sip.h                |   9 --
+ drivers/ufs/host/ufs-mediatek.c                    |  78 ++++++------
+ drivers/ufs/host/ufs-mediatek.h                    |   7 +-
+ include/linux/soc/mediatek/mtk_sip_svc.h           |   3 +
+ 7 files changed, 255 insertions(+), 63 deletions(-)
+---
+base-commit: 40a3abb0f3e5229996c8ef0498fc8d8a0c2bd64f
+change-id: 20251014-mt8196-ufs-cec4b9a97e53
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
