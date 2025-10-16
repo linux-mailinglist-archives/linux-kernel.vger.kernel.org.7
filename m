@@ -1,86 +1,49 @@
-Return-Path: <linux-kernel+bounces-855568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E2CBE1A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:09:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C677BE1AC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479524F1CD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE71F19C78F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFA8257AD1;
-	Thu, 16 Oct 2025 06:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638F256C70;
+	Thu, 16 Oct 2025 06:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PAwhwAqr"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="BgYWF9k/"
+Received: from mail-m1973178.qiye.163.com (mail-m1973178.qiye.163.com [220.197.31.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD122571B0;
-	Thu, 16 Oct 2025 06:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B3B25524C;
+	Thu, 16 Oct 2025 06:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760594905; cv=none; b=YN3NC9ZUPRN40QSDibRo8IZzJkSONgLr2oJr2IhBfqcL1uw0HmhPwEM8FfOBnnXb2KyEn4uHxirb61iPf59/DTFK0PtCKgbPxg7B582GMVfVtm7YP1w7zp5EsKtiUmBewzuvCdT56w2BDe3zEzqNNBhOfeD0qsT4gz2sOvtxx/Q=
+	t=1760595051; cv=none; b=blssGFotkNTXuEuBU2LoIlK4rqQ3jOHtKqa83QJ0I3sIj+FEtQpQ9Eyt9InNXtQi0UmUmek4Go5iBxZ8mtm4BOT4X0JpKov8VI+q+QR4bowPFGHvtcRSo5I09pnZUaeb2Ikl49uQAvtpnr4p4gYwv0Fz3NO4lZBXuf+4POldQ24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760594905; c=relaxed/simple;
-	bh=NEM+vvGkU2hEjqeEYeGcTJYvpQwSZrKWTlzmN50pWPc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hi3If2e4OkKqQk1KlDdUyfLEHTgBb/AlLHofAWfDs4ctCm8t34kS6fCpnDQIdD/UH7NaXzqVIAhxmAWLswSYeZ0ezb2KTGupbMD4DtBSJxpnw4SHVB4TekWvFPHo53hV+QWUOIZ4vijmWwQqXyGBV1PMlorYnrohRxOiN2Npx8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PAwhwAqr; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7f1d9684aa5611f0b33aeb1e7f16c2b6-20251016
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=7ZwgZ1yPCVManbniK00ddW0A9r3Z2AUU4qbd8SLHkq4=;
-	b=PAwhwAqrTe3gAdxxRDg7ple1NTnTCQBRbsvtA/zktjt/uwfoLXkwOWSwJcl5Rti2M9zOB0dlo6SC695mOYWdDxPGsW3EgvDE1dmYef+0PTvjempQ8M23UhsK4ueD5HYUpQ7jMhBwtx82ijaPg7WdLmMw7KDXSVOmwYn9dqjkNCg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:3b047e86-53d4-4bce-9f9d-57305716b64f,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:a9d874c,CLOUDID:81ad7202-eaf8-4c8c-94de-0bc39887e077,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 7f1d9684aa5611f0b33aeb1e7f16c2b6-20251016
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2101229445; Thu, 16 Oct 2025 14:08:12 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 16 Oct 2025 14:08:11 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Thu, 16 Oct 2025 14:08:09 +0800
-From: Kyrie Wu <kyrie.wu@mediatek.com>
-To: Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen
-	<andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, Sebastian Fricke
-	<sebastian.fricke@collabora.com>, Nathan Hebert <nhebert@chromium.org>, Arnd
- Bergmann <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>, George Sun
-	<george.sun@mediatek.com>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-CC: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
-	<andrzejtp2010@gmail.com>
-Subject: [PATCH v4 8/8] media: mediatek: encoder: Add MT8189 encoder compatible data
-Date: Thu, 16 Oct 2025 14:07:46 +0800
-Message-ID: <20251016060747.20648-9-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20251016060747.20648-1-kyrie.wu@mediatek.com>
-References: <20251016060747.20648-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1760595051; c=relaxed/simple;
+	bh=oCw789xmCGRjiexvmqDKIjY5sP+ymSwLge1g9i9Ykt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSZutVFSUr+4kT2L/hJaitOJCMe3VuQlZ+op547jSt6tQrymt+nz/mdi2pcea31jP8J03Nchr/gzr3wehmE8KCxBfWm0e1wAOoK9r3hw6Wen40mf/HXzHHaD9tDcLsgK+IegD9uAV7h30+/o+1/Bq0KXsgjCuXenyE6XsIjvWb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=BgYWF9k/; arc=none smtp.client-ip=220.197.31.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
+Received: from localhost.lan (unknown [1.193.59.83])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 261a0f673;
+	Thu, 16 Oct 2025 14:10:37 +0800 (GMT+08:00)
+From: Dewei Meng <mengdewei@cqsoftware.com.cn>
+To: clm@fb.com,
+	dsterba@suse.com,
+	quwenruo.btrfs@gmx.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dewei Meng <mengdewei@cqsoftware.com.cn>,
+	Daniel Vacek <neelx@suse.com>
+Subject: [PATCH v2] btrfs: Fix NULL pointer access in btrfs_check_leaked_roots()
+Date: Thu, 16 Oct 2025 14:10:11 +0800
+Message-ID: <20251016061011.22946-1-mengdewei@cqsoftware.com.cn>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,50 +51,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-HM-Tid: 0a99eba44df703abkunm99c4ff8f44f937
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCH0lMVkhCSE1JSEtLTk5JT1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKVUpCSFVOQlVDSFlXWRYaDxIVHRRZQVlPS0hVSktJT09PSFVKS0tVSk
+	JLS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=BgYWF9k/MggL+NVTWlEQIl2Sd2zMjPknFLfvTLKQviehFK1ROIQGNXYzkxpIoDAFXC5BSYAcWUDuXUMXs6DU9M23YaJ8kz19uYFqSm5zjvkjPnxaQmn6dgupebdg5QV93t+SGJd5iAGsmV/RcfY4COJ89GfqKLUxcs3gLSnTWTw=; s=default; c=relaxed/relaxed; d=cqsoftware.com.cn; v=1;
+	bh=OUxMx3bMWLOXcjTSF9y3dYvaaaxjFJZL9tcr3oOVZbs=;
+	h=date:mime-version:subject:message-id:from;
 
-add compatible data to support MT8189 encoding.
+If fs_info->super_copy or fs_info->super_for_commit allocated failed in
+btrfs_get_tree_subvol(), then no need to call btrfs_free_fs_info().
+Otherwise btrfs_check_leaked_roots() would access NULL pointer because
+fs_info->allocated_roots had not been initialised.
 
-Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+syzkaller reported the following information:
+  ------------[ cut here ]------------
+  BUG: unable to handle page fault for address: fffffffffffffbb0
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 64c9067 P4D 64c9067 PUD 64cb067 PMD 0
+  Oops: Oops: 0000 [#1] SMP KASAN PTI
+  CPU: 0 UID: 0 PID: 1402 Comm: syz.1.35 Not tainted 6.15.8 #4 PREEMPT(lazy)
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), (...)
+  RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+  RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+  RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+  RIP: 0010:refcount_read include/linux/refcount.h:170 [inline]
+  RIP: 0010:btrfs_check_leaked_roots+0x18f/0x2c0 fs/btrfs/disk-io.c:1230
+  [...]
+  Call Trace:
+   <TASK>
+   btrfs_free_fs_info+0x310/0x410 fs/btrfs/disk-io.c:1280
+   btrfs_get_tree_subvol+0x592/0x6b0 fs/btrfs/super.c:2029
+   btrfs_get_tree+0x63/0x80 fs/btrfs/super.c:2097
+   vfs_get_tree+0x98/0x320 fs/super.c:1759
+   do_new_mount+0x357/0x660 fs/namespace.c:3899
+   path_mount+0x716/0x19c0 fs/namespace.c:4226
+   do_mount fs/namespace.c:4239 [inline]
+   __do_sys_mount fs/namespace.c:4450 [inline]
+   __se_sys_mount fs/namespace.c:4427 [inline]
+   __x64_sys_mount+0x28c/0x310 fs/namespace.c:4427
+   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+   do_syscall_64+0x92/0x180 arch/x86/entry/syscall_64.c:94
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  RIP: 0033:0x7f032eaffa8d
+  [...]
+
+Fixes: 3bb17a25bcb0 ("btrfs: add get_tree callback for new mount API")
+Signed-off-by: Dewei Meng <mengdewei@cqsoftware.com.cn>
+Reviewed-by: Daniel Vacek <neelx@suse.com>
 ---
- .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+V1 -> V2:
+- Revise the patch description to make it easier to read
+- Delete btrfs_free_fs_info() when super_copy/super_for_commit allocated
+  failed, instead of NULL pointer check in btrfs_check_leaked_roots()
 
-diff --git a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c
-index 6b3d2e72fad9..2cc92a8f7a0d 100644
---- a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c
-+++ b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c
-@@ -467,6 +467,19 @@ static const struct mtk_vcodec_enc_pdata mt8196_pdata = {
- 	.set_dma_bit_mask = true,
- };
- 
-+static const struct mtk_vcodec_enc_pdata mt8189_pdata = {
-+	.venc_model_num = 8189,
-+	.capture_formats = mtk_video_formats_capture_h264,
-+	.num_capture_formats = ARRAY_SIZE(mtk_video_formats_capture_h264),
-+	.output_formats = mtk_video_formats_output,
-+	.num_output_formats = ARRAY_SIZE(mtk_video_formats_output),
-+	.min_bitrate = 64,
-+	.max_bitrate = 100000000,
-+	.core_id = VENC_SYS,
-+	.uses_common_fw_iface = true,
-+	.set_dma_bit_mask = true,
-+};
-+
- static const struct of_device_id mtk_vcodec_enc_match[] = {
- 	{.compatible = "mediatek,mt8173-vcodec-enc",
- 			.data = &mt8173_avc_pdata},
-@@ -477,6 +490,7 @@ static const struct of_device_id mtk_vcodec_enc_match[] = {
- 	{.compatible = "mediatek,mt8192-vcodec-enc", .data = &mt8192_pdata},
- 	{.compatible = "mediatek,mt8195-vcodec-enc", .data = &mt8195_pdata},
- 	{.compatible = "mediatek,mt8196-vcodec-enc", .data = &mt8196_pdata},
-+	{.compatible = "mediatek,mt8189-vcodec-enc", .data = &mt8189_pdata},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_vcodec_enc_match);
+ fs/btrfs/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index d6e496436539..dc95e697b22b 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2069,7 +2069,9 @@ static int btrfs_get_tree_subvol(struct fs_context *fc)
+ 	fs_info->super_copy = kzalloc(BTRFS_SUPER_INFO_SIZE, GFP_KERNEL);
+ 	fs_info->super_for_commit = kzalloc(BTRFS_SUPER_INFO_SIZE, GFP_KERNEL);
+ 	if (!fs_info->super_copy || !fs_info->super_for_commit) {
+-		btrfs_free_fs_info(fs_info);
++		kfree(fs_info->super_copy);
++		kfree(fs_info->super_for_commit);
++		kvfree(fs_info);
+ 		return -ENOMEM;
+ 	}
+ 	btrfs_init_fs_info(fs_info);
 -- 
-2.45.2
+2.43.5
 
 
