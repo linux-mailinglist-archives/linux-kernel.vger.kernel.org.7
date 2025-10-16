@@ -1,231 +1,176 @@
-Return-Path: <linux-kernel+bounces-856170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1B1BE34B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:15:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F229BE34CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70DF95056B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:14:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1852F4F7844
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1B0324B3E;
-	Thu, 16 Oct 2025 12:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4702D9795;
+	Thu, 16 Oct 2025 12:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="e52oA+EG"
-Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="06IlqMjh"
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8222D9795
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F435325481
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760616888; cv=none; b=GNkYSpxUAtXEx/tnTHx9GtfCsHiUdLOYyJFkiU9P3nR/GNiRazdj4Utuns16N9Plz0mRl64EeevjcMyafpikVnzP1DlBm9dPrwlN8hkC4b/H81doipx47cNjZmgQDJdGF2X9fpqoZ/GxRClooOErbyyYRMQYVUOAanqU9bYBzxE=
+	t=1760616999; cv=none; b=BmyZAY9uTm1AJQ1GZV9yaq9AKw+Un3BpScA34QrG/ltWivkAWl3TBOrhltzBRaLhA0KsEUY3vX6xbSekeQNQnZTQko4X4y3dl0StuTAwvpZzKUa+9SYGcUFTrIcPnr3L+JkSZ5AhzHsNT3d2hs2Iuuf/mzj0M3kez57rar+pAwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760616888; c=relaxed/simple;
-	bh=UHvkBdQxGCrR3FqeSmX4kGnqyIvvIvMaGeEzDd4k5jg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ll8e3+Oke/EelFxnECXgiU0Yk5tGPnskRWe0Ps7VGxWTe/pz9vRHEA3vvgQz83S0wQ7x02SQVKq+ac1VjGHNgyt71Geqbs+EhaamKvdm3XKRrr6VKj8FuFlorNQRtJXpgf++TnC8v1Zod4FWU2q8eyZHQW3lFmtn94WnFpubH5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=e52oA+EG; arc=none smtp.client-ip=178.156.171.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay13 (localhost [127.0.0.1])
-	by relay13.grserver.gr (Proxmox) with ESMTP id 456B15E5F3
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:14:44 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay13.grserver.gr (Proxmox) with ESMTPS id 783B85E637
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:14:41 +0300 (EEST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 0511E1FFC15
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:14:39 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760616880;
-	bh=zaI4TGCa0As3OOgXao4EolVIww/X5bqNPPIbHU0Dp2A=;
-	h=Received:From:Subject:To;
-	b=e52oA+EGXTpmDBmjQ9b1gg3sW8wQnSad3rqYu/evCRva/Kbb/A6wO9L131RR8+cnT
-	 /TePy2vFpbsBOaZpNvGKnQqwFoVen0Qu94AnbSUQeAuB2oG5iDpQ+y6vKfkv+Ib3M8
-	 BhJPp7UX85zB0g+Naj1S/povOCLDdLSDNp5UP7Nn5ECIYU8OTomo3kxgzOeDDvOszC
-	 /JHCXE9DlTUhtsDZyhVhF8MqDEk7uzuRYrFw729XYDWGBwbJOPj5IhE8WUGUknFHX+
-	 GpdbC9zPfLTtfoWa9b6DDMk2ifCXxgMLJawfWnmq31MRTSmgcf6ZG5JrMTw/x0SMD5
-	 DYu2Oi7up88Tw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.179) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f179.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f179.google.com with SMTP id
- 38308e7fff4ca-36bf096b092so7242741fa.1
-        for <linux-kernel@vger.kernel.org>;
- Thu, 16 Oct 2025 05:14:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUYynp2wIW4yBpvTnxGI7ttaVeonpx6vRCparQKvnIjhUB+pzbuiNo7Y6OYHei8qT0rXU5txd7t4KEqEvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT3WjHgohTTc+FuHx67fQQ2oJzPsP4pTpIgoMEPDqnW6PrtCak
-	cJ+JwAYYvAz8M8CCkHh1XtXC6yCwjymv+lFX4aQj193b9Bc+SQtxZgkIMSMmAZdFlZXpHw2fRFu
-	ppMpJ5sup/8YGTcTYMrWYelihjwYEr6Y=
-X-Google-Smtp-Source: 
- AGHT+IHo3iaPN/kZiNC3WqaGG26iR5S4bZa3fIB84osvdJzn2mXiNvhEQ33QGVri3FJalos/UEMlkwe5rx/44THUjsA=
-X-Received: by 2002:a05:651c:1504:b0:36d:501:76d5 with SMTP id
- 38308e7fff4ca-37609e04b12mr87885811fa.26.1760616879242; Thu, 16 Oct 2025
- 05:14:39 -0700 (PDT)
+	s=arc-20240116; t=1760616999; c=relaxed/simple;
+	bh=Asv18Es4/CkZ3Onkr5LhEejicqx9AZR93SBU0FKTb64=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Juc4YdUXzrUrAp4lXaDkZcHG/CkZzQL5qPJ/32WMltprklgZSPyBs+J0Z3YVvJezqr5MfROzmvUULFlVdBh4opM8n6mQ9qY+DiYWkOoJiAfHnOzSjb/UUrZ9Tg+WwSSLCcI/oIdnf+R+kjYoacNn7BNTfUjFQJjShX8ZjmOul5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=06IlqMjh; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=mZhdIG8BiKktKnsU0vLBSalOfC9ysmb6xScde5ulHzw=;
+	b=06IlqMjhNJEnnJP/XboQMft72lRnLM/1Yz0DUGUmInvIjjIdY9SDfmxXn9IWIpOhAk/f1i+oc
+	gWR6DVNQUhCYIw0HupMuM67fyCQrQq4fh5rF1z5JXyTh2SjFN1J48bOPKbU/4AueHwi111U/9cA
+	Hsj36XsIQGlFq91n36/Ap+0=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cnRkZ5QMdzRhS7;
+	Thu, 16 Oct 2025 20:16:06 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id D8798180B72;
+	Thu, 16 Oct 2025 20:16:27 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 16 Oct 2025 20:16:27 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <rmk+kernel@armlinux.org.uk>, <linux@armlinux.org.uk>, <rppt@kernel.org>,
+	<vbabka@suse.cz>, <pfalcato@suse.de>, <brauner@kernel.org>,
+	<lorenzo.stoakes@oracle.com>, <kuninori.morimoto.gx@renesas.com>,
+	<tony@atomide.com>, <arnd@arndb.de>, <bigeasy@linutronix.de>,
+	<akpm@linux-foundation.org>, <punitagrawal@gmail.com>, <rjw@rjwysocki.net>,
+	<marc.zyngier@arm.com>
+CC: <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <liaohua4@huawei.com>,
+	<lilinjie8@huawei.com>, <xieyuanbin1@huawei.com>
+Subject: [PATCH v2 RESEND 1/2] ARM: spectre-v2: Fix potential missing mitigations
+Date: Thu, 16 Oct 2025 20:16:21 +0800
+Message-ID: <20251016121622.8957-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <160c3adf-9333-4486-ba4c-d3359ea73337@gmail.com>
-In-Reply-To: <160c3adf-9333-4486-ba4c-d3359ea73337@gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 16 Oct 2025 14:14:27 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwGzOQ-LCk6B202-CuKq=gepn6Mt4LitJJZ7dfMLaDVs7Q@mail.gmail.com>
-X-Gm-Features: AS18NWD4C-Q5Y_LyIHx0Q-D6j_Qbge9uaHC65A1_VYwrq3CPNNcDSwbjwcLVl-s
-Message-ID: 
- <CAGwozwGzOQ-LCk6B202-CuKq=gepn6Mt4LitJJZ7dfMLaDVs7Q@mail.gmail.com>
-Subject: Re: [PATCH v6 0/7] HID: asus: Fix ASUS ROG Laptop's Keyboard
- backlight handling
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176061688021.3173876.7298231615772030537@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-On Thu, 16 Oct 2025 at 13:57, Denis Benato <benato.denis96@gmail.com> wrote:
->
->
-> On 10/13/25 22:15, Antheas Kapenekakis wrote:
-> > This is a two part series which does the following:
-> >   - Clean-up init sequence
-> >   - Unify backlight handling to happen under asus-wmi so that all Aura
-> >     devices have synced brightness controls and the backlight button works
-> >     properly when it is on a USB laptop keyboard instead of one w/ WMI.
-> >
-> > For more context, see cover letter of V1. Since V5, I removed some patches
-> > to make this easier to merge.
-> >
-> > All comments with these patches had been addressed since V4.
-> I have loaded this patchset for users of asus-linux project to try out.
->
-> One of them opened a bug report about a kernel bug that happens
-> consistently when closing the lid of his laptop [1].
->
-> He also sent another piece of kernel log, but didn't specify anything more
-> about this [2].
->
-> [1] https://pastebin.com/akZx1w10
-> [2] https://pastebin.com/sKdczPgf
+For the latest kernel, with arm's multi_v7_defconfig, and set
+CONFIG_PREEMPT=y, CONFIG_DEBUG_PREEMPT=y, CONFIG_ARM_LPAE=y,
+if a user program try to accesses any valid kernel address, for example:
+```c
+static void han(int x)
+{
+	while (1);
+}
 
-Can you provide a link to the bug report? [2] seems unrelated.
+int main(void)
+{
+	signal(SIGSEGV, han);
+	/* 0xc0331fd4 is just a kernel address in kernel .text section */
+	__asm__ volatile (""::"r"(*(int *)(uintptr_t)0xc0331fd4):"memory");
+	while (1);
+	return 0;
+}
+```
+, the following WARN will be triggered:
 
-As for [1], it looks like a trace that stems from a sysfs write to
-brightness stemming from userspace that follows the same chain it
-would on a stock kernel and times out. Is it present on a stock
-kernel?
+[    1.089103] BUG: using smp_processor_id() in preemptible [00000000] code: init/1
+[    1.093367] caller is __do_user_fault+0x20/0x6c
+[    1.094355] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.14.3 #7
+[    1.094585] Hardware name: Generic DT based system
+[    1.094706] Call trace:
+[    1.095211]  unwind_backtrace from show_stack+0x10/0x14
+[    1.095329]  show_stack from dump_stack_lvl+0x50/0x5c
+[    1.095352]  dump_stack_lvl from check_preemption_disabled+0x104/0x108
+[    1.095448]  check_preemption_disabled from __do_user_fault+0x20/0x6c
+[    1.095459]  __do_user_fault from do_page_fault+0x334/0x3dc
+[    1.095505]  do_page_fault from do_DataAbort+0x30/0xa8
+[    1.095528]  do_DataAbort from __dabt_usr+0x54/0x60
+[    1.095570] Exception stack(0xf0825fb0 to 0xf0825ff8)
 
-Ilpo should know more about this, could the spinlock be interfering?
-My testing on devices that have WMI led controls is a bit limited
-unfortunately. However, most of our asus users have been happy with
-this series for around half a year now.
+This WARN indicates that the current CPU is not stable, which means that
+current can be migrated to other CPUs.
+Therefore, in some scenarios, mitigation measures may be missed, such as:
+1. Thread A attacks on cpu0 and triggers do_page_fault
+2. Thread A migrates to cpu1 before bp_hardening
+3. Thread A do bp_hardening on cpu1
+4. Thread A migrates to cpu0
+5. Thread A ret_to_user on cpu0
 
-Antheas
+Assuming that all of the context_stwitch() mentioned above does not
+trigger switch_mm(), therefore all of the context_stwitch() does not
+trigger mitigation. Thread A successfully bypassed the mitigation on cpu0.
 
-> > ---
-> > V5: https://lore.kernel.org/all/20250325184601.10990-1-lkml@antheas.dev/
-> > V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@antheas.dev/
-> > V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@antheas.dev/
-> > V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@antheas.dev/
-> > V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
-> >
-> > Changes since V5:
-> >   - It's been a long time
-> >   - Remove addition of RGB as that had some comments I need to work on
-> >   - Remove folio patch (already merged)
-> >   - Remove legacy fix patch 11 from V4. There is a small chance that
-> >     without this patch, some old NKEY keyboards might not respond to
-> >     RGB commands according to Luke, but the kernel driver does not do
-> >     RGB currently. The 0x5d init is done by Armoury crate software in
-> >     Windows. If an issue is found, we can re-add it or just remove patches
-> >     1/2 before merging. However, init could use the cleanup.
-> >
-> > Changes since V4:
-> >   - Fix KConfig (reported by kernel robot)
-> >   - Fix Ilpo's nits, if I missed anything lmk
-> >
-> > Changes since V3:
-> >   - Add initializer for 0x5d for old NKEY keyboards until it is verified
-> >     that it is not needed for their media keys to function.
-> >   - Cover init in asus-wmi with spinlock as per Hans
-> >   - If asus-wmi registers WMI handler with brightness, init the brightness
-> >     in USB Asus keyboards, per Hans.
-> >   - Change hid handler name to asus-UNIQ:rgb:peripheral to match led class
-> >   - Fix oops when unregistering asus-wmi by moving unregister outside of
-> >     the spin lock (but after the asus reference is set to null)
-> >
-> > Changes since V2:
-> >   - Check lazy init succeds in asus-wmi before setting register variable
-> >   - make explicit check in asus_hid_register_listener for listener existing
-> >     to avoid re-init
-> >   - rename asus_brt to asus_hid in most places and harmonize everything
-> >   - switch to a spinlock instead of a mutex to avoid kernel ooops
-> >   - fixup hid device quirks to avoid multiple RGB devices while still exposing
-> >     all input vendor devices. This includes moving rgb init to probe
-> >     instead of the input_configured callbacks.
-> >   - Remove fan key (during retest it appears to be 0xae that is already
-> >     supported by hid-asus)
-> >   - Never unregister asus::kbd_backlight while asus-wmi is active, as that
-> >   - removes fds from userspace and breaks backlight functionality. All
-> >   - current mainline drivers do not support backlight hotplugging, so most
-> >     userspace software (e.g., KDE, UPower) is built with that assumption.
-> >     For the Ally, since it disconnects its controller during sleep, this
-> >     caused the backlight slider to not work in KDE.
-> >
-> > Changes since V1:
-> >   - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
-> >   - Fix ifdef else having an invalid signature (reported by kernel robot)
-> >   - Restore input arguments to init and keyboard function so they can
-> >     be re-used for RGB controls.
-> >   - Remove Z13 delay (it did not work to fix the touchpad) and replace it
-> >     with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
-> >     keyboard rename into it.
-> >   - Unregister brightness listener before removing work queue to avoid
-> >     a race condition causing corruption
-> >   - Remove spurious mutex unlock in asus_brt_event
-> >   - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
-> >     relocking the mutex and causing a deadlock when unregistering leds
-> >   - Add extra check during unregistering to avoid calling unregister when
-> >     no led device is registered.
-> >   - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
-> >     the driver to create 4 RGB handlers per device. I also suspect some
-> >     extra events sneak through (KDE had the @@@@@@).
-> >
-> > Antheas Kapenekakis (7):
-> >   HID: asus: refactor init sequence per spec
-> >   HID: asus: prevent binding to all HID devices on ROG
-> >   platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
-> >   HID: asus: listen to the asus-wmi brightness device instead of
-> >     creating one
-> >   platform/x86: asus-wmi: remove unused keyboard backlight quirk
-> >   platform/x86: asus-wmi: add keyboard brightness event handler
-> >   HID: asus: add support for the asus-wmi brightness handler
-> >
-> >  drivers/hid/hid-asus.c                     | 235 +++++++++++----------
-> >  drivers/platform/x86/asus-wmi.c            | 157 ++++++++++++--
-> >  include/linux/platform_data/x86/asus-wmi.h |  69 +++---
-> >  3 files changed, 291 insertions(+), 170 deletions(-)
-> >
-> >
-> > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
->
+Over the past six years, there have been continuous reports of this bug:
+2025.4.24 https://lore.kernel.org/all/20250424100437.27477-1-xieyuanbin1@huawei.com/
+2022.6.22 https://lore.kernel.org/all/795c9463-452e-bf64-1cc0-c318ccecb1da@I-love.SAKURA.ne.jp/
+2021.3.25 https://lore.kernel.org/all/20210325095049.6948-1-liu.xiang@zlingsmart.com/
+2021.3.12 https://lore.kernel.org/all/20210312041246.15113-1-qiang.zhang@windriver.com/
+2021.3.11 https://lore.kernel.org/all/0000000000007604cb05bd3e6968@google.com/
+2019.5.27 https://lore.kernel.org/all/1558949979-129251-1-git-send-email-gaoyongliang@huawei.com/
+2019.3.19 https://lore.kernel.org/all/20190319203239.gl46fxnfz6gzeeic@linutronix.de/
+
+To fix it, we must check whether mitigation are needed before enabling
+interrupt(with PREEMPT) or before calling mm_read_lock()(without PREEMPT).
+
+Fixes: f5fe12b1eaee ("ARM: spectre-v2: harden user aborts in kernel space")
+
+Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
+Cc: Russell King (Oracle) <linux@armlinux.org.uk>
+---
+ arch/arm/mm/fault.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 2bc828a1940c..e4dc7c2cfe75 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -265,20 +265,27 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+ 	int sig, code;
+ 	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_DEFAULT;
+ 	vm_flags_t vm_flags = VM_ACCESS_FLAGS;
+ 
+ 	if (kprobe_page_fault(regs, fsr))
+ 		return 0;
+ 
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++	if (unlikely(addr > TASK_SIZE) && user_mode(regs)) {
++		fault = 0;
++		code = SEGV_MAPERR;
++		goto bad_area;
++	}
++#endif
+ 
+ 	/* Enable interrupts if they were enabled in the parent context. */
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+ 
+ 	/*
+ 	 * If we're in an interrupt or have no user
+ 	 * context, we must not take the fault..
+ 	 */
+ 	if (faulthandler_disabled() || !mm)
+-- 
+2.48.1
 
 
