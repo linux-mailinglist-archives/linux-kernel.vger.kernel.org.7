@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-855915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C22BE2A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A4ABE2ADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA753B7F35
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039695803C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0A0341AC3;
-	Thu, 16 Oct 2025 09:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3807B2E370E;
+	Thu, 16 Oct 2025 09:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O7f2VWuT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kTtFTdmD"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CMkyeApc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jZ/wO1Oq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD96431A06C;
-	Thu, 16 Oct 2025 09:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34432E758;
+	Thu, 16 Oct 2025 09:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608395; cv=none; b=jyAJlxdqicIzepEouPSDZfnCzMP52YMdLILaBSOnhHiEHFBhzbF2mlW8q5I+bPdcDXDxSN2ZExWYnYw5awhS5Lkf+6u7GvCcE5S434PuWvmLeTp5QMwa0zlUB0JvZNmzK1AReST8NuLiJzuIyTCkeIcQNL4dC3a9tYA80BLx1eE=
+	t=1760608410; cv=none; b=dzYiP/DxQASQKLPR56MirDIGwTvAGnTaaArz7mrSE4yqfCNpLWXk5OhJAvfHqZi8TiBniYsKplUtE5amkSbfViWK8CFnDmA/Bl0s1E4HPSRCRSa1ymSTzIsqLPZcM7a1g/cvS3wH8+X1xQd9vOikC9i/ihg8Nl0XNksZ+pSoBt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608395; c=relaxed/simple;
-	bh=1lyhjpl6UBFfrpu2AsBfgbJv1xcSFe6SxOrsd9vtVxQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=sWBKdAYkzKqZT42wdX0gcwLf8xJM1SrGT2zlA4nqvM6PmxBt3xTYPLfmMPjHarSeWQzNZS6OmZkr+WWJ7PI/sBRIVQsGCaebRiaYox5lDKT9hCBUtAMT+HhsnxGFTAdysWtxUF/sHJLMkSdbmV8377pvpJ6QB2C8PFrKSDHbfWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O7f2VWuT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kTtFTdmD; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1760608410; c=relaxed/simple;
+	bh=Rbv4sLhpj3y55d4kusVUyJ1AVOWMVwMz/WQse5wv5EI=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=k2yf3vZ8ZNmRe+7sLsLJkFE0H0eLwGdJApFrrCC5QuLfA5GPcmf4HA1CaQMDhsLakDhrccU1yRpPxKn3cWf+DROC+RpZQzxK500ANRfNdK86ZkyCAFmnu4wsXrt1PwgMqzqIDeDpbyYcd1fjfkzpPF9F/g3IcHBsgaM7rN4Novk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CMkyeApc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jZ/wO1Oq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:52:31 -0000
+Date: Thu, 16 Oct 2025 09:52:43 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760608353;
+	s=2020; t=1760608364;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=mOCIGoBtEKNNR2ffrWTFldOUm7GKW7gMfN6qxmxlfkg=;
-	b=O7f2VWuT5S2a12ws+CDhRzbXJqhzKXZIrUUCo8H2THv5d4beIhqbdwt91OkZg8zWsksxxQ
-	NV3QJHSgG4e+k/nmUeyp+BkzthOLAtL+vZ6TY812jpk3nyBiJ3zc5IyNQCLRXtkgJ7eGzN
-	emU1U4JeGYLZVGeO+l3eKx18FyR1yNwbEIQwtY5DOWaYey3S/gThnff76HFKdUpgEfx3RM
-	+THPjOOVcMQNY4XhZ5qDE9xQZ23zW5vNYofyJcH44QWvqINWMuPhIHJieWVhGTSYqSGHaN
-	0mXNIDrp4wY9WiQFeHWZxdEOIPM3S4ToPJ7cYovNyo+hWbtFvRZRIQD3xr5ihg==
+	bh=LUnmSBZNEh3fhDBok8Q9crKVUVnjxGCLft6pp84kSpo=;
+	b=CMkyeApcjI41H9fApAGmxqCYu+NowWMhuHzWGigSTfTU1VubPjR5azS5AwAJnMgsQUm9Wf
+	LedM/dcOnb5C56dSFLxCxIAx0XrDho67vqcu4th+O0QKC72hsWbfaR5Do8t/SmcQ+WSYoa
+	JdN+7PIcJANvVt1XnJr972Xi5l9RJOtuZLw3XaWcZTFDtUpqdZhiDaPp+A7sGKGddEyXJe
+	qaAEI813BhWtSFO2CRWu6djeFz+UjnzEbgLxH+iifyc+AUNjjBbhz0EPpaAwWvdu+8rZ4T
+	OCdwomnjXxsZO7RO4rYPgffiUmtGhhlApj4o9248igQi17CGN4co6rwIx8McWw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760608353;
+	s=2020e; t=1760608364;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=mOCIGoBtEKNNR2ffrWTFldOUm7GKW7gMfN6qxmxlfkg=;
-	b=kTtFTdmDDb6QaTPDm7HqjSyrhoyhoiteD16jHvan/fBaTM68uWooDdWuubmTC1Ir6pgVCH
-	UrRvqe6PnOcddRAQ==
+	bh=LUnmSBZNEh3fhDBok8Q9crKVUVnjxGCLft6pp84kSpo=;
+	b=jZ/wO1OqrHy/DyxVrFZUNzIP4Id1AgH/d1b4vTznw62Lytf12KIV72Vgb2tTJ99vuA/k4q
+	FxfwtiWkwLA//vDQ==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Generalize elf_create_symbol()
+Subject: [tip: objtool/core] objtool: Fix weak symbol hole detection for .cold
+ functions
 Cc: Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
@@ -64,7 +65,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060835183.709179.17236409709130251135.tip-bot2@tip-bot2>
+Message-ID: <176060836342.709179.15914566929059147032.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -74,250 +75,164 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     dd2c29aafde7653839791d3073515b62e5df1f4d
-Gitweb:        https://git.kernel.org/tip/dd2c29aafde7653839791d3073515b62e5d=
-f1f4d
+Commit-ID:     c9e9b85d41f9079d6a10faabf70a0b18d5c0f177
+Gitweb:        https://git.kernel.org/tip/c9e9b85d41f9079d6a10faabf70a0b18d5c=
+0f177
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Wed, 17 Sep 2025 09:03:47 -07:00
+AuthorDate:    Wed, 17 Sep 2025 09:03:38 -07:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 14 Oct 2025 14:46:48 -07:00
+CommitterDate: Tue, 14 Oct 2025 14:46:47 -07:00
 
-objtool: Generalize elf_create_symbol()
+objtool: Fix weak symbol hole detection for .cold functions
 
-In preparation for the objtool klp diff subcommand, broaden the
-elf_create_symbol() interface to give callers more control and reduce
-duplication of some subtle setup logic.
+When ignore_unreachable_insn() looks for weak function holes which jump
+to their .cold functions, it assumes the parent function comes before
+the corresponding .cold function in the symbol table.  That's not
+necessarily the case with -ffunction-sections.
 
-While at it, make elf_create_symbol() and elf_create_section_symbol()
-global so sections can be created by the upcoming klp diff code.
+Mark all the holes beforehand (including .cold functions) so the
+ordering of the discovery doesn't matter.
 
 Acked-by: Petr Mladek <pmladek@suse.com>
 Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/elf.c                 | 111 ++++++++++++++-------------
- tools/objtool/include/objtool/elf.h |  11 ++-
- 2 files changed, 69 insertions(+), 53 deletions(-)
+ tools/objtool/check.c                 | 84 +++++++++++++-------------
+ tools/objtool/include/objtool/check.h |  3 +-
+ 2 files changed, 45 insertions(+), 42 deletions(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index c35726a..d7703c8 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -763,24 +763,60 @@ static int elf_update_symbol(struct elf *elf, struct se=
-ction *symtab,
- 	return 0;
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 1d28ff7..86f6e4d 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -2507,6 +2507,44 @@ static void mark_rodata(struct objtool_file *file)
+ 	file->rodata =3D found;
  }
 =20
--static struct symbol *
--__elf_create_symbol(struct elf *elf, struct symbol *sym)
-+static int elf_add_string(struct elf *elf, struct section *strtab, const cha=
-r *str);
++static void mark_holes(struct objtool_file *file)
++{
++	struct instruction *insn;
++	bool in_hole =3D false;
 +
-+struct symbol *elf_create_symbol(struct elf *elf, const char *name,
-+				 struct section *sec, unsigned int bind,
-+				 unsigned int type, unsigned long offset,
-+				 size_t size)
- {
- 	struct section *symtab, *symtab_shndx;
- 	Elf32_Word first_non_local, new_idx;
--	struct symbol *old;
-+	struct symbol *old, *sym;
-=20
--	symtab =3D find_section_by_name(elf, ".symtab");
--	if (symtab) {
--		symtab_shndx =3D find_section_by_name(elf, ".symtab_shndx");
-+	sym =3D calloc(1, sizeof(*sym));
-+	if (!sym) {
-+		ERROR_GLIBC("calloc");
-+		return NULL;
-+	}
++	if (!opts.link)
++		return;
 +
-+	sym->name =3D strdup(name);
-+	if (!sym->name) {
-+		ERROR_GLIBC("strdup");
-+		return NULL;
-+	}
++	/*
++	 * Whole archive runs might encounter dead code from weak symbols.
++	 * This is where the linker will have dropped the weak symbol in
++	 * favour of a regular symbol, but leaves the code in place.
++	 */
++	for_each_insn(file, insn) {
++		if (insn->sym || !find_symbol_hole_containing(insn->sec, insn->offset)) {
++			in_hole =3D false;
++			continue;
++		}
 +
-+	if (type !=3D STT_SECTION) {
-+		sym->sym.st_name =3D elf_add_string(elf, NULL, sym->name);
-+		if (sym->sym.st_name =3D=3D -1)
-+			return NULL;
-+	}
++		/* Skip function padding and pfx code */
++		if (!in_hole && insn->type =3D=3D INSN_NOP)
++			continue;
 +
-+	if (sec) {
-+		sym->sec =3D sec;
- 	} else {
-+		sym->sec =3D find_section_by_index(elf, 0);
-+		if (!sym->sec) {
-+			ERROR("no NULL section");
-+			return NULL;
++		in_hole =3D true;
++		insn->hole =3D 1;
++
++		/*
++		 * If this hole jumps to a .cold function, mark it ignore.
++		 */
++		if (insn->jump_dest) {
++			struct symbol *dest_func =3D insn_func(insn->jump_dest);
++
++			if (dest_func && dest_func->cold)
++				dest_func->ignore =3D true;
 +		}
 +	}
++}
 +
-+	sym->sym.st_info  =3D GELF_ST_INFO(bind, type);
-+	sym->sym.st_value =3D offset;
-+	sym->sym.st_size  =3D size;
-+
-+	symtab =3D find_section_by_name(elf, ".symtab");
-+	if (!symtab) {
- 		ERROR("no .symtab");
- 		return NULL;
- 	}
+ static int decode_sections(struct objtool_file *file)
+ {
+ 	mark_rodata(file);
+@@ -2560,6 +2598,9 @@ static int decode_sections(struct objtool_file *file)
+ 	if (read_unwind_hints(file))
+ 		return -1;
 =20
-+	symtab_shndx =3D find_section_by_name(elf, ".symtab_shndx");
++	/* Must be after add_jump_destinations() */
++	mark_holes(file);
 +
- 	new_idx =3D sec_num_entries(symtab);
+ 	/*
+ 	 * Must be after add_call_destinations() such that it can override
+ 	 * dead_end_function() marks.
+@@ -4021,7 +4062,8 @@ static bool ignore_unreachable_insn(struct objtool_file=
+ *file, struct instructio
+ 	struct instruction *prev_insn;
+ 	int i;
 =20
--	if (GELF_ST_BIND(sym->sym.st_info) !=3D STB_LOCAL)
-+	if (bind !=3D STB_LOCAL)
- 		goto non_local;
+-	if (insn->type =3D=3D INSN_NOP || insn->type =3D=3D INSN_TRAP || (func && f=
+unc->ignore))
++	if (insn->type =3D=3D INSN_NOP || insn->type =3D=3D INSN_TRAP ||
++	    insn->hole || (func && func->ignore))
+ 		return true;
 =20
  	/*
-@@ -818,10 +854,8 @@ __elf_create_symbol(struct elf *elf, struct symbol *sym)
+@@ -4032,46 +4074,6 @@ static bool ignore_unreachable_insn(struct objtool_fil=
+e *file, struct instructio
+ 	    !strcmp(insn->sec->name, ".altinstr_aux"))
+ 		return true;
 =20
- non_local:
- 	sym->idx =3D new_idx;
--	if (elf_update_symbol(elf, symtab, symtab_shndx, sym)) {
--		ERROR("elf_update_symbol");
-+	if (sym->idx && elf_update_symbol(elf, symtab, symtab_shndx, sym))
- 		return NULL;
+-	/*
+-	 * Whole archive runs might encounter dead code from weak symbols.
+-	 * This is where the linker will have dropped the weak symbol in
+-	 * favour of a regular symbol, but leaves the code in place.
+-	 *
+-	 * In this case we'll find a piece of code (whole function) that is not
+-	 * covered by a !section symbol. Ignore them.
+-	 */
+-	if (opts.link && !func) {
+-		int size =3D find_symbol_hole_containing(insn->sec, insn->offset);
+-		unsigned long end =3D insn->offset + size;
+-
+-		if (!size) /* not a hole */
+-			return false;
+-
+-		if (size < 0) /* hole until the end */
+-			return true;
+-
+-		sec_for_each_insn_continue(file, insn) {
+-			/*
+-			 * If we reach a visited instruction at or before the
+-			 * end of the hole, ignore the unreachable.
+-			 */
+-			if (insn->visited)
+-				return true;
+-
+-			if (insn->offset >=3D end)
+-				break;
+-
+-			/*
+-			 * If this hole jumps to a .cold function, mark it ignore too.
+-			 */
+-			if (insn->jump_dest && insn_func(insn->jump_dest) &&
+-			    insn_func(insn->jump_dest)->cold)
+-				insn_func(insn->jump_dest)->ignore =3D true;
+-		}
+-
+-		return false;
 -	}
-=20
- 	symtab->sh.sh_size +=3D symtab->sh.sh_entsize;
- 	mark_sec_changed(elf, symtab, true);
-@@ -831,64 +865,39 @@ non_local:
- 		mark_sec_changed(elf, symtab_shndx, true);
- 	}
-=20
-+	elf_add_symbol(elf, sym);
-+
- 	return sym;
- }
-=20
--static struct symbol *
--elf_create_section_symbol(struct elf *elf, struct section *sec)
-+struct symbol *elf_create_section_symbol(struct elf *elf, struct section *se=
-c)
- {
- 	struct symbol *sym =3D calloc(1, sizeof(*sym));
-=20
--	if (!sym) {
--		ERROR_GLIBC("malloc");
-+	sym =3D elf_create_symbol(elf, sec->name, sec, STB_LOCAL, STT_SECTION, 0, 0=
-);
-+	if (!sym)
- 		return NULL;
--	}
 -
--	sym->name =3D sec->name;
--	sym->sec =3D sec;
+ 	if (!func)
+ 		return false;
 =20
--	// st_name 0
--	sym->sym.st_info =3D GELF_ST_INFO(STB_LOCAL, STT_SECTION);
--	// st_other 0
--	// st_value 0
--	// st_size 0
--
--	sym =3D __elf_create_symbol(elf, sym);
--	if (sym)
--		elf_add_symbol(elf, sym);
-+	sec->sym =3D sym;
+diff --git a/tools/objtool/include/objtool/check.h b/tools/objtool/include/ob=
+jtool/check.h
+index 00fb745..0f4e7ac 100644
+--- a/tools/objtool/include/objtool/check.h
++++ b/tools/objtool/include/objtool/check.h
+@@ -64,7 +64,8 @@ struct instruction {
+ 	    noendbr		: 1,
+ 	    unret		: 1,
+ 	    visited		: 4,
+-	    no_reloc		: 1;
++	    no_reloc		: 1,
++	    hole		: 1;
+ 		/* 10 bit hole */
 =20
- 	return sym;
- }
-=20
--static int elf_add_string(struct elf *elf, struct section *strtab, const cha=
-r *str);
--
- struct symbol *
--elf_create_prefix_symbol(struct elf *elf, struct symbol *orig, long size)
-+elf_create_prefix_symbol(struct elf *elf, struct symbol *orig, size_t size)
- {
--	struct symbol *sym =3D calloc(1, sizeof(*sym));
- 	size_t namelen =3D strlen(orig->name) + sizeof("__pfx_");
--	char *name =3D malloc(namelen);
--
--	if (!sym || !name) {
--		ERROR_GLIBC("malloc");
--		return NULL;
--	}
-+	char name[SYM_NAME_LEN];
-+	unsigned long offset;
-=20
- 	snprintf(name, namelen, "__pfx_%s", orig->name);
-=20
--	sym->name =3D name;
--	sym->sec =3D orig->sec;
-+	offset =3D orig->sym.st_value - size;
-=20
--	sym->sym.st_name =3D elf_add_string(elf, NULL, name);
--	sym->sym.st_info =3D orig->sym.st_info;
--	sym->sym.st_value =3D orig->sym.st_value - size;
--	sym->sym.st_size =3D size;
--
--	sym =3D __elf_create_symbol(elf, sym);
--	if (sym)
--		elf_add_symbol(elf, sym);
--
--	return sym;
-+	return elf_create_symbol(elf, name, orig->sec,
-+				 GELF_ST_BIND(orig->sym.st_info),
-+				 GELF_ST_TYPE(orig->sym.st_info),
-+				 offset, size);
- }
-=20
- static struct reloc *elf_init_reloc(struct elf *elf, struct section *rsec,
-@@ -934,7 +943,7 @@ struct reloc *elf_init_reloc_text_sym(struct elf *elf, st=
-ruct section *sec,
- 				      unsigned long insn_off)
- {
- 	struct symbol *sym =3D insn_sec->sym;
--	int addend =3D insn_off;
-+	s64 addend =3D insn_off;
-=20
- 	if (!is_text_sec(insn_sec)) {
- 		ERROR("bad call to %s() for data symbol %s", __func__, sym->name);
-@@ -951,8 +960,6 @@ struct reloc *elf_init_reloc_text_sym(struct elf *elf, st=
-ruct section *sec,
- 		sym =3D elf_create_section_symbol(elf, insn_sec);
- 		if (!sym)
- 			return NULL;
--
--		insn_sec->sym =3D sym;
- 	}
-=20
- 	return elf_init_reloc(elf, sec->rsec, reloc_idx, offset, sym, addend,
-diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objt=
-ool/elf.h
-index 07fc41f..c33b8fa 100644
---- a/tools/objtool/include/objtool/elf.h
-+++ b/tools/objtool/include/objtool/elf.h
-@@ -15,6 +15,8 @@
- #include <linux/jhash.h>
- #include <arch/elf.h>
-=20
-+#define SYM_NAME_LEN		512
-+
- #ifdef LIBELF_USE_DEPRECATED
- # define elf_getshdrnum    elf_getshnum
- # define elf_getshdrstrndx elf_getshstrndx
-@@ -120,7 +122,14 @@ struct section *elf_create_section_pair(struct elf *elf,=
- const char *name,
- 					size_t entsize, unsigned int nr,
- 					unsigned int reloc_nr);
-=20
--struct symbol *elf_create_prefix_symbol(struct elf *elf, struct symbol *orig=
-, long size);
-+struct symbol *elf_create_symbol(struct elf *elf, const char *name,
-+				 struct section *sec, unsigned int bind,
-+				 unsigned int type, unsigned long offset,
-+				 size_t size);
-+struct symbol *elf_create_section_symbol(struct elf *elf, struct section *se=
-c);
-+struct symbol *elf_create_prefix_symbol(struct elf *elf, struct symbol *orig,
-+					size_t size);
-+
-=20
- struct reloc *elf_init_reloc_text_sym(struct elf *elf, struct section *sec,
- 				      unsigned long offset,
+ 	struct alt_group *alt_group;
 
