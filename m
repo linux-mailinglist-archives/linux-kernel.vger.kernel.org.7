@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-856414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBC5BE41EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:07:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C55CBE41F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB13C546702
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:05:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CDEE0507E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546F13314A1;
-	Thu, 16 Oct 2025 15:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E817340D94;
+	Thu, 16 Oct 2025 15:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAQ/hMKe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TXbo0xYu"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010014.outbound.protection.outlook.com [52.101.201.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343442DE6FE;
-	Thu, 16 Oct 2025 15:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B423432D442;
+	Thu, 16 Oct 2025 15:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627096; cv=fail; b=QZPrG2n7R+Bl5t9rMt5Gw4u+1+QTZTsx6zTIHa2Tf4B0q5GFlLOgh8EHKFL/5V6lym5UvzJGAiC6MDiY08UHj34oUHR54TKj6wR48p6Pw4d5G3gDhE3CBzfNSz9Z8+FcIxUWobqrd5VLvcJdbuAnA9xM0zi93OnmXLEHWqB0txY=
+	t=1760627151; cv=fail; b=ojHSjii2DgfcSHaxbI6Wp7NH/RPqKSPEC78ZpajWlvBeFbVrespJfAXv5C/fv2ibzOMWw+2QctoLT8An87myKUJVFZXKxIu9THnFiMGoRbtRNyLjjjaIDqGO1apYvCBGBrC2/7TdaK2r2QCyKs1h5R+IQu1rspDRZKL1hnEq5y8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627096; c=relaxed/simple;
-	bh=bW0lYVTtbR1X6hKgTnI4AvnpNWn07ZJWQKWj4HcgMfI=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OhB0vc2mS6DAPviflXDe8Uj2uZ58+M/hliRuX2WhAnzgoYiyA2AAK5VdtQmt9UruuSbWNlxPbkV+fHni7E2Tyo50hXqPlT4O3Ee7n1f9BYDNVGPs6e34oIgLuV7w2jvePV0NiAfd8V12QVLWcATBOlF32LG41pZxB+vn1LxcmZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mAQ/hMKe; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760627095; x=1792163095;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bW0lYVTtbR1X6hKgTnI4AvnpNWn07ZJWQKWj4HcgMfI=;
-  b=mAQ/hMKeEtSpc96twLVOhbfnOuwwyqC+6MFSEr7A5YD/XWwB5YEcIsi/
-   13ANHjprwNn0VN9JclWjUK4miXuM/ccYXlto7goFM3dSYE63mLm7rZ5V4
-   p72kfLAaqEZjFiX3f3R7pQ16XUd01Be242QVbHrujN6YgzYGmsg07BO7c
-   EGqEE1pa5v4+/2oslLDP/FgpMavQJRpEQmDBk+CxyoLot2oSrf9yuDCHL
-   IdE4f6pScPG8xiwYC2GKPXZNvxA4hM8rr2p2xkN22WzOJzGiozsZc/Tvx
-   vO70kzJeH2dDU9MWl0L3bTszthgs57DRIOruIc+Nqvid+AiOrNegnxv76
-   g==;
-X-CSE-ConnectionGUID: rb+xbe6GQAm70BgKsgEhvQ==
-X-CSE-MsgGUID: pjfmiWCdTUieGzeX6zgkIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62868917"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="62868917"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 08:04:54 -0700
-X-CSE-ConnectionGUID: 01GJSvc7QJmafwJVx+RT2w==
-X-CSE-MsgGUID: eDyqS2J8S6OS/K/MSEpPIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="181691181"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 08:04:53 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 16 Oct 2025 08:04:53 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 16 Oct 2025 08:04:53 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.4) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 16 Oct 2025 08:04:53 -0700
+	s=arc-20240116; t=1760627151; c=relaxed/simple;
+	bh=OlIybnCjcu9Y7nl+xzaypURHyKlVSze9xgbyclVJRw0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=f2AAxsu1l34pJIzMpWyhyN7MVIDvdxqeSPrZImm21HWx6VRgoJUJ81rxfj8qnoOf8GNL9dfDY0JPWM2OsBm6FRTWAIquGi8YJAIjEAuz91JEsShggpnPlWETtMCbypzF/+i24aVNLQ4byGjt3q3pvsINhYh9c6is2iWzQI6XbgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TXbo0xYu; arc=fail smtp.client-ip=52.101.201.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mcKWNZcrflDmdScA/o1WttciAHoGHr1Y8KQE0EW8KLtIaa18Ae9o0jkAHybqpD4q9z1XZ/X+qqsaecrHqjStQPXzB+DH/0NT7SVfnBA7nNm8Q3wY32dO+udl742gAdZj7O/h49iFTSQhpT9D8xA414gpiIH99al0VutzALyEqvlkz4pj8HNZdKC23cRoq4uzHT1ISl/mp9kmY7F/8aDcEHvXp4qVDSt6HUOjfUFEMrXgAlTFmGmBCYT7ZiyHJfh8VigLdKF1ErayqhvcNceoF5Ynd98gL63uB0Gwj9Iev6CG0COqk2NBugBYRaDZWe61B/mbyTlNBBhyAFlZ4wKRbQ==
+ b=YYO0wxnhA4QAOljxnAawdNOlDIq3ElNrjmybBryNYOq0Sn/7Ll5b1tgtchbxibumAZXWB2H8c+Tt4OEMF8eQFYzwboN/MwpOMrKeRCOJQHP7RfQNY5Mwn3l3KYpBbXnSC/lTyu9UUVYqPJpcudk8QZBDPguykr7r+XOsiH+/7SYewoyn1+OwUW2GFCvcSPGGcK/EzBZsqbUtbdPY5Ob+z9bTRvcDoQfnOAuCchHC/dW38RwulqvLi5HORSTfamE03rzw8H5jcfeRfMOEJVEw15ZY3Wr2tjFiUW2O8Su/pbLUL5Ho1THb3Vnqp3MO+XKPcZNlxE/868N4KvYgz0H15w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4B/1ptN8zaRmQlKd3RyUzSfXFTyAF8arFsmk8ysxbkA=;
- b=Cpiyp25LJEFaos5qzYdm1TiNSAHiOab9jp4kkxKNwtXvvCtH9RIeOJhflwJ9IHF/F+bmdLrUIYLzSTeTGPLYXgvJFyIXGQNcL1yPaNtEzRkGWwuD9Is3koFpeTyvnZR9AQ+DcV05mJhsFF8iOLUE09NOKM/R2SxTtfCVFuFAV0EBXhSJaEcDGjAHXK3P9kaCahdNICMGSe9NJfak6flPshMveSS3FBoNSmGsjEmHR1efiAmGp0KpFApSTjBG+7vYP8vqjgNrdzEq7sqCJX818YykURkRFO2+mieibzN/DzEJdXmBgLQk7tpxHLu4On9+RKq/wA43+FrmUrq76xOs2w==
+ bh=Hv2ishWC8UVO+FlZ1ZL8etEhfApaNVWQHNchZBN91Is=;
+ b=dI8l20Z/L607EvtCn80Cuize2UdInGxyhTn46JrIxxusX/hK9/j7u4P5/Aw+i6fwawW5EOJG5dqGLE0MHcNVBoPUMUXORMpo9/oax+EGRJOTfywGkGy4C++T8EmTNATyvQRk3NdAayOnI/iWLbLrilp3MK4UOlf8M6/ZF+BeKwIMVplHAI+spExtIryMqrvOtDe+CyZU4hRiBocf6FteomGa4d3j46XTmaroisZ9i3tXWNtIlcOURoIXFuLDUpEGZdZ2mrECbWte5m5C+4r42PYS+0vjarx+2zprksAVMcDXM8MOio0QEHpGknVTGUHQi8zyzAA+YYHu6xsPsCFtuA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hv2ishWC8UVO+FlZ1ZL8etEhfApaNVWQHNchZBN91Is=;
+ b=TXbo0xYuQWqZmzjlSIsOtAIfobtiPxn9Vam6Y3Yw+uGpwO/wEnAjn1EwSj/6EYnlzlvJ5RN2CJ4SxCh+44QaqxR8pOS7ZB6rykWCgNtsi8gpilEMZskWjOuujpMNGVS8fy99uaPw7uTmkkV/2Jq8A9jyDInP1X4+eTPS5EyrYgCpEiA688ngT9XuNANOZhIoairZUuQV4Mn84xfLy1+LM6EfeP2bbgqsAppkjKmY7R8W2vHLaXJDP2aqX+uSY5basfOoG2jPv3T3se48RfRVMio+4G5A/8S2Z/srvugOdAz7kzH2umGAGRWibWUDborf2eE/8MMUIVvZuuTTvPTXoA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW4PR11MB8289.namprd11.prod.outlook.com (2603:10b6:303:1e8::9)
- by SA1PR11MB7061.namprd11.prod.outlook.com (2603:10b6:806:2ba::8) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by PH7PR12MB5808.namprd12.prod.outlook.com (2603:10b6:510:1d4::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
- 2025 15:04:50 +0000
-Received: from MW4PR11MB8289.namprd11.prod.outlook.com
- ([fe80::d626:a4f8:c029:5022]) by MW4PR11MB8289.namprd11.prod.outlook.com
- ([fe80::d626:a4f8:c029:5022%6]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
- 15:04:50 +0000
-Message-ID: <9f843a5b-4fa1-4abf-9c4b-1e5433ab9704@intel.com>
-Date: Thu, 16 Oct 2025 23:04:38 +0800
+ 2025 15:05:46 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
+ 15:05:46 +0000
+Message-ID: <a3f8f89d-be89-4fab-8399-6340ce4db899@nvidia.com>
+Date: Thu, 16 Oct 2025 11:05:42 -0400
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf tools annotate: fix a crash when annotate the
- same symbol with 's' and 'T'
-To: James Clark <james.clark@linaro.org>
-CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Kan
- Liang" <kan.liang@linux.intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
-	<wangyang.guo@intel.com>, <pan.deng@intel.com>, <zhiguo.zhou@intel.com>,
-	<jiebin.sun@intel.com>, <thomas.falcon@intel.com>, <dapeng1.mi@intel.com>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Namhyung
- Kim" <namhyung@kernel.org>
-References: <baea1e93-5e30-404e-8a5d-8b1d20cf8761@linaro.org>
- <20251015172017.2115213-1-tianyou.li@intel.com>
- <4151e2e4-b7df-4c04-b038-71ff2612ee8d@linaro.org>
- <db33a977-c712-48b7-9be1-83721b23635f@intel.com>
- <046f1441-bc18-44e0-9bd0-f98a62ebbf9b@linaro.org>
+Subject: Re: [PATCH v7 1/4] gpu: nova-core: register: use field type for Into
+ implementation
+To: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251016150204.1189641-1-joelagnelf@nvidia.com>
+ <20251016150204.1189641-2-joelagnelf@nvidia.com>
 Content-Language: en-US
-From: "Li, Tianyou" <tianyou.li@intel.com>
-In-Reply-To: <046f1441-bc18-44e0-9bd0-f98a62ebbf9b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KL1PR0401CA0025.apcprd04.prod.outlook.com
- (2603:1096:820:e::12) To MW4PR11MB8289.namprd11.prod.outlook.com
- (2603:10b6:303:1e8::9)
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <20251016150204.1189641-2-joelagnelf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN0PR05CA0015.namprd05.prod.outlook.com
+ (2603:10b6:208:52c::28) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -126,278 +92,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR11MB8289:EE_|SA1PR11MB7061:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae6a185f-f993-481f-c695-08de0cc55aa4
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH7PR12MB5808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30ced3e9-54a0-45cc-2ab2-08de0cc57b97
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?a0Z2RG9ra1E5TWt3cXZVbm93MC9ES0E2VWNkZmRZVjZKenRhRE4zZkhnakVV?=
- =?utf-8?B?YTY2Q0E4a28vSEg5ZVRhTmJVbWZzcWdLVkUwL3lVN3dNQVVjMFFMQVpOMGNu?=
- =?utf-8?B?Zmp2WE1YOG1vZHFvNGp3TW14ZFY2R2hPRXdzK3FSdWRacXFuNC9JMldqa2Zm?=
- =?utf-8?B?b3M3Y0g1bWppYlc1Nm5XdmhtZ0lTNFVOR0Jya1JDVTVhRGp0U3N6YURvVHlU?=
- =?utf-8?B?NGVDWWF2U2dWOUErTFhSemlSSTRSdWwwZDRUOFpvazVjRU5uM0ZoKzZrZ0Vo?=
- =?utf-8?B?WC93K0R5dEhSWUJIeUlCeXI3YUJiWWFKYkJjRmx4M3duQlVDRlp6VTFPeWJ3?=
- =?utf-8?B?NHJGNnovdDVLeTRhaFI1SHl4UHVqVGtoUmZjZm9PYXJ5QkxaS2thVzI3MmJa?=
- =?utf-8?B?dTVUem4rWld6cmE2bktHdUZTOHl5S1VzMGJRK3RhZWV1Y25TdzF0aE93bnNt?=
- =?utf-8?B?QVVlajczZ2RDOVRrNmY0SC93Tjc0L1ZpbUdUTHhick5ZL1dzaS9NYWVEOTdy?=
- =?utf-8?B?ZVlOUzVHM3BjSjIzbGR1WkRjZWRtUFZYZERVN2MvTU81dnZBMkZ4dUsvTkh2?=
- =?utf-8?B?UTFLR2NIcUVQS3NnVm44MllrTDhVdm0xVTdGZEt6WVF0dFNRckhoUnQ3b3p1?=
- =?utf-8?B?RXZ3UWRmN2FmaXNhUFUzV25qclRRdjN3ZGNlMG53RXNhMUo3OXFqdVcrQXdk?=
- =?utf-8?B?UE1LR002QWVKMnRJOE5UT2lNNSsxUTE2Sm5tUjNUSzJlem10VzJOVWlObVB5?=
- =?utf-8?B?U05UYjdxUTZYTzZMem1KMlFySlRWa2xWRG5qWURwNFpiMTEveGZNY2NwS0c1?=
- =?utf-8?B?dzV5MWFSalMyUEs0M3VqdHozT1Z2NWh0dGQ4TFYzSEt6UTVIME1YSTczaHda?=
- =?utf-8?B?UnloYi94TnA5RVNPQWxWdkRpcHlDMERsRWZRdmk2SVFjNVlIZm9HbEEwY3JP?=
- =?utf-8?B?aGo4UWtpZGhPTmcrY3JLMXQ4MXNGc0F2UUc1NVl2UnVKWWVadUhoQTFhcEQw?=
- =?utf-8?B?ZFQrd1dqVWs3eUowTGcvRlJKT21zWUQ1ZWZEaWZORC9BYllDbzZhdStMMU1a?=
- =?utf-8?B?VmhkZjlaVW42bVM4ckN2R0pMWDcxa2pyNFE0QUNjNy9qWEpkbEY4aXdzZi9L?=
- =?utf-8?B?K2Q1L2M1WnhpTEtzSWhWb0hDTUYxK0RXYzArNVp1UG5kVWJNbElRSjdrejVp?=
- =?utf-8?B?SkE3dUhqbjhQbEVWb1MxVDJrblgxN3RYenJJN25TQWswTlJSejVMdlJEcGhD?=
- =?utf-8?B?dVJpNkxCRE84Ukl2UDFHZTB4R1M0YWFxTWEySFdCZ3BzZnQ5YThRcWtJZlB1?=
- =?utf-8?B?ZTZCb3RSWEo4bThsem4vUnFyYnM0ZjZMSERIcUF4VEMvMXBWU1hwaGdQMTY5?=
- =?utf-8?B?emlwaTZibVgrdC9CU25oS0pDMlBZQ0R2T0RBNnlMOEk5RmhhQStyQ2RhTlNR?=
- =?utf-8?B?S0pVOFM4NFpOZWpIVXhGd3BIcm5qemxxR0lBcXN0SGtsS0xrczg1dFY5Unlm?=
- =?utf-8?B?bjhDdk1keWpYVVhCN0VMalB1d1NkalpHQXM5NThkOVQzVWVseENySjkxOE5z?=
- =?utf-8?B?QVhFUWRmdzhzTlRGUUdyZGVYRWN5TUtld2ZXTjJGT0N6cm9PRzFHZmJuaHNm?=
- =?utf-8?B?SDB4Tk5GS3NqR2tXOVN0TTh6bllFQkp3a3ErblF0TWhlekRKeHBGN2kzeEhF?=
- =?utf-8?B?YiswY0xJUzRDL3BFaG9pSGZNQ2I4bGNuUTFrclpvVkVVcHNKd1VwWFFzZkc4?=
- =?utf-8?B?N05wTjZocUpHL2Z1V01HMzlsUEdiZFVMajVES3kzN3R5Z0t2Z3Q5RG9mNXFh?=
- =?utf-8?B?UGY4dnNUTzVEY29JOGlSODczSjJzZFBCTHBkZ3o4QjdJQkVqWDRkdjVheEhr?=
- =?utf-8?B?UDIxZWJmRHdDYk9xM29ET3N0UzBCTW0zV1VIR0lDcUdXem9KTkNXSW5kbzVv?=
- =?utf-8?Q?6EkEd0C35XcBfG2Reh3zUYCZ7+OquZP2?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB8289.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WjlnV1NaL1N0R01vQ3pkUTVCb1NVSlpsTTFOTS9HVVIxU05meTVxdVNHVXRD?=
+ =?utf-8?B?Y0QyY1VKd0xXTjQ2NHp6dm9QMFEyaTRRQ1h0bHNUcEJDOW1DR295Zk5sWWZn?=
+ =?utf-8?B?a05aTHNJVVlZazIrV0kwVjFsRWZzOGhaQ1VvMUJLMFBiYWgyN3RMWUJpZ3hY?=
+ =?utf-8?B?TGw3eXpDY3c0dVlFUHNUM2RsQUZKcnAxQ25pZWY0UktIMmlTMzNWV1pwaDFR?=
+ =?utf-8?B?N1pQTFRxdlU1aTNVU3FzRDVIT1FuL294OVBoZHBiTFh5NFdjNUpOLzg0bGRI?=
+ =?utf-8?B?Z2pSMmpjU3ExUEZUYWxyVkpQQW5FcGhtM3Q3eDNrSWJLSmRkTk02eUZQN09w?=
+ =?utf-8?B?MEJGN2xiK01makNuVGNxWUdvZHlpeFhTQWoxL2tNeGU1U01WanNCazhwWEdX?=
+ =?utf-8?B?elVSSTBvSzh6Z1hLTzNWNk53NFlYSWdwSFF5NTVQVUw3NnlneENPSXQxSS9R?=
+ =?utf-8?B?cE55QUliS20vOEdNdThuemVjazhENnRnbjJqSGhsWkRtNjk2b0wrTXRacEJL?=
+ =?utf-8?B?a05BaG42N1lpQWtMZlNjV0NJSkNWeldhRzAwb3JGaGhyRVg1UERBSk1VR3ky?=
+ =?utf-8?B?bUhqajVhZFZWN3N6MmxvT0IzZUgwbnQvKzNEeXFJOUZJbWJNaVZGVVl2elNh?=
+ =?utf-8?B?VGZpR2FqeHJLVUd4RHpUVXJZWEFzQU5FT3M3Y1BTYjJ1R1U4K1BOTVgzd09Y?=
+ =?utf-8?B?Vk5rTVhoUlNaelVSOU5RMWIrVkU4SjJhTW52Uml2OHFtZTd5SXo5Q251c2ph?=
+ =?utf-8?B?QmIzY0xpbVFDTGx5TS9CWmNwQkpFejF4Q1pxdEhsMTRMd0lvbWhCK2Z3d3RG?=
+ =?utf-8?B?OG1nWDBJbnNLamQvT2NVbXBENkJINWRHKzJ0V05tNTZJWWxHak10Nk5Pay95?=
+ =?utf-8?B?alFiVXd4cTcxMXJ3MmVuWHljTWUrenA5VmM0MkhhbzFHYVBOSFZRTVpodysr?=
+ =?utf-8?B?UCtqd2FYeFRCMCtLeEJoTDZMajc4aVZ0R3NMWVdMNmFKeS9LOXlBVSs1cU1w?=
+ =?utf-8?B?Mng0a1NjaXQ0NXFYT1QxdHlpbHNaMUZzZ0NaVjFUWkxiUUxHTWRCY01CaTBQ?=
+ =?utf-8?B?RGZyd0FnQzFLNXM5MUNmL2MybDkyYjRTMVl3ZTNMalJvVmVTQmV0RzRrSFZJ?=
+ =?utf-8?B?RmNNN0lyTlhJZnRuRzlucVVZa09TNHhrM3lXWXhyYlMvT3QxSzJYYzgxcUFi?=
+ =?utf-8?B?YWROSkZkaVY0UnBjUEt1bDBZWUYvUysrY0RlTWRTdmtGdmt2VGZURFRiV0ls?=
+ =?utf-8?B?TnNjeWdyKzVyWHFkaEFMRng5VC9sR2gyNzdhTSt3MWl4UkJ2QnY4MStyZjlu?=
+ =?utf-8?B?ajBScWVsVVlodmYrL09pS3ZKWUtTajZ6LzdUdFhVeXc2dERVcldQZU81SUE5?=
+ =?utf-8?B?OWRtT2RSU2YwNU1kL1dOdEErYk5VcGZLL2xQU0JWZEZnZGRTdFh6S3JqQ3Zi?=
+ =?utf-8?B?WjA5TU9aNFlaNkdOZFNBQ1Rldm9xSUdIaXRPQkw2VnIwVXNvVmJOUFpaZ1Yr?=
+ =?utf-8?B?anNIZGU3czE5STFnVUpvTVJheWordnA5TElPUytpblg5MkcwTjRSRElRb2lX?=
+ =?utf-8?B?MXFWM0FJSnFoTTl6by9POFpOblZCUnBHOTRGekZZb09hL01rdllTME1QRVVW?=
+ =?utf-8?B?MXJHQmt2SnZMRDAxcGFadFVGMDd2U1ZNN2pMSUp4RW9Ud3hSOG9IOUR1VDc2?=
+ =?utf-8?B?THhmMW9PUmJFUGNsV3Nlc3JmRjFPTDlrK3l2R0ZGY24xS1orVkZsZnFHQ2Na?=
+ =?utf-8?B?ZFVKc1ZkbTQ0SmducWpVWk1zb3JDak82dXRnaWZ3YlFKZy9yRmEwMU9qY0E0?=
+ =?utf-8?B?WWc4N3FHV2xpT0NaT1F5T1JyajVZR3BVemg1d2JRTmptSEJEbWVvb3oyMldH?=
+ =?utf-8?B?SDQ0bDhkNkpiS1hLL2hGRHBRQVNZcUZiZDhnT3FyT3duOVZ5Y2dGeWg4VDEx?=
+ =?utf-8?Q?HB5UKE9WZAA/JJp/C/6wjcV0/4S277kA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N1F5TGZkL3krSVRsOENWTFNMVUk2aDNJWkdMV2U2cjZZek90ZklJTUFNRFJ4?=
- =?utf-8?B?OEpPUzdncUxxMzQ1emVyR2hGM0JPMzFPRjBEZnNEUEVVcnZNclhpeUZmNUc0?=
- =?utf-8?B?ckp0ZjdHWC9rZ1VibWpRTUZDUE9DVlVIWkNSSVN1SC8rOVJ3VmJZUlB3UUYx?=
- =?utf-8?B?T0dQQTJyRCtNajVBejAreHJLYlVoT3M1TWl2QTNZN09Sb2ZMTy9TbTdRN3dR?=
- =?utf-8?B?YTNyWjlPTmZiZjFKV3Z4UG9OWklWTHVVYmtGODBzcUxlbWZmQS91MEo5cFlU?=
- =?utf-8?B?YnloTFNTN3Izdno4R0k5RUVtY3R2Ri9XaHpEdlNOVmhadXEvbHhKOHEvQWxV?=
- =?utf-8?B?eHlUa1V6bEw2MlJ0eUZVVHdwVFYvdjFHSlptSXJhaEVvYmlqQXZsRnY0S0pG?=
- =?utf-8?B?NGFJNEJoUEk3VUhzYUdIT1ZWQ3RzOGROZ1ErUVhSMDZycE1QVGI5UTFnMkVz?=
- =?utf-8?B?R085dW9FdlQzRGNtSTlZTXJwSExqZ2RVRWtEaXhHdHg2UkhFT29ML1IzN0hh?=
- =?utf-8?B?NlE1UWl1RW05dG83dWsxRG5MZ0RhSzdRbDVLMDVKTEZLNjBJdWt0V1JMdkIw?=
- =?utf-8?B?YWloSmRudzFNUjJTV2dIU1VMcjVBcnpzN1NoQmxTbXdGdGJIdGU3ZUhVRFI0?=
- =?utf-8?B?ajB6MS9aMHFHRFB5VXpGYXZpWnpzeVMvczFObVRQbEp5MUx2Lzh3cHBNTU04?=
- =?utf-8?B?YW13S3RwZnU2VUU4Y0gyZ05tQmo3ZFp6cEJGR0VVVy9pbk1VNE5KM2pTek9y?=
- =?utf-8?B?OFovNnFwY1dMWExKek1FNFUzR2ZwUE9uSGtiWm9SdkJHR1JNZVNkOGsxTjRj?=
- =?utf-8?B?WGdlNHZCbTZCZHk4N0xMTFJTOXg4VTd1OVFhSHliQmZXeFRya25FS2lpZk1r?=
- =?utf-8?B?M3pQZjdaMnlZRTVVY0hYdldUOXZQOVBqY2NCcFF1SEdaSFFRbU9tcVo0UmY4?=
- =?utf-8?B?ZVk0ekMvUzU4U1cvNFZyT2xqSUJYQVM2bWFIN3BENmtSaTZkeU1yc0tvNWx1?=
- =?utf-8?B?WlR2Q3lZeElhRWF4QTdoMUJMQzBuTE1ITE5GKzR5eWczTTZ5U0VYUGRkL0VR?=
- =?utf-8?B?Z3dZWkUraXAvSmZmVVkySDRVWE9LNkRtTTNDdkIwSy90Qy9nV0dZYkovcnJy?=
- =?utf-8?B?RXplbE5VWWpoOTNTTUQzbFJtekgzc3hGd3Mvbld1Kzh4SUc5NFBKNjlZQTk5?=
- =?utf-8?B?TEtqaDFVTWhrS25vL3pIN0pGT0J4ZHlSOTFXVm9lMEVVT045aFM3cnljWkZt?=
- =?utf-8?B?L3pwWi9ONlNtamxJOC9LanVyWjFrajdQL2N3MVRaZ3FGSDlyeXk0M3dXZS9m?=
- =?utf-8?B?UnNWT1BOWXZWamRYNkRRY3RWWW9BdU1vRHh4eDI0cjhEQWlYOElNcFBVMnEw?=
- =?utf-8?B?aHlFZU1ReHh0eldvQU9mZjVyMWhHNXAxRXJEdFE4SWd5bXpqZ0FZbCt1bXlm?=
- =?utf-8?B?dGpjbEhmOW9lUWNnRDBLM05uUmk1cHREaFNaVmtMV0lzb1NmME5UckZCSzYw?=
- =?utf-8?B?RUZab24vcDRkdVRMemFlNkFWSllRUy91Qm9KeDVnNWFaLzVkM1A2NERTNVli?=
- =?utf-8?B?TUUxcnNDTTEwUVcxbVBOM08yeVp2YmVkUVM3eU50QTRJUisxYU9BYjVxaFBV?=
- =?utf-8?B?UGFYaE1RcXlhYnhkVDRPVnAzd2V3dmhTN3FsMTc5alRkVEZFQWZhdnloMGtl?=
- =?utf-8?B?NkZYYm5ING1NQ0tmalFPY09obnp4M2NVdW8zVTlnTWFvc0xyQzMxcG10a2I0?=
- =?utf-8?B?b3ZEQXdRbU90Ny95RzFYQ3ZNYzkwODluMlVMNGZwWWtMNVRXaWdadFJzbkpl?=
- =?utf-8?B?Qm41VXZHbEw1akpjeHZLNG5pUUVUZEEvTkR2NWdNdWprdnZBRWtZdVB2a0Ns?=
- =?utf-8?B?SWk5MmQ5Vy9UR2wxcUJhbGpxdWZudlNjUEdwK25mMmYybERtR0VtQ2pOdkdu?=
- =?utf-8?B?RTFidDEwVXZSK2UxeGk5MXBmTVBDaXA0eHNxNzlsejJYSWd5RElzODl5Q1BI?=
- =?utf-8?B?a0pKRW5ubUhBcTNjczBGWDdFREVIU1IxL09xTkZFY1YvNSt4eGFFZXF3SGR0?=
- =?utf-8?B?dk5aRHd3T2RLVHNKU2xLMExORjNJM2FzYml6aDNucVM1TjJ2SGlONVJMMnZl?=
- =?utf-8?Q?CRwIw9fv5Fum+7yY12sO5hKnq?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae6a185f-f993-481f-c695-08de0cc55aa4
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB8289.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c0lhNThibWVpVzZoVjMwemFxdzgxTTkvbkdSQzhUVnFHTjI5cUMxVStkbC9B?=
+ =?utf-8?B?dVdhYW5jSDk4ZEVHSlBBT213ZGhib0wrZ0duMTVlelMzbFJuRHlqYktUTnI3?=
+ =?utf-8?B?MXJTSU5oZlB6K0YrMlNmV0xtZ3dDT2h1R3BYSDF6NXBtblVLRHRJVSsyckda?=
+ =?utf-8?B?RHNnNUxyS2NheWZLRDcyQmZ6cE1IdFZuQ0xKVUJwNnpudHpLYS9TRXBnYjdk?=
+ =?utf-8?B?RHhOUHRNb1piYkh5cmJ5OUg2dXVWRkh1Z2lIYnFORjVhTWdKU2ZrSWJra1hl?=
+ =?utf-8?B?RXhIakpjWFIvNnl4UzRFZDNHWGZWMHVxSEpPOHJLN1AxUU91eUhKZ3pWMnVn?=
+ =?utf-8?B?alJNY2IrUUNNSHVWNjhidUJ2a2ZwQkp4ZWRHVExLNE93aSsxMUwzWjRVcTRk?=
+ =?utf-8?B?RVFQOHkrK0xFUVloZTdTUmlHVzFnMVIyUzFWNkd6YjVmc3pjRTJDVlN2QjVL?=
+ =?utf-8?B?OWNZZDIvN1lYcW45TDJ4TEFjLy9TWEVPZE5ZRUJqU01Bdm5hc1h4NWRWekU0?=
+ =?utf-8?B?aXhLdXQrWHdHNnFiLzB3NGkyNWl6UDBUWWtkRWw2Tm9KK0VWT09UcVZaNkNR?=
+ =?utf-8?B?TzRydTg5YXlJSURrcG9GZloyM0tDTnMwK3VTOFcrWkdZaW0zY0NYR3NJSmE2?=
+ =?utf-8?B?SnZUU2RMd1VFMVJpUm5CZWxUTkhHenVJVlFqeWF1ZEZSTmRvL3RkaFFtRDkz?=
+ =?utf-8?B?WmQycmp4aExVeFJrdW5TUFcza3M5YmV3Rmp6WGprSFF6VXNxUzdkSzhCZiti?=
+ =?utf-8?B?akgwY0FKWTdxa3FNZjYxcUQxNWwyZ2pTaUNZT3l4eUtOcEhQQkdIbTZ4Tklm?=
+ =?utf-8?B?QWlrNFBHTEdPUnVoSEJUbW11MzJqZWhET1VQK21Rc0Z2WUNiRFNzaVlrTDVz?=
+ =?utf-8?B?Si9VSDdtZ29GbHplNWU5YmloK1hoek5Xc1hJWWtVWFduY0lrK0tKRkRYRTlO?=
+ =?utf-8?B?aHVDbTh4QWRHSERqTnlSZHdxWnJhckpzV0dLUStiRXZJV0RFNEJnSFVlUTNR?=
+ =?utf-8?B?SjJnOENTelFLUjdYY2xHM05SYXVHKzVNYW53bTArWDRWUm9yY1g4OVRDR3Jk?=
+ =?utf-8?B?Q3M5Vlc4bFhRa1ZqQVhTWGRwQ0hveUxCc09NUUJkbDY5WnB2QlBPRUQ1c3NH?=
+ =?utf-8?B?dk94NU5SSWMzUU0xTC9lSlIwVEJ4NHA3TEVON1RleEorWXVoWWtNaEFod2RI?=
+ =?utf-8?B?SytZU2Rwam1WOWw4UUNNenVRSE9nQ3ZxN3Y1eXBWeTNHNHFXYityQUptNDhk?=
+ =?utf-8?B?VVhoVko5UjN0cHY1TDRYNHRJZ1hQOUdpYy84bCtYVHp4VHNTVUNSbFFvWXhU?=
+ =?utf-8?B?dS9pR2NZUUsxalV5RkNhcU5ycmFqaW55bHNvUXN6ejY4R2tNeWdOZUswdGtO?=
+ =?utf-8?B?N2NUTHIvajlLakxna2w3VWxXR1JKTk8xUXZNbGs4eG5VSXR1UHJ2akZUY2dm?=
+ =?utf-8?B?THRxS2RXMDZjYXdhVHNIZHR6Ni9Galh0Y1RCcXJEQ0dHS2xUZE56NndPa21j?=
+ =?utf-8?B?UmE2bVpWcG1HQVkyVnp2NXN0YUl2eVNyMW9Oa2NqR1NSMVArbXJVQ3JDNEJV?=
+ =?utf-8?B?Z2NiNXRweGMyQ2lpU2ZBWUtWVVpROXFHdVhYUGZUZk1hWVFEeDQvRm93Z0ww?=
+ =?utf-8?B?YXh6U3UzQVNQSHBGL29NdzlqTW85SVdYditZY1dJWXNPMVBHeGZ3RHlHcXZE?=
+ =?utf-8?B?aHB5dWRYOERVbU93bmpwZG5Ub3lSVUhPTlVMV2Z3Q1ZvMU5ya0IrUloxNGVQ?=
+ =?utf-8?B?Mnl0cGowMEt2M0p0TGxqT3ZnRkxJaHFvOVlPUUFnWVhmbDQybE0xYi8zWXpm?=
+ =?utf-8?B?eXlONXJFYXVZSmhpOCtDNWdPWWk5NnJrNEoxOU9kNnBjczM3WjFkMWY0cHlP?=
+ =?utf-8?B?SkQxMGtFQ21seU5uS0tPQUdlVEF4L2Y1NVlVcHR3cEZ2V1lDclpoekVTVW1m?=
+ =?utf-8?B?R21TZlFPdDY1KytQREo2UVVwV2RwRGtiVlhHUndoTGF3d1lxem9PNHg5elBM?=
+ =?utf-8?B?ZXRqeWdhUTBMS0MvTVlrVEcyRlJ4d0EwbzFkMU16YUh3dFhSVnh4RjZYRXVk?=
+ =?utf-8?B?UStidDVlK3U2blVNVDJSSnQwazBLQjBaTVpJVjJMSDhEeGRyTTlOTllycTVv?=
+ =?utf-8?Q?uqxb9OlUEx7hBdezSVf7QSpIT?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30ced3e9-54a0-45cc-2ab2-08de0cc57b97
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:04:50.3642
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:05:46.1755
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PYoVoaoa0+Mcd5RkX2l4aFkCVR67dGyMEy17+1bILt3ecS31rUW+bLE9L4UeQXmUGZ94euhZjUAQQ1QK1+Lypg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7061
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: gYv3OavcIiVm5OdCPs6wjn8uWoL4pZqXmf8CWAzCd+WWbXR6PHJyvitilXPybmg6vqesGZ2Ztg3FJkOHSPLvig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5808
 
 
-On 10/16/2025 9:06 PM, James Clark wrote:
->
->
-> On 16/10/2025 4:36 am, Li, Tianyou wrote:
->> Hi James,
->>
->> Thanks for your time to review. Please see my comments inlined.
->>
->> Regards,
->>
->> Tianyou
->>
->> On 10/16/2025 1:30 AM, James Clark wrote:
->>>
->>>
->>> On 15/10/2025 6:20 pm, Tianyou Li wrote:
->>>> When perf report with annotation for a symbol, press 's' and 'T', 
->>>> then exit
->>>> the annotate browser. Once annotate the same symbol, the annotate 
->>>> browser
->>>> will crash.
->>>>
->>>> The browser.arch was required to be correctly updated when data type
->>>> feature was enabled by 'T'. Usually it was initialized by 
->>>> symbol__annotate2
->>>> function. If a symbol has already been correctly annotated at the 
->>>> first
->>>> time, it should not call the symbol__annotate2 function again, thus 
->>>> the
->>>> browser.arch will not get initialized. Then at the second time to 
->>>> show the
->>>> annotate browser, the data type needs to be displayed but the 
->>>> browser.arch
->>>> is empty.
->>>>
->>>> Stack trace as below:
->>>>
->>>> Perf: Segmentation fault
->>>> -------- backtrace --------
->>>>      #0 0x55d365 in ui__signal_backtrace setup.c:0
->>>>      #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
->>>>      #2 0x570f08 in arch__is perf[570f08]
->>>>      #3 0x562186 in annotate_get_insn_location perf[562186]
->>>>      #4 0x562626 in __hist_entry__get_data_type annotate.c:0
->>>>      #5 0x56476d in annotation_line__write perf[56476d]
->>>>      #6 0x54e2db in annotate_browser__write annotate.c:0
->>>>      #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
->>>>      #8 0x54dc9e in annotate_browser__refresh annotate.c:0
->>>>      #9 0x54c03d in __ui_browser__refresh browser.c:0
->>>>      #10 0x54ccf8 in ui_browser__run perf[54ccf8]
->>>>      #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
->>>>      #12 0x552293 in do_annotate hists.c:0
->>>>      #13 0x55941c in evsel__hists_browse hists.c:0
->>>>      #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
->>>>      #15 0x42ff02 in cmd_report perf[42ff02]
->>>>      #16 0x494008 in run_builtin perf.c:0
->>>>      #17 0x494305 in handle_internal_command perf.c:0
->>>>      #18 0x410547 in main perf[410547]
->>>>      #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
->>>>      #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 
->>>> libc.so.6[29680]
->>>>      #21 0x410b75 in _start perf[410b75]
->>>>
->>>> Fixes: 1d4374afd000 ("perf annotate: Add 'T' hot key to toggle data 
->>>> type display")
->>>> Reviewed-by: James Clark <james.clark@linaro.org>
->>>> Signed-off-by: Tianyou Li <tianyou.li@intel.com>
->>>> ---
->>>>   tools/perf/ui/browsers/annotate.c | 3 +++
->>>>   tools/perf/util/annotate.c        | 2 +-
->>>>   tools/perf/util/annotate.h        | 2 ++
->>>>   3 files changed, 6 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/ 
->>>> browsers/annotate.c
->>>> index 8fe699f98542..3b27ef1e8490 100644
->>>> --- a/tools/perf/ui/browsers/annotate.c
->>>> +++ b/tools/perf/ui/browsers/annotate.c
->>>> @@ -1161,6 +1161,9 @@ int __hist_entry__tui_annotate(struct 
->>>> hist_entry *he, struct map_symbol *ms,
->>>>               if (!annotation__has_source(notes))
->>>>                   ui__warning("Annotation has no source code.");
->>>>           }
->>>> +    } else if (evsel__get_arch(evsel, &browser.arch)) {
->>>> +        ui__error("Couldn't get architecture for event '%s'", 
->>>> evsel- >name);
->>>> +        return -1;
->>>>       }
->>>
->>> symbol_annotate() only fails for negative return values of 
->>> evsel__get_arch(), but evsel__get_arch() has at least two positive 
->>> error return values.
->>>
->>> If symbol_annotate() is wrong and it should be != 0 like you have, 
->>> then maybe symbol_annotate() should be fixed in another commit in 
->>> the same patchset as this one. Otherwise you have two calls to the 
->>> same thing right next to each other that handle errors differently.
->>
->>
->> Thanks James. I will give a try on handling the error message with 
->> symbol__strerror_disassemble. I am conservative to change the code in 
->> symbol_annotate, agreed it should be considered in another patch. 
->> Would like to focus this particular issue and get it fixed properly. 
->> Thanks.
->>
->>
->
-> Looks like there was a misunderstanding. I'm not saying that the error 
-> is _reported_ differently, it's that the condition that triggers the 
-> error is different.
->
-> symbol__annotate():
->
->   err = evsel__get_arch(evsel, &arch);
->   if (err < 0)
->       return err;
->
-> You added:
->
->   if (evsel__get_arch(evsel, &browser.arch))
->      ...
->
-> evsel__get_arch() returns positive error values (and maybe also 
-> negative?), so "< 0" behaves differently to "!= 0".
->
-> You either have to assume that "< 0" is correct and not change it, but 
-> then you have to also check the return value in the same way. Or if by 
-> doing "!= 0" you're implying that symbol__annotate() is wrong to do "< 
-> 0", then you should fix it now to not leave 
-> __hist_entry__tui_annotate() doing the same thing two different ways 
-> at different times.
->
-Thanks James. I looked at the code of symbol__annotate, and noticed the 
-if (err<0) statement. I did not mean to change the code in 
-symbol__annotate because I did not understand why it handled the error 
-code that way. The positive return value of evsel__get_arch indicates 
-some error happens, eg in arm__annotate_init, so I use the 
-symbol__strerror_disassemble function to handle both positive and 
-negative error code.
 
-I do agree we should check the error code of evsel__get_arch, but I am 
-hesitate to touch the code which I am not sure the consequences. I agree 
-it may deserve another patch but not in this patchset if we have clear 
-answers on why "<0" is not correct, or we have a case to break the 
-current code as a evidence. Thanks.
+On 10/16/2025 11:02 AM, Joel Fernandes wrote:
+> From: Alexandre Courbot <acourbot@nvidia.com>
+> 
+> The getter method of a field works with the field type, but its setter
+> expects the type of the register. This leads to an asymmetry in the
+> From/Into implementations required for a field with a dedicated type.
+> For instance, a field declared as
+> 
+>     pub struct ControlReg(u32) {
+>         3:0 mode as u8 ?=> Mode;
+>         ...
+>     }
+> 
+> currently requires the following implementations:
+> 
+>     impl TryFrom<u8> for Mode {
+>       ...
+>     }
+> 
+>     impl From<Mode> for u32 {
+>       ...
+>     }
+> 
+> Change this so the `From<Mode>` now needs to be implemented for `u8`,
+> i.e. the primitive type of the field. This is more consistent, and will
+> become a requirement once we start using the TryFrom/Into derive macros
+> to implement these automatically.
+> 
+> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
+Uff, my SOB is missing.
 
-Regards,
+Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-Tianyou
+Alex, do you mind adding it to the patch when applying?
 
->>>
->>>>         /* Copy necessary information when it's called from perf 
->>>> top */
->>>> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
->>>> index a2e34f149a07..39d6594850f1 100644
->>>> --- a/tools/perf/util/annotate.c
->>>> +++ b/tools/perf/util/annotate.c
->>>> @@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, 
->>>> struct evsel *evsel)
->>>>       annotation__calc_percent(notes, evsel, symbol__size(sym));
->>>>   }
->>>>   -static int evsel__get_arch(struct evsel *evsel, struct arch 
->>>> **parch)
->>>> +int evsel__get_arch(struct evsel *evsel, struct arch **parch)
->>>>   {
->>>>       struct perf_env *env = evsel__env(evsel);
->>>>       const char *arch_name = perf_env__arch(env);
->>>> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
->>>> index eaf6c8aa7f47..d4990bff29a7 100644
->>>> --- a/tools/perf/util/annotate.h
->>>> +++ b/tools/perf/util/annotate.h
->>>> @@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
->>>>   int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 
->>>> *br_cntr,
->>>>                    int num_aggr, struct evsel *evsel);
->>>>   int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, 
->>>> bool header);
->>>> +
->>>> +int evsel__get_arch(struct evsel *evsel, struct arch **parch);
->>>>   #endif    /* __PERF_ANNOTATE_H */
->>>
->>>
->
->
+thanks,
+
+ - Joel
+
 
