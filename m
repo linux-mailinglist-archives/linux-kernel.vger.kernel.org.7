@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-856780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B57BE50CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B364FBE50D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F3664E9B1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:24:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 481274F67E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CFF2367D9;
-	Thu, 16 Oct 2025 18:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65C223A9B0;
+	Thu, 16 Oct 2025 18:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sb4HYadL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goe5tqm1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CE4235341
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E63C239570
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760639078; cv=none; b=TZdP32D3kEwd9efXVJGUdd5yrjExkxbgJV7JfInjVd/uef2vPBICbpS9jXeCwNGcngzwpV99xBS3bB+jKwDp54SuPWMXcsjpO/4t2GsoIcUAzE5RBliibuYrpM+yqWCBJ43Qgkaq0RRPavAJHHYUKGdUNiud+Xik4jd6J/jBJZM=
+	t=1760639080; cv=none; b=otiYH2u693LuoKoHLvH4VrQqmDdr/MzSs9T0LNgrTlnBfcOLqedVba1U+37pYg5qUeCs3XLWA8bihtqjU+YR9GAaQ+zziRiJFeQloB6PJVsuuUOYZ3K3zn+h5oxNC4gZt3xCQWxac6k4qzqZYKMqEjGCsgsUfO9aoJ+SomNmLGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760639078; c=relaxed/simple;
-	bh=uzY7QbZ8CrzW7pubjL/Qa8fDMy2uC8toqiGjslYwHCU=;
+	s=arc-20240116; t=1760639080; c=relaxed/simple;
+	bh=3G6NU7adcx9IxXLVXQAvw/QZhqU2AWiAKM0inqmninM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pDVuEtfbtZe7g/3cLAoBDJwMkPT7DCzplkasuK3DXWNmqyOtVJBtN2e17tyyrAbg4NNcnirv1keRiKzuelH06ERqoY7LoBnyeOyuy0udaIaK8wJRiynCMOQ0LirzF9gAAvTxbLHFJa/pYqf/okSlBHqmtV88WiD88z5GujrdG/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sb4HYadL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8A2C4CEFB;
-	Thu, 16 Oct 2025 18:24:38 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Z28GVyL4fib3RwuVLqORDHY83Vu19O4ZEQIZHnfRBGi7Mi9r+zNzexPBQKcA/TNPh0cf/8m2Z9u+Uig7UDjngzktAqNFitQ0hdQo8bk2uB++ikvIeqv50R3nGdpUNmPVucj08eiVJDaMD0JpVV+Kph95wLYYPctsesnVGys5LkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goe5tqm1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05CEC4CEFE;
+	Thu, 16 Oct 2025 18:24:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760639078;
-	bh=uzY7QbZ8CrzW7pubjL/Qa8fDMy2uC8toqiGjslYwHCU=;
+	s=k20201202; t=1760639079;
+	bh=3G6NU7adcx9IxXLVXQAvw/QZhqU2AWiAKM0inqmninM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sb4HYadLP5bflziqd0jzlztvEDxzI3kLxyX5GbpyEnuka4Y98ptacMqBcrhaBcSCO
-	 XPRyR++XZMhsyIsa8P/QDkBJHQvrR8ZVfilRwu01NlE6m88wuc0saC+gjmNxYBhm9F
-	 IEZLw400CSVcpPtikxtlWA13Rg9/N97ihNISIReE09o0xsbVtB3iSTrEt6T4qoVc9B
-	 PpVmjMhS0KXtiQUVBIzMMNJXF2Pi8E2F4Y/vn5I6LCkfXg8ntxaFvADf/suslfCRUm
-	 +oU9zKnq6HA6dzPRLZFLpjv6YR8bggMa7BTnX0IWU0Ul4TRzNEz3peFHlRkyYeDOYA
-	 /3uSzbgz6j85w==
+	b=goe5tqm1EaTaojhQIPSv05S1b2ECgZeF+7CrBlLDSrRa/fYLmOOG0qA6wF8ZPyeYX
+	 Tnc8YPJcnI/fMOEZAwojiR59ErBATIQ0yp9Tp31/e/uZ53LWt4rr0TVirD2UKDhwYQ
+	 qVxeX+lqEOajUkBJmYl2ueJVLMfLBpZO8e/N6+0C9QhnhEtkAhL1fr8ZGzd4PJMaDs
+	 pMA+VrF0ZmZXuVsbi683lQ9iQTxGI2WyvlYwbpxdlbRYVf5tK9+a0RhzcQwTOf3iG7
+	 PsbdFIRCebo4l2czY4dXSGQ/h3MSjG9bSuNLiFTQU/TJQjtco78AAF6BTBTcpbtA2u
+	 +loGqfSFSXE2g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD6B39B167A;
-	Thu, 16 Oct 2025 18:24:23 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33A7739B167A;
+	Thu, 16 Oct 2025 18:24:25 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs fix for 6.18-rc2
+Subject: Re: [f2fs-dev] [PATCH] f2fs: set default valid_thresh_ratio to 80 for
+ zoned devices
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <176063906224.1852182.4367810623044827631.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Oct 2025 18:24:22 +0000
-References: <aPEt2-u8J16L9Xnk@google.com>
-In-Reply-To: <aPEt2-u8J16L9Xnk@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+ <176063906374.1852182.11763854243841197701.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Oct 2025 18:24:23 +0000
+References: <20251007164614.3631594-1-daeho43@gmail.com>
+In-Reply-To: <20251007164614.3631594-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com, daehojeong@google.com
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 16 Oct 2025 17:39:39 +0000 you wrote:
-> Hi Linus,
+On Tue,  7 Oct 2025 09:46:14 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Could you please consider this pull request?
+> Zoned storage devices provide marginal over-capacity space, typically
+> around 10%, for filesystem level storage control.
 > 
-> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
-> 
->   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+> By utilizing this extra capacity, we can safely reduce the default
+> 'valid_thresh_ratio' to 80. This action helps to significantly prevent
+> excessive garbage collection (GC) and the resulting power consumption,
+> as the filesystem becomes less aggressive about cleaning segments
+> that still hold a high percentage of valid data.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs fix for 6.18-rc2
-    https://git.kernel.org/jaegeuk/f2fs/c/98ac9cc4b445
+  - [f2fs-dev] f2fs: set default valid_thresh_ratio to 80 for zoned devices
+    https://git.kernel.org/jaegeuk/f2fs/c/9a25aeb2be7a
 
 You are awesome, thank you!
 -- 
