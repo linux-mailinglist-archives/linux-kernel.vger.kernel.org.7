@@ -1,283 +1,119 @@
-Return-Path: <linux-kernel+bounces-855813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6F4BE2680
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:33:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0E1BE268F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04E534F99DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:33:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27AF73E0D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A371D7984;
-	Thu, 16 Oct 2025 09:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p0JCvYXe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0UYnArAy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD9F3176EF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA631815D;
 	Thu, 16 Oct 2025 09:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dji1B5hC"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B083E3168FD
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760607197; cv=none; b=udKARXK9HXrPdXSCvNtp/SOFZrvFDU2dCuVeII3JAADxmxykj8hVQAodmVG3FHMZWPJq90XH357Qmtji3IUB+FsMjU3n1RReK2tEF0j55nZLyOa/IF3puYTWdeIoJq2KUPg+O6jfM4n2f94f1OD4qkiwm0aXIkQ5XPYPSjTghhs=
+	t=1760607195; cv=none; b=Nz3DTUGIJFfJs85QGUTXMobZu2ujfZ5qBluOe5arhBuSSL3z3HcZcHxPeuDO3asfF+ZCwfuuoX5pJ/gAOoItGsoM3O54PKYxItYFZ7g7H/uehBuvDJ11Yph3mMuLmyNfaEWCMBKQU4oZw0UwVzXz/mSiOT11MmXHR3UMUFoyQYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760607197; c=relaxed/simple;
-	bh=LSmoFy7Rnhg526ab4fxA2C57il/RfdFG48ks41k7r7I=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=L6WsvxU+os2O865I4aKtuepkN8TbGEt56wXHG99qs+31B3HgkDqqooj6JUJfp+lGc6HK7Ow47r346qjUctHlYAUQjHRKaxNBNSZoVA+hrTSX53NxyMNI/crJ62WE1XLVBI2Sz4Nnn4qYD/TLLVL8M/xoY3tJkhS/5ClPMcwqSXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p0JCvYXe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0UYnArAy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:32:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760607193;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=uShJOkOhi1ud6xtxozBd0NWR7Ry6n/9+N357yMOD94k=;
-	b=p0JCvYXexj54U2GFlOMRlga6xleTKJThePUIXBuNWSodW0DILIjrTo8kqxqAKwRIjJsNzG
-	BmqxcbJWoDFqesT4d1ape0rp3H+0jILo7rl0/mKam8XU7HHuNRKzP4byLRA+3466tI7Qqr
-	GwDZJzTbqQnjPUR0SFwNbRWBqfBB5oCIwdNZpZUVOjENxAuYkZOpIdd0VUNO59fwaUQr9O
-	10eOQ00SLLJuqk/+A8GiUb8ttnoz8M47C5tgVdfegKn1WL8ujWcmtOZpZDGhBgbcYHCGgD
-	KrARoFG51EltToGMlEtrqV+A5+fu5ijwVE1aO0tkPS+XWplfhJjEP2sfuJS5wg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760607193;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=uShJOkOhi1ud6xtxozBd0NWR7Ry6n/9+N357yMOD94k=;
-	b=0UYnArAyZAslBILDt/DB4hG0dQOeufFkIJgeiV2yRbTZS+0zkNLBkYwRnkJSHpcOnXYCV4
-	asE86R+Qfb0lleAA==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] x86/insn: Simplify for_each_insn_prefix()
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1760607195; c=relaxed/simple;
+	bh=x5XlyHp4qZ8YuHSOjiM2sfd2xNaQ4YQKX9ltLMZZgKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AwUnZTaIr1vK93V0hoDgOVwgwv4bsf5KNHz3xTUUZHPTYrN5aGwMHa1vIH0vhEmzoL16LlwzyLmNp6JBqEsKfcssYKolPv646APbYnzid2bcon/xCIhxGl/kwvliylKQwm3TQZMHfeHN3HpBe6LMXPWfWo6Rj5ZFT0JfKXBfhlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dji1B5hC; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3e9d633b78so119516366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760607192; x=1761211992; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pHMRuj/15syb74fDu1791nFi8BMeOt6zd/hpHr/6Rq4=;
+        b=Dji1B5hCdBleYoLUDKwVdZzPkc7HtOlggGUA/ycNXmFd0RrpnCpA2gPXoU4zSpthbV
+         bPHMmtBdzQKfUqIYfxBqAd6WKHOEyQq/CmB4sYykmemG8UDJlwdKKnOhKcd6Lvp9UMdb
+         Dxu9YhcjWDpdFceUD95C82T88y2DwJj4cYDkSCECGYwwAjRPZ8LUlKJl7D85sOVoUUGu
+         MhkFhO7vQFviKhn32MfBXRf57U0KzBsDvVSONUt1wyvtU6X8WORLqf7eTGvhTUMpk8fx
+         oT5EFG8A0nXaLD9gaingrv/iquqZ6sz8rkr6u5HpWFOm8IWKoe8X+mSzxzYjXrYDPa4r
+         VLjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760607192; x=1761211992;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pHMRuj/15syb74fDu1791nFi8BMeOt6zd/hpHr/6Rq4=;
+        b=UmkfGc9jis1Yx9Cxi7sGXjXOvXhkiH8tjDLbzQ1RojSaIqVYnC4dKYYdfYSYX7EWxH
+         iHWudUKV9F3CVOJtP7/z8kpt5UsBomQmN9ePCIbqK/Si+WhXZJrB2E/Mye41X2iTPI54
+         T5LANXo7WL36qDRoNHJhS9FyoLkUQt/Zt4qMWHLDAIvFQ8wB1+GqpzSTaHeuNZFWSnRw
+         3Z/QRe9yr/wGafaMO91jEyWY6NI1IHz8VhpCUalqUXuWAnlsPzlMThL+GvdV+m1B9v0u
+         bbuwhTckz19DUEGRhHGSP45t3dR4gnvyhO8SXBKW2pZA+WwVm1TTbNFiHFSfWw9NacaY
+         YiBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcb+pvPndiTJ0bDBCgWnhOPdb+n/vKs/lSzGFFdk9C+KzBffXiEW/GBO1c2Kj1ooV0a5dinkmGE+RxelQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaEsHbzy3+Jb5EJt0p/jfQnm00qmHU66sN+VVPZSk7y+XvSpwE
+	rZ9jEPC7T8Vm3oifjPeNRsTtkZLMxDp9V1sMjCqlsV/spzdnOwJp1MwI
+X-Gm-Gg: ASbGncsUyXAD05I8gjH6DL/CwvuMRroifg2FeNGR+rwSvANSy1fS+/XTJIaiEaNGRVf
+	g/SHTIS+kVovf8vP0SlcGTaIN24mwtjtAnxhGw0ntHQCGCQ7cyiooDBppNZPF/OW5Mv5O0WHo68
+	XkMHYa4gYI0AW1y4lq/WW2AJeRC/aB0qqfrGGM0pb1zWG6tDfXgbWgggmnbER9JRkDDuFKeyh1l
+	PA70LkiUWirXrBYADvjRm8I/nP/MF3MDn1iQitXXj1k79OYUPney0BDwrGy/fJczuwxODQupLgu
+	G5G44roKk+V0bH/BOWEURsHsIVwib25p4oAXRbxSBtM2OBVW1je0zlaJruA6mwoVBmmcm+fByf2
+	jPDubxpaZRdjCOF2UbUdeHZsVYAE2vyVWWNxuD6xgXyOdlGVERMMGOVJTQfDGmstenEdtb3J8Qk
+	wj9Mb7SQ53wQ==
+X-Google-Smtp-Source: AGHT+IEYm86dPzeRxAUlI721i6XxvlHj7KPkjjQbYDNxh+Ekxpv1GeqtK7/vX/7AtTiWdLiudoge7g==
+X-Received: by 2002:a17:907:c718:b0:b53:f93f:bf59 with SMTP id a640c23a62f3a-b60552bdca5mr370747366b.29.1760607191779;
+        Thu, 16 Oct 2025 02:33:11 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cb965dde9sm475741266b.4.2025.10.16.02.33.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Oct 2025 02:33:11 -0700 (PDT)
+Date: Thu, 16 Oct 2025 09:33:10 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+	dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: guard is_zero_pfn() calls with
+ pte_present()
+Message-ID: <20251016093310.rilvenglgnr65ojq@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251016033643.10848-1-lance.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060714785.709179.11824506848891961011.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016033643.10848-1-lance.yang@linux.dev>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-The following commit has been merged into the perf/core branch of tip:
+On Thu, Oct 16, 2025 at 11:36:43AM +0800, Lance Yang wrote:
+>From: Lance Yang <lance.yang@linux.dev>
+>
+>A non-present entry, like a swap PTE, contains completely different data
+>(swap type and offset). pte_pfn() doesn't know this, so if we feed it a
+>non-present entry, it will spit out a junk PFN.
+>
+>What if that junk PFN happens to match the zeropage's PFN by sheer
+>chance? While really unlikely, this would be really bad if it did.
+>
+>So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
+>in khugepaged.c are properly guarded by a pte_present() check.
+>
 
-Commit-ID:     45e1dccc0653c50e377dae57ef086a8d0f71061d
-Gitweb:        https://git.kernel.org/tip/45e1dccc0653c50e377dae57ef086a8d0f7=
-1061d
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 25 Sep 2025 10:19:05 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 16 Oct 2025 11:13:48 +02:00
+Does it more like to guard pte_pfn() with pte_present()?
 
-x86/insn: Simplify for_each_insn_prefix()
-
-Use the new-found freedom of allowing variable declarions inside
-for() to simplify the for_each_insn_prefix() iterator to no longer
-need an external temporary.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/boot/compressed/sev-handle-vc.c |  3 +--
- arch/x86/include/asm/insn.h              |  5 ++---
- arch/x86/kernel/kprobes/core.c           |  3 +--
- arch/x86/kernel/uprobes.c                |  6 ++----
- arch/x86/lib/insn-eval.c                 | 12 +++++-------
- tools/arch/x86/include/asm/insn.h        |  5 ++---
- 6 files changed, 13 insertions(+), 21 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/sev-handle-vc.c b/arch/x86/boot/compres=
-sed/sev-handle-vc.c
-index 7530ad8..030001b 100644
---- a/arch/x86/boot/compressed/sev-handle-vc.c
-+++ b/arch/x86/boot/compressed/sev-handle-vc.c
-@@ -29,11 +29,10 @@
- bool insn_has_rep_prefix(struct insn *insn)
- {
- 	insn_byte_t p;
--	int i;
-=20
- 	insn_get_prefixes(insn);
-=20
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p =3D=3D 0xf2 || p =3D=3D 0xf3)
- 			return true;
- 	}
-diff --git a/arch/x86/include/asm/insn.h b/arch/x86/include/asm/insn.h
-index 091f88c..846d21c 100644
---- a/arch/x86/include/asm/insn.h
-+++ b/arch/x86/include/asm/insn.h
-@@ -312,7 +312,6 @@ static inline int insn_offset_immediate(struct insn *insn)
- /**
-  * for_each_insn_prefix() -- Iterate prefixes in the instruction
-  * @insn: Pointer to struct insn.
-- * @idx:  Index storage.
-  * @prefix: Prefix byte.
-  *
-  * Iterate prefix bytes of given @insn. Each prefix byte is stored in @prefix
-@@ -321,8 +320,8 @@ static inline int insn_offset_immediate(struct insn *insn)
-  * Since prefixes.nbytes can be bigger than 4 if some prefixes
-  * are repeated, it cannot be used for looping over the prefixes.
-  */
--#define for_each_insn_prefix(insn, idx, prefix)	\
--	for (idx =3D 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix =3D insn-=
->prefixes.bytes[idx]) !=3D 0; idx++)
-+#define for_each_insn_prefix(insn, prefix)	\
-+	for (int idx =3D 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix =3D i=
-nsn->prefixes.bytes[idx]) !=3D 0; idx++)
-=20
- #define POP_SS_OPCODE 0x1f
- #define MOV_SREG_OPCODE 0x8e
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 3863d77..c1fac3a 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -141,7 +141,6 @@ bool can_boost(struct insn *insn, void *addr)
- {
- 	kprobe_opcode_t opcode;
- 	insn_byte_t prefix;
--	int i;
-=20
- 	if (search_exception_tables((unsigned long)addr))
- 		return false;	/* Page fault may occur on this address. */
-@@ -154,7 +153,7 @@ bool can_boost(struct insn *insn, void *addr)
- 	if (insn->opcode.nbytes !=3D 1)
- 		return false;
-=20
--	for_each_insn_prefix(insn, i, prefix) {
-+	for_each_insn_prefix(insn, prefix) {
- 		insn_attr_t attr;
-=20
- 		attr =3D inat_get_opcode_attribute(prefix);
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index 6318898..a563e90 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -259,9 +259,8 @@ static volatile u32 good_2byte_insns[256 / 32] =3D {
- static bool is_prefix_bad(struct insn *insn)
- {
- 	insn_byte_t p;
--	int i;
-=20
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		insn_attr_t attr;
-=20
- 		attr =3D inat_get_opcode_attribute(p);
-@@ -1404,7 +1403,6 @@ static int branch_setup_xol_ops(struct arch_uprobe *aup=
-robe, struct insn *insn)
- {
- 	u8 opc1 =3D OPCODE1(insn);
- 	insn_byte_t p;
--	int i;
-=20
- 	if (insn_is_nop(insn))
- 		goto setup;
-@@ -1437,7 +1435,7 @@ static int branch_setup_xol_ops(struct arch_uprobe *aup=
-robe, struct insn *insn)
- 	 * Intel and AMD behavior differ in 64-bit mode: Intel ignores 66 prefix.
- 	 * No one uses these insns, reject any branch insns with such prefix.
- 	 */
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p =3D=3D 0x66)
- 			return -ENOTSUPP;
- 	}
-diff --git a/arch/x86/lib/insn-eval.c b/arch/x86/lib/insn-eval.c
-index c991dac..e03eeec 100644
---- a/arch/x86/lib/insn-eval.c
-+++ b/arch/x86/lib/insn-eval.c
-@@ -63,11 +63,10 @@ static bool is_string_insn(struct insn *insn)
- bool insn_has_rep_prefix(struct insn *insn)
- {
- 	insn_byte_t p;
--	int i;
-=20
- 	insn_get_prefixes(insn);
-=20
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p =3D=3D 0xf2 || p =3D=3D 0xf3)
- 			return true;
- 	}
-@@ -92,13 +91,13 @@ bool insn_has_rep_prefix(struct insn *insn)
- static int get_seg_reg_override_idx(struct insn *insn)
- {
- 	int idx =3D INAT_SEG_REG_DEFAULT;
--	int num_overrides =3D 0, i;
-+	int num_overrides =3D 0;
- 	insn_byte_t p;
-=20
- 	insn_get_prefixes(insn);
-=20
- 	/* Look for any segment override prefixes. */
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		insn_attr_t attr;
-=20
- 		attr =3D inat_get_opcode_attribute(p);
-@@ -1701,7 +1700,6 @@ bool insn_is_nop(struct insn *insn)
- 	u8 sib =3D 0, sib_scale, sib_index, sib_base;
- 	u8 nrex, rex;
- 	u8 p, rep =3D 0;
--	int i;
-=20
- 	if ((nrex =3D insn->rex_prefix.nbytes)) {
- 		rex =3D insn->rex_prefix.bytes[nrex-1];
-@@ -1741,7 +1739,7 @@ bool insn_is_nop(struct insn *insn)
- 		modrm_rm =3D sib_base;
- 	}
-=20
--	for_each_insn_prefix(insn, i, p) {
-+	for_each_insn_prefix(insn, p) {
- 		if (p =3D=3D 0xf3) /* REPE */
- 			rep =3D 1;
- 	}
-@@ -1789,7 +1787,7 @@ bool insn_is_nop(struct insn *insn)
- 		if (sib && (sib_scale !=3D 0 || sib_index !=3D 4)) /* (%reg, %eiz, 1) */
- 			return false;
-=20
--		for_each_insn_prefix(insn, i, p) {
-+		for_each_insn_prefix(insn, p) {
- 			if (p !=3D 0x3e) /* DS */
- 				return false;
- 		}
-diff --git a/tools/arch/x86/include/asm/insn.h b/tools/arch/x86/include/asm/i=
-nsn.h
-index c683d60..8f10f29 100644
---- a/tools/arch/x86/include/asm/insn.h
-+++ b/tools/arch/x86/include/asm/insn.h
-@@ -312,7 +312,6 @@ static inline int insn_offset_immediate(struct insn *insn)
- /**
-  * for_each_insn_prefix() -- Iterate prefixes in the instruction
-  * @insn: Pointer to struct insn.
-- * @idx:  Index storage.
-  * @prefix: Prefix byte.
-  *
-  * Iterate prefix bytes of given @insn. Each prefix byte is stored in @prefix
-@@ -321,8 +320,8 @@ static inline int insn_offset_immediate(struct insn *insn)
-  * Since prefixes.nbytes can be bigger than 4 if some prefixes
-  * are repeated, it cannot be used for looping over the prefixes.
-  */
--#define for_each_insn_prefix(insn, idx, prefix)	\
--	for (idx =3D 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix =3D insn-=
->prefixes.bytes[idx]) !=3D 0; idx++)
-+#define for_each_insn_prefix(insn, prefix)	\
-+	for (int idx =3D 0; idx < ARRAY_SIZE(insn->prefixes.bytes) && (prefix =3D i=
-nsn->prefixes.bytes[idx]) !=3D 0; idx++)
-=20
- #define POP_SS_OPCODE 0x1f
- #define MOV_SREG_OPCODE 0x8e
+-- 
+Wei Yang
+Help you, Help me
 
