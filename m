@@ -1,49 +1,63 @@
-Return-Path: <linux-kernel+bounces-857054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C165CBE5C7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F870BE5C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1BC34EFF43
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:20:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63EBD4E9CD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261982E0934;
-	Thu, 16 Oct 2025 23:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431052E6CA7;
+	Thu, 16 Oct 2025 23:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdX2/npy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRyGjdY/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788031CEAD6;
-	Thu, 16 Oct 2025 23:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982C42E1C57;
+	Thu, 16 Oct 2025 23:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760656829; cv=none; b=itmhL8RGXxNUXr/xfYiFuC8XgZe+ZrKXAg6rFlrKM0MaKd4errfV30rEKJzvXNG0t9ag9zdTx2YQ7QD+Mxw+twbg2MnA5Zyx4TqPbhHrxmgJzefkOFo9mhgBCqc5g/mszc3lk+1jVEVWO1Z22gxvO9qgBXFcxAqNo32ryqG+kO8=
+	t=1760656891; cv=none; b=OGh1svOfsYLu9i3/TczxbXxswM+8IaGWM/D7fGCzxFZVdTHa5PEXlj/mJSrV5GWdHhrllBVbR8FYRl0hSiJlU8/wndsdk2wcllNr9ep+27oiD7b1TWXr8ZLk11y3QG5/7JE1YU4yn/O59FZXezxjYpJ27tP6VRdAtDdAguVtfL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760656829; c=relaxed/simple;
-	bh=XmFZ1aCPOavivGFm2MY2rpuXNMGOSeXgUjkf7jQ4ZSY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=n5To2Zoa4n4n6pw4LtRE19gyA6mICFVGO0Hr7VSb3MqdMNADkQXs4DotLQYMyGUuqL2si1TgjbuDLwaviZ81eFmPPVQI53c1GB3Cx00cuUgpJdK6SBhkSovL+ZPRePrvr3AQfzfaEGhPyS5oI/8rv6nPuLNZU/V0MTQaXJDhhgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdX2/npy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C2EC4CEF1;
-	Thu, 16 Oct 2025 23:20:28 +0000 (UTC)
+	s=arc-20240116; t=1760656891; c=relaxed/simple;
+	bh=lhnZdjQAspu8z7emtfhvrNr16HucRHE64ZrpEWkb9e8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bWn9GSidewR4B00XDt4ml5KFNmSR/APIOz6TayhJdp3Vv1N6B0T+tDrZLuOE4AZbSZWiARj5Eb1W0k78UbTtdK8NTLtKbaIjHUMjMu4k+Zt7rby5shRzVLpICPxL8bDxvsjhmJzC8LUOR83SyLUS2kyOTGNdwKjG0Hd1rGWoANI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRyGjdY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC33C4CEF1;
+	Thu, 16 Oct 2025 23:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760656829;
-	bh=XmFZ1aCPOavivGFm2MY2rpuXNMGOSeXgUjkf7jQ4ZSY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NdX2/npyuApB04JWfGhacNAQxh7Odc9VcysylDLj6xMk8iShYkL+ZSQulPbmVQnBP
-	 K5pg+2x4rOXIYLy6/MyMYeS6YblWpBHbRxa85mGx9Tk6J6BtgBwZEvq73JTA0pytjx
-	 ArdCtEq5O8mdevH4P1QWpfnYtEyun22mdyT+Cb4iSUuo1rXgpb8dsxGPZS5jSmxjI3
-	 JisiJn9jyFWATdHaf1lUoFioBvz9dCMI6MtKCCLWPD+H59kELGRRS+ljXrFV/Gdpm2
-	 y3F5YA3qkcYciAK53CnN5e8x+tQREXUYNusfIxLgbYaK1Oiu7vSYJxbtxC+7PBPOPc
-	 dVhsyg7mVesfg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D7739D0C31;
-	Thu, 16 Oct 2025 23:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1760656891;
+	bh=lhnZdjQAspu8z7emtfhvrNr16HucRHE64ZrpEWkb9e8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CRyGjdY/waPRSekH+tFc/yr5IXsl4uy0BOCBFuheN8EO7xtbkzmceJIj7gYNuVMhX
+	 5lZJ95n0KnYMseXDEDQDCiUJkrWUOV+IWVisHzaUIS0pW48pXtiVycrZq3Baw8XW6b
+	 uOXap3lt6hcTCFx/CwGcHg/QzUI20+tqK/zf/LIDI2+ulunhNHmuoJ+D6Siy+1gdMP
+	 l6XzOZ5JrOCGWWN6wv8v6GXELagnAsxS5EIZSx0bJ0vQQ90d0sO/BKVIGORsaCZCFz
+	 tYyEgs5QElchLvsEfyZZkzmSfj0wawH3bGP/hHsFJFOygSdOYgjcp4Of9RPNGcPW9+
+	 kp0FvtAObJ38g==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>,
+	Burak Emir <bqe@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: bitmap: fix formatting
+Date: Fri, 17 Oct 2025 01:21:18 +0200
+Message-ID: <20251016232118.1419895-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,64 +65,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v8 0/2] Add driver support for Eswin eic7700 SoC ethernet
- controller
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176065681299.1942659.16205838065637894819.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Oct 2025 23:20:12 +0000
-References: <20251015113751.1114-1-weishangjuan@eswincomputing.com>
-In-Reply-To: <20251015113751.1114-1-weishangjuan@eswincomputing.com>
-To: =?utf-8?b?6Z+m5bCa5aifIDx3ZWlzaGFuZ2p1YW5AZXN3aW5jb21wdXRpbmcuY29tPg==?=@codeaurora.org
-Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com,
- vladimir.oltean@nxp.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- jan.petrous@oss.nxp.com, inochiama@gmail.com, jszhang@kernel.org,
- 0x1207@gmail.com, boon.khai.ng@altera.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
- linmin@eswincomputing.com, lizhi2@eswincomputing.com,
- pinkesh.vaghela@einfochips.com
 
-Hello:
+We do our best to keep the repository `rustfmt`-clean, thus run the tool
+to fix the formatting issue.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Link: https://docs.kernel.org/rust/coding-guidelines.html#style-formatting
+Link: https://rust-for-linux.com/contributing#submit-checklist-addendum
+Fixes: 0f5878834d6c ("rust: bitmap: clean Rust 1.92.0 `unused_unsafe` warning")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+This one will go on top of:
 
-On Wed, 15 Oct 2025 19:37:51 +0800 you wrote:
-> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
-> 
-> Updates:
-> 
->   Changes in v8:
->   - Removed config option patch dependency from cover letter, because the patch
->     was applied.
->   - Modify the theme style of patch 2.
->   - Remove unnecessary dependencies, such as CRC32 and MII
->   - Add "Reviewed-by" tag of "Andrew Lunn" for Patch 2.
->   - Update eswin,eic7700-eth.yaml
->     - Add new line character at the end of file
->   - Update dwmac-eic7700.c
->     - Provide callbacks for plat_dat->init/exit and plat_dat->suspend/resume
->       to optimize clock processing
->     - Use devm_stmmac_pltfr_probe() instead of stmmac_dvr_probe() in probe
->     - Remove eic7700_dwmac_remove()
->   - Link to v7: https://lore.kernel.org/all/20250918085612.3176-1-weishangjuan@eswincomputing.com/
-> 
-> [...]
+    https://lore.kernel.org/rust-for-linux/20251010174351.948650-1-ojeda@kernel.org/
 
-Here is the summary with links:
-  - [v8,1/2] dt-bindings: ethernet: eswin: Document for EIC7700 SoC
-    https://git.kernel.org/netdev/net-next/c/888bd0eca93c
-  - [v8,2/2] net: stmmac: add Eswin EIC7700 glue driver
-    https://git.kernel.org/netdev/net-next/c/ea77dbbdbc4e
+ rust/kernel/bitmap.rs | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
+index 711b8368b38f..aa8fc7bf06fc 100644
+--- a/rust/kernel/bitmap.rs
++++ b/rust/kernel/bitmap.rs
+@@ -167,7 +167,9 @@ fn deref(&self) -> &Bitmap {
+         let ptr = if self.nbits <= BITS_PER_LONG {
+             // SAFETY: Bitmap is represented inline.
+             #[allow(unused_unsafe, reason = "Safe since Rust 1.92.0")]
+-            unsafe { core::ptr::addr_of!(self.repr.bitmap) }
++            unsafe {
++                core::ptr::addr_of!(self.repr.bitmap)
++            }
+         } else {
+             // SAFETY: Bitmap is represented as array of `unsigned long`.
+             unsafe { self.repr.ptr.as_ptr() }
+@@ -184,7 +186,9 @@ fn deref_mut(&mut self) -> &mut Bitmap {
+         let ptr = if self.nbits <= BITS_PER_LONG {
+             // SAFETY: Bitmap is represented inline.
+             #[allow(unused_unsafe, reason = "Safe since Rust 1.92.0")]
+-            unsafe { core::ptr::addr_of_mut!(self.repr.bitmap) }
++            unsafe {
++                core::ptr::addr_of_mut!(self.repr.bitmap)
++            }
+         } else {
+             // SAFETY: Bitmap is represented as array of `unsigned long`.
+             unsafe { self.repr.ptr.as_ptr() }
 
-
+base-commit: 32f072d9eaf9c31c2b0527a4a3370570a731e3cc
+--
+2.51.0
 
