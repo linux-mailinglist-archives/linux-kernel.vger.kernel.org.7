@@ -1,143 +1,127 @@
-Return-Path: <linux-kernel+bounces-855777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119C6BE246C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806DCBE2545
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83AC319C3288
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D364253D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E9A3081CF;
-	Thu, 16 Oct 2025 09:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0846730100A;
+	Thu, 16 Oct 2025 09:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYP5srU3"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="lfBfHtS+"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008B83254AD
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6493254BC
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760605313; cv=none; b=a5DIbGIoaWgSvtoSosvKD9ieYCNOUN6X66n9k0S+Uw9kPRj33i6LlxP6ozjG1Eg7xtyJM5Czn4urmDq74sWDEVW5lrIHWO23ZP8woI206uqKY5c236CmIL5gu/EyrLLhy1Oylgi8QtmtnpuAczf7r4NB3IyWX4d1VFfQN3l8UdM=
+	t=1760606267; cv=none; b=CXi/gbjRz357iH6cfPfO1j7X5uVGy+YwRZXjU/TIsjHOLMhBlsX9x456O2fdzhjVGToCKMp+cmUp1D7i2gLZhQWtJY34iDdWr4yQ3wbJ8LuUNveGE0xiDMpxccctu/z92A3y0/iq/Q2ufW6FhJ+UrxMmXIgLs6W4paUPjJszEAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760605313; c=relaxed/simple;
-	bh=suc4JnIRIUGOcWs/9qR0Bix6Z/KdKrVm+w6n80ouM2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3QFL5/sech71B8rQedVEfsWXSRSTCqptoK0fNZI/KC1DAdXNrV9u4/EiHsC14FWsZ9VNvpxxwCtMl9/vGeukEE04nhWRrBA6dumNpPWUbtgnLg0v66VuwNgvaFu2gryqPfVR+QI/e9R8OGwJHLw5YBBf9IPnM2dGrsNVSsWymo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYP5srU3; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27eed7bdfeeso6181995ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760605311; x=1761210111; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=suc4JnIRIUGOcWs/9qR0Bix6Z/KdKrVm+w6n80ouM2w=;
-        b=LYP5srU36HSTMU0+jbS3BCNJM0Cay+HD5d70VSyE34c31C4gZS9kkkyPF6C/Dh0Ahs
-         aPXMxUlCe+HyJ0150QrTSztoGfrJ9lKgOnXco1S/kk2Twa2pYV+sF60MSxSQbGcn2cg1
-         hHaqG28WBKpcl6PdlOfZq38I4VWqCUSQ8OraTRIoX8vUHj5cJE4hj7Nj54nt4uTN1V0C
-         Yx5BNa3pFSLxjNf5Fk4I89tKOukhg5iyo41ypWxFIRBpELO9M1Y7OZfzUBi8A1g8zEUv
-         46rlyXz3Hrz41qQTGldrsPJF6xtFDzycWMriO4ARZabr7ZqLKAmPLOTxcfBg+uDWp7CB
-         EcRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760605311; x=1761210111;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=suc4JnIRIUGOcWs/9qR0Bix6Z/KdKrVm+w6n80ouM2w=;
-        b=PZfD1e4kk7XntLtAadPMysAQSTxxrxao4vvtDEiPOJMgd6+s2UYCyvEjA5UmEGsLX+
-         tVlE21VIBYvWlivVUPsXEF19zwihsTuFkj8xI40hZN5B8ExdRpOH2kpONGPL3Bp4ufZu
-         wJ/BaXKQKDw0bbBzWjfWcjweBeBAj3SBQYuaw4aXNSIfjZ5aMlXBDkoDbsIIJ9ZztutY
-         XC+RGSJTBBk3zknB7SyjNCLH4CTL0I+pi1WejsUbtr8Q3ILAV4d1qELmWwXOnmpISkwH
-         s+Dsc4p+kRtK45PxRrmf9ssoSJhIU3JLp9+ilGRJ42e3TOenMHphJ74EtOdyhgorKrC5
-         +jaw==
-X-Gm-Message-State: AOJu0YzSmfgAMs/IN2vF2eSildOQwbs+g3wBC81DlIb5vEXNMZgKTx7L
-	tp149y8ZlPSAtpPub/MS8RvwngqPVP6DO5zgd0JWm/Hgcfmq/HqWy0mO
-X-Gm-Gg: ASbGncsNJVfoUs4Z2qlkD7Oh/vawRxHxVxgVRYAGPbZ1Q/Zo+6Dlb3cNL9h2b8aq6QT
-	7c2BMZ7jdR8kfs/voXWsqoQuoyyUkeJaCi6QZvevNq/vuAUISaj08bfZN0b/NjQMW3M/lB5Asea
-	sJYLjdnBUP5Vbi422qNby3jTnX+ioKpNf4idDJ5khEs0i9YXWEQx+e3O2QeiHdvWHhiRq1ANX6n
-	jKjz54kPZxmnykIRjQc3mgmaDHrABv14NS9zzu4I3nCAk2MbL/hmbh8/Q+ydiayzTwd7bC0Cman
-	N7sI1Z8Mj+bfzxMVWUfYsxI+X28snZRuDdweMlgHc0U/fLnKf11qZb5l4kouk8ND4tYQISSryN4
-	kqo+ibjek866p/DSEk8LqB+jXIRf3SydhCwr/AHQ+lnmWxZVJYR5xWI3rKNsoLvFgnpiL8PmLie
-	MqmtudhYbf8cQ3lA==
-X-Google-Smtp-Source: AGHT+IE57WvRWVQwP15WqnNytPnJ0vJwjIIRthPOsa4cpEi8X8CD2FPyQJMr+7uqN7uOBtFrHDlVOw==
-X-Received: by 2002:a17:903:1a23:b0:271:9b0e:54c7 with SMTP id d9443c01a7336-29091af3a9cmr42613085ad.11.1760605310973;
-        Thu, 16 Oct 2025 02:01:50 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bb66403f4sm1073355a91.23.2025.10.16.02.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 02:01:49 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 098DA40C0938; Thu, 16 Oct 2025 16:01:46 +0700 (WIB)
-Date: Thu, 16 Oct 2025 16:01:46 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>,
-	Subash Abhinov Kasiviswanathan <subash.a.kasiviswanathan@oss.qualcomm.com>,
-	Sean Tranchetti <sean.tranchetti@oss.qualcomm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sharath Chandra Vurukala <quic_sharathv@quicinc.com>
-Subject: Re: [PATCH net] net: rmnet: Fix checksum offload header v5 and
- aggregation packet formatting
-Message-ID: <aPC0et6rtTOKyDR6@archie.me>
-References: <20251015092540.32282-2-bagasdotme@gmail.com>
- <aO_MefPIlQQrCU3j@horms.kernel.org>
- <aPA1BzY88pULdWJ9@archie.me>
- <aPCo2f3lybfRJvP0@horms.kernel.org>
+	s=arc-20240116; t=1760606267; c=relaxed/simple;
+	bh=0TaMUuOpNvxesYh/jBprYtOcZs+49A4CFlq3+lu+Fmc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=mfK0G9Mq05kDnofwIVFOCJxzbUdfUJvyqQyvFveB4zfx/K6616iasfyuV4L1Epd26nh4TIY5UDTDqKLI0PgI1Wd9dpzv04RsBqcHhbPrGwDKsr3hLCl6h+7S/AmRAE6qtiGD/5E279k2MrYSlwAQshXGtdFzvUctWSDZavgOAos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=lfBfHtS+; arc=none smtp.client-ip=117.135.210.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id; bh=45e/C/Y1u5j+v/O
+	/pm3lDrXdyxiM2QtQtB+MmvdCD00=; b=lfBfHtS+B4nMbart+XAW0oMXSrpX1dW
+	tjsDS5NNb0Ijjbsx0wEG1uki1O4/LpNV2vGR//o0VZlYYKhgdg4WSEsdvgB2jCun
+	wvPFdAFnFRFFEpQEQWFbw4Rlmv1A5bXU+tEmvgDrq/LzQ3zoQxcjkfY4cN+Mu17r
+	CzoLSmrfMWJ0=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PikvCgD3n0DBtfBoo1JkAA--.53082S2;
+	Thu, 16 Oct 2025 17:07:20 +0800 (CST)
+From: XueBing Chen <chenxb_99091@126.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	XueBing Chen <chenxb_99091@126.com>
+Subject: [PATCH] lib/bsearch: add mutex protection for thread-safe binary search
+Date: Thu, 16 Oct 2025 17:06:40 +0800
+Message-Id: <20251016090640.6331-1-chenxb_99091@126.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:PikvCgD3n0DBtfBoo1JkAA--.53082S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF4xGFW7tw45Gry7Zw4fZrb_yoW8Zr1UpF
+	Z5Cr43GF4kJrZ3uF4fWr12q3sxWa93KF45t3sIka4fZF4UXw1kKrZ5KFy5uF4fGrZrJFWj
+	kryDWr90kF4rZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_jg4xUUUUU=
+X-CM-SenderInfo: hfkh05lebzmiizr6ij2wof0z/1tbiihLoxWjwr0CGgQAAsF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V/bGbS2sUY816rHU"
-Content-Disposition: inline
-In-Reply-To: <aPCo2f3lybfRJvP0@horms.kernel.org>
 
+Replace the __inline_bsearch() wrapper with a full implementation
+that includes mutex protection to ensure thread safety when
+multiple threads call bsearch() concurrently.
 
---V/bGbS2sUY816rHU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The original implementation lacked synchronization, which could
+lead to race conditions in multi-threaded environments when
+accessing shared arrays or using non-atomic comparison functions.
 
-On Thu, Oct 16, 2025 at 09:12:09AM +0100, Simon Horman wrote:
-> On Thu, Oct 16, 2025 at 06:57:59AM +0700, Bagas Sanjaya wrote:
->=20
-> ...
->=20
-> > I think that can go on separate net-next patch.
->=20
-> Yes, sure.
->=20
-> Would you like to send that patch or should I?
+Signed-off-by: XueBing Chen <chenxb_99091@126.com>
+---
+ lib/bsearch.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-I'll do it myself.
+diff --git a/lib/bsearch.c b/lib/bsearch.c
+index bf86aa66f..9a5a2e949 100644
+--- a/lib/bsearch.c
++++ b/lib/bsearch.c
+@@ -1,9 +1,12 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * A generic implementation of binary search for the Linux kernel
+  *
+  * Copyright (C) 2008-2009 Ksplice, Inc.
+  * Author: Tim Abbott <tabbott@ksplice.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; version 2.
+  */
+ 
+ #include <linux/export.h>
+@@ -28,9 +31,29 @@
+  * the key and elements in the array are of the same type, you can use
+  * the same comparison function for both sort() and bsearch().
+  */
+-void *bsearch(const void *key, const void *base, size_t num, size_t size, cmp_func_t cmp)
++DEFINE_MUTEX(cmp_mutex);
++void *bsearch(const void *key, const void *base, size_t num, size_t size,
++	      int (*cmp)(const void *key, const void *elt))
+ {
+-	return __inline_bsearch(key, base, num, size, cmp);
++	const char *pivot;
++	int result;
++
++	while (num > 0) {
++		pivot = base + (num >> 1) * size;
++		mutex_lock(&cmp_mutex);
++		result = cmp(key, pivot);
++		mutex_unlock(&cmp_mutex);
++		if (result == 0)
++			return (void *)pivot;
++
++		if (result > 0) {
++			base = pivot + size;
++			num--;
++		}
++		num >>= 1;
++	}
++
++	return NULL;
+ }
+ EXPORT_SYMBOL(bsearch);
+ NOKPROBE_SYMBOL(bsearch);
+-- 
+2.17.1
 
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---V/bGbS2sUY816rHU
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPC0dgAKCRD2uYlJVVFO
-o1RbAQDBHNO/O//8dreUmgf0Lc9dgz9gsgk+/PRYBouO4ont9AEAlEQdl9VwuHJJ
-7cOjWsWj/n4O6weq7V/0N67jnElupwU=
-=JFh8
------END PGP SIGNATURE-----
-
---V/bGbS2sUY816rHU--
 
