@@ -1,142 +1,126 @@
-Return-Path: <linux-kernel+bounces-855759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F4BBE235E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EDABE2364
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2368484672
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B05819C0262
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF572307AE1;
-	Thu, 16 Oct 2025 08:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF762C158F;
+	Thu, 16 Oct 2025 08:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HQmM4ypr"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="6nnANU8Y"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87EB1E0E08
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A3214D29B
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760604287; cv=none; b=mBonoyuLdgOhxT1crneRGZdXgIP5X6FULIEbPjjgnzhJUHpljY+p3lHY276OpiYB3ugPyUsm3QG6AxehnZrGRfvo6yoAYO86ywJJ6OqCu1+81OYviWy/w21/xaZl3ERfKlIxCKbgnLA60ojZGivzguffJIAXid2lNMN6kWnbRlM=
+	t=1760604404; cv=none; b=lThePAjBbk4H2RpJnp7BI2a6+9s2neoulTPMUsrNyRwDrVRnmvCB3hnwduocgvsHQ9yNgg5cpspRouPeSESjkSEIUanxeDweMDJdZrEDxdt1sVMuYYU+uj1sUHpvfxZGRbHDgqdScSbOhD9kXtcXyx+LIju9N9wJLUFhfzK9NL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760604287; c=relaxed/simple;
-	bh=vRX2tojo3/tm9805sxEoYBXfaRPegPiWe9oFIjqdDOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tb93Xk7mJPuOZm+2KMNK+mZIfTz9wrBOEBqkepXaBKRposXbq1CW32MrGoWu8CJXXelH4WaWN+NGANGIYFMzhSy7t9+jBgSMfRSImRxbdo9tK1ITPiX7sEGN/ldUkoJ5QKpRgNLMbraE+6iUcyXDhI4Cx4TJEeuFht2Do6tcMIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HQmM4ypr; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 06738C03598;
-	Thu, 16 Oct 2025 08:44:23 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 24AAB6062C;
-	Thu, 16 Oct 2025 08:44:42 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 56753102F22F1;
-	Thu, 16 Oct 2025 10:44:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760604281; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=N1rZiVWM7zYa7/iOhEFyo6sQl/kIYT8q4flK3hRKByc=;
-	b=HQmM4yprZlilGcaiSB4/XWd0S51BJtvXC4417lCtZL2fcCLWXoIicfoDQFC7COdyPP0d8U
-	sGUm6edEWmgUf3OBpeISB1P1kDAcotG5N0Jnq++reD2L0FyKrqycTTjt7b6aq6DJZRCcC4
-	MYkWwgL8NAqOE61PQINi3sOG5Jx56yvzF2AXr0go6QOjuzk3OANIeriItOuNTML1TK13Za
-	48NEqBqW1wlUbAloKzagYwDULgmqA4Urj/6Uv7VdtM+yoH7C0DSsGkKrZJsfOhog3uYzRV
-	Kolrc5ZfmqkyT8TOXZll5Fe9p88LnOa+7QdJNsG69DX1P3mVF/jiMY1id8+JJw==
-Date: Thu, 16 Oct 2025 10:44:34 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
- <alexis.lothore@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] net: ethtool: tsconfig: Re-configure
- hwtstamp upon provider change
-Message-ID: <20251016104338.6677e807@kmaincent-XPS-13-7390>
-In-Reply-To: <731e8fa7-465b-4470-9036-c59fea602c07@bootlin.com>
-References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
-	<20251015102725.1297985-4-maxime.chevallier@bootlin.com>
-	<20251015144526.23e55ee0@kmaincent-XPS-13-7390>
-	<731e8fa7-465b-4470-9036-c59fea602c07@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760604404; c=relaxed/simple;
+	bh=NnrcmzFkXtSy1OqvRrmhHUDsaiHNiSnJlYk78esVVzo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c/UopdBQu00zQodTiyybpOZxd5dJ9XyxDctRCbylhLPwVqSh/HeJK2A76QS1DGKILxaErkHWqMqqUGNn8lDXVjAw9toNlr7Pma3ynBtwpjhSsbDSKdvol473XBWZaQ2JkXaC4wEGkpm5O4zEV7PjSZXUOXDwaXxbk3O1/LcbDDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=6nnANU8Y; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 9C6DA685CAF;
+	Thu, 16 Oct 2025 10:46:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1760604394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NnrcmzFkXtSy1OqvRrmhHUDsaiHNiSnJlYk78esVVzo=;
+	b=6nnANU8YeEHT1VoI/11CWAfGUbZfwrss8H9dYRN1mO7Yz3Y7M91EJ1VlgrqnksrEI7usD6
+	1qMdUThysEs5uZa7N3Jdhry6Tk5s1e71iVe3jo5k9Dugt2+8xG56DIi1K1IfP2/10x69fz
+	tIKfSlhdFyqYl/5j4E4gOdoHXucCwHw8q4vC6j9zdMeH9qzaM7j6D5nfaN7k/q2OEOFzY0
+	yyefEpRtUc23/xQmrVy4SSjYGISgCCHFB3ipj166yE2sGMU6mAwFcws2Y32FNoyLiTgo0j
+	FTbKzHsu2Z/pWHMj7INJI9zASPV1wjp4k/VblEZhRei3n4eE0pONd7QjLZm4MA==
+Message-ID: <0b2fa71f1ccd49d66ca02b6c44ba8fe2135e9b6f.camel@svanheule.net>
+Subject: Re: [PATCH v3] regmap: add cache validity to REGCACHE_FLAT
+From: Sander Vanheule <sander@svanheule.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	 <rafael@kernel.org>, linux-kernel@vger.kernel.org
+Date: Thu, 16 Oct 2025 10:46:33 +0200
+In-Reply-To: <a2f7e2c3-f072-40f7-a865-5693b82b636e@sirena.org.uk>
+References: <20250109180256.6269-1-sander@svanheule.net>
+	 <a2f7e2c3-f072-40f7-a865-5693b82b636e@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 16 Oct 2025 10:01:53 +0200
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+Hi Mark,
 
-> Hi K=C3=B6ry,
+On Thu, 2025-01-09 at 20:11 +0000, Mark Brown wrote:
+> On Thu, Jan 09, 2025 at 07:02:55PM +0100, Sander Vanheule wrote:
+> > The flat regcache will always assume the data in the cache is valid.
+> > Since the cache takes priority over hardware values, this may shadow th=
+e
+> > actual state of the device. This is not the case with REGCACHE_RBTREE
+> > for example, which makes these implementation behave differently.
 >=20
-> On 15/10/2025 14:45, Kory Maincent wrote:
-> > On Wed, 15 Oct 2025 12:27:23 +0200
-> > Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
-> >  =20
-> >> When a hwprov timestamping source is changed, but without updating the
-> >> timestamping parameters, we may want to reconfigure the timestamping
-> >> source to enable the new provider.
-> >>
-> >> This is especially important if the same HW unit implements 2 provider=
-s,
-> >> a precise and an approx one. In this case, we need to make sure we call
-> >> the hwtstamp_set operation for the newly selected provider. =20
-> >=20
-> > This is a design choice.
-> > Do we want to preserve the hwtstamp config if only the hwtstamp source =
-is
-> > changed from ethtool?
-> > If we want to configure the new source to the old source config we will=
- also
-> > need to remove this condition:
-> > https://elixir.bootlin.com/linux/v6.17.1/source/net/ethtool/tsconfig.c#=
-L339
-> > =20
+> This is causing spurious events to be generated by the audio drivers on
+> Pine64 Plus, the audio drivers for that do use the flat cache (see
+> sound/soc/sunxi):
 >=20
-> What I get from the ethtool output is that the ts config is per-source.
-> Re-applying the old config to the new source may not work if the new one
-> doesn't have the same capabilities.
+> =C2=A0=C2=A0 https://lava.sirena.org.uk/scheduler/job/1056879#L1897
 >=20
-> >=20
-> > I do not really have a strong opinion on this, let's discuss which beha=
-vior
-> > we prefer. =20
+> I haven't investigated yet but I suspect this is going to have been
+> triggered by the change from assuming all registers default to 0 if not
+> otherwise specified to reading back from the hardware if the first
+> access is a read.=C2=A0 That does seem a bit like a driver bug (I'm not c=
+lear
+> on the precise mechanism apart from anything else) but I worry that
+> it'll be a widespread one where things do read/modify/write cycles.
+> There may also be initialisation from suspend issues where we stop
+> resetting values after resume.=C2=A0 We do need a plan for this, possibly=
+ we
+> should default to the old behaviour.
 >=20
-> Well if we want to support different timestamp providers provided by the =
-same
-> HW block (same MAC or even same PHY), then we need a way to notify the
-> provider when the timestamp provider gets selected and unselected.
->=20
-> Otherwise there's no way for the provider to know it has been re-enabled,
-> unless we perform a config change at the same time.
+> It's definitely too late in the release cycle to apply the change in any
+> case.
 
-Oh right, indeed, we need a call to ndo_hwtstamp_set to tell the provider to
-change the qualifier configured. I missed that.
-This could even be a fix but as it is used nowhere it won't fix anything.
+Apologies for the delay, it took me some time to get back to this properly.
 
-Acked-by: Kory Maincent <kory.maincent@bootlin.com>
+Would you be open to providing a new type of flat cache with sparse
+initalisation (e.g. REGCACHE_FLAT_SPARSE) to provide the behavior provided =
+by
+this patches? Most of the code could be shared with REGCACHE_FLAT.
 
-Thank you!
+REGCACHE_FLAT and REGCACHE_FLAT_SPARSE would both maintain the cache validi=
+ty as
+in this patch. On a read, _FLAT_SPARSE would return -ENOENT on an invalid c=
+ache
+entry. _FLAT would then always return 0 and the (zero-initialized) value,
+ignoring the cache validity and maintaining the behavior drivers may curren=
+tly
+rely on.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+If you would like existing drivers to transition to REGCACHE_FLAT_SPARSE, I
+could also add a deprecation warning for users of REGCACHE_FLAT.
+
+I can also just send a patch series, if that helps.
+
+Best,
+Sander
 
