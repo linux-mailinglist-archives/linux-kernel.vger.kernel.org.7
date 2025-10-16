@@ -1,189 +1,168 @@
-Return-Path: <linux-kernel+bounces-856945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC0ABE5834
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:05:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA0CBE585C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041FE5484FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:05:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 827F84EA495
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E452DF3E7;
-	Thu, 16 Oct 2025 21:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6060F2E1F11;
+	Thu, 16 Oct 2025 21:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+d/Dd0K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLE4WBke"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79783BB5A;
-	Thu, 16 Oct 2025 21:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A544D3BB5A;
+	Thu, 16 Oct 2025 21:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760648747; cv=none; b=m9/vJxhqTU64VIYwXwBwq1w7sOmxVGVm2FBOpWvQVGhxovisezx4vQiH+BTwmX3YEBz+tkRBNCdpGPNrel1miNdDo8rz66rjDRNfJw7MxzldzQEdeMl/E1ZTuuUqJWKBLT9m/uG2mb8eclH8EHIfvicb2d7yL1Leuf4jTNNsHRI=
+	t=1760649009; cv=none; b=Iac97Q5hKmMz1fTGUGqd7D9LX637aUmf0lsPqgcntUwtntq2fv6o8VJrFdIGQy9AuV7hcm6N8XuA/SZt/Jgn6hs/rCSzsLWYSbsK0vX0VDoiTBwPO53FWogh9dUCe466S2hhC4OXdo+4aV5AoY8yjHKsE+rPtZh9P6+oW38I4Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760648747; c=relaxed/simple;
-	bh=KzjbcAo/PwUxext8umITliZVstWqP+nCRZJf+X0AXhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=id+O80XPhuuU5UP+v+kcoN6lb0a36wZUwejJY/7UMqJw1WKQ0NmlX8IfDTCqx9wD6z4S6gWNP6EVFd4wOHMV1w8LX/Wb6fJU65MKtpPJE/mQE+Sz8cK5Y2PzYVUNlhn6IQbAEvbqBi4aBm0bC0Spk7fwWMljhMbsZ5mSUe3ksRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+d/Dd0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A389C4CEF1;
-	Thu, 16 Oct 2025 21:05:44 +0000 (UTC)
+	s=arc-20240116; t=1760649009; c=relaxed/simple;
+	bh=dIiHINW5Bj1JFH3BL4BlKw1HSHlW2rw7nfPJWBosgAQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HSd62PNj8aO3aakc0n+EwJfmB6IilY0UqENqVJ+lT09KJ1bDzxCFDiZTT0AZXpeZpfcw1Z5slVpI8MyMITdfjpx2VVJ+NdYUtwIBrG+qLcizZC2fKpq7r3clggyIf6yDmht2QQhQm3z7uXSkuRzCNWtLEeEILBdRcdrlhshzrek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLE4WBke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC8A7C4CEF1;
+	Thu, 16 Oct 2025 21:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760648747;
-	bh=KzjbcAo/PwUxext8umITliZVstWqP+nCRZJf+X0AXhQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Y+d/Dd0KT1E643lExUM2uTgU5/Y6Y+fiHscI9ACyQG18AsO0O6B5SjcbTmwZejU0y
-	 4sbR94VZMMPbY4McWqvQyw/OXH9Ng8za/evK0/Pc2VEF4vQVvBTcFRD9/K2HZ0uKSR
-	 y8vz6IHtnQvKxOAMRltmTRjbcG8S1fKORsPsFB/Xvuq+jlNAYIxVWVrJwnKOqJrW3R
-	 xVPa5x6JVBKAHqT5PgYJZ7R4keOGtVwOBqk9b/2ObiHTOXOMnQjIBXvUuT85JwAIdI
-	 MgUCJ6FCMgYPeXnxN1Wa/jZ+nL26P/zXP8Hw9wQCVlonfbVsjCbz4qZpFGLBiFf13e
-	 A3co5k8Sol7Rw==
-From: Benno Lossin <lossin@kernel.org>
-To: Benno Lossin <lossin@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Fiona Behrens <me@kloenk.dev>,
-	Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] add `[pin_]init_scope` to execute code before creating an initializer
-Date: Thu, 16 Oct 2025 23:05:39 +0200
-Message-ID: <20251016210541.650056-1-lossin@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1760649009;
+	bh=dIiHINW5Bj1JFH3BL4BlKw1HSHlW2rw7nfPJWBosgAQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=GLE4WBkewy5OvAs6L3yyOlgcdFL5cxVgDJlMZ9ApUWis+p6D5BeDj1psH4zQEZCFR
+	 CRtjnN5ScBO2agtN5sOzFwdIT2BFFIvlI7go+I70fHZFWXzxcGTqBfxSI3rDYW9b7S
+	 h2YQFuq4+9krqJu8c1H9zfROzafxhic3YeaMobTtdcsuKdqLkeAVpCb+J65PyegfnQ
+	 kKEPGY6m+7bqGbVm/y0FEqKr6Z96qUULLbqeNEap9K6/HlD+cahy+cMlpuj7JZeD7h
+	 EPUrtLYBeXqQKwtI0cnluxhItb0/paUbr6HuVkkiZACT8Js1au5J3NEOiR5jvQXaIF
+	 xwhLRDoN/TrSg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v5 0/2] accel: Add Arm Ethos-U NPU
+Date: Thu, 16 Oct 2025 16:06:03 -0500
+Message-Id: <20251016-ethos-v5-0-ba0aece0a006@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADte8WgC/2XPywrCMBCF4VeRrI1kJk01rnwPcZHLxAallUSCU
+ vrupuIFcXmGfD9kZJlSpMy2i5ElKjHHoa9DLRfMdaY/Eo++boYClViD4nTthsxl8F5qCm0Azer
+ bS6IQb8/O/lB3F/N1SPdntsB8fRUQX4UCXHDnwCkjnLXB7k6UejqvhnRkc6Lgl20A3gwrMwg6O
+ IVGq38mv0xj+2aystZ6bORaUhPUH2s+DMTnm6WpbAP1aKR3NsgfNk3TAzZ9i45AAQAA
+X-Change-ID: 20250715-ethos-3fdd39ef6f19
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
+ Daniel Stone <daniel@fooishbar.org>, Frank Li <Frank.li@nxp.com>, 
+ Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.15-dev
 
-In more complex cases, initializers need to run arbitrary code before
-assigning initializers to fields. While this is possible using the
-underscore codeblock feature (`_: {}`), values returned by such
-functions cannot be used from later field initializers.
+The Arm Ethos-U65/85 NPUs are designed for edge AI inference 
+applications[0].
 
-The two new functinos `[pin_]init_scope` allow users to first run some
-fallible code and then return an initializer which the function turns
-into a single initializer. This permits using the same value multiple
-times by different fields.
+The driver works with Mesa Teflon. The Ethos support was merged on 
+10/15. The UAPI should also be compatible with the downstream (open 
+source) driver stack[2] and Vela compiler though that has not been 
+implemented.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Benno Lossin <lossin@kernel.org>
+Testing so far has been on i.MX93 boards with Ethos-U65 and a FVP model 
+with Ethos-U85. More work is needed in mesa for handling U85 command 
+stream differences, but that doesn't affect the UAPI.
+
+A git tree is here[3].
+
+Rob
+
+[0] https://www.arm.com/products/silicon-ip-cpu?families=ethos%20npus
+[2] https://gitlab.arm.com/artificial-intelligence/ethos-u/
+[3] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git ethos-v5
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- rust/pin-init/src/lib.rs | 87 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+Changes in v5:
+- Rework Runtime PM init in probe
+- Use __free() cleanups where possible
+- Use devm_mutex_init()
+- Handle U85 NPU_SET_WEIGHT2_BASE and NPU_SET_WEIGHT2_LENGTH
+- Link to v4: https://lore.kernel.org/r/20251015-ethos-v4-0-81025a3dcbf3@kernel.org
 
-diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
-index dd553212836e..8dc9dd5ac6fd 100644
---- a/rust/pin-init/src/lib.rs
-+++ b/rust/pin-init/src/lib.rs
-@@ -1392,6 +1392,93 @@ pub fn pin_init_array_from_fn<I, const N: usize, T, E>(
-     unsafe { pin_init_from_closure(init) }
- }
- 
-+/// Construct an initializer in a closure and run it.
-+///
-+/// Returns an initializer that first runs the closure and then the initializer returned by it.
-+///
-+/// See also [`init_scope`].
-+///
-+/// # Examples
-+///
-+/// ```
-+/// # use pin_init::*;
-+/// # #[pin_data]
-+/// # struct Foo { a: u64, b: isize }
-+/// # struct Bar { a: u32, b: isize }
-+/// # fn lookup_bar() -> Result<Bar, Error> { todo!() }
-+/// # struct Error;
-+/// fn init_foo() -> impl PinInit<Foo, Error> {
-+///     pin_init_scope(|| {
-+///         let bar = lookup_bar()?;
-+///         Ok(try_pin_init!(Foo { a: bar.a.into(), b: bar.b }? Error))
-+///     })
-+/// }
-+/// ```
-+///
-+/// This initializer will first execute `lookup_bar()`, match on it, if it returned an error, the
-+/// initializer itself will fail with that error. If it returned `Ok`, then it will run the
-+/// initializer returned by the [`try_pin_init!`] invocation.
-+pub fn pin_init_scope<T, E, F, I>(make_init: F) -> impl PinInit<T, E>
-+where
-+    F: FnOnce() -> Result<I, E>,
-+    I: PinInit<T, E>,
-+{
-+    // SAFETY:
-+    // - If `make_init` returns `Err`, `Err` is returned and `slot` is completely uninitialized,
-+    // - If `make_init` returns `Ok`, safety requirement are fulfilled by `init.__pinned_init`.
-+    // - The safety requirements of `init.__pinned_init` are fulfilled, since it's being called
-+    //   from an initializer.
-+    unsafe {
-+        pin_init_from_closure(move |slot: *mut T| -> Result<(), E> {
-+            let init = make_init()?;
-+            init.__pinned_init(slot)
-+        })
-+    }
-+}
-+
-+/// Construct an initializer in a closure and run it.
-+///
-+/// Returns an initializer that first runs the closure and then the initializer returned by it.
-+///
-+/// See also [`pin_init_scope`].
-+///
-+/// # Examples
-+///
-+/// ```
-+/// # use pin_init::*;
-+/// # struct Foo { a: u64, b: isize }
-+/// # struct Bar { a: u32, b: isize }
-+/// # fn lookup_bar() -> Result<Bar, Error> { todo!() }
-+/// # struct Error;
-+/// fn init_foo() -> impl Init<Foo, Error> {
-+///     init_scope(|| {
-+///         let bar = lookup_bar()?;
-+///         Ok(try_init!(Foo { a: bar.a.into(), b: bar.b }? Error))
-+///     })
-+/// }
-+/// ```
-+///
-+/// This initializer will first execute `lookup_bar()`, match on it, if it returned an error, the
-+/// initializer itself will fail with that error. If it returned `Ok`, then it will run the
-+/// initializer returned by the [`try_init!`] invocation.
-+pub fn init_scope<T, E, F, I>(make_init: F) -> impl Init<T, E>
-+where
-+    F: FnOnce() -> Result<I, E>,
-+    I: Init<T, E>,
-+{
-+    // SAFETY:
-+    // - If `make_init` returns `Err`, `Err` is returned and `slot` is completely uninitialized,
-+    // - If `make_init` returns `Ok`, safety requirement are fulfilled by `init.__init`.
-+    // - The safety requirements of `init.__init` are fulfilled, since it's being called from an
-+    //   initializer.
-+    unsafe {
-+        init_from_closure(move |slot: *mut T| -> Result<(), E> {
-+            let init = make_init()?;
-+            init.__init(slot)
-+        })
-+    }
-+}
-+
- // SAFETY: the `__init` function always returns `Ok(())` and initializes every field of `slot`.
- unsafe impl<T> Init<T> for T {
-     unsafe fn __init(self, slot: *mut T) -> Result<(), Infallible> {
+Changes in v4:
+- Use bulk clk API
+- Various whitespace fixes mostly due to ethos->ethosu rename
+- Drop error check on dma_set_mask_and_coherent()
+- Drop unnecessary pm_runtime_mark_last_busy() call
+- Move variable declarations out of switch (a riscv/clang build failure)
+- Use lowercase hex in all defines
+- Drop unused ethosu_device.coherent member
+- Add comments on all locks
+- Link to v3: https://lore.kernel.org/r/20250926-ethos-v3-0-6bd24373e4f5@kernel.org
 
+Changes in v3:
+- Rework and improve job submit validation                                                            
+- Rename ethos to ethosu. There was an Ethos-Nxx that's unrelated.
+- Add missing init for sched_lock mutex
+- Drop some prints to debug level          
+- Fix i.MX93 SRAM accesses (AXI config)
+- Add U85 AXI configuration and test on FVP with U85
+- Print the current cmd value on timeout                                                              
+- Link to v2: https://lore.kernel.org/r/20250811-ethos-v2-0-a219fc52a95b@kernel.org
+
+Changes in v2:
+- Rebase on v6.17-rc1 adapting to scheduler changes
+- scheduler: Drop the reset workqueue. According to the scheduler docs,
+  we don't need it since we have a single h/w queue.
+- scheduler: Rework the timeout handling to continue running if we are
+  making progress. Fixes timeouts on larger jobs.
+- Reset the NPU on resume so it's in a known state
+- Add error handling on clk_get() calls
+- Fix drm_mm splat on module unload. We were missing a put on the
+  cmdstream BO in the scheduler clean-up.
+- Fix 0-day report needing explicit bitfield.h include
+- Link to v1: https://lore.kernel.org/r/20250722-ethos-v1-0-cc1c5a0cbbfb@kernel.org
+
+---
+Rob Herring (Arm) (2):
+      dt-bindings: npu: Add Arm Ethos-U65/U85
+      accel: Add Arm Ethos-U NPU driver
+
+ .../devicetree/bindings/npu/arm,ethos.yaml         |  79 +++
+ MAINTAINERS                                        |   9 +
+ drivers/accel/Kconfig                              |   1 +
+ drivers/accel/Makefile                             |   1 +
+ drivers/accel/ethosu/Kconfig                       |  10 +
+ drivers/accel/ethosu/Makefile                      |   4 +
+ drivers/accel/ethosu/ethosu_device.h               | 195 ++++++
+ drivers/accel/ethosu/ethosu_drv.c                  | 403 ++++++++++++
+ drivers/accel/ethosu/ethosu_drv.h                  |  15 +
+ drivers/accel/ethosu/ethosu_gem.c                  | 704 +++++++++++++++++++++
+ drivers/accel/ethosu/ethosu_gem.h                  |  46 ++
+ drivers/accel/ethosu/ethosu_job.c                  | 540 ++++++++++++++++
+ drivers/accel/ethosu/ethosu_job.h                  |  41 ++
+ include/uapi/drm/ethosu_accel.h                    | 261 ++++++++
+ 14 files changed, 2309 insertions(+)
+---
 base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
--- 
-2.51.0
+change-id: 20250715-ethos-3fdd39ef6f19
+
+Best regards,
+--  
+Rob Herring (Arm) <robh@kernel.org>
 
 
