@@ -1,145 +1,148 @@
-Return-Path: <linux-kernel+bounces-855677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BE1BE1F3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:41:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B9FBE1F45
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4659C3B302F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:41:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0D974E258C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0972C2FABFE;
-	Thu, 16 Oct 2025 07:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFEC2FB96A;
+	Thu, 16 Oct 2025 07:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YTFbDkD2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lwvrmy0F"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E618024
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2943D2417E0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760600466; cv=none; b=GXCL9SzmObrFTdrolNT69i/PwrwsWsNMuShB5roGXlqaUWUm1X67EiZSggvPn1FiMaikPrHmq7bF43iq0/YTURfECWka/yHn5U9ZWMkx6YT/PwRkd89WyTuciZpH+l1NOvkAnHBw2EM5Fz6fTnQI0vOdtG4pU4CojMd3W9gfPd4=
+	t=1760600545; cv=none; b=IJ9hO2mHZN9F5NQMqA1UBxBg6MnXG308jEruVzJWvYQvkC9fGtvmSboiJ18G7DR4Ki5PQQ5Hmo50ibKY9JVHJEHqPTffBZyixVSHC2aiD1L05yEEqxNUNe83wxy7fHMiKpMh8kZMHZFHknk9zxIbW/t0Yt9RgECU7Bze3x8hrsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760600466; c=relaxed/simple;
-	bh=Fup1vFbNmBkUZQoA3QUEeql7GGJw+t+MaKUfaCBQc6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhXj9i4SBtIS8sr2quLFcTHpegyUvyHxeJxUxJeSIixL5cehLNknrCZ+WycyzFhxgfrzo0ffyHoelsoK1SxckwDEzjS2jgLirRLaGJ1bqxMzFoZBNbsKLtwVyeYlsU8IvLSMkLgWzentxw5qeH9QF2pc9PNOWL5nHfpPOMiOr2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YTFbDkD2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=+W0C4tyTouRQMMSvh/W0piKcep9xR4b682+mPek2OrY=; b=YTFbDkD2EupxuCaBsij4QRxCte
-	b3axQhOpHdYsBo61wjP6mT4Bj4ZGxwKFgn6gahBBmiFhq8DgkKcXaEIFPm6A+IjfPPSJk8V54rI0i
-	tvdhrV6G133pYhR2Wu00o77KkRm8Vp+8mIdl4gm3SuY2gY8MTs2rQMI0LzkhFamMa9sGhVnoLrMkZ
-	2XRHLySI2zg4Kh8RcsiLTCq5v3U4L77KhDafqGDbHM0D62fZA9wvVn0c75tAaf7ZJQ2dsr5ClFKO/
-	d4yFNdOBNBeT72wKrMqGQY5HGDQqnKjAVUNScz9ga94bMXxfNiQleT9WdNJG4lpgxfNtNAtyxzhzH
-	QRbxsfjg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9Ib9-0000000GQoI-2KfR;
-	Thu, 16 Oct 2025 07:40:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 513333001D4; Thu, 16 Oct 2025 09:40:32 +0200 (CEST)
-Date: Thu, 16 Oct 2025 09:40:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jianyong Wu <jianyong.wu@outlook.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Tingyin Duan <tingyin.duan@gmail.com>,
-	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
-	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
-	Chen Yu <yu.chen.surf@gmail.com>,
-	Adam Li <adamli@os.amperecomputing.com>,
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/19] sched/fair: Introduce a static key to enable cache
- aware only for multi LLCs
-Message-ID: <20251016074032.GX3289052@noisy.programming.kicks-ass.net>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <ef136e6a6f5a2ef840b1f9571c47411f04705b6a.1760206683.git.tim.c.chen@linux.intel.com>
- <20251015110450.GO3289052@noisy.programming.kicks-ass.net>
- <15b871f2-49b8-4b62-926d-31f93ad49f51@intel.com>
+	s=arc-20240116; t=1760600545; c=relaxed/simple;
+	bh=TI1ysOXPP4hVMHn60o6TUG3RYzs3fDZDuOhKElmj1NM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QB4bvdkWcgSV9oys+V/0RgvfS3U3eBhXEMUW6Vw0KCjBBDQ/2ifrDG9Hm+W5fl0EwB+wU7w6tuvPu1dmf7Aljl6i2feACi57l8gn/Xm7NAhl9y7b0khTyUfnklcKtBqHLWFKDSGwOLNuy0s/IelSSk5uwC8lC81P/InnPj13Hek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lwvrmy0F; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3612c38b902so3586301fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760600541; x=1761205341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0TL/ekeJOQg26wztgmTDgEuvDo0zmkivmyNIAbPqQQ=;
+        b=Lwvrmy0FR4SSoTtcsz+k6eel0nldj4A65RjZdGhN88JE/tBUxH96s4h+YSwUtVEMd6
+         V7+0OEX1S4NMBNnqFbagKcBO5U2sHUPKo5su3skF2mkklIze/l+3Qw/PB0SyOnR6a4z1
+         PZNfDKybX+ET5BdHo4XTi1drTMnryJO63v44eDZ2zyFNOb1xBrVFKGVjE8YmSriA28qP
+         w8STUjf5qEqlONfS0WIu160nY+7oGQ5cOulO11V6tMwFM4Y2kai6iiR0cvAPC54EfU1t
+         RR5hrpGkGY7HFzWmLaPyTllMQKV069nSrd150HjZPXCMo8VMIvucyem3reIAd1/q7GgI
+         6y+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760600541; x=1761205341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e0TL/ekeJOQg26wztgmTDgEuvDo0zmkivmyNIAbPqQQ=;
+        b=YOYcuzEqmEBk4CD7OJhUk5zIMPquvBP+YxofNs5HE/SlAIJ4rH7fPv9jFz7mNer2Mo
+         O+TlfmrxbZwTZ7ACku57wpeL9ffaeIdJ1uC7E5uNVTe1YvZhxOIirNmcQmL5Mb0tM21n
+         3LEEP+k7tPABOxvsbf8by5xP7yOeZ0zaUgUcD3AB87oDdf8KH7UdkfGyG6UPwPpV0bmk
+         qTyBF84sqliCS6bBeMFWrgyzqVcwXF0nNBAA49bz8goMJcTEpG75tSKIFqnzi1h6Wgh1
+         /apJ49z0LxrVlCOTdbBSDf0joM9/niXGA3yaxbTaPnVrkCohBqu7aBHgdTxcsfzjpbUS
+         xKUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwK/JYITVrYef4rwXvF1Pr0+vmE6S7R7qfwfeXTjF7g4onrv7Qzu/DW3ZW+F6ZTtYHDu7nHoTTgy2sV7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyACPBs6734F/zrTMs/+jwqPwXemmE7IjrNK1Y456BdNeLgEx/B
+	QkOc/pVVjpQLxCmyFR5XNLzOIXSt2lsFMd4/3yUfju1M1xi0D/3dJIeQ
+X-Gm-Gg: ASbGncusLoLScMB1A7cLVcCDqv49m2WgRb7KO+QffVvStJD12UEaLGHu8mSgd+FHZi5
+	LjbRePoPcKg/akYapvQGVUfG6c+ePRZ2m2cVagDwYNXlNLXUjBGciUx5lOWlU4TRAh4NqOqclCg
+	BqGL36DHuUq4orwd9ZgUGG3tdV/wcX061O1wiuvOjCR0BBWeVElKe1CMU22x8suZjHmB+mUAsIn
+	TU5iEoAFbP5Fnq1mJostIL5ACtx0DFOUBup0Fl+XpbJDeU+XvkTfYXTxxjRglcTKOPbuGw2pTQy
+	pymr9nbJA4SjT/McltC3tkRvV6M8vNWMU/PSzlWAf+nwl4jJWm68X6QfGZmtQDXk2mToauowTtg
+	U4UhoekM66eZrix3zpwTIVvhnxDVYCpUHIP2HwXz1Az19Keb1xSnNlabXZBYST7Ob6J17QZ8tJs
+	mCmg==
+X-Google-Smtp-Source: AGHT+IHbI5nRs9M56J22ztjzyvcXIL8I57Igr4lqZlKhfr5x5C0oH/gLGKHadu7CjkSyNXpdSbLboA==
+X-Received: by 2002:a2e:a99f:0:b0:372:4d3d:aace with SMTP id 38308e7fff4ca-37609f3086emr82578691fa.38.1760600540863;
+        Thu, 16 Oct 2025 00:42:20 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea14d46sm53226121fa.34.2025.10.16.00.42.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 00:42:20 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/4 RESEND] ARM: tegra: complete Tegra 4 and Tegra K1 device trees
+Date: Thu, 16 Oct 2025 10:41:48 +0300
+Message-ID: <20251016074152.8759-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <15b871f2-49b8-4b62-926d-31f93ad49f51@intel.com>
 
-On Thu, Oct 16, 2025 at 12:25:27AM +0800, Chen, Yu C wrote:
-> On 10/15/2025 7:04 PM, Peter Zijlstra wrote:
-> > On Sat, Oct 11, 2025 at 11:24:41AM -0700, Tim Chen wrote:
-> > > From: Chen Yu <yu.c.chen@intel.com>
-> > > 
-> > > Enable cache-aware load balancing only if at least 1 NUMA node has
-> > > more than one LLC.
-> > > 
-> > > Suggested-by: Libo Chen <libo.chen@oracle.com>
-> > > Suggested-by: Adam Li <adamli@os.amperecomputing.com>
-> > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> > > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > > ---
-> > >   kernel/sched/fair.c     | 15 ++++++++++++---
-> > >   kernel/sched/sched.h    |  1 +
-> > >   kernel/sched/topology.c | 14 ++++++++++++--
-> > >   3 files changed, 25 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index cd080468ddc9..3d643449c48c 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -1208,6 +1208,14 @@ static s64 update_se(struct rq *rq, struct sched_entity *se)
-> > >   __read_mostly unsigned int llc_overload_pct       = 50;
-> > >   __read_mostly unsigned int llc_imb_pct            = 20;
-> > > +DEFINE_STATIC_KEY_FALSE(sched_cache_allowed);
-> > > +
-> > > +static inline bool sched_cache_enabled(void)
-> > > +{
-> > > +	return sched_feat(SCHED_CACHE) &&
-> > > +		static_branch_likely(&sched_cache_allowed);
-> > > +}
-> > 
-> > Urgh; do we really need _2_ static keys stacked for this? I'm thinking
-> > one should be well enough.
-> 
-> SCHED_CACHE allows user space to turn on/off the feature at runtime,
-> while sched_cache_allow is a hardware capability. This capability is
->  disabled if there are no multiple LLCs within one node. I’m not sure
-> if using one key could support the above two scenarios.
+Complete T114 and T124 device trees.
 
-Of course it can! There is one decision 'is cache aware crap enabled',
-you only need one branch for that. You just need to make the code that
-sets the branch state a little more complicated.
+---
+Changes in v5:
+- dropped clock and reset names from TSEC schema
+- removed clock and reset names from device nodes
 
-Things like sysctl/kernel/sched_schedstats
-sysctl/kernel/sched_energy_aware debugfs/sched/numa_balancing all work
-like this.
+Changes in v4:
+- configured tsec schema to cover Tegra210 TSEC as well
+- added required to tsec schema
+- reset-names preserved for consistency with other host1x devices and align with T210
+- added clock-names to align with T210
+- operating-points-v2 check https://lore.kernel.org/lkml/20230119131033.117324-1-krzysztof.kozlowski@linaro.org/
 
-Take the sched_energy_aware one, that is very similar; it will only
-enable if the topology supports energy aware stuff. But then still lets
-userspace disable it.
+Changes in v3:
+- added tsec description
+- swapped compatible back to use enum
+- clock and reset description dropped, added maxItems: 1
+- reset-names preserved for consistency with other host1x devices
+- dropped interconnects and interconnect-names
+- dropped isp nodename
+- dropped multiple rest names for mpe/msenc
+- dropped tegra114 msenc example
+- fixed reset name in second isp in t124 dtsi
 
-Same for this. The static branch condition should be:
-'topology-has-multi-llc && userspace-wants-it'.
+Changes in v2:
+- dropped accepted commits
+- added EPP, MPE and ISP compatibility for T114 and T124
+- added TSEC schema
+---
+
+Svyatoslav Ryhel (4):
+  dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for
+    Tegra114+
+  ARM: tegra114: add missing HOST1X device nodes
+  ARM: tegra124: add missing HOST1X device nodes
+  arm64: tegra210: drop redundant clock and reset names from TSEC node
+
+ .../display/tegra/nvidia,tegra114-tsec.yaml   | 68 +++++++++++++++++++
+ .../display/tegra/nvidia,tegra20-epp.yaml     | 14 ++--
+ .../display/tegra/nvidia,tegra20-isp.yaml     | 15 ++--
+ .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 64 +++++++++++++++++
+ arch/arm/boot/dts/nvidia/tegra124.dtsi        | 64 +++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  2 -
+ 7 files changed, 230 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+
+-- 
+2.48.1
+
 
