@@ -1,197 +1,236 @@
-Return-Path: <linux-kernel+bounces-855629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2985CBE1CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:51:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD20BE1CFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC1914E6723
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:51:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 655714E7765
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFEF2ECD26;
-	Thu, 16 Oct 2025 06:51:31 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C42239E63
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760597491; cv=none; b=Z1TcXA2lK/2uL7qP/W6LPOyHHMpdqzOgxdCL8d9Jogv0tZlzV3A2XGYu//+r68GOrmdLMq+flUwDZSU51RspyztmX4BF9VwfEkGRBuLEEfud5eR6peJlffZTqZgskm3dIFXnmCvdajvu5Yz36jXTusSMUYo3v3RIoNfWM4gOg94=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760597491; c=relaxed/simple;
-	bh=RgjWqRhjJP9gMUhspF15bVrGw+KTodR9auMRPhnUGWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vCLH5xfQ48ia5Rl1eIDPnDt9MgLoX+MTy0+8ovhnJPQoQsXcM/S/d5cOc9ips5XisUX2euaeQpDOmzwZ8YroA4xwdlmEsBuW8i3BoSv+ivmUqbjSsUGGIFWMr8/pM7trndZaK3m2nLA6nXivoCDRxV1knF7hAXPJMapESfzHc/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxM9DnlfBo6sQWAA--.49246S3;
-	Thu, 16 Oct 2025 14:51:19 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxusDllfBoAX3pAA--.33076S2;
-	Thu, 16 Oct 2025 14:51:18 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>
-Cc: amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] drm/amd: Fix set but not used warnings
-Date: Thu, 16 Oct 2025 14:51:17 +0800
-Message-ID: <20251016065117.2797-1-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6B12F0C49;
+	Thu, 16 Oct 2025 06:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJZ9zG4j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E5E23D298;
+	Thu, 16 Oct 2025 06:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760597517; cv=fail; b=U0zOwey6j7bJO1rENuPOU6Z6OrzDRG5zWXAAu2fTJ4inUeb1og9cHWhoECrVnyxqGpKxRPm+aVKrOOgNVt54nMAE9E2Bp7cykfZeRRUGGaah090IOv3VuUzPDH2upXqMo8Ss9nI2KXBiSP+WVRpo913yoImEMPca/gaTVplmTRA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760597517; c=relaxed/simple;
+	bh=LHnB+z4bPxV+ntjp7MrwJXg+CxYzITi6Z36tcjYgtgk=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=maiXRibw5cQBIC5QmoVNeGz2aJPlJCzVSpc0N+1UTZqIP7fIhs/l4QbNjSdNGn+O1twkdEpfVgb3n1szjhD4JnXXpLumCEO4IcZ7mwoaWUMjRzoOnJ1ZjMxVZDAl+I/rz+xdXlv1a36cDyJrdV4m5AwnHu2vRZdxKZwIl5cCqL8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJZ9zG4j; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760597516; x=1792133516;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=LHnB+z4bPxV+ntjp7MrwJXg+CxYzITi6Z36tcjYgtgk=;
+  b=KJZ9zG4jiPatHZsoh4bRoVs7yxbTYhb6KY3XI/ZdHr9ndeK4GvPa/DMP
+   7q1RuoqlSPYh4t5At0qgpRIKaMZ2+yZO72NzV5ttalzBILiF/+rWy8Yyt
+   xLUh6PkDXD5bGBjPrDSgzQQqDq9A92qlDZhnLdWUllzWaEr7A+cOukj/v
+   PRGCb922CrW2zVm5l4xwTLNwxVtVEih8w18XEfJF9HwH9/FMPFfHnmGD0
+   zZZYhu9nb3a2FirzW3BV+4EXtAduqxPJAG/rYsja1gjlS/wJWtKAXv3ik
+   wr2JQuzIekZvLlXKlV0fpWNHvote4HEo1KhUft3rXQxJJ79HwWV1ik2+B
+   w==;
+X-CSE-ConnectionGUID: pbZAMRXgQJybhcXoeqLvpQ==
+X-CSE-MsgGUID: IP82GgmcTmqGraxlPUEFLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62712245"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62712245"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 23:51:50 -0700
+X-CSE-ConnectionGUID: MeWPsR8kTf+JwD9/uwSKFQ==
+X-CSE-MsgGUID: Qra5CoSMSJaL/9cyCZZbrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="186776128"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 23:51:50 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 15 Oct 2025 23:51:49 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 15 Oct 2025 23:51:49 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.57) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 15 Oct 2025 23:51:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JHgzV6d4RZLdwJwgw4mgL9Hu4kHTdFMnJpygdOe7zwSpH7k16iq72ucZqerNB1zw9UVPJkJlkV6K6XHIleZun/zcZ7Mn4lijWZ62ukcw1lWNhDclN+d4Z+wu2hJ3r0Uu4SkdAdGtq6z+J4rvjZcHhbHoKMyfIL52bG6lqepeRrpN6yqMMlEnx+59ibxGcRv8ta0Yk1Z6Fbq9GkrMAF5G0o8JQpdJMEvieA4SL41wkXqaPsIU/gc1fvU0PmzU5xOHW3pGmzoEszxFZLJCLas/zjbU0UB7nLtzpCRqoW25h2SnJQGVCQ0WW0f/qAsCW+g+vMBRvcI2Bs8ekaBtxdJQRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cm3Gr2QmmMV0kiONYAp50Gz5MbjDCrf4g0bZN7bZvuk=;
+ b=S7jMMBcT0eBjrwB8Xno2pwl+ODDHbMCWlLTnQUK1cscgVGPqOSgOj/34a+jv8gCi4H6dTYMWFBwDbHvatoIxdNvJbT9jAa4K30GXe7WADkvgW3lXWVdKUjAnwBX8BxSIeA8Y5YmIoyS1pz5oFpXt4UuV6/qYDKGsPWJKN2rHOok2cn8Jpap29SajqPCzRszCZWh3SEH/gurpCANlJxM5JQgU60IpixW/ZyMFPkGES2pudBO4iktWfAwzLlucDEUBsj8rQMqtCVucgjrceAYtFuO1jJhaambFk47f3J0cVES2ogjAXTq+saCXJjl0pelQ3+CdNl9gzZ5oSHz24ACyjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by SA0PR11MB4608.namprd11.prod.outlook.com (2603:10b6:806:94::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
+ 2025 06:51:41 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
+ 06:51:40 +0000
+Message-ID: <5f7a4e3f-0f60-46bb-8448-6750803fdd8e@intel.com>
+Date: Thu, 16 Oct 2025 09:51:35 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
+To: Michael Wu <michael@allwinnertech.com>, <ulf.hansson@linaro.org>,
+	<linus.walleij@linaro.org>, <brgl@bgdev.pl>, <avri.altman@wdc.com>,
+	<wsa+renesas@sang-engineering.com>, <victor.shih@genesyslogic.com.tw>,
+	<andy-ld.lu@mediatek.com>
+CC: <jason.lai@genesyslogic.com.tw>, <linux-mmc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+References: <20251015060714.67558-1-michael@allwinnertech.com>
+ <9f666390-653d-4834-800d-8997665b6dac@intel.com>
+ <6ac35d5e-7d2f-9af6-d1c4-831725c33896@allwinnertech.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <6ac35d5e-7d2f-9af6-d1c4-831725c33896@allwinnertech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU7P194CA0015.EURP194.PROD.OUTLOOK.COM
+ (2603:10a6:10:553::10) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxusDllfBoAX3pAA--.33076S2
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtw47Zr15Cry7Kw1xZr4DKFX_yoW7Aw1rpF
-	WkJFyY9r18ZF47t347Aa4xWr98Jwn3XFWxKrZ7GasI9a15Ar93Ca17AryUGryDWFsrAF43
-	ZFs3X3yUX3ZFvrcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8j-e5UUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|SA0PR11MB4608:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75cb458e-4a13-40d5-367c-08de0c8075d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aVAxekRBVmJWMG1EdzlmQk5CTUhqWFVyVyt4WFJ4aTRtUzdVbzBUV0htL1RQ?=
+ =?utf-8?B?YnpaZnpQTHJCNnE3WnVDajRFQzlISGlCK1hEMEZGZWUwNFNZUHZlcUVROVI1?=
+ =?utf-8?B?b0NMY01WbFZuTEU5UGdtUFZSaFA1bmk3Wm9EbUl1ZnU3UG1Ib283dUVpV0tq?=
+ =?utf-8?B?dnhDOGZ2bFJQbHBmSXY4QUlrSzN3eDIzQlhNVE9NamhuVkhRNWNrbFUwWUU3?=
+ =?utf-8?B?bXdSV2tYeEFBdjlKVStiQ2RKQ1R1MzVRL0VLSDdFWDIxZjZYMVVPckl3V2E0?=
+ =?utf-8?B?R2R1Tld1T1p3UmZWaWZ0dHNMRUIzYzc4aHZNbnV6OW9SbVMxYjNaTlJrOUtL?=
+ =?utf-8?B?bXd3dXFleDloK1g3S2syRUkyVHkvN3JVdW9Jbk9RdE80blBHVDYwby8xSWRQ?=
+ =?utf-8?B?S3dWU0x5d2hVbVJ4VGFDT3FCaWRwamV0T2lmazRYY3lEQytBKzZITXIwTTdE?=
+ =?utf-8?B?Z0RyNFVHekpNSEJ1RCtvUUdZU29HWEdza1g4VVRhUWQrekdBRTU1TkxyZFBI?=
+ =?utf-8?B?R2Z2TkF0M244anZmUGxhOW1ZSFhtMHR1YllXQlMxS2o5ZUdkSDBlVTNMNERj?=
+ =?utf-8?B?UWFFdVF1OFg1dEtnUVZpVExrc0U2VFRZZ1M1UGc2LzdjeDRUZWR1dE9mNzdl?=
+ =?utf-8?B?MDV6UW5KM3k5aDJvMkdkYlRhNU9oWkVObU9nVHZlNkFzcjhEcTdlajc1VWRj?=
+ =?utf-8?B?YXA2dTRRS2NRTEhoQUxQdkdKQmZta3o0elRGdEVpRFVRcCtTQ2dtNmNqdWpY?=
+ =?utf-8?B?VGNaN2czUUtXQjRSczZtVjRWTnErc05QdUlKcEpJZndNbXpoNnJ1L2JiU2Ns?=
+ =?utf-8?B?ckQvM09VMDl0OWtoYmxUb1hHZHlrbXNjRnJnamxYY25pMUd0Q0QxUDhBRmVj?=
+ =?utf-8?B?eStxUHphdkdhT0xSZ3hHRVdJb3FUcldWTVh0bVBJRXZ3aDhtQmNNVUJXanpm?=
+ =?utf-8?B?SHM0T0xOcUZUUjNZU1FGR0o0QUQxcGg4V2tuOFhFZmhiQkl6WEh3MGtmbHJi?=
+ =?utf-8?B?cFZaZUhjUTByN0FEZU9mMXA5ZStLaGw5RTcvSEZya3JtVElObzVWdEtTNXVk?=
+ =?utf-8?B?Q1NHZldocEhiNGdhZENmS0E5L2R5d000bUZHZENGbVJpbjFuRDNkOVhrbFMx?=
+ =?utf-8?B?d1lkRUtRNkxiaUJ1ZTNONmJXU2paZkNpSnh4MHlUaXZROUwxQTlPT3YrdTVD?=
+ =?utf-8?B?T2VoZnd5VkQzQm1MRlBkQmJHVFRUZ0RPWUltN2E4OTdBMXhRa0Frd2ljenQz?=
+ =?utf-8?B?UDlzRWZvKzhQMW1NeS9OOXFEMlNBZUYrbzFzSkhwUkpYZGxKb2FMN2lSU2Zr?=
+ =?utf-8?B?b0RES09vd2RaZEp1VTErYzE4cjcxelZPWXRFWjNUNWx5aUtienpYNXBYSldW?=
+ =?utf-8?B?Y0xITHRZaFRQVzZhNkV4MEwxR1cyNU4yKzdRYzZYeDQzN2Qyd3lKMTZrMDhy?=
+ =?utf-8?B?Z2dxNk55bEV4aTJod3prT2JSRHJtUWhjeTBVSG41b2xpRVJXMXQ1U210RnpN?=
+ =?utf-8?B?R0hjMExmWkpOVHVHdUNTclRvQzhTSmlvNk5ZWXZvV2tCU3E1anRORC85UUEx?=
+ =?utf-8?B?czlQdDNsSWpnV1lkRlZ0UE5kZmVnbVVlSGFYTS9ubUxKOFJ4U0VaM1hTejRD?=
+ =?utf-8?B?aU5lY3J4aThZdnZSRStaZnNGZGZOUG1hSWE3dnhMZjk4UFFJOXdTWVBQOGVK?=
+ =?utf-8?B?TTVKdDh4TGgyMVBmaDFpa3ZoZk9YcEg4QTBOMGc1RGZEaXlGMnY5amwyZ2N0?=
+ =?utf-8?B?YWlHTitUclQxZHdyRkErRktjbnAvSW5WOVZ1QTNMTkZrMkl4MUNkVGkrSjVQ?=
+ =?utf-8?B?YVBnZllwdVdvQVZXUEVkR0lFTnBvdGhENVFTckdLUEtCRTlTNzN5aktucTcz?=
+ =?utf-8?B?c2F6Y1N3Q2k1K1J3azN6L25ZcTN3RlR5MUFJNm0xSnhRWWlpeXUzb0pCTjNM?=
+ =?utf-8?Q?u3RkSwN/n2IP4qvQmHyeX2I5O6cgjeDh?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c3MxMTFMTE5yTnVBUkpybEdvWTFvRXYwZUt3dVkyUTVITEVOTGRlWGloOFpF?=
+ =?utf-8?B?Yy9tQjBBRGRSQzJEa3BUMjRkTFdkNTdjUldib2hSOHBCSUQzOUNIczlQVzF0?=
+ =?utf-8?B?SDBYcVRIck8wVHZXb25uL0JGZmprMUY0UWV0ZjZFQVdULzZFZWhPYnZFZ25Y?=
+ =?utf-8?B?ODBjNjhLZyt1Wkk5ZEN1NEltNEN0YUZlZVN0WHVLc1hoM0J2S2V5c3dkSW5i?=
+ =?utf-8?B?bGdKS3NoSGZIYm5LZmppejViZ1dMbGxacFFlVDNpYmRaS0NyOW9LZVRmYS8r?=
+ =?utf-8?B?ZWI3dVlXR3QwcVByVU5HZjAyZnFiSkRRc3d5MkNmaUhvUmxQa2RlcWFXb2ln?=
+ =?utf-8?B?TTRQZEd3bEtwUXpabldlaWFrRzJQSGY2eDNKMjBnbE9tWmVPT3l3YWR1b1JK?=
+ =?utf-8?B?VC9nUHJKVkpFN2ZBRHdzU1FQTkpKVWZQeTJ5d1NlZFdxb3N2Q2ZOTHk1NjJn?=
+ =?utf-8?B?b3JoZUE0dTJBR1pPOHNnV1ozS1FrRllQMGVaYTc5ZzNnNisrUHBDOEQ5dk5V?=
+ =?utf-8?B?OVVXSE04OTdGcWpqSyt5UXNLVk9raHZCdXNFVW1BcjlmclJ0bTdDd292Ylo1?=
+ =?utf-8?B?YVJtc2pHL0UxcjRKUW0xTEFXNHlCdjBISytuTy95YjBWNFFjcGlKUEJGSlk5?=
+ =?utf-8?B?aHpnak1DNWpHK2VENnVYZDNIMUwrUXVPSG1oSWo5M3k1dFlIaEZLYTJZUE1F?=
+ =?utf-8?B?ZG1CeUNxM0hIVzVrTU5HY3Jwa010aVJYWUFhMDB3OFhEMWJXMEdPMmZPU3JO?=
+ =?utf-8?B?MUJxeW9UM1BhRzVlQmVaNkh6TnBydjNlell6TFJ2YjBFRVhTSW1qeVBKL2Vt?=
+ =?utf-8?B?OXM5Y0pOV0dRNWlCbzZLUi9UNmJhY2dOT2VFdUlOandadkl3NHdwbTFHb250?=
+ =?utf-8?B?NHBWMFU0NlpRNUszZ1RzbWEwdFZKOFdtNjVoZ3ZxYzI3OWxkN3BnN1R2QStP?=
+ =?utf-8?B?VVM2TXVTSEoydkdXQzB3Z0F1RDdNQlpDaERybUJlUnVEUW5ZblhIRzd5Z0p1?=
+ =?utf-8?B?eDR4Q25jZjN0WVFkcE94YnF1Si84cDhxclNCd0xraDdPOWZZT0VDUXNPV3Ji?=
+ =?utf-8?B?cGV2RzJrNENyZmlCQ3d5dmZxeHVneU9jdXdCLytEUmtXdWFTbmRtSGJjTXZx?=
+ =?utf-8?B?RjhNQmtNR1FBajRlMk1ZamFhcS9SUE1jVU5aNmpYTDltR0xLWGJWV3piaUN4?=
+ =?utf-8?B?V0N1UWlXaThYYTdzR3dVRDVoQ21qL0RkL2FETG5QMTRSNll6SE9tMnJOcGpT?=
+ =?utf-8?B?WmpjRjc2UExLUjJKN1A2VG9kSEVFVU5DNy8xQWhvVm9kKzJpUU90Nk5naWs0?=
+ =?utf-8?B?ZythRWJPQVpVZ0laM0JvQmVwNEwrUmNEMEFsaWhSSHpjdTEzaTJHTTVkMlFP?=
+ =?utf-8?B?eVJNUFRJbGVnS24ybi8xdTVTS3ZyUlc1OFAvNGxvSTlKUzZuVTlyLzFNVjR1?=
+ =?utf-8?B?bUVWZEpsaUF0SEl1elMzSVp6aDQ5SUVUL2ZkaC9laWFJcDdjcjlUdzBwSldl?=
+ =?utf-8?B?QXpMc1R3QjJiaVoxU3hZNnFMRXp3Q0lLT1JZWXY5RGMzNGl5WVJZRjBwNGcv?=
+ =?utf-8?B?cE1HOHp6RXpscG4vYmxTSVhTajJLL2V5UzZobDN1SVpNb3RFMnE5QUJ0TnNa?=
+ =?utf-8?B?TzhQemRobCs1LzhreERCMy9rQUxUbytSYy9XQ0pydWkxY3prUGtCbGVBYkJE?=
+ =?utf-8?B?bmpoblQ1cUd0bmxiYVNTOFcrLy9iRHNmZ2dRUTZKVyt2emg1MVcxbWp4bExU?=
+ =?utf-8?B?SWlGWGxEZmI5eVFKRHlMcW5FdjFCcDNDUGxvNE1jVnJRU0VNQlp6MEFhMGo1?=
+ =?utf-8?B?bStRbDZ5eGp0aUorTVg0Qit6WkgyU2pxRTdDMitXdTRqU3lpNlg5dHJIQ2RY?=
+ =?utf-8?B?MmtxZFFhUDJRQlROYVErKzNQRk9OYnBEazdUT0tPamJXd3A5VnpLUmtSejdu?=
+ =?utf-8?B?amFRbm94aldKaHU3eDdtYlBPT3J5Y3BEQmlOdDZoV1hZaGNCc09GTlRzNit4?=
+ =?utf-8?B?UStpSlNPa0tDdVR1WUYxZW1ZUVNBd0dOekdpbDd4OEprSmd1SThBcVZkdFEx?=
+ =?utf-8?B?Sy8vT3J6eG04dlFxejhqNWkrd3kzbDdjZUtscHUyWlVYeU9aZDZtdU5IZkRW?=
+ =?utf-8?B?N2xxdzZvY01kcFM4M1Q0aDMwdklJZG52U3VReWt4MDJ4R3I2aXlXSllsMzV3?=
+ =?utf-8?B?Ync9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75cb458e-4a13-40d5-367c-08de0c8075d5
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 06:51:40.7966
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QIz4arV7wZBvd47xLVdbcYLFkdJyoGiinS1VmS91ABP99ULrCa1CgjpIDlFj3kmEJQ/McfY7iBveI3N+Viomyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4608
+X-OriginatorOrg: intel.com
 
-There are many set but not used warnings under drivers/gpu/drm/amd when
-compiling with the latest upstream mainline GCC:
+On 16/10/2025 09:38, Michael Wu wrote:
+> Hello,
+> 
+> The execution timing of this `host->detect` work actually depends on when the WiFi driver executes its unload procedure. 
 
-  drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c:305:18: warning: variable ‘p’ set but not used [-Wunused-but-set-variable=]
-  drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h:103:26: warning: variable ‘internal_reg_offset’ set but not used [-Wunused-but-set-variable=]
-  ...
-  drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h:164:26: warning: variable ‘internal_reg_offset’ set but not used [-Wunused-but-set-variable=]
-  ...
-  drivers/gpu/drm/amd/amdgpu/../display/dc/dc_dmub_srv.c:445:13: warning: variable ‘pipe_idx’ set but not used [-Wunused-but-set-variable=]
-  drivers/gpu/drm/amd/amdgpu/../display/dc/dc_dmub_srv.c:875:21: warning: variable ‘pipe_idx’ set but not used [-Wunused-but-set-variable=]
+Devices should not really be removed during shutdown.  The
+requirement for shutdown is to ensure there are no on-going
+operations and to prepare the hardware for power-off.
 
-Remove the variables actually not used or add __maybe_unused attribute for
-the variables actually used to fix them, compile tested only.
+So this sounds like the WiFi driver should not be executing
+an unload procedure at shutdown.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c     | 4 +---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h      | 6 ++++--
- drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c | 9 +++------
- 3 files changed, 8 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
-index b2033f8352f5..83f3b94ed975 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
-@@ -302,7 +302,6 @@ void amdgpu_gart_unbind(struct amdgpu_device *adev, uint64_t offset,
- 			int pages)
- {
- 	unsigned t;
--	unsigned p;
- 	int i, j;
- 	u64 page_base;
- 	/* Starting from VEGA10, system bit must be 0 to mean invalid. */
-@@ -316,8 +315,7 @@ void amdgpu_gart_unbind(struct amdgpu_device *adev, uint64_t offset,
- 		return;
- 
- 	t = offset / AMDGPU_GPU_PAGE_SIZE;
--	p = t / AMDGPU_GPU_PAGES_IN_CPU_PAGE;
--	for (i = 0; i < pages; i++, p++) {
-+	for (i = 0; i < pages; i++) {
- 		page_base = adev->dummy_page_addr;
- 		if (!adev->gart.ptr)
- 			continue;
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h
-index dc8a17bcc3c8..82624b44e661 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h
-@@ -100,7 +100,8 @@
- 
- #define SOC15_DPG_MODE_OFFSET(ip, inst_idx, reg) 						\
- 	({											\
--		uint32_t internal_reg_offset, addr;						\
-+		/* To avoid a -Wunused-but-set-variable warning. */				\
-+		uint32_t internal_reg_offset __maybe_unused, addr;				\
- 		bool video_range, video1_range, aon_range, aon1_range;				\
- 												\
- 		addr = (adev->reg_offset[ip##_HWIP][inst_idx][reg##_BASE_IDX] + reg);		\
-@@ -161,7 +162,8 @@
- 
- #define SOC24_DPG_MODE_OFFSET(ip, inst_idx, reg)						\
- 	({											\
--		uint32_t internal_reg_offset, addr;						\
-+		/* To avoid a -Wunused-but-set-variable warning. */				\
-+		uint32_t internal_reg_offset __maybe_unused, addr;				\
- 		bool video_range, video1_range, aon_range, aon1_range;				\
- 												\
- 		addr = (adev->reg_offset[ip##_HWIP][inst_idx][reg##_BASE_IDX] + reg);		\
-diff --git a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-index 53a088ebddef..6518d5639d66 100644
---- a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-+++ b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-@@ -442,7 +442,6 @@ bool dc_dmub_srv_p_state_delegate(struct dc *dc, bool should_manage_pstate, stru
- 	int i = 0, k = 0;
- 	int ramp_up_num_steps = 1; // TODO: Ramp is currently disabled. Reenable it.
- 	uint8_t visual_confirm_enabled;
--	int pipe_idx = 0;
- 	struct dc_stream_status *stream_status = NULL;
- 
- 	if (dc == NULL)
-@@ -457,7 +456,7 @@ bool dc_dmub_srv_p_state_delegate(struct dc *dc, bool should_manage_pstate, stru
- 	cmd.fw_assisted_mclk_switch.config_data.visual_confirm_enabled = visual_confirm_enabled;
- 
- 	if (should_manage_pstate) {
--		for (i = 0, pipe_idx = 0; i < dc->res_pool->pipe_count; i++) {
-+		for (i = 0; i < dc->res_pool->pipe_count; i++) {
- 			struct pipe_ctx *pipe = &context->res_ctx.pipe_ctx[i];
- 
- 			if (!pipe->stream)
-@@ -472,7 +471,6 @@ bool dc_dmub_srv_p_state_delegate(struct dc *dc, bool should_manage_pstate, stru
- 				cmd.fw_assisted_mclk_switch.config_data.vactive_stretch_margin_us = dc->debug.fpo_vactive_margin_us;
- 				break;
- 			}
--			pipe_idx++;
- 		}
- 	}
- 
-@@ -872,7 +870,7 @@ void dc_dmub_setup_subvp_dmub_command(struct dc *dc,
- 		bool enable)
- {
- 	uint8_t cmd_pipe_index = 0;
--	uint32_t i, pipe_idx;
-+	uint32_t i;
- 	uint8_t subvp_count = 0;
- 	union dmub_rb_cmd cmd;
- 	struct pipe_ctx *subvp_pipes[2];
-@@ -899,7 +897,7 @@ void dc_dmub_setup_subvp_dmub_command(struct dc *dc,
- 
- 	if (enable) {
- 		// For each pipe that is a "main" SUBVP pipe, fill in pipe data for DMUB SUBVP cmd
--		for (i = 0, pipe_idx = 0; i < dc->res_pool->pipe_count; i++) {
-+		for (i = 0; i < dc->res_pool->pipe_count; i++) {
- 			struct pipe_ctx *pipe = &context->res_ctx.pipe_ctx[i];
- 			pipe_mall_type = dc_state_get_pipe_subvp_type(context, pipe);
- 
-@@ -922,7 +920,6 @@ void dc_dmub_setup_subvp_dmub_command(struct dc *dc,
- 				populate_subvp_cmd_vblank_pipe_info(dc, context, &cmd, pipe, cmd_pipe_index++);
- 
- 			}
--			pipe_idx++;
- 		}
- 		if (subvp_count == 2) {
- 			update_subvp_prefetch_end_to_mall_start(dc, context, &cmd, subvp_pipes);
--- 
-2.42.0
+> This is something we cannot control and cannot handle using `reboot_notifier_list` and `register_reboot_notifier()` operations. Moreover, different WiFi drivers may have different handling sequences for this timing.
+> 
+> From this perspective, we believe it's not convenient to address the issue in that way.
+> 
+> We noticed that the `mmc_bus_shutdown` function calling `cancel_delayed_work_sync` was newly added. Therefore, we suggest removing this part first.
+> 
+> On 10/15/2025 3:09 PM, Adrian Hunter wrote:
+>> reboot_notifier_list and
+>> register_reboot_notifier()
+> 
 
 
