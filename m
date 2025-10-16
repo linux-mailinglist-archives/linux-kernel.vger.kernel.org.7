@@ -1,136 +1,188 @@
-Return-Path: <linux-kernel+bounces-856557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1A5BE4781
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:09:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8BEBE47B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203661A6710C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:09:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54D184F7677
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F0E32D0F7;
-	Thu, 16 Oct 2025 16:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD9F23EA83;
+	Thu, 16 Oct 2025 16:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vL2KWL3t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZFC5HUWh"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E382232D0DD
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A7232D0F3;
+	Thu, 16 Oct 2025 16:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760630965; cv=none; b=mqj+rlcP3ue+EstyFJbtEjXA4EkanuIMMw15TJRZFHNcpcQlxUNDGItC1Ym3Wjz3mVxu5Ahee+IWy+/rNpOHc0mdlmIgh6pv/qP6mp7mlE8cEsXwzSezTgsiLLXzZtD3XxAC+K9QBaAea+3UOkknrl4huFZmX9QTy7QexntXu4o=
+	t=1760631057; cv=none; b=rTysqXpu44hV8cE5aq99stTUepjivaMg3qLxsZEPF6qrYvb0Cqf7zSR+iWXqZf7c1OFKVblNYtivw367CQNwp4neXFWy6p80LHAZHglUvAc5BUUHnpa635cTo7NZpBkmeSRDVC2BR3SKJd+X+F5W11LCFMOeKIDJUShY02gHu4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760630965; c=relaxed/simple;
-	bh=rKuQr+3zE0UBXAW6sZvdWRlFubASovKHG2uz0tKSfKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YlximbXBPHs/XuIAghpqoglSmD9Hij56QPlDgZo3gHAgSsDM3XS3SKGEpwovMsKNP5unN0oM7AM20I7+uzHGW1G8jpQ+CKtG3rFiqm1xqDHgYvm3L0zLycp6Vgi4ylcBzfl1LbgMSU4eYkBwpkTuA609DUmI7VkeTHTYavseRuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vL2KWL3t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C971C4CEF1
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760630964;
-	bh=rKuQr+3zE0UBXAW6sZvdWRlFubASovKHG2uz0tKSfKA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vL2KWL3tDFGNt2jyuap6PyLZwjg0s4TxW5n4AYsnB6Blf2XZ/Iaw26oxau3qDsmXK
-	 05UH2o8m1GzloI36o19u1Pb1QwJ6lqh50ibl3aFtuordO4cV1xi5EiA8UJKWwJz3Uz
-	 0b+WSiKpLGtuvUyZ4A3GEg90AH5alF+ki4e6PhnqxeQLhAUvZJpPiTzztZ3XNBg5LS
-	 J1/fRUJm5TzhmvMASQSkS3ejFla9fm9THbZyEzS7zANIxUSiFu1CQkeTx8PCsKt9i/
-	 ls8LBoZ87mS+WdnVilY/AIEVtKbIOIhQtetPsNyPMihy7YKIMKhGmi4ONKbEcDh0Cu
-	 FV7KG3ISuYrPQ==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-648746b05ecso262671eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:09:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWHPneLIGVEKxDyF32pJDULkE8ymwjRC3snjkvFJ3IrtP/h2bO95Atv4os9HYQkZdukyi5TvYPu03BhK+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk3ELB9+Mbbj/79O8h0PgZTC4eJLsNj4gXC226Kr5BwT/5eIMP
-	N8M9F92oL9/BDTjeUicx7uBwUdY4rip5c9STe2THgTTQORWeRBTeO2UClWteQLVh9vALZcOJmRq
-	yHYCLnZGowtogn6+tYbH5b91gcllqxSs=
-X-Google-Smtp-Source: AGHT+IF54YUbfKT0mYePoTKCwnxwraZ2JolwrX5idg8J8ydCYBSwqjLZNsqEVNOkrJIZTrh0VcEo1HTnGmAAsmcAPZc=
-X-Received: by 2002:a05:6871:820d:b0:315:9f40:2af3 with SMTP id
- 586e51a60fabf-3c98d17cda5mr141606fac.33.1760630963886; Thu, 16 Oct 2025
- 09:09:23 -0700 (PDT)
+	s=arc-20240116; t=1760631057; c=relaxed/simple;
+	bh=5U6Z8a0MaSKZ0+RBLu/OxM3V0/Ilgn3EedvuYUvKxMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLym952Yx5Pru6tqEQF80lS9/xEbHGPnO5xp1b11Q3iyKR45PxP1XDNEnlw+N4Lp7clnNZgwo4CQozvvEPkyytckgoHS0qa+QCJ0famdnpksPZF4mtr01UF+SIr6C+6ICXHpe0DGHAsMjXLHBRUcsr20ykgbCe/I1BNAVy/FMWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZFC5HUWh; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760631043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1oFfzAiEmNB1imkgRrAcZMXMnzNaSFSgFD/9vrR+Foo=;
+	b=ZFC5HUWh/rc/E62Q0sjva/XeBcVkzGBoZhUK50u8KVLRFDNaSSzs/aXVRWsFJweLDEHt+H
+	MR9j8EMEWQ5PV9f5kmSCmPRIiuBfiWBOw3j8mMpeBc7XP90/+3Yx6ed1MFV1ZJXIIiaUp4
+	LdOJ+G1AZjiv1e/WFmVJ554PHPgJT2w=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Tejun Heo <tj@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Matyas Hurtik <matyas.hurtik@cdn77.com>,
+	Daniel Sedlak <daniel.sedlak@cdn77.com>,
+	Simon Horman <horms@kernel.org>,
+	Neal Cardwell <ncardwell@google.com>,
+	Wei Wang <weibunny@meta.com>,
+	netdev@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v2] memcg: net: track network throttling due to memcg memory pressure
+Date: Thu, 16 Oct 2025 09:10:35 -0700
+Message-ID: <20251016161035.86161-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-wip-atl-prm-v1-0-4a62967fb2b0@amd.com>
- <20251006-wip-atl-prm-v1-1-4a62967fb2b0@amd.com> <20251016160149.GBaPEW7ej4qvOcVfYh@fat_crate.local>
-In-Reply-To: <20251016160149.GBaPEW7ej4qvOcVfYh@fat_crate.local>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 16 Oct 2025 18:09:12 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gvn21FeMNpJDWOZ0ZH5CZzDt0zEuXjHEpWxHjq9vHqyw@mail.gmail.com>
-X-Gm-Features: AS18NWAGg3cRiqRD4IVCBlMYwD3BxTDT4FKkM2L9nMHhZnA1y2Ft50etdSKqdhQ
-Message-ID: <CAJZ5v0gvn21FeMNpJDWOZ0ZH5CZzDt0zEuXjHEpWxHjq9vHqyw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ACPI: PRM: Add acpi_prm_handler_available()
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>, 
-	Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, 
-	Avadhut Naik <avadhut.naik@amd.com>, John Allen <john.allen@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 16, 2025 at 6:02=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
-e:
->
-> On Mon, Oct 06, 2025 at 03:10:25PM +0000, Yazen Ghannam wrote:
-> > Add a helper function to check if a PRM handler/module is present.
-> >
-> > This can be used during init time by code that depends on a particular
-> > handler. If the handler is not present, then the code does not need to
-> > be loaded.
-> >
-> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> > ---
-> >  drivers/acpi/prmt.c  | 6 ++++++
-> >  include/linux/prmt.h | 2 ++
-> >  2 files changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-> > index 6792d4385eee..7b8b5d2015ec 100644
-> > --- a/drivers/acpi/prmt.c
-> > +++ b/drivers/acpi/prmt.c
-> > @@ -244,6 +244,12 @@ static struct prm_handler_info *find_prm_handler(c=
-onst guid_t *guid)
-> >       return (struct prm_handler_info *) find_guid_info(guid, GET_HANDL=
-ER);
-> >  }
-> >
-> > +bool acpi_prm_handler_available(const guid_t *guid)
-> > +{
-> > +     return find_prm_handler(guid) && find_prm_module(guid);
-> > +}
-> > +EXPORT_SYMBOL_GPL(acpi_prm_handler_available);
-> > +
-> >  /* In-coming PRM commands */
-> >
-> >  #define PRM_CMD_RUN_SERVICE          0
-> > diff --git a/include/linux/prmt.h b/include/linux/prmt.h
-> > index c53ab287e932..8cdc987de963 100644
-> > --- a/include/linux/prmt.h
-> > +++ b/include/linux/prmt.h
-> > @@ -4,9 +4,11 @@
-> >
-> >  #ifdef CONFIG_ACPI_PRMT
-> >  void init_prmt(void);
-> > +bool acpi_prm_handler_available(const guid_t *handler_guid);
-> >  int acpi_call_prm_handler(guid_t handler_guid, void *param_buffer);
-> >  #else
-> >  static inline void init_prmt(void) { }
-> > +static inline bool acpi_prm_handler_available(const guid_t *handler_gu=
-id) { return false; }
-> >  static inline int acpi_call_prm_handler(guid_t handler_guid, void *par=
-am_buffer)
-> >  {
-> >       return -EOPNOTSUPP;
-> >
-> > --
->
-> Rafael?
+The kernel can throttle network sockets if the memory cgroup associated
+with the corresponding socket is under memory pressure. The throttling
+actions include clamping the transmit window, failing to expand receive
+or send buffers, aggressively prune out-of-order receive queue, FIN
+deferred to a retransmitted packet and more. Let's add memcg metric to
+indicate track such throttling actions.
 
-I've seen it.  Are you asking for anything in particular?
+At the moment memcg memory pressure is defined through vmpressure and in
+future it may be defined using PSI or we may add more flexible way for
+the users to define memory pressure, maybe through ebpf. However the
+potential throttling actions will remain the same, so this newly
+introduced metric will continue to track throttling actions irrespective
+of how memcg memory pressure is defined.
+
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+Reviewed-by: Daniel Sedlak <daniel.sedlak@cdn77.com>
+---
+Changes since v1:
+- renamed socks_throttled & MEMCG_SOCKS_THROTTLED as suggested by Roman
+http://lore.kernel.org/20251016013116.3093530-1-shakeel.butt@linux.dev
+
+ Documentation/admin-guide/cgroup-v2.rst | 4 ++++
+ include/linux/memcontrol.h              | 1 +
+ include/net/sock.h                      | 6 +++++-
+ kernel/cgroup/cgroup.c                  | 1 +
+ mm/memcontrol.c                         | 3 +++
+ 5 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 0e6c67ac585a..3345961c30ac 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1515,6 +1515,10 @@ The following nested keys are defined.
+           oom_group_kill
+                 The number of times a group OOM has occurred.
+ 
++          sock_throttled
++                The number of times network sockets associated with
++                this cgroup are throttled.
++
+   memory.events.local
+ 	Similar to memory.events but the fields in the file are local
+ 	to the cgroup i.e. not hierarchical. The file modified event
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 7ed15f858dc4..e0240560cea4 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -52,6 +52,7 @@ enum memcg_memory_event {
+ 	MEMCG_SWAP_HIGH,
+ 	MEMCG_SWAP_MAX,
+ 	MEMCG_SWAP_FAIL,
++	MEMCG_SOCK_THROTTLED,
+ 	MEMCG_NR_MEMORY_EVENTS,
+ };
+ 
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 60bcb13f045c..ff7d49af1619 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2635,8 +2635,12 @@ static inline bool mem_cgroup_sk_under_memory_pressure(const struct sock *sk)
+ #endif /* CONFIG_MEMCG_V1 */
+ 
+ 	do {
+-		if (time_before64(get_jiffies_64(), mem_cgroup_get_socket_pressure(memcg)))
++		if (time_before64(get_jiffies_64(),
++				  mem_cgroup_get_socket_pressure(memcg))) {
++			memcg_memory_event(mem_cgroup_from_sk(sk),
++					   MEMCG_SOCK_THROTTLED);
+ 			return true;
++		}
+ 	} while ((memcg = parent_mem_cgroup(memcg)));
+ 
+ 	return false;
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index fdee387f0d6b..8df671c59987 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4704,6 +4704,7 @@ void cgroup_file_notify(struct cgroup_file *cfile)
+ 	}
+ 	spin_unlock_irqrestore(&cgroup_file_kn_lock, flags);
+ }
++EXPORT_SYMBOL_GPL(cgroup_file_notify);
+ 
+ /**
+  * cgroup_file_show - show or hide a hidden cgroup file
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 3ae5cbcaed75..976412c8196e 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -81,6 +81,7 @@ struct cgroup_subsys memory_cgrp_subsys __read_mostly;
+ EXPORT_SYMBOL(memory_cgrp_subsys);
+ 
+ struct mem_cgroup *root_mem_cgroup __read_mostly;
++EXPORT_SYMBOL(root_mem_cgroup);
+ 
+ /* Active memory cgroup to use from an interrupt context */
+ DEFINE_PER_CPU(struct mem_cgroup *, int_active_memcg);
+@@ -4463,6 +4464,8 @@ static void __memory_events_show(struct seq_file *m, atomic_long_t *events)
+ 		   atomic_long_read(&events[MEMCG_OOM_KILL]));
+ 	seq_printf(m, "oom_group_kill %lu\n",
+ 		   atomic_long_read(&events[MEMCG_OOM_GROUP_KILL]));
++	seq_printf(m, "sock_throttled %lu\n",
++		   atomic_long_read(&events[MEMCG_SOCK_THROTTLED]));
+ }
+ 
+ static int memory_events_show(struct seq_file *m, void *v)
+-- 
+2.47.3
+
 
