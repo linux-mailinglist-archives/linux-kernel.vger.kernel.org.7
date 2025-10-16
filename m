@@ -1,266 +1,182 @@
-Return-Path: <linux-kernel+bounces-856563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12374BE47DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FE9BE47C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A36814FF4AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79571885D5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11FD32D0F9;
-	Thu, 16 Oct 2025 16:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAB332D0E5;
+	Thu, 16 Oct 2025 16:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fzoAgBdc"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013016.outbound.protection.outlook.com [40.93.201.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="jaxC8P5Z"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACF623EA93;
-	Thu, 16 Oct 2025 16:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631158; cv=fail; b=jp/o2jomIVOJg+rOzZoUXNTv5Iki7YGsYPmhwJm/6ZmAhUjRuNVTZP5CoiOGHb4YqMVYrQqYr5tOxZP/6FXGUlg8jiaeyXwgXn5K7zLgTwab5g/MeigNwlRK//3whlqq/JYmH6N/uoWe0Q8W2lh9Qfvu8CLbe47a1DCsUb+V/Rk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631158; c=relaxed/simple;
-	bh=ZNwEWJ338bbtPGoCd9qSGbkavMsjpUKze9pQ4qwFbC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LRZy3Px+3UeyhwpHDUxKg6o3V2RYTR+W/xNkxKM96iZF+B0JCrr+1CV9mGac9B97E29WalD/dixZ59/JLJhwAWjy4Gy0nPiS54qs+dR23Z1bUaw/0+Az8mXIMrNNQBN05ozPMPr20cHqUFSkujBvgmW3jvwYFazSti6Rwpx8JEk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fzoAgBdc; arc=fail smtp.client-ip=40.93.201.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rEfGQPTwJHIta4NQ1WNhMQFfJ+7Z0pg/PgkgKclr4xhpXyO+WwcwlUAeWgc/y3EVHfsYc9ytkNTk5/ejWcfZdQdNOjUOLCj2+gOhVir4FqxkgPNwPurFX8I+VT8OGOcASCIOg62FbTBBBwjQeelJiDEcgLZY1PbGyYr9O5sSZxuC/eA1QXP0Pv5IZlQKynI2Bw35eoanXTgPMuf5LGDlT0hUFpfetw2gTzsdYqHzKor/z87Xh3hAIxRv1+XOwEfA0YVPFx3jik8kwu6RUiIr0nNK9syuHGfywVw29VF0QQpwujcvasqsmm4jK87wsmtV8FIZN+XGDexXLk7orgjOHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vb8c0yKwSpc4zoPzkklBNqXYCEMtUbIRaQdP1RjwTOg=;
- b=YUcvohIgL98n/++LlfAiJYAP2rvOpAFmhv4qnrps6JskOaEq+O8PtuAH4zQDYoKZsDK+kCzzZqB/eyaaYBWqh7OHqYa+qZq64RgSeW8Co1SOtZJYFnawaTJ0QpAUDe7kxlikyYQ32KIKN/LZsUACTlTB3Mh4zU198KtsFadvsgpiR6MQIDzT6rtF5e9MjcGL2T733cbJn/2gpMOao4FLWO6PDKztv/54WtBOORiaugeUcO09YFVaFAv2jYIZKrEwSJtCSYbSmTQuqPd4lWObCcqmxFbU1B719t7X3RBVvD/CV5Y0eXB48Tz+ByOkqjMJtAW+NTW+5Cy4bPA8In1sMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vb8c0yKwSpc4zoPzkklBNqXYCEMtUbIRaQdP1RjwTOg=;
- b=fzoAgBdcCEldX21wR+J2fETO1Ac2DWf1ZM7Nkvj1pag8M9+MOFb+r7Slwj0bLWTVF76G50XuzkF/xbba84VK4/Xn0rBvttb7G2+aNZY3SWXfDtcP5Uu5A64bMaOMwSghiZh5EUzqSf5hbXcXjTIEodOeHS4DL4epPJsbe1IGu8E=
-Received: from BL1PR13CA0399.namprd13.prod.outlook.com (2603:10b6:208:2c2::14)
- by PH7PR12MB7841.namprd12.prod.outlook.com (2603:10b6:510:273::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Thu, 16 Oct
- 2025 16:12:34 +0000
-Received: from BL6PEPF0001AB55.namprd02.prod.outlook.com
- (2603:10b6:208:2c2:cafe::2f) by BL1PR13CA0399.outlook.office365.com
- (2603:10b6:208:2c2::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.4 via Frontend Transport; Thu,
- 16 Oct 2025 16:12:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL6PEPF0001AB55.mail.protection.outlook.com (10.167.241.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 16:12:33 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 16 Oct
- 2025 09:12:32 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 16 Oct
- 2025 11:12:32 -0500
-Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 16 Oct 2025 09:12:32 -0700
-Message-ID: <9e22a020-937b-4965-b7f8-140853ad7d37@amd.com>
-Date: Thu, 16 Oct 2025 11:12:26 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44132D0FE
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760631153; cv=none; b=P8D1dubDcPzw2m5qBTfBqvr5622FPSTe+mRJseaXJqovwo4O0NoKps590pHBPRdNV4ZqbtIv9FS+vBXo7xr/rnhjI3vABLk4b1RXPLCIPCxzKbdZrzdFx0VE1Psr2UyTya7tMcm0D06z1mgrl1ubPWoRmBrZtDZseAuiSkeOh5E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760631153; c=relaxed/simple;
+	bh=tK4nBP5ZW/n2FdmfrGNvfW9qpVfWyHpShwt5hD7hYq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkOxy0SbrEhN9CPVVE8fQUx/o8LVtXNe+lFXtbt+2fjt9Ih+8muZbY4/iodCSDhcARVJoqlDV/Oe+Q/Am9t6gLVJqBcPW5bwrbapBY7VG7rWZ6nJEsqIAxm8HQPrYQ9Y9maqsoVvOZbNY5S1b3PbYmGPyHhhenOnR3cUu728Ht0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=jaxC8P5Z; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7a8e7ece907so672448a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:12:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1760631151; x=1761235951; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRpFtwXiNMgpIA5IWo+QdMTjYy97Q0e03I3R5kmEU0I=;
+        b=jaxC8P5ZdX+2dcRx5TCxX1uZc0Q6oaUpLMDlFSQc0zyb8/gHWFrDUvmzP1Xa53abks
+         u69hbRpPmWCogqpxguvHvhiVpnV8q99Igp+71nemYzF0lxI4rnw1Zui1UqCU7rfR6CPL
+         hAumvxLYWmKPQ9QMup6KetKnjVC+fYO34GPQnI8LCjEpBqjFE1CSM0BOZR0vgLEKNxeL
+         euvZQWmQwR/VBCLLF7UKsAeBVYX+4iRgOvdopXlVGC38Oj12hKcwQt9zoS/zxo8aQi4M
+         sH438KffssiXWLEuE1WDPo49O3C3ocWREAHx9UEtWS36sVyHtg1VNk4UvxXLSh2ean+I
+         aKUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760631151; x=1761235951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NRpFtwXiNMgpIA5IWo+QdMTjYy97Q0e03I3R5kmEU0I=;
+        b=ABSDgP3DIK4VE8KjOsU6fXYWSxSqiKNF+8FeFrpdyBAq1p7/NpFXFsyj0DpMerNWWI
+         LzbjaCKJHlaVQwG30fP0M8iCy8LwKHbTB/VEtV0ZKTKFALEL2Fk2E5OeusCf5PZgegsY
+         wkiIBLhkxYgRCNV95qtHwpHi5DSIF8O5WDTlmZBTpYvhnjrXOv2EcY9KLuMXVALuz7XJ
+         K3/VuSLweRFYRmWNjXgF98fzIAAopdzBxW9AgSRwW8TuR5ug4KnACstHVCog71CqxszV
+         +O5oMTJOUvBtZL4mFmpKPGIZArvjz8TS43uZhGYrsr1QOSsuWN2qL5iYMRkJxBUYpbJf
+         YpYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2mU1MUCSp5hr4V+n2/cNdHKqidEeeNudrciJlf7ElnOyPf8dDkmTR4ju30U+8E7YR790WipJCGZpih1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7kfWJXAjLF5mfNMosyoyuazbIS6otg5QZ/5Vy61/fMBJrX42i
+	6TyRFxtJIzeQvJUzjvw6WXseA24/fP1nnaCzY3/BkromMzdaKQ0n1hNshEhMizPrngc=
+X-Gm-Gg: ASbGnctuK7mlePINfA3bEu0Ty4Za0+Cnmpn//9PrbjWitLuWniE/XOWGvUIVUnWHCeW
+	cQAuLft8gfu67PzFqeHXqOfeL+Y3wojBa65R4J7W6M9wH5FlpKLi/8VuKPDuZWWHjuDc4yRrvgu
+	KA0qTotZ7ZkyEe4BP8ZaYJ2/XGfa44wWNjn3MyCZKB4gc9cpWoYrywgAMGOr90YSFvVzZIkdyXF
+	HTNDClCbNPR66pWLtN1wQZe1DjeoqKF1cs5zyZUWA4uajls7QP+uLqiS8mtZ+EzTcYYJ7zEs7AE
+	O8R51/1rYPedE0xbZu71Mx7VODW4lg1lk939wlwlIDJ/DpdJYRIBbZh4mftM6s8CAD9zr4ASyuF
+	NZ6QqLV/E5jesB3fiMbtuRlOlRhtaacNAxZL0rgw/qCWo+QKeyFIkXE4ZJAOB
+X-Google-Smtp-Source: AGHT+IFlsd4BFifhkmjK0hoI9D1z1RM0tIuhzOXEXydeMOREIODbN5VKBxSZiUJ/7vXGUgtPglp42A==
+X-Received: by 2002:a05:6830:719e:b0:7a4:a993:da38 with SMTP id 46e09a7af769-7c27cbd6276mr186364a34.34.1760631151017;
+        Thu, 16 Oct 2025 09:12:31 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c27a206ac7sm278507a34.17.2025.10.16.09.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 09:12:30 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v9Qab-00000000V4E-2PEx;
+	Thu, 16 Oct 2025 13:12:29 -0300
+Date: Thu, 16 Oct 2025 13:12:29 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Haakon Bugge <haakon.bugge@oracle.com>
+Cc: Sean Hefty <shefty@nvidia.com>, Jacob Moroni <jmoroni@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Vlad Dumitrescu <vdumitrescu@nvidia.com>,
+	Or Har-Toov <ohartoov@nvidia.com>,
+	Manjunath Patil <manjunath.b.patil@oracle.com>,
+	OFED mailing list <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH for-next] RDMA/cm: Rate limit destroy CM ID timeout error
+ message
+Message-ID: <20251016161229.GM3938986@ziepe.ca>
+References: <20250912100525.531102-1-haakon.bugge@oracle.com>
+ <20250916141812.GP882933@ziepe.ca>
+ <CAHYDg1Rd=meRaF=AJAXJ+5_hDaJckaZs7DJUtXAY_D2z_a6wsw@mail.gmail.com>
+ <D2E28412-CC9F-497E-BF81-2DB4A8BC1C5E@oracle.com>
+ <ABD64250-0CA0-4F4F-94D3-9AA4497E3518@oracle.com>
+ <07DE3BC6-827E-4311-B68B-695074000CA3@oracle.com>
+ <20251015164928.GJ3938986@ziepe.ca>
+ <CH8PR12MB97419E98111F553FCC117E36BDE8A@CH8PR12MB9741.namprd12.prod.outlook.com>
+ <20251015184516.GK3938986@ziepe.ca>
+ <49A8CE60-DC8E-43F7-9620-D4D5F8EB2A08@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [RFC PATCH] remoteproc: core: full attach detach during recovery
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20251002153343.766352-1-tanmay.shah@amd.com>
- <aPELVfhkk0qDXqa9@p14s>
-Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <aPELVfhkk0qDXqa9@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB55:EE_|PH7PR12MB7841:EE_
-X-MS-Office365-Filtering-Correlation-Id: 26012312-6e46-43aa-e4e3-08de0cced077
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UXl1TEhMSy9qWDA0YlpoY0VWWkVCaXk5eDllN0t4NmxGSk9pRGdFSThYL3BO?=
- =?utf-8?B?MWNnbDZTMkN4TnVBTElzVk85NnZrN245TndGY0p3eklqZTlSRUZaYzlIc1FI?=
- =?utf-8?B?SkR2OVQrWjJGb2wyVmRuWEw5a0hmcWZybUZFdjZoVGZXUGdJbENkdVY1VmVR?=
- =?utf-8?B?dW1meVBzYjFOY01qaytSWGRDd3JzU2x0eC9sRWxVZHR2WndYRDE1REw1bmFl?=
- =?utf-8?B?bVZ0NFBQdC9CQjRmVzdrMEdKR0VqZHJ0a2ZBRU95aGZZMFlxajR0QzFzbTc1?=
- =?utf-8?B?bnVuL2ovL0xrZlZ4ak5ZSjRGMm9VNWdBMjk0RTE5MDZscERPZTVPRFpONkhS?=
- =?utf-8?B?MS82S0FORGc5UzljVjZaWHl6cVRzcGFHUWU1c2lOS1pEaklPb1lKMDgzL3Bp?=
- =?utf-8?B?U3R5bU1FeWw2UHR6RGhrK0VmWkFaNTFjYTJCVmN4QVFDdDMyd1ZtMzBiVTZK?=
- =?utf-8?B?UVpYM1dBQWVIVWxYMHJSRDNBbnAwdVZkaEN3VFAxd0l4ZDJJTnBwNm9NcGZz?=
- =?utf-8?B?ci8rcG1LTFM3Z1ZNSGdwTXR1YWtxUmRMdmNaNU9rSTZrWk54YysxbHFsVklv?=
- =?utf-8?B?WjMvSGRBeUh0WFlYQjgwWFN4ZnRycHdEQWNZZ0owVlVPbzljRFFNZmNwdHlH?=
- =?utf-8?B?RWZnL3d6Z3dvK1FUTHBzNldkVndDWW5KWWlmdXA2U25PdWVLNm1uai83N3cv?=
- =?utf-8?B?WndZbXJwQUVWWmZKcVNBNVhWVG5GQmIzNk9oc1l1TWIxM0szbFcvZmJ2Zzc2?=
- =?utf-8?B?OHZPem1FL3RMZjJCdER2aERvQ3BLRG54ZmxBMmdjR2U5NmkzcGtib3RDY1l5?=
- =?utf-8?B?Y0pNNGNSY0JCajUzSCtnSkNaVnlLZjYyYVFwRlZybzhvTURXM0tyLzdVaEg0?=
- =?utf-8?B?UXhhZGN6ZzlYZ0NOYTFJUVJLbUh5cHpOSmI4ZkRDUUZQZHgvY24rbiticTlH?=
- =?utf-8?B?YjIvQW02NTh1c1R6RTB2TDVUUmhFc3F1bjNIdGlxTjZkbWxONEVzKzM3RVkx?=
- =?utf-8?B?OFBCaldyTmlCTzgrMkh4R1ZXUEY2NlZSem5sbS9WczIza1VZTTFEa0RTbEk1?=
- =?utf-8?B?cE5kZ0wrSlF2Sy9XKzNaR2dHUk1aVWg3RXkxclFxQU8yNmRXN1M5K0J5WFZt?=
- =?utf-8?B?VXBVQmxoL2d1cndSU0ZTRXB2ZUlWcHJMMjhtU3RpSDBkRVUreEJHSTluNHVB?=
- =?utf-8?B?N2NpM1RlME0xdDEzbTFneWY1dkFLQ0djTTBxNS9JcUs4RDhnUEs3VWR2RjVj?=
- =?utf-8?B?ZTRqVG5KN252cEpFdzMzK0dqRUZzcm1oZnVRWkhPNXowRzFrQlovdTBDYU0w?=
- =?utf-8?B?STRpZmJHQ0t5NTRlWVBBMnRXbGJrL1VtRVAvdlFoSHJoU0NDMzNTY0xQdTRp?=
- =?utf-8?B?YlNwVm1LVW1ieVZhTVNlbWJZZ0tYeWxDQzBabXFUK0p2ZHFpaTYwWWFITFVQ?=
- =?utf-8?B?TDN1SDNxZWlaV2M4citRM2cxUE1mN3VDakx5cXJzaUp2OGg4cjF3RnNUSVpB?=
- =?utf-8?B?alUvOS80bDJ6Ykg2dFdjdTFYSEtmL1cwdEZMclBUMG96UHYwcEdxaDlZSllO?=
- =?utf-8?B?M3p2aUI3YTF2KzFJeTAyakwwZEFUdWxsUVBXU3dJKzRQSnJ6d2E4OXhwbFVv?=
- =?utf-8?B?RDJxN0gwdk1kVWtJZWk4aEdMV1lEVHRrWlJJaHN1YjU5T0RsSWRIa3NIRVdN?=
- =?utf-8?B?aDFNMDBWV0IvNnhVeERBc1kydUt6LzJzZTFBVjI5S2V6NVFubXVZazRRclR6?=
- =?utf-8?B?QW1SY0xkQ29EU21aMG92Qzc2Y2IxVVVGcm12d3hXQTc3eG5KUnJSaGZKdUhx?=
- =?utf-8?B?WkVCcEpNUS9qS3U3UGtXUmRadzc4UmtsZGFiZ2NnMDZ2dXBVS3RFRjV2aXNn?=
- =?utf-8?B?eG5ySlFMZnNnUWtOVnlQek5nRVcrNWhJM0ZFb1ZJT29sNEdCdUFoSE11YXdq?=
- =?utf-8?B?bkRnN0JvOXg4KzVneE1BZTdTL3dUL2NNaXArMDYwb204QmJRdEJtK3ZUZVRH?=
- =?utf-8?B?QStxZ2hOb3hZb2lZbG9LTDVvWHRHS0tzNFlzMFVIVXQ4S3l5M2pqWGVJVHlH?=
- =?utf-8?B?RFc5b2xNNjRyeFgwaWNYTjlpZ3BucWJldUNOU2FwRHdkOS9zYndCcnk5MnVC?=
- =?utf-8?Q?jIZ0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 16:12:33.3061
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26012312-6e46-43aa-e4e3-08de0cced077
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB55.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7841
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49A8CE60-DC8E-43F7-9620-D4D5F8EB2A08@oracle.com>
 
-
-Hello,
-
-Please find my comments below:
-
-On 10/16/25 10:12 AM, Mathieu Poirier wrote:
-> Good morning,
+On Thu, Oct 16, 2025 at 03:25:15PM +0000, Haakon Bugge wrote:
 > 
-> On Thu, Oct 02, 2025 at 08:33:46AM -0700, Tanmay Shah wrote:
->> Current recovery operation does only virtio device reset, but do not
->> free and re-allocate all the resources. As third-party is booting the
->> remote processor during attach-detach, it is better to free and
->> re-allocate resoruces as resource table state might be unknown to linux
->> when remote processor boots and reports crash.
 > 
-> 1) When referring to "third-party", should I assume boot loader?
-
-Here, "third-party" could be a bootloader or another core in a 
-heterogeneous system. In my-case it is a platform management controller.
-
-
-> 2) Function rproc_attach_recovery() calls __rproc_detach(), which in turn calls
-> rproc_reset_rsc_table_on_detach().  That function deals explicitly with the
-> resource table.
-
-As per my understanding, rproc_reset_rsc_table_on_detach() will setup 
-clean resource table, that sets vring addresses to 0xffffffff. Please 
-let me know if this understanding is not correct.
-
-If we do not, call rproc_attach(), then correct vring addresses are not 
-setup in the resource table for next attach to work. Because, 
-rproc_handle_resources() and rproc_alloc_registered_carveouts() are not 
-called as part __rproc_attach().
-
-> 3) The code in this patch mixes __rproc_detach() with rproc_attach(), something
-> that is likely not a good idea.  We either do __rproc_detach/__rproc_attach or
-> rproc_detach/rproc_attach but I'd like to avoid the mix-and-match to keep the
-> amount of possible states to a minimum.
+> > On 15 Oct 2025, at 20:45, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > 
+> > On Wed, Oct 15, 2025 at 06:34:33PM +0000, Sean Hefty wrote:
+> >>>> With this hack, running cmtime with 10.000 connections in loopback,
+> >>>> the "cm_destroy_id_wait_timeout: cm_id=000000007ce44ace timed out.
+> >>>> state 6 -> 0, refcnt=1" messages are indeed produced. Had to kill
+> >>>> cmtime because it was hanging, and then it got defunct with the
+> >>>> following stack:
+> >>> 
+> >>> Seems like a bug, it should not hang forever if a MAD is lost..
+> >> 
+> >> The hack skipped calling ib_post_send.  But the result of that is a
+> >> completion is never written to the CQ.
 > 
-
-I agree to this. I can find a way to call rproc_detach() and 
-rproc_attach() sequentially, instead of __rproc_detach() and 
-rproc_attach() calls. I might have to remove 
-rproc_trigger_attach_recovery completely, but that is implementation 
-details. We can work it out later, once we agree to the current problem 
-& solution.
-
-> If I understand correctly, the main motivation for this patch is the management
-> of the resource table.  But as noted in (2), this should be taken care of.  Am I
-> missing some information?
 > 
-
-The main motivation is to make the attach operation works during 
-attach_recovery(). The __rproc_detach() works as expected, but attach 
-doesn't work. After recovery, I am not able to strat RPMsg communication.
-
-Please let me know if I am missing something.
-
-Thanks,
-Tanmay
-
-> Thanks,
-> Mathieu
+> Which is exactly the behaviour I see when the VF gets "whacked". This is from a system without the reproducer hack. Looking at the netdev detected TX timeout:
+>
+> mlx5_core 0000:af:00.2 ens4f2: TX timeout detected
+> mlx5_core 0000:af:00.2 ens4f2: TX timeout on queue: 0, SQ: 0xe31ee, CQ: 0x484, SQ Cons: 0x0 SQ Prod: 0x7, usecs since last trans: 18439000
+> mlx5_core 0000:af:00.2 ens4f2: EQ 0x7: Cons = 0x3ded47a, irqn = 0x197
 > 
->>
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->>
->> Note: RFC patch for design discussion. Please do not merge.
->>
->>   drivers/remoteproc/remoteproc_core.c | 15 ++++++++++++++-
->>   1 file changed, 14 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 825672100528..4971508bc5b2 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1786,7 +1786,20 @@ static int rproc_attach_recovery(struct rproc *rproc)
->>   	if (ret)
->>   		return ret;
->>   
->> -	return __rproc_attach(rproc);
->> +	/* clean up all acquired resources */
->> +	rproc_resource_cleanup(rproc);
->> +
->> +	/* release HW resources if needed */
->> +	rproc_unprepare_device(rproc);
->> +
->> +	rproc_disable_iommu(rproc);
->> +
->> +	/* Free the copy of the resource table */
->> +	kfree(rproc->cached_table);
->> +	rproc->cached_table = NULL;
->> +	rproc->table_ptr = NULL;
->> +
->> +	return rproc_attach(rproc);
->>   }
->>   
->>   static int rproc_boot_recovery(struct rproc *rproc)
->>
->> base-commit: 56d030ea3330ab737fe6c05f89d52f56208b07ac
->> -- 
->> 2.34.1
->>
+> (I get tons of the like)
+> 
+> There are two points here. All of them has "SQ Cons: 0x0", which to me implies that no TX CQE has ever been polled for any of them.
+ 
+> The other point is that we do _not_ see "Recovered %d eqes on EQ
+> 0x%x" (which is because mlx5_eq_poll_irq_disabled() always returns
+> zero), which means that either a) no CQE has been generated by the
+> HCA or b) a CQE has been generated but no corresponding EQE has been
+> written to the EQ.
 
+Lost interrupts/cqe are an obnoxiously common bug in virtualization
+environments. Be sure you are running latest NIC firmware. Be sure you
+have all the qemu/kvm fixes.
+
+But yes, if you hit these bugs then the QP gets effectively stuck
+forever.
+
+We don't have a stuck QP watchdog for the GMP QP, IIRC. Perhaps we
+should, but I'd also argue if you are loosing interrupts for GMP QPs
+then your VM platform is so broken it won't succeed to run normal RDMA
+applications :\
+
+At the end of the day you must not have these "TX timeout" type
+errors, they are very very serious. Whatever bugs cause them must be
+squashed.
+
+> >>  The state machine or
+> >> reference counting is likely waiting for the completion, so it knows
+> >> that HW is done trying to access the buffer.
+> > 
+> > That does make sense, it has to immediately trigger the completion to
+> > be accurate. A better test would be to truncate the mad or something
+> > so it can't be rx'd
+> 
+> As argued above, I think my reproducer hack is sound and to the point.
+
+Not quite, you are just loosing CQEs. We should never loose a CQE.
+
+Yes perhaps your QP can become permanently stuck, and that's bad. But
+the fix is to detect the stuck QP, push it through to error and drain
+it generating all the err CQs without any loss.
+
+To better model what you are seeing you want to do something like
+randomly drop the GMP QP doorbell ring, that will cause the QP to get
+stuck similar to a lost interrupt/etc.
+
+Jason
 
