@@ -1,208 +1,140 @@
-Return-Path: <linux-kernel+bounces-856840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFC0BE536A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:19:47 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEFABE5367
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 83757358282
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:19:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C93C358125
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28932D97B7;
-	Thu, 16 Oct 2025 19:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB332D9787;
+	Thu, 16 Oct 2025 19:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BCFPEvXB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QydhAQqw"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA342D94BB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642542D949A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760642382; cv=none; b=IER+YHUVStitcapvbpXnFXvfsI1cUonp6LjR4KigBi0rrutD2PTTEEYeBR6UXCOoX/U3i4zSU7IUXWbSNt9hxP3Cs45inmZk4lAFFVVSERaUczGpx6GfL85YivlfnsgZ6u7qudbCeFtmW6KIL6MCN2yp0TF89SlVxvLrkVuiKHw=
+	t=1760642348; cv=none; b=n+YzaalF+eLqJ5uJscqYFZPyRaVqwFj5/47Q2rDti9+jWYQasDbwuaeNSVFP+lDZk2MS+FSQkK+UzCJ34etlssgx+oSyoDVrpQoyb89jND9gapymcUmneL98W1dvS9cF6W5aL0A/zS12oUJuSh3xDBT1WqbcR5zpzj1U9QRCh/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760642382; c=relaxed/simple;
-	bh=uVCJyvmT8hz8YltzC3dkZ9FwIOqU+bxtdzLVDUMQCAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pk+jUwAM9GRCHEo0axx1P/IErIV5bY4Hz1V/Q7hfMzXaeDV2eRYid/D/awfpwwJH/yf6PkpJV3l810Qgq365hB+o3RbzKF1sUgkzXbMmvY/u5rDQJ9YzbobKE1XEBBUBzDHsmvrYH+2/uVr4dI0osHs/k0nCq2EEE6kTKcExENA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BCFPEvXB; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760642380; x=1792178380;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uVCJyvmT8hz8YltzC3dkZ9FwIOqU+bxtdzLVDUMQCAE=;
-  b=BCFPEvXBiCUofrZ26c0fc0eSm0El0atsGPUGrIlu0vTbLz0P5NSuZudB
-   mGjwf77Jlmwl/O9zLlK/WQa+ZAZzyy15uu1WVpsVgMRFlqy/MQ00ot61m
-   yagaTls6QIZleODmwUQNQP79NJZ/UBA2xoYdtUOUv6fWjj8fZTZjICxIz
-   b6A7ZChSJwB3gIXI+SESEAHOfEhJ2T0HmFiiWrPMe4jZViJpfr2Iuduz9
-   WATbQLpCkbfZpU5xrbvmiBqYsWQwy5HSfiLEnUEGVG0oWEB8ONYUccTUF
-   jtW1PzW1Oe7jB1e3qr7cSZL+jGuo6ZTw0EqNn4rI7MHbAV3DWaoc8KxYu
-   w==;
-X-CSE-ConnectionGUID: W1AAbyoHRpyjd9v5NnzyKw==
-X-CSE-MsgGUID: 8FwWh/PnQgGo4eiv/0Lt0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="73134222"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="73134222"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 12:19:39 -0700
-X-CSE-ConnectionGUID: L0/9s+v2SqC1MFaXkIQtng==
-X-CSE-MsgGUID: FdXW7oIvQ9aJtH+xcx9hkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="206244266"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 16 Oct 2025 12:19:36 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9TV8-0005BP-1l;
-	Thu, 16 Oct 2025 19:19:07 +0000
-Date: Fri, 17 Oct 2025 03:18:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org, jgg@nvidia.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
-	balbirs@nvidia.com, miko.lenczewski@arm.com, peterz@infradead.org,
-	kevin.tian@intel.com, praan@google.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <202510170345.lO7fR7ao-lkp@intel.com>
-References: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
+	s=arc-20240116; t=1760642348; c=relaxed/simple;
+	bh=a3Gj7mh3v/3Kk82UEe0rHgCedYTsE9uhWk8L2/gsUsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fQL4LtIix/5FDx7VeYhca6vsjZm5WU1uTjldvQrwdd9KqHh6qQ+MpkxCLZPWHvp7lmJgzJ/hQopjW8ZLqkIOkmS8A4agMms+SLucJMvm0UWZLY1FG0z9p4vkFXW7kyO4o/CZsaI2B8iaUEAWjo/Efn4vOy4R9zaeqTFg3Gbc7bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QydhAQqw; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29094f23eedso1628605ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:19:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760642346; x=1761247146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QkNb2DeKO+13qtb+PBXoKP6RFeVYVbqfpbvDK5KSaF0=;
+        b=QydhAQqwREUOnfLFgCf98Hk0Yq+GnD43PvXt4cFJoMlID+DgSA2j5uT0edUJPvVkJQ
+         5M4FbS/75Qv7AeKj+94BFBAJPa63XEnpN2tEXWOsn07xtVHGlxtaNsYd4wEQFfZstON4
+         97jQpkB3YQqFB6EQhhmw5LnywFdDQFSaWXW2xwdu/+SxGVr+RZi8n7VPMmjnjwpO+/Mu
+         5TuX8OtObALzOomWoirLtUL5A+9L0tGXZesw/mBbV80sVDk+QnLJSYwpTJVfPqZXC74L
+         u5NmaryNSfryQfFFq/VEJTOs5ycM28JMQT1yK2p8PJWDBfHOA3lDXSOK0e65sg0+PL/P
+         h6/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760642346; x=1761247146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QkNb2DeKO+13qtb+PBXoKP6RFeVYVbqfpbvDK5KSaF0=;
+        b=Eypmx4OSRtf75ZGth3DcDXo31bFxHahEPY4CTCyOcMbHqVNr9D4ZvZEAOIuElwKa2R
+         pcLndbnyQVQ3BniMO0/CMUOjiKxna5v9BXdr5OOsoF8MPnvruYWkUqFOfotJRKr+L+rc
+         k0lFfe6HlxfWTiOvWrzl92kOsDTojM7GiJSBOj1QLTU2bsOSlfuuUVphjLdmA38g0KlB
+         rfJzwz2pW3ZA79jatLb484lZph9AFfr+eXUjX4kBFBMSzEedc3fxq2Y+YerPFD+r6UTR
+         mLMJPpVTaetvVfu7tv4NBcemExfz+guehR/AJfP14jxsGOheMteSm8iNyFkXpj/rs2EF
+         J5vg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+7NyTALfRLGYkkG4ZyJldIkcl/UX8zqA6HC5ziz9Yr7GJ+A1iuat7DJp2aSYAp1QZq8KDJzAj8IxhrDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyRP78Xl1CAqJ7Rbrc/LvlMbEmXKUS01ZoCndbUsDCSl/cQPcA
+	/uwe7qzx+BpdnHo/kVY0/p5b5X7NwtyIb28Ole3w3Xoen/2Npj7iW4wkwH7f1JsfFq1lN8e+OYG
+	xTApp9BtvClMGMzB9OJtmoRVBYrZ24dg=
+X-Gm-Gg: ASbGncv+D2KtSuTeiNckufMkRTKN7PYHOcUTTuMGojIVs8VrnBhlEmmMQreEe0lP0C+
+	IQsG/YEqsd1s52rcAZhM3PGlGUIuc6EonFfD16gvyhsXfMmndHM2VN7nF0TkRDDeJ5HmJneMp78
+	9r6ozwXCXku6SNefddCTYonP+VLm1We6ZepPQuFYAGDYn0oTFccvCX9/rrDTtyKcMq6qVwXU+ge
+	R6twRbWTREczjYrSVrUkS0gLzxwEA7ra5LNGpRvXxFjY1alekm6Al00VHvzc869a/cyfDom7BY4
+	n7wv+zqhK4OzfcHdYP6kf0BIx3OPtaBsHxQwTTpAbWDExMPYHmSXHmiCm4bbS4rz4lR8P3IkRtg
+	+nUo=
+X-Google-Smtp-Source: AGHT+IH0YWgGKSo65cgBPX5W3p7j4HkK3bVU7l78fZ+js9jI7tU4OLEp6GPUbGx58mDOvsKGfrW9fh+1rWFnGpM/2VM=
+X-Received: by 2002:a17:902:e950:b0:290:7634:6d7e with SMTP id
+ d9443c01a7336-290cc4ea8f2mr6194375ad.11.1760642345509; Thu, 16 Oct 2025
+ 12:19:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
+References: <20251013062041.1639529-1-apopple@nvidia.com> <20251013062041.1639529-5-apopple@nvidia.com>
+ <DDJJ4P7ED3LJ.6YD2M62RB5VY@nvidia.com>
+In-Reply-To: <DDJJ4P7ED3LJ.6YD2M62RB5VY@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 16 Oct 2025 21:18:52 +0200
+X-Gm-Features: AS18NWCOXO5Nlj8i8ZNj-U23NNA7RJ1ucE47naAt3VXCGXJAjL5KZrU7UJiyBhk
+Message-ID: <CANiq72kpgPT8=-UPj8Bez_ui=MTVauCPg7CabDau=jxOB8qdow@mail.gmail.com>
+Subject: Re: [PATCH v5 04/14] gpu: nova-core: Add a slice-buffer (sbuffer) datastructure
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alistair Popple <apopple@nvidia.com>, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, dakr@kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolin,
+On Thu, Oct 16, 2025 at 8:23=E2=80=AFAM Alexandre Courbot <acourbot@nvidia.=
+com> wrote:
+>
+> On Mon Oct 13, 2025 at 3:20 PM JST, Alistair Popple wrote:
+> >
+> > +/// # Example:
+> > +///
+> > +/// ```
+> > +/// let mut buf1 =3D [0u8; 5];
+> > +/// let mut buf2 =3D [0u8; 5];
+> > +/// let mut sbuffer =3D SBufferIter::new_writer([&buf1, &buf2]);
+> > +///
+> > +/// let data =3D b"hello";
+> > +/// let result =3D sbuffer.write_all(data);
+> > +/// ```
+>
+> This example doesn't build - there are several things wrong with it. It
+> is also missing statements to confirm and show the expected result. Here
+> is a fixed and slightly improved version:
 
-kernel test robot noticed the following build warnings:
+Yeah, I mentioned this one in a previous version -- the section header
+is also still wrong too.
 
-[auto build test WARNING on soc/for-next]
-[also build test WARNING on linus/master v6.18-rc1 next-20251016]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Alistair, please check the link I gave:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommu-arm-smmu-v3-Explicitly-set-smmu_domain-stage-for-SVA/20251016-034754
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc%40nvidia.com
-patch subject: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain arm_smmu_invs array
-config: arm64-randconfig-001-20251017 (https://download.01.org/0day-ci/archive/20251017/202510170345.lO7fR7ao-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251017/202510170345.lO7fR7ao-lkp@intel.com/reproduce)
+    https://docs.kernel.org/rust/coding-guidelines.html#code-documentation
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510170345.lO7fR7ao-lkp@intel.com/
+or other code in the `kernel` crate for examples on how it is usually done.
 
-All warnings (new ones prefixed by >>):
+It is not critical today, of course, but the further it is from what
+will be needed in a few months, the harder it will become to start
+building the docs and running the examples as KUnit tests.
 
->> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1170:7: warning: variable 'cmp' is uninitialized when used here [-Wuninitialized]
-    1170 |                 if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-         |                     ^~~
-   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1167:10: note: initialize the variable 'cmp' to silence this warning
-    1167 |                 int cmp;
-         |                        ^
-         |                         = 0
-   1 warning generated.
+Thanks!
 
-
-vim +/cmp +1170 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-
-  1132	
-  1133	/**
-  1134	 * arm_smmu_invs_unref() - Find in @invs for all entries in @to_unref, decrease
-  1135	 *                         the user counts without deletions
-  1136	 * @invs: the base invalidation array
-  1137	 * @to_unref: an array of invlidations to decrease their user counts
-  1138	 * @flush_fn: A callback function to invoke, when an entry's user count reduces
-  1139	 *            to 0
-  1140	 *
-  1141	 * Return: the number of trash entries in the array, for arm_smmu_invs_purge()
-  1142	 *
-  1143	 * This function will not fail. Any entry with users=0 will be marked as trash.
-  1144	 * All tailing trash entries in the array will be dropped. And the size of the
-  1145	 * array will be trimmed properly. All trash entries in-between will remain in
-  1146	 * the @invs until being completely deleted by the next arm_smmu_invs_merge()
-  1147	 * or an arm_smmu_invs_purge() function call.
-  1148	 *
-  1149	 * This function must be locked and serialized with arm_smmu_invs_merge() and
-  1150	 * arm_smmu_invs_purge(), but do not lockdep on any mutex for KUNIT test.
-  1151	 *
-  1152	 * Note that the final @invs->num_invs might not reflect the actual number of
-  1153	 * invalidations due to trash entries. Any reader should take the read lock to
-  1154	 * iterate each entry and check its users counter till the last entry.
-  1155	 */
-  1156	VISIBLE_IF_KUNIT
-  1157	size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
-  1158				   struct arm_smmu_invs *to_unref,
-  1159				   void (*flush_fn)(struct arm_smmu_inv *inv))
-  1160	{
-  1161		unsigned long flags;
-  1162		size_t num_trashes = 0;
-  1163		size_t num_invs = 0;
-  1164		size_t i, j;
-  1165	
-  1166		for (i = j = 0; i != invs->num_invs || j != to_unref->num_invs;) {
-  1167			int cmp;
-  1168	
-  1169			/* Skip any existing trash entry */
-> 1170			if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-  1171				num_trashes++;
-  1172				i++;
-  1173				continue;
-  1174			}
-  1175	
-  1176			cmp = arm_smmu_invs_cmp(invs, i, to_unref, j);
-  1177			if (cmp < 0) {
-  1178				/* not found in to_unref, leave alone */
-  1179				i++;
-  1180				num_invs = i;
-  1181			} else if (cmp == 0) {
-  1182				/* same item */
-  1183				if (refcount_dec_and_test(&invs->inv[i].users)) {
-  1184					/* KUNIT test doesn't pass in a flush_fn */
-  1185					if (flush_fn)
-  1186						flush_fn(&invs->inv[i]);
-  1187					num_trashes++;
-  1188				} else {
-  1189					num_invs = i + 1;
-  1190				}
-  1191				i++;
-  1192				j++;
-  1193			} else {
-  1194				/* item in to_unref is not in invs or already a trash */
-  1195				WARN_ON(true);
-  1196				j++;
-  1197			}
-  1198		}
-  1199	
-  1200		/* Exclude any tailing trash */
-  1201		num_trashes -= invs->num_invs - num_invs;
-  1202	
-  1203		/* The lock is required to fence concurrent ATS operations. */
-  1204		write_lock_irqsave(&invs->rwlock, flags);
-  1205		WRITE_ONCE(invs->num_invs, num_invs); /* Remove tailing trash entries */
-  1206		write_unlock_irqrestore(&invs->rwlock, flags);
-  1207	
-  1208		return num_trashes;
-  1209	}
-  1210	EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_unref);
-  1211	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Miguel
 
