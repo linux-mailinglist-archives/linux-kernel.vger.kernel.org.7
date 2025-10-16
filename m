@@ -1,545 +1,181 @@
-Return-Path: <linux-kernel+bounces-856895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46D1BE55BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:20:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C44CBE550C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E868A5E175A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FDA418909CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A42DC79A;
-	Thu, 16 Oct 2025 20:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AEC2DA767;
+	Thu, 16 Oct 2025 20:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSB2odci"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYZXT7yG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F3D469D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723AD21FF2E
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760645993; cv=none; b=U5D6jpFalP9gaXn4b5KEBE2Q4djsYVY3JL59LnJhqtQzT8LXXryay989rPdPAGaIBSQzJVaBON0NqLmZ3BiXbVUa2ogM1novl2dUevEXQDjvF09SkDGEWR81uP+7NmVxRzJXWJBItHUH9r7v1PrYb8sfl49gjVnfEzpasxgNiVQ=
+	t=1760645180; cv=none; b=QV679FxoykHeDDdVOOGG0SMfdcNSrZ4izX6aw1iBfB1Af+fbx5tBHz9C8ETouDLrlisWWU9jA/VOJSRUd2HybilC0v0suLbaqLsEIJ9IjddbauQd5dZlZer8XFrORFEGessm8YZovwhgFS6ieHSmlTwEXQb8z+9OOdKyQExuCrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760645993; c=relaxed/simple;
-	bh=Z3iyNrYbhzb9hFJanwhOMu/EtVrKnsj4KculgtjehTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LtpwNjXkBpDAm+dHgdLCalOy4Bqc5D/nV/4UcidVKzAUfEoT9qCmMRzBKO/hMs0xDzo5upq5Q1ySq9eYwAFCHcQz1vdfWTe1wyCeXaD170TPr/h/FwK+YUNVa3Wx1/Sy+TxCIn/VZeOMGcE3x+YV3sPI0fp0pW/GIRDuzfjQMAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSB2odci; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7810289cd4bso1174805b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760645991; x=1761250791; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+av0HPtEwSTsOCuSUQdK1ftanNeIM9GRj5WV9WejZ/s=;
-        b=CSB2odcidoLLIq9XgNL8vL7kBCaGukr6QsXzG8ywOaeTLrLgDkqRZtcoSQjoXzRBd4
-         5h5D43DXwHVV4fbJPbHqvKptYEik84jgsddbkt0albmIcxAyL+TChXDwiQGwdZ8UgvMW
-         m+mBO3yFmjQTIZBt48xmaVbSin4F34gkS1aRbOpTQ4lMO1FI0sRGfhFQj8QTj9ccyzy9
-         95TN1fB/mfKFXwwHtgev/jnaxQ5eaZHz1H4vJ2kQ32stlPM+HmhGWc2IURuD8nc6ySXQ
-         WM4xf0/fDFyTjUVld7bb80Jjyh+dO8+Dmj9CsUw6X99OhZp2EV8lMNyw0XC2y3aEK4GN
-         oOfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760645991; x=1761250791;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+av0HPtEwSTsOCuSUQdK1ftanNeIM9GRj5WV9WejZ/s=;
-        b=Gew1g/zgEjdYpHrKfuIGUvZUnXNr8GYJtBCDFFvrUaFn/Ic2LiSLudoES5zTiYFyzV
-         r6+Vq10XAQuNAOtDseMpDwx+CPWltPPWygqSj+HwMooCRJW7NV4azf9Z99hW1Qayr6NB
-         fhA+C7u/zUPyDScEOrzlgIkhY7ZjtRjxDXry85/ch5bimjodMFsa9pZYc1JbtqeIc4L0
-         l0ytXoKkaQF95Mukn9ByGv70KlOkzKHvkNdJKWoygijJ5k47iZjxsuIk1noEmq6prxF9
-         uKVNHfbIwbKd9JFWG/Y4B2xAxt9lJuQbsdCMAvX8H3toVfaTi2PXjqDXa6iC8hdGm5Bq
-         IyqA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/KUJwLUc25srn7vE3n9pHRlCVG4BZbPgSosNdUJvtjXPO+1obrSsG4i4Z/nhXtEUDXe7Jf5f2pV2caoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkW3EZ1RealoxAF6Nce+/Shcckf2NKkDQjuEA07VgKGN+FGGR7
-	d6RZTc3dCiDzN4qprfN0Cb9Q67oAjvHS7DJUP0jFFvXIIanTsB1S+KOmYJXk9x92Z2Sx5g==
-X-Gm-Gg: ASbGncuQgPcamXEt7CeL/vr6/wJzMh4FAB7EAubtFyKO/h0hMJFyebzx9V1Eyj6iorV
-	wKtXom/dLPPyLuo0IbvSUL3sJ/4F+bqeMHP0AwMCod4q1swqURdr1tL1CD05D6SYsqme68MjpZa
-	z/3U4wx2e0aPwtqlMn8AA8Qkgia8oEPcHfvJWoMPmzImyo1SmtouPOmw9X727LzdQ4QVCZ5Ljm/
-	Lh4Y+HcdtNHYmPS+IxSDHu56WE2+XQYrGG9/IKfezfiXqmzz+t1/8OXc3FItbIRq7bIb7CIhNOD
-	EiuBKvIESv+lpdV0+HctXXitgpHJu7BsKJGFXlx6xV6LF+Z//3PTlsQHG7o8DNN9DDPYS13cgQi
-	AlgAN0D1TiASbtoTnQ+oaLmpaCaAOfF1IxvqHOq2k6hNJWH5u5OOax5eY9+PYvTetIiULId5Y5k
-	YedhjFBEx3jTd+1TWK5vWF2PRbOJEIDbkSheRhIKKPt81uhYPVz7VHo8tcTROmash3N5rsDdtB
-X-Google-Smtp-Source: AGHT+IG+sxkvw4J66EyUWy7hkA9Gt8yHCCBQKvQGF3IO+F1MDMkkuQKd8HWWzZx0fFVzrv7/MgTNLw==
-X-Received: by 2002:a05:6a20:7344:b0:262:4378:9df2 with SMTP id adf61e73a8af0-334a86384femr1667733637.44.1760645990579;
-        Thu, 16 Oct 2025 13:19:50 -0700 (PDT)
-Received: from linux-dev.dhcp4.washington.edu ([205.175.106.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a198c57513sm7326767b3a.23.2025.10.16.13.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 13:19:50 -0700 (PDT)
-From: Aditya Gollamudi <adigollamudi@gmail.com>
-To: trondmy@kernel.org
-Cc: adigollamudi@gmail.com,
-	anna@kernel.org,
-	linux-nfs@vger.kernel.org,
+	s=arc-20240116; t=1760645180; c=relaxed/simple;
+	bh=9BOlprVzVDfLj3Omx3b4Y2sCcGVk48Oml4fOY30fAVg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pRN0YnWcGbWonj9Ysko1uAgEKD7UHcVtdsyq7+lpaOResXIwCbxb6D+P9XbS5fP9IcvreS2nuZshIoYgBa5B0EAy0jMSW1GBfUhjdojkA5dqBt6OX1uQjIryVekD/AKvgZgfzKR5h3o1AOKCA9WhusWAlitvuTQWZ/+cc/mCzjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYZXT7yG; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760645179; x=1792181179;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=9BOlprVzVDfLj3Omx3b4Y2sCcGVk48Oml4fOY30fAVg=;
+  b=DYZXT7yGqxDM+pBww5l0aFmMLP5XiSLlL9Hbp1Nr+lTzETSbQkXcGE6N
+   zPwel1EjGK80yO4wZRWiZLKlXTrA/S4M4OitvGsxE3nZa6nAd7ORtF3Cu
+   n066Yj54gSNq1CTvFdxcgJYmPkm8lRL+cCBY3qEi5xhJ26RX+BQ8PE5/d
+   ekMnccDfWw1vJK3OCO6glx8+b9vtbwcaUp0g3c3d862fhb2r4M4YeqAYD
+   eaPj6jk58A6JY5cnT3Xsec81lBc/kd73PgvL3vLUJy0fMLHIYg4ni0uYm
+   Iy62GSNVk7HFZSS9X/TaxAmKcdxcduQaUr8YSE7rWiL2+838xAIHRPaUx
+   Q==;
+X-CSE-ConnectionGUID: vCWBASsdTMWsSCLLFv03uA==
+X-CSE-MsgGUID: UxFP9O2ES46qz6yTDmgwoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66684327"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="66684327"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 13:06:18 -0700
+X-CSE-ConnectionGUID: 35RGTBlrSzOR/jfWiWCsjA==
+X-CSE-MsgGUID: /MYt43zJQkWtq9fFzcMKcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="219704342"
+Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 13:06:17 -0700
+Message-ID: <fc22425fbb0e9e11d32cc08a6c1dc1b1da625216.camel@linux.intel.com>
+Subject: Re: [PATCH 07/19] sched/fair: Track LLC-preferred tasks per runqueue
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
+ <kprateek.nayak@amd.com>,  "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
+ <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
+ <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
+ <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
+ <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
+ <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Chen Yu	
+ <yu.c.chen@intel.com>, Libo Chen <libo.chen@oracle.com>, Adam Li	
+ <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/nfs: Resolve style errors in fs/nfs/nfs4proc.c
-Date: Thu, 16 Oct 2025 12:50:13 -0700
-Message-Id: <20251016195013.25929-1-adigollamudi@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Date: Thu, 16 Oct 2025 13:06:16 -0700
+In-Reply-To: <20251016074434.GZ3289052@noisy.programming.kicks-ass.net>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+	 <ccbfda37200b66177a1c1add4715a49b863ac84d.1760206683.git.tim.c.chen@linux.intel.com>
+	 <20251015120523.GT3289052@noisy.programming.kicks-ass.net>
+	 <60fb91a69466e84d2367c11a4f0dd38511788bcb.camel@linux.intel.com>
+	 <20251016074434.GZ3289052@noisy.programming.kicks-ass.net>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Adi Gollamudi <adigollamudi@gmail.com>
+On Thu, 2025-10-16 at 09:44 +0200, Peter Zijlstra wrote:
+> On Wed, Oct 15, 2025 at 01:03:37PM -0700, Tim Chen wrote:
+> > On Wed, 2025-10-15 at 14:05 +0200, Peter Zijlstra wrote:
+> > > On Sat, Oct 11, 2025 at 11:24:44AM -0700, Tim Chen wrote:
+> > > > @@ -3999,6 +4038,7 @@ account_entity_enqueue(struct cfs_rq *cfs_rq,=
+ struct sched_entity *se)
+> > > >  		struct rq *rq =3D rq_of(cfs_rq);
+> > > > =20
+> > > >  		account_numa_enqueue(rq, task_of(se));
+> > > > +		account_llc_enqueue(rq, task_of(se));
+> > > >  		list_add(&se->group_node, &rq->cfs_tasks);
+> > >=20
+> > > Here and...
+> > >=20
+> > > >  	}
+> > > >  	cfs_rq->nr_queued++;
+> > > > @@ -4010,9 +4050,14 @@ account_entity_dequeue(struct cfs_rq *cfs_rq=
+, struct sched_entity *se)
+> > > >  	update_load_sub(&cfs_rq->load, se->load.weight);
+> > > >  	if (entity_is_task(se)) {
+> > > >  		account_numa_dequeue(rq_of(cfs_rq), task_of(se));
+> > > > +		account_llc_dequeue(rq_of(cfs_rq), task_of(se));
+> > >=20
+> > > ... here, could you please check the compiler is doing CSE of task_of=
+()?
+> >=20
+> > Will consolidate those task_of(se).=20
+>=20
+> And rq_of(). But really, check code-gen, it *should* DTRT and CSE the
+> lot. If it doesn't, then do it manually.
 
-add spaces before opening parentheses "(", fix indentation of switch cases, remove trailing
-whitespaces, make "else if" start on the same line as closing "if" brace and fix spacing around "=".10 errors remain in fs/nfs/nfs4proc.c
+Looking at the assembly dump, it does look like compiler is doing
+the right thing and not computing those twice.
 
-Signed-off-by: Adi Gollamudi <adigollamudi@gmail.com>
----
- fs/nfs/nfs4proc.c | 277 +++++++++++++++++++++++-----------------------
- 1 file changed, 137 insertions(+), 140 deletions(-)
-
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index f58098417142..35df95407059 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -518,7 +518,7 @@ static int nfs4_do_handle_exception(struct nfs_server *server,
- 	if (stateid == NULL && state != NULL)
- 		stateid = nfs4_recoverable_stateid(&state->stateid);
-
--	switch(errorcode) {
-+	switch (errorcode) {
- 		case 0:
- 			return 0;
- 		case -NFS4ERR_BADHANDLE:
-@@ -1566,7 +1566,7 @@ static void nfs4_opendata_put(struct nfs4_opendata *p)
- static bool nfs4_mode_match_open_stateid(struct nfs4_state *state,
- 		fmode_t fmode)
- {
--	switch(fmode & (FMODE_READ|FMODE_WRITE)) {
-+	switch (fmode & (FMODE_READ|FMODE_WRITE)) {
- 	case FMODE_READ|FMODE_WRITE:
- 		return state->n_rdwr != 0;
- 	case FMODE_WRITE:
-@@ -2247,7 +2247,7 @@ static int nfs4_open_recover_helper(struct nfs4_opendata *opendata,
- 	nfs4_init_opendata_res(opendata);
- 	ret = _nfs4_recover_proc_open(opendata);
- 	if (ret != 0)
--		return ret;
-+		return ret;
- 	newstate = nfs4_opendata_to_nfs4_state(opendata);
- 	if (IS_ERR(newstate))
- 		return PTR_ERR(newstate);
-@@ -2304,7 +2304,7 @@ static int _nfs4_do_open_reclaim(struct nfs_open_context *ctx, struct nfs4_state
- 	rcu_read_lock();
- 	delegation = rcu_dereference(NFS_I(state->inode)->delegation);
- 	if (delegation != NULL && test_bit(NFS_DELEGATION_NEED_RECLAIM, &delegation->flags) != 0) {
--		switch(delegation->type) {
-+		switch (delegation->type) {
- 		case FMODE_READ:
- 			delegation_type = NFS4_OPEN_DELEGATE_READ;
- 			if (test_bit(NFS_DELEGATION_DELEGTIME, &delegation->flags))
-@@ -2359,54 +2359,54 @@ static int nfs4_open_reclaim(struct nfs4_state_owner *sp, struct nfs4_state *sta
- static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct nfs4_state *state, const nfs4_stateid *stateid, struct file_lock *fl, int err)
- {
- 	switch (err) {
--		default:
--			printk(KERN_ERR "NFS: %s: unhandled error "
--					"%d.\n", __func__, err);
--			fallthrough;
--		case 0:
--		case -ENOENT:
--		case -EAGAIN:
--		case -ESTALE:
--		case -ETIMEDOUT:
--			break;
--		case -NFS4ERR_BADSESSION:
--		case -NFS4ERR_BADSLOT:
--		case -NFS4ERR_BAD_HIGH_SLOT:
--		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
--		case -NFS4ERR_DEADSESSION:
--			return -EAGAIN;
--		case -NFS4ERR_STALE_CLIENTID:
--		case -NFS4ERR_STALE_STATEID:
--			/* Don't recall a delegation if it was lost */
--			nfs4_schedule_lease_recovery(server->nfs_client);
--			return -EAGAIN;
--		case -NFS4ERR_MOVED:
--			nfs4_schedule_migration_recovery(server);
--			return -EAGAIN;
--		case -NFS4ERR_LEASE_MOVED:
--			nfs4_schedule_lease_moved_recovery(server->nfs_client);
--			return -EAGAIN;
--		case -NFS4ERR_DELEG_REVOKED:
--		case -NFS4ERR_ADMIN_REVOKED:
--		case -NFS4ERR_EXPIRED:
--		case -NFS4ERR_BAD_STATEID:
--		case -NFS4ERR_OPENMODE:
--			nfs_inode_find_state_and_recover(state->inode,
--					stateid);
--			nfs4_schedule_stateid_recovery(server, state);
--			return -EAGAIN;
--		case -NFS4ERR_DELAY:
--		case -NFS4ERR_GRACE:
--			ssleep(1);
--			return -EAGAIN;
--		case -ENOMEM:
--		case -NFS4ERR_DENIED:
--			if (fl) {
--				struct nfs4_lock_state *lsp = fl->fl_u.nfs4_fl.owner;
--				if (lsp)
--					set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
--			}
--			return 0;
-+	default:
-+		printk(KERN_ERR "NFS: %s: unhandled error "
-+				"%d.\n", __func__, err);
-+		fallthrough;
-+	case 0:
-+	case -ENOENT:
-+	case -EAGAIN:
-+	case -ESTALE:
-+	case -ETIMEDOUT:
-+		break;
-+	case -NFS4ERR_BADSESSION:
-+	case -NFS4ERR_BADSLOT:
-+	case -NFS4ERR_BAD_HIGH_SLOT:
-+	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
-+	case -NFS4ERR_DEADSESSION:
-+		return -EAGAIN;
-+	case -NFS4ERR_STALE_CLIENTID:
-+	case -NFS4ERR_STALE_STATEID:
-+		/* Don't recall a delegation if it was lost */
-+		nfs4_schedule_lease_recovery(server->nfs_client);
-+		return -EAGAIN;
-+	case -NFS4ERR_MOVED:
-+		nfs4_schedule_migration_recovery(server);
-+		return -EAGAIN;
-+	case -NFS4ERR_LEASE_MOVED:
-+		nfs4_schedule_lease_moved_recovery(server->nfs_client);
-+		return -EAGAIN;
-+	case -NFS4ERR_DELEG_REVOKED:
-+	case -NFS4ERR_ADMIN_REVOKED:
-+	case -NFS4ERR_EXPIRED:
-+	case -NFS4ERR_BAD_STATEID:
-+	case -NFS4ERR_OPENMODE:
-+		nfs_inode_find_state_and_recover(state->inode,
-+				stateid);
-+		nfs4_schedule_stateid_recovery(server, state);
-+		return -EAGAIN;
-+	case -NFS4ERR_DELAY:
-+	case -NFS4ERR_GRACE:
-+		ssleep(1);
-+		return -EAGAIN;
-+	case -ENOMEM:
-+	case -NFS4ERR_DENIED:
-+		if (fl) {
-+			struct nfs4_lock_state *lsp = fl->fl_u.nfs4_fl.owner;
-+			if (lsp)
-+				set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
-+		}
-+		return 0;
- 	}
- 	return err;
- }
-@@ -2810,7 +2810,7 @@ static int _nfs4_proc_open(struct nfs4_opendata *data,
- 	}
- 	if ((o_res->rflags & NFS4_OPEN_RESULT_LOCKTYPE_POSIX) == 0)
- 		server->caps &= ~NFS_CAP_POSIX_LOCK;
--	if(o_res->rflags & NFS4_OPEN_RESULT_CONFIRM) {
-+	if (o_res->rflags & NFS4_OPEN_RESULT_CONFIRM) {
- 		status = _nfs4_proc_open_confirm(data);
- 		if (status != 0)
- 			return status;
-@@ -3186,7 +3186,7 @@ static int _nfs4_open_and_get_state(struct nfs4_opendata *opendata,
- 		}
- 	}
-
--	switch(opendata->o_arg.claim) {
-+	switch (opendata->o_arg.claim) {
- 	default:
- 		break;
- 	case NFS4_OPEN_CLAIM_NULL:
-@@ -3679,40 +3679,40 @@ static void nfs4_close_done(struct rpc_task *task, void *data)
- 	 * the state_owner. we keep this around to process errors
- 	 */
- 	switch (task->tk_status) {
--		case 0:
--			res_stateid = &calldata->res.stateid;
--			renew_lease(server, calldata->timestamp);
--			break;
--		case -NFS4ERR_ACCESS:
--			if (calldata->arg.bitmask != NULL) {
--				calldata->arg.bitmask = NULL;
--				calldata->res.fattr = NULL;
--				goto out_restart;
-+	case 0:
-+		res_stateid = &calldata->res.stateid;
-+		renew_lease(server, calldata->timestamp);
-+		break;
-+	case -NFS4ERR_ACCESS:
-+		if (calldata->arg.bitmask != NULL) {
-+			calldata->arg.bitmask = NULL;
-+			calldata->res.fattr = NULL;
-+			goto out_restart;
-
--			}
-+		}
-+		break;
-+	case -NFS4ERR_OLD_STATEID:
-+		/* Did we race with OPEN? */
-+		if (nfs4_refresh_open_old_stateid(&calldata->arg.stateid,
-+					state))
-+			goto out_restart;
-+		goto out_release;
-+	case -NFS4ERR_ADMIN_REVOKED:
-+	case -NFS4ERR_STALE_STATEID:
-+	case -NFS4ERR_EXPIRED:
-+		nfs4_free_revoked_stateid(server,
-+				&calldata->arg.stateid,
-+				task->tk_msg.rpc_cred);
-+		fallthrough;
-+	case -NFS4ERR_BAD_STATEID:
-+		if (calldata->arg.fmode == 0)
- 			break;
--		case -NFS4ERR_OLD_STATEID:
--			/* Did we race with OPEN? */
--			if (nfs4_refresh_open_old_stateid(&calldata->arg.stateid,
--						state))
--				goto out_restart;
--			goto out_release;
--		case -NFS4ERR_ADMIN_REVOKED:
--		case -NFS4ERR_STALE_STATEID:
--		case -NFS4ERR_EXPIRED:
--			nfs4_free_revoked_stateid(server,
--					&calldata->arg.stateid,
--					task->tk_msg.rpc_cred);
--			fallthrough;
--		case -NFS4ERR_BAD_STATEID:
--			if (calldata->arg.fmode == 0)
--				break;
--			fallthrough;
--		default:
--			task->tk_status = nfs4_async_handle_exception(task,
--					server, task->tk_status, &exception);
--			if (exception.retry)
--				goto out_restart;
-+		fallthrough;
-+	default:
-+		task->tk_status = nfs4_async_handle_exception(task,
-+				server, task->tk_status, &exception);
-+		if (exception.retry)
-+			goto out_restart;
- 	}
- 	nfs_clear_open_stateid(state, &calldata->arg.stateid,
- 			res_stateid, calldata->arg.fmode);
-@@ -3823,13 +3823,13 @@ static const struct rpc_call_ops nfs4_close_ops = {
- 	.rpc_release = nfs4_free_closedata,
- };
-
--/*
-- * It is possible for data to be read/written from a mem-mapped file
-+/*
-+ * It is possible for data to be read/written from a mem-mapped file
-  * after the sys_close call (which hits the vfs layer as a flush).
-- * This means that we can't safely call nfsv4 close on a file until
-+ * This means that we can't safely call nfsv4 close on a file until
-  * the inode is cleared. This in turn means that we are not good
-- * NFSv4 citizens - we do not indicate to the server to update the file's
-- * share state even when we are done with one of the three share
-+ * NFSv4 citizens - we do not indicate to the server to update the file's
-+ * share state even when we are done with one of the three share
-  * stateid's in the inode.
-  *
-  * NOTE: Caller must be holding the sp->so_owner semaphore!
-@@ -4506,7 +4506,7 @@ int nfs4_proc_getattr(struct nfs_server *server, struct nfs_fh *fhandle,
- 	return err;
- }
-
--/*
-+/*
-  * The file is not closed if it is opened due to the a request to change
-  * the size of the file. The open call will not be needed once the
-  * VFS layer lookup-intents are implemented.
-@@ -4538,7 +4538,6 @@ nfs4_proc_setattr(struct dentry *dentry, struct nfs_fattr *fattr,
- 		pnfs_commit_and_return_layout(inode);
-
- 	nfs_fattr_init(fattr);
--
- 	/* Deal with open(O_TRUNC) */
- 	if (sattr->ia_valid & ATTR_OPEN)
- 		sattr->ia_valid &= ~(ATTR_MTIME|ATTR_CTIME);
-@@ -5219,7 +5218,6 @@ static int _nfs4_proc_symlink(struct inode *dir, struct dentry *dentry,
- 	data->arg.u.symlink.pages = &page;
- 	data->arg.u.symlink.len = len;
- 	data->arg.label = label;
--
- 	status = nfs4_do_create(dir, dentry, data);
-
- 	nfs4_free_createdata(data);
-@@ -5373,8 +5371,7 @@ static int _nfs4_proc_mknod(struct inode *dir, struct dentry *dentry,
- 		data->arg.ftype = NF4BLK;
- 		data->arg.u.device.specdata1 = MAJOR(rdev);
- 		data->arg.u.device.specdata2 = MINOR(rdev);
--	}
--	else if (S_ISCHR(mode)) {
-+	} else if (S_ISCHR(mode)) {
- 		data->arg.ftype = NF4CHR;
- 		data->arg.u.device.specdata1 = MAJOR(rdev);
- 		data->arg.u.device.specdata2 = MINOR(rdev);
-@@ -6033,7 +6030,7 @@ int nfs4_buf_to_pages_noslab(const void *buf, size_t buflen,
- 	return rc;
-
- unwind:
--	for(; rc > 0; rc--)
-+	for (; rc > 0; rc--)
- 		__free_page(spages[rc-1]);
- 	return -ENOMEM;
- }
-@@ -6759,7 +6756,7 @@ static void nfs4_delegreturn_done(struct rpc_task *task, void *calldata)
- 		goto out_restart;
-
- 	if (data->args.sattr_args && task->tk_status != 0) {
--		switch(data->res.sattr_ret) {
-+		switch (data->res.sattr_ret) {
- 		case 0:
- 			data->args.sattr_args = NULL;
- 			data->res.sattr_res = false;
-@@ -6980,10 +6977,10 @@ int nfs4_proc_delegreturn(struct inode *inode, const struct cred *cred,
- 					     delegation, issync);
- 		trace_nfs4_delegreturn(inode, stateid, err);
- 		switch (err) {
--			case -NFS4ERR_STALE_STATEID:
--			case -NFS4ERR_EXPIRED:
--			case 0:
--				return 0;
-+		case -NFS4ERR_STALE_STATEID:
-+		case -NFS4ERR_EXPIRED:
-+		case 0:
-+			return 0;
- 		}
- 		err = nfs4_handle_exception(server, err, &exception);
- 	} while (exception.retry);
-@@ -7020,11 +7017,11 @@ static int _nfs4_proc_getlk(struct nfs4_state *state, int cmd, struct file_lock
- 	arg.lock_owner.s_dev = server->s_dev;
- 	status = nfs4_call_sync(server->client, server, &msg, &arg.seq_args, &res.seq_res, 1);
- 	switch (status) {
--		case 0:
--			request->c.flc_type = F_UNLCK;
--			break;
--		case -NFS4ERR_DENIED:
--			status = 0;
-+	case 0:
-+		request->c.flc_type = F_UNLCK;
-+		break;
-+	case -NFS4ERR_DENIED:
-+		status = 0;
- 	}
- 	request->fl_ops->fl_release_private(request);
- 	request->fl_ops = NULL;
-@@ -7152,36 +7149,36 @@ static void nfs4_locku_done(struct rpc_task *task, void *data)
- 	if (!nfs4_sequence_done(task, &calldata->res.seq_res))
- 		return;
- 	switch (task->tk_status) {
--		case 0:
--			renew_lease(calldata->server, calldata->timestamp);
--			locks_lock_inode_wait(calldata->lsp->ls_state->inode, &calldata->fl);
--			if (nfs4_update_lock_stateid(calldata->lsp,
--					&calldata->res.stateid))
--				break;
--			fallthrough;
--		case -NFS4ERR_ADMIN_REVOKED:
--		case -NFS4ERR_EXPIRED:
--			nfs4_free_revoked_stateid(calldata->server,
--					&calldata->arg.stateid,
--					task->tk_msg.rpc_cred);
--			fallthrough;
--		case -NFS4ERR_BAD_STATEID:
--		case -NFS4ERR_STALE_STATEID:
--			if (nfs4_sync_lock_stateid(&calldata->arg.stateid,
--						calldata->lsp))
--				rpc_restart_call_prepare(task);
--			break;
--		case -NFS4ERR_OLD_STATEID:
--			if (nfs4_refresh_lock_old_stateid(&calldata->arg.stateid,
--						calldata->lsp))
--				rpc_restart_call_prepare(task);
-+	case 0:
-+		renew_lease(calldata->server, calldata->timestamp);
-+		locks_lock_inode_wait(calldata->lsp->ls_state->inode, &calldata->fl);
-+		if (nfs4_update_lock_stateid(calldata->lsp,
-+				&calldata->res.stateid))
- 			break;
--		default:
--			task->tk_status = nfs4_async_handle_exception(task,
--					calldata->server, task->tk_status,
--					&exception);
--			if (exception.retry)
--				rpc_restart_call_prepare(task);
-+		fallthrough;
-+	case -NFS4ERR_ADMIN_REVOKED:
-+	case -NFS4ERR_EXPIRED:
-+		nfs4_free_revoked_stateid(calldata->server,
-+				&calldata->arg.stateid,
-+				task->tk_msg.rpc_cred);
-+		fallthrough;
-+	case -NFS4ERR_BAD_STATEID:
-+	case -NFS4ERR_STALE_STATEID:
-+		if (nfs4_sync_lock_stateid(&calldata->arg.stateid,
-+					calldata->lsp))
-+			rpc_restart_call_prepare(task);
-+		break;
-+	case -NFS4ERR_OLD_STATEID:
-+		if (nfs4_refresh_lock_old_stateid(&calldata->arg.stateid,
-+					calldata->lsp))
-+			rpc_restart_call_prepare(task);
-+		break;
-+	default:
-+		task->tk_status = nfs4_async_handle_exception(task,
-+				calldata->server, task->tk_status,
-+				&exception);
-+		if (exception.retry)
-+			rpc_restart_call_prepare(task);
- 	}
- 	nfs_release_seqid(calldata->arg.seqid);
- }
-@@ -7684,7 +7681,7 @@ nfs4_retry_setlk_simple(struct nfs4_state *state, int cmd,
- 	int		status = -ERESTARTSYS;
- 	unsigned long	timeout = NFS4_LOCK_MINTIMEOUT;
-
--	while(!signalled()) {
-+	while (!signalled()) {
- 		status = nfs4_proc_setlk(state, cmd, request);
- 		if ((status != -EAGAIN) || IS_SETLK(cmd))
- 			break;
-@@ -9619,7 +9616,7 @@ static void nfs41_sequence_release(void *data)
-
- static int nfs41_sequence_handle_errors(struct rpc_task *task, struct nfs_client *clp)
- {
--	switch(task->tk_status) {
-+	switch (task->tk_status) {
- 	case -NFS4ERR_DELAY:
- 		rpc_delay(task, NFS4_POLL_RETRY_MAX);
- 		return -EAGAIN;
-@@ -9767,7 +9764,7 @@ static void nfs4_reclaim_complete_prepare(struct rpc_task *task, void *data)
-
- static int nfs41_reclaim_complete_handle_errors(struct rpc_task *task, struct nfs_client *clp)
- {
--	switch(task->tk_status) {
-+	switch (task->tk_status) {
- 	case 0:
- 		wake_up_all(&clp->cl_lock_waitq);
- 		fallthrough;
-@@ -10536,7 +10533,7 @@ static void nfs4_handle_delay_or_session_error(struct nfs_server *server,
- 		int err, struct nfs4_exception *exception)
- {
- 	exception->retry = 0;
--	switch(err) {
-+	switch (err) {
- 	case -NFS4ERR_DELAY:
- 	case -NFS4ERR_RETRY_UNCACHED_REP:
- 		nfs4_handle_exception(server, err, exception);
---
-2.34.1
-
+Tim
 
