@@ -1,141 +1,99 @@
-Return-Path: <linux-kernel+bounces-855783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E84BE24DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9642BBE24E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C795519C3726
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:10:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B28C19C4418
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8253D3164C0;
-	Thu, 16 Oct 2025 09:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rWNm3s3t"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173293115A3
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC840315D52;
+	Thu, 16 Oct 2025 09:10:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0643148A9;
+	Thu, 16 Oct 2025 09:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760605781; cv=none; b=CRqDSsrMlGC1hgsljEVf07Rl23ZhDHXyY0oJhwJc/4hbbLAyfg7MOVXVxeY3/amB8F+bsrNMn5W/Ux7QXCgtDGY9h4450Axpwb+9e0mCM8qq1EfmEkkJWLFlX3KJ2TbWaQ2YXHer5sxXyrb/Ytxy4y0WfUmh7lz7I9Ocf3H/djg=
+	t=1760605803; cv=none; b=t5IrMufV7pGPj/z3/aZvBT86XbVhyUV0WwkXF39AlmHPH4P+7nPzfGgprmL0mYiuGMr2Gkm8w5dj6nfkU6v3PDocnLiyfT4YpH4AtCZwk+06foeitjEXGvdE/Ru5rcV6Ia4KD97FugWJkOuY9aNH3XyAy8KopKdAfZIKAcuTxxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760605781; c=relaxed/simple;
-	bh=+TqfTRpPRoq3AU8dHuMcrb7fqxyNtpoQv0+EpVlasEo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Cerrh0KreMFrGwn08I51+yZ9fhTg7ZhK7ALXK1veCJgtYzDH3Z+Gt/D8Q9zLQw1YRkaFHV0i645sDungTuqLQrm2Yexl8FNAeO7VvSbc6JdQqJUcTSyy8XMiLvZIZx0sVLAw1P58TsInKM/CF73V18l+iLJk69upLo5pxd4vOrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rWNm3s3t; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-426edfffc66so286231f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760605778; x=1761210578; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=giyJvu+P/c/zBlzgMeJooxdfh7qZjl2zxl4gZFBxF6g=;
-        b=rWNm3s3tKXxptLddSgePlIk+7tm9l3bLUYbeA9lNlPbHXWepAc5/6ANZgUfnoZVack
-         TKGTddPCGYM747ujtArBDdvVhMxVes5eRmNgseX4+8055GSpJQpqu1PW/nVr9s/0z01f
-         /CdEnwRQxT9+lL1ZLsMDw64SoPtpa/3ARpW92G7FdPpyVhy/Z1FDNbwnG9pALlhyX1uQ
-         IGnrcP6nsQJ+xizRWUynnFFu3j/rwzIC+SclleqL/u+3QXJ114ygith1KKO0cv1oaIxa
-         SMZwOv6k7Nz76DrOBGwIf/OKwLN6QbXZ1iKi3h8r91BVWLPqK62i64SyL/UUKajIHyzm
-         X9cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760605778; x=1761210578;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=giyJvu+P/c/zBlzgMeJooxdfh7qZjl2zxl4gZFBxF6g=;
-        b=I9RedbHTcwSkdXcYPKIANGntPde/e10a0CgeEmOLlwOOYJp40y6F4SiwG5CwhnlNLM
-         beNvD6YVkIELQH/0AijS/ItQt3wpdcKEMlLxt0+rcnXgfbUB7MIGdkGUCNnipXAja7X3
-         EMHD221rnXhyawPpxJT4a0ygEmW3xAYoKI4kiHQYcyUByxCKhOyWVJ1Cyf5Un660ig+S
-         wpn9kCp553RVi10P7q90B8CGXCryjR7X0bPhCGpDnmDQdFrXzNAOtXCUdbCNhX/zcdKs
-         dtF5eB2SJ14eBSQFG707CLoCzBZcKltv32Sp4EQTFy8uvYJdMznRpPm+bxhq6go/WdEM
-         Ndmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM2TsFTUUZllQopmYSh3WQUKp4QO7V0ALvipUIxh4Yo/82k5+hxX0UtaYzWBFXSFgwjtz0waNrz6jl/TE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlBXpoaEdfPyY7LAvNfiNMrpoH3BA8mhpehbcQ2yJmKPjZzAG/
-	VTyoeQLILxQdDLVCa1+W6/h/YNAX0l/20PotNC0CFeJgykzmoArqErPyd1W2sS+mvBk=
-X-Gm-Gg: ASbGncvxat7EZ+LhSxnii03FK32NdZ6RhOq4JDmpUHx80X4MKiHRHRiF3hY7pC4ThHF
-	myInbYae9vadnV4aSAco2MC+aTVYwV/wgd1DNgFcRFXp26Pj7rnXri/KEMgW/yGbFcRNfvmwrT5
-	u3Aj8if+nXC1+EXwYtdYPLLomWE7wqE872qxSmf6U5NdYz+NhTw1GS+G+Vb9Ujw8pmD2lcLn7VR
-	vfk7d/yXPTvi9vWtVT9lqtcyhEF/CmDGlovC8Le3akZCE0wS6XWM7ClzOQzYs2eULS4a6oJbqsH
-	UZ5oUNh3YUtAkAdldK3QAOVURUilGxGBEZmdDbomrIW1UThiXHv3AvsqD5iWHZKXQCdqw5HH926
-	ASDRreEGqiZ4lE47galTyXgIKCIELQPEKSYxgRcjgPq1BUCbVTQOk17+hxAtSxSnm2Bt2GcY=
-X-Google-Smtp-Source: AGHT+IFwQ1Vj0TPDw4e4cKls5YWKHTovuMxKu9ae74FALGIc/dMLGZ2EBvJ6JtiJA1WjhvYyV1IDeg==
-X-Received: by 2002:a05:6000:41d1:b0:426:f9d3:2feb with SMTP id ffacd0b85a97d-426fb7ab9e7mr2401645f8f.23.1760605778274;
-        Thu, 16 Oct 2025 02:09:38 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:ef97:57cb:86cb:f7c4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e1284sm33191287f8f.45.2025.10.16.02.09.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 02:09:36 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 16 Oct 2025 11:09:27 +0200
-Subject: [PATCH 3/3] gpio: aspeed: remove unneeded include
+	s=arc-20240116; t=1760605803; c=relaxed/simple;
+	bh=Womg90+i4ELD8jdBQNceUQHjQ3cGGYE/qCn3v5ORcno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUZx/s3IxRNf17u72AewMeM4TYqDPQyDUNNCL+c2jbd2+RlJchl1vyhQWXugWUWFi+BP32ih9GF+q4QMJz9goTJll1QzhAwsxvjVduVDbKQeIQbWBZIpYFhXjJo676OyCbBEPNQefqCmPrHNi9yxNzAbgbAE3MMXAw03lWzZh+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C41C81688;
+	Thu, 16 Oct 2025 02:09:52 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D5F03F6A8;
+	Thu, 16 Oct 2025 02:10:00 -0700 (PDT)
+Date: Thu, 16 Oct 2025 10:09:58 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: tanze <tanze@kylinos.cn>
+Cc: james.clark@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	graham.woodward@arm.com
+Subject: Re: [PATCH v1] perf arm_spe: Add a macro definition to handle offset
+ value
+Message-ID: <20251016090958.GE109737@e132581.arm.com>
+References: <20251016083019.27935-1-tanze@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251016-aspeed-gpiolib-include-v1-3-31201c06d124@linaro.org>
-References: <20251016-aspeed-gpiolib-include-v1-0-31201c06d124@linaro.org>
-In-Reply-To: <20251016-aspeed-gpiolib-include-v1-0-31201c06d124@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=807;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=AnELVPWhjXwv4nNT8oy1ky6Ra8SlMALj94FDJwWeEnQ=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo8LZMRCng48xJlmYCAnXgnelIsEpfURlPAafHW
- lkDOwc8RISJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPC2TAAKCRARpy6gFHHX
- cjRHD/4gn97X2frtT0cloiZdcc6gGioOaf4UKJ2xeM/W83SKU24VRhJufxQDYnRAKZUHwS3vM0i
- 5xRJI7ZSCBEnwcdXUYP//E4XMsNeG6l2QtsNGOVTiPZbHyJ3ABGl3gUHq0Yo+l8hgkzmtee8CBv
- izSfKQzKXubIdTaHH4hPG36fHFwPfHqYfWgy2SJhEsD2fqmKm/2bdpMKZFQ2b0rQaCjWjMGSCEE
- SnR3F25qf/1xIPbT41uHEwbR4AYuiNPe0jb1OiA9oZC/8zrXc2vuja1rUHsCdGJ4FJ/oZA2c1vw
- gh8Op0XLF4Z01G1BZNgc7VHxLvbokm0xXzhbogh1mi5KTEkK9F+Zt9N24rsbha3jTZkDkidO6zF
- jymTl5YWnc2pOmONTe8zmUEC4gwXBQWj04uOFs2iUw69r3/q02w6dtJkPdV02tyUVE6OFS9HA9i
- XysJDFCxs6ffsLaYUNaL0zsTTHARF7WVLqqp2wUNjix0lAB5NeoIdGq3cUo454LYGRt5Op56xs3
- MnmGoKC7rP88mtSv9/zVDuGuNW5gXczxzLEMiwfkRkEQlIjuSqHTuTPDT/RcD5cmX/4Zzclpi0k
- LBdw9fVriRvRaBoxsYsIScwPxGHPGgGrEpmwKx6qgVMDvzkur6TQ5U6cJXuDRKo2sOF6Xa0n8H6
- uysm6NlVANuLgOQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016083019.27935-1-tanze@kylinos.cn>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Oct 16, 2025 at 04:30:19PM +0800, tanze wrote:
+> Add a macro definition SPE_SYNTH_ID_OFFSET to handle the offset value
+> and improve readability.
+> 
+> Signed-off-by: tanze <tanze@kylinos.cn>
+> ---
+>  tools/perf/util/arm-spe.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> index 71be979f5077..645048ac7708 100644
+> --- a/tools/perf/util/arm-spe.c
+> +++ b/tools/perf/util/arm-spe.c
+> @@ -36,6 +36,7 @@
+>  
+>  #include "../../arch/arm64/include/asm/cputype.h"
+>  #define MAX_TIMESTAMP (~0ULL)
+> +#define SPE_SYNTH_ID_OFFSET (1000000000ULL)
+>  
+>  #define is_ldst_op(op)		(!!((op) & ARM_SPE_OP_LDST))
+>  
+> @@ -1732,7 +1733,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
+>  	attr.sample_period = spe->synth_opts.period;
+>  
+>  	/* create new id val to be a fixed offset from evsel id */
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = evsel->core.id[0] + SPE_SYNTH_ID_OFFSET;
 
-This driver no longer uses any symbols from the GPIOLIB internal header.
-We can now drop the gpiolib.h include.
+If really want to improve a bit for this, I'd define a macro in
+util/synthetic-events.h:
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-aspeed.c | 1 -
- 1 file changed, 1 deletion(-)
+  #define PERF_SYNTH_EVENT_ID_OFFSET    (1000000000ULL)
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 3da37a0fda3fbdcb8077c07706aa41b233e9beeb..2e0ae953dd996ec1dbe7585c4a92f28622f8e39e 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -29,7 +29,6 @@
-  * access to some GPIOs and to arbitrate between coprocessor and ARM.
-  */
- #include <linux/gpio/consumer.h>
--#include "gpiolib.h"
- 
- /* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
- #define field_get(_mask, _reg)	(((_reg) & (_mask)) >> (ffs(_mask) - 1))
+Then, apply the new macro in files:
 
--- 
-2.48.1
+$ git grep "core.id.*1000000000"
+util/arm-spe.c: id = evsel->core.id[0] + 1000000000;
+util/cs-etm.c:  id = evsel->core.id[0] + 1000000000;
+util/intel-bts.c:       id = evsel->core.id[0] + 1000000000;
+util/intel-pt.c:        id = evsel->core.id[0] + 1000000000;
+util/powerpc-vpadtl.c:  id = evsel->core.id[0] + 1000000000;
 
+Thanks,
+Leo
 
