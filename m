@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-856062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B3CBE2F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 407B8BE2FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BDB3B0037
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C634A3B9EDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1AC302761;
-	Thu, 16 Oct 2025 10:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0592E543B;
+	Thu, 16 Oct 2025 10:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C/YBsZO5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FPZ1AnBM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22EF16132F;
-	Thu, 16 Oct 2025 10:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74972301468;
+	Thu, 16 Oct 2025 10:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760612124; cv=none; b=rIUQ/MaDcZ1QGsDr6/gctfcE03t7OEaMxqcNwQZj9cnUmoe0DpETbd3IP8cnpwmWGgYmCvaon5cvxJB5lJdCmT8TcOSJtQvtQ5zDn8w+3HOqw5K/faxPGlsh4j2DWpx9qX+NaiFCkQZPsc7C30bpx7JdXHgeCmDTXtVQY7H5F+I=
+	t=1760612313; cv=none; b=FnetXmEa8I5w3Y5A/sSxLcOEifv9mnef90Lt630XsIe3U/+Z0xgn1gCwilW9uG5Ri2mxHaliZQ5j4mrTgJsRx/xYrFflNxvaxULIbliQykxcN/4FJlcBr4EBOuACVuU1w6ARtysp+5rOxj83VF2z7ESwsPbEFh6IAxOqDR/XxwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760612124; c=relaxed/simple;
-	bh=+kiiKROK28TM5gnwbZCyi+ykIDPugSZOQFkBToxu0jo=;
+	s=arc-20240116; t=1760612313; c=relaxed/simple;
+	bh=G5YIzlM0wW45iOdOfOR7wWJBmL7Lgrcc8f2jbTPM22E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMeTQ6WXHOd2prfwKc+4zHPaawgUiTCwnYbAsMBaS+j+JlHNxBrBHRbdWMO2FNiSMaokeutABUi85QdlSfPk4vsUdC5GymvambxN2SvXFJp2W2Y9IUlLNLFOQEXVZVaNPlmO3ak2bmOnnVD4tyLu8apXr21/QxVdpLc45MCyV1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C/YBsZO5; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760612123; x=1792148123;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+kiiKROK28TM5gnwbZCyi+ykIDPugSZOQFkBToxu0jo=;
-  b=C/YBsZO5Em33EEP7u1wcXv2MNQfPNEeVM7QXIiTjkG6D+vlBgMQ9LLXA
-   9tuECriA9S9GN5L2Zamx3KmatKl+3ABMH2OitCVAohXWvIK6MLpp76R9f
-   721KYO9F63Zhlg3vyYQA5kK7l5sDuImkiQf4B3doSfjIUJwwYesWgnyAm
-   amuGctL4gQ4T6u3/j30/ZL31iSqCtMYwRW1pImSno/rA3l6TRZ3g3M1Ui
-   ppu8FzKAuW9GqqRILu634bkNHEzg8gQdFyYip9+g5FGa1ChTBKDS7IFCl
-   2FA8Ot8HKIPReOgsFKnvjJHQrdUG+J8MAoHDuDgq9vVUbZ6ZJPx4pFRNN
-   A==;
-X-CSE-ConnectionGUID: lus6fO+8T4KG+50/18+3vA==
-X-CSE-MsgGUID: TNcgd+s1R0eQCVgLOghkTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="88270174"
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="88270174"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 03:55:22 -0700
-X-CSE-ConnectionGUID: 6Pwt631hROa6t2dloMedSQ==
-X-CSE-MsgGUID: nVF/XZuOTxaj+SsEOmyH0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="182406928"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 16 Oct 2025 03:55:18 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9Ldb-0004il-1P;
-	Thu, 16 Oct 2025 10:55:15 +0000
-Date: Thu, 16 Oct 2025 18:54:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v9 4/4] tracing: Add warnings for unused tracepoints for
- modules
-Message-ID: <202510161811.9iIH3K15-lkp@intel.com>
-References: <20251015203924.731213165@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JycHJ6B4Kk6j+Fe1d6vHHAyusPZzHtlxVIzJ17dDQ6P5UIvJdnCnTRrpZGddczE/2I27+pUSD9foqHzJ4STsGDqurTNLj+B0utxEZwgSNeVpDTAoGl4Lnv8k17Zu0A64KvS47JRu/7YPwp9DeSGDv83FFYCinmzLiCpy8U4aSw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FPZ1AnBM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AF2C340E01A5;
+	Thu, 16 Oct 2025 10:58:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id H3F_11x1GYkR; Thu, 16 Oct 2025 10:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760612302; bh=cLAm2KZbcUMyv3Nykzzh+blygKDExFAFcPx/1H0Hto0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FPZ1AnBMLzWN3gC/Gf8oC+xPZnSOsHILd7rdmywbZYi1fx/C6g7Oo9/xbTgXCLICK
+	 avBK1uzfruRje0qZ9aAWGt3FhexI9arjvQTYu5wXUlmWFijiDwi/UiU3H26beBeHl1
+	 ubBVVlBJmk2AIIcm1a8KaJvfmNqdtvibRhZOV3lWWJKKYYZ8LGKOJpo2V+/2cYhi7U
+	 BtP9zHYpgg2dUiWN5qSe+zWjVNuXF5UrU54/hm7l5/ZH94kW401Mgxg72d+ua4KfUj
+	 QiLNwPv6Hbq8dPK5wxeQpE+t67c2z2Jc2Wr83mIdX8MesmQ4kd9LLf9gZxRlCn/bu3
+	 PNtGvtFFaC9N6CZ+VeImrsvBOT1ejhhFsdKMKWrHTz51aiMgcfMrZcbF9aW8WrNh+G
+	 t6KSGgg0sAKfX+/7/SZe/xtAW4RbRe2biZyzKsHwP7sJ9xpuE9MaEtSJ7neMm2x1S9
+	 QTAjSU9UHVKkITvVjIBAt6yh1oHgf3RmuTgSgZi231zw0i98jpzbDYN7Ug7kULo2OG
+	 yVMYdVqxQRWt8bhL+Whg6r10tcXTa2rgn7gaH+OrMd1T7sU/eepYzP/AvN/9eTV5HO
+	 oGJ7Opl3ejfSYV5pGsokRoFsXc7As8XF2y8ZV7ZE2EI4dkB6UwjaEAKGlf+1AQB4Yp
+	 uan2LaXdq9kM5oqqGjUJn2Is=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 44B0C40E016E;
+	Thu, 16 Oct 2025 10:58:06 +0000 (UTC)
+Date: Thu, 16 Oct 2025 12:57:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Ahmed S. Darwish" <darwi@linutronix.de>,
+	Cezary Rojewski <cezary.rojewski@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Sean Christopherson <seanjc@google.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v5 01/35] ASoC: Intel: avs: Include CPUID header at file
+ scope
+Message-ID: <20251016105514.GCaPDPEu016XyDocfY@fat_crate.local>
+References: <20250905121515.192792-1-darwi@linutronix.de>
+ <20250905121515.192792-2-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251015203924.731213165@kernel.org>
+In-Reply-To: <20250905121515.192792-2-darwi@linutronix.de>
 
-Hi Steven,
+On Fri, Sep 05, 2025 at 02:14:41PM +0200, Ahmed S. Darwish wrote:
+> +#ifdef CONFIG_X86
+> +#include <asm/cpuid/api.h>
+> +static unsigned int intel_crystal_freq_hz(void)
+> +{
+> +	return cpuid_ecx(CPUID_LEAF_TSC);
+> +}
+> +#else
+> +static unsigned int intel_crystal_freq_hz(void)
+> +{
+> +	return 0;
+> +}
+> +#endif /* !CONFIG_X86 */
 
-kernel test robot noticed the following build errors:
+Why are we even bothering with !CONFIG_X86?
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.18-rc1 next-20251015]
-[cannot apply to trace/for-next arnd-asm-generic/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Because this thing has || COMPILE_TEST in Kconfig.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/sorttable-Move-ELF-parsing-into-scripts-elf-parse-ch/20251016-044008
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251015203924.731213165%40kernel.org
-patch subject: [PATCH v9 4/4] tracing: Add warnings for unused tracepoints for modules
-config: microblaze-defconfig (https://download.01.org/0day-ci/archive/20251016/202510161811.9iIH3K15-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251016/202510161811.9iIH3K15-lkp@intel.com/reproduce)
+But this thing gets enough compile testing on x86 already so why not simply
+drop the whole unnecessary gunk?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510161811.9iIH3K15-lkp@intel.com/
+---
 
-All errors (new ones prefixed by >>):
-
->> /bin/bash: line 1: ./scripts/tracepoint-update: No such file or directory
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index 412555e626b8..63367364916a 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -95,7 +95,7 @@ config SND_SOC_INTEL_KEEMBAY
+ 
+ config SND_SOC_INTEL_AVS
+ 	tristate "Intel AVS driver"
+-	depends on X86 || COMPILE_TEST
++	depends on X86
+ 	depends on PCI
+ 	depends on COMMON_CLK
+ 	select ACPI_NHLT if ACPI
+diff --git a/sound/soc/intel/avs/tgl.c b/sound/soc/intel/avs/tgl.c
+index afb066516101..d920488d24b1 100644
+--- a/sound/soc/intel/avs/tgl.c
++++ b/sound/soc/intel/avs/tgl.c
+@@ -11,7 +11,7 @@
+ #include "debug.h"
+ #include "messages.h"
+ 
+-#define CPUID_TSC_LEAF 0x15
++#include <asm/cpuid/api.h>
+ 
+ static int avs_tgl_dsp_core_power(struct avs_dev *adev, u32 core_mask, bool power)
+ {
+@@ -44,18 +44,15 @@ static int avs_tgl_config_basefw(struct avs_dev *adev)
+ {
+ 	struct pci_dev *pci = adev->base.pci;
+ 	struct avs_bus_hwid hwid;
++	unsigned int freq;
+ 	int ret;
+-#ifdef CONFIG_X86
+-	unsigned int ecx;
+ 
+-#include <asm/cpuid/api.h>
+-	ecx = cpuid_ecx(CPUID_TSC_LEAF);
+-	if (ecx) {
+-		ret = avs_ipc_set_fw_config(adev, 1, AVS_FW_CFG_XTAL_FREQ_HZ, sizeof(ecx), &ecx);
++	freq = cpuid_ecx(CPUID_LEAF_TSC);
++	if (freq) {
++		ret = avs_ipc_set_fw_config(adev, 1, AVS_FW_CFG_XTAL_FREQ_HZ, sizeof(freq), &freq);
+ 		if (ret)
+ 			return AVS_IPC_RET(ret);
+ 	}
+-#endif
+ 
+ 	hwid.device = pci->device;
+ 	hwid.subsystem = pci->subsystem_vendor | (pci->subsystem_device << 16);
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
