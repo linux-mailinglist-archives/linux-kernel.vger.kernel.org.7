@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-855741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF28BE229E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC37FBE223A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 766124EC4B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003B319A361B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338CB2FF14D;
-	Thu, 16 Oct 2025 08:34:23 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2133.outbound.protection.partner.outlook.cn [139.219.146.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0399B3054F6;
+	Thu, 16 Oct 2025 08:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Dfbrzfll"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012047.outbound.protection.outlook.com [52.101.66.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B61A145348;
-	Thu, 16 Oct 2025 08:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025A2303C9E;
+	Thu, 16 Oct 2025 08:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760603662; cv=fail; b=ZcVivxR3PheW7tUOdv4hns8nFS29QWCX9Jbwmu3aMtkhiROF4VEL2ucqCaDN5Ge8bVwMcUBfu6r4qbaErAVsBmzDui3pebs3PP9uPgJE9O1y+Mm+xMew1y6b41kkyRwnW37+aV8BtFrp19BphJUK45mzJDyDIqOoUXD7rAiYUqo=
+	t=1760603052; cv=fail; b=dr5q9C5BA17iQPNjyf+CehrK8LIrh3oVz/yVaab7TjRM8K3EeCpKvsZ/UkpUDg+qNdimhnaNNGVQKtkeeijku1qjbCewitVWOneZrtr2DXsBNGo1THtqredkNi8TzNZLjdG4gxotlW6qh9wzuSr019pm+G6U9/Yfj+u3ElINTRw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760603662; c=relaxed/simple;
-	bh=LffuFy0o+ak0sYVtamZtfM1tkLci4+dbgr5HAogXeVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bguFnvakxEdvBeBr+pY5AD/sW4ngR7gM3izZqxLV/Ia1Vii3lJv6BjqWx897y1rIRu5OTkdZsKxpH3/o5YqE710X5mpMAfdNfoueiSEu0Qnv6WGa4VDea6WJ6OaCuPZ47xZpi2VRFu8YDawftDgB3Wr+aDxgYCSMZkX8z6nOns8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RdYN8qwIlfNCdamwENSIJFhUKqEFu+YSkV3P/eQcN+OpKmkmKGflsbwUQr+v1dOgooWFGve+tmDBbyWSLMIQh0cyYEJrf6aDwPg0arW6/6c4Ah7sEgQcu+52h2voDBlVPxwSIPjMnOvD3kbwLeZc/eUTupWvjBR9yH60lvpynYut6+TlgzcSZz8Jxv1cHmHHoj+gT8v/8DMf1L4+K4zBK1KoiR30seEtZshfsXq8gGPLbodX6hStWUle82dlTnUEiyBIHwbXgCZSOvgThX63vt5EsR0pN1pcqwvjizEpxgM3Tr1v8vGXgOc/aIhdfIULan0kbTwBDBfp55KYOD9obw==
+	s=arc-20240116; t=1760603052; c=relaxed/simple;
+	bh=CjHJWjmmO5APXNONJar6K5cpG+ABx1ocl2M/lRe5MKw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=f9n2ol1903ZnWeuMbBMQgRDbQ7n70zmJcAsgIZtAbeZ2J6OlqUHciRt1ADLqNB1fS49/m7r1GjQ1rUivolxAqCMuaMzUApPX1uVyG/4VPbwNhmbSrddv7rL58+A4ibPitYxzJAWzdwbW37y+gBnUFoZsIyI2hUBPWXixsGUpitM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Dfbrzfll; arc=fail smtp.client-ip=52.101.66.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cQ/3axbD/xflYz/5OkvUd2orXY7mlgHKMFLi+DcYcOrOBQvTGbpeWpURyr5Bpq8LlgvJwwngPcXQd3bygBPyE2PtQLqvE6psJ31QjJAx3vAukQ4I/PurvxgNAtvmn16UK2xb7yh9535jiCOgZjIgO4V7r5Hi/jqV2XQXZuXAZfAitJ9/XC+U1WmeIXg1uCHU68namaeq98dChyN3fV+UJOtG5Ub1DpBNqK1FdZJRqt6yM1mgp3ICrLCGB+epSUuzqkngC+TX+4GkhM3u7PUwyr4wzCjcouholqPCM+NpddHAfU7s3AfMKDiEAgjjKgPdkXBh+T33vmNHc1qiR4Ei/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
+ s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2kXPRul5UgqNQ91FZuNxL8MCd5ZCkwkQkOLYKss6ByM=;
- b=XZ/D/Fb4hkXxpT7pTS2KRp1bK5AXWP1tgkGPlkCFslY+ScykeXXIFrKhY3oC1uZr9TmWcd5/rB2PQZlb77BIEsGFklMgPP8kP1RIoFygYFCW7IOzSMnKpjZLO+kqQucd4J4NF99ZEovLSvU/hMlCo9Via/PPAKeqCqNu5D0+EtumYzD7dFmkQI9rKPliI6E0qvqj6QNC5qn463khYdRJvM+E7LKDKKNXejtGTJ0yGPB6xDzn7WISLvZyEr44x5Yo+v0YVLuklh2+y/tiVN5LjIfHM+ayQ+aASSpscIM/nqwBI8vbX71ChcLhYAXw0+qx6LOzv+9DgyEbgpgOlx17LA==
+ bh=JDzmn9yHZjK4XpscNWbCne/3v85mEa9ghTB/mffoELM=;
+ b=d8bqXCRxhD6+ZX1KwcrETjcVTVoBO/p//FM+X4n2nUu+Y1HlpmRemLMCVlGd6s3JcrsEed7Y09+Lp46US8ucpb0RmKL/Wn12Vfy/XnCv9aPT/5Fw9niqc51F0Et1fhj2/HGczY1Yp4bi9WaGWFn+RO5s+vJ6dtYfBBVRB9d55OWZGQ8O4YiSLCxckq2+eRpP1r8LCGCq9fvGjRyFSiMnFHIroGJm/sATjPIt3DekPjBkfgBYj8tC7SbmmN7P8rKGqvR4uiaJQ54P07tqgGg8texR3GbTi8u5emiVfQtqHBKhkGVS3rAvqTPIXeG0xcQZjEm/LHuW6aCNEK6TNi0vUA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JDzmn9yHZjK4XpscNWbCne/3v85mEa9ghTB/mffoELM=;
+ b=DfbrzfllxeDDyYkKo/QEBvDo0HKEkM0kuGKnl6CeCGIXzrNxZ8p4rcIUjKFmyBQyEDuCpsWHTw0j53Z3t2IWuS7hmcnccGyvTMjhu1hzcsK/I3Ak7OCTW2CUMlTC7Gn0+0TqZbP+AjcZzroqRUVCdHGmpN43sJRGJbXABD8wYJM1QQ06nAu7G0j5PJVs8ekYxo9niea63fi/ukKh1SbxhdpHSQSFxf9VNlnDtIRRKwc0bUvdXTATaPjhqixzjtwMN8nl+QmXd35BzlW0liM7wNu+QztP4jkGhS6i0ZNLQcmNabAezp6Bu+ZF82Vz+s0iN4y6ox5iFnym07z6PiTxeA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1308.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:12::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.23; Thu, 16 Oct
- 2025 08:01:11 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7%4]) with mapi id 15.20.9182.020; Thu, 16 Oct 2025
- 08:01:11 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
-	E Shattow <e@freeshell.de>,
-	Paul Walmsley <pjw@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Hal Feng <hal.feng@starfivetech.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DU2PR04MB9082.eurprd04.prod.outlook.com (2603:10a6:10:2f1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
+ 2025 08:24:04 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9228.011; Thu, 16 Oct 2025
+ 08:24:04 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	Frank.Li@nxp.com
+Cc: imx@lists.linux.dev,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 7/7] riscv: dts: starfive: Add VisionFive 2 Lite eMMC board device tree
-Date: Thu, 16 Oct 2025 16:00:54 +0800
-Message-ID: <20251016080054.12484-8-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20251016080054.12484-1-hal.feng@starfivetech.com>
-References: <20251016080054.12484-1-hal.feng@starfivetech.com>
+Subject: [PATCH v2 net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
+Date: Thu, 16 Oct 2025 16:01:31 +0800
+Message-Id: <20251016080131.3127122-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0020.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:c::16) To ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14)
+X-ClientProxiedBy: SG2PR02CA0067.apcprd02.prod.outlook.com
+ (2603:1096:4:54::31) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,105 +83,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1308:EE_
-X-MS-Office365-Filtering-Correlation-Id: d04bd4d9-28b6-4cc9-a876-08de0c8a2b8c
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|DU2PR04MB9082:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0468f482-5b8f-4f5e-4b39-08de0c8d5dd4
 X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|41320700013|1800799024|7416014|366016|38350700014|921020;
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|19092799006|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	elSKiNQNqM1l8u5YaBkvYvQ7xDDEB8Fx11WO5kuUHSsK1mDKiNxGa/Pr/QccK4T0DBBHTyqFgp+8xvMlsduMSf+7QGTSmSiDwP6qrXgUuoVEb9abrX/Q8UfbaTvLy4umL/Iuzye1R7k7MHpbIhfWxNHmtGRqVuBgDQVFD/fEZeOJ6DhywRZt27x4BMjn3BaJa1oSSxh99Q+WCqssempjlLDpxf4XN473EF4MFe6pB7cZhIE0HjMrREF0phmmYM3J6HeFKjiQQ1LwSERQ7/dNBUQd0OuINp557rqxEG04lrB8Kibk700h42LOKAFgCu3HXbM7qYLPZq8SYajEa/Kne5KgOl50cLt855ygPU+2oKbtwNAeZO9coNXSuyWWNPhC/8mctGdtxajc31k87AZXlpPHm5ddGwCNnWdK4PE5MvROSGRUOAnf8FIUi1A0dV25334OkSXr5HneKZ6yD4rowm1MewZTQyKdwHzkZHTGrw5n323Am03jMEMQGHYMXn++kI+XCCfptndTZBbQSGLv9j2XZIsSAHKTXVbvXr6WQAG/lBoraNac29rC/VqSGHte/rZvjDjHT9yRvhOCVDN6mgvo6aAwJQR4BJz5wh3WhV0=
+	=?us-ascii?Q?BXPjsUvNSAb+JQ6IjV8GZDKTKRyIEmsCI9uzDSP3J/urROPsTOQhdctjOzEM?=
+ =?us-ascii?Q?i9Y0MhjN+jLKW3A2jchJaa/zY/PpAI00W1p2Kjx+GICi1CJMmhUv+icj9Ocl?=
+ =?us-ascii?Q?/GKIrKomhdXl7HoAS0dVD4OnvGANuOygxWY40DmL/BPMv/PunhzF/C4hAIy6?=
+ =?us-ascii?Q?9WO5JrTZZtFbBCF+bsFdL78ODD++6XK4Lx0Jk5UnehJ+kVsKV+iepTvaNGtW?=
+ =?us-ascii?Q?dqUAXfsPUFcrBA5m/vO1MK8BwfNC4+Lo2MhgBbmCT3vLrx/370qG1J8BlihH?=
+ =?us-ascii?Q?mQ2StHbtx63k1mlvxjVKRMn30nGgIfTu15yUu8ThZbDpFBZNe3sb4rzlq9D5?=
+ =?us-ascii?Q?WMF74XqBwQ/sVm2EDi4AzM0JWSmNH9pr6KW+5HBA+JeRHTifeWIBBzcMT1e/?=
+ =?us-ascii?Q?z4TouwnVmQoE6o2+Qe5gCqpD/fFureKTCBV7BvMpz4fQvZnvwHIri9C0AvGc?=
+ =?us-ascii?Q?RE9q6zkb054+0CLxLOA68CkkQbcerubIkN/CUQMloWDle8qpjy7QW2BH3xPU?=
+ =?us-ascii?Q?eElwc3n1URt6JU6UBlazpEd+eVVknag53fTlubGRiSFavmA5mmVvy59VLKJU?=
+ =?us-ascii?Q?x5HZmfbFnnfBVWhTrl3AYzo9KEqPyHqm0sJ1d0LnTaauG/VlbpTaX9kN28vu?=
+ =?us-ascii?Q?PwN3GzwL7e9hucia/KLkV201rzAmmza/lh1WMno74IXNWy3yJjxYUpQouG0M?=
+ =?us-ascii?Q?8qRu2mX60oAlhy75L78iHeqVRX33QWyqfKDvbgehhrWKtig/bLEC9OnQrcAX?=
+ =?us-ascii?Q?ZCsjZr4nhkxl9y4vlHVseLwyg/Ik7pyoZlPGbyBeCSfQ+Ts2dzWN6EK1oG3j?=
+ =?us-ascii?Q?o3nNysr7Oo+KOdALfMjqULWibuBMVAcsNN5cpVy3ZXkaB5v9yNIoM9V+K1p8?=
+ =?us-ascii?Q?NT3X7rpjAz+CJKsolVzDL6Q989eUhCt7qiRKN/flmGhohWokDOL77vv/ppJf?=
+ =?us-ascii?Q?mP8/2J2UsC7pIlb+LQGLtYD5gkKKz4BhkBlLspBa8sGkqEdF+FCRqLGlk30o?=
+ =?us-ascii?Q?oyURWn16a5G6rdHGxtRBxkUJGG60BN8K/wQ9dii8QocmE6CULDIGFxpJgZSX?=
+ =?us-ascii?Q?fH8JcsPb7XZiYf9JY+bJnf/Lk+mELHzTlWnkT+jS4AJ7mexjQ2DHa8FT8Wib?=
+ =?us-ascii?Q?iQxEcbeKAGu0K3/XcOpIpZSp1fUoadZXdldexlaFii6BASsBxtXW48ThVQ82?=
+ =?us-ascii?Q?e0eg5zlH+HcYjqPRlvsADGng7ExFZR8w7A82ZShuS2GcrLBzWL9CQ4gNcnlp?=
+ =?us-ascii?Q?akW+6A3ttrakVNBVzMvtSAdLGbN96Ow4o96+IC00PqM+K49as3xA+HR+h0b3?=
+ =?us-ascii?Q?GTrW2uS7MvwjL4oXkIXTeQq0p2X6iMNYGFgoq80Ik1xBxk4Owjm48u+img0W?=
+ =?us-ascii?Q?uXyfQkZQir1SajcYFi1kiGHqbI2fjoC0mO19VqONKaRGpf6fSEOLsA7i7EhK?=
+ =?us-ascii?Q?Z9KeaHlXc+KU78wyehPsj1oizhXjrwQAAMPjQHKp2sGhVvPBXZDVwHyAVPEY?=
+ =?us-ascii?Q?GCj+WmHdHfpAbGKwf6i5IM67mQxb2GSiZ67z?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(41320700013)(1800799024)(7416014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lxzPeheErrwsgk6CgCOIejkb/o1+7rCXJLF0lMbQ7Ros7W0gnAVDrqfXwoxd?=
- =?us-ascii?Q?tYfxLSSRkRnQ0TdJISeFNIaZyyIbu1XBSyAQzjXcCuoNNKrsz3Sar+4wTEHG?=
- =?us-ascii?Q?l/IinGoqHbgsmE283wj9kSXe3QGYxZldpyvjw37NVYbu4gMkKgGNDdzbwrhU?=
- =?us-ascii?Q?eOBxAtg5Hw/w5LwsCMEunqH0NqYdVP7L4w/8BxMdsbfzCWq0gSiEbg03zvbZ?=
- =?us-ascii?Q?3yC14gHLxanuQyd5UqKNSj/AVlN66XiyiRwqoRdoogt075PoBMo3AghUhzB9?=
- =?us-ascii?Q?LpF+rKrdmZ++PdPW+nN/g1PX9SvWsKS1CE5nmrYf5syUAxQfZE8Yv1CrmV7X?=
- =?us-ascii?Q?8wi42emjhX3afcBapnvCiRqGlSZ6zzHwjqWsndsP/kxVJjfYJ6y3t6rN19gZ?=
- =?us-ascii?Q?sazEom9cLKJ51o03VUhAKtrV2fB8DAqpL0vF6j1ul0IbXnPd5A+KriQJf+YL?=
- =?us-ascii?Q?n7a4Hyy9HptgT5e2XLvW7RoOW5aepIt78193YREZi5EST6Mt+3z6HG3hIluS?=
- =?us-ascii?Q?z0FHq/sKZLtvq+PYCc3a1A64MXq/ji2RTCy0IZSl7Ng5qki5wo8D28kDPSnQ?=
- =?us-ascii?Q?J9+tQo8QeIVEg1pxksy+WTKDF45E6TS8CCwI1IZH1+vmjGvo8TjsFxTVM41O?=
- =?us-ascii?Q?MjTwgdHJrkUbr2ANbcwuJuRydXtIcIDcsLpB+8WGbImNZKx6k4YvGGCFHWh9?=
- =?us-ascii?Q?nQyif3XkvSO8kH5Tyq6+rYHcsP6BO9egQ2C9s1XLelFkYGaExxQlX7xDZaco?=
- =?us-ascii?Q?U8sk1xOCTmp+iwTIqEZ4CZjTuYOiUSqhT44AKBecDpjIZKiA5Zlt6RiLMRT1?=
- =?us-ascii?Q?ijFAV3v81ABziu5omLoLwQkbRr/z5pzyYRBuccS0bWBB9SLR50UOvvV1pkiP?=
- =?us-ascii?Q?Zc7V6u5lxa8JLtBq5FyoJmpz2oCZnlE0EJ+ACJCArAmU/HkwYNR+Z4Zm7ZoK?=
- =?us-ascii?Q?yw1c7W4EZHO0XWlo1CN9r0FlIsDkp2HT9y76UBHoZDzCyMPfrW8TsuEGiUm9?=
- =?us-ascii?Q?r0xHV6ADU54RxA1P2RDjkomUKh+yYhvVIbD31qovVZa3WDRqFOCuFufqBVAN?=
- =?us-ascii?Q?jKTVkq2Omd6+HY336rdZFMESn2BOMq8+PhE/7sdaCjfOQ8aDtpGYARIrfuq6?=
- =?us-ascii?Q?zJHydmDAMpPppvCX79opRHp1Wwj5E85YJ7ulxbkoecl6Tnl941pKu/ELDPX5?=
- =?us-ascii?Q?pvT2239LCIo7qrJoF5rf7YlkEbN11LUcteEcQ263+C2/43/DXLMU0MIlKzkM?=
- =?us-ascii?Q?U4+R7nbjokDD/2TR+9ALR3RFpq93LNmz8BubM4R5Rkbkv7inn3ii+KpKGJee?=
- =?us-ascii?Q?J4s/MsJWUClW14UBrIEkuX3na7sGHdDukdQzJMH6/Me6IhJggrSVvZAiSx2v?=
- =?us-ascii?Q?gIIdVLntxSKeNWM9SNYN5LejLzMW8QNtGLYnW6zEF8Y9WWdphh2XK9g/mDgW?=
- =?us-ascii?Q?eoC+WLHS0ouw5KbEb9h2i0a4l0JtlnAsWuwAQI1mLCSCQg9NQ0f4Mi0H+ax+?=
- =?us-ascii?Q?LyH/2jZq4Wo44+iCzXK25V0sXKLm+ZZ2pCUUYK/bhyFK7t87JBESyE9lJPOj?=
- =?us-ascii?Q?/mg8tUeLQqcdIP4XTFybDAqtCZDwSOkiXox1i9Du8stu6BlGDUFi4C8PIICn?=
- =?us-ascii?Q?Dg=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d04bd4d9-28b6-4cc9-a876-08de0c8a2b8c
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+	=?us-ascii?Q?eYvAI1/kpebxmZPw0JVqBT/oKZUicQaRZr3rQGBU1izLI1WM17bClPgfiTNo?=
+ =?us-ascii?Q?oaANOEVuAs90cYGkXnJmeixDSuZDLh0uGkxuMKVd+6BYupQ6a6vt9+RRObtR?=
+ =?us-ascii?Q?i3HdY2e3TzVTTAytuF8TubsdZM2HIUpCqGNdAzHHxzT2WOChfRt8s2zjDxUD?=
+ =?us-ascii?Q?MvnoCzI1YzNpGdsOtps6hjPTeY1HxBK0Jf21GUz9b7m8gMb8kt+IEpyul3MH?=
+ =?us-ascii?Q?pRcoXSBGxOCN0J2DI9/1J7Vd7tshNyo93TslTb4KMEP9PtSomjUWJ61e4otY?=
+ =?us-ascii?Q?PgMFfo4HZHfS/BfntLPY6uRVXxanDN2qln8d9gNIScPq2NDwZ3r81pNlc1Ox?=
+ =?us-ascii?Q?q7vpiYifDTjpvBFiAAPPiLJTsHKlQyrO0AS2w3uGRFGgxx8H67iFY34FXsV+?=
+ =?us-ascii?Q?iNXpgexGTII7JTDJ+mUDElup3eXb2o1vU0NlEfJ7VUH7ZW6UrBKP1gpRr+55?=
+ =?us-ascii?Q?8xclsqmGuC5o7k/aQVNCSM/eV2OtkbfW5LTG0m9bX3Pj6Brxgc5gk/h0FM11?=
+ =?us-ascii?Q?20hs6cyM7t8WUyRGA0NKPMhMDSMqTjODqYmdLT6OSYcLjJgncbwgle/WhY3x?=
+ =?us-ascii?Q?i6MofRwdnyN70GkjtvHhm4fyHC5WiW/X0Qut/krvbCNtzZWZkta0BxRNL5O9?=
+ =?us-ascii?Q?X/t18NzUeUrdWtzq6NYjvxGCN5ASMR7Y8Hrz/7nzseWy+annrx8AOj+PAias?=
+ =?us-ascii?Q?0HZfd/oJe+wX8e7HVSKQ8VgOFpUpFIWm8Vjs8zrb9wAwJdKJV6sym+Om/gK+?=
+ =?us-ascii?Q?NjEtl0Tt7LTwZhmd5xf30TouG6qZ3NWLAeSea2qiuXUEE6tF9/ppmcEvghG8?=
+ =?us-ascii?Q?gN7o4nXDiOa9Sex/dw9kXBdLOOftEVC5awfkatGok3mJFIMZPKxECi0rZhAn?=
+ =?us-ascii?Q?7PxdlS+mFzYUlYf3qlF96fWeRZm8/Z6t0Vrt9GnetKKUNPCdzCGNjT2dG5Wz?=
+ =?us-ascii?Q?E4CEvtglyu0WY67+KBr3vw7Wo9rVG648/f0HNTleWceq4u/liqw+zw1WZ1K8?=
+ =?us-ascii?Q?kKRSABl2vUlIMXqHQLsPzwpVanpfaXcyH9W3Ef4DXEyU8vb/2JK4fSV54ncQ?=
+ =?us-ascii?Q?fF77nyswgu4Pz3mw59iwK+TUf/bx8AVkuJWTKknqdGVlmXqYSq2WJTqFb7+S?=
+ =?us-ascii?Q?o5fegpnBUxS8VkjBJXiAvrcd+IR5TnNuT1XwbbNxd9EQz/mO3jmhC2Np7YO4?=
+ =?us-ascii?Q?LlXvAMxvRv9TpwytSUiZrW6RNot55AXCZ+Cv8ToOgu5gfeQMvYZRab/U8YMv?=
+ =?us-ascii?Q?yp7+FzKCY27jhUow2cTfhHMLH2E6g39RyMw/b7RaOKM6bAB+NZz5xhg/aPOE?=
+ =?us-ascii?Q?CuCwbWGKTVNUFmitUARyyXMQpDmQp4nrQHFfxeJlyHug/8QXi8V85d2iQrQ9?=
+ =?us-ascii?Q?h3tJx3uy6kw0HqGG5vEZPwvqUC8WG2KpgFOeQ0d5wy53jInqtvfjKCO2m9v2?=
+ =?us-ascii?Q?50YhHZ6oSp5OJI2AE8JXneR1iChpfyRsUAVCjqnyNkD5nS9hcR5BQl2NmyP3?=
+ =?us-ascii?Q?y3PN98/tbkVueggiBOHjzUrk7cQmjYmNNuEcR7qpNLndf0s8m+EU3r/8kC+g?=
+ =?us-ascii?Q?TGRuu6H24QC1rm8H+LB8LlC2XegL0g+5npOrX/7c?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0468f482-5b8f-4f5e-4b39-08de0c8d5dd4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 08:01:10.9684
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 08:24:03.9948
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3RoUo+bEcDBuNrs1WNfu16HoaSD2dq3uRlf3n60SiLjGvD9nG4LZCrEliwKLJHEv4FUs8YjRdsC9+14zlrziSxDuV7wQzV/DC+RGhp4hfLY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1308
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9VRNkmQN/HKgXwxQ6v4DRgRbDMJ5GRtGejKgp5fvtqNB7sEtPP/tj0jjuSwo7yTNzq8lra7eHc3vbyZ5ssycbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9082
 
-VisionFive 2 Lite eMMC board uses a non-removable onboard 64GiB eMMC
-instead of the MicroSD slot.
+The ENETC RX ring uses the page halves flipping mechanism, each page is
+split into two halves for the RX ring to use. And ENETC_RXB_TRUESIZE is
+defined to 2048 to indicate the size of half a page. However, the page
+size is configurable, for ARM64 platform, PAGE_SIZE is default to 4K,
+but it could be configured to 16K or 64K.
 
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+When PAGE_SIZE is set to 16K or 64K, ENETC_RXB_TRUESIZE is not correct,
+and the RX ring will always use the first half of the page. This is not
+consistent with the description in the relevant kernel doc and commit
+messages.
+
+This issue is invisible in most cases, but if users want to increase
+PAGE_SIZE to receive a Jumbo frame with a single buffer for some use
+cases, it will not work as expected, because the buffer size of each
+RX BD is fixed to 2048 bytes.
+
+Based on the above two points, we expect to correct ENETC_RXB_TRUESIZE
+to (PAGE_SIZE >> 1), as described in the comment.
+
+Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
 ---
- arch/riscv/boot/dts/starfive/Makefile         |  1 +
- ...h7110s-starfive-visionfive-2-lite-emmc.dts | 22 +++++++++++++++++++
- 2 files changed, 23 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite-emmc.dts
+v2: Refine the commit message
+v1 link: https://lore.kernel.org/imx/20251010092608.2520561-1-wei.fang@nxp.com/
+---
+ drivers/net/ethernet/freescale/enetc/enetc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index f53109253d41..a60244803829 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -17,3 +17,4 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
+index 0ec010a7d640..f279fa597991 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+@@ -76,7 +76,7 @@ struct enetc_lso_t {
+ #define ENETC_LSO_MAX_DATA_LEN		SZ_256K
  
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110s-starfive-visionfive-2-lite.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110s-starfive-visionfive-2-lite-emmc.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite-emmc.dts b/arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite-emmc.dts
-new file mode 100644
-index 000000000000..60ce2753f2d1
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110s-starfive-visionfive-2-lite-emmc.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2025 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2025 Hal Feng <hal.feng@starfivetech.com>
-+ */
-+
-+/dts-v1/;
-+#include "jh7110s-starfive-visionfive-2-lite.dtsi"
-+
-+/ {
-+	model = "StarFive VisionFive 2 Lite eMMC";
-+	compatible = "starfive,visionfive-2-lite-emmc", "starfive,jh7110s";
-+};
-+
-+&mmc0 {
-+	cap-mmc-highspeed;
-+	cap-mmc-hw-reset;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+	vmmc-supply = <&vcc_3v3>;
-+	vqmmc-supply = <&emmc_vdd>;
-+};
+ #define ENETC_RX_MAXFRM_SIZE	ENETC_MAC_MAXFRM_SIZE
+-#define ENETC_RXB_TRUESIZE	2048 /* PAGE_SIZE >> 1 */
++#define ENETC_RXB_TRUESIZE	(PAGE_SIZE >> 1)
+ #define ENETC_RXB_PAD		NET_SKB_PAD /* add extra space if needed */
+ #define ENETC_RXB_DMA_SIZE	\
+ 	(SKB_WITH_OVERHEAD(ENETC_RXB_TRUESIZE) - ENETC_RXB_PAD)
 -- 
-2.43.2
+2.34.1
 
 
