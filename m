@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-857031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFE0BE5AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:30:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D87BE5B21
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C4E94FBCC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:29:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBDED4F61FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BE32E62D0;
-	Thu, 16 Oct 2025 22:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A482D9EF8;
+	Thu, 16 Oct 2025 22:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bU0brkBc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GbCxO3Jz"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD42E1F01;
-	Thu, 16 Oct 2025 22:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F8D3BB5A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760653727; cv=none; b=iAA7cv4X0Eb+YLVaa8Gr6n31zQxuxNlRdo9SvbMQaVrriZRmAhLdborEQWfsJ06jqqFV5FxrlolQc3oJJefNFUpXNgO0QTjjpJyW0JEj+fiys6LQfqMWHuSB5Bu/wTkzap5S3wFmgm+L5MHUy1fB53rXDs7z2UxThR1tdHcHq7E=
+	t=1760654075; cv=none; b=hhXrIMgo//FmzGQh5+JR/wsJJGzfZS8ICVfzDy7//sCja7VwghqGVSnvgRNdlCFcDLLiREgm7tVx8Lce9y1iF/brAMCXOpy50xbPaQVqDXhVcWWhWfl7DClsqZ3DqX8FG6oq5WVqEVKJCHpz8d7+j7T8/hogDEkw6bDFxmocfJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760653727; c=relaxed/simple;
-	bh=ciKQIk52+iRfgjCWilAdkX6YNbNDCJyfo9BtEuwQYqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=coIomgA/9D2l6X6Fmp69knMt04p/cG30HFXO4dDAPp4h+eLjmg7/EjaBY9XC4569vwhtPqDoY1LcFwzLcP7IGY7uEEA9jQwkVv5l49zmp89xqCkFblYqh0tT7Nid5XhsfBJlJ59CSG9VKy2MXBjXe3CHlZmcBhx24A7dqIsKovA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bU0brkBc; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760653726; x=1792189726;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ciKQIk52+iRfgjCWilAdkX6YNbNDCJyfo9BtEuwQYqQ=;
-  b=bU0brkBcVi/UuQSMcCxobLlxbuQ9Wy4msCdCg+X+ArFG+xYC16YRQv8s
-   vLw4+62ulFfwAqM6k55NFNkz3k29B2HxrgCO5GTL+mKT1QEZ2Sd/tQmj5
-   426xncBiIDuP2hMMcDXmbCdhCgcnAR2uuyi1+aBdy4RZVjzl7A+B272kD
-   8vwWU0222GHNapAwL4TYbg/YYynz7iK6AOXFwDYSTcnQ73fBSiOcwQzTH
-   DYwZ+DbrRtjefP5yyXamxqc1aPRAwtNw5EQ4+a7GWE4538s5GHmq98J3s
-   hOU2pcU8CWOi/O3AnG1V9zy1kUFJXgxARLt9m1avh8bC6ePQ6Fi8HWFNJ
-   Q==;
-X-CSE-ConnectionGUID: soHQ0f4pQjSpEDhpda6WFw==
-X-CSE-MsgGUID: e7hCY9d6R2KBbvL/UD6s0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62071723"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="62071723"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 15:28:45 -0700
-X-CSE-ConnectionGUID: /2MsaDmgTJmh3x2o1fWcuQ==
-X-CSE-MsgGUID: 4Xm1/v/rTaScrK/tKgO49Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="182132113"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 16 Oct 2025 15:28:41 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9WSd-0005J9-0C;
-	Thu, 16 Oct 2025 22:28:39 +0000
-Date: Fri, 17 Oct 2025 06:28:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: JP Kobryn <inwardvessel@gmail.com>, shakeel.butt@linux.dev,
-	andrii@kernel.org, ast@kernel.org, mkoutny@suse.com,
-	yosryahmed@google.com, hannes@cmpxchg.org, tj@kernel.org,
-	akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 1/2] memcg: introduce kfuncs for fetching memcg stats
-Message-ID: <202510170654.s2j4GuCs-lkp@intel.com>
-References: <20251015190813.80163-2-inwardvessel@gmail.com>
+	s=arc-20240116; t=1760654075; c=relaxed/simple;
+	bh=iX+5unsZ/nIc8zTlOk5LEx289kMidILELWKfCtaDFTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hnqI54UZYrJ8yPv1j/QUqGNl4QDjy4Zsa9f1/3uRD1VzjiI7ZvAznkgYYHU91zQPFlmW9XIxWkwSc50WcqyyaQds+B54xtJgCTjyeICGW3KPKKJ5H+VD8RoZrKgE8vTTeTeYdlf/j0GehD3TU3MDdiQ6cQ6itRaqmHK6iGtQNFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GbCxO3Jz; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-363f137bbf8so10774961fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760654072; x=1761258872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iX+5unsZ/nIc8zTlOk5LEx289kMidILELWKfCtaDFTo=;
+        b=GbCxO3JzFZOtdCZdB6AL0d6h42NLdhHHSvZ25WZcN6gnzWh3cwKf7u9Qb9FJ+sqCCg
+         N+JFVDB32qjYnkbL+p/AbXxNI5Eus5I3VEEr5iKt9xj3lKcrnStB6dgP2UGYui3fUYh5
+         dJwPDloaJjPv0Gyl2+b9ETXJBGpzwmMn5uPewW0kc7Td5fuZKsiK8TseoAUpVoTNAsW0
+         NXRlO1zYcl3S2tJTdYjoq2jPap9KqiSvC4KzxbsR0NZfJdpHASRL50Eype7fyPqXbBKg
+         68WvT1AiodzN0sLQ0Q69DZ6u3ZTGgS6RFsyJwaBpQXUnNE11y9OMKuvWv5iWhlbe0rU4
+         eIfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760654072; x=1761258872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iX+5unsZ/nIc8zTlOk5LEx289kMidILELWKfCtaDFTo=;
+        b=L4ck/hRRzS/i706alHek+fv33RTKQQdEQcJTwfzbuy1/nHt5/kQyyKqAoMKos3RE+q
+         0IGJNXQgVLrgR1fSichnzpTlZR3BvY4BWrXsWwtFHrVVn+wBJEM8Ux1GFPujEB/D6dTF
+         5Tgwy5jK+Qev8o1yqTeoh9e4HFVBxCvCs+zU28vB0lQoOpA60IufNXKeG9e+Fr7kSDY8
+         ljqnySv6LPMReVo1yz5PnV3LSCWzhD/8YKW+wpScbod77pgDerVYUikBR1xQaRhGrqco
+         HS93RzsOyVh1oJaQGnbiRzYCUO40uX93C7eayHuiKm4Ni7iaXeVb5yd4532e2p6TAfUe
+         FFsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtefPdzqLQj5O6eqjG41kzueOdJncJTuce4m66PPwSiLM5q84TewZTUse/z8HclliLHDjTTCAPA5x9IB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3s3ZZVexvytW2L41lY9Ant849U87lKnJ75IpGqnetUGc46lHy
+	+uXcVY1ykmUF+hfhF5RsF+GzaS+s1pVMoPxH9n17FLmZZOvQVrnPCKojVRWRV3EHzj2YV8VsR9H
+	HCq+ANX4T8Zx5YEM019Crer/UD8d6a/dO9N8brqj5ww==
+X-Gm-Gg: ASbGncvaOF9FcAjqUVAs8B6GnHEje8JMj1hc+mvVur36prQrr+0KwEwiM0Ba452Ln8k
+	XICvSlzE4gj5HpkeFb7ZeDa+3FMPP3Vr3jy6Ip91AHga8o/uVzN9tNJ2ExgYnO6zhkubHTnw0gm
+	hGwVHP8/DqKh0IDF8a0ph/h4MBLCD8coa0ZQl7ckx+zHrqF6XHYG65du4In2M1TQ4uH7YvrZz/E
+	x6LbbgiJc3tPT9XSEhbTMAxYAnrwcvk0sLVn2M0MfPU2XNRJSlRGzEpPgQY
+X-Google-Smtp-Source: AGHT+IFA4cyVMFygunIvR6Sb+S9YIRIcOrQFSwrOM7TfF/g+giPJ+nTPjzhR5YZOyLHNwAaJZrRx7sKEMrauQ98ImcA=
+X-Received: by 2002:a05:651c:1b12:b0:376:4320:e362 with SMTP id
+ 38308e7fff4ca-37797ad8130mr5292681fa.48.1760654071781; Thu, 16 Oct 2025
+ 15:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015190813.80163-2-inwardvessel@gmail.com>
+References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
+ <20251014140451.1009969-3-antonio.borneo@foss.st.com> <20251014-barbecue-crewman-717fe614daa6@spud>
+ <CACRpkdZT20cdH+G6Gjw8PopAkir+gGgMtRR4pkjnXFrmDkdfog@mail.gmail.com>
+ <20251014-water-gown-11558c4eabe7@spud> <7ba7c2f2a6dcfac30f05b35a4f41ef0af2dab575.camel@foss.st.com>
+In-Reply-To: <7ba7c2f2a6dcfac30f05b35a4f41ef0af2dab575.camel@foss.st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 17 Oct 2025 00:34:20 +0200
+X-Gm-Features: AS18NWC4woaW4Og4j92NIZzv9C3mFxPWXkXZf-tyb-63Pv9rPBLJcNATzKQalio
+Message-ID: <CACRpkdahbDfu+ffZC50hPrZRRo85_A3WUr8za-D7_tRJA6shrg@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] dt-bindings: pincfg-node: Add properties 'skew-delay-{in,out}put'
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, 
+	Fabien Dessenne <fabien.dessenne@foss.st.com>, Valentin Caron <valentin.caron@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi JP,
+On Wed, Oct 15, 2025 at 2:52=E2=80=AFPM Antonio Borneo
+<antonio.borneo@foss.st.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> What about the existing 'skew-delay'? Should it become deprecated in
+> favor of a new 'skew-delay-ps' ?
 
-[auto build test WARNING on bpf-next/net]
-[also build test WARNING on bpf-next/master bpf/master akpm-mm/mm-everything linus/master v6.18-rc1 next-20251016]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Maybe it should be deprecated I didn't think of that.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/JP-Kobryn/memcg-introduce-kfuncs-for-fetching-memcg-stats/20251016-030920
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git net
-patch link:    https://lore.kernel.org/r/20251015190813.80163-2-inwardvessel%40gmail.com
-patch subject: [PATCH v2 1/2] memcg: introduce kfuncs for fetching memcg stats
-config: x86_64-randconfig-121-20251016 (https://download.01.org/0day-ci/archive/20251017/202510170654.s2j4GuCs-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251017/202510170654.s2j4GuCs-lkp@intel.com/reproduce)
+I think there is no need for a new property to replace it,
+your new properties can be used, just with input and output
+skews set to the same value, so hardware that can only
+control one skew knob should complain if the values
+are different.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510170654.s2j4GuCs-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   mm/memcontrol.c:4236:52: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   mm/memcontrol.c:4236:52: sparse:    struct task_struct [noderef] __rcu *
-   mm/memcontrol.c:4236:52: sparse:    struct task_struct *
->> mm/memcontrol.c:876:55: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cgroup_subsys_state *css @@     got struct cgroup_subsys_state [noderef] __rcu * @@
-   mm/memcontrol.c:876:55: sparse:     expected struct cgroup_subsys_state *css
-   mm/memcontrol.c:876:55: sparse:     got struct cgroup_subsys_state [noderef] __rcu *
->> mm/memcontrol.c:876:55: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cgroup_subsys_state *css @@     got struct cgroup_subsys_state [noderef] __rcu * @@
-   mm/memcontrol.c:876:55: sparse:     expected struct cgroup_subsys_state *css
-   mm/memcontrol.c:876:55: sparse:     got struct cgroup_subsys_state [noderef] __rcu *
->> mm/memcontrol.c:876:55: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cgroup_subsys_state *css @@     got struct cgroup_subsys_state [noderef] __rcu * @@
-   mm/memcontrol.c:876:55: sparse:     expected struct cgroup_subsys_state *css
-   mm/memcontrol.c:876:55: sparse:     got struct cgroup_subsys_state [noderef] __rcu *
->> mm/memcontrol.c:876:55: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cgroup_subsys_state *css @@     got struct cgroup_subsys_state [noderef] __rcu * @@
-   mm/memcontrol.c:876:55: sparse:     expected struct cgroup_subsys_state *css
-   mm/memcontrol.c:876:55: sparse:     got struct cgroup_subsys_state [noderef] __rcu *
-   mm/memcontrol.c: note: in included file:
-   include/linux/memcontrol.h:729:9: sparse: sparse: context imbalance in 'folio_lruvec_lock' - wrong count at exit
-   include/linux/memcontrol.h:729:9: sparse: sparse: context imbalance in 'folio_lruvec_lock_irq' - wrong count at exit
-   include/linux/memcontrol.h:729:9: sparse: sparse: context imbalance in 'folio_lruvec_lock_irqsave' - wrong count at exit
-
-vim +876 mm/memcontrol.c
-
-   873	
-   874	static inline struct mem_cgroup *memcg_from_cgroup(struct cgroup *cgrp)
-   875	{
- > 876		return cgrp ? mem_cgroup_from_css(cgrp->subsys[memory_cgrp_id]) : NULL;
-   877	}
-   878	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yours,
+Linus Walleij
 
