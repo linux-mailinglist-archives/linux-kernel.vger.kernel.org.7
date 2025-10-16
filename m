@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-856801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F8BBE51E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BBABE51FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F1854F44B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC891AA0BE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAC623A9B0;
-	Thu, 16 Oct 2025 18:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C1E23B61B;
+	Thu, 16 Oct 2025 18:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nGQVX2Qk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfN0Q0lm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/AcmAyY"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02E722D4FF;
-	Thu, 16 Oct 2025 18:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C480238150
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760640844; cv=none; b=DVkDbU8DsWdGFbLq+sAwDEiQ84GFSc28DK7TIZAPK7xy5r9FwXldFx5zXNQYsYKfj49C6r6SKiZGAGx9PZGhjw/G/FEoSm1v072YGxgLig1bbm/fnUgHjkR+/9BK+3jdHQm4qG5+XUs/56OJgCTWnGcYSnS35EkLKO5qq1WNjDg=
+	t=1760640863; cv=none; b=amHOsF/LY+Nn/5MNfeniea8UzZPfW3K1YcxxfMmjcUOEdgtLlHbO4PYyHkocUgXRXu8B/o5UwB+CsGLP2uK4kNpA6K2nNRUkEJ4rtw7Qt/eNhhrxRaDHWFGSqoVlCPebg+aCN/Pm7tbPjkPfxsYpBWF3WMEdcG8mRF4P4OuB6go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760640844; c=relaxed/simple;
-	bh=oC4Qmh26pfyqGfqAYEuZFDRhfG9AIhUmSYnLHNqUl2Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CG4qEs0lVZAGABaBC5D4aVUy19vWJcY8/VC8BQc3CmuizFDEiWUFYLpbUuD5/M6mnxYxoY+hEXBgoPA9wW5O82eRWLq5woiqCH+s4gbDlBh2WbU3k/rrmAf9D9llUAAj/xbrNFaHg739SzQboa7CpX/UNxCUWloOrTCHEURU/XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nGQVX2Qk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfN0Q0lm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760640841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cw3pW5LiVDOcN8pDOG3T4cobF3AN3EhzWUWIZj4Jfn0=;
-	b=nGQVX2QkQPTCRrQ3BVNkCItQ8edVCSCv+T5F2Qf/zP2coTUp9sAt8aAxm4Ht2INwayVIV8
-	RADP6UycoswqT4A6oeZQpAB+bsa27Eg5IvIjszqJB89aSsB19pXQxg+Kz9kH0dm/ueVy+G
-	6tdpH8WNg9IsLC7dnL0CMx03hTmlc/pPtdR18iD0yytSPE8627j4MyWKJQEGXrCYpVMhfq
-	Jr4KM++28o5bwAeNoKWu6cFIMb3JnAd+gZUE/opBDKWnkoMlAeuK8Bub6mRnWh3JMr92Ra
-	GUUxWv69KXu+PQq1M6Bg72OhVgc9LbkOXS3SE7b1mzWVs/txkfKRe2k2eWtFVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760640841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cw3pW5LiVDOcN8pDOG3T4cobF3AN3EhzWUWIZj4Jfn0=;
-	b=VfN0Q0lmGJs/KvetSfYA7RgYqToXfCulGzUCe3r/4KAEMiWwRd1TmbHapQ9XlNL4Jtbzfr
-	Fe/1qgwaEUvjpyAQ==
-To: Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <maz@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-Date: Thu, 16 Oct 2025 20:53:59 +0200
-Message-ID: <87cy6m1xvc.ffs@tglx>
+	s=arc-20240116; t=1760640863; c=relaxed/simple;
+	bh=+utBgb+Y0Uu1IYHRlU1599odQNpYd89QM72RzQIjkKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=knFOFXm1wLw1AIh3nSuirGIaVgnyBvyzdAQar2NJMnvwP0QfdhYMQwKJ2hItO8ACE0gRoRXOAjj+V4tPyND7DXKkWJwzegkvWpxtGrDiZyWta+qR/3SXyIMQ2yD135fjhCIhmcmjaqPzoXkTwcPvE425g2p+60S3r9nFz2ezn7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/AcmAyY; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-280fc0e9f50so1365455ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760640861; x=1761245661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tfjITJrDrBsj6NyrvMWKq7r/mdAyxrTj8oS5nFcA3D8=;
+        b=X/AcmAyYGA+t1YhKP94+NATzTMfT2RmapnyBp+pK1RW/ivJvtADIGOt+BEjkaIO2W4
+         JuWbh8C3mYOhYGN2o91ecCQlwtsuBhgDKT72gqJafnWDhEYRX41Ez4nzUutob1/mdjeZ
+         UaRCnyao7d+Vp1yXDPWLgiGUnSBZV5/RGDaoEISbEskGsxuq00JA8tpsPBJwHD67CTlq
+         7BZvFic4duWbZHwLEK8ogizOFZit4VKsTH9818QTG6BcnDvg3KOXbFA9W99EMFnldMRw
+         G7FnRNX7ZRSb8K4uCBMuT8s3V49EKBl1hklAiUk4mzOAy4PwHwbU0ObjJ3EnVST0Ejaf
+         DVJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760640861; x=1761245661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tfjITJrDrBsj6NyrvMWKq7r/mdAyxrTj8oS5nFcA3D8=;
+        b=mX8FsrZRFPT4TPw6QVOchR/5uJyVM+Q4iyoauOL1Y0gTpifltLXki3E0C59gHmWa7p
+         Xwx/L7mb4s0c9wEETEiPyew9g5ULk0u20m46iF7hd1bHx5bEMWq+lhB096jYBfC3zDuG
+         1Lp3af89lWnzJqCA7lESPI6g6MYOdKM1ZS0vx6eG8CgXqrnI6SkuwBZuUjkNNKFAVBvf
+         HNk3ZI1K9Iq4Gnj+ghKAz/4JyUD4AivPduzxYos5KF9IZ9gC9WvVu4UviPIiPIsS0IcV
+         sYPfUxzRk14evriC5QqEDxVpq5xqJslHrTzmvGAmuMLUpXQ/xZVlkAStdRT2iKB5merq
+         rIbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf8i+2itkC4U+97bsKJ2GXzSqJswJtH+XIEbfnYxNhU8bLtotM+YmZtX4VmH3BcH94ZEE6/v4Op8HGLmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylSpvyj6tKto3UuwR4lwZbpY3UB1hiJ45T+TQWDvSJn89SzwFw
+	Dzu7AxUHaqSzVKp262nj9fyT/uupXW1sGwvBUd9uHaxnSuHgoMvClcLnv8jFxMjl3xSEM5moyTb
+	d8Zu/rbe77yA8CwtHW459lcXGZ6e+Hac=
+X-Gm-Gg: ASbGnctgR4AB0Wng1AqEF1lIrDVqbNxX89c4yXECY5AQ3F5hRYpAucBhDiu/bKJb0dI
+	wYVZYkAEeeiVArrMMC1Gi3kUMK0//6BtotcLyZkVYi4Ii5znR9BkZx3dOhHHJFujeswFa+S4Xdf
+	P0U/bDGx+gyiOmICOesYs3zAD35bZYmcFzulsXMpJpKmGMt5QjruvBnp9W0IvUgva6lHD464Mfl
+	+wk3/wrhRy8n9gPCio6dVCyg9mxji0noChOPwaFIFySVmfljAd4JBQEQoLGGHk9AOVC56kQc7JH
+	C2q2/v+KR+PfM7zcHzfTCQyGj2To9l+wOe8x6WT3xzposVxjcD7cjRHTrQ5jiKbYRBLr9SnhZUi
+	2+++9/D7ldBOSBQ==
+X-Google-Smtp-Source: AGHT+IEbKwbqFQ/fneIGbpfTlhDpPKZtHqphNXdfbEVmTezUHkwYnzXeQIHBTRMspHOBh02pv2qlfv7V0DyvDzmt1nM=
+X-Received: by 2002:a17:903:40ca:b0:290:55ba:d70a with SMTP id
+ d9443c01a7336-290c9cf3306mr5986045ad.2.1760640861448; Thu, 16 Oct 2025
+ 11:54:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251015182118.106604-3-dakr@kernel.org> <20251015225827.GA960157@bhelgaas>
+ <DDJR102F5NFB.1X5IVJQ6FK3CD@kernel.org>
+In-Reply-To: <DDJR102F5NFB.1X5IVJQ6FK3CD@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 16 Oct 2025 20:54:08 +0200
+X-Gm-Features: AS18NWANSYIYYVl5goGbtu4qiEWHeLwDVADFRWSVLvLKuJro8t-8yxzSNbn9BXI
+Message-ID: <CANiq72mB_M3GeU8DLg5Wnn66wgUimF1Eg8Vpy50AEZoD23O7Fg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: pci: move I/O infrastructure to separate file
+To: Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, kwilczynski@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09 2025 at 13:38, Thierry Reding wrote:
-> We've been running into an issue on some systems (NVIDIA Grace chips)
-> where either during boot or at runtime, CPU 0 can be under very high
-> load and cause some IRQ thread functions to be delayed to a point where
-> we encounter the timeout in the work submission parts of the driver.
+On Thu, Oct 16, 2025 at 2:35=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
 >
-> Specifically this happens for the Tegra QSPI controller driver found
-> in drivers/spi/spi-tegra210-quad.c. This driver uses an IRQ thread to
-> wait for and process "transfer ready" interrupts (which need to run
-> DMA transfers or copy from the hardware FIFOs using PIO to get the
-> SPI transfer data). Under heavy load, we've seen the IRQ thread run
-> with up to multiple seconds of delay.
+> Those could also be a candidate for the list of "good first issues" of th=
+e Rust
+> for Linux project [1].
 
-If the interrupt thread which runs with SCHED_FIFO is delayed for
-multiple seconds, then there is something seriously wrong to begin with.
+Indeed -- done as an example:
 
-You fail to explain how that happens in the first place. Heavy load is
-not really a good explanation for that.
+    https://github.com/Rust-for-Linux/linux/issues/1196
 
-> Alternatively, would it be possible (and make sense) to make the IRQ
-> core code schedule threads across more CPUs? Is there a particular
-> reason that the IRQ thread runs on the same CPU that services the IRQ?
+Bjorn and others: of course please feel free to create more.
 
-Locality. Also remote wakeups are way more expensive than local wakeups.
-
-Though there is no actual hard requirement to force it onto the same
-CPU. What could be done is to have a flag which binds the thread to the
-real affinity mask instead of the effective affinity mask so it can be
-scheduled freely. Needs some thoughts, but should work.
-
-> Maybe another way would be to "reserve" CPU 0 for the type of core OS
-> driver like QSPI (the TPM is connected to this controller) and make sure
-> all CPU intensive tasks do not run on that CPU?
->
-> I know that things like irqbalance and taskset exist to solve some of
-> these problems, but they do not work when we hit these cases at boot
-> time.
-
-I'm still completely failing to see how you end up with multiple seconds
-delay of that thread especially during boot. What exactly keeps it from
-getting scheduled?
-
-Thanks,
-
-        tglx
- 
+Cheers,
+Miguel
 
