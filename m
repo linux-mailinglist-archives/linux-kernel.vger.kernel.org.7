@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-855390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE34BE1149
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:14:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F67BE1143
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D4564E3235
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B650E54799E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317C24A21;
-	Thu, 16 Oct 2025 00:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFCB4A21;
+	Thu, 16 Oct 2025 00:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="c3SV+VEY";
-	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="Ck7x31Oz"
+	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="hyUqiB+O";
+	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="FG83ejWc"
 Received: from mail.0la.ch (mail.0la.ch [78.47.82.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA3D1367
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F003FC7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.82.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760573643; cv=none; b=qAucpwIU9XfAn6sB7Tcq6ksaRzvz739WJ5lPJSAl5FoOZsFj5W4drNuEkKaTO6UEtdjQjRwqkiHsADl/ClUqGwuoor69/zBag+S/YxKrV/oEGRNfZ8mC7zUIqd8Xc9AEckGTwnzk4llatymYvXWL4PVwQFiRtwQ1+i6w0SV+y+s=
+	t=1760573524; cv=none; b=hn2Uaj3WnIWmRQKbdFEj9jQZf/g0NvFpiaVX6nShLS0oXHWcCnftNTheu2QM2pWR7+o0BXQUseofOPDL66ryHQ4qIk1nzURey1rLXmzzyHwPMzvO/IEhwT5nR5dgdV5vTu6K0pF9kLiEebysa01MFjdvOGuMhgHRh4vn6IzXCFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760573643; c=relaxed/simple;
-	bh=JHwsu4aQizAX4uFcmiiYEBYSTGes2iyvTqLt/JFyAOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=edraJJD5SpCA0bcbQwJ/Tjpkt1CTnva5eeV9a5hgZ9Bxx9VUZRjQOSCn8/tVUkhPJ6G17VMIKT8TDEyFJwZlS8gO8KQLmzwXQ/bsoN9anODwfmVCrZ6PNl+RzDbpm0+QDs26yvDMQc/1D5v8T7x1g9NPHkqYYboZy9pDXg0Le/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=c3SV+VEY; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=Ck7x31Oz; arc=none smtp.client-ip=78.47.82.197
+	s=arc-20240116; t=1760573524; c=relaxed/simple;
+	bh=dukfTNwguTpdWokI/BljF+T/f9xv5200yknNuZY3Vb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Yx1n/5Gmvjgeaizm/sWHhqgsDbdBOFx2HTlwhHGyrTXIeCzsa9sArBQdxapgWwgwgNYEYHZ+HH9AE8qVdDRnkzgu1Q0L1KCw5Zs3yswvNRB8XbU4fjgHuxRfcYp1Eoy68njbx2pwVKWbqpoDzTrx0oDXGN7NHrPMlave5J4fwzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=hyUqiB+O; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=FG83ejWc; arc=none smtp.client-ip=78.47.82.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lach.pw
 DKIM-Signature: v=1; a=rsa-sha256; s=202502r; d=lach.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1760573477; bh=1oNxC6V6cVor+Gg4OXUBoLx
-	iBpnvcw+v+jXnVnkw1A4=; b=c3SV+VEYSnmkMjrP35FF/JPKJj6ziXCYnU35Xg0eGa0a1GBrs7
-	mB+WcjORpV6z3NPrYd9//sZhD+dEYgQ0vebpEb8vr6TdWaRbZumy9ezj5o53BDZGpLTPzI/Y8fZ
-	O5OGauysQDTZY0lmMPHOUyNSRaqHJnxPCIxO11VXfpJw47ftnm/6uFp4Z6FV86tWqydW2QUdBNh
-	Ac9QIO09n6L2r5ZC9MRFG+bDv+u851Ooeb66dPZlK81TnHYKXvcLI9Z6hpHc0dqMDbrDth/8/9y
-	s1YNmzOXvqjVnxIQgT+ciBdq9vvjNXyyB3nnFlGDcHhqbQgE6QaN+LGD5u15k4R0FVA==;
+	h=Message-ID:Date:Subject:To:From; t=1760573489; bh=+SemiRcUaSB7Nrev6CNie0b
+	OSyZVRYn3Wqgm2UiyIHg=; b=hyUqiB+OAijUuOcm6iBfk0ma2quv/H3yEzCoQRox7YcgrtnOmC
+	ubptgzUYdkV+toGiY2F/qkqXQHvRZeTu+146aq+KOzagXGKFeO6FNrx5zaXI7wmUkx7jGYanCMB
+	r3SlfYXFw+5SU+AiivJ1AnPi205+IKy2SUxfo00sFgmExl87x1IT/sLnDyzlUkc/+oYEj19nqjz
+	Z7OAmqyIaZ004/SNnRIl0TfFjHfNaBHeFwdIZbFJMRZs3E9g0rW2SEKPce6U5H3t5tRyha9stQP
+	/AoToUqyE3HBU/HuoazUZ4hMcHonlLdWlG9oLwQfQXsZKxg1W+SV74oFRzb75H/uvXQ==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202502e; d=lach.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1760573477; bh=1oNxC6V6cVor+Gg4OXUBoLx
-	iBpnvcw+v+jXnVnkw1A4=; b=Ck7x31Oz0haAxmOIULjU1JOV33EZjG3paceDvJ3Wn2XL1R2Fvz
-	l+6ObPbLUc/GKPL9Re+1KDjpEiyNQoMhKKDQ==;
+	h=Message-ID:Date:Subject:To:From; t=1760573489; bh=+SemiRcUaSB7Nrev6CNie0b
+	OSyZVRYn3Wqgm2UiyIHg=; b=FG83ejWc5WjmYJMMRX+/FDs57bmoVDpwgvls5EUgVBLoMwQF+F
+	6/2aLXXFIc/8jmzmiw61Kiqj2T57QLfaq1Dw==;
 From: Yaroslav Bolyukin <iam@lach.pw>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -57,10 +58,12 @@ Cc: Harry Wentland <harry.wentland@amd.com>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Yaroslav Bolyukin <iam@lach.pw>
-Subject: [PATCH v4 0/2] DisplayID DSC passthrough timing support
-Date: Thu, 16 Oct 2025 02:10:37 +0200
-Message-ID: <20251016001038.13611-2-iam@lach.pw>
+Subject: [PATCH v4 1/2] drm/edid: parse DRM VESA dsc bpp target
+Date: Thu, 16 Oct 2025 02:10:39 +0200
+Message-ID: <20251016001038.13611-4-iam@lach.pw>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251016001038.13611-2-iam@lach.pw>
+References: <20251016001038.13611-2-iam@lach.pw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,75 +72,232 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-VESA DisplayID spec allows the device to force its DSC bits per pixel
-value.
+As per DisplayID v2.0 Errata E9 spec "DSC pass-through timing support"
+VESA vendor-specific data block may contain target DSC bits per pixel
+fields
 
-For example, the HTC Vive Pro 2 VR headset uses this value in
-high-resolution modes (3680x1836@90-120, 4896x2448@90-120), and when the
-kernel doesn't respect this parameter, garbage is displayed on the HMD
-instead.
+Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
+---
+ drivers/gpu/drm/drm_displayid_internal.h |  8 ++++
+ drivers/gpu/drm/drm_edid.c               | 61 ++++++++++++++++--------
+ include/drm/drm_connector.h              |  6 +++
+ include/drm/drm_modes.h                  | 10 ++++
+ 4 files changed, 64 insertions(+), 21 deletions(-)
 
-Me and other users have successfully tested the old (v3) version of this
-patch (which was applying DSC BPP value unconditionally, thus incorrect:
-https://lkml.org/lkml/2023/2/26/116) on Vive Pro 2 and
-Bigscreen Beyond VR headsets, and have been using it daily, it is known
-to work and doesn't seem to break anything else since 2022.
-
-Previously, I didn't have enough dedication to get it merged, I hope
-this time I will manage to get it to v6.19 :D
-
-Regarding driver support - I have looked at amdgpu and Nvidia's
-open-gpu-kernel-modules, and both seem to have some indication for this
-value; however, in Linux, it is unused in both.
-
-First patch implements parsing of DSC BPP values and display mode VII
-timings flag which mandates that the DSC BPP value should actually be
-used for this display mode.
-
-The second patch implements handling of this value for AMDGPU driver.
-
-The only thing that I don't like in the current implementation, is how
-the value of `dsc_passthrough_timings_support` flag is propagated from
-the connector display modes to the mode created in `DRM_IOCTL_MODE_SETCRTC`
-handler (which is used for VR display initialization in Monado and
-StreamVR), it feels like this flag should be initialized by the kernel
-itself, but as far as I can see there is no correct way to do this, as
-the timing constraints calculation belongs to the individual drivers.
-
-Another problem with how this flag is set, is that there is no hard
-connection between modes creaded in `SETCRTC` and the modes actually
-defined by connector, so I implement an assumption that this flag should
-be the same between choosen mode and the preferred display mode. Given
-that previously due to the missing support for this flag displays
-were only showing garbage, I believe this assumption won't break
-anything.
-
-Both of those downsides are due to the fact my understanding of DRM
-subsystem is not that high. If another implementation would be proposed
-by AMDGPU maintainers - I will gladly implement it here.
-
-v3->v4:
- * This patch now parses timings support flag on type VII block, instead
-   of applying it unconditionally. Previously I didn't understand the
-   spec properly.
- * Now it also is not being applied for non-supported and/or non-VII
-   blocks in amdgpu driver.
-
-Regards,
-
-Lach
-
-Yaroslav Bolyukin (2):
-  drm/edid: parse DRM VESA dsc bpp target
-  drm/amd: use fixed dsc bits-per-pixel from edid
-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 14 ++++-
- drivers/gpu/drm/drm_displayid_internal.h      |  8 +++
- drivers/gpu/drm/drm_edid.c                    | 61 ++++++++++++-------
- include/drm/drm_connector.h                   |  6 ++
- include/drm/drm_modes.h                       | 10 +++
- 5 files changed, 77 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/drm_displayid_internal.h
+index 957dd0619f5c..d008a98994bb 100644
+--- a/drivers/gpu/drm/drm_displayid_internal.h
++++ b/drivers/gpu/drm/drm_displayid_internal.h
+@@ -97,6 +97,10 @@ struct displayid_header {
+ 	u8 ext_count;
+ } __packed;
+ 
++#define DISPLAYID_BLOCK_REV				GENMASK(2, 0)
++#define DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT	BIT(3)
++#define DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES	GENMASK(6, 4)
++
+ struct displayid_block {
+ 	u8 tag;
+ 	u8 rev;
+@@ -144,12 +148,16 @@ struct displayid_formula_timing_block {
+ 
+ #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
+ #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
++#define DISPLAYID_VESA_DSC_BPP_INT	GENMASK(5, 0)
++#define DISPLAYID_VESA_DSC_BPP_FRACT	GENMASK(3, 0)
+ 
+ struct displayid_vesa_vendor_specific_block {
+ 	struct displayid_block base;
+ 	u8 oui[3];
+ 	u8 data_structure_type;
+ 	u8 mso;
++	u8 dsc_bpp_int;
++	u8 dsc_bpp_fract;
+ } __packed;
+ 
+ /*
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index e2e85345aa9a..6e42e55b41f9 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -6524,8 +6524,8 @@ static void drm_get_monitor_range(struct drm_connector *connector,
+ 		    info->monitor_range.min_vfreq, info->monitor_range.max_vfreq);
+ }
+ 
+-static void drm_parse_vesa_mso_data(struct drm_connector *connector,
+-				    const struct displayid_block *block)
++static void drm_parse_vesa_specific_block(struct drm_connector *connector,
++					  const struct displayid_block *block)
+ {
+ 	struct displayid_vesa_vendor_specific_block *vesa =
+ 		(struct displayid_vesa_vendor_specific_block *)block;
+@@ -6541,7 +6541,7 @@ static void drm_parse_vesa_mso_data(struct drm_connector *connector,
+ 	if (oui(vesa->oui[0], vesa->oui[1], vesa->oui[2]) != VESA_IEEE_OUI)
+ 		return;
+ 
+-	if (sizeof(*vesa) != sizeof(*block) + block->num_bytes) {
++	if (block->num_bytes < 5) {
+ 		drm_dbg_kms(connector->dev,
+ 			    "[CONNECTOR:%d:%s] Unexpected VESA vendor block size\n",
+ 			    connector->base.id, connector->name);
+@@ -6564,28 +6564,40 @@ static void drm_parse_vesa_mso_data(struct drm_connector *connector,
+ 		break;
+ 	}
+ 
+-	if (!info->mso_stream_count) {
+-		info->mso_pixel_overlap = 0;
+-		return;
+-	}
++	info->mso_pixel_overlap = 0;
+ 
+-	info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP, vesa->mso);
+-	if (info->mso_pixel_overlap > 8) {
+-		drm_dbg_kms(connector->dev,
+-			    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
+-			    connector->base.id, connector->name,
+-			    info->mso_pixel_overlap);
+-		info->mso_pixel_overlap = 8;
++	if (info->mso_stream_count) {
++		info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP, vesa->mso);
++		if (info->mso_pixel_overlap > 8) {
++			drm_dbg_kms(connector->dev,
++				    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
++				    connector->base.id, connector->name,
++				    info->mso_pixel_overlap);
++			info->mso_pixel_overlap = 8;
++		}
+ 	}
+ 
+ 	drm_dbg_kms(connector->dev,
+ 		    "[CONNECTOR:%d:%s] MSO stream count %u, pixel overlap %u\n",
+ 		    connector->base.id, connector->name,
+ 		    info->mso_stream_count, info->mso_pixel_overlap);
++
++	if (block->num_bytes < 7) {
++		/* DSC bpp is optional */
++		return;
++	}
++
++	info->dp_dsc_bpp = FIELD_GET(DISPLAYID_VESA_DSC_BPP_INT, vesa->dsc_bpp_int) << 4 |
++			   FIELD_GET(DISPLAYID_VESA_DSC_BPP_FRACT, vesa->dsc_bpp_fract);
++
++	drm_dbg_kms(connector->dev,
++		    "[CONNECTOR:%d:%s] DSC bits per pixel %u\n",
++		    connector->base.id, connector->name,
++		    info->dp_dsc_bpp);
+ }
+ 
+-static void drm_update_mso(struct drm_connector *connector,
+-			   const struct drm_edid *drm_edid)
++static void drm_update_vesa_specific_block(struct drm_connector *connector,
++					   const struct drm_edid *drm_edid)
+ {
+ 	const struct displayid_block *block;
+ 	struct displayid_iter iter;
+@@ -6593,7 +6605,7 @@ static void drm_update_mso(struct drm_connector *connector,
+ 	displayid_iter_edid_begin(drm_edid, &iter);
+ 	displayid_iter_for_each(block, &iter) {
+ 		if (block->tag == DATA_BLOCK_2_VENDOR_SPECIFIC)
+-			drm_parse_vesa_mso_data(connector, block);
++			drm_parse_vesa_specific_block(connector, block);
+ 	}
+ 	displayid_iter_end(&iter);
+ }
+@@ -6630,6 +6642,7 @@ static void drm_reset_display_info(struct drm_connector *connector)
+ 	info->mso_stream_count = 0;
+ 	info->mso_pixel_overlap = 0;
+ 	info->max_dsc_bpp = 0;
++	info->dp_dsc_bpp = 0;
+ 
+ 	kfree(info->vics);
+ 	info->vics = NULL;
+@@ -6753,7 +6766,7 @@ static void update_display_info(struct drm_connector *connector,
+ 	if (edid->features & DRM_EDID_FEATURE_RGB_YCRCB422)
+ 		info->color_formats |= DRM_COLOR_FORMAT_YCBCR422;
+ 
+-	drm_update_mso(connector, drm_edid);
++	drm_update_vesa_specific_block(connector, drm_edid);
+ 
+ out:
+ 	if (drm_edid_has_internal_quirk(connector, EDID_QUIRK_NON_DESKTOP)) {
+@@ -6784,7 +6797,8 @@ static void update_display_info(struct drm_connector *connector,
+ 
+ static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *dev,
+ 							    const struct displayid_detailed_timings_1 *timings,
+-							    bool type_7)
++							    bool type_7,
++							    int rev)
+ {
+ 	struct drm_display_mode *mode;
+ 	unsigned int pixel_clock = (timings->pixel_clock[0] |
+@@ -6805,6 +6819,10 @@ static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *d
+ 	if (!mode)
+ 		return NULL;
+ 
++	if (type_7 && FIELD_GET(DISPLAYID_BLOCK_REV, rev) >= 1)
++		mode->dsc_passthrough_timings_support =
++			!!(rev & DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT);
++
+ 	/* resolution is kHz for type VII, and 10 kHz for type I */
+ 	mode->clock = type_7 ? pixel_clock : pixel_clock * 10;
+ 	mode->hdisplay = hactive;
+@@ -6846,7 +6864,7 @@ static int add_displayid_detailed_1_modes(struct drm_connector *connector,
+ 	for (i = 0; i < num_timings; i++) {
+ 		struct displayid_detailed_timings_1 *timings = &det->timings[i];
+ 
+-		newmode = drm_mode_displayid_detailed(connector->dev, timings, type_7);
++		newmode = drm_mode_displayid_detailed(connector->dev, timings, type_7, block->rev);
+ 		if (!newmode)
+ 			continue;
+ 
+@@ -6893,7 +6911,8 @@ static int add_displayid_formula_modes(struct drm_connector *connector,
+ 	struct drm_display_mode *newmode;
+ 	int num_modes = 0;
+ 	bool type_10 = block->tag == DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
+-	int timing_size = 6 + ((formula_block->base.rev & 0x70) >> 4);
++	int timing_size = 6 +
++		FIELD_GET(DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES, formula_block->base.rev);
+ 
+ 	/* extended blocks are not supported yet */
+ 	if (timing_size != 6)
+diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+index 8f34f4b8183d..01640fcf7464 100644
+--- a/include/drm/drm_connector.h
++++ b/include/drm/drm_connector.h
+@@ -837,6 +837,12 @@ struct drm_display_info {
+ 	 */
+ 	u32 max_dsc_bpp;
+ 
++	/**
++	 * @dp_dsc_bpp: DP Display-Stream-Compression (DSC) timing's target
++	 * DSC bits per pixel in 6.4 fixed point format. 0 means undefined.
++	 */
++	u16 dp_dsc_bpp;
++
+ 	/**
+ 	 * @vics: Array of vics_len VICs. Internal to EDID parsing.
+ 	 */
+diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
+index b9bb92e4b029..312e5c03af9a 100644
+--- a/include/drm/drm_modes.h
++++ b/include/drm/drm_modes.h
+@@ -417,6 +417,16 @@ struct drm_display_mode {
+ 	 */
+ 	enum hdmi_picture_aspect picture_aspect_ratio;
+ 
++	/**
++	 * @dsc_passthrough_timing_support:
++	 *
++	 * Indicates whether this mode timing descriptor is supported
++	 * with specific target DSC bits per pixel only.
++	 *
++	 * VESA vendor-specific data block shall exist with the relevant
++	 * DSC bits per pixel declaration when this flag is set to true.
++	 */
++	bool dsc_passthrough_timings_support;
+ };
+ 
+ /**
 -- 
 2.51.0
 
