@@ -1,158 +1,209 @@
-Return-Path: <linux-kernel+bounces-856431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8441ABE4278
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A67BE4287
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16BB64FDA5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682C85E0292
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F83C3451B0;
-	Thu, 16 Oct 2025 15:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE8D345727;
+	Thu, 16 Oct 2025 15:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D7KtpM8Z"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D97y5IqY"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010018.outbound.protection.outlook.com [52.101.46.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073C5343D93
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760627546; cv=none; b=lcniDyFP3gS4RRwO1Q1Js1hYb9mNQ8/YecPLQC+U8wCcySgHGCluBHsBWDhOf/FUK7hoRrid5fjGuHNgqeN5bA4MOi0+Xy+ni0mo/4bTBvY5QWdvP8C8omOaUqB85nTxYjCz3ckJZeEMuyYhjYeHrmyrl/jj+B2FlkmZOv5voSg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760627546; c=relaxed/simple;
-	bh=yCg35r4ms7gsC/mGtCURPao3mJuEsBfHclwa8/neqMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxqrTOet4eQZKPbK995IoZFwXeMMnnxEnVsNS/36dLPkWvTg+7SHSEGCptDZ3rWNXjw0IRN5BZiFIO97JOSsZL6dw/30fW2pN7rxJGd0e/OpQRGdokG3gPvleL4k+cPTNlMotguK6S7A7C8x4d8bLjxK4XxDxtYInES3k3o+eBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D7KtpM8Z; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-780fc3b181aso557203b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760627544; x=1761232344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ut2s/s3FIafEe4ZDshWAioE5+2hw+U5ZIXkh0yek/f4=;
-        b=D7KtpM8ZqjDr8SDyt1fR1cBcERWth6ral6Br4EmIldcjUK3n+4GlY/oniLPuV+LRtT
-         R5YIWzlOt/4egCI4aleRjZQYoy/C0KhxxgVq6jDWEwNRDiw84Du+scun3p6FCxQB405U
-         VGCDTdIaDfXoHuqFhPC+b3QCBtiZe4NLjVG1HTa3Q2bBHLTbyXHNGIHD1lIncuH6sXAV
-         Clm4vFqaL6YD7nQPeyZNkXXBmBIJ3DlgUGgj0fjTra9NPIUysZX+u8wbUQw8+UtOZzE4
-         elXCMVSiDxqscLCISHjPnJ1IeW2Ln8lXUS3392UZ9g01G2jgjkrDTxd8KBgG17tGSoDD
-         NQzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760627544; x=1761232344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ut2s/s3FIafEe4ZDshWAioE5+2hw+U5ZIXkh0yek/f4=;
-        b=v6pB+IDzuBe+P50TnwfDhn3qTJWsIfq0Cacz9FOJ3U13Nfmb1LfCI3IH1IwTcjFOJ8
-         LjC+nxsdwtx8tB45AISCPA/GCBQP3Ip9yipwr/OAp5F9TZyyu7a/Rlf/zrh8ApFV9UIi
-         kSzX1l7elMidvvhn7QQ86rp2Zd8BDwz7OJti493/rKTDY/2rmR1XDTtT+TX0BoJqtorp
-         X9iGjA8wfRUhT6O59ZHW+9/fLXx9NSARMpKqZ6gGrpMhZrgDbMKZXgIIdCVQ0+EQnqrI
-         FmbTjSvl7sB3D3Z74c8MYyyhXCWc8YTqFqHTYW3a3XbsRzp0Hw9/in9qJ95cvhsn6nZa
-         xsng==
-X-Forwarded-Encrypted: i=1; AJvYcCVFJldsTaku4nRbQtprEfEqVVXYJDniYX7g/vjaelsINS1EcIVGbLw0kslsrlLhjnuL8UoyBNy7kXysA3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaRqutC+SJVbpzJhvrBhUaet+a5XRQxCvwLvWkSqKdYhexc1ue
-	NuRhuen428u+nBH6wsV6CNPOsmglfd4MegERFNjYaqwnxSdYRE0A5UGElCYsqmcDtsI=
-X-Gm-Gg: ASbGncsXGG1GuhNlWnIfzzZHbhMLiTMm6d4H/yCIlVFdlHmQDrSkUhIaHym/3CGhJRN
-	krzsL8UHtqQhmLduEw6z7Nt9WOSMhB3ZdlHptD6niy6/NIhx7Reyo4rhboReZI+nTmVYtXcax0X
-	t7JALV69oNe7KHgypvbhhXyN7MD25OWn27+gfFbbaMVRh5TPG1L4bG1q31tU2F4q1Sd+/hccc+7
-	f9etxQ5ed2TU1U8bFMs6liGKFuNH8upCIUoeVkuNn2e43OSOCway3Zy/FapITXXukx/9ohwySaX
-	X7uJ8Vb8z6a0mYZ/tHY3RLyHrP+WSuL+pf8PRPmkRL6LfQIueYSYdxBmSY5RNR9tpesa3L7gIS1
-	abAKoiAjIY7RbaURYcVsvqIqe9wPrAcixtfpKNF56SiVEd+Eg5MPBpdyRr6pvgKFWzm12RF64r7
-	zOShPZLxknBVUgCQrHunEnT4dd
-X-Google-Smtp-Source: AGHT+IELjLEOjB5GZ8wek/jbgtacavjiPcJ12k9YT8oJ8gP2sncFT79C4nC7cfzpXzG3kveX/6VhGQ==
-X-Received: by 2002:a05:6a20:e212:b0:263:52cb:bc49 with SMTP id adf61e73a8af0-334a8607db3mr427025637.35.1760627544219;
-        Thu, 16 Oct 2025 08:12:24 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:c6a8:58de:b8f8:4d8e])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a22bb5b8fsm3152334a12.37.2025.10.16.08.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 08:12:23 -0700 (PDT)
-Date: Thu, 16 Oct 2025 09:12:21 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] remoteproc: core: full attach detach during recovery
-Message-ID: <aPELVfhkk0qDXqa9@p14s>
-References: <20251002153343.766352-1-tanmay.shah@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E3A7263B;
+	Thu, 16 Oct 2025 15:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760627612; cv=fail; b=ThOLQykOJfDRZDuBsmHId3QQfV+Y6ujAPqq6JCHCpK8tYbBJQOHMOChh/CXDefL38bWC7JsRscRf7mnfSdAUZf79KR0UkIhYIlyJynGBW9/0ZmYgwr9Ud1uCnC27K5Vn1eLXK76KkiWQwHDaC8oO2vonKPOz4Yj4NrKF+Fm/2Ag=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760627612; c=relaxed/simple;
+	bh=cij3cV9wZexdNbCJSu/dT7crQ/42wOvtzicNqfCGpcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Trm5j4saomuy8nFocpEB5xpeuo08PHtlV/SpOobg34par2wpGgJxchSD7HIB6FaWXlgZsiS5g42Abzg7uPuY0nEDYEWs2s7lOO2tNk2K214fxU9MrYSLr8NStBxY6nff3rrVo2z9jUvwqw9sGHEfJTO2EnIo6meOz8Ua3ZVOs3w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D97y5IqY; arc=fail smtp.client-ip=52.101.46.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CjMN+peo9mDmF4tfzEmmAtJ/k6OurIfxnj7cshOAbOBn9fteFLL8GkJqdKCwgI30HSTqzLrWI26l9oNmB6a5AbmTAVWNuhoEALJMCQrqMXCfbs1WBefBL0j3eM8hdclWLVi4r9EQqEG81MYNHQOWAg+7X50U2otIvEMw38RVOkCrZoxfxUVV9ilqT6BOAKTmCRP0T6hIdFcNkpEmeVH/JBJ2RCzYBUmCw/6ubKJL2RzI0ksaatKDCWuxxwiwbV4Yy1ZUMDMF3q9DGxDiB3UhSlMJ5fOMXEelxEdiwyWj7LIiVnD5bymHXjH6l+6rRQyuhdEmu7khYRCTTYfjnD3bXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qjwQFDfkGNEmj1wpoduUMYhVhhfkIjEyov15v6bWrm8=;
+ b=I1rIlwfVkpmAwnVw/gn/m7/BZPyc1Fsvzg+LHYS+Uzj0bdq7Mm7P3q9twTbTmDCXBlQd+MFeE5hvIerBg4E5V5IlFjBmRTHvI30XgOTjl6EbY4g0nad4+wtNZL9gQIoMhBCBsaSN+ETU1nMfZZcCG0huNPt4WaUfhsI21uoAX4kIUYNjBstGEHlu0XklHADYWCo+IUvseVinFRRNUFTliKNwRHm8m+tkEcVJCO8wkp5chPJKMAwg/9hERRd5M+aB59HKTvhvcdv5ooZnzsm1Zi299FTFeIe4COLkL6wTnnOuaWvyQ3iyVw4Fgw93tbP8gnvnJD9jCzfM56PYnvkY3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qjwQFDfkGNEmj1wpoduUMYhVhhfkIjEyov15v6bWrm8=;
+ b=D97y5IqYBJFwWnt58BM/2O0F4LoCfOxmpuf0E/WEw6wGBz3aWZTSsKZ5ut9Itz6k1kPxUMpdNDq7ua4fMeZlrD8wdq1H0EdDQqabDfdxZQFMrREq83uON/WRKXKq9VkY0wMilZLEbDCkj94/lCL3KDu44If6kuaZEXBOYsQx9gulMHUDduPVo2uZpT2VUL3JkghhPIhD1LBGs1LCLAieZlYHHserIuCemJARgJoVlQ27Pc6k8AzVz1gqaqdocc7NUbPhC99QgZb/eJzivb2MjcKM0Bwc9whayBwaLaCak8fxyoiN1ng6lLDliK8AwO/XCNWRzfTG+MedyTH4y6lD/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by DM4PR12MB6205.namprd12.prod.outlook.com (2603:10b6:8:a8::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Thu, 16 Oct
+ 2025 15:13:27 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
+ 15:13:27 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org,
+	Elle Rhumsaa <elle@weathered-steel.dev>,
+	Yury Norov <yury.norov@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH v7.1 0/4] bitfield initial refactor within nova-core (RESEND)
+Date: Thu, 16 Oct 2025 11:13:19 -0400
+Message-Id: <20251016151323.1201196-1-joelagnelf@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH2PR04CA0026.namprd04.prod.outlook.com
+ (2603:10b6:610:52::36) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002153343.766352-1-tanmay.shah@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DM4PR12MB6205:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6da7bcd-8f0e-40ae-4f8e-08de0cc68ef9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NbcyPr5rxjLT/N5EJ554k/ioW42K+hKKDNqhNF3jcgsTj3Oc6eU6BijfJIDv?=
+ =?us-ascii?Q?/t1jxbBWOBvQX2ohzMh6YLQ8ZjfvovQq74f5aWy6wERpsGNQTtBix9M07OWY?=
+ =?us-ascii?Q?iW/WxedA2NO5cPL6FlLEKCj3hh1lBeC8OnJJ9H9ZZHdxu1qe0qgqoHJSDF4D?=
+ =?us-ascii?Q?eX9p+LI48HspT5NYG7U2tzErDV3AoXdzqMtfgD1fCjjcW/6KxV5DrE6HImr6?=
+ =?us-ascii?Q?W/jn0JV61GBJTcS7pAOWQdMpj2Tg0WCslR/54YaYmumUSscYjYxBqYv+mXN5?=
+ =?us-ascii?Q?FfHL7e2gJBRE3hYUNCK2UCYgPjbHMN/z+i3vB20qwQ5SLkzhntIv1dQMoM+l?=
+ =?us-ascii?Q?bYor7cJtO4GuNOBK9tExzsPh5SIOs2plYqrFWR9HsFQZRXaOeMwR5RFeBd72?=
+ =?us-ascii?Q?0lKLCbF2C1kvULi1aLfm7AKLQ5YjvzvqkZ/eEc6IHasATk69TS+R7dXDmn78?=
+ =?us-ascii?Q?a7kKgh8qM7qxeWwTp2ezHL58r3X2Q2wxglGgwvYOD6osA2JOTg7vuUHDCu58?=
+ =?us-ascii?Q?YN+ZxNBuzcJqLPUzvL7psLz88H1xJmh4fcO2JQLWXhplBgudKz58tYJzwkuG?=
+ =?us-ascii?Q?mkBG/a9uLrZFmB+xjmxLahWHCbnUaJjKq2Id+KG4QpZYdx0ARXbBEN1neswD?=
+ =?us-ascii?Q?OxoZWcIV6N39Ik9h37eavefvVujUY3PHmoTmENifpYo0CojzgbN5riJqmIFi?=
+ =?us-ascii?Q?4jbKhLvKRZb3uCMMw4BfX/8i/wleBIpHxA3Hap4NyA/DyTSDlEg8gQTD9px2?=
+ =?us-ascii?Q?6bYkc9tKnJDEgalmj/tse+LdMAVhGzUkzkN1h0blTDKUwYgrFVd19w0nXxXB?=
+ =?us-ascii?Q?2T1dZikyUmYsb2qDZDp1zfwV9GIK7tyQMMFW1BLddh4AWX7R3AtGW9Njfs3Q?=
+ =?us-ascii?Q?NF92anEEb2R8CQg8wyZlNFjI9Rw/4cMeKiBpt3AQNvrrCEutxHatA/TsVn73?=
+ =?us-ascii?Q?wHovbAnr/XlAJFnHaSyew9CwZbs9qvoF7bemt6ILmEWn6Kf+sqkysow0duG5?=
+ =?us-ascii?Q?0ZCIWqzhQ12eReeyVFyL1f6My423tzTnzU/w6sK03AFrY+Tj3IZChHqhddyv?=
+ =?us-ascii?Q?nQN9CCB4mdC9PGVTUXH1aC+kOTeb7TxAr0gIEfVIPjkaS3hNSf96CWARXka3?=
+ =?us-ascii?Q?/xXfUhcKjh4Blh2uzczMFI2kZzDWjJvaft8eWkYbhDV3aoIh6c5zXUJCymNK?=
+ =?us-ascii?Q?FXNbIRkd63fAx2OtGnG08G5QoZ7urC7uiCb8TeztmsgYXdHvtAJenXCBhv5B?=
+ =?us-ascii?Q?+kiR8Gv21KxdKjHLSkYuxnlmbfvV18p75NaZy3yqHz03L97dtnSbsYYSg9Pl?=
+ =?us-ascii?Q?gE2V3gmWrCBkulctFENUq75QM3fNqOGCHtKCl6EjJnsUoUs1Pbia1yVKWW/2?=
+ =?us-ascii?Q?DNyPwJAEQtcD7ABOBWSTTfbbM6emOCHjAruvqUivHWxZ4k9bm6VffvZmF8Q5?=
+ =?us-ascii?Q?yzAmniBvrmiKril4F+jyO81mPYF2TgKo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vURjHLerpJZz756jzxly8LyikzNe/mtE2xMEDwH8x9xWdQ9sJX27bNrzpPjT?=
+ =?us-ascii?Q?/pF03yg/MI+wYgkNylw10NucHBDG8Q4ENdeguhx0vzRjtSdY7bSN7Qavzdmz?=
+ =?us-ascii?Q?XxRs17U4nRYlqn333T/IfllWwR+d5s9GawttzW9gA76FiS0FMivOmx9l+NxS?=
+ =?us-ascii?Q?RXUN7/zAAA0pjIHBc0uWWD85t/DKQI4/9uieyxQr5synPTKncmWP2OTswf2r?=
+ =?us-ascii?Q?nZotHcxZ8FwsXNaQmfSRYesD07jykPAYQzgqtKHWNppa5NQmmMaxdNph/PyW?=
+ =?us-ascii?Q?2Nr8Sw8G9FjLH4VMUwVV7NpnvrhwC+v1xRhYOM9RDgqvUZ8eRGsLoKiIf76/?=
+ =?us-ascii?Q?8qjbcTe0HewCDntgGhRrDn2UakQhIpqhDO9HQM5YtiqM8CNC41dGs/6HTCkY?=
+ =?us-ascii?Q?gTPU28tkt+r/kUVu64mYwc6f4rIV0n0711Cp8f7N9wKx8BYRJmgjXInd2ufa?=
+ =?us-ascii?Q?2ebYp7qGfVVk8GemcsiOsZrDIbc/wYmZln+LP1kSdAFV0ZDc8Sm+GTtIAcdO?=
+ =?us-ascii?Q?0wVS7OuqDCTC5GDywKL3O5wqPkDhCw4O4skDgO8lFUgM3CjueN56GSwDAoWw?=
+ =?us-ascii?Q?9ty/cXgaDyMD+m55B5zuhdJIQu0l06yWKnFXo0lZHbWZ8Txw7MpSaA7+xHWW?=
+ =?us-ascii?Q?vS/1RhKuFcCn8AsQNobUuj4FBPfRydkphYrwV8NRDWD0zic0j29cMiOHdbfc?=
+ =?us-ascii?Q?aZDQB40cXivJCNL1izdwn3Mk5pB7Tnm5jobualtE/sJ7kgaJz2qAgBox0mBR?=
+ =?us-ascii?Q?Ls6MsmaMjHS1+ggy2YhtRWcG8znvnIi0US++0sVJRhqfrhHwhnAn2JnGmejb?=
+ =?us-ascii?Q?Ze98OlQ8yR8HgnKM9GgJiglO/EAiZP5rFT0rsnlIG8xAMsnGOx38iIcmn2BK?=
+ =?us-ascii?Q?xBS8ePXkyQGwerSquJ8/JgZU7zZtIMaeKt4MXHr017LHGDeNQohtQupkZTeF?=
+ =?us-ascii?Q?lR+/iQjWrHoNWHEEHlykAV9Bvg7bFsKTDqx1aVX27Zl/82nawsclCUkrbelk?=
+ =?us-ascii?Q?nPyFJYCfM6o7lZFTPCTI+l020xYgcGNvkRcEdWN5tkqj0VNGKe047NwRShIV?=
+ =?us-ascii?Q?SB0t8TJgaNMUjlwfNYvC7EHTzXFZICBMequGw7bd5W6Nianw9orDsEomF34x?=
+ =?us-ascii?Q?aesX1gHrLH1xnouGkY+P+D0YNTjKsfwLE/I/wDCyrNIVY5Xp/5s7/8NXmgif?=
+ =?us-ascii?Q?9O6hSGnCp3YFSMmFGdL9Hv4vTmNvsOyfHklDSTnhdnfFKu0WLOBeTBenyTjX?=
+ =?us-ascii?Q?FnlMiQsSGziNpp1NDmjwTsSNAKZ8EnPvpYvaiGALMJj2aqNIMPjHiDw0wwRH?=
+ =?us-ascii?Q?QLZCMVW4zc3iysY4315lrjfusQtge1jK0X5gmOGltLjcvpT2dfoiCbvd4xPg?=
+ =?us-ascii?Q?itdu75By2o1/EnGKxqb/nK8ystce7zHFmBidiL8QvlOQtC4sHp6wDXJ4PGRI?=
+ =?us-ascii?Q?VlLsEpUJXbLS4NFIoWhlqkIxXbkwo9TdJJA7/C8RerP8pZQmh3EMQ0SUDwx5?=
+ =?us-ascii?Q?HAMVovUrgpWi1NWV7LUTSrjxe0pEaKGkOjTmK/zo3kPzUWaOn/Gtn8N+qc32?=
+ =?us-ascii?Q?QdNEAuQ9ESl6ylODgiMX+MtApy6mhoy9C2ccLb2z?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6da7bcd-8f0e-40ae-4f8e-08de0cc68ef9
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:13:27.6479
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UX7LzlTD3wIdTMvkkOgzeITyHYrANZr4CylKa2D7ntGLvbFzUaVSRsZuXA5fs7N7K/TYeKvHCTiXJKLVP1X2qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6205
 
-Good morning,
+(Resending due to some commit message mistakes (missing SOB etc). Thanks!).
 
-On Thu, Oct 02, 2025 at 08:33:46AM -0700, Tanmay Shah wrote:
-> Current recovery operation does only virtio device reset, but do not
-> free and re-allocate all the resources. As third-party is booting the
-> remote processor during attach-detach, it is better to free and
-> re-allocate resoruces as resource table state might be unknown to linux
-> when remote processor boots and reports crash.
+These patches implement the initial refactoring and few improvements to the
+register and bitfield macros. Rebased on drm-rust-next.
 
-1) When referring to "third-party", should I assume boot loader?
-2) Function rproc_attach_recovery() calls __rproc_detach(), which in turn calls
-rproc_reset_rsc_table_on_detach().  That function deals explicitly with the
-resource table.
-3) The code in this patch mixes __rproc_detach() with rproc_attach(), something
-that is likely not a good idea.  We either do __rproc_detach/__rproc_attach or
-rproc_detach/rproc_attach but I'd like to avoid the mix-and-match to keep the
-amount of possible states to a minimum.
+Main difference from the previous series [1] is dropped the moving out of
+nova-core pending BoundedInt changes:
+https://lore.kernel.org/all/20251003154748.1687160-1-joelagnelf@nvidia.com/
+Other than that, added tags, resolved conflict with kernel::fmt changes and
+rebased on drm-rust-next.
 
-If I understand correctly, the main motivation for this patch is the management
-of the resource table.  But as noted in (2), this should be taken care of.  Am I
-missing some information?
+Alexandre Courbot (1):
+  gpu: nova-core: register: use field type for Into implementation
 
-Thanks,
-Mathieu
+Joel Fernandes (3):
+  gpu: nova-core: bitfield: Move bitfield-specific code from register!
+    into new macro
+  gpu: nova-core: bitfield: Add support for different storage widths
+  gpu: nova-core: bitfield: Add support for custom visiblity
 
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
-> 
-> Note: RFC patch for design discussion. Please do not merge. 
-> 
->  drivers/remoteproc/remoteproc_core.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 825672100528..4971508bc5b2 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1786,7 +1786,20 @@ static int rproc_attach_recovery(struct rproc *rproc)
->  	if (ret)
->  		return ret;
->  
-> -	return __rproc_attach(rproc);
-> +	/* clean up all acquired resources */
-> +	rproc_resource_cleanup(rproc);
-> +
-> +	/* release HW resources if needed */
-> +	rproc_unprepare_device(rproc);
-> +
-> +	rproc_disable_iommu(rproc);
-> +
-> +	/* Free the copy of the resource table */
-> +	kfree(rproc->cached_table);
-> +	rproc->cached_table = NULL;
-> +	rproc->table_ptr = NULL;
-> +
-> +	return rproc_attach(rproc);
->  }
->  
->  static int rproc_boot_recovery(struct rproc *rproc)
-> 
-> base-commit: 56d030ea3330ab737fe6c05f89d52f56208b07ac
-> -- 
-> 2.34.1
-> 
+ drivers/gpu/nova-core/bitfield.rs    | 333 +++++++++++++++++++++++++++
+ drivers/gpu/nova-core/falcon.rs      |  38 ++-
+ drivers/gpu/nova-core/nova_core.rs   |   3 +
+ drivers/gpu/nova-core/regs/macros.rs | 259 +--------------------
+ 4 files changed, 373 insertions(+), 260 deletions(-)
+ create mode 100644 drivers/gpu/nova-core/bitfield.rs
+
+
+base-commit: 1d5cffebd930d61588c32198f85fbe541ab97b8f
+-- 
+2.34.1
+
 
