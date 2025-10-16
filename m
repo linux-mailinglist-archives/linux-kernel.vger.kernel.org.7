@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-855395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996C1BE119B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2E9BE11A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B9419C7D00
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B2E19C7CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6726B17A2E8;
-	Thu, 16 Oct 2025 00:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C7714658D;
+	Thu, 16 Oct 2025 00:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dj94XWJV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A73F1114;
-	Thu, 16 Oct 2025 00:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="R4Lvc2Yr"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07BA1114;
+	Thu, 16 Oct 2025 00:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760574400; cv=none; b=HA9Da0UFZIzhK00IisNprU+BAMOJs+mtH58YOHBlU3wG6w8pj7qPVfBjxhv3ucPUGgGWhuCma/MlZvwguXs3qD9hZtOzOXjdzxxOyCmkMxmA6YmT6bbW9aie1ndMFYYb33seXJirmuR3AYlM9AyWaUyuUAnHCQBJrRKR/6O7pMU=
+	t=1760574411; cv=none; b=KKPjS4uiIgr7psDF060ONqsH3Pf4tLEKtd92HkAke5CKs5ELE0I3VSyRraa5jKOyXtofQITWHPOi6dTbNX562nMC+bJ127x0wEoaWoklP75OwObWiZVt3n0mGedwpIi77SgoegmKyvXINPPPMARC/nGTvDJlK7hTOKpvuEsRS70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760574400; c=relaxed/simple;
-	bh=U28sDA1Foqogqj0EpzymayQ1wgUPbptp/B4nVYhh2VQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=aDchgbxM+vX/lDpblCXYah+pDzopWQHmXEeCFprmuifDL31i6PVC4668GOdaHfA2p6QqihqxCfn2xS0yR3NTI7kryxmCPfVSCKXPhBcS7MTyvMcQJZXaJ7CM0ypIP0AWriUkoOBuBF+vOY3FMh5CQarqR22juTtbEqPW5pPOUUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dj94XWJV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F7CC4CEF8;
-	Thu, 16 Oct 2025 00:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760574399;
-	bh=U28sDA1Foqogqj0EpzymayQ1wgUPbptp/B4nVYhh2VQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Dj94XWJV8URBCP7eHQRkGso8jdIVf4yq32iKR936m+qK40hXECoK27b6FucGkMto0
-	 xKqWpYkuWx4UHz/896XaCHoBe6Q1JiK0Kxc00rN7K8h+LuhdBPw9dxd2mNpLuJ/PYx
-	 tzubS/ZUMVIURtzvMmnHMgnXnGMfdlqmgRAfFKecvQdGrHV4o08O4AeT2FvZxs8MR3
-	 S2oBcLETPjUKZ1Z7T+ECLUUDZZ7/de+DlhSPpNl+CJxTWzsD31NPwc+R9Fx7aH5B6+
-	 JSbYHle1X/IxBGUx/oiSimthNjSWELBTTa2mpPBZ3gOWs/hRRYtOhh7vtqt1X+IZ/X
-	 O62U8DSbcPnEw==
-Date: Wed, 15 Oct 2025 19:26:36 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1760574411; c=relaxed/simple;
+	bh=4V8avRwlwLJiSB+fJIrVl9Yj5bJDeiCEtQgchHHrH58=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=RV64NjlaCGIGKR6Z00p7bRGaszeHRh+Tr3FxNYKJCkHztT4fSa12+dobeshr1RVIT3Z1CReu7t4AD5p/x9NgEH68wgCi1QXKvuleKVY08BMu9ruMKvcEzOL9340i5sPNySyj4Hf/0JD+vzxArM1utyFL2JCacCqvKModScDruuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=R4Lvc2Yr; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [4.155.116.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DFD5421244D5;
+	Wed, 15 Oct 2025 17:26:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DFD5421244D5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760574408;
+	bh=nzrPLreH69hMKpah0sqAVPRj1qFALXIV7zsFZ13rJ0E=;
+	h=Subject:From:To:Cc:Date:From;
+	b=R4Lvc2YrDlJC7z25nVjPK3BOFKd7JtWEp13AC/E6hLM4KIJMgGky1eNF0k9bZlz2X
+	 nLRjHkHQQUYH20ygwxzUOv6zHN0iwpmC+VanoaGx7sdlMNV3KhRv0gxWdNfb1ommF4
+	 soxKsyOjcWHeLVEbWsqgyx2E4X6m3+3MvzcVLfCM=
+Subject: [PATCH v5 0/5] Introduce movable pages for Hyper-V guests
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 16 Oct 2025 00:26:48 +0000
+Message-ID: 
+ <176057396465.74314.10055784909009416453.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Vladimir Oltean <olteanv@gmail.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, devicetree@vger.kernel.org, 
- Jakub Kicinski <kuba@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
- Joel Stanley <joel@jms.id.au>, Bjorn Helgaas <bhelgaas@google.com>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, Lee Jones <lee@kernel.org>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Eric Dumazet <edumazet@google.com>, linux-iio@vger.kernel.org, 
- Manivannan Sadhasivam <mani@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, linux-phy@lists.infradead.org, 
- Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
- linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
- linux-media@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-pci@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Tony Lindgren <tony@atomide.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
-References: <20251015232015.846282-1-robh@kernel.org>
-Message-Id: <176057439666.933167.2958808777480882513.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From the start, the root-partition driver allocates, pins, and maps all
+guest memory into the hypervisor at guest creation. This is simple: Linux
+cannot move the pages, so the guest’s view in Linux and in Microsoft
+Hypervisor never diverges.
+
+However, this approach has major drawbacks:
+ - NUMA: affinity can’t be changed at runtime, so you can’t migrate guest memory closer to the CPUs running it → performance hit.
+ - Memory management: unused guest memory can’t be swapped out, compacted, or merged.
+ - Provisioning time: upfront allocation/pinning slows guest create/destroy.
+ - Overcommit: no memory overcommit on hosts with pinned-guest memory.
+
+This series adds movable memory pages for Hyper-V child partitions. Guest
+pages are no longer allocated upfront; they’re allocated and mapped into
+the hypervisor on demand (i.e., when the guest touches a GFN that isn’t yet
+backed by a host PFN).
+When a page is moved, Linux no longer holds it and it is unmapped from the hypervisor.
+As a result, Hyper-V guests behave like regular Linux processes, enabling standard Linux memory features to apply to guests.
+
+Exceptions (still pinned):
+ 1. Encrypted guests (explicit).
+ 2. Guests with passthrough devices (implicitly pinned by the VFIO framework).
+
+v5:
+ - Fix a bug in MMU notifier handling where an uninitialized 'ret' variable
+   could cause the warning about failed page invalidation to be skipped.
+ - Improve comment grammar regarding skipping the unmapping of non-mapped pages.
+
+v4:
+ - Fix a bug in batch unmapping can skip mapped pages when selecting a new
+   batch due to wrong offset calculation.
+ - Fix an error message in case of failed memory region pinning.
+
+v3:
+ - Region is invalidated even if the mm has no users.
+ - Page remapping logic is updated to support 2M-unaligned remappings for
+   regions that are PMD-aligned, which can occur during both faults and
+   invalidations.
+
+v2:
+ - Split unmap batching into a separate patch.
+ - Fixed commit messages from v1 review.
+ - Renamed a few functions for clarity.
+
+---
+
+Stanislav Kinsburskii (5):
+      Drivers: hv: Refactor and rename memory region handling functions
+      Drivers: hv: Centralize guest memory region destruction
+      Drivers: hv: Batch GPA unmap operations to improve large region performance
+      Drivers: hv: Ensure large page GPA mapping is PMD-aligned
+      Drivers: hv: Add support for movable memory regions
 
 
-On Wed, 15 Oct 2025 18:16:24 -0500, Rob Herring (Arm) wrote:
-> yamllint has gained a new check which checks for inconsistent quoting
-> (mixed " and ' quotes within a file). Fix all the cases yamllint found
-> so we can enable the check (once the check is in a release). Use
-> whichever quoting is dominate in the file.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../arm/altera/socfpga-clk-manager.yaml       |  4 ++--
->  .../bindings/clock/nvidia,tegra124-car.yaml   |  8 ++++----
->  .../bindings/clock/nvidia,tegra20-car.yaml    |  6 +++---
->  .../devicetree/bindings/gpio/gpio-mxs.yaml    |  9 +++++----
->  .../bindings/gpio/snps,dw-apb-gpio.yaml       |  4 ++--
->  .../bindings/iio/temperature/adi,ltc2983.yaml | 20 +++++++++----------
->  .../mailbox/qcom,apcs-kpss-global.yaml        | 16 +++++++--------
->  .../mailbox/xlnx,zynqmp-ipi-mailbox.yaml      |  2 +-
->  .../bindings/media/fsl,imx6q-vdoa.yaml        |  2 +-
->  .../devicetree/bindings/mfd/aspeed-lpc.yaml   |  4 ++--
->  .../devicetree/bindings/mfd/ti,twl.yaml       |  4 ++--
->  .../bindings/net/ethernet-switch.yaml         |  2 +-
->  .../pci/plda,xpressrich3-axi-common.yaml      |  2 +-
->  .../bindings/phy/motorola,cpcap-usb-phy.yaml  |  4 ++--
->  .../pinctrl/microchip,sparx5-sgpio.yaml       | 12 +++++------
->  .../bindings/pinctrl/qcom,pmic-gpio.yaml      | 10 +++++-----
->  .../bindings/pinctrl/qcom,pmic-mpp.yaml       |  6 +++---
->  .../bindings/pinctrl/renesas,pfc.yaml         |  4 ++--
->  .../bindings/pinctrl/renesas,rza1-ports.yaml  |  2 +-
->  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  2 +-
->  .../pinctrl/renesas,rzv2m-pinctrl.yaml        |  2 +-
->  .../bindings/power/renesas,sysc-rmobile.yaml  |  4 ++--
->  .../soc/microchip/atmel,at91rm9200-tcb.yaml   |  8 ++++----
->  .../soc/tegra/nvidia,tegra20-pmc.yaml         | 12 +++++------
->  24 files changed, 75 insertions(+), 74 deletions(-)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/pinctrl/renesas,pfc.example.dts:90.36-37 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/pinctrl/renesas,pfc.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251015232015.846282-1-robh@kernel.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+ drivers/hv/Kconfig             |    1 
+ drivers/hv/mshv_root.h         |   10 +
+ drivers/hv/mshv_root_hv_call.c |    2 
+ drivers/hv/mshv_root_main.c    |  495 +++++++++++++++++++++++++++++++++-------
+ 4 files changed, 424 insertions(+), 84 deletions(-)
 
 
