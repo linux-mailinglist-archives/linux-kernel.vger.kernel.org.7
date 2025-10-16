@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-855808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889FABE266B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEA6BE2674
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C092F1895AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852BE3E19E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC2231A7F8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF1931AF01;
 	Thu, 16 Oct 2025 09:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iI7VlmQF"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HzFo6UsJ"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1F8319607;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D283319608;
 	Thu, 16 Oct 2025 09:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760607076; cv=none; b=FrSxDl6hpjX+zqaOdCeGex0GMVMi912HWGctrwnl0lxJjxtLUvJ7Trb1faEJOPaMAHas5+OOoefSNChedmppDI4JaZWhv5VU0Vq0rCBR9naMq9IcP1OkSY+Iu3mXnn92U/HRyuN1sEZg9LYKPhzC5PdRMEkN94ptm/QdMkKAlEA=
+	t=1760607076; cv=none; b=HcBSqYc7o83g8gpz3Nc+zOKioQTvvO8c0QxK8gH3NBH4Oxt4LpCnW+M3UT11eQDEb26T8OvG84k6mExstoeW2igVw+Sfa6Z2baKvZIJonO7/H5Dnsj+DfdIdW4wWzndDUsMRDkmgOl2y86DW9DwXmJx7tf5U/H3+ubK/MbQoWMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760607076; c=relaxed/simple;
-	bh=hXxs0guUv2+YNHky2gE0MkQPs7q5vu8jR9rLRZw+U8E=;
+	bh=Jg4xR5JYOV7wmTDT8vgm7aFRkp4L7gFOs41bPvlD5IU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oCtCldkxZCYzyNnqPCK5qyj8Bb3B0g/6/MSQy0l89AsduoNiKZQQ2I0Rwkyq/cOlaH2fRvdzuTBtSMQXdiHPnocKGUoznqFFXJpyerrsS6pwG5WPzH7b8hGJPmFqjikq4+0SUdfA+bH79PDsh3YIKk/RUwVBJ5G47T7XYLLeOk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iI7VlmQF; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=Z4y6G4CYphW0DYku1cUzQ+soekNBLwsrvkXsdYIfNY/GFYIvVmRk0EQhzO20kHr2LhgtDwejWvmvEQlmUH/IFJHThacOljqUmXbuW60FUeSXBslQEfpdBDAFpZZpLRsDV8TTPuWgwWO5LoHnpDto0LHCcS5vUUnr22Sttc9nVbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HzFo6UsJ; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1760607067;
-	bh=hXxs0guUv2+YNHky2gE0MkQPs7q5vu8jR9rLRZw+U8E=;
+	bh=Jg4xR5JYOV7wmTDT8vgm7aFRkp4L7gFOs41bPvlD5IU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iI7VlmQFRd8nZIRKd6RZhkFPOMrNkQAQb7ek9vLK6B95sRDdzBIL3G+wpwAvCsFaT
-	 Qob3cNTCDTRZ5QklfcnihWaQf5ziw6q8uahr8+itVdrJ9ZFPd8CMzDacsfMWxWak6T
-	 WoR7wv04cYXBkfVHC8cmIk9f7upf7AYkLJFLF1fgxl8zDQAzxwmfy4rHBm8BZPTKmJ
-	 Trk6av/BgJIyBOdzW291UJ6YVE68nwabdqJHBn6bblxyjx0UdT8n94IkOjZVMxxlSJ
-	 3DT/9A2MNqocMjWUEtMR9qCYlLWPP6lPputN5dypSNc2fgisuoHOsc1r9iEvu2r6+f
-	 G9BGSYpyVX2ZQ==
+	b=HzFo6UsJ/EMQfD0A7ZfHtGwx+MhAXvz+Zob41UG1mmKx0R5rClDa7H3xQTlI6pbx2
+	 5ieqB1hmG/gGhkBiG11JS+FGT+SzDrcdReD+T/dYPUFB3wChBWU6L+t+mbFbbZuS6s
+	 yMmlFnTrtXxjHfE2ihZ2yJEz6WjE/ZKuk0D8VNi/rfDiywZQPzIX/wfX7D5HIYrNme
+	 NBiwzqKQTRMbvbKtNU7azM7W8/TmdUX22lIuZhsvCvm6rkyZdr4mQgKjJl6BMsu5xU
+	 r8Kx0u3heo49v7yE1OlmbJ7sjOclclwXXZAKOGxDLEgcyJFCpjS9t0O5bG68bRkO09
+	 ZyioyBb7btFAw==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 52B7E17E1407;
-	Thu, 16 Oct 2025 11:31:06 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 24D0B17E1412;
+	Thu, 16 Oct 2025 11:31:07 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: linux-mediatek@lists.infradead.org
 Cc: lee@kernel.org,
@@ -62,10 +62,11 @@ Cc: lee@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com,
 	wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: [PATCH v9 7/9] dt-bindings: iio: adc: mt6359: Allow reg for SPMI PMICs AuxADC
-Date: Thu, 16 Oct 2025 11:30:52 +0200
-Message-ID: <20251016093054.126293-8-angelogioacchino.delregno@collabora.com>
+	igor.belwon@mentallysanemainliners.org,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v9 8/9] dt-bindings: mfd: Add binding for MediaTek MT6363 series SPMI PMIC
+Date: Thu, 16 Oct 2025 11:30:53 +0200
+Message-ID: <20251016093054.126293-9-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251016093054.126293-1-angelogioacchino.delregno@collabora.com>
 References: <20251016093054.126293-1-angelogioacchino.delregno@collabora.com>
@@ -75,53 +76,139 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When one or multiple Auxiliary ADC IPs are embedded in a SPMI PMIC
-it is reachable at a specific address.
+Add a binding for the MediaTek MT6363/6373 (and similar) multi
+function PMICs connected over SPMI.
 
-Allow specifying the `reg` property and make it a required one for
-MediaTek MT6363/6373 PMICs as those communicate over SPMI and also
-disallow it for the others (as it wouldn't be applicable).
+These PMICs are found on board designs using newer MediaTek SoCs,
+such as the Dimensity 9400 Smartphone chip, or the Chromebook
+MT8196 chip.
 
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- .../iio/adc/mediatek,mt6359-auxadc.yaml         | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ .../bindings/mfd/mediatek,mt6363.yaml         | 109 ++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-index 5d4ab701f51a..e685e5ee224a 100644
---- a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-@@ -25,6 +25,9 @@ properties:
-       - mediatek,mt6363-auxadc
-       - mediatek,mt6373-auxadc
- 
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+new file mode 100644
+index 000000000000..ee90d16053e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+@@ -0,0 +1,109 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MediaTek MT6363 series SPMI PMICs multi-function device
++
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++
++description: |
++  Some MediaTek Power Management ICs (PMICs) found in board designs with
++  the Helio, Dimensity and/or Kompanio series of SoCs are interfaced to
++  the chip via the System Power Management Interface (SPMI) bus.
++
++  These PMICs are multi-function devices with various sub modules.
++  For example, those may include one, or more of the following:
++  - Auxiliary ADC Controller
++  - Clock Controller
++  - eFuses
++  - GPIO Controller
++  - Interrupt Controller
++  - Keys
++  - LEDs Controller
++  - Regulators
++  - RTC
++
++properties:
++  compatible:
++    enum:
++      - mediatek,mt6363
++      - mediatek,mt6373
++
 +  reg:
 +    maxItems: 1
 +
-   "#io-channel-cells":
-     const: 1
- 
-@@ -33,3 +36,17 @@ required:
-   - "#io-channel-cells"
- 
- additionalProperties: false
++  '#address-cells':
++    const: 1
 +
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - mediatek,mt6363-auxadc
-+          - mediatek,mt6373-auxadc
-+then:
-+  required:
-+    - reg
-+else:
-+  properties:
-+    reg: false
++  '#size-cells':
++    const: 0
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 3
++
++patternProperties:
++  "^adc@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
++
++  "^regulators@[0-9a-f]+$":
++    type: object
++    oneOf:
++      - $ref: /schemas/regulator/mediatek,mt6363-regulator.yaml#
++      - $ref: /schemas/regulator/mediatek,mt6373-regulator.yaml#
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/spmi/spmi.h>
++
++    spmi {
++      #address-cells = <2>;
++      #size-cells = <0>;
++
++      pmic@4 {
++        compatible = "mediatek,mt6363";
++        reg = <0x4 SPMI_USID>;
++        interrupts = <4 64 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #address-cells = <1>;
++        #interrupt-cells = <3>;
++        #size-cells = <0>;
++
++        regulators@30 {
++          compatible = "mediatek,mt6363-regulator";
++          reg = <0x30>;
++
++          vio18 {
++            regulator-name = "pp1800-vio18-s3";
++            regulator-min-microvolt = <1800000>;
++            regulator-max-microvolt = <1800000>;
++            regulator-allowed-modes = <0 2>;
++            regulator-allow-set-load;
++            regulator-over-current-protection;
++          };
++        };
++
++        adc@1000 {
++          compatible = "mediatek,mt6363-auxadc";
++          reg = <0x1000>;
++          #io-channel-cells = <1>;
++        };
++      };
++    };
 -- 
 2.51.0
 
