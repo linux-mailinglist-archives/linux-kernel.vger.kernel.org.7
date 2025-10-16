@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-856085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C3FBE30AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCDEBE30B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CEC75862C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB895863CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56CE3164B8;
-	Thu, 16 Oct 2025 11:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483E53164B0;
+	Thu, 16 Oct 2025 11:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Og9fIw+c";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FMgiECvq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T+j1Wu31"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54967263B;
-	Thu, 16 Oct 2025 11:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76887263B
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613705; cv=none; b=nd0h0/3CZ70kLfEPh10b9RsVnkDBkZxynhvTpkvDjftPk5pLk9Uv2i0kQvRiQF2wjUUqIJhK5fpuQtkOTI1W+42pvOfWSM7PHNhdofPisYKB29hu6qHfUXoAZLDQUkqzGzZXkOX7hiydWWKp2MlNLulybiDuARbKo1mM85Sf8/4=
+	t=1760613827; cv=none; b=F0AA7aUX2dw+drnYNR3z51DH4U+APgN2TUYPUznOIj8N5GW5h0MoX5TjgO9PdqnBkV+x5NPY51H20GD+ETlAd3FmlxdH/uD5wi7yOqbN33wxSBy2rKPXINCsj8qZHIiHP/v1M7YItxr1iB9/xuuz/n/q+arkVLZi0GfMxSNenYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613705; c=relaxed/simple;
-	bh=s3UKeMDFienzdhZ6fEyetCuPEQBFdQYD9GlTbQx8eQQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=orzINbXQEV569dB/3yXt+RshQwAC3Rs7PRR1NIZZFVPxZ8Ce0wZrlKID1InBR0Hj0/jp9uXeLcB3m/OtJFBlL7sT0b17IEBmhrnh9aNqx6C90ztw6NEz6+wTOxgArPpyZYjttWBzqtZZC1XNZGJe563Iyv+KgxoogroZPuyf444=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Og9fIw+c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FMgiECvq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 11:21:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760613701;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=AHIexI7oh85pU2rC4PB6zjKSGbbonpIYsq1vd3KvIys=;
-	b=Og9fIw+c5CI8WBIkamKSi/XaMNfHPG5lGkdwrMcdoRaLfbwlmoRGHCOsViHvE/ia6IbrJv
-	I1LfKCYO2G2oObRXakUihTKoudhoJgnlHP+JDf78PDJIRpdOQdtqSHVSygTEBGRpt2tPkf
-	U8injnXR7WrpUm4SzajbzLiGjryo/CJp0kII3+WHiYXkB4M1vY8GG711zWvsLbk43qdsFO
-	upCfQ9WmLax/g4ein58enslVaR1uZrqXZ+54yng1dpbjtC1bVLFoqPGPd1SebV4klf5yGU
-	zbluwtfaKjscKtqcrTmEommazq5t2bnf0C0z99tQe3TVkCkkcN2IC1m+d9nlDA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760613701;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=AHIexI7oh85pU2rC4PB6zjKSGbbonpIYsq1vd3KvIys=;
-	b=FMgiECvq4iNkCgLqCiEudsSGIjPM4mBrsDqFoCKqFydTesGoFQkRDX5a32bYq1lPZl/69u
-	w3KaAT9CKw8AJFBg==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/topology,x86: Fix build warning
-Cc: Borislav Petkov <bp@alien8.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1760613827; c=relaxed/simple;
+	bh=2QNDr6BJ4iK2s/4Apca2Q4H52oQZE9xEwuSWhaOl4SA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyP8j37PX/qSy88desxZj/aX+rFrijAU1H42we8SJr+tdhIN6pt4CQ3gsO42XFA940FAuKqLG2Yb47TP4YYWCRFcS7WE47YEABK9qwYtpNd58Qvl2bUc+J7uMg8NfGq20RPpAq+Q8zcUb4b4RlQv4yLUfoe+P6lk12le1u+PIFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T+j1Wu31; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Kzvos0GfmE1bLYBsytWgHBjCtrXqHcUYEkroBXgRp40=; b=T+j1Wu31HkhSWC+QLQtkAIc6Gf
+	4x7Q2rqdjzqoIB2lFtXHb5bBRht4qsqiN7EATkm6YPtZB98Rgn12z6s+Sfy9xidre2EM/nqjEPG4V
+	OLzZBf/zx8Ju9HytqWVLRJROQM9CMzYdsjRN+Qkwj4tm0ViixHY+ipbjBwqrXifh9vRqxD7RQ/OvN
+	WSf/xKdiBM2iyMg97MH6LRGR2yt3bFDDU8tbivlvryiZncVAbi15gM25OR1oeyzaJF2w6agwGg463
+	soypikux43N0F43ENktCilQFZI2TbpcQmgCiu7Cy8o/4rmpIyQgbnEteMo1gkopNyFepx/Zvq6KlC
+	X6eyQSJA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9M4s-000000025e4-3MMs;
+	Thu, 16 Oct 2025 11:23:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0FCCB30023C; Thu, 16 Oct 2025 13:23:27 +0200 (CEST)
+Date: Thu, 16 Oct 2025 13:23:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 31/56] x86/alternative: Prepend nops with retpolines
+Message-ID: <20251016112327.GQ1386988@noisy.programming.kicks-ass.net>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-32-david.kaplan@amd.com>
+ <20251016110717.GE3289052@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176061369966.709179.2557895434975882601.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016110717.GE3289052@noisy.programming.kicks-ass.net>
 
-The following commit has been merged into the sched/core branch of tip:
+On Thu, Oct 16, 2025 at 01:07:17PM +0200, Peter Zijlstra wrote:
+> On Mon, Oct 13, 2025 at 09:34:19AM -0500, David Kaplan wrote:
+> > When patching retpolines, nops may be required for padding such as when
+> > turning a 5-byte direct call into a 2-byte indirect call.  Previously,
+> > these were appended at the end so the code becomes "call *reg;nop;nop;nop"
+> > for example.  This was fine because it's always going from a larger
+> > instruction to a smaller one.
+> > 
+> > But this is a problem if the sequence is transformed from a 2-byte indirect
+> > to the 5-byte direct call version at runtime because when the called
+> > function returns, it will be in the middle of the 5-byte call instruction.
+> > 
+> > To fix this, prepend the nops instead of appending them.  Consequently, the
+> > return site of the called function is always the same.
+> > 
+> 
+> So this results in:
+> 
+> NOP3; call *%r11
+> 
+> And you're saying a task can be on the other side of that call and then
+> return lines up. But what if the task is preempted right after that
+> NOP3?
+> 
+> Same for all the alternative patching; what ensures no task is currently
+> having a register state that is in the middle of things?
 
-Commit-ID:     73cbcfe255f7edca915d978a7d1b0a11f2d62812
-Gitweb:        https://git.kernel.org/tip/73cbcfe255f7edca915d978a7d1b0a11f2d=
-62812
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 16 Oct 2025 12:58:34 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 16 Oct 2025 13:01:15 +02:00
-
-sched/topology,x86: Fix build warning
-
-A compile warning slipped through:
-
-   arch/x86/kernel/smpboot.c:548:5: warning: no previous prototype for functi=
-on 'arch_sched_node_distance' [-Wmissing-prototypes]
-
-Fixes: 4d6dd05d07d0 ("sched/topology: Fix sched domain build error for GNR, C=
-WF in SNC-3 mode")
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/topology.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 2104189..df94388 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -325,4 +325,6 @@ static inline void freq_invariance_set_perf_ratio(u64 rat=
-io, bool turbo_disabled
- extern void arch_scale_freq_tick(void);
- #define arch_scale_freq_tick arch_scale_freq_tick
-=20
-+extern int arch_sched_node_distance(int from, int to);
-+
- #endif /* _ASM_X86_TOPOLOGY_H */
+Ah, I found it, you freeze everything, which puts it at safe points.
 
