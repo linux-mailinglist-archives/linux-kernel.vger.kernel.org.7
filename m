@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-856076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEECBE3039
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:11:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CD4BE303F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76A3C4E4FFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:11:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBDD84E48DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B353307491;
-	Thu, 16 Oct 2025 11:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64F9307491;
+	Thu, 16 Oct 2025 11:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lqFMMEpD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ml/7w8Zf"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69352307487
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE9261B60
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613057; cv=none; b=f5OEE0zD9Km/QT4ei4EVWguC4uteOmNZy68v2GcTawygxom8j2S+w7nPx38cZjUiSCrrJExmfyLL1AFEEhLUd75AYbw9PM5BdB/lZoGFh7jhhbrcpnp6QANR0G5zz/pA9ijjdWFrtuguPepjjoKC8HrjBzZm1xPg+QkNyYDG2s8=
+	t=1760613132; cv=none; b=T85qqNC3SIoXa3L8JvZgPxdqv/o2VFmK0zf2z8CvDpYup1PjkbjGh10ZHU+ctv6sZvcAAwech4efh4tcG5N8e2HmApqaL3tjP2gUAbGLH35EwRbpfT6ZMrr3uv78jYBoSXQpYYPvrLnBsZQa5DwekkS37IU7kM2khF4bab4Cbh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613057; c=relaxed/simple;
-	bh=MUEntCr2Dyf3s21UeE6RAqOb6Ge0RHsUvZzXKmFSj24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOrXQfl31ZOmNvN3J9x706CIsb/aXpHQWw+JcU4iPyxoZcnUGegolq88KwTHl8Zz5e+Tpm1z/nwyaZ5emv/J8zkrVlV1gD2q200uelQRdFpLbp+y3PNjPknuTVsARpLR+N8i1Kz4e5EGr3XTQ+f1/UwxgsKwWKOhgHd7KCGjUxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lqFMMEpD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mbcRg+C7qz18C4vqHks8odgTF0Z26ChkfEwT8Scgj+Y=; b=lqFMMEpD5Ak/0rf+7l9eid7CPA
-	rJScu13GynWeWQdQVXyw3yT5jmqrpUs21lsp8PlQ2c94gDnIH3ZvojkmOf3bXynpI/kNqfwhI9kL0
-	h/S4h2b2QDwsqz4/dE9XRwBbCvG9TS8+5KuK0N0byFEyDjOmktS6fYLJHN1iXihyCnGb6M8JlzE/G
-	oXRao3et6ZSQaf731mgUiuwDV4eswsF1WAfIPQKzrDXjgtj35vTR5pK4KwD1ZXCWA9Q5ZyRWTr8Ka
-	nDsI/OwRWCTpiwhumM4r6kgq7XB33+QoQVxtUiQJA0QltqhL8M9msGTG6xRi9Df4MenHg31wmxio1
-	MoucdyyA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9LsX-00000006hNn-3L8B;
-	Thu, 16 Oct 2025 11:10:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 60EE230023C; Thu, 16 Oct 2025 13:10:41 +0200 (CEST)
-Date: Thu, 16 Oct 2025 13:10:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 31/56] x86/alternative: Prepend nops with retpolines
-Message-ID: <20251016111041.GP1386988@noisy.programming.kicks-ass.net>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-32-david.kaplan@amd.com>
- <20251016110717.GE3289052@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1760613132; c=relaxed/simple;
+	bh=F2NDQd0RB+lDxTS6DTrsGgpz1L9XDygP38aOkc9JCmQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=E1QHYC7wVmHSg/rqw4bSXKLPuKsMYE+wxbZVTB28tge6ZhU4aJMET1ad+aaO0lOs2Pwt6meUqhMHGF1I1BXPJTIy60YTMMidgqBoNpen8/zZysWiGEbAy4gFkubU7Amdlj1gOWvRMRUcm9f6kkuVh9NkcJn3IG0nzOM2DiYHdcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ml/7w8Zf; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251016111208euoutp012f06e6d1766c8b0d672ee1209bf61196~u9E-6Llj72784827848euoutp01J
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:12:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251016111208euoutp012f06e6d1766c8b0d672ee1209bf61196~u9E-6Llj72784827848euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760613128;
+	bh=vz6aHMBDh36l9YV+XjUIIXycn9boKM8dyJnIdlbGieA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ml/7w8ZfnrWTdTCW0sjXPykM6Z9Pi3CBIqOprfFmB+gDvj13V4IfWIyPxFgnnBsE/
+	 CxA4dRIgRfqoWv26PNTZnc7ihN1w/lXEImegGrJ/X3RTiGDcS6qCvEg3GfSo/KoHlz
+	 MB/1QLvN+xI+5LOXTqnJm3esHr5LiJ/PGtykp7VQ=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d~u9E-jI15-1702017020eucas1p2G;
+	Thu, 16 Oct 2025 11:12:08 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251016111207eusmtip1a8615a027e8a98878686cbaa67d402a5~u9E-HbUgn1158811588eusmtip1i;
+	Thu, 16 Oct 2025 11:12:07 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa
+	<tfiga@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guennadi
+	Liakhovetski <g.liakhovetski@gmx.de>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Hans Verkuil <hverkuil@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] media: videobuf2: forbid create_bufs/remove_bufs when
+ legacy fileio is active
+Date: Thu, 16 Oct 2025 13:11:54 +0200
+Message-Id: <20251016111154.993949-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016110717.GE3289052@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
+X-EPHeader: CA
+X-CMS-RootMailID: 20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d
+References: <CGME20251016111208eucas1p24cd8cc1e952a8cdf73fbadea704b499d@eucas1p2.samsung.com>
 
-On Thu, Oct 16, 2025 at 01:07:17PM +0200, Peter Zijlstra wrote:
-> On Mon, Oct 13, 2025 at 09:34:19AM -0500, David Kaplan wrote:
-> > When patching retpolines, nops may be required for padding such as when
-> > turning a 5-byte direct call into a 2-byte indirect call.  Previously,
-> > these were appended at the end so the code becomes "call *reg;nop;nop;nop"
-> > for example.  This was fine because it's always going from a larger
-> > instruction to a smaller one.
-> > 
-> > But this is a problem if the sequence is transformed from a 2-byte indirect
-> > to the 5-byte direct call version at runtime because when the called
-> > function returns, it will be in the middle of the 5-byte call instruction.
-> > 
-> > To fix this, prepend the nops instead of appending them.  Consequently, the
-> > return site of the called function is always the same.
-> > 
-> 
-> So this results in:
-> 
-> NOP3; call *%r11
+create_bufs and remove_bufs ioctl calls manipulate queue internal buffer
+list, potentially overwriting some pointers used by the legacy fileio
+access mode. Simply forbid those calls when fileio is active to protect
+internal queue state between subsequent read/write calls.
 
-Also possible:
+CC: stable@vger.kernel.org
+Fixes: 2d86401c2cbf ("[media] V4L: vb2: add support for buffers of different sizes on a single queue")
+Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-  lfence; call *r11
-
-(which is why we needed 6 bytes for reg>8)
-
-> And you're saying a task can be on the other side of that call and then
-> return lines up. But what if the task is preempted right after that
-> NOP3?
-> 
-> Same for all the alternative patching; what ensures no task is currently
-> having a register state that is in the middle of things?
-
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index d911021c1bb0..f4104d5971dd 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -751,6 +751,11 @@ int vb2_create_bufs(struct vb2_queue *q, struct v4l2_create_buffers *create)
+ 	int ret = vb2_verify_memory_type(q, create->memory, f->type);
+ 	unsigned i;
+ 
++	if (vb2_fileio_is_active(q)) {
++		dprintk(q, 1, "file io in progress\n");
++		return -EBUSY;
++	}
++
+ 	create->index = vb2_get_num_buffers(q);
+ 	vb2_set_flags_and_caps(q, create->memory, &create->flags,
+ 			       &create->capabilities, &create->max_num_buffers);
+@@ -1010,6 +1015,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
+ 	if (vb2_queue_is_busy(vdev->queue, file))
+ 		return -EBUSY;
+ 
++	if (vb2_fileio_is_active(vdev->queue)) {
++		dprintk(vdev->queue, 1, "file io in progress\n");
++		return -EBUSY;
++	}
++
+ 	return vb2_core_remove_bufs(vdev->queue, d->index, d->count);
+ }
+ EXPORT_SYMBOL_GPL(vb2_ioctl_remove_bufs);
+-- 
+2.34.1
 
 
