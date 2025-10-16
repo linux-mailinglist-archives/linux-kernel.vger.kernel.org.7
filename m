@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-856332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9D8BE3E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:26:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DC9BE3E5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02BD05E053E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:24:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 581C1560239
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637F634320B;
-	Thu, 16 Oct 2025 14:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B74D33EAF7;
+	Thu, 16 Oct 2025 14:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aVNVNzti"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lHDdzPgG"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D2833EB19;
-	Thu, 16 Oct 2025 14:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692E333EAF4
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760624576; cv=none; b=LGE612G3Rt7UPVn/nltjj8795qeU0nf5YrH9uTa/xkFIibhukqDO7PXEGfRAfW1um/a6CM63hG1DsKqMgasuR0NKGcafc0g95tDkGjPqfWIO/NL/3cqdwJ7PGFtGhD+aJ0Jn2D6bdimp5nJkT4jZh/NnjYXPD0fW0wKsOAo3EGk=
+	t=1760624641; cv=none; b=kLe9kMiujyYX0V4XcziVq/Bl+F5kasNWfcnQX+F5riDUUM9ECoyucJO8lc7Fkgw+TXLVK3QK5CF6Xjrq1oLztgJ+H2y4S25pGs55idGms5/IIwKaNKk6xyYCQqfmbo5y0OaImfBPXNthjLCES+rLa+YCN6HxJCI9y0pff1bERk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760624576; c=relaxed/simple;
-	bh=/Trh+v1W/uhiBFTYoqQXEekxqHsqS7bTdkGqVrRYRBk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a08uVm8QvVOnOlg0Yxeh/Tmopp6FI+7tmQQSpRyA1zRzZ1tArEIr23DHHemiki+W/S7he7Ua8rlK24iGYPRqGC910RLtEzPFHFAaMNuVBjvKAfFXVJZjb/jX+PzyU4nhoakHZD7AawNx738Be7/ys7QUk8wyxEniAuc+yvpWlUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aVNVNzti; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760624573;
-	bh=/Trh+v1W/uhiBFTYoqQXEekxqHsqS7bTdkGqVrRYRBk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aVNVNztiHaDJ0c9NLhWPwbjZhsvWW8Zr/b4eqAt5QGaoNsJn0Z6AC3HqzYYD13Lt4
-	 /axQTpMlyei9J2PFKmBPQKos3F41LEApQ++DW0nMJk+oixKiuSR7VbtPtPPx6yAEvc
-	 7h6VWqyfGMdXPu2EDJlc7tedWdghXJDPgJo52ziMw9k0LbHJsBBYTe1nUMguwxkrMu
-	 U4agrD0lL+8dq1trQ2zOE+yFr4nN1x0aJqhTfhiB0mrLuJ7HW3Zhsu4+s7xiYqT88o
-	 fp7DlSq9wbQ4iduXlp4aBlTV6JAk5zqcBTFhgIHVEBny6SYdf3vwBYXj8a6vaqsyXi
-	 cq3sIcvc66/XA==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:655a:5eaa:d2ad:4ee4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2DBE617E10C8;
-	Thu, 16 Oct 2025 16:22:52 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: srini@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: nfraprado@collabora.com,
-	arnd@arndb.de,
-	colin.i.king@gmail.com,
-	u.kleine-koenig@baylibre.com,
-	andrew-ct.chen@mediatek.com,
-	lala.lin@mediatek.com,
-	bchihi@baylibre.com,
-	frank-w@public-files.de,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com,
-	Laura Nao <laura.nao@collabora.com>
-Subject: [PATCH RESEND v3 9/9] dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
-Date: Thu, 16 Oct 2025 16:21:58 +0200
-Message-Id: <20251016142158.740242-10-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251016142158.740242-1-laura.nao@collabora.com>
-References: <20251016142158.740242-1-laura.nao@collabora.com>
+	s=arc-20240116; t=1760624641; c=relaxed/simple;
+	bh=E+wNyAuIJoFDEuv1C0VMJx4QWwJugwFMwrmGN7GGo1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=unvENN5F2QO5S603wHveQSxK+fwnClw9P3e6s4YTE+nxhLizbh/LiVg1sd9nXXVnD0SGZwB4agV21v+zK8wXKWZQMb4OzjXdLQz6L3nFkhZXssR1mcY/q/GBbfZ7KrPbygnG7VEoBDd653Y6NLLjdWbn97bglMg4ZiynxYuBU3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lHDdzPgG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZKdf/K8sl+1APrizLcOU21JGNAAJoPeFfvKXPb5UfOI=; b=lHDdzPgG+0RrAfGzJDq5fQSuSI
+	5nFqoLgmCqZ7TuY6B5Hqtoj+WAMKBmB7T3CkGC2fUIo2veuAPUn2jSbEp8q7LE9h2P7ey6cZm6xDg
+	ERLSUb5e4PC62XnbmhvIWkaAV76nHZg+W7f8KxZZWov3a5hsHTsC2cRxvzMQKgje8aVzbA5uiY58d
+	tBWldWrvBEF7Fz5tYlg59EAJTGKnlE9BUdTQ2r0l2IUJDMnPsRjMjBPD1uazYt7V2ro7fDOB82ewH
+	xAq9JvzHl+/9JHNanlzHxvBkt1KuCWpiR/JM86cuLdyMcHpRM6M67qJhiiCjLhOImmZ3eZ4wmf1yu
+	8EyME24w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9OtO-00000005gr7-4BzC;
+	Thu, 16 Oct 2025 14:23:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BC97C30023C; Thu, 16 Oct 2025 16:23:47 +0200 (CEST)
+Date: Thu, 16 Oct 2025 16:23:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 31/56] x86/alternative: Prepend nops with retpolines
+Message-ID: <20251016142347.GV4067720@noisy.programming.kicks-ass.net>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-32-david.kaplan@amd.com>
+ <20251016110717.GE3289052@noisy.programming.kicks-ass.net>
+ <20251016112327.GQ1386988@noisy.programming.kicks-ass.net>
+ <DS0PR12MB92738D3C38021EE0B693326994E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
+ <20251016140731.GS4067720@noisy.programming.kicks-ass.net>
+ <DS0PR12MB9273D3CAD0EED60F0CC7547994E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS0PR12MB9273D3CAD0EED60F0CC7547994E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
 
-The MT8196 eFuse layout is compatible with MT8186 and shares the same
-decoding scheme for the gpu-speedbin cell.
+On Thu, Oct 16, 2025 at 02:16:04PM +0000, Kaplan, David wrote:
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
----
- Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> > Yeah, makes sense. But I like I wrote, I think prefix stuffing might be
+> > a better option.
+> 
+> Ok, and that's because we need at most 3 prefixes as Intel uarch's
+> don't have significant penalties at 3 prefixes, only at 4+?
 
-diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-index 4dc0d42df3e6..c90b026e40bd 100644
---- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-@@ -25,7 +25,9 @@ properties:
-   compatible:
-     oneOf:
-       - items:
--          - const: mediatek,mt8188-efuse
-+          - enum:
-+              - mediatek,mt8196-efuse
-+              - mediatek,mt8188-efuse
-           - const: mediatek,mt8186-efuse
-       - const: mediatek,mt8186-efuse
- 
--- 
-2.39.5
+Yeah, IIRC 3 was the magic number. Sadly there isn't much public
+information on this. The best summary on the subject I could find was
+here:
+
+  https://reviews.llvm.org/D75945
+
+> I'll need to check on this on the AMD side too.
+
+The above, quoting Agner's optimization guide, says Bulldozer is
+affected.
 
 
