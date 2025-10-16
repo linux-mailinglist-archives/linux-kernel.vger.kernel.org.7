@@ -1,122 +1,170 @@
-Return-Path: <linux-kernel+bounces-855552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E318BE19CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:59:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC06BE19DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4FE235174B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6672C1893B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1511246770;
-	Thu, 16 Oct 2025 05:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9874724C068;
+	Thu, 16 Oct 2025 05:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y5rndtHo"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSUBroB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A32123E35F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1FB241686;
+	Thu, 16 Oct 2025 05:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760594364; cv=none; b=ZBK6+g3RVK4GUr2FlFRLHSMFTfLqbmpaW8yrYIRi/RHnfDpiZSQg4i5GQDO4k5KXmAmW3t/EwrHcvTIN8rHr6TTdbuqDLs97Kpigy+8Lix9J9sxrI/PXum5konXC60xgdB24rqPD36i/FzQGtEJFgWMUEchO5KM6jOCXt60mnRI=
+	t=1760594383; cv=none; b=jhtjpQVEGtxwvp3e84+HHy7LTRwDSuKjAGsZslKo5RxrJ/Y2V2O3f3OIuS8q9BX1qsQwmZB4StfECLXD5ZLFohCh7Fq5TuCA+ffHNZcLlXK4XrYZvVG/OGDsgI3nx2KBK7kgOrTDJclk3U82aMk3KFfGMtoJipMaiGCw3u3yKzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760594364; c=relaxed/simple;
-	bh=vawqNMoFZ5VKFuN0Vja2YQC5OXrm6Pc/9crYHoD1Sek=;
+	s=arc-20240116; t=1760594383; c=relaxed/simple;
+	bh=8ciTShZccMAg56b4cQsrmTPZobu4kdKJ+1tp/6jLHrc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LPGFJ9ejzmFTbLVbHCN1YwwdtY1gqPVVCGIKF+t0z7dUBxyj0OK3ALp5e2JRsS+5RVkD6yRhukh0mKzNX8yhaw1ykJje/0Iw+57TpfOVsCrid9DKEDcT/Q0W+JKzKUKgTtAj5AR0O57dgSKXg1RxpoBux4zYeVBa5PVpxTzP9jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y5rndtHo; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d5d2fe20-9d63-4304-8b36-9708309791ea@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760594360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vdb4s1EUc15piP4fsMIcyGvi1KhE492ZqzLXb8qr2Tc=;
-	b=Y5rndtHob9Zji+lY2MljLArqMcNI1xw4ZC5ZajqNzJ9wnEaq0A7owV05dBx4uVeWKfCStV
-	sJ/l1S3P678HOCQBjCfnev8fEfeIMD9C/NW1ReEsu4/Z4huTRwzsKIa5tfDpaIeVGeyjgw
-	JyzMWMjf8AHV7IkDbitYqkZZR8v8xGU=
-Date: Thu, 16 Oct 2025 13:59:07 +0800
+	 In-Reply-To:Content-Type; b=heKZFAfGBmS3KZiWwI+4C1TQkPPuYRXBRG5fyoYyXwCrqWmsmKax5ERunVa3EWIaBatrS7qg+e7M0Bzs66vYe+6vC0VPxvv0eQA/looSNxM4NMRUD3z0Rbxvxta+XRtwaJgE5LBIVM8A297lmcb3tnkEva7HvdRPKffsyjZBgFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSUBroB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C78EC4CEF1;
+	Thu, 16 Oct 2025 05:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760594383;
+	bh=8ciTShZccMAg56b4cQsrmTPZobu4kdKJ+1tp/6jLHrc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iSUBroB6zN12uj57egK6nYeGXF+APzMzirw5wPgJ4EFDLmuWHTl7djqwdTvR7e9yW
+	 iIomQGcJ7npB5UUXK3wDA4QNY1GwrROFN1kkjByJa0JbmxhMcdoJV41DB9YB6gq6z2
+	 suzIP61mHuV7s927w8JSu3qTiK6TFLYhR+94L01R9WUcPht7GIZz9LyVaJH4A6kXZB
+	 Fi5oJZBcgl/SeXu4tfIa0huFsCHUtN7RcVz3UdNCnplrd6OlaYi9075op5RCbqOdnU
+	 kCev68BHUckZSPlUY65yz/1EfPKcEYu6G1biNv3lav79dbcW818Ee3rrmnAwFekmV+
+	 F6x1fWYerGqAA==
+Message-ID: <8966ddaf-9c10-4626-a4cc-36efd3fc93e2@kernel.org>
+Date: Thu, 16 Oct 2025 07:59:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: guard is_zero_pfn() calls with
- pte_present()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs8300: Add support for camss
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, bryan.odonoghue@linaro.org
+References: <20251015130130.2790829-1-quic_vikramsa@quicinc.com>
+ <20251015130130.2790829-3-quic_vikramsa@quicinc.com>
+ <b4207e22-8d9c-4223-8b28-272d2650661f@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, akpm@linux-foundation.org, david@redhat.com
-References: <20251016033643.10848-1-lance.yang@linux.dev>
- <ab4e7044-c285-426e-bf9c-fa06a0f47ae9@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <ab4e7044-c285-426e-bf9c-fa06a0f47ae9@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <b4207e22-8d9c-4223-8b28-272d2650661f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/10/16 13:34, Dev Jain wrote:
-> 
-> On 16/10/25 9:06 am, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
+On 15/10/2025 20:49, Vladimir Zapolskiy wrote:
+> On 10/15/25 16:01, Vikram Sharma wrote:
+>> Add changes to support the camera subsystem on the QCS8300.
 >>
->> A non-present entry, like a swap PTE, contains completely different data
->> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
->> non-present entry, it will spit out a junk PFN.
->>
->> What if that junk PFN happens to match the zeropage's PFN by sheer
->> chance? While really unlikely, this would be really bad if it did.
->>
->> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
->> in khugepaged.c are properly guarded by a pte_present() check.
->>
->> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 >> ---
-> 
-> Thanks, I missed this.
-
-Me too ...
-
-> 
->>   mm/khugepaged.c | 13 ++++++++-----
->>   1 file changed, 8 insertions(+), 5 deletions(-)
+>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 171 ++++++++++++++++++++++++++
+>>   1 file changed, 171 insertions(+)
 >>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index d635d821f611..0341c3d13e9e 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t 
->> *_pte,
->>           pte_t pteval = ptep_get(_pte);
->>           unsigned long pfn;
->> -        if (pte_none(pteval))
->> +        if (!pte_present(pteval))
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> index 8d78ccac411e..acd475555115 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> @@ -4769,6 +4769,177 @@ videocc: clock-controller@abf0000 {
+>>   			#power-domain-cells = <1>;
+>>   		};
+>>   
+>> +		camss: isp@ac78000 {
+>> +			compatible = "qcom,qcs8300-camss";
+>> +
+>> +			reg = <0x0 0xac78000 0x0 0x1000>,
+>> +			      <0x0 0xac7a000 0x0 0xf00>,
+>> +			      <0x0 0xac7c000 0x0 0xf00>,
+>> +			      <0x0 0xac84000 0x0 0xf00>,
+>> +			      <0x0 0xac88000 0x0 0xf00>,
+>> +			      <0x0 0xac8c000 0x0 0xf00>,
+>> +			      <0x0 0xac90000 0x0 0xf00>,
+>> +			      <0x0 0xac94000 0x0 0xf00>,
+>> +			      <0x0 0xac9c000 0x0 0x2000>,
+>> +			      <0x0 0xac9e000 0x0 0x2000>,
+>> +			      <0x0 0xaca0000 0x0 0x2000>,
+>> +			      <0x0 0xacac000 0x0 0x400>,
+>> +			      <0x0 0xacad000 0x0 0x400>,
+>> +			      <0x0 0xacae000 0x0 0x400>,
+>> +			      <0x0 0xac4d000 0x0 0xf000>,
+>> +			      <0x0 0xac60000 0x0 0xf000>,
+>> +			      <0x0 0xac85000 0x0 0xd00>,
+>> +			      <0x0 0xac89000 0x0 0xd00>,
+>> +			      <0x0 0xac8d000 0x0 0xd00>,
+>> +			      <0x0 0xac91000 0x0 0xd00>,
+>> +			      <0x0 0xac95000 0x0 0xd00>;
+>> +			reg-names = "csid_wrapper",
+>> +				    "csid0",
 > 
-> There should be no chance that we end up with a pteval which is not none 
-> *and*
-> not present, if you look at the callers of release_pte_pages. So perhaps we
-> should keep this either the same, or, after "if(pte_none(pteval))", do a
-> WARN_ON_ONCE(!pte_present(pteval))?
+> The list of 'reg-names' is not alphanumerically sorted, this is a newly
+> introduced sorting order pattern of CAMSS 'reg' property values.
 
-Good catch! Yeah, but I'd rather not rely on the callers ...
 
-Wouldn't it just be simpler and safer to always have is_zero_pfn() guarded
-by pte_present()?
+Please stop inventing ad-hoc or fake rules. There is no such sorting
+pattern for this property, which I expressed multiple times. Last time
+you claimed there is some sorting by "values", now this.
 
-I don't have a strong opinon here, though ;p
-
-Dev, Thanks!
+Best regards,
+Krzysztof
 
