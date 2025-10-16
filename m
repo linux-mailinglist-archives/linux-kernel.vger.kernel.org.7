@@ -1,216 +1,295 @@
-Return-Path: <linux-kernel+bounces-856930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D43ABE5798
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:58:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB73FBE57A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4287581769
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:57:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9BD19A5010
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CBA2E1742;
-	Thu, 16 Oct 2025 20:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC9E2E1F02;
+	Thu, 16 Oct 2025 20:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="GPud9RuW"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l8L2A0GA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59171534EC
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760648273; cv=none; b=jMaQLfqGW7Zmsru8uBX1o+/Kp8Hxb18I0+umOdL8Wxh0ujTCjTpvnXyxsKYFZNHjGHNUuEyKQNco7aGepjj2K7iqpAG0qkekN5IN478LiltL1zJl9TMEe6D2ceQvbITvhWkzS3FQYIzUpz2VM0vFO0oin/RBPKBgKFZLyk6kCzo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760648273; c=relaxed/simple;
-	bh=uRhISYL3n3QE3AeFIzzdXnBIT58XDxcDzGu8M8mMX0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IMGR73PinpHhzoY4XF7f0COo5H5El9jOCkTUFUiiKsaE197e/ZJqZuT528Vuaneioqx/XfGdKyduqKSubBatxyuTOe5oStLP6cIUG4D3mItuhM0mokG3ef1sOlwMn1vhcs8fgja8K2oynCq+y/SDR1QkplNTPukoDZy54X7vn/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=GPud9RuW; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GH3GdS009939;
-	Thu, 16 Oct 2025 20:57:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=IG7FiSEvgNzm4RES3MNSobFTWT
-	004S/n8Il0NAT6yt0=; b=GPud9RuWGblQLBISVz/kA9V0+8jbLh7uQ2fzJ0f+Hp
-	phpnyhT79VhTufv+/j1MhG3MX4xr7O52Hh82z0pb+8aV42UCi9jT7mPwvu6hzEkG
-	VQVfckNo4Y0AoFTvEflgn30+FgAwzioon0prwlD0G8QtKDn2MDFJKnOBNhE0LmHe
-	6z+R4K6Ut65G+/i1uikly71z+M4lVMhR+ysX3QQZfwMDY+UbWk5csgbakVEjf+j1
-	wmr7D8J65+eRa/NT6npYU58X/cdsoa/PpQAZ6dHWNt+0cfkr3p2fTo99xBpYPCrw
-	OtMdrT56FUerVgqwi940HFU9QM9Xc+txgow8wfspJF8w==
-Received: from p1lg14880.it.hpe.com (p1lg14880.it.hpe.com [16.230.97.201])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 49tshfftm9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 20:57:15 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 6DF72800354;
-	Thu, 16 Oct 2025 20:57:15 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 8A5FF80EECB;
-	Thu, 16 Oct 2025 20:57:14 +0000 (UTC)
-Date: Thu, 16 Oct 2025 15:57:12 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: Re: [PATCH] tick/sched: Use trylock for jiffies updates by
- non-timekeeper CPUs
-Message-ID: <aPFcKDJIP4-maoqI@swahl-home.5wahls.com>
-References: <20251013150959.298288-1-steve.wahl@hpe.com>
- <87a51q1uhg.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA79A1534EC;
+	Thu, 16 Oct 2025 20:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760648341; cv=fail; b=ZEcpkunwuuos/qlGqnQm8xP3CFUb0hzPn0qKrZPi+TxC+EOXofB8i+k7bW5XYBgmEpc3BZR22TLVebNQtspjjv58h0CDyV4YBr+RDUkptPGCPfphgsB0Kr0/VRa+HQhuKH3qovH5Mnipoq2+ZWt1bH4k1DnIFdk15iEGgptVkkY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760648341; c=relaxed/simple;
+	bh=g0PXiiwj6/jPcIFEXZZT1HXQbR04+PRx//GVbUzWJlI=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=FNRoDLlyqf/6X175rvUhvXHTR42Okk5jGwCgWWqynTeFvqeKTOgfQi9L4+f7zph170iCmgbJ+gvMhNiEM0myHAoWmna7sCVPqBTZHk0wVTC9UbxXfEDk1th2pHpRPCX0QgJq0bjWSeT8zFGLhXt0zaplApdxxDZhStjpUX4f6Ek=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l8L2A0GA; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760648339; x=1792184339;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=g0PXiiwj6/jPcIFEXZZT1HXQbR04+PRx//GVbUzWJlI=;
+  b=l8L2A0GANaCh1l5nYaeoqkAv+ioihvrp1XU7sF2mCsy42UUUK7jz2QVS
+   KpKSsHgQfduzQ4bhckgZM3xECZ6UJnoRgQq/4UllcEfmvGQFUgqOEJ8q1
+   l0QjMMy06aG4av91lt3n04fB6xs1ZUe8lToguMWXNs+FNIPWCLr0SJm4D
+   XzVOZGCwzjeUW1tzYXlPwvBOFI5xv8p78QJXNB32BgM9LwjyBaU8PYu2A
+   Cbm+3Tya8yu33rMQpVdPCkUNWzIb0qTFnwGB2mXCym/YM0V1HMQKzLHDq
+   KHcpDlkY41IgU2HdZIqT/g3JvPz6oPYkkB/kw6e/YR6Hb3YP99XrLi7bt
+   g==;
+X-CSE-ConnectionGUID: m1cJoNPhSPm4wH1uf9wMWw==
+X-CSE-MsgGUID: nvr/+3YkT1W7b8WvgTXwNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="73141140"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="73141140"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 13:58:54 -0700
+X-CSE-ConnectionGUID: AuC+QMRDRgufsoShJ92VKA==
+X-CSE-MsgGUID: cyHsQq9CQ9KMkQlWzk1QfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="182963909"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 13:58:53 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 16 Oct 2025 13:58:52 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 16 Oct 2025 13:58:52 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.28) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 16 Oct 2025 13:58:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N0/DSOgMwsvI6SZU6baUcycospf/mjENzz9968bn2JQY+d7oXtjVgW2GuyxjBWj8vqympSh0uaOhlEJ+jDQeg4ZatoyU/anayUZhuQcLGI9UfACbxfVe+whpAOfK5MN0FtJt89tJWssoYZKtVm136xeg2tKzGBPg6MRtyGNtPKinrEASY/qUlHAr/ei4XTUcREEqpCKkYhJ8c20x3iA5PZB1ivQr684h9OS5PkZ4WEgfo+8hVs2qzk3yBOwIkSrIRiO0TYzhm049AACI4rfKzDjcAqupsuGeA47FXw5rCb5cbpN5CHIJ2a/GEKlvxt7SD0cN0UT/S8sQoSUFxlxPag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dKlBdFULINIua52t4Ew7MjGyaWaib+o6ocPcUgDrTqY=;
+ b=thCVcaqkffn2uaZekgCqHmDa7iDWnaNCrCV0cvIFCU0R61lJd7pge4WvCo3aCKHPyyROU+zQA/JyTLRbkK/a7+y5sYlfcfUDVrhCA8Ckez5FKGjJ76S1lSEQpcSZsWsxcH7sYzaHqFc4Ec3tQBDSmjsQ0I93DNAs6Bo4BBi4t8CQ8iGeQny2oeLEsDlPvivIWj++jk8rfpnEdc/gR4oqhY+kNPFjoVtbWnOGjEa1NEC+loFboq1zRbiwJ02Re47wKFu/kxmq+pMIWpDkXOygAeIc0P4vvhAvrbr+h3WvRfTw76xey1E5tI8kkBl4pMjWwC+rYzP/0J0nxGH1dZdkeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CH3PR11MB7795.namprd11.prod.outlook.com (2603:10b6:610:120::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
+ 2025 20:58:47 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.9228.011; Thu, 16 Oct 2025
+ 20:58:47 +0000
+From: <dan.j.williams@intel.com>
+Date: Thu, 16 Oct 2025 13:58:45 -0700
+To: "Rafael J. Wysocki" <rafael@kernel.org>, <dan.j.williams@intel.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+	David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Linux PM <linux-pm@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>,
+	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Linux ACPI <linux-acpi@vger.kernel.org>,
+	"Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>
+Message-ID: <68f15c85b1781_2a2010086@dwillia2-mobl4.notmuch>
+In-Reply-To: <CAJZ5v0iZJFQeBhA7tM-sWuJDtisvrHGjPPdQHrC-eXXF1xJpbA@mail.gmail.com>
+References: <3925484.kQq0lBPeGt@rafael.j.wysocki>
+ <cc21a74c-905f-4223-95a8-d747ef763081@baylibre.com>
+ <875xce7m11.wl-tiwai@suse.de>
+ <12765144.O9o76ZdvQC@rafael.j.wysocki>
+ <68f14b5b6a92_2a2b10018@dwillia2-mobl4.notmuch>
+ <CAJZ5v0iZJFQeBhA7tM-sWuJDtisvrHGjPPdQHrC-eXXF1xJpbA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] PM: runtime: Introduce
+ PM_RUNTIME_ACQUIRE_OR_FAIL() macro
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BYAPR21CA0008.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::18) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a51q1uhg.ffs@tglx>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDAyOSBTYWx0ZWRfX8k0dKlInkhSX
- rUDCh9vLwAhoSTOxMd8wDZdyiNsYPpFWM22rqQl5nkpokZdnwj+JpWUgQOCRBYthIhY2qtb7pt0
- k4aVCbcwHrM9GYlyBFiOKD6lMjlAK7GhHFTcS8zEZh1U68R57vwBhVy7uQmCDctHk2bXiK6zydZ
- kUp2jUpS8/A0gQZhlOALcEE1epYc5vEaejWrdApZQCjCeWFWJ0vJwHQ7TNiY20sZ/28136DRX7J
- mMyGXnyhV3D0vDfIcLZo1I69AWTfVZMyTCoLyj4Ex4BNCVykvl9ee2TADc5zREW84H3YuxN+c/L
- FRagUKSipSiGKPG+Ab+FWi7Dv9gt/2x7fHeSF/Qx11Qcv39z5Jwf0ngBkIBCTCYwveqoqxx9P/U
- JnepXVZJ5wzMVvtM0FOv0bMXZfVT8A==
-X-Proofpoint-ORIG-GUID: tc8sYpf_6b8BvGO1LKUmmZwn7YW0FHrZ
-X-Proofpoint-GUID: tc8sYpf_6b8BvGO1LKUmmZwn7YW0FHrZ
-X-Authority-Analysis: v=2.4 cv=O/E0fR9W c=1 sm=1 tr=0 ts=68f15c2b cx=c_pps
- a=A+SOMQ4XYIH4HgQ50p3F5Q==:117 a=A+SOMQ4XYIH4HgQ50p3F5Q==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=PxzMMrfhGef9sE1I89YA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 malwarescore=0 clxscore=1015
- spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510160029
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CH3PR11MB7795:EE_
+X-MS-Office365-Filtering-Correlation-Id: cbc7093d-8d6a-4fe6-22e9-08de0cf6ccc2
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QXJiREpkeW1CYTNpU3I0THl4OFlkZFN5SDZlWFJBTjZNQjVTdHZuQ3VsMXNo?=
+ =?utf-8?B?R2F5alJIUDNQSjJhWmdOb250NTlXOGxTT2pNaGN0Q2ZHeXM1cUY0bFNmbDJO?=
+ =?utf-8?B?RWR0c0gySXlvY3dwN2sxeFFNbkw1NkFHTE9NQkl2allaQVRJcGlSTWNZOW56?=
+ =?utf-8?B?ZzZYUDV4dENqRW5SWDh6SXVZNEc1OVh1YWZ1by9NbG0vcWoxWlZsZGpQbys4?=
+ =?utf-8?B?ZHRLMDRjN1RRb0tVdkE2ZGlSRGZpTGMwM0IvQ2RsWDVsSHJQWW5COXlNcjNI?=
+ =?utf-8?B?SzFELzJDVmlEOGF5SktZWG9sZTgyRHExcHZ4T3BGTGJZTjkyL1ZDVFYvRVlp?=
+ =?utf-8?B?ZEY5SXdiWnUzTHoxMzFDOXF4R1p4S3hlMjQ4c25NN3cxUWwxVElZUVRneU0v?=
+ =?utf-8?B?SUxHMjBFUVBLSXJjeXo3Yjc0bHZoL2I5K2pFVWZ5VjlJOW1rbHNpcU5qL0w3?=
+ =?utf-8?B?eFVaNm95UVFoY002dzBUQmh0QlJjb0ZIcWtCOXpVNVZ5WXVJclViam1PeDdt?=
+ =?utf-8?B?OEhCdU90WW1STWIzRkQwVDNYMU1JSjBYQ0tNRHhMZFc2T2hMYk1DZnRENlRN?=
+ =?utf-8?B?d0JrZm9uTFNOY3lxbGVLQnZnNEk3QXFBM0xGZ1hmTitVcmFCK0xRcDNBUXpw?=
+ =?utf-8?B?VEZUckpqeE1SWWhlUytpc0tBOW9CUkNtNGxodVozL1hiSlB1anMvUG5GSjZu?=
+ =?utf-8?B?N1VnZ29HYzVEL2dnSzVvc3o0Q1B1K3A4THhjSC9hUmhYcGkvSm5qM0pPcmsw?=
+ =?utf-8?B?S2hkajJLaURJZkZDT3BCUitPaFBuZElwNnI1YzFEaTc3eGEwQmJudzJsT0g5?=
+ =?utf-8?B?KzFYV2xSeGFKcjlvTnlWc3djQm5aeDRMUEtxU1lwa2pkc25tR3dhTDlLL3M4?=
+ =?utf-8?B?TVkvWnplQVF2aEM2YThPQ1d0bXoyNWIvRVVRTzNRUGJjVGJ5SFRwRW9qeVhY?=
+ =?utf-8?B?QXhVdjdpWG1DbzY4Q1FHOGhZb24zR1lVdXdvSy9MajhaSCtGNmdkM3NYRXNk?=
+ =?utf-8?B?WGV1RUd2MG1XOHpHR2ZjdWNQUGFkL21JeVdiTFpUMXc2ZzNYUHNHc0Z4S3RS?=
+ =?utf-8?B?QnpZNVMxV3FvWXNNNWlNWGN5V2N0UTQ3eHJ6anRxRGlycnBSRDVVMVRkZzAr?=
+ =?utf-8?B?SkwxQ1RRalJOcmJuNktVSEYyaEprKzF5NE9RdFRXR2NoSnE2RGhWYy82UFR1?=
+ =?utf-8?B?ME9hRXV4UjRiaDZyb251ZnBkc3F5QTVYcHBjOVRyWFdWSkJpMUtIZk5vZFFO?=
+ =?utf-8?B?aytMTW5uV2VZMEhwMUdlbjRETzZFZ1ZMbzRHZkc4RlpFOWxHakF0M1k0ZEhK?=
+ =?utf-8?B?MjhZdVpCUkZtY1Y3ZjROMEowbUNyTHIzMUdLbm5OVEd1bDh4aGUvZlVoaGVv?=
+ =?utf-8?B?MCtybWFYZTk2UnZUem9TN0g2eXA3ZDNtcll4ZVN3eVF1aXNRWkh3dFRJeGMr?=
+ =?utf-8?B?NTlWcU41Wnl2bVJBZW9vNkpHU3d5SWkyc0YxOUU2VURJTkFzUGs2aDlIaWNY?=
+ =?utf-8?B?MlJOLzdteERuU1FpYWRuaUlsL0RzRlJnMnhXaHpYNlVJYlhZd2RkdjF3SHlV?=
+ =?utf-8?B?c3E0bVFER2hjQ0h4LzRyekp1TEZEZGlwd296SGlHTjk3L1Zwai9QV3N0VVFT?=
+ =?utf-8?B?TFpZckxKT1BFYk1nODNXb2dkZ1BtU3BaZnJNREQvRzViRlpzUkV2OGdpSzMy?=
+ =?utf-8?B?aU5MUzVla3pKYWhyTUVXUC9OZFkxSCtFaTkzY0h5Y0hWSGJteXhBNUxXRVlB?=
+ =?utf-8?B?SjZwQTl2V01FbklWMXBtenZFYU1kM0hBVmV2VXVCa2kremJzZXBFMEZzMyt5?=
+ =?utf-8?B?NklBL1FMbzVBVHhlQi9vbkZhTEU2b2twd2JCSU0reUFoVCtrdnFQMU16cU5n?=
+ =?utf-8?B?NzV2eG9DWDJYNFl2ZUFkdDlFcWpvOWZtdmdkNDNJNFNhbWc9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eHUxaGRBS2FyVzBoVXMrWEFNVnRkbWtEZTQ1dVlUQkdQaHRXQnpteUNjNlZ6?=
+ =?utf-8?B?UlcrNU90bUdBS0dkRHJyOFhlalJIUFVnc29rcnRJZXpTdE9Hd2RTSko2bVpD?=
+ =?utf-8?B?UFlneC9IVUVKTG5YaUFiNlFMVERSbTgzb25FNVJLS0VPSndFQTRQUHpQSmRG?=
+ =?utf-8?B?MG1HVmljZUg3UFNnaGZyL09WbUZaK3owV0JPYjZYRmtJd2dXWG1hWHRFdmNS?=
+ =?utf-8?B?blY1T1J1STlmc0dQeEdCZGVseXRjcWRwQU5CaWRCaDlUQ0FDWE1jQzAxaGRo?=
+ =?utf-8?B?M1RxcUgvQ0pPVzUxWGk3MFpObTlRNWlEdSttc01RTVJZWUtnV0lWRC80alFw?=
+ =?utf-8?B?QVp5RTFIclJUZEx4blJ6SExkZXh4SDZpbWpCYkZ2L0p3N0I4Vy9nVHE5amJv?=
+ =?utf-8?B?TlkzWGNsR1NtWlkwS3RkV2FnS3VuT3AzWkM5SEZIZ3VWb0FYUGJkQjVoRHM0?=
+ =?utf-8?B?TjJZelVucXBhK1h2b3FsNUtKQXVJSlFMNlI5aTB3dXMybjFzU2puc2x4dE1N?=
+ =?utf-8?B?bUJPM1JOUkYvekt5ZXQ2N3orZS9aTlN5ekhwNkNReVlKUndEWE5vUEFiUjJK?=
+ =?utf-8?B?bHBESUIvb1dwQkV6RFNvQ0ZsLzdhTkpvY3p4KzF1R3FoOWhRVTVzNk52bnF0?=
+ =?utf-8?B?NnV2dUlWUVhDbmdxU0xwelNuTzdZK21HQzg5MnJXSlF3K3YrYlBuNEFwdnlO?=
+ =?utf-8?B?cHBrUFNodWtPc3YreEFrNGRiWk9GQWtuNkxReEtybkdESGl1ajNybDljbU9Q?=
+ =?utf-8?B?cGVFbmVtTlFaQkg1YVppMzJGbmU5UUc1SlN0TnFyenZUUURMWElLVDVqTENv?=
+ =?utf-8?B?VFI0MjhoZk05TjIvcEdmZnZjY3l1Q0Iya0l6SVlQTXFLcWRmWXlLN0ZNb1FE?=
+ =?utf-8?B?bC82TTlGeGtBSllzRXdZMU1uWU1LNzUvUlBadFdKSTlyR3RLQ0RDcFNadDcz?=
+ =?utf-8?B?Y2ZScTRzQVY0M0gxSWlIaE1kK2hQQTNLUlZ6RVJSeXlKYmRtcTAyakRXczB6?=
+ =?utf-8?B?RkFaVCtxS0c2VzdYaEgwUlZseWNSeWIxSVY2Vld2R2d3OFlublFnZzlqUzBH?=
+ =?utf-8?B?YXhGcmRCSWdqLzBqZkhpYVRLTzQ2dEVXSldNTE9PZmhibDJoMEVZUk9BNnZH?=
+ =?utf-8?B?NWRrQVYwWFpzbUVOYnZNNkNGWGVFdmIxT1NUclR5SG51b05TLzlFa3llcFJO?=
+ =?utf-8?B?bURNWlhEMVpxUENtOW4wZTY0VDVERHRrNGVGdGxZeWZHTlRrQ2Jyc1FqSXVE?=
+ =?utf-8?B?QzFOeDF1Q3NndHZrVVloSUxCUXFwejhQdDRydnYxN21wd05BbmgrTTVDVmZW?=
+ =?utf-8?B?ZEt4RzVla09oU3lqT2FOTzFHRy9tNDQyZGZIVjg5MEJKYTl5TCtiSkJDS3RM?=
+ =?utf-8?B?dU1QRW93QzRmdFV0OTh4cklqU3lYSHVrZGplZUQzKzVxOWRkNGEzZ3BEd1Jl?=
+ =?utf-8?B?aVNGbFVUYTQwUUppRkNuLytZa293NVR5U3pHeS9LWEREdW1JanBuUjU0V2RL?=
+ =?utf-8?B?aWVidk8zWFdiSWtKcGlsWHFpd3JVYmwySklPZzYvbXRtTE1mMDBqb2lUSzRp?=
+ =?utf-8?B?QTVTWHZkdXNFNXkrVEl0YkdHc0VwV0xScGxxOC9IQnYwY21jNHF4MVNkVnRj?=
+ =?utf-8?B?WksrYnNWYkluWElHVmIxNGFNQm9VaytzZGU0aEU1UzBMbW9uRkZ1VTdhdmRh?=
+ =?utf-8?B?QnB3Yk9KL3ZuVDl4K1UybW5rNU5HaDRhTlZ2am4zbEl3WllDQlZyandUMjE4?=
+ =?utf-8?B?cTduR1loa1BiRU5uc1A1Y0hhRWt2cWVqSS8wODloVXFLR2Y3ZHdSMFpaLzJ1?=
+ =?utf-8?B?Y1hLVW9OelpBQ0J1b0FpcCtoWENDYUxySzlydE9wWXk4eHBSRnYzbkNQQlp5?=
+ =?utf-8?B?N2N0MFB4YmF4MkRuVlNyV2tvME80TVZ6QnYxaWJ5UzU4Uk1WQWUvQUo1VTQ3?=
+ =?utf-8?B?NHhmV3RGZkU3UFk2Ym9ubFVPdVRrMFVJb3hZNkVYZFJtUGwwL1JyUExZNWhR?=
+ =?utf-8?B?RGt0K1dLUGF5QnNDakFKNmJYM0tud2pTYTNXUmRFS3hmTHpHaUVob0lqSm9E?=
+ =?utf-8?B?b3lHTyt2RlEwN1E4QnY2bUQyME4rYmp1YjhUdjh1VTZhVkhncDA4UVJvTlRO?=
+ =?utf-8?B?eTlNYmkxdjdjZ3YySStNV3pkb0NiTVVLOVpCZk8xVUpFbDMvdFNlVFpzbDc3?=
+ =?utf-8?B?dFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbc7093d-8d6a-4fe6-22e9-08de0cf6ccc2
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 20:58:47.2063
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SlvYs01+EAsHUfYHTp6IOw5UWAZuFLnjiEipXEnVhE96UvCdzufcFzC4Joa8MVPTJF6I8yq5hoX9wYW8vHdimneATk2nfaMX0oYEldb9KJM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7795
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 16, 2025 at 10:07:07PM +0200, Thomas Gleixner wrote:
-> On Mon, Oct 13 2025 at 10:09, Steve Wahl wrote:
-> > -static void tick_do_update_jiffies64(ktime_t now)
-> > +static bool _tick_do_update_jiffies64(ktime_t now, bool trylock)
-> >  {
-> >  	unsigned long ticks = 1;
-> >  	ktime_t delta, nextp;
-> > @@ -70,7 +70,7 @@ static void tick_do_update_jiffies64(ktime_t now)
-> >  	 */
-> >  	if (IS_ENABLED(CONFIG_64BIT)) {
-> >  		if (ktime_before(now, smp_load_acquire(&tick_next_period)))
-> > -			return;
-> > +			return true;
-> >  	} else {
-> >  		unsigned int seq;
-> >  
-> > @@ -84,18 +84,24 @@ static void tick_do_update_jiffies64(ktime_t now)
-> >  		} while (read_seqcount_retry(&jiffies_seq, seq));
-> >  
-> >  		if (ktime_before(now, nextp))
-> > -			return;
-> > +			return true;
-> >  	}
-> >  
-> >  	/* Quick check failed, i.e. update is required. */
-> > -	raw_spin_lock(&jiffies_lock);
-> > +	if (trylock) {
-> > +		/* The cpu holding the lock will do the update. */
-> > +		if (!raw_spin_trylock(&jiffies_lock))
-> > +			return false;
-> > +	} else {
-> > +		raw_spin_lock(&jiffies_lock);
-> > +	}
-> 
-> Why inflicting this horrible conditional locking scheme into the main
-> path? This can be solved without all this churn completely independent
-> from this function.
+Rafael J. Wysocki wrote:
+> On Thu, Oct 16, 2025 at 9:45=E2=80=AFPM <dan.j.williams@intel.com> wrote:
+> >
+> > Rafael J. Wysocki wrote:
+> > [..]
+> > > > > [1]: https://lore.kernel.org/all/CAHk-=3Dwhn07tnDosPfn+UcAtWHBcLg=
+=3DKqA16SHVv0GV4t8P1fHw@mail.gmail.com/
+> > > >
+> > > > Yeah, I myself also find it suboptimal, hence it wasn't really
+> > > > proposed...  It's a limit of macro, unfortunately.
+> > >
+> > > The macro from the $subject patch can be split along the lines of the=
+ appended
+> > > patch to avoid the "disgusting syntax" issue, although it then become=
+s less
+> > > attractive as far as I'm concerned.  It still allows the details unre=
+lated to
+> > > the rest of the code to be hidden though.
+> > >
+> > > ---
+> > >  drivers/acpi/acpi_tad.c |   10 ++++++++--
+> > >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > >
+> > > --- a/drivers/acpi/acpi_tad.c
+> > > +++ b/drivers/acpi/acpi_tad.c
+> > > @@ -31,6 +31,12 @@ MODULE_DESCRIPTION("ACPI Time and Alarm
+> > >  MODULE_LICENSE("GPL v2");
+> > >  MODULE_AUTHOR("Rafael J. Wysocki");
+> > >
+> > > +#define PM_RUNTIME_ACQUIRE_ACTIVE(dev)       \
+> > > +     ACQUIRE(pm_runtime_active_try, pm_runtime_active_guard_var)(dev=
+)
+> > > +
+> > > +#define PM_RUNTIME_ACQUIRE_ACTIVE_ERR        \
+> > > +     ACQUIRE_ERR(pm_runtime_active_try, &pm_runtime_active_guard_var=
+)
+> > > +
+> > >  /* ACPI TAD capability flags (ACPI 6.2, Section 9.18.2) */
+> > >  #define ACPI_TAD_AC_WAKE     BIT(0)
+> > >  #define ACPI_TAD_DC_WAKE     BIT(1)
+> > > @@ -264,8 +270,8 @@ static int acpi_tad_wake_set(struct devi
+> > >       args[0].integer.value =3D timer_id;
+> > >       args[1].integer.value =3D value;
+> > >
+> > > -     ACQUIRE(pm_runtime_active_try, pm)(dev);
+> > > -     if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
+> > > +     PM_RUNTIME_ACQUIRE_ACTIVE(dev);
+> > > +     if (PM_RUNTIME_ACQUIRE_ACTIVE_ERR)
+> > >               return -ENXIO;
+> >
+> > This defeats one of the other motivations for ACQUIRE() vs
+> > scoped_cond_guard() in that it drops the error code from
+> > pm_runtime_active_try.
+>=20
+> No, it doesn't.  PM_RUNTIME_ACQUIRE_ACTIVE_ERR is that error code.  Or
+> did I misunderstand what you said?
 
-Why? Because my first crack at the problem was just change to a
-trylock at all times.  But I saw some callers might depend on time
-being updated before return.  And I would say I didn't "zoom out" far
-enough from the simple fix when trying to accomodate that.
+Oh, what I am saying is that pm_runtime_get_active() returns a distinct
+error code like -EACCES or -EINPROGRESS etc. The
+PM_RUNTIME_ACQUIRE_ACTIVE_ERR proposal ignores that value and open codes
+returning -ENXIO.
 
-> Something like the uncompiled below. You get the idea.
+> > Maybe it is the case that failure is always -ENXIO, but from a
+> > future code evolution standpoint do you want to commit to always
+> > translating _try errors to a local error code?
+>=20
+> No, I don't.
+>=20
+> > Btw, was acpi_tad_wake_set() buggy previously for ignoring
+> > pm_runtime_get_sync() errors, or is it a regression risk now for
+> > honoring errors?
+>=20
+> You may call it buggy strictly speaking, but it just assumed that if
+> the runtime resume failed, the subsequent operation would just fail
+> either, so -EIO would be returned to the caller.
+>=20
+> This change allows distinguishing resume errors from I/O errors.
 
-I like this approach.
-
-The reason I'm getting in to this situation seems to be that the
-designated timekeeper is actually doing the jiffies update work;
-holding the lock, hasn't finished processing yet.  Under those
-conditions, this approach will have one extra CPU stuck waiting on the
-jiffies lock.
-
-But that's far better than thousands, and I think would be acceptable
-tradeoff for code readability.  I will make it compile and see how it
-tests, and proceed to make it become patch v2 if it seems OK.
-
-> Thanks,
->
->         tglx
-
-Thank you!
-
---> Steve Wahl
-
-> ---
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -203,6 +203,21 @@ static inline void tick_sched_flag_clear
->  
->  #define MAX_STALLED_JIFFIES 5
->  
-> +static bool tick_try_update_jiffies64(struct tick_sched *ts, ktime_t now)
-> +{
-> +	static atomic_t in_progress;
-> +	int inp;
-> +
-> +	inp = atomic_read(&in_progress);
-> +	if (inp || !atomic_try_cmpxchg(&in_progress, &inp, 1))
-> +		return false;
-> +
-> +	if (ts->last_tick_jiffies == jiffies)
-> +		tick_do_update_jiffies64(now);
-> +	atomic_set(&in_progress, 0);
-> +	return true;
-> +}
-> +
->  static void tick_sched_do_timer(struct tick_sched *ts, ktime_t now)
->  {
->  	int tick_cpu, cpu = smp_processor_id();
-> @@ -239,10 +254,11 @@ static void tick_sched_do_timer(struct t
->  		ts->stalled_jiffies = 0;
->  		ts->last_tick_jiffies = READ_ONCE(jiffies);
->  	} else {
-> -		if (++ts->stalled_jiffies == MAX_STALLED_JIFFIES) {
-> -			tick_do_update_jiffies64(now);
-> -			ts->stalled_jiffies = 0;
-> -			ts->last_tick_jiffies = READ_ONCE(jiffies);
-> +		if (++ts->stalled_jiffies >= MAX_STALLED_JIFFIES) {
-> +			if (tick_try_update_jiffies64(ts, now)) {
-> +				ts->stalled_jiffies = 0;
-> +				ts->last_tick_jiffies = READ_ONCE(jiffies);
-> +			}
->  		}
->  	}
->  
-
--- 
-Steve Wahl, Hewlett Packard Enterprise
+Ah, ok, makes sense.=
 
