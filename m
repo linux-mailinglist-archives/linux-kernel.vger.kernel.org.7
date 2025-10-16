@@ -1,99 +1,79 @@
-Return-Path: <linux-kernel+bounces-855983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C03BE2CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F3FBE2CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919C25E47D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D9D5E03FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53034328621;
-	Thu, 16 Oct 2025 10:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4dyf4keG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m97xrjB9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B82111A8;
-	Thu, 16 Oct 2025 10:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D6532862D;
+	Thu, 16 Oct 2025 10:20:26 +0000 (UTC)
+Received: from harvie.cz (harvie.cz [77.87.242.242])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544742571BE;
+	Thu, 16 Oct 2025 10:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.87.242.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609796; cv=none; b=QaIY18Y0n2q+KyvmQ8psERxe3E7jM+jFB2Bc/GEFHvC/3BJoJ+Wbu2bhVfQuBw6zb6hHtpw9X0oqaSvfk5YbmJyP9pzovXgHbAUkoAMxMDpEtMSgPyQEkBLZ6/DspEps8mzz3OwlKBDhMHYw5WMoz6SYQ5S+7z2SwHOEZ2rm9PY=
+	t=1760610026; cv=none; b=XvowIdVtGJrMrdTWDDCXmnaLkd7ZBp3XFrhjQIR7GjaqsaqjccLeat7rSjesLrpe+Hjc91tsaoELITqDsLMUiMwNEZ+yxHkLwj6xjWLnkaFQBuefatKfcgyL2GemCwOGgtmpZ8jDK0SEH25XS3LpB2mioo96FAFSJA3XLw1BE/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609796; c=relaxed/simple;
-	bh=8P2htBhrJO17CrkOlrLH3d0XBHXx2pEysnhLVdEWLvs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BR7N60Km+0ZPF+GGrKw3psf4oZs/kie0Y0Daktlq+AtTjE3hEUYgs/EETQ83jB7ddjKvOiDNuwKlK7jXxSyzBaLTl7e5CNSoeZphMMvvXYGRKIhFMtaJvW9gQ+ej2FlxFau0PliCU9g2MEyrERbZAC/h/sS8u30Si9CU4wMflKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4dyf4keG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m97xrjB9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760609788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TLL69dJksF4/iqPmPUgAV5VYqtWXMBbCiNFdjNIo33A=;
-	b=4dyf4keGlON8LSBC1aKpcUUuL7XHEVITligizH+whmze2T1S9YiS2D6lI5s+/gLeIWR+Ah
-	2ZvutviDhrj2QYaki5VnTWq9WyAVwapLiVFaqxATBh3L/m2E1ihklhIKGi144T0EXKix2C
-	oQbaxy9NojKDXswd7xxV+KFCr6e4+WtJc/oXCYHxht1AmCjh7NXJP6B6C85s5AXv6vKidQ
-	sxL9j4vlNzXONRtdmWcoynupVyIKDsrh3VK2xxETQMpmgK7096cCoIIyrviDRMVa9jDArH
-	D1H/x+S15p6l6MhcgrXNkB0oq/YW2StHHvaUm/wdDaSnsUNWHPGtTMdbVfqx6Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760609788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TLL69dJksF4/iqPmPUgAV5VYqtWXMBbCiNFdjNIo33A=;
-	b=m97xrjB9cTEobIoToBzhJ5TnfbY2K7rA/p04sZvWEmK5R41wJb0EJV+mN6bY2YtAI0RRug
-	rUMF1tse33kTVWDA==
-To: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Charles Mirabile <cmirabil@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Samuel
- Holland <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Vivian
- Wang <dramforever@live.com>, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, Zhang Xincheng
- <zhangxincheng@ultrarisc.com>, Lucas Zampieri <lzampier@redhat.com>
-Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
-In-Reply-To: <20251016084301.27670-4-lzampier@redhat.com>
-References: <20251016084301.27670-1-lzampier@redhat.com>
- <20251016084301.27670-4-lzampier@redhat.com>
-Date: Thu, 16 Oct 2025 12:16:26 +0200
-Message-ID: <87sefj179h.ffs@tglx>
+	s=arc-20240116; t=1760610026; c=relaxed/simple;
+	bh=agXcdvupcHtoYe4OlnCWGTdViIU+m3roIcFK4YETR7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pLqxWsTjR9jES+ubPWn/rb3ozIaJWwu/Zm372M0vCFc3BaFDwCqkUvmogOrCgiu+zcVl0+XBp68wd16gMT+RvIiTILa703hask0sk4EPdukz+1xZyFxBWqs080IeXBxYQ5VwDhkbYQEOKPmimkBDPh8I365u1yx1Pg/xHzJTno4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=77.87.242.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from anemophobia.amit.cz (unknown [31.30.84.130])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by harvie.cz (Postfix) with ESMTPSA id CBBAA18000D;
+	Thu, 16 Oct 2025 12:18:16 +0200 (CEST)
+From: Tomas Mudrunka <tomas.mudrunka@gmail.com>
+To: corbet@lwn.net
+Cc: bagasdotme@gmail.com,
+	cengiz@kernel.wtf,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	mail@anselmschueler.com,
+	tomas.mudrunka@gmail.com
+Subject: Re: [PATCH] Documentation: sysrq: Remove contradicting sentence on extra /proc/sysrq-trigger characters
+Date: Thu, 16 Oct 2025 12:17:58 +0200
+Message-ID: <20251016101758.1441349-1-tomas.mudrunka@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <87wm4xbkim.fsf@trenco.lwn.net>
+References: <87wm4xbkim.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 16 2025 at 09:42, Lucas Zampieri wrote:
-> @@ -430,6 +516,8 @@ static const struct of_device_id plic_match[] = {
-      ^^^^^^^^^^^^
-How on earth did you manage to screw up the hunk header?
+Hi. I am author of that sentence and this is NACK from me.
 
-Applying: irqchip/plic: Add support for UltraRISC DP1000 PLIC
-error: corrupt patch at line 116
+> I'm not sure this is right - there is a warning here that additional
+> characters may acquire a meaning in the future, so one should not
+> develop the habit of writing them now.
 
->  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
->  	{ .compatible = "thead,c900-plic",
->  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-> +	{ .compatible = "ultrarisc,cp100-plic",
-> +	  .data = (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
->  	{}
->  };
->  
-> @@ -664,12 +752,16 @@ static int plic_probe(struct fwnode_handle *fwnode)
-     ^^^^^^^^^^^^^^^
-Ditto here.
+As you've said... I don't see anything confusing about that.
+The warning was added for a reason, because there was discussion
+about some people writing extra characters in there, which might
+cause issues down the line if we refactor the code in future.
 
-I fixed it up manually. Please be more careful next time.
+> After all these years, I think
+> the chances of fundamental sysrq changes are pretty small,
 
+Actualy it is not that long since the underscore mode was added...
+
+> but I still don't see why we would take the warning out?
+
+Exactly. Thank you.
 
