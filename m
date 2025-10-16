@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-855530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA94BE18CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:44:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0721BE18D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D173480688
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:44:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E38324F08D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E2023A9B0;
-	Thu, 16 Oct 2025 05:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154E6239E9B;
+	Thu, 16 Oct 2025 05:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lZrCmrZv"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMmRV7Lf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7954623958C
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E08A239E7E;
+	Thu, 16 Oct 2025 05:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760593486; cv=none; b=hLC5LM39Sim5mlocBJCXfMMZ4RF6NefP2yvVZ4dBIT6eGHSO2gjjM7pL+/ZLcBdDklCNWDLOaNZU4wqTJUAX+HYZJZ5HmLJKMO+s6qLeGZNopRUtVVFAr+hFmGAeS4d1ffRFEKRT6arRzvQYxbs8BeM0V6dqhUQ/NVr75wHhbDw=
+	t=1760593499; cv=none; b=mp9pF86Kk9Hnexf3jsC4gEAelbGzDTbtuI3CBbWQKFsJ7nnLbZqAnWNw8kAGe5Kc4YzvWDirrXAkZ0za+oyMZYhyFTnZQtFtGD03tvajjHcviS6us0qWyX4UVAwYl1tPRBVtQtCHTtTs+V9d5M75q9LMQF6ivjaXtQ82CF6wzjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760593486; c=relaxed/simple;
-	bh=p9TBkTZ5r+V3Vqzg3Erf9DxM3Aqb0ebyWyF6uv/8DBk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NWN0q1QP/fUjrPXgtcF/A2WZQCqRxyajCaAJFXcCB1eiQmExVDiodAUrk4ye3xzekUTVQ8W7y5n4jznz9ysI0yeF1kY42mrQ2GppQZqF7El1rH9uJTrhct9h8RY5ZppIqpujE7suqHPyo2TVcAFf7Yd5xnwslXxeG++t8mC+GcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lZrCmrZv; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-639102bba31so523685a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760593482; x=1761198282; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p9TBkTZ5r+V3Vqzg3Erf9DxM3Aqb0ebyWyF6uv/8DBk=;
-        b=lZrCmrZvNfSUQPPoKBfDSDSm6QKmirBXZlL0AmcrljEtiLekyKw7MB0fhCclDrkobV
-         /HgV4JM4VFTKiDq2mC2AqT6MiRxk1C8npSBVUE3DHxpRX/5g5quqPPxxWSUMU2KmL/Lm
-         dPO0m0R4s946uOZog5gTUCeKS2KdIYh+JzJhhdS5lXd1vnKM0fVanRlDGBWMrKoXSjd2
-         kX4c829jhQX0IXoGNWD4sugQS5BtJbgDhJYXVC2/NYA52vTUo+lN3HShwHXi75fj3Fu3
-         ZFMlaNKd3uquDsKX5VHU2jGrZyX4h1b2Kg+cz3snwdLz+0qkzZIEQtjzJjcShTZWG+QB
-         K6eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760593482; x=1761198282;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p9TBkTZ5r+V3Vqzg3Erf9DxM3Aqb0ebyWyF6uv/8DBk=;
-        b=rDdTwjgsQiL0MWcguL8KI/udKjnyub5zEJgm/cxySssjZUdDIrZEBbdEPAVPVDFOcW
-         1J80Cj/QbhUywoEJJCQWJ6K5z6gOdeSLM73oo3BwWIEm2BPHxCMA+esXoQH3XsXMx+tc
-         4XuMUqAYTmQkKo/jjgV/n/oeQHoZ7KlTnhuappr+1HNdZiVGWmcZaVLdgqbj/p1sWco2
-         GwU26TgQKVQVBPkO0unO90jgLH5SA0CaywaNNEeTvE+VQYnxjLJTeVaKRUwMgmTO+00D
-         mx2fQ9IObZM07TZet7Lsx3zMFZzE9qXa+62PgpnDai2Eg1kcrnsYahzr4DrcNce5tBH0
-         pAkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDYw1KkltqWlPyG32fJmjkIC62nGWETTBJ5lZvkO6XUPxNK3zXqXkhRrJwUMw/ihTLiHwFJG0c38xeZBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlZPK+d88oHYvTL2opNdJ2QBSX42j9eIFnzysDu8+OFnnzzPb3
-	4KCFGf3Yg23zbeF6rqgYcfm3Nz7ohdTjg8EftBzVXjLRTnSgkcsVtTcYy/jlWjawiOY=
-X-Gm-Gg: ASbGncvZtS0UsokI9VlsfaH8KF3nWnMZAQtXLkfCRnfR4Y3wFi/k0LAM5IjOHTIPlWC
-	3ZC/yXellzfpwVJyP7urbykGe0GhtCdp1dqFm4MAsfIREmf6jgxAwNjbFMbplxZmcSclOgoED2j
-	xlRFl8ayzX5T2wCGQh1EujOsnZaRdaf8bEHencO7Va+RcbScdoGmfQTGH373vu3pt3aT4DN/xzd
-	HjOUuJoUTQgopmnsL+iM68cRCVxo2o8UPOF+wuOGBE9zBWNBETBdYyKB1YHbu/XC+Gx7hxrLUm3
-	Xg6SO7jHnbEfVTreL84uDJ7g1wstwM9zIUCGOzsbqEaPQM0y9jXtSk7lmmFsZ59ljUiItuXBEIT
-	xxMRBX5LwAgqliMSdxkxyWkm3TA3licrXGPRI8qVY4DtGpv/8/rNhUoWY2HwjbNSFq/zqopSrWN
-	sc+EvzKQTbxvBOknfmqQ==
-X-Google-Smtp-Source: AGHT+IGTAzXneDlTJJthrwyFh1A2mpMs+brYmC8fjkaobeSG7qIGMGjBpTwlt/OHwTYQt+NY+Zh2QA==
-X-Received: by 2002:a05:6402:d0e:b0:634:5381:530b with SMTP id 4fb4d7f45d1cf-639d5b8956cmr28820056a12.13.1760593481782;
-        Wed, 15 Oct 2025 22:44:41 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c133412sm15055961a12.32.2025.10.15.22.44.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 22:44:41 -0700 (PDT)
-Message-ID: <a8dc26e96c6ea0bbb2b9f02ddf3360cf0fad8331.camel@linaro.org>
-Subject: Re: [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101
- hsi0 and misc compatibles
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sam Protsenko	
- <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski	
- <krzk@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Krzysztof
- Kozlowski	 <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
-Date: Thu, 16 Oct 2025 06:44:39 +0100
-In-Reply-To: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
-References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
-	 <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	s=arc-20240116; t=1760593499; c=relaxed/simple;
+	bh=cnyLRJ0G1sMCXs1YVhn67EgfKQmTjiiUOYDq3GD/d+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HhWeSFhjyh1nTMkxsFPtsXgNVFvEXaEf7+IDbkwuhX16QVHOCKjm/yYts5oVwHmWZvyPbF1AYkTAYyE2T+2ODByOfOQk8dSO+bB8SuUheUdUy0Kn7NMCxS2KtbTwXhgoqXRpvEfkHuKwXUz/5NnbIhVyE02K/CTiqqP73tL5RBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMmRV7Lf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47D1C4CEF1;
+	Thu, 16 Oct 2025 05:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760593499;
+	bh=cnyLRJ0G1sMCXs1YVhn67EgfKQmTjiiUOYDq3GD/d+Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fMmRV7LfKtBTue7rxQKcQVrQUDJML2NKQqDDUA05tCVrZWUhWmomsLGwSZeS/TwFI
+	 P7S6ch3MbwvGfWniS1rRFpEvshdNE38pM8GiRFZoQUyZ7I2qw5/R0GkY/wufUdiimv
+	 5e7m7Wctp1hHGgG2ecTVWQI404dxO214SLbVkHDj7ONqPhj2X3D93hfecqMN1jUzUL
+	 oJR4I5bbfeVj6DEPPWa6QeZd8Aw9JkLP2tBNIqA8Ql7Ksz+WIPe1iIn4WY24hJWPJ4
+	 dNZHARjaDjFNaKyN2tO59ZOb7AnmEpRVJwROZbNdbK/h/5tkUlFZZaC80T9T45VPjP
+	 hG+yshtieU6sA==
+Message-ID: <f91f3c15-0070-413a-8f35-541149a07f0b@kernel.org>
+Date: Thu, 16 Oct 2025 07:44:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] i2c: machxo2: new driver
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com
+References: <9e00b0ff4e90e4fb31c3012bd7a753d06ae21b45.1760525985.git.matthias.schiffer@ew.tq-group.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <9e00b0ff4e90e4fb31c3012bd7a753d06ae21b45.1760525985.git.matthias.schiffer@ew.tq-group.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-10-13 at 21:51 +0100, Peter Griffin wrote:
-> Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to t=
-he
-> documentation.
->=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> =C2=A0.../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++++
-> =C2=A01 file changed, 4 insertions(+)
+On 15/10/2025 13:03, Matthias Schiffer wrote:
+> +
+> +module_platform_driver(machxo2_i2c_driver);
+> +
+> +MODULE_AUTHOR("TQ-Systems GmbH <linux@ew.tq-group.com>");
+> +MODULE_DESCRIPTION("Lattice MachXO2 I2C bus driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:i2c-machxo2");
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+You should not need MODULE_ALIAS() in normal cases. If you need it,
+usually it means your device ID table is wrong (e.g. misses either
+entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
+for incomplete ID table.
+
+
+Best regards,
+Krzysztof
 
