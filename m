@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-857008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5263BE5A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 175D0BE5A59
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF7B1A65E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E2D19C50C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0F02E6137;
-	Thu, 16 Oct 2025 22:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D822E5B1B;
+	Thu, 16 Oct 2025 22:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="Bc71DBDn"
-Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eOZnyuRT"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4457B18FDDB;
-	Thu, 16 Oct 2025 22:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B082E3B16
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760652530; cv=none; b=DPy7Wo/4cgWyuSKRWucyPG+t1z6mFaNjxRiENu+IvWkLZnmVypzlj86ZvgT5ilze/RYOEeIl7ZwnwP9zcTvTrcGFOSZZfxaEhzNVNpr9BPGSvW5Lmfcm7wd4ntw5qPtYUJAlh/0aW4JTrOnEedu4cV/4qULIWxjoiFw1PIIFqbo=
+	t=1760652748; cv=none; b=Ycm0jHUF/sBN/vTIlB5l0/LnJy6XQhJdUUD/E/QNYFjvjSb2u5bsPFbtsskFWXydIzY949Kl1jdYFu7N6Dv8QtPQOdXSGmwshT+B1igdSXebM1eX1RTsg+Le6LZU73I2RUfsT1zcc7IETuo6dF+CbIWbMfkIB2mHRdlErtx92bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760652530; c=relaxed/simple;
-	bh=pKvKUgdkUKwG51UlkTrr4qg6LoxInFipSwpVGXY8GxA=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bKnRV932o5fk9MB2VGA5+Fbwy1DftN+1X0JBE+lYm7J7v3LY58REcj9mqEt990XPgNm6UrlUWK1uBso8ACbiXM78ygbVC1vQhCrJgcniQwF/WYk7zELhL645DFCBgHs8HXBGWLHPC3YImxX6wnFP2+SefrN0LEA8lO9VJ494goQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=Bc71DBDn; arc=none smtp.client-ip=139.28.40.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202505; t=1760652317;
-	bh=pKvKUgdkUKwG51UlkTrr4qg6LoxInFipSwpVGXY8GxA=;
-	h=Date:From:To:Subject:From;
-	b=Bc71DBDnoopyJthECfqjKho6/kpN85QibzGqtInElep4fRX6DtlRY1ExoNIxtEIvA
-	 xMlKW76vxkio74Cz86IBI9gOcqkzCrDXju3MzDr8SrLVVmhCyiGaEuHsNBOFkersJJ
-	 bdU7oHMZM/P8gslKKX1cPG9+qWuWyI8KGRVEWwZlTkFP0pCn4k7WVKHIC5JpekzvWl
-	 lImgAGwys7rMRwE7pUDMmOe42MiON1W5fPISLbOI1bft7IG7aT8ErrSLfZZv3QkKPW
-	 V/FzQi2NYkMHcGPm3e7iI6cP2Z9PdacldSZEnqmNtvv4pNaeCNXkgX7XoqRq0/jJpL
-	 /dHhze1si+S/g==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 20A3A9540;
-	Fri, 17 Oct 2025 00:05:17 +0200 (CEST)
-Date: Fri, 17 Oct 2025 00:05:16 +0200
-From: 
-	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Paul Mundt <lethal@linux-sh.org>, Kristoffer Ericson <Kristoffer.Ericson@gmail.com>, 
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] sh: hp6xx: unset apm_get_power_status on unload
-Message-ID: <ydtnrqqjuaz6uifqplujmqwdnpxoe7ma33d5hp4waavekerod2@tarta.nabijaczleweli.xyz>
+	s=arc-20240116; t=1760652748; c=relaxed/simple;
+	bh=mQg/ICgMWrNLJ+qVKDXr+wEji85IYihnhnnRuN0F69c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ahVBo2/IDZgR/+7zK8NsvTWQi5FLsYqsP7boapcktqHkVkXYA9qFgE2RphejH5lchT56YAC52zn6d/TG4u0YaoSLjWwVMKyETx+s5v208sv1IJr4UKVmNGYWVKJcuO4+plKwQ9PmuAa33a4x25RKSB+dKj+C1WNDm8mI884K7xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eOZnyuRT; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3696f1d5102so10389371fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760652745; x=1761257545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mQg/ICgMWrNLJ+qVKDXr+wEji85IYihnhnnRuN0F69c=;
+        b=eOZnyuRTjvaSscSdThine8D4RUysMa/y4xxZ0nzfuSRe2qs/xf6tNsiBCd/VViTc+O
+         y6lUR/Uibu7xA79mWeQL96jYOELf6Z8v8OKFQ1D/DCnrfkzRiezC71Isodu74Sg4ATqC
+         Q8vevtAzxZwUj4p6ar3KIPsZkxn/REV+CQB+lL62dDfndxpn2Dy+05nlQn5SUVn79bOu
+         cltZVqXEMgyJeOSXKd3Lf3kA0Q1SZ5rrvR+Ki+XOHESaQCSehJ94jWYxfPVNOWxUxDex
+         7d6U96Wz5JCJaWUlIRxSZT8sDxIN+JCrWaIDp7pjuQsTYaK8z/VmsRKmtV+8yANEo507
+         p87A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760652745; x=1761257545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mQg/ICgMWrNLJ+qVKDXr+wEji85IYihnhnnRuN0F69c=;
+        b=oR8pQ1vk3ks0ADZUv55z4C8dr+sG5YdWV3eupel+nUdfmwqHCD+APnjyZDXxNGZq3t
+         m5RfJ66DaYU9P/cQ36J0g0BCFBjVU7Erl+75PG5szOnDGnfwDmXc7K+6Ndc0lFa/cYxX
+         E6UvZknvbYlmb8w48jl18A0lPbGX/L0YixVFnFfDhFzMgLA/Zk1505+yc6XJfWt6Zy7M
+         rtG0y7vNCGfBDh+VIhXSnvAF+r18RQL0aZ61nVF92NBk1BJyXJd7izVM32IIUfXTUy7Y
+         HwXjsdKEbs24s+hUMwE9kqI1zKtW18FqWvU/Rps3KMUTte3CWqT2VtNYFo95lC9ogjCm
+         cxug==
+X-Forwarded-Encrypted: i=1; AJvYcCWwy5Km1SNpS7XSaJ6pA5QDEGeli7w2e5Usemajp0qKVIL1j8IKTvKDCen3CjsJsDllyggc4vlZvHwwW2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwvrqMJAXCPT62xPj25CDoXvrrGoiD91W1kA4wVbLtPMYqXLq7
+	5VJ6kUZ6mZPFz58/T8t7f+K9bcmsTi4K/cUCq/21jtRo8u3dturQEo7h+8cwCgCb/4Y5fQKYTsg
+	1vKALoQWWxwukdreTGnB2BnRqhPh+ZwHyHtWDHDb+Ug==
+X-Gm-Gg: ASbGncuSh6AX+11mDabjHM6DDkrKrwEqDjwbWsp9fnOfGERlXeq78p0NNBu/6NZrTDZ
+	BvzZ+ZJqWNkbjPI+KYuwBoOMUhS2VfykW1gH0JfXQcLWOYJvgDYBU1/RqvCFjtxoe2i1MwkVUQ2
+	sG/s3Dgnrt4FiAwFHwr0KfNsaSvEviWg+myZZDGDUJoT7EGQAyu1eHzoNh+on5M4bj/rV86sBGr
+	N7cUZApuniU3sLhzIft8zT4l0mnutJn7EOMk40F2kuAjTHz81SM4mUNfiQ5PXmAn1DbvB4=
+X-Google-Smtp-Source: AGHT+IETNEjPulnwiJEaZdRc0wH+lGlrNLWsrrUjpY6RycGygjNZ/Td0MfEPQ6uNRg6Pg81UriqqHMCpfUkXWgv3ujw=
+X-Received: by 2002:a05:651c:1595:b0:36d:501:76d5 with SMTP id
+ 38308e7fff4ca-37797a0e6fdmr6276421fa.26.1760652745154; Thu, 16 Oct 2025
+ 15:12:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ethnvwrgdpexrx2w"
-Content-Disposition: inline
-User-Agent: NeoMutt/20231221-2-4202cf-dirty
-
-
---ethnvwrgdpexrx2w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251009223501.570949-1-jelonek.jonas@gmail.com>
+ <20251009223501.570949-3-jelonek.jonas@gmail.com> <CACRpkdbCw1Agnsy-aYPs+2PhQDFjj+=VjmGQBmxuCUfwRuWkfw@mail.gmail.com>
+ <22a84772-0e54-4b99-9bc7-59e7e4633807@gmail.com>
+In-Reply-To: <22a84772-0e54-4b99-9bc7-59e7e4633807@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 17 Oct 2025 00:12:14 +0200
+X-Gm-Features: AS18NWCQeU3PRrgCI-45m0Qnjsaps5imw3vWqXQ6TlIlAkiw0OaRW5Kow6BCtE8
+Message-ID: <CACRpkdZ_UjOBv2JU3VfWZYa41LcAhRmUzQCpni+pJViFRjvFTw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 2/2] gpio: add gpio-split driver
+To: Jonas Jelonek <jelonek.jonas@gmail.com>
+Cc: Peter Rosin <peda@axentia.se>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The API for apm_get_power_status is "call it if it isn't NULL".
-If the module is unloaded and it's not unset,
-reading /proc/apm will jump into unloaded kernel memory.
+On Thu, Oct 16, 2025 at 5:37=E2=80=AFPM Jonas Jelonek <jelonek.jonas@gmail.=
+com> wrote:
 
-The first commit that added this incompletely refactored
-the assigned-to variable in __exit,
-the second deleted it instead of fixing it.
+> I think this doesn't really simplify things her. As far as I can see the
+> GPIO forwarder is more targeted toward 1-to-1 scenarios, requiring some
+> (or even more?) "hackery" to fit to my 1-to-many.
 
-Unset it on unload like drivers/macintosh/apm_emu.c.
+I see hm OK you worked on it so you know better what
+will be most elegant here, let's see what the others say.
 
-Fixes: 0a9b0db19262 ("[APM] SH: Convert to use shared APM emulation.")
-Fixes: 8c8ee8254767 ("sh: hp6xx: APM build fix and new battery values.")
-Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
----
- arch/sh/boards/mach-hp6xx/hp6xx_apm.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'm curious what v2 will look like!
 
-diff --git a/arch/sh/boards/mach-hp6xx/hp6xx_apm.c b/arch/sh/boards/mach-hp=
-6xx/hp6xx_apm.c
-index e5c4c7d34139..089eca39c4e6 100644
---- a/arch/sh/boards/mach-hp6xx/hp6xx_apm.c
-+++ b/arch/sh/boards/mach-hp6xx/hp6xx_apm.c
-@@ -98,6 +98,9 @@ static int __init hp6x0_apm_init(void)
-=20
- static void __exit hp6x0_apm_exit(void)
- {
-+	if (apm_get_power_status =3D=3D hp6x0_apm_get_power_status)
-+		apm_get_power_status =3D NULL;
-+
- 	free_irq(HP680_BTN_IRQ, 0);
- }
-=20
---=20
-2.39.5
-
---ethnvwrgdpexrx2w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmjxbBwACgkQvP0LAY0m
-WPH3KA//U1fjA6GQZjwTQGkOuBhgN5DIwPgQ0S3sEx2P0ExvqCiyxzM5iO1xr3oP
-iMwWyZukLxQ5hhMpRHdWizQiJjEQSWaUJfp58xNtfXiE7F7V7GPd3BN8q6osJTEt
-TMBP02Idm9nDCFqbA9/AWAmL4Fvkn2erqIQVL9fWu6zfykySHbNzq6lKhtrBnK32
-3tA1ngQcjKQf1SJl0hc/9Kij49j8TjzN5SyYxt9giqT6SbLAfi7W6UQDoiRhnzq/
-9qWabu56d/g8XnzjJCfHM6Ei4GoN5aFucv5ieg8z5prT6MrZzgDXYA+bGt22AK0K
-ZN1lGAB6yKzUnbyEhEzLsqNcka+twqaXsVjTMe+sWW0cKdxi7hsPv9yW5/upEpmC
-gIp7/ldRCeFJWyNU+Xq+fC/eZyMqj+FzyxgVg3pp3IAaFFK/XJeTK95Ut5jX3QLR
-AGJr+iw6lMdPoB04+SowtEq8ZZhc6jAsvH0KGba6z57PfpXaH3dUQsrzDt4RMArD
-fazqosY5g55mcPY8sSJ1ftHG2/LHBUHVaz+0q50TKM9jQDF/zC9DgRkQH91tiXr+
-BYzpXVUYufdpdkBWBfhP6T+a298MIE20i2RH2lkESm5c7v6kD+IPpZQBZ4siXKnD
-p29Sy6c6QDdnCL6xWnAQQH5hTjV3Z+3AiBuHwXcTT6/qg9Bt5C0=
-=yztO
------END PGP SIGNATURE-----
-
---ethnvwrgdpexrx2w--
+Yours,
+Linus Walleij
 
