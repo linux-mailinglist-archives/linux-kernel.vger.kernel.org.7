@@ -1,212 +1,171 @@
-Return-Path: <linux-kernel+bounces-855821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BD0BE26AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:34:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBE1BE2710
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C74F4FCEA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:34:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A95650231B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85A231B82C;
-	Thu, 16 Oct 2025 09:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF1D3191BD;
+	Thu, 16 Oct 2025 09:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s6MlccQK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wVK/71U3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=traverse.com.au header.i=@traverse.com.au header.b="GNB6Z2in";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AI79jTS8"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397AF31AF06;
-	Thu, 16 Oct 2025 09:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72B324B25;
+	Thu, 16 Oct 2025 09:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760607212; cv=none; b=TaV5Z8Ubxht16GjAAOmdIIx1Cx71r/+DQxKsCPARRf4ZdnQgbGpjn/nGG0p08dHeqE96kj30ol7ocAPiXjvunCuFmQHJ5STRGzkdXCKyr0jpvCQs9jBQ2PAJ0ejOOpCaCdJifBTCdR/WxcSvqB2e8KQB9V953rZ1iKGbLRK9Bro=
+	t=1760607234; cv=none; b=I/9yjPTZ5+40sBcQIAMc4R/oPVUGDBTKhai3HO/uqntxWwmmgRqn+1m0zzriqySvBhuj/WS/LL37nXFK/vlbCe0srevw+YnW20YyvZVhB1l6Q6DMbkzyIZOUXdr9NzRZUQfZQVR/K5oxKqelrD2M7sEdItel0YUWabKYdUk9PQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760607212; c=relaxed/simple;
-	bh=HapQ6B6X0GAMNZZXX/BLZwad9cRUv6o7DTc1Su2KQiw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NurezpLBt67pxFsJWo5xlsQlK2jDaaQoxSSAOzGWa7GQtusMwRvVfzLDdrtppbf1GL+Wkkk/13LBQ6GEp4v42zEIznDVPfkuU526w/r8jf/NqnuOkSBjZ5KtoYtbc23aoD+Ff5qWW3A3vQUb8CXyIhJ5E3GP6whzepZWpE/eexE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s6MlccQK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wVK/71U3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:33:26 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760607207;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UT2+TaJWGhmDQDIjSvSKfy9tCdm2pKaoP1iOJlJLbAk=;
-	b=s6MlccQK9Tw/ErGY87QpSfanz0LzT2QZHJ8UED5KwlTgyP+TYZ4ebWTT3iICner5D3dvnf
-	WeOOKi9b2DBm/qfUGbvdiogv6SwB6BRfsZAWxTIpp3oO6ScXTucj5MQQjKJiQ6aKrdE7zL
-	+X69QOvhn5TpF8LyA7Ecg6b+qSffCf4vsdas56vppKo6TbV/mbleJO3kvC8iA4s4Vr7txj
-	+ZEiPhw5nj1Lz854PGFMtO5OdNwQJRaNZ9oiBnDZMvnu7Y3+0BiCnB6YULJwnzdMSi32bS
-	TzPTmpKAKqkvavniSTRh78rGV03ypUiSoJpqEPQ/phF8v0NHxrzzeETl/cM23Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760607207;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UT2+TaJWGhmDQDIjSvSKfy9tCdm2pKaoP1iOJlJLbAk=;
-	b=wVK/71U3u4BpSeItzYuIcodgkeJwavZ4pfu7cs4c9/JZfZ2pr47SnXcrWM/jPYpHdcrpc0
-	DkDQ6BTnHLrmb3Bg==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Match __task_rq_{,un}lock()
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Tejun Heo <tj@kernel.org>,
- Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251006104527.813272361@infradead.org>
-References: <20251006104527.813272361@infradead.org>
+	s=arc-20240116; t=1760607234; c=relaxed/simple;
+	bh=uNbN9TRSDsOqkVANM3w7ZLCcBXSqXKUui5X70JcRE8I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=mwSG9KgOAsNWXQo+kqJF0DxyEkvnAzR2qB2Mp/edU6YjjH6MTT5UkoQ/zuHdjjG88H0ILXA1M4lTjfIpsFu6/vyhWHCz9k4PyRwRDFoKKXzCxd5GwqoUKj8GUxYPYPpzgMyD1fOJEFVx9MN3gustgDRF43mKZosiYwbdbub8vMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=traverse.com.au; spf=pass smtp.mailfrom=traverse.com.au; dkim=pass (2048-bit key) header.d=traverse.com.au header.i=@traverse.com.au header.b=GNB6Z2in; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AI79jTS8; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=traverse.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=traverse.com.au
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7EDAB14000B4;
+	Thu, 16 Oct 2025 05:33:49 -0400 (EDT)
+Received: from phl-imap-18 ([10.202.2.89])
+  by phl-compute-01.internal (MEProxy); Thu, 16 Oct 2025 05:33:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=traverse.com.au;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1760607229; x=1760693629; bh=HKIIP7EMa3kiCvEdSloRcVMbxBGUsM0L
+	jZHG22p7+5s=; b=GNB6Z2inBvCzWxDteewxYt06bg4h2IAodNA+MggooFmUvljl
+	44mmI2SUWp6W8xBqy5v7wfx7X49yMxC0Vap2m7o3d+Ujm5HSwimRGqFSRFR9wW2S
+	8/Z/PbxOw92cKkO/zyEK9oYGncpJFraPqo7P4+FkBcc9zcBmsS9vyHnZcnLrONWr
+	wVoBkt62EfPkfjD5tWTB1VKINCZmoXkujheTYYJlDCSAVXP6unnwpA/ratNU62Qf
+	2ZPVzhF+HqxNil0nhlI12+h+5Q42eP0VObueCrrAaOVm3+zUQK79qbPBnurzEVSs
+	HAVkBhakhZw+D5Vh1PNQZb6edB2hj1JBtkTyTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760607229; x=
+	1760693629; bh=HKIIP7EMa3kiCvEdSloRcVMbxBGUsM0LjZHG22p7+5s=; b=A
+	I79jTS89kqLtqQbv9J6qEpY3McgAC7NkEVgzUW+eRV84lEUuR1ZM5i1HC3tEM61G
+	tAfC+1rhlvCBK8b7892/ICXEN/u1UFBvceD47YJKUH84Bl3QbEOscT+MYRlMBilM
+	Jg/4rb2768lC9JhrIZf2apjc13I6cp81nBnxnKctGn8aPNvyeo1QRjROnNgWB22c
+	9IdmcJ5OKuXYqnWaH7ZcazzhkyJlic0pf15GbLkQUjSmMTVcmKyvjBwK7sfUqLXV
+	aguWXsR+nbnyMS3WBkQ7wi/Sn3oGexsjYOYJK5L5GufE+Rtbko7tf2JUoDdIMdxS
+	lSczRAAkFspL1FOHB29Lw==
+X-ME-Sender: <xms:_LvwaHuX0Gi0fWP0GPJ3CH3JkaegiJ_aIYW89ld5NAQZQ_rotuBiIA>
+    <xme:_LvwaDTV2zPLT7VaYiDHioSDWJq4WULFECQu1XuJ8T75GvDk9NaqwiMrj9j3J8tcb
+    iJ0RdtlFpiC1T7VWi-tCWkkXk--Nd0hDREp-tY3eE3Vt8bN_0J_60I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdehleegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrthhh
+    vgifucfotgeurhhiuggvfdcuoehmrghtthesthhrrghvvghrshgvrdgtohhmrdgruheqne
+    cuggftrfgrthhtvghrnhepvdeitdeufeffheeltddutddtuddugfdtveffffekvdffvdfh
+    gfejuedtgeeluddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepmhgrthhtsehtrhgrvhgvrhhsvgdrtghomhdrrghupdhnsggprhgtphhtthho
+    peekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
+    hofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvg
+    ifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehiohgrnhgrrdgtihhorhhn
+    vghisehngihprdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:_LvwaLNf_YQT1Tb90jrjQgOqF0S_W0diemqevOrpv9gVUCf6cH05Pw>
+    <xmx:_LvwaB-PmJekHfN-yFVaRAFlLkFcRn_qa2a7DAKf6Uo1-ignwpK6Gg>
+    <xmx:_LvwaMca4vFcQTmztkQ_ptLGadunuZUGhkhTg4Ot7bE98G0sshKB2w>
+    <xmx:_LvwaAwRfJUqULkd5WfWHplduMxWh-7yGNNjAynsl2OXTYa6kxE5UA>
+    <xmx:_bvwaCr-aG5YcPj6hb-UMmf69lLIBr3Bfwpc_fGDgbkvawhcdotvR_aX>
+Feedback-ID: i426947f3:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B08C415C0053; Thu, 16 Oct 2025 05:33:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060720600.709179.949762469775900348.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: A_WGycAshL9F
+Date: Thu, 16 Oct 2025 20:33:27 +1100
+From: "Mathew McBride" <matt@traverse.com.au>
+To: "Ioana Ciornei" <ioana.ciornei@nxp.com>
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <9beeb68d-2973-4d40-b48b-ee9cc984b9db@app.fastmail.com>
+In-Reply-To: 
+ <xl3227oc7kfa6swgaxoew7g2jzgy2ksgnpqo4qvz2nzbuludnh@ti6h25vfp4ft>
+References: <20251015-fix-dpaa2-vhost-net-v1-1-26ea2d33e5c3@traverse.com.au>
+ <xl3227oc7kfa6swgaxoew7g2jzgy2ksgnpqo4qvz2nzbuludnh@ti6h25vfp4ft>
+Subject: Re: [PATCH] dpaa2-eth: treat skb with exact headroom as scatter/gather frames
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     5892cbd85dbf9059b8a3a7dd8ab64c0fce671029
-Gitweb:        https://git.kernel.org/tip/5892cbd85dbf9059b8a3a7dd8ab64c0fce6=
-71029
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 25 Sep 2025 11:26:22 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 16 Oct 2025 11:13:54 +02:00
 
-sched: Match __task_rq_{,un}lock()
+On Wed, Oct 15, 2025, at 9:18 PM, Ioana Ciornei wrote:
+> On Wed, Oct 15, 2025 at 03:01:24PM +1100, Mathew McBride wrote:
+[snip]
+> Hi Mathew,
+> 
+> First of all, sorry for missing your initial message.
+> 
+No problem. I had a revert patch in my tree and mostly forgot about the problem until a customer of ours reminded me recently. The S/G "solution" looked easy enough to try.
 
-In preparation to adding more rules to __task_rq_lock(), such that
-__task_rq_unlock() will no longer be equivalent to rq_unlock(),
-make sure every __task_rq_lock() is matched by a __task_rq_unlock()
-and vice-versa.
+> While I was trying to understand how the 'aligned_start >= skb->head'
+> check ends up failing while you have the necessary 128bytes of headroom,
+> I think I discovered that this is not some kind of off-by-one issue.
+> 
+> The below snippet is from your original message.
+> fsl_dpaa2_eth dpni.9: dpaa2_eth_build_single_fd alignment issue, aligned_start=ffff008002e09140 skb->head=ffff008002e09180
+> fsl_dpaa2_eth dpni.9: dpaa2_eth_build_single_fd data=ffff008002e09200
+> fsl_dpaa2_eth dpni.9: dpaa2_eth_build_single_fd is cloned=0
+> dpaa2_eth_build_single_fdskb len=150 headroom=128 headlen=150 tailroom=42
+> 
+> If my understanding is correct skb->data=ffff008002e09200.
+> Following the dpaa2_eth_build_single_fd() logic, this means that
+> buffer_start = 0xffff008002e09200 - 0x80
+> buffer_start = 0xFFFF008002E09180
+> 
+> Now buffer_start is already pointing to the start of the skb's memory
+> and I don't think the extra 'buffer_start - DPAA2_ETH_TX_BUF_ALIGN'
+> adjustment is correct.
+> 
+> What I think happened is that I did not take into consideration that by
+> adding the DPAA2_ETH_TX_BUF_ALIGN inside the dpaa2_eth_needed_headroom()
+> function I also need to remove it from the manual adjustment.
+> 
+> Could you please try with the following diff and let me know how it does
+> in your setup?
+> 
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/core.c  | 13 ++++++++-----
- kernel/sched/sched.h |  8 ++++----
- kernel/sched/stats.h |  2 +-
- 3 files changed, 13 insertions(+), 10 deletions(-)
+It looks good to me! I've tested across two different kernel series (6.6 and 6.18) with two different host userlands (Debian and OpenWrt). Both VM (vhost-net) and normal system traffic are OK.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8c55740..e715147 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2582,7 +2582,8 @@ static int migration_cpu_stop(void *data)
- 		 */
- 		WARN_ON_ONCE(!pending->stop_pending);
- 		preempt_disable();
--		task_rq_unlock(rq, p, &rf);
-+		rq_unlock(rq, &rf);
-+		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
- 		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
- 				    &pending->arg, &pending->stop_work);
- 		preempt_enable();
-@@ -2591,7 +2592,8 @@ static int migration_cpu_stop(void *data)
- out:
- 	if (pending)
- 		pending->stop_pending =3D false;
--	task_rq_unlock(rq, p, &rf);
-+	rq_unlock(rq, &rf);
-+	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-=20
- 	if (complete)
- 		complete_all(&pending->done);
-@@ -3708,7 +3710,7 @@ static int ttwu_runnable(struct task_struct *p, int wak=
-e_flags)
- 		ttwu_do_wakeup(p);
- 		ret =3D 1;
- 	}
--	__task_rq_unlock(rq, &rf);
-+	__task_rq_unlock(rq, p, &rf);
-=20
- 	return ret;
- }
-@@ -4301,7 +4303,7 @@ int task_call_func(struct task_struct *p, task_call_f f=
-unc, void *arg)
- 	ret =3D func(p, arg);
-=20
- 	if (rq)
--		rq_unlock(rq, &rf);
-+		__task_rq_unlock(rq, p, &rf);
-=20
- 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
- 	return ret;
-@@ -7362,7 +7364,8 @@ out_unlock:
-=20
- 	rq_unpin_lock(rq, &rf);
- 	__balance_callbacks(rq);
--	raw_spin_rq_unlock(rq);
-+	rq_repin_lock(rq, &rf);
-+	__task_rq_unlock(rq, p, &rf);
-=20
- 	preempt_enable();
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 3462145..e3d2710 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1825,7 +1825,8 @@ struct rq *task_rq_lock(struct task_struct *p, struct r=
-q_flags *rf)
- 	__acquires(p->pi_lock)
- 	__acquires(rq->lock);
-=20
--static inline void __task_rq_unlock(struct rq *rq, struct rq_flags *rf)
-+static inline void
-+__task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
- 	__releases(rq->lock)
- {
- 	rq_unpin_lock(rq, rf);
-@@ -1837,8 +1838,7 @@ task_rq_unlock(struct rq *rq, struct task_struct *p, st=
-ruct rq_flags *rf)
- 	__releases(rq->lock)
- 	__releases(p->pi_lock)
- {
--	rq_unpin_lock(rq, rf);
--	raw_spin_rq_unlock(rq);
-+	__task_rq_unlock(rq, p, rf);
- 	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
- }
-=20
-@@ -1849,7 +1849,7 @@ DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
-=20
- DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
- 		    _T->rq =3D __task_rq_lock(_T->lock, &_T->rf),
--		    __task_rq_unlock(_T->rq, &_T->rf),
-+		    __task_rq_unlock(_T->rq, _T->lock, &_T->rf),
- 		    struct rq *rq; struct rq_flags rf)
-=20
- static inline void rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 26f3fd4..cbf7206 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -206,7 +206,7 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
-=20
- 		rq =3D __task_rq_lock(p, &rf);
- 		psi_task_change(p, p->psi_flags, 0);
--		__task_rq_unlock(rq, &rf);
-+		__task_rq_unlock(rq, p, &rf);
- 	}
- }
-=20
+Many thanks,
+Matt
+
+> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+> @@ -1077,7 +1077,7 @@ static int dpaa2_eth_build_single_fd(struct dpaa2_eth_priv *priv,
+>         dma_addr_t addr;
+> 
+>         buffer_start = skb->data - dpaa2_eth_needed_headroom(skb);
+> -       aligned_start = PTR_ALIGN(buffer_start - DPAA2_ETH_TX_BUF_ALIGN,
+> +       aligned_start = PTR_ALIGN(buffer_start,
+>                                   DPAA2_ETH_TX_BUF_ALIGN);
+>         if (aligned_start >= skb->head)
+>                 buffer_start = aligned_start;
+> 
+> Ioana
+> 
 
