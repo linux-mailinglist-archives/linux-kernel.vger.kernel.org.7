@@ -1,229 +1,144 @@
-Return-Path: <linux-kernel+bounces-855551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21026BE19CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:56:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7393FBE19EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED27B4E80ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F584484733
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780812475E3;
-	Thu, 16 Oct 2025 05:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QX6T8jHl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8D62571BE;
+	Thu, 16 Oct 2025 06:00:20 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650BD242D70;
-	Thu, 16 Oct 2025 05:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FAD2566E9;
+	Thu, 16 Oct 2025 06:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760594206; cv=none; b=ZDr5R/YcMHQJITNWs91GKcq7dHkQRLEmpy2hF9etMtpa4xY5PgGJV/d6GrqXj1nbVuYSpfD0JMMCGOI9CsgHHo3SXvR806v/jKqkx2AzRDwn+pIUgaMHz9xntplw9jmKdrnsbKkWbNMuecDqMQHDt/9mo///BNDCxU1Mqn7HTXE=
+	t=1760594420; cv=none; b=iiRdCEX3R5y7bOLxnBv6KPBK8jCsnTx853N7PnH8OCZ6n/4HzcpBvwWZ0RYbFafQZdZmmYSBVIKt6OfanetsJteEEz/dAlBpLT63SZjYRMamIg6914sHT+ynphLQkek8pkktmQ9EPn1+zLsKppFgXf07/L2BauCaAcmW+W1gBZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760594206; c=relaxed/simple;
-	bh=v28SW4C2/MMOF14xcWGZoBm6mtw65G/uoNs/VCAmapM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tsCtXI0yM8E5JdzQL1Z1jUoYVNZdaHvk2vH0hSl4iYkTnD2DlcPcmErtE60kPNJtSkR8irZWauWh2o3lfXL5F3NPytmgmCYLYztvouzJ1v22WF/1W4MPl1BH0tBh2vMiEhnCkgEMw7qDVvq141U5dItv3/J1EdYy4ySq4gr3QUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QX6T8jHl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760594202;
-	bh=v28SW4C2/MMOF14xcWGZoBm6mtw65G/uoNs/VCAmapM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QX6T8jHlaUjF0jv51uLgXQcAH7TxnY63c9Eq9eYQ1SzI7HC8icxUPRUT+OqhI3q2a
-	 aNY85XuyJmUMasOXGX4UFdMBaBlsUXPRsLEkcDqYLhYXLCC87kSqkwEAZTGLVKiRJb
-	 RXsiqT3UNRlkB9Txx8SCDvpvuSTsIbsL46Dc0PEWOe5iwjhpl/Mc3MRc2tphIzbg73
-	 GsyPOGwRLs/KVDy6n4d58AS2lyJfGM/dCUIdWvij/K5YtOzG7UDxC2nkMq34mPuzvY
-	 LXm8HjtBEZEL6kXwi2xc4qY3QLgDb9uYZIci2jO8EuCNonyr6x82jtHXk4wRc+X800
-	 5sfj3NaFXCraQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0EE9017E05FE;
-	Thu, 16 Oct 2025 07:56:41 +0200 (CEST)
-Date: Thu, 16 Oct 2025 07:56:37 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
- Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v4 08/13] drm/v3d: Fix builds with
- CONFIG_TRANSPARENT_HUGEPAGE=n
-Message-ID: <20251016075637.3aec3465@fedora>
-In-Reply-To: <efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
-References: <20251015153018.43735-1-loic.molinari@collabora.com>
-	<20251015153018.43735-9-loic.molinari@collabora.com>
-	<20251015201737.3956f801@fedora>
-	<efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760594420; c=relaxed/simple;
+	bh=zL3WvO3665EouwcoDa/nbIqn/ahEBMnS/1uR2CNyfWY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=a0dDLib8uZvWIw5wNIDCNeThEV2vqfZZUb3FnbCxZmmCPCJoIvP4NSXKgoZbwx2y1qtHMJ0gmDBO96TfHFD4ZPdeX2Q5lB/DPbDGutfM7JahdtxpjdZbi/6IA6Xg8fwcGAl5mJ4ADrXO78mPAxhRrYFZbASA8WxlX2u3dVqA6Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Lance Yang <lance.yang@linux.dev>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "wireguard@lists.zx2c4.com"
+	<wireguard@lists.zx2c4.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Anshuman Khandual
+	<anshuman.khandual@arm.com>, Arnd Bergmann <arnd@arndb.de>, David Hildenbrand
+	<david@redhat.com>, Florian Wesphal <fw@strlen.de>, Jakub Kacinski
+	<kuba@kernel.org>, "Jason A . Donenfeld" <jason@zx2c4.com>, Joel Granados
+	<joel.granados@kernel.org>, Joel Stanley <joel@jms.id.au>, Jonathan Corbet
+	<corbet@lwn.net>, Kees Cook <kees@kernel.org>, Liam Howlett
+	<liam.howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>, Pawan Gupta
+	<pawan.kumar.gupta@linux.intel.com>, Petr Mladek <pmladek@suse.com>, "Phil
+ Auld" <pauld@redhat.com>, Randy Dunlap <rdunlap@infradead.org>, Russell King
+	<linux@armlinux.org.uk>, Shuah Khan <shuah@kernel.org>, Simon Horman
+	<horms@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Steven Rostedt
+	<rostedt@goodmis.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?UkU6IFvlpJbpg6jpgq7ku7ZdIFJlOiBbUEFUQ0hdW3Y0XSBodW5nX3Rhc2s6?=
+ =?utf-8?B?IFBhbmljIHdoZW4gdGhlcmUgYXJlIG1vcmUgdGhhbiBOIGh1bmcgdGFza3Mg?=
+ =?utf-8?Q?at_the_same_time?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSF1bdjRdIGh1bmdfdGFzazogUGFu?=
+ =?utf-8?B?aWMgd2hlbiB0aGVyZSBhcmUgbW9yZSB0aGFuIE4gaHVuZyB0YXNrcyBhdCB0?=
+ =?utf-8?Q?he_same_time?=
+Thread-Index: AQHcPZ4O/k3Wsx0bHk6g9O8K49+CJbTDtCqAgACThiA=
+Date: Thu, 16 Oct 2025 05:57:34 +0000
+Message-ID: <bb443552b6db40548a4fae98d1f63c80@baidu.com>
+References: <20251015063615.2632-1-lirongqing@baidu.com>
+ <4db3bd26-1f74-4096-84fd-f652ec9a4d27@linux.dev>
+In-Reply-To: <4db3bd26-1f74-4096-84fd-f652ec9a4d27@linux.dev>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Wed, 15 Oct 2025 22:41:59 +0200
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
-
-> On 15/10/2025 20:17, Boris Brezillon wrote:
-> > On Wed, 15 Oct 2025 17:30:12 +0200
-> > Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
-> >  =20
-> >> Don't declare "super_pages" on builds with CONFIG_TRANSPARENT_HUGEPAGE
-> >> disabled to prevent build error:
-> >>
-> >> ERROR: modpost: "super_pages" [drivers/gpu/drm/v3d/v3d.ko] undefined! =
-=20
-> >=20
-> > I believe this is a bug introduced by the previous commit: the
-> > compiler probably drops any code between the
-> > IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) check and the err label
-> > because IS_ENABLED() evaluates to false at compile time. So I'd squash
-> > those changes in the previous commit. =20
->=20
-> Right, it's been introduced in previous commit.
->=20
-> > =20
-> >>
-> >> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
-> >> ---
-> >>   drivers/gpu/drm/v3d/v3d_drv.h | 2 ++
-> >>   drivers/gpu/drm/v3d/v3d_gem.c | 2 ++
-> >>   2 files changed, 4 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_d=
-rv.h
-> >> index 99a39329bb85..481502104391 100644
-> >> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> >> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> >> @@ -564,7 +564,9 @@ extern const struct dma_fence_ops v3d_fence_ops;
-> >>   struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_que=
-ue q);
-> >>  =20
-> >>   /* v3d_gem.c */
-> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>   extern bool super_pages;
-> >> +#endif
-> >>   int v3d_gem_init(struct drm_device *dev);
-> >>   void v3d_gem_destroy(struct drm_device *dev);
-> >>   void v3d_reset_sms(struct v3d_dev *v3d);
-> >> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_g=
-em.c
-> >> index 635ff0fabe7e..0039063eb8b2 100644
-> >> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> >> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> >> @@ -269,7 +269,9 @@ v3d_huge_mnt_init(struct v3d_dev *v3d)
-> >>   	 * match our usecase.
-> >>   	 */
-> >>  =20
-> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>   	if (super_pages)
-> >> +#endif
-> >>   		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size"); =20
-> >=20
-> > Why not
-> >=20
-> > #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >    	if (super_pages)
-> >    		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-> > #endif
-> >=20
-> > I guess
-> >=20
-> > 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
-> > 		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-> >=20
-> > would also do, since it's likely to rely on the same optimization the
-> > previous v3d_gemfs_init() implementation was relying on, but it's
-> > fragile (not sure what happens when compiled with -O0). =20
->=20
-> I'll remove the #ifdef/#endif around the super_pages declaration in=20
-> v3d_drv.h because it isn't necessary if super_pages is compiled out in=20
-> v3d_huge_mnt_init().
->=20
-> In v3d_huge_mnt_init(), I'd add the #ifdef before the ret variable=20
-> declaration and the #endif right after the last else so that it's clear=20
-> drm_notice("THP is recommended...") is called unconditionally when=20
-> CONFIG_TRANSPARENT_HUGEPAGE=3Dn, whatever the optim level. What do you th=
-ink?
-
-First off, I'm not a huge fan of the following pattern
-
-#if foo
-	if (xxxx)
-#endif
-		do_something
-
-which also applies to
-
-#if foo
-	if (xxxx)
-		do_xxx
-	else if (yyy)
-		do_yyy
-	else
-#endif
-		do_something
-
-I'd rather have do_something duplicated in an #else section
-like that:
-
-#if foo
-	if (xxxx)
-		do_xxx
-	else if (yyy)
-		do_yyy
-	else
-		do_something
-#else
-	do_something
-#endif
-
-But I'm not even seeing what the problem is here. If you do:
-
-	int err =3D 0;
-
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-    	if (super_pages)
-    		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-#endif
-
-	if (v3d->drm.huge_mnt)
-		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
-	else if (err)
-		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n", err);
-	else
-		drm_notice(&v3d->drm,
-			   "Transparent Hugepage support is recommended for optimal performance =
-on this platform!\n");
-
-You're guaranteed that err=3D0 and v3d->drm.huge_mnt=3DNULL when
-CONFIG_TRANSPARENT_HUGEPAGE=3Dn, so the "THP recommended"
-message should be displayed unconditionally. Am I missing
-something?
+DQo+IExHVE0uIEl0IHdvcmtzIGFzIGV4cGVjdGVkLCB0aGFua3MhDQo+IA0KPiBPbiAyMDI1LzEw
+LzE1IDE0OjM2LCBsaXJvbmdxaW5nIHdyb3RlOg0KPiA+IEZyb206IExpIFJvbmdRaW5nIDxsaXJv
+bmdxaW5nQGJhaWR1LmNvbT4NCj4gDQo+IEZvciB0aGUgY29tbWl0IG1lc3NhZ2UsIEknZCBzdWdn
+ZXN0IHRoZSBmb2xsb3dpbmcgZm9yIGJldHRlciBjbGFyaXR5Og0KPiANCj4gYGBgDQo+IFRoZSBo
+dW5nX3Rhc2tfcGFuaWMgc3lzY3RsIGlzIGN1cnJlbnRseSBhIGJsdW50IGluc3RydW1lbnQ6IGl0
+J3MgYWxsIG9yIG5vdGhpbmcuDQo+IA0KPiBQYW5pY2tpbmcgb24gYSBzaW5nbGUgaHVuZyB0YXNr
+IGNhbiBiZSBhbiBvdmVycmVhY3Rpb24gdG8gYSB0cmFuc2llbnQgZ2xpdGNoLiBBDQo+IG1vcmUg
+cmVsaWFibGUgaW5kaWNhdG9yIG9mIGEgc3lzdGVtaWMgcHJvYmxlbSBpcyB3aGVuIG11bHRpcGxl
+IHRhc2tzIGhhbmcNCj4gc2ltdWx0YW5lb3VzbHkuDQo+IA0KPiBFeHRlbmQgaHVuZ190YXNrX3Bh
+bmljIHRvIGFjY2VwdCBhbiBpbnRlZ2VyIHRocmVzaG9sZCwgYWxsb3dpbmcgdGhlIGtlcm5lbA0K
+PiB0byBwYW5pYyBvbmx5IHdoZW4gTiBodW5nIHRhc2tzIGFyZSBkZXRlY3RlZCBpbiBhIHNpbmds
+ZSBzY2FuLiBUaGlzIHByb3ZpZGVzDQo+IGZpbmVyIGNvbnRyb2wgdG8gZGlzdGluZ3Vpc2ggYmV0
+d2VlbiBpc29sYXRlZCBpbmNpZGVudHMgYW5kIHN5c3RlbS13aWRlDQo+IGZhaWx1cmVzLg0KPiAN
+Cj4gVGhlIGFjY2VwdGVkIHZhbHVlcyBhcmU6DQo+IC0gMDogRG9uJ3QgcGFuaWMgKHVuY2hhbmdl
+ZCkNCj4gLSAxOiBQYW5pYyBvbiB0aGUgZmlyc3QgaHVuZyB0YXNrICh1bmNoYW5nZWQpDQo+IC0g
+TiA+IDE6IFBhbmljIGFmdGVyIE4gaHVuZyB0YXNrcyBhcmUgZGV0ZWN0ZWQgaW4gYSBzaW5nbGUg
+c2Nhbg0KPiANCj4gVGhlIG9yaWdpbmFsIGJlaGF2aW9yIGlzIHByZXNlcnZlZCBmb3IgdmFsdWVz
+IDAgYW5kIDEsIG1haW50YWluaW5nIGZ1bGwNCj4gYmFja3dhcmQgY29tcGF0aWJpbGl0eS4NCj4g
+YGBgDQo+IA0KPiBJZiB5b3UgYWdyZWUsIGxpa2VseSBubyBuZWVkIHRvIHJlc2VuZCAtIEFuZHJl
+dyBjb3VsZCBwaWNrIGl0IHVwIGRpcmVjdGx5IHdoZW4NCj4gYXBwbHlpbmcgOikNCj4gDQoNClRo
+aXMgaXMgYmV0dGVyOw0KDQpBbmRyZXcsIGNvdWxkIHlvdSBwaWNrIGl0IHVwIGRpcmVjdGx5DQoN
+ClRoYW5rcw0KDQotTGkNCg0KPiA+DQo+ID4gQ3VycmVudGx5LCB3aGVuICdodW5nX3Rhc2tfcGFu
+aWMnIGlzIGVuYWJsZWQsIHRoZSBrZXJuZWwgcGFuaWNzDQo+ID4gaW1tZWRpYXRlbHkgdXBvbiBk
+ZXRlY3RpbmcgdGhlIGZpcnN0IGh1bmcgdGFzay4gSG93ZXZlciwgc29tZSBodW5nDQo+ID4gdGFz
+a3MgYXJlIHRyYW5zaWVudCBhbmQgYWxsb3cgc3lzdGVtIHJlY292ZXJ5LCB3aGlsZSBwZXJzaXN0
+ZW50IGhhbmdzDQo+ID4gc2hvdWxkIHRyaWdnZXIgYSBwYW5pYyB3aGVuIGFjY3VtdWxhdGluZyBi
+ZXlvbmQgYSB0aHJlc2hvbGQuDQo+ID4NCj4gPiBFeHRlbmQgdGhlICdodW5nX3Rhc2tfcGFuaWMn
+IHN5c2N0bCB0byBhY2NlcHQgYSB0aHJlc2hvbGQgdmFsdWUNCj4gPiBzcGVjaWZ5aW5nIHRoZSBu
+dW1iZXIgb2YgaHVuZyB0YXNrcyB0aGF0IG11c3QgYmUgZGV0ZWN0ZWQgYmVmb3JlDQo+ID4gdHJp
+Z2dlcmluZyBhIGtlcm5lbCBwYW5pYy4gVGhpcyBwcm92aWRlcyBmaW5lciBjb250cm9sIGZvcg0K
+PiA+IGVudmlyb25tZW50cyB3aGVyZSB0cmFuc2llbnQgaGFuZ3MgbWF5IG9jY3VyIGJ1dCBwZXJz
+aXN0ZW50IGhhbmdzDQo+IHNob3VsZCBiZSBmYXRhbC4NCj4gPg0KPiA+IFRoZSBzeXNjdGwgbm93
+IGFjY2VwdHM6DQo+ID4gLSAwOiBkb24ndCBwYW5pYyAobWFpbnRhaW5zIG9yaWdpbmFsIGJlaGF2
+aW9yKQ0KPiA+IC0gMTogcGFuaWMgb24gZmlyc3QgaHVuZyB0YXNrIChtYWludGFpbnMgb3JpZ2lu
+YWwgYmVoYXZpb3IpDQo+ID4gLSBOID4gMTogcGFuaWMgYWZ0ZXIgTiBodW5nIHRhc2tzIGFyZSBk
+ZXRlY3RlZCBpbiBhIHNpbmdsZSBzY2FuDQo+ID4NCj4gPiBUaGlzIG1haW50YWlucyBiYWNrd2Fy
+ZCBjb21wYXRpYmlsaXR5IHdoaWxlIHByb3ZpZGluZyBmbGV4aWJpbGl0eSBmb3INCj4gPiBkaWZm
+ZXJlbnQgaGFuZyBzY2VuYXJpb3MuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMaSBSb25nUWlu
+ZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4gQ2M6IEFuZHJldyBKZWZmZXJ5IDxhbmRyZXdA
+Y29kZWNvbnN0cnVjdC5jb20uYXU+DQo+ID4gQ2M6IEFuc2h1bWFuIEtoYW5kdWFsIDxhbnNodW1h
+bi5raGFuZHVhbEBhcm0uY29tPg0KPiA+IENjOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRl
+Pg0KPiA+IENjOiBEYXZpZCBIaWxkZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT4NCj4gPiBDYzog
+RmxvcmlhbiBXZXNwaGFsIDxmd0BzdHJsZW4uZGU+DQo+ID4gQ2M6IEpha3ViIEthY2luc2tpIDxr
+dWJhQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IEphc29uIEEuIERvbmVuZmVsZCA8amFzb25AengyYzQu
+Y29tPg0KPiA+IENjOiBKb2VsIEdyYW5hZG9zIDxqb2VsLmdyYW5hZG9zQGtlcm5lbC5vcmc+DQo+
+ID4gQ2M6IEpvZWwgU3RhbmxleSA8am9lbEBqbXMuaWQuYXU+DQo+ID4gQ2M6IEpvbmF0aGFuIENv
+cmJldCA8Y29yYmV0QGx3bi5uZXQ+DQo+ID4gQ2M6IEtlZXMgQ29vayA8a2Vlc0BrZXJuZWwub3Jn
+Pg0KPiA+IENjOiBMYW5jZSBZYW5nIDxsYW5jZS55YW5nQGxpbnV4LmRldj4NCj4gPiBDYzogTGlh
+bSBIb3dsZXR0IDxsaWFtLmhvd2xldHRAb3JhY2xlLmNvbT4NCj4gPiBDYzogTG9yZW56byBTdG9h
+a2VzIDxsb3JlbnpvLnN0b2FrZXNAb3JhY2xlLmNvbT4NCj4gPiBDYzogIk1hc2FtaSBIaXJhbWF0
+c3UgKEdvb2dsZSkiIDxtaGlyYW1hdEBrZXJuZWwub3JnPg0KPiA+IENjOiAiUGF1bCBFIC4gTWNL
+ZW5uZXkiIDxwYXVsbWNrQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IFBhd2FuIEd1cHRhIDxwYXdhbi5r
+dW1hci5ndXB0YUBsaW51eC5pbnRlbC5jb20+DQo+ID4gQ2M6IFBldHIgTWxhZGVrIDxwbWxhZGVr
+QHN1c2UuY29tPg0KPiA+IENjOiBQaGlsIEF1bGQgPHBhdWxkQHJlZGhhdC5jb20+DQo+ID4gQ2M6
+IFJhbmR5IER1bmxhcCA8cmR1bmxhcEBpbmZyYWRlYWQub3JnPg0KPiA+IENjOiBSdXNzZWxsIEtp
+bmcgPGxpbnV4QGFybWxpbnV4Lm9yZy51az4NCj4gPiBDYzogU2h1YWggS2hhbiA8c2h1YWhAa2Vy
+bmVsLm9yZz4NCj4gPiBDYzogU2ltb24gSG9ybWFuIDxob3Jtc0BrZXJuZWwub3JnPg0KPiA+IENj
+OiBTdGFuaXNsYXYgRm9taWNoZXYgPHNkZkBmb21pY2hldi5tZT4NCj4gPiBDYzogU3RldmVuIFJv
+c3RlZHQgPHJvc3RlZHRAZ29vZG1pcy5vcmc+DQo+ID4gLS0tDQo+IA0KPiBTbzoNCj4gDQo+IFJl
+dmlld2VkLWJ5OiBMYW5jZSBZYW5nIDxsYW5jZS55YW5nQGxpbnV4LmRldj4NCj4gVGVzdGVkLWJ5
+OiBMYW5jZSBZYW5nIDxsYW5jZS55YW5nQGxpbnV4LmRldj4NCj4gDQo+IENoZWVycywNCj4gTGFu
+Y2UNCg0K
 
