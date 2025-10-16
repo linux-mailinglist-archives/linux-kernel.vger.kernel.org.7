@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-856991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B89BE5982
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BED84BE598B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2356334C5B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:48:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C95435561C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481D02E717B;
-	Thu, 16 Oct 2025 21:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7862E54DB;
+	Thu, 16 Oct 2025 21:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZQnwU0h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugFm4wIZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955402E6100;
-	Thu, 16 Oct 2025 21:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259462DFA4A;
+	Thu, 16 Oct 2025 21:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760651263; cv=none; b=hfUilHdAcI3q8pqfaXpVYMmgaNE4LiAwQgWKqKDRJUMSq1qEAt9sNr+RYZYs+1ub6W51dRt1dstGL8xvYJgZzMl1Ra1Csp+j4R5mHEOXQ89o02+GTngszM2348xLxnfn5as8sznV7Fdlx4c6pDD+ghpGqmBy6YjLtnpA8zUGGd0=
+	t=1760651272; cv=none; b=I0H3Ig3edCMB4fCDKB9qA+/qFoUU9Rh9QM4XT58mZ9ncq3kwFpTlxVobmRW+Xw4l5iVPPAtfyqKW6ZKaLVlSDvJSs9Dln1IzeO8ANi/ZJqaDH1CjUf4j2PtBqED9nAA2tJFar/vo8jDWcKaApriD01ntUvzO/6kmCOIE7yYsS/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760651263; c=relaxed/simple;
-	bh=JpqRyISZ6HQ2mzWCEY5nbQa5reQxJ9kMpl3zJAQ2NZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CD5iIoy0L73vbncalIjoT1WXHOKqJ6ExwcZxRFagRgkIBlusfYgpf5fgJZbnVNoP2bzbeS7Fsohnq85oHzhJm30QcuT4V1cuIsoGdOKBiBpwanB9ynxE4IXRkYbVO3UXrDjKMa40miA6XXM7ObBCSfaXbGAqVKVsVybVJ9HB7Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZQnwU0h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F577C4CEFE;
-	Thu, 16 Oct 2025 21:47:43 +0000 (UTC)
+	s=arc-20240116; t=1760651272; c=relaxed/simple;
+	bh=P0ccrz25cVeIv5CP0fVfDA2Q2QwIFMKPR+3K+ugp+i8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=IAgiJ73G7GsyRvn4n9uKb/pge8Pzs5G2T79GibLg7XGpjClm0zmYr7e+xFxjecxC7ZihGt3SuN+LjbvMKTYNWmwci/nQWBq9xF1yHLVFZKatWOCWaLCc4mQRp2cPezQ91DytTa6wp1Ay5CxZKAc3y2FGu/dM6nX0SmnQrALRGjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugFm4wIZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA6AC4CEF1;
+	Thu, 16 Oct 2025 21:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760651263;
-	bh=JpqRyISZ6HQ2mzWCEY5nbQa5reQxJ9kMpl3zJAQ2NZQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MZQnwU0hG4KqVdwBF+Mm4OdnOIU1ymk6yGpSBNIucrULJbtP+oSkhJ73HOt64U7aW
-	 v6uTX0bPc4qLSb4vDTPbT+Pt+cwP/2r7kcGPvzRqxZwlcBMG6KZjrx+pGJ5/nenFgf
-	 otrbPDRvx26SU3z4AhzsPsOfkyobHAd/WpzydRa5ndpTOoO/IUUAHWrIKCnQRwntKB
-	 ayVSHLFjKugeVTI+9hG/ZELj6ja1ZcrS5gb016wSqjb7eisXhaTZaSYKxoQgcKjC34
-	 ZAlVYYw10iFj2gy3TTv5oND+GQEJY2L1eSo1FeULh/Hee8FOwWkEaFMORk1afuDkX/
-	 KJqjcEu9R+6zw==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	bijan311@gmail.com,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 5/5] Docs/ABI/damon: document obsolete_target sysfs file
-Date: Thu, 16 Oct 2025 14:47:32 -0700
-Message-ID: <20251016214736.84286-6-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251016214736.84286-1-sj@kernel.org>
-References: <20251016214736.84286-1-sj@kernel.org>
+	s=k20201202; t=1760651271;
+	bh=P0ccrz25cVeIv5CP0fVfDA2Q2QwIFMKPR+3K+ugp+i8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ugFm4wIZxWDU8ANFaXF9AXg2+4cH7EKbq6E2VMNNQI5mtnDTQPRazx055zq+QSfZK
+	 JuGodsFfNHuF93SNLji0d8JT4Ztao9zjRC7cv9wNhhj3DtmPNjCpWwxgog821IvzEU
+	 Gy2vIrla0ZEPySYhk3ALOiocjZil/XarlVS7Kx+wvn3sUyKdBruSkchmCfb4ghewaX
+	 5tCsfO2/ZWNPAPhpYwwPHHACzXApgoafsLC+YKyM+SFtxjwL/IiLvurloyEkGRMUGG
+	 DyXBAB14t42bun0msFqSDzsxFVuUoJzKOl9xGX+4SIIkulVXexTALgnCI4mvXwfrdX
+	 rLjOIgSGC5M1Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 Oct 2025 23:47:47 +0200
+Message-Id: <DDK2SA1D77HM.38KOTOTF8FJXI@kernel.org>
+Subject: Re: [PATCH 1/2] rust: pin-init: fix broken rust doc link
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Fiona Behrens" <me@kloenk.dev>,
+ "Alban Kurti" <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20251016211740.653599-1-lossin@kernel.org>
+ <CANiq72k8KmpFyKAFZ293GDUWx5=HJtksR02hTU8-H9PX7xsT+g@mail.gmail.com>
+In-Reply-To: <CANiq72k8KmpFyKAFZ293GDUWx5=HJtksR02hTU8-H9PX7xsT+g@mail.gmail.com>
 
-Update DAMON ABI document for the newly added obsolete_target DAMON
-sysfs file.
+On Thu Oct 16, 2025 at 11:24 PM CEST, Miguel Ojeda wrote:
+> On Thu, Oct 16, 2025 at 11:17=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
+ wrote:
+>>
+>> Rust 1.92.0 warns when building the documentation that [`PinnedDrop`] is
+>> an invalid reference. This is correct and it's weird that it didn't warn
+>> before, so fix the link.
+>
+> It is because it is hidden -- I have patches to fix this (it is not
+> just in pin-init but elsewhere too), but I am waiting for confirmation
+> on whether this is actually intentional behavior:
+>
+>     https://github.com/rust-lang/rust/pull/147153#issuecomment-3395484636
+>
+> From the early reply I got, it seems it is not, so it may be that it is "=
+fixed".
+>
+> Personally, I think it is useful, so I hope they keep it, even if as a
+> new opt-in option or similar.
+>
+> Of course, we can land this patch since it does not matter either way,
+> but please add a note with the above in the commit message if you land
+> it.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
+Thanks a lot for the added context! I will add it when applying. The
+`__pinned_drop!` macro will be gone with the syn patches this cycle, so
+in this case, we don't care what the resolution will be.
+
 ---
- Documentation/ABI/testing/sysfs-kernel-mm-damon | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-damon b/Documentation/ABI/testing/sysfs-kernel-mm-damon
-index dce6c2cda4e8..4fb8b7a6d625 100644
---- a/Documentation/ABI/testing/sysfs-kernel-mm-damon
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-damon
-@@ -164,6 +164,13 @@ Description:	Writing to and reading from this file sets and gets the pid of
- 		the target process if the context is for virtual address spaces
- 		monitoring, respectively.
- 
-+What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/targets/<T>/obsolete_target
-+Date:		Oct 2025
-+Contact:	SeongJae Park <sj@kernel.org>
-+Description:	Writing to and reading from this file sets and gets the
-+		obsoleteness of the matching parameters commit destination
-+		target.
-+
- What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/targets/<T>/regions/nr_regions
- Date:		Mar 2022
- Contact:	SeongJae Park <sj@kernel.org>
--- 
-2.47.3
+Cheers,
+Benno
 
