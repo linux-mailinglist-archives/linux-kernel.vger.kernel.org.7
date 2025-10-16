@@ -1,737 +1,234 @@
-Return-Path: <linux-kernel+bounces-856815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB5CBE5298
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:03:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B44BE529E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 087F65075ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:02:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D666E4F7488
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D20D258CC0;
-	Thu, 16 Oct 2025 19:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203E7231826;
+	Thu, 16 Oct 2025 19:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a06yVHnD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N1fgK554"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfcqZdCw"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EEE254B1B;
-	Thu, 16 Oct 2025 19:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0AD1CDFD5
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760641296; cv=none; b=vGm1jjoktB2cOZKa0P60ES5+ZF472B9kWkwxsqqJp4e5YBM5IfkrxbH3U6eGuf2E+v1+Mk5l6BSfaQHr8eZTjzhM26WV2kvMuMAgZ5MUyvunBko1/q6sp7uI51MypKqkkJhpfk0bZ9MCgBxurVvm2kaMyZrNildOyRfeMeehLqk=
+	t=1760641391; cv=none; b=DqKkKqE66N+brtLGT8CZjM42QPk3qzeKUglgCMemgqYPx8L11BuCrOmcHbKCoAaqnAkYd1qQkybHFZMkM1hrwlWZ34qg5w9+na1MNpfeBXJ/Y+K958y7rD/shiIdvx7gBzPKuufXdL5VbsaeJDdtS+mUghbJBy7MhpP9SYQ1ZeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760641296; c=relaxed/simple;
-	bh=GYM/A5+yoFyWZ+Ke+saycfEBsf+bYcTZqtANRL/civw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PLreqhO3J8rXNioSOfA2TRXwo87DnIMANq/rT74wYxpeff9+C7/YNRkAdAWWxyrw2wTBFqlCvPtbAO5FSYXkN4hDe0tngbp4tqLJ0t3bJtM63uXUQf7VJXh+ByclPi9c3f9oi6eLpQEfEdaDa+6hBcc/5NErIKsLkZ9O+FmrukY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a06yVHnD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N1fgK554; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 19:01:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760641292;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nfYyGBxfo1uRj0759DXuyCJ49JvPdGwLmKllpbrCBxA=;
-	b=a06yVHnDWvN9t4r1XWKKckGf77I9CT+7eF5eHIhWIDWo+L8xp6SJdRPeTTzLCl85auZlri
-	uRuQaXhQ+qOtq7rSZiIBXua01ZPWCVwjsLGrNZVLBHOLFCTRc9nlh2G6jnt8fbemtXAKZO
-	Ap4CHtF2lAF9VCWk3uVh+YA5c2mnWidwAKaadwO9j2Q/hKxWrervCbp/+E4+F6iWCOTuuQ
-	uTdDrqQ0v2/gG+7CGHeSMrbvjqu086J2xS50LmHZ0I7WmkrTABt/geMfKOXdzRAPzm1ZkN
-	z3P43etJ9pSiplSnHeT7VpJlbtDsUpSF6Ry2UUSqQJlqAo8SficTjIf3b1xceA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760641292;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nfYyGBxfo1uRj0759DXuyCJ49JvPdGwLmKllpbrCBxA=;
-	b=N1fgK55493q38sPnMgM0pCrwDu3g+LprqStpBzEHVkdaTkpzVf1EW2YeOh7pn6bWZbr29G
-	MR273V1IXNqMSvAA==
-From: "tip-bot2 for Johan Hovold" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip: Pass platform device to platform drivers
-Cc: Johan Hovold <johan@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Changhuang Liang <changhuang.liang@starfivetech.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251013094611.11745-12-johan@kernel.org>
-References: <20251013094611.11745-12-johan@kernel.org>
+	s=arc-20240116; t=1760641391; c=relaxed/simple;
+	bh=ZsHKQ5AActfUgl4mI1rv0BKSC1aW6V+ROa7gKY0/AgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnuc49tLrmboQ5oJ+qHrYbSFOB5G+ou0J71IbfDACsMGviHErtfRexstiF5Nf1lF05Y1E/2+vS6pYv2vN9fiv8DZ8hpbsZFEu0dgTHE79/hWkFTIXtevwk2uRYvrPj6/DwVFM1V3N6BlSbUVZb04FlvzfwZ34jMQwD+9OC5ZBWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfcqZdCw; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4710665e7deso5589205e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760641387; x=1761246187; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bElOFzybJYApx11r2UithqZnt7BeVh4JMgw683hHLlM=;
+        b=RfcqZdCw6RaNbO25iAcXYj5rtRBUoYRB7U9carTwer7KJobUdamnEzBKlxDWA89Lhx
+         65p5Q4UPFccfqh2MEVR+rwkV1lXWeHknJlWSmCyIMfek+k8kmUd2bIRQWazXzsSTe5Lv
+         Tde1QcAHJXbOQYKiy7xu1vE23sRoHekLHWsZtx2WRJpXN2h4mRr76TIP1M+cO6qO3Tmd
+         wmQPvQ3yPEN7T+rK40SmJA7PVX3P330ESm//Dt+/oatPX9qw0kCQX4BBqnApH29gJdLI
+         Uc+SFVTAIwyFwWd1ggyuumrdC/32awTCG360jRwm//ggJF6bJkz7rVFCFNIKt/0Oxqb+
+         k2Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760641387; x=1761246187;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bElOFzybJYApx11r2UithqZnt7BeVh4JMgw683hHLlM=;
+        b=AGu78JHKyqryGgIjjn+tbYavaHNTTMP6Z4aOhOFhNA58p3nPbnzFZZLn1/YFD/yNEZ
+         1BznePZffxKhw1p1fPm74GkYTU59HqOcVE0YoXGrHvifhh5VJb3iHg0/OFxOxSFbQnp2
+         /GFMkn0LsJMWRbivgDVURfDc/drx0UtRPCSDl/P5xcafI3uUx++IhyHIo/longKML09p
+         vkaTXoKOCDhjmFwBGsY54Vscwg1HiQuGGTnrOxt4l32rYHgbr1Q7rISmPZaEysk5xagW
+         hzTxNK8igCtp9MtHpGHX5oJuC3PUtDOWH1am8/EXIJrmVGw3m64mvxu263volCrUQAxw
+         pkhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwAubixIyk3JCUlz/yRVW2Sz5bDHk49osKnjDLsqipVxca2yw02RFItjo7IY1RHkLXl6WBVXM6ML0nMEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyML8uNanX+CL8vEt2CScEgjsIjNbLteFb7oGz40pEHYHjeXqo4
+	pbCE5npjfUFM2GAzFRQ9fw0esxRSep+dd4z/el2we42/gbuAClIYB2J5
+X-Gm-Gg: ASbGncveCC6aTjd4T+mQTWUWwrH4g//ZXo4Oxzm/7wZyV1/k+RWQCAHK98Dk+3m/c1e
+	6zIgUtS/Jzad1MLpsOm4SIcSlr5BPepP1wt8wOcBcpZquXPuS/wpRJ65fTNhYujixAXTRqFwtJm
+	KH+YAZyKo7jqPdw5ekKiQxPohd7rJfOcwibfO6eD80BS0dwbHVcEMdKiu/SuETmcBGrxIbmfb14
+	4SvIdr4aH+JIOXdNkb4O/0yURhj3kxUDhQlC1wq7wSp0l1xv/rT7FeSvIeU5G8pWJO5WloLDULq
+	ogW15DQmowJXIFCpbqCdzyckmxzynHHfDwbrncEPbtUmvJeuKegzSoIViB9UzmK7L52e9E4Gscs
+	tNmhSwE5H69UEsItH+thoF4YEWI1wAWPu6taU1ajLioqwZqvNL+o/Do2BVH2pXhLGXA2SHnFZ37
+	VpJCayqtUgVsBfm8VS
+X-Google-Smtp-Source: AGHT+IHpqR+b9nmFiD5VjfH6g0TM8Sg/3RCXImNqlBAhdaTBB5kxjSgRISQMrKRjkf7dkKnh9/bQZA==
+X-Received: by 2002:a05:600c:3553:b0:46e:1cc6:25f7 with SMTP id 5b1f17b1804b1-4711789daf3mr7304675e9.9.1760641387210;
+        Thu, 16 Oct 2025 12:03:07 -0700 (PDT)
+Received: from fedora ([31.94.20.195])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711435b06fsm52679605e9.0.2025.10.16.12.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 12:03:06 -0700 (PDT)
+Date: Thu, 16 Oct 2025 12:02:59 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
+ allocator
+Message-ID: <aPFBY_OtG0YTAaHv@fedora>
+References: <20251014182754.4329-1-vishal.moola@gmail.com>
+ <aO8behuGn5jVo28K@casper.infradead.org>
+ <aO9pUS3zLHsap81f@fedora>
+ <aPEZdHJlNOofy5tm@milan>
+ <aPEubI4kWvzSC5RN@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176064129069.709179.11516216268127298741.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPEubI4kWvzSC5RN@fedora>
 
-The following commit has been merged into the irq/drivers branch of tip:
+On Thu, Oct 16, 2025 at 10:42:04AM -0700, Vishal Moola (Oracle) wrote:
+> On Thu, Oct 16, 2025 at 06:12:36PM +0200, Uladzislau Rezki wrote:
+> > On Wed, Oct 15, 2025 at 02:28:49AM -0700, Vishal Moola (Oracle) wrote:
+> > > On Wed, Oct 15, 2025 at 04:56:42AM +0100, Matthew Wilcox wrote:
+> > > > On Tue, Oct 14, 2025 at 11:27:54AM -0700, Vishal Moola (Oracle) wrote:
+> > > > > Running 1000 iterations of allocations on a small 4GB system finds:
+> > > > > 
+> > > > > 1000 2mb allocations:
+> > > > > 	[Baseline]			[This patch]
+> > > > > 	real    46.310s			real    34.380s
+> > > > > 	user    0.001s			user    0.008s
+> > > > > 	sys     46.058s			sys     34.152s
+> > > > > 
+> > > > > 10000 200kb allocations:
+> > > > > 	[Baseline]			[This patch]
+> > > > > 	real    56.104s			real    43.946s
+> > > > > 	user    0.001s			user    0.003s
+> > > > > 	sys     55.375s			sys     43.259s
+> > > > > 
+> > > > > 10000 20kb allocations:
+> > > > > 	[Baseline]			[This patch]
+> > > > > 	real    0m8.438s		real    0m9.160s
+> > > > > 	user    0m0.001s		user    0m0.002s
+> > > > > 	sys     0m7.936s		sys     0m8.671s
+> > > > 
+> > > > I'd be more confident in the 20kB numbers if you'd done 10x more
+> > > > iterations.
+> > > 
+> > > I actually ran my a number of times to mitigate the effects of possibly
+> > > too small sample sizes, so I do have that number for you too:
+> > > 
+> > > [Baseline]			[This patch]
+> > > real    1m28.119s		real    1m32.630s
+> > > user    0m0.012s		user    0m0.011s
+> > > sys     1m23.270s		sys     1m28.529s
+> > > 
+> > I have just had a look at performance figures of this patch. The test
+> > case is 16K allocation by one single thread, 1 000 000 loops, 10 run:
+> > 
+> > sudo ./test_vmalloc.sh run_test_mask=1 nr_threads=1 nr_pages=4
+> 
+> The reason I didn't use this test module is the same concern Matthew
+> brought up earlier about testing the PCP list rather than buddy
+> allocator. The test module allocates, then frees over and over again,
+> making it incredibly prone to reuse the pages over and over again.
+> 
+> > BOX: AMD Milan, 256 CPUs, 512GB of memory
+> > 
+> > # default 16K alloc
+> > [   15.823704] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 955334 usec
+> > [   17.751685] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1158739 usec
+> > [   19.443759] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1016522 usec
+> > [   21.035701] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 911381 usec
+> > [   22.727688] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 987286 usec
+> > [   24.199694] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 955112 usec
+> > [   25.755675] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 926393 usec
+> > [   27.355670] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 937875 usec
+> > [   28.979671] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1006985 usec
+> > [   30.531674] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 941088 usec
+> > 
+> > # the patch 16K alloc
+> > [   44.343380] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2296849 usec
+> > [   47.171290] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2014678 usec
+> > [   50.007258] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2094184 usec
+> > [   52.651141] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1953046 usec
+> > [   55.455089] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2209423 usec
+> > [   57.943153] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1941747 usec
+> > [   60.799043] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2038504 usec
+> > [   63.299007] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1788588 usec
+> > [   65.843011] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2137055 usec
+> > [   68.647031] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2193022 usec
+> > 
+> > 2X slower.
+> > 
+> > perf-cycles, same test but on 64 CPUs:
+> > 
+> > +   97.02%     0.13%  [test_vmalloc]    [k] fix_size_alloc_test
+> > -   82.11%    82.10%  [kernel]          [k] native_queued_spin_lock_slowpath
+> >      26.19% ret_from_fork_asm
+> >         ret_from_fork
+> >       - kthread
+> >          - 25.96% test_func
+> >             - fix_size_alloc_test
+> >                - 23.49% __vmalloc_node_noprof
+> >                   - __vmalloc_node_range_noprof
+> >                      - 54.70% alloc_pages_noprof
+> >                           alloc_pages_mpol
+> >                           __alloc_frozen_pages_noprof
+> >                           get_page_from_freelist
+> >                           __rmqueue_pcplist
+> >                      - 5.58% __get_vm_area_node
+> >                           alloc_vmap_area
+> >                - 20.54% vfree.part.0
+> >                   - 20.43% __free_frozen_pages
+> >                        free_frozen_page_commit
+> >                        free_pcppages_bulk
+> >                        _raw_spin_lock_irqsave
+> >                        native_queued_spin_lock_slowpath
+> >          - 0.77% worker_thread
+> >             - process_one_work
+> >                - 0.76% vmstat_update
+> >                     refresh_cpu_vm_stats
+> >                     decay_pcp_high
+> >                     free_pcppages_bulk
+> >                     _raw_spin_lock_irqsave
+> >                     native_queued_spin_lock_slowpath
+> > +   76.57%     0.16%  [kernel]          [k] _raw_spin_lock_irqsave
+> > +   71.62%     0.00%  [kernel]          [k] __vmalloc_node_noprof
+> > +   71.61%     0.58%  [kernel]          [k] __vmalloc_node_range_noprof
+> > +   62.35%     0.06%  [kernel]          [k] alloc_pages_mpol
+> > +   62.27%     0.17%  [kernel]          [k] __alloc_frozen_pages_noprof
+> > +   62.20%     0.02%  [kernel]          [k] alloc_pages_noprof
+> > +   62.10%     0.05%  [kernel]          [k] get_page_from_freelist
+> > +   55.63%     0.19%  [kernel]          [k] __rmqueue_pcplist
+> > +   32.11%     0.00%  [kernel]          [k] ret_from_fork_asm
+> > +   32.11%     0.00%  [kernel]          [k] ret_from_fork
+> > +   32.11%     0.00%  [kernel]          [k] kthread
+> > 
+> > I would say the bottle-neck is a page-allocator. It seems high-order
+> > allocations are not good for it.
 
-Commit-ID:     1e3e330c07076a0582385bbea029c9cc918fa30d
-Gitweb:        https://git.kernel.org/tip/1e3e330c07076a0582385bbea029c9cc918=
-fa30d
-Author:        Johan Hovold <johan@kernel.org>
-AuthorDate:    Mon, 13 Oct 2025 11:46:11 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 16 Oct 2025 18:17:27 +02:00
+Ah also just took a closer look at this. I realize that you also did 16k
+allocations (which is at most order-2), so it may not be a good
+representation of high-order allocations either.
 
-irqchip: Pass platform device to platform drivers
+Plus that falls into the regression range I found that I detailed in
+response to Matthew elsewhere (I've copy pasted it here for reference)
 
-The IRQCHIP_PLATFORM_DRIVER macros can be used to convert OF irqchip
-drivers to platform drivers but currently reuse the OF init callback
-prototype that only takes OF nodes as arguments. This forces drivers to
-do reverse lookups of their struct devices during probe if they need
-them for things like dev_printk() and device managed resources.
+  I ended up finding that allocating sizes <=20k had noticeable
+  regressions, while [20k, 90k] was approximately the same, and >= 90k had
+  improvements (getting more and more noticeable as size grows in
+  magnitude).
 
-Half of the drivers doing reverse lookups also currently fail to release
-the additional reference taken during the lookup, while other drivers
-have had the reference leak plugged in various ways (e.g. using
-non-intuitive cleanup constructs which still confuse static checkers).
-
-Switch to using a probe callback that takes a platform device as its
-first argument to simplify drivers and plug the remaining (mostly
-benign) reference leaks.
-
-Fixes: 32c6c054661a ("irqchip: Add Broadcom BCM2712 MSI-X interrupt controlle=
-r")
-Fixes: 70afdab904d2 ("irqchip: Add IMX MU MSI controller driver")
-Fixes: a6199bb514d8 ("irqchip: Add Qualcomm MPM controller driver")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- drivers/irqchip/irq-bcm2712-mip.c          | 10 +-----
- drivers/irqchip/irq-bcm7038-l1.c           |  5 +--
- drivers/irqchip/irq-bcm7120-l2.c           | 20 +++---------
- drivers/irqchip/irq-brcmstb-l2.c           | 21 ++++++-------
- drivers/irqchip/irq-imx-mu-msi.c           | 24 ++++++--------
- drivers/irqchip/irq-mchp-eic.c             |  5 +--
- drivers/irqchip/irq-meson-gpio.c           |  5 +--
- drivers/irqchip/irq-qcom-mpm.c             |  6 ++--
- drivers/irqchip/irq-renesas-rzg2l.c        | 35 ++++++---------------
- drivers/irqchip/irq-renesas-rzv2h.c        | 32 +++++--------------
- drivers/irqchip/irq-starfive-jh8100-intc.c |  5 +--
- drivers/irqchip/irqchip.c                  |  6 ++--
- drivers/irqchip/qcom-pdc.c                 |  5 +--
- include/linux/irqchip.h                    |  8 ++++-
- 14 files changed, 78 insertions(+), 109 deletions(-)
-
-diff --git a/drivers/irqchip/irq-bcm2712-mip.c b/drivers/irqchip/irq-bcm2712-=
-mip.c
-index 8466646..4761974 100644
---- a/drivers/irqchip/irq-bcm2712-mip.c
-+++ b/drivers/irqchip/irq-bcm2712-mip.c
-@@ -232,16 +232,12 @@ err_put:
- 	return ret;
- }
-=20
--static int mip_of_msi_init(struct device_node *node, struct device_node *par=
-ent)
-+static int mip_msi_probe(struct platform_device *pdev, struct device_node *p=
-arent)
- {
--	struct platform_device *pdev;
-+	struct device_node *node =3D pdev->dev.of_node;
- 	struct mip_priv *mip;
- 	int ret;
-=20
--	pdev =3D of_find_device_by_node(node);
--	if (!pdev)
--		return -EPROBE_DEFER;
--
- 	mip =3D kzalloc(sizeof(*mip), GFP_KERNEL);
- 	if (!mip)
- 		return -ENOMEM;
-@@ -284,7 +280,7 @@ err_priv:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(mip_msi)
--IRQCHIP_MATCH("brcm,bcm2712-mip", mip_of_msi_init)
-+IRQCHIP_MATCH("brcm,bcm2712-mip", mip_msi_probe)
- IRQCHIP_PLATFORM_DRIVER_END(mip_msi)
- MODULE_DESCRIPTION("Broadcom BCM2712 MSI-X interrupt controller");
- MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l=
-1.c
-index eda33bd..821b288 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -394,8 +394,9 @@ static const struct irq_domain_ops bcm7038_l1_domain_ops =
-=3D {
- 	.map			=3D bcm7038_l1_map,
- };
-=20
--static int bcm7038_l1_of_init(struct device_node *dn, struct device_node *pa=
-rent)
-+static int bcm7038_l1_probe(struct platform_device *pdev, struct device_node=
- *parent)
- {
-+	struct device_node *dn =3D pdev->dev.of_node;
- 	struct bcm7038_l1_chip *intc;
- 	int idx, ret;
-=20
-@@ -453,7 +454,7 @@ out_free:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(bcm7038_l1)
--IRQCHIP_MATCH("brcm,bcm7038-l1-intc", bcm7038_l1_of_init)
-+IRQCHIP_MATCH("brcm,bcm7038-l1-intc", bcm7038_l1_probe)
- IRQCHIP_PLATFORM_DRIVER_END(bcm7038_l1)
- MODULE_DESCRIPTION("Broadcom STB 7038-style L1/L2 interrupt controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/irqchip/irq-bcm7120-l2.c b/drivers/irqchip/irq-bcm7120-l=
-2.c
-index b6c8556..518c9d4 100644
---- a/drivers/irqchip/irq-bcm7120-l2.c
-+++ b/drivers/irqchip/irq-bcm7120-l2.c
-@@ -206,14 +206,14 @@ static int bcm7120_l2_intc_iomap_3380(struct device_nod=
-e *dn, struct bcm7120_l2_
- 	return 0;
- }
-=20
--static int bcm7120_l2_intc_probe(struct device_node *dn, struct device_node =
-*parent,
-+static int bcm7120_l2_intc_probe(struct platform_device *pdev, struct device=
-_node *parent,
- 				 int (*iomap_regs_fn)(struct device_node *,
- 						      struct bcm7120_l2_intc_data *),
- 				 const char *intc_name)
- {
- 	unsigned int clr =3D IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
-+	struct device_node *dn =3D pdev->dev.of_node;
- 	struct bcm7120_l2_intc_data *data;
--	struct platform_device *pdev;
- 	struct irq_chip_generic *gc;
- 	struct irq_chip_type *ct;
- 	int ret =3D 0;
-@@ -224,14 +224,7 @@ static int bcm7120_l2_intc_probe(struct device_node *dn,=
- struct device_node *par
- 	if (!data)
- 		return -ENOMEM;
-=20
--	pdev =3D of_find_device_by_node(dn);
--	if (!pdev) {
--		ret =3D -ENODEV;
--		goto out_free_data;
--	}
--
- 	data->num_parent_irqs =3D platform_irq_count(pdev);
--	put_device(&pdev->dev);
- 	if (data->num_parent_irqs <=3D 0) {
- 		pr_err("invalid number of parent interrupts\n");
- 		ret =3D -ENOMEM;
-@@ -331,20 +324,19 @@ out_unmap:
- 		if (data->map_base[idx])
- 			iounmap(data->map_base[idx]);
- 	}
--out_free_data:
- 	kfree(data);
- 	return ret;
- }
-=20
--static int bcm7120_l2_intc_probe_7120(struct device_node *dn, struct device_=
-node *parent)
-+static int bcm7120_l2_intc_probe_7120(struct platform_device *pdev, struct d=
-evice_node *parent)
- {
--	return bcm7120_l2_intc_probe(dn, parent, bcm7120_l2_intc_iomap_7120,
-+	return bcm7120_l2_intc_probe(pdev, parent, bcm7120_l2_intc_iomap_7120,
- 				     "BCM7120 L2");
- }
-=20
--static int bcm7120_l2_intc_probe_3380(struct device_node *dn, struct device_=
-node *parent)
-+static int bcm7120_l2_intc_probe_3380(struct platform_device *pdev, struct d=
-evice_node *parent)
- {
--	return bcm7120_l2_intc_probe(dn, parent, bcm7120_l2_intc_iomap_3380,
-+	return bcm7120_l2_intc_probe(pdev, parent, bcm7120_l2_intc_iomap_3380,
- 				     "BCM3380 L2");
- }
-=20
-diff --git a/drivers/irqchip/irq-brcmstb-l2.c b/drivers/irqchip/irq-brcmstb-l=
-2.c
-index 53e67c6..bb7078d 100644
---- a/drivers/irqchip/irq-brcmstb-l2.c
-+++ b/drivers/irqchip/irq-brcmstb-l2.c
-@@ -138,11 +138,12 @@ static void brcmstb_l2_intc_resume(struct irq_data *d)
- 	irq_reg_writel(gc, ~b->saved_mask, ct->regs.enable);
- }
-=20
--static int brcmstb_l2_intc_of_init(struct device_node *np, struct device_nod=
-e *parent,
--				   const struct brcmstb_intc_init_params *init_params)
-+static int brcmstb_l2_intc_probe(struct platform_device *pdev, struct device=
-_node *parent,
-+				 const struct brcmstb_intc_init_params *init_params)
- {
- 	unsigned int clr =3D IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
- 	unsigned int set =3D 0;
-+	struct device_node *np =3D pdev->dev.of_node;
- 	struct brcmstb_l2_intc_data *data;
- 	struct irq_chip_type *ct;
- 	int ret;
-@@ -255,21 +256,21 @@ out_free:
- 	return ret;
- }
-=20
--static int brcmstb_l2_edge_intc_of_init(struct device_node *np, struct devic=
-e_node *parent)
-+static int brcmstb_l2_edge_intc_probe(struct platform_device *pdev, struct d=
-evice_node *parent)
- {
--	return brcmstb_l2_intc_of_init(np, parent, &l2_edge_intc_init);
-+	return brcmstb_l2_intc_probe(pdev, parent, &l2_edge_intc_init);
- }
-=20
--static int brcmstb_l2_lvl_intc_of_init(struct device_node *np, struct device=
-_node *parent)
-+static int brcmstb_l2_lvl_intc_probe(struct platform_device *pdev, struct de=
-vice_node *parent)
- {
--	return brcmstb_l2_intc_of_init(np, parent, &l2_lvl_intc_init);
-+	return brcmstb_l2_intc_probe(pdev, parent, &l2_lvl_intc_init);
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(brcmstb_l2)
--IRQCHIP_MATCH("brcm,l2-intc", brcmstb_l2_edge_intc_of_init)
--IRQCHIP_MATCH("brcm,hif-spi-l2-intc", brcmstb_l2_edge_intc_of_init)
--IRQCHIP_MATCH("brcm,upg-aux-aon-l2-intc", brcmstb_l2_edge_intc_of_init)
--IRQCHIP_MATCH("brcm,bcm7271-l2-intc", brcmstb_l2_lvl_intc_of_init)
-+IRQCHIP_MATCH("brcm,l2-intc", brcmstb_l2_edge_intc_probe)
-+IRQCHIP_MATCH("brcm,hif-spi-l2-intc", brcmstb_l2_edge_intc_probe)
-+IRQCHIP_MATCH("brcm,upg-aux-aon-l2-intc", brcmstb_l2_edge_intc_probe)
-+IRQCHIP_MATCH("brcm,bcm7271-l2-intc", brcmstb_l2_lvl_intc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(brcmstb_l2)
- MODULE_DESCRIPTION("Broadcom STB generic L2 interrupt controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/irqchip/irq-imx-mu-msi.c b/drivers/irqchip/irq-imx-mu-ms=
-i.c
-index 41df168..c598f2f 100644
---- a/drivers/irqchip/irq-imx-mu-msi.c
-+++ b/drivers/irqchip/irq-imx-mu-msi.c
-@@ -296,10 +296,9 @@ static const struct imx_mu_dcfg imx_mu_cfg_imx8ulp =3D {
- 		  },
- };
-=20
--static int imx_mu_of_init(struct device_node *dn, struct device_node *parent,
--			  const struct imx_mu_dcfg *cfg)
-+static int imx_mu_probe(struct platform_device *pdev, struct device_node *pa=
-rent,
-+			const struct imx_mu_dcfg *cfg)
- {
--	struct platform_device *pdev =3D of_find_device_by_node(dn);
- 	struct device_link *pd_link_a;
- 	struct device_link *pd_link_b;
- 	struct imx_mu_msi *msi_data;
-@@ -415,28 +414,27 @@ static const struct dev_pm_ops imx_mu_pm_ops =3D {
- 			   imx_mu_runtime_resume, NULL)
- };
-=20
--static int imx_mu_imx7ulp_of_init(struct device_node *dn, struct device_node=
- *parent)
-+static int imx_mu_imx7ulp_probe(struct platform_device *pdev, struct device_=
-node *parent)
- {
--	return imx_mu_of_init(dn, parent, &imx_mu_cfg_imx7ulp);
-+	return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
- }
-=20
--static int imx_mu_imx6sx_of_init(struct device_node *dn, struct device_node =
-*parent)
-+static int imx_mu_imx6sx_probe(struct platform_device *pdev, struct device_n=
-ode *parent)
- {
--	return imx_mu_of_init(dn, parent, &imx_mu_cfg_imx6sx);
-+	return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx6sx);
- }
-=20
--static int imx_mu_imx8ulp_of_init(struct device_node *dn, struct device_node=
- *parent)
-+static int imx_mu_imx8ulp_probe(struct platform_device *pdev, struct device_=
-node *parent)
- {
--	return imx_mu_of_init(dn, parent, &imx_mu_cfg_imx8ulp);
-+	return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx8ulp);
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(imx_mu_msi)
--IRQCHIP_MATCH("fsl,imx7ulp-mu-msi", imx_mu_imx7ulp_of_init)
--IRQCHIP_MATCH("fsl,imx6sx-mu-msi", imx_mu_imx6sx_of_init)
--IRQCHIP_MATCH("fsl,imx8ulp-mu-msi", imx_mu_imx8ulp_of_init)
-+IRQCHIP_MATCH("fsl,imx7ulp-mu-msi", imx_mu_imx7ulp_probe)
-+IRQCHIP_MATCH("fsl,imx6sx-mu-msi", imx_mu_imx6sx_probe)
-+IRQCHIP_MATCH("fsl,imx8ulp-mu-msi", imx_mu_imx8ulp_probe)
- IRQCHIP_PLATFORM_DRIVER_END(imx_mu_msi, .pm =3D &imx_mu_pm_ops)
-=20
--
- MODULE_AUTHOR("Frank Li <Frank.Li@nxp.com>");
- MODULE_DESCRIPTION("Freescale MU MSI controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/irqchip/irq-mchp-eic.c b/drivers/irqchip/irq-mchp-eic.c
-index 516a3a0..b513a89 100644
---- a/drivers/irqchip/irq-mchp-eic.c
-+++ b/drivers/irqchip/irq-mchp-eic.c
-@@ -199,8 +199,9 @@ static const struct irq_domain_ops mchp_eic_domain_ops =
-=3D {
- 	.free		=3D irq_domain_free_irqs_common,
- };
-=20
--static int mchp_eic_init(struct device_node *node, struct device_node *paren=
-t)
-+static int mchp_eic_probe(struct platform_device *pdev, struct device_node *=
-parent)
- {
-+	struct device_node *node =3D pdev->dev.of_node;
- 	struct irq_domain *parent_domain =3D NULL;
- 	int ret, i;
-=20
-@@ -273,7 +274,7 @@ free:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(mchp_eic)
--IRQCHIP_MATCH("microchip,sama7g5-eic", mchp_eic_init)
-+IRQCHIP_MATCH("microchip,sama7g5-eic", mchp_eic_probe)
- IRQCHIP_PLATFORM_DRIVER_END(mchp_eic)
-=20
- MODULE_DESCRIPTION("Microchip External Interrupt Controller");
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpi=
-o.c
-index 7d17762..09ebf1d 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -572,8 +572,9 @@ static int meson_gpio_irq_parse_dt(struct device_node *no=
-de, struct meson_gpio_i
- 	return 0;
- }
-=20
--static int meson_gpio_irq_of_init(struct device_node *node, struct device_no=
-de *parent)
-+static int meson_gpio_irq_probe(struct platform_device *pdev, struct device_=
-node *parent)
- {
-+	struct device_node *node =3D pdev->dev.of_node;
- 	struct irq_domain *domain, *parent_domain;
- 	struct meson_gpio_irq_controller *ctl;
- 	int ret;
-@@ -630,7 +631,7 @@ free_ctl:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(meson_gpio_intc)
--IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_of_init)
-+IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_probe)
- IRQCHIP_PLATFORM_DRIVER_END(meson_gpio_intc)
-=20
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm.c
-index 8d569f7..83f31ea 100644
---- a/drivers/irqchip/irq-qcom-mpm.c
-+++ b/drivers/irqchip/irq-qcom-mpm.c
-@@ -320,9 +320,9 @@ static bool gic_hwirq_is_mapped(struct mpm_gic_map *maps,=
- int cnt, u32 hwirq)
- 	return false;
- }
-=20
--static int qcom_mpm_init(struct device_node *np, struct device_node *parent)
-+static int qcom_mpm_probe(struct platform_device *pdev, struct device_node *=
-parent)
- {
--	struct platform_device *pdev =3D of_find_device_by_node(np);
-+	struct device_node *np =3D pdev->dev.of_node;
- 	struct device *dev =3D &pdev->dev;
- 	struct irq_domain *parent_domain;
- 	struct generic_pm_domain *genpd;
-@@ -478,7 +478,7 @@ remove_genpd:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(qcom_mpm)
--IRQCHIP_MATCH("qcom,mpm", qcom_mpm_init)
-+IRQCHIP_MATCH("qcom,mpm", qcom_mpm_probe)
- IRQCHIP_PLATFORM_DRIVER_END(qcom_mpm)
- MODULE_DESCRIPTION("Qualcomm Technologies, Inc. MSM Power Manager");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesa=
-s-rzg2l.c
-index 12b6eb1..1bf19de 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -8,7 +8,6 @@
-  */
-=20
- #include <linux/bitfield.h>
--#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
-@@ -528,18 +527,15 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2l_irq=
-c_priv *priv,
- 	return 0;
- }
-=20
--static int rzg2l_irqc_common_init(struct device_node *node, struct device_no=
-de *parent,
--				  const struct irq_chip *irq_chip)
-+static int rzg2l_irqc_common_probe(struct platform_device *pdev, struct devi=
-ce_node *parent,
-+				   const struct irq_chip *irq_chip)
- {
--	struct platform_device *pdev =3D of_find_device_by_node(node);
--	struct device *dev __free(put_device) =3D pdev ? &pdev->dev : NULL;
- 	struct irq_domain *irq_domain, *parent_domain;
-+	struct device_node *node =3D pdev->dev.of_node;
-+	struct device *dev =3D &pdev->dev;
- 	struct reset_control *resetn;
- 	int ret;
-=20
--	if (!pdev)
--		return -ENODEV;
--
- 	parent_domain =3D irq_find_host(parent);
- 	if (!parent_domain)
- 		return dev_err_probe(dev, -ENODEV, "cannot find parent domain\n");
-@@ -583,33 +579,22 @@ static int rzg2l_irqc_common_init(struct device_node *n=
-ode, struct device_node *
-=20
- 	register_syscore_ops(&rzg2l_irqc_syscore_ops);
-=20
--	/*
--	 * Prevent the cleanup function from invoking put_device by assigning
--	 * NULL to dev.
--	 *
--	 * make coccicheck will complain about missing put_device calls, but
--	 * those are false positives, as dev will be automatically "put" via
--	 * __free_put_device on the failing path.
--	 * On the successful path we don't actually want to "put" dev.
--	 */
--	dev =3D NULL;
--
- 	return 0;
- }
-=20
--static int rzg2l_irqc_init(struct device_node *node, struct device_node *par=
-ent)
-+static int rzg2l_irqc_probe(struct platform_device *pdev, struct device_node=
- *parent)
- {
--	return rzg2l_irqc_common_init(node, parent, &rzg2l_irqc_chip);
-+	return rzg2l_irqc_common_probe(pdev, parent, &rzg2l_irqc_chip);
- }
-=20
--static int rzfive_irqc_init(struct device_node *node, struct device_node *pa=
-rent)
-+static int rzfive_irqc_probe(struct platform_device *pdev, struct device_nod=
-e *parent)
- {
--	return rzg2l_irqc_common_init(node, parent, &rzfive_irqc_chip);
-+	return rzg2l_irqc_common_probe(pdev, parent, &rzfive_irqc_chip);
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzg2l_irqc)
--IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_init)
--IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_init)
-+IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_probe)
-+IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(rzg2l_irqc)
- MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
- MODULE_DESCRIPTION("Renesas RZ/G2L IRQC Driver");
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesa=
-s-rzv2h.c
-index 9018d9c..899a423 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -490,29 +490,15 @@ static int rzv2h_icu_parse_interrupts(struct rzv2h_icu_=
-priv *priv, struct device
- 	return 0;
- }
-=20
--static void rzv2h_icu_put_device(void *data)
--{
--	put_device(data);
--}
--
--static int rzv2h_icu_init_common(struct device_node *node, struct device_nod=
-e *parent,
--				 const struct rzv2h_hw_info *hw_info)
-+static int rzv2h_icu_probe_common(struct platform_device *pdev, struct devic=
-e_node *parent,
-+				  const struct rzv2h_hw_info *hw_info)
- {
- 	struct irq_domain *irq_domain, *parent_domain;
-+	struct device_node *node =3D pdev->dev.of_node;
- 	struct rzv2h_icu_priv *rzv2h_icu_data;
--	struct platform_device *pdev;
- 	struct reset_control *resetn;
- 	int ret;
-=20
--	pdev =3D of_find_device_by_node(node);
--	if (!pdev)
--		return -ENODEV;
--
--	ret =3D devm_add_action_or_reset(&pdev->dev, rzv2h_icu_put_device,
--				       &pdev->dev);
--	if (ret < 0)
--		return ret;
--
- 	parent_domain =3D irq_find_host(parent);
- 	if (!parent_domain) {
- 		dev_err(&pdev->dev, "cannot find parent domain\n");
-@@ -618,19 +604,19 @@ static const struct rzv2h_hw_info rzv2h_hw_params =3D {
- 	.field_width	=3D 8,
- };
-=20
--static int rzg3e_icu_init(struct device_node *node, struct device_node *pare=
-nt)
-+static int rzg3e_icu_probe(struct platform_device *pdev, struct device_node =
-*parent)
- {
--	return rzv2h_icu_init_common(node, parent, &rzg3e_hw_params);
-+	return rzv2h_icu_probe_common(pdev, parent, &rzg3e_hw_params);
- }
-=20
--static int rzv2h_icu_init(struct device_node *node, struct device_node *pare=
-nt)
-+static int rzv2h_icu_probe(struct platform_device *pdev, struct device_node =
-*parent)
- {
--	return rzv2h_icu_init_common(node, parent, &rzv2h_hw_params);
-+	return rzv2h_icu_probe_common(pdev, parent, &rzv2h_hw_params);
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzv2h_icu)
--IRQCHIP_MATCH("renesas,r9a09g047-icu", rzg3e_icu_init)
--IRQCHIP_MATCH("renesas,r9a09g057-icu", rzv2h_icu_init)
-+IRQCHIP_MATCH("renesas,r9a09g047-icu", rzg3e_icu_probe)
-+IRQCHIP_MATCH("renesas,r9a09g057-icu", rzv2h_icu_probe)
- IRQCHIP_PLATFORM_DRIVER_END(rzv2h_icu)
- MODULE_AUTHOR("Fabrizio Castro <fabrizio.castro.jz@renesas.com>");
- MODULE_DESCRIPTION("Renesas RZ/V2H(P) ICU Driver");
-diff --git a/drivers/irqchip/irq-starfive-jh8100-intc.c b/drivers/irqchip/irq=
--starfive-jh8100-intc.c
-index 117f2c6..705361b 100644
---- a/drivers/irqchip/irq-starfive-jh8100-intc.c
-+++ b/drivers/irqchip/irq-starfive-jh8100-intc.c
-@@ -114,8 +114,9 @@ static void starfive_intc_irq_handler(struct irq_desc *de=
-sc)
- 	chained_irq_exit(chip, desc);
- }
-=20
--static int starfive_intc_init(struct device_node *intc, struct device_node *=
-parent)
-+static int starfive_intc_probe(struct platform_device *pdev, struct device_n=
-ode *parent)
- {
-+	struct device_node *intc =3D pdev->dev.of_node;
- 	struct starfive_irq_chip *irqc;
- 	struct reset_control *rst;
- 	struct clk *clk;
-@@ -198,7 +199,7 @@ err_free:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(starfive_intc)
--IRQCHIP_MATCH("starfive,jh8100-intc", starfive_intc_init)
-+IRQCHIP_MATCH("starfive,jh8100-intc", starfive_intc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(starfive_intc)
-=20
- MODULE_DESCRIPTION("StarFive JH8100 External Interrupt Controller");
-diff --git a/drivers/irqchip/irqchip.c b/drivers/irqchip/irqchip.c
-index 652d20d..689c8e4 100644
---- a/drivers/irqchip/irqchip.c
-+++ b/drivers/irqchip/irqchip.c
-@@ -36,9 +36,9 @@ int platform_irqchip_probe(struct platform_device *pdev)
- {
- 	struct device_node *np =3D pdev->dev.of_node;
- 	struct device_node *par_np __free(device_node) =3D of_irq_find_parent(np);
--	of_irq_init_cb_t irq_init_cb =3D of_device_get_match_data(&pdev->dev);
-+	platform_irq_probe_t irq_probe =3D of_device_get_match_data(&pdev->dev);
-=20
--	if (!irq_init_cb)
-+	if (!irq_probe)
- 		return -EINVAL;
-=20
- 	if (par_np =3D=3D np)
-@@ -55,6 +55,6 @@ int platform_irqchip_probe(struct platform_device *pdev)
- 	if (par_np && !irq_find_matching_host(par_np, DOMAIN_BUS_ANY))
- 		return -EPROBE_DEFER;
-=20
--	return irq_init_cb(np, par_np);
-+	return irq_probe(pdev, par_np);
- }
- EXPORT_SYMBOL_GPL(platform_irqchip_probe);
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index 52d7754..518f7f0 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -350,9 +350,10 @@ static int pdc_setup_pin_mapping(struct device_node *np)
-=20
- #define QCOM_PDC_SIZE 0x30000
-=20
--static int qcom_pdc_init(struct device_node *node, struct device_node *paren=
-t)
-+static int qcom_pdc_probe(struct platform_device *pdev, struct device_node *=
-parent)
- {
- 	struct irq_domain *parent_domain, *pdc_domain;
-+	struct device_node *node =3D pdev->dev.of_node;
- 	resource_size_t res_size;
- 	struct resource res;
- 	int ret;
-@@ -428,7 +429,7 @@ fail:
- }
-=20
- IRQCHIP_PLATFORM_DRIVER_BEGIN(qcom_pdc)
--IRQCHIP_MATCH("qcom,pdc", qcom_pdc_init)
-+IRQCHIP_MATCH("qcom,pdc", qcom_pdc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(qcom_pdc)
- MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Power Domain Controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/irqchip.h b/include/linux/irqchip.h
-index d5e6024..bc4ddac 100644
---- a/include/linux/irqchip.h
-+++ b/include/linux/irqchip.h
-@@ -17,12 +17,18 @@
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-=20
-+typedef int (*platform_irq_probe_t)(struct platform_device *, struct device_=
-node *);
-+
- /* Undefined on purpose */
- extern of_irq_init_cb_t typecheck_irq_init_cb;
-+extern platform_irq_probe_t typecheck_irq_probe;
-=20
- #define typecheck_irq_init_cb(fn)					\
- 	(__typecheck(typecheck_irq_init_cb, &fn) ? fn : fn)
-=20
-+#define typecheck_irq_probe(fn)						\
-+	(__typecheck(typecheck_irq_probe, &fn) ? fn : fn)
-+
- /*
-  * This macro must be used by the different irqchip drivers to declare
-  * the association between their DT compatible string and their
-@@ -42,7 +48,7 @@ extern int platform_irqchip_probe(struct platform_device *p=
-dev);
- static const struct of_device_id drv_name##_irqchip_match_table[] =3D {
-=20
- #define IRQCHIP_MATCH(compat, fn) { .compatible =3D compat,		\
--				    .data =3D typecheck_irq_init_cb(fn), },
-+				    .data =3D typecheck_irq_probe(fn), },
-=20
-=20
- #define IRQCHIP_PLATFORM_DRIVER_END(drv_name, ...)			\
+> > --
+> > Uladzislau Rezki
 
