@@ -1,193 +1,346 @@
-Return-Path: <linux-kernel+bounces-856602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A4EBE4959
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A61BE4968
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57A6A4ECD71
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:28:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1CBB4E2AE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B174232D0E1;
-	Thu, 16 Oct 2025 16:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6A7329C4B;
+	Thu, 16 Oct 2025 16:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JMdcuIVE"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HYp7bRQq"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2383D23EAAC
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA2532D0C3
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632116; cv=none; b=K3oSLOx4eNm7D+PuiR/5o5Zy0YlnOt+w1IPqJOYYwglRpUO6aEne0F3QgmpGA+ZMpr22AIkzS2VLU2mM9EQHqc35oGue/WXlJqeS6qy1MQ0MX4q7ZjifgigiHiHzorjN0Imstg0/KTfPizeUN12onUFhvUhMueOQCEQb+b1ie1o=
+	t=1760632143; cv=none; b=TLt4DkDp7FtOeiAatVyNY6I32uFAzBbll2ghQepzqwc9hDFYs2e8RBEkH8BR11T2hzkENIUUq2QlDUjHtbpZJ4QhE9Y3/Z1bSR3wdbJpzuBIRx+4aF6XUyTP/ITcWnNNt00PM3LjCsUDdlMJEDpTCqzS/lZTQNGl9j/cSSsY2js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632116; c=relaxed/simple;
-	bh=FjVpoWGv6GPVJRB9yeW4QLEHb8pWvSjkcJMfHKRVAdQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DRT6zzS0qNjvYWOh4tiQCi3J3uADKFnbyvJkQ6hQy4cVytevisd6gQmUg4v8efoYsdd8QaDu/Do31a4j0RGaSoELJG/WsHYpYy6jpE4/Exw8XMjs052WjKLdk15KOD4xReDvG2MpxbkYkHcXGMZmugHFN8dVQoaAYMNGXmHQFK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JMdcuIVE; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-426c4d733c4so509473f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760632112; x=1761236912; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZctlYZjcVfC1+MlR0sp+XM0r7q1XTeaaRhcJmr7aR4=;
-        b=JMdcuIVEaBluvev5sUmUK6v8SJUqydYTX/mvFjsyUnIcCxAAIy53bx1azQKqwmhbcP
-         EpMj8nLrGWD6EbojQ+iWHTGgadXuD9o4GjJkUXMgigFhiXshgOYrpytxn2QrpUIwElNX
-         V7OE/7ceuHKKPiEMxl8P2629NNJhz2iT0I579liYUmQXFmctCZoDRHHcRNO9KaQynih+
-         t6Alr+cw2k7QkfJ4A+weDgZHxUGJhmCroz7n9p1pSLLK/D2OOKlTbCwVpFLze6oiDqGA
-         VU+y665jl2i2Q7UrDgbCO8yU/DgdFV4r0gMfkcmHyZHoPwTAV6xmVZMHvkFU7pvURSjS
-         WYtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760632112; x=1761236912;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZctlYZjcVfC1+MlR0sp+XM0r7q1XTeaaRhcJmr7aR4=;
-        b=F3TnLfgOw4Cr9G5oRtZMEeziZky0ryW8S9DfJBFaSmYSupIOlZCmF8uRFhVal32z06
-         kTz01Fe5na2KJ0OTdqCFN4SxXfdr37Tpp4DgmhDijESPijsH+yA0xBctyicpMXyOVhaP
-         kDRmNoCTnLTwG+Dj66J3ltz1w8FPg7wN5W/IkZD83ZM8ENnnPmWQ/PT5uJFXSPao11LO
-         hf+c49jZNUM8bIc76niVBRmeTMxSh1wVDdFrpWIvVQNBiA9oWBhtZVJ+ZtUunJXP+duu
-         z6w/vrg9HksqaLQJ193pu1aJxE+6FhoTk1hOkQWhQgTwXG58Xv+oqXfjgTsvZ27VpG67
-         zsOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSZ5o0s1HisFfnk6gNhx8gT3P/0v3Q2D7Pi7Ypz+eiuOLphcEoZACTfobpWvVdyRrcA0t7Yv3Ex9ARbDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLv2k3MPPDra2VEv5ffqUdloMu66JQQmsd38IsWKV8RXGtQrRp
-	T8+NH4FRZ2JGqlnWTdu3Vv1Rtfb6TTiAtXfIavYlY4HJXVN8xfhOIHbdoDabBdMmn/KBxH6giVu
-	hjCRosDHPLKiyDA==
-X-Google-Smtp-Source: AGHT+IEkgxIfttf92pExoYBo7KohqBzXHMskcIxmLZcWhPYU1oVTgvunhusq1ktj9gTY8Us7Cr+te5yOCiK3Ng==
-X-Received: from wmgg6.prod.google.com ([2002:a05:600d:6:b0:46f:aafc:e6d4])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:22c6:b0:3ff:d5c5:6b0d with SMTP id ffacd0b85a97d-42704d497eemr516676f8f.4.1760632112484;
- Thu, 16 Oct 2025 09:28:32 -0700 (PDT)
-Date: Thu, 16 Oct 2025 16:28:31 +0000
-In-Reply-To: <aPEULoJUUadbb3nn@google.com>
+	s=arc-20240116; t=1760632143; c=relaxed/simple;
+	bh=xgMFpX0BIR71woe8YX+WiPVTs5+kjfm7dtexZcSeKyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjwZotZsY/YvT1bpCgrAuS6m4dup7IM2Zg3fSfkLNubE27dzfqgfH0AyQgHwyb2Z+1cYIvV06PQ1Mw+7ZOCgl4j0GUnc2dx3hLVF9AdkJ8nwU/IS3Y68mqheDBQE6ak34hlvvthU8j7MZFghZ2Px8/hZbb/tFd0z33udD7j6qzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HYp7bRQq; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 17 Oct 2025 00:28:44 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760632130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JaY5CRwC1HDMrpy1hbuqwe1wcgpHaPLBrHN6I1Y50c0=;
+	b=HYp7bRQqtDFWeu3yVM3XWlInEmEc/MQSAMB67KgioiZ1DGeAjWwHBAPqpeZSo6pO1UU6US
+	ViEfjnu88V8U2ZHseODn8LtignIFFVvHS4D59OfWy7IjSQEweTHGjyYyn5idsgO0fLMQVE
+	zNsNXKgS6HqsBHBN85mb+d5eP8Md9+Q=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dawei Li <dawei.li@linux.dev>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, set_pte_at@outlook.com,
+	dawei.li@linux.dev
+Subject: Re: [PATCH v5 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Message-ID: <20251016162844.GA2725@wendao-VirtualBox>
+References: <20251015151718.3927-1-dawei.li@linux.dev>
+ <aPEP9EdZ8tIAVwyE@p14s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com> <aPEULoJUUadbb3nn@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDJVZU914RVD.1HXRX01BELY4L@google.com>
-Subject: Re: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Brendan Jackman <jackmanb@google.com>
-To: Sean Christopherson <seanjc@google.com>, Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>, 
-	<kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPEP9EdZ8tIAVwyE@p14s>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu Oct 16, 2025 at 3:50 PM UTC, Sean Christopherson wrote:
-> On Wed, Oct 15, 2025, Brendan Jackman wrote:
->> Currently the tracking of the need to flush L1D for L1TF is tracked by
->> two bits: one per-CPU and one per-vCPU.
->> 
->> The per-vCPU bit is always set when the vCPU shows up on a core, so
->> there is no interesting state that's truly per-vCPU. Indeed, this is a
->> requirement, since L1D is a part of the physical CPU.
->> 
->> So simplify this by combining the two bits.
->> 
->> The vCPU bit was being written from preemption-enabled regions. For
->> those cases, use raw_cpu_write() (via a variant of the setter function)
->> to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
->> CPU that gets its bit set in these paths is not important; vcpu_load()
->> must always set it on the destination CPU before the guest is resumed.
->> 
->> Signed-off-by: Brendan Jackman <jackmanb@google.com>
->> ---
->
-> ...
->
->> @@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
->>  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
->>  }
->>  
->> +static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
->> +{
->> +	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
->> +}
->
-> TL;DR: I'll post a v3 with a slightly tweaked version of this patch at the end.
->
-> Rather than add a "raw" variant, I would rather have a wrapper in arch/x86/kvm/x86.h
-> that disables preemption, with a comment explaining why it's ok to enable preemption
-> after setting the per-CPU flag.  Without such a comment, choosing between the two
-> variants looks entirely random
->
-> Alternatively, all writes could be raw, but that
-> feels wrong/weird, and in practice disabling preemption in the relevant paths is a
-> complete non-issue.
+Hi, Mathieu, 
 
-Hm, why does making every write _raw feel weird but adding
-preempt_disable() to every write doesn't? Both feel equally weird to me.
-But the latter has the additional weirdness of using preempt_disable()
-as a way to signal "I know what I'm doing", when that signal is already
-explicitly documented as the purpose of raw_cpu_write().
+On Thu, Oct 16, 2025 at 09:32:04AM -0600, Mathieu Poirier wrote:
+> I have applied this set.
+> 
+> Thanks,
+> Mathieu
 
-> <me rummages around>
->
-> Gah, I followed a tangential thought about the "cost" of disabling/enabling preemtion
-> and ended up with a 4-patch series.  All of this code really should be conditioned
-> on CONFIG_CPU_MITIGATIONS=y.  With that, the wrapper can be:
->
-> static __always_inline void kvm_request_l1tf_flush_l1d(void)
-> {
-> #if IS_ENABLED(CONFIG_CPU_MITIGATIONS) && IS_ENABLED(CONFIG_KVM_INTEL)
-> 	/*
-> 	 * Temporarily disable preemption (if necessary) as the tracking is
-> 	 * per-CPU.  If the current vCPU task is migrated to a different CPU
-> 	 * before the next VM-Entry, then kvm_arch_vcpu_load() will pend a
-> 	 * flush on the new CPU.
-> 	 */
-> 	guard(preempt)();
-> 	kvm_set_cpu_l1tf_flush_l1d();
-> #endif
-> }
+It seems that it is v4 being applied? [1]
 
-Having a nice place to hang the comment definitely seems worthwhile, but
-couldn't we just put it in the _raw varant?
+The only difference between v4 and v5 is commit message, though.
 
-> and kvm_set_cpu_l1tf_flush_l1d() and irq_cpustat_t.kvm_cpu_l1tf_flush_l1d can
-> likewise be gated on CONFIG_CPU_MITIGATIONS && CONFIG_KVM_INTEL.
->
->
->> +
->>  static __always_inline void kvm_clear_cpu_l1tf_flush_l1d(void)
->>  {
->>  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 0);
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index 48598d017d6f3f07263a2ffffe670be2658eb9cb..fcdc65ab13d8383018577aacf19e832e6c4ceb0b 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -1055,9 +1055,6 @@ struct kvm_vcpu_arch {
->>  	/* be preempted when it's in kernel-mode(cpl=0) */
->>  	bool preempted_in_kernel;
->>  
->> -	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
->> -	bool l1tf_flush_l1d;
->> -
->>  	/* Host CPU on which VM-entry was most recently attempted */
->>  	int last_vmentry_cpu;
->>  
->> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
->> index 667d66cf76d5e52c22f9517914307244ae868eea..8c0dce401a42d977756ca82d249bb33c858b9c9f 100644
->> --- a/arch/x86/kvm/mmu/mmu.c
->> +++ b/arch/x86/kvm/mmu/mmu.c
->> @@ -4859,7 +4859,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
->>  	 */
->>  	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
->>  
->> -	vcpu->arch.l1tf_flush_l1d = true;
->> +	kvm_set_cpu_l1tf_flush_l1d();
->
-> This is wrong, kvm_handle_page_fault() runs with preemption enabled.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/commit/?h=rpmsg-next&id=00af63201cbb7903e5deb2a9fdebd97f979492e5
 
-Ah, thanks.
+> 
+> On Wed, Oct 15, 2025 at 11:17:15PM +0800, Dawei Li wrote:
+> > Hi,
+> > 
+> > This is V5 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+> > for rpmsg subsystem.
+> > 
+> > Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> > abstracted in procedures below:
+> > - fd = open("/dev/rpmsg_ctrlX")
+> > - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+> >   generated.
+> > - fd_ep = open("/dev/rpmsgY", O_RDWR)
+> > - operations on fd_ep(write, read, poll ioctl)
+> > - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> > - close(fd_ep)
+> > - close(fd)
+> > 
+> > This /dev/rpmsgY abstraction is less favorable for:
+> > - Performance issue: It's time consuming for some operations are
+> > involved:
+> >   - Device node creation.
+> >     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+> >     overhead is based on coordination between DEVTMPFS and userspace
+> >     tools such as udev and mdev.
+> >   - Extra kernel-userspace switch cost.
+> >   - Other major costs brought by heavy-weight logic like device_add().
+> > 
+> > - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+> >     that a dynamically created device node can be opened only once.
+> > 
+> > - For some container application such as docker, a client can't access
+> >   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+> >   is generated dynamically and whose existence is unknown for clients in
+> >   advance, this uAPI based on device node doesn't fit well.
+> > 
+> > An anonymous inode based approach is introduced to address the issues
+> > above. Rather than generating device node and opening it, rpmsg code just
+> > creates an anonymous inode representing eptdev and return the fd to
+> > userspace.
+> > 
+> > Performance demo
+> > 
+> > A simple C application is tested to verify performance of new uAPI.
+> > Please be noted that all '#' in code are preceded with space to suppress
+> > checkpatch complaints.
+> > 
+> > $ cat test.c
+> > 
+> >  #include <linux/rpmsg.h>
+> > 
+> >  #include <sys/types.h>
+> >  #include <sys/stat.h>
+> >  #include <sys/ioctl.h>
+> >  #include <fcntl.h>
+> >  #include <string.h>
+> >  #include <stdio.h>
+> >  #include <unistd.h>
+> >  #include <stdlib.h>
+> >  #include <errno.h>
+> >  #include <sys/time.h>
+> > 
+> >  #define N (1 << 20)
+> > 
+> > int main(int argc, char *argv[])
+> > {
+> > 	int ret, fd, ep_fd, loop;
+> > 	struct rpmsg_endpoint_info info;
+> > 	struct rpmsg_endpoint_fd_info fd_info;
+> > 	struct timeval start, end;
+> > 	int i = 0;
+> > 	double t1, t2;
+> > 
+> > 	fd = -1;
+> > 	ep_fd = -1;
+> > 	loop = N;
+> > 
+> > 	if (argc == 1) {
+> > 		loop = N;
+> > 	} else if (argc > 1) {
+> > 		loop = atoi(argv[1]);
+> > 	}
+> > 
+> > 	printf("loop[%d]\n", loop);
+> > 
+> > 	strcpy(info.name, "epx");
+> > 	info.src = -1;
+> > 	info.dst = -1;
+> > 
+> > 	strcpy(fd_info.name, "epx");
+> > 	fd_info.src = -1;
+> > 	fd_info.dst = -1;
+> > 	fd_info.fd = -1;
+> > 
+> > 	while (fd < 0) {
+> > 		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+> > 		if (fd < 0) {
+> > 			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+> > 		}
+> > 	}
+> > 
+> > 	gettimeofday(&start, NULL);
+> > 
+> > 	while (loop--) {
+> > 		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+> > 		if (ret < 0) {
+> > 			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed,
+> > 			ret[%d]\n", ret);
+> > 		}
+> > 
+> > 		ep_fd = -1;
+> > 		i = 0;
+> > 
+> > 		while (ep_fd < 0) {
+> > 			ep_fd = open("/dev/rpmsg0", O_RDWR);
+> > 			if (ep_fd < 0) {
+> > 				i++;
+> > 				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+> > 			}
+> > 		}
+> > 
+> > 		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> > 		if (ret < 0) {
+> > 			printf("old RPMSG_DESTROY_EPT_IOCTL failed, ret[%d], errno[%d]\n",
+> > 			ret, errno);
+> > 		}
+> > 
+> > 		close(ep_fd);
+> > 	}
+> > 	
+> > 	gettimeofday(&end, NULL);
+> > 
+> > 	printf("time for old way: [%ld] us\n",
+> > 		1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> > 	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> > 
+> > 	if (argc == 1) {
+> > 		loop = N;
+> > 	} else if (argc > 1) {
+> > 		loop = atoi(argv[1]);
+> > 	}
+> > 
+> > 	printf("loop[%d]\n", loop);
+> > 
+> > 	gettimeofday(&start, NULL);
+> > 
+> > 	while (loop--) {
+> > 		fd_info.fd = -1;
+> > 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+> > 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+> > 		if (ret < 0 || fd_info.fd < 0) {
+> > 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+> > 		}
+> > 
+> > 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> > 		if (ret < 0) {
+> > 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+> > 		}
+> > 
+> > 		close(fd_info.fd);
+> > 	}
+> > 	
+> > 	gettimeofday(&end, NULL);
+> > 
+> > 	printf("time for new way: [%ld] us\n",
+> > 	1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> > 	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> > 
+> > 	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+> > 
+> > 	close(fd);
+> > }
+> > 
+> > Performance benchmark
+> > 
+> > - Legacy means benchmark based on old uAPI
+> > - New means benchmark based on new uAPI(the one this series introduce)
+> > - Time are in units of us(10^-6 s)
+> > 
+> > Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+> > 1	1000	148362			1153		128.674761	
+> > 2	1000	145640			1121		129.919715	
+> > 3	1000	145303			1174		123.767462	
+> > 4	1000	150294			1142		131.605954	
+> > 5	1000	160877			1175		136.916596	
+> > 6	1000	154400			1134		136.155203	
+> > 7	1000	143252			1163		123.174549	
+> > 8	1000	148758			1161		128.129199
+> > 9	1000	149044			1112		134.032374
+> > 10	1000	146895			1192		123.234060
+> > 11	10000	1428967			11627		122.900748
+> > 12	10000	1367015			10557		129.488965
+> > 13	10000	1371919			11663		117.630027
+> > 14	10000	1358447			11080		122.603520
+> > 15	10000	1375463			11245		122.317741
+> > 16	10000	1364901			11153		122.379718
+> > 17	10000	1352665			10735		126.005123
+> > 18	10000	1400873			11341		123.522882
+> > 19	10000	1391276			10892		127.733750
+> > 20	10000	1394367			11110		125.505581
+> > 21	100000	14069671		115569		121.742604
+> > 22	100000	13663364		117074		116.707074
+> > 23	100000	13735740		115638		118.782234
+> > 24	100000	13714441		119362		114.897882
+> > 25	100000	13904366		118282		117.552679
+> > 26	100000	13870560		117717		117.829710
+> > 27	100000	13713605		118312		115.910516
+> > 28	100000	13872852		114347		121.322396
+> > 29	100000	13777964		119072		115.711200
+> > 30	100000	13725654		116296		118.023440
+> > 
+> > Changelog:
+> > 
+> > Changes in v5:
+> > - Rebased on v6.18.rc1.
+> > - Fix checkpatch warning on commit msg on patch[1/3].
+> > - Other minor commit msg tweaks.
+> > - Update performance testing results.
+> > - Link to v4:
+> >   https://lore.kernel.org/all/20250609151531.22621-1-dawei.li@linux.dev/
+> > 
+> > Changes in v4:
+> > - Build warning of copy_to_user (Dan).
+> > - ioctl() branches reorder (Beleswar).
+> > - Remove local variable fd and pass &ept_fd_info.fd to
+> >   rpmsg_anonymous_eptdev_create().
+> > - Link to v3:
+> >   https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/
+> > 
+> > Changes in v3:
+> > - s/anon/anonymous (Mathieu)
+> > - API naming adjustment (Mathieu)
+> >   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+> >   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+> > - Add parameter 'flags' to uAPI so user can specify file flags
+> >   explicitly on creating anonymous inode.
+> > - Link to v2:
+> >   https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/
+> > 
+> > Changes in v2:
+> > - Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+> > - Link to v1:
+> >   https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+> > 
+> > Dawei Li (3):
+> >   rpmsg: char: Reuse eptdev logic for anonymous device
+> >   rpmsg: char: Implement eptdev based on anonymous inode
+> >   rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+> > 
+> >  drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
+> >  drivers/rpmsg/rpmsg_char.h |  23 +++++++
+> >  drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
+> >  include/uapi/linux/rpmsg.h |  27 +++++++-
+> >  4 files changed, 182 insertions(+), 32 deletions(-)
+> > 
+> > ---
+> > 
+> > Thanks,
+> > 
+> > 	Dawei
+> > 
+> > -- 
+> > 2.25.1
+> > 
+
+Thanks,
+
+	Dawei
 
