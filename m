@@ -1,209 +1,185 @@
-Return-Path: <linux-kernel+bounces-857005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BD7BE5A1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:01:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBEF1BE5A2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F341A4F98C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:01:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4233E3562B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7132E5B1B;
-	Thu, 16 Oct 2025 22:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2752D9EC9;
+	Thu, 16 Oct 2025 22:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="HdWq+6GC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OePscQGj"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IH0iahE7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671972DFA48;
-	Thu, 16 Oct 2025 22:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F058428CF49
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760652107; cv=none; b=OmMYFBuur1+dPH6BWoy+40QHJ9UQwC4EqPAYn/CqmQffcxuNwwY+CfoqnJ05+0edJ9ajh09c8rQuAwV8847rlhhcKitsCkr7fdAl+O5MPD7weIPMaQq63ps9Lovr6FfVtrRDRReaNci1kTQdYIqzwde2umu2UXSRcfaDniC1s30=
+	t=1760652226; cv=none; b=i/wb7diEPH6+r6hRrY/9rk2u7OYeYQt2WES5NjlApVDhQjGPen57mBcEOGtJpBEcaWb56Br8XzxHJrjifR46EiyM80Cq5AIHvaUIxRETnI67uDH0yUnLgCs1uKQuZFCgZGzOZGdjFgJz2zhBUi4WamphrabgcMx678u54/ZJfcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760652107; c=relaxed/simple;
-	bh=TVWwG6C+CUNW26rEtsWK44upOeWoXwozc5BcwDmIdi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gsJ0Pv2gBV+HtequsI3wWrtfocCQtvWnM6BIjCmxlcFy98hfNbUn1TH+3oLNLTSNGjQRxJkaDbv3n4YkCNQmf35DCUZJgCgvbuI3W2RzTxhk2nTU8RJTgqRKNQBgMeHhhSJrOUghs9SY4ZtGYZaTHnZ6uhkOmqF1+58Wza8ZED8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=HdWq+6GC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OePscQGj; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id 475D01D0005C;
-	Thu, 16 Oct 2025 18:01:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Thu, 16 Oct 2025 18:01:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1760652103;
-	 x=1760738503; bh=4uiZ9WYAYVcK3QbHeOV3S54ojJ1TPQb+P5ityLpARDg=; b=
-	HdWq+6GCq9H67XQMbIbLF5/1scrM5vp/Hiw1hV+BA48b58c/XMicdB1iyEDaEGzH
-	i9j8gFN7CXYBuKjIssvexGD8BEykh9AwlpCCB3sgcN3b9P3RmAp9D7Pgbs4wmOxV
-	/7x8KUD6v4p13DxE0khZECHIbbEuXmSlwaiceGWCeNDOEz5ztU0NrT2o/XaZCt5N
-	ZeNu5KatsNxnVoMrn/kfdP/lQCJe+Yf9wL6hcPzvVgQL6Yeyp6j9GtlUGDkx+OEV
-	foyqb4u9UU/99N2NmeAuS3juQovtsCegRLMIH071ovKIp4iba7B4WEGVj6zSEAJg
-	Ty3MJtmZgudeJhSymEARTg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760652103; x=
-	1760738503; bh=4uiZ9WYAYVcK3QbHeOV3S54ojJ1TPQb+P5ityLpARDg=; b=O
-	ePscQGjKn4KSW0Xwfq7TiJvTWhKsSRPCq9+ljfbXgRDFaVxmZ8vCEUyX1vljm7m5
-	Xz3PAEPul9uLO5akq1QRK4gLrf4To3UjBbFHGNfM1GbKh08xULJsHfJdhuwR1aOA
-	eK5wWYwmfSbtXb7ZisqWTEAjOEDSLaHE5E5e2QiVPY44hcHUvtBYXHg0gVpuP9pP
-	AUgvudpIA5DrKwbQas6yy+biFT9KBZN6ykg86Wd1oYZfZJ3j9SZgOCbDZdjwfiLz
-	IlLl1GQngGNz8t6EwA5aXk57pG5JJ5O0efxJIXq/WLioma6jXS8zA5PaxIMJoHlQ
-	Fs9iXW1kUZtZHcMzllbbQ==
-X-ME-Sender: <xms:RmvxaJoRPgEYtxAUfuPa38vNIY-liYkpPtFjT_bZ62DX7C-i92yzig>
-    <xme:RmvxaNIE15aacbJff0A4yCm1Ntf-74ccEW-r4ni9hqkVmrD8pN0kdzQcaDOb0leV-
-    VGBp-ugKOVe0CKpwqnWFlLoYNMOCkFNOUHch0KPwegFHR-oV_Xx6Q>
-X-ME-Received: <xmr:RmvxaGR2jyr1wD0Tn11MMgWIOx8Vn8qsRL7oMskPR737a_8m-yB27D8l5TI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdejgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucgh
-    ihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrth
-    htvghrnhepteehueetledtveduueffvefgieegieeuueekvdehtdekvdejgfeihfekuedt
-    kedvnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhgvgiesshhhrgiisghothdrohhrghdp
-    nhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghmrg
-    hsthhrohesfhgsrdgtohhmpdhrtghpthhtoheprghlvghjrghnughrohdrjhdrjhhimhgv
-    nhgviiesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepjhhgghesiihivghpvgdrtggrpd
-    hrtghpthhtohepkhhvmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:RmvxaEuan-PAOT7V8cd9HGCb5rEVLIf_oPFVrCD6fAqg-uSmDQIGog>
-    <xmx:RmvxaPZb8exl43z7Wr3Wae5nJhwvctlr8MKOOpa6vJcqTrW1g-ts-g>
-    <xmx:RmvxaCFtnM1jYQfIDRyQKMHMH3ZUIyStOX3EMVIQTLFES9FCxWNhsw>
-    <xmx:RmvxaLx31ZYtZOAXf0y-QDHFR_6pI8_pKlJN6Hj_Xd0xpVsfs7tDYw>
-    <xmx:R2vxaJ-7XQrNDyXOr0peLgeW8gEALGNtEZPTMRvO85eEIy-B25zRJWZp>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Oct 2025 18:01:41 -0400 (EDT)
-Date: Thu, 16 Oct 2025 16:01:38 -0600
-From: Alex Williamson <alex@shazbot.org>
-To: Alex Mastro <amastro@fb.com>
-Cc: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <20251016160138.374c8cfb@shazbot.org>
-In-Reply-To: <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
-	<20251015132452.321477fa@shazbot.org>
-	<3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
-	<aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
+	s=arc-20240116; t=1760652226; c=relaxed/simple;
+	bh=REPaXfEEwHSvCPYQv1YOGPYDOJ36+iQWTap+y51gNTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gt85vaejFh/Bn0IhrUjOEOR5/4GH0XA5gC5xuCdTuvrlagIVzC9SFJ3mF3NEcoSh2lVkLwoRNCUCKcpZw/0jT8G8fLvMnHC30WSWrCRjRov3479SkfWk2Z5CS1eyo7tpE9ESDoMwMpf+KnPnMM2jYQ4vUHFHuExHKyu8Ec98y+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IH0iahE7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLM6f028584
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:03:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Hy4oakQHnBC57FbFZ/RDt9wr7jDjpQ0QoQIdKdfku5U=; b=IH0iahE7zd2RU9FH
+	JXT25DKQ7oALJmhqpYYPRCgzdpYiII/8oI5R13Pmh0CwELM8OgWJTiPmuB/nRdTr
+	mzndNtjqiZN4Qv6J35QAz+fKkjwazsct5nOm/pQvYphZXvZWgapz2h1NpcHdS53r
+	QzJTNFcIvT6TNuL/hL9wMbpR/pOR6rL4bKYlxzHQi+0L8PMrQ9m/roiEWqL0HpMj
+	Fgff+auIbwHmEjeJnO/gPcjRThy2p7U1eyFW2KiYzDRKMmndZ4Y0sVupo+jOPZKs
+	6nImmyVCwwSSGdTEFELP/Umlho13ihak7j8bycaXIAJYyr/EYnnjIC/ihgHEgDAc
+	O9gCsA==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49u1h0sjem-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:03:44 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b55443b4114so831295a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:03:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760652223; x=1761257023;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hy4oakQHnBC57FbFZ/RDt9wr7jDjpQ0QoQIdKdfku5U=;
+        b=oZ2b7uvyCht15o5JEcYdjq4OTSB8JbOJINCKUyHA2BWPVN9qJ50SzumBVCJuNomBf6
+         BFEjUArNd5pceJmOQPqDcmo68jnXIWyjSklz2Ju+bYY1kaIIqQymI+lRw0YMU0T1C7G1
+         330cKzgX9drPtUvdH8cvm6LfFg4MQLgHOxCPLlYejHCpNELeo0sNLAKlHwDfCwHc7dvQ
+         kxEiAJiZ1eFRDiEAYj8jyACUqrewR+0EJEX0OZTuFNEQih84hdrwSyjG4Vv/kGpFFfuL
+         f51ED3SUgwCQFzqnk+fa3nFiFit1f5LBDj0+k71HJCKFH6ZVRQ8i+PNV1Zs8mxoKUcZu
+         PPNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgcFWntM90sLCcyVrbKUU+6shDSLaDo8QFtyExGKLbBnrHoGprhsD1bnzGszAeyynrU8znjbSy53RvIvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFLbB/7iLZaq9nSCO1vLMb4OqTgW88YhhzMlyxo1FdzOiJzSIK
+	0DXe6wgCzkrLPBpjwFoY50OuHUApx5rLefoil6bQGdxbYo3pVgs9fi0JuqlIKHZ+YAdQGnGPWgm
+	UFsFPyy+8Y1ME7ZnMjnWuwt3G5avXZeSy+RHRQMZqSZyhpV2Z2kX6kSpRumgCgP3VGNI=
+X-Gm-Gg: ASbGncuh3ra1KYRWTEa67MfEknrraiRYehDwu1R2+B/2wC4u6f8EJ5q5X4WNQxSJKf0
+	Tv+5wSZ1CM9xEBQiziZOf6cf76ol8waLX1nEg/xaIxcIICYaB95ExouJdbKhAOpQ4kSfyl9bNKO
+	8eJWnUL5OTNz65pXz/EZ4ARq5ZviMpqvhxpSPGAUesu3B6gfVIVW8jeNhunCTrMLWQhUbtO3LtD
+	+k/AjmZ4R17oBG8wpeQE8CefRzLjy9TB+jPyOlnKpNMPcqchKtaXez0MKoKFuN0i/g/jPu4ZeLL
+	tZW43DyYT0AEm7Ve22iTBa3an/KA7Vq50m7xzvOflZmoA1dHUN/jsv/KJlSBx7hLd6GQYsKHmxo
+	rxpwWF5kO5CrmxZAmOLdVmzS8X41YqjmkCMPSRHHxQGi/O89h8G8R9Q==
+X-Received: by 2002:a17:902:e841:b0:290:c902:759 with SMTP id d9443c01a7336-290ccab6c0amr11702695ad.51.1760652223247;
+        Thu, 16 Oct 2025 15:03:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdlNyditaaAKOFd3CyrSvZAeteR0a/ircCtUxjXi9qCn2mN27imlOzHsdxn+P/3lQNSL8XVg==
+X-Received: by 2002:a17:902:e841:b0:290:c902:759 with SMTP id d9443c01a7336-290ccab6c0amr11702295ad.51.1760652222695;
+        Thu, 16 Oct 2025 15:03:42 -0700 (PDT)
+Received: from [10.62.37.19] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909934b0b5sm41340775ad.38.2025.10.16.15.03.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 15:03:42 -0700 (PDT)
+Message-ID: <1d300d0f-97c7-4538-9b14-4216f8762a1e@oss.qualcomm.com>
+Date: Thu, 16 Oct 2025 15:03:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] media: qcom: camss: csid: Add support for CSID
+ 1080
+To: Bryan O'Donoghue <bod@kernel.org>,
+        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251014-add-support-for-camss-on-kaanapali-v2-0-f5745ba2dff9@oss.qualcomm.com>
+ <20251014-add-support-for-camss-on-kaanapali-v2-5-f5745ba2dff9@oss.qualcomm.com>
+ <5f0e081c-30f6-4ff9-b8d2-2af0d87efd23@kernel.org>
+ <16def16e-fead-4d32-812c-5672773ef3bb@kernel.org>
+Content-Language: en-US
+From: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>
+In-Reply-To: <16def16e-fead-4d32-812c-5672773ef3bb@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=esXSD4pX c=1 sm=1 tr=0 ts=68f16bc0 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=_bdMYa0xl-006hGExtMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: NUWvUMrgjjdbUJwZzZzJfy7haKOxXmz9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDA5OSBTYWx0ZWRfX0465KJoRNr7h
+ 3DOv6f0PPqKaHk6KUyl+kEGBYVmnCFmd+Z0PZTkApK2xGr6m+NrlW5KTWPRwexrIWHxcrrCocRg
+ S5GTNiCRJLk0GUufcVJfEwiUH9QaCII85SRDzLDwrXcdnSWb48Hums+Cu//4ku/fzbNofrebPx4
+ G08CWL+FHX2SS3qhxISSCX9TPYD8JDT/iw6mmmDetwCarDW5y8Q/iMEGO6/wcU6j8o6m9Twcy4t
+ h6HDDj0dzKy2dVMW5dpMQzumK9KK55dTomHakcwJxYmYh/Yl0iFfHzSeT7eJ7J/mz9kKtf9RPmY
+ edZTuteJapz3F1n67xDD9W5cAa8holN8edO/0idMjiDfUwDfH4tD0jK9ta8HtbJZ7COe1Q74CtW
+ mRK88v4x63smpmblgEwgU8Z3TCcdMQ==
+X-Proofpoint-ORIG-GUID: NUWvUMrgjjdbUJwZzZzJfy7haKOxXmz9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 impostorscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510160099
 
-On Thu, 16 Oct 2025 14:19:53 -0700
-Alex Mastro <amastro@fb.com> wrote:
 
-> On Wed, Oct 15, 2025 at 05:25:14PM -0400, Alejandro Jimenez wrote:
-> > 
-> > 
-> > On 10/15/25 3:24 PM, Alex Williamson wrote:  
-> > > On Sun, 12 Oct 2025 22:32:23 -0700
-> > > Alex Mastro <amastro@fb.com> wrote:
-> > >   
-> > > > This patch series aims to fix vfio_iommu_type.c to support
-> > > > VFIO_IOMMU_MAP_DMA and VFIO_IOMMU_UNMAP_DMA operations targeting IOVA
-> > > > ranges which lie against the addressable limit. i.e. ranges where
-> > > > iova_start + iova_size would overflow to exactly zero.  
-> > > 
-> > > The series looks good to me and passes my testing.  Any further reviews
-> > > from anyone?  I think we should make this v6.18-rc material.  Thanks,
-> > >   
-> > 
-> > I haven't had a chance yet to closely review the latest patchset versions,
-> > but I did test this v4 and confirmed that it solves the issue of not being
-> > able to unmap an IOVA range extending up to the address space boundary. I
-> > verified both with the simplified test case at:
-> > https://gist.github.com/aljimenezb/f3338c9c2eda9b0a7bf5f76b40354db8
-> > 
-> > plus using QEMU's amd-iommu and a guest with iommu.passthrough=0
-> > iommu.forcedac=1 (which is how I first found the problem).
-> > 
-> > So Alex Mastro, please feel free to add:
-> > 
-> > Tested-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-> > 
-> > for the series. I'll try to find time to review the patches in detail.
-> > 
-> > Thank you,
-> > Alejandro
-> >   
-> > > Alex  
-> >   
-> 
-> Thanks all. I would like additional scrutiny around vfio_iommu_replay. It was
-> the one block of affected code I have not been able to test, since I don't have
-> / am not sure how to simulate a setup which can cause mappings to be replayed
-> on a newly added IOMMU domain. My confidence in that code is from close review
-> only.
-> 
-> I explicitly tested various combinations of the following with mappings up to
-> the addressable limit:
-> - VFIO_IOMMU_MAP_DMA
-> - VFIO_IOMMU_UNMAP_DMA range-based, and VFIO_DMA_UNMAP_FLAG_ALL
-> - VFIO_IOMMU_DIRTY_PAGES with VFIO_IOMMU_DIRTY_PAGES_FLAG_GET_BITMAP
-> 
-> My understanding is that my changes to vfio_iommu_replay would be traversed
-> when binding a group to a container with existing mappings where the group's
-> IOMMU domain is not already one of the domains in the container.
-
-I really appreciate you making note of it if you're uneasy about the
-change.  I'll take a closer look there and hopefully others can as
-well.
-
-The legacy vfio container represents a single IOMMU context, which is
-typically managed by a single domain.  The replay comes into play when
-groups are under IOMMUs with different properties that prevent us from
-re-using the domain.  The case that most comes to mind for this is
-Intel platforms with integrated graphics where there's a separate IOMMU
-for the GPU, which iirc has different coherency settings.
-
-That mechanism for triggering replay requires a specific hardware
-configuration, but we can easily trigger it through code
-instrumentation, ex:
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 5167bec14e36..2cb19ddbb524 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -2368,7 +2368,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
-                    d->enforce_cache_coherency ==
-                            domain->enforce_cache_coherency) {
-                        iommu_detach_group(domain->domain, group->iommu_group);
--                       if (!iommu_attach_group(d->domain,
-+                       if (0 && !iommu_attach_group(d->domain,
-                                                group->iommu_group)) {
-                                list_add(&group->next, &d->group_list);
-                                iommu_domain_free(domain->domain);
-
-We might consider whether it's useful for testing purposes to expose a
-mechanism to toggle this.  For a unit test, if we create a container,
-add a group, and build up some suspect mappings, if we then add another
-group to the container with the above bypass we should trigger the
-replay.
-
-In general though the replay shouldn't have a mechanism to trigger
-overflows, we're simply iterating the current set of mappings that have
-already been validated and applying them to a new domain.
-
-In any case, we can all take a second look at the changes there.
-Thanks,
-
-Alex
+On 10/16/2025 3:18 AM, Bryan O'Donoghue wrote:
+> On 16/10/2025 11:04, Bryan O'Donoghue wrote:
+>> drivers/media/platform/qcom/camss/camss-csid-gen3.c: csid- 
+>>  >reg_update &= ~CSID_RUP_AUP_RDI(port_id);
+>> drivers/media/platform/qcom/camss/camss-csid-gen3.c: csid- 
+>>  >reg_update |= CSID_RUP_AUP_RDI(port_id);
+>>
+>> and this in your code
+>>
+>>
+>> λ ~/Development/qualcomm/qlt-kernel/ linux-stable/master-reviews- 
+>> oct15-25* grep aup_update drivers/media/platform/qcom/camss/*
+>>
+>> drivers/media/platform/qcom/camss/camss-csid-1080.c:static void 
+>> __csid_aup_update(struct csid_device *csid, int port_id)
+>> drivers/media/platform/qcom/camss/camss-csid-1080.c: csid->aup_update 
+>> |= AUP_RDIN << port_id;
+>
+> And now that I see the code side-by-side - also please use the 
+> established macros and/or write a new macro to follow the established 
+> pattern.
+>
+> There's virtually no good argument to replicate a bit shift or twiddle 
+> - that can be functionally decomposed and encapsulated in one place 
+> and subsequently reused.
+>
+> ---
+> bod
+>
+Hi @Bryan, sure. Both are essentially shift + twiddle, just that in this 
+patch, both are happening in one place. Where as in gen3, the shift is 
+happening inside the macro. The other difference is that on Kaanapali, 
+RUP and AUP update registers are separated and hence need to be handled 
+separately. But I understand your point about the consistency. We will 
+modify the 1080 macros to be consistent with gen3. OR we can add two 
+macros commonly in csid.h that takes both the base bit (RDI0) offset 
+within those registers and also the port ID to return a value with the 
+bit set, just that gen3 file will have to call them separately from 
+within "csid_subdev_reg_update". Please let us know if you would like 
+this. Thanks.
 
