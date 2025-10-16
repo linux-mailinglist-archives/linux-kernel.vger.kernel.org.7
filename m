@@ -1,120 +1,229 @@
-Return-Path: <linux-kernel+bounces-855550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAFBBE19BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:56:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21026BE19CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3762400040
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:56:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED27B4E80ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD279248868;
-	Thu, 16 Oct 2025 05:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780812475E3;
+	Thu, 16 Oct 2025 05:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tAo2SJwE"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QX6T8jHl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65079246770
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650BD242D70;
+	Thu, 16 Oct 2025 05:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760594174; cv=none; b=ILD+pyldZAxYTK2AlWR5DDttqL/zk5E4wwl/kpGbVvXbGF6p6MLhl2dWLQajqjtRKyYOqjo7cf6xaXrY0pvHdH6uaQ5oc93JreuhW20768+EP861Ls5Xf0tRJkLCZ/QdAIC0M3nAMiuthMvJPwi4bHTZEMAPEOdozmIrMQxt0M8=
+	t=1760594206; cv=none; b=ZDr5R/YcMHQJITNWs91GKcq7dHkQRLEmpy2hF9etMtpa4xY5PgGJV/d6GrqXj1nbVuYSpfD0JMMCGOI9CsgHHo3SXvR806v/jKqkx2AzRDwn+pIUgaMHz9xntplw9jmKdrnsbKkWbNMuecDqMQHDt/9mo///BNDCxU1Mqn7HTXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760594174; c=relaxed/simple;
-	bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OWtZbP/9HaStYV8PhMaN8XYmNDovHc50ojP6PuSs9quW/qixCl00Hf6OWSHZh+ggOLKHg2eF021ciNgbmxrU4+tlDpjnQ2Vdjhgcu0fJKl8jZIGxEYcKC0ojmWdk77cAf+fnPMcBKitRy8ps8184iH+L59cOruJweiWxLHYoDHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tAo2SJwE; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b4f323cf89bso60042266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760594171; x=1761198971; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
-        b=tAo2SJwE9rpak8Mebz2GFYOXRsqg0Kq2i/y66sKssWolUVkV9CIztX8YztPD9Emt32
-         XldkFvb09so7lXyzGB9nxKHBkREzD3ELC0PuwM1l+vZY/4OipY3aOWuLAT2VvkgQi0VB
-         nsPrf6lmLMoG3kQm19zG4/lELk3W/6l0k4mW+xCRU5n6GgfBHz8tyBjhpF/8qZfxbYD7
-         SHQi1bueqjmwosezRUMMwjH7qDKfOwL29tAlaPagOUi6HPdxINwLAMUz1PbKoVphWsK3
-         GJtxP+fozZgho6HodUeDnboktHpi6RM4AV9tnj/QBjQD6QWB9FpoHKGSNB69hHaRTDFg
-         tTXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760594171; x=1761198971;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
-        b=eGg0HCwKZQQfilV5xGTXJgM4fn49AWwT9UC1q/bGcC7J6LmHA33l0tSQoTANAQ8tQL
-         JceT32L7DskB6msVcirUDqhHfMYBPhjpLLRWnQIy0aVU0ydJh8RteTuYZ0B1TuZJSOwR
-         0dtVGksGXp6fdJhD0ZgVdyesLF41pawGQtCbiV0O4+G15vEQE/8S5VRrsWG3eTLLnx30
-         6EXzVCTqhVQE+cteIkqvBxTu6BPE6bF1VBYaBsFhc7E2mVysylLdRCGs9iyQcnJifMfo
-         4SyPZR7nj9S/eL6iBQaBN03HejMl8TivP9pLDVodSZgVcYx2o5FlfxhlkoF2jUUhW3WW
-         Uj4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWIRIYS1mksb28cOP8NcBfRmS2hZUtLiHw86Qu43GVEVAkaX/NiSG9sumVGBAa5QoEdU4NA9Mb5tjU4hPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqVmc7vLwyhC1p8YT8T+9Go2c0VtyqeneNFOj+kZx+5SJyhJwR
-	vTaJd4DA3wdvwUZ0rkrv0dvZx2DqLZp84+R3EO/zfG6LnJ2EpyeSOlWPOAEx7N+D64U=
-X-Gm-Gg: ASbGnctBA1cZP/RxN2hMssZMqeCvB6sy01AugHLVmBqP0u6t1VEds1EGReskyEHgfqv
-	aPBzmBssd1WxMJkDmHmpP+FVYhcEPzBl9fbMW/eQmhrw6tUvc0E7VlzmmyzcTQfD/RHsMJSY99s
-	IG6y6MWntzX1jxYACngvZGS36Eb4Xvx16GLV9g4mdV8OP87p+viTI9SErc15gQOfIvv6ISMZOcc
-	Ee9/BQnB9llfrx1G8W3LGX7QfJMTC3bt+64lnJyz4Y1cqfZdDOJqYjktolS72kPLxR3A5BYTt5p
-	E8vo7TjdYxo76kyPIQd7krMauPJYvGv/RybFb/FjPIHq2yOW2KBECJwk1iuUy62GxIA3PVWRip0
-	FckNjsRbK1Mum/IQ/Ak6raqtuMVs9RRtWwqzIqIBTXDhHmUsKMGdYrmjwG72+0UZBT0pFg6wKaT
-	2ja3Ku1tko6LXK4kdaQw==
-X-Google-Smtp-Source: AGHT+IHRn6DJcub987XbIaCnD213XxBVwA1OkaUrOOTFR+bbpHbUgS+RyDdcriH37dmE0TK4LGPTbQ==
-X-Received: by 2002:a17:906:c149:b0:b41:2209:d35d with SMTP id a640c23a62f3a-b50a9d701b3mr3125674866b.1.1760594170719;
-        Wed, 15 Oct 2025 22:56:10 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccaab18sm419863266b.48.2025.10.15.22.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 22:56:10 -0700 (PDT)
-Message-ID: <30a0c50b682b990820d486e536f320c7ea31eabc.camel@linaro.org>
-Subject: Re: [PATCH 3/9] arm64: dts: exynos: gs101: add sysreg_misc and
- sysreg_hsi0 nodes
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sam Protsenko	
- <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski	
- <krzk@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Krzysztof
- Kozlowski	 <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
-Date: Thu, 16 Oct 2025 06:56:09 +0100
-In-Reply-To: <20251013-automatic-clocks-v1-3-72851ee00300@linaro.org>
-References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
-	 <20251013-automatic-clocks-v1-3-72851ee00300@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	s=arc-20240116; t=1760594206; c=relaxed/simple;
+	bh=v28SW4C2/MMOF14xcWGZoBm6mtw65G/uoNs/VCAmapM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tsCtXI0yM8E5JdzQL1Z1jUoYVNZdaHvk2vH0hSl4iYkTnD2DlcPcmErtE60kPNJtSkR8irZWauWh2o3lfXL5F3NPytmgmCYLYztvouzJ1v22WF/1W4MPl1BH0tBh2vMiEhnCkgEMw7qDVvq141U5dItv3/J1EdYy4ySq4gr3QUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QX6T8jHl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760594202;
+	bh=v28SW4C2/MMOF14xcWGZoBm6mtw65G/uoNs/VCAmapM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QX6T8jHlaUjF0jv51uLgXQcAH7TxnY63c9Eq9eYQ1SzI7HC8icxUPRUT+OqhI3q2a
+	 aNY85XuyJmUMasOXGX4UFdMBaBlsUXPRsLEkcDqYLhYXLCC87kSqkwEAZTGLVKiRJb
+	 RXsiqT3UNRlkB9Txx8SCDvpvuSTsIbsL46Dc0PEWOe5iwjhpl/Mc3MRc2tphIzbg73
+	 GsyPOGwRLs/KVDy6n4d58AS2lyJfGM/dCUIdWvij/K5YtOzG7UDxC2nkMq34mPuzvY
+	 LXm8HjtBEZEL6kXwi2xc4qY3QLgDb9uYZIci2jO8EuCNonyr6x82jtHXk4wRc+X800
+	 5sfj3NaFXCraQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0EE9017E05FE;
+	Thu, 16 Oct 2025 07:56:41 +0200 (CEST)
+Date: Thu, 16 Oct 2025 07:56:37 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
+ Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v4 08/13] drm/v3d: Fix builds with
+ CONFIG_TRANSPARENT_HUGEPAGE=n
+Message-ID: <20251016075637.3aec3465@fedora>
+In-Reply-To: <efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
+References: <20251015153018.43735-1-loic.molinari@collabora.com>
+	<20251015153018.43735-9-loic.molinari@collabora.com>
+	<20251015201737.3956f801@fedora>
+	<efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-10-13 at 21:51 +0100, Peter Griffin wrote:
-> Add syscon DT node for the hsi0 and misc sysreg controllers. These will b=
-e
-> referenced by their respective CMU nodes in future patchs.
+On Wed, 15 Oct 2025 22:41:59 +0200
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-s/patchs/patches :-)
-
+> On 15/10/2025 20:17, Boris Brezillon wrote:
+> > On Wed, 15 Oct 2025 17:30:12 +0200
+> > Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+> >  =20
+> >> Don't declare "super_pages" on builds with CONFIG_TRANSPARENT_HUGEPAGE
+> >> disabled to prevent build error:
+> >>
+> >> ERROR: modpost: "super_pages" [drivers/gpu/drm/v3d/v3d.ko] undefined! =
+=20
+> >=20
+> > I believe this is a bug introduced by the previous commit: the
+> > compiler probably drops any code between the
+> > IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) check and the err label
+> > because IS_ENABLED() evaluates to false at compile time. So I'd squash
+> > those changes in the previous commit. =20
 >=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> =C2=A0arch/arm64/boot/dts/exynos/google/gs101.dtsi | 12 ++++++++++++
-> =C2=A01 file changed, 12 insertions(+)
+> Right, it's been introduced in previous commit.
+>=20
+> > =20
+> >>
+> >> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+> >> ---
+> >>   drivers/gpu/drm/v3d/v3d_drv.h | 2 ++
+> >>   drivers/gpu/drm/v3d/v3d_gem.c | 2 ++
+> >>   2 files changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_d=
+rv.h
+> >> index 99a39329bb85..481502104391 100644
+> >> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> >> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> >> @@ -564,7 +564,9 @@ extern const struct dma_fence_ops v3d_fence_ops;
+> >>   struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_que=
+ue q);
+> >>  =20
+> >>   /* v3d_gem.c */
+> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>   extern bool super_pages;
+> >> +#endif
+> >>   int v3d_gem_init(struct drm_device *dev);
+> >>   void v3d_gem_destroy(struct drm_device *dev);
+> >>   void v3d_reset_sms(struct v3d_dev *v3d);
+> >> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_g=
+em.c
+> >> index 635ff0fabe7e..0039063eb8b2 100644
+> >> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> >> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> >> @@ -269,7 +269,9 @@ v3d_huge_mnt_init(struct v3d_dev *v3d)
+> >>   	 * match our usecase.
+> >>   	 */
+> >>  =20
+> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>   	if (super_pages)
+> >> +#endif
+> >>   		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size"); =20
+> >=20
+> > Why not
+> >=20
+> > #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >    	if (super_pages)
+> >    		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> > #endif
+> >=20
+> > I guess
+> >=20
+> > 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
+> > 		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> >=20
+> > would also do, since it's likely to rely on the same optimization the
+> > previous v3d_gemfs_init() implementation was relying on, but it's
+> > fragile (not sure what happens when compiled with -O0). =20
+>=20
+> I'll remove the #ifdef/#endif around the super_pages declaration in=20
+> v3d_drv.h because it isn't necessary if super_pages is compiled out in=20
+> v3d_huge_mnt_init().
+>=20
+> In v3d_huge_mnt_init(), I'd add the #ifdef before the ret variable=20
+> declaration and the #endif right after the last else so that it's clear=20
+> drm_notice("THP is recommended...") is called unconditionally when=20
+> CONFIG_TRANSPARENT_HUGEPAGE=3Dn, whatever the optim level. What do you th=
+ink?
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+First off, I'm not a huge fan of the following pattern
+
+#if foo
+	if (xxxx)
+#endif
+		do_something
+
+which also applies to
+
+#if foo
+	if (xxxx)
+		do_xxx
+	else if (yyy)
+		do_yyy
+	else
+#endif
+		do_something
+
+I'd rather have do_something duplicated in an #else section
+like that:
+
+#if foo
+	if (xxxx)
+		do_xxx
+	else if (yyy)
+		do_yyy
+	else
+		do_something
+#else
+	do_something
+#endif
+
+But I'm not even seeing what the problem is here. If you do:
+
+	int err =3D 0;
+
+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+    	if (super_pages)
+    		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+#endif
+
+	if (v3d->drm.huge_mnt)
+		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
+	else if (err)
+		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n", err);
+	else
+		drm_notice(&v3d->drm,
+			   "Transparent Hugepage support is recommended for optimal performance =
+on this platform!\n");
+
+You're guaranteed that err=3D0 and v3d->drm.huge_mnt=3DNULL when
+CONFIG_TRANSPARENT_HUGEPAGE=3Dn, so the "THP recommended"
+message should be displayed unconditionally. Am I missing
+something?
 
