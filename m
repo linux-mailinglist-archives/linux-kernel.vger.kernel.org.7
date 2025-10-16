@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel+bounces-856933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02330BE57B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:00:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E393BBE57C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 999B8581E7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:00:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 738F54EA684
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06132E2F05;
-	Thu, 16 Oct 2025 21:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B972E22AB;
+	Thu, 16 Oct 2025 21:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="NNhEyqKN"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="moSYQ9IK"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C192E175F;
-	Thu, 16 Oct 2025 21:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58611B3937;
+	Thu, 16 Oct 2025 21:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760648411; cv=none; b=mVkREQnxHxwG4lRtz+j6TmK5vdDcnVmGI63Kp3NEEl1G3Kd4eCzLUkQ5ADHhcsUt32ijiSfpCZ6Xl6csTV6jU49p11Ic4NUUfbnSLeDN0KntK63+65eDkyrcJ5CZuVygUfMAbdnuqCXeI2N6m0wSv1vUnLL+dE3c9H9nX50hfpc=
+	t=1760648433; cv=none; b=dgAt2mR6nznP3rdna4dQSkyglMsnoj6pVHbR4Xe7jPjXEuIFxAQrgKOXOMMadz33381HQjsRuFz528gSgdIfHbCMW9FA+AyW4NDIYVnSvqIJGEUZ+jBHjPgguccy59ZTMd5e/zfovjIHdklBMNxiKDgdbyXu5IjqeIVf4xyhozo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760648411; c=relaxed/simple;
-	bh=HkuOkxyB2m/+D/rJgqkrVVupVYZ0tLZ0vgu0chsz3qI=;
+	s=arc-20240116; t=1760648433; c=relaxed/simple;
+	bh=R8mh5FQ8064vB6hbEAdsDztpZEieJ8efrSDaY6rzYgI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g6zWadnw6xfcGL5ksSfAMBw4ALP7jHRDRiUu0yiiHqFqIjYKtim9gzpxUDH3XKpjbv6/1awKfgH9ky/E0WwrI+SlAHbECUjdDcb6xRWnrFFPyzdtelJrE9j2igX2uZecSqXVthJYUeAPaOgOr0jLufdqzUn+RJ2X16mH1fGCx3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=NNhEyqKN; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 3160F53410CB;
-	Thu, 16 Oct 2025 23:00:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1760648406;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=S5/vuvOPT4+EkrbEoZhHfRioInqnLB9uxTYVw4dXlMg=;
-	b=NNhEyqKNFf72k3lhO8+mHcjh/IPLFh/OHq+uWPf3/dVjVP8DPKb1oz8d+xtjaEkajTWVEX
-	WWfLU5zGlZMdAKb1Y/YMoDT1ryPXhI3IFS8ykoCOvZCCP0fGGiArS3uiiiRJMLgag8BgEx
-	ZxNFN/K2/085vjXED7pZEPDt1Mom0J0=
-Message-ID: <e230521b-02f5-4219-a196-eaede1a31cf6@ixit.cz>
-Date: Thu, 16 Oct 2025 23:00:05 +0200
+	 In-Reply-To:Content-Type; b=DoO+b03QA6rCDw7uYpsPkih/2hn/p2YBlSvQToaEl7HSnBbQbtl5GNru+dQck08PnpqZvaT/a3vKvYTMo2rt9kEXsjGfgoiTsB0g5bT4ZxVvvD7c/CrcLWSzgXu0PBuOOC/eehHsAD4V+5jLUGurAdfn2T7y33DsFJjAL4P5NeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=moSYQ9IK; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GK7o4A021089;
+	Thu, 16 Oct 2025 21:00:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=t7l/y8
+	hH/vFoPwZP3Zfq2IwPXzUBxuBk1Tqib7Yw4C8=; b=moSYQ9IKvrPGw/kMg1WkvX
+	mORvn1l41hjFkkmoHEJVcFKSHE0Z61BvPYVfuzZ7JOdo+9jVZlRxQi9iiZ0j3RCv
+	SWKTfJvAbI/IITsTRZrmk/h49jxkiLVOjZAvmJKMeJJ/pHpMeOwctL/fecZUbJkr
+	AnRxtBSVBVjmiTo8UxLKfUK1tEgw2XVlRPqDmJpX1L/2+j53wmpM0Rr+s0LIzc/b
+	nO5POess6Qf4gFmS0bQd+hCOSclH+ATZijlqq70MskYPNjxwGzZ4HzU2+p0eLtpN
+	tMQCxosMZ97i76gwDvOZYTyEYppbZizmQbCXh05jr6ICmrCLcKr3iRvwmSTqLEIA
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew0bxqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Oct 2025 21:00:26 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59GJho19015207;
+	Thu, 16 Oct 2025 21:00:26 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r1jsg3x4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Oct 2025 21:00:26 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59GL0PRn7078448
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 16 Oct 2025 21:00:25 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 31FC558043;
+	Thu, 16 Oct 2025 21:00:25 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6F8D45805E;
+	Thu, 16 Oct 2025 21:00:24 +0000 (GMT)
+Received: from [9.61.254.141] (unknown [9.61.254.141])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 16 Oct 2025 21:00:24 +0000 (GMT)
+Message-ID: <1ee79c53-4c29-475f-b44e-6839b1feef78@linux.ibm.com>
+Date: Thu, 16 Oct 2025 14:00:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,122 +76,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: sdm845-oneplus: Describe TE gpio
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Casey Connolly <casey.connolly@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20251016-s6e3fc2x01-v3-0-ce0f3566b903@ixit.cz>
- <20251016-s6e3fc2x01-v3-7-ce0f3566b903@ixit.cz>
- <rung7om2fvwmfyihgsnn7j2b6pak7sjt2ayzy42ovugroti4jy@wt6chj662llr>
+Subject: Re: [PATCH v4 01/10] PCI: Avoid saving error values for config space
+To: Niklas Schnelle <schnelle@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>
+Cc: Benjamin Block <bblock@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, alex.williamson@redhat.com,
+        helgaas@kernel.org, clg@redhat.com, mjrosato@linux.ibm.com
+References: <20251001151543.GB408411@p1gen4-pw042f0m>
+ <ae5b191d-ffc6-4d40-a44b-d08e04cac6be@linux.ibm.com>
+ <aOE1JMryY_Oa663e@wunner.de>
+ <c0818c13-8075-4db0-b76f-3c9b10516e7a@linux.ibm.com>
+ <aOQX6ZTMvekd6gWy@wunner.de>
+ <8c14d648-453c-4426-af69-4e911a1128c1@linux.ibm.com>
+ <aOZoWDQV0TNh-NiM@wunner.de>
+ <21ef5524-738a-43d5-bc9a-87f907a8aa70@linux.ibm.com>
+ <aOaqEhLOzWzswx8O@wunner.de>
+ <d69f239040b830718b124c5bcef01b5075768226.camel@linux.ibm.com>
+ <aOtL_Y6HH5-qh2jD@wunner.de>
+ <bb59edee909ceb09527cedec10896d45126f0027.camel@linux.ibm.com>
 Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- xsFNBF5v1x4BEADS3EddwsNsvVAI1XF8uQKbdYPY/GhjaSLziwVnbwv5BGwqB1tfXoHnccoA
- 9kTgKAbiXG/CiZFhD6l4WCIskQDKzyQN3JhCUIxh16Xyw0lECI7iqoW9LmMoN1dNKcUmCO9g
- lZxQaOl+1bY/7ttd7DapLh9rmBXJ2lKiMEaIpUwb/Nw0d7Enp4Jy2TpkhPywIpUn8CoJCv3/
- 61qbvI9y5utB/UhfMAUXsaAgwEJyGPAqHlC0YZjaTwOu+YQUE3AFzhCbksq95CwDz4U4gdls
- dmv9tkATfu2OmzERZQ6vJTehK0Pu4l5KmCAzYg42I9Dy4E6b17x6NncKbcByQFOXMtG0qVUk
- F1yeeOQUHwu+8t3ZDMBUhCkRL/juuoqLmyDWKMc0hKNNeZ9BNXgB8fXkRLWEUfgDXsFyEkKp
- NxUy5bDRlivf6XfExnikk5kj9l2gGlNQwqROti/46bfbmlmc/a2GM4k8ZyalHNEAdwtXYSpP
- 8JJmlbQ7hNTLkc3HQLRsIocN5th/ur7pPMz1Beyp0gbE9GcOceqmdZQB80vJ01XDyCAihf6l
- AMnzwpXZsjqIqH9r7T7tM6tVEVbPSwPt4eZYXSoJijEBC/43TBbmxDX+5+3txRaSCRQrG9dY
- k3mMGM3xJLCps2KnaqMcgUnvb1KdTgEFUZQaItw7HyRd6RppewARAQABzSBEYXZpZCBIZWlk
- ZWxiZXJnIDxkYXZpZEBpeGl0LmN6PsLBlAQTAQgAPgIbAwULCQgHAgYVCgkICwIEFgIDAQIe
- AQIXgBYhBNd6Cc/u3Cu9U6cEdGACP8TTSSByBQJl+KksBQkPDaAOAAoJEGACP8TTSSBy6IAQ
- AMqFqVi9LLxCEcUWBn82ssQGiVSDniKpFE/tp7lMXflwhjD5xoftoWOmMYkiWE86t5x5Fsp7
- afALx7SEDz599F1K1bLnaga+budu55JEAYGudD2WwpLJ0kPzRhqBwGFIx8k6F+goZJzxPDsf
- loAtXQE62UvEKa4KRRcZmF0GGoRsgA7vE7OnV8LMeocdD3eb2CuXLzauHAfdvqF50IfPH/sE
- jbzROiAZU+WgrwU946aOzrN8jVU+Cy8XAccGAZxsmPBfhTY5f2VN1IqvfaRdkKKlmWVJWGw+
- ycFpAEJKFRdfcc5PSjUJcALn5C+hxzL2hBpIZJdfdfStn+DWHXNgBeRDiZj1x6vvyaC43RAb
- VXvRzOQfG4EaMVMIOvBjBA/FtIpb1gtXA42ewhvPnd5RVCqD9YYUxsVpJ9d+XsAy7uib3BsV
- W2idAEsPtoqhVhq8bCUs/G4sC2DdyGZK8MRFDJqciJSUbqA+5z1ZCuE8UOPDpZKiW6H/OuOM
- zDcjh0lOzr4p+/1TSg1PbUh7fQ+nbMuiT044sC1lLtJK0+Zyn0GwhR82oNM4fldNsaHRW42w
- QGD35+eNo5Pvb3We5XRMlBdhFnj7Siggp4J8/PJ6MJvRyC+RIJPGtbdMB2/RxWunFLn87e5w
- UgwR9jPMHAstuTR1yR23c4SIYoQ2fzkrRzuazsFNBF5v1x4BEADnlrbta2WL87BlEOotZUh0
- zXANMrNV15WxexsirLetfqbs0AGCaTRNj+uWlTUDJRXOVIwzmF76Us3I2796+Od2ocNpLheZ
- 7EIkq8budtLVd1c06qJ+GMraz51zfgSIazVInNMPk9T6fz0lembji5yEcNPNNBA4sHiFmXfo
- IhepHFOBApjS0CiOPqowYxSTPe/DLcJ/LDwWpTi37doKPhBwlHev1BwVCbrLEIFjY0MLM0aT
- jiBBlyLJaTqvE48gblonu2SGaNmGtkC3VoQUQFcVYDXtlL9CVbNo7BAt5gwPcNqEqkUL60Jh
- FtvVSKyQh6gn7HHsyMtgltjZ3NKjv8S3yQd7zxvCn79tCKwoeNevsvoMq/bzlKxc9QiKaRPO
- aDj3FtW7R/3XoKJBY8Hckyug6uc2qYWRpnuXc0as6S0wfek6gauExUttBKrtSbPPHiuTeNHt
- NsT4+dyvaJtQKPBTbPHkXpTO8e1+YAg7kPj3aKFToE/dakIh8iqUHLNxywDAamRVn8Ha67WO
- AEAA3iklJ49QQk2ZyS1RJ2Ul28ePFDZ3QSr9LoJiOBZv9XkbhXS164iRB7rBZk6ZRVgCz3V6
- hhhjkipYvpJ/fpjXNsVL8jvel1mYNf0a46T4QQDQx4KQj0zXJbC2fFikAtu1AULktF4iEXEI
- rSjFoqhd4euZ+QARAQABwsF8BBgBCAAmAhsMFiEE13oJz+7cK71TpwR0YAI/xNNJIHIFAmX4
- qVAFCQ8NoDIACgkQYAI/xNNJIHKN4A/+Ine2Ii7JiuGITjJkcV6pgKlfwYdEs4eFD1pTRb/K
- 5dprUz3QSLP41u9OJQ23HnESMvn31UENk9ffebNoW7WxZ/8cTQY0JY/cgTTrlNXtyAlGbR3/
- 3Q/VBJptf04Er7I6TaKAmqWzdVeKTw33LljpkHp02vrbOdylb4JQG/SginLV9purGAFptYRO
- 8JNa2J4FAQtQTrfOUjulOWMxy7XRkqK3QqLcPW79/CFn7q1yxamPkpoXUJq9/fVjlhk7P+da
- NYQpe4WQQnktBY29SkFnvfIAwqIVU8ix5Oz8rghuCcAdR7lEJ7hCX9bR0EE05FOXdZy5FWL9
- GHvFa/Opkq3DPmFl/0nt4HJqq1Nwrr+WR6d0414oo1n2hPEllge/6iD3ZYwptTvOFKEw/v0A
- yqOoYSiKX9F7Ko7QO+VnYeVDsDDevKic2T/4GDpcSVd9ipiKxCQvUAzKUH7RUpqDTa+rYurm
- zRKcgRumz2Tc1ouHj6qINlzEe3a5ldctIn/dvR1l2Ko7GBTG+VGp9U5NOAEkGpxHG9yg6eeY
- fFYnMme51H/HKiyUlFiE3yd5LSmv8Dhbf+vsI4x6BOOOq4Iyop/Exavj1owGxW0hpdUGcCl1
- ovlwVPO/6l/XLAmSGwdnGqok5eGZQzSst0tj9RC9O0dXO1TZocOsf0tJ8dR2egX4kxM=
-In-Reply-To: <rung7om2fvwmfyihgsnn7j2b6pak7sjt2ayzy42ovugroti4jy@wt6chj662llr>
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <bb59edee909ceb09527cedec10896d45126f0027.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nYRmfBHz-sJUtlkxxhCAHULZ3YAIdEdY
+X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68f15ceb cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=PKv9noQjo39VnIMqULwA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfXyuDHD4JM2u4g
+ bbK7WrmK5hQz+YdmBVZeGIooFLX16nb8sJ9MGhgmdUXtgf/ROPKEHo6hDkcyPLuzSIl6REhDt7C
+ 3P2X6qV5J6i/pcmmbF04kVbvLHZBnrtP+VDr7GJvbgIfc9zuRPsSAzzo+lQ9LtYyBMm/gUnQxis
+ FkIYIKcQ8DY2fVvPFUkAV7UinEM7qFkbShk0SclYQaROUTzcJ391I1XYsyUC7FxPLUnp8gKlaTo
+ CSlQIADeadrDT0pDHP9B+mNwTtQCy17jSv/X3xVQaMQksf1cc133P8c3GAziKr+oCw/cBOa5ajV
+ StDG4l2dg0MViDWob1DSqBNWhFkPOMS286uXLTKmNGVd6UHsiRSZTA4QxDS7cAnnPxCRgQiJ0TN
+ H0JsrcTxPgdBc316lMxBcjGrO+r8xQ==
+X-Proofpoint-GUID: nYRmfBHz-sJUtlkxxhCAHULZ3YAIdEdY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
-On 16/10/2025 22:15, Dmitry Baryshkov wrote:
-> On Thu, Oct 16, 2025 at 06:17:02PM +0200, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
+
+On 10/14/2025 5:07 AM, Niklas Schnelle wrote:
+> On Sun, 2025-10-12 at 08:34 +0200, Lukas Wunner wrote:
+>> On Thu, Oct 09, 2025 at 11:12:03AM +0200, Niklas Schnelle wrote:
+>>> On Wed, 2025-10-08 at 20:14 +0200, Lukas Wunner wrote:
+>>>> And yet you're touching the device by trying to reset it.
+>>>>
+>>>> The code you're introducing in patch [01/10] only becomes necessary
+>>>> because you're not following the above-quoted protocol.  If you
+>>>> follow the protocol, patch [01/10] becomes unnecessary.
+>>> I agree with your point above error_detected() should not touch the
+>>> device. My understanding of Farhan's series though is that it follows
+>>> that rule. As I understand it error_detected() is only used to inject
+>>> the s390 specific PCI error event into the VM using the information
+>>> stored in patch 7. As before vfio-pci returns
+>>> PCI_ERS_RESULT_CAN_RECOVER from error_detected() but then with patch 7
+>>> the pass-through case is detected and this gets turned into
+>>> PCI_ERS_RESULT_RECOVERED and the rest of the s390 recovery code gets
+>>> skipped. And yeah, writing it down I'm not super happy with this part,
+>>> maybe it would be better to have an explicit
+>>> PCI_ERS_RESULT_LEAVE_AS_IS.
+>> Thanks, that's the high-level overview I was looking for.
 >>
->> Describe panel Tearing Effect (TE) GPIO line.
+>> It would be good to include something like this at least
+>> in the cover letter or additionally in the commit messages
+>> so that it's easier for reviewers to connect the dots.
 >>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 1 +
->>   1 file changed, 1 insertion(+)
+>> I was expecting paravirtualized error handling, i.e. the
+>> VM is aware it's virtualized and vfio essentially proxies
+>> the pci_ers_result return value of the driver (e.g. nvme)
+>> back to the host, thereby allowing the host to drive error
+>> recovery normally.  I'm not sure if there are technical
+>> reasons preventing such an approach.
+> It does sound technically feasible but sticking to the already
+> architected error reporting and recovery has clear advantages. For one
+> it will work with existing Linux versions without guest changes and it
+> also has precedent with it working already in the z/VM hypervisor for
+> years. I agree that there is some level of mismatch with Linux'
+> recovery support but I don't think that outweighs having a clean
+> virtualization support where the host and guest use the same interface.
+>
+>> If you do want to stick with your alternative approach,
+>> maybe doing the error handling in the ->mmio_enabled() phase
+>> instead of ->error_detected() would make more sense.
+>> In that phase you're allowed to access the device,
+>> you can also attempt a local reset and return
+>> PCI_ERS_RESULT_RECOVERED on success.
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
->> index a8e87507d667b..b663345de0214 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
->> @@ -460,6 +460,7 @@ display_panel: panel@0 {
->>   		vci-supply = <&panel_vci_3v3>;
->>   		poc-supply = <&panel_vddi_poc_1p8>;
->>   
->> +		te-gpios = <&tlmm 30 GPIO_ACTIVE_HIGH>;
-> 
-> Isn't it GPIO 10?
-
-The datasheet says that both 10 and 30 are TE GPIOs.
-
-The downstream and mainline code describes gpio 30 as ESD check and as 
-you write. So generally it seems to be confirmed that 10 is TE (same as 
-for other sdm845 devices as Samsung S9).
-
-Will be fixed in the next patchset version.
-
-Thank you
-
-
-
-> 
->>   		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
->>   
->>   		pinctrl-0 = <&panel_default>;
+>> You'd have to return PCI_ERS_RESULT_CAN_RECOVER though
+>> from the ->error_detected() callback in order to progress
+>> to the ->mmio_enabled() step.
 >>
->> -- 
->> 2.51.0
+>> Does that make sense?
 >>
+>> Thanks,
 >>
-> 
+>> Lukas
+> The problem with using ->mmio_enabled() is two fold. For one we
+> sometimes have to do a reset instead of clearing the error state, for
+> example if the device was not only put in the error state but also
+> disabled, or if the guest driver wants it, so we would also have to use
+> ->slot_reset() and could end up with two resets. Second and more
+> importantly this would break the guests assumption that the device will
+> be in the error state with MMIO and DMA blocked when it gets an error
+> event. On the other hand, that's exactly the state it is in if we
+> report the error in the ->error_detected() callback and then skip the
+> rest of recovery so it can be done in the guest, likely with the exact
+> same Linux code. I'd assume this should be similar if QEMU/KVM wanted
+> to virtualize AER+DPC except that there MMIO remains accessible?
+>
+> Here's an idea. Could it be an option to detect the pass-through in the
+> vfio-pci driver's ->error_detected() callback, possibly with feedback
+> from QEMU (@Alex?), and then return PCI_ERS_RESULT_RECOVERED from there
+> skipping the rest of recovery?
+>
+> The skipping would be in-line with the below section of the
+> documentation i.e. "no further intervention":
+>
+>    - PCI_ERS_RESULT_RECOVERED
+>        Driver returns this if it thinks the device is usable despite
+>        the error and does not need further intervention.
+>
+> It's just that in this case the device really remains with MMIO and DMA
+> blocked, usable only in the sense that the vfio-pci + guest VM combo
+> knows how to use a device with MMIO and DMA blocked with the guest
+> recovery.
+>
+> Thanks,
+> Niklas
 
--- 
-David Heidelberg
+Hi Lukas,
+
+Hope this helps to clarify why we still need patch [01/10] (or at least 
+the check in pci_save_state() to see if the device responds with error 
+value or not if we move forward with your patch series PCI: Universal 
+error recoverability of devices). We can discuss if that check needs to 
+be moved somewhere else if there is concern with overhead in 
+pci_save_state(). Discussing with Niklas (off mailing list), we were 
+thinking if it makes sense if vfio_pci_core_aer_err_detected() returned 
+PCI_ERS_RESULT_RECOVERED if it doesn't need any further intervention 
+from platform recovery to align closer to pcie-error-recovery 
+documentation? One proposal would be to have a flag in struct 
+vfio_pci_core_device(eg vdev->mediated_recovery), which can be used to 
+return PCI_ERS_RESULT_RECOVERED in vfio_pci_core_aer_err_detected()if 
+the flag was set. The flag could be set by userspace using 
+VFIO_DEVICE_FEATURE_SET for the device feature 
+VFIO_DEVICE_FEATURE_ZPCI_ERROR (would like to hear Alex's thoughts on 
+this proposal).
+
+Thanks
+
+Farhan
 
 
