@@ -1,95 +1,121 @@
-Return-Path: <linux-kernel+bounces-856476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6392CBE4456
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:35:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AB5BE442C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E71F3B510B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:32:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30D6F561B8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC73A34DCE4;
-	Thu, 16 Oct 2025 15:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AA634F471;
+	Thu, 16 Oct 2025 15:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYvWAMzc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6swSOMS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E12C34AB0A;
-	Thu, 16 Oct 2025 15:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29CF34AB05;
+	Thu, 16 Oct 2025 15:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760628695; cv=none; b=VBHeUj9Fas6aoXRGeHp9Ddond4E0NndKFvXsCTfyHzkQyPz89bWUwOvudow9Gu4TnRDGELhh7SipQAkkWEE8N5gSdFpMolFGV7zp6GHrOR9AksRPz97Co/Y19XhHi7P1Jeo322U8iRNRA1HZmMF1hNO8s04a2xux1h8wbstbaQA=
+	t=1760628710; cv=none; b=W7nU2Z+ULA+QutmkTou2PIkfUYWMXyxmpJrlNeR2ewo1pRorMHP1821UDSMN8YHuug15RMRON+8lL6VHLPRHw9tGFqbd/n3Hy76KWi9L5pUeikroYhRaHTw3gg5LJ6+8iUdrAbA8HSdlqiYGcn4MVz5wlTakWU+1StYmzUH9MjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760628695; c=relaxed/simple;
-	bh=Qce3400gZekkF9rZ7Sx7daMfcQ3FsP9u8CUhUxXknVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SQ2qw2R3eBIo79vMA/YGRq2gPYi6MknpfAnKZIWFpQlbm4XgKje1yssG3Ica264Y2AZFx5u5Vhq6Its/1xU89tx36paXcoK5A3jSE6QxBgo7VqTgg1GtdjoMGucQcnG8TlRwDaVyMHr5OMwRNfcxZ8D5RfXeHrrGOru1eSh7NPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYvWAMzc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72522C4CEFE;
-	Thu, 16 Oct 2025 15:31:30 +0000 (UTC)
+	s=arc-20240116; t=1760628710; c=relaxed/simple;
+	bh=fXOp/m+BS3x2gq20s4BnSqHZoXlFUhnNhp56vbeGy74=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DCJPKIUTdlab/csAk9T58s8dcyjzimII7YtFjNLTrlnHb1zHUXPMtxnnVXqrnXyWGjGBmvB5rnEx+zz7jwlwKJPCZCjXCW/35uFicrned0giQr1NDSyBdKhWBWmGxMZXb1yoj+gQGAILhLiQhxCEZc3dOXXsMFgvWMXQUdlXZyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6swSOMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF491C4CEF1;
+	Thu, 16 Oct 2025 15:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760628694;
-	bh=Qce3400gZekkF9rZ7Sx7daMfcQ3FsP9u8CUhUxXknVk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mYvWAMzc3SRt0amHGvhycjblwqyjJ6zdnMVaKS5Vug3+gevsdIzHaZLXjsH/W+9ZF
-	 YnWZ+0fNbLouN2ioX8xOA0rgLJG9lqT30DfZNiPNhucWWagL451Ii7Th3oA8o0iyOi
-	 Dd7zd+m4hdcSJOCU/WndaJS0Xwmcx3J37qbODzL4lL47Fk9AJS8VfAsfAzcgjyPr1g
-	 /UFuieoKW1bMC6Tp/AvmTH+Cr01y31pGfh2XnwXFXrXAD5eG1xCOdxY6kPeA2pDa7c
-	 3cP27mjB5L+6vKqafZSlDxW6idRtqSC9QuX3KILRH7wh+jWyLcYxtp6VQFJBIzVZ1W
-	 gc58BAIZlHfmw==
-Message-ID: <33513b43-f6d1-4c76-887b-39611a75e1f4@kernel.org>
-Date: Thu, 16 Oct 2025 16:31:28 +0100
+	s=k20201202; t=1760628709;
+	bh=fXOp/m+BS3x2gq20s4BnSqHZoXlFUhnNhp56vbeGy74=;
+	h=Date:From:To:Cc:Subject:From;
+	b=V6swSOMSvb7TXJ+sdGe+mPjz7z/baCLorrrV9rFqN60jz3yYrPZQH0fpBP6Z9zEM6
+	 H4ue+DeGh2IND+eIhqTQx9yWWDumiUOlIY/97a+3vQMam/0dQPBK0yLHdGnDvIVAL1
+	 I7+gomQKadJVtESUsCGHli5l72az8h4xxA2D6JjqC3zKl9gqOeGKd5ZvHIjns5DLLV
+	 vFcj1cvLZZGTYorR+5x6f29lIkyVzO7SoRKO5khtvI1ugkYfYLG/bLbiAyslEY2UAz
+	 koxrtiyzXiiqV0g7iXX460YfB30vRtcuA0K6yMTEubQF2aX2oA3sOx46pflF9qV8jx
+	 9WbdsDdpviNfw==
+Date: Thu, 16 Oct 2025 16:31:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 16
+Message-ID: <aPEP4lIj08M2OcEA@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: qcom: camss: Enable setting the rate to
- camnoc_rt_axi clock
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20251014-add-new-clock-in-vfe-matching-list-v1-1-0d965ccc8a3a@oss.qualcomm.com>
- <9984bc23-05ef-4d46-aeb8-feb0a18e5762@kernel.org>
- <bc0caeb8-c99b-4bef-a69e-5ce433e6b890@oss.qualcomm.com>
- <c4fd6bfc-cc9a-4f37-99b3-f36466691a1e@linaro.org>
- <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <CAFEp6-2=GJL-gc+PSyAL4=prp_sXdZJS=Ewg5nP2kcp_Gu85Fw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/To7pIyJj0hNED2U"
+Content-Disposition: inline
 
-On 16/10/2025 13:22, Loic Poulain wrote:
->> I'm - perhaps naively - assuming this clock really is required ... and
->> that both will be needed concurrently.
-> AFAIU, the NRT clock is not in use for the capture part, and only
-> required for the offline processing engine (IPE, OPE), which will
-> likely be described as a separated node.
 
-Maybe yeah though we already have bindings.
+--/To7pIyJj0hNED2U
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-@Hangxiang I thought we had discussed this clock was required for your 
-setup.
+Hi all,
 
-Can you confirm with a test and then
+Changes since 20251015:
 
-1. Repost with my RB - I assume you included this on purpose
-2. Respond that you can live without it.
+The drm-intel tree gained a conflict with the drm-intel-fixes tree.
 
----
-bod
+Non-merge commits (relative to Linus' tree): 1772
+ 1797 files changed, 56678 insertions(+), 26656 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with an arm64
+defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
+a native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig and
+pseries_le_defconfig and i386, arm64, s390, sparc and sparc64 defconfig
+and htmldocs. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+
+Below is a summary of the state of the merge.
+
+I am currently merging 407 trees (counting Linus' and 406 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--/To7pIyJj0hNED2U
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjxD+EACgkQJNaLcl1U
+h9AMHAgAgUe+0KwRRhnOMpQO06PJXyUAZwXjuJdGu+qQQ7lVsSn1I2sEJaGo3v2N
+ZAiVc/sXJ8tGIoHJerepO0RcmOhHPxGkuhZ87leZs7X5zILO7JXTW83pGsqdqMCR
+Qpiiae9xCRfPYuN54UUPWQS50zxGVGMLiBBK2uQD/NIO3oEIvp7affSr6CenAsRQ
+vcPQxAq2JUH1JB0VoZW8UZNnKza80o4zTwqsSEXnAdOLF0grQdcBxuyybtHAt5Xj
+XjZy9PoodderCZkWU2ULMW8D1loKaOV3sf62eenS8eh/M+Cq/QzW7Bus0pAO0e8u
+dvqrQMJ0WseqSpkwTdDgzq/l08zHyA==
+=XOMd
+-----END PGP SIGNATURE-----
+
+--/To7pIyJj0hNED2U--
 
