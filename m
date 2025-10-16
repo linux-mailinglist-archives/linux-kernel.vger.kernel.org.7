@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-855999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC12FBE2D50
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:37:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71EA9BE2CCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 901F53B6580
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:30:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2A519C7D99
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEC62DE704;
-	Thu, 16 Oct 2025 10:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2392FFDFB;
+	Thu, 16 Oct 2025 10:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C8lTblYR"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ht3Bvgny"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AFB214812
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0298431961E;
+	Thu, 16 Oct 2025 10:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760610595; cv=none; b=iWad4X77y8ALjI6GTWkDinbLxrKEHXD4MT+7v2HnXQX8HCjjWSoBzcsAtHjA0k7kkEdnSDRAGCncknazFAlytQepjAg2DwN7mw8hADuNakenXk4U/gMWK13SWe3PUTdH2AJxsm/KX9f+WuuohBFPoWJNbhc/Oer8uBVqVk3skwg=
+	t=1760610606; cv=none; b=t63TXklZoNH8rkiqYcLAyzBn4A336fgGCyrELmGDX2Z5r7D0NJyifrQRdl6G7NRWLG6HPWHwSEfoYlnUReZsIqIMnWDZVqtZnf4bE/K4NQTw9NezjqQU1Qkrk09znLdH/tlClgTXe0v8TXQwTYKXSqSAt37HNvuKYY1SRe6ui3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760610595; c=relaxed/simple;
-	bh=C1Qq0nuM3kmY41SedxaVCFVgNViHbDE+Dg+0PoOWuUI=;
+	s=arc-20240116; t=1760610606; c=relaxed/simple;
+	bh=6oDqTTQNPa3hjTV43ytvjp3i0Ej8ZJ5aNHwNeKgT9wI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a536ErmqAdOYmd28+LYSutt3ryWDoBOBZSX4/0gGIwXfnSQZBBeCJEvhAxLLX8syKr3yiaKseqiCivTxy4xh3C60/1NtenTLnZlxbCfpTOPUloaaf29BNPX/+eMhuaQtHDW9NNBOQLKOevSp0YgShIz4IF3Z+Qzf5iKZUjpeqys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C8lTblYR; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42420c7de22so295679f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760610590; x=1761215390; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7aWwXJImAGu1XaOPG7ISHmz9NLDzl7hFLgWZKk+CsrM=;
-        b=C8lTblYRhlcxGllrdqMiC5PZocUGKWNuMpRKbE+CtZRImecjCDAd6ShtMdwnOPyzSs
-         j+umnBBsqI+CLh8ufe0rQ/Jq5zU9k/dof/Ve3/XRiZUgLSu86O9GU5CKeCIPGjfGG7ES
-         Trg/WVMaDmzqBA9s3lfpYNUcXts63q9MezsdXs1MGbae5ua48am7BWOnbPd3hvCrWUkJ
-         vCuNzKv03CbTR6zCPrSWUiVP44TbhQtD+lebzrW6JyQJzAdsMAHsrJ/LAnlOJ4v5FrPw
-         3iZGNDMPk5Xw0rEO7v9nowRkkZCpvoDHHqr/TUr/niWmcgOjbHaKz6iZU8+BEJ35hhfe
-         ZKxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760610590; x=1761215390;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7aWwXJImAGu1XaOPG7ISHmz9NLDzl7hFLgWZKk+CsrM=;
-        b=vCDWvYC1dv5oiC+/UIEpYmlL91HOVZAidBZgrpJSGXsO97CJ2A50B3fVIBSTHwHSr0
-         utHN1fMuWRB1WiOC9KRi6YuC8YClZg+/VkisbooBUcJwkzUc3/z5E+czVM7RHboP7u7M
-         9XBbcznTqud33YynHtJYpeamV/VmdQ3VHe1HuloJ6KD3e4PLQJRYPvqFsu320kaijHCu
-         u/aRRTt6ErUiaKF6yVpJ9S/+pmI3Nqk6UnTxnQrImgxtDPOc13Hw4ag6NguXY/5vpxSL
-         tBA5MEvr3OY12RP9eTeIX25jKpisqPE+0fbc2Z6YUQqA0xbUqQgpIR2nZZvhhF+7DuJS
-         HUfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTHDnKOORFvszZd7MIh2NKnWCWew12qfOqS5Nc3Zr5sK57q2yR6P2ucMLMcayan3z+gN0CWipggDzQqyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB+s6wMFTV5yEZv5j3BOuYuIOck7EQUOn8YcDJAcjgh0BTWux2
-	/tDKJbG5l9fOfsY2BG9Zsc4b0JuMRwoKxeg272gCcKe08a06mFEhJq34Gk2864EBvAE=
-X-Gm-Gg: ASbGnct35SPrCaE/zolX2pea+MC2oFT1aTfnvpkyZbjFj4EjxKQ6gcqtKBAnRDHZ5Kk
-	hmx2K4LmGFyOlHMbu9OlNQxSyn3/JKzfw1+vLlTKe4/DV4vKplB8h2xubLu26HYzgEvU8jQkeHB
-	B+erlh6c8tsAFvuoQrOy09zBUJQhVS/DCSMJnTRvVEktn3HeRAqOWrcFQVKzbbo/0/0C/9eDYuO
-	H8kEawgvLqvr/CYh2iKT58E6UJ0AUz8ESPN7x/zYVBFmlnlSL1YVRFwIV4zRiHTOkPbsLvgkKwp
-	kbmC/B1QzW6fS7iMEOcGQ0FrF94onUMt0p3FvzdMUxar4L8MRsI5nBqqu3FrRkvBAZfiSvan3it
-	VrYCTQsxR/FZW0OjYccDbnkahX7SvYcOkIgF4pGnGWdE+eBnsOpT291dUiEou8cNnZHIOssL7FU
-	lU1qrpUDAQkQ==
-X-Google-Smtp-Source: AGHT+IHfR7TsQm+oDwSMGTkIL3w54sYZhAOyys7grMjNi/GzoSKnD6Jh1izbG0lLs9rpXLzQrSEitg==
-X-Received: by 2002:a5d:5f54:0:b0:3da:37de:a38e with SMTP id ffacd0b85a97d-4266e8e0b8emr22762057f8f.54.1760610590562;
-        Thu, 16 Oct 2025 03:29:50 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711443e81asm20056685e9.10.2025.10.16.03.29.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 03:29:50 -0700 (PDT)
-Message-ID: <b1a461b4-4358-4556-80ef-e7abd686f2e5@linaro.org>
-Date: Thu, 16 Oct 2025 11:29:49 +0100
+	 In-Reply-To:Content-Type; b=fplcgaQ3mEa9h/7hi0+81A48tYKId0+WARe0dtc4q8KgYP7QOYjOeX3nfnXbvbHga5DwYnmza2E77PEVyWAhmWxTh5XkTAefqmgMm9dXQQX8uruh7ZsRqZEPzjoDtg7k6U2ZSZMpL/X2ProUX6MaddUeTta3PDzU/WPKEfopTMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ht3Bvgny; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 419BDC113D0;
+	Thu, 16 Oct 2025 10:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760610604;
+	bh=6oDqTTQNPa3hjTV43ytvjp3i0Ej8ZJ5aNHwNeKgT9wI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ht3BvgnyTHBlim2BpFe/HnnDeGnbArjq+Mq82LeeZiFYKhPsxL4dmHVjKkZWVcXta
+	 SGt3UnK8Z9fytsqLjpD8E6EJa6EJ0XX4sPwYPTbm+wPlDqc2H80yI7iNKbksKixh2y
+	 JD52CzoI2uiTcA0D4MdCokPzu8iY8szsMH7IjDiNZVrwgmcQztHPBEL+XzAFcgYJJ/
+	 u4koIp4V8wlvXAjD8DOCUsTJ+TSJeu1wPnm+Cnv39TgkLX9oi9xVm2hBhafb+eCp7m
+	 zGkRrPGOuDwitjjq6reaHhyFOwrfSXdRqOA+w08p0HPFHa1pxppdK0or3/a8kmlJ/M
+	 zVkuEaWTBS50w==
+Message-ID: <1d4d4627-7fe9-43b2-8622-8ffc078e30a6@kernel.org>
+Date: Thu, 16 Oct 2025 11:29:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,159 +49,311 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/27] Legacy hardware/cache events as json
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>,
- Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Atish Patra <atishp@rivosinc.com>,
- Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>,
- Vince Weaver <vincent.weaver@maine.edu>
-References: <20251005182430.2791371-1-irogers@google.com>
- <176054362630.22559.13423487878652916137.b4-ty@kernel.org>
- <a9f3b996-4fb4-463a-8392-16115862903a@linaro.org>
- <CAP-5=fX8ZV6WTmKcrrfPo0MUFiruJoWhYeUk3JrToEP=9-aPCA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] media: qcom: camss: add support for SM6150 camss
+To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251016-sm6150-camss-v1-0-e7f64ac32370@oss.qualcomm.com>
+ <20251016-sm6150-camss-v1-2-e7f64ac32370@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fX8ZV6WTmKcrrfPo0MUFiruJoWhYeUk3JrToEP=9-aPCA@mail.gmail.com>
+In-Reply-To: <20251016-sm6150-camss-v1-2-e7f64ac32370@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 15/10/2025 10:24 pm, Ian Rogers wrote:
-> On Wed, Oct 15, 2025 at 10:39 AM James Clark <james.clark@linaro.org> wrote:
->>
->>
->>
->> On 15/10/2025 4:53 pm, Namhyung Kim wrote:
->>> On Sun, 05 Oct 2025 11:24:03 -0700, Ian Rogers wrote:
->>>
->>>> Mirroring similar work for software events in commit 6e9fa4131abb
->>>> ("perf parse-events: Remove non-json software events"). These changes
->>>> migrate the legacy hardware and cache events to json.  With no hard
->>>> coded legacy hardware or cache events the wild card, case
->>>> insensitivity, etc. is consistent for events. This does, however, mean
->>>> events like cycles will wild card against all PMUs. A change doing the
->>>> same was originally posted and merged from:
->>>> https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
->>>> and reverted by Linus in commit 4f1b067359ac ("Revert "perf
->>>> parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
->>>> his dislike for the cycles behavior on ARM with perf record. Earlier
->>>> patches in this series make perf record event opening failures
->>>> non-fatal and hide the cycles event's failure to open on ARM in perf
->>>> record, so it is expected the behavior will now be transparent in perf
->>>> record on ARM. perf stat with a cycles event will wildcard open the
->>>> event on all PMUs, however, with default events the cycles event will
->>>> only be opened on core PMUs.
->>>>
->>>> [...]
->>>
->>> Applied to perf-tools-next, thanks!
->>>
->>> Best regards,
->>> Namhyung
->>>
->>
->> Hi Namhyung,
->>
->> I'm still getting the build failure that I mentioned on patch 5. This
->> only seems to happen with out of source builds:
->>
->>     $ make -C tools/perf O=../build/local/ V=1
->>
->>
->>     static const struct pmu_sys_events pmu_sys_event_tables[] = {
->>           {
->> -               .event_table = {
->> -                       .pmus = pmu_events__test_soc_sys,
->> -                       .num_pmus = ARRAY_SIZE(pmu_events__test_soc_sys)
->> -               },
->> -               .name = "pmu_events__test_soc_sys",
->> -       },
->> -       {
->>                   .event_table = { 0, 0 },
->>                   .metric_table = { 0, 0 },
->>           },
->> make[3]: *** [pmu-events/Build:54:
->> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log]
->> Error 1
+On 16/10/2025 11:22, Wenmeng Liu wrote:
+> The camera subsystem for SM6150 which is based on Spectra 230.
 > 
-> Sorry for the issue. Is this happening when you don't do a clean
-> first? I tried recreating your output path, but I can't reproduce the
-> issue on a clean build. The diff above indicates some issue with the
+> Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
 
-The clean issue was separate to the build failure. I meant that the 
-build failure was sticky when I was bisecting. So after commit 5 the 
-build breaks on a clean build but then it stayed broken even on builds 
-before commit 5 unless I cleaned. I think we can ignore this for now.
+Your commit log needs more detail.
 
-> Makefile processing tools/perf/pmu-events/arch/test/test_soc/. This
-> directory should be copied to
-> ../build/local/pmu-events/arch/test/test_soc/ and so I wonder if the
-> copy failed for some reason.
+- VFE17x version what ?
+- CSID version .. gen2 so CSID 480 is it ?
+- CSIPHY process node would be nice
+
+
+> ---
+>   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     |   2 +
+>   drivers/media/platform/qcom/camss/camss-vfe.c      |   2 +
+>   drivers/media/platform/qcom/camss/camss.c          | 186 +++++++++++++++++++++
+>   drivers/media/platform/qcom/camss/camss.h          |   1 +
+>   4 files changed, 191 insertions(+)
 > 
-> The copy rule is:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/Build?h=perf-tools-next#n33
-> ```
-> # Copy checked-in json for generation.
-> $(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
-> $(call rule_mkdir)
-> $(Q)$(call echo-cmd,gen)cp $< $@
-> ```
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index a229ba04b158739ddfe4076bdd28167a309f13ea..7bc524a9c4bbe3a316e366868e9d636e58d5956a 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -908,6 +908,7 @@ static bool csiphy_is_gen2(u32 version)
+>   
+>   	switch (version) {
+>   	case CAMSS_2290:
+> +	case CAMSS_6150:
+>   	case CAMSS_7280:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> @@ -996,6 +997,7 @@ static int csiphy_init(struct csiphy_device *csiphy)
+>   		regs->lane_array_size = ARRAY_SIZE(lane_regs_sdm845);
+>   		break;
+>   	case CAMSS_2290:
+> +	case CAMSS_6150:
+>   		regs->lane_regs = &lane_regs_qcm2290[0];
+
+You don't need to specify the array index for that.
+
+>   		regs->lane_array_size = ARRAY_SIZE(lane_regs_qcm2290);
+>   		break;
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index dff8d0a1e8c228878d03d95aaf91f262b208f9e7..2ec796b6f82d67d7a1bc332a0d770a8185ba3fdd 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -341,6 +341,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   		break;
+>   	case CAMSS_660:
+>   	case CAMSS_2290:
+> +	case CAMSS_6150:
+>   	case CAMSS_7280:
+>   	case CAMSS_8x96:
+>   	case CAMSS_8250:
+> @@ -1989,6 +1990,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
+>   	int ret = 8;
+>   
+>   	switch (vfe->camss->res->version) {
+> +	case CAMSS_6150:
+>   	case CAMSS_7280:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 2fbcd0e343aac9620a5a30719c42e1b887cf34ed..51e2522d4d01dd7bb4581c721544835c47b09c38 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -1318,6 +1318,178 @@ static const struct camss_subdev_resources vfe_res_845[] = {
+>   	}
+>   };
+>   
+> +static const struct camss_subdev_resources csiphy_res_6150[] = {
+> +	/* CSIPHY0 */
+> +	{
+> +		.regulators = { "vdd-csiphy-1p2", "vdd-csiphy-1p8" },
+> +		.clock = { "csiphy0", "csiphy0_timer" },
+> +		.clock_rate = { { 269333333, 384000000 },
+> +				{ 269333333 } },
+> +		.reg = { "csiphy0" },
+> +		.interrupt = { "csiphy0" },
+> +		.csiphy = {
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sdm845
+> +		}
+> +	},
+> +	/* CSIPHY1 */
+> +	{
+> +		.regulators = { "vdd-csiphy-1p2", "vdd-csiphy-1p8" },
+> +		.clock = { "csiphy1", "csiphy1_timer" },
+> +		.clock_rate = { { 269333333, 384000000 },
+> +				{ 269333333 } },
+> +		.reg = { "csiphy1" },
+> +		.interrupt = { "csiphy1" },
+> +		.csiphy = {
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sdm845
+> +		}
+> +	},
+> +	/* CSIPHY2 */
+> +	{
+> +		.regulators = { "vdd-csiphy-1p2", "vdd-csiphy-1p8" },
+> +		.clock = { "csiphy2", "csiphy2_timer" },
+> +		.clock_rate = { { 269333333, 384000000 },
+> +				{ 269333333 } },
+> +		.reg = { "csiphy2" },
+> +		.interrupt = { "csiphy2" },
+> +		.csiphy = {
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sdm845
+> +		}
+> +	},
+> +};
+> +
+> +static const struct camss_subdev_resources csid_res_6150[] = {
+> +	/* CSID0 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "vfe0_cphy_rx", "vfe0_csid" },
+> +		.clock_rate = { { 269333333, 384000000 },
+> +				{ 320000000, 540000000 } },
+> +		.reg = { "csid0" },
+> +		.interrupt = { "csid0" },
+> +		.csid = {
+> +			.is_lite = false,
+> +			.hw_ops = &csid_ops_gen2,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID1 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "vfe1_cphy_rx", "vfe1_csid" },
+> +		.clock_rate = { { 269333333, 384000000 },
+> +				{ 320000000, 540000000 } },
+> +		.reg = { "csid1" },
+> +		.interrupt = { "csid1" },
+> +		.csid = {
+> +			.is_lite = false,
+> +			.hw_ops = &csid_ops_gen2,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID2 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "vfe_lite_cphy_rx", "vfe_lite_csid" },
+> +		.clock_rate = { { 269333333, 384000000 },
+> +				{ 320000000, 540000000 } },
+> +		.reg = { "csid_lite" },
+> +		.interrupt = { "csid_lite" },
+> +		.csid = {
+> +			.is_lite = true,
+> +			.hw_ops = &csid_ops_gen2,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +};
+> +
+> +static const struct camss_subdev_resources vfe_res_6150[] = {
+> +	/* VFE0 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "camnoc_axi", "cpas_ahb", "soc_ahb",
+> +			   "vfe0", "vfe0_axi"},
+> +		.clock_rate = { { 0 },
+> +				{ 400000000 },
+> +				{ 80000000 },
+> +				{ 37500000, 40000000 },
+> +				{ 360000000, 432000000, 540000000, 600000000 },
+> +				{ 265000000, 426000000 } },
+> +		.reg = { "vfe0" },
+> +		.interrupt = { "vfe0" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = true,
+> +			.pd_name = "ife0",
+> +			.hw_ops = &vfe_ops_170,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE1 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "camnoc_axi", "cpas_ahb", "soc_ahb",
+> +			   "vfe1", "vfe1_axi"},
+> +		.clock_rate = { { 0 },
+> +				{ 400000000 },
+> +				{ 80000000 },
+> +				{ 37500000, 40000000 },
+> +				{ 360000000, 432000000, 540000000, 600000000 },
+> +				{ 265000000, 426000000 } },
+> +		.reg = { "vfe1" },
+> +		.interrupt = { "vfe1" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = true,
+> +			.pd_name = "ife1",
+> +			.hw_ops = &vfe_ops_170,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE2 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "camnoc_axi", "cpas_ahb", "soc_ahb",
+> +			   "vfe_lite" },
+> +		.clock_rate = { { 0 },
+> +				{ 400000000 },
+> +				{ 80000000 },
+> +				{ 37500000, 40000000 },
+> +				{ 360000000, 432000000, 540000000, 600000000 } },
+> +		.reg = { "vfe_lite" },
+> +		.interrupt = { "vfe_lite" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_170,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +};
+> +
+> +static const struct resources_icc icc_res_sm6150[] = {
+> +	{
+> +		.name = "ahb",
+> +		.icc_bw_tbl.avg = 38400,
+> +		.icc_bw_tbl.peak = 76800,
+> +	},
+> +	{
+> +		.name = "hf_mnoc",
+> +		.icc_bw_tbl.avg = 2097152,
+> +		.icc_bw_tbl.peak = 2097152,
+> +	},
+> +};
+> +
+>   static const struct camss_subdev_resources csiphy_res_8250[] = {
+>   	/* CSIPHY0 */
+>   	{
+> @@ -4438,6 +4610,19 @@ static const struct camss_resources sc7280_resources = {
+>   	.vfe_num = ARRAY_SIZE(vfe_res_7280),
+>   };
+>   
+> +static const struct camss_resources sm6150_resources = {
+> +	.version = CAMSS_6150,
+> +	.pd_name = "top",
+> +	.csiphy_res = csiphy_res_6150,
+> +	.csid_res = csid_res_6150,
+> +	.vfe_res = vfe_res_6150,
+> +	.icc_res = icc_res_sm6150,
+> +	.icc_path_num = ARRAY_SIZE(icc_res_sm6150),
+> +	.csiphy_num = ARRAY_SIZE(csiphy_res_6150),
+> +	.csid_num = ARRAY_SIZE(csid_res_6150),
+> +	.vfe_num = ARRAY_SIZE(vfe_res_6150),
+> +};
+> +
+>   static const struct camss_resources sm8550_resources = {
+>   	.version = CAMSS_8550,
+>   	.pd_name = "top",
+> @@ -4478,6 +4663,7 @@ static const struct of_device_id camss_dt_match[] = {
+>   	{ .compatible = "qcom,sdm660-camss", .data = &sdm660_resources },
+>   	{ .compatible = "qcom,sdm670-camss", .data = &sdm670_resources },
+>   	{ .compatible = "qcom,sdm845-camss", .data = &sdm845_resources },
+> +	{ .compatible = "qcom,sm6150-camss", .data = &sm6150_resources },
+>   	{ .compatible = "qcom,sm8250-camss", .data = &sm8250_resources },
+>   	{ .compatible = "qcom,sm8550-camss", .data = &sm8550_resources },
+>   	{ .compatible = "qcom,x1e80100-camss", .data = &x1e80100_resources },
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+> index a70fbc78ccc307c0abc2f3c834fb1e2dafd83c6b..b60556f2f226104adb48908bdb436f389fb1e1ad 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -79,6 +79,7 @@ enum pm_domain {
+>   enum camss_version {
+>   	CAMSS_660,
+>   	CAMSS_2290,
+> +	CAMSS_6150,
+>   	CAMSS_7280,
+>   	CAMSS_8x16,
+>   	CAMSS_8x53,
 > 
-> The mapping of file names happens in the patsubst in:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/Build?h=perf-tools-next#n42
-> ```
-> GEN_JSON = $(patsubst %,$(OUTPUT)%,$(JSON)) $(LEGACY_CACHE_JSON)
-> ```
-> 
-> Those files are dependencies for the empty-pmu-events.c test so I'm
-> not sure how this can be failing for you.
-> 
-> Thanks,
-> Ian
 
-If I apply this patchset to commit 2a67955de136 ("perf bpf_counter: Fix 
-opening of "any"(-1) CPU events"), then:
-
-   $ rm -r ../build/local ; mkdir ../build/local
-   $ git clean -xfd
-   $ make -C tools/perf O=../build/local/ -j1 V=1
-
-I get no copy of the test jsons:
-
-   $ ls ../build/local/pmu-events/arch/test/test_soc/
-
-   ls: cannot access '../build/local/pmu-events/arch/test/test_soc/': No
-   such file or directory
-
-Looking at the dependencies of the rule for $(PMU_EVENTS_C), it's 
-$(JSON_TEST), but JSON_TEST is the in-source version without the 
-$(OUTPUT) prefix. That's already satisfied so it skips the copy.
-
-If I modify the generator for JSON_TEST to include the OUTPUT prefix:
-
-JSON_TEST	=  $(shell [ -d $(JDIR_TEST) ] &   \
-	find $(JDIR_TEST) -name '*.json' | sed -e 's|^|$(OUTPUT)|g')
-
-Now I get the copy:
-
-   $ ls ../build/local/pmu-events/arch/test/test_soc/
-
-   total 0
-   drwxrwxr-x 1 james  56 Oct 16 11:13 ..
-   drwxrwxr-x 1 james 108 Oct 16 11:13 cpu
-   drwxrwxr-x 1 james  12 Oct 16 11:13 .
-   drwxrwxr-x 1 james  22 Oct 16 11:13 sys
-
-Now the diff check is slightly different/better, but the build still 
-fails. Weirdly I don't see this failure on my Arm machine which is where 
-I tested the whole set, I only see this failure on x86. Maybe some 
-difference in the version of make?
-
+---
+bod
 
