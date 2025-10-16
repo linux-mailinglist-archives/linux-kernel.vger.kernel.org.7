@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-856965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64070BE58DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B29E3BE58DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF07654505C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547525482BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1834F2DA742;
-	Thu, 16 Oct 2025 21:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E07D2E54A9;
+	Thu, 16 Oct 2025 21:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBtIRFEO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4PSQMGR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC6419067C;
-	Thu, 16 Oct 2025 21:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77AF2E425E;
+	Thu, 16 Oct 2025 21:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760649468; cv=none; b=KeAnEljrFrv78dKFurZo2NdEhaV9H/0d1xHkDG3+alcJvQTXzicKv7KahZT0dQcguu3w3Sk9IQUVrO0u6wwoLX8Sbam4ZUh5BNHWrBCI4+wPlq1WMDXywU6MsinZM7ovxdybWzqGZVlOVwAPwj2oVpWqdKB9EmfoZ/bXTyHFjbQ=
+	t=1760649470; cv=none; b=B9bSH8loQTP8jabtKTSZz2he9D81Ff8GE+48zABsYpbfVkJ5c/nBQbQLIuo0Rht1oiV6smuvsDWCYvIWFyb2buaTnv8JKaitJ8w+P7R4KyyxsdNcf5GX1cNIxIMInXFk2M4iC50BRbjzg2qx7e6QtXFuCH9CVfWHWt5LcgeTzJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760649468; c=relaxed/simple;
-	bh=9sb2klG7sKm8UU0jqADornOndrsInzButfgYDF73plw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AiO/akVx0WQh1aH8ShSKw7BODTLLm7MBg8ERYMNZzDzGVPLonTgzPD0adzPdSo3Fy7QLG0MHz5nnUywl88/dbpnILoZph8VpQZMXMYBH00HJdgvRmG06J2+/CyZ0LVldmVGFmdQIANLSCYe43YEhxit24cihSHAj23uIV7VdKDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBtIRFEO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F37C113D0;
-	Thu, 16 Oct 2025 21:17:43 +0000 (UTC)
+	s=arc-20240116; t=1760649470; c=relaxed/simple;
+	bh=WGh5AR3IGPIkGeVKJtar/L8hByGyS87dy2DrVjXpwP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BFMWy/rBh95C/t/1RQUQ3/CJlxkHTwPm4ledYtUntUmJE5KVRaPjVLH8Faxd58d0x7uC//SOzNifD62UD3Tn/PqX1X7FIri5BeH43NrARwhu1geFREJKDItM0FEt6vSSvIRjuOkWSnR+oM/6TVH88Ere+lUHMwo9sjgx7ccPTMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4PSQMGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 943C7C4CEF1;
+	Thu, 16 Oct 2025 21:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760649466;
-	bh=9sb2klG7sKm8UU0jqADornOndrsInzButfgYDF73plw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SBtIRFEOk60daxaS9JxJDiwh3a5JyqhXFsJgSnxMJGjLUrmkvbhMTZE1ZecFRj8k8
-	 Frj9hAhg5+fDJaXlgbcpnqXdnAFuRuwJinc80cd8x2cN6kAEVk59wKpbYnj6UELQUI
-	 qG8Y/NSFAmToR8FmKVfSnXMGOfX1Lhtvpke2Iiy8LBvGy80umubncleKfty4IaC6jD
-	 FVYVcfAueL+a266kwqpFZkgFVL4qcPhqNMUSyKlQ0rqNBOwu18vf4O0DWTZBU5sSdt
-	 CSzuNk4BqxVDWmWu0JNfY85WJjeDV5Mu5XmixeLIo51Ybd2xo5ZNdOYwtk+Qu2o0Qb
-	 axo4/RhjWZHhQ==
+	s=k20201202; t=1760649470;
+	bh=WGh5AR3IGPIkGeVKJtar/L8hByGyS87dy2DrVjXpwP8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M4PSQMGRZ2DDFly/99tM1XjetYjfn42aEeKpYY5W7aqiKWmDvFzhZYaKjwFKpHh/K
+	 cJ4W5F4rOink9Vqe0c8+KtK8zmnPE78wOq9wtS5HyhEf83bW9ESYAKZ+5EQdofAEZY
+	 apfQpKxPs0p7n9EopLmANqUMLkQQwqZDNEoGQeQCKJNQBYFGyLI6Bdlth7fknDj82G
+	 Nl3S1h8gHIxf3ih20UCDpixjdgXYu7yUHOccrmo/AMQR3qpP3C0+HraN+CBE+N3cVg
+	 z3qUrmOiHiOsUn55WkycDAuiB5F0jUA9qKjPV09ysJ1kmVmeKPboGTsCkiAIvIeisN
+	 yxi54tWzY9rdQ==
 From: Benno Lossin <lossin@kernel.org>
 To: Benno Lossin <lossin@kernel.org>,
 	Miguel Ojeda <ojeda@kernel.org>,
@@ -49,15 +50,16 @@ To: Benno Lossin <lossin@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Fiona Behrens <me@kloenk.dev>,
-	Alban Kurti <kurti@invicto.ai>
-Cc: rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Brian Harring <ferringb@gmail.com>,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] rust: pin-init: fix broken rust doc link
-Date: Thu, 16 Oct 2025 23:17:38 +0200
-Message-ID: <20251016211740.653599-1-lossin@kernel.org>
+Subject: [PATCH 2/2] rust: pin-init: fix typo in docs
+Date: Thu, 16 Oct 2025 23:17:39 +0200
+Message-ID: <20251016211740.653599-2-lossin@kernel.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251016211740.653599-1-lossin@kernel.org>
+References: <20251016211740.653599-1-lossin@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +68,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rust 1.92.0 warns when building the documentation that [`PinnedDrop`] is
-an invalid reference. This is correct and it's weird that it didn't warn
-before, so fix the link.
+From: Brian Harring <ferringb@gmail.com>
 
+Signed-off-by: Brian Harring <ferringb@gmail.com>
 Signed-off-by: Benno Lossin <lossin@kernel.org>
 ---
- rust/pin-init/src/macros.rs | 2 ++
- 1 file changed, 2 insertions(+)
+ rust/pin-init/README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/rust/pin-init/src/macros.rs b/rust/pin-init/src/macros.rs
-index d6acf2cd291e..682c61a587a0 100644
---- a/rust/pin-init/src/macros.rs
-+++ b/rust/pin-init/src/macros.rs
-@@ -506,6 +506,8 @@
- /// Creates a `unsafe impl<...> PinnedDrop for $type` block.
- ///
- /// See [`PinnedDrop`] for more information.
-+///
-+/// [`PinnedDrop`]: crate::PinnedDrop
- #[doc(hidden)]
- #[macro_export]
- macro_rules! __pinned_drop {
-
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+diff --git a/rust/pin-init/README.md b/rust/pin-init/README.md
+index 723e275445d4..74bbb4e0a2f7 100644
+--- a/rust/pin-init/README.md
++++ b/rust/pin-init/README.md
+@@ -9,7 +9,7 @@
+ > [!NOTE]
+ > 
+ > This crate was originally named [`pinned-init`], but the migration to
+-> `pin-init` is not yet complete. The `legcay` branch contains the current
++> `pin-init` is not yet complete. The `legacy` branch contains the current
+ > version of the `pinned-init` crate & the `main` branch already incorporates
+ > the rename to `pin-init`.
+ >
 -- 
 2.51.0
 
