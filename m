@@ -1,118 +1,168 @@
-Return-Path: <linux-kernel+bounces-856136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FF5BE3320
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B872ABE3326
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E5E44F5639
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71AF3A3052
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B46731D371;
-	Thu, 16 Oct 2025 11:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C5531CA7D;
+	Thu, 16 Oct 2025 11:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKORyzMl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="CxFPCAnE"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F153090D0;
-	Thu, 16 Oct 2025 11:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65C63161B9;
+	Thu, 16 Oct 2025 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760615684; cv=none; b=Kgb43CZQQZfe+nTOYdEStBRPOQE+vTt4igcl7ilc892zC8KUaTVpIRMaWHcO1QnH+PgDkFLBMKVttuhNszLj5fdAx4X9hH4a4qF1afNIa1fkEuwCTdQ1Q9NLbYBiGz3W4bIawLXv197APi99yPqIzpz+frsL9wHBD6e/nxBFA1A=
+	t=1760615734; cv=none; b=k4YA9tsRZCe47ZALce6Louu/VZHdoW2eIPtHK1MKYGfE1LHZXD4ZdSPRcz1jhbYt5a7Qt7d9OETx0CMrcI3+JUIpCxoxYzEfBRcb0DCaP89BfOLAcU8kunT9C4g7wXEZ+6bff8lwRcG1Kduz/ewXDi6CtYLTX886Dc5GiS8yKEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760615684; c=relaxed/simple;
-	bh=R5K6gjYxckr64q8GAE7CkGg327Su9eLC9K5LHFsyno4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXdzwOcIpXN3Joogdf2mx1QW7/if/006YV6iO7RlpsIu6LKjSOYDIKXXUfpiFuKgerSJLYT75Zg1eu6YG9eu9hRgwM6kI6w0ciGspYH891Jg6rtRIsRy52xaz/qLcqx+ekD49gsgSFhw8QQwMUftWL5RLc5zKZlJn1jPBaszeeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKORyzMl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52F2C4CEF1;
-	Thu, 16 Oct 2025 11:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760615684;
-	bh=R5K6gjYxckr64q8GAE7CkGg327Su9eLC9K5LHFsyno4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KKORyzMlz37CnwE/AsPa7TwOC82iW7gFC91EMw9bX4VbuD2PeuD7xg9o0/pf5fTz7
-	 OGW8CAYomuUH5B4T7iM1o+0+BaZcM98k3lJ1NGpdUAs7BdM81EKxvSlKLMoICxpvuY
-	 Md+7EiDsto58hPRlFC4JbWi2lBGZS3qmQotx5yek7DU4DpK5j3zwx3VJYUD6gbNsjM
-	 p8neDUHULHRzrrBBXiYod3mtCsujy+L2mzYjzRydSbupn2ul4bHfRRMNaEiUUeU/qj
-	 aLbFDv+f8gfSfEl88WfSQtPCl05LKVTW/TGSJqdlM85Ag2tSykCRgUtKaDYQmA3k9c
-	 x0fPQh1zX//PA==
-Date: Thu, 16 Oct 2025 13:54:35 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Randolph Lin <randolph@andestech.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alex@ghiti.fr,
-	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	ben717@andestech.com, inochiama@gmail.com,
-	thippeswamy.havalige@amd.com, namcao@linutronix.de,
-	shradha.t@samsung.com, pjw@kernel.org, randolph.sklin@gmail.com,
-	tim609@andestech.com, Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v6 1/5] PCI: dwc: Allow adjusting the number of ob/ib
- windows in glue driver
-Message-ID: <aPDc-yclubiHbUcD@ryzen>
-References: <20251003023527.3284787-1-randolph@andestech.com>
- <20251003023527.3284787-2-randolph@andestech.com>
- <aO4bWRqX_4rXud25@ryzen>
- <aPDTJKwmpxolGEyj@swlinux02>
+	s=arc-20240116; t=1760615734; c=relaxed/simple;
+	bh=xTGD7ktb+E68vu2taqUt2m9ubpD6pFOo3Uxps+bU6ME=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=oPQDJ6DZvjCYWOeX7YFnCxYUjiQARkDTxCPVmDetQBBW249ce6xndzbzfi2EDa3BqjF2ofXLTfLwfu9bZ0qI/emuVCCBBZhbFjGbkTZHqVKZ8IcfrZLEnQW46tgzfAXZWTDeT5Npfs8Gqk0vQB1x9mZQNN8pCTtIhtQovc1SxPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=CxFPCAnE; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=JdJWyTw5grIca2C49Gc8SShAY81xl1ZxjBDpB/TgceY=; b=CxFPCAnEfus2DAQGC/F0bO5d4C
+	kLTklHkcWcVnvjybleV9p64RbrYZdQFzdDopV8SWnlFMURdQ+kLJVkG3CCo88/fmPtKYEJCRetPP2
+	x3D291Gwuuy+wO6MzV/rFM8lrn+cR8xXn+rWp5dy9ib7ltgJFjD9ojLF3xGnA0H5Vnd2xx9NgfAzN
+	1CRiAstPPcaL5okfp9H4Zc1Gm+LmQx/a0frpnREyqRJ+sdIKSJZfTuUFYze9n8lGWCf23frw1SAEX
+	9HLigBvQkTAhbvLbYJtz9Hkn09mLzS6sYr+oQNAq/9zualqofN/BAq3JyLtqIMr5qfQtr0PI/0HGd
+	6h1M1VXQ==;
+Received: from [122.175.9.182] (port=2029 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v9MZu-000000079dC-1oBn;
+	Thu, 16 Oct 2025 07:55:30 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id C240E1783FF9;
+	Thu, 16 Oct 2025 17:25:26 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id B466E1783FF4;
+	Thu, 16 Oct 2025 17:25:26 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uJODz3yCZt52; Thu, 16 Oct 2025 17:25:26 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 8BA601781E1F;
+	Thu, 16 Oct 2025 17:25:26 +0530 (IST)
+Date: Thu, 16 Oct 2025 17:25:26 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: parvathi <parvathi@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
+	danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
+	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
+	afd <afd@ti.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>
+Message-ID: <179725937.1046.1760615726437.JavaMail.zimbra@couthit.local>
+In-Reply-To: <ce87a72f-09b3-4615-aab9-2be8648300f8@lunn.ch>
+References: <20251014124018.1596900-1-parvathi@couthit.com> <20251014124018.1596900-3-parvathi@couthit.com> <ce87a72f-09b3-4615-aab9-2be8648300f8@lunn.ch>
+Subject: Re: [PATCH net-next v3 2/3] net: ti: icssm-prueth: Adds switchdev
+ support for icssm_prueth driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPDTJKwmpxolGEyj@swlinux02>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: icssm-prueth: Adds switchdev support for icssm_prueth driver
+Thread-Index: wPaVLJ+dDJYcM1dgRjkmeX50UJ4mnA==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hello Randolph,
+Hi,
 
-On Thu, Oct 16, 2025 at 07:12:36PM +0800, Randolph Lin wrote:
-> > 
-> > Could we please get a better explaination than "satisfy platform-specific
-> > constraints" ?
-> > 
+>> +static struct prueth_fw_offsets fw_offsets_v2_1;
+>> +
+>> +static void icssm_prueth_set_fw_offsets(struct prueth *prueth)
+>> +{
+>> +	/* Set VLAN/Multicast filter control and table offsets */
+>> +	if (PRUETH_IS_EMAC(prueth)) {
+>> +		prueth->fw_offsets->mc_ctrl_byte  =
+>> +			ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_OFFSET;
+>> +		prueth->fw_offsets->mc_filter_mask =
+>> +			ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OFFSET;
+>> +		prueth->fw_offsets->mc_filter_tbl =
+>> +			ICSS_EMAC_FW_MULTICAST_FILTER_TABLE;
 > 
-> Due to this SoC design, only iATU regions with mapped addresses within the
-> 32-bits address range need to be programmed. However, this SoC has a design
-> limitation in which the maximum region size supported by a single iATU
-> entry is restricted to 4 GB, as it is based on a 32-bits address region.
+> I know for some of these SoCs, there can be multiple instances of the
+> hardware blocks. It looks like that will go wrong here, because there
+> is only one fw_offsets_v2_1 ?
 > 
-> For most EP devices, we can only define one entry in the "ranges" property
-> of the devicetree that maps an address within the 32-bit range,
-> as shown below:
-> 	ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>;
+> Humm, actually, if this are constant, why have fw_offsets_v2_1? Just
+> use ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_OFFSET directly?
 > 
-> For EP devices that require 64-bits address mapping (e.g., GPUs), BAR
-> resources cannot be assigned.
-> To support such devices, an additional entry for 64-bits address mapping is
-> required, as shown below:
-> 	ranges = <0x02000000 0x0 0x10000000 0x0 0x10000000 0x0 0xf0000000>,
-> 		 <0x43000000 0x1 0x00000000 0x1 0x00000000 0x7 0x00000000>;
+
+Sure we will evaluate this and address in the next version.
+
+>> +static void icssm_emac_mc_filter_ctrl(struct prueth_emac *emac, bool enable)
+>> +{
+>> +	struct prueth *prueth = emac->prueth;
+>> +	void __iomem *mc_filter_ctrl;
+>> +	void __iomem *ram;
+>> +	u32 mc_ctrl_byte;
+>> +	u32 reg;
+>> +
+>> +	ram = prueth->mem[emac->dram].va;
+>> +	mc_ctrl_byte = prueth->fw_offsets->mc_ctrl_byte;
+>> +	mc_filter_ctrl = ram + mc_ctrl_byte;
 > 
-> In the current common implementation, all ranges entries are programmed to
-> the iATU. However, the size of entry for 64-bit address mapping exceeds the
-> maximum region size that a single iATU entry can support. As a result, an
-> error is reported during iATU programming, showing that the size of 64-bit
-> address entry exceeds the region limit.
+> mc_filter_ctrl = ram + ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_OFFSET; ???
+> 
 
-Note that each iATU can map up to IATU_LIMIT_ADDR_OFF_OUTBOUND_i +
-IATU_UPPR_LIMIT_ADDR_OFF_OUTBOUND_i.
+Sure we will evaluate this and address in the next version.
 
-Some DWC controllers have this at 4G, others have this at 8G.
+>> +static void icssm_prueth_sw_fdb_work(struct work_struct *work)
+>> +{
+>> +	struct icssm_prueth_sw_fdb_work *fdb_work =
+>> +		container_of(work, struct icssm_prueth_sw_fdb_work, work);
+>> +	struct prueth_emac *emac = fdb_work->emac;
+>> +
+>> +	rtnl_lock();
+>> +
+>> +	/* Interface is not up */
+>> +	if (!emac->prueth->fdb_tbl) {
+>> +		rtnl_unlock();
+>> +		goto free;
+>> +	}
+> 
+> I would probably put the rtnl_unlock() after free: label.
+> 
 
-Samuel has submitted a patch to use multiple iATUs to support
-a window size larger than the iATU limit of a single iATU:
-https://lore.kernel.org/linux-pci/aPDObXsvMoz1OYso@ryzen/T/#m11c3d95215982411d0bbd36940e70122b70ae820
+We will address this in the next version.
 
-Perhaps this patch could be of use for you too?
-
-
-Kind regards,
-Niklas
+Thanks and Regards,
+Parvathi.
 
