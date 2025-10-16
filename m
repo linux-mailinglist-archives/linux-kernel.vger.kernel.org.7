@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-856159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7DDBE3445
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:12:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00C0BE3459
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D4E1A61A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:12:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D990F502FDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2D732BF32;
-	Thu, 16 Oct 2025 12:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACADE32C324;
+	Thu, 16 Oct 2025 12:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9yMkyc2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCGlCg3K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0C3306496;
-	Thu, 16 Oct 2025 12:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009A132BF4E;
+	Thu, 16 Oct 2025 12:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760616711; cv=none; b=jD+2TRuYxp4TzMRL9fI+hlAKhBCtlV23B+mQ0wJaMNohVPE2kv6+SBLqSvmIzXmpx998R7PhZoDnLHSDVYK1vJzRz30Fm4iZx5mGzOYW9tNhd2fCIfJM+35y9vPCMCH1lDrACeG7txzcuODw56DZBDxaUwU3Xz4lN7qggNXbhSc=
+	t=1760616713; cv=none; b=EdA4v/uRIlZBZUUmZXFRK9g+Qk0Hxo0hPh66iRDEq9du5my8Wd979UiMPnFkWukNvPCUldWGafhrJjB2WZUj7LHqqD2MEVGUbSF9NY+h4tLF9N4kKTx8hP90YX9GoBRvX57vk6vjNbmAyHXxr0LxmZtFRnr5KPw8cSX9B1CTtDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760616711; c=relaxed/simple;
-	bh=QMMq7ETdtjTgnDNtAlTjnkOPZVCN6eYABiSBB0vfLLQ=;
+	s=arc-20240116; t=1760616713; c=relaxed/simple;
+	bh=fXQW5LlY3uriTrQKws57EZgohSd4auvpbv1xc5ox9X8=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=utYEqjcYRQpQXfaXRnpyN7Ef4JHqz5fVCUdH3CFNRcTs3CZKB0LQ2F9Btb3xQwS0NmyV5BL/t3g50dBbafdZP6J3AZiesvvZlLokAo0120QcdZ8x8grnGFBUns3TXUQTt/NyqbqwWw2q9pLdgtSPPOtQk5NI16eqVJ2bTYotLB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9yMkyc2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B90BC4CEF1;
-	Thu, 16 Oct 2025 12:11:50 +0000 (UTC)
+	 Message-Id:Subject; b=SQHIiPesggPqOvg+rEUZaY6CtQT0miG6dbMoq+7/ly42guBX93SuQC4lS8XiQLVDVcW4PV158y/KOf1R0edxAP/E96sirijKa+1hBtCO1lrmb5+ZFK44APvdjnEs+bY88CJPP8n5IEfUtlgPuNV3qXn6PxWlhpuGo4rGS2igGLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCGlCg3K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B81FC116B1;
+	Thu, 16 Oct 2025 12:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760616710;
-	bh=QMMq7ETdtjTgnDNtAlTjnkOPZVCN6eYABiSBB0vfLLQ=;
+	s=k20201202; t=1760616712;
+	bh=fXQW5LlY3uriTrQKws57EZgohSd4auvpbv1xc5ox9X8=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=n9yMkyc2tj8S/WI8tnTdMbETm0ap6JHP5dyIRsPDzWMrHtHjLdsc6wCUEiCbfSgNT
-	 5wjkzOpCbxWP3n1ZmjRo6/DjKrmff4jtr2zAjGYe1S4jiluB41ZhQCHlCTTIMz3cDH
-	 KGzHiJkwTUiBPVejxI/Nwiu2Kiebwk1xDgemmukC9VbWVx3CVPK9QBAF8lfAP3Dqey
-	 dRgfVsmhb45ADD/us7wjBXXqqI19MFcJK3DNrTh0pftAHWrvyDhu6trNkUuaTeitNW
-	 qSeKgoP6PTCbakpoRn3egW79ZbN7GA2mLFdZtAl95MFb5FM1hGqBXWmk9PjWY5KVVg
-	 sDdCyPfKjT5TQ==
-Date: Thu, 16 Oct 2025 07:11:48 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	b=eCGlCg3KYMaFDE2I2HYQ7UC4kwzdvab0JbYJVvZAIfFSwgJmC0SB5HqFzEGD9ZZqp
+	 jb/4lrvvl2gEnH2Vghh5t2+K3E+ZRQGeKQucfabea2klGQZcznjEk6dzgAGmFPUTxJ
+	 VTI+W/ZI/mayVy6PKH65vrqZaaPD+aruuabmgxuQmi76C7T5OUyL0OcJZ9tngqCPhl
+	 3pYB3ttdZvDvWPoqfhueWGjBZXkYMCD4CHHM9+ZBFTI4MYxmHPp5JuZkhGv+GU/ojH
+	 VWGulZT4+pnvDgwrO8dYGkY0qwv+Yjb6Zpck1/Au5A+AowNEUEXA+VoCVqL60veqzz
+	 9gToVZtXMD6WQ==
+Date: Thu, 16 Oct 2025 07:11:51 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,174 +50,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Frank Wang <frank.wang@rock-chips.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Diederik de Haas <didi.debian@cknow.org>, 
- Amit Sunil Dhamne <amitsd@google.com>, Johan Jonker <jbx6244@gmail.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, 
- dri-devel@lists.freedesktop.org, Thomas Zimmermann <tzimmermann@suse.de>, 
- Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org, 
- Peter Robinson <pbrobinson@gmail.com>, David Airlie <airlied@gmail.com>, 
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
- linux-rockchip@lists.infradead.org, linux-usb@vger.kernel.org, 
- Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Dragan Simic <dsimic@manjaro.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, 
- Yubing Zhang <yubing.zhang@rock-chips.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
- Maxime Ripard <mripard@kernel.org>
-To: Chaoyi Chen <kernel@airkyi.com>
-In-Reply-To: <20251016022741.91-1-kernel@airkyi.com>
-References: <20251016022741.91-1-kernel@airkyi.com>
-Message-Id: <176061621163.2563037.16885169757150775717.robh@kernel.org>
-Subject: Re: [PATCH v6 0/8] Add Type-C DP support for RK3399 EVB IND board
+Cc: krzk+dt@kernel.org, davem@davemloft.net, richardcochran@gmail.com, 
+ Frank.Li@nxp.com, vladimir.oltean@nxp.com, andrew+netdev@lunn.ch, 
+ kuba@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, claudiu.manoil@nxp.com, pabeni@redhat.com, 
+ edumazet@google.com, xiaoning.wang@nxp.com, netdev@vger.kernel.org, 
+ conor+dt@kernel.org
+To: Wei Fang <wei.fang@nxp.com>
+In-Reply-To: <20251016102020.3218579-1-wei.fang@nxp.com>
+References: <20251016102020.3218579-1-wei.fang@nxp.com>
+Message-Id: <176061621269.2563112.3282967985432898709.robh@kernel.org>
+Subject: Re: [PATCH net-next 0/8] net: enetc: Add i.MX94 ENETC support
 
 
-On Thu, 16 Oct 2025 10:27:33 +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+On Thu, 16 Oct 2025 18:20:11 +0800, Wei Fang wrote:
+> i.MX94 NETC has two kinds of ENETCs, one is the same as i.MX95, which
+> can be used as a standalone network port. The other one is an internal
+> ENETC, it connects to the CPU port of NETC switch through the pseudo
+> MAC. Also, i.MX94 have multiple PTP Timers, which is different from
+> i.MX95. Any PTP Timer can be bound to a specified standalone ENETC by
+> the IERB ETBCR registers. Currently, this patch only add ENETC support
+> and Timer support for i.MX94. The switch will be added by a separate
+> patch set.
 > 
-> This series focuses on adding Type-C DP support for USBDP PHY and DP
-> driver. The USBDP PHY and DP will perceive the changes in cable status
-> based on the USB PD and Type-C state machines provided by TCPM. Before
-> this, the USBDP PHY and DP controller of RK3399 sensed cable state
-> changes through extcon, and devices such as the RK3399 Gru-Chromebook
-> rely on them. This series should not break them.
+> ---
+> Note that the DTS patch (patch 8/8) is just for referenece, it will be
+> removed from this patch set when the dt-bindings patches have been
+> reviewed. It will be sent for review by another thread in the future.
+> ---
 > 
-> ====
-> 1. DisplayPort HPD status notify
+> Clark Wang (1):
+>   net: enetc: add ptp timer binding support for i.MX94
 > 
-> Before v4, I implemented a variety of DP HPD status notify. However,
-> they all had various problems and it was difficult to become a common
-> solution.
+> Wei Fang (7):
+>   dt-bindings: net: netc-blk-ctrl: add compatible string for i.MX94
+>     platforms
+>   dt-bindings: net: enetc: add compatible string for ENETC with pseduo
+>     MAC
+>   dt-bindings: net: ethernet-controller: remove the enum values of speed
+>   net: enetc: add preliminary i.MX94 NETC blocks control support
+>   net: enetc: add basic support for the ENETC with pseudo MAC for i.MX94
+>   net: enetc: add standalone ENETC support for i.MX94
+>   arm64: dts: imx94: add basic NETC nodes and properties
 > 
-> Under Dmitry's guidance, I try to add default DRM AUX HPD device when
-> register DisplayPort altmode in patch 1. That makes it redundant for
-> each Type-C chip driver to implement a similar registration process
-> in embedded scenarios.
-> 
-> ====
-> 2. Altmode switching and orientation switching for USBDP PHY
-> 
-> For USB Type-C interfaces, an external Type-C controller chip assists
-> by detecting cable attachment, determining plug orientation, and
-> reporting USB PD message. The USB/DP combo PHY supports software
-> configurable pin mapping and DisplayPort lane assignment. Based on
-> these message, the combo PHY can perform both altmode switching and
-> orientation switching via software.
-> 
-> The RK3399 EVB IND board has a Type-C interface DisplayPort. It use
-> fusb302 chip as Type-C controller. The connection diagram is shown below:
-> 
-> fusb302 chip +---> USB2.0 PHY ----> DWC3 USB controller
->              |
->              +---> USB/DP PHY0 +--> CDN-DP controller
->                                |
->                                +--> DWC3 USB controller
-> 
-> ====
-> 3. Multiple bridge model for RK3399 CDN-DP
-> 
-> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
-> the CDN-DP can be switched to output to one of the PHYs.
-> 
-> USB/DP PHY0 ---+
->                | <----> CDN-DP controller
-> USB/DP PHY1 ---+
-> 
-> In previous versions, if both PHY ports were connected to DP,
-> the CDN-DP driver would select the first PHY port for output.
-> 
-> On Dmitry's suggestion, we introduced a multi-bridge model to support
-> flexible selection of the output PHY port. For each PHY port, a
-> separate encoder and bridge are registered.
-> 
-> The change is based on the DRM AUX HPD bridge, rather than the
-> extcon approach. This requires the DT to correctly describe the
-> connections between the first bridge in bridge chain and DP
-> controller. And Once the first bridge is obtained, we can get the
-> last bridge corresponding to the USB-C connector, and then set the
-> DRM connector's fwnode to the corresponding one to enable HPD
-> notification.
-> 
-> ====
-> Patch1 add default HPD device when register Displayport altmode.
-> Patch2 add new Type-C mode switch for RK3399 USBDP phy binding.
-> Patch3 add typec_mux and typec_switch for RK3399 USBDP PHY.
-> Patch4 add DRM AUX bridge support for RK3399 USBDP PHY.
-> Patch5 drops CDN-DP's extcon dependency when Type-C is present.
-> Patch6 add multiple bridges to support PHY port selection.
-> Patch7 add missing dp_out port for RK3399 CDN-DP.
-> Patch8 add Type-C DP support for RK3399 EVB IND board.
-> 
-> Changes in v6:
-> - Link to V5: https://lore.kernel.org/all/20251011033233.97-1-kernel@airkyi.com/
-> - Fix depend in Kconfig.
-> - Check DP svid in tcphy_typec_mux_set().
-> - Remove mode setting in tcphy_orien_sw_set().
-> - Rename some variable names.
-> - Attach the DP bridge to the next bridge.
-> 
-> Changes in v5:
-> - Link to V4: https://lore.kernel.org/all/20250922012039.323-1-kernel@airkyi.com/
-> - Remove the calls related to `drm_aux_hpd_bridge_notify()`.
-> - Place the helper functions in the same compilation unit.
-> - Add more comments about parent device.
-> - Add DRM AUX bridge support for RK3399 USBDP PHY
-> - By parsing the HPD bridge chain, set the connector's of_node to the
-> of_node corresponding to the USB-C connector.
-> - Return EDID cache when other port is already enabled.
-> 
-> Changes in v4:
-> - Link to V3: https://lore.kernel.org/all/20250729090032.97-1-kernel@airkyi.com/
-> - Add default HPD device for DisplayPort altmode.
-> - Introduce multiple bridges for CDN-DP.
-> - ...
-> 
-> Changes in v3:
-> - Link to V2: https://lore.kernel.org/all/20250718062619.99-1-kernel@airkyi.com/
-> - Add more descriptions to clarify the role of the PHY in switching.
-> - Fix wrong vdo value.
-> - Fix port node in usb-c-connector.
-> 
-> Changes in v2:
-> - Link to V1: https://lore.kernel.org/all/20250715112456.101-1-kernel@airkyi.com/
-> - Reuse dp-port/usb3-port in rk3399-typec-phy binding.
-> - Fix compile error when CONFIG_TYPEC is not enabled.
-> - Notify DP HPD state by USB/DP PHY.
-> - Ignore duplicate HPD events.
-> - Add endpoint to link DP PHY and DP controller.
-> - Fix devicetree coding style.
-> 
-> Chaoyi Chen (8):
->   usb: typec: Add default HPD device when register DisplayPort altmode
->   dt-bindings: phy: rockchip: rk3399-typec-phy: Support mode-switch
->   phy: rockchip: phy-rockchip-typec: Add typec_mux/typec_switch support
->   phy: rockchip: phy-rockchip-typec: Add DRM AUX bridge
->   drm/rockchip: cdn-dp: Support handle lane info without extcon
->   drm/rockchip: cdn-dp: Add multiple bridges to support PHY port
->     selection
->   arm64: dts: rockchip: Add missing dp_out port for RK3399 CDN-DP
->   arm64: dts: rockchip: rk3399-evb-ind: Add support for DisplayPort
-> 
->  .../phy/rockchip,rk3399-typec-phy.yaml        |   6 +
->  arch/arm64/boot/dts/rockchip/rk3399-base.dtsi |  10 +-
->  .../boot/dts/rockchip/rk3399-evb-ind.dts      | 146 ++++++
->  drivers/gpu/drm/rockchip/cdn-dp-core.c        | 354 ++++++++++++---
->  drivers/gpu/drm/rockchip/cdn-dp-core.h        |  24 +-
->  drivers/phy/rockchip/Kconfig                  |   3 +
->  drivers/phy/rockchip/phy-rockchip-typec.c     | 420 +++++++++++++++++-
->  drivers/usb/typec/Kconfig                     |   2 +
->  drivers/usb/typec/class.c                     |  26 ++
->  include/linux/usb/typec_altmode.h             |   2 +
->  10 files changed, 911 insertions(+), 82 deletions(-)
+>  .../bindings/net/ethernet-controller.yaml     |   1 -
+>  .../devicetree/bindings/net/fsl,enetc.yaml    |   1 +
+>  .../bindings/net/nxp,netc-blk-ctrl.yaml       |   1 +
+>  arch/arm64/boot/dts/freescale/imx94.dtsi      | 118 ++++++++++
+>  arch/arm64/boot/dts/freescale/imx943-evk.dts  | 100 +++++++++
+>  drivers/net/ethernet/freescale/enetc/enetc.c  |  28 ++-
+>  drivers/net/ethernet/freescale/enetc/enetc.h  |   8 +
+>  .../net/ethernet/freescale/enetc/enetc4_hw.h  |  32 ++-
+>  .../net/ethernet/freescale/enetc/enetc4_pf.c  |  37 ++--
+>  .../ethernet/freescale/enetc/enetc_ethtool.c  |  64 ++++++
+>  .../net/ethernet/freescale/enetc/enetc_hw.h   |   1 +
+>  .../freescale/enetc/enetc_pf_common.c         |   5 +-
+>  .../ethernet/freescale/enetc/netc_blk_ctrl.c  | 202 ++++++++++++++++++
+>  13 files changed, 574 insertions(+), 24 deletions(-)
 > 
 > --
-> 2.49.0
+> 2.34.1
 > 
 > 
 > 
@@ -239,21 +131,18 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/v6.18-rc1-18-g924aa1d9e0ae (exact match)
- Base: tags/v6.18-rc1-18-g924aa1d9e0ae (use --merge-base to override)
+ Base: tags/next-20251015 (exact match)
+ Base: tags/next-20251015 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20251016022741.91-1-kernel@airkyi.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20251016102020.3218579-1-wei.fang@nxp.com:
 
-arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: syscon@ff770000 (rockchip,rk3399-grf): usb2phy@e450: 'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
-arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: syscon@ff770000 (rockchip,rk3399-grf): usb2phy@e450: Unevaluated properties are not allowed ('port' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
-arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: usb2phy@e450 (rockchip,rk3399-usb2phy): 'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/phy/rockchip,inno-usb2phy.yaml#
-arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dtb: /sound: failed to match any schema with compatible: ['rockchip,rk3399-gru-sound']
+arch/arm64/boot/dts/freescale/imx943-evk.dtb: system-controller@4ceb0000 (nxp,imx94-netc-blk-ctrl): 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
 
 
 
