@@ -1,485 +1,307 @@
-Return-Path: <linux-kernel+bounces-855859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC91BE2832
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:52:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ECDCBE282B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E573D3BB0F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:51:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 225604FD009
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D542E2DFB;
-	Thu, 16 Oct 2025 09:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5B31B82C;
+	Thu, 16 Oct 2025 09:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="2pzid519"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HZuf0CvS"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43962D3EFC
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059203191A2
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608264; cv=none; b=U9MVxPl5RWY71ND1BPRHMSzHvfsMjjvBD66lvV//u9oiMRbuw0b1VfmTlcBKd2FlTlrHWixD3OL71uauL1WFKWnzYR26ssDky7SAM41n2baowauA95I26+ZXwVHohWW0k7Ot3pvGb7fVRc7047/V05g+WaTZUL4zlQIh9wMXEhQ=
+	t=1760608290; cv=none; b=t157v5mWS2Lq/fXvgMGwItHEcpH7W0gZKYI42Nwn82kJn2z9t929hcVCUiPlHqyB8bZ011yjVzGbupAuybQqlzWLDvkErCsgmZToQCvb93PChWVMxHWBRaxprcGGCowvb6xGgQpXGfx+XQvMczS9iIKDFG7rqWjZvvBXX21jKOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608264; c=relaxed/simple;
-	bh=uWk39fUFrvpyBDX2lm7zrHVUVZqOVhaqbxns637gDhU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PN4jxPlA9Jkic16hQWU4rKPJRHdUmlkKAFvEV0g/aM3BY4mV42UqekGHTlsODQ8ghQNe/6XMFIBcZrCxqWV0ZwANoq79Ed1GYTsjgRJmi7BfJUhVL+vaNEmwFH6KPPmmIyS4n7hPYnzjjc8zNUoPvuBKBTPBpJW+RpCRAGGID8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=2pzid519; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339d53f4960so546304a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1760608259; x=1761213059; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lFs3EGtGlK6OwlG3/AgKjm9aiJuGxxNuTS0QmzI5toQ=;
-        b=2pzid519fqOc8TP3DTKHbMpB5/XxfyZknCa/GNEvemMUmc1g7pPKZuWbbkGLxLn2GX
-         IFbMFU0cwgIB+1CXg2U1b0PobE2v3D4WJuUvUQnfpWdVk+uY0KpusN6eOlgaW0YLB0lg
-         nObMhDHz+UDwc6Bcez1kWGE6+9xWkTNlc3d0vMdj5BGlpdCBuzEnQrKKvwd815iLf8dP
-         XVwjWzoEwZHTaHUir4AMyXI0NRazKejP7leodUC1pbk11JpJlODHpiB/0I4f3X46JUwJ
-         fSD4r5tW5oKCct4B6I2hwUXMZ/mk7ouFClcLEYFKNkZF8dbsJWtkjoRDkGkRM4ozw0Cu
-         yrwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760608259; x=1761213059;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lFs3EGtGlK6OwlG3/AgKjm9aiJuGxxNuTS0QmzI5toQ=;
-        b=NG12lCk5TziQzqVgBuAYD59TzB/opjsQdBGtxSQkiMLTEEx4ZDEV5Gd2l1zx0a6TLt
-         pcZtI5ta+QDljxDUtnrT8nQOhmgtQBOkH/tHB+xfN1wDrrSkcBybCSYct1rRvA68pVxR
-         D1q29fxzrNDdIEihXA3440cocjZx4Bf1eS99UJj+FYbiAqEleYi6yhC9jmuL+aSTsNzk
-         bDbtXItaXsYddQC6cwBfPzW1C3XJDcTDIIdry4OrwO5RP4Esk6EIB1EZ5BNoNrWW6d+C
-         eQFEcS6gB5N7QTjRzLerbsxVIvlbxPC5ZT7LxG6NosfkcUAZ3f+A5cVtgim2xj6PZpUo
-         9gsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW41cuaPU4c7qC8+mxG3osrQ628QyJqkGRLx8HIed3q10o1TfrybFtpuL5XRgztdFgWOtqr/QFrLJ9TuSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhW72VwCopuEgcSbzZC2gg3OTYlzf9d8pgMYYJdCpeuRf5kHJI
-	bHndK9q2CV8ehu4rUidSxiCxYaukfZ55HeESrQg+Vkib172uU43EEunhJ/+s6kG1dDM=
-X-Gm-Gg: ASbGnctmsWfeUr0lINieqrNA1xph7F9x8CCeqEcpP2dGpuKULzyXFaiwbxZX5YyoiKy
-	staG8B9OgSJNFwagUNG9y9tYMNFpTEq4D3QNKmeK6l2ArjX82fFbV3Y27RgQOvb93zLesw6Dngr
-	g9Qzb6ECmYUztziHOa4RBeOWwP8SHiE30oDXDWWP9WpSYuWBsX1HKINTih0Lcwh7bBxZLORi6wk
-	sDQDAH0TYqYwrInkcywNsUDfrVPq+mGpjhaieDiLp1W+xwoC3NwTKCX3E/Yxvi5NCHrDVNn2O5K
-	gwYEc0eAy8CQV0Mf0SifgZ56yjUyQfpT6DllvXlvauIx8nEGBP82XNL7GakkwxtBKNBKZp6rrrh
-	A6E8RJ4nctbZtlvaRsN4yMgjgvhzk7HFT0B8O0B1ovx8hV3lXCjh9kdHz5t5Iltik2qgwk16o9k
-	7+Tr6aUjYpSKh1ooXiPx22ai0ar5yg0sJnNGy9R9CIzsVXL1gWpuxbfIi8UA==
-X-Google-Smtp-Source: AGHT+IE1EUi1+7BD9Qmr9q3KVeE2U3k6HZTCCxGbpg+g2pzJT8BF4zuNi1u/SE9s6oHhJCVragcTew==
-X-Received: by 2002:a17:90b:4a0b:b0:330:6f16:c4e0 with SMTP id 98e67ed59e1d1-33b5116a4b1mr45144549a91.12.1760608258877;
-        Thu, 16 Oct 2025 02:50:58 -0700 (PDT)
-Received: from dgp100339560-01.huaqin.com ([103.117.77.121])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bb6519421sm1272402a91.1.2025.10.16.02.50.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 02:50:58 -0700 (PDT)
-From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-To: neil.armstrong@linaro.org,
-	jessica.zhang@oss.qualcomm.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dianders@chromium.org
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-Subject: [PATCH v3 2/2] drm/panel: Add driver for Ilitek IL79900A-based panels
-Date: Thu, 16 Oct 2025 17:50:43 +0800
-Message-Id: <20251016095043.1694736-3-yelangyan@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251016095043.1694736-1-yelangyan@huaqin.corp-partner.google.com>
-References: <20251016095043.1694736-1-yelangyan@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1760608290; c=relaxed/simple;
+	bh=GuOA5GxxnddDAeBlZENLPE1NwOR/4by1LqONgJTNOHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rTEzCgiVEeK2yUXe8omOC31LPH3CUIFMdSB6yct20H5yoQx3dVSQTNotsjWZlKXeFLTpoJ4GEl7rGtOmTDlBoskYqQJBARH3m8VE1FtdLvggx6//myS+K4Sgr7M+YeY6TG38J1kNTysRPSe+HpZIY5MlbW/JypjGnOYrLPVil0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HZuf0CvS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G1xAaI001444;
+	Thu, 16 Oct 2025 09:51:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=87uFae
+	E9/6hxFdNJLHex+ZSIMzX1ZexUzOPHkdh8InA=; b=HZuf0CvSfWT4gACBD2lh+H
+	ClAPA3hXOIyvYPSb9Q1TkEU3KX8MT4UZlbHIP98iozFz6YBJQoSqx6iBtREro5Lu
+	pRLa3LhZgaagnqx5oxrrAkIj92XZjATgn1dyd5vxdL2oWwXTQfuDjJvF4ipo/SJ2
+	RLPfS+Flx4DgC9wy74EgN1GkiCvxFSWncTUA6n/7m9+NngqpNEXVVc9hsrAYueY0
+	5FUimUhuuUztin6vP+LaGFz8xyTQ2rRcoHGv29/XRQ91sXct4lCi68hF9yCEGDDh
+	+hIOmGpRoNR5f4hWpwiX7wf9KZLzQZc6ntBn2i6OmAREpwvmpdfq/+CZyD8u+Zgw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp84peh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Oct 2025 09:51:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59G9fQ0R003641;
+	Thu, 16 Oct 2025 09:51:10 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xy54kb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Oct 2025 09:51:10 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59G9p5ZG30146826
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 16 Oct 2025 09:51:06 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94F9120043;
+	Thu, 16 Oct 2025 09:51:05 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A9D82004B;
+	Thu, 16 Oct 2025 09:51:04 +0000 (GMT)
+Received: from [9.109.204.116] (unknown [9.109.204.116])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 16 Oct 2025 09:51:04 +0000 (GMT)
+Message-ID: <7b9f9ca0-a6d8-40d0-8195-bbf81377e866@linux.ibm.com>
+Date: Thu, 16 Oct 2025 15:21:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [mainline]Kernel Boot Warings at arch/powerpc/mm/mem.c:341
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>, Baoquan He <bhe@redhat.com>
+References: <90937fe0-2e76-4c82-b27e-7b8a7fe3ac69@linux.ibm.com>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <90937fe0-2e76-4c82-b27e-7b8a7fe3ac69@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Z8GkyGJ_YovZfpJLQazHzUQSk6mLxaaV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA4NCBTYWx0ZWRfX+OJPssgHyqKs
+ b1lKhdhQIJ9LshoyEILOarITnTmLe3MFUXfPgjaj0KZqHvBJLQEG9+X9Aq37sR2vOH54eo2ddpQ
+ m6rpangdnaozneMg6ad4ajd/Z+2M7OX4EDMAmVb6vlTQ5d42VxGqSF+QfzQStz5hC2yT0UYDeH6
+ izsPMPcMHp+fB2ZR/vxHkoJNOi5bFB6ZG+Duz0a3331VnGZU304o5uISkqqXpa1lvl2CNUThJjX
+ HeG6INI8bLRKh4ZH1r4Qf7rrDH5LOURlYBWmJciVDoCGl6m2U4FMhj2mmAXTWPhKba2U5dn7pMe
+ H58miBJ8zKa5Ww+oUxwfdMC43Ln0qvsmah5XDnRxbuBX7n3CShmc3RYvGLrrrU4Bt5TP9cd7kMX
+ 9aHWpr/1j46Feg7T5XfxR/bg58dSHg==
+X-Proofpoint-GUID: Z8GkyGJ_YovZfpJLQazHzUQSk6mLxaaV
+X-Authority-Analysis: v=2.4 cv=af5sXBot c=1 sm=1 tr=0 ts=68f0c00f cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=0LcAchjzLpStlyLQwpoA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510120084
 
-Add a DRM panel driver for the Ilitek IL79900A MIPI-DSI LCD controller.
 
-The controller is used in panels such as the Tianma TL121BVMS07-00.
-It requires multiple power supplies (AVDD, AVEE, 1.8V logic), an enable
-GPIO, and a backlight device.
 
-Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
----
- drivers/gpu/drm/panel/panel-ilitek-il79900a.c | 358 ++++++++++++++++++
- 1 file changed, 358 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-ilitek-il79900a.c
+On 10/10/25 11:15, Venkat Rao Bagalkote wrote:
+> Greetings!!!
+>
+>
+> IBM CI has reported kernel boot warnings on the mainline kernel on IBM 
+> Power11 system.
+>
+>
+> Attached is the .config file.
+>
+> Traces:
+>
+>
+> [    0.040098] plpks: POWER LPAR Platform KeyStore is not supported or 
+> enabled
+> [    0.043041] ------------[ cut here ]------------
+> [    0.043045] WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/mem.c:341 
+> add_system_ram_resources+0xfc/0x180
+> [    0.043058] Modules linked in:
+> [    0.043065] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
+> 6.17.0-auto-12607-g5472d60c129f #1 VOLUNTARY
+> [    0.043072] Hardware name: IBM,9080-HEX Power11 (architected) 
+> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
+> [    0.043078] NIP:  c00000000201de3c LR: c00000000201de34 CTR: 
+> 0000000000000000
+> [    0.043082] REGS: c000000127cef8a0 TRAP: 0700   Not tainted 
+> (6.17.0-auto-12607-g5472d60c129f)
+> [    0.043088] MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 
+> 84000840  XER: 20040010
+> [    0.043099] CFAR: c00000000017eed0 IRQMASK: 0
+> [    0.043099] GPR00: c00000000201de34 c000000127cefb40 
+> c0000000016a8100 0000000000000001
+> [    0.043099] GPR04: c00000012005aa00 0000000020000000 
+> c000000002b705c8 0000000000000000
+> [    0.043099] GPR08: 000000007fffffff fffffffffffffff0 
+> c000000002db8100 000000011fffffff
+> [    0.043099] GPR12: c00000000201dd40 c000000002ff0000 
+> c0000000000112bc 0000000000000000
+> [    0.043099] GPR16: 0000000000000000 0000000000000000 
+> 0000000000000000 0000000000000000
+> [    0.043099] GPR20: 0000000000000000 0000000000000000 
+> 0000000000000000 c0000000015a3808
+> [    0.043099] GPR24: c00000000200468c c000000001699888 
+> 0000000000000106 c0000000020d1950
+> [    0.043099] GPR28: c0000000014683f8 0000000081000200 
+> c0000000015c1868 c000000002b9f710
+> [    0.043138] NIP [c00000000201de3c] add_system_ram_resources+0xfc/0x180
+> [    0.043143] LR [c00000000201de34] add_system_ram_resources+0xf4/0x180
+> [    0.043148] Call Trace:
+> [    0.043150] [c000000127cefb40] [c00000000201de34] 
+> add_system_ram_resources+0xf4/0x180 (unreliable)
+> [    0.043157] [c000000127cefba0] [c000000000010eb4] 
+> do_one_initcall+0x60/0x36c
+> [    0.043162] [c000000127cefc80] [c0000000020068cc] 
+> do_initcalls+0x120/0x220
+> [    0.043169] [c000000127cefd30] [c000000002006cbc] 
+> kernel_init_freeable+0x23c/0x390
+> [    0.043174] [c000000127cefde0] [c0000000000112e8] 
+> kernel_init+0x34/0x26c
+> [    0.043178] [c000000127cefe50] [c00000000000df7c] 
+> ret_from_kernel_user_thread+0x14/0x1c
+> [    0.043181] ---- interrupt: 0 at 0x0
+> [    0.043186] Code: 3d02010c e9210028 e9410020 fb840010 fba40018 
+> 38685b48 3929ffff f9440000 f9240008 4a161035 60000000 54630ffe 
+> <0b030000> 39210028 39400000 39010020
+> [    0.043197] ---[ end trace 0000000000000000 ]---
+> [    0.043202] ------------[ cut here ]------------
+> [    0.043203] WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/mem.c:341 
+> add_system_ram_resources+0xfc/0x180
+> [    0.043209] Modules linked in:
+> [    0.043212] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G W      
+>      6.17.0-auto-12607-g5472d60c129f #1 VOLUNTARY
+> [    0.043217] Tainted: [W]=WARN
+> [    0.043219] Hardware name: IBM,9080-HEX Power11 (architected) 
+> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
+> [    0.043223] NIP:  c00000000201de3c LR: c00000000201de34 CTR: 
+> 0000000000000000
+> [    0.043226] REGS: c000000127cef8a0 TRAP: 0700   Tainted: G   W     
+>       (6.17.0-auto-12607-g5472d60c129f)
+> [    0.043229] MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 
+> 84000440  XER: 20040010
+> [    0.043237] CFAR: c00000000017eed0 IRQMASK: 0
+> [    0.043237] GPR00: c00000000201de34 c000000127cefb40 
+> c0000000016a8100 0000000000000001
+> [    0.043237] GPR04: c00000012005a9c0 0000000020000000 
+> c000000002b705c8 0000000080000000
+> [    0.043237] GPR08: 000000257fffffff fffffffffffffff0 
+> c000000002db8100 000000011fffffff
+> [    0.043237] GPR12: c00000000201dd40 c000000002ff0000 
+> c0000000000112bc 0000000000000000
+> [    0.043237] GPR16: 0000000000000000 0000000000000000 
+> 0000000000000000 0000000000000000
+> [    0.043237] GPR20: 0000000000000000 0000000000000000 
+> 0000000000000000 c0000000015a3808
+> [    0.043237] GPR24: c00000000200468c c000000001699888 
+> 0000000000000106 c0000000020d1950
+> [    0.043237] GPR28: c0000000014683f8 0000000081000200 
+> c0000000015c1868 c000000002b9f710
+> [    0.043271] NIP [c00000000201de3c] add_system_ram_resources+0xfc/0x180
+> [    0.043276] LR [c00000000201de34] add_system_ram_resources+0xf4/0x180
+> [    0.043280] Call Trace:
+> [    0.043281] [c000000127cefb40] [c00000000201de34] 
+> add_system_ram_resources+0xf4/0x180 (unreliable)
+> [    0.043287] [c000000127cefba0] [c000000000010eb4] 
+> do_one_initcall+0x60/0x36c
+> [    0.043291] [c000000127cefc80] [c0000000020068cc] 
+> do_initcalls+0x120/0x220
+> [    0.043296] [c000000127cefd30] [c000000002006cbc] 
+> kernel_init_freeable+0x23c/0x390
+> [    0.043301] [c000000127cefde0] [c0000000000112e8] 
+> kernel_init+0x34/0x26c
+> [    0.043305] [c000000127cefe50] [c00000000000df7c] 
+> ret_from_kernel_user_thread+0x14/0x1c
+> [    0.043308] ---- interrupt: 0 at 0x0
+> [    0.043311] Code: 3d02010c e9210028 e9410020 fb840010 fba40018 
+> 38685b48 3929ffff f9440000 f9240008 4a161035 60000000 54630ffe 
+> <0b030000> 39210028 39400000 39010020
+> [    0.043322] ---[ end trace 0000000000000000 ]---
+> [    0.043520] kprobes: kprobe jump-optimization is enabled. Al
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-il79900a.c b/drivers/gpu/drm/panel/panel-ilitek-il79900a.c
-new file mode 100644
-index 000000000000..22338bef5609
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-ilitek-il79900a.c
-@@ -0,0 +1,358 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Panels based on the Ilitek IL79900A display controller.
-+ *
-+ * Based on drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-+ */
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_connector.h>
-+#include <drm/drm_probe_helper.h>
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_panel.h>
-+
-+#include <video/mipi_display.h>
-+
-+struct il79900a;
-+
-+/*
-+ * Use this descriptor struct to describe different panels using the
-+ * Ilitek IL79900A display controller.
-+ */
-+struct panel_desc {
-+	const struct drm_display_mode *modes;
-+	unsigned int bpc;
-+	unsigned long mode_flags;
-+	enum mipi_dsi_pixel_format format;
-+	int (*init)(struct il79900a *boe);
-+	unsigned int lanes;
-+};
-+
-+struct il79900a {
-+	struct drm_panel base;
-+	struct mipi_dsi_device *dsi;
-+
-+	const struct panel_desc *desc;
-+
-+	enum drm_panel_orientation orientation;
-+	struct regulator *pp1800;
-+	struct regulator *avee;
-+	struct regulator *avdd;
-+	struct gpio_desc *enable_gpio;
-+};
-+
-+/* IL79900A-specific commands, add new commands as you decode them */
-+#define IL79900A_DCS_SWITCH_PAGE	0xFF
-+
-+#define il79900a_switch_page(ctx, page) \
-+	mipi_dsi_dcs_write_seq_multi(ctx, IL79900A_DCS_SWITCH_PAGE, \
-+				     0x5a, 0xa5, (page))
-+
-+static int tianma_il79900a_init(struct il79900a *ili)
-+{
-+	struct mipi_dsi_multi_context ctx = { .dsi = ili->dsi };
-+
-+	mipi_dsi_usleep_range(&ctx, 5000, 5100);
-+
-+	il79900a_switch_page(&ctx, 0x06);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3e, 0x62);
-+
-+	il79900a_switch_page(&ctx, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x1b, 0x20);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5d, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5e, 0x40);
-+
-+	il79900a_switch_page(&ctx, 0x07);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0X29, 0x00);
-+
-+	il79900a_switch_page(&ctx, 0x06);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x92, 0x22);
-+
-+	il79900a_switch_page(&ctx, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, MIPI_DCS_EXIT_SLEEP_MODE);
-+
-+	mipi_dsi_msleep(&ctx, 120);
-+
-+	mipi_dsi_dcs_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_ON);
-+
-+	mipi_dsi_msleep(&ctx, 80);
-+
-+	return 0;
-+};
-+
-+static inline struct il79900a *to_il79900a(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct il79900a, base);
-+}
-+
-+static int il79900a_enter_sleep_mode(struct mipi_dsi_multi_context *ctx)
-+{
-+	mipi_dsi_dcs_set_display_off_multi(ctx);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(ctx);
-+	return ctx->accum_err;
-+}
-+
-+static int il79900a_disable(struct drm_panel *panel)
-+{
-+	struct il79900a *ili = to_il79900a(panel);
-+	struct mipi_dsi_multi_context ctx = { .dsi = ili->dsi };
-+	int ret;
-+
-+	il79900a_switch_page(&ctx, 0x00);
-+	if (ctx.accum_err)
-+		return ctx.accum_err;
-+
-+	ret = il79900a_enter_sleep_mode(&ctx);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "failed to set panel off: %d\n", ret);
-+		return ret;
-+	}
-+
-+	mipi_dsi_msleep(&ctx, 150);
-+
-+	return 0;
-+}
-+
-+static int il79900a_unprepare(struct drm_panel *panel)
-+{
-+	struct il79900a *ili = to_il79900a(panel);
-+
-+	gpiod_set_value(ili->enable_gpio, 0);
-+	usleep_range(1000, 2000);
-+	regulator_disable(ili->avee);
-+	regulator_disable(ili->avdd);
-+	usleep_range(5000, 7000);
-+	regulator_disable(ili->pp1800);
-+
-+	return 0;
-+}
-+
-+static int il79900a_prepare(struct drm_panel *panel)
-+{
-+	struct il79900a *ili = to_il79900a(panel);
-+	int ret;
-+
-+	gpiod_set_value(ili->enable_gpio, 0);
-+	usleep_range(1000, 1500);
-+
-+	ret = regulator_enable(ili->pp1800);
-+	if (ret < 0)
-+		return ret;
-+
-+	usleep_range(3000, 5000);
-+
-+	ret = regulator_enable(ili->avdd);
-+	if (ret < 0)
-+		goto poweroff1v8;
-+	ret = regulator_enable(ili->avee);
-+	if (ret < 0)
-+		goto poweroffavdd;
-+
-+	usleep_range(10000, 11000);
-+
-+	// MIPI needs to keep the LP11 state before the lcm_reset pin is pulled high
-+	ret = mipi_dsi_dcs_nop(ili->dsi);
-+	if (ret < 0) {
-+		dev_err(&ili->dsi->dev, "Failed to send NOP: %d\n", ret);
-+		goto poweroff;
-+	}
-+	usleep_range(1000, 2000);
-+
-+	gpiod_set_value(ili->enable_gpio, 1);
-+	usleep_range(1000, 2000);
-+	gpiod_set_value(ili->enable_gpio, 0);
-+	usleep_range(10000, 11000);
-+	gpiod_set_value(ili->enable_gpio, 1);
-+	usleep_range(20000, 21000);
-+
-+	ret = ili->desc->init(ili);
-+	if (ret < 0)
-+		goto poweroff;
-+
-+	return 0;
-+
-+poweroff:
-+	gpiod_set_value(ili->enable_gpio, 0);
-+	regulator_disable(ili->avee);
-+poweroffavdd:
-+	regulator_disable(ili->avdd);
-+poweroff1v8:
-+	usleep_range(5000, 7000);
-+	regulator_disable(ili->pp1800);
-+
-+	return ret;
-+}
-+
-+static int il79900a_enable(struct drm_panel *panel)
-+{
-+	return 0;
-+}
-+
-+static const struct drm_display_mode tianma_il79900a_default_mode = {
-+	.clock = 264355,
-+	.hdisplay = 1600,
-+	.hsync_start = 1600 + 20,
-+	.hsync_end = 1600 + 20 + 4,
-+	.htotal = 1600 + 20 + 4 + 20,
-+	.vdisplay = 2560,
-+	.vsync_start = 2560 + 82,
-+	.vsync_end = 2560 + 82 + 2,
-+	.vtotal = 2560 + 82 + 2 + 36,
-+	.width_mm = 163,
-+	.height_mm = 260,
-+};
-+
-+static const struct panel_desc tianma_il79900a_desc = {
-+	.modes = &tianma_il79900a_default_mode,
-+	.bpc = 8,
-+	.lanes = 3,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		      MIPI_DSI_MODE_LPM,
-+	.init = tianma_il79900a_init,
-+};
-+
-+static int il79900a_get_modes(struct drm_panel *panel,
-+			      struct drm_connector *connector)
-+{
-+	struct il79900a *ili = to_il79900a(panel);
-+	const struct drm_display_mode *m = ili->desc->modes;
-+	int num_modes;
-+
-+	num_modes = drm_connector_helper_get_modes_fixed(connector, m);
-+	if (num_modes <= 0)
-+		return 0;
-+
-+	connector->display_info.bpc = ili->desc->bpc;
-+
-+	return num_modes;
-+}
-+
-+static enum drm_panel_orientation il79900a_get_orientation(struct drm_panel *panel)
-+{
-+	struct il79900a *ili = to_il79900a(panel);
-+
-+	return ili->orientation;
-+}
-+
-+static const struct drm_panel_funcs il79900a_funcs = {
-+	.disable = il79900a_disable,
-+	.unprepare = il79900a_unprepare,
-+	.prepare = il79900a_prepare,
-+	.enable = il79900a_enable,
-+	.get_modes = il79900a_get_modes,
-+	.get_orientation = il79900a_get_orientation,
-+};
-+
-+static int il79900a_add(struct il79900a *ili)
-+{
-+	struct device *dev = &ili->dsi->dev;
-+	int err;
-+
-+	ili->avdd = devm_regulator_get(dev, "avdd");
-+	if (IS_ERR(ili->avdd))
-+		return PTR_ERR(ili->avdd);
-+
-+	ili->avee = devm_regulator_get(dev, "avee");
-+	if (IS_ERR(ili->avee))
-+		return PTR_ERR(ili->avee);
-+
-+	ili->pp1800 = devm_regulator_get(dev, "pp1800");
-+	if (IS_ERR(ili->pp1800))
-+		return PTR_ERR(ili->pp1800);
-+
-+	ili->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(ili->enable_gpio)) {
-+		dev_err(dev, "cannot get reset-gpios %ld\n",
-+			PTR_ERR(ili->enable_gpio));
-+		return PTR_ERR(ili->enable_gpio);
-+	}
-+
-+	gpiod_set_value(ili->enable_gpio, 0);
-+
-+	drm_panel_init(&ili->base, dev, &il79900a_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+	err = of_drm_get_panel_orientation(dev->of_node, &ili->orientation);
-+	if (err < 0) {
-+		dev_err(dev, "%pOF: failed to get orientation %d\n", dev->of_node, err);
-+		return err;
-+	}
-+
-+	err = drm_panel_of_backlight(&ili->base);
-+	if (err)
-+		return err;
-+
-+	ili->base.funcs = &il79900a_funcs;
-+	ili->base.dev = &ili->dsi->dev;
-+
-+	drm_panel_add(&ili->base);
-+
-+	return 0;
-+}
-+
-+static int il79900a_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct il79900a *ili;
-+	int ret;
-+	const struct panel_desc *desc;
-+
-+	ili = devm_kzalloc(&dsi->dev, sizeof(*ili), GFP_KERNEL);
-+	if (!ili)
-+		return -ENOMEM;
-+
-+	desc = of_device_get_match_data(&dsi->dev);
-+	dsi->lanes = desc->lanes;
-+	dsi->format = desc->format;
-+	dsi->mode_flags = desc->mode_flags;
-+	ili->desc = desc;
-+	ili->dsi = dsi;
-+	ret = il79900a_add(ili);
-+	if (ret < 0)
-+		return ret;
-+
-+	mipi_dsi_set_drvdata(dsi, ili);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret)
-+		drm_panel_remove(&ili->base);
-+
-+	return ret;
-+}
-+
-+static void il79900a_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct il79900a *ili = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
-+
-+	if (ili->base.dev)
-+		drm_panel_remove(&ili->base);
-+}
-+
-+static const struct of_device_id il79900a_of_match[] = {
-+	{ .compatible = "tianma,il79900a", .data = &tianma_il79900a_desc },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, il79900a_of_match);
-+
-+static struct mipi_dsi_driver il79900a_driver = {
-+	.driver = {
-+		.name = "panel-il79900a",
-+		.of_match_table = il79900a_of_match,
-+	},
-+	.probe = il79900a_probe,
-+	.remove = il79900a_remove,
-+};
-+module_mipi_dsi_driver(il79900a_driver);
-+
-+MODULE_AUTHOR("Langyan Ye <yelangyan@huaqin.corp-partner.google.com>");
-+MODULE_DESCRIPTION("Ilitek IL79900A-based panels driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
+This is happening because crashkernel reservation is not coming under 
+single memblock region.
 
+commit e3185ee438c28ee926cb3ef26f3bfb0aae510606
+Author: Sourabh Jain <sourabhjain@linux.ibm.com>
+Date:   Fri Jan 31 17:08:30 2025 +0530
+
+     powerpc/crash: use generic crashkernel reservation
+
+     Commit 0ab97169aa05 ("crash_core: add generic function to do 
+reservation")
+     added a generic function to reserve crashkernel memory.  So let's 
+use the
+     same function on powerpc and remove the architecture-specific code that
+     essentially does the same thing.
+
+The above commit moved powerpc crashkernel reservation to generic 
+crashkernel reservation
+which adds the crashkernel memory to /proc/iomem.
+
+Since add_system_ram_resources()/arch/powerpc/mm/mem.c also add System 
+RAM to /proc/iomem there
+is a chance of conflict.
+
+Although the below commit try to avoid that by inserting the System RAM 
+resource inserted request_resource()
+
+commit bce074bdbc36e747b9e0783fe642f7b634cfb536
+Author: Sourabh Jain <sourabhjain@linux.ibm.com>
+Date:   Fri Jan 31 17:08:29 2025 +0530
+
+     powerpc: insert System RAM resource to prevent crashkernel conflict
+
+     The next patch in the series with title "powerpc/crash: use generic
+
+But the above commit is not enough if crashkernel memory is part of two 
+different memblock objects.
+In this case insert_resource() on System RAM will fail with a conflict.
+
+For example:
+If the below crashkernel memory is added to /proc/iomem:
+20000000-11fffffff : Crash kernel
+
+Then memblock with below memory ranges will failed to inserted in 
+/proc/iomem:
+00000000-7fffffff : System RAM
+80000000-257fffffff : System RAM
+
+Now we have two options:
+1. Don't add System RAM to /proc/iomem
+2. Don't add crashkernel to /proc/iomem
+
+Not adding System RAM breaks the kdump tools on major distros, so that’s 
+not a good idea.
+I think the second option is better - not adding crashkernel to 
+/proc/iomem - because it has never
+been done in the past on powerpc.
+
+I think one of my old patch:
+https://lore.kernel.org/all/20250121115442.1278458-4-sourabhjain@linux.ibm.com/
+
+Along with some changes in below patch:
+https://lore.kernel.org/all/20250121115442.1278458-6-sourabhjain@linux.ibm.com/
+
+should fix the issue.
+
+I will send a fresh fix patch.
+
+Thanks for reporting the issue Venkat.
+
+- Sourabh Jain
 
