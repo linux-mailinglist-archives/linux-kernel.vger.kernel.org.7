@@ -1,160 +1,115 @@
-Return-Path: <linux-kernel+bounces-856630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8CEBE4A6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:43:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FF3BE4A74
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 555C7544C04
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D5619A60CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBEF330D5E;
-	Thu, 16 Oct 2025 16:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAFA32AACE;
+	Thu, 16 Oct 2025 16:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BodyCeZR"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gYlY+t/e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CD332AAD1
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EE22E62D0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632890; cv=none; b=iCTp6isMo1aDmEZ6n97PS27YVCr0JN66/WMZnIx/fSlow5W8O8ekfoz7X7dYiI91qB/z5aPXKh2ACxPy3ce5ee/A0j79wqK/jXRGeLjQULExcByKPPq++WE4gv3vhepk8i3LNuXItsvlb4pEDFjOGAgbNe1mjwnHAzQJk5vvOi8=
+	t=1760633001; cv=none; b=rjNj8rINTuEkz7Xtr4fxBrYSFUib+7zuqGByBJwkcWKL3yN4rXHRfnXcqx5MLdWULdlCeEjiJr1UUn98RlgV40tfLQsGw03Er1v7fcp0des15Fsg4iAy6m+eidBuBb2YkmQX5I5WYzlvhWW5ZV+miAXxzh5mq2mFev3/41nCRjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632890; c=relaxed/simple;
-	bh=5b1uR8avD8EX9RbCfc4WzXyX47hnxxWVjpS3uPNgpoM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=q14eYUYQNzqZsTgw+74Ws5dyrWnegMO7kZk3NexsFYFz+xHVUqfiI/RHSbQJicGdgE8a7B0tPoMSPdbXyJnTJ3aBUsy5Cgczd69qaBXVcFve1a5gwpNIdZX3bhmch5ADQwjHbU91VzY+L6RoDzqd0eYo7pajGp9gGOQYg+tRjzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BodyCeZR; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3352a336ee1so1916933a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760632887; x=1761237687; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqPVZGf9T95ct2jENQJ/yrYIEM39mRcHNNeOoVIpqFE=;
-        b=BodyCeZRQf8EZA6lxMp52+7EVaV5Jdxo4dpoCPuqy0qnv2Qdy1MTLw1PsQvth4XWv7
-         oxrdvsVJUbnHLPAWbAz2vtGk8w+4sGckC44O4yRKFK1MhYpkS+0Jlyo7jM1LtUjBKyg3
-         KBBmQec8v7nBpZvN6QFNuuYtj4fY60PnO4PzwIxJKdjzzEV7QdLp3JXOBW/hURjYRfch
-         bFcn1a29dFI52u3zsmkcJugoKTWBSxq4sjr6uqS2P7WV0YWjrg5rU+k42CbUXeDAJ6Wi
-         3AOIhoB4bG8Whm1c3vDXDVb0O4b57V0/mtHyjN8SWJVr1aNmPf/WvZUcx6L/3BviEF8y
-         abwA==
+	s=arc-20240116; t=1760633001; c=relaxed/simple;
+	bh=hVQWi346CfFIRj57TmG7mDIKbGtDYBTuiV7lKs1NxxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kz3NhLH7dOEVdyjOiKdcqBiPDXfBEGEFQ4lBUqVHSP9DqjRwQog2AsZWo8pVGnHWFR6uF6DaQaDdP4mhEPgtwvRIz9ZnNRaF+tKa6a1unF7D5yq+XsHf2C7h66EojfClunKt32rFFZZ4pXhDJydWg7eIat3hI1eCDqdeOruQ0kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gYlY+t/e; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760632998;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hVQWi346CfFIRj57TmG7mDIKbGtDYBTuiV7lKs1NxxE=;
+	b=gYlY+t/emEI6F5ODilabdWAsgO1P8UPlMwuz+kq381gFCMDRzvF9OZ4k8RjlEUhF1CZvXj
+	vXkChRKyFpO95LoOJg4tJ3tIK8JoCXSOOrMzuLuHfiQWcT4Rs9MUou3WWC/BY2tm33GhDz
+	yljiyimjVEYi2g+DF+zrY5jN5cRT7Ac=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-WeLiEAzwMmuhP5jGHHs8Fg-1; Thu, 16 Oct 2025 12:43:17 -0400
+X-MC-Unique: WeLiEAzwMmuhP5jGHHs8Fg-1
+X-Mimecast-MFC-AGG-ID: WeLiEAzwMmuhP5jGHHs8Fg_1760632997
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-71e7181cddeso13895157b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:43:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760632887; x=1761237687;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqPVZGf9T95ct2jENQJ/yrYIEM39mRcHNNeOoVIpqFE=;
-        b=Q+yF5P2WVg5J+enx/27nb2FckM265PfNvbt098q7DGj0A8oTRI8Nl+CQWJXj75LlVw
-         dvRlqpRR1imTI6qlB3eCzkgMpWDAFJHwaOxkNspszqaIHt4IDD0/hOJeVtrXgNJk3r7i
-         oE4w7D7AVQA1R9YM7OtyNRN7VMrVbZ3s9TkLKwCP2s2PYfCUSrucr4VK1lKB37lc00ZF
-         wU6OY7kDih7K1hYGS7vt4FRyzOfXF59Th5eclclmjg7Z8SjlVNbK8A09+qCd9tNqbgVQ
-         Ui55jcZBpsZdad/auNQc94dJblkaNT8XbqoL6zb/GCTouVOSdOllb7eWNmct7mMNBmkW
-         KkDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ1N/5V0aWFdyS++CPQoUNkdfqmGG5aCL5Oj/9t3O/H2q9jSAyviUgjS28RxyJGM4bu4IoXPqqFaaPVy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2kbldWnWwFZyvx2KKZ1yz8TT2YO32aO+qAcl2hVZib6NQbEwU
-	gZxerXSN4CcsDGcfjHHlP8Pmd/1fKXkOQdacCRRZafPgEKdGilkNr4ZfqSgU1G6xftayYW/KVib
-	r20fbJQ==
-X-Google-Smtp-Source: AGHT+IGhQCW4K3xGX6fHaK8K6Q7a6yeDvd3mZnDRJdbIdt8yNVVVAesk9LWWVf9TBIUrZur8H6SkRRXBuRY=
-X-Received: from pjbpm17.prod.google.com ([2002:a17:90b:3c51:b0:33b:b692:47b0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2690:b0:32e:d16c:a8c6
- with SMTP id 98e67ed59e1d1-33bcf87d120mr509076a91.16.1760632887537; Thu, 16
- Oct 2025 09:41:27 -0700 (PDT)
-Date: Thu, 16 Oct 2025 09:41:25 -0700
-In-Reply-To: <DDJVZU914RVD.1HXRX01BELY4L@google.com>
+        d=1e100.net; s=20230601; t=1760632997; x=1761237797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hVQWi346CfFIRj57TmG7mDIKbGtDYBTuiV7lKs1NxxE=;
+        b=IZ76NYp5PrHNGoUufj/GwprQdMIviyJ2LBQUagozvHoAtATOCvT4plle7mEofXvSK3
+         qcfOCmgui31dTICavEEPrgZQBJOmLHo8WInnklbPz2hID+m6f1HipaABF4WyHz0IJVUH
+         3UfN0VRssqMFVjkKQjSfEhJ3l7bIDq9zTWkdHyvrSlFA5l88Yv+IZUGzUJdVS7FCbwOX
+         g+sLYYg1pi28WyxX2CZaiZ18pqsfUf9su4urfgmwqhvuhbm8ih0QNcj5cV3TVzri9oSB
+         D5Ah5AzSNrNVlU2p4nfXkCpdG3aOLGT884G0HWEwNRgfxHiswf6JmvJCgZ3hpAG0Q7gT
+         tbqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWClIyKQgB94hBh5pMGaoORDoURFKwBojts7fLntIKIbIM25l+ktrUs5dVVI7ywdhGGc/9CyVT63/jUrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfWxXrFiiI2L8/qgX9tDbVVV/u5wyEDkOX4nJY5eKoJnHDWhdS
+	xcfIDe2RSzVpbk0wTwTsAwXOeSYkYapQV5g0VZ6hK8z+CJFyIAJJIWkfAvKioyCz12Ie8UFU048
+	R/nh0A60By5MBe5nLkfZ27yvUvKdWl3erkohpqnZNnOSOv5feAdX70p/5bwd9T3bwx0jdsCT8YZ
+	CEkeWBYsNHPDUjOseJs/AG/Yr0kAA1zJNG/m0ZJ+XJ
+X-Gm-Gg: ASbGnctWcNdVEKvVPDcJfeIYQNL0/8BdAhqZn4bh7LhHFNgPEEm1O9Engm29Ima3eFE
+	TPhimG9h/xNe+QPTFMljJy8nj3PRv3Aw+W/YG2Qk5iN0gi6LEQwiisSMgAM/gyKPSTf85hYJxtm
+	EAILE4zfingKkZQx3jQSzBbNY0B6KsJ6T7cMNMiw0aXycD2uZVqUuzww==
+X-Received: by 2002:a53:c057:0:20b0:628:fd1c:c3d0 with SMTP id 956f58d0204a3-63e161391abmr659546d50.27.1760632996782;
+        Thu, 16 Oct 2025 09:43:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7mB3OeCFADl+jf2RSpEiGzKJOZy5msvHxNe0q5ZhXMEg1AZ+3Dae1uL8nRfkXcQoadqgSmyaXNBTPb9hTvMk=
+X-Received: by 2002:a53:c057:0:20b0:628:fd1c:c3d0 with SMTP id
+ 956f58d0204a3-63e161391abmr659517d50.27.1760632996336; Thu, 16 Oct 2025
+ 09:43:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
- <aPEULoJUUadbb3nn@google.com> <DDJVZU914RVD.1HXRX01BELY4L@google.com>
-Message-ID: <aPEgNdjr0j4LdSYq@google.com>
-Subject: Re: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Sean Christopherson <seanjc@google.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <68ef030a.050a0220.91a22.022a.GAE@google.com> <tencent_9C66663DC537949618361A4B5E750576B309@qq.com>
+In-Reply-To: <tencent_9C66663DC537949618361A4B5E750576B309@qq.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Thu, 16 Oct 2025 18:43:05 +0200
+X-Gm-Features: AS18NWAlVrld73zUQk8uQm4oUFpr0k3NrXS-m7lewNfHMU6fVdnI_G8q45y50Vw
+Message-ID: <CAHc6FU5Ay5HostiVPxyE_DuE-djScdV32B3iDrzsnX6e7-UWgQ@mail.gmail.com>
+Subject: Re: [PATCH next] gfs2: Add sanity check for sd_jdesc
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+6b156e132970e550194c@syzkaller.appspotmail.com, 
+	gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025, Brendan Jackman wrote:
-> On Thu Oct 16, 2025 at 3:50 PM UTC, Sean Christopherson wrote:
-> > On Wed, Oct 15, 2025, Brendan Jackman wrote:
-> >> Currently the tracking of the need to flush L1D for L1TF is tracked by
-> >> two bits: one per-CPU and one per-vCPU.
-> >> 
-> >> The per-vCPU bit is always set when the vCPU shows up on a core, so
-> >> there is no interesting state that's truly per-vCPU. Indeed, this is a
-> >> requirement, since L1D is a part of the physical CPU.
-> >> 
-> >> So simplify this by combining the two bits.
-> >> 
-> >> The vCPU bit was being written from preemption-enabled regions. For
-> >> those cases, use raw_cpu_write() (via a variant of the setter function)
-> >> to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
-> >> CPU that gets its bit set in these paths is not important; vcpu_load()
-> >> must always set it on the destination CPU before the guest is resumed.
-> >> 
-> >> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-> >> ---
-> >
-> > ...
-> >
-> >> @@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
-> >>  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-> >>  }
-> >>  
-> >> +static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
-> >> +{
-> >> +	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-> >> +}
-> >
-> > TL;DR: I'll post a v3 with a slightly tweaked version of this patch at the end.
-> >
-> > Rather than add a "raw" variant, I would rather have a wrapper in arch/x86/kvm/x86.h
-> > that disables preemption, with a comment explaining why it's ok to enable preemption
-> > after setting the per-CPU flag.  Without such a comment, choosing between the two
-> > variants looks entirely random
-> >
-> > Alternatively, all writes could be raw, but that
-> > feels wrong/weird, and in practice disabling preemption in the relevant paths is a
-> > complete non-issue.
-> 
-> Hm, why does making every write _raw feel weird but adding
-> preempt_disable() to every write doesn't? Both feel equally weird to me.
+Hello,
 
-I completely agree that both approaches are odd/weird.
+On Wed, Oct 15, 2025 at 12:00=E2=80=AFPM Edward Adam Davis <eadavis@qq.com>=
+ wrote:
+> Asynchronous withdraw, when sd_withdraw_work is scheduled later than
+> put_super, will set sd_jdesc to NULL when clearing all journal index
+> information, triggering the syz report uaf.
 
-> But the latter has the additional weirdness of using preempt_disable()
-> as a way to signal "I know what I'm doing", when that signal is already
-> explicitly documented as the purpose of raw_cpu_write().
+that's not quite what's happening here; we are actually looking at a
+failure in gfs2_fill_super() which calls init_inodes(UNDO) ->
+init_journal(UNDO) -> gfs2_jindex_free() before flushing the
+asynchronous withdraw work. A similar ordering issue exists in
+gfs2_put_super() as well, though. I'll fix that in "gfs2: Asynchronous
+withdraw" by moving the flush_work() calls into the proper place.
 
-True.  Aha!
+Thanks,
+Andreas
 
-With the #ifdefs in place, KVM doesn't need arch/x86/include/asm/hardirq.h to
-provide a wrapper.  irq_stat is already exported, the wrapper exists purely so
-that kvm_set_cpu_l1tf_flush_l1d() can be invoked without callers having to check
-CONFIG_KVM_INTEL.
-
-Not yet tested, but how about this?
-
-static __always_inline void kvm_request_l1tf_flush_l1d(void)
-{
-#if IS_ENABLED(CONFIG_CPU_MITIGATIONS) && IS_ENABLED(CONFIG_KVM_INTEL)
-	/*
-	 * Use a raw write to set the per-CPU flag, as KVM will ensure a flush
-	 * even if preemption is currently enabled..  If the current vCPU task
-	 * is migrated to a different CPU (or userspace runs the vCPU on a
-	 * different task) before the next VM-Entry, then kvm_arch_vcpu_load()
-	 * will request a flush on the new CPU.
-	 */
-	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-#endif
-}
 
