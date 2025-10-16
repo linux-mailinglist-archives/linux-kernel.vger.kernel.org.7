@@ -1,61 +1,72 @@
-Return-Path: <linux-kernel+bounces-856455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8585DBE4330
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:23:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262EDBE4312
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 334F14FDAAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501E519A3B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBE334DCEE;
-	Thu, 16 Oct 2025 15:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A4350276;
+	Thu, 16 Oct 2025 15:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnTWn0Lp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Vx1Go4EP"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6177134AAFB;
-	Thu, 16 Oct 2025 15:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97C54C9D;
+	Thu, 16 Oct 2025 15:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760628047; cv=none; b=HbSZ4W6JRZ5S4qsVJgfN5NHshPwao9tn3i+qv2r7ot7NYz7tlpxjBjqOL0gki3ErYol/nTaur7iRxXn9aFPZ75YyFwMbPc+jk8b+Ubi83/cEE9sQ4RQ9QQJphcrJwK4Zqf043D3hOUFaSx7Il/9dBGmdn7oKVrLwvIUIkjjK3Tc=
+	t=1760628086; cv=none; b=MjOronKNqYcDOZqphmjKh4GV0wwFr3lSoofX0+KSTOXEGLpCTD2mSU2NfuQsN5XprbrDx8QFOFyMlKPYXYlHDTB3hnaqWAyYJlRCMvUP9Wjbkx6xRcFQ4kQvdYiHZJfSZ1vJ0CITq3LTh26GnBmqKoPqCLtIy7lgm0Hm0y3UoV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760628047; c=relaxed/simple;
-	bh=YsYP4uh9MOE6nCku635QoIr2FRjU31t7RRgYVAqHqsg=;
+	s=arc-20240116; t=1760628086; c=relaxed/simple;
+	bh=z8MA8LUyae+lGsjF1gwHLGWRBNQCFSy54sXprN2LxaA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5Ewm6B6OuvijL7XSBmq6ymjD3kj9bjYSkq+KbSHN36ES+Uhg+GSBuCsR17xb8cML9klX9sUxfZEQvx5M8k/RofyxhmpmIAxQJrGwhYSBwmjdWMjibXRBvIyqhowMYVF2++1NcjEpxM7v/JhWRHE481N+4YyTAeynnuUGGJ9Bcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnTWn0Lp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE17C4CEF1;
-	Thu, 16 Oct 2025 15:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760628047;
-	bh=YsYP4uh9MOE6nCku635QoIr2FRjU31t7RRgYVAqHqsg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gnTWn0LpOZKub3oDRSlSffhT/pPriwTSn99HYtbBnkJ6gDYi1mtmf3zo5uzs7WDq+
-	 aXTRMw3dyfH4hBSoQ7g7r9YJaKuwAtVaFzW4s/h7HrZD/X9+ALaMwXBdmhsEMc/NN1
-	 DaOL7WAmH6qgi52AYkjEy1vFVRBkl8AJeWDFKr7bxLvg6Mc2RnDjX+xlUjcn2fl5Ah
-	 KWT8x6Fk7Y7mHIYGMFDBRqKwKwqPpDi0nLLyVzs394pTVC18IzvPWVG0aQka9A0xxX
-	 tBBIeWx5oFvwekwdw/UKW/vjnaO2Waaa+Y4YsT+zVFJXOH9kaW1khLs+neN1buffTI
-	 rpF5X1o2kj5vw==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v9Pmb-000000006pF-06En;
-	Thu, 16 Oct 2025 17:20:49 +0200
-Date: Thu, 16 Oct 2025 17:20:49 +0200
-From: Johan Hovold <johan@kernel.org>
-To: kernel test robot <lkp@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Florian Fainelli <florian.fainelli@broadcom.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: Re: [tip:irq/drivers 11/18] drivers/irqchip/irq-imx-mu-msi.c:419:16:
- error: implicit declaration of function 'imx_mu_probe'; did you mean
- 'imx_mu_write'?
-Message-ID: <aPENUdGUywB88-LD@hovoldconsulting.com>
-References: <202510162257.g1RUy0bT-lkp@intel.com>
- <aPEMRBTVR6rT4MzJ@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LySeApiiYDWI2kJxPCQWX3W3gE/HhmuhsVZbYwkJEaYkqq/a5SYN4xatd2hQJL0k/b5GBVPK1rnF7t71EeE47SNDoJZv4lF600eQKXBlfPRJvymujJRKPFTCES9ejG+DLJvqSs/R+SdKQM2GnStVgvSs+S5q8Km44DQ5wQVsOh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Vx1Go4EP; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zufCpAXCVEwDc/8p4UXog53BnP9tM+43qUpcW1f09iM=; b=Vx1Go4EP3OHyeVIlzAQWHe7TrA
+	q4PyEtofbcg/a89657ONYBOhGme8m01o1I4N46htjcrOUWTIS1p0SAFYDwisxemju5McrvW2L416n
+	5n8LYFZkwTfi0eFEWEZmAbMvNlJkCT5NnT6FaFRcVUEWGRRdUh/GjTkOramECPR1pCz3g5C8Qswte
+	OwJX/mInR0Yhwg3khITa/XhHcy3PEKxW8KogItiPrJSjyOJahDKru1jM/BG+BJ/PHMtqfkxvxt5ax
+	SThwSwUPE4eUEBMVn+vMFMohFFliLU5O44lKMpVZRChieBgc4IlYMUQLXtotPU2knjiWFkcQKd2v+
+	2OCeEeng==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56116)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v9Pn3-000000006dM-2UPG;
+	Thu, 16 Oct 2025 16:21:17 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v9Pn1-000000003NP-2Vov;
+	Thu, 16 Oct 2025 16:21:15 +0100
+Date: Thu, 16 Oct 2025 16:21:15 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
+Message-ID: <aPENa90OS4ZZA5Rc@shell.armlinux.org.uk>
+References: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,30 +75,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPEMRBTVR6rT4MzJ@hovoldconsulting.com>
+In-Reply-To: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Oct 16, 2025 at 05:16:21PM +0200, Johan Hovold wrote:
-> On Thu, Oct 16, 2025 at 10:47:56PM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-> > head:   45f8fdcfbf4e49075172cf1a3fd812b90160e903
-> > commit: 4265aed28d7de2a643b8e441bc25344f421f2f78 [11/18] irqchip: Pass platform device to platform drivers
+On Thu, Oct 16, 2025 at 01:37:30PM +0200, Matthias Schiffer wrote:
+> -	if (!sport->have_rtscts)
+> +	if (!sport->have_rtscts && !sport->have_rtsgpio)
 
-> >    drivers/irqchip/irq-imx-mu-msi.c: In function 'imx_mu_imx7ulp_probe':
-> > >> drivers/irqchip/irq-imx-mu-msi.c:419:16: error: implicit declaration of function 'imx_mu_probe'; did you mean 'imx_mu_write'? [-Wimplicit-function-declaration]
-> >      419 |         return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
-> >          |                ^~~~~~~~~~~~
-> >          |                imx_mu_write
-> >    drivers/irqchip/irq-imx-mu-msi.c: At top level:
-> > >> drivers/irqchip/irq-imx-mu-msi.c:299:12: warning: 'imx_mu_of_init' defined but not used [-Wunused-function]
-> >      299 | static int imx_mu_of_init(struct platform_device *pdev, struct device_node *parent,
-> >          |            ^~~~~~~~~~~~~~
-> 
-> Thomas, this looks like a bad edit on your part where you renamed
-> imx_mu_probe() back to imx_mu_init() when you removed a line break from
-> the function header.
+This is fine...
 
-Actually the line break is still there, but the function has its old
-name in your tree for some reason.
+> -	} else if (termios->c_cflag & CRTSCTS) {
+> +	} else if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts) {
 
-Johan
+This adds extra parens that do nothing to aid readability. Too many
+parens actually hurt readability.
+
+> -	if (termios->c_cflag & CRTSCTS)
+> +	if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts)
+
+Same here.
+
+Maybe change these to:
+
+	if (sport->have_rtscts && termios->c_cflag & CRTSCTS)
+
+?
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
