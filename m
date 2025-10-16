@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-855760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6EDABE2364
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:46:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE262BE237C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B05819C0262
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E0E48680A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF762C158F;
-	Thu, 16 Oct 2025 08:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F8C3090D0;
+	Thu, 16 Oct 2025 08:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="6nnANU8Y"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KBje1WTg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A3214D29B
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE23B2FDC51
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760604404; cv=none; b=lThePAjBbk4H2RpJnp7BI2a6+9s2neoulTPMUsrNyRwDrVRnmvCB3hnwduocgvsHQ9yNgg5cpspRouPeSESjkSEIUanxeDweMDJdZrEDxdt1sVMuYYU+uj1sUHpvfxZGRbHDgqdScSbOhD9kXtcXyx+LIju9N9wJLUFhfzK9NL4=
+	t=1760604446; cv=none; b=E1W1qk8yZKYqCErhu5GgqyH2roStRBleRmya6R0nIsUirvhZqZmYpD3yxQIwh0wXMvkDclaE8VBUHfWmUkY4MhxU1dTY+sZMXCkSu6L1+Zgv1WSCqWFZbLo+w8gip4YNP0hX/zLaZCb5TjgqoKBMPDJjYvTlHsAp8ntw57VGFr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760604404; c=relaxed/simple;
-	bh=NnrcmzFkXtSy1OqvRrmhHUDsaiHNiSnJlYk78esVVzo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c/UopdBQu00zQodTiyybpOZxd5dJ9XyxDctRCbylhLPwVqSh/HeJK2A76QS1DGKILxaErkHWqMqqUGNn8lDXVjAw9toNlr7Pma3ynBtwpjhSsbDSKdvol473XBWZaQ2JkXaC4wEGkpm5O4zEV7PjSZXUOXDwaXxbk3O1/LcbDDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=6nnANU8Y; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id 9C6DA685CAF;
-	Thu, 16 Oct 2025 10:46:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1760604394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NnrcmzFkXtSy1OqvRrmhHUDsaiHNiSnJlYk78esVVzo=;
-	b=6nnANU8YeEHT1VoI/11CWAfGUbZfwrss8H9dYRN1mO7Yz3Y7M91EJ1VlgrqnksrEI7usD6
-	1qMdUThysEs5uZa7N3Jdhry6Tk5s1e71iVe3jo5k9Dugt2+8xG56DIi1K1IfP2/10x69fz
-	tIKfSlhdFyqYl/5j4E4gOdoHXucCwHw8q4vC6j9zdMeH9qzaM7j6D5nfaN7k/q2OEOFzY0
-	yyefEpRtUc23/xQmrVy4SSjYGISgCCHFB3ipj166yE2sGMU6mAwFcws2Y32FNoyLiTgo0j
-	FTbKzHsu2Z/pWHMj7INJI9zASPV1wjp4k/VblEZhRei3n4eE0pONd7QjLZm4MA==
-Message-ID: <0b2fa71f1ccd49d66ca02b6c44ba8fe2135e9b6f.camel@svanheule.net>
-Subject: Re: [PATCH v3] regmap: add cache validity to REGCACHE_FLAT
-From: Sander Vanheule <sander@svanheule.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	 <rafael@kernel.org>, linux-kernel@vger.kernel.org
-Date: Thu, 16 Oct 2025 10:46:33 +0200
-In-Reply-To: <a2f7e2c3-f072-40f7-a865-5693b82b636e@sirena.org.uk>
-References: <20250109180256.6269-1-sander@svanheule.net>
-	 <a2f7e2c3-f072-40f7-a865-5693b82b636e@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760604446; c=relaxed/simple;
+	bh=4Cr3hLvCCrouiag43KD+fwe7CAMY7VqZErV48pL/VOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FB5oh6EI8/eLVBWCYvct9dgarwwUeUVQzs3CZszA94eNkVdbG+5ackTHJmDstQpjO/7MS4Hy75MVlkhW7Fy7f0VH5eLIaMkfgPt3dQ+UgJOIZ2ZLix0dkSv4Es/eFGzL8/kGDJeHtB1+4sf6gFZwJ2Y9mY5ujes+9JLBBt3DYjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KBje1WTg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G8DNsd009138
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:47:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DtK2jXcjWQPbKB7OnX2TPJKpHc1AyZMAFUwhHWo+ek4=; b=KBje1WTgyhZ37KRv
+	On83yXBfGXbNXOOwqTu69Gof1xwbOtsQVzIMUOaWhqJAH14FsD+2g3ptjOhhggGG
+	O/G61XyTeZzgFxtpTCcAZsDtiruQ/XX/V1mFqpBuDjVOc+qhEMI4UhVVM9Zhms0C
+	b0qrY+XqgoLLpJg2AIptG//5SEm9TojJTt1A0j+FvvhLqOauzd4xTWw3hsPtgnro
+	qvJz4dT4dW6Gb93cOuYGaocMUfHPXsqxk6YQojuMEWy96m6tvyHdK35CQ0MGSD48
+	ll11UmuQ7eI0qMtstRSSzPML9uyFnqqfiFF9NT9iOSGZ3SnmEJhb/i8FB+PpquFU
+	yM+wPQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0c7ghk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:47:24 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c08308d26so17257056d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:47:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760604443; x=1761209243;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DtK2jXcjWQPbKB7OnX2TPJKpHc1AyZMAFUwhHWo+ek4=;
+        b=lvwuSvA+45q08juGrb8DYleuDzunnKxV9VFzNcdegPsn1xDxa3fREZRcnySK+LbwDW
+         dObvX1KBidxYLKHsdKaaK4Z7SUE9IjNYdjrWt21ZFuQj7kGSz2cAOda0Ea5UHb2t62GG
+         ueQ8gelQpUbmg7ZX7i5jw7wsjCv3S9JucR19UC+83ds6ckms7MMZnQHk6gfLHosmemwD
+         SaRpLhdefUrrMn45MjLOTK2r5Dgk3todbsy2TkhdXTndToSTwRns9a0eFcd+OoLd6XDR
+         bhASVNHxhVAIIttng4WyaSPzQIGQIKwVqjMLZlylU5OL200SPw7dzrP4Oec9zvqMBnBf
+         rBqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXESj7HHewIW212At4vgP4Xmu4a8WgzKoo1Ob3/b2hEsDm2dXUEaJuP7P+qksKxIDGH8W2+yKG17Ihgo6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbd23bTbYOqUtAdwXGkektannB+LxuemBVUKHpjVKuIkZh7FJq
+	+XX7A2tKJA4l2dgGq6wy8ky9QXiHFFOxNDQkqPcZy7TZDtJdonufpkoJLYE7jDoOe5+asyAmggk
+	W9FnNVAZBlPYQIBRJhZnBErMSrMAItnUjF8PXZOLHtsDYVKJ3I+LFKEjckHnTK/CLVoZraUfrxc
+	LL2jK3R8NB9/bk3YIrOIaZXk/uzbygQIbqq6WNQ53m3w==
+X-Gm-Gg: ASbGncsCwLOFwW3hZxKWj/0Pzy16/3pFjKFxzAHm1LtfBG6eokOEamsfEx4ODK+g/Iv
+	PjHVHx9H89W4BSofq7BK+/eGKUjjO5qgRYW8qMGD0EmOiQHoWYJd2kKc/z0mETrmFDM1q+KWGBq
+	6cxacFzsbgDZF7GOCb96DelNbgSvwFMAjuYeMyhVe5C+kodJTBVBzVXpP24BUNpj0sUb4teZE9H
+	N0eZMg4s2iVv1bOCpUiuPEX1gtfcu9Zh0gPVQDXF48+IQ==
+X-Received: by 2002:a05:6214:cc7:b0:879:db53:dd2 with SMTP id 6a1803df08f44-87b2107bdc2mr384170116d6.22.1760604442622;
+        Thu, 16 Oct 2025 01:47:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKIDwd0H080pXEFK1kdHvRTAf/OHzMp8h2JpG4d2oyZ6MvcF5FnRmiKkwvO8LcA8cfNV3BhP6f4FxVJw0D0mg=
+X-Received: by 2002:a05:6214:cc7:b0:879:db53:dd2 with SMTP id
+ 6a1803df08f44-87b2107bdc2mr384169876d6.22.1760604442226; Thu, 16 Oct 2025
+ 01:47:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250924-knp-cam-v1-0-b72d6deea054@oss.qualcomm.com>
+ <20250924-knp-cam-v1-2-b72d6deea054@oss.qualcomm.com> <CAFEp6-1o11B9o3HjdJY-xQhDXquOTknXo0JeW=HfpTxXcEaK3g@mail.gmail.com>
+ <a7be3a42-bd4f-46dc-b6de-2b0c0320cb0d@oss.qualcomm.com> <d8dfe11f-c55a-4eb2-930a-bfa31670bef0@kernel.org>
+In-Reply-To: <d8dfe11f-c55a-4eb2-930a-bfa31670bef0@kernel.org>
+From: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Date: Thu, 16 Oct 2025 10:47:11 +0200
+X-Gm-Features: AS18NWDQrzQKYCHdrrwTe9-7hmb4jjMXDlC9wkwV60oUqGOhB-GFpY7hHhqu3ys
+Message-ID: <CAFEp6-1zpobZNLHt1192Ahtn2O7bV+As0P1YvVHrkRsORyH_Aw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dt-bindings: media: camss: Add qcom,kaanapali-camss binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bryan O'Donoghue" <bod@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: C-cB6ZvfXBAyZhnPeXQ1uMh34m-IPa0i
+X-Proofpoint-ORIG-GUID: C-cB6ZvfXBAyZhnPeXQ1uMh34m-IPa0i
+X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68f0b11c cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=GOxOaFmcAZOYw-Nqf4IA:9
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfX87FkgVnOihQU
+ jMkT/VbkUlmyKg0Aj0YTDUCUqCRdNLdi8zZLxLXEJvKs6Oiq51Dewvf4MiPfu5LegykmTxoin90
+ mIQHOwEzYuKv5dzWWy6KoZixkijyHLVD71KpNkBIN3OLFyXK7RWgmG05Ezyx1yNSBEPkdijjzxF
+ afOK/wgLozFPf5fosSz1yfSz+z1ofssxkPcqHq4l6pph7UiuXDUMSaL2bn0iOJu6S+lwlYk0fGF
+ mE56yDtuUaqEcl7dJZAtNbd7hbR1OBWQl3exgJTBC7UDX31T5HzP+DFLt7WFAgrnf19x5DvA4Tm
+ bfO908jKDgNFfhzRJ5xbdfJN2au9WNYgml2R8CJmDtoc85FSBhN8Ghi73tVlGobCMFYKtvUG9HQ
+ eCDlaxAAvUwbADAmSG/gkhX078NLsA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
 
-Hi Mark,
+On Thu, Oct 16, 2025 at 7:52=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 15/10/2025 05:21, Hangxiang Ma wrote:
+> >>> +      - const: csiphy4
+> >>> +      - const: csiphy5
+> >>> +      - const: vfe0
+> >>> +      - const: vfe1
+> >>> +      - const: vfe2
+> >>> +      - const: vfe_lite0
+> >>> +      - const: vfe_lite1
+> >> Wouldn't it make sense to simplify this and have different camss nodes
+> >> for the 'main' and 'lite' paths?
+> >>
+> >> [...]
+> > No such plan till now. Other series may take this into consideration.
+>
+> We don't care much about your plan. You are expected to send correct
+> hardware description.
 
-On Thu, 2025-01-09 at 20:11 +0000, Mark Brown wrote:
-> On Thu, Jan 09, 2025 at 07:02:55PM +0100, Sander Vanheule wrote:
-> > The flat regcache will always assume the data in the cache is valid.
-> > Since the cache takes priority over hardware values, this may shadow th=
-e
-> > actual state of the device. This is not the case with REGCACHE_RBTREE
-> > for example, which makes these implementation behave differently.
->=20
-> This is causing spurious events to be generated by the audio drivers on
-> Pine64 Plus, the audio drivers for that do use the flat cache (see
-> sound/soc/sunxi):
->=20
-> =C2=A0=C2=A0 https://lava.sirena.org.uk/scheduler/job/1056879#L1897
->=20
-> I haven't investigated yet but I suspect this is going to have been
-> triggered by the change from assuming all registers default to 0 if not
-> otherwise specified to reading back from the hardware if the first
-> access is a read.=C2=A0 That does seem a bit like a driver bug (I'm not c=
-lear
-> on the precise mechanism apart from anything else) but I worry that
-> it'll be a widespread one where things do read/modify/write cycles.
-> There may also be initialisation from suspend issues where we stop
-> resetting values after resume.=C2=A0 We do need a plan for this, possibly=
- we
-> should default to the old behaviour.
->=20
-> It's definitely too late in the release cycle to apply the change in any
-> case.
+To be fair, other platforms like sc8280xp-camss already have the
+all-in big camss node.
+Point is that if Lite and Main blocks are distinct enough we could
+have two simpler nodes.
+Would it make things any better from a dts and camss perspective?
 
-Apologies for the delay, it took me some time to get back to this properly.
+ camss: isp@9253000 {
+    compatible =3D "qcom,kaanapali-camss";
+    [...]
+}
 
-Would you be open to providing a new type of flat cache with sparse
-initalisation (e.g. REGCACHE_FLAT_SPARSE) to provide the behavior provided =
-by
-this patches? Most of the code could be shared with REGCACHE_FLAT.
+camss-lite:ips@9273000 {
+   compatible =3D "qcom,kaanapali-lite-camss";
+    [...]
+}
 
-REGCACHE_FLAT and REGCACHE_FLAT_SPARSE would both maintain the cache validi=
-ty as
-in this patch. On a read, _FLAT_SPARSE would return -ENOENT on an invalid c=
-ache
-entry. _FLAT would then always return 0 and the (zero-initialized) value,
-ignoring the cache validity and maintaining the behavior drivers may curren=
-tly
-rely on.
+That approach would create two distinct CAMSS instances and separate
+media pipelines.
+However, it may not work with the current implementation, as the CSI
+PHYs would need to be shared between them.
 
-If you would like existing drivers to transition to REGCACHE_FLAT_SPARSE, I
-could also add a deprecation warning for users of REGCACHE_FLAT.
+I guess this should be part of the broader discussion around
+splitting/busifying CAMSS.
 
-I can also just send a patch series, if that helps.
-
-Best,
-Sander
+Regards,
+Loic
 
