@@ -1,150 +1,101 @@
-Return-Path: <linux-kernel+bounces-856473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD2FBE43EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5A7BE442F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 36F49359A55
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1339E3B054E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86EF34DCCD;
-	Thu, 16 Oct 2025 15:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F039F34DCF4;
+	Thu, 16 Oct 2025 15:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kosmx.dev header.i=@kosmx.dev header.b="l8O1INcr";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="VCVsSmbs"
-Received: from b224-2.smtp-out.eu-central-1.amazonses.com (b224-2.smtp-out.eu-central-1.amazonses.com [69.169.224.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA30A346A1B;
-	Thu, 16 Oct 2025 15:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=69.169.224.2
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jlp4AvJ/"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE39634AB1F
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760628668; cv=none; b=c37EieMN6doT7zLCHAMixtV396ZOIQX0Rq7U16/T778bRvjttz1696ctFs/BHuVJpkuKvtTTWrzLtDK4RIcuIhtec+BQIbhxEae6B3uONO+JMnxeElXusBmC38NHK8g5rfaKiSXXnV0Awk+HQMcPxF43dxNdzxNgQ5ElxK7+5Xo=
+	t=1760628670; cv=none; b=Z69cRRwgXIuC4mSf2cXMmVi6mhfl6crSnwaD8edkMlRDd7SlbpLfsOvg1IbMjq+Dw9RGdyPMSLUgRlFDtQYDEhUd63Hd+6dXXJHFBV3QZWQozy2mrKQUJ+i3GOQ11rJ8ktx2L2IOs4bZV0Qx8YE/aBy11amNBrpL+Gpcl0BepXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760628668; c=relaxed/simple;
-	bh=4V+eiDbJeS2/Lkmw7GXs1heP2kr5DjpdCX+SmScCzco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rb4BgKm5z2SZDDTFglg9uMFPUbqSFCpYJ0WgUgMLEgQvxgkcenz+GL1a/bU1+5hQdW1EF/43l9Kah3FPLdKd57PQzZ68Lo9gNpUiBRJMUo2s03WfPtzRckeYg/IgK8mObCGx3iBMZ6AtlIcST8X63wM3djwvLLGLGr1ZuJmG2GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kosmx.dev; spf=pass smtp.mailfrom=eu-central-1.amazonses.com; dkim=pass (2048-bit key) header.d=kosmx.dev header.i=@kosmx.dev header.b=l8O1INcr; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=VCVsSmbs; arc=none smtp.client-ip=69.169.224.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kosmx.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eu-central-1.amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=2d6evbf27r2lzynqz2duzea56jayutws; d=kosmx.dev; t=1760628662;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=4V+eiDbJeS2/Lkmw7GXs1heP2kr5DjpdCX+SmScCzco=;
-	b=l8O1INcrEZVAyTskRDCz1jSdZjAI7LQJEswDzEqxHAXzfc+6sxq6en6VV1Efo6X7
-	KXkhePqB+3Fsg+wwMUdZCea5BeTltdQaAFODFc6TRcObGsf6TChdbbmQ5eR5C+6LR1O
-	zzB68saGPWBBNhB4Tr6EAE6Xg0ePKAhXc/fJOap0c9myOiFoHphSsfCL0JWlb4497Zq
-	5l8Z8YL4hQRKRM/VZ4pg8C6wMjabCETMbhn+yUC/HMwjeyffnb31cA6/kd1+U92C2LP
-	CyrahYfh5khic7qS13gL+srSOoys0v999JjbLECNXnAogv+in0Nxwspi1XUHTqpzkgc
-	aWUPGT2a9Q==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=sokbgaaqhfgd6qjht2wmdajpuuanpimv; d=amazonses.com; t=1760628662;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=4V+eiDbJeS2/Lkmw7GXs1heP2kr5DjpdCX+SmScCzco=;
-	b=VCVsSmbsXZJ2WUv4RWow/8JmxdP0JC5Kh1ftrvf909tFqIh9lm9ttMAvyE4CSzOy
-	TRiVlzAsi99aUXynnjo2gAIJgGbbO+3xYinvqEohI0qZUuy5r3dVXYGI/z61Br//z46
-	dzK3ZDfmSNyi80uuEB6zxJ1E8JllfLZcG/Ez0eA4=
-Message-ID: <01070199eda55d65-1e43d600-4eb4-4caf-98f0-4414b449cb07-000000@eu-central-1.amazonses.com>
-Date: Thu, 16 Oct 2025 15:31:01 +0000
+	s=arc-20240116; t=1760628670; c=relaxed/simple;
+	bh=tG5OOuXeUWI2eXizLChcud8024S6FbBMNLQjqqyGqIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bTBN2uA3cKMMyCZku9zQLD+n+luyRMdva66qPE6tlvbOjulXLp7zaxNOiwBrmjf2yeBnjyQTrovR3kMnLCT+DGdOnQsnIpO9wdvpsHufm58gn6tkNdiDBMHZ/yZl1G2QlWPgFNEMEdR4oKQjslg78hK64mjb9eYui2pRdBL39iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jlp4AvJ/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.10.120])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AFC47211CFB4;
+	Thu, 16 Oct 2025 08:31:03 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AFC47211CFB4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760628664;
+	bh=ARfP24dBUs8fSS257602OfB6P4HZvIrohgAIMGINijo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jlp4AvJ/7LCGOgJMVRUVivYl2TI6DabNsAlRS4knhdVygR2NeC9VPzpe9nAynzcei
+	 U+Bd1tR12YEVe+YffqyNE2Bu2k9RE/UHGOvZQ275MGjLA+5of4XxNtYoVhTwxrqyE4
+	 2zMRPPjX9yTn6PiljyTFoBIveuz7nMbSnrghp2ik=
+Date: Thu, 16 Oct 2025 08:31:02 -0700
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Jason Gunthorpe
+ <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Nicolin Chen
+ <nicolinc@nvidia.com>, Joerg Roedel <joro@8bytes.org>
+Cc: Zhang Yu <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+ <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH 0/2] SMMU v3 CMDQ fix and improvement
+Message-ID: <20251016083102.0000585d@linux.microsoft.com>
+In-Reply-To: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] sysfs: check visibility before changing group attribute
- ownership
-To: Greg KH <gregkh@linuxfoundation.org>, 
-	Fernando Fernandez Mancera <fmancera@suse.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org, 
-	rafael@kernel.org, dakr@kernel.org, christian.brauner@ubuntu.com, 
-	edumazet@google.com, pabeni@redhat.com, davem@davemloft.net, 
-	horms@kernel.org
-References: <20251016101456.4087-1-fmancera@suse.de>
- <2025101604-filing-plenty-ec86@gregkh>
-Content-Language: en-US
-From: Cynthia <cynthia@kosmx.dev>
-In-Reply-To: <2025101604-filing-plenty-ec86@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-central-1.7BiZt5Lnf19vB746CR+JKfpU6eIRDUAYyv2UoOsIVTE=:AmazonSES
-X-SES-Outgoing: 2025.10.16-69.169.224.2
 
+Hi Will,
 
-On 10/16/25 16:46, Greg KH wrote:
-> On Thu, Oct 16, 2025 at 12:14:56PM +0200, Fernando Fernandez Mancera wrote:
->> Since commit 0c17270f9b92 ("net: sysfs: Implement is_visible for
->> phys_(port_id, port_name, switch_id)"), __dev_change_net_namespace() can
->> hit WARN_ON() when trying to change owner of a file that isn't visible.
->> See the trace below:
->>
->>   WARNING: CPU: 6 PID: 2938 at net/core/dev.c:12410 __dev_change_net_namespace+0xb89/0xc30
->>   CPU: 6 UID: 0 PID: 2938 Comm: incusd Not tainted 6.17.1-1-mainline #1 PREEMPT(full)  4b783b4a638669fb644857f484487d17cb45ed1f
->>   Hardware name: Framework Laptop 13 (AMD Ryzen 7040Series)/FRANMDCP07, BIOS 03.07 02/19/2025
->>   RIP: 0010:__dev_change_net_namespace+0xb89/0xc30
->>   [...]
->>   Call Trace:
->>    <TASK>
->>    ? if6_seq_show+0x30/0x50
->>    do_setlink.isra.0+0xc7/0x1270
->>    ? __nla_validate_parse+0x5c/0xcc0
->>    ? security_capable+0x94/0x1a0
->>    rtnl_newlink+0x858/0xc20
->>    ? update_curr+0x8e/0x1c0
->>    ? update_entity_lag+0x71/0x80
->>    ? sched_balance_newidle+0x358/0x450
->>    ? psi_task_switch+0x113/0x2a0
->>    ? __pfx_rtnl_newlink+0x10/0x10
->>    rtnetlink_rcv_msg+0x346/0x3e0
->>    ? sched_clock+0x10/0x30
->>    ? __pfx_rtnetlink_rcv_msg+0x10/0x10
->>    netlink_rcv_skb+0x59/0x110
->>    netlink_unicast+0x285/0x3c0
->>    ? __alloc_skb+0xdb/0x1a0
->>    netlink_sendmsg+0x20d/0x430
->>    ____sys_sendmsg+0x39f/0x3d0
->>    ? import_iovec+0x2f/0x40
->>    ___sys_sendmsg+0x99/0xe0
->>    __sys_sendmsg+0x8a/0xf0
->>    do_syscall_64+0x81/0x970
->>    ? __sys_bind+0xe3/0x110
->>    ? syscall_exit_work+0x143/0x1b0
->>    ? do_syscall_64+0x244/0x970
->>    ? sock_alloc_file+0x63/0xc0
->>    ? syscall_exit_work+0x143/0x1b0
->>    ? do_syscall_64+0x244/0x970
->>    ? alloc_fd+0x12e/0x190
->>    ? put_unused_fd+0x2a/0x70
->>    ? do_sys_openat2+0xa2/0xe0
->>    ? syscall_exit_work+0x143/0x1b0
->>    ? do_syscall_64+0x244/0x970
->>    ? exc_page_fault+0x7e/0x1a0
->>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>   [...]
->>    </TASK>
->>
->> Fix this by checking is_visible() before trying to touch the attribute.
->>
->> Fixes: 303a42769c4c ("sysfs: add sysfs_group{s}_change_owner()")
->> Reported-by: Cynthia <cynthia@kosmx.dev>
->> Closes: https://lore.kernel.org/netdev/01070199e22de7f8-28f711ab-d3f1-46d9-b9a0-048ab05eb09b-000000@eu-central-1.amazonses.com/
->> Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
->> ---
->>   fs/sysfs/group.c | 26 +++++++++++++++++++++-----
->>   1 file changed, 21 insertions(+), 5 deletions(-)
-> Nice, thanks!  This has been tested, right?
->
-> thanks,
->
-> greg k-h
+Just wondering if you had a chance to review these?
 
-I did a quick test just now, it works in the VM (no warn and the 
-container is running).
+Thanks,
 
-kosmx
+Jacob
+
+On Wed, 24 Sep 2025 10:54:36 -0700
+Jacob Pan <jacob.pan@linux.microsoft.com> wrote:
+
+> Hi Will et al,
+> 
+> These two patches are derived from testing SMMU driver with smaller
+> CMDQ sizes where we see soft lockups.
+> 
+> This happens on HyperV emulated SMMU v3 as well as baremetal ARM
+> servers with artificially reduced queue size and microbenchmark to
+> stress test concurrency.
+> 
+> Thanks,
+> 
+> Jacob 
+> 
+> 
+> Alexander Grest (1):
+>   iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
+> 
+> Jacob Pan (1):
+>   iommu/arm-smmu-v3: Fix CMDQ timeout warning
+> 
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 85
+> +++++++++------------ 1 file changed, 35 insertions(+), 50
+> deletions(-)
+> 
 
 
