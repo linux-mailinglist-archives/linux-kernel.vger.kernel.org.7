@@ -1,115 +1,180 @@
-Return-Path: <linux-kernel+bounces-855686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C0EBE1F9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6897BBE1FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97034F649C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18BB43B2074
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868D2FDC42;
-	Thu, 16 Oct 2025 07:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B481E2FCC16;
+	Thu, 16 Oct 2025 07:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JkIKXaiC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZIAWwHQi"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AD5288514
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79AA2BAF9;
+	Thu, 16 Oct 2025 07:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760600715; cv=none; b=ISOarBILjuuITcRy/sRyTAJXsBSxVdpdUlwbHDzpr/PvwlPDF/16KtwakN+H0Z1pNxN+xDSz5OmyKDkz6XPWCZHfsheurdbC80DZwFhJ7RCfAgU5FWqNpEzF9tlktv7aRSj95QiRZZyTiOjJBATtEfoYmhRz2fIA+YmE44c8p4k=
+	t=1760600750; cv=none; b=DyykyrlQZETaQHX10y2kPzEaRU3jHQR8hciK+QRmx2LPGb61XmFe7o06Re4NWtglWtvy5vf9wio7/LbXzMKIBheJmR+6JiOi/NxRvvdm/g5iJnhY8q0OoY44IpgC6Cpgltf9z2y/A5/kBdS2iKPRBESMH7+RrH2OcCduDBv6Iz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760600715; c=relaxed/simple;
-	bh=4HJEor79t2Zd/Gv55aXcaHEtS2bT2DVKSqD35v32X28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VDihxmOX+3CNLy/wDlPUAWwv+5tPLy7lIQuWwo8tl35UNG2EIqqy5w47geCJyRJQhTMMgqglppQNuvgKl/WeTKQ+dDb7uAUaKI/EU4w0HBFULSuiD/jRqXTk43GjnR0nSWqWydGDJC8OBG3yMHFr/JxWVRLMsxolQbzdBA/WWbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JkIKXaiC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dWFuZOwCnHREvFTOOI4lYoSZLWg8HjO7PYath0nHoYc=; b=JkIKXaiCYltNrKznpE5Qv6mRP4
-	GR5UN2IKlBI4hP8OTlQOBhOjy4mTDcYzhC1s6hkUYNSr7VGuWYVHGTDpKSQHwQ4ndevDW7UPd6Yld
-	9vz3ru2ZuNebxPaRMEfaYWwRD4gtNTho0UCue6DWqs/HxQMEmxA33YhdJUfEcHPZCLtKonmiACT9Y
-	m6QN7K+b5vg9Np2cWJvEcAFwuLIthbMF/EzeEps10UlG//UfpE7XrVr1+K6LNM8fT/1VCYOpOr+tG
-	O3XwhsWC2g/UN7ZafGutdrzJG3Eag5NE124ra1smOS31MbrqFbdUFZQeLFmpiSxnvFp5OoWgIqoej
-	EP0FZQdw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9If5-00000006Zfc-0szB;
-	Thu, 16 Oct 2025 07:44:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 45C47300325; Thu, 16 Oct 2025 09:44:34 +0200 (CEST)
-Date: Thu, 16 Oct 2025 09:44:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jianyong Wu <jianyong.wu@outlook.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Tingyin Duan <tingyin.duan@gmail.com>,
-	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
-	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
-	Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
-	Libo Chen <libo.chen@oracle.com>,
-	Adam Li <adamli@os.amperecomputing.com>,
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/19] sched/fair: Track LLC-preferred tasks per runqueue
-Message-ID: <20251016074434.GZ3289052@noisy.programming.kicks-ass.net>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <ccbfda37200b66177a1c1add4715a49b863ac84d.1760206683.git.tim.c.chen@linux.intel.com>
- <20251015120523.GT3289052@noisy.programming.kicks-ass.net>
- <60fb91a69466e84d2367c11a4f0dd38511788bcb.camel@linux.intel.com>
+	s=arc-20240116; t=1760600750; c=relaxed/simple;
+	bh=fgKopdh9Z8sM0MUKRQaIDPRrqJA6y6ZuCQJarX+n8UI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ew6evW04JPgf0RMeLo0FLKNGswcrRuaXG0Mp3fWzGefQqMxAqVosbEGfHxtjUeUdgeWZWaG1vlF/TNGde4lNU/MWhmdpfSHpFMJqj+U4vtK0Q1OcCl/s6jT7XO/SgCgD1uQjnNmiJb1spV2cfJ0dYdQLFXymaSUcp2o9bcBmMDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZIAWwHQi; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 40807C03B71;
+	Thu, 16 Oct 2025 07:45:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6A0886062C;
+	Thu, 16 Oct 2025 07:45:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DAD15102F22AA;
+	Thu, 16 Oct 2025 09:45:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760600744; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=bOrjWfiWeIIZ2L76OBjivzkicsSnnO++i9iY32aMGOA=;
+	b=ZIAWwHQiTPIZ9iNHp7YmbrismilCLEtvQcTq8rWLklVI78qzFM4ymkUTkpKUuC00iCqo3u
+	NitW/VJoTo6l+NWOTs05gLRdiOR5lTTWzTaHJd3tFqh2A36NKbT6DoBmV/et24TMLK+GHR
+	XMaHyEGsTpp8FDNEBWxC3kXURxoTPNPTjN0BZwtHiy9qGURHj1++gghUexveUvp6bOweHO
+	OoMAmPryda5R29j8hgJEj/5zi2/b3Z3faq82OkDBIcmdVc3vbOBRLu4Evk+Ti2brpGTg83
+	RP8qxRgN9iHuEEWG6Qaj9VAMe9Q77QbPwBDD16go75X05HWvZg0+b2t4mO1xWg==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v5 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+Date: Thu, 16 Oct 2025 09:45:29 +0200
+Message-Id: <20251016-xsk-v5-0-662c95eb8005@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60fb91a69466e84d2367c11a4f0dd38511788bcb.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJmi8GgC/23MQQ7CIBCF4asY1mJgBqS48h7GhaVTJWppStPUm
+ N5dQk2s0eXkzfc/WaTOU2S71ZN1NPjoQ5MOvV4xdzk1Z+K+SjcDAVqALPgYr1y42gqyRldSsfT
+ ZdlT7MVcOrGxr3tDYs2NaLj72oXvk/CDznksoMZcGyQU3aJQBe7JY2n0ZQn/zzcaFey4M8FFWw
+ KwgKWncFpWuNEj9q3Cp1KwwKUdYACFKVfxRaqHgrVRSIEgbjaYszPZbTdP0AprBqgREAQAA
+X-Change-ID: 20250218-xsk-0cf90e975d14
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 15, 2025 at 01:03:37PM -0700, Tim Chen wrote:
-> On Wed, 2025-10-15 at 14:05 +0200, Peter Zijlstra wrote:
-> > On Sat, Oct 11, 2025 at 11:24:44AM -0700, Tim Chen wrote:
-> > > @@ -3999,6 +4038,7 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
-> > >  		struct rq *rq = rq_of(cfs_rq);
-> > >  
-> > >  		account_numa_enqueue(rq, task_of(se));
-> > > +		account_llc_enqueue(rq, task_of(se));
-> > >  		list_add(&se->group_node, &rq->cfs_tasks);
-> > 
-> > Here and...
-> > 
-> > >  	}
-> > >  	cfs_rq->nr_queued++;
-> > > @@ -4010,9 +4050,14 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
-> > >  	update_load_sub(&cfs_rq->load, se->load.weight);
-> > >  	if (entity_is_task(se)) {
-> > >  		account_numa_dequeue(rq_of(cfs_rq), task_of(se));
-> > > +		account_llc_dequeue(rq_of(cfs_rq), task_of(se));
-> > 
-> > ... here, could you please check the compiler is doing CSE of task_of()?
-> 
-> Will consolidate those task_of(se). 
+Hi all,
 
-And rq_of(). But really, check code-gen, it *should* DTRT and CSE the
-lot. If it doesn't, then do it manually.
+Now that the merge window is over, here's a respin of the previous
+iteration rebased on the latest bpf-next_base. The bug triggering the
+XDP_ADJUST_TAIL_SHRINK_MULTI_BUFF failure when CONFIG_DEBUG_VM is
+enabled hasn't been fixed yet so I've moved the test to the flaky
+table.
+
+The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+are defined in xksxceiver.c. Since this script is used to test real
+hardware, the goal here is to leave it as it is, and only integrate the
+tests that run on veth peers into the test_progs framework.
+
+Some tests are flaky so they can't be integrated in the CI as they are.
+I think that fixing their flakyness would require a significant amount of
+work. So, as first step, I've excluded them from the list of tests
+migrated to the CI (cf PATCH 14). If these tests get fixed at some
+point, integrating them into the CI will be straightforward.
+
+PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+tests available to test_progs.
+PATCH 2 to 7 fix small issues in the current test
+PATCH 8 to 13 handle all errors to release resources instead of calling
+exit() when any error occurs.
+PATCH 14 isolates some flaky tests
+PATCH 15 integrate the non-flaky tests to the test_progs framework
+
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Changes in v5:
+- Rebase on latest bpf-next_base
+- Move XDP_ADJUST_TAIL_SHRINK_MULTI_BUFF to the flaky table
+- Add Maciej's reviewed-by
+- Link to v4: https://lore.kernel.org/r/20250924-xsk-v4-0-20e57537b876@bootlin.com
+
+Changes in v4:
+- Fix test_xsk.sh's summary report.
+- Merge PATCH 11 & 12 together, otherwise PATCH 11 fails to build.
+- Split old PATCH 3 in two patches. The first one fixes
+  testapp_stats_rx_dropped(), the second one fixes
+  testapp_xdp_shared_umem(). The unecessary frees (in
+  testapp_stats_rx_full() and testapp_stats_fill_empty() are removed)
+- Link to v3: https://lore.kernel.org/r/20250904-xsk-v3-0-ce382e331485@bootlin.com
+
+Changes in v3:
+- Rebase on latest bpf-next_base to integrate commit c9110e6f7237 ("selftests/bpf:
+Fix count write in testapp_xdp_metadata_copy()").
+- Move XDP_METADATA_COPY_* tests from flaky-tests to nominal tests
+- Link to v2: https://lore.kernel.org/r/20250902-xsk-v2-0-17c6345d5215@bootlin.com
+
+Changes in v2:
+- Rebase on the latest bpf-next_base and integrate the newly added tests
+  to the work (adjust_tail* and tx_queue_consumer tests)
+- Re-order patches to split xkxceiver sooner.
+- Fix the bug reported by Maciej.
+- Fix verbose mode in test_xsk.sh by keeping kselftest (remove PATCH 1,
+  7 and 8)
+- Link to v1: https://lore.kernel.org/r/20250313-xsk-v1-0-7374729a93b9@bootlin.com
+
+---
+Bastien Curutchet (eBPF Foundation) (15):
+      selftests/bpf: test_xsk: Split xskxceiver
+      selftests/bpf: test_xsk: Initialize bitmap before use
+      selftests/bpf: test_xsk: Fix __testapp_validate_traffic()'s return value
+      selftests/bpf: test_xsk: fix memory leak in testapp_stats_rx_dropped()
+      selftests/bpf: test_xsk: fix memory leak in testapp_xdp_shared_umem()
+      selftests/bpf: test_xsk: Wrap test clean-up in functions
+      selftests/bpf: test_xsk: Release resources when swap fails
+      selftests/bpf: test_xsk: Add return value to init_iface()
+      selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
+      selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
+      selftests/bpf: test_xsk: Don't exit immediately when workers fail
+      selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+      selftests/bpf: test_xsk: Don't exit immediately on allocation failures
+      selftests/bpf: test_xsk: Isolate flaky tests
+      selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
+
+ tools/testing/selftests/bpf/Makefile              |   11 +-
+ tools/testing/selftests/bpf/prog_tests/test_xsk.c | 2595 ++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/test_xsk.h |  294 +++
+ tools/testing/selftests/bpf/prog_tests/xsk.c      |  146 ++
+ tools/testing/selftests/bpf/xskxceiver.c          | 2696 +--------------------
+ tools/testing/selftests/bpf/xskxceiver.h          |  156 --
+ 6 files changed, 3174 insertions(+), 2724 deletions(-)
+---
+base-commit: bd61720310e0b11bfbb7c8e1f373bb87d98451d4
+change-id: 20250218-xsk-0cf90e975d14
+
+Best regards,
+-- 
+Bastien Curutchet (eBPF Foundation) <tux@bootlin.com>
+
 
