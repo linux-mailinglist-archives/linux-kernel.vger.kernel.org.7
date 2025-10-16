@@ -1,166 +1,160 @@
-Return-Path: <linux-kernel+bounces-855405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47BFBE11F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:39:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C43BE1200
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C74C40012F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:39:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3ABB1A2047E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3C11A0728;
-	Thu, 16 Oct 2025 00:39:18 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6290F14885D;
-	Thu, 16 Oct 2025 00:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A49192B7D;
+	Thu, 16 Oct 2025 00:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CgOUAEuQ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A9415B54A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760575157; cv=none; b=icj4fO09EBWu+xWdZxEQY4+kmaH1iaic9sxTgRbw6oSDUIsHMJD9vmTLv12LtLTdNWGr9ddcyekGiT7uYWUUqSFJXvAARurjTGFpxf6SGoldGy9qmsl6SY+rdF8yP8/fVfhPHIXQwJRsZT9Hjg4kqbf4qRaJFbgJKEZM9KgblRU=
+	t=1760575217; cv=none; b=DRJPqwcVVyaqyPANS2PJ53hge0L8ktJdYhW6MkTB0Cp9pePTAS6eI2EJ/xdRPsDe5QjnHW4PnuBgR3KTP+Ge8D+4moxP/urMOGQom4gNgI+Mlw5L86i2D/eTsCUUM4UGJuJlJKUxyQ6iY1nnMrRJvVyX1ivbDXx9XY0hCi4VzUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760575157; c=relaxed/simple;
-	bh=dia0WiQqSMsA7QalQ+w75C/rhHhdK+gNykgAm5x1cK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QljXfd+aqh5IBXcL8MKWKJLaTUYSJRqTFhNCKO/GapcHmA2TJU+nqd3tYfeZpmw5M1cfKFbJ5U5KnCJ92naCisVkM5rmxeXVhp0NxUwG0Y/qgFsj6/R7OkfXY6v8aHmDbd7Z/mukzZr/3WCCnxqFKfWxKTT09xNoMXRWfe8aREo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-f3-68f03ea9ff1a
-Date: Thu, 16 Oct 2025 09:38:59 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, kernel-team@lge.com, linux-mm@kvack.org,
-	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
-	hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
-	jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 01/47] llist: move llist_{head,node} definition to
- types.h
-Message-ID: <20251016003859.GA2948@system.software.com>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-2-byungchul@sk.com>
- <2025100230-grafted-alias-22a2@gregkh>
+	s=arc-20240116; t=1760575217; c=relaxed/simple;
+	bh=7vY9PzWr/yiLC8CW0M2fmrsK2IW0Vzer5uITSO+BXpo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MaSwF7JS8mkZe892UwL0GNRdDUmHHo2yMuT6qemmKzOYtdpLDo5luhJFgOy1WtTpibKgUrnWaYhlSuPtT/T4Z92tCRPKa+TOmsZvIpbnQbrg/uE5FQ8nywWHkKXt+2uSnMUvBmKiRN43Zc91r8ljlkgNbU0Kk9ztnmotzp4CRKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CgOUAEuQ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-334b0876195so217126a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:40:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760575213; x=1761180013; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3dNlCURooSIJX80Bj3EYkA9QRwRQzSg6kTNlO7f/Gn4=;
+        b=CgOUAEuQazcDZPeyqs2s5ACE9C6Y0AJJPmwpGYGC/76AgNkRfLmc9ar7aHVrfFHQ5l
+         BbNimUVOtLVJ5uhKaIiJ4j4nqJsCLBubYpnvqli/eQ+HV9NMQ/MOCAPZellBnP3mYVrx
+         X/sHoKHWdZ0jrmZ+fDH0RKaDdA0c576nUzSVsGySo2r4+dXYGCSQqGNp+hiZM4iB986+
+         1JUTivF7jKYLig8KuQfrENpabOaJTfjAQOWAIJArPii3F7ZFtKrsDtnpLHtoNdHakwIp
+         AYzAFMkXD3cnOWm6vFvdxG1AztNU4PnezoSEM2Q0MLZJ6SYDW2IQzT9gVwCrn8Mecy66
+         Op4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760575213; x=1761180013;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3dNlCURooSIJX80Bj3EYkA9QRwRQzSg6kTNlO7f/Gn4=;
+        b=hqfxbo2GIlvaJ0XKZKl3cYfHHjd/H92EXBiuzDJo4BludvP00OhQo+M1Usn4wBdol7
+         voeQ2K2poGLwj+GhDwH6S3IuBToSczHDI7U0Yq696MC7YwW8/yYgRtYjLXtH/g0pGJ3J
+         vj8CRnw1gPMzPiYnkWDE/vnsncBjx7K4x6dtpSfKKIImnolRp+KDNAfd0kNhYQeB5BTE
+         qI+YDFTK9y4sUz0/oFrnVH/fw9l11atrAdpRYlZgQubFa74RLSAoxUDSv1tN9jpEij1L
+         uMkAPt6vYaOVNLmP+4mbuQwC2BLLgzEkjXU5XKT+SZJb46MjM6WK7RYKpydm+t0ReGEw
+         n5AA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvm1HMvVfgaNcwhPH4UUrnWWTYRoE+FrqtKLq2Dh2oCwel4PY6ioHhgUElV4gOAwqvec3Sw7wcRgDTl54=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8G3VpkM5gsnOI33Hh3E+PX/5xKQqSLyqaTFsiGxdtArAJZ2wE
+	z2r81ptQFtPlmHj7nGzPbPJqsnYfcBI9QeUWWz1T65Qro6ptDpGhn/adh4wTLZyJauRzVvWxyPQ
+	FDzePNg==
+X-Google-Smtp-Source: AGHT+IHfPvjhnedJTgg6CAxnlq4B1q8xkwPd3n+ogO/h0bax4t2Y4qg32T1rBL73rr/Fp9d7GqAYfHy1jZw=
+X-Received: from pjbrv22.prod.google.com ([2002:a17:90b:2c16:b0:329:6ac4:ea2e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2412:b0:33b:ade7:51d3
+ with SMTP id 98e67ed59e1d1-33bade7553bmr476752a91.20.1760575213249; Wed, 15
+ Oct 2025 17:40:13 -0700 (PDT)
+Date: Wed, 15 Oct 2025 17:40:11 -0700
+In-Reply-To: <aPAnWWmo555uB0-H@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025100230-grafted-alias-22a2@gregkh>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0xTVxjGd+499/bS0OVaYTvKPixdUFP/DSTx/TB1W5btJtuii/vC9sF1
-	cmMboLjyT+bMqkjHmFNoAl1bYAVmLW23sRL/INQgal2jMHCEkUpBEJUGmBu2cyila2vM/HLy
-	y/M853nfkxyOlrewqzmNtkTUaVUFClaKpfOprRvbt/+lftV1QQkjh3sxRMLVGBp/drNQ7TEz
-	MPiTC8FEpBpBVVcMQ9Tok0B48aYEYl4fgoYhIw0POpZZmL20gKB+cpoFU+gwhtCVd2B+opuB
-	WPAeBfbpZQqiDfnwfWsnC4/7f6PBVD+IYKbjKwRexxEW7tSepmE4cp8Ff/03LMwPNVLwZwcL
-	tiNeBpqsxvioJg+GodklCqymysQxQ0H9j90ULNqdErjeNobBrs+EKYdFAkuTWRCzFYHPdU8C
-	s3eNLExcNTBwVn8rvvzwJAXuY3dpqD4fweC5PcKAN7AeWgw/YDA3j8XfHQ0j8J2bouD3840s
-	HOs4zcC4O8aA3vqQgRuuQQzXfL9i8FvaMZz8Y4h6PU94WHUcC87OM5RQdSPKCu5mNxIePzIi
-	oao2Tkc7y4WT1+ZYoa5/o9BlCUoEm6dUOHp5nhE6HUqhrSdECS0LEUYIzG7bte4j6Wt5YoGm
-	TNRt3v6JVG0L6CX7x5kDJ4xWRo+6cA1K4QifQ66bZtin3FbZTicY85mk0qBPZlh+LRkdXUzq
-	afw6EroSiOtSjuatGcTVb04aK/kPyYjLmbwg47eSgVMtTCIk52sQ6bV0U0+MFcRvnk6GaF5J
-	RpdDcZ2LcwY5tcwl5BR+C6lrOI4SnM6/QnrPXKUSPYQfTyFzJgP1ZNNV5KJjFNci3vJMreWZ
-	Wsv/tTZEO5Fcoy0rVGkKcjapK7SaA5v2FhV6UPzj2g8tfXwOLQzu7kM8hxSpsluO+2o5oyor
-	rijsQ4SjFWmyrQfn1HJZnqric1FXtEdXWiAW96EMDitelGX/U54n5/epSsR8Udwv6p66FJey
-	Wo/qUg+V6B4wTY92TnVl5w78y+lLo1njSj67O71mz3ettbz03eBbPZFAeEN5466Mmzt22huM
-	wzkvvJ82dtk5EUzPznz7MyfxPpcW/gJO5C9++ctA7Gvjp9Jv//6g+U1/T8CQW7hj76Wcl9+4
-	o8197/m1bUsH/dYtK+g16uBL5nxtq/J2jwIXq1VZSlpXrPoPX6yAprQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTdxTG83/vNOv22mH4h/rFGrNNI5u76HFuxsRs/OfE7MO8hJhIM9/Y
-	BiikVYSZJYXaSdwi0KQltDILxNJRLAjqZKRLU0cdMgTEMUQuYjqxyGVBkCBQ9tJlmV9OnvN7
-	nic5H45Aq2JssqA3nJCMBm2WhlMwiv07LVu8u/7WvdMd2gF9hUEG5maLGbjQUM9BcVMFC91+
-	H4KRuWIE84suGqwtKwws28I8zC484GElEEbg6LHRUH+1kIJnjTEOnt6cQWAfjXBQHi1kYNrz
-	PQLnYxcP0bZUmBxpZWFlaIyCP59PIPBEYhREgmcRLDsy4WJ1MweLnV00lNu7EVSNDtHwpFE2
-	r4aHEQS8RRz8VXqNht7Iq3BvbpqDdvt3HEz2XKBgqpEDd1GAhUqXDYGlpoEDR2UTAy0Pf+ah
-	5+kSBYMOGwW+pjQY8TxmoKO0mpLvk1NXksBVbqHk8YQC++VWChY8dTz8XjPIgMe8EVydvSw8
-	8jp5WBrdCivuHAj7xngYKrEz4J/sYnfbEZm3nmdIXfN1iljvLnOk/od6RBZf2BCZvWShibVU
-	Xm9OTNPkTPMpcqljgiMv5v7gSOC5myG3qzEp69xCWpxDPDnzywD/xYfpio+OSVn6PMn49q4M
-	hc49YOZzh9n8EpuLNaMW5hxKELD4Pq6x/EivakbciC3fmuOcE9/A/f0LcZ4ovomjbQMyVwi0
-	6FJjX2dF3Hhd/BL3+eriBaW4Hd+prWJXQyrxHMJBZyv1r7EGt1dE4iFa3IT7Y1GZC7JW49qY
-	sIoTxPdwmeM8WtVrxQ04eP0WVYqUzpfazpfazv/bbkTXoUS9IS9bq8/6IMWUqSsw6PNTvsrJ
-	bkLyV3q+WSq7gWZ7U0NIFJDmFeVD77ROxWrzTAXZIYQFWpOo3H56QqdSHtMWfC0Zc44aT2ZJ
-	phBSC4wmSbn3kJShEo9rT0iZkpQrGf9zKSEh2Yz06o/Hwj/51207mHnfMv+o274vLRb9laf2
-	7ymaPCvORAwzpGHzYTKcf6Rkj/ezULqQdHzntoB1fPzaukLz6Q2nbiWH1+B7qbql4N72T9M7
-	mIuN+wY/ea3iLf/l6s/X51ahyh333x2/O9U19ez2oQN9bWWalLTh3Rm1M+vV/qTfYodvaBiT
-	Trt1E200af8BW/SRTpEDAAA=
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0
+References: <20250917215031.2567566-1-jmattson@google.com> <20250917215031.2567566-4-jmattson@google.com>
+ <aPAnWWmo555uB0-H@google.com>
+Message-ID: <aPA-60vV0WQUCmc2@google.com>
+Subject: Re: [PATCH 3/4] KVM: selftests: Add VM_MODE_PXXV57_4K VM mode
+From: Sean Christopherson <seanjc@google.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Andrew Jones <ajones@ventanamicro.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	"Pratik R. Sampat" <prsampat@amd.com>, Kai Huang <kai.huang@intel.com>, 
+	Eric Auger <eric.auger@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Oct 02, 2025 at 10:24:41AM +0200, Greg KH wrote:
-> On Thu, Oct 02, 2025 at 05:12:01PM +0900, Byungchul Park wrote:
-> > llist_head and llist_node can be used by some other header files.  For
-> > example, dept for tracking dependencies uses llist in its header.  To
-> > avoid header dependency, move them to types.h.
-> 
-> If you need llist in your code, then include llist.h.  Don't force all
+On Wed, Oct 15, 2025, Sean Christopherson wrote:
+> On Wed, Sep 17, 2025, Jim Mattson wrote:
+> > Add a new VM mode, VM_MODE_PXXV57_4K, to support tests that require
+> > 5-level paging on x86. This mode sets up a 57-bit virtual address
+> > space and sets CR4.LA57 in the guest.
 
-Eventually, I found out another way to avoid the dependency issue.
-Thanks anyway for the feedback.
+Thinking about this more, unless it's _really_ painful, e.g. because tests assume
+4-level paging or 48-bit non-canonical address, I would rather turn VM_MODE_PXXV48_4K
+into VM_MODE_PXXVXX_4K and have ____vm_create() create the "maximal" VM.  That
+way tests don't need to go out of their way just to use 5-level paging, e.g. a
+"TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_LA57))" is all that is needed.  It will also
+gives quite a bit of coverage for free, e.g. that save/restore works with and
+without 5-level paging (contrived example, but you get the point).
 
-	Byungchul
+The NONCANONICAL #define works for LA57, so hopefully making tests play nice with
+LA57 is straightforward?
 
-> types.h users to do so as there is not a dependency in types.h for
-> llist.h.
+> > @@ -358,6 +360,25 @@ struct kvm_vm *____vm_create(struct vm_shape shape)
+> >  		vm->va_bits = 48;
+> >  #else
+> >  		TEST_FAIL("VM_MODE_PXXV48_4K not supported on non-x86 platforms");
+> > +#endif
+> > +		break;
+> > +	case VM_MODE_PXXV57_4K:
+> > +#ifdef __x86_64__
+> > +		kvm_get_cpu_address_width(&vm->pa_bits, &vm->va_bits);
+> > +		kvm_init_vm_address_properties(vm);
+> > +		/*
+> > +		 * For 5-level paging, KVM requires LA57 to be enabled, which
+> > +		 * requires a 57-bit virtual address space.
+> > +		 */
+> > +		TEST_ASSERT(vm->va_bits == 57,
+> > +			    "Linear address width (%d bits) not supported for VM_MODE_PXXV57_4K",
+> > +			    vm->va_bits);
+> > +		pr_debug("Guest physical address width detected: %d\n",
+> > +			 vm->pa_bits);
+> > +		vm->pgtable_levels = 5;
+> > +		vm->va_bits = 57;
+> > +#else
+> > +		TEST_FAIL("VM_MODE_PXXV57_4K not supported on non-x86 platforms");
+> >  #endif
 > 
-> This patch shouldn't be needed as you are hiding "header dependency" for
-> other files.
+> That's a lot of copy+paste, especially given the #ifdefs.  How about this (untested)?
 > 
-> thanks,
+> 	case VM_MODE_PXXV48_4K:
+> 	case VM_MODE_PXXV57_4K:
+> #ifdef __x86_64__
+> 		kvm_get_cpu_address_width(&vm->pa_bits, &vm->va_bits);
+> 		kvm_init_vm_address_properties(vm);
 > 
-> greg k-h
+> 		/*
+> 		 * Ignore KVM support for 5-level paging (vm->va_bits == 57) if
+> 		 * the target mode is 4-level paging (48-bit virtual address
+> 		 * space), as 5-level paging only takes effect if CR4.LA57=1.
+> 		 */
+> 		TEST_ASSERT(vm->va_bits == 57 ||
+> 			    (vm->va_bits == 48 && vm->mode == VM_MODE_PXXV48_4K),
+> 			    "Linear address width (%d bits) not supported",
+> 			    vm->va_bits);
+> 		pr_debug("Guest physical address width detected: %d\n",
+> 			 vm->pa_bits);
+> 		if (vm->mode == VM_MODE_PXXV48_4K) {
+> 			vm->pgtable_levels = 4;
+> 			vm->va_bits = 48;
+> 		} else {
+> 			vm->pgtable_levels = 5;
+> 			vm->va_bits = 57;
+> 		}
+> #else
+> 		TEST_FAIL("VM_MODE_PXXV{48,57}_4K not supported on non-x86 platforms");
+> #endif
+> 		break;
 
