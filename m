@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-856131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4511CBE32FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A19F4BE3302
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33A8B4F3EBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:52:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 507224F4BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D798231B800;
-	Thu, 16 Oct 2025 11:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2923231CA47;
+	Thu, 16 Oct 2025 11:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=gus@collabora.com header.b="bREvLixJ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8M+ypII"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6A82E36E9;
-	Thu, 16 Oct 2025 11:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760615531; cv=pass; b=eKeRZ55fa/HznnvH6B1BxNC5oCLDnXi3L27L/qsUmHFoau2V87Qxp7zKXzQ+JeU2FFpOiJhXmK9y6drZGO/ie4agOo6/En8mFMofoCeebc3Z0z2xyzMAdCHzRaysSvJzJC23z7HbIp/PwFcM+9aJKbiLksHxyNOm1GAxECECJa4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760615531; c=relaxed/simple;
-	bh=j66SJQar5QnOrEar4/L1Jfi7zP89uDDu8qt/3YJRtrY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=aYVCq45Vst00SKEcbfcM2uw0umr5mQ3xWW74rSHm8eJt+5uI1Zcitf2ajifDZouXlwIacySpvYjE1lxy/N0eWpjBC9fjknxqeF3GvKh0AXQhqKqXG8/WnXf7KatWVbklyfDymZaMxOX1Z4QXkGUv4biwR0VuWWH3SX1esF2nv7I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=gus@collabora.com header.b=bREvLixJ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760615509; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kbUQO9XOk4YmvZgzkU0biflnf9kHyUt7JA6W8uNi4aZt5RXXs9laCNE4mTAUgmFQxbY9CjZ4A4+v/dcN6iDrSR9DuL2RhXWe9V6EYBXkVCUwe3Gfm4nOiE+GEbLDE/mXhcCKshRceftQWjKRdI9n2hlp2WlGzYiWY/NI5WSHmmM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760615509; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=yCzFxbn7GJVSCGZwCm5WpUYtn8vecoWWAu+Ddkx7Aoc=; 
-	b=OZm2uPVUrcaAtJ7BALZXlKlLf+S1ZSzqLfCbjlLLiGFmE7aasX2Yzcdy++fiegpx5Xes+skEpsaOdofwN7CRf8kLdUshDAf4veDpPcTokkQUZkNNVmf6I6y17T8M/sGRsWLNmtEAHCGsyH5bdhINdCgDTauSn84scS2NWTtVX8c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=gus@collabora.com;
-	dmarc=pass header.from=<gus@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760615509;
-	s=zohomail; d=collabora.com; i=gus@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=yCzFxbn7GJVSCGZwCm5WpUYtn8vecoWWAu+Ddkx7Aoc=;
-	b=bREvLixJ7TS1jfVDhk/0b2WbKp/HbS/nHJbPgAohsKIrlKFOW3dOzGCGPDcwJ5Sg
-	fy1YkekZzLwebvUiqg14IEkDJzvEbS3bynjEYylaVIaD8gUfnqx28rUrvOEoXyX/ALj
-	RL8Nxt+KWW/HyF2d3ouk3XYIrTI2DQdFaTRcWJXY=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1760615506978686.2189466745768; Thu, 16 Oct 2025 04:51:46 -0700 (PDT)
-Date: Thu, 16 Oct 2025 08:51:46 -0300
-From: Gustavo Padovan <gus@collabora.com>
-To: =?UTF-8?Q?=22Guido_G=C3=BCnther=22?= <agx@sigxcpu.org>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
-	"Jessica Zhang" <jessica.zhang@oss.qualcomm.com>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>,
-	"dri-devel" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"phone-devel" <phone-devel@vger.kernel.org>
-Message-ID: <199ecdca3d9.3341649c978102.7928576754342044908@collabora.com>
-In-Reply-To: <20251016-visionox-rm69299-bl-v1-1-d3b817ae5a26@sigxcpu.org>
-References: <20251016-visionox-rm69299-bl-v1-1-d3b817ae5a26@sigxcpu.org>
-Subject: Re: [PATCH] drm/panel: visionox-rm69299: Depend on
- BACKLIGHT_CLASS_DEVICE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028B02741AB
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760615553; cv=none; b=ROGZ+yZEGdbHoNxjoOfjeEta1qx5VypiW7mNbn0EQx9yBdU5w6h03erECAtMdGOI6XrXYHu8DajettydheVfBp43Fd157F3gFfk8jn7B71KoWhdyTNbU8ugZffggyE6DqmGFHThjZ7MaOO+xqM/8v+8fvAYKSTPmQmVqxo2NZ+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760615553; c=relaxed/simple;
+	bh=mC+9tDBrABDE/IJ+3G93YVagmcCQSUndMoDjtVKH8do=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bTr4XHNfHBJwZVHZ51nHGrjFn+Ux3ezEiz6l+E24Tt9aIdcYIB9JTAItCBcgp/tesT2SgVAX/zmDULH2dKIVrhVKNsiERsAEqOWZHiTUwTaNRCfXNNvlXnkqLjaC2z1/Qmcjc18i+k+Ejow6tLplCyfcVf9DHTvnCIOja6fpQSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8M+ypII; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-3c917ea655bso411193fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 04:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760615551; x=1761220351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mC+9tDBrABDE/IJ+3G93YVagmcCQSUndMoDjtVKH8do=;
+        b=M8M+ypIItBI7oRThWFl4sOdAJoXP6jcdl+tQ9PtmRACAEJprF9ihfA2WRBjumA02M8
+         XhI8WpisQIPABUk93jne2TcGkjnnCUyK+0V82itEbTEUgHMSy/6bVnZvr8ggvG4W7AWy
+         9wjxuRjKkgzmW/OSczTylqNDZpqMHW3IQCaxMMOR7PYZ+7HbhAWLWZ5Bapfefb3Aw8qv
+         4ycVv9GWWFlnfj1vHiiCrPN7QMPUUCXuScAHx9ZG/FSYwFVju1oGS1sp5/eg8qBprCqQ
+         gXrbTGNTZkwy6oytA9gYElOhy39qOso2y/6mhLcXn1TI+5wU55xDPmPH6o74+X0z3ZvJ
+         kKig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760615551; x=1761220351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mC+9tDBrABDE/IJ+3G93YVagmcCQSUndMoDjtVKH8do=;
+        b=CG52nX3MfjJOuNMmGfkJy7tfgM+tPAAJExxgtUVvw/fXQZ9+g+4U0RvcVfo4RAFxsq
+         9zNjfUBwERQdTGnHYRPqcuSJmHGnjrJcLU+Y0tng8G9mhEOFF7AFkCSjmAtnW8jhHdQa
+         CVcbpt3uMXzmTPtdCs1LPVKmgWMj6O+NFw0gV9c7PvxDf0qE36YHbEMqjNp6Xx4mT4A5
+         2xnGpQb931/hJSdjadTsW2tWSopXE1HkA5stiCALNW6zewxrqTCpgJaM7Kdh0AFK0Mi3
+         7E5hFgUo8zToC37f4JEwv0Ri+2pbWau2Nn6K9jijDeLH1PHq0AOf47rQkNs4YWMf1KOK
+         +E5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXDyy2PLJ+jcMwwRGfNvde3RRzC6zTEP9KOVKMmneXQa/3SZiOuolxNSAmhJHQVk37yfoMTIicOAfjGl7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0rZhxVW0qoEstkiE2rSCOSRoxPcpIrIT7a1N/BnBo9nitGTGq
+	ghBEs1J0/zT1GSNnbR1xwy/Gwct8e+LXp4LK9XVB6S00TAyquC5SJPYohOuzFOeJDq+RaSXERQQ
+	5LJfjuadjxnIA8UmMiwoqnpGddTv6VVA=
+X-Gm-Gg: ASbGnctvqIj1sL2xpCTo6wvLARHHIaDpBa3L5ofKs7kR3CiEVrfQFDFHxdej1n4aaVt
+	R1YkrXuRKwdpfO9MaTIXCvv5UgDLk76jtltuMTMSyjXtGoskVVFLqVVYYqTB/JWbkQADHg0Bcra
+	iFGQEe4AEQBXJ7gYeCbhK2iLLg9ljjXEmd5oHrASJWCYwR3XKTsZjzcj8P6ulTrdW2mNgtCCYSp
+	yeOewONIK48glh8TGC4bNA5AibkZXD40m1FE91AkBpDFh0AwXicHZAUBi4sGQ==
+X-Google-Smtp-Source: AGHT+IFauwwQS3WETtyLhzy44iD48OMfA608HyRDHXmXr5xDQLt9tlht985FKph/VCC9SYR1RyZpln3F5+TQqJplHjM=
+X-Received: by 2002:a05:6871:81da:20b0:3c9:7398:51c0 with SMTP id
+ 586e51a60fabf-3c97398642fmr902024fac.31.1760615550975; Thu, 16 Oct 2025
+ 04:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251013185645.yhrtn64mwpfom7ut@wrangler>
+In-Reply-To: <20251013185645.yhrtn64mwpfom7ut@wrangler>
+From: Karim Manaouil <kmanaouil.dev@gmail.com>
+Date: Thu, 16 Oct 2025 12:52:19 +0100
+X-Gm-Features: AS18NWB3B3V_JmGbFkguEBUx1ZHqqCPVgptVO3r8ni_Q_BkPMq6dhfTbp54BDYA
+Message-ID: <CA+uifjMUQS+nkaDqGnm77tLG38k9ZYi-mcF2eqpOKHnaF2Nvhw@mail.gmail.com>
+Subject: Re: Which amd cpu families support ptdma and ae4dma?
+To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc: Raju Rangoju <Raju.Rangoju@amd.com>, Nathan Lynch <nathan.lynch@amd.com>, 
+	Sanjay R Mehta <sanju.mehta@amd.com>, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 
-Hello,
+Hey guys,
 
----- On Thu, 16 Oct 2025 08:41:27 -0300 Guido G=C3=BCnther <agx@sigxcpu.org=
-> wrote ---
+Just a gentle reminder. Much appreciated!
 
- > We handle backlight so need that dependency.=20
- > =20
- > Fixes: 49802972d116 ("drm/panel: visionox-rm69299: Add backlight support=
-")=20
- > Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>=20
+Thanks
 
-Missing the KernelCI report tag:
-
-Reported-by: kernelci.org bot <bot@kernelci.org>
-
- > ---=20
- >  drivers/gpu/drm/panel/Kconfig | 1 +=20
- >  1 file changed, 1 insertion(+)=20
- > =20
- > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconf=
-ig=20
- > index 407c5f6a268b..59f5a31f3381 100644=20
- > --- a/drivers/gpu/drm/panel/Kconfig=20
- > +++ b/drivers/gpu/drm/panel/Kconfig=20
- > @@ -1112,6 +1112,7 @@ config DRM_PANEL_VISIONOX_RM69299=20
- >      tristate "Visionox RM69299"=20
- >      depends on OF=20
- >      depends on DRM_MIPI_DSI=20
- > +    depends on BACKLIGHT_CLASS_DEVICE=20
- >      help=20
- >        Say Y here if you want to enable support for Visionox=20
- >        RM69299  DSI Video Mode panel.=20
- > =20
- > ---=20
- > base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a=20
- > change-id: 20251016-visionox-rm69299-bl-7e6a2e30626d=20
- > =20
- > Best regards,=20
- > --=20
- > Guido G=C3=BCnther <agx@sigxcpu.org>=20
- > =20
- >=20
-
+On Mon, Oct 13, 2025 at 7:56=E2=80=AFPM Karim Manaouil <kmanaouil.dev@gmail=
+.com> wrote:
+>
+> Hi folks,
+>
+> I have a dual AMD EPYC 9224 on a Gigabyte MZ73-LM0 server motherboard. I
+> am trying to use ptdma or ae4dma to prototype a memory management
+> related patch, but it doesn't seem like any of those engines exist on my
+> CPU. I loaded ae4dma but /sys/class/dma and /sys/kernel/debug/dmaengine
+> are empty and I can't see anyting on dmsg.
+>
+> I cannot find any documentation whatsover online on those engines.
+>
+> Could you please tell me which classes of amd cpus support those
+> engines? Is there a chance I have it, but I'm missing something?
+>
+> I am on Linux v6.17. I also tried to check with lspci. It doesn't seem
+> to report anything related to ptdma or ae4dma.
+>
+> Any info will be much appreciated!
+>
+> Thanks
+>
+> --
+> ~karim
 
