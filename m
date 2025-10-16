@@ -1,139 +1,120 @@
-Return-Path: <linux-kernel+bounces-855549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63432BE19AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:55:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAFBBE19BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEBC33AADC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:55:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3762400040
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EF9248868;
-	Thu, 16 Oct 2025 05:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD279248868;
+	Thu, 16 Oct 2025 05:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FHwWz2us"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tAo2SJwE"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1151623A564
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65079246770
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760594109; cv=none; b=b2SmJzJX2Lem6QHdDvvAVGs2F1+sTn6/Yik+6CZ0az/P8oNixJJ7UNuNDyVL1tU2ZRnVIOG04/Lgq0r1M9O4oUt9GwUVb3Y9+2DOvvio9D9NqOq8fPqCHE6lJHNYELaw7DjS+dbTHW7z+KuCZTOP92IkCdsrXxOwgNbt5M0XqBw=
+	t=1760594174; cv=none; b=ILD+pyldZAxYTK2AlWR5DDttqL/zk5E4wwl/kpGbVvXbGF6p6MLhl2dWLQajqjtRKyYOqjo7cf6xaXrY0pvHdH6uaQ5oc93JreuhW20768+EP861Ls5Xf0tRJkLCZ/QdAIC0M3nAMiuthMvJPwi4bHTZEMAPEOdozmIrMQxt0M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760594109; c=relaxed/simple;
-	bh=zZ3hiuoOz7S40OWe1BhO7yrk1jjd8J+w81QTPBAFJB4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=bqCQzyZQigzdkVtWP/fcYc+D7PUe2cpjc3xG9TUM2hFi2ZRICpRYaJWwlUIw/R8OhNToImg2tIx/FUdtCPbXgt4Im2J/op9JkxjUtX2WyEBHOxHcaWO6WUb+QKKo3VwBNC3BQIWrtHFuSiECwJKvj7o3FriQ67Py9U3taVzIwRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FHwWz2us; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251016055506epoutp024008cb0920fb941786cfbc089c83ba4d~u4wLzIXAB0811608116epoutp02L
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:55:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251016055506epoutp024008cb0920fb941786cfbc089c83ba4d~u4wLzIXAB0811608116epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760594106;
-	bh=Lt1V1ttJT/rzLxB3yr+Kj2hiXZUyzShEyCvGqxVBJsQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=FHwWz2us2IYVIr+EuFa6oJbqoifB4KHvpW7efNqW30FqFZmUucTZAOWlA+M12qzg7
-	 kjrIixlxsVwlX4MFCSgPlx0eKIF7vyEwh38v6QEQsiLqVWRhMzP3sF4zT2uRW1Z3R0
-	 DXDOaRU6OpumLxcCPwDaMCMQgDWpxWigiDqYGv70=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251016055505epcas2p1bd7203b2019c94b7e042145b3c441814~u4wLSUwr41320913209epcas2p1v;
-	Thu, 16 Oct 2025 05:55:05 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.38.201]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cnHGx1qvFz6B9mD; Thu, 16 Oct
-	2025 05:55:05 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251016055504epcas2p465445e62cb43a07d933890d533c08b97~u4wKYUP4M2158421584epcas2p4M;
-	Thu, 16 Oct 2025 05:55:04 +0000 (GMT)
-Received: from KORCO115296 (unknown [12.80.207.128]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251016055504epsmtip2ae441a34d309f357a7223522f6fc7556~u4wKSXLQv2437324373epsmtip2j;
-	Thu, 16 Oct 2025 05:55:04 +0000 (GMT)
-From: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Bartlomiej Zolnierkiewicz'"
-	<bzolnier@gmail.com>, "'Rafael J . Wysocki'" <rafael@kernel.org>, "'Daniel
- Lezcano'" <daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>,
-	"'Lukasz	Luba'" <lukasz.luba@arm.com>, "'Rob Herring'" <robh@kernel.org>,
-	"'Conor Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>, "'Henrik Grimler'" <henrik@grimler.se>
-Cc: <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <65380fa1-7d49-48eb-bab4-3e15cc4ea434@kernel.org>
-Subject: RE: [PATCH v6 3/3] arm64: dts: exynosautov920: Add multiple sensors
-Date: Thu, 16 Oct 2025 14:55:02 +0900
-Message-ID: <001f01dc3e61$6b2ec7d0$418c5770$@samsung.com>
+	s=arc-20240116; t=1760594174; c=relaxed/simple;
+	bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OWtZbP/9HaStYV8PhMaN8XYmNDovHc50ojP6PuSs9quW/qixCl00Hf6OWSHZh+ggOLKHg2eF021ciNgbmxrU4+tlDpjnQ2Vdjhgcu0fJKl8jZIGxEYcKC0ojmWdk77cAf+fnPMcBKitRy8ps8184iH+L59cOruJweiWxLHYoDHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tAo2SJwE; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b4f323cf89bso60042266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:56:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760594171; x=1761198971; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
+        b=tAo2SJwE9rpak8Mebz2GFYOXRsqg0Kq2i/y66sKssWolUVkV9CIztX8YztPD9Emt32
+         XldkFvb09so7lXyzGB9nxKHBkREzD3ELC0PuwM1l+vZY/4OipY3aOWuLAT2VvkgQi0VB
+         nsPrf6lmLMoG3kQm19zG4/lELk3W/6l0k4mW+xCRU5n6GgfBHz8tyBjhpF/8qZfxbYD7
+         SHQi1bueqjmwosezRUMMwjH7qDKfOwL29tAlaPagOUi6HPdxINwLAMUz1PbKoVphWsK3
+         GJtxP+fozZgho6HodUeDnboktHpi6RM4AV9tnj/QBjQD6QWB9FpoHKGSNB69hHaRTDFg
+         tTXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760594171; x=1761198971;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6ycztQkvJg+KdGCCiCnENVHtBhwB6Y+p5nrVTPjvpLc=;
+        b=eGg0HCwKZQQfilV5xGTXJgM4fn49AWwT9UC1q/bGcC7J6LmHA33l0tSQoTANAQ8tQL
+         JceT32L7DskB6msVcirUDqhHfMYBPhjpLLRWnQIy0aVU0ydJh8RteTuYZ0B1TuZJSOwR
+         0dtVGksGXp6fdJhD0ZgVdyesLF41pawGQtCbiV0O4+G15vEQE/8S5VRrsWG3eTLLnx30
+         6EXzVCTqhVQE+cteIkqvBxTu6BPE6bF1VBYaBsFhc7E2mVysylLdRCGs9iyQcnJifMfo
+         4SyPZR7nj9S/eL6iBQaBN03HejMl8TivP9pLDVodSZgVcYx2o5FlfxhlkoF2jUUhW3WW
+         Uj4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIRIYS1mksb28cOP8NcBfRmS2hZUtLiHw86Qu43GVEVAkaX/NiSG9sumVGBAa5QoEdU4NA9Mb5tjU4hPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqVmc7vLwyhC1p8YT8T+9Go2c0VtyqeneNFOj+kZx+5SJyhJwR
+	vTaJd4DA3wdvwUZ0rkrv0dvZx2DqLZp84+R3EO/zfG6LnJ2EpyeSOlWPOAEx7N+D64U=
+X-Gm-Gg: ASbGnctBA1cZP/RxN2hMssZMqeCvB6sy01AugHLVmBqP0u6t1VEds1EGReskyEHgfqv
+	aPBzmBssd1WxMJkDmHmpP+FVYhcEPzBl9fbMW/eQmhrw6tUvc0E7VlzmmyzcTQfD/RHsMJSY99s
+	IG6y6MWntzX1jxYACngvZGS36Eb4Xvx16GLV9g4mdV8OP87p+viTI9SErc15gQOfIvv6ISMZOcc
+	Ee9/BQnB9llfrx1G8W3LGX7QfJMTC3bt+64lnJyz4Y1cqfZdDOJqYjktolS72kPLxR3A5BYTt5p
+	E8vo7TjdYxo76kyPIQd7krMauPJYvGv/RybFb/FjPIHq2yOW2KBECJwk1iuUy62GxIA3PVWRip0
+	FckNjsRbK1Mum/IQ/Ak6raqtuMVs9RRtWwqzIqIBTXDhHmUsKMGdYrmjwG72+0UZBT0pFg6wKaT
+	2ja3Ku1tko6LXK4kdaQw==
+X-Google-Smtp-Source: AGHT+IHRn6DJcub987XbIaCnD213XxBVwA1OkaUrOOTFR+bbpHbUgS+RyDdcriH37dmE0TK4LGPTbQ==
+X-Received: by 2002:a17:906:c149:b0:b41:2209:d35d with SMTP id a640c23a62f3a-b50a9d701b3mr3125674866b.1.1760594170719;
+        Wed, 15 Oct 2025 22:56:10 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccaab18sm419863266b.48.2025.10.15.22.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 22:56:10 -0700 (PDT)
+Message-ID: <30a0c50b682b990820d486e536f320c7ea31eabc.camel@linaro.org>
+Subject: Re: [PATCH 3/9] arm64: dts: exynos: gs101: add sysreg_misc and
+ sysreg_hsi0 nodes
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Tudor
+ Ambarus <tudor.ambarus@linaro.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sam Protsenko	
+ <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski	
+ <krzk@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Krzysztof
+ Kozlowski	 <krzysztof.kozlowski@linaro.org>, kernel-team@android.com
+Date: Thu, 16 Oct 2025 06:56:09 +0100
+In-Reply-To: <20251013-automatic-clocks-v1-3-72851ee00300@linaro.org>
+References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+	 <20251013-automatic-clocks-v1-3-72851ee00300@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQIjrV0tYij4Y9dxV2JVizj4BALpcQInw8+iAnOKzA4BpaaqeLQDYDWA
-Content-Language: ko
-X-CMS-MailID: 20251016055504epcas2p465445e62cb43a07d933890d533c08b97
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250930005148epcas2p19ffbb0ceaacac4d92e7d43936884dc70
-References: <20250930005139.1424963-1-shin.son@samsung.com>
-	<CGME20250930005148epcas2p19ffbb0ceaacac4d92e7d43936884dc70@epcas2p1.samsung.com>
-	<20250930005139.1424963-4-shin.son@samsung.com>
-	<65380fa1-7d49-48eb-bab4-3e15cc4ea434@kernel.org>
 
-Hello Krzysztof Kozlowski,
+On Mon, 2025-10-13 at 21:51 +0100, Peter Griffin wrote:
+> Add syscon DT node for the hsi0 and misc sysreg controllers. These will b=
+e
+> referenced by their respective CMU nodes in future patchs.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski [mailto:krzk@kernel.org]
-> Sent: Friday, October 10, 2025 9:46 PM
-> To: Shin Son <shin.son@samsung.com>; Bartlomiej Zolnierkiewicz
-> <bzolnier@gmail.com>; Rafael J . Wysocki <rafael@kernel.org>; Daniel
-> Lezcano <daniel.lezcano@linaro.org>; Zhang Rui <rui.zhang@intel.com>;
-> Lukasz Luba <lukasz.luba@arm.com>; Rob Herring <robh@kernel.org>; Conor
-> Dooley <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>;
-> Henrik Grimler <henrik@grimler.se>
-> Cc: linux-pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v6 3/3] arm64: dts: exynosautov920: Add multiple
-> sensors
-> 
-> On 30/09/2025 02:51, Shin Son wrote:
-> > diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > index 0fdf2062930a..fba403e48aed 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > @@ -330,6 +330,36 @@ watchdog_cl1: watchdog@10070000 {
-> >  			samsung,cluster-index = <1>;
-> >  		};
-> >
-> > +		tmu_top: tmu@100a0000 {
-> > +			compatible = "samsung,exynosautov920-tmu";
-> > +			reg = <0x100A0000 0x1000>;
-> 
-> I guess there will be new version, so nitpick: please use lowercase hex.
-> 
-> 
-> Best regards,
-> Krzysztof
+s/patchs/patches :-)
 
-Ok, I'll use the lowercase hex.
-Thanks for your feedback.
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> =C2=A0arch/arm64/boot/dts/exynos/google/gs101.dtsi | 12 ++++++++++++
+> =C2=A01 file changed, 12 insertions(+)
 
-Best regards,
-Shin Son.
-
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
