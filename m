@@ -1,252 +1,99 @@
-Return-Path: <linux-kernel+bounces-855982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15448BE2BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:23:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C03BE2CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AFE5E45CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919C25E47D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B053074BC;
-	Thu, 16 Oct 2025 10:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53034328621;
+	Thu, 16 Oct 2025 10:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zetn1/Qv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ASGcX4mx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zetn1/Qv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ASGcX4mx"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4dyf4keG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m97xrjB9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F5F2C235A
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B82111A8;
+	Thu, 16 Oct 2025 10:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609769; cv=none; b=T/w1Q1FUP6Es5yZAM0b88/Kai2E6x/T0BLh95cGSFo+MiL1w4NgYSUWOz1oWHH26Qx8cM2frzbhnCrnxuc4+cmUqZUAWAnP/QNgTAiD5AdIBDyE1iHGD9CxjkVW3rtha5+d3KCfH4ZGd1ZrGuePqiArZ3gLnJYzqSqCgMcwv/3s=
+	t=1760609796; cv=none; b=QaIY18Y0n2q+KyvmQ8psERxe3E7jM+jFB2Bc/GEFHvC/3BJoJ+Wbu2bhVfQuBw6zb6hHtpw9X0oqaSvfk5YbmJyP9pzovXgHbAUkoAMxMDpEtMSgPyQEkBLZ6/DspEps8mzz3OwlKBDhMHYw5WMoz6SYQ5S+7z2SwHOEZ2rm9PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609769; c=relaxed/simple;
-	bh=TZamH4bOnQ54pzht4K/rRs4eGIdE04QjzGKBWpVNsvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jD3Wi4UG0zSFsdvlggw4JcpUEwAfeFGHLiLNK3/rsfz9ApGK9QYUsfLoOFV33n3ZhcQz8CPkeJ5cL4MI/QGLXmn+fC+Q0CQmN/MSihDLI/S6Ug0Xsg8D8u+Me6KkoT//Jvt7h6XnCLZPHHHrMzF3ky5vjeA92TBflZ2H01FqNfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zetn1/Qv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ASGcX4mx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zetn1/Qv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ASGcX4mx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 29B0D1F399;
-	Thu, 16 Oct 2025 10:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760609766; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=uxrIU0TzjlP7S5ryJQV1KkSdUjIrVkLiLjT2How3fyc=;
-	b=zetn1/Qv4gAbw7FUurun1NGsgMhfEmqJhWcoVXLoagNg4lR8vCGSuOc0XzwDaUUT90axw9
-	hmGHM5GKcSbRRrYamtXvyvhDp1iHfN8e+qEAq4qYGI9+UTQZloP+TPcqMN/DypjT/c4QKJ
-	FsObyfrlXzLEkLi99GtMFV0zvrFgYjA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760609766;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=uxrIU0TzjlP7S5ryJQV1KkSdUjIrVkLiLjT2How3fyc=;
-	b=ASGcX4mx0MSIlMSArC1T6+1YB/Uk/RLigYR5lQ8N8+tM5LgLaODIcp28mvFOqGre2U0gLK
-	B2dlmzMYKCqDp/BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760609766; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=uxrIU0TzjlP7S5ryJQV1KkSdUjIrVkLiLjT2How3fyc=;
-	b=zetn1/Qv4gAbw7FUurun1NGsgMhfEmqJhWcoVXLoagNg4lR8vCGSuOc0XzwDaUUT90axw9
-	hmGHM5GKcSbRRrYamtXvyvhDp1iHfN8e+qEAq4qYGI9+UTQZloP+TPcqMN/DypjT/c4QKJ
-	FsObyfrlXzLEkLi99GtMFV0zvrFgYjA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760609766;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=uxrIU0TzjlP7S5ryJQV1KkSdUjIrVkLiLjT2How3fyc=;
-	b=ASGcX4mx0MSIlMSArC1T6+1YB/Uk/RLigYR5lQ8N8+tM5LgLaODIcp28mvFOqGre2U0gLK
-	B2dlmzMYKCqDp/BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 690681376E;
-	Thu, 16 Oct 2025 10:16:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /o1TFuXF8GjmAgAAD6G6ig
-	(envelope-from <fmancera@suse.de>); Thu, 16 Oct 2025 10:16:05 +0000
-From: Fernando Fernandez Mancera <fmancera@suse.de>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	kuba@kernel.org
-Cc: cynthia@kosmx.dev,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	christian.brauner@ubuntu.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	davem@davemloft.net,
-	horms@kernel.org,
-	Fernando Fernandez Mancera <fmancera@suse.de>
-Subject: [PATCH] sysfs: check visibility before changing group attribute ownership
-Date: Thu, 16 Oct 2025 12:14:56 +0200
-Message-ID: <20251016101456.4087-1-fmancera@suse.de>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760609796; c=relaxed/simple;
+	bh=8P2htBhrJO17CrkOlrLH3d0XBHXx2pEysnhLVdEWLvs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BR7N60Km+0ZPF+GGrKw3psf4oZs/kie0Y0Daktlq+AtTjE3hEUYgs/EETQ83jB7ddjKvOiDNuwKlK7jXxSyzBaLTl7e5CNSoeZphMMvvXYGRKIhFMtaJvW9gQ+ej2FlxFau0PliCU9g2MEyrERbZAC/h/sS8u30Si9CU4wMflKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4dyf4keG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m97xrjB9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760609788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TLL69dJksF4/iqPmPUgAV5VYqtWXMBbCiNFdjNIo33A=;
+	b=4dyf4keGlON8LSBC1aKpcUUuL7XHEVITligizH+whmze2T1S9YiS2D6lI5s+/gLeIWR+Ah
+	2ZvutviDhrj2QYaki5VnTWq9WyAVwapLiVFaqxATBh3L/m2E1ihklhIKGi144T0EXKix2C
+	oQbaxy9NojKDXswd7xxV+KFCr6e4+WtJc/oXCYHxht1AmCjh7NXJP6B6C85s5AXv6vKidQ
+	sxL9j4vlNzXONRtdmWcoynupVyIKDsrh3VK2xxETQMpmgK7096cCoIIyrviDRMVa9jDArH
+	D1H/x+S15p6l6MhcgrXNkB0oq/YW2StHHvaUm/wdDaSnsUNWHPGtTMdbVfqx6Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760609788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TLL69dJksF4/iqPmPUgAV5VYqtWXMBbCiNFdjNIo33A=;
+	b=m97xrjB9cTEobIoToBzhJ5TnfbY2K7rA/p04sZvWEmK5R41wJb0EJV+mN6bY2YtAI0RRug
+	rUMF1tse33kTVWDA==
+To: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Charles Mirabile <cmirabil@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Samuel
+ Holland <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Vivian
+ Wang <dramforever@live.com>, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Zhang Xincheng
+ <zhangxincheng@ultrarisc.com>, Lucas Zampieri <lzampier@redhat.com>
+Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
+In-Reply-To: <20251016084301.27670-4-lzampier@redhat.com>
+References: <20251016084301.27670-1-lzampier@redhat.com>
+ <20251016084301.27670-4-lzampier@redhat.com>
+Date: Thu, 16 Oct 2025 12:16:26 +0200
+Message-ID: <87sefj179h.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Type: text/plain
 
-Since commit 0c17270f9b92 ("net: sysfs: Implement is_visible for
-phys_(port_id, port_name, switch_id)"), __dev_change_net_namespace() can
-hit WARN_ON() when trying to change owner of a file that isn't visible.
-See the trace below:
+On Thu, Oct 16 2025 at 09:42, Lucas Zampieri wrote:
+> @@ -430,6 +516,8 @@ static const struct of_device_id plic_match[] = {
+      ^^^^^^^^^^^^
+How on earth did you manage to screw up the hunk header?
 
- WARNING: CPU: 6 PID: 2938 at net/core/dev.c:12410 __dev_change_net_namespace+0xb89/0xc30
- CPU: 6 UID: 0 PID: 2938 Comm: incusd Not tainted 6.17.1-1-mainline #1 PREEMPT(full)  4b783b4a638669fb644857f484487d17cb45ed1f
- Hardware name: Framework Laptop 13 (AMD Ryzen 7040Series)/FRANMDCP07, BIOS 03.07 02/19/2025
- RIP: 0010:__dev_change_net_namespace+0xb89/0xc30
- [...]
- Call Trace:
-  <TASK>
-  ? if6_seq_show+0x30/0x50
-  do_setlink.isra.0+0xc7/0x1270
-  ? __nla_validate_parse+0x5c/0xcc0
-  ? security_capable+0x94/0x1a0
-  rtnl_newlink+0x858/0xc20
-  ? update_curr+0x8e/0x1c0
-  ? update_entity_lag+0x71/0x80
-  ? sched_balance_newidle+0x358/0x450
-  ? psi_task_switch+0x113/0x2a0
-  ? __pfx_rtnl_newlink+0x10/0x10
-  rtnetlink_rcv_msg+0x346/0x3e0
-  ? sched_clock+0x10/0x30
-  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
-  netlink_rcv_skb+0x59/0x110
-  netlink_unicast+0x285/0x3c0
-  ? __alloc_skb+0xdb/0x1a0
-  netlink_sendmsg+0x20d/0x430
-  ____sys_sendmsg+0x39f/0x3d0
-  ? import_iovec+0x2f/0x40
-  ___sys_sendmsg+0x99/0xe0
-  __sys_sendmsg+0x8a/0xf0
-  do_syscall_64+0x81/0x970
-  ? __sys_bind+0xe3/0x110
-  ? syscall_exit_work+0x143/0x1b0
-  ? do_syscall_64+0x244/0x970
-  ? sock_alloc_file+0x63/0xc0
-  ? syscall_exit_work+0x143/0x1b0
-  ? do_syscall_64+0x244/0x970
-  ? alloc_fd+0x12e/0x190
-  ? put_unused_fd+0x2a/0x70
-  ? do_sys_openat2+0xa2/0xe0
-  ? syscall_exit_work+0x143/0x1b0
-  ? do_syscall_64+0x244/0x970
-  ? exc_page_fault+0x7e/0x1a0
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- [...]
-  </TASK>
+Applying: irqchip/plic: Add support for UltraRISC DP1000 PLIC
+error: corrupt patch at line 116
 
-Fix this by checking is_visible() before trying to touch the attribute.
+>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>  	{ .compatible = "thead,c900-plic",
+>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+> +	{ .compatible = "ultrarisc,cp100-plic",
+> +	  .data = (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
+>  	{}
+>  };
+>  
+> @@ -664,12 +752,16 @@ static int plic_probe(struct fwnode_handle *fwnode)
+     ^^^^^^^^^^^^^^^
+Ditto here.
 
-Fixes: 303a42769c4c ("sysfs: add sysfs_group{s}_change_owner()")
-Reported-by: Cynthia <cynthia@kosmx.dev>
-Closes: https://lore.kernel.org/netdev/01070199e22de7f8-28f711ab-d3f1-46d9-b9a0-048ab05eb09b-000000@eu-central-1.amazonses.com/
-Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
----
- fs/sysfs/group.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
-index 2d78e94072a0..e142bac4f9f8 100644
---- a/fs/sysfs/group.c
-+++ b/fs/sysfs/group.c
-@@ -498,17 +498,26 @@ int compat_only_sysfs_link_entry_to_kobj(struct kobject *kobj,
- }
- EXPORT_SYMBOL_GPL(compat_only_sysfs_link_entry_to_kobj);
- 
--static int sysfs_group_attrs_change_owner(struct kernfs_node *grp_kn,
-+static int sysfs_group_attrs_change_owner(struct kobject *kobj,
-+					  struct kernfs_node *grp_kn,
- 					  const struct attribute_group *grp,
- 					  struct iattr *newattrs)
- {
- 	struct kernfs_node *kn;
--	int error;
-+	int error, i;
-+	umode_t mode;
- 
- 	if (grp->attrs) {
- 		struct attribute *const *attr;
- 
--		for (attr = grp->attrs; *attr; attr++) {
-+		for (i = 0, attr = grp->attrs; *attr; i++, attr++) {
-+			if (grp->is_visible) {
-+				mode = grp->is_visible(kobj, *attr, i);
-+				if (mode & SYSFS_GROUP_INVISIBLE)
-+					break;
-+				if (!mode)
-+					continue;
-+			}
- 			kn = kernfs_find_and_get(grp_kn, (*attr)->name);
- 			if (!kn)
- 				return -ENOENT;
-@@ -523,7 +532,14 @@ static int sysfs_group_attrs_change_owner(struct kernfs_node *grp_kn,
- 	if (grp->bin_attrs) {
- 		const struct bin_attribute *const *bin_attr;
- 
--		for (bin_attr = grp->bin_attrs; *bin_attr; bin_attr++) {
-+		for (i = 0, bin_attr = grp->bin_attrs; *bin_attr; i++, bin_attr++) {
-+			if (grp->is_bin_visible) {
-+				mode = grp->is_bin_visible(kobj, *bin_attr, i);
-+				if (mode & SYSFS_GROUP_INVISIBLE)
-+					break;
-+				if (!mode)
-+					continue;
-+			}
- 			kn = kernfs_find_and_get(grp_kn, (*bin_attr)->attr.name);
- 			if (!kn)
- 				return -ENOENT;
-@@ -573,7 +589,7 @@ int sysfs_group_change_owner(struct kobject *kobj,
- 
- 	error = kernfs_setattr(grp_kn, &newattrs);
- 	if (!error)
--		error = sysfs_group_attrs_change_owner(grp_kn, grp, &newattrs);
-+		error = sysfs_group_attrs_change_owner(kobj, grp_kn, grp, &newattrs);
- 
- 	kernfs_put(grp_kn);
- 
--- 
-2.51.0
+I fixed it up manually. Please be more careful next time.
 
 
