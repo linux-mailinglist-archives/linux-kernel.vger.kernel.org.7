@@ -1,241 +1,138 @@
-Return-Path: <linux-kernel+bounces-856050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08839BE2EC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:50:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA0EBE2F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539EC189F643
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:50:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC689507220
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBE733A00A;
-	Thu, 16 Oct 2025 10:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9sHMEkt"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E433EB1D;
+	Thu, 16 Oct 2025 10:45:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049BD339B5E
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104DE33EB03
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760611490; cv=none; b=pMPdzXAYj70Z9K4LgyTegiHHBguPkUbgVSUx9/shAWazVzZ+o8Id9ykaW/gXR2Gx5nmPqIx9y/ZirVB2aGfb8v0xWG+5JtzrDVgM1EWUiZ7feE6fTclMnW0/WHnRLHGLi3BLIa3YAg9DWMi67g5dsZd3tlqybSWvDa4aq2vMBBs=
+	t=1760611525; cv=none; b=SV4mKc2x6L6vfFMJIH9WeR/336oryH+EYSO5BBjk3TXh1yIBTWKXLh88CSne3bR2FXZQHqZJ4JRQ0SezQ39Pbs/n7i6b2eTUhXmtTD1wSJH+nO5XgY/IamUPurqfeSvi2xZCVlsoSIJvQFaBmRfyJ70aNzBXLybKZAUWTlAaBUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760611490; c=relaxed/simple;
-	bh=Stuf5zf331tRxF2DePg1IzXwQbv5RQFJNJDnJFIpp0Y=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZH5ZxVV61h/Ukyp74+7T3WmFNT7arY0f5KSstLIa6ZCO+n5mYLwZxLPVA0wGWbLPzxElKGjTHd4L9mPcGy6kXyOay8vI2ZdGv10AcvKMsVmy2CdHeqlaoLZRC5rUxCBSmx5N52XN0vKnTqCMDKYoOhVn0m3BpuX+qiZPqEJ22ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9sHMEkt; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290b48e09a7so4128465ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 03:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760611487; x=1761216287; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=idI0QB240u0sJsMGBvFXgYaH1URVwhRv/+IzbU7+Rbw=;
-        b=O9sHMEktYPG0ruqtUpQibeEtQY9eHacm4iYb10YHhhFZuwnZLE1LZOEOFTmMYiAR28
-         pD2A78GJ8iilI3/T6Tmvf6bTz4yjUP32d9L0cooPqeaBAmGVl9RZ9qAe2twOS0KwSmQw
-         /uf3r8gV65hEbI7RHOcnmQPht6C9FWy/LuFsBvKf9M5pLU7sRx4UAJxg6lOtgqt0bOts
-         JtFwW7uMBpA5E8KPCIxp2kKTM/S6SfuETMU02UcyA13XzfD5KYPPigUelkdNED/01vQo
-         EUVY1w4zW5i6tIOHsF1dtmIZo/tgprdg4Yg6HoRWi+ZLP4/lOhxwXMFkBnrDPwhcL/5a
-         UhTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760611487; x=1761216287;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=idI0QB240u0sJsMGBvFXgYaH1URVwhRv/+IzbU7+Rbw=;
-        b=rYllBTqdJdT0ZpW8phdqC0LiRuYCGcMdmIZR2xMJBfdXyGVMnMrGHTr4Lo+NWdGO4x
-         LnlKeKM77xLzA8dIBIOUsQMQ2Lfn27WQIowFigSmpxFiPwy2SE7Xnd0bRU2FV+jH+7/P
-         Zw1j06Goh6OmvFLmCErZ30Z5TGBCSGndSjlr3cGJL8Ejtl0wPiwZyuWWNIYO/GP07mN2
-         6S7zG0vOYiH2XJuRFt20op0P5KbBdz3rBQPrG1G1PyJ3aCBP0LkQ6ZavVDWrxSvoBX8F
-         GF0pVI2bqEgl4TtZctRZXeWHEyri6YWgEJoAcVlK6o8mSqZFwy+wZhgjo8iur0zSAJPr
-         pdyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFB2raMzwjj/gtNFCBWvMENdprwkO1Sv3pEm2aj6qoxlnP44A+qgtQyJsjiZup4oVeSXVUW4u/aCsocg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz03osgI52eVKB8VpqY5ZA5qtx1wuyz0auGJ6bqBVjFdSRti9J4
-	BsRf9GGB5U8TVl+xQ2eXJcTs29OI9uBgj2E5s0DdTllDBRB8dJycvMZjpQmAYE3/mdWW8qNM8C2
-	kj91A8WlaHSDL7HUDkQsiiqcLiZLqAVl/RQO+ApUWQg==
-X-Gm-Gg: ASbGncupg836QjJga9YmyWJs0wq9pG881fnLICJ2ZamH7YnqITE3tlsQJq6Aj61Giyk
-	4mQLl6wUBettDgCPdNw9OcPfv1nVPmwAocNRbchCcVV+W8b77rj0PjvVwWEgu1FcXCZu6Lr0JZZ
-	CGclT2rDhLKh/Fi3bXveV6jK1FB17IBBUkcf10WtJOn7T02v4MoXtwj2HnY/4YPmLR4J/FdBDkk
-	B5HWicY/wWKJ9s5RHR5y+j44wKMJI1y5H+aM9oXowNb09ikHC6smse6CfbqV8hUv/wU2Ttq490V
-	2i+jnuEdIgWHMR1REVeuWJpisqvRUS436bvUiC4cTW2SksjdgYR2WoQ4XTXRUbqL
-X-Google-Smtp-Source: AGHT+IEPY/5S2tkggfuLp3oD5F9OLEskbq6IsVnBNsvCjw8LxAoTpzJ6R5WvQHLqebqcj6ozMCADrO0NyMZ2ygz54Us=
-X-Received: by 2002:a17:902:ec83:b0:267:d2f9:2327 with SMTP id
- d9443c01a7336-2902739b36dmr460860835ad.27.1760611487240; Thu, 16 Oct 2025
- 03:44:47 -0700 (PDT)
+	s=arc-20240116; t=1760611525; c=relaxed/simple;
+	bh=hrYJDosjd+/ob7cWB21JMK3xipvvovksinPUtE1sN0w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IyP0OoFTh/18Z98iyphXuuexn5v1GSPYsOGONz24gekihoTH7TLjZ73ysMyFmVp1bQtujVoqyhPeAXEbgk3DEb/c9hqPcrvLRxw4nFQZY2Nq6vqpC9P4o8FjOixF9lriBrJz8CkobVP8GVOM3aXkb1HTslBB9P5EJ5+FU2LwdjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9LTW-0003LT-FW; Thu, 16 Oct 2025 12:44:50 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9LTV-003sP0-11;
+	Thu, 16 Oct 2025 12:44:49 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9LTV-000000006MN-0w7x;
+	Thu, 16 Oct 2025 12:44:49 +0200
+Message-ID: <47112ace39ea096242e68659d67a401e931abf3a.camel@pengutronix.de>
+Subject: Re: [PATCH usb-next v2 5/5] usb: dwc3: Add Apple Silicon DWC3 glue
+ layer driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa	
+ <neal@gompa.dev>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 16 Oct 2025 12:44:49 +0200
+In-Reply-To: <20251015-b4-aplpe-dwc3-v2-5-cbd65a2d511a@kernel.org>
+References: <20251015-b4-aplpe-dwc3-v2-0-cbd65a2d511a@kernel.org>
+	 <20251015-b4-aplpe-dwc3-v2-5-cbd65a2d511a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 16 Oct 2025 16:14:36 +0530
-X-Gm-Features: AS18NWCOCPygc6MstdsohR6QGJ32VyACC4u8LK8GX7Ej2KusoZDYlUabwuiSksU
-Message-ID: <CA+G9fYuKHp3QgPKjgFY3TfkDdh5Vf=Ae5pCW+eU41Bu=D7th2g@mail.gmail.com>
-Subject: next-20251014: Internal error: Oops: drm_bridge_connector_hdmi_cec_init
- drmm_connector_hdmi_cec_register
-To: dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Simona Vetter <simona@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Maxime Ripard <mripard@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-While booting and loading kernel modules on dragonboard 410c board
-with Linux next
-kernel next-20251014 and next-20251015 the following crash noticed,
+On Mi, 2025-10-15 at 15:40 +0000, Sven Peter wrote:
+> The dwc3 controller present on Apple Silicon SoCs like the M1 requires
+> a specific order of operations synchronized between its PHY and its
+> Type-C controller. Specifically, the PHY first has to go through initial
+> bringup (which requires knowledge of the lane mode and orientation)
+> before dwc3 itself can be brought up and can then finalize the PHY
+> configuration.
+> Additionally, dwc3 has to be teared down and re-initialized whenever
+> the cable is changed due to hardware quirks that prevent a new device
+> from being recognized and due to the PHY being unable to switch lane
+> mode or orientation while dwc3 is up and running.
+>=20
+> These controllers also have a Apple-specific MMIO region after the
+> common dwc3 region where some controls have to be updated. PHY bringup
+> and shutdown also requires SUSPHY to be enabled for the ports to work
+> correctly.
+>=20
+> In the future, this driver will also gain support for USB3-via-USB4
+> tunneling which will require additional tweaks.
+>=20
+> Add a glue driver that takes of all of these constraints.
+>=20
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> ---
+>  MAINTAINERS                   |   1 +
+>  drivers/usb/dwc3/Kconfig      |  11 +
+>  drivers/usb/dwc3/Makefile     |   1 +
+>  drivers/usb/dwc3/dwc3-apple.c | 489 ++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 502 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/usb/dwc3/dwc3-apple.c b/drivers/usb/dwc3/dwc3-apple.=
+c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..6e41bd0e34f461b0c3db9b8a6=
+46116458ff816b6
+> --- /dev/null
+> +++ b/drivers/usb/dwc3/dwc3-apple.c
+> @@ -0,0 +1,489 @@
+[...]
+> +static int dwc3_apple_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct dwc3_apple *appledwc;
+> +	int ret;
+> +
+> +	appledwc =3D devm_kzalloc(&pdev->dev, sizeof(*appledwc), GFP_KERNEL);
+> +	if (!appledwc)
+> +		return -ENOMEM;
+> +
+> +	appledwc->dev =3D &pdev->dev;
+> +	mutex_init(&appledwc->lock);
+> +
+> +	appledwc->resets =3D devm_reset_control_array_get_exclusive(dev);
 
-First seen on next-20251014
-Good: next-20251013
-Bad:  next-20251014
+Why is this using an array? The bindings say there is only a single
+reset.
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
-
-Boot regressions: next-20251014: Internal error: Oops:
-drm_bridge_connector_hdmi_cec_init drmm_connector_hdmi_cec_register
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-The kernel modules are not built with debug_info and could not find
-the line number.
-### Boot
-[    9.830602] Unable to handle kernel NULL pointer dereference at
-virtual address 0000000000000098
-[    9.841379] coresight-cpu-debug 856000.debug: Coresight debug-CPU3
-initialized
-[    9.843514] Mem abort info:
-[    9.843523]   ESR = 0x0000000096000004
-[    9.843528]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    9.843535]   SET = 0, FnV = 0
-[    9.843539]   EA = 0, S1PTW = 0
-[    9.843543]   FSC = 0x04: level 0 translation fault
-[    9.843547] Data abort info:
-[    9.843550]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[    9.843554]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[    9.903238] usb 1-1.2: new high-speed USB device number 3 using ci_hdrc
-[    9.908692]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[    9.908700] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000834a2000
-[    9.908708] [0000000000000098] pgd=0000000000000000, p4d=0000000000000000
-[    9.951360] Internal error: Oops: 0000000096000004 [#1]  SMP
-[    9.958091] Modules linked in: coresight_cpu_debug qcom_wcnss_pil
-coresight_stm coresight_tmc stm_core coresight_tpiu coresight_cti
-coresight_replicator coresight_funnel snd_soc_lpass_apq8016 coresight
-snd_soc_lpass_cpu msm adv7511 snd_soc_lpass_platform
-snd_soc_msm8916_digital snd_soc_msm8916_analog snd_soc_apq8016_sbc
-snd_soc_qcom_common qcom_camss snd_soc_core snd_pcm_dmaengine
-llcc_qcom snd_compress venus_core qrtr snd_pcm videobuf2_dma_sg
-ubwc_config qcom_spmi_temp_alarm qcom_pon v4l2_fwnode rtc_pm8xxx
-qcom_q6v5_mss ocmem snd_timer qcom_spmi_vadc drm_gpuvm v4l2_mem2mem
-v4l2_async qcom_pil_info snd qcom_vadc_common drm_exec qcom_q6v5
-videobuf2_v4l2 gpu_sched qcom_sysmon soundcore drm_dp_aux_bus
-qcom_common videodev qcom_glink_smem drm_display_helper mdt_loader
-videobuf2_memops qmi_helpers qnoc_msm8916 qcom_stats qcom_rng cec
-videobuf2_common mc drm_client_lib socinfo phy_qcom_usb_hs rpmsg_ctrl
-rpmsg_char display_connector ramoops rmtfs_mem drm_kms_helper
-reed_solomon fuse drm backlight ipv6
-[   10.029607] CPU: 1 UID: 0 PID: 87 Comm: kworker/u16:3 Not tainted
-6.18.0-rc1-next-20251015 #1 PREEMPT
-[   10.051760] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-[   10.060957] Workqueue: events_unbound deferred_probe_work_func
-[   10.067812] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   10.073455] pc : drm_bridge_connector_hdmi_cec_init+0xc/0x3c
-drm_display_helper
-[   10.080320] lr : drmm_connector_hdmi_cec_register+0x104/0x1b0
-drm_display_helper
-[   10.087958] sp : ffff800082fe3640
-[   10.091389] ci_hdrc ci_hdrc.0: remove, state 1
-[   10.095399] x29: ffff800082fe3690 x28: 0000000000000001 x27: ffff00000aa97610
-[   10.095414] x26: ffff00000aa97610 x25: 0000000000000008 x24: ffff80007ab7a0a8
-[   10.095427] x23: 0000000000000003 x22: ffff0000049dd420
-[   10.098816] usb usb1: USB disconnect, device number 1
-[   10.103130]  x21: ffff000004245e10
-[   10.103138] x20: ffff00000aa59000 x19: ffff00000aa4c080 x18: 00000002425c8888
-[   10.103150] x17: 0000000000000400 x16: 00000002425c8888 x15: 0000000000000553
-[   10.110393] usb 1-1: USB disconnect, device number 2
-[   10.117450]
-[   10.117454] x14: 00000000023660af x13: 0000000000000000 x12: 0000000000000000
-[   10.117466] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-[   10.117478] x8 : ffff80007ab4f3a0 x7 : 000000001e237337
-[   10.126995] usb 1-1.2: USB disconnect, device number 3
-[   10.127691]  x6 : 000000001e237337
-[   10.176293] x5 : ffff8000826c5974 x4 : ffff00003fc734f0 x3 : 0000000000154401
-[   10.179619] x2 : 0000000000000003 x1 : ffff00000aa4c080 x0 : 0000000000000000
-[   10.186823] Call trace:
-[   10.193932] drm_bridge_connector_hdmi_cec_init+0xc/0x3c
-drm_display_helper (P)
-[   10.196204] drm_bridge_connector_init+0x580/0x64c drm_display_helper
-[   10.203839] msm_dsi_manager_connector_init+0xa0/0xd0 msm
-[   10.210260] msm_dsi_modeset_init+0x70/0xb4 msm
-[   10.215814] mdp5_kms_init+0xbec/0xe24 msm
-[   10.220674] msm_drm_kms_init+0x80/0x220 msm
-[   10.225018] msm_drm_init+0x1a8/0x1e0 msm
-[   10.229268] msm_drm_bind+0x34/0x40 msm
-[   10.233348]  try_to_bring_up_aggregate_device
-(/builds/linux/drivers/base/component.c:249)
-[   10.237516]  __component_add (/builds/linux/drivers/base/component.c:270)
-[   10.242894]  component_add (/builds/linux/drivers/base/component.c:807)
-[   10.246538] dsi_dev_attach+0x1c/0x28 msm
-[   10.250363] dsi_host_attach+0x64/0x98 msm
-[   10.254270]  devm_mipi_dsi_attach
-(/builds/linux/drivers/gpu/drm/drm_mipi_dsi.c:384)
-[   10.258779] adv7533_attach_dsi+0xac/0xf4 adv7511
-[   10.262708] adv7511_probe+0x700/0x75c adv7511
-[   10.262733]  i2c_device_probe (/builds/linux/drivers/i2c/i2c-core-base.c:604)
-[   10.262749]  really_probe (/builds/linux/drivers/base/dd.c:583)
-[   10.276313]  __driver_probe_device (/builds/linux/drivers/base/dd.c:?)
-[   10.279962]  driver_probe_device (/builds/linux/drivers/base/dd.c:831)
-[   10.284300]  __device_attach_driver (/builds/linux/drivers/base/dd.c:960)
-[   10.288207]  bus_for_each_drv (/builds/linux/drivers/base/bus.c:462)
-[   10.292719]  __device_attach (/builds/linux/drivers/base/dd.c:?)
-[   10.296887]  device_initial_probe (/builds/linux/drivers/base/dd.c:1081)
-[   10.300445]  bus_probe_device (/builds/linux/drivers/base/bus.c:539)
-[   10.304613]  deferred_probe_work_func (/builds/linux/drivers/base/dd.c:125)
-[   10.308780]  process_scheduled_works (/builds/linux/kernel/workqueue.c:3274)
-[   10.313035]  worker_thread (/builds/linux/include/linux/list.h:381
-/builds/linux/kernel/workqueue.c:952
-/builds/linux/kernel/workqueue.c:3428)
-[   10.317893]  kthread (/builds/linux/kernel/kthread.c:465)
-[   10.321451]  ret_from_fork (/builds/linux/arch/arm64/kernel/entry.S:861)
-[   10.324845] Code: d65f03c0 d503245f aa0003e1 f9449400 (f9404c08)
-All code
-========
-   0: d65f03c0 ret
-   4: d503245f bti c
-   8: aa0003e1 mov x1, x0
-   c: f9449400 ldr x0, [x0, #2344]
-  10:* f9404c08 ldr x8, [x0, #152] <-- trapping instruction
-
-Code starting with the faulting instruction
-===========================================
-   0: f9404c08 ldr x8, [x0, #152]
-[   10.328407] ---[ end trace 0000000000000000 ]---
-
-
-## Source
-* Kernel version: 6.18.0-rc1-next-20251015
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git commit: 1fdbb3ff1233e204e26f9f6821ae9c125a055229
-* Architectures: arm64 db410c
-* Toolchains: gcc-13 and clang-21
-* Kconfigs: defconfig+lkftconfig
-
-## Build
-* Test log: https://lkft.validation.linaro.org/scheduler/job/8493594#L2966
-* Test details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20251015/log-parser-test/oops-Oops_SMP-ad06dc06/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/346UvyvsORKa7GkJXNgOdZm4Jc9
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/346UvE5jXrKAGFTkdkd35Z9HsUM/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/346UvE5jXrKAGFTkdkd35Z9HsUM/config
-
---
-Linaro LKFT
+regards
+Philipp
 
