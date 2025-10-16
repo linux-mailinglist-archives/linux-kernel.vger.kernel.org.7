@@ -1,187 +1,186 @@
-Return-Path: <linux-kernel+bounces-855704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE13BE20AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:55:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D0BBE2063
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49C7250405A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:51:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B65233529C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4DE2FE580;
-	Thu, 16 Oct 2025 07:49:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA0D2475CB;
+	Thu, 16 Oct 2025 07:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YH/uWHr2"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80744214812;
-	Thu, 16 Oct 2025 07:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA7C1C28E
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760600953; cv=none; b=suTvXe/kb+5R6rTDo+HKbRhv2KTPmm/KupLcbglP537aIe3zMd4wrfSK4DTLENYsj+/uNxDat45SJpYvIe678touxIkLG2s06CA6AjP9kwnonAbxUFO4eEIz2gLFL9OOBqJyd4B5QeRP3JCYwi10amWYcDlTVV+cH5kWHJGWUW4=
+	t=1760600974; cv=none; b=ZNFQqY0VKb8uRu1U37kD7sdrKuicvV8DDKvnMvjtrbDtftrAlh6IHiT3NVE6OofxVSSoWq1npnELOHBq/WfG72Xb1+1Wb06KUVcirJkteO1oNiEN8Bdn5ZUWNQeF3zNLOjl3hLZKy+L865Xym38rNBV2bP8N9XRlUAkGTNgx+cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760600953; c=relaxed/simple;
-	bh=RjbmRx8/GdkOWRF92JnypmFwTgH5nqsGBf6mqWStoeU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pVTLMueIb6VAjNyF2IaHMB/xO61SXQyumoTVfInmfjX3y1m4Otr6GgBUabLfIkC9esDyqN8kHLo0lv5FTtMnQQsnVUl6CmdeILlqmZaOymMXStHvbGeyWNYVHoWPkmmfKV78Cnj5txMlXMNy4KEZT1FbIGGmtguTDRW4jXMo+ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 9296f1b6aa6411f0a38c85956e01ac42-20251016
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
-	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD_SPF, CIE_UNKNOWN
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:78c828b6-5295-4228-9af5-4c6bdbb63c9a,IP:10,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:5
-X-CID-INFO: VERSION:1.3.6,REQID:78c828b6-5295-4228-9af5-4c6bdbb63c9a,IP:10,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:5
-X-CID-META: VersionHash:a9d874c,CLOUDID:14317c042bd57d89bbe3ebd40eb2eb47,BulkI
-	D:251015231359I6R5N7TL,BulkQuantity:2,Recheck:0,SF:17|19|23|43|64|66|74|78
-	|80|81|82|83|102|841|850,TC:nil,Content:0|52,EDM:-3,IP:-2,URL:0,File:nil,R
-	T:nil,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP
-	:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 9296f1b6aa6411f0a38c85956e01ac42-20251016
-X-User: tianyaxiong@kylinos.cn
-Received: from localhost.localdomain [(223.153.233.62)] by mailgw.kylinos.cn
-	(envelope-from <tianyaxiong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1688555980; Thu, 16 Oct 2025 15:48:58 +0800
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
-To: rafael@kernel.org
-Cc: christian.loehle@arm.com,
-	dietmar.eggemann@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	srinivas.pandruvada@linux.intel.com,
-	tianyaxiong@kylinos.cn
-Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: hybrid: Adjust energy model rules
-Date: Thu, 16 Oct 2025 15:48:49 +0800
-Message-Id: <20251016074849.1046580-1-tianyaxiong@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <3394529.aeNJFYEL58@rafael.j.wysocki>
-References: <3394529.aeNJFYEL58@rafael.j.wysocki>
+	s=arc-20240116; t=1760600974; c=relaxed/simple;
+	bh=wEPKnK+M4gvm8Iy3++P3j7bSaSdp1iheMKWVcHm7Ct4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HN7nMjkISlPrY3+OMMxp8/1FU74/2uTuJA6EIaOCtblJ2+RYtmfCUZl1TnuoN5fdR48HJHCPWdYFJ+A0JjqlF6Sj3O+VjMadgGVLq82S1bw1hMbya+DryDTzDAbent2PnFTq3MENbiwBk76ubk2cHjd7GBXc2Xao+LshQaw8vlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YH/uWHr2; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77f5d497692so630496b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:49:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760600972; x=1761205772; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GuI5K+CQH1/adG9F7GlO3QvQTMmwQ/cJbkEQVyqXOZU=;
+        b=YH/uWHr2fcgPruE/trVMgcQhlkLOFKTTIe3nOSBzCV6umHxFFyTdSo1L9gv+Kbi7Kr
+         R76cdBufMUgjrKEQaKtnm7zaGbkhPsP+B/UyCKcP+rGOPn6tJRiySeb2A+JvceSbTtVW
+         qrPi/jRVek3rkE3zU8iYTRnmK50got56EdxyiJd4UiEMhiNHtf+aD2Hzd3PTfRl4leF0
+         n/KjmOAHdFOoVNMd5mnCvN3qC8IU5wqh06u4AhmLiNPdVroaXu1/OF5I+KZ/Bb+p08hK
+         Q19LeO2jbhr4l28A2m7v5DKHZeQ5CMLg8NGGA9Zr6Xo8M3D3bBBEmBTC8V8TUiIngXtp
+         KBAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760600972; x=1761205772;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GuI5K+CQH1/adG9F7GlO3QvQTMmwQ/cJbkEQVyqXOZU=;
+        b=j0LJ6eO5sZ67/k1zMXtpUUX6guJrSFmSZVtvsESLJnTvRRXqVgetbw0SGe3kwdbH4b
+         AqODvhIPHrUgtkLeqMAebWnrEjhzS15MHVN9NnnKwcvGGY3N1YZpkBlTO464riGOXiJe
+         QZNKu3yC36KdlwG7d1Cz3wQgJ1jbbS0um7XaLEL0EkOd6a8jEpN/YDa1flhvyWDeY2XQ
+         33QjEFVgwqEri5PFM4/9orI2fPcZucfxynyVgWOII1OFGgoY/ma9yTO/mii35V6Qeo9i
+         D1cmyHwKekOshUOpJ76PMe60s+Lm/nyWIYGBOEMWI8MnAKv3M8nXKFhjNzWMmEvFR/lq
+         s0bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsE5VTtEiZbpl1RvHIxLOkidyxVcJWDKO0B1tHLU8nYQfczeAmBgYBvO4r0+hnUXRqVm3tvYD5FolcMKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl11XZimPN4bL/tHrR5JoTbNnEOPqeJd6+Kp1TS+wP1yTwod6L
+	B657zLLkZjBxZAieK5nRIrCTDZ3myGViBvUlvqqLL+r/fehE+chUyAJt
+X-Gm-Gg: ASbGncuq/IoVEUqDWLECAZ6IdTdDq9c6hKrVMSHIJsBU3yal+fRb02n6xIgQJHmfrXY
+	YKfiXORTSZizY7abjxnndUB8UVhKiyLU7gsICDmD7KxNG42+5Q997udWW6B2Zq0IleCfqkuomkE
+	8+V3dB95VBDSp+wIMf7oAsi6FUaAbQ5e3dYLPDy5XKxJZTDXHiyGwqipt6eEV52uv7s7TSw1jGn
+	aIdtz3D7c6mnTq16LiCWqfPk389yRgFvArc3drimFw9+xlaWQ7LFYrCR1O/OzKeNy5ednBuRPbV
+	QwK95yhveyfiwpDP3H9xUJVrdCPq5h6j/SxuALqzUEj1nSjiWfKLIliKHXyrV6Q1GldLIzaPkoC
+	/M8jgIuABRMoqV8m9szMQYB3HwCzI6I9vrSMtCI90bvgVZPZY+54qQy+URkmfDRnEpyAAnjsNFH
+	/+i+ufB+9FshM8tYMAlpXi7VDBObLuj+Q=
+X-Google-Smtp-Source: AGHT+IFkzRwqICq1ZD2+J8bdCnwoumuBn8mVsuVfa5hMnyW8bmfMJyjMgpljSLlxdoJI9iHPLnKGMQ==
+X-Received: by 2002:a05:6a00:1385:b0:781:9f2:efb1 with SMTP id d2e1a72fcca58-79387146b38mr42428618b3a.15.1760600972298;
+        Thu, 16 Oct 2025 00:49:32 -0700 (PDT)
+Received: from [10.125.192.72] ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e134fsm21199656b3a.58.2025.10.16.00.49.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 00:49:31 -0700 (PDT)
+Message-ID: <ff16098b-00ff-80ee-5130-f1327b0af17d@gmail.com>
+Date: Thu, 16 Oct 2025 15:49:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
+ zero runtime_remaining
+To: Aaron Lu <ziqianlu@bytedance.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall
+ <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Xi Wang <xii@google.com>,
+ linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+ Chuyi Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
+ Florian Bezdeka <florian.bezdeka@siemens.com>,
+ Songtang Liu <liusongtang@bytedance.com>, Chen Yu <yu.c.chen@intel.com>,
+ Matteo Martelli <matteo.martelli@codethink.co.uk>,
+ =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20250929074645.416-1-ziqianlu@bytedance.com>
+ <c4a1bcea-fb00-6f3f-6bf6-d876393190e4@gmail.com>
+ <20251014090728.GA41@bytedance>
+ <84382429-02c1-12d5-bdf4-23e880246cf3@gmail.com>
+ <20251014115018.GC41@bytedance>
+ <ded8b9bf-c9bb-8a41-541d-1bef354e4296@gmail.com>
+ <20251015025154.GA35@bytedance>
+ <4902f7d4-c6ee-bc29-dd7f-282d19d0b3b2@gmail.com>
+ <20251015084045.GB35@bytedance>
+ <6bcc899c-a2a5-7b77-dcff-436d2a7cc688@gmail.com>
+ <20251016065438.GA32@bytedance>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <20251016065438.GA32@bytedance>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-在 2025/10/15 21:48, Rafael J. Wysocki 写道:> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Hi Aaron,
+
+On 2025/10/16 14:54, Aaron Lu wrote:
+> On Wed, Oct 15, 2025 at 06:21:01PM +0800, Hao Jia wrote:
+>> On 2025/10/15 16:40, Aaron Lu wrote:
+> ... ...
+>>> Hao Jia,
+>>>
+>>> Do I understand you correctly that you can only hit the newly added
+>>> debug warn in tg_unthrottle_up():
+>>> WARN_ON_ONCE(cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0);
+>>> but not throttle triggered on unthrottle path?
+>>>
+>>
+>> yes. but I'm not sure if there are other corner cases where
+>> cfs_rq->runtime_remaining <= 0 and cfs_rq->curr is NULL.
+>>
 > 
-> Instead of using HWP-to-frequency scaling factors for computing cost
-> coefficients in the energy model used on hybrid systems, which is
-> fragile, rely on CPU type information that is easily accessible now and
-> the information on whether or not L3 cache is present for this purpose.
+> Right, I'm not aware of any but might be possible.
 > 
-> This also allows the cost coefficients for P-cores to be adjusted so
-> that they start to be populated somewhat earlier (that is, before
-> E-cores are loaded up to their full capacity).
+>>> BTW, I think your change has the advantage of being straightforward and
+>>> easy to reason about. My concern is, it's not efficient to enqueue tasks
+>>> to a cfs_rq that has no runtime left, not sure how big a deal that is
+>>> though.
+>>
+>> Yes, but that's what we're doing now. The case described above involves
+>> enqueue a task where cfs_rq->runtime_remaining <= 0.
+>>
+>> I previously tried adding a runtime_remaining check for each level of task
+>> p's cfs_rq in unthrottle_cfs_rq()/tg_unthrottle_up(), but this made the code
+>> strange and complicated.
 > 
-> In addition to the above, replace an inaccurate comment regarding the
-> reason why the freq value is added to the cost in hybrid_get_cost().
+> Agree that adding a runtime_remaining check for each level in
+> unthrottle_cfs_rq() looks too complex.
 > 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->   drivers/cpufreq/intel_pstate.c |   37 +++++++++++++++----------------------
->   1 file changed, 15 insertions(+), 22 deletions(-)
+> So I think you approach is fine, feel free to submit a formal patch.
+> With your change, theoretically we do not need to do those
+> runtime_remaining check in unthrottle_cfs_rq() but keeping that check
+> could save us some unnecessary enqueues, so I'll leave it to you to
+> decide if you want to keep it or not. If you want to keep it, please
+> also change its comments because the current comments will be stale
+> then.
 > 
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -933,11 +933,8 @@ static int hybrid_active_power(struct de
->   			       unsigned long *freq)
->   {
->   	/*
-> -	 * Create "utilization bins" of 0-40%, 40%-60%, 60%-80%, and 80%-100%
-> -	 * of the maximum capacity such that two CPUs of the same type will be
-> -	 * regarded as equally attractive if the utilization of each of them
-> -	 * falls into the same bin, which should prevent tasks from being
-> -	 * migrated between them too often.
-> +	 * Create four "states" corresponding to 40%, 60%, 80%, and 100% of the
-> +	 * full capacity.
->   	 *
->   	 * For this purpose, return the "frequency" of 2 for the first
->   	 * performance level and otherwise leave the value set by the caller.
-> @@ -970,26 +967,22 @@ static bool hybrid_has_l3(unsigned int c
->   static int hybrid_get_cost(struct device *dev, unsigned long freq,
->   			   unsigned long *cost)
->   {
-> -	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
-> -
-> +	/* Facilitate load balancing between CPUs of the same type. */
-> +	*cost = freq;
->   	/*
-> -	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
-> -	 * ratio between the given CPU and the least capable CPU in the system.
-> -	 * Regard that IPC ratio as the primary cost component and assume that
-> -	 * the scaling factors for different CPU types will differ by at least
-> -	 * 5% and they will not be above INTEL_PSTATE_CORE_SCALING.
-> +	 * Adjust the cost depending on CPU type.
->   	 *
-> -	 * Add the freq value to the cost, so that the cost of running on CPUs
-> -	 * of the same type in different "utilization bins" is different.
-> -	 */
-> -	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
-> -	/*
-> -	 * Increase the cost slightly for CPUs able to access L3 to avoid
-> -	 * touching it in case some other CPUs of the same type can do the work
-> -	 * without it.
-> +	 * The idea is to start loading up LPE-cores before E-cores and start
-> +	 * to populate E-cores when LPE-cores are utilized above 60% of the
-> +	 * capacity.  Similarly, P-cores start to be populated when E-cores are
-> +	 * utilized above 60% of the capacity.
->   	 */
-> -	if (hybrid_has_l3(dev->id))
-> -		*cost += 2;
-> +	if (hybrid_get_cpu_type(dev->id) == INTEL_CPU_TYPE_ATOM) {
-> +		if (hybrid_has_l3(dev->id)) /* E-core */
-> +			*cost += 2;
-> +	} else { /* P-core */
-> +		*cost += 4;
-> +	}
->   
->   	return 0;
->   }
 
-Hi Rafael J. Wysocki:
+Thank you for your suggestion. I'll send a formal patch later.
 
-Is the increment of this cost for different types of CPUs by one instead 
-of two?
+I'm also happy for you to submit a patch for the next version. This 
+warning needs to be fixed, regardless of the method.
 
-cost by increment of 2:
-          0~40%  40%~60%  60%~80% 80%~100
-LPE-core    2       3        4      5
-E-core      4       5        6      7
-P-core      6       7        8      9
+However, I've discovered a minor bug in your current patch.
 
-So, tasks only start being allocated to more powerful CPUs when 
-utilization exceeds 80%, but by that point the system is already in an
- overloaded state.
+In kernel/sched/core.c tg_set_cfs_bandwidth()
 
-cost by increment of 1:
-          0~40%  40%~60%  60%~80% 80%~100
-LPE-core    2       3        4      5
-E-core      3       4        5      6
-P-core      4       5        6      7
+...
+if (cfs_rq->runtime_enabled && !cfs_rq->throttled) {
+     update_rq_clock(rq);   <----
+     throttle_cfs_rq(cfs_rq);
+}
+...
 
-This situation aligns with the description in your patch.
+Call update_rq_clock() to avoid the warning about using an outdated 
+rq_clock in tg_throttle_down()->rq_clock_pelt().
 
-The idea of this patch looks good to me.
+Thanks,
+Hao
 
