@@ -1,124 +1,81 @@
-Return-Path: <linux-kernel+bounces-856080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F95BE3054
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:12:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E72BE3060
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D181A60939
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:13:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6CE4FC98B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9748B30F53E;
-	Thu, 16 Oct 2025 11:12:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F61830DD23;
-	Thu, 16 Oct 2025 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D1E308F0C;
+	Thu, 16 Oct 2025 11:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUjlV0Ol"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587E33064AF;
+	Thu, 16 Oct 2025 11:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613143; cv=none; b=UiBdfVCRF+RsfbyikO08Pk6S3P+uCJ5t/7yRI4HVnUTGOn+/L352rBVQ+5Ec2j4WHWSvfo2kJXWSJkfYOY9Zwu+GMzXmNCI7F2GZYvpf4GiCR02icY5tAptWcp++tjp8CSvTM1tUcdwl1+lDWmn56OryvlEWAFsUJ/gif1L29Ao=
+	t=1760613151; cv=none; b=mO+TSXAweBRJtU+WmjD76Jt0KeSz084DDR5e4DHckoR6YnE4s7lZURxqDhx1vNr3PJiaynZuiuYUYfuUcKWDRB3Q7T6FuTgJ9jaj6EL8CjS9Q/X395dHUAb43gJaUho+sq30YtNEC+E6OT7ydAO8qOuZ/w0kAUSFqGgXd5RKrfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613143; c=relaxed/simple;
-	bh=MjMFhOg2NxY99XAzsKP3cJh9TYZGAQpjPijW9FlBDEQ=;
+	s=arc-20240116; t=1760613151; c=relaxed/simple;
+	bh=qWN5jRJyu+ZfS0Mz8q6YyNusK6HtE9esHiV2Q5N3IP8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yp+XYStTwRJE28juotbK53PeFGC6lgeRhm6icM87MlIlh1yuad1o47tbPwoEvEe07tkjj4G+ZFZDLyyt9TGwOXmsskt8FEQ1HGUGkb3jSR53zA9yKnoNDc9cEFP1nDputyxAXQzmYYtgu5lzxyu2dgPyGrK4egaaUg/SyuULVbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3FCE263D;
-	Thu, 16 Oct 2025 04:12:12 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82D733F6A8;
-	Thu, 16 Oct 2025 04:12:19 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: stable@vger.kernel.org
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org,
+	 MIME-Version:Content-Type; b=VMaMo6UMbouMZUceK7cCTkfq8BXbMADrftqrLE32TLOupbYgG4P7MlQcZeOaepgWLG1B59HxDVoKFWc/E6fCZzfjjK/g3qKq6ygjd30DbJtdnMfb04rPK5sYSI3yKE98p61HxFwjLthDXz/1W4UEtOMvvWGd/J0NxHDTdqlJYDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUjlV0Ol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1FE7C4CEF9;
+	Thu, 16 Oct 2025 11:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760613150;
+	bh=qWN5jRJyu+ZfS0Mz8q6YyNusK6HtE9esHiV2Q5N3IP8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QUjlV0OlifcMFLBZMW1oR2N63lZhedrxldkjDhwxZ4zRPkVgLLR8tx+no/WpXJrFy
+	 NetRxqKtgSplF5tAbjn+PiAQ4mNefzam7iHz6lGy9D3bXh+afCYs5mObf3Q7aphVSx
+	 FSkM6Dr9dF0j9cfWO/tQorUxgxuUGiqS97BLnHf6mTKs0pWcKXpi5Y3XzdzBng2Zno
+	 m41+gk6UMNdyiuNJrmFTfy9jx/Spuz7PRXXsu+nugGvHoAPynHAuT31K+XwAUJ7PWA
+	 TVpAaDcQ5G5/RRECXWyr487iLgB3bPf7T3Vkm56WYNGNrnrgz3wwqDi5HCBBCzDhlb
+	 y/zaFZPmFyQZw==
+From: William Breathitt Gray <wbg@kernel.org>
+To: linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>
-Subject: [PATCH 5.4-6.17 2/2] arm64: errata: Apply workarounds for Neoverse-V3AE
-Date: Thu, 16 Oct 2025 12:12:06 +0100
-Message-ID: <20251016111208.3983300-3-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251016111208.3983300-1-ryan.roberts@arm.com>
-References: <20251016111208.3983300-1-ryan.roberts@arm.com>
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
+Date: Thu, 16 Oct 2025 20:12:19 +0900
+Message-ID: <176061309838.174790.14380642459338947302.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251014145905.4862-1-ilpo.jarvinen@linux.intel.com>
+References: <20251014145905.4862-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=368; i=wbg@kernel.org; h=from:subject:message-id; bh=9nxdi0icLV2/6ycaKJr/4F7sVcSCO09YFZnRpoQS+/Q=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBkfLn2a5leQ2nRVP8p3/5WtUiFO6im77loluS/+KrTWc oIuq7VlRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjCRrwcY/oebHbl/yczpmuaB RiOTdYssjwTmrAtg1P0inPrhTop5/lJGhoOKgVoHvrVFXbh979B1xlQJzpux+extxRrX1sx0YWJ LZAYA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
 
-From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 0c33aa1804d101c11ba1992504f17a42233f0e11 ]
+On Tue, 14 Oct 2025 17:59:05 +0300, Ilpo Järvinen wrote:
+> Jarkko's address is going to bounce soon and I agreed to be the new
+> maintainer.
+> 
+> 
 
-Neoverse-V3AE is also affected by erratum #3312417, as described in its
-Software Developer Errata Notice (SDEN) document:
+Applied, thanks!
 
-  Neoverse V3AE (MP172) SDEN v9.0, erratum 3312417
-  https://developer.arm.com/documentation/SDEN-2615521/9-0/
+[1/1] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
+      commit: b462fcd08dd589d9cf9eb7f9d8fc7777b5c5521d
 
-Enable the workaround for Neoverse-V3AE, and document this.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-[ Ryan: Trivial backport ]
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- Documentation/arch/arm64/silicon-errata.rst | 2 ++
- arch/arm64/Kconfig                          | 1 +
- arch/arm64/kernel/cpu_errata.c              | 1 +
- 3 files changed, 4 insertions(+)
-
-diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
-index b42fea07c5ce..b6dacd012539 100644
---- a/Documentation/arch/arm64/silicon-errata.rst
-+++ b/Documentation/arch/arm64/silicon-errata.rst
-@@ -198,6 +198,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Neoverse-V3     | #3312417        | ARM64_ERRATUM_3194386       |
- +----------------+-----------------+-----------------+-----------------------------+
-+| ARM            | Neoverse-V3AE   | #3312417        | ARM64_ERRATUM_3194386       |
-++----------------+-----------------+-----------------+-----------------------------+
- | ARM            | MMU-500         | #841119,826419  | N/A                         |
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | MMU-600         | #1076982,1209401| N/A                         |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7887d18cce3e..40ae4dd961b1 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1111,6 +1111,7 @@ config ARM64_ERRATUM_3194386
- 	  * ARM Neoverse-V1 erratum 3324341
- 	  * ARM Neoverse V2 erratum 3324336
- 	  * ARM Neoverse-V3 erratum 3312417
-+	  * ARM Neoverse-V3AE erratum 3312417
-
- 	  On affected cores "MSR SSBS, #0" instructions may not affect
- 	  subsequent speculative instructions, which may permit unexepected
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index a78f247029ae..3f675ae57d09 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -455,6 +455,7 @@ static const struct midr_range erratum_spec_ssbs_list[] = {
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
- 	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
-+	MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3AE),
- 	{}
- };
- #endif
---
-2.43.0
-
+Best regards,
+-- 
+William Breathitt Gray <wbg@kernel.org>
 
