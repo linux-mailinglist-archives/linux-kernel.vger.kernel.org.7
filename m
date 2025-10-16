@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-856510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEEDBE45A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:51:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183B8BE45BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F618481B19
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:50:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 449AE4F92A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C9434F475;
-	Thu, 16 Oct 2025 15:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7100734F472;
+	Thu, 16 Oct 2025 15:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nfVI2lZE"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QyU80uoG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D06343217
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AE62FBE1A;
+	Thu, 16 Oct 2025 15:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760629810; cv=none; b=RLKS9WA+9vMRJwkLBPz7bad6ZahcRqdYV8xP5clXnmh9TIFHnYIXmq1pgN0xIKWP0asEpIE+jQzBNYWrYr045WRxXY3+7fZj3atuBnUjQL03snyxp3xYEgFocxgyonF5fHrs5FfiFfaniDzJRhPYokqiJkdLiARROdVdsZae0ck=
+	t=1760629898; cv=none; b=OloH1SFzc40NPbHBLDYkvpt9HiGEm4LKjOmYD4d5oc8klY4Q2x1mOkm+qhRpNTKJpWgiqBX4m6bx43nA7oHA6BMMBtXbw70s9qGaCVQ6IoKNYeeEYZq/EC/jnZ9T/Qe3tQ3ndJWlwFOCVg12aYXNsXWNx2MOajzXUVeEXkLPKtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760629810; c=relaxed/simple;
-	bh=ExmP7JW6L2M8fe/dlRfNdqFZ5JWDvA824rXlJ3x2Z/M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XfcVYnw+3dudUuAfhE1CsaR/73kOJsJKvPsL8wb1DfyQlTnfPzHWdJiY047y4NuetIQU+NNg7oBH5umeTHLx54xq8jP0CWGMj4bGjqNrR9JY8VYl13x4MQQyMA2whbnRAL4viki/FOA2DphhwotW8SCCp3bfGWB4gacM8c8b5rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nfVI2lZE; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-780f82484faso745943b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760629808; x=1761234608; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2KnvP2YaZFVVi1EKHrbJGZVnySCwYiJLXRUCGwZnk4=;
-        b=nfVI2lZEphSBecb9K6bJaScsFj4tpRBiimdwr33NU5qnVYCXm4feB8eor5wEFk502a
-         5WH7cMoe2VP+WMbiJUyukAS7Rtxib4BHva3G9Ux5by9Bgvops8FyGXRQK/EiMZmwG/Wc
-         Nf3ISrpWWBRpBPmtWy5UnPn21ZcB1wouydwYKK36nBf02bl4vMtCaFVy8WEZA14a0K51
-         4XsX8T5g6tQe+HuLdm9/jbHHR4bjWwd3MsCQgJSR1WapVbtJlnuPhzG1bhc3qkoc55eV
-         iKfdR9hYj4HXbCeCayz3oOodHGD3MfBmYiGr74jgz6l+JEMEHSO8AI4eVxoc5+DpPvN2
-         oWlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760629808; x=1761234608;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2KnvP2YaZFVVi1EKHrbJGZVnySCwYiJLXRUCGwZnk4=;
-        b=aXuJyx0IDl9wlI7HckIHan8d7flzQ6HTB/HcJ5pwTt0Ee4aHmdcNqABPmtaf/pN0qO
-         F2nuqVlIxmh1VTXJ90Fwe/isy55IVEhCx2h3WX126L/I9ttuIDufnRSMDzx5FkDNDmX5
-         D6kIprQfpX9EJUO/fftgooqWcisGOv8b6TJHOWyKNFUCXbUpsx5T7OHJKKnc8aeusO1n
-         u8ccH4vYmQ6P/Rmptf2F+LzOVXxtPxLNuHheOFVctJrqrErDgMNrU9thWOyp738kpgC5
-         3TdaQGLfTp8s+o8M/KQ1Mnrv9Pd63SG8mhfgXUaue/lsH+kqH/TMH11UDq6yyvYthzhL
-         hVpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVQEP7pGLL1a92OGJJEeMtDFcVQRQepdbQNhKxtyfMtkY6S/roqLNOQ+kjrIBHlYtb2UH8MBWLKPvELx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymdbFR5F4UPck6RI+YcB4Jmi4XM3rJ6Opsz/QcxsBfMxu7CQAH
-	chlTSYTzWhyZl/wcMewOvguknoO++UAaIVurztNsGuw37iNq+WTba0ssiOGwv4x+ApdryKkTnfP
-	fSYiplw==
-X-Google-Smtp-Source: AGHT+IFGxYfwSsZkUcYhXBV21YEOmorZdegtgwciywIpoQfeWnjVwbihghEXQZ41KIvgyIxlUzsULhHNz6I=
-X-Received: from pjbqd7.prod.google.com ([2002:a17:90b:3cc7:b0:32d:69b3:b7b0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:e291:b0:32d:b925:74ea
- with SMTP id adf61e73a8af0-334a8515117mr598099637.11.1760629807662; Thu, 16
- Oct 2025 08:50:07 -0700 (PDT)
-Date: Thu, 16 Oct 2025 08:50:06 -0700
-In-Reply-To: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
+	s=arc-20240116; t=1760629898; c=relaxed/simple;
+	bh=oq62L0QEd7GMpJS9eO2BskgBIJhoVEYg5AjMxl/aOgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtMl4i1x+EILWA5h+IWFc5kWwbPmzfLbgY9JUFra+SizGVhEmc+952spg34lYP/yMDVWy0buqven8489IuqiTnihKy4tb8rkkdlCtnZ7MZsYzmgIkWgp6Jlz+QvT1QmYtPx6/gqS4Hvrxqztuzk6J89puoCaiqZFRGnWUXsBk+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QyU80uoG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F3AC4CEF1;
+	Thu, 16 Oct 2025 15:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760629898;
+	bh=oq62L0QEd7GMpJS9eO2BskgBIJhoVEYg5AjMxl/aOgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QyU80uoGG5kkW2++eUWu/SaamQze8xl4dWD0p4gadFBX6zlV4xiC2kRdqhSN8KTfv
+	 0tzoGlONFV2sfqft42lulCb0CBRRddTlq8P5aUovib+1Ymmmiulw+sKKtZHw26Kljh
+	 BwbYybapIwG+terlVH+cN/sa/Muyl5xe8dacgFlN21nP2UssMMuTOf1/1o8P3RZWSq
+	 X2+NBTgvg7WFQ7+uMTXf+dshmkgqbkW5MHLsKxF+UF/IRDjXOjkuXHMfQb71Vk3GDq
+	 YnoRWAke6Va5ytrbKmO57fhyMWVEV5FiC77Yw/GinFZmKGJmYi4bIdtRK2QYFpEEjM
+	 y2XkgdeRysKyQ==
+Date: Thu, 16 Oct 2025 16:51:33 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Cc: Hal Feng <hal.feng@starfivetech.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	E Shattow <e@freeshell.de>, Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH v1 2/7] dt-bindings: PCI: starfive,jh7110-pcie: Add
+ enable-gpios property
+Message-ID: <20251016-countable-probing-062cd0504baf@spud>
+References: <20251016080054.12484-1-hal.feng@starfivetech.com>
+ <20251016080054.12484-3-hal.feng@starfivetech.com>
+ <a4c5e7fd-a37d-4729-ad58-81523f813fb3@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
-Message-ID: <aPEULoJUUadbb3nn@google.com>
-Subject: Re: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Sean Christopherson <seanjc@google.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-
-On Wed, Oct 15, 2025, Brendan Jackman wrote:
-> Currently the tracking of the need to flush L1D for L1TF is tracked by
-> two bits: one per-CPU and one per-vCPU.
-> 
-> The per-vCPU bit is always set when the vCPU shows up on a core, so
-> there is no interesting state that's truly per-vCPU. Indeed, this is a
-> requirement, since L1D is a part of the physical CPU.
-> 
-> So simplify this by combining the two bits.
-> 
-> The vCPU bit was being written from preemption-enabled regions. For
-> those cases, use raw_cpu_write() (via a variant of the setter function)
-> to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
-> CPU that gets its bit set in these paths is not important; vcpu_load()
-> must always set it on the destination CPU before the guest is resumed.
-> 
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-> ---
-
-...
-
-> @@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
->  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
->  }
->  
-> +static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
-> +{
-> +	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-> +}
-
-TL;DR: I'll post a v3 with a slightly tweaked version of this patch at the end.
-
-Rather than add a "raw" variant, I would rather have a wrapper in arch/x86/kvm/x86.h
-that disables preemption, with a comment explaining why it's ok to enable preemption
-after setting the per-CPU flag.  Without such a comment, choosing between the two
-variants looks entirely random
-
-Alternatively, all writes could be raw, but that
-feels wrong/weird, and in practice disabling preemption in the relevant paths is a
-complete non-issue.
-
-<me rummages around>
-
-Gah, I followed a tangential thought about the "cost" of disabling/enabling preemtion
-and ended up with a 4-patch series.  All of this code really should be conditioned
-on CONFIG_CPU_MITIGATIONS=y.  With that, the wrapper can be:
-
-static __always_inline void kvm_request_l1tf_flush_l1d(void)
-{
-#if IS_ENABLED(CONFIG_CPU_MITIGATIONS) && IS_ENABLED(CONFIG_KVM_INTEL)
-	/*
-	 * Temporarily disable preemption (if necessary) as the tracking is
-	 * per-CPU.  If the current vCPU task is migrated to a different CPU
-	 * before the next VM-Entry, then kvm_arch_vcpu_load() will pend a
-	 * flush on the new CPU.
-	 */
-	guard(preempt)();
-	kvm_set_cpu_l1tf_flush_l1d();
-#endif
-}
-
-and kvm_set_cpu_l1tf_flush_l1d() and irq_cpustat_t.kvm_cpu_l1tf_flush_l1d can
-likewise be gated on CONFIG_CPU_MITIGATIONS && CONFIG_KVM_INTEL.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0gGGbfbrsf7Gc4JG"
+Content-Disposition: inline
+In-Reply-To: <a4c5e7fd-a37d-4729-ad58-81523f813fb3@canonical.com>
 
 
-> +
->  static __always_inline void kvm_clear_cpu_l1tf_flush_l1d(void)
->  {
->  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 0);
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 48598d017d6f3f07263a2ffffe670be2658eb9cb..fcdc65ab13d8383018577aacf19e832e6c4ceb0b 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1055,9 +1055,6 @@ struct kvm_vcpu_arch {
->  	/* be preempted when it's in kernel-mode(cpl=0) */
->  	bool preempted_in_kernel;
->  
-> -	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
-> -	bool l1tf_flush_l1d;
-> -
->  	/* Host CPU on which VM-entry was most recently attempted */
->  	int last_vmentry_cpu;
->  
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 667d66cf76d5e52c22f9517914307244ae868eea..8c0dce401a42d977756ca82d249bb33c858b9c9f 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4859,7 +4859,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
->  	 */
->  	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
->  
-> -	vcpu->arch.l1tf_flush_l1d = true;
-> +	kvm_set_cpu_l1tf_flush_l1d();
+--0gGGbfbrsf7Gc4JG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is wrong, kvm_handle_page_fault() runs with preemption enabled.
+On Thu, Oct 16, 2025 at 10:58:41AM +0200, Heinrich Schuchardt wrote:
+> On 10/16/25 10:00, Hal Feng wrote:
+> > Add enable-gpios property for controlling the PCI bus device power.
+> > This property had been supported in the driver but not added in the
+> > dt-bindings.
+> >=20
+> > Fixes: 22fe32239770 ("dt-bindings: PCI: Add StarFive JH7110 PCIe contro=
+ller")
+> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> > ---
+> >   .../devicetree/bindings/pci/starfive,jh7110-pcie.yaml         | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie=
+=2Eyaml b/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+> > index 5f432452c815..f254c7111837 100644
+> > --- a/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+> > @@ -60,6 +60,10 @@ properties:
+> >       description:
+> >         The phandle to System Register Controller syscon node.
+> > +  enable-gpios:
+> > +    description: GPIO used to enable the PCI bus device power
+> > +    maxItems: 1
+> > +
+>=20
+> Shouldn't we try to keep the entries alphabetically ordered?
+
+Grouping the two gpios together also has some value. I don't think it's
+particularly important which way it is done.
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
+
+>=20
+> Otherwise looks good.
+>=20
+> Best regards
+>=20
+> Heinrich
+>=20
+> >     perst-gpios:
+> >       description: GPIO controlled connection to PERST# signal
+> >       maxItems: 1
+>=20
+>=20
+
+--0gGGbfbrsf7Gc4JG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEUhQAKCRB4tDGHoIJi
+0kHnAP91tU6Elbe7EoQ06v9wFqPRkrxkwtDTP1VqY/ANSWwhiQD+IXGZb8bDIsQY
+1ijBK46Ge9swvJk32RZqngcbnhRZ+A8=
+=rpz9
+-----END PGP SIGNATURE-----
+
+--0gGGbfbrsf7Gc4JG--
 
