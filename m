@@ -1,129 +1,201 @@
-Return-Path: <linux-kernel+bounces-856756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E9CBE4F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:01:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D16BE4FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974E01A63E77
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:01:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCA31A6343C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC8C221F13;
-	Thu, 16 Oct 2025 18:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E3322FF22;
+	Thu, 16 Oct 2025 18:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iC3bRjvN"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="gtf4bb+r"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E06F19DF8D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB7A22173D;
+	Thu, 16 Oct 2025 18:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760637673; cv=none; b=NO5q2Slt9TYQd1kBYAkadupeo5Zxlfn/sL7MnBic1H+Z6D6d3dX+WBbZbtZWxFUmiE6i0WDCjAmrAZ3yJQlwp0DlyHKAfzzJTG7HtIvpp+x+3fGTgYjawZdY2xuFsnnNwP7C/vDm0SEOVBcvlGKq8ODjFGL3gJBd48hqPlpZWuo=
+	t=1760637684; cv=none; b=cdPb40uVnUBxvACnIenj8gYdv0I0lZqE5GApwsAiF6L/RyY0VLYCzcXkgSWqLnG64w4nt56PXRRVt+X111WQO1Zq4Bz/anemWafeuGfGG/XboKqWv8A3lGz6ov2CkX7AorVPU9VR3i880ZUcH94FVkqliW5zQmZngKxLGrEEyDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760637673; c=relaxed/simple;
-	bh=UEZSqC8DG+AeJI1N/uJ8S8bsTsBgDQAckEkKFSw6cKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGTVTMNRdFY55fhhU5HbjO232pWYY0HCFABxm3oIUCgOCP2A+aAyk9agIdjte3FsQ/js67XV4Fg9isRGra52n2nYvn8V6wr3bjEwI9OVSuyHKTzozFQIX60TTKmHAWXTQXH4ClwBPauVDZcAR/tn1f+zhlRVpo+iefHg9rWmZ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=iC3bRjvN; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-781db5068b8so930292b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1760637671; x=1761242471; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEZSqC8DG+AeJI1N/uJ8S8bsTsBgDQAckEkKFSw6cKI=;
-        b=iC3bRjvNIw5qwAVYBgZ08fEjEz17PEa3TTYPZrjQ8/K3f4iwECCE7lorl+2dDp7GGi
-         lGBzjpy1TLzKFCTZLL1BF3AHsENRiK0LU3tetyXOfzQrDzIcwlN65bZ7/PePj9mjUZ/4
-         B69D79oEMTtitzl0DeJgvcOWcPRhhqTNOkobPOTvDqLOEhF0EoqZxrWrYxlHa7FQWmZ/
-         OZ1c6gWsUuGmseiQswL5VugeObDD4ILLM3ft6gDSazn4oNK/Xm47O2LncpzxSee5dnEc
-         4knjapRngF8fxaa+UV+/C+V/SJ2AdrT6ccHSD/DbnEGmIvgJI8VNzjWnNygWYMqDW1qJ
-         1K3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760637671; x=1761242471;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UEZSqC8DG+AeJI1N/uJ8S8bsTsBgDQAckEkKFSw6cKI=;
-        b=J6QBQuBH8pApjD4g0HUM0hXdd884K4HWhJFQE2de6G+tUbHkUBuaHZhAHy46dN9X4d
-         PQaxwme2jbqXk/UeG7t8QN8CZL60okFMHAJ8RgTGuJRLYD/pInFbpUVGwgtO6NsgPIRf
-         y4JCGgc9F4RkFMgY/pfJew1FrBkL4nDUUuaHT9UO2ByehLQ6YqgjAsiGCUPdXlE2GPqJ
-         14ntuwiawB7/4KkAtEB6xbB/oJ4aDkEqmqV/pkD7tSUHcjsqE/HFhOIOMPdo1R84PMgt
-         qMbgN0udXYsOdoV/oW3ZhN1QcDTI81eZ/URfqKwQWEvKUfNUMnqeIohcOiJafgVbDMrs
-         zG0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoasnLZkY2PcQ5bAfvZerYmSrmh9sinaQLEpSbgYcBARfn0rYp6/fR4dw/CQRplB7gakUdaf7YqC17cUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh6LK9qAXge9S1UqFmJxtm1jrIoj+w6foX8tPQLTaqH84ESJKZ
-	R7GF7xWqq5V/tXDfcI7JKyrPmIew/JV/EthGPALrnBQLuottRZUNoqcI3H5PXKGwdIY=
-X-Gm-Gg: ASbGncuQs5ahLN2pB2RX1R3RuhhiGMf1OnAujEJbLvZ3TdfwvsFDxhXFvZfkP04Lkl/
-	OCXiQ/izFrVkZ/V0d97d4Q+lEa78j2PLUCRbR4LGAOEs/OS9Bzj4dkLQTJdxvwJEWja+TUIK7R0
-	pvA8IFxLOrMK8VqHabBkzOQy79PudM5HDO7QGIFIgp29+kPuva8q/K2RvB1bkhPD81lBOsNvoFN
-	KQ3eB+b8Bi2fOmqqLzwdul1gQJE+xt/MrJhuNIW08acr022WWyFuS7QJgQIsfI1qagKPglenXPF
-	AYFEQUBykk6eDIm5VZaK31hDpkMc/9spdgmbF+I8VbAYEjKTo4srcr409fo7w0sdLi13chkfN8v
-	bc1aR+3uI+5EPeymU5KleGkOFSBC981cE3LusvaNqhTkIG5ghbs4OnaSvI+qC
-X-Google-Smtp-Source: AGHT+IEyG6ZYu1U6Nn8RDvsAS7EbrXFkX0+ilZLMRwbsGIkqOYw1gFQPq6bGSrG6RDqNrcU0ZyKvdA==
-X-Received: by 2002:aa7:9066:0:b0:781:155c:f9c9 with SMTP id d2e1a72fcca58-7a220accef5mr837410b3a.20.1760637670510;
-        Thu, 16 Oct 2025 11:01:10 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e275csm22976026b3a.61.2025.10.16.11.01.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 11:01:10 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v9SHk-00000000xL7-1iof;
-	Thu, 16 Oct 2025 15:01:08 -0300
-Date: Thu, 16 Oct 2025 15:01:08 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Haakon Bugge <haakon.bugge@oracle.com>
-Cc: Sean Hefty <shefty@nvidia.com>, Jacob Moroni <jmoroni@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Vlad Dumitrescu <vdumitrescu@nvidia.com>,
-	Or Har-Toov <ohartoov@nvidia.com>,
-	Manjunath Patil <manjunath.b.patil@oracle.com>,
-	OFED mailing list <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH for-next] RDMA/cm: Rate limit destroy CM ID timeout error
- message
-Message-ID: <20251016180108.GO3938986@ziepe.ca>
-References: <CAHYDg1Rd=meRaF=AJAXJ+5_hDaJckaZs7DJUtXAY_D2z_a6wsw@mail.gmail.com>
- <D2E28412-CC9F-497E-BF81-2DB4A8BC1C5E@oracle.com>
- <ABD64250-0CA0-4F4F-94D3-9AA4497E3518@oracle.com>
- <07DE3BC6-827E-4311-B68B-695074000CA3@oracle.com>
- <20251015164928.GJ3938986@ziepe.ca>
- <CH8PR12MB97419E98111F553FCC117E36BDE8A@CH8PR12MB9741.namprd12.prod.outlook.com>
- <20251015184516.GK3938986@ziepe.ca>
- <49A8CE60-DC8E-43F7-9620-D4D5F8EB2A08@oracle.com>
- <20251016161229.GM3938986@ziepe.ca>
- <6244F8C9-2067-4A8A-8DCD-02A4A2D117F6@oracle.com>
+	s=arc-20240116; t=1760637684; c=relaxed/simple;
+	bh=HHVVaxsF89op4pNfdku8FJj9VGD8pE674ULayMgG5nI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iJj7WFlx0e6I0Dxt5dj115zz/jd3sYYNdCmgYG7GOPz1xiyJGbqHllwxvebGMfUHdIYDZACf3/WBQdj+quUib3OWJDnp4L8vI0NbhIDgLW41wQbGr4VGihHLu38vqJZrhzsrjLbxAu3CB/gYQPssxDH9lJOa6bKigIc3grpgWgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=gtf4bb+r; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1760637679; x=1761242479; i=w_armin@gmx.de;
+	bh=Q16D+6aJBQlt1JfZ0aZTlA8PpUun+DZc60iL3nXImIA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=gtf4bb+r/JixMpinXBD9+VZLSLliVULbZcIEH/fm4BQoymwpc+JblfzPI3GSs0+3
+	 z0nizHUjlEC28QOgiuhem+kkYGiLyXGqc6Tl6YvJ3lRQUU/DU4Avxc5ST+JaVUGsP
+	 VZWO6wQi9JEqQaOIMl78jVNVMXGAvI4JAf8C5NdVAgjWtJuykT37NnfS+rtE+FVLe
+	 TD3nWTH0X+eF/pLkktNQ2bEmon0Yhv7crHuWnf2FXRljuDT9zjZ6JXySlWUdAQQo2
+	 TmrruuML/Uz7YEKoACQwFnPKfEQ1vxUJ5yo7xc3yd7oEpIWfBUtve9tVXUzq2GP+p
+	 Vu9EMoYNLxSEaoYelA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MybGh-1uHUBu18BR-00v07x; Thu, 16
+ Oct 2025 20:01:19 +0200
+Message-ID: <a112b38b-aaf3-4c86-9469-0f60723d5443@gmx.de>
+Date: Thu, 16 Oct 2025 20:01:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6244F8C9-2067-4A8A-8DCD-02A4A2D117F6@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] platform/x86: acer-wmi: Add fan control support
+To: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>, jlee@suse.com,
+ basak.sb2006@gmail.com, rayanmargham4@gmail.com
+Cc: kuurtb@gmail.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251015192551.321200-1-W_Armin@gmx.de>
+ <5048620.31r3eYUQgx@cacher>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <5048620.31r3eYUQgx@cacher>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JqBS/0LAlaKLokzzUj9lIOhZN7ytNhevNQ/6uF3alGdNW5vRa+p
+ R5889WbwZtAsyjDuXw7PSdSlJW8tx7zS8HzPPl7qp0ulKw4GQxRpgLn0EcPL3lSXbnmDMpK
+ /MksWW83tc5ix81gTRXA9IS5jzyRRsINsOqzzsrMEqPzPUwLKAcWjrFvo63aFbhdbG9OjtF
+ Wvq+ouxpaAEcCK8ZfI42A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:urpPFHPCDog=;oWgxPtN009rjSQ4O1lqHuytJrQn
+ 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
+ BAdFMEEEzjQzup2fDjVwXSauv0o2ZySJWX4=
 
-On Thu, Oct 16, 2025 at 04:43:16PM +0000, Haakon Bugge wrote:
+Am 16.10.25 um 19:23 schrieb Fa-Iz Faadhillah Ibrahim:
 
-> Well, I started off this thread thinking a cm_deref_id() was missing
-> somewhere, but now I am more inclined to think as you do, this is an
-> unrecoverable situation, and I should work with NVIDIA to fix it.
+> On Thursday, October 16, 2025 2:25=E2=80=AFAM Armin Wolf wrote:
+>> This patch series aims to add fan control support to the acer-wmi
+>> driver. The patches are compile-tested only and need to be tested
+>> on real hardware to verify that they actually work.
+>>
+>> I CCed three users who requested support for this feature. I would be
+>> very happy if one of you could test those patches and report back.
+>>
+>> Changes since v2:
+>> - get rid of nested bit masks
+>>
+>> Changes since v1:
+>> - remove unnecessary blank line
+>>
+>> Changes since RFC v2:
+>> - improve error handling when setting fan behavior
+>> - Add Reviewed-by tags
+>> - whitelist PHN16-72
+>>
+>> Changes since RFC v1:
+>> - remove duplicate include and replace hwmon_pwm_mode with
+>>    hwmon_pwm_enable in second patch
+>>
+>> Armin Wolf (4):
+>>    platform/x86: acer-wmi: Fix setting of fan behavior
+>>    platform/x86: acer-wmi: Add fan control support
+>>    platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
+>>    platform/x86: acer-wmi: Add support for PHN16-72
+>>
+>>   drivers/platform/x86/acer-wmi.c | 292 +++++++++++++++++++++++++++++--=
+-
+>>   1 file changed, 269 insertions(+), 23 deletions(-)
+> Hello,
+>
+> I've tested the patch on my PHN16-72, this time the fan control for CPU =
+fan
+> works just fine, but GPU fan control doesn't work anymore. no logs obser=
+ved on
+> dmesg while changing the speed of either fan.
+>
+> Thanks,
+> Fa-Iz Faadhillah Ibrahim
+>
+It seems that i made a small error in WMID_gaming_set_fan_behavior(). I se=
+nd a v4 patch series
+with the necessary fix.
 
-If the VF is just stuck and not progressing QPs for whatever reason
-then yes absolutely.
+Thanks,
+Armin Wolf
 
-At best all we can do is detect stuck QPs and try to recover them as I
-described.
-
-How hard/costly would it be to have a tx timer watchdog on the mad
-layer send q?
-
-At the very least we could log a stuck MAD QP..
-
-Jason
 
