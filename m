@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-856718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1BC3BE4E42
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E637BE4E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C24914FC5CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6B11A61D67
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6268120E032;
-	Thu, 16 Oct 2025 17:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9908218ADD;
+	Thu, 16 Oct 2025 17:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNbbHMAq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uSAD+5cf"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5B317C21E
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916961FC110;
+	Thu, 16 Oct 2025 17:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760636381; cv=none; b=lmS3ZRqs7V1malp0+oWzeVeedrc+RluBWvlHSTiCmNApcJJZqAdLILSGqWGRVHH8Mg/azBRWL02PQBJ9lgstlefhbQmi6GYU1bfv+8nYhyTIwWFecwwTOKDCl0A8C653NlTO2Wz+mq00D1t/x8hM8q6w2mtZZyRiMd+ymJAEdDo=
+	t=1760636425; cv=none; b=jkSKRZ2ZwcbAZF+ADx4/BOvNuk8JMxc8yEaDw6EDZy7BobI3RUszxySOyPHOlJewhBkX2TgkdaFKfVxsQqKn6ekhJb/uBStn6D9EKQv+qZPF0EfAQ8kTdb4oX2Oc6+pTP6bV2eiYNhTR/1c3cQb0LeRuyggRIP4NYTDMxUMPDEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760636381; c=relaxed/simple;
-	bh=eOq2qhTSMPD2ObFUJ67WfeOoa0dy5B3akOcSy4XfLeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EEVqDUg0VBWbWLOqm78lfTC96R//8A99QYvYdAXoDR6hJDDAS3AR8XdcZDtno1PvtqqHknRr5Sa8hd2zDTS+etC5q4FvOOaq3cke9uRSYooX/JO8uUSsXCJtUaOkiRN+GMAM79TjIK/yCSHNGTWyhrTzu3NxF/vHNwzGELNoIVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNbbHMAq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1331CC4CEF1;
-	Thu, 16 Oct 2025 17:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760636381;
-	bh=eOq2qhTSMPD2ObFUJ67WfeOoa0dy5B3akOcSy4XfLeU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZNbbHMAqqaHwVE8NGCSk5qWFMMJYCSSSwtuBrgETyhIkitAXW48z1nFJXGwPmHoMS
-	 Zag2hnp1byMgU4pHXHjgV/yykoR/VXuiaw+ADlIvjboxDloqo91GlPkq/2iOg5cdD8
-	 WQSdtfE4aBroHzji/bPOGSr6JvDexK/KJZLdsX/WpEzQOUPgfYtcpU08nXpmj8rAC6
-	 QqEilivsYurOYM3R1IYJq1lQAs9V/fQvxokrlUFedGdd8AiLGaJlWrm1oN5I2slTGf
-	 KRnYbTSS61kRqaeI3HsvLtbZnCu43fS5Sg1PhApJ2PLR8QS8X0Rrdk5aJSS5/QxYZF
-	 JsHqsq1gEPx6g==
-Date: Thu, 16 Oct 2025 17:39:39 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] f2fs fix for 6.18-rc2
-Message-ID: <aPEt2-u8J16L9Xnk@google.com>
+	s=arc-20240116; t=1760636425; c=relaxed/simple;
+	bh=Wq3pp60rA3hdopTYWj2BZO4WQdhVCiSXHOABuF5YnCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VOvj7wWHRx/eRfQOSXk2NHlbIYInohmc0h8a6Mecem4GrgVcU2RV7HOlyLY+GaH8xyule2HZiwKkSqMjuCP7nkCAvpkm/Ful1kxBgJYThEkjslBGaTcIsc9jn5mU+4h8UrVoTThbWQYGwP9+do4oMyHARD0k6MtF0lKJIRAPDjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uSAD+5cf; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cnZwX3zWhz9tHQ;
+	Thu, 16 Oct 2025 19:40:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760636412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZxP0Op2GOPJGCmVQfhpVi9OKM831NuQf5A5nCw+dZv4=;
+	b=uSAD+5cfZSmQYp83bqgCZJ2GFHuuQhmPjHL/wN/5mHexJACIMaAVV+lt/vEBlttehdTl28
+	eEGLhxwyU7vQRgALRAV8NAQEzMqaJiVtYNBbV2ib9G/rQblwYzxhZZOxWuBiUpr5yD74OG
+	N/nf9nemOKlaXVUVo0kriTvuDpV/ik6jDF0IMYpBfNu4OzqHNTkcR/lSnwV+czwWXkrTxR
+	T6BnyiZzrG8Xwfrv1a+RPavCsuU7dgc9HBKTfXiH5y90zKUKLtLahQ5S2j/a8ScaDBx8bB
+	Srzn/G0HBPbRhDnoTJohEiB7CRI9xQu3XNqYz5kfGWHWvNc09KH0S2WkKb/YLQ==
+Message-ID: <174bdb5a-b5a8-4856-a0ac-8caaaefde136@mailbox.org>
+Date: Thu, 16 Oct 2025 19:39:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: Re: [PATCH v4 07/14] drm/imx: dc: Add DPR channel support
+To: Liu Ying <victor.liu@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+References: <20251016-imx8-dc-prefetch-v4-0-dfda347cb3c5@nxp.com>
+ <20251016-imx8-dc-prefetch-v4-7-dfda347cb3c5@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20251016-imx8-dc-prefetch-v4-7-dfda347cb3c5@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: oisd1xzkoiz1sooehr5hspunmxjz571t
+X-MBO-RS-ID: eee63f1da7d39cab528
 
-Hi Linus,
+On 10/16/25 8:32 AM, Liu Ying wrote:
 
-Could you please consider this pull request?
+Hello Liu,
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+> +++ b/drivers/gpu/drm/imx/dc/Kconfig
+> @@ -1,6 +1,7 @@
+>   config DRM_IMX8_DC
+>   	tristate "Freescale i.MX8 Display Controller Graphics"
+>   	depends on DRM && COMMON_CLK && OF && (ARCH_MXC || COMPILE_TEST)
+> +	depends on IMX_SCU
+Can the SCU dependency be made optional, or per-module, or somehow 
+abstracted out (via regmap?), so iMX95 support can be added into the 
+driver easily too ?
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-fix-6.18-rc2
-
-for you to fetch changes up to 9d5c4f5c7a2c7677e1b3942772122b032c265aae:
-
-  f2fs: fix wrong block mapping for multi-devices (2025-10-13 23:55:44 +0000)
-
-----------------------------------------------------------------
-f2fs-fix-6.18-rc2
-
-This includes two urgent fixes:
-1) iput() added by bc986b1d756482a causes soft lockup [1].
-2) fix a wrong block address map on multiple devices.
-
-[1] https://lore.kernel.org/oe-lkp/202509301450.138b448f-lkp@intel.com
-
-----------------------------------------------------------------
-Jaegeuk Kim (1):
-      f2fs: fix wrong block mapping for multi-devices
-
-Mateusz Guzik (1):
-      f2fs: don't call iput() from f2fs_drop_inode()
-
- fs/f2fs/data.c  | 2 +-
- fs/f2fs/super.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-Thanks,
+Thank you
 
