@@ -1,221 +1,213 @@
-Return-Path: <linux-kernel+bounces-856788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C270CBE5156
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:40:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BA8BE5168
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C216583FB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:40:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A35A4EFADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD88A239570;
-	Thu, 16 Oct 2025 18:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F975239E65;
+	Thu, 16 Oct 2025 18:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kb4DVjr4"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XJtKcZQL"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE3E262A6
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B227149C6F;
+	Thu, 16 Oct 2025 18:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760640039; cv=none; b=nnDMbuT9//wV+Txn/rSh85Ea5ZMc6hBxKtl1/PP+VKWLTJHFP87P+/twXAKjI8rfFxFr+Z4Agyeh0BqF7kVLicIwHTw2TQdi1AP7vafSOOL7BY2oix0J9YsKJH0kG9oVKp8LYck47JeRpaeMdD5gk3O9Wrll2iNPpjnWngEhXAM=
+	t=1760640227; cv=none; b=LJ0dbX3HBVFVQXx7i7SZXBf3VF4n+KtDWhTtala7VdUhr8ZaCg90nCfJBdWbsyy9wG2gzkLyg9QKuG9XoLY7dH5eXpirLKbX3zSF2ht5oSykSAhnkqzm4S5LaunxY8z6WqFcFOWxWm6OnxB/GTEXATZcYprZNpUETqEa2TSHg80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760640039; c=relaxed/simple;
-	bh=5QysmaokXLn3WO6Gp92GJ+wwsN+FNCg2fB1fyWLq7Tg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YP3k6Z6RtBowRKvDM4+d3yhPZocs2UZBHWv/ekG0HxayA0nfPq0NxhttUncn3McKj8SYCif8DIFX3SoRMityI9do7kRXB1UDLrFVHwX1Xy3JArjAOSSZ8lZGbXFeOQzjzsAS6ILGUz6oJHng7H0RF0CV8sZjWlagrsQcbgE9kKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kb4DVjr4; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-427060bc0f5so31596f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760640035; x=1761244835; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gVrVN0cURT8XxOWEND/toDNC6BEXYqhiqrr2ZmhC6Wg=;
-        b=Kb4DVjr4P8bzQkdC6frJlmNGatQhd6iQxGC7D7VWMo1gddZHd8qoiB5WW9eAzT1A4N
-         KjDaMdaWQt2diQJURY3BrxTJSVrIoG0lrlFu0Lg4/nfuIny800GFeOWoe6/0Ys/KxNRW
-         RJTSKJwXMkmTOXBYqnn5BzLWomDqmOPdrwHUQoVS3n1FsScRSHRlxsrgCKjp/NARDV/P
-         ozot9zUmZMMU7SwN5sQdej3O1YkcIKM9XAlC5mOs+22Rb8RZJDQd8NMC1hRxY6eqVsvC
-         jwrwWRRMt1OgJoaHxvFN7sdL7pGPMfJCSwqcpdlAQyRQ6i9mG3ojDllxSUsEaUMJJY1R
-         8MUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760640035; x=1761244835;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gVrVN0cURT8XxOWEND/toDNC6BEXYqhiqrr2ZmhC6Wg=;
-        b=WvCdxiM5bxU08rslADcnhV78esVai2Fuvj/lQU6OYH2iE4pUJzpArDsymctoUeZPdJ
-         0RH438QTAKxF/hzjwzoKyJXCp15Ps7ZaBIC85fxTrbBb+KCttbRc3vPPA+zL8W2TNTS8
-         6xyZqfoidhVLpDYtjS6WOUaC4Fyl2RUKlRpr6V2FDX7m8wky6Yiu/2ICpGujdc/UKyW0
-         1/IPK0ZXL9otWWW4k0A0/7oG1WvaC4Uqo8X5dYJBzmD4fDv7kA9R5zXyUPq3JPpuo6Ff
-         mHmEGorSoqimXVvi8AArrM2Ww1UJH8Amjom2bggFxMhP06SJJN1PU7nhfPTcn/3wnDYY
-         VR1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFgMXl/IvgA7waaB0B7Z93WR/m3ySx1v8htptbdeBB4ty6cmo8KNarHpeR/k00sXpyuQRxabDwgKbNXOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6WSWrxXS3VH7eMZU/04ayLqUAEcOO/VvxHCOzX1XJ8lGRLzhn
-	OaxfblK7kWkH9Ra361srKC86AHfNqoPZLC3ItQM4EzqkjwgD7WnsW3i6
-X-Gm-Gg: ASbGncsfl2O0cHS6oO+YdOWqZ1rPIPqAQwiVqUkjBy4E4U8MnOoh9JIX0zxiBs2uaYL
-	UFdEeUaYLnbEe3Ac+k25YWcbECUyvV8gsZN3MP8LyngnC76vSjJqDNGPnO+ZqOU7rwVEMxgJX3X
-	fEvbz8uX6fBoiTuvlVuuSvcLdPOXmBNf7o0LoqNe9nibZJ44xAFaLLSclOlvGGcJgYZUY0xWjU8
-	KQvlHOIRh2pUtUCe09nAZSecEKYz59NaKXhEwPBMC3doj5FA5Db23BTeus+TxLua+opef9e3y9X
-	YuwCjVTj5YdU4mVzHMhQJCX+KAsoa0eMw1pFZTk5foGiN+KCDwjWqVcwHFJRQAuLAG9vGxspGfr
-	gDiqbG6wIAgunOnagHJ3Cqine390OeX7QGYXFweUrUI8EyeldhzbKhLk43HjOgNEs7irL5HrHjc
-	//1j+VhHaGgnL5kET1kKT2B1/1s3m4a7Cz5MIhPldlvuHq4FCsxVIJEk9c
-X-Google-Smtp-Source: AGHT+IFtecOfZqgKKUQdQobTvSoWGjsWAXnz5FwPdqEhfoodXPkAZsFTaly51YsTEiMSfFcc5ooSyw==
-X-Received: by 2002:a05:6000:4301:b0:3e5:47a9:1c7f with SMTP id ffacd0b85a97d-42704e043c1mr799792f8f.47.1760640035343;
-        Thu, 16 Oct 2025 11:40:35 -0700 (PDT)
-Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm35643266f8f.40.2025.10.16.11.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 11:40:34 -0700 (PDT)
-Message-ID: <60fbaaef249e6f5af602fe4087eab31cd70905de.camel@gmail.com>
-Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
- automatic module loading
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Herve Codina <herve.codina@bootlin.com>, David Rhodes	
- <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela	 <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Nikita Shubin	 <nikita.shubin@maquefel.me>,
- Axel Lin <axel.lin@ingics.com>, Brian Austin	 <brian.austin@cirrus.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
-	 <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org
-Date: Thu, 16 Oct 2025 20:40:34 +0200
-In-Reply-To: <20251016130340.1442090-2-herve.codina@bootlin.com>
-References: <20251016130340.1442090-1-herve.codina@bootlin.com>
-	 <20251016130340.1442090-2-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1760640227; c=relaxed/simple;
+	bh=Q8orrl4MLzqCEwAfLl/l6Ptxt8k3EQam4gUEfueVYj8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=jyrcO3MJseNhMDfXXZx7mcBjLfvWH31EtuUZSkX5sTimBIFgRY5ijFtKnlmyuyQrryinfUdHGOf2AqvVXcXNu2AQrZq5MGeDckPBfTKodXK4NlBK0pZVqZbZQ5y3SOA8mKDfZtXrwUe+EyAlhT7LAaaNkvQd3vjfxm99bLof7Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XJtKcZQL; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760640206; x=1761245006; i=markus.elfring@web.de;
+	bh=CLGVfjGRycUohHijBK/kKmSQZMw+js4xognjhCwizcM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XJtKcZQLwZxu5QNP2c7huxDgEsQdwE6Wds6U7ZDATeENpqS/93pKcczAUGsExNgi
+	 TgCyQoNq13aPDWQBrJGTHxprHnfcQuEda5XqFZKGSBaHuiziaGRYt+yHtlWPmDjHR
+	 pEeLWaGVMAqZhU2sLerflF6vMz3IwTOzM9SoQUoBYXr/nBS49gT+LLuE7Hknx9PJR
+	 zKr7/ycCmm5hQU1jqXvDyYNMd9RAxt8V3HwkIZlprbvJeUwuRQkGflvi5kJMg7XhZ
+	 wmUhJ9HNl8ZcJv5oxe/DNkXoUG4mLwbBKjFAhVkLJrrwWD4SMkZ9PEA1/aG+niKjy
+	 Dm72BOMNk1kaBgiccg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.241]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MumJD-1uJ9Xa2ySR-015LwL; Thu, 16
+ Oct 2025 20:43:25 +0200
+Message-ID: <fe4d7cd9-0566-4d1b-97c0-91cc1f952077@web.de>
+Date: Thu, 16 Oct 2025 20:43:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>,
+ Manjunath Hadli <manjunath.hadli@vayavyalabs.com>,
+ Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>,
+ Ruud Derwig <Ruud.Derwig@synopsys.com>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Aditya Kulkarni <adityak@vayavyalabs.com>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ T Pratham <t-pratham@ti.com>
+References: <20251007065020.495008-3-pavitrakumarm@vayavyalabs.com>
+Subject: Re: [PATCH v7 2/4] Add SPAcc ahash support
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251007065020.495008-3-pavitrakumarm@vayavyalabs.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LK4z+ncE5zS8HB1UF5xsMBi3WgBv6O1bqjYXfpMNhAnEoJSZLh7
+ OOcD1+tlTwXpELzhkMew3CSKDOaweupeDQHAne5UVlp7Ji+rhXoEoPboKNTJeirTIztREFW
+ zh90wuFGAHKUJqcU2LxI837OBagSNFyyzV43iAzSBp++0uZGMVi2aCDP+VGrizbeI3mzR0K
+ pHBgAPxtNiRWNB6Pa8gnA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AcenHJOJSaw=;lD6a9dLOfQeOHc/Gfiri0k5GvF4
+ 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
 
-Hello Herve,
-
-On Thu, 2025-10-16 at 15:03 +0200, Herve Codina wrote:
-> In commit c973b8a7dc50 ("ASoC: cs4271: Split SPI and I2C code into
-> different modules") the driver was slit into a core, an SPI and an I2C
-> part.
->=20
-> However, the MODULE_DEVICE_TABLE(of, cs4271_dt_ids) was in the core part
-> and so, module loading based on module.alias (based on DT compatible
-> string matching) loads the core part but not the SPI or I2C parts.
->=20
-> In order to have the I2C or the SPI module loaded automatically, move
-> the MODULE_DEVICE_TABLE(of, ...) the core to I2C and SPI parts.
-> Also move cs4271_dt_ids itself from the core part to I2C and SPI parts
-> as both the call to MODULE_DEVICE_TABLE(of, ...) and the cs4271_dt_ids
-> table itself need to be in the same file.
-
-I'm a bit confused by this change.
-What do you have in SYSFS "uevent" entry for the real device?
-
-If you consider spi_uevent() and i2c_device_uevent(), "MODALIAS=3D" in the
-"uevent" should be prefixed with either "spi:" or "i2c:".
-And this isn't what you adress in your patch.
-
-You provide [identical] "of:" prefixed modalias to two different modules
-(not sure, how this should work), but cs4271 is not an MMIO device,
-so it should not generate an "of:" prefixed uevent.
-
-Could you please show the relevant DT snippet for the affected HW?
-
-> Fixes: c973b8a7dc50 ("ASoC: cs4271: Split SPI and I2C code into different=
- modules")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
-> =C2=A0sound/soc/codecs/cs4271-i2c.c | 6 ++++++
-> =C2=A0sound/soc/codecs/cs4271-spi.c | 6 ++++++
-> =C2=A0sound/soc/codecs/cs4271.c=C2=A0=C2=A0=C2=A0=C2=A0 | 9 ---------
-> =C2=A0sound/soc/codecs/cs4271.h=C2=A0=C2=A0=C2=A0=C2=A0 | 1 -
-> =C2=A04 files changed, 12 insertions(+), 10 deletions(-)
->=20
-> diff --git a/sound/soc/codecs/cs4271-i2c.c b/sound/soc/codecs/cs4271-i2c.=
-c
-> index 1d210b969173..cefb8733fc61 100644
-> --- a/sound/soc/codecs/cs4271-i2c.c
-> +++ b/sound/soc/codecs/cs4271-i2c.c
-> @@ -28,6 +28,12 @@ static const struct i2c_device_id cs4271_i2c_id[] =3D =
-{
-> =C2=A0};
-> =C2=A0MODULE_DEVICE_TABLE(i2c, cs4271_i2c_id);
-> =C2=A0
-> +static const struct of_device_id cs4271_dt_ids[] =3D {
-> +	{ .compatible =3D "cirrus,cs4271", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, cs4271_dt_ids);
+=E2=80=A6
+> +++ b/drivers/crypto/dwc-spacc/spacc_ahash.c
+> @@ -0,0 +1,980 @@
+=E2=80=A6
+> +static int do_shash(struct device *dev, unsigned char *name,
+=E2=80=A6
+> +{
+=E2=80=A6
+> +	sdesc =3D kmalloc(size, GFP_KERNEL);
+> +	if (!sdesc) {
+> +		rc =3D -ENOMEM;
+> +		goto do_shash_err;
+> +	}
+=E2=80=A6
+> +do_shash_err:
+> +	crypto_free_shash(hash);
+> +	kfree(sdesc);
 > +
-> =C2=A0static struct i2c_driver cs4271_i2c_driver =3D {
-> =C2=A0	.driver =3D {
-> =C2=A0		.name =3D "cs4271",
-> diff --git a/sound/soc/codecs/cs4271-spi.c b/sound/soc/codecs/cs4271-spi.=
-c
-> index 4feb80436bd9..82abc654293c 100644
-> --- a/sound/soc/codecs/cs4271-spi.c
-> +++ b/sound/soc/codecs/cs4271-spi.c
-> @@ -23,6 +23,12 @@ static int cs4271_spi_probe(struct spi_device *spi)
-> =C2=A0	return cs4271_probe(&spi->dev, devm_regmap_init_spi(spi, &config))=
-;
-> =C2=A0}
-> =C2=A0
-> +static const struct of_device_id cs4271_dt_ids[] =3D {
-> +	{ .compatible =3D "cirrus,cs4271", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, cs4271_dt_ids);
-> +
-> =C2=A0static struct spi_driver cs4271_spi_driver =3D {
-> =C2=A0	.driver =3D {
-> =C2=A0		.name	=3D "cs4271",
-> diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-> index 6a3cca3d26c7..ff9c6628224c 100644
-> --- a/sound/soc/codecs/cs4271.c
-> +++ b/sound/soc/codecs/cs4271.c
-> @@ -543,15 +543,6 @@ static int cs4271_soc_resume(struct snd_soc_componen=
-t *component)
-> =C2=A0#define cs4271_soc_resume	NULL
-> =C2=A0#endif /* CONFIG_PM */
-> =C2=A0
-> -#ifdef CONFIG_OF
-> -const struct of_device_id cs4271_dt_ids[] =3D {
-> -	{ .compatible =3D "cirrus,cs4271", },
-> -	{ }
-> -};
-> -MODULE_DEVICE_TABLE(of, cs4271_dt_ids);
-> -EXPORT_SYMBOL_GPL(cs4271_dt_ids);
-> -#endif
-> -
-> =C2=A0static int cs4271_component_probe(struct snd_soc_component *compone=
-nt)
-> =C2=A0{
-> =C2=A0	struct cs4271_private *cs4271 =3D snd_soc_component_get_drvdata(co=
-mponent);
-> diff --git a/sound/soc/codecs/cs4271.h b/sound/soc/codecs/cs4271.h
-> index 290283a9149e..4965ce085875 100644
-> --- a/sound/soc/codecs/cs4271.h
-> +++ b/sound/soc/codecs/cs4271.h
-> @@ -4,7 +4,6 @@
-> =C2=A0
-> =C2=A0#include <linux/regmap.h>
-> =C2=A0
-> -extern const struct of_device_id cs4271_dt_ids[];
-> =C2=A0extern const struct regmap_config cs4271_regmap_config;
-> =C2=A0
-> =C2=A0int cs4271_probe(struct device *dev, struct regmap *regmap);
+> +	return rc;
+> +}
+=E2=80=A6
 
---=20
-Alexander Sverdlin.
+* You may use an additional label for better exception handling.
+
+  Or
+
+* Would you like to benefit more from the attribute =E2=80=9C__free(kfree)=
+=E2=80=9D?
+  https://elixir.bootlin.com/linux/v6.17.1/source/include/linux/slab.h#L47=
+6
+
+
+=E2=80=A6
+> +/* Crypto engine hash operation */
+> +static int spacc_hash_do_one_request(struct crypto_engine *engine, void=
+ *areq)
+> +{
+=E2=80=A6
+> +	tctx->tmp_sgl =3D kmalloc(sizeof(*tctx->tmp_sgl) * 2, GFP_KERNEL);
+> +
+> +	if (!tctx->tmp_sgl)
+
+* Please omit a blank line between such statements.
+
+* Can a kmalloc_array() call be helpful here?
+
+
+=E2=80=A6
+> +			kfree(tctx->tmp_sgl);
+> +			tctx->tmp_sgl =3D NULL;
+> +			local_bh_disable();
+> +			crypto_finalize_hash_request(engine, req, rc);
+> +			local_bh_enable();
+> +			return 0;
+> +		}
+=E2=80=A6
+
+Please avoid duplicate source code in such a function implementation.
+
+Regards,
+Markus
 
