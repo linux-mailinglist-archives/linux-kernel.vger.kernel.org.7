@@ -1,128 +1,191 @@
-Return-Path: <linux-kernel+bounces-856400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBD5BE40F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1CABE40BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 12FB7359228
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25859407F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C8F26F45A;
-	Thu, 16 Oct 2025 14:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85FC3451CC;
+	Thu, 16 Oct 2025 14:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="KD59eRZ3"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
+	dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b="ZVsv7fdL"
+Received: from mail.hostpark.net (mail.hostpark.net [212.243.197.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D24343D93;
-	Thu, 16 Oct 2025 14:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.165
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626763; cv=pass; b=WGVcJnVQhAK8sv3NCuhQpORRZMtRIPZFPNj2Q7TF+5OB5vbNxCCWvbuyL2ZOwAked3CcPTMB9e1c4MSodZne2qVWoSzMQLqY4mz6HNQPgPRduiPDkDJtcBkpNbwmu+Vn5SBqp0TS7wbJkLfVnEZ62nmqnLqWXlxtg2s++b08j9k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626763; c=relaxed/simple;
-	bh=VUvSpcjMJ6LpfbaagWC+IIOu4x5SrZ1/M4Iyktdp7Mc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eZQ6eGOvXAWFce6bK9+LEO5BqSxM2I61kzgDVST0d5dWnWIVrrBVegCd/DRnDIw/uY5uP7qCznHIzsMiFu6vkAXNWzgmHEl/xGLdgdJomPpvKnuitEHF661AYGoNGgTFdlcooALV5maFNvVwQyx0nKCNxWQffgK00rsO7v2Cq6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=KD59eRZ3; arc=pass smtp.client-ip=81.169.146.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-ARC-Seal: i=1; a=rsa-sha256; t=1760626571; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=itzjNjpudnno0prCGw6S+DblTrA4WNG35ScX8M05+4VSF1wIFCpjOP7c+EUwbTiwA6
-    vBBhWriaaVyychOlBJcFSHumjd7yilUpcsyY37p/t97giLBfNPgNH1Mms4HBr9dbPNk7
-    RXQ8rOHLF9uxE4HYRiugISfBjuLyYxDvQ6DpVw5JB8askHEA8uhKR7V8b7HIGzNl3IAO
-    XFbo36/nGvBSdZe0X146AhQcNrTA1HTkQkeKV+18oLYoJaQqrsZTQS3yP6FyZlvbF+l5
-    CvvvagHmy9AwtFRDRE3Cm4BY7m8W90aZsJvSxC63TNuKsKlI0aHVqm2yz4MyzUcYcres
-    2PFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1760626571;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=fGOMP+OS+GLcPkdX83O8tRNbIO+1sVKZCqRPowenx2o=;
-    b=mCMA/M8Wr3lXMWyejjUnMmZphcjWqNvSG33P/w7YsXXTmd9RAkjf5hlZpBon4Mp5fv
-    0Y3eTDJT4zBuVIR8uEFqG30XEozeuOcFU08m4AoXIgo7O3Jyxl/t7+o34/vUOBfR7o9q
-    rVMPW3lQwm8YhlysakC7dl2cGJRzgE1XdyVKvce2clUlCocQK90o8HW1xQ5Qc4m5eeng
-    qklHFG32fE7FYCSMBRJARPfL3eBIrNdYwcMBUJCh3kPFGWjJh902KAyVHnxT59reAT+b
-    3vabKOHmQ4Im7sQqB4f9qnnMWETT6Dn9EKqe6WTOWPflZ0J4+NL7ZOBCv1gdr4oGwHB+
-    nKsA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1760626571;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=fGOMP+OS+GLcPkdX83O8tRNbIO+1sVKZCqRPowenx2o=;
-    b=KD59eRZ3H6a3KxPi5UYG+z7pUWAMZ52hBa/wpDU5zRdA0ixc+JmrP/wWe6ngaMOdfM
-    /Q2iDObh4efaB1iodl0/1aUeyPqM/f7xPZ7ULyGITno6AJ1RxTucvs9hnEQ6/cjGyV8S
-    wmLHm+GnnWfRA2pK5KqMXY9TEedb/QTRyWhRO2BtsJW7WZMLlhP3G+48u2k4BL1nxqWL
-    ZygXkxm80K4AA/ONntSl0jMjU6QZqMzCwYPG2zFsxMQeVqgYXBmEX1LNQDcTOuTUlJJ+
-    N4R6k+tfq/rsedQByAzw3W/AmveibJb3NueW+2/C0o6pI354KjtEl+ASD23bB0MAWbnH
-    FVZA==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDYJfSfvOU3"
-Received: from tauon.localnet
-    by smtp.strato.de (RZmta 53.4.2 DYNA|AUTH)
-    with ESMTPSA id f279ee19GEuAbSv
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 16 Oct 2025 16:56:10 +0200 (CEST)
-From: Stephan Mueller <smueller@chronox.de>
-To: David Howells <dhowells@redhat.com>
-Cc: dhowells@redhat.com, Eric Biggers <ebiggers@kernel.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] crypto,
- lib/crypto: Add SHAKE128/256 support and move SHA3 to lib/crypto
-Date: Thu, 16 Oct 2025 16:56:09 +0200
-Message-ID: <13446126.ZYm5mLc6kN@tauon>
-In-Reply-To: <363389.1760625251@warthog.procyon.org.uk>
-References:
- <286100.1760618158@warthog.procyon.org.uk>
- <2636609.1759410884@warthog.procyon.org.uk>
- <363389.1760625251@warthog.procyon.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62456343D85;
+	Thu, 16 Oct 2025 14:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.243.197.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760626602; cv=none; b=R15N9xxNF9XHbpIp2YThPDfkLrPOgV+v2X+3SmDZDbcPMxGN8p0NkQKC082eCM+1ihY7QcEnAjiGt6xTK+vRDW3mT4G5yT5SR9pqFalAxT6728wk34HIU2gjtkQbxiznoEgVgvXbaDPpG4eGjO/+hhJmQUKGnfV1EWEz7a9iOs4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760626602; c=relaxed/simple;
+	bh=Ek2ILsSfxxehyC+PgeYS48DStt27lqnZk8RnptziTzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NrmKFPXm+QX0balA9XMRI3m0uBb/CtDDQNgNeck/xAgrurtSAAx3TFWZj748d94YEgCWIiSvm3dkSDGse4tbxSGGuIiN15Jvz9oq+hMlAUAWjKPTkEiQpAaWUreTTxhh7ERqu3SUxCVItEYASZG/KIGYA5Fsi7XZFyA7hGJi1eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li; spf=pass smtp.mailfrom=klarinett.li; dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b=ZVsv7fdL; arc=none smtp.client-ip=212.243.197.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=klarinett.li
+Received: from localhost (localhost [127.0.0.1])
+	by mail.hostpark.net (Postfix) with ESMTP id 63EFC162C9;
+	Thu, 16 Oct 2025 16:56:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=klarinett.li; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from; s=sel2011a; t=1760626588; bh=Ek
+	2ILsSfxxehyC+PgeYS48DStt27lqnZk8RnptziTzg=; b=ZVsv7fdL7vfZ/HRUQW
+	5uIoZtMyEds8t98Qt1FoxgSGOUKb3LwX46ffX9hNihkET6Z2BoeLHpNEuVwVSLue
+	AN3O0kFRMPdxUCJ7IjIVGwXF5pZEGyALalL2Alz1EbXD+IP20IWnxMIr5/Az7mpu
+	AXxmNn7VRVmwWGiE4r2P4/mE8=
+X-Virus-Scanned: by Hostpark/NetZone Mailprotection at hostpark.net
+Received: from mail.hostpark.net ([127.0.0.1])
+ by localhost (mail0.hostpark.net [127.0.0.1]) (amavis, port 10224) with ESMTP
+ id uyut2nYIzpeB; Thu, 16 Oct 2025 16:56:28 +0200 (CEST)
+Received: from customer (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.hostpark.net (Postfix) with ESMTPSA id 65BF2162C2;
+	Thu, 16 Oct 2025 16:56:27 +0200 (CEST)
+From: Christian Hitz <christian@klarinett.li>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Dan Murphy <dmurphy@ti.com>
+Cc: Christian Hitz <christian.hitz@bbv.ch>,
+	stable@vger.kernel.org,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: leds-lp50xx: enable chip before any communication
+Date: Thu, 16 Oct 2025 16:56:23 +0200
+Message-ID: <20251016145623.2863553-1-christian@klarinett.li>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 16. Oktober 2025, 16:34:11 Mitteleurop=C3=A4ische Sommerzeit=
- schrieb=20
-David Howells:
+From: Christian Hitz <christian.hitz@bbv.ch>
 
-Hi David,
+If a GPIO is used to control the chip's enable pin, it needs to be pulled
+high before any SPI communication is attempted.
+Split lp50xx_enable_disable() into two distinct functions to enforce
+correct ordering.
+Observe correct timing after manipulating the enable GPIO and SPI
+communication.
 
-> David Howells <dhowells@redhat.com> wrote:
-> > I have ML-DSA working as far as being able to load keys and check
-> > signatures in the kernel - but hit a minor bump of openssl not apparent=
-ly
-> > being able to actually generate CMS signatures for it:-/.  It seems the
-> > standard is not settled quite yet...
->=20
-> Actually, openssl CMS can generate ML-DSA signatures, but only if CMS_NOA=
-TTR
-> is not specified.
+Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
 
-If you want to test it, perhaps the lc_x509_generator or lc_pkcs7_generator=
-=20
-from leancrypto could be used [1].
+Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
+Cc: stable@vger.kernel.org
+---
+ drivers/leds/leds-lp50xx.c | 51 +++++++++++++++++++++++++++-----------
+ 1 file changed, 36 insertions(+), 15 deletions(-)
 
-[1] https://leancrypto.org/leancrypto/x509_support/index.html
->=20
-> David
-
-
-Ciao
-Stephan
-
+diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+index d19b6a459151..f23e9ae434e4 100644
+--- a/drivers/leds/leds-lp50xx.c
++++ b/drivers/leds/leds-lp50xx.c
+@@ -52,6 +52,8 @@
+ 
+ #define LP50XX_SW_RESET		0xff
+ #define LP50XX_CHIP_EN		BIT(6)
++#define LP50XX_START_TIME_US	500
++#define LP50XX_RESET_TIME_US	3
+ 
+ /* There are 3 LED outputs per bank */
+ #define LP50XX_LEDS_PER_MODULE	3
+@@ -374,19 +376,42 @@ static int lp50xx_reset(struct lp50xx *priv)
+ 	return regmap_write(priv->regmap, priv->chip_info->reset_reg, LP50XX_SW_RESET);
+ }
+ 
+-static int lp50xx_enable_disable(struct lp50xx *priv, int enable_disable)
++static int lp50xx_enable(struct lp50xx *priv)
+ {
+ 	int ret;
+ 
+-	ret = gpiod_direction_output(priv->enable_gpio, enable_disable);
++	if (priv->enable_gpio) {
++		ret = gpiod_direction_output(priv->enable_gpio, 1);
++		if (ret)
++			return ret;
++
++		udelay(LP50XX_START_TIME_US);
++	} else {
++		ret = lp50xx_reset(priv);
++		if (ret)
++			return ret;
++	}
++
++	return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
++}
++
++static int lp50xx_disable(struct lp50xx *priv)
++{
++	int ret;
++
++	ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (enable_disable)
+-		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
+-	else
+-		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
++	if (priv->enable_gpio) {
++		ret = gpiod_direction_output(priv->enable_gpio, 0);
++		if (ret)
++			return ret;
++
++		udelay(LP50XX_RESET_TIME_US);
++	}
+ 
++	return 0;
+ }
+ 
+ static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
+@@ -453,6 +478,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+ 		return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
+ 				     "Failed to get enable GPIO\n");
+ 
++	ret = lp50xx_enable(priv);
++	if (ret)
++		return ret;
++
+ 	priv->regulator = devm_regulator_get(priv->dev, "vled");
+ 	if (IS_ERR(priv->regulator))
+ 		priv->regulator = NULL;
+@@ -550,14 +579,6 @@ static int lp50xx_probe(struct i2c_client *client)
+ 		return ret;
+ 	}
+ 
+-	ret = lp50xx_reset(led);
+-	if (ret)
+-		return ret;
+-
+-	ret = lp50xx_enable_disable(led, 1);
+-	if (ret)
+-		return ret;
+-
+ 	return lp50xx_probe_dt(led);
+ }
+ 
+@@ -566,7 +587,7 @@ static void lp50xx_remove(struct i2c_client *client)
+ 	struct lp50xx *led = i2c_get_clientdata(client);
+ 	int ret;
+ 
+-	ret = lp50xx_enable_disable(led, 0);
++	ret = lp50xx_disable(led);
+ 	if (ret)
+ 		dev_err(led->dev, "Failed to disable chip\n");
+ 
+-- 
+2.51.0
 
 
