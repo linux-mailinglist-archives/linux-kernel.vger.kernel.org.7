@@ -1,78 +1,126 @@
-Return-Path: <linux-kernel+bounces-856684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55861BE4CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:17:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52600BE4D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE0C58663E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70DE58641C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD9B21CA13;
-	Thu, 16 Oct 2025 17:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8874D328636;
+	Thu, 16 Oct 2025 17:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPCvG9oi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WV09bS6a"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015D93346BA;
-	Thu, 16 Oct 2025 17:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7C223EAA0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760635057; cv=none; b=EDvHs5u1qOebGiRE9bXp5Jt7c7Hahrj0MumpL8NFinUIgD+4OQVqTnCXqoiQvaWYXjRFTbjIWLe3sD9l3lpJD4beDqE5kZ/nG1ITbZpt/FfM4KdTMLS9Q645Rc02WpbR+CcD05WqTwB1cWOWsUce7qhFt2k+TT8AGrBLwaodSEU=
+	t=1760635061; cv=none; b=NnoUVtGi1oTpc3CAbxUMAqucykg63aFBPy0LCmoFtNK0gFUuQALHXpLVDkCKH/EoZAoFl7xDf1PVi+uHnGeoC2iW1eNbvqg6Grr6J5NCYI30CtbNairlKip2EvAESJZCEKEtbiGMFtW806+0jk/7GA7wersbVYfykjT7ei82c18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760635057; c=relaxed/simple;
-	bh=bAw5Vwi1O/L5gr53AGhPFekj4RxGYL/VkVy01Lhm5yQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DhvhKCOXxG3ygRAGbot61qhiL9x17U6CejALujJn4cVrwtVGitaJKOh/+QSV+C03v4H193DTjHWvItqGlVajfDID6heEFWED4grECdVOcLvLYpN1W2LnoTHvH+VIdeJXl1SJ2rqUDhRAvb5lFAQjEwZHDgK/YhqsqO6hw2ZfAeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPCvG9oi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8248EC4CEF1;
-	Thu, 16 Oct 2025 17:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760635056;
-	bh=bAw5Vwi1O/L5gr53AGhPFekj4RxGYL/VkVy01Lhm5yQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=uPCvG9oiMq3az4xSrov+9rmwNURfoiI0NnBQGb846NIEbu/WrDn3fsEYWaMlUHsWT
-	 XZO/6xa8DlY4NiXrY8pLzwXxcYHgABhDOCLtgWdaolcY3yRk7ctBXZd4Gm3vyY1M/J
-	 FwhTeXr2AVCv0GSr/NEzdU1p/mS5xYTY32SXVo64qf7iGfZ1Pv664ulAn4yILCjn2z
-	 2C7fU0zKjzBkwxzW9h33oMda8cBse+KhFduw4ImonzdPd44W3fmX17p2c2mU22/0S1
-	 GNgnsqrY5ZYOto5/dUToPO85txRcHVZvOe2RsKcOOlwzz0ni/P2dBZhWtRWMTCJmLJ
-	 M/b8dTcEWqU7Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0D9383BF62;
-	Thu, 16 Oct 2025 17:17:21 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.18-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251016150328.32601-1-pabeni@redhat.com>
-References: <20251016150328.32601-1-pabeni@redhat.com>
-X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251016150328.32601-1-pabeni@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.18-rc2
-X-PR-Tracked-Commit-Id: 6de1dec1c166c7f7324ce52ccfdf43e2fa743b19
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 634ec1fc7982efeeeeed4a7688b0004827b43a21
-Message-Id: <176063504046.1828004.6913652083427884732.pr-tracker-bot@kernel.org>
-Date: Thu, 16 Oct 2025 17:17:20 +0000
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1760635061; c=relaxed/simple;
+	bh=OvIzTILdLjt0ZWBrFxi644wKZ7X2l/q7hdn6E8pzNOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=or4URZvVRbKk6yXCTTnrkzp+KP2gUg8HICiS1t6hYlDBv5MG6g/UIvjWRIZiqh+qPNBdVAjZR2KnnqJiwL4UJtgcYIMoOWiioUqy6DJpH6heXSHkOra9yeXs3+OFzHnTd3ewBenxz2XGLbySvCziE+cOFuV/Lqsp3T0VZRkmzhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WV09bS6a; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=OX3P
+	Eq2AA3O282TkfqGHD7Y5ojgHInOgKrAj3tdjeSQ=; b=WV09bS6ays1ysZQdJFcE
+	3LqxiBhwr76RZrIGeq3P7bP9hzjRrtoU/V2Ytv32HpwL0PQ4palg8udvjrOYHBYi
+	gjZXY1hyb+wlQFsuKvnoxXHuyu+562YQCeA2i25tYs/eqmIKpwuIP8gPSVkf+Y08
+	A3crt7gax0p924xvd815jM/NGwh23ej9EufSQ1ebQfZW2CJm5XLVIfYZTSsjDCSd
+	sBMdSmhaQzyFboEabtQ2umAW1NPdtqICoAXUZSsArkp/nRUNJe9QZZ/5pNaJrNA/
+	a3CF0inqdBTYNBTFPdEEsrTfE93DrexxJJx7zW63bWuuBDypmHJFwbttjpnvyqjm
+	Gw==
+Received: (qmail 3896430 invoked from network); 16 Oct 2025 19:17:33 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Oct 2025 19:17:33 +0200
+X-UD-Smtp-Session: l3s3148p1@E4nryklBcrcujnti
+Date: Thu, 16 Oct 2025 19:17:30 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
+Message-ID: <aPEoqkdatl4G82co@shikoro>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+ <20251015142816.1274605-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jv9t7icn7i4vlBOj"
+Content-Disposition: inline
+In-Reply-To: <20251015142816.1274605-2-herve.codina@bootlin.com>
 
-The pull request you sent on Thu, 16 Oct 2025 17:03:28 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.18-rc2
+--jv9t7icn7i4vlBOj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/634ec1fc7982efeeeeed4a7688b0004827b43a21
 
-Thank you!
+> +description:
+> +  The Renesas RZ/N1 ADC controller available in the Renesas RZ/N1 SoCs family
+> +  can use up to two internal ACD cores (ADC1 and ADC2) those internal cores are
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+ADC cores?
+
+> +  handled through ADC controller virtual channels.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - renesas,r9a06g032-adc   # RZ/N1D
+> +      - const: renesas,rzn1-adc
+
+Do you know of other SoCs with this IP core? If it is only RZ/N for now,
+we could go with const for N1D. All other N1 variants cannot run Linux
+because of no SDRAM controller.
+
+
+--jv9t7icn7i4vlBOj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjxKKcACgkQFA3kzBSg
+KbZBTg//XP1NxCTl2FOwgzhHQbgD3sYnBcvNepzdoiScf+9sZ1VZqzIHym2uQ8SO
+xymT1EMucboG47Q32jH4jrUY4TZhhRgHO5EqXwYtXEtaaBzkZNmnYSeY7vBEFwC6
+qJpam+NldppA2iCtBieIYPpFtsCOkNqazBVhr1X1FwNgWKOVaIIqaWvXV2Fk6aSz
+/l0ADNZBjPt9t431KUiuPlmgybJnijDOmaCI+E47vTekhfDynWWuqYFyRujNSa1X
+IYWFkdwUNvCntBxmtQwxYrbDaaFp+T1YvHQAwruyCFHPL1wQTtFPLeGgU83xFaNd
+epAecZh6zk88veIU2Q+y5CdNuwb3idFueNu4i9KElBXpmjROLdqNmb+KMUGUHLxR
+F15jkCEK+vqo0qZ/aqLCW3a5QW1OEM7EHaL1/ayE0PN3sAi/Galeig8we1ngWh0m
+Z4C1jdPrS0IAgVjCqXZGMiJ/WO5o/tpcZaXipcy6ioElUQurOaOASfORrNKxAZWZ
+6V//R6F+UV7TSnQSmePZhoJze6xgJpyLQdjgoqKgv61yVLzgYdLncJmoawPGISaW
+Q5XzVTubp/6JVVLGhoJIQ5efW5AZ4PLiNHaWUiDa57uLDdMiuKjDIVTzid0cirM/
+bUtTuwZgpf1VfPCcXYPCUKHj8CxqGY0p6sITy5M+UXvGG9eikAw=
+=5LLJ
+-----END PGP SIGNATURE-----
+
+--jv9t7icn7i4vlBOj--
 
