@@ -1,141 +1,180 @@
-Return-Path: <linux-kernel+bounces-856560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECD8BE47CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:12:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AE5BE47C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 420574F8D12
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7287718873D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460B932D0CA;
-	Thu, 16 Oct 2025 16:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4932D0C5;
+	Thu, 16 Oct 2025 16:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TcJc6Nkg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZRO9mP/8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f4I884pQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9DA32D0C6
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DDA32D0C2;
+	Thu, 16 Oct 2025 16:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631124; cv=none; b=riU1cIzKyp18/UpaD5hjUqDNCTxaUt2YYSmD6M5Xtn5XNz0rkSYWCKW/4sb98QiZik5KU0anZkfwKiERshkQ6HqI0q/MWNSPyjM3BzXv35Md1Uze6zxR/9sYxZeBnPT1kGV74KrM6x3aXZb/n2grPPuH4iGaQajOvKRZ8wztay0=
+	t=1760631150; cv=none; b=XnuQNuQBUx63BOZ90G+iG0+51bl/rlBbfEAZewDqHtOxzR5ENn4Xbltc7455CUnZ0g7ZI1oeZ6G7BsZYklBKGtUtxVyj6yRGSzLx9g47JWSAoibezE9rG+naADeHwhuMclzRJ6vCvf75C1DcVDZwuVe3kp7wA3j8H1VcHxB4AfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631124; c=relaxed/simple;
-	bh=bKJ3I/p2e0Vh4IFYAmqyfM7NJoRWxLa5VofXn+LHCDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uig+4D7WXsYdrsBMkW7oL4y/ep1sIxE/JAht9vWB5QLjek3ya20ToykzAsMJ7ysz3sau0HPnMjz5Oos/lPxaIhNa87J/Of2wswalnCrVTSIYJDRsYS46VgZTplkF32/BiwEGBtZpF0hw9s0EGZrUf4BLxjTrmT+ZbnquVdORLTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TcJc6Nkg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760631122;
+	s=arc-20240116; t=1760631150; c=relaxed/simple;
+	bh=XW6k3Gcar3ovV4dpcje4zQ2uk6r9dgawRYEicfegPf8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FKdPHytYTLsW3hIrgNp4F8pKxIrZd0WAXphkqPHQo8AzMsMAZFvnw94EORAIDHSIbtiLqOhJBoGXyLNt2pUh+C02NRy5twjSjiUt2mM54oxwh7jmXcdDVG+OI9OXCsnOUNDl34zpRSV1VeMuccIUDs0Ca0aO5Htnoa84yy0mk/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZRO9mP/8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f4I884pQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760631147;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ACAqVbHWeoat6K3HL1ahrRzqT6qreY6/QV4aq1RfvOI=;
-	b=TcJc6NkgkaIaNbc5VIw4/336yBy61vzpKJihqxik6DD1LyElysfG8Yorvc5wRoVlJSjp6v
-	k//7p2fW7g6jm6LAy2RGolWROLiQOCNGYHfV2mK9crx9wcHXc4oET/uVl0U/64t8ZfsdZq
-	ov7ZVRHxwLVks3TV/pn2b+Cl/Fodyfo=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-HH_Wd7wpPzW5RPzT8s4vDw-1; Thu, 16 Oct 2025 12:11:57 -0400
-X-MC-Unique: HH_Wd7wpPzW5RPzT8s4vDw-1
-X-Mimecast-MFC-AGG-ID: HH_Wd7wpPzW5RPzT8s4vDw_1760631117
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-78e5b6f1296so29519166d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:11:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760631116; x=1761235916;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ACAqVbHWeoat6K3HL1ahrRzqT6qreY6/QV4aq1RfvOI=;
-        b=FK1K5pmFhnyRgszMK0T1BB0hyf8bf4TAdRl8IF13j7MREKB0GWd2DgPejN0+KN2xPj
-         IpllyWG9aB4rBQbUf2jRIKCAvl9NRG85rDJT1OSJDnCXKOwsxbaCrWRbGUHFr5Xj6dFC
-         uqyg0jsEOJ4oBW0jR5DRiD9sMKLbzuK3/1beoJc2qQpQhYNSYtKDGKSONm2MvrxgpWHW
-         ZHmyJv0ZOo0j6ZsmAIMRX/Qn6L7TuHtURIcJ2k6wtcjw0X+uF+riH72/Kfq9q5A0Ndag
-         RhWxPWHup6Ww8SR2nZhHFcCjuZABoVcLlqBqVPHfp5FAOTE7kisCWKUwpkWVGwJ7d3Z+
-         unBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxC6PCgal7wyJTx/f2jhX1esIFTYK866BB1AOUOABsECmHHPCYN0nBE5Tr4ctqzEyA5JRJUCYoaxQA/dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUA/vmf2C6tmHVEZP9X0nG9ULYBQGqjJxjNjw4JHyX67SsIP9s
-	gfNeGODZcD295ShAVZWTzTmR1Q5DMiocIGbjERTBfsXA/QwXJnKWwtL1BkL5FGT4vc4iVnn+63E
-	jwgOx1yy+N5VdzjoaPRkWIxBRPLKZBM+pxx+EWrzGkGRXGST5GHosNNjPlCsFZ2t+GxBy4rZcnQ
-	==
-X-Gm-Gg: ASbGncuDF6ebGPeHulnf2VBmQd5fUWD2RJYvNB1LYtusAKhIYP7yhqSIYJJZkkWa+ye
-	qKOY3g15jtJIdVz8KnyME1XyRm0ZocDHC+tnB7E1EXkhEntd6NAwKikf2Pz9tUofUFcMG/KVjsG
-	PsKB1Ujwc5XzsY4KLPHP9XyJ/tjoCEitGLy6JKMp8/QXze2IsShJ+JXUthdavFtAgNMJTI8dqOn
-	J6vgxFzAomkoEZsqv4IfLcteo0aoYMzQkUCb8pxlASPxqDl3Cu/e3NAiHlPjIhej9uNLxwShR4c
-	pD/dJj32Ue6+snwEhveEsZpEmOUG3v23TjABBHxrqgEzj2KTyXVYKbDu7H3gtWlIlt5xkt0zEs1
-	bLfm7heeoY4g9ASR9O75IvKlgns3KpkW0pZ/8Vy56NaRNuI8pTZyVqCC683E+YeaxGg==
-X-Received: by 2002:a05:6214:319a:b0:87c:20b5:6685 with SMTP id 6a1803df08f44-87c20b56795mr9221806d6.55.1760631116553;
-        Thu, 16 Oct 2025 09:11:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3K3iFq5m/T2G5n5k1Ub/AwaYH7OwwIxLCZt5EEaLCKub8NnH0J3P6LhBuV98s17jbVOVRfA==
-X-Received: by 2002:a05:6214:319a:b0:87c:20b5:6685 with SMTP id 6a1803df08f44-87c20b56795mr9221106d6.55.1760631116071;
-        Thu, 16 Oct 2025 09:11:56 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c012b4608sm42179536d6.58.2025.10.16.09.11.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 09:11:55 -0700 (PDT)
-Date: Thu, 16 Oct 2025 12:11:53 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Iwona Winiarska <iwona.winiarska@intel.com>,
-	Joel Stanley <joel@jms.id.au>, Maxime Ripard <mripard@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from round_rate()
- to determine_rate()
-Message-ID: <aPEZSY6RC-UVclxN@redhat.com>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
- <aMatZAX6eFI1RmDH@redhat.com>
- <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
+	bh=EimfC5YBQZ0kq/Gz52aWdB6vLjbMGcafw2nhUU8MVtE=;
+	b=ZRO9mP/8ehCkUpZqmBe1rgk54JZHc29ccwtTz5j954OrVqClG6R+uVRDYkbJp7hC1gdJJZ
+	y5PEOhujG1srTiKm+IOooIdhhs0kUZTBg4no06GdwWfYS9c5mWtbD/4Vm5ajrzxPau/bM9
+	9V1jlggPXINSOLbxqr8l4O4HJFubXNqMmKD9mxQ4/xIWvOz1XaQ+GtxT9E4rcZGj2ur6Ob
+	wSufpZsQHWCSIZlhRNhxoBXc712/TuEeRpyRjjoavVOhCa2rUqh8BW7FCpL+7ZOryAWmxx
+	AoFp07wqU0/WHcI9Qum/mmpesYmxTEZ1yG++4KX20YvDIBCM3mP0+nBORDZNSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760631147;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EimfC5YBQZ0kq/Gz52aWdB6vLjbMGcafw2nhUU8MVtE=;
+	b=f4I884pQCh72NrW5bcmy4HgTPvI5ho0GNW8nxlBno/OTw1sTWSsWqoRojjYlPDOcm2wPbr
+	9w2ELHaEq06LBtBw==
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
+ <alex@ghiti.fr>, Vivian Wang <dramforever@live.com>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, Zhang
+ Xincheng <zhangxincheng@ultrarisc.com>
+Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
+In-Reply-To: <CABe3_aGj68qM1bNZ3LExbexO=9FO4RzJxhUy2T+HKK1qZfBmtw@mail.gmail.com>
+References: <20251016084301.27670-1-lzampier@redhat.com>
+ <20251016084301.27670-4-lzampier@redhat.com> <87plan0yvd.ffs@tglx>
+ <CABe3_aGj68qM1bNZ3LExbexO=9FO4RzJxhUy2T+HKK1qZfBmtw@mail.gmail.com>
+Date: Thu, 16 Oct 2025 18:12:25 +0200
+Message-ID: <87ms5q25cm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew and Iwona,
+On Thu, Oct 16 2025 at 11:54, Charles Mirabile wrote:
+> On Thu, Oct 16, 2025 at 9:17=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>> > +static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
+>> > +                                     void __iomem *claim)
+>> > +{
+>> > +     int nr_irq_groups =3D DIV_ROUND_UP(handler->priv->nr_irqs, 32);
+>> > +     void __iomem *pending =3D handler->priv->regs + PENDING_BASE;
+>> > +     void __iomem *enable =3D handler->enable_base;
+>> > +     irq_hw_number_t hwirq =3D 0;
+>> > +     int i;
+>> > +
+>> > +     guard(raw_spinlock)(&handler->enable_lock);
+>> > +
+>> > +     /* Save current interrupt enable state */
+>> > +     for (i =3D 0; i < nr_irq_groups; i++)
+>> > +             handler->enable_save[i] =3D readl_relaxed(enable + i * s=
+izeof(u32));
+>>
+>> This is truly the most inefficient way to solve that problem. The enable
+>> registers are modified with enabled_lock held, so you can just cache the
+>> value in plic_handler::enabled_save and avoid this read loop completely.
+>> After claiming the interrupt you restore from that cache, no?
+>
+> You mean touch the other functions where the enable bits are modified
+> to keep the cache in sync so that we don't need to do this read loop
+> and can have a proper set of values cached?
+>
+> My concern is that this obviously has an impact on other platforms
+> which do not have this quirk since keeping the cache in sync would get
+> pushed all throughout the driver.
 
-On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
-> Hi Brian,
-> 
-> On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> > Hi Iwona, Joel, and Andrew,
-> > 
-> > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
-> > > The round_rate() clk ops is deprecated, so migrate this driver from
-> > > round_rate() to determine_rate() using the Coccinelle semantic patch
-> > > appended to the "under-the-cut" portion of the patch.
-> > > 
-> > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > 
-> > Would it be possible to get this picked up for v6.18? I'd like to remove
-> > this API from drivers/clk in v6.19.
-> 
-> My (strong) preference is that Iwona applies it, but I'll keep an eye
-> out for any unusual delays.
+The irq_enable()/disable() callbacks are not really hotpath and caching
+the bit in plic_toggle() or such is just not measurable overhead
+compared to the register access.
 
-This patch wasn't picked up for v6.18. Any chance this can get picked up
-now for v6.19?
+>> Now for the search and disable mechanism. Of course you need to search
+>> for th pending interrupt first, but then you can make that masking loop
+>> very simple by having a plic_handler::enabled_clear[] array which is
+>> zeroed on initialization:
+>>
+>>         unsigned long pending =3D 0;
+>>
+>>         for (group =3D 0; !pending && group < nr_irq_groups; group++) {
+>>                 pending =3D handler->enabled_save[i];
+>>                 pending =3D& readl_relaxed(pending + group * sizeof(u32)=
+);
+>>         }
+>>         if (!pending)
+>>                 return false;
+>>
+>>         bit =3D ffs(pending) - 1;
+>>         handler->enabled_clear[group] |=3D BIT(bit);
+>>         for (int i =3D 0; i < nr_irq_groups; i++)
+>>                 writel_relaxed(handler->enabled_clear[i], enable + i * s=
+izeof(u32));
+>>         handler->enabled_clear[group] =3D 0;
+>>
+>> No?
+>
+> Sure that would also work, but why are we using ffs (slow) only to
+> shift the result back to make a new mask when (x & -x) is faster and
+> skips the intermediate step delivering immediately the mask of the
+> lowest bit.
 
-I'm hoping to get this merged so that we can remove the round_rate() clk
-op from the clk core. The clk maintainer (Stephen) mentioned this work
-in his last pull to Linus.
+Because I did not spend time thinking about it.=20
 
-https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel.org/
+> As for making another caching array, I guess, but again that is just a
+> time vs space trade off with its own invariants to maintain that would
+> also impact other platforms.
+
+It's a pointer in struct plic_handler (or whatever it's named) and you
+can allocate it when the quirk is required. The pointer is definitely
+not a burden for anyone else.
+
+>> Is the device B interrupt preserved in the interrupt chip and actually
+>> raised when the interrupt enable bit is restored or is it lost?
+>
+> I am not sure how to verify this other than to tell you that without
+> this quirk (i.e. trying to use normal plic behavior) the device does
+> not work, but with this quirk I can boot to a desktop with a pcie
+> graphics card and storage, use networking etc that all obviously
+> depend on the correct functioning of the interrupt controller.
+>
+> My reading of the spec for PLIC also suggests (but does not explicitly
+> confirm) that the pending bits function irrespective of the state of
+> the corresponding enable bit: "A pending bit in the PLIC core can be
+> cleared by setting the associated enable bit then performing a claim."
+> (page 14 plic spec 1.0.0 [1]).
+>
+> This sentence implies to me that it is possible for a pending bit to
+> be set even though the corresponding enable bit is not, which lends
+> credence to the idea that the pending bits operate independently.
+
+Looks like that. Please add a comment to that effect then.
 
 Thanks,
 
-Brian
-
+        tglx
 
