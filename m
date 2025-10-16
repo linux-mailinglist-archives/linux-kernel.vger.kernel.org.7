@@ -1,267 +1,545 @@
-Return-Path: <linux-kernel+bounces-856889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5BEBE5569
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:13:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46D1BE55BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D46FF34F435
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E868A5E175A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98B92DC77D;
-	Thu, 16 Oct 2025 20:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A42DC79A;
+	Thu, 16 Oct 2025 20:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sophos.com header.i=@sophos.com header.b="Ea57FN4m";
-	dkim=pass (2048-bit key) header.d=mail-dkim-eu-west-1.prod.hydra.sophos.com header.i=@mail-dkim-eu-west-1.prod.hydra.sophos.com header.b="8MAr96DB"
-Received: from ix-euw1.prod.hydra.sophos.com (ix-euw1.prod.hydra.sophos.com [198.154.180.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSB2odci"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC682DCBFA
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.154.180.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760645605; cv=fail; b=NLszV3TxrrupSIOVkkyhPDVWNrGMH/Wh+lW2y5ICETJI8Uk358Qs+9uBVvsjwfuTWnYVH6SbdqgNyw3PgmzLsLpws/huwUOhSVs3IfKboYqp+5P9QPVJbmpOZV+BfzBqyIuaH0JGQ2m9BYizFZnnS7ig0xpmUQQa5/PYRS2OpPU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760645605; c=relaxed/simple;
-	bh=8MrXXrNObezfHsLD/3/h9Udr06998BYbHf+B7T0UZzs=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cVJeRXZJ9FRzmw4i/VDO/XFyswhvY+b+YhEAJDV1M5HJI8uR5PBqkeqTKWJsDQ989xW4tlPoNGn1DCdleJsvzXhSwbEfkD1G9lEPB43m4UxLbBLX9lnW3Ni0L2JTvJE96Lrvjgv3mMqlQ4fZx6EK6XfUL4l3LAzp8O/LooTBlls=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Sophos.com; spf=fail smtp.mailfrom=sophos.com; dkim=pass (2048-bit key) header.d=sophos.com header.i=@sophos.com header.b=Ea57FN4m; dkim=pass (2048-bit key) header.d=mail-dkim-eu-west-1.prod.hydra.sophos.com header.i=@mail-dkim-eu-west-1.prod.hydra.sophos.com header.b=8MAr96DB; arc=fail smtp.client-ip=198.154.180.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Sophos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sophos.com
-Received: from id-euw1.prod.hydra.sophos.com (ip-172-19-0-187.eu-west-1.compute.internal [172.19.0.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ix-euw1.prod.hydra.sophos.com (Postfix) with ESMTPS id 4cndXC0k59z4vS
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:37:47 +0000 (UTC)
-Received: from ip-172-19-2-8.eu-west-1.compute.internal (ip-172-19-2-8.eu-west-1.compute.internal [127.0.0.1])
-	by id-euw1.prod.hydra.sophos.com (Postfix) with ESMTP id 4cndX40MfMzKm5F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:37:40 +0000 (UTC)
-X-Sophos-Product-Type: Gateway
-X-Sophos-Email-ID: 1381e34921e742ad833d3b242d1464f7
-Received: from LO0P265CU003.outbound.protection.outlook.com
- (mail-uksouthazon11012007.outbound.protection.outlook.com [52.101.96.7])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest
- SHA256) (No client certificate requested)
- by relay-eu-west-1.prod.hydra.sophos.com (Postfix) with ESMTPS id
- 4cndX24vCnznTW9
- for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:37:38 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VtbCbJKjy2I86U4dutXjSlKleiEA2MsihpFgfNZp4KyS4dCSDr8uFS5W2v2DgwFJaWfwJIlJtEHpRNpBlwul1Vqvgv1uDVN6kmSk3YAB/eshmL+UKmAQ1n0hLzefUla36sTro8HnQ911A+6uKzhyoSumBNrZ66zfMUg9CCDrQdP3TmbuZ0yv1k3bdEO1o27N/wl4JoeSBCHHp799DESjAqEvTglYyXXHkvp1M0ELw4Tj0w5Nkhk5k+SlUl00muWLnijPBE5ncYi4pW68lrCwqhgCyGuJihUnTuRMw951Vj5Xg23zR+AVimVIf1hn+n3zG0Vt7S7xRIa/kjS8C1rQ5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YHW0pSLbhCBZtCKN03AB/5ABmM8CywF10ilDtRRqCrg=;
- b=qH4zA7fabheVWWs6zBlL3fN4mXnT+mq11WmowoMTuuc2/J+4JXUUHCcmZstCgJgL4RIeGsHa17E1nKzyK5pXl23oufu8qDfHYzcQ8WP3r9H2B4/QobRSN4FMPOsvVYExkVoWhXMd/2UwgsqXUg8byHC9de+r8oqROiT/KDN14WeN3MlQ1DR0+aJoPbHzkxma3lKEuvpuNay8BtS87Z5vDAOt/rxTsxTvfKo9KPLw43ajOolXr/jU9k8dtDjT6HptA9Vvt8B+7xe3kkRJPiTQ3eeNDkxf770vDToqR4LjZhWhJL4FtOmd2qC5i3y7JZxqI5ZgJ8K3sEo3/6hYpJTMBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sophos.com; dmarc=pass action=none header.from=sophos.com;
- dkim=pass header.d=sophos.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760643456; 
- s=sophosf69f0521910d49beb03f4ce823e25fdd; d=sophos.com;
- h=Content-Type:Date:Subject:To:From;
- bh=YHW0pSLbhCBZtCKN03AB/5ABmM8CywF10ilDtRRqCrg=;
- b=Ea57FN4mYPkinjNjdxcQGhAjTAiyB8+yUDOry0QlHioXHuXJMFdmGG6LkNF1PiZi
- A+WdpfIyaACvgLevQD8QY1lffSOxbyOXN1BlbcsD+lphjKnxSgyaBuAgaum2bCd1F5G
- IE/J8iaE3JprlpuI4vbrBrMyaIcBohOA0qjev4BxanfwuVygvDu7I0cNJhkngcBSlOQ
- ZhLpo3WYvBCTTsws8/ptjVZc8cqoxnm3MZ2ys8/M4RBryW1Cfd7p7IaHlk7EmJQFAsc
- aKKO1v9qglF+MDS9iPDkhoQuk9Yz82thrug38ojUVUgO59BNiTW5c5mK+JtO6cPJe5k
- sKVC3Vn9Lg==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760643456; 
- s=v1; d=mail-dkim-eu-west-1.prod.hydra.sophos.com;
- h=Content-Type:Date:Subject:To:From;
- bh=YHW0pSLbhCBZtCKN03AB/5ABmM8CywF10ilDtRRqCrg=;
- b=8MAr96DB4WLoh3dYIyon0szD19izU3FBNx0SVNLgODBKOWRI4ObcD6bBW2//SKCK
- w2x+eYHLeouA4ZuZqlaZGcrklWuIAkqqyZejLhSYkFbnShR1j3/8z3N9DfJHF2JmYJc
- IrMWmhP4lRHf90YYHcg1nMlaZ1jrEYvpBRICZLI+dW1jMBNj80DvIt21h7MvVsgkYOh
- aGba5M8qdpCQ5D/q0nR2kebi7cK6tFKvAM2I3gNGne/vAKZVpxQjPw64bovfFwrscyT
- ttONrp2SH9lyPlUlbkcV1zHXlHnBDGUkuz4UAhmyys6/36P3UHzMWZOG5GdmBsZ6+dA
- w2kpFSG92w==
-Received: from LO4P265MB7392.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:348::7)
- by LO9P265MB7476.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3a6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Thu, 16 Oct
- 2025 19:37:36 +0000
-Received: from LO4P265MB7392.GBRP265.PROD.OUTLOOK.COM
- ([fe80::7d07:57c3:71:cbea]) by LO4P265MB7392.GBRP265.PROD.OUTLOOK.COM
- ([fe80::7d07:57c3:71:cbea%3]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
- 19:37:36 +0000
-From: Elison Niven <Elison.Niven@Sophos.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: x86 : Slow read/write from tmpfs after major kernel upgrades
-Thread-Topic: x86 : Slow read/write from tmpfs after major kernel upgrades
-Thread-Index: AQHcPs1imhZG6/ye/km/VfhWFiSULQ==
-Date: Thu, 16 Oct 2025 19:37:36 +0000
-Message-ID: <LO4P265MB739293B94D911AE33A496EDFEBE9A@LO4P265MB7392.GBRP265.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=Sophos.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LO4P265MB7392:EE_|LO9P265MB7476:EE_
-x-ms-office365-filtering-correlation-id: 2019b1e9-1ca4-49f5-5b22-08de0ceb75ae
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|10070799003|1800799024|366016|38070700021; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?TSIXXih8TSya73VG3jiFisnDyTzveRU22fA5Zb6ipdc9sUq+FNpvMW2MrU?=
- =?iso-8859-1?Q?Ic4etBbGthVnZ/samMlsakAIad3ijTm37BnOUCBiMnxEEDkm277HxJ0Cyd?=
- =?iso-8859-1?Q?VwP8U/MIuZ84LeDsvpbcn2V75aMosOUI90BLtafnoSxqkQR3+kSho/AaAN?=
- =?iso-8859-1?Q?Bd0Cp7Q1Xkpwkkh78lIzPMNQfwUExDIZ/DwaV2isqJOeU4IiH/ffbZwNL4?=
- =?iso-8859-1?Q?aYo61IkwLrguUwGd2hpC1kgVTeaZjQ4uC0mCjfN10JbDQSecLdqQDDLjHn?=
- =?iso-8859-1?Q?UWpXKQL0W+a5QP8Z8EIv2uRLoyFYfispheOVQ0cmXmsadtXMm5rZcD0UGX?=
- =?iso-8859-1?Q?AAkhTAHmPuWM8MNz+YfaIenxEYRE+Y8v49J2nFRxz6d+NSfrYrW7znUZru?=
- =?iso-8859-1?Q?y2nWjmkZd3Xoc4sXCKxYdaUp40smL8i5Y8uT21WJdL80AlLgOsx5fdZai9?=
- =?iso-8859-1?Q?Ar81bWeKoZv4vg9r5DXbl98RiEh3f9N5J0zNtCo2QHuY6zeOR4SK8ssLEB?=
- =?iso-8859-1?Q?V9/1CqEmbvjiqPHmDidwwmZ9XdbN3gC17j7fD6p46ksUDWp0nY7mnoVD2P?=
- =?iso-8859-1?Q?M3EqtHUW8rklWVlLSCrc6lBTIKwAvuXf4xAT5O8J+u+gzuxTrRTiKUX0HI?=
- =?iso-8859-1?Q?UpeoBA5zWTwVOxGEqT7GKhM9o+hbPwQR71HcPskHIUiJkyGCPHyjM4TLD8?=
- =?iso-8859-1?Q?uyrLozkYJM4y0dLsW5une3eInbq4JJ9wH4pNCJevXTsGE7P2Lm8gg4Qzqe?=
- =?iso-8859-1?Q?a5CleaFMstxuJjsvvJL9BFSAVmmqPkoTntmGpy3bgjFRgTN0MBhjxJdD0F?=
- =?iso-8859-1?Q?vqyReZlWhxKU9hosTay4wK9TybhjaIoXk2cccjDMzbPlZF6AlMC7/qCtlA?=
- =?iso-8859-1?Q?CjfHPUpoRTn0HR7Kn4/DK3VyMA3jkju/dwb6TrhsWTwlxRbrMhClg6Wqgh?=
- =?iso-8859-1?Q?dYcQD9cj2PtK5VnGjiTuumj8A2bLzQrHP7DtPPdlDwlP3AiF8RSHIiYiV4?=
- =?iso-8859-1?Q?ElTvx8ewrtatbB6Gz8emrNO99r/XipbIE6x/UUZZYcXhLljqL1jQZ7pOFK?=
- =?iso-8859-1?Q?QpB2UC9UWz/pqCtMr7VsWkI+dx9FHaJxX79IU13GCAJ4o2fZ9gO7t4Fs3d?=
- =?iso-8859-1?Q?xc+lKKOvrSUCghuJyiSust+OwZbgtikb6QXXWBia3/t8cNZiGRVO2rZM03?=
- =?iso-8859-1?Q?2fWiG05rBE4mwG3+M3ge5hMgtOXl2NhluIRmhXFhPN89VSA/DS6E/8CYuv?=
- =?iso-8859-1?Q?LbV1Rm8pEXa84dh5zV6T+fa1wetffvKMctwcvnC2P+vZIDB9N0YUZoZt9t?=
- =?iso-8859-1?Q?KL3zkYI8POefwxe+M6A1sSDoX9l2af5TSLoF7VKulVbp0RMdrBe13rIpC/?=
- =?iso-8859-1?Q?lPzMeyVxA9VyONCKF2iYw2S6rlJxcmEML9o4G4UzbhvHvttmYIlItuMJQv?=
- =?iso-8859-1?Q?/XNkW87Tqhey3Snwjk3NpdoTxKp/qkbu7tyxsCdpWesG1NFIzyANWUQmP8?=
- =?iso-8859-1?Q?xsd/sNpOpYpegTaRCqyeCAkZU+BKKcAET2Q+u40wGppq52GNElNx34XuPT?=
- =?iso-8859-1?Q?4Bt+l3bzLY7Lma6aY8WA6jVeba8L?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:LO4P265MB7392.GBRP265.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(38070700021); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?2HeuIjUIWyD+aK5nzmIy9aM+A1LVs2gCmxedNbAq+9iv/MahwzeOM4YLMB?=
- =?iso-8859-1?Q?yIs77zOETFF/2Ekl1rfX5pNYlCUxexj6L1Qq3oJ6paoqLq83Ni6qOpm5PJ?=
- =?iso-8859-1?Q?wmN86tIYt/2hDSB284ffvPoOuunwLvAQJ6VB/jUyVwVSe0Cu/d4ztkN/79?=
- =?iso-8859-1?Q?Ykk8hWB6jDuU0D+8k2NrQdXTkvaF+YlaCjkSpKwg7AAaO9JyjGNH3/njDu?=
- =?iso-8859-1?Q?5E75b8Yt7iVkrOeeksz1O8+W8BcWTOmp7T2umkDuYzt9va38Vh03+gtEuh?=
- =?iso-8859-1?Q?4zz+C9sMXTMM1v3yt88T86fDwTXnOCpnWdrZfLpd35rZ16mxu7fYwISDu6?=
- =?iso-8859-1?Q?gwbEV/hyBTZqH8JJkrQyiGVVTbcmy0Ppc61RuCfF82wqEulDR0/+wCHCnY?=
- =?iso-8859-1?Q?vjGx+FBNnCnXaXPSGZwcFZgrBeVII3Q8aMTrYp5vIAUSaII8foNLjtKpU+?=
- =?iso-8859-1?Q?d7eBPpd+lSQLCA7PeIgg/g1DO8+kCKoIX8uYwkzp7osGyJThX1AHkoytt/?=
- =?iso-8859-1?Q?kP6mQ1roy7x3KpZgR5hdXu+Wn1HSxhnh3goU2E0YWLs/F+eek0xMwPEo9j?=
- =?iso-8859-1?Q?RVcLfTXHMLtMNkI5xen0tt5fYJv7IhMY9IwhSzQdm7/amnNMANKJK9QEKB?=
- =?iso-8859-1?Q?2etH5GCSPVJgdWzLHnyxsWayRsMx2yrrSRAH+obnjtxRy5cAb9d3+yXqDM?=
- =?iso-8859-1?Q?vrKkNePT2M/e4zH/NIOaKQFrGlndDFTM2yxgGw0lnPFbBXy3Z5si8J2Zx0?=
- =?iso-8859-1?Q?RXz5k1Ven6Ix3loi921DfFcjThan2IZ75/yKFELoTSAB5ZrvPAFCZEeKIg?=
- =?iso-8859-1?Q?yjyKMj4aRmrnF9UH3N1HgWgA5RCmRBI62Ccwb3rE5YkYTLomRmvWkfsg9W?=
- =?iso-8859-1?Q?cd4lk4rKKpnEUnlVoAnDvgTiBXZzgN9RCYd3KKDIBebdVkO+JC4w7YyGMK?=
- =?iso-8859-1?Q?8KnWgiCuV6zMTyNmshkAou8Qfbi/TX1JLmH0qiZl56o3XFHmHK2NlHtdUn?=
- =?iso-8859-1?Q?4YCeGnFIAmsPyMgFqJJNfv1WY5dlcE0OnCkfRr+d6ZoTRJa7DONQ1Pytq0?=
- =?iso-8859-1?Q?g0MqeVMHk6cboiINNjsfEgQaJm9YVmZ4L1GheoeLtFQsxsWYx+FZupqeOB?=
- =?iso-8859-1?Q?U94D26FgrXWEz+vyqEy+6VZVYFvcT1vQPAwvLFKSkaTFL7e9HgCli0wNQ6?=
- =?iso-8859-1?Q?iyEE7CS9mrfLPN2z7RP3UwjHMmkZMnuDCSyZtBQDR8btJEMYouyzbX+iYF?=
- =?iso-8859-1?Q?ivEhrDTu3+zMKovZ/CLyEUxEF2rKIC7FunXlOTaakW0jsoZmc2ld2C4tMc?=
- =?iso-8859-1?Q?EUxw9k8w11ZheMwHMi2dyHcOkPujvtN30aai7VYf8d6stSA0U6mCPLvzno?=
- =?iso-8859-1?Q?ww2VEP80vNdvcezmjumICCRjYMB0bE+g6MrgLCiUQynCtvby9l4m59mpzS?=
- =?iso-8859-1?Q?NvhB1+H2U4F2OZS4Qatg1RbBQ4nbH0rqktBtQWBmXOq65HbQS0zps1VSaJ?=
- =?iso-8859-1?Q?GlbA/MUlv8CBOt9Om8NwnIx17R9S8FfHCAkShl+Y4/qYcCdXi79arAvxnY?=
- =?iso-8859-1?Q?+63mdYTUWgfoEBP23dUZfGXP8FNMp7iPMY2Q2WFGoyCccBuGJeD9ArgZ+n?=
- =?iso-8859-1?Q?GEoCka4Fgiu4wtq40t9kHftHoduSnMXSw6vTbhgkhfw5je6tmtkMGKY0aM?=
- =?iso-8859-1?Q?5cOZBrASajppOcXO2vtyRCNX/toOcrNHNo5m18sC?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F3D469D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760645993; cv=none; b=U5D6jpFalP9gaXn4b5KEBE2Q4djsYVY3JL59LnJhqtQzT8LXXryay989rPdPAGaIBSQzJVaBON0NqLmZ3BiXbVUa2ogM1novl2dUevEXQDjvF09SkDGEWR81uP+7NmVxRzJXWJBItHUH9r7v1PrYb8sfl49gjVnfEzpasxgNiVQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760645993; c=relaxed/simple;
+	bh=Z3iyNrYbhzb9hFJanwhOMu/EtVrKnsj4KculgtjehTE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LtpwNjXkBpDAm+dHgdLCalOy4Bqc5D/nV/4UcidVKzAUfEoT9qCmMRzBKO/hMs0xDzo5upq5Q1ySq9eYwAFCHcQz1vdfWTe1wyCeXaD170TPr/h/FwK+YUNVa3Wx1/Sy+TxCIn/VZeOMGcE3x+YV3sPI0fp0pW/GIRDuzfjQMAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSB2odci; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7810289cd4bso1174805b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760645991; x=1761250791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+av0HPtEwSTsOCuSUQdK1ftanNeIM9GRj5WV9WejZ/s=;
+        b=CSB2odcidoLLIq9XgNL8vL7kBCaGukr6QsXzG8ywOaeTLrLgDkqRZtcoSQjoXzRBd4
+         5h5D43DXwHVV4fbJPbHqvKptYEik84jgsddbkt0albmIcxAyL+TChXDwiQGwdZ8UgvMW
+         m+mBO3yFmjQTIZBt48xmaVbSin4F34gkS1aRbOpTQ4lMO1FI0sRGfhFQj8QTj9ccyzy9
+         95TN1fB/mfKFXwwHtgev/jnaxQ5eaZHz1H4vJ2kQ32stlPM+HmhGWc2IURuD8nc6ySXQ
+         WM4xf0/fDFyTjUVld7bb80Jjyh+dO8+Dmj9CsUw6X99OhZp2EV8lMNyw0XC2y3aEK4GN
+         oOfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760645991; x=1761250791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+av0HPtEwSTsOCuSUQdK1ftanNeIM9GRj5WV9WejZ/s=;
+        b=Gew1g/zgEjdYpHrKfuIGUvZUnXNr8GYJtBCDFFvrUaFn/Ic2LiSLudoES5zTiYFyzV
+         r6+Vq10XAQuNAOtDseMpDwx+CPWltPPWygqSj+HwMooCRJW7NV4azf9Z99hW1Qayr6NB
+         fhA+C7u/zUPyDScEOrzlgIkhY7ZjtRjxDXry85/ch5bimjodMFsa9pZYc1JbtqeIc4L0
+         l0ytXoKkaQF95Mukn9ByGv70KlOkzKHvkNdJKWoygijJ5k47iZjxsuIk1noEmq6prxF9
+         uKVNHfbIwbKd9JFWG/Y4B2xAxt9lJuQbsdCMAvX8H3toVfaTi2PXjqDXa6iC8hdGm5Bq
+         IyqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/KUJwLUc25srn7vE3n9pHRlCVG4BZbPgSosNdUJvtjXPO+1obrSsG4i4Z/nhXtEUDXe7Jf5f2pV2caoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkW3EZ1RealoxAF6Nce+/Shcckf2NKkDQjuEA07VgKGN+FGGR7
+	d6RZTc3dCiDzN4qprfN0Cb9Q67oAjvHS7DJUP0jFFvXIIanTsB1S+KOmYJXk9x92Z2Sx5g==
+X-Gm-Gg: ASbGncuQgPcamXEt7CeL/vr6/wJzMh4FAB7EAubtFyKO/h0hMJFyebzx9V1Eyj6iorV
+	wKtXom/dLPPyLuo0IbvSUL3sJ/4F+bqeMHP0AwMCod4q1swqURdr1tL1CD05D6SYsqme68MjpZa
+	z/3U4wx2e0aPwtqlMn8AA8Qkgia8oEPcHfvJWoMPmzImyo1SmtouPOmw9X727LzdQ4QVCZ5Ljm/
+	Lh4Y+HcdtNHYmPS+IxSDHu56WE2+XQYrGG9/IKfezfiXqmzz+t1/8OXc3FItbIRq7bIb7CIhNOD
+	EiuBKvIESv+lpdV0+HctXXitgpHJu7BsKJGFXlx6xV6LF+Z//3PTlsQHG7o8DNN9DDPYS13cgQi
+	AlgAN0D1TiASbtoTnQ+oaLmpaCaAOfF1IxvqHOq2k6hNJWH5u5OOax5eY9+PYvTetIiULId5Y5k
+	YedhjFBEx3jTd+1TWK5vWF2PRbOJEIDbkSheRhIKKPt81uhYPVz7VHo8tcTROmash3N5rsDdtB
+X-Google-Smtp-Source: AGHT+IG+sxkvw4J66EyUWy7hkA9Gt8yHCCBQKvQGF3IO+F1MDMkkuQKd8HWWzZx0fFVzrv7/MgTNLw==
+X-Received: by 2002:a05:6a20:7344:b0:262:4378:9df2 with SMTP id adf61e73a8af0-334a86384femr1667733637.44.1760645990579;
+        Thu, 16 Oct 2025 13:19:50 -0700 (PDT)
+Received: from linux-dev.dhcp4.washington.edu ([205.175.106.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a198c57513sm7326767b3a.23.2025.10.16.13.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 13:19:50 -0700 (PDT)
+From: Aditya Gollamudi <adigollamudi@gmail.com>
+To: trondmy@kernel.org
+Cc: adigollamudi@gmail.com,
+	anna@kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/nfs: Resolve style errors in fs/nfs/nfs4proc.c
+Date: Thu, 16 Oct 2025 12:50:13 -0700
+Message-Id: <20251016195013.25929-1-adigollamudi@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Dg2GK10sDRS12InlAL9/y4+GUGbHlmqXzQAvYDOsK5H98zfqnrNKDskYtFbIMfdLUJrRk/fCDa3V6D1NvqUA21yhUe8CxI6//WB/qFJIbttjrJPbdjPAEFDgy+U4hvI260lTAzz/1FGGUsnipnQ/L+g/U2dSaKBaXugx3apI86Vegmxypx3CHaoV+/N1l28SbfKR1W45g20no9+UFK7KcFOvADo82AmAPJRYUKqqxMwCvKvpFVOD3k9XSzRviLw+ZFOr/Ij/qbRi9tWLm1vlej3AN5JdPEssLFIDhsbUrTFWWPnXHOTnUvk+9M23pZld79YvGll4bm1EtQISc1FLwyg4EHjEQiiOQ8eToc0t9W/O5y4J9xfogikpNl+ylEsOoeg4nhYjpLsFuYhAncomYo59WN2QDWh4WEEcjviJixeGXfS2Gmke102piGAF2USncFDBTXSuKY2wYgpVhuNv0Ehf+OJP6ZX8OiBecZQz4FoP4v3KsFV+nZ9NMx9vDOF/IeN9sOUHFRom6YzElbNFKFMoHMpWnxY8JLstQ1U1r5Z2W0iFaTLtz51OEA05iwZlSCzxJGgpb0bB8+TG7+s+nfwPob9RO8neRwGzABmYsUo+99MdmGkgyF/vuQViFzjCf/zEmGq4Hp/N1o65yunjHlAiHtRFe4jwXiWzNQ5IJaXBnKmSMOf6Z27i6W1kl8Oz
-X-OriginatorOrg: sophos.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LO4P265MB7392.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2019b1e9-1ca4-49f5-5b22-08de0ceb75ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2025 19:37:36.4192 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 358a41ff-46d9-49d3-a297-370d894eae6a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aV5UgF2ccHSqyB2a0pz7PgFfuhcd97W35qOMuY1kb5vKlnH9H/xoqwidOLglQxN/3NEZmyqmBySeLLWR5bmWEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO9P265MB7476
-X_Sophos_TLS_Connection: OPP_TLS_1_3
-X_Sophos_TLS_Delivery: true
-X-Sophos-MH-Mail-Info-Key: NGNuZFhDMGs1OXo0dlMtMTcyLjE5LjEuNjc=
+Content-Transfer-Encoding: 8bit
 
-We have noticed severe degradation in read/write operations from tmpfs whil=
-e upgrading from kernel 4.x.y to kernel 6.6.x on x86 hardware.
+From: Adi Gollamudi <adigollamudi@gmail.com>
 
-To demonstrate this, I built linux kernel with make defconfig ARCH=3Dx86_64=
- and booted it with a minimal busybox based initramfs.
+add spaces before opening parentheses "(", fix indentation of switch cases, remove trailing
+whitespaces, make "else if" start on the same line as closing "if" brace and fix spacing around "=".10 errors remain in fs/nfs/nfs4proc.c
 
-# Mount tmpfs at /tmp :
-mount -t tmpfs tmpfs /tmp
+Signed-off-by: Adi Gollamudi <adigollamudi@gmail.com>
+---
+ fs/nfs/nfs4proc.c | 277 +++++++++++++++++++++++-----------------------
+ 1 file changed, 137 insertions(+), 140 deletions(-)
 
-# Write a 200KB file using dd with 512 block size :
-dd if=3D/dev/zero of=3D/tmp/200k bs=3D512 count=3D400
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index f58098417142..35df95407059 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -518,7 +518,7 @@ static int nfs4_do_handle_exception(struct nfs_server *server,
+ 	if (stateid == NULL && state != NULL)
+ 		stateid = nfs4_recoverable_stateid(&state->stateid);
 
-# Create a 64 MB file in /tmp/ :
-dd if=3D/dev/zero of=3D/tmp/test bs=3D4k count=3D16k
+-	switch(errorcode) {
++	switch (errorcode) {
+ 		case 0:
+ 			return 0;
+ 		case -NFS4ERR_BADHANDLE:
+@@ -1566,7 +1566,7 @@ static void nfs4_opendata_put(struct nfs4_opendata *p)
+ static bool nfs4_mode_match_open_stateid(struct nfs4_state *state,
+ 		fmode_t fmode)
+ {
+-	switch(fmode & (FMODE_READ|FMODE_WRITE)) {
++	switch (fmode & (FMODE_READ|FMODE_WRITE)) {
+ 	case FMODE_READ|FMODE_WRITE:
+ 		return state->n_rdwr != 0;
+ 	case FMODE_WRITE:
+@@ -2247,7 +2247,7 @@ static int nfs4_open_recover_helper(struct nfs4_opendata *opendata,
+ 	nfs4_init_opendata_res(opendata);
+ 	ret = _nfs4_recover_proc_open(opendata);
+ 	if (ret != 0)
+-		return ret;
++		return ret;
+ 	newstate = nfs4_opendata_to_nfs4_state(opendata);
+ 	if (IS_ERR(newstate))
+ 		return PTR_ERR(newstate);
+@@ -2304,7 +2304,7 @@ static int _nfs4_do_open_reclaim(struct nfs_open_context *ctx, struct nfs4_state
+ 	rcu_read_lock();
+ 	delegation = rcu_dereference(NFS_I(state->inode)->delegation);
+ 	if (delegation != NULL && test_bit(NFS_DELEGATION_NEED_RECLAIM, &delegation->flags) != 0) {
+-		switch(delegation->type) {
++		switch (delegation->type) {
+ 		case FMODE_READ:
+ 			delegation_type = NFS4_OPEN_DELEGATE_READ;
+ 			if (test_bit(NFS_DELEGATION_DELEGTIME, &delegation->flags))
+@@ -2359,54 +2359,54 @@ static int nfs4_open_reclaim(struct nfs4_state_owner *sp, struct nfs4_state *sta
+ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct nfs4_state *state, const nfs4_stateid *stateid, struct file_lock *fl, int err)
+ {
+ 	switch (err) {
+-		default:
+-			printk(KERN_ERR "NFS: %s: unhandled error "
+-					"%d.\n", __func__, err);
+-			fallthrough;
+-		case 0:
+-		case -ENOENT:
+-		case -EAGAIN:
+-		case -ESTALE:
+-		case -ETIMEDOUT:
+-			break;
+-		case -NFS4ERR_BADSESSION:
+-		case -NFS4ERR_BADSLOT:
+-		case -NFS4ERR_BAD_HIGH_SLOT:
+-		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
+-		case -NFS4ERR_DEADSESSION:
+-			return -EAGAIN;
+-		case -NFS4ERR_STALE_CLIENTID:
+-		case -NFS4ERR_STALE_STATEID:
+-			/* Don't recall a delegation if it was lost */
+-			nfs4_schedule_lease_recovery(server->nfs_client);
+-			return -EAGAIN;
+-		case -NFS4ERR_MOVED:
+-			nfs4_schedule_migration_recovery(server);
+-			return -EAGAIN;
+-		case -NFS4ERR_LEASE_MOVED:
+-			nfs4_schedule_lease_moved_recovery(server->nfs_client);
+-			return -EAGAIN;
+-		case -NFS4ERR_DELEG_REVOKED:
+-		case -NFS4ERR_ADMIN_REVOKED:
+-		case -NFS4ERR_EXPIRED:
+-		case -NFS4ERR_BAD_STATEID:
+-		case -NFS4ERR_OPENMODE:
+-			nfs_inode_find_state_and_recover(state->inode,
+-					stateid);
+-			nfs4_schedule_stateid_recovery(server, state);
+-			return -EAGAIN;
+-		case -NFS4ERR_DELAY:
+-		case -NFS4ERR_GRACE:
+-			ssleep(1);
+-			return -EAGAIN;
+-		case -ENOMEM:
+-		case -NFS4ERR_DENIED:
+-			if (fl) {
+-				struct nfs4_lock_state *lsp = fl->fl_u.nfs4_fl.owner;
+-				if (lsp)
+-					set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
+-			}
+-			return 0;
++	default:
++		printk(KERN_ERR "NFS: %s: unhandled error "
++				"%d.\n", __func__, err);
++		fallthrough;
++	case 0:
++	case -ENOENT:
++	case -EAGAIN:
++	case -ESTALE:
++	case -ETIMEDOUT:
++		break;
++	case -NFS4ERR_BADSESSION:
++	case -NFS4ERR_BADSLOT:
++	case -NFS4ERR_BAD_HIGH_SLOT:
++	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
++	case -NFS4ERR_DEADSESSION:
++		return -EAGAIN;
++	case -NFS4ERR_STALE_CLIENTID:
++	case -NFS4ERR_STALE_STATEID:
++		/* Don't recall a delegation if it was lost */
++		nfs4_schedule_lease_recovery(server->nfs_client);
++		return -EAGAIN;
++	case -NFS4ERR_MOVED:
++		nfs4_schedule_migration_recovery(server);
++		return -EAGAIN;
++	case -NFS4ERR_LEASE_MOVED:
++		nfs4_schedule_lease_moved_recovery(server->nfs_client);
++		return -EAGAIN;
++	case -NFS4ERR_DELEG_REVOKED:
++	case -NFS4ERR_ADMIN_REVOKED:
++	case -NFS4ERR_EXPIRED:
++	case -NFS4ERR_BAD_STATEID:
++	case -NFS4ERR_OPENMODE:
++		nfs_inode_find_state_and_recover(state->inode,
++				stateid);
++		nfs4_schedule_stateid_recovery(server, state);
++		return -EAGAIN;
++	case -NFS4ERR_DELAY:
++	case -NFS4ERR_GRACE:
++		ssleep(1);
++		return -EAGAIN;
++	case -ENOMEM:
++	case -NFS4ERR_DENIED:
++		if (fl) {
++			struct nfs4_lock_state *lsp = fl->fl_u.nfs4_fl.owner;
++			if (lsp)
++				set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
++		}
++		return 0;
+ 	}
+ 	return err;
+ }
+@@ -2810,7 +2810,7 @@ static int _nfs4_proc_open(struct nfs4_opendata *data,
+ 	}
+ 	if ((o_res->rflags & NFS4_OPEN_RESULT_LOCKTYPE_POSIX) == 0)
+ 		server->caps &= ~NFS_CAP_POSIX_LOCK;
+-	if(o_res->rflags & NFS4_OPEN_RESULT_CONFIRM) {
++	if (o_res->rflags & NFS4_OPEN_RESULT_CONFIRM) {
+ 		status = _nfs4_proc_open_confirm(data);
+ 		if (status != 0)
+ 			return status;
+@@ -3186,7 +3186,7 @@ static int _nfs4_open_and_get_state(struct nfs4_opendata *opendata,
+ 		}
+ 	}
 
-# Read the file back
-dd if=3D/tmp/test of=3D/dev/zero bs=3D4k
+-	switch(opendata->o_arg.claim) {
++	switch (opendata->o_arg.claim) {
+ 	default:
+ 		break;
+ 	case NFS4_OPEN_CLAIM_NULL:
+@@ -3679,40 +3679,40 @@ static void nfs4_close_done(struct rpc_task *task, void *data)
+ 	 * the state_owner. we keep this around to process errors
+ 	 */
+ 	switch (task->tk_status) {
+-		case 0:
+-			res_stateid = &calldata->res.stateid;
+-			renew_lease(server, calldata->timestamp);
+-			break;
+-		case -NFS4ERR_ACCESS:
+-			if (calldata->arg.bitmask != NULL) {
+-				calldata->arg.bitmask = NULL;
+-				calldata->res.fattr = NULL;
+-				goto out_restart;
++	case 0:
++		res_stateid = &calldata->res.stateid;
++		renew_lease(server, calldata->timestamp);
++		break;
++	case -NFS4ERR_ACCESS:
++		if (calldata->arg.bitmask != NULL) {
++			calldata->arg.bitmask = NULL;
++			calldata->res.fattr = NULL;
++			goto out_restart;
 
-The average write speeds for writing a 200 KB file with bs=3D512 measured o=
-n different kernel versions were :
+-			}
++		}
++		break;
++	case -NFS4ERR_OLD_STATEID:
++		/* Did we race with OPEN? */
++		if (nfs4_refresh_open_old_stateid(&calldata->arg.stateid,
++					state))
++			goto out_restart;
++		goto out_release;
++	case -NFS4ERR_ADMIN_REVOKED:
++	case -NFS4ERR_STALE_STATEID:
++	case -NFS4ERR_EXPIRED:
++		nfs4_free_revoked_stateid(server,
++				&calldata->arg.stateid,
++				task->tk_msg.rpc_cred);
++		fallthrough;
++	case -NFS4ERR_BAD_STATEID:
++		if (calldata->arg.fmode == 0)
+ 			break;
+-		case -NFS4ERR_OLD_STATEID:
+-			/* Did we race with OPEN? */
+-			if (nfs4_refresh_open_old_stateid(&calldata->arg.stateid,
+-						state))
+-				goto out_restart;
+-			goto out_release;
+-		case -NFS4ERR_ADMIN_REVOKED:
+-		case -NFS4ERR_STALE_STATEID:
+-		case -NFS4ERR_EXPIRED:
+-			nfs4_free_revoked_stateid(server,
+-					&calldata->arg.stateid,
+-					task->tk_msg.rpc_cred);
+-			fallthrough;
+-		case -NFS4ERR_BAD_STATEID:
+-			if (calldata->arg.fmode == 0)
+-				break;
+-			fallthrough;
+-		default:
+-			task->tk_status = nfs4_async_handle_exception(task,
+-					server, task->tk_status, &exception);
+-			if (exception.retry)
+-				goto out_restart;
++		fallthrough;
++	default:
++		task->tk_status = nfs4_async_handle_exception(task,
++				server, task->tk_status, &exception);
++		if (exception.retry)
++			goto out_restart;
+ 	}
+ 	nfs_clear_open_stateid(state, &calldata->arg.stateid,
+ 			res_stateid, calldata->arg.fmode);
+@@ -3823,13 +3823,13 @@ static const struct rpc_call_ops nfs4_close_ops = {
+ 	.rpc_release = nfs4_free_closedata,
+ };
 
-Linux version 4.20.17 : 500 MB/s
-Linux version 5.4.300 : 460 MB/s
-Linux version 5.19.17 : 380 MB/s
-Linux version 6.6.108 : 240 MB/s
-Linux version 6.17.2 : 277 MB/s
+-/*
+- * It is possible for data to be read/written from a mem-mapped file
++/*
++ * It is possible for data to be read/written from a mem-mapped file
+  * after the sys_close call (which hits the vfs layer as a flush).
+- * This means that we can't safely call nfsv4 close on a file until
++ * This means that we can't safely call nfsv4 close on a file until
+  * the inode is cleared. This in turn means that we are not good
+- * NFSv4 citizens - we do not indicate to the server to update the file's
+- * share state even when we are done with one of the three share
++ * NFSv4 citizens - we do not indicate to the server to update the file's
++ * share state even when we are done with one of the three share
+  * stateid's in the inode.
+  *
+  * NOTE: Caller must be holding the sp->so_owner semaphore!
+@@ -4506,7 +4506,7 @@ int nfs4_proc_getattr(struct nfs_server *server, struct nfs_fh *fhandle,
+ 	return err;
+ }
 
-The average read speeds for reading a 64 MB file with bs=3D4k measured on d=
-ifferent kernel versions were :
+-/*
++/*
+  * The file is not closed if it is opened due to the a request to change
+  * the size of the file. The open call will not be needed once the
+  * VFS layer lookup-intents are implemented.
+@@ -4538,7 +4538,6 @@ nfs4_proc_setattr(struct dentry *dentry, struct nfs_fattr *fattr,
+ 		pnfs_commit_and_return_layout(inode);
 
-Linux version 4.20.17 : 4.7 GB/s
-Linux version 5.4.300 : 4.5 GB/s
-Linux version 5.19.17 :  4.3 GB/s
-Linux version 6.6.108 : 2.3 GB/s
-Linux version 6.17.2 : 2.5 GB/s
+ 	nfs_fattr_init(fattr);
+-
+ 	/* Deal with open(O_TRUNC) */
+ 	if (sattr->ia_valid & ATTR_OPEN)
+ 		sattr->ia_valid &= ~(ATTR_MTIME|ATTR_CTIME);
+@@ -5219,7 +5218,6 @@ static int _nfs4_proc_symlink(struct inode *dir, struct dentry *dentry,
+ 	data->arg.u.symlink.pages = &page;
+ 	data->arg.u.symlink.len = len;
+ 	data->arg.label = label;
+-
+ 	status = nfs4_do_create(dir, dentry, data);
 
-These numbers were taken on a AMD Ryzen Embedded V1780B with 16 GB RAM.
-We also noticed the same issue on other AMD and Intel machines.
+ 	nfs4_free_createdata(data);
+@@ -5373,8 +5371,7 @@ static int _nfs4_proc_mknod(struct inode *dir, struct dentry *dentry,
+ 		data->arg.ftype = NF4BLK;
+ 		data->arg.u.device.specdata1 = MAJOR(rdev);
+ 		data->arg.u.device.specdata2 = MINOR(rdev);
+-	}
+-	else if (S_ISCHR(mode)) {
++	} else if (S_ISCHR(mode)) {
+ 		data->arg.ftype = NF4CHR;
+ 		data->arg.u.device.specdata1 = MAJOR(rdev);
+ 		data->arg.u.device.specdata2 = MINOR(rdev);
+@@ -6033,7 +6030,7 @@ int nfs4_buf_to_pages_noslab(const void *buf, size_t buflen,
+ 	return rc;
 
-openwrt[.]org offers kernel images on their website, I have also booted sev=
-eral openwrt kernel versions and noticed the same degradation.
-I have also confirmed that the same issue occurs when running different ver=
-sions of Ubuntu on the same machines.
-I do not have the means to test this on ARM/other architectures.
+ unwind:
+-	for(; rc > 0; rc--)
++	for (; rc > 0; rc--)
+ 		__free_page(spages[rc-1]);
+ 	return -ENOMEM;
+ }
+@@ -6759,7 +6756,7 @@ static void nfs4_delegreturn_done(struct rpc_task *task, void *calldata)
+ 		goto out_restart;
 
-We tried modifying to kernel config to disable CPU mitigations, setting the=
- CPU frequency governor to performance, disabling kernel debugging and many=
- such options etc. after which we noticed a small 3-5% improvement but we c=
-an no longer come near the older 4.x performance numbers.
+ 	if (data->args.sattr_args && task->tk_status != 0) {
+-		switch(data->res.sattr_ret) {
++		switch (data->res.sattr_ret) {
+ 		case 0:
+ 			data->args.sattr_args = NULL;
+ 			data->res.sattr_res = false;
+@@ -6980,10 +6977,10 @@ int nfs4_proc_delegreturn(struct inode *inode, const struct cred *cred,
+ 					     delegation, issync);
+ 		trace_nfs4_delegreturn(inode, stateid, err);
+ 		switch (err) {
+-			case -NFS4ERR_STALE_STATEID:
+-			case -NFS4ERR_EXPIRED:
+-			case 0:
+-				return 0;
++		case -NFS4ERR_STALE_STATEID:
++		case -NFS4ERR_EXPIRED:
++		case 0:
++			return 0;
+ 		}
+ 		err = nfs4_handle_exception(server, err, &exception);
+ 	} while (exception.retry);
+@@ -7020,11 +7017,11 @@ static int _nfs4_proc_getlk(struct nfs4_state *state, int cmd, struct file_lock
+ 	arg.lock_owner.s_dev = server->s_dev;
+ 	status = nfs4_call_sync(server->client, server, &msg, &arg.seq_args, &res.seq_res, 1);
+ 	switch (status) {
+-		case 0:
+-			request->c.flc_type = F_UNLCK;
+-			break;
+-		case -NFS4ERR_DENIED:
+-			status = 0;
++	case 0:
++		request->c.flc_type = F_UNLCK;
++		break;
++	case -NFS4ERR_DENIED:
++		status = 0;
+ 	}
+ 	request->fl_ops->fl_release_private(request);
+ 	request->fl_ops = NULL;
+@@ -7152,36 +7149,36 @@ static void nfs4_locku_done(struct rpc_task *task, void *data)
+ 	if (!nfs4_sequence_done(task, &calldata->res.seq_res))
+ 		return;
+ 	switch (task->tk_status) {
+-		case 0:
+-			renew_lease(calldata->server, calldata->timestamp);
+-			locks_lock_inode_wait(calldata->lsp->ls_state->inode, &calldata->fl);
+-			if (nfs4_update_lock_stateid(calldata->lsp,
+-					&calldata->res.stateid))
+-				break;
+-			fallthrough;
+-		case -NFS4ERR_ADMIN_REVOKED:
+-		case -NFS4ERR_EXPIRED:
+-			nfs4_free_revoked_stateid(calldata->server,
+-					&calldata->arg.stateid,
+-					task->tk_msg.rpc_cred);
+-			fallthrough;
+-		case -NFS4ERR_BAD_STATEID:
+-		case -NFS4ERR_STALE_STATEID:
+-			if (nfs4_sync_lock_stateid(&calldata->arg.stateid,
+-						calldata->lsp))
+-				rpc_restart_call_prepare(task);
+-			break;
+-		case -NFS4ERR_OLD_STATEID:
+-			if (nfs4_refresh_lock_old_stateid(&calldata->arg.stateid,
+-						calldata->lsp))
+-				rpc_restart_call_prepare(task);
++	case 0:
++		renew_lease(calldata->server, calldata->timestamp);
++		locks_lock_inode_wait(calldata->lsp->ls_state->inode, &calldata->fl);
++		if (nfs4_update_lock_stateid(calldata->lsp,
++				&calldata->res.stateid))
+ 			break;
+-		default:
+-			task->tk_status = nfs4_async_handle_exception(task,
+-					calldata->server, task->tk_status,
+-					&exception);
+-			if (exception.retry)
+-				rpc_restart_call_prepare(task);
++		fallthrough;
++	case -NFS4ERR_ADMIN_REVOKED:
++	case -NFS4ERR_EXPIRED:
++		nfs4_free_revoked_stateid(calldata->server,
++				&calldata->arg.stateid,
++				task->tk_msg.rpc_cred);
++		fallthrough;
++	case -NFS4ERR_BAD_STATEID:
++	case -NFS4ERR_STALE_STATEID:
++		if (nfs4_sync_lock_stateid(&calldata->arg.stateid,
++					calldata->lsp))
++			rpc_restart_call_prepare(task);
++		break;
++	case -NFS4ERR_OLD_STATEID:
++		if (nfs4_refresh_lock_old_stateid(&calldata->arg.stateid,
++					calldata->lsp))
++			rpc_restart_call_prepare(task);
++		break;
++	default:
++		task->tk_status = nfs4_async_handle_exception(task,
++				calldata->server, task->tk_status,
++				&exception);
++		if (exception.retry)
++			rpc_restart_call_prepare(task);
+ 	}
+ 	nfs_release_seqid(calldata->arg.seqid);
+ }
+@@ -7684,7 +7681,7 @@ nfs4_retry_setlk_simple(struct nfs4_state *state, int cmd,
+ 	int		status = -ERESTARTSYS;
+ 	unsigned long	timeout = NFS4_LOCK_MINTIMEOUT;
 
-Has anyone else observed similar performance regressions with tmpfs in rece=
-nt kernel versions ?
-Any pointers, explanations, or patches that could help identify or resolve =
-this issue would be greatly appreciated.
-I am happy to provide further details, logs, and build/test scripts if need=
-ed.
+-	while(!signalled()) {
++	while (!signalled()) {
+ 		status = nfs4_proc_setlk(state, cmd, request);
+ 		if ((status != -EAGAIN) || IS_SETLK(cmd))
+ 			break;
+@@ -9619,7 +9616,7 @@ static void nfs41_sequence_release(void *data)
 
-Best Regards,
-Elison Niven
+ static int nfs41_sequence_handle_errors(struct rpc_task *task, struct nfs_client *clp)
+ {
+-	switch(task->tk_status) {
++	switch (task->tk_status) {
+ 	case -NFS4ERR_DELAY:
+ 		rpc_delay(task, NFS4_POLL_RETRY_MAX);
+ 		return -EAGAIN;
+@@ -9767,7 +9764,7 @@ static void nfs4_reclaim_complete_prepare(struct rpc_task *task, void *data)
 
-
-________________________________
-
-Sophos Technologies Private Limited Regd. Office: Sophos House, Near Kalgi =
-X Rasta, Gujarat College Road, Ellisbridge, Ahmedabad - 380 006, Gujarat, I=
-ndia CIN: U72200GJ2006PTC047857
-
-Sophos Ltd, a company registered in England and Wales number 2096520, The P=
-entagon, Abingdon Science Park, Abingdon, OX14 3YP, United Kingdom.
+ static int nfs41_reclaim_complete_handle_errors(struct rpc_task *task, struct nfs_client *clp)
+ {
+-	switch(task->tk_status) {
++	switch (task->tk_status) {
+ 	case 0:
+ 		wake_up_all(&clp->cl_lock_waitq);
+ 		fallthrough;
+@@ -10536,7 +10533,7 @@ static void nfs4_handle_delay_or_session_error(struct nfs_server *server,
+ 		int err, struct nfs4_exception *exception)
+ {
+ 	exception->retry = 0;
+-	switch(err) {
++	switch (err) {
+ 	case -NFS4ERR_DELAY:
+ 	case -NFS4ERR_RETRY_UNCACHED_REP:
+ 		nfs4_handle_exception(server, err, exception);
+--
+2.34.1
 
 
