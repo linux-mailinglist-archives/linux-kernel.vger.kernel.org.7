@@ -1,202 +1,195 @@
-Return-Path: <linux-kernel+bounces-855736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388E5BE2250
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:28:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40429BE225F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E02FB3B374B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:28:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 229024EBFC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFFC3054C2;
-	Thu, 16 Oct 2025 08:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A1330504C;
+	Thu, 16 Oct 2025 08:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="X+/DgH4+"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012024.outbound.protection.outlook.com [52.101.66.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnmQVCPg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED40304BCA;
-	Thu, 16 Oct 2025 08:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760603327; cv=fail; b=qQC1q5fRJsmnz8R0zXmW1+8xkCYspESFaoXvN13rCTeUgKBhr9cXxgaJ+oX5lfy9ZwkA6+5lfOFo0JyJFpZBT2Qcyp3mHjnKe145zVgBhyS8Byck1vBw7dc7ADLeBYIKaGrv6vwJOPQgpaytKG18itdj/rYbVBDwZk/LJCEn+2Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760603327; c=relaxed/simple;
-	bh=M0vAbIOumqvBdgKeK7eGBGkrfYDl1VnBlzK5Lq6VSys=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=n+Cw2lXK2JlE8ioZEM1/BWLucHUiHnagWyLTe1YxmQtJdieZtTamcl1UgvNB0ICTZZpv7BDwDYvgmJdEklm6n9WY1hGN3FQyhE7ygynMLRCySYGc5POFZbEORxTUS2dCoPi6hIq6F02b4KsAdoWUPrplho6UeMBRF2dbQVyd1qU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=X+/DgH4+; arc=fail smtp.client-ip=52.101.66.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zSJNzKMKZyyAzU/D7x+Q/kr+fQgAAk/gt/tbgrRnDbFqkUTmessWb13zZwAqhawvmVmhq1+Ruc+469uY04wiYuWMxnxKwMRv2O7X0gh5ySdk3VaecJjr3cDYY/Nih8/bAfD1LfZMoXcRwrBEUfetwnESpOjgh/37iOHcknN18P3ZNHcCePGyky/gA3e1qPJy/B8m3eiaIarA80sYEHxc7e+qkZsjRGimxf3l/k+WOLPa9IfciabRdq0my1ZD4/RGA+jU/oaBlE7X4pMmowE+njsQEgSf36p19iHY/l7/g1ScPr9QTDzpPSWtTU1YNZYF6qFmbmVsIkSTOpOar9jaVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C/0zRoltC2T+t7VQLgk6nyEmIpwWFEdsZfuo8oWQWw8=;
- b=HpU5F+jguQB7bPtLvtILJiFA6KmE1DW/MmIMvTJc3MvYHIXosOMAtoUjJG9Q2P9BUmclU1LecClJ7bB5S6Ui1IUV5dlwKcovnnGl9itfTwN7dT8N/BKwhiJ56ZYIvsNCc05bt+Egb+P193/5XzF4093tVnLr3eoeYsglrBy3rI9Vgi4Ji9tNT9BfnokHKRPOylzPABYwoKJKswITuuDMhuwV5nPw4KmzyHVvn9Gp7LxKpQW1WvI5oHtR5Le/TNqFBLvwak2rIaD7+IBqjCT3eIcxsr1uYz8vaxHLA1LQUl4yj5jEOb4IkORaVAeLHk4JkHQhht4wzKbypQZsdlgZtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C/0zRoltC2T+t7VQLgk6nyEmIpwWFEdsZfuo8oWQWw8=;
- b=X+/DgH4+eKxvi5DzeaND/8676QDBKtoWOdmZ0az7vztOpsTKhczHF/0i+XwIuVfiAdjYcVP35gJwv9ZzjSyp8UoOZu3DZ+EM6ZJInPfe0h6uqf8VusQGyishk2+3kezDk632wKbXA3sZoNCDbqCODNWAKi9glr2GGpevd1QD6GWIvpagERHM8UR54ltbRMDa8CPR15W7KauZOzgBfEuQS/algGAKbbaJy6gPiWmsJhZwANvdUzhuBz77r+Lv1rl9pQckM+t20+PanKPzH5U5YW8UQhGznQxZEZjce6dgFC87oue3fQIQynLlPjJ/lW14pST9+OoePRGsch6TwsDmuw==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VI2PR04MB11002.eurprd04.prod.outlook.com (2603:10a6:800:280::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Thu, 16 Oct
- 2025 08:28:39 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9228.011; Thu, 16 Oct 2025
- 08:28:39 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, Alexandru Marginean
-	<alexandru.marginean@nxp.com>
-Subject: RE: [v4 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
-Thread-Topic: [v4 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
-Thread-Index: AQHcPXl+4gOh3lJGnkazrFvku0OWBLTEcqFA
-Date: Thu, 16 Oct 2025 08:28:39 +0000
-Message-ID:
- <PAXPR04MB8510BB8856CB343601102A9988E9A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20251015021427.180757-1-jianpeng.chang.cn@windriver.com>
-In-Reply-To: <20251015021427.180757-1-jianpeng.chang.cn@windriver.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|VI2PR04MB11002:EE_
-x-ms-office365-filtering-correlation-id: 5a51d4ce-af20-4e9b-69fd-08de0c8e0203
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?t/zxJ6pgXUGWPtWq0yPnm4eVWuZBXRbsPTGxBIc91LK7yaz8DlrWycg4IPuY?=
- =?us-ascii?Q?pQgT3hrcC5btZlnUS0wPtuXd4Eaa3tkCC6AbCCQGceQik/wvvJZ1gF1uDrJL?=
- =?us-ascii?Q?8AwsKO1RgIrv7QjRlbvd1JoS+Mf9nFtHxK8BXpD3aloyfpsoAZSxr5/iVSFp?=
- =?us-ascii?Q?AlDbqmQlq4IA+j7s5HSIdxG8TWdK/v7jZsxOiy33zFlA/BHoHtSpKm3wZvqK?=
- =?us-ascii?Q?as7L1dUXoO7CBqkLqB6yQmp2cuPXF/e1kHc7RiG/UJ7wIG/g/DbElRTySUCF?=
- =?us-ascii?Q?dBh39SxwC79eRNKqUW3RqAkjgPbicz19JLQmEQQ3ghsnRbLtZB7mbektTdbm?=
- =?us-ascii?Q?Q8/mSIGPTdPUYqO5EmrZlQVKJzBgWPoRtVK/WAo+sRuk8G5t/K3yyignLWZJ?=
- =?us-ascii?Q?z1QkwRfggDjPQ490VHydVvcDz2TYhH1/hQbUqK7k9jzL8jhZNjyxW+nbK7u3?=
- =?us-ascii?Q?yle1EsHFicYo7R5aBOEvzmWD8PErcmRXDxSULSW3nneF9Bxv7oVFSxV7yIN5?=
- =?us-ascii?Q?iSv7Vh1vR8leYT5+s9w5T58LnKnc4zNnmS+kY678mhPsGUZGEprRSRJZMKy4?=
- =?us-ascii?Q?uya+nKTIvxiYmSgvt1gq9SxyFWcVoOmPAKZRWNDpQImQIr+V8bKheejYgUPb?=
- =?us-ascii?Q?e5yxIgwNx81wMIRQ3LkbmkALgPjyo2ckAgq3EXyoPj45p8j1FNSSRLfD7dWM?=
- =?us-ascii?Q?ymWTMy8a2VJaniouyawh0PNvB88g0iq8zqBezJxLWK0vSwq4QVbc2MVwHlTu?=
- =?us-ascii?Q?Jw1Ba5BMnJawJJUkcuP286uTO7oL+DKsh85fIjYEJrqaRZR/fourVxCDc9rS?=
- =?us-ascii?Q?4TGtZf+6HFvo2FoSV489Hs/tVZ1mebL5hB4YflghawW3Oy3vDHotAFDiXyLn?=
- =?us-ascii?Q?1du5rlc8KzDP1fIhIGf1b1YMv3Kr8klUaP/Ay/Bb8CnJ+LLIAsjNkLwYr31j?=
- =?us-ascii?Q?ATU5Ns+q11fSc1p39sqEd9Eapzis34azAEH1tbeTCZwmR9kYdQV+rZGtUCF8?=
- =?us-ascii?Q?H7SLfZnS7hAry7XmEicMeXV4vCioxv8g14JqYC466426Cw53YVv2J1qwa4It?=
- =?us-ascii?Q?puzo25V0/XqJ2qjDyO3VeswE+aSZLBDKHwtIXUqNFXpP74rGNFZyJanVfoxA?=
- =?us-ascii?Q?YmbcIMkHkn48KAesSjBj2r+jmDc5BMtbcJeuTAWx82prxRo8Szfr8rl3cfi8?=
- =?us-ascii?Q?9lhnXydl9eICQq2yOCRnpmHuvpPlzH4f1VAqSeNXN0q7MtViMsHamjr7P8Xd?=
- =?us-ascii?Q?v9Z5jkmgjNrVw5ZBsP9yDJIYqWujHVrBxqxxKWSazJBE08R6BT+qj2tfP+8Z?=
- =?us-ascii?Q?98SZjPuUkqS5TAuLgGOm1p/HG1j7Yp5LPZwNpSOg4h2a8Nl1vW14uomvzfJF?=
- =?us-ascii?Q?jJIYHScSkuJuh9qfz8BotYQwlFTD+qRsirRcbQw7bIPFTlVWGMZM2WOYhsur?=
- =?us-ascii?Q?Sc3ETT/nj45mx6dLiuYsz7giToQE9Q/KV9yn0C28XkzA2CQfO3alVETbxELC?=
- =?us-ascii?Q?wlWyfK0s7hJ3DFGLmfOEYTFpyzq3pZnyn9en?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?nmint0F3WioqFPLusD58w8K28UejHSNFCNPcSrM7sUEPRFkl0R3db7drw7Ve?=
- =?us-ascii?Q?7eB2TOhFiuLOveq/j6eLKmEKWPwpQoG0DNQyWlOZAsq/LJsG1dAQ8oc5huQe?=
- =?us-ascii?Q?Iw6ouXHoauzutA7sNAsRywCrcxd//O0lYOSAc8rAhm4IFtIgd9E2YnYI0roE?=
- =?us-ascii?Q?AwOdZnzn3mYlg3M6R+8K+t+hDtQIQJ9xwD+Ec0WOukKfuqGUyZycEpVgurVa?=
- =?us-ascii?Q?cs9PE3prxDpPnJP1CNrU7TOZPgqAJN6t26gDu/oVa3B1O6B2vkxsKXfaR0tP?=
- =?us-ascii?Q?+0/TFQu/huN1m4ge9CH1Ax7+ZAA4ZodlN2z+ohEUiYoRlXozyZ8kEsqPtKz9?=
- =?us-ascii?Q?OEKhB2sk1NTZ1Phtn6CBmb7Q6S/9vSJONTKbNo3HYcqSwPpJ/xCJqp6mcSvy?=
- =?us-ascii?Q?3+7uWwGa15Jt+WWLqYVh50ghK6w2c7I/E4cJMYMnacrXqyAKPes9aY7OQgQT?=
- =?us-ascii?Q?JZ4GAlgNYRbQRlOmE+pdRO2eHCTicvQFVqeMSAm7AhQPiEt6kZXpgMXcYBgG?=
- =?us-ascii?Q?9LEgxsljWNoaGR4RQA7Z7MwRw+aAYcqRvzBp+vTKqE/uQC1jS7g4TvV4GGXI?=
- =?us-ascii?Q?uncVaPt1dhaeM62yq/nzkMn+98mcPw6e5oNDCqbZQ/FXeen6M4CPN6F1f7b+?=
- =?us-ascii?Q?+MMMX+UPTnJJGhr8h49B0ZOl6a3E45H3WUCTqjlZzQKxOJ7Fi7A55iJ8IFdn?=
- =?us-ascii?Q?oSkfd2pK84sxWFH969BELz/pNPBsTg2SSCv3Vk4E96EGl0yvZy9adKDRdcv0?=
- =?us-ascii?Q?9AmQtp8DeXRJqSsEAQWWTOp8aNbPupbVUas0HZTUsHvhcrCXfbT/R0ijwm1x?=
- =?us-ascii?Q?l21cwLeEdfZAtif5oC4/CPIEz+4wnWKpApiLGUcrpdSOa/L+DUurLfCbCqo+?=
- =?us-ascii?Q?a5yT0KzZ1SjY9vqHrbeLXyni6aCzo1rbLzwtD9erDKdxOiQ67ujdzDiWGpkw?=
- =?us-ascii?Q?8MTdCekMFeMjo4FnAJFez4kQkfP8c3rMNJZP7Phi0Y3CpQid15I+PJg8JdbK?=
- =?us-ascii?Q?Ti3qfpVQ2wWnerLFusR4WhKFk38nDm/Kl1w4TRbQL1ZYWfFbmdx5CxVxxIo9?=
- =?us-ascii?Q?hI5w33Q4X6heDecqb9j9InFb6dYxjIIUKgHh5SdSWCFTHDOmkTwvvaE7mQ29?=
- =?us-ascii?Q?lvJZYMqyFQ6qYFMjoig85iCPz8ePwNrQDoHgpqYPsftML9KsH3PVfDcisVug?=
- =?us-ascii?Q?iNGJxwKSoNh3VC2M9jFhNT3xBbAQxFKqlcR52C0CzXmxl8TSp4qaBVBYDfKa?=
- =?us-ascii?Q?7bb78vuABOBICv3OOjCm0AQpYwxxty3vLayOG5C32MNTZL+z+wvUCwAUfB58?=
- =?us-ascii?Q?s0mveRicF0SfB0TsVB0FH4rp9SBIWhpt0djDOMkkzYtmEbQyx8qLB0B9BVPj?=
- =?us-ascii?Q?QNn4kJ7ZtDZUqPTPgeOsZl97GJ2n+F+QU0sGSE/IMDSamJjPQ19mIR1BHzBv?=
- =?us-ascii?Q?S1ZuJlf4jxzrqP1teTd464Y/t+CE9nQFg43eyF3lrntT9dk6/GPzIvs0Fz9Y?=
- =?us-ascii?Q?iaR7oe2ddpbbtCtr5n3QznKv4vsm5TboHbDlCOky/KKf3TMwbzLqNG1tz+gq?=
- =?us-ascii?Q?IK7oH6ZbE1p6wuxRt+M=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C32FDC4E
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760603366; cv=none; b=o4eY+foie5BYH9WQJAJi9u+Fo9jwe1aqLbpxr9Vy1OwNBv5WwzuQdzp5XIT0RM5T12KJgFQjadp6YtPXueZ5UgqbtsqbgTuHmWAfiBx7MLoL6Bv0aUzfy7pQnBud9mlL7TUci1OK8cNY++QiEA/MYH3IFe7yBFkFQMlKj6SnFOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760603366; c=relaxed/simple;
+	bh=NRqMCO2UD2ZElId4/sDDauUesnj09RgQKU3DA85pH7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXWT+QGeAcXQAhGeEWwEPi7pT/pbYr6U1HcjrmjgDpE/tTR6Jm0OoXgdZS+ubPS++yYP7X0Pg20xMFlhst4ECPh4sFd5mItbD1OtAfE09TwqQ5c+UwsCBMpNMcjhTgt1+8YIu3sreqS+wynXjNrluU7RH3LcUGFEGqL2Ad7R3/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnmQVCPg; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760603364; x=1792139364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NRqMCO2UD2ZElId4/sDDauUesnj09RgQKU3DA85pH7U=;
+  b=YnmQVCPg0TZu5QsQzi0yA/QRzjYTBNgg95i+s6WORwOo76od/w0xeQhx
+   tvi3xBa8LlcsICcwcj5w+yuj6JzfNv1CaGumaQRJNY+f7BT+YmQvahBJJ
+   NHn5zljbPjkjXWEWLI6mOPXsYzosdH0UXbQYr7TYfDwaqjzMr7AhjFfaF
+   slt4rLvg41rN0vMMoJisPtoB6jdMTdAzl6+CMHsnb4Y2ZNqvDARliOVYM
+   aGuJTVjnvoYMHEj34Q2JtZdDg4C08f7rXWh1vzrWeDE1QtvwsWTj9sgG4
+   XvyAMF3npbgalSZXQSJ4PAGCz5+cp3K9y5ubPw98BeFE8ilE4dYIwugbe
+   g==;
+X-CSE-ConnectionGUID: 9cB6qO53T1y1cAX+mS3pfA==
+X-CSE-MsgGUID: KG/PyJ8ISHy6c/2vqIjqtQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="66439708"
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="66439708"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 01:29:23 -0700
+X-CSE-ConnectionGUID: m0sBl1kLTqOn+kmk8/YFNg==
+X-CSE-MsgGUID: hmBJhFAFSheM3NYWWDHmJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="182072902"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Oct 2025 01:29:20 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v9JML-0004bH-2v;
+	Thu, 16 Oct 2025 08:29:17 +0000
+Date: Thu, 16 Oct 2025 16:29:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
+Cc: oe-kbuild-all@lists.linux.dev, nd@arm.com,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 06/10] drm/panthor: Implement L2 power on/off via
+ PWR_CONTROL
+Message-ID: <202510161626.f3OG4u62-lkp@intel.com>
+References: <20251014094337.1009601-7-karunika.choo@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a51d4ce-af20-4e9b-69fd-08de0c8e0203
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2025 08:28:39.1431
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xHlUIpKNd7aDsxawPS1PF4wLXvW4hRS5eQkTXR51orYDUrYxE5AuopWKVMFtGdnggG9xVZesvU2mxsvCFE25CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11002
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014094337.1009601-7-karunika.choo@arm.com>
 
-> After applying the workaround for err050089, the LS1028A platform
-> experiences RCU stalls on RT kernel. This issue is caused by the
-> recursive acquisition of the read lock enetc_mdio_lock. Here list some
-> of the call stacks identified under the enetc_poll path that may lead to
-> a deadlock:
->=20
-> enetc_poll
->   -> enetc_lock_mdio
->   -> enetc_clean_rx_ring OR napi_complete_done
->      -> napi_gro_receive
->         -> enetc_start_xmit
->            -> enetc_lock_mdio
->            -> enetc_map_tx_buffs
->            -> enetc_unlock_mdio
->   -> enetc_unlock_mdio
->=20
-> After enetc_poll acquires the read lock, a higher-priority writer attempt=
-s
-> to acquire the lock, causing preemption. The writer detects that a
-> read lock is already held and is scheduled out. However, readers under
-> enetc_poll cannot acquire the read lock again because a writer is already
-> waiting, leading to a thread hang.
->=20
-> Currently, the deadlock is avoided by adjusting enetc_lock_mdio to preven=
-t
-> recursive lock acquisition.
->=20
-> Fixes: 6d36ecdbc441 ("net: enetc: take the MDIO lock only once per NAPI p=
-oll
-> cycle")
-> Signed-off-by: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
+Hi Karunika,
 
-Thanks.
+kernel test robot noticed the following build warnings:
 
-Acked-by: Wei Fang <wei.fang@nxp.com>
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip linus/master v6.18-rc1 next-20251015]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Karunika-Choo/drm-panthor-Factor-out-GPU_ID-register-read-into-separate-function/20251014-174729
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20251014094337.1009601-7-karunika.choo%40arm.com
+patch subject: [PATCH v1 06/10] drm/panthor: Implement L2 power on/off via PWR_CONTROL
+config: arm-randconfig-r132-20251016 (https://download.01.org/0day-ci/archive/20251016/202510161626.f3OG4u62-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251016/202510161626.f3OG4u62-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510161626.f3OG4u62-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/panthor/panthor_pwr.c:153:13: warning: shift count >= width of type [-Wshift-count-overflow]
+     152 |         ret = gpu_read64_poll_timeout(ptdev, pwrtrans_reg, val,
+         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     153 |                                       !(PWR_ALL_CORES_MASK & val), 100,
+         |                                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     154 |                                       timeout_us);
+         |                                       ~~~~~~~~~~~
+   drivers/gpu/drm/panthor/panthor_pwr.c:26:29: note: expanded from macro 'PWR_ALL_CORES_MASK'
+      26 | #define PWR_ALL_CORES_MASK              GENMASK(63, 0)
+         |                                         ^
+   include/linux/bits.h:51:24: note: expanded from macro 'GENMASK'
+      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
+         |                                 ^
+   include/linux/bits.h:49:20: note: expanded from macro 'GENMASK_TYPE'
+      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+         |                           ^
+   drivers/gpu/drm/panthor/panthor_device.h:533:37: note: expanded from macro 'gpu_read64_poll_timeout'
+     533 |         read_poll_timeout(gpu_read64, val, cond, delay_us, timeout_us, false,   \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     534 |                           dev, reg)
+         |                           ~~~~~~~~~
+   include/linux/iopoll.h:145:36: note: expanded from macro 'read_poll_timeout'
+     145 |         poll_timeout_us((val) = op(args), cond, sleep_us, timeout_us, sleep_before_read)
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/iopoll.h:49:7: note: expanded from macro 'poll_timeout_us'
+      49 |                 if (cond) { \
+         |                     ^~~~
+   drivers/gpu/drm/panthor/panthor_pwr.c:260:13: warning: shift count >= width of type [-Wshift-count-overflow]
+     259 |         ret = gpu_read64_poll_timeout(ptdev, PWR_STATUS, val,
+         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     260 |                                       !(PWR_STATUS_RETRACT_PENDING & val), 0,
+         |                                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     261 |                                       PWR_RETRACT_TIMEOUT_US);
+         |                                       ~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/panthor/panthor_regs.h:249:40: note: expanded from macro 'PWR_STATUS_RETRACT_PENDING'
+     249 | #define   PWR_STATUS_RETRACT_PENDING                    BIT(43)
+         |                                                         ^
+   include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                        ^
+   drivers/gpu/drm/panthor/panthor_device.h:533:37: note: expanded from macro 'gpu_read64_poll_timeout'
+     533 |         read_poll_timeout(gpu_read64, val, cond, delay_us, timeout_us, false,   \
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     534 |                           dev, reg)
+         |                           ~~~~~~~~~
+   include/linux/iopoll.h:145:36: note: expanded from macro 'read_poll_timeout'
+     145 |         poll_timeout_us((val) = op(args), cond, sleep_us, timeout_us, sleep_before_read)
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/iopoll.h:49:7: note: expanded from macro 'poll_timeout_us'
+      49 |                 if (cond) { \
+         |                     ^~~~
+   2 warnings generated.
+
+
+vim +153 drivers/gpu/drm/panthor/panthor_pwr.c
+
+   144	
+   145	static int panthor_pwr_domain_wait_transition(struct panthor_device *ptdev, u32 domain,
+   146						      u32 timeout_us)
+   147	{
+   148		u32 pwrtrans_reg = get_domain_pwrtrans_reg(domain);
+   149		u64 val;
+   150		int ret = 0;
+   151	
+   152		ret = gpu_read64_poll_timeout(ptdev, pwrtrans_reg, val,
+ > 153					      !(PWR_ALL_CORES_MASK & val), 100,
+   154					      timeout_us);
+   155		if (ret) {
+   156			drm_err(&ptdev->base, "%s domain power in transition, pwrtrans(0x%llx)",
+   157				get_domain_name(domain), val);
+   158			return ret;
+   159		}
+   160	
+   161		return 0;
+   162	}
+   163	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
