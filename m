@@ -1,208 +1,115 @@
-Return-Path: <linux-kernel+bounces-855684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C717BE1F7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:44:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C0EBE1F9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D59154F7C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:43:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97034F649C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885CB2FE05F;
-	Thu, 16 Oct 2025 07:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868D2FDC42;
+	Thu, 16 Oct 2025 07:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSFn2lnF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JkIKXaiC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2462FDC51;
-	Thu, 16 Oct 2025 07:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AD5288514
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760600565; cv=none; b=Lc/Txr7hJ/RHlOGSICFr5TF5HeDsheUU/f5l1eGuV91yCjqQKPY9bu/oBlzSJqFoLBsFdtECvgjdLqheBGz8WrWxBPPvhi1XqPOE0aMdpyHxhfpSRpo88aY0dM1aN0tMwhIMf1NbA/RrFtDixfNY4DI4aU8apv3kO1juQ/Eokvg=
+	t=1760600715; cv=none; b=ISOarBILjuuITcRy/sRyTAJXsBSxVdpdUlwbHDzpr/PvwlPDF/16KtwakN+H0Z1pNxN+xDSz5OmyKDkz6XPWCZHfsheurdbC80DZwFhJ7RCfAgU5FWqNpEzF9tlktv7aRSj95QiRZZyTiOjJBATtEfoYmhRz2fIA+YmE44c8p4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760600565; c=relaxed/simple;
-	bh=/BhJAu/ou9XnXIn3SfQ7l0bSbgnmCrIk7nRE8O1cXwY=;
+	s=arc-20240116; t=1760600715; c=relaxed/simple;
+	bh=4HJEor79t2Zd/Gv55aXcaHEtS2bT2DVKSqD35v32X28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmS3YqLbxAr3d3VC1yil9LDuB9LpMvn63/H85kdXlN6naW7JxRSoCybdcPoMh4gJdZ1GqJkn0IkxRZSnnJbMVjxNXD/BbU8W+f61cckYUufakg7j4LF8P9ZUtmtMDYDPvGcjhbZiOeZF1p1XH/00v2vI5WeBbNsUSBuFQSO01+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSFn2lnF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830E8C113D0;
-	Thu, 16 Oct 2025 07:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760600565;
-	bh=/BhJAu/ou9XnXIn3SfQ7l0bSbgnmCrIk7nRE8O1cXwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SSFn2lnFMcE0F/Lsv5EGTxXzOWAHMf7Ud9Z/4qmOErqPTKjyu6sSAPkVDYxveaMWb
-	 5yfwgXsQfcLv+taPjNDyd5C/iX09tpyjJjpsBT3TNBnzInhg5H/w1Qto0/IZxANLeO
-	 PZa982EntazUU3+jy+S3DLzexgV+p5y46qzQEOit6gYCh+eT38HkzP1d5o16f3MyM3
-	 YLMfofxgKKHo/NmlktHEEzjAkVWWoNuFyRXGKgWPqki9CXh8Aj8+ShZ8gZpn8NWhEr
-	 feXqSm0KcAVanMHrmpsXpaUqFRiI2JkO+ziho+0xx6iu2H6FXBUiWuACYceSFymwmd
-	 1PxXYwKXld25Q==
-Date: Thu, 16 Oct 2025 13:12:35 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Val Packett <val@packett.cool>, linux-pci@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-Message-ID: <w7typaxh6kw5diqgqmc2tzwk3mjxeee66vjae64tdwv52i3sai@vvoqoh5og72l>
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com>
- <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
- <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
- <f5eb0360-55bd-723c-eca2-b0f7d8971848@linux.intel.com>
- <cd8a1d3c-1386-476b-a93d-1259b81c04e9@packett.cool>
- <8f9c9950-1612-6e2d-388a-ce69cf3aae1a@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDihxmOX+3CNLy/wDlPUAWwv+5tPLy7lIQuWwo8tl35UNG2EIqqy5w47geCJyRJQhTMMgqglppQNuvgKl/WeTKQ+dDb7uAUaKI/EU4w0HBFULSuiD/jRqXTk43GjnR0nSWqWydGDJC8OBG3yMHFr/JxWVRLMsxolQbzdBA/WWbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JkIKXaiC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dWFuZOwCnHREvFTOOI4lYoSZLWg8HjO7PYath0nHoYc=; b=JkIKXaiCYltNrKznpE5Qv6mRP4
+	GR5UN2IKlBI4hP8OTlQOBhOjy4mTDcYzhC1s6hkUYNSr7VGuWYVHGTDpKSQHwQ4ndevDW7UPd6Yld
+	9vz3ru2ZuNebxPaRMEfaYWwRD4gtNTho0UCue6DWqs/HxQMEmxA33YhdJUfEcHPZCLtKonmiACT9Y
+	m6QN7K+b5vg9Np2cWJvEcAFwuLIthbMF/EzeEps10UlG//UfpE7XrVr1+K6LNM8fT/1VCYOpOr+tG
+	O3XwhsWC2g/UN7ZafGutdrzJG3Eag5NE124ra1smOS31MbrqFbdUFZQeLFmpiSxnvFp5OoWgIqoej
+	EP0FZQdw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9If5-00000006Zfc-0szB;
+	Thu, 16 Oct 2025 07:44:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 45C47300325; Thu, 16 Oct 2025 09:44:34 +0200 (CEST)
+Date: Thu, 16 Oct 2025 09:44:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Jianyong Wu <jianyong.wu@outlook.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Tingyin Duan <tingyin.duan@gmail.com>,
+	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
+	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
+	Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
+	Libo Chen <libo.chen@oracle.com>,
+	Adam Li <adamli@os.amperecomputing.com>,
+	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/19] sched/fair: Track LLC-preferred tasks per runqueue
+Message-ID: <20251016074434.GZ3289052@noisy.programming.kicks-ass.net>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+ <ccbfda37200b66177a1c1add4715a49b863ac84d.1760206683.git.tim.c.chen@linux.intel.com>
+ <20251015120523.GT3289052@noisy.programming.kicks-ass.net>
+ <60fb91a69466e84d2367c11a4f0dd38511788bcb.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8f9c9950-1612-6e2d-388a-ce69cf3aae1a@linux.intel.com>
+In-Reply-To: <60fb91a69466e84d2367c11a4f0dd38511788bcb.camel@linux.intel.com>
 
-On Tue, Oct 07, 2025 at 06:43:03PM +0300, Ilpo Järvinen wrote:
-> On Mon, 6 Oct 2025, Val Packett wrote:
-> > On 10/6/25 7:46 AM, Ilpo Järvinen wrote:
-> > > On Mon, 6 Oct 2025, Val Packett wrote:
-> > > > On 9/24/25 10:42 AM, Ilpo Järvinen wrote:
-> > > > > Bridge windows are read twice from PCI Config Space, the first read is
-> > > > > made from pci_read_bridge_windows() which does not setup the device's
-> > > > > resources. It causes problems down the road as child resources of the
-> > > > > bridge cannot check whether they reside within the bridge window or
-> > > > > not.
-> > > > > 
-> > > > > Setup the bridge windows already in pci_read_bridge_windows().
-> > > > > 
-> > > > > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > > > Looks like this change has broken the WiFi (but not NVMe) on my Snapdragon
-> > > > X1E
-> > > > laptop (Latitude 7455):
-> > > Thanks for the report.
-> > > 
-> > > > qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-> > > > pci_bus 0004:00: root bus resource [bus 00-ff]
-> > > > pci_bus 0004:00: root bus resource [io  0x100000-0x1fffff] (bus address
-> > > > [0x0000-0xfffff])
-> > > So this looks the first change visible in the fragment you've taken from
-> > > the dmesg...
-> > > 
-> > > > pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
-> > > > pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
-> > > > pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-> > > > pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> > > ...What I don't understand in these logs is how can the code changed in
-> > > pci_read_bridge_windows() affect the lines before this line as it is being
-> > > printed from pci_read_bridge_windows(). Maybe there are more 'PCI bridge
-> > > to' lines above the quoted part of the dmesg?
+On Wed, Oct 15, 2025 at 01:03:37PM -0700, Tim Chen wrote:
+> On Wed, 2025-10-15 at 14:05 +0200, Peter Zijlstra wrote:
+> > On Sat, Oct 11, 2025 at 11:24:44AM -0700, Tim Chen wrote:
+> > > @@ -3999,6 +4038,7 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+> > >  		struct rq *rq = rq_of(cfs_rq);
+> > >  
+> > >  		account_numa_enqueue(rq, task_of(se));
+> > > +		account_llc_enqueue(rq, task_of(se));
+> > >  		list_add(&se->group_node, &rq->cfs_tasks);
 > > 
-> > Sorry for the confusion, the 0x100000 shift was caused by unrelated changes
-> > (Qcom/DWC ECAM support) and I wasn't diligent enough with which exact log I
-> > picked as the working one.
-> 
-> Okay, I certainly couldn't figure out how that could have happened, no 
-> wonder then. :-)
-> 
-> > Here's the actual difference. Good:
+> > Here and...
 > > 
-> > ❯ dmesg | rg 0004: | rg brid
-> > [    1.780172] qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-> > [    1.781930] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> > [    1.781972] pci 0004:00:00.0:   bridge window [io 0x100000-0x100fff]
-> > [    1.781998] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-> > [    1.782043] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff
-> > 64bit pref]
-> > [    1.800769] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> > [    1.976893] pcieport 0004:00:00.0: bridge window [mem
-> > 0x7c400000-0x7c5fffff]: assigned
-> >
-> > Bad:
+> > >  	}
+> > >  	cfs_rq->nr_queued++;
+> > > @@ -4010,9 +4050,14 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+> > >  	update_load_sub(&cfs_rq->load, se->load.weight);
+> > >  	if (entity_is_task(se)) {
+> > >  		account_numa_dequeue(rq_of(cfs_rq), task_of(se));
+> > > +		account_llc_dequeue(rq_of(cfs_rq), task_of(se));
 > > 
-> > ❯ dmesg | rg 0004: | rg brid
-> > [    1.380369] qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-> > [    1.442881] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> > [    1.449496] pci 0004:00:00.0:   bridge window [io 0x100000-0x100fff]
-> > [    1.462988] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-> > [    1.476661] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff
-> > 64bit pref]
-> > [    1.502299] pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]:
-> > assigned
-> > [    1.509028] pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff
-> > 64bit pref]: assigned
-> > [    1.509057] pci 0004:00:00.0: bridge window [io 0x100000-0x100fff]:
-> > assigned
-> > [    1.509085] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> > [    1.509099] pci 0004:00:00.0:   bridge window [io 0x100000-0x100fff]
-> > [    1.509124] pci 0004:00:00.0:   bridge window [mem 0x7c300000-0x7c3fffff]
-> > [    1.509133] pci 0004:00:00.0:   bridge window [mem 0x7c400000-0x7c4fffff
-> > 64bit pref]
+> > ... here, could you please check the compiler is doing CSE of task_of()?
 > 
-> Interpreting these logs is usually hard even when given the whole log, it 
-> becomes even harder when they're filtered so that many lines of interest 
-> are not shown (I tried to correlate the working case to the previous 
-> "wrong" "correct" log but I've no guarantee the rest would remain same).
-> 
-> > I've also added log lines to pci_read_bridge_bases where the other calls to
-> > the same pci_read_bridge_* functions are called, and turns out they did *not*
-> > happen.
-> > 
-> > So it seems to me that the good reason you were wondering about for why the
-> > resources were not set up in pci_read_bridge_windows, is that they must not be
-> > set up unconditionally!
-> >
-> > I think it's that early check in pci_read_bridge_bases that avoids the setup
-> > here:
-> > 
-> >     if (pci_is_root_bus(child)) /* It's a host bus, nothing to read */
-> >         return;
-> 
-> If there's a PCI device as is the case in pci_read_bridge_windows() 
-> which inputs non-NULL pci_dev, the config space of that device can be read 
-> normally (or should be readable normally, AFAIK). The case where bus->self 
-> is NULL is different, we can't read from a non-existing PCI device, but 
-> it doesn't apply to pci_read_bridge_windows().
-> 
-> I don't think reading the window is the real issue here but how the 
-> resource fitting algorithm corners itself by reserving space for bridge 
-> windows before it knows their sizes, so basically these lines from the 
-> earlier email:
-> 
-> pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
-> pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]: assigned
-> pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
-> 
-> ...which seem to occur before the child buses have been scanned so that 
-> space reserved is either hotplug reservation or due to "old_size" lower 
-> bounding. That non-prefetchable bridge window is too small to fit the 
-> child resources.
-> 
+> Will consolidate those task_of(se). 
 
-Yeah, this is specifically the reason why the issue only affects the WiFi card
-and not NVMe on this platform. The NVMe is powered on by the bootloader/BIOS
-and it doesn't use the pwrctrl framework to handle the power management. But on
-the other hand, the WiFi is not powered on by the bootloader and powered on by
-the pwrctrl framework (which happens after the bridge windows are allocated).
-Since the Root Port is not hotplug capable, the initial bridge window assigned
-is not enough for the WiFi card that comes up later and hence the failure.
-
-This also rings a bell that I should change the way the pwrctrl framework power
-on the devices. I think the devices/slot should be powered on before scanning
-the secondary bus of the Root Port so that the resource fitting algorithm knows
-how much bridge window memory should be allocated.
-
-I did notice the similar issue while trying to use the pwrctrl framework to
-power on an endpoint connected to a PCIe switch. But your patch made it obvious
-that the issue gets triggered even for the endpoints connected to the Root
-Port. I didn't digged into this issue yet, but this is the theory I came up
-with.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+And rq_of(). But really, check code-gen, it *should* DTRT and CSE the
+lot. If it doesn't, then do it manually.
 
