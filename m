@@ -1,155 +1,253 @@
-Return-Path: <linux-kernel+bounces-856303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC375BE3CB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:48:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB62BE3CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6955E0418
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B161887658
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B0933CE90;
-	Thu, 16 Oct 2025 13:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5EB33CEA2;
+	Thu, 16 Oct 2025 13:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WHfXtQqP"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wf0mGeeX"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B5133CE81
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7C833A01D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760622467; cv=none; b=b/LN1tQa05C9gPWsxVW5YqK7BU8f+TNgY5GxCj8eWW9vNEMSgjdrzgTKXDsT3pJgr4btBN8U4wkJi7WItlhYg7Cy2xLGJI+dW1p666FFGkEj3Vh6Hxuo17SUjPnyhwPyVEHUMkiIHA526M/LcGXibV3cZdlbGM+T5Fafed3G29o=
+	t=1760622489; cv=none; b=AY4vMfxtCgz/sljnTMiLO8LzDE7EIODl5K7WfJxCfvucx/IIT8h1ij3pvFrvDqi2HsRCkSJ8V3GRdg4exmyLY1hKaQdik5xJ1BopSOB83MEqB+PItjwfkV/SxNN5J87IA9Z7XIwPXQrM8sV36FjGplnZCxvDEhiEx9fWPViU7Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760622467; c=relaxed/simple;
-	bh=TIbHy+Z0k2K3fCKi+VbpjiLs1/PVwuQj2mTAMPKziEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A00ZC1VnDRtqQlZwPzuEhh5jKNbD4QhjpwVhBqqwGSpWRbE2nO14rjqfPDu+Fak4OmqJtztHQfHoV1fSg8WUJKZdr6ORCP92A4vKHo4okNODSAh2H3PLd/SXEXm8D0e6UfBD/zFv1K4GNh1aMWFQiBgiqqQIYlb44I1Guld+2xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WHfXtQqP; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-579d7104c37so1021376e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:47:45 -0700 (PDT)
+	s=arc-20240116; t=1760622489; c=relaxed/simple;
+	bh=sSDe1mGlkEL2RtCUFKIHhbHVM3TXv73UeokYbvF2fOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Px4PodX2fnjOAvZXdSblB/0Ua7miuBJtCEMQlv8Rmo9Misz+xa9kFO3ucv2/n+zOnutgmKoXhRcvug7lzG8iF0dkAoC3vCFRiDS1X/EgGExrhi15ko/0whXTyzfiR1eWKaD/oP9+lJdeMfY6/YPyYJyaENVofxAy5igSFRVxZVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wf0mGeeX; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-580585075aeso127029e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760622464; x=1761227264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1760622484; x=1761227284; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9hV7HDDV7d/rQjqNE9K7eRYtxgXH4WZBCf1hQsUW93I=;
-        b=WHfXtQqPKkEGO46qVkvlvyWJ+B1Ceoz9Ox/0y8uojf8ZpboEH6vIJgrt90Ke9GBbuM
-         7g3eqtGtB1TD2PQnEr3qso4aqvorEEamDUToYDaTmYG8A6iKj/rJ25b+MRkFScDK140b
-         TsnelOmQ9yz9EkPJ2KTOHoa8OFo10ucWwo2+h4paQQ2Nl0ZrFUa/LtPihYKTdC0DKEAZ
-         L/jPBHMzJ0g3jK5UOOSp0SAjlXyJAa5zmHPniuL0IgN8hkGlizEAdd4Q6O2I8Vd9K2nf
-         61njAkHNXHM/7Djad/3YmfvtxVbrE+t5EcxEI9eZLPL/eMkPXIiRtzckJ918wQnwB7pF
-         SlZg==
+        bh=gcAg85FBlDnXHKhY+clR6LHNWXAePe89oWLFHhsgwvw=;
+        b=wf0mGeeXXJaeC+ph0tGH1pvKZc02ZCHXYW6ydDgGVrmiB03NAe5eLQ98FshU2Cu6Em
+         /UmyNTG6MuiwZjgoa0KX7oIgMs1QL26i2GEBEKh+l8F4jFgB/e3DNNMvhKvC9HnMtMmp
+         4utiEufqWdXjm/mejyYDaGc6Vc1xRAhCa+hirOBmJHZ2+AeC1qHm07yh/z3bYhXTtnT7
+         peJJUNuCrOSy7bf2b/nsBNHPJi8upVnQKKXvPkfEFYN5/o7LO01NKVM+J0/LAewRqIyK
+         tGWaT71xNnuez7SsU0wkvgfcv4Rnbrlheow0yVjS1qOXi0UDfWU9pHdLtWUOfsxJ/1K+
+         O3qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760622464; x=1761227264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9hV7HDDV7d/rQjqNE9K7eRYtxgXH4WZBCf1hQsUW93I=;
-        b=iOYO+FmZ8D9xOM6dTAv+ifOmJBong5Js+snz7BTz2yo0KEDhfSp9QH+k5xEKpNJTyS
-         gT+s3qnAVx4hNVTAqYCZuMVR8ce4TgBLgcm30nz70cPUHNXfu9HYl1XgqiGbA8cYsVhG
-         nKFQTDOESh8l1yX+oVxBITHMUaCLjAst0LIHQ9XXdNlLr4narv8scGg/s62jOIeuZMCp
-         XOSYpb8Ly3uA//D9ink8GGsiZfoDbCf1JoaOzJoOiHzpdgLUeShhPyEw8ahfEE/t4QYf
-         Qj0JjjvLsH9/U0dBEDiS3IZ7A4fmd3ktuTiW0t9/u7+Vpw6K0W2FmtGKoinVBmcus/ms
-         y2yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDStD97/lBijWEvyEzzS3DYhoiNlS5TxBcNkcR3kqZv8Xz1WkI2zC1+9pb+Gr1496KvxTEEOMDVELNl+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbWRgwAYnHvvJh7O7PFNABiZ/OjEvpGmzyi5gmPxWTlGu18YOF
-	j5n4lSc8g29NYpZF1336J4PJ4AdAx3/fc4za8i/NGzb6+7T2AfgBArw5hQpJ1fuMZ0EsW7g90XX
-	4+4z3InLgYsj+/hanqMcw3GV9JePE/fNekLTePEqUh/mjozGhDVkJpIs=
-X-Gm-Gg: ASbGncsVbXvp8CdpgAtPu3DAjG1vsc5z6ZS2JGzGh269iU7XYaauK3SbjhK3tkgPLa3
-	1eNCNbQpNSJQfkDbduKk3kQQTU+Gjy5FCmz5j+ImqEcBTNR8ySYk83OMioJp4bW9xXkCC42D9Qt
-	V/GHvKXCtWUw5sJaSzD/NMUPfj9dl82mvc88TkPmmZw5gCeVAPKV2UZHttCXC6Tf3a10wysXVeA
-	RlMuEYDnNjC9CPkkh0vhucJUjA89/HxLpiQzTl1azFen/Lt1tI3OeFL4wMnFeW/wJ/oSd5TSOeG
-	OzTogIdBl4mX2Gtx
-X-Google-Smtp-Source: AGHT+IFZia1iEzr/3s7m2nxQ2YoGGpQuFa1cdLn3lelUEXgdsXE4QurhRg0vcVlptY3DWxqKgY6TbGSuBWeTV6sA8n4=
-X-Received: by 2002:a05:6512:3192:b0:58b:138:cb63 with SMTP id
- 2adb3069b0e04-591d845d4bamr82383e87.0.1760622463385; Thu, 16 Oct 2025
- 06:47:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760622484; x=1761227284;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gcAg85FBlDnXHKhY+clR6LHNWXAePe89oWLFHhsgwvw=;
+        b=HFH6YyPUBZE+vBUlrBww+D9EyE6V7ZCY5sLLlfGDao6nAK9VxgJMvTY5/ipeJ5LMFF
+         p3qd48WKR4TULjMYt+3zdW7XPofxnvopiHgU7k6BuN4bnMoPmBuCrBMnNiHs8CPlVzf1
+         ssJ+y8gkxXZAKci8PnTHBGsRTMzTSjczv25QmU78lL9ojOfBLvPhblQYgsP27i2eGpfB
+         drv6C1MpYEKtmRPTkv1qwK1hnXtTpXAlBcCcgpfvw9Qb4bSrJ2or4IYmQqGENGa9eNgO
+         fWbDq7nHYe3mWkNtndH5DVoE64DIKC0tMDe7wdr9Y+vRHcPIzLQ2mXskbXWyvnMlX/89
+         p2/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWnCv5wosz9f2XF8O849Fep0iUqP6XBju8XLafzbyMeH2J8G3Xm1QbLvkOZ+bAFQk02QRSLmyqE3O2MK90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlgurrehO3GOhKyaZBquU6bUnPlqW54/vSrMdXIYRl3siNZRfx
+	OaU5dEskIo70U+X9KNRh2WGbLzg7+Iwsj0Xii31iyU3eEvjgF1b5rsmcHq7aNilvr8I=
+X-Gm-Gg: ASbGncsaM5LExpQPf38PS72aGQZdJlRCLrGkEtN3xYi877XY0cz7rJuZ9PVe7d4Pg8c
+	YisHvA21ny9kWkKxh7adYh9Zwx+YYbfs9SwQcqDXi96KdiDPGBj5XMTxITKuqzKQ0rCToR2VuuQ
+	gQHmiO8YQImHZP+DuMIXIyjIjQpI+9x+wP8Ldd02qeRMZrt2LKOxHfqXbmbbyUC+FO4bMNg9tPg
+	DXEIBgy7A906QRkj5W/AAraVpp6p7p9E7XbrM9M42rhJRHNyYDM9ttf0OdP9IqVf8kMjO+XedeF
+	NSCXBnTridpaXLl1X6SNGcoUscF0igmEOsEeucYY9x/jJqmxiQ/Whmsg+x6N19OimcUqgbXwpcT
+	irdMkcaOK0O11EIeOuWwCcA89kpvHFp4m5cjggkb3n5DtNq2CN9l6TCZbHZoEhuPMy6KmxmpPEt
+	IFa+Q45gTmiKYYbSyuJ33ETKRZVyGZ/S8XEVEE31npR4g5splcMpZ0bE+LhZ3tEvM7K1rcH9T0H
+	Vkvr2to
+X-Google-Smtp-Source: AGHT+IFJNT+AAD99Hz3zpEUaGMgFi/cx8sgcMYMp0PdSXJ1mbaKwn/y+9OKRg8oSB9qI/6dBNhERfA==
+X-Received: by 2002:a05:6512:3ca5:b0:55f:461e:b458 with SMTP id 2adb3069b0e04-591d8550df2mr36408e87.4.1760622484271;
+        Thu, 16 Oct 2025 06:48:04 -0700 (PDT)
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590885768desm7109937e87.98.2025.10.16.06.48.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 06:48:03 -0700 (PDT)
+Message-ID: <b0224cd8-fe81-4229-94a4-c314c7b19811@linaro.org>
+Date: Thu, 16 Oct 2025 16:48:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014155358.3885805-1-ioana.ciornei@nxp.com>
- <176060910602.64650.7023197009719546944.b4-ty@linaro.org> <o3oknl2onntkl2dgzpzsjm6xeunqxrq3j5afo5zb5gdy6xyo2r@4ctlictxhdlv>
-In-Reply-To: <o3oknl2onntkl2dgzpzsjm6xeunqxrq3j5afo5zb5gdy6xyo2r@4ctlictxhdlv>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 16 Oct 2025 15:47:30 +0200
-X-Gm-Features: AS18NWDVv8MlP6uw2dQyaHqupGAESjmFAAgPFTaJOd9tBhON_tj8pkU25B2KAgg
-Message-ID: <CAMRc=Mepg=Cw0yUouEi9sJw+rPh3xRCQsbgYc=GVCsLXr3GAXg@mail.gmail.com>
-Subject: Re: (subset) [PATCH v6 0/9] drivers: gpio: and the QIXIS FPGA GPIO controller
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Frank Li <Frank.Li@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm6150: Add camss node
+To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251016-sm6150-camss-v1-0-e7f64ac32370@oss.qualcomm.com>
+ <20251016-sm6150-camss-v1-3-e7f64ac32370@oss.qualcomm.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20251016-sm6150-camss-v1-3-e7f64ac32370@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 16, 2025 at 3:25=E2=80=AFPM Ioana Ciornei <ioana.ciornei@nxp.co=
-m> wrote:
->
-> On Thu, Oct 16, 2025 at 12:05:13PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> >
-> > On Tue, 14 Oct 2025 18:53:49 +0300, Ioana Ciornei wrote:
-> > > This patch set adds support for the GPIO controllers on the QIXIS FPG=
-As
-> > > found on some Layerscape boards such as LX2160ARDB and LS1046AQDS. At
-> > > the same time it describes the SFP+ cages found on these boards, whic=
-h
-> > > are the users of those GPIO lines.
-> > >
-> > > Before actually adding the GPIO driver, patches #2 and #3 add and
-> > > describe a new compatible string - fsl,lx2160ardb-fpga - which would =
-be
-> > > used for the QIXIS FPGA found on the LX2160ARDB board. As opposed to =
-the
-> > > other compatible strings found in fsl,fpga-qixis-i2c.yaml, the
-> > > fsl,lx2160ardb-fpga imposes a unit address for its child devices. Thi=
-s
-> > > will be used in the next patches when the gpio controller node will
-> > > define its unit address as the address of its underlying register off=
-set
-> > > inside the FPGA. This requirement is described in the yaml file and i=
-t
-> > > only affects the newly added compatible.
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [1/9] dt-bindings: gpio: add QIXIS FPGA based GPIO controller
-> >       https://git.kernel.org/brgl/linux/c/d5896130a8781de5ac8970dbb7083=
-ce4cd6fe57a
-> > [4/9] gpio: regmap: add the .fixed_direction_output configuration param=
-eter
-> >       https://git.kernel.org/brgl/linux/c/ae495810cffe29c3c30a757bd48b0=
-bb035fc3098
-> > [5/9] gpio: add QIXIS FPGA GPIO controller
-> >       https://git.kernel.org/brgl/linux/c/e88500247dc3267787abc837848b0=
-01c1237f692
-> >
->
-> Thanks!
->
-> How are the two remaining dt-binding patches going to be handled?
->
-> The driver changes for the new fsl,lx2160ardb-fpga compatible were
-> merged but not the associated dt-bindings changes in patch 2/9. And for
-> patch 3/9 there are no associated driver changes.
->
-> Ioana
+On 10/16/25 13:22, Wenmeng Liu wrote:
+> Add node for the SM6150 camera subsystem.
+> 
+> Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sm6150.dtsi | 121 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 121 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm6150.dtsi b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> index 3d2a1cb02b628a5db7ca14bea784429be5a020f9..ebfb336439b4fdfa567c0e011cd4da88a6290dfd 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> @@ -3646,6 +3646,127 @@ videocc: clock-controller@ab00000 {
+>   			#power-domain-cells = <1>;
+>   		};
+>   
+> +		camss: isp@acb3000 {
+> +			compatible = "qcom,sm6150-camss";
+> +
+> +			reg = <0x0 0x0acb3000 0x0 0x1000>,
+> +			      <0x0 0x0acba000 0x0 0x1000>,
+> +			      <0x0 0x0acc8000 0x0 0x1000>,
+> +			      <0x0 0x0ac65000 0x0 0x1000>,
+> +			      <0x0 0x0ac66000 0x0 0x1000>,
+> +			      <0x0 0x0ac67000 0x0 0x1000>,
+> +			      <0x0 0x0acaf000 0x0 0x4000>,
+> +			      <0x0 0x0acb6000 0x0 0x4000>,
+> +			      <0x0 0x0acc4000 0x0 0x4000>;
+> +			reg-names = "csid0",
+> +				    "csid1",
+> +				    "csid_lite",
+> +				    "csiphy0",
+> +				    "csiphy1",
+> +				    "csiphy2",
+> +				    "vfe0",
+> +				    "vfe1",
+> +				    "vfe_lite";
+> +
+> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
+> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
+> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
+> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
+> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
+> +				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
+> +				 <&camcc CAM_CC_SOC_AHB_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
+> +
+> +			clock-names = "camnoc_axi",
+> +				      "cpas_ahb",
+> +				      "csiphy0",
+> +				      "csiphy0_timer",
+> +				      "csiphy1",
+> +				      "csiphy1_timer",
+> +				      "csiphy2",
+> +				      "csiphy2_timer",
+> +				      "gcc_axi_hf",
+> +				      "soc_ahb",
+> +				      "vfe0",
+> +				      "vfe0_axi",
+> +				      "vfe0_cphy_rx",
+> +				      "vfe0_csid",
+> +				      "vfe1",
+> +				      "vfe1_axi",
+> +				      "vfe1_cphy_rx",
+> +				      "vfe1_csid",
+> +				      "vfe_lite",
+> +				      "vfe_lite_cphy_rx",
+> +				      "vfe_lite_csid";
+> +
+> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+> +					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
+> +					<&mmss_noc MASTER_CAMNOC_HF0 QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "ahb",
+> +					     "hf_mnoc";
+> +
+> +			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "csid0",
+> +					  "csid1",
+> +					  "csid_lite",
+> +					  "csiphy0",
+> +					  "csiphy1",
+> +					  "csiphy2",
+> +					  "vfe0",
+> +					  "vfe1",
+> +					  "vfe_lite";
+> +
+> +			iommus = <&apps_smmu 0x820 0x40>;
+> +
+> +			power-domains = <&camcc IFE_0_GDSC>,
+> +					<&camcc IFE_1_GDSC>,
+> +					<&camcc TITAN_TOP_GDSC>;
+> +			power-domain-names = "ife0",
+> +					     "ife1",
+> +					     "top";
+> +
+> +			status = "disabled";
 
-I would assume Frank Li will pick them up? Ping me if that doesn't
-happen in the following days, I'll pick them up into the GPIO tree.
+Please remove empty lines between properties all above.
 
-Bart
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +				};
+> +			};
+> +		};
+> +
+>   		camcc: clock-controller@ad00000 {
+>   			compatible = "qcom,qcs615-camcc";
+>   			reg = <0 0x0ad00000 0 0x10000>;
+> 
+
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+-- 
+Best wishes,
+Vladimir
 
