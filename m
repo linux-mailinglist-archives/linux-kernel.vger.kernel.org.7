@@ -1,126 +1,125 @@
-Return-Path: <linux-kernel+bounces-856685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52600BE4D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:18:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43199BE4D01
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70DE58641C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E36B5866B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8874D328636;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FFB21C163;
 	Thu, 16 Oct 2025 17:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WV09bS6a"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7C223EAA0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578753346BA
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760635061; cv=none; b=NnoUVtGi1oTpc3CAbxUMAqucykg63aFBPy0LCmoFtNK0gFUuQALHXpLVDkCKH/EoZAoFl7xDf1PVi+uHnGeoC2iW1eNbvqg6Grr6J5NCYI30CtbNairlKip2EvAESJZCEKEtbiGMFtW806+0jk/7GA7wersbVYfykjT7ei82c18=
+	t=1760635062; cv=none; b=Xdbpnibqt0FEll6lggiCvCNNrZu8JYRljSQ0nFsz4SKgC967tRh/zFOUWFiHLLwFLTWgzmfh4w5EV8fWdH6vFrwJ/NiQvBOGJtpiyhJPaS+RfTEaC51t2ROqZTE1rW/3jblgPu1NSAwdlP7rHa0hhDTFU09xXvCjjpkCjUx1mfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760635061; c=relaxed/simple;
-	bh=OvIzTILdLjt0ZWBrFxi644wKZ7X2l/q7hdn6E8pzNOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=or4URZvVRbKk6yXCTTnrkzp+KP2gUg8HICiS1t6hYlDBv5MG6g/UIvjWRIZiqh+qPNBdVAjZR2KnnqJiwL4UJtgcYIMoOWiioUqy6DJpH6heXSHkOra9yeXs3+OFzHnTd3ewBenxz2XGLbySvCziE+cOFuV/Lqsp3T0VZRkmzhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WV09bS6a; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=OX3P
-	Eq2AA3O282TkfqGHD7Y5ojgHInOgKrAj3tdjeSQ=; b=WV09bS6ays1ysZQdJFcE
-	3LqxiBhwr76RZrIGeq3P7bP9hzjRrtoU/V2Ytv32HpwL0PQ4palg8udvjrOYHBYi
-	gjZXY1hyb+wlQFsuKvnoxXHuyu+562YQCeA2i25tYs/eqmIKpwuIP8gPSVkf+Y08
-	A3crt7gax0p924xvd815jM/NGwh23ej9EufSQ1ebQfZW2CJm5XLVIfYZTSsjDCSd
-	sBMdSmhaQzyFboEabtQ2umAW1NPdtqICoAXUZSsArkp/nRUNJe9QZZ/5pNaJrNA/
-	a3CF0inqdBTYNBTFPdEEsrTfE93DrexxJJx7zW63bWuuBDypmHJFwbttjpnvyqjm
-	Gw==
-Received: (qmail 3896430 invoked from network); 16 Oct 2025 19:17:33 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Oct 2025 19:17:33 +0200
-X-UD-Smtp-Session: l3s3148p1@E4nryklBcrcujnti
-Date: Thu, 16 Oct 2025 19:17:30 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
-Message-ID: <aPEoqkdatl4G82co@shikoro>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
- <20251015142816.1274605-2-herve.codina@bootlin.com>
+	s=arc-20240116; t=1760635062; c=relaxed/simple;
+	bh=cwIHUhRsMLJsQkWr4HfOu/7/fl3QvoFPf39FKcgG5uE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rLKUe2fl0oAGQz334ZIy5Q/NaSXfpLzRkER+g12q8Rm8opQMeIYEoTjbCxLjrY+ymHpw6H9Tj4qFfFt+TImm18PLdHXWKiavMc2n5zGbFMGb8AjuXNTnoeNnr5tvdpKb3Gl+Vka6pPgNJTOJQMckagXHjmA9wUUZuaGOctdzLm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 798601713;
+	Thu, 16 Oct 2025 10:17:31 -0700 (PDT)
+Received: from [10.57.35.229] (unknown [10.57.35.229])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 038B53F66E;
+	Thu, 16 Oct 2025 10:17:37 -0700 (PDT)
+Message-ID: <73a1d5d0-8077-450c-a38f-c1b027088258@arm.com>
+Date: Thu, 16 Oct 2025 18:17:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jv9t7icn7i4vlBOj"
-Content-Disposition: inline
-In-Reply-To: <20251015142816.1274605-2-herve.codina@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mostafa Saleh <smostafa@google.com>, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ will@kernel.org, joro@8bytes.org, praan@google.com
+References: <20250929155001.3287719-1-smostafa@google.com>
+ <20250929155001.3287719-5-smostafa@google.com>
+ <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com> <aO9vI1aEhnyZx1PL@google.com>
+ <b48193a4-a37b-41ba-b4ba-8b5c67d812bd@arm.com>
+ <20251015151002.GH3938986@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251015151002.GH3938986@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025-10-15 4:10 pm, Jason Gunthorpe wrote:
+> On Wed, Oct 15, 2025 at 02:51:15PM +0100, Robin Murphy wrote:
+>> On 2025-10-15 10:53 am, Mostafa Saleh wrote:
+>>>> Conversely, this is infrastructure, not an actual test of expected
+>>>> io-pgtable behaviour, so I think just:
+>>>>
+>>>> 	cfg.iommu_dev = kunit_device_register(test, "io-pgtable-test");
+>>>> 	if (IS_ERR(cfg.iommu_dev))
+>>>> 		return;
+>>>>
+>>>> (it doesn't return NULLs either)
+>>>>
+>>>
+>>> Yes, I was not sure about this one, when checking the code base, every test
+>>> handles kunit_device_register() failure differently, this seemed the
+>>> most strict one so I used it, I will update that in the next version.
+>>
+>> Yeah, my impression is that those have likely been copied from the
+>> lib/kunit/ code where it is actually testing its own API. I've now sent a
+>> patch for the example in the docs...
+> 
+> I think any failure to run the test should be reported, either with an
+> err or a skip. Tests that didn't do anything and silently report
+> success are not a good design.
 
---jv9t7icn7i4vlBOj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sure, a test that hasn't completed hasn't succeeded, but it hasn't 
+failed either, in the sense of there being no fault found in the actual 
+code being tested. Hence it seems intuitive to me that reporting a 
+failure in the test infrastructure itself as if it were incorrect 
+behaviour of the target code is not right.
 
+In this case AFAICS kunit_device_register() can only fail due to OOM or 
+something unexpectedly messed up in the kobject/sysfs hierarchy, all of 
+which should already scream (and represent the system being sufficiently 
+hosed that any actual test results probably no longer matter anyway) - 
+otherwise I would have suggested a kunit_err() message too.
 
-> +description:
-> +  The Renesas RZ/N1 ADC controller available in the Renesas RZ/N1 SoCs family
-> +  can use up to two internal ACD cores (ADC1 and ADC2) those internal cores are
+> Looking at the existing users I see alot are in init functions, so
+> they propogate an error code and fail the init.
 
-ADC cores?
+Indeed I think this one ultimately wants to end up in an init function 
+too once everything is unpicked, but for now...
+> And the rest inside tests do something like this:
+> 
+> 	dev = kunit_device_register(test, dev_name);			
+> 	KUNIT_ASSERT_FALSE_MSG(test, IS_ERR(dev);
+> 			       "Cannot register test device\n");
 
-> +  handled through ADC controller virtual channels.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - renesas,r9a06g032-adc   # RZ/N1D
-> +      - const: renesas,rzn1-adc
+The confusion is that most of those KUNIT_ASSERTs are where the KUnit 
+API *is* the thing under test, or have clearly copy-pasted the same 
+example soon after, and some are in init functions which could fail 
+gracefully, so it's far from clear how much considered intent they 
+actually represent. In fact AFAICS it's only the two cases of that exact 
+pattern in overflow and fortify that hint at being an older notion.
 
-Do you know of other SoCs with this IP core? If it is only RZ/N for now,
-we could go with const for N1D. All other N1 variants cannot run Linux
-because of no SDRAM controller.
+However, on further inspection, I see that there also about as many of 
+examples of kunit_skip() being used when failing to allocate per-test 
+resources, so I guess that's the pattern I was after, hurrah! I wouldn't 
+consider the difference between "test skipped because it unexpectedly 
+couldn't run" and "test skipped because it knowingly wouldn't have been 
+meaningful or possible to run" significant enough to be worth trying to 
+split further.
 
-
---jv9t7icn7i4vlBOj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjxKKcACgkQFA3kzBSg
-KbZBTg//XP1NxCTl2FOwgzhHQbgD3sYnBcvNepzdoiScf+9sZ1VZqzIHym2uQ8SO
-xymT1EMucboG47Q32jH4jrUY4TZhhRgHO5EqXwYtXEtaaBzkZNmnYSeY7vBEFwC6
-qJpam+NldppA2iCtBieIYPpFtsCOkNqazBVhr1X1FwNgWKOVaIIqaWvXV2Fk6aSz
-/l0ADNZBjPt9t431KUiuPlmgybJnijDOmaCI+E47vTekhfDynWWuqYFyRujNSa1X
-IYWFkdwUNvCntBxmtQwxYrbDaaFp+T1YvHQAwruyCFHPL1wQTtFPLeGgU83xFaNd
-epAecZh6zk88veIU2Q+y5CdNuwb3idFueNu4i9KElBXpmjROLdqNmb+KMUGUHLxR
-F15jkCEK+vqo0qZ/aqLCW3a5QW1OEM7EHaL1/ayE0PN3sAi/Galeig8we1ngWh0m
-Z4C1jdPrS0IAgVjCqXZGMiJ/WO5o/tpcZaXipcy6ioElUQurOaOASfORrNKxAZWZ
-6V//R6F+UV7TSnQSmePZhoJze6xgJpyLQdjgoqKgv61yVLzgYdLncJmoawPGISaW
-Q5XzVTubp/6JVVLGhoJIQ5efW5AZ4PLiNHaWUiDa57uLDdMiuKjDIVTzid0cirM/
-bUtTuwZgpf1VfPCcXYPCUKHj8CxqGY0p6sITy5M+UXvGG9eikAw=
-=5LLJ
------END PGP SIGNATURE-----
-
---jv9t7icn7i4vlBOj--
+Thanks,
+Robin.
 
