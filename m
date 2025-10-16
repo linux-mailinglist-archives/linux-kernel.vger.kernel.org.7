@@ -1,175 +1,134 @@
-Return-Path: <linux-kernel+bounces-856215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40756BE381A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC98BE382A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853C81A60ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A906B584465
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F16E334395;
-	Thu, 16 Oct 2025 12:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4791334386;
+	Thu, 16 Oct 2025 12:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i2LfPzHA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1DxaPLZ"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A852262FE9;
-	Thu, 16 Oct 2025 12:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C41C262FE9
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760619213; cv=none; b=rH8SpB86HkPCEvsh2uQ46nmW+jd58hyG2EJFzBFlFd1KnNW/dEn33Eh4SVE3eto64RSI0zuuh/IZAK0ueH5TNI/gd/s9oOyCDPtfrvJOh394s+GAQRRDTtVh77uBoWX3j2aknXDJ2yRw3G0kbppjH0+W1j2Ag/2U3mBW3Hj9X8E=
+	t=1760619249; cv=none; b=HYpYVEQG9v3+8dEtWJilLWsdh5Wu+8+CKhjCwRSOMnX6WuIw1tUPKUw9FbATHG7QjmGCXDudummesKTQk5RmIGehAFda167Q+VtUv/mARffU1lRKHBRUOLm7l1jncKfVJlK3ADVrx9xYSpxyIGvF3wO3E4KZPn/RoJh+hIq6Hoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760619213; c=relaxed/simple;
-	bh=+sjguuQF9veMh/XDulGaaJkoj9vbjMeKiKeAv2UoE68=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=tWOHrC5RjGGd8t7ahlG+jSYLFFh7CvUPKVDfVb2dXNSaozdxwF2E115A75lBt4+6238mlLG1Co4m4vPP1rjrfO7i2u+5uXjse/WGyo5x4Is0AQBMgR0hmKE849VZMGDw8Dj7KusOHFNptjh2e6iaY4jKb4Djln/fq+2nl6JpbAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i2LfPzHA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G7ks50016276;
-	Thu, 16 Oct 2025 12:53:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	b8UnPcHh8kcwrSfAcGYTzDXv1L8RUlX1O3Kk3RXFStU=; b=i2LfPzHABBf26XBu
-	vqC0xFUplzYzmHoKgqtcWauwWsbIRQ9uAOikv99AVY2ncaLQ4LjeCehhYlog6wFe
-	YYcY247InTChJrg+nXz3IEWqDOEbfzcz7JVHMf3Zu2AAY2owl53C+yB2G0d2Q+fP
-	6RrKwGLx5YRbW1Q9rkx069eZUWo0COydE3Z0BH/IY5gMO5HI6mCh6DriDjcVnNiY
-	GYUmqtTBfgBg/AQ3Tj571pN6dVLN+wW4zdxfZofFE3MwpLJ3n2GoBdRSkqjVZO/y
-	hjJ9npnA5ZVGi1ek8nFYNM9ZcUKtHeRkaWH4XEIWDm4K6EfKIxqyBIUZ2rWSCzTu
-	3+eACA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdkga3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 12:53:22 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59GCrLak032071
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 12:53:21 GMT
-Received: from [10.206.103.106] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 16 Oct
- 2025 05:53:15 -0700
-Message-ID: <564165ba-38ae-4c86-a980-b2342aa20695@quicinc.com>
-Date: Thu, 16 Oct 2025 18:23:12 +0530
+	s=arc-20240116; t=1760619249; c=relaxed/simple;
+	bh=02xWtP8jgtv+56tf5rCWPxlK4KrnJ/X65QlZU3iE1KU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=r61mnqSEp5HJtSbuXvzGOj3BzGYSWsPAn07D4bY3J7oyZUdyguZ4W9LSk0fhJUtaCftt8LkrT2ejRs9w+iXlaRtcXe1HDsiVE6v7VCu1Dkj3igFU6r1cOVblCsX3odDv05VgDOinJWJg7PEjfbjgparYhQQieIiaSdaCFPVbLDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1DxaPLZ; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3f6b44ab789so623751f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760619245; x=1761224045; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QydqXtcKOrJO6HFcjmy3pq4ZYiBmoe/JsOUdaXl6rgo=;
+        b=f1DxaPLZQIhURK2ZQJeMxqud/fdr+4STmi3bwIvian90l4WHGlEpOagcPh9QMHoHhu
+         aB7zKj3LxXgz+ZUKp2ZeExO8AMuRVVckGsFzR4d3RSLYzyBWSx4dke0HM2POdFEbdKgj
+         sctyKxsv+41JQtSJrfYEaBKXpYHOj2YfC59WNQhTwekfsXCcLm8CA5eoNssJrXATzePc
+         33WqakfLu9S58RMFVGpKPYecVKlGGmj4jWg353UlDfLElCOtHjaNAedlsSgz246/9dkx
+         dPDqG6Q5uK0Gr35C8cziJHSE+iY4czYGryNE84l4m/s2orIEHIJkFEDUTDG+ihEBiSyz
+         Ce1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760619245; x=1761224045;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QydqXtcKOrJO6HFcjmy3pq4ZYiBmoe/JsOUdaXl6rgo=;
+        b=XOf8lkrJlqZ8otPcoLAEHBFE5BmXr8KCa6xEl8dyACUi2xNH3vSfNJO8Q2ch1QgGkm
+         TFviEa6KjRMZQ0nlrIZwalh1vTt61sDZdJKJM3oHAV11MLAhPsDrGyX9O7sxCh4n7L6A
+         rCG1zBi88uWcth/Ri9O5PbuhuxYbmLfb8XongQuhAc37G4bg1S6k6tITPamAzLM33hhg
+         RdC7dosR/ulBvA3HfBHkScfioLHBW2vVpyJig9/G8mGZq3GzfVdCEaNzCkkvLsb6hKDw
+         nyMHT+4gc8Act7/5G+tXs9PbaCYEQP3eBr3W0XRstqcbexDwWZaNkpXLUS5/+RJzyzLq
+         VqQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrP2MHrxWCC0WkK7f9nW6HgI2ElkvBygSp6qKSvtSN0VY0Mz48sPdoBOAI4362/hBW2zIbdTWty2bSrMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywti4jWkSH1qpp0F+HPxTWHPRUdX9UYLJ5i/Ccqs4eKYZU9FA4Z
+	He45zRATps2Vvxl9gPTDYu2+C2plCpBiS2RhQMhR0gzKohFcmEbbj0bEkDMaAhinNWj6qr7VkX/
+	mmGuyaaq81YWaUA==
+X-Google-Smtp-Source: AGHT+IGy4FY3Mof3DNeUIeQNoz0mW/pNbCcDRnOKerX5YwlmVMZ+FGjr6nv56Lt4OnKiRfLxkk5nIL9tXvQztQ==
+X-Received: from wrnv18.prod.google.com ([2002:adf:ebd2:0:b0:425:6e00:e053])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2c0a:b0:3e8:f67:894a with SMTP id ffacd0b85a97d-42704d8357dmr32f8f.5.1760619244702;
+ Thu, 16 Oct 2025 05:54:04 -0700 (PDT)
+Date: Thu, 16 Oct 2025 12:54:03 +0000
+In-Reply-To: <20251013143444.3999-8-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: monaco-evk-camera: Add DT
- overlay
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vikram Sharma
-	<quic_vikramsa@quicinc.com>,
-        <bryan.odonoghue@linaro.org>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ravi Shankar
-	<quic_rshankar@quicinc.com>,
-        Vishal Verma <quic_vishverm@quicinc.com>
-References: <20251015131303.2797800-1-quic_vikramsa@quicinc.com>
- <20251015131303.2797800-4-quic_vikramsa@quicinc.com>
- <ec23a3b2-fb50-4da7-8912-512b0a741ecf@linaro.org>
-Content-Language: en-US
-In-Reply-To: <ec23a3b2-fb50-4da7-8912-512b0a741ecf@linaro.org>
+Mime-Version: 1.0
+References: <20251013143444.3999-1-david.kaplan@amd.com> <20251013143444.3999-8-david.kaplan@amd.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDJRFMTS5HX9.3MT8W88VM4U2I@google.com>
+Subject: Re: [RFC PATCH 07/56] x86/bugs: Reset spectre_v2_user mitigations
+From: Brendan Jackman <jackmanb@google.com>
+To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Graf <graf@amazon.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	<linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: odQb8elHaFhJptGVdwMceWWzXct9Is-S
-X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68f0eac2 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=4uKfaDAKpMznJALyaWEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: odQb8elHaFhJptGVdwMceWWzXct9Is-S
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX6zGPZNqJl59G
- s8ESr0GZMW16IRYwpG+LcHv1qx/Rou8m+Ozcp9A7l2CWkKJMzQI9Wbn4OxJZlRsRZyuRoUc+LxL
- lm8hZ9WKXT+/Xm0ciVzxkgVklgfQ6qNlet6v1PMf+eds6B2tUMOAcQdTY+vCf3klOrNBgzJf6n1
- R2UL/5CyCdFvBUFE5tikKX/OIO+tx1hC6NciH2onqF0ebOKo6Wewt54c8egLtZunBV5IGmc3Hxf
- g0C2gi7n6fpAtl6mhLdZJzdQlreWvP3y/goiPYfcLhkTyK9Nk0dn6jR2NIoTiP8zOt4V4nah80n
- CExRENyXgHySmCLOC509/xkc1DQsjIDkLsZe2YsmuJUb/dacSlNJxXWbGSI00vb7FK5aq2deor5
- 2SmdHkSjdHoef3xI7l74EpuB55GmNQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
 
+On Mon Oct 13, 2025 at 2:33 PM UTC, David Kaplan wrote:
+> Add function to reset spectre_v2_user mitigations back to their boot-time
+> defaults.
+>
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 1f56ccb5f641..4ca46f58e384 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -2056,6 +2056,18 @@ static void __init spectre_v2_user_apply_mitigation(void)
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_DYNAMIC_MITIGATIONS
+> +static void spectre_v2_user_reset_mitigation(void)
+> +{
+> +	static_branch_disable(&switch_vcpu_ibpb);
+> +	static_branch_disable(&switch_mm_always_ibpb);
+> +	static_branch_disable(&switch_mm_cond_ibpb);
+> +	spectre_v2_user_stibp = SPECTRE_V2_USER_NONE;
+> +	spectre_v2_user_ibpb = SPECTRE_V2_USER_NONE;
+> +	spectre_v2_user_cmd = SPECTRE_V2_USER_CMD_AUTO;
+> +}
+> +#endif
+> +
+>  static const char * const spectre_v2_strings[] = {
+>  	[SPECTRE_V2_NONE]			= "Vulnerable",
+>  	[SPECTRE_V2_RETPOLINE]			= "Mitigation: Retpolines",
+> @@ -3844,5 +3856,6 @@ void arch_cpu_reset_mitigations(void)
+>  	spectre_v1_reset_mitigation();
+>  	spectre_v2_reset_mitigation();
+>  	retbleed_reset_mitigation();
+> +	spectre_v2_user_reset_mitigation();
+>  }
+>  #endif
 
-
-On 16-10-2025 00:45, Vladimir Zapolskiy wrote:
->> configuration. Introducing a device tree overlay to support optional
-> 
-> s/Introducing/Introduce
-> 
-ACK
-
->> Co-developed-by: Ravi Shankar <quic_rshankar@quicinc.com>
->> Signed-off-by: Ravi Shankar <quic_rshankar@quicinc.com>
-> 
-> The first expected Signed-off-by tag shall be from the change author, and
-> it is not.
-ACK
-
->> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> 
-> Year is missing.
-> 
-This is as per new yearless copyright format.
-
->> +        avdd-supply = <&vreg_cam1_2p8>;
->> +
-> 
-> Please remove empty lines between individual properties.
-> 
-ACK
-
-> Remove 'clock-lanes' property, first of all it is non-configurable,
-> and definitely it's hypothetical value can not be equal to '7'.
-ACK
-
->> +        };
-> 
-> I'd suggest to add a description of pins with MCLK function in a separate
-> change to the SoC specific .dtsi file. It will cover gpio67, gpio68, gpio74
-> and gpio69, so here it's a MCLK1 pin for instance.
-We are currently enabling sensor only on CCI1.  Pins gpio67–gpio69 are used by mclk for cam0–cam2, and gpio74 enables the regulator.
-Since mclk is sensor-specific, it's added in the sensor dtso.
-
-Would it be appropriate to extend mclk support to all CCI instances, even if some are not actively used?
-
-@Konrad, @Bryan, Could you please share your thoughts on the above?
-
-If valid, then cam0_default, cam1_default, cam2_default should be added in SoC dtsi, with references used in sensor dtso.
-
-> 
->> +
->> +        ldo-avdd-pins { 
-
--- 
-Regards,
-Nihal Kumar Gupta
-
+I think this might be failing to account for task state? E.g. if a
+user boots with spectre_v2=off then we ignore the PR_SPEC_DISABLE calls
+that would enable IBPB-on-context-switch for that task. Then if they
+enable it via this dynamic interface they probably expect their
+PR_SPEC_DISABLE to take effect retroactively. I don't think it will with
+the current code, do I have that right?
 
