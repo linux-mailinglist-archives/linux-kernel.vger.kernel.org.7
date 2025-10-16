@@ -1,178 +1,93 @@
-Return-Path: <linux-kernel+bounces-856254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E09DBE3A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:15:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E843BE3A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BEFF5009BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:15:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D811A653EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2AB33A011;
-	Thu, 16 Oct 2025 13:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vn7F8YCc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E1033A008;
-	Thu, 16 Oct 2025 13:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6781E5205;
+	Thu, 16 Oct 2025 13:18:46 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0267B1D63F0;
+	Thu, 16 Oct 2025 13:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760620456; cv=none; b=NV8m0pYwNCpWOdwnSOWSXsstzZ7uQL42jGbWg8V9zEIDOf0V/axRiw/Wv7jmfegYuHjnuay2ePVg4UL/xEsO/i1k5+qCsclsIWrBgPGPyWrCyoR7QTXuLG9azNFI0x+WAdn+S7KrFoZ/zuzguV4nCbVSwYqXip1UNITmZltwIlw=
+	t=1760620725; cv=none; b=rtTeDHMOGQy2o9XC4UTQrjShd+GKo9Kg2CPQNYUBKZcmVT8RReUJL9YNv/SyhNYm38YjZ60Vsx8aCeqKGMCvX0hf6jf7/bHwnYDj7CKWtEo45lRx6zk8go1sz3/SvlX2zWHXRKUp3L8ENpqthY/zVdH/COh5A1ynBsI9KKpDTE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760620456; c=relaxed/simple;
-	bh=0N8/qd5qzLHbFEVNvXz6ej7DAPmf2eK2l9UUMC1Qd9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ANuxCHNjYM0HFVo1uyuJ3TN3Dkk25YgMBddbskh3o4k+DLgkJKb5+z58g5yywR/gqUR8xBxSqMPl58HG64x83LTN2iJ7Js09Ls1nMcb9niFADIubMZhG+n62k1GRkUL+d59AzcfVI8AWkt2nWArBWHN3yQiGD9Z64VzS1mZz9Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vn7F8YCc; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760620454; x=1792156454;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0N8/qd5qzLHbFEVNvXz6ej7DAPmf2eK2l9UUMC1Qd9c=;
-  b=Vn7F8YCcrw7zgKVrHyJ4DXdAPpl22cmnxqON7RmQg3oJldJ71031w+e7
-   AwQ6EAImvMR3CSk11e2EAPcKnhzipB7W83/KkFPyT9BiLQgQwwIhpQogr
-   TrUzUqLkjOb7HwEg9kpOygshKGbnIfcyJc4y3lbeks/PRYnmT+oaHjec2
-   yxMLIL4Fsr/ar1WRW1jPQefinZ67I450+/MwesHRSzh4N+hPj2ty9I2DZ
-   sbhPkvr4fk2xj5A3JZXvrk4Wq1CHWbofJBdeeX4V7zGQZto9m3f/A4TY9
-   4jZCBxRHiKNB4g/tCGNfrTUffFLaCDgBL87vUdGa7aYZEN5g2rjBdeiGl
-   g==;
-X-CSE-ConnectionGUID: xcJsGYceS1qYXX3ubSUvYA==
-X-CSE-MsgGUID: oifVkcWSTfaN0ajvjXHJsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62904750"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="62904750"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 06:14:14 -0700
-X-CSE-ConnectionGUID: /6qmLXwSSuujN6n5tJPkyg==
-X-CSE-MsgGUID: GPjxXppZQzOxZThp/c/j8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="182016030"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.10])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 06:14:09 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	seanjc@google.com,
-	kai.huang@intel.com,
-	mingo@kernel.org,
-	linux-sgx@vger.kernel.org,
+	s=arc-20240116; t=1760620725; c=relaxed/simple;
+	bh=Nn7uOs5GW1/6qUmPIXfE6B6oLA5OjxF+GXumtCmXsT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOaDcKgbTX2RY/WDtj1X8/HwFqqwRlyEy/AfkFFPc5433p8nZuFGcAaAowBXOam/jABY2fVNs/ig0gHTT3vX/kKDZWNRwm0a3j2o33kXPI/zqBoKsbtXgCoOiNF9PO2+rDK7eHARkHCZz24qhuZFFQVNwq+s1OXDDjk27ev/2dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: kq3DJWO5QvWrHalCYR1dHQ==
+X-CSE-MsgGUID: LG5HJzMWSj+XSTpU4hcFtA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 16 Oct 2025 22:13:34 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.8])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B3F2D41CB11F;
+	Thu, 16 Oct 2025 22:13:28 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: john.madieu.xa@bp.renesas.com,
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v17 5/5] x86/sgx: Enable automatic SVN updates for SGX enclaves
-Date: Thu, 16 Oct 2025 16:11:08 +0300
-Message-ID: <20251016131314.17153-6-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251016131314.17153-1-elena.reshetova@intel.com>
-References: <20251016131314.17153-1-elena.reshetova@intel.com>
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/3] Add TSU support for the Renesas RZ/V2H SoC
+Date: Thu, 16 Oct 2025 13:13:24 +0000
+Message-ID: <20251016131327.19141-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-== Background ==
+Hi,
 
-ENCLS[EUPDATESVN] is a new SGX instruction [1] which allows enclave
-attestation to include information about updated microcode SVN without a
-reboot. Before an EUPDATESVN operation can be successful, all SGX memory
-(aka. EPC) must be marked as “unused” in the SGX hardware metadata
-(aka.EPCM). This requirement ensures that no compromised enclave can
-survive the EUPDATESVN procedure and provides an opportunity to generate
-new cryptographic assets.
+This series adds TSU support for the Renesas RZ/V2H SoC.
 
-== Solution ==
+The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
+to measure the junction temperature. The device provides real-time
+temperature measurements for thermal management, utilizing two dedicated
+channels for temperature sensing.
 
-Attempt to execute ENCLS[EUPDATESVN] every time the first file descriptor
-is obtained via sgx_(vepc_)open(). In the most common case the microcode
-SVN is already up-to-date, and the operation succeeds without updating SVN.
+The Renesas RZ/V2H SoC is using the same TSU IP found on the RZ/G3E SoC,
+the only difference being that it has two channels instead of one.
 
-Note: while in such cases the underlying crypto assets are regenerated, it
-does not affect enclaves' visible keys obtained via EGETKEY instruction.
+Best regards,
+Ovidiu
 
-If it fails with any other error code than SGX_INSUFFICIENT_ENTROPY, this
-is considered unexpected and the *open() returns an error. This should not
-happen in practice.
+Ovidiu Panait (3):
+  clk: renesas: r9a09g057: Add clock and reset entries for TSU
+  dt-bindings: thermal: r9a09g047-tsu: Document RZ/V2H TSU
+  arm64: dts: renesas: r9a09g057: Add TSU nodes
 
-On contrary, SGX_INSUFFICIENT_ENTROPY might happen due to a pressure on the
-system's DRNG (RDSEED) and therefore the *open() can be safely retried to
-allow normal enclave operation.
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  7 +-
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 75 +++++++++++++++++++
+ drivers/clk/renesas/r9a09g057-cpg.c           |  6 ++
+ 3 files changed, 87 insertions(+), 1 deletion(-)
 
-[1] Runtime Microcode Updates with Intel Software Guard Extensions,
-https://cdrdv2.intel.com/v1/dl/getContent/648682
-
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-Tested-by: Nataliia Bondarevska <bondarn@google.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index ffc7b9496218..3eda7e7942e6 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -934,7 +934,7 @@ static int sgx_usage_count;
-  * *             entropy in RNG
-  * * %-EIO:    - Unexpected error, retries are not advisable
-  */
--static int __maybe_unused sgx_update_svn(void)
-+static int sgx_update_svn(void)
- {
- 	int ret;
- 
-@@ -992,14 +992,30 @@ static int __maybe_unused sgx_update_svn(void)
- 	return -EIO;
- }
- 
-+/* Mutex to ensure no concurrent EPC accesses during EUPDATESVN */
-+static DEFINE_MUTEX(sgx_svn_lock);
-+
- int sgx_inc_usage_count(void)
- {
-+	int ret;
-+
-+	guard(mutex)(&sgx_svn_lock);
-+
-+	if (!sgx_usage_count) {
-+		ret = sgx_update_svn();
-+		if (ret)
-+			return ret;
-+	}
-+
-+	sgx_usage_count++;
-+
- 	return 0;
- }
- 
- void sgx_dec_usage_count(void)
- {
--	return;
-+	guard(mutex)(&sgx_svn_lock);
-+	sgx_usage_count--;
- }
- 
- static int __init sgx_init(void)
 -- 
-2.45.2
+2.51.0
 
 
