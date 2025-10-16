@@ -1,372 +1,225 @@
-Return-Path: <linux-kernel+bounces-856613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA1BBE49CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:37:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5FFBE49D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB447407B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E224809E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E88329C69;
-	Thu, 16 Oct 2025 16:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F121F32AAA7;
+	Thu, 16 Oct 2025 16:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mccwji7U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNJjygoQ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1673E32D0CA
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BA1329C49
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632630; cv=none; b=Oo/Es/aqJE3rOzNRn1B3BwjEBdwEXKJ6Wn9kpw0/K+lHRbe8zfGYFG9P6yIr3NEzjDZ3WlvW/7WvNkw8thlQQMIWLeFwCg+DTMQ9NXLrlU2naBYw1dpxck+fyOoIS5UPfjy00HTi/Idm2MeIeYKOJT/69f6RVx9iT4KFwlRSEXM=
+	t=1760632652; cv=none; b=L8z7lhcNtS7Qf+5OPbt+zbqAw01YNZPQJzT7PWURCU5nW5t2Va3tUmozobxLi/zq07/5W9BdSSwEOBwW29vYTh7+ThIVq/EeoRQvPQvhy6jvW23PS+jAOfCWbo737LLgdWHocXKNfyUEm2gyb6EtFlAjXy8ZYBc9+SU2V1fsWkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632630; c=relaxed/simple;
-	bh=LbMQXYYD2VCFhyGbP4YBItotcfoofyldIjj+Vt4ukYo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o6yJhhYJiUGxysUZVCC2C75VYjerHQQQzbDWKZnS4iJMHEbp/xQDbEbw4ze0ackSknT7ZLeq5nzZzYlYAQaqRcfRfBpgrOJrXUMVTU6pOJEqF09YiUuRh+wQloMYJhAqw4SjW44iNFX30PaSHs4T81txzzX2Shsc6gRo+yc/8Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mccwji7U; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760632628; x=1792168628;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=LbMQXYYD2VCFhyGbP4YBItotcfoofyldIjj+Vt4ukYo=;
-  b=Mccwji7UBDdoWBT0FP5QmtG4D79TLGPO6VkHAfp7abwCkkJ/WEkrM7dQ
-   ENktMse1SxZ4Q7spSkhanpQeS78bIEQPMEpRGuaNPl3BvkoUJJsiDE5ks
-   j4QRawM5muTS+5xp+cNKtvLJUu8DHOtOME6BywdbKYqi8KGqG+QWE1TW2
-   fmjEouXgw5Fby7MKkt7rVteJlV7EyfSBbgjAMOoBUvhJzaOtn+bhOOcp/
-   SW10U1z+KtUfFdHnkTzHMpwgrmqEWLny5jT3KgM8i3snYMxWokiZWBGgR
-   IczFNybB+tm+HAvMNwpXEdRDyaLadCkGPbgk3Lc96DypaeD61LpYH5uec
-   w==;
-X-CSE-ConnectionGUID: 5MvanUSVQpWQQcsR+a1SYw==
-X-CSE-MsgGUID: cxeuxmuLRXW+AhA+K6LrTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="65450139"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="65450139"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 09:37:06 -0700
-X-CSE-ConnectionGUID: 0jiOiGrZQAKpydpnQhqX6w==
-X-CSE-MsgGUID: mZqcDuquS5SRKye74ytZqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="182474326"
-Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.155])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 09:37:00 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Yaroslav Bolyukin <iam@lach.pw>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>,
- Wayne Lin <Wayne.Lin@amd.com>, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Yaroslav
- Bolyukin <iam@lach.pw>
-Subject: Re: [PATCH v4 1/2] drm/edid: parse DRM VESA dsc bpp target
-In-Reply-To: <20251016001038.13611-4-iam@lach.pw>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251016001038.13611-2-iam@lach.pw>
- <20251016001038.13611-4-iam@lach.pw>
-Date: Thu, 16 Oct 2025 19:36:57 +0300
-Message-ID: <3abc1087618c822e5676e67a3ec2e64e506dc5ec@intel.com>
+	s=arc-20240116; t=1760632652; c=relaxed/simple;
+	bh=KEHq5Zv6SKODtoWAUUZ02QfgtCU6kZ9QOgSNgl9kgnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6r/zPvV36w5KvYQauQIWAeN5A1yFtCzrIQKyTIn0TwzUY71zFNsE6UCxFObWY72ZIoK/ukGMkTNgIy7nwrYQfxALu37gm3I7TxxYdP51cy2lb/uUStRhsYORXnTlcKXMNiyGtMrs4jc3CDtmIPi49UPoVDTD3VrGDMy8jdVPBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNJjygoQ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so8704425e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760632649; x=1761237449; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=45+w+j3wKKDN4yoFkSENhMTwEvEfIBVYuwOyTN6K8LA=;
+        b=GNJjygoQs0rQ9GY3K7lzK50fODSxRs9worjuVD/nlH5XnwWltDIaQmIm9EN+8ZeHDl
+         rBJPRpIDc2oCaOf4mN7uY4N319+gfJ3EPeGT0FtSGmXKpY3LyG6QRuRU4eG85AA1gJA3
+         zHCQB9rjfKmyJ/6RzIvp3zp1l0ki8VBkCubkJSxlY2zWrxB4vB2pof864K7nTf4HSI0M
+         vHIiuDJvmMH0DOefu/EhTznDH9JlkZpIorYS8Df7jIXHTwF2ySgf9g1yhtOh4MqfIbVu
+         A5dSjBvdwxFr/HumMqWmTltarN5TTYh8u9FGZsWf+SPIzmytIyZ1MD3ThhVMez1yObUH
+         u6zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760632649; x=1761237449;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=45+w+j3wKKDN4yoFkSENhMTwEvEfIBVYuwOyTN6K8LA=;
+        b=weeLyKHPv9s0SMS4kiHPKA/KtrldCMxh55SWzGN+XBYS5Oklh1wBfPXwNXQrei0SAu
+         3xYwy5apZ4GtM2j61xbVqAtx8PkVoKTLHUY8SBxfNEpOMAAeqKPrKMWxNC1MI4q4H1CU
+         u4BIjLy9IcrIKnCIhfEo1Z517xqqvxVZnbHWifQrpxDD3KnyZTKDsrkmheG5qw3JW40H
+         hRed/w8aVcsuO0OU1jeiolwkwjzqQdsFJdGkbo4C7dWzHDSvB8rrxFO4edAwAsYls6Lq
+         /S4Ra175B7gIoF4BfYVqxoTm/uamuQz4gSegOhZxdLgXreYmeHL9WQGpC+oYp8TNEvfZ
+         zmbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCoqufjU7d0wcUfU1JUjNynB+O+y2heby6ZXwYhEueIT3W8nBVJxHqNRZWAPcnXt5Whxwv1BUQzGR+MvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZrU0e0qaK32VUP2M7NVNSlAk8urHtizu3NjYtmFwNZLLS3X/G
+	1gsdjuknGjkMLB6fwmGqEoYyLjN2A3l/sZGlAgRdrkGleoLw707SBjPC
+X-Gm-Gg: ASbGncuure8U8O/RtoH7FV08QyKYbHPnIntj3sint6srtTX7vzgYXRdBDeOCFXBsZnF
+	IOuefrLEPsSme5WW/yA0p1QH0fsvyGt7hhno964d25G7wNWmPQatLKEP8rhOZofp4+n0ZJfByLT
+	PU+UPZBkaiLX0T40Gscz+mnWkQdH4ZiE/fPsFII07x6Yg0jj2OqAWE4GvNaFGeWMkSlIySjxcA8
+	QsUwKwRPj4+gtvGj9KtRMHnN27WKJmyKSTghyygbGcFernRrhVD8ZAWOVHlr5IWcrZWUUceNK4Z
+	OjnlUC+BWQZ/tMS5po9UGcPG3dvClealxzyNIH/LTBOzXDBgDarupNNZYsFjhN9D1RJYADooxnm
+	KOYzXg39rpV1LwlYXXZPNnTuWdToh9iHcJW26rX6ssYXye5whB9MzqKXX4O6fXZQmfUJivAnPER
+	UjO1T+oz2F+v3TZg==
+X-Google-Smtp-Source: AGHT+IGEOTfVqWnJFYOk2GGMnHDO9Q9MSJhfGr6/3jWO6A4puL9KoGNizC6MjPxWvVhvNa+GQ/HzbQ==
+X-Received: by 2002:a05:600c:458b:b0:46e:39da:1195 with SMTP id 5b1f17b1804b1-471178784d9mr5114965e9.3.1760632648448;
+        Thu, 16 Oct 2025 09:37:28 -0700 (PDT)
+Received: from gmail.com ([51.154.248.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4710ed4b47fsm25518655e9.4.2025.10.16.09.37.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 09:37:28 -0700 (PDT)
+Date: Thu, 16 Oct 2025 16:37:27 +0000
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Michael Buesch <m@bues.ch>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] gpio: bt8xx: use generic PCI PM
+Message-ID: <aPEfR_lwO1i2wGYb@gmail.com>
+References: <20251013155303.1103235-1-vaibhavgupta40@gmail.com>
+ <20251013174319.GA847155@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251013174319.GA847155@bhelgaas>
 
-On Thu, 16 Oct 2025, Yaroslav Bolyukin <iam@lach.pw> wrote:
-> As per DisplayID v2.0 Errata E9 spec "DSC pass-through timing support"
-> VESA vendor-specific data block may contain target DSC bits per pixel
-> fields
+On Mon, Oct 13, 2025 at 12:43:19PM -0500, Bjorn Helgaas wrote:
+> On Mon, Oct 13, 2025 at 03:52:59PM +0000, Vaibhav Gupta wrote:
+> > Switch to the new generic PCI power management framework and remove legacy
+> > callbacks like .suspend() and .resume(). With the generic framework, the
+> > standard PCI related work like:
+> > 	- pci_save/restore_state()
+> > 	- pci_enable/disable_device()
+> > 	- pci_set_power_state()
+> > is handled by the PCI core and this driver should implement only gpio-bt8xx
+> > specific operations in its respective callback functions.
+> 
+> Tiny nits:
+> 
+> s/use generic PCI PM/use generic power management/  # subject; not PCI
+> s/new generic PCI power/generic power management/   # no longer "new" :)
+> 
+> > Signed-off-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+> > ---
+> >  drivers/gpio/gpio-bt8xx.c | 29 +++++++----------------------
+> >  1 file changed, 7 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+> > index 05401da03ca3..70b49c385b43 100644
+> > --- a/drivers/gpio/gpio-bt8xx.c
+> > +++ b/drivers/gpio/gpio-bt8xx.c
+> > @@ -52,10 +52,8 @@ struct bt8xxgpio {
+> >  	struct pci_dev *pdev;
+> >  	struct gpio_chip gpio;
+> >  
+> > -#ifdef CONFIG_PM
+> >  	u32 saved_outen;
+> >  	u32 saved_data;
+> > -#endif
+> >  };
+> >  
+> >  #define bgwrite(dat, adr)	writel((dat), bg->mmio+(adr))
+> > @@ -224,9 +222,9 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
+> >  	pci_disable_device(pdev);
+> >  }
+> >  
+> > -#ifdef CONFIG_PM
+> > -static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+> > +static int __maybe_unused bt8xxgpio_suspend(struct device *dev)
+> 
+> I think __maybe_unused is unnecessary because of this path:
+> 
+>   DEFINE_SIMPLE_DEV_PM_OPS
+>     _DEFINE_DEV_PM_OPS
+>       SYSTEM_SLEEP_PM_OPS
+>         pm_sleep_ptr
+> 	  PTR_IF(IS_ENABLED(CONFIG_PM_SLEEP), (_ptr))
+> 
+> Detailed explanation here:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/util_macros.h?id=v6.17#n86
+> 
+Fixed them in v6.
+> >  {
+> > +	struct pci_dev *pdev = to_pci_dev(dev);
+> >  	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+> >  
+> >  	scoped_guard(spinlock_irqsave, &bg->lock) {
+> 
+> Unrelated to this patch, but it's not clear to me why bg->lock is
+> needed here (or maybe anywhere).
+> 
+>   $ git grep -l "static int.*_suspend" drivers/gpio | wc -l
+>   26
+>   $ git grep -W "static int.*_suspend" drivers/gpio | grep lock | grep -v unlock | wc -l
+> 
+> It looks like only about 8 of the 26 gpio drivers that implement
+> .suspend() protect it with a lock.  I would expect a lock to be needed
+> in all of them or none of them.
+> 
 
-Thanks for the patch.
+I can have a look at them.
 
-I think there's just too much going on in a single patch. Should
-probably be split to several patches:
-
-- rename drm_parse_vesa_mso_data() to drm_parse_vesa_specific_block()
-
-- handle DSC pass-through parts in the above, including the macros for
-  parsing that (but nothing about timing here yet), and adding to
-  display_info
-
-- note that the above would be needed to backport mso support for 7 byte
-  vendor blocks to stable!
-
-- Add the detailed timing parsing in a separate patch
-
->
-> Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
-> ---
->  drivers/gpu/drm/drm_displayid_internal.h |  8 ++++
->  drivers/gpu/drm/drm_edid.c               | 61 ++++++++++++++++--------
->  include/drm/drm_connector.h              |  6 +++
->  include/drm/drm_modes.h                  | 10 ++++
->  4 files changed, 64 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/drm_displayid_internal.h
-> index 957dd0619f5c..d008a98994bb 100644
-> --- a/drivers/gpu/drm/drm_displayid_internal.h
-> +++ b/drivers/gpu/drm/drm_displayid_internal.h
-> @@ -97,6 +97,10 @@ struct displayid_header {
->  	u8 ext_count;
->  } __packed;
->  
-> +#define DISPLAYID_BLOCK_REV				GENMASK(2, 0)
-> +#define DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT	BIT(3)
-> +#define DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES	GENMASK(6, 4)
-
-These two are related to the rev of struct
-displayid_detailed_timing_block only, and should probably be defined
-next to it.
-
-> +
->  struct displayid_block {
->  	u8 tag;
->  	u8 rev;
-> @@ -144,12 +148,16 @@ struct displayid_formula_timing_block {
->  
->  #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
->  #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
-> +#define DISPLAYID_VESA_DSC_BPP_INT	GENMASK(5, 0)
-> +#define DISPLAYID_VESA_DSC_BPP_FRACT	GENMASK(3, 0)
->  
->  struct displayid_vesa_vendor_specific_block {
->  	struct displayid_block base;
->  	u8 oui[3];
->  	u8 data_structure_type;
->  	u8 mso;
-> +	u8 dsc_bpp_int;
-> +	u8 dsc_bpp_fract;
->  } __packed;
->  
->  /*
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index e2e85345aa9a..6e42e55b41f9 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -6524,8 +6524,8 @@ static void drm_get_monitor_range(struct drm_connector *connector,
->  		    info->monitor_range.min_vfreq, info->monitor_range.max_vfreq);
->  }
->  
-> -static void drm_parse_vesa_mso_data(struct drm_connector *connector,
-> -				    const struct displayid_block *block)
-> +static void drm_parse_vesa_specific_block(struct drm_connector *connector,
-> +					  const struct displayid_block *block)
->  {
->  	struct displayid_vesa_vendor_specific_block *vesa =
->  		(struct displayid_vesa_vendor_specific_block *)block;
-> @@ -6541,7 +6541,7 @@ static void drm_parse_vesa_mso_data(struct drm_connector *connector,
->  	if (oui(vesa->oui[0], vesa->oui[1], vesa->oui[2]) != VESA_IEEE_OUI)
->  		return;
->  
-> -	if (sizeof(*vesa) != sizeof(*block) + block->num_bytes) {
-> +	if (block->num_bytes < 5) {
->  		drm_dbg_kms(connector->dev,
->  			    "[CONNECTOR:%d:%s] Unexpected VESA vendor block size\n",
->  			    connector->base.id, connector->name);
-> @@ -6564,28 +6564,40 @@ static void drm_parse_vesa_mso_data(struct drm_connector *connector,
->  		break;
->  	}
->  
-> -	if (!info->mso_stream_count) {
-> -		info->mso_pixel_overlap = 0;
-> -		return;
-> -	}
-> +	info->mso_pixel_overlap = 0;
-
-Nitpick, I kind of like having this in the else path below instead of
-first setting it to 0 and then setting it again to something else.
-
->  
-> -	info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP, vesa->mso);
-> -	if (info->mso_pixel_overlap > 8) {
-> -		drm_dbg_kms(connector->dev,
-> -			    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
-> -			    connector->base.id, connector->name,
-> -			    info->mso_pixel_overlap);
-> -		info->mso_pixel_overlap = 8;
-> +	if (info->mso_stream_count) {
-> +		info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP, vesa->mso);
-> +		if (info->mso_pixel_overlap > 8) {
-> +			drm_dbg_kms(connector->dev,
-> +				    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
-> +				    connector->base.id, connector->name,
-> +				    info->mso_pixel_overlap);
-> +			info->mso_pixel_overlap = 8;
-> +		}
->  	}
->  
->  	drm_dbg_kms(connector->dev,
->  		    "[CONNECTOR:%d:%s] MSO stream count %u, pixel overlap %u\n",
->  		    connector->base.id, connector->name,
->  		    info->mso_stream_count, info->mso_pixel_overlap);
-
-Not sure we want to debug log this unless info->mso_stream_count !=
-0. This is a rare feature.
-
-Side note, we seem to be lacking the check for
-data_structure_type. Probably my bad. I'm not asking you to fix it, but
-hey, if you're up for it, another patch is welcome! ;)
-
-> +
-> +	if (block->num_bytes < 7) {
-> +		/* DSC bpp is optional */
-> +		return;
-> +	}
-> +
-> +	info->dp_dsc_bpp = FIELD_GET(DISPLAYID_VESA_DSC_BPP_INT, vesa->dsc_bpp_int) << 4 |
-> +			   FIELD_GET(DISPLAYID_VESA_DSC_BPP_FRACT, vesa->dsc_bpp_fract);
-> +
-> +	drm_dbg_kms(connector->dev,
-> +		    "[CONNECTOR:%d:%s] DSC bits per pixel %u\n",
-> +		    connector->base.id, connector->name,
-> +		    info->dp_dsc_bpp);
->  }
->  
-> -static void drm_update_mso(struct drm_connector *connector,
-> -			   const struct drm_edid *drm_edid)
-> +static void drm_update_vesa_specific_block(struct drm_connector *connector,
-> +					   const struct drm_edid *drm_edid)
->  {
->  	const struct displayid_block *block;
->  	struct displayid_iter iter;
-> @@ -6593,7 +6605,7 @@ static void drm_update_mso(struct drm_connector *connector,
->  	displayid_iter_edid_begin(drm_edid, &iter);
->  	displayid_iter_for_each(block, &iter) {
->  		if (block->tag == DATA_BLOCK_2_VENDOR_SPECIFIC)
-> -			drm_parse_vesa_mso_data(connector, block);
-> +			drm_parse_vesa_specific_block(connector, block);
->  	}
->  	displayid_iter_end(&iter);
->  }
-> @@ -6630,6 +6642,7 @@ static void drm_reset_display_info(struct drm_connector *connector)
->  	info->mso_stream_count = 0;
->  	info->mso_pixel_overlap = 0;
->  	info->max_dsc_bpp = 0;
-> +	info->dp_dsc_bpp = 0;
->  
->  	kfree(info->vics);
->  	info->vics = NULL;
-> @@ -6753,7 +6766,7 @@ static void update_display_info(struct drm_connector *connector,
->  	if (edid->features & DRM_EDID_FEATURE_RGB_YCRCB422)
->  		info->color_formats |= DRM_COLOR_FORMAT_YCBCR422;
->  
-> -	drm_update_mso(connector, drm_edid);
-> +	drm_update_vesa_specific_block(connector, drm_edid);
->  
->  out:
->  	if (drm_edid_has_internal_quirk(connector, EDID_QUIRK_NON_DESKTOP)) {
-> @@ -6784,7 +6797,8 @@ static void update_display_info(struct drm_connector *connector,
->  
->  static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *dev,
->  							    const struct displayid_detailed_timings_1 *timings,
-> -							    bool type_7)
-> +							    bool type_7,
-> +							    int rev)
-
-If we added struct displayid_detailed_timing_block *block parameter
-(between dev and timings), the function could figure it all out from
-there instead of having to pass several parameters. Dunno which is
-cleaner. It's also not neat to pass rev as int, when it's really data
-that has to be parsed.
-
->  {
->  	struct drm_display_mode *mode;
->  	unsigned int pixel_clock = (timings->pixel_clock[0] |
-> @@ -6805,6 +6819,10 @@ static struct drm_display_mode *drm_mode_displayid_detailed(struct drm_device *d
->  	if (!mode)
->  		return NULL;
->  
-> +	if (type_7 && FIELD_GET(DISPLAYID_BLOCK_REV, rev) >= 1)
-> +		mode->dsc_passthrough_timings_support =
-> +			!!(rev & DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT);
-
-I wonder if it would make life easier all around if we just filled the
-dp_dsc_bpp in the mode itself, instead of having a flag and having to
-look it up separately?
-
-> +
->  	/* resolution is kHz for type VII, and 10 kHz for type I */
->  	mode->clock = type_7 ? pixel_clock : pixel_clock * 10;
->  	mode->hdisplay = hactive;
-> @@ -6846,7 +6864,7 @@ static int add_displayid_detailed_1_modes(struct drm_connector *connector,
->  	for (i = 0; i < num_timings; i++) {
->  		struct displayid_detailed_timings_1 *timings = &det->timings[i];
->  
-> -		newmode = drm_mode_displayid_detailed(connector->dev, timings, type_7);
-> +		newmode = drm_mode_displayid_detailed(connector->dev, timings, type_7, block->rev);
->  		if (!newmode)
->  			continue;
->  
-> @@ -6893,7 +6911,8 @@ static int add_displayid_formula_modes(struct drm_connector *connector,
->  	struct drm_display_mode *newmode;
->  	int num_modes = 0;
->  	bool type_10 = block->tag == DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
-> -	int timing_size = 6 + ((formula_block->base.rev & 0x70) >> 4);
-> +	int timing_size = 6 +
-> +		FIELD_GET(DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES, formula_block->base.rev);
-
-I think this is an unrelated change. Probably something we want, but
-should not be in the same patch with the rest.
-
->  
->  	/* extended blocks are not supported yet */
->  	if (timing_size != 6)
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index 8f34f4b8183d..01640fcf7464 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -837,6 +837,12 @@ struct drm_display_info {
->  	 */
->  	u32 max_dsc_bpp;
->  
-> +	/**
-> +	 * @dp_dsc_bpp: DP Display-Stream-Compression (DSC) timing's target
-> +	 * DSC bits per pixel in 6.4 fixed point format. 0 means undefined.
-> +	 */
-> +	u16 dp_dsc_bpp;
-
-It's slightly annoying that we have max_dsc_bpp which is int, and
-dp_dsc_bpp, which is 6.4 fixed point. The drm_dp_helper.c uses _x16
-suffix for the 6.4 bpp, so maybe do the same here, dp_dsc_bpp_x16?
-
-> +
->  	/**
->  	 * @vics: Array of vics_len VICs. Internal to EDID parsing.
->  	 */
-> diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
-> index b9bb92e4b029..312e5c03af9a 100644
-> --- a/include/drm/drm_modes.h
-> +++ b/include/drm/drm_modes.h
-> @@ -417,6 +417,16 @@ struct drm_display_mode {
->  	 */
->  	enum hdmi_picture_aspect picture_aspect_ratio;
->  
-> +	/**
-> +	 * @dsc_passthrough_timing_support:
-> +	 *
-> +	 * Indicates whether this mode timing descriptor is supported
-> +	 * with specific target DSC bits per pixel only.
-> +	 *
-> +	 * VESA vendor-specific data block shall exist with the relevant
-> +	 * DSC bits per pixel declaration when this flag is set to true.
-> +	 */
-> +	bool dsc_passthrough_timings_support;
->  };
->  
->  /**
-
--- 
-Jani Nikula, Intel
+regards,
+Vaibhav
+> > @@ -238,23 +236,13 @@ static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+> >  		bgwrite(0x0, BT848_GPIO_OUT_EN);
+> >  	}
+> >  
+> > -	pci_save_state(pdev);
+> > -	pci_disable_device(pdev);
+> > -	pci_set_power_state(pdev, pci_choose_state(pdev, state));
+> > -
+> >  	return 0;
+> >  }
+> >  
+> > -static int bt8xxgpio_resume(struct pci_dev *pdev)
+> > +static int __maybe_unused bt8xxgpio_resume(struct device *dev)
+> >  {
+> > +	struct pci_dev *pdev = to_pci_dev(dev);
+> >  	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+> > -	int err;
+> > -
+> > -	pci_set_power_state(pdev, PCI_D0);
+> > -	err = pci_enable_device(pdev);
+> > -	if (err)
+> > -		return err;
+> > -	pci_restore_state(pdev);
+> >  
+> >  	guard(spinlock_irqsave)(&bg->lock);
+> >  
+> > @@ -267,10 +255,8 @@ static int bt8xxgpio_resume(struct pci_dev *pdev)
+> >  
+> >  	return 0;
+> >  }
+> > -#else
+> > -#define bt8xxgpio_suspend NULL
+> > -#define bt8xxgpio_resume NULL
+> > -#endif /* CONFIG_PM */
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(bt8xxgpio_pm_ops, bt8xxgpio_suspend, bt8xxgpio_resume);
+> >  
+> >  static const struct pci_device_id bt8xxgpio_pci_tbl[] = {
+> >  	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT848) },
+> > @@ -286,8 +272,7 @@ static struct pci_driver bt8xxgpio_pci_driver = {
+> >  	.id_table	= bt8xxgpio_pci_tbl,
+> >  	.probe		= bt8xxgpio_probe,
+> >  	.remove		= bt8xxgpio_remove,
+> > -	.suspend	= bt8xxgpio_suspend,
+> > -	.resume		= bt8xxgpio_resume,
+> > +	.driver.pm	= &bt8xxgpio_pm_ops,
+> >  };
+> >  
+> >  module_pci_driver(bt8xxgpio_pci_driver);
+> > -- 
+> > 2.51.0
+> > 
 
