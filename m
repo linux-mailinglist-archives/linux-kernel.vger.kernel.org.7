@@ -1,101 +1,122 @@
-Return-Path: <linux-kernel+bounces-857056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC730BE5C89
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:23:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAB3BE5C8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81ED24EAC46
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:23:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC4B14ED331
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595432E6CA9;
-	Thu, 16 Oct 2025 23:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B232E54A8;
+	Thu, 16 Oct 2025 23:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUFJ9UAX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzfF03Mn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05462405E8;
-	Thu, 16 Oct 2025 23:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63AC2405E8
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760657005; cv=none; b=fylNYSEp7kG5j/UHSROrou/y0awtISgrV4fAyVTrcQRiBTlGNDIg6z78TpTM4EIHsviJxD/jda30awWZ/mAGXyOz7GjfJCoyoO9FaroNnPH4VdAFEibrpHNHJC6KmKZY52WaZ06MuQKhszI74RS31Odw+R/3ja/7fJz6EzNGMgY=
+	t=1760657117; cv=none; b=q5sCi9UltRd8Doz1WuuDVYYlbKYDbQmNOirlfTWr9zSBA043KTYcjHgMUdc/1Benoc18ZpFH4Dzr2/ed4GcT3FR0D4FkoYM1EzEhhvao6f8+vqU26g4OJjdg9Wogx90T0nnJTYqh51LXpu79UCh9xPgnuqXDoIjNROAvxosAxxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760657005; c=relaxed/simple;
-	bh=AoOr6NzAAERUS6WMCz640DwHNaOlipYNbvxIeaLPK2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UQnAAmojmLkAmQvi0b7/6HLfQXXG6T9UeMCl8Mt95vDQVM3W7MIrIp8cL9gith555Alg0aNvKz1Pph0NqQc5rBFDIbwC+ZBjKwahuKcnzkDzwRhYVvrOHeDM2Q5nRiM0a9Uzz3EOscQr8yAMmWFB/64v8eVpTAyXKT7QiZIfdaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUFJ9UAX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79B0C4CEF1;
-	Thu, 16 Oct 2025 23:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760657005;
-	bh=AoOr6NzAAERUS6WMCz640DwHNaOlipYNbvxIeaLPK2c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZUFJ9UAXp1v5Idy/X+tlbirueHIm1S9bVyj3YC9uodEUSTVQ+RFRz2adyXxHnUDU+
-	 TiAF2zFPYV5/ClDoSAX363LrZr63/ZljaLmzi9cLXjrNBExZLXSRBGqCcLVEJRRcZS
-	 hA3rTPKPg2O9Wil92qdxo945DOOTyhL4tljn9iGfNdqZ+kGfy8LnKwKR9AEX6vBPgm
-	 tA5w0LCCy/WOsYLrtayuQMCF8o2P4GklOsjln6eyNB8kn2Rpbovc6yoMMewvjg+4Oc
-	 RJSoKynnEaM1Fz6P5esuqtgnlenR5Pzw7zJcIndpuhNiFpOY9N5spKyLYPfo0eHySF
-	 gbzPA8S+YSWkw==
-Date: Thu, 16 Oct 2025 16:23:23 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-Subject: Re: [PATCH net v3] netpoll: Fix deadlock in memory allocation under
- spinlock
-Message-ID: <20251016162323.176561bd@kernel.org>
-In-Reply-To: <20251014-fix_netpoll_aa-v3-1-bff72762294e@debian.org>
-References: <20251014-fix_netpoll_aa-v3-1-bff72762294e@debian.org>
+	s=arc-20240116; t=1760657117; c=relaxed/simple;
+	bh=NaoJwlqs6RJ9zPQIEFByuLYzAhJ363qQIKtmEJXBZ50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U0xEGoMoq2VMTrEjzwv4M4pyMkhoxe7soC6XJJmN3pfkmlHw2TWZZOHWtretyBHH5HJL4PdziHqksfexDFOtHsTnn+AlY3TJ+MBlZvydOaq7gxIpTJtINHPjv/B0eVPuKf9dTGdhjNYA+sGEvk+S8hQODLXGM9WZtcEZvsCpqFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzfF03Mn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-26816246a0aso1706815ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760657115; x=1761261915; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NaoJwlqs6RJ9zPQIEFByuLYzAhJ363qQIKtmEJXBZ50=;
+        b=XzfF03MnTOAlE0eGr7Sii4GMoJ4aW+v1Apiq+nsfGBLDdPFQSBG+oYQh1aphi+GO6L
+         smDGJGpvIxA6tOPf0B8K9nL6g8elll77FOmbkN1zfoJCRTk+9x+1ZI/0YH1mzDkAnGYg
+         V7LWItwDP5JNVzxuWgKMEmRXeO4LYqzu8PHbj+lJ5qJfhbNZ76LngqUeMqTubUS7g8kI
+         syJhBM2fjqV8ce7GAJMgmFCU5901ZRATUT0+cDbFXnyDkugSPebrKPJ4nrccKOoLfOaS
+         uO8y4uANzx0fnN9nT6FKfGD+gz6zcduxLab3F+yOAfvVEKEm/b6cZMBd8Owu3fLjokli
+         +nmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760657115; x=1761261915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NaoJwlqs6RJ9zPQIEFByuLYzAhJ363qQIKtmEJXBZ50=;
+        b=AgWU1Ea6hTX9uuzH41hyZQMdP/1R11kbeFdFX6ZqtP6VKIl/labxpKOr72gw1SDjm1
+         tmM2BjYv1wa74SEMRQk1qGYalhDS5K05sxVDyEzcNVrnkxOs6F5sHpj+aTHi9U52g2De
+         HDiT0I9AF1IcJ9SLIQrb/2rL/Mmyu35dnAQEsPhff0uK5D7eZcZLcQXZC6YwAP+LY786
+         PO5PWcmrRpbyY549/hlQ2uQQtXJ6BTMyxTeYjwzzxvjRYI9Hf43CV9hI/yxorZww9otW
+         In6uyy+Dv1Gfr8iaibUsM53MmHKjuwkR7XY1lmE/X95XI+sz7avhU3x0dvIOoxni+Bjh
+         tPYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNR80P0oG258SB0q/ADC64lHb77L/iFN2B7lTTIv+6K3GWjxB8rvF90+ByNwpln+ZwnYXotYdFfwTdVTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGk6z6FHYlVzZY/zbeKMCQVWV6yJFt5YUd8mFfy8nXsA37qIPu
+	mHzxHtcD6o/fAbIQLqENBUszSJIImxXO+IfUWP5rpNpIKX7Z/10wPrrThu1XRaZhs9qlXOFvfUI
+	gSbqwjuM02qfpHh00TmixUOQtkLzsxA4=
+X-Gm-Gg: ASbGncupTpkzJ8mw3FW4EzD0lNH5lKScHBHdq+j0LGcBZ+k79Q8OiqkHgtIleCgEZOr
+	ivjXqkvNuba3B6PsYH8oNm3q+5Ar2/1emPVxR5yJdYZQdBgEAAK9YTNX1Hr523yYLa7L46aJ8YQ
+	HC2/rO8R0b47BzAoERo+lzIqGqQnX4KfwWhk57QETnYaAjKOkvyoNuHRq8iyK7F3s1UPhs796A/
+	Pba0N3aE3tRW9dZ6d5/W2aHo/pNw9+3cuSwkh3TRvcesoyOJzVd1P+nfBQ/kRrtvHvTYJn2G/ob
+	AchTN8VNBhjN66P/kfy+Gd/6CCXyr6pNenp3cjKLinOd5Y+6IotSrBpsgE62SeG5N+YIRNZqPVa
+	8yV0=
+X-Google-Smtp-Source: AGHT+IHKez+rkRZENZvy/hZJ8rzFedxcLXv76zCn8uMa8clcMKyVyIuSWC0YxEtCrU1ccFU8WzBv306p2NdIMP1l0SM=
+X-Received: by 2002:a17:903:8cd:b0:26c:3c15:f780 with SMTP id
+ d9443c01a7336-290cb7568c3mr9104045ad.8.1760657115196; Thu, 16 Oct 2025
+ 16:25:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251010174351.948650-1-ojeda@kernel.org>
+In-Reply-To: <20251010174351.948650-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 17 Oct 2025 01:25:02 +0200
+X-Gm-Features: AS18NWAKsC4mVl1hI4d0Walzq8300iiHYVsaJlXnwFoTiPZWBDqN1Yy7f1pfzfY
+Message-ID: <CANiq72kjoOWNFw8xuRHk9QzhfYHDjymKV_TTt099UH_f5Kv2qg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Clean `rustfmt` formatting and define imports style
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Oct 2025 09:37:50 -0700 Breno Leitao wrote:
-> +	while (1) {
-> +		spin_lock_irqsave(&skb_pool->lock, flags);
-> +		if (skb_pool->qlen >= MAX_SKBS)
-> +			goto unlock;
-> +		spin_unlock_irqrestore(&skb_pool->lock, flags);
+On Fri, Oct 10, 2025 at 7:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Hi Linus,
+>
+> Please see these commits, especially the documentation one. It is a
+> follow-up of the discussion on `rustfmt`.
+>
+> If you are OK with it, please pick them up for -rc1 -- this should make
+> CIs green and let people work easily after -rc1, which would help even
+> if we decide to do something differently later on.
+>
+> I can send a quick PR if you prefer.
+>
+> Thanks!
 
-No need for the lock here:
+Since I didn't hear anything, I will send you the PR after tomorrow's
+linux-next.
 
-	if (READ_ONCE(..) >= MAX_SKBS)
+Applied to `rust-fixes` (plus one I just sent to the list) -- thanks everyo=
+ne!
 
->  		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
->  		if (!skb)
-> -			break;
-> +			return;
->  
-> +		spin_lock_irqsave(&skb_pool->lock, flags);
-> +		if (skb_pool->qlen >= MAX_SKBS)
-> +			/* Discard if len got increased (TOCTOU) */
-> +			goto discard;
-
-Not sure this is strictly needed, the number 32 (MAX_SKBS) was not
-chosen super scientifically anyway, doesn't matter if we go over a
-little. But if we care I think we can:
-
-	if (skb_pool->qlen < MAX_SKBS)
-		__skb_queue_tail(skb_pool, skb);
-	else
-		dev_kfree_skb_any(skb);
-
-and there's no need for the gotos
-
->  		__skb_queue_tail(skb_pool, skb);
-> +		spin_unlock_irqrestore(&skb_pool->lock, flags);
->  	}
--- 
-pw-bot: cr
+Cheers,
+Miguel
 
