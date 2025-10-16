@@ -1,134 +1,164 @@
-Return-Path: <linux-kernel+bounces-855775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AEFBE244E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B02BE2448
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C3319C14ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:01:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9463F19C0C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00AE3112C8;
-	Thu, 16 Oct 2025 09:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eW2/ewSx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2AB30F936;
-	Thu, 16 Oct 2025 09:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB73E30F54F;
+	Thu, 16 Oct 2025 09:00:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8793081CF;
+	Thu, 16 Oct 2025 09:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760605239; cv=none; b=IfZDmdeChskjkKW+XTpaNzQIKjQwK/3lLsA3/6DitbOYXwydpfrCiywS9CXqxf3Fh7cOa28weCMrUPmANB0vk8kGJ+C8eF4GXAOdXpigu28DvKnW+oeCi/RJcbqIkskQnJDnrcxYR+y7fofMBbmMLK/DIpxuTX1wWxMl+PLFx0c=
+	t=1760605236; cv=none; b=uVUl9+CBGFki/sGluGpPpHJxEa1/8pWzjEaozqzq9POBpL0nMJkbmLO49C4xBoamr2sksSfRct7xpkjtMyHqcK/P9908LLQfJ9KRctu77+UFRgMpS4d/wqSJovfA5P0hjyZbBacSW8fo4+nJPBHguQuBbRAGeqbOhdvEkCQ1a7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760605239; c=relaxed/simple;
-	bh=FdenBHU5rcBSRQSKAfzbSTso6YQNkURXfQxyZlaIGC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hR/M0H7MGdMbnFkQ+p0bOsggsyyXzKP/emWFjVZHO8pJdHi2oMUo/YHslOkoS2MmPcYBo3bWmXsOZmWpEBpfQ/dmQ8SWCkx8CkBZlSWCUIngkbGMGxMPlbKTBbjS1pFecGPt7ivTNy1z5uV0On313zL9yGjZAT9HC6sqYt6Us34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eW2/ewSx; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760605238; x=1792141238;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FdenBHU5rcBSRQSKAfzbSTso6YQNkURXfQxyZlaIGC8=;
-  b=eW2/ewSxHcfE8vBVkfmmR0QpVglV+d2TX0yCdYvrJZPy9X7ZDN6sJ9Nu
-   BUdtrAW69Fcx1fKqBp74mTQgU+isItjXl2pdcQxJtMi1rdOgzQhTWcMAx
-   PbgKXVerThwSMZi9SzCQGYR6V4E3yqo1pj8vGayX6anz4t5FRXmktck2F
-   q9RV6DxWz0SBTx+LqF2Uo+nxvIFsRgomlFeAwICZlm4JTLuq9K+cIZ4Ns
-   0DkbSNQyPbBPS+ORW2L33LOuGdRybEbBzMHoxfWpBCYC6g1vVbWiOViZC
-   KnGYkPzQpMtQjEi7N20kxjLMhibg2PzjQuzQl/t3WiSY1p1+KQKJSpeGn
-   Q==;
-X-CSE-ConnectionGUID: 3WZKAYIKT3ObKcnQ+3fW0g==
-X-CSE-MsgGUID: 36TmiN6JQtm8VK4aot33Cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62886214"
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="62886214"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 02:00:37 -0700
-X-CSE-ConnectionGUID: Y67/g9b4Rt6HcpsjfqA+wA==
-X-CSE-MsgGUID: ufcDctIQT++VpEwHe1YDbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="183200149"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 16 Oct 2025 02:00:34 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9JqZ-0004cD-36;
-	Thu, 16 Oct 2025 09:00:31 +0000
-Date: Thu, 16 Oct 2025 16:59:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brendan Jackman <jackmanb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-Message-ID: <202510161649.QbfhDLy3-lkp@intel.com>
-References: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
+	s=arc-20240116; t=1760605236; c=relaxed/simple;
+	bh=wv3xX13vFSrdHxGgvQF6JICigI+j3Iw0CTH9HHdGfgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZktjkzS7+H55dLEDvWaj+GTlRMVyWzAEBzmSgJPDr5Z4iCA1aOCqx+RRjkWymE55/r+vYDvM2RxBibVJLmWOe8ek4sBjEn1RQ9ezAnGOhW8+ccSFWtUsPOBfI5sXn01myTrAe7Y02tct6E2X2noLp3rgtxdm7bp+Bt+vj7qgY8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 714D81688;
+	Thu, 16 Oct 2025 02:00:19 -0700 (PDT)
+Received: from [10.57.2.120] (unknown [10.57.2.120])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E3B63F6A8;
+	Thu, 16 Oct 2025 02:00:26 -0700 (PDT)
+Message-ID: <f48b80d5-0098-424d-9a7c-ae07017ab2bb@arm.com>
+Date: Thu, 16 Oct 2025 10:00:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: hybrid: Adjust energy model
+ rules
+To: Yaxiong Tian <tianyaxiong@kylinos.cn>, rafael@kernel.org
+Cc: dietmar.eggemann@arm.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, lukasz.luba@arm.com,
+ srinivas.pandruvada@linux.intel.com
+References: <3394529.aeNJFYEL58@rafael.j.wysocki>
+ <20251016074849.1046580-1-tianyaxiong@kylinos.cn>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20251016074849.1046580-1-tianyaxiong@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Brendan,
+On 10/16/25 08:48, Yaxiong Tian wrote:
+> 在 2025/10/15 21:48, Rafael J. Wysocki 写道:> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> Instead of using HWP-to-frequency scaling factors for computing cost
+>> coefficients in the energy model used on hybrid systems, which is
+>> fragile, rely on CPU type information that is easily accessible now and
+>> the information on whether or not L3 cache is present for this purpose.
+>>
+>> This also allows the cost coefficients for P-cores to be adjusted so
+>> that they start to be populated somewhat earlier (that is, before
+>> E-cores are loaded up to their full capacity).
+>>
+>> In addition to the above, replace an inaccurate comment regarding the
+>> reason why the freq value is added to the cost in hybrid_get_cost().
+>>
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> ---
+>>   drivers/cpufreq/intel_pstate.c |   37 +++++++++++++++----------------------
+>>   1 file changed, 15 insertions(+), 22 deletions(-)
+>>
+>> --- a/drivers/cpufreq/intel_pstate.c
+>> +++ b/drivers/cpufreq/intel_pstate.c
+>> @@ -933,11 +933,8 @@ static int hybrid_active_power(struct de
+>>   			       unsigned long *freq)
+>>   {
+>>   	/*
+>> -	 * Create "utilization bins" of 0-40%, 40%-60%, 60%-80%, and 80%-100%
+>> -	 * of the maximum capacity such that two CPUs of the same type will be
+>> -	 * regarded as equally attractive if the utilization of each of them
+>> -	 * falls into the same bin, which should prevent tasks from being
+>> -	 * migrated between them too often.
+>> +	 * Create four "states" corresponding to 40%, 60%, 80%, and 100% of the
+>> +	 * full capacity.
+>>   	 *
+>>   	 * For this purpose, return the "frequency" of 2 for the first
+>>   	 * performance level and otherwise leave the value set by the caller.
+>> @@ -970,26 +967,22 @@ static bool hybrid_has_l3(unsigned int c
+>>   static int hybrid_get_cost(struct device *dev, unsigned long freq,
+>>   			   unsigned long *cost)
+>>   {
+>> -	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
+>> -
+>> +	/* Facilitate load balancing between CPUs of the same type. */
+>> +	*cost = freq;
+>>   	/*
+>> -	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
+>> -	 * ratio between the given CPU and the least capable CPU in the system.
+>> -	 * Regard that IPC ratio as the primary cost component and assume that
+>> -	 * the scaling factors for different CPU types will differ by at least
+>> -	 * 5% and they will not be above INTEL_PSTATE_CORE_SCALING.
+>> +	 * Adjust the cost depending on CPU type.
+>>   	 *
+>> -	 * Add the freq value to the cost, so that the cost of running on CPUs
+>> -	 * of the same type in different "utilization bins" is different.
+>> -	 */
+>> -	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
+>> -	/*
+>> -	 * Increase the cost slightly for CPUs able to access L3 to avoid
+>> -	 * touching it in case some other CPUs of the same type can do the work
+>> -	 * without it.
+>> +	 * The idea is to start loading up LPE-cores before E-cores and start
+>> +	 * to populate E-cores when LPE-cores are utilized above 60% of the
+>> +	 * capacity.  Similarly, P-cores start to be populated when E-cores are
+>> +	 * utilized above 60% of the capacity.
+>>   	 */
+>> -	if (hybrid_has_l3(dev->id))
+>> -		*cost += 2;
+>> +	if (hybrid_get_cpu_type(dev->id) == INTEL_CPU_TYPE_ATOM) {
+>> +		if (hybrid_has_l3(dev->id)) /* E-core */
+>> +			*cost += 2;
+>> +	} else { /* P-core */
+>> +		*cost += 4;
+>> +	}
+>>   
+>>   	return 0;
+>>   }
+> 
+> Hi Rafael J. Wysocki:
+> 
+> Is the increment of this cost for different types of CPUs by one instead 
+> of two?
+> 
+> cost by increment of 2:
+>           0~40%  40%~60%  60%~80% 80%~100
+> LPE-core    2       3        4      5
+> E-core      4       5        6      7
+> P-core      6       7        8      9
+> 
+> So, tasks only start being allocated to more powerful CPUs when 
+> utilization exceeds 80%, but by that point the system is already in an
+>  overloaded state.
+> 
+> cost by increment of 1:
+>           0~40%  40%~60%  60%~80% 80%~100
+> LPE-core    2       3        4      5
+> E-core      3       4        5      6
+> P-core      4       5        6      7
+> 
+> This situation aligns with the description in your patch.
+> 
+> The idea of this patch looks good to me.
 
-kernel test robot noticed the following build errors:
+Agreed if you want the threshold to be 60% for both it should be +1 for l3
+and +2 for P-core.
+Good catch!
 
-[auto build test ERROR on 6b36119b94d0b2bb8cea9d512017efafd461d6ac]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Brendan-Jackman/KVM-x86-Unify-L1TF-flushing-under-per-CPU-variable/20251016-011539
-base:   6b36119b94d0b2bb8cea9d512017efafd461d6ac
-patch link:    https://lore.kernel.org/r/20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9%40google.com
-patch subject: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-config: i386-buildonly-randconfig-006-20251016 (https://download.01.org/0day-ci/archive/20251016/202510161649.QbfhDLy3-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251016/202510161649.QbfhDLy3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510161649.QbfhDLy3-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/x86/kvm/x86.c: In function 'kvm_write_guest_virt_system':
->> arch/x86/kvm/x86.c:8003:9: error: implicit declaration of function 'kvm_set_cpu_l1tf_flush_l1d_raw'; did you mean 'kvm_set_cpu_l1tf_flush_l1d'? [-Wimplicit-function-declaration]
-    8003 |         kvm_set_cpu_l1tf_flush_l1d_raw();
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |         kvm_set_cpu_l1tf_flush_l1d
-
-
-vim +8003 arch/x86/kvm/x86.c
-
-  7998	
-  7999	int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
-  8000					unsigned int bytes, struct x86_exception *exception)
-  8001	{
-  8002		/* kvm_write_guest_virt_system can pull in tons of pages. */
-> 8003		kvm_set_cpu_l1tf_flush_l1d_raw();
-  8004	
-  8005		return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
-  8006						   PFERR_WRITE_MASK, exception);
-  8007	}
-  8008	EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_write_guest_virt_system);
-  8009	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
