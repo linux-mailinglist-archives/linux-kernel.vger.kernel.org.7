@@ -1,213 +1,164 @@
-Return-Path: <linux-kernel+bounces-856634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F354BE4A8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D3EBE4A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AAF14E90AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:47:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 098854F50C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E192B329C54;
-	Thu, 16 Oct 2025 16:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96C332AAD1;
+	Thu, 16 Oct 2025 16:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0A7Gg9lh"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yXPGU4u"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2EE2BAF4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BB832D7F7
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760633221; cv=none; b=deHP6S/KUGUw0ktbmgDNEtz0vsdLUXPC1l0pXnJ738leouZ5jToMYOG7yzLIOw7KOzexR8kLfio6BLUeuFHTCEQ0NiZl6WhGp+Jv8VtSOxJTSCASrmnI9ytiLgX+08h9/xtpBzj2STxCk9nU2WjsmLGZGrhdDXtA8duHx3jX1kQ=
+	t=1760633226; cv=none; b=tLZqx9DzapCivggkVdY9dF79W1pTGmlJ9dsvvSdMohkv6TbGdg5ejU/lXfSBuA2rs9vMoq1Ow/JtHRO8CTTdqB3/N+m/aTtNaVQVny9CQItAGozfXziPNS4cVVDpQbPgOQ6VsJRJ3M0jKn+8jesnb+4JdmBsnQFISuFC7FAQ0bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760633221; c=relaxed/simple;
-	bh=/8ULp8GNitp6ed8PeDWxV3ir/nSGEG1rxOOWV9OZqWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOOw52sAI5XpjqjogM6MzBiEr4sMuyzYn4e1JQyZdckVTyXagKSYt2tljSLB07rDLIS5yKWv8ERPOYqNgqReYNodN8uISds1LgA0Hu8jPcQR9PjbAY2eLrmShgpQaPW4dRH32pLW/iBzq6J0C5YLH+gj44Z+esXVy6Krsw15mAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0A7Gg9lh; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-4439fc3abfeso210606b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:46:58 -0700 (PDT)
+	s=arc-20240116; t=1760633226; c=relaxed/simple;
+	bh=/5RTxVjF0G6irKYsLlz4ZbBm7+5Do4c5REN7Mem7vMM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hFR1ZXEVRVPdFjpregJxyUAF2AZhpjrs2jzEwSGfR4oVFyzjn7HHTFx3iIecq32bRugMvJAyxJABvcJxvbfbmRe8ARjCJhd/XaqiK8Cur7FH0/WW+Y4TP0zLQ6ARm5hzAdXqExVLncS0pyouWij2Qafd30IZAY3KnyQBpXbKv3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yXPGU4u; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-426ede1d66fso650546f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:47:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760633217; x=1761238017; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WC9Kf4Woi10vxrnm+xt87b6ePjx84cYka09NWwjNNWA=;
-        b=0A7Gg9lhFCuW9sMBiGBuBCWby4BhJtTI6e1ru5t1h/Sjf9+vApIhL3Uj2S9Eh5s5zO
-         shfFQOyr/EWGKdWFlroW42BOfu6ljhknOhZSj3rYeN30I+OggdfYtx2eaxm37unbcz/a
-         0vH4WvRmfN11HlLhCgbCttNuN/oA1Cq0gTF4LErAHa3MfhR6kvtM/c8GL4NuoYK7DTcD
-         D/hL5MUHML1iesOwzBDvAdHZVszuFaAmYr2sJKxxSMazufnB24W2JFKHyDKb6mFhPSP+
-         rrIIjw3UkowvQiQMnjyd2l+xN8J7Erf3DYtcu3+RI3b3KSLtNPYFiS2dvqodtRSVzmlH
-         YxOg==
+        d=google.com; s=20230601; t=1760633223; x=1761238023; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BH6iB9yTl4fk0GH7d0wlAo5lBLVhqDhIbHp2taDAclg=;
+        b=3yXPGU4u2k1EeiLEwAGxMItkdznv3pFh/XCH6M00rBiQw7I1LfqOvTHSJdmgFN2TiT
+         fydLu/UB2Sl90aiTArMqwjGsOdjyHsTrYWqo+uJDnortops3llc9d0IRvZpeaXitz01s
+         d0FhFimCReY7haAtrpQ14icVzz467O/0k187dAG+F1tDjEZrpppXgozsttGMe2Id5U5z
+         8aOXHUE8F0gTI8ZjY1NZ5nFgefZhvGh7Xt6fYRmo5FuFHgPObV6oiFlc/Ue/6g9y+Wvf
+         StG+8db2TLMOj63RDP/sK4EX9ePidpvEIEXKcVtsTyYQOuMwG6e3M56BPWhqvfCN5se2
+         EdxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760633217; x=1761238017;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WC9Kf4Woi10vxrnm+xt87b6ePjx84cYka09NWwjNNWA=;
-        b=vpBxrMPeIuq/GH82QxKsk+ae2ik51aLcy/WtlW4gGHYmODRwH+krk13ghyVs69rPOy
-         4vyyOUmykLWbuGQcplDwtqKR4QX0Vtyb5p+lrADWkWuvx02LeIdFawhogAztfgERoPRP
-         azrjL/VMSYkciiHOzbSIIBcaxODZP5pzKKZtBUZMNtkQuHE/ljvbZS7fgnDZMhHcCtLy
-         Af9xmK4SYv+pPT4xZimptsUR1c8gLGP2qe6Z454zWHEkexBHb1MC/F8XTOjYhKyLZXf5
-         kYStJXmw773rAWgeBKwE95CvrmnBq4F8/6VLRAV7oHdfp6o8q0bUWdaGhSww9fP/3WZa
-         mizg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2z08AH048esTjzGxnpTFgUfJywhnpG2hRdd+ruxTtOypZMwR1zUT4vHjH39Y4gqI0wQnAzBXQ3WUJtoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdG4fDUoQuQXRsSz2ZWsSt4gfn8CkQx9jj8xsPtUsHG21RiIr0
-	6sfO+tKag0o95eTcZFyxI8POssEG5tNTShaj8ITht73dTothesL6InjqFTt3zvCT9Q4=
-X-Gm-Gg: ASbGncuc+wzLr6c+zwjyZd9X3t59c6p5CbmqAmwDKwvGuZt9yH0Eu/wezOcNBavcX8r
-	u3qa7GdtEzC0Wrsez06wXIqYD2klU7a5Rqq5fyh6n0tKZd2WsjVCYGlqqEidfqRwJXLkhTI6Mzf
-	Fv7U05cA5MzITry3RNEQfMqZueqtiZJ5WmS0+dDYnyDhtZkgHnk4BTsStzyida+AFMzdjfubLB3
-	W8Oixdc5VfbX5WNncYsPECFInzICw7Zh0bm1RNgyqm4N8d7RIAvqHRy31A6SxKNyPKFF+97cHPh
-	JhHlUsozoEmu7iILyZLW/3CUNhV/sspZyovxDRF8lZm1Gfpiulo77O1Tbl0TBHXOiUW5ipwVdOL
-	EPe6ozHJLGFb5cEXnGnrT059P8mpeoMAzeXwA5LUu3WsBTkHRSwv8e0YcRtCqWaT4su2UIaF1zw
-	xg18CGauVv66L5EVAkklj07vMfUhEChP8uDgLqz4SSWG7yn1I=
-X-Google-Smtp-Source: AGHT+IGuEWd+8F+VovYJZ3CHXCt5CGxSvLqiDDTdefEfbr49E3wJzWtW8JNbm3BgbVjhnWchRkMr+Q==
-X-Received: by 2002:a05:6808:3a0b:b0:441:d465:7474 with SMTP id 5614622812f47-443a30e1b7emr249948b6e.33.1760633217480;
-        Thu, 16 Oct 2025 09:46:57 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:86b5:623:b364:9913? ([2600:8803:e7e4:500:86b5:623:b364:9913])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-441d5f7ebdbsm3144632b6e.18.2025.10.16.09.46.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 09:46:57 -0700 (PDT)
-Message-ID: <cc21a74c-905f-4223-95a8-d747ef763081@baylibre.com>
-Date: Thu, 16 Oct 2025 11:46:56 -0500
+        d=1e100.net; s=20230601; t=1760633223; x=1761238023;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BH6iB9yTl4fk0GH7d0wlAo5lBLVhqDhIbHp2taDAclg=;
+        b=n4AgdY0F3dAconPAf3Hg5VGV3OjATkk6hDjey9w33vQ02iX0uapbcmD1phHzSONSNm
+         0Fiex+opUD8qoLPo54x6ImFJnT9KpYXd8VfC4dJhy6e18BfgygfRhzZbXVurS5ru8iGH
+         CDOnvFpmtGhJSJqajL+sq+rpO8Nux79GV6hCY5VetMDHcSW5wfjxuWDWxn7TgRtU+LrX
+         ZfCz5oSJ/Phf4v1cJJvUnPuRuvlRjALiBaBsAKakBEOiZv+eCEuWeASCnSL1sQDi5OOC
+         4Qeq8+X2gdzaPAdNfpLLda31KqPkS1YlfPiCfwDmz9eB2Qfmrn2kLmg+Szp4z0mW8V8J
+         rEFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsnSlYeNWOpJwJq3GAGkJ4Mc3EoJ4q4bRyBVMASDk6V1ee8tL3lUxfuG5DmuHeUsUOCHXwkMOO/V6whLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3fRTw2TwiRW3EsIPB/BkAteA1s3LiF4FBQm6o73RwPYMTD45A
+	J7K2XMLliB53qdKqaw8XzUSgtsmPQH27Z6xAmsLCSmZyR9dhmQppSgFGUBk8wzgIYk7JBipSx8m
+	AjUaHEpkSFuJsUw==
+X-Google-Smtp-Source: AGHT+IHcD3DhvFIyEIdQBqcildJVHXf0ma0Sjcc8HSeY6Y1WeeaInmnjzCLZSpJkSvdkYUcwmyWxkDHjxlOUqw==
+X-Received: from wrwd5.prod.google.com ([2002:a5d:6445:0:b0:427:352:6d90])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2891:b0:3da:37de:a38e with SMTP id ffacd0b85a97d-42704da2c9cmr689217f8f.54.1760633222807;
+ Thu, 16 Oct 2025 09:47:02 -0700 (PDT)
+Date: Thu, 16 Oct 2025 16:47:02 +0000
+In-Reply-To: <aPEgNdjr0j4LdSYq@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] PM: runtime: Introduce
- PM_RUNTIME_ACQUIRE_OR_FAIL() macro
-To: Takashi Iwai <tiwai@suse.de>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
- Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Dhruva Gole <d-gole@ti.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Dan Williams <dan.j.williams@intel.com>,
- "Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>
-References: <3925484.kQq0lBPeGt@rafael.j.wysocki>
- <3324926.5fSG56mABF@rafael.j.wysocki> <20251016133854.00003669@huawei.com>
- <CAJZ5v0iOgbkJbdRzgrBUaaYL+S_8BZD7XuXdK5vs2gMG3ug1KA@mail.gmail.com>
- <87ikge7v01.wl-tiwai@suse.de>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <87ikge7v01.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
+ <aPEULoJUUadbb3nn@google.com> <DDJVZU914RVD.1HXRX01BELY4L@google.com> <aPEgNdjr0j4LdSYq@google.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DDJWE0C6OM45.2AKEJR1EG8Z6Q@google.com>
+Subject: Re: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
+From: Brendan Jackman <jackmanb@google.com>
+To: Sean Christopherson <seanjc@google.com>, Brendan Jackman <jackmanb@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>, 
+	<kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/16/25 9:59 AM, Takashi Iwai wrote:
-> On Thu, 16 Oct 2025 15:46:08 +0200,
-> Rafael J. Wysocki wrote:
->>
->> On Thu, Oct 16, 2025 at 2:39 PM Jonathan Cameron
->> <jonathan.cameron@huawei.com> wrote:
->>>
->>> On Wed, 15 Oct 2025 16:02:02 +0200
->>> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
->>>
->>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>
->>>> There appears to be an emerging pattern in which guard
->>>> pm_runtime_active_try is used for resuming the given device and
->>>> incrementing its runtime PM usage counter if the resume has been
->>>> successful, that is followed by an ACQUIRE_ERR() check on the guard
->>>> variable and if that triggers, a specific error code is returned, for
->>>> example:
->>>>
->>>>       ACQUIRE(pm_runtime_active_try, pm)(dev);
->>>>       if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
->>>>               return -ENXIO
->>>>
->>>> Introduce a macro called PM_RUNTIME_ACQUIRE_OR_FAIL() representing the
->>>> above sequence of statements that can be used to avoid code duplication
->>>> wherever that sequence would be used.
->>>>
->>>> Use this macro right away in the PCI sysfs code where the above pattern
->>>> is already present.
->>>>
->>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>> ---
->>>>
->>>> Admittedly, the new macro is slightly on the edge, but it really helps
->>>> reduce code duplication, so here it goes.
->>>
->>> Fully agree with the 'on the edge'.
->>>
->>> This looks somewhat like the some of the earlier attempts to come up with
->>> a general solution before ACQUIRE().  Linus was fairly clear on his opinion of
->>> a proposal that looked a bit similar to this
->>> cond_guard(mutex_intr, return -EINTR, &mutex);
->>>
->>> https://lore.kernel.org/all/CAHk-=win7bwWhPJ=iuW4h-sDTqbX6v9_LJnMaO3KxVfPSs81bQ@mail.gmail.com/
->>>
->>> +CC a few people who might have better memories of where things went than I do.
->>>
->>> The solution you have here has the benefit of clarity that all it can do is
->>> return the error code.
->>
->> Well, I could call the macro PM_RUNTIME_ACQUIRE_OR_RETURN_ERROR(), but
->> FAIL is just shorter. :-)
->>
->> Seriously though, the odd syntax bothers me, but it has come from
->> looking at the multiple pieces of code that otherwise would have
->> repeated exactly the same code pattern including the guard name in two
->> places and the pm variable that has no role beyond guarding.
-> 
-> While I see the benefit of simplification, IMO, embedding a code
-> flow control inside the macro argument makes it really harder to
-> follow.
-> 
-> Is the problem about the messy ACQUIRE_ERR() invocation?  If so, it
-> could be replaced with something shorter (and without extra type),
-> e.g. replace 
-> 	ret = ACQUIRE_ERR(pm_runtime_active_try, &pm);
-> with
-> 	ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
-> 
-> Since all runtime PM guard usage is to the same object, we can have a
-> common macro.
-> 
-> Also, in the past, I thought of a macro like below that stores the
-> error code in the given variable ret:
-> 
-> #define __guard_cond_ret(_name, _var, _ret, _args)	\
-> 	CLASS(_name, _var)(_args);			\
-> 	(_ret) = __guard_err(_name)(&_var)
-> #define guard_cond_ret(_name, _ret, _args) \
-> 	__guard_cond_ret(_name, __UNIQUE_ID(guard), _ret, _args)
-> 
-> ... so that it'd work for runtime PM like:
-> 
-> 	int ret;
-> 
-> 	guard_cond_ret(pm_runtime_active, ret)(dev);
-> 	if (ret)
-> 		return ret;
-> 	
-> Of course, a clear drawback is that the assignment of ret isn't
-> obvious, but the code flow isn't skewed much in this way.
-> 
-> 
-> thanks,
-> 
-> Takashi
+On Thu Oct 16, 2025 at 4:41 PM UTC, Sean Christopherson wrote:
+> On Thu, Oct 16, 2025, Brendan Jackman wrote:
+>> On Thu Oct 16, 2025 at 3:50 PM UTC, Sean Christopherson wrote:
+>> > On Wed, Oct 15, 2025, Brendan Jackman wrote:
+>> >> Currently the tracking of the need to flush L1D for L1TF is tracked by
+>> >> two bits: one per-CPU and one per-vCPU.
+>> >> 
+>> >> The per-vCPU bit is always set when the vCPU shows up on a core, so
+>> >> there is no interesting state that's truly per-vCPU. Indeed, this is a
+>> >> requirement, since L1D is a part of the physical CPU.
+>> >> 
+>> >> So simplify this by combining the two bits.
+>> >> 
+>> >> The vCPU bit was being written from preemption-enabled regions. For
+>> >> those cases, use raw_cpu_write() (via a variant of the setter function)
+>> >> to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
+>> >> CPU that gets its bit set in these paths is not important; vcpu_load()
+>> >> must always set it on the destination CPU before the guest is resumed.
+>> >> 
+>> >> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+>> >> ---
+>> >
+>> > ...
+>> >
+>> >> @@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
+>> >>  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
+>> >>  }
+>> >>  
+>> >> +static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
+>> >> +{
+>> >> +	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
+>> >> +}
+>> >
+>> > TL;DR: I'll post a v3 with a slightly tweaked version of this patch at the end.
+>> >
+>> > Rather than add a "raw" variant, I would rather have a wrapper in arch/x86/kvm/x86.h
+>> > that disables preemption, with a comment explaining why it's ok to enable preemption
+>> > after setting the per-CPU flag.  Without such a comment, choosing between the two
+>> > variants looks entirely random
+>> >
+>> > Alternatively, all writes could be raw, but that
+>> > feels wrong/weird, and in practice disabling preemption in the relevant paths is a
+>> > complete non-issue.
+>> 
+>> Hm, why does making every write _raw feel weird but adding
+>> preempt_disable() to every write doesn't? Both feel equally weird to me.
+>
+> I completely agree that both approaches are odd/weird.
+>
+>> But the latter has the additional weirdness of using preempt_disable()
+>> as a way to signal "I know what I'm doing", when that signal is already
+>> explicitly documented as the purpose of raw_cpu_write().
+>
+> True.  Aha!
+>
+> With the #ifdefs in place, KVM doesn't need arch/x86/include/asm/hardirq.h to
+> provide a wrapper.  irq_stat is already exported, the wrapper exists purely so
+> that kvm_set_cpu_l1tf_flush_l1d() can be invoked without callers having to check
+> CONFIG_KVM_INTEL.
+>
+> Not yet tested, but how about this?
+>
+> static __always_inline void kvm_request_l1tf_flush_l1d(void)
+> {
+> #if IS_ENABLED(CONFIG_CPU_MITIGATIONS) && IS_ENABLED(CONFIG_KVM_INTEL)
+> 	/*
+> 	 * Use a raw write to set the per-CPU flag, as KVM will ensure a flush
+> 	 * even if preemption is currently enabled..  If the current vCPU task
+> 	 * is migrated to a different CPU (or userspace runs the vCPU on a
+> 	 * different task) before the next VM-Entry, then kvm_arch_vcpu_load()
+> 	 * will request a flush on the new CPU.
+> 	 */
+> 	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
+> #endif
+> }
 
-FWIW, a while back, I suggested something like this where ret was
-a parameter rather than a return value [1]. Linus did not seem to
-be a fan (said it was "disgusting syntax").
-
-[1]: https://lore.kernel.org/all/CAHk-=whn07tnDosPfn+UcAtWHBcLg=KqA16SHVv0GV4t8P1fHw@mail.gmail.com/
-
-
+Yeah, just poking irq_stat directly seems fine to me.
 
