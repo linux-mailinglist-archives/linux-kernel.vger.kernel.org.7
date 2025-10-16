@@ -1,103 +1,91 @@
-Return-Path: <linux-kernel+bounces-856589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607BDBE48D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D57BE4929
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 185F9509247
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0208546718
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB9F329C5E;
-	Thu, 16 Oct 2025 16:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA61329C44;
+	Thu, 16 Oct 2025 16:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="e98vpMIZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="khc0T9rn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eA+cpOsg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF88E213254;
-	Thu, 16 Oct 2025 16:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE1D32D0FE;
+	Thu, 16 Oct 2025 16:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631448; cv=none; b=XS5vMgzAiFrfp+QNWLzGs3VtmRr44k3hCBSeARTMtTMJU5ribBc3heBgpshheMCUavHtE6IpBRZD5Oka3aw6wifDjNEETTqbWjaakiFt/svIlR53D/J4EtIZzQQKrayKQh4RicGwqNbeJkAhFqIzfVPqMVI1PLUnAt8K2JoKaMw=
+	t=1760631551; cv=none; b=ESQM9BSKl2yjGI2iYl2Yb/L2Lz3WoIJoSgwjBmZztHHPYCvkjYrLlCfCj86RUxJsPhwhKWnMv/KQta//nnS7XBQKRaBLoemIITFTisfMWTOhH6hxQAzYw3xkBtNhtmPchGOimb0F88hsIB9rsJPAyUyHeo4OCRz/YkB7HHL6aRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631448; c=relaxed/simple;
-	bh=ePwyMIEkVztUnbUIenuITTss9vYpW1OJ9kvTasFRqZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSo+/Z8HHd1dIdnBL+m42AJv326sI2IElgUsLBWECJ88OZBq3Hh5Rk071WSCJopeCR7YC7Kh4ljlKiebI1FNwmMdQLQ2R4YA5oMQkNeMWs+rDnARvvqrLArfVaEZfe/sNfPF1k3oCNrhHrPfYnGKYQ0Y2g/d80r4aqUT0GxofOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=e98vpMIZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F9AA40E00DE;
-	Thu, 16 Oct 2025 16:17:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RprFMtxObG06; Thu, 16 Oct 2025 16:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760631441; bh=lCvM/owjpNP9QvdrTv21SCtqHV1RNq0z0FQrUIvfdtA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e98vpMIZSJkoJfCXfHZlvu/j7Xx163gPFxtLq1/7Sst7j7T8EPSc7RRsbQ8bGQ5m0
-	 Hixmi63b/ur/kw2rpWvARz9v66JMiJz1KZliTYSu74CmvHyqJzqtLY3zlybnIy72os
-	 Ug+2k7OT7wy4Z5FBp9Fnyb8AqmvRA+GmpJdQTIFpIesSpKggrhZfdT90v8zEqoAA9u
-	 ZguWKo8UaDmHp42P5xMKMfHlsnl1wZocFJt0cixq0QBBCxRYDrnavUnFcWYTJUunY3
-	 Ry566HpQq4uWoxs33XXayy4KsHnB8OEEZo4a5s0T9cUGW4pB790y9WnjWqnBxVkEtc
-	 FWSss0G+bnBBN7Q8GI7a0Vk0K8K/Tbkt+K6Daw5XNlQNp5huSPjmjwInczsGdOygfR
-	 sIBiP+lOnRw/23w+4rIXHB5EPOHXPkd7A5rF1UiOMRVZ1fHvapdnQ2pl41G+aswqRE
-	 N8oFd9kUKtNVScWnmEi1pPW2LFAZe+CIQg7a585SPfUusoHMiJQxSaRnoxGDfssDm9
-	 n2G7VuFUMCrUXcIxLtbg+bt/KV7S7sniZOuSuG1/E4UIyQZZlm7KXomyNVv5J1mMyw
-	 gnaqQXeuqEvnEQ8NwZn/fq7RjVbFApYsQL6xpkUFQ6CLuutXdvWOzIMTTyNXALJnQ6
-	 srZaZuatJIfLb6oG5KvmNMqw=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 342EF40E016E;
-	Thu, 16 Oct 2025 16:17:11 +0000 (UTC)
-Date: Thu, 16 Oct 2025 18:17:10 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Len Brown <lenb@kernel.org>,
-	Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Avadhut Naik <avadhut.naik@amd.com>,
-	John Allen <john.allen@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH 1/3] ACPI: PRM: Add acpi_prm_handler_available()
-Message-ID: <20251016161710.GCaPEahlw4qsCMaw4n@fat_crate.local>
-References: <20251006-wip-atl-prm-v1-0-4a62967fb2b0@amd.com>
- <20251006-wip-atl-prm-v1-1-4a62967fb2b0@amd.com>
- <20251016160149.GBaPEW7ej4qvOcVfYh@fat_crate.local>
- <CAJZ5v0gvn21FeMNpJDWOZ0ZH5CZzDt0zEuXjHEpWxHjq9vHqyw@mail.gmail.com>
+	s=arc-20240116; t=1760631551; c=relaxed/simple;
+	bh=TG1LH9f0ugAp6QShBhpVnT0/N/Vk86GE7yOip/fY3E0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DE21/TrYcxwC+OPFunf1ucCMM0+mgJ7ZV/oIZvienGkPiLtSEImU/lXuiS5SMnDYMXAd+1TTGtw46nrlZ33qAjKSPaeouZZGISziJipnwiZdT54OZdLAIhAa3zrq9v6HkyviX9/YPtChBOQE1/Bnpm4qwYVbZNfzivfCz1qAw0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=khc0T9rn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eA+cpOsg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760631546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbacNbZ8PoU0CnMy/mXPEaA+xmgiFkgVX5e5fxm4LWM=;
+	b=khc0T9rnmavU9b+3ItRiXXAVIIVushGALKxP4I/GbGC6+FviyntGDGgex68FQJVq6j696u
+	qDtlMoCjW8Zr/Gaii32D0S6t79g0b6DETd4M149a+miAE9Y8O6pieqVbiDCjaheG7vwXRd
+	Nun51YWy5jnQB5a5UIn4KRR4MPD6ebR4ww2Ev/FgLZjZWQLmgoeXIHPGj7oC7f8cd663z2
+	xkkNZncz0QFQxVanqc6XcmnYWEBLYwp+gd2LAeZU1vCTUVr47XRYwqnmFNboNhX5NVpsXr
+	aJf3/eeXtWEKLRbM5ox5ZaAYP0Cy1noOO55LICEBPyVbksGW3BLv0ug2qN1RpQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760631546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbacNbZ8PoU0CnMy/mXPEaA+xmgiFkgVX5e5fxm4LWM=;
+	b=eA+cpOsgn/jbHG+8XNVXKn8vDPbj1e5R0+MSNvW326TFlz1xPOe/cNwiUlfpALLOFoF+Zc
+	pi0H4+R6hFrww2Dg==
+To: Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Changhuang Liang
+ <changhuang.liang@starfivetech.com>, x86@kernel.org
+Subject: Re: [tip: irq/drivers] irqchip: Pass platform device to platform
+ drivers
+In-Reply-To: <aPEVtDo1CHibAGxn@hovoldconsulting.com>
+References: <20251013094611.11745-12-johan@kernel.org>
+ <176062960151.709179.10135307807179758941.tip-bot2@tip-bot2>
+ <aPEVtDo1CHibAGxn@hovoldconsulting.com>
+Date: Thu, 16 Oct 2025 18:19:05 +0200
+Message-ID: <87jz0u251i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gvn21FeMNpJDWOZ0ZH5CZzDt0zEuXjHEpWxHjq9vHqyw@mail.gmail.com>
+Content-Type: text/plain
 
-On Thu, Oct 16, 2025 at 06:09:12PM +0200, Rafael J. Wysocki wrote:
-> > Rafael?
-> 
-> I've seen it.  Are you asking for anything in particular?
+On Thu, Oct 16 2025 at 17:56, Johan Hovold wrote:
+> On Thu, Oct 16, 2025 at 03:46:41PM -0000, tip-bot2 for Johan Hovold wrote:
+>> The following commit has been merged into the irq/drivers branch of tip:
+>> @@ -296,10 +296,9 @@ static const struct imx_mu_dcfg imx_mu_cfg_imx8ulp = {
+>>  		  },
+>>  };
+>>  
+>> -static int imx_mu_of_init(struct device_node *dn, struct device_node *parent,
+>> -			  const struct imx_mu_dcfg *cfg)
+>> +static int imx_mu_of_probe(struct platform_device *pdev, struct device_node *parent,
+>> +			   const struct imx_mu_dcfg *cfg)
+>
+> There's still an editing mistake here; the new name should just be
+> 'imx_mu_probe'.
 
-LOL.
-
-ACK/NAK?
-
-If former, should I carry it through tip?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Not my day today. Even enabling the correct config knob is too complicated it
+seems....
 
