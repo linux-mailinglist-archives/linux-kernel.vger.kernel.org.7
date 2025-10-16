@@ -1,307 +1,199 @@
-Return-Path: <linux-kernel+bounces-855860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECDCBE282B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:51:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053ECBE2855
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 225604FD009
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9B948267B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5B31B82C;
-	Thu, 16 Oct 2025 09:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE30631AF30;
+	Thu, 16 Oct 2025 09:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HZuf0CvS"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="SPVFLj4W";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="wq2FT0La"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059203191A2
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608290; cv=none; b=t157v5mWS2Lq/fXvgMGwItHEcpH7W0gZKYI42Nwn82kJn2z9t929hcVCUiPlHqyB8bZ011yjVzGbupAuybQqlzWLDvkErCsgmZToQCvb93PChWVMxHWBRaxprcGGCowvb6xGgQpXGfx+XQvMczS9iIKDFG7rqWjZvvBXX21jKOI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608290; c=relaxed/simple;
-	bh=GuOA5GxxnddDAeBlZENLPE1NwOR/4by1LqONgJTNOHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rTEzCgiVEeK2yUXe8omOC31LPH3CUIFMdSB6yct20H5yoQx3dVSQTNotsjWZlKXeFLTpoJ4GEl7rGtOmTDlBoskYqQJBARH3m8VE1FtdLvggx6//myS+K4Sgr7M+YeY6TG38J1kNTysRPSe+HpZIY5MlbW/JypjGnOYrLPVil0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HZuf0CvS; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G1xAaI001444;
-	Thu, 16 Oct 2025 09:51:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=87uFae
-	E9/6hxFdNJLHex+ZSIMzX1ZexUzOPHkdh8InA=; b=HZuf0CvSfWT4gACBD2lh+H
-	ClAPA3hXOIyvYPSb9Q1TkEU3KX8MT4UZlbHIP98iozFz6YBJQoSqx6iBtREro5Lu
-	pRLa3LhZgaagnqx5oxrrAkIj92XZjATgn1dyd5vxdL2oWwXTQfuDjJvF4ipo/SJ2
-	RLPfS+Flx4DgC9wy74EgN1GkiCvxFSWncTUA6n/7m9+NngqpNEXVVc9hsrAYueY0
-	5FUimUhuuUztin6vP+LaGFz8xyTQ2rRcoHGv29/XRQ91sXct4lCi68hF9yCEGDDh
-	+hIOmGpRoNR5f4hWpwiX7wf9KZLzQZc6ntBn2i6OmAREpwvmpdfq/+CZyD8u+Zgw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp84peh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 09:51:11 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59G9fQ0R003641;
-	Thu, 16 Oct 2025 09:51:10 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xy54kb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 09:51:10 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59G9p5ZG30146826
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Oct 2025 09:51:06 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 94F9120043;
-	Thu, 16 Oct 2025 09:51:05 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A9D82004B;
-	Thu, 16 Oct 2025 09:51:04 +0000 (GMT)
-Received: from [9.109.204.116] (unknown [9.109.204.116])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 Oct 2025 09:51:04 +0000 (GMT)
-Message-ID: <7b9f9ca0-a6d8-40d0-8195-bbf81377e866@linux.ibm.com>
-Date: Thu, 16 Oct 2025 15:21:03 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CD5319875;
+	Thu, 16 Oct 2025 09:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760608299; cv=fail; b=oe2bJOI2fzDpc/TPNsA+a8eMeRLt8cP7GCdtUfpiL5o1cbwcEp8p2I6euJamXDj8qw71dTMHwYV/xiDADZZIpdHYhLDASC3k9YfaWoDTa7Z15AT8/tNFxxbyNGU+784rWNBeCv2qVkrnVIBuHQCVLNdYOS5+aEbGtdUgXzqD7V0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760608299; c=relaxed/simple;
+	bh=paRS1iPtTebKE7Yr10XlLhkl6Iu4E/Ax1fIpP+N+sjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DTRVHTZBi4qkCFU6WlTIf02DZ2TvM9qiakPxLI7Y5srYYRv+IHPXBBKVBG2kT97sGajEUid4dLF49NORf02N9Zos+/TVPIMs/vmrKGhctc1YFIG80XIkFGBFfIksShID0pLvag3Mfujn3rO0B92SJO2E4KQ3W58j0RfPF9f2V0c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=SPVFLj4W; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=wq2FT0La; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59G8fDZG2477160;
+	Thu, 16 Oct 2025 04:51:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=+waaRa7bBZFzb5p4
+	hb+mxaMIxMNJhC7YjaizblBK3B8=; b=SPVFLj4WzHuufC77m76do2+3Jv+y3VSj
+	mJRIrEF2eSpPSCeHrXvNj364yLvj3RNCbAGHDTSFGwISFL4p8v1njtyKPAWRPf/a
+	sJGzbgXKfOqB4rKKeLMLDU911PWbyeIfstlnNUH4nU6GQPjuK8MjJV/oNvy3ApbI
+	3arfXJbNJ3uWjJ+x0a6S/pk39P3qUXus32HBbDu2GppOnQAGWTkkDC/Q92QYWZ15
+	o+UyGf53I+R6nj7SPE4efJAH4mcP6UacnOcit6qsWR/SPcGBj2QotNnHL4yx3hTB
+	ohY4ePzWf6dSTdp86YhMVUd7Nnsv9HpGwqir/xN3xWqMN8Hq8Ur03A==
+Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11022129.outbound.protection.outlook.com [40.107.209.129])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 49t9mhhn4h-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 16 Oct 2025 04:51:24 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tpaEdZezkApuW08ZQ0KP/Eb4Mf9rPbO6UDyR9uMzArCIKiw58iHD0IfcfNAea4gw02C1QWtP2P3NJftNF9Q81Yu5J3RvRqUmyhDv/a6nNiqa4YivsM84wRyH8c9rm+MZkbnDlcp74HY7bB6nDmw0Nlw+0p0wtiGVbSmSlAUOeKAoeIznVnPVGvdd8N+NjqZv47FPERarI2aa5AFIJeV1p5JQze4jcJSSyx9LZTyUWaQMglvLG8l7QyRqdjT1+Mu/XdoW17cpBk+F5Kzeii8VJg5wnstAsbk9kzOdA2lxmgK/GGqRyIcrk8ZCZVMeq1ZbtAntad1T3XSoKG5FKVEgQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+waaRa7bBZFzb5p4hb+mxaMIxMNJhC7YjaizblBK3B8=;
+ b=Sx5Dy9P+GpnTuXlLc1cJBYfBUdZN5Lduw1GWlXFf+/hJMQk9/rOdQi77qAzP1xwC9/36lHktfP8YdjD72G/1QsBDgsugilk9Q7buVvMw+pa06EyQqyI9WG9jJuEC47YkjxPqu0TYnj65/2faBR59LLx1KOjnP+AExuNCXD8eNm9zSqiT+4BkZLahEl/5D07o1+UXDqrTgeY3HQVJad6a5BvqzLV8vPiXfCxpmW3g/aYwLsFGM8X7V9cuK3hLh+5CpDo15XWSUXclFlL32Rm/BZUKDbhkzZjhQOyzVxTJPntuGW/MK7bscs3xOO+Mv3nbRf+ASRYt2y4oDwDFLuT8Yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+waaRa7bBZFzb5p4hb+mxaMIxMNJhC7YjaizblBK3B8=;
+ b=wq2FT0LacoAABa5EWhmY6qYiR/sbXTMwZZLfklBHEWib1//mD9Ov3iXeAS5ax73NkPUyoPPIvkNmb25BeU5hn6yXf8eZpu7Uc51nsxF/TewpqGeSRmOxtzsmNq3fZGNwDP3npqqmFx0N/UrIz6uK3zZWlrNt46ToSNQHw7e8K18=
+Received: from CH0PR13CA0009.namprd13.prod.outlook.com (2603:10b6:610:b1::14)
+ by MW5PR19MB5580.namprd19.prod.outlook.com (2603:10b6:303:1a0::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Thu, 16 Oct
+ 2025 09:51:18 +0000
+Received: from CH3PEPF0000000B.namprd04.prod.outlook.com
+ (2603:10b6:610:b1:cafe::83) by CH0PR13CA0009.outlook.office365.com
+ (2603:10b6:610:b1::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.5 via Frontend Transport; Thu,
+ 16 Oct 2025 09:51:18 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CH3PEPF0000000B.mail.protection.outlook.com (10.167.244.38) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.7
+ via Frontend Transport; Thu, 16 Oct 2025 09:51:18 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id DB271406547;
+	Thu, 16 Oct 2025 09:51:16 +0000 (UTC)
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.24])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id B6F61820249;
+	Thu, 16 Oct 2025 09:51:16 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: broonie@kernel.org
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: [PATCH] ASoC: cs-amp-lib-test: Fix missing include of kunit/test-bug.h
+Date: Thu, 16 Oct 2025 10:51:16 +0100
+Message-ID: <20251016095116.93260-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline]Kernel Boot Warings at arch/powerpc/mm/mem.c:341
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-References: <90937fe0-2e76-4c82-b27e-7b8a7fe3ac69@linux.ibm.com>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <90937fe0-2e76-4c82-b27e-7b8a7fe3ac69@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Z8GkyGJ_YovZfpJLQazHzUQSk6mLxaaV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA4NCBTYWx0ZWRfX+OJPssgHyqKs
- b1lKhdhQIJ9LshoyEILOarITnTmLe3MFUXfPgjaj0KZqHvBJLQEG9+X9Aq37sR2vOH54eo2ddpQ
- m6rpangdnaozneMg6ad4ajd/Z+2M7OX4EDMAmVb6vlTQ5d42VxGqSF+QfzQStz5hC2yT0UYDeH6
- izsPMPcMHp+fB2ZR/vxHkoJNOi5bFB6ZG+Duz0a3331VnGZU304o5uISkqqXpa1lvl2CNUThJjX
- HeG6INI8bLRKh4ZH1r4Qf7rrDH5LOURlYBWmJciVDoCGl6m2U4FMhj2mmAXTWPhKba2U5dn7pMe
- H58miBJ8zKa5Ww+oUxwfdMC43Ln0qvsmah5XDnRxbuBX7n3CShmc3RYvGLrrrU4Bt5TP9cd7kMX
- 9aHWpr/1j46Feg7T5XfxR/bg58dSHg==
-X-Proofpoint-GUID: Z8GkyGJ_YovZfpJLQazHzUQSk6mLxaaV
-X-Authority-Analysis: v=2.4 cv=af5sXBot c=1 sm=1 tr=0 ts=68f0c00f cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=0LcAchjzLpStlyLQwpoA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510120084
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000B:EE_|MW5PR19MB5580:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 75f2919d-48aa-4e19-3317-08de0c998dd7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|61400799027|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YtBN+HtqZfxeNp2Jm2nTwshlNjMNCa9/D92spPJjBPM/ycl9mKewRom7v5+3?=
+ =?us-ascii?Q?rVJUkZjkbH8u7Cm9L6o6G90udc/tZrBA/IpywhkVPq1L6F0G3b5ZwrnLbbNn?=
+ =?us-ascii?Q?z1HBCJgvNhiOnhloroLGhBZAp8QfPSXtOo7SJ3oSFSVGdJOX8taX0N4pLdcn?=
+ =?us-ascii?Q?W1S55NrGmqWisWsFWciKY4u2v0RpyS+qU1jRcbR4dGRCn/HdJ1JLDSiVfEdP?=
+ =?us-ascii?Q?/x5MmegAXEfHi/ofy7mtgMMYtuOlBctsY3tvOKv5NgUrlzT4aLPgUkGR/aBB?=
+ =?us-ascii?Q?5T3aGeGpkrNPStq3HqFlr7hDDJQB7v09unNQllsl1yRjhuUVnZ5zqi7w7lze?=
+ =?us-ascii?Q?jjTCklc8P448lLdHNAjz+MhV3CXfYQ+XHHpUlSjWD/OlPewxHvv8P4XctWc3?=
+ =?us-ascii?Q?qZXqsgoT77MDRc+Fcf1wu/qXvk/ACnRN6+RV1Q+Xl5k0CaxtzWfgGGXHQGaz?=
+ =?us-ascii?Q?KXxwLP+5TuNBXZ4O8GfSm6ojlGQG1bYyJ4+pxDlC4wpociArJRE1RhbXhkj7?=
+ =?us-ascii?Q?LuLUNLtVULNpNzmIPHTAR6NxUJNHvqFNW5A7sQdAbGy/Ck7jx5lBntNPZzWz?=
+ =?us-ascii?Q?oe15F99lfjN+Xd/7jCTdPGjhfOkn7QD7o7PPwg4N7Io/9zWxRnUOD601oAbn?=
+ =?us-ascii?Q?yWn4f9/ogjTU3qJTRWEKYjgt890X7QpAmoFfPBIuUxepM8zcJQkhFuk+SjPD?=
+ =?us-ascii?Q?kgxqlPooR8aWoOp0Dqs4qg36TB+OL6XkKVQSRHDGqo8m2LYxLbOwBXngCu3x?=
+ =?us-ascii?Q?dUrY2N6JpZKMgg9doj9dc8aOAs/JpSrkFPWuu8bVxZFotvLJ+yFxOrfcJY21?=
+ =?us-ascii?Q?hZ5MCjhUhdJsEtQMJdWgs+1EwPluadNHg5aBnLgUbK6UaCZWguBO1OPb1mQG?=
+ =?us-ascii?Q?w59ef65ee7GohK/mPv+zI5Ahw7NO7bHOG6FSUGJQKS0lIsSJ+XAk6cVzguDB?=
+ =?us-ascii?Q?LZzwUkRsWSXcMl217cLqAfBUFjo8HHmeQXKuUwRts/YzQThNnm0uNoh9mqbT?=
+ =?us-ascii?Q?LvsEpO5HQAuwX8ZyBRhdmYSzGNY+w3CrZ0ixVCY/T9dgOW++QEC6hKY6qMb2?=
+ =?us-ascii?Q?xMMo+Kj+oAgUaom6tQAzvXDceJtlj9bi/i5J3gdKe0HQsyIgb6oD5jQxHrDN?=
+ =?us-ascii?Q?ixaIc7HN18c2SaxR46+li0AHFLIbOFYDfOtQYpiNMWwzeP90XN354K2ER0/q?=
+ =?us-ascii?Q?BnuigB8dpDNpePZWretrwvbdmLZZhQVL6+5P8s+aPeq/REXbJckrDHLtRQZa?=
+ =?us-ascii?Q?1inRgCJca/of8F4Fo66bKM3JT1/ictGIk8VJrgKAyzyh0oMiGlsQBXH9yCF/?=
+ =?us-ascii?Q?AHvZ5joUnhOajeLYEbFUTqGg5PBtlsj7jamUob26cm1uqoYSWiO1QoIC4Hj8?=
+ =?us-ascii?Q?ZZW7AS+NiPM5OUGM3QfcYzdHXyhXMJRtSdT/DKx57dgj2t0ryT3PmEO8orh0?=
+ =?us-ascii?Q?UC5KRwN0lL8FlYLBc9/lc4ytwkW0GzaxVMfoTg/bz0ER+ua24NMg/b/lhyLb?=
+ =?us-ascii?Q?HwqTLDTNjlJ+U3Mzyd5N2BlRH2xzgVUi1p47pf9KCFQxfHd4LTShpeutyzFy?=
+ =?us-ascii?Q?Q3kTi0a/KVB0Bw2VvEY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(61400799027)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 09:51:18.0084
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75f2919d-48aa-4e19-3317-08de0c998dd7
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CH3PEPF0000000B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR19MB5580
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDA3NCBTYWx0ZWRfX2JxL8+rPkW6y
+ QcDTgqG6wFqGpu808fdmbiuWv5xEUZ+Sg5GVpT/LhOr5slMEHg1p+fxONpn+AihMBZm7sTF1mQy
+ 8nYwSGyONOugt1RAyuRqojbNoYnF7RN6GsqCvXWTSEaUQCk8J9HtWubtyltDkFo2t1WhyspqnF5
+ 32TSpLySZFgvGQgXwoXa45SQw55J9IvaWajaVs6YFfhGFkNtzy4lw2ho+Hfn8GARUhjBKS8p3OO
+ CBsyanm+KqcUXOZfuwbUFTv786i/vzkH4qXECE4yJOPWaQEFUTBMi/2Vd/sQQuTgLgZvGv71ctS
+ DaxBsiBS69EwMZZBxqrIp5euabz2npDC5XXBvi+Ujck4A56dM0SmxkVVyccpDt1v5fNTX8ItcLw
+ W5rDLeb4MwXaowuR4SvlaQHjhuTR3w==
+X-Proofpoint-ORIG-GUID: 62u_rkHLX88BpbJffUNWYu6Hdow44cfH
+X-Authority-Analysis: v=2.4 cv=OJIqHCaB c=1 sm=1 tr=0 ts=68f0c01c cx=c_pps
+ a=6Bt0GI45FyvFQl6hnU1EVQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=x6icFKpwvdMA:10 a=RWc_ulEos4gA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=w1d2syhTAAAA:8 a=DBs-fRHfoGwBX52xYIkA:9
+X-Proofpoint-GUID: 62u_rkHLX88BpbJffUNWYu6Hdow44cfH
+X-Proofpoint-Spam-Reason: safe
 
+cs-amp-lib-test uses functions from kunit/test-bug.h but wasn't
+including it.
 
+This error was found by smatch.
 
-On 10/10/25 11:15, Venkat Rao Bagalkote wrote:
-> Greetings!!!
->
->
-> IBM CI has reported kernel boot warnings on the mainline kernel on IBM 
-> Power11 system.
->
->
-> Attached is the .config file.
->
-> Traces:
->
->
-> [    0.040098] plpks: POWER LPAR Platform KeyStore is not supported or 
-> enabled
-> [    0.043041] ------------[ cut here ]------------
-> [    0.043045] WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/mem.c:341 
-> add_system_ram_resources+0xfc/0x180
-> [    0.043058] Modules linked in:
-> [    0.043065] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
-> 6.17.0-auto-12607-g5472d60c129f #1 VOLUNTARY
-> [    0.043072] Hardware name: IBM,9080-HEX Power11 (architected) 
-> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> [    0.043078] NIP:  c00000000201de3c LR: c00000000201de34 CTR: 
-> 0000000000000000
-> [    0.043082] REGS: c000000127cef8a0 TRAP: 0700   Not tainted 
-> (6.17.0-auto-12607-g5472d60c129f)
-> [    0.043088] MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 
-> 84000840  XER: 20040010
-> [    0.043099] CFAR: c00000000017eed0 IRQMASK: 0
-> [    0.043099] GPR00: c00000000201de34 c000000127cefb40 
-> c0000000016a8100 0000000000000001
-> [    0.043099] GPR04: c00000012005aa00 0000000020000000 
-> c000000002b705c8 0000000000000000
-> [    0.043099] GPR08: 000000007fffffff fffffffffffffff0 
-> c000000002db8100 000000011fffffff
-> [    0.043099] GPR12: c00000000201dd40 c000000002ff0000 
-> c0000000000112bc 0000000000000000
-> [    0.043099] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [    0.043099] GPR20: 0000000000000000 0000000000000000 
-> 0000000000000000 c0000000015a3808
-> [    0.043099] GPR24: c00000000200468c c000000001699888 
-> 0000000000000106 c0000000020d1950
-> [    0.043099] GPR28: c0000000014683f8 0000000081000200 
-> c0000000015c1868 c000000002b9f710
-> [    0.043138] NIP [c00000000201de3c] add_system_ram_resources+0xfc/0x180
-> [    0.043143] LR [c00000000201de34] add_system_ram_resources+0xf4/0x180
-> [    0.043148] Call Trace:
-> [    0.043150] [c000000127cefb40] [c00000000201de34] 
-> add_system_ram_resources+0xf4/0x180 (unreliable)
-> [    0.043157] [c000000127cefba0] [c000000000010eb4] 
-> do_one_initcall+0x60/0x36c
-> [    0.043162] [c000000127cefc80] [c0000000020068cc] 
-> do_initcalls+0x120/0x220
-> [    0.043169] [c000000127cefd30] [c000000002006cbc] 
-> kernel_init_freeable+0x23c/0x390
-> [    0.043174] [c000000127cefde0] [c0000000000112e8] 
-> kernel_init+0x34/0x26c
-> [    0.043178] [c000000127cefe50] [c00000000000df7c] 
-> ret_from_kernel_user_thread+0x14/0x1c
-> [    0.043181] ---- interrupt: 0 at 0x0
-> [    0.043186] Code: 3d02010c e9210028 e9410020 fb840010 fba40018 
-> 38685b48 3929ffff f9440000 f9240008 4a161035 60000000 54630ffe 
-> <0b030000> 39210028 39400000 39010020
-> [    0.043197] ---[ end trace 0000000000000000 ]---
-> [    0.043202] ------------[ cut here ]------------
-> [    0.043203] WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/mem.c:341 
-> add_system_ram_resources+0xfc/0x180
-> [    0.043209] Modules linked in:
-> [    0.043212] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G W      
->      6.17.0-auto-12607-g5472d60c129f #1 VOLUNTARY
-> [    0.043217] Tainted: [W]=WARN
-> [    0.043219] Hardware name: IBM,9080-HEX Power11 (architected) 
-> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> [    0.043223] NIP:  c00000000201de3c LR: c00000000201de34 CTR: 
-> 0000000000000000
-> [    0.043226] REGS: c000000127cef8a0 TRAP: 0700   Tainted: G   W     
->       (6.17.0-auto-12607-g5472d60c129f)
-> [    0.043229] MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 
-> 84000440  XER: 20040010
-> [    0.043237] CFAR: c00000000017eed0 IRQMASK: 0
-> [    0.043237] GPR00: c00000000201de34 c000000127cefb40 
-> c0000000016a8100 0000000000000001
-> [    0.043237] GPR04: c00000012005a9c0 0000000020000000 
-> c000000002b705c8 0000000080000000
-> [    0.043237] GPR08: 000000257fffffff fffffffffffffff0 
-> c000000002db8100 000000011fffffff
-> [    0.043237] GPR12: c00000000201dd40 c000000002ff0000 
-> c0000000000112bc 0000000000000000
-> [    0.043237] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [    0.043237] GPR20: 0000000000000000 0000000000000000 
-> 0000000000000000 c0000000015a3808
-> [    0.043237] GPR24: c00000000200468c c000000001699888 
-> 0000000000000106 c0000000020d1950
-> [    0.043237] GPR28: c0000000014683f8 0000000081000200 
-> c0000000015c1868 c000000002b9f710
-> [    0.043271] NIP [c00000000201de3c] add_system_ram_resources+0xfc/0x180
-> [    0.043276] LR [c00000000201de34] add_system_ram_resources+0xf4/0x180
-> [    0.043280] Call Trace:
-> [    0.043281] [c000000127cefb40] [c00000000201de34] 
-> add_system_ram_resources+0xf4/0x180 (unreliable)
-> [    0.043287] [c000000127cefba0] [c000000000010eb4] 
-> do_one_initcall+0x60/0x36c
-> [    0.043291] [c000000127cefc80] [c0000000020068cc] 
-> do_initcalls+0x120/0x220
-> [    0.043296] [c000000127cefd30] [c000000002006cbc] 
-> kernel_init_freeable+0x23c/0x390
-> [    0.043301] [c000000127cefde0] [c0000000000112e8] 
-> kernel_init+0x34/0x26c
-> [    0.043305] [c000000127cefe50] [c00000000000df7c] 
-> ret_from_kernel_user_thread+0x14/0x1c
-> [    0.043308] ---- interrupt: 0 at 0x0
-> [    0.043311] Code: 3d02010c e9210028 e9410020 fb840010 fba40018 
-> 38685b48 3929ffff f9440000 f9240008 4a161035 60000000 54630ffe 
-> <0b030000> 39210028 39400000 39010020
-> [    0.043322] ---[ end trace 0000000000000000 ]---
-> [    0.043520] kprobes: kprobe jump-optimization is enabled. Al
+Fixes: 177862317a98 ("ASoC: cs-amp-lib: Add KUnit test for calibration helpers")
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ sound/soc/codecs/cs-amp-lib-test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-This is happening because crashkernel reservation is not coming under 
-single memblock region.
+diff --git a/sound/soc/codecs/cs-amp-lib-test.c b/sound/soc/codecs/cs-amp-lib-test.c
+index 2fde84309338..3406887cdfa2 100644
+--- a/sound/soc/codecs/cs-amp-lib-test.c
++++ b/sound/soc/codecs/cs-amp-lib-test.c
+@@ -7,6 +7,7 @@
+ 
+ #include <kunit/resource.h>
+ #include <kunit/test.h>
++#include <kunit/test-bug.h>
+ #include <kunit/static_stub.h>
+ #include <linux/device/faux.h>
+ #include <linux/firmware/cirrus/cs_dsp.h>
+-- 
+2.47.3
 
-commit e3185ee438c28ee926cb3ef26f3bfb0aae510606
-Author: Sourabh Jain <sourabhjain@linux.ibm.com>
-Date:   Fri Jan 31 17:08:30 2025 +0530
-
-     powerpc/crash: use generic crashkernel reservation
-
-     Commit 0ab97169aa05 ("crash_core: add generic function to do 
-reservation")
-     added a generic function to reserve crashkernel memory.  So let's 
-use the
-     same function on powerpc and remove the architecture-specific code that
-     essentially does the same thing.
-
-The above commit moved powerpc crashkernel reservation to generic 
-crashkernel reservation
-which adds the crashkernel memory to /proc/iomem.
-
-Since add_system_ram_resources()/arch/powerpc/mm/mem.c also add System 
-RAM to /proc/iomem there
-is a chance of conflict.
-
-Although the below commit try to avoid that by inserting the System RAM 
-resource inserted request_resource()
-
-commit bce074bdbc36e747b9e0783fe642f7b634cfb536
-Author: Sourabh Jain <sourabhjain@linux.ibm.com>
-Date:   Fri Jan 31 17:08:29 2025 +0530
-
-     powerpc: insert System RAM resource to prevent crashkernel conflict
-
-     The next patch in the series with title "powerpc/crash: use generic
-
-But the above commit is not enough if crashkernel memory is part of two 
-different memblock objects.
-In this case insert_resource() on System RAM will fail with a conflict.
-
-For example:
-If the below crashkernel memory is added to /proc/iomem:
-20000000-11fffffff : Crash kernel
-
-Then memblock with below memory ranges will failed to inserted in 
-/proc/iomem:
-00000000-7fffffff : System RAM
-80000000-257fffffff : System RAM
-
-Now we have two options:
-1. Don't add System RAM to /proc/iomem
-2. Don't add crashkernel to /proc/iomem
-
-Not adding System RAM breaks the kdump tools on major distros, so that’s 
-not a good idea.
-I think the second option is better - not adding crashkernel to 
-/proc/iomem - because it has never
-been done in the past on powerpc.
-
-I think one of my old patch:
-https://lore.kernel.org/all/20250121115442.1278458-4-sourabhjain@linux.ibm.com/
-
-Along with some changes in below patch:
-https://lore.kernel.org/all/20250121115442.1278458-6-sourabhjain@linux.ibm.com/
-
-should fix the issue.
-
-I will send a fresh fix patch.
-
-Thanks for reporting the issue Venkat.
-
-- Sourabh Jain
 
