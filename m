@@ -1,180 +1,266 @@
-Return-Path: <linux-kernel+bounces-856561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AE5BE47C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:12:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12374BE47DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7287718873D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:13:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A36814FF4AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4932D0C5;
-	Thu, 16 Oct 2025 16:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11FD32D0F9;
+	Thu, 16 Oct 2025 16:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZRO9mP/8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f4I884pQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fzoAgBdc"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013016.outbound.protection.outlook.com [40.93.201.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DDA32D0C2;
-	Thu, 16 Oct 2025 16:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631150; cv=none; b=XnuQNuQBUx63BOZ90G+iG0+51bl/rlBbfEAZewDqHtOxzR5ENn4Xbltc7455CUnZ0g7ZI1oeZ6G7BsZYklBKGtUtxVyj6yRGSzLx9g47JWSAoibezE9rG+naADeHwhuMclzRJ6vCvf75C1DcVDZwuVe3kp7wA3j8H1VcHxB4AfE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631150; c=relaxed/simple;
-	bh=XW6k3Gcar3ovV4dpcje4zQ2uk6r9dgawRYEicfegPf8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FKdPHytYTLsW3hIrgNp4F8pKxIrZd0WAXphkqPHQo8AzMsMAZFvnw94EORAIDHSIbtiLqOhJBoGXyLNt2pUh+C02NRy5twjSjiUt2mM54oxwh7jmXcdDVG+OI9OXCsnOUNDl34zpRSV1VeMuccIUDs0Ca0aO5Htnoa84yy0mk/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZRO9mP/8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f4I884pQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760631147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EimfC5YBQZ0kq/Gz52aWdB6vLjbMGcafw2nhUU8MVtE=;
-	b=ZRO9mP/8ehCkUpZqmBe1rgk54JZHc29ccwtTz5j954OrVqClG6R+uVRDYkbJp7hC1gdJJZ
-	y5PEOhujG1srTiKm+IOooIdhhs0kUZTBg4no06GdwWfYS9c5mWtbD/4Vm5ajrzxPau/bM9
-	9V1jlggPXINSOLbxqr8l4O4HJFubXNqMmKD9mxQ4/xIWvOz1XaQ+GtxT9E4rcZGj2ur6Ob
-	wSufpZsQHWCSIZlhRNhxoBXc712/TuEeRpyRjjoavVOhCa2rUqh8BW7FCpL+7ZOryAWmxx
-	AoFp07wqU0/WHcI9Qum/mmpesYmxTEZ1yG++4KX20YvDIBCM3mP0+nBORDZNSA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760631147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EimfC5YBQZ0kq/Gz52aWdB6vLjbMGcafw2nhUU8MVtE=;
-	b=f4I884pQCh72NrW5bcmy4HgTPvI5ho0GNW8nxlBno/OTw1sTWSsWqoRojjYlPDOcm2wPbr
-	9w2ELHaEq06LBtBw==
-To: Charles Mirabile <cmirabil@redhat.com>
-Cc: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
- <alex@ghiti.fr>, Vivian Wang <dramforever@live.com>,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, Zhang
- Xincheng <zhangxincheng@ultrarisc.com>
-Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
-In-Reply-To: <CABe3_aGj68qM1bNZ3LExbexO=9FO4RzJxhUy2T+HKK1qZfBmtw@mail.gmail.com>
-References: <20251016084301.27670-1-lzampier@redhat.com>
- <20251016084301.27670-4-lzampier@redhat.com> <87plan0yvd.ffs@tglx>
- <CABe3_aGj68qM1bNZ3LExbexO=9FO4RzJxhUy2T+HKK1qZfBmtw@mail.gmail.com>
-Date: Thu, 16 Oct 2025 18:12:25 +0200
-Message-ID: <87ms5q25cm.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACF623EA93;
+	Thu, 16 Oct 2025 16:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760631158; cv=fail; b=jp/o2jomIVOJg+rOzZoUXNTv5Iki7YGsYPmhwJm/6ZmAhUjRuNVTZP5CoiOGHb4YqMVYrQqYr5tOxZP/6FXGUlg8jiaeyXwgXn5K7zLgTwab5g/MeigNwlRK//3whlqq/JYmH6N/uoWe0Q8W2lh9Qfvu8CLbe47a1DCsUb+V/Rk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760631158; c=relaxed/simple;
+	bh=ZNwEWJ338bbtPGoCd9qSGbkavMsjpUKze9pQ4qwFbC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LRZy3Px+3UeyhwpHDUxKg6o3V2RYTR+W/xNkxKM96iZF+B0JCrr+1CV9mGac9B97E29WalD/dixZ59/JLJhwAWjy4Gy0nPiS54qs+dR23Z1bUaw/0+Az8mXIMrNNQBN05ozPMPr20cHqUFSkujBvgmW3jvwYFazSti6Rwpx8JEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fzoAgBdc; arc=fail smtp.client-ip=40.93.201.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rEfGQPTwJHIta4NQ1WNhMQFfJ+7Z0pg/PgkgKclr4xhpXyO+WwcwlUAeWgc/y3EVHfsYc9ytkNTk5/ejWcfZdQdNOjUOLCj2+gOhVir4FqxkgPNwPurFX8I+VT8OGOcASCIOg62FbTBBBwjQeelJiDEcgLZY1PbGyYr9O5sSZxuC/eA1QXP0Pv5IZlQKynI2Bw35eoanXTgPMuf5LGDlT0hUFpfetw2gTzsdYqHzKor/z87Xh3hAIxRv1+XOwEfA0YVPFx3jik8kwu6RUiIr0nNK9syuHGfywVw29VF0QQpwujcvasqsmm4jK87wsmtV8FIZN+XGDexXLk7orgjOHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vb8c0yKwSpc4zoPzkklBNqXYCEMtUbIRaQdP1RjwTOg=;
+ b=YUcvohIgL98n/++LlfAiJYAP2rvOpAFmhv4qnrps6JskOaEq+O8PtuAH4zQDYoKZsDK+kCzzZqB/eyaaYBWqh7OHqYa+qZq64RgSeW8Co1SOtZJYFnawaTJ0QpAUDe7kxlikyYQ32KIKN/LZsUACTlTB3Mh4zU198KtsFadvsgpiR6MQIDzT6rtF5e9MjcGL2T733cbJn/2gpMOao4FLWO6PDKztv/54WtBOORiaugeUcO09YFVaFAv2jYIZKrEwSJtCSYbSmTQuqPd4lWObCcqmxFbU1B719t7X3RBVvD/CV5Y0eXB48Tz+ByOkqjMJtAW+NTW+5Cy4bPA8In1sMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vb8c0yKwSpc4zoPzkklBNqXYCEMtUbIRaQdP1RjwTOg=;
+ b=fzoAgBdcCEldX21wR+J2fETO1Ac2DWf1ZM7Nkvj1pag8M9+MOFb+r7Slwj0bLWTVF76G50XuzkF/xbba84VK4/Xn0rBvttb7G2+aNZY3SWXfDtcP5Uu5A64bMaOMwSghiZh5EUzqSf5hbXcXjTIEodOeHS4DL4epPJsbe1IGu8E=
+Received: from BL1PR13CA0399.namprd13.prod.outlook.com (2603:10b6:208:2c2::14)
+ by PH7PR12MB7841.namprd12.prod.outlook.com (2603:10b6:510:273::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Thu, 16 Oct
+ 2025 16:12:34 +0000
+Received: from BL6PEPF0001AB55.namprd02.prod.outlook.com
+ (2603:10b6:208:2c2:cafe::2f) by BL1PR13CA0399.outlook.office365.com
+ (2603:10b6:208:2c2::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.4 via Frontend Transport; Thu,
+ 16 Oct 2025 16:12:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BL6PEPF0001AB55.mail.protection.outlook.com (10.167.241.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 16:12:33 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 16 Oct
+ 2025 09:12:32 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 16 Oct
+ 2025 11:12:32 -0500
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 16 Oct 2025 09:12:32 -0700
+Message-ID: <9e22a020-937b-4965-b7f8-140853ad7d37@amd.com>
+Date: Thu, 16 Oct 2025 11:12:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [RFC PATCH] remoteproc: core: full attach detach during recovery
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20251002153343.766352-1-tanmay.shah@amd.com>
+ <aPELVfhkk0qDXqa9@p14s>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <aPELVfhkk0qDXqa9@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB55:EE_|PH7PR12MB7841:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26012312-6e46-43aa-e4e3-08de0cced077
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UXl1TEhMSy9qWDA0YlpoY0VWWkVCaXk5eDllN0t4NmxGSk9pRGdFSThYL3BO?=
+ =?utf-8?B?MWNnbDZTMkN4TnVBTElzVk85NnZrN245TndGY0p3eklqZTlSRUZaYzlIc1FI?=
+ =?utf-8?B?SkR2OVQrWjJGb2wyVmRuWEw5a0hmcWZybUZFdjZoVGZXUGdJbENkdVY1VmVR?=
+ =?utf-8?B?dW1meVBzYjFOY01qaytSWGRDd3JzU2x0eC9sRWxVZHR2WndYRDE1REw1bmFl?=
+ =?utf-8?B?bVZ0NFBQdC9CQjRmVzdrMEdKR0VqZHJ0a2ZBRU95aGZZMFlxajR0QzFzbTc1?=
+ =?utf-8?B?bnVuL2ovL0xrZlZ4ak5ZSjRGMm9VNWdBMjk0RTE5MDZscERPZTVPRFpONkhS?=
+ =?utf-8?B?MS82S0FORGc5UzljVjZaWHl6cVRzcGFHUWU1c2lOS1pEaklPb1lKMDgzL3Bp?=
+ =?utf-8?B?U3R5bU1FeWw2UHR6RGhrK0VmWkFaNTFjYTJCVmN4QVFDdDMyd1ZtMzBiVTZK?=
+ =?utf-8?B?UVpYM1dBQWVIVWxYMHJSRDNBbnAwdVZkaEN3VFAxd0l4ZDJJTnBwNm9NcGZz?=
+ =?utf-8?B?ci8rcG1LTFM3Z1ZNSGdwTXR1YWtxUmRMdmNaNU9rSTZrWk54YysxbHFsVklv?=
+ =?utf-8?B?WjMvSGRBeUh0WFlYQjgwWFN4ZnRycHdEQWNZZ0owVlVPbzljRFFNZmNwdHlH?=
+ =?utf-8?B?RWZnL3d6Z3dvK1FUTHBzNldkVndDWW5KWWlmdXA2U25PdWVLNm1uai83N3cv?=
+ =?utf-8?B?WndZbXJwQUVWWmZKcVNBNVhWVG5GQmIzNk9oc1l1TWIxM0szbFcvZmJ2Zzc2?=
+ =?utf-8?B?OHZPem1FL3RMZjJCdER2aERvQ3BLRG54ZmxBMmdjR2U5NmkzcGtib3RDY1l5?=
+ =?utf-8?B?Y0pNNGNSY0JCajUzSCtnSkNaVnlLZjYyYVFwRlZybzhvTURXM0tyLzdVaEg0?=
+ =?utf-8?B?UXhhZGN6ZzlYZ0NOYTFJUVJLbUh5cHpOSmI4ZkRDUUZQZHgvY24rbiticTlH?=
+ =?utf-8?B?YjIvQW02NTh1c1R6RTB2TDVUUmhFc3F1bjNIdGlxTjZkbWxONEVzKzM3RVkx?=
+ =?utf-8?B?OFBCaldyTmlCTzgrMkh4R1ZXUEY2NlZSem5sbS9WczIza1VZTTFEa0RTbEk1?=
+ =?utf-8?B?cE5kZ0wrSlF2Sy9XKzNaR2dHUk1aVWg3RXkxclFxQU8yNmRXN1M5K0J5WFZt?=
+ =?utf-8?B?VXBVQmxoL2d1cndSU0ZTRXB2ZUlWcHJMMjhtU3RpSDBkRVUreEJHSTluNHVB?=
+ =?utf-8?B?N2NpM1RlME0xdDEzbTFneWY1dkFLQ0djTTBxNS9JcUs4RDhnUEs3VWR2RjVj?=
+ =?utf-8?B?ZTRqVG5KN252cEpFdzMzK0dqRUZzcm1oZnVRWkhPNXowRzFrQlovdTBDYU0w?=
+ =?utf-8?B?STRpZmJHQ0t5NTRlWVBBMnRXbGJrL1VtRVAvdlFoSHJoU0NDMzNTY0xQdTRp?=
+ =?utf-8?B?YlNwVm1LVW1ieVZhTVNlbWJZZ0tYeWxDQzBabXFUK0p2ZHFpaTYwWWFITFVQ?=
+ =?utf-8?B?TDN1SDNxZWlaV2M4citRM2cxUE1mN3VDakx5cXJzaUp2OGg4cjF3RnNUSVpB?=
+ =?utf-8?B?alUvOS80bDJ6Ykg2dFdjdTFYSEtmL1cwdEZMclBUMG96UHYwcEdxaDlZSllO?=
+ =?utf-8?B?M3p2aUI3YTF2KzFJeTAyakwwZEFUdWxsUVBXU3dJKzRQSnJ6d2E4OXhwbFVv?=
+ =?utf-8?B?RDJxN0gwdk1kVWtJZWk4aEdMV1lEVHRrWlJJaHN1YjU5T0RsSWRIa3NIRVdN?=
+ =?utf-8?B?aDFNMDBWV0IvNnhVeERBc1kydUt6LzJzZTFBVjI5S2V6NVFubXVZazRRclR6?=
+ =?utf-8?B?QW1SY0xkQ29EU21aMG92Qzc2Y2IxVVVGcm12d3hXQTc3eG5KUnJSaGZKdUhx?=
+ =?utf-8?B?WkVCcEpNUS9qS3U3UGtXUmRadzc4UmtsZGFiZ2NnMDZ2dXBVS3RFRjV2aXNn?=
+ =?utf-8?B?eG5ySlFMZnNnUWtOVnlQek5nRVcrNWhJM0ZFb1ZJT29sNEdCdUFoSE11YXdq?=
+ =?utf-8?B?bkRnN0JvOXg4KzVneE1BZTdTL3dUL2NNaXArMDYwb204QmJRdEJtK3ZUZVRH?=
+ =?utf-8?B?QStxZ2hOb3hZb2lZbG9LTDVvWHRHS0tzNFlzMFVIVXQ4S3l5M2pqWGVJVHlH?=
+ =?utf-8?B?RFc5b2xNNjRyeFgwaWNYTjlpZ3BucWJldUNOU2FwRHdkOS9zYndCcnk5MnVC?=
+ =?utf-8?Q?jIZ0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 16:12:33.3061
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26012312-6e46-43aa-e4e3-08de0cced077
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB55.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7841
 
-On Thu, Oct 16 2025 at 11:54, Charles Mirabile wrote:
-> On Thu, Oct 16, 2025 at 9:17=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->> > +static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
->> > +                                     void __iomem *claim)
->> > +{
->> > +     int nr_irq_groups =3D DIV_ROUND_UP(handler->priv->nr_irqs, 32);
->> > +     void __iomem *pending =3D handler->priv->regs + PENDING_BASE;
->> > +     void __iomem *enable =3D handler->enable_base;
->> > +     irq_hw_number_t hwirq =3D 0;
->> > +     int i;
->> > +
->> > +     guard(raw_spinlock)(&handler->enable_lock);
->> > +
->> > +     /* Save current interrupt enable state */
->> > +     for (i =3D 0; i < nr_irq_groups; i++)
->> > +             handler->enable_save[i] =3D readl_relaxed(enable + i * s=
-izeof(u32));
->>
->> This is truly the most inefficient way to solve that problem. The enable
->> registers are modified with enabled_lock held, so you can just cache the
->> value in plic_handler::enabled_save and avoid this read loop completely.
->> After claiming the interrupt you restore from that cache, no?
->
-> You mean touch the other functions where the enable bits are modified
-> to keep the cache in sync so that we don't need to do this read loop
-> and can have a proper set of values cached?
->
-> My concern is that this obviously has an impact on other platforms
-> which do not have this quirk since keeping the cache in sync would get
-> pushed all throughout the driver.
 
-The irq_enable()/disable() callbacks are not really hotpath and caching
-the bit in plic_toggle() or such is just not measurable overhead
-compared to the register access.
+Hello,
 
->> Now for the search and disable mechanism. Of course you need to search
->> for th pending interrupt first, but then you can make that masking loop
->> very simple by having a plic_handler::enabled_clear[] array which is
->> zeroed on initialization:
->>
->>         unsigned long pending =3D 0;
->>
->>         for (group =3D 0; !pending && group < nr_irq_groups; group++) {
->>                 pending =3D handler->enabled_save[i];
->>                 pending =3D& readl_relaxed(pending + group * sizeof(u32)=
-);
->>         }
->>         if (!pending)
->>                 return false;
->>
->>         bit =3D ffs(pending) - 1;
->>         handler->enabled_clear[group] |=3D BIT(bit);
->>         for (int i =3D 0; i < nr_irq_groups; i++)
->>                 writel_relaxed(handler->enabled_clear[i], enable + i * s=
-izeof(u32));
->>         handler->enabled_clear[group] =3D 0;
->>
->> No?
->
-> Sure that would also work, but why are we using ffs (slow) only to
-> shift the result back to make a new mask when (x & -x) is faster and
-> skips the intermediate step delivering immediately the mask of the
-> lowest bit.
+Please find my comments below:
 
-Because I did not spend time thinking about it.=20
+On 10/16/25 10:12 AM, Mathieu Poirier wrote:
+> Good morning,
+> 
+> On Thu, Oct 02, 2025 at 08:33:46AM -0700, Tanmay Shah wrote:
+>> Current recovery operation does only virtio device reset, but do not
+>> free and re-allocate all the resources. As third-party is booting the
+>> remote processor during attach-detach, it is better to free and
+>> re-allocate resoruces as resource table state might be unknown to linux
+>> when remote processor boots and reports crash.
+> 
+> 1) When referring to "third-party", should I assume boot loader?
 
-> As for making another caching array, I guess, but again that is just a
-> time vs space trade off with its own invariants to maintain that would
-> also impact other platforms.
+Here, "third-party" could be a bootloader or another core in a 
+heterogeneous system. In my-case it is a platform management controller.
 
-It's a pointer in struct plic_handler (or whatever it's named) and you
-can allocate it when the quirk is required. The pointer is definitely
-not a burden for anyone else.
 
->> Is the device B interrupt preserved in the interrupt chip and actually
->> raised when the interrupt enable bit is restored or is it lost?
->
-> I am not sure how to verify this other than to tell you that without
-> this quirk (i.e. trying to use normal plic behavior) the device does
-> not work, but with this quirk I can boot to a desktop with a pcie
-> graphics card and storage, use networking etc that all obviously
-> depend on the correct functioning of the interrupt controller.
->
-> My reading of the spec for PLIC also suggests (but does not explicitly
-> confirm) that the pending bits function irrespective of the state of
-> the corresponding enable bit: "A pending bit in the PLIC core can be
-> cleared by setting the associated enable bit then performing a claim."
-> (page 14 plic spec 1.0.0 [1]).
->
-> This sentence implies to me that it is possible for a pending bit to
-> be set even though the corresponding enable bit is not, which lends
-> credence to the idea that the pending bits operate independently.
+> 2) Function rproc_attach_recovery() calls __rproc_detach(), which in turn calls
+> rproc_reset_rsc_table_on_detach().  That function deals explicitly with the
+> resource table.
 
-Looks like that. Please add a comment to that effect then.
+As per my understanding, rproc_reset_rsc_table_on_detach() will setup 
+clean resource table, that sets vring addresses to 0xffffffff. Please 
+let me know if this understanding is not correct.
+
+If we do not, call rproc_attach(), then correct vring addresses are not 
+setup in the resource table for next attach to work. Because, 
+rproc_handle_resources() and rproc_alloc_registered_carveouts() are not 
+called as part __rproc_attach().
+
+> 3) The code in this patch mixes __rproc_detach() with rproc_attach(), something
+> that is likely not a good idea.  We either do __rproc_detach/__rproc_attach or
+> rproc_detach/rproc_attach but I'd like to avoid the mix-and-match to keep the
+> amount of possible states to a minimum.
+> 
+
+I agree to this. I can find a way to call rproc_detach() and 
+rproc_attach() sequentially, instead of __rproc_detach() and 
+rproc_attach() calls. I might have to remove 
+rproc_trigger_attach_recovery completely, but that is implementation 
+details. We can work it out later, once we agree to the current problem 
+& solution.
+
+> If I understand correctly, the main motivation for this patch is the management
+> of the resource table.  But as noted in (2), this should be taken care of.  Am I
+> missing some information?
+> 
+
+The main motivation is to make the attach operation works during 
+attach_recovery(). The __rproc_detach() works as expected, but attach 
+doesn't work. After recovery, I am not able to strat RPMsg communication.
+
+Please let me know if I am missing something.
 
 Thanks,
+Tanmay
 
-        tglx
+> Thanks,
+> Mathieu
+> 
+>>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>
+>> Note: RFC patch for design discussion. Please do not merge.
+>>
+>>   drivers/remoteproc/remoteproc_core.c | 15 ++++++++++++++-
+>>   1 file changed, 14 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 825672100528..4971508bc5b2 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1786,7 +1786,20 @@ static int rproc_attach_recovery(struct rproc *rproc)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	return __rproc_attach(rproc);
+>> +	/* clean up all acquired resources */
+>> +	rproc_resource_cleanup(rproc);
+>> +
+>> +	/* release HW resources if needed */
+>> +	rproc_unprepare_device(rproc);
+>> +
+>> +	rproc_disable_iommu(rproc);
+>> +
+>> +	/* Free the copy of the resource table */
+>> +	kfree(rproc->cached_table);
+>> +	rproc->cached_table = NULL;
+>> +	rproc->table_ptr = NULL;
+>> +
+>> +	return rproc_attach(rproc);
+>>   }
+>>   
+>>   static int rproc_boot_recovery(struct rproc *rproc)
+>>
+>> base-commit: 56d030ea3330ab737fe6c05f89d52f56208b07ac
+>> -- 
+>> 2.34.1
+>>
+
 
