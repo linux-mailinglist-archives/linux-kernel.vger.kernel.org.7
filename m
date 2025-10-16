@@ -1,194 +1,403 @@
-Return-Path: <linux-kernel+bounces-855798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86ACBE25B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37B0BE259C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B6774F6B03
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7823AC60E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4482030F556;
-	Thu, 16 Oct 2025 09:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0B231691C;
+	Thu, 16 Oct 2025 09:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Frt74fXz"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEpy0kNm"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2273164C8
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912930100A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760606681; cv=none; b=q9+GDPCadjmwQQvltZ8R9kzfVhsG+Fcs9t2eL8gnkoSKI8YAabx+dNsmWSIpVYh/WGi/gQsW+Paa5gpmOhr0OO51FLTGicctbHmzY6Fbyr54me/iuZQpQcRQd97DW3tzzkx98tVNo1HpkArhVZZMo+A4/Dnfq2l5N8OmfrJhRH0=
+	t=1760606649; cv=none; b=R5BQrMWDYEcVxAM0aaqVrmc3skhH+0CnQbJBi7YyQ0+lwc2uj5xd1you6E9eu+TO0qpKfU2Sc1XOrH6t5wxGR+ooTwy7uAnoH21gmfF0PhuKfDKvnyS/9OyL/L72VwZZuX9PJTtWn+CQMoV/96wdAr56HBUkL9pALDv2Nc4J1ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760606681; c=relaxed/simple;
-	bh=M4Y1UfCzl//9fhvdpaNABF0RhKSRR5+CnAVK+a7lT1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RksO/+7Hgqclt2KmeNrj5x8+M12VTVMiJgOQGspM865aFn8sb4c97g8C/wTIXUdcS38j4OfD2Hji2kXcQqGIXslLmTfXpBo2nrh3yXqR6MTddU5Ef0ssBhU4bPnsBEE3NuAwghwJ22L4g603ZEi5EEozqr1tNDljIiecyRT/Cu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Frt74fXz; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c0e357ab51so428780a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:24:39 -0700 (PDT)
+	s=arc-20240116; t=1760606649; c=relaxed/simple;
+	bh=dtdYSFzxl4ZLf2m3mmaBJjWZIDIL1b9t2J/uPFgCe9M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ufor33pDXouhEJjoVIK8bRdVnXAdFSj/MFIYgK/XOB/1FHu2oMc763HyZ7njIlDJqenQsPNUnvrK3JwQgR/kGJtDvj5w+V4krFIteBszzuvkNgXktUzqfzYbKkmQX8Xb5V8fvk72R4qKCqu8Gefy6/HCcHXQykul4k/VeqRFAyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEpy0kNm; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so5405705e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 02:24:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760606679; x=1761211479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/c6zz769KW3+RZuhvQvM45rkjkysrRExAu4xufMTsS4=;
-        b=Frt74fXz52BMMBmRe54r+ulQVSZIdfXUs9fE5ujie5YMWCwHVt+LAXJ7egaln21wqL
-         o+Y0bYkgc7yIZac7cFRZwX6kdH6bT3+pVoGuHPGZNc5FKvk1sxMn/I3hk5td3nF6qi7I
-         LzberP0ULy7vwn4dbzodeVhNnAfc3FSwpsB7QRKPxUNsrGpntnDwj7AdRSWihksjz3ga
-         kGAczZqMg4ta2QS900/GSluXBsV3wNEQ2b9RYYEYVukkrSSj8q/kpVaIK1RP4I9TYPgq
-         RGpZt/TaJsTEElLsK3bG5D3u7DQAyiFoaEK0eeS0tqI4iT8IM1t18Y0AMClrJ2uDIp98
-         CCBQ==
+        d=gmail.com; s=20230601; t=1760606645; x=1761211445; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wN5GriOc5joXaZ2V++iE2SjCJaPtC87zNIqvbkuQmbs=;
+        b=VEpy0kNmDouy4Xnbmr+9VNMHxYXnxEj6hFs9v3DbW7CBRDn+TstTbQpIRNKEwVvcp1
+         vbu+HX0tYA59GalQ84mifK8eeLIdcJ1fkFbT4X3oKwyuyagy/T0x40ilBbgI0Tmbp0SP
+         +7ZFqLaVxU4nUVe+ECRlCkskVVM5nU2+KRLYkYVmsBRZ9WisdG0gZJS4IYQYakK2H8PC
+         7YYG9knKjDTnakYZYyrDdscFiIyCrBwRR5g9dZjPMSxYYgIrgahhJB3oDHVOGFVodQFx
+         muAXdy2eIrPuVJwJyI6GPZ+1sbGGJl+/scdLN0XXeEelrC6SlXKv6tnpKOkOm3ohbLSC
+         qKlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760606679; x=1761211479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/c6zz769KW3+RZuhvQvM45rkjkysrRExAu4xufMTsS4=;
-        b=tmR70wlEFQK2+6TRPXZHm8SjnCnstaRfr1gf8KAr0OrPf14BMes7e04qz5yTHmP09K
-         cF52xSNX6UT/FC/aRm2YrR0N9eIuXtGidLtNaXHyno9E3Ob9cIEeU5rKYtfnuXm/rTkl
-         ObIRbHUNUC1E1soHaeZmKmA29fyhxYzBbG+gRk6GB1T9Nlw0iua8IUWHzacPYu8HuMTo
-         mCZULUoEayamVvn3UtEYOd3ZrEvV0z1cKq8i8n3N8Gl4qTqVkGkFJUYqfGko97ILp/Uu
-         kQMNCwLTZpRVuiJkApW8ONlzFfpWObZE7aJRaE7KWIGGkpkv2I8ZM8fHVrOdvVRD/sV0
-         N3DA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHivmnmnd5WiKyRLTjVtQitfWiu/Rtmo/yaQSNEQ0qJKgfRFIVVu/0J6V8f4FEPCMuvO/DFEOXOFsM7Us=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz13ldkDSGJdjRkU19SHuI3cxRfjY92a4p8HBpJOlgkXPpXE4k7
-	N1qG2/NZApoKvyzrZ8rH7eJM2QQ4fYztpSYbjDzCKsc+mmzbxVNCJ1Eo7iLLD5k2ZIPx6OF3O8p
-	ZY9RnrTsAetALeF4EczUowlsXkj5OrMhrYRyyd/gsqQ==
-X-Gm-Gg: ASbGnctT5QCKS36+k7PKNTcP9EONAfPXCDqdCtv1va/77XekC+UV9aPT4Le6fJXi1u6
-	PWgW9cDrztU9/IFThQ0cawlI3UzxDPvb61XhBjpZNZGGRTkIQoXVCSSIEa1Zb/JR2WFtGwk+tvP
-	GNFwd0h+G3JdqYymSqjyJHE7D93gL74tly18N0fzOBqxevD47GyB50/LqXfCyWVPr3c2qP5qAuR
-	eCjdIV1oih7hCTAUTfLovBKz3aohJcwPliv1QqJMdzfzefufVXKP+VnzemPcKIv+xjKl6qq
-X-Google-Smtp-Source: AGHT+IHm4R3HAhs61U+ziACGhT5EU87YhgLPPrROIOYqvuuTTqIEn/VlTT4VJwJAYRRve6qjnJ4K5VlBxkGqJHLI9cY=
-X-Received: by 2002:a05:6808:1787:b0:439:8e9:637c with SMTP id
- 5614622812f47-4417b3b1440mr14272700b6e.25.1760606678720; Thu, 16 Oct 2025
- 02:24:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760606645; x=1761211445;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wN5GriOc5joXaZ2V++iE2SjCJaPtC87zNIqvbkuQmbs=;
+        b=VwA3UN+yRGDo2CyVxnJrR1FSLijfZzZKU/U4pb9oIAYf4thWbFlbT5/DSeCKPh7GoJ
+         4o4YpOP3U85XueWOLCN0p4hm2oNtDJOWFj3WxMlWkPdSzVry2B707SRUJ+LMSACQf59A
+         ElhK/0/pJmOu33o86Afjh+TKGZGYzZ/W/vE3qeKY3J2UBTATsrmqj3veqSMOBFdUZWJL
+         M8+WCescmv3e9UvCU4gpacVZ0MDerOMZGiq+B13g5mTWCeqUHCkNMrJIUkyjp3+E23xK
+         x9v4b2VuO1VYK++87YD/phriLaw+/MeV27gZsuzwGSmgGSLmhzSKlqhII5HluQ7Y2v4i
+         ZJqA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5W9odQ6aieqjNApnjjLQUMTcO+sHJu7qnjUDYjoazS5NnUQ8j6+z8/b9VooYV9pFxlETAh6K7VlpLBw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/M10c+u2EbdtZ2IBA91DWQ59w0hWINgO2wQNLM/vTxfMOakdW
+	ZPhWUtyr+tlP4Esv0Yr1RAJODdS4auZo+CTYKooUokWIwqa9N8KycOg2
+X-Gm-Gg: ASbGncu/O9Trwzq+4oR13SghdOnUzBiPt1S/4BNsBVVg9QBZ0/DLYAT/RG7MYNTyYsG
+	ybmrq81vqrS2/t/sAHG75rC8CDVHIwxetxow3i1EWGSaQiCZ8ZIhQK7nGmyenGJ7rXyAwavmglI
+	RfO1/gCdbfiDRXsY55Gojcl+i7c+xyDkIJrVYlBWCUbM1coXTDEPC/WZ0hiEcOjj373BBpBqILT
+	WUf4goQXO4hxPuZPMZH61t3JXGHK1xX5I6Au/IpbhNXX1BjWukdsxzlBYF/Z+hS6z7kakeuZvTw
+	nF1IGMZPwSc1pbzo/j4PxVgGhMwLJKVd4BgPSkpaP8HjYdTVAQTav6Vw43wPUqbFhReFtgjS0Ws
+	7j59x2DUUiBQu+GM6H9itzzpkQYgCqo+9AOmaWJXyvJK2L0Z5nWACiHw/d7m9ETu2C9IFpp4AcI
+	0Sehs8hEmJ
+X-Google-Smtp-Source: AGHT+IFM/eDs5DimbOjgvhNjhvWS6XPVfEwodHiPhgaUg+nD8JwAoHYzOT5T+xC5UzBHiITSk+szgw==
+X-Received: by 2002:a05:600c:5028:b0:46e:428a:b4c7 with SMTP id 5b1f17b1804b1-46fa9af2ff1mr222490415e9.23.1760606645180;
+        Thu, 16 Oct 2025 02:24:05 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c91sm13762335e9.11.2025.10.16.02.24.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 02:24:04 -0700 (PDT)
+Message-ID: <de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
+Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron	
+ <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown	
+ <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Date: Thu, 16 Oct 2025 10:24:36 +0100
+In-Reply-To: <20251015211420.031c61fa@bootlin.com>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+	 <20251015142816.1274605-3-herve.codina@bootlin.com>
+	 <1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
+	 <20251015211420.031c61fa@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009134514.8549-1-cuiyunhui@bytedance.com> <aOfmnjJmQAdR1wD4@pie>
-In-Reply-To: <aOfmnjJmQAdR1wD4@pie>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Thu, 16 Oct 2025 17:24:26 +0800
-X-Gm-Features: AS18NWAzFcG41x3ym-AvM6L2OgXYcfI1rHQW_3fAesaQdIbiv5CARk8r2OaaGpI
-Message-ID: <CAEEQ3wkH5FZSOGPhu7i7UDyi5=Xe6B9q7=4_ZZN_R2BHi63J1A@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH RFC] riscv: add support for Ziccid
-To: Yao Zi <ziyao@disroot.org>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com, 
-	peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, 
-	willy@infradead.org, guoren@kernel.org, ziy@nvidia.com, 
-	akpm@linux-foundation.org, bjorn@rivosinc.com, ajones@ventanamicro.com, 
-	parri.andrea@gmail.com, cleger@rivosinc.com, yongxuan.wang@sifive.com, 
-	inochiama@gmail.com, samuel.holland@sifive.com, charlie@rivosinc.com, 
-	conor.dooley@microchip.com, yikming2222@gmail.com, andybnac@gmail.com, 
-	yury.norov@gmail.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Yao,
-
-On Fri, Oct 10, 2025 at 12:46=E2=80=AFAM Yao Zi <ziyao@disroot.org> wrote:
->
-> On Thu, Oct 09, 2025 at 09:45:14PM +0800, Yunhui Cui wrote:
-> > The Ziccid extension provides hardware synchronization between
-> > Dcache and Icache. With this hardware support, there's no longer
-> > a need to trigger remote hart execution of fence.i via IPI.
->
-> This description looks wrong to me: Ziccid only guarantees code
-> modification **eventually** becomes visible to remote HARTs, not
-> immediately. Quoting a paragraph from documentation of Ziccid[1],
->
-> > Since, under Ziccid, instruction fetches appear in the global memory
-> > order, the RVWMO progress axiom suffices to guarantee that stores
-> > **eventually** become visible to instruction fetches, even without
-> > executing a FENCE.I instruction.
->
-> and an issue[2] in the same repository (Ziccid hardware implementation &
-> software model),
->
-> > > Is fence.i still necessary in any case with the presence of Ziccid
-> >
-> > The only thing that Ziccid guarantees is that stores eventually become
-> > visible to instruction fetch. It doesn't guarantee that stores
-> > immediately become visible to instruction fetch, even on the same
-> > hart.
-> >
-> > So, fence.i is still usually necessary. The only situations in which
-> > fence.i is not necessary is when race conditions in code patching are
-> > functionally acceptable, i.e. when it doesn't matter whether the old
-> > code or new code is executed.
-
-Well, yes, based on this link, no additional software support is
-needed=E2=80=94and that=E2=80=99s also a good thing.
-https://github.com/aswaterman/riscv-misc/issues/4
-
->
-> So it's definitely wrong to state "there's no longer a need to trigger
-> remote hart execution of fence.i".
->
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >  arch/riscv/include/asm/cacheflush.h |  4 ++--
-> >  arch/riscv/include/asm/hwcap.h      |  1 +
-> >  arch/riscv/include/asm/switch_to.h  | 10 ++++++++++
-> >  arch/riscv/kernel/cpufeature.c      |  1 +
-> >  arch/riscv/kernel/ftrace.c          |  2 +-
-> >  arch/riscv/kernel/hibernate.c       |  2 +-
-> >  arch/riscv/kernel/jump_label.c      |  2 +-
-> >  arch/riscv/mm/cacheflush.c          | 16 ++++++++++++++--
-> >  8 files changed, 31 insertions(+), 7 deletions(-)
-> >
->
+On Wed, 2025-10-15 at 21:14 +0200, Herve Codina wrote:
+> Hi Nuno,
+>=20
+> On Wed, 15 Oct 2025 16:21:09 +0100
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>=20
 > ...
->
-> > -void flush_icache_all(void)
-> > +void flush_icache_all(bool force)
-> >  {
-> >       local_flush_icache_all();
-> >
-> >       if (num_online_cpus() < 2)
-> >               return;
-> >
-> > +     if (!force)
-> > +             asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0,
-> > +                     RISCV_ISA_EXT_ZICCID, 1)
-> > +                     : : : : ziccid);
->
-> and even in the patch, a remote-fence is still triggered if
-> flush_icache_all() is called with force set to true.
->
-> Best regards,
-> Yao Zi
->
-> [1]: https://github.com/aswaterman/riscv-misc/blob/e4fe3aa7b4d5b/isa/zicc=
-id.adoc?plain=3D1#L139-L158
-> [2]: https://github.com/aswaterman/riscv-misc/issues/4#issuecomment-28849=
-84633
->
-> >       /*
-> >        * Make sure all previous writes to the D$ are ordered before mak=
-ing
-> >        * the IPI. The RISC-V spec states that a hart must execute a dat=
-a fence
-> > @@ -41,6 +46,7 @@ void flush_icache_all(void)
-> >               sbi_remote_fence_i(NULL);
-> >       else
-> >               on_each_cpu(ipi_remote_fence_i, NULL, 1);
-> > +ziccid:;
-> >  }
-> >  EXPORT_SYMBOL(flush_icache_all);
+> >=20
+> > > +static int rzn1_adc_enable(struct rzn1_adc *rzn1_adc)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	ret =3D rzn1_adc_core_power_on(&rzn1_adc->adc_core[0]);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret =3D rzn1_adc_core_power_on(&rzn1_adc->adc_core[1]);
+> > > +	if (ret)
+> > > +		goto poweroff_adc_core0;
+> > > +
+> > > +	ret =3D clk_prepare_enable(rzn1_adc->pclk);
+> > > +	if (ret)
+> > > +		goto poweroff_adc_core1;
+> > > +
+> > > +	ret =3D clk_prepare_enable(rzn1_adc->adc_clk);
+> > > +	if (ret)
+> > > +		goto disable_pclk;
+> > > +
+> > > +	ret =3D rzn1_adc_power(rzn1_adc, true);
+> > > +	if (ret)
+> > > +		goto disable_adc_clk;=C2=A0=20
+> >=20
+> > Can we use devm_actions() on the above to avoid the complex error path =
+plus
+> > the
+> > .remove() callback?
+>=20
+> rzn1_adc_enable() is used by the driver pm_runtime_resume() function.
+>=20
+> I don't think that devm_add_actions_or_reset() will help here.
+>=20
+> In my understanding, devm_* functions are use to perform some operations
+> automatically on device removal.
+>=20
+> The purpose of the error path here is to restore a correct state if
+> rzn1_adc_enable() failed when it is called from pm_runtime_resume().
+>=20
+> In that case no device removal is involved to trig any action set by
+> devm_add_actions_or_reset().
+>=20
+> Maybe I am wrong. Did I miss something?
 
+Nope, I see now what's your intent.
 
-Thanks,
-Yunhui
+>=20
+> >=20
+> > > +
+> > > +	return 0;
+> > > +
+> > > +disable_adc_clk:
+> > > +	clk_disable_unprepare(rzn1_adc->adc_clk);
+> > > +disable_pclk:
+> > > +	clk_disable_unprepare(rzn1_adc->pclk);
+> > > +poweroff_adc_core1:
+> > > +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[1]);
+> > > +poweroff_adc_core0:
+> > > +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[0]);
+> > > +	return ret;
+> > > +}
+> > > +
+>=20
+> ...
+>=20
+> > > +static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
+> > > +					 struct iio_dev *indio_dev)
+> > > +{
+> > > +	int adc_used;
+> > > +
+> > > +	adc_used =3D rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
+> > > +	adc_used |=3D rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
+> > > +
+> > > +	switch (adc_used) {
+> > > +	case 0x01:
+> > > +		indio_dev->channels =3D rzn1_adc1_channels;
+> > > +		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc1_channels);
+> > > +		return 0;
+> > > +	case 0x02:
+> > > +		indio_dev->channels =3D rzn1_adc2_channels;
+> > > +		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc2_channels);
+> > > +		return 0;
+> > > +	case 0x03:
+> > > +		indio_dev->channels =3D rzn1_adc1_adc2_channels;
+> > > +		indio_dev->num_channels =3D
+> > > ARRAY_SIZE(rzn1_adc1_adc2_channels);
+> > > +		return 0;
+> > > +	default:
+> > > +		break;
+> > > +	}
+> > > +
+> > > +	dev_err(rzn1_adc->dev, "Failed to set IIO channels, no ADC core
+> > > used\n");
+> > > +	return -ENODEV;=C2=A0=20
+> >=20
+> > dev_err_probe()?
+>=20
+> Why? the error returned is a well known value: -ENODEV.
+>=20
+> dev_err_probe() should be involved when -EPROBE_DEFER is a potential erro=
+r
+> code.
+>=20
+> IMHO, dev_err() here is correct.
+
+If I'm not missing nothing this function is called during probe so I do thi=
+nk
+dev_err_probe() should be used. Not only unifies logging style during probe=
+ it
+also has the small benefit of doing:
+
+return dev_err_probe(...) saving a line of code.
+
+You can see that, at least in IIO, we even have some patches just convertin=
+g
+drivers probe() to use dev_err_probe().
+
+>=20
+> >=20
+> > > +}
+> > > +
+> > > +static int rzn1_adc_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct device *dev =3D &pdev->dev;
+> > > +	struct iio_dev *indio_dev;
+> > > +	struct rzn1_adc *rzn1_adc;
+> > > +	int ret;
+> > > +
+> > > +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*rzn1_adc));
+> > > +	if (!indio_dev)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	rzn1_adc =3D iio_priv(indio_dev);
+> > > +	rzn1_adc->dev =3D dev;
+> > > +	mutex_init(&rzn1_adc->lock);=C2=A0=20
+> >=20
+> > devm_mutex_init()
+>=20
+> Yes, I will update in the next iteration.
+>=20
+> >=20
+> > > +
+> > > +	rzn1_adc->regs =3D devm_platform_ioremap_resource(pdev, 0);
+> > > +	if (IS_ERR(rzn1_adc->regs))
+> > > +		return PTR_ERR(rzn1_adc->regs);
+> > > +
+> > > +	rzn1_adc->pclk =3D devm_clk_get(dev, "pclk");
+> > > +	if (IS_ERR(rzn1_adc->pclk))
+> > > +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk),
+> > > "Failed to
+> > > get pclk\n");
+> > > +
+> > > +	rzn1_adc->adc_clk =3D devm_clk_get(dev, "adc-clk");
+> > > +	if (IS_ERR(rzn1_adc->pclk))
+> > > +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk),
+> > > "Failed to
+> > > get adc-clk\n");
+> > > +
+> > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-
+> > > >adc_core[0],
+> > > +					=C2=A0=C2=A0 "adc1-avdd", "adc1-vref");
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-
+> > > >adc_core[1],
+> > > +					=C2=A0=C2=A0 "adc2-avdd", "adc2-vref");
+> > > +	if (ret)
+> > > +		return ret;=C2=A0=20
+> >=20
+> > Hmm, is avdd really an optional regulator? I mean can the ADC power up =
+at
+> > all
+> > without a supply in AVDD? Even vref seems to be mandatory as we can't
+> > properly
+> > scale the sample without it.
+>=20
+> Where do you see that avdd is an optional regulator?
+
+You are using devm_regulator_get_optional(). That's for optional regulators=
+.
+
+>=20
+> >=20
+> > Also, can't we have getting and enabling the regulator together? Then, =
+we
+> > could
+> > use some of the modern helpers to simplify the code (ok I see you use t=
+hem
+> > in
+> > the PM callbacks).
+>=20
+> Yes, I rely on PM callbacks to handle those regulators.
+>=20
+> >=20
+> > > +
+> > > +	platform_set_drvdata(pdev, indio_dev);
+> > > +
+> > > +	indio_dev->name =3D dev_name(dev);=C2=A0=20
+> >=20
+> > dev_name() should not be used for the above. It's typically the part na=
+me so
+> > I
+> > guess in here "rzn1-adc" would be the appropriate one.
+>=20
+> I thought it was more related to the instance and so having a different n=
+ame
+> for each instance was better.
+>=20
+> Some other IIO drivers use dev_name() here.
+>=20
+> But well, if you confirm that a fixed string should be used and so all
+> instances have the same string, no problem, I will update my indio_dev->n=
+ame.
+
+It is a fixed string, typically the part name. David Lechner not that long =
+ago
+actually sent some patch or documented somewhere why not to use dev_name().=
+ To
+identify different instances we have a 'label' property.
+
+>=20
+> >=20
+> > > +	indio_dev->info =3D &rzn1_adc_info;
+> > > +	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> > > +	ret =3D rzn1_adc_set_iio_dev_channels(rzn1_adc, indio_dev);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret =3D rzn1_adc_enable(rzn1_adc);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	pm_runtime_set_autosuspend_delay(dev, 500);
+> > > +	pm_runtime_use_autosuspend(dev);
+> > > +	pm_runtime_get_noresume(dev);
+> > > +	pm_runtime_set_active(dev);
+> > > +	pm_runtime_enable(dev);=C2=A0=20
+> >=20
+> > There's a devm_pm_runtime_enable() API now.
+>=20
+> Will look to use it in the next iteration.
+>=20
+> >=20
+> > > +
+> > > +	ret =3D devm_iio_device_register(dev, indio_dev);
+> > > +	if (ret)
+> > > +		goto disable;
+> > > +
+> > > +	pm_runtime_mark_last_busy(dev);
+> > > +	pm_runtime_put_autosuspend(dev);
+> > > +
+> > > +	return 0;
+> > > +
+> > > +disable:
+> > > +	pm_runtime_disable(dev);
+> > > +	pm_runtime_put_noidle(dev);
+> > > +	pm_runtime_set_suspended(dev);
+> > > +	pm_runtime_dont_use_autosuspend(dev);
+> > > +
+> > > +	rzn1_adc_disable(rzn1_adc);
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static void rzn1_adc_remove(struct platform_device *pdev)
+> > > +{
+> > > +	struct iio_dev *indio_dev =3D platform_get_drvdata(pdev);
+> > > +	struct rzn1_adc *rzn1_adc =3D iio_priv(indio_dev);
+> > > +
+> > > +	pm_runtime_disable(rzn1_adc->dev);
+> > > +	pm_runtime_set_suspended(rzn1_adc->dev);
+> > > +	pm_runtime_dont_use_autosuspend(rzn1_adc->dev);
+> > > +
+> > > +	rzn1_adc_disable(rzn1_adc);
+> > > +}=C2=A0=20
+> >=20
+> > I'm fairly confident we can sanely go without .remove().
+>=20
+> Will see what I can be do for the next iteration.
+>=20
+> Maybe I will ask some questions if I need some clarification around
+> pm_runtime but let me first try to go further in that direction.
+
+Yeah, maybe you can come up with something but given how you use pm to
+enable/disable stuff I'm also not sure the above is easily doable.
+
+- Nuno S=C3=A1
 
