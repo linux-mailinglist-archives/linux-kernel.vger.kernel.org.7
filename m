@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-856239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EDDEBE3985
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BEBE39A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C59481974
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:03:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01311581B68
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0421922FB;
-	Thu, 16 Oct 2025 13:03:16 +0000 (UTC)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37952335BD1;
+	Thu, 16 Oct 2025 13:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L3YcXKFZ"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FB31CD1F
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E77330D4D
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760619796; cv=none; b=HviJAr2bfTynIi4geeOpuuEEs5DGA7CDVVcEqof/T9g75v5URJYV0Bm6s2wewyDqarbxAuhThZofI8HSXipaBFGbSW6ozFe98pFU5EQUf1n+oleUAQf/MPTHN72Q7Gw3JfD6T93YNk36MxV2U2cfmbxKcEmkRAtENhU7nVQuQ1w=
+	t=1760619859; cv=none; b=HDTE3hu47HRwQP28UphIiou4fUoaJE5xDHKbTLxZkAfvw2F/M4h6oJSioK3u2IcrqbN13VvNJM1PNicoQM2bkVuFSYqwVxepfuAkeKICW0xX99DbnYPhh8eEMwm1VVbq/SVPO5MyU45KPXPKAKcFzc6VcaoCiaSTAu0v/Y14MF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760619796; c=relaxed/simple;
-	bh=0AcPguF7DH274FG4kuspo74fxSRZ6Q4tez0YJJCGbm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=At0pN31l99fouT6OqvzDxEMDNJeo6Y0jd2OkCHuAG2C8X5mIV3d/8vGMdXmt2qy+sDeqmQgrxcZc3/i0quTCE7z9GNGm+U8DCnO/FWZ3jGZSTGqxwmyQ0EQvRaiWqIPpzVnAS/6I2kssAFG2laxnUczAzFIjVykOnH0JL49/pTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5b62ab6687dso549721137.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:03:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760619793; x=1761224593;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FdIoMomFfpw6tW8BeWtLibvojBlEBE1EJKLZQ5iP+S0=;
-        b=qQn3E5D++mpN8aVLsVnjPLfC5wcIUEo8DUBwxzkWNw8v38IgZLJPVVDSYtqCi9mni5
-         oy1M7WGgb/x606NoQ0JLmnI55LPFq0WnSP8NQU4BW45ppFOt5ZJgimaggznZfhp2L8dq
-         aU/vMU0t7m7n1PIKDfPH829oxxlR2DVV0qghs8qLzQSK4JDiYfD3TP/cSchVx3ZcPWni
-         FP6pf4n5F4nYmkpTPqNhUhyyBzkANvaiO4YLkM3ikJcdVeByPSeBPUpLDfMeRAzKF503
-         t73xxQsBF0Ya4/FOoW8wpQXmPJwljOaK6el9cmMaFafSvWVrwfoLuCA0To4QPcAFDFH2
-         hvTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVALuXTK12mMiqTw17fgBfWA67srnz9++ixUPt0kgJWA0L05KJFff/nn+ESKSqwkXqNxfgPwG5eQknY6TM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrGO9Ua0IZpR/usjCUEMkrfzENSOrSe0JtkxvZIJASBf1QOKZV
-	tnFXmMdb4k/D4X7821DDvwZ4iSynO9itlYI8/XpDOzB4+1WmpuCwrY9ewSDIEMwo
-X-Gm-Gg: ASbGncvNbxHRpe8zKNAPZRQTaVmumXA5DK4TJTwZ/SSdhs4MPeWHFRPoWLBNM4k3aGn
-	cNwuHxZz58JEWsjMzO1q8o65Rzv/dfYxo1M+n830oLyLqlM8R13H6CLNens4inBQLuodkIgyuZe
-	AMiWCmUW2wI5yoQp+lr7/w8Zf+qwJWC1DtEVxr2J0M9GRljmg0dhRtqq34Nt+R+JyZuY6xFlH8Q
-	AcCShr8AQUvmGMnD7UVGk5lbQhiLUagXMeeSXzyPSFwr6pwkm8r+3YMom4oi2V8lwXzNkNlK1PV
-	9lox8ftH23qaFyZqoQmGemDBdKOOGGSW96zhbDVj94RLnE/cWqND5I37ABECcgGW2q1tqIltw/x
-	C2UD1wR8Zv24iVEvJSG2kS9mIWDrE07ePZz+8lYZeWAnxyx2sI5p/yM/0Izs2O+UJhqg0RD3yev
-	OZgIoSVzMY1Y76I/5lmv7W+CL6nlP+tTRV1SE30Q==
-X-Google-Smtp-Source: AGHT+IF3ncR11RIyltXgA7CgcXmKZPqAs6l6MlgynzdZ7DhvDf3MvhmsFmRgIxbaWBQPBS86OwQfQQ==
-X-Received: by 2002:a05:6102:3749:b0:51e:609d:316c with SMTP id ada2fe7eead31-5d7dd501a04mr68329137.4.1760619793440;
-        Thu, 16 Oct 2025 06:03:13 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d5fc4e9e4csm6352259137.0.2025.10.16.06.03.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 06:03:12 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5a7b2a6b13bso462586137.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:03:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWyocwxa5aTJ/9WQajXDJ6YpzATPYkbg0PgTZJFGhSJOcuc6qT1SCYqfT6TfdQcp+8aryQ+VuophA93kCo=@vger.kernel.org
-X-Received: by 2002:a05:6102:e11:b0:59e:2c90:fae2 with SMTP id
- ada2fe7eead31-5d7dd6a1252mr46608137.30.1760619792176; Thu, 16 Oct 2025
- 06:03:12 -0700 (PDT)
+	s=arc-20240116; t=1760619859; c=relaxed/simple;
+	bh=wXSJ8vAfRbg0Cxbpy/8fhVe9PDfk5GYN6dqCLBRsjeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DfaMcsnz/SKkDcFqPPLFAqOChJxcE8P7ci5geP3vEmxYuW0DUnkvHoNHGjWiM1YIMMNhdGkvMptR347ckeqpL5Yoxuzo56Gz7vB20leb/ZVABLnCROz4ho4RkYIMlv8SsdkeQSy4hC9RZJQ2N+AfeZR78+KGO4YBtoa3QyZSAF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L3YcXKFZ; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 8D50D4E410FC;
+	Thu, 16 Oct 2025 13:04:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 565136062C;
+	Thu, 16 Oct 2025 13:04:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6207A102F22FC;
+	Thu, 16 Oct 2025 15:03:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760619849; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=n0bZV/YxdfuyhZ+9D9ALeORpVV6Z1ZAtqfLZkUaKoiE=;
+	b=L3YcXKFZYt//X0LhtF5xpe8YI64HF/v0HiQIU6nlAwJ0EM9HFB2eYlrNlYBp2pVpnJm3gC
+	U34WQlBC05Lxnr95SnQN4ZHKiewGajBzuhB3G/ERjVJy7gsQoc8ZCdgObhqr7DJSaTxwim
+	6yAv5KVAAvI83JA/eLb0OnvD8Pf2ZvYnT2UqH43y4kzcQoptDksakVrTbwdip+WsMIH41M
+	fHlI4ric3GbhoV1IDTbNnPgUkCFIKx2pH+OxyHNy8vGlS2ToFwwAUIP5pLyA3vGkPMZlJM
+	r3mfPG4m6OJUW1hrVR+d/BocKNBFZmQVhFlTyyIXvrS0OAyq89V6D7AK2q+qow==
+From: Herve Codina <herve.codina@bootlin.com>
+To: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Axel Lin <axel.lin@ingics.com>,
+	Brian Austin <brian.austin@cirrus.com>
+Cc: linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH 0/3] Add support for an external Master Clock in the Cirrus CS4271 codec
+Date: Thu, 16 Oct 2025 15:03:36 +0200
+Message-ID: <20251016130340.1442090-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com> <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Oct 2025 15:02:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
-X-Gm-Features: AS18NWBZilE682DWas3ATbTkhQVgsQwHH9LuAVhgcMxFqSN3t6GQlo6WKm_9ezg
-Message-ID: <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if possible
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org, 
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Wolfram,
+The Cirrus CS4271 codec can have its Master Clock provided by an
+external clock when no crystal is used.
 
-On Thu, 16 Oct 2025 at 14:16, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Reset core uses the reset_gpio driver for a fallback mechanism. So,
-> include it always once its dependencies are met to enable the fallback
-> mechanism whenever possible. This avoids regressions when drivers remove
-> open coded solutions in favor of this fallback.
->
-> Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Closes: https://lore.kernel.org/r/87a51um1y1.wl-kuninori.morimoto.gx@renesas.com
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This series adds support for this external Master clock.
 
-Thanks for your patch!
+The first patch in the series is not related to the clock but fixes an
+issue related to module loading and MODULE_DEVICE_TABLE() due to a
+driver split between i2c part and spi part.
 
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -5,6 +5,7 @@ config ARCH_HAS_RESET_CONTROLLER
->  menuconfig RESET_CONTROLLER
->         bool "Reset Controller Support"
->         default y if ARCH_HAS_RESET_CONTROLLER
-> +       select RESET_GPIO if GPIOLIB
->         help
->           Generic Reset Controller support.
->
+The next patch document the Master clock in the binding and the last
+patch implement this clock handling in the existing driver.
 
-Makes sense, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Best regards,
+Hervé
 
-This does mean RESET_GPIO will never be modular anymore, while it could
-still work as a module (the reset core creates the platform device,
-which can be probed later), albeit in a non-intuitive way.
+Herve Codina (3):
+  ASoC: cs4271: Fix cs4271 I2C and SPI drivers automatic module loading
+  ASoC: dt-bindings: cirrus,cs4271: Document mclk clock
+  ASoC: cs4271: Add support for the external mclk
 
-BTW, could we run into a circular dependency?
-
-    config RESET_TI_TPS380X
-            tristate "TI TPS380x Reset Driver"
-            select GPIOLIB
-
-I guess this should be changed from select to depends on?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../bindings/sound/cirrus,cs4271.yaml         | 10 +++++
+ sound/soc/codecs/cs4271-i2c.c                 |  6 +++
+ sound/soc/codecs/cs4271-spi.c                 |  6 +++
+ sound/soc/codecs/cs4271.c                     | 43 +++++++++++++------
+ sound/soc/codecs/cs4271.h                     |  1 -
+ 5 files changed, 53 insertions(+), 13 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.51.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
