@@ -1,204 +1,190 @@
-Return-Path: <linux-kernel+bounces-856484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE4DBE447F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:38:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2D6BE4477
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C723A8F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:35:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FE925085FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CBB34AB0E;
-	Thu, 16 Oct 2025 15:35:38 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2D634AB07;
+	Thu, 16 Oct 2025 15:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SF8fNbUN"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F361D2E2DE4
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D801534AAF2
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760628937; cv=none; b=vE5hg0jcoq/DIVh6pNh6iZetBj1sD+q6/7QgFhReZoj/2RC6SWYiZxaa8Metyl3GYUTizZbOUGy6RWqahYITy9pgOKOZf1Y+9VSl90OVhCf/395CAwyPrMrGlaN7o34jLKCrVKcUEULUC//+YZLGW0OHFqR00jNbPm1/4XylSs4=
+	t=1760628999; cv=none; b=e7oIxugT8S0UopgOLt8DwK17Ev/4tCjghlbtKlPikpwjBKMeHW0TwNbdQ68vl8kEptAXzOpSgsUHu39InY+yWRhc9HxsJBshwtDYzE5k/xqxg4+4Mv+h4uXCykaZf993ikxv/7ZiXe9fOBPKzb11w5rr+mCHii5jCxcdQKtcxdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760628937; c=relaxed/simple;
-	bh=1gGIuJtRyKRsycME9bjSRrbil0usjgs36aHxiXzm0RU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AMDMmdlx0TUY9ubMl4jjqUhllTMs1YEqvb0wcS8tOdfL1xm78IsM4jO7aqWtbRAGycUhuirB/ZHGl56Dvs4/kl2UzrvTnjtqRdFVHY6Zq3lWA6FKIJw0ctsKkojChhxLklViC9gj+FkjVVD6pBysXKkN7nG3y/atOCk8UQBOjgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e5f8a8babso224789739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:35:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760628935; x=1761233735;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1760628999; c=relaxed/simple;
+	bh=FFZcu4RD3Dv+ioWbkpd/pDCll5NoC3OZzg9NNSDgjKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z46vdX8M/1EmMxz/B/ZOllYDjeOjSlK6YnDdxPGlEmQG8Wl3PTIW3JSuN09tVglKhggl48nvM1Z96tTvtdhgr6bpXX0j6qG5N7PYvqk8ELjip3RqPRQ4hHZcP53gMnmNdkf6451NjJeSRIaxePC/9MCF1Hej0KsgcDDtgLt78i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SF8fNbUN; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b54f55a290cso130653366b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:36:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760628996; x=1761233796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DHuQVk8Kqi5ZrSYbC6H1u1h4LVBxc0HEQR6WAKWX1cg=;
-        b=CLB5S/xaCV0JkH0g7C+IHTd5nXb/WTYTQJjD1MWzMPjLRxl8+pJy33UFgDfJUq/HBB
-         IBUAr3ESRWboB5wTjluhksxsowoxclQQyVEKV2OuKBsjROtcmZ+E75m6991LPRm11F0T
-         dkDXt51QhClWuCMvoavzSFEhngt0uU/zOx/cfFi3vt4lxFrvdx/js58X6iwYctvW6tg8
-         XL+qPTyovJoeDdLVPEYGivTgL82iPhd6QfWYQuqtTXEGUvMiOikMtDRRee+1J3unSMsR
-         ovyEaI9r5y75AO/oW288eiAVYMKKa+WJMfVeW4fC1pEC8Haz7PxsFWLoxUIaAEO9YmCx
-         a14w==
-X-Forwarded-Encrypted: i=1; AJvYcCVuEp1DjhxMS1+C0OpKmZY5sm5/8aSqqebt3iuWBL8Ur60YmCr0x4cfYmYYfpMKKoHZI1S2OPItEefBq3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNQ4rDiwZkSmEc2dppYINbAjcHLc2pqqYBASrMHNC1ZP9kkzQL
-	FGft+4aIbqK0nmFn11wa3KO+IoV4V/C/2Pnn9xlp7gKwpRB1s1r3jn6Jl0/l25UbYbUmU/vucMW
-	vy7YR3Se850BamOe702pUhqEXSn5mVRDgqMvNAyV8q32eICCbFsrpweLcEsQ=
-X-Google-Smtp-Source: AGHT+IFgZ45sgALAAQfeHYt321ZOtIGEA9C8lac/VFA+nuXt47y8YlJqQlHi/64Fuh/sbtK6tGtrjsDk5fakzSNEQae38ZlW/m75
+        bh=7f+hKMg8WmS3JDWErhSA/MQ3nGPG3bGYLMR7Bu6zms0=;
+        b=SF8fNbUNf1imanL2pIuSQp22fqV4dyIEsvmVjtVLgg9LkfS20dnTRcoWXv3TqyxrHS
+         OLe6P5jvaP/xvcDmsRnTTCSenpEpZ8h7KjL6srX2FCFaKMxE0iS0uLKg7KLdSuxLrgzr
+         D5l+jc+LztVNBcTTxhMtWtuGqWvL8KbUr+uPr3Cmc5HKTi/UYJViI/dAbrbRX46n4cE0
+         apFajPPbcZoeSSMttCGrSQ1cZ7h3nXjlS4i6VkaPZXBcQLZNOimyP2vYz37WRaB2xhgy
+         chk1ytn8JwEVp30NRzftAxZfgt/JilyKfCwN879yb9ORzeUhDXKartIDhukxmBGWyjeE
+         bcEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760628996; x=1761233796;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7f+hKMg8WmS3JDWErhSA/MQ3nGPG3bGYLMR7Bu6zms0=;
+        b=XU/wAf7duzUo6nOPtJPD8KLwU8AiTQe8lfAX1D8BQ6EnzmRBYI2zEGLx1wNAYzeqJq
+         1xJcPOCNM6RBApOqasE4Vx3j4kaAVlvKgO862lqab0XupJjijHgI8vVCpVET+kgxYoqU
+         Hf+SttyT1YTWipflVZXkkEdnjZnBytF/KRITeeWpVCPMiihXB/p3aXvCvd7zJ6BogiEq
+         YPYEZ+8E4TRr0rLlCS4GThU2T426wKNrSMfuzSRtFBfiFdz1ZzMRsOQnalA8enJw2ReQ
+         4QsFrieFMxfXTrwQjtz4B2yStnwIgjT/uDrK4jG1TG9EuQXYG2gZD1J5tqc3XXdtazia
+         PaIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMvFcznK5xtV57LOivuVKfHE/8lZYAtr73WjiceWT74/jX8ntrmDHAzukcAWSSk0k42wa/uegh62Bg1cM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUoQ8SqKyr1dWGz4d33hTICxMcwiMlCDBtsGl5+t4gHDdBCpSX
+	V30MdWpgEqZgNG/oOXkOzX+LwP8T1Nh832WZZ7q9Bsn4zFh1zZT3n9eB
+X-Gm-Gg: ASbGncsC8E4tN7/kt1NhuhQZ/LWGagqfUmjHbNLtK8KnFR9qsJKu5k07EzQ+m75Hvcw
+	tkWzS5Uk3dOIpH1RN+0xkuocK6VvQ+fTH7O/Of1H4uyMgwB5JLQ1OxDrfyA3ytMAnajsbhNm9dp
+	95SJNuC7SxInStv1Xz28V2OUcAxBimfBeSnRgjDPKt6gwosELmVwl8Y/xMATSKxO9dNXzj79HvT
+	IQc2eqOk1H+ZbeDcifyo+QPj0keplGGJurCgrqt9ttasbuwQ9jeoVrkTn/BZ5ml2sYB4KR0AeRS
+	sB9QrMFWQfZBaPqj79tv5NktzSrJzgwRsHN7mCusgqw1AdONk3i326e38ja1yi5hJblOoUJoxXv
+	7VcsRCzuhHdyb4wGUhBhVSGbgXctQszR1Z91bEKthEjtYrbRRD670XRb3lbMjzIQfnkaks/loF2
+	W9qykU8XvueF1aWZr658IiCoCac02jiF+GTKCKHTDXDxWUIt/8XgGT2YCP6A/X0Tk6itSztYd03
+	bcMH3hT/mk=
+X-Google-Smtp-Source: AGHT+IFim1RAGqPs9Zun8NZFi1n35CbocJN1zzyQWzy1cPQfa3BPST1oAIlzlfpieEeJDdgZ3Ac5JQ==
+X-Received: by 2002:a17:907:961b:b0:b4f:ffbf:9aeb with SMTP id a640c23a62f3a-b647512360cmr40230866b.46.1760628995927;
+        Thu, 16 Oct 2025 08:36:35 -0700 (PDT)
+Received: from ?IPV6:2001:9e8:f10a:ad01:ad7e:4d4c:7985:153? ([2001:9e8:f10a:ad01:ad7e:4d4c:7985:153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cccdaa2c8sm546548766b.46.2025.10.16.08.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 08:36:35 -0700 (PDT)
+Message-ID: <0c070b3b-45c7-4295-a3f4-429d8504d9f2@gmail.com>
+Date: Thu, 16 Oct 2025 17:36:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fca:b0:42f:946f:8eb4 with SMTP id
- e9e14a558f8ab-430c527bca5mr9919585ab.21.1760628935190; Thu, 16 Oct 2025
- 08:35:35 -0700 (PDT)
-Date: Thu, 16 Oct 2025 08:35:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f110c7.050a0220.1186a4.03ce.GAE@google.com>
-Subject: [syzbot] [bluetooth?] INFO: trying to register non-static key in l2cap_unregister_user
-From: syzbot <syzbot+cdba6d325676d9602f21@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 1/2] dt-bindings: gpio: add gpio-split controller
+Content-Language: en-US
+To: Linus Walleij <linus.walleij@linaro.org>, Peter Rosin <peda@axentia.se>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251009223501.570949-1-jelonek.jonas@gmail.com>
+ <20251009223501.570949-2-jelonek.jonas@gmail.com>
+ <CACRpkdb6bTFbTtNsO59GXFa9eMK9x=+BGK5Vx4bKv62wxiSpiw@mail.gmail.com>
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+In-Reply-To: <CACRpkdb6bTFbTtNsO59GXFa9eMK9x=+BGK5Vx4bKv62wxiSpiw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi Linus,
 
-syzbot found the following issue on:
+On 14.10.25 10:23, Linus Walleij wrote:
+> Hi Jonas,
+>
+> thanks for your patch!
+>
+> Including Peter Rosin (the gpio-mux author) and Geert Uytterhoeven
+> on this review, as they have worked with similar stuff. Please include
+> them on future postings. The result definitely need Peters ack before
+> we can merge it.
 
-HEAD commit:    67029a49db6c Merge tag 'trace-v6.18-3' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=141b3304580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
-dashboard link: https://syzkaller.appspot.com/bug?extid=cdba6d325676d9602f21
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Thanks, will do.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> So if I understand it correctly this models a 1-to-many input-only
+> GPIO multiplexer, we need an illustration such as
+>
+>         +----- A
+> IN     /
+> <-----o------- B
+>     / |\
+>     | | +----- C
+>     | |  \
+>     | |   +--- D
+>     | |
+>    M1 M0
+>
+> MUX CONTROL
+>
+>  M1 M0   INPUT
+>   0  0   A
+>   0  1   B
+>   1  0   C
+>   1  1   D
+>
+> Is this correct? In that case include something like this
+> verbatim in the bindings (feel free to copy/modify this)
+> as it makes it much easier to understand what is going on.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d9f00d3dfd46/disk-67029a49.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2f1d7b8b8e95/vmlinux-67029a49.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c60cf4f7bc26/bzImage-67029a49.xz
+You nailed it. I'll include your drawing in the bindings then in the next
+revision. Only thing is that I just didn't limit it to being 'input-only'.
+I have no real usecase for this but to me there was no really obvious issue
+needing this to be input-only.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cdba6d325676d9602f21@syzkaller.appspotmail.com
+> That's a very minimal example of a way to turn 3 GPIO
+> lines into 4 GPIO lines, which is a bit crazy but I'm not
+> the one to tell vendors what to do :D
 
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 0 UID: 0 PID: 6046 Comm: khidpd_04580058 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- assign_lock_key+0x133/0x150 kernel/locking/lockdep.c:984
- register_lock_class+0x105/0x320 kernel/locking/lockdep.c:1299
- __lock_acquire+0x99/0xd20 kernel/locking/lockdep.c:5112
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0xa2/0xf0 kernel/locking/spinlock.c:170
- rt_mutex_slowlock_block+0x5c2/0x6d0 kernel/locking/rtmutex.c:1650
- __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
- __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
- rt_mutex_slowlock+0x2b1/0x6e0 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
- mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
- l2cap_unregister_user+0x6a/0x1b0 net/bluetooth/l2cap_core.c:1728
- hidp_session_thread+0x3c9/0x410 net/bluetooth/hidp/core.c:1304
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 6046 Comm: khidpd_04580058 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:rt_waiter_node_less kernel/locking/rtmutex.c:397 [inline]
-RIP: 0010:rt_mutex_steal kernel/locking/rtmutex.c:433 [inline]
-RIP: 0010:try_to_take_rt_mutex+0x179/0xac0 kernel/locking/rtmutex.c:1129
-Code: dc 74 3d 4d 8d 6c 24 18 4c 89 e8 48 c1 e8 03 0f b6 04 10 84 c0 0f 85 f1 07 00 00 45 8b 75 00 4c 8d 6b 18 4c 89 e8 48 c1 e8 03 <0f> b6 04 10 84 c0 0f 85 fe 07 00 00 45 3b 75 00 0f 8d 85 05 00 00
-RSP: 0018:ffffc90005e7f8c0 EFLAGS: 00010006
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: ffffffff8ac83bc4
-RDX: dffffc0000000000 RSI: ffff8880257ebc00 RDI: ffff8880328f4050
-RBP: 0000000000000000 R08: ffff8880257ebc1b R09: 1ffff11004afd783
-R10: dffffc0000000000 R11: ffffed1004afd784 R12: ffffc90005e7fa80
-R13: 0000000000000018 R14: 0000000000000078 R15: ffff8880257ebc00
-FS:  0000000000000000(0000) GS:ffff888126bc8000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c37013a CR3: 0000000036ca4000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- rt_mutex_slowlock_block+0x61d/0x6d0 kernel/locking/rtmutex.c:1619
- __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
- __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
- rt_mutex_slowlock+0x2b1/0x6e0 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
- mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
- l2cap_unregister_user+0x6a/0x1b0 net/bluetooth/l2cap_core.c:1728
- hidp_session_thread+0x3c9/0x410 net/bluetooth/hidp/core.c:1304
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:rt_waiter_node_less kernel/locking/rtmutex.c:397 [inline]
-RIP: 0010:rt_mutex_steal kernel/locking/rtmutex.c:433 [inline]
-RIP: 0010:try_to_take_rt_mutex+0x179/0xac0 kernel/locking/rtmutex.c:1129
-Code: dc 74 3d 4d 8d 6c 24 18 4c 89 e8 48 c1 e8 03 0f b6 04 10 84 c0 0f 85 f1 07 00 00 45 8b 75 00 4c 8d 6b 18 4c 89 e8 48 c1 e8 03 <0f> b6 04 10 84 c0 0f 85 fe 07 00 00 45 3b 75 00 0f 8d 85 05 00 00
-RSP: 0018:ffffc90005e7f8c0 EFLAGS: 00010006
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: ffffffff8ac83bc4
-RDX: dffffc0000000000 RSI: ffff8880257ebc00 RDI: ffff8880328f4050
-RBP: 0000000000000000 R08: ffff8880257ebc1b R09: 1ffff11004afd783
-R10: dffffc0000000000 R11: ffffed1004afd784 R12: ffffc90005e7fa80
-R13: 0000000000000018 R14: 0000000000000078 R15: ffff8880257ebc00
-FS:  0000000000000000(0000) GS:ffff888126bc8000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c37013a CR3: 0000000036ca4000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	dc 74 3d 4d          	fdivl  0x4d(%rbp,%rdi,1)
-   4:	8d 6c 24 18          	lea    0x18(%rsp),%ebp
-   8:	4c 89 e8             	mov    %r13,%rax
-   b:	48 c1 e8 03          	shr    $0x3,%rax
-   f:	0f b6 04 10          	movzbl (%rax,%rdx,1),%eax
-  13:	84 c0                	test   %al,%al
-  15:	0f 85 f1 07 00 00    	jne    0x80c
-  1b:	45 8b 75 00          	mov    0x0(%r13),%r14d
-  1f:	4c 8d 6b 18          	lea    0x18(%rbx),%r13
-  23:	4c 89 e8             	mov    %r13,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	0f b6 04 10          	movzbl (%rax,%rdx,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	0f 85 fe 07 00 00    	jne    0x834
-  36:	45 3b 75 00          	cmp    0x0(%r13),%r14d
-  3a:	0f 8d 85 05 00 00    	jge    0x5c5
+On my device it's actually that the single GPIO mux controls the signals for
+both SFP cages, meaning it makes more sense in the big picture though a GPIO
+expander as all other vendors do would've been better IMO ^^.
 
+>> +  mux-controls:
+>> +    maxItems: 1
+> So this needs a description, it is a phandle to the
+> gpio multiplexer (reference /schemas/mux/gpio-mux.yaml
+> explicitly!) used by the splitter.
+>
+> You should also in the same patch add an example to
+> /schemas/mux/gpio-mux.yaml showing how this is used
+> to muliplex GPIOs so people find this new usecase easily.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Sure, will add it.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>> +  shared-gpio:
+>> +    description:
+>> +      GPIO that is shared by the virtual GPIOs and controlled via the mux.
+> So this one is shared one-to-many, and I think the bindings
+> overall makes sense.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I'll also add this hint to the description to make it clearer.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> Maybe "gpio-split" is a bit ambiguous?
+> We have io-channel-mux, so what about "gpio-line-mux"
+> simply?
+>
+> The fact that GPIO lines are used to do the muxing is just
+> a detail since a mux is an abstract concept, it could have
+> just as well been muxed with some I2C device for example.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Sure, this was just my initial idea but I'm not fixed to it. I can adjust
+that in the next iteration.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> Yours,
+> Linus Walleij
+
+Best,
+Jonas
 
