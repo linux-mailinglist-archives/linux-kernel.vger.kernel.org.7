@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-856907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1485BE564B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8778BE566C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5A7C504E43
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC75A5E5651
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133882DCF43;
-	Thu, 16 Oct 2025 20:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2562DF3FD;
+	Thu, 16 Oct 2025 20:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoQK19Z7"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5pWjFNo"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9245918FDDB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B311A9F93
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760646413; cv=none; b=axgeSqJEjYO/9uX96mXZiNwIlGhdqL5Us7r51bEXXzp1tWyChhazNkkDTeQXtOmXrEf0oYP9eDHya5fMARPCqmgLPF0fyxvG0EXvWy687Wb5deiV9y2rvKgf7Pwh/1tWmRZt5/qDNTs+h/bJa3WMiN8RerSqzzRFH4galIft9do=
+	t=1760646500; cv=none; b=b6A8+NOMSkB6UidPO7xP56vA6PHowKQ55Q6BLvqVH/G6pBEeqBMLW6uq1hr6g2IRM1gqnDxvH7FS+9NMFzZC8AmNCSaoP9yD2snxcu9iub5YAt++xPWM0LqkxGqOq233HSuFzAAcaHMHfZ5Gr/PXmU1xx8TeKgxCg5NyJPVqMfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760646413; c=relaxed/simple;
-	bh=xdxf4bGgZ3b0nAJDzpJIh8oNb3BVl6MHHNAqkvbVLn8=;
+	s=arc-20240116; t=1760646500; c=relaxed/simple;
+	bh=st8CE9lSuHr+S9UOZSYikJT8QbGSDyWDzzQM1KcjVRA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSuskE4krU2D6P1f8qQueFHRLQkqtmNJMh3xsRSkXyiwH4XLeb+E64E8gmKmEd9q0ntxMZl287P71z6myHq8ml2dKzToITzyoaAtjCne+wFYEk7XXgJd/h2YgCO/u06Bu+kWqrQTQkt5smCnb1vEwmjlYf5XOh5u10HE2Q5uqvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoQK19Z7; arc=none smtp.client-ip=209.85.216.45
+	 In-Reply-To:Content-Type; b=NcSj2h7H9cwmivtQcx//e3BDAPe7hNhFQ0i2z7+/VGDtjfnsvs7Vxi0jUTgNCfgrH9TFDrH/0P1Ci7s3AQ7Cr1W30xefIf0nGOycTe8UVd/cWEQYUsyER0yBMvRtjUMqET3MSyiVTY4wCs5s4Y2I7woYshfCLNCUEzqgrk2tWRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5pWjFNo; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33ba5fc3359so1231866a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:26:51 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-794e300e20dso2019554b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760646411; x=1761251211; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760646499; x=1761251299; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bo5Pb4pEnCN8Qp9wO+FXoUs/VjBU1u60no/MUECaFf8=;
-        b=SoQK19Z7A9eR9ukTH8+3c4LN+x14wDqjGqoyVh+5sugwUg+ZjfXBol1okUTDeA25en
-         vwOTU9K/nct0pKJVYj1rNFFUh7iI1UDRCJPK0Y1w8B/k5808oxRfnXWAKjI852FgNJlS
-         syNot3sqCqg+Q/UjdZyQu+uPooBhVnnBs6VArKrhCuM/VzhJr+5QszH0X7iYKcDHRETR
-         f2t6aL3fIFgFP45cbDWpuMMwngk7CTeTMVm99qXKczJCsDpLbSEYZmztrZGrh9R/YunG
-         pI6WamFvdZmFhA70F4yT+yurmZyeabfVa1rQ3HpO6bzo7NMWosAsomOfDahcVHAijaX2
-         mSHQ==
+        bh=3jY39mXgVcMN9xXBrEeHr/JB2nDeThDXcp+1mm32IdM=;
+        b=Y5pWjFNoMFuga+piOB20DKpQqJSOgtBUvga9OwP/+NdW1PyKmFNIE5b1ajws+2AVe1
+         K6yFsKzxjO8OpiCoaYUSG6XCWrOGDkzIJGNH0Z5dyV5D4cDey1Eegc6Sos/RlztDOXLz
+         M/x9ZvO67bjp+DXLtUN/R0I3YeYW/k9Xh6pLJgWyyam0qUYRBz+TkOLFqrLjCUVzBWih
+         LgLtvg4qG2eSZtMpCJy2YzWkRvPTXV0wZKF7SsW5J+ZNw5Zynd6mNJP++i9DxwD7oemi
+         /XZ9kSL6jy/B9ikPgaBlF0nLIWZcbg1wvYpjyuqAHsdlzuIlzLvWN+kKawIZKdyQdY9d
+         OjGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760646411; x=1761251211;
+        d=1e100.net; s=20230601; t=1760646499; x=1761251299;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bo5Pb4pEnCN8Qp9wO+FXoUs/VjBU1u60no/MUECaFf8=;
-        b=pTrObP7GLfJMJiaEjBtyN+OvJ5SrG7PxxxYSsJKqhFmGSc0OTYMpFo1V7ztF16QTCr
-         Bf9IqQsPx1sRAyDW4HRTE2L/OQ32+ANS8juohtGFdgAIzJ9EB9yi3iajO0H5b3CGcha8
-         W7SxrxBFPMYFUI3HUTqVresR39FLh6tT/SqAbWEszNkqapinPxyDkUdOFVW2n/4qWGvX
-         vOFuzqXD9a/7Iwp7zkEbovGoTok6JSNljEhnVXDsl79ff3wHQ4AFAlqAK3IvOCECX3Om
-         Ugv/6sk+TjlqwZ0/vBt1jTLDxjuym6kT/XEe/AFzQBGKWMaHGtwGENNQCr3/1a+wbU6K
-         sxGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWM5WGstiGuKAQBcNqTPUGbe4XMXZfQ+FbnfVkx1i7SUjrR6tW26+62fOjPDsBC9TIjb2nx7nj/c8Xi+Yc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZU5yWkgt4rb1OT7rYZGVG0tN+h86ZazU/vJ7Oz67gWfGqGn/I
-	mmrcE/pCJdsh70+NqCq4UlBp0q1RroNiu+Zd33Un+D9VrERzUGI6DPN1
-X-Gm-Gg: ASbGncvMEHkTULRBM3a4MJoAhkiSjdrrWx+OeQhNNd65xe+pobkB0SzwHdqP/BqvI17
-	TT3ilYGN8SRmGpamJypKXDb3YbxWZUsFJlEvKn38a7zZUCCcxHoX/rX2QBLIGZnbB/jR0+Hs3P+
-	Pu2+CQfbpKp3QpDLYeNF1ayYyT76q/qwUbo6QucIYYDaDIvFUOMgZmOBz6RTAgUpl6Ppbj+xCof
-	dSXU+7XJmJuMzhm4tNlMSPDwhyPBEtJ4EC/oTuymcpBBeIl/PWZ1+f98cOA+sTwfKWmEqHY9aGX
-	bpVsixYyfkg4TCyXQug4VbXOdx1ZbtA5Ec/UkeyCJbWunXYd1c+57jo17A8aNtNH67zmO+06otm
-	I0zURFnnodfVXhxLnn/7Y2whtYbgbqL3sEKp2VJEHTSEdGNMr5ConGsrroBc0B3TTr7NS9WzAIu
-	Zz3CocgygKYkiMeQzJwY/uxQin4tBclYtTTx8F9JvMCHrB96uB254zdgU=
-X-Google-Smtp-Source: AGHT+IE9B5Vdk4petXHg7AQwUSLZThEnOzKfYaaM8uzg+9wXXauMcXrMjeybYvp0mkVR/VZkAIO0fw==
-X-Received: by 2002:a17:90b:28c4:b0:338:2c90:1540 with SMTP id 98e67ed59e1d1-33bcf8e7174mr1148401a91.20.1760646410655;
-        Thu, 16 Oct 2025 13:26:50 -0700 (PDT)
+        bh=3jY39mXgVcMN9xXBrEeHr/JB2nDeThDXcp+1mm32IdM=;
+        b=xR/g5wkMyVoy0xQx97n0cN6FfmANwcqyrDh9whWio42Mw609zLBcer9wF7dDqb4n+e
+         PRilcdstM8hBytTUipmvbnWyNGDtEYcQSC/ytggSh7HEcATqODRNED1/Yld8uKMk/dA5
+         NoFsP7ewUu9Uh6fSQO3adPDNYQY6LjRqCEBgCt7sXQ8zkkkizEWMg/CytY3WFxJwG2de
+         ffTSSeV/TiXWKqhEQ3lHOccVvzMWUuCDieoLSWDx38mdh87mtpxqjHD2wjQ163mId3mN
+         94sxo32JEJuEEI7sYnGRYNmh8rzB5DyViq0ck0U2HH7sDI3i8M30YJkU0GO5x+3Oqknu
+         goEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ9HGO7Dr8+63ireEWXQTnSdPsFLl+C4UmfU/GBEjRqfSzzfs67AB0xJagtRjsGcQ37qXJ3G66ehCb8h8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlG4KzGViVFrJtGJWp/uQWE/ugxb0i4UpVr1xfw8iQvr9grxlH
+	jDCIPHmlZaQ29YOsgtQXF/KSpyBX78mqpJ/hGB7r3jF0ZReJ2+HK2pkR
+X-Gm-Gg: ASbGncvHrUEE04bHxv6PJbSHalHAnhSugKxC0NRgpxVwpq7bg0eAlzsQlcjFbPeYkT7
+	/jo6StO1FbuHxPAlh6R778ztYBDWcFBFfMpOOOMPsiz7XhktVqdgfNMNuPxpUycwHO/Kr9B2vnh
+	PEj+AElYTIIR828FVBI4TFnLezSZtnXQ77KkJSQWdLzvx0sfq8i+I8FQ1znqaCbTXlvYm2NJg7K
+	V6hPIDI4ZvbA5b4tSM7OrpXkKR5ZTo3hMJ/njHmQ4VKtvKhfOhtPrCEvLHtUa/op9jjbZs+6YHb
+	bWz559zzKS9820rBCtVMtwvAhB4A4zIt0PNd3bJvLEIEaBbvDIwF/PdrPZ+1KCwD2mDNBHwFs6I
+	3M9hVVQRowCLLV1MBFGz7bYB1Dz3p5gmxyb7iK6prISaIDv4KYFVNS7Trnqo6m6r0EZmfvfjoTe
+	Uqt4ZvXRRTZef3FxmsoJbRZmye+oRjcgN7db1A0BTwaJlx
+X-Google-Smtp-Source: AGHT+IGWLWyH0AABkRz6alBvUVzPFctljtKTWRYOwESGtF7UJb7utW5OdfjqyV+JPgqFQydchn8xQQ==
+X-Received: by 2002:a17:90b:3f0e:b0:327:c583:add with SMTP id 98e67ed59e1d1-33b9e0a4c2dmr5398538a91.6.1760646498534;
+        Thu, 16 Oct 2025 13:28:18 -0700 (PDT)
 Received: from ?IPV6:2a03:83e0:1151:15:6028:a61a:a132:9634? ([2620:10d:c090:500::5:e774])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd7b3da16sm314131a91.18.2025.10.16.13.26.46
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd79dda6fsm337108a91.10.2025.10.16.13.28.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 13:26:50 -0700 (PDT)
-Message-ID: <2fa573e6-bd9a-46b9-a2a6-bfb233d0389a@gmail.com>
-Date: Thu, 16 Oct 2025 13:26:44 -0700
+        Thu, 16 Oct 2025 13:28:17 -0700 (PDT)
+Message-ID: <b4418948-61ce-4cf1-a3d2-a4208e73d5b3@gmail.com>
+Date: Thu, 16 Oct 2025 13:28:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,56 +82,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] memcg: reading memcg stats more efficiently
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, andrii@kernel.org, ast@kernel.org,
+Subject: Re: [PATCH v2 1/2] memcg: introduce kfuncs for fetching memcg stats
+To: Song Liu <song@kernel.org>
+Cc: shakeel.butt@linux.dev, andrii@kernel.org, ast@kernel.org,
  mkoutny@suse.com, yosryahmed@google.com, hannes@cmpxchg.org, tj@kernel.org,
  akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
  cgroups@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- kernel-team@meta.com, mhocko@kernel.org, muchun.song@linux.dev
+ kernel-team@meta.com
 References: <20251015190813.80163-1-inwardvessel@gmail.com>
- <uxpsukgoj5y4ex2sj57ujxxcnu7siez2hslf7ftoy6liifv6v5@jzehpby6h2ps>
- <e102f50a-efa5-49b9-927a-506b7353bac0@gmail.com> <87wm4v7isj.fsf@linux.dev>
+ <20251015190813.80163-2-inwardvessel@gmail.com>
+ <CAHzjS_s3L7f=Rgux_Y3NQ7tz+Jmec5T8hLyQCxseLJ9-T-9xuQ@mail.gmail.com>
 Content-Language: en-US
 From: JP Kobryn <inwardvessel@gmail.com>
-In-Reply-To: <87wm4v7isj.fsf@linux.dev>
+In-Reply-To: <CAHzjS_s3L7f=Rgux_Y3NQ7tz+Jmec5T8hLyQCxseLJ9-T-9xuQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/15/25 6:10 PM, Roman Gushchin wrote:
-> JP Kobryn <inwardvessel@gmail.com> writes:
+On 10/15/25 4:12 PM, Song Liu wrote:
+> On Wed, Oct 15, 2025 at 12:08 PM JP Kobryn <inwardvessel@gmail.com> wrote:
+>>
+> [...]
+>> ---
+>>   mm/memcontrol.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 67 insertions(+)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index 4deda33625f4..6547c27d4430 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -871,6 +871,73 @@ unsigned long memcg_events_local(struct mem_cgroup *memcg, int event)
+>>   }
+>>   #endif
+>>
+>> +static inline struct mem_cgroup *memcg_from_cgroup(struct cgroup *cgrp)
+>> +{
+>> +       return cgrp ? mem_cgroup_from_css(cgrp->subsys[memory_cgrp_id]) : NULL;
+>> +}
+>> +
 > 
->> On 10/15/25 1:46 PM, Shakeel Butt wrote:
->>> Cc memcg maintainers.
->>> On Wed, Oct 15, 2025 at 12:08:11PM -0700, JP Kobryn wrote:
->>>> When reading cgroup memory.stat files there is significant kernel overhead
->>>> in the formatting and encoding of numeric data into a string buffer. Beyond
->>>> that, the given user mode program must decode this data and possibly
->>>> perform filtering to obtain the desired stats. This process can be
->>>> expensive for programs that periodically sample this data over a large
->>>> enough fleet.
->>>>
->>>> As an alternative to reading memory.stat, introduce new kfuncs that allow
->>>> fetching specific memcg stats from within cgroup iterator based bpf
->>>> programs. This approach allows for numeric values to be transferred
->>>> directly from the kernel to user mode via the mapped memory of the bpf
->>>> program's elf data section. Reading stats this way effectively eliminates
->>>> the numeric conversion work needed to be performed in both kernel and user
->>>> mode. It also eliminates the need for filtering in a user mode program.
->>>> i.e. where reading memory.stat returns all stats, this new approach allows
->>>> returning only select stats.
-> 
-> It seems like I've most of these functions implemented as part of
-> bpfoom: https://lkml.org/lkml/2025/8/18/1403
-> 
-> So I definitely find them useful. Would be nice to merge our efforts.
+> We should add __bpf_kfunc_start_defs() here, and __bpf_kfunc_end_defs()
+> after all the kfuncs.
 
-Sounds great. I see in your series that you allow the kfuncs to accept
-integers as item numbers. Would my approach of using typed enums work
-for you? I wanted to take advantage of libbpf core so that the bpf
-program could gracefully handle cases where a given enumerator is not
-present in a given kernel version. I made use of this in the selftests.
+Good call.
 
-I'm planning on sending out a v3 so let me know if you would like to see
-any alterations that would align with bpfoom.
+> 
+>> +__bpf_kfunc static void memcg_flush_stats(struct cgroup *cgrp)
+> 
+> We mostly do not make kfunc static, but it seems to also work.
+> 
+>> +{
+>> +       struct mem_cgroup *memcg = memcg_from_cgroup(cgrp);
+>> +
+>> +       if (!memcg)
+>> +               return;
+> 
+> Maybe we can let memcg_flush_stats return int, and return -EINVAL
+> on memcg == NULL cases?
+
+Sure, I'll do that in v3.
+
+> 
+>> +
+>> +       mem_cgroup_flush_stats(memcg);
+>> +}
+>> +
+> [...]
+
 
