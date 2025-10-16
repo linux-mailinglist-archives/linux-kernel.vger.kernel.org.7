@@ -1,144 +1,172 @@
-Return-Path: <linux-kernel+bounces-856289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42288BE3C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:41:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D35BE3C5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1C7A4EAD19
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EDBD1888BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91597339B52;
-	Thu, 16 Oct 2025 13:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534AF33CEB2;
+	Thu, 16 Oct 2025 13:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BYg/+XKs"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TbM0Hawm"
+Received: from mail-m1973173.qiye.163.com (mail-m1973173.qiye.163.com [220.197.31.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ECE32A3CC
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D1033A00E;
+	Thu, 16 Oct 2025 13:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760622068; cv=none; b=nRQL2lCpvnSmueNdu8SERstBCOZ/UcABFrj0SLYf9UXvveO1vT11SjbtXiZnBPVJvhna1XWr++F/JLguWY6FGpiX/7ZP9EaEJ3wnCukl+f80+3MNDUW+Bs0wCWEVd4KgrlKcS+79zIaqwFkhTrOrE8vaP2eIW2Y4sFWw/5pWrf8=
+	t=1760622121; cv=none; b=SRxLxENrxpk3D78YiaEbY9VtMZXrvbT5cbhLV6H+PGDpsVvNybTXdlPQT/49YzrfTP58/Sd6+gcx+sY4u+uzyYZxBONVSMlqELyeYXSgt6KoAPA99wa6mZoiF/7/iPi91NEIDUEdg69jS/e+TGx/twRWJ8Y4oZoEUWGMJc9qhuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760622068; c=relaxed/simple;
-	bh=aVEhqc/c60MDyAfUgQvI6KEHXzGImS1PZJ4Zx3bPwW8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bDFJuQL/BJX/VxEmDr3SvKPAvkSL4ovzKUsYlVaSifTAOwNa02p5/e7h3wG0rr7ZIHm1ihDanji7P+TYzAEXMJIpd3ZoAiRl0VybBUbGlQOlT3pJ7QosJy44auKjHWFzST/1lCkh6k7ulYtJIpEMdVMF5pgDR+9iMolQYhPlZec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BYg/+XKs; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bb3b235ebso1011798a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760622066; x=1761226866; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnajJrtq/zicbKOANLTRdaDsT6uMH68/4M/MyZaKoJ8=;
-        b=BYg/+XKsJcMDtkTygrrexdSXoGy8Wf0Tqs4WdAm2gpgQJtixDqhjEgCmfaPow4OZZk
-         ZxLDUeWCvK5qk9dCk01Aa62m6+L5dU6qifK/IkYu3KvjSAn6sTeU0xeNQ1X7/47pOIbo
-         AH00768Byj1S1PGe2rvDCaWUrL6pPqKLkF9VNlUD5zL28iwZIgkcV1mF/I1TlidFo91D
-         iGdnr9aA+yV1sE9zt/Upa/+YpboS0RsAgaN4xqlZoagc7j8GMXLJAvao0IFfHXYchC5M
-         LLYV8LkgIivm8+CvMssFtFVWg6QOp1lagDdOVbf0qFgKRf5jqBTfnZfr8cBhTAtT3W07
-         cMUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760622066; x=1761226866;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnajJrtq/zicbKOANLTRdaDsT6uMH68/4M/MyZaKoJ8=;
-        b=PhFj1D+RBEUzUpsbMp/aGiijVADJWQxKsdP1u8B+XL6Tr9MP+C2zqg0zzqmi0fNB5o
-         QLuVb28InM6UpTDdhmAC/+jZVM9jk5cTGcUMRsL/afClbmavfbk0l+wvkzPtcKrSyzR1
-         5ZiSN5RdFUiYGOtCmRY77mKtrQkzh52rC/pDSK0SZvSz+PEuknbT6t4yam/AK9xpbUg4
-         QQ4ylnYNc9msx520eEnWp7OSMAOi0kIO+hcVS1EzemNbteiJAghbkYWBaX0tp7GnOXqz
-         EybB47oqotxMiPgrKruvbkRzTEsYUa2ko/zpeMaDyEVKXJEMRSMs0hoZCsRTtJbAarCh
-         WAvg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5wARRM2RnfqkPYG6z670oJH26YdH6zpmekUu7N/Zp2hnlMPqhonkvpqF/L2EVbF3oOYhQ+6GWCHqb3dE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsWkAQEO0laV1j9fnfp8Ct8KpqP3SFxqdzex/BsvkRH+s4sB0n
-	RKa1i6V7ajpQ8B36WZs3VRZN4G/04eG305KfQbWnN/MEzMzd6R2pme9TV/xPaT1Ww5fJkP9+Wv7
-	WqJup8Q==
-X-Google-Smtp-Source: AGHT+IHCpSqOqfu494ZwihjiS2Nn5X3JignxUlxwge9/0fS8hKe4ONpHcMnssp5tHSKwqdBpSnpYNN1XKd0=
-X-Received: from pjbsv12.prod.google.com ([2002:a17:90b:538c:b0:33b:9921:8e9a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1ae4:b0:27d:69de:edd3
- with SMTP id d9443c01a7336-29027374b2cmr398857755ad.20.1760622065740; Thu, 16
- Oct 2025 06:41:05 -0700 (PDT)
-Date: Thu, 16 Oct 2025 06:41:03 -0700
-In-Reply-To: <20251016132738.GB95606@k08j02272.eu95sqa>
+	s=arc-20240116; t=1760622121; c=relaxed/simple;
+	bh=aR1eaDNIrPulkBL1DXPC20FxSUB27nGElMJ7szUod6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s+nBIFqWrp5P7VGzSifJ2uivwYJaCMEVijb5v06Qezmu/rPlIzu277G89aANurXAC9Te+p54BhMILY9ZVWvmRUO/epuW9BraZlPUCSmJLP06PXzZ7TS8gE4ZnE/KkSeANlC5ZLAlUj7RoZhxO8Eey6Z6vSyverRNV52XMJoVMU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TbM0Hawm; arc=none smtp.client-ip=220.197.31.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from xf.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 26283fe3a;
+	Thu, 16 Oct 2025 21:41:48 +0800 (GMT+08:00)
+From: Finley Xiao <finley.xiao@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	finley.xiao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	sugar.zhang@rock-chips.com,
+	huangtao@rock-chips.com
+Subject: [PATCH v1 2/2] pmdomain: rockchip: Add support for RV1126B
+Date: Thu, 16 Oct 2025 21:41:03 +0800
+Message-ID: <20251016134103.294636-3-finley.xiao@rock-chips.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251016134103.294636-1-finley.xiao@rock-chips.com>
+References: <20251016134103.294636-1-finley.xiao@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919214259.1584273-1-seanjc@google.com> <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
- <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com> <aNwFTLM3yt6AGAzd@google.com>
- <aNwGjIoNRGZL3_Qr@google.com> <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
- <aO_JdH3WhfWr2BKr@google.com> <aPCzqQO7LE/cNiMA@yzhao56-desk.sh.intel.com> <20251016132738.GB95606@k08j02272.eu95sqa>
-Message-ID: <aPD173WPjul0qC0P@google.com>
-Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
- skips WRMSR
-From: Sean Christopherson <seanjc@google.com>
-To: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99ed415f1503a9kunm0a0c6b9d2865e
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU0ZSlZMH0sZQkhLGk8eQh5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=TbM0Hawm5HzQvXbp+O5LAOEpKQ+D84rvrZ+39BZ+GY4SfM1sMQWUELFfVF6Sblh+ihxiTzaxDWKTEQq5/BB+hGHv/x6kB6KQDqDPLlTrG8XAghhcIED031ObiBE2h9KQTrlIulc6wUzu7rSbDYsRtGT57mGFuNN6jeosKoDIqEA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=DTh7gctk5AI3bDTEHZSUWiFdhA+fv7NuK/ICIUrV96g=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Oct 16, 2025, Hou Wenlong wrote:
-> On Thu, Oct 16, 2025 at 04:58:17PM +0800, Yan Zhao wrote:
-> > On Wed, Oct 15, 2025 at 09:19:00AM -0700, Sean Christopherson wrote:
-> > > +	/*
-> > > +	 * Leave the user-return notifiers as-is when disabling virtualization
-> > > +	 * for reboot, i.e. when disabling via IPI function call, and instead
-> > > +	 * pin kvm.ko (if it's a module) to defend against use-after-free (in
-> > > +	 * the *very* unlikely scenario module unload is racing with reboot).
-> > > +	 * On a forced reboot, tasks aren't frozen before shutdown, and so KVM
-> > > +	 * could be actively modifying user-return MSR state when the IPI to
-> > > +	 * disable virtualization arrives.  Handle the extreme edge case here
-> > > +	 * instead of trying to account for it in the normal flows.
-> > > +	 */
-> > > +	if (in_task() || WARN_ON_ONCE(!kvm_rebooting))
-> > kvm_offline_cpu() may be invoked when irq is enabled.
-> > So does it depend on [1]?
-> > 
-> > [1] https://lore.kernel.org/kvm/aMirvo9Xly5fVmbY@google.com/
-> >
-> 
-> Actually, kvm_offline_cpu() can't be interrupted by kvm_shutdown().
-> syscore_shutdown() is always called after
-> migrate_to_reboot_cpu(), which internally waits for currently running
-> CPU hotplug to complete, as described in [*].
-> 
-> [*] https://lore.kernel.org/kvm/dd4b8286774df98d58b5048e380b10d4de5836af.camel@intel.com
-> 
-> 
-> > > +		drop_user_return_notifiers();
-> > > +	else
-> > > +		__module_get(THIS_MODULE);
-> > Since vm_vm_fops holds ref of module kvm_intel, and drop_user_return_notifiers()
-> > is called in kvm_destroy_vm() or kvm_exit():
-> > 
-> > kvm_destroy_vm/kvm_exit
-> >   kvm_disable_virtualization
-> >     kvm_offline_cpu
-> >       kvm_disable_virtualization_cpu
-> >         drop_user_return_notifiers
-> > 
-> > also since fire_user_return_notifiers() executes with irq disabled, is it
-> > necessary to pin kvm.ko?
+Add configuration and power domains for RV1126 SoC.
 
-Pinning kvm.ko is necessary because kvm_disable_virtualization_cpu() will bail
-early due to virtualization_enabled being false (it will have been cleared by
-the IPI call from kvm_shutdown()).  We could try figuring out a way around that,
-but I don't see an easy solution, and in practice I can't think of any meaningful
-downside to pinning kvm.ko.
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+---
+ drivers/pmdomain/rockchip/pm-domains.c | 41 ++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-I don't want to leave virtualization_enabled set because that's completely wrong
-for everything except x86's user-return MSRs, which aren't even strictly related
-to enabling virtualization.
+diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+index 1955c6d453e4..49a01261d13d 100644
+--- a/drivers/pmdomain/rockchip/pm-domains.c
++++ b/drivers/pmdomain/rockchip/pm-domains.c
+@@ -25,6 +25,7 @@
+ #include <soc/rockchip/rockchip_sip.h>
+ #include <dt-bindings/power/px30-power.h>
+ #include <dt-bindings/power/rockchip,rv1126-power.h>
++#include <dt-bindings/power/rockchip,rv1126b-power.h>
+ #include <dt-bindings/power/rk3036-power.h>
+ #include <dt-bindings/power/rk3066-power.h>
+ #include <dt-bindings/power/rk3128-power.h>
+@@ -137,6 +138,20 @@ struct rockchip_pmu {
+ 	.active_wakeup = wakeup,			\
+ }
+ 
++#define DOMAIN_M_G(_name, pwr, status, req, idle, ack, g_mask, wakeup, keepon)	\
++{							\
++	.name = _name,					\
++	.pwr_w_mask = (pwr) << 16,			\
++	.pwr_mask = (pwr),				\
++	.status_mask = (status),			\
++	.req_w_mask = (req) << 16,			\
++	.req_mask = (req),				\
++	.idle_mask = (idle),				\
++	.ack_mask = (ack),				\
++	.clk_ungate_mask = (g_mask),			\
++	.active_wakeup = wakeup,			\
++}
++
+ #define DOMAIN_M_G_SD(_name, pwr, status, req, idle, ack, g_mask, mem, wakeup, keepon)	\
+ {							\
+ 	.name = _name,					\
+@@ -205,6 +220,9 @@ struct rockchip_pmu {
+ #define DOMAIN_RV1126(name, pwr, req, idle, wakeup)		\
+ 	DOMAIN_M(name, pwr, pwr, req, idle, idle, wakeup)
+ 
++#define DOMAIN_RV1126B(name, pwr, req, wakeup)			\
++	DOMAIN_M_G(name, pwr, pwr, req, req, req, req, wakeup, true)
++
+ #define DOMAIN_RK3288(name, pwr, status, req, wakeup)		\
+ 	DOMAIN(name, pwr, status, req, req, (req) << 16, wakeup)
+ 
+@@ -1104,6 +1122,13 @@ static const struct rockchip_domain_info rv1126_pm_domains[] = {
+ 	[RV1126_PD_USB]		= DOMAIN_RV1126("usb", BIT(9), BIT(15), BIT(15),  false),
+ };
+ 
++static const struct rockchip_domain_info rv1126b_pm_domains[] = {
++					      /* name    pwr     req      wakeup */
++	[RV1126B_PD_NPU]	= DOMAIN_RV1126B("npu",  BIT(0), BIT(8),  false),
++	[RV1126B_PD_VDO]	= DOMAIN_RV1126B("vdo",  BIT(1), BIT(9),  false),
++	[RV1126B_PD_AISP]	= DOMAIN_RV1126B("aisp", BIT(2), BIT(10), false),
++};
++
+ static const struct rockchip_domain_info rk3036_pm_domains[] = {
+ 	[RK3036_PD_MSCH]	= DOMAIN_RK3036("msch", BIT(14), BIT(23), BIT(30), true),
+ 	[RK3036_PD_CORE]	= DOMAIN_RK3036("core", BIT(13), BIT(17), BIT(24), false),
+@@ -1516,6 +1541,18 @@ static const struct rockchip_pmu_info rv1126_pmu = {
+ 	.domain_info = rv1126_pm_domains,
+ };
+ 
++static const struct rockchip_pmu_info rv1126b_pmu = {
++	.pwr_offset = 0x210,
++	.status_offset = 0x230,
++	.req_offset = 0x110,
++	.idle_offset = 0x128,
++	.ack_offset = 0x120,
++	.clk_ungate_offset = 0x140,
++
++	.num_domains = ARRAY_SIZE(rv1126b_pm_domains),
++	.domain_info = rv1126b_pm_domains,
++};
++
+ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
+ 	{
+ 		.compatible = "rockchip,px30-power-controller",
+@@ -1585,6 +1622,10 @@ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
+ 		.compatible = "rockchip,rv1126-power-controller",
+ 		.data = (void *)&rv1126_pmu,
+ 	},
++	{
++		.compatible = "rockchip,rv1126b-power-controller",
++		.data = (void *)&rv1126b_pmu,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
+-- 
+2.43.0
 
-I considered calling drop_user_return_notifiers() directly from kvm_exit(), but
-that would require more special-case code, and it would mean blasting an IPI to
-all CPUs, which seems like a bad idea when we know the system is trying to reboot.
 
