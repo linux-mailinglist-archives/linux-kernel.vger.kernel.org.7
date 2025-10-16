@@ -1,228 +1,253 @@
-Return-Path: <linux-kernel+bounces-856506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C269BE4582
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C4CBE4597
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25124273F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1B8485D37
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912B6350D5E;
-	Thu, 16 Oct 2025 15:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7087834F482;
+	Thu, 16 Oct 2025 15:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQiGzob/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WMyya1km"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013041.outbound.protection.outlook.com [40.107.159.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8FF1C84B2;
-	Thu, 16 Oct 2025 15:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760629668; cv=none; b=W5vAQ701Wxa8Bwq+E/31QPgIZH+RuriLbyhZQNByrawlKshRc0mA4IvwL0DDX0aiWQmQW1mWq7bWHyHbFzw43bPO3JjG2S35fG55LW9SzRdSF1UAvBCzUjaqe9Th0kfPIogPq9H1A3ErIipty1TwMeMTgjrNZtWAHn6A/RoLtbY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760629668; c=relaxed/simple;
-	bh=FlKNufpuhBcgk9SN4QuiloHjSfMgs0UC4KeGBdebjrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W16H0OhwoUhMsxWiWczUa93WZHDYjjv0y/oV+baH+FovDYHXdxyDLPIAj8w4amnFk10V7FZ0S7axavWKD/z0nFtBPdfGbT/BU1UrBYGgVCsHDKLkrljyiEVR9F7Dr+NSO4bpmdtPsbbXfl1WpFvx+ntF5+N91YwyFdVs+cp2WG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQiGzob/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF368C4CEF1;
-	Thu, 16 Oct 2025 15:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760629668;
-	bh=FlKNufpuhBcgk9SN4QuiloHjSfMgs0UC4KeGBdebjrM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CQiGzob/dazeSYg9CUbgQ5holsVMP1Ke7AMaIv2jyr0NpY6Ijr1H0vjWROoCu9Jvg
-	 9q9+JydTIZ75UYJBPa4GvE9hvGUA+Jo3F8UMBlWkDOm2vCNHcX0tfvaJ665P6q/wq4
-	 mnI3OhsYn5gvsMH01GtKjlgeURrSy6lQ345JRVsW+F21jLU4o04GPeQcLRCzdQpT0R
-	 AR/uvvRBU2jta1Ps7jYam6eLi+KSyhQVZHzL2XzSribOHNJ76seZ8fVohruQ4n1nNd
-	 +Z0siXUFO1Xj5bWCUBiEbZxK6Uc0zHUHxJOEu2eYb3tvo2y6R0Ej4RZ2e3Q4MoJ/Lr
-	 3YpkSIk70gxeQ==
-Date: Thu, 16 Oct 2025 16:47:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: caohang@eswincomputing.com
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: Re: [PATCH] dt-bindings: usb: Add ESWIN EIC7700 USB controller
-Message-ID: <20251016-oil-reuse-01758b4165ea@spud>
-References: <20251016094654.708-1-caohang@eswincomputing.com>
- <20251016094748.722-1-caohang@eswincomputing.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160431C84B2;
+	Thu, 16 Oct 2025 15:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760629761; cv=fail; b=N9uQ9dD4j+is6ozqcUtCKz0VT9T+U8c2lJQzNvcQO9mVyu3vyb5VC0yW0xscOTcp4/2QTPqNw1KQxVIhwJCTC3D+ELfLq43DEVTidz3YiYDxwgd1JpgOe2+dGeZ0r3qEwjVK9TDh8kYpRezOgrlIvsCdbgMaYfev5xUGnWKV2ow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760629761; c=relaxed/simple;
+	bh=Xrh3KohVrGEHdpVWdnSHasHdIOi/pLFZR++d6JcIwk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=s+5w4b1UC8ZR5BoCJfj80TiL70f3FIMd1XCMv1ShpzEU7FnMJAhDiJDoXdpNmA1Nk4FTAG+P7zt1V+A95KguBuEyk+KfiQtB/c9TrVKjcREZbru0pNW1zUsmWvDqPLCqmHsL2b7gjMYACnEfE3lIGrBlnA1+bbsfSIy8iLH51d8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WMyya1km; arc=fail smtp.client-ip=40.107.159.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LMDsQF5MuFctqTLZNtJrsV3UvEfJHkfRSBTY2xxZpFxJTlBui6QeVQUAIFbHld+N8G33jBcl1bOYOT84czMPyOUXIe8ILsBhZpmbtdTn2exRhHGgGxfzHE/203c6XAC5KIivDUb9HzScZ95VuACKLSppBknplbYW2p4DOLNkLBJ1cLfLybNiHpk7KTE6OkPPgrSHEyAJLuu6PFZ4BKWKYg5yx2c6AgKt7brGcslBslIfpHi4m6/jItAXRnNpAW4Y24WcE+Tjk7YjP1juOfZpAzGi7GAIAK29x8qNg8CYdfhn47XE6H+DXDOXwadzk0ByLtuESBgHJrFZbeHQbheAIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Fa1GuV/+5Udx01EzQpUFnoIe5xLMPhM8xGVKBW/qs0=;
+ b=rrk6JZf1CcLzlYTtqB30aMtTRGGl3YgFwvtCNhVXgA6xx5M4ud60QDZJXyaLbdd+fzOhLmVwrO4Bc7VV2IyFkFiK46mihvN4bnLeJzqEI5SoRyt38Kzqw3aC/XIR0S5Bq4UaJanXtXzDtuupVsQIQOm3kwyy8ZEbE62ad4NSRraLgswijyST1tz1xKlOAQ+M33VDojfzB9n83FuwFoefol8e0JsCQR30W2WDH0iCju+ezCFBFpkyjlMDtmX8EC1CgH+NbKIx3G1DMqVnFhf6fhtaP9cg2UJb5bwaE6Ky/smbGuDoSOadDAMozSGCnIpSwMnDP/+n+XrFnxwt/+LHQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Fa1GuV/+5Udx01EzQpUFnoIe5xLMPhM8xGVKBW/qs0=;
+ b=WMyya1kmCU8w5ozqxnVT0MhVtjDx6v2BwMQbGnOQAIiVPkWW+jxaruZyHmCCIpI1/HOrFMPLx/ER0bKgUQNgEFrmcTyb2Xbn+GAFebx5Ml/Qzg0wsJLm/RNfvARtL+JRiBHoX4D9tpYAK69jXwepG/zDVxVhSrOWr7u2JS4Pp89HaYLPcfFWyBsE7dJE4j18gDRG1EauC+aRKAuSkPpZ9zGLpyaxbPAOPjRs2WdKEosTuj2dYQMdpG/P0/TLuPFJPYQb5/+JcmknOS/at2kfXhjTnk5oIPT+4eMSboH3zU0rDGFNRLTd9gGLE2ZvwIpFIujmvFtHKZFEySdDfbgLwg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by VI0PR04MB11069.eurprd04.prod.outlook.com (2603:10a6:800:266::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Thu, 16 Oct
+ 2025 15:49:15 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
+ 15:49:15 +0000
+Date: Thu, 16 Oct 2025 11:49:08 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: Use multiple ATU regions for large bridge
+ windows
+Message-ID: <aPET9G2NQslWt+dD@lizhi-Precision-Tower-5810>
+References: <20251015231707.3862179-1-samuel.holland@sifive.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015231707.3862179-1-samuel.holland@sifive.com>
+X-ClientProxiedBy: PH8PR15CA0010.namprd15.prod.outlook.com
+ (2603:10b6:510:2d2::6) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7vMLZRVbrLLy4j5D"
-Content-Disposition: inline
-In-Reply-To: <20251016094748.722-1-caohang@eswincomputing.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB11069:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85b381f3-9118-4976-1cff-08de0ccb8f44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1NcUp0JfJiQER+rUBX7rvz2KGLp0+x/VEN2W3tTp5+V1JfG/sISUvssTNCz1?=
+ =?us-ascii?Q?T4y9NzHzf7bpgOcenkdhR2DG1GYs6itcr4sz5M4OeAyDEPpnAAUKdyypkNzw?=
+ =?us-ascii?Q?q041rpUtP9gP8D0gDLKY78p7qtxEcWI41147RWPYwy3QXnU0vmqDF0DOj/84?=
+ =?us-ascii?Q?+hzHh/N4YIOxphwKEO0kYYRtERQCnrHQTzWXVnjg16sxjbGfLlgdpr9cnKM9?=
+ =?us-ascii?Q?Kz/RS1VQXcchgctRelwqVhGI4s7ORGVB798mglYXyM2cge6vXQ3fF9K5gSBw?=
+ =?us-ascii?Q?H9/UDKf8od43KBq+VEVfCnsGmQyTlCgCGiFjHU/foBSwvc6F/S0ktZjCFhav?=
+ =?us-ascii?Q?Dt9mk0e2KLxIC0ukL71zUthlmgNYZJIUawiuojVleD4B0nisFCk8YyQZJY+Q?=
+ =?us-ascii?Q?QD4FZLM/sRRisTuIHmjVKmDLHovaz+4whDrMrsjjwo1NHy/ld1BI9LXcnuZ5?=
+ =?us-ascii?Q?8+XEzX90p5bZQQ+iXSuDaMVHNbrVSKndZiT92TUOXYt6WiPyWXqqA2XiDBOw?=
+ =?us-ascii?Q?Q1m4/19hNg56GzE76LrHLiTYmwLscq7quGtm2WPfFpQlPgouHWeP0Tjwag2Q?=
+ =?us-ascii?Q?5pm+UKwCwRWTpZtak6uLO6tmn/TXmgKoCfumvyvBBtryGkh8+h9oelglYhn7?=
+ =?us-ascii?Q?dIYr1jTG6w08phlx6UZAYw/tSvxJgYyp8FAnLXfe8eduLBYS8b4zSg8HoU0n?=
+ =?us-ascii?Q?zYcBnBB9Vw4QmXO2sweFsAE9t10R9Ln91DOzPT00aCEDiVYP4SGoLP+F8YvD?=
+ =?us-ascii?Q?l6s4FAkqWzj6gwL9YIYgWn7W0Wl10/Z6f9Sc+GUxFLZZbK+EQSyoCoR3hA06?=
+ =?us-ascii?Q?y6W7Dp93JcaxkCLlrNR3kiD2LmqO4ttHqP4kAO/jZzq9Rrnwxi0+SMjMIVZo?=
+ =?us-ascii?Q?WkyTNzGYIeqBYBpKegK9cRz+qPaxrY5tdIkGaijYjB1X7I1th0V8H3JklGER?=
+ =?us-ascii?Q?ZEt/dm03kdyLhUQVIFzNPQbUhZFsyUxdiDFE9Or6biKRV9iONG6g3yxpaKCi?=
+ =?us-ascii?Q?FGoqip1iXCCbjPcA1jWiBJT86l0Zp96EwSOYVZnmiliXnTS+uxGR80/xKFTy?=
+ =?us-ascii?Q?aJaIJ2CxFvQKp/x37G8y9Oxs2Zgq4LGAl0LVId6x3YWYChM+c4a8Rv9cT96y?=
+ =?us-ascii?Q?9mBp4EWNLNG0JxzgmgYc0h4aEP6Nwb0qsNQCO3QQaiYvdDk2OrSe4cAhGKsL?=
+ =?us-ascii?Q?dMa8RmhwSoUbGrg8cnGiz2/0NOf2e0/QfQTeFerM+9xOL1eEGaIsUnQE/VqS?=
+ =?us-ascii?Q?Y8o86CYUjl14vKd80BF0m+7zkHmzzNA8J8WN2Y2jg1kT93wBrNfqd8iINYYU?=
+ =?us-ascii?Q?As9bE0GTTh2SFWHmk39Fo/tg9PCrUzYZk/+u4kvClU71FpETU074iClKuf5l?=
+ =?us-ascii?Q?cxiulh33kKjcvCo4sib31D6+OkSuHpAExxd1nLThBmLi4cq9VEpcrJIB2AGf?=
+ =?us-ascii?Q?GAv0jYgmUkLQkEuaAQkEhGKSEDw47lO2me/o9pOGvXIC+1BtNvEmkdXHNdCh?=
+ =?us-ascii?Q?v3TfIQFzNqPzPdkk9yvb2bblH1HD/6kK4nbv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Sa/t5/B17VVWVdEe0IPl75xwumPsc1aJb/Zs9IQkxr5Dxgf/FzC3t3La1H13?=
+ =?us-ascii?Q?ltgHVLLhgTyJrY1SwQmdMpEzJPcNLtyYWj88DwjBS/JZ/SVnF6vc0bjUUJF6?=
+ =?us-ascii?Q?x2blFKLXOusWA0xstSKyNMeQn2KY2gFEQi2dLRJXe8ExnBHQTtNvrxGnWWGu?=
+ =?us-ascii?Q?z690R9XRUpqGJwcgygPvR/JFwUUhHLLTtPvbbUvwEihNt5dFPPTmMT3RBjxJ?=
+ =?us-ascii?Q?hKETWizOeHm3Hd9o8ngqzLHoX3Ag0qV2lo4djwn1Oj0ZK9beUUQ0rDRpAnwr?=
+ =?us-ascii?Q?be8pyO7DHqERduiX3lf9cFAU3AprEZyZ5xeRTq07+Sv5JN9lLPHDIm731Wdr?=
+ =?us-ascii?Q?yUulFfUF9l13p+yd31qMPLVhZRVkasAUl58B5q69YjaPSYM1jvL68H2SahjT?=
+ =?us-ascii?Q?MBPtVqibh4dLll7OlMFA3utUKS04kimUpqCnI8lkgb1LC78mY2Yc15AxK86R?=
+ =?us-ascii?Q?cQpHyLL9aq31b/Z80MOiUhN9pcUknvC84Mk3Rk5HupNo8wmXHeFO0Sp82JYa?=
+ =?us-ascii?Q?IHBwYG0qpCiDJhwSOBE3OJJKCQjFforAXjq5kGg9ujMKRAaovaBlCUVR7ixg?=
+ =?us-ascii?Q?zw4DsvDp2IoeuoqS16n9uBcDnV7UPSYWqW5h0k6fhdhAooDBOWRFdg7z8H4t?=
+ =?us-ascii?Q?2ERL7rkkFb9ccG8l1Td3CXVKc/ckOpAqENpt38B5WP3QaQoojW/Ei9TYxwoX?=
+ =?us-ascii?Q?80wn/GqnDfAiQOhA6LiPzdu51SKV90t+tNKJXSr3rJwUyIlU22AM5LIXjMeY?=
+ =?us-ascii?Q?wtvfzhpkub8dHcs0M4DaAPlNKFuFrFdrukhAWMErUa75oWrh6+pkmoQZf0ma?=
+ =?us-ascii?Q?aOPEReFTz3BMARXUF9xKy4aFk/cbd8mDOiT7ryk+qyxrlT9wbvutgjRoUVUR?=
+ =?us-ascii?Q?vRrIPGBERGxNhiTqQSq8Ipfa+AbAqLHfkYqVK1QoWmyHXQT0box+qIl/wOuw?=
+ =?us-ascii?Q?VgiTebG2rf6+DVyOMvCWM7meEkw93JGeyB+MG+uHgVEyhucnYYPNajmQYKUq?=
+ =?us-ascii?Q?zJjyJzIHe/364jYmT9IDtBkMaHvWg7C2k9uP7qrTaOmmleSIJKnHQFda28WF?=
+ =?us-ascii?Q?upVduVlDMJijR2gYwCiUen4uOIB+K1fGHFc8Fx7Mk3ZVOyMwnKJpI0OqtexH?=
+ =?us-ascii?Q?KzBwLbQhaW7L+rTB9WZqlO51JL73YGo0n+eAqoe2cYZd5SZpSWsEDzBNRVxa?=
+ =?us-ascii?Q?7vXGHmDTGWEtZLqQVLuKs6AxDo1T0Ye9Ynoxk9miWe3ZWDDjuTyuvbPi9YIG?=
+ =?us-ascii?Q?PHgaqCeZn3iTIznqEEPy1nigOa6K+9kk/OtBKn8qI5rtfwE3Ux2fPD218ktN?=
+ =?us-ascii?Q?8TbQMwVmhYRbBemmhLT9opR3RZ3jmiWiu0X+KZTUFX85DEX3AEQTiH7cVb5U?=
+ =?us-ascii?Q?9/DYjWssepOdHzFz60d1B5kcIsrEJTEObfngSUe9PZQ5P5g8+kTN1CAIZ5Na?=
+ =?us-ascii?Q?rIyKIRJoJvVLaOJPPeFp4Pff3YwQl8fPAZHLq0jQi8TXV4pvEqMnC/Glf+xx?=
+ =?us-ascii?Q?KHXOCmzAhEL6vUgyTUuwcqTTxmHMrCUwrzo8MlWONHhVrXPoKJUx8Y2H0b4h?=
+ =?us-ascii?Q?a07T8MrfuahaxAMwOxM=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85b381f3-9118-4976-1cff-08de0ccb8f44
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:49:15.6265
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aDmzj1daxlZBoRhhWSOgTr/5VDXpFKnSTqJWUOT7zqUlONmO/6hVDbAAO9FCGpQyL31AtwEdOld9hxGpvNXXCg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11069
 
-
---7vMLZRVbrLLy4j5D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 16, 2025 at 05:47:48PM +0800, caohang@eswincomputing.com wrote:
-> From: Hang Cao <caohang@eswincomputing.com>
->=20
-> Add Device Tree binding documentation for the ESWIN EIC7700
-> usb controller module.
->=20
-> Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> Signed-off-by: Hang Cao <caohang@eswincomputing.com>
+On Wed, Oct 15, 2025 at 04:15:01PM -0700, Samuel Holland wrote:
+> Some SoCs may allocate more address space for a bridge window than can
+> be covered by a single ATU region. Allow using a larger bridge window
+> by allocating multiple adjacent ATU regions.
+>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 > ---
->  .../bindings/usb/eswin,eic7700-usb.yaml       | 99 +++++++++++++++++++
->  1 file changed, 99 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-u=
-sb.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml=
- b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-> new file mode 100644
-> index 000000000000..589a3ab6c644
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/eswin,eic7700-usb.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ESWIN EIC7700 SoC Usb Controller
-> +
-> +maintainers:
-> +  - Wei Yang <yangwei1@eswincomputing.com>
-> +  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> +  - Hang Cao <caohang@eswincomputing.com>
-> +
-> +description:
-> +  The Usb controller on EIC7700 SoC.
-> +
-> +allOf:
-> +  - $ref: snps,dwc3-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-dwc3
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: peripheral
-> +
-> +  clocks:
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    items:
-> +      - const: aclk
-> +      - const: cfg
-> +      - const: usb_en
-> +
-> +  resets:
-> +    maxItems: 2
-> +
-> +  reset-names:
-> +    items:
-> +      - const: vaux
-> +      - const: usb_rst
 
-Drop the _rst here, since this can't be anything other than a reset.
+Nice feature.
 
-> +  eswin,hsp-sp-csr:
-> +    description:
-> +      HSP CSR is to control and get status of different high-speed perip=
-herals
-> +      (such as Ethernet, USB, SATA, etc.) via register, which can tune
-> +      board-level's parameters of PHY, etc.
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to HSP Register Controller hsp_sp_csr n=
-ode.
-> +          - description: USB bus register offset.
-> +          - description: AXI low power register offset.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-This looks better than before, thanks.
-
+> An example of where this is needed is the ESWIN EIC7700 SoC[1]. The SoC
+> decodes 128 GiB of address space to the PCIe controller. Without this
+> change, only 8 GiB is usable; after this change 48 GiB (6 ATU regions)
+> is usable, which allows using PCIe cards with >8 GiB BARs:
+>
+> eic7700-pcie 54000000.pcie: host bridge /soc/pcie@54000000 ranges:
+> eic7700-pcie 54000000.pcie:       IO 0x0040800000..0x0040ffffff -> 0x0040800000
+> eic7700-pcie 54000000.pcie:      MEM 0x0041000000..0x004fffffff -> 0x0041000000
+> eic7700-pcie 54000000.pcie:      MEM 0x8000000000..0x89ffffffff -> 0x8000000000
+> eic7700-pcie 54000000.pcie: iATU: unroll T, 8 ob, 4 ib, align 4K, limit 8G
+> eic7700-pcie 54000000.pcie: PCIe Gen.2 x1 link up
+> eic7700-pcie 54000000.pcie: PCI host bridge to bus 0000:00
+>
+> [1]: https://lore.kernel.org/linux-pci/20250923120946.1218-1-zhangsenchuan@eswincomputing.com/
+>
+>  .../pci/controller/dwc/pcie-designware-host.c | 34 ++++++++++++-------
+>  1 file changed, 22 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 20c9333bcb1c..148076331d7b 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -873,30 +873,40 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>
+>  	i = 0;
+>  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
+> +		u64 total_size;
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - resets
-> +  - reset-names
-> +  - eswin,hsp-sp-csr
+>  		if (resource_type(entry->res) != IORESOURCE_MEM)
+>  			continue;
+>
+> -		if (pci->num_ob_windows <= ++i)
+> -			break;
+> -
+> -		atu.index = i;
+>  		atu.type = PCIE_ATU_TYPE_MEM;
+>  		atu.parent_bus_addr = entry->res->start - pci->parent_bus_offset;
+>  		atu.pci_addr = entry->res->start - entry->offset;
+>
+>  		/* Adjust iATU size if MSG TLP region was allocated before */
+>  		if (pp->msg_res && pp->msg_res->parent == entry->res)
+> -			atu.size = resource_size(entry->res) -
+> +			total_size = resource_size(entry->res) -
+>  					resource_size(pp->msg_res);
+>  		else
+> -			atu.size = resource_size(entry->res);
+> +			total_size = resource_size(entry->res);
+>
+> -		ret = dw_pcie_prog_outbound_atu(pci, &atu);
+> -		if (ret) {
+> -			dev_err(pci->dev, "Failed to set MEM range %pr\n",
+> -				entry->res);
+> -			return ret;
+> -		}
+> +		do {
+> +			if (pci->num_ob_windows <= ++i)
+> +				break;
 > +
-> +unevaluatedProperties: false
+> +			atu.index = i;
+> +			atu.size = min(total_size, pci->region_limit + 1);
 > +
-> +examples:
-> +  - |
-> +    usb@50480000 {
-> +        compatible =3D "eswin,eic7700-dwc3";
-> +        reg =3D <0x50480000 0x10000>;
-> +        clocks =3D <&clock 135>,
-> +                 <&clock 136>,
-> +                 <&hspcrg 18>;
-> +        clock-names =3D "aclk", "cfg", "usb_en";
-> +        interrupt-parent =3D <&plic>;
-> +        interrupts =3D <85>;
-> +        interrupt-names =3D "peripheral";
-> +        resets =3D <&reset 84>, <&hspcrg 2>;
-> +        reset-names =3D "vaux", "usb_rst";
-> +        dr_mode =3D "peripheral";
-> +        maximum-speed =3D "high-speed";
-> +        phy_type =3D "utmi";
-
-> +        snps,dis_enblslpm_quirk;
-> +        snps,dis-u2-freeclk-exists-quirk;
-> +        snps,dis_u2_susphy_quirk;
-> +        snps,dis-del-phy-power-chg-quirk;
-> +        snps,parkmode-disable-ss-quirk;
-
-If any of these "quirks" are required for the device to function
-properly, please mark them as required so that they don't ever get left
-out. If it is board dependant, that's fine. I'm only interested in what
-is set on the SoC level.
-If most properties from the common snps binding are not possible, please
-use additionalProperties: false and only permit those that are.
-
-pw-bot: changes-requested
-
-> +        eswin,hsp-sp-csr =3D <&hsp_sp_csr 0x800 0x818>;
-> +    };
-> --=20
-> 2.34.1
->=20
-
---7vMLZRVbrLLy4j5D
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPETnwAKCRB4tDGHoIJi
-0lE9AP0RYcahckW+TyawV1n5NagY3zGsvVuIM/siZKHv97ZftQD/dvbM5ZVZbXQh
-RSVtUQpDVXbOxasrnvFaQpkBkdBnSAE=
-=JWPt
------END PGP SIGNATURE-----
-
---7vMLZRVbrLLy4j5D--
+> +			ret = dw_pcie_prog_outbound_atu(pci, &atu);
+> +			if (ret) {
+> +				dev_err(pci->dev, "Failed to set MEM range %pr\n",
+> +					entry->res);
+> +				return ret;
+> +			}
+> +
+> +			atu.parent_bus_addr += atu.size;
+> +			atu.pci_addr += atu.size;
+> +			total_size -= atu.size;
+> +		} while (total_size);
+>  	}
+>
+>  	if (pp->io_size) {
+> --
+> 2.47.2
+>
+> base-commit: 5a6f65d1502551f84c158789e5d89299c78907c7
+> branch: up/pci-bridge-window
 
