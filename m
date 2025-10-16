@@ -1,271 +1,204 @@
-Return-Path: <linux-kernel+bounces-855995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58DEBE2D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1903BE2D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365DA5E13C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE8815E173B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2F7111A8;
-	Thu, 16 Oct 2025 10:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1011C2D0C7D;
+	Thu, 16 Oct 2025 10:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pXUrcsMc"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="P2aC/LS/"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D7432863A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34832862D
 	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760610254; cv=none; b=sckQVD5nDLv7H6eyB6+xlYm9WlG0HZ9iOS0Dq6WcaTNdyUR43UYzkwNHDIHvsLPapWbC0XpTF6Xz9Q+/2ns6d/6npqsbS4oCwKgK6Bc/jKEDvA8oxcSU1TTJl6Vnq8hn4Vrxsf2L5v/BumVEOXC3ksw3egTCqi87xPZs/v2JXEQ=
+	t=1760610256; cv=none; b=FNM9OG54XAKFxPE4wj9xCyMoE9iinHvaJkCLjbzuIVEVQMoOWURVIBlT+c4dFE3jN/YjIwvmqU1z+EznqIeb64/r1JzYFsY+GBUmuZTB4P9LmVai5blMiGDHk4bK7YWqoTt2kEoD4PRGDaZWm58cRz/qTqTFJGSfHbciOfszYxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760610254; c=relaxed/simple;
-	bh=THynFsm+uNetSIOEglsqSzltbK2zZODtc7fw8J3Y8/k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T1s1JIeFsDnLPeZe2o0Hh7c27i0ZGde5bGMKnvS45DZFBGmch3T+YyfRroa5T5wpdGrc6NIVK6pwKIgfA3chC4Zjh7+ZQyA4P3BhLItbmgFe8LO5FZcf93NGLb5j4oFByUS2eYxpjx1Jrx7ZCfwRYSBjejnaagPfsmZhAo8O6XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pXUrcsMc; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ey
-	RI+CsMCcUKicgmPIqDbD8tGK56XEuTP9EuKahNIm4=; b=pXUrcsMcsHlPUKK/uQ
-	A2HkjoLaGe3rmq23C76FmCIy9bKfpVaXq5+w4FgNyY8UD6C4ujhxQdYriqp+h0Lj
-	ll7/Ix7NoqGOOkfKMaihVMUywIt4CJ+BQUQZnE9WPAnc8o2JaR6yqgJeeWh8rmFZ
-	u7bzS5eEh4Gi91Sttoc76ssAw=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAHS_2zx_BoOCKJAg--.5549S2;
-	Thu, 16 Oct 2025 18:23:48 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: tj@kernel.org,
-	jiangshanlai@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH] workqueue: Support RT workqueue
-Date: Thu, 16 Oct 2025 18:23:45 +0800
-Message-Id: <20251016102345.2200815-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760610256; c=relaxed/simple;
+	bh=qp+KeUy96QuR5ckUkOoqptYM3jA5RP4mf69cvLhzuUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tbIe99l20nT4RKXshtK3qDWBCfDodTiqIzglfunqMqIpBrVnNoDxNB6bx8ceCKJOKQfxK7v9HJ3VXqvDpYCH+YgdYDJYa+ItUXhPMEB5u0PF4MVT5+FckslZQdtlR0pHdTieS3SaWZhPOl1JIpY8zOlWVtoR50AGLqW6dpqXSsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=P2aC/LS/; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 44E48C4308
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:24:04 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 91DB2C4A85
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:24:03 +0300 (EEST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 9A3321FF719
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:24:02 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760610243;
+	bh=gV/v90xa2SLKdmP/pBZ8wq4Q7F0yp1HfJIwXljec+TI=;
+	h=Received:From:Subject:To;
+	b=P2aC/LS/ToS+TE4cVj05O/+7jmxhSqZ7TZxMGjKCeYMKCPePcB3k7b/ZkxqKtumLW
+	 1Vm+hlz1I736IRX4hINwyKRopWWssr2RsuPVl2YMwL42n7GfnBVWWTyyPuSndTzwz9
+	 E1tc8bH3eZCFV45CWOoFBb9LnG5opv2pe3UBKNKhQY2JrJlQVWs+mkRj1tMcWlADtC
+	 11pqZv2YdZtnDj1IIINkF3XqH4gyHg38EqOpekUW0saNG40d7RDA6rDJaP/f/9rBvB
+	 K49GD2cx+oGa8lBYuyXp3fKeISY0GuiU5tQPAW3EzQONnTocH9LBkFzMA+DXTPtLnl
+	 X0KOi9DYfMKvQ==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.175) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f175.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f175.google.com with SMTP id
+ 38308e7fff4ca-36c0b946cb5so4041561fa.3
+        for <linux-kernel@vger.kernel.org>;
+ Thu, 16 Oct 2025 03:24:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWupIr99++WOrIscG9YxkCnPhM/ACpHv57BKugI+XPpElJFmaaLyCMCLcP27nL6EsZn5T8hh7DxGnwe3r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7/VUFxrGifZnnHDKABz6NJsAZx41its30xgOSAZDIVAg5ueO/
+	NUqxs9mxM1NhpnJd4b78lI/7SiP1Vyw4vnBB1de8AnDkdl7KaaEzHPx6Y3KXo3IcSDjvqAOXWTF
+	5rTaqnSNZ5dfE1P0Z/ttUJ8mSOCkpxEA=
+X-Google-Smtp-Source: 
+ AGHT+IH5R/hNpzYEzewPipSZJMkHM5BoUT9HVwv+Z4NmQpb8O+7YzOMwKwR3vaNGi5bMleyf6xqrVpsn/dsjmevG4UM=
+X-Received: by 2002:a2e:bccc:0:b0:36b:693d:1244 with SMTP id
+ 38308e7fff4ca-37609ef126bmr84862431fa.30.1760610241765; Thu, 16 Oct 2025
+ 03:24:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAHS_2zx_BoOCKJAg--.5549S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Xr4kZF4DAw1xZryUKFW3ZFb_yoWfZrW3pF
-	4Fkrs8Kw48Xr4jgasxKay7Jry3Kr10g3W7J34xuw1ay398tr9av3WvyFyYvryrtr98uw13
-	AFWDta92yw4qvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piiSdxUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCwBR1f2jwx7TKjAAA3z
+References: <20251013201535.6737-1-lkml@antheas.dev>
+ <20251013201535.6737-4-lkml@antheas.dev>
+ <cf0ca840-6e0d-2d99-cb23-eabf0ac5263b@linux.intel.com>
+ <CAGwozwFBQ4DWS5s-La5f-6H=ZQvQFjU3=7U2RiJStGxO1sM+bQ@mail.gmail.com>
+ <cf824f48-58b4-2400-9acf-796bb76d6b28@linux.intel.com>
+In-Reply-To: <cf824f48-58b4-2400-9acf-796bb76d6b28@linux.intel.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 16 Oct 2025 12:23:50 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwEo+Mx8fv_ohQQ9Ha6p=bJcJmfj==aRGcgoqQXzXEZmVw@mail.gmail.com>
+X-Gm-Features: AS18NWBuPZc56lDSGKACDIJ6VO20ByZypxxronk974sOSAippwxgCHKH754emac
+Message-ID: 
+ <CAGwozwEo+Mx8fv_ohQQ9Ha6p=bJcJmfj==aRGcgoqQXzXEZmVw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] platform/x86: asus-wmi: Add support for multiple
+ kbd RGB handlers
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	Denis Benato <benato.denis96@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176061024323.2757629.2849137605324600119@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-In a system with high real-time requirements, we have noticed that many
-high-priority tasks, such as kernel threads responsible for dispatching
-GPU tasks and receiving data sources, often experience latency spikes
-due to insufficient real-time execution of work.
-The kworker threads are shared globally based on the attributes of the
-workqueue (wq) and the parameters of queue_work_on. This means that
-regardless of whether you create a new wq or use an existing one, the
-kworker thread that processes the work does not exclusively run any
-specific work or work from a specific wq. While this design saves
-resources, it makes it difficult to ensure the real-time execution of
-work by modifying the priority of the kworker thread associated with a
-specific work in hard real-time scenarios. Additionally, if I manually
-set the real-time priority of the kworker while executing the work task
-and then adjust it back upon completion, the next time queue_work_on is
-called, the priority of the kworker thread will have reverted, making it
-impossible to ensure timely execution of these lower-priority threads.
-Moreover, frequent priority adjustments can incur additional overhead.
-Perhaps we could implement all logic related to hard real-time tasks
-using kernel threads, but I believe this workload is unnecessary. The
-existing workqueue mechanism in the system is well-structured and can
-guarantee that work executes in an orderly manner in concurrent scenarios
-by adjusting the max_active and WQ_ORDERED attributes. We only need to
-introduce a WQ_RT flag and add a small amount of code to meet the
-requirements of hard real-time workqueues.
+On Thu, 16 Oct 2025 at 12:19, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
+>
+> > On Wed, 15 Oct 2025 at 13:59, Ilpo J=C3=A4rvinen
+> > <ilpo.jarvinen@linux.intel.com> wrote:
+> > >
+> > > On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
+> > >
+> > > > Some devices, such as the Z13 have multiple AURA devices connected
+> > > > to them by USB. In addition, they might have a WMI interface for
+> > > > RGB. In Windows, Armoury Crate exposes a unified brightness slider
+> > > > for all of them, with 3 brightness levels.
+> > > >
+> > > > Therefore, to be synergistic in Linux, and support existing tooling
+> > > > such as UPower, allow adding listeners to the RGB device of the WMI
+> > > > interface. If WMI does not exist, lazy initialize the interface.
+> > > >
+> > > > Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> > > > Tested-by: Luke D. Jones <luke@ljones.dev>
+> > > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > > ---
+> > > >  drivers/platform/x86/asus-wmi.c            | 118 +++++++++++++++++=
++---
+> > > >  include/linux/platform_data/x86/asus-wmi.h |  16 +++
+> > > >  2 files changed, 121 insertions(+), 13 deletions(-)
+> > > >
+> > > > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86=
+/asus-wmi.c
+> > > > index e72a2b5d158e..a2a7cd61fd59 100644
+> > > > --- a/drivers/platform/x86/asus-wmi.c
+> > > > +++ b/drivers/platform/x86/asus-wmi.c
+> > > > @@ -258,6 +258,8 @@ struct asus_wmi {
+> > > >       int tpd_led_wk;
+> > > >       struct led_classdev kbd_led;
+> > > >       int kbd_led_wk;
+> > > > +     bool kbd_led_avail;
+> > > > +     bool kbd_led_registered;
+> > > >       struct led_classdev lightbar_led;
+> > > >       int lightbar_led_wk;
+> > > >       struct led_classdev micmute_led;
+> > > > @@ -1530,6 +1532,53 @@ static void asus_wmi_battery_exit(struct asu=
+s_wmi *asus)
+> > > >
+> > > >  /* LEDs **********************************************************=
+*************/
+> > > >
+> > > > +struct asus_hid_ref {
+> > > > +     struct list_head listeners;
+> > > > +     struct asus_wmi *asus;
+> > > > +     spinlock_t lock;
+> > >
+> > > Please always document what a lock protects.
+> > >
+> > > I started wonder why it needs to be spinlock?
+> > >
+> > > It would seem rwsem is more natural for it as write is only needed at
+> > > probe/remove time (if there's no good reason for using a spinlock).
+> > >
+> > > You're also missing include.
+> >
+> > I went through the comments. Thanks. The reason that it is a spinlock
+> > is that both hid-asus and asus-wmi interact with the primitives to
+> > register and unregister listeners, either of which can prompt the
+> > creation of the led device which has to be atomic. And they do so from
+> > IRQs too.
+>
+> Please note in the changelog how it can happen from IRQs as I tried but
+> couldn't find anything. Admittedly, I didn't try to follow the callchains
+> that deeply. The justification should be clear enough to anyone who
+> looks this commit later so better have it in the changelog.
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
- include/linux/workqueue.h |  6 ++++++
- kernel/workqueue.c        | 34 ++++++++++++++++++++++++----------
- 2 files changed, 30 insertions(+), 10 deletions(-)
+The initial versions used a mutex, and we found kernel hangs under
+IRQs, so it was converted to a spinlock. I will try to reword.
+Specifically, I think the errors came when holding the lock when
+changing brightness.
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 45d5dd470..973876b79 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -16,6 +16,7 @@
- #include <linux/cpumask_types.h>
- #include <linux/rcupdate.h>
- #include <linux/workqueue_types.h>
-+#include <uapi/linux/sched/types.h>
- 
- /*
-  * The first word is the work queue pointer and the flags rolled into
-@@ -404,6 +405,8 @@ enum wq_flags {
- 	WQ_POWER_EFFICIENT	= 1 << 7,
- 	WQ_PERCPU		= 1 << 8, /* bound to a specific cpu */
- 
-+	WQ_RT			= 1 << 9,
-+
- 	__WQ_DESTROYING		= 1 << 15, /* internal: workqueue is destroying */
- 	__WQ_DRAINING		= 1 << 16, /* internal: workqueue is draining */
- 	__WQ_ORDERED		= 1 << 17, /* internal: workqueue is ordered */
-@@ -460,6 +463,7 @@ enum wq_consts {
- extern struct workqueue_struct *system_wq; /* use system_percpu_wq, this will be removed */
- extern struct workqueue_struct *system_percpu_wq;
- extern struct workqueue_struct *system_highpri_wq;
-+extern struct workqueue_struct *system_rt_wq;
- extern struct workqueue_struct *system_long_wq;
- extern struct workqueue_struct *system_unbound_wq;
- extern struct workqueue_struct *system_dfl_wq;
-@@ -781,6 +785,8 @@ extern void __warn_flushing_systemwide_wq(void)
- 	     _wq == system_wq) ||					\
- 	    (__builtin_constant_p(_wq == system_highpri_wq) &&		\
- 	     _wq == system_highpri_wq) ||				\
-+	    (__builtin_constant_p(_wq == system_rt_wq) &&		\
-+	     _wq == system_rt_wq) ||					\
- 	    (__builtin_constant_p(_wq == system_long_wq) &&		\
- 	     _wq == system_long_wq) ||					\
- 	    (__builtin_constant_p(_wq == system_unbound_wq) &&		\
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index c6b79b367..ccbf19e3a 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -103,7 +103,7 @@ enum work_cancel_flags {
- };
- 
- enum wq_internal_consts {
--	NR_STD_WORKER_POOLS	= 2,		/* # standard pools per cpu */
-+	NR_STD_WORKER_POOLS	= 3,		/* # standard pools per cpu */
- 
- 	UNBOUND_POOL_HASH_ORDER	= 6,		/* hashed by pool->attrs */
- 	BUSY_WORKER_HASH_ORDER	= 6,		/* 64 pointers */
-@@ -123,6 +123,7 @@ enum wq_internal_consts {
- 	 */
- 	RESCUER_NICE_LEVEL	= MIN_NICE,
- 	HIGHPRI_NICE_LEVEL	= MIN_NICE,
-+	RTPRI_LEVEL		= MIN_NICE - 1,
- 
- 	WQ_NAME_LEN		= 32,
- 	WORKER_ID_LEN		= 10 + WQ_NAME_LEN, /* "kworker/R-" + WQ_NAME_LEN */
-@@ -509,6 +510,8 @@ struct workqueue_struct *system_percpu_wq __ro_after_init;
- EXPORT_SYMBOL(system_percpu_wq);
- struct workqueue_struct *system_highpri_wq __ro_after_init;
- EXPORT_SYMBOL_GPL(system_highpri_wq);
-+struct workqueue_struct *system_rt_wq __read_mostly;
-+EXPORT_SYMBOL_GPL(system_rt_wq);
- struct workqueue_struct *system_long_wq __ro_after_init;
- EXPORT_SYMBOL_GPL(system_long_wq);
- struct workqueue_struct *system_unbound_wq __ro_after_init;
-@@ -2751,7 +2754,8 @@ static int format_worker_id(char *buf, size_t size, struct worker *worker,
- 		if (pool->cpu >= 0)
- 			return scnprintf(buf, size, "kworker/%d:%d%s",
- 					 pool->cpu, worker->id,
--					 pool->attrs->nice < 0  ? "H" : "");
-+					 pool->attrs->nice < 0 ?
-+					 (pool->attrs->nice == RTPRI_LEVEL ? "F" : "H") : "");
- 		else
- 			return scnprintf(buf, size, "kworker/u%d:%d",
- 					 pool->id, worker->id);
-@@ -2760,6 +2764,9 @@ static int format_worker_id(char *buf, size_t size, struct worker *worker,
- 	}
- }
- 
-+static int kworker_rt_prio = 1;
-+module_param(kworker_rt_prio, int, 0444);
-+
- /**
-  * create_worker - create a new workqueue worker
-  * @pool: pool the new worker will belong to
-@@ -2776,6 +2783,7 @@ static struct worker *create_worker(struct worker_pool *pool)
- {
- 	struct worker *worker;
- 	int id;
-+	struct sched_param sp;
- 
- 	/* ID is needed to determine kthread name */
- 	id = ida_alloc(&pool->worker_ida, GFP_KERNEL);
-@@ -2810,7 +2818,12 @@ static struct worker *create_worker(struct worker_pool *pool)
- 			goto fail;
- 		}
- 
--		set_user_nice(worker->task, pool->attrs->nice);
-+		if (pool->attrs->nice == RTPRI_LEVEL) {
-+			sp.sched_priority = kworker_rt_prio;
-+			sched_setscheduler_nocheck(worker->task, SCHED_FIFO, &sp);
-+		} else {
-+			set_user_nice(worker->task, pool->attrs->nice);
-+		}
- 		kthread_bind_mask(worker->task, pool_allowed_cpus(pool));
- 	}
- 
-@@ -5470,7 +5483,7 @@ static void unbound_wq_update_pwq(struct workqueue_struct *wq, int cpu)
- 
- static int alloc_and_link_pwqs(struct workqueue_struct *wq)
- {
--	bool highpri = wq->flags & WQ_HIGHPRI;
-+	int prio = (wq->flags & WQ_RT) ? 2 : (wq->flags & WQ_HIGHPRI ? 1 : 0);
- 	int cpu, ret;
- 
- 	lockdep_assert_held(&wq_pool_mutex);
-@@ -5491,7 +5504,7 @@ static int alloc_and_link_pwqs(struct workqueue_struct *wq)
- 			struct pool_workqueue **pwq_p;
- 			struct worker_pool *pool;
- 
--			pool = &(per_cpu_ptr(pools, cpu)[highpri]);
-+			pool = &(per_cpu_ptr(pools, cpu)[prio]);
- 			pwq_p = per_cpu_ptr(wq->cpu_pwq, cpu);
- 
- 			*pwq_p = kmem_cache_alloc_node(pwq_cache, GFP_KERNEL,
-@@ -5511,14 +5524,14 @@ static int alloc_and_link_pwqs(struct workqueue_struct *wq)
- 	if (wq->flags & __WQ_ORDERED) {
- 		struct pool_workqueue *dfl_pwq;
- 
--		ret = apply_workqueue_attrs_locked(wq, ordered_wq_attrs[highpri]);
-+		ret = apply_workqueue_attrs_locked(wq, ordered_wq_attrs[prio]);
- 		/* there should only be single pwq for ordering guarantee */
- 		dfl_pwq = rcu_access_pointer(wq->dfl_pwq);
- 		WARN(!ret && (wq->pwqs.next != &dfl_pwq->pwqs_node ||
- 			      wq->pwqs.prev != &dfl_pwq->pwqs_node),
- 		     "ordering guarantee broken for workqueue %s\n", wq->name);
- 	} else {
--		ret = apply_workqueue_attrs_locked(wq, unbound_std_wq_attrs[highpri]);
-+		ret = apply_workqueue_attrs_locked(wq, unbound_std_wq_attrs[prio]);
- 	}
- 
- 	return ret;
-@@ -7720,7 +7733,7 @@ static void __init init_cpu_worker_pool(struct worker_pool *pool, int cpu, int n
- void __init workqueue_init_early(void)
- {
- 	struct wq_pod_type *pt = &wq_pod_types[WQ_AFFN_SYSTEM];
--	int std_nice[NR_STD_WORKER_POOLS] = { 0, HIGHPRI_NICE_LEVEL };
-+	int std_nice[NR_STD_WORKER_POOLS] = { 0, HIGHPRI_NICE_LEVEL, RTPRI_LEVEL };
- 	void (*irq_work_fns[2])(struct irq_work *) = { bh_pool_kick_normal,
- 						       bh_pool_kick_highpri };
- 	int i, cpu;
-@@ -7805,6 +7818,7 @@ void __init workqueue_init_early(void)
- 	system_wq = alloc_workqueue("events", 0, 0);
- 	system_percpu_wq = alloc_workqueue("events", 0, 0);
- 	system_highpri_wq = alloc_workqueue("events_highpri", WQ_HIGHPRI, 0);
-+	system_rt_wq = alloc_workqueue("events_rt", WQ_RT, 0);
- 	system_long_wq = alloc_workqueue("events_long", 0, 0);
- 	system_unbound_wq = alloc_workqueue("events_unbound", WQ_UNBOUND, WQ_MAX_ACTIVE);
- 	system_dfl_wq = alloc_workqueue("events_unbound", WQ_UNBOUND, WQ_MAX_ACTIVE);
-@@ -7818,8 +7832,8 @@ void __init workqueue_init_early(void)
- 	system_bh_wq = alloc_workqueue("events_bh", WQ_BH, 0);
- 	system_bh_highpri_wq = alloc_workqueue("events_bh_highpri",
- 					       WQ_BH | WQ_HIGHPRI, 0);
--	BUG_ON(!system_wq || !system_percpu_wq|| !system_highpri_wq || !system_long_wq ||
--	       !system_unbound_wq || !system_freezable_wq || !system_dfl_wq ||
-+	BUG_ON(!system_wq || !system_percpu_wq || !system_highpri_wq || !system_rt_wq ||
-+	       !system_long_wq || !system_unbound_wq || !system_freezable_wq || !system_dfl_wq ||
- 	       !system_power_efficient_wq ||
- 	       !system_freezable_power_efficient_wq ||
- 	       !system_bh_wq || !system_bh_highpri_wq);
--- 
-2.34.1
+I recall one of them was brightness hotkey (second to last patch)
+triggers an IRQ -> event goes to asus-wmi -> calls brightness handler
+-> tries to hold lock -> crashes. Lock needs to be held because
+hid-asus can choose to unregister a listener.
+
+
+> > Perhaps the driver could be refactored to use rwsem, I am not sure.
+>
+> Just leave it spinlock.
+>
+> > The fixed version can be found here[1]. I will give it 1-2 more days
+> > in case someone else wants to chime in and resend.
+>
+>
+>
+> --
+>  i.
 
 
