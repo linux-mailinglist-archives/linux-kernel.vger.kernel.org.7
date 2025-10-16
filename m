@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-856624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C03BE4A3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C26BE49F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19E155614E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:39:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66A3D4E3913
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAB13570CB;
-	Thu, 16 Oct 2025 16:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F2032AAD2;
+	Thu, 16 Oct 2025 16:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ycRUAkB5"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012042.outbound.protection.outlook.com [52.101.43.42])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZOhr8gfz"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012002.outbound.protection.outlook.com [40.107.200.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A75A3570A1;
-	Thu, 16 Oct 2025 16:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05772DEA87
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.2
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632696; cv=fail; b=hPrVfIWFvCkIoQaMcWWljrNTuU0q8uC1pm+gZZ0FPDg0yWUjRyITEeNZgsnwDlYas5YvRUGPGlS+2TZq7nFZF7Mho0CuAg/NbYrG7eM3ocPV84+PG7PAU1z63XjaJqzWGCtcmsE4I3dbGM23OE3hONyb6tEW1tj+m4hBJZSRQoA=
+	t=1760632685; cv=fail; b=VqA/qIuUa9Sc/5Rzy0H/m2yIUMB3reuCdYJsGHx1TYvl1bqBLJBhD76+DUDTvk4RzAafYHLRG9YdxQ6HKSkAjSiVDeVRmUuoaEAYr+2w1w8eIy/p4COUVtcR2HBZ6J+qfTHUulbxTOw0tV+craakzHRO+2597mZmb7mITbdt0mI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632696; c=relaxed/simple;
-	bh=SoVE4yowg55cmVkEzip3CHbbj//sKTSawmYPq02Srlk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=STUCzBYv0nSVIlz8+aSDAlM82Gvtp5ualloi7TaYDfPhTHg/eujDPfAUJ371J6dpxhTGatRcREjzNQ5BLvBj4BaDSAm9Dlu6AYxYhWL3YxkyUnzo3E0LMoOrmBlB4ZpZe3U5OXRJFwviR6dGu+NUaIuhgUHHYzK1JEB0OLLSkN8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ycRUAkB5; arc=fail smtp.client-ip=52.101.43.42
+	s=arc-20240116; t=1760632685; c=relaxed/simple;
+	bh=ke0J3riyuBrluRjFjiGWP6DYuGGjHBBGNL9Ysl4LuAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CxRUVXlUwwgb0Eh1Nc5OcxuBSWo227FED96B32ftKqyOwzrrYFsWBCTn2jHlPPNr4m4C/DxhLwQV8T2+WbE9Z7Vn9lB5quucvQwikDWyHtxp19P5zvN6MTX1maWd+MQTgM3ikO+MYUQRw+sbUZEhA63lxeKy19hyKXBAn0HXGLU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZOhr8gfz; arc=fail smtp.client-ip=40.107.200.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y4mK3jOwFzRHSVpOnisiPuz7tkhWlB30/P6kwIqWBZrcn0Mc0mVOhHQXBWvo5CdvJEQANKYJIbZJR2DKxkEWd9nqpJx81RoTQSz4DoUs3PTNGrIDXRxQhgKuMgkFsq+1AkbuNbinV7d/dfGoTjUhe+1AwyTJl7Ve8iL3LlU6vZPHN4sVwb/+btFze5E6VKOk2mJDdjXVrsipO3E9ULEsjvz65U3dD+kWUKkbS5YKShUsOXcQ6GRMpvWa4JtiDIJNT1ctXoE/1jHwMfFD6fzRZiaAKf76bK6prgTHugA8WohyXHNxsC8n8NuTjSXHrhAWPKhCj5ebdd3b6Q2Q5cnyHg==
+ b=gbf6vYLMZJrbubpXDjfj8E0PJ1IC1l7ojsvA0vyObbQ5gvGq4w7slRpMU2Q9+UcXFUpo2Ws2zFPu+MauhuAM7ZNSeXNs+qIuSAg0LUQZA2dzDUp5/5q6hOfXLtrjSQ6wV3DV75uwTo2IOUEIBIUz7eMLQ0djqHn2bKD8vSvZxPDBafFlJMyTOXs2I6XRsqxsYjP8Rp0nC+mlaKdF1924Lo3qNelJ6aMX4PVMKVJjlmYI0X7LL72VgX7eCGR2AOZO60M+p8KODfM5OhMxA17BAUAZ8nZuDQqU/zEdVsVP3Bga/47gOa/j5YifvpZvTCvK5naGkLx99GPbp3eD/UGMQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZFA4GWGiwqxAAslG5gXRD25P/3iZzSuEFIrhQewPRVc=;
- b=ZJTryON6E4kTsxPOecal1YzZbT0yENzjpQ96qmqgGKT7qPcbgZhFxWpDJztPgEmao546xX1yhcghDmXkV2Yi5K47JgmiFXQcBZJ4aJ/zIyuBw9SzCWHhfELu6pkHAwiG0JTO6DLC8tl5eXQdDUE5/5Z1jyOJyQ2k0EZiICZ2owcoxdTxqeddAPFlhkNssY9YcZhfeEKr6FWNzZlBkMyjR0g2hoy4In11S/QrCryntoPxRRvKQeIpzhZvX2nSzafhhoQrL6M1dQH/LSis5vReEowzMKKFzKZD9/1JgfEHusDRQPVODjcMHY0xrmUGfQhLPk24bieM9Imp5CzDLOLQCA==
+ bh=BbYaxwM14q7Egt/dCnjQv4at3Hl7eUMDD4TDsA4RFRE=;
+ b=QzF0qBP+4ot7huQ4ime6Z/QceNNTfNuSliAKf7hpA5olDzWlaCdCbHnTF5vj0ZNSFRKNKrfglvyYB6RVDAEXz4Ta9W3CsdrKQAhu8KFg5hnyquJ0CK+eCuLh6d2/CjjbUPnxPq+V82LGzSj+T5vXaVaqStHVdvT3q9YVjxixeS9Ue0Qsrpc4ZJQvfQRsSgxMzbSHfH4YCKOQHhQdOsfyfF87NiBSFHZlEHcKj5KQfIrEGJV1yA/PcH1Vu5jleFfzB1KvBxgx+itlZRJ/6bOolGIsJSlWuqLHFzdSEC3Td/WJZsiNBm3fNxgM0GVWKJArI43i+NlelX4GcHnQUJZOHw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZFA4GWGiwqxAAslG5gXRD25P/3iZzSuEFIrhQewPRVc=;
- b=ycRUAkB5lMh4emZNyfRyCGhaamjQsS9e5XR7RjbW+mRchAPGa6QdtgsFGN+2pQLnOHmSVdvD3/mdzO7OBD0NK+298/Y6yLf6l6q4RtVU1FvmlMhZr00M0DV9qk0xVNh5st7lP8i2MBnBdkgwPyUTgL3v2M8ZfLYwVOBZIwa0l2w=
-Received: from BLAP220CA0028.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::33)
- by BL1PR12MB5804.namprd12.prod.outlook.com (2603:10b6:208:394::5) with
+ bh=BbYaxwM14q7Egt/dCnjQv4at3Hl7eUMDD4TDsA4RFRE=;
+ b=ZOhr8gfzWL8sRtEzMCVVV050N39Q0dKIoiONL3plV8GYqF7G93aypF+PXFc+zw77fAcb18AIlwXxxrkkZazMdEapmzBR2XZt6bwuo0XNUDvaoEaibubwRKNLpJ7/kE+m/29jl+Fr+rBkR3rNaZi5R0cWJlImLytgMcNMwL116zo=
+Received: from BLAP220CA0011.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::16)
+ by PH7PR12MB6936.namprd12.prod.outlook.com (2603:10b6:510:1ba::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Thu, 16 Oct
- 2025 16:38:08 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
+ 2025 16:38:00 +0000
 Received: from BL02EPF0001A105.namprd05.prod.outlook.com
- (2603:10b6:208:32c:cafe::26) by BLAP220CA0028.outlook.office365.com
- (2603:10b6:208:32c::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.10 via Frontend Transport; Thu,
- 16 Oct 2025 16:37:53 +0000
+ (2603:10b6:208:32c:cafe::3f) by BLAP220CA0011.outlook.office365.com
+ (2603:10b6:208:32c::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.13 via Frontend Transport; Thu,
+ 16 Oct 2025 16:37:59 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,262 +64,438 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  BL02EPF0001A105.mail.protection.outlook.com (10.167.241.137) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 16:38:08 +0000
-Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
+ 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 16:37:59 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 16 Oct
- 2025 09:38:04 -0700
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-Date: Thu, 16 Oct 2025 16:37:53 +0000
-Subject: [PATCH v7 8/8] x86/mce: Save and use APEI corrected threshold
- limit
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 16 Oct
+ 2025 09:37:59 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 16 Oct
+ 2025 11:37:59 -0500
+Received: from [172.19.71.207] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 16 Oct 2025 09:37:58 -0700
+Message-ID: <67e8e444-6eb8-97db-4088-bf618b7b6df6@amd.com>
+Date: Thu, 16 Oct 2025 09:37:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251016-wip-mca-updates-v7-8-5c139a4062cb@amd.com>
-References: <20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com>
-In-Reply-To: <20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com>
-To: <x86@kernel.org>, Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<Smita.KoralahalliChannabasappa@amd.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, Bert Karwatzki <spasswolf@web.de>,
-	<linux-acpi@vger.kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>
-X-Mailer: b4 0.15-dev-9b767
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V2] accel/amdxdna: Support getting last hardware error
+Content-Language: en-US
+To: Mario Limonciello <superm1@kernel.org>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <maciej.falkowski@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20251014234119.628453-1-lizhi.hou@amd.com>
+ <4e64ba7c-18d6-42e0-8fb1-dc03ae0cfbd7@kernel.org>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <4e64ba7c-18d6-42e0-8fb1-dc03ae0cfbd7@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A105:EE_|BL1PR12MB5804:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdd60ba1-09c5-4279-2d01-08de0cd26379
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A105:EE_|PH7PR12MB6936:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f8ce742-8507-4f39-1ef9-08de0cd25e59
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013|13003099007;
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OTYvTlRINCs3TU9COWtpMGVuYUZ0TVhtTFpwVTZTeHZiWC9QSzdnQU1QT2pv?=
- =?utf-8?B?Q2hYbnR3WVVIdUVoMkozeFdJOWRob2dMUStYTmpTNmVobUVwKzVVeUsxM3J3?=
- =?utf-8?B?eGZpeWZnUVdOeXBCVkJkZmdjUzBJQXRTT3VvWUdab3BvZytrRDVQWTE1ci8x?=
- =?utf-8?B?cmtQWC9PQVFmSUVzV2JIWXF2QW4vZ2hRMEh6NndrY2g3RVQ0cWhGY3VWWU52?=
- =?utf-8?B?M0xkRUlIaDJpSys4ajRxZUloNWxZYnJ4c0ZUQ01sUm1RTlpvcURwZGg0MFEz?=
- =?utf-8?B?Vk9SMUo1WFdBVVdGOUxnb215cjFuaHJMWi9uaTlETWlYdTBYN1I5Q1JQR0xy?=
- =?utf-8?B?aHBMNzdVT0RsZnE4Nk9vcUJqZ1NJdWhjMWJQeVNjNlFmeUN1Zy9Cay9xaTVX?=
- =?utf-8?B?NGYwZWhkS28rOWgwYVFLODBlVHpCUU9DaFhlbWczcnVQSVZBclJTREluZDh1?=
- =?utf-8?B?cWFzWXFmVC9kYmVpZ05mcm00Qmx3b0NPOXR2L0tyN2hBQnU1dk51NUpUS1cy?=
- =?utf-8?B?STdsTkJrcWt4OUY5bGlTSmRqTXZhbjFxVndYVTh4K2dCVDlYcG5wdFNFaXQw?=
- =?utf-8?B?RTNVV01BTVhDYmd5aEdwSUxWQUJuL2VXUzhkaXhJZVZpZmtFTUNkTjNob0F5?=
- =?utf-8?B?bGdQSnh5ZXpQbk5BVStqTkpJbGVmU0p1dWVqLzZqazVoQlEvNXVQcFlNVTZz?=
- =?utf-8?B?SC9sRVFtaUNMR0hCMGU4UGxMRk00ZXZoREZoZ2EvT1JXQkFhWWN2UjAyYXB0?=
- =?utf-8?B?OFFhZkp5TGJqVHFnYktjSmdSRVJ6cWd3NTBLYjdteU1STU1Majk1bm9ycVRt?=
- =?utf-8?B?Wks1UjM3bGdOZk12aCtCR0g4aVNXTGxqQ01rU0J6eC9HWVh4S0JsVDRKaEo5?=
- =?utf-8?B?cjRiaUdFa3NoZW9LQ1FFNG9jdWtiVkhhTEJJWmhRcW1aYlVkTkxEVHZEbUky?=
- =?utf-8?B?RVZUVSs0Si9zRHpNY0lmLzR1eWI0VmROZ0hzTFBMK1NQWXVPNUhSM0JMR1pl?=
- =?utf-8?B?RzNqZGRnVG5qSW1scTZJZEg1WVZiT3p0QmtIaUlwQm5mbFU2K2ppbEs2YkxQ?=
- =?utf-8?B?WE1KUFlsSUJ0MVNZMytKZkZWWG42QkpZZHFNencxbjk2bExrNDYwVlZ0bUhw?=
- =?utf-8?B?RWF1LzR1NmdoNGhoeFBUeXlnWXRpL2Q4M3dWaFNNRG05Q054Y1hyLzhTY2U2?=
- =?utf-8?B?aDg5S1NOVE95SG5JNnhadGw2NzY5d0VJWkRxNy9nM00wYi9QWGZmMnBTcmc1?=
- =?utf-8?B?ekhPR08rSkFNQUNlc2E3aStTZUlMVkh0bUttNG1lUWl6azlvakNLbmRBcjBk?=
- =?utf-8?B?b3QxQWFHRGxRWDFhZVlhMHZpb1ptWC9iM2VXL3VWNU9aVDR6S3c3TkpNL2li?=
- =?utf-8?B?K0ZPYngvME9ySG1hc3ZsQnlsMlplNVBjS3ZYWDJ0S3c2WVlRUWM2UFArR3RX?=
- =?utf-8?B?RW1qUnZkL0I0Zi9JK2V5dStCZm5kRGFxQnVXU3l1V2lRUE5VcjR4Z01UbnRQ?=
- =?utf-8?B?eG55b1JPbUZyV1pZanZPeDdSNFhzbGMvME1tZzdTSmlNN2tBNmtrdEdPbFYz?=
- =?utf-8?B?K1Y4RWhiOGxyL1hkWGl4czdidFNYZjJIQUVVTnU5eW8wZTM4a0MxditLbEo2?=
- =?utf-8?B?MFpCTzJaL1lrekpSQ3pDVGIxb1E1L3Q0b1QxTjYzeXhhbHZxcTlXWnpJaUhX?=
- =?utf-8?B?V2NDVkJ5UVMwMVAzZDRrRzQ0MDNJRlZLb2NlWmRqWVdTQXNEY2pnK0ppWFlC?=
- =?utf-8?B?MXFES0Rvakg0ZG9jVmNleDEyZjBESXZJNkxWclJNZW1JVVhwc1RzNkNRQlll?=
- =?utf-8?B?MjRlaUlobExxRE5YWEJQd0lOZXZqZVZwWXVDQlA5cTJ3cTJpbFhHM3JZOS9B?=
- =?utf-8?B?d2d1T1JzMHZ0cEtSbDVzdVBxRmZyZThiOTQrNk9PcjBBL2EwWDgwMWRFZldY?=
- =?utf-8?B?RjhqU2RxNjJFaDhzckNlMGg3VDJ4dXB1L0JXdVorOGhBZnc0L1k4cDBVMnZ0?=
- =?utf-8?B?SGhLUWRaUXJjV1lrNitSQnVZVi95NlRRM2NKYStvV1poSVdTTFBWMTRjNTJa?=
- =?utf-8?B?SGFkdjB0dGJaYzNKL0dNVEJHaFpsVVAxd3VMN0FZUVlyTUhKQWwrck9Bb0Vp?=
- =?utf-8?Q?3BdQ=3D?=
+	=?utf-8?B?WTdBa2k4TUwvMHQ3b2E3dHR3UTk3MkJBYnp1L25Cck1aTGdWclU3eVoxK1dH?=
+ =?utf-8?B?ZzVaZGlnSy9wMW05eFRMMDlHTmNNY2JSM2hOeHF0TGc3d2NZR0htRnU1SUpZ?=
+ =?utf-8?B?MmtHa0U2TDliNmRsL2EyUGlobjdqb0VybVFnYmxNRnYvaElqN1pPMFFtN2hM?=
+ =?utf-8?B?NGpTNlQvdnRSQ1hLcS9xVjRkNXdlVUpSWGUrYTBQMXBSSVEyUEJiQUtJN3kz?=
+ =?utf-8?B?ZUtGRkUvYTR5eTBreTZsK2h5VXRJbU1kRmY3S1FBQ3NHVVJtTnpqc2xzekQ0?=
+ =?utf-8?B?bWI2Q0RLWityblRJdFc4SmJIVnJ5WGw5MFJrUUJCYU54WnMvcVY5UzVueXlV?=
+ =?utf-8?B?T3g5dFFVYkFLTWlXSnNFQ3IyT1p0V2dFTDdVMnRwREpDL2JhYTY1REFKVnlq?=
+ =?utf-8?B?cVhmSDVIVVFpdE1ybHlQTy9jeE05aENZNFBTWmt2NjY2Y0l6L2pSazBVc0dL?=
+ =?utf-8?B?US9yS3QvMUt0SWZxcU90WmdCTWI4NCszNytialp1WEtIMnpBb3dJZXJyUWRm?=
+ =?utf-8?B?bmxjV0Z4NGJxK0Npb2hpQzBKa0RlM2IxdWQ0eW1BdWU0MHRBdDIzRWVxc3Fp?=
+ =?utf-8?B?SEdSTXJBUlp2dXdvM1FGOXV2cDRuWk1Yajd0N0ZQanlLUkZpNlR0M2R2T081?=
+ =?utf-8?B?TUxVQ3ZYUmVwUlNTd2pvVk1DMW9qZjg2T2NHaUZjUUlSYkkxSkpkOTR6MUQy?=
+ =?utf-8?B?YU9aVUM0YzB2UWNWM1FOK0grQ1BNOUpGTlcvd0Y4Ymk1NmxtY3BveDNWZy9Q?=
+ =?utf-8?B?YU0zZSt2ekMzdVVhUGpaUGxPWFVjTTczNXBEN1NJcytlN2pNQmZTNW14M0Jt?=
+ =?utf-8?B?aWFmc1NsdlVlVWJNaWJQek5WYzFudDlDYTFtSGxIUmQya0ZXL2Rxb2dVeWs2?=
+ =?utf-8?B?S1dtWTdpVFZPQmRRZXVQc3Q1VFpaL1p3U016eXljbys5KzkwbmNkMDhBSEVX?=
+ =?utf-8?B?djhaQ2NmUzJVSjB4UDlhcWYrM3kreUltZ1c5cGNRT3d0Zm9TSDBkSzFhYkpR?=
+ =?utf-8?B?MnNaU3d0bTFWcFJadi9OZjE3Z2ZDOHo5cTZtc05wQlFndTJ4MHBqV3lZYURu?=
+ =?utf-8?B?YWE3L0VlTlcycFpCQlVOT09tdVppY1NFQUQ0VWtNaDNKaVQzejM2T1ZubmM5?=
+ =?utf-8?B?MmYrZXRrQzY1SS8vaTZQQVpsb0ppY09KNDlDL2J5MU0yVzJWc3ZXQndzSGU0?=
+ =?utf-8?B?L0tFR3FaT2hDQjQ0R3kxbjR5RS9pUG1Wd0gya3RlQzJFT202YkxKMXI2OSt1?=
+ =?utf-8?B?UmpqWUFZWDZtdUJoVHAvNWpER1hvUnNCMjNRR3RBMXVOMVJMdVhURStvWUp4?=
+ =?utf-8?B?YVRJUmpaM2Z1NzNOd2tUZFcxNThvTmNjV0lsVmZQVXpNNkdJUDdVQXF2T0gr?=
+ =?utf-8?B?WkxwZ2p2ak43VC8rSW9CVUJMNGVNSDNaWHpubnRMOGIycDhaT3grVTJJTk9u?=
+ =?utf-8?B?aEVzd0RoTU9FeTNrSTJ1Rjh4TFJaNWVyenRKc1hnY3FlbkR2R05oemJHU1M4?=
+ =?utf-8?B?NzI3ZE9USWZ0aE4zM1djbnNHV0EwWFVzUERnRW9yeUs5bGt4VTVkY3AzWnJ2?=
+ =?utf-8?B?bUUvUnRGRVNCQnNnMFNBWEZlQUU1N3QzbDh1NUxPT2w1VFVjclJ0MW5EMEJh?=
+ =?utf-8?B?YXB4RTkyOENueG9HKzIvZ1lWUmVXVG5rczlKUHFIVDVjd2tIUEx3NzJQWS9Q?=
+ =?utf-8?B?ZExDdFhoZXFRM1FJWlUzdmR0V2pwcWFzRjhscHg1RkRQUnZOaHJ1enBmbFl4?=
+ =?utf-8?B?dGNzYmx3cmZtUUtPRjBUOHc1OUlsTGRaNUZTdGc2OVY4ZlFRUktmWHUrSHM2?=
+ =?utf-8?B?ZUJDOEFwN3FOSk53R3FwYnhLN1hjdlRFR2dsU2NNbVV5bitXajBYdzNyUlNz?=
+ =?utf-8?B?R1orSHZEQzRZUzlvamJIbkZTdlV5RWdkR3hnVEd4bzAzdUpENFlrelZUcjND?=
+ =?utf-8?B?cDJYWTltYnZzcU1ZcTloU25QU1RpS2ZwbVd5NWNyeUY5Qnpvb1QzLzlGbUZz?=
+ =?utf-8?B?WEx2Y0pFRjF3bkpyU0lzTFA4SUZBR3ovajlYRlhtc2hJL1VOa00zMTZoN3ZC?=
+ =?utf-8?B?TEZGc1piTFNEVi9EWndxUmcva1FQMEErVnN3VWliejJWZFhjMUw2MDV4VEFT?=
+ =?utf-8?Q?Rltc=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 16:38:08.4282
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 16:37:59.8306
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdd60ba1-09c5-4279-2d01-08de0cd26379
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f8ce742-8507-4f39-1ef9-08de0cd25e59
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	BL02EPF0001A105.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5804
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6936
 
-The MCA threshold limit generally is not something that needs to change
-during runtime. It is common for a system administrator to decide on a
-policy for their managed systems.
+Applied to drm-misc-next
 
-If MCA thresholding is OS-managed, then the threshold limit must be set
-at every boot. However, many systems allow the user to set a value in
-their BIOS. And this is reported through an APEI HEST entry even if
-thresholding is not in FW-First mode.
-
-Use this value, if available, to set the OS-managed threshold limit.
-Users can still override it through sysfs if desired for testing or
-debug.
-
-APEI is parsed after MCE is initialized. So reset the thresholding
-blocks later to pick up the threshold limit.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
----
-
-Notes:
-    Link:
-    https://lore.kernel.org/r/20250908-wip-mca-updates-v6-15-eef5d6c74b9c@amd.com
-    
-    v6->v7:
-    * No change.
-    
-    v5->v6:
-    * No change.
-    
-    v4->v5:
-    * No change.
-    
-    v3->v4:
-    * New in v4.
-
- arch/x86/include/asm/mce.h          |  6 ++++++
- arch/x86/kernel/acpi/apei.c         |  2 ++
- arch/x86/kernel/cpu/mce/amd.c       | 18 ++++++++++++++++--
- arch/x86/kernel/cpu/mce/internal.h  |  2 ++
- arch/x86/kernel/cpu/mce/threshold.c | 13 +++++++++++++
- 5 files changed, 39 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 1482648c8508..9652fc11860d 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -309,6 +309,12 @@ DECLARE_PER_CPU(struct mce, injectm);
- /* Disable CMCI/polling for MCA bank claimed by firmware */
- extern void mce_disable_bank(int bank);
- 
-+#ifdef CONFIG_X86_MCE_THRESHOLD
-+void mce_save_apei_thr_limit(u32 thr_limit);
-+#else
-+static inline void mce_save_apei_thr_limit(u32 thr_limit) { }
-+#endif /* CONFIG_X86_MCE_THRESHOLD */
-+
- /*
-  * Exception handler
-  */
-diff --git a/arch/x86/kernel/acpi/apei.c b/arch/x86/kernel/acpi/apei.c
-index 0916f00a992e..e21419e686eb 100644
---- a/arch/x86/kernel/acpi/apei.c
-+++ b/arch/x86/kernel/acpi/apei.c
-@@ -19,6 +19,8 @@ int arch_apei_enable_cmcff(struct acpi_hest_header *hest_hdr, void *data)
- 	if (!cmc->enabled)
- 		return 0;
- 
-+	mce_save_apei_thr_limit(cmc->notify.error_threshold_value);
-+
- 	/*
- 	 * We expect HEST to provide a list of MC banks that report errors
- 	 * in firmware first mode. Otherwise, return non-zero value to
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 7020c5ad4c74..83fad4503b1c 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -489,6 +489,18 @@ static void threshold_restart_bank(unsigned int bank, bool intr_en)
- 	}
- }
- 
-+/* Try to use the threshold limit reported through APEI. */
-+static u16 get_thr_limit(void)
-+{
-+	u32 thr_limit = mce_get_apei_thr_limit();
-+
-+	/* Fallback to old default if APEI limit is not available. */
-+	if (!thr_limit)
-+		return THRESHOLD_MAX;
-+
-+	return min(thr_limit, THRESHOLD_MAX);
-+}
-+
- static void mce_threshold_block_init(struct threshold_block *b, int offset)
- {
- 	struct thresh_restart tr = {
-@@ -497,7 +509,7 @@ static void mce_threshold_block_init(struct threshold_block *b, int offset)
- 		.lvt_off		= offset,
- 	};
- 
--	b->threshold_limit		= THRESHOLD_MAX;
-+	b->threshold_limit		= get_thr_limit();
- 	threshold_restart_block(&tr);
- };
- 
-@@ -1076,7 +1088,7 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
- 	b->address		= address;
- 	b->interrupt_enable	= 0;
- 	b->interrupt_capable	= lvt_interrupt_supported(bank, high);
--	b->threshold_limit	= THRESHOLD_MAX;
-+	b->threshold_limit	= get_thr_limit();
- 
- 	if (b->interrupt_capable) {
- 		default_attrs[2] = &interrupt_enable.attr;
-@@ -1087,6 +1099,8 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
- 
- 	list_add(&b->miscj, &tb->miscj);
- 
-+	mce_threshold_block_init(b, (high & MASK_LVTOFF_HI) >> 20);
-+
- 	err = kobject_init_and_add(&b->kobj, &threshold_ktype, tb->kobj, get_name(cpu, bank, b));
- 	if (err)
- 		goto out_free;
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
-index 9920ee5fb34c..a31cf984619c 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -67,6 +67,7 @@ void mce_track_storm(struct mce *mce);
- void mce_inherit_storm(unsigned int bank);
- bool mce_get_storm_mode(void);
- void mce_set_storm_mode(bool storm);
-+u32  mce_get_apei_thr_limit(void);
- #else
- static inline void cmci_storm_begin(unsigned int bank) {}
- static inline void cmci_storm_end(unsigned int bank) {}
-@@ -74,6 +75,7 @@ static inline void mce_track_storm(struct mce *mce) {}
- static inline void mce_inherit_storm(unsigned int bank) {}
- static inline bool mce_get_storm_mode(void) { return false; }
- static inline void mce_set_storm_mode(bool storm) {}
-+static inline u32  mce_get_apei_thr_limit(void) { return 0; }
- #endif
- 
- /*
-diff --git a/arch/x86/kernel/cpu/mce/threshold.c b/arch/x86/kernel/cpu/mce/threshold.c
-index 22930a8fcf9e..ae27911de26d 100644
---- a/arch/x86/kernel/cpu/mce/threshold.c
-+++ b/arch/x86/kernel/cpu/mce/threshold.c
-@@ -13,6 +13,19 @@
- 
- #include "internal.h"
- 
-+static u32 mce_apei_thr_limit;
-+
-+void mce_save_apei_thr_limit(u32 thr_limit)
-+{
-+	mce_apei_thr_limit = thr_limit;
-+	pr_info("HEST: Corrected error threshold limit = %u\n", thr_limit);
-+}
-+
-+u32 mce_get_apei_thr_limit(void)
-+{
-+	return mce_apei_thr_limit;
-+}
-+
- static void default_threshold_interrupt(void)
- {
- 	pr_err("Unexpected threshold interrupt at vector %x\n",
-
--- 
-2.51.0
-
+On 10/15/25 06:42, Mario Limonciello wrote:
+> On 10/14/25 6:41 PM, Lizhi Hou wrote:
+>> Add new parameter DRM_AMDXDNA_HW_LAST_ASYNC_ERR to get array IOCTL. When
+>> hardware reports an error, the driver save the error information and
+>> timestamp. This new get array parameter retrieves the last error.
+>>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>
+>> ---
+>>   drivers/accel/amdxdna/aie2_error.c      | 95 ++++++++++++++++++++-----
+>>   drivers/accel/amdxdna/aie2_pci.c        |  3 +
+>>   drivers/accel/amdxdna/aie2_pci.h        |  5 +-
+>>   drivers/accel/amdxdna/amdxdna_error.h   | 59 +++++++++++++++
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.c |  3 +-
+>>   include/uapi/drm/amdxdna_accel.h        | 13 ++++
+>>   6 files changed, 159 insertions(+), 19 deletions(-)
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_error.h
+>>
+>> diff --git a/drivers/accel/amdxdna/aie2_error.c 
+>> b/drivers/accel/amdxdna/aie2_error.c
+>> index 5ee905632a39..d452008ec4f4 100644
+>> --- a/drivers/accel/amdxdna/aie2_error.c
+>> +++ b/drivers/accel/amdxdna/aie2_error.c
+>> @@ -13,6 +13,7 @@
+>>     #include "aie2_msg_priv.h"
+>>   #include "aie2_pci.h"
+>> +#include "amdxdna_error.h"
+>>   #include "amdxdna_mailbox.h"
+>>   #include "amdxdna_pci_drv.h"
+>>   @@ -46,6 +47,7 @@ enum aie_module_type {
+>>       AIE_MEM_MOD = 0,
+>>       AIE_CORE_MOD,
+>>       AIE_PL_MOD,
+>> +    AIE_UNKNOWN_MOD,
+>>   };
+>>     enum aie_error_category {
+>> @@ -143,6 +145,31 @@ static const struct aie_event_category 
+>> aie_ml_shim_tile_event_cat[] = {
+>>       EVENT_CATEGORY(74U, AIE_ERROR_LOCK),
+>>   };
+>>   +static const enum amdxdna_error_num aie_cat_err_num_map[] = {
+>> +    [AIE_ERROR_SATURATION] = AMDXDNA_ERROR_NUM_AIE_SATURATION,
+>> +    [AIE_ERROR_FP] = AMDXDNA_ERROR_NUM_AIE_FP,
+>> +    [AIE_ERROR_STREAM] = AMDXDNA_ERROR_NUM_AIE_STREAM,
+>> +    [AIE_ERROR_ACCESS] = AMDXDNA_ERROR_NUM_AIE_ACCESS,
+>> +    [AIE_ERROR_BUS] = AMDXDNA_ERROR_NUM_AIE_BUS,
+>> +    [AIE_ERROR_INSTRUCTION] = AMDXDNA_ERROR_NUM_AIE_INSTRUCTION,
+>> +    [AIE_ERROR_ECC] = AMDXDNA_ERROR_NUM_AIE_ECC,
+>> +    [AIE_ERROR_LOCK] = AMDXDNA_ERROR_NUM_AIE_LOCK,
+>> +    [AIE_ERROR_DMA] = AMDXDNA_ERROR_NUM_AIE_DMA,
+>> +    [AIE_ERROR_MEM_PARITY] = AMDXDNA_ERROR_NUM_AIE_MEM_PARITY,
+>> +    [AIE_ERROR_UNKNOWN] = AMDXDNA_ERROR_NUM_UNKNOWN,
+>> +};
+>> +
+>> +static_assert(ARRAY_SIZE(aie_cat_err_num_map) == AIE_ERROR_UNKNOWN + 
+>> 1);
+>> +
+>> +static const enum amdxdna_error_module aie_err_mod_map[] = {
+>> +    [AIE_MEM_MOD] = AMDXDNA_ERROR_MODULE_AIE_MEMORY,
+>> +    [AIE_CORE_MOD] = AMDXDNA_ERROR_MODULE_AIE_CORE,
+>> +    [AIE_PL_MOD] = AMDXDNA_ERROR_MODULE_AIE_PL,
+>> +    [AIE_UNKNOWN_MOD] = AMDXDNA_ERROR_MODULE_UNKNOWN,
+>> +};
+>> +
+>> +static_assert(ARRAY_SIZE(aie_err_mod_map) == AIE_UNKNOWN_MOD + 1);
+>> +
+>>   static enum aie_error_category
+>>   aie_get_error_category(u8 row, u8 event_id, enum aie_module_type 
+>> mod_type)
+>>   {
+>> @@ -176,12 +203,40 @@ aie_get_error_category(u8 row, u8 event_id, 
+>> enum aie_module_type mod_type)
+>>           if (event_id != lut[i].event_id)
+>>               continue;
+>>   +        if (lut[i].category > AIE_ERROR_UNKNOWN)
+>> +            return AIE_ERROR_UNKNOWN;
+>> +
+>>           return lut[i].category;
+>>       }
+>>         return AIE_ERROR_UNKNOWN;
+>>   }
+>>   +static void aie2_update_last_async_error(struct amdxdna_dev_hdl 
+>> *ndev, void *err_info, u32 num_err)
+>> +{
+>> +    struct aie_error *errs = err_info;
+>> +    enum amdxdna_error_module err_mod;
+>> +    enum aie_error_category aie_err;
+>> +    enum amdxdna_error_num err_num;
+>> +    struct aie_error *last_err;
+>> +
+>> +    last_err = &errs[num_err - 1];
+>> +    if (last_err->mod_type >= AIE_UNKNOWN_MOD) {
+>> +        err_num = aie_cat_err_num_map[AIE_ERROR_UNKNOWN];
+>> +        err_mod = aie_err_mod_map[AIE_UNKNOWN_MOD];
+>> +    } else {
+>> +        aie_err = aie_get_error_category(last_err->row,
+>> +                         last_err->event_id,
+>> +                         last_err->mod_type);
+>> +        err_num = aie_cat_err_num_map[aie_err];
+>> +        err_mod = aie_err_mod_map[last_err->mod_type];
+>> +    }
+>> +
+>> +    ndev->last_async_err.err_code = AMDXDNA_ERROR_ENCODE(err_num, 
+>> err_mod);
+>> +    ndev->last_async_err.ts_us = ktime_to_us(ktime_get_real());
+>> +    ndev->last_async_err.ex_err_code = 
+>> AMDXDNA_EXTRA_ERR_ENCODE(last_err->row, last_err->col);
+>> +}
+>> +
+>>   static u32 aie2_error_backtrack(struct amdxdna_dev_hdl *ndev, void 
+>> *err_info, u32 num_err)
+>>   {
+>>       struct aie_error *errs = err_info;
+>> @@ -264,29 +319,14 @@ static void aie2_error_worker(struct 
+>> work_struct *err_work)
+>>       }
+>>         mutex_lock(&xdna->dev_lock);
+>> +    aie2_update_last_async_error(e->ndev, info->payload, 
+>> info->err_cnt);
+>> +
+>>       /* Re-sent this event to firmware */
+>>       if (aie2_error_event_send(e))
+>>           XDNA_WARN(xdna, "Unable to register async event");
+>>       mutex_unlock(&xdna->dev_lock);
+>>   }
+>>   -int aie2_error_async_events_send(struct amdxdna_dev_hdl *ndev)
+>> -{
+>> -    struct amdxdna_dev *xdna = ndev->xdna;
+>> -    struct async_event *e;
+>> -    int i, ret;
+>> -
+>> -    drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>> -    for (i = 0; i < ndev->async_events->event_cnt; i++) {
+>> -        e = &ndev->async_events->event[i];
+>> -        ret = aie2_error_event_send(e);
+>> -        if (ret)
+>> -            return ret;
+>> -    }
+>> -
+>> -    return 0;
+>> -}
+>> -
+>>   void aie2_error_async_events_free(struct amdxdna_dev_hdl *ndev)
+>>   {
+>>       struct amdxdna_dev *xdna = ndev->xdna;
+>> @@ -341,6 +381,10 @@ int aie2_error_async_events_alloc(struct 
+>> amdxdna_dev_hdl *ndev)
+>>           e->size = ASYNC_BUF_SIZE;
+>>           e->resp.status = MAX_AIE2_STATUS_CODE;
+>>           INIT_WORK(&e->work, aie2_error_worker);
+>> +
+>> +        ret = aie2_error_event_send(e);
+>> +        if (ret)
+>> +            goto free_wq;
+>>       }
+>>         ndev->async_events = events;
+>> @@ -349,6 +393,8 @@ int aie2_error_async_events_alloc(struct 
+>> amdxdna_dev_hdl *ndev)
+>>            events->event_cnt, events->size);
+>>       return 0;
+>>   +free_wq:
+>> +    destroy_workqueue(events->wq);
+>>   free_buf:
+>>       dma_free_noncoherent(xdna->ddev.dev, events->size, events->buf,
+>>                    events->addr, DMA_FROM_DEVICE);
+>> @@ -356,3 +402,18 @@ int aie2_error_async_events_alloc(struct 
+>> amdxdna_dev_hdl *ndev)
+>>       kfree(events);
+>>       return ret;
+>>   }
+>> +
+>> +int aie2_get_array_async_error(struct amdxdna_dev_hdl *ndev, struct 
+>> amdxdna_drm_get_array *args)
+>> +{
+>> +    struct amdxdna_dev *xdna = ndev->xdna;
+>> +
+>> +    drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>> +
+>> +    args->num_element = 1;
+>> +    args->element_size = sizeof(ndev->last_async_err);
+>> +    if (copy_to_user(u64_to_user_ptr(args->buffer),
+>> +             &ndev->last_async_err, args->element_size))
+>> +        return -EFAULT;
+>> +
+>> +    return 0;
+>> +}
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.c 
+>> b/drivers/accel/amdxdna/aie2_pci.c
+>> index 8a66f276100e..cfca4e456b61 100644
+>> --- a/drivers/accel/amdxdna/aie2_pci.c
+>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>> @@ -924,6 +924,9 @@ static int aie2_get_array(struct amdxdna_client 
+>> *client,
+>>       case DRM_AMDXDNA_HW_CONTEXT_ALL:
+>>           ret = aie2_query_ctx_status_array(client, args);
+>>           break;
+>> +    case DRM_AMDXDNA_HW_LAST_ASYNC_ERR:
+>> +        ret = aie2_get_array_async_error(xdna->dev_handle, args);
+>> +        break;
+>>       default:
+>>           XDNA_ERR(xdna, "Not supported request parameter %u", 
+>> args->param);
+>>           ret = -EOPNOTSUPP;
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.h 
+>> b/drivers/accel/amdxdna/aie2_pci.h
+>> index 289a23ecd5f1..34bc35479f42 100644
+>> --- a/drivers/accel/amdxdna/aie2_pci.h
+>> +++ b/drivers/accel/amdxdna/aie2_pci.h
+>> @@ -190,6 +190,8 @@ struct amdxdna_dev_hdl {
+>>         enum aie2_dev_status        dev_status;
+>>       u32                hwctx_num;
+>> +
+>> +    struct amdxdna_async_error    last_async_err;
+>>   };
+>>     #define DEFINE_BAR_OFFSET(reg_name, bar, reg_addr) \
+>> @@ -253,8 +255,9 @@ void aie2_psp_stop(struct psp_device *psp);
+>>   /* aie2_error.c */
+>>   int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev);
+>>   void aie2_error_async_events_free(struct amdxdna_dev_hdl *ndev);
+>> -int aie2_error_async_events_send(struct amdxdna_dev_hdl *ndev);
+>>   int aie2_error_async_msg_thread(void *data);
+>> +int aie2_get_array_async_error(struct amdxdna_dev_hdl *ndev,
+>> +                   struct amdxdna_drm_get_array *args);
+>>     /* aie2_message.c */
+>>   int aie2_suspend_fw(struct amdxdna_dev_hdl *ndev);
+>> diff --git a/drivers/accel/amdxdna/amdxdna_error.h 
+>> b/drivers/accel/amdxdna/amdxdna_error.h
+>> new file mode 100644
+>> index 000000000000..c51de86ec12b
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/amdxdna_error.h
+>> @@ -0,0 +1,59 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#ifndef _AMDXDNA_ERROR_H_
+>> +#define _AMDXDNA_ERROR_H_
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/bits.h>
+>> +
+>> +#define AMDXDNA_ERR_DRV_AIE        4
+>> +#define AMDXDNA_ERR_SEV_CRITICAL    3
+>> +#define AMDXDNA_ERR_CLASS_AIE        2
+>> +
+>> +#define AMDXDNA_ERR_NUM_MASK        GENMASK_U64(15, 0)
+>> +#define AMDXDNA_ERR_DRV_MASK        GENMASK_U64(23, 16)
+>> +#define AMDXDNA_ERR_SEV_MASK        GENMASK_U64(31, 24)
+>> +#define AMDXDNA_ERR_MOD_MASK        GENMASK_U64(39, 32)
+>> +#define AMDXDNA_ERR_CLASS_MASK        GENMASK_U64(47, 40)
+>> +
+>> +enum amdxdna_error_num {
+>> +    AMDXDNA_ERROR_NUM_AIE_SATURATION = 3,
+>> +    AMDXDNA_ERROR_NUM_AIE_FP,
+>> +    AMDXDNA_ERROR_NUM_AIE_STREAM,
+>> +    AMDXDNA_ERROR_NUM_AIE_ACCESS,
+>> +    AMDXDNA_ERROR_NUM_AIE_BUS,
+>> +    AMDXDNA_ERROR_NUM_AIE_INSTRUCTION,
+>> +    AMDXDNA_ERROR_NUM_AIE_ECC,
+>> +    AMDXDNA_ERROR_NUM_AIE_LOCK,
+>> +    AMDXDNA_ERROR_NUM_AIE_DMA,
+>> +    AMDXDNA_ERROR_NUM_AIE_MEM_PARITY,
+>> +    AMDXDNA_ERROR_NUM_UNKNOWN = 15,
+>> +};
+>> +
+>> +enum amdxdna_error_module {
+>> +    AMDXDNA_ERROR_MODULE_AIE_CORE = 3,
+>> +    AMDXDNA_ERROR_MODULE_AIE_MEMORY,
+>> +    AMDXDNA_ERROR_MODULE_AIE_SHIM,
+>> +    AMDXDNA_ERROR_MODULE_AIE_NOC,
+>> +    AMDXDNA_ERROR_MODULE_AIE_PL,
+>> +    AMDXDNA_ERROR_MODULE_UNKNOWN = 8,
+>> +};
+>> +
+>> +#define AMDXDNA_ERROR_ENCODE(err_num, err_mod)                \
+>> +    (FIELD_PREP(AMDXDNA_ERR_NUM_MASK, err_num) |            \
+>> +     FIELD_PREP_CONST(AMDXDNA_ERR_DRV_MASK, AMDXDNA_ERR_DRV_AIE) |    \
+>> +     FIELD_PREP_CONST(AMDXDNA_ERR_SEV_MASK, 
+>> AMDXDNA_ERR_SEV_CRITICAL) | \
+>> +     FIELD_PREP(AMDXDNA_ERR_MOD_MASK, err_mod) |            \
+>> +     FIELD_PREP_CONST(AMDXDNA_ERR_CLASS_MASK, AMDXDNA_ERR_CLASS_AIE))
+>> +
+>> +#define AMDXDNA_EXTRA_ERR_COL_MASK    GENMASK_U64(7, 0)
+>> +#define AMDXDNA_EXTRA_ERR_ROW_MASK    GENMASK_U64(15, 8)
+>> +
+>> +#define AMDXDNA_EXTRA_ERR_ENCODE(row, col)                \
+>> +    (FIELD_PREP(AMDXDNA_EXTRA_ERR_COL_MASK, col) |            \
+>> +     FIELD_PREP(AMDXDNA_EXTRA_ERR_ROW_MASK, row))
+>> +
+>> +#endif /* _AMDXDNA_ERROR_H_ */
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c 
+>> b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> index aa04452310e5..696fdac8ad3c 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> @@ -27,9 +27,10 @@ MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
+>>   /*
+>>    * 0.0: Initial version
+>>    * 0.1: Support getting all hardware contexts by 
+>> DRM_IOCTL_AMDXDNA_GET_ARRAY
+>> + * 0.2: Support getting last error hardware error
+>>    */
+>>   #define AMDXDNA_DRIVER_MAJOR        0
+>> -#define AMDXDNA_DRIVER_MINOR        1
+>> +#define AMDXDNA_DRIVER_MINOR        2
+>>     /*
+>>    * Bind the driver base on (vendor_id, device_id) pair and later 
+>> use the
+>> diff --git a/include/uapi/drm/amdxdna_accel.h 
+>> b/include/uapi/drm/amdxdna_accel.h
+>> index a1fb9785db77..c7eec9ceb2ae 100644
+>> --- a/include/uapi/drm/amdxdna_accel.h
+>> +++ b/include/uapi/drm/amdxdna_accel.h
+>> @@ -523,7 +523,20 @@ struct amdxdna_drm_hwctx_entry {
+>>       __u32 pad;
+>>   };
+>>   +/**
+>> + * struct amdxdna_async_error - XDNA async error structure
+>> + */
+>> +struct amdxdna_async_error {
+>> +    /** @err_code: Error code. */
+>> +    __u64 err_code;
+>> +    /** @ts_us: Timestamp. */
+>> +    __u64 ts_us;
+>> +    /** @ex_err_code: Extra error code */
+>> +    __u64 ex_err_code;
+>> +};
+>> +
+>>   #define DRM_AMDXDNA_HW_CONTEXT_ALL    0
+>> +#define DRM_AMDXDNA_HW_LAST_ASYNC_ERR    2
+>>     /**
+>>    * struct amdxdna_drm_get_array - Get information array.
+>
 
