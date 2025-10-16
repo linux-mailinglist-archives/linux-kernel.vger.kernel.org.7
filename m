@@ -1,172 +1,128 @@
-Return-Path: <linux-kernel+bounces-856713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F5CBE4DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:34:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA1DBE4DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0C794F8805
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:33:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DBAA562D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB3834F46D;
-	Thu, 16 Oct 2025 17:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C98350D44;
+	Thu, 16 Oct 2025 17:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l41+waih"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biocjUso"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559303431F2
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8713934F470;
+	Thu, 16 Oct 2025 17:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760635831; cv=none; b=c0vzA+s+vavLmSSUYfDrTqH+jPathNk8/dlONE0VhgMEEx0pgmG8bgVqmLC1OIwvMJlPizYNwOMC5FhyIHzqOU+b8/LMMoudmdVy2e2kxicTBqXnPPJKToUiuXeNH5UT7Zoo/MEXGTlnMBZnAavH5kqoJWpmThVIKBL7Hrc//u8=
+	t=1760635832; cv=none; b=sQRnoWM25tsrmRhHjTTcDVgtdA2ApyVfogAWM3w4jczi9nm0XWoweTSZTaXjSpmm3nQ0qguJdHLGXOURCoYr0mRvLdnTCeEKixjLxZs77g7QI7SBBhZcWVZVOf5zF6rsmuaulJXpiqqybx2ayuMkVA0dBK9bHqPEK1gVwASTaGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760635831; c=relaxed/simple;
-	bh=u73IkWxovHfIqFa1WeugdviVlKOG53gOaetPwlyyztU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NRTiprH/FG2xjxlfhcmvQ3gqnFUM+8W0xhu2zfxzy8Z9zN3tFo64E6AceYuL0Bt2auzWGkTkcjXDUzRokrrHg/8K6hPBm5+sOUEkwoxUr6Htee80ZgpsYpXntq6BG6v4JDQko48ONgpgsRuLox8MHRhNQFyWKgWWBrznBs/uphU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l41+waih; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b6097ca315bso1569184a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760635829; x=1761240629; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVBqs1fBWLjUqhKekNBXs2j0fRJmcNGrbmsvLjXeKrQ=;
-        b=l41+waihuLTGtQNanwUNjhCuRxkZ3+g4RHJUpXsuNF66JXDSDFLirRAffRqPLKh+8n
-         undGXyArwk7vBbUulc9lUPCFIjqedupCtRNwtY4kFF+AScEWT4wYWc56Dh8CiA23P5Wl
-         rK+yNE/zrFx4lpAbLZaRjAbostWFNoaTTyphDGopvTe0G+a0ppjKOC6FE6XID50SJkOk
-         nS7+GicXjfA9TraLlg0zgh+plotiBHZqcL3wGallJCFfBshgqBNyLXY1y7Ne4gd47pz8
-         cwX5TWZe9oScoxZcVXOPPqtdOuTrMp09yaHcJKC/aJVuQlFMQ9na7izAYaTJTveg8yTQ
-         xAGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760635829; x=1761240629;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hVBqs1fBWLjUqhKekNBXs2j0fRJmcNGrbmsvLjXeKrQ=;
-        b=OZ9Etam5aWDB0v2I8h8WJsswUdQIIRaCmlV+cGPtZdLcERy4MRA3MkDaO1783Kkmnz
-         MfskMh7ymBq/X8zovtmglioMRI2yADad6cWEVb9wSvieqEc9N9HFJGtdJj/Gim463O3n
-         9bZE7va5oEpl2lxXCm1xHnxenwRvPjtBjCZDCbm9KFj4cinAiqG4y7jy6EKjZYO4mWsv
-         OgX+ZAq1GVU63HUKRVVhkweeGcqMBag0vm/1A5UQvIhk/bHfS09epv4q5+w9ByS2HE4U
-         KGnL7O3rstYA4z4YBAJPOJwjZt0w/h+oOFyEVpiGw7l3Y4q2mR8VlYolhdTki8DQu3QC
-         5AXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpDvGsYfZrrRYEGdvxYl/cttdUfMNOCkwqpJFVzGet7pYZ7SU6DSWz3DO6qzjtnIyISzud0VKEZh668pw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX3uwtHehSUXJdBNjQhuXh7W6o3L3bOcFL/yCvu4LSsAf0IUNQ
-	bI23n6YB0JmsQ5boKKL6okiN28nvegpKtey/eq1cNYsQG6TUDIqyCcFlxNYj7hZbZEbMJWzq2Zh
-	GIAD0tg==
-X-Google-Smtp-Source: AGHT+IGe2t05unDim4uDryBf0T+QferPUXjPaV2LK4Nd4NgexnAWeTiux+wqiz6ZgBu9e+7IBbrnySiYCWM=
-X-Received: from pja6.prod.google.com ([2002:a17:90b:5486:b0:33b:51fe:1a79])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2590:b0:2e0:9b1a:640a
- with SMTP id adf61e73a8af0-334a8485506mr977560637.3.1760635829602; Thu, 16
- Oct 2025 10:30:29 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 16 Oct 2025 10:28:53 -0700
-In-Reply-To: <20251016172853.52451-1-seanjc@google.com>
+	s=arc-20240116; t=1760635832; c=relaxed/simple;
+	bh=O1PeDs+ueaf6tTqY3uTzigyg4af7TbN5NLCGU6ditm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrCJZ3rHaEQVoO3OBA5RSr4MMyk+4m/lriYrIVt0SxHtCRBIl22EsV7FghyhqlRBGF+4IggTSje1tuzxSA3rp0aJtiRrJXUpi8/N44+jpeJEO9a8/Q8G5cqE6rRWhtZRuwA/uf+b+HDsZSaHYbp9KTcqN95WtRsD06/fwLRGfHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biocjUso; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A100FC4CEFE;
+	Thu, 16 Oct 2025 17:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760635832;
+	bh=O1PeDs+ueaf6tTqY3uTzigyg4af7TbN5NLCGU6ditm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=biocjUsoQunlT8LPzGwXoaMftmMLyNtQUGK0upt4nFv+6zS5o/8KHL/QlKhW7RNT2
+	 lMMpYFTZJJFVzKc3ct/vaGiAtKMfUGXWP5RVolXqJafCGbcmeeI1xHQuv9tFduCxpK
+	 lI9LD2YQdSwYy7rZ62XcwPFSfYGqakBf64Q5+oVvFkR68zODKNu1Z//HuEJe8YiPqF
+	 aLEhCGh6/z7jqnre8xvXnUaWEdvV9OX9JwdlqPIcQI2jKnMFCg27Ar2PT4IC+bexEQ
+	 C+WbCmS1vDnv6k1Yrt9Lvf240+FMRYUZ1PzmG10etWJrf6es0p9lot8KZHSvVd7vrO
+	 V5AtGDnq1aN3A==
+Date: Thu, 16 Oct 2025 20:30:24 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
+	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
+	rdunlap@infradead.org, tj@kernel.org
+Subject: Re: [PATCH v5 6/7] liveupdate: kho: move to kernel/liveupdate
+Message-ID: <aPErsBFxgxJ5VntU@kernel.org>
+References: <20251007033100.836886-1-pasha.tatashin@soleen.com>
+ <20251007033100.836886-7-pasha.tatashin@soleen.com>
+ <aO9WvF_WMkKKqYo5@kernel.org>
+ <CA+CK2bBC57v_CYdpT-Jcu4LX4MxZZ5CyAJBVTZVXdMnCXR-AmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016172853.52451-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251016172853.52451-13-seanjc@google.com>
-Subject: [PATCH v13 12/12] KVM: guest_memfd: Add gmem_inode.flags field
- instead of using i_private
-From: Sean Christopherson <seanjc@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ackerley Tng <ackerleytng@google.com>, Shivank Garg <shivankg@amd.com>, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bBC57v_CYdpT-Jcu4LX4MxZZ5CyAJBVTZVXdMnCXR-AmA@mail.gmail.com>
 
-Track a guest_memfd instance's flags in gmem_inode instead of burying them
-in i_private.  Burning an extra 8 bytes per inode is well worth the added
-clarity provided by explicit tracking.
+On Wed, Oct 15, 2025 at 07:50:59AM -0400, Pasha Tatashin wrote:
+> On Wed, Oct 15, 2025 at 4:09 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Tue, Oct 07, 2025 at 03:30:59AM +0000, Pasha Tatashin wrote:
+> > > Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
+> > > core kernel related files to the same place.
+> > >
+> > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> >
+> > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> 
+> Thank you.
+> 
+> >
+> > One comment below.
+> >
+> > > ---
+> > >  Documentation/core-api/kho/concepts.rst       |  2 +-
+> > >  MAINTAINERS                                   |  2 +-
+> > >  init/Kconfig                                  |  2 ++
+> > >  kernel/Kconfig.kexec                          | 25 ----------------
+> > >  kernel/Makefile                               |  3 +-
+> > >  kernel/liveupdate/Kconfig                     | 30 +++++++++++++++++++
+> > >  kernel/liveupdate/Makefile                    |  4 +++
+> > >  kernel/{ => liveupdate}/kexec_handover.c      |  6 ++--
+> > >  .../{ => liveupdate}/kexec_handover_debug.c   |  0
+> > >  .../kexec_handover_internal.h                 |  0
+> > >  10 files changed, 42 insertions(+), 32 deletions(-)
+> > >  create mode 100644 kernel/liveupdate/Kconfig
+> > >  create mode 100644 kernel/liveupdate/Makefile
+> > >  rename kernel/{ => liveupdate}/kexec_handover.c (99%)
+> > >  rename kernel/{ => liveupdate}/kexec_handover_debug.c (100%)
+> > >  rename kernel/{ => liveupdate}/kexec_handover_internal.h (100%)
+> > >
+> > > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
+> > > new file mode 100644
+> > > index 000000000000..522b9f74d605
+> > > --- /dev/null
+> > > +++ b/kernel/liveupdate/Kconfig
+> > > @@ -0,0 +1,30 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +
+> > > +menu "Live Update"
+> >
+> > KHO can be used without Live Update, let's make this "Kexec HandOver and
+> > Live Update"
+> 
+> IMO the current menu name is OK, as it is an option presented only to
+> users configuring the kernel, my rational for that thinking is that
+> KHO is an independent module, but it should be enabled as a dependency
+> by other kernel features that require it.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- virt/kvm/guest_memfd.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+I think that we should allow enabling KHO on its own. For example, preserving
+tracing data in reserve_mem usecase does not have a strict dependency on
+KHO and it surely does not drive it. 
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 4463643bd0a2..20f6e7fab58d 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -30,6 +30,8 @@ struct gmem_file {
- struct gmem_inode {
- 	struct shared_policy policy;
- 	struct inode vfs_inode;
-+
-+	u64 flags;
- };
- 
- static __always_inline struct gmem_inode *GMEM_I(struct inode *inode)
-@@ -154,7 +156,7 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
- 
- static enum kvm_gfn_range_filter kvm_gmem_get_invalidate_filter(struct inode *inode)
- {
--	if ((u64)inode->i_private & GUEST_MEMFD_FLAG_INIT_SHARED)
-+	if (GMEM_I(inode)->flags & GUEST_MEMFD_FLAG_INIT_SHARED)
- 		return KVM_FILTER_SHARED;
- 
- 	return KVM_FILTER_PRIVATE;
-@@ -385,9 +387,7 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
- 
- static bool kvm_gmem_supports_mmap(struct inode *inode)
- {
--	const u64 flags = (u64)inode->i_private;
--
--	return flags & GUEST_MEMFD_FLAG_MMAP;
-+	return GMEM_I(inode)->flags & GUEST_MEMFD_FLAG_MMAP;
- }
- 
- static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
-@@ -399,7 +399,7 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
- 	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
- 		return VM_FAULT_SIGBUS;
- 
--	if (!((u64)inode->i_private & GUEST_MEMFD_FLAG_INIT_SHARED))
-+	if (!(GMEM_I(inode)->flags & GUEST_MEMFD_FLAG_INIT_SHARED))
- 		return VM_FAULT_SIGBUS;
- 
- 	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
-@@ -588,7 +588,6 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 		goto err_fops;
- 	}
- 
--	inode->i_private = (void *)(unsigned long)flags;
- 	inode->i_op = &kvm_gmem_iops;
- 	inode->i_mapping->a_ops = &kvm_gmem_aops;
- 	inode->i_mode |= S_IFREG;
-@@ -598,6 +597,8 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	/* Unmovable mappings are supposed to be marked unevictable as well. */
- 	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
- 
-+	GMEM_I(inode)->flags = flags;
-+
- 	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, &kvm_gmem_fops);
- 	if (IS_ERR(file)) {
- 		err = PTR_ERR(file);
-@@ -917,6 +918,8 @@ static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
- 		return NULL;
- 
- 	mpol_shared_policy_init(&gi->policy, NULL);
-+
-+	gi->flags = 0;
- 	return &gi->vfs_inode;
- }
- 
 -- 
-2.51.0.858.gf9c4a03a3a-goog
-
+Sincerely yours,
+Mike.
 
