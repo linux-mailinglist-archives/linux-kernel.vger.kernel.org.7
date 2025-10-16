@@ -1,231 +1,237 @@
-Return-Path: <linux-kernel+bounces-856267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C60BE3B2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:28:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AEDBE3B32
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AA5C3BBF37
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:27:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFF1587CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC72F339B34;
-	Thu, 16 Oct 2025 13:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1053339B33;
+	Thu, 16 Oct 2025 13:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="dtwtN5rx"
-Received: from out28-2.mail.aliyun.com (out28-2.mail.aliyun.com [115.124.28.2])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1RlNsK8r"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013039.outbound.protection.outlook.com [40.93.196.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E931D732;
-	Thu, 16 Oct 2025 13:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760621274; cv=none; b=IJsC+IeXdlWwIrAKfudAY1IvUI+r8sHBqiqHyYmo68rJYM+quMtb5Dr/oYF6jVDrX9oU6ekNVk0u5BuOJFLlrbiNH03oHwXLjAF2RhsAsG+PCCblyItDRF0tY8NVDuYRP9gfQNSkB4StzNilRgasXdCmgU8SZxLtVQpMOjhozd0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760621274; c=relaxed/simple;
-	bh=rURpKKoKpiPCZKoYFk4mxrb1SCBNbL4IUUCyZ7GgzTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VM421gLylqFZdLn+v10c7H4gnmd7+5BRGY1iNmDYsagkD1kwnJEo6DAbRLwcwQEqEMsELMEBzqvAxmiLR9IP3HD1GbDWRYaMcyp3XEDpkEUqjm+EHjTwPhgmxsWtr0TUHSnHjP14ccI/P+a1oTQ4gT+VITjzHucv4nzpKZ4piLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=dtwtN5rx; arc=none smtp.client-ip=115.124.28.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1760621259; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=Wvy+NFSqDgMOqcIBtfcIh0dPe0v9RLra3a++XA6Y7Zs=;
-	b=dtwtN5rx1sMlukBBFDBOg1nYqS9xTSHCv6GJuzl3eMeNxKtGSBnZK32GqtWbh0EFH3JdWpA4k8G6q7wkszY0/hsykBP8VAyKq0trgN+d9odJsbpy8dj/7sxeIn9CwOpUH5oNRuMvP3KHRSFfNUdUc3j3Ydtst/t4MsbPeo/Dn/s=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.f06bvyV_1760621258 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 16 Oct 2025 21:27:38 +0800
-Date: Thu, 16 Oct 2025 21:27:38 +0800
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
- skips WRMSR
-Message-ID: <20251016132738.GB95606@k08j02272.eu95sqa>
-References: <20250919214259.1584273-1-seanjc@google.com>
- <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
- <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com>
- <aNwFTLM3yt6AGAzd@google.com>
- <aNwGjIoNRGZL3_Qr@google.com>
- <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
- <aO_JdH3WhfWr2BKr@google.com>
- <aPCzqQO7LE/cNiMA@yzhao56-desk.sh.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4AA339B53
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760621279; cv=fail; b=uKbIMMFYxmwkUmyuIM8DEoKBtnBOOyg3o1Vg8FVT25o41YKSgX68L8NpMk1xVMVUyD1sgICkjqe83djw5K3ApBYvWoWt3NODGoIqqSsbwhJbEOoxeSNszjJqFKZ/3WLnR+ON1HdzOIRmZmQhI32gZCAGSTC57pBVbN+hh18Eu6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760621279; c=relaxed/simple;
+	bh=BTVPkuj7zFfGXgwvp0V9CkPZndBSBvUy3vs5TZj1Z5s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=U8+a+AQA5JNvwsKaxGO0EuaEHFuFT8qyV2aPFBOCl1vAODCNoqwHhd6GgJPs+BoA/jIM3O4G0VH18yofcbEjThABsSAG3c6Dm8oYefSAtxvMkaDTvAnIVrA2oB1zae2aqmB3jI6XBKJLM5D7/AGp0vWos5/4AFTk8YdpcgaXOpg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1RlNsK8r; arc=fail smtp.client-ip=40.93.196.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W5JAdjDNt3upiyXSFRa3FguW1WEo+FMRcpmSsqMHlcMeJWAFE/S2lVGSEgvr59s5ikE1mnBkNTWyO6MANQnpom7el8Hawve7/5tFMWVlFWE0liQlj9l1n7kFia9Z9DPkczNfDqlqbay9pTNihWt3skWEXP7jsw68xryyFzNaA4H0rP6eU0vo+WQd7noiwl4VbizpNOHGGe8JUW6iCGLEJWVBfLwskS4x2FESAgD8gomhsj6imoo97FgXn+TnStcKk+rXinfDXaEXc2RoH/pB1UboPnH7glL9if8m1r+aDaqwLK3ZWNj5MkRtyR5jXoiCfEM5vhLBSzy7UfXpbFBX7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=si5XXMO6bV8e26qqRIjKFaBPeLYKN/pG0oHvu5ZPhao=;
+ b=J6U/m+4cZfeMWSGGXZBaeuLkNyHmsiiZUtUTSCmQ4DCuxzEoFnOYBoN66p9vd7FCjc4y277ioKhhUtUl4HUEiISEfg44WA0512jnQ0kvuPZ7sSd5Fncqlv/WmAXgPvTFMQyhAIFQ9EjlFwLIfdPTdJkl+3MM2BE6ICBLVF4syP5UL9nrWleVw/p46VGdG32WI30QetTSUyK7r1Vt+RZaoVCCgN0nuUTm26TmMwpqbdN3nh2nnKKdkDZJ6El0rRlw/JdPO/HENesAOXikXpMdyzOHDaGxPYjz2UCIwoB6VmMYf/04CbH7xEnEP2JggWuCuGzqQnsQ33o+fO38dSu+TA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=si5XXMO6bV8e26qqRIjKFaBPeLYKN/pG0oHvu5ZPhao=;
+ b=1RlNsK8rSsCZ7V5zTYa9lCpIBjeoHMuUJxORrf+bf/fcW11OheeVGFGbUYnE40R0+xQRiQR6iq7F9VOeW2PHTbjMhU+mn4r26PizLu3NsnY9zYaX8LwpcR3jeFnv3lPPoI38NjGTiA1lkt7UfUdI9Sk8JtXOA9/tuAIPE7GMCgg=
+Received: from DS0PR12MB9273.namprd12.prod.outlook.com (2603:10b6:8:193::14)
+ by DS4PR12MB9770.namprd12.prod.outlook.com (2603:10b6:8:29d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Thu, 16 Oct
+ 2025 13:27:53 +0000
+Received: from DS0PR12MB9273.namprd12.prod.outlook.com
+ ([fe80::a3be:28f9:394b:74e6]) by DS0PR12MB9273.namprd12.prod.outlook.com
+ ([fe80::a3be:28f9:394b:74e6%3]) with mapi id 15.20.9228.011; Thu, 16 Oct 2025
+ 13:27:53 +0000
+From: "Kaplan, David" <David.Kaplan@amd.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta
+	<pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, Dave
+ Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H .
+ Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>, Boris
+ Ostrovsky <boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 31/56] x86/alternative: Prepend nops with retpolines
+Thread-Topic: [RFC PATCH 31/56] x86/alternative: Prepend nops with retpolines
+Thread-Index: AQHcPo0Ir0Tctlr5bEu+zRmeqpsk+LTEoXuAgAAh1bA=
+Date: Thu, 16 Oct 2025 13:27:53 +0000
+Message-ID:
+ <DS0PR12MB92738D3C38021EE0B693326994E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-32-david.kaplan@amd.com>
+ <20251016110717.GE3289052@noisy.programming.kicks-ass.net>
+ <20251016112327.GQ1386988@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251016112327.GQ1386988@noisy.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-10-16T13:24:32.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR12MB9273:EE_|DS4PR12MB9770:EE_
+x-ms-office365-filtering-correlation-id: bb2fd88e-9ed5-4984-2ae8-08de0cb7cfd4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?2oeZevVSem7TAgMcAYaTPIIwyqK4YsZwrgyKGNQN3sqR/th4CQ3xEsC/yD2u?=
+ =?us-ascii?Q?moCDM4PiQUvtqNrFZlQvDNBcPkvjU8FW/m/7sHIsXi9tt/WcTAiyhB0WtyV+?=
+ =?us-ascii?Q?5uuXDQmR7CwwXOtJf+4GluM9fvdOSF/7koy2PN/LNvWTx/4A3pFiwcZSqj9N?=
+ =?us-ascii?Q?3U7zUWS2RgqYmRg0jkwbXjKzxFtq5VnNqhuyaIFRaSKf4z9iMo5+CMkTSkjb?=
+ =?us-ascii?Q?1bEWLylfaE5EZu+53lRgsZMRtszX5PlQSsvoYJDNf3AdnmDNHehi8chgozId?=
+ =?us-ascii?Q?6ybf0IXm55bYL9YIgAt6HJyIiVwmgDyWj3bG7Hj4CIHTUNOgHapA5k8dHnxW?=
+ =?us-ascii?Q?PqKqZqsT9NuHH1iX3HP1NO19dAviSDLITlV+iAMSLY/P9fyhe0v1Pm+cit85?=
+ =?us-ascii?Q?6D8kjD3Q4CeQ0MOxIl+NF6Rs9INOdqknDfpSz/iXXAN1hRfaBKCKyBu8bq2J?=
+ =?us-ascii?Q?IzuUaxe+ydYgSQVCHGVnlv3xtpqiS2xDItCh84P9fbq7NA7lQYifRzf4ROXU?=
+ =?us-ascii?Q?S/dnCp5TxrHgfaBTOAARKT1G2EqHv9/N26CyfTZWbofKAoGDwkyzHvJ4MD/Y?=
+ =?us-ascii?Q?72ZMtmFGGp+Y1J2lTEwEo7A+4f+asasB27TecD6bzo2ng8zluCQnRrVjpIIK?=
+ =?us-ascii?Q?QyGA0KS5JLA4AO4PeSPg91gwshkLbp7GBJeWXyPr2DIAFXSxWrZ89I1TxtoP?=
+ =?us-ascii?Q?+8BfWAzifJiCAnfaH2JLGAVdS/7q4Chy9uRgcB0RQrYE7RWPk3HZxV1RSQZw?=
+ =?us-ascii?Q?Dy3kgQut8NG21kqknfA7c+uV6+7qDRd0wmOwPkTyoe834RmIa59HYiRiRc5I?=
+ =?us-ascii?Q?PfSC+e4GIH59YeEEo/hvjg0mnJ9IR0MZ4cXQMQIbiEHDVouGohsNelWfJac+?=
+ =?us-ascii?Q?/ReUWh/+iE22ELBXpwcQQ1qk+TmP6Nt+X2RlCnLsvsNTUxODa8/hwSmzksAk?=
+ =?us-ascii?Q?w1r5U7cWm03ITJ2w75WMfvq06uBFiKlG8Up2wjxFmcOK+kCctKefBU8+vwra?=
+ =?us-ascii?Q?JDDfyYpwqQ+V8JKC4zZf9El4a2S9Gzjo3U69UpeweVT78r4HJBPLx+TWUfJy?=
+ =?us-ascii?Q?eK0Btv4HS1SLJw2HGa4NLJngm5iW+l1ZChZXzz9qvpmX6MAKTDcj+V7lRmjF?=
+ =?us-ascii?Q?aJSB1CgjzpLF8q0DiQjMblxgftVeo6AFtly/3veZgAXQ8h/cBsMAqlw/ms6C?=
+ =?us-ascii?Q?HIXhYQGxwtW1jDxUVYTXczVF7nf+pRvlQIj4adfSkZwy2gXAxspo/4hjgX4B?=
+ =?us-ascii?Q?XeU6M1pWvQSfWcCr3z362vMvLcQBq/jsU25/njr0ZJB0foClodldECemVkpr?=
+ =?us-ascii?Q?o/06xjtg6C3um1NABHYw+doLiicigIm5ILxNlTDgKyn+seN1NPo18QuYzq6r?=
+ =?us-ascii?Q?1dLJSf4czjsdin86dVwR4wUKbVTvaFFthBg5SGrRj07xhQo1thB8B71yyvAk?=
+ =?us-ascii?Q?XWuybchSbdtaUINyLA0F20L7ckkr+CgghNKrxcADJBE7/amdSju1oYDr094l?=
+ =?us-ascii?Q?o4e7b5iKPpwIr1vrJml6v5nghR9gOuJ1WzWi?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB9273.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?AArFGDQAhqe7gwKGCNvFy7pgbrTHobNrDAS8Ow+PQkhw7SMXKIasgDhqsYRt?=
+ =?us-ascii?Q?W5vD1vsOYgA7ulJ70fP4Rezh/J5u8tZ/2+oQW6ktsEm3a+HKZS6IsbxNcLUk?=
+ =?us-ascii?Q?7FbYr1FKjngemQYNwz8OxvIEac7TEqckutNcyNz+pePwVb5QbBpJExLJQANQ?=
+ =?us-ascii?Q?LDgN4vu04/39bQUn8ox5ViS+G2DVak2u/D2zQbRi2m+w7d6RS1/xHTob/7mt?=
+ =?us-ascii?Q?8Ga64Ssf4rb2+Ahv/KPl+Rk5ds+iWwR0dDPPD0r9c1vhAUE25pUSOGioP48P?=
+ =?us-ascii?Q?EN7qYUc3k0vxjMN1uXXHAZ+C0zuBp/8QJff1wTIEHv46zzVnTVTvRfLc9/JY?=
+ =?us-ascii?Q?8bJ+Bc48GhoJO3ZJDpkFZAUDxkFok/B23E3ZvoyDJFXte81Xvinc++qUkOVe?=
+ =?us-ascii?Q?6Y0b/VKZChlcE4EkojF6GFImpOMtMDADlbk1e/0Fik2VRKPDfD5Jvtmin30J?=
+ =?us-ascii?Q?v0dXfqzs6wZwqkp3CGNpusoFS3mE32vd26jLz2kRnVmoCNmGD3HUe5oDcJve?=
+ =?us-ascii?Q?tOd6FnH3b2vS/tJRLtH3gNgkgvE0+6iTfvJ6ysgWMQF03xVI72MwypkgPW9S?=
+ =?us-ascii?Q?r2N4iExUNwLeLWyDb2tdofgjl6bi5omDAtgw7LfGaqfF5On1m+JaJR3XbP3R?=
+ =?us-ascii?Q?wY05XjjmsQ12RrnvMfO1yNOOa+amT1iEnwBE/je105fd8cCCcAEA3/id7bYe?=
+ =?us-ascii?Q?g5sZUPNJxKRCLBdh7dVrOv1ADZbxNo7KIJof7g4eE2HaODb5EUkpIDqfSJFX?=
+ =?us-ascii?Q?y3sLpfYmuatcAI/gszZJRHQQrz+6bojBZLrHbNwhryg/Ha8vgidHtvwkZKz9?=
+ =?us-ascii?Q?dOzs5UECYSS98UZYj7RSBoJCN1gKpn0lipu3IDpxRyp5I21YP0eMbBVge24T?=
+ =?us-ascii?Q?AxHLk7ugp8KR+WQdTPMgTB0/kBKfytQpFyVJkUXR1krtq7TAc1Pzn97H5/lR?=
+ =?us-ascii?Q?tH04nNpc85oB1sJvsY91GTfMwyEFHPw4pE7w+V0HrnVDUKXGOFitapskNgoX?=
+ =?us-ascii?Q?yKYB9fxqJj1ceokje2SHwUK7EVlhO+IhXcS0+3/tP96DU9mlFPjO2n0ItKk0?=
+ =?us-ascii?Q?JR8BMi4sLlEdmvYCgIImJVhFTcP4NYlYh9w3VyfC3fKyaiuFjPyT+Yszq8YR?=
+ =?us-ascii?Q?PcNY49TX9c//Vu0A0IveyqNPkl5kCs/VZ+BPDqGbXYEQa+l56QZGXafHRupA?=
+ =?us-ascii?Q?qjzXdy3Af8nVZqu9sxLJUxBPKygPnBMKtWLH83+aipfCgYFnY9jAGEkjkbHk?=
+ =?us-ascii?Q?XClrturqVd+ECs/WSrWhJ+rI2QF4ZRbhMBvawH8J8SJBVX6SzMKKr+sY1INX?=
+ =?us-ascii?Q?8gsBF6GiyxH7JMd8lTL5wbGi4eXE3XLkEvAAXiiSWrsp8E5Bh0dTu3MU+6Jt?=
+ =?us-ascii?Q?a9uvdNxWbDBy1Aj2kVtrV/zm7JHoqWnP6bOVfHq1Mb5u6zCu2JojEsGqAF+s?=
+ =?us-ascii?Q?PSxhvky7bZCBwdzGvNouWOum/k3yf2LMMOuvtJegfon4wzDUA7QavytPIA98?=
+ =?us-ascii?Q?hTWaOhoo+QcyyQ/pbmuFGTlXrelafOPg0aU80zQuKW84aWnbtdiWyAsZadqO?=
+ =?us-ascii?Q?0bpmq5g/5mxQM6mPvIY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPCzqQO7LE/cNiMA@yzhao56-desk.sh.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB9273.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb2fd88e-9ed5-4984-2ae8-08de0cb7cfd4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2025 13:27:53.8038
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hk+/fG6Xb0yu8KgeCdgBrGBDE0qEOWtAjxjxwepKJ0+s4nOXujQAzDC32mmik7k8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9770
 
-On Thu, Oct 16, 2025 at 04:58:17PM +0800, Yan Zhao wrote:
-> On Wed, Oct 15, 2025 at 09:19:00AM -0700, Sean Christopherson wrote:
-> > +Hou, who is trying to clean up the user-return registration code as well:
-> > 
-> > https://lore.kernel.org/all/15fa59ba7f6f849082fb36735e784071539d5ad2.1758002303.git.houwenlong.hwl@antgroup.com
-> > 
-> > On Wed, Oct 15, 2025, Yan Zhao wrote:
-> > > On Tue, Sep 30, 2025 at 09:34:20AM -0700, Sean Christopherson wrote:
-> > > > Ha!  It's technically a bug fix.  Because a forced shutdown will invoke
-> > > > kvm_shutdown() without waiting for tasks to exit, and so the on_each_cpu() calls
-> > > > to kvm_disable_virtualization_cpu() can call kvm_on_user_return() and thus
-> > > > consume a stale values->curr.
-> > > Looks consuming stale values->curr could also happen for normal VMs.
-> > > 
-> > > vmx_prepare_switch_to_guest
-> > >   |->kvm_set_user_return_msr //for all slots that load_into_hardware is true
-> > >        |->1) wrmsrq_safe(kvm_uret_msrs_list[slot], value);
-> > >        |  2) __kvm_set_user_return_msr(slot, value);
-> > >                |->msrs->values[slot].curr = value;
-> > >                |  kvm_user_return_register_notifier
-> > > 
-> > > As vmx_prepare_switch_to_guest() invokes kvm_set_user_return_msr() with local
-> > > irq enabled, there's a window where kvm_shutdown() may call
-> > > kvm_disable_virtualization_cpu() between steps 1) and 2). During this window,
-> > > the hardware contains the shadow guest value while values[slot].curr still holds
-> > > the host value.
-> > > 
-> > > In this scenario, if msrs->registered is true at step 1) (due to updating of a
-> > > previous slot), kvm_disable_virtualization_cpu() could call kvm_on_user_return()
-> > > and find "values->host == values->curr", which would leave the hardware value
-> > > set to the shadow guest value instead of restoring the host value.
-> > > 
-> > > Do you think it's a bug?
-> > > And do we need to fix it by disabling irq in kvm_set_user_return_msr() ? e.g.,
-> > 
-> > Ugh.  It's technically "bug" of sorts, but I really, really don't want to fix it
-> > by disabling IRQs.
-> > 
-> > Back when commit 1650b4ebc99d ("KVM: Disable irq while unregistering user notifier")
-> > disabled IRQs in kvm_on_user_return(), KVM blasted IPIs in the _normal_ flow, when
-> > when the last VM is destroyed (and also when enabling virtualization, which created
-> > its own problems).
-> > 
-> > Now that KVM uses the cpuhp framework to enable/disable virtualization, the normal
-> > case runs in task context, including kvm_suspend() and kvm_resume().  I.e. the only
-> > path that can toggle virtualization via IPI callback is kvm_shutdown().  And on
-> > reboot/shutdown, keeping the hook registered is ok as far as MSR state is concerned,
-> > as the callback will run cleanly and restore host MSRs if the CPU manages to return
-> > to userspace before the system goes down.
-> > 
-> > The only wrinkle is that if kvm.ko module unload manages to race with reboot, then
-> > leaving the notifier registered could lead to use-after-free.  But that's only
-> > possible on --forced reboot/shutdown, because otherwise userspace tasks would be
-> > frozen before kvm_shutdown() is called, i.e. the CPU shouldn't return to userspace
-> > after kvm_shutdown().  Furthermore, on a --forced reboot/shutdown, unregistering
-> > the user-return hook from IRQ context rather pointless, because KVM could immediately
-> > re-register the hook, e.g. if the IRQ arrives before kvm_user_return_register_notifier()
-> > is called.  I.e. the use-after-free isn't fully defended on --forced reboot/shutdown
-> > anyways.
-> > 
-> > Given all of the above, my vote is to eliminate the IRQ disabling crud and simply
-> > leave the user-return notifier registered on a reboot.  Then to defend against
-> > a use-after-free due to kvm.ko unload racing against reboot, simply bump the module
-> > refcount.  Trying to account for a rather absurd case in the normal paths adds a
-> > ton of noise for almost no gain.
-> Thanks for the detailed explanation.
-> 
-> > E.g.
-> > 
-> > ---
-> >  arch/x86/kvm/x86.c | 29 +++++++++++++++++++++--------
-> >  1 file changed, 21 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 4b8138bd4857..f03f3ae836f8 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -582,18 +582,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
-> >  	struct kvm_user_return_msrs *msrs
-> >  		= container_of(urn, struct kvm_user_return_msrs, urn);
-> >  	struct kvm_user_return_msr_values *values;
-> > -	unsigned long flags;
-> >  
-> > -	/*
-> > -	 * Disabling irqs at this point since the following code could be
-> > -	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
-> > -	 */
-> > -	local_irq_save(flags);
-> >  	if (msrs->registered) {
-> >  		msrs->registered = false;
-> >  		user_return_notifier_unregister(urn);
-> >  	}
-> > -	local_irq_restore(flags);
-> > +
-> >  	for (slot = 0; slot < kvm_nr_uret_msrs; ++slot) {
-> >  		values = &msrs->values[slot];
-> >  		if (values->host != values->curr) {
-> > @@ -13079,7 +13073,21 @@ int kvm_arch_enable_virtualization_cpu(void)
-> >  void kvm_arch_disable_virtualization_cpu(void)
-> >  {
-> >  	kvm_x86_call(disable_virtualization_cpu)();
-> > -	drop_user_return_notifiers();
-> > +
-> > +	/*
-> > +	 * Leave the user-return notifiers as-is when disabling virtualization
-> > +	 * for reboot, i.e. when disabling via IPI function call, and instead
-> > +	 * pin kvm.ko (if it's a module) to defend against use-after-free (in
-> > +	 * the *very* unlikely scenario module unload is racing with reboot).
-> > +	 * On a forced reboot, tasks aren't frozen before shutdown, and so KVM
-> > +	 * could be actively modifying user-return MSR state when the IPI to
-> > +	 * disable virtualization arrives.  Handle the extreme edge case here
-> > +	 * instead of trying to account for it in the normal flows.
-> > +	 */
-> > +	if (in_task() || WARN_ON_ONCE(!kvm_rebooting))
-> kvm_offline_cpu() may be invoked when irq is enabled.
-> So does it depend on [1]?
-> 
-> [1] https://lore.kernel.org/kvm/aMirvo9Xly5fVmbY@google.com/
+[AMD Official Use Only - AMD Internal Distribution Only]
+
+> -----Original Message-----
+> From: Peter Zijlstra <peterz@infradead.org>
+> Sent: Thursday, October 16, 2025 6:23 AM
+> To: Kaplan, David <David.Kaplan@amd.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>;=
+ Josh
+> Poimboeuf <jpoimboe@kernel.org>; Pawan Gupta
+> <pawan.kumar.gupta@linux.intel.com>; Ingo Molnar <mingo@redhat.com>; Dave
+> Hansen <dave.hansen@linux.intel.com>; x86@kernel.org; H . Peter Anvin
+> <hpa@zytor.com>; Alexander Graf <graf@amazon.com>; Boris Ostrovsky
+> <boris.ostrovsky@oracle.com>; linux-kernel@vger.kernel.org
+> Subject: Re: [RFC PATCH 31/56] x86/alternative: Prepend nops with retpoli=
+nes
 >
+> Caution: This message originated from an External Source. Use proper caut=
+ion
+> when opening attachments, clicking links, or responding.
+>
+>
+> On Thu, Oct 16, 2025 at 01:07:17PM +0200, Peter Zijlstra wrote:
+> > On Mon, Oct 13, 2025 at 09:34:19AM -0500, David Kaplan wrote:
+> > > When patching retpolines, nops may be required for padding such as wh=
+en
+> > > turning a 5-byte direct call into a 2-byte indirect call.  Previously=
+,
+> > > these were appended at the end so the code becomes "call *reg;nop;nop=
+;nop"
+> > > for example.  This was fine because it's always going from a larger
+> > > instruction to a smaller one.
+> > >
+> > > But this is a problem if the sequence is transformed from a 2-byte in=
+direct
+> > > to the 5-byte direct call version at runtime because when the called
+> > > function returns, it will be in the middle of the 5-byte call instruc=
+tion.
+> > >
+> > > To fix this, prepend the nops instead of appending them.  Consequentl=
+y, the
+> > > return site of the called function is always the same.
+> > >
+> >
+> > So this results in:
+> >
+> > NOP3; call *%r11
+> >
+> > And you're saying a task can be on the other side of that call and then
+> > return lines up. But what if the task is preempted right after that
+> > NOP3?
+> >
+> > Same for all the alternative patching; what ensures no task is currentl=
+y
+> > having a register state that is in the middle of things?
+>
+> Ah, I found it, you freeze everything, which puts it at safe points.
 
-Actually, kvm_offline_cpu() can't be interrupted by kvm_shutdown().
-syscore_shutdown() is always called after
-migrate_to_reboot_cpu(), which internally waits for currently running
-CPU hotplug to complete, as described in [*].
+Yes.  In fact, I think you were the one who pointed me in that direction :)
 
-[*] https://lore.kernel.org/kvm/dd4b8286774df98d58b5048e380b10d4de5836af.camel@intel.com
+Despite the freezer though, this patch is necessary in particular because s=
+top_machine_nmi() uses an indirect branch to run the handler.  Which means =
+that while patching is going on, all cores are inside a function which is g=
+oing to return to after the indirect call site.  And so that needs to be th=
+e end of the 5 (or 6) byte sequence.
 
-
-> > +		drop_user_return_notifiers();
-> > +	else
-> > +		__module_get(THIS_MODULE);
-> Since vm_vm_fops holds ref of module kvm_intel, and drop_user_return_notifiers()
-> is called in kvm_destroy_vm() or kvm_exit():
-> 
-> kvm_destroy_vm/kvm_exit
->   kvm_disable_virtualization
->     kvm_offline_cpu
->       kvm_disable_virtualization_cpu
->         drop_user_return_notifiers
-> 
-> also since fire_user_return_notifiers() executes with irq disabled, is it
-> necessary to pin kvm.ko?
-> 
-> >  }
-> >  
-> >  bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
-> > @@ -14363,6 +14371,11 @@ module_init(kvm_x86_init);
-> >  
-> >  static void __exit kvm_x86_exit(void)
-> >  {
-> > +	int cpu;
-> > +
-> > +	for_each_possible_cpu(cpu)
-> > +		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
-> > +
-> >  	WARN_ON_ONCE(static_branch_unlikely(&kvm_has_noapic_vcpu));
-> >  }
-> >  module_exit(kvm_x86_exit);
-> > 
-> > base-commit: fe57670bfaba66049529fe7a60a926d5f3397589
-> > --
+--David Kaplan
 
