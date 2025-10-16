@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-856599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA93BE4920
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23A0BE4932
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39666508CFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C523B8E53
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746BD329C6B;
-	Thu, 16 Oct 2025 16:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4396C23EAAC;
+	Thu, 16 Oct 2025 16:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDb8Huj+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hKGGdTTG"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC06A23EABA;
-	Thu, 16 Oct 2025 16:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30431C84D0
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631939; cv=none; b=twqaNaIZ8c3Rq2lngbsFWNiOYG3GBGYI8YYP0ijYurHrEQtA4XkPyen+fvj040VdPcbJNfbIx35EPsKErOU6TE8OVMdAdBPM+upmD91bOM4p2i7UjuUk1LkFZrDwkftlM1EoXSE7FzHRP4CCNAllq6KGowPVBNCM+HpUAmax9uU=
+	t=1760632062; cv=none; b=mCCuf4ohTgCy1b5QvI4DBkwtEpMKDraMzJ9FjLA/sSk3wa/MneyVhsyd3C7/DLdqXAlfkywUzED6JTJqYdcE3+CasRfMOrKrLxc0IKTjpL7KO+4+UTFoHNFqDOCCpuiDuXPEZtIOasKQPYJ7K4wRFwYWvJNu2GTeUVF+CNzVR9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631939; c=relaxed/simple;
-	bh=XY16fYS6OOP9xjM5VB6SenXMoSMfGpwGBh+ou4x3omo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DMZAvCBlCKdkvSU6kD8HgrQ7eKFqZI56A2uX3mDUMbTHz3lrzEpPeer29gIfbNioQBPly2vhk8/8FITZDy4HNKIkQFEkw8P2DK5V8MMmV41cddz0v5GSeQ+fvMM0+Ahypx5Z2riz4J2tx+XpQtBBnOySXjcD7vJgEAangnTWREo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDb8Huj+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8154DC4CEF1;
-	Thu, 16 Oct 2025 16:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760631939;
-	bh=XY16fYS6OOP9xjM5VB6SenXMoSMfGpwGBh+ou4x3omo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cDb8Huj+Nb1b74dUMKRfDINKIB0wlM5mMXrFYZP2igHn5sUTdKiC5/pE1ACZRpMRH
-	 z5V92wh/zu4WKGzjMW3UUnWi+5vf/GhgPhpml5tnX947zVb29UCoLwlmtVtB4NW03I
-	 QBktHZKavXf66oJOqsgTSqDmWjAH6XexGOirVAvqMvX+aVUL72B0mzcULIxnOH8q54
-	 3NnISlgr6J6u8WLe2peZxDlTz+ERw8R4DQcW1Tw41Bc/kqGb9X0liYKaDjm7mN4TNk
-	 ySJFh2NlrOX6N/10NkidA+chc8A0zjBvRpWR3kgwO5ZkHLgbfibmL2ZIb3CMLhkD8m
-	 cCnf2UqfeLb8g==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Tomasz Figa <tfiga@chromium.org>, Doug Smythies <dsmythies@telus.net>
-Subject:
- [PATCH v1] cpuidle: governors: menu: Predict longer idle time when in doubt
-Date: Thu, 16 Oct 2025 18:25:35 +0200
-Message-ID: <4687373.LvFx2qVVIh@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1760632062; c=relaxed/simple;
+	bh=8XoOPYcNvWNi5CWD6ZBAUSFQsyBDRp11wyfWgoFIU9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doefwNNtTFLXV1b66+zuuJBUkd5fnxScvfcILUZxcBCa2yx48JdQCGzrDNFiebTCWswzQ1oLqnNwLEEChWIb7HBpG6PN4x5tJxvZlmdTgQDpTy8Eamn5DuIX+onoBBckTqwmFWiO8meXh32+mgqPKuyebu/yRYrf2RNDdS7mpvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hKGGdTTG; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6C97B40E00DE;
+	Thu, 16 Oct 2025 16:27:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Y6ZwUH7X56RG; Thu, 16 Oct 2025 16:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760632055; bh=6jmE4Bz01I78IdGJxMKqA/KtHVOKV/u7EDOmvtbyCkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hKGGdTTG5ZU1xKzvSASvwQGsTVSnLt53z0urIsat3DTcmOEq9Qh6Dx84msL6dMPhP
+	 19NMzhjeHKNCN85Vlao8oKHeazRUvIbye4EIQrHzBEVHIq0XTRoT1BOW8murEDPCTS
+	 I9jV3yY3I1SBgULG7rc1f5zKYOIJnPaONOIST2JB94oKKmC79olKtsmQfq80gWkgNI
+	 VDnClhjHZ5iDt0dD+nmvtVIHbK9SWJvw8Y6Z7jlLOHv1Q5hMZtZVIN3mL/kDYEh4VK
+	 DxEsLjA8HhWYHvrjQ+HJhfIUa8h+OuFmQBllFwVtzXwkhq09rhUxFUhKgz4lFwl/3w
+	 gzlyR0/uFow62/VfZn84WuZ2+EKQiGr/5RPAY1j2Cd9oRUyVmPl9bIgd2PFa8u/b//
+	 hwYNhXA+EWco5qzBF9p9gc1O28DgIQgLFo+0PX6QQJekGcSlFEXE6piGxZKP7Sf5XV
+	 yXgf1K+/MtnomiJyTX524A7O6G4G+kE8JiFRXB1PGbaw80bca/DSi6RDBPG+WKau6l
+	 n/kNSO0JUJgv70Q9YyjCs8ScZ/mmDORAjHfSn2QXbAWBKFSUX5y82fiyXlqNV4zZ6n
+	 IXkHbfQJbN8yFDxnzwiAGNa4Jv7GEDPR5ZVgEL7JAesSPP0lbZUGKGJUkzUaf5o1Lz
+	 QqZjazADy7794myGZFGmLQ+U=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id BBA2A40E015B;
+	Thu, 16 Oct 2025 16:27:21 +0000 (UTC)
+Date: Thu, 16 Oct 2025 18:27:16 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 40/56] x86/alternative: Use sync_core_nmi_safe()
+Message-ID: <20251016162716.GDaPEc5NWGAHq5n6VV@fat_crate.local>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-41-david.kaplan@amd.com>
+ <20251016103549.GD3289052@noisy.programming.kicks-ass.net>
+ <DS0PR12MB9273D987B842D9E80081261A94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
+ <20251016144730.GC3245006@noisy.programming.kicks-ass.net>
+ <DS0PR12MB92731E9877D21E36EC3EE4ED94E9A@DS0PR12MB9273.namprd12.prod.outlook.com>
+ <9ca5a40c-1e9b-426d-8525-b1da39599731@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9ca5a40c-1e9b-426d-8525-b1da39599731@intel.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Oct 16, 2025 at 09:15:32AM -0700, Dave Hansen wrote:
+> On 10/16/25 08:34, Kaplan, David wrote:
+> >> BTW, will AMD do that SERIALIZE instruction?
+> > It is not supported on current parts, I can't comment on future ones.
+> 
+> I think that was Peter's nice way of asking AMD to go implement
+> SERIALIZE. ;)
 
-It is reported that commit 85975daeaa4d ("cpuidle: menu: Avoid discarding
-useful information") led to a performance regression on Intel Jasper Lake
-systems because it reduced the time spent by CPUs in idle state C7 which
-is correlated to the maximum frequency the CPUs can get to because of an
-average running power limit [1].
+Why does it matter?
 
-Before that commit, get_typical_interval() would have returned UINT_MAX
-whenever it had been unable to make a high-confidence prediction which
-had led to selecting the deepest available idle state too often and
-both power and performance had been inadequate as a result of that in
-some cases.  This was not a problem on systems with relatively
-aggressive average running power limits, like the Jasper Lake systems
-in question, because on those systems it was compensated by the ability
-to run CPUs at relatively higher frequencies.
+:-P
 
-Commit 85975daeaa4d addressed that by causing get_typical_interval() to
-return a number based on the recent idle duration information available
-to it in those cases, but that number is usually smaller than the
-maximum idle duration observed recently which may be regarded as an
-overly optimistic choice.
+-- 
+Regards/Gruss,
+    Boris.
 
-Namely, it may be argued that when the samples considered by
-get_typical_interval() are spread too much for a high-confidence
-prediction to be made, the function should fall back to returning a
-number that is likely to be an upper bound for the duration of the
-upcoming idle interval and that number needs to be at least equal to
-the maximum recently observed idle time.  Otherwise, the governor may
-miss an oportunity to reduce power without hurting performance in a
-noticeable way.  Of course, it may also be argued the other way around,
-but the available data indicate that get_typical_interval() should
-rather tend to return larger numbers as that causes the governor to
-behave more closely to its past behavior from before the problematic
-commit.
-
-Accordingly, modify get_typical_interval() to return the maximum
-recently observed idle time when it is unable to make a high-
-confidence prediction.
-
-Fixes: 85975daeaa4d ("cpuidle: menu: Avoid discarding useful information")
-Closes: https://lore.kernel.org/linux-pm/36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7/ [1]
-Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Tested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpuidle/governors/menu.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -116,6 +116,7 @@ static void menu_update(struct cpuidle_d
- static unsigned int get_typical_interval(struct menu_device *data)
- {
- 	s64 value, min_thresh = -1, max_thresh = UINT_MAX;
-+	unsigned int max_overall = 0;
- 	unsigned int max, min, divisor;
- 	u64 avg, variance, avg_sq;
- 	int i;
-@@ -151,6 +152,9 @@ again:
- 	if (!max)
- 		return UINT_MAX;
- 
-+	if (max_overall < max)
-+		max_overall = max;
-+
- 	if (divisor == INTERVALS) {
- 		avg >>= INTERVAL_SHIFT;
- 		variance >>= INTERVAL_SHIFT;
-@@ -198,7 +202,7 @@ again:
- 		 * maximum, so return the latter in that case.
- 		 */
- 		if (divisor >= INTERVALS / 2)
--			return max;
-+			return max_overall;
- 
- 		return UINT_MAX;
- 	}
-
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
