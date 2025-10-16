@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-857073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3398BE5D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00630BE5D82
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFC83A9E56
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6531519C57BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFE02E9ECA;
-	Thu, 16 Oct 2025 23:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E6F2EB5A1;
+	Thu, 16 Oct 2025 23:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ccep93lD"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3k9xM5Ui"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EBA2E88A1
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85E72E9756
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760659158; cv=none; b=XVxEIqtry6h8O2vzYAoYLevVbAB3jKYVEIAyNrRQ+NkjURvp3IIGUNZaH9Bngqc+IqC3G3CdzBnDcyghMLi7OQISJB+c1W4nPycRRmx8pzkxBSKQLFD7nMuVRr+kAmLbnMGDPBcPtkafeHtU0/fcIDOyYhFAMMSvT98cciS/1gI=
+	t=1760659160; cv=none; b=hcjzTij/AvDoyaHWODIsh97l5ew0wZV/DUoXw/Zn7oqjO1fEoxoRt9D4FF+iuQM6XgdYq8PS9QH7cVctKc/9lFMZjVYOUbfu3o/KNcp3tEzFaaonculYPLMVigzs8C/78q4c8wzyewh9oHbDDdiB+7xYEt6oUWaLFzVYwnZ0fJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760659158; c=relaxed/simple;
-	bh=cVcXBVu0k1e2ZRGGGJ4RUhqAr8gGPi6p8pLo82SXQ14=;
+	s=arc-20240116; t=1760659160; c=relaxed/simple;
+	bh=WE1Ux7Rt098ZLRDNgjhehsgJW8hPOrR/KgyCdv0Yg+4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GxHwZuvOXBfEBuTMRfdv1DyY/9uB5tFykGpcW1BNBBSeb21Lv8h93sGVEuTZITg3pWsyYpyFsKlkS0EMwNw0rdFMy2B1+7bM3uPCnIO1C66dhZWd8dXjOIhbvwN4pU5kd6ZVThnxlVhYmo/O7dGGaMumW8NihECA2FkcNR2ESxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ccep93lD; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=rN+48WAKOCb/o2IGQxgbqhNGPuGOccvZ0mhtv6eb4JSd08S6ls0kNPjEsK3glkfS/1nVrxYnEfW+pim0JuntOmbwXpMNGXnMaKKRj2SPPnSUDSRJ3JQ6pdMUX9y8Begk2GnD2qrJr2s/8pevnyiPfLrnKUZGxrl4A4y2eGVWp6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3k9xM5Ui; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bb3b235ebso1962165a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:59:16 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b632471eda1so1227992a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:59:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760659156; x=1761263956; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760659158; x=1761263958; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqtzN3u7r+YLYm+sK/X2sT3wcYKU5XU4zGVHMnL2rk8=;
-        b=Ccep93lDRJnQiFPpREkcH9twaXLS8KEc9q8O8s7cDLRqIFM78PXMo98tJISo/lqxwc
-         M5+zGuMHgydwkEoqRQ2nKbfUC1C78Y/s4Le5YIxAixcrjkawsBKTsF2mK/f1kL6r5KOs
-         4OYKCPK9cN6fCSt3wGhYZisXNAqmeIWCQMoB6GkVSt/Jl9Ibg1/y3TKYNIO27tDWVmOG
-         fBA4pY8SM9kz6wO5it0tabg4vgVjDvCpOYtSymQxnMlkfemhWMrLrkUoKD/OF6Z+zuWL
-         ShoG8V9r/2avnv7AANwOitqZkVNLNXOhMgrng73rqoaV40bTDdSJpIQ+5dHg2Ppl2TZA
-         s/5w==
+        bh=j4ZD2TO+dabREMxCZUv1sX5s7/hIQJuO7N3PFIef3ns=;
+        b=3k9xM5Ui527/LG1tJnX7O+N2FjFrFXSjnRe4e1KVDLD3HSgRZRJ/wxaTdf/Fg38WgA
+         c8LJpy5IEefnDg/YE9NYAktMI+F0x5Y0Lrb2OwML106Fp8cgN0aP70Ty4XP1th887y/R
+         SdfYpGDw5TpZzrv9icNjGgTxg5Upwl0YSeaxvDzBPhtotH/3TCRvAyIyD9xDXFMRWRoI
+         BMFhJhF8gqRubmcF2s9a8NTJfzV56k6OaO7zVtbSZt+lNjdZ75xdSO+KSi0ZHFNNlCef
+         kIGxJEGa5PmF8ybOJlQK5IMgQeJPupuYT7/5Hdn5vZIaJn8xQO62BkuuVRUBDm6f69Mk
+         vCng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760659156; x=1761263956;
+        d=1e100.net; s=20230601; t=1760659158; x=1761263958;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqtzN3u7r+YLYm+sK/X2sT3wcYKU5XU4zGVHMnL2rk8=;
-        b=Md0fAkuC0B/GEa1I/haWeSnkrFxt+AA+n7DaOHM+3Yesu2JzBvRAmyKLxgpifn5KXW
-         UXr6xYg15fhi5v3A2D709uFzNYJ+mgGp8eW0FPv04GtlBbF7/zwVbPeVEArsxMlJLsQX
-         G51mzG8QcncRJ1/XJe19l2//+7GTNHcGSwAYO5lDHRkCvKX8Cr/nbmtsBtPnYjnnO436
-         KP9ODStMKesk7tgD506jFwyOU6MvfBvctWKpfz87y/PbihN5ktq0XrojjYdAz8pbnnZu
-         oo22X2ph1osNJCwHNZb942v1Z6GPENJlfrg6mDQ2dIrzBVvQC9cI11Ue6dLWH53X/Nmo
-         a+1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXK+FI4Y5OEP+1OSJcdcPfJhfzLFm6HGaAVYLhilWi6Q/Giu60E0C5w89cJy7sBj7l2pBwAXDWMitrELKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFEIYC2naPMgqVxmqZnbpy2pTDYpdLEDyPvMFB3TVxvido9S/1
-	+XqTOEDLwui0TqJPlpDMB+HDZseQFY1RSJ/rzEGOR0q2P2MIqTwXJ1LXKH4i6HRKadLlZ0D0rea
-	lOvU45Q==
-X-Google-Smtp-Source: AGHT+IHtcbdwP9Wxf0JSNuqCWmvroXZg4RbHOg6ahPle404TYQoEdJxSL7fw+8XsYpRsjXT5w4FJSGoxoa4=
-X-Received: from pjbsc12.prod.google.com ([2002:a17:90b:510c:b0:33b:9db7:e905])
- (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55cf:b0:329:d8d2:3602
- with SMTP id 98e67ed59e1d1-33bcf8f9c49mr2193375a91.17.1760659156328; Thu, 16
- Oct 2025 16:59:16 -0700 (PDT)
-Date: Thu, 16 Oct 2025 23:59:08 +0000
+        bh=j4ZD2TO+dabREMxCZUv1sX5s7/hIQJuO7N3PFIef3ns=;
+        b=wJK2RsTZeqiJFl5jNqf9+vSguObJmfKNEj6hi/+qChsPNMALK2BlTZsUoPMRm7Qshh
+         56gwUSwBy2Wommd1L6+wW52yZRqWjc0ytHTJ4wJfJGJ5Kg3NLNBZFWRrQ+ZDyHItEY9O
+         4rWgCtov9n1SSFh1ic14lnLNGMs+9YK/hAphPuxMQobJ1Uwhwu6FaF/ZrQowI3pTj0wI
+         TDepej+cAyewjVhE63Pb5c9byhBt/Cx6I97MEsbb5Bp5aGWzj/QkzVVgH3dryz7yBoaU
+         TbadjSf6XXcBpTgQwnWw+nbmYN84HjnrYyV/AmPAHwbz+iIdy/bTv6ZkOzG+cVbAbmR7
+         6t3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWAiRFvAPlfBn4GVy2zHeCTOXe9RNnRxPYrRPwgRgkoqeQn54XHgDQpw0xo+38kFgB0TWxe3igOMcdkkTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztD/Dprwye+2P+zax4yIVCp0/4XH1D03QYaHw8njaZt4BuCkTt
+	s+4MpgaObA/M47atJMsk9Vkg1RUZji63RCegIo6VluKJPoq6OfsSOLZxUOoBWVnNPbAn8Fbrqe1
+	4oNVphA==
+X-Google-Smtp-Source: AGHT+IGIeuq5jBttQfOPZDegsqumWfJZ/LOWeQkhcn8gZ4JaojN86hrd1bFUOoF/UZUtJUupg3tr8KyZFtw=
+X-Received: from pjut11.prod.google.com ([2002:a17:90a:d50b:b0:33b:beb0:be7])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c11:b0:32b:9774:d340
+ with SMTP id 98e67ed59e1d1-33bcf91909fmr2098196a91.33.1760659158090; Thu, 16
+ Oct 2025 16:59:18 -0700 (PDT)
+Date: Thu, 16 Oct 2025 23:59:09 +0000
 In-Reply-To: <20251016235909.2092917-1-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251016235909.2092917-1-jthies@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251016235909.2092917-3-jthies@google.com>
-Subject: [PATCH v2 2/3] usb: typec: ucsi: Report power supply changes on power
- opmode changes
+Message-ID: <20251016235909.2092917-4-jthies@google.com>
+Subject: [PATCH v2 3/3] usb: typec: ucsi: Report power supply change on sink
+ path change
 From: Jameson Thies <jthies@google.com>
 To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
@@ -85,40 +85,40 @@ Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org,
 	linux-pm@vger.kernel.org, Jameson Thies <jthies@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Report opmode changes from the PPM to the power supply class by calling
-ucsi_port_psy_changed(). If the current opmode is USB PD, do not call
-ucsi_port_psy_changed(). The power supply class will be updated after
-requesting partner source PDOs.
+Update the UCSI interface driver to report a power supply change when
+the PPM sets the Sink Path Change bit.
 
 Signed-off-by: Jameson Thies <jthies@google.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/usb/typec/ucsi/ucsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/typec/ucsi/ucsi.c | 2 +-
+ drivers/usb/typec/ucsi/ucsi.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 3f568f790f39..7b718049d0d1 100644
+index 7b718049d0d1..cad3913bd7f9 100644
 --- a/drivers/usb/typec/ucsi/ucsi.c
 +++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -1022,14 +1022,17 @@ static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
- 	case UCSI_CONSTAT_PWR_OPMODE_TYPEC1_5:
- 		con->rdo = 0;
- 		typec_set_pwr_opmode(con->port, TYPEC_PWR_MODE_1_5A);
-+		ucsi_port_psy_changed(con);
- 		break;
- 	case UCSI_CONSTAT_PWR_OPMODE_TYPEC3_0:
- 		con->rdo = 0;
- 		typec_set_pwr_opmode(con->port, TYPEC_PWR_MODE_3_0A);
-+		ucsi_port_psy_changed(con);
- 		break;
- 	default:
- 		con->rdo = 0;
- 		typec_set_pwr_opmode(con->port, TYPEC_PWR_MODE_USB);
-+		ucsi_port_psy_changed(con);
- 		break;
- 	}
- }
+@@ -1293,7 +1293,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
+ 	if (change & UCSI_CONSTAT_CAM_CHANGE)
+ 		ucsi_partner_task(con, ucsi_check_altmodes, 1, HZ);
+ 
+-	if (change & UCSI_CONSTAT_BC_CHANGE)
++	if (change & (UCSI_CONSTAT_BC_CHANGE | UCSI_CONSTAT_SINK_PATH_CHANGE))
+ 		ucsi_port_psy_changed(con);
+ 
+ 	if (con->ucsi->version >= UCSI_VERSION_2_1 &&
+diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+index cce93af7461b..35993bc34d4d 100644
+--- a/drivers/usb/typec/ucsi/ucsi.h
++++ b/drivers/usb/typec/ucsi/ucsi.h
+@@ -382,6 +382,7 @@ struct ucsi_cable_property {
+ #define UCSI_CONSTAT_BC_CHANGE			BIT(9)
+ #define UCSI_CONSTAT_PARTNER_CHANGE		BIT(11)
+ #define UCSI_CONSTAT_POWER_DIR_CHANGE		BIT(12)
++#define UCSI_CONSTAT_SINK_PATH_CHANGE		BIT(13)
+ #define UCSI_CONSTAT_CONNECT_CHANGE		BIT(14)
+ #define UCSI_CONSTAT_ERROR			BIT(15)
+ 
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
