@@ -1,123 +1,144 @@
-Return-Path: <linux-kernel+bounces-856844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC34BE538E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:22:43 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEED1BE5397
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB0C189FC1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:23:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4620B358830
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5AE2D9EDB;
-	Thu, 16 Oct 2025 19:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981652D9EE5;
+	Thu, 16 Oct 2025 19:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMYJSQTO"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="1rRVZjcJ"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F05C21B9C9
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198442882DE
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760642549; cv=none; b=cjLwm607kpTyGKadzIkERihQP0EdYqRS5R0GVmD2yhNVs8wF7UpPEjaNbZfY5NV+fd6qL3NoIahqlZGEVaV0vzereFdu21jHSIjkZjHA/MAsLNugsD2i9m5tJsxYq0rMnJOgWZlOB6Hm/lP8KBhSh6NVhZyW5aPVaMvK9Grgh1g=
+	t=1760642617; cv=none; b=bFdAph8m9d977AaFhkODVhRljDPvWkGrRGZrAa6e4S6QxaOU0nFbC1Tc37yaRFbHBTL6JKsgvVTAQa7JV+/74Gfb6udiHWvc7W8TMkeNciGM5NS0xuhz0j2ruMUmOrCyXjwzwml4lXBlsXQb92PoJDiPW+xXXW7IaMyJt0vF/Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760642549; c=relaxed/simple;
-	bh=u6TNI6P7uxhJsMAo4Mhkv+owrlXQyJn08NNCI9uXiro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgVNTnFYFuZRNpkoXLSZPWCNGVxkRkf8zx1BLN6JxpuNUt+i2btQScKNsBcP+MF5AUPDbW83yPFJfIBjjpUgN95r2shLr/dav45el/dE4ADpZb7iyFc8XuL4F4ttxqdE6x7d0vmy/wtJJMcjI7BV4suUJZzsrziis15Zyw4W4qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMYJSQTO; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-29094f23eedso1633645ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760642548; x=1761247348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wBABBnxn8fN9AsR0d75e1hIi7H9rcgMvSSTa+zi6yEc=;
-        b=LMYJSQTOQx6/68djLsNmPLV9djmCB4JNusOBZPW6rwetVzs4Pux9+ucfnk0YUnfAs1
-         RmHfA5tDF/Cb3fMjMjkKFAg6ndBuXXsViTcCS5uruWdR96+x9/apfOs4O0nEethEiOWR
-         PX2Hnc/MV1MA2WIwtXxOEF7OymM+hqUcclo2l5VS7zcUPEgWfW/KpOoRBr691NODe8sS
-         4KEJ05XjLBNhYnwoNk7iiW5AscW+IDkXfl21Z/gQk5b1iYb6Z67m12KfE4vQsCZoVA5W
-         ghV8LeRCU7DAJ2kkMfAc/Ztfaui5o3hKbSf/q/WmmNVg7HKjz/4+4Bu0ulkPQUsLCOUA
-         nQpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760642548; x=1761247348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wBABBnxn8fN9AsR0d75e1hIi7H9rcgMvSSTa+zi6yEc=;
-        b=ThXzj8vwPsXfJg7rsoxc/v0Yf4DE9Ez0RHbPvRNPALabOB0bENF8mWRQJh/sxBstmF
-         v1vsmQSNHTM02hT4PXqakbK8SsxBQw1cxk8wI+E5OurbjkAzuQ3OSRx6QcPxOiJCO+fo
-         lT+restBLlaRqNcg4smFOsDsHCT6DZKTo0p/dNg3vOqDYVVyGmed+0+il9aSN2m2tyof
-         XbBzz+J+wBw0xJNm77GJUiCae2B95uFlV6jIhMKHCM9Go5ef7OBulYmSQpFZrnO03Ogy
-         8pBqSu4Y1ITa8u70Rb8d73br2aZEvbIuAmpyq7070Zy4cIhZYtMvqWD2/aH9Wmlq7wDx
-         rDdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXW/lSswwujb0xz7s7WBuajQNTzRwKkpphJNHF8pXIH1Ii34f3Fj0uJ74lXINCSeB0Glp6LmcHx7o6F5hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5jAHvrCzYPEij98de8KHJ4RInAwg6hf+nJ1olj/6TqSNRiMqc
-	2muIfeD2xKUad+VqYTwO4B3+DwWY/ccWlGFNjDRxVfGvZ9MTFAJ2wZ5GgF6/TOjfzlQ8owxiFwC
-	Q487v/tnfJDLyBBFXrVUPdv1COjwaY9U=
-X-Gm-Gg: ASbGnctr5ZkZJWGwPecTIv+HmQ/On5/Zvy1La4zRPgnUW43wEtLluxo8MiHJphma27K
-	QYFUG3dnBaEr63N8QMzYYwA7FnhhKs84HxsbukZ6fuhXtkuO3BAInq6eG4kr6U3Gv/4/gn2qDGb
-	Zz5xYgGbkiAHyDgIDRB/N5twOKbGKQiSS1jwBWzA9WfShYaQbGa/MN5QPTtLIMp7+wQH1iJrzYb
-	NadGNbKiWPNIZcKu6LrBDjlG7vCP0/r1vyJ7D69Np+UkAyrF7cuCDVoYDl1KfEsI9G32BgqPH68
-	Bbj+oOZYqYldBQtWb90fRwUnzgQqiWeDQ5OsebZUTlH+jFBsQonREXy9faQ/3O9h6UwDFO+mVpa
-	mpTd/ukZ8vGJo7w==
-X-Google-Smtp-Source: AGHT+IHjy8KjEMzI/k73gqsgnhmTui+XTn/RvV7qTycBPo1XmiJr5yhiR0piRHANoQ1JkvBfjCgn9II2uzdLiDAifMg=
-X-Received: by 2002:a17:902:eccd:b0:290:ccf2:9371 with SMTP id
- d9443c01a7336-290ccf29388mr7338615ad.0.1760642547522; Thu, 16 Oct 2025
- 12:22:27 -0700 (PDT)
+	s=arc-20240116; t=1760642617; c=relaxed/simple;
+	bh=qPZyqqlDuxupwy3hqSnQfIURpZPS/AwJNmqI4HhPNE0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=SEchciERNUbFm0Wc5mRiShQw/Q4YNQ9jOTIy3/4yG1vIA7XPzGqUw0n9Zk4st5pPepwwmssmMs+CFUMmIQFSBidVDg0bNc/t+Pw0zJQ0GxEuDOQEprDjU22/HFNwI/US0805Q3FkmhalgQ268EGpv8Wk0wpLKBqXio8tw6ZRQmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=1rRVZjcJ; arc=none smtp.client-ip=212.77.101.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 33255 invoked from network); 16 Oct 2025 21:23:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1760642611; bh=e7IBYjNUi7Lb06DrRP+uQ7pq93oWoPw2ibUwX8GbUDM=;
+          h=From:To:Subject;
+          b=1rRVZjcJdFsJ3pBmLZjhnq27q7b064x90Oz5jsTAO+6acwCOKkArbV/FwBWE43PhK
+           f0MajVzIYuBNFnmbsoAnEt4bQ+tIHhBFRkc06cwYenR6d1t2fKtgCu7dvWEILi/qnh
+           shJN3KR796CjlABz+EQTXms/MXlhufeI6CwQUjjygPl/rISE8k8DZ4OKGD1dxhqliA
+           MvWN1HSMY7KHLC+CffVKWmIT6GmJ6oQza3SMDiEAgRi9amJ/BYmXjSwOgE4vGyjYCe
+           MfBC+qT+RKjLzW39HQ74RHDm98GR2/DX7408Wp/Zp3Z8DF/P42cjExjJo1XltW8k03
+           hsGWWKfDRVFGg==
+Received: from 83.24.133.17.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.133.17])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <andrew@lunn.ch>; 16 Oct 2025 21:23:31 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	michael@fossekall.de,
+	daniel@makrotopia.org,
+	olek2@wp.pl,
+	rmk+kernel@armlinux.org.uk,
+	kabel@kernel.org,
+	ericwouds@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: phy: realtek: fix rtl8221b-vm-cg name
+Date: Thu, 16 Oct 2025 21:22:52 +0200
+Message-ID: <20251016192325.2306757-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013062041.1639529-1-apopple@nvidia.com> <20251013062041.1639529-7-apopple@nvidia.com>
- <DDJJ4Y320YEC.O6QIUDDLFVOH@nvidia.com>
-In-Reply-To: <DDJJ4Y320YEC.O6QIUDDLFVOH@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 16 Oct 2025 21:22:15 +0200
-X-Gm-Features: AS18NWDEkVfvPPz-PXmo2P-iezhkJ_4yR77lvhxdIOXjaj9vZ-OB3fMu7gnX7yo
-Message-ID: <CANiq72kWof2RL93s5L7t52ax+G65iBrOnfMa3XrqC+LgSO49=Q@mail.gmail.com>
-Subject: Re: [PATCH v5 06/14] gpu: nova-core: Add GSP command queue bindings
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alistair Popple <apopple@nvidia.com>, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, dakr@kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 0f1545edf1641a304771a642558411d5
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [QXOk]                               
 
-On Thu, Oct 16, 2025 at 8:24=E2=80=AFAM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> There are lots of unused warnings when building on this commit. I know
-> we don't like big patches, but since this is semantically related to the
-> next one and the two touch different files anyway, how about merging
-> them? IMHO this is preferable to adding lots of `#[expect(unused)]` that
-> we are going to remove right after.
->
-> If you have been told to split in a previous version, let's just add a
-> the `#[expect(unused)]`  where needed.
+When splitting the RTL8221B-VM-CG into C22 and C45 variants, the name was
+accidentally changed to RTL8221B-VN-CG. This patch brings back the previous
+part number.
 
-A possible middle-ground is to add the `expect` in a "more global"
-position, e.g. at the top, so that it is a single line change. I think
-that is fine as long as it is removed right after.
+Fixes: ad5ce743a6b0 ("net: phy: realtek: Add driver instances for rtl8221b via Clause 45")
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+ drivers/net/phy/realtek/realtek_main.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Thanks!
+diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
+index a724b21b4fe7..16a347084293 100644
+--- a/drivers/net/phy/realtek/realtek_main.c
++++ b/drivers/net/phy/realtek/realtek_main.c
+@@ -154,7 +154,7 @@
+ #define RTL_8211FVD_PHYID			0x001cc878
+ #define RTL_8221B				0x001cc840
+ #define RTL_8221B_VB_CG				0x001cc849
+-#define RTL_8221B_VN_CG				0x001cc84a
++#define RTL_8221B_VM_CG				0x001cc84a
+ #define RTL_8251B				0x001cc862
+ #define RTL_8261C				0x001cc890
+ 
+@@ -1523,16 +1523,16 @@ static int rtl8221b_vb_cg_c45_match_phy_device(struct phy_device *phydev,
+ 	return rtlgen_is_c45_match(phydev, RTL_8221B_VB_CG, true);
+ }
+ 
+-static int rtl8221b_vn_cg_c22_match_phy_device(struct phy_device *phydev,
++static int rtl8221b_vm_cg_c22_match_phy_device(struct phy_device *phydev,
+ 					       const struct phy_driver *phydrv)
+ {
+-	return rtlgen_is_c45_match(phydev, RTL_8221B_VN_CG, false);
++	return rtlgen_is_c45_match(phydev, RTL_8221B_VM_CG, false);
+ }
+ 
+-static int rtl8221b_vn_cg_c45_match_phy_device(struct phy_device *phydev,
++static int rtl8221b_vm_cg_c45_match_phy_device(struct phy_device *phydev,
+ 					       const struct phy_driver *phydrv)
+ {
+-	return rtlgen_is_c45_match(phydev, RTL_8221B_VN_CG, true);
++	return rtlgen_is_c45_match(phydev, RTL_8221B_VM_CG, true);
+ }
+ 
+ static int rtl_internal_nbaset_match_phy_device(struct phy_device *phydev,
+@@ -1879,7 +1879,7 @@ static struct phy_driver realtek_drvs[] = {
+ 		.suspend        = genphy_c45_pma_suspend,
+ 		.resume         = rtlgen_c45_resume,
+ 	}, {
+-		.match_phy_device = rtl8221b_vn_cg_c22_match_phy_device,
++		.match_phy_device = rtl8221b_vm_cg_c22_match_phy_device,
+ 		.name           = "RTL8221B-VM-CG 2.5Gbps PHY (C22)",
+ 		.probe		= rtl822x_probe,
+ 		.get_features   = rtl822x_get_features,
+@@ -1892,8 +1892,8 @@ static struct phy_driver realtek_drvs[] = {
+ 		.read_page      = rtl821x_read_page,
+ 		.write_page     = rtl821x_write_page,
+ 	}, {
+-		.match_phy_device = rtl8221b_vn_cg_c45_match_phy_device,
+-		.name           = "RTL8221B-VN-CG 2.5Gbps PHY (C45)",
++		.match_phy_device = rtl8221b_vm_cg_c45_match_phy_device,
++		.name           = "RTL8221B-VM-CG 2.5Gbps PHY (C45)",
+ 		.probe		= rtl822x_probe,
+ 		.config_init    = rtl822xb_config_init,
+ 		.get_rate_matching = rtl822xb_get_rate_matching,
+-- 
+2.47.3
 
-Cheers,
-Miguel
 
