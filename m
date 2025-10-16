@@ -1,154 +1,121 @@
-Return-Path: <linux-kernel+bounces-857070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E37BE5D57
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:57:52 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50D6BE5D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB68548016
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:57:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C6E6356122
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A39B2E7645;
-	Thu, 16 Oct 2025 23:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4846A2E7193;
+	Thu, 16 Oct 2025 23:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aHniw2w2"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SpHCaxLJ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834A22DEA6B
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3692E20C00A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760659063; cv=none; b=GjkR6okTUIwRFteX+prvNHuUxmRssqjcHCgeIt/GmnfLKVaawpC7Tl01GG+IQmJ81kLD/htBOeRUQYckL65aiThbidg9JYy50taeMEDnzkNp/UM2FtoM2p5RMBEcET5FtIK0D45NIA1tZGSVYHBSAun138tmOAC+jy4VJ4U8bwM=
+	t=1760659155; cv=none; b=EMi7+KT2fYpA4mtaZZjK76nw0hTVVIb+2eDSVRFII0yWhAIGGQynLIigqgzrOmHlw2qHOW1agK3Nw0S9bUGWkMHVsGIbRpDfl2fQSOH28Y7bCsXsl8Cr9EivE/lap1JukqddoEVO1ZNGlcWj6OinJE/IAvacoEf/xP8MlmI/PRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760659063; c=relaxed/simple;
-	bh=vOAdDSYX83kzIXZY6k7808Nqc/n1Jrd8SmNl/kz/Z8U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=io5no29qakhSJXHbz414xkEyth0zSvbZIqcppZli2y12k3nXFo2B+hWuR6aULcb3V3fooVabUhDvMzvPvYBzYAM2DgwOtfloEkh3yVT8gcD2WmFK/syFv82W5Ap0XeKWvI/dBX79tpsBBizXysB2zlSfOEFoOLDYoSiLA4zAwjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aHniw2w2; arc=none smtp.client-ip=209.85.215.202
+	s=arc-20240116; t=1760659155; c=relaxed/simple;
+	bh=HBiddadU9m7kjU0oqtk462Jkzkl4y5+s8GpBQ6GxRKI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uvT98DSL7kqVJCuvVZ+C1zdTWf+psAHEiw0FkZuXV2o9NXTfWuZijDlS4uB2N8I6IHeHKeNfD7ipXGGr2iw0g6eg2VxIWdLEGfPPP+Mg/GtFAAvAuY5EE0V85Ca3cgUS5EnX/EGLjy/z1shPP9Ba7YIIeFAcMtqI2HxN/8ej5Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SpHCaxLJ; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b57c2371182so1179323a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:57:42 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bc5d7c289so1404504a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760659062; x=1761263862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W+gFerwj7sc87prcy/GQMGpAh3zQW+FK7X8HO9E9Qn8=;
-        b=aHniw2w2SDaL4IJxRvGmkLFIsclKYQemiQ+qGd6tcbSvVkcwfX46Crd1eSwE2wnbtv
-         MeR2UOnx64hZ4IM6GvsQUB9FKFcHQgvTklIT3F3OBy0LqXoifHJTJbGP2zTG1huG3rl6
-         mKUdN32w+KN8E8S9+OOGPXD6xLnKhEfkMbpANWoUM2FFNp7X8ZeTaaAXoSRaRTaE3mpL
-         VGIS7qkPs5ZxbTlcoj3IdBZb8x7A2jNo84m0EQpkViYAZu9RlNtzoDCv1QASHbOzdF6M
-         3E/12nUQ42WGc2ByF7X/a8sZHDPaEaaIakHXGNc5kXU2VPzU/ebsmZiT7IvUiJouzM8J
-         z+6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760659062; x=1761263862;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=google.com; s=20230601; t=1760659153; x=1761263953; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=W+gFerwj7sc87prcy/GQMGpAh3zQW+FK7X8HO9E9Qn8=;
-        b=Ugn0LOsN34jPfNitc0xf2Isg1R3ZWwJr4R/ORp8tvQkJXbYHhfJf6aUIrMkdS8noJ/
-         GdmwZ7QCo8jglcFGU8qqRBrAeOtoxOiKIyZ/rdNG5wOoPksp1qqoZy0m4zStVe6ZLSBU
-         hth+Mi4wjsmxwkghtDbzKnkC0/ASCtM8NNe1SfWIN/WSECJKjSAMHeNEckT1+oAIDEZm
-         yNjdNK2VCaf0i/fYiuGX8KFinv/+hA/8qglBIEU1NMb5FmYbr7odxqXRFZ4fAaQUpdS8
-         Qvh7DtjDawwhTU/rNDQo+X7hlLMZcd7WOdOgvzkJWi1prniQQP+9CHLBab92PKg7hVx4
-         jwvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUktYcQYPtAEFZvWRauXurUqx/e8xCec8+Vj2Zo/5CiWiQiPG24QvK+XWpCh8mQTxEJnP/Bo7ueyJaOJhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykU9VsjPRS8CwRY67mDNMKWlW1qHKqRwZFZjl2y8Tipcze/mPA
-	270a9RToLus+ImAikM6vcrsjNvLR/3+tEPd7tozsjpvU0ZNhwWGjJIC/QwYTz/OKEM93lNl6vpq
-	UajrOPp70a82qWm0x84ic+QCZLQ==
-X-Google-Smtp-Source: AGHT+IE2GZ6bYZtCSD13nlTnA7H2MPbbvOsHzo3LQjiehRmABnDXMBoSAsb+4L5uxVyy1gpfUlSoXNG9qcSb1xRc+Q==
-X-Received: from pjyj8.prod.google.com ([2002:a17:90a:e608:b0:33b:9959:6452])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:3992:b0:334:a99f:926 with SMTP id adf61e73a8af0-334a99f0c06mr1602497637.11.1760659061843;
- Thu, 16 Oct 2025 16:57:41 -0700 (PDT)
-Date: Thu, 16 Oct 2025 16:57:40 -0700
-In-Reply-To: <CANiq72m6vWc9K+TLYoToGOWXXFB5tbAdf-crdx6U1UrBifEEBA@mail.gmail.com>
+        bh=WawDHA60a6s4raK4N/aQLo6JOofQaLsnvf/pVAIpEpk=;
+        b=SpHCaxLJBSgFjbCHaYFI1lIvy9zyL4YBTBpYhjvmdpqBXxX5fMb0r5ET2UphM68pWW
+         Cyl1N8Efb5Nb2v0+ZUYUrk0CmpQqcdhOqZKJHrT5ym3Kv1FSJXcVVRWJOQ7nf3vD8EsR
+         /ZGAaHmOdF+mUjet9r5hOEPGpa5+7xrZyqiXn2RP5H9Xog129+8M0bmurhcvaAKSRkbF
+         fpvtWfjf7I8ycIYVssxxxC2EpA9ksMC7PhSwl5l5gS5uh7+PDmGTcE1GHIYeXFJlvAZe
+         /m5V/sVZ97uvBQgOyJchO2uCdZ5+IMZtmUpgsLI2fetziBrD788N8nY5lYUlI93ua1EP
+         FSQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760659153; x=1761263953;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WawDHA60a6s4raK4N/aQLo6JOofQaLsnvf/pVAIpEpk=;
+        b=ibC0NMj1XoNcOE/bN3uWHO3zLjwJWWrSkUdEWsey5mmEYEVydUhgqe+De2lnzxr0mq
+         jEkjHqobD1vyu/pw2xkFNOeCPKI/kHZiGpj4u2Jq3ZJ3l41H+wJQfJDdTpmwaoDE80Cm
+         U3l8Hew+y4pjkwVv0r5I7eEPszas90Hq/mqiTFSM5Yj+hG3WdDGo/c6WA7WF4bpyjwUE
+         5gbF9YErPFTbflbkEhxLF0oBpFs5z/GWDHxrGb8jCHl5E6OecOv4qQJz1dC6+4usmgcA
+         n7KoksWM/2hz65tvzVfB4DuaDeYmmFnRGFdXdvTCnqHYO4m6tkzHGSaIEzW/9RrfZdrh
+         bAcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOa84fdYe/7h8NXYYsj5bp33s/7MEDmWsGwVvksSScp/8A9GkbkW3o14V59fpw4KKWowGk0w0DUxNzp0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylTiYC8jMT0xruQMTE/Rjs2KE+2OKyyZzU5ydgAq86cSYQDdmw
+	Tt5B772UXsQmFA7dIkAcDeOF+lBZa7YK0dHXQIbe9XQD22NWavAousn/ap0vwWubxTI+9j1V6ri
+	R2rXqcA==
+X-Google-Smtp-Source: AGHT+IEU+N5aH0xxOsEz+DyPSJOr/pus0xHhiIOJ6c9Ask7TcSZD4nSQ/AeRjmE0UAo2XpRAtOkANqnYu1Y=
+X-Received: from plrt13.prod.google.com ([2002:a17:902:b20d:b0:267:fa7d:b637])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:138a:b0:290:567a:bb98
+ with SMTP id d9443c01a7336-290cc6da1fdmr19433285ad.57.1760659153500; Thu, 16
+ Oct 2025 16:59:13 -0700 (PDT)
+Date: Thu, 16 Oct 2025 23:59:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251016172853.52451-1-seanjc@google.com> <CANiq72ntKAeXRT_fEGJteUfuQuNUSjobmJCbQOuJWAcNFb1+9w@mail.gmail.com>
- <aPFVcMdfFlxhgGZh@google.com> <CANiq72m6vWc9K+TLYoToGOWXXFB5tbAdf-crdx6U1UrBifEEBA@mail.gmail.com>
-Message-ID: <diqzqzv2762z.fsf@google.com>
-Subject: Re: [PATCH v13 00/12] KVM: guest_memfd: Add NUMA mempolicy support
-From: Ackerley Tng <ackerleytng@google.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Sean Christopherson <seanjc@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shivank Garg <shivankg@amd.com>, David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251016235909.2092917-1-jthies@google.com>
+Subject: [PATCH v2 0/3] UCSI Power Supply Updates
+From: Jameson Thies <jthies@google.com>
+To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
+	gregkh@linuxfoundation.org, akuchynski@chromium.org, 
+	abhishekpandit@chromium.org, sebastian.reichel@collabora.com, kenny@panix.com, 
+	linux-pm@vger.kernel.org, Jameson Thies <jthies@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
+This series includes the following minor changes to power supply
+handling by the UCSI driver.
 
-> On Thu, Oct 16, 2025 at 10:28=E2=80=AFPM Sean Christopherson <seanjc@goog=
-le.com> wrote:
->>
->> Oh, I take it .clang-format is auto-generated?  Is it a "formal" script,=
- or do
->> you literally just run the grep command in the comment?
->
-> I just run it and copy-paste the results there from time to time.
-> Yeah, a very low-tech solution :)
->
+1) Adds the "Status" property to power supplies registered by the UCSI
+driver.
+2) Updates ucsi.c to report a power supply change all power opmode
+changes. Currently this only gets reported when opmode is PD.
+3) Updates ucsi.c to report a power supply change when the PPM signals
+a sink path change.
 
-I assumed someone was doing this from time to time, and I ran the grep
-command in .clang-format but IIUC it only reads tools/ and include/
-(which doesn't cover this new macro) and so I thought the "automation"
-would miss this new macro, hence I suggested to manually add the macro.
+v2 changes
+- Removed patch adding support for reporting DRP power supply types.
+  It led to spam in dmesg and needs further debug.
+- Removed patch to report 0 max current when a port is not connected.
+  This is a bug fix and should be reviewed separately.
+- Removed patch to refresh connector status after PR swaps. This is
+  not directly related to the power supply and should be sent up
+  separately.
+- Updated patch notify the power supply class of sink path status
+  changes. It now uses a single bit mask for checking both sink path
+  status changes and battery charging status changes.
 
-Using the command on virt/ would pick it up. Would it be better to add
-"virt/" to the "automation" + update .clang-format while we're at it?
+Jameson Thies (3):
+  usb: typec: ucsi: psy: Add power supply status
+  usb: typec: ucsi: Report power supply changes on power opmode changes
+  usb: typec: ucsi: Report power supply change on sink path change
 
-$ git grep -h '^#define [^[:space:]]*for_each[^[:space:]]*(' virt/ | sed "s=
-,^#define \([^[:space:]]*for_each[^[:space:]]*\)(.*$,  - '\1'," | LC_ALL=3D=
-C sort -u
-- 'kvm_for_each_memslot_in_hva_range'
-- 'kvm_gmem_for_each_file'
+ drivers/usb/typec/ucsi/psy.c  | 26 ++++++++++++++++++++++++++
+ drivers/usb/typec/ucsi/ucsi.c |  5 ++++-
+ drivers/usb/typec/ucsi/ucsi.h |  4 ++++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
->> I don't think I care if it's in the list?  I honestly don't know for sur=
-e, because
->> it's entirely possible I'm consuming .clang-format without knowing it.  =
-I added
->> the entry based on someone else's request.
->>
->> Ackerley?
->
-> If you are not relying on it, then please just skip it, yeah.
->
 
-I'm using it, I believe clangd (my lsp server) uses it to reflow correctly.
+base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
+-- 
+2.51.0.858.gf9c4a03a3a-goog
 
->> Is it possible, and sensible, to have per-subsystem .clang-format files?=
-  KVM
->> (virt/kvm) and KVM x86 (arch/x86/kvm) both have has several for_each mac=
-ros,
->> pretty much all of which are more interesting than kvm_gmem_for_each_fil=
-e().
->
-> There is `InheritParentConfig` nowadays, but from a quick look I don't
-> see it supports merging lists.
->
-> So to do something fancier, we would do need something like we did for
-> rust-analyzer, i.e. a `make` target or similar that would generate it.
->
-> Otherwise, we can just add extra macros at the top meanwhile.
->
-> What we did last time is just to add `tools/` to that command --
-> increasing coverage is not an issue (I just started with `include/`
-> originally to be a bit conservative and avoid a huge list until we
-> knew the tool would be used).
->
-> Cheers,
-> Miguel
 
