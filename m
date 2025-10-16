@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-856992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED84BE598B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:48:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDB3BE5994
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C95435561C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:48:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0E31A636C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7862E54DB;
-	Thu, 16 Oct 2025 21:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6E42E62D0;
+	Thu, 16 Oct 2025 21:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugFm4wIZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3pgPtJ/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259462DFA4A;
-	Thu, 16 Oct 2025 21:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFFA2E612E;
+	Thu, 16 Oct 2025 21:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760651272; cv=none; b=I0H3Ig3edCMB4fCDKB9qA+/qFoUU9Rh9QM4XT58mZ9ncq3kwFpTlxVobmRW+Xw4l5iVPPAtfyqKW6ZKaLVlSDvJSs9Dln1IzeO8ANi/ZJqaDH1CjUf4j2PtBqED9nAA2tJFar/vo8jDWcKaApriD01ntUvzO/6kmCOIE7yYsS/A=
+	t=1760651313; cv=none; b=lYUd0+v11pfUKRcx1aV1v7wQj4V0OhypAIzG1TDwz1blE4HLBv+fD7oteNiPolGGV+QnKioia1Xtf4yZa6+eE0B5Lu5FjGApt8NbHs2fNqY04AC1Jz/MTFwWkGpxvx6S7zAgHdQTS49SvgdVX56A5VxZShWIrBXUd5jtwJUzB/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760651272; c=relaxed/simple;
-	bh=P0ccrz25cVeIv5CP0fVfDA2Q2QwIFMKPR+3K+ugp+i8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=IAgiJ73G7GsyRvn4n9uKb/pge8Pzs5G2T79GibLg7XGpjClm0zmYr7e+xFxjecxC7ZihGt3SuN+LjbvMKTYNWmwci/nQWBq9xF1yHLVFZKatWOCWaLCc4mQRp2cPezQ91DytTa6wp1Ay5CxZKAc3y2FGu/dM6nX0SmnQrALRGjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugFm4wIZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA6AC4CEF1;
-	Thu, 16 Oct 2025 21:47:48 +0000 (UTC)
+	s=arc-20240116; t=1760651313; c=relaxed/simple;
+	bh=az2P0BtWOdbNV9GVnUGrbuYR+gFXF+qCpHSYxeMG9Y0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=IMQ+SLcuM1hfMoGEwU3bcCt63DbyjOZ9HNKnM+/VV412M5c8D0LDgeenOuZWTuKYk5Zk/pQxoDZk9cum47Vwda5uXziJWin7/Jhf6FEj5r/8hWpBK2IzO9CIRBbtXFwRlcJcE4Y6K4cUtb1rXJJqGgtDTfHpkL9Ve28qOgxmDmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3pgPtJ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CBCCC4CEF1;
+	Thu, 16 Oct 2025 21:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760651271;
-	bh=P0ccrz25cVeIv5CP0fVfDA2Q2QwIFMKPR+3K+ugp+i8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=ugFm4wIZxWDU8ANFaXF9AXg2+4cH7EKbq6E2VMNNQI5mtnDTQPRazx055zq+QSfZK
-	 JuGodsFfNHuF93SNLji0d8JT4Ztao9zjRC7cv9wNhhj3DtmPNjCpWwxgog821IvzEU
-	 Gy2vIrla0ZEPySYhk3ALOiocjZil/XarlVS7Kx+wvn3sUyKdBruSkchmCfb4ghewaX
-	 5tCsfO2/ZWNPAPhpYwwPHHACzXApgoafsLC+YKyM+SFtxjwL/IiLvurloyEkGRMUGG
-	 DyXBAB14t42bun0msFqSDzsxFVuUoJzKOl9xGX+4SIIkulVXexTALgnCI4mvXwfrdX
-	 rLjOIgSGC5M1Q==
+	s=k20201202; t=1760651312;
+	bh=az2P0BtWOdbNV9GVnUGrbuYR+gFXF+qCpHSYxeMG9Y0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=S3pgPtJ/dxSC0vCGR7QZtHL8vtSOJDzsapuk50mdbYa2Bzph4QxYTLe4mdrOb9VOS
+	 EPbPLvQvJ8E4OoEQDjLcCVqxfP/crT4q5rweC/WxdiUod3jm1woACovGDOkofs9ZfZ
+	 SIXHZQo+9gXCQtFPlTX4B43idgOIAFf8PsiQbkOnYM1CuIrRT3eT06BcTXsAqk7Y1R
+	 rcZYL1+MnGfTxb1NxkMV/Lno9/7/axlaD9bnhNDTbfrXdXtJak7x7pYpVwQ5Dgiqd5
+	 507EJO3k6eqIES5q9RdHzE+7koQyPPY0w7yIhd1yrXMbM6iflC8NPB6cPRnVI5E1nC
+	 9drphuLbHu6xw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,53 +48,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 Oct 2025 23:47:47 +0200
-Message-Id: <DDK2SA1D77HM.38KOTOTF8FJXI@kernel.org>
-Subject: Re: [PATCH 1/2] rust: pin-init: fix broken rust doc link
+Date: Thu, 16 Oct 2025 23:48:25 +0200
+Message-Id: <DDK2SRUF7OG7.1HEZXR1V4ND8Z@kernel.org>
+Cc: <viresh.kumar@linaro.org>, <acourbot@nvidia.com>, <ira.weiny@intel.com>,
+ <leon@kernel.org>, <daniel.almeida@collabora.com>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <abdiel.janulgue@gmail.com>,
+ <robin.murphy@arm.com>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+ <linux-pm@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: driver: let probe() return impl PinInit<Self,
+ Error>
 From: "Benno Lossin" <lossin@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Fiona Behrens" <me@kloenk.dev>,
- "Alban Kurti" <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
+ <rafael@kernel.org>
 X-Mailer: aerc 0.21.0
-References: <20251016211740.653599-1-lossin@kernel.org>
- <CANiq72k8KmpFyKAFZ293GDUWx5=HJtksR02hTU8-H9PX7xsT+g@mail.gmail.com>
-In-Reply-To: <CANiq72k8KmpFyKAFZ293GDUWx5=HJtksR02hTU8-H9PX7xsT+g@mail.gmail.com>
+References: <20251016125544.15559-1-dakr@kernel.org>
+In-Reply-To: <20251016125544.15559-1-dakr@kernel.org>
 
-On Thu Oct 16, 2025 at 11:24 PM CEST, Miguel Ojeda wrote:
-> On Thu, Oct 16, 2025 at 11:17=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
- wrote:
->>
->> Rust 1.92.0 warns when building the documentation that [`PinnedDrop`] is
->> an invalid reference. This is correct and it's weird that it didn't warn
->> before, so fix the link.
+On Thu Oct 16, 2025 at 2:55 PM CEST, Danilo Krummrich wrote:
+> The driver model defines the lifetime of the private data stored in (and
+> owned by) a bus device to be valid from when the driver is bound to a
+> device (i.e. from successful probe()) until the driver is unbound from
+> the device.
 >
-> It is because it is hidden -- I have patches to fix this (it is not
-> just in pin-init but elsewhere too), but I am waiting for confirmation
-> on whether this is actually intentional behavior:
+> This is already taken care of by the Rust implementation of the driver
+> model. However, we still ask drivers to return a Result<Pin<KBox<Self>>>
+> from probe().
 >
->     https://github.com/rust-lang/rust/pull/147153#issuecomment-3395484636
+> Unlike in C, where we do not have the concept of initializers, but
+> rather deal with uninitialized memory, drivers can just return an
+> impl PinInit<Self, Error> instead.
 >
-> From the early reply I got, it seems it is not, so it may be that it is "=
-fixed".
+> This contributed to more clarity to the fact that a driver returns it's
+> device private data in probe() and the Rust driver model owns the data,
+> manages the lifetime and - considering the lifetime - provides (safe)
+> accessors for the driver.
 >
-> Personally, I think it is useful, so I hope they keep it, even if as a
-> new opt-in option or similar.
+> Hence, let probe() functions return an impl PinInit<Self, Error> instead
+> of Result<Pin<KBox<Self>>>.
 >
-> Of course, we can land this patch since it does not matter either way,
-> but please add a note with the above in the commit message if you land
-> it.
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> Depends on a minor pin-init patch [1] (Benno will send it to the list
+> soon). A branch with this patch and the pin-init dependency is available
+> in [2].
 
-Thanks a lot for the added context! I will add it when applying. The
-`__pinned_drop!` macro will be gone with the syn patches this cycle, so
-in this case, we don't care what the resolution will be.
+I sent the patch to the list:
+
+    https://lore.kernel.org/all/20251016210541.650056-1-lossin@kernel.org
 
 ---
 Cheers,
 Benno
+
+>
+> [1] https://github.com/Rust-for-Linux/pin-init/pull/86/commits
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=
+=3Dprobe_return
+> ---
+>  drivers/cpufreq/rcpufreq_dt.rs        |  4 +-
+>  drivers/gpu/drm/nova/driver.rs        |  4 +-
+>  drivers/gpu/drm/tyr/driver.rs         |  4 +-
+>  drivers/gpu/nova-core/driver.rs       | 34 +++++++----------
+>  rust/kernel/auxiliary.rs              |  6 +--
+>  rust/kernel/cpufreq.rs                |  4 +-
+>  rust/kernel/device.rs                 |  9 ++++-
+>  rust/kernel/driver.rs                 |  4 +-
+>  rust/kernel/io/mem.rs                 |  8 ++--
+>  rust/kernel/pci.rs                    |  8 ++--
+>  rust/kernel/platform.rs               | 12 +++---
+>  rust/kernel/usb.rs                    |  4 +-
+>  samples/rust/rust_debugfs.rs          | 21 ++++++-----
+>  samples/rust/rust_dma.rs              | 37 +++++++++----------
+>  samples/rust/rust_driver_auxiliary.rs | 25 +++++--------
+>  samples/rust/rust_driver_pci.rs       | 53 +++++++++++++--------------
+>  samples/rust/rust_driver_platform.rs  |  6 +--
+>  samples/rust/rust_driver_usb.rs       |  5 +--
+>  18 files changed, 117 insertions(+), 131 deletions(-)
 
