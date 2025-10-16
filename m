@@ -1,164 +1,278 @@
-Return-Path: <linux-kernel+bounces-856635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D3EBE4A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:47:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF28DBE4AA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 098854F50C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:47:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4236C5E22D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96C332AAD1;
-	Thu, 16 Oct 2025 16:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yXPGU4u"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00E832AAD6;
+	Thu, 16 Oct 2025 16:47:21 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BB832D7F7
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5D123EA94;
+	Thu, 16 Oct 2025 16:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760633226; cv=none; b=tLZqx9DzapCivggkVdY9dF79W1pTGmlJ9dsvvSdMohkv6TbGdg5ejU/lXfSBuA2rs9vMoq1Ow/JtHRO8CTTdqB3/N+m/aTtNaVQVny9CQItAGozfXziPNS4cVVDpQbPgOQ6VsJRJ3M0jKn+8jesnb+4JdmBsnQFISuFC7FAQ0bM=
+	t=1760633241; cv=none; b=BJFwuFyLgDVVOW6Gu4KtjP/T5d7xcwbgxhqsjoTF4+CcYerxnnJ04g1FOYOKYtZGMFJ0eQMPVi9B07fQnaQkUVcbq1E8DwK8HUkD7iglgWJjWi6PSmmN316ZP47e8W22QMjzQCdn1T3xryduK6LUe44fRuElLbkSw7VhnOuj630=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760633226; c=relaxed/simple;
-	bh=/5RTxVjF0G6irKYsLlz4ZbBm7+5Do4c5REN7Mem7vMM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hFR1ZXEVRVPdFjpregJxyUAF2AZhpjrs2jzEwSGfR4oVFyzjn7HHTFx3iIecq32bRugMvJAyxJABvcJxvbfbmRe8ARjCJhd/XaqiK8Cur7FH0/WW+Y4TP0zLQ6ARm5hzAdXqExVLncS0pyouWij2Qafd30IZAY3KnyQBpXbKv3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yXPGU4u; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-426ede1d66fso650546f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760633223; x=1761238023; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BH6iB9yTl4fk0GH7d0wlAo5lBLVhqDhIbHp2taDAclg=;
-        b=3yXPGU4u2k1EeiLEwAGxMItkdznv3pFh/XCH6M00rBiQw7I1LfqOvTHSJdmgFN2TiT
-         fydLu/UB2Sl90aiTArMqwjGsOdjyHsTrYWqo+uJDnortops3llc9d0IRvZpeaXitz01s
-         d0FhFimCReY7haAtrpQ14icVzz467O/0k187dAG+F1tDjEZrpppXgozsttGMe2Id5U5z
-         8aOXHUE8F0gTI8ZjY1NZ5nFgefZhvGh7Xt6fYRmo5FuFHgPObV6oiFlc/Ue/6g9y+Wvf
-         StG+8db2TLMOj63RDP/sK4EX9ePidpvEIEXKcVtsTyYQOuMwG6e3M56BPWhqvfCN5se2
-         EdxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760633223; x=1761238023;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BH6iB9yTl4fk0GH7d0wlAo5lBLVhqDhIbHp2taDAclg=;
-        b=n4AgdY0F3dAconPAf3Hg5VGV3OjATkk6hDjey9w33vQ02iX0uapbcmD1phHzSONSNm
-         0Fiex+opUD8qoLPo54x6ImFJnT9KpYXd8VfC4dJhy6e18BfgygfRhzZbXVurS5ru8iGH
-         CDOnvFpmtGhJSJqajL+sq+rpO8Nux79GV6hCY5VetMDHcSW5wfjxuWDWxn7TgRtU+LrX
-         ZfCz5oSJ/Phf4v1cJJvUnPuRuvlRjALiBaBsAKakBEOiZv+eCEuWeASCnSL1sQDi5OOC
-         4Qeq8+X2gdzaPAdNfpLLda31KqPkS1YlfPiCfwDmz9eB2Qfmrn2kLmg+Szp4z0mW8V8J
-         rEFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsnSlYeNWOpJwJq3GAGkJ4Mc3EoJ4q4bRyBVMASDk6V1ee8tL3lUxfuG5DmuHeUsUOCHXwkMOO/V6whLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3fRTw2TwiRW3EsIPB/BkAteA1s3LiF4FBQm6o73RwPYMTD45A
-	J7K2XMLliB53qdKqaw8XzUSgtsmPQH27Z6xAmsLCSmZyR9dhmQppSgFGUBk8wzgIYk7JBipSx8m
-	AjUaHEpkSFuJsUw==
-X-Google-Smtp-Source: AGHT+IHcD3DhvFIyEIdQBqcildJVHXf0ma0Sjcc8HSeY6Y1WeeaInmnjzCLZSpJkSvdkYUcwmyWxkDHjxlOUqw==
-X-Received: from wrwd5.prod.google.com ([2002:a5d:6445:0:b0:427:352:6d90])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2891:b0:3da:37de:a38e with SMTP id ffacd0b85a97d-42704da2c9cmr689217f8f.54.1760633222807;
- Thu, 16 Oct 2025 09:47:02 -0700 (PDT)
-Date: Thu, 16 Oct 2025 16:47:02 +0000
-In-Reply-To: <aPEgNdjr0j4LdSYq@google.com>
+	s=arc-20240116; t=1760633241; c=relaxed/simple;
+	bh=DlAyQQmVrHCjqtbaYRqt228DCsKpBQ6VDXNZ3FPON2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESWE65KR83STA6Yg8kSLZTb2s3DDXGg2vYE8nitlFwIexjD9531artjr9cdz9X2LOvvw4AZrdSYj7AAafxkbQzT0bhPZcJ18ZIWsyGrgky2gBieeuXMQ+1Wj6ELsx8gQRvX8e256qwt71IJeZYuRGs3D8jf1RZ+bbRmgUFwSsPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1v9R89-000000002py-116l;
+	Thu, 16 Oct 2025 16:47:09 +0000
+Date: Thu, 16 Oct 2025 17:47:05 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Sjoerd Simons <sjoerd@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+	kernel@collabora.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org, netdev@vger.kernel.org,
+	Bryan Hinton <bryan@bryanhinton.com>
+Subject: Re: [PATCH 10/15] arm64: dts: mediatek: mt7981b: Add Ethernet and
+ WiFi offload support
+Message-ID: <aPEhiVdgkVLvF9Et@makrotopia.org>
+References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
+ <20251016-openwrt-one-network-v1-10-de259719b6f2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
- <aPEULoJUUadbb3nn@google.com> <DDJVZU914RVD.1HXRX01BELY4L@google.com> <aPEgNdjr0j4LdSYq@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDJWE0C6OM45.2AKEJR1EG8Z6Q@google.com>
-Subject: Re: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Brendan Jackman <jackmanb@google.com>
-To: Sean Christopherson <seanjc@google.com>, Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>, 
-	<kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016-openwrt-one-network-v1-10-de259719b6f2@collabora.com>
 
-On Thu Oct 16, 2025 at 4:41 PM UTC, Sean Christopherson wrote:
-> On Thu, Oct 16, 2025, Brendan Jackman wrote:
->> On Thu Oct 16, 2025 at 3:50 PM UTC, Sean Christopherson wrote:
->> > On Wed, Oct 15, 2025, Brendan Jackman wrote:
->> >> Currently the tracking of the need to flush L1D for L1TF is tracked by
->> >> two bits: one per-CPU and one per-vCPU.
->> >> 
->> >> The per-vCPU bit is always set when the vCPU shows up on a core, so
->> >> there is no interesting state that's truly per-vCPU. Indeed, this is a
->> >> requirement, since L1D is a part of the physical CPU.
->> >> 
->> >> So simplify this by combining the two bits.
->> >> 
->> >> The vCPU bit was being written from preemption-enabled regions. For
->> >> those cases, use raw_cpu_write() (via a variant of the setter function)
->> >> to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
->> >> CPU that gets its bit set in these paths is not important; vcpu_load()
->> >> must always set it on the destination CPU before the guest is resumed.
->> >> 
->> >> Signed-off-by: Brendan Jackman <jackmanb@google.com>
->> >> ---
->> >
->> > ...
->> >
->> >> @@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
->> >>  	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
->> >>  }
->> >>  
->> >> +static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
->> >> +{
->> >> +	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
->> >> +}
->> >
->> > TL;DR: I'll post a v3 with a slightly tweaked version of this patch at the end.
->> >
->> > Rather than add a "raw" variant, I would rather have a wrapper in arch/x86/kvm/x86.h
->> > that disables preemption, with a comment explaining why it's ok to enable preemption
->> > after setting the per-CPU flag.  Without such a comment, choosing between the two
->> > variants looks entirely random
->> >
->> > Alternatively, all writes could be raw, but that
->> > feels wrong/weird, and in practice disabling preemption in the relevant paths is a
->> > complete non-issue.
->> 
->> Hm, why does making every write _raw feel weird but adding
->> preempt_disable() to every write doesn't? Both feel equally weird to me.
->
-> I completely agree that both approaches are odd/weird.
->
->> But the latter has the additional weirdness of using preempt_disable()
->> as a way to signal "I know what I'm doing", when that signal is already
->> explicitly documented as the purpose of raw_cpu_write().
->
-> True.  Aha!
->
-> With the #ifdefs in place, KVM doesn't need arch/x86/include/asm/hardirq.h to
-> provide a wrapper.  irq_stat is already exported, the wrapper exists purely so
-> that kvm_set_cpu_l1tf_flush_l1d() can be invoked without callers having to check
-> CONFIG_KVM_INTEL.
->
-> Not yet tested, but how about this?
->
-> static __always_inline void kvm_request_l1tf_flush_l1d(void)
-> {
-> #if IS_ENABLED(CONFIG_CPU_MITIGATIONS) && IS_ENABLED(CONFIG_KVM_INTEL)
-> 	/*
-> 	 * Use a raw write to set the per-CPU flag, as KVM will ensure a flush
-> 	 * even if preemption is currently enabled..  If the current vCPU task
-> 	 * is migrated to a different CPU (or userspace runs the vCPU on a
-> 	 * different task) before the next VM-Entry, then kvm_arch_vcpu_load()
-> 	 * will request a flush on the new CPU.
-> 	 */
-> 	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-> #endif
-> }
+On Thu, Oct 16, 2025 at 12:08:46PM +0200, Sjoerd Simons wrote:
+> Add device tree nodes for the Ethernet subsystem on MT7981B SoC,
+> including:
+> - Ethernet MAC controller with dual GMAC support
+> - Wireless Ethernet Dispatch (WED)
+> - SGMII PHY controllers for high-speed Ethernet interfaces
+> - Reserved memory regions for WiFi offload processor
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+> ---
+>  arch/arm64/boot/dts/mediatek/mt7981b.dtsi | 133 ++++++++++++++++++++++++++++++
+>  1 file changed, 133 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7981b.dtsi b/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+> index 13950fe6e8766..c85fa0ddf2da8 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+> @@ -2,6 +2,7 @@
+>  
+>  #include <dt-bindings/clock/mediatek,mt7981-clk.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/leds/common.h>
+>  #include <dt-bindings/phy/phy.h>
+>  #include <dt-bindings/reset/mt7986-resets.h>
+>  
+> @@ -47,11 +48,36 @@ reserved-memory {
+>  		#size-cells = <2>;
+>  		ranges;
+>  
+> +		wo_boot: wo-boot@15194000 {
+> +			reg = <0 0x15194000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		wo_ilm0: wo-ilm@151e0000 {
+> +			reg = <0 0x151e0000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		wo_dlm0: wo-dlm@151e8000 {
+> +			reg = <0 0x151e8000 0 0x2000>;
+> +			no-map;
+> +		};
+> +
+>  		/* 192 KiB reserved for ARM Trusted Firmware (BL31) */
+>  		secmon_reserved: secmon@43000000 {
+>  			reg = <0 0x43000000 0 0x30000>;
+>  			no-map;
+>  		};
+> +
+> +		wo_emi0: wo-emi@47d80000 {
+> +			reg = <0 0x47d80000 0 0x40000>;
+> +			no-map;
+> +		};
+> +
+> +		wo_data: wo-data@47dc0000 {
+> +			reg = <0 0x47dc0000 0 0x240000>;
+> +			no-map;
+> +		};
+>  	};
+>  
+>  	soc {
+> @@ -107,6 +133,18 @@ pwm: pwm@10048000 {
+>  			#pwm-cells = <2>;
+>  		};
+>  
+> +		sgmiisys0: syscon@10060000 {
+> +			compatible = "mediatek,mt7981-sgmiisys_0", "syscon";
+> +			reg = <0 0x10060000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		sgmiisys1: syscon@10070000 {
+> +			compatible = "mediatek,mt7981-sgmiisys_1", "syscon";
+> +			reg = <0 0x10070000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+>  		uart0: serial@11002000 {
+>  			compatible = "mediatek,mt7981-uart", "mediatek,mt6577-uart";
+>  			reg = <0 0x11002000 0 0x100>;
+> @@ -338,6 +376,10 @@ soc-uuid@140 {
+>  			thermal_calibration: thermal-calib@274 {
+>  				reg = <0x274 0xc>;
+>  			};
+> +
+> +			phy_calibration: phy-calib@8dc {
+> +				reg = <0x8dc 0x10>;
+> +			};
+>  		};
+>  
+>  		ethsys: clock-controller@15000000 {
+> @@ -347,6 +389,97 @@ ethsys: clock-controller@15000000 {
+>  			#reset-cells = <1>;
+>  		};
+>  
+> +		wed: wed@15010000 {
+> +			compatible = "mediatek,mt7981-wed",
+> +				     "syscon";
+> +			reg = <0 0x15010000 0 0x1000>;
+> +			interrupt-parent = <&gic>;
+> +			interrupts = <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
+> +			memory-region = <&wo_emi0>, <&wo_ilm0>, <&wo_dlm0>,
+> +					<&wo_data>, <&wo_boot>;
+> +			memory-region-names = "wo-emi", "wo-ilm", "wo-dlm",
+> +					      "wo-data", "wo-boot";
+> +			mediatek,wo-ccif = <&wo_ccif0>;
+> +		};
+> +
+> +		eth: ethernet@15100000 {
+> +			compatible = "mediatek,mt7981-eth";
+> +			reg = <0 0x15100000 0 0x40000>;
+> +			assigned-clocks = <&topckgen CLK_TOP_NETSYS_2X_SEL>,
+> +					  <&topckgen CLK_TOP_SGM_325M_SEL>;
+> +			assigned-clock-parents = <&topckgen CLK_TOP_CB_NET2_800M>,
+> +						 <&topckgen CLK_TOP_CB_SGM_325M>;
+> +			clocks = <&ethsys CLK_ETH_FE_EN>,
+> +				 <&ethsys CLK_ETH_GP2_EN>,
+> +				 <&ethsys CLK_ETH_GP1_EN>,
+> +				 <&ethsys CLK_ETH_WOCPU0_EN>,
+> +				 <&topckgen CLK_TOP_SGM_REG>,
+> +				 <&sgmiisys0 CLK_SGM0_TX_EN>,
+> +				 <&sgmiisys0 CLK_SGM0_RX_EN>,
+> +				 <&sgmiisys0 CLK_SGM0_CK0_EN>,
+> +				 <&sgmiisys0 CLK_SGM0_CDR_CK0_EN>,
+> +				 <&sgmiisys1 CLK_SGM1_TX_EN>,
+> +				 <&sgmiisys1 CLK_SGM1_RX_EN>,
+> +				 <&sgmiisys1 CLK_SGM1_CK1_EN>,
+> +				 <&sgmiisys1 CLK_SGM1_CDR_CK1_EN>,
+> +				 <&topckgen CLK_TOP_NETSYS_SEL>,
+> +				 <&topckgen CLK_TOP_NETSYS_500M_SEL>;
+> +			clock-names = "fe", "gp2", "gp1", "wocpu0",
+> +				      "sgmii_ck",
+> +				      "sgmii_tx250m", "sgmii_rx250m",
+> +				      "sgmii_cdr_ref", "sgmii_cdr_fb",
+> +				      "sgmii2_tx250m", "sgmii2_rx250m",
+> +				      "sgmii2_cdr_ref", "sgmii2_cdr_fb",
+> +				      "netsys0", "netsys1";
+> +			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "fe0", "fe1", "fe2", "fe3", "pdma0",
+> +					  "pdma1", "pdma2", "pdma3";
+> +			sram = <&eth_sram>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			mediatek,ethsys = <&ethsys>;
+> +			mediatek,sgmiisys = <&sgmiisys0>, <&sgmiisys1>;
+> +			mediatek,infracfg = <&topmisc>;
+> +			mediatek,wed = <&wed>;
+> +			status = "disabled";
+> +
+> +			mdio_bus: mdio-bus {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				int_gbe_phy: ethernet-phy@0 {
+> +					compatible = "ethernet-phy-ieee802.3-c22";
+> +					reg = <0>;
+> +					phy-mode = "gmii";
+> +					phy-is-integrated;
+> +					nvmem-cells = <&phy_calibration>;
+> +					nvmem-cell-names = "phy-cal-data";
 
-Yeah, just poking irq_stat directly seems fine to me.
+Please also define the two LEDs here with their corresponding (only)
+pinctrl options for each of them, with 'status = "disabled";'. This
+makes it easier for boards to make use of the Ethernet PHY leds by just
+referencing the LED and setting the status to 'okay'.
+
+> +				};
+> +			};
+> +		};
+> +
+> +		eth_sram: sram@15140000 {
+> +			compatible = "mmio-sram";
+> +			reg = <0 0x15140000 0 0x40000>;
+> +			ranges = <0 0x15140000 0 0x40000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +		};
+> +
+> +		wo_ccif0: syscon@151a5000 {
+> +			compatible = "mediatek,mt7986-wo-ccif", "syscon";
+> +			reg = <0 0x151a5000 0 0x1000>;
+> +			interrupt-parent = <&gic>;
+> +			interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+>  		wifi: wifi@18000000 {
+>  			compatible = "mediatek,mt7981-wmac";
+>  			reg = <0 0x18000000 0 0x1000000>,
+> 
+> -- 
+> 2.51.0
+> 
 
