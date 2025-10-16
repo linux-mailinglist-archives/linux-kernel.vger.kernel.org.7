@@ -1,217 +1,147 @@
-Return-Path: <linux-kernel+bounces-856915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24E1BE5705
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 411A0BE5708
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26561188AE3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42711A62D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F152E0408;
-	Thu, 16 Oct 2025 20:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A640D2DE6F4;
+	Thu, 16 Oct 2025 20:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="EOLV7BGd"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4NYKUR/"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB1D2580FF;
-	Thu, 16 Oct 2025 20:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8B02580FF
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760647624; cv=none; b=CO9gQjmt28or0LxxogAaNLFoM1Azn9XB0wKjtUKHpmdfFR2meI8X7z/I7gyaAm0qrQzdwN0bcE/UDPjrMjxw1vtG30jg/3TtVWuHAMZyA/m6pkcJWreJ3/jGWx970JFGaz9sHCjTK/N0hJUA+rB+V/CNwCq7xS6tHXk5eH5VB7k=
+	t=1760647633; cv=none; b=mHpzneldjaRGX4pNOWxnK7c8exHAhpWYFl88ORiFZzmAn4jmRcsEjQSxebvHyARpIz1293fp3ql0SkqAHCambK783uYKh81Cu6vZ1oS8ZKVp/e3hnvcp5mjNhbDQjOlogwuzajVwf+0NaEhEddqHV2icYy9hRSSlJ/zwQHxJki4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760647624; c=relaxed/simple;
-	bh=FvjPKaHy3uDCE3u2I9fXIEVxKeqvzoRXv8edK6A3fXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GllMx0fwqO+wfZkBLMOl3di5zDWSSr6sOtQggtxbK9xwVbr1Y1nGbFNSPrQldp3fDJhpT7hbyLYzTvruef94Ort1EGXOp7HlA5dFxnzJigQ4NJ/MBw6um1rkKtRTsgj0ZR0uHxz9QybUM/xsh+QBPePBAht8XIRe8jFO3qSV3io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=EOLV7BGd; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id DC1B95340895;
-	Thu, 16 Oct 2025 22:46:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1760647616;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2M4RQrRAYPrPAzAkQd7q+bC/wmwzYAp1UUQk/QFp0Q8=;
-	b=EOLV7BGd2fd5HoW/dYJBg22hfbmcGU/636unV509PgYFMA8Om9XbAiqifmFmVBpd/aZOyh
-	0zAWfPcqwx/jcIslQuFtEV78bCcc/cURaEq6GrF3VhhWuJbpUa+D2I79pqn1abx3+dtnk+
-	MUYHKWdxeE6DxUZ2BxbG8L1QGDSSqd0=
-Message-ID: <d13cdf83-22df-4a24-a711-2db4abe3a0a8@ixit.cz>
-Date: Thu, 16 Oct 2025 22:46:56 +0200
+	s=arc-20240116; t=1760647633; c=relaxed/simple;
+	bh=SZ3VwLpPvbuumhkSyMRDao9a+3CAOTAOynz06g6NFLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CWQYYCb3eiFl/UIY2R5iylpFv45ibOJ/hUnkewRf/xGpuqQ9sVmWVkeqGu10jPXtcxO94fLMWs8QD2zQOQjFtRru5V8jM84iyKauQjR9HBLac7GiZz/ogKM7G5X3AYDB+QKmwfaQ7ZJWVkSurOvFuyUQEw8FTZBJmYFItkTTeOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4NYKUR/; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee12807d97so1133918f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760647629; x=1761252429; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1BaWBVzmCroQjkChpezmuVIfaDJZO7tG78XkiTqoyPc=;
+        b=h4NYKUR/4Q9vWnwuxD+5+w49snMsDRmfn+rZ2Puawcycpgk2nT+8ZB3JzdNovYDvA1
+         gveCcNwopuLdkjbfWRPKXg/rUhZRaERBVtUijmV8iDjXpmg5FMPuoiytmZHbpu3uyO9B
+         kJ1mwFuQPb/rgFCNMMCNp+UlWDHx+gsleA1PRNbUk7JfC7X+uFqCvRQCB+tNiqMnfIrh
+         RwbriaHcdAnJJagdmPxu6knf5BIw3cvlrT7gBY7STOwcMe0f2YOXzCrRnwKTl5KfQAuR
+         fv69ePRCeNhqaJT93qrgUCNPFIJ9JTFw9kYzbgRqDceT5BtYLOsl9hLv+sgQ5+jwgSCL
+         Io4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760647629; x=1761252429;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1BaWBVzmCroQjkChpezmuVIfaDJZO7tG78XkiTqoyPc=;
+        b=WmZ5jx7ON9G4AmJ+6rsnWxqoOyJAgGf9lG2grXsoeuRp+ePkekzyXBNS7bVs0fc+OB
+         jOvOEHdVnnSoU63LxzQJBkSlqxU2UGXTXgHdC2zyTC+kvB4tNFvAnxKi16+wfOmeGHgj
+         lUSipehpRmE3FJjK7A6Y1zGH7Tq0p1xcK7MAGF52Nz5G+weM6/rSO3Qrfwr1+j9HKPCF
+         fjnyOJKJ5Voy2pHpF2dbWBJc921RKW9ciAvkoKQyqWmcFPpTX/3k5OvTnokm+SAI74dN
+         G4zVlTeMfgAfeIuOYz4dI/YV2SObVKXtlI+dzqyG7fN5lip1CnauLoVhpLs9NeBTLOUY
+         tDEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUigIfjDWvFb97/5qewSnJOfb32pYVu/f+8cnQL4qKSe5l9t7rHL8+FiWksweifk5AcCkZeNeKwSO/gvyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdN7uESnKkVQTJON1qH/+SKV+UfKO/GxW4nbzkrZhyxk8SVJu0
+	90m7+t3gqlP7IEaTyOmsit5KERd0PacQzmG+fW5cpKPPIYwtyv08gwVI
+X-Gm-Gg: ASbGnct0YsQvqsY1dVxQJM9E16edRwryzGOOgXBS2mpSeeJt0zhcvPaA789R8JB2u4Y
+	HwPWMaREdhTB37gH279Us/xJF6DRjZUDM3l4x9oX7ucsMzjCYz+QILCCIwrhJZgU2f5WrcPixvu
+	n7mp8MmKa9yK2VDdV7OonIzjsU8Rtkor9r8JkDk4/ZZFBG8Qg+EUcI6jIC1PGCxpwEsmMMGw1BW
+	PKv7XobAWHP78e7evNBJSRlK5+Hb6euRKkdG4YGNgPwo2S5BvURotNn5s4vKh16X8dhHfFLKfcs
+	oZoSAGK0IUWK+WTzgDC+6OYMcz1exNOnxbNYm/coxN21PZ4D+Rt0Wcvgu/hPl6hayx8KffYZP7x
+	uNduaTP+gf9uwDkPExZh9S8LpaeDyD6uqyr8K8DI90keLwDaJM4YPtbkZV+/r+P+ssdj/Nsbct2
+	T85D93txIM/EhobXp1MF2OUJ+Op8w6aGwS0302iEMGT48uADsusdLbOryFOJt1O2Y=
+X-Google-Smtp-Source: AGHT+IGDOna4lVF1hUlbzkP+Y7qxbh38Qj418e9wBhFyw8Fwh1BtEEEnac13VNZybKlLGFbX+xrsaQ==
+X-Received: by 2002:a05:6000:25ee:b0:427:697:c2db with SMTP id ffacd0b85a97d-4270697c302mr24980f8f.20.1760647629344;
+        Thu, 16 Oct 2025 13:47:09 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711441f975sm45547375e9.4.2025.10.16.13.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 13:47:09 -0700 (PDT)
+Date: Thu, 16 Oct 2025 21:47:07 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Kevin Locke <kevin@kevinlocke.name>
+Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
+ Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: fix == bashism in kernel-chktaint
+Message-ID: <20251016214707.5c3d373b@pumpkin>
+In-Reply-To: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
+References: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] drm/panel: Add Samsung S6E3FC2X01 DDIC with
- AMS641RW panel
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Casey Connolly <casey.connolly@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251016-s6e3fc2x01-v3-0-ce0f3566b903@ixit.cz>
- <20251016-s6e3fc2x01-v3-4-ce0f3566b903@ixit.cz>
- <didkbltadu4ql6xcqtjrtf2iguody5bgy6mqlwtbyfgbambaii@mzofzymnfbju>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <didkbltadu4ql6xcqtjrtf2iguody5bgy6mqlwtbyfgbambaii@mzofzymnfbju>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 16/10/2025 22:12, Dmitry Baryshkov wrote:
-> On Thu, Oct 16, 2025 at 06:16:59PM +0200, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> Add panel driver used in the OnePlus 6T.
->>
->> No datasheet, based mostly on EDK2 init sequence and the downstream driver.
->>
->> Note: This driver doesn't use previously mentioned "samsung,s6e3fc2x01"
->> by OnePlus 6T device-tree.
->> The reason is because DDIC itself without knowing the panel type used
->> with it will not give the driver enough information about the panel used,
->> as the panel cannot be autodetected.
->> While would be more practical to support the original compatible,
->> I would like to avoid it, to prevent confusing devs upstreaming DDICs.
->>
->> Based on work of:
->>    Casey Connolly <casey@connolly.tech>
->>    Joel Selvaraj <foss@joelselvaraj.com>
->>    Nia Espera <a5b6@riseup.net>
->>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   MAINTAINERS                                      |   1 +
->>   drivers/gpu/drm/panel/Kconfig                    |  13 +
->>   drivers/gpu/drm/panel/Makefile                   |   1 +
->>   drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c | 399 +++++++++++++++++++++++
->>   4 files changed, 414 insertions(+)
->>
->> +
->> +static const struct drm_display_mode ams641rw_mode = {
->> +	.clock = (1080 + 72 + 16 + 36) * (2340 + 32 + 4 + 18) * 60 / 1000,
->> +	.hdisplay = 1080,
->> +	.hsync_start = 1080 + 72,
->> +	.hsync_end = 1080 + 72 + 16,
->> +	.htotal = 1080 + 72 + 16 + 36,
->> +	.vdisplay = 2340,
->> +	.vsync_start = 2340 + 32,
->> +	.vsync_end = 2340 + 32 + 4,
->> +	.vtotal = 2340 + 32 + 4 + 18,
->> +	.width_mm = 68,
->> +	.height_mm = 145,
->> +};
->> +
->> +static int s6e3fc2x01_get_modes(struct drm_panel *panel,
->> +					struct drm_connector *connector)
->> +{
->> +	struct drm_display_mode *mode;
->> +
->> +	mode = drm_mode_duplicate(connector->dev, &ams641rw_mode);
->> +	if (!mode)
->> +		return -ENOMEM;
->> +
->> +	drm_mode_set_name(mode);
->> +
->> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
->> +	connector->display_info.width_mm = mode->width_mm;
->> +	connector->display_info.height_mm = mode->height_mm;
->> +	drm_mode_probed_add(connector, mode);
+On Sat, 11 Oct 2025 15:04:26 -0600
+Kevin Locke <kevin@kevinlocke.name> wrote:
+
+> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
+> at least one argument may produce error messages such as the following
+> (produced by [dash] with argument 1024):
 > 
-> drm_connector_helper_get_modes_fixed()
-
-Thanks, next version will have it.>
->> +
->> +	return 1;
->> +}
->> +
->> +
->> +static const struct of_device_id s6e3fc2x01_of_match[] = {
->> +	/* samsung,s6e3fc2x01 will default to the AMS641RW mode (legacy) */
->> +	{ .compatible = "samsung,s6e3fc2x01", .data = &ams641rw_mode },
+>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
+>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
 > 
-> Is there a need to probide this kind of legacy?
-
-I don't know. I don't see the need to provide it, but I understood you 
-may want to have it. If not, please tell me and I'll happily remove it 
-from next version.
-
-David
-
+> This occurs because the == operator is not specified for [test in POSIX]
+> and is not supported by all shells, as noted by shellcheck [SC3014].
 > 
->> +	{ .compatible = "samsung,s6e3fc2x01-ams641rw", .data = &ams641rw_mode },
->> +	{ /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, s6e3fc2x01_of_match);
->> +
+> To fix the issue and avoid the error message, replace == with =.
 > 
+> [dash]: https://git.kernel.org/pub/scm/utils/dash/dash.git
+> [test in POSIX]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
+> [SC3014]: https://www.shellcheck.net/wiki/SC3014
+> 
+> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
+> ---
+>  tools/debugging/kernel-chktaint | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+> index e7da0909d0970..051608a63d9f1 100755
+> --- a/tools/debugging/kernel-chktaint
+> +++ b/tools/debugging/kernel-chktaint
+> @@ -19,7 +19,7 @@ EOF
+>  }
+>  
+>  if [ "$1"x != "x" ]; then
+> -	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
+> +	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
 
--- 
-David Heidelberg
+Ugg - one of the reasons for adding an x is to stop the string being treated as
+an operator - but you need to to add at the front, not the end.
+You don't need one to avoid an empty string - the quotes to that.
+
+Although, IIRC, the posix standard requires the 3-operand expressions
+be evaluated 'as expected' even if the first is (say) "-n".
+ISTR that the 5-operand [ a = b -o c = d ] is also required to be parsed.
+But, in any case, you can do:
+	if [ "x$1" = x--help -o "x$1" = x-h ]; then
+
+  David
+
+
+>  		usage
+>  		exit 1
+>  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
 
 
