@@ -1,185 +1,136 @@
-Return-Path: <linux-kernel+bounces-855748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72149BE22D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:37:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D08BE22EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 483A94F9098
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:37:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADD919A5FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B24C307AD0;
-	Thu, 16 Oct 2025 08:37:07 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9127B30102C;
-	Thu, 16 Oct 2025 08:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1877A2FF14D;
+	Thu, 16 Oct 2025 08:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IXvHAR7f"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE183301028;
+	Thu, 16 Oct 2025 08:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760603826; cv=none; b=p4M73HcxWf09E9no3TyN0D8WH1U9jkqAPmJr5KIMpPPWgq5hy938omGlTRzPYgWBjoNuwOb1/qV6cd9EUHXVSVyn51pF14NSSEjoXSk5EpwiWs8EiEfWFVcxQCDiXq0+1oQkvVFQ57gRumD0d2OjqDil9zN1d/PkADhHKOA0UOs=
+	t=1760604004; cv=none; b=amYmGcEsXAp4WE3w0avzVpY2aXYScFFs8yDrF0rQHK8mK4dO7LHem8XQSOEg/PpNenMk8vlXsrHG5+Hjjnx0jYwLBI3SVejj1mnU+4jRBMfZPXPejen47AjEzTY1C7gSaBNP5fVDTCLm3p6bjCatuzwaqql7wAv8oxx71i8oTps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760603826; c=relaxed/simple;
-	bh=NDwwwy0SIpprH+tMkxCSpNm6aauOVoGSL2X9etZlqs0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=aa0oC11H2zZuctBctxQmNs78V2y9phe5bRydMC8pcDJwHW3TN2/biTQCDP4sXOypPCmdE8ddj2cHj9S6p+1TYeHmRfANG63pOjRr6p6OW8vFDlBuIez643w0d4ZYUKBvmJoH1wRidrAxmUdbYFTDvW3jaXhsUzivO49aRfSZ9gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 16 Oct 2025 16:36:49 +0800 (GMT+08:00)
-Date: Thu, 16 Oct 2025 16:36:49 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v7 0/2] Add driver support for ESWIN eic7700 SoC reset
- controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20250930093132.2003-1-dongxuyang@eswincomputing.com>
-References: <20250930093132.2003-1-dongxuyang@eswincomputing.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1760604004; c=relaxed/simple;
+	bh=rx01UHCPmxoC5Jtx5T79SkI8RPRyscxgiyj1ajOTjyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FTSr48Iyw1HaL2a2CBIe7fHQaVprk6ZsCmFQXsH34ATDAnTRzjV/LbzL0uvylGYmDkj/XmDUjxYfWG4fcj9Djuk1N9yCWdyBfGgmr1MKPVQDvRRxYaFJsgKbXxJiifCj4bk/+R4ncza6rNhH4Oi3U3zDjk5akc/Z+50GHaYEJ50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IXvHAR7f; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=RS
+	vYSPh8ZvpCq9Tn8rRo74pwoQsk+cPXDxtofOd/xlQ=; b=IXvHAR7fi2TAsfLHVn
+	2fLAddoDQPJpeHz+Hc0NSWLC+xBmv3zguiE5uAvUltBapI4Q7QDPwqAvtxclmPkb
+	HySd+GNCk9SREAlplFQSf1P2d3GRAx/h2mwx0FMk4yAhZlqMIDPv4A3aCVKxsnZo
+	zaVlOiK6ME/Ndg+TjBzMX2h+Y=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wC3f_8Ur_BoSVKcAg--.8978S2;
+	Thu, 16 Oct 2025 16:38:48 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com,
+	heiko@sntech.de
+Cc: mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	andrzej.hajda@intel.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	Laurent.pinchart@ideasonboard.com,
+	maarten.lankhorst@linux.intel.com,
+	rfoss@kernel.org,
+	simona@ffwll.ch,
+	tzimmermann@suse.de,
+	knaerzche@gmail.com,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v8 0/2] Convert inno hdmi to drm bridge
+Date: Thu, 16 Oct 2025 16:38:30 +0800
+Message-ID: <20251016083843.76675-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <43bdee04.216.199ec2a2646.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgA31pShrvBovgUOAQ--.27355W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQERAmjvzH0Ys
-	AABsM
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC3f_8Ur_BoSVKcAg--.8978S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CF4fZw1rGr4xKr48KrWDCFg_yoW8uF4kpa
+	yjyrW5GF47uF1jgFs2kF1fAr1Syan8Jw4S9ryxX34SvFW29F15Aws29F4Yqr9rZr47CFsF
+	yrn7Ja47KFy7ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jv_M3UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEg7oXmjwqwOGzAAAsQ
 
-SGkgYWxsLAoKICBHZW50bGUgcGluZy4gTG9va2luZyBmb3J3YXJkIHRvIHlvdXIgcmVwbHkuIFRo
-YW5rIHlvdSB2ZXJ5IG11Y2ghCgpCZXN0IHJlZ2FyZHMsClh1eWFuZyBEb25nCgo+IAo+IFRoaXMg
-c2VyaWVzIGRlcGVuZHMgb24gdGhlIGNvbmZpZyBvcHRpb24gcGF0Y2ggWzFdLgo+IAo+IFsxXSBo
-dHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9uZXh0L2xpbnV4
-LW5leHQuZ2l0L2NvbW1pdC8/aD1uZXh0LTIwMjUwOTI5JmlkPWNlMmQwMGM2ZTE5MmI1ODhkZGMz
-ZDFlZmI3MmIwZWEwMGFiNTUzOGYKPiAKPiBVcGRhdGVzOgo+IAo+ICAgZHQtYmluZGluZ3M6IHJl
-c2V0OiBlc3dpbjogRG9jdW1lbnRhdGlvbiBmb3IgZWljNzcwMCBTb0MKPiAgIHY2IC0+IHY3Ogo+
-ICAgICAxLiBSZW1vdmVkIHZlbmRvciBwcmVmaXggcGF0Y2ggZGVwZW5kZW5jeSBmcm9tIGNvdmVy
-IGxldHRlciwgYmVjYXVzZSB0aGUKPiAgICAgICAgcGF0Y2ggd2FzIGFwcGxpZWQuIFVwZGF0ZWQg
-dGhlIGxpbmsgb2YgY29uZmlnIG9wdGlvbiBwYXRjaC4KPiAgICAgMi4gTW9kaWZpZWQgcmVnIGFk
-ZHJlc3MgZnJvbSAweDUxODI4MDAwIHRvIDB4NTE4MjgzMDAgaW4geWFtbC4gQmVhY3VzZSB0aGUK
-PiAgICAgICAgU29DIHVzZWQgdGhlIHJlc2V0IHJlZ2lzdGVycyBmcm9tIDB4NTE4MjgzMDAuCj4g
-ICAgIDMuIE1vZGlmaWVkIHJlZyBzaXplIGZyb20gMHg4MDAwMCB0byAweDIwMC4gQmVhY3VzZSBy
-ZXNldCByZWdpc3RlcnMgdXNlZAo+ICAgICAgICB0aGUgc2l6ZSBvZiAweDIwMC4KPiAgICAgNC4g
-TW9kaWZpZWQgU1lTQ1JHX0NMRUFSX0JPT1RfSU5GT19PRkZTRVQgZnJvbSAweDMwQyB0byAweEMu
-IE1vZGlmaWVkCj4gICAgICAgIFNZU0NSR19SRVNFVF9PRkZTRVQgZnJvbSAweDQwMCB0byAweDEw
-MC4gQmVjYXVzZSBtb2RpZmllZCB0aGUgCj4gICAgICAgIHJlc2V0LWNvbnRyb2xsZXIgcmVnIGZy
-b20gMHg1MTgyODAwMCB0byAweDUxODI4MzAwLiBBbmQgdGhlIG9mZnNldCB3YXMgCj4gICAgICAg
-IGFsc28gbW9kaWZpZWQuCj4gICAgIDUuIEFkZGVkIC5yZWdfc3RyaWRlID0gNCBpbiBlaWM3NzAw
-X3JlZ21hcF9jb25maWcuIEJlYWN1c2UgcmlzY3Ygc3VwcG9ydGVkCj4gICAgICAgIDQtYnl0ZSBh
-bGlnbmVkIGFjY2Vzcy4KPiAgICAgTGluayB0byB2NjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-YWxsLzIwMjUwODI2MTEwNjEwLjEzMzgtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8K
-PiAKPiAgIHY1IC0+IHY2Ogo+ICAgICBBZGQgZGVwZW5kZW5jaWVzIG9mIHZlbmRvciBwcmVmaXgg
-YW5kIGNvbmZpZyBvcHRpb24gcGF0Y2ggaW4gY292ZXItbGV0dGVyLgo+ICAgICBMaW5rIHRvIHY1
-OiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA3MjUwOTMyNDkuNjY5LTEtZG9uZ3h1
-eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2NCAtPiB2NToKPiAgICAgMS4gRHJvcHBl
-ZCBFSUM3NzAwX1JFU0VUX01BWCBmcm9tIGJpbmRpbmdzLgo+ICAgICAyLiBBZGQgIlJldmlld2Vk
-LWJ5IiB0YWcgb2YgIktyenlzenRvZiBLb3psb3dza2kiIGZvciBQYXRjaCAxLgo+ICAgICAzLiBD
-b3JyZWN0ZWQgdGhlIGxpbmsgdG8gcHJldmlvdXMgdmVyc2lvbnMuCj4gICAgIExpbmsgdG8gdjQ6
-IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDcxNTEyMTQyNy4xNDY2LTEtZG9uZ3h1
-eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2MyAtPiB2NDoKPiAgICAgMS4gUmVtb3Zl
-IHJlZ2lzdGVyIG9mZnNldHMgaW4gZHQtYmluZGluZ3MuCj4gICAgIDIuIFRoZSBjb25zdCB2YWx1
-ZSBvZiAiI3Jlc2V0LWNlbGwiIHdhcyBjaGFuZ2VkIGZyb20gMiB0byAxLgo+ICAgICAgICBCZWNh
-dXNlIHRoZSBvZmZzZXRzIHdlcmUgcmVtb3ZlZCBmcm9tIGR0LWJpbmRpbmdzLiBUaGVyZSBhcmUK
-PiAgICAgICAgb25seSBJRHMuIEFuZCByZW1vdmVkIHRoZSBkZXNjcmlwdGlvbiBvZiBpdC4KPiAg
-ICAgMy4gTW9kaWZ5IGNvcHlyaWdodCB5ZWFyIGZyb20gMjAyNCB0byAyMDI1Lgo+ICAgICA0LiBS
-ZWRlZmluZWQgdGhlIElEcyBpbiB0aGUgZHQtYmluZGluZ3MgYW5kIHVzZWQgdGhlc2UgdG8gYnVp
-bGQgYQo+ICAgICAgICByZXNldCBhcnJheSBpbiByZXNldCBkcml2ZXIuIEVuc3VyZSB0aGF0IHRo
-ZSByZXNldCByZWdpc3RlciBhbmQKPiAgICAgICAgcmVzZXQgdmFsdWUgY29ycmVzcG9uZGluZyB0
-byB0aGUgSURzIGFyZSBjb3JyZWN0Lgo+ICAgICBMaW5rIHRvIHYzOiBodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4MTEuMTIzMC0xLWRvbmd4dXlhbmdAZXN3aW5jb21wdXRp
-bmcuY29tLwo+IAo+ICAgdjIgLT4gdjM6Cj4gICAgIDEuIERyb3Agc3lzY29uIGFuZCBzaW1wbGUt
-bWZkIGZyb20geWFtbCBhbmQgY29kZSwgYmVjYXVzZSB0aGVzZSBhcmUKPiAgICAgICAgbm90IG5l
-Y2Vzc2FyeS4KPiAgICAgMi4gVXBkYXRlIGRlc2NyaXB0aW9uIHRvIGludHJvZHVjZSByZXNldCBj
-b250cm9sbGVyLgo+ICAgICAzLiBBZGQgcmVzZXQgY29udHJvbCBpbmRpY2VzIGZvciBkdC1iaW5k
-aW5ncy4KPiAgICAgNC4gS2VlcCB0aGUgcmVnaXN0ZXIgb2Zmc2V0cyBpbiBkdC1iaW5kaW5ncy4K
-PiAgICAgTGluayB0byB2MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNjE5MDc1
-ODExLjEyMzAtMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiAgIHYxIC0+IHYy
-Ogo+ICAgICAxLiBDbGVhciB3YXJuaW5ncy9lcnJvcnMgZm9yIHVzaW5nICJtYWtlIGR0X2JpbmRp
-bmdfY2hlY2siLgo+ICAgICAyLiBVcGRhdGUgZXhhbXBsZSwgY2hhbmdlIHBhcmVudCBub2RlIGZy
-b20gc3lzLWNyZyB0byByZXNldC1jb250cm9sbGVyCj4gICAgICAgIGZvciByZXNldCB5YW1sLgo+
-ICAgICAzLiBEcm9wIHRoZSBjaGlsZCBub2RlIGFuZCBhZGQgJyNyZXNldC1jZWxscycgdG8gdGhl
-IHBhcmVudCBub2RlLgo+ICAgICA0LiBEcm9wIHRoZSBkZXNjcmlwdGlvbiwgYmVjYXVzZSBzeXMt
-Y3JnIGJsb2NrIGlzIGNoYW5nZWQgdG8gcmVzZXQtCj4gICAgICAgIGNvbnRyb2xsZXIuCj4gICAg
-IDUuIENoYW5nZSBoZXggbnVtYmVycyB0byBkZWNpbWFsIG51bWJlcnMgZ29pbmcgZnJvbSAwLCBh
-bmQgZHJvcCB0aGUKPiAgICAgICAgbm90IG5lZWRlZCBoYXJkd2FyZSBudW1iZXJzLgo+ICAgICBM
-aW5rIHRvIHYxOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4MTEuMTIz
-MC0xLWRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+ICAgcmVzZXQ6IGVzd2luOiBB
-ZGQgZWljNzcwMCByZXNldCBkcml2ZXIKPiAgIHY2IC0+IHY3Ogo+ICAgICAxLiBBZGRlZCAucmVn
-X3N0cmlkZSA9IDQgaW4gcmVnbWFwX2NvbmZpZy4gQmVjYXVzZSBlaWM3NzAwIG9ubHkgc3VwcG9y
-dGVkCj4gICAgICAgIDQtYnl0ZSByZWdpc3RlciBhY2Nlc3MuCj4gICAgIDIuIE1vZGlmaWVkIFNZ
-U0NSR19DTEVBUl9CT09UX0lORk9fT0ZGU0VUIGZyb20gMHgzMEMgdG8gMHhDLiBNb2RpZmllZAo+
-ICAgICAgICBTWVNDUkdfUkVTRVRfT0ZGU0VUIGZyb20gMHg0MDAgdG8gMHgxMDAuIEJlY2F1c2Ug
-dGhlIGJhc2UgYWRkcmVzcyBoYXMKPiAgICAgICAgY2hhbmdlZCBmcm9tIDB4NTE4MjgwMDAgdG8g
-MHg1MTgyODMwMC4KPiAKPiAgIHY1IC0+IHY2Ogo+ICAgICAxLiBSZW1vdmVkIHBsYXRmb3JtX3Nl
-dF9kcnZkYXRhKCkgZnVuY3Rpb24uCj4gICAgIDIuIEluIHByb2JlIGZ1bmN0aW9uLCBkZWZpbmVk
-IHN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXYuCj4gICAgICAgIE1vZGlmaWVkICZwZGV2
-LT5kZXYgdG8gZGV2Lgo+ICAgICBMaW5rIHRvIHY1OiBodHRwczovL2xvcmUua2VybmVsLm9yZy9h
-bGwvMjAyNTA3MjUwOTMyNDkuNjY5LTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4g
-Cj4gICB2NCAtPiB2NToKPiAgICAgMS4gVGhlIHZhbHVlIG9mIC5tYXhfcmVnaXN0ZXIgaXMgMHg3
-ZmZmYy4KPiAgICAgMi4gQ29udmVydGVkICJ0b19lc3dpbl9yZXNldF9kYXRhIiBmcm9tIG1hY3Jv
-IHRvIGlubGluZSBmdW5jdGlvbi4KPiAgICAgMy4gTW9kaWZpZWQgRUlDNzcwMF9SRVNFVF9PRkZT
-RVQgdG8gRUlDNzcwMF9SRVNFVCBhbmQgZWljNzcwMF8KPiAgICAgICAgcmVnaXN0ZXJfb2Zmc2V0
-IHRvIGVpYzc3MDBfcmVzZXQuCj4gICAgIDQuIFNpbmNlIEVJQzc3MDBfUkVTRVRfTUFYIGlzIGRy
-b3BwZWQsIHVzZWQgZWljNzcwMF9yZXNldFtdIHdpdGhvdXQKPiAgICAgICAgRUlDNzcwMF9SRVNF
-VF9NQVguCj4gICAgIDUuIFJlbW92ZWQgZnVuY3Rpb24gZXN3aW5fcmVzZXRfc2V0LCBhbmQgcHV0
-IHJlZ21hcF9jbGVhcl9iaXRzIGluCj4gICAgICAgIGVzd2luX3Jlc2V0X2Fzc2VydCBhbmQgcmVn
-bWFwX3NldF9iaXRzIGluIGVzd2luX3Jlc2V0X2RlYXNzZXJ0Lgo+ICAgICA2LiBBZGRlZCB1c2xl
-ZXBfcmFuZ2UgaW4gZnVuY3Rpb24gZXN3aW5fcmVzZXRfcmVzZXQgd2hpY2ggd2FzIG1pc3NlZC4K
-PiAgICAgNy4gVXNlZCBBUlJBWV9TSVpFKGVpYzc3MDBfcmVzZXQpIGZvciBkYXRhLT5yY2Rldi5u
-cl9yZXNldHMuCj4gICAgIDguIFVzZSBidWlsdGluX3BsYXRmb3JtX2RyaXZlciwgYmVjYXVzZSBy
-ZXNldCBkcml2ZXIgaXMgYSByZXNldAo+ICAgICAgICBjb250cm9sbGVyIGZvciBTb0MuIFJlbW92
-ZWQgZXN3aW5fcmVzZXRfaW5pdCBmdW5jdGlvbi4KPiAgICAgOS4gTW9kaWZpZWQgZXN3aW5fcmVz
-ZXRfKiB0byBlaWM3NzAwX3Jlc2V0XyouCj4gICAgIExpbmsgdG8gdjQ6IGh0dHBzOi8vbG9yZS5r
-ZXJuZWwub3JnL2FsbC8yMDI1MDcxNTEyMTQyNy4xNDY2LTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1
-dGluZy5jb20vCj4gCj4gICB2MyAtPiB2NDoKPiAgICAgMS4gQWRkICdjb25zdCcgZm9yIHRoZSBk
-ZWZpbml0aW9uLiBJdCBpcyAnY29uc3Qgc3RydWN0IG9mX3BoYW5kbGVfCj4gICAgICAgIGFyZ3Mg
-KnJlc2V0X3NwZWMgPSBkYXRhOycuCj4gICAgIDIuIE1vZGlmeSBjb3B5cmlnaHQgeWVhciBmcm9t
-IDIwMjQgdG8gMjAyNS4KPiAgICAgMy4gSW5jbHVkZWQgImVzd2luLGVpYzc3MDAtcmVzZXQuaCIg
-aW4gcmVzZXQgZHJpdmVyLgo+ICAgICA0LiBBZGRlZCBtYXBwaW5nIHRhYmxlIGZvciByZXNldCBJ
-RHMuCj4gICAgIDUuIFJlbW92ZWQgb2ZfeGxhdGUgYW5kIGlkciBmdW5jdGlvbnMgYXMgd2UgYXJl
-IHVzaW5nIElEcyBmcm9tIERUUy4KPiAgICAgNi4gUmVtb3ZlZCAucmVtb3ZlIGZ1bmN0aW9uLgo+
-ICAgICBMaW5rIHRvIHYzOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA2MTkwNzU4
-MTEuMTIzMC0xLWRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+ICAgdjIgLT4gdjM6
-Cj4gICAgIDEuIENoYW5nZSBzeXNjb25fbm9kZV90b19yZWdtYXAoKSB0byBNTUlPIHJlZ21hcCBm
-dW5jdGlvbnMsIGJlY2F1c2UKPiAgICAgICAgZHJvcHBlZCBzeXNjb24uCj4gICAgIDIuIEFkZCBC
-SVQoKSBpbiBmdW5jdGlvbiBlc3dpbl9yZXNldF9zZXQoKSB0byBzaGlmdCB0aGUgcmVzZXQKPiAg
-ICAgICAgY29udHJvbCBpbmRpY2VzLgo+ICAgICAzLiBSZW1vdmUgZm9yY2VkIHR5cGUgY29udmVy
-c2lvbnMgZnJvbSBmdW5jdGlvbiBlc3dpbl9yZXNldF9vZl8KPiAgICAgICAgeGxhdGVfbG9va3Vw
-X2lkKCkuCj4gICAgIExpbmsgdG8gdjI6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1
-MDYxOTA3NTgxMS4xMjMwLTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICB2
-MSAtPiB2MjoKPiAgICAgMS4gTW9kaWZ5IHRoZSBjb2RlIGFjY29yZGluZyB0byB0aGUgc3VnZ2Vz
-dGlvbnMuCj4gICAgIDIuIFVzZSBlc3dpbl9yZXNldF9hc3NlcnQoKSBhbmQgZXN3aW5fcmVzZXRf
-ZGVhc3NlcnQgaW4gZnVuY3Rpb24KPiAgICAgICAgZXN3aW5fcmVzZXRfcmVzZXQoKS4KPiAgICAg
-My4gUGxhY2UgUkVTRVRfRUlDNzcwMCBpbiBLY29uZmlnIGFuZCBNYWtlZmlsZSBpbiBvcmRlci4K
-PiAgICAgNC4gVXNlIGRldl9lcnJfcHJvYmUoKSBpbiBwcm9iZSBmdW5jdGlvbi4KPiAgICAgTGlu
-ayB0byB2MTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNjE5MDc1ODExLjEyMzAt
-MS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiBYdXlhbmcgRG9uZyAoMik6Cj4g
-ICBkdC1iaW5kaW5nczogcmVzZXQ6IGVzd2luOiBEb2N1bWVudGF0aW9uIGZvciBlaWM3NzAwIFNv
-Qwo+ICAgcmVzZXQ6IGVzd2luOiBBZGQgZWljNzcwMCByZXNldCBkcml2ZXIKPiAKPiAgLi4uL2Jp
-bmRpbmdzL3Jlc2V0L2Vzd2luLGVpYzc3MDAtcmVzZXQueWFtbCAgIHwgIDQyICsrCj4gIGRyaXZl
-cnMvcmVzZXQvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxMCArCj4gIGRyaXZl
-cnMvcmVzZXQvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCj4gIGRyaXZl
-cnMvcmVzZXQvcmVzZXQtZWljNzcwMC5jICAgICAgICAgICAgICAgICB8IDQyOSArKysrKysrKysr
-KysrKysrKysKPiAgLi4uL2R0LWJpbmRpbmdzL3Jlc2V0L2Vzd2luLGVpYzc3MDAtcmVzZXQuaCAg
-IHwgMjk4ICsrKysrKysrKysrKwo+ICA1IGZpbGVzIGNoYW5nZWQsIDc4MCBpbnNlcnRpb25zKCsp
-Cj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-cmVzZXQvZXN3aW4sZWljNzcwMC1yZXNldC55YW1sCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2
-ZXJzL3Jlc2V0L3Jlc2V0LWVpYzc3MDAuYwo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9k
-dC1iaW5kaW5ncy9yZXNldC9lc3dpbixlaWM3NzAwLXJlc2V0LmgKPiAKPiAtLQo+IDIuNDMuMAo=
+From: Andy Yan <andy.yan@rock-chips.com>
+
+
+Convert it to drm bridge driver, it will be convenient for us to
+migrate the connector part to the display driver later.
+
+Patches that have already been merged in drm-misc-next are dropped.
+
+
+Changes in v8:
+- Rebase on latest drm-misc-next tag: drm-misc-fixes-2025-10-09
+- Link to v7: https://lore.kernel.org/linux-rockchip/20250903110825.776807-1-andyshrk@163.com/
+
+Changes in v7:
+- Rebase on latest drm-misc-next
+- Link to v6: https://lore.kernel.org/linux-rockchip/20250717081344.1355613-1-andyshrk@163.com/
+
+Changes in v6:
+- Rebase on latest drm-misc-next
+- Link to V5: https://lore.kernel.org/linux-rockchip/20250512124615.2848731-1-andyshrk@163.com/
+
+Changes in v5:
+- Split cleanup code to seperate patch
+- Switch to devm_drm_bridge_alloc() API
+- Link to V4: https://lore.kernel.org/linux-rockchip/20250422070455.432666-1-andyshrk@163.com/
+
+Changes in v4:
+- Do not store colorimetry within inno_hdmi struct
+- Link to V3: https://lore.kernel.org/linux-rockchip/20250402123150.238234-1-andyshrk@163.com/
+
+Changes in v3:
+- First included in v3
+- Link to V2: https://lore.kernel.org/dri-devel/20250325132944.171111-1-andyshrk@163.com/
+
+Andy Yan (2):
+  drm/rockchip: inno-hdmi: Convert to drm bridge
+  MAINTAINERS: Add entry for Innosilicon hdmi bridge library
+
+ MAINTAINERS                                   |   8 +
+ drivers/gpu/drm/bridge/Kconfig                |   7 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ .../inno_hdmi.c => bridge/inno-hdmi.c}        | 501 +++++-------------
+ drivers/gpu/drm/rockchip/Kconfig              |   1 +
+ drivers/gpu/drm/rockchip/Makefile             |   2 +-
+ drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c | 189 +++++++
+ include/drm/bridge/inno_hdmi.h                |  33 ++
+ 8 files changed, 375 insertions(+), 367 deletions(-)
+ rename drivers/gpu/drm/{rockchip/inno_hdmi.c => bridge/inno-hdmi.c} (69%)
+ create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
+ create mode 100644 include/drm/bridge/inno_hdmi.h
+
+-- 
+2.43.0
+
+base-commit: 21f0c9e6d2835608c3b46ab47d84e341fc7749fc
+branch: rk3036_hdmi_bridge_v8
 
 
