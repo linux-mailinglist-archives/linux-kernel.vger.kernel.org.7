@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-856603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84600BE4962
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:29:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83002BE496E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77E019C5F44
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434A6400B1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B231E23EAAC;
-	Thu, 16 Oct 2025 16:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F288A329C4B;
+	Thu, 16 Oct 2025 16:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE1k9/sw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMZwoq7W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123241C84D0;
-	Thu, 16 Oct 2025 16:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578DD23EAB4
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632136; cv=none; b=cXZtE3HkNXalag8UdLza20Uy1UV20Hn31pEs7aHe/YF7yHJyYE3XrAMPZWEBw5fHfgBfsaQf/rxOLny71GnB7nvNDodOuQ5U4loHhtmrM8Wb8nruW5yJ0CndXsGfPsnjXiUSEamyJs2Ctvc1yvay2HXymuB9jBM5vHkb8c+4Z84=
+	t=1760632173; cv=none; b=WCq2OjHfvvH3gTV/D7Bf2vHxO3aF5t6pxfMYqI0QZH8cLcJTCFVVYa2wmVMHSL5iert/jnxvkdXPBCI5XE057luAZGjvjHlkLFpOTkUD8QeE7Nx+fqj90QIbGP8QDnj8wlFbaiHcuPPECmnntT8Lj80CZeXJTuZuIVg6M3lqqdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632136; c=relaxed/simple;
-	bh=e0tpk0pXhNi0q5plF/roKaY96GG8hUyMZeEejuinUmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vh5qJanIUli1jgKlTf6RUHXlF4TiAkQA1a92v8oZci7MMztoy3uqQWMtfW6HFmQ015KeZlL9ffhVGzq5xeYeFFLYqthoKMMulGu6JCdEJHcIZzbyt+FhrZ7QhR8KilYGsjOTLyVhm4XLxGE63eT5lu+T3charAcK8a55VmgbPX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE1k9/sw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5867BC4CEF1;
-	Thu, 16 Oct 2025 16:28:53 +0000 (UTC)
+	s=arc-20240116; t=1760632173; c=relaxed/simple;
+	bh=V5iXdZUTWXmbmXUTCkXFNu1fakwvvp8GZryPhQdiRhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mqPAnyLy8Dt6MOh6lBTFQGaIAXGHaYmc0LO1tDNmSu7O+oL1VghjD848Xm80EWIOVe9pnPuMUoBVYFgiJIz7ZKvqhcJqt2786Lw0aNJ6N+Uat5I4hNQlXxFsCKGPzeNmhcsglROACTzB5XoqboQRwom5xqoJgGsjWUT+gmbr29M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMZwoq7W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36B2C4CEF1
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760632135;
-	bh=e0tpk0pXhNi0q5plF/roKaY96GG8hUyMZeEejuinUmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OE1k9/swW/9cZ+nogd5QzEATbacMt/NE0mx3YanZRwL2ubIiUKiAa41VeQDc/88aI
-	 zQ2voAcjsNUg+QPVxJ2c0LElLoGx2YwBPLTtHio7cI7PCtbC58RScGyWLXoRCYTPjJ
-	 gtpsVN789tPz5YnK7cK4H5v1FfhHQe5K52wBc4pjyTz0B5mrYrQS83F3inanGzsgOe
-	 h0FQ/11fARUWgv40HxK5NPBC0pz5XLI2pvGGNNjGEZuyvW3b8f4sFzgAjhUo+RQNOy
-	 W+NHsBxUlr/9hew9TkrK1wy5VTC09k5zDjbdJOwe2aaT5gQNik8xQV5zkb811jUFEb
-	 rgqjtQUNQnm6Q==
-Date: Thu, 16 Oct 2025 17:28:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dimitri.fedrau@liebherr.com
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: phy: add support for NXPs TJA1145
- CAN transceiver
-Message-ID: <20251016-expire-oxymoron-7a527e0af28e@spud>
-References: <20251015-tja1145-support-v4-0-4d3ca13c8881@liebherr.com>
- <20251015-tja1145-support-v4-1-4d3ca13c8881@liebherr.com>
+	s=k20201202; t=1760632173;
+	bh=V5iXdZUTWXmbmXUTCkXFNu1fakwvvp8GZryPhQdiRhE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rMZwoq7WCpLwbZitk/OHHEvNtDunUjkgxEtOc0oakYT+jsmpvZ0GnO36PATRk2Gz0
+	 aRjcD7JmMTelqpKPKJ80T+NNL+lCjyNVG6bw/bBaCvSCDZLq0wPBqli38N9QwZ5j2Q
+	 qatd1FbNTXwB0z45dKy18B8EFPpRT8lBuIug2Ka9HoHPe3AngUDfp+JCNJ4RliWZkT
+	 V8eXJOQQPz5L0+VsoaRG0PjyeraPDwR7O68Qo73912VhPxfmpc+5Zc39z1WzI7+/Xu
+	 mxIIRVvM+VMLERDyKatXddOKs8ZJMcR9XA460PYRlmwnXu5MTwHddARtqJJ0xo98NG
+	 dzi7Fy6NhR+gg==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-43f802f8571so290117b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:29:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXobRAodhGlFi+HZW4Bwhm1uyG/j2oYTvbNnT2V1O0hJJ154nCQIC+Tfa2WjVOkbP7aampu6B+EVl9Ze4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDs/evU7O6rhaJlKbbIAVmxgjzDwGn+hfBvv5fM/QFAs5C3Wcj
+	mg3s5YSdDP48k9OvSBHSE+c30dFsv8vlpa8oTp+/WCvKB4C8ULByrFRdJgEbvphqlYRLi1mkzlg
+	tSuzhGUNSbU3i32lHcqUmPvEASkWb5Sw=
+X-Google-Smtp-Source: AGHT+IE/Zx3ePN0Zu+KDX6q0J4Ts+nu/qyRQG/zSt/wER3dCTv1zJE9tGeVTvWMw4i3r8vMWIDZD8Oj6GM0Ejgy1FHk=
+X-Received: by 2002:a05:6808:2205:b0:43d:3be9:b261 with SMTP id
+ 5614622812f47-443a2e71975mr325182b6e.13.1760632172323; Thu, 16 Oct 2025
+ 09:29:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/ONgJVkuQzMk504I"
-Content-Disposition: inline
-In-Reply-To: <20251015-tja1145-support-v4-1-4d3ca13c8881@liebherr.com>
-
-
---/ONgJVkuQzMk504I
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251006-wip-atl-prm-v1-0-4a62967fb2b0@amd.com>
+ <20251006-wip-atl-prm-v1-1-4a62967fb2b0@amd.com> <20251016160149.GBaPEW7ej4qvOcVfYh@fat_crate.local>
+ <CAJZ5v0gvn21FeMNpJDWOZ0ZH5CZzDt0zEuXjHEpWxHjq9vHqyw@mail.gmail.com> <20251016161710.GCaPEahlw4qsCMaw4n@fat_crate.local>
+In-Reply-To: <20251016161710.GCaPEahlw4qsCMaw4n@fat_crate.local>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 16 Oct 2025 18:29:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hvoSUpT3Q5DN3sWZnCOuctSTqn8tOTrboiTgurnF8_ug@mail.gmail.com>
+X-Gm-Features: AS18NWDaDD9L1SosPOS4VE_zrdb4v89WWiQPLHH3aiLBNB95jL2jjkani0MnbX8
+Message-ID: <CAJZ5v0hvoSUpT3Q5DN3sWZnCOuctSTqn8tOTrboiTgurnF8_ug@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ACPI: PRM: Add acpi_prm_handler_available()
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>, 
+	Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, 
+	Avadhut Naik <avadhut.naik@amd.com>, John Allen <john.allen@amd.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 09:37:08AM +0200, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->=20
-> Adding documentation for NXPs TJA1145 CAN transceiver, which resides like
-> the ti,tcan104x-can.yaml in the same directory as other generic PHY
-> subsystem bindings. At the moment there is only support for simple PHYs
-> by using regulator bindings in combination with can-transceiver.yaml or
-> PHYs that implement the generic PHY subsystem like the NXP TJA1145.
->=20
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Thu, Oct 16, 2025 at 6:17=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
+e:
+>
+> On Thu, Oct 16, 2025 at 06:09:12PM +0200, Rafael J. Wysocki wrote:
+> > > Rafael?
+> >
+> > I've seen it.  Are you asking for anything in particular?
+>
+> LOL.
+>
+> ACK/NAK?
+>
+> If former, should I carry it through tip?
 
-Thanks for the update.
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Please feel free to take it with
 
---/ONgJVkuQzMk504I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEdQwAKCRB4tDGHoIJi
-0k+vAP4qpP/HGQPYQh/9NRAJMNduk5wViRE4u/NDCKwdIGNYJQD+JYobjIqKAQ/j
-jX1knxlZh6zaq2DvcJl5iX6rrB/RugA=
-=AufA
------END PGP SIGNATURE-----
-
---/ONgJVkuQzMk504I--
+Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
 
