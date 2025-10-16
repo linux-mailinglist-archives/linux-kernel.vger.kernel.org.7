@@ -1,206 +1,187 @@
-Return-Path: <linux-kernel+bounces-855703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15578BE206C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:52:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE13BE20AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A17402273
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:51:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49C7250405A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D25330102C;
-	Thu, 16 Oct 2025 07:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VhnjvLRt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4DE2FE580;
+	Thu, 16 Oct 2025 07:49:13 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA302FDC4E;
-	Thu, 16 Oct 2025 07:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760600846; cv=fail; b=sDVNTVPP82mKZAsEY2zKIKjkV0RxNudOSydtMVuWeSWyVFYpnuqsx+8p9lTrY6nlIW1QvpVdIqXqGiRV9cz0l3olMO1qtmBSREuzkMD+iTCMxMFGFk5c94kLRloBFXGc2o244wOfUHf8q4eX/L8y7gy2Om4VYDDXz/49QORPCZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760600846; c=relaxed/simple;
-	bh=g54Rvx4gsm7M/pp4TwqX7c/a9WkRxgdaimQXmX+HgPg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OhdAg7meVCzXhjkJyrToau5a4aIlSwClquRbz2ApE468qn/jEqAAmu53evK/ZjtneXCgXN2YMsecYgIY2mZOJ8bT9SrsmeJCTQSdEokZINoJArx3V0PXFA6vKbLIrX2p6PeXnem3pLNo6xSa7P2q2+eRdBSI100TxR5Umy2l5lw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VhnjvLRt; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760600845; x=1792136845;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=g54Rvx4gsm7M/pp4TwqX7c/a9WkRxgdaimQXmX+HgPg=;
-  b=VhnjvLRthztZsk9aSrgqIOFnll6lfLIqrSPYZ0ul+h5LWG7tOpplP2Uk
-   TDzFaa/yNeAEzSQyxhmjI/jqoMFYg2gD5tCWlfP5sddcUOfRiuNyeTlWH
-   D76CWJ3U9KbbA2qbLkgkDTVF1i3tqBbqysr64RWEenjwDNEyiZqZn5S2F
-   vQZUtE++JbL80NbEjI6dRVhbLfvz18kOo9mBMhdTYAgHMoWm21FDvya6/
-   7TrqCRtFZvzQp2Mbq7FIAh+BkgFQOS0vcCzxcv0S58HaMjLWGAMtoHzBU
-   d8vj1G1GUTvHS7hG8POBZ/mVH5dEQhhtk7UmtoDIKaiUZH/aUbFVJw6u+
-   Q==;
-X-CSE-ConnectionGUID: bqj70GCMRhK7hD1xuLBU3Q==
-X-CSE-MsgGUID: goYMxRatTxuO1lW1PiTQXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62826175"
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="62826175"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 00:47:24 -0700
-X-CSE-ConnectionGUID: pOVEnrsiTGKxKO6Ri+Zdww==
-X-CSE-MsgGUID: LXDo4EwlR1m5k+Lbnf0x3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
-   d="scan'208";a="181596517"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 00:47:24 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 16 Oct 2025 00:47:23 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 16 Oct 2025 00:47:23 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.52) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 16 Oct 2025 00:47:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xBPNcI1GZc5/XFhbdTmFXxrAixRTrJwaPI+HF1rV88yDlTraOZMw00ZwS5C9GQ4EX4lYCgtO6/4a2hjy8GyVfBmFvQSdxiZjLVic6v11sVXUZyHZvT5skSH2kqBRzoGvuD9a06lwtGvBzipLpW1o+Bsv+rm5BnOx06stex5qP3J8SFc4n7nSkywH6vOYpb0+S3rCqTelb8knVkeU77g/UlOGLYnwFcp/ni/7YHP2jKGnl8UTbbgDb/vCX+5hddJyrcxko8pjaiVIXfR8eMEppUk7RN3iqkp/dJGv/rKa/pjRCp0REkTCQnkZv51q7Ydrv1vDmg2TkDU+ykHwNAS5uQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g54Rvx4gsm7M/pp4TwqX7c/a9WkRxgdaimQXmX+HgPg=;
- b=gB83xsQ1QstWaIez6gyI3MnfvM+NaWxU9nZwxZbMuJ3QaqgnBWI7EOkv8SJVp6p/xevfHzeMav2iGq+Qqro7OYFFkm/DJCKfmhiVWVuAjQBCBoea3KpCWuk0OE5KD/1BOTXvMeZzizjcfwyMqDA6mENXBz0s00UUx9h8J4NMOB2vo8WXfuanzFXshrqQweAkY2OIF1Axki+8yDfck03u525847ueAieH/lg9f/7OpYR/XwriB0w6EwY90nXrT08gnh4PnsfrxHWOrt1W1NhTPj7lotNKYJTXSE3OwrsOkADDiWlOS0BOu8dABHU+xQaPgLH1BtS9ronrqd+wXr6eoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by MW5PR11MB5787.namprd11.prod.outlook.com (2603:10b6:303:192::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Thu, 16 Oct
- 2025 07:47:20 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
- 07:47:20 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
-CC: "shuah@kernel.org" <shuah@kernel.org>, "alessandro.zanni87@gmail.com"
-	<alessandro.zanni87@gmail.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH rc] iommufd/selftest: Fix ioctl return value in
- _test_cmd_trigger_vevents()
-Thread-Topic: [PATCH rc] iommufd/selftest: Fix ioctl return value in
- _test_cmd_trigger_vevents()
-Thread-Index: AQHcPVRnkLZe3dbGA0qfw2AZydGM8LTEZ2yQ
-Date: Thu, 16 Oct 2025 07:47:20 +0000
-Message-ID: <BN9PR11MB5276834E90A7990269EBBF608CE9A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20251014214847.1113759-1-nicolinc@nvidia.com>
-In-Reply-To: <20251014214847.1113759-1-nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|MW5PR11MB5787:EE_
-x-ms-office365-filtering-correlation-id: 4645af4b-958a-42ab-8aa6-08de0c883c79
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?7lDQdiUR9i3TtJLQEBP9uX5GOQSXHf/N+t34LnEuvnUN0gE2+/phxsmkhVXr?=
- =?us-ascii?Q?6tGh63bsyReRTa0jXeLytiJXYksz+b1IaQWUHGk/+E4ZTtI6bsdcodAFIx6F?=
- =?us-ascii?Q?RyNnhDsvit0DS2cb/vnc7Y/d1nSc3d6wgEKy90e4W+1r3sT9NVpKiEhI2crE?=
- =?us-ascii?Q?zo8IHLz8r+VbrGtNejExYWUsOsw2xnfeEw0t9XGkVL/SMMVDiTIbXZyEoZa6?=
- =?us-ascii?Q?1kTxbdGrxyFuZkOCca2VOXGCQEdtGzvWhusJsTIM4m2EHQ9Tl/2h/5v0Sfwc?=
- =?us-ascii?Q?EwAWUSGB4kjy97p5SUQyz+Rv8lpCdYxKeMcD3hVdzu4TdYDmJuj52Gk6rcLL?=
- =?us-ascii?Q?hvu6XkW1MsGYpt9IzVYEPKJA9VzrtLnDHalNk8EnYWWIxNQdjOJzes7+QcEH?=
- =?us-ascii?Q?FRSztxIXEIQYgz22aH6IywE8tGGqI8jSSj/aIA9UUmq9Qr1135VUqLHr6ids?=
- =?us-ascii?Q?RVMNqaHV4K9D7uD/fa2FIdWzo1JGU39tyz31o01Knb2ivKPqCMGm+CAEFsYV?=
- =?us-ascii?Q?4nFUyTWPSWUZuXhfdUZ+um20nm7exEak+orh8Tv6vLRDfQ0/rnny7uI0P0+p?=
- =?us-ascii?Q?o3hupbhobpDtlyNXL4KDiidMev5T16KPQMKbsuObzwJWoPVwp5ipEIiZtPKX?=
- =?us-ascii?Q?jruL+W1K6SoUmXPa5/YRe+egym7bgC1Usyr7hIOM+tseJeV26P1emm9/+7zZ?=
- =?us-ascii?Q?Wm7SiTJAQrMcZY8pmvz5fJBSHzQSfQNHX2cN4tCEiDG6Cvck3sVUB5UwztiY?=
- =?us-ascii?Q?IEzbiVIyuEp5hTRAuwr22ziCJamD0QC5nulfl+mSJ53QqHsjPTx+vtFGkxLr?=
- =?us-ascii?Q?YzknYSg9KqY/Yidki1kdubdeE1A508JPIp4Rz1vBf3Z+XFNd/w8tlQSKkBpK?=
- =?us-ascii?Q?CQ8FhycRzQnqN1quKsYn3H+qNVnUG5509hPTDWrDVijBpofUu0i5xC+2vquG?=
- =?us-ascii?Q?xHuf3qwTXyNBj4ruJJlBe8kNEiwaChlafB4L50GGcZiski6rXnlmkmOz9ha3?=
- =?us-ascii?Q?0SZPI4FboduVMwu6Z41FDTLUMm0l5CUWKs4MRzz1iOvrXZ8t+D7a7J2CQ8eV?=
- =?us-ascii?Q?HZAFbRzpCp3U5GpstwyiW5YujUPwcmaW/5jhQA6nC6J78gMeFz8rQjgyBUSH?=
- =?us-ascii?Q?Krz3KeA8xkh+QGj9JnfKR8KO2q0BizN8KWu7aAAKeDfrCD7nDWgZ11HcyEqd?=
- =?us-ascii?Q?S3iWEDtIt8AvsDsYRLhIeHTbIziaD/SqkAOkHawH1VqaeOP7uHr4jtXdsuOO?=
- =?us-ascii?Q?p4OjDqmY6J7/C4hBYDdQGDTXPAtYjMPNU/WTXhwr5wbv9Ie0O1Qvk9t4OC9N?=
- =?us-ascii?Q?8auoBt0uhmRYoXm2TxpW89NerHSjUw13OQmZjhrU63X49G9yX6Iqd9hNfmjk?=
- =?us-ascii?Q?kFKo1HvYES6M8xd6M6UlDRI1yPr303A8+eELNkG6uz22bEzuR+yyeCITwByn?=
- =?us-ascii?Q?yimznljqngo80UpIgMVcGzUSoTdrVmUMbRwPg12MQWqVx7XoJ4eYwfmcYkOP?=
- =?us-ascii?Q?aS5XN8eMUQfbiH2qZGQduaeDcZqMOcCzztYJ?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?8e7pN55iEsjQikyFsf3BZpTOBTrczi51/ExKHIeLfP/3kSVQAQEhsOHlQIE2?=
- =?us-ascii?Q?rbJB4rzty1/A4WUOa2yLbQFCaOWJKiXBFieqWtkTIYj5ZrsDFoandesAb+nY?=
- =?us-ascii?Q?ApF1bvkxTv5qoSe8GSsla6EQuXlELR5gISAAPgOqK4JE/uKOMkX/sshROvGR?=
- =?us-ascii?Q?ZdUbAIrjREJYQNh1V2Ev0gv5rP7wyyVt533/AMWXr+xu2OpFG2iAhMZ1ejzD?=
- =?us-ascii?Q?7ATAoBdsMDPkSHBvPggrUQD/s0VEEWOjyvCqkhelFSlzSWEXrBEpK7KpjPVT?=
- =?us-ascii?Q?KtIe92uLn+8V44G8PPJv73TxrXyaTgsUcREWeF2oRUXzrze+x7kxHCkduxXl?=
- =?us-ascii?Q?ZrmAD/J8l6a1aFj3Y3quT9d5evnmPe1wlgPp9NHlNhe+Ndqckc+okevnzm1j?=
- =?us-ascii?Q?6HUkknGGtB2WsZwJEQijyHlCQBq9ODQvP683xg9e5JkucOWYLRXWrCj0pQrc?=
- =?us-ascii?Q?BIXl+57+3GNs6ziLvOkjcTsgB+v8738F1CJNPk4S/KmwV44maKavHxWbCLQC?=
- =?us-ascii?Q?kHkwUBcDMsnJJ29yux0liHS5AQYMQ3+UN/LUXbuNUKzZ8O2QaDGof+0rpTEd?=
- =?us-ascii?Q?VDPa06LxbXih38viY8ghQ5a1Ppy8azVC9IRjqiog/VaWj8/jUW+b377iTdHy?=
- =?us-ascii?Q?YgTYVLpoiRE/tPaxh+y/NZzic9Ae9KQPpZISt9kYcpvaTMr2ErtQGzIMLjCY?=
- =?us-ascii?Q?TfMiqrb4Fod1DBQ8t0yD4nhGPwZYO/kIG69D8J5SOmaRjNsop804NPp0qEvA?=
- =?us-ascii?Q?VEz/2L6xjJ2NriUqmS6BYZkKGZBlFCElGfi3RvRkVfQNp8ouD9LGnBOFiVr1?=
- =?us-ascii?Q?eyX5Wk6t4YPAQi3pSEefbgIXzcwMUsRjTa3jWOL3BbD4tGs0VrIkTp7sa2Oa?=
- =?us-ascii?Q?5NQGt1ZztjFnk6pH3gecaYrjETcjwD7Mv7PIQcjs4SxFjBZO3leNOaFpWCFW?=
- =?us-ascii?Q?gyBgN48hOcUvs+9sXdoargr/O/xPmfx+2jCCgf8R6wyhSIpBly7dfEIRHG4v?=
- =?us-ascii?Q?zxrKwSDY5swtd2bukiQIPNY1CQlUigs99ycg/6yZkNQxSj5nM5D3P0omjPPG?=
- =?us-ascii?Q?iHrSOJnhKf3dvVPUV6wAXUFLbHyT0ccfXRcwHApJEeVgR+iQ+U25zfP8C2Kr?=
- =?us-ascii?Q?4li9U6c+CYHbUSnJaHfT+++Pi4aMVBIrqLVRQ1ljClE24nDgzwoYPc5bSyp4?=
- =?us-ascii?Q?yvpHxu5o9vi/77UM9MxHWFapqGGdsTrn9iNP1hlucwc+mmvyPiY05iPXW76n?=
- =?us-ascii?Q?uZozvbTKYrAu7MjZq83Zam6HtFmd0gv3C9SJNHdWzRTGHTS+zj4ahNfoye60?=
- =?us-ascii?Q?f84nJuJw+gjVog76UpNOjSTKog+bVjasaimJhqubcr5Va663EslzMFygI7sl?=
- =?us-ascii?Q?GGujlyYmLlwpoOspKeyxSULx3SfJPupf0QPNHU4BStpvFeO9sGS474Rlq1U1?=
- =?us-ascii?Q?TtfKiSFCQY0epOQu1TwPri+LRFlLw4PJJcukydq64yymcej+lXE4vx/fFDVg?=
- =?us-ascii?Q?qqon2HheM9clvI0EbDd/o5IqENK/0+A84Vc2h++wYmU4sCOYjKlZAyh/YuQ7?=
- =?us-ascii?Q?oBnoB90vtuDgAb9KNY5M4Vwu2gUFFx0Hc9SjeGza?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80744214812;
+	Thu, 16 Oct 2025 07:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760600953; cv=none; b=suTvXe/kb+5R6rTDo+HKbRhv2KTPmm/KupLcbglP537aIe3zMd4wrfSK4DTLENYsj+/uNxDat45SJpYvIe678touxIkLG2s06CA6AjP9kwnonAbxUFO4eEIz2gLFL9OOBqJyd4B5QeRP3JCYwi10amWYcDlTVV+cH5kWHJGWUW4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760600953; c=relaxed/simple;
+	bh=RjbmRx8/GdkOWRF92JnypmFwTgH5nqsGBf6mqWStoeU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pVTLMueIb6VAjNyF2IaHMB/xO61SXQyumoTVfInmfjX3y1m4Otr6GgBUabLfIkC9esDyqN8kHLo0lv5FTtMnQQsnVUl6CmdeILlqmZaOymMXStHvbGeyWNYVHoWPkmmfKV78Cnj5txMlXMNy4KEZT1FbIGGmtguTDRW4jXMo+ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9296f1b6aa6411f0a38c85956e01ac42-20251016
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
+	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_GOOD_SPF, CIE_UNKNOWN
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:78c828b6-5295-4228-9af5-4c6bdbb63c9a,IP:10,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:5
+X-CID-INFO: VERSION:1.3.6,REQID:78c828b6-5295-4228-9af5-4c6bdbb63c9a,IP:10,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:5
+X-CID-META: VersionHash:a9d874c,CLOUDID:14317c042bd57d89bbe3ebd40eb2eb47,BulkI
+	D:251015231359I6R5N7TL,BulkQuantity:2,Recheck:0,SF:17|19|23|43|64|66|74|78
+	|80|81|82|83|102|841|850,TC:nil,Content:0|52,EDM:-3,IP:-2,URL:0,File:nil,R
+	T:nil,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP
+	:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 9296f1b6aa6411f0a38c85956e01ac42-20251016
+X-User: tianyaxiong@kylinos.cn
+Received: from localhost.localdomain [(223.153.233.62)] by mailgw.kylinos.cn
+	(envelope-from <tianyaxiong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1688555980; Thu, 16 Oct 2025 15:48:58 +0800
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+To: rafael@kernel.org
+Cc: christian.loehle@arm.com,
+	dietmar.eggemann@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	srinivas.pandruvada@linux.intel.com,
+	tianyaxiong@kylinos.cn
+Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: hybrid: Adjust energy model rules
+Date: Thu, 16 Oct 2025 15:48:49 +0800
+Message-Id: <20251016074849.1046580-1-tianyaxiong@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <3394529.aeNJFYEL58@rafael.j.wysocki>
+References: <3394529.aeNJFYEL58@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4645af4b-958a-42ab-8aa6-08de0c883c79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2025 07:47:20.2423
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cgR4dNYRdEZ8AuMMnWGT9xljDHFnq+olTgbYK+dw9AwFxGfZH4X0hTYKz84AnuWgQzja+37cjPEJCAfb/paUXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5787
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Wednesday, October 15, 2025 5:49 AM
->=20
-> The ioctl returns 0 upon success, so !0 returning -1 breaks the selftest.
->=20
-> Drop the '!' to fix it.
->=20
-> Fixes: 1d235d849425 ("iommu/selftest: prevent use of uninitialized variab=
-le")
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+在 2025/10/15 21:48, Rafael J. Wysocki 写道:> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Instead of using HWP-to-frequency scaling factors for computing cost
+> coefficients in the energy model used on hybrid systems, which is
+> fragile, rely on CPU type information that is easily accessible now and
+> the information on whether or not L3 cache is present for this purpose.
+> 
+> This also allows the cost coefficients for P-cores to be adjusted so
+> that they start to be populated somewhat earlier (that is, before
+> E-cores are loaded up to their full capacity).
+> 
+> In addition to the above, replace an inaccurate comment regarding the
+> reason why the freq value is added to the cost in hybrid_get_cost().
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>   drivers/cpufreq/intel_pstate.c |   37 +++++++++++++++----------------------
+>   1 file changed, 15 insertions(+), 22 deletions(-)
+> 
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -933,11 +933,8 @@ static int hybrid_active_power(struct de
+>   			       unsigned long *freq)
+>   {
+>   	/*
+> -	 * Create "utilization bins" of 0-40%, 40%-60%, 60%-80%, and 80%-100%
+> -	 * of the maximum capacity such that two CPUs of the same type will be
+> -	 * regarded as equally attractive if the utilization of each of them
+> -	 * falls into the same bin, which should prevent tasks from being
+> -	 * migrated between them too often.
+> +	 * Create four "states" corresponding to 40%, 60%, 80%, and 100% of the
+> +	 * full capacity.
+>   	 *
+>   	 * For this purpose, return the "frequency" of 2 for the first
+>   	 * performance level and otherwise leave the value set by the caller.
+> @@ -970,26 +967,22 @@ static bool hybrid_has_l3(unsigned int c
+>   static int hybrid_get_cost(struct device *dev, unsigned long freq,
+>   			   unsigned long *cost)
+>   {
+> -	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
+> -
+> +	/* Facilitate load balancing between CPUs of the same type. */
+> +	*cost = freq;
+>   	/*
+> -	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
+> -	 * ratio between the given CPU and the least capable CPU in the system.
+> -	 * Regard that IPC ratio as the primary cost component and assume that
+> -	 * the scaling factors for different CPU types will differ by at least
+> -	 * 5% and they will not be above INTEL_PSTATE_CORE_SCALING.
+> +	 * Adjust the cost depending on CPU type.
+>   	 *
+> -	 * Add the freq value to the cost, so that the cost of running on CPUs
+> -	 * of the same type in different "utilization bins" is different.
+> -	 */
+> -	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
+> -	/*
+> -	 * Increase the cost slightly for CPUs able to access L3 to avoid
+> -	 * touching it in case some other CPUs of the same type can do the work
+> -	 * without it.
+> +	 * The idea is to start loading up LPE-cores before E-cores and start
+> +	 * to populate E-cores when LPE-cores are utilized above 60% of the
+> +	 * capacity.  Similarly, P-cores start to be populated when E-cores are
+> +	 * utilized above 60% of the capacity.
+>   	 */
+> -	if (hybrid_has_l3(dev->id))
+> -		*cost += 2;
+> +	if (hybrid_get_cpu_type(dev->id) == INTEL_CPU_TYPE_ATOM) {
+> +		if (hybrid_has_l3(dev->id)) /* E-core */
+> +			*cost += 2;
+> +	} else { /* P-core */
+> +		*cost += 4;
+> +	}
+>   
+>   	return 0;
+>   }
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Hi Rafael J. Wysocki:
+
+Is the increment of this cost for different types of CPUs by one instead 
+of two?
+
+cost by increment of 2:
+          0~40%  40%~60%  60%~80% 80%~100
+LPE-core    2       3        4      5
+E-core      4       5        6      7
+P-core      6       7        8      9
+
+So, tasks only start being allocated to more powerful CPUs when 
+utilization exceeds 80%, but by that point the system is already in an
+ overloaded state.
+
+cost by increment of 1:
+          0~40%  40%~60%  60%~80% 80%~100
+LPE-core    2       3        4      5
+E-core      3       4        5      6
+P-core      4       5        6      7
+
+This situation aligns with the description in your patch.
+
+The idea of this patch looks good to me.
 
