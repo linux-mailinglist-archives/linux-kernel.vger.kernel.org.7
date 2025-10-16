@@ -1,258 +1,197 @@
-Return-Path: <linux-kernel+bounces-855660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AFB7BE1E54
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBB2BE1E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7DB34F8791
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397D64836BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029CD2E6CA9;
-	Thu, 16 Oct 2025 07:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CE22E7F3E;
+	Thu, 16 Oct 2025 07:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i5cGQ7rh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lcehCPxd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ECC2F5A0F;
-	Thu, 16 Oct 2025 07:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220AD2DECD6
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760599338; cv=none; b=qBCh9y9avIJn0HH/r4dFh3gR8CGfFYGFc28fzNC6Q+XNveolzfXZ/hwIEDrtppFkE+7gNJQpBkdjHkyF5mZGkgP5F5D2E6DdulB0y+wOmvjZCkAqNqZzsR+eAlnggXMK+5y90UoMl8PPfa6fOfOeUXEUX0QRjXnFlhJVVbm/5S4=
+	t=1760599438; cv=none; b=AUl12/LpwjzRTi0sJLWmvHxVX83X17PJaROIPZ8K9iM8LtTEOcpdPLxSPGNQbtWRW//DizzyORe3rxG607/qzQ6cUopdBtFZxgUpiXNSWGu2BqQWlpB60PMskb/OAcWum9ADSW8sPzN4WMVbjKBuKJgxWoxxkDqhc40lJbEQ620=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760599338; c=relaxed/simple;
-	bh=IoepIVDWjMVUEYx/JMoNNzAWuBitBwwdY07odCMO0Q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UvVxUbmkBilN6kabnQDX4Ct/vutQRJHs0cnh97NbrmNIq5PoUGWahQNoYMTElmp+uL54qGrhMLGnvROGP36gygAwfm/G0E/RROUuunNQLz5nl/rgttBfRCuYYJmLFneSiZLIDIEutG0RVq9t0SXwHGIQDhlo/+WMN0X0cN20LIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i5cGQ7rh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760599333;
-	bh=IoepIVDWjMVUEYx/JMoNNzAWuBitBwwdY07odCMO0Q4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i5cGQ7rhvkjDuErtbB5sX5ggFRBd+1rGKxncPvI/s6TjTXgo1MQZQIyPkkz6s/D3u
-	 J01+9DTEkAR9KOL7ZUQepTLpi9qT4NuGqRIpj7EoHAM/pR8bW9RVqi/mOFotKFX0MG
-	 7OReNQZgSFwj9belOQ1F/n63dbOFBn55qZEl8WnDClGF0rsPm0Kt4zFY+kSF+9vVVG
-	 UigzSGtC5g50UmmqqsV1QxvZEavI52MBBZPRGP8L4zL2l6fIsA7amz/+AFSGLSBFVe
-	 6vL0YQqnYE1OqalIp70NkJnwcgKze8eI+KsFgeRZ+WlkLAdXY8GoRbY6CpqwWDalZp
-	 yJb2MR/ufjNuQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A48017E0FC2;
-	Thu, 16 Oct 2025 09:22:12 +0200 (CEST)
-Date: Thu, 16 Oct 2025 09:22:08 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
- Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v4 08/13] drm/v3d: Fix builds with
- CONFIG_TRANSPARENT_HUGEPAGE=n
-Message-ID: <20251016092208.2b8ae536@fedora>
-In-Reply-To: <02c8447d-25fc-4503-873f-0b2932e218ec@collabora.com>
-References: <20251015153018.43735-1-loic.molinari@collabora.com>
-	<20251015153018.43735-9-loic.molinari@collabora.com>
-	<20251015201737.3956f801@fedora>
-	<efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
-	<20251016075637.3aec3465@fedora>
-	<02c8447d-25fc-4503-873f-0b2932e218ec@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760599438; c=relaxed/simple;
+	bh=u/pvDB6NNeRtZsdN9ugitJ4p2VYbjeZ0yG4iEuphbPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shETIOwMvz8jnxKYUXvwKCz04QcA6T9Zn8XoiBozl6hY1r5J94Y8jQZc1N/WaHtuWiof9F5+ck47ioyk1dBqjMH3MNMIUBXegdiqS+N2kFgdU4WfGnE2BWk8X0NsHE+18n+OIJh/rIv8GthA/VobjR26yDK2/F6z7KUqZ7Ve32A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lcehCPxd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FKhZOf016276
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:23:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=HNGoDb+vaeJYhaVScXJVKuKu
+	/Vv4DWy6iQO7I53RXv0=; b=lcehCPxdI3Y3P4qM+yY4UhPyGsxAao5Pp/qdcZiG
+	OsMZzCfojghPy6kLmWAQuHukdmPKI5dtOZlrv9CZmxrYxZw3ADW99vJTtiqw7uce
+	1W44E0QRpEFdP8Xt7Ni1hOZTPYs+S9bKymX1SOX8a53k2jHcTGXeFn1dCi9FprYG
+	5PQ+D5Vpx+HOi4rGzhpdM8oY8w7+dIcLYDyv1McaTcRTL8QuOthKT0qUn2BD7onW
+	r2z4no7LHMbWIvn6qzyAiEJjYnv6jEHkWsXoxwOoXwPdhlRP8AXRe5Dmy2mx6dKM
+	FhCpW+uv2KioBWzyoLNYccyX7+jb30gQRDNOIx3WR+3p0A==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdkfc9n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:23:55 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b62da7602a0so336284a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 00:23:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760599435; x=1761204235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HNGoDb+vaeJYhaVScXJVKuKu/Vv4DWy6iQO7I53RXv0=;
+        b=SwC1qd/O/i837okCFXcD6F+AaCsdTHZs47gQZcDGsOB+xovapuZ6YjelVKy5BqlXiH
+         CdIXvCYsfaDzANjuSUjdfpOae+gNKx5kI1cSq4JaUxSb0gzJ/7RdSSdOYSv1D/Yg1Ure
+         RYwrmf1iCpSVVqu6imjlYXheOtLjq+DJj7L5DwJTjR3+xWjZjhiGzeo4x55IQEQOh+3O
+         WJnQjRxnogdFhqMbLurGnJWj8V8Z1R3qM4qLRcmOw/hrCmxMQSpryigzgy7ObB2snjOD
+         6ukBS5Wm3AFvKQ3p/KwuJxJCdEsNa2MXerv4l0/K1PNmT5l4HIzmdVY/86kjcqWtJyd8
+         o8zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnC/nYZoOOxVs9kBviD30ZDMJ1JjDhVm7yBq3FzGTzqml6uMGn3Jn5598nGeQAJ7Op/Wl6PmRuI3inzVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjEzDLN9qE67V59MOSDLlN0r4PKCxa0wNS2bTn2fIabw4KRgEb
+	6+viN1D7tlJ7KJ7rI+83J9GMzULNfgXv4THvfkBmd1hOw46p6W3mSTZIkqMSOcxm6MAKJe5oVXi
+	z/rkkB4DA0osly+VgEMSZj2B9We23ASYpm32/YMMOYDDQfQPnwwtS1gtyJTZpCu057c0=
+X-Gm-Gg: ASbGnctmS72avS8BJYCDzDQXf+ILMs5qNJBocUBTqSQLwfvuluPHWYl8gILiIQ+vIxe
+	V2icBCruphFiFx3lMgU86eeNKhV6nPz84OvAD50dkOlSGDNrt74qEN1/KBQI7QQiu/GPvbBDM5T
+	4rnrRSZe8udHKUuX026T2TLX8dn+TmzxomfLrmdkE8Vk/o2ZSofaHAXJpJf16JLMwuEia7Hv2XX
+	ZKoD5VGgfzPdkUPhknQjrXbRgVDRPrvJ6takc+Baouyjz26chOXhlZBT3inSsykcnE8niAu2BQH
+	df2p9xjHprRnBDYrr8NOhnrir+MOKvXk6pzOhEprKRESvJrtyXyLg/pmfOqhvd2Fxr2SDWsZbjO
+	VgXDy+3A+KPSEmNhHFesX5tWMH+gsYPcHtoo+S7f0S80HEA==
+X-Received: by 2002:a05:6a20:9147:b0:334:8d0b:6640 with SMTP id adf61e73a8af0-3348d0b695bmr6237499637.8.1760599434710;
+        Thu, 16 Oct 2025 00:23:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwrFPYz5L+0gDGKdDM3zwqmU9HSI97jDmKx2e+L9OE61zcHAbhnCy3ioFU+PCD6S5glLBXkw==
+X-Received: by 2002:a05:6a20:9147:b0:334:8d0b:6640 with SMTP id adf61e73a8af0-3348d0b695bmr6237464637.8.1760599434258;
+        Thu, 16 Oct 2025 00:23:54 -0700 (PDT)
+Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bb116basm21248313b3a.30.2025.10.16.00.23.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 00:23:53 -0700 (PDT)
+Date: Thu, 16 Oct 2025 00:23:51 -0700
+From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Wenbin Yao <wenbin.yao@oss.qualcomm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        konrad.dybcio@oss.qualcomm.com,
+        Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: PCI: qcom: Document the Glymur PCIe
+ Controller
+Message-ID: <aPCdhz+kr/Hghol/@hu-qianyu-lv.qualcomm.com>
+References: <20250903-glymur_pcie5-v4-0-c187c2d9d3bd@oss.qualcomm.com>
+ <20250903-glymur_pcie5-v4-2-c187c2d9d3bd@oss.qualcomm.com>
+ <w2r4yh2mgdjytteawyyh6h3kyxy36bnbfbfw4wir7jju7grldx@rypy6qjjy3a3>
+ <7dadc4bb-43a1-4d53-bd6a-68ff76f06555@kernel.org>
+ <aO797ZyWIrm0jx2y@hu-qianyu-lv.qualcomm.com>
+ <w4kphey3icpiln2sd5ucmxgo7yp72twwtnloi5z7a3r3a63fri@fbebffeibb7p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <w4kphey3icpiln2sd5ucmxgo7yp72twwtnloi5z7a3r3a63fri@fbebffeibb7p>
+X-Proofpoint-ORIG-GUID: t6iwh33xosESVuzDvRKzYE23MiEXK30z
+X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68f09d8b cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gEfo2CItAAAA:8 a=AS9496Lnv1pbona6PS0A:9
+ a=CjuIK1q_8ugA:10 a=3WC7DwWrALyhR5TkjVHa:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: t6iwh33xosESVuzDvRKzYE23MiEXK30z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXxAKCAairU2mB
+ +LKS5D2q2nwvS/Wih2pkjLOelmZoGoLfQo1MxjMRJDSZDdZr/fCYuVLwhbYmf7GH10V4Fo15sKe
+ DowOauFvbxVLK39tEJswnAa5hVBi9AKd6fT1PTrcWMh4e+pIMBSzdTnoSgl18OtKTnZLxTo+fFa
+ vGYa1EqDfbZzxfcg8LQ61mml4TNsZOlOZMS70PJw4oADsggjLMXLMMTPxK5V9cdoWKtFNiMnFpS
+ +fM3FKDoORlxWCOYdqmScVlJvUni4bO/oT6WIvfDAnW/n2uZ/hvk8usZzsaNas6pggb/TpXt7J5
+ bi0Epmu/K2aw+YMiBdH4YohFP/AIp2Y8qHw+NR8YvOTdLTKmw3DEMVH6XP0QGK9yib5gbUHSu04
+ 7mxm1kIggHGErr0d8RiZ4ptnA8Yw1Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-On Thu, 16 Oct 2025 09:09:26 +0200
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+On Wed, Oct 15, 2025 at 09:58:31AM +0300, Abel Vesa wrote:
+> On 25-10-14 18:50:37, Qiang Yu wrote:
+> > On Sun, Oct 12, 2025 at 05:01:45AM +0200, Krzysztof Kozlowski wrote:
+> > > On 11/10/2025 14:15, Abel Vesa wrote:
+> > > >>  
+> > > >>  properties:
+> > > >>    compatible:
+> > > >> -    const: qcom,pcie-x1e80100
+> > > >> +    oneOf:
+> > > >> +      - const: qcom,pcie-x1e80100
+> > > >> +      - items:
+> > > >> +          - enum:
+> > > >> +              - qcom,glymur-pcie
+> > > >> +          - const: qcom,pcie-x1e80100
+> > > >>  
+> > > > 
+> > > > The cnoc_sf_axi clock is not found on Glymur, at least according to this:
+> > > > 
+> > > > https://lore.kernel.org/all/20250925-v3_glymur_introduction-v1-19-24b601bbecc0@oss.qualcomm.com/
+> > > > 
+> > > > And dtbs_check reports the following:
+> > > > 
+> > > > arch/arm64/boot/dts/qcom/glymur-crd.dtb: pci@1b40000 (qcom,glymur-pcie): clock-names: ['aux', 'cfg', 'bus_master', 'bus_slave', 'slave_q2a', 'noc_aggr'] is too short
+> > > >         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+> > > > 
+> > > > One more thing:
+> > > > 
+> > > > arch/arm64/boot/dts/qcom/glymur-crd.dtb: pci@1b40000 (qcom,glymur-pcie): max-link-speed: 5 is not one of [1, 2, 3, 4]
+> > > >         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+> > > > 
+> > > 
+> > > So that's another Glymur patch which wasn't ever tested?
+> > 
+> > I tested all of these patch and also did dtb checks. That's how I found
+> > cnoc_sf_axi clock is not required. There was a discussion about whether we
+> > need to limit max speed to 16 GT and I limited it. I may forget to do dtb
+> > checks again after changing it to 32 GT. Let me push another patch to fix
+> > this.
+> 
+> Still, you need to add glymur specific clocks entry then, to fix the schema
+> w.r.t cnoc_sf_axi not being needed.
+>
 
-> Hi Boris,
->=20
-> On 16/10/2025 07:56, Boris Brezillon wrote:
-> > On Wed, 15 Oct 2025 22:41:59 +0200
-> > Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
-> >  =20
-> >> On 15/10/2025 20:17, Boris Brezillon wrote: =20
-> >>> On Wed, 15 Oct 2025 17:30:12 +0200
-> >>> Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
-> >>>     =20
-> >>>> Don't declare "super_pages" on builds with CONFIG_TRANSPARENT_HUGEPA=
-GE
-> >>>> disabled to prevent build error:
-> >>>>
-> >>>> ERROR: modpost: "super_pages" [drivers/gpu/drm/v3d/v3d.ko] undefined=
-! =20
-> >>>
-> >>> I believe this is a bug introduced by the previous commit: the
-> >>> compiler probably drops any code between the
-> >>> IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) check and the err label
-> >>> because IS_ENABLED() evaluates to false at compile time. So I'd squash
-> >>> those changes in the previous commit. =20
-> >>
-> >> Right, it's been introduced in previous commit.
-> >> =20
-> >>>    =20
-> >>>>
-> >>>> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
-> >>>> ---
-> >>>>    drivers/gpu/drm/v3d/v3d_drv.h | 2 ++
-> >>>>    drivers/gpu/drm/v3d/v3d_gem.c | 2 ++
-> >>>>    2 files changed, 4 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d=
-_drv.h
-> >>>> index 99a39329bb85..481502104391 100644
-> >>>> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> >>>> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> >>>> @@ -564,7 +564,9 @@ extern const struct dma_fence_ops v3d_fence_ops;
-> >>>>    struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_=
-queue q);
-> >>>>   =20
-> >>>>    /* v3d_gem.c */
-> >>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>>>    extern bool super_pages;
-> >>>> +#endif
-> >>>>    int v3d_gem_init(struct drm_device *dev);
-> >>>>    void v3d_gem_destroy(struct drm_device *dev);
-> >>>>    void v3d_reset_sms(struct v3d_dev *v3d);
-> >>>> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d=
-_gem.c
-> >>>> index 635ff0fabe7e..0039063eb8b2 100644
-> >>>> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> >>>> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> >>>> @@ -269,7 +269,9 @@ v3d_huge_mnt_init(struct v3d_dev *v3d)
-> >>>>    	 * match our usecase.
-> >>>>    	 */
-> >>>>   =20
-> >>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>>>    	if (super_pages)
-> >>>> +#endif
-> >>>>    		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size"); =20
-> >>>
-> >>> Why not
-> >>>
-> >>> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>>     	if (super_pages)
-> >>>     		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-> >>> #endif
-> >>>
-> >>> I guess
-> >>>
-> >>> 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
-> >>> 		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-> >>>
-> >>> would also do, since it's likely to rely on the same optimization the
-> >>> previous v3d_gemfs_init() implementation was relying on, but it's
-> >>> fragile (not sure what happens when compiled with -O0). =20
-> >>
-> >> I'll remove the #ifdef/#endif around the super_pages declaration in
-> >> v3d_drv.h because it isn't necessary if super_pages is compiled out in
-> >> v3d_huge_mnt_init().
-> >>
-> >> In v3d_huge_mnt_init(), I'd add the #ifdef before the ret variable
-> >> declaration and the #endif right after the last else so that it's clear
-> >> drm_notice("THP is recommended...") is called unconditionally when
-> >> CONFIG_TRANSPARENT_HUGEPAGE=3Dn, whatever the optim level. What do you=
- think? =20
-> >=20
-> > First off, I'm not a huge fan of the following pattern
-> >=20
-> > #if foo
-> > 	if (xxxx)
-> > #endif
-> > 		do_something
-> >=20
-> > which also applies to
-> >=20
-> > #if foo
-> > 	if (xxxx)
-> > 		do_xxx
-> > 	else if (yyy)
-> > 		do_yyy
-> > 	else
-> > #endif
-> > 		do_something
-> >=20
-> > I'd rather have do_something duplicated in an #else section
-> > like that:
-> >=20
-> > #if foo
-> > 	if (xxxx)
-> > 		do_xxx
-> > 	else if (yyy)
-> > 		do_yyy
-> > 	else
-> > 		do_something
-> > #else
-> > 	do_something
-> > #endif
-> >=20
-> > But I'm not even seeing what the problem is here. If you do:
-> >=20
-> > 	int err =3D 0;
-> >=20
-> > #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >      if (super_pages)
-> >      	err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-> > #endif
-> >=20
-> > 	if (v3d->drm.huge_mnt)
-> > 		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
-> > 	else if (err)
-> > 		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n", err);
-> > 	else
-> > 		drm_notice(&v3d->drm,
-> > 			   "Transparent Hugepage support is recommended for optimal performa=
-nce on this platform!\n");
-> >=20
-> > You're guaranteed that err=3D0 and v3d->drm.huge_mnt=3DNULL when
-> > CONFIG_TRANSPARENT_HUGEPAGE=3Dn, so the "THP recommended"
-> > message should be displayed unconditionally. Am I missing
-> > something? =20
->=20
-> It doesn't really matter here but I just thought it would be cleaner to=20
-> explicitly let just the drm_notice() because the compiler doesn't know=20
-> v3d->drm.huge_mnt is always NULL here and would emit a branch in=20
-> CONFIG_TRANSPARENT_HUGEPAGE=3Dn builds.
+I think the clock-names too short (cnoc_sf_axi not needed) issue has been
+fixed by below change.
+https://lore.kernel.org/all/20250919142325.1090059-1-pankaj.patil@oss.qualcomm.com/
 
-Okay, well. I think it would matter if this was a hot-path, maybe? But
-that's clearly not the case, this code is called once at probe time.
+About the max-link-speed issue, we will remove max-link-speed = <5> in dts
+as max-link-speed is used to limit speed but I'm not limiting it.
 
-> I know your dislike for this=20
-> pattern now, so I will stick to the suggestion :)
-
-Actually, I would probably stick to the original
-
-	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
-		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
-
-pattern since it worked so far. If -O0 is really a problem (didn't
-check if it is), and v3d maintainers care about it (I doubt anyone
-forces -O0 to be honest), they'll fix that in a follow-up patchset.
+- Qiang Yu
+> 
+> Best regards,
+> Abel
 
