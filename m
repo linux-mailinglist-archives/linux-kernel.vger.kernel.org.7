@@ -1,197 +1,238 @@
-Return-Path: <linux-kernel+bounces-856375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94140BE401D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46D1BE406F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EBB1A658E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF21548918
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8344E345752;
-	Thu, 16 Oct 2025 14:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9743451B4;
+	Thu, 16 Oct 2025 14:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OFsfHcKs"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZWclaO/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9B334575D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4F8346A01
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760626102; cv=none; b=RWUrmpmbH6RpECrrs20fJhxdYntPPs56YICl15dzMjor2300d5AS49RZcMyclr1S+zosD+yNhACWth23v/hL7ajv+Slpt6ErpNgtVuG2OdzFA+cqXpItsBWT6xGPwSu0jN4CRAs+DxIe21l1bcthvftPbi6XMCNgKjV2A2PcIZs=
+	t=1760626147; cv=none; b=iCCMPgL9WRcWmp97qfawRvzcc/KurF5LNlITaORZP6azZ35XRUyD6PFa2f7VFbcDr2i0NXNbUUocxrEGOTCPXbB2v9WKaYp9QYF9rhPHhHjpTXfGssI+kxrfMX7qu3euP7E2j2Wtq4pXdR+6rpx02EM9TYU/e5QDMtMy0+8qR+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760626102; c=relaxed/simple;
-	bh=1gtg55A6q6fYqQYhYt7iNdCwJ9yE+ZwzkgpLqb9S7w8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U1hUo5Vry8vKPuyuK0LWp2mwYaoSJYSZUPDDfxsXVa+3iLITUdW/0WgIyDB/dd+1PSb8pmGUELY0wi6l7wJyBhViThOBt5xZvtJ5smhYk9zaj4tZ/jRC5cdo+ZUw41k21HU5zFVLvQxnSbB2pdyCqczBtGxoulNjYzvMQTdk5mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OFsfHcKs; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso583572f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 07:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760626097; x=1761230897; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CIxAIlLH2WkPghxJtQLJXYy+AU+xIAHCNA8pGfVE8Mc=;
-        b=OFsfHcKs5aedb1LOrZ97tlCLh6WK6hJclGgt79HQ3zkeRYX82BPAjLYlUzYtzWV9cv
-         jyFqIvlUetaz+hEsJQ6YUYHTYMPDrUdnG4/YmKfCRCwA/132OvUPluX/k8VfMQdv0qdP
-         oUbClOIvyE+m2Lq9Lzmr/dLkSBwg+GlPNyTRU8Z3PGf7glHZyh+s3OPudMq6wy6zp3pp
-         oV8lHEPFlabE7sZGDOf1VlqMaxnLYRHQidLZX0FDzE/4NRuDB9nTuS8hCS2GaJXN4NO4
-         x2hTcLH6zcc93hQrL6g2EXKn+B+/eVJwMKJtzfLfKZ7kJhbwM+GJsXmzVxAKoFGmXfLZ
-         L08w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760626097; x=1761230897;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CIxAIlLH2WkPghxJtQLJXYy+AU+xIAHCNA8pGfVE8Mc=;
-        b=SZFYPLlTQQTxQBvqH2uWquU4HkzdUUiCHzWuKzuY7DLTVjRzsgCAeGCxx4TmrpjC3O
-         at3Dmc8+combeQyHKj5iLWPo3uuyKBKs/dmAjY5mrSrGvm9Txbws8Kr0IFUakD0jIvNc
-         uWJn+j+ntFBtFpxUcgUhQK3H15a2qgVjZsRkNgg0ei1yfMu+xTnfE/sy4DUnGHjkxx79
-         RjXnRknv+mWzwD9VsloNCotwo1Oafmuygz3uQ9eONAYdyE8Xgn0HgkpuaOVtJ4MZBLlx
-         khOr8p2RdStniRWsDWkTFzmOXEfojSFfenxRh+6fHxiUJ/wdK+wbtVrUe0zy7EHLeMTx
-         P+DQ==
-X-Gm-Message-State: AOJu0YyMuSZ23w2YyC8AGHmzlxd3085dMzWLo+g0/ZcJdEClx2xr9H8u
-	1g8Olhq0zsiZCh0OhQLSBPpSZQFuYs/Bq6f7IuWoVhSk2PRUb9JMh44quHA5IOTgN/c=
-X-Gm-Gg: ASbGnct4vEndpL8MqwBgMz6elaAcorhsfiEiYkv7cDn7uel0xT0grQgMwWnhDoqblWj
-	F4PGhsW1WVpN5RmOcQ+2HQyhy30xYjDybn3sqHGtaftgDA83XF6zp36a4yHsUtUzzPcQEUdVRfd
-	d03nAlSW4x4IBHKeUJgrlFKgOqA7wHvJzLewMWyuMstgy/mVm0HHGalXtkJDmGtEvlwzWXK0oAI
-	OCBQvy4ouCuwhJmpJsl7xjeVhsoCp6WCpNQ2/CdrL2KuwaDWyOoUJhzCKK4rS88wlJ4c+gdFkmm
-	goGMGIgWAoMC/YpzeVT/3eB19+xzKPwLnF7HZXEFpBqrKoUopRXp4+jYZgDjja9LvFEzHWr4sJX
-	Oex+UQ+tPKBENyTJPq/YLP5RmIZO/QXa0wVFnNR+RHqI2xamqxjEZIvaqOwDGhxiTVVjC+gSebn
-	slPy+/0TQ=
-X-Google-Smtp-Source: AGHT+IHmHSHNF3BYV3Uo2Nk3NIqyIqeAqZq5Krmm0v974TtwQGifmJ3M/YmEZCuGc9CDlunbtedN4g==
-X-Received: by 2002:a05:6000:25c6:b0:3ee:1294:4784 with SMTP id ffacd0b85a97d-42704db5d28mr275699f8f.37.1760626097125;
-        Thu, 16 Oct 2025 07:48:17 -0700 (PDT)
-Received: from [127.0.0.1] ([2804:5078:81f:9200:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099afe03bsm32947795ad.107.2025.10.16.07.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 07:48:16 -0700 (PDT)
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Thu, 16 Oct 2025 11:47:56 -0300
-Subject: [PATCH v6 3/5] printk: nbcon: Allow KDB to acquire the NBCON
- context
+	s=arc-20240116; t=1760626147; c=relaxed/simple;
+	bh=8ITsHesfnulo81f9e85ky5kKv8SNn64+QZIPERSk16M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=siFCHji0HjBUwLkNmQr437wnJsmWdVVr9VJfCpD/dzru/EpVURfNO3U1NZ9d8hmu6Azu5h/dG4hbPXrEE3NmBBic7ekqrhuynJPJlOEdUx2Wi+HG00IrO11Mg7VUfxppx0hdZz3yL8HL++sBXmVPHZ2qUKUYooAyqsaknarP1iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZWclaO/; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760626135; x=1792162135;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8ITsHesfnulo81f9e85ky5kKv8SNn64+QZIPERSk16M=;
+  b=OZWclaO/Jhq5/HWr/D48M6CEx6Al+TrLHUd2I1igEf64tISxGY7HhS/x
+   6i6jcCTQFZVrWTAS15xCO2NqdnKSNe/hZxkTaz08ZO89x4SprRawUZeCg
+   gT+4DgbBeNStQ/CCh0BY6Iivbuto2I1Tbv3VFMmOohnI8RyBfPAAp5kzK
+   BygPGZ1cKtBETMWyDMG1wkwnE8eFL57yzNRwa1BpkNaI6X3UsxrbAerrC
+   B9SoJ2qWdNIFqpqFajNWP8ME68QP14YiL5ALeheB2lrFAqvVzLQMx/J2j
+   Zjjcc8Bmo+XxO94mIfuDC0tpdinHmioA203c8xsVpS4uu7qfFEyzZIITv
+   w==;
+X-CSE-ConnectionGUID: Jjoc/G+0SRqj2tAPYkjy7Q==
+X-CSE-MsgGUID: Rksoq50/TR+iUL95zLLRIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62730934"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62730934"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 07:48:50 -0700
+X-CSE-ConnectionGUID: tkv9OBKCSeuHKHYuwBSBlQ==
+X-CSE-MsgGUID: QTg8NjIMSHu84IdW7lMExw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="182883351"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 16 Oct 2025 07:48:47 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v9PHZ-0004vH-1q;
+	Thu, 16 Oct 2025 14:48:45 +0000
+Date: Thu, 16 Oct 2025 22:47:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Subject: [tip:irq/drivers 11/18] drivers/irqchip/irq-imx-mu-msi.c:419:16:
+ error: implicit declaration of function 'imx_mu_probe'; did you mean
+ 'imx_mu_write'?
+Message-ID: <202510162257.g1RUy0bT-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251016-nbcon-kgdboc-v6-3-866aac60a80e@suse.com>
-References: <20251016-nbcon-kgdboc-v6-0-866aac60a80e@suse.com>
-In-Reply-To: <20251016-nbcon-kgdboc-v6-0-866aac60a80e@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Jason Wessel <jason.wessel@windriver.com>, 
- Daniel Thompson <danielt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
- Marcos Paulo de Souza <mpdesouza@suse.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760626083; l=3334;
- i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=1gtg55A6q6fYqQYhYt7iNdCwJ9yE+ZwzkgpLqb9S7w8=;
- b=U2KpRJninMM0ae+wZQYBQS8JB7rjKsTHHbZ1MKu2cGffKSTkFIJ743yBfsDhNEBZf3gcp+7L6
- +0UZqm/BOG7DHC0H+CFX2whaOTmoRwyuezaGhSsDrwcgNxsfVE8filK
-X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
- pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-KDB can interrupt any console to execute the "mirrored printing" at any
-time, so add an exception to nbcon_context_try_acquire_direct to allow
-to get the context if the current CPU is the same as kdb_printf_cpu.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
+head:   45f8fdcfbf4e49075172cf1a3fd812b90160e903
+commit: 4265aed28d7de2a643b8e441bc25344f421f2f78 [11/18] irqchip: Pass platform device to platform drivers
+config: arm-randconfig-004-20251016 (https://download.01.org/0day-ci/archive/20251016/202510162257.g1RUy0bT-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251016/202510162257.g1RUy0bT-lkp@intel.com/reproduce)
 
-This change will be necessary for the next patch, which fixes
-kdb_msg_write to work with NBCON consoles by calling ->write_atomic on
-such consoles. But to print it first needs to acquire the ownership of
-the console, so nbcon_context_try_acquire_direct is fixed here.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510162257.g1RUy0bT-lkp@intel.com/
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
- include/linux/kdb.h   | 16 ++++++++++++++++
- kernel/printk/nbcon.c |  6 +++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+All error/warnings (new ones prefixed by >>):
 
-diff --git a/include/linux/kdb.h b/include/linux/kdb.h
-index ecbf819deeca..db9d73b12a1a 100644
---- a/include/linux/kdb.h
-+++ b/include/linux/kdb.h
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/list.h>
-+#include <linux/smp.h>
- 
- /* Shifted versions of the command enable bits are be used if the command
-  * has no arguments (see kdb_check_flags). This allows commands, such as
-@@ -207,11 +208,26 @@ static inline const char *kdb_walk_kallsyms(loff_t *pos)
- /* Dynamic kdb shell command registration */
- extern int kdb_register(kdbtab_t *cmd);
- extern void kdb_unregister(kdbtab_t *cmd);
-+
-+/* Return true when KDB as locked for printing a message on this CPU. */
-+static inline
-+bool kdb_printf_on_this_cpu(void)
-+{
-+	/*
-+	 * We can use raw_smp_processor_id() here because the task could
-+	 * not get migrated when KDB has locked for printing on this CPU.
-+	 */
-+	return unlikely(READ_ONCE(kdb_printf_cpu) == raw_smp_processor_id());
-+}
-+
- #else /* ! CONFIG_KGDB_KDB */
- static inline __printf(1, 2) int kdb_printf(const char *fmt, ...) { return 0; }
- static inline void kdb_init(int level) {}
- static inline int kdb_register(kdbtab_t *cmd) { return 0; }
- static inline void kdb_unregister(kdbtab_t *cmd) {}
-+
-+static inline bool kdb_printf_on_this_cpu(void) { return false };
-+
- #endif	/* CONFIG_KGDB_KDB */
- enum {
- 	KDB_NOT_INITIALIZED,
-diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index e1bf5409cb6b..5be018493909 100644
---- a/kernel/printk/nbcon.c
-+++ b/kernel/printk/nbcon.c
-@@ -10,6 +10,7 @@
- #include <linux/export.h>
- #include <linux/init.h>
- #include <linux/irqflags.h>
-+#include <linux/kdb.h>
- #include <linux/kthread.h>
- #include <linux/minmax.h>
- #include <linux/panic.h>
-@@ -249,13 +250,16 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
- 		 * since all non-panic CPUs are stopped during panic(), it
- 		 * is safer to have them avoid gaining console ownership.
- 		 *
--		 * If this acquire is a reacquire (and an unsafe takeover
-+		 * One exception is when kdb has locked for printing on this CPU.
-+		 *
-+		 * Second exception is a reacquire (and an unsafe takeover
- 		 * has not previously occurred) then it is allowed to attempt
- 		 * a direct acquire in panic. This gives console drivers an
- 		 * opportunity to perform any necessary cleanup if they were
- 		 * interrupted by the panic CPU while printing.
- 		 */
- 		if (panic_on_other_cpu() &&
-+		    !kdb_printf_on_this_cpu() &&
- 		    (!is_reacquire || cur->unsafe_takeover)) {
- 			return -EPERM;
- 		}
+   drivers/irqchip/irq-imx-mu-msi.c: In function 'imx_mu_imx7ulp_probe':
+>> drivers/irqchip/irq-imx-mu-msi.c:419:16: error: implicit declaration of function 'imx_mu_probe'; did you mean 'imx_mu_write'? [-Wimplicit-function-declaration]
+     419 |         return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
+         |                ^~~~~~~~~~~~
+         |                imx_mu_write
+   drivers/irqchip/irq-imx-mu-msi.c: At top level:
+>> drivers/irqchip/irq-imx-mu-msi.c:299:12: warning: 'imx_mu_of_init' defined but not used [-Wunused-function]
+     299 | static int imx_mu_of_init(struct platform_device *pdev, struct device_node *parent,
+         |            ^~~~~~~~~~~~~~
+
+
+vim +419 drivers/irqchip/irq-imx-mu-msi.c
+
+   298	
+ > 299	static int imx_mu_of_init(struct platform_device *pdev, struct device_node *parent,
+   300				  const struct imx_mu_dcfg *cfg)
+   301	{
+   302		struct device_link *pd_link_a;
+   303		struct device_link *pd_link_b;
+   304		struct imx_mu_msi *msi_data;
+   305		struct resource *res;
+   306		struct device *pd_a;
+   307		struct device *pd_b;
+   308		struct device *dev;
+   309		int ret;
+   310		int irq;
+   311	
+   312		dev = &pdev->dev;
+   313	
+   314		msi_data = devm_kzalloc(&pdev->dev, sizeof(*msi_data), GFP_KERNEL);
+   315		if (!msi_data)
+   316			return -ENOMEM;
+   317	
+   318		msi_data->cfg = cfg;
+   319	
+   320		msi_data->regs = devm_platform_ioremap_resource_byname(pdev, "processor-a-side");
+   321		if (IS_ERR(msi_data->regs)) {
+   322			dev_err(&pdev->dev, "failed to initialize 'regs'\n");
+   323			return PTR_ERR(msi_data->regs);
+   324		}
+   325	
+   326		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "processor-b-side");
+   327		if (!res)
+   328			return -EIO;
+   329	
+   330		msi_data->msiir_addr = res->start + msi_data->cfg->xTR;
+   331	
+   332		irq = platform_get_irq(pdev, 0);
+   333		if (irq < 0)
+   334			return irq;
+   335	
+   336		platform_set_drvdata(pdev, msi_data);
+   337	
+   338		msi_data->clk = devm_clk_get(dev, NULL);
+   339		if (IS_ERR(msi_data->clk))
+   340			return PTR_ERR(msi_data->clk);
+   341	
+   342		pd_a = dev_pm_domain_attach_by_name(dev, "processor-a-side");
+   343		if (IS_ERR(pd_a))
+   344			return PTR_ERR(pd_a);
+   345	
+   346		pd_b = dev_pm_domain_attach_by_name(dev, "processor-b-side");
+   347		if (IS_ERR(pd_b))
+   348			return PTR_ERR(pd_b);
+   349	
+   350		pd_link_a = device_link_add(dev, pd_a,
+   351				DL_FLAG_STATELESS |
+   352				DL_FLAG_PM_RUNTIME |
+   353				DL_FLAG_RPM_ACTIVE);
+   354	
+   355		if (!pd_link_a) {
+   356			dev_err(dev, "Failed to add device_link to mu a.\n");
+   357			goto err_pd_a;
+   358		}
+   359	
+   360		pd_link_b = device_link_add(dev, pd_b,
+   361				DL_FLAG_STATELESS |
+   362				DL_FLAG_PM_RUNTIME |
+   363				DL_FLAG_RPM_ACTIVE);
+   364	
+   365	
+   366		if (!pd_link_b) {
+   367			dev_err(dev, "Failed to add device_link to mu a.\n");
+   368			goto err_pd_b;
+   369		}
+   370	
+   371		ret = imx_mu_msi_domains_init(msi_data, dev);
+   372		if (ret)
+   373			goto err_dm_init;
+   374	
+   375		pm_runtime_enable(dev);
+   376	
+   377		irq_set_chained_handler_and_data(irq,
+   378						 imx_mu_msi_irq_handler,
+   379						 msi_data);
+   380	
+   381		return 0;
+   382	
+   383	err_dm_init:
+   384		device_link_remove(dev,	pd_b);
+   385	err_pd_b:
+   386		device_link_remove(dev, pd_a);
+   387	err_pd_a:
+   388		return -EINVAL;
+   389	}
+   390	
+   391	static int __maybe_unused imx_mu_runtime_suspend(struct device *dev)
+   392	{
+   393		struct imx_mu_msi *priv = dev_get_drvdata(dev);
+   394	
+   395		clk_disable_unprepare(priv->clk);
+   396	
+   397		return 0;
+   398	}
+   399	
+   400	static int __maybe_unused imx_mu_runtime_resume(struct device *dev)
+   401	{
+   402		struct imx_mu_msi *priv = dev_get_drvdata(dev);
+   403		int ret;
+   404	
+   405		ret = clk_prepare_enable(priv->clk);
+   406		if (ret)
+   407			dev_err(dev, "failed to enable clock\n");
+   408	
+   409		return ret;
+   410	}
+   411	
+   412	static const struct dev_pm_ops imx_mu_pm_ops = {
+   413		SET_RUNTIME_PM_OPS(imx_mu_runtime_suspend,
+   414				   imx_mu_runtime_resume, NULL)
+   415	};
+   416	
+   417	static int imx_mu_imx7ulp_probe(struct platform_device *pdev, struct device_node *parent)
+   418	{
+ > 419		return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
+   420	}
+   421	
 
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
