@@ -1,275 +1,537 @@
-Return-Path: <linux-kernel+bounces-856517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D25BE45EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:55:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FCEBE45EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEB81A645C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:55:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E89A35902C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DDB350D4E;
-	Thu, 16 Oct 2025 15:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC5134F499;
+	Thu, 16 Oct 2025 15:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KUqvMjPd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCxMzPP9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E85434AB04
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9001C84B2;
+	Thu, 16 Oct 2025 15:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760630098; cv=none; b=SiAekGiQtzU5q3SjNy3YTda4lzzWL230dkNz92sTCTMmh1lgf8stogHW6rI/BX267W4Dklv3e1XV0Y4SctwKnAXKuJ4rtJWaSRsfX7nc4U8omT9yBEOJrQprt4GFp/favGHBiHHxA8yKOE1+K2mSD58UO4OIF8HnRA6lQ1Fo+ac=
+	t=1760630093; cv=none; b=nEiF/uWlkr0L/CsuD6/sqyVsW0ygvNYw7uqHRX1ikdmPlmAwM52FzbG0lj6cr/65H51CsbwHXYn6Lj6eBKO4j6vHnST5MRw8LdiS//oqbL5W5TOj3VVGCv38b3DZ9HC0HVE+pFznEgJFtnjWdraICiCf482KTzzwctpuKvabOhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760630098; c=relaxed/simple;
-	bh=M3XVnMU46p309A+ES/SPrKYTi7RsCqOO8URRr3vSRaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VosoTYnCW6xGgPMOxVQmcoehKV5Om7eWZTezMZhBQ7c0lHcW4rsU33kb7iTpXs3soM1xn9WXM7VZ1FMraLi0MVOnoRQxsmRTrEVm6oYec68ax2AFKfnAFBac6WKeCqLVNg3kwXnQaRItpv80Hs9OtrsXEsdddSigFnbJNWK6WYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KUqvMjPd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760630095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrUhomfRKtXP1TwC5ktPjSwJlqeR6Qy+1bL0w2VHOPI=;
-	b=KUqvMjPdTPl/k8LqYinlyUuElrSO9LRVYvVpGKxLz9NSYsSEyJW+5UM6aViykpycOi9gZj
-	SLj+6Z3HVq3OFJ36gw3ubAgDGW4JmMgSPR8eG2hpq3EjAPAXC6X3HtXhUDstR9c1BrfuUR
-	cDmaHO+uvN0E7Tz6WfhZRZTnIWK2fzk=
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
- [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-328-c0-xL2JxOzi8VuszlLa20Q-1; Thu, 16 Oct 2025 11:54:54 -0400
-X-MC-Unique: c0-xL2JxOzi8VuszlLa20Q-1
-X-Mimecast-MFC-AGG-ID: c0-xL2JxOzi8VuszlLa20Q_1760630094
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-54a7d8436a4so433523e0c.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:54:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760630094; x=1761234894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RrUhomfRKtXP1TwC5ktPjSwJlqeR6Qy+1bL0w2VHOPI=;
-        b=J/OtLdJg4soYqjz99njwU58XvSFyN+KNIgZeQYovEEI7TrGtVTgxUITXgP4lhDZwrQ
-         oLXFwBFXx0ppzLJmq+CCy8Ol6rTQHPA+x7rSKivXE+p3rRiig7POJWcQsEbb3+U7uhho
-         3t9lLcNEr0YIEF/zzF2xDCEXH96U+8j8XZweTdzhOuqVGfJUiNBGNTK2woTj2oQF8JHO
-         cPZPgoAGMX+a4+XGnZiZH8Dx3ZQ15oIgT/LknGuL+iiv+VIoTS18jkRRKBHfODRMguZU
-         tWIt5QTAyGiHmq8QldgYRhCYXn1VLgCaK3tEfsgcC9jqdhVIhpas/o7shiBGgG4JWely
-         Um4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUG0FbV3CI9dW8ZuVked5SxdBeLa6jSzA/0BHU260QfG2SoCBYsskD7gn1XkwZ2tGJdv1nfhG9R1DpjKWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCGkN6ByLVtUQVZo5AYHJPmhvUPZKgOpI2ah05Rhf8PfGJIzU5
-	4WnuuDV3YAFhn2FrXtLMgRUJiUEa8wAuJt26eW50C9eFZGF7OEXHsozE2oZH1AoTGR94g73b/Lc
-	IZ3yRtC8tUZ/lgmpzcJN3Z6zw7mYuGNtZE3rXXoS70meaLYDCCdBuEd/SFeeKxm9WtVcsQaZU3I
-	oHFkIwl2G8jgr8YbIXXIOmjtq3i7XZq/gzqZZlebWu
-X-Gm-Gg: ASbGncsGEqW9HsDTuLN6eEb4qArd5ylnKzOYg6OCXWPPg3osbJoQH5lNPfjg0I6YrxC
-	CQa3EU77RRipDCvi1SZ8d17XU5Nhyp+PnPjflSD4U/+UkQ3pI6ZJQeTAbY7Ust5+wCwbgvmWBHK
-	XMdVfNS/t6yr6C7muFJJkjmxs9OkNfq2D02Jr/1v4vam/TxJ+GyI7qMfQt
-X-Received: by 2002:a05:6122:3183:b0:54a:9927:7ab7 with SMTP id 71dfb90a1353d-5564ee4b9b8mr500777e0c.4.1760630093593;
-        Thu, 16 Oct 2025 08:54:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqVcrxd7JjTSzdjEeIgvpIHT5+8pHGXMFeawBOH1308WaBPClx/OBwQfclDPZgbGRF+ueXjuKCpAcm6AGF1FQ=
-X-Received: by 2002:a05:6122:3183:b0:54a:9927:7ab7 with SMTP id
- 71dfb90a1353d-5564ee4b9b8mr500759e0c.4.1760630093139; Thu, 16 Oct 2025
- 08:54:53 -0700 (PDT)
+	s=arc-20240116; t=1760630093; c=relaxed/simple;
+	bh=hCXJj2ZQQunKXdQtPbAlC5ujVXRGTPASQI8qWWbs9og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuxAu4EG9YjltR6jesXUV/AKrMqXTlfjBIZuqmsQPdQSG8YRkvE3pDI6/zMRv4+JF8jVfxKHnxfSHSB8ZfCMbIgfTq4qM7rzRSo5phdOXauEFekcXJJGhHP0Rol/jASliywSBLK/Ik9SO+jzARbKlLEqbzcWXGML3MrcVb/pGzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCxMzPP9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EDAC116C6;
+	Thu, 16 Oct 2025 15:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760630093;
+	bh=hCXJj2ZQQunKXdQtPbAlC5ujVXRGTPASQI8qWWbs9og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gCxMzPP9E2Q4/twNBfUJzZvw4nvroUq3wS6qnR0pcFqM06Am126/L52MQ3FaxejrW
+	 lyAQUQNLXQKeCS1HftR1PtbJhEIjxgYVJhAIwQPqkDyp2EFBWOHvUl/yE6Lvd5yAIz
+	 WQPMEAOXdLi7bKKPfb1fY/aiF0w64PkI5ERvz7rXl6GtwBYwMmKRL6vBfsS7YYZRi2
+	 cKpt+3lH/FpYJZYWXXorKUEzhad1aShe0O0mWJO9xZQOZL0zrhCLa63I8bmDke40uo
+	 70qyJhOCfLOZCuqFT8D1XH0FFtwdIQfmVNuWzXnBWbYcS3n0Zxgab6hbGggc/YE+Mb
+	 u4OlqR4HQI+pw==
+Date: Thu, 16 Oct 2025 16:54:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	E Shattow <e@freeshell.de>, Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 4/7] riscv: dts: starfive: jh7110-common: Move out
+ some nodes to the board dts
+Message-ID: <20251016-portion-margarine-b79b9f366582@spud>
+References: <20251016080054.12484-1-hal.feng@starfivetech.com>
+ <20251016080054.12484-5-hal.feng@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016084301.27670-1-lzampier@redhat.com> <20251016084301.27670-4-lzampier@redhat.com>
- <87plan0yvd.ffs@tglx>
-In-Reply-To: <87plan0yvd.ffs@tglx>
-From: Charles Mirabile <cmirabil@redhat.com>
-Date: Thu, 16 Oct 2025 11:54:41 -0400
-X-Gm-Features: AS18NWChDcnKUn9SfERgPxeS2QxBz3ndg7E1h3wN_hP1ifuWW7TmfF6Ys7GQBsE
-Message-ID: <CABe3_aGj68qM1bNZ3LExbexO=9FO4RzJxhUy2T+HKK1qZfBmtw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Vivian Wang <dramforever@live.com>, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="niEVM0SQyhIdNYKc"
+Content-Disposition: inline
+In-Reply-To: <20251016080054.12484-5-hal.feng@starfivetech.com>
+
+
+--niEVM0SQyhIdNYKc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas=E2=80=94
+Emil,
 
-On Thu, Oct 16, 2025 at 9:17=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Thu, Oct 16 2025 at 09:42, Lucas Zampieri wrote:
->
-> After fixing the corrupted patch up I had a closer look and decided not
-> to merge it. See comments below.
->
-> > +static bool cp100_isolate_pending_irq(int nr_irq_groups, u32 ie[],
-> > +                                    void __iomem *pending,
-> > +                                    void __iomem *enable)
-> > +{
-> > +     u32 pending_irqs =3D 0;
-> > +     int i, j;
-> > +
-> > +     /* Look for first pending interrupt */
-> > +     for (i =3D 0; i < nr_irq_groups; i++) {
-> > +             pending_irqs =3D ie[i] & readl_relaxed(pending + i * size=
-of(u32));
-> > +             if (pending_irqs)
-> > +                     break;
-> > +     }
-> > +
-> > +     if (!pending_irqs)
-> > +             return false;
-> > +
-> > +     /* Disable all interrupts but the first pending one */
-> > +     for (j =3D 0; j < nr_irq_groups; j++) {
-> > +             u32 new_mask =3D 0;
-> > +
-> > +             if (j =3D=3D i) {
-> > +                     /* Extract mask with lowest set bit */
-> > +                     new_mask =3D (pending_irqs & -pending_irqs);
-> > +             }
-> > +
-> > +             writel_relaxed(new_mask, enable + j * sizeof(u32));
-> > +     }
-> > +
-> > +     return true;
-> > +}
-> > +
-> > +static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
-> > +                                     void __iomem *claim)
-> > +{
-> > +     int nr_irq_groups =3D DIV_ROUND_UP(handler->priv->nr_irqs, 32);
-> > +     void __iomem *pending =3D handler->priv->regs + PENDING_BASE;
-> > +     void __iomem *enable =3D handler->enable_base;
-> > +     irq_hw_number_t hwirq =3D 0;
-> > +     int i;
-> > +
-> > +     guard(raw_spinlock)(&handler->enable_lock);
-> > +
-> > +     /* Save current interrupt enable state */
-> > +     for (i =3D 0; i < nr_irq_groups; i++)
-> > +             handler->enable_save[i] =3D readl_relaxed(enable + i * si=
-zeof(u32));
->
-> This is truly the most inefficient way to solve that problem. The enable
-> registers are modified with enabled_lock held, so you can just cache the
-> value in plic_handler::enabled_save and avoid this read loop completely.
-> After claiming the interrupt you restore from that cache, no?
+On Thu, Oct 16, 2025 at 04:00:51PM +0800, Hal Feng wrote:
+> Some node in this file are not used by the upcoming VisionFive 2 Lite
+> board. Move them to the board dts to prepare for adding the new
+> VisionFive 2 Lite device tree.
 
-You mean touch the other functions where the enable bits are modified
-to keep the cache in sync so that we don't need to do this read loop
-and can have a proper set of values cached?
+I definitely want your input as to whether these jh7110s devices should
+share the same common file as the devices using the regular jh7110.
 
-My concern is that this obviously has an impact on other platforms
-which do not have this quirk since keeping the cache in sync would get
-pushed all throughout the driver.
+Cheers,
+Conor.
 
-I do agree that it would save this loop, but the way this was written
-was intentionally designed to minimize the impact on other platforms
-at the expense of this one because it is the platform with the bug.
+>=20
+> Reviewed-by: E Shattow <e@freeshell.de>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+>  .../boot/dts/starfive/jh7110-common.dtsi      | 19 --------
+>  .../jh7110-deepcomputing-fml13v01.dts         | 46 +++++++++++++++++++
+>  .../boot/dts/starfive/jh7110-milkv-mars.dts   | 46 +++++++++++++++++++
+>  .../dts/starfive/jh7110-milkv-marscm-emmc.dts |  9 ++++
+>  .../dts/starfive/jh7110-milkv-marscm-lite.dts |  1 +
+>  .../dts/starfive/jh7110-milkv-marscm.dtsi     | 32 +++++++++++++
+>  .../dts/starfive/jh7110-pine64-star64.dts     | 46 +++++++++++++++++++
+>  .../jh7110-starfive-visionfive-2.dtsi         | 43 +++++++++++++++++
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 16 -------
+>  9 files changed, 223 insertions(+), 35 deletions(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv=
+/boot/dts/starfive/jh7110-common.dtsi
+> index 5dc15e48b74b..8cfe8033305d 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -281,14 +281,8 @@ &mmc0 {
+>  	assigned-clock-rates =3D <50000000>;
+>  	bus-width =3D <8>;
+>  	bootph-pre-ram;
+> -	cap-mmc-highspeed;
+> -	mmc-ddr-1_8v;
+> -	mmc-hs200-1_8v;
+> -	cap-mmc-hw-reset;
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&mmc0_pins>;
+> -	vmmc-supply =3D <&vcc_3v3>;
+> -	vqmmc-supply =3D <&emmc_vdd>;
+>  	status =3D "okay";
+>  };
+> =20
+> @@ -298,8 +292,6 @@ &mmc1 {
+>  	assigned-clock-rates =3D <50000000>;
+>  	bus-width =3D <4>;
+>  	bootph-pre-ram;
+> -	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> -	disable-wp;
+>  	cap-sd-highspeed;
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&mmc1_pins>;
+> @@ -444,17 +436,6 @@ GPOEN_SYS_I2C6_DATA,
+>  	};
+> =20
+>  	mmc0_pins: mmc0-0 {
+> -		 rst-pins {
+> -			pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> -					      GPOEN_ENABLE,
+> -					      GPI_NONE)>;
+> -			bias-pull-up;
+> -			drive-strength =3D <12>;
+> -			input-disable;
+> -			input-schmitt-disable;
+> -			slew-rate =3D <0>;
+> -		};
+> -
+>  		mmc-pins {
+>  			pinmux =3D <PINMUX(PAD_SD0_CLK, 0)>,
+>  				 <PINMUX(PAD_SD0_CMD, 0)>,
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.d=
+ts b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> index f2857d021d68..7535d62201f1 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> @@ -11,6 +11,52 @@ / {
+>  	compatible =3D "deepcomputing,fml13v01", "starfive,jh7110";
+>  };
+> =20
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz =3D /bits/ 64 <375000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz =3D /bits/ 64 <500000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz =3D /bits/ 64 <750000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz =3D /bits/ 64 <1500000000>;
+> +		opp-microvolt =3D <1040000>;
+> +	};
+> +};
+> +
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply =3D <&vcc_3v3>;
+> +	vqmmc-supply =3D <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength =3D <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate =3D <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie1 {
+>  	perst-gpios =3D <&sysgpio 21 GPIO_ACTIVE_LOW>;
+>  	phys =3D <&pciephy1>;
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/ri=
+scv/boot/dts/starfive/jh7110-milkv-mars.dts
+> index fdaf6b4557da..c2e7a91e460a 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> @@ -11,6 +11,25 @@ / {
+>  	compatible =3D "milkv,mars", "starfive,jh7110";
+>  };
+> =20
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz =3D /bits/ 64 <375000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz =3D /bits/ 64 <500000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz =3D /bits/ 64 <750000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz =3D /bits/ 64 <1500000000>;
+> +		opp-microvolt =3D <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	assigned-clocks =3D <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>  	assigned-clock-parents =3D <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> @@ -22,6 +41,33 @@ &i2c0 {
+>  	status =3D "okay";
+>  };
+> =20
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply =3D <&vcc_3v3>;
+> +	vqmmc-supply =3D <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength =3D <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate =3D <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie0 {
+>  	status =3D "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts b/=
+arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> index e568537af2c4..ce95496263af 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> @@ -10,3 +10,12 @@ / {
+>  	model =3D "Milk-V Mars CM";
+>  	compatible =3D "milkv,marscm-emmc", "starfive,jh7110";
+>  };
+> +
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply =3D <&vcc_3v3>;
+> +	vqmmc-supply =3D <&emmc_vdd>;
+> +};
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts b/=
+arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+> index 6c40d0ec4011..63aa94d65ab5 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+> @@ -14,6 +14,7 @@ / {
+>  &mmc0 {
+>  	bus-width =3D <4>;
+>  	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+>  };
+> =20
+>  &mmc0_pins {
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi b/arch=
+/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+> index 25b70af564ee..af01d3abde2f 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm.dtsi
+> @@ -21,6 +21,25 @@ sdio_pwrseq: sdio-pwrseq {
+>  	};
+>  };
+> =20
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz =3D /bits/ 64 <375000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz =3D /bits/ 64 <500000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz =3D /bits/ 64 <750000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz =3D /bits/ 64 <1500000000>;
+> +		opp-microvolt =3D <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	assigned-clocks =3D <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>  	assigned-clock-parents =3D <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> @@ -40,6 +59,19 @@ &i2c6 {
+>  	status =3D "disabled";
+>  };
+> =20
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength =3D <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate =3D <0>;
+> +	};
+> +};
+> +
+>  &mmc1 {
+>  	#address-cells =3D <1>;
+>  	#size-cells =3D <0>;
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch=
+/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> index 31e825be2065..6faf3826c5c3 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> @@ -14,6 +14,25 @@ aliases {
+>  	};
+>  };
+> =20
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz =3D /bits/ 64 <375000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz =3D /bits/ 64 <500000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz =3D /bits/ 64 <750000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz =3D /bits/ 64 <1500000000>;
+> +		opp-microvolt =3D <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	starfive,tx-use-rgmii-clk;
+>  	assigned-clocks =3D <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+> @@ -44,6 +63,33 @@ &i2c0 {
+>  	status =3D "okay";
+>  };
+> =20
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply =3D <&vcc_3v3>;
+> +	vqmmc-supply =3D <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength =3D <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate =3D <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie1 {
+>  	status =3D "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dt=
+si b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index 5f14afb2c24d..9cd79fe30d19 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -13,6 +13,25 @@ aliases {
+>  	};
+>  };
+> =20
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz =3D /bits/ 64 <375000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz =3D /bits/ 64 <500000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz =3D /bits/ 64 <750000000>;
+> +		opp-microvolt =3D <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz =3D /bits/ 64 <1500000000>;
+> +		opp-microvolt =3D <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	status =3D "okay";
+>  };
+> @@ -38,9 +57,33 @@ &i2c0 {
+>  };
+> =20
+>  &mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply =3D <&vcc_3v3>;
+> +	vqmmc-supply =3D <&emmc_vdd>;
+>  	non-removable;
+>  };
+> =20
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength =3D <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate =3D <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +};
+> +
+>  &pcie0 {
+>  	status =3D "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/d=
+ts/starfive/jh7110.dtsi
+> index 6e56e9d20bb0..a380d3dabedd 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -205,22 +205,6 @@ core4 {
+>  	cpu_opp: opp-table-0 {
+>  			compatible =3D "operating-points-v2";
+>  			opp-shared;
+> -			opp-375000000 {
+> -					opp-hz =3D /bits/ 64 <375000000>;
+> -					opp-microvolt =3D <800000>;
+> -			};
+> -			opp-500000000 {
+> -					opp-hz =3D /bits/ 64 <500000000>;
+> -					opp-microvolt =3D <800000>;
+> -			};
+> -			opp-750000000 {
+> -					opp-hz =3D /bits/ 64 <750000000>;
+> -					opp-microvolt =3D <800000>;
+> -			};
+> -			opp-1500000000 {
+> -					opp-hz =3D /bits/ 64 <1500000000>;
+> -					opp-microvolt =3D <1040000>;
+> -			};
+>  	};
+> =20
+>  	thermal-zones {
+> --=20
+> 2.43.2
+>=20
+>=20
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
->
-> Now for the search and disable mechanism. Of course you need to search
-> for th pending interrupt first, but then you can make that masking loop
-> very simple by having a plic_handler::enabled_clear[] array which is
-> zeroed on initialization:
->
->         unsigned long pending =3D 0;
->
->         for (group =3D 0; !pending && group < nr_irq_groups; group++) {
->                 pending =3D handler->enabled_save[i];
->                 pending =3D& readl_relaxed(pending + group * sizeof(u32))=
-;
->         }
->         if (!pending)
->                 return false;
->
->         bit =3D ffs(pending) - 1;
->         handler->enabled_clear[group] |=3D BIT(bit);
->         for (int i =3D 0; i < nr_irq_groups; i++)
->                 writel_relaxed(handler->enabled_clear[i], enable + i * si=
-zeof(u32));
->         handler->enabled_clear[group] =3D 0;
->
-> No?
+--niEVM0SQyhIdNYKc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sure that would also work, but why are we using ffs (slow) only to
-shift the result back to make a new mask when (x & -x) is faster and
-skips the intermediate step delivering immediately the mask of the
-lowest bit.
+-----BEGIN PGP SIGNATURE-----
 
-As for making another caching array, I guess, but again that is just a
-time vs space trade off with its own invariants to maintain that would
-also impact other platforms.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEVSAAKCRB4tDGHoIJi
+0rwuAQDdyg5qJYxpjeK/5dNMDTVwgh87VryxXKs5D0N+6BUmVwEAzTA2ShRWUp/0
+1TpXAy5SVGAkW4aaQaTR2/flh9qg8wg=
+=oqXA
+-----END PGP SIGNATURE-----
 
-I could definitely adjust the clear loop to move the mask preparation out l=
-ike:
-
-/* extract lowest set bit */
-pending &=3D -pending
-
-for(j =3D 0; j < nr_groups; ++j)
-    writel_relaxed(i =3D=3D j ? pending : 0, enable + i * sizeof(u32));
-
-but I am quite sure that the compiler is well able to do this exact
-transformation as an optimization pass and I am not sure that it is
-more readable than what I originally proposed.
-
->
-> But looking at this makes me wonder about the functional correctness of a=
-ll
-> this. What happens in this case:
->
-> Device A raises an interrupt
->
->     handler()
->         ....
->         disable_groups();
->
-> Device B raises a now disabled interrupt
->
->         restore_groups();
->
-> Is the device B interrupt preserved in the interrupt chip and actually
-> raised when the interrupt enable bit is restored or is it lost?
-
-I am not sure how to verify this other than to tell you that without
-this quirk (i.e. trying to use normal plic behavior) the device does
-not work, but with this quirk I can boot to a desktop with a pcie
-graphics card and storage, use networking etc that all obviously
-depend on the correct functioning of the interrupt controller.
-
-My reading of the spec for PLIC also suggests (but does not explicitly
-confirm) that the pending bits function irrespective of the state of
-the corresponding enable bit: "A pending bit in the PLIC core can be
-cleared by setting the associated enable bit then performing a claim."
-(page 14 plic spec 1.0.0 [1]).
-
-This sentence implies to me that it is possible for a pending bit to
-be set even though the corresponding enable bit is not, which lends
-credence to the idea that the pending bits operate independently.
-
->
-> Thanks,
->
->         tglx
->
-
-I am very sorry about the corrupt patch, I don't know how it happened.
-I hope you will reconsider taking this code. We can send a version
-that is not corrupt (or with the slight modification to bring the mask
-preparation out of the loop) if you would prefer.
-
-Thanks for the review.
-
-Best=E2=80=94Charlie
-
-[1] https://github.com/riscv/riscv-plic-spec/releases/tag/1.0.0
-
+--niEVM0SQyhIdNYKc--
 
