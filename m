@@ -1,110 +1,92 @@
-Return-Path: <linux-kernel+bounces-857014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACABBE5A81
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:18:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB8BE5A9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BFD8E351F24
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:18:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E59C24E44D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D0F2D3725;
-	Thu, 16 Oct 2025 22:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92E12DCBEB;
+	Thu, 16 Oct 2025 22:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U96/ogYb"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkfRktec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4302518A921
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B6242D95;
+	Thu, 16 Oct 2025 22:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760653087; cv=none; b=KaaN7v/WcCNfllch87NaWfmSksBBQf9j4lk2qU8qyVcyLCayX7Ep6ipiVTZ5u/WHtnmMj2545Vv0NY+M/KLjtrtBXZ9YQVUoTGuxfMhMxKXtAH+XMs5OGiBTlDmfyEtPXtHjEmZMoCrR9QCKnBcsec1heruoDJiCjmPW0f6r3Bs=
+	t=1760653222; cv=none; b=G/RJxTDQzkKrPZjhK4iad+oHy9IAd23J8ohnLaFJ6NpXmh6t2Ka6VJ8sTEW0+pcLdFHdXXBhtxqy7wMmdIGYkfnzyC/dNuLA0tIJVFoQtFqcvCvggYZ1/9A/OR8C3TEMmXYdwM2VRbtljmlmGRkm/N+8BwKo9gSOL+ablVCsc9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760653087; c=relaxed/simple;
-	bh=7xqMM4w688p0AnL2bHbxl1+atuUYQy+3HnHSF9sf/IQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t9xxdW1EIofZ3GtVaMQOkAZeDpyhM/Xqos+mikttJuv7m5qcKTdfWL4binHEug03pH29i5P4t3v9/2HKHWvP5cuHb2wNtNj9gEFPAXWmPb1QSx4TybRC/OPBc0oPmzejCSW/8Os6PmPV80eFu/Hk7MlbOVZVW0M8CnQUU1hV76Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U96/ogYb; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-37777912161so13606251fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760653083; x=1761257883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7xqMM4w688p0AnL2bHbxl1+atuUYQy+3HnHSF9sf/IQ=;
-        b=U96/ogYbcYL1tNOzrvlNbNVZ9WdG50oiIB9LtlYrQwsmb4OttqDVAnCdklGnurG+Uq
-         JKhY90VXyuH/4Z3CUVnTek9d9wC1e8C+1tDS0A6LbmQ5v+2f5sTmcqKp3W9OuBQbZyl4
-         ImJTw6/JZilkj9z4PthaiswZRhwn6AFRs9xS6jV31MiTsMFov33cEXqPgcY0yD6f2cMr
-         Y/eXFFzaYvqNhcBjGuMwUQ4cpfkZr7sE6RT6F13ZntgyNws/Aw4wmuZB2fhakAlDR9DS
-         SO/ZdspmGRukI8fXg3oqeJKSwlLxcxffvRa3qf9/cCFNE6EMIc5c2RlnvWfzqdEtM1qu
-         ZXKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760653083; x=1761257883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7xqMM4w688p0AnL2bHbxl1+atuUYQy+3HnHSF9sf/IQ=;
-        b=RcpdGNbjyPiFg5fAA2oqYU3pffRnVaQeqV0CsYkcvFdyLhoEElliSn8IsE7+5v5PAQ
-         AA6t6/zIAMHwmDXmL94EkoEPBTXaWdbSR61Ry2Eli/LMV6jfFhFtXHaH0ARtGBGp2Jj0
-         rl6V1mOVcz7iKmXWo/3JvwDayCDyrDYufjjfKCIzc9Fe4lY7zYxN1JFJXrHfefvR2Ydk
-         hM533O9nu/Mxj3lI6EuqBoiPRbBrG9gFjWatbYmmHUVYTsR4obuW1xYW+bPoOAyJvdvM
-         z4k5Noqk2UYe2bpOjvOsqELSOQOAp3P7y7fuOT71BoW6xm/VQ9rHT9Yut0SKeIApaLyk
-         XdlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXg5g0gOKyH+I9yebYw2z0Kh/obzA1O7mgy+Ev/FFxXOyO/DzoPjH9ehxjX+KNfZvebeFYrFK/73aWFuN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXlVLBxYljRB5kEpKGz5uZMsfDyz4Yij+Ol0TOAjUZ339h42uu
-	xZ0q+yXnhuAJVTh18cF7OsqSy7fa2wpD2aG+J4vtYLFFD+OvcuO7qxp62QL8HHdVlGGQhWaIBhQ
-	RKPixPKb8CBQj3WTUguMgoQ44EtJiuPH+f82wP7SmBw==
-X-Gm-Gg: ASbGncs0qj2w6SP4a0kthuajrTYpAYUlB7/R0ck8ZB3YaVnunIkBK3lG/rvVTwbjBM1
-	bPXiaPhhdlx1UeW4/7Xh1z6nX7sqlVUbhusTORH2npbqybVW/Vn6foEqbgDh6dvdw64JRYauuH2
-	q0VIOTCDp8Vzhiggb+vIV6a23JwgQtTl8Jw6UmwPZEuBndIHc9FjhHIMFu7zstt0BAYp8SG1886
-	cl5G+0MVoAnK0qaA4WiHJFVXine8eGlbhZ/LzWcjZvUnzAZH7kwOGxi+ufaSjSMcBWCPAA=
-X-Google-Smtp-Source: AGHT+IHRpvTzR9lRZrlmQ1podNEFEF+NC21f0G3G257FEgsRUC3w77A0jnF1673Idk1A/qWEdilf/Xf7lGab2jdyAQA=
-X-Received: by 2002:a2e:a596:0:b0:372:8ca0:15af with SMTP id
- 38308e7fff4ca-37797a6fb5emr5125231fa.35.1760653083253; Thu, 16 Oct 2025
- 15:18:03 -0700 (PDT)
+	s=arc-20240116; t=1760653222; c=relaxed/simple;
+	bh=s5fu+uXQ5u4l/JEK8DPW0QEVlCFSvZTtTu+d2PH75Y8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=KOVtaoMdgEQ3/sSrk8RBBXo74pdtSXPMxkxunmtha1Ph5HICxp2CCala62ehGpg/Rt6OwaIqt5glhlanQ6uUeoSsl2j+zmyO9QAeLyX+J9KFi998c58rBCihRhOISaSQ31ng4Xl+TwW4yJqE/2GRzsv4A9iew7O77YJIAGWHcWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkfRktec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3458C4CEF1;
+	Thu, 16 Oct 2025 22:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760653221;
+	bh=s5fu+uXQ5u4l/JEK8DPW0QEVlCFSvZTtTu+d2PH75Y8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=XkfRktecNgkxb4dXMFpJAqAefTdY3oJ22/0buu0x2yKqn7zrbC+9wtLPTkZCNelhh
+	 55N2RoqHuXbOsf5IBGVczRbwlbhgz9TSXdWizFzcqvNlfRBhkiqeMQQgeG+06VrLNB
+	 SS1/sDijQw7LKBTX67RJZNCGIiGVUIdo61clMGpXOl6S65reNKXQ52F7IU+iELngV9
+	 LMTHejVgKKr6/UNyBuXQJC9kmQuUpFfQeumOgEPKNGNVwAuZVKvS9iY0yD12CTKFXf
+	 IvrfCzg/5JMHJiLeCzgTQZAtsLuF6gCm1Mjjny5pVRvqNmjp08h1mhqCi+Y8I5efrJ
+	 apcslkQ9ZYmVw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE0139D0C23;
+	Thu, 16 Oct 2025 22:20:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
- <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
- <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com>
- <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
- <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com>
- <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil> <CALHNRZ9J2VFLm39wm7+8Le8rt2HpfeHgDOm6mc-s7_Ya8aXe1g@mail.gmail.com>
-In-Reply-To: <CALHNRZ9J2VFLm39wm7+8Le8rt2HpfeHgDOm6mc-s7_Ya8aXe1g@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 17 Oct 2025 00:17:52 +0200
-X-Gm-Features: AS18NWC2jQDWzQH1uHLFWOu77qn-QxNZZEbGaap9VZGs-W6Fej50AwlRr45fuS8
-Message-ID: <CACRpkdbYkWL4BPyARSOCRQoVHJkTFpDA+Mfo-Aq+-dLGosqJOg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: usb: rtl8150: Fix frame padding
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176065320577.1926380.4043534150079861289.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Oct 2025 22:20:05 +0000
+References: <20251014203528.3f9783c4.michal.pecio@gmail.com>
+In-Reply-To: <20251014203528.3f9783c4.michal.pecio@gmail.com>
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: petkan@nucleusys.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, horms@kernel.org
 
-On Tue, Oct 14, 2025 at 7:54=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
+Hello:
 
-> Reminder about this series. Patches 1 and 2 are in v6.18-rc1. Patch 3
-> is not. And I have seen no indication that it has been picked up or
-> will be picked up within the 6.18 cycle.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Patch 3 is a DTS patch so it should go through the Tegra tree to
-the SoC tree, I guess Thierry collects them?
+On Tue, 14 Oct 2025 20:35:28 +0200 you wrote:
+> TX frames aren't padded and unknown memory is sent into the ether.
+> 
+> Theoretically, it isn't even guaranteed that the extra memory exists
+> and can be sent out, which could cause further problems. In practice,
+> I found that plenty of tailroom exists in the skb itself (in my test
+> with ping at least) and skb_padto() easily succeeds, so use it here.
+> 
+> [...]
 
-Yours,
-Linus Walleij
+Here is the summary with links:
+  - [net,v2] net: usb: rtl8150: Fix frame padding
+    https://git.kernel.org/netdev/net/c/75cea9860aa6
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
