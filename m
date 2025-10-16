@@ -1,156 +1,184 @@
-Return-Path: <linux-kernel+bounces-856578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0C0BE4890
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:20:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF51BE4817
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C3535621AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:17:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7498454262C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C9E32D7F7;
-	Thu, 16 Oct 2025 16:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA62F23EAB9;
+	Thu, 16 Oct 2025 16:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RuvOvNYd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrsshslT"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BCE32AABB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441B532D0F3
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760631415; cv=none; b=bCy5ecGejC+dSBVFAUgAvo5IOHL/nIdZLxAM++quHJ1j6Zhw5g08tfGVGy8O7tprHQaA7Su/iw9al9YfclrPR4AHXxDgNw8t+cRVclH02Eu9adMU1IF1uxBKTBHHTQkMEJ8vX3PmbFjoWz/OYhAZ9Wne2rtizTu2LuZi09D48Ns=
+	t=1760631407; cv=none; b=FuCyBA1hnd2AA8Cr0ZaGFLX9HEx5+o49sRuArHSGqdy5LR3VHzYxVwZRPzUDN/pZinsiR6TpoTh1JN65CJDu1fen2NutMLCI0hW0zxhpSOOGNEP21s/9PyWRew87tR4hBlXXU4ZjrwuBXVbYDWTTzaFL+s4ch4DdUqGMozG5m+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760631415; c=relaxed/simple;
-	bh=I1J3S6x5LiLW/zyWZ87aQm6praqo1qBzZH7S+vE3aU8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hqYDLpcc7k3gYSSXgdwvHqWSait3E2L/YaItBy7m01DYHcilZKovxxpI7HPLIJ/5UIDB9meWEEBddcDaHiwo9OkUyeId7e6H9yxTAay/SW5SUeit/+YjMszpudwVZQ6BB+OzOtRXf5sgiZ6rIVNqlTvQKb77mxbTLjBSWL6YO00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RuvOvNYd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760631413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=36wLOxtnUtAVE2o+a4sL0tiiKKSB5B5mwGz4ZRb7cv4=;
-	b=RuvOvNYdTLnqYqmoyGKNVVavvbI7TktPkLgKK4s6viBjFXRFGANi58X/Cxd35agsvOX1Lk
-	rLTYWO1mJyqym5V2Y1TJf16MXfyrvkrua18PXLoLIACK88wLWuWDsOaufXqBqEEJ+3qiEF
-	4eFYy0CkG0WEqRDT1LFYGAXNJEVc4PA=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-rdkUf9u9NCK57jdcZGAkyA-1; Thu, 16 Oct 2025 12:16:51 -0400
-X-MC-Unique: rdkUf9u9NCK57jdcZGAkyA-1
-X-Mimecast-MFC-AGG-ID: rdkUf9u9NCK57jdcZGAkyA_1760631411
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c1558a74aso40074986d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:16:51 -0700 (PDT)
+	s=arc-20240116; t=1760631407; c=relaxed/simple;
+	bh=dDzcE9GIhuMD03hwQWEzPv1MMHllwhlQEEVcA4HO9eM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TMMV5r9IXxQ822lvRWCEsBGF8zvGXVM7L6w69WXIv1GxcrO/My/lp3buAnXtTCuY4QQFfPvDDotGkZw+okMDRYkZm+tmkBDlOLwjpLkqRGAiwsfulR8VeoB9Wvk4s1hrd9iS8y+eokEcHjtYuIyufRTf8KvEAaEn6l93Eypl6No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrsshslT; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b463f986f80so188951566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 09:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760631403; x=1761236203; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LU4H/m2arF+mqUMYVRlHKE47q1ucl7Pu6ll61/fszag=;
+        b=ZrsshslTt7yXtTkAJTj0Vj/o2o6Slh/tJh7wwncDNsY+Q8IDDYV5Vu2w/ICZFBSIph
+         Dgl3WH4zf+2VAI4Pl3XqxQBmzTwa+p2fbcvpH9V4m0QDNU+fRkNUh/ig7Et+0+A9hQMZ
+         gzmMrnPAMI165Lz+ZEVRKzxxzNDneUKkRcr1fCjQGESQcyl9pGi8ZpB+Tca2KNTxKF1B
+         ZTRRRqEZVC28fF3/6m0DY06hnJyQSBrY+zrJ14UoImwcrdnMyx0//77u4VP2bpB0VHDh
+         3DM8Wsi+w2ThoIS+MF785GUoQRADWxvpSCMH0arYgwHNYJodiLuXS24gS8fhTCKzxiTA
+         WjkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760631411; x=1761236211;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760631403; x=1761236203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=36wLOxtnUtAVE2o+a4sL0tiiKKSB5B5mwGz4ZRb7cv4=;
-        b=qVnijQGLi0YuPcuKR377oNrXZiBQxpR0CPkqGDm/SVttgWLD1LyhIcSfJ2y843oVxl
-         aqUBbseNc6A+a0z6Pne72NETmvbzyQaCNH0tNSanSGWGArYlvM1vwPRPO7HBb4m3Amtc
-         uNkMQxTnNUxiE/hR7O6PNt6lv9WrWxX9fr5BOV9oI/5CFTdatv8SRt/4YlHjZOLe9ack
-         jgvfl/cFvU19v8McYNedj9WiWyZYAuTDP94q1Qb//lLE8Rq9PLTlEnfFkty4QukDBJA3
-         gJOZKAVM1MnqNRHyriuXEf7yZn3TDFrtHCa+7zc+7zYSET3Fi5uxsi9DxxtagNoTsbaA
-         fTPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwQnPp7UQUAOYql+I/p2wQUYU9cI/3FXvpargWYLVyL/cbccAMjTgyGudnp93E+g7AHK3ZkHnwf/Vuyhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3PAt5tFVX9h/u1QRYiIYX7jacy50HknMBkhSErbcGo/OId7rW
-	dp4do3ZQcoT4N7wCe1RRhi9gbYaYNxb1xY5pZpiltbkPi5E7JzZo88eCzgH2CYiSyqvc5qeBzJt
-	xDPQbSu9w04H6vJKAltpJQSJVG5QiooaQ0rPauCxhk6A1nr+Mx19HijV30NeuiBLxKw==
-X-Gm-Gg: ASbGnctVBa+CCbrHdzfqofr6LYiDLW7eIkjGt3yMqqIANhvOfPE10SV1HDWNgsbludx
-	0C2ZcSafCLnRfn7EGsJg9AKt3PEoo17U/VFKZeM1NuYfI1fQAklrbvXzxZBzsMRQTXxvrsJJdYF
-	qicmOi4oFVFeW6KjtSsfKYv3z05puukkfrTI0/yRXuJYOgHQT+mEb4bjr/pbiJn/QvsP4fq6++g
-	rm6cvl5VhoT2XdL4FzMA80OagncY5ifrC1Uq3v4n1qSysXUWAdtgmu2oR0r8d9iLJZxxG/QxpTO
-	RTmISZa+1kaZ8xJTmGyNU3hVnobPUr13ylIhP3fWt2VnB4fOktUB5E4L2spTyL+CF/nsSD6aQvI
-	iUDBd5Q4T4UCWal2/3LplYfgeaYgUsl6SP/FatZEKV6BfU6lpSUZAQvoNCCqygV41yQF1JA==
-X-Received: by 2002:ad4:576e:0:b0:812:dc64:e8fb with SMTP id 6a1803df08f44-87c2055e0f1mr11220696d6.3.1760631411255;
-        Thu, 16 Oct 2025 09:16:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2H4hqxbPAz78vUyuVxepWRoN/7lFlbe1nAViv5z5DCNPAXcja8zNCahwq2KBdmRw44i1b6w==
-X-Received: by 2002:ad4:576e:0:b0:812:dc64:e8fb with SMTP id 6a1803df08f44-87c2055e0f1mr11220206d6.3.1760631410751;
-        Thu, 16 Oct 2025 09:16:50 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c0128c9d8sm44068466d6.33.2025.10.16.09.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 09:16:48 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 16 Oct 2025 12:16:29 -0400
-Subject: [PATCH RESEND 4/4] media: platform: ti: omap3isp: isp: convert
- from round_rate() to determine_rate()
+        bh=LU4H/m2arF+mqUMYVRlHKE47q1ucl7Pu6ll61/fszag=;
+        b=lGODjvfVfwN9Nlnp73QGVoSZKt2d9+gz2Fln6M3SR9+4bObvnWSgWudFqQuxebJxSU
+         ooqsQRPHiTtU/4e8xy/IdyvONij2YFiYNP/5h0BFX0vHI2+YSyq5CPWdA7QAgDz/jrLb
+         SqV1BlC+z3U0Fh7GaRqbKjP0RQb/GQ4TO2QkoCgW/p5T6iZRL8poBxp5rbM/GJvnOs/Y
+         +fqwP4+/FUtHgr8rVpUnL/ILThqwWWuBINqtH0tLgquu+IPwFj9OWMRUnONL0oOzRZcy
+         nzoIn9RojhFYjQytkpEdw4lr3Hd4e0h9SGtiSkWw+/r3EF6eUCKPfDH+SG24x5QUU0zx
+         GU2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXTSbDDhzeRCYJaZNXBvYk8VOk7iaYtiIChwOg0nKXdvRuZae2AJqjoDJ17eYKIetScPE/mIiWCgeXvrlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk9Ngj5GNfXVYPCI61qxD26I1btY+NamPsIFmrzs6+TbjVxhdd
+	aVTTTJqIdOFNlrzqOsgfEjPt5r/siMkf6JBPWVjcCRJnoGqrWjycGUOU6kOGrHRIAJ2BdWCxhv+
+	Sepq2KemtdY4s3mm/mN1wVxVbMdQuxG0=
+X-Gm-Gg: ASbGncvqGPOQR7w/8YBvJd3IRW/NvZM3kjMoQ8f3TTZNsuNlcI5iw6KnmZSCgX8gaOv
+	xTheVvxZTLjzTnyMk1D6cprWso/qYehTyo5ilprGEC9v+Mvk4fMyf57IqPXspPm6oAFnOzjs8JK
+	NevXQUz+cVXiINA6E1Gj4V8IjVsEI0MZK1nwP9zWjiPbh/YytqyicPH7dCIE75G6PLxByrHswgb
+	/C1xyCQxcYUvX5uAyq9KcZMqrZiaJec2KqEACN4grYOrDMW+iNlP7xPZhitpVrnZSpsipYwtA==
+X-Google-Smtp-Source: AGHT+IGeI0c+J/vFikvKLQh7Q/TygfPMPFT9ewUwuJMXMjAiOuEpM5YJkGnX697MAOyb7hi1nyrkuoDilCUc0wP6mZA=
+X-Received: by 2002:a17:907:2d93:b0:b40:e7ee:b5ec with SMTP id
+ a640c23a62f3a-b6475510488mr53395866b.59.1760631403045; Thu, 16 Oct 2025
+ 09:16:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251016-media-clk-round-rate-resend-v1-4-446c522fdaaf@redhat.com>
-References: <20251016-media-clk-round-rate-resend-v1-0-446c522fdaaf@redhat.com>
-In-Reply-To: <20251016-media-clk-round-rate-resend-v1-0-446c522fdaaf@redhat.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Julien Massot <julien.massot@collabora.com>, 
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1494; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=I1J3S6x5LiLW/zyWZ87aQm6praqo1qBzZH7S+vE3aU8=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDI+SqWZf/X6Vm73eU9DzfVsPYnraWE1XSySZzb8F5xoY
- rktkXlnRykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABMxs2Zk6I1g+qq60NS5suG8
- wfeKlfo1s4O9T//Tc5+zKK/wF/9+S0aGTQqnuNcodYtsesUwpWW2WUbR1Kc/bltnPZ093TDF/XU
- 6FwA=
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+References: <20250910144653.212066-1-bharata@amd.com> <aMGbpDJhOx7wHqpo@casper.infradead.org>
+ <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F> <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
+ <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
+ <20250917174941.000061d3@huawei.com> <5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
+ <20250925160058.00002645@huawei.com>
+In-Reply-To: <20250925160058.00002645@huawei.com>
+From: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>
+Date: Thu, 16 Oct 2025 18:16:31 +0200
+X-Gm-Features: AS18NWCi3W8UGN6S3h7IBg2byjYK79TJWWE4zkCP9FRr4Mz_MHN_5h5HNXTlxEo
+Message-ID: <CAOi6=wS6s2FAAbMbxX5zCZzPQE7Mm73pbhxpiM_5e44o6yyPMw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion infrastructure
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>, 
+	Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>, Bharata B Rao <bharata@amd.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dave.hansen@intel.com, 
+	hannes@cmpxchg.org, mgorman@techsingularity.net, mingo@redhat.com, 
+	peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org, 
+	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net, 
+	nifan.cxl@gmail.com, xuezhengchu@huawei.com, akpm@linux-foundation.org, 
+	david@redhat.com, byungchul@sk.com, kinseyho@google.com, 
+	joshua.hahnjy@gmail.com, yuanchu@google.com, balbirs@nvidia.com, 
+	alok.rathore@samsung.com, yiannis@zptcorp.com, 
+	Adam Manzanares <a.manzanares@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+On Thu, Sep 25, 2025 at 5:01=E2=80=AFPM Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
+>
+> On Thu, 25 Sep 2025 16:03:46 +0200
+> Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com> wrote:
+>
+> Hi Yiannis,
+Hi Jonathan! Thanks for your response!
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/media/platform/ti/omap3isp/isp.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+[snip]
+> > There are several things that may be done on the device side. For now, =
+I
+> > think the kernel should be unaware of these. But with what I described
+> > above, the goal is to have the capacity thresholds configured in a way
+> > that we can absorb the occasional dirty cache lines that are written ba=
+ck.
+>
+> In worst case they are far from occasional. It's not hard to imagine a ma=
+licious
+This is correct. Any simplification on my end is mainly based on the
+empirical evidence of the use cases we are testing for (tiering). But
+I fully respect that we need to be proactive and assume the worst case
+scenario.
+> program that ensures that all L3 in a system (say 256MiB+) is full of cac=
+he lines
+> from the far compressed memory all of which are changed in a fashion that=
+ makes
+> the allocation much less compressible.  If you are doing compression at c=
+ache line
+> granularity that's not so bad because it would only be 256MiB margin need=
+ed.
+> If the system in question is doing large block side compression, say 4KiB=
+.
+> Then we have a 64x write amplification multiplier. If the virus is stream=
+ing over
+This is insightful indeed :). However, even in the case of the 64x
+amplification, you implicitly assume that each of the cachelines in
+the L3 belongs to a different page. But then one cache-line would not
+deteriorate the compressed size of the entire page that much (the
+bandwidth amplification on the device is a different -performance-
+story). So even in the 4K case the two ends of the spectrum are to
+either have big amplification with low compression ratio impact, or
+small amplification with higher compression ratio impact.
+Another practical assumption here, is that the different HMU
+mechanisms would help promote the contended pages before this becomes
+a big issue. Which of course might still not be enough on the
+malicious streaming writes workload.
+Overall, I understand these are heuristics and I do see your point
+that this needs to be robust even for the maliciously behaving
+programs.
+> memory the evictions we are seeing at the result of new lines being fetch=
+ed
+> to be made much less compressible.
+>
+> Add a accelerator (say DPDK or other zero copy into userspace buffers) in=
+to the
+> mix and you have a mess. You'll need to be extremely careful with what go=
+es
+Good point about the zero copy stuff.
+> in this compressed memory or hold enormous buffer capacity against fast
+> changes in compressability.
+To my experience the factor of buffer capacity would be closer to the
+benefit that you get from the compression (e.g. 2x the cache size in
+your example).
+But I understand the burden of proof is on our end. As we move further
+with this I will try to provide data as well.
+>
+> Key is that all software is potentially malicious (sometimes accidentally=
+ so ;)
+>
+> Now, if we can put this into a special pool where it is acceptable to dro=
+p the writes
+> and return poison (so the application crashes) then that may be fine.
+>
+> Or block writes.   Running compressed memory as read only CoW is one way =
+to
+> avoid this problem.
+These could be good starting points, as I see in the rest of the thread.
 
-diff --git a/drivers/media/platform/ti/omap3isp/isp.c b/drivers/media/platform/ti/omap3isp/isp.c
-index f51cf6119e978a3a33939bd83c2e676a43ca2c6d..8ac2bdcdf87b1fa0ad1b064cbeb7f1e7519973fd 100644
---- a/drivers/media/platform/ti/omap3isp/isp.c
-+++ b/drivers/media/platform/ti/omap3isp/isp.c
-@@ -240,11 +240,11 @@ static u32 isp_xclk_calc_divider(unsigned long *rate, unsigned long parent_rate)
- 	return divider;
- }
- 
--static long isp_xclk_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *parent_rate)
-+static int isp_xclk_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
- {
--	isp_xclk_calc_divider(&rate, *parent_rate);
--	return rate;
-+	isp_xclk_calc_divider(&req->rate, req->best_parent_rate);
-+	return 0;
- }
- 
- static int isp_xclk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -275,7 +275,7 @@ static const struct clk_ops isp_xclk_ops = {
- 	.enable = isp_xclk_enable,
- 	.disable = isp_xclk_disable,
- 	.recalc_rate = isp_xclk_recalc_rate,
--	.round_rate = isp_xclk_round_rate,
-+	.determine_rate = isp_xclk_determine_rate,
- 	.set_rate = isp_xclk_set_rate,
- };
- 
-
--- 
-2.51.0
-
+Thanks,
+Yiannis
 
