@@ -1,164 +1,386 @@
-Return-Path: <linux-kernel+bounces-856912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698ACBE56A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B87BE56E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95A334E876B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1C8546295
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514E02DE1E6;
-	Thu, 16 Oct 2025 20:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8DE2E0408;
+	Thu, 16 Oct 2025 20:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuE1nlka"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQVY+MC9"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372031EBFE0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA931534EC
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760647176; cv=none; b=V4Qevrs11qXKElidqAooXyVdKCMR2zaua/IVGAlX7Vk4OUo++AOSxNhqzEFFMfyiUXejpHiJLXQ1mtO1/RnYVT23NMJZjLuLHa6oeLjohSWfOW8msOEcG3d7/ju6JTxZSWp1uS4QZFhSfz7LF4FnRPVFsq+WThhq1n+JqGI6pSo=
+	t=1760647547; cv=none; b=DMwRvyNP00AGfqJnbTiEwu2ruobLTNU9q5az0pKTUM+W6AtaB49aZ51XWNCFIW7wwNjLlFA0XyP4vPJEkJ2CUpTdsvspxk/qbOvcBD4FHX0C2QYOocCBp94I3wJ2EKTaq9q+ukT9Px73BunQGKRm44fLFO9GlqXwHGVAzc2M13w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760647176; c=relaxed/simple;
-	bh=j47gUxbffwQzSI5QkRAi1UGxgKVvkhYsy8R9Lk2cIp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bg42g+hVpTuAWawJFyn/SLuSxpfVdAuee50HKznrQnREuA5L7ET/+UntvQ7xtZkvdv3UPAUufxbPPUHBJ/q/z3Vl953DMMKdzMQ0vwH5e06BK2r3YPnKWY9aeQzywx0Rn2NtMbQOwpK643U6J9xMG3hfZ4EV+TMhxcupXgtgRak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MuE1nlka; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1760647547; c=relaxed/simple;
+	bh=MduJfsMZNecaLdb0+8wa/tl4GWaUKuc4J2PpP1baFPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=coW0iJW3J20OB8GA8NQZwKNqpvfl1No6AWkdzy58VhPn7ynh08zrKCqky9Uza6E9j9ELH184KPsAgjep+gfGtSUjiGpXyN6SeA8Wickzy3lo/oHPwcri8nX9d4EhKCpfta03cwTGkYPbHKHW3LPwteSbUhvSFS0ghUwCRsPIP2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQVY+MC9; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33ba8d20888so1247245a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:39:35 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77f67ba775aso1739860b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:45:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760647174; x=1761251974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EsEecsSQDVQd72weWcRmXLR+hYEbzg7jxqkKrhdHLo8=;
-        b=MuE1nlkaMBgUExM+2ri3mzDg0HeqleVSO5rzkIiI51vVivw8OR8Dl/jtYYRRJYuOyY
-         92kOxdZA5ZBR+9KXQN2AF7OhzphkmOBNFE2CBWkDusrQnNwSyLxjC4XzJSXT4Ws9nPii
-         RrVOfXLmp7np+HzkqUw+qs2BWN/SvTOXUJKK/lA1s9PyUp+Z7jcVuQpWoZLA36KFJP+t
-         uN6WJNWQIDl1xLgDPiy3DO65xrEQPv/xijIHEPd+pbpDbNUCZhyMJCIJ9cICrFIRkeQ9
-         eWgWIjSIAh5KHkJxq2asnlVDXevBqgZdLtj2OHLSuAHtlyGJQ1xbx7PCk3Izz9Jq9uZb
-         fKow==
+        d=gmail.com; s=20230601; t=1760647545; x=1761252345; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1kpH/IPeNwgc8siGpWHSiGFjX32BfbjsHkNF2cmzC/U=;
+        b=CQVY+MC9iBOW+DOvGIFDQnsinpRnyWmmO1CjRwfVhK8qJfvGhx12UB7fE34DWzsQNo
+         zULp6ZyJVBstiEU50VKIH84ovZsHI2FqlOVaBDhmmhP2xCmC/ZiETVKuXJIWG6ijnDRi
+         GKioRse8bGwItiaCgjhN9AoptdzIrtNgCO/m9OOx5MMOauLt2E6DQwVshwQLTqBiX291
+         sPaFsofvBfXn4KFWo1QLcH4V5z2nLS/KHT2foqIqrhzzP13r0D8vPPUDHJv4NU49gfRI
+         eTxnMxhcl/VPEZJeSgM511PGaV6bN/tJ/JNe+YPTaf9Xz2wfDjsqBBgZqM+vdOX9QOLo
+         +P0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760647174; x=1761251974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EsEecsSQDVQd72weWcRmXLR+hYEbzg7jxqkKrhdHLo8=;
-        b=UEucTEkJ4Z3BH7MO2vfzVylqH9B47t1EQMnLVfYaSiqVKgwDMrygPBXgH9PDUltxS+
-         T8eV06Gs8fAuqTj7ncL+K3upXZfIZYDvhVErznW3wPF6oIli6J+SsCcPRssqjaDQDtxM
-         Vl83JgiVlLcDPAPKby5ybx+Vvmq3Ez1SrjAoyuodRSTC8uRHTcmqHUmgJy69GUF9CcEj
-         pIYLkq3s6drG1/R1GXn2E6A1JMQUDyuP808a8yEPq7B/LGGjzAhfxgfVAgjsBA4KZ72o
-         p4chYvajrelsMfEMwy2cmD2uwY4EQwXIw5RBXZfvv6z7C2lngvos/Gc1Uj7Aj/8N2a3y
-         l0Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZp8NNof57xsHFRunvvrNTD9pKOs1044viUMyfbrw9NbZlbOEt2NjPpnB3yhD24e78qqhIRSBGdnxiAUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Bb+L1gbHHM8bei3mnwbgrXjwZA7+juzbW+4uVlmeFl9ZHAjm
-	hVguExaLb458iBmMF/Ln+6UzUjWRCRPqOnRUJPsm2C7eiIuOQhcST7CB1WJZZD9Qrem7kONMlz7
-	wu7qZk+2IwggaHX3Lb93kT4JlifGtL18=
-X-Gm-Gg: ASbGncvlO+F9lBDZ4O/EPYo6d369mR7ihRzU4YRdy2gBWUPUbEcu8li+LdSHFmKHJxy
-	gAZNjPnw9ywAvO5alUmliN+8CFBDhyXGBn9hxNlTZW+UrngbN3L7nGCM6RofdRB12oXtCqInSSm
-	vE2oyp8nVOJzRG1nIR1PrHv5enFj2GH6V2AI03ZwY0ijVXa9xS0FLdngxcbpomZALaWUyi3C8iM
-	z2qXypSL31zn8ud9yOLZBJC1kDRfOIF8VKaefxtKJX3lSg6epDloRB2HgPk0jfBn0XRCWMsySoe
-	gTqT4oxrMOw=
-X-Google-Smtp-Source: AGHT+IHDr5J0KFk161wPAYc7kYj7KAxZHJ299Vu5BgTI/wRioKfbYD47CRXPhpJbNq7ELZ17QmNTDJWYHON81DsIz/o=
-X-Received: by 2002:a17:90b:54c6:b0:32e:dcc6:cd3f with SMTP id
- 98e67ed59e1d1-33b9e28a808mr6232546a91.14.1760647174299; Thu, 16 Oct 2025
- 13:39:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760647545; x=1761252345;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1kpH/IPeNwgc8siGpWHSiGFjX32BfbjsHkNF2cmzC/U=;
+        b=KESC43LeBZDu5IDs5tlnTGYRp4ywXAKWeH1lwHDGp3FtxhURumGfMGZOJtB1WIlSTj
+         q3Ziiz/1pieTMuPecru9Brx179lAgzo+0w7aqRrWwGuPCoBSlbkhtI6Qvy46ZfrRFFqT
+         +4ER/+Rm51aHd26KxwKM/QmgGruTfDASd2h0hQkybY1E5l8q13wFTlCz7OeeAqj2M4iB
+         6U1UMGLeUjFPtwYWRQ0oNXmwTuUaig2OcV6R5SD18Ps3xLi4Yv2FVoya9Otw2Ck04SCT
+         MULW3V/1nS/ObJDnWLOw0uTmLfaMDn6EJ0JZWbl5hTY9wezSy9LQw/bxg9QRDY7pHJQt
+         jTHg==
+X-Gm-Message-State: AOJu0YwE33Wtm5MaQwOzeU8DUzjPB8IOwxGfwYLGb6i+bmZxcFbOg+9i
+	chYY5hrFBWhMjWfHDW1kHkV5x0ZzTjozaDNgmId4RNRKnHNlDLpeF5UO
+X-Gm-Gg: ASbGnctqBZrGAPrlIEu9IJ2ORkU7iLcyS8eXBiLaixRVELOXZja6xLiVzibFzYJj9Jx
+	vlLvh7MQU/a9MPcrCmjGB1mj3nbrA7vE6UIYVOQOasDKHkTJu6P+yS0QfU5XWStzaSlk0m23+X3
+	iavOCbrbmYGB3JE7rZZwRtx1FLBVBDoPxKO0gFnnRlx0y1gVFPwlOB9EoaXXhkJNzMg2KfJQUTT
+	wCqonEX32DdGO5JYRcqACVb2XGeklhJAH0wgUO+P5d+EOIVCkBrYUGB++N99SsKT8ifJAG08iHJ
+	pxZ748mymhcrFKa8AnudLH6wh+BehqcMVpOMnCcAMQDMLuv6OwA7eGOyAlKWBJcXnvDfgjEfXaZ
+	xW8MQADvue/OftqRTd6DGvSgQMR3anJe0j5pURl6IVzKoU+U49y5ZSl5QQFXRoGc2ZjpyZmwY4y
+	b0IKha4H5ixfix6vYAZaaq85ZEduv/rt6SqlA8C5SE0i9/
+X-Google-Smtp-Source: AGHT+IEoAMG2mVaG+NEkk3ZlOYGx2UdFMICSOF0uPohRDbPIlD8LLNH2B8Z8QyGDdKqZ5YjGUOuVCw==
+X-Received: by 2002:a05:6a20:7344:b0:334:88a2:d985 with SMTP id adf61e73a8af0-334a864fec8mr1996525637.54.1760647545100;
+        Thu, 16 Oct 2025 13:45:45 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1151:15:6028:a61a:a132:9634? ([2620:10d:c090:500::5:e774])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a22877ebcsm3792046a12.4.2025.10.16.13.45.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 13:45:44 -0700 (PDT)
+Message-ID: <fe0c8bb4-938f-4432-a0ff-584c7322a478@gmail.com>
+Date: Thu, 16 Oct 2025 13:45:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014100128.2721104-1-chen.dylane@linux.dev>
- <20251014100128.2721104-3-chen.dylane@linux.dev> <aO4-jAA5RIUY2yxc@krava> <CAADnVQLoF49pu8CT81FV1ddvysQzvYT4UO1P21fVxnafnO5vrQ@mail.gmail.com>
-In-Reply-To: <CAADnVQLoF49pu8CT81FV1ddvysQzvYT4UO1P21fVxnafnO5vrQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 16 Oct 2025 13:39:20 -0700
-X-Gm-Features: AS18NWA45dPZ_Bqm8aVj24uKxev9XFt4-GQ7iuJ9EiK13dkTykni87M8kGxIHSA
-Message-ID: <CAEf4BzbAt_3co0s-+DspnHuJryG2DKPLP9OwsN0bWWnbd5zsmQ@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next v2 2/2] bpf: Pass external callchain entry to get_perf_callchain
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Tao Chen <chen.dylane@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] memcg: selftests for memcg stat kfuncs
+To: Yonghong Song <yonghong.song@linux.dev>, shakeel.butt@linux.dev,
+ andrii@kernel.org, ast@kernel.org, mkoutny@suse.com, yosryahmed@google.com,
+ hannes@cmpxchg.org, tj@kernel.org, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, bpf@vger.kernel.org, kernel-team@meta.com
+References: <20251015190813.80163-1-inwardvessel@gmail.com>
+ <20251015190813.80163-3-inwardvessel@gmail.com>
+ <f1558b5d-41be-4f56-8428-d5ae63d696ea@linux.dev>
+Content-Language: en-US
+From: JP Kobryn <inwardvessel@gmail.com>
+In-Reply-To: <f1558b5d-41be-4f56-8428-d5ae63d696ea@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 8:02=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Oct 14, 2025 at 5:14=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wr=
-ote:
-> >
-> > On Tue, Oct 14, 2025 at 06:01:28PM +0800, Tao Chen wrote:
-> > > As Alexei noted, get_perf_callchain() return values may be reused
-> > > if a task is preempted after the BPF program enters migrate disable
-> > > mode. Drawing on the per-cpu design of bpf_perf_callchain_entries,
-> > > stack-allocated memory of bpf_perf_callchain_entry is used here.
-> > >
-> > > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> > > ---
-> > >  kernel/bpf/stackmap.c | 19 +++++++++++--------
-> > >  1 file changed, 11 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> > > index 94e46b7f340..acd72c021c0 100644
-> > > --- a/kernel/bpf/stackmap.c
-> > > +++ b/kernel/bpf/stackmap.c
-> > > @@ -31,6 +31,11 @@ struct bpf_stack_map {
-> > >       struct stack_map_bucket *buckets[] __counted_by(n_buckets);
-> > >  };
-> > >
-> > > +struct bpf_perf_callchain_entry {
-> > > +     u64 nr;
-> > > +     u64 ip[PERF_MAX_STACK_DEPTH];
-> > > +};
-> > > +
+On 10/15/25 10:04 PM, Yonghong Song wrote:
+> 
+> 
+> On 10/15/25 12:08 PM, JP Kobryn wrote:
+>> Add test coverage for the kfuncs that fetch memcg stats. Using some 
+>> common
+>> stats, test before and after scenarios ensuring that the given stat
+>> increases by some arbitrary amount. The stats selected cover the three
+>> categories represented by the enums: node_stat_item, memcg_stat_item,
+>> vm_event_item.
+>>
+>> Since only a subset of all stats are queried, use a static struct made up
+>> of fields for each stat. Write to the struct with the fetched values when
+>> the bpf program is invoked and read the fields in the user mode 
+>> program for
+>> verification.
+>>
+>> Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
+>> ---
+>>   .../testing/selftests/bpf/cgroup_iter_memcg.h |  18 ++
+>>   .../bpf/prog_tests/cgroup_iter_memcg.c        | 295 ++++++++++++++++++
+>>   .../selftests/bpf/progs/cgroup_iter_memcg.c   |  61 ++++
+>>   3 files changed, 374 insertions(+)
+>>   create mode 100644 tools/testing/selftests/bpf/cgroup_iter_memcg.h
+>>   create mode 100644 tools/testing/selftests/bpf/prog_tests/ 
+>> cgroup_iter_memcg.c
+>>   create mode 100644 tools/testing/selftests/bpf/progs/ 
+>> cgroup_iter_memcg.c
+>>
+>> diff --git a/tools/testing/selftests/bpf/cgroup_iter_memcg.h b/tools/ 
+>> testing/selftests/bpf/cgroup_iter_memcg.h
+>> new file mode 100644
+>> index 000000000000..5f4c6502d9f1
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/cgroup_iter_memcg.h
+>> @@ -0,0 +1,18 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+>> +#ifndef __CGROUP_ITER_MEMCG_H
+>> +#define __CGROUP_ITER_MEMCG_H
+>> +
+>> +struct memcg_query {
+>> +    /* some node_stat_item's */
+>> +    long nr_anon_mapped;
+>> +    long nr_shmem;
+>> +    long nr_file_pages;
+>> +    long nr_file_mapped;
+>> +    /* some memcg_stat_item */
+>> +    long memcg_kmem;
+>> +    /* some vm_event_item */
+>> +    long pgfault;
+>> +};
+>> +
+>> +#endif /* __CGROUP_ITER_MEMCG_H */
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/ 
+>> cgroup_iter_memcg.c b/tools/testing/selftests/bpf/prog_tests/ 
+>> cgroup_iter_memcg.c
+>> new file mode 100644
+>> index 000000000000..264dc3c9ec30
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c
+>> @@ -0,0 +1,295 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+>> +#include <test_progs.h>
+>> +#include <bpf/libbpf.h>
+>> +#include <bpf/btf.h>
+>> +#include <fcntl.h>
+>> +#include <sys/mman.h>
+>> +#include <unistd.h>
+>> +#include "cgroup_helpers.h"
+>> +#include "cgroup_iter_memcg.h"
+>> +#include "cgroup_iter_memcg.skel.h"
+>> +
+>> +int read_stats(struct bpf_link *link)
+> 
+> static int read_stats(...)
+> 
+>> +{
+>> +    int fd, ret = 0;
+>> +    ssize_t bytes;
+>> +
+>> +    fd = bpf_iter_create(bpf_link__fd(link));
+>> +    if (!ASSERT_OK_FD(fd, "bpf_iter_create"))
+>> +        return 1;
+>> +
+>> +    /*
+>> +     * Invoke iter program by reading from its fd. We're not 
+>> expecting any
+>> +     * data to be written by the bpf program so the result should be 
+>> zero.
+>> +     * Results will be read directly through the custom data section
+>> +     * accessible through skel->data_query.memcg_query.
+>> +     */
+>> +    bytes = read(fd, NULL, 0);
+>> +    if (!ASSERT_EQ(bytes, 0, "read fd"))
+>> +        ret = 1;
+>> +
+>> +    close(fd);
+>> +    return ret;
+>> +}
+>> +
+>> +static void test_anon(struct bpf_link *link,
+>> +        struct memcg_query *memcg_query)
+> 
+> Alignment between arguments? Actually two arguments can be in the same 
+> line.
 
-we shouldn't introduce another type, there is perf_callchain_entry in
-linux/perf_event.h, what's the problem with using that?
+Thanks. I was using a limit of 75 chars but will increase to 100 where
+applicable.
 
-> > >  static inline bool stack_map_use_build_id(struct bpf_map *map)
-> > >  {
-> > >       return (map->map_flags & BPF_F_STACK_BUILD_ID);
-> > > @@ -305,6 +310,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, reg=
-s, struct bpf_map *, map,
-> > >       bool user =3D flags & BPF_F_USER_STACK;
-> > >       struct perf_callchain_entry *trace;
-> > >       bool kernel =3D !user;
-> > > +     struct bpf_perf_callchain_entry entry =3D { 0 };
-> >
-> > so IIUC having entries on stack we do not need to do preempt_disable
-> > you had in the previous version, right?
-> >
-> > I saw Andrii's justification to have this on the stack, I think it's
-> > fine, but does it have to be initialized? it seems that only used
-> > entries are copied to map
->
-> No. We're not adding 1k stack consumption.
+[...]
+>> +{
+>> +    int fds[2];
+>> +    int err;
+>> +    ssize_t bytes;
+>> +    size_t len;
+>> +    char *buf;
+>> +    long val;
+>> +
+>> +    len = sysconf(_SC_PAGESIZE) * 1024;
+>> +
+>> +    if (!ASSERT_OK(read_stats(link), "read stats"))
+>> +        return;
+>> +
+>> +    val = memcg_query->memcg_kmem;
+>> +    if (!ASSERT_GE(val, 0, "initial kmem val"))
+>> +        return;
+>> +
+>> +    err = pipe2(fds, O_NONBLOCK);
+>> +    if (!ASSERT_OK(err, "pipe"))
+>> +        return;
+>> +
+>> +    buf = malloc(len);
+> 
+> buf could be NULL?
 
-Right, and I thought we concluded as much last time, so it's a bit
-surprising to see this in this patch.
+Thanks. I'll add the check unless this test is simplified and a buffer
+is not needed for v3.
 
-Tao, you should go with 3 entries per CPU used in a stack-like
-fashion. And then passing that entry into get_perf_callchain() (to
-avoid one extra copy).
+[...]
+>> +
+>> +    skel = cgroup_iter_memcg__open();
+>> +    if (!ASSERT_OK_PTR(skel, "cgroup_iter_memcg__open"))
+>> +        goto cleanup_cgroup_fd;
+>> +
+>> +    err = cgroup_iter_memcg__load(skel);
+>> +    if (!ASSERT_OK(err, "cgroup_iter_memcg__load"))
+>> +        goto cleanup_skel;
+> 
+> The above two can be combined with cgroup_iter_memcg__open_and_load().
 
->
-> pw-bot: cr
+I'll do that in v3.
+
+> 
+>> +
+>> +    DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
+>> +    union bpf_iter_link_info linfo = {
+>> +        .cgroup.cgroup_fd = cgroup_fd,
+>> +        .cgroup.order = BPF_CGROUP_ITER_SELF_ONLY,
+>> +    };
+>> +    opts.link_info = &linfo;
+>> +    opts.link_info_len = sizeof(linfo);
+>> +
+>> +    link = bpf_program__attach_iter(skel->progs.cgroup_memcg_query, 
+>> &opts);
+>> +    if (!ASSERT_OK_PTR(link, "bpf_program__attach_iter"))
+>> +        goto cleanup_cgroup_fd;
+> 
+> goto cleanup_skel;
+
+Good catch.
+
+> 
+>> +
+>> +    if (test__start_subtest("cgroup_iter_memcg__anon"))
+>> +        test_anon(link, &skel->data_query->memcg_query);
+>> +    if (test__start_subtest("cgroup_iter_memcg__shmem"))
+>> +        test_shmem(link, &skel->data_query->memcg_query);
+>> +    if (test__start_subtest("cgroup_iter_memcg__file"))
+>> +        test_file(link, &skel->data_query->memcg_query);
+>> +    if (test__start_subtest("cgroup_iter_memcg__kmem"))
+>> +        test_kmem(link, &skel->data_query->memcg_query);
+>> +    if (test__start_subtest("cgroup_iter_memcg__pgfault"))
+>> +        test_pgfault(link, &skel->data_query->memcg_query);
+>> +
+>> +    bpf_link__destroy(link);
+>> +cleanup_skel:
+>> +    cgroup_iter_memcg__destroy(skel);
+>> +cleanup_cgroup_fd:
+>> +    close(cgroup_fd);
+>> +    cleanup_cgroup_environment();
+>> +}
+>> diff --git a/tools/testing/selftests/bpf/progs/cgroup_iter_memcg.c b/ 
+>> tools/testing/selftests/bpf/progs/cgroup_iter_memcg.c
+>> new file mode 100644
+>> index 000000000000..0d913d72b68d
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/progs/cgroup_iter_memcg.c
+>> @@ -0,0 +1,61 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+>> +#include <vmlinux.h>
+>> +#include <bpf/bpf_core_read.h>
+>> +#include "cgroup_iter_memcg.h"
+>> +
+>> +char _license[] SEC("license") = "GPL";
+>> +
+>> +extern void memcg_flush_stats(struct cgroup *cgrp) __ksym;
+>> +extern unsigned long memcg_stat_fetch(struct cgroup *cgrp,
+>> +        enum memcg_stat_item item) __ksym;
+>> +extern unsigned long memcg_node_stat_fetch(struct cgroup *cgrp,
+>> +        enum node_stat_item item) __ksym;
+>> +extern unsigned long memcg_vm_event_fetch(struct cgroup *cgrp,
+>> +        enum vm_event_item item) __ksym;
+> 
+> The above four extern functions are not needed. They should be included
+> in vmlinux.h if the latest pahole version (1.30) is used.
+
+Thanks, was not aware of that. Will remove.
+
+> 
+>> +
+>> +/* The latest values read are stored here. */
+>> +struct memcg_query memcg_query SEC(".data.query");
+>> +
+>> +/*
+>> + * Helpers for fetching any of the three different types of memcg stats.
+>> + * BPF core macros are used to ensure an enumerator is present in the 
+>> given
+>> + * kernel. Falling back on -1 indicates its absence.
+>> + */
+>> +#define node_stat_fetch_if_exists(cgrp, item) \
+>> +    bpf_core_enum_value_exists(enum node_stat_item, item) ? \
+>> +        memcg_node_stat_fetch((cgrp), bpf_core_enum_value( \
+>> +                     enum node_stat_item, item)) : -1
+>> +
+>> +#define memcg_stat_fetch_if_exists(cgrp, item) \
+>> +    bpf_core_enum_value_exists(enum memcg_stat_item, item) ? \
+>> +        memcg_node_stat_fetch((cgrp), bpf_core_enum_value( \
+>> +                     enum memcg_stat_item, item)) : -1
+>> +
+>> +#define vm_event_fetch_if_exists(cgrp, item) \
+>> +    bpf_core_enum_value_exists(enum vm_event_item, item) ? \
+>> +        memcg_vm_event_fetch((cgrp), bpf_core_enum_value( \
+>> +                     enum vm_event_item, item)) : -1
+>> +
+>> +SEC("iter.s/cgroup")
+>> +int cgroup_memcg_query(struct bpf_iter__cgroup *ctx)
+>> +{
+>> +    struct cgroup *cgrp = ctx->cgroup;
+>> +
+>> +    if (!cgrp)
+>> +        return 1;
+>> +
+>> +    memcg_flush_stats(cgrp);
+>> +
+>> +    memcg_query.nr_anon_mapped = node_stat_fetch_if_exists(cgrp,
+>> +            NR_ANON_MAPPED);
+>> +    memcg_query.nr_shmem = node_stat_fetch_if_exists(cgrp, NR_SHMEM);
+>> +    memcg_query.nr_file_pages = node_stat_fetch_if_exists(cgrp,
+>> +            NR_FILE_PAGES);
+>> +    memcg_query.nr_file_mapped = node_stat_fetch_if_exists(cgrp,
+>> +            NR_FILE_MAPPED);
+>> +    memcg_query.memcg_kmem = memcg_stat_fetch_if_exists(cgrp, 
+>> MEMCG_KMEM);
+>> +    memcg_query.pgfault = vm_event_fetch_if_exists(cgrp, PGFAULT);
+> 
+> There is a type mismatch:
+> 
+> +struct memcg_query {
+> +    /* some node_stat_item's */
+> +    long nr_anon_mapped;
+> +    long nr_shmem;
+> +    long nr_file_pages;
+> +    long nr_file_mapped;
+> +    /* some memcg_stat_item */
+> +    long memcg_kmem;
+> +    /* some vm_event_item */
+> +    long pgfault;
+> +};
+> 
+> memcg_query.nr_anon_mapped is long, but node_stat_fetch_if_exists
+> (...) return value type is unsigned long. It would be good if two
+> types are the same.
+
+Good call, will do.
 
