@@ -1,127 +1,151 @@
-Return-Path: <linux-kernel+bounces-856790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1533BE516B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F58BE5171
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B045840A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205A2584238
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E1E23D7F2;
-	Thu, 16 Oct 2025 18:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A6323D2B4;
+	Thu, 16 Oct 2025 18:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UfdnloSc"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtH9HYM5"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6F823A9B0
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B1523ABB9
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760640231; cv=none; b=UeUPxpBLqFdbGlJhDudAHu/Oh8vOMsCxCuznko7cFdzyzjSvCrLX4iqN4lmTY1BB4QpqYXPWQkWIe/om84j8/x4uIyBeS1Z9kMtfJajxaWf/dym9Y+p+kz1ncrujBcTX2wykFaYOocD/SgWg6kAG04992rKPIGr3Zn+Hggxg31s=
+	t=1760640306; cv=none; b=QJg59c4NjuUyYYfNixvHygShfAk4MhS9MvfywiiECM5hPUZ0ogW+aEIg/Ou8CbzGbM9uaCWWxBiOUhRJ9WVP3t+cAjN9AX17So6mKHmxac/Yng9aLEGqUeHv5rL+A+FfKi9bEF07U2cGxk5iIUpEvXelPtawJBUaHmjAr+RS8Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760640231; c=relaxed/simple;
-	bh=AUMqM5KwDaH6FkEguXjWOsp3VPXxkmvw7hUmlsK3MT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwEfaFvRZ5bI7DEuWja/m5Cm97269RyvOgde4HOtR7rN1fr3ZuZt285p4C1kt59porldMlwenhPP6fvEzVbpYQvYl9sZ3W9j4qJvD3QYCYiNFP6K/oa2yDq4LtcrSfmQ/19rlyYgn0HflPs9DtlHbyvw52IBCgK2oI/4KGMT7BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UfdnloSc; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42557c5cedcso662639f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:43:48 -0700 (PDT)
+	s=arc-20240116; t=1760640306; c=relaxed/simple;
+	bh=MVvmC7MY2M1TL7VrB7aCmsPWhi1lCkdO2TRKjAq+FoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VDz4m1h8ughhgR3K+jkmTIv/PSxcTXBw3wOhvNuWagsYs8PbC55df6LSv0Qx31FZwdoOKxSKtfRRVrGSb2Nxk7dmnm9R9T0Ld2054xfa1N9A4FIKoIFLdtwrdyTZXE5+JtUR/mIFJCesgSKjRJktE4wQXlXcuav9ABW/OcDwnN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TtH9HYM5; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290a38a2fe4so1158875ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:45:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760640227; x=1761245027; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZf/xOnYZ5AB4g+Afgo4f1SIJz1a8qeaJvzviov59ws=;
-        b=UfdnloScTOSjfuY/OzztT8W95wB64wiYYI213hm6NIbjKcpQFpZq9eh8IVApAlVaXx
-         WfBeOwmR+tipbvVcW0XS003kkE73rQkLpqDg5NDoie2KLcJXyhaRJ/PZ2ee3nxRpquEd
-         v4WHSQ8nGl4XJf6Bv714BfG7Z5UeEuNa4B7xJPMvwUCoFiPiUfC147hhXZa4xBkGo1zw
-         zLeb9pJBnkkwMUYe64ql4YR5JrT34inPCCdkLFu4G10DFk5ca5dIYc2JYltrt0DNID9y
-         tF+zaGeBzSC1c5RVZilY1LIrP1RKF2T8ETOa2YmG7/so5WxSeJ0MClGbKQJ3ml0EPa2R
-         8FBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760640227; x=1761245027;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760640304; x=1761245104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sZf/xOnYZ5AB4g+Afgo4f1SIJz1a8qeaJvzviov59ws=;
-        b=Qy+teSS9cZKjAxq+Lg1aG8AY9UvN5t/9Df2CAqE1Q9BvOfdRv8S5y+dlT5qprcm9Tx
-         llJzRdSBHvwzxFPHZqtmJoiG2xw8r5xZtwwcij72oWJRGApzrJASjVCo+UA5lonyDZjp
-         z8eG6ZYfbos7ucv3kNR2cuxRpjfVXOWvGog0QmRnZKevH7FWuKoMyk8LCAEAA8ljdOwZ
-         /BaRB5ECwo5NiDN0/0Vwna/SJ9NPoYUICcti4xtaGMblHhoR+jtQ4MNyF2jE3OBgl3V/
-         dg4BUrKYHrvGQ+rcN+w8NQWsUFFa3nu6+lpFuSGoYrItrCpAXcIF4S5WckGs4o+JF67H
-         VxGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbp73+f5m/AaGV4513yyEoVTXZbjYNgEHGseynSKycxNAEUcEh3VYYTN/7+HAOUflFRg5It0CQLE6pBpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcU2rrb1qh6lOFiYd+gLje/sSge3+Zru3QdyoJZ6TPTKxSz0qv
-	DsLBtDsCs3BfoWSVupjorHhyfCVY1h3uV/ZwaQUEflna4oXqS9sjI7RKQioykWTv9yQ=
-X-Gm-Gg: ASbGncuN04vpAjN2wF8N/YfB0jGjDRVLyWRFW8icXHcFhiAo+taBEjD1tqRPZFukeFX
-	GqvOD4KUh2ebx6tfjy0LqaHGavlyjFb3IyvUCeDdIsUB/X77U5BLBER9DcG8XYnpLqX1CV4Fp39
-	jta8gjYYQq+AONADZDAS4acemgqtQaCMT7lmkck87LeKL6ctmSm4xqhMyKhNYwZsS7aXi/51avi
-	B93PYZsv+ukIXczSojCBjZYgNd4TrsVirfEqY7NBTaHynNY6+mtVoIDfjcRpriZ0bHZbnM3RiEl
-	4p7dEln26TmgOiD5VY/QlbKZnkWUV8xq3UX8IBFcuuINXZkbq7RS6qToRjYiWW0gCE8wO6eYZ2e
-	e3sav3AF75O/DEtquuX/G3qhKU5a3Juhjhw1s/3LIJzppVo33cblP1T80ctR6EtSlAQUvYdwwla
-	RPRBn2LxIx1m8=
-X-Google-Smtp-Source: AGHT+IGo6y5lk13djMjMMq4R3viE+pYB2nSrAPV8y+Kp8nAdZ4R6ve9ypzaXAl0LPNYCFR1kJAQtiw==
-X-Received: by 2002:a05:6000:250d:b0:3fd:eb15:77a with SMTP id ffacd0b85a97d-42704d143e3mr765616f8f.6.1760640227495;
-        Thu, 16 Oct 2025 11:43:47 -0700 (PDT)
-Received: from localhost (109-81-16-57.rct.o2.cz. [109.81.16.57])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-471144b5d48sm41689115e9.9.2025.10.16.11.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 11:43:47 -0700 (PDT)
-Date: Thu, 16 Oct 2025 20:43:45 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	David Hildenbrand <david@redhat.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mm/vmscan: Add retry logic for cgroups with
- memory.low in kswapd
-Message-ID: <aPE84XfToVH4eAbs@tiehlicka>
-References: <20251014081850.65379-1-jiayuan.chen@linux.dev>
- <aO4Y35l12Cav-xr4@tiehlicka>
- <a6cd4eb712f3b9f8898e9a2e511b397e8dc397fc@linux.dev>
- <aPEGDwiA_LhuLZmX@tiehlicka>
- <46df65477e0580d350e6e14fea5e68aee6a2832b@linux.dev>
+        bh=FPl4GNeEvYNsD07xkIxR49GzR8yYXDLG1l9YclgP27g=;
+        b=TtH9HYM5a4FUeYoXz+SZqe6MYw3kP3BExPqNjklDmC5IaRgZkKr3RXBb9m0tLrjdxe
+         q3Lw9cEF2ZNlNJyi8MGtsfvkeg1dQTgunkaxgXnpLA72lFMrcx2du2N3rNQxFwl0T7i9
+         Iylq8ZvQHDBO2BwA+rzs/COHIDMbwi40e0w54NDQrSMyPmeJsQTgVgj2XVagAlXdgnQ4
+         4xWCLqxVoT9lJi38TMDHIzQ2MWo/udIMntFZM2/73asVgwGmvi1uuCgvGNF+jt0r6tFC
+         WtvByxqZallAeHHGWLwiv7/vHLHMiUAhHiaphgcUKFVSI4HnGz2dshh+K9kKdaaXC5fN
+         UQ7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760640304; x=1761245104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FPl4GNeEvYNsD07xkIxR49GzR8yYXDLG1l9YclgP27g=;
+        b=q/mzSfUdt5iFp81teg9sLJUehv+WKNxKt6VS2Vps9nRS6EARb79P6yKihFwcsYRZyM
+         I+bO0e67V5v35QV9Xzbx0mTIoNwdR37DxuNaJZjy9PRGxEgDSp94ysCIAJ7/mw1N5uq2
+         eocGpL9d0TH3rQX5+HOYt7mSextPN/RfG42Fu9yxXX/QTpxz5psRjMRtnFcJ15WAj7xC
+         /HhuFekj2AANFh6RPjpRxswQITJGRROo7DqC0dUozCe+AilMLQBq0QoFETxe6dYaSxaB
+         +K+89taJW6b9C1pcNTGZj9gmvcWvZ7OUEc0J2/npxUlhMRA71G0cSmq4x7qi0S+fr5Ev
+         8KkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgswvxag0vm6EaJDxeu22cYjoNDejlH0g2+wrT5AFECmHFkvSYaEOiWWM3d45b1uxw8pyz5Lc1NbGQ8/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFg6NpiJ62c7IaaOi9ssSwc00gzPKt3h0BrMFFWvgh/X551b5f
+	Gp85uf75uZhQ/yQUEWrn+kQ3iS8S2z4Qv9dnFpDDGen58O8L3qF0XB5wwMvXITcD7j6ROYRAtqj
+	vhw7qvpZLj3ki1Mnd5pfEe9nFI8dh0q4=
+X-Gm-Gg: ASbGncsveQPFtf+sedPMGIEKoqyeaXPZQSuO5W3HeplaRJBlnpZPoERcA5Rda9hdoQh
+	SSg5kVpXXS8tCsdcbDf8N3DW8NehKIqaWFA7dDh4jGAfchj3M/M/JeEkxM/3mO5R6sDWohfroYn
+	N60e2Om8LuWKevxdr5/VFYcXWp60YWGzkFBGi1klM585U0V5PVdrKVbiBf5Jn65WbgeGxFnBGez
+	qqXKe+fNNRpKXhsNpNRllKKeukAsRvvhVaGukdXIERPB/Tm7ASj+29IzcfALBL5Fmxqlobj5Va4
+	Bx4dKRKsn8pB/u1ackB1eXBaorvCZqbxBCl3KwprrgrM+jqa+8hh4S4lYShDxWx7VB6LnosAZPk
+	aiuA=
+X-Google-Smtp-Source: AGHT+IF9I6SSPaZXt6fObKsCwr8z4pX/yL7H2Swh89Pd5qRMIU65WohMKqiraRMDzUotqhTJ9xFy0vEvU+nF48HX4/Y=
+X-Received: by 2002:a17:903:2f87:b0:290:af0d:9381 with SMTP id
+ d9443c01a7336-290cba4effcmr5451435ad.7.1760640303984; Thu, 16 Oct 2025
+ 11:45:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46df65477e0580d350e6e14fea5e68aee6a2832b@linux.dev>
+References: <20251013062041.1639529-1-apopple@nvidia.com> <20251013062041.1639529-8-apopple@nvidia.com>
+In-Reply-To: <20251013062041.1639529-8-apopple@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 16 Oct 2025 20:44:50 +0200
+X-Gm-Features: AS18NWCjsMPV451tdiawVF8gJgOdhZslUWuxkRt4tznLBhQSO2tbezIdx1gta_0
+Message-ID: <CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/14] gpu: nova-core: gsp: Add GSP command queue handling
+To: Alistair Popple <apopple@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	dakr@kernel.org, acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 16-10-25 15:10:31, Jiayuan Chen wrote:
-[...]
-> The issue we encountered is that since the watermark_boost parameter is enabled by
-> default, it causes kswapd to be woken up even when memory watermarks are still relatively
-> high. Due to rapid consecutive wake-ups, kswapd_failures eventually reaches MAX_RECLAIM_RETRIES,
-> causing kswapd to stop running, which ultimately triggers direct memory reclaim.
+On Mon, Oct 13, 2025 at 8:21=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
+> wrote:
 >
-> I believe we should choose another approach that avoids breaking the memory.low semantics.
-> Specifically, in cases where kswapd is woken up due to watermark_boost, we should bypass the
-> logic that increments kswapd_failures.
+> -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_=
+reasons,offset_of_nested,raw_ref_op,used_with_arg
+> +rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_=
+reasons,offset_of_nested,raw_ref_op,used_with_arg,slice_flatten
 
-yes, this seems like unintended side effect of the implementation. Seems
-like a rare problem as low limits would have to be configured very close
-to kswapd watermarks. My assumption has always been that low limits are
-not getting very close to watermarks because that makes any reclaim very
-hard and configuration rather unstable but you might have a very good
-reason to configure the memory protection that way. It would definitely
-help to describe your specific setup with rationale so that we can look
-into that closer.
--- 
-Michal Hocko
-SUSE Labs
+This is not sorted, and it is not mentioned in the comment right above
+it -- in general, please try to clearly mention this sort of addition
+in the commit message too.
+
+As Alexandre mentions, it will not work to use it as-is. However, what
+happened in 1.80 was just a rename, but the feature was available
+since 1.67 as `flatten`.
+
+If you want to still use it through an indirection or similar, then
+please move it to a new commit that explains the addition of the
+feature and the indirection to use it.
+
+See e.g. the `file()` function I added in e.g. rust/macros/helpers.rs
+in commit 36174d16f3ec ("rust: kunit: support KUnit-mapped `assert!`
+macros in `#[test]`s") to see how to set it up.
+
+Essentially it is:
+
+    config RUSTC_HAS_SPAN_FILE
+           def_bool RUSTC_VERSION >=3D 108800
+
+And then:
+
+    pub(crate) fn file() -> String {
+        #[cfg(not(CONFIG_RUSTC_HAS_SPAN_FILE))]
+        {
+            ...
+        }
+
+        #[cfg(CONFIG_RUSTC_HAS_SPAN_FILE)]
+        #[allow(clippy::incompatible_msrv)]
+        {
+            ...
+        }
+    }
+
+I hope that helps.
+
+Thanks!
+
+Cheers,
+Miguel
 
