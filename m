@@ -1,91 +1,154 @@
-Return-Path: <linux-kernel+bounces-857069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8385BE5D54
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E37BE5D57
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E2F74E378D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB68548016
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2312E22A7;
-	Thu, 16 Oct 2025 23:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A39B2E7645;
+	Thu, 16 Oct 2025 23:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW8xCsIv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aHniw2w2"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDAF2405E8;
-	Thu, 16 Oct 2025 23:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834A22DEA6B
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760659010; cv=none; b=TCXXZPbTBFh/z7j7scaHGsC6vK0aAK4kOl0zU6zsAfszxUJvuBWKOzRobrkS+1M56E0A0tBk9Vq0yoYvWqQmb4Ykf8d8GX97mglUSrjKlrvw8ULwWANmVSZWEskGmUv3RUJolW4biBCgzVETNcwi7u8Mc6dnJnCWwuhHwbLRtlY=
+	t=1760659063; cv=none; b=GjkR6okTUIwRFteX+prvNHuUxmRssqjcHCgeIt/GmnfLKVaawpC7Tl01GG+IQmJ81kLD/htBOeRUQYckL65aiThbidg9JYy50taeMEDnzkNp/UM2FtoM2p5RMBEcET5FtIK0D45NIA1tZGSVYHBSAun138tmOAC+jy4VJ4U8bwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760659010; c=relaxed/simple;
-	bh=3kntJsodGoesQXD3hEICZYjE4tiqmt6YN9DYV7C3aYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OGXixcfZpgnNcAiKgBQze42CWwVkaTrYpUgmtdaojdbgM0eKumds84tMarQZS4lRHzVoWmxHzA7JIjgiQLZwSbF2v2Z62SqnCKWUTBvzInWOj0T/L8LUTFEY2FLDIuu4jJV9JgPYmsmni+IeVGu/NpgWdQ9Ec+jhJDbdizVa1I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW8xCsIv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A18AC4CEF1;
-	Thu, 16 Oct 2025 23:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760659010;
-	bh=3kntJsodGoesQXD3hEICZYjE4tiqmt6YN9DYV7C3aYU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oW8xCsIvW40e2O3RLk06mYWw2kPwQ2hrgE+2PvNHKqWTTQzyJr4Wf/vvNcXsxF/kb
-	 46JPR1aVBEPn/JlD2caRC4+WSObi1cHZVAyWJNcmqSzE60zL8orZU3zoeEsJ8L/TNk
-	 s9b/1M4+PnILg+haYyZU8i3jNsG4wBAVmq16yz/uRoah6KJ9olZHhZ9wnbl3HJxEqC
-	 50KfblW6w6uqXJGcof01wwYnatUWsUNk+NtRGwo32xD/5Fm7EA6HCceU6NVs/Q/pPf
-	 xKXHrF9PxbB2TQ6zxP8mIm7vfMMOX2NbB9JH4D5SpzM17oVl0J2da3yUycWlQMigSY
-	 y4E3/P83yA7sg==
-Date: Thu, 16 Oct 2025 16:56:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Simon Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- "Paolo Abeni" <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Tony
- Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Alexander Lobakin <aleksander.lobakin@intel.com>, <netdev@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dan Nowlin
- <dan.nowlin@intel.com>, Qi Zhang <qi.z.zhang@intel.com>, Jie Wang
- <jie1x.wang@intel.com>, Junfeng Guo <junfeng.guo@intel.com>, "Jedrzej
- Jagielski" <jedrzej.jagielski@intel.com>, Aleksandr Loktionov
- <aleksandr.loktionov@intel.com>, Rafal Romanowski
- <rafal.romanowski@intel.com>
-Subject: Re: [PATCH net-next 06/14] ice: Extend PTYPE bitmap coverage for
- GTP encapsulated flows
-Message-ID: <20251016165648.2f53e1fc@kernel.org>
-In-Reply-To: <902dab41-51f0-4e01-8149-921fb80db23d@intel.com>
-References: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
-	<20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com>
-	<aPDjUeXzS1lA2owf@horms.kernel.org>
-	<64d3e25a-c9d6-4a43-84dd-cffe60ac9848@intel.com>
-	<aPFBazc43ZYNvrz7@horms.kernel.org>
-	<902dab41-51f0-4e01-8149-921fb80db23d@intel.com>
+	s=arc-20240116; t=1760659063; c=relaxed/simple;
+	bh=vOAdDSYX83kzIXZY6k7808Nqc/n1Jrd8SmNl/kz/Z8U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=io5no29qakhSJXHbz414xkEyth0zSvbZIqcppZli2y12k3nXFo2B+hWuR6aULcb3V3fooVabUhDvMzvPvYBzYAM2DgwOtfloEkh3yVT8gcD2WmFK/syFv82W5Ap0XeKWvI/dBX79tpsBBizXysB2zlSfOEFoOLDYoSiLA4zAwjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aHniw2w2; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b57c2371182so1179323a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760659062; x=1761263862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W+gFerwj7sc87prcy/GQMGpAh3zQW+FK7X8HO9E9Qn8=;
+        b=aHniw2w2SDaL4IJxRvGmkLFIsclKYQemiQ+qGd6tcbSvVkcwfX46Crd1eSwE2wnbtv
+         MeR2UOnx64hZ4IM6GvsQUB9FKFcHQgvTklIT3F3OBy0LqXoifHJTJbGP2zTG1huG3rl6
+         mKUdN32w+KN8E8S9+OOGPXD6xLnKhEfkMbpANWoUM2FFNp7X8ZeTaaAXoSRaRTaE3mpL
+         VGIS7qkPs5ZxbTlcoj3IdBZb8x7A2jNo84m0EQpkViYAZu9RlNtzoDCv1QASHbOzdF6M
+         3E/12nUQ42WGc2ByF7X/a8sZHDPaEaaIakHXGNc5kXU2VPzU/ebsmZiT7IvUiJouzM8J
+         z+6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760659062; x=1761263862;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W+gFerwj7sc87prcy/GQMGpAh3zQW+FK7X8HO9E9Qn8=;
+        b=Ugn0LOsN34jPfNitc0xf2Isg1R3ZWwJr4R/ORp8tvQkJXbYHhfJf6aUIrMkdS8noJ/
+         GdmwZ7QCo8jglcFGU8qqRBrAeOtoxOiKIyZ/rdNG5wOoPksp1qqoZy0m4zStVe6ZLSBU
+         hth+Mi4wjsmxwkghtDbzKnkC0/ASCtM8NNe1SfWIN/WSECJKjSAMHeNEckT1+oAIDEZm
+         yNjdNK2VCaf0i/fYiuGX8KFinv/+hA/8qglBIEU1NMb5FmYbr7odxqXRFZ4fAaQUpdS8
+         Qvh7DtjDawwhTU/rNDQo+X7hlLMZcd7WOdOgvzkJWi1prniQQP+9CHLBab92PKg7hVx4
+         jwvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUktYcQYPtAEFZvWRauXurUqx/e8xCec8+Vj2Zo/5CiWiQiPG24QvK+XWpCh8mQTxEJnP/Bo7ueyJaOJhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykU9VsjPRS8CwRY67mDNMKWlW1qHKqRwZFZjl2y8Tipcze/mPA
+	270a9RToLus+ImAikM6vcrsjNvLR/3+tEPd7tozsjpvU0ZNhwWGjJIC/QwYTz/OKEM93lNl6vpq
+	UajrOPp70a82qWm0x84ic+QCZLQ==
+X-Google-Smtp-Source: AGHT+IE2GZ6bYZtCSD13nlTnA7H2MPbbvOsHzo3LQjiehRmABnDXMBoSAsb+4L5uxVyy1gpfUlSoXNG9qcSb1xRc+Q==
+X-Received: from pjyj8.prod.google.com ([2002:a17:90a:e608:b0:33b:9959:6452])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:3992:b0:334:a99f:926 with SMTP id adf61e73a8af0-334a99f0c06mr1602497637.11.1760659061843;
+ Thu, 16 Oct 2025 16:57:41 -0700 (PDT)
+Date: Thu, 16 Oct 2025 16:57:40 -0700
+In-Reply-To: <CANiq72m6vWc9K+TLYoToGOWXXFB5tbAdf-crdx6U1UrBifEEBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251016172853.52451-1-seanjc@google.com> <CANiq72ntKAeXRT_fEGJteUfuQuNUSjobmJCbQOuJWAcNFb1+9w@mail.gmail.com>
+ <aPFVcMdfFlxhgGZh@google.com> <CANiq72m6vWc9K+TLYoToGOWXXFB5tbAdf-crdx6U1UrBifEEBA@mail.gmail.com>
+Message-ID: <diqzqzv2762z.fsf@google.com>
+Subject: Re: [PATCH v13 00/12] KVM: guest_memfd: Add NUMA mempolicy support
+From: Ackerley Tng <ackerleytng@google.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Sean Christopherson <seanjc@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Shivank Garg <shivankg@amd.com>, David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 16 Oct 2025 14:37:53 -0700 Jacob Keller wrote:
-> What version of git are you using? I'm using git v2.51.0 Perhaps this
-> isn't a b4 or git issue but some other tooling that is causing an issue
-> (patchwork?).
+Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
 
-Looks like patchwork, it serves us:
-https://patchwork.kernel.org/project/netdevbpf/patch/20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com/mbox
-which has the -- "corrected" to ---
+> On Thu, Oct 16, 2025 at 10:28=E2=80=AFPM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+>>
+>> Oh, I take it .clang-format is auto-generated?  Is it a "formal" script,=
+ or do
+>> you literally just run the grep command in the comment?
+>
+> I just run it and copy-paste the results there from time to time.
+> Yeah, a very low-tech solution :)
+>
 
-Doesn't matter all that much cause there are also kdoc issues on
-patches 4 and 5. Obligatory advertisement:
-https://github.com/linux-netdev/nipa?tab=readme-ov-file#running-locally
--- 
-pw-bot: cr
+I assumed someone was doing this from time to time, and I ran the grep
+command in .clang-format but IIUC it only reads tools/ and include/
+(which doesn't cover this new macro) and so I thought the "automation"
+would miss this new macro, hence I suggested to manually add the macro.
+
+Using the command on virt/ would pick it up. Would it be better to add
+"virt/" to the "automation" + update .clang-format while we're at it?
+
+$ git grep -h '^#define [^[:space:]]*for_each[^[:space:]]*(' virt/ | sed "s=
+,^#define \([^[:space:]]*for_each[^[:space:]]*\)(.*$,  - '\1'," | LC_ALL=3D=
+C sort -u
+- 'kvm_for_each_memslot_in_hva_range'
+- 'kvm_gmem_for_each_file'
+
+>> I don't think I care if it's in the list?  I honestly don't know for sur=
+e, because
+>> it's entirely possible I'm consuming .clang-format without knowing it.  =
+I added
+>> the entry based on someone else's request.
+>>
+>> Ackerley?
+>
+> If you are not relying on it, then please just skip it, yeah.
+>
+
+I'm using it, I believe clangd (my lsp server) uses it to reflow correctly.
+
+>> Is it possible, and sensible, to have per-subsystem .clang-format files?=
+  KVM
+>> (virt/kvm) and KVM x86 (arch/x86/kvm) both have has several for_each mac=
+ros,
+>> pretty much all of which are more interesting than kvm_gmem_for_each_fil=
+e().
+>
+> There is `InheritParentConfig` nowadays, but from a quick look I don't
+> see it supports merging lists.
+>
+> So to do something fancier, we would do need something like we did for
+> rust-analyzer, i.e. a `make` target or similar that would generate it.
+>
+> Otherwise, we can just add extra macros at the top meanwhile.
+>
+> What we did last time is just to add `tools/` to that command --
+> increasing coverage is not an issue (I just started with `include/`
+> originally to be a bit conservative and avoid a huge list until we
+> knew the tool would be used).
+>
+> Cheers,
+> Miguel
 
