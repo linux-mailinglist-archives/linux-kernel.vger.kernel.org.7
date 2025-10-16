@@ -1,103 +1,172 @@
-Return-Path: <linux-kernel+bounces-855984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6068BE2C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE91BE2D29
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BAFC3B314B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A808585976
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE1E328637;
-	Thu, 16 Oct 2025 10:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA27F32862B;
+	Thu, 16 Oct 2025 10:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u59n4pwk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CgE07Cfd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11886111A8;
-	Thu, 16 Oct 2025 10:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0946F32860C;
+	Thu, 16 Oct 2025 10:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609916; cv=none; b=MJShy1SHZ7kQL8QRi1XxEQOVqzBcZmY+z9+NhsmomUx9WmmNef23J7NdLAE6HPA3ay6qbh6Ty4d9jIJpcUPFcm7mOBxWgnzTHVnNOdjSk7Lpg5hyW2POH8XXo+H2mG8W3xxN1IALJMKWRny864lxS1hC3inwt1UzdnCr88yQpmk=
+	t=1760609943; cv=none; b=mLnx6WXc8IxXrLAdKrbXinbVTobMLp/xtox8uUG8q2cUsLXXeBCxnKieED/MkoUSLyKVaweU9WxzfHrGNNf3CCxmXxdD5r3coWrJP7sXat0nplQBXluUIMHpUfVbJXAybVOz+DvwnknqHV7m05BXwlywqNwet4FtkTQRE7yyTKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609916; c=relaxed/simple;
-	bh=XBZLRHeHwSEC/eQfjqXZydQM4j4g6/JbFasBuQ9ZViM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=b2Ry47oXD11R3Q2jL15Syv8AKC0CUcx8RUgLt2n91mgFO0s8QHZpnB5Uq1J47VNLF9iDWkyh/tVaCc4QIyWYx/xrN0mERQNuDMAbg7auDOq6XABvDYyDYOBX0OqModGEchA5alUpvu+2KJRO5rk0uhL8yKCLSZl086V/Zt4OcGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u59n4pwk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A231C4CEF1;
-	Thu, 16 Oct 2025 10:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760609915;
-	bh=XBZLRHeHwSEC/eQfjqXZydQM4j4g6/JbFasBuQ9ZViM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=u59n4pwkDkGBXihWHVgPwxqsBGP9fYXWL9jaiHx/8IoRggh4zobpQte2xN2lu3F+X
-	 WB3ntzOPSP8sW2NLv5otBAaSPLFIusOe9p9dGVtEYhCT00ZbHM2EkQz9drh9BO2JsD
-	 x0yWfjvq/anDLdK5EIIKqesTTfJNVDNHs1ZClZSwjO0aB+SV/odVCGnbwuaP5obmbK
-	 IEgsc693K3MmRPtdzTulHM8BvbxF+HTqYDqLW/1QB5Qdrca8sIv5o2h6KDI5EfSVoC
-	 d9iYa+J9Is+vWEfXRsr6oS3gcZCwdi8tbOboVwwYm/rCnXZ9vgLlX0B+fQPms2bcgD
-	 lL5q6miHXWBBw==
-Message-ID: <16def16e-fead-4d32-812c-5672773ef3bb@kernel.org>
-Date: Thu, 16 Oct 2025 11:18:28 +0100
+	s=arc-20240116; t=1760609943; c=relaxed/simple;
+	bh=Eluc4w9ycVVcfrCZPAC/PaN5nQHAhBh69pF94Zrj1I8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cRQ0MawMXXmwGnuiceeNdAYd0lod9s4Buow6gnldRtXGBJpRUJJ4NhoDsKEZCMIsv6pQ2tOgnhcGRHjnULvl3m3l1Re0mCXP7Sy4Zy5NNFnhvOyZO4w57dDyvUwJzmiq/2VkovYc4Bc1Hic1Jq6khWXkP5ixmeCuJNQxg9HWbhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CgE07Cfd; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760609941; x=1792145941;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Eluc4w9ycVVcfrCZPAC/PaN5nQHAhBh69pF94Zrj1I8=;
+  b=CgE07CfdrvKL0rZyhWSQBovTH9sXymDfJk7Lgiujrm4z9Z8enR3D4uoc
+   GBl/zT6hDF3KPuD3NGps4Hxiep3kFBSfI6nEBT91B0rI3xjkDqirmB7WO
+   kE1VvcQ1ZIasGZcmcKGkqxs+tbJvh0tPSB4UP5b9bhMUAhvq2vQ/veJRm
+   UEMtUjNGsuFoHqZNRjUzNs6iyzMOHrrhGEQTHHNqKPJ1BMClJhxayB53B
+   YsuSXw9bflrmLwgDafRiQJYaCjtvA6fLI0z/aeYqBlOJ81toA4CxIahmu
+   LeQ/w1HXXf5IYsgZekNJ2SXOYTKOxWi5eLSaX4d1X79hiGl6nHvIy286Y
+   A==;
+X-CSE-ConnectionGUID: 8nRLQuKSQEKTAV3OcDQ3OA==
+X-CSE-MsgGUID: jCib9RurQY2NIyCmH+E4Hg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62946934"
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="62946934"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 03:18:59 -0700
+X-CSE-ConnectionGUID: CJrAuFCmTOu9r6ffC+QvlA==
+X-CSE-MsgGUID: fEesfpwWTiK4errXV8tOuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="213377964"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.242])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 03:18:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 16 Oct 2025 13:18:53 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
+    Denis Benato <benato.denis96@gmail.com>
+Subject: Re: [PATCH v6 3/7] platform/x86: asus-wmi: Add support for multiple
+ kbd RGB handlers
+In-Reply-To: <CAGwozwFBQ4DWS5s-La5f-6H=ZQvQFjU3=7U2RiJStGxO1sM+bQ@mail.gmail.com>
+Message-ID: <cf824f48-58b4-2400-9acf-796bb76d6b28@linux.intel.com>
+References: <20251013201535.6737-1-lkml@antheas.dev> <20251013201535.6737-4-lkml@antheas.dev> <cf0ca840-6e0d-2d99-cb23-eabf0ac5263b@linux.intel.com> <CAGwozwFBQ4DWS5s-La5f-6H=ZQvQFjU3=7U2RiJStGxO1sM+bQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] media: qcom: camss: csid: Add support for CSID
- 1080
-From: Bryan O'Donoghue <bod@kernel.org>
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251014-add-support-for-camss-on-kaanapali-v2-0-f5745ba2dff9@oss.qualcomm.com>
- <20251014-add-support-for-camss-on-kaanapali-v2-5-f5745ba2dff9@oss.qualcomm.com>
- <5f0e081c-30f6-4ff9-b8d2-2af0d87efd23@kernel.org>
-Content-Language: en-US
-In-Reply-To: <5f0e081c-30f6-4ff9-b8d2-2af0d87efd23@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-193638825-1760609933=:1664"
 
-On 16/10/2025 11:04, Bryan O'Donoghue wrote:
-> drivers/media/platform/qcom/camss/camss-csid-gen3.c:        csid- 
->  >reg_update &= ~CSID_RUP_AUP_RDI(port_id);
-> drivers/media/platform/qcom/camss/camss-csid-gen3.c:        csid- 
->  >reg_update |= CSID_RUP_AUP_RDI(port_id);
-> 
-> and this in your code
-> 
-> 
-> λ ~/Development/qualcomm/qlt-kernel/ linux-stable/master-reviews- 
-> oct15-25* grep aup_update drivers/media/platform/qcom/camss/*
-> 
-> drivers/media/platform/qcom/camss/camss-csid-1080.c:static void 
-> __csid_aup_update(struct csid_device *csid, int port_id)
-> drivers/media/platform/qcom/camss/camss-csid-1080.c:    csid->aup_update 
-> |= AUP_RDIN << port_id;
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-And now that I see the code side-by-side - also please use the 
-established macros and/or write a new macro to follow the established 
-pattern.
+--8323328-193638825-1760609933=:1664
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-There's virtually no good argument to replicate a bit shift or twiddle - 
-that can be functionally decomposed and encapsulated in one place and 
-subsequently reused.
+On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
 
----
-bod
+> On Wed, 15 Oct 2025 at 13:59, Ilpo J=C3=A4rvinen
+> <ilpo.jarvinen@linux.intel.com> wrote:
+> >
+> > On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
+> >
+> > > Some devices, such as the Z13 have multiple AURA devices connected
+> > > to them by USB. In addition, they might have a WMI interface for
+> > > RGB. In Windows, Armoury Crate exposes a unified brightness slider
+> > > for all of them, with 3 brightness levels.
+> > >
+> > > Therefore, to be synergistic in Linux, and support existing tooling
+> > > such as UPower, allow adding listeners to the RGB device of the WMI
+> > > interface. If WMI does not exist, lazy initialize the interface.
+> > >
+> > > Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> > > Tested-by: Luke D. Jones <luke@ljones.dev>
+> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > ---
+> > >  drivers/platform/x86/asus-wmi.c            | 118 ++++++++++++++++++-=
+--
+> > >  include/linux/platform_data/x86/asus-wmi.h |  16 +++
+> > >  2 files changed, 121 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/a=
+sus-wmi.c
+> > > index e72a2b5d158e..a2a7cd61fd59 100644
+> > > --- a/drivers/platform/x86/asus-wmi.c
+> > > +++ b/drivers/platform/x86/asus-wmi.c
+> > > @@ -258,6 +258,8 @@ struct asus_wmi {
+> > >       int tpd_led_wk;
+> > >       struct led_classdev kbd_led;
+> > >       int kbd_led_wk;
+> > > +     bool kbd_led_avail;
+> > > +     bool kbd_led_registered;
+> > >       struct led_classdev lightbar_led;
+> > >       int lightbar_led_wk;
+> > >       struct led_classdev micmute_led;
+> > > @@ -1530,6 +1532,53 @@ static void asus_wmi_battery_exit(struct asus_=
+wmi *asus)
+> > >
+> > >  /* LEDs ************************************************************=
+***********/
+> > >
+> > > +struct asus_hid_ref {
+> > > +     struct list_head listeners;
+> > > +     struct asus_wmi *asus;
+> > > +     spinlock_t lock;
+> >
+> > Please always document what a lock protects.
+> >
+> > I started wonder why it needs to be spinlock?
+> >
+> > It would seem rwsem is more natural for it as write is only needed at
+> > probe/remove time (if there's no good reason for using a spinlock).
+> >
+> > You're also missing include.
+>=20
+> I went through the comments. Thanks. The reason that it is a spinlock
+> is that both hid-asus and asus-wmi interact with the primitives to
+> register and unregister listeners, either of which can prompt the
+> creation of the led device which has to be atomic. And they do so from
+> IRQs too.
+
+Please note in the changelog how it can happen from IRQs as I tried but=20
+couldn't find anything. Admittedly, I didn't try to follow the callchains=
+=20
+that deeply. The justification should be clear enough to anyone who=20
+looks this commit later so better have it in the changelog.
+
+> Perhaps the driver could be refactored to use rwsem, I am not sure.
+
+Just leave it spinlock.
+
+> The fixed version can be found here[1]. I will give it 1-2 more days
+> in case someone else wants to chime in and resend.
+
+
+
+--=20
+ i.
+--8323328-193638825-1760609933=:1664--
 
