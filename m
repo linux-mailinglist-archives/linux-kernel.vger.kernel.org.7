@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-856922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59C7BE576B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA616BE5765
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57816544C95
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:52:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD551890928
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87972E4266;
-	Thu, 16 Oct 2025 20:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8093B2E54A2;
+	Thu, 16 Oct 2025 20:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YgAgpFsr"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QGGWIWh+"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D032E22AB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397BE2E3B1C
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760647906; cv=none; b=Bh0XJWiuBCpqSgBicQ3MEMTnVBK3UyeqzINYHuAbunvlV5E82WTYRM97ycPiApvLXVcvKr10uHZQHmzrC4eg/ZabxIkCRK6Ehc3dYZn3hOHyF/cdGCWoDSvri8fcAwJnrW3kGVZfqMHvrPXMsuhcw3omOav9rRiX2qvzOUlx6UA=
+	t=1760647907; cv=none; b=oVqw65Qt//2CBdGZd+7udo+E3ehf0R8UzQ1X2oBZBddK4plmgZX5lL3Qj06c46gedhaZCRK4XD4JHVyUYLF/NPHG4qbzmrl2DmPWKmvoV4jmohyFFfVCAce9jrvR00U28CiHFfTfUJq6a/rbEtxZJso8b97IeaOzvEvPZ9p9vPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760647906; c=relaxed/simple;
-	bh=nVrSvzPztuXGClDcdMqXs9xM3Seb6JCG22hS9qvNjdA=;
+	s=arc-20240116; t=1760647907; c=relaxed/simple;
+	bh=UvfqvuNzNaKuTenaXI68Nt5jBlIoumMb2oUSP1fRCMU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=Qlryeu8mGjRd1BDTALXuN/aD0Y07NT/uaKpHFZb1a2QwQaHROE5IsGfC3MkT1c+8bpGcPe4gG7XAsA0r7MXn8Q+xLIEtuB5mPXD56rqxCa0FBG8etG5aG+5Ht4PCdqyKwzkCNG5fkP2M55kl3BQFKjKawGXen9A3l+MoppsFLbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YgAgpFsr; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=KkuNxes5uaOaSJg+2nkq7xtwSXikd7+Hs2l07hYPW/Vdqf6LFP6DnZ7rcf5UB+2mSy7GVCsxJaJpfJFFTNEE1dkgfDWck9pWAHkJD+nyKFqu7TIVx3tSY478NSgypD9+SHqt/ve4Ltn/wlKTSDZNYQKIWGgBNJYJSALJiZODHEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QGGWIWh+; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-27ee41e062cso17333775ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:51:44 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f64c5cf62so994643b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760647904; x=1761252704; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760647905; x=1761252705; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BAIMGYoqbISny2vRErUw0qxGyMwV616xJj8ghqmGSR0=;
-        b=YgAgpFsr7DuYTEPj1mC2sURger/hsf+DwRhYAci96wvFfCM/eDp31lTwSYdlSmbVZv
-         8JYtZylr/du8IH6rU9Ek9etUZMTlzeaHVFqRC3HII/sHcksXVaWQCk2MIyik2ZHJ5K1t
-         z1RoazTT6M4C6qFrrs0lvso/3LrmRkSE9HAk7q2L0CQvye4RPF66wqsom9bGEYlQtxkD
-         XFJGZlgtDxXCLIuMBTcL7u2W+pF29SpPUOfcp9vkTbM0oCvySonVNjq0CQIxclCq5UKQ
-         2Jb3cXdBfam5HXeDyn7jNXS4xTFVtyKiJyXW5YqOELpQ1hB6bgtOwxx9BniCU3ApgI65
-         uvOQ==
+        bh=Op/cgLXnfaBM2beLrTOCrg+8NoqMY5HOv5BplNGP7NA=;
+        b=QGGWIWh+pnserlzUrxPH4BA+m7NV4XzFYkbMzNIguxIBTuEC/tRd98BjX9PCWc/Om6
+         HV+6qTn0ePEULdSZbenN2jrWAVNrfO8STKHC1zYhGONz/topHXlF1ZL8sJPawIUUinF8
+         U7J+pSaWyOqglKc9VWDoZF+BRqVpbNVJ7QLQSRBTnOareu5SaM9cVmsnWuhnad31xj/j
+         SFoqC09DvrgydNg+GlvzqX2S7uAOmGv6GerOqu3aHSDNwZXEH0ZcS+M2lgca3QAeZuju
+         Hs9UrjLZLBplEFRbtv7CN9oWDwXcw0swWBVk27OiCfuGFNU4sxxzetxcnw2MVURyJ34t
+         aNFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760647904; x=1761252704;
+        d=1e100.net; s=20230601; t=1760647905; x=1761252705;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BAIMGYoqbISny2vRErUw0qxGyMwV616xJj8ghqmGSR0=;
-        b=HDN2gwNozEkPAwJ38c9xrNgOf9QJOhjSR55DJ8qbkr6dKqdGrI80HgpkJ8X+eppPjr
-         DKOjlTVM98Thzwe+g2phRnz+wSuqTvXZzXUQvFzFFcJ20h4am+0xjm/3nSYVtQrJ3kql
-         H6BU9AhGydHRFg3YUQQHR4mrqvVw37hWhjempM/mltk/hw42z37Mootjm2UrGNghL9bM
-         X45ETWHwmI0l22AfDMsQgJCM65pc4gkZrtdOLYSmUbJH27hb47p2mm1Oos3Vnk9yYEFy
-         NmulD1HGUGcZhpGrHnNiQMMGH9Um3jfRr3c3yxA4tGJGJX8k4Bb+e/59zbMDS3btlX9B
-         qOyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVMHHuYP2aqY6BTe1Kdk9zqixE0d4clMXMKgXK2B20jr+GybXejjz3QXof1rTH7Qx6+SaMjoSrAnaZsU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvRdBV1t+KeQlT+smwCzmaMdHhl6GV9JvqPAcdipB/zD3nDZHg
-	xE4yYNZvxcHZkRCZKsoLN1loryzLk3JCKAobp0nVYe5RfqMZsE6i/S4gWxgHRsMT6KuX7X5AMve
-	BMJUFh4OM9A==
-X-Google-Smtp-Source: AGHT+IG5RzQebXrGDbWsNPzFtRR2+5yK+xcRDPhguIs/MdSqdZRddPVVMtrRDsP/hpqzUccoN4arVYWrJvpY
-X-Received: from plko5.prod.google.com ([2002:a17:902:6b05:b0:25c:22e5:1a27])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2b06:b0:272:f9c3:31fb
- with SMTP id d9443c01a7336-290cba4dbb5mr14771145ad.58.1760647903824; Thu, 16
- Oct 2025 13:51:43 -0700 (PDT)
-Date: Thu, 16 Oct 2025 13:51:24 -0700
+        bh=Op/cgLXnfaBM2beLrTOCrg+8NoqMY5HOv5BplNGP7NA=;
+        b=pXEm74jj4N+miU29s3quufCMR9TG7glaAuAX/VHH69LxRFT6p8a7tObBnAbH5lFBAw
+         JSewovxIprvCR94LcXtjDPanx1fiCLcetR5AdaESzLGehxXPox1cUGMxM6lWMTvMYgx5
+         F6+OeGFod6Zhv6Xdc/Ica0M4G6VoZc/RlwVZwSfXQVUz4LZvMKI+Xa3PyrT+EpYVKPKw
+         WseVxjLbCHUvczXVwO/PO90czxVpUr5pbSUFAaVNttZUNCZ3UbLgdLVPtRgguYSnNSpT
+         mx5cKGMdcZRBPhRdpwG1gZxpXgeoOZyephfgauDISapOaJvUnMBxeuXJ0EubSRDkmbQF
+         NbHA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5+ihA+D7eukRMiXesi4emsX8UWL15chpd07TIizxROlDcXYt0nkMbhPF28m9pfsPOSP1tOsDUtiE8OfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbKHDV5/XSfIDYSoMOXjo3Jqkn/moThRD+YzRBeCfq+CVM4k8l
+	l9u3FFW2qPFSlVkw02/qzqcE7xdWMen+CCKwJiWzx2XF+E82okRtrp+2HKsnmIpyajV8cpLg7Pu
+	O7Za1RD7wCA==
+X-Google-Smtp-Source: AGHT+IGUbpSBAQlWWqITv9bif+XWoD3GdrHFfDFRJdD4RE9Dd+y5C2qTC2uRnG+u/NrbClKTgiG4ImAur+pN
+X-Received: from pgip24.prod.google.com ([2002:a63:c158:0:b0:b54:fd1f:ef57])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:72a4:b0:334:974b:6e0f
+ with SMTP id adf61e73a8af0-334a86256c3mr1836298637.40.1760647905615; Thu, 16
+ Oct 2025 13:51:45 -0700 (PDT)
+Date: Thu, 16 Oct 2025 13:51:25 -0700
 In-Reply-To: <20251016205126.2882625-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251016205126.2882625-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251016205126.2882625-3-irogers@google.com>
-Subject: [PATCH v5 2/4] vdso: Switch get/put unaligned from packed struct to memcpy
+Message-ID: <20251016205126.2882625-4-irogers@google.com>
+Subject: [PATCH v5 3/4] tools headers: Update the linux/unaligned.h copy with
+ the kernel sources
 From: Ian Rogers <irogers@google.com>
 To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
 	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -85,20 +86,54 @@ To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller
 	"Jason A. Donenfeld" <Jason@zx2c4.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Type punning is necessary for get/put unaligned but the use of a
-packed struct violates strict aliasing rules, requiring
--fno-strict-aliasing to be passed to the C compiler. Switch to using
-memcpy so that -fno-strict-aliasing isn't necessary.
+To pick up the changes in:
+
+  vdso: Switch get/put unaligned from packed struct to memcpy
+
+As the code is dependent on __unqual_scalar_typeof, update the tools
+version of compiler_types.h to include this.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- include/vdso/unaligned.h | 41 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ tools/include/linux/compiler_types.h | 22 +++++++++++++++
+ tools/include/vdso/unaligned.h       | 41 ++++++++++++++++++++++++----
+ 2 files changed, 57 insertions(+), 6 deletions(-)
 
-diff --git a/include/vdso/unaligned.h b/include/vdso/unaligned.h
+diff --git a/tools/include/linux/compiler_types.h b/tools/include/linux/compiler_types.h
+index d09f9dc172a4..890982283a5e 100644
+--- a/tools/include/linux/compiler_types.h
++++ b/tools/include/linux/compiler_types.h
+@@ -40,4 +40,26 @@
+ #define asm_goto_output(x...) asm goto(x)
+ #endif
+ 
++/*
++ * __unqual_scalar_typeof(x) - Declare an unqualified scalar type, leaving
++ *			       non-scalar types unchanged.
++ */
++/*
++ * Prefer C11 _Generic for better compile-times and simpler code. Note: 'char'
++ * is not type-compatible with 'signed char', and we define a separate case.
++ */
++#define __scalar_type_to_expr_cases(type)				\
++		unsigned type:	(unsigned type)0,			\
++		signed type:	(signed type)0
++
++#define __unqual_scalar_typeof(x) typeof(				\
++		_Generic((x),						\
++			 char:	(char)0,				\
++			 __scalar_type_to_expr_cases(char),		\
++			 __scalar_type_to_expr_cases(short),		\
++			 __scalar_type_to_expr_cases(int),		\
++			 __scalar_type_to_expr_cases(long),		\
++			 __scalar_type_to_expr_cases(long long),	\
++			 default: (x)))
++
+ #endif /* __LINUX_COMPILER_TYPES_H */
+diff --git a/tools/include/vdso/unaligned.h b/tools/include/vdso/unaligned.h
 index ff0c06b6513e..9076483c9fbb 100644
---- a/include/vdso/unaligned.h
-+++ b/include/vdso/unaligned.h
+--- a/tools/include/vdso/unaligned.h
++++ b/tools/include/vdso/unaligned.h
 @@ -2,14 +2,43 @@
  #ifndef __VDSO_UNALIGNED_H
  #define __VDSO_UNALIGNED_H
