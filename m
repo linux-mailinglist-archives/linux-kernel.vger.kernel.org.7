@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-855572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1249FBE1AD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:11:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D55BE1AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE094F1EEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:11:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C4684F24B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3432566D9;
-	Thu, 16 Oct 2025 06:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIdVfDzy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACDB14F125;
-	Thu, 16 Oct 2025 06:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0C7256C71;
+	Thu, 16 Oct 2025 06:15:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EA8145B3E
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 06:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760595112; cv=none; b=pLZI8z+9z+2Vtdo4l40D3KeJ4zeOZxMGNQP8/+ALVEdQCQvFsUDlXSl/3yY/LsE3ywfW0+UUn/HBMC5jC+uGXb9flCDYaJ+UmnIFKw0x4wkZpEt2r3KX2IN0AMGhUwu5Qq07A2mLKYMFlLo/nO37+z8qcpCOzQ4aJjW2Em00mOI=
+	t=1760595311; cv=none; b=ou74WbiDHaQOzhVgWrjXZOInZS/9BR3L3CmaUUvWI6T7cPkH8nVLwAFkg3NqhBX7vL8Zs+4nVOopEFskiC6R6ktxH/etI1P7Gcm0cTyQ1aROs27AIw9K4/+VtsoQLLneAqw+WjEdOukS65P9GgFd5Uoi4/Zdd5I2tKVBH4t8/GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760595112; c=relaxed/simple;
-	bh=J0e6A4qR6u0y79WQ62MdEKnirowtxZc3UfIVN49ooBM=;
+	s=arc-20240116; t=1760595311; c=relaxed/simple;
+	bh=+TT0TfrqkTBN3bSd0lLTo1tVHO96zD6LzEW5XsjCrV4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mWXyGkt2fDYVeU/QQrtDDalLE3ViPypVlXMR6rTln1ABh71wKphq6x2O7f6lZiSEn7BA3jZKdUiOPPQf1awNYHCd8CfPhu2gd8cskZbKDlGhdUKBKS+zGZV/2WvLc1Qn5xOBGVBDlTxj7M4UbR1m0H3bYKKTEyErYKwR0By7gjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIdVfDzy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20E70C4CEF1;
-	Thu, 16 Oct 2025 06:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760595111;
-	bh=J0e6A4qR6u0y79WQ62MdEKnirowtxZc3UfIVN49ooBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DIdVfDzyQvoMvrCQQrcXnGjZAEKPYJc5o/Y4b605RqE9i79ynt14jTEifMAE2XOXL
-	 zsr8rNlj67qk78pGkrdJivxAW2rsCP3GZLBjrBF6+5r9wLrdDMASoAZUlXLMfMhMSe
-	 s0OVuBwXxJ4g8MGKM9fTijPTeT4gHGc6b4Pjum+dDLMnwhceKeS2K4wNo3/Ntqhlyy
-	 QsVo2FFnBVGGCSfrytlVNcgFJOQK/J+ddF0SgSlhbL8Q1zM55ekPcO2n3qYCN9OWnh
-	 37F4gDAg3bwqA7iczHOQbmaI9oXonsT9b3kBUiBiFh7b6oQcdm2eKfKjobzuxKYyVC
-	 6jZyKXx6dCXfg==
-Message-ID: <73ece401-048a-47c6-aac2-2c8f98514023@kernel.org>
-Date: Thu, 16 Oct 2025 08:11:46 +0200
+	 In-Reply-To:Content-Type; b=Cbylxr2w7PAKNmQoEqS1m9OMDCsuzhlTBs/EyzMPhceAh8Fo9lt/Yd8RO6q68qhxLfis/PpCpcUNtTzw7veA3obGOiW6hoZUPUNx64R5M5SAn0SLvrppbB49yMnfd/TCOqO+nwnTTxRHtX6BZR9RA0NxDTx6J0XtRVlt6JOE1CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B764A1688;
+	Wed, 15 Oct 2025 23:15:00 -0700 (PDT)
+Received: from [10.163.68.150] (unknown [10.163.68.150])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD8CB3F738;
+	Wed, 15 Oct 2025 23:15:03 -0700 (PDT)
+Message-ID: <debdccdd-1a4a-4039-bdc3-64b68525d03c@arm.com>
+Date: Thu, 16 Oct 2025 11:45:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +41,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: correct the flexspi compatible string to
- match with yaml
-To: Bough Chen <haibo.chen@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Michael Walle <michael@walle.cc>,
- Peng Fan <peng.fan@nxp.com>, Frank Li <frank.li@nxp.com>,
- Marco Felsch <m.felsch@pengutronix.de>, Han Xu <han.xu@nxp.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250919-flexspi-dts-v3-1-44d43801eae7@nxp.com>
- <DU0PR04MB9496B69270A50704DE8374B990E9A@DU0PR04MB9496.eurprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: guard is_zero_pfn() calls with
+ pte_present()
+To: Lance Yang <lance.yang@linux.dev>
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, akpm@linux-foundation.org, david@redhat.com
+References: <20251016033643.10848-1-lance.yang@linux.dev>
+ <ab4e7044-c285-426e-bf9c-fa06a0f47ae9@arm.com>
+ <d5d2fe20-9d63-4304-8b36-9708309791ea@linux.dev>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DU0PR04MB9496B69270A50704DE8374B990E9A@DU0PR04MB9496.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 16/10/2025 08:00, Bough Chen wrote:
-> Gentle ping...
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <d5d2fe20-9d63-4304-8b36-9708309791ea@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-Why maintainer would take it if it cannot be spotted?
+On 16/10/25 11:29 am, Lance Yang wrote:
+>
+>
+> On 2025/10/16 13:34, Dev Jain wrote:
+>>
+>> On 16/10/25 9:06 am, Lance Yang wrote:
+>>> From: Lance Yang <lance.yang@linux.dev>
+>>>
+>>> A non-present entry, like a swap PTE, contains completely different 
+>>> data
+>>> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
+>>> non-present entry, it will spit out a junk PFN.
+>>>
+>>> What if that junk PFN happens to match the zeropage's PFN by sheer
+>>> chance? While really unlikely, this would be really bad if it did.
+>>>
+>>> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
+>>> in khugepaged.c are properly guarded by a pte_present() check.
+>>>
+>>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>> ---
+>>
+>> Thanks, I missed this.
+>
+> Me too ...
+>
+>>
+>>>   mm/khugepaged.c | 13 ++++++++-----
+>>>   1 file changed, 8 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>> index d635d821f611..0341c3d13e9e 100644
+>>> --- a/mm/khugepaged.c
+>>> +++ b/mm/khugepaged.c
+>>> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t 
+>>> *_pte,
+>>>           pte_t pteval = ptep_get(_pte);
+>>>           unsigned long pfn;
+>>> -        if (pte_none(pteval))
+>>> +        if (!pte_present(pteval))
+>>
+>> There should be no chance that we end up with a pteval which is not 
+>> none *and*
+>> not present, if you look at the callers of release_pte_pages. So 
+>> perhaps we
+>> should keep this either the same, or, after "if(pte_none(pteval))", do a
+>> WARN_ON_ONCE(!pte_present(pteval))?
+>
+> Good catch! Yeah, but I'd rather not rely on the callers ...
+>
+> Wouldn't it just be simpler and safer to always have is_zero_pfn() 
+> guarded
+> by pte_present()?
+>
+> I don't have a strong opinon here, though ;p
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Yeah same, I think we can leave it to what you have done.
 
 
-Best regards,
-Krzysztof
+>
+> Dev, Thanks!
+>
 
