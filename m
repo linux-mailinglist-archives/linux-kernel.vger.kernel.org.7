@@ -1,204 +1,170 @@
-Return-Path: <linux-kernel+bounces-855996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1903BE2D23
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:33:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F8DBE2C5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE8815E173B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:24:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47D9334B992
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1011C2D0C7D;
-	Thu, 16 Oct 2025 10:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C7A226863;
+	Thu, 16 Oct 2025 10:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="P2aC/LS/"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rm+1Rt41"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34832862D
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B035B29CE1;
+	Thu, 16 Oct 2025 10:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760610256; cv=none; b=FNM9OG54XAKFxPE4wj9xCyMoE9iinHvaJkCLjbzuIVEVQMoOWURVIBlT+c4dFE3jN/YjIwvmqU1z+EznqIeb64/r1JzYFsY+GBUmuZTB4P9LmVai5blMiGDHk4bK7YWqoTt2kEoD4PRGDaZWm58cRz/qTqTFJGSfHbciOfszYxw=
+	t=1760610475; cv=none; b=rWqF1egfzFXEkHQ1BC4s4PiZtr/9aTFPIeYokm66Td0Q0NQznnOtLZsWghXk4V+okzB2oMt00O5c+faXmT5ZKdeEwI1ycUjaNz/d/uCClCNbgSFida2t1Mw+MW2urlahYJb+T+q/ReUcQU74tHRz+MO1Vxc3eEmfcVuG1P3ZWjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760610256; c=relaxed/simple;
-	bh=qp+KeUy96QuR5ckUkOoqptYM3jA5RP4mf69cvLhzuUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tbIe99l20nT4RKXshtK3qDWBCfDodTiqIzglfunqMqIpBrVnNoDxNB6bx8ceCKJOKQfxK7v9HJ3VXqvDpYCH+YgdYDJYa+ItUXhPMEB5u0PF4MVT5+FckslZQdtlR0pHdTieS3SaWZhPOl1JIpY8zOlWVtoR50AGLqW6dpqXSsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=P2aC/LS/; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id 44E48C4308
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:24:04 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 91DB2C4A85
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:24:03 +0300 (EEST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 9A3321FF719
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:24:02 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760610243;
-	bh=gV/v90xa2SLKdmP/pBZ8wq4Q7F0yp1HfJIwXljec+TI=;
-	h=Received:From:Subject:To;
-	b=P2aC/LS/ToS+TE4cVj05O/+7jmxhSqZ7TZxMGjKCeYMKCPePcB3k7b/ZkxqKtumLW
-	 1Vm+hlz1I736IRX4hINwyKRopWWssr2RsuPVl2YMwL42n7GfnBVWWTyyPuSndTzwz9
-	 E1tc8bH3eZCFV45CWOoFBb9LnG5opv2pe3UBKNKhQY2JrJlQVWs+mkRj1tMcWlADtC
-	 11pqZv2YdZtnDj1IIINkF3XqH4gyHg38EqOpekUW0saNG40d7RDA6rDJaP/f/9rBvB
-	 K49GD2cx+oGa8lBYuyXp3fKeISY0GuiU5tQPAW3EzQONnTocH9LBkFzMA+DXTPtLnl
-	 X0KOi9DYfMKvQ==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.175) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f175.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f175.google.com with SMTP id
- 38308e7fff4ca-36c0b946cb5so4041561fa.3
-        for <linux-kernel@vger.kernel.org>;
- Thu, 16 Oct 2025 03:24:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWupIr99++WOrIscG9YxkCnPhM/ACpHv57BKugI+XPpElJFmaaLyCMCLcP27nL6EsZn5T8hh7DxGnwe3r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7/VUFxrGifZnnHDKABz6NJsAZx41its30xgOSAZDIVAg5ueO/
-	NUqxs9mxM1NhpnJd4b78lI/7SiP1Vyw4vnBB1de8AnDkdl7KaaEzHPx6Y3KXo3IcSDjvqAOXWTF
-	5rTaqnSNZ5dfE1P0Z/ttUJ8mSOCkpxEA=
-X-Google-Smtp-Source: 
- AGHT+IH5R/hNpzYEzewPipSZJMkHM5BoUT9HVwv+Z4NmQpb8O+7YzOMwKwR3vaNGi5bMleyf6xqrVpsn/dsjmevG4UM=
-X-Received: by 2002:a2e:bccc:0:b0:36b:693d:1244 with SMTP id
- 38308e7fff4ca-37609ef126bmr84862431fa.30.1760610241765; Thu, 16 Oct 2025
- 03:24:01 -0700 (PDT)
+	s=arc-20240116; t=1760610475; c=relaxed/simple;
+	bh=lJ9v2xcx1JnSMx93hvwga21ohxCuyZf3tm6RnYMFOKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rH00kgCXFOVwYIA5AXa2lwguOQgYFGivuq5aChgLUEu2yjWBpTEZq56qNBfjyz+th4ZXbHctou72+cqyzvBSddRwKycDLw1wQcqgfpo/RYM47iUEuzCbsxg3gLS1+sWi1y3Jnc9dW2qWV9EV41zpzpZHqnNatKNw/NeBJ+ZRVKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rm+1Rt41; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760610379; x=1761215179; i=markus.elfring@web.de;
+	bh=lJ9v2xcx1JnSMx93hvwga21ohxCuyZf3tm6RnYMFOKs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=rm+1Rt410py7jzDohBK15D7DXSNxkzhlMrn3xurftrFsXIvjBo0J42KKKXHRSsNu
+	 FofgvhBW4tLFKNBG2sYMPNlSC2NXZA6Rv2Rs1dmr+7qzWAx2sYAS+ZfG7Jc7j5uBj
+	 5QxYKmlobWPU3dsJ40K9RJHaHfNTXJq2Y7ziejlihu8iY22G6Es7NQtuiOL5ELV9+
+	 G+yXWnP7al6KRYHpOChNp0ABBkLSBQ05JyCPDd81Md1lulHObjhwYNZyxFSAI0klT
+	 j6DMprvfBAg1yUeeeDpPbRaALLW4Jg7uYlaMTZVArvScYnhNKu+4VSSWCNHW/FKkn
+	 xUqxg0bSDG/00lZ+bg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.241]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzin-1urwtO1IjR-00WZWN; Thu, 16
+ Oct 2025 12:26:19 +0200
+Message-ID: <3ed166fc-6641-4e7b-a2ba-2f17081af1d3@web.de>
+Date: Thu, 16 Oct 2025 12:26:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <20251013201535.6737-4-lkml@antheas.dev>
- <cf0ca840-6e0d-2d99-cb23-eabf0ac5263b@linux.intel.com>
- <CAGwozwFBQ4DWS5s-La5f-6H=ZQvQFjU3=7U2RiJStGxO1sM+bQ@mail.gmail.com>
- <cf824f48-58b4-2400-9acf-796bb76d6b28@linux.intel.com>
-In-Reply-To: <cf824f48-58b4-2400-9acf-796bb76d6b28@linux.intel.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 16 Oct 2025 12:23:50 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwEo+Mx8fv_ohQQ9Ha6p=bJcJmfj==aRGcgoqQXzXEZmVw@mail.gmail.com>
-X-Gm-Features: AS18NWBuPZc56lDSGKACDIJ6VO20ByZypxxronk974sOSAippwxgCHKH754emac
-Message-ID: 
- <CAGwozwEo+Mx8fv_ohQQ9Ha6p=bJcJmfj==aRGcgoqQXzXEZmVw@mail.gmail.com>
-Subject: Re: [PATCH v6 3/7] platform/x86: asus-wmi: Add support for multiple
- kbd RGB handlers
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	Denis Benato <benato.denis96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next 2/9] hinic3: Add PF management interfaces
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
+ netdev@vger.kernel.org
+Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Bjorn Helgaas <helgaas@kernel.org>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Gur Stavi <gur.stavi@huawei.com>, Jakub Kicinski <kuba@kernel.org>,
+ Joe Damato <jdamato@fastly.com>, Jonathan Corbet <corbet@lwn.net>,
+ Lee Trager <lee@trager.us>, luosifu@huawei.com, luoyang82@h-partners.com,
+ Meny Yossefi <meny.yossefi@huawei.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Paolo Abeni <pabeni@redhat.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Shen Chenyang <shenchenyang1@hisilicon.com>, Shi Jing
+ <shijing34@huawei.com>, Simon Horman <horms@kernel.org>,
+ Suman Ghosh <sumang@marvell.com>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, Wu Like <wulike1@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Zhou Shuai <zhoushuai28@huawei.com>
+References: <b59d625d-18c8-49c9-9e96-bb4e2f509cd7@web.de>
+ <20251016085543.1903-1-gongfan1@huawei.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251016085543.1903-1-gongfan1@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <176061024323.2757629.2849137605324600119@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+X-Provags-ID: V03:K1:nxYgTsho/n3tNqKGoyXovz3zHZrFhFsam3viLf1NX2PU+V6Oncj
+ 1iCP437tSZMp+xBm1W+Ohbgof7lAzVdvxJeUJAJPdyg0Fm58Sb/1eSEnjYifCqutUvXwL+N
+ OiovrWEr0nACManebaf9NfjBdI63zDmbYaaGsqmMAQm6MHVkTaPBZNqRUyY8eCFGELmLwHs
+ DRrByAYBIgEAzmqaErbyA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:d7DCC4oCh3o=;8DYm32kJ+SSA7R8co/mkQ2/74U1
+ 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
 
-On Thu, 16 Oct 2025 at 12:19, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
->
-> > On Wed, 15 Oct 2025 at 13:59, Ilpo J=C3=A4rvinen
-> > <ilpo.jarvinen@linux.intel.com> wrote:
-> > >
-> > > On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
-> > >
-> > > > Some devices, such as the Z13 have multiple AURA devices connected
-> > > > to them by USB. In addition, they might have a WMI interface for
-> > > > RGB. In Windows, Armoury Crate exposes a unified brightness slider
-> > > > for all of them, with 3 brightness levels.
-> > > >
-> > > > Therefore, to be synergistic in Linux, and support existing tooling
-> > > > such as UPower, allow adding listeners to the RGB device of the WMI
-> > > > interface. If WMI does not exist, lazy initialize the interface.
-> > > >
-> > > > Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> > > > Tested-by: Luke D. Jones <luke@ljones.dev>
-> > > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > > > ---
-> > > >  drivers/platform/x86/asus-wmi.c            | 118 +++++++++++++++++=
-+---
-> > > >  include/linux/platform_data/x86/asus-wmi.h |  16 +++
-> > > >  2 files changed, 121 insertions(+), 13 deletions(-)
-> > > >
-> > > > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86=
-/asus-wmi.c
-> > > > index e72a2b5d158e..a2a7cd61fd59 100644
-> > > > --- a/drivers/platform/x86/asus-wmi.c
-> > > > +++ b/drivers/platform/x86/asus-wmi.c
-> > > > @@ -258,6 +258,8 @@ struct asus_wmi {
-> > > >       int tpd_led_wk;
-> > > >       struct led_classdev kbd_led;
-> > > >       int kbd_led_wk;
-> > > > +     bool kbd_led_avail;
-> > > > +     bool kbd_led_registered;
-> > > >       struct led_classdev lightbar_led;
-> > > >       int lightbar_led_wk;
-> > > >       struct led_classdev micmute_led;
-> > > > @@ -1530,6 +1532,53 @@ static void asus_wmi_battery_exit(struct asu=
-s_wmi *asus)
-> > > >
-> > > >  /* LEDs **********************************************************=
-*************/
-> > > >
-> > > > +struct asus_hid_ref {
-> > > > +     struct list_head listeners;
-> > > > +     struct asus_wmi *asus;
-> > > > +     spinlock_t lock;
-> > >
-> > > Please always document what a lock protects.
-> > >
-> > > I started wonder why it needs to be spinlock?
-> > >
-> > > It would seem rwsem is more natural for it as write is only needed at
-> > > probe/remove time (if there's no good reason for using a spinlock).
-> > >
-> > > You're also missing include.
-> >
-> > I went through the comments. Thanks. The reason that it is a spinlock
-> > is that both hid-asus and asus-wmi interact with the primitives to
-> > register and unregister listeners, either of which can prompt the
-> > creation of the led device which has to be atomic. And they do so from
-> > IRQs too.
->
-> Please note in the changelog how it can happen from IRQs as I tried but
-> couldn't find anything. Admittedly, I didn't try to follow the callchains
-> that deeply. The justification should be clear enough to anyone who
-> looks this commit later so better have it in the changelog.
+> I can't quite understand "the distribution of recipient information betw=
+een message
+> fields". Can you explain this further?
 
-The initial versions used a mutex, and we found kernel hangs under
-IRQs, so it was converted to a spinlock. I will try to reword.
-Specifically, I think the errors came when holding the lock when
-changing brightness.
+Can it occasionally be more desirable to specify other recipients
+in the field =E2=80=9CTo=E2=80=9D (instead of =E2=80=9CCc=E2=80=9D)?
 
-I recall one of them was brightness hotkey (second to last patch)
-triggers an IRQ -> event goes to asus-wmi -> calls brightness handler
--> tries to hold lock -> crashes. Lock needs to be held because
-hid-asus can choose to unregister a listener.
-
-
-> > Perhaps the driver could be refactored to use rwsem, I am not sure.
->
-> Just leave it spinlock.
->
-> > The fixed version can be found here[1]. I will give it 1-2 more days
-> > in case someone else wants to chime in and resend.
->
->
->
-> --
->  i.
-
+Regards,
+Markus
 
