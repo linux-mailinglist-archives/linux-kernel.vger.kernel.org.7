@@ -1,115 +1,193 @@
-Return-Path: <linux-kernel+bounces-856764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CBBBE4FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54082BE501B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D2B1A63F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6A748162F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDD922D4C3;
-	Thu, 16 Oct 2025 18:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6F62248A8;
+	Thu, 16 Oct 2025 18:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+kSMksD"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BclBUnRs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9DB2264CA
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423FE221721;
+	Thu, 16 Oct 2025 18:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760638119; cv=none; b=D5p4sdNKzTBi6NHDPkDXEQOKnfyPiOY4t9pIqVBssaq80SEvPVywESzWXX88vIkDhpmadqvesYLfTD6qAZB1hbnDaKQlpXceI21dNRmxKkHX8g10LJc7+RMjtxegPXepxObWAU8qBkUiCOYqGZSOiUxAYMI32ojByxkD4oZ1SWQ=
+	t=1760638196; cv=none; b=hZwwz0mP8pbBZXPD5x9VgFtZH06fdm7Mh1FqGvaxCA3OgfgCep6uMo53rhJckZseoWGDJjIKvDcJ3hHT0HncTIpIhwMPLFS/OZ/mLD5K76EGyeEj/5EcxkOpfYfDGXW+5bUId/JjODdwkDDaLEKxq9u9PjATvB/ChqSgX8kIATE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760638119; c=relaxed/simple;
-	bh=pvdI1tHJ0y9UyYUK8ggKpv8HiCk5nY9MZSyFsaBNsRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VvvtoNgO9b+bY1sBMVfllTzJnWlrXkqC7X/xbPiXdz0E3KomCno3ReWpnWpRvIUqlwz0KXbLV6kNvNDSwwaqgiUQn1fX9Xkq+Py7POS4829WyjmpED6kxxgBM4o1+ml7dxsAxeAAUDouVpLQbIHvsRUX+rQI7WL6SMc2sI1VOtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+kSMksD; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-26e81c17d60so2003905ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760638117; x=1761242917; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pvdI1tHJ0y9UyYUK8ggKpv8HiCk5nY9MZSyFsaBNsRY=;
-        b=H+kSMksDV6T3s5wcA+ctD5yFuJ3P2xIRjT8GofqOvekOwjggObbh1tjNFvvAbmbysQ
-         drrQWQOeYsWB0QP4G84ElM5cb6IpCHTFsPZf/FmtyGFwboBVhk6K9LEYTYf36Aia+qfF
-         KdfmUmlUy5HzI6alFFTkRL6+iz+SVYmWneHDGIHsoHj4q3dMgLHejT0a0RJC9kM7jGNk
-         zDuqSWLOkMmQWmRUXD4XyjnmttRUw8/nua74fIdgS3dxmlDQinTMRFJIyOP7l0kRsVhv
-         LjL9A/5NAVT42ncBZ1EPKGNt/BBQjy7xaOk89rA+x6V2AQRelOg+10GWOfGJAjniS6JM
-         i4RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760638117; x=1761242917;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pvdI1tHJ0y9UyYUK8ggKpv8HiCk5nY9MZSyFsaBNsRY=;
-        b=QJafMlW2zvutsG3g61ZYJrCeQlB3EVuDa3jBvIT/DgvE0Z0AudBkJuOw2MdrSS6GdF
-         bcIeLConbZHxfFlb7a/dnokGuTI8GV7UZP2bAQILuiLH4ZsbYF4bRvQpqG+TM7yC0efi
-         sGhwGKPUNhHKsOnZRYFsA0LO6eqeK+5ihKleOfxraam8VmmYv8dG+EKggcm6FQCUg7bL
-         NgPAT6rOM2D6Lc5YNysEpO6FAIFAamGcIMmb+WrZjEz6LgmUSmxRtlEYMPdpAG5vhrJG
-         9N+l7pasia7QQjbSnBYadHrAWYMKV/joAcfMzxIgm5WmnXG7h+E6aG/R4UVHbX2kUgLf
-         RoNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSblCzSaDpXiw04jqGtgaAEjLag0x39SIDEGBLj0QQEL9x7noM6wh/NuPzXdJVP74ZG6ivHK9U05fzFeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSannUpNtX7OH/mfcUkYR3tJ+NAH2UzcSaO0Uw3vv2LRmTgw57
-	U2qBqKAFjSJHW9fGczDfaqX/AvgFLRVfXv8ZCms6N//4MBOVVdqKAURHhWejWh5K1TJZsJloEWm
-	QoVXGXVOhtJKlZfDWywub4L2/jzBB69w=
-X-Gm-Gg: ASbGncvFU665t/mFN7gekWGH2t6c0G7/uh/t8Sz91HOE6NL27UJhlUsJlYlkQc5t2Kw
-	L32D7NydippscQX+YdT2NwNY5f0yhOLnCuY7azi6qn83gtpgwtK7UBvzQSUYeljKJutdZsAglAA
-	g8E1FQYAKF+taLLntm3dITQLwW6SMpp7sF14oiIZgBOUVgjWfi69m0iCn+4bkZNsC/ezLxuaO/x
-	PScx6ahkis5+XMU9pMzgdTNr1sbe5702p9eMRkDK/42hGoobkqTWzh3MwXyZ/0wIiK6nrxiHYjD
-	h7nRGccj9CjJH2m35z8IvBk3t2hCww6D44xqzEnMJgdMV6xqsvrk/LCKcQW8sh3PuIfxU62r8x7
-	wmPGm0PWw6y348A==
-X-Google-Smtp-Source: AGHT+IEoB07YLtvOmgRhJpNg1dneDk3OqPXrwHl8ZjlPvoUL+f8vvKYxA5NW6SB6Z+zvhdKoNNyC5a3rT2Kl6EmYok0=
-X-Received: by 2002:a17:902:e743:b0:264:cda8:7fd3 with SMTP id
- d9443c01a7336-290cb27ec63mr5305925ad.6.1760638117403; Thu, 16 Oct 2025
- 11:08:37 -0700 (PDT)
+	s=arc-20240116; t=1760638196; c=relaxed/simple;
+	bh=FRAN62fSnY6qJO+g1UsOiqTuZGwBL0tpTWmPU6Wzwq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZmVIFXS0eBiklWzXbyStOqzOmuHES5ZIBDMkTieiiiQlc97Rl8p7dbcocRgRhYK9J3C9XmnI3FKzm2JYCB6P/QWjGTNa+Y/LbOBG8POe83sEwxrSNTp1FFRILUZR5xguuaTLaozRzhCmus5Rac5wX+QTs41kn/hpNSLX5U6jHc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BclBUnRs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1385CC4CEF1;
+	Thu, 16 Oct 2025 18:09:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760638195;
+	bh=FRAN62fSnY6qJO+g1UsOiqTuZGwBL0tpTWmPU6Wzwq4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BclBUnRs6bqWeXRqnDjG0fFXxvJ/1yZ6ELpu+6g99uRglnoxe5xatsNVcFu2Yh00S
+	 +uoeKOA4Hh6IQVzdRDjd5eB1fPENHw8jwCeyj8A2WSc/GpdaXHS6haWAEMPmTJgaef
+	 ytaLZCJd6QdNWsLjnM3qSCxjp2sco0lrkWwKq6eVoXkroHEuGfUQMIL0S7mvHM/L2V
+	 PVQXKDi6qD6a7HYy4XkRDPiwORKEfZNSwrA7W+E/1LvluDh/9aCIpCb+u+1I3ciXmX
+	 usE8sAnAypxRncUwNwv5fav5r1PC98K5Gg+SKS5QVQ05YKwd1I17Wo7mN5NZ6OFbJb
+	 kPvvFUJLU4N4g==
+Message-ID: <2ee650e6-9549-4241-ab6d-a294f2d7d4b6@kernel.org>
+Date: Thu, 16 Oct 2025 14:09:54 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016172853.52451-1-seanjc@google.com>
-In-Reply-To: <20251016172853.52451-1-seanjc@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 16 Oct 2025 20:08:25 +0200
-X-Gm-Features: AS18NWA8avJ7AT3gN1GiIIdaHzAYbZXDs9-XkxbnI3nrmWWVp79jjOsrQv3WW6I
-Message-ID: <CANiq72ntKAeXRT_fEGJteUfuQuNUSjobmJCbQOuJWAcNFb1+9w@mail.gmail.com>
-Subject: Re: [PATCH v13 00/12] KVM: guest_memfd: Add NUMA mempolicy support
-To: Sean Christopherson <seanjc@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ackerley Tng <ackerleytng@google.com>, Shivank Garg <shivankg@amd.com>, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] NFSD changes for v6.18
+To: Eric Biggers <ebiggers@kernel.org>, Trond Myklebust <trondmy@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Jeff Layton <jlayton@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+References: <20251006135010.2165-1-cel@kernel.org>
+ <CAMuHMdVYNUBH11trBr2Mo3i_fDh5sw5AzqYbPwO7_m4H6Y3sfA@mail.gmail.com>
+ <20251013192103.GA61714@google.com>
+ <f3a3f734-e75a-4d93-9a89-988417d5008c@kernel.org>
+ <96e2c0717722be57011f4670b1a6b19bb5f4ef48.camel@kernel.org>
+ <CAMuHMdX-LN-uhecx_ZJ9DokNJQ-0maGiLij_u9LVhNk9TODFVA@mail.gmail.com>
+ <b97cea29-4ab7-4fb6-85ba-83f9830e524f@kernel.org>
+ <99d95e27637c6eeb82939d98d6aa3344b7518d89.camel@kernel.org>
+ <20251016180234.GC1575@sol>
+Content-Language: en-US
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20251016180234.GC1575@sol>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 16, 2025 at 7:30=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Miguel, you got pulled in due to a one-line change to add a new iterator
-> macros in .clang-format.
+On 10/16/25 2:02 PM, Eric Biggers wrote:
+> On Thu, Oct 16, 2025 at 11:19:24AM -0400, Trond Myklebust wrote:
+>> On Thu, 2025-10-16 at 11:04 -0400, Chuck Lever wrote:
+>>> On 10/16/25 10:36 AM, Geert Uytterhoeven wrote:
+>>>> Hi Jeff,
+>>>>
+>>>> On Thu, 16 Oct 2025 at 16:31, Jeff Layton <jlayton@kernel.org>
+>>>> wrote:
+>>>>> On Mon, 2025-10-13 at 15:37 -0400, Chuck Lever wrote:
+>>>>>> On 10/13/25 3:21 PM, Eric Biggers wrote:
+>>>>>>> On Mon, Oct 13, 2025 at 12:15:52PM +0200, Geert Uytterhoeven
+>>>>>>> wrote:
+>>>>>>>> Hi Chuck, Eric,
+>>>>>>>>
+>>>>>>>> On Wed, 8 Oct 2025 at 00:05, Chuck Lever <cel@kernel.org>
+>>>>>>>> wrote:
+>>>>>>>>> Eric Biggers (4):
+>>>>>>>>>       SUNRPC: Make RPCSEC_GSS_KRB5 select CRYPTO instead
+>>>>>>>>> of depending on it
+>>>>>>>>
+>>>>>>>> This is now commit d8e97cc476e33037 ("SUNRPC: Make
+>>>>>>>> RPCSEC_GSS_KRB5
+>>>>>>>> select CRYPTO instead of depending on it") in v6.18-rc1.
+>>>>>>>> As RPCSEC_GSS_KRB5 defaults to "y", CRYPTO is now auto-
+>>>>>>>> enabled in
+>>>>>>>> defconfigs that didn't enable it before.
+>>>>>>>
+>>>>>>> Now the config is:
+>>>>>>>
+>>>>>>>     config RPCSEC_GSS_KRB5
+>>>>>>>         tristate "Secure RPC: Kerberos V mechanism"
+>>>>>>>         depends on SUNRPC
+>>>>>>>         default y
+>>>>>>>         select SUNRPC_GSS
+>>>>>>>         select CRYPTO
+>>>>>>>         select CRYPTO_SKCIPHER
+>>>>>>>         select CRYPTO_HASH
+>>>>>>>
+>>>>>>> Perhaps the 'default y' should be removed?
+>>>>>>>
+>>>>>>> Chuck, do you know why it's there?
+>>>>>> The "default y" was added by 2010 commit df486a25900f ("NFS:
+>>>>>> Fix the
+>>>>>> selection of security flavours in Kconfig"), then modified
+>>>>>> again by
+>>>>>> commit e3b2854faabd ("SUNRPC: Fix the SUNRPC Kerberos V
+>>>>>> RPCSEC_GSS
+>>>>>> module dependencies") in 2011.
+>>>>>>
+>>>>>> Copying Trond, the author of both of those patches.
+>>>>>
+>>>>> Looking at this a bit closer, maybe a patch like this is what we
+>>>>> want?
+>>>>> This should make it so that we only enable RPCSEC_GSS_KRB5 if
+>>>>> CRYPTO is
+>>>>> already enabled:
+>>>>>
+>>>>> diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+>>>>> index 984e0cf9bf8a..d433626c7917 100644
+>>>>> --- a/net/sunrpc/Kconfig
+>>>>> +++ b/net/sunrpc/Kconfig
+>>>>> @@ -19,9 +19,8 @@ config SUNRPC_SWAP
+>>>>>  config RPCSEC_GSS_KRB5
+>>>>>         tristate "Secure RPC: Kerberos V mechanism"
+>>>>>         depends on SUNRPC
+>>>>> -       default y
+>>>>> +       default y if CRYPTO
+>>>>
+>>>> This merely controls the default, the user can still override it.
+>>>> Implementing your suggestion above would mean re-adding "depends on
+>>>> CRYPTO", i.e. reverting commit d8e97cc476e33037.
+>>>>
+>>>>>         select SUNRPC_GSS
+>>>>> -       select CRYPTO
+>>>>>         select CRYPTO_SKCIPHER
+>>>>>         select CRYPTO_HASH
+>>>>>         help
+>>>>
+>>>> Gr{oetje,eeting}s,
+>>>>
+>>>>                         Geert
+>>>>
+>>>
+>>> The graph of dependencies and selects between NFS, NFSD, and SUNRPC
+>>> is
+>>> brittle, unfortunately. I suggest reverting d8e97cc476e33037 for now
+>>> while a proper solution is worked out and then tested.
+>>>
+>>
+>> Yes. The reason why I went for the weaker 'default y if ...' and
+>> 'depends on ...' is precisely because 'select' is so brittle, and at
+>> the time others advised against using it for more complicated
+>> situations such as this. The crypto code has a number of dependencies,
+>> and those have been known to change both over time and across hardware
+>> platforms.
+> 
+> CRYPTO doesn't have any dependencies.  As I documented in the commit
+> itself, CRYPTO is normally selected rather than depended on.  Similar to
+> how e.g. this option (RPCSEC_GSS_KRB5) already selected CRYPTO_SKCIPHER
+> and CRYPTO_HASH rather than depending on them.  It doesn't really make
+> sense to handle these options differently.
+> 
+> The real issue is RPCSEC_GSS_KRB5 being 'default y'.  The nfs folks
+> should make a decision about whether they want that or not.
+> 
+> I'll also that NFSD_V4 already selects RPCSEC_GSS_KRB5.  Perhaps that
+> already achieves what the 'default y' may have been intended to achieve?
 
-Thanks!
+Agreed, that's possible. My concern right now is that there are enough
+testing gaps (simply because Kconfig makes the test matrix exponentially
+large) that I don't have confidence that we can come up with a good fix
+and get it broadly tested before v6.18 final.
 
-The macro is not in `include/`, right? That means that, currently,
-when I rerun the command to update the list it will go away.
+I am, however, happy to continue discussing ways to improve the menu
+and the settings it selects.
 
-If that is correct, and you want to have it in the list, then we
-should add e.g. `virt/` there or similar, or we could have a few
-separate lines at the top that are independent of the ones generated
-by the command.
 
-Cheers,
-Miguel
+-- 
+Chuck Lever
 
