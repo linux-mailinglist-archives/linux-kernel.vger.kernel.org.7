@@ -1,163 +1,216 @@
-Return-Path: <linux-kernel+bounces-856929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E158BE5795
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:56:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D43ABE5798
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BFB3189B845
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4287581769
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FD12E1C56;
-	Thu, 16 Oct 2025 20:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CBA2E1742;
+	Thu, 16 Oct 2025 20:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bk2foqa1"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="GPud9RuW"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C1821CA00
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59171534EC
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760648183; cv=none; b=oclcV9FW2o8WM+H6/rlTZiMMPNPdWuj8zeXv5L3ulazP/GcSXNV2so86AQr5F4OdHL/t0F0jyMQcRJgkQavP+zpcdzWM6f2RsDqG4sEffz0Wp4xBhxIJEp+ntJvCfcsxIjNfmFlA8vFbqFU+Yg2NujiMyH0ScHDUGoO+XwQUO6U=
+	t=1760648273; cv=none; b=jMaQLfqGW7Zmsru8uBX1o+/Kp8Hxb18I0+umOdL8Wxh0ujTCjTpvnXyxsKYFZNHjGHNUuEyKQNco7aGepjj2K7iqpAG0qkekN5IN478LiltL1zJl9TMEe6D2ceQvbITvhWkzS3FQYIzUpz2VM0vFO0oin/RBPKBgKFZLyk6kCzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760648183; c=relaxed/simple;
-	bh=QNbtDJRoZLPpXy+idpr7aFTGQIMBg2BzDWB4Jsj5egE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pLSdV84aKu+2f9UOYQ5uYqBHoroctj+XIw+wLj4bINARSLtxBHFmvHHLBRZHn5kmNhbdnT3ehTxtn+oZxxij4rHTFGx3Wltp0lhi9KtJdpi7DMXKyLQIevvdIbmqEFEw4SM2z5SXhveCAArF0NjH1Gvsv8atoY7QUgzMhlwHvyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bk2foqa1; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33badfbd87aso204565a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760648181; x=1761252981; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GkYz85RHkk9FUvuJAia9QMn7na2I9WeVkFiitjkUcbc=;
-        b=Bk2foqa1ypZvjmRZ9gczXYcp3/3SegTJGwSuEoFGUzu90RNFZVcUEp4S6w8IFX7iCp
-         wSUBJkEPYcic/Rg0NJp3sEtuukiFgTKfvcoSsWEUmusy6jAlhNEWtu6S0HduIEgNAU3N
-         R5ygEmna4IGGvuP2AcCHcPckuqCKnRrvooUh84lsfv4hZSXuSKZTxjEndE67XacLXSxq
-         gegPpDznIzqLfHqcVCrNfSramLDL7ytVRlAK9BxCng0bALpZr0FGiBkOlUd/OVx6Y2CP
-         2/cE7zdO6cUrYXCd9xRtTJy9s9VxngW/5GbWXdSqsELBs4p+xzLJeryzPB0c088NhPxX
-         YV8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760648181; x=1761252981;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GkYz85RHkk9FUvuJAia9QMn7na2I9WeVkFiitjkUcbc=;
-        b=NQwuKjgv/OGzwqNj+ECeLhMDUYQF5AymXekcfSnmenb7yvRHjWKrL6m7wDeL4TDZv4
-         D+a7/cEMqiHFtPrEbjHkuYRWvWfH1MS3dOihhgTbGP5SWAeh1E2OKYNijgf38JzZld8f
-         p3FR90NIvZL77FI8CBI7aRAhbL1c09ZlKxdgR6MGLM0/fiaxJ56bJOMyYO6GOIsMnHOJ
-         eo+KZxvrGjK53QVvFyFocyxQkzwdBPtEBggHR4ojX3AaauZJPIm3Mu0+Fq3pgYtJmfCU
-         SyEKjbHSF0SCugl0PtDZeiBEEXZNb2MKzH4uVaZbTAV8+pwafTdi2DSJ/D13iPsySlyZ
-         +o3w==
-X-Gm-Message-State: AOJu0Yz4Er2SNNYnX522/ThE9piyJolfhV+Nrq/x80LiYnGwg7QOhx6a
-	XmarRTpfva1a5HIlK2+S52ZaHcb94PYECovhksr3+7daS67UrBgAcqF6G5/OFuQ0
-X-Gm-Gg: ASbGncvPBQ74axhRDn/JSQCC5i3+7yvpMxLqQJPKlcY/HcYSiEWKY/vPZFGq4TtUgO+
-	hbAVB2qvW7BIzc58vk192hx3PvRgMdMtmoMg/JBbqKV1r9mZjptlweMZrhmXvpSNcuLK6+CJiWT
-	TDIh7wpaxGAWatyJnCfbWhHa2+geSFQsf6yL7fca4t/jCLQ3yeF2Cuws/TyhZyXofdbIVlKy9GJ
-	kNA0Q08Me1e57xZN9V6DOD0dr3PzqOIhjhw2F0ThOU5pobcyCsgVjbm2cy/mx2JiS7NvBLL5wVJ
-	J+IoMbEZx6AdJNU/W4v+kNKhVBLJATR0+kg/NZwC4xV3610nWkmoB0EYLL8EG7KxbNOIJC6s+iD
-	Nb9RdK2jmmmm0m5iegG5cFpydItvneSShV4aYWW5CORldfVYybLRac2v1Nz6Tsbg0Lt8OTuY=
-X-Google-Smtp-Source: AGHT+IGIefvEDm6vu2zJfmlf3U/r52Y7h8MqeGPnDg4XL7t2Jz0M9qxJZVyywZlIkfbPAPTt22SvRg==
-X-Received: by 2002:a05:6a00:1a87:b0:781:18ae:2b8 with SMTP id d2e1a72fcca58-7a2206e648cmr954594b3a.2.1760648180846;
-        Thu, 16 Oct 2025 13:56:20 -0700 (PDT)
-Received: from hobbes ([2600:70ff:f833:0:85d:f376:d78:d2b3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b921711sm23324709b3a.27.2025.10.16.13.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 13:56:19 -0700 (PDT)
-Date: Thu, 16 Oct 2025 10:56:01 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-perf-users@vger.kernel.org, "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, 
-	Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH RESEND] perf/x86/amd/uncore: use kcalloc() instead of
- multiplication
-Message-ID: <hlb3gqgsqpimmv5xjniy27x3l7rmmzc6rektf7hqkr5ysysxsu@n7b7dcnuymwj>
+	s=arc-20240116; t=1760648273; c=relaxed/simple;
+	bh=uRhISYL3n3QE3AeFIzzdXnBIT58XDxcDzGu8M8mMX0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IMGR73PinpHhzoY4XF7f0COo5H5El9jOCkTUFUiiKsaE197e/ZJqZuT528Vuaneioqx/XfGdKyduqKSubBatxyuTOe5oStLP6cIUG4D3mItuhM0mokG3ef1sOlwMn1vhcs8fgja8K2oynCq+y/SDR1QkplNTPukoDZy54X7vn/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=GPud9RuW; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GH3GdS009939;
+	Thu, 16 Oct 2025 20:57:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps0720; bh=IG7FiSEvgNzm4RES3MNSobFTWT
+	004S/n8Il0NAT6yt0=; b=GPud9RuWGblQLBISVz/kA9V0+8jbLh7uQ2fzJ0f+Hp
+	phpnyhT79VhTufv+/j1MhG3MX4xr7O52Hh82z0pb+8aV42UCi9jT7mPwvu6hzEkG
+	VQVfckNo4Y0AoFTvEflgn30+FgAwzioon0prwlD0G8QtKDn2MDFJKnOBNhE0LmHe
+	6z+R4K6Ut65G+/i1uikly71z+M4lVMhR+ysX3QQZfwMDY+UbWk5csgbakVEjf+j1
+	wmr7D8J65+eRa/NT6npYU58X/cdsoa/PpQAZ6dHWNt+0cfkr3p2fTo99xBpYPCrw
+	OtMdrT56FUerVgqwi940HFU9QM9Xc+txgow8wfspJF8w==
+Received: from p1lg14880.it.hpe.com (p1lg14880.it.hpe.com [16.230.97.201])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 49tshfftm9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Oct 2025 20:57:15 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 6DF72800354;
+	Thu, 16 Oct 2025 20:57:15 +0000 (UTC)
+Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 8A5FF80EECB;
+	Thu, 16 Oct 2025 20:57:14 +0000 (UTC)
+Date: Thu, 16 Oct 2025 15:57:12 -0500
+From: Steve Wahl <steve.wahl@hpe.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Steve Wahl <steve.wahl@hpe.com>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+        Kyle Meyer <kyle.meyer@hpe.com>
+Subject: Re: [PATCH] tick/sched: Use trylock for jiffies updates by
+ non-timekeeper CPUs
+Message-ID: <aPFcKDJIP4-maoqI@swahl-home.5wahls.com>
+References: <20251013150959.298288-1-steve.wahl@hpe.com>
+ <87a51q1uhg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4qwazsycsrcemc6n"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <87a51q1uhg.ffs@tglx>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDAyOSBTYWx0ZWRfX8k0dKlInkhSX
+ rUDCh9vLwAhoSTOxMd8wDZdyiNsYPpFWM22rqQl5nkpokZdnwj+JpWUgQOCRBYthIhY2qtb7pt0
+ k4aVCbcwHrM9GYlyBFiOKD6lMjlAK7GhHFTcS8zEZh1U68R57vwBhVy7uQmCDctHk2bXiK6zydZ
+ kUp2jUpS8/A0gQZhlOALcEE1epYc5vEaejWrdApZQCjCeWFWJ0vJwHQ7TNiY20sZ/28136DRX7J
+ mMyGXnyhV3D0vDfIcLZo1I69AWTfVZMyTCoLyj4Ex4BNCVykvl9ee2TADc5zREW84H3YuxN+c/L
+ FRagUKSipSiGKPG+Ab+FWi7Dv9gt/2x7fHeSF/Qx11Qcv39z5Jwf0ngBkIBCTCYwveqoqxx9P/U
+ JnepXVZJ5wzMVvtM0FOv0bMXZfVT8A==
+X-Proofpoint-ORIG-GUID: tc8sYpf_6b8BvGO1LKUmmZwn7YW0FHrZ
+X-Proofpoint-GUID: tc8sYpf_6b8BvGO1LKUmmZwn7YW0FHrZ
+X-Authority-Analysis: v=2.4 cv=O/E0fR9W c=1 sm=1 tr=0 ts=68f15c2b cx=c_pps
+ a=A+SOMQ4XYIH4HgQ50p3F5Q==:117 a=A+SOMQ4XYIH4HgQ50p3F5Q==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=PxzMMrfhGef9sE1I89YA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510160029
 
+On Thu, Oct 16, 2025 at 10:07:07PM +0200, Thomas Gleixner wrote:
+> On Mon, Oct 13 2025 at 10:09, Steve Wahl wrote:
+> > -static void tick_do_update_jiffies64(ktime_t now)
+> > +static bool _tick_do_update_jiffies64(ktime_t now, bool trylock)
+> >  {
+> >  	unsigned long ticks = 1;
+> >  	ktime_t delta, nextp;
+> > @@ -70,7 +70,7 @@ static void tick_do_update_jiffies64(ktime_t now)
+> >  	 */
+> >  	if (IS_ENABLED(CONFIG_64BIT)) {
+> >  		if (ktime_before(now, smp_load_acquire(&tick_next_period)))
+> > -			return;
+> > +			return true;
+> >  	} else {
+> >  		unsigned int seq;
+> >  
+> > @@ -84,18 +84,24 @@ static void tick_do_update_jiffies64(ktime_t now)
+> >  		} while (read_seqcount_retry(&jiffies_seq, seq));
+> >  
+> >  		if (ktime_before(now, nextp))
+> > -			return;
+> > +			return true;
+> >  	}
+> >  
+> >  	/* Quick check failed, i.e. update is required. */
+> > -	raw_spin_lock(&jiffies_lock);
+> > +	if (trylock) {
+> > +		/* The cpu holding the lock will do the update. */
+> > +		if (!raw_spin_trylock(&jiffies_lock))
+> > +			return false;
+> > +	} else {
+> > +		raw_spin_lock(&jiffies_lock);
+> > +	}
+> 
+> Why inflicting this horrible conditional locking scheme into the main
+> path? This can be solved without all this churn completely independent
+> from this function.
 
---4qwazsycsrcemc6n
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [PATCH RESEND] perf/x86/amd/uncore: use kcalloc() instead of
- multiplication
-MIME-Version: 1.0
+Why? Because my first crack at the problem was just change to a
+trylock at all times.  But I saw some callers might depend on time
+being updated before return.  And I would say I didn't "zoom out" far
+enough from the simple fix when trying to accomodate that.
 
-Dynamic size calculations should not be performed in allocator
-function arguments due to overflow risk.
+> Something like the uncompiled below. You get the idea.
 
-Use kcalloc() instead of multiplication in the first argument
-of kzalloc().
+I like this approach.
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>=20
----
- arch/x86/events/amd/uncore.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The reason I'm getting in to this situation seems to be that the
+designated timekeeper is actually doing the jiffies update work;
+holding the lock, hasn't finished processing yet.  Under those
+conditions, this approach will have one extra CPU stuck waiting on the
+jiffies lock.
 
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index e8b6af199c738eb00b..d08e3054461f2ca07a 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -1036,11 +1036,11 @@ int amd_uncore_umc_ctx_init(struct amd_uncore *unco=
-re, unsigned int cpu)
- 		group_num_pmus[gid] =3D hweight32(info.split.aux_data);
- 		group_num_pmcs[gid] =3D info.split.num_pmcs;
- 		uncore->num_pmus +=3D group_num_pmus[gid];
- 	}
-=20
--	uncore->pmus =3D kzalloc(sizeof(*uncore->pmus) * uncore->num_pmus,
-+	uncore->pmus =3D kcalloc(uncore->num_pmus, sizeof(*uncore->pmus),
- 			       GFP_KERNEL);
- 	if (!uncore->pmus) {
- 		uncore->num_pmus =3D 0;
- 		goto done;
- 	}
---=20
-Cheers,
-Joey Pabalinas
+But that's far better than thousands, and I think would be acceptable
+tradeoff for code readability.  I will make it compile and see how it
+tests, and proceed to make it become patch v2 if it seems OK.
 
+> Thanks,
+>
+>         tglx
 
---4qwazsycsrcemc6n
-Content-Type: application/pgp-signature; name="signature.asc"
+Thank you!
 
------BEGIN PGP SIGNATURE-----
+--> Steve Wahl
 
-iQJPBAABCAA5FiEEx6b1SGGPTKxTmPDYqoHu9CTxowIFAmjxW+EbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyAAoJEKqB7vQk8aMCSTIP/jyBdY/bM6BYOPmLlxcY
-7d679rsc10SVO9ia3Afd8buRveo0D9MnZyODRWgO1xcKO2d1MEc89G31P/e/LgL4
-Cxze5uz8l4a2pWP5VCmRLFVnRoLP+50k5D8BkPwe62c5+XiAwmLCcpVVNTruuoFD
-7TiWQh3QsqwlFAOYg1Fau4nAJw151IUByQjDim7yLUA3fixjvETspAh6ePRKsEMr
-m7/VBrJn7jnjgI0q4aNA5uvuYLSy+NTSkBjHShbo9y7a43nHgmP9CxxgPScYV7fV
-MOoXUxvdKbPyxq2zOoQ0mHI0wQ607byo+J68U2/ddPwPb+iX1acHi8gZ91xzntPp
-BArExh38u4NXO6ofTOLPSLAspI5NbmVFvb98AgnhvJuYvD/k/TDZ6/E3l6iMlXZa
-A9bMMx6B/MY/YlgrS/Aryo0KMsqbtfckfuDKbEEFvg6kG0ocZB1F51zRcI6HD61f
-iYcmypXjK9GU27F1OeGV/0h8PT41izq7p5V91LTWK1KRiFLP76YewOaXaVQbAyF9
-kqHW6IzJGKtk8jpe+0MFTt7pq82HOFdkehXVBCGaloDXAfZ9UpjQ/czkP7qOlHOF
-cx2KrgbeM+ZiV+e3TIryaSvyVKVFvQFC1xEtruLKKgvavPq9dXxRdPUFPzFjfMJb
-YrFcIN9F1qYrCrfgqfNEmuYT
-=Xdus
------END PGP SIGNATURE-----
+> ---
+> --- a/kernel/time/tick-sched.c
+> +++ b/kernel/time/tick-sched.c
+> @@ -203,6 +203,21 @@ static inline void tick_sched_flag_clear
+>  
+>  #define MAX_STALLED_JIFFIES 5
+>  
+> +static bool tick_try_update_jiffies64(struct tick_sched *ts, ktime_t now)
+> +{
+> +	static atomic_t in_progress;
+> +	int inp;
+> +
+> +	inp = atomic_read(&in_progress);
+> +	if (inp || !atomic_try_cmpxchg(&in_progress, &inp, 1))
+> +		return false;
+> +
+> +	if (ts->last_tick_jiffies == jiffies)
+> +		tick_do_update_jiffies64(now);
+> +	atomic_set(&in_progress, 0);
+> +	return true;
+> +}
+> +
+>  static void tick_sched_do_timer(struct tick_sched *ts, ktime_t now)
+>  {
+>  	int tick_cpu, cpu = smp_processor_id();
+> @@ -239,10 +254,11 @@ static void tick_sched_do_timer(struct t
+>  		ts->stalled_jiffies = 0;
+>  		ts->last_tick_jiffies = READ_ONCE(jiffies);
+>  	} else {
+> -		if (++ts->stalled_jiffies == MAX_STALLED_JIFFIES) {
+> -			tick_do_update_jiffies64(now);
+> -			ts->stalled_jiffies = 0;
+> -			ts->last_tick_jiffies = READ_ONCE(jiffies);
+> +		if (++ts->stalled_jiffies >= MAX_STALLED_JIFFIES) {
+> +			if (tick_try_update_jiffies64(ts, now)) {
+> +				ts->stalled_jiffies = 0;
+> +				ts->last_tick_jiffies = READ_ONCE(jiffies);
+> +			}
+>  		}
+>  	}
+>  
 
---4qwazsycsrcemc6n--
+-- 
+Steve Wahl, Hewlett Packard Enterprise
 
