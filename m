@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-857020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F19BE5AA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B3EBE5AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF08E4EE6B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:23:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7823620184
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0202E1F01;
-	Thu, 16 Oct 2025 22:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970C12DE1FA;
+	Thu, 16 Oct 2025 22:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="oZTMVaCH"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BFU2Czy+"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AE72DFA21
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ECB2DCC08
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760653383; cv=none; b=e03IfGLrOLPm7warK9L6Y5fEPov0raSLcaXZEQV6gIcd6wsAdz/FiU5p9x+WTH8gwJWfuVGIxNNWGLC9zgA4HC8qNxxVI2H0nVAs5poyztMoIRhOO08Bbbmh7NMxR5WH9b/8iQ2mZUECjWV1ga6KsMn3ThXZZsEYKsyZFQw7rfw=
+	t=1760653396; cv=none; b=W7wu8BU0Tx80gY2b60mKSr4k3/Ha7aJJeXsYArayl00S66jDL39B0aVk8mufASkB2DzOLDaIv2CX1nMxl9HfUvvefygcCiFGJbkT02MZJ+glPF60iGxIFaXQhF0g/xOsqYIvgWU2zWurlOQ9vzvvCAjC+c+IFyv6p3vHA22lC6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760653383; c=relaxed/simple;
-	bh=3ekii4Padoo4vLo5RlCV8aomTzPPeL5/QviVnlsRBu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HeSR/vsjuFyLEoBe91+emheN9bJC8mQmnkzJcL0igKQNwBrOES+WVCiAQ5MXyj/Pa+QSV5HWnggCYYgqQXL1wZip2drC7EWPXstC+RT5fbN5nd35NF9sUP/udPbHIRvFur4FIgyFvdUT+k9jLb/jzVqwc+lSCWQU1AbLvDATriI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=oZTMVaCH; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-269639879c3so12109725ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:23:01 -0700 (PDT)
+	s=arc-20240116; t=1760653396; c=relaxed/simple;
+	bh=3Of9KQDNlxnFxcbbIcQndxNfMGpGHDt7p33lwAbo/H0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dyZ1m62q3zJD/TYNHUudF91WahyUj2BinsT8+v3XpX19TCslDwAGOOZOi9F0+z3fFmtD3XwnV8OX/63AXHCQwIU2epMmQNL+GYGPYi/zLF5BwZE3KxLnoWEdGxT+Fhji8KkIsI7mYewjkAHF1p8YIx+0RmNsD7uvDo6F0AOh86U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BFU2Czy+; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so2780237a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760653381; x=1761258181; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rkSN+UnBTkzCG3PwDHFkCHOX5m2YbVVWNnREzEnFMow=;
-        b=oZTMVaCHq/k0tx3yiSzxJBt/n2F6POmsgUBNRgGUTwpbiuSjPYj0kDam07TY+m9U1L
-         3MOyijOH4WZe/MFS6ZMdRJbgZ9pX4h/vohe9K3EB9mUKAc9c5AKQmyBLTZy0nxNWshmt
-         Oar3glofJ7e3eRxfjDE/kFEE9TktjK/o8F9JJzLbcCl8/bU8aN/ANIpP7rfWRnwqu0Or
-         2w4Jh8p/GU86eBKLffTZBWRSzl37PrhU5/9rd24zpjrInpFupQ2/2hZbH/bHYnSkaEpG
-         x5EaBspLDoq+pvMxV+6X9Z2qcJNSiHJPo98+lzgQHl8oYyI1XUn4Uh2k82tM6HXOHlpG
-         wJTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760653381; x=1761258181;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1760653393; x=1761258193; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rkSN+UnBTkzCG3PwDHFkCHOX5m2YbVVWNnREzEnFMow=;
-        b=vcgINeyh/03xITRfti8Gs49q91nlNOAnfrT6yAv8DZJfgLMGj2EGAlUVmkXcEMyiog
-         jPJX9SVDe3CwKaHbGuqUARIupTt5N0Wv2D43Npoy0DJnj1YSoEubbfdPBKsDKm7s7Wdn
-         J/D1L0kAxs3KMqWkxJDy8zBpSzLtc6h04XoV88nLkNRAh6/xFWScFt0qQx2ErZd4y6JU
-         S0sGWI3zOCmacUfjKDVKRuYdfbOZGr8vFK5tVkZythLQ31/nj0WTe5zRmgcqWlezCfLo
-         vyUyqahpdSz/nZgOkK3TYaj2W1+ye2sEbAZD6qcfzUdItActzZNvnRvOqFZu97siNtJT
-         fGMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYMBhKLvTN1YpgYpWzt7XqAyx/2Wjzjb/jgAqHrKpIAns2mI0ULlQ18Zp/iA19reoFAXwVZCquQBBSf1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9GDO9/C14oLYUrLXXTxUQXMwbae6FhZqphzlKHW/bad+pjWs7
-	a/A3ZXY/Iv59LdG4cVMuReCSgaNOUZQHNZ6PaRoTLnp8akEWClV5zlfn5MBTEFOuCsqH3yZJpUn
-	z6EAx
-X-Gm-Gg: ASbGnctOL08CHXVUMf1X1zsGuv3vzACN1FOfzb9uWIpzhRAMTbsCgP7tP3vS8XCH/VH
-	DPeH4b/3lCVRbG/yp3+Cgjb53ChF+fWvL3XG9+JgphzGOHCLQaWOrkpobBx72G5zPB2jXya3dvw
-	I6vtnBaaOLpvAZtNmTmzDZREUDjiWpOx1Mgm2QHxjyZ9dF5LDLrSdCOhWkeuykQrF/lyVeLWr7e
-	kRLtNaJvsXXxFExnbJLKoafEa4njuFfy/lXiw+DsCmlOSZcajXhoU2i0Bc18P8kJdXVioN1ZuP/
-	z9Tc0tOSH4UFYN+XlNxhcBw1QjqnNYUauJVu0uDwHhN3T4p7jk482dGKoaBDueVLN5EKB2jtje+
-	7xZW4u/Z6pUp3ktOMaW9sDY+/Wb0SBUhwc8OZro5PSIXtjHkw/TajLSiBOnZzQ7lmxvXWPWPlqJ
-	/z533e3g==
-X-Google-Smtp-Source: AGHT+IG6Ed2MBjmz0upGafcO94uC04MsCaD920R4+63rtx35D385DHJTV6ADNuxL5fUjZODV+u2KRA==
-X-Received: by 2002:a17:902:ea01:b0:267:d2f9:2327 with SMTP id d9443c01a7336-290c9cf2d88mr20529015ad.27.1760653380873;
-        Thu, 16 Oct 2025 15:23:00 -0700 (PDT)
-Received: from sunil-laptop ([106.51.195.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909934b0b5sm41627735ad.38.2025.10.16.15.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 15:23:00 -0700 (PDT)
-Date: Fri, 17 Oct 2025 03:52:53 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: rafael@kernel.org, regressions@lists.linux.dev, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	apatel@ventanamicro.com,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Daniele Cleri <DanieleCleri@aaeon.eu>
-Subject: Re: [REGRESSION] in 6.18-rc1, failed to query a GPIO using a name in
- ACPI
-Message-ID: <aPFwPR2A0CN6k1Vl@sunil-laptop>
-References: <c321423b-3cdb-41a5-9939-dc5c846cfcd4@bootlin.com>
+        bh=hbP4t9WZG2Kuz1VfYZ6CoRLFNg6XhQf//zeVogyIhOo=;
+        b=BFU2Czy+P/qJ7jI9CpO+YONVrUDpjA3chmJqtvFbOSlMUnZCUlCJOCE3ETRAaUEVC7
+         GB6tKSLiw2fCLmX93rnGCzQZ52hBQnAB+7INIOXB/rJZ8Dr3Zvbp5mJeTE8s2VxG918f
+         HEvjZpQJftFE28ckA/DSydNCueeeBkqRk/NJkhwB1XJtaPW/bRI62OnkumcI2Co9OzO5
+         gIAyoWmMcrtdRu/TN4aRWyeDEO/SgZyN2ewcYCkSl4kN4Q/y8jqvCchE0tAwkxa9sXYY
+         7lomN5OS9lYHFNpHWTj6F0XNQg9YAJaXrEykudx6GqD+B3PIAosTYGIXGdW3WyhfBdKF
+         Q7gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760653393; x=1761258193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hbP4t9WZG2Kuz1VfYZ6CoRLFNg6XhQf//zeVogyIhOo=;
+        b=jTc005jS1fxvt0pdfpmpXTkKfj6C+LIoAPX9+o1veEGOVYI6IP1wpWuIFrX+5kPAsY
+         gvMxBxK43ZCmySlhAQi5IALx9rHd46ix6R0A+H/prB57avtZNUm58oyhWjBiZJCR9k/0
+         o0zOnConCKqfuBYvIk74WSF41UCMRWMxeVVMxrh7HAiqmeFtmOBA0cNr34JqBz701TVc
+         i37qYS+AMH6sbXSe8NNwGzP/cTmAAp1ZsFxlbauD6L2GsNhI+WxBw8O+z3klDnGlnI+n
+         RUeJvTb9hkUZWLgAAT4aLhfIUB5wIu2Y5Lh+SNTjRCQl7RLPtunPW8Vc5zfkfG4DTy54
+         msHA==
+X-Gm-Message-State: AOJu0YwaLTaeNWACkRcthVpNS5QZFDD+LzYB1OXAyZc1uyt7hhEttY+X
+	MWvPi19ICgeqHea/NiQy2I2RlOQjR0pU8E5dJ1m/cUAmPHZ8RTAwB+Sc1tuLmEG/Om7EUQMM6fT
+	5ED0e3OooYaxjlKjblvTS67hFYiJHeH2v+H3kXO8=
+X-Gm-Gg: ASbGncvI128SrIvISGn6xhuvJX+1d7+Ck3Jns+KB8Eb6NOCKKl0vIujwcR+6GKP8rVX
+	uKAlnS80rHMcY7fcyY3tgK5G3nvnjL3Mf9YpztJsshPVJACEZIFj7M1eO3tNRUZwsAumpRk/hR2
+	UtpJQF/RrjpLgVetr6r7Px/j9NrnjpAtcvqSE2xtZzTV3D5HZVvds4LezPmCcc75ksPtFmZkke9
+	7UcB+xg4UTJRZMlVAJnpuiBNu3MjxFkJT6sUy0SLT0I/7tx8V1G8P+KSv4T8AVWtI93R5MPWYCz
+	sfhf/WRb5zyqjNA=
+X-Google-Smtp-Source: AGHT+IH1jyo8WiF+9onbqM3PWMbE33kht1xDlMoA6Nu+PSLmgon+9FHRgcFTIpcxihRF4rrkP/IWF/84kPNGE2TnQpE=
+X-Received: by 2002:a17:907:7f17:b0:b3c:31c2:b57d with SMTP id
+ a640c23a62f3a-b64742428b8mr191747666b.55.1760653392822; Thu, 16 Oct 2025
+ 15:23:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c321423b-3cdb-41a5-9939-dc5c846cfcd4@bootlin.com>
+References: <20250926032931.27663-1-jstultz@google.com> <20250926032931.27663-3-jstultz@google.com>
+ <20251008112603.GU3419281@noisy.programming.kicks-ass.net>
+ <CANDhNCpSNyOkcuUZvpZK5FQhL8oxQEax2wUStdRAV_ns2z7n_A@mail.gmail.com>
+ <20251009114302.GI3245006@noisy.programming.kicks-ass.net> <CANDhNCp6TPcfzJLCU-o-xScfoeCqMzYjVhGyDa23YjAqiMnA0w@mail.gmail.com>
+In-Reply-To: <CANDhNCp6TPcfzJLCU-o-xScfoeCqMzYjVhGyDa23YjAqiMnA0w@mail.gmail.com>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 16 Oct 2025 15:23:00 -0700
+X-Gm-Features: AS18NWDJqXK2tpwEaqAd80ufKAkn9onPuMvbTv-G5jIj6eY-duD9kyAOhv1XIqg
+Message-ID: <CANDhNCppAhmF5MX9wP06tPD=H4cpKqppHEPuMgxH+Z=cT9YB5Q@mail.gmail.com>
+Subject: Re: [PATCH v22 2/6] sched/locking: Add blocked_on_state to provide
+ necessary tri-state for proxy return-migration
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Suleiman Souhlal <suleiman@google.com>, kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 02:47:40PM +0200, Thomas Richard wrote:
-> Hello,
-> 
-> While testing the AAEON UpBoard MFD driver with the v6.18-rc1 release, I
-> noticed a regression. The driver does not probe anymore and I get the
-> following error:
-> 
-> [    1.977831] upboard-fpga AANT0F01:00: error -ENOENT: Failed to
-> initialize FPGA common GPIOs
-> [    1.977854] upboard-fpga AANT0F01:00: probe with driver upboard-fpga
-> failed with error -2
-> 
-> The driver fails to get some GPIOs using a name [1] in the ACPI tables [2].
-> 
-> I did a bisect and I found the commit which introduced the regression:
-> e121be784d35 ("ACPI: property: Refactor acpi_fwnode_get_reference_args()
-> to support nargs_prop")
-> 
-Hi Thomas,
+On Mon, Oct 13, 2025 at 7:43=E2=80=AFPM John Stultz <jstultz@google.com> wr=
+ote:
+> On Thu, Oct 9, 2025 at 4:43=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+> >  - I'm confliced on having TTWU fix up PROXY_STOP; strictly not require=
+d
+> >    I think, but might improve performance -- if so, include numbers in
+> >    patch that adds it -- which should be a separate patch from the one
+> >    that adds PROXY_STOP.
+>
+> Ok, I'll work to split that logic out. The nice thing in ttwu is we
+> already end up taking the rq lock in ttwu_runnable() when we do the
+> dequeue so yeah I expect it would help performance.
 
-Could you please try with below change and see if it resolves the issue?
+So, I thought this wouldn't be hard, but it ends up there's some
+subtlety to trying to separate the ttwu changes.
 
-diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-index 1b997a5497e7..43d5e457814e 100644
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -1107,7 +1107,7 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
-                                       size_t num_args,
-                                       struct fwnode_reference_args *args)
- {
--       return acpi_fwnode_get_reference_args(fwnode, propname, NULL, index, num_args, args);
-+       return acpi_fwnode_get_reference_args(fwnode, propname, NULL, num_args, index, args);
- }
+First, I am using PROXY_WAKING instead of PROXY_STOP since it seemed
+more clear and aligned to my previous mental model with BO_WAKING.
 
-Thanks,
-Sunil
+One of the issues is when we go through the:
+  mutex_unlock_slowpath()/ww_mutex_die()/ww_mutex_wound()
+  ->  tsk->blocked_on =3D PROXY_WAKING
+      wake_q_add(tsk)
+      ...
+      wake_up_q()
+      ->  wake_up_process()
+
+The wake_up_process() call through try_to_wake_up() will hit the
+ttwu_runnable() case and set the task state RUNNING.
+
+Then on the cpu where that task is enqueued:
+  __schedule()
+  -> find_proxy_task()
+     -> if (p->blocked_on =3D=3D PROXY_WAKING)
+           proxy_force_return(rq, p);
+
+In v22, proxy_force_return() logic would block_task(p),
+clear_task_blocked_on(p) and then call wake_up_process(p).
+https://github.com/johnstultz-work/linux-dev/blob/proxy-exec-v22-6.17-rc6/k=
+ernel/sched/core.c#L7117
+
+However, since the task state has already been set to TASK_RUNNING,
+the second wakeup ends up short-circuiting at ttwu_state_match(), and
+the now blocked task would end up left dequeued forever.
+
+So, I've reworked the proxy_force_return() to be sort of an open coded
+try_to_wakeup() to call select_task_rq() to pick the return cpu and
+then basically deactivate/activate the task to migrate it over.  It
+was nice to reuse block_task() and wake_up_process() previously, but
+that wake/block/wake behavior tripping into the dequeued forever issue
+worries me that it could be tripped in rare cases previously with my
+series (despite having check after ttwu_state_mach() for this case).
+So either I'll keep this approach or maybe we should add some extra
+checking in ttwu_state_mach() for on_rq before bailing?  Let me know
+if you have thoughts there.
+
+Hopefully will have the patches cleaned up and out again soon.
+
+thanks
+-john
 
