@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-855926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E21BE2A64
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:08:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE4CBE2A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 12:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C1A484CD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:02:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 51736353993
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17234DCF9;
-	Thu, 16 Oct 2025 09:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF69333383;
+	Thu, 16 Oct 2025 09:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BN2o6r5P";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jfNYhBzB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qknzVQzs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g6i4VDXB"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAED330D48;
-	Thu, 16 Oct 2025 09:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681E2335BDA;
+	Thu, 16 Oct 2025 09:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760608406; cv=none; b=DA+uhNHHPUIVOHl77DnHdjWSOCr2B6pu52hK8GzWtN5ViR9DN2P/sQlKi6w8Yfh7mJsXUWQx4Sdb3ll1yM6Tj2d3V+pDNVuYtpHySoRd+1GBAZT441oVBpLPWg4wDIy/NvJBkalfCqfwqlvwOvYdJi3LjNdpVaOuqPqMuimP/4I=
+	t=1760608414; cv=none; b=AXMYBhlNLtps6oTiKcD+RXqtiW2KwdigO2/W865sTQWWaQY4G81K7gtmOh/J9/9T+kes3tdyqEj0Sr4zEnDMCaW15WOeLk7wNFbwfpnRmGmH50lN4S/A1DxXFyu2UDAQIKXJpjYNpCdVyhtewkIU/gzmDiS95VnDOOh+s7C+93E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760608406; c=relaxed/simple;
-	bh=cx3342mW0W5PARNnYhZXFqYWqTgMvimlE5kHoTU2gIE=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=BUrMu8BrEPPRCPk9IJ7wIqEormUOBwwt8NuRNHQWvUVyTIK4u6dINySoI1EyVameHOT1uiyJVO0viG9zD+4ZLHe7r9cb+t0IcwH45+DGg54ZYUC2D1gyvpROetZNRiJmjpMtpD0zjS/hLNSob5lpvoHZdwu3CIU74Z0RBfLM73Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BN2o6r5P; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jfNYhBzB; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1760608414; c=relaxed/simple;
+	bh=ATbbnrx0TUObp47sVRlqLG9QZEVMDb5/otnSDEnSVMA=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=d8WTIm2owpRS9al0z+UOdGyiF0kN7oBvybW17lijaFReJSlyE09mrHVRhZ7Ul2OirzkxI+Z61c+eFGNzSqvoxtdBjoa3GcoRnTRv2TPgQrXrlTbX22vsfRZN2f0KVNRwrQf+NzD6PPsiWPJwO6DtMR3kwI/B4zm1DPQ5uTWm6Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qknzVQzs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g6i4VDXB; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 16 Oct 2025 09:53:03 -0000
+Date: Thu, 16 Oct 2025 09:53:12 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760608384;
+	s=2020; t=1760608393;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=QvHS8Rv4+yi1xrHpM24y3GDY7YiKu4O5R19q+x+5+Js=;
-	b=BN2o6r5P3Eoslccy8LrHePpVLjY7hBmPAUXh8A6wASKeGv/mt78CZnKNNZAMHMPxQHYklL
-	thmPW0plen+Yvzw8KQ148idCFEMEzzbmDKBXaW7shah3XRUzUp84Mj+Vma9GMa6y4Y/s/K
-	CBjVpHFHxSDdSctq7sDPFRB93M9NimFjjkvUFKBaPMOMSwj98UFpsTJTmj/oRyZRSmmveH
-	PQ4v0Yp1HJ4Fk0lRh3Q4vlbJp9LHU/Vw/hUvzD3CLHRaHhU0nfvn57s8rdvZZMggjbSa8z
-	A5cY/CNSjoIAc7HSHrKWoCUERCFOFLrc6ATcAfzWYqjqnmvt0/BYektJ97TjPw==
+	bh=5p25HMeTLCfPpfbdlCDMeDawjU8D2mBQsAuPv6MO5SI=;
+	b=qknzVQzs5oGQwePl83xXV8QekTC36ILbQGKdiC+GRqYaSioIxXnjvtPY7WM7CCf7SfRSjJ
+	snMWV7+plWH6EpDv6tPTpj6YrcahG/roxAxq3um6g0FniXD5usjL7BY7aKEPXW8In3QHwj
+	EG4kKqQIs87BsaddXqOSWImuRzYWEPPtbIuKR3zA1ObY4i+WGjNFsz6AawRLTo3PK/s81f
+	6gZ6++Ak5hwtqp+VuxMR5nRNxsbFGW+vbNPN1DnqsFlpIFEZNbulzA+9aRB0fjdDMzeAAo
+	M91wyhwbAfKQlvWl9Bfqi4Iwb3hJE8+/TidBogv4Mizw5BunUvZq7qDWq8oybw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760608384;
+	s=2020e; t=1760608393;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=QvHS8Rv4+yi1xrHpM24y3GDY7YiKu4O5R19q+x+5+Js=;
-	b=jfNYhBzBlL7nzSN7ZeBiaG+eZVKYcMqBJFCOb7eRKatck7RZkVq+E9fovsUH8NZOv9NvQj
-	HuFcs2a6FbEMlLBQ==
+	bh=5p25HMeTLCfPpfbdlCDMeDawjU8D2mBQsAuPv6MO5SI=;
+	b=g6i4VDXB79Ue+XlM7cRED20bv3RX3fk4TH7U+QLdfn7tftaB5WT8+DtYKMNhRUwrRn0Srw
+	Ycs9bZgmWY2NWeCA==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/core] objtool: Fix broken error handling in read_symbols()
+Subject: [tip: objtool/core] elfnote: Change ELFNOTE() to use __UNIQUE_ID()
 Cc: Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
@@ -65,7 +64,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176060838328.709179.13853867452101955806.tip-bot2@tip-bot2>
+Message-ID: <176060839201.709179.4524623285795260797.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -75,70 +74,73 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     9ebb662fab38a5942100e597b48de5ec9d5e714d
-Gitweb:        https://git.kernel.org/tip/9ebb662fab38a5942100e597b48de5ec9d5=
-e714d
+Commit-ID:     c2d420796a427dda71a2400909864e7f8e037fd4
+Gitweb:        https://git.kernel.org/tip/c2d420796a427dda71a2400909864e7f8e0=
+37fd4
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Wed, 17 Sep 2025 09:03:22 -07:00
+AuthorDate:    Wed, 17 Sep 2025 09:03:15 -07:00
 Committer:     Josh Poimboeuf <jpoimboe@kernel.org>
-CommitterDate: Tue, 14 Oct 2025 14:45:23 -07:00
+CommitterDate: Tue, 14 Oct 2025 14:45:22 -07:00
 
-objtool: Fix broken error handling in read_symbols()
+elfnote: Change ELFNOTE() to use __UNIQUE_ID()
 
-The free(sym) call in the read_symbols() error path is fundamentally
-broken: 'sym' doesn't point to any allocated block.  If triggered,
-things would go from bad to worse.
+In preparation for the objtool klp diff subcommand, replace the custom
+unique symbol name generation in ELFNOTE() with __UNIQUE_ID().
 
-Remove the free() and simplify the error paths.  Freeing memory isn't
-necessary here anyway, these are fatal errors which lead to an immediate
-exit().
+This standardizes the naming format for all "unique" symbols, which will
+allow objtool to properly correlate them.  Note this also removes the
+"one ELF note per line" limitation.
 
 Acked-by: Petr Mladek <pmladek@suse.com>
 Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/elf.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ include/linux/elfnote.h | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 1c1bb2c..b009d9f 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -492,14 +492,14 @@ static int read_symbols(struct elf *elf)
- 		if (!gelf_getsymshndx(symtab->data, shndx_data, i, &sym->sym,
- 				      &shndx)) {
- 			ERROR_ELF("gelf_getsymshndx");
--			goto err;
-+			return -1;
- 		}
+diff --git a/include/linux/elfnote.h b/include/linux/elfnote.h
+index 69b136e..bb3dcde 100644
+--- a/include/linux/elfnote.h
++++ b/include/linux/elfnote.h
+@@ -60,23 +60,21 @@
 =20
- 		sym->name =3D elf_strptr(elf->elf, symtab->sh.sh_link,
- 				       sym->sym.st_name);
- 		if (!sym->name) {
- 			ERROR_ELF("elf_strptr");
--			goto err;
-+			return -1;
- 		}
-=20
- 		if ((sym->sym.st_shndx > SHN_UNDEF &&
-@@ -511,7 +511,7 @@ static int read_symbols(struct elf *elf)
- 			sym->sec =3D find_section_by_index(elf, shndx);
- 			if (!sym->sec) {
- 				ERROR("couldn't find section for symbol %s", sym->name);
--				goto err;
-+				return -1;
- 			}
- 			if (GELF_ST_TYPE(sym->sym.st_info) =3D=3D STT_SECTION) {
- 				sym->name =3D sym->sec->name;
-@@ -581,10 +581,6 @@ static int read_symbols(struct elf *elf)
+ #else	/* !__ASSEMBLER__ */
+ #include <uapi/linux/elf.h>
++#include <linux/compiler.h>
+ /*
+  * Use an anonymous structure which matches the shape of
+  * Elf{32,64}_Nhdr, but includes the name and desc data.  The size and
+  * type of name and desc depend on the macro arguments.  "name" must
+- * be a literal string, and "desc" must be passed by value.  You may
+- * only define one note per line, since __LINE__ is used to generate
+- * unique symbols.
++ * be a literal string, and "desc" must be passed by value.
+  */
+-#define _ELFNOTE_PASTE(a,b)	a##b
+-#define _ELFNOTE(size, name, unique, type, desc)			\
++#define ELFNOTE(size, name, type, desc)					\
+ 	static const struct {						\
+ 		struct elf##size##_note _nhdr;				\
+ 		unsigned char _name[sizeof(name)]			\
+ 		__attribute__((aligned(sizeof(Elf##size##_Word))));	\
+ 		typeof(desc) _desc					\
+ 			     __attribute__((aligned(sizeof(Elf##size##_Word)))); \
+-	} _ELFNOTE_PASTE(_note_, unique)				\
++	} __UNIQUE_ID(note)						\
+ 		__used							\
+ 		__attribute__((section(".note." name),			\
+ 			       aligned(sizeof(Elf##size##_Word)),	\
+@@ -89,11 +87,10 @@
+ 		name,							\
+ 		desc							\
  	}
+-#define ELFNOTE(size, name, type, desc)		\
+-	_ELFNOTE(size, name, __LINE__, type, desc)
 =20
- 	return 0;
--
--err:
--	free(sym);
--	return -1;
- }
+ #define ELFNOTE32(name, type, desc) ELFNOTE(32, name, type, desc)
+ #define ELFNOTE64(name, type, desc) ELFNOTE(64, name, type, desc)
++
+ #endif	/* __ASSEMBLER__ */
 =20
- static int mark_group_syms(struct elf *elf)
+ #endif /* _LINUX_ELFNOTE_H */
 
