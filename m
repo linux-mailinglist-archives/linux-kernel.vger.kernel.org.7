@@ -1,214 +1,190 @@
-Return-Path: <linux-kernel+bounces-856263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2F7BE3AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F261BE3B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683221A65651
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CC2586176
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CDE1F8BA6;
-	Thu, 16 Oct 2025 13:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00A3339B34;
+	Thu, 16 Oct 2025 13:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="Fs6o/bIj"
-Received: from out28-4.mail.aliyun.com (out28-4.mail.aliyun.com [115.124.28.4])
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="PSTTxJjz"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9571E501C;
-	Thu, 16 Oct 2025 13:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E651E1DF982;
+	Thu, 16 Oct 2025 13:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760620867; cv=none; b=B2kiIrEbZekdtPP1t7uoqKeND7uO5GF5H5TYwWt4GhyV20M5tvVoqDq8NHlNdKG2z4Y4o8f/JDWzMwf0iEZr88j8mJRwYlfyWCqTLeQURq3OsXl85l2yS1c7RRYsyhkrZOWmMLZcwZaQibooS3usqZAe95epMWZoEZ1RaBr4fJg=
+	t=1760621342; cv=none; b=GaN8+hgAmGAafdHo7ujshi/LD9hnM2/Ntbg1LocoL1w6iWj8paIcESvv508pfNGKkJOzDiEtOp1jNgVGc9nr0qtQbQfudhM/Tt1jPATVzyU6gUewTAEjDUvyJAaLOiFSwr9I1GG3SC4FrZ/JSmy2x3U4/5q+yrUOZ2F+NcuF9Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760620867; c=relaxed/simple;
-	bh=d43wWxFe8YgciryMpshrEFfv1eIj9lNmKK1kt7WhGoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAn7YlcvUKQhI7hL0qy2BQ9YWQDMFDRlBNTGwiITCnOzeMvjXBDG7uw7L904GqxwOhsV19Rwk1SC+l64CWozb/6hQvEOVDSZMZDFZ++L1wbE3u6Lj/6FEdqfgXymxDNkN1PTU7ElbAN5S+rHMi3rACgupmau4R++szzn9mDitDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=Fs6o/bIj; arc=none smtp.client-ip=115.124.28.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1760620852; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=2UTd91wMwsE0FFLKumOUlnjeucPMDcZi9xO0exeFpwE=;
-	b=Fs6o/bIjV8QMImu0elaptpS9DhlqsjitJPu2vc6WeXZgyTB+N6mfyQooui6NXM2UpV/3i+3EpbBzDONDRgOX01Bho8rmW90GEWDX98NNHpcYqOBRj3XePu2gjR14IueBLS6QQSzjmgyPWNE314MxGTnMOTkIwmGh9MBEst3QcDA=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.f0AQZQ2_1760619912 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 16 Oct 2025 21:05:13 +0800
-Date: Thu, 16 Oct 2025 21:05:12 +0800
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Xiaoyao Li <xiaoyao.li@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
- skips WRMSR
-Message-ID: <20251016130512.GA95606@k08j02272.eu95sqa>
-References: <20250919214259.1584273-1-seanjc@google.com>
- <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
- <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com>
- <aNwFTLM3yt6AGAzd@google.com>
- <aNwGjIoNRGZL3_Qr@google.com>
- <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
- <aO_JdH3WhfWr2BKr@google.com>
+	s=arc-20240116; t=1760621342; c=relaxed/simple;
+	bh=W7EFgnzr5VtHMbZSDIKFfHdRgXS6s6BbdPilZrxfOy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mc5ewYBb7OKgxpX6xqdQNLw2FKIQlTeugTtWN2iJ8sA1s2tMaUu/SC1rGNndSVmbE7ycxcQiHqSJYz43GaLHH08EMyn1c4LIwNikwr8n1dpMzjm8xLKw1tM++wKzxXC/ez5qIgII2YaLrJNJ5KiFK7ftUvTqMH3KlJHSJ9Qako4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=PSTTxJjz; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=b2ScJ6plfteW9i8eAYDh25/3yzR6qSuYHL3UCvaBAQE=; b=PSTTxJjzed2gJfl+vwX+HLgzSH
+	9TZqqtJpFXglC0AA6CP2k2yH1EJxMX4Xc9SMaRPpuz3i+A83eeXMbeL99q6g6CiLymMspp1kOAgpX
+	1/U/L4xp6QbmP63hsrQ1bYCmhX6HB6Dgm6dDZuJoL433TRyajYacZ1cwq+ksYVssCHUR2MepGVlFW
+	TDb6WWsmSR2beF0aIEVcB8wCaQ4HaU16+6/jMeOumX4FtnR3kLdUZRajudj3naYJZCf5jAt5DG35Z
+	tzZmVFQOotlq44fcXn6myw5KG0txGbXZmjuNKfohlTaFu6xq5XAahofMto7lhPwKKNa4n7h35+0GQ
+	0+IczkB3CW4ohUAJQzPxy93SEEqGS+Yt4JQX5Yakghn8BWPWXMzKgkUyhiLto7ZEGGFN2mgDcyPou
+	A0KraeQNEu8P0ieYr5qWP0JjgEWtLn204ERmO78dHxqYuEQVke2aDk2jjocFY7p54CFY4A0UA/Ofc
+	Hahv5RnOQE8ApYclVVFlF8C0sVyPGD8PRKtw5Y4ZJkYMd0rCLytQxX7sZUOyzkK8KyDdbZKzXtDes
+	2TdMGiDY9mdwbJeQ144azsosjYEXuehhZgGTGS3F0eI25piSKM8jMgxUqjPPytXyjm4Y09iueimJe
+	EQ9EFo4nXBGggb2XR554Q9WggbrVNT93xfgFRCzh8=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: asmadeus <asmadeus@codewreck.org>, Pierre Barre <pierre@barre.sh>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, v9fs@lists.linux.dev,
+ ericvh@kernel.org, lucho@ionkov.net, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2] 9p: Use kvmalloc for message buffers on supported  transports
+Date: Thu, 16 Oct 2025 15:06:09 +0200
+Message-ID: <5019358.GXAFRqVoOG@silver>
+In-Reply-To: <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
+References:
+ <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <8602724.2ttRNpPraX@silver>
+ <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO_JdH3WhfWr2BKr@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Oct 15, 2025 at 09:19:00AM -0700, Sean Christopherson wrote:
-> +Hou, who is trying to clean up the user-return registration code as well:
+On Thursday, October 16, 2025 9:01:56 AM CEST Pierre Barre wrote:
+> While developing a 9P server (https://github.com/Barre/ZeroFS) and
+> testing it under high-load, I was running into allocation failures.
+> The failures occur even with plenty of free memory available because
+> kmalloc requires contiguous physical memory.
 > 
-> https://lore.kernel.org/all/15fa59ba7f6f849082fb36735e784071539d5ad2.1758002303.git.houwenlong.hwl@antgroup.com
->
-Thanks for the CC.
- 
-> On Wed, Oct 15, 2025, Yan Zhao wrote:
-> > On Tue, Sep 30, 2025 at 09:34:20AM -0700, Sean Christopherson wrote:
-> > > Ha!  It's technically a bug fix.  Because a forced shutdown will invoke
-> > > kvm_shutdown() without waiting for tasks to exit, and so the on_each_cpu() calls
-> > > to kvm_disable_virtualization_cpu() can call kvm_on_user_return() and thus
-> > > consume a stale values->curr.
-> > Looks consuming stale values->curr could also happen for normal VMs.
-> > 
-> > vmx_prepare_switch_to_guest
-> >   |->kvm_set_user_return_msr //for all slots that load_into_hardware is true
-> >        |->1) wrmsrq_safe(kvm_uret_msrs_list[slot], value);
-> >        |  2) __kvm_set_user_return_msr(slot, value);
-> >                |->msrs->values[slot].curr = value;
-> >                |  kvm_user_return_register_notifier
-> > 
-> > As vmx_prepare_switch_to_guest() invokes kvm_set_user_return_msr() with local
-> > irq enabled, there's a window where kvm_shutdown() may call
-> > kvm_disable_virtualization_cpu() between steps 1) and 2). During this window,
-> > the hardware contains the shadow guest value while values[slot].curr still holds
-> > the host value.
-> > 
-> > In this scenario, if msrs->registered is true at step 1) (due to updating of a
-> > previous slot), kvm_disable_virtualization_cpu() could call kvm_on_user_return()
-> > and find "values->host == values->curr", which would leave the hardware value
-> > set to the shadow guest value instead of restoring the host value.
-> > 
-> > Do you think it's a bug?
-> > And do we need to fix it by disabling irq in kvm_set_user_return_msr() ? e.g.,
+> This results in errors like:
+> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
 > 
-> Ugh.  It's technically "bug" of sorts, but I really, really don't want to fix it
-> by disabling IRQs.
+> This patch introduces a transport capability flag (supports_vmalloc)
+> that indicates whether a transport can work with vmalloc'd buffers
+> (non-physically contiguous memory). Transports requiring DMA should
+> leave this flag as false.
 > 
-> Back when commit 1650b4ebc99d ("KVM: Disable irq while unregistering user notifier")
-> disabled IRQs in kvm_on_user_return(), KVM blasted IPIs in the _normal_ flow, when
-> when the last VM is destroyed (and also when enabling virtualization, which created
-> its own problems).
->
-Yes, when I looked up this commit, I was confused as well. It is a UAF
-issue if fire_user_return_notifiers() runs in an IRQ-enabled state and
-is interrupted by the unloading of the KVM module.  Both the data
-(user_return_notifier) and the code could be subject to UAF. It is not
-sufficient to simply disable IRQ in kvm_on_user_return() in this commit.
-
-> Now that KVM uses the cpuhp framework to enable/disable virtualization, the normal
-> case runs in task context, including kvm_suspend() and kvm_resume().  I.e. the only
-> path that can toggle virtualization via IPI callback is kvm_shutdown().  And on
-> reboot/shutdown, keeping the hook registered is ok as far as MSR state is concerned,
-> as the callback will run cleanly and restore host MSRs if the CPU manages to return
-> to userspace before the system goes down.
+> The fd-based transports (tcp, unix, fd) set this flag to true, and
+> p9_fcall_init will use kvmalloc instead of kmalloc for these
+> transports. This allows the allocator to fall back to vmalloc when
+> contiguous physical memory is not available.
 > 
-> The only wrinkle is that if kvm.ko module unload manages to race with reboot, then
-> leaving the notifier registered could lead to use-after-free.  But that's only
-> possible on --forced reboot/shutdown, because otherwise userspace tasks would be
-> frozen before kvm_shutdown() is called, i.e. the CPU shouldn't return to userspace
-> after kvm_shutdown().  Furthermore, on a --forced reboot/shutdown, unregistering
-> the user-return hook from IRQ context rather pointless, because KVM could immediately
-> re-register the hook, e.g. if the IRQ arrives before kvm_user_return_register_notifier()
-> is called.  I.e. the use-after-free isn't fully defended on --forced reboot/shutdown
-> anyways.
+> Additionally, if kmem_cache_alloc fails, the code falls back to
+> kvmalloc for transports that support it.
 > 
-
-Thank you for providing the extra information about forced reboot/shutdown. I had only
-assumed that all userspace tasks are frozen before shutdown.
-
-> Given all of the above, my vote is to eliminate the IRQ disabling crud and simply
-> leave the user-return notifier registered on a reboot.  Then to defend against
-> a use-after-free due to kvm.ko unload racing against reboot, simply bump the module
-> refcount.  Trying to account for a rather absurd case in the normal paths adds a
-> ton of noise for almost no gain.
-> 
-> E.g.
-> 
+> Signed-off-by: Pierre Barre <pierre@barre.sh>
 > ---
->  arch/x86/kvm/x86.c | 29 +++++++++++++++++++++--------
->  1 file changed, 21 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 4b8138bd4857..f03f3ae836f8 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -582,18 +582,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
->  	struct kvm_user_return_msrs *msrs
->  		= container_of(urn, struct kvm_user_return_msrs, urn);
->  	struct kvm_user_return_msr_values *values;
-> -	unsigned long flags;
->  
-> -	/*
-> -	 * Disabling irqs at this point since the following code could be
-> -	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
-> -	 */
-> -	local_irq_save(flags);
->  	if (msrs->registered) {
->  		msrs->registered = false;
->  		user_return_notifier_unregister(urn);
+>  include/net/9p/transport.h |  4 ++++
+>  net/9p/client.c            | 11 +++++++++--
+>  net/9p/trans_fd.c          |  3 +++
+>  3 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
+> index 766ec07c9599..f0981515148d 100644
+> --- a/include/net/9p/transport.h
+> +++ b/include/net/9p/transport.h
+> @@ -24,6 +24,9 @@
+>   *                   we're less flexible when choosing the response message
+> *                   size in this case
+>   * @def: set if this transport should be considered the default
+> + * @supports_vmalloc: set if this transport can work with vmalloc'd buffers
+> + *                    (non-physically contiguous memory). Transports
+> requiring + *                    DMA should leave this as false.
+>   * @create: member function to create a new connection on this transport
+>   * @close: member function to discard a connection on this transport
+>   * @request: member function to issue a request to the transport
+> @@ -44,6 +47,7 @@ struct p9_trans_module {
+>  	int maxsize;		/* max message size of transport */
+>  	bool pooled_rbuffers;
+>  	int def;		/* this transport should be default */
+> +	bool supports_vmalloc;	/* can work with vmalloc'd buffers */
+>  	struct module *owner;
+>  	int (*create)(struct p9_client *client,
+>  		      const char *devname, char *args);
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 5c1ca57ccd28..2a4884c880c1 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -229,8 +229,15 @@ static int p9_fcall_init(struct p9_client *c, struct
+> p9_fcall *fc, if (likely(c->fcall_cache) && alloc_msize == c->msize) {
+>  		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
+>  		fc->cache = c->fcall_cache;
+> +		if (!fc->sdata && c->trans_mod->supports_vmalloc) {
+> +			fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+> +			fc->cache = NULL;
+> +		}
+>  	} else {
+> -		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+> +		if (c->trans_mod->supports_vmalloc)
+> +			fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+> +		else
+> +			fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+>  		fc->cache = NULL;
 >  	}
-> -	local_irq_restore(flags);
-> +
->  	for (slot = 0; slot < kvm_nr_uret_msrs; ++slot) {
->  		values = &msrs->values[slot];
->  		if (values->host != values->curr) {
-> @@ -13079,7 +13073,21 @@ int kvm_arch_enable_virtualization_cpu(void)
->  void kvm_arch_disable_virtualization_cpu(void)
->  {
->  	kvm_x86_call(disable_virtualization_cpu)();
-> -	drop_user_return_notifiers();
-> +
-> +	/*
-> +	 * Leave the user-return notifiers as-is when disabling virtualization
-> +	 * for reboot, i.e. when disabling via IPI function call, and instead
-> +	 * pin kvm.ko (if it's a module) to defend against use-after-free (in
-> +	 * the *very* unlikely scenario module unload is racing with reboot).
-> +	 * On a forced reboot, tasks aren't frozen before shutdown, and so KVM
-> +	 * could be actively modifying user-return MSR state when the IPI to
-> +	 * disable virtualization arrives.  Handle the extreme edge case here
-> +	 * instead of trying to account for it in the normal flows.
-> +	 */
-> +	if (in_task() || WARN_ON_ONCE(!kvm_rebooting))
-> +		drop_user_return_notifiers();
-> +	else
-> +		__module_get(THIS_MODULE);
+>  	if (!fc->sdata)
+> @@ -252,7 +259,7 @@ void p9_fcall_fini(struct p9_fcall *fc)
+>  	if (fc->cache)
+>  		kmem_cache_free(fc->cache, fc->sdata);
+>  	else
+> -		kfree(fc->sdata);
+> +		kvfree(fc->sdata);
 >  }
->  
->  bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
-> @@ -14363,6 +14371,11 @@ module_init(kvm_x86_init);
->  
->  static void __exit kvm_x86_exit(void)
->  {
-> +	int cpu;
-> +
-> +	for_each_possible_cpu(cpu)
-> +		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
-> +
->  	WARN_ON_ONCE(static_branch_unlikely(&kvm_has_noapic_vcpu));
->  }
->  module_exit(kvm_x86_exit);
+>  EXPORT_SYMBOL(p9_fcall_fini);
 > 
-> base-commit: fe57670bfaba66049529fe7a60a926d5f3397589
-> --
+> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+> index a516745f732f..e7334033eba5 100644
+> --- a/net/9p/trans_fd.c
+> +++ b/net/9p/trans_fd.c
+> @@ -1101,6 +1101,7 @@ static struct p9_trans_module p9_tcp_trans = {
+>  	.maxsize = MAX_SOCK_BUF,
+>  	.pooled_rbuffers = false,
+>  	.def = 0,
+> +	.supports_vmalloc = true,
+>  	.create = p9_fd_create_tcp,
+>  	.close = p9_fd_close,n
+>  	.request = p9_fd_request,
+> @@ -1115,6 +1116,7 @@ static struct p9_trans_module p9_unix_trans = {
+>  	.name = "unix",
+>  	.maxsize = MAX_SOCK_BUF,
+>  	.def = 0,
+> +	.supports_vmalloc = true,
+>  	.create = p9_fd_create_unix,
+>  	.close = p9_fd_close,
+>  	.request = p9_fd_request,
+> @@ -1129,6 +1131,7 @@ static struct p9_trans_module p9_fd_trans = {
+>  	.name = "fd",
+>  	.maxsize = MAX_SOCK_BUF,
+>  	.def = 0,
+> +	.supports_vmalloc = true,
+>  	.create = p9_fd_create,
+>  	.close = p9_fd_close,
+>  	.request = p9_fd_request,
+
+Just for clarity I would add .supports_vmalloc = false to the other 
+transports. Except of that:
+
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+
+Thanks!
+
+/Christian
+
+
 
