@@ -1,110 +1,112 @@
-Return-Path: <linux-kernel+bounces-856084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8935BE309A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C3FBE30AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22863A23D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CEC75862C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1684D31690D;
-	Thu, 16 Oct 2025 11:20:23 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56CE3164B8;
+	Thu, 16 Oct 2025 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Og9fIw+c";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FMgiECvq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E885C2D9EE6;
-	Thu, 16 Oct 2025 11:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54967263B;
+	Thu, 16 Oct 2025 11:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613622; cv=none; b=bgreac74YDb7M8u7o+u2WkiGmyim7eHEpHRtS3a24HMP7xF0yLs24iTUS29jBj+SUbXdNKbhiqU+gEW5h6lJyEIOQgYXp3zAgLphmQK5kh1688uTWHPbAihHaEIWWQqkuYdsON9bZr8EK7T9L7/5wfPLRmkJ9ZQIM3d0nyhHO7Y=
+	t=1760613705; cv=none; b=nd0h0/3CZ70kLfEPh10b9RsVnkDBkZxynhvTpkvDjftPk5pLk9Uv2i0kQvRiQF2wjUUqIJhK5fpuQtkOTI1W+42pvOfWSM7PHNhdofPisYKB29hu6qHfUXoAZLDQUkqzGzZXkOX7hiydWWKp2MlNLulybiDuARbKo1mM85Sf8/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613622; c=relaxed/simple;
-	bh=JRUebYVubCL3QW0KC1pAGr7YuA/5oFFXVxgrLB0FVJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nq0FluebpG5VXXv0y+e1qD7hTWMJxo+/CIXrulWLSiVwXP9tEVRBBCo51RJ3YG46WAXgehlx0vN4Fq3F+5aNHfwSockFHgB+Eooza03/ZKzIrIscbcvfRGtaENk1t261ltXgBOpH7V7bqStxWeX8XJhDsfflXW2DkMfkUP+7PHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
-	id 14D8361A14; Thu, 16 Oct 2025 13:20:11 +0200 (CEST)
-Date: Thu, 16 Oct 2025 13:20:10 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Andrii Melnychenko <a.melnychenko@vyos.io>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, phil@nwl.cc,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] nf_conntrack_ftp: Added nfct_seqadj_ext_add() for
- ftp's conntrack.
-Message-ID: <aPDU6i1HKhy5v-nh@strlen.de>
-References: <20251016104802.567812-1-a.melnychenko@vyos.io>
- <20251016104802.567812-2-a.melnychenko@vyos.io>
+	s=arc-20240116; t=1760613705; c=relaxed/simple;
+	bh=s3UKeMDFienzdhZ6fEyetCuPEQBFdQYD9GlTbQx8eQQ=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=orzINbXQEV569dB/3yXt+RshQwAC3Rs7PRR1NIZZFVPxZ8Ce0wZrlKID1InBR0Hj0/jp9uXeLcB3m/OtJFBlL7sT0b17IEBmhrnh9aNqx6C90ztw6NEz6+wTOxgArPpyZYjttWBzqtZZC1XNZGJe563Iyv+KgxoogroZPuyf444=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Og9fIw+c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FMgiECvq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 16 Oct 2025 11:21:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760613701;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=AHIexI7oh85pU2rC4PB6zjKSGbbonpIYsq1vd3KvIys=;
+	b=Og9fIw+c5CI8WBIkamKSi/XaMNfHPG5lGkdwrMcdoRaLfbwlmoRGHCOsViHvE/ia6IbrJv
+	I1LfKCYO2G2oObRXakUihTKoudhoJgnlHP+JDf78PDJIRpdOQdtqSHVSygTEBGRpt2tPkf
+	U8injnXR7WrpUm4SzajbzLiGjryo/CJp0kII3+WHiYXkB4M1vY8GG711zWvsLbk43qdsFO
+	upCfQ9WmLax/g4ein58enslVaR1uZrqXZ+54yng1dpbjtC1bVLFoqPGPd1SebV4klf5yGU
+	zbluwtfaKjscKtqcrTmEommazq5t2bnf0C0z99tQe3TVkCkkcN2IC1m+d9nlDA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760613701;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=AHIexI7oh85pU2rC4PB6zjKSGbbonpIYsq1vd3KvIys=;
+	b=FMgiECvq4iNkCgLqCiEudsSGIjPM4mBrsDqFoCKqFydTesGoFQkRDX5a32bYq1lPZl/69u
+	w3KaAT9CKw8AJFBg==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/topology,x86: Fix build warning
+Cc: Borislav Petkov <bp@alien8.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016104802.567812-2-a.melnychenko@vyos.io>
+Message-ID: <176061369966.709179.2557895434975882601.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andrii Melnychenko <a.melnychenko@vyos.io> wrote:
-> There was an issue with NAT'ed ftp and replaced messages
-> for PASV/EPSV mode. "New" IP in the message may have a
-> different length that would require sequence adjustment.
-> 
-> Signed-off-by: Andrii Melnychenko <a.melnychenko@vyos.io>
-> ---
->  net/netfilter/nf_conntrack_ftp.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/net/netfilter/nf_conntrack_ftp.c b/net/netfilter/nf_conntrack_ftp.c
-> index 617f744a2..0216bc099 100644
-> --- a/net/netfilter/nf_conntrack_ftp.c
-> +++ b/net/netfilter/nf_conntrack_ftp.c
-> @@ -25,6 +25,7 @@
->  #include <net/netfilter/nf_conntrack_ecache.h>
->  #include <net/netfilter/nf_conntrack_helper.h>
->  #include <linux/netfilter/nf_conntrack_ftp.h>
-> +#include <net/netfilter/nf_conntrack_seqadj.h>
->  
->  #define HELPER_NAME "ftp"
->  
-> @@ -390,6 +391,8 @@ static int help(struct sk_buff *skb,
->  	/* Until there's been traffic both ways, don't look in packets. */
->  	if (ctinfo != IP_CT_ESTABLISHED &&
->  	    ctinfo != IP_CT_ESTABLISHED_REPLY) {
-> +		if (!nf_ct_is_confirmed(ct))
-> +			nfct_seqadj_ext_add(ct);
+The following commit has been merged into the sched/core branch of tip:
 
-Still not convinced this is the correct place.
+Commit-ID:     73cbcfe255f7edca915d978a7d1b0a11f2d62812
+Gitweb:        https://git.kernel.org/tip/73cbcfe255f7edca915d978a7d1b0a11f2d=
+62812
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Thu, 16 Oct 2025 12:58:34 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 16 Oct 2025 13:01:15 +02:00
 
-In nf_nat_setup_info we have:
+sched/topology,x86: Fix build warning
 
-                if (nfct_help(ct) && !nfct_seqadj(ct))
-                        if (!nfct_seqadj_ext_add(ct))
-                                return NF_DROP;
+A compile warning slipped through:
 
-Looking at your cover letter (some of that info should be in
-patch changelog, it provides essential context), I would say
-that dnat rule is evaluated before the helper gets attached.
+   arch/x86/kernel/smpboot.c:548:5: warning: no previous prototype for functi=
+on 'arch_sched_node_distance' [-Wmissing-prototypes]
 
-If so, the bug is in nft_ct_helper_obj_eval, and the Fixes
-tag should be set to
+Fixes: 4d6dd05d07d0 ("sched/topology: Fix sched domain build error for GNR, C=
+WF in SNC-3 mode")
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/include/asm/topology.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Fixes: 1a64edf54f55 ("netfilter: nft_ct: add helper set support")
-
-Probably something like:
-
-if ((ct->status & IPS_NAT_MASK) && !!nfct_seqadj(ct))
-	if (!nfct_seqadj_ext_add(ct)) ...
-
-Could you please investigate a bit futher? To me it looks
-like all other helpers have the same issue, a generic fix would
-be better.
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 2104189..df94388 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -325,4 +325,6 @@ static inline void freq_invariance_set_perf_ratio(u64 rat=
+io, bool turbo_disabled
+ extern void arch_scale_freq_tick(void);
+ #define arch_scale_freq_tick arch_scale_freq_tick
+=20
++extern int arch_sched_node_distance(int from, int to);
++
+ #endif /* _ASM_X86_TOPOLOGY_H */
 
