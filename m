@@ -1,167 +1,403 @@
-Return-Path: <linux-kernel+bounces-856067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55640BE2FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:02:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62006BE2FD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9639119C2011
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D8842006A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C682798FA;
-	Thu, 16 Oct 2025 11:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B6E25B1DA;
+	Thu, 16 Oct 2025 11:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VQAagrtA"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f4dKm6Lo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gAOjJsXS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YWY9uuhX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vyBtqWrm"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550412066F7
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56FC328619
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760612509; cv=none; b=awDTdpkwWrzStD5zkvt3oHVs0UE4amBinE4YiuGxj+wQ3Vtv0WO+wxd9Suoa1YqjpgN6J5cSU7YuERol8m/up1BEPIJOthXfJfWnNzGaAToUA0C9cpYe4epm2NoyBuMWlFXswFDKC3kCNlK3Fo9iZmoHs1oYSv8dT9yoMCAORYY=
+	t=1760612506; cv=none; b=r1xPbbH/lzMR7QbiVk9xmAt8CYX1Fk3XRMsfxL1fq1SCxrOnJXwH/uEnMBKNTu4Q/KG1SzhsdHShsrEwEu0h+MWLptz7er92XHQAYHEnt8g1wBxoaGlfCH/wp46IOt4ArAs2iXCxl7HKISa4Tdtm9yZYnd0llIIyGlDMqGyDiPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760612509; c=relaxed/simple;
-	bh=TwInCQuSxkp1G5BdQXQOGvUNIqDGzmnYz3mow6w6l84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RCtx7DmU/+WEixuSdmZSHkRA3y4yvA889ViTNcUm4hlrc3u4LiTKVjQ6L/ZtnkB9KmcVNxZepNDc+4Qc+sxPZRTpl7H739KOAtOSn8L2/d/SihcIZBwC1IlRs3wx1sJN+T9qJPjh2U0uXas1eBgyC9nPt1qvRNB/Wf7TbWldu+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VQAagrtA; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760612463; x=1761217263; i=markus.elfring@web.de;
-	bh=pBiHgqrHbUYp2JEA6PbWJGJtRV3x6jWPI0L/vSeghho=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VQAagrtAaS97HDtx3m1NFhFzulhL15tU3UMYE1gbMacZjQgDDOVowmheHkR/NY8v
-	 vgPcWlZamsgwpaMZk1JngjelUJoT+l/k5P08JIDCaVZhKy2gPh/pC8kC08JPD2g/5
-	 4Zh0PtvcEiLM5i+hbqLyk3q1exyLVM/WAq15Gjsj4piidou3Z/+6MhSjet5FwP3hY
-	 3kPfDfdWLOP0xR47LkGbmIaUWkoDpJeD9qBvs/VsykqJ+cITXYL2qD4ZN3cIZT2Fu
-	 l7i5gSz4xMj7hu1XI8wgQHPn1mj+Z74OmB3yXNqMS4kw0bofjVgf/wtdh54ivt8KL
-	 V9Etdxfi1Il4pFHWqg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.241]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MuVKI-1uItnZ1SxG-015dOT; Thu, 16
- Oct 2025 13:01:03 +0200
-Message-ID: <04f6f978-1551-4429-8f3d-a9eaf331d3a7@web.de>
-Date: Thu, 16 Oct 2025 13:01:00 +0200
+	s=arc-20240116; t=1760612506; c=relaxed/simple;
+	bh=/HanGIISO+FAl8/fhjoxI5d4bBuLrT8fvaP6DoxhTOk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SlmdC9J5nMwWw9CcZReW60x6rGqcCgU12CtvdTUnhJJBUjDjo7bh677Jme38CgOGIu49+J63yrReaNj202+SddLdBI+n5ryueSiqWTq8UaKxwos8tGqT1Vke2G6w0GKCysK+fPzpl026OLqfFI8+kswCPyaJ0JDLsdYO7F9WzOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f4dKm6Lo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gAOjJsXS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YWY9uuhX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vyBtqWrm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B85CC1F7BB;
+	Thu, 16 Oct 2025 11:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760612503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JppALIfxtNy0YCR3k3y+/IM0OqyO2knEp8c0AkQxfNw=;
+	b=f4dKm6Lo3rz3831C0m76Zr526V8BUQyUgqNkRiej0qwd5pu+95khAdU4OPoNodqznW68ZG
+	44l1FLhjpeJhXS2F1MwIZXdo/MygpljILlxs1k+nNftmqkgPsn132sGFOSQmou2b97vk5q
+	k2udjzgEjs2cAMRWmG+XZoopsodvE1A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760612503;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JppALIfxtNy0YCR3k3y+/IM0OqyO2knEp8c0AkQxfNw=;
+	b=gAOjJsXSVx4YwwC+zQP5BuS57E20bD1uPEAZPqqoTdMZ0goyWM9FuYJtsViPKvKb4RIDdE
+	xU2rmzdJ+7TFJqCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YWY9uuhX;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vyBtqWrm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760612501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JppALIfxtNy0YCR3k3y+/IM0OqyO2knEp8c0AkQxfNw=;
+	b=YWY9uuhXmmyE0CS/Fvfa621sioAAYi6vY8d9R3QONSswC29gWNumMOXuoaP12/73XErJfD
+	8FzizkxBukjQGQgC2pAT2Ucll4V+T4kcZTqrY2hYxLAxd4C3s//qgys4bP6A/pCjOPl6jO
+	txuwesP5RhPCTanX78I5UfKr2FyZtNY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760612501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JppALIfxtNy0YCR3k3y+/IM0OqyO2knEp8c0AkQxfNw=;
+	b=vyBtqWrm/OBR/p9Y861QotQ8aXXH/YOWD+FzjXA4OJ288NZEcRaX7I8DbFimOSzEnsxw1B
+	b7qNEAvC54pwlODQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8807B1376E;
+	Thu, 16 Oct 2025 11:01:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TonXH5XQ8GgPMQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 16 Oct 2025 11:01:41 +0000
+Date: Thu, 16 Oct 2025 13:01:41 +0200
+Message-ID: <871pn3860a.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: broonie@kernel.org,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH 05/11] ALSA: hda/cs35l56: Create sysfs files for factory calibration
+In-Reply-To: <20251016104242.157325-6-rf@opensource.cirrus.com>
+References: <20251016104242.157325-1-rf@opensource.cirrus.com>
+	<20251016104242.157325-6-rf@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/1] mm/ksm: recover from memory failure on KSM page by
- migrating to healthy duplicate
-To: Longlong Xia <xialonglong@kylinos.cn>, linux-mm@kvack.org,
- David Hildenbrand <david@redhat.com>, Lance Yang <lance.yang@linux.dev>,
- Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>
-Cc: Longlong Xia <xialonglong2025@163.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, xu xin <xu.xin16@zte.com.cn>
-References: <20251016101813.484565-1-xialonglong2025@163.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251016101813.484565-1-xialonglong2025@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:l5cCuNphgxSZjAM2aUiH7tqi96ORbL27N3eaVYs0pSWyvDhRY7a
- EP56On/5SDBn1OqEst7Ae2QaGlNMtMZ9TtvHea1URPCcP9WJhquBqBvkocgxyWe7pj4zeHy
- mu93ZQoL9zrkMBtk5DVwAEts6UqLqMV1/f0Zem1AjCb4pqo0sHe8n0IpuKkXNH+zE5akEeM
- UoCBOkjjzzKMzjXqMKTXw==
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: B85CC1F7BB
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[cirrus.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LbQ5Jc5HBIc=;aO861wgYsDC4QF26xQdykZyEFyD
- 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
+X-Spam-Score: -3.51
+X-Spam-Level: 
 
-> When a hardware memory error occurs on a KSM page, the current
-> behavior is to kill all processes mapping that page. This can
-=E2=80=A6
+On Thu, 16 Oct 2025 12:42:36 +0200,
+Richard Fitzgerald wrote:
+> 
+> Create sysfs files that can be used to perform factory calibration.
+> 
+> During manufacture, the production line must perform a factory calibration
+> of the amps. This patch adds this functionality via sysfs files.
+> 
+> Sysfs is used here to restrict access to the factory calibration.
+> It is only intended to be used during manufacture. It is not something
+> that a normal user should ever touch. Calibration affects the matching of
+> the amp hardware to the external speakers. If not done correctly it can
+> cause the speakers to be under-protected.
+> 
+> As this is only needed during manufacture, there is no need for this to be
+> available in a normal system so a Kconfig item has been added to enable
+> this. The new Kconfig option is inside a sub-menu because items do not
+> group and indent if the parent is invisible or there are multiple parent
+> dependencies. Anyway the sub-menu reduces the clutter.
+> 
+> cs35l56_hda_apply_calibration() has been changed to return an error code
+> that can be reported back through the sysfs write. The original call to
+> this function doesn't check the return code because in normal use it
+> doesn't matter whether this fails - the firmware will default to a safe
+> calibration for the platform. But tooling using sysfs might want to know
+> if there was an error.
+> 
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-* The word wrapping can be improved another bit, can't it?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.17#n658
+What kind of data format should be written to calibrate sysfs entry?
+Since those are no trivial files, we may need to document the
+formats.
 
-* How relevant is such a cover letter for a single patch?
-
-* Is there a need to extend change descriptions at other places?
+Also, the scenario isn't clear -- who should write this sysfs at which
+moment?  e.g. is this supposed to be set up at each boot?
 
 
-Regards,
-Markus
+thanks,
+
+Takashi
+
+> ---
+>  sound/hda/codecs/side-codecs/Kconfig       |  15 +++
+>  sound/hda/codecs/side-codecs/cs35l56_hda.c | 139 ++++++++++++++++++++-
+>  2 files changed, 149 insertions(+), 5 deletions(-)
+> 
+> diff --git a/sound/hda/codecs/side-codecs/Kconfig b/sound/hda/codecs/side-codecs/Kconfig
+> index cbf1847896bc..0218aa41bba2 100644
+> --- a/sound/hda/codecs/side-codecs/Kconfig
+> +++ b/sound/hda/codecs/side-codecs/Kconfig
+> @@ -88,6 +88,21 @@ config SND_HDA_SCODEC_CS35L56_SPI
+>  	  Say Y or M here to include CS35L56 amplifier support with
+>  	  SPI control.
+>  
+> +menu "CS35L56 driver options"
+> +	depends on SND_HDA_SCODEC_CS35L56
+> +
+> +config SND_HDA_SCODEC_CS35L56_CAL_SYSFS
+> +	bool "CS35L56 create sysfs for factory calibration"
+> +	default N
+> +	select SND_SOC_CS35L56_CAL_SYSFS_COMMON
+> +	help
+> +	  Create sysfs entries used during factory-line manufacture
+> +	  for factory calibration.
+> +	  This is not needed for normal use.
+> +
+> +	  If unsure select "N".
+> +endmenu
+> +
+>  config SND_HDA_SCODEC_TAS2781
+>  	tristate
+>  	select SND_HDA_GENERIC
+> diff --git a/sound/hda/codecs/side-codecs/cs35l56_hda.c b/sound/hda/codecs/side-codecs/cs35l56_hda.c
+> index 5bb1c4ebeaf3..4a1bd934887a 100644
+> --- a/sound/hda/codecs/side-codecs/cs35l56_hda.c
+> +++ b/sound/hda/codecs/side-codecs/cs35l56_hda.c
+> @@ -548,20 +548,24 @@ static void cs35l56_hda_release_firmware_files(const struct firmware *wmfw_firmw
+>  	kfree(coeff_filename);
+>  }
+>  
+> -static void cs35l56_hda_apply_calibration(struct cs35l56_hda *cs35l56)
+> +static int cs35l56_hda_apply_calibration(struct cs35l56_hda *cs35l56)
+>  {
+>  	int ret;
+>  
+>  	if (!cs35l56->base.cal_data_valid || cs35l56->base.secured)
+> -		return;
+> +		return -EACCES;
+>  
+>  	ret = cs_amp_write_cal_coeffs(&cs35l56->cs_dsp,
+>  				      &cs35l56_calibration_controls,
+>  				      &cs35l56->base.cal_data);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+>  		dev_warn(cs35l56->base.dev, "Failed to write calibration: %d\n", ret);
+> -	else
+> -		dev_info(cs35l56->base.dev, "Calibration applied\n");
+> +		return ret;
+> +	}
+> +
+> +	dev_info(cs35l56->base.dev, "Calibration applied\n");
+> +
+> +	return 0;
+>  }
+>  
+>  static void cs35l56_hda_fw_load(struct cs35l56_hda *cs35l56)
+> @@ -669,7 +673,9 @@ static void cs35l56_hda_fw_load(struct cs35l56_hda *cs35l56)
+>  	if (ret)
+>  		dev_dbg(cs35l56->base.dev, "%s: cs_dsp_run ret %d\n", __func__, ret);
+>  
+> +	/* Don't need to check return code, it's not fatal if this fails */
+>  	cs35l56_hda_apply_calibration(cs35l56);
+> +
+>  	ret = cs35l56_mbox_send(&cs35l56->base, CS35L56_MBOX_CMD_AUDIO_REINIT);
+>  	if (ret)
+>  		cs_dsp_stop(&cs35l56->cs_dsp);
+> @@ -695,6 +701,126 @@ static void cs35l56_hda_dsp_work(struct work_struct *work)
+>  	cs35l56_hda_fw_load(cs35l56);
+>  }
+>  
+> +static ssize_t calibrate_store(struct device *dev, struct device_attribute *attr,
+> +			       const char *buf, size_t count)
+> +{
+> +	struct cs35l56_hda *cs35l56 = dev_get_drvdata(dev);
+> +	ssize_t ret;
+> +
+> +	ret = pm_runtime_resume_and_get(cs35l56->base.dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cs35l56_calibrate_sysfs_store(&cs35l56->base, buf, count);
+> +	pm_runtime_autosuspend(cs35l56->base.dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t cal_temperature_store(struct device *dev, struct device_attribute *attr,
+> +				     const char *buf, size_t count)
+> +{
+> +	struct cs35l56_hda *cs35l56 = dev_get_drvdata(dev);
+> +	ssize_t ret;
+> +
+> +	ret = pm_runtime_resume_and_get(cs35l56->base.dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cs35l56_cal_ambient_sysfs_store(&cs35l56->base, buf, count);
+> +	pm_runtime_autosuspend(cs35l56->base.dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t cal_data_read(struct file *filp, struct kobject *kobj,
+> +			     const struct bin_attribute *battr, char *buf, loff_t pos,
+> +			     size_t count)
+> +{
+> +	struct cs35l56_hda *cs35l56 = dev_get_drvdata(kobj_to_dev(kobj));
+> +	ssize_t ret;
+> +
+> +	ret = pm_runtime_resume_and_get(cs35l56->base.dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cs35l56_cal_data_sysfs_read(&cs35l56->base, buf, pos, count);
+> +	pm_runtime_autosuspend(cs35l56->base.dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t cal_data_write(struct file *filp, struct kobject *kobj,
+> +			      const struct bin_attribute *battr, char *buf, loff_t pos,
+> +			      size_t count)
+> +{
+> +	struct cs35l56_hda *cs35l56 = dev_get_drvdata(kobj_to_dev(kobj));
+> +	ssize_t ret;
+> +
+> +	ret = cs35l56_cal_data_sysfs_write(&cs35l56->base, buf, pos, count);
+> +	if (ret == -ENODATA)
+> +		return count;	/* Ignore writes of empty cal blobs */
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(cs35l56->base.dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cs35l56_hda_apply_calibration(cs35l56);
+> +	if (ret == 0)
+> +		cs35l56_mbox_send(&cs35l56->base, CS35L56_MBOX_CMD_AUDIO_REINIT);
+> +	else
+> +		count = -EIO;
+> +
+> +	pm_runtime_autosuspend(cs35l56->base.dev);
+> +
+> +	return count;
+> +}
+> +
+> +static const DEVICE_ATTR_WO(calibrate);
+> +static const DEVICE_ATTR_WO(cal_temperature);
+> +static const BIN_ATTR_RW(cal_data, sizeof_field(struct cs35l56_base, cal_data));
+> +
+> +static const struct attribute *cs35l56_hda_cal_attributes[] = {
+> +	&dev_attr_calibrate.attr,
+> +	&dev_attr_cal_temperature.attr,
+> +	NULL
+> +};
+> +
+> +static void cs35l56_hda_create_calibration_sysfs(struct cs35l56_hda *cs35l56)
+> +{
+> +	struct device *dev = cs35l56->base.dev;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_SND_HDA_SCODEC_CS35L56_CAL_SYSFS))
+> +		return;
+> +
+> +	ret = sysfs_create_files(&dev->kobj, cs35l56_hda_cal_attributes);
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret = sysfs_create_bin_file(&dev->kobj, &bin_attr_cal_data);
+> +	if (ret)
+> +		goto err;
+> +
+> +	return;
+> +err:
+> +	dev_err_probe(dev, ret, "Failed creating calibration sysfs\n");
+> +}
+> +
+> +static void cs35l56_hda_remove_calibration_sysfs(struct cs35l56_hda *cs35l56)
+> +{
+> +	struct device *dev = cs35l56->base.dev;
+> +
+> +	if (!IS_ENABLED(CONFIG_SND_HDA_SCODEC_CS35L56_CAL_SYSFS))
+> +		return;
+> +
+> +	sysfs_remove_files(&dev->kobj, cs35l56_hda_cal_attributes);
+> +	sysfs_remove_bin_file(&dev->kobj, &bin_attr_cal_data);
+> +}
+> +
+>  static int cs35l56_hda_bind(struct device *dev, struct device *master, void *master_data)
+>  {
+>  	struct cs35l56_hda *cs35l56 = dev_get_drvdata(dev);
+> @@ -722,6 +848,8 @@ static int cs35l56_hda_bind(struct device *dev, struct device *master, void *mas
+>  	cs_dsp_init_debugfs(&cs35l56->cs_dsp, cs35l56->debugfs_root);
+>  #endif
+>  
+> +	cs35l56_hda_create_calibration_sysfs(cs35l56);
+> +
+>  	dev_dbg(cs35l56->base.dev, "Bound\n");
+>  
+>  	return 0;
+> @@ -736,6 +864,7 @@ static void cs35l56_hda_unbind(struct device *dev, struct device *master, void *
+>  	cancel_work_sync(&cs35l56->dsp_work);
+>  
+>  	cs35l56_hda_remove_controls(cs35l56);
+> +	cs35l56_hda_remove_calibration_sysfs(cs35l56);
+>  
+>  #if IS_ENABLED(CONFIG_SND_DEBUG)
+>  	cs_dsp_cleanup_debugfs(&cs35l56->cs_dsp);
+> -- 
+> 2.47.3
+> 
 
