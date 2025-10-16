@@ -1,134 +1,136 @@
-Return-Path: <linux-kernel+bounces-856115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FC3BE31E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:40:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2256BBE3281
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FD3E4EB554
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:40:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46388586EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 11:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA06631A815;
-	Thu, 16 Oct 2025 11:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4573164C5;
+	Thu, 16 Oct 2025 11:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="ZPwtWfVf"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="TrTwhDv7";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="MXzMS8dV"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC8732861A;
-	Thu, 16 Oct 2025 11:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2741DF987;
+	Thu, 16 Oct 2025 11:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760614826; cv=none; b=nBd1F2SEKo8hk38CTV0Vqrf+/1SmfZ8+wjITA1rm4GbSkU5MpPcYIpgOzKUXw84L39dDAl7vidcL6juAxEqPPupy4Cusx+Fceyrft//nhULEKg5rdIKOCGcNaj4HZVXX58o7kIcffMArvxVZ6Ct/25iUycXyhjpoeMHuGl7YlL8=
+	t=1760615295; cv=none; b=RPEjM0sVGKS4z1DwnsrYmem8HfH2Vcol4DLGijhYWCxLoI7mzVCPCUqRkngxslilBGoDeEFkg9/GCpSZUQCztBLIDlAqwDJdijJW99OqjoVKWSTEKvGw7yYQfU0vhgujZ9CeaISEheRU8HixIu9RXUlHLxtUuT3BXD0MECpu4K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760614826; c=relaxed/simple;
-	bh=KO19B0tKkIkkoYaO00XtSpVGB9fo75GeJpItH1g+Ieo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=BxTzWFhRQwXg2souh5JloTbw0s4/QQSPSKwfhg4LWduzlTgqaCQvUL2bM/yexirCKDTy86jmx1UcAyijNPFceXTalKMV6DC7c+/fiNCvAyyfb7OvZrXt1XT1iNgAo4i16n1Qmrgb6p4KsKNpMmSx7Q44NLfyHra1AAVE7I+azlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=ZPwtWfVf; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XvYgm2ZiEhdQinQKcxWC99AV37HjB6EYaQCw2NitFgg=; b=ZPwtWfVfmH1BgOVMa3L70j0efc
-	qqsLU2dGGGukihkkq+42UZcMLx8PX2kIvKq2VQScwsWmV3FqzlCOiWcaZ4II38HfGvqEPfD21HNRL
-	kGzjp+NyLq+iH5rvz+NxDEejWy0YpC00XxoIDmHg/USbd8xKEjHt5J4OfvJ8i+676WT2bwZRuWC6p
-	YFdnvdOUsNfsVD476lUnekQErRuvNNG71r6S9nrYXVddVMJqVz1YyY2tMYuSdbeDxui9CS22iAZde
-	8xt8vJRlx4MbKGvSkc1tSeDJaZ9xYanDHGWDeViZI0601YhoSyL46ivOsN10QOcTh8XKpl4WlFCIX
-	NPckYhlA==;
-Received: from [122.175.9.182] (port=17170 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1v9MLE-000000079MT-1SRX;
-	Thu, 16 Oct 2025 07:40:20 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id E724F1783FF9;
-	Thu, 16 Oct 2025 17:10:15 +0530 (IST)
+	s=arc-20240116; t=1760615295; c=relaxed/simple;
+	bh=1uX+iCoWbbjlWd3wtxJLMpV1DvJ1ymMC5djhMKb2x6E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h7olg3rkfK9W8tRiIiOPL1stw2QDpfF90SYUlHujrh5odS3VPADLSJ4ZrzaQq9wkv+aGVwdWYdhlztw+1GaE+RSZThqRRsaJL0Y6pRu6NwFvfPuJxG9Zvpfd39Oji3bzInansmw80QjAUyLTn2jNet8nPUtLfjd3lxkAmLhFBXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=TrTwhDv7; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=MXzMS8dV; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1760614899; bh=1uX+iCoWbbjlWd3wtxJLMpV1DvJ1ymMC5djhMKb2x6E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=TrTwhDv78JXvTmxNwLMfnDGUHA/a5yzZEf+bJZSOTUHLK7yPotLP5LfpmGfEsl1HZ
+	 nOlKhqzond9NkKwzgqPyW4vKG6bG50EwMMKWKva7CyfdUuBHOM/QD0//IHNcJnAjvv
+	 vRJZS4yLvaWtUZppr2swIJxkooH9LGOXkVsLhbtr2gNbS2H3T7mACpEqxR2QeMiCRN
+	 w1UnTWCEa/sXN0pNV3ETfqstt/Ir0dTFZLzQCJEICRzal4D5vEqsgebOU33tVHMbRC
+	 5F4QmloXPZkIcRIXy34bOFsaewSC21nBdZC4/HVkGcpNxCJHGSWRoTASAqPXCv17dF
+	 qxm0bUBXHyeww==
 Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id D12ED1783FF4;
-	Thu, 16 Oct 2025 17:10:15 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id GzU_cDNcWiqS; Thu, 16 Oct 2025 17:10:15 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id A72EF1781C72;
-	Thu, 16 Oct 2025 17:10:15 +0530 (IST)
-Date: Thu, 16 Oct 2025 17:10:15 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: parvathi <parvathi@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
-	danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
-	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
-	afd <afd@ti.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>
-Message-ID: <1633385931.433.1760614815573.JavaMail.zimbra@couthit.local>
-In-Reply-To: <1e16ab86-ccc1-433a-a482-76d9ba567fb9@lunn.ch>
-References: <20251014124018.1596900-1-parvathi@couthit.com> <20251014124018.1596900-2-parvathi@couthit.com> <1e16ab86-ccc1-433a-a482-76d9ba567fb9@lunn.ch>
-Subject: Re: [PATCH net-next v3 1/3] net: ti: icssm-prueth: Adds helper
- functions to configure and maintain FDB
+	by honk.sigxcpu.org (Postfix) with ESMTP id 93C3AFB03;
+	Thu, 16 Oct 2025 13:41:39 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id GcYD6Z5qO_cK; Thu, 16 Oct 2025 13:41:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1760614898; bh=1uX+iCoWbbjlWd3wtxJLMpV1DvJ1ymMC5djhMKb2x6E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=MXzMS8dVauLGdGvUsUigJj68Cz8vYmupGJRgCs6Z8gRXOecJXjyQtYtPcUFtDwXjO
+	 9U5s5cj4X90twHD3TXJfbalF153QTLQhkPzgoadokJ7w+s7VCgjfXsKAuUqC8wW1Ng
+	 rf9+3Usz47mnQePEpcIhAFTOz71awud5yLSHOkPNRCCBnnPp8V++Nj4lxxGavW/KlV
+	 66QvSd9Sdj+QCZk+d7bXDbpwIWmFq5cioLhwO0cj6/pAWu6m8cZkF5SVCRxxLgBYho
+	 ZqrgzmzR3KAY+1PsG9h7XIv2NpQYlHR4YBxB8NXagWEHT1YpxWXL6iMqG1+zJlsrk5
+	 qDiAZtoVsCjMw==
+From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Date: Thu, 16 Oct 2025 13:41:27 +0200
+Subject: [PATCH] drm/panel: visionox-rm69299: Depend on
+ BACKLIGHT_CLASS_DEVICE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: icssm-prueth: Adds helper functions to configure and maintain FDB
-Thread-Index: XlOBMErJ6hpwpJMWg3cXMXchYoQRVA==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251016-visionox-rm69299-bl-v1-1-d3b817ae5a26@sigxcpu.org>
+X-B4-Tracking: v=1; b=H4sIAObZ8GgC/yWMSQqAMAwAvyI5G2gjRupXxEPVqAE3WhBB/LtFj
+ wMzc0OUoBKhzm4IcmrUfUtg8wz62W+ToA6JgQyV1ljGX9kvDCs7cg67BSthT1IYJh4glUeQUa/
+ v2rTP8wLUphi0ZQAAAA==
+X-Change-ID: 20251016-visionox-rm69299-bl-7e6a2e30626d
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ phone-devel <phone-devel@vger.kernel.org>, 
+ Gustavo Padovan <gus@collabora.com>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=886; i=agx@sigxcpu.org;
+ h=from:subject:message-id; bh=1uX+iCoWbbjlWd3wtxJLMpV1DvJ1ymMC5djhMKb2x6E=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0VCYlFLUy9aQU5Bd0FJQVNXL2hsSksvT
+ UhqQWNzbVlnQm84Tm5yM3JGaG9MeERnQVVuZVlkenlsaHNYZ2R6CjUrQVNjKzVJMUg3SnhwNnZK
+ ZEdKQWpNRUFBRUlBQjBXSVFSajlzemZsaUtkQ1NocktzTWx2NFpTU3Z6QjR3VUMKYVBEWjZ3QUt
+ DUkFsdjRaU1N2ekI0MGdWRUFDcmMzSjdyNHZuQmxxWUJxbndiMEh0dHJDZ3VXbUhUVnRDc0Z0Tg
+ o3S1dBZWlpaytnS09SMk1DTlJFTUMvdXJmdE5xODFoOVlMTC9KRUNKY0ZyRktUM0VRN3B6TUdzR
+ Vc0Q2NpSkIwCmlIMC82UW4zNG5oUGxJdzBlam5YeDRYN3hqYlEwUDAxZS9mejNTdXk1RXQvUnBq
+ SFE5c0ZJaC9OWjdCSmxIdm0KZitsUDZ0N09LSFBCWXlqdGlSV1VQc00wRHJIU2xmRUwyTnFKVkR
+ uZXhMOGIrUkdoT3Zrem1VUGhBSkVvcGtZbAoyczVGN0VZYk9GNlZIbGl5emJDQjJockhVNFJ2Ym
+ 1qakU0dmt2MUR5aHRRditEM0FYSldTdWNLQWF2SHcrTUFWCnVodWE3TXBIVjAwaXQ5VHE3SDZWZ
+ UN3NHRwYzRiY0RMRDRNQW9qN0ZuV3JZWUdUcGFManVCV1BFbTBITW5KcVgKYnJrZG4wSytXTG1G
+ bHd4WkNsU3J3V0FLTkxhelZZU2MzZGFEMnVveXlhUEh0MjNHUTlIanJTRTBLL0lIMHlUSgpJUjB
+ xMjY5dGsrSXVnanE4YnB0MzRqRy9HVFp1b01icGxKRnBkWHNvK3RFU3B6VzdwdXVVQmtvcXFwTk
+ Mra1NRCngxRXA4ZWFJL0JBZGFocWhwZ0RmNHAwRlMyTXJNTzA5MEcrM21WTldzbjF0RHdISGF2a
+ GtVTkM5VFc5cFRZZ04KSlJDUm9rVFg2cWdiV0F6UElCcTY2TW1oaDVuMTB6ZzlyVk9KRUszTHEw
+ NXFYdUIxdHpzUVZpYkR6SmxiQ2owbApzRlZtTVhUZFBZV1lsM2EwbTF3bTM2ZU1GWncvZE5hbmp
+ Gc1RvUVRnTzlHcGF6Yk4xYzgzU0lBRGlOa2FHTmFCCjFIYlc0Zz09Cj1xM1FwCi0tLS0tRU5EIF
+ BHUCBNRVNTQUdFLS0tLS0K
+X-Developer-Key: i=agx@sigxcpu.org; a=openpgp;
+ fpr=0DB3932762F78E592F6522AFBB5A2C77584122D3
 
-Hi,
+We handle backlight so need that dependency.
 
->> +/* 4 bytes */
->> +struct fdb_index_tbl_entry_t {
->> +	/* Bucket Table index of first Bucket with this MAC address */
->> +	u16 bucket_idx;
->> +	u16 bucket_entries; /* Number of entries in this bucket */
->> +};
-> 
-> Please drop the _t. That is normally used to indicate a type, but this
-> is actually a struct
->
+Fixes: 49802972d116 ("drm/panel: visionox-rm69299: Add backlight support")
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+---
+ drivers/gpu/drm/panel/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sure. We will remove _t from the struct definitions.
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 407c5f6a268b..59f5a31f3381 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -1112,6 +1112,7 @@ config DRM_PANEL_VISIONOX_RM69299
+ 	tristate "Visionox RM69299"
+ 	depends on OF
+ 	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  Say Y here if you want to enable support for Visionox
+ 	  RM69299  DSI Video Mode panel.
 
->> +void icssm_prueth_sw_fdb_tbl_init(struct prueth *prueth)
->> +{
->> +	struct fdb_tbl *t = prueth->fdb_tbl;
->> +
->> +	t->index_a = (struct fdb_index_array_t *)((__force const void *)
->> +			prueth->mem[V2_1_FDB_TBL_LOC].va +
->> +			V2_1_FDB_TBL_OFFSET);
-> 
-> You cast it to a const void * and then a non-const fdb_index_array_t *?
+---
+base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
+change-id: 20251016-visionox-rm69299-bl-7e6a2e30626d
 
-We will address this and remove the double casting completely.
+Best regards,
+-- 
+Guido Günther <agx@sigxcpu.org>
 
-Thanks and Regards,
-Parvathi.
 
