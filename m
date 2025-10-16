@@ -1,250 +1,193 @@
-Return-Path: <linux-kernel+bounces-856490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1887DBE44AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C11FABE44CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B84D56103D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:39:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2FB6501EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40E934AAE4;
-	Thu, 16 Oct 2025 15:39:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98B51607AC
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 15:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760629150; cv=none; b=fqz6ApVVmFovtbKUgDiqcLxd9HDhC20Mjj1ZTvRaQ7XByUbmrTF8gK5Uxyhivz2necqrofsZ11rWmJ6HBfIVz/haMRz93FcDYXphH2KZ1IKKBcxJXS82xGazdMbE+pJb9p7cficUbORYcFyA7byprcX1J3xl672oskq0OnPS9iA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760629150; c=relaxed/simple;
-	bh=/mm8Psx4yQWgGrmwImBFcaAmLB46RC7PwojqD7zi/mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYTJ/uaIyy/mTVl9idHThiS/l4/t/ylhwySavIavQqp9g6j30kCbvGuxLgefejIyk8MtFjzQooX7l95VE9lfoHiPJGz8VW3oSHdtIo+knFDuFpd5kZVY1HQ5TthhiXbjeRpyXtwOF5pxq4a/RXnmVYpy3EM6kBa87dLp8geRdl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 198851688
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:38:59 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BDC9B3F66E
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:39:06 -0700 (PDT)
-Date: Thu, 16 Oct 2025 16:38:57 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Rahul Kumar <rk0006818@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
-Subject: Re: [PATCH v3] drm/komeda: Convert logging in komeda_crtc.c to drm_*
- with drm_device parameter
-Message-ID: <aPERkceQmre1527U@e110455-lin.cambridge.arm.com>
-References: <20250926093008.1949131-1-rk0006818@gmail.com>
- <CAKY2RybMM5jcOzO_mknsdH+m9-T+Qe3yMhRrdpV_VE4paUrAKw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7270234DCD8;
+	Thu, 16 Oct 2025 15:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TjnkIM6b"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013069.outbound.protection.outlook.com [40.93.201.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15705259CAF;
+	Thu, 16 Oct 2025 15:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760629262; cv=fail; b=TvLtIm2eMO3ziHkYXPJk3tLDvONoo3RNicZIF+/vM+eX8y+VBzUE3bvMunO2tUHhR+Icsa6Uqtnn3UvHJmxtbjJER48l30pQ2Vmo0YneysqNkyHPdnKoQkfonzKG3LDFlYir4vjbxq2HOubZ/ktz5n5Ag/oGNDwYYJkx41l9CIY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760629262; c=relaxed/simple;
+	bh=huK8BF65JqHy9UM+Fo+TVRbSEW2+juatN1h+V/NcNwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cgCa6HiLlTFoLL2SFO7IcZlFhEcflO1voWFR/7UDnR+7q2pACpbswAL2aODDaQOe2XUyWNSEkOW9n4JHt/fARRZB+NQXzbwMEJXAJFP99uPlgS7hikt1gNnIfAeUh4+HOWMAESCbgAH40iYjZaSE1NDKmvhxs6Kn0uoZ1so9E1U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TjnkIM6b; arc=fail smtp.client-ip=40.93.201.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tx9XrKAu6fd5ZS1v7y2PQjlWJzK2frSNomVqonoR+N+ecNA56xEj+HEfaFztWwTimJ9fHk0LPTDS37+/OahvTrbF7R7BpQMh9Koj//Id+b6yyPUDWWq6pFUM28zVBEpnVMAwtrn22RjaigE0BhZ/2+PKrtruWPakXT1vWtA+dtyWPcNNp4r5jdXcHzEDR86ry5IaDEiHJH0QYBEdOoVyphqgXxTtmoIMpNj5bLMkyyotIJ6HsS5VLDs+roGC9QEO+hMoePQkZhkOfIB5L/2G+2cBAWD/Y5L6qJVYBu83bLwJ5xFICIqvSO88YIWQ03cPlTf3OnWgJk9UotV++jEDFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FlwHwHy7ylsRR4ifdhQ79wcLj3BNmChu9MRHJOMBWDk=;
+ b=ygqa/C4OcGJ3Sk9rJomIqMhrDzSv3QQuA6CgDpVZcEIPyrJO1SgkxtCxCUHls99rwY6p0RF1EdT9I1V6ZBl94kcQWgnt52Y0yTZz6mswKoXXtDEW2T8Tyv7HTC7H2aaXKY6SE/JiHOcbpIuD051aEN/gcFYjpP6Q/6mrJsr9dRSWn+28ElS3deZTeW4Jtpu2LAo65zDzgtwKM4d8YdMi5fmfzmawlDdbjBjfV5iSsBJUroMXtYnbvenvWuQoUKGZgFG03jUBcInUM+p8tDoW9ihfL1gS3AtMJs8kxy//tVLVglrYZC3dLIFDRtsNH68lrx88s0Z/BvvsDbYJ4x4qTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=debian.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FlwHwHy7ylsRR4ifdhQ79wcLj3BNmChu9MRHJOMBWDk=;
+ b=TjnkIM6bW48HMnziEdjx6rjq1bIjVHXhLW72lCxFLY97nXevvrajLaoJH9m4LKFtWr02k7vT3JtlWLdyLwbYZS9jjZAtH71w/6jpR0ZOJV8LoXYTSyDPvO1+yTO1IrXGfcW+cVLta9IIBWniCtnggmuE/rTBsx0G3E4dMbDiiTbMhZIInh490tqHyj/Il/nC2NjjX/ExzKzfDG1vbsKPh0EKSGdOwLZgeU8ir0QKMgBKFDr8N0Yu3xZxgi8uHzPj38b1SBqT1of1MgeH8ptbq4ZQRb3CyOnR642O42eaInh/0nXApLvIKyCX0x0zjkoihmpD6B6RrfCdHn/fKrWGTA==
+Received: from CH2PR05CA0025.namprd05.prod.outlook.com (2603:10b6:610::38) by
+ SA5PPF0EB7D076B.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8c5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Thu, 16 Oct
+ 2025 15:40:57 +0000
+Received: from CH1PEPF0000A347.namprd04.prod.outlook.com
+ (2603:10b6:610:0:cafe::2a) by CH2PR05CA0025.outlook.office365.com
+ (2603:10b6:610::38) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.4 via Frontend Transport; Thu,
+ 16 Oct 2025 15:40:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000A347.mail.protection.outlook.com (10.167.244.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Thu, 16 Oct 2025 15:40:56 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Thu, 16 Oct
+ 2025 08:40:36 -0700
+Received: from [10.242.158.240] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 16 Oct
+ 2025 08:40:33 -0700
+Message-ID: <19e13479-861a-479c-8f5e-b9db229bfe38@nvidia.com>
+Date: Thu, 16 Oct 2025 18:39:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKY2RybMM5jcOzO_mknsdH+m9-T+Qe3yMhRrdpV_VE4paUrAKw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: mlx5: CX7: fw_tracer: crash at mlx5_tracer_print_trace()
+To: Breno Leitao <leitao@debian.org>
+CC: <saeedm@nvidia.com>, <itayavr@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dcostantino@meta.com>, <kuba@kernel.org>
+References: <hanz6rzrb2bqbplryjrakvkbmv4y5jlmtthnvi3thg5slqvelp@t3s3erottr6s>
+ <e9abc694-27f2-4064-873c-76859573a921@nvidia.com>
+ <uhlgxrlphs6cufrbm7mkp3nmtkrvhtoxbgd6rt7uojogfrbdoc@4mgzpab3dv3a>
+Content-Language: en-US
+From: Moshe Shemesh <moshe@nvidia.com>
+In-Reply-To: <uhlgxrlphs6cufrbm7mkp3nmtkrvhtoxbgd6rt7uojogfrbdoc@4mgzpab3dv3a>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A347:EE_|SA5PPF0EB7D076B:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51e69ca4-c2c5-4941-0f20-08de0cca661d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d1laWFN5OExyMWIrRWd5NGhNYTVabnB0akhwVUc4SGhRT3hKK3VYVGhXUnp3?=
+ =?utf-8?B?WkN4ZDA3VHZuaE8vMDdGMVRsYTl2SDFHelpjbnJqaEtCWEdZS2d0cURNZnpK?=
+ =?utf-8?B?RW5zV0pocTVKNGszMGc3Q0lxMXlIU2VGMTFITU94dldtdlp5RVBzZ3RHandk?=
+ =?utf-8?B?eDh5UEdhbjRKMGlZa0hwL0lncnhzRDYzY3VZdE5oRHYzbjB4NGdTRVYxYmRY?=
+ =?utf-8?B?L3VVM0IwZjFHSFg3M0JpOFJrNFI2SzlpL2pJd0lGOHF0Q0NKckRCY3pqS1pK?=
+ =?utf-8?B?a05GSkdiKzIxQUtuL0N5ZFMxdzFxQ1lyZmVGTmlROXliVDgwWUtXVnBERk03?=
+ =?utf-8?B?eXNIRUJlUkczOGJGeGhSYWNxa3p4YVdPdXMxNmEvMkx1MmdPVFJLbXhMZCt3?=
+ =?utf-8?B?MTRjaEhmNi9ySHl6WG5zTzZsS2VHZFc1NjlBaVUvQ3VUdEFsUnZ6WlgrOXN4?=
+ =?utf-8?B?d0ZpWFUrWFBUVVRQbGJ0TjQ1NE10S2NIVTV4cjhZZ0NnTjVLd1lGQ2NlMkVJ?=
+ =?utf-8?B?SlVLK3JRNjJIMzQwZSswaVJkaWFBR1pscEh3N2lleTBSVmdDcDBkQ3NpR2d2?=
+ =?utf-8?B?TFZPVnF4UjNNQUpmRzVzMCtwWlNhd0dGZHh1c21hMUVUTm05cnV4VkM1RjNu?=
+ =?utf-8?B?U3NTWklXWGVJR1V3dng4VCtoNlJuSjRzV1BoS0EwVEZlKzJZTVgwc0FITDJr?=
+ =?utf-8?B?eWx1c3lySEdicVJDTXkyWUtTeng3U2x4a1ptSU8zdzg1bi9KQlQyRXNZcHl3?=
+ =?utf-8?B?OEMxNEVzR3FKZUhKTTVsVGhiTDRhWGI2aGlWbEYvVmZhbm9aLzI4VFlWNmc4?=
+ =?utf-8?B?WlU5bnFWTW5GTlNCZC9rWjNwWmdlM3I5bVZWUDFuSDY5TzIzNkdxZnJ2Y0U5?=
+ =?utf-8?B?eCtMdlk1eFJBMnBWaHNYU3crRk4xcUQ4TEZmLzZnd2N4R2c0YlNLWlJHcnVI?=
+ =?utf-8?B?cXZxelZZQytPQlR6cSs1SkdMWnJCZUVqSXFKQy9WN213NHBSVERlaUJSZUM4?=
+ =?utf-8?B?NGhlbDFURFEwbnBHTnh5M1ZyaW0zQ0FaMTM1eVlSNm5DWUZyNTBzOFpNU2pZ?=
+ =?utf-8?B?bmRNNEsvRmE5QXBHVmZLb21BOEJzelpKYVA4VEdBNjI5MFU5clBxZGtzVTdl?=
+ =?utf-8?B?K1NuVGdYeHE3cE42ZmpGWkxSME9zaTB4eGFJV0wrb29zSTMza3BEWnYrQXM2?=
+ =?utf-8?B?Tjk3bFJkOTBHVzdMbC9Oems5ekpQQ0RZNGgyN2d3VWVwc2tBMHJEbFUreDRl?=
+ =?utf-8?B?UzNhTUM4NlpRUHFSMHgrMktXQU0vMU9BRzB1VFdaZlV1ZUtRMDYvcjNIRHJK?=
+ =?utf-8?B?bG9GT0FRcDA0YjZNaXY4clpJMzJwWFl6UExmRm5yYUMyYk5GcnlVTmI0bnFM?=
+ =?utf-8?B?MU05VkFHYTdYWVYvKzhYekVYdmtyYml2VFByVFlrTzMrZUt3b3lrbjA4dFFZ?=
+ =?utf-8?B?ZjFBWW9IQ3B3VEJ6aThNNnZmVW9uUnhIZzErOUpoSG4xaVR1dC9PdjMyTGcv?=
+ =?utf-8?B?Z01XNDFXQ3NoRXdVaDBZMzIybVgwUWRjcHd5N0JZeGF2bjFJd0ZrRytpb05S?=
+ =?utf-8?B?RitJUERsNXBnMDB5YWFzMUsrcGM3SlBDbHI1VFo5cFpJT21rZ0Ryc1hwOUVx?=
+ =?utf-8?B?R2lpbkNJalNFcHc0ek1RdDVybXJWNFF1UzgvRTZZMHQzOXNyQWNWZzBqcmk3?=
+ =?utf-8?B?NVFOR2FzNThUM1lsSGhqS0Njck4wZHhrdzV5eVlQZHg1MmVBZ2hqV1Zvamx3?=
+ =?utf-8?B?SUdJWmwzSGd4cVRJWkRrZHVOaEw1UEE5TUJLL2p2Qjg1RlcvT2VNVkVDLzhu?=
+ =?utf-8?B?UUIzNmhCYUtxeWRQOEdtVVViL2NmWG9lbXF3MmN5YkZpWHVGeUhOUS8wdmNo?=
+ =?utf-8?B?SEkvRUlORnFrOUZtL0l4U3JxdFEwMHhKcEQzWC8zb0NtTktYTEl0WU84SEFB?=
+ =?utf-8?B?UG1MeGlyQWxwQVRsMGhmRzl5bjZtanJxUGltdGpTNGN2NTVXK2FwTFJHVVFW?=
+ =?utf-8?B?RXVTVDh2NDc0YXYvV0orYURrREpRc3JTQkE4TmNFNUI4MmhZVkRxRGdQQitL?=
+ =?utf-8?B?TS9wajh4clRVNzNjbVk3TTU4NFRqNWNkUVpyT1ZLZ1dxMml0MTEyamk3WTJD?=
+ =?utf-8?Q?qH+c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 15:40:56.7646
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51e69ca4-c2c5-4941-0f20-08de0cca661d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A347.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF0EB7D076B
 
-Hi Rahul,
 
-Appologies for lack of replies, I was very busy at work and also attended XDC when you've
-sent this email.
 
-I've now pushed your patch into drm-misc-next.
-
-Best regards,
-Liviu
-
-On Fri, Oct 03, 2025 at 11:21:25PM +0530, Rahul Kumar wrote:
-> Hi Liviu,
+On 10/15/2025 3:26 PM, Breno Leitao wrote:
 > 
-> Just following up to ask if anything more is needed from my side for
-> this patch, or if you plan to pick it up in this merge window.
+> Hello Moshe,
 > 
-> Thanks,
-> Rahul
+> On Wed, Oct 15, 2025 at 12:13:29PM +0300, Moshe Shemesh wrote:
+>> On 10/9/2025 3:42 PM, Breno Leitao wrote:
+>>>
+>>> My understanding that we are printf %s with params[0], which is 557514328 (aka
+>>> 0x213afe58). So, sprintf is trying to access the content of 0x213afe58, which
+>>> is invalid, and crash.
+>>>
+>>> Is this a known issue?
+>>
+>> Not a known issue, not expected, thanks for reporting.
+>> We will send patch to protect from such crash.
 > 
-> On Fri, Sep 26, 2025 at 3:00 PM Rahul Kumar <rk0006818@gmail.com> wrote:
-> >
-> > Replace all dev_err(), dev_warn(), dev_info() and DRM_ERROR/WARN/INFO()
-> > calls in drivers/gpu/drm/arm/display/komeda/komeda_crtc.c with the
-> > corresponding drm_err(), drm_warn(), and drm_info() helpers.
-> >
-> > The new drm_*() logging functions take a struct drm_device * as the
-> > first argument. This allows the DRM core to prefix log messages with
-> > the specific DRM device name and instance, which is essential for
-> > distinguishing logs when multiple GPUs or display controllers are present.
-> >
-> > This change aligns komeda with the DRM TODO item: "Convert logging to
-> > drm_* functions with drm_device parameter".
-> >
-> > Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
-> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> > ---
-> > Changes since v2:
-> > - Added Reviewed-by tag from Liviu Dudau
-> >
-> > Link to v1:
-> > https://lore.kernel.org/all/aJshoswGslcYQFLI@e110455-lin.cambridge.arm.com/
-> > ---
-> >  .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 31 +++++++++++--------
-> >  1 file changed, 18 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > index 2ad33559a33a..5a66948ffd24 100644
-> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > @@ -111,6 +111,7 @@ komeda_crtc_atomic_check(struct drm_crtc *crtc,
-> >  static int
-> >  komeda_crtc_prepare(struct komeda_crtc *kcrtc)
-> >  {
-> > +       struct drm_device *drm = kcrtc->base.dev;
-> >         struct komeda_dev *mdev = kcrtc->base.dev->dev_private;
-> >         struct komeda_pipeline *master = kcrtc->master;
-> >         struct komeda_crtc_state *kcrtc_st = to_kcrtc_st(kcrtc->base.state);
-> > @@ -128,8 +129,8 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
-> >
-> >         err = mdev->funcs->change_opmode(mdev, new_mode);
-> >         if (err) {
-> > -               DRM_ERROR("failed to change opmode: 0x%x -> 0x%x.\n,",
-> > -                         mdev->dpmode, new_mode);
-> > +               drm_err(drm, "failed to change opmode: 0x%x -> 0x%x.\n,",
-> > +                       mdev->dpmode, new_mode);
-> >                 goto unlock;
-> >         }
-> >
-> > @@ -142,18 +143,18 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
-> >         if (new_mode != KOMEDA_MODE_DUAL_DISP) {
-> >                 err = clk_set_rate(mdev->aclk, komeda_crtc_get_aclk(kcrtc_st));
-> >                 if (err)
-> > -                       DRM_ERROR("failed to set aclk.\n");
-> > +                       drm_err(drm, "failed to set aclk.\n");
-> >                 err = clk_prepare_enable(mdev->aclk);
-> >                 if (err)
-> > -                       DRM_ERROR("failed to enable aclk.\n");
-> > +                       drm_err(drm, "failed to enable aclk.\n");
-> >         }
-> >
-> >         err = clk_set_rate(master->pxlclk, mode->crtc_clock * 1000);
-> >         if (err)
-> > -               DRM_ERROR("failed to set pxlclk for pipe%d\n", master->id);
-> > +               drm_err(drm, "failed to set pxlclk for pipe%d\n", master->id);
-> >         err = clk_prepare_enable(master->pxlclk);
-> >         if (err)
-> > -               DRM_ERROR("failed to enable pxl clk for pipe%d.\n", master->id);
-> > +               drm_err(drm, "failed to enable pxl clk for pipe%d.\n", master->id);
-> >
-> >  unlock:
-> >         mutex_unlock(&mdev->lock);
-> > @@ -164,6 +165,7 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
-> >  static int
-> >  komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
-> >  {
-> > +       struct drm_device *drm = kcrtc->base.dev;
-> >         struct komeda_dev *mdev = kcrtc->base.dev->dev_private;
-> >         struct komeda_pipeline *master = kcrtc->master;
-> >         u32 new_mode;
-> > @@ -180,8 +182,8 @@ komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
-> >
-> >         err = mdev->funcs->change_opmode(mdev, new_mode);
-> >         if (err) {
-> > -               DRM_ERROR("failed to change opmode: 0x%x -> 0x%x.\n,",
-> > -                         mdev->dpmode, new_mode);
-> > +               drm_err(drm, "failed to change opmode: 0x%x -> 0x%x.\n,",
-> > +                       mdev->dpmode, new_mode);
-> >                 goto unlock;
-> >         }
-> >
-> > @@ -200,6 +202,7 @@ komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
-> >  void komeda_crtc_handle_event(struct komeda_crtc   *kcrtc,
-> >                               struct komeda_events *evts)
-> >  {
-> > +       struct drm_device *drm = kcrtc->base.dev;
-> >         struct drm_crtc *crtc = &kcrtc->base;
-> >         u32 events = evts->pipes[kcrtc->master->id];
-> >
-> > @@ -212,7 +215,7 @@ void komeda_crtc_handle_event(struct komeda_crtc   *kcrtc,
-> >                 if (wb_conn)
-> >                         drm_writeback_signal_completion(&wb_conn->base, 0);
-> >                 else
-> > -                       DRM_WARN("CRTC[%d]: EOW happen but no wb_connector.\n",
-> > +                       drm_warn(drm, "CRTC[%d]: EOW happen but no wb_connector.\n",
-> >                                  drm_crtc_index(&kcrtc->base));
-> >         }
-> >         /* will handle it together with the write back support */
-> > @@ -236,7 +239,7 @@ void komeda_crtc_handle_event(struct komeda_crtc   *kcrtc,
-> >                         crtc->state->event = NULL;
-> >                         drm_crtc_send_vblank_event(crtc, event);
-> >                 } else {
-> > -                       DRM_WARN("CRTC[%d]: FLIP happened but no pending commit.\n",
-> > +                       drm_warn(drm, "CRTC[%d]: FLIP happened but no pending commit.\n",
-> >                                  drm_crtc_index(&kcrtc->base));
-> >                 }
-> >                 spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
-> > @@ -309,7 +312,7 @@ komeda_crtc_flush_and_wait_for_flip_done(struct komeda_crtc *kcrtc,
-> >
-> >         /* wait the flip take affect.*/
-> >         if (wait_for_completion_timeout(flip_done, HZ) == 0) {
-> > -               DRM_ERROR("wait pipe%d flip done timeout\n", kcrtc->master->id);
-> > +               drm_err(drm, "wait pipe%d flip done timeout\n", kcrtc->master->id);
-> >                 if (!input_flip_done) {
-> >                         unsigned long flags;
-> >
-> > @@ -562,6 +565,7 @@ static const struct drm_crtc_funcs komeda_crtc_funcs = {
-> >  int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
-> >                            struct komeda_dev *mdev)
-> >  {
-> > +       struct drm_device *drm = &kms->base;
-> >         struct komeda_crtc *crtc;
-> >         struct komeda_pipeline *master;
-> >         char str[16];
-> > @@ -581,7 +585,7 @@ int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
-> >                 else
-> >                         sprintf(str, "None");
-> >
-> > -               DRM_INFO("CRTC-%d: master(pipe-%d) slave(%s).\n",
-> > +               drm_info(drm, "CRTC-%d: master(pipe-%d) slave(%s).\n",
-> >                          kms->n_crtcs, master->id, str);
-> >
-> >                 kms->n_crtcs++;
-> > @@ -613,6 +617,7 @@ static int komeda_attach_bridge(struct device *dev,
-> >                                 struct komeda_pipeline *pipe,
-> >                                 struct drm_encoder *encoder)
-> >  {
-> > +       struct drm_device *drm = encoder->dev;
-> >         struct drm_bridge *bridge;
-> >         int err;
-> >
-> > @@ -624,7 +629,7 @@ static int komeda_attach_bridge(struct device *dev,
-> >
-> >         err = drm_bridge_attach(encoder, bridge, NULL, 0);
-> >         if (err)
-> > -               dev_err(dev, "bridge_attach() failed for pipe: %s\n",
-> > +               drm_err(drm, "bridge_attach() failed for pipe: %s\n",
-> >                         of_node_full_name(pipe->of_node));
-> >
-> >         return err;
-> > --
-> > 2.43.0
-> >
+> Thanks. how do you plan to protect it? I understand that the string is
+> coming from the firmware and the kernel is just using it in snprintf. Is
+> it right?
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Yes, but FW should not use %s. Driver can check it.
+> 
+>> Please send FW version it was detected on.
+> 
+> `ethtool -i` outputs:
+>          firmware-version: 28.44.2506 (FB_0000000030)
+
+Thanks.
+> 
+> Thanks for your answer,
+> --breno
+
 
