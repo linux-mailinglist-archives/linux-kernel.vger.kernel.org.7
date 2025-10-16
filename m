@@ -1,235 +1,192 @@
-Return-Path: <linux-kernel+bounces-856834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0F3BE533F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:14:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640BFBE534B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C6FE035555F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1C71A684C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7666028B7EA;
-	Thu, 16 Oct 2025 19:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D42229ACEE;
+	Thu, 16 Oct 2025 19:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlgGxgDT"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DLzqCxA4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F712641C6
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E84299937
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760642091; cv=none; b=KhAuuhYV3OhrLvoiqNHJMelBZDvlb+VSFOpTJNeWykU1DfzNyQK0T4KpL2ayrXu/75dvnRqYyYhswyRxxDrNZyLwIcv5fRJ4M9+V62ftZ++Aw5cJxhlBv5ctKrzgBKIFoyV1AgQgFwcQ/8JzFtzxqQxATYIhsu4MLFR905OzJ14=
+	t=1760642114; cv=none; b=UJaOlbKqEf3DNQC9ZW0PeD1O8itm+ajh3TL9Hco6LQntWIWZj60Yi5aeR0cWHsimCNZsc8T8vEFoc9wManFGjIeWtJRF50/nXqTBsQS+yi7UL3tdlGdJUTsNLDID3iemHb3nZoEfpcNiIquLzrYOL6ZECLe0F32Px5/8rT+Lm6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760642091; c=relaxed/simple;
-	bh=gs2gtkYtOC38rK7GjuO0PFTzMNsj13nnhZhBvsBEHrs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hcv0ZhZroz6DyKUnzvpwuTgYe1jEUr7I3dqk/BQcjjBC//duP2QqECy08N3bryofGCoar9dvokW0zzYQlIorv4SwHwVO1xFE8plyBsXzmOcemDyCizmH8R7g07NP1wvsOsytK+pbZyVdYQilC/Vq4juQYBz+ekjvREb3excozgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlgGxgDT; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so572145f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760642088; x=1761246888; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aZrdvbsUZHARrwqjSB2xifq/HutkAoth/3p7P2F8JXY=;
-        b=hlgGxgDTK0Ff89eQCHom4w+6FFbDDr/1fORmelQowhl0FIabCQLCciHIfP3X2usxj7
-         61mwlb4cimtevLFxlWAl5Q2Rj7eBOVRJwMwSGlMec9l/xmGK5kzpffpWizslCGYcvcrL
-         vE+FVTSGjIJtdojtO6A/Nb4XGwZKYsnPqLZvdJs7sQFKmyD5XIB6A9w5DGjHYcssvQWO
-         Fj+kgZlrC5bFjuKyCusR5YjdjMxVlzcOutItwdATg9poCVXyDaSvOJGcp44M4sAkkvxh
-         6b+fuedUQTWtuKYtVICJ4sN6ac3sTN0aIy2VeFOgYkquebkNFB3jXwuHRVuSip4Yrm+e
-         PRFg==
+	s=arc-20240116; t=1760642114; c=relaxed/simple;
+	bh=2wIoqQOKViyJzI5mST31nnZOq2eejB4i2v9JaxIh2po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cwx9xphBNFSxrlbQQ4VFJK0aMXROA8IvKEhVUv13dh1dSFeuVHAP75cyRT9zDt6NOTaS/MuzEhSoRuHxK9f7eS4PUDs7anWH+EpA9LMq5W9S0qKBWJar5Hvq65i3gQLwyc6hr6c/tWbj+dOAkijiO8vIPIC2Kr7ul0+IBrWaBuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DLzqCxA4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760642111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hVHh5PR4TvqqguUhfaerHBEOYknHgUGYrVSqECH8sUI=;
+	b=DLzqCxA4GoAi534zS1kF78egJhMKDAdTdHIWTZ4sU0/ZSJLNmxVu5bjpO0+xzaOpmLZF77
+	c/4mHId4MVoH9X/w44EhTzHo4Qnr6yADxua2k+29BDlvTcdTIOvl2UHBFgxrJx73BoRF/+
+	7LiK6jXd7LTYeW0+6dLSodIJ8JcxXec=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-263-t0PdJFvwObqERJzONtPVKA-1; Thu, 16 Oct 2025 15:15:10 -0400
+X-MC-Unique: t0PdJFvwObqERJzONtPVKA-1
+X-Mimecast-MFC-AGG-ID: t0PdJFvwObqERJzONtPVKA_1760642109
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-427015f62a7so423419f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 12:15:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760642088; x=1761246888;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aZrdvbsUZHARrwqjSB2xifq/HutkAoth/3p7P2F8JXY=;
-        b=j0/E+fjPRrzyYe/1zmPXZ1ymST4+qrCF4gxQn1CwhMAjjV3cxbJxvLUA37zSejYOD+
-         Jh4VKRPQt51JpZLPaFeWpsibqX+WUvbv4Gv1Qaa/nTCyn8DUtVvN9fZ4GcuZr7tu5A5p
-         VGUqmEphD0ZRdUc/pE5bWkWKN0ui3zkOpZ56JzoCZQ/z3ip2Awx+yzfFtaEx/wHNswft
-         LLidj+M4NJjOxaocKIf7qfBQ/GsGfa3XuVJsvN5L9eGXiziPK2FSfWiAkDVmuZdSfvUF
-         HwF83AKarIy80Wp3vXlrFNjDYPlsAW3lK6W99aNgXfRAQeN2WrI58HMmuMXCtstYSwub
-         63dA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOhMvHwSod1enGp1as4ytj2AcluBjD+iZHImYbnDA0MiZQdwuqw/xfBgW2WGrFmkLNGNr/mIME2ZAOBSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyQGp0f7E40dDrcpUbxqSm96lUTBSQzz7xVoDb1QMrQmY3Y6K0
-	Q0GfNrf9voC1LD4rfUygcgjG8CPDcFdfc04LZL6UqMuGEhJ0YNQf/B/x
-X-Gm-Gg: ASbGncsWhK+2xt1Rvm9BOJWDwAiTpcakqo9GxJ2tGenrUXS/iR4j48yuAYi78k5yJwt
-	wWi0i17HGEgZeiQhVA6ZAg0B0UfQPmXwdMhIKXG2i02WxAJVt1swBLA5OCU19tXFZORL/Yi2N7Q
-	vlRyOraG71ABdVP38SSc1xP/UFRQnCAbbZYV724OtfOhg91RgSf2c4EJngfohIe0nH6DYBgpirT
-	N7zHv+r4mmo3/iXgvS7tFey7oMPJ5LQxzqvoWf71B7+C6h0zC2PMYdtsPs9RuY7edtVEXdJ7sum
-	NW2iXfvu4STtfrbETVEglx0adDFpwhCCtHXaihpbiVu1G3dIR0DpZFYEwr23XgdwwJcFVMsIKIU
-	jyFkaZ0i2TVztBFuVJ7SXIhKN/n7+x0tVnmA+U3dxxK2V8yrRry1j/pEyoT3r5Te3h8J7gD/yhK
-	ky2xdMC/q+RvGlQ+C0XnWJzzmbwQjlBOQMkqDF8j1STP9G/3MXMDxqQiS+
-X-Google-Smtp-Source: AGHT+IGzDQUbAcr6m/DJ/mVNT3hlzNep8olol6NpA1JIe9i80lJ2ED6sWYbbJQUrtZaq3gRCYYUzwQ==
-X-Received: by 2002:a05:6000:24c9:b0:426:d549:5861 with SMTP id ffacd0b85a97d-42704e029bcmr917816f8f.42.1760642088185;
-        Thu, 16 Oct 2025 12:14:48 -0700 (PDT)
-Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4270539be85sm1216634f8f.7.2025.10.16.12.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 12:14:47 -0700 (PDT)
-Message-ID: <f8bdecb31664317e28fff9244507944adb7c939d.camel@gmail.com>
-Subject: Re: [PATCH 3/3] ASoC: cs4271: Add support for the external mclk
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Herve Codina <herve.codina@bootlin.com>, David Rhodes	
- <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela	 <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Nikita Shubin	 <nikita.shubin@maquefel.me>,
- Axel Lin <axel.lin@ingics.com>, Brian Austin	 <brian.austin@cirrus.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
-	 <thomas.petazzoni@bootlin.com>
-Date: Thu, 16 Oct 2025 21:14:46 +0200
-In-Reply-To: <20251016130340.1442090-4-herve.codina@bootlin.com>
-References: <20251016130340.1442090-1-herve.codina@bootlin.com>
-	 <20251016130340.1442090-4-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+        d=1e100.net; s=20230601; t=1760642109; x=1761246909;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hVHh5PR4TvqqguUhfaerHBEOYknHgUGYrVSqECH8sUI=;
+        b=IS09FaBqIwcdGDcj1dTRmC96Xnsh137NEYKIY+rQpxnFLfqRfQEXf48UvYJa4+wJlJ
+         tYQI/65F67nORRCjX1s/Fe3GqMd3oAFI8/2ouRueMcDRoKmML9v8TS0Q5AlqNiQdLn9X
+         ZJg9sEKBN/mpPylW2SNxHC3iX7X1ouX6qCceReWE0LoA/5/0EpJGvtLy/20vRmcXKxPF
+         9/eUJF4lBPqFrWQQQpGlKZMxoNR0QjBX2gfby2c7MC66eS+A58bRnOTUKFF8CXUy6eIw
+         4WPLfTWIcGvFYDk4ouxfSVRsejI1eRMgtINg+cego03GdkFc+1hvxSAVcKyi2ZqllWcF
+         4lrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVL08bc65AcOOp0z0mu1+kuQsnj+EpknZOVfVrXMyBYgjBtuTgLHjX+PUBq9DHgkdvyNeZ04IFcUIr503g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBCDx6/Qy62FcuWqBy+0XAWTd3wdXyGSWXv9lZ911ITxleZOQ7
+	WCYc+UQY39r4GmAq5Sa1+6BosIBpH+J9QferBdl15KBhO+FEIj4Tomf9fwXwxgIufhQKEBpfOwe
+	CQn6303SyuIPi6zMfEyhdvWv5lSEcECN8vMSTBSc6aubQHWxxhWajpu1wHpLhy6dhjQ==
+X-Gm-Gg: ASbGncvaTBe519+IgZBBg3sX1vP3lnULUWUsR0fNBTi+yidZ+bqka8yH9qvx/Pn/nwd
+	eev+akOQer5pbZiKBHtZaLNb0zH/KX7p5YxkGR/38rADcTgaFMNOhwiwbZYPx9hkAaNHqPgHt93
+	dFTl6Ot3s+hfdxhiqAzADVVFZQSiuGlowB3Cdri43+bUBAfSGuMdBzNGSTmd3jK+G3rTDsonSe+
+	Gfkxq1aboywquGajVWYurFnzHSIt2PrVMV3+CxZDpTOIk1EpocuflbtuT5/IzTdeeM5wFp6f92d
+	rEicyeVrk7szetKKE2bNM7nrQE+/AmVsA/gLoGC9bfU4VGopzqZilCuhkF4pMOg0P3lDACtfrgY
+	oE0XmUcUbHzhGoncxgDiY3j9swUFIU+VlK1ky2qhJ9NJ/3xmmGOSSwjlRSPvdA+XSfI3iVEWVTM
+	k3ubz/ozUTWDH1W3WTfafuE6H/QZk=
+X-Received: by 2002:a05:6000:1446:b0:40b:c42e:fe39 with SMTP id ffacd0b85a97d-42704d963b3mr855975f8f.40.1760642109116;
+        Thu, 16 Oct 2025 12:15:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTwjlQtEo8QmL86bVhgI5H+nKBsihjFtBhqqdNCCeLESucnFPVLdDF1Syd2/2TIS9wcEA8jg==
+X-Received: by 2002:a05:6000:1446:b0:40b:c42e:fe39 with SMTP id ffacd0b85a97d-42704d963b3mr855922f8f.40.1760642108544;
+        Thu, 16 Oct 2025 12:15:08 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144239bdsm64839695e9.3.2025.10.16.12.15.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 12:15:08 -0700 (PDT)
+Message-ID: <dc14c183-d93e-405a-831a-dca69ede3cd2@redhat.com>
+Date: Thu, 16 Oct 2025 21:15:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] mm: fix off-by-one error in VMA count limit checks
+To: Kalesh Singh <kaleshsingh@google.com>, Hugh Dickins <hughd@google.com>
+Cc: akpm@linux-foundation.org, minchan@kernel.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
+ pfalcato@suse.de, kernel-team@android.com, android-mm@google.com,
+ stable@vger.kernel.org, SeongJae Park <sj@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jann Horn <jannh@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20251013235259.589015-1-kaleshsingh@google.com>
+ <20251013235259.589015-2-kaleshsingh@google.com>
+ <144f3ee6-1a5f-57fc-d5f8-5ce54a3ac139@google.com>
+ <CAC_TJvdLxPRC5r+Ae+h2Zmc68B5+s40+413Xo4SjvXH2x2F6hg@mail.gmail.com>
+ <af0618c0-03c5-9133-bb14-db8ddb72b8de@google.com>
+ <CAC_TJvdy4qCaLAW09ViC5vPbj4XC7_P+9Jjj_kYSU6d+=r70yw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAC_TJvdy4qCaLAW09ViC5vPbj4XC7_P+9Jjj_kYSU6d+=r70yw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Herve,
+>>> Would this be an acceptable path forward?
+>>
+>> Possibly, if others like it: my concern was to end a misunderstanding
+>> (I'm generally much too slow to get involved in cleanups).
+>>
+>> Though given that the sysctl is named "max_map_count", I'm not very
+>> keen on renaming everything else from map_count to vma_count
+>> (and of course I'm not suggesting to rename the sysctl).
+> 
+> I still believe vma_count is a clearer name for the field, given some
+> existing comments already refer to it as vma count. The inconsistency
+> between vma_count and sysctl_max_map_count can be abstracted away; and
+> the sysctl made non-global.
 
-On Thu, 2025-10-16 at 15:03 +0200, Herve Codina wrote:
-> The mclk (master clock) of the cs4271 codec can be an input clock.
->=20
-> In this case the connected clock needs to be enabled outside of any
-> audio stream. Indeed, this clock is needed for i2c communication.
->=20
-> Add support of this clock and enable it before the first i2c transfer.
+Yes, to me that part makes perfect sense (taste differs as we know).
 
-what about suspend/resume, would it make sense to disable/enable the clock
-there?
+-- 
+Cheers
 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
-> =C2=A0sound/soc/codecs/cs4271.c | 34 +++++++++++++++++++++++++++++++---
-> =C2=A01 file changed, 31 insertions(+), 3 deletions(-)
->=20
-> diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-> index ff9c6628224c..481a2c20b7cf 100644
-> --- a/sound/soc/codecs/cs4271.c
-> +++ b/sound/soc/codecs/cs4271.c
-> @@ -10,6 +10,7 @@
-> =C2=A0 * DAPM support not implemented.
-> =C2=A0 */
-> =C2=A0
-> +#include <linux/clk.h>
-> =C2=A0#include <linux/module.h>
-> =C2=A0#include <linux/slab.h>
-> =C2=A0#include <linux/delay.h>
-> @@ -163,6 +164,7 @@ struct cs4271_private {
-> =C2=A0	/* enable soft reset workaround */
-> =C2=A0	bool				enable_soft_reset;
-> =C2=A0	struct regulator_bulk_data=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 supplies[=
-ARRAY_SIZE(supply_names)];
-> +	struct clk *clk;
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct snd_soc_dapm_widget cs4271_dapm_widgets[] =3D {
-> @@ -567,22 +569,36 @@ static int cs4271_component_probe(struct snd_soc_co=
-mponent *component)
-> =C2=A0		cs4271->enable_soft_reset =3D cs4271plat->enable_soft_reset;
-> =C2=A0	}
-> =C2=A0
-> +	ret =3D clk_prepare_enable(cs4271->clk);
-> +	if (ret) {
-> +		dev_err(component->dev, "Failed to enable clk: %d\n", ret);
-> +		goto err_disable_regulators;
-> +	}
-> +
-> +	/*
-> +	 * Be sure to have the clock and power-supplies stable before releasing
-> +	 * the reset.
-> +	 */
+David / dhildenb
 
-Would "if (cs4271->clk)" make sense for the fsleep() call?
-
-> +	fsleep(1000);
-> +
-> =C2=A0	/* Reset codec */
-> =C2=A0	cs4271_reset(component);
-> =C2=A0
-> =C2=A0	ret =3D regcache_sync(cs4271->regmap);
-> =C2=A0	if (ret < 0)
-> -		return ret;
-> +		goto err_force_reset;
-> =C2=A0
-> =C2=A0	ret =3D regmap_update_bits(cs4271->regmap, CS4271_MODE2,
-> =C2=A0				 CS4271_MODE2_PDN | CS4271_MODE2_CPEN,
-> =C2=A0				 CS4271_MODE2_PDN | CS4271_MODE2_CPEN);
-> =C2=A0	if (ret < 0)
-> -		return ret;
-> +		goto err_force_reset;
-> +
-> =C2=A0	ret =3D regmap_update_bits(cs4271->regmap, CS4271_MODE2,
-> =C2=A0				 CS4271_MODE2_PDN, 0);
-> =C2=A0	if (ret < 0)
-> -		return ret;
-> +		goto err_force_reset;
-> +
-> =C2=A0	/* Power-up sequence requires 85 uS */
-> =C2=A0	udelay(85);
-> =C2=A0
-> @@ -592,6 +608,13 @@ static int cs4271_component_probe(struct snd_soc_com=
-ponent *component)
-> =C2=A0				=C2=A0=C2=A0 CS4271_MODE2_MUTECAEQUB);
-> =C2=A0
-> =C2=A0	return 0;
-> +
-> +err_force_reset:
-> +	gpiod_set_value(cs4271->reset, 1);
-
-Is the reset line assertion really required here?
-
-> +	clk_disable_unprepare(cs4271->clk);
-> +err_disable_regulators:
-> +	regulator_bulk_disable(ARRAY_SIZE(cs4271->supplies), cs4271->supplies);
-
-Would it make sense to fix the error path regarding regulators handling
-in a separate patch (especially if you decide to extend suspend/resume)?
-
-> +	return ret;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void cs4271_component_remove(struct snd_soc_component *compo=
-nent)
-> @@ -603,6 +626,7 @@ static void cs4271_component_remove(struct snd_soc_co=
-mponent *component)
-> =C2=A0
-> =C2=A0	regcache_mark_dirty(cs4271->regmap);
-> =C2=A0	regulator_bulk_disable(ARRAY_SIZE(cs4271->supplies), cs4271->suppl=
-ies);
-> +	clk_disable_unprepare(cs4271->clk);
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct snd_soc_component_driver soc_component_dev_cs42=
-71 =3D {
-> @@ -637,6 +661,10 @@ static int cs4271_common_probe(struct device *dev,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "error retrieving RESET GPIO\n");
-> =C2=A0	gpiod_set_consumer_name(cs4271->reset, "CS4271 Reset");
-> =C2=A0
-> +	cs4271->clk =3D devm_clk_get_optional(dev, "mclk");
-> +	if (IS_ERR(cs4271->clk))
-> +		return dev_err_probe(dev, PTR_ERR(cs4271->clk), "Failed to get mclk\n"=
-);
-> +
-> =C2=A0	for (i =3D 0; i < ARRAY_SIZE(supply_names); i++)
-> =C2=A0		cs4271->supplies[i].supply =3D supply_names[i];
-> =C2=A0
-
---=20
-Alexander Sverdlin.
 
