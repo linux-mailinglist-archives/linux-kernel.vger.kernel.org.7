@@ -1,1186 +1,657 @@
-Return-Path: <linux-kernel+bounces-855419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E25EBE12A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:29:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9740FBE12AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92ED8541FFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E8F541EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77331E5207;
-	Thu, 16 Oct 2025 01:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0761DDC37;
+	Thu, 16 Oct 2025 01:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYnlgBq+"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZXINPNQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68E618FDDB
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760578138; cv=none; b=ZSfCuWb3KqnD/TVnKoqq0cVV2uQt3Qt625HLl4qwWVCczr9p7/zSpqNwnlDMoVptjNGO+6JMAZwoVlAaq4Km4NapY8kFeWQCLUMDcrwW98KKg+jhZDNKevTWDuP/9LQMS8kQZFpnxchtBafMWblIE33lzn/d6VhJlHCox5T9Ny4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760578138; c=relaxed/simple;
-	bh=E+sgGLwFdMF/i3DgRoYsUcjuJ325OoEPNgTZcM0/5ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BWv/5UGLfr6ioPtuWlhK29pi369rdB9JxyTzHhc+IKdTGEObuOz2GZN7lCldkegq8bh/Mgc8nRfdcjO4XYnpF0aQ21ChbiefKY9au9ao5Yhv7B7lCPHIQS5pyedk2nmkDuVVOCDgeMOz6V1ZCB2AN74ZqB36mPCWQAUBqFp1SoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYnlgBq+; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso161040f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760578133; x=1761182933; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pa+XfaK9u7quw3l0UX/gsxX2HcP3aoidEYDHMUoUHmk=;
-        b=DYnlgBq+RXvXkpLdqv8ifvGMKXoeTZUlSDc+82lQlrtw+y1iiwDbY8qZf39Vwk8vPl
-         SohlOd/1wEL9BUDg/SjQe6BtM+WeAW7kNm7ABGEoV6Wg+xv9/ATXFCcGm6IjkSmosFJC
-         2Yu4n+kV1TQFzwfW+qDd54DtozqO6MQuRgfkS9RptT530GkFmBpJnzpZSWunJ6CQvBW2
-         9rGT5IN0lx4etZZJq2ydVZosLnrNxFpxoPcm2HkcyBaL6196IXMDce+lxsb0CMn708JG
-         jlbWoEAfywsPkRafIRPmNUZE51hfLi7uAYSHbR55pU+E8rhDNa+Jw4EoC2PTCNbivZq0
-         y6BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760578133; x=1761182933;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pa+XfaK9u7quw3l0UX/gsxX2HcP3aoidEYDHMUoUHmk=;
-        b=HoEUC1KtsvfThF001gEtUwSqS8z2Gn1I0L++B4Hj1A++Bg87DSc0di6t/1wsxS/w0U
-         hirUunpzQE4FItnK9XQRdz9tbCtdmJkk76Onk9bYWoIt7KiECgLfT9rIRjAtmvcj9FZV
-         uGPCzVJu0UQbZp6apm3kqhR663JVqhDzt5ceV0gUHRVojYyQNQr7yHtgbtUceDPCiwO9
-         NzicWcmJrJY+Al0j72FzPBmTICjOVhksuThc04/bn2M9aBIfJtwuJqB4atfKTddBR/QI
-         PI7MDUeyj2Hs3FhWCAOLJQK7bQMPHkI0t6QvBW8EsStQ93HH8+SzaTXoBNJ0bClYJGjV
-         S6Ew==
-X-Gm-Message-State: AOJu0YwsXjR2UAGKQ2CPK1cO9D9konGJEs3Tafqq67kq0ZYA74lyVe2c
-	eqB3B4tl6gqoFvwZVVUPKbZ0jl2VJJL7O0q85tMISnObSKyYf8BEpo59
-X-Gm-Gg: ASbGncvG2KI6zIguWnOlJTz5AHsQ8Xwnt7gj5UJwq7OhpRwmbijq/FeFFoX8YAzsM/r
-	lFMK8jrLZy7koUi0pXrt9Y3E/Yj/qOhv8RKg0SXYljhp9cs2VcrlXKsjTXiaqtnuaqE5Zs1TF7W
-	jhuwksxpCVkYwEHHtqV1NJsdi8LNRfKKpVP+eE09e3F3Kz5XlgBBu2aBvdMbDN9I1KhR0XsIuBF
-	lvYs1W46JjtoRg2HsND096gb5n7/aoDnWk6M77xHE/C0ZlX25o6fVknSHRIU3XKIf+eUfEAIHp7
-	gVTnv+lQJsMJdgJx71X5LpmQVTyZ/sIU9/6d8+Bwi71HU3yE+tAE3nalbfqutVD6CbkAIZRxAAO
-	yAP2FEvJcEWcnit6iL5kZsDkeoEE6VVaANXIs80HyiZdDohgHm4yHtQNYPWq1+gECyWp2jOcilC
-	OGk9M/uVqdvbd7Nw==
-X-Google-Smtp-Source: AGHT+IGFMHh+2pFt94mvEx5UJDzW3rVv3NBHaBjFrsQlpchSPalM2sbNeWHILN2OTIks9oLXIMXU2Q==
-X-Received: by 2002:a05:6000:2285:b0:3ec:8c8:7b79 with SMTP id ffacd0b85a97d-4266e8e0bdfmr21482533f8f.61.1760578132624;
-        Wed, 15 Oct 2025 18:28:52 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427013f9b58sm7167f8f.51.2025.10.15.18.28.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 18:28:52 -0700 (PDT)
-Message-ID: <4d660ca5-fa98-481f-be74-1103f1e483d4@gmail.com>
-Date: Thu, 16 Oct 2025 03:28:51 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC7E1FF1C4;
+	Thu, 16 Oct 2025 01:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760578206; cv=fail; b=JhhM2mpBfqIjMDPcNmstv9a/n3FHin0k4Rqvd/F+XGuj5I/WduvU/dMH8w9Jwlykv8qu4IJ2ri+BQvWCbGpPgt5bsgz/uG1Eq6373Qur5Wh0WYiWMNASYRCKNpDY7LrS8BI+8pmIha3kvt9jupc6AyElwIdUW7WCzsrW5YwVKbM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760578206; c=relaxed/simple;
+	bh=0pCxU4br174KIiBNuU6xzFHwe/TOJx90lwpkW8m3ap4=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kuRFRPYK7AQufBmJibln8TBi8nBBeiXpxLteL04/IM8nb3ECUOPR4OacFnaLqg6/E2EZIq47kg0pHQGM6WaCFsFNPs49bGZxu9F4/dIqJVfkpUvynHmNJZGCC4muWkavGE6K7t6tJ3vonkjF9Tz+bMp6+8lC0NgKNp9VU/YOG78=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZXINPNQ; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760578203; x=1792114203;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   mime-version;
+  bh=0pCxU4br174KIiBNuU6xzFHwe/TOJx90lwpkW8m3ap4=;
+  b=XZXINPNQOIufAcqZNsgnjJ07N1LzjhXTSYWDcj5Mqm/v5v1Uz6WD9bNT
+   6+5AmljQxYQovzst22qErkHhztu9bBIXlbHL6ejybGucyYYa9syJDD98c
+   YlT7Z+oC6GffC9HA2J33EOtrv7TzcfhSACXJYWwTIUujACCnTdAxL+I4X
+   OIDf1ug3r6sL5dU/QG0q4V2wfLtyibYVd8y8MLAz/xEf0MRcKkG6GVB/x
+   dLgA70/j7z7pcXyg8ufmCNcNNBIR+7r0aGZR6VDmzEH97LM3RVXKE5vdP
+   ZN0zqqjRb+VVVxP6G/5JGogHzoU6O6Ezb6zAHta6yXQTXvIBbXHLcjhA8
+   w==;
+X-CSE-ConnectionGUID: 42NPWLIvSUuwqFgfbxGOOg==
+X-CSE-MsgGUID: P/OqoOkeTGmKDRqlB2x1CA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="73874001"
+X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
+   d="scan'208";a="73874001"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 18:30:02 -0700
+X-CSE-ConnectionGUID: UJg8u99XTRO0UURHjG/nBA==
+X-CSE-MsgGUID: Ldl/uZH8QgiGxrnhpEIezQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
+   d="scan'208";a="186724693"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 18:30:01 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 15 Oct 2025 18:30:00 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 15 Oct 2025 18:30:00 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.37)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 15 Oct 2025 18:30:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ek4jfJCuMKJG9B4cMh6lzyv2TjfHbNXmgIl119ipi42kbr6bimpE4vmLYSmqRWtEPiuhC/v24og10dv4Hu71M7Eu4o4lskSZ9ySRJHpASzcjz9SxUWoZ/VzKN15w69wQrBmuQiht9NtCpsYYlMhldb2ng9wnOT4nSz3nww+lepIJFovWOLyKp9ct6Fg649nDLUka08AVjcJ5UcXIX+4EHOWOs6XZhdIS/evbo/yWzJLMOuKDo/xlYyL4eU1NFV1jBF0Rf70Nqo/X3P2rKBbmRkAESrhtV2/iqHFgswD6fsdQOzcbA0ig68UPd9MgyHhsFQOLuwHc24w4pzTAb9rtAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hnFlauM44OqSKId59avWxZHA7YMgBkyPatnfh+VNGSc=;
+ b=RongxW+WHjaZb3DS/dVxegPR9ez/ulPD+GyMoXh88lg3rG6VJFyX14sot9gaTu6OGrr74Wtiuvzcb+w2O4K2a48yiZFKebXTV1V6YNr4Bm0Lcgfz6FcGOjhbtwI76PrGFdpOI23f3z9CDy552KLZGS/Bsx7ZVexxFM2kexo86nt5+50+CRhGwqeMCw2mmdJwQuCZU/FM3M0oXk4YPnf8BpQA6kk3nccloQ90UijfUZGfgDvIy6HWnG/yj+zdqydM/WXrwdx7utpq+AnIsRGyu9UTKcTGBZwRIBUWSq7apa7Q6hyWsOaAtK71oJuW+h+L0JqiiHIhoxNJB6eWczwlFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BY5PR11MB4165.namprd11.prod.outlook.com (2603:10b6:a03:18c::26)
+ by MN6PR11MB8217.namprd11.prod.outlook.com (2603:10b6:208:47d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Thu, 16 Oct
+ 2025 01:29:54 +0000
+Received: from BY5PR11MB4165.namprd11.prod.outlook.com
+ ([fe80::d9f7:7a66:b261:8891]) by BY5PR11MB4165.namprd11.prod.outlook.com
+ ([fe80::d9f7:7a66:b261:8891%7]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
+ 01:29:54 +0000
+Date: Thu, 16 Oct 2025 09:29:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: <xur@google.com>, Alexey Gladkov <legion@kernel.org>, Alice Ryhl
+	<aliceryhl@google.com>, Ard Biesheuvel <ardb@kernel.org>, Bill Wendling
+	<morbo@google.com>, Han Shen <shenhan@google.com>, Ingo Molnar
+	<mingo@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Justin Stitt
+	<justinstitt@google.com>, Kees Cook <kees@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <nick.desaulniers+lkml@gmail.com>, Nicolas Schier
+	<nicolas.schier@linux.dev>, Peter Zijlstra <peterz@infradead.org>, "Tamir
+ Duberstein" <tamird@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Thomas
+ =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, Yabin Cui
+	<yabinc@google.com>, Sriraman Tallam <tmsriram@google.com>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-kbuild@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>, Rong Xu
+	<xur@google.com>
+Subject: Re: [PATCH v2 2/4] kbuild: Disable AutoFDO and Propeller flags for
+ kernel modules
+Message-ID: <aPBKgTyyAH1rpVN8@rli9-mobl>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251014191156.3836703-3-xur@google.com>
+X-ClientProxiedBy: SG2PR04CA0155.apcprd04.prod.outlook.com (2603:1096:4::17)
+ To DM6PR11MB4172.namprd11.prod.outlook.com (2603:10b6:5:19f::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 2/9] platform/x86: asus-armoury: move existing tunings
- to asus-armoury module
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>,
- "Limonciello, Mario" <mario.limonciello@amd.com>,
- "Luke D . Jones" <luke@ljones.dev>, Alok Tiwari <alok.a.tiwari@oracle.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
-References: <20251015014736.1402045-1-benato.denis96@gmail.com>
- <20251015014736.1402045-3-benato.denis96@gmail.com>
- <eb8f01d9-9250-4916-3e65-40aef04cff6b@linux.intel.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <eb8f01d9-9250-4916-3e65-40aef04cff6b@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR11MB4165:EE_|MN6PR11MB8217:EE_
+X-MS-Office365-Filtering-Correlation-Id: d54dc214-1c9b-4995-1f02-08de0c538135
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wfzoBF+JUhjTomgEkakWlbngebkOyLroN9tiKgV5TOGZbd490MeKf7hj1Jr8?=
+ =?us-ascii?Q?c1+mKX7OUM4Ed1nMGkf7E+shc7uxBE2NsUZ4FcwCBTyYQu143om3V3Bo2e8Q?=
+ =?us-ascii?Q?/HT/4pfNHdYSYSJvCZL41W1d600wPiLoC5orqXUFQAq0zasPNMQng5Z1u8OK?=
+ =?us-ascii?Q?yXN4yNzewhwl5rLB+U5JzrvGXxh1hQXiYr4zKPCyYXfcGYE8GFz0DYCebryw?=
+ =?us-ascii?Q?ucwHuFtTw6rcHjfDWTPio7sRkhEwUkt9+AkzbYilFcyanskfsN0mWn/k4Zon?=
+ =?us-ascii?Q?Qfhds7j2u6s5DFfoTy0DVV1xK0Un1uEcYtX5bMvfhlTsWoRX3JcoNNhEIfdH?=
+ =?us-ascii?Q?Z3M/Sy2d0ISHoBreJnBh+mkprGMjEMTZGxhFfSgQp4PoLqxm/gGcZM5yvMSr?=
+ =?us-ascii?Q?5F6PibKg+o/IX4EJKcTNUtqB2Rpl/uF122p34tXs7An/43RZQjgJ1GJnfcl6?=
+ =?us-ascii?Q?XB0IVDAKwEHh7iB+NC0dBlmdjDynr5B/lwMnN31j9IOyglq/s2NWbKLyo4pn?=
+ =?us-ascii?Q?Tgnr0C/H1drpCnJyd62b0K5VMQ1NJhZMMjq6sHXB9VOL1vn6GRrAjW+aiJGT?=
+ =?us-ascii?Q?gEP6XWCVS7NLSJQpG0yhz2sFPHAfk/sxAzIJ9im8PrVtW1IdZ5izccjw8ade?=
+ =?us-ascii?Q?a6zD5IzVq4fSVeCKH/6dk3sAd/dh7UrUHlad2wDkjVeN6CQ2AeC7jAYAm5/p?=
+ =?us-ascii?Q?NTEoheKIUh6muNz5yvkiBydFMhh+WlgRcHr4Z4r+ATnO0gX6/+dkX/CadIGi?=
+ =?us-ascii?Q?tC0OgKA4ygwZEDZTq9gvf+zyuMqNxQbMVlL+27bQ6ENNybr89PxZHriGuPlz?=
+ =?us-ascii?Q?GxmHuw4RQ7rfj7gr5m2eOkeBO38C+qD+pgH2U+ZzwMxYEidX6Uu+Lsz9N0Rc?=
+ =?us-ascii?Q?5+QuvxM0w3DMX2dCx6R5WAWYuyPDAi6qgSJOeyIGcQG+d6yOZRmlvPp8T8Iv?=
+ =?us-ascii?Q?QLQ1BfSbMTdRal+aeVlw7cyuuDwFIEEy7XuVJE54Ia2ETkkCBZp96tqv5zHK?=
+ =?us-ascii?Q?dTx5OZkVIW6qiuLl04dpGrI56KRUDECMXFv8nyljzSyhh48aop2d4lQF/upl?=
+ =?us-ascii?Q?JoUles6cYtUAC6yicbKIBdu13Mb/CnoqWQdYckCvPhJUABpNFPtRWQ52xcot?=
+ =?us-ascii?Q?h7eGcSOSyAQIL/LZ4Xji0RnsEIF6i3RMNYHHBJklmxLc8zq1RmZUylll8bDo?=
+ =?us-ascii?Q?rl87Nnldito49iC3GbN2S9daqEE7y8NNDCeyatw2emJR7Tg8nJOrHK2vDRKI?=
+ =?us-ascii?Q?/Hv5A1bo+wMyTKisZ7f8mMX8UseFygVDQYLGt7pfCtakEs9Ufghhd4bGHJ3F?=
+ =?us-ascii?Q?Dzg1DdZAFqRbliWWJBfhK45syCWa/dTzPfNXTeYzX9Zx1HZRUR4A8yEcvwOm?=
+ =?us-ascii?Q?rkvhyi+aPxWv9DCBdtPMKLLWH/MGKUsDX7oz3cPkli4eLUAjgbyQVrwFkjwZ?=
+ =?us-ascii?Q?C+3q+68r30FUzIT/++MYZqnkElHV19kJpOhwDe+xq8R3mg/gBGOdAw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4165.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+6h2K0caXwxN1DFRkT4voPyMrFQBo3X/G+nbEyy+kWlvUoJC2sxKSAn8Sm8/?=
+ =?us-ascii?Q?TyOalktVk2yY+awBv4XFa8y5l8QHdSuPOD8s/JeddyxcoGT7RahoLl4upiPi?=
+ =?us-ascii?Q?eLB1l1TAAFU6Zk5Rka6qnOVRsrDrfMY1rqxNGrFf5h4cAekarwfYugpXArYA?=
+ =?us-ascii?Q?W6XmW9sOxuz6x5lLcHsNT84VesZcLjhZWiI682slTHpht4grty21KYtNqBl2?=
+ =?us-ascii?Q?LtDmLphQc3dH0g3GQXHTVpD5d9yUtlCyOPAWb6Vp7XCh0y2hamV8hC6wKz1K?=
+ =?us-ascii?Q?c+iiY7IdSHSdGFlRB6MKDJn+M23q2nAl9r6Y8OsWuhobfpFL/TCQyFvaHQ1E?=
+ =?us-ascii?Q?UR0UG8AK/lEjgO8al9vFiVPBiaStRHmINtTSk7km8DSYuP6xmCVmldQkA6t/?=
+ =?us-ascii?Q?cwklMFdDxc94DAK998MpE1ELUlZDt9quvS4gV/hnTEscKdGR97BXnOnjr6K5?=
+ =?us-ascii?Q?ZVLLPJGbw5BuxPaHVBMX/CYULKyOpPQc4rS2qxK2NLzI6BL3dzhSTtmP/p5O?=
+ =?us-ascii?Q?9juWgzX2Bt2yvAbwy3uM4xhTVI6PbuECCARXI0MYgPY3c7zyaomG2e+nA1Ye?=
+ =?us-ascii?Q?wvqIO/u4tcUDkm8RJfMTug6r1/ChoF/MbYgMFtBcIQc0YIoTzqPxkfukV7FU?=
+ =?us-ascii?Q?uMexdnn7a+qfJ16u9tkG02JegNb5KtzQzLYWX71ViH7FZIhBq9IJKKiuRnyP?=
+ =?us-ascii?Q?EvqpcN4YhmFMXguPkZUaNSk53ir2Mq3putbC7MtAU0Ktz+3BvG8NS+LHgUYo?=
+ =?us-ascii?Q?aSAbfZhpGvhEmd7QtE1OSLffUNVKIVCZEKWy6ADCZiwvnFTeOuvU2GKxzP6s?=
+ =?us-ascii?Q?vjOmrQRVY+US3xefs5eSF+KQMnwaFGUBapvxMqrQiJ1TtOdWnuE5n/Xstk5n?=
+ =?us-ascii?Q?GOjqoCvhLbPpKfV6XM0MvQrZwnP2pi6WJn+y+aC8nriN0O8a3J2j6IgUuUMt?=
+ =?us-ascii?Q?uoNYrTfQDGb4rXg61Yvz5Ehl78AWojqMklGkUIPMEy3pPNV/YJtr4ntMvKTC?=
+ =?us-ascii?Q?a4xSsq8Bv0cx0wyUKFiwyu3lawdlbeWKu29Z5k6H+hK5boXaEap88pzRFkuZ?=
+ =?us-ascii?Q?xW1VZNQ/fzkCRM2lrkN/zb4+prjMg5TLhtWnFOSxzG3eqx9o62he/d9HDtw8?=
+ =?us-ascii?Q?d4sL7OqIgVLVjC9DUvMPqIxDgGt+TIkmHzbEWJZa7jdptKiFQ3M2hsAIROJa?=
+ =?us-ascii?Q?WvSiN+sbghq1Se50dl1mDhv+fDDj0U4navWKdw8kUK6gSzfnH1fwid2Lt2uj?=
+ =?us-ascii?Q?wt5+TMoqKfMubz1xIFGwtNHna3AYEvj4SnGRHrT4FTVuHIp7hKu0RNrogNCw?=
+ =?us-ascii?Q?2147VYnL/sYFnSwGKwP+p5ILg20OXaEiFMWdvgmFfVuN2SUJ1IXWsS2mAeBj?=
+ =?us-ascii?Q?gvl4xrvcDsL5QOva7fTUKdAiI+ZPrG+UPvaSQlI202h7H2KKGOFZD6MpBVLD?=
+ =?us-ascii?Q?sxXHItuUXo/FDhSALjJ1MbqKuxu1BAGjW8INqfrzJ9bEBntyUo+lLTahENA6?=
+ =?us-ascii?Q?3NKzID5la/XE0VCn7am4wUi6p9fzgZR5zKy/ufhXaMfs8iSP9Dcz1FIyxP3D?=
+ =?us-ascii?Q?ZMn5/EAEBBZa1NQHgGaqjXcL33wjedO4ZhSAoVsl?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d54dc214-1c9b-4995-1f02-08de0c538135
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4172.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 01:29:54.1656
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VjwId5yud0EYRKEWd4OjBEFAYCE8kL9XGJFqOz8d9kU7nJGqfum4HrDhzqTGUjigTLvL5cNLj9KgYaNw+MAQGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8217
+X-OriginatorOrg: intel.com
 
+Hi,
 
-On 10/15/25 15:56, Ilpo Järvinen wrote:
-> On Wed, 15 Oct 2025, Denis Benato wrote:
->
->> From: "Luke D. Jones" <luke@ljones.dev>
->>
->> The fw_attributes_class provides a much cleaner interface to all of the
->> attributes introduced to asus-wmi. This patch moves all of these extra
->> attributes over to fw_attributes_class, and shifts the bulk of these
->> definitions to a new kernel module to reduce the clutter of asus-wmi
->> with the intention of deprecating the asus-wmi attributes in future.
->>
->> The work applies only to WMI methods which don't have a clearly defined
->> place within the sysfs and as a result ended up lumped together in
->> /sys/devices/platform/asus-nb-wmi/ with no standard API.
->>
->> Where possible the fw attrs now implement defaults, min, max, scalar,
->> choices, etc. As en example dgpu_disable becomes:
->>
->> /sys/class/firmware-attributes/asus-armoury/attributes/dgpu_disable/
->> ├── current_value
->> ├── display_name
->> ├── possible_values
->> └── type
->>
->> as do other attributes.
->>
->> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
->> Signed-off-by: Luke D. Jones <luke@ljones.dev>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>  drivers/hid/hid-asus.c                        |   1 +
->>  drivers/platform/x86/Kconfig                  |  12 +
->>  drivers/platform/x86/Makefile                 |   1 +
->>  drivers/platform/x86/asus-armoury.c           | 545 ++++++++++++++++++
->>  drivers/platform/x86/asus-armoury.h           | 164 ++++++
->>  drivers/platform/x86/asus-wmi.c               |   5 +-
->>  .../platform_data/x86/asus-wmi-leds-ids.h     |  50 ++
->>  include/linux/platform_data/x86/asus-wmi.h    |  43 +-
->>  8 files changed, 777 insertions(+), 44 deletions(-)
->>  create mode 100644 drivers/platform/x86/asus-armoury.c
->>  create mode 100644 drivers/platform/x86/asus-armoury.h
->>  create mode 100644 include/linux/platform_data/x86/asus-wmi-leds-ids.h
->>
->> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
->> index a444d41e53b6..472bca54642b 100644
->> --- a/drivers/hid/hid-asus.c
->> +++ b/drivers/hid/hid-asus.c
->> @@ -27,6 +27,7 @@
->>  #include <linux/hid.h>
->>  #include <linux/module.h>
->>  #include <linux/platform_data/x86/asus-wmi.h>
->> +#include <linux/platform_data/x86/asus-wmi-leds-ids.h>
->>  #include <linux/input/mt.h>
->>  #include <linux/usb.h> /* For to_usb_interface for T100 touchpad intf check */
->>  #include <linux/power_supply.h>
->> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->> index 46e62feeda3c..8b827680754c 100644
->> --- a/drivers/platform/x86/Kconfig
->> +++ b/drivers/platform/x86/Kconfig
->> @@ -262,6 +262,18 @@ config ASUS_WIRELESS
->>  	  If you choose to compile this driver as a module the module will be
->>  	  called asus-wireless.
->>  
->> +config ASUS_ARMOURY
->> +	tristate "ASUS Armoury driver"
->> +	depends on ASUS_WMI
->> +	select FW_ATTR_CLASS
->> +	help
->> +	  Say Y here if you have a WMI aware Asus machine and would like to use the
->> +	  firmware_attributes API to control various settings typically exposed in
->> +	  the ASUS Armoury Crate application available on Windows.
->> +
->> +	  To compile this driver as a module, choose M here: the module will
->> +	  be called asus-armoury.
->> +
->>  config ASUS_WMI
->>  	tristate "ASUS WMI Driver"
->>  	depends on ACPI_WMI
->> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
->> index c7db2a88c11a..4b1220f9b194 100644
->> --- a/drivers/platform/x86/Makefile
->> +++ b/drivers/platform/x86/Makefile
->> @@ -33,6 +33,7 @@ obj-$(CONFIG_APPLE_GMUX)	+= apple-gmux.o
->>  # ASUS
->>  obj-$(CONFIG_ASUS_LAPTOP)	+= asus-laptop.o
->>  obj-$(CONFIG_ASUS_WIRELESS)	+= asus-wireless.o
->> +obj-$(CONFIG_ASUS_ARMOURY)	+= asus-armoury.o
->>  obj-$(CONFIG_ASUS_WMI)		+= asus-wmi.o
->>  obj-$(CONFIG_ASUS_NB_WMI)	+= asus-nb-wmi.o
->>  obj-$(CONFIG_ASUS_TF103C_DOCK)	+= asus-tf103c-dock.o
->> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
->> new file mode 100644
->> index 000000000000..57ed9449ec5f
->> --- /dev/null
->> +++ b/drivers/platform/x86/asus-armoury.c
->> @@ -0,0 +1,545 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Asus Armoury (WMI) attributes driver.
->> + *
->> + * This driver uses the fw_attributes class to expose various WMI functions
->> + * that are present in many gaming and some non-gaming ASUS laptops.
->> + *
->> + * These typically don't fit anywhere else in the sysfs such as under LED class,
->> + * hwmon or others, and are set in Windows using the ASUS Armoury Crate tool.
->> + *
->> + * Copyright(C) 2024 Luke Jones <luke@ljones.dev>
->> + */
->> +
->> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/array_size.h>
->> +#include <linux/bitfield.h>
->> +#include <linux/device.h>
->> +#include <linux/dmi.h>
->> +#include <linux/errno.h>
->> +#include <linux/fs.h>
->> +#include <linux/kernel.h>
->> +#include <linux/kmod.h>
->> +#include <linux/kobject.h>
->> +#include <linux/module.h>
->> +#include <linux/mutex.h>
->> +#include <linux/platform_data/x86/asus-wmi.h>
->> +#include <linux/printk.h>
->> +#include <linux/types.h>
->> +
->> +#include "asus-armoury.h"
->> +#include "firmware_attributes_class.h"
->> +
->> +#define ASUS_NB_WMI_EVENT_GUID "0B3CBB35-E3C2-45ED-91C2-4C5A6D195D1C"
->> +
->> +#define ASUS_MINI_LED_MODE_MASK   0x03
-> GENMASK() + add its include. Consider if _MASK is necessary as it doesn't 
-> provide much value and results in just longer lines.
->
-> BTW, before I go further, with my reviews there's no need to "ack" each 
-> and every feedback item you're going to apply to your patches, I trust you 
-> make those changes you don't contest. That way we can both save some time 
-> by focusing on parts that need further discussion. :-)
-unironically ack :)
+kernel test robot noticed the following build warnings:
 
-I will mention things that change a fair bit of code or logic/runtime changes.
+[auto build test WARNING on 9b332cece987ee1790b2ed4c989e28162fa47860]
 
->> +/* Standard modes for devices with only on/off */
->> +#define ASUS_MINI_LED_OFF         0x00
->> +#define ASUS_MINI_LED_ON          0x01
->> +/* Like "on" but the effect is more vibrant or brighter */
->> +#define ASUS_MINI_LED_STRONG_MODE 0x02
->> +/* New modes for devices with 3 mini-led mode types */
->> +#define ASUS_MINI_LED_2024_WEAK   0x00
->> +#define ASUS_MINI_LED_2024_STRONG 0x01
->> +#define ASUS_MINI_LED_2024_OFF    0x02
->> +
->> +static struct asus_armoury_priv {
->> +	struct device *fw_attr_dev;
->> +	struct kset *fw_attr_kset;
->> +
->> +	u32 mini_led_dev_id;
->> +	u32 gpu_mux_dev_id;
->> +} asus_armoury;
-> I suggest put this to own line:
->
-> static struct asus_armoury_priv asus_armoury;
->
-> ...as the current arrangement awkwardly separates things far away (e.g. 
-> the "static").
->
->> +struct fw_attrs_group {
->> +	bool pending_reboot;
->> +};
->> +
->> +static struct fw_attrs_group fw_attrs = {
->> +	.pending_reboot = false,
->> +};
->> +
->> +struct asus_attr_group {
->> +	const struct attribute_group *attr_group;
->> +	u32 wmi_devid;
->> +};
->> +
->> +static bool asus_wmi_is_present(u32 dev_id)
->> +{
->> +	u32 retval;
->> +	int status;
->> +
->> +	status = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS, dev_id, 0, &retval);
->> +	pr_debug("%s called (0x%08x), retval: 0x%08x\n", __func__, dev_id, retval);
->> +
->> +	return status == 0 && (retval & ASUS_WMI_DSTS_PRESENCE_BIT);
->> +}
->> +
->> +static void asus_set_reboot_and_signal_event(void)
->> +{
->> +	fw_attrs.pending_reboot = true;
->> +	kobject_uevent(&asus_armoury.fw_attr_dev->kobj, KOBJ_CHANGE);
->> +}
->> +
->> +static ssize_t pending_reboot_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
->> +{
->> +	return sysfs_emit(buf, "%d\n", fw_attrs.pending_reboot);
-> Add include.
->
->> +}
->> +
->> +static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
->> +
->> +static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
->> +{
->> +	return !strcmp(attr->attr.name, "gpu_mux_mode");
->> +}
->> +
->> +static int armoury_wmi_set_devstate(struct kobj_attribute *attr, u32 value, u32 wmi_dev)
->> +{
->> +	u32 result;
->> +	int err;
->> +
->> +	err = asus_wmi_set_devstate(wmi_dev, value, &result);
->> +	if (err) {
->> +		pr_err("Failed to set %s: %d\n", attr->attr.name, err);
->> +		return err;
->> +	}
->> +	/*
->> +	 * !1 is usually considered a fail by ASUS, but some WMI methods do use > 1
->> +	 * to return a status code or similar.
->> +	 */
->> +	if (result < 1) {
-> == 0 ?
->
->> +		pr_err("Failed to set %s: (result): 0x%x\n", attr->attr.name, result);
->> +		return -EIO;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/**
->> + * attr_uint_store() - Send an uint to wmi method, checks if within min/max exclusive.
->> + * @kobj: Pointer to the driver object.
->> + * @attr: Pointer to the attribute calling this function.
->> + * @buf: The buffer to read from, this is parsed to `uint` type.
->> + * @count: Required by sysfs attribute macros, pass in from the callee attr.
->> + * @min: Minimum accepted value. Below this returns -EINVAL.
->> + * @max: Maximum accepted value. Above this returns -EINVAL.
->> + * @store_value: Pointer to where the parsed value should be stored.
->> + * @wmi_dev: The WMI function ID to use.
->> + *
->> + * This function is intended to be generic so it can be called from any "_store"
->> + * attribute which works only with integers. The integer to be sent to the WMI method
->> + * is range checked and an error returned if out of range.
->> + *
->> + * If the value is valid and WMI is success, then the sysfs attribute is notified
->> + * and if asus_bios_requires_reboot() is true then reboot attribute is also notified.
-> In general, please fold comment text to 80 characters as it's easier to 
-> read shorter lines of text (long lines do require eye movement).
->
-> Also note this 80 character limits is only meant for comments, in code 
-> exceeding 80 is fine where it makes sense.
->
->> + *
->> + * Returns: Either count, or an error.
->> + */
->> +static ssize_t attr_uint_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf,
->> +			      size_t count, u32 min, u32 max, u32 *store_value, u32 wmi_dev)
->> +{
->> +	u32 value;
->> +	int err;
->> +
->> +	err = kstrtouint(buf, 10, &value);
->> +	if (err)
->> +		return err;
->> +
->> +	if (value < min || value > max)
->> +		return -EINVAL;
->> +
->> +	err = armoury_wmi_set_devstate(attr, value, wmi_dev);
->> +	if (err)
->> +		return err;
->> +
->> +	if (store_value != NULL)
->> +		*store_value = value;
->> +	sysfs_notify(kobj, NULL, attr->attr.name);
->> +
->> +	if (asus_bios_requires_reboot(attr))
->> +		asus_set_reboot_and_signal_event();
->> +
->> +	return count;
->> +}
->> +
->> +static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
->> +			      char *buf)
->> +{
->> +	return sysfs_emit(buf, "enumeration\n");
->> +}
->> +
->> +/* Mini-LED mode **************************************************************/
->> +static ssize_t mini_led_mode_current_value_show(struct kobject *kobj,
->> +						struct kobj_attribute *attr, char *buf)
->> +{
->> +	u32 value;
->> +	int err;
->> +
->> +	err = asus_wmi_get_devstate_dsts(asus_armoury.mini_led_dev_id, &value);
->> +	if (err)
->> +		return err;
->> +
->> +	value &= ASUS_MINI_LED_MODE_MASK;
-> FIELD_GET() (mainly for consistency as shift is 0 here anyway)
->
->> +
->> +	/*
->> +	 * Remap the mode values to match previous generation mini-LED. The last gen
->> +	 * WMI 0 == off, while on this version WMI 2 == off (flipped).
->> +	 */
->> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE2) {
->> +		switch (value) {
->> +		case ASUS_MINI_LED_2024_WEAK:
->> +			value = ASUS_MINI_LED_ON;
->> +			break;
->> +		case ASUS_MINI_LED_2024_STRONG:
->> +			value = ASUS_MINI_LED_STRONG_MODE;
->> +			break;
->> +		case ASUS_MINI_LED_2024_OFF:
->> +			value = ASUS_MINI_LED_OFF;
->> +			break;
->> +		}
->> +	}
->> +
->> +	return sysfs_emit(buf, "%u\n", value);
->> +}
->> +
->> +static ssize_t mini_led_mode_current_value_store(struct kobject *kobj,
->> +						 struct kobj_attribute *attr,
->> +						const char *buf, size_t count)
->> +{
->> +	u32 mode;
->> +	int err;
->> +
->> +	err = kstrtou32(buf, 10, &mode);
->> +	if (err)
->> +		return err;
->> +
->> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE &&
->> +	    mode > ASUS_MINI_LED_ON)
->> +		return -EINVAL;
->> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE2 &&
->> +	    mode > ASUS_MINI_LED_STRONG_MODE)
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * Remap the mode values so expected behaviour is the same as the last
->> +	 * generation of mini-LED with 0 == off, 1 == on.
->> +	 */
->> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE2) {
->> +		switch (mode) {
->> +		case ASUS_MINI_LED_OFF:
->> +			mode = ASUS_MINI_LED_2024_OFF;
->> +			break;
->> +		case ASUS_MINI_LED_ON:
->> +			mode = ASUS_MINI_LED_2024_WEAK;
->> +			break;
->> +		case ASUS_MINI_LED_STRONG_MODE:
->> +			mode = ASUS_MINI_LED_2024_STRONG;
->> +			break;
->> +		}
->> +	}
-> Combine these into a single switch/case.
->
->> +
->> +	err = armoury_wmi_set_devstate(attr, mode, asus_armoury.mini_led_dev_id);
->> +	if (err)
->> +		return err;
->> +
->> +	sysfs_notify(kobj, NULL, attr->attr.name);
->> +
->> +	return count;
->> +}
->> +
->> +static ssize_t mini_led_mode_possible_values_show(struct kobject *kobj,
->> +						  struct kobj_attribute *attr, char *buf)
->> +{
->> +	switch (asus_armoury.mini_led_dev_id) {
->> +	case ASUS_WMI_DEVID_MINI_LED_MODE:
->> +		return sysfs_emit(buf, "0;1\n");
->> +	case ASUS_WMI_DEVID_MINI_LED_MODE2:
->> +		return sysfs_emit(buf, "0;1;2\n");
->> +	default:
->> +		return -ENODEV;
->> +	}
->> +}
->> +
->> +ATTR_GROUP_ENUM_CUSTOM(mini_led_mode, "mini_led_mode", "Set the mini-LED backlight mode");
-> Remove the empty line before this.
->
-> I'm little worried about using such a generic names in macros specific 
-> to this driver. Maybe the use of "CUSTOM" will save you from collisions 
-> but a prefix also helps when reading code to know what is driver specific 
-> and what is provided by the core. Maybe changing it to:
->
-> I think ASUS_ATTR_GROUP_ENUM() already indicates it's "custom" thing, I 
-> don't know to which aspect the customness exactly tries to refer to in 
-> this macro.
->
->> +static ssize_t gpu_mux_mode_current_value_store(struct kobject *kobj,
->> +						struct kobj_attribute *attr, const char *buf,
->> +						size_t count)
->> +{
->> +	int result, err;
->> +	u32 optimus;
->> +
->> +	err = kstrtou32(buf, 10, &optimus);
-> Why the other function used kstrtouint and this kstrtou32 ?? Please check 
-> all these.
->
->> +	if (err)
->> +		return err;
->> +
->> +	if (optimus > 1)
->> +		return -EINVAL;
->> +
->> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_DGPU)) {
->> +		err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_DGPU, &result);
->> +		if (err)
->> +			return err;
->> +		if (result && !optimus) {
->> +			pr_warn("Can not switch MUX to dGPU mode when dGPU is disabled: %02X %02X\n",
->> +				result, optimus);
->> +			return -ENODEV;
->> +		}
->> +	}
->> +
->> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_EGPU)) {
->> +		err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_EGPU, &result);
->> +		if (err)
->> +			return err;
->> +		if (result && !optimus) {
->> +			pr_warn("Can not switch MUX to dGPU mode when eGPU is enabled\n");
->> +			return -EBUSY;
->> +		}
->> +	}
->> +
->> +	err = armoury_wmi_set_devstate(attr, optimus, asus_armoury.gpu_mux_dev_id);
->> +	if (err)
->> +		return err;
->> +
->> +	sysfs_notify(kobj, NULL, attr->attr.name);
->> +	asus_set_reboot_and_signal_event();
->> +
->> +	return count;
->> +}
->> +WMI_SHOW_INT(gpu_mux_mode_current_value, "%u\n", asus_armoury.gpu_mux_dev_id);
->> +ATTR_GROUP_BOOL_CUSTOM(gpu_mux_mode, "gpu_mux_mode", "Set the GPU display MUX mode");
->> +
->> +/*
->> + * A user may be required to store the value twice, typical store first, then
->> + * rescan PCI bus to activate power, then store a second time to save correctly.
-> Could this be automated?
-this can (have developed already) a way to automate this, including the pci rescan,
-and it is what I was referring when I said "xg mobile" here:
+url:    https://github.com/intel-lab-lkp/linux/commits/xur-google-com/kbuild-Fix-Propeller-flags/20251015-031420
+base:   9b332cece987ee1790b2ed4c989e28162fa47860
+patch link:    https://lore.kernel.org/r/20251014191156.3836703-3-xur%40google.com
+patch subject: [PATCH v2 2/4] kbuild: Disable AutoFDO and Propeller flags for kernel modules
+:::::: branch date: 21 hours ago
+:::::: commit date: 21 hours ago
+config: i386-buildonly-randconfig-001-20251015 (https://download.01.org/0day-ci/archive/20251015/202510152308.eqq7in1N-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510152308.eqq7in1N-lkp@intel.com/reproduce)
 
-https://lore.kernel.org/all/8128cd6b-50e3-464c-90c2-781f61c3963e@gmail.com/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/r/202510152308.eqq7in1N-lkp@intel.com/
 
-that code has never been reviewed before and I was hoping to postpone it to avoid
-holding back this series, but given the fact there is now a request for it and
-that in this patch egpu can only be on/off (like a bool) but there are three distinct
-ways to activate the egpu and I don't want to make this a bool or having to deal with
-said property changing from bool to int later on I think I will blend in that other patch.
+All warnings (new ones prefixed by >>):
 
->
->> + */
->> +static ssize_t dgpu_disable_current_value_store(struct kobject *kobj,
->> +						struct kobj_attribute *attr, const char *buf,
->> +						size_t count)
->> +{
->> +	int result, err;
->> +	u32 disable;
->> +
->> +	err = kstrtou32(buf, 10, &disable);
->> +	if (err)
->> +		return err;
->> +
->> +	if (disable > 1)
-> "disable" sounds like it is boolean for which there's kstrtobool ? 
-> Also, I was not sure about optimus > 1 thing above if it too would 
-> actually be bool.
-basically see considerations in the previous paragraph.
+   ld: warning: orphan section `.init.ramfs.info' from `usr/initramfs_data.o' being placed in section `.init.ramfs.info'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/entry/entry.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/entry/entry.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/entry/entry.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/entry/entry.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.entry.text' from `arch/x86/entry/entry.o' being placed in section `.entry.text'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/entry/entry.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.entry.text' from `arch/x86/entry/entry_32.o' being placed in section `.entry.text'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/entry/entry_32.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/entry/entry_32.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `__ex_table' from `arch/x86/entry/entry_32.o' being placed in section `__ex_table'
+   ld: warning: orphan section `__jump_table' from `arch/x86/entry/syscall_32.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/entry/syscall_32.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/entry/syscall_32.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/entry/syscall_32.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/entry/syscall_32.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/entry/syscall_32.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/entry/syscall_32.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `__bug_table' from `arch/x86/entry/syscall_32.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/entry/vdso/vma.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/entry/vdso/vma.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `__bug_table' from `arch/x86/entry/vdso/vma.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.init.text' from `arch/x86/entry/vdso/vma.o' being placed in section `.init.text'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/entry/vdso/vma.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.initcall4.init' from `arch/x86/entry/vdso/vdso-image-32.o' being placed in section `.initcall4.init'
+   ld: warning: orphan section `.init.text' from `arch/x86/entry/vdso/vdso-image-32.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/entry/vdso/vdso-image-32.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/entry/vdso/vdso-image-32.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.initcall6.init' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.initcall6.init'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.setup' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.init.setup'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/entry/vdso/vdso32-setup.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/entry/thunk.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/entry/thunk.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.static_call.text' from `arch/x86/events/core.o' being placed in section `.static_call.text'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/core.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.initcallearly.init' from `arch/x86/events/core.o' being placed in section `.initcallearly.init'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/core.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/core.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/core.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/core.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/core.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/core.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/core.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/events/core.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/core.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/core.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/core.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/core.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/core.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/events/core.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/events/core.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/events/core.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/probe.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/probe.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/probe.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.static_call.text' from `arch/x86/events/amd/core.o' being placed in section `.static_call.text'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/amd/core.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/amd/core.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/amd/core.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/events/amd/core.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/amd/core.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/amd/core.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/amd/core.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/amd/core.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/amd/core.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/amd/core.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/amd/core.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/amd/core.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.data..once' from `arch/x86/events/amd/core.o' being placed in section `.data..once'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/amd/core.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/amd/core.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/events/amd/core.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/events/amd/core.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/amd/lbr.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/amd/lbr.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/amd/lbr.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/amd/lbr.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/amd/lbr.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/events/amd/lbr.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/amd/lbr.o' being placed in section `.init.text'
+   ld: warning: orphan section `.static_call.text' from `arch/x86/events/amd/brs.o' being placed in section `.static_call.text'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/amd/brs.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/events/amd/brs.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/amd/brs.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/amd/brs.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/amd/brs.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/events/amd/brs.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/amd/brs.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/amd/brs.o' being placed in section `.init.text'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/amd/brs.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/amd/brs.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.initcall6.init' from `arch/x86/events/amd/power.o' being placed in section `.initcall6.init'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/amd/power.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/amd/power.o' being placed in section `__ex_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/amd/power.o' being placed in section `__bug_table'
+>> ld: warning: orphan section `.altinstructions' from `arch/x86/events/amd/power.o' being placed in section `.altinstructions'
+>> ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/amd/power.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/amd/power.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.exit.text' from `arch/x86/events/amd/power.o' being placed in section `.exit.text'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/amd/power.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/amd/power.o' being placed in section `.init.text'
+   ld: warning: orphan section `.modinfo' from `arch/x86/events/amd/power.o' being placed in section `.modinfo'
+   ld: warning: orphan section `.exitcall.exit' from `arch/x86/events/amd/power.o' being placed in section `.exitcall.exit'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/amd/power.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/amd/ibs.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.initcall6.init' from `arch/x86/events/amd/ibs.o' being placed in section `.initcall6.init'
+>> ld: warning: orphan section `.altinstructions' from `arch/x86/events/amd/ibs.o' being placed in section `.altinstructions'
+>> ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/amd/ibs.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/amd/ibs.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/amd/ibs.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/amd/ibs.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/amd/ibs.o' being placed in section `.init.text'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/amd/ibs.o' being placed in section `__jump_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/amd/ibs.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/amd/ibs.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/amd/ibs.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/amd/ibs.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/amd/ibs.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/events/amd/ibs.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.initcall6.init' from `arch/x86/events/msr.o' being placed in section `.initcall6.init'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/msr.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/msr.o' being placed in section `.init.text'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/msr.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/msr.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/msr.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/msr.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/msr.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.static_call.text' from `arch/x86/events/intel/core.o' being placed in section `.static_call.text'
+   ld: warning: orphan section `.initcall4.init' from `arch/x86/events/intel/core.o' being placed in section `.initcall4.init'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/core.o' being placed in section `__ex_table'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/intel/core.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/intel/core.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/core.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/core.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/core.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/core.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/intel/core.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/intel/core.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/events/intel/core.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/intel/core.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.data' from `arch/x86/events/intel/core.o' being placed in section `.init.data'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/intel/core.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/intel/core.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/events/intel/core.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/events/intel/core.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.initcallearly.init' from `arch/x86/events/intel/bts.o' being placed in section `.initcallearly.init'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/intel/bts.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/intel/bts.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/bts.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/bts.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/intel/bts.o' being placed in section `__jump_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/bts.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/bts.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/intel/bts.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/intel/bts.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/intel/bts.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/ds.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/intel/ds.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/intel/ds.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/ds.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/ds.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/ds.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/intel/ds.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/ds.o' being placed in section `.init.text'
+   ld: warning: orphan section `.data..once' from `arch/x86/events/intel/ds.o' being placed in section `.data..once'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/intel/ds.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/intel/ds.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.data..percpu..page_aligned' from `arch/x86/events/intel/ds.o' being placed in section `.data..percpu..page_aligned'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/knc.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/knc.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/knc.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/knc.o' being placed in section `.init.text'
+   ld: warning: orphan section `.data..once' from `arch/x86/events/intel/knc.o' being placed in section `.data..once'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/events/intel/knc.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/intel/lbr.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/intel/lbr.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/intel/lbr.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/events/intel/lbr.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/lbr.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/lbr.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/lbr.o' being placed in section `__bug_table'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/intel/lbr.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/lbr.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/lbr.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/intel/lbr.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/intel/lbr.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/intel/lbr.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/p4.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/p4.o' being placed in section `__ex_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/p4.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/p4.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/events/intel/p4.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/p4.o' being placed in section `.init.text'
+   ld: warning: orphan section `.data..once' from `arch/x86/events/intel/p4.o' being placed in section `.data..once'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/intel/p4.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/events/intel/p4.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/p6.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/p6.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/p6.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/p6.o' being placed in section `.init.text'
+   ld: warning: orphan section `.init.data' from `arch/x86/events/intel/p6.o' being placed in section `.init.data'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/events/intel/p6.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/events/intel/pt.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.initcall3.init' from `arch/x86/events/intel/pt.o' being placed in section `.initcall3.init'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/intel/pt.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/intel/pt.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/intel/pt.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/intel/pt.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/events/intel/pt.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/intel/pt.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/intel/pt.o' being placed in section `.init.text'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/intel/pt.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/events/intel/pt.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/events/intel/pt.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/events/intel/pt.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/events/intel/pt.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `__ex_table' from `arch/x86/events/zhaoxin/core.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/events/zhaoxin/core.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/events/zhaoxin/core.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/events/zhaoxin/core.o' being placed in section `.init.text'
+   ld: warning: orphan section `__jump_table' from `arch/x86/events/zhaoxin/core.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/events/zhaoxin/core.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/events/zhaoxin/core.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.init.data' from `arch/x86/events/zhaoxin/core.o' being placed in section `.init.data'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/events/zhaoxin/core.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/events/zhaoxin/core.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.initcallearly.init' from `arch/x86/realmode/init.o' being placed in section `.initcallearly.init'
+   ld: warning: orphan section `.init.text' from `arch/x86/realmode/init.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/realmode/init.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/realmode/init.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__bug_table' from `arch/x86/realmode/init.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/realmode/init.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.data' from `arch/x86/realmode/rmpiggy.o' being placed in section `.init.data'
+   ld: warning: orphan section `.bss..brk' from `arch/x86/kernel/head_32.o' being placed in section `.bss..brk'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/head_32.o' being placed in section `.init.text'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/head_32.o' being placed in section `.init.data'
+   ld: warning: orphan section `.ref.data' from `arch/x86/kernel/head_32.o' being placed in section `.ref.data'
+   ld: warning: orphan section `.bss..page_aligned' from `arch/x86/kernel/head_32.o' being placed in section `.bss..page_aligned'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/head_32.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/kernel/head_32.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/head32.o' being placed in section `.init.text'
+   ld: warning: orphan section `__ex_table' from `arch/x86/kernel/head32.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/head32.o' being placed in section `.init.data'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/ebda.o' being placed in section `.init.text'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/platform-quirks.o' being placed in section `.init.text'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/process_32.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `__ex_table' from `arch/x86/kernel/process_32.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/process_32.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/process_32.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/process_32.o' being placed in section `__bug_table'
+   ld: warning: orphan section `__jump_table' from `arch/x86/kernel/process_32.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/process_32.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/process_32.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.initcallearly.init' from `arch/x86/kernel/signal.o' being placed in section `.initcallearly.init'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/signal.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/signal.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/signal.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/signal.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.init.setup' from `arch/x86/kernel/signal.o' being placed in section `.init.setup'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/kernel/signal.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/kernel/signal.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/signal.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `__ex_table' from `arch/x86/kernel/signal_32.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/signal_32.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/kernel/signal_32.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/kernel/signal_32.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/kernel/signal_32.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/traps.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/kernel/traps.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/traps.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/traps.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/kernel/traps.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/kernel/traps.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/kernel/traps.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `__ex_table' from `arch/x86/kernel/traps.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/traps.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/traps.o' being placed in section `.init.text'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/kernel/traps.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/idt.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/idt.o' being placed in section `.init.text'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/idt.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/idt.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/kernel/idt.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.bss..page_aligned' from `arch/x86/kernel/idt.o' being placed in section `.bss..page_aligned'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/kernel/idt.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/idt.o' being placed in section `.init.data'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/irq.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/irq.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/irq.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/kernel/irq.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/irq.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.data..percpu..hot..__softirq_pending' from `arch/x86/kernel/irq.o' being placed in section `.data..percpu..hot..__softirq_pending'
+   ld: warning: orphan section `.data..percpu..shared_aligned' from `arch/x86/kernel/irq.o' being placed in section `.data..percpu..shared_aligned'
+   ld: warning: orphan section `.data..percpu..hot..hardirq_stack_ptr' from `arch/x86/kernel/irq.o' being placed in section `.data..percpu..hot..hardirq_stack_ptr'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/irq_32.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/irq_32.o' being placed in section `.rodata.str1.1'
+>> ld: warning: orphan section `__jump_table' from `arch/x86/kernel/irq_32.o' being placed in section `__jump_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/irq_32.o' being placed in section `__bug_table'
+>> ld: warning: orphan section `alloc_tags' from `arch/x86/kernel/irq_32.o' being placed in section `alloc_tags'
+>> ld: warning: orphan section `.data..percpu' from `arch/x86/kernel/irq_32.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/kernel/irq_32.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.data..percpu..hot..softirq_stack_ptr' from `arch/x86/kernel/irq_32.o' being placed in section `.data..percpu..hot..softirq_stack_ptr'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/dumpstack_32.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/dumpstack_32.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.data..once' from `arch/x86/kernel/dumpstack_32.o' being placed in section `.data..once'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/time.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/time.o' being placed in section `.init.text'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/kernel/time.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/kernel/time.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/kernel/time.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/time.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/time.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/time.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/ioport.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/ioport.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/ioport.o' being placed in section `.rodata.str1.1'
+>> ld: warning: orphan section `.altinstructions' from `arch/x86/kernel/ioport.o' being placed in section `.altinstructions'
+>> ld: warning: orphan section `.altinstr_replacement' from `arch/x86/kernel/ioport.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `__jump_table' from `arch/x86/kernel/ioport.o' being placed in section `__jump_table'
+>> ld: warning: orphan section `__bug_table' from `arch/x86/kernel/ioport.o' being placed in section `__bug_table'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/kernel/ioport.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/kernel/ioport.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/dumpstack.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/dumpstack.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/dumpstack.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/kernel/dumpstack.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/kernel/dumpstack.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.initcall5.init' from `arch/x86/kernel/nmi.o' being placed in section `.initcall5.init'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/nmi.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/nmi.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/nmi.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/nmi.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/nmi.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/kernel/nmi.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `__jump_table' from `arch/x86/kernel/nmi.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/nmi.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/kernel/nmi.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/kernel/nmi.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/kernel/nmi.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/kernel/nmi.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `_kprobe_blacklist' from `arch/x86/kernel/nmi.o' being placed in section `_kprobe_blacklist'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/nmi.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.setup' from `arch/x86/kernel/nmi.o' being placed in section `.init.setup'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/kernel/nmi.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/kernel/nmi.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/ldt.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/ldt.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__jump_table' from `arch/x86/kernel/ldt.o' being placed in section `__jump_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/ldt.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.altinstructions' from `arch/x86/kernel/ldt.o' being placed in section `.altinstructions'
+   ld: warning: orphan section `.altinstr_replacement' from `arch/x86/kernel/ldt.o' being placed in section `.altinstr_replacement'
+   ld: warning: orphan section `.altinstr_aux' from `arch/x86/kernel/ldt.o' being placed in section `.altinstr_aux'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/kernel/ldt.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/kernel/ldt.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/setup.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.initcall3.init' from `arch/x86/kernel/setup.o' being placed in section `.initcall3.init'
+   ld: warning: orphan section `.initcall6.init' from `arch/x86/kernel/setup.o' being placed in section `.initcall6.init'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/setup.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/setup.o' being placed in section `.init.text'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/setup.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/setup.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/setup.o' being placed in section `__bug_table'
+   ld: warning: orphan section `__ex_table' from `arch/x86/kernel/setup.o' being placed in section `__ex_table'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/setup.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/setup.o' being placed in section `.init.data'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/kernel/setup.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.data..read_mostly' from `arch/x86/kernel/setup.o' being placed in section `.data..read_mostly'
+   ld: warning: orphan section `.bss..brk' from `arch/x86/kernel/setup.o' being placed in section `.bss..brk'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/x86_init.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/x86_init.o' being placed in section `.init.text'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/kernel/x86_init.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/x86_init.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/x86_init.o' being placed in section `.init.data'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/i8259.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.initcall6.init' from `arch/x86/kernel/i8259.o' being placed in section `.initcall6.init'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/i8259.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.smp_locks' from `arch/x86/kernel/i8259.o' being placed in section `.smp_locks'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/i8259.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/i8259.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/i8259.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/kernel/i8259.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/irqinit.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/irqinit.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/irqinit.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/kernel/irqinit.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/jump_label.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/jump_label.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/jump_label.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.ref.text' from `arch/x86/kernel/jump_label.o' being placed in section `.ref.text'
+   ld: warning: orphan section `.noinstr.text' from `arch/x86/kernel/irq_work.o' being placed in section `.noinstr.text'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/probe_roms.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/probe_roms.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/probe_roms.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/probe_roms.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.initcall3.init' from `arch/x86/kernel/ksysfs.o' being placed in section `.initcall3.init'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/ksysfs.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/ksysfs.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/ksysfs.o' being placed in section `.init.text'
+   ld: warning: orphan section `__jump_table' from `arch/x86/kernel/ksysfs.o' being placed in section `__jump_table'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/ksysfs.o' being placed in section `__bug_table'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/ksysfs.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `alloc_tags' from `arch/x86/kernel/ksysfs.o' being placed in section `alloc_tags'
+   ld: warning: orphan section `.data..percpu' from `arch/x86/kernel/ksysfs.o' being placed in section `.data..percpu'
+   ld: warning: orphan section `.data..ro_after_init' from `arch/x86/kernel/ksysfs.o' being placed in section `.data..ro_after_init'
+   ld: warning: orphan section `.initcall3.init' from `arch/x86/kernel/bootflag.o' being placed in section `.initcall3.init'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/bootflag.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/bootflag.o' being placed in section `.init.text'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/bootflag.o' being placed in section `.discard.addressable'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/bootflag.o' being placed in section `.init.data'
+   ld: warning: orphan section `.export_symbol' from `arch/x86/kernel/e820.o' being placed in section `.export_symbol'
+   ld: warning: orphan section `.initcall1.init' from `arch/x86/kernel/e820.o' being placed in section `.initcall1.init'
+   ld: warning: orphan section `.init.text' from `arch/x86/kernel/e820.o' being placed in section `.init.text'
+   ld: warning: orphan section `.rodata.str1.1' from `arch/x86/kernel/e820.o' being placed in section `.rodata.str1.1'
+   ld: warning: orphan section `.rodata.str1.4' from `arch/x86/kernel/e820.o' being placed in section `.rodata.str1.4'
+   ld: warning: orphan section `__bug_table' from `arch/x86/kernel/e820.o' being placed in section `__bug_table'
+   ld: warning: orphan section `__jump_table' from `arch/x86/kernel/e820.o' being placed in section `__jump_table'
+   ld: warning: orphan section `.init.data' from `arch/x86/kernel/e820.o' being placed in section `.init.data'
+   ld: warning: orphan section `.init.setup' from `arch/x86/kernel/e820.o' being placed in section `.init.setup'
+   ld: warning: orphan section `.init.rodata' from `arch/x86/kernel/e820.o' being placed in section `.init.rodata'
+   ld: warning: orphan section `.discard.addressable' from `arch/x86/kernel/e820.o' being placed in section `.discard.addressable'
+..
 
-The acpi can take in three different values to activate the xg mobile.
-I think those corresponds to the three different xg mobile docks asus
-has released over the years because for example nv_dynamic_boost
-(and others) exposed via WMI can instead be used to control the egpu.
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for I2C_K1
+   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
+   Selected by [m]:
+   - MFD_SPACEMIT_P1 [=m] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
 
-But one model was AMD and nv_dynamic_boost won't work on that,
-hence the need to diversify commands used to activate the egpu
-(an operation that can take about a minute) and also certain models
-appears to have the physical bus (?) in common between the soldered
-dgpu and the egpu, so here things gets difficult because those accessories
-are hard to find (at least where I live), costs a fair amount of money and
-are not common.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-Samples of laptop+xgm I have seen are about 6 at most, so there is a
-demand of having this working well, but little pool of device to extract
-info from.
-
-Most of what I know is pure observation, ACPI guesswork, testing one myself
-(I have one at my disposal, but only one specific model) and trial and
-errors with some user over a chat for the models I don't have.
-
->
->> +		return -EINVAL;
->> +
->> +	if (asus_armoury.gpu_mux_dev_id) {
->> +		err = asus_wmi_get_devstate_dsts(asus_armoury.gpu_mux_dev_id, &result);
->> +		if (err)
->> +			return err;
->> +		if (!result && disable) {
->> +			pr_warn("Can not disable dGPU when the MUX is in dGPU mode\n");
->> +			return -EBUSY;
->> +		}
->> +	}
->> +
->> +	err = armoury_wmi_set_devstate(attr, disable, ASUS_WMI_DEVID_DGPU);
->> +	if (err)
->> +		return err;
->> +
->> +	sysfs_notify(kobj, NULL, attr->attr.name);
->> +
->> +	return count;
->> +}
->> +WMI_SHOW_INT(dgpu_disable_current_value, "%d\n", ASUS_WMI_DEVID_DGPU);
-> ASUS_WMI_SHOW_INT()
->
->> +ATTR_GROUP_BOOL_CUSTOM(dgpu_disable, "dgpu_disable", "Disable the dGPU");
->> +
->> +/* The ACPI call to enable the eGPU also disables the internal dGPU */
->> +static ssize_t egpu_enable_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
->> +					       const char *buf, size_t count)
->> +{
->> +	int result, err;
->> +	u32 enable;
->> +
->> +	err = kstrtou32(buf, 10, &enable);
->> +	if (err)
->> +		return err;
->> +
->> +	if (enable > 1)
-> kstrtobool() ?
->
->> +		return -EINVAL;
->> +
->> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_EGPU_CONNECTED, &result);
->> +	if (err) {
->> +		pr_warn("Failed to get eGPU connection status: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	if (asus_armoury.gpu_mux_dev_id) {
->> +		err = asus_wmi_get_devstate_dsts(asus_armoury.gpu_mux_dev_id, &result);
->> +		if (err) {
->> +			pr_warn("Failed to get GPU MUX status: %d\n", result);
->> +			return err;
->> +		}
->> +		if (!result && enable) {
->> +			pr_warn("Can not enable eGPU when the MUX is in dGPU mode\n");
->> +			return -ENODEV;
->> +		}
->> +	}
->> +
->> +	err = armoury_wmi_set_devstate(attr, enable, ASUS_WMI_DEVID_EGPU);
->> +	if (err)
->> +		return err;
->> +
->> +	sysfs_notify(kobj, NULL, attr->attr.name);
->> +
->> +	return count;
->> +}
->> +WMI_SHOW_INT(egpu_enable_current_value, "%d\n", ASUS_WMI_DEVID_EGPU);
->> +ATTR_GROUP_BOOL_CUSTOM(egpu_enable, "egpu_enable", "Enable the eGPU (also disables dGPU)");
->> +
->> +/* Simple attribute creation */
->> +ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE, "0;1;2",
->> +		       "Show the current mode of charging");
->> +
->> +ATTR_GROUP_BOOL_RW(boot_sound, "boot_sound", ASUS_WMI_DEVID_BOOT_SOUND,
->> +		   "Set the boot POST sound");
->> +ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_MCU_POWERSAVE,
->> +		   "Set MCU powersaving mode");
->> +ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
->> +		   "Set the panel refresh overdrive");
->> +ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
->> +		   "Show the eGPU connection status");
->> +
->> +/* If an attribute does not require any special case handling add it here */
->> +static const struct asus_attr_group armoury_attr_groups[] = {
->> +	{ &egpu_connected_attr_group, ASUS_WMI_DEVID_EGPU_CONNECTED },
->> +	{ &egpu_enable_attr_group, ASUS_WMI_DEVID_EGPU },
->> +	{ &dgpu_disable_attr_group, ASUS_WMI_DEVID_DGPU },
->> +
->> +	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
->> +	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
->> +	{ &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
->> +	{ &panel_od_attr_group, ASUS_WMI_DEVID_PANEL_OD },
->> +};
->> +
->> +static int asus_fw_attr_add(void)
->> +{
->> +	int err, i;
->> +
->> +	asus_armoury.fw_attr_dev = device_create(&firmware_attributes_class, NULL, MKDEV(0, 0),
->> +						NULL, "%s", DRIVER_NAME);
->> +	if (IS_ERR(asus_armoury.fw_attr_dev)) {
-> Add include.
->
->> +		err = PTR_ERR(asus_armoury.fw_attr_dev);
->> +		goto fail_class_get;
->> +	}
->> +
->> +	asus_armoury.fw_attr_kset = kset_create_and_add("attributes", NULL,
->> +						&asus_armoury.fw_attr_dev->kobj);
->> +	if (!asus_armoury.fw_attr_kset) {
->> +		err = -ENOMEM;
->> +		goto err_destroy_classdev;
->> +	}
->> +
->> +	err = sysfs_create_file(&asus_armoury.fw_attr_kset->kobj, &pending_reboot.attr);
->> +	if (err) {
->> +		pr_err("Failed to create sysfs level attributes\n");
->> +		goto err_destroy_kset;
->> +	}
->> +
->> +	asus_armoury.mini_led_dev_id = 0;
->> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE))
->> +		asus_armoury.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
->> +	else if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE2))
->> +		asus_armoury.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE2;
->> +
->> +	if (asus_armoury.mini_led_dev_id) {
->> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
->> +					 &mini_led_mode_attr_group);
->> +		if (err) {
->> +			pr_err("Failed to create sysfs-group for mini_led\n");
->> +			goto err_remove_file;
->> +		}
->> +	}
->> +
->> +	asus_armoury.gpu_mux_dev_id = 0;
->> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX))
->> +		asus_armoury.gpu_mux_dev_id = ASUS_WMI_DEVID_GPU_MUX;
->> +	else if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX_VIVO))
->> +		asus_armoury.gpu_mux_dev_id = ASUS_WMI_DEVID_GPU_MUX_VIVO;
->> +
->> +	if (asus_armoury.gpu_mux_dev_id) {
->> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
->> +					 &gpu_mux_mode_attr_group);
->> +		if (err) {
->> +			pr_err("Failed to create sysfs-group for gpu_mux\n");
->> +			goto err_remove_mini_led_group;
->> +		}
->> +	}
->> +
->> +	for (i = 0; i < ARRAY_SIZE(armoury_attr_groups); i++) {
->> +		if (!asus_wmi_is_present(armoury_attr_groups[i].wmi_devid))
->> +			continue;
->> +
->> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
->> +					 armoury_attr_groups[i].attr_group);
->> +		if (err) {
->> +			pr_err("Failed to create sysfs-group for %s\n",
->> +			       armoury_attr_groups[i].attr_group->name);
->> +			goto err_remove_groups;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +
->> +err_remove_groups:
->> +	while (i--) {
->> +		if (asus_wmi_is_present(armoury_attr_groups[i].wmi_devid))
->> +			sysfs_remove_group(&asus_armoury.fw_attr_kset->kobj,
->> +					   armoury_attr_groups[i].attr_group);
->> +	}
->> +	if (asus_armoury.gpu_mux_dev_id)
->> +		sysfs_remove_group(&asus_armoury.fw_attr_kset->kobj, &gpu_mux_mode_attr_group);
->> +err_remove_mini_led_group:
->> +	if (asus_armoury.mini_led_dev_id)
->> +		sysfs_remove_group(&asus_armoury.fw_attr_kset->kobj, &mini_led_mode_attr_group);
->> +err_remove_file:
->> +	sysfs_remove_file(&asus_armoury.fw_attr_kset->kobj, &pending_reboot.attr);
->> +err_destroy_kset:
->> +	kset_unregister(asus_armoury.fw_attr_kset);
->> +err_destroy_classdev:
->> +fail_class_get:
->> +	device_destroy(&firmware_attributes_class, MKDEV(0, 0));
->> +	return err;
->> +}
->> +
->> +/* Init / exit ****************************************************************/
->> +
->> +static int __init asus_fw_init(void)
->> +{
->> +	char *wmi_uid;
->> +
->> +	wmi_uid = wmi_get_acpi_device_uid(ASUS_WMI_MGMT_GUID);
->> +	if (!wmi_uid)
->> +		return -ENODEV;
->> +
->> +	/*
->> +	 * if equal to "ASUSWMI" then it's DCTS that can't be used for this
->> +	 * driver, DSTS is required.
->> +	 */
->> +	if (!strcmp(wmi_uid, ASUS_ACPI_UID_ASUSWMI))
->> +		return -ENODEV;
->> +
->> +	return asus_fw_attr_add();
->> +}
->> +
->> +static void __exit asus_fw_exit(void)
->> +{
->> +	sysfs_remove_file(&asus_armoury.fw_attr_kset->kobj, &pending_reboot.attr);
-> Why does the rollback path in asus_fw_attr_add() differ from these?
-I don't see and am not aware of any particular reason.
-
-From what I can gather every added sysfs attribute had its own rollback
-because on previous iterations the flow to loading certain attributes
-and rolling back (without failing) was different from how it is now.
-
-It is my understanding that kset_unregister will unregister the whole
-set of registered sysfs, so I guess I can issue just one kset_unregister
-in a single err_sysfs_attr and avoid mentioning specific sysfs one by one,
-correct?
-
->> +	kset_unregister(asus_armoury.fw_attr_kset);
->> +	device_destroy(&firmware_attributes_class, MKDEV(0, 0));
->> +}
->> +
->> +module_init(asus_fw_init);
->> +module_exit(asus_fw_exit);
->> +
->> +MODULE_IMPORT_NS("ASUS_WMI");
->> +MODULE_AUTHOR("Luke Jones <luke@ljones.dev>");
->> +MODULE_DESCRIPTION("ASUS BIOS Configuration Driver");
->> +MODULE_LICENSE("GPL");
->> +MODULE_ALIAS("wmi:" ASUS_NB_WMI_EVENT_GUID);
->> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
->> new file mode 100644
->> index 000000000000..61675e7b5a60
->> --- /dev/null
->> +++ b/drivers/platform/x86/asus-armoury.h
->> @@ -0,0 +1,164 @@
->> +/* SPDX-License-Identifier: GPL-2.0
->> + *
->> + * Definitions for kernel modules using asus-armoury driver
->> + *
->> + *  Copyright (c) 2024 Luke Jones <luke@ljones.dev>
->> + */
->> +
->> +#ifndef _ASUS_ARMOURY_H_
->> +#define _ASUS_ARMOURY_H_
->> +
->> +#include <linux/types.h>
->> +#include <linux/platform_device.h>
->> +
->> +#define DRIVER_NAME "asus-armoury"
->> +
->> +#define __ASUS_ATTR_RO(_func, _name)					\
->> +	{								\
->> +		.attr = { .name = __stringify(_name), .mode = 0444 },	\
->> +		.show = _func##_##_name##_show,				\
->> +	}
->> +
->> +#define __ASUS_ATTR_RO_AS(_name, _show)					\
->> +	{								\
->> +		.attr = { .name = __stringify(_name), .mode = 0444 },	\
->> +		.show = _show,						\
->> +	}
->> +
->> +#define __ASUS_ATTR_RW(_func, _name) \
->> +	__ATTR(_name, 0644, _func##_##_name##_show, _func##_##_name##_store)
->> +
->> +#define __WMI_STORE_INT(_attr, _min, _max, _wmi)			\
->> +	static ssize_t _attr##_store(struct kobject *kobj,		\
->> +				     struct kobj_attribute *attr,	\
->> +				     const char *buf, size_t count)	\
->> +	{								\
->> +		return attr_uint_store(kobj, attr, buf, count, _min,	\
->> +					_max, NULL, _wmi);		\
->> +	}
->> +
->> +#define WMI_SHOW_INT(_attr, _fmt, _wmi)						\
->> +	static ssize_t _attr##_show(struct kobject *kobj,			\
->> +				    struct kobj_attribute *attr, char *buf)	\
->> +	{									\
->> +		u32 result;							\
->> +		int err;							\
->> +										\
->> +		err = asus_wmi_get_devstate_dsts(_wmi, &result);		\
->> +		if (err)							\
->> +			return err;						\
->> +		return sysfs_emit(buf, _fmt,					\
->> +				  result & ~ASUS_WMI_DSTS_PRESENCE_BIT);	\
->> +	}
->> +
->> +/* Create functions and attributes for use in other macros or on their own */
->> +
->> +/* Shows a formatted static variable */
->> +#define __ATTR_SHOW_FMT(_prop, _attrname, _fmt, _val)				\
->> +	static ssize_t _attrname##_##_prop##_show(				\
->> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf)	\
->> +	{									\
->> +		return sysfs_emit(buf, _fmt, _val);				\
->> +	}									\
->> +	static struct kobj_attribute attr_##_attrname##_##_prop =		\
->> +		__ASUS_ATTR_RO(_attrname, _prop)
->> +
->> +#define __ATTR_RO_INT_GROUP_ENUM(_attrname, _wmi, _fsname, _possible, _dispname)\
->> +	WMI_SHOW_INT(_attrname##_current_value, "%d\n", _wmi);			\
->> +	static struct kobj_attribute attr_##_attrname##_current_value =		\
->> +		__ASUS_ATTR_RO(_attrname, current_value);			\
->> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);		\
->> +	__ATTR_SHOW_FMT(possible_values, _attrname, "%s\n", _possible);		\
->> +	static struct kobj_attribute attr_##_attrname##_type =			\
->> +		__ASUS_ATTR_RO_AS(type, enum_type_show);			\
->> +	static struct attribute *_attrname##_attrs[] = {			\
->> +		&attr_##_attrname##_current_value.attr,				\
->> +		&attr_##_attrname##_display_name.attr,				\
->> +		&attr_##_attrname##_possible_values.attr,			\
->> +		&attr_##_attrname##_type.attr,					\
->> +		NULL								\
->> +	};									\
->> +	static const struct attribute_group _attrname##_attr_group = {		\
->> +		.name = _fsname, .attrs = _attrname##_attrs			\
->> +	}
->> +
->> +#define __ATTR_RW_INT_GROUP_ENUM(_attrname, _minv, _maxv, _wmi, _fsname,\
->> +				 _possible, _dispname)			\
->> +	__WMI_STORE_INT(_attrname##_current_value, _minv, _maxv, _wmi);	\
->> +	WMI_SHOW_INT(_attrname##_current_value, "%d\n", _wmi);		\
->> +	static struct kobj_attribute attr_##_attrname##_current_value =	\
->> +		__ASUS_ATTR_RW(_attrname, current_value);		\
->> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);	\
->> +	__ATTR_SHOW_FMT(possible_values, _attrname, "%s\n", _possible);	\
->> +	static struct kobj_attribute attr_##_attrname##_type =		\
->> +		__ASUS_ATTR_RO_AS(type, enum_type_show);		\
->> +	static struct attribute *_attrname##_attrs[] = {		\
->> +		&attr_##_attrname##_current_value.attr,			\
->> +		&attr_##_attrname##_display_name.attr,			\
->> +		&attr_##_attrname##_possible_values.attr,		\
->> +		&attr_##_attrname##_type.attr,				\
->> +		NULL							\
->> +	};								\
->> +	static const struct attribute_group _attrname##_attr_group = {	\
->> +		.name = _fsname, .attrs = _attrname##_attrs		\
->> +	}
->> +
->> +/* Boolean style enumeration, base macro. Requires adding show/store */
->> +#define __ATTR_GROUP_ENUM(_attrname, _fsname, _possible, _dispname)	\
->> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);	\
->> +	__ATTR_SHOW_FMT(possible_values, _attrname, "%s\n", _possible);	\
->> +	static struct kobj_attribute attr_##_attrname##_type =		\
->> +		__ASUS_ATTR_RO_AS(type, enum_type_show);		\
->> +	static struct attribute *_attrname##_attrs[] = {		\
->> +		&attr_##_attrname##_current_value.attr,			\
->> +		&attr_##_attrname##_display_name.attr,			\
->> +		&attr_##_attrname##_possible_values.attr,		\
->> +		&attr_##_attrname##_type.attr,				\
->> +		NULL							\
->> +	};								\
->> +	static const struct attribute_group _attrname##_attr_group = {	\
->> +		.name = _fsname, .attrs = _attrname##_attrs		\
->> +	}
->> +
->> +#define ATTR_GROUP_BOOL_RO(_attrname, _fsname, _wmi, _dispname)	\
->> +	__ATTR_RO_INT_GROUP_ENUM(_attrname, _wmi, _fsname, "0;1", _dispname)
->> +
->> +
->> +#define ATTR_GROUP_BOOL_RW(_attrname, _fsname, _wmi, _dispname)	\
->> +	__ATTR_RW_INT_GROUP_ENUM(_attrname, 0, 1, _wmi, _fsname, "0;1", _dispname)
->> +
->> +#define ATTR_GROUP_ENUM_INT_RO(_attrname, _fsname, _wmi, _possible, _dispname)	\
->> +	__ATTR_RO_INT_GROUP_ENUM(_attrname, _wmi, _fsname, _possible, _dispname)
->> +
->> +/*
->> + * Requires <name>_current_value_show(), <name>_current_value_show()
->> + */
->> +#define ATTR_GROUP_BOOL_CUSTOM(_attrname, _fsname, _dispname)		\
->> +	static struct kobj_attribute attr_##_attrname##_current_value =	\
->> +		__ASUS_ATTR_RW(_attrname, current_value);		\
->> +	__ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
->> +
->> +/*
->> + * Requires <name>_current_value_show(), <name>_current_value_show()
->> + * and <name>_possible_values_show()
->> + */
->> +#define ATTR_GROUP_ENUM_CUSTOM(_attrname, _fsname, _dispname)			\
->> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);		\
->> +	static struct kobj_attribute attr_##_attrname##_current_value =		\
->> +		__ASUS_ATTR_RW(_attrname, current_value);			\
->> +	static struct kobj_attribute attr_##_attrname##_possible_values =	\
->> +		__ASUS_ATTR_RO(_attrname, possible_values);			\
->> +	static struct kobj_attribute attr_##_attrname##_type =			\
->> +		__ASUS_ATTR_RO_AS(type, enum_type_show);			\
->> +	static struct attribute *_attrname##_attrs[] = {			\
->> +		&attr_##_attrname##_current_value.attr,				\
->> +		&attr_##_attrname##_display_name.attr,				\
->> +		&attr_##_attrname##_possible_values.attr,			\
->> +		&attr_##_attrname##_type.attr,					\
->> +		NULL								\
->> +	};									\
->> +	static const struct attribute_group _attrname##_attr_group = {		\
->> +		.name = _fsname, .attrs = _attrname##_attrs			\
->> +	}
->> +
->> +#endif /* _ASUS_ARMOURY_H_ */
->> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
->> index 38ab5306e05a..0d0c84a37ad8 100644
->> --- a/drivers/platform/x86/asus-wmi.c
->> +++ b/drivers/platform/x86/asus-wmi.c
->> @@ -30,6 +30,7 @@
->>  #include <linux/pci.h>
->>  #include <linux/pci_hotplug.h>
->>  #include <linux/platform_data/x86/asus-wmi.h>
->> +#include <linux/platform_data/x86/asus-wmi-leds-ids.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/platform_profile.h>
->>  #include <linux/power_supply.h>
->> @@ -55,8 +56,6 @@ module_param(fnlock_default, bool, 0444);
->>  #define to_asus_wmi_driver(pdrv)					\
->>  	(container_of((pdrv), struct asus_wmi_driver, platform_driver))
->>  
->> -#define ASUS_WMI_MGMT_GUID	"97845ED0-4E6D-11DE-8A39-0800200C9A66"
->> -
->>  #define NOTIFY_BRNUP_MIN		0x11
->>  #define NOTIFY_BRNUP_MAX		0x1f
->>  #define NOTIFY_BRNDOWN_MIN		0x20
->> @@ -105,8 +104,6 @@ module_param(fnlock_default, bool, 0444);
->>  #define USB_INTEL_XUSB2PR		0xD0
->>  #define PCI_DEVICE_ID_INTEL_LYNXPOINT_LP_XHCI	0x9c31
->>  
->> -#define ASUS_ACPI_UID_ASUSWMI		"ASUSWMI"
->> -
->>  #define WMI_EVENT_MASK			0xFFFF
->>  
->>  #define FAN_CURVE_POINTS		8
->> diff --git a/include/linux/platform_data/x86/asus-wmi-leds-ids.h b/include/linux/platform_data/x86/asus-wmi-leds-ids.h
->> new file mode 100644
->> index 000000000000..281b98ba0ca7
->> --- /dev/null
->> +++ b/include/linux/platform_data/x86/asus-wmi-leds-ids.h
->> @@ -0,0 +1,50 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef __PLATFORM_DATA_X86_ASUS_WMI_LEDS_IDS_H
->> +#define __PLATFORM_DATA_X86_ASUS_WMI_LEDS_IDS_H
->> +
->> +#include <linux/types.h>
-> Unnecessary, AFAICT.
->
->> +#include <linux/dmi.h>
->> +
->> +/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
->> +#if IS_REACHABLE(CONFIG_ASUS_WMI) || IS_REACHABLE(CONFIG_HID_ASUS)
->> +static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
-> Are you aware that by placing this into a header file it ends up 
-> getting duplicated to anything including this file? I suppose there's no 
-> good way around it without some pretty complex trickery and it doesn't 
-> look very large so I guess we can leave it here for now.
-I am well aware given the fact I had to move around that table to avoid
-compiler warnings with certain configurations and it took me two revisions
-to make those go away.
-
-Luckily for us if the hid-asus patchset from Antheas [1] will work without
-surprises across all affected ASUS hardware this table will get removed,
-and honestly that would make me quite happy. 
-
-[1] https://lore.kernel.org/all/20251015014736.1402045-1-benato.denis96@gmail.com/
-
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
->> +		},
->> +	},
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
->> +		},
->> +	},
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
->> +		},
->> +	},
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_PRODUCT_FAMILY, "ProArt P16"),
->> +		},
->> +	},
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
->> +		},
->> +	},
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
->> +		},
->> +	},
->> +	{
->> +		.matches = {
->> +			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
->> +		},
->> +	},
->> +	{ },
->> +};
->> +#endif
->> +
->> +#endif	/* __PLATFORM_DATA_X86_ASUS_WMI_LEDS_IDS_H */
->> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
->> index dbd44d9fbb6f..71c68425b3b9 100644
->> --- a/include/linux/platform_data/x86/asus-wmi.h
->> +++ b/include/linux/platform_data/x86/asus-wmi.h
->> @@ -6,6 +6,9 @@
->>  #include <linux/types.h>
->>  #include <linux/dmi.h>
->>  
->> +#define ASUS_WMI_MGMT_GUID	"97845ED0-4E6D-11DE-8A39-0800200C9A66"
->> +#define ASUS_ACPI_UID_ASUSWMI	"ASUSWMI"
->> +
->>  /* WMI Methods */
->>  #define ASUS_WMI_METHODID_SPEC	        0x43455053 /* BIOS SPECification */
->>  #define ASUS_WMI_METHODID_SFBD		0x44424653 /* Set First Boot Device */
->> @@ -191,44 +194,4 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
->>  }
->>  #endif
->>  
->> -/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
->> -static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
->> -		},
->> -	},
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
->> -		},
->> -	},
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
->> -		},
->> -	},
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ProArt P16"),
->> -		},
->> -	},
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
->> -		},
->> -	},
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
->> -		},
->> -	},
->> -	{
->> -		.matches = {
->> -			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
->> -		},
->> -	},
->> -	{ },
->> -};
->> -
->>  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
->>
-> I don't have more time for further reviews.
->
-The xgm new code will need a review. I am pretty new to all of this
-and I need guidance: I have gone from average user to maintainer in
-about three years and therefore don't have much experience.
-
-Thanks for your time and understanding,
-Denis
 
