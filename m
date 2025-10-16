@@ -1,90 +1,123 @@
-Return-Path: <linux-kernel+bounces-855588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786D3BE1B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:25:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA501BE1B65
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366A919C8358
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA53419C8149
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 06:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CF52D5410;
-	Thu, 16 Oct 2025 06:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64362D46D0;
+	Thu, 16 Oct 2025 06:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RTh20dkg"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012016.outbound.protection.outlook.com [52.101.43.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e3iBsF/f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3717494;
-	Thu, 16 Oct 2025 06:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5166D21CC44;
+	Thu, 16 Oct 2025 06:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760595887; cv=fail; b=qvmOexa3fT5jSdx5nbu+dC5Mgge2sTeaagoZWjS8092ruaFePHHF+JQ7cbWFBmZK2qsitGTaOZeIB9jfIkNNQjj1NgssTMCuFCV7dGaljLOpQpuN7742kcx4E4brn2xSGSmP2ErM63cqafTGegDBMfErvbReVQg/qEnUSdY3N78=
+	t=1760595920; cv=fail; b=Zcwdt9a2XsXdRbveRde4tngxHcA+z0TUsQwIrqyS6+iz31Mi6G3sQbpDEjYk2Wjvgo7M5AXRxBFa+NF079U+ctbNV6kLIcqEe23Aco3L+6KSPn4NZIaDG4E027h7yyjL27Pj7pKrzJuxhlDTXDDyJDCaDYYySbD3T+4VLb0kHfA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760595887; c=relaxed/simple;
-	bh=cXNwVv+JgFqFpbY02VnPd6lkTkI4U8eRR7m0jqcEajo=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=Ap8OiSAEG/zP8BP7Lq+PdOXjcCtxAOo2RlKzyc0kHRNVN6UTS7TQykrZnXY6V3c+/kZTWdifH33gtzQYPQ91biLU2VUbFF8eyRMYO1mP+d1smjV1+JSpChL12RQXRSK67vVQhOc1ad/7HLnuIWJtJC5Fyr/V22XaImkq23IsT4E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RTh20dkg; arc=fail smtp.client-ip=52.101.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1760595920; c=relaxed/simple;
+	bh=0scbTsYg1ypZjOUHTZyqhjQDmWisCe08glGbSjeYUZ8=;
+	h=Message-ID:Date:From:Subject:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=N5dEcmYsT2+TgqFYC8O+ViuroyYZ+Xf1h7v4Bmg35pDSqX/bhilY+MkAd3u56oRA8u7e01Oqzgyo6SCidiXLOjgud0yS26Lc6xAlPlHBmuVII2vg0gTdFxQeJCNlV6bvId7Le8zZX7V7UE1zfogZnPSGnPDtIKQFCjivBG1hBao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e3iBsF/f; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760595917; x=1792131917;
+  h=message-id:date:from:subject:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0scbTsYg1ypZjOUHTZyqhjQDmWisCe08glGbSjeYUZ8=;
+  b=e3iBsF/f6repmrpW88DBNg5wBfmkliry8eWUYY4ZMoMiVvc3je8hpMaG
+   kWEbvJNZzsNYuiVJoqOeycv/44+YHfOEUp4gjiGIkEjvI+//og/WqhS2b
+   XbQ1PjFLhrqQ58zfxqJGNwzyNhW33+3GqobEp9yatN6EBxn/ujmE7fRCA
+   mayEm8l4hjM4ypVTzwg5JSXeeH/41qEIu7zSihGFRMQNMlnjlWrfMQHz6
+   NamoMMdQotlMYGA0Yqm1POWcMjfznfaqDr9yjWep+RREk86TdvxrvMw3/
+   D4TEGfjJqq8GR91Wx5FHnjHbIlo0rydIVdcB2aNEo5XSSHIYsXxS0+cLI
+   w==;
+X-CSE-ConnectionGUID: cI5Q3ylGQ5qkhen8bktzjA==
+X-CSE-MsgGUID: MshkxfrITfiYNT/1P5jXzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62872787"
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="62872787"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 23:25:16 -0700
+X-CSE-ConnectionGUID: NyCVCOkWS3GZYaF6gO4JUg==
+X-CSE-MsgGUID: PiT3Q9X/Sr2bqhqZQL/ipw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,233,1754982000"; 
+   d="scan'208";a="181925743"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 23:25:15 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 15 Oct 2025 23:25:14 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 15 Oct 2025 23:25:14 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.47) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 15 Oct 2025 23:25:14 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HKuK8BlaZyNK2tJjpqntxSgFhNNtr5FfJg19tZlaX4+Y05qHSk6fbDPtQnZbKJxX8YT1xudVhknyVN6F1P1WbHHmRYFu/fmSOoz8+UyB1/7SPkEh9ie/LmfAdcvSNneWraYk/UZ1PGedArx5RYIe7gJwy/GE4iNFM/tv+4ISzzQikOrVy+Qqbd/lAk7sjX6kRBSHrkS3vCfo4i9mKvxFLxgc7fRgZvOy/ufJ/SH5YeeGvIn/xejyMpLnd5+aHEfSVMjqjaF8eWJOyoMu+/pGRxRGJ+iij3C6Ze9ifC6N2NfR5OIvA/yFrUrkY+03ps+Paq+iryS/cSvCyXbsyQX4vQ==
+ b=ZyHQfpTL/VbkNYfcCrM9pIzG5GZxTQQPX/SWeDz5uA4DoLmJ1a7AkWZCFp0XsKMHtq20FTSkYH7hdp4d03RhIOPPGfxeHAyFzD5zTdbWWyPwgCh/JX3jyP2xcONp9nZbdGgsnw2AGFmdl+uda/G6okBoUcUxd02CGMksmRa7GdA+l8NpFntE7RGwMry0ephvv/5NdUo4S9HVToXz970Cd8KpkZkcXS3Y6vzLYqgtlZSXTvk22Epff1zGVIQxzzzq3GVcSgAaUjvcEwN4tTGu+UPDfbGrC4sVxiPmAsOxX83V+eUlOv8cpw8DICaVSxygQBfErC2874+QiOA+R7dtvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cXNwVv+JgFqFpbY02VnPd6lkTkI4U8eRR7m0jqcEajo=;
- b=e3z7CrTWlITFoxIoDpuXiTa1AJ4y+fXjmiLV/LANYB/MSQyqfuhKiOiHipop1S/WMFWvfIhJTtps2gPZ784L98WLTI3jiEjTHE+CDYfzj0bCE8rA2hgEm+xKeh+icgPZKQjNEtgAue1iQbPOJ4/vZ4rfx87S4Igq1TDVBGa+vpewE/55NaQbkWYvg/e8tBobk9jfBVERXFj/x1TTIRP9p8ivYUx472Fq6tPLPpMTU4WKsj0KkFF+c5izUb/PaGMTOEukTNzex6J3r9CrOPdARGm7oClLGkkTqoTNyYvmuMwKDjzLbiqeM0xvCYU2d00buaUmDMdWtZl0vL3quGlxsg==
+ bh=uDNm1oYvXbhlBF2PYM0X/zAAyIghaJZLOcrWrELZPt8=;
+ b=TNpDCkJsUfjXl/6hbyR2RddfMGNuqEwbGI6cM6p6sCVHLgGsrna5wcPqbmCL4WwaZkad3A8ZAE4FhpQGaIBgEhmtsUn4W13m0aOm5PA3GSDCjW6ZeyFr4scYlejIBKZsnHe/sZAFjkvgMrG3VUkzQSeKST1y/O8g2azkrfMw3Jso09+M7ILvamj8SWGBxCJzCR7xFk2ahCWmkiHxZfEQ1AGSho8sUh/6+PZg4qfELAh73bov0qP5yVy18HuRSZ3TzspeejBu10nezJyykxrAw1RfplrmbNM8Bb1WFUjk6OUcirMRHpFsVNAU2rCJ26l17RVO3ArrCsGwYlhbzBEb2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cXNwVv+JgFqFpbY02VnPd6lkTkI4U8eRR7m0jqcEajo=;
- b=RTh20dkguTiUaDxR/YyHQt54dzClZi9eZEDETSIORQ0KdAZAspnYZEkMfO/SCN3WpEg2EH099oLm0NK9RzF4jfkUoBxsYVaTSqxkV9lA1HyX6ql8JwtVbUJS1GH5v3o6ak6mOlylpjXbZ0f8xQFPN3kTwNR/AuLeIgNZuprgftqwtB0ldMAAW22TpEv3i/3LRxiM4R9Q96902nLifXxqq2QIumXonCq0rBImFo7pGBV3xu6FV1nwIpCtp9fkTDwgiK4dtjCYpo0NLq6mwLr+6ZXOyIv+c95EnRqnKdl9ttz51/yT9XC+VpPHiwPlo1c7KURUpIM1rnYWtGoG3kuVEg==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by IA0PR12MB7603.namprd12.prod.outlook.com (2603:10b6:208:439::9) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by PH7PR11MB5885.namprd11.prod.outlook.com (2603:10b6:510:134::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Thu, 16 Oct
- 2025 06:24:40 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
- 06:24:40 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 Oct 2025 15:24:37 +0900
-Message-Id: <DDJJ5GJI5HJ8.2388S19QXO8G0@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v5 09/14] gpu: nova-core: Add bindings and accessors for
- GspSystemInfo
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Alistair Popple" <apopple@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <dakr@kernel.org>, <acourbot@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251013062041.1639529-1-apopple@nvidia.com>
- <20251013062041.1639529-10-apopple@nvidia.com>
-In-Reply-To: <20251013062041.1639529-10-apopple@nvidia.com>
-X-ClientProxiedBy: TYCP286CA0019.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::13) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Thu, 16 Oct
+ 2025 06:25:03 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.20.9228.010; Thu, 16 Oct 2025
+ 06:25:03 +0000
+Message-ID: <1320d1a3-0554-4fbe-a2f2-7f6d4f50a3c4@intel.com>
+Date: Thu, 16 Oct 2025 09:24:58 +0300
+User-Agent: Mozilla Thunderbird
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v5 4/4] mmc: sdhci-msm: Rectify DLL programming sequence
+ for SDCC
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson
+	<andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<dmitry.baryshkov@oss.qualcomm.com>, <quic_pragalla@quicinc.com>,
+	<quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
+	<quic_bhaskarv@quicinc.com>, <kernel@oss.qualcomm.com>, Sachin Gupta
+	<quic_sachgupt@quicinc.com>
+References: <20251013145316.1087274-1-quic_rampraka@quicinc.com>
+ <20251013145316.1087274-5-quic_rampraka@quicinc.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20251013145316.1087274-5-quic_rampraka@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU7P251CA0013.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:551::34) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,104 +125,518 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA0PR12MB7603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 981e1d71-d239-4f74-6604-08de0c7cb054
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|PH7PR11MB5885:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10bda712-00ff-4744-a978-08de0c7cbd8d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VjNZT2hjU1hBbXNlTElUczBUR0NnSS9TRnpVWlc4OExjWTEvTlo4THBBMHdu?=
- =?utf-8?B?UzY1U1NBWXVpYnJ1V1FWek9wT2JWRWVRNWdpZ1hLWTBkYkVuZzM1UUJ5WVp1?=
- =?utf-8?B?MG9wRWJnRFExNytTaGk3eDNKWWtyTUpLc09EMElKWFZHazh5cEJsQXZnYXB1?=
- =?utf-8?B?NGdXLzZxMy85ZWZxeVBod1hSRjRSN25PS1ZzZkRITzlnMVhrL0p2WGRDV2Qv?=
- =?utf-8?B?OS9BTVhXeGJNNGJrb3p1Q1BNY3pkbTIvYWFUc21NK1JwaTNqQlZuOXg4b2R1?=
- =?utf-8?B?OXYrVzgxN0U4dDZMV0NkK2VobGROUFpQaW5ldmVlMnc2dXhYMENnM0Y5NGo4?=
- =?utf-8?B?ZkdlYzNaL1Q2Z1J5Y2JUNVB1NVVLMXhmb2VLQVQrcUZBbVVJeUVSR0ppTnhh?=
- =?utf-8?B?YUtDRHRaY0FuZXN0aVRDUEl5WDVCREJMdGRBTzFRdjh1RGhsNC9yd2krMU5P?=
- =?utf-8?B?eXhEcFdhRjFnZXVJTy9sdWZ4dkVCcUk1VTdxQ3ZHUUhCMkh5K2R4QzFraGIr?=
- =?utf-8?B?NG0yQjlEckFSRllVRnUwOEJ4ak93NklaamJDd09aQkJTQStqQ1BDaWxBNmFk?=
- =?utf-8?B?MDBOMkVrWmFHRGF0aGZlNkxnNExYMnlaM29NZEtQUXV1WW5CVWcxTEErMDBD?=
- =?utf-8?B?OHR1UUcxNS81QTlxa1VJYnFqdWdqV2sxenQzTWFRS1NNV283ZVVZeHE0NUpx?=
- =?utf-8?B?bXJtVmxmQVRndVRlWTZTUWsvWExWbVdwYkN4b2IrMGJ5QzVWL0UwcjMyQUVO?=
- =?utf-8?B?MDdHdTJEYmY2SUp1emFzNi9vZjY5cmxYcUZjS0pnaStrQnl2V09LVlIzcWRN?=
- =?utf-8?B?OTM2UVJ4bE0wbUlENWcyQ09JRUNodkEzSjF0K095dVBuZjV2b1ZHSExSR0lD?=
- =?utf-8?B?eG9vVVA5dTVmSUpzNmEvTXZtU0x0S1lTOUFRZjBKeUVCOEJZU1hSdld3NmZ0?=
- =?utf-8?B?cGtsZFFES3hDc3k1c3dJUTkwQWRjYklvOGNDL29vWGJNNExnd1IwU3lRY1ZQ?=
- =?utf-8?B?RGVUc0JTR29TaU0xSGxIWkhRV2E0NitqSUdjbmFMUjhhMzBHM1lUMjZOcXdH?=
- =?utf-8?B?dWJmRERqMWNscGdKZkU5QzNwQUVrc0RSTmFVWVB2Yll5SHA0SDVhNEVSekt2?=
- =?utf-8?B?aGFzS01qcitOTkdqVDRuelZJWklkS1FjeDdoRWU0eFZtUVBjbVJoM3Z6cW1J?=
- =?utf-8?B?ekNhS1ZaZ2l3dU9EZnMrYmtkVDR2TldOTFBuVEhRYTB2K3JOMTl0WHJDQmVE?=
- =?utf-8?B?U3JybXRtYU5KNFhzVXlZZE83YzUyNWF3bTM5bmZ1b0ZUQW0zRXBhWVRjMjEx?=
- =?utf-8?B?Y2xFNlBkd21rKzJWWHUrMkhJWlRSK2p2T3VaTTVpRzFpZkRVWnV2NVpnMW5O?=
- =?utf-8?B?cW9rYzYzMm5oVEJrN2w2OW5JMUI3ejF6Ri9lSkNPZ3JoaGtqNUJGanp6Rng3?=
- =?utf-8?B?WFhJV0xmdk90OExYZWVRSmpFZXJUY0tYUWpIa1R3Mkk2WlNqaUJ4TSsycXBR?=
- =?utf-8?B?OEtETWJ6N1VoeThDVUhwSmRuN0oyekdLV29razN0NVI5NWJaR1l0eTJLSXFO?=
- =?utf-8?B?dVpRbTVwN0hqMldpZGlLSFFGTHFUYTFqRmZLVUlzVmZFS2luQjU0ZHFhSkNR?=
- =?utf-8?B?amo1elRVMGcvOHFmK0dERUlrVFBhZjJ2VC92R3NqdGJlS1RqVnRiYkxQbm44?=
- =?utf-8?B?bVZFZE4xVUNtWElIcGNFR21uYUZpQ1NUSm5COURsMFNEaWNPR29qUVdJYUF2?=
- =?utf-8?B?OHNEbnlScCtBeSt1MlhPOUdOaHdCNmpYTVN4NjRXeklBeVJmdm54K0FPQTR6?=
- =?utf-8?B?YUlIN3Q1K0pETHNwbUIxT3YvbVBHYzFoeUVkdDhPS0ZldWEzS1EzazBqTkxZ?=
- =?utf-8?B?WHF3Ty9TTmVUL1hzVUZFeTE4a3hvdk1KUTdUQjhQdUs2QWlhYzc5QVpERklL?=
- =?utf-8?Q?BMTtUFX3DMmcJ5oWqk81ZX9ayGOJ68ef?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TkhMdWNGWnlmNjhxU2RIbE1aYTJpVE5qRlBUYTR5VFE3a0pUTmpSdzM1VGt2?=
+ =?utf-8?B?M1hVR1ljcFdnMHNpZDhYbXMydmtub1dHVzNGSlJ6NXFBOGNDV2NqaEUzWnpj?=
+ =?utf-8?B?V0NGc0c2U3ZncWlsTGNnR0RhdW9seUZoZUxzeFpQSHo3WnVaeGhteTdncE1X?=
+ =?utf-8?B?VUFFdWRhNlU4dFNLNTdqZ0hUMDBKbGxYU1Zxcy9GSHd2cGdiVVh4RHVDNmJK?=
+ =?utf-8?B?aWxoaWdyQXRwVDBlbFlnM1MrL1h5dm44OTRYdHQreEJLM0xrNmtXbndJdGJR?=
+ =?utf-8?B?UkdGZldtNmJQSGtMT0EyRkdaekVQOG5LUlBMait1Z0taM0VZK3ByUTROc2hv?=
+ =?utf-8?B?ZEpCOUNWVUlaVTR6SVdxVXRqQk04M0tDWWQzZllVdXo5blJIWXJRM1RPY1dO?=
+ =?utf-8?B?SFM4SlBFRG8xVzJIMlN4YXlUK3ZQL1lkWi83T0JERTk1bUwxQUJkMnRVUFFW?=
+ =?utf-8?B?aElmeW1qQno3UGZ1ZXBGeHpmNHJyd1hMbnFhUVBWNEJ1WWNCblpkT3NJYjZJ?=
+ =?utf-8?B?azg1Z3dMMHgwTFNGbWhXZzJqb1ppZk1UZndxMzU4ZFAxRVFZM2NNcTNML0hw?=
+ =?utf-8?B?RDhPcVcvdVhQWEE0VmxsL2dCZzNDZzZnSGFMejRwVkdzME1kUGNabHdpL3Qr?=
+ =?utf-8?B?Ky83K2tUWCtqYmtyMWpUQW95UHo0N2Y4NEl4dXpVdis1Vmx4MVJQTVgybUdU?=
+ =?utf-8?B?VFZFMVFQWHI1RlRqRHZoNmJKa21KbGlyVnhnVXVINlBWSlhETUlId2RwMWlK?=
+ =?utf-8?B?YTNwRHB6WWhMb0YxWXlyK2JxVHNSczdUMUYzUjJ6b1lOVGNUa1dHOGhKSDhG?=
+ =?utf-8?B?Z1VRTHRJNThObGZYMm9XY0lxT1kyMWtmZ0dydnRxeklKakdubXBseFhSaVVT?=
+ =?utf-8?B?NXRGWk9JTEw2YkZDUVBXOFZ3ZjBUOVlhcGdrRGlZS2JDN0RLa0VXOGZHMDJH?=
+ =?utf-8?B?eS9udDZlc2RoVGd0aW8rK2hJOHBtck5XS2RDNlNjM1c1SDQ1SzhSQjQvNHlw?=
+ =?utf-8?B?cHBnUHR1dDlZMEZaVWd4dnMzcVNtQ3EraGg4NlZtSVNTczlnNWtsVFYzbm0v?=
+ =?utf-8?B?TFpZcVNHdGx3UVFCWGZsRlB1cDNjSVpJVW4rQjJFTy9aMjh3bUh2QzAvVnds?=
+ =?utf-8?B?aWxqamtpelRjdEtBb2FYUFdPM0VtS0xucG1XSEFBZUcycnZBOEJPQ20xSE5t?=
+ =?utf-8?B?cEpaeGFwNWUzcENHNGJiYTJNby9RaUFvRXBybmt4ZFMrUjMzb2pjdUhlS3V5?=
+ =?utf-8?B?RWJkWUxVWUtuRlNMdDhsZndnYSswYVJyTXFmd0hIRk5UQjJqTGErczVlTWZn?=
+ =?utf-8?B?aUFrM1oxVzNwVTR0MHRUSHFud0RGaXlUL2NVcGdLbk1kSE1FTWo0WUMxWkQ1?=
+ =?utf-8?B?MUJUK3lXa01oL0x6Vno0WEYvTytIZmliWU1CMW0wNmRNQnEwZjNtR2RzVm0x?=
+ =?utf-8?B?emJBV3kvNllPcWRJUXdCZ0hqK2xEM1EvQkh5dkVQcVR1VGh2RkMzYy9Xd2Rk?=
+ =?utf-8?B?NXZGMm1KcnE5SEdzb1ZwNGdvS3pkYVo1YXFOeVZxVlZkUXVYb0dsSkY5ZWVP?=
+ =?utf-8?B?S2czUEg4bU5VcEJqWFI1YjllR3RzTmF3SEZ1RWNNTEt0bnJTQXJ6cTFtcFhM?=
+ =?utf-8?B?N0h0WEVpbGltVUxOUjJhdDJMbVE2M0g2Wkh1dmVKR2dtUE5GMXJiSTRRTFk5?=
+ =?utf-8?B?Z2huRjNzY0tyU2NqWWdlK3pJUy9Ib3ZOYzROZDlQLzEzOGYrd3ZmUUVmMjF1?=
+ =?utf-8?B?Zmd4YjUvVnlzVlBpeUxEYmFxcWtYL21neGllUlMrRzR5N0UxcWFUZElLVVF3?=
+ =?utf-8?B?RWxlVzlCSEYyUS9YQ0Mzd1gzVE8rSXNMNDkxeVFyeWphUTlPMzZzZkJxdktG?=
+ =?utf-8?B?akQ0OE02K0dVMktNNzVJT1lNOFRwUGhmbWMxbmQ2eUxJa2owV1RRZHlJRVFQ?=
+ =?utf-8?Q?LreZZ2A3O6eYmA7Xi3oC5pVf7EzZpwzj?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TU5MRXhISVhqbGlzN25WZlNwN0xVSFltenZlcGxSWS90dUw3TGUvdXRKZVFU?=
- =?utf-8?B?anNmL1VVeGsrd00rUHh6UW52M01FK0o3cmxrV1llNVJPbWMrbkpuMW1BY1Q0?=
- =?utf-8?B?VDdVY2NJdVNIejJMSVkwa0MxbTdZbzFiTGVodzdRMUFpeXdmZTlCdTF6QlZE?=
- =?utf-8?B?enMrcjJFUWVBL2NlaWgwTEJDMDFidGpVR29YZnY5ZTVYamw5V2VSWDJtQjZJ?=
- =?utf-8?B?SkJ3cHE2bWZlWS9sY21LbG5QM2E5WEQxT3d1MytKVEY0WVo4K0dLelBQbThs?=
- =?utf-8?B?UGl5ZWJycnBhNTBJZ3B0TkZlZnpuQjlCUkZZT3V2Nm81L3hpM1B0dmZEZUJr?=
- =?utf-8?B?YXFkYkYwdGVVUnVMZjZ6c0JNVUorQ3BDVjM2SW5ZOE1kTldOUEIybU42dzFn?=
- =?utf-8?B?YWErOW42QldPcVhSZlRlYXdXOGU0OG95THA0NnFrOVJqTjdOVDJ3OHUxUlVS?=
- =?utf-8?B?d21Ic2laSmQ3c21XQW1kVk56YkVvYUpHSDg0WXJmcjNFUWZQOUliRmVJUG9z?=
- =?utf-8?B?UFdwcE9BRCtwZVVCL1Q0emNuSU1hTHhGcXJ6TlNSTGF3dUh3M3JvYXRCNGs3?=
- =?utf-8?B?WHR6ejlTTGFseW1BU1lZb3RSRGRQOWsxTUxzYjNneEIrT0E1SElLemorNmtj?=
- =?utf-8?B?U2dmTzd1Q0lYeGpwNkljVmVPcXZIeE05ZFh5dEN3aHFydDR0MWtrSmRhZTg5?=
- =?utf-8?B?RHhHOXRhVHV0NXhXMFl6RmdFbHNQamVYYmxnWDI2Q0U2YUJlQWppNWhaSHVj?=
- =?utf-8?B?aEluRWtGakltRzI3SG10VHA0TGxvZWxiWHZIOXJXOUtybXNua1Bpa3RTc0o2?=
- =?utf-8?B?dkJPT3BRVnZvK1MybVhISFlzaUFmeXdDT0RpVzZlZk5xOXovZUZySFVMWTZt?=
- =?utf-8?B?SzJFTDZKSVk3bkRrWEh1NDJNWHp6REdYbVlKMVpzSkJiNzQvTTF1S3hnQ2FB?=
- =?utf-8?B?NmZ6WG1Ia0pjZW9DY1lvUHU4SmxpWmlkbmlhU1liMTlNRGZGYWNPT1hadGZz?=
- =?utf-8?B?b0FTdFc3UVlDSnV6SnEvREFnVm9VOXZPTHo1YXBNZXNKV0pqOVArN0NlRzVm?=
- =?utf-8?B?SHFPYzd0WFRzNklMMUxpNUc3K1lkY0N6TTB6Nm02MTk4dnFVbUgyNmpBTlRL?=
- =?utf-8?B?OStCeFlpM284ank2SEtpMEtnREsrc3NqYnJZcENsdGJ4K3NNS3N5ZE80WmRN?=
- =?utf-8?B?a2M1VitHZTdVZVc0cXVPU1RJV1VhQ0RBd05BZ1FROXhUNFJ4V1JVK28xNDNP?=
- =?utf-8?B?OHc3UVhvTmQ4TTErWGFmbWM1TnQ4TzV4b3VFbjVyMHBrNlFBYjZycUpZcGJV?=
- =?utf-8?B?NnZ2T1pCeU96RGt6RGtTRnV5UnQ0WnpFSVpRaWI2NFo0Sk9OSVNNUVI2L1Ay?=
- =?utf-8?B?R1ZJSURueFBycVljeU92d0llQzgzVm1Rb0NwK05nd3h4d0NYZTNIMWlVTjJE?=
- =?utf-8?B?cHppaE8xSTFVUU9CRHVTbWlMZXd4TmNkZFFLYnpUc01CS2FzOHFLWURCclVI?=
- =?utf-8?B?M1M3V25iQXBIZVBtZ1NJK1dZSEVEcU5EWldRYnlKMHpuRnpLRjJHZDBhbkxL?=
- =?utf-8?B?bFlsOXBNaDAxajBFMnhaTHc0ejYrWjdkcFFIVWdwU0pUTEFjL3hJbEZJTmQ1?=
- =?utf-8?B?N3cvK0RDQzlscmh3eVpNMm9TMDY5Vm02alpMazY0OHFRZ2xIMmNpSU5EekV1?=
- =?utf-8?B?cWQ2T0lxTHhGUDNFSUQ5Y0ExMThxWVY5OVNBM1FYcjQvamxZUEszWFB4NFNT?=
- =?utf-8?B?b1p5Tlk0bkNUejFnOUJWYkZScU1FbnZaMGVaa05Ub1o0RExJMmRsZ1FCMDhW?=
- =?utf-8?B?RzM4Z3NVUXV5enhTa0dEOVR6N3ZsNGdaRnd1Y2k4aFc0RVR4ZzNYaHA0ejRh?=
- =?utf-8?B?OGcyaUNVbUdGekluNWViRDZTQVJNczl0eXp1ZmxsaW9iTTI5bjVlTHdFSXEx?=
- =?utf-8?B?QXcxMzNqWTlOckdGUlEyYVNib1U1U1dUZGMxdkZwNmd0WXBkRXBRclp5cEFW?=
- =?utf-8?B?NTdCdDdYeEplT1pubktvM0JONzRIT014VEdKOGxxY2NwbVJwaWtVcHhYWFdy?=
- =?utf-8?B?VnBPanRGVHJ0L05acGoyc1pwN2VoT2xTcVJCckRVNXI5NlZHOGczUW9RRmll?=
- =?utf-8?B?ZS9WTHZZVVdsL0NWQjZZOUZTaitNVExyNDlXTVRLMkk4NXNpaGNqYmxPRlZY?=
- =?utf-8?Q?KKBZ5qqijJogFsX1mq/ORKLehXPrhYEYcPZdVtDbmKjx?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 981e1d71-d239-4f74-6604-08de0c7cb054
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WEtiMFEvalBxcDFrZ21VRk9DTXNvSzExTDlzK0xOWTZ3Q2FoOTJLSlFNZTY5?=
+ =?utf-8?B?MGt6L0VwMkNtKzNKL1A4V21ndUlTZW43RjUwOUZJSUdmdVZ5YmF1NnZKenBk?=
+ =?utf-8?B?c0Jzc1dKRk1WY3JUanZuVlJhRWRJdHV4ajE3KzVwOXlYODkxbU95TGl6QnBT?=
+ =?utf-8?B?YS9ZVExRQVViNVZVTmNlYVV5aWNmSEh0b3k1L0VjTmdBOEpEeE1vd1owektZ?=
+ =?utf-8?B?ZXN6emozdG1IUTdROUd6RmlTUWxTa1NCcURteFd5UVJ0WlY0dlFWeUU2M29M?=
+ =?utf-8?B?bG1rbldhT2ViVjRKSXRWSENuKy9VTERsdThtOWhUc2VPbmRFRzZLUDBEcXRw?=
+ =?utf-8?B?RnlUaDNZem1UZ2ZwR2FBY0hLQmdnMmtSWm9UTG96NW9NN0JwaXdqNGVZK1Qx?=
+ =?utf-8?B?dVVoZ2IvZEU1c2U4YWlkUnZZcllvZHJqNWRyNCtsRXRZeEZWVVd1VHI2Q3Za?=
+ =?utf-8?B?UFhxYitGbkcwd0Y0d2gzWUN5S2pNWDN2TURvY2s1akgxdFovSmNGSU1nVEdC?=
+ =?utf-8?B?N3lRMDI1cGIwOGlucWUrOFY0QTZwcGM1YytzUm8wT0ZhTU13bkYvWFNnK0xu?=
+ =?utf-8?B?RGU3WUlVS1JkeTIwZHdGbE9ZMWZ0K0VWb1hqdlVjc3p0OFJVbERxWG9rUWJT?=
+ =?utf-8?B?ZWpPcmtyY0kvNXpQUWNNZU5tTDI1VXRMT1pVUWozUFRZZWxYS3BjNWFCeDhO?=
+ =?utf-8?B?UWRWUVkxZ3VPNk5CcVFUd0NEcHJZeENnYUZHanloYllURkY2MVdpUDZnWFda?=
+ =?utf-8?B?bjRLL1RTOGZrSENTK2ozZnFsV2d5RjVkdU9qRTArS1JyWlgzV1dIMG1LdVMy?=
+ =?utf-8?B?ZjFYTWhWNDZjWkVLS0IzbUdXeDJTcCs5ajN4Z0YyTHZCVGZOUWxvZll6dHlJ?=
+ =?utf-8?B?bGhCbnpIc1BNTXFFYWx2Y3JvdHFPZEhkd1dhOGl1eWk1U0R4Y1BnWG1HazNQ?=
+ =?utf-8?B?ZFpsb0FJMmQ1ZWxJdjBmZ0htK2lTbWxhTTMwdEttTFkzL21sMHJESzVWbjU3?=
+ =?utf-8?B?TXJnMGs2N05IbE1VMkJ5R29Fb2llbEdHb3BrTTYzQW8rRkNwdVFYRnQ5eGx5?=
+ =?utf-8?B?SGc2OXRSVkJ3TzBoMTRERHZ6N0JycU1qWXpZMWZiRlRWOTZNZkZ6YXlxWlJJ?=
+ =?utf-8?B?cmx1NkRYSkU2MkVlbnI1RjZST2pKQU1GSjA0TTdydWpiclVzMlJ5RnhIdDVH?=
+ =?utf-8?B?bHFDZUZqaHRGQ2twMUJoaHdJRmpHWGtkcS94TUt6NDZObm9BeWZrYjhXajd2?=
+ =?utf-8?B?OGhLUXMzZ1QrLzVkU2FyWjREQWxpbWFCY1FSdVl0NkJRTTlYUXRzTU0wd2pD?=
+ =?utf-8?B?Sm9PbHN6SzRuRzBqYXFESkk1Z09KemFnbnd6dEdBYThuQXNWN25hVHRoUWZn?=
+ =?utf-8?B?ekFRNm4zZUhlK2ltNXJ1RGQzcHRqanE0SmZwVUtoMm5IazJSbjJBS0FBUGxp?=
+ =?utf-8?B?bm5JWUt4OE1KNzZRNS9EVkQ5ZHZtdUtTeXN2ZVRiMHYzQUJQZ3RYK1cyWGtI?=
+ =?utf-8?B?ciswL01iTDl0SWlETStQSC85Zjk4Wm9PalhDK0FNU0J5a05scEZHam1zUTR3?=
+ =?utf-8?B?Z2tacGduTXFkdzZZMndlSktraDZBYUlJOWFmYUlOdHB1UG5XSm8rbkphMjBC?=
+ =?utf-8?B?SXJucE1BNjNkcXNoUjJORFJTdnpEYk1jUm11UGQ4MWFJOFZJK2djMlpyaitH?=
+ =?utf-8?B?UVhIWnAxTmhjRjI3QjIvSVVsekxwODFsMHdydW41RXh2OEpuQ1dJSzl5UzVK?=
+ =?utf-8?B?MUdnWUl4aFlBalhVUVpPNmk2UmJ0OG9OSm5qU05XRVBsZ0xoMTZwdCtaLzRq?=
+ =?utf-8?B?QjlZZy9WendRMzFJbVBwWXRIbUVKUUZNZEFGOUcwbTh4NGFieDR4UCtIbWpW?=
+ =?utf-8?B?blFEVTh1OFJLWUVVRVlmZ1ZpZ0RjRmRhNVprYm84MThiL2NmVXpyRnV2VXRZ?=
+ =?utf-8?B?dkpCQzJwRmNtOGZiZDNVZTkrS2hNL2NRMkE2T21VN3p6WHZnZDJoOWYxeGls?=
+ =?utf-8?B?Mm5UMUttTnY0c3JXbUYzbUszem0zU2RxRGp5V2RtQ01UOUY2QUMxbGxKVlN6?=
+ =?utf-8?B?a0FLRzNMbzk3Z001aVk4a1M5QXZ5ZjlScTBnbWdxM1ZvZTB1bG16MlI4M0lD?=
+ =?utf-8?B?R2hJcUxQVlFzUG1IZHZ3UW5qSTBxYUxNczR1bTRhUmJuNUFXMHg5OEt5UmZJ?=
+ =?utf-8?B?WGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10bda712-00ff-4744-a978-08de0c7cbd8d
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 06:24:40.8283
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 06:25:03.2878
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DppN6jx6UJjfGIxMS7+M+9mG7NeLhRAebVcghRMEbP+ncPHy2rAYiNAgFHYFtL8C8/7Rbj6YFk9WC3xFrxvElg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7603
+X-MS-Exchange-CrossTenant-UserPrincipalName: e7jYZ0XvTvYgJOJRPbT3ksusA/EN03x9r38cY231FaIXsCfPtz3lWFkDtFlQ3qFtxcKqEqOSv9AQ0SxQOAk6xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5885
+X-OriginatorOrg: intel.com
 
-On Mon Oct 13, 2025 at 3:20 PM JST, Alistair Popple wrote:
-> Adds bindings and an in-place initialiser for the GspSystemInfo struct.
->
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+On 13/10/2025 17:53, Ram Prakash Gupta wrote:
+> From: Sachin Gupta <quic_sachgupt@quicinc.com>
+> 
+> With the current DLL sequence stability issues for data
+> transfer seen in HS400 and HS200 modes.
+> 
+> "mmc0: cqhci: error IRQ status: 0x00000000 cmd error -84
+> data error 0"
+> 
+> Rectify the DLL programming sequence as per latest hardware
+> programming guide
+> 
+> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 272 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 253 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 8038b8def355..a875e92f8663 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -28,6 +28,7 @@
+>  #define CORE_VERSION_MAJOR_SHIFT	28
+>  #define CORE_VERSION_MAJOR_MASK		(0xf << CORE_VERSION_MAJOR_SHIFT)
+>  #define CORE_VERSION_MINOR_MASK		0xff
+> +#define SDHCI_MSM_MIN_V_7FF		0x6e
+>  
+>  #define CORE_MCI_GENERICS		0x70
+>  #define SWITCHABLE_SIGNALING_VOLTAGE	BIT(29)
+> @@ -119,7 +120,8 @@
+>  #define CORE_PWRSAVE_DLL	BIT(3)
+>  
+>  #define DDR_CONFIG_POR_VAL	0x80040873
+> -
+> +#define DLL_CONFIG_3_POR_VAL	0x10
+> +#define TCXO_FREQ               19200000
+>  
+>  #define INVALID_TUNING_PHASE	-1
+>  #define SDHCI_MSM_MIN_CLOCK	400000
+> @@ -319,6 +321,16 @@ struct sdhci_msm_host {
+>  	bool artanis_dll;
+>  };
+>  
+> +enum dll_init_context {
+> +	DLL_INIT_NORMAL,
+> +	DLL_INIT_FROM_CX_COLLAPSE_EXIT,
 
-I am getting a new unused warnings on this patch - we should either
-annotate or merge.
+DLL_INIT_FROM_CX_COLLAPSE_EXIT is never used?
+
+> +};
+> +
+> +enum mode {
+> +	HS400, // equivalent to SDR104 mode for DLL.
+> +	HS200, // equivalent to SDR50 mode for DLL.
+> +};
+> +
+>  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -803,6 +815,209 @@ static int msm_init_cm_dll(struct sdhci_host *host)
+>  	return 0;
+>  }
+>  
+> +static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+> +{
+> +	return SDHCI_MSM_MIN_CLOCK;
+> +}
+> +
+> +static unsigned int sdhci_msm_get_clk_rate(struct sdhci_host *host, u32 req_clk)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct clk *core_clk = msm_host->bulk_clks[0].clk;
+> +	struct mmc_ios ios = host->mmc->ios;
+> +	unsigned int sup_clk;
+> +
+> +	if (req_clk < sdhci_msm_get_min_clock(host))
+> +		return sdhci_msm_get_min_clock(host);
+> +
+> +	sup_clk = clk_get_rate(core_clk);
+> +
+> +	if (ios.timing == MMC_TIMING_MMC_HS400 ||
+> +	    host->flags & SDHCI_HS400_TUNING)
+> +		sup_clk = sup_clk / 2;
+> +
+> +	return sup_clk;
+> +}
+> +
+> +/* Initialize the DLL (Programmable Delay Line) */
+> +static int sdhci_msm_configure_dll(struct sdhci_host *host, enum dll_init_context
+> +				 init_context, enum mode index)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
+> +	struct mmc_host *mmc = host->mmc;
+> +	u32 ddr_cfg_offset, core_vendor_spec, config;
+> +	void __iomem *ioaddr = host->ioaddr;
+> +	unsigned long flags, dll_clock;
+> +	int rc = 0, wait_cnt = 50;
+> +
+> +	dll_clock = sdhci_msm_get_clk_rate(host, host->clock);
+> +	spin_lock_irqsave(&host->lock, flags);
+> +
+> +	core_vendor_spec = readl_relaxed(ioaddr + msm_offset->core_vendor_spec);
+> +
+> +	/*
+> +	 * Always disable PWRSAVE during the DLL power
+> +	 * up regardless of its current setting.
+> +	 */
+> +	core_vendor_spec &= ~CORE_CLK_PWRSAVE;
+> +	writel_relaxed(core_vendor_spec, ioaddr + msm_offset->core_vendor_spec);
+> +
+> +	if (msm_host->use_14lpp_dll_reset) {
+> +		/* Disable CK_OUT */
+> +		config = readl_relaxed(ioaddr + msm_offset->core_dll_config);
+> +		config &= ~CORE_CK_OUT_EN;
+> +		writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +		/* Disable the DLL clock */
+> +		config = readl_relaxed(ioaddr + msm_offset->core_dll_config_2);
+> +		config |= CORE_DLL_CLOCK_DISABLE;
+> +		writel_relaxed(config, ioaddr + msm_offset->core_dll_config_2);
+> +	}
+> +
+> +	/*
+> +	 * Write 1 to DLL_RST bit of DLL_CONFIG register
+> +	 * and Write 1 to DLL_PDN bit of DLL_CONFIG register.
+> +	 */
+> +	config = readl_relaxed(ioaddr + msm_offset->core_dll_config);
+> +	config |= (CORE_DLL_RST | CORE_DLL_PDN);
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	/*
+> +	 * Configure DLL_CONFIG_3 and USER_CTRL
+> +	 * (Only applicable for 7FF projects).
+> +	 */
+> +	if (msm_host->core_minor >= SDHCI_MSM_MIN_V_7FF) {
+> +		writel_relaxed(msm_host->dll[index].dll_config_3,
+> +			       ioaddr + msm_offset->core_dll_config_3);
+> +		writel_relaxed(msm_host->dll[index].dll_usr_ctl,
+> +			       ioaddr + msm_offset->core_dll_usr_ctl);
+> +	}
+> +
+> +	/*
+> +	 * Set DDR_CONFIG since step 7 is setting TEST_CTRL that can be skipped.
+> +	 */
+> +	ddr_cfg_offset = msm_host->updated_ddr_cfg ? msm_offset->core_ddr_config
+> +					: msm_offset->core_ddr_config_old;
+> +
+> +	config = msm_host->dll[index].ddr_config;
+> +	writel_relaxed(config, ioaddr + ddr_cfg_offset);
+> +
+> +	/* Set DLL_CONFIG_2 */
+> +	if (msm_host->use_14lpp_dll_reset) {
+> +		u32 mclk_freq;
+> +		int cycle_cnt;
+> +
+> +		/*
+> +		 * Only configure the mclk_freq in normal DLL init
+> +		 * context. If the DLL init is coming from
+> +		 * CX Collapse Exit context, the host->clock may be zero.
+> +		 * The DLL_CONFIG_2 register has already been restored to
+> +		 * proper value prior to getting here.
+> +		 */
+> +		if (init_context == DLL_INIT_NORMAL) {
+> +			cycle_cnt = readl_relaxed(ioaddr +
+> +					msm_offset->core_dll_config_2)
+> +					& CORE_FLL_CYCLE_CNT ? 8 : 4;
+> +
+> +			mclk_freq = DIV_ROUND_CLOSEST_ULL(dll_clock * cycle_cnt, TCXO_FREQ);
+> +
+> +			if (dll_clock < 100000000) {
+> +				pr_err("%s: %s: Non standard clk freq =%u\n",
+> +				       mmc_hostname(mmc), __func__, dll_clock);
+> +				rc = -EINVAL;
+> +				goto out;
+> +			}
+> +
+> +			config = readl_relaxed(ioaddr + msm_offset->core_dll_config_2);
+> +			config = (config & ~GENMASK(17, 10)) |
+> +					FIELD_PREP(GENMASK(17, 10), mclk_freq);
+> +			writel_relaxed(config, ioaddr + msm_offset->core_dll_config_2);
+> +		}
+> +		/* wait for 5us before enabling DLL clock */
+> +		udelay(5);
+> +	}
+> +
+> +	config = msm_host->dll[index].dll_config;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	/* Wait for 52us */
+> +	spin_unlock_irqrestore(&host->lock, flags);
+> +	usleep_range(60, 70);
+> +	spin_lock_irqsave(&host->lock, flags);
+> +
+> +	/*
+> +	 * Write 0 to DLL_RST bit of DLL_CONFIG register
+> +	 * and Write 0 to DLL_PDN bit of DLL_CONFIG register.
+> +	 */
+> +	config &= ~CORE_DLL_RST;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	config &= ~CORE_DLL_PDN;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +	/* Write 1 to DLL_RST bit of DLL_CONFIG register */
+> +	config |= CORE_DLL_RST;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	/* Write 0 to DLL_RST bit of DLL_CONFIG register */
+> +	config &= ~CORE_DLL_RST;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	/* Set CORE_DLL_CLOCK_DISABLE to 0 */
+> +	if (msm_host->use_14lpp_dll_reset) {
+> +		config = readl_relaxed(ioaddr + msm_offset->core_dll_config_2);
+> +		config &= ~CORE_DLL_CLOCK_DISABLE;
+> +		writel_relaxed(config, ioaddr + msm_offset->core_dll_config_2);
+> +	}
+> +
+> +	/* Set DLL_EN bit to 1. */
+> +	config = readl_relaxed(ioaddr + msm_offset->core_dll_config);
+> +	config |= CORE_DLL_EN;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	/*
+> +	 * Wait for 8000 input clock. Here we calculate the
+> +	 * delay from fixed clock freq 192MHz, which turns out 42us.
+> +	 */
+> +	spin_unlock_irqrestore(&host->lock, flags);
+> +	usleep_range(50, 60);
+> +	spin_lock_irqsave(&host->lock, flags);
+> +
+> +	/* Set CK_OUT_EN bit to 1. */
+> +	config |= CORE_CK_OUT_EN;
+> +	writel_relaxed(config, ioaddr + msm_offset->core_dll_config);
+> +
+> +	/*
+> +	 * Wait until DLL_LOCK bit of DLL_STATUS register
+> +	 * becomes '1'.
+> +	 */
+> +	while (!(readl_relaxed(ioaddr + msm_offset->core_dll_status) &
+> +		 CORE_DLL_LOCK)) {
+> +		/* max. wait for 50us sec for LOCK bit to be set */
+> +		if (--wait_cnt == 0) {
+> +			dev_err(mmc_dev(mmc), "%s: DLL failed to LOCK\n",
+> +				mmc_hostname(mmc));
+> +			rc = -ETIMEDOUT;
+> +			goto out;
+> +		}
+> +		/* wait for 1us before polling again */
+> +		udelay(1);
+> +	}
+
+Please use an iopoll macro like readl_relaxed_poll_timeout_atomic().
+
+> +
+> +out:
+> +	if (core_vendor_spec & CORE_CLK_PWRSAVE) {
+> +		/* Reenable PWRSAVE as needed */
+> +		config = readl_relaxed(ioaddr + msm_offset->core_vendor_spec);
+> +		config |= CORE_CLK_PWRSAVE;
+> +		writel_relaxed(config, ioaddr + msm_offset->core_vendor_spec);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&host->lock, flags);
+> +	return rc;
+> +}
+> +
+>  static void msm_hc_select_default(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -925,14 +1140,31 @@ static void sdhci_msm_hc_select_mode(struct sdhci_host *host)
+>  		msm_hc_select_default(host);
+>  }
+>  
+> +static int sdhci_msm_init_dll(struct sdhci_host *host, enum dll_init_context init_context)
+> +{
+> +	if (host->mmc->ios.timing == MMC_TIMING_UHS_SDR104 ||
+> +	    host->mmc->ios.timing == MMC_TIMING_MMC_HS400)
+> +		return sdhci_msm_configure_dll(host, init_context, HS400);
+> +
+> +	return sdhci_msm_configure_dll(host, init_context, HS200);
+> +}
+> +
+> +static int sdhci_msm_dll_config(struct sdhci_host *host, enum dll_init_context init_context)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +
+> +	return msm_host->artanis_dll ? sdhci_msm_init_dll(host, init_context) :
+> +		msm_init_cm_dll(host);
+> +}
+> +
+>  static int sdhci_msm_cdclp533_calibration(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
+>  	u32 config, calib_done;
+>  	int ret;
+> -	const struct sdhci_msm_offset *msm_offset =
+> -					msm_host->offset;
+>  
+>  	pr_debug("%s: %s: Enter\n", mmc_hostname(host->mmc), __func__);
+>  
+> @@ -940,7 +1172,7 @@ static int sdhci_msm_cdclp533_calibration(struct sdhci_host *host)
+>  	 * Retuning in HS400 (DDR mode) will fail, just reset the
+>  	 * tuning block and restore the saved tuning phase.
+>  	 */
+> -	ret = msm_init_cm_dll(host);
+> +	ret = sdhci_msm_dll_config(host, DLL_INIT_NORMAL);
+>  	if (ret)
+>  		goto out;
+>  
+> @@ -1028,7 +1260,7 @@ static int sdhci_msm_cdclp533_calibration(struct sdhci_host *host)
+>  	return ret;
+>  }
+>  
+> -static int sdhci_msm_cm_dll_sdc4_calibration(struct sdhci_host *host)
+> +static int sdhci_msm_cm_dll_sdc4_calibration(struct sdhci_host *host, enum mode index)
+>  {
+>  	struct mmc_host *mmc = host->mmc;
+>  	u32 dll_status, config, ddr_cfg_offset;
+> @@ -1051,7 +1283,11 @@ static int sdhci_msm_cm_dll_sdc4_calibration(struct sdhci_host *host)
+>  		ddr_cfg_offset = msm_offset->core_ddr_config;
+>  	else
+>  		ddr_cfg_offset = msm_offset->core_ddr_config_old;
+> -	writel_relaxed(msm_host->ddr_config, host->ioaddr + ddr_cfg_offset);
+> +
+> +	if (msm_host->artanis_dll)
+> +		writel_relaxed(msm_host->dll[index].ddr_config, host->ioaddr + ddr_cfg_offset);
+> +	else
+> +		writel_relaxed(msm_host->ddr_config, host->ioaddr + ddr_cfg_offset);
+>  
+>  	if (mmc->ios.enhanced_strobe) {
+>  		config = readl_relaxed(host->ioaddr +
+> @@ -1108,11 +1344,10 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
+>  	struct mmc_host *mmc = host->mmc;
+> -	int ret;
+>  	u32 config;
+> -	const struct sdhci_msm_offset *msm_offset =
+> -					msm_host->offset;
+> +	int ret;
+
+Here and elsewhere, this re-ordering of local definitions is a nice
+improvement but it would be better as a separate patch
+
+>  
+>  	pr_debug("%s: %s: Enter\n", mmc_hostname(host->mmc), __func__);
+>  
+> @@ -1120,7 +1355,8 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
+>  	 * Retuning in HS400 (DDR mode) will fail, just reset the
+>  	 * tuning block and restore the saved tuning phase.
+>  	 */
+> -	ret = msm_init_cm_dll(host);
+> +	ret = sdhci_msm_dll_config(host, DLL_INIT_NORMAL);
+> +
+>  	if (ret)
+>  		goto out;
+>  
+> @@ -1140,7 +1376,7 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
+>  	if (msm_host->use_cdclp533)
+>  		ret = sdhci_msm_cdclp533_calibration(host);
+>  	else
+> -		ret = sdhci_msm_cm_dll_sdc4_calibration(host);
+> +		ret = sdhci_msm_cm_dll_sdc4_calibration(host, HS400);
+>  out:
+>  	pr_debug("%s: %s: Exit, ret %d\n", mmc_hostname(host->mmc),
+>  		 __func__, ret);
+> @@ -1183,7 +1419,8 @@ static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
+>  		return 0;
+>  
+>  	/* Reset the tuning block */
+> -	ret = msm_init_cm_dll(host);
+> +	ret = sdhci_msm_dll_config(host, DLL_INIT_NORMAL);
+> +
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1257,12 +1494,11 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	if (host->flags & SDHCI_HS400_TUNING) {
+>  		sdhci_msm_hc_select_mode(host);
+>  		msm_set_clock_rate_for_bus_mode(host, ios.clock);
+> -		host->flags &= ~SDHCI_HS400_TUNING;
+>  	}
+>  
+>  retry:
+>  	/* First of all reset the tuning block */
+> -	rc = msm_init_cm_dll(host);
+> +	rc = sdhci_msm_dll_config(host, DLL_INIT_NORMAL);
+>  	if (rc)
+>  		return rc;
+>  
+> @@ -1325,6 +1561,9 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		rc = -EIO;
+>  	}
+>  
+> +	if (host->flags & SDHCI_HS400_TUNING)
+> +		host->flags &= ~SDHCI_HS400_TUNING;
+
+Really the flag should be cleared on all return paths
+
+> +
+>  	if (!rc)
+>  		msm_host->tuning_done = true;
+>  	return rc;
+> @@ -1845,11 +2084,6 @@ static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
+>  	return clk_round_rate(core_clk, ULONG_MAX);
+>  }
+>  
+> -static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+> -{
+> -	return SDHCI_MSM_MIN_CLOCK;
+> -}
+> -
+>  /*
+>   * __sdhci_msm_set_clock - sdhci_msm clock control.
+>   *
+
 
