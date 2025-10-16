@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-856972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2207FBE5904
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:24:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF86BE5907
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A742487D66
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:24:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E1114E58B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1612E0407;
-	Thu, 16 Oct 2025 21:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBF32DF3FD;
+	Thu, 16 Oct 2025 21:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haIP9fp9"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2QdmWmX"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44497155326
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819D841C71
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760649866; cv=none; b=doc+RWQVhMdjPW6iHIIixLwYZlgjdzVcCkNsEo8fZ85M7m8M2YetVr1httYV6VE2Y6VCPnwm3DGH7egEcfkRCUkRqhMLT1cft3MTg2YW2j4u5YNbndbK094yz3GpVCGwT8gSexJ3TdzIV49gjVklUffAwQ0phCX6Zb3MDstR8Jo=
+	t=1760649886; cv=none; b=hKMKlMPNab3FL8qUYzGbMc0ccPuEhblHB1i3KJgVsoI/VJQfdDcrGvgi0IzwpVxR6sPUSUDBHZiv2d5Fg0ulWMw/iWIJfmRDcroV2Ze15Ih92snnU/GnqbPZgP/h4bquUtETMbN3xWHELe5LkMr3UWblokruAk7PMBQixOLXOWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760649866; c=relaxed/simple;
-	bh=zkqdfx4BD5UyPEIxcbsOF2fQCsYMrVYuy2A9HeyQ5sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=riA7NLGSSB1OwV4jhWPGNzJdmU/iL43BmmcZUgEQ8OVUROvGxF3N9Z/3xg4+8JHixrbKHWsRVVmzYjzOSdER5MCTVSVxiu3VzqkTlXXN3dGX2oWPrD908T2/DuWZrC9tXpRPIrhzsNc80fxcunaIaqszZrVrOt9JlPwMjWuJlI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haIP9fp9; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1760649886; c=relaxed/simple;
+	bh=GjJ1WmiRmWmpJrjA0Rajn65qwKkQDgHPux/O/uor8Vs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O2/U4Yr9ZgV/kU9kQqwHor2VFXY0yWQS8cGPuRO069wVlrEUjTpN04iiWuFCRWgAFwT+RihUms6ySHujm0mDqo9irnmUo6oI9ADjxL0rYM1HdP05X4fe7mqqys+coxg3ZwvMJDogdkFfz61mNe4w8M8+7x6kBlJqcxVjmov6Jcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2QdmWmX; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42420c7de22so662282f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:24:24 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-27ec3db6131so1891935ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760649863; x=1761254663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760649885; x=1761254685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A8K154kd8Y5oAN1bdoWfiouSXSOoD2DULkag1tX9qDc=;
-        b=haIP9fp9o5/mIKKQkzlGEb+IFXzoH9wthWhgCNqasnLZBbtQGz4oc/EFbk2i00aH9S
-         ko3EzlDa2456lYJydkBbbzZYxc/FoagYnASxX25TZY0GAkpxjm/iUNodqgkcj3V8U/oP
-         XoiReuKUEdScOoA5E3jzWC+xJNmRCTkEXXwXoIzpDQJqpER/LJS17c23phX4QK3Xuax6
-         jxJED/0J7ksIP7geQmpIitNZEils80XCwDB87SuMbvBrRIkvFSIVBC9JbZQ+qlCN3KnE
-         4JuxgQA4vuc3F4XIWxGdkb79/+b44GSYfY3u+GbhrVWpnF66qjhcGDnCguXRjok8l+72
-         5kEQ==
+        bh=0nrKPmUCwMPDYDiZh+SWdu6MfHF7qH9Oc5WdLHC9FKQ=;
+        b=g2QdmWmXxegpgkzJSBhaldKE86gPX/kLptJHGVORF0aLJvz+oXQwRzUWLFWaXG5CBB
+         amUm8j7Coh4+Tl1Onjj8ndL5znvqQTl5YaxdEsYbBwjU9A1+ssU6vU7i9/AYaBUVkq58
+         Be/YxZpsuNmvWgEfg/tUOO4D4WJf1vH9LgUw9/oQw9V1+k8dvxrwCVS2eXB/xa4QBEjr
+         C39A6UNqJOy8AwVDTk3UVXOZo7vBoe5FCiaMRiw5SUo8bTWmC9Q2ZzrVSjF7Xd/L4PbC
+         UfjUrOPtHjrfc/I9i0JZG1Tl+sCqpCrjurCoDZyxHNVlnQUAguxnpWRR8IZb+wO2op2i
+         lW+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760649863; x=1761254663;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760649885; x=1761254685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A8K154kd8Y5oAN1bdoWfiouSXSOoD2DULkag1tX9qDc=;
-        b=wQyekhbAYOP8mdl/32WjaCCRBVEbL8GJ09QQdmupP3Eygbl4TQpP6x43wGels2ZaKo
-         s2lP+IN16afxavQJqdk21DzdZUlwpVIIl45ug4djR0GkSviwpg21CiaiK4ymqpv+/mlC
-         KRpM4YWybOJjtPKB9DadvvdDA+tLDCONcr/tEF+dauE85mdpScqxUH8Sr5Owd3cDFUOY
-         VQT5SR/C+5GaTq5tevh/bMiG2VcvqVEP5+oK20Tf22gPjKBirO/CakaBOAuZnkfn0+9H
-         OBW+HK9WULiNWgBMZyze9s6g7lp4IdIBhdnT3scCHMnFDk7LaLrqGo2JPXKWpYkqFxXr
-         PMVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYm8XR1PaK/2K5x27BXQ/KgQc1OvnJOx79q93gYpfDvVVVTFvo/LZLQOTFLnVD2zuK5WDDyA/QG2q2JFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxu7DSk+KpJjLj3nACNZxkO4INRjCqya4mmsCDiuiQvI8kQGxr
-	mRxtiCpUSG+aF3jiPNgvpP5Bg/6wqyEGXqI2CHFwcw5pRuPjVPTGxjbtkgcoSg==
-X-Gm-Gg: ASbGncv6MBa5LHcUuy61/F6zc6tPKByLSQFi8P9P1nBlpsCBuvV5mNudJfAOeUH7Nc+
-	veSEXUnspAot+IJn30q8ujr7fyZCsmfKEBlyQAXqH+4KhFuzZiPoHdyMHCGwRVkN0r/5Yeo6mge
-	Ps+nUZ4qeMMhiciR3ZLTvLPcM+877UCuYSn8dDf9Mj905Ner3zZwTiGkpN3vzA1qhuNuMhiMx9D
-	C4Kt+O5G9RDf1nGz5gbUodf2m8bOB+ePU1ajajcWfz8WxyIMlRV/sBK7fhk3lgGKoiEvTlKuBZJ
-	hnRp36gNfF1dGLs7UJhLebqVO7AhcooH/tp1BqGuSesal0h/yAW7ob+uEwKWpVi/ieQg2UQk9wY
-	vDYL/6r7yhlEOEvY/O8lomU+bxNqdI4bWVuNFDG4yCtBzYgPtu4EHWFVXYS/l53JQnNPPLrOes9
-	+14Wjn5vB0Rc1Fnx/TeWwQYHwCRovcRvPTFoEN3/fcdsLRXVZXxVK+
-X-Google-Smtp-Source: AGHT+IEuo+os1JCoNcOFBsfo7dbV+ulg6iVzPth7mYQXucYvD/F0/YBKb3eG6695x4HViUPFesLAow==
-X-Received: by 2002:a05:6000:240f:b0:427:486:d96b with SMTP id ffacd0b85a97d-42704da0b74mr815352f8f.50.1760649863293;
-        Thu, 16 Oct 2025 14:24:23 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144516fasm50876905e9.16.2025.10.16.14.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 14:24:23 -0700 (PDT)
-Date: Thu, 16 Oct 2025 22:24:21 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, Daniel
- Almeida <daniel.almeida@collabora.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
- <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?=
- Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
- <dakr@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Sebastian Andrzej
- Siewior <bigeasy@linutronix.de>, Joel Fernandes <joelagnelf@nvidia.com>,
- Ryo Takakura <ryotkkr98@gmail.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v13 05/17] irq & spin_lock: Add counted interrupt
- disabling/enabling
-Message-ID: <20251016222421.512ca8d1@pumpkin>
-In-Reply-To: <20251013155205.2004838-6-lyude@redhat.com>
-References: <20251013155205.2004838-1-lyude@redhat.com>
-	<20251013155205.2004838-6-lyude@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=0nrKPmUCwMPDYDiZh+SWdu6MfHF7qH9Oc5WdLHC9FKQ=;
+        b=VUBH/hCKh4y/9hI/eDAnmU1LdgIksJiZYPWBWGE2pw2PXzNzaagqm1Ck0S/RgB83ME
+         GwM7fEapj1DKLhUF84WDqW5D45qGEkojaRlWeShMVpHj41c55wYT1B5DeFqykbwn6m0j
+         egQc1AtlegCEcVoJPs/igGoFchfujU6xOG8C+N/tRmCLH94Tk4ZdecNiaWDTwMeNUMVM
+         nIgy9WBVjnfEmSJ+WKmQcY6htNaybuyo1pMkVoxKxxwuAHYQBoDXtmXjl1GkEj9qHPEd
+         ODP6FwuOYs82FFUQY7Uv3+02ksiww0fkH7vIijkTg9R9c/UV8+dkRGgeLVuT0PuT+4fp
+         MU3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnSZr+/6VAn2Pyp9X4p17rDzdz9jrKfbjHrHTlgbzFHksPkDCW9WRu8VgAFkziNjxu5GuXrZBMjBNVP0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnpUTUvW3NlFNRoBjDw/rYuUd0ADkkgQRjMzm+GVfNoyW73479
+	8jVUNt5AOp4X1aKaG69/Lb86CzcFL88+Y2VrFe5fcW115cflGIdBXm7TwERWE5hspX2iV+SfR0e
+	JmE7NT4jqazR+tso86+g11gKdFxoUkj0=
+X-Gm-Gg: ASbGnctgR0VRu0WvsYtH1oCSjDmRVKV5Fvv38ueZKlU+zgXCC+fs8gPnlkEAwfAvCAO
+	7PeaDFuAs7be5udAUZFJE5WKRhOwYpVVTqKFNFhPH4+gXdcnhmm2hCqy1rtRMzNFEVHue38dCtS
+	zXuvN0J0MEvxul3LOZ8Jq/9t1EXRPIXnq6I0zDdpZXt/aXStjw5QaEwE/93ZIRVF8uaYjbrzOkT
+	L7A9enbeA0HB60RXoE6g75jOAAn6aaRgV6aQQ0MmtB90JIlX8Cqq69RaUjzOJQrln185sEXTfsa
+	BnhL68tzoVCKSdQbTmf3FrhluwqbOKiuAGXO8P9iD1IQBoLGI14+LEBZUygpp36xmpysJYPWLkX
+	P8RElUndXayidsw==
+X-Google-Smtp-Source: AGHT+IGnxgBRJ3U+G+Rx7edjM57XlaxeOMOXI3o5gi2a34CPb9gCivHNo55oa8Ovom5Sgq5XvaFoCPqdKPPRGNcGOgk=
+X-Received: by 2002:a17:903:19c8:b0:273:a653:bacf with SMTP id
+ d9443c01a7336-290c9ae1dc0mr8912775ad.0.1760649884726; Thu, 16 Oct 2025
+ 14:24:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251016211740.653599-1-lossin@kernel.org>
+In-Reply-To: <20251016211740.653599-1-lossin@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 16 Oct 2025 23:24:32 +0200
+X-Gm-Features: AS18NWBqY989ayloddTfcF8OWEnJ9InCFTkCC88WD09zgOYwhDkhIBRAyogFVX4
+Message-ID: <CANiq72k8KmpFyKAFZ293GDUWx5=HJtksR02hTU8-H9PX7xsT+g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: pin-init: fix broken rust doc link
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	Alban Kurti <kurti@invicto.ai>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 13 Oct 2025 11:48:07 -0400
-Lyude Paul <lyude@redhat.com> wrote:
+On Thu, Oct 16, 2025 at 11:17=E2=80=AFPM Benno Lossin <lossin@kernel.org> w=
+rote:
+>
+> Rust 1.92.0 warns when building the documentation that [`PinnedDrop`] is
+> an invalid reference. This is correct and it's weird that it didn't warn
+> before, so fix the link.
 
-> From: Boqun Feng <boqun.feng@gmail.com>
-> 
-> Currently the nested interrupt disabling and enabling is present by
-> _irqsave() and _irqrestore() APIs, which are relatively unsafe, for
-> example:
-> 
-> 	<interrupts are enabled as beginning>
-> 	spin_lock_irqsave(l1, flag1);
-> 	spin_lock_irqsave(l2, flag2);
-> 	spin_unlock_irqrestore(l1, flags1);
-> 	<l2 is still held but interrupts are enabled>
-> 	// accesses to interrupt-disable protect data will cause races.
+It is because it is hidden -- I have patches to fix this (it is not
+just in pin-init but elsewhere too), but I am waiting for confirmation
+on whether this is actually intentional behavior:
 
-To do this right you have to correctly 'nest' the flags even though
-the locks are chained.
-So you should have:
-	spin_unlock_irqrestore(l1, flags2);
-Which is one reason why schemes that save the interrupt state in the
-lock are completely broken.
+    https://github.com/rust-lang/rust/pull/147153#issuecomment-3395484636
 
-Did you consider a scheme where the interrupt disable count is held in a
-per-cpu variable (rather than on-stack)?
-It might have to be the same per-cpu variable that is used for disabling
-pre-emption.
-If you add (say) 256 to disable interrupts and do the hardware disable
-when the count ends up between 256 and 511 and the enable on the opposite
-transition I think it should work.
-An interrupt after the increment will be fine - it can't do a process
-switch.
+From the early reply I got, it seems it is not, so it may be that it is "fi=
+xed".
 
-The read-add-write doesn't even need to be atomic.
-The problem is a process switch and that can only happen when the only
-value is zero - so it doesn't matter it is can from a different cpu!
+Personally, I think it is useful, so I hope they keep it, even if as a
+new opt-in option or similar.
 
-I know some systems (I think including x86) have only incremented such a
-counter instead of doing the hardware interrupt disable.
-When an interrupt happens they realise it shouldn't have, block the IRQ,
-remember there is a deferred interrupt, and return from the ISR.
-This is good for very short disables - because the chance of an IRQ
-is low.
+Of course, we can land this patch since it does not matter either way,
+but please add a note with the above in the commit message if you land
+it.
 
-	David
- 
+Thanks!
+
+Cheers,
+Miguel
 
