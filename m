@@ -1,192 +1,182 @@
-Return-Path: <linux-kernel+bounces-855657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C777BBE1E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:21:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A987BE1E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 873024E464E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:21:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAD7D4F6C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE3A2D46B2;
-	Thu, 16 Oct 2025 07:21:47 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452251EE019;
-	Thu, 16 Oct 2025 07:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A477D2E7F3E;
+	Thu, 16 Oct 2025 07:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QSA3J8fB"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170A32E5B1D;
+	Thu, 16 Oct 2025 07:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760599307; cv=none; b=EviiXTo1cFeHk7ybsCO5DkQyUl6rEYCo8JPX+ggkUbL6UyT2+p5oi9Tnn5sHo87eQ9iEf0LYhj5/4lYGE42xKe7q+idXsFW6E57yH0JnNaNo9Hv10RFMMrxREPlY76jmud6Aq63MisOGRdNhs4HVxZv8FzanTG8cXbMfKL0x6lk=
+	t=1760599335; cv=none; b=YaEgItiF9ycTCqiYjCi/OQ9gQRhuDVC5J0Y5OEF3lRaf2dIlZLT5xcXg+UxsEOUfVIGM0j2DLqEmcTt5gg7kAXMVDgkcfh1LddDzHKUPdloK4dhlpXqQg92oGfAjDx7siRZkULEAYt6roMdFrU7tRTBMgcXFsplWIxTWrFIH844=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760599307; c=relaxed/simple;
-	bh=EJXNHgEM/c6BAiZKCxEAAJsXGxgydll/3KwHHRXA9qQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwVzwaVFIw4pS3SwIbxV/1uDhjqrq2RGJXTC5Xznkcq5blIZBzJwMvB4XVbwaiQt7wtpZX2L5cHoqJokhFgqfB4IOqX7xZU30PF8ATmJ8hVRSV3JHt6hRDcasamhZkW2yTQxWCFPd6Hi7bJHVQZOtbIHrz7mxKChOPMUECO56pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-70-68f09d01a5d2
-Date: Thu, 16 Oct 2025 16:21:32 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: axboe@kernel.dk, kuba@kernel.org, pabeni@redhat.com,
-	almasrymina@google.com, asml.silence@gmail.com
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	hawk@kernel.org, ilias.apalodimas@linaro.org, sdf@fomichev.me,
-	dw@davidwei.uk, ap420073@gmail.com, dtatulea@nvidia.com,
-	toke@redhat.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kernel_team@skhynix.com, max.byungchul.park@gmail.com
-Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
- confirm its usage as pp for net_iov
-Message-ID: <20251016072132.GA19434@system.software.com>
-References: <20251016063657.81064-1-byungchul@sk.com>
+	s=arc-20240116; t=1760599335; c=relaxed/simple;
+	bh=C59JgKvwWWhUInISEqbPzJA1b1DFwSmcGjDq0Nulje8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHcqhANNYhFcSCYgHsLENoGRK9jnRQgqrsdDgiJSesk61tq8Pbgi1d1DoPyNKXI+Ur5/PowMHu3tCZNOZmKm3oEPFYDRl8Q78LLy+l2ua9lA9fa6YNlPoR36P7+x1CHeWv8DGFRVt7LSyX6MaNTROlRjpC4Ktft+JsHdyliI+FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QSA3J8fB; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760599324; x=1761204124; i=markus.elfring@web.de;
+	bh=ClF/lH/L2hUjaH0udbSfDPG5j9SaktaTFd5cW5HzLTg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=QSA3J8fBq4SRPRa9EiMGeavZFncmqvWw6uIQr+J7lPEaqD+e0rG6ahOkBIXRIZLu
+	 IXRzxA6DQJNzX9gxptTEkcDjaqGcu/VYT9evvrg8gNHxSNrVBMlxKj/j5BziXK+fg
+	 2HWwGXLzrwynQrsDdCwIcCwQLzNvJq0N8/96r/INbY5WsLcq6i93bPkWaap6gP34g
+	 zVXZQbdxAdEXYPiO3ZBabjFzXtSD+g6X9hb4/Yb0eEKABrKWF0z/tfNx7qtQR9zI6
+	 3K8iB9WXIDH9wvkPmbK99k7UKcsmh2l2XBoqA4ws6sbhZn/JZW7+hT2FdvSd6n1+b
+	 fRhsV3uhzwh+ybTLGQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.241]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1uSqIE2VoU-00e1uU; Thu, 16
+ Oct 2025 09:22:04 +0200
+Message-ID: <1f9e946d-91e3-4f9a-b26c-e69537cbbd4c@web.de>
+Date: Thu, 16 Oct 2025 09:21:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016063657.81064-1-byungchul@sk.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsXC9ZZnkS7T3A8ZBns2c1is/lFh8XPNcyaL
-	Oau2MVqsvtvPZjHnfAuLxc5dzxktXs1Yy2bx9Ngjdos97duZLR71n2Cz6G35zWzxrvUci8WF
-	bX2sFpd3zWGzuDCxl9Xi2AIxi2+n3zBaXJ25i8ni0uFHLA7CHltW3mTyuDZjIovHjX2nmDx2
-	zrrL7rFgU6nH5bOlHptWdbJ53Lm2h82jt/kdm8f7fVfZPD5vkgvgjuKySUnNySxLLdK3S+DK
-	eHp4BXPBUoWKlZOnMjYwNkp1MXJwSAiYSLzf4t/FyAlm7l39jxHEZhFQlejoe8QOYrMJqEvc
-	uPGTGcQWEciU6Jp8Hcjm4mAWuMEkMfvrFtYuRnYOYYE8iWfGICW8AhYSR4/9AysXEjCVeHv+
-	AzNEXFDi5MwnLCA2s4CWxI1/L5lALmAWkJZY/o8DJMwpYCbxfd47VhBbVEBZ4sC240wgmyQE
-	NrFLzL74nxHiTEmJgytusExgFJiFZOwsJGNnIYxdwMi8ilEoM68sNzEzx0QvozIvs0IvOT93
-	EyMwBpfV/onewfjpQvAhRgEORiUe3gcr3mcIsSaWFVfmHmKU4GBWEuFlKPiQIcSbklhZlVqU
-	H19UmpNafIhRmoNFSZzX6Ft5ipBAemJJanZqakFqEUyWiYNTqoGxurxw0j8Wi/cPP/SyWKyQ
-	WZxz/bjiwjU1xn8r9U6sDF//t+S11/rm+bv9s20fLrmlvu1tW7W3cEPyPsazeUbeAoHVleL8
-	tXFLzL/ZK8Q2b5w2Zc21Cd9vdf0OZdBS3jnj9lTubfN732y5e9jvjfHaUzemtH/tWFK6MXZp
-	3eaVM9cvW1Zx9svscCWW4oxEQy3mouJEAFZ2F+e9AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsXC5WfdrMs490OGwbnZpharf1RY/FzznMli
-	zqptjBar7/azWcw538JisXPXc0aLVzPWslk8PfaI3WJP+3Zmi0f9J9gselt+M1u8az3HYnF4
-	7klWiwvb+lgtLu+aw2ZxYWIvq8WxBWIW306/YbS4OnMXk8Wlw49YHEQ8tqy8yeRxbcZEFo8b
-	+04xeeycdZfdY8GmUo/LZ0s9Nq3qZPO4c20Pm0dv8zs2j/f7rrJ5LH7xgcnj8ya5AJ4oLpuU
-	1JzMstQifbsEroynh1cwFyxVqFg5eSpjA2OjVBcjJ4eEgInE3tX/GEFsFgFViY6+R+wgNpuA
-	usSNGz+ZQWwRgUyJrsnXgWwuDmaBG0wSs79uYe1iZOcQFsiTeGYMUsIrYCFx9Ng/sHIhAVOJ
-	t+c/MEPEBSVOznzCAmIzC2hJ3Pj3kqmLkQPIlpZY/o8DJMwpYCbxfd47VhBbVEBZ4sC240wT
-	GHlnIemehaR7FkL3AkbmVYwimXlluYmZOaZ6xdkZlXmZFXrJ+bmbGIExtaz2z8QdjF8uux9i
-	FOBgVOLhfbDifYYQa2JZcWXuIUYJDmYlEV6Ggg8ZQrwpiZVVqUX58UWlOanFhxilOViUxHm9
-	wlMThATSE0tSs1NTC1KLYLJMHJxSDYyH/Q+/jPUq3unscvvsj49y4YGJt6sqb88KfH66OP78
-	jtXvZ645HBnbIWWwZGfKuZ+M1bWrs26HS8mq2vofF19o/v2jKO/0alONF0vS9p5cs7R1n/0z
-	7wiF+9mmUakJyw58NBP8mf7h4rZ1Z3XneonULP3q5CUnxb900bG76tuEdxxxvfL39kQRJZbi
-	jERDLeai4kQABs+akaUCAAA=
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] smb: client: Fix refcount leak for cifs_sb_tlink
+To: Shuhao Fu <sfual@cse.ust.hk>, Steve French <sfrench@samba.org>,
+ Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org
+Cc: Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <aPBeBxTQLeyFl4mx@chcpu18>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aPBeBxTQLeyFl4mx@chcpu18>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tmHGRQKLg/BK76yM/sIHBW5q2wuNFogaJ1LFLdCIQFchbHcz+7N
+ O5l+hWkWa/rt668xAJKX0haG9FQ7StluVA/titfss0j8LA5JVElGjCgZ9b/GvXf2r9W6nSV
+ zanaV0I8NTImmtS9koRHCFdxokaHwvUX83sfq1HQqnhni1sx69fBFO7KR31rnjbmSCAbQhi
+ zo+Z0vduXBb3hfWxCXgVA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nDdqvVZpSZU=;8Ua1uscXuUJEmHyHcaN6R46gWmA
+ 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
+ DWcYQ0kv8fdajPUDNoPDVo2LFc/iTGTe5e0=
 
-On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
-> ->pp_magic field in struct page is current used to identify if a page
-> belongs to a page pool.  However, ->pp_magic will be removed and page
-> type bit in struct page e.g. PGTY_netpp should be used for that purpose.
-> 
-> As a preparation, the check for net_iov, that is not page-backed, should
-> avoid using ->pp_magic since net_iov doens't have to do with page type.
-> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
-> page pool, by making sure nmdesc->pp is NULL otherwise.
-> 
-> For page-backed netmem, just leave unchanged as is, while for net_iov,
-> make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for the
-> check.
+> Fix three refcount inconsistency issues related to `cifs_sb_tlink`.
 
-IIRC,
+I find such an introduction sentence not so relevant here.
 
-Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
 
-	Byungchul
+> Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be=
+=20
+> called after successful calls to `cifs_sb_tlink()`. Three calls fail to
+> update refcount accordingly, leading to possible resource leaks.
 
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> ---
->  io_uring/zcrx.c        |  4 ++++
->  net/core/devmem.c      |  1 +
->  net/core/netmem_priv.h |  6 ++++++
->  net/core/page_pool.c   | 16 ++++++++++++++--
->  4 files changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index 723e4266b91f..cf78227c0ca6 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-> @@ -450,6 +450,10 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
->  		area->freelist[i] = i;
->  		atomic_set(&area->user_refs[i], 0);
->  		niov->type = NET_IOV_IOURING;
-> +
-> +		/* niov->desc.pp is already initialized to NULL by
-> +		 * kvmalloc_array(__GFP_ZERO).
-> +		 */
->  	}
->  
->  	area->free_count = nr_iovs;
-> diff --git a/net/core/devmem.c b/net/core/devmem.c
-> index d9de31a6cc7f..f81b700f1fd1 100644
-> --- a/net/core/devmem.c
-> +++ b/net/core/devmem.c
-> @@ -291,6 +291,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
->  			niov = &owner->area.niovs[i];
->  			niov->type = NET_IOV_DMABUF;
->  			niov->owner = &owner->area;
-> +			niov->desc.pp = NULL;
->  			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
->  						      net_devmem_get_dma_addr(niov));
->  			if (direction == DMA_TO_DEVICE)
-> diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-> index 23175cb2bd86..fb21cc19176b 100644
-> --- a/net/core/netmem_priv.h
-> +++ b/net/core/netmem_priv.h
-> @@ -22,6 +22,12 @@ static inline void netmem_clear_pp_magic(netmem_ref netmem)
->  
->  static inline bool netmem_is_pp(netmem_ref netmem)
->  {
-> +	/* Use ->pp for net_iov to identify if it's pp, which requires
-> +	 * that non-pp net_iov should have ->pp NULL'd.
-> +	 */
-> +	if (netmem_is_net_iov(netmem))
-> +		return !!netmem_to_nmdesc(netmem)->pp;
-> +
->  	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
->  }
->  
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 1a5edec485f1..2756b78754b0 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -699,7 +699,13 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
->  void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
->  {
->  	netmem_set_pp(netmem, pool);
-> -	netmem_or_pp_magic(netmem, PP_SIGNATURE);
-> +
-> +	/* For page-backed, pp_magic is used to identify if it's pp.
-> +	 * For net_iov, it's ensured nmdesc->pp is non-NULL if it's pp
-> +	 * and nmdesc->pp is NULL if it's not.
-> +	 */
-> +	if (!netmem_is_net_iov(netmem))
-> +		netmem_or_pp_magic(netmem, PP_SIGNATURE);
->  
->  	/* Ensuring all pages have been split into one fragment initially:
->  	 * page_pool_set_pp_info() is only called once for every page when it
-> @@ -714,7 +720,13 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
->  
->  void page_pool_clear_pp_info(netmem_ref netmem)
->  {
-> -	netmem_clear_pp_magic(netmem);
-> +	/* For page-backed, pp_magic is used to identify if it's pp.
-> +	 * For net_iov, it's ensured nmdesc->pp is non-NULL if it's pp
-> +	 * and nmdesc->pp is NULL if it's not.
-> +	 */
-> +	if (!netmem_is_net_iov(netmem))
-> +		netmem_clear_pp_magic(netmem);
-> +
->  	netmem_set_pp(netmem, NULL);
->  }
->  
-> 
-> base-commit: e1f5bb196f0b0eee197e06d361f8ac5f091c2963
-> -- 
-> 2.17.1
+* Can it be preferred to refer to the term =E2=80=9Creference count=E2=80=
+=9D?
+
+* Would you find a description of corresponding case distinctions more hel=
+pful?
+
+* May resource leaks be indicated also in the summary phrase?
+
+* Would it be helpful to append parentheses to function names at more plac=
+es?
+
+* Is there a need to mention change steps more individually?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.17#n94
+
+* Will development interests grow for the application of scope-based resou=
+rce management?
+
+
+Regards,
+Markus
 
