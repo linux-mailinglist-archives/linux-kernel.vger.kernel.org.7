@@ -1,39 +1,81 @@
-Return-Path: <linux-kernel+bounces-856984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86295BE595E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF405BE5967
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE7C19A83E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E725D424E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 21:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2922E54A2;
-	Thu, 16 Oct 2025 21:42:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F56201004;
-	Thu, 16 Oct 2025 21:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EA62E36F6;
+	Thu, 16 Oct 2025 21:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VblxKrxW"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4CC1547EE
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760650939; cv=none; b=kzufdKwGoNB3sn06Bz3td0HACv4jQDYRS0g4XNR3UnCwZqHE+pLOihRSLGR5txsIJy5X0no6Xa6+Th7YCx+pcodhCd6mma65zJ9hlJ5NfsGzzLcI4qHg1bxLp4lUFZjJHzzZIYDukcnNyFmF4FBEtoW2Cc1SAE8YIZ8/FNUIahs=
+	t=1760651192; cv=none; b=GwJPosfHlLXVBNXsYlFNT6dIJdIHQYUiR/6VpLjJcNJi57/xlLo58tx2fnNPnA5oMuALilz4S/isL6KnnhO74WlbUUbi/nmjjtJI21CqrN0X8K9pRKVI/dSrr59qra0sksaQ4ySJUVG1OM43TItbhaMPz5XrHX+N1cZx7xoPRMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760650939; c=relaxed/simple;
-	bh=ijhdVkyHGpjUo5Eimbd6fP2bcB9kcxqJR9/xsOsunms=;
+	s=arc-20240116; t=1760651192; c=relaxed/simple;
+	bh=9jQWlajEMSQKY7+qnTit+xxMvnKuDZeRR/e9BH0v+t8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ncDx7s7jw0Kd4MHGmMbqJJiB0VAiASDu7FZjtpfPT7yjLRCUIroG8lYQj8QVGT9MSAbSYYLUFLPQ58O3k8V8pavNHvwqknbCxviyLCCopdAUpTrIt4Wu5Dq/KsOyzLyFThNDd17I+Py7aY1PnwA7KIFGkaifW6wNvFh0R4BMyj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 714C11688;
-	Thu, 16 Oct 2025 14:42:06 -0700 (PDT)
-Received: from [172.27.42.171] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A078E3F66E;
-	Thu, 16 Oct 2025 14:42:13 -0700 (PDT)
-Message-ID: <9df72789-ab35-46a0-86cf-7b1eb3339ac7@arm.com>
-Date: Thu, 16 Oct 2025 16:41:54 -0500
+	 In-Reply-To:Content-Type; b=UnJcRKyXAK2sfit6rpXh3/5VYVTUgtpKFQd9+8tZ9QIBWltoF6UhHZY0iBnQLi50Kx0Pv+IVO6oVNonQ6SS5FMLcJ64Lj2R5yEDzkH0XxvEgeiSl465a4XxAU9/sHLAOjWMlOcCibo/BFDfr53Y7a34xliww0hV1fHjs7nH1jY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VblxKrxW; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so1126115f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760651189; x=1761255989; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qLVbGWoACrgE9VODWgB1TKnJBzMVwNUtM6cFxhgg3wc=;
+        b=VblxKrxWjNlAZSVAr9Ey/sAfc5GlEhybqkM9A/UATuks84VcgVu7VnjBdv31Nvm1yj
+         VfDX05J5lT6AgTbyKDwedRht7qKWyLHAOOAY4Xt8xOEffnZLo03haL7tKdbytdIx6Qpn
+         rXB2cyZkABo3IEfP5/HGvYIsm+GgP/PHaGr1wOVWDpl+gwVm8xo4d3rNVQz9KV/CDilC
+         4n6nPg799d05MJsbSNHem9HQ10uf0rAVewtPqGMrTjaNIG0j9YEgZ0wdfZ609DVBgSX9
+         IqeQAKk9FG2SIL/Mj/MIJ3CVToNSII6wkV62FOfXWpp+iOpsyZckAIONhSno+dcFYU1e
+         ye6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760651189; x=1761255989;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLVbGWoACrgE9VODWgB1TKnJBzMVwNUtM6cFxhgg3wc=;
+        b=ezO3d0AezayPmzqAaBK1LtKnpjAZCVqU+LIbD24SPZcBe3sp44XlWQPba2DAs3g4Pz
+         iWpYMZuuYr/ygCJ2JCBtcfG9RTGtcKs9Ot1DveUMQQwUmZEE8bT1SAolgKXA9ST66bKH
+         R5LDvYe8/8adGcbQghjF8jZFWjiqLqpgLZrgW3J1HRPXfxo+yEEsTaFrfk20of+VOiZ0
+         P+YNGKnb5lCFC7Mvef/8HNlZJUIyhSSoVQjcUXig6W7v3lpbcbbvzhxrG8cb0LkHKyRQ
+         d0VfiV3KNgk76aYK09hFA5kKGQXV4Buj7LcXz3jVIpXvpLqLO0i/wptXRoLr+2ZCvq31
+         JvPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjH6Q+VPiwcsDT3gHGVWpUHODM/k8hIKnRiFgMQg3bTE8ZysbdMmdiz8E7t/5VXhL6MqhbFkD7UM45New=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybc1TSwywfcM4ycb4p1sVkibbDD36hvdVr6XBv8Sacl5gFh8T/
+	W1d99oNB+3TAsHPL+e+gEWPBQLnAtwJg4X2oEMBazA37VRaNoxO0fjaZ
+X-Gm-Gg: ASbGncuHO2kDV7hZ0vNKAGEsniWTFgkQxEevuJ1l3j6simB0NYuFDn84luYptKNibuJ
+	UCJsVZ2mI9VYWLixN6ucZc12YkvBQk/piYX8eOEAo3dX3K4uMCee9iDgH/oZhy1OtFh+sb810gS
+	jCEnwjiemL42uV8AdmIRPDCWtZY7+Kdgmq8sTWFuOOv3PPRxb1glVPC+C7WXuKaJUuIWyR568wa
+	ncgpFnMNNQ+bnVPPhS39hcCOqrXPgivqs/o7ll6jua5WRfXVE4Gkd0tS2tXMgB4fVCWH0L46FTD
+	269mFlSdeAEWd0SL2dNxmRrNz31GR7HnvicDYVsxIvyYNwswpKrKFDs60yN4kqXyIlHk4XDq5LS
+	nsIjXpDtCkdnYfJ8unmTHHKeC+SmwWQIEapubzUOFHE3pkDAShCoB2KsXhfQKjfS67OPffb8eNU
+	9712aNs6EOZWITsxSqwWLeC4nHVZqsWxKYXND0MEOpTwSaDrl2EF5m4PURl9iJVWnqjGFWf/VDL
+	E4OXTePTWlu593u
+X-Google-Smtp-Source: AGHT+IH/zjgPG/HV9ngqclxgSOqwAQJ1HFnhUiJ+6D/aP5dTWD4NXoIdy+KZQeUj/f6oIUnU/Azdag==
+X-Received: by 2002:a05:6000:2911:b0:425:8bc2:9c43 with SMTP id ffacd0b85a97d-42704d7e987mr1012235f8f.1.1760651189397;
+        Thu, 16 Oct 2025 14:46:29 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:acc:bb60:756b:64e3:20ef:1d08? ([2a01:e0a:acc:bb60:756b:64e3:20ef:1d08])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d4bbsm37423275f8f.2.2025.10.16.14.46.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 14:46:29 -0700 (PDT)
+Message-ID: <a7ccda73-2c40-419c-a7c3-3155739648d0@gmail.com>
+Date: Thu, 16 Oct 2025 23:46:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,197 +83,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] vfio/pci: add PCIe TPH device ioctl
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>,
- alex.williamson@redhat.com, jgg@ziepe.ca, pstanner@redhat.com
-Cc: kvm@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251013163515.16565-1-wathsala.vithanage@arm.com>
+Subject: Re: [PATCH 1/2] nova-core: Solve mentions of `CoherentAllocation`
+ improvements [COHA]
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org
+References: <20251015194936.121586-1-delcastillodelarosadaniel@gmail.com>
+ <409f2f03-2bc2-4cb8-9ca7-4e30f82077ff@kernel.org>
 Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <20251013163515.16565-1-wathsala.vithanage@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+In-Reply-To: <409f2f03-2bc2-4cb8-9ca7-4e30f82077ff@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Danilo,
 
-On 10/13/25 11:35 AM, Wathsala Vithanage wrote:
-> TLP Processing Hints (TPH) let a requester provide steering hints that
-> can enable direct cache injection on supported platforms and PCIe
-> devices. The PCIe core already exposes TPH handling to kernel drivers.
+On 10/15/25 22:04, Danilo Krummrich wrote:
+>> diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
+>> index 94f44bcfd748..639a99cf72c4 100644
+>> --- a/drivers/gpu/nova-core/dma.rs
+>> +++ b/drivers/gpu/nova-core/dma.rs
+>> @@ -25,21 +25,11 @@ pub(crate) fn new(dev: &device::Device<device::Bound>, len: usize) -> Result<Sel
+>>      }
+>>  
+>>      pub(crate) fn from_data(dev: &device::Device<device::Bound>, data: &[u8]) -> Result<Self> {
+>> -        Self::new(dev, data.len()).map(|mut dma_obj| {
+>> -            // TODO[COHA]: replace with `CoherentAllocation::write()` once available.
+>> -            // SAFETY:
+>> -            // - `dma_obj`'s size is at least `data.len()`.
+>> -            // - We have just created this object and there is no other user at this stage.
+>> -            unsafe {
+>> -                core::ptr::copy_nonoverlapping(
+>> -                    data.as_ptr(),
+>> -                    dma_obj.dma.start_ptr_mut(),
+>> -                    data.len(),
+>> -                );
+>> -            }
+>> -
+>> -            dma_obj
+>> -        })
+>> +        let mut dma_obj = Self::new(dev, data.len())?;
+>> +        // SAFETY: We have just created this object and there is no other user at this stage.
 > 
-> This change adds the VFIO_DEVICE_PCI_TPH ioctl and exposes TPH control
-> to user space to reduce memory latency and improve throughput for
-> polling drivers (e.g., DPDK poll-mode drivers). Through this interface,
-> user-space drivers can:
->    - enable or disable TPH for the device function
->    - program steering tags in device-specific mode
-> 
-> The ioctl is available only when the device advertises the TPH
-> Capability. Invalid modes or tags are rejected. No functional change
-> occurs unless the ioctl is used.
-> 
-> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-> ---
->   drivers/vfio/pci/vfio_pci_core.c | 74 ++++++++++++++++++++++++++++++++
->   include/uapi/linux/vfio.h        | 36 ++++++++++++++++
->   2 files changed, 110 insertions(+)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index 7dcf5439dedc..0646d9a483fb 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -28,6 +28,7 @@
->   #include <linux/nospec.h>
->   #include <linux/sched/mm.h>
->   #include <linux/iommufd.h>
-> +#include <linux/pci-tph.h>
->   #if IS_ENABLED(CONFIG_EEH)
->   #include <asm/eeh.h>
->   #endif
-> @@ -1443,6 +1444,77 @@ static int vfio_pci_ioctl_ioeventfd(struct vfio_pci_core_device *vdev,
->   				  ioeventfd.fd);
->   }
->   
-> +static int vfio_pci_tph_set_st(struct vfio_pci_core_device *vdev,
-> +			       const struct vfio_pci_tph_entry *ent)
-> +{
-> +	int ret, mem_type;
-> +	u16 st;
-> +	u32 cpu_id = ent->cpu_id;
-> +
-> +	if (cpu_id >= nr_cpu_ids || !cpu_present(cpu_id))
-> +		return -EINVAL;
-> +
-> +	if (!cpumask_test_cpu(cpu_id, current->cpus_ptr))
-> +		return -EINVAL;
-> +
-> +	switch (ent->mem_type) {
-> +	case VFIO_TPH_MEM_TYPE_VMEM:
-> +		mem_type = TPH_MEM_TYPE_VM;
-> +		break;
-> +	case VFIO_TPH_MEM_TYPE_PMEM:
-> +		mem_type = TPH_MEM_TYPE_PM;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	ret = pcie_tph_get_cpu_st(vdev->pdev, mem_type, topology_core_id(cpu_id),
-> +				  &st);
-> +	if (ret)
-> +		return ret;
-> +	/*
-> +	 * PCI core enforces table bounds and disables TPH on error.
-> +	 */
-> +	return pcie_tph_set_st_entry(vdev->pdev, ent->index, st);
-> +}
-> +
-> +static int vfio_pci_tph_enable(struct vfio_pci_core_device *vdev, int mode)
-> +{
-> +	/* IV mode is not supported. */
-> +	if (mode == PCI_TPH_ST_IV_MODE)
-> +		return -EINVAL;
-> +	/* PCI core validates 'mode' and returns -EINVAL on bad values. */
-> +	return pcie_enable_tph(vdev->pdev, mode);
-> +}
-> +
-> +static int vfio_pci_tph_disable(struct vfio_pci_core_device *vdev)
-> +{
-> +	pcie_disable_tph(vdev->pdev);
-> +	return 0;
-> +}
-> +
-> +static int vfio_pci_ioctl_tph(struct vfio_pci_core_device *vdev,
-> +			      void __user *uarg)
-> +{
-> +	struct vfio_pci_tph tph;
-> +
-> +	if (copy_from_user(&tph, uarg, sizeof(struct vfio_pci_tph)))
-> +		return -EFAULT;
-> +
-> +	if (tph.argsz != sizeof(struct vfio_pci_tph))
-> +		return -EINVAL;
-> +
-> +	switch (tph.op) {
-> +	case VFIO_DEVICE_TPH_ENABLE:
-> +		return vfio_pci_tph_enable(vdev, tph.mode);
-> +	case VFIO_DEVICE_TPH_DISABLE:
-> +		return vfio_pci_tph_disable(vdev);
-> +	case VFIO_DEVICE_TPH_SET_ST:
-> +		return vfio_pci_tph_set_st(vdev, &tph.ent);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->   long vfio_pci_core_ioctl(struct vfio_device *core_vdev, unsigned int cmd,
->   			 unsigned long arg)
->   {
-> @@ -1467,6 +1539,8 @@ long vfio_pci_core_ioctl(struct vfio_device *core_vdev, unsigned int cmd,
->   		return vfio_pci_ioctl_reset(vdev, uarg);
->   	case VFIO_DEVICE_SET_IRQS:
->   		return vfio_pci_ioctl_set_irqs(vdev, uarg);
-> +	case VFIO_DEVICE_PCI_TPH:
-> +		return vfio_pci_ioctl_tph(vdev, uarg);
->   	default:
->   		return -ENOTTY;
->   	}
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index 75100bf009ba..cfdee851031e 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -873,6 +873,42 @@ struct vfio_device_ioeventfd {
->   
->   #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
->   
-> +/**
-> + * VFIO_DEVICE_PCI_TPH - _IO(VFIO_TYPE, VFIO_BASE + 22)
-> + *
-> + * Control PCIe TLP Processing Hints (TPH) on a PCIe device.
-> + *
-> + * Supported operations:
-> + * - VFIO_DEVICE_TPH_ENABLE: enable TPH in no-steering-tag (NS) or
-> + *   device-specific (DS) mode. IV mode is not supported via this ioctl
-> + *   and returns -EINVAL.
-> + * - VFIO_DEVICE_TPH_DISABLE: disable TPH on the device.
-> + * - VFIO_DEVICE_TPH_SET_ST: program an entry in the device TPH Steering-Tag
-> + *   (ST) table. The kernel derives the ST from cpu_id and mem_type; the
-> + *   value is not returned to userspace.
-> + */
-> +struct vfio_pci_tph_entry {
-> +	__u32 cpu_id;			/* CPU logical ID */
-> +	__u8  mem_type;
-> +#define VFIO_TPH_MEM_TYPE_VMEM		0   /* Request volatile memory ST */
-> +#define VFIO_TPH_MEM_TYPE_PMEM		1   /* Request persistent memory ST */
-> +	__u8  rsvd[1];
-> +	__u16 index;			/* ST-table index */
-> +};
-> +
-> +struct vfio_pci_tph {
-> +	__u32 argsz;			/* Size of vfio_pci_tph */
-> +	__u32 mode;			/* NS and DS modes; IV not supported */
-> +	__u32 op;
-> +#define VFIO_DEVICE_TPH_ENABLE		0
-> +#define VFIO_DEVICE_TPH_DISABLE		1
-> +#define VFIO_DEVICE_TPH_SET_ST		2
-> +	struct vfio_pci_tph_entry ent;
-> +};
-> +
-> +#define VFIO_DEVICE_PCI_TPH	_IO(VFIO_TYPE, VFIO_BASE + 22)
+> The safety comment should rather confirm that it is guaranteed that the device
+> won't access this memory concurrently.
 
-A quick look at this, it seems its following the way the existing vfio 
-IOCTls are defined, yet two of them (ENABLE and DISABLE) won't likely 
-really change their structure, or don't need a structure in the case of 
-disable. Why not use IOW() and let the kernel error handling deal with 
-those two as independent ioctls?
-
+I actually don't know how this is guaranteed. It wasn't explicitly
+explained before here, although unless I'm mistaken it was already a
+requirement. Could you help me? I guess it's related to the already
+mentioned fact that we just allocated this DMA memory and the device
+isn't yet initialized?
 
 Thanks,
-
-> +
-> +
->   /**
->    * VFIO_DEVICE_FEATURE - _IOWR(VFIO_TYPE, VFIO_BASE + 17,
->    *			       struct vfio_device_feature)
-
+Daniel
 
