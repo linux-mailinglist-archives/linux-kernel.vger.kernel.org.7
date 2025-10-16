@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-856240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0757FBE396A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:04:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCC0BE3991
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DE474FFEB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9463A4D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1FF32D7F4;
-	Thu, 16 Oct 2025 13:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A937033439D;
+	Thu, 16 Oct 2025 13:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mFngzCWQ"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S98R/FuY"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3946019E7F9;
-	Thu, 16 Oct 2025 13:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9241A2398
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760619856; cv=none; b=tu2vs7FUB/57becCV5rpn+urn6dOzacHSiHpQtWnz3kMJT7xAYB7N40hxP8e6Snn0offN9WbZcYuYCFYB90l3leNtb6wV4ppWjjxGqPRZqL5ZDOm+KDWv98EhHgxQ8ey8L2RBeu3EulHXAndjbMhPHb9LsnKBkSkNFk87a3VLX0=
+	t=1760619858; cv=none; b=W0u9vuy0kQVFMz9i8Lt7CBhaC2pc67FVIQY7Wy8I8iDnU1jBTt94nz0OLkyWqk2hI0Ep3wbHzmP/Zx03xPziCFuH0C42HflAs+M94KRw3VI7WUq6wkELhr8qL9NHChqSPOysBXN+bV/bqJBD11OXmXb0VldCLmgUxDVXuT8ktcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760619856; c=relaxed/simple;
-	bh=QReg2vp97BUkr6fGoaX3HVTBKM4wAz/0LebQasrMhpw=;
+	s=arc-20240116; t=1760619858; c=relaxed/simple;
+	bh=pT9rQgKll8jmWS4orI3/Yt4belu5XsXdLKl4a9KPSBI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ldrJJjX6VxCfNYmpfdIlKgstLuYyWnJHfyRkbgl8Rrz39/rbfXPoGI24mjhheSBH+Xp77MaBwxOtZUFWpm1jG92qiud4rZp0rW1OznogpyPMmAjfzRAQ2/mJyY/MOAxw6kDpIiHmH9ucpg/u0Ma5T0e9SzdGWfUQPMd9qveOabM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mFngzCWQ; arc=none smtp.client-ip=185.246.84.56
+	 MIME-Version; b=SZa6HoGffRkuCm7yVcS4cICq0xHd+ZWPy8stJs1WS73upNM36RVqGvMOJM4il5lLT5FUvrmU5nr2E52KoRZmlpSABb2z+mkGYIyAh4U5GciRf0rYoD4R+D+/74P9I9xrvXSTL3Pr0vRdh1ITooFbxl2xwPqUd7+UHotb6QV/DbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S98R/FuY; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 64C991A1429;
-	Thu, 16 Oct 2025 13:04:12 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 0EF10C041CD;
+	Thu, 16 Oct 2025 13:03:55 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 39C4B6062C;
-	Thu, 16 Oct 2025 13:04:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BDD77102F22EF;
-	Thu, 16 Oct 2025 15:04:09 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 428856062C;
+	Thu, 16 Oct 2025 13:04:14 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B1C85102F2309;
+	Thu, 16 Oct 2025 15:04:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760619851; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1760619853; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=xjCaRMRjVPxm5y+Ak8E+acuNrbc32ytUH8e92tM/4FA=;
-	b=mFngzCWQYfGixlbS21zV34AGh8gfnhdomnXyf160lglJWjQXIQtRjcsCVB2RaAW5gt5SMU
-	kZca+FEXkN5PzDeH+0T9MO8d7CKHHEKIIYT1Tgo+JmR3qgBugv5K2bZOrnk97rm73y3qsq
-	LQQU7oyqzZD3GrBcWNM3+qHwmyOduKRZ6H/OsVzpFBOsqFJmZIwr+FokdYwrE7ErKy8nBk
-	1e9iekLQ3IMC/28Qxpt3dlDMPD7LgJOjHeTz6Lynvt4DMEJyA4Sz0hyCMBfX5Dh8LrZSD1
-	eshHBrzqZ8q0+SggSYnYURVONhDgK8/bWAdDtSO/RVSAmGY0GkgdgFLtlutxZA==
+	bh=uoDF+HIilfVMcll1NHENrGFL0ZTm+xsdbcPT8m/QM8M=;
+	b=S98R/FuYBCgboDW/7GMSIicVwXIUKDKfFZWqNdIRE0xHLTv8Lt08JGGgVpC2odcuUo7N7o
+	SnAcNRA4bsuiTcfwLg76rO7wOR0pB0MSTdnyYteQvWHxnsnnKoRwy2AnbI2+nAn8mfqVWp
+	5X0Po1AjtC90zJNcHHLs3Leyo1BPXekKaRMe7dGnoU0ts0ojkxq99NxRdgmwQ88V6y40Hp
+	WFvQ6M+CZz8etB8CERkLpteLsTihT7IEL5n1AQEFsjk491DU0uN1W44Zjg0bCtYSE63360
+	cZcF7tr0LndgMbWOjJyMEpzK1lzPEdFOn/pyvV9pLbhgnQ8Jk/VMMYEVmzQR2g==
 From: Herve Codina <herve.codina@bootlin.com>
 To: David Rhodes <david.rhodes@cirrus.com>,
 	Richard Fitzgerald <rf@opensource.cirrus.com>,
@@ -66,11 +66,10 @@ Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers automatic module loading
-Date: Thu, 16 Oct 2025 15:03:37 +0200
-Message-ID: <20251016130340.1442090-2-herve.codina@bootlin.com>
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH 2/3] ASoC: dt-bindings: cirrus,cs4271: Document mclk clock
+Date: Thu, 16 Oct 2025 15:03:38 +0200
+Message-ID: <20251016130340.1442090-3-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251016130340.1442090-1-herve.codina@bootlin.com>
 References: <20251016130340.1442090-1-herve.codina@bootlin.com>
@@ -83,96 +82,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-In commit c973b8a7dc50 ("ASoC: cs4271: Split SPI and I2C code into
-different modules") the driver was slit into a core, an SPI and an I2C
-part.
+The Cirrus CS4271 codec can use an external clock as an input Master
+Clock. When no crystal is used, the CS4271 component considers its MCLK
+pin as an input pin and expects the external clock connected to provide
+the Master Clock.
 
-However, the MODULE_DEVICE_TABLE(of, cs4271_dt_ids) was in the core part
-and so, module loading based on module.alias (based on DT compatible
-string matching) loads the core part but not the SPI or I2C parts.
+This clock is not documented in the binding.
 
-In order to have the I2C or the SPI module loaded automatically, move
-the MODULE_DEVICE_TABLE(of, ...) the core to I2C and SPI parts.
-Also move cs4271_dt_ids itself from the core part to I2C and SPI parts
-as both the call to MODULE_DEVICE_TABLE(of, ...) and the cs4271_dt_ids
-table itself need to be in the same file.
+Add the missing clock.
 
-Fixes: c973b8a7dc50 ("ASoC: cs4271: Split SPI and I2C code into different modules")
-Cc: stable@vger.kernel.org
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- sound/soc/codecs/cs4271-i2c.c | 6 ++++++
- sound/soc/codecs/cs4271-spi.c | 6 ++++++
- sound/soc/codecs/cs4271.c     | 9 ---------
- sound/soc/codecs/cs4271.h     | 1 -
- 4 files changed, 12 insertions(+), 10 deletions(-)
+ .../devicetree/bindings/sound/cirrus,cs4271.yaml       | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/sound/soc/codecs/cs4271-i2c.c b/sound/soc/codecs/cs4271-i2c.c
-index 1d210b969173..cefb8733fc61 100644
---- a/sound/soc/codecs/cs4271-i2c.c
-+++ b/sound/soc/codecs/cs4271-i2c.c
-@@ -28,6 +28,12 @@ static const struct i2c_device_id cs4271_i2c_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, cs4271_i2c_id);
+diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
+index 68fbf5cc208f..d286eb169915 100644
+--- a/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
++++ b/Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml
+@@ -25,6 +25,16 @@ properties:
+   reg:
+     maxItems: 1
  
-+static const struct of_device_id cs4271_dt_ids[] = {
-+	{ .compatible = "cirrus,cs4271", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cs4271_dt_ids);
++  clocks:
++    items:
++      - description:
++          Master clock connected to the MCLK pin if MCLK is an input (i.e. no
++          crystal used).
 +
- static struct i2c_driver cs4271_i2c_driver = {
- 	.driver = {
- 		.name = "cs4271",
-diff --git a/sound/soc/codecs/cs4271-spi.c b/sound/soc/codecs/cs4271-spi.c
-index 4feb80436bd9..82abc654293c 100644
---- a/sound/soc/codecs/cs4271-spi.c
-+++ b/sound/soc/codecs/cs4271-spi.c
-@@ -23,6 +23,12 @@ static int cs4271_spi_probe(struct spi_device *spi)
- 	return cs4271_probe(&spi->dev, devm_regmap_init_spi(spi, &config));
- }
- 
-+static const struct of_device_id cs4271_dt_ids[] = {
-+	{ .compatible = "cirrus,cs4271", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cs4271_dt_ids);
++  clock-names:
++    items:
++      - const: mclk
 +
- static struct spi_driver cs4271_spi_driver = {
- 	.driver = {
- 		.name	= "cs4271",
-diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-index 6a3cca3d26c7..ff9c6628224c 100644
---- a/sound/soc/codecs/cs4271.c
-+++ b/sound/soc/codecs/cs4271.c
-@@ -543,15 +543,6 @@ static int cs4271_soc_resume(struct snd_soc_component *component)
- #define cs4271_soc_resume	NULL
- #endif /* CONFIG_PM */
+   spi-cpha: true
  
--#ifdef CONFIG_OF
--const struct of_device_id cs4271_dt_ids[] = {
--	{ .compatible = "cirrus,cs4271", },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, cs4271_dt_ids);
--EXPORT_SYMBOL_GPL(cs4271_dt_ids);
--#endif
--
- static int cs4271_component_probe(struct snd_soc_component *component)
- {
- 	struct cs4271_private *cs4271 = snd_soc_component_get_drvdata(component);
-diff --git a/sound/soc/codecs/cs4271.h b/sound/soc/codecs/cs4271.h
-index 290283a9149e..4965ce085875 100644
---- a/sound/soc/codecs/cs4271.h
-+++ b/sound/soc/codecs/cs4271.h
-@@ -4,7 +4,6 @@
- 
- #include <linux/regmap.h>
- 
--extern const struct of_device_id cs4271_dt_ids[];
- extern const struct regmap_config cs4271_regmap_config;
- 
- int cs4271_probe(struct device *dev, struct regmap *regmap);
+   spi-cpol: true
 -- 
 2.51.0
 
