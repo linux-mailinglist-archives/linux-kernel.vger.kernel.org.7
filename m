@@ -1,191 +1,400 @@
-Return-Path: <linux-kernel+bounces-856312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAB4BE3D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 15:58:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720DEBE3D5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 16:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FF0D4EB005
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 13:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178005882D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 14:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E6E33CEA3;
-	Thu, 16 Oct 2025 13:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06854A21;
+	Thu, 16 Oct 2025 14:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="g3xr/ni9"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011048.outbound.protection.outlook.com [52.101.70.48])
+	dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b="GEai1RX6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WlcM57Nj"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12621D5CE8;
-	Thu, 16 Oct 2025 13:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760623105; cv=fail; b=WH5O6Gnt9QUnRZUAhUeyiid0V/8LT9Li0ZKk52s/rtsuyLrDFRBt2ptMRzFPLcwgif9DF8XOtZMvf4UbQq0+fARhXDGZCFbWmvEKt08hXSXY/W0LYU2OGDeV0fTfcoATsG+DsyXyWHTEFbQHFGXJsM6q/g3WYyhCD6K8uMilQWg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760623105; c=relaxed/simple;
-	bh=aPvHaiKciBAtvNWar4lsDUOg+bKMJursWTkxFShvHuE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lx08A74/qjNaT/8KHGo+b6lEZHiFXobx9JIeGTl9nhv25qJO5suAVVqdw6V+Kh/PWme/Qum64O/TpNPPfLET1PPCuxvaWqkHgd69Dtg9QMGUHr0J4K5xONdgCe/5GBmhyRUg7YXdN02LofvfBdu4IF0/uLLNtVx6ZlSUzbHpsDc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=g3xr/ni9; arc=fail smtp.client-ip=52.101.70.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KNkc1aVhaLAgwst9vwz49zx/qqTgkgshKVEgl5XnK6EkFKuSLmby5EZCDeSy9+b2J+GYzYaFtVcTEbgvgU18J1aa0UCuBaQomuqkoazFw9WTvvVznSpBcOWiCI30HCpUWX/bkgBQfswpGGMNshS5gtI0pQn8k4C1hBy+Y6O4fpM6jNXuwvJAYh6b7g4IJygPaQKpoHGhgTk2ay2FknaS0MRS56dqpcLR2wEmQEYOUA8z55VWRRcq60ss84qLhjWqDsDhocclcZc9RKCaDKToYXiQO755L5hcE7aV5dMyw2jNodydqGRhxi+9RE5lAS5aEzXoxzHHZTHOt1k74m2fzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4/fsU7q9Ok10w+uyazSFw+Krd5jxrgEot+TwdL/Ro6c=;
- b=Bi34fvW2icDx/nof1/51glcGOCW3w8n/f0Y1Tu2ry6XzZVXFvK6i3Mc6rhIcawnX4CtbF707Jyn++uq8j3g+FZo+/BPdE7k3kOtB3pbIadoDZLjKJT9r5kFkWXQUsp2LQ9wgq0SVR4mNfCV6zC/buPQ43lA+lRXITpNX+vu4RcfGyexHTjsQnBPFTvwO3h3Va8defGwneL1RN9+j0eRYP1/4TV+i/h861LYdEntCvH/OGW5Dv9+ahZ5BKSk7qEPinK1Xd35Lw5bUjUCTm9deuXdzdUchVOQ0BSH78Uvk8kzwtIlUCmdbP2iySDnpcJN/eVsam7p8fKslls78ava1Xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4/fsU7q9Ok10w+uyazSFw+Krd5jxrgEot+TwdL/Ro6c=;
- b=g3xr/ni9J063vmPct+zJCZixLdViDn8dWg1YuRHyA4X+sppWOpUERYrbs/sL8sAwO94ICmtTrjfVSn0YJzKkJZeiql/KycryKTHrx3jlzg/pwdWNqJLliKoqaYSRTzksyH+UAL0uE3HzVQW9jOUGyyxBrk6hmdbPzC0rbyd9r+Y2SHKAolxXx8CS7InIjVoYFbshPPm/FfBvqq6RuhqpqUYcmxb1+gxm3tLauP2uKzeHdnlfbxLiWo/+aCW/rdJ2m/UfT6/MKf8vr5WZRqVvHYsFAaG3JNVydVSjvSSMabEx1b5YiKPWKiOX1BDZZWW1V8xSifFUPdB4JUwtOcjP1Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by AS8PR04MB7624.eurprd04.prod.outlook.com (2603:10a6:20b:291::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Thu, 16 Oct
- 2025 13:58:20 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
- 13:58:19 +0000
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mathew McBride <matt@traverse.com.au>
-Subject: [PATCH net] dpaa2-eth: fix the pointer passed to PTR_ALIGN on Tx path
-Date: Thu, 16 Oct 2025 16:58:07 +0300
-Message-Id: <20251016135807.360978-1-ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR2P281CA0143.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:98::16) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D46F510
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 14:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760623255; cv=none; b=cw4u8NWlfTNJc5c5d4aZ7Ojt/tSIJC28kezTNgViF4MlP1E68cPkUKDN34XfShBD+Tb58b92bwO9mDMZs43sXfU3TFOEn1nKdVuSKC/BNvIUpgPlGAqMW1M9xdmkpZ1Hq9GNN7/O+qu1qBJWY3zfGnoHr1NOw3ub/qviRZaLc08=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760623255; c=relaxed/simple;
+	bh=x3bhhFDeaKgcMsGIGXdd9mKo8LUoA+/5P1oZzvTMFs4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=LithO5o1lXx61/FzpUCaJDGOuPzd7MfWnYVJ48RidCdFkj10wByTBZp0ZgVMiQVnKRrB/bZKxbQ0elHrPzqOz2obbVi2SvC3ijmjPnC3Xf0O5PSSAL7ZwTa1382XvxSd4obYTDLhu67sT0hg406JA9+WH/MY+pKZOk9on1z7LD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh; spf=pass smtp.mailfrom=barre.sh; dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b=GEai1RX6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WlcM57Nj; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=barre.sh
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9D7AEEC0201;
+	Thu, 16 Oct 2025 10:00:52 -0400 (EDT)
+Received: from phl-imap-04 ([10.202.2.82])
+  by phl-compute-01.internal (MEProxy); Thu, 16 Oct 2025 10:00:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=barre.sh; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760623252;
+	 x=1760709652; bh=mOAWN36gnI+B2Uubin9XBzhtfpDIutS6dEBMKDovWhk=; b=
+	GEai1RX6YQEdFS5RWY8RZFg91rtktvawhwD1M5t/oZWqXTFKlKAJvJZd2ICwVeNY
+	YnP3r52SHCHCnru9JNAcq/Ltns+WWb2zO9mFWDY7ZX66uBLQiZAaxuAhrH/ha9Ti
+	rpKiPCNJZkr7clvucAGpOnzAwTlVtIbeXTsk6PSUl4i/GMA19tKY+wc/EpekN8XX
+	/MWAV6FQkY16uxBa5sxhO0Xt03Uz8IhVuBuzz20IJASQZD9SXH/SO7VA4iIUNqvp
+	y5pTX9uTwp/UaSKDWEts8KmGkMUnHVcaUv4Kdfh8Vu1WoMTJeqpK0dnEPYzKa67i
+	yMmSH1S56zkqR5QVBuhLnw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760623252; x=
+	1760709652; bh=mOAWN36gnI+B2Uubin9XBzhtfpDIutS6dEBMKDovWhk=; b=W
+	lcM57NjVizXSBH342Zt6iaQJNdMIsZqBIANh+kmm6PMiETCXBBDOzO91xsYXn8a7
+	lqs6Hv1/hQw11+YMJ8JWgHiOKrSmpDipPe501UjIVktljF/vzgGW6ZGqfSDAHVHO
+	6NxUBFm/Sw/m6ReWygMURdO19D0j899rTYi9g/iJi6CNUVEJ/0e5qV7DbN0A0r8y
+	L6ymy9V5/fQOHgwR3OvdNZKVlHJ/uQWoDVtwQR3ATUQAUu780uOBeOGGRD9XVerg
+	EUBEMEiwrHXiyIIFgaSqSPJVKqcnijtv/zlCnsRPif9ncOJHGXhZl4tWiA0OWczy
+	kf2sn+sgiHuYQ9aje4efw==
+X-ME-Sender: <xms:k_rwaFaV0S2t7wrP77vwsXJxwaiNl7E_b5vDFDwHu-nw-8TcKysSOg>
+    <xme:k_rwaHOtPundgXRnDzTrL2krl0zejnoRmmQeQvcxxJzXOFNVELlxV7LacN8aJHVMj
+    pUpbPsBM5qVkaCjphuQjwtD629t0oTja3ExUXIa5Nrmc7jDTJHJe44>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdeigeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefoggffhffvvefkjghfufgtgfesthejre
+    dtredttdenucfhrhhomhepfdfrihgvrhhrvgcuuegrrhhrvgdfuceophhivghrrhgvsegs
+    rghrrhgvrdhshheqnecuggftrfgrthhtvghrnhepleeiffetleektddvffejveeflefghe
+    ehfffhiedvleefteekvdfgffffuedthfdvnecuffhomhgrihhnpehgihhthhhusgdrtgho
+    mhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpih
+    gvrhhrvgessggrrhhrvgdrshhhpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprh
+    gtphhtthhopehlihhnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthht
+    ohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehluhgthhhose
+    hiohhnkhhovhdrnhgvthdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:k_rwaDB8j4plZ3r0fPJK3EHNwRt4Oy1nnT3NMIiJ20fe7rr5uG2g6w>
+    <xmx:k_rwaDlgOFfLcnj8isnYWeAzIuTEHecgIqOSRnldbqLArnDsc15Rrg>
+    <xmx:k_rwaOeJ2l-kZaG5KN3hLvS_oAII7Av4hOYoGPes5cbn9q5rCetlbA>
+    <xmx:k_rwaHQ8Tynf4y85FfSW03DIfm66QwrG2NOPc5TUOFYhwPOVRFUSCQ>
+    <xmx:lPrwaA-w5NMQ1A_YPA7obfuqk9xM0pahKqXhh0L7p3Obb6kh4Qv_QPHC>
+Feedback-ID: i97614980:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 939C3B60074; Thu, 16 Oct 2025 10:00:51 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|AS8PR04MB7624:EE_
-X-MS-Office365-Filtering-Correlation-Id: 772ef23b-ade9-44bc-b724-08de0cbc0fb7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|19092799006|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/LnfbR9O8GldtfjhfkEE8+ZDiiHStZBBPpjltnvWHe68jE8OE0oJQ1kEWhpg?=
- =?us-ascii?Q?2RA1bWEQ0paGU5+qjeEmwQgEID+71FjC/SR/ct/luVV3otO4+dn0+Ax601rH?=
- =?us-ascii?Q?V+MjU8ZHSuz+wJS5pfCeSlI9h4vcEilyXfFeRFCRcfTrS7vzKxEBzqiwKT7O?=
- =?us-ascii?Q?awJv0xmCAEyRjB10lDt5LL95gHcYRAB8HbD9lLwKEG7Yxm++QsRv6VuEEEzo?=
- =?us-ascii?Q?RTVuFGZutwuaRgA4LJuFaTDms7HR/K35OxsQCvArLa52lMSsV/8mnErfiUPM?=
- =?us-ascii?Q?Bo6r3s7DsUXHTHaLVzmHpokbkoTibrZ/ECn4rQ+yfodZtXnZzVRIadrEAyR6?=
- =?us-ascii?Q?ICSWAP25JNi/6JoK1WZS65YfRiN1qpglwKSQrwbQz+9TZ6KqNBpQgDZq2khe?=
- =?us-ascii?Q?mI3kfX6+b14lfFcjZVhQPeqYZCmWnZ5V61Dkcx4N5W/HFVUpgooKMiVF3LIj?=
- =?us-ascii?Q?XUK3BqOpnuSnKOI+SZ2Sre3mLSwIe7qx3vmWWyGLUE1OWtoTJwYuXhmet/JO?=
- =?us-ascii?Q?Zp2yEaMN4SbT/06FJul1yO9zh0aA3mj/uc0Jm/+dR+p75wMU5fa7raIVhsza?=
- =?us-ascii?Q?WLtycVQQafh/iQH8DZ0Lxz7vtCczX6BeQsa8praWyKKB4Tp6bbFRSYk99idf?=
- =?us-ascii?Q?FmQsApcim2hz5uL5iVJDZ6YK+npuush1ZHwvzYUVvc28mh+Wwvs4JKOSahOq?=
- =?us-ascii?Q?0vRei01R6/AEpIqAT5Pc+4HTElsr+9fOgsh13nAIrmffhs8Bf6Dj1aD1DKsR?=
- =?us-ascii?Q?EJwLcs46bpXGDq4PPeC4mJb+kdEorzTJRxwe7IER5JLBqdfvVSa0zz7JKAwi?=
- =?us-ascii?Q?oBW1yD4uKXv9Odv9V0PnkuiG0BJv3bOQerRJLLJ3B7vegBmZhtrbzvcU+z1V?=
- =?us-ascii?Q?fzswCoXdo3LbYmscAtw/55eqQR03lxVI8FrbI9NQlR8LDw4AftwHyltChUun?=
- =?us-ascii?Q?GQwn0biVxRyIhSRfn7X6jUO3jAAwNccTrbFyEO3xc806pzvz8c98ZqNOYe5K?=
- =?us-ascii?Q?P+hdgdPvA1HxnRoovXdkMT8uEPgIgR5C1bGcXMOQovNy1KT6KePZ3xV4wZn3?=
- =?us-ascii?Q?EzwYm5SLM2FgOf+u5jr4c/MFeF5BaZ0+BepmqilcFu6S7bqcf3B4K7qxmht7?=
- =?us-ascii?Q?yvPwIHseHTr8652RlrgKLN/UwJ6eYbpigbyWKHaNaFO+J2ysfGCPLUUhFye7?=
- =?us-ascii?Q?JUCNxQie3FgyR1jgb4PbeNIP3yOSjExbyAPG2jIyzsfdgmwIeUFlCpjUOx5K?=
- =?us-ascii?Q?/jiPfpzn8TTndyo58LwAQo+JvpFuyLgIpG4myHRW3ShvVneKojJi4W40mwXA?=
- =?us-ascii?Q?ZoixLtDjyQ93G7GFnmFsO60F9tCwcu9Uu48zlbwST8Kw2NpsVd4q6SxqS9+o?=
- =?us-ascii?Q?lbNetbYRkrsxwY/3N+2LCnqOx1Jtk+l3nEjor2bG+PQFghdICQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1vkZki3cruQUKvdnzXAg5Wl7rcCuJ2piIbdoKVOlaHHh+2cl30xY0OW1otK1?=
- =?us-ascii?Q?YBJdOCUtKj9qkDOwKdMktruVr8HAhwZmM/5JbNPDmD4EOKnDP39ggrMhwLqq?=
- =?us-ascii?Q?9+pRFRpYfrttw8YCPAkLFbPGFKhnviEmjjro59t5TBmI8ASNvpOVdSmnU9bF?=
- =?us-ascii?Q?O0NAUFvrQXPm5QD0qciqVvw1jE60uiuGj9gwwBSxKEWM3dSdI1SaUkT04qH2?=
- =?us-ascii?Q?JmLTCM6PjLOW69lDU/qdBW5R0MqyKHF3v3ciA/qookaJolUpMSGnplRNJsH6?=
- =?us-ascii?Q?yxxspqgefTRslg2MlYS/L6lIN47E91iwsdrKGacO8zniWW1KsYhWn7Vmv6K2?=
- =?us-ascii?Q?h6M5uMc6I3hiUsryozZQKicrmrf7l9QK8MoQspuBKT8JisI3RgBQzq+XhX/v?=
- =?us-ascii?Q?6TumE7EhzH+CpeGbct+zAMRjC5kgydnaSDJbo6QCUzkUaoBRiawUFrF5b4Cs?=
- =?us-ascii?Q?m03Jjz7XPGiSNe8Jkmxgh91gSUhzVuclmdUJmoCqNiSZoU0yTtGfWZ14vjlm?=
- =?us-ascii?Q?98DRSrulKsLIjuaUBK1BSrQUtvnDNHT5D/FIaw0DStcHFcmj/6IC8tRgkUE3?=
- =?us-ascii?Q?rbwURo/iZ4iq4GdXUaXY70HWIIlwPIE3vROma6cJNOcj5aL9bsf+43byD5rO?=
- =?us-ascii?Q?ztrGxuRg7MFL9qUEBfDldmfxr97xuxnGbK5i/VD6UrYkQr0YW2qtV5kQHga+?=
- =?us-ascii?Q?uBdn+3lPpoSvCCIMAOZlYyYSdiEXqussZJIGk+bKGH7L9chtTw6lU0B7yOcQ?=
- =?us-ascii?Q?6L9/+rBfJjwfLrZZC/cjYYyvmMdeSMlN2i9PMV3mp9JEtwGJ/p+5DKndUuJf?=
- =?us-ascii?Q?rFiEhWpzPMfyRKS5QNja9WfcoqToFLpzKiMesY7BtsoGkqDNZvrqpOZI0lmY?=
- =?us-ascii?Q?HBmo7DKV03/dmOCFV//DskdOn3h/3vAMVILqTgAETxb6PGsV5CIIPAc4a2HR?=
- =?us-ascii?Q?4yUFDkwdWsYUyxjWcZQIceATLmESQWJ3GLgCZ/bRqA4YNY3cedQDRValcR2i?=
- =?us-ascii?Q?UjYlyVQAuJbt96iAA38H2TmRDy4qVojcdYU8HLIviCTZXz/9HyqEyUMDqKi7?=
- =?us-ascii?Q?WkWS2I7AVqcQHNhxBCfHxT8TlQ/hJEdBFyHXw5r//ebrCYMTV802KoFuEaSi?=
- =?us-ascii?Q?ufkDwr2wGwi/VmOXA32tjddOyrGvVK1l2QmcOdKWP5Jq2JfZnJU5UptQ5zTy?=
- =?us-ascii?Q?3Up78hZCQ6iUH6NeZ/Q88cL8IoS7vTk2+BBRuVjZM+RMzyfV/kxb5uXp7JYH?=
- =?us-ascii?Q?33leZvUvPzdkvcTWY+VuzVKecVjYRwK5g2MgyciZ4nEODVFqJ9WxI2XcM3Gw?=
- =?us-ascii?Q?0/nyfFo5AWmot3qJm0l44zk5NPEEkBIYJJVFIeK5sWW/hWfOAmV/Mg0gM9rq?=
- =?us-ascii?Q?N/E5/te6S0bW89ljrG92cqpsAfPkqu8rFzSIhUAcjmuGLMfAhGqMyNTLYUGl?=
- =?us-ascii?Q?TuvlWGs2ydlC88sTM24gRH1iAHjw3tFKbo3nkhkHXHERj+yRmTKrHxGhb34d?=
- =?us-ascii?Q?zMbvXm/a9PocvHbR8GRGhtrJOmChYXCiPVBOgn+6bLOQILSr+ZQZDA6Y6DDP?=
- =?us-ascii?Q?5C3mcoA+hgRMpySZwiEzDkWgyvV4saLxlkci/IpS?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 772ef23b-ade9-44bc-b724-08de0cbc0fb7
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 13:58:19.1675
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2mP/LLczm9kmwafMSJqt45AljzmWFlUqRkpLWNZXgDP/ldOE2ROat9XXeK6NYS5c7Ew6J/4ENE7eOANQZvWlcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7624
+X-ThreadId: AmYx6M_OjcyJ
+Date: Thu, 16 Oct 2025 15:58:36 +0200
+From: "Pierre Barre" <pierre@barre.sh>
+To: "Christian Schoenebeck" <linux_oss@crudebyte.com>,
+ asmadeus <asmadeus@codewreck.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, v9fs@lists.linux.dev,
+ ericvh@kernel.org, lucho@ionkov.net, linux-kernel@vger.kernel.org
+Message-Id: <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
+In-Reply-To: <5019358.GXAFRqVoOG@silver>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <8602724.2ttRNpPraX@silver>
+ <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
+ <5019358.GXAFRqVoOG@silver>
+Subject: Re: [PATCH v3] 9p: Use kvmalloc for message buffers on supported  transports
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The blamed commit increased the needed headroom to account for
-alignment. This means that the size required to always align a Tx buffer
-was added inside the dpaa2_eth_needed_headroom() function. By doing
-that, a manual adjustment of the pointer passed to PTR_ALIGN() was no
-longer correct since the 'buffer_start' variable was already pointing
-to the start of the skb's memory.
+While developing a 9P server (https://github.com/Barre/ZeroFS) and
+testing it under high-load, I was running into allocation failures.
+The failures occur even with plenty of free memory available because
+kmalloc requires contiguous physical memory.
 
-The behavior of the dpaa2-eth driver without this patch was to drop
-frames on Tx even when the headroom was matching the 128 bytes
-necessary. Fix this by removing the manual adjust of 'buffer_start' from
-the PTR_MODE call.
+This results in errors like:
+ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
 
-Closes: https://lore.kernel.org/netdev/70f0dcd9-1906-4d13-82df-7bbbbe7194c6@app.fastmail.com/T/#u
-Fixes: f422abe3f23d ("dpaa2-eth: increase the needed headroom to account for alignment")
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Tested-by: Mathew McBride <matt@traverse.com.au>
+This patch introduces a transport capability flag (supports_vmalloc)
+that indicates whether a transport can work with vmalloc'd buffers
+(non-physically contiguous memory). Transports requiring DMA should
+leave this flag as false.
+
+The fd-based transports (tcp, unix, fd) set this flag to true, and
+p9_fcall_init will use kvmalloc instead of kmalloc for these
+transports. This allows the allocator to fall back to vmalloc when
+contiguous physical memory is not available.
+
+Additionally, if kmem_cache_alloc fails, the code falls back to
+kvmalloc for transports that support it.
+
+Signed-off-by: Pierre Barre <pierre@barre.sh>
 ---
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes in v3:
+- Added explicit .supports_vmalloc = false to DMA-based transports
+  (suggested by Christian Schoenebeck)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index c96d1d6ba8fe..18d86badd6ea 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -1077,8 +1077,7 @@ static int dpaa2_eth_build_single_fd(struct dpaa2_eth_priv *priv,
- 	dma_addr_t addr;
- 
- 	buffer_start = skb->data - dpaa2_eth_needed_headroom(skb);
--	aligned_start = PTR_ALIGN(buffer_start - DPAA2_ETH_TX_BUF_ALIGN,
--				  DPAA2_ETH_TX_BUF_ALIGN);
-+	aligned_start = PTR_ALIGN(buffer_start, DPAA2_ETH_TX_BUF_ALIGN);
- 	if (aligned_start >= skb->head)
- 		buffer_start = aligned_start;
+ include/net/9p/transport.h |  4 ++++
+ net/9p/client.c            | 11 +++++++++--
+ net/9p/trans_fd.c          |  3 +++
+ net/9p/trans_rdma.c        |  1 +
+ net/9p/trans_usbg.c        |  1 +
+ net/9p/trans_virtio.c      |  1 +
+ net/9p/trans_xen.c         |  1 +
+ 7 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
+index 766ec07c9599..f0981515148d 100644
+--- a/include/net/9p/transport.h
++++ b/include/net/9p/transport.h
+@@ -24,6 +24,9 @@
+  *                   we're less flexible when choosing the response message
+  *                   size in this case
+  * @def: set if this transport should be considered the default
++ * @supports_vmalloc: set if this transport can work with vmalloc'd buffers
++ *                    (non-physically contiguous memory). Transports requiring
++ *                    DMA should leave this as false.
+  * @create: member function to create a new connection on this transport
+  * @close: member function to discard a connection on this transport
+  * @request: member function to issue a request to the transport
+@@ -44,6 +47,7 @@ struct p9_trans_module {
+ 	int maxsize;		/* max message size of transport */
+ 	bool pooled_rbuffers;
+ 	int def;		/* this transport should be default */
++	bool supports_vmalloc;	/* can work with vmalloc'd buffers */
+ 	struct module *owner;
+ 	int (*create)(struct p9_client *client,
+ 		      const char *devname, char *args);
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 5c1ca57ccd28..2a4884c880c1 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -229,8 +229,15 @@ static int p9_fcall_init(struct p9_client *c, struct p9_fcall *fc,
+ 	if (likely(c->fcall_cache) && alloc_msize == c->msize) {
+ 		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
+ 		fc->cache = c->fcall_cache;
++		if (!fc->sdata && c->trans_mod->supports_vmalloc) {
++			fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
++			fc->cache = NULL;
++		}
+ 	} else {
+-		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
++		if (c->trans_mod->supports_vmalloc)
++			fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
++		else
++			fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+ 		fc->cache = NULL;
+ 	}
+ 	if (!fc->sdata)
+@@ -252,7 +259,7 @@ void p9_fcall_fini(struct p9_fcall *fc)
+ 	if (fc->cache)
+ 		kmem_cache_free(fc->cache, fc->sdata);
  	else
+-		kfree(fc->sdata);
++		kvfree(fc->sdata);
+ }
+ EXPORT_SYMBOL(p9_fcall_fini);
+ 
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index a516745f732f..e7334033eba5 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -1101,6 +1101,7 @@ static struct p9_trans_module p9_tcp_trans = {
+ 	.maxsize = MAX_SOCK_BUF,
+ 	.pooled_rbuffers = false,
+ 	.def = 0,
++	.supports_vmalloc = true,
+ 	.create = p9_fd_create_tcp,
+ 	.close = p9_fd_close,
+ 	.request = p9_fd_request,
+@@ -1115,6 +1116,7 @@ static struct p9_trans_module p9_unix_trans = {
+ 	.name = "unix",
+ 	.maxsize = MAX_SOCK_BUF,
+ 	.def = 0,
++	.supports_vmalloc = true,
+ 	.create = p9_fd_create_unix,
+ 	.close = p9_fd_close,
+ 	.request = p9_fd_request,
+@@ -1129,6 +1131,7 @@ static struct p9_trans_module p9_fd_trans = {
+ 	.name = "fd",
+ 	.maxsize = MAX_SOCK_BUF,
+ 	.def = 0,
++	.supports_vmalloc = true,
+ 	.create = p9_fd_create,
+ 	.close = p9_fd_close,
+ 	.request = p9_fd_request,
+diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+index b84748baf9cb..6c5ad232c194 100644
+--- a/net/9p/trans_rdma.c
++++ b/net/9p/trans_rdma.c
+@@ -749,6 +749,7 @@ static struct p9_trans_module p9_rdma_trans = {
+ 	.maxsize = P9_RDMA_MAXSIZE,
+ 	.pooled_rbuffers = true,
+ 	.def = 0,
++	.supports_vmalloc = false,
+ 	.owner = THIS_MODULE,
+ 	.create = rdma_create_trans,
+ 	.close = rdma_close,
+diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+index 468f7e8f0277..2542ef099233 100644
+--- a/net/9p/trans_usbg.c
++++ b/net/9p/trans_usbg.c
+@@ -514,6 +514,7 @@ static struct p9_trans_module p9_usbg_trans = {
+ 	.close = p9_usbg_close,
+ 	.request = p9_usbg_request,
+ 	.cancel = p9_usbg_cancel,
++	.supports_vmalloc = false,
+ 	.owner = THIS_MODULE,
+ };
+ 
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 0b8086f58ad5..12806207f4f0 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -803,6 +803,7 @@ static struct p9_trans_module p9_virtio_trans = {
+ 	.maxsize = PAGE_SIZE * (VIRTQUEUE_NUM - 3),
+ 	.pooled_rbuffers = false,
+ 	.def = 1,
++	.supports_vmalloc = false,
+ 	.owner = THIS_MODULE,
+ };
+ 
+diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
+index b9ff69c7522a..4b1cec0ab829 100644
+--- a/net/9p/trans_xen.c
++++ b/net/9p/trans_xen.c
+@@ -258,6 +258,7 @@ static struct p9_trans_module p9_xen_trans = {
+ 	.maxsize = 1 << (XEN_9PFS_RING_ORDER + XEN_PAGE_SHIFT - 2),
+ 	.pooled_rbuffers = false,
+ 	.def = 1,
++	.supports_vmalloc = false,
+ 	.create = p9_xen_create,
+ 	.close = p9_xen_close,
+ 	.request = p9_xen_request,
 -- 
-2.25.1
+2.39.5 (Apple Git-154)
 
+
+On Thu, Oct 16, 2025, at 15:06, Christian Schoenebeck wrote:
+> On Thursday, October 16, 2025 9:01:56 AM CEST Pierre Barre wrote:
+>> While developing a 9P server (https://github.com/Barre/ZeroFS) and
+>> testing it under high-load, I was running into allocation failures.
+>> The failures occur even with plenty of free memory available because
+>> kmalloc requires contiguous physical memory.
+>> 
+>> This results in errors like:
+>> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
+>> 
+>> This patch introduces a transport capability flag (supports_vmalloc)
+>> that indicates whether a transport can work with vmalloc'd buffers
+>> (non-physically contiguous memory). Transports requiring DMA should
+>> leave this flag as false.
+>> 
+>> The fd-based transports (tcp, unix, fd) set this flag to true, and
+>> p9_fcall_init will use kvmalloc instead of kmalloc for these
+>> transports. This allows the allocator to fall back to vmalloc when
+>> contiguous physical memory is not available.
+>> 
+>> Additionally, if kmem_cache_alloc fails, the code falls back to
+>> kvmalloc for transports that support it.
+>> 
+>> Signed-off-by: Pierre Barre <pierre@barre.sh>
+>> ---
+>> 
+>>  include/net/9p/transport.h |  4 ++++
+>>  net/9p/client.c            | 11 +++++++++--
+>>  net/9p/trans_fd.c          |  3 +++
+>>  3 files changed, 16 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
+>> index 766ec07c9599..f0981515148d 100644
+>> --- a/include/net/9p/transport.h
+>> +++ b/include/net/9p/transport.h
+>> @@ -24,6 +24,9 @@
+>>   *                   we're less flexible when choosing the response message
+>> *                   size in this case
+>>   * @def: set if this transport should be considered the default
+>> + * @supports_vmalloc: set if this transport can work with vmalloc'd buffers
+>> + *                    (non-physically contiguous memory). Transports
+>> requiring + *                    DMA should leave this as false.
+>>   * @create: member function to create a new connection on this transport
+>>   * @close: member function to discard a connection on this transport
+>>   * @request: member function to issue a request to the transport
+>> @@ -44,6 +47,7 @@ struct p9_trans_module {
+>>  	int maxsize;		/* max message size of transport */
+>>  	bool pooled_rbuffers;
+>>  	int def;		/* this transport should be default */
+>> +	bool supports_vmalloc;	/* can work with vmalloc'd buffers */
+>>  	struct module *owner;
+>>  	int (*create)(struct p9_client *client,
+>>  		      const char *devname, char *args);
+>> diff --git a/net/9p/client.c b/net/9p/client.c
+>> index 5c1ca57ccd28..2a4884c880c1 100644
+>> --- a/net/9p/client.c
+>> +++ b/net/9p/client.c
+>> @@ -229,8 +229,15 @@ static int p9_fcall_init(struct p9_client *c, struct
+>> p9_fcall *fc, if (likely(c->fcall_cache) && alloc_msize == c->msize) {
+>>  		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
+>>  		fc->cache = c->fcall_cache;
+>> +		if (!fc->sdata && c->trans_mod->supports_vmalloc) {
+>> +			fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+>> +			fc->cache = NULL;
+>> +		}
+>>  	} else {
+>> -		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+>> +		if (c->trans_mod->supports_vmalloc)
+>> +			fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+>> +		else
+>> +			fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+>>  		fc->cache = NULL;
+>>  	}
+>>  	if (!fc->sdata)
+>> @@ -252,7 +259,7 @@ void p9_fcall_fini(struct p9_fcall *fc)
+>>  	if (fc->cache)
+>>  		kmem_cache_free(fc->cache, fc->sdata);
+>>  	else
+>> -		kfree(fc->sdata);
+>> +		kvfree(fc->sdata);
+>>  }
+>>  EXPORT_SYMBOL(p9_fcall_fini);
+>> 
+>> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+>> index a516745f732f..e7334033eba5 100644
+>> --- a/net/9p/trans_fd.c
+>> +++ b/net/9p/trans_fd.c
+>> @@ -1101,6 +1101,7 @@ static struct p9_trans_module p9_tcp_trans = {
+>>  	.maxsize = MAX_SOCK_BUF,
+>>  	.pooled_rbuffers = false,
+>>  	.def = 0,
+>> +	.supports_vmalloc = true,
+>>  	.create = p9_fd_create_tcp,
+>>  	.close = p9_fd_close,n
+>>  	.request = p9_fd_request,
+>> @@ -1115,6 +1116,7 @@ static struct p9_trans_module p9_unix_trans = {
+>>  	.name = "unix",
+>>  	.maxsize = MAX_SOCK_BUF,
+>>  	.def = 0,
+>> +	.supports_vmalloc = true,
+>>  	.create = p9_fd_create_unix,
+>>  	.close = p9_fd_close,
+>>  	.request = p9_fd_request,
+>> @@ -1129,6 +1131,7 @@ static struct p9_trans_module p9_fd_trans = {
+>>  	.name = "fd",
+>>  	.maxsize = MAX_SOCK_BUF,
+>>  	.def = 0,
+>> +	.supports_vmalloc = true,
+>>  	.create = p9_fd_create,
+>>  	.close = p9_fd_close,
+>>  	.request = p9_fd_request,
+>
+> Just for clarity I would add .supports_vmalloc = false to the other 
+> transports. Except of that:
+>
+> Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+>
+> Thanks!
+>
+> /Christian
 
