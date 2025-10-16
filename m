@@ -1,182 +1,258 @@
-Return-Path: <linux-kernel+bounces-855659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A987BE1E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:22:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFB7BE1E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 09:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAD7D4F6C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:22:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7DB34F8791
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A477D2E7F3E;
-	Thu, 16 Oct 2025 07:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029CD2E6CA9;
+	Thu, 16 Oct 2025 07:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QSA3J8fB"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i5cGQ7rh"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170A32E5B1D;
-	Thu, 16 Oct 2025 07:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ECC2F5A0F;
+	Thu, 16 Oct 2025 07:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760599335; cv=none; b=YaEgItiF9ycTCqiYjCi/OQ9gQRhuDVC5J0Y5OEF3lRaf2dIlZLT5xcXg+UxsEOUfVIGM0j2DLqEmcTt5gg7kAXMVDgkcfh1LddDzHKUPdloK4dhlpXqQg92oGfAjDx7siRZkULEAYt6roMdFrU7tRTBMgcXFsplWIxTWrFIH844=
+	t=1760599338; cv=none; b=qBCh9y9avIJn0HH/r4dFh3gR8CGfFYGFc28fzNC6Q+XNveolzfXZ/hwIEDrtppFkE+7gNJQpBkdjHkyF5mZGkgP5F5D2E6DdulB0y+wOmvjZCkAqNqZzsR+eAlnggXMK+5y90UoMl8PPfa6fOfOeUXEUX0QRjXnFlhJVVbm/5S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760599335; c=relaxed/simple;
-	bh=C59JgKvwWWhUInISEqbPzJA1b1DFwSmcGjDq0Nulje8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PHcqhANNYhFcSCYgHsLENoGRK9jnRQgqrsdDgiJSesk61tq8Pbgi1d1DoPyNKXI+Ur5/PowMHu3tCZNOZmKm3oEPFYDRl8Q78LLy+l2ua9lA9fa6YNlPoR36P7+x1CHeWv8DGFRVt7LSyX6MaNTROlRjpC4Ktft+JsHdyliI+FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QSA3J8fB; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760599324; x=1761204124; i=markus.elfring@web.de;
-	bh=ClF/lH/L2hUjaH0udbSfDPG5j9SaktaTFd5cW5HzLTg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=QSA3J8fBq4SRPRa9EiMGeavZFncmqvWw6uIQr+J7lPEaqD+e0rG6ahOkBIXRIZLu
-	 IXRzxA6DQJNzX9gxptTEkcDjaqGcu/VYT9evvrg8gNHxSNrVBMlxKj/j5BziXK+fg
-	 2HWwGXLzrwynQrsDdCwIcCwQLzNvJq0N8/96r/INbY5WsLcq6i93bPkWaap6gP34g
-	 zVXZQbdxAdEXYPiO3ZBabjFzXtSD+g6X9hb4/Yb0eEKABrKWF0z/tfNx7qtQR9zI6
-	 3K8iB9WXIDH9wvkPmbK99k7UKcsmh2l2XBoqA4ws6sbhZn/JZW7+hT2FdvSd6n1+b
-	 fRhsV3uhzwh+ybTLGQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.241]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1uSqIE2VoU-00e1uU; Thu, 16
- Oct 2025 09:22:04 +0200
-Message-ID: <1f9e946d-91e3-4f9a-b26c-e69537cbbd4c@web.de>
-Date: Thu, 16 Oct 2025 09:21:46 +0200
+	s=arc-20240116; t=1760599338; c=relaxed/simple;
+	bh=IoepIVDWjMVUEYx/JMoNNzAWuBitBwwdY07odCMO0Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UvVxUbmkBilN6kabnQDX4Ct/vutQRJHs0cnh97NbrmNIq5PoUGWahQNoYMTElmp+uL54qGrhMLGnvROGP36gygAwfm/G0E/RROUuunNQLz5nl/rgttBfRCuYYJmLFneSiZLIDIEutG0RVq9t0SXwHGIQDhlo/+WMN0X0cN20LIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i5cGQ7rh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760599333;
+	bh=IoepIVDWjMVUEYx/JMoNNzAWuBitBwwdY07odCMO0Q4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i5cGQ7rhvkjDuErtbB5sX5ggFRBd+1rGKxncPvI/s6TjTXgo1MQZQIyPkkz6s/D3u
+	 J01+9DTEkAR9KOL7ZUQepTLpi9qT4NuGqRIpj7EoHAM/pR8bW9RVqi/mOFotKFX0MG
+	 7OReNQZgSFwj9belOQ1F/n63dbOFBn55qZEl8WnDClGF0rsPm0Kt4zFY+kSF+9vVVG
+	 UigzSGtC5g50UmmqqsV1QxvZEavI52MBBZPRGP8L4zL2l6fIsA7amz/+AFSGLSBFVe
+	 6vL0YQqnYE1OqalIp70NkJnwcgKze8eI+KsFgeRZ+WlkLAdXY8GoRbY6CpqwWDalZp
+	 yJb2MR/ufjNuQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A48017E0FC2;
+	Thu, 16 Oct 2025 09:22:12 +0200 (CEST)
+Date: Thu, 16 Oct 2025 09:22:08 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
+ Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v4 08/13] drm/v3d: Fix builds with
+ CONFIG_TRANSPARENT_HUGEPAGE=n
+Message-ID: <20251016092208.2b8ae536@fedora>
+In-Reply-To: <02c8447d-25fc-4503-873f-0b2932e218ec@collabora.com>
+References: <20251015153018.43735-1-loic.molinari@collabora.com>
+	<20251015153018.43735-9-loic.molinari@collabora.com>
+	<20251015201737.3956f801@fedora>
+	<efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
+	<20251016075637.3aec3465@fedora>
+	<02c8447d-25fc-4503-873f-0b2932e218ec@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] smb: client: Fix refcount leak for cifs_sb_tlink
-To: Shuhao Fu <sfual@cse.ust.hk>, Steve French <sfrench@samba.org>,
- Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org
-Cc: Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <aPBeBxTQLeyFl4mx@chcpu18>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aPBeBxTQLeyFl4mx@chcpu18>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tmHGRQKLg/BK76yM/sIHBW5q2wuNFogaJ1LFLdCIQFchbHcz+7N
- O5l+hWkWa/rt668xAJKX0haG9FQ7StluVA/titfss0j8LA5JVElGjCgZ9b/GvXf2r9W6nSV
- zanaV0I8NTImmtS9koRHCFdxokaHwvUX83sfq1HQqnhni1sx69fBFO7KR31rnjbmSCAbQhi
- zo+Z0vduXBb3hfWxCXgVA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nDdqvVZpSZU=;8Ua1uscXuUJEmHyHcaN6R46gWmA
- 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
- DWcYQ0kv8fdajPUDNoPDVo2LFc/iTGTe5e0=
 
-> Fix three refcount inconsistency issues related to `cifs_sb_tlink`.
+On Thu, 16 Oct 2025 09:09:26 +0200
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-I find such an introduction sentence not so relevant here.
+> Hi Boris,
+>=20
+> On 16/10/2025 07:56, Boris Brezillon wrote:
+> > On Wed, 15 Oct 2025 22:41:59 +0200
+> > Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+> >  =20
+> >> On 15/10/2025 20:17, Boris Brezillon wrote: =20
+> >>> On Wed, 15 Oct 2025 17:30:12 +0200
+> >>> Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+> >>>     =20
+> >>>> Don't declare "super_pages" on builds with CONFIG_TRANSPARENT_HUGEPA=
+GE
+> >>>> disabled to prevent build error:
+> >>>>
+> >>>> ERROR: modpost: "super_pages" [drivers/gpu/drm/v3d/v3d.ko] undefined=
+! =20
+> >>>
+> >>> I believe this is a bug introduced by the previous commit: the
+> >>> compiler probably drops any code between the
+> >>> IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) check and the err label
+> >>> because IS_ENABLED() evaluates to false at compile time. So I'd squash
+> >>> those changes in the previous commit. =20
+> >>
+> >> Right, it's been introduced in previous commit.
+> >> =20
+> >>>    =20
+> >>>>
+> >>>> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+> >>>> ---
+> >>>>    drivers/gpu/drm/v3d/v3d_drv.h | 2 ++
+> >>>>    drivers/gpu/drm/v3d/v3d_gem.c | 2 ++
+> >>>>    2 files changed, 4 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d=
+_drv.h
+> >>>> index 99a39329bb85..481502104391 100644
+> >>>> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> >>>> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> >>>> @@ -564,7 +564,9 @@ extern const struct dma_fence_ops v3d_fence_ops;
+> >>>>    struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_=
+queue q);
+> >>>>   =20
+> >>>>    /* v3d_gem.c */
+> >>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>>    extern bool super_pages;
+> >>>> +#endif
+> >>>>    int v3d_gem_init(struct drm_device *dev);
+> >>>>    void v3d_gem_destroy(struct drm_device *dev);
+> >>>>    void v3d_reset_sms(struct v3d_dev *v3d);
+> >>>> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d=
+_gem.c
+> >>>> index 635ff0fabe7e..0039063eb8b2 100644
+> >>>> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> >>>> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> >>>> @@ -269,7 +269,9 @@ v3d_huge_mnt_init(struct v3d_dev *v3d)
+> >>>>    	 * match our usecase.
+> >>>>    	 */
+> >>>>   =20
+> >>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>>    	if (super_pages)
+> >>>> +#endif
+> >>>>    		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size"); =20
+> >>>
+> >>> Why not
+> >>>
+> >>> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>     	if (super_pages)
+> >>>     		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> >>> #endif
+> >>>
+> >>> I guess
+> >>>
+> >>> 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
+> >>> 		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> >>>
+> >>> would also do, since it's likely to rely on the same optimization the
+> >>> previous v3d_gemfs_init() implementation was relying on, but it's
+> >>> fragile (not sure what happens when compiled with -O0). =20
+> >>
+> >> I'll remove the #ifdef/#endif around the super_pages declaration in
+> >> v3d_drv.h because it isn't necessary if super_pages is compiled out in
+> >> v3d_huge_mnt_init().
+> >>
+> >> In v3d_huge_mnt_init(), I'd add the #ifdef before the ret variable
+> >> declaration and the #endif right after the last else so that it's clear
+> >> drm_notice("THP is recommended...") is called unconditionally when
+> >> CONFIG_TRANSPARENT_HUGEPAGE=3Dn, whatever the optim level. What do you=
+ think? =20
+> >=20
+> > First off, I'm not a huge fan of the following pattern
+> >=20
+> > #if foo
+> > 	if (xxxx)
+> > #endif
+> > 		do_something
+> >=20
+> > which also applies to
+> >=20
+> > #if foo
+> > 	if (xxxx)
+> > 		do_xxx
+> > 	else if (yyy)
+> > 		do_yyy
+> > 	else
+> > #endif
+> > 		do_something
+> >=20
+> > I'd rather have do_something duplicated in an #else section
+> > like that:
+> >=20
+> > #if foo
+> > 	if (xxxx)
+> > 		do_xxx
+> > 	else if (yyy)
+> > 		do_yyy
+> > 	else
+> > 		do_something
+> > #else
+> > 	do_something
+> > #endif
+> >=20
+> > But I'm not even seeing what the problem is here. If you do:
+> >=20
+> > 	int err =3D 0;
+> >=20
+> > #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >      if (super_pages)
+> >      	err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> > #endif
+> >=20
+> > 	if (v3d->drm.huge_mnt)
+> > 		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
+> > 	else if (err)
+> > 		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n", err);
+> > 	else
+> > 		drm_notice(&v3d->drm,
+> > 			   "Transparent Hugepage support is recommended for optimal performa=
+nce on this platform!\n");
+> >=20
+> > You're guaranteed that err=3D0 and v3d->drm.huge_mnt=3DNULL when
+> > CONFIG_TRANSPARENT_HUGEPAGE=3Dn, so the "THP recommended"
+> > message should be displayed unconditionally. Am I missing
+> > something? =20
+>=20
+> It doesn't really matter here but I just thought it would be cleaner to=20
+> explicitly let just the drm_notice() because the compiler doesn't know=20
+> v3d->drm.huge_mnt is always NULL here and would emit a branch in=20
+> CONFIG_TRANSPARENT_HUGEPAGE=3Dn builds.
 
+Okay, well. I think it would matter if this was a hot-path, maybe? But
+that's clearly not the case, this code is called once at probe time.
 
-> Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be=
-=20
-> called after successful calls to `cifs_sb_tlink()`. Three calls fail to
-> update refcount accordingly, leading to possible resource leaks.
+> I know your dislike for this=20
+> pattern now, so I will stick to the suggestion :)
 
-* Can it be preferred to refer to the term =E2=80=9Creference count=E2=80=
-=9D?
+Actually, I would probably stick to the original
 
-* Would you find a description of corresponding case distinctions more hel=
-pful?
+	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
+		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
 
-* May resource leaks be indicated also in the summary phrase?
-
-* Would it be helpful to append parentheses to function names at more plac=
-es?
-
-* Is there a need to mention change steps more individually?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.17#n94
-
-* Will development interests grow for the application of scope-based resou=
-rce management?
-
-
-Regards,
-Markus
+pattern since it worked so far. If -O0 is really a problem (didn't
+check if it is), and v3d maintainers care about it (I doubt anyone
+forces -O0 to be honest), they'll fix that in a follow-up patchset.
 
