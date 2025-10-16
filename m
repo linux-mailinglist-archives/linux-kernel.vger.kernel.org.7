@@ -1,295 +1,132 @@
-Return-Path: <linux-kernel+bounces-855721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D20BE21AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:14:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D95BE21BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF3AD4E8C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:14:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 684404E5F6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902F430102C;
-	Thu, 16 Oct 2025 08:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D256F302CA6;
+	Thu, 16 Oct 2025 08:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mZo03frm"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013016.outbound.protection.outlook.com [40.93.196.16])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pBEULoiR"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092221A2C11;
-	Thu, 16 Oct 2025 08:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760602441; cv=fail; b=COcMKROy+KpTwt0q1Bw8iL5etUHrEW2nOVBmzbzKPBQCknUEWA4LpFrM//Bvakc9dIJA/lOw/WC6LB3hqZ0YJqlzdgsXUrTXCeACR4XAbG3h1pIp8PG+yuYmp3LnDE3meMkTY/lr/kujpJo++kW0K6fh6OOkxfIIPdOBX7bpeOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760602441; c=relaxed/simple;
-	bh=RhZ3xe6Yc+PqrK1zmGQz5Bvq+ixzzW0mMbL9xU7/dgQ=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nnOizKm5c9qPnz6GFORkbUl7elRrENwjaJbXB/bYVL1BPEXcb/Wh0EuyAcZsxSypmvIMIbiWt2GbWEJHZWVonvJ3Hj8+/LfGZXWsMVhCsWGHFhTYxrn2nr4navZYgtpzlZG6DHZfybfbldVFtnXZf72w1RmixoCiK7QZhuGIA1g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mZo03frm; arc=fail smtp.client-ip=40.93.196.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TfM2r7Dynlh716JHqzulN8roAB6LhQ3XSxeLwyufOwskjV+bLBSxH7zhLa8oEO3YIHMDUI/KtApjGfEWiSTGVxQaiolcQk45xLkGFm4DdAFimatvJkaA6cpeLs2Qaf9xPDf6BriF54JMpY3Kz9XeI8uVO9p1AXEPRYGLuzg8EtinDGoHeocq7s3j9L5h4JgTYGdLv5dsp2NZbjyBLchCxltdI3d3Rn0uARKuAI02N5PcDAzFlf59Ut8uYxmdanO4ck2EA0EsfZBT7uljKNNJssDjDVe3uYT5kQc2k/rzcDnRkegoUgUbpQhbeQNh0V5SNXNAFf07TkL1lm9J9T+h7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RbSOrmaX4oAOyqsx7SvELmzW1vzdRn58sPLzg9RZhIg=;
- b=NNo+CQmGrrr0bmuoFzIcWsQJK7T+vQgY7+GVS6IU3UI3eivD5hc+RDcUPL4AaKtt8Gutwayhsrroz/ajm/rS3pWygoygFZlZ4BEUgbJlS4wFTfzJGHKfyTyq1Y9VcS1HM+MaPk3pm+MzaFvrY/v8Q7RcVektdMryc2hlpmqbyucqXaPXqoqvAB7oG4reQDwzVhzgQVA1TPgo6k0ZUJ/o5cKPN+Vsy4unWACtQAFOAfBc5SX41664TtXyp/UDHWuI47E2GU7e7eh4Un1w+NZ8giKs3csG01+3csJY8LvJhiqJJ4dU5lVfDYkD1A70vS6NfkSgCthcgK56lvqknRDKyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RbSOrmaX4oAOyqsx7SvELmzW1vzdRn58sPLzg9RZhIg=;
- b=mZo03frmNRhxyCYAZ07Qj/8SCrQpxBjAQCgaRsIwPUvF8LCtkYegRLLDk3BOpaMc8GLJVaPJKT89To8Mwou0ggbHCe9YyQpccbTrRICdtPJ+Uq4yobXkxYkFJE2Vm1mbMbszrdcTclB5bHOZOCnvnTw1n5Kiy+tKPdvmckdyCOc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV9PR12MB9829.namprd12.prod.outlook.com (2603:10b6:408:2eb::9)
- by IA1PR12MB6436.namprd12.prod.outlook.com (2603:10b6:208:3ac::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Thu, 16 Oct
- 2025 08:13:57 +0000
-Received: from LV9PR12MB9829.namprd12.prod.outlook.com
- ([fe80::c47f:251d:7b84:e6b4]) by LV9PR12MB9829.namprd12.prod.outlook.com
- ([fe80::c47f:251d:7b84:e6b4%6]) with mapi id 15.20.9228.012; Thu, 16 Oct 2025
- 08:13:57 +0000
-Message-ID: <51c24e3d-be89-44c9-8247-95fb776aed78@amd.com>
-Date: Thu, 16 Oct 2025 16:13:47 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] media: platform: amd: isp4 video node and buffers
- handling added
-From: "Du, Bin" <bin.du@amd.com>
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
- Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>,
- Alexey Zagorodnikov <xglooom@gmail.com>
-References: <20250911100847.277408-1-Bin.Du@amd.com>
- <20250911100847.277408-6-Bin.Du@amd.com> <aNzP2LH0OwUkMtGb@sultan-box>
- <c28eb905-b578-4512-aa9c-37281d3a0ee4@amd.com>
-Content-Language: en-US
-In-Reply-To: <c28eb905-b578-4512-aa9c-37281d3a0ee4@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCPR01CA0158.jpnprd01.prod.outlook.com
- (2603:1096:400:2b1::9) To LV9PR12MB9829.namprd12.prod.outlook.com
- (2603:10b6:408:2eb::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA10248F7D;
+	Thu, 16 Oct 2025 08:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760602518; cv=none; b=dHB23W9qwf7uCJn8pjyveM1QCC3uG/ciYkAEWDwPpyY3saEwK0aPQWQcl7yoavGi11OqgTwH4FZph+WfMZXV+h/ATpEPnEKDx4GHU0532Uc/AU+kO5WGCMKFq1UGMFRbMkrwh4fBaSaThShuZjlYOzre7bwI1uXZBxIWxvLBJtA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760602518; c=relaxed/simple;
+	bh=qsr1nVJV6SCeROqWZZrDkXqfhgt8sdr2zuj6CMu9BbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cueMQ79VV6s900ZOXqRrtEJf+XBfTKROqXROlBtwCyGuD82F/nBHi1dIFpy8mqiTU7cngepADGaIwX9VpHO92We/6l26HKTzhYepJQ7CcBmc6F2cdxwP4K2WG1P8ipmkt0cZRyo2KBvOS3XmuYMSd5Aa+iZQcH8TsO9ZXF4xTxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pBEULoiR; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 0847F4E410F3;
+	Thu, 16 Oct 2025 08:15:13 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D17616062C;
+	Thu, 16 Oct 2025 08:15:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ACE2B102F22B9;
+	Thu, 16 Oct 2025 10:14:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760602512; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=dXsurt/UB6adbtX7xqXZLThjuVgu/eCgnHbY5gWKelw=;
+	b=pBEULoiRmAouS3SHUlKOJyrqWJ1t2pWZMEbbaVEaGbDYSH8OzKzPbTtL5dRUoMhvF95Czb
+	2A5X4dM7SfrhDOhll7Qjw/V3SmjgkR3m0USf630ew4Kns4/6FGHU/Sy527JAvABxPeBc53
+	tEqrPxK2eGLRHIF2YDaF0FGQTOdf5Jp+vf1PKMPgca8yso8uIL3nlUP7lQ7jhH3f6k/IU3
+	GtTcWvhzBu8exiUKbVHyINlfRkh8a/F7HLdPego1MiE4fuabbF4MyWu2ZkNz0FFkCPLrRJ
+	KOizvsmFFq+vZVxJOQxaPLAAiy0mCHeWPQulGTJZGpUL73FZIkidBmQbw32sJw==
+Message-ID: <328d5953-aec3-4a1e-b2e3-268155793996@bootlin.com>
+Date: Thu, 16 Oct 2025 10:14:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV9PR12MB9829:EE_|IA1PR12MB6436:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12ce739c-5d44-41a0-3538-08de0c8bf402
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YkxiNVZwZUhvU1BhdUpENVpjTURtVVNlaFdrRWRORUVmYUZuSmFTeHBQcThC?=
- =?utf-8?B?RGpJbDBpZ0xWM1J3bXZFTXVNb2ZMSE4rcWtEZ0FBMkZMd25JT3F0U2F4Z2Rw?=
- =?utf-8?B?Y0tGaFlQNjZ5WUVCb1lYNlA0cWJtMDFIU1duaitXYzNiUjJtS2xqcFVwbEZN?=
- =?utf-8?B?bm1sVVpWRE1nZnhWdDZMMk5UVWZhQ1BDU1kwOGZWSFR1YXIvS1pzNjBJNXMx?=
- =?utf-8?B?WVZVOXA1YlUybUFOS1RuOFc2UURDcUlLSnJqY0x0Nk5mcnIzd1hkK2xnVm1J?=
- =?utf-8?B?NS9vVGZmZ0tpNVpzVGpBQUdJT3JaQ3NMUlBtenpaRy90MUNnbS9BdEtadXVz?=
- =?utf-8?B?Q2QxSVh2bDRVNlVsYy9FdytPOW4ycTZ2NFp1S203QmwrRVVwMGQxMXM3MTZm?=
- =?utf-8?B?MHlFZUY4WU5tN244ODRKWmppSGtXSkFEdlFveVIzQkZzVU9iekpsTU5zT0V3?=
- =?utf-8?B?TmEzcytlK1hhb3lMY21uSVh2TkV3clZJVTVNQ2xVRDNuTUY3Y1FRMXhMcDI4?=
- =?utf-8?B?S0ovakg3NnhQNW1KTzJPQ1dSeEdmem9TL0RJTUVoeUo0MVFnblY4ampCalk3?=
- =?utf-8?B?b2YyY2IyWHBDTElPSDQxR1FHUlhyYnVaVk82VGQ5RlFYbSsvMWM5L1ZlN3Vn?=
- =?utf-8?B?Z05tVDFibW9oazg0ZkVoQ25INEp6dzM2MXEvSEpTRjZ3SlN1NS9WQkNIZFpQ?=
- =?utf-8?B?djMzNS85UWgxR3RGNk81aS9rS0xPT1MxNkluanhRRmpPbll0MmIvL0lKYzdL?=
- =?utf-8?B?cXp0U2N3NHhZN0hiMUpER1MrUE82aFNmaFJleUQwNThMSzE1Z1FyZkh1eHVK?=
- =?utf-8?B?SmRHTGVUU3lrNitBWnZwcVFOL25XckExTnFMdk9oMTRvd09QUUJZRHBXWnJS?=
- =?utf-8?B?bER3NE0rRzhocGxNU0YyTzUrS051b0VMQ2RyUWVWdnZkNWRCYUFxNjliSDFo?=
- =?utf-8?B?K2oybnRTWFQxVDBIRUpJelBLNzRZMEtnWlBKc0s1eVA4d3VZTFZ5RG4rR0lM?=
- =?utf-8?B?Tjc0ZVRxSXR6VXYvdVQ5bjlUdWpCcmRvL3kwWmJQbHI3dnZVQUJZdDNzdDVH?=
- =?utf-8?B?dWx0S255NE1mWEFiUTRCOUxpNzlGRVhiU0ZNRE1STkc0OXJLdnVoWi9xSHlo?=
- =?utf-8?B?aHVMdGxqek5QRWlJVHBWNDgrcWVnSXRveXUveGRYMmM4WDdNMlNkTDZZMVNm?=
- =?utf-8?B?WEhvc3luOWhiU1VTQVdLWTdrN1BRYkRPZ29hSy9LK1ZHOFRxbG10YU9XWmRT?=
- =?utf-8?B?OTZvME5NcWE3LzBOL3l2UjNPZ1F6VFZqVFF3VWR2dEliT1NPYVREVTIyRU1x?=
- =?utf-8?B?U3F2SGhwZFB6ZHAyeERXSWoxN0xDU1lYNk01R0hFYk5VRXlLa3dEZm85cllm?=
- =?utf-8?B?L1BoektrOGdmb3ViUG1ZaGxvbmtrelp2ZTgwY2FZc29COWNIUzcwU3E0YXpT?=
- =?utf-8?B?cjJ4YzJDNDlCTFE0RVRlQmxzbWh4UzdvdU9ySTJ3Y2FIRmZzcVpkZzNrak41?=
- =?utf-8?B?U2FLVjhsbklyMkJuSVhucGEvbEdsWVErUUdaTEd3KzgyRW5UVDdxUWlLYmUx?=
- =?utf-8?B?dHk5U2dhcFU2dWhmQ0N4bHRIRmtSTkk2b2sxMkF1bDBYdE9jdDV2b1hTU3VS?=
- =?utf-8?B?QytEUG8vUnBDY05rZ1RSVDNVSXRCRzExYnZRWFlPUDBrT1luQUJJbmtnVmk4?=
- =?utf-8?B?aENsS2wvTnZxZ053eDllUDJVTHZ5VWtPUm56Ukx6S0ZON2oyYitubFQySkJZ?=
- =?utf-8?B?VU1vb2xGY2YvQlVjU21NWnpHZFo1cUlGQlFwUlNkdzRieS82NSt0SVRFMEdH?=
- =?utf-8?B?SFBrRW9sSDgvSUY3Z0ZHWkNWWDR3cnRCdDVuTHJRNjRIc00wQXFrVEpqZHJ5?=
- =?utf-8?B?WEY5L2tYWERGS3ZCOERkRDd4bGhhYk1xU1ZnYlhWK1RqOE5LK04ydExQaGRu?=
- =?utf-8?B?SE9TRVloVXRxQUVBVzBWU2tpaDdnRHhjWGlFTE9ZVkJWU0tvWklSRUI2ZTBJ?=
- =?utf-8?B?aXpnS1ZSMkhRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV9PR12MB9829.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aTdPY3FTcUxtdnNOVHVHbHQzaXh0aEZ3NGhQVkw3Y0ZGdHFoZzdNSWtnRksz?=
- =?utf-8?B?SGRmTVF0QWV4emJNTm1paS9ZSnNRUjFFSWdkRVp4M3NTZGI1TVNKanJBZkx4?=
- =?utf-8?B?NjVyRWNvc01pY0tYbkZwKytWdnh5ZUdsZ0ZvMVNBTVZPSjQ1amZaRUk1WGEy?=
- =?utf-8?B?eWdrOEgwTU9uY2RqOE5IbGswQlAwKzNCVnVzRVd2QUoxU1o3R1loQk9XS1pa?=
- =?utf-8?B?SHhnVjBkeExvdk1WVnJVbHA3L2tNemRrOEYwZ0JtaElIdDFnYkdidkRYSVRh?=
- =?utf-8?B?WUI2WkJwVkVHWTBLQk1kUFhPT0pRWDZ1cnExZUFmOUFCMzgzbGJBMXhOUXFo?=
- =?utf-8?B?d0tLT25qRmN5L05OY0k0MTBnUTRad1BhbEt1UTRmZ1pXdTFiV0JSa0FCNEN4?=
- =?utf-8?B?aDBaR3lEekdPS3VmYllHUlpWQWhCOGN4bm9LSFd0cW1rWXpCRHVSZ1I5bmUr?=
- =?utf-8?B?M1Vmd1hkVW13OWpJeEpTRDdlZGpHaEhTSXVaQUpxd3hjZVcwMEx0OTBjSVZi?=
- =?utf-8?B?czdKZHRqblhVa2F2TmROUjJUZFVweXR4eDlQZUVibzY2dlBjcE1QVEZXdWFw?=
- =?utf-8?B?eFkyc2FkT2tONU5kb3IzUGFiL3VUUklTVVV0Y0FpMUduLzFiZWM4Z2lGNWlC?=
- =?utf-8?B?djJwY3MxSERxb2tuSUR5WEo4ZDFaVWtxZFFFWlh1UlcrOENBQnU0RW9sbGts?=
- =?utf-8?B?eDd2NWpKRG5mVytXMUp0c2FLTEZTY3FqY2drTWpPZmdDcWVtaUdab0ZDbVg4?=
- =?utf-8?B?Q3N2WU5pemJ2c0ZYZ25hMnhROGpBZ1oyQzc5c1Z6WU5ERDBtQzJXMzdKV1JD?=
- =?utf-8?B?Ujl1UkU1d2VzeFkvT2pkbGhndTNUWlNwUWhvWGtIOWxlUXdSbU9RVDFzem5o?=
- =?utf-8?B?VHF0WnpnQzhWZGpQdTZZZldJdG5uUWJtTzBXR3Q2WDE3ZlE0NU1GdUc2Rm5J?=
- =?utf-8?B?Wko2WTNNS0w1dW5WWmlIZExDbHpycm16bEJMT2lXZGxleXFGdTBaeEVROEV4?=
- =?utf-8?B?QUdJdlZsS3ptaG9rNC9Ed1Nhd1lVbmk0dVJqcTNwYkpwQm9zYXFUeVgwVFN4?=
- =?utf-8?B?U2NKbEgyWmwzY0VibFZOVlBWaWlZZE1paUJkNDdJdCt5Q1ZhVERRV3Bjdmt6?=
- =?utf-8?B?YXl1YVJKRlhIdW5nQlNYeDUyL3JnSGE3NkpwNnNsbHF3NjRMQ0dFdDFUN3h1?=
- =?utf-8?B?elN3UjAxTlZoUktaSFc4QnZhUHpKMEFIOGJrQ1BhdzQrNUx1ZE9kSU94RWNq?=
- =?utf-8?B?MUhiRjVSU1JRd1lGSytCZTlqTjJDOFV2RHlITTZOaDlpSHRmSTcwN0xON1lV?=
- =?utf-8?B?MnNoV0VvM1FMM2lJQTNWYlZjbnViSjRIbmRBK29JUWQwVjBtMVNrQnRqWDYv?=
- =?utf-8?B?a1dzTEh1ZUozWEh0QkVYcDZWT25tNjg2d2k5eDhhYVFEdktVOHFQbmVmTGll?=
- =?utf-8?B?SFB2M1VwazdFUHdUS2ZISTA1bXlDQkxETm00M2p0TWpqN1k3OUJMYktrbjVI?=
- =?utf-8?B?Z3htMmtTQVVOR1ZlcUMyN2ZEak44OTNUN0Q2VWw3YXU5cFpIMWwyTDdIZGtP?=
- =?utf-8?B?UWxESWd0YjAvQ01JcXNxdm91bEEzY2NNYmNGTkl0dWkrL2NoNnQ1TXhsYkxC?=
- =?utf-8?B?eXdKS3pLQVhCanQza2xHRExGSzZIaCtMZk5hRWlmVWFHVFRsRlVsZ2haWHF1?=
- =?utf-8?B?eGhSTSs4bVJWaWtqV2k1K0xSN2F4akhNa3hhOVY3MEpmRVVMVWNNMzhRR0Ns?=
- =?utf-8?B?VUNjWTVCYzFvOUpKOTBrZCtvTGlCS1JwZFA3YUpQNklvMEREaWZ1a3RHL1U1?=
- =?utf-8?B?bHQzVUNHTUtiOFBwZWZuOHhMSHZLNjNVVktVL3Y0VnNMSzY3Q3B1OHdaaHZG?=
- =?utf-8?B?KzlzbE83R0dwNzZmYnkrZnNvOG5OQkxwM0VQUWRtWlk4eTV2NmVlZ1hBZUE0?=
- =?utf-8?B?RVM3cWc2UkM4SEtPWldTSWRmUkJaSFpuLzBUMmdISGVDZUpYUDEyemxNbWk4?=
- =?utf-8?B?QkRYN05ZSHRCYXlqOHlzRVhPSzdqc2pVVUptU3dzSkVkdkhpMEVVT0tWUndh?=
- =?utf-8?B?Ym51THh0YnlqVVJZTlhyL2dCMGc4dVJSdmRaVnVISzJXd0NVN2RTNmkzdlNO?=
- =?utf-8?Q?CuTE=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12ce739c-5d44-41a0-3538-08de0c8bf402
-X-MS-Exchange-CrossTenant-AuthSource: LV9PR12MB9829.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2025 08:13:56.9771
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z7NsrnkCJVdWxS6qkayUmgh2nbGA/WACL1GLjdwpFIXbDSB/LEQe1e4SGZwXVlM0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6436
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/3] net: stmmac: Add support for coarse
+ timestamping
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
+ <20251015145519.280b6263@kmaincent-XPS-13-7390>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20251015145519.280b6263@kmaincent-XPS-13-7390>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Sultan,
+Hi,
 
-On 10/11/2025 5:30 PM, Du, Bin wrote:
-> Many thanks Sultan for your review, that's really helpful.
+On 15/10/2025 14:55, Kory Maincent wrote:
+> On Wed, 15 Oct 2025 12:27:20 +0200
+> Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 > 
-> On 10/1/2025 2:53 PM, Sultan Alsawaf wrote:
->> Hi Bin,
+>> Hello everyone,
 >>
->> On Thu, Sep 11, 2025 at 06:08:45PM +0800, Bin Du wrote:
->>> Isp video implements v4l2 video interface and supports NV12 and YUYV. It
->>> manages buffers, pipeline power and state. Cherry-picked Sultan's DMA
->>> buffer related fix from branch v6.16-drm-tip-isp4-for-amd on
->>> https://github.com/kerneltoast/kernel_x86_laptop.git
->>>
->>> Co-developed-by: Sultan Alsawaf <sultan@kerneltoast.com>
->>> Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
->>> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->>> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->>> Signed-off-by: Bin Du <Bin.Du@amd.com>
->>> Tested-by: Alexey Zagorodnikov <xglooom@gmail.com>
+>> This is another attempt to support the fine vs coarse timestamping modes
+>> in stmmac.
 >>
->> [snip]
+>> This mode allows trading off PTP clock frequency adjustment precision
+>> versus timestamping precision.
 >>
->>> +++ b/drivers/media/platform/amd/isp4/isp4.c
->>> @@ -178,6 +178,16 @@ static int isp4_capture_probe(struct 
->>> platform_device *pdev)
->>>           goto err_isp4_deinit;
->>>       }
->>> +    ret = media_create_pad_link(&isp_dev->isp_sdev.sdev.entity,
->>> +                    0, &isp_dev->isp_sdev.isp_vdev.vdev.entity,
->>> +                    0,
->>> +                    MEDIA_LNK_FL_ENABLED |
->>> +                    MEDIA_LNK_FL_IMMUTABLE);
->>> +    if (ret) {
->>> +        dev_err(dev, "fail to create pad link %d\n", ret);
->>> +        goto err_isp4_deinit;
->>> +    }
->>> +
+>> In coarse mode, we lose the ability to fine-tune the PTP clock
+>> frequency, but get better timestamping precision instead. This is
+>> especially useful when acting as a PTP Grand Master, where the PTP clock
+>> in sync'd to a high-precision GPS clock through PPS inputs.
 >>
->> Two problems with this hunk:
+>> This has been submitted before as a dedicated ioctl() back in 2020 [1].
+>> Since then, we now have a better representation of timestamp providers
+>> with a dedicated qualifier (approx vs precise).
 >>
->> 1. According to the comment in include/media/media-device.h [1],
->>     media_create_pad_link() should be called before 
->> media_device_register():
+>> This series attempts to map these new qualifiers to stmmac's
+>> timestamping modes, see patch 2 for details.
 >>
->>      * So drivers need to first initialize the media device, register 
->> any entity
->>      * within the media device, create pad to pad links and then 
->> finally register
->>      * the media device by calling media_device_register() as a final 
->> step.
->>
->> 2. Missing call to media_device_unregister() on error when
->>     media_create_pad_link() fails.
->>
->> Since the media_create_pad_link() will be moved before 
->> media_device_register(),
->> we will need to clean up media_create_pad_link() when 
->> media_device_register()
->> fails.
->>
->> The clean-up function for media_create_pad_link() is 
->> media_device_unregister().
->> According to the comment for media_device_unregister() [2], it is safe 
->> to call
->> media_device_unregister() on an unregistered media device that is 
->> initialized
->> (through media_device_init()).
->>
->> In addition, this made me realize that there's no call to 
->> media_device_cleanup()
->> in the entire driver too. This is the cleanup function for 
->> media_device_init(),
->> so it should be called on error and on module unload.
->>
->> To summarize, make the following changes:
->>
->> 1. Move the media_create_pad_link() up, right before 
->> media_device_register().
->>
->> 2. When media_device_register() fails, clean up 
->> media_create_pad_link() by
->>     calling media_device_unregister().
->>
->> 3. Add a missing call to media_device_cleanup() on error and module 
->> unload to
->>     clean up media_device_init().
->>
+>> The main drawback IMO is that the qualifiers don't map very well to our
+>> timestamping modes, as the "approx" qualifier actually maps to stmmac's
+>> "coars" mode, but we actually gain in timestamping precision (while
+>> losing frequency precision).
 > 
-> Very clear guide, will follow your advice.
-> 
->>>       platform_set_drvdata(pdev, isp_dev);
->>>       return 0;
+> https://elixir.bootlin.com/linux/v6.17.1/source/include/uapi/linux/net_tstamp.h#L16
+> "approx" was initially added for DMA timestamp point.
+> Maybe we should add a new enum value here with a more suitable name.
 
-For 2, we found when media_device_register() fails, calling 
-media_device_unregister() won't clean up media_create_pad_link() because 
-it simply returns without doing anything(see 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/mc/mc-device.c?h=v6.17-rc7#n797). 
-Therefore like other kernel drivers, we'd rather not call 
-media_device_unregister() in this scenario, it doesn't cause issues, but 
-it's not logically correct. Cleanup for media_create_pad_link() occurs 
-during error handling via 
-isp4sd_deinit()->isp4vid_dev_deinit()->vb2_video_unregister_device()->...->media_entity_remove_link(). 
-What do you think?
+Yeah, the terminology in stmmac of "coarse/fine" refers to frequency adjustment, while
+the "fine/approx" qualifiers refer to timestamping.
 
-[snip]
+I'm OK to add a new value, with the usual risk of seeing the number of qualifiers
+explode if different hardware to that in different ways.
 
--- 
-Regards,
-Bin
+I suggest keeping "precise" for the default mode, and maybe use "enhanced" or
+a similar term that would imply that the improved precision is done at the expense
+of some some other aspect of the system (and therefore probably not
+suitable as a default).
+
+Maybe Richard can shed some light on that ?
+
+> Regards,
 
 
