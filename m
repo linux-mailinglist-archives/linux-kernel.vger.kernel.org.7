@@ -1,178 +1,164 @@
-Return-Path: <linux-kernel+bounces-856881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7338BE5524
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:08:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD8FBE552D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4732B189B39A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:09:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DC9D4F1D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D481CEAD6;
-	Thu, 16 Oct 2025 20:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1F52D46B2;
+	Thu, 16 Oct 2025 20:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ7Jt8PR"
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GRoQMH21"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0261B0437
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00872D9EED
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760645310; cv=none; b=bkQWfV7/1vLYZA8Y45obxXe2qzaDeb6r6agXZY4wH3U4yZSrSFLvUqEr+nIXp8eVU+GtgCf0j3fBrVxftkB3pE0Qit9PjE5OHJS4kFK+vDXIijkvQBAYRVHxe5eqxkqXnq/PKJuZOv7Zlx9npBZctkDAAOjbwnZUGm/nkpvDzFQ=
+	t=1760645335; cv=none; b=k36xqq0LJZGmz96bQvQDEZvsDGLQ06L3v+mxN65tb/DoyVV2ytTAZ7rBVgyMpn7HPUk9Ws4kPxChXrxZsM/fYns3xhB7JxJeYrezGiDsrh01o6ajRmS8+WknEWCnP5LYpNRq0qYh/naE4wfGp13PvV/jT8Yzo4IcbHLOTjIX6sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760645310; c=relaxed/simple;
-	bh=5LV1LhbZXSqdN8/Ic6BuDFnwHiv8u0GIP1b8uHhLq8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EVMJnOUuJpKhhUYN23kQiE9EsgDmQam0XyxIMFVfOAjTylV7hUlA9yckswPQubu0qwYjA23MVfExHJdNJKcuI2/NklvGwx9Vk9VAilDPZpOEpm+tUuQVoVHB7/MjvFrbgzIofQvUlUQrM/mbJst/i6dNwaG/wMjw3ImQo6vA58I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQ7Jt8PR; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63e14c509d6so656655d50.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760645308; x=1761250108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zwSJQlIKUBZxKguIzgka47vhsGWXbpweHW396bjpenE=;
-        b=cQ7Jt8PRLP2bdHUqwCjJx2w5q1Bf+uBKQ6jGV7vfm+JVSzm0Og7LGFvKTfl5A7AqY3
-         jcbaB9wc+kUJhEfh+5d5JnzJNth0AUTvc3zZmuyTlr0Y9nLmWjKVw6JLr6d6PVLcvy2q
-         cWv4HHCSLSW38gyuOn56+Z3Mf3qEm+K79Pp9ZTXJzN8+LUfHrKM4WfhTYICW4+rM6605
-         +3IKFyENvSOOv2Cci8o6Nbc1Hn7NRy8bOGkmOI2g84uiW6CVTQhYwLkoRZFyw4iASCGl
-         FbYRrJw+YkBPRrl7IcLhbG9obSGor+lD6rChfSX2j89b3IXXSE0sba4o5y4vXrRDGFLz
-         8RYw==
+	s=arc-20240116; t=1760645335; c=relaxed/simple;
+	bh=J+Zwp0E9tqCVCXtH1TLr3bcBFxCc5MDrmVDUvbChza8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cL9Lx94Hl7WojfRU5Aj7+ikXOjCMmTL2v7UbQ5JCVwKvNwj1yrfYYijANCcDtBeViQyO1qEcS3YOx7D2j/ayUY3DvpV6HMO4LnENErIlrZeWEI9LqqPaywv6Q4wfqmvDaPu2eKHm0yw1auANXvF61VjlF3NAZ9nSuJ5vx+w8XCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GRoQMH21; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GAhlck022118
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:08:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=XW25WTUPjM0HYbFzO4qQOv0a
+	rYQaTxvpGuWa+PN/BYQ=; b=GRoQMH214l9ZktR6yEwxRJNDcIkLrBGBary+WEiB
+	gk568wNkQnbNtkD+GEL1hRkPTWZ/2dm4uFYIutRag5FBldkDVnAWfyXdr2+zYpbr
+	qx1FYrJ4jOq3ppXR/hcqkq+JfOaBuHUAjRUToTk4TAHCykw8Euz4m9BqNQLBh/tG
+	/g5mHJuHsoxuQNOvChjTXEy+l54mJM6APFKcXFcIFrSTuiTrba9o4mvG+mIGXyuR
+	LU0RrLb5OVeep+Z9OjfIyzsNzYaiNpJxTeb7ZsQFfDHKXvliCzJjZw5In9jH7VFU
+	hQTKA2+A3pLHJkUm1BXyp/86N9+KDx5TaelhK3jit4MsSQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49tqvpjyy0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:08:52 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-78e45d71f05so34336666d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:08:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760645308; x=1761250108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zwSJQlIKUBZxKguIzgka47vhsGWXbpweHW396bjpenE=;
-        b=tRGPw/vI0hgZbi8j82PLT5bau//7wkVHfJUSVhn546AlW6pMKPG6rKJzdM9Cx7egbq
-         QVbta0gY/t+9Y2I4JD3lp6h9GMOLUHMvrKvSHhnF8Sm/2x/aiPKDzd6m0NUTQjcGm06q
-         TY3vQ3py8rsm1POs5p41hAb4y0X03Lw7sekahk2yOuLUl11aCblEHsY0YPrTUv5p6AuR
-         wQJ1uh1Fx99TyJvbU4VreYtzNIxhIQOTSVYUu++ipJDZ2uDi+MA2Ht7mjonhRz/7nlf0
-         XSRm4MqzxhkmtaYNXcbhA1lu9o3bSIpqH0T18ZGjMHpRCTmDgid4JmH8/EFY6aKQX8R8
-         jgSg==
-X-Forwarded-Encrypted: i=1; AJvYcCW06BlMprq4ul/CzxuXuEv/K7ny/Tj8KCrU4JNoHK/qunBn06Gey5lbP9vgLH5ksT0rXfWRlV0XfbWQoHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwRpKD3mOLoc0E4L8TH1ZUihdXfUSmb1qkYrJw+elft32DJJKt
-	dzdMH72t8wFC78VukxKq7HqH+b33IjLHSnXOSs5Dn0FI5aUrw3WYVzL0OaarVbETu+r0/fJit9l
-	AZiqgHpvdlJG5RkqXoYffzmnLp7ducDw=
-X-Gm-Gg: ASbGncuHBbTzdvPRjGRDG3Cc1HW/p28aBX9yB59yCEv8KWqYMY/pWICCt6od7VyHvGG
-	AVcXRF8bNj73xFclFyl+CVHHwMXvKuiU6B4DQo9UiW0ms7GeEiA/Yho1vEyXDO/+GSwr7GhrSV1
-	6/Kud70tsoawXfP1NGZtCZKZ50USv+RurV194bOvwxJRM/9tuR2xCis2juWmp0tgrcKXRs2F3Ms
-	XbgeAMeKKO0KYPgLMBLhP/zSrpEajiWSOss0Rguc9Al25GsEYaY2MErUFA=
-X-Google-Smtp-Source: AGHT+IHvMgZk6If8o2qH54dkg2cytF3aHS8b+WyjiGydzi+xYAEbco+6c2Bb5pN+U9QhO3xEPUlTr6z3Csxk3GbljFI=
-X-Received: by 2002:a05:690e:11cb:b0:63e:c66:42c2 with SMTP id
- 956f58d0204a3-63e160d895emr1244040d50.4.1760645307556; Thu, 16 Oct 2025
- 13:08:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760645332; x=1761250132;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XW25WTUPjM0HYbFzO4qQOv0arYQaTxvpGuWa+PN/BYQ=;
+        b=VWGf22UTLG9zApLnVIgz0lj1psju0zlrrsB0mDh8pfmIAXOB47jqMQmgCNKuafHMnH
+         K7mFayml5Hx5INYZ4DdVaSOkNgkyn4BAUEGgkSnsH4nxFOg5b0Fl6+foeZH576vgYydu
+         x+rYGtC/QYgFVOqdORZVGpCmiNVxpClW+/72AJIxLVS4sCfDtWEKdOlsdU42HzRc84Bt
+         XcIvmUiaX4YFSHlKocvg69Mrm4j3VLwJCavmPs140FjsgGvXkRJdGn82x/ZlAMYtAC1u
+         zJy4q1WA5A1Pxg2B+zS1TbZFtey3tkI3TEZZeLxG283IhzBH3BHpFmryQZYU251xyWsS
+         wVBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/r+MMR3hoKOjCwyPykU7Piu/zsm2/av8Y+uXrTmKIXXPPsba7YFG06r8XZlADgpfDm++JwsMrE245KMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9UJR96e+ipanL22UmRpqoZVTRHEuR16+b5GUQh0zzzUuZZ+/1
+	BXRKtuFuNHiGmuUZbCcHgmsSjupV/9qSZXGnRDySLQO/yPBp7lkVIOcFChnOP0NX/tQqoO/wG3O
+	OnXnAHhlEJIJTDU/YPju4bYAJSkVl9gdMJeluVigi4/SAxwuDUQX5trxujap6VsD210U=
+X-Gm-Gg: ASbGncuKRvOt9Jir9fshP9iD4MeKBQHUMjI2U/CNOJgAMPqbc9811VNwe7h3RKuVtlk
+	XH/tsc8r0a6BJKDZUOoVJDI4Adzka3C036cEn9S0myIeHcqh32/3ADcFScMO3NxKrCkdCvNijLt
+	/2IbCX7qZw2nrdB9TiKH56bN11wYKEdTmkuDkHiO0E4zJSto4xF58DWG8BmdXOLd2wcK7esV5I7
+	y3CEGz/rxfpLiVHgQyv1tRy0B3zZwdW/kBoxg8HP0voIjTc3lgPGxmBZ+5Rx9HTnUaTU8atqnvf
+	1WhS2e5SN47zzgUkK+57E5bVi+WM8neiTBO/pNOOJPDhxHUkfup6msIO0zeMod50G1/xc8xPwvP
+	ftaQ3/JyMI1BZJ8NxTPgB2sSv72zaFeCuhvj504CYZciuWDCrPSGJb7P4SiPcjLQwy04FYIvIxp
+	uw2X1l+y6vupo=
+X-Received: by 2002:ac8:5fc9:0:b0:4b4:8ee1:7d98 with SMTP id d75a77b69052e-4e89d21c3d6mr24692871cf.8.1760645331603;
+        Thu, 16 Oct 2025 13:08:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELwSY0pYfGnC1kz4S53qSyk4kBH14qSenJ7X/Cza61k+EVAgrYsjLisx7xZsfpWVeiZg6fEg==
+X-Received: by 2002:ac8:5fc9:0:b0:4b4:8ee1:7d98 with SMTP id d75a77b69052e-4e89d21c3d6mr24692431cf.8.1760645331106;
+        Thu, 16 Oct 2025 13:08:51 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881fe5besm7293872e87.50.2025.10.16.13.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 13:08:50 -0700 (PDT)
+Date: Thu, 16 Oct 2025 23:08:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: david@ixit.cz
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Casey Connolly <casey.connolly@linaro.org>,
+        Jessica Zhang <jesszhan0024@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        phone-devel@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] arm64: dts: qcom: sdm845-oneplus: Describe panel
+ vci and poc supplies
+Message-ID: <62iuzoisxavlgadhz3gfrlwxqu6vl4gtlyrarjkmwihepjr4hf@nuzpsaj6jcg3>
+References: <20251016-s6e3fc2x01-v3-0-ce0f3566b903@ixit.cz>
+ <20251016-s6e3fc2x01-v3-2-ce0f3566b903@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014044135.177210-1-ghatto404@gmail.com> <20251014044135.177210-4-ghatto404@gmail.com>
- <e114504e-4bdd-46b9-b708-8eebc3075163@oss.qualcomm.com> <CAMQHOhfjsi1L+3j3TrcjEjPp3xkn94KOdsrVZvJCyUDFBBSeqg@mail.gmail.com>
- <d06a254f-bf54-4bdf-bd09-3ee5e5b31bad@oss.qualcomm.com> <CAMQHOhe=WYhtsjHMcRnJOi8UhnNNBfveTWRGSZ_bg24gFysAEw@mail.gmail.com>
- <8bd5486f-38a9-4104-8d09-234f642b45fe@oss.qualcomm.com>
-In-Reply-To: <8bd5486f-38a9-4104-8d09-234f642b45fe@oss.qualcomm.com>
-From: Ghatto <ghatto404@gmail.com>
-Date: Thu, 16 Oct 2025 16:08:15 -0400
-X-Gm-Features: AS18NWCRa6pRdMMpu0X_9Af5lgC9aF7fE9-UeKFo7BJK8yxGs2I6QnALReJ2QHs
-Message-ID: <CAMQHOheTkKC8NcRrPxKZdB_h0SJGNJVMd4NUD7TE4becPouWyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: r0q: add touchscreen support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016-s6e3fc2x01-v3-2-ce0f3566b903@ixit.cz>
+X-Authority-Analysis: v=2.4 cv=aPD9aL9m c=1 sm=1 tr=0 ts=68f150d4 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=CJSKMeR5ttdQttduZpoA:9 a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDAxNyBTYWx0ZWRfXwkNZvPLNeCvY
+ +ChTgBcW2ObnadhrOCB+iNIaiPDbeSwGGGm5IUQ9+FQE+N1QsTCNdSumguMP++7d47TobkmcwWt
+ qWBTKJLjJZ/NyhjqQi/DH7HvBjyZPQhhvsmllbWhLlfcfGR+hkxG/XFntHYxqC+0ei1dkw6kAfW
+ TqQ+r2wvmdenLmHptqaSwbOnCwgpDscJxW5zWbf9rVynfIfr9mSgMTRjv3i6faeN0QTPbYSxIo9
+ ICGV0WuKP2VTsJixgaLE44cbBuxB31ZixphfFFCM3/OdMIs0U8kIzrrHn5lXhv6AdLOdniSwmtN
+ iDJh7oCirBkZJTC7E9rhFNB3ll3xX1mFthbv9ijRzkShXwIjZs4a6Lkwz7bS3SrjyTLfQ6Ou9us
+ 6sE5BNrhv2neKYpROI8mnanGXsJYLQ==
+X-Proofpoint-ORIG-GUID: ZU_V3Y-qQfWFNryIkYhRhg3_tZxilmc7
+X-Proofpoint-GUID: ZU_V3Y-qQfWFNryIkYhRhg3_tZxilmc7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510160017
 
-On Thu, Oct 16, 2025 at 6:06=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
->
->
-> On 10/14/25 9:04 PM, Ghatto wrote:
-> > On Tue, Oct 14, 2025 at 11:18=E2=80=AFAM Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> >>
-> >> On 10/14/25 5:10 PM, Ghatto wrote:
-> >>> On Tue, Oct 14, 2025 at 7:01=E2=80=AFAM Konrad Dybcio
-> >>> <konrad.dybcio@oss.qualcomm.com> wrote:
-> >>>>
-> >>>> On 10/14/25 6:41 AM, Eric Gon=C3=A7alves wrote:
-> >>>>> Enable the ST-Microelectronics FTS2BA61Y touchscreen. This patch
-> >>>>> depends on "Input: add support for the STM FTS2BA61Y touchscreen".
-> >>>>
-> >>>> The second sentence doesn't really make sense to be included in
-> >>>> the git log
-> >>> I'll keep it to the cover letter then
-> >>>>
-> >>>>> The device has an issue where SPI 8 (the bus which the touchscreen =
-is
-> >>>>> connected to) is not working properly right now, so
-> >>>>> spi-gpio is used instead.
-> >>>>
-> >>>> Some Samsung devices used to use spi/i2c-gpio intentionally, also
-> >>>> on downstream. I'm assuming this isn't the case for r0q.
-> >>> It isn't, the device uses fts2ba61y on the spi8 bus - I hosted the
-> >>> DT at https://github.com/ghatt-o/ss_experiments/blob/main/r0q.dts if =
-you
-> >>> want to take a look.
-> >>>>
-> >>>> Did you enable gpi_dma1, qupv3_id_1 before spi8, when testing
-> >>> The driver probes, but it fails to recognize the touchscreen device
-> >>
-> >> Could you post a complete dmesg and the precise DT diff you used?
-> > https://pastebin.com/QkYa8nMp (android dmesg) mainline dmesg doesn't ha=
-ve
->
-> The link has expired =F0=9F=99=81
-https://pastebin.com/s4abJS9M shouldn't expire now!
->
-> > any relevant information other than spi/i2c probing, however, I've noti=
-ced
-> > both on deviceinfohw.ru and the dmesg that for some reason the touchscr=
-een
-> > is on spi0.0 (even though DT says 8) and I'm not sure if that means it'=
-s on SPI
-> > but on a bugged out bus or if it's really just spi on bus 0
->
-> It means that it's on the SPI bus that probed first (index 0)
->
-> [...]
->
-> > +&spi8 {
-> > +       spi-max-frequency =3D <5000000>;
-> > +
-> > +       touchscreen@0 {
-> > +               compatible =3D "st,fts2ba61y";
-> > +               reg =3D <0>;
-> > +
-> > +               vdd-supply =3D <&vreg_l8c_1p8>;
-> > +               avdd-supply =3D <&vreg_l11c_3p0>;
-> > +
-> > +               interrupt-parent =3D <&tlmm>;
-> > +               interrupts =3D <46 IRQ_TYPE_LEVEL_LOW>;
-> > +
-> > +               pinctrl-names =3D "default", "sleep";
-> > +               pinctrl-0 =3D <&tsp_int_active>;
-> > +               pinctrl-1 =3D <&tsp_int_sleep>;
-> > +
-> > +               status =3D "okay";
-> > +       };
-> > +
-> > +
-> > +       status =3D "okay";
-> > +};
->
-> this won't compile ^
->
-> Konrad
->
+On Thu, Oct 16, 2025 at 06:16:57PM +0200, David Heidelberg via B4 Relay wrote:
+> From: Casey Connolly <casey.connolly@linaro.org>
+> 
+> There are two additional supplies used by the panel, both are GPIO
+> controlled and are left enabled by the bootloader for continuous splash.
+> 
+> Previously these were (incorrectly) modelled as pinctrl. Describe them
+> properly so that the panel can control them.
+> 
+> Fixes: 288ef8a42612 ("arm64: dts: sdm845: add oneplus6/6t devices")
+> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> Co-developed-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 46 +++++++++++++++++++++-
+>  1 file changed, 45 insertions(+), 1 deletion(-)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
