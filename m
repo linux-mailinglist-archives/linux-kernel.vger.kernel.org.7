@@ -1,112 +1,197 @@
-Return-Path: <linux-kernel+bounces-857050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107E4BE5C51
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:14:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D489BE5C67
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2D95425DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:14:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0910E4E6E2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D744C2E62B4;
-	Thu, 16 Oct 2025 23:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D5625291B;
+	Thu, 16 Oct 2025 23:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NK44aBRz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Vt6INOQd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ASe/JBjf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Vt6INOQd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ASe/JBjf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FF826FDA9;
-	Thu, 16 Oct 2025 23:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAA318872A
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760656446; cv=none; b=JlohZCIxan4n2v5kSXe7cDPAONmR7TdwqpvgBvsce4ULYAO6a2j+fsDBsxYedkQ3uCGnZd2E4EzYrsXG3tKlAdkGvdyZMd1UXazLQvakgzsS+RrWxBsHvxsbNT+6dpqUzez6jlcbb9jSx86BJ3TjgHutE+1WBR87HSasiuhSDVQ=
+	t=1760656673; cv=none; b=p2MtNcUT8i4kGOjS7QfVHENNAOwqAJbHf4jEf0gsy2JEJw5tm8XtUwMIoGaDV3FULTqmI/L1nlrXq1gzORIx8GVGK9SJPioifXSOjyrWPIEBxF3tUZxkUPGuGPhST/DNbW6NxNYBmDruOGfhoF4QyiudF4GqF7xPzgaHWf/RZu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760656446; c=relaxed/simple;
-	bh=ITMqOLCtxTXwtLJfhCV2mihXr4gf+cYn7l6eHf2Y+Sk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=giLg2J2D2VdzprU7E/iYw0/UCPMPGvYCFRqQ4244fS6h6nB6dJOjOkEd5FRp7oAoH8QtZReNvoK9JnG3YsgQaMR9tMR5yMP+s3hfdRMMRlrX0KX6rlXRTr02XnoWA9hSDtLvDHC3MPjQ7BzkSBr2k+poihzsOYTpGUTe62TDkYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NK44aBRz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 190C4C4CEF1;
-	Thu, 16 Oct 2025 23:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760656444;
-	bh=ITMqOLCtxTXwtLJfhCV2mihXr4gf+cYn7l6eHf2Y+Sk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NK44aBRzxaUx3lsfUitwGmoNGboFZ6cTTXMKWQI+kBOyi4NRBR8jOs4I8RsBC9DP4
-	 sJC6kkjxsTkETQa0xviq0+REnY+Pw5K7gw9mpfhurtabTvk8uNMmBZ5RbIoF6fbf3H
-	 FXXlS3CyShJFUtjXwSFM0163wiFIFwXRT+XXBe907ORwVBa71bBRCkxXWdgM2wxMzV
-	 Nz9WiDRn8GciOkdEOI/MuQvhAi0IzGdPnzVImqp0gFrOF6ylZaUevUBLB152sUK+1X
-	 fedIbFNKZlbEzxVbPCiIvqyVlOM5mta8ZD/7nhhaM6kVg/bPsEs/LI1sUzJQior1Cq
-	 Zux5cFF2RJxMA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: linux-usb@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: usb: fix formatting
-Date: Fri, 17 Oct 2025 01:13:50 +0200
-Message-ID: <20251016231350.1418501-1-ojeda@kernel.org>
+	s=arc-20240116; t=1760656673; c=relaxed/simple;
+	bh=EZI3njGxXbbPAbO1uI7EtI/kJ8bnuhlOofcSXo4Lzj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V94ZZ+/RgIoxM2EPvY6zzmZaUd0f74RC2vtcD8gq1OY507oXHxKjvR3cvI4bExkFR3MlafELtSLgS4GJwA/0sp6mcWzjJgYKP3/7keD4Jun10aN3WTyChVgUE3E9cXAxDsIP2aqUT/0FvjFyqcDiE6RaEVMp4MAAHWEYuXF98l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Vt6INOQd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ASe/JBjf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Vt6INOQd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ASe/JBjf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 94B0B21B4F;
+	Thu, 16 Oct 2025 23:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760656669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Y8ecXVBKjnutAqaCSzRp5pFnNF0vqCxP+J0P/gIIuQ=;
+	b=Vt6INOQdFLfRzTG9SGa/jH6GFg/EDZjFrNsQKz5SZrcDlCrYeRDnVaqVIOYhwAomxx/zGH
+	NncGjWNIK7qNBYGTESuEjpy37v47g9Qd8SksPjQ3r0zi8k1nzMZ9L+BHFnxvCiU+ZK7nWw
+	Szjr/u4xLiWzpeecpxwrMKtVAkIXl1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760656669;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Y8ecXVBKjnutAqaCSzRp5pFnNF0vqCxP+J0P/gIIuQ=;
+	b=ASe/JBjf+ZARCofyuEsZ1WJOWL6Xa0Jr6EluSYcFvAc+fAdlHVB5rj1KFTQb4XeUAHZETe
+	FPGCkx9+Xs6Ik+Bg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760656669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Y8ecXVBKjnutAqaCSzRp5pFnNF0vqCxP+J0P/gIIuQ=;
+	b=Vt6INOQdFLfRzTG9SGa/jH6GFg/EDZjFrNsQKz5SZrcDlCrYeRDnVaqVIOYhwAomxx/zGH
+	NncGjWNIK7qNBYGTESuEjpy37v47g9Qd8SksPjQ3r0zi8k1nzMZ9L+BHFnxvCiU+ZK7nWw
+	Szjr/u4xLiWzpeecpxwrMKtVAkIXl1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760656669;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Y8ecXVBKjnutAqaCSzRp5pFnNF0vqCxP+J0P/gIIuQ=;
+	b=ASe/JBjf+ZARCofyuEsZ1WJOWL6Xa0Jr6EluSYcFvAc+fAdlHVB5rj1KFTQb4XeUAHZETe
+	FPGCkx9+Xs6Ik+Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDC6A1340C;
+	Thu, 16 Oct 2025 23:17:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DXPUMhx98Wg4dQAAD6G6ig
+	(envelope-from <fmancera@suse.de>); Thu, 16 Oct 2025 23:17:48 +0000
+Message-ID: <44c3937c-bf63-4e5f-a821-6c9adb4faf48@suse.de>
+Date: Fri, 17 Oct 2025 01:17:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sysfs: check visibility before changing group attribute
+ ownership
+To: Cynthia <cynthia@kosmx.dev>, Greg KH <gregkh@linuxfoundation.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+ rafael@kernel.org, dakr@kernel.org, christian.brauner@ubuntu.com,
+ edumazet@google.com, pabeni@redhat.com, davem@davemloft.net, horms@kernel.org
+References: <20251016101456.4087-1-fmancera@suse.de>
+ <2025101604-filing-plenty-ec86@gregkh>
+ <01070199eda55d65-1e43d600-4eb4-4caf-98f0-4414b449cb07-000000@eu-central-1.amazonses.com>
+Content-Language: en-US
+From: Fernando Fernandez Mancera <fmancera@suse.de>
+In-Reply-To: <01070199eda55d65-1e43d600-4eb4-4caf-98f0-4414b449cb07-000000@eu-central-1.amazonses.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-
-We do our best to keep the repository `rustfmt`-clean, thus run the tool
-to fix the formatting issue.
-
-Link: https://docs.kernel.org/rust/coding-guidelines.html#style-formatting
-Link: https://rust-for-linux.com/contributing#submit-checklist-addendum
-Fixes: 9a55e0079258 ("Revert "USB: disable rust bindings from the build for now"")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-Greg: I am sending the `rustfmt` series to Linus to see if he is OK with
-getting the tree back into a clean state:
-
-    https://lore.kernel.org/rust-for-linux/20251010174351.948650-1-ojeda@kernel.org/
-
-And I noticed that in linux-next this is wrongly formatted (i.e. bad
-sorting).
-
-Please feel free to just fix the original commit if you rebase, of
-course. I am sending this as a patch in case it helps.
-
-Thanks!
-
- rust/kernel/lib.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 9cf4ca0ae7a1..cd191686fef6 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -138,9 +138,9 @@
- pub mod tracepoint;
- pub mod transmute;
- pub mod types;
-+pub mod uaccess;
- #[cfg(CONFIG_USB = "y")]
- pub mod usb;
--pub mod uaccess;
- pub mod workqueue;
- pub mod xarray;
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,amazonses.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
 
-base-commit: 2433b84761658ef123ae683508bc461b07c5b0f0
---
-2.51.0
+
+On 10/16/25 5:31 PM, Cynthia wrote:
+> [...]
+>>>    ? psi_task_switch+0x113/0x2a0
+>>>    ? __pfx_rtnl_newlink+0x10/0x10
+>>>    rtnetlink_rcv_msg+0x346/0x3e0
+>>>    ? sched_clock+0x10/0x30
+>>>    ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+>>>    netlink_rcv_skb+0x59/0x110
+>>>    netlink_unicast+0x285/0x3c0
+>>>    ? __alloc_skb+0xdb/0x1a0
+>>>    netlink_sendmsg+0x20d/0x430
+>>>    ____sys_sendmsg+0x39f/0x3d0
+>>>    ? import_iovec+0x2f/0x40
+>>>    ___sys_sendmsg+0x99/0xe0
+>>>    __sys_sendmsg+0x8a/0xf0
+>>>    do_syscall_64+0x81/0x970
+>>>    ? __sys_bind+0xe3/0x110
+>>>    ? syscall_exit_work+0x143/0x1b0
+>>>    ? do_syscall_64+0x244/0x970
+>>>    ? sock_alloc_file+0x63/0xc0
+>>>    ? syscall_exit_work+0x143/0x1b0
+>>>    ? do_syscall_64+0x244/0x970
+>>>    ? alloc_fd+0x12e/0x190
+>>>    ? put_unused_fd+0x2a/0x70
+>>>    ? do_sys_openat2+0xa2/0xe0
+>>>    ? syscall_exit_work+0x143/0x1b0
+>>>    ? do_syscall_64+0x244/0x970
+>>>    ? exc_page_fault+0x7e/0x1a0
+>>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>   [...]
+>>>    </TASK>
+>>>
+>>> Fix this by checking is_visible() before trying to touch the attribute.
+>>>
+>>> Fixes: 303a42769c4c ("sysfs: add sysfs_group{s}_change_owner()")
+>>> Reported-by: Cynthia <cynthia@kosmx.dev>
+>>> Closes: https://lore.kernel.org/netdev/01070199e22de7f8-28f711ab- 
+>>> d3f1-46d9-b9a0-048ab05eb09b-000000@eu-central-1.amazonses.com/
+>>> Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
+>>> ---
+>>>   fs/sysfs/group.c | 26 +++++++++++++++++++++-----
+>>>   1 file changed, 21 insertions(+), 5 deletions(-)
+>> Nice, thanks!  This has been tested, right?
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> I did a quick test just now, it works in the VM (no warn and the 
+> container is running).
+> 
+
+Same here, I tested it while doing the patch using the reproducer 
+provided on the report.
+
+Thanks,
+Fernando.
+
+
 
