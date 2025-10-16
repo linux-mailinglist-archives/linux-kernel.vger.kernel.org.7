@@ -1,91 +1,178 @@
-Return-Path: <linux-kernel+bounces-856679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E6DBE4C79
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447DDBE4CAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9623C188A36B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F35EF581E7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657FA21CFE0;
-	Thu, 16 Oct 2025 17:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B8D20C00A;
+	Thu, 16 Oct 2025 17:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atP3U8RF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="UQsNPB5G"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD621922FB;
-	Thu, 16 Oct 2025 17:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760634271; cv=none; b=B5zEsyhjG9hx42orAhuGIYrgbB3CXW8Z9b6vVEpvWT0yt4L9WVUY8gCaLXsOlgGwCUq7lV9EphZioOU7HiSjTW/BibDrIi0Xij2mxD7n3I27Zy8baWF29W/KoIUfy8KtfjO/hXckxPNYWJZa1BKpyxQBtDTo28wwLd73VPUx/jg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760634271; c=relaxed/simple;
-	bh=EkbCja++TGh/RGY7U9MFZ/ewmSQrL6PS5DCx6Y9h25M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSQ8XPPGDX/2RN4UsrYvUhAmdylQ7mtAEpvb7rmax+4T7RVl8nxOEp8cb6FAkiySw9akggS6nBlgcFCYgVRXlhs8g499BnFxiKb/52uELp8H+Lk2iWbLy2+l4SwqwYd/iyFsg41tKi+YlmR/yS8lB8qsModQFZPQCoW8Hn3Etyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atP3U8RF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480C1C4CEF1;
-	Thu, 16 Oct 2025 17:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760634271;
-	bh=EkbCja++TGh/RGY7U9MFZ/ewmSQrL6PS5DCx6Y9h25M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=atP3U8RFs0gv5Nu/Lk0Uy3QZQWRJUM/j3qjhzQzQLgj+iR2CVdwizyNaB79sNdgjd
-	 FGjpe9ZS5279632kgRWXMW1n9P016Q0DPHb2V87WoQCgK94WSKaeUBqynNOLGssB17
-	 xMiTG7ph6Jw1Uy5vnoL8BO+nfZZUajoDpFGrFbGFD1v4HBPRcPfXYoW0sKOPkl2lEB
-	 823K0Onk86B9+S/Xe4a+bwTvNoaduM+F5hgq5c/jz9Hg8ASQCrT6bUkr4Dj8HiwAOt
-	 fLJDLpO6gGsm3As5rJi89YuGuPkim0GjPyhv0vA9IJGh2gTyBMWll48lPgvYn+Vy3Y
-	 ra2da+otRLGLQ==
-Message-ID: <16bec003-ca45-4576-9a18-35bfe133c5e3@kernel.org>
-Date: Thu, 16 Oct 2025 19:04:26 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003463346B2;
+	Thu, 16 Oct 2025 17:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760634616; cv=pass; b=seL79o+OAF97zvXupisS5YxLHBnkPNbC518eP6kO1k/apDdyMsFvalXGYgExJhfu5Crz6xsQe6APyPggWoRzXVPq9TgOpvmWDnmYZLjs7o9UI1OEQTnudSjvXXCARqwDdTBmlnm0Ldv3X4ngWkvmqub5jrdDBz1a+dfNTbnPoME=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760634616; c=relaxed/simple;
+	bh=IoOOOo99B6oDTSqOk5pWxfk5E3PACZ8LU1gvKyz/9f8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fu8Ldc2/NDfJ9BuT60yMtyIlpo8uIHsZd7AX7dpFSeM24nzpHccYGDLaAHj8+8QxgGq0d6un1YdGQerlvAt9BCfzSrkOFQUMTGVNI6tux5EigN9x2iG0Qwbxw+eDhA1SnypKKmuWL1pmBuW2CjCxIKJlUzWxxAoiII27rNpLrmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=UQsNPB5G; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760634588; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gczbO7sKvcCDnqFSCQR1vw53dx1KwJ5W0866fWUOnSzlNftVHnFLj77hgcQUZtYXhY4ar0IDH7bqxBx/6iCFqfl2mqPQH6dsKBEJ9AkGJjyDHneSaj81ertXiYnhnrzH0c9O80Zn4V1KJw79ZGJd7mmXlgT28lr0FBTaCsiadOQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760634588; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hbEVUDEoCtk3RUFUaAcs6tJL6oJ/a4YVjeL1gA2lj0c=; 
+	b=YoBbzw8uapRMEd890bLia1G3i2fGbjjsf6WNJmThnnPZhpHq5BO92Bf9SGMz2GamRtF4h1WYTLoGbU9bpLWepgGbVx3Ks8mQQglFWILlhDV4b3SigUq7xntql27Ad1dm1DFHD+6AXpW5tzdEplrhLZj9CYVop0/m/UcwIIfPtiI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760634588;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=hbEVUDEoCtk3RUFUaAcs6tJL6oJ/a4YVjeL1gA2lj0c=;
+	b=UQsNPB5Go5CaZbJTq7W5TDuEJTrKB9w9Kk33sLnBncGFqC3D24repvUEoKp49MYr
+	NaIT7U2ltqoYff1WLmjb5bzmBzfgIe57idrbASxG6LCiH7O8GXGe2SMPb0ks/ZXG9R3
+	H6mgu+d0x3B+3yZ2biXQx7MHasadDM+zICc2J0Rg=
+Received: by mx.zohomail.com with SMTPS id 1760634584762197.15433494671288;
+	Thu, 16 Oct 2025 10:09:44 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id A00AA180305; Thu, 16 Oct 2025 19:09:37 +0200 (CEST)
+Date: Thu, 16 Oct 2025 19:09:37 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, kernel@collabora.com, 
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci-of-dwcmshc: Add command queue support for
+ rockchip SOCs
+Message-ID: <7bxs6nw5fnjq22p7gxrmjqjtw3g5nt6cacwpfjihxv5jk765si@ho3odkyxpi7m>
+References: <20251014-rockchip-emmc-cqe-support-v1-0-918f03de0cb1@collabora.com>
+ <20251014-rockchip-emmc-cqe-support-v1-1-918f03de0cb1@collabora.com>
+ <70cca930-29ac-40a9-8e3d-fba1aace9156@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] rust: pci: implement TryInto<IrqRequest<'a>> for
- IrqVector<'a>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: bhelgaas@google.com, kwilczynski@kernel.org, ojeda@kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
- tmgross@umich.edu, rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251015182118.106604-1-dakr@kernel.org>
- <20251015182118.106604-2-dakr@kernel.org> <aPEIxYlh98exA2vn@google.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <aPEIxYlh98exA2vn@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hi7slofuvqrfaiik"
+Content-Disposition: inline
+In-Reply-To: <70cca930-29ac-40a9-8e3d-fba1aace9156@intel.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/260.576.51
+X-ZohoMailClient: External
 
-On 10/16/25 5:01 PM, Alice Ryhl wrote:
-> On Wed, Oct 15, 2025 at 08:14:29PM +0200, Danilo Krummrich wrote:
->> @@ -707,12 +705,12 @@ pub fn request_irq<'a, T: crate::irq::Handler + 'static>(
->>      /// Returns a [`kernel::irq::ThreadedRegistration`] for the given IRQ vector.
->>      pub fn request_threaded_irq<'a, T: crate::irq::ThreadedHandler + 'static>(
->>          &'a self,
->> -        vector: IrqVector<'_>,
->> +        vector: IrqVector<'a>,
->>          flags: irq::Flags,
->>          name: &'static CStr,
->>          handler: impl PinInit<T, Error> + 'a,
->>      ) -> Result<impl PinInit<irq::ThreadedRegistration<T>, Error> + 'a> {
->> -        let request = self.irq_vector(vector)?;
->> +        let request = vector.try_into()?;
-> 
-> The resulting change to the lifetime semantics is curious, but seems
-> right.
 
-Yes, IrqVector has to have the same lifetime as &self, but I was surprised that
-with this change the compiler does require an explicit lifetime (even though I
-think the explicit one is better anyways).
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+--hi7slofuvqrfaiik
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] mmc: sdhci-of-dwcmshc: Add command queue support for
+ rockchip SOCs
+MIME-Version: 1.0
 
+Hi,
+
+I will fix the typo in the commit message in PATCHv2.
+
+On Thu, Oct 16, 2025 at 10:42:29AM +0300, Adrian Hunter wrote:
+> > +static void rk35xx_sdhci_cqe_enable(struct mmc_host *mmc)
+> > +{
+> > +	struct sdhci_host *host =3D mmc_priv(mmc);
+> > +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> > +	struct dwcmshc_priv *dwc_priv =3D sdhci_pltfm_priv(pltfm_host);
+> > +	u32 reg;
+> > +
+> > +	reg =3D sdhci_readl(host, dwc_priv->vendor_specific_area2 + CQHCI_CFG=
+);
+> > +	reg |=3D CQHCI_ENABLE;
+> > +	sdhci_writel(host, reg, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
+> > +
+> > +	reg =3D sdhci_readl(host, SDHCI_PRESENT_STATE);
+> > +	while (reg & SDHCI_DATA_AVAILABLE) {
+> > +		sdhci_readl(host, SDHCI_BUFFER);
+> > +		reg =3D sdhci_readl(host, SDHCI_PRESENT_STATE);
+> > +	}
+> > +
+> > +	sdhci_writew(host, DWCMSHC_SDHCI_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
+> > +
+> > +	sdhci_cqe_enable(mmc);
+> > +
+> > +	sdhci_writew(host, DWCMSHC_SDHCI_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
+>=20
+> Transfer mode was set already 2 lines up
+
+Indeed. I was not sure if this is an intentional quirk from Yifeng
+Zhao and thus kept this dual write.
+
+> > +}
+> > +
+> > +static void rk35xx_sdhci_cqe_disabled(struct mmc_host *mmc, bool recov=
+ery)
+>=20
+> As mentioned elsewhere "disabled" -> "disable"
+
+Ack, will fix in PATCHv2.
+
+> > +{
+> > +	struct sdhci_host *host =3D mmc_priv(mmc);
+> > +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> > +	struct dwcmshc_priv *dwc_priv =3D sdhci_pltfm_priv(pltfm_host);
+> > +	unsigned long flags;
+> > +	u32 ctrl;
+> > +
+> > +	mmc->cqe_ops->cqe_wait_for_idle(mmc);
+>=20
+> Is this necessary?  If so, it seems more like something that should be do=
+ne by
+> cqhci itself.
+
+The RK3588 TRM says that the software needs to verify that the eMMC
+controller is in idle state without any ongoing commands or data
+transfers before disabling the CQ_EN bit (CQHCI_ENABLE in the kernel).
+
+Thanks for the review,
+
+-- Sebastian
+
+--hi7slofuvqrfaiik
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjxJs4ACgkQ2O7X88g7
++pq51hAAm3CH6Mqi1/tRfS7aU5DQ4CTIPKPwk8OcIi55uSaw6dq9jg7bPBVs4V7n
+9HB551tq8Pam5BJ4/rLH7izTRBCzSG/hvChWlKYqsVw1w60Pb/JaTBxoFiYrq9XD
+gNfWsQPBo3hwxrkzeIxYNNn2AnLHcEmkzYLWjVRsxNaoalAsOtwgTA/8bY4Yuwvg
+Q7zCCqj4XrWrhvYET/c8EIoYkfjOnTkNhvE/ErZRYPb1tJLSjrzJoxU0KjtUtGcm
+ac+orwAkqDuMVOpL0CvdjZkDiOhnubYAL9vWcSDXKN++MbeMwaLoqsrl3x9bnw1X
+eYzGDQr5pNK7ywYVAcxu6mOTFrQaBFzh7RcoV5f+Gpw2xjF99CYpGI5Nysxyjr/q
+1KoaTFjp8FQxVxycZhPCAnbAXrvfWWhKCwU8bbR3tgYHFMTGR/bnQqYQFbTu+5nL
+W54NRQir+pMjeAOt8/aKhPCvQ8FPOUdQoqXqUqt7iVBtEdDejfKxVgV+TAC/7ild
+xhh+jwafHylVySu8xf7kYUgITtNXIkeDlaU34SvWUs+rZ8fXE+ixQPez4c2QMzy7
+mImT+596Tn+3IeRjnZVGaRsFCHRcwZZ95O167gW2IfU6BCFNS3E3a6DULxsbrNmv
+aVM8t/FpIjNYIHDNGGTKD2YybwFSNeY1c0F2L7zUBTcY8gir0cM=
+=DGaK
+-----END PGP SIGNATURE-----
+
+--hi7slofuvqrfaiik--
 
