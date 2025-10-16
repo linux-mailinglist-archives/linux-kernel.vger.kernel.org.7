@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-857068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D40BE5D4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:55:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8385BE5D54
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 846504EB4A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:55:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E2F74E378D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 23:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205E62E716A;
-	Thu, 16 Oct 2025 23:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2312E22A7;
+	Thu, 16 Oct 2025 23:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BZ15LKBe"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW8xCsIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134EA2D7DCA
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDAF2405E8;
+	Thu, 16 Oct 2025 23:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760658943; cv=none; b=LhHJv2+MI6oAOog1NAssieqtomBgK9T18XzWRJSTjtdjlmbqAB7fKpD7tBnle/epn9WfiAMWUFRdiDQcr28qToG9f8Ii2NTLzrBaILPnahXoWh3XZYF50FbYr7NNMMxFfrq/GOMYc7UppswmeGsU46ltfCk56RJuOq3Mz6IrNE8=
+	t=1760659010; cv=none; b=TCXXZPbTBFh/z7j7scaHGsC6vK0aAK4kOl0zU6zsAfszxUJvuBWKOzRobrkS+1M56E0A0tBk9Vq0yoYvWqQmb4Ykf8d8GX97mglUSrjKlrvw8ULwWANmVSZWEskGmUv3RUJolW4biBCgzVETNcwi7u8Mc6dnJnCWwuhHwbLRtlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760658943; c=relaxed/simple;
-	bh=WwjO4GatRHKKUJDBAs3BruAaj4i1hqbmFn941g71wiI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XEyVquyeJqXxOpRW5olwY3IPcez+HC+8DUVdAiQTAp1zn5viRCAwfCaqOJuIUGJk8VsuYlsrbTxFfbVSUHFrxRAIATJjYMReuH4jFbPyb/0XFg5jc6pTfl4Pkewa7r9Av30JZHiIEvStaejY0/lY3AorydrHVVpw9CKNFb4kkR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BZ15LKBe; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bba464b08so925372a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 16:55:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760658941; x=1761263741; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pPVrm5pE/FjJ1RaaLP4f68EkqgXZ2N60KkxrWhwGEQA=;
-        b=BZ15LKBeEY92ify+Cxeb4qE/yuu6mWLN32WabLVpaBwKpD4rV5uZ9b4lejpAMefAno
-         GxO6vlPBNqKkkv6ZumIPgWzpemURtOQomf7/CZ17qnF/rsaWlkpALJ6iX68/0xkP2Csc
-         GsJOBlKiPcwqSoDhIumBwgqqQSMj3LzPJ8SGcZuQF4B74WNmjV0JBYtfgZKIfsDz8SAU
-         Na2ddSIydDA8EBs6cWciCbFoCPfG16zBhYbA8GjrWPUy0eC4hJW9Hzsky1kQ3DMcBkuu
-         lPi0ZV71X9q2Ugx+9AYuF4pqXOi9PrJVilgN+l9lr67QKivZRLJRSq/75QEbKgfUgQ6p
-         UyJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760658941; x=1761263741;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPVrm5pE/FjJ1RaaLP4f68EkqgXZ2N60KkxrWhwGEQA=;
-        b=nbdctpotXZhjlUA9GQesnRvm25iXtlroZVclHUHruSN5ByFJyU4HPNofBVUkqPTW7V
-         K+qZxmCyExPxZsub25Otaei46ZkHMJA7VXu9oYxz2L3UwNBuHSfPr4UhbghjhnT0Ns4B
-         Q16IhpEJQMq33qojcV6iC8uLTY6coRi+P7lhTke4vqAUDciyMPtM29BCmYxVRyjAuN2B
-         BHsUBN3tUml22CRnDZTIk61i7tGkD7o8tEehXAF8zObtOno91kE4cFwKQKorYXzCP8hv
-         P7ixT/jzBlzatB7MbBnAdPyeqGrJag0g9BQtuKKfO5x7xjyQmpVLuagEP34ZNnLbS2EL
-         Girw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCDr5+BmUi0WvuP855uC+wQJX80inAbfCpM4gIKgWsvfMlImyCtH99PzpUzMVqdTOQI59hD7qrTwr/bbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFVROAWHeOofpag9MJuXWbO4e4k2RJBSo8cVpDuvXVFhiWahX2
-	HC80nD35G9F0jMkp29AMtZZCONWl65BRKCo+RCa6ew60qRfvcmjGq6WXmWtLhmQJD9k5ouDaOPc
-	TINfg/g==
-X-Google-Smtp-Source: AGHT+IEubE2lA1WOXoIBHExBmIq5CuR49JO3UOOOlGoyNxR7LBrKYLkgLhfLvK7PDhIOutFTQwQ9vWmAfjA=
-X-Received: from pjbtd12.prod.google.com ([2002:a17:90b:544c:b0:330:b9e9:7acc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5290:b0:32e:a54a:be5d
- with SMTP id 98e67ed59e1d1-33bcf85abbfmr1652222a91.2.1760658941384; Thu, 16
- Oct 2025 16:55:41 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 16 Oct 2025 16:55:38 -0700
+	s=arc-20240116; t=1760659010; c=relaxed/simple;
+	bh=3kntJsodGoesQXD3hEICZYjE4tiqmt6YN9DYV7C3aYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OGXixcfZpgnNcAiKgBQze42CWwVkaTrYpUgmtdaojdbgM0eKumds84tMarQZS4lRHzVoWmxHzA7JIjgiQLZwSbF2v2Z62SqnCKWUTBvzInWOj0T/L8LUTFEY2FLDIuu4jJV9JgPYmsmni+IeVGu/NpgWdQ9Ec+jhJDbdizVa1I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW8xCsIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A18AC4CEF1;
+	Thu, 16 Oct 2025 23:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760659010;
+	bh=3kntJsodGoesQXD3hEICZYjE4tiqmt6YN9DYV7C3aYU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oW8xCsIvW40e2O3RLk06mYWw2kPwQ2hrgE+2PvNHKqWTTQzyJr4Wf/vvNcXsxF/kb
+	 46JPR1aVBEPn/JlD2caRC4+WSObi1cHZVAyWJNcmqSzE60zL8orZU3zoeEsJ8L/TNk
+	 s9b/1M4+PnILg+haYyZU8i3jNsG4wBAVmq16yz/uRoah6KJ9olZHhZ9wnbl3HJxEqC
+	 50KfblW6w6uqXJGcof01wwYnatUWsUNk+NtRGwo32xD/5Fm7EA6HCceU6NVs/Q/pPf
+	 xKXHrF9PxbB2TQ6zxP8mIm7vfMMOX2NbB9JH4D5SpzM17oVl0J2da3yUycWlQMigSY
+	 y4E3/P83yA7sg==
+Date: Thu, 16 Oct 2025 16:56:48 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Simon Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ "Paolo Abeni" <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Tony
+ Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, <netdev@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dan Nowlin
+ <dan.nowlin@intel.com>, Qi Zhang <qi.z.zhang@intel.com>, Jie Wang
+ <jie1x.wang@intel.com>, Junfeng Guo <junfeng.guo@intel.com>, "Jedrzej
+ Jagielski" <jedrzej.jagielski@intel.com>, Aleksandr Loktionov
+ <aleksandr.loktionov@intel.com>, Rafal Romanowski
+ <rafal.romanowski@intel.com>
+Subject: Re: [PATCH net-next 06/14] ice: Extend PTYPE bitmap coverage for
+ GTP encapsulated flows
+Message-ID: <20251016165648.2f53e1fc@kernel.org>
+In-Reply-To: <902dab41-51f0-4e01-8149-921fb80db23d@intel.com>
+References: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
+	<20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com>
+	<aPDjUeXzS1lA2owf@horms.kernel.org>
+	<64d3e25a-c9d6-4a43-84dd-cffe60ac9848@intel.com>
+	<aPFBazc43ZYNvrz7@horms.kernel.org>
+	<902dab41-51f0-4e01-8149-921fb80db23d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251016235538.171962-1-seanjc@google.com>
-Subject: [PATCH] Documentation: KVM: Formalizing taking vcpu->mutex *outside*
- of kvm->slots_lock
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Explicitly document the ordering of vcpu->mutex being taken *outside* of
-kvm->slots_lock.  While extremely unintuitive, and arguably wrong, both
-arm64 and x86 have gained flows that take kvm->slots_lock inside of
-vcpu->mutex.  x86's kvm_inhibit_apic_access_page() is particularly
-nasty, as slots_lock is taken quite deep within KVM_RUN, i.e. simply
-swapping the ordering isn't an option.
+On Thu, 16 Oct 2025 14:37:53 -0700 Jacob Keller wrote:
+> What version of git are you using? I'm using git v2.51.0 Perhaps this
+> isn't a b4 or git issue but some other tooling that is causing an issue
+> (patchwork?).
 
-Commit to the vcpu->mutex => kvm->slots_lock ordering even though taking a
-VM-scoped lock inside a vCPU-scoped lock is odd, as vcpu->mutex really is
-intended to be a "top-level" lock in most respects, whereas kvm->slots_lock
-is "just" a helper lock.
+Looks like patchwork, it serves us:
+https://patchwork.kernel.org/project/netdevbpf/patch/20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com/mbox
+which has the -- "corrected" to ---
 
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- Documentation/virt/kvm/locking.rst | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/virt/kvm/locking.rst b/Documentation/virt/kvm/locking.rst
-index ae8bce7fecbe..2b4c786038be 100644
---- a/Documentation/virt/kvm/locking.rst
-+++ b/Documentation/virt/kvm/locking.rst
-@@ -17,6 +17,8 @@ The acquisition orders for mutexes are as follows:
- 
- - kvm->lock is taken outside kvm->slots_lock and kvm->irq_lock
- 
-+- vcpu->mutex is taken outside kvm->slots_lock
-+
- - kvm->slots_lock is taken outside kvm->irq_lock, though acquiring
-   them together is quite rare.
- 
-
-base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
+Doesn't matter all that much cause there are also kdoc issues on
+patches 4 and 5. Obligatory advertisement:
+https://github.com/linux-netdev/nipa?tab=readme-ov-file#running-locally
 -- 
-2.51.0.858.gf9c4a03a3a-goog
-
+pw-bot: cr
 
