@@ -1,154 +1,127 @@
-Return-Path: <linux-kernel+bounces-855507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1D0BE17F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE03BE1808
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 07:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C55D84EBAAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:16:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 016A44EF220
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 05:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72437225414;
-	Thu, 16 Oct 2025 05:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB09522ACEF;
+	Thu, 16 Oct 2025 05:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fU3M8doa"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1to4AVv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E73B223DDD
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 05:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5642264CF;
+	Thu, 16 Oct 2025 05:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760591802; cv=none; b=Cd6mJm5HEnZyzvrhabVNxCC55plQI7wH/b/EIoeVu5T/Rb7G5YCruJMQNGYIbJptSIMnCvwA8xQAObgTYuHVAnH+srn68fJdT0sbeJdKQzlHePYl1dHW+ZPZf1zXcugSxM3KkLMaS5MvqTu2Fxq3P6PrXhVVya6K6GlF5ObewHw=
+	t=1760592045; cv=none; b=ANh2d2E9+tSbdUlYW0zWiRQL+dt97Ce368pn2Er6bfv6hUjwy5ump1M+7tPM041SpQ3CYuju9visQ2d97A3215M8W5Lprzix86jCQcEOVilzGwDxHqrv5dmkXnLH+2lum1H1sY32hFQcj8qbEiTZ6AC2l8/YVp7VlfYh1TIfTfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760591802; c=relaxed/simple;
-	bh=C5vNE/JdIuz7kIW1xQSUDF6bjXOLGiRlAa2BP0KHlrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UtIgNsGIVAHYqpGA73fhQzdUlvfpQX1Qf3B9Av36HSlP+JIC1FPhfFX7/1FbU+WkclAingTh9ZE/9jKirjkI39cemG1CBNYsQ847qvbKkd7mI5aDEyHlYTGiP7tPEK8702vLh031YrvZ30LVtHnbddOqzCY9XCn833liuxDmkfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fU3M8doa; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so1231681a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:16:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760591801; x=1761196601; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pigqJGC+B272ixDTo1WsT4TFwZwGZ84ntnAlQQ1cee8=;
-        b=fU3M8doacUY6An4QOGpKmuSLtodEus5lRnz7GkHT8LYO62vRiCSdOfKK9kj2VMXaaM
-         MLCB3kFwRdFsIfUWhEu6ul1w2NrxNZ3+9HJoZkvd9Fv0DD+Yz8JzzJjrNbJe0jmwAPe/
-         jXMy/yPLjw9/1zBGm1vfEQZ+fr+YGiyCi+3h6neCwXAsen3Mw+oNO0cCUgenLa70KAUa
-         81OH6xuvbPueld+crkyS/5GHTTJp13PVghphqJzn5uO2momFOe8qOg249G/LN8jsaOMt
-         M6wL51CAaQ/2vvkSIbKj+6S/sLguFlrwEuBnpoUG6L6Rtz0YEgKjK5EousM/BdPaJ1+J
-         5/Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760591801; x=1761196601;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pigqJGC+B272ixDTo1WsT4TFwZwGZ84ntnAlQQ1cee8=;
-        b=KFa2ajaOtKVWVB6XKLqRi6VhP7OfZ0h+AUypzuQX+EOdC+OZyf3JxKmbe0E0klZDxN
-         kjgEwooYzicBirJF6dCx9blhNCkwePXzQvTWsNn1E00EIODprKaH/r4jYFJJua4xOazx
-         39pULBXsM0MMK7eA2ZrbE2Cu6wpGW5Z4GPaZ+qZJ6PNRVs+DluuxIIqJV/+zwZgJuX9e
-         2jhB4Z2CJOkwAxN/ujYdH9Sqhsq9nqUbcsBluo27mu49e6sTaBi48HS8SQlZKoDOKCA8
-         dm0+VJYRomFxaiduPxU9a5G2rA5i91XdZJE2FCNOS69h5nygSdzQURvMvt19SSY9bIdl
-         5OJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX44bsZPhIpqpCCUPTWPcOHscOLcwLSOVRZChWUiFWRDNeEg624LxsuSrWx4uERe+GBzP9i/PQlZLgO0Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+vsBYynKpjB7VU1AmJm/btb+gXhcUP4sVwAqSQF/Ku8I/e6WH
-	32pOtnua78f6jafYoKoro0PjFcj/xHEGgBKdpXlis8S1nLG0VDQTz1OM
-X-Gm-Gg: ASbGncuPACqY5mB471k03EMDE3vcUBpxqnX2dysiaJYDJOm1owEK1nc0lHt9Z+iz0ur
-	NQXIE0fpKUHR9+YLROPmMCW0zb20UZ8yVgy4zJOdBh8ZdOQwioIn/ZGe2IodFK6+6bj5vAK4u7o
-	DYa+38yNTICCXou3I9grm0GNXBl+iCK6H+UNGPUMTiNkm2InDMkYoy6eFQJf2c117MOorq6oe8u
-	GCgrT7Y9+lCaLVJ4Gu9iW9w0lqAkzVwS02eccPdKNwDhGT+4u6/Fcclm805eLzsAnCOsME0j96K
-	imjDR5BnNc7miv0wQcSdK4KGKLm2d80ndFLbkB9FBk1sTVOL7UtFN4if4z3JmbbgXDm5SHPiYBU
-	KqknY14ZHmdFA/bZcfsPrP9R4dgkwZAU481gheUi1tDLfXqDKYnrTtV8EfBbH5o+rvqSZZ6dakF
-	1TkUhhxU2PDobp3A==
-X-Google-Smtp-Source: AGHT+IF0/K4q2jQn9UOtDGAHunWEgJG1TbfokjhDoIk1ay6EYVQXYRPGachSbGMLIS9aV8kVIq+UWw==
-X-Received: by 2002:a17:90b:268e:b0:330:55de:8c20 with SMTP id 98e67ed59e1d1-33b9e09006bmr3258974a91.2.1760591800552;
-        Wed, 15 Oct 2025 22:16:40 -0700 (PDT)
-Received: from jeuk-MS-7D42.. ([175.119.5.143])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b0606f0sm21261497b3a.15.2025.10.15.22.16.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 22:16:39 -0700 (PDT)
-From: Jeuk Kim <jeuk20.kim@gmail.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	jeuk20.kim@samsung.com,
-	d_hyun.kwon@samsung.com,
-	gyusun.lee@samsung.com,
-	hyenc.jeong@samsung.com,
-	j-young.choi@samsung.com,
-	jaemyung.lee@samsung.com,
-	jieon.seol@samsung.com,
-	keosung.park@samsung.com,
-	wone.jung@samsung.com
-Subject: [PATCH] f2fs: serialize writeback for inline-crypto inodes
-Date: Thu, 16 Oct 2025 14:16:21 +0900
-Message-ID: <20251016051621.7425-1-jeuk20.kim@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760592045; c=relaxed/simple;
+	bh=ITUgx3N03EK9CFNyirfZfXh7cU+zPoME+aIpuLj0Acs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UsA5bNMxiONqEcn1xW1CmBYaPIIT2F0bJVKUBv7zkjh+fszEqc1xWm/ekOA64nk5ssGdZpJj1iqA1BCetjqvs2MuqhGV54Y4FjyWFo0ZYa4nKpgBEEbLv0SaXJBjgzOYVsMwx9NHskhM9+m8Pr409wjDrDrZ0YIwdok14fYLewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1to4AVv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9BCBDC4CEFB;
+	Thu, 16 Oct 2025 05:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760592044;
+	bh=ITUgx3N03EK9CFNyirfZfXh7cU+zPoME+aIpuLj0Acs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=p1to4AVvn5kgrCtwkt9LP5viD9K8enlwfzzTnbEdFgujpGENa+wlvhy9otW9zkvSj
+	 cSmZU1fL+zuK9hDNimoAxEQzaDeAC1VNPEpdk/n6+Nmyf0ksHwQayg8FfUNZmdPTRG
+	 W10EOFpj4glKRCq80hT4SD/jH/y/aCfmLt2/FBUJ1/4lbFpya5eEBqkeXKAfObi/tc
+	 uNyXh5LbViYIJIdc8Q+LTMV8fRF9Ug7FpotdiuOPyGF/a/vv/kDbsJy0hmIF6gdU4H
+	 d/UDGslPJ/EGMwUN6fbrhLqISb9txqEoTGHsPohw3lNFVqwl/sH/7FKBZl8zQSF9zp
+	 kaWLd//xx/2ag==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD7ACCD194;
+	Thu, 16 Oct 2025 05:20:44 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH v4 0/2] iio: humditiy: hdc3020: fix units
+Date: Thu, 16 Oct 2025 07:20:37 +0200
+Message-Id: <20251016-hdc3020-units-fix-v4-0-2d9e9f33c7b1@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKWA8GgC/23OwQrCMAwG4FcZPVtJWuc6T76HeFjbzBZ0k3YWZ
+ ezd7QYqyE7h/yFfMrJIwVNkh2JkgZKPvu9y2G0KZlzTXYh7mzMTIEpQArizRkKej84Pkbf+yWs
+ kq7UyxkLF8t49UK4X83TO2fk49OG1nEg4tx8NV7SEHPi+0aCNLKUp6Xj1pB2FsDX9jc1gEj+kh
+ lVEZGR+V6oGyxqrFUR+EQSUa4jMiBbYNloKrZT4Q6ZpegNV9LjfPwEAAA==
+X-Change-ID: 20250820-hdc3020-units-fix-91edbb8ccd07
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Chris Lesiak <chris.lesiak@licorbio.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760592043; l=1749;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=ITUgx3N03EK9CFNyirfZfXh7cU+zPoME+aIpuLj0Acs=;
+ b=N09qwM+v+PNKWl7FPdJLocOTs2GKdT2AnWfWVq7ZXDUesAjWmHCUBD49XCLz9D0mbegssSRKw
+ 07ubwFeDLEwCcuMDwWTcJK109d0CQko9JBCPprFcexngdn4EXnnQN0L
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-From: Jeuk Kim <jeuk20.kim@samsung.com>
+Fix units to milli degree celsius and milli percent for temperature
+respectively relative humidity measurements and thresholds.
 
-Inline encryption derives DUN from <inode, file offset>,
-so bios from different inodes can't merge. With multi-threaded
-buffered O_SYNC writes where each thread writes to its own file,
-4KiB-per-page LBA allocation interleaves across inodes and
-causes bio split. Serialize writeback for fscrypt inline-crypto
-inodes via __should_serialize_io() to keep foreground writeback
-focused on one inode and avoid split.
-
-Test: fio --name=wb_osync --rw=write --bs=1M \
-      --time_based=1 --runtime=60s --size=2G \
-      --ioengine=psync --direct=0 --sync=1 \
-      --numjobs=8 --thread=1 --nrfiles=1 \
-      --filename_format='wb_osync.$jobnum'
-
-device: UFS
-
-Before -
-  write throughput: 675MiB/s
-  device I/O size distribution (by count, total 1027414):
-    4 KiB:  923139 (89.9%)
-    8 KiB:  84798 (8.3%)
-    ≥512 KiB: 453 (0.0%)
-
-After -
-  write throughput: 1760MiB/s
-  device I/O size distribution (by count, total 231750):
-    4 KiB:  16904 (7.3%)
-    8 KiB:  72128 (31.1%)
-    ≥512 KiB: 118900 (51.3%)
-
-Signed-off-by: Jeuk Kim <jeuk20.kim@samsung.com>
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 ---
- fs/f2fs/data.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v4:
+- Add explicit formula into comments of hdc3020_thresh_get_temp and
+  hdc3020_thresh_get_hum
+- Add explicit division by 5 into calculations in hdc3020_thresh_get_temp
+  and hdc3020_thresh_get_hum
+- Link to v3: https://lore.kernel.org/r/20251013-hdc3020-units-fix-v3-0-b21fab32b882@liebherr.com
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ef38e62cda8f..ae6fb435d576 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3217,6 +3217,8 @@ static inline bool __should_serialize_io(struct inode *inode,
- 
- 	if (f2fs_need_compress_data(inode))
- 		return true;
-+	if (fscrypt_inode_uses_inline_crypto(inode))
-+		return true;
- 	if (wbc->sync_mode != WB_SYNC_ALL)
- 		return true;
- 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+Changes in v3:
+- Fix verbose comment for define HDC3020_THRESH_FRACTION (Javier)
+- Embed prescale into define HDC3020_THRESH_FRACTION to make the division
+  by 5 calculation in threshold calculations explicit. (Andy)
+- Add resulting units into comments again in hdc3020_thresh_get_temp and
+  hdc3020_thresh_get_hum (Andy)
+- Link to v2: https://lore.kernel.org/r/20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com
+
+Changes in v2:
+- Added explanation what is wrong at the moment into commit msg
+- Added define HDC3020_THRESH_FRACTION and comment at the beginning of the
+  code.
+- Use MILLI for instead of hardcoded 1000.
+- Link to v1: https://lore.kernel.org/r/20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com
+
+---
+Dimitri Fedrau (2):
+      iio: humditiy: hdc3020: fix units for temperature and humidity measurement
+      iio: humditiy: hdc3020: fix units for thresholds and hysteresis
+
+ drivers/iio/humidity/hdc3020.c | 73 +++++++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 30 deletions(-)
+---
+base-commit: 875e7d357a7f2e77a7f3fc4759d0aa0872c33027
+change-id: 20250820-hdc3020-units-fix-91edbb8ccd07
+
+Best regards,
 -- 
-2.43.0
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
 
 
