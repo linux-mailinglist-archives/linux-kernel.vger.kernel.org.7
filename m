@@ -1,176 +1,164 @@
-Return-Path: <linux-kernel+bounces-856925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A9FBE5775
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE23BE577A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 22:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA99580325
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701211A66802
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C9C2E0B6A;
-	Thu, 16 Oct 2025 20:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEA82E175F;
+	Thu, 16 Oct 2025 20:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LdSJQzpj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tq37NCE6"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B2F239E9B
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A53721CA00
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 20:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760647958; cv=none; b=hmBZy5ttJL/2jJMLjzU/6+CCU7urHmQ7HaWpe9Hb4X1YYpBEplfK7kAcceg1CFUk6igocXf9RiReFN545GKeOawy5DOTbCLQvG13hrd0p3c01yuHyCGADCRC8XhTno+3DFXVFdiJMDA++5K8zpUS50KDliPRU4gc9ui3SQveI/g=
+	t=1760647989; cv=none; b=poUDFSClTc6q9oMdqYht3DiYjT2mCHEC2Yopm7eK/8ru3QNGWUOwea5sWr1U7K7Sezwzt4pzSSQcDvMg06Kp277wXEmc6SdIJUtnjrXWNifaxT1J3LVPSAu6lohvhHky87NTDD81TUDX4hDVkPAE1/ayVfWhZdim5nx5DSyHXB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760647958; c=relaxed/simple;
-	bh=PU/TdxNHBz7m/8QSydcfpOGU6UIjKJsiLDtqA4s9uLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Se8Twmj8bnUO58KdGgH8cEDukjb8HOMwvSad2fzbZ6d+0svLhpXe2Z2qpjXbLAsGR6uN6K0/aO99oaktWmcRhf91oW8mdMbJyZQAUMA7OBnwVx7imJkNC247qLxOeyeQaTR5J/mTKRU28mmVs+tKErqzVF/KkCP94hS4Zk/Jgm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LdSJQzpj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760647955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/cKRiSBHedJeuF2YiPC1JdZMWW96N+8/8JV1od4hamE=;
-	b=LdSJQzpj6VonGYUkTxhD6cg7fx6ksYNMBWqfCoJxDsrxiYT3bMbnpvJKBGU6RMq5xMZTUM
-	E5G4qHRdcNT+6dqMw+2O6QDXOnAtL1hxcFaZuHsI9Noy22zpKysZMbTQE1RjKGz3e8A35i
-	hjddUnYxW0Up4Ihq3FrHbck0xWBRplY=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-693-R5qFwJewOX-WNs6bSVpEGA-1; Thu, 16 Oct 2025 16:52:34 -0400
-X-MC-Unique: R5qFwJewOX-WNs6bSVpEGA-1
-X-Mimecast-MFC-AGG-ID: R5qFwJewOX-WNs6bSVpEGA_1760647953
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-86df46fa013so530071285a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:52:34 -0700 (PDT)
+	s=arc-20240116; t=1760647989; c=relaxed/simple;
+	bh=KjSibwBEl5RvNt8FdRA6/VLAHMFHa4TcPKtGguhAw/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T4PoYCFhx5AYmMBDt8GjjkE82c5y3fYmwC4FTVRp7+CAWZli+DPA4m9XVPEfIGe2m+UTVNNbtiTg8JY7Ofp9TPmXz32dGFGaejf4M7AwzEhHosNn6PmT8D3UPxJsCozkk+n49ITIpkJYu149lngD+Hz4w9ApzE/00y2DqkKmmGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tq37NCE6; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-290aaff26c1so3002845ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 13:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760647986; x=1761252786; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WUGdHveixQiipUVAjag5n0t7zrVAHKQtIWI+mfEMlkY=;
+        b=Tq37NCE6PR+3dPBBJ31OiUdSt7MY5H4Tj1pP9/Rkzl3I/IMK5jrEniH8y2hKIfkre/
+         BSvWkVyLGgBJkWZYxMxv/0t/8euSxPQqnD+GRlS50ipLsSxbfK2lZiENtqppI3m034HV
+         NY1LYD/sM0Mk20W9yKtizJmeFk02T0GtuPR/oZtqfO74UfiaXvv0hXgfVngcH6BRn9Tb
+         MeFc5lfLev76ECHxhE20tHuvstb6woXcEeKFy3e8ZWDJyh+FXSa6aWzXvN7J5bdapHKi
+         9LUc3Q7/4m9tfvXMKwYOWO7H6kvQA+FPY1qDPVw2RgjcMwMO6iu7iI1EqLRjI+tNj8BJ
+         5q2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760647953; x=1761252753;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/cKRiSBHedJeuF2YiPC1JdZMWW96N+8/8JV1od4hamE=;
-        b=wjgTbQ1MfCHeLxeDqj8I2HO2q3WPmp+ZPyQDitTl62BzuL3W7U7H+zunc5MKHaNvpr
-         WIfQzSG9bydO+ZeneKfPZ7LrdPOREGYsAgo4qV9xFJJrjsFXrN5ohMDHTKt8V1JsTj7g
-         9WWRCNWrK42ivzFXC9fexQZk8GSoLhE5V3nYcp6TfpuD1FWWrR+Vy2fd3XJDZ8hthlbn
-         kkBOzNCHrDOzY6Atf61wXd+4VGkk3Fe0DAJpali7OJLltNq/O62vhSVNDKTgQM2mLqzj
-         c0r17kT9BlBQRpYxMFFypfFRUYKyEKWz9N0//x2V2ItSPEe5+qcSzakOher+Ow03xNTR
-         qaUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWT+ndujQyWYi1hRuw2xH42SwTY8rsIzsEe68W7XxvtGMnLQGizc6EL8ya/AzIHEdNirGmsl64xRlaLn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSEuPn+LOVSp4w/M6K8FN6cH4LqtPgT5sGMI+VUbhRaSXo7KjG
-	eiUGK7xIqO63Jz+6V8poKEgL0bRfYj1HjtDkc54BQ52N38+ClBqDio0yJ6K0OSD/say10iprSBV
-	A1a08Z/bBMebgnDAGt27IvYzidZ0iNhvrwO3Bcc5Z0ujJYLvr7zkd06PuHxFCaoYlJw==
-X-Gm-Gg: ASbGncsv/aJt0wOM91AbHMEvj79IRDlgsVKe5UVaQ+UGEuo96//uar+Opg/8LPU1I1Q
-	pQgq/E2BaLGUE5wHhTZ4oPYA2HY+0FUOSD1tSfSETQzEjDhlLgIkngOPb6KHc1W1ZOu4WeF7twm
-	cmJpgdfmwWLMSvAO2OkYqxJ9aJFb6hq6aQ67kYUfsMQqkAhTHCTcHxPTljJ3Nz66/015DhhcaFI
-	sgfW8C4m1VCkIvE+I232IBxklYR9S9OQrxy+v/4aO4Pu8G5cfmFduM0XHHxZtH6jN8xMTJ0h+fy
-	4M5qhFItsi6He5aYgnLYN8ovw2Xq0894DYnAzg3K9jvdd4inFzADrnnmKq6cCe/GZQ/+j0WOrhc
-	AgH2oISK9tpr0GvlxJvmOxRGg8YWwLLSARnqmlk0h6Oo39rfK1fWGUsExAhIkdsTjDA==
-X-Received: by 2002:ac8:598b:0:b0:4e7:1f00:2ce8 with SMTP id d75a77b69052e-4e89d281865mr19861911cf.18.1760647953500;
-        Thu, 16 Oct 2025 13:52:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHATwA2Ecq5ayw4bx1RtADAqnB2jb/OZrDzGJ991Q3kxbxfK4bp4SH8V/S+x7MWZzR6YqvEcQ==
-X-Received: by 2002:ac8:598b:0:b0:4e7:1f00:2ce8 with SMTP id d75a77b69052e-4e89d281865mr19861681cf.18.1760647953054;
-        Thu, 16 Oct 2025 13:52:33 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c0120cc36sm47970366d6.2.2025.10.16.13.52.31
+        d=1e100.net; s=20230601; t=1760647986; x=1761252786;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUGdHveixQiipUVAjag5n0t7zrVAHKQtIWI+mfEMlkY=;
+        b=CKwlmtq533IbaetpNcQkqzE6MJ6AnqjbFNkxBvJSaXqA3pbctQHHq9cZJ5FawwcxbF
+         25wt9GrfSuQwPzZNcFbv8ck+a5pnxSeyxrMBTAIJIi4kgYYl4HmUvkJAE8lGpyvP567O
+         a2DGSp68+oSHRDfw0PJvCLfv6GOL9KxQmwSl0kh+gMpd4f1+yAyjKpji/xH558uh9EFo
+         /jErLLykbk98Sc07jM6XKxj+wt8orm7XjcBPTasrShGNjXG/V3jA71pUuP+LO6KARwXf
+         Q0MgivRMfK8dYn6+nku12n0ZComDB5bXZ+bfWPCDu4h7YwGkDv7JHc+pD9A4x6ykwxlb
+         ZPIQ==
+X-Gm-Message-State: AOJu0YytWq0iWcRPL4Fv6o26ZZkrRVxqdeZ9Fqhc/fk6v5Hn7l+sGJ1A
+	LOiRG3uz5OV6o6dbXRNn6TLDzwe+UiD8Ukdb7/f0sU4PqNDn5tzQpjL+SxQ98H8Z
+X-Gm-Gg: ASbGncs2nvBgdJlskZgMVEV2E1uySp8bt4uicfRuZ6Ix7m04iRQ4qK9q+zc7SupyDya
+	jtpnq/kh4XbhpGf+bNRUDWChcoJLUWzlWM++h0whSYAHfcBs1Tpdvqt8kn0WtafORvsm3iaDTTb
+	/nbiPhEYTTsms+gBIelm5Z9vUC3doEOuyzAehnkQ7uVJQQGCTDg8FhXQMQGD1JTJTE28Tp27EB/
+	qwwkyvfW1kIzQW1BBHgpZ1PVCo2lopUtwGUrzMJbMgExafOhbIeERLQrhpEowvW35CFZoxChxkQ
+	7eyPeGPoR7aS2FPWhBDN++MN1VtYo0pzUuHsPFqUxQb26Eam1eOGN1JT0J3XTBdE+AyZTvw0wPE
+	c4tVhKHnVATqhsOISbA9Z0UWFSMEGme9BlS1wI7LgV0xcpA41zvdhZPEnn4PLxsJUj8Rk4FA65A
+	Hg0Im+1A==
+X-Google-Smtp-Source: AGHT+IGFqrhuRDzLp1B7vKAD/h5TSqISSfWh+qG6S2EB/f+0a7wn6hO5xl/a2yDTx2gN3DmjnP0BDA==
+X-Received: by 2002:a17:902:f645:b0:290:c3a9:42b5 with SMTP id d9443c01a7336-290c9d1fdefmr7632495ad.5.1760647986361;
+        Thu, 16 Oct 2025 13:53:06 -0700 (PDT)
+Received: from hobbes ([2600:70ff:f833:0:85d:f376:d78:d2b3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099ab1ca0sm40015035ad.96.2025.10.16.13.53.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 13:52:32 -0700 (PDT)
-Date: Thu, 16 Oct 2025 16:52:30 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	Laura Nao <laura.nao@collabora.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
-	kernel@collabora.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
-Message-ID: <aPFbDl_JKyDay1S5@redhat.com>
-References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
- <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
+        Thu, 16 Oct 2025 13:53:05 -0700 (PDT)
+Date: Thu, 16 Oct 2025 10:52:57 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, 
+	Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: [PATCH RESEND] perf/x86/amd/uncore: use kcalloc() instead of
+ multiplication
+Message-ID: <455fb1db8ab0811d2336e0ec198c728a0c703be9.1757744812.git.joeypabalinas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vqsldrqglnjee27m"
 Content-Disposition: inline
-In-Reply-To: <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
-
-Hi Nicolas,
-
-On Fri, Oct 10, 2025 at 10:47:09PM +0200, Nicolas Frattaroli wrote:
-> When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
-> operations, such as setting the rate or switching parents. However,
-> another operation that can and often does touch actual hardware state is
-> recalc_rate, which may also be affected by such a dependency.
-> 
-> Add parent enables/disables where the recalc_rate op is called directly.
-> 
-> Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-> Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  drivers/clk/clk.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98df0c0d2ad244eb90 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *core,
->  	unsigned long rate = parent_rate;
->  
->  	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-> +		if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +			clk_core_prepare_enable(core->parent);
-> +
->  		rate = core->ops->recalc_rate(core->hw, parent_rate);
-> +
-> +		if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +			clk_core_disable_unprepare(core->parent);
-> +
->  		clk_pm_runtime_put(core);
->  	}
->  	return rate;
-
-clk_change_rate() has the following code:
 
 
-        if (core->flags & CLK_OPS_PARENT_ENABLE)
-                clk_core_prepare_enable(parent);
+--vqsldrqglnjee27m
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: [PATCH RESEND] perf/x86/amd/uncore: use kcalloc() instead of
+ multiplication
+MIME-Version: 1.0
 
-	...
+Dynamic size calculations should not be performed in allocator
+function arguments due to overflow risk.
 
-        core->rate = clk_recalc(core, best_parent_rate);
+Use kcalloc() instead of multiplication in the first argument
+of kzalloc().
 
-	...
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>=20
+---
+ arch/x86/events/amd/uncore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        if (core->flags & CLK_OPS_PARENT_ENABLE)
-                clk_core_disable_unprepare(parent);
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index e8b6af199c738eb00b..d08e3054461f2ca07a 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -1036,11 +1036,11 @@ int amd_uncore_umc_ctx_init(struct amd_uncore *unco=
+re, unsigned int cpu)
+ 		group_num_pmus[gid] =3D hweight32(info.split.aux_data);
+ 		group_num_pmcs[gid] =3D info.split.num_pmcs;
+ 		uncore->num_pmus +=3D group_num_pmus[gid];
+ 	}
+=20
+-	uncore->pmus =3D kzalloc(sizeof(*uncore->pmus) * uncore->num_pmus,
++	uncore->pmus =3D kcalloc(uncore->num_pmus, sizeof(*uncore->pmus),
+ 			       GFP_KERNEL);
+ 	if (!uncore->pmus) {
+ 		uncore->num_pmus =3D 0;
+ 		goto done;
+ 	}
+--=20
+Cheers,
+Joey Pabalinas
 
-clk_change_rate() ultimately is called by various clk_set_rate
-functions. Will that be a problem for the double calls to
-clk_core_prepare_enable()?
 
-Fanning this out to the edge further is going to make the code even
-more complicated. What do you think about moving this to
-clk_core_enable_lock()? I know the set_parent operation has a special
-case that would need to be worked around.
+--vqsldrqglnjee27m
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Brian
+-----BEGIN PGP SIGNATURE-----
 
+iQJPBAABCAA5FiEEx6b1SGGPTKxTmPDYqoHu9CTxowIFAmjxWykbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyAAoJEKqB7vQk8aMCFAwQAKq3PKRByKJhX2KwbQjk
+skfl5xlEZzdfp/hFYftBkM3B62WE1USEIKxcUsdtDOoIkMLU+7gbUYtBpyb8PlA1
+8eMRVs8f20cOvBD9/9GKtRqXia4kK+YwNMoQqqzmN2LfSMobw/4f5IUnQw250/S4
+IZySErp9DrJ4XM94qp4F9RiMXHGQXBx6EhX2iKuAxnY20yxIIAp3OVw54zRYzLxI
+5gkMT311MxPorlzTHy0I+O+lpQtSS5pnTioBWB4B2GBELCAEIQQXbpfVx3U1d4aZ
+Bdr1x0Ek7zp/87L9z8oNGuzxxnhvbAPOzCIJWYbzDuoCRYrwbsQ+WSm9HnoK+9By
+2PLb0bzL0Gj8GCXAUnK11A3tJ2ldR+v/xDkdRk3Z9PafXUBGQTMBmzvFKgPXXcJx
+CSMoksqb9ijOM7ynK8cG6APcJDva+VJGhrXWoapz+8yd7yE8MNUB9hgDgj3pijZj
+qH5hByVhslsx+8EwbSzu+QNwSdsos9H+TLriOCWyI2wSkclPXLSzVV35qj4oEGoD
+6Oks/FWN5I/k/26Z4YpQLeONI60fTY8JnABrknFF3Q33WOgo9xouqv/emR7SN+iU
+zbpN9MDmt6IOZAmbryanWcQlwInbhFUkINxy7Vn2aPINPod6oksNB4EaHipW+7mW
+00LBepAkQSu0EPa9u5iq1hqy
+=irL1
+-----END PGP SIGNATURE-----
+
+--vqsldrqglnjee27m--
 
