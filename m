@@ -1,180 +1,142 @@
-Return-Path: <linux-kernel+bounces-856783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46EB9BE50E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:26:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E33BE50EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 20:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 932D63BCAE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:25:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5220E4E7915
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 18:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DC422D4FF;
-	Thu, 16 Oct 2025 18:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C949B231836;
+	Thu, 16 Oct 2025 18:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="luiJWRno"
-Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eDny30yn"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C296225785
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76961E1C22
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760639150; cv=none; b=WGNbg4I8FUgQWyKGRnrwx2aK4Lzz9rgnZhIMZlBrDho1n3IJk/B20Dv37w9M2seQMzv/StsF+9RjihsWBTMd0Qk8u244xCtF0SaS32Kre2A8IB3geXojUqB0XpHbl/IzKWwJyakm1XEYW0+qiI19jIhIphOrbPo9mlI+5fXrilc=
+	t=1760639341; cv=none; b=EamEs8/YZSJ5f9BdTSoq/I2TUlPAyyA6s7N6jlpnj6D/nC+aK4ePEF3U+XH5S9JyZNHWtkmlWKNnwFzrpTGO6tZZW8k6gF7FS9cbtEnz5acKx4WAypgy/6lP80cgeE89aZyRY3GIei+5SPqQ2O4h15ndTevPYQWNGMkRdcTPba8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760639150; c=relaxed/simple;
-	bh=V4rgg45EQlkMjgrqSVdh1uwAFbU6ZcVY09d4AEkeWxI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZxSgy4t0axFmtgz4f6MghitxL15PYrI5oRrcH1oxgGbOrUDOpA/CsVNykpWgK04IO1VHI/rkt/DcobO/6p61RWN+HnmZxKlIPCM8pm+TCQwtrE9xbDU3fk2HHqIOBzHqtMgtOZdiP7ii3oADvEP9VDTViYbgjvZSkWrASiHFAIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=luiJWRno; arc=none smtp.client-ip=209.85.160.74
+	s=arc-20240116; t=1760639341; c=relaxed/simple;
+	bh=UF3AwMJu8GdTcVj3UtSmXMsr6jhKvVHZX0CWdAKeoIg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JOeofAKX+qH5WQDbIpIKQ5QfX9eLMlwy+rMQbmlRv6ItYLCZ8kMCil/OHxJrBEMWSMBo6aEu+ISneQ2/eVYBYXGcHVhZ8TAsuBOpQycJrWpqUVza4eRqzT0QDpw9F6rGJOzgj+Z/lDasimiGrDb7dCYMPHxfRynwSJWCaqtPYKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eDny30yn; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-3c966724936so305504fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:25:48 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33428befc08so2237078a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 11:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760639148; x=1761243948; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aTNTzsh8UwWq3gKAxJaQnoz8QnNDSoRjLqAKLOKrSJ4=;
-        b=luiJWRnojfdkXN9/tOmB/7ICmBEvj80lfsx5SgR4yUOi/MUC37R0wx/oLmd4upAnYu
-         ap8ouk1tsR6DnIBnqGGV2S5/2LQH3Dc/4NyPIjdlA5YL6Fr6/u2lfJiJJjkvIM1gvJKs
-         yt/DMbY31QiMhwoc0nDY1J7pqS3jaKt3F0BQ6dsox3R8xMkiWPu1cUZ25Jn5jPkkbLkp
-         oxGpIMbRog0A/VntLugJKHtfeuGD98oVdoHp8CVrF4iDC3dE82UNy/t+YYJBonMIKd6e
-         bX7T17oI7T8q9ARTCLQ8bgDF1cROyiwcbedtpI2dNjj4y2zaaPlMbp4qajB6tVFMyWBV
-         wacg==
+        d=google.com; s=20230601; t=1760639339; x=1761244139; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0fRYlwOE6ipOvEeK9Cj1tZOghAnrxlLNVjHWdV3e+uk=;
+        b=eDny30yn3KmTBFNI7dbooNArLHBMEX8bIyXdBkFuguFTSmUBjCf0L3JonlTPhpADFS
+         ISEVpMgv5CODyMLaOHWRwuR3IYNEDOaa6D2vUADw2/9gVrzRcybKOsQDVQINPo46U3BF
+         5qpeqare5+FXqz/ZFy2bB0JjtKob3ix4FDyhBJonW7A+1D+waIhga9W4fPDonm4qmvUv
+         aWodADDfr+w/UUyInjcImVwjNluja/9OOFTTsafMgFQQbpauL22WJzyc52dE3SCv0bqr
+         0gOJ9aQnxTLw3MrJdeiLhYfJj7m3ySNtTXdL5TZCr4CdSym9X21BbFLGlwXy0BumYqof
+         5DgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760639148; x=1761243948;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aTNTzsh8UwWq3gKAxJaQnoz8QnNDSoRjLqAKLOKrSJ4=;
-        b=ELn7D87074iEY6lkwfamsHnlhkbS6iof6ADQJ7IsW0td+Hz1mQVZe5JuIchOn0OFyh
-         oWYpEP63RX5tpoD6NMRk/FHz5r0/8S/T1MRG+ZD00mhVCXri6M/CaHSZzkMDxWWN2VED
-         6HB/QM3Q7jSvAfGuKheTpX3FjU8W+/luZua5PPqaOjuZow6Om76Lf7dl5sDo31Mr79r/
-         al75fms56XEqg5AFwsunZsKRD6cWBMgYY6M+4mTfUvmehOzgoHeBmm4TbbJqCP/XYJb4
-         fgN83CwlSRhMKfjlCe2xmkp5suW1/FaaiDv40+hmwd6LGxlPvgpOb1osfVDqDRN3tZci
-         zi4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+2d7KcfBFJd2DlIIMWzDsqBgGA530JnUxxIKeBaWeZcu1IoOHaVrJTGBIKGRuXjNP8N22fCD13lrpeS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKa0ye/61WASmyvKFfKIde9ebXYooGmuvI2JRQQr0+dChg/YcJ
-	hujguYQLgT3B2iytGmTX+0LbQDOD1VFRTRd/8vig7MSmu2aWZukWUV72XqEmWl+zA3uOeZmqnPW
-	4lGv/C9FakAk/uA==
-X-Google-Smtp-Source: AGHT+IHORlKSlHZvzvt6CVNdFwUEZuO8mJlT1v1ETTjTT7HeBTJCEZWGKHssgZ7VVxf9i8WZAnDYnurNq1qOOg==
-X-Received: from oane15.prod.google.com ([2002:a05:6870:506f:b0:3c9:810c:2ba])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6870:64a5:b0:375:db59:20e4 with SMTP id 586e51a60fabf-3c98cf4364cmr380239fac.13.1760639147713;
- Thu, 16 Oct 2025 11:25:47 -0700 (PDT)
-Date: Thu, 16 Oct 2025 18:25:37 +0000
+        d=1e100.net; s=20230601; t=1760639339; x=1761244139;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0fRYlwOE6ipOvEeK9Cj1tZOghAnrxlLNVjHWdV3e+uk=;
+        b=AOYcg8FxGbK9BoLgfVu2nY9fPKIFt0ObQN6641ALULZlR8udxI7/C2SjOFG9AQSqei
+         E1UIEbyajFYp1MRqj9tE2hEdnIsT8yJre6G4q7eD8LbFZ+xv8cLC2A2U6X4qQPL01+p8
+         bkJotQgd1uXI59oNo9my1VptQN8zphW8x9Vse0AtLkSx4kaoamhigUcU1AQLyJhO3zwb
+         eBXsvHqmqwtSF6vU4EWM7XqO/TP1dOfusKioiGv2Nk++uoTxtyhb9h3Bmt/5iU+hS9b1
+         5bVz+yxpAnREopXu1RomOOBHFXv2o/k6bISK2Uks59Hw516RmuAC5NVkh+pbajf2EHGM
+         TjwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgGy759QPijoUtj8k+9yqpf8k63RFV6jCkKo597f4cerGThPX+V4H/q2/L5qem0K9xwjjmf06zqvCuctk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiUaUZRkCVg8kOLTtpmAk4GdjT6kaeUGZOYiwF/TdGr99Eyf5J
+	QAvlkc+hxk2YxIRPrV25+LYL4byw9NwG5YSzrFY8knhpM7BUdadgTmXqcnnonDAPeTKhg5xfK3T
+	nlK+IPg==
+X-Google-Smtp-Source: AGHT+IGsN3Wc8ow+0kQfebQAOlEk+HH7ZqsKXkWse6wxgZajxLhoda5hRvaTMuKi10EUGgABBMrroNhH0NI=
+X-Received: from pjbsc12.prod.google.com ([2002:a17:90b:510c:b0:33b:9db7:e905])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b09:b0:32e:d600:4fe9
+ with SMTP id 98e67ed59e1d1-33bcf85ceacmr1083277a91.4.1760639338931; Thu, 16
+ Oct 2025 11:28:58 -0700 (PDT)
+Date: Thu, 16 Oct 2025 11:28:57 -0700
+In-Reply-To: <456146b7-e4f3-46d4-8b30-8b0ccb250f08@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
-Message-ID: <20251016182538.3790567-1-cmllamas@google.com>
-Subject: [PATCH net-next] selftests/net: io_uring: fix unknown errnum values
-From: Carlos Llamas <cmllamas@google.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Pavel Begunkov <asml.silence@gmail.com>, Carlos Llamas <cmllamas@google.com>, 
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20251014231042.1399849-1-seanjc@google.com> <b12f4ba6-bf52-4378-a107-f519eb575281@intel.com>
+ <aO-oTw_l9mU1blRo@google.com> <456146b7-e4f3-46d4-8b30-8b0ccb250f08@intel.com>
+Message-ID: <aPE5aZpsDYpIqngX@google.com>
+Subject: Re: [PATCH] KVM: VMX: Inject #UD if guest tries to execute SEAMCALL
+ or TDCALL
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kai Huang <kai.huang@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-The io_uring functions return negative error values, but error() expects
-these to be positive to properly match them to an errno string. Fix this
-to make sure the correct error descriptions are displayed upon failure.
+On Wed, Oct 15, 2025, Xiaoyao Li wrote:
+> On 10/15/2025 9:57 PM, Sean Christopherson wrote:
+> > On Wed, Oct 15, 2025, Xiaoyao Li wrote:
+> > > On 10/15/2025 7:10 AM, Sean Christopherson wrote:
+> > > > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> > > > index 76271962cb70..f64a1eb241b6 100644
+> > > > --- a/arch/x86/kvm/vmx/nested.c
+> > > > +++ b/arch/x86/kvm/vmx/nested.c
+> > > > @@ -6728,6 +6728,14 @@ static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu,
+> > > >    	case EXIT_REASON_NOTIFY:
+> > > >    		/* Notify VM exit is not exposed to L1 */
+> > > >    		return false;
+> > > > +	case EXIT_REASON_SEAMCALL:
+> > > > +	case EXIT_REASON_TDCALL:
+> > > > +		/*
+> > > > +		 * SEAMCALL and TDCALL unconditionally VM-Exit, but aren't
+> > > > +		 * virtualized by KVM for L1 hypervisors, i.e. L1 should
+> > > > +		 * never want or expect such an exit.
+> > > > +		 */
+> > > 
+> > > The i.e. part is confusing? It is exactly forwarding the EXITs to L1, while
+> > > it says L1 should never want or expect such an exit.
+> > 
+> > Gah, the comment is right, the code is wrong.
+> 
+> So the intent was to return false here? to let L0 handle the exit?
 
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- .../selftests/net/io_uring_zerocopy_tx.c      | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Correct.
 
-diff --git a/tools/testing/selftests/net/io_uring_zerocopy_tx.c b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-index 76e604e4810e..7bfeeb133705 100644
---- a/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-+++ b/tools/testing/selftests/net/io_uring_zerocopy_tx.c
-@@ -106,14 +106,14 @@ static void do_tx(int domain, int type, int protocol)
- 
- 	ret = io_uring_queue_init(512, &ring, 0);
- 	if (ret)
--		error(1, ret, "io_uring: queue init");
-+		error(1, -ret, "io_uring: queue init");
- 
- 	iov.iov_base = payload;
- 	iov.iov_len = cfg_payload_len;
- 
- 	ret = io_uring_register_buffers(&ring, &iov, 1);
- 	if (ret)
--		error(1, ret, "io_uring: buffer registration");
-+		error(1, -ret, "io_uring: buffer registration");
- 
- 	tstop = gettimeofday_ms() + cfg_runtime_ms;
- 	do {
-@@ -149,24 +149,24 @@ static void do_tx(int domain, int type, int protocol)
- 
- 		ret = io_uring_submit(&ring);
- 		if (ret != cfg_nr_reqs)
--			error(1, ret, "submit");
-+			error(1, -ret, "submit");
- 
- 		if (cfg_cork)
- 			do_setsockopt(fd, IPPROTO_UDP, UDP_CORK, 0);
- 		for (i = 0; i < cfg_nr_reqs; i++) {
- 			ret = io_uring_wait_cqe(&ring, &cqe);
- 			if (ret)
--				error(1, ret, "wait cqe");
-+				error(1, -ret, "wait cqe");
- 
- 			if (cqe->user_data != NONZC_TAG &&
- 			    cqe->user_data != ZC_TAG)
--				error(1, -EINVAL, "invalid cqe->user_data");
-+				error(1, EINVAL, "invalid cqe->user_data");
- 
- 			if (cqe->flags & IORING_CQE_F_NOTIF) {
- 				if (cqe->flags & IORING_CQE_F_MORE)
--					error(1, -EINVAL, "invalid notif flags");
-+					error(1, EINVAL, "invalid notif flags");
- 				if (compl_cqes <= 0)
--					error(1, -EINVAL, "notification mismatch");
-+					error(1, EINVAL, "notification mismatch");
- 				compl_cqes--;
- 				i--;
- 				io_uring_cqe_seen(&ring);
-@@ -174,14 +174,14 @@ static void do_tx(int domain, int type, int protocol)
- 			}
- 			if (cqe->flags & IORING_CQE_F_MORE) {
- 				if (cqe->user_data != ZC_TAG)
--					error(1, cqe->res, "unexpected F_MORE");
-+					error(1, -cqe->res, "unexpected F_MORE");
- 				compl_cqes++;
- 			}
- 			if (cqe->res >= 0) {
- 				packets++;
- 				bytes += cqe->res;
- 			} else if (cqe->res != -EAGAIN) {
--				error(1, cqe->res, "send failed");
-+				error(1, -cqe->res, "send failed");
- 			}
- 			io_uring_cqe_seen(&ring);
- 		}
-@@ -190,11 +190,11 @@ static void do_tx(int domain, int type, int protocol)
- 	while (compl_cqes) {
- 		ret = io_uring_wait_cqe(&ring, &cqe);
- 		if (ret)
--			error(1, ret, "wait cqe");
-+			error(1, -ret, "wait cqe");
- 		if (cqe->flags & IORING_CQE_F_MORE)
--			error(1, -EINVAL, "invalid notif flags");
-+			error(1, EINVAL, "invalid notif flags");
- 		if (!(cqe->flags & IORING_CQE_F_NOTIF))
--			error(1, -EINVAL, "missing notif flag");
-+			error(1, EINVAL, "missing notif flag");
- 
- 		io_uring_cqe_seen(&ring);
- 		compl_cqes--;
--- 
-2.51.0.869.ge66316f041-goog
+> Then I have a question, why not implement it in nested_vmx_l0_wants_exit()?
+> what's the reason and rule here?
 
+The basic gist of "l0/l1 wants exit" is that each entity (L0 and L1) should act
+independently.  And if both L0 and L1 "want" the exit, then L0 wins.
+
+E.g. for EXIT_REASON_EXTERNAL_INTERRUPT, KVM _always_ wants the exit because KVM
+unconditionally runs with PIN_BASED_EXT_INTR_MASK set.  But L1 might want the
+exit too, i.e. if it too is running with PIN_BASED_EXT_INTR_MASK.  But L1 doesn't
+get the exit because L0's desire trumps L1.
+
+Other exit are less straightfoward.  E.g. EXIT_REASON_EXCEPTION_NMI is filled with
+conditionals because KVM needs to determine if the exception was due to something
+KVM did, i.e. if the exception needs to be resolved by KVM, or if it the exception
+isn't at all related to KVM and thus isn't "want" by L0.  But the exception may
+still be routed to L0, e.g. if L1 doesn't want it.
+
+For this particular case, L1 _can't_ want the exit, because the exit simply shouldn't
+exist from L1's perspective.  Whether or not L0 wants the exit can't really be
+known, because that would require predicting the future.  E.g. in the unlikely
+case that KVM somehow virtualized some piece of TDX and thus exposed SEAMCALL
+and/or TDCALL exits to L1, then nested_vmx_l1_wants_exit() _must_ be updated,
+if only to consult the L1 VMXON state.  But L0's wants may or may not change;
+if there are no scenarios where KVM/L0 "wants" the exit, then there wouldn't be
+a need to modify nested_vmx_l0_wants_exit().
+
+And so the most future-resistant location for this particular case is
+nested_vmx_l1_wants_exit().
 
