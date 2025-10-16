@@ -1,179 +1,233 @@
-Return-Path: <linux-kernel+bounces-855761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE262BE237C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:47:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB50BE23A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 10:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E0E48680A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6645219C0427
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 08:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F8C3090D0;
-	Thu, 16 Oct 2025 08:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F4030BB8B;
+	Thu, 16 Oct 2025 08:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KBje1WTg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kmRWLsEb"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE23B2FDC51
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9EA30B50B
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760604446; cv=none; b=E1W1qk8yZKYqCErhu5GgqyH2roStRBleRmya6R0nIsUirvhZqZmYpD3yxQIwh0wXMvkDclaE8VBUHfWmUkY4MhxU1dTY+sZMXCkSu6L1+Zgv1WSCqWFZbLo+w8gip4YNP0hX/zLaZCb5TjgqoKBMPDJjYvTlHsAp8ntw57VGFr4=
+	t=1760604651; cv=none; b=nXF/fyU/Gw1qZrMXmQXXFubVVwg2S9yFLXkJinidqzByKRXvrIwDxXUlzcyVYTOYGft3H/aWC1AhOzpKnXcMVETdAJT5Joj+ZPRuUk5ki3xnwADY3jxdPcbwDTQ/qiWDO/bSlfimt++ZyUHNjvjoxqTSpDhoS/VezHdkddJuXoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760604446; c=relaxed/simple;
-	bh=4Cr3hLvCCrouiag43KD+fwe7CAMY7VqZErV48pL/VOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FB5oh6EI8/eLVBWCYvct9dgarwwUeUVQzs3CZszA94eNkVdbG+5ackTHJmDstQpjO/7MS4Hy75MVlkhW7Fy7f0VH5eLIaMkfgPt3dQ+UgJOIZ2ZLix0dkSv4Es/eFGzL8/kGDJeHtB1+4sf6gFZwJ2Y9mY5ujes+9JLBBt3DYjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KBje1WTg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59G8DNsd009138
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:47:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DtK2jXcjWQPbKB7OnX2TPJKpHc1AyZMAFUwhHWo+ek4=; b=KBje1WTgyhZ37KRv
-	On83yXBfGXbNXOOwqTu69Gof1xwbOtsQVzIMUOaWhqJAH14FsD+2g3ptjOhhggGG
-	O/G61XyTeZzgFxtpTCcAZsDtiruQ/XX/V1mFqpBuDjVOc+qhEMI4UhVVM9Zhms0C
-	b0qrY+XqgoLLpJg2AIptG//5SEm9TojJTt1A0j+FvvhLqOauzd4xTWw3hsPtgnro
-	qvJz4dT4dW6Gb93cOuYGaocMUfHPXsqxk6YQojuMEWy96m6tvyHdK35CQ0MGSD48
-	ll11UmuQ7eI0qMtstRSSzPML9uyFnqqfiFF9NT9iOSGZ3SnmEJhb/i8FB+PpquFU
-	yM+wPQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0c7ghk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 08:47:24 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87c08308d26so17257056d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:47:23 -0700 (PDT)
+	s=arc-20240116; t=1760604651; c=relaxed/simple;
+	bh=5/XS3JraEjxk1JfmUJdTZhej2bh1Sw1yywUdb9kgz+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrBXeNBJXQCmFXhfqEED9V3gHDnKPqUZxJ+XiseUmb8KmjTKdxLxQbIFT3rI1sNHEkEoAeh7CuhWHzYiQFFBS0w3l/FS3bW10uvbajzVFJ45zP/cqWnT8afmxrEM0/yorE4txa7iaGBNLX9JjXVAzrhqVMnQEwEZjsWK7XLjRRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kmRWLsEb; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b00a9989633so90872566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760604647; x=1761209447; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HPGh/INSa2zSUyaHqMg9VH3NffLUw7enDRxb7tS1TjQ=;
+        b=kmRWLsEb66JdBRTvhWEaSVOf8uv8SVUmZNFoyq7K2ysaQhdkzIjuqdLYrnNraueLZ0
+         sswo48kmXbYk3X6VraNcvZQOsDZpniFdkuwwZfZ18e8AwmgSziTJ5U1GkL/yKsKHWPQz
+         l4aqRNFxCRAVt13UOXUPb8OesJO18nAvUQcdESwwT3m1F2LbQksVLId+VFLW7Exhc6fQ
+         ej7W/Nuig1HZl2ieRYZb+GyWpZ26U0iO6IqGv4KBYW4YfaL5lNYrU5Q+t2ZsNmZBLcSZ
+         tThq7BtMRu2flW4Y7lBgQDqxboNNn6aM6b8iMlLHhFqmuyJzP7k5Jsn/J3g7oeLQkOP6
+         bgFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760604443; x=1761209243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DtK2jXcjWQPbKB7OnX2TPJKpHc1AyZMAFUwhHWo+ek4=;
-        b=lvwuSvA+45q08juGrb8DYleuDzunnKxV9VFzNcdegPsn1xDxa3fREZRcnySK+LbwDW
-         dObvX1KBidxYLKHsdKaaK4Z7SUE9IjNYdjrWt21ZFuQj7kGSz2cAOda0Ea5UHb2t62GG
-         ueQ8gelQpUbmg7ZX7i5jw7wsjCv3S9JucR19UC+83ds6ckms7MMZnQHk6gfLHosmemwD
-         SaRpLhdefUrrMn45MjLOTK2r5Dgk3todbsy2TkhdXTndToSTwRns9a0eFcd+OoLd6XDR
-         bhASVNHxhVAIIttng4WyaSPzQIGQIKwVqjMLZlylU5OL200SPw7dzrP4Oec9zvqMBnBf
-         rBqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXESj7HHewIW212At4vgP4Xmu4a8WgzKoo1Ob3/b2hEsDm2dXUEaJuP7P+qksKxIDGH8W2+yKG17Ihgo6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbd23bTbYOqUtAdwXGkektannB+LxuemBVUKHpjVKuIkZh7FJq
-	+XX7A2tKJA4l2dgGq6wy8ky9QXiHFFOxNDQkqPcZy7TZDtJdonufpkoJLYE7jDoOe5+asyAmggk
-	W9FnNVAZBlPYQIBRJhZnBErMSrMAItnUjF8PXZOLHtsDYVKJ3I+LFKEjckHnTK/CLVoZraUfrxc
-	LL2jK3R8NB9/bk3YIrOIaZXk/uzbygQIbqq6WNQ53m3w==
-X-Gm-Gg: ASbGncsCwLOFwW3hZxKWj/0Pzy16/3pFjKFxzAHm1LtfBG6eokOEamsfEx4ODK+g/Iv
-	PjHVHx9H89W4BSofq7BK+/eGKUjjO5qgRYW8qMGD0EmOiQHoWYJd2kKc/z0mETrmFDM1q+KWGBq
-	6cxacFzsbgDZF7GOCb96DelNbgSvwFMAjuYeMyhVe5C+kodJTBVBzVXpP24BUNpj0sUb4teZE9H
-	N0eZMg4s2iVv1bOCpUiuPEX1gtfcu9Zh0gPVQDXF48+IQ==
-X-Received: by 2002:a05:6214:cc7:b0:879:db53:dd2 with SMTP id 6a1803df08f44-87b2107bdc2mr384170116d6.22.1760604442622;
-        Thu, 16 Oct 2025 01:47:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKIDwd0H080pXEFK1kdHvRTAf/OHzMp8h2JpG4d2oyZ6MvcF5FnRmiKkwvO8LcA8cfNV3BhP6f4FxVJw0D0mg=
-X-Received: by 2002:a05:6214:cc7:b0:879:db53:dd2 with SMTP id
- 6a1803df08f44-87b2107bdc2mr384169876d6.22.1760604442226; Thu, 16 Oct 2025
- 01:47:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760604647; x=1761209447;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HPGh/INSa2zSUyaHqMg9VH3NffLUw7enDRxb7tS1TjQ=;
+        b=hlK4lY0KgtnwdbhQdenimV4uhUoqcf9JQC1O3gHu++C+Ib+ChnAo45qscfCqK4gcD3
+         nbxl/KtcF7n33BgQqCuQU/nEGUnKABjBiK5H5+t6USA59zDZ+LHI7VzKmwcznrQtW1aP
+         Jf8oUGJyBJfB5VQLkb2EZEyRZbZJL5yEPscM1QqeWGe5HkRgF+yMRhLOvNwYVDpjVxbS
+         jknmJ53tj+zQzArdMxmkh8MNp+0eSfNPZ0r/CiYUbz1n1uO5oeuoBMsoYKOapvuH2LUa
+         m0ewLoXPh/cnmuGIctJCTz4w1TNn7zodAI1JntHZFfYgtjeuSdsi/vNSBBRZs2tWNndV
+         aQXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm6Uaj6ePM6xelKb/deILtOs6K8qmiBfMqzrtSRiugQ20tLRwyjM6A9j4kwoibCnWSmYA9sp+vM7ANFO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjmYwdT+GOe/Ngi5bzh+JP/1eu0Mdu2uuorS5cRCy6h3FX7MXy
+	wpTZrbNe/Ye5JauDPiPMipVnCJtzgBqzbkq1nk70z8hsM93KgTctb1+SE+a9/LQggzPkp+dSqqU
+	zMV8v
+X-Gm-Gg: ASbGnctoYfq61EIKybWzpPPyo4dO32UDy3ZVkb/Y9ZB5mi7iI5BJ+3+yh6WUL1GzA0I
+	a0HC7UADjkFdWTFwtJqGfl/3nxqfa3/8qKUgdxNWTP6SbfGKN80aQZpwIpvAfUG/OTDI+oornlK
+	Xn3YW4lY1qo3b6DNAHtah7ltkaJvMxzVgG9KnqRjWkCRLG17GkHUQU4Rq2oSp1o1WP/fb//XPlX
+	0uaxoLJ3PnorL+5FEyJhmBM43AWE7e6pTqT0K6KvDlVY7EcT1DL88g/cXs8F95xX5ZQS8N9ItmA
+	dexl9PUY0dSvUrSaGUKYqr9NIqu1kPZImUqb6aepUC4b7QZEQvpRfzkEAwsVD+iXsfeNmQzCBBH
+	CrX67WeYqCWcPYPrgausT8nL2uX+PS61XQTS2D3j0WxqySIrTFUvQVLH2UAW1Xgp6OhSc1OZsKU
+	j9U2AQh7XHKhTpf3V6fsPUS8m7t7K08NgoEPb75rKZUmb/Odn6/oA9
+X-Google-Smtp-Source: AGHT+IGs/Ex7rQ3pCPhtdm0KlwKe9GFuI3YTsI4ki3K0pfy1MU+O9okm6dWvBIHwMxGo4ooAzD+LEw==
+X-Received: by 2002:a17:907:7a86:b0:b3f:f6d:1d9e with SMTP id a640c23a62f3a-b6051dc383cmr402374666b.6.1760604647221;
+        Thu, 16 Oct 2025 01:50:47 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b5cccda99adsm457507666b.41.2025.10.16.01.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 01:50:46 -0700 (PDT)
+Date: Thu, 16 Oct 2025 10:50:44 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Rakuram Eswaran <rakuram.e96@gmail.com>
+Cc: ulf.hansson@linaro.org, chenhuacai@kernel.org, 
+	david.hunter.linux@gmail.com, khalid@kernel.org, skhan@linuxfoundation.org, 
+	zhoubinbin@loongson.cn, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling
+ using devm APIs
+Message-ID: <o55ujlbvxwezsf3ogqx33pcbg5b2lviy6bv5ufnz6t7yi4v23t@i6uiafh6no6c>
+References: <20251014184657.111144-1-rakuram.e96@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-knp-cam-v1-0-b72d6deea054@oss.qualcomm.com>
- <20250924-knp-cam-v1-2-b72d6deea054@oss.qualcomm.com> <CAFEp6-1o11B9o3HjdJY-xQhDXquOTknXo0JeW=HfpTxXcEaK3g@mail.gmail.com>
- <a7be3a42-bd4f-46dc-b6de-2b0c0320cb0d@oss.qualcomm.com> <d8dfe11f-c55a-4eb2-930a-bfa31670bef0@kernel.org>
-In-Reply-To: <d8dfe11f-c55a-4eb2-930a-bfa31670bef0@kernel.org>
-From: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Date: Thu, 16 Oct 2025 10:47:11 +0200
-X-Gm-Features: AS18NWDQrzQKYCHdrrwTe9-7hmb4jjMXDlC9wkwV60oUqGOhB-GFpY7hHhqu3ys
-Message-ID: <CAFEp6-1zpobZNLHt1192Ahtn2O7bV+As0P1YvVHrkRsORyH_Aw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] dt-bindings: media: camss: Add qcom,kaanapali-camss binding
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bryan O'Donoghue" <bod@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6zooc3ooxgc2c7fb"
+Content-Disposition: inline
+In-Reply-To: <20251014184657.111144-1-rakuram.e96@gmail.com>
+
+
+--6zooc3ooxgc2c7fb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: C-cB6ZvfXBAyZhnPeXQ1uMh34m-IPa0i
-X-Proofpoint-ORIG-GUID: C-cB6ZvfXBAyZhnPeXQ1uMh34m-IPa0i
-X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68f0b11c cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=GOxOaFmcAZOYw-Nqf4IA:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfX87FkgVnOihQU
- jMkT/VbkUlmyKg0Aj0YTDUCUqCRdNLdi8zZLxLXEJvKs6Oiq51Dewvf4MiPfu5LegykmTxoin90
- mIQHOwEzYuKv5dzWWy6KoZixkijyHLVD71KpNkBIN3OLFyXK7RWgmG05Ezyx1yNSBEPkdijjzxF
- afOK/wgLozFPf5fosSz1yfSz+z1ofssxkPcqHq4l6pph7UiuXDUMSaL2bn0iOJu6S+lwlYk0fGF
- mE56yDtuUaqEcl7dJZAtNbd7hbR1OBWQl3exgJTBC7UDX31T5HzP+DFLt7WFAgrnf19x5DvA4Tm
- bfO908jKDgNFfhzRJ5xbdfJN2au9WNYgml2R8CJmDtoc85FSBhN8Ghi73tVlGobCMFYKtvUG9HQ
- eCDlaxAAvUwbADAmSG/gkhX078NLsA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
+Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling
+ using devm APIs
+MIME-Version: 1.0
 
-On Thu, Oct 16, 2025 at 7:52=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 15/10/2025 05:21, Hangxiang Ma wrote:
-> >>> +      - const: csiphy4
-> >>> +      - const: csiphy5
-> >>> +      - const: vfe0
-> >>> +      - const: vfe1
-> >>> +      - const: vfe2
-> >>> +      - const: vfe_lite0
-> >>> +      - const: vfe_lite1
-> >> Wouldn't it make sense to simplify this and have different camss nodes
-> >> for the 'main' and 'lite' paths?
-> >>
-> >> [...]
-> > No such plan till now. Other series may take this into consideration.
->
-> We don't care much about your plan. You are expected to send correct
-> hardware description.
+On Wed, Oct 15, 2025 at 12:16:57AM +0530, Rakuram Eswaran wrote:
+> This patch refactors pxamci_probe() to use devm-managed resource
+> allocation (e.g. devm_dma_request_chan()) and dev_err_probe() for
+> improved readability and automatic cleanup on probe failure.
+>=20
+> This eliminates redundant NULL assignments and manual release logic.
+>=20
+> This issue was originally reported by Smatch:
+> drivers/mmc/host/pxamci.c:709 pxamci_probe() warn: passing zero to 'PTR_E=
+RR'
+>=20
+> The warning occurred because a pointer was set to NULL before using
+> PTR_ERR(), leading to PTR_ERR(0) and an incorrect 0 return value.
+> This refactor eliminates that condition while improving overall
+> error handling robustness.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202510041841.pRlunIfl-lkp@intel.com/
+> Fixes: 58c40f3faf742c ("mmc: pxamci: Use devm_mmc_alloc_host() helper")
+> Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+> ---
+>=20
+> Changes since v1:
+> Following Uwe Kleine-K=C3=B6nig=E2=80=99s suggestion:
+> - Replaced dma_request_chan() with devm_dma_request_chan() to make DMA
+>   channel allocation devm-managed and avoid manual release paths.
+> - Used dev_err_probe() for improved error reporting and consistent
+>   probe failure handling.
+> - Removed redundant NULL assignments and obsolete goto-based cleanup logi=
+c.
+> - Updated commit message to better describe the intent of the change.
+>=20
+> Testing note:
+> I do not have access to appropriate hardware for runtime testing.=20
+> Any help verifying on actual hardware would be appreciated.
+>=20
+> Build and Analysis:
+> This patch was compiled against the configuration file reported by
+> 0day CI in the above link (config: s390-randconfig-r071-20251004) using
+> `s390x-linux-gnu-gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0`.=20
+>=20
+> Static analysis was performed with Smatch to ensure the reported warning=
+=20
+> no longer reproduces after applying this fix.
+>=20
+> Command used for verification:
+>   ARCH=3Ds390 CROSS_COMPILE=3Ds390x-linux-gnu- \
+>   ~/project/smatch/smatch_scripts/kchecker ./drivers/mmc/host/pxamci.c
+>=20
+>  drivers/mmc/host/pxamci.c | 57 +++++++++++++++------------------------
+>  1 file changed, 21 insertions(+), 36 deletions(-)
+>=20
+> diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
+> index 26d03352af63..d03388f64934 100644
+> --- a/drivers/mmc/host/pxamci.c
+> +++ b/drivers/mmc/host/pxamci.c
+> @@ -652,11 +652,14 @@ static int pxamci_probe(struct platform_device *pde=
+v)
+>  	host->clkrt =3D CLKRT_OFF;
+> =20
+>  	host->clk =3D devm_clk_get(dev, NULL);
+> -	if (IS_ERR(host->clk)) {
+> -		host->clk =3D NULL;
+> -		return PTR_ERR(host->clk);
+> -	}
+> +	if (IS_ERR(host->clk))
+> +		return dev_err_probe(dev, PTR_ERR(host->clk),
+> +				     "Failed to acquire clock\n");
+> =20
+> +	/*
+> +	 * Note that the return value of clk_get_rate() is only valid
+> +	 * if the clock is enabled.
+> +	 */
 
-To be fair, other platforms like sc8280xp-camss already have the
-all-in big camss node.
-Point is that if Lite and Main blocks are distinct enough we could
-have two simpler nodes.
-Would it make things any better from a dts and camss perspective?
+The intention of this comment in my WIP suggestion was to point out
+another thing to fix as the precondition for calling clk_get_rate()
+isn't asserted. If you don't want to address this (which is fine),
+drop the comment (or improve my wording to make it more obvious that
+there is something to fix).
 
- camss: isp@9253000 {
-    compatible =3D "qcom,kaanapali-camss";
-    [...]
-}
+>  	host->clkrate =3D clk_get_rate(host->clk);
+> =20
+>  	/*
+> [...]
+> @@ -759,16 +752,8 @@ static int pxamci_probe(struct platform_device *pdev)
+>  	if (ret) {
+>  		if (host->pdata && host->pdata->exit)
+>  			host->pdata->exit(dev, mmc);
+> -		goto out;
+>  	}
+> =20
+> -	return 0;
+> -
+> -out:
+> -	if (host->dma_chan_rx)
+> -		dma_release_channel(host->dma_chan_rx);
+> -	if (host->dma_chan_tx)
+> -		dma_release_channel(host->dma_chan_tx);
 
-camss-lite:ips@9273000 {
-   compatible =3D "qcom,kaanapali-lite-camss";
-    [...]
-}
+I was lazy in my prototype patch and didn't drop the calls to
+dma_release_channel() in pxamci_remove(). For a proper patch this is
+required though.
 
-That approach would create two distinct CAMSS instances and separate
-media pipelines.
-However, it may not work with the current implementation, as the CSI
-PHYs would need to be shared between them.
+To continue the quest: Now that I looked at pxamci_remove(): `mmc` is
+always non-NULL, so the respective check can be dropped.
 
-I guess this should be part of the broader discussion around
-splitting/busifying CAMSS.
 
-Regards,
-Loic
+--6zooc3ooxgc2c7fb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjwseAACgkQj4D7WH0S
+/k6mDwgAsXfmGQvI3EWoF/Xf7HICwAuzocExje3sDIKYBM2h6ePeiozPAL4KW/36
+K33TIV+nzcHI2enredvl0hZ45mlc54A0qsINU0PCI06DBSz2ACIPjSvv2iHs3gwL
+jTcCuAtQzXWHqYXDN1Gb1x92B/s+sOL3gJkGQMfDQUv6JQDUlM1Ip4yrH/XyNy/F
+6VbqxHDWPxjYroGphTanRSJNz3YvtmSRaerx6KzDweCMMI3kDj0xdAMxNS8twViP
+PQHwsyW9znXNi/Old+xa0EoTawa0s9xAYsDtWu57LutautBHOLM7qz5+B8CeY0Vf
+cxANyYd/x8WF5++m59blZxAtM02bGg==
+=Yph/
+-----END PGP SIGNATURE-----
+
+--6zooc3ooxgc2c7fb--
 
