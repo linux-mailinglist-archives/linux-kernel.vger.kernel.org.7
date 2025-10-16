@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-856702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-856703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93071BE4D8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:30:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD83BE4D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 19:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006CA19A78CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:31:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8B3E4F746B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 17:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4423221714;
-	Thu, 16 Oct 2025 17:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A7C328B5B;
+	Thu, 16 Oct 2025 17:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNL2KZ4A"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UhtDXPhv"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E2920E032
-	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B1B22A7F2
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760635812; cv=none; b=d9fIF7fjL8kLVpzmb9xcD/NaFbo597QLemvbB4f/zZJKOL7pOrSBEJqrY/prwtSlRhHmgiOroXmhTq99e4r/4S2XY3pEbgQMjKtyrQSCzG124VDQi6KwdIiX4wE7KV4B24SSe+VInltrikVu6vUOewgMygUnN3eSJNoxg24MLHI=
+	t=1760635815; cv=none; b=RUT7fnr0mrIGF3nWhRbyaO0+Oro4dICX8oZEygAQqkBzurdPm885lke4yy1TeNXBEGIAO8GfejUiHjuyX1PC9KzEUPKmrATU7Z/e6WgrkERwpnQcAF9OZJIOuEE7Qbg4bOna18/YOkZKyQcKckT6lPdk1pn2VDNG4mbsSg0bTy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760635812; c=relaxed/simple;
-	bh=itHMf3dOY7/pa7dZPvih/oiz3WtoZDKZziAtaSntews=;
+	s=arc-20240116; t=1760635815; c=relaxed/simple;
+	bh=Ru4m8I7GXDakLu5/QZ8fZL1qLohr4A91qPbj1pId4+Q=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l1tEGeCMnpbE18DwsRIJTrq9EI2NMsdHs9xc/PyrIzL9d7dlCz6W4Dd9gufQM6CeYKgbaJkyr3y18a4ajSVwkDbPBhkXddJF4T9tf3fTcZC1V9RswKXJJYXuCFpTDky4kVjb6zJtfAfB+2OvagmsQhNqNhMihqWLhHKDktOGbVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HNL2KZ4A; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=j8wff1FC7StdAW7cFblAD0wyxHE0iuot3Txd8llki/ArUMEFVR5v0zdk84XeUS7JGS6JmaagBjif3rNRWiGewMCQK0VbyZyELdvKsDzB6lbcHwk9kNf1Eom695wcY9ifYsxnKAlBv7cOOJwoWhNzQRlHIjxW2kJy4II1zS7bMJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UhtDXPhv; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33ba9047881so1480471a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:30:10 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-336b646768eso1200351a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 10:30:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760635810; x=1761240610; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760635812; x=1761240612; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=KbValAQi3mVPkQeBnxJpdOpCqapDSSet7GA9qMeIyHY=;
-        b=HNL2KZ4AOT9K71o2gYUKDXFit7lkZ80BQC7xCdfe+kvoKF8gg0FU/46nb7TGngVkjP
-         njH8uDClKREohAbd9+nTj2+c2INp9w/DKg46L9upWm+QeN/7szO8uQK9d9VHQ7zz1exf
-         aiOvOtcYKSXVcxMpCEvpYBoT/dl7ura7EfQwM75Dsxq11X3a172/Ae1srW33+AiD9/48
-         wwAofBkhE0mu/E1go8MPRbveOwlTwEK3oKSLMwnyQQhP4bpSg9OT1ktHICtFCoS3xm2x
-         rnOWZbvFDLNpc99aGeOURvtiEKhzMD7aUrY4EVXTGsUZFWep1TvVK+uPsMOBCboey06G
-         dR6A==
+        bh=6tAVv6b9fRDhntp0ml3AD/e15cFGLUttzwV4nvdq0R8=;
+        b=UhtDXPhvqA06ZRnLxi/Omu72OTZydcByyk/lkS+e3IZe+2vGiGtbWLpSI6TSeZ7+hs
+         cV+wRgcjWqYHms/wMtNU64f6YGGfVk+IPtXUwJJkmK3JBU306jm7ktto4QIJ7pI5Ora8
+         eh9mnZt4YEd8Gn9GMwNyR0XF0jM6VVJEK+LrotIfdhyLljVrVLPnRPJUgY6cc9CHl/Z7
+         ZJS3n29kkbflp00g864+mk1pJ1MbfVP+8SVLoSmsldy2o+4eQoYM96Kr//vmldCv8Ykc
+         0qlTnrzpYMdvNxae05ltqUEqZ6MZA7OGr5UOGdAG1BVtNX/fQL1ToGkF7sk+7vt3QVtc
+         p3Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760635810; x=1761240610;
+        d=1e100.net; s=20230601; t=1760635812; x=1761240612;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KbValAQi3mVPkQeBnxJpdOpCqapDSSet7GA9qMeIyHY=;
-        b=gR6CXsyUlg4XZoBUWG7xu1IS/qz8xsqPRi3A699qTZChZ4YJce8F7vjhzDT7ZeXMhV
-         HZM/yvDQUK0mCtvtL7djVAWyoB2XJbsf9SpXQrpqEptch1bLAVPgaPcM0ddEpNG2jDed
-         Yai7oGbbv6/0WD4hkNo/TzcXZ3h30aDSNTe9ZA32FWi+rXAiovUYQuxp7bQTMmucU2oP
-         TZu7cOsokVu6+JU/LWkYXDXR16KrKJrytRz+f0rMoNRSv4zEAl5/z1nDpQs3ERxsbpIM
-         7xKvp6P28RNfWRo0c1fTFmHbaseaeoBJMOAZTYbG7awdHrX/fJVHR0vyGwh5MG1PK1mW
-         Lrcg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Wpe1wphAuWhIUESk3uR1Afa4HdME7fQ5N5o3rk5Hgoz2R19RQvY7RObhHVQ3ckrxXItJgtXpK1SdKqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlhYL0evzk2t2E1MUmaoHFtQy4e9fQlaYNEVLQ9pAW3kI8UTtt
-	tdxq0zXdswrTYCVPaO3nPohLQI+5NE5iC/nxFvSIkaHQHvgT8Uebhk7MCZuUTfBi6OU0vuLbA49
-	OCvME9Q==
-X-Google-Smtp-Source: AGHT+IF8IBthLJ6j6SkHq4SrSxFmPl9P4miDt7bIY6TTq8tVebOV0t9zTlMTT00ono8S6O8EZ924QZsF6IQ=
-X-Received: from pjre3.prod.google.com ([2002:a17:90a:b383:b0:33b:51fe:1a75])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc4:b0:32e:716d:4d2b
- with SMTP id 98e67ed59e1d1-33bc9b77638mr1287133a91.3.1760635810154; Thu, 16
- Oct 2025 10:30:10 -0700 (PDT)
+        bh=6tAVv6b9fRDhntp0ml3AD/e15cFGLUttzwV4nvdq0R8=;
+        b=cHn25dvYptB4/bl2wpfnw/vHV3v25cCJrk4BPLqsEseEwlOGSaDt1UYBQcy2JZHeWD
+         EW2z7/196YCyJhEHEy0Oi/8tDlQhKxO3iEXx+QrKEFeDK0f5Uq4/qG2gNq63tKBDYOlh
+         H8mq3Gtff8W+97kwSpKvg9sHVJFmnbM6WK5kjOxP28BZSFcv1QTdo0Gdq7r/9BtjHQoF
+         d+Kro9IQEg8pDdKbVXSBIfRiYe0uR4VVTmqE1oChlGfSLvYdLTLEuSIlI2xrgsi7XO3W
+         ZO98Ns9q+dJmm7Mz93Ho8e/raoW8vNTa/mNmChlJWJ3ogmTFf0luZpc+9jj+701APzYl
+         sWbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqTTS6FSHNVe1ytwPqy0cuD6sAIRZrOP+tPZSFyekWACZCexrAm2nYFPYOkrFo/tXf72NmY2U2zVmgwWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuavGXntq2BzIPkZuyyu04X+DkXe4J5tSeNwgHOqnCaA7i1k7H
+	UOddGrKu5Edez1e8O6/2y7Hb1Ao3qe77IOyl8TJGTpwHGpMvhBarBwhuPm6X9SgTn7h6mk/xU+V
+	Quzmslg==
+X-Google-Smtp-Source: AGHT+IFiziQxx4vN6XNlZpR7uI1Y1WkivFjq8+/qZ9wHBFeEPxqCLQgsLYXVUg11kld4O3lt/m0fng8h7Tw=
+X-Received: from pji6.prod.google.com ([2002:a17:90b:3fc6:b0:33b:ca21:e3e7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e43:b0:339:cece:a99
+ with SMTP id 98e67ed59e1d1-33bcf86c699mr779489a91.13.1760635812664; Thu, 16
+ Oct 2025 10:30:12 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 16 Oct 2025 10:28:42 -0700
+Date: Thu, 16 Oct 2025 10:28:43 -0700
 In-Reply-To: <20251016172853.52451-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251016172853.52451-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251016172853.52451-2-seanjc@google.com>
-Subject: [PATCH v13 01/12] KVM: guest_memfd: Rename "struct kvm_gmem" to
- "struct gmem_file"
+Message-ID: <20251016172853.52451-3-seanjc@google.com>
+Subject: [PATCH v13 02/12] KVM: guest_memfd: Add macro to iterate over
+ gmem_files for a mapping/inode
 From: Sean Christopherson <seanjc@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
@@ -89,19 +89,9 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 
-Rename the "kvm_gmem" structure to "gmem_file" in anticipation of using
-dedicated guest_memfd inodes instead of anonyomous inodes, at which point
-the "kvm_gmem" nomenclature becomes quite misleading.  In guest_memfd,
-inodes are effectively the raw underlying physical storage, and will be
-used to track properties of the physical memory, while each gmem file is
-effectively a single VM's view of that storage, and is used to track assets
-specific to its associated VM, e.g. memslots=>gmem bindings.
-
-Using "kvm_gmem" suggests that the per-VM/per-file structures are _the_
-guest_memfd instance, which almost the exact opposite of reality.
-
-Opportunistically rename local variables from "gmem" to "f", again to
-avoid confusion once guest_memfd specific inodes come along.
+Add a kvm_gmem_for_each_file() to make it more obvious that KVM is
+iterating over guest_memfd _files_, not guest_memfd instances, as could
+be assumed given the name "gmem_list".
 
 No functional change intended.
 
@@ -110,269 +100,62 @@ Tested-by: Ackerley Tng <ackerleytng@google.com>
 Reviewed-by: Shivank Garg <shivankg@amd.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- virt/kvm/guest_memfd.c | 98 +++++++++++++++++++++++-------------------
- 1 file changed, 53 insertions(+), 45 deletions(-)
+ .clang-format          | 1 +
+ virt/kvm/guest_memfd.c | 9 +++++----
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/.clang-format b/.clang-format
+index f371a13b4d19..220cda77a8f1 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -540,6 +540,7 @@ ForEachMacros:
+   - 'kvm_for_each_memslot'
+   - 'kvm_for_each_memslot_in_gfn_range'
+   - 'kvm_for_each_vcpu'
++  - 'kvm_gmem_for_each_file'
+   - 'libbpf_nla_for_each_attr'
+   - 'list_for_each'
+   - 'list_for_each_codec'
 diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 1e4af29159ea..2989c5fe426f 100644
+index 2989c5fe426f..5cce20ff418d 100644
 --- a/virt/kvm/guest_memfd.c
 +++ b/virt/kvm/guest_memfd.c
-@@ -7,7 +7,16 @@
- 
- #include "kvm_mm.h"
- 
--struct kvm_gmem {
-+/*
-+ * A guest_memfd instance can be associated multiple VMs, each with its own
-+ * "view" of the underlying physical memory.
-+ *
-+ * The gmem's inode is effectively the raw underlying physical storage, and is
-+ * used to track properties of the physical memory, while each gmem file is
-+ * effectively a single VM's view of that storage, and is used to track assets
-+ * specific to its associated VM, e.g. memslots=>gmem bindings.
-+ */
-+struct gmem_file {
- 	struct kvm *kvm;
- 	struct xarray bindings;
+@@ -22,6 +22,9 @@ struct gmem_file {
  	struct list_head entry;
-@@ -115,16 +124,16 @@ static enum kvm_gfn_range_filter kvm_gmem_get_invalidate_filter(struct inode *in
- 	return KVM_FILTER_PRIVATE;
- }
+ };
  
--static void __kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-+static void __kvm_gmem_invalidate_begin(struct gmem_file *f, pgoff_t start,
- 					pgoff_t end,
- 					enum kvm_gfn_range_filter attr_filter)
++#define kvm_gmem_for_each_file(f, mapping) \
++	list_for_each_entry(f, &(mapping)->i_private_list, entry)
++
+ /**
+  * folio_file_pfn - like folio_file_page, but return a pfn.
+  * @folio: The folio which contains this index.
+@@ -164,13 +167,12 @@ static void __kvm_gmem_invalidate_begin(struct gmem_file *f, pgoff_t start,
+ static void kvm_gmem_invalidate_begin(struct inode *inode, pgoff_t start,
+ 				      pgoff_t end)
  {
- 	bool flush = false, found_memslot = false;
- 	struct kvm_memory_slot *slot;
--	struct kvm *kvm = gmem->kvm;
-+	struct kvm *kvm = f->kvm;
- 	unsigned long index;
- 
--	xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
-+	xa_for_each_range(&f->bindings, index, slot, start, end - 1) {
- 		pgoff_t pgoff = slot->gmem.pgoff;
- 
- 		struct kvm_gfn_range gfn_range = {
-@@ -157,20 +166,20 @@ static void kvm_gmem_invalidate_begin(struct inode *inode, pgoff_t start,
- {
- 	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+-	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
  	enum kvm_gfn_range_filter attr_filter;
--	struct kvm_gmem *gmem;
-+	struct gmem_file *f;
+ 	struct gmem_file *f;
  
  	attr_filter = kvm_gmem_get_invalidate_filter(inode);
  
--	list_for_each_entry(gmem, gmem_list, entry)
--		__kvm_gmem_invalidate_begin(gmem, start, end, attr_filter);
-+	list_for_each_entry(f, gmem_list, entry)
-+		__kvm_gmem_invalidate_begin(f, start, end, attr_filter);
+-	list_for_each_entry(f, gmem_list, entry)
++	kvm_gmem_for_each_file(f, inode->i_mapping)
+ 		__kvm_gmem_invalidate_begin(f, start, end, attr_filter);
  }
  
--static void __kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
-+static void __kvm_gmem_invalidate_end(struct gmem_file *f, pgoff_t start,
- 				      pgoff_t end)
- {
--	struct kvm *kvm = gmem->kvm;
-+	struct kvm *kvm = f->kvm;
- 
--	if (xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
-+	if (xa_find(&f->bindings, &start, end - 1, XA_PRESENT)) {
- 		KVM_MMU_LOCK(kvm);
- 		kvm_mmu_invalidate_end(kvm);
- 		KVM_MMU_UNLOCK(kvm);
-@@ -181,10 +190,10 @@ static void kvm_gmem_invalidate_end(struct inode *inode, pgoff_t start,
+@@ -189,10 +191,9 @@ static void __kvm_gmem_invalidate_end(struct gmem_file *f, pgoff_t start,
+ static void kvm_gmem_invalidate_end(struct inode *inode, pgoff_t start,
  				    pgoff_t end)
  {
- 	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
--	struct kvm_gmem *gmem;
-+	struct gmem_file *f;
+-	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+ 	struct gmem_file *f;
  
--	list_for_each_entry(gmem, gmem_list, entry)
--		__kvm_gmem_invalidate_end(gmem, start, end);
-+	list_for_each_entry(f, gmem_list, entry)
-+		__kvm_gmem_invalidate_end(f, start, end);
+-	list_for_each_entry(f, gmem_list, entry)
++	kvm_gmem_for_each_file(f, inode->i_mapping)
+ 		__kvm_gmem_invalidate_end(f, start, end);
  }
- 
- static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
-@@ -282,9 +291,9 @@ static long kvm_gmem_fallocate(struct file *file, int mode, loff_t offset,
- 
- static int kvm_gmem_release(struct inode *inode, struct file *file)
- {
--	struct kvm_gmem *gmem = file->private_data;
-+	struct gmem_file *f = file->private_data;
- 	struct kvm_memory_slot *slot;
--	struct kvm *kvm = gmem->kvm;
-+	struct kvm *kvm = f->kvm;
- 	unsigned long index;
- 
- 	/*
-@@ -304,7 +313,7 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 
- 	filemap_invalidate_lock(inode->i_mapping);
- 
--	xa_for_each(&gmem->bindings, index, slot)
-+	xa_for_each(&f->bindings, index, slot)
- 		WRITE_ONCE(slot->gmem.file, NULL);
- 
- 	/*
-@@ -312,18 +321,18 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	 * Zap all SPTEs pointed at by this file.  Do not free the backing
- 	 * memory, as its lifetime is associated with the inode, not the file.
- 	 */
--	__kvm_gmem_invalidate_begin(gmem, 0, -1ul,
-+	__kvm_gmem_invalidate_begin(f, 0, -1ul,
- 				    kvm_gmem_get_invalidate_filter(inode));
--	__kvm_gmem_invalidate_end(gmem, 0, -1ul);
-+	__kvm_gmem_invalidate_end(f, 0, -1ul);
- 
--	list_del(&gmem->entry);
-+	list_del(&f->entry);
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
- 
- 	mutex_unlock(&kvm->slots_lock);
- 
--	xa_destroy(&gmem->bindings);
--	kfree(gmem);
-+	xa_destroy(&f->bindings);
-+	kfree(f);
- 
- 	kvm_put_kvm(kvm);
- 
-@@ -491,7 +500,7 @@ bool __weak kvm_arch_supports_gmem_init_shared(struct kvm *kvm)
- static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- {
- 	const char *anon_name = "[kvm-gmem]";
--	struct kvm_gmem *gmem;
-+	struct gmem_file *f;
- 	struct inode *inode;
- 	struct file *file;
- 	int fd, err;
-@@ -500,14 +509,13 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	if (fd < 0)
- 		return fd;
- 
--	gmem = kzalloc(sizeof(*gmem), GFP_KERNEL);
--	if (!gmem) {
-+	f = kzalloc(sizeof(*f), GFP_KERNEL);
-+	if (!f) {
- 		err = -ENOMEM;
- 		goto err_fd;
- 	}
- 
--	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
--					 O_RDWR, NULL);
-+	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, f, O_RDWR, NULL);
- 	if (IS_ERR(file)) {
- 		err = PTR_ERR(file);
- 		goto err_gmem;
-@@ -529,15 +537,15 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
- 
- 	kvm_get_kvm(kvm);
--	gmem->kvm = kvm;
--	xa_init(&gmem->bindings);
--	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
-+	f->kvm = kvm;
-+	xa_init(&f->bindings);
-+	list_add(&f->entry, &inode->i_mapping->i_private_list);
- 
- 	fd_install(fd, file);
- 	return fd;
- 
- err_gmem:
--	kfree(gmem);
-+	kfree(f);
- err_fd:
- 	put_unused_fd(fd);
- 	return err;
-@@ -562,7 +570,7 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- {
- 	loff_t size = slot->npages << PAGE_SHIFT;
- 	unsigned long start, end;
--	struct kvm_gmem *gmem;
-+	struct gmem_file *f;
- 	struct inode *inode;
- 	struct file *file;
- 	int r = -EINVAL;
-@@ -576,8 +584,8 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 	if (file->f_op != &kvm_gmem_fops)
- 		goto err;
- 
--	gmem = file->private_data;
--	if (gmem->kvm != kvm)
-+	f = file->private_data;
-+	if (f->kvm != kvm)
- 		goto err;
- 
- 	inode = file_inode(file);
-@@ -591,8 +599,8 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 	start = offset >> PAGE_SHIFT;
- 	end = start + slot->npages;
- 
--	if (!xa_empty(&gmem->bindings) &&
--	    xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
-+	if (!xa_empty(&f->bindings) &&
-+	    xa_find(&f->bindings, &start, end - 1, XA_PRESENT)) {
- 		filemap_invalidate_unlock(inode->i_mapping);
- 		goto err;
- 	}
-@@ -607,7 +615,7 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 	if (kvm_gmem_supports_mmap(inode))
- 		slot->flags |= KVM_MEMSLOT_GMEM_ONLY;
- 
--	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
-+	xa_store_range(&f->bindings, start, end - 1, slot, GFP_KERNEL);
- 	filemap_invalidate_unlock(inode->i_mapping);
- 
- 	/*
-@@ -625,7 +633,7 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
- {
- 	unsigned long start = slot->gmem.pgoff;
- 	unsigned long end = start + slot->npages;
--	struct kvm_gmem *gmem;
-+	struct gmem_file *f;
- 	struct file *file;
- 
- 	/*
-@@ -636,10 +644,10 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
- 	if (!file)
- 		return;
- 
--	gmem = file->private_data;
-+	f = file->private_data;
- 
- 	filemap_invalidate_lock(file->f_mapping);
--	xa_store_range(&gmem->bindings, start, end - 1, NULL, GFP_KERNEL);
-+	xa_store_range(&f->bindings, start, end - 1, NULL, GFP_KERNEL);
- 
- 	/*
- 	 * synchronize_srcu(&kvm->srcu) ensured that kvm_gmem_get_pfn()
-@@ -657,17 +665,17 @@ static struct folio *__kvm_gmem_get_pfn(struct file *file,
- 					pgoff_t index, kvm_pfn_t *pfn,
- 					bool *is_prepared, int *max_order)
- {
--	struct file *gmem_file = READ_ONCE(slot->gmem.file);
--	struct kvm_gmem *gmem = file->private_data;
-+	struct file *slot_file = READ_ONCE(slot->gmem.file);
-+	struct gmem_file *f = file->private_data;
- 	struct folio *folio;
- 
--	if (file != gmem_file) {
--		WARN_ON_ONCE(gmem_file);
-+	if (file != slot_file) {
-+		WARN_ON_ONCE(slot_file);
- 		return ERR_PTR(-EFAULT);
- 	}
- 
--	if (xa_load(&gmem->bindings, index) != slot) {
--		WARN_ON_ONCE(xa_load(&gmem->bindings, index));
-+	if (xa_load(&f->bindings, index) != slot) {
-+		WARN_ON_ONCE(xa_load(&f->bindings, index));
- 		return ERR_PTR(-EIO);
- 	}
  
 -- 
 2.51.0.858.gf9c4a03a3a-goog
