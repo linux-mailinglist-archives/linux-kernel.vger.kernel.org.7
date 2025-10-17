@@ -1,55 +1,67 @@
-Return-Path: <linux-kernel+bounces-858376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F05FABEA7C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:09:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C159BEA939
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78D86189ED57
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:06:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B9A95859E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CC725E469;
-	Fri, 17 Oct 2025 16:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D73A258EE9;
+	Fri, 17 Oct 2025 16:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNddrQRw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5w/i+f9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDAD259CAF;
-	Fri, 17 Oct 2025 16:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FAC251795;
+	Fri, 17 Oct 2025 16:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717171; cv=none; b=BpEK77XCOpC7hUJH2rz8pJ0hX245gJv577AyB0S6GuLwhoDINXVCEFqntJHmimCbNMUBC8KR+UAFuaj64ei/mtBU5a7MKX1uxt9CrTZHDvHASUjYOTNAJ6SSCAPHCSswoluFIggc1k54PwnYkxzhvKTb3vx8M384oBEsJ9x1jzY=
+	t=1760717284; cv=none; b=H7/VwMU+lQlNhZFjNjKkYTfO/aYPvt5MailT3bCtN60V5bGPX+KJ1yMmvHLRhRXvTfsFyG9yOAnuT2piaX+C4Ts0ZGtDEAQbnXFTM1FtO/wfx5viHqYZP0pNUtUapSXSVlXViTCNOFcP18FrGyZY90lipp8lXZMh4d2OD+qYbb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717171; c=relaxed/simple;
-	bh=mMn+A5vb7WZSNlXsUJJR8RQuOL2xMgNRYtvTYr4tbcU=;
+	s=arc-20240116; t=1760717284; c=relaxed/simple;
+	bh=HqjY6m4D2rtLDZQzYhepgOuofMmASG3H7EfDU2kJMB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwPlA7Vyg6mMR7apQP/oPX1xxAY2TGjVqZe3NPfAXNM9wXjQsSPlBKa8StLTMhbP08RAUzFqp3zrTozt7mUCWnpANEO6SGgv0USrZUANxeEbSM3aTKdTVS0bHRAcMCo2N6s7XqeIWC62Uqw0cZc+74NZB+qGsbLQDMTQGyOoCzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNddrQRw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D8AFC116B1;
-	Fri, 17 Oct 2025 16:06:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oqdorGffqbZYXX9CQEIO6KeupSzgy0Ud2eNodOncklAPuqeRxkpLlmtDf3rd/fQyrvEVOG5Zii7C5gsRuOlmSrSTAvD3vzdJ19aOw3C17JbG+3TOX3ZmMsRRio710pZd/6bCXR4x/TIr1H8geRQqDgwGJYn1NgVk8FGe8JxSRi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5w/i+f9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2852C4CEE7;
+	Fri, 17 Oct 2025 16:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760717170;
-	bh=mMn+A5vb7WZSNlXsUJJR8RQuOL2xMgNRYtvTYr4tbcU=;
+	s=k20201202; t=1760717283;
+	bh=HqjY6m4D2rtLDZQzYhepgOuofMmASG3H7EfDU2kJMB4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mNddrQRwmWMwKIJRRUymDW+GQDQQ36AqFBPij4GsBxlB6yxHIfoLQbFr21sKzrM78
-	 +Kmrg5zLFGnJwQgDIPpYkfh9EjxVvvYB6nBE4deMU65Wk0y5yQoOmtlDP/hUt8UNRU
-	 EywzOkHUV/JfypodwDx3sjBjSsqwCeKC2psWM9HDQS6iEa1A1AO6vL54TVCl2P2E6c
-	 mfykJmHxMqj7WX1C95bTgM0erQ/F5FJnelj6cNPAT6GeRhX7xX3HI2/wojlPN7VlJR
-	 EvWUc4DlxbgFw8aRZZAKCGOv0Vw+02xsd5vOoQ6tLBMuWzaoKuNrkpuqYfvrrbsdSI
-	 X0R03f0y5KQrQ==
-Date: Fri, 17 Oct 2025 09:04:37 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org, Jason@zx2c4.com
-Subject: Re: [PATCH 0/8] VAES+AVX2 optimized implementation of AES-GCM
-Message-ID: <20251017160437.GA1566@sol>
-References: <20251014003123.GA2763@sol>
- <aPH9ZQP0m8Pq5Iy-@gondor.apana.org.au>
- <CAMj1kXGE6-xiUSyKa92=HWeywt=5-F2_G2H7V-UnVhKG65zwCA@mail.gmail.com>
+	b=T5w/i+f9TZp7C+F8S8KSixlOYUFd6GgOHtP7QKqP24S2FV1WdkmTi7cqVVCjbcj7h
+	 NgIjEGH4azEXnCHiH3N/BXph4TBu+en56bkX86o71rWjYqSggMTtX+eSMFfKgmVRgY
+	 7oe/3t1bxPW0/ut7mJcOa9bkTMylXpIuCuzv0hk7KS/ukI68um0W8mAeMWegEgCAWF
+	 hh204sIm0qnVOVkpyyFLgY50C4LDXnFt2XigIaaXGCC4rlhEZm/zfWV9vsfJclLaHJ
+	 x6tpoASNLn3MEEn2kJeoQy83ZoNE/QVuKOTFJVH3ukTZPoefZVeEcpj9kTrMVaVyf5
+	 uaUMYUFD0D9pw==
+Date: Sat, 18 Oct 2025 00:07:58 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
+Message-ID: <aPJp3hP44n96Rug9@tzungbi-laptop>
+References: <20251016054204.1523139-1-tzungbi@kernel.org>
+ <20251016054204.1523139-6-tzungbi@kernel.org>
+ <20251016123149.GA88213@nvidia.com>
+ <aPGryj-V5PQZRtoI@google.com>
+ <20251017134916.GK3901471@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,64 +70,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGE6-xiUSyKa92=HWeywt=5-F2_G2H7V-UnVhKG65zwCA@mail.gmail.com>
+In-Reply-To: <20251017134916.GK3901471@nvidia.com>
 
-On Fri, Oct 17, 2025 at 10:44:37AM +0200, Ard Biesheuvel wrote:
-> On Fri, 17 Oct 2025 at 10:25, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >
-> > Eric Biggers <ebiggers@kernel.org> wrote:
-> > > On Wed, Oct 01, 2025 at 07:31:09PM -0700, Eric Biggers wrote:
-> > >> This patchset replaces the 256-bit vector implementation of AES-GCM for
-> > >> x86_64 with one that requires AVX2 rather than AVX512.  This greatly
-> > >> improves AES-GCM performance on CPUs that have VAES but not AVX512, for
-> > >> example by up to 74% on AMD Zen 3.  For more details, see patch 1.
-> > >>
-> > >> This patchset also renames the 512-bit vector implementation of AES-GCM
-> > >> for x86_64 to be named after AVX512 rather than AVX10/512, then adds
-> > >> some additional optimizations to it.
-> > >>
-> > >> This patchset applies to next-20250929 and is targeting 6.19.  Herbert,
-> > >> I'd prefer to just apply this myself.  But let me know if you'd prefer
-> > >> to take it instead (considering that AES-GCM hasn't been librarified
-> > >> yet).  Either way, there's no hurry, since this is targeting 6.19.
-> > >>
-> > >> Eric Biggers (8):
-> > >>   crypto: x86/aes-gcm - add VAES+AVX2 optimized code
-> > >>   crypto: x86/aes-gcm - remove VAES+AVX10/256 optimized code
-> > >>   crypto: x86/aes-gcm - rename avx10 and avx10_512 to avx512
-> > >>   crypto: x86/aes-gcm - clean up AVX512 code to assume 512-bit vectors
-> > >>   crypto: x86/aes-gcm - reorder AVX512 precompute and aad_update
-> > >>     functions
-> > >>   crypto: x86/aes-gcm - revise some comments in AVX512 code
-> > >>   crypto: x86/aes-gcm - optimize AVX512 precomputation of H^2 from H^1
-> > >>   crypto: x86/aes-gcm - optimize long AAD processing with AVX512
-> > >>
-> > >>  arch/x86/crypto/Makefile                      |    5 +-
-> > >>  arch/x86/crypto/aes-gcm-aesni-x86_64.S        |   12 +-
-> > >>  arch/x86/crypto/aes-gcm-vaes-avx2.S           | 1150 +++++++++++++++++
-> > >>  ...m-avx10-x86_64.S => aes-gcm-vaes-avx512.S} |  722 +++++------
-> > >>  arch/x86/crypto/aesni-intel_glue.c            |  264 ++--
-> > >>  5 files changed, 1667 insertions(+), 486 deletions(-)
-> > >>  create mode 100644 arch/x86/crypto/aes-gcm-vaes-avx2.S
-> > >>  rename arch/x86/crypto/{aes-gcm-avx10-x86_64.S => aes-gcm-vaes-avx512.S} (69%)
-> > >>
-> > >> base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
-> > >
-> > > Applied to https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
-> >
-> > Oops, I didn't see this email until it was too late.  Since the
-> > patches should be identical I don't think it matters.
+On Fri, Oct 17, 2025 at 10:49:16AM -0300, Jason Gunthorpe wrote:
+> On Fri, Oct 17, 2025 at 02:36:58AM +0000, Tzung-Bi Shih wrote:
+> > Imagining the following example:
+> > 
+> > /* res1 and res2 are provided by hot-pluggable devices. */
+> > struct filp_priv {
+> >     void *res1;
+> >     void *res2;
+> > };
+> > 
+> > /* In .open() fops */
+> > priv = kzalloc(sizeof(struct filp_priv), ...);
+> > priv->res1 = ...;
+> > priv->res2 = ...;
+> > filp->private_data = priv;
+> > 
+> > /* In .read() fops */
+> > priv = filp->private_data;
+> > priv->res1    // could result UAF if the device has gone
+> > priv->res2    // could result UAF if the device has gone
+> > 
+> > 
+> > How does the bool * work for the example?
+> 
+> You are thinking about it completely wrong, you are trying to keep the
+> driver running conccurrently after it's remove returns - but that
+> isn't how Linux drivers are designed.
+> 
+> We have a whole family of synchronous fencing APIs that drivers call
+> in their remove() callback to shut down their concurrency. Think of
+> things like free_irq(), cancel_work_sync(), timer_shutdown_sync(),
+> sysfs_remove_files(). All of these guarentee the concurrent callbacks
+> are fenced before returning.
+> 
+> The only issue with cros_ec is this:
+> 
+> static void cros_ec_chardev_remove(struct platform_device *pdev)
+> {
+>         struct miscdevice *misc = dev_get_drvdata(&pdev->dev);
+> 
+>         misc_deregister(misc);
+> }
+> 
+> It doesn't fence the cdevs! Misc is a hard API to use because it
+> doesn't have a misc_deregister_sync() variation!
+> 
+> Dan/Laurent's point and proposal was that mis_deregister() does not
+> work like this! It is an anomaly that driver authors typically over
+> look.
+> 
+> So the proposal was to add some way to get a:
+>   misc_deregister_sync()
+> 
+> What gives the fence. Under your proposal it would lock the SRCU and
+> change the bool. After it returns no cdev related threads are running
+> in fops touching res1/res2. I think your proposal to replace the fops
+> and that related machinery is smart and has a chance to succeed.
+> 
+> From this perspective your example is malformed. Resources should not
+> become revoked concurrently *while a driver is bound*. The driver
+> should be unbound, call misc_deregister_sync()/etc, and return from
+> remove() guaranteeing it no longer touches any resources.
 
-Well, it seems you didn't read the patchset (even the cover letter) or
-any of the replies to it.  So maybe I should just take it, as I already
-said I preferred, and later did do since you hadn't said you wanted to
-take it.  It would have been okay if you had volunteered to take this,
-but you need to actually read the patches and replies.
+Imagining:
+- Driver X provides the res1.
+- Driver Y provides the res2.
+- Driver Z provides the chardev /dev/zzz.  The file operations use res1
+  and res2.
+- A userspace program opened /dev/zzz.
 
-As for the patches being identical, besides correctly applying Ard's
-tags, I made a couple very minor changes that weren't worth sending a v2
-for: clarifying one of the commit messages, and correcting two comments
-and dropping some unused aliases from aes-gcm-vaes-avx2.S.
+In the approach, what is .remove() of driver X supposed to do when driver X
+is unbinding (e.g. due to device unplug)?
 
-- Eric
+If it ends up call misc_deregister_sync(), should the synchronous function
+wait for the userspace program to close the FD?
+
+
+The design behind revocable: the driver X waits via synchronize_srcu(), and
+then it is free to go.  The subsequent accesses to res1 will get NULL, and
+should fail gracefully.
+
+> For this specific cros_ec driver it's "res" is this:
+> 
+>         struct cros_ec_dev *ec = dev_get_drvdata(pdev->dev.parent);
+>         struct cros_ec_platform *ec_platform = dev_get_platdata(ec->dev);
+
+In fact, no, the "res" we are concerning is struct cros_ec_device, e.g. [1].
+(I knew the naming cros_ec_device vs. cros_ec_dev is somehow easy to confuse.)
+
+[1] https://elixir.bootlin.com/linux/v6.17/source/drivers/platform/chrome/cros_ec_spi.c#L752
+
+> This is already properly lifetime controlled!
+> 
+> It *HAS* to be, and even your patches are assuming it by blindly
+> reaching into the parent's memory!
+> 
+> +	misc->rps[0] = ec->ec_dev->revocable_provider;
+> 
+> If the parent driver has been racily unbound at this point the
+> ec->ec_dev is already a UAF!
+
+Not really, it uses the fact that the caller is from probe().  I think the
+driver can't be unbound when it is still in probe().
+(Probe protocol device -> register the MFD device ->
+ add cros-ec-chardev device and probe.)
+
+> For cros it is safe because the cros_ec driver is a child of a MFD and
+> the MFD logic ensures that the children are unbound as part of
+> destroying the parent. So 'ec' is guarenteed valid from probe() to
+> remove() return.
+> 
+> IHMO auto-revoke is a terrible idea, if you go down that path then why
+> is misc special? You need to auto-revoke irqs, timers, work queues,
+> etc too? That's a mess.
+
+To be clear, I'm using misc as an example which is also the real crash we
+observed.  If the file operations use other resources provided by a
+hot-pluggable device, it'd need to use revocable APIs to prevent the UAFs.
 
