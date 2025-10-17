@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-858382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D821BEAEAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE42BBEAD04
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA61E940ECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:10:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E006A9432DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B32857C1;
-	Fri, 17 Oct 2025 16:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F162296BAB;
+	Fri, 17 Oct 2025 16:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5f2MTTJ"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="DVJDUqr8"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96690283FEF
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4A2253EC;
+	Fri, 17 Oct 2025 16:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717395; cv=none; b=Aa0v15P6YlhsYWVjOnJfYCtMvlE3PM7eQMc9hISmIi0RQKmhaVpSuYutb8fD//0Y3i6f8vvv5Dwpwqhw63j7P0CcNm4jh4P5WAJIJqVxKXFeAST2biEZ6xQODzLUEVURo/dSO9m+1tK8Qhb+H7kTJ1dW1+xz5oAvUb+FPE4V8TE=
+	t=1760717425; cv=none; b=tch38qhLW3+NH+JIapFriNOgbHl6tEGOohb83Y1sDDDsy6Yl3kXemP4yI5Bx/NBbFQvnRsXHRyDG4Eu3rdHHU6cIm5TH4K8/qy0OJiu1Gz1C92Zz55CE/QVo4+EE2tte9uo/Ir000AC6YOpLWicUbVeIwKVdJjf4JBFWE6S4B1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717395; c=relaxed/simple;
-	bh=UiLYr8jJW28eUVROI2Zqetwow8c8Jur2bmph5Wn4+jI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pUZrlRXVi3HTCKzCwQvyu/OtkK2uFbRrIxxZxAB99VeW4D1B/LdPEoBu3HQ8ixbs5QIQlwAnQZE+H6mK7dxJkgGCcVeq0VMVdkgBRTMpILaB7jhKpAgifjCgLJbTZnYPpmgUFgMLRW0RtHSCBxk4iOJT9doga2yUfEhMzBNiFpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5f2MTTJ; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bcb7796d4so1522324a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:09:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760717393; x=1761322193; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xco4bIjlvyRAGDvFYX9qeWZinCThHE/ogACqSwyAjPk=;
-        b=V5f2MTTJShkRqg9+rITcfSBO3cLyRSYQ9oN3YHtA4hJ6EwGQZ+wDQwGQQjCBwBQwXV
-         qWgANYG9lLM2orWkotio7Jpr1qLvqHvCRhcgJPDnuIjPJukJFC5IINxupDEC++hMnYCq
-         vrF0OklSywvO5UnvZm58PJAk1oOX2IdGatT0pZlgbWvQfnmBJs/HkdZFjqhcIbfkHHoa
-         mpfAgjds7rloyx7Zaw1IYE3mE8wwl2vp3B6f/qT1Ztk1N7WNy3wp61GOpDPBCVfcK60Y
-         i/akICWyVnet62AH34s+xRWNgCpa18BCTwLnEpfkwB0nCg0tYmZp3q8S1yYbtkocX+2P
-         sZyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760717393; x=1761322193;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xco4bIjlvyRAGDvFYX9qeWZinCThHE/ogACqSwyAjPk=;
-        b=kUo4l8AUqxXXCjqixOlJZelg+gtO43ecFnBuVm/eYJgW6ZyLsNiUHsPFwjxF9eztO7
-         BNanr69FWMakWAm+yEtSfDIHXVVQmnGvuNowq/nOg+6ugvWYce7TmOruXc8U7Sm16bqR
-         FlIFUatKiUvkJN1a2iJLZ0Vp1MjCW6TZMK27Qh5eCMhMcf1Y8xuNhHcyA4mIT37/chre
-         0/42mY/KzdqdgJHNSjfeA8CtIJmjRkh+y/0Z1LsOHqnZSJfs8VW/4j0kkXXja8WS6cZF
-         va87EsLMiojgddgU6Qnqieake1NbGVjkY2QBr3XnC0Vib8M115zL6BE2U6UpkZtrKSx9
-         Kotw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8ddjGElBhYWyd74a4dgIEb/THVgRqYy1jHyKR6ChExUaHX28u0LS9R671Owkkurli+7/e05xhbTI2ZS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWiV1pKs9uaaPm90E9To5D1oGLo57ujzJsWW6LQAb1RL894TT4
-	nyNCQEn1iCz1ela9IObQK6elbrn+ZVJ/eajZEee2TXQ+ErXNQn25rhZ7Yd9kn5H1YP6xcGMTL4o
-	k2P9rDg==
-X-Google-Smtp-Source: AGHT+IEX3Sb5zJcmsRpA1W1vQ5QaKm+SHN+64AlkRsSY2B5yN0+QDo/O6QpFaF3gXFyeWZi0UF8r+4DiSYM=
-X-Received: from pjqc13.prod.google.com ([2002:a17:90a:a60d:b0:332:7fae:e138])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b0f:b0:33b:6ef4:c904
- with SMTP id 98e67ed59e1d1-33bcf8faaf5mr5262194a91.20.1760717392946; Fri, 17
- Oct 2025 09:09:52 -0700 (PDT)
-Date: Fri, 17 Oct 2025 09:09:50 -0700
-In-Reply-To: <ad3b910a-ff83-4738-888b-5432d09de073@maciej.szmigiero.name>
+	s=arc-20240116; t=1760717425; c=relaxed/simple;
+	bh=6KhZzuB5RgPXRnk3z3pqPv5g/6A72xiksTm8KdGgFOc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GfVXYIs9he1S7tPtILRY9WghCT5Ax7fCFh+Gh/3oIejn4bqnsViowmF+ZxmUHmn8GkXm4XoMuuoCXX/Qe+cGW49SFcllWxnnpZtG3LDVOK4NJNUVkba/9YWJ5Yyk6irl3kTCX+LSPaIUdI3/q2ls7B2w7kmcLG062f9j6kKrXRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=DVJDUqr8; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 2C860A10D7;
+	Fri, 17 Oct 2025 18:10:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=qdHFeu7J/stvY65dY6buBrBVhFapjPw5TmtVfzS/XXk=; b=
+	DVJDUqr8F1ubGCEo4HU7/D7OEq3IWQUG1YSmnvsprjPJLt49uPYTyOtmAJr1DTaq
+	9BYcrHWj9bUOCBQ0eUoDNWKQrLakhCD3D7JxOuhDw9uQUNY0yfAs03PxYf7FxZr5
+	3aSwEcNaXAV3wKjlwP0G7inQgFY2dYpQ69oWji7rqvFbZR9IIY09x0wZk1iDD8cu
+	CtSGJ5zDvGM939Nz1N2lw2bqH+S8BPvsGLSAm3YxyvNEq99O4DBX213qC+Neh71A
+	n0obF7nPjePKelFGScADayhQD2rMOCsv87/V3Pt1RqwPguhvpWvRg/OCcYLc3roM
+	gToix5XkTrsgZYIIRhHW5IluXOJtXlO33DXfYnItCjLanOHDZn1fc3rRbuC1ExuD
+	+q0g/NbQLYOWZFF3ou9+X1Fw0hIwfr+A6Zu60t6y+O3prQvJsPPEcjUJKS0YFAcE
+	fokUQBNw7bO/bdsIWrNNgNiNUHPoUVH1bCw22+pIps7FLSJ6x/AQn05YW4zF7AJ5
+	XHCrwyZuUWsmnUNIhiFQ7S24tMvEFYXModada3Bi4s3OuELzoVBWdgD6YaZdN2rN
+	X9Sd8aDfXYo1M3t4MfcXNgdDklPFJDRJuQU8oDuf2GF+yKFnk11ns84VUSE+V2ko
+	xeg2dcSg03zMNx787BOo4v+n4EYha8n4v3osBZI4mzk=
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, "Florian
+ Fainelli" <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Buday Csaba <buday.csaba@prolan.hu>
+Subject: [PATCH net-next v3 0/4] net: mdio: implement optional PHY reset before MDIO access
+Date: Fri, 17 Oct 2025 18:10:07 +0200
+Message-ID: <cover.1760620093.git.buday.csaba@prolan.hu>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <90ea0b66874d676b93be43e9bf89a9a831323107.1758647049.git.maciej.szmigiero@oracle.com>
- <pssrvpxpo7ncvfkgunuwbenztcw4p4d3aavvbmgzcr23fg7biy@aeylu42ii3k6> <ad3b910a-ff83-4738-888b-5432d09de073@maciej.szmigiero.name>
-Message-ID: <aPJqToq-589NovVS@google.com>
-Subject: Re: [PATCH v3] KVM: selftests: Test TPR / CR8 sync and interrupt masking
-From: Sean Christopherson <seanjc@google.com>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Naveen N Rao <naveen@kernel.org>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, 
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1760717418;VERSION=8000;MC=4017348431;ID=38906;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2998FD515F647660
 
-On Fri, Oct 17, 2025, Maciej S. Szmigiero wrote:
-> On 25.09.2025 12:43, Naveen N Rao wrote:
-> > On Tue, Sep 23, 2025 at 07:32:14PM +0200, Maciej S. Szmigiero wrote:
-> > > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
-> > > 
-> > > Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
-> > > * TPR is 0 on reset,
-> > > * TPR, PPR and CR8 are equal inside the guest,
-> > > * TPR and CR8 read equal by the host after a VMExit
-> > > * TPR borderline values set by the host correctly mask interrupts in the
-> > > guest.
-> > > 
-> > > These hopefully will catch the most obvious cases of improper TPR sync or
-> > > interrupt masking.
-> > > 
-> > > Do these tests both in x2APIC and xAPIC modes.
-> > > The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
-> > > bit of exercise too.
-> > > 
-> > > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-> > 
-> > Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
-> > 
-> 
-> Was this patch picked up or are there any other review comments here?
-> I can't seem to find it in any KVM upstream tree.
+Some Ethernet PHY devices require a hard reset before any MDIO access can
+be safely performed. This includes the auto-detection of the PHY ID, which
+is necessary to bind the correct driver to the device.
 
-Not applied yet, though it's in my queue to look at.
+The kernel currently does not provide a way to assert the reset before
+reading the ID, making these devices usable only when the ID is hardcoded
+in the Device Tree 'compatible' string.
+(One notable exception is the FEC driver and its now deprecated
+`phy-reset-gpios` property).
 
-The main reason for the delay is that I think I made a mistake by shoving the ICR
-test into xapic_state_test.c. Bundling the ICR test with APIC ID tests was "fine"
-at the time, but it obviously encourages using the test as a dumping ground for
-similar APIC tests.  And I don't want selftests to end up like KUT where there
-are these huge, inscrutable tests that are painful to debug.
+This patchset implements an optional reset before reading of the PHY ID
+register, allowing such PHYs to be used with auto-detected ID. The reset
+is controlled by a newly defined DT property, so it should not break
+compatibility with existing systems.
 
-So I don't want to apply this patch before deciding whether or not to split
-xapic_state_test.c, e.g. into xapic_id_test.c and xapic_icr_test.c, and then
-this could add xapic_tpr_test.c.  But I haven't looked closely enough at your
-patch to make a concrete suggestion (at a glance, it looks like there's not much
-overlap with the ICR test, so I'm leaning strongly towards splitting).
+There have been several earlier attempts to implement such functionality,
+of which I have collected a few in the links section.
+
+The links to my own v1 and v2 versions are also provided.
+
+Link: https://lore.kernel.org/lkml/1499346330-12166-2-git-send-email-richard.leitner@skidata.com/
+Link: https://lore.kernel.org/all/20230405-net-next-topic-net-phy-reset-v1-0-7e5329f08002@pengutronix.de/
+Link: https://lore.kernel.org/netdev/20250709133222.48802-4-buday.csaba@prolan.hu/
+Link: https://lore.kernel.org/all/20251013135557.62949-1-buday.csaba@prolan.hu/
+Link: https://lore.kernel.org/all/20251015134503.107925-1-buday.csaba@prolan.hu/
+
+Buday Csaba (4):
+  net: mdio: common handling of phy reset properties
+  net: mdio: change property read from fwnode_property_read_u32() to
+    device_property_read_u32()
+  dt-bindings: net: mdio: add phy-id-read-needs-reset property
+  net: mdio: reset PHY before attempting to access registers in
+    fwnode_mdiobus_register_phy
+
+ .../devicetree/bindings/net/ethernet-phy.yaml |  8 +++
+ drivers/net/mdio/fwnode_mdio.c                | 40 +++++++++++---
+ drivers/net/phy/mdio_bus.c                    | 39 +-------------
+ drivers/net/phy/mdio_device.c                 | 52 +++++++++++++++++++
+ include/linux/mdio.h                          |  2 +
+ 5 files changed, 98 insertions(+), 43 deletions(-)
+
+
+base-commit: 00922eeaca3c5c2001781bcad40e0bd54d0fdbb6
+-- 
+2.39.5
+
+
 
