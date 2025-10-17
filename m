@@ -1,148 +1,109 @@
-Return-Path: <linux-kernel+bounces-858455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4355BEAE80
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:54:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788B3BEAD94
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F19960E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:31:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2316A5C0280
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976B6298CDE;
-	Fri, 17 Oct 2025 16:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAA3299AB4;
+	Fri, 17 Oct 2025 16:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJMcpOPR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3QIcPU3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00199137923;
-	Fri, 17 Oct 2025 16:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292D025BEF8;
+	Fri, 17 Oct 2025 16:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718652; cv=none; b=k9FMOEkkapHvZ95irYcleTtx/z1uJrfRYXp5oaBwemJ8o+mX9K2TKRPTf77TEY1IR+/AL9u1k/sB07vSyhVzIz8bKcnZqZQu7wfQoUqsYEDjyf1TfxdQ81Rwv6E3d+VY6Y/rWWXGzY28LyBWIPaP5nMfb+/z0Y/Ttb+lvy0cI6A=
+	t=1760718680; cv=none; b=nt+A25Pv4FvnksOiwEU8Bs0gSh9wq1n7S8GGspnAugCElvIf2Xt/lHTtnll/h1AfsHC9heqn//8cc6Eo5Sjb6w3EZm2yTZeeguIfplr2YiqBoEJo6kZ15aBCgS1SxScgsBL2g/m9f6sB8HbMczR4Ifs/ewFIBDcAZJZBeOQYzv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718652; c=relaxed/simple;
-	bh=xamKdc8Fy5z0epEQXm3Wn0WLPZuqYDYYH6wCE5QSiow=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=nApw5YdNuOPMUVnQUBFvdfv2g5HBWNmCd9W/XpeneNBZx0/vYQKOREG7NCM/uLBC6s7NAOHisiNIWXa7LeoirXmNiuvnaFnbn5y+01wRXLak32POZIoqHaL7SuXpTZB+SG5MbLVzJGWFywungsWtLz7n777aEnLVgFxblQNTJfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJMcpOPR; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760718651; x=1792254651;
-  h=message-id:date:mime-version:from:to:cc:subject:
-   content-transfer-encoding;
-  bh=xamKdc8Fy5z0epEQXm3Wn0WLPZuqYDYYH6wCE5QSiow=;
-  b=CJMcpOPRu4b4lr/HiCh7AxVhq8jyvfAfrYd/0Wx8DkOnMcpWMhKn84jC
-   6eJkHeL2nEPT3I4N1kcjyuTYwCzArgykbPndhgyVk6+vQebDK2XJkY9nq
-   nK3MIvI7KjFE/TuS70SJy8NJgxV0tlyFKfYn6yAoOuzBY8npzfoG2gr7y
-   YZ7xWs3Gp4CUxKNKC17swP/fDlJDq6aI28Rwcdm1G7UYJDoxB+zy4R8da
-   y0cn6kE90BoG6E5MBN0iiHtgJwvvnGA/0jw7UOVwfQwoKNflsrhpZ8NbL
-   upRYvfJSi67ZtJdc0mJlTWQQXQRJ0DD+pyeXs/4bpsF3OdaqmcT/nBoYu
-   g==;
-X-CSE-ConnectionGUID: mTnngB8KRIC+0IrbUm86Ig==
-X-CSE-MsgGUID: p7TpgJ7dRUSFaTO3rb3COA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="63081518"
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="63081518"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:30:50 -0700
-X-CSE-ConnectionGUID: IPaMK2wETFqPXTkZGZ7+GQ==
-X-CSE-MsgGUID: j8isfBWFQCafPWqdPO0t6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="181907541"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:30:50 -0700
-Message-ID: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
-Date: Fri, 17 Oct 2025 09:30:49 -0700
+	s=arc-20240116; t=1760718680; c=relaxed/simple;
+	bh=5xMasA4dijTH+D4z29yAG7yMdBg2ZcUrxcBTkA8e/H0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgWSahmvCRYDAfsLRNkx0j2PItgCPU53ooItt6m/v0lXniJ9tpkz8MPfS2em6HxQpUF4LRXFivyX0ci+JYUgZaS83TeKbpa9widDUtQHMQw0iLl7CHbMrgWMj4jQMNlwFLy7vPiVpai4aSghcVLz5uqUpFbBymYxZaHFCP6cYK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3QIcPU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2D7C4CEE7;
+	Fri, 17 Oct 2025 16:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760718679;
+	bh=5xMasA4dijTH+D4z29yAG7yMdBg2ZcUrxcBTkA8e/H0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F3QIcPU3p7RNzyBPQZelatj72PHZvLBO0v7WMQEHKWQkcWw0aRP9NCI45+i4R/QOX
+	 xpxQTrVMHpjoS92aFDhaWMEkeF5iUPP9dYnN8ZmaDz1a/+gT/CuePd7sxCfx6AWG+u
+	 yD5ltB9eikDPFmSFMKlz5rMyye1n8PgmFkxSxtBDociP9AI6amRnnKUPFhoIzXzR2Z
+	 zFvBs7up8qd/VnxeQZUpRilr8lb36OzTZdMjRVzfttLVT1gfLOVT6NRCb8JrCm1/Q5
+	 QXzsuwHApBuF7IZmNMJFHht/hBfG2gWtWY+5vsuw45LG5ItzUCua1dX7rV19vEI+CL
+	 RMU+fEhy6ObCQ==
+Date: Fri, 17 Oct 2025 17:31:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 06/11] ASoC: dt-bindings: sound: cirrus: cs530x: Add
+ cs530x variants
+Message-ID: <d51da899-cd16-4d5d-a754-e6fecbdab2e8@sirena.org.uk>
+References: <20251017161543.214235-1-vitalyr@opensource.cirrus.com>
+ <20251017161543.214235-7-vitalyr@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Subject: [GIT PULL] Compute Express Link (CXL) Fixes for 6.18-rc2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="P8YSWoU5Aja4b2E5"
+Content-Disposition: inline
+In-Reply-To: <20251017161543.214235-7-vitalyr@opensource.cirrus.com>
+X-Cookie: Androphobia:
 
-Hi Linus, please pull from
 
-git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
+--P8YSWoU5Aja4b2E5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-...to receive a small collection of CXL fixes. In addition to some misc fixes
-for the CXL subsystem, a number of fixes for CXL extended linear cache support
-are included to make it functional again.
+On Fri, Oct 17, 2025 at 05:15:33PM +0100, Vitaly Rodionov wrote:
 
-While 0f6f1982cb28 ("cxl: Set range param for region_res_match_cxl_range() as const")
-is not a fix, it's a small change that addresses a compile warning that arose from the fix
-f4d027921c81 ("cxl: Fix match_region_by_range() to use region_res_match_cxl_range()").
+> --- a/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
+> +++ b/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
+> @@ -22,6 +22,10 @@ properties:
+>        - cirrus,cs5302
+>        - cirrus,cs5304
+>        - cirrus,cs5308
+> +      - cirrus,cs4282
+> +      - cirrus,cs4302
+> +      - cirrus,cs4304
+> +      - cirrus,cs4308
 
-These have all appeared in -next for a few days with no reported issues.
+I've not gone back and cheked but I suspect Krzysztof's complaint on
+prior versions that he wasn't happy you weren't addressing was that
+these enumerations should be sorted.
 
----
+--P8YSWoU5Aja4b2E5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+-----BEGIN PGP SIGNATURE-----
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjyb1EACgkQJNaLcl1U
+h9BnNAf9FnyhKYn1KSX/ST6QBpGE9aa0GovWGEvRYa1P0k/2X0snV9ucWxg6U8ok
+QbjVVfcN0DSpwgyc4JStp2KuwxtNypL+Ot4Tx0hy8h3KToDEvu6VmNhRzPYy/jX9
+55oG/ZlmczBIcTaBkio5H5UsdiaGizWD0oh6T8hmvNOnhRZS5Oljfi+CNM140u68
+v4mozydi112NiCnQ9GWbOAUci96SevjcbxRDVlTB5iNqatYtvhXLeJCsVejzZgfp
+cZz8t+WEBvO7xBAv3pKTrP68jyeomWIpNvEbOETtxGUeRB/OFUJf+EdkwvDMDP9r
+zKUv4J/i+NWVO2F6VO4QzlxqvQ39nA==
+=p2yG
+-----END PGP SIGNATURE-----
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
-
-for you to fetch changes up to a4bbb493a3247ef32f6191fd8b2a0657139f8e08:
-
-  cxl/trace: Subtract to find an hpa_alias0 in cxl_poison events (2025-10-14 14:48:14 -0700)
-
-----------------------------------------------------------------
-cxl fixes for v6.18-rc2
-
-- Avoid missing port component registers setup due to dport enumeration
-  failure
-- Add check for no entries in cxl_feature_info to address accessing
-  invalid pointer.
-- Use %pa printk format to emit resource_size_t in
-  validate_region_offset()
-
-CXL extended linear cache support fixes:
-- Fix setup of memory resource in cxl_acpi_set_cache_size()
-- Set range param for region_res_match_cxl_range() as const.
-  (Addresses a compile warning for match_region_by_range() fix)
-- Fix match_region_by_range() to use region_res_match_cxl_range()
-- Subtract to find an hpa_alias0 in cxl_poison events to correct
-  the alias math calculation.
-
-----------------------------------------------------------------
-Alison Schofield (2):
-      cxl/region: Use %pa printk format to emit resource_size_t
-      cxl/trace: Subtract to find an hpa_alias0 in cxl_poison events
-
-Dave Jiang (4):
-      cxl/features: Add check for no entries in cxl_feature_info
-      cxl/acpi: Fix setup of memory resource in cxl_acpi_set_cache_size()
-      cxl: Set range param for region_res_match_cxl_range() as const
-      cxl: Fix match_region_by_range() to use region_res_match_cxl_range()
-
-Li Ming (1):
-      cxl/port: Avoid missing port component registers setup
-
- drivers/cxl/acpi.c          |  2 +-
- drivers/cxl/core/features.c |  3 +++
- drivers/cxl/core/port.c     | 26 ++++++++++++++------------
- drivers/cxl/core/region.c   | 11 ++++-------
- drivers/cxl/core/trace.h    |  2 +-
- 5 files changed, 23 insertions(+), 21 deletions(-)
+--P8YSWoU5Aja4b2E5--
 
