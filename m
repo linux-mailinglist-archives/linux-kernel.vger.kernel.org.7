@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-858446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B35BEAB4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:29:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CFABEAB26
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870B91AE041B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:29:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B30AB359818
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF40C2BEC4E;
-	Fri, 17 Oct 2025 16:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EA728466F;
+	Fri, 17 Oct 2025 16:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="Zsy8CkoL";
-	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="/wCOTQlk"
+	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="BZAmcj42";
+	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="7tnaCM6o"
 Received: from mail.0la.ch (mail.0la.ch [78.47.82.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B232877C2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7257E29AB00
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.82.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718503; cv=none; b=Jmk1qSjuduB4yRtOLyYj6XBvhUwGQ9fM+9v3m2Gu08mLUyp6C3pDmqJKUhLJ8G6kRVhiU1OYbaq2XK/WLKA7p4YHt0K6GaVb9HHtpT9nM+LwiFmoINzYi5GiVNNsdXT+dVNWkzZiZNKgR2cg3pnOzsp8t+6CxMEydjzeYtvegEM=
+	t=1760718487; cv=none; b=gPuzjwKuQdv2DNh7PPbbc4EP7cXMpJnCMazk5yR18HSf+pINWtt35EPbBrZM0TOZcd5jTkMtSE+gs8kMIm8ws9hRSSgLdgAcEXHE85QqiMOi/+1Pt8UTDqchL09PjOXBCyaIVFKCfeS1wp5Q0YvsbLbOJUGKsmO40ekZ+aAxCJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718503; c=relaxed/simple;
-	bh=JO+zCEoLR5+AqKWtcuvPiErpr3/jceX5afNZook+voo=;
+	s=arc-20240116; t=1760718487; c=relaxed/simple;
+	bh=J8nATLSpNDCuuYPy8nc9Jh3EjXH/HS2salyTmzYCVU4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FINmyMoXpv4+rTx8toXJ5bWEl2+06YgaGtBB+26YFEGQ9EVvEgcZ6+ByxFiG49f1U5WfEU/cJOOyu9xzj1DYfGWGFuquxF0f/mAX8Q6ld2uvcIL+iZTyfXygDV8/Kt4QvM8j11xDQpyuOgEpF0wj+BZ1/LDfvKwntxBiR4Uf2pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=Zsy8CkoL; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=/wCOTQlk; arc=none smtp.client-ip=78.47.82.197
+	 MIME-Version; b=kq/tG6NwXBevmHart9GwxWyI9EwJXrz5y5dfZ2l8pROqNi1A804NTwVmNWgYLAxpPYvAQUL4J25nBS9xOqxGgsAKsmOMZ/rs3eJCA8odBr80K6ecAdrCT5KBAxv/upVDK4A2nWFQVr3OpDArRWqUEZbMBrfHM/GdcbP9e6W2GwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=BZAmcj42; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=7tnaCM6o; arc=none smtp.client-ip=78.47.82.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lach.pw
 DKIM-Signature: v=1; a=rsa-sha256; s=202502r; d=lach.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1760718480; bh=FySvhxgkGPeEce3SsSP+zgs
-	Qe5XpsgsiK22GvDAXT0k=; b=Zsy8CkoLpRzeAbXtMsK6wQjVizDFWmG3thi/0CONQLus7t9j5U
-	JThsjA9WaEZeoVWq1xKeEGOVhDV+EP834vWlBnPDDMeASDoQGcFPUPmFZsW5Ot+cfz5UJ4xgBGT
-	iBXETSCf3duhdBMqmjT17cNKBHv/KuycDTBSiDBOyHirN2hOIGs4jAm5m15D817PI00wBEAGQHP
-	80Ol+PaCpbh6ewQbXZpJdXWk+72G8mwmcPh1j3x9ks46pR3pLC065KNb2q8uWdKgH2KWCQDm4RP
-	+S3/DM+hmsrnXm2JJQlCaNCl8AE43Px6Qo/x4XGSFHXyQIqSWJASjeNInD8FKrMOtuw==;
+	h=Message-ID:Date:Subject:To:From; t=1760718482; bh=G0cUjhPXLsNiRSzg25M5MDh
+	tPLRayvef22yIVqM4pgw=; b=BZAmcj42Tx4KgCUm7gwuhiu23+4lWTXljxM1DgM5pw0lUo1shr
+	bjUuMdS5qphyFhTX5yv4heg1KbfxDnAgaGg6W50ALBuvtS4/E81Fu0LFYmWpvJbIDrkHf0qvRtl
+	KkJUq52WvtFp9HXDG8u/WGM06P1yavQjyalNZvqWlTvxGgXmRRhzgqlDINnCE5UciHKIwGDbifc
+	EEt4U5tF9R/vrZsPCeCYb+xfw8Bj02isOXPJzUwCPXuAFLuXklN7o9MN7S8RjAolzlQsEzktJ+g
+	q5fCLpajAB67CwXhXY1UdOpf2xFONTp3as+dBGn2ZRD2RuaXuAJkCWHfCVZMNO1Cjdg==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202502e; d=lach.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1760718480; bh=FySvhxgkGPeEce3SsSP+zgs
-	Qe5XpsgsiK22GvDAXT0k=; b=/wCOTQlktcCTumqs5csZjjrMi5y+59YiUCTusdRmhNkAAAb09t
-	eGt75Fe5zYX/qe1hgFPI4uSLjhXSU+2ddmDQ==;
+	h=Message-ID:Date:Subject:To:From; t=1760718482; bh=G0cUjhPXLsNiRSzg25M5MDh
+	tPLRayvef22yIVqM4pgw=; b=7tnaCM6oVQtil/Mg0gF5n7TynT9nM1uOFUikgWxSpjww/vsIHr
+	ux0+oXF2ALeUBjyvUXnwNF3JkdiE+mzUdsDA==;
 From: Yaroslav Bolyukin <iam@lach.pw>
 To: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc: Harry Wentland <harry.wentland@amd.com>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Yaroslav Bolyukin <iam@lach.pw>
-Subject: [PATCH v5 1/7] drm/edid: rename VESA block parsing functions to more generic name
-Date: Fri, 17 Oct 2025 18:27:30 +0200
-Message-ID: <20251017162736.45368-2-iam@lach.pw>
+Subject: [PATCH v5 2/7] drm/edid: prepare for VESA vendor-specific data block extension
+Date: Fri, 17 Oct 2025 18:27:31 +0200
+Message-ID: <20251017162736.45368-3-iam@lach.pw>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251017162736.45368-1-iam@lach.pw>
 References: <20251017162736.45368-1-iam@lach.pw>
@@ -73,58 +73,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Those functions would also parse DSC Bits Per Pixel value in the future
-commits.
+Current VESA vendor-specific block parsing expects real block size to be
+the same as the defined struct size, use real offsets in conditionals
+instead to add struct fields in future commits.
 
 Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
 ---
- drivers/gpu/drm/drm_edid.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_edid.c | 28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index e2e85345aa9a..4fcde52291ce 100644
+index 4fcde52291ce..725ae5f9d160 100644
 --- a/drivers/gpu/drm/drm_edid.c
 +++ b/drivers/gpu/drm/drm_edid.c
-@@ -6524,8 +6524,8 @@ static void drm_get_monitor_range(struct drm_connector *connector,
- 		    info->monitor_range.min_vfreq, info->monitor_range.max_vfreq);
- }
+@@ -6541,7 +6541,7 @@ static void drm_parse_vesa_specific_block(struct drm_connector *connector,
+ 	if (oui(vesa->oui[0], vesa->oui[1], vesa->oui[2]) != VESA_IEEE_OUI)
+ 		return;
  
--static void drm_parse_vesa_mso_data(struct drm_connector *connector,
--				    const struct displayid_block *block)
-+static void drm_parse_vesa_specific_block(struct drm_connector *connector,
-+					  const struct displayid_block *block)
- {
- 	struct displayid_vesa_vendor_specific_block *vesa =
- 		(struct displayid_vesa_vendor_specific_block *)block;
-@@ -6584,8 +6584,8 @@ static void drm_parse_vesa_mso_data(struct drm_connector *connector,
- 		    info->mso_stream_count, info->mso_pixel_overlap);
- }
- 
--static void drm_update_mso(struct drm_connector *connector,
--			   const struct drm_edid *drm_edid)
-+static void drm_update_vesa_specific_block(struct drm_connector *connector,
-+					   const struct drm_edid *drm_edid)
- {
- 	const struct displayid_block *block;
- 	struct displayid_iter iter;
-@@ -6593,7 +6593,7 @@ static void drm_update_mso(struct drm_connector *connector,
- 	displayid_iter_edid_begin(drm_edid, &iter);
- 	displayid_iter_for_each(block, &iter) {
- 		if (block->tag == DATA_BLOCK_2_VENDOR_SPECIFIC)
--			drm_parse_vesa_mso_data(connector, block);
-+			drm_parse_vesa_specific_block(connector, block);
+-	if (sizeof(*vesa) != sizeof(*block) + block->num_bytes) {
++	if (block->num_bytes < 5) {
+ 		drm_dbg_kms(connector->dev,
+ 			    "[CONNECTOR:%d:%s] Unexpected VESA vendor block size\n",
+ 			    connector->base.id, connector->name);
+@@ -6564,24 +6564,20 @@ static void drm_parse_vesa_specific_block(struct drm_connector *connector,
+ 		break;
  	}
- 	displayid_iter_end(&iter);
+ 
+-	if (!info->mso_stream_count) {
+-		info->mso_pixel_overlap = 0;
+-		return;
+-	}
+-
+-	info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP, vesa->mso);
+-	if (info->mso_pixel_overlap > 8) {
++	if (info->mso_stream_count) {
++		info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP, vesa->mso);
++		if (info->mso_pixel_overlap > 8) {
++			drm_dbg_kms(connector->dev,
++				    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
++				    connector->base.id, connector->name,
++				    info->mso_pixel_overlap);
++			info->mso_pixel_overlap = 8;
++		}
+ 		drm_dbg_kms(connector->dev,
+-			    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
++			    "[CONNECTOR:%d:%s] MSO stream count %u, pixel overlap %u\n",
+ 			    connector->base.id, connector->name,
+-			    info->mso_pixel_overlap);
+-		info->mso_pixel_overlap = 8;
++			    info->mso_stream_count, info->mso_pixel_overlap);
+ 	}
+-
+-	drm_dbg_kms(connector->dev,
+-		    "[CONNECTOR:%d:%s] MSO stream count %u, pixel overlap %u\n",
+-		    connector->base.id, connector->name,
+-		    info->mso_stream_count, info->mso_pixel_overlap);
  }
-@@ -6753,7 +6753,7 @@ static void update_display_info(struct drm_connector *connector,
- 	if (edid->features & DRM_EDID_FEATURE_RGB_YCRCB422)
- 		info->color_formats |= DRM_COLOR_FORMAT_YCBCR422;
  
--	drm_update_mso(connector, drm_edid);
-+	drm_update_vesa_specific_block(connector, drm_edid);
- 
- out:
- 	if (drm_edid_has_internal_quirk(connector, EDID_QUIRK_NON_DESKTOP)) {
+ static void drm_update_vesa_specific_block(struct drm_connector *connector,
 -- 
 2.51.0
 
