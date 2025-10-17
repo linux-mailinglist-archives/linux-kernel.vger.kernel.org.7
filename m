@@ -1,172 +1,339 @@
-Return-Path: <linux-kernel+bounces-857524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E00CBE703A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044CFBE7043
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC63B4EEAEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5910918973F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F2825CC74;
-	Fri, 17 Oct 2025 07:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F0325F984;
+	Fri, 17 Oct 2025 07:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K4rAhMCJ"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Le05EvtO"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDD5262FD1
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340CD25A2A4
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687632; cv=none; b=d7bcvsu3kiaOYrozV1RUWNAFbYI5xfvtJD1z61uwmOO0Gi1bsoAzc+3a41W3vBJtf0BZEFDGXArIKzNOQOe6WbaeEhz7gw2lTn5MQE/m+c85XfuNx5tyxhILpbxWZKXOszOu1MbDiMJNVcz//rQYEbOeTGUF5Ea5p7IjmJ4ncBI=
+	t=1760687695; cv=none; b=aJcOM1gZZFFtxlqegCGDZ0py8afRa515dyJlGV9oAnk786B0NvD+z5ZL966doZh4awXsWHH8Ow4ip7bak/2vCwB8VQ/lE+syudLNYoGCt7QsN3Zf+21oeWFnfI+8KPMqGF4EhGN4XxI/1HVRRzae4l4islO9cjTFy/rE3mIPykE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687632; c=relaxed/simple;
-	bh=C+sqd/1nPij690O0rir0ZEJTk53n77kuroVYS12UZ1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dmcoP+Kbud92vIL+Vu6oeIp+S9YoXsgaY75EHWXaPngs2I3ND+NrlaT8ckah4YuxU8lUBLs/H+wDvS7REucLRyWxLILWC2yv9St/YmKCtGaY8aCcOEhYS+isWdwxwDIo2aMwWZM/5DRifPacoxbBtWP50+jmq0heqOV2j3ObAB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K4rAhMCJ; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760687625; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=oHdZGMzoWgx8F2L9qwK1aYNWjA2JpQlzaq9Ae2oOJGE=;
-	b=K4rAhMCJ3TvFplI1GkEZHLnJCDeSgtQLkIqa/CiL71G5bN4I5OT6vbEo66YHhQQ0n5ftCgNJWp2ixbOplFiTraOgCySd8RSv0eA7uTXvebXdXnn4Pt8g/1rq/nKhSDbLPahViJq7U+24KlJVsrlj7M397MNK9oSvGoLEYst8igA=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WqPA.uq_1760687623 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 17 Oct 2025 15:53:43 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hannes@cmpxchg.org
-Cc: david@redhat.com,
-	mhocko@kernel.org,
-	zhengqi.arch@bytedance.com,
-	shakeel.butt@linux.dev,
-	lorenzo.stoakes@oracle.com,
-	hughd@google.com,
-	willy@infradead.org,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mm: vmscan: simplify the logic for activating dirty file folios
-Date: Fri, 17 Oct 2025 15:53:07 +0800
-Message-ID: <ba5c49955fd93c6850bcc19abf0e02e1573768aa.1760687075.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <cover.1760687075.git.baolin.wang@linux.alibaba.com>
-References: <cover.1760687075.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1760687695; c=relaxed/simple;
+	bh=LLSGTDDpMdaPw2AY1q/tryOB06iCvFxNdHq9h6MR3Bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YRK45AxulCA/qryZN6mr95zjxAC3n/T1leY6p+qwFtpjxMrKW2n9YaBUAu6Qj8RBVsguKweBsVvM+trV384f04TZulBLcZvWuj99vIC2D7TFYcZx3Vill0tKeNM++zJ6Ep0VlJrGzJZOSjXfeIuTmQhoMbPZlG4cjwOPGC0oShc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Le05EvtO; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 2FDE9C30A1
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:54:50 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 0BE84C2B44
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:54:49 +0300 (EEST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 7D321200C00
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:54:48 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760687688;
+	bh=qjqXT1Gnn58O+Bbs8lKe43lBmBOc/sCLpY4L/VLFJqI=;
+	h=Received:From:Subject:To;
+	b=Le05EvtOcZq22bwEUgY7WaJYTxyKGYy9rGZYvlOmDMBCxIx7FLJtkPOtFQOq5SR8r
+	 vlmdANuFkZvUhTrYaPa4p2RuZ7Il4/rr+hlYdckYHo1P7n+oah3x9iV7kQ+kJVKcoT
+	 m0pI1LLjaa6F0bsBr8AluYh+DmmIh8YogeTKVEyfvNlzRG3oZQcN48a/hhasoyvOaO
+	 hl+bbIrbUhRWLqi4lbiUz9iSp3+4JThCYBxsxxkBSVrFaSDKAXgp8PzcXEFGIqUReP
+	 XhqmGz+eohdKJ8vwj0/9x8d4ilRKSvx/fJgN2GnnXj6FNCM7uQcg3iazjY13KiW44r
+	 FuGmSls8H1Lqw==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.178) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f178.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f178.google.com with SMTP id
+ 38308e7fff4ca-3737d0920e6so18080731fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Fri, 17 Oct 2025 00:54:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUpHHU9B0r/qqCZev76pfKqaqqdwx6kgpWynnAzlJXwcyRSFO6aVTUKEpWTX0UqTjyo9gzRwacDjrobvdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo94BpbO+TLGIGAH6oPsqCQ4l7QG1Rq5AKzXlxudTrNGg6SXRI
+	kbLBDxXV+mygX/B7R5B2PPLUySzYNOBJVJMI6HYCCEokpJ5NzceNcpMOpKDofcEy3ZfO163pHUV
+	4QJKgzKn6HQRFpE0v5ytAt1wLecWqrPg=
+X-Google-Smtp-Source: 
+ AGHT+IFyf5WmwJHYyOEMwRqnRF1xHLH7SADW3THIPeFiDi5+/7P1lrGa7v48wWBuTZlIvRnGzUFAGt4uxmoOOBDKW0M=
+X-Received: by 2002:a2e:a99d:0:b0:372:80ac:a33a with SMTP id
+ 38308e7fff4ca-37797a3b204mr10208551fa.28.1760687687885; Fri, 17 Oct 2025
+ 00:54:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251013201535.6737-1-lkml@antheas.dev>
+ <160c3adf-9333-4486-ba4c-d3359ea73337@gmail.com>
+ <CAGwozwGzOQ-LCk6B202-CuKq=gepn6Mt4LitJJZ7dfMLaDVs7Q@mail.gmail.com>
+ <c075a9f4-8103-dbcc-a1e7-4eaec5e90597@linux.intel.com>
+ <CAGwozwH3VnTsx8p5N6S1yp4Z9mFfPUdZ4frrnPAveLH2a00K6g@mail.gmail.com>
+In-Reply-To: 
+ <CAGwozwH3VnTsx8p5N6S1yp4Z9mFfPUdZ4frrnPAveLH2a00K6g@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Fri, 17 Oct 2025 09:54:36 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGqZ_yuNQ+TgtW4R79g4JWxZg-Q-vA7thKy_vSdpbY_yA@mail.gmail.com>
+X-Gm-Features: AS18NWC7wJQcBBP8f_8qfaO8FI-Ep2M33ZNdSAlX-mIhYsQFXVaCju_8woer5f0
+Message-ID: 
+ <CAGwozwGqZ_yuNQ+TgtW4R79g4JWxZg-Q-vA7thKy_vSdpbY_yA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] HID: asus: Fix ASUS ROG Laptop's Keyboard
+ backlight handling
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Denis Benato <benato.denis96@gmail.com>,
+ platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+ "Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176068768868.3460177.8167416331551097962@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-After commit 6b0dfabb3555 ("fs: Remove aops->writepage"), we no longer
-attempt to write back filesystem folios through reclaim.
+On Thu, 16 Oct 2025 at 18:16, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> On Thu, 16 Oct 2025 at 17:09, Ilpo J=C3=A4rvinen
+> <ilpo.jarvinen@linux.intel.com> wrote:
+> >
+> > On Thu, 16 Oct 2025, Antheas Kapenekakis wrote:
+> > > On Thu, 16 Oct 2025 at 13:57, Denis Benato <benato.denis96@gmail.com>=
+ wrote:
+> > > > On 10/13/25 22:15, Antheas Kapenekakis wrote:
+> > > > > This is a two part series which does the following:
+> > > > >   - Clean-up init sequence
+> > > > >   - Unify backlight handling to happen under asus-wmi so that all=
+ Aura
+> > > > >     devices have synced brightness controls and the backlight but=
+ton works
+> > > > >     properly when it is on a USB laptop keyboard instead of one w=
+/ WMI.
+> > > > >
+> > > > > For more context, see cover letter of V1. Since V5, I removed som=
+e patches
+> > > > > to make this easier to merge.
+> > > > >
+> > > > > All comments with these patches had been addressed since V4.
+> > > > I have loaded this patchset for users of asus-linux project to try =
+out.
+> > > >
+> > > > One of them opened a bug report about a kernel bug that happens
+> > > > consistently when closing the lid of his laptop [1].
+> > > >
+> > > > He also sent another piece of kernel log, but didn't specify anythi=
+ng more
+> > > > about this [2].
+> > > >
+> > > > [1] https://pastebin.com/akZx1w10
+> > > > [2] https://pastebin.com/sKdczPgf
+> > >
+> > > Can you provide a link to the bug report? [2] seems unrelated.
+> > >
+> > > As for [1], it looks like a trace that stems from a sysfs write to
+> > > brightness stemming from userspace that follows the same chain it
+> > > would on a stock kernel and times out. Is it present on a stock
+> > > kernel?
+> > >
+> > > Ilpo should know more about this, could the spinlock be interfering?
+> >
+> > [1] certainly seems to do schedule() from do_kbd_led_set() so it's not
+> > possible to use spinlock there.
+> >
+> > So we're back to what requires the spinlock? And what the spinlock
+> > protects?
+>
+> For that invocation, since it is coming from the cdev device owned by
+> asus_wmi, it protects asus_ref.listeners under do_kbd_led_set.
+> asus_wmi is protected by the fact it is owned by that device. Spinlock
+> is not required in this invocation due to not being an IRQ.
+>
+> Under asus_hid_event (second to last patch), which is called from an
+> IRQ, a spinlock is required for protecting both listeners and the
+> asus_ref.asus, and I suspect that scheduling from an IRQ is not
+> allowed either. Is that correct?
 
-However, in the shrink_folio_list() function, there still remains some
-logic related to writeback control of dirty file folios. The original
-logic was that, for direct reclaim, or when folio_test_reclaim() is false,
-or the PGDAT_DIRTY flag is not set, the dirty file folios would be directly
-activated to avoid being scanned again; otherwise, it will try to writeback
-the dirty file folios. However, since we can no longer perform writeback on
-dirty folios, the dirty file folios will still be activated.
+So it is a bit tricky here. When the IRQ fires, it needs to know
+whether asus-wmi will handle the keyboard brightness event so that it
+falls back to emitting it.
 
-Additionally, under the original logic, if we continue to try writeback dirty
-file folios, we will also check the references flag, sc->may_writepage, and
-may_enter_fs(), which may result in dirty file folios being left in the inactive
-list. This is unreasonable. Even if these dirty folios are scanned again, we
-still cannot clean them.
+If we want it to know for sure, it needs to access asus_wmi, so it
+needs a spinlock or an IRQ friendly lock. This way, currently,
+asus_hid_event will return -EBUSY if there is no led device so the
+event propagates through hid.
 
-Therefore, the checks on these dirty file folios appear to be redundant and can
-be removed. Dirty file folios should be directly moved to the active list to
-avoid being scanned again. Since we set the PG_reclaim flag for the dirty folios,
-once the writeback is completed, they will be moved back to the tail of the
-inactive list to be retried for quick reclaim.
+If we say that it is good enough to know that it was compiled with
+IS_REACHABLE(CONFIG_ASUS_WMI), ie the actual implementation of
+asus_hid_event in asus-wmi will never return an error, then,
+asus_hid_event can schedule a task to fire the event without a lock,
+and that task can use a normal locking primitive.
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- include/linux/mmzone.h |  4 ----
- mm/vmscan.c            | 25 +++----------------------
- 2 files changed, 3 insertions(+), 26 deletions(-)
+If the task needs to be assigned to a device or have a handle,
+asus_hid_listener can be provided to asus_hid_event, so that it is
+owned by the calling device.
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 7fb7331c5725..4398e027f450 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1060,10 +1060,6 @@ struct zone {
- } ____cacheline_internodealigned_in_smp;
- 
- enum pgdat_flags {
--	PGDAT_DIRTY,			/* reclaim scanning has recently found
--					 * many dirty file pages at the tail
--					 * of the LRU.
--					 */
- 	PGDAT_WRITEBACK,		/* reclaim scanning has recently found
- 					 * many pages under writeback
- 					 */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 65f299e4b8f0..c922bad2b8fd 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1387,21 +1387,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 
- 		mapping = folio_mapping(folio);
- 		if (folio_test_dirty(folio)) {
--			/*
--			 * Only kswapd can writeback filesystem folios
--			 * to avoid risk of stack overflow. But avoid
--			 * injecting inefficient single-folio I/O into
--			 * flusher writeback as much as possible: only
--			 * write folios when we've encountered many
--			 * dirty folios, and when we've already scanned
--			 * the rest of the LRU for clean folios and see
--			 * the same dirty folios again (with the reclaim
--			 * flag set).
--			 */
--			if (folio_is_file_lru(folio) &&
--			    (!current_is_kswapd() ||
--			     !folio_test_reclaim(folio) ||
--			     !test_bit(PGDAT_DIRTY, &pgdat->flags))) {
-+			if (folio_is_file_lru(folio)) {
- 				/*
- 				 * Immediately reclaim when written back.
- 				 * Similar in principle to folio_deactivate()
-@@ -1410,7 +1396,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 				 */
- 				node_stat_mod_folio(folio, NR_VMSCAN_IMMEDIATE,
- 						nr_pages);
--				folio_set_reclaim(folio);
-+				if (!folio_test_reclaim(folio))
-+					folio_set_reclaim(folio);
- 
- 				goto activate_locked;
- 			}
-@@ -6105,11 +6092,6 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 		if (sc->nr.writeback && sc->nr.writeback == sc->nr.taken)
- 			set_bit(PGDAT_WRITEBACK, &pgdat->flags);
- 
--		/* Allow kswapd to start writing pages during reclaim.*/
--		if (sc->nr.unqueued_dirty &&
--			sc->nr.unqueued_dirty == sc->nr.file_taken)
--			set_bit(PGDAT_DIRTY, &pgdat->flags);
--
- 		/*
- 		 * If kswapd scans pages marked for immediate
- 		 * reclaim and under writeback (nr_immediate), it
-@@ -6850,7 +6832,6 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
- 
- 	clear_bit(LRUVEC_NODE_CONGESTED, &lruvec->flags);
- 	clear_bit(LRUVEC_CGROUP_CONGESTED, &lruvec->flags);
--	clear_bit(PGDAT_DIRTY, &pgdat->flags);
- 	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
- }
- 
--- 
-2.43.7
+What would the appropriate locking primitive be in this case?
+
+> Antheas
+> >
+> > Not related to this particular email in this thread, if the users are
+> > testing something with different kernels, it's also important to make s=
+ure
+> > that the lockdep configs are enabled in both. As it could be that in on=
+e
+> > kernel lockdep is not enabled and thus it won't do the splat.
+> >
+> > --
+> >  i.
+> >
+> >
+> > > My testing on devices that have WMI led controls is a bit limited
+> > > unfortunately. However, most of our asus users have been happy with
+> > > this series for around half a year now.
+> > >
+> > > > > ---
+> > > > > V5: https://lore.kernel.org/all/20250325184601.10990-1-lkml@anthe=
+as.dev/
+> > > > > V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@anthe=
+as.dev/
+> > > > > V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@ant=
+heas.dev/
+> > > > > V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@anthea=
+s.dev/
+> > > > > V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@anthe=
+as.dev/
+> > > > >
+> > > > > Changes since V5:
+> > > > >   - It's been a long time
+> > > > >   - Remove addition of RGB as that had some comments I need to wo=
+rk on
+> > > > >   - Remove folio patch (already merged)
+> > > > >   - Remove legacy fix patch 11 from V4. There is a small chance t=
+hat
+> > > > >     without this patch, some old NKEY keyboards might not respond=
+ to
+> > > > >     RGB commands according to Luke, but the kernel driver does no=
+t do
+> > > > >     RGB currently. The 0x5d init is done by Armoury crate softwar=
+e in
+> > > > >     Windows. If an issue is found, we can re-add it or just remov=
+e patches
+> > > > >     1/2 before merging. However, init could use the cleanup.
+> > > > >
+> > > > > Changes since V4:
+> > > > >   - Fix KConfig (reported by kernel robot)
+> > > > >   - Fix Ilpo's nits, if I missed anything lmk
+> > > > >
+> > > > > Changes since V3:
+> > > > >   - Add initializer for 0x5d for old NKEY keyboards until it is v=
+erified
+> > > > >     that it is not needed for their media keys to function.
+> > > > >   - Cover init in asus-wmi with spinlock as per Hans
+> > > > >   - If asus-wmi registers WMI handler with brightness, init the b=
+rightness
+> > > > >     in USB Asus keyboards, per Hans.
+> > > > >   - Change hid handler name to asus-UNIQ:rgb:peripheral to match =
+led class
+> > > > >   - Fix oops when unregistering asus-wmi by moving unregister out=
+side of
+> > > > >     the spin lock (but after the asus reference is set to null)
+> > > > >
+> > > > > Changes since V2:
+> > > > >   - Check lazy init succeds in asus-wmi before setting register v=
+ariable
+> > > > >   - make explicit check in asus_hid_register_listener for listene=
+r existing
+> > > > >     to avoid re-init
+> > > > >   - rename asus_brt to asus_hid in most places and harmonize ever=
+ything
+> > > > >   - switch to a spinlock instead of a mutex to avoid kernel ooops
+> > > > >   - fixup hid device quirks to avoid multiple RGB devices while s=
+till exposing
+> > > > >     all input vendor devices. This includes moving rgb init to pr=
+obe
+> > > > >     instead of the input_configured callbacks.
+> > > > >   - Remove fan key (during retest it appears to be 0xae that is a=
+lready
+> > > > >     supported by hid-asus)
+> > > > >   - Never unregister asus::kbd_backlight while asus-wmi is active=
+, as that
+> > > > >   - removes fds from userspace and breaks backlight functionality=
+. All
+> > > > >   - current mainline drivers do not support backlight hotplugging=
+, so most
+> > > > >     userspace software (e.g., KDE, UPower) is built with that ass=
+umption.
+> > > > >     For the Ally, since it disconnects its controller during slee=
+p, this
+> > > > >     caused the backlight slider to not work in KDE.
+> > > > >
+> > > > > Changes since V1:
+> > > > >   - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z=
+13
+> > > > >   - Fix ifdef else having an invalid signature (reported by kerne=
+l robot)
+> > > > >   - Restore input arguments to init and keyboard function so they=
+ can
+> > > > >     be re-used for RGB controls.
+> > > > >   - Remove Z13 delay (it did not work to fix the touchpad) and re=
+place it
+> > > > >     with a HID_GROUP_GENERIC quirk to allow hid-multitouch to loa=
+d. Squash
+> > > > >     keyboard rename into it.
+> > > > >   - Unregister brightness listener before removing work queue to =
+avoid
+> > > > >     a race condition causing corruption
+> > > > >   - Remove spurious mutex unlock in asus_brt_event
+> > > > >   - Place mutex lock in kbd_led_set after LED_UNREGISTERING check=
+ to avoid
+> > > > >     relocking the mutex and causing a deadlock when unregistering=
+ leds
+> > > > >   - Add extra check during unregistering to avoid calling unregis=
+ter when
+> > > > >     no led device is registered.
+> > > > >   - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as =
+it causes
+> > > > >     the driver to create 4 RGB handlers per device. I also suspec=
+t some
+> > > > >     extra events sneak through (KDE had the @@@@@@).
+> > > > >
+> > > > > Antheas Kapenekakis (7):
+> > > > >   HID: asus: refactor init sequence per spec
+> > > > >   HID: asus: prevent binding to all HID devices on ROG
+> > > > >   platform/x86: asus-wmi: Add support for multiple kbd RGB handle=
+rs
+> > > > >   HID: asus: listen to the asus-wmi brightness device instead of
+> > > > >     creating one
+> > > > >   platform/x86: asus-wmi: remove unused keyboard backlight quirk
+> > > > >   platform/x86: asus-wmi: add keyboard brightness event handler
+> > > > >   HID: asus: add support for the asus-wmi brightness handler
+> > > > >
+> > > > >  drivers/hid/hid-asus.c                     | 235 +++++++++++----=
+------
+> > > > >  drivers/platform/x86/asus-wmi.c            | 157 ++++++++++++--
+> > > > >  include/linux/platform_data/x86/asus-wmi.h |  69 +++---
+> > > > >  3 files changed, 291 insertions(+), 170 deletions(-)
+> > > > >
+> > > > >
+> > > > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > > >
+> > >
+> >
+> >
 
 
