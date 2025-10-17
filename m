@@ -1,158 +1,92 @@
-Return-Path: <linux-kernel+bounces-858141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B170BE91B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:11:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68F5BE91BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2112F4EA9B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4761A64825
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB10436CDE8;
-	Fri, 17 Oct 2025 14:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C56E36998D;
+	Fri, 17 Oct 2025 14:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="bu9ROv6k"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1OZaAO9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB77332ED8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7CE32D0FA;
+	Fri, 17 Oct 2025 14:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760710281; cv=none; b=flSUakSii7u1r/w2VZjQ224FqapP1pbajBNl3mDs0y54ce5oW9mPA3y8pDbgsOmnhiOJYdYAZotZe//nPVkzs3Y5Pj1Tu9pCeXTKqYV//wK9catO1nVE8zyYQD/r4FiO74reJCLjMbc34W9oCrvBN4NJ1r1FtBLzGUj8UYX/c1s=
+	t=1760710303; cv=none; b=kvCVZXn9Zc+ZHHk90uqCdn4bPgo6yzc7QVZXTjjOeKY8htCdY08Nn7ZYS58lWIKx85uMEYx2pV9475A1e7DiQnlHxnkGfrJFgX777rJhvx4d9rGZT8UBnZtXN++bk9XvRwErhctxmrSRnnAKPXxxUId3mAq6o1GYEUni28u3Nx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760710281; c=relaxed/simple;
-	bh=9B5vEkIH8nKOMJ2pa7dQQHpQMvOjno74wZoZO+7Ez2U=;
+	s=arc-20240116; t=1760710303; c=relaxed/simple;
+	bh=xERAN/e5Cm/8/5cXZP+oMVP58AS5r9et6b6usC7SpgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/Uf7u2i83wHILPQHil9ZKrspunr7pipz2/y91bbEvNmDR8XiDNHMFVmrC5Pv72ApL2NTwcihN+q+X9ufL6/R58Jd5VXlXCr/RCUTw4r20pH7daLsk98Bp7XdT4bW+F9TzOAx9ciGrXxyM+0FOHHTJ06hlACzFOFGjsXFSslFaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=bu9ROv6k; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-88fa5974432so259769785a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1760710278; x=1761315078; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M6ds8aPxh7S7Lt5UrZxirxWPacqgdchl1177Nxo/2fE=;
-        b=bu9ROv6kRYO/7yAFL6Z9SEqzTekWbqoeU4XfwcDrbs4fXlCbA1MaTl2aqE84k4xFDY
-         JehI8c9rn9w/0uzzmTea78QvJaFuCruDL8RikiEO+uMJSW6SyiP0Ftd/a3YvZ5lnp+iu
-         633rdorIihpKfleYDegeSiDHkp5g2xIaYJ48VA/sz7TeyJwH36Iy1R6LWpq+X8rtXV+9
-         9EtlaGtfMq5U4ITAw5MUBvV/2MyC6jZbrIt16qUIrvFP/UZ5rbYEpAGlA+Qyox1sSBVd
-         +Z4ZKjLe6e+myFc0d2YIj3DySBqmNPv+9PxEde6EyFddoMtwVzt9BYF4fGIRsozdjyq7
-         uHTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760710278; x=1761315078;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M6ds8aPxh7S7Lt5UrZxirxWPacqgdchl1177Nxo/2fE=;
-        b=i2KeQbg9HD3YsWdYzAFq+b/3oI5AEqASqMt8NhCPSQtaoCuAiqAlngAvusi6/Qv/CM
-         wByKO0gDfr6efZyxPjDNam8z9Gsw+7X+YfoDHi3tMYNoA0WGUuzPZ6AWzRBkfuCV6JKG
-         ESMydMYgSBuQIICip7JV+2SAerrJSnx4xIItGTVvibGNPAdsyrwBflsZZOoqGQX2eZ9N
-         FVSY2/blO6GatY2vPeeZK3Qd+8rYgb4SSSBB8lf3urRLsmckRqmz8BTzuUqckxM/X/1N
-         n2qK0lQRPZusdPIidWspM7abDPFCBBoT2NftGehrYOwLUSzlLlIuf2CjpWVInNEzOrB5
-         UXyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUr5G/AerkbVNup0hiF2VUmOm5YSEhlnM6ZXA8DWNqdJvNsZ/51FuVG/C3SngsPTLftct8u8lzhUWx3Cq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysQDGs6mLjDkW+12+R/+j8SQdMayw3w/otmHxxiTtYeKMNE6ar
-	djBgL2uo/Qi9GHQ+z02DiDQXdlDloszs0zHJXv7UcES+pSwSfqiL4Jgf+HDGq8fQ9c0=
-X-Gm-Gg: ASbGnctS9E/ZBBlNnafULEM68CKAVa50j60Ranbi1vP/xwfjzfHkVaoVEcTCukYLLmD
-	lWHAdLvSbT9XWjZPbp/KdvyQrOv0eMC19pCgRa9U13VuZWt4QiBW72j7GORY8XyiTmXpb/nfpZr
-	W+1yRjuBbhRFl6QfkkLTKmWR+pDrqV6Cggm4cfggh2LlvML36Jy0Hr4vUIrwPzxMWQWF2pn4n2C
-	TyZBqYgecMAKumIxpECkxVoyYDugMyL3jX2c+pYSEL5GH6PtQgBTSYkzOUuoimN+xopjwVJ2RMO
-	39aLXS10oUQXOAHT2pxbVmH+0dKHk2Z0Xshn6hBQiHJn2iQ3OVtnYSRug3LVEwu09w2MaWy8pLH
-	aoyNddAF33pgO6HJdZznALv5y3SoWxgiDWzViFT/EZgtlGJUxgZAurjHDEwxO28SgCJsFooPIi0
-	Xt/Pq5BAjm4NodNF/DzV61pdTcnTqCdewJbVullWQInfruhoxh8i7isZ0wpC8=
-X-Google-Smtp-Source: AGHT+IH8LpteQZDQ+J2oywG/+kVC1wIwU+JCaxUxk0r7zdVU9vHyFVi491xjxlagAerjw11v+bZ9fQ==
-X-Received: by 2002:a05:620a:a1d9:20b0:891:2447:9d91 with SMTP id af79cd13be357-89124479ef1mr147297185a.66.1760710277492;
-        Fri, 17 Oct 2025 07:11:17 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-88f358726c7sm431196185a.7.2025.10.17.07.11.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 07:11:17 -0700 (PDT)
-Date: Fri, 17 Oct 2025 10:11:15 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Szuying Chen <chensiying21@gmail.com>
-Cc: akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-	dan.j.williams@intel.com, jhubbard@nvidia.com,
-	akinobu.mita@gmail.com, sumanthk@linux.ibm.com,
-	peterz@infradead.org, huang.ying.caritas@gmail.com,
-	linux-kernel@vger.kernel.org, Andrew_Su@asmedia.com.tw,
-	Yd_Tseng@asmedia.com.tw, Ed_Huang@asmedia.com.tw,
-	Cindy1_Hsu@asmedia.com.tw, Jesse1_Chang@asmedia.com.tw,
-	Richard_Hsu@asmedia.com.tw, Chloe_Chen@asmedia.com.tw
-Subject: Re: [PATCH] kernel: resourse: Add conditional handling for ACPI
- device
-Message-ID: <aPJOg2XsyIYUUaEi@gourry-fedora-PF4VCD3F>
-References: <20251017023531.5616-1-Chloe_Chen@asmedia.com.tw>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ao1C+4YbIDi86Cf2Y5kZjbJr3WVQmxcEbr4C6+psYksO0K7SP6U8CnY+4ZBFr+GqRlvFif5mypCLhTve6+brapqq1vxcwHqXFx7LR8leOZI0OaLD+Hm9cTiU2L95EPUG+2HUpclfxZmOkwRPwAJP9jUy1QtNyXGv0R65U8PZmdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1OZaAO9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FE3C4CEE7;
+	Fri, 17 Oct 2025 14:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760710303;
+	bh=xERAN/e5Cm/8/5cXZP+oMVP58AS5r9et6b6usC7SpgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W1OZaAO9NXxFEECaksL8+KZKzkBZuLtbPmjnjH3KZZySzoci57ZaD644SqBnT+BVC
+	 2x8jP5ji/HapEsnyQuuisogdT6ONVmVOZkTBIUqzTDiqSLHreJqfJjCILN48G7MPmX
+	 C3E1F5/7LH3P7s4tKRhKpLqY+sNMXJ0T4oJa6VxofJtvDUEYVk6r1FddNwoShQY6Ow
+	 UJX/yZrZK28Rqv0dFThVQ+wN4SlF9TNVZ6Wq5ADuZLEBbOOfnfu6IaxXbx3g4mr1W+
+	 CmSxhh/b3cABZmAkkcPfqlFnGAb2LAq0QLL1g6tip+mMXGd7G0PuurpilNgXgIgaC2
+	 DNLaVAgwj14+w==
+Date: Fri, 17 Oct 2025 15:11:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, Vijendar.Mukunda@amd.com
+Subject: Re: [PATCH 0/2] ASoC: amd: ps: Propagate the PCI subsystem Vendor
+ and Device IDs
+Message-ID: <f1a59057-a054-4d22-8207-b13db3821bfd@sirena.org.uk>
+References: <20251016150649.320277-1-simont@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZxO3SKlPFBf4OkSj"
+Content-Disposition: inline
+In-Reply-To: <20251016150649.320277-1-simont@opensource.cirrus.com>
+X-Cookie: Androphobia:
+
+
+--ZxO3SKlPFBf4OkSj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017023531.5616-1-Chloe_Chen@asmedia.com.tw>
 
-On Fri, Oct 17, 2025 at 10:35:31AM +0800, Szuying Chen wrote:
-> To avoid address conflicts and related errors, specific checks for
-> the ACPI device "AMDIF031" should be bypassed.
-> 
-> Signed-off-by: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-> ---
->  kernel/resource.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index b9fa2a4ce089..9ffcd5bdb62e 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -177,6 +177,27 @@ static struct resource *alloc_resource(gfp_t flags)
->  	return kzalloc(sizeof(struct resource), flags);
->  }
-> 
-> +static int IgnoreResource(struct resource *tmp)
-> +{
-> +	char *pt, *name_sep;
-> +	char *name;
-> +
-> +	pt = kstrdup(tmp->name, GFP_KERNEL);
-> +	name_sep = pt;
-> +	if (!name_sep)
-> +		goto out;
-> +
-> +	name = strsep(&name_sep, ":");
-> +	if (strcmp(name, "AMDIF031") == 0) {
-> +		kfree(pt);
-> +		return 1;
-> +	}
+On Thu, Oct 16, 2025 at 03:06:47PM +0000, Simon Trimmer wrote:
+> This chain of two patches propagates the PCI subsystem Vendor and Device
+> IDs so that they can be used by component drivers to differentiate
+> firmware loads.
 
-Assuming we actually want this, i think we probably need to put this in
-an arch/ extension, not hard-coded into kernel/.  There's no need for
-non-x86 platforms to ever touch this.
+They're called patch serieses.
 
-> +
-> +out:
-> +	kfree(pt);
-> +	return 0;
-> +}
-> +
->  /* Return the conflict entry if you can't request it */
->  static struct resource * __request_resource(struct resource *root, struct resource *new)
->  {
-> @@ -202,6 +223,8 @@ static struct resource * __request_resource(struct resource *root, struct resour
->  		p = &tmp->sibling;
->  		if (tmp->end < start)
->  			continue;
-> +		if (IgnoreResource(tmp))
-> +			continue;
->  		return tmp;
->  	}
->  }
-> --
-> 2.39.2
-> 
+--ZxO3SKlPFBf4OkSj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjyTpoACgkQJNaLcl1U
+h9DOsQf+KIiIEoehFpJ8acfW4fqqjFzS3MChglr6jTdoCAAGOZFVIde/M2YWHb1a
+JgGq7373cTy1RWRjnrgkzARghbUXjO/TaanEw/3pjmOhBllPh5Zv6aohPBp5S2xL
+WqZwYx2Jxa0aaRfswL8F5Xa3ZCyY/COudDghDw6QNyIF/vKcWKzkaEblH/7vj1kH
+coOC5d5vaxCLbNz4FWy/vIr6V7aomFFtTqtgVVfOxSXOG1GhZCY4wZrbecPxnQ7M
+SIDUp5r/VYGwrsc5ieAs3X/aKfkVMnVcf2nciGkSAtUQ0FcHdPIqyTHmRfNU29fb
+6w/2oNh0JXgHZtpPp163VOBeGBml/g==
+=u0Wu
+-----END PGP SIGNATURE-----
+
+--ZxO3SKlPFBf4OkSj--
 
