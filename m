@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-857395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2D1BE6B8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EECBE6BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF087428ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E897B624B48
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B6330F80F;
-	Fri, 17 Oct 2025 06:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9A430F553;
+	Fri, 17 Oct 2025 06:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JqnZ+cYf"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="cnuzAA2Y"
+Received: from mail-m49213.qiye.163.com (mail-m49213.qiye.163.com [45.254.49.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2887D225A23
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDF421FF2A;
+	Fri, 17 Oct 2025 06:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682635; cv=none; b=H79X54qtbbgMNaug3H/QT/g0aobjV4Ts+W2q/f+8nLyjaZcIoCmbvwXOp9gA24Uc26q6AexZXi18WRPtyZZA0mjshPYDC6+0Siv2+2tOEV/b66rWRmdR38tOtg/Zc7NzxOGti3MrxHr0O3WOjLjLmRdSS7aObt0+OsFLWHkpeLg=
+	t=1760682683; cv=none; b=Md3aOClYV5+DGDXjuCOyEQgs+z8f6IOJOZ5Zx0ZuzJzDaOb6hM0kXxDHbS1TaIu/cRgaiR9uwKEMi65dKtqHfLIRoDIN0RNMp+tuF5QJz66pDjJ1P7XrcM26MTRMLQgLwJ19WrCNNjhcyBKpshH6bZYgFdOPe/uAo1E39R0xZfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682635; c=relaxed/simple;
-	bh=uFu+pTsB8pI+GUFdNcyatCeYuZ876YAOsDz0NEO58Ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+HpzzCfwsTDdW89mJMjy1I1XWqRupeNhQaLLSXXk/LcjRFXljlLmuxNu18F2Pg0ngiv2iiCuzmknX00EBt2l44nuOdGdzQIUHMmbimcMxS6gJo51BRNazqWSxGZpUX9JYVHmo3yyZg3nrLbP+sa5Yt0bSqPgRlSAmKXZVGSoJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JqnZ+cYf; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=O7xM
-	+w8vsz249zp6iqPFcWLDZWbI7OmkhCv22ZDZ8dY=; b=JqnZ+cYfaBiwYLqZ3hb9
-	RufOrc/DIqfzl2CN+ULsF2rqaTW0p1R4Bl0vM3XU7GmibxziIeVT+hcl6irEZtuH
-	yoo+qanSMLZFST3UZiLYaLnhCca+pYJnjlQHN3XNT3frtP67tvaD2+a9nWO0SemB
-	kC92CYuneMN7pCADiKyFQSL4VcFT4DDLh3D/6tusI2PPFIZdTEqne19S7D50frz0
-	+qbaCXvK73q8mZhvO29n2jtME1b3ImVXjh5GDJXhwuuaceIAxHJp+c99VojjkZdS
-	kBYUOnlWWeI3KyNNNPbuB3wjfulNVaiiylytoJD/MiLv71+qCzwyI0fJddGIrSgg
-	TQ==
-Received: (qmail 4111707 invoked from network); 17 Oct 2025 08:30:30 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 08:30:30 +0200
-X-UD-Smtp-Session: l3s3148p1@u33E3lRBLLQujntM
-Date: Fri, 17 Oct 2025 08:30:30 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1760682683; c=relaxed/simple;
+	bh=o7KoOTukKUK8Bo9f8gLf+GF2nbTP5wdUBKB1bqs3ktA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MPyTE1gOFDInBHD+BxfI9qQLMFjlOKozr/yhnn+EOcjKJvwyu/XoNe2JQR5H13fGfmXpPae5kbez8xSnwNnPnkD4mxTiPrbFpSxev+IhHdK7hUKOqHF6LY9SwJ8PpUH42OBC31kUfjKkvQIIBWZEW+HSsd/ftNxLZSgBGwKFUxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=cnuzAA2Y; arc=none smtp.client-ip=45.254.49.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 263d85163;
+	Fri, 17 Oct 2025 14:31:09 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 4/4] MAINTAINERS: Add the Renesas RZ/N1 ADC driver entry
-Message-ID: <aPHihgPNuQgURAmY@ninjato>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
- <20251015142816.1274605-5-herve.codina@bootlin.com>
+	huangtao@rock-chips.com
+Subject: [PATCH v2 0/5] clk: rockchip: Add clock controller for the RV1126B
+Date: Fri, 17 Oct 2025 14:31:02 +0800
+Message-Id: <20251017063107.1606965-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oI+TfPz1PKdbXmGE"
-Content-Disposition: inline
-In-Reply-To: <20251015142816.1274605-5-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99f0dd749003a3kunm5af2b40521c1cf
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUIYH1YaHRpOTUwaTh5PHkJWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=cnuzAA2YnYc/7WeXNe67MWdEAI4RslvR6hqWPXaNo+JTAKV5AXu1dGw7ChizLd4dsGeWvNszC6CdZ5xFifusCPuahqgkuqMhs/Fh0HcXkYSTNytepcqBQVcg5/wVxfkVU+KhZRR3i2jY4OhWhk/8dMPHsjVNank2WjY+ZPJr5cM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=/aINBKiM753GDV/mgQ76FLNKFuuq3DWGoIuhWFugFMM=;
+	h=date:mime-version:subject:message-id:from;
 
+Add yaml and dt-bindings for the RV1126B.
 
---oI+TfPz1PKdbXmGE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Change in V2:
+[PATCH v2 1/5]: update commit message, rename v2 to multi_pll
+[PATCH v2 2/5]: Modify DT binding headers license
+[PATCH v2 3/5]: update driver
+[PATCH v2 4/5]: fix error
+[PATCH v2 5/5]: update commit message
 
-Hi Herve,
+Elaine Zhang (5):
+  clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+  dt-bindings: clock, reset: Add support for rv1126b
+  clk: rockchip: Add clock controller for the RV1126B
+  dt-bindings: clock: Add support for rockchip pvtpll
+  clk: rockchip: add support for pvtpll clk
 
-thanks for stepping up to be the maintainer!
+ .../bindings/clock/rockchip,clk-pvtpll.yaml   |   98 ++
+ .../bindings/clock/rockchip,rv1126b-cru.yaml  |   52 +
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-cpu.c                |  165 +++
+ drivers/clk/rockchip/clk-pvtpll.c             |  925 ++++++++++++++
+ drivers/clk/rockchip/clk-rv1126b.c            | 1105 +++++++++++++++++
+ drivers/clk/rockchip/clk.c                    |   24 +
+ drivers/clk/rockchip/clk.h                    |   83 ++
+ drivers/clk/rockchip/rst-rv1126b.c            |  444 +++++++
+ .../dt-bindings/clock/rockchip,rv1126b-cru.h  |  392 ++++++
+ .../dt-bindings/reset/rockchip,rv1126b-cru.h  |  405 ++++++
+ 12 files changed, 3701 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-pvtpll.c
+ create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
+ create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
 
-> +RENESAS RZ/N1 ADC DRIVER
-> +M:	Herve Codina <herve.codina@bootlin.com>
-> +L:	linux-iio@vger.kernel.org
+-- 
+2.34.1
 
-The iio list can go because it will be added by the generic IIO entry
-which handles all "drivers/iio".
-
-Happy hacking,
-
-   Wolfram
-
-
---oI+TfPz1PKdbXmGE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjx4oYACgkQFA3kzBSg
-KbYIdg//d8odnCOfUdJMRpsordOI1u251bqcKLtuIlx2FwJsdyg47s7tbUK3oprR
-yMStg9prZnLZSPQKqYkpOIMorzObKYReac39MZA/JavrNXWWEesUZfk9dn6sQbQL
-HgQuf+yshlwQcoUOBC6M6hPPyW7HdTdTg/jm1bPs7c/luj8AmI27QMV8VANS3RWX
-mmw9kVX12cnxAgvJZUmB3oLJp/EAawZaJNFr1KLAb33x/18h7M9r3KLK+1/Zm4vy
-kEHBr99Ge8yKULEj+fSzNjlatAePEybVVs3d4jlZcY5kIx6rDOb7QpxHMWz1FmN2
-wC+lwzgih8FM/0MKTpzQTWI9SJZaqhEX85J989BQWI0BjFhYCUAlfIFNY+vq1wnp
-qQ3vOqS0Gg/m0Z0/HWYYHYC8mn+MFgNcJOs/LCY7az734pZkGLFjdziVuyKUDG0p
-ac9re17ls1ofpxNIVD5REi53v/tC1pGi+9gCu3zd0DHqgW6pAvGUHQSWBptAzlut
-enzIyHOniWzuhxvmMGn4NhzheWl8s4TKlA+T2UyVJQbuouul52drmcAKFncly9nR
-6KBfEANO9MX+JEtlbO8aBbbQs1cMjMVkj+GxmZ6UK1C+JVQY8vwXHGAmVThq/KvK
-Xhk9N6ys8CcoC2gRfUCC+U8FPf0v8MfESLdyqC5Cvzio5WDL7TU=
-=2Lm9
------END PGP SIGNATURE-----
-
---oI+TfPz1PKdbXmGE--
 
