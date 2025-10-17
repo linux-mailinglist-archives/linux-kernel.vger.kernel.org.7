@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-858260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE83CBE985F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33495BE9918
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5976E5B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285787402C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B10335066;
-	Fri, 17 Oct 2025 15:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF8136999C;
+	Fri, 17 Oct 2025 15:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDZC6Ki9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OCn34bF2"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB4533711D;
-	Fri, 17 Oct 2025 15:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63F32E141;
+	Fri, 17 Oct 2025 15:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713294; cv=none; b=bMxFfADfJ6hEQ/FzZ/mtnuecw6lidKQ04RK8gn8CztjjuRdBDaTF5sJdvtimxi++XeAKuCgpeDDcT6bPzrwdEKeJNItq5p6hkqZjZSsRlhUjWXoc7KRjLe/WDqyoGEeqRi1HiJPzieTMnr+fS2p5UChWMpsDSy2m1qidlaKuiuA=
+	t=1760713333; cv=none; b=bOjgDnniwXloitRZMmcExzUgO6zCHuBRI9fsX1lij4qpSZG0Ooizc0FTe7zqR45H1JiJWH36ba1t9O9BmPp3+wefh1FOl7++ZGl1ghFPLLNr6sWBSHT8S5ugdWN1fUKnGdtgrmeC8SzoLts0vFx62esWNRzZQFZHes17+9DAozA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713294; c=relaxed/simple;
-	bh=aVEBdYs0yBYpk4F32BB2Cp2eEoFiHHIVi+K1xfhsNC4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ly+dtWJclteeqPA3ncVN97vjAONwMOOL9CbDIr1mtsqFFcHocB7lLY61aRAzjg4Hjr1nmasQCwk3RLyVoOrfvRddoo1JIkqvSpVhUaU2jJMhU5+bp2tRgCZeQXUjuDbVE2LLTdnj0Qy5HjAdT2rFB0uu8X2szxvb2HHS+zRpC/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDZC6Ki9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05109C4CEE7;
-	Fri, 17 Oct 2025 15:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760713294;
-	bh=aVEBdYs0yBYpk4F32BB2Cp2eEoFiHHIVi+K1xfhsNC4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dDZC6Ki9rOSpqid7v/VEzHihGvvL4VDIsT7VpFPX+Eymfzp3wZNf0VjxY7JuR4fSY
-	 IAsxIqSILjYuf44DwymkWFMvGB1c+HUeAZn4Cnks57ajdE+k84kPN8NkH6BFnjlFPl
-	 enobg0IJqsGt0NfAipRW2xuqapmldWA5kLwumZqXDyf0zkLZ0NmLPqWE8/p2maJWYs
-	 PYzblvP5Hjo2cXLbXaLw3rUPkOAJtMmIqVKyH19nDkbFY4rrq8zY7n2BEVpM++SkYB
-	 VIZtYK0LgoTnHav21aJ87aDDt5KEVD+y0ynL1bt3UQXUYfNO4cbCtZmw/CNB9/4LiJ
-	 XHymPb4NGBqEg==
-Date: Sat, 18 Oct 2025 00:01:30 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] tracing: Allow tracer to add more than 32
- options
-Message-Id: <20251018000130.aa69bd5b6670715b1c52d387@kernel.org>
-In-Reply-To: <20251015172020.5966beaf@gandalf.local.home>
-References: <175918528341.65920.10238038992631012350.stgit@devnote2>
-	<175918529300.65920.15856373929947126262.stgit@devnote2>
-	<20251015172020.5966beaf@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760713333; c=relaxed/simple;
+	bh=DxLnhdIQ2kU+zeD/wAroujRESZq6V2Rlm0i8ySn6fOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfRBCvtd6VUhoRXcQKYVK/8zfuUpltO0909L4fCi17ifdRic8v+zJG3O2oLzZszeyfu1xWReKucxgr0n0bi7MTvwhwLy+3ETBD4rK3qSqPrC/NyX3LVbU3HFR640F761JYBq/NgWtJ3JMTZfD5WrWl1ohyCkHh/kmlan/lZ2X8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OCn34bF2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59HBHM9h021066;
+	Fri, 17 Oct 2025 15:01:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=WjlOEp
+	jA/dZDxYCSjsqfVgbZFM/SxanKWySMXDeQTRA=; b=OCn34bF2k/4rTHZa89TN+a
+	tJKPMQDGoxH2pn9ne2v6SOaGqeVSxpPjHe/iOg5w/NXb5+58U+J80m+CDwg0WZ6U
+	DY9ssF3TJmj8rLrVmIQkObSShDGbdGdd3+JJIpxjN3lnvCq+e2UGidVRTL3trVh8
+	Mbh+epPmp8zruQgMiRuj9VbWP0cLNmAoWlBVbIj6jGWy2mfkiHhqmR3w4ndJOQqS
+	IPORSIeVzR9+5OFTlGysUwxV6uOitTHZnEuToToFS24otgwEj1BSALjizSgTBdfJ
+	b0dLnWC2Ixo1T2Yoy4SFlRczoKLEN9UWT1G0iqHDLsEH8uDPk5aDwpZDDtExCGMw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew0hwd6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 15:01:45 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59HEY0SR015227;
+	Fri, 17 Oct 2025 15:01:45 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew0hwd2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 15:01:45 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59HBd3uE018917;
+	Fri, 17 Oct 2025 15:01:44 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r2jn5x58-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 15:01:44 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59HF1ge619988834
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 Oct 2025 15:01:42 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E81E20043;
+	Fri, 17 Oct 2025 15:01:42 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E57DF20040;
+	Fri, 17 Oct 2025 15:01:40 +0000 (GMT)
+Received: from [9.111.36.47] (unknown [9.111.36.47])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 17 Oct 2025 15:01:40 +0000 (GMT)
+Message-ID: <c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
+Date: Fri, 17 Oct 2025 17:01:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: KVM/s390x regression
+To: David Hildenbrand <david@redhat.com>, balbirs@nvidia.com
+Cc: Liam.Howlett@oracle.com, airlied@gmail.com, akpm@linux-foundation.org,
+        apopple@nvidia.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
+        byungchul@sk.com, dakr@kernel.org, dev.jain@arm.com,
+        dri-devel@lists.freedesktop.org, francois.dugast@intel.com,
+        gourry@gourry.net, joshua.hahnjy@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        lorenzo.stoakes@oracle.com, lyude@redhat.com, matthew.brost@intel.com,
+        mpenttil@redhat.com, npache@redhat.com, osalvador@suse.de,
+        rakie.kim@sk.com, rcampbell@nvidia.com, ryan.roberts@arm.com,
+        simona@ffwll.ch, ying.huang@linux.alibaba.com, ziy@nvidia.com,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-next@vger.kernel.org
+References: <20251001065707.920170-4-balbirs@nvidia.com>
+ <20251017144924.10034-1-borntraeger@linux.ibm.com>
+ <9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
+Content-Language: en-US
+From: Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 9LKX8Nmv4XcVUXrLvHE_HxecLxk_cP8h
+X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68f25a59 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=U-Hwjmto4vr2S7wfJqkA:9 a=QEXdDO2ut3YA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfXwHOgqQ6tTe+U
+ eJeOmxYOFp6+xojNs6VzBRrLhYngNWxnQYx4056hPZU3A7tztlpmQKe0jl4dRsHm2EY5V4OwECd
+ wfXh8kvLFSBLNWQO6YChYGy8sO5WM4VZzr8m4sgqW6h5Ode2RGLfx0nNgfJ6/OIZqgqp3jebCHe
+ dmip45P6cxhsJignJNv2FmPri77wdU9CW/FxJ8EHR1zW+g4xOQmIisNydT7y5lhEebl5F7X762z
+ F59ssPdVoDm8ELtqeqRw8YLucK+fiFaZoZ6bzLG5yyQGtkx8T1J2LG04XKhx60ksW8Zheieeyiy
+ hdZEIis1wsxG2DnvxK4WS+PNIjnS5x8eC2KBhybUtz5i6wzPM91FG6A/3s+VFhy+r+YRTQPrmaJ
+ LApWx8jnpGwmr0TM/gRlRO66VANL4g==
+X-Proofpoint-GUID: P8unXoLWz4BehbTrBCBmfoLT7VBR8y9s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
-On Wed, 15 Oct 2025 17:20:20 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Am 17.10.25 um 16:54 schrieb David Hildenbrand:
+> On 17.10.25 16:49, Christian Borntraeger wrote:
+>> This patch triggers a regression for s390x kvm as qemu guests can no longer start
+>>
+>> error: kvm run failed Cannot allocate memory
+>> PSW=mask 0000000180000000 addr 000000007fd00600
+>> R00=0000000000000000 R01=0000000000000000 R02=0000000000000000 R03=0000000000000000
+>> R04=0000000000000000 R05=0000000000000000 R06=0000000000000000 R07=0000000000000000
+>> R08=0000000000000000 R09=0000000000000000 R10=0000000000000000 R11=0000000000000000
+>> R12=0000000000000000 R13=0000000000000000 R14=0000000000000000 R15=0000000000000000
+>> C00=00000000000000e0 C01=0000000000000000 C02=0000000000000000 C03=0000000000000000
+>> C04=0000000000000000 C05=0000000000000000 C06=0000000000000000 C07=0000000000000000
+>> C08=0000000000000000 C09=0000000000000000 C10=0000000000000000 C11=0000000000000000
+>> C12=0000000000000000 C13=0000000000000000 C14=00000000c2000000 C15=0000000000000000
+>>
+>> KVM on s390x does not use THP so far, will investigate. Does anyone have a quick idea?
+> 
+> Only when running KVM guests and apart from that everything else seems to be fine?
 
-> On Tue, 30 Sep 2025 07:34:53 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > --- a/kernel/trace/trace.c
-> > +++ b/kernel/trace/trace.c
-> > @@ -86,6 +86,11 @@ void __init disable_tracing_selftest(const char *reason)
-> >  #define tracing_selftest_disabled	0
-> >  #endif
-> >  
-> > +/* Define TRACE_ITER_* flags. */
-> > +#undef C
-> > +#define C(a, b) const u64 TRACE_ITER_##a = (1ULL << TRACE_ITER_##a##_BIT);
-> > +TRACE_FLAGS
-> > +
-> 
-> 
-> 
-> >  #undef C
-> > -#define C(a, b) TRACE_ITER_##a = (1 << TRACE_ITER_##a##_BIT)
-> > +#define C(a, b) extern const u64 TRACE_ITER_##a;
-> >  
-> > -enum trace_iterator_flags { TRACE_FLAGS };
-> > +TRACE_FLAGS
-> > +#undef C
-> 
-> Why all this work when this could have been simply fixed with a:
-> 
-> -enum trace_iterator_flags { TRACE_FLAGS };
-> +enum64 trace_iterator_flags { TRACE_FLAGS };
-> 
->   ?
-
-I could not find any other enum64 usage, so I doubt it is
-available. (Does it depend on compiler?)
-It seems C23 standard support it...
-
-> 
-> Not to mention, using const u64 requires saving these numbers in an address
-> and referencing them, instead of doing it inlined in text. That is, using
-> u64 instead of enum64 is both slower and wastes more memory.
-
-Yeah, I expected that the compiler could easily optimize correctly, but
-maybe not?
-
-Thank you,
-
-> 
-> -- Steve
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+We have other weirdness in linux-next but in different areas. Could that somehow be
+related to use disabling THP for the kvm address space?
 
