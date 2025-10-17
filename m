@@ -1,176 +1,178 @@
-Return-Path: <linux-kernel+bounces-858540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA55BEB19C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF6CBEB1AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAF7E4E587D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3C181AE02CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87757308F26;
-	Fri, 17 Oct 2025 17:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529A630C63B;
+	Fri, 17 Oct 2025 17:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpYX0lXc"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEB8261595
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mcZxpF2N"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A81307AD0;
+	Fri, 17 Oct 2025 17:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760722827; cv=none; b=mU7vo9nXpULOiNrOZCnsZ5oD24YXyB1b8HbXOONEhsxM+J6ljuDbVS6Sahsj4OSnc+O0yXBa0RrWj560/6mahec+tDIZcgtg2843uVue5AbONR2YH8quUck2OGGyFMCk4/DxdHxR07O6rh+LuuYgjhLIcojWHuJzCVnhhyfQ4iQ=
+	t=1760722883; cv=none; b=UB/1RbfStKHCGcIlv91fk/aZUfgu5NLMDlB7DgOFe545bpFk+NaPi27aliBBe5eBBNLRvTtceel9Gi4cKOiU8Ty3E1hx/klxK9jz2KVZjyGuFmCIgqErJbgOEDvvz0dKNpV7xjylfVd8wNL5XbuHCxaQgByrm8kFHdvgxNjKUw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760722827; c=relaxed/simple;
-	bh=2RysdHxuMiEeGX3LMu1oRMBi5KuQC1DwjQsH18ggAek=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mwDSOgcjHPikQ+QbeYMC5n4+y8m4ioRsVlBpoXEKURSPCl2FEQG97FENN+SZeDDBJsoQElZjd/oQDu3RdhtHQrFn5GzSMeQEwblFJJuP4XnHGCs2o9ibsrRiSRdH4ChZBOUcqLjwmTqm3GBgwkHqvraeRK1Y6jBH4oZpqv0bqpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpYX0lXc; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b63148d25c3so1382322a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760722825; x=1761327625; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i7J12+qTHU1oshcnB/C58fDfVlviejVYuguJOo2R2Bs=;
-        b=SpYX0lXcy64oQYQEd0HVIY0IERhReUTR6SEibjDLESsggu9RHXZ851vcErOlOqMa5R
-         lfGOeQnEOa9jeA5q6J239Q7NTeOt4gac/J0/7NJH3kmFcEy4DsAyHUCVwcKAtCeieV9h
-         qXdI5MMqS8U9qaLrMqsYttzxA6BYIP5sgenKA1u5ZQl7lBorFjoQLvwN/dI2cez78Ivd
-         PxkmToqbO8O6vTqJPAW8owBxSvuwRU+u7ZZdQ1rNI4B5F9Qsm1LbzfjUtNLN5RpX7xuP
-         U31I5jNPN4ap43qQKXCEARHGlPJKDoMpVle8ststA8Z13fjRZXeuTIx+JW38wB81R8yO
-         mSpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760722825; x=1761327625;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i7J12+qTHU1oshcnB/C58fDfVlviejVYuguJOo2R2Bs=;
-        b=E6rG2HRJBxk9RRCFOoHJTrRJ6zZVZukvld98E3FivNJT8qOAAiwm6Z1M1/VnHDpncj
-         +oE6JVxP9x7xphhS+mcsmLEwwHEDL+JCoN6macuuzoysRVuDZeKc6+Fcj99LEHFkpbbT
-         11BzGbg8P1QeGMtiBmCkRm3X2TacciGbpVqHJDx8eUPvd5iPxrCboP29BpHuXjj+gawY
-         T8xy2Gs9AC6EY0dsSfcjrDUi+joUbJwdIQHpS5h3k1JrEH9a56SaD42gu9OLY9KFxulH
-         rETqdtULQvzwXLvH0sz222N8p+F6LSPPBdlvs/vEHypNaRt0oT0hyRONaU4hzNQjMVbZ
-         EwOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXy9lGfPMPW6N1CsvYFsmdsjk3LRNiMuaYn7HT/HOCAKiRQlMSP/mhKgFQc6YUznZIFraByK0JntgSeio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPJt/VHNEHmWSdcLhEMwf7F4geBs5gftjvvilqxdIjvEMfzaOZ
-	M0kZ2wsXup2fDK7gmhCcPb5je39C1zcW/UrV3kwrf4sovRnEWekcIvcE
-X-Gm-Gg: ASbGnctG+tBzHLVl61ZqsMv8RLpKkfoeCkMw+1XNn7YWp7bgNeK4oixTY7ehqJE3oCT
-	ss6mGIix2enznCwxaPcyrT6w15OryXjhYc4BGYCs35DeWqcSxYnr4hs+Jy0/g306ruTveD+43GI
-	Zl53bZCA4HZF/mA5OJ5RHcBH5BMmOAao2GkRKQs33/G2relJ0Nx21JiM6r32nAxjSrZhHHlSIOu
-	AGe4LImbOeSIeQDdBkLegmi/olH3ETbahwjAkJpFs3QDcOc3o+IKAly+2JLIBz9TyqcHvrXrRCY
-	B/s5THQ8ej6WOLHZ1V1UiYBoxENl0EhI+bNQE6eS9Pp0owQRpvXNi0dl5mUoZonBK3y/nXhl2Hm
-	4aUePHiYErPuu1jkUlRRSEl4feMfkKK+MauTnl/cxpLHZO/8EAU3YteCuFhQH9RtEJClM5xNdFJ
-	T34UfQf4e9QPgr7+fe7L6UM3xKfirYwY7sR6M=
-X-Google-Smtp-Source: AGHT+IE1kHqHrep5C3xUFAnjuWiDhRo+OW5gMsEsbnV93uBVizwW/D3B1IfWyTNFusVOT9RxT3CGtg==
-X-Received: by 2002:a17:902:dacd:b0:282:2c52:508e with SMTP id d9443c01a7336-290c67e981cmr65676475ad.8.1760722825391;
-        Fri, 17 Oct 2025 10:40:25 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:49ef:d9f5:3ec:b542? ([2620:10d:c090:500::7:77fa])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebcdefsm1127105ad.16.2025.10.17.10.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 10:40:24 -0700 (PDT)
-Message-ID: <1ce0c35c4c444ba85f753df5b0d0c5cd4870d887.camel@gmail.com>
-Subject: Re: [PATCH bpf v1] selftests/bpf: Fix set but not used errors
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Tiezhu Yang
-	 <yangtiezhu@loongson.cn>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, LKML
-	 <linux-kernel@vger.kernel.org>
-Date: Fri, 17 Oct 2025 10:40:23 -0700
-In-Reply-To: <CAADnVQJjSNEuX=HJKrD=pefC4C9dQk2aqP+hnRscUEDTntVXyA@mail.gmail.com>
-References: <20251017092156.27270-1-yangtiezhu@loongson.cn>
-	 <CAADnVQJjSNEuX=HJKrD=pefC4C9dQk2aqP+hnRscUEDTntVXyA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1760722883; c=relaxed/simple;
+	bh=PRfVQxJjy6Vjp+xyCypyGyhNOHUhx/dYPG4ShHWopEk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ht1N+pMWLEZTGq0CwFFqBRgLSwkOQUXENLiFRtB/Iyq6BwPQXtb+PqfxOh7RVLvu9TnZnSwCHLFfDXi3b0CR73c9izQKMtgEAXBRcQAlo+gC/O/i+RyMjsMig5VtGvPSbdnYjXCfCmss51Rg4FCiY3EKU/zlDZPqhzfxY/DVnCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mcZxpF2N; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.1.19] (unknown [103.212.145.76])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A03B9201724E;
+	Fri, 17 Oct 2025 10:41:14 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A03B9201724E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760722881;
+	bh=Vj1gk3aMFO+P9nUqeopKE4AuncD7z4KeVlwI818/kuQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=mcZxpF2N174Av/F08Hahi5sOnNi4wbANuLMTrs8jeuc7aGqKcDFhDpjSjqKb/Cuta
+	 K8Oi1Yc9cgeAM45PzaA1ouFsjnbdCIc/eG2aVfLh1CKIvY71FNf3rxs6E+1OiGQ+pA
+	 Jx9qOYEy9pHXZKqfKMxFYpTW8gYTkP4Vp5G49D+w=
+Message-ID: <1d3ac973-7bc7-4abe-9fe2-6b17dbba223b@linux.microsoft.com>
+Date: Fri, 17 Oct 2025 23:11:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: mana: Linearize SKB if TX SGEs exceeds
+ hardware limit
+From: Aditya Garg <gargaditya@linux.microsoft.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+ kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com,
+ ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
+ shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, gargaditya@microsoft.com,
+ ssengar@linux.microsoft.com
+References: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CANn89iJwkbxC5HvSKmk807K-3HY+YR1kt-LhcYwnoFLAaeVVow@mail.gmail.com>
+ <9d886861-2e1f-4ea8-9f2c-604243bd751b@linux.microsoft.com>
+ <CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com>
+ <7bc327ba-0050-4d9e-86b6-1b7427a96f53@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <7bc327ba-0050-4d9e-86b6-1b7427a96f53@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-10-17 at 10:20 -0700, Alexei Starovoitov wrote:
-> On Fri, Oct 17, 2025 at 2:35=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongson.=
-cn> wrote:
-> >
-> > There are some set but not used errors under tools/testing/selftests/bp=
-f
-> > when compiling with the latest upstream mainline GCC, add the compiler
-> > attribute __maybe_unused for the variables that may be used to fix the
-> > errors, compile tested only.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > ---
-> >  tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c | 3 ++-
-> >  tools/testing/selftests/bpf/prog_tests/bpf_cookie.c            | 3 ++-
-> >  tools/testing/selftests/bpf/prog_tests/find_vma.c              | 3 ++-
-> >  tools/testing/selftests/bpf/prog_tests/perf_branches.c         | 3 ++-
-> >  tools/testing/selftests/bpf/prog_tests/perf_link.c             | 3 ++-
-> >  tools/testing/selftests/bpf/test_maps.h                        | 1 +
-> >  tools/testing/selftests/bpf/test_progs.h                       | 1 +
-> >  7 files changed, 12 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_o=
-ps.c b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> > index d32e4edac930..2b8edf996126 100644
-> > --- a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> > +++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> > @@ -226,7 +226,8 @@ static void test_lpm_order(void)
-> >  static void test_lpm_map(int keysize)
-> >  {
-> >         LIBBPF_OPTS(bpf_map_create_opts, opts, .map_flags =3D BPF_F_NO_=
-PREALLOC);
-> > -       volatile size_t n_matches, n_matches_after_delete;
-> > +       /* To avoid a -Wunused-but-set-variable warning. */
-> > +       __maybe_unused volatile size_t n_matches, n_matches_after_delet=
-e;
->
-> I think it's better to disable the warning instead of hacking the tests.
-> Arguably it's a grey zone whether n_matches++ qualifies as a "use".
-> It's certainly not a nop, since it's a volatile variable.
->
-> pw-bot: cr
+On 08-10-2025 20:58, Aditya Garg wrote:
+> On 08-10-2025 20:51, Eric Dumazet wrote:
+>> On Wed, Oct 8, 2025 at 8:16 AM Aditya Garg
+>> <gargaditya@linux.microsoft.com> wrote:
+>>>
+>>> On 03-10-2025 21:45, Eric Dumazet wrote:
+>>>> On Fri, Oct 3, 2025 at 8:47 AM Aditya Garg
+>>>> <gargaditya@linux.microsoft.com> wrote:
+>>>>>
+>>>>> The MANA hardware supports a maximum of 30 scatter-gather entries 
+>>>>> (SGEs)
+>>>>> per TX WQE. In rare configurations where MAX_SKB_FRAGS + 2 exceeds 
+>>>>> this
+>>>>> limit, the driver drops the skb. Add a check in mana_start_xmit() to
+>>>>> detect such cases and linearize the SKB before transmission.
+>>>>>
+>>>>> Return NETDEV_TX_BUSY only for -ENOSPC from 
+>>>>> mana_gd_post_work_request(),
+>>>>> send other errors to free_sgl_ptr to free resources and record the tx
+>>>>> drop.
+>>>>>
+>>>>> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+>>>>> Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+>>>>> ---
+>>>>>    drivers/net/ethernet/microsoft/mana/mana_en.c | 26 +++++++++++++ 
+>>>>> ++----
+>>>>>    include/net/mana/gdma.h                       |  8 +++++-
+>>>>>    include/net/mana/mana.h                       |  1 +
+>>>>>    3 files changed, 29 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/ 
+>>>>> drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>>> index f4fc86f20213..22605753ca84 100644
+>>>>> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>>> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>>> @@ -20,6 +20,7 @@
+>>>>>
+>>>>>    #include <net/mana/mana.h>
+>>>>>    #include <net/mana/mana_auxiliary.h>
+>>>>> +#include <linux/skbuff.h>
+>>>>>
+>>>>>    static DEFINE_IDA(mana_adev_ida);
+>>>>>
+>>>>> @@ -289,6 +290,19 @@ netdev_tx_t mana_start_xmit(struct sk_buff 
+>>>>> *skb, struct net_device *ndev)
+>>>>>           cq = &apc->tx_qp[txq_idx].tx_cq;
+>>>>>           tx_stats = &txq->stats;
+>>>>>
+>>>>> +       BUILD_BUG_ON(MAX_TX_WQE_SGL_ENTRIES != 
+>>>>> MANA_MAX_TX_WQE_SGL_ENTRIES);
+>>>>> +       #if (MAX_SKB_FRAGS + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES)
+>>>>> +               if (skb_shinfo(skb)->nr_frags + 2 > 
+>>>>> MANA_MAX_TX_WQE_SGL_ENTRIES) {
+>>>>> +                       netdev_info_once(ndev,
+>>>>> +                                        "nr_frags %d exceeds max 
+>>>>> supported sge limit. Attempting skb_linearize\n",
+>>>>> +                                        skb_shinfo(skb)->nr_frags);
+>>>>> +                       if (skb_linearize(skb)) {
+>>>>
+>>>> This will fail in many cases.
+>>>>
+>>>> This sort of check is better done in ndo_features_check()
+>>>>
+>>>> Most probably this would occur for GSO packets, so can ask a software
+>>>> segmentation
+>>>> to avoid this big and risky kmalloc() by all means.
+>>>>
+>>>> Look at idpf_features_check()  which has something similar.
+>>>
+>>> Hi Eric,
+>>> Thank you for your review. I understand your concerns regarding the use
+>>> of skb_linearize() in the xmit path, as it can fail under memory
+>>> pressure and introduces additional overhead in the transmit path. Based
+>>> on your input, I will work on a v2 that will move the SGE limit check to
+>>> the ndo_features_check() path and for GSO skbs exceding the hw limit
+>>> will disable the NETIF_F_GSO_MASK to enforce software segmentation in
+>>> kernel before the call to xmit.
+>>> Also for non GSO skb exceeding the SGE hw limit should we go for using
+>>> skb_linearize only then or would you suggest some other approach here?
+>>
+>> I think that for non GSO, the linearization attempt is fine.
+>>
+>> Note that this is extremely unlikely for non malicious users,
+>> and MTU being usually small (9K or less),
+>> the allocation will be much smaller than a GSO packet.
+> 
+> Okay. Will send a v2
+Hi Eric,
+I tested the code by disabling GSO in ndo_features_check when the number 
+of SGEs exceeds the hardware limit, using iperf for a single TCP 
+connection with zerocopy enabled. I noticed a significant difference in 
+throughput compared to when we linearize the skbs.
+For reference, the throughput is 35.6 Gbits/sec when using 
+skb_linearize, but drops to 6.75 Gbits/sec when disabling GSO per skb.
 
-Maybe something like below?
-
---- a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-+++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-@@ -223,6 +223,8 @@ static void test_lpm_order(void)
-        tlpm_clear(l2);
- }
-
-+static int print_stats; /* debug knob */
-+
- static void test_lpm_map(int keysize)
- {
-        LIBBPF_OPTS(bpf_map_create_opts, opts, .map_flags =3D BPF_F_NO_PREA=
-LLOC);
-@@ -334,14 +336,14 @@ static void test_lpm_map(int keysize)
-        tlpm_clear(list);
-
-        /* With 255 random nodes in the map, we are pretty likely to match
--        * something on every lookup. For statistics, use this:
--        *
--        *     printf("          nodes: %zu\n"
--        *            "        lookups: %zu\n"
--        *            "        matches: %zu\n"
--        *            "matches(delete): %zu\n",
--        *            n_nodes, n_lookups, n_matches, n_matches_after_delete=
-);
-+        * something on every lookup.
-         */
-+       if (print_stats)
-+               printf("          nodes: %zu\n"
-+                      "        lookups: %zu\n"
-+                      "        matches: %zu\n"
-+                      "matches(delete): %zu\n",
-+                      n_nodes, n_lookups, n_matches, n_matches_after_delet=
-e);
- }
+Hence, We propose to  linearizing skbs until the first failure occurs. 
+After that, we switch to a fail-safe mode by disabling GSO for SKBs with 
+  sge > hw limit using the ndo_feature_check implementation, while 
+continuing to apply  skb_linearize() for non-GSO packets that exceed the 
+hardware limit. This ensures we remain on the optimal performance path 
+initially, and only transition to the fail-safe path after encountering 
+a failure.
+Regards,
+Aditya
 
