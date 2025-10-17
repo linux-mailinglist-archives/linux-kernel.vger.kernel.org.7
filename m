@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-857282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB19BE667C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D524EBE6682
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDB8620986
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 698B0621529
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4230BBA0;
-	Fri, 17 Oct 2025 05:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35CA30C637;
+	Fri, 17 Oct 2025 05:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGEU4NhG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNl3CCIV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16B421B9F6;
-	Fri, 17 Oct 2025 05:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AD221B9F6;
+	Fri, 17 Oct 2025 05:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760678495; cv=none; b=IyCcNiFF3IFXJeHGr+BRxfn84OE/PcdXLOUirN9reOqMmzdTONagxuqarV82POsrUQzRJ1Voibg9h4nc9DT8y2ukUE+cy67zBFgblUd75pjfwRF3W7RsZ7gKCxM6FIpnT+TACUiDXFmeRZBZmzBE8WWRn5dfy3p/rUsrmr3pSpw=
+	t=1760678613; cv=none; b=sQuDFZlQIiTr0glGFmAwHdbqo7SMy4BZCvxCcr9ze0Hgz2MKWdJQWikzZufbIzNN7sV0S109rUg7Amx2+nX+Vj+0LdmBd+z6g2Iz+WtELTBIyGu+FnhIGzVVEES/WP4Ff0dkjOkzGKPMIkru0EDDTNNXiYYxtqH4v65mIZLF684=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760678495; c=relaxed/simple;
-	bh=hjJCSuHfRg3Z0/fXMxh5w654m/Ay/iOYcxY74kEycgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YnGqhYqjk9DgqS4iWAPKkAZkQ7z5i9BETKqigujAHfsUgL6fAUUOvUvGyJT5X6MTBqAEwibzIggqRzAXoYNDR7a/Q6t97AQlf5d8leYEPnrSeg9jcbNwbmloSYEEgkcyenJStLeRcWKEMulLGXID+R0+6hqSIAO+HgnZauZRLys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGEU4NhG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBB5C4CEE7;
-	Fri, 17 Oct 2025 05:21:32 +0000 (UTC)
+	s=arc-20240116; t=1760678613; c=relaxed/simple;
+	bh=BdhYZ0DjJYWEzV1VPI2VejEGfv1pBFEayIsmNsgK++0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bQqr6zJX54Vbr25McAQFIQc+M+MXHG+gOC8pFVkl8NjOeCedKyQMqA61QmPSxTvNPU0adFUxOiIq2qT+3pB6J9nzD/MhJiAGOHPYN4MfEzvq8Iw3lha8rsuUsiE1xQOf7BUXh45nG5YHQ3bafkTXuBTgyMgMcoOcvW8cs8SIY6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNl3CCIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E23C4CEE7;
+	Fri, 17 Oct 2025 05:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760678494;
-	bh=hjJCSuHfRg3Z0/fXMxh5w654m/Ay/iOYcxY74kEycgo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TGEU4NhGH069OFw7QheDVVKbGcCewNdSxjZXSGDH8D05TdyDV/5JJly28B707QarY
-	 i6nPRB0yy5EXKfY5+onOSlmgGO1Q07RewtCP6IanG8a/YrCnW7CJGrEZur5UydDxf9
-	 IAEWReKKuG77XhKr1XYsnwKY5jkODBPa+3laIcLI9QR6ZkiLGoTPFiQAHu6erECNDv
-	 td4n0XOB0I5xgh0ICPMmx8DGfNSVEZXTggAXcIkwqa+WI7tD9kXPt4bNXGRWVO4ZYD
-	 MHSweYMG6VAW6u0Pa+Tc+jncdK+tQggQdTanCdURvq0cAjk77qh4DgDWDOMLcZjAcx
-	 iEhUat/kRHwyQ==
-Message-ID: <90c8dda3-f753-43dc-8bb9-d03a808c8704@kernel.org>
-Date: Fri, 17 Oct 2025 07:21:30 +0200
+	s=k20201202; t=1760678613;
+	bh=BdhYZ0DjJYWEzV1VPI2VejEGfv1pBFEayIsmNsgK++0=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=YNl3CCIVgKsusolVNkhadwaKh044jx71tvi+7VJv+e2lB7U7nsLLZ+ivyM5MvXvtq
+	 y5ypH4yw/IbBnYMUdSvL4roQTgHAC05l22T8nGI4vMiV+zWAj7mPepJha83kHAOjr/
+	 PkofHGCKPMr/8OH1aSCYdWSfQMbzC08q1WeEmuA2piJgg0CrzKNvz/DRu+KcVtp7gQ
+	 7Bttcxvemxp/dxQyyKw4Z5SsdTCOPpKVuhxteAgt7Khri5IQhLckBN6IJbaHcdkLbo
+	 vghfSI1WJQkM5mJEBBprtEk9YExn25i9eVTsmtssHNpJipcvceBaL/jV/7t+5DyNvI
+	 y0vBoQt8fwalg==
+Message-ID: <8554dfe1-6dec-49b4-9c34-e51bd4e28404@kernel.org>
+Date: Fri, 17 Oct 2025 07:23:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_SM_TCSRCC_8750 from m to
- y
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
- Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
- Imran Shaik <imran.shaik@oss.qualcomm.com>,
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- linux-kernel@vger.kernel.org
-References: <20251017-update_defconfig_tcsrcc_sm8750-v1-1-34b1b47a0bda@oss.qualcomm.com>
- <30390038-0f90-48a4-befe-475cf88ba1fb@kernel.org>
- <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
+Subject: Re: [PATCH V4 4/4] media: ti: vpe: Add the VIP driver
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ hverkuil+cisco@kernel.org
+Cc: sakari.ailus@linux.intel.com, bparrot@ti.com,
+ jai.luthra@ideasonboard.com, dale@farnsworth.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, u-kumar1@ti.com,
+ Sukrut Bellary <sbellary@baylibre.com>
+References: <20251015054010.3594423-1-y-abhilashchandra@ti.com>
+ <20251015054010.3594423-5-y-abhilashchandra@ti.com>
+ <87e5f31a-5c3d-4cc0-8146-1b6b5923136b@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -106,51 +106,48 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
+In-Reply-To: <87e5f31a-5c3d-4cc0-8146-1b6b5923136b@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 07:16, Taniya Das wrote:
+On 17/10/2025 07:19, Krzysztof Kozlowski wrote:
+> On 15/10/2025 07:40, Yemike Abhilash Chandra wrote:
+>> +static int vip_probe_complete(struct platform_device *pdev)
+>> +{
+>> +	struct vip_shared *shared = platform_get_drvdata(pdev);
+>> +	struct vip_ctrl_module *ctrl = NULL;
+>> +	struct vip_port *port;
+>> +	struct vip_dev *dev;
+>> +	struct device_node *parent = pdev->dev.of_node;
+>> +	struct fwnode_handle *ep = NULL;
+>> +	struct of_phandle_args args;
+>> +	int ret, i, slice_id, port_id, p;
+>> +
+>> +	/* Allocate ctrl before using it */
+>> +	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
+>> +	if (!ctrl)
+>> +		return -ENOMEM;
+>> +
+>> +	if (parent && of_property_present(parent, "ti,ctrl-module")) {
+>> +		ctrl->syscon_pol = syscon_regmap_lookup_by_phandle(parent,
+>> +								   "ti,ctrl-module");
+>> +		if (IS_ERR(ctrl->syscon_pol))
+>> +			return dev_err_probe(&pdev->dev, PTR_ERR(ctrl->syscon_pol),
+>> +				     "Failed to get ti,ctrl-module regmap\n");
+>> +	}
+>> +
+>> +	ret = of_parse_phandle_with_fixed_args(parent, "ti,ctrl-module",
+>> +					       5, 0, &args);
 > 
-> 
-> On 10/17/2025 10:00 AM, Krzysztof Kozlowski wrote:
->> On 16/10/2025 20:53, Taniya Das wrote:
->>> The TCSR clock controller is required  during boot to provide the ref
->>> clocks to the UFS controller. Setting CONFIG_SM_TCSRCC_8750 to y ensures
->>> the UFS driver successfully probe and initialize the device.
->>>
->>> Without this change, the UFS subsystem fails to mount as a usable file
->>> system during boot.
->>
->>
->> That's not what I observed. UFS works fine, especially that it is a
->> module, so no, this is not a desired change and explanation is not only
->> insufficient but actually incorrect.
->>
-> 
-> Krzysztof, on Pakala MTP we are observing the below issue and it
-> requires the module of tscrcc to be loaded explicitly. This patch also
-> aligns to how it is on all other targets.
-> 
-> /soc@0/phy@1d80000: Failed to get clk index: 2 ret: -517
-> [   10.496570] ufshcd-qcom 1d84000.ufs: freq-table-hz property not specified
-> [   10.503660] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> find vdd-hba-supply regulator, assuming enabled
-> [   10.514548] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> find vccq2-supply regulator, assuming enabled
-> [   10.565955] platform 1d80000.phy: deferred probe pending: (reason
-> unknown)
-> [   10.573078] platform 1d84000.ufs: deferred probe pending:
-> ufshcd-qcom: ufshcd_pltfrm_init() failed
-> 
+> 1. You leak parent.
 
 
-I don't and I am testing regularly, so I assume you have incorrect
-config. Maybe I have incorrect one (which works), but then commit msg is
-incomplete - you must explain the bug and provide proof that this is the
-correct fix for it.
+I meant args->np, obviously.
 
-
+> 2. Why you can't just just take it from syscon call? This is not only
+> leaking, but actually duplicated and unnecessary.
+> 
+>> +
 Best regards,
 Krzysztof
 
