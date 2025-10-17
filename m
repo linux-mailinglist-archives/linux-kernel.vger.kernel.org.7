@@ -1,125 +1,183 @@
-Return-Path: <linux-kernel+bounces-857709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204D8BE7D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE056BE7CB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D1F358096D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC016E371A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F12313E27;
-	Fri, 17 Oct 2025 09:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2SuZ1Oj"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B302D877B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814F63168FB;
+	Fri, 17 Oct 2025 09:22:11 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8B92D5C92;
+	Fri, 17 Oct 2025 09:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692868; cv=none; b=hVLo2HGKVvamxhynruCKiHGeTZWjLsLodX3fc6eVh/YfL7oFlIyrXcHczCAMNjHA8UC+FT5zXqCfNpK5eOlyIalyZH07Ujs2EDbKx62Ypazd73Yf9Jzerm7PIs+KcNFU9D50uufXlzc8jLmMNWE+jCQPyyEexxrRtklIiaTTHrY=
+	t=1760692931; cv=none; b=c8qkOTF/nnpaUwoNnOmqnBNi/kpDQJVXfZgLPQ0QUncfVG512ssy5+qTMe2/0MWcGZVs0oalQv4c57DvGgU+clhmXeodoUClUg5pMjtShjYL24y4aADeTjDt0RtvtZkiIEk4Lw1GMQ9qWDcWCU2H2K8eaDS6e8yGuiJmYoHueXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760692868; c=relaxed/simple;
-	bh=XwbL7/L7C9/nDL2/xmbaFiG9RcBj6a+Cj3r3ADzcpU0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A1SGj6wlfEdaZt/XfLWY9K2EeShUruA68G41TvD2HlatwySmabINiXk9ITwrR4vsrrUqQRjlL6gH6WEUc2WRd12B8XrN+oz+YV0KnlZRaG7PBlKEtB0OuZypPEUXfz529JD3mpedB63N3R54ovrnLf5L83YcPpxfA8Uc8c08sSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2SuZ1Oj; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63c1006fdcfso3113653a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:21:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760692865; x=1761297665; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XwbL7/L7C9/nDL2/xmbaFiG9RcBj6a+Cj3r3ADzcpU0=;
-        b=P2SuZ1Oj6xGm2iA5KKOEpUHCvhMWF5HwqfjfdTnTR5SWrqJB4Ghcf9bbtMzOj889wd
-         dyca7uVM2HGaET4428Tlan3dG66XXvcC1QGWpvjtPmLOBUzChA9cH8nQskd9LUpR91AP
-         kufkblqFG2uajTg1kjWYz58OPgzeZe2x0EPW/zHSpfvpcp2FU1BpuzIWAWFVvbbZSteN
-         HsCflN59L4QbqBtGPIibj1ZwgqmcaBBdHA3QG5Yg9lZ2VDeiXRmkSb5WyiyBWbMAZx2w
-         ysodKKjW2vcc5oJCah/fMFfITVLQ3K+UAgCM77BbjBoy2E24JQ8M1LkCoHEcUM4gUasN
-         6+2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760692865; x=1761297665;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XwbL7/L7C9/nDL2/xmbaFiG9RcBj6a+Cj3r3ADzcpU0=;
-        b=hIukXeHSLiXB1USO+XtePPe7aTL1BhmxPyPoRCKald8dUqBjFZKACKCluvqCbjTzFq
-         LSAIFgUy0CDDZiiS1ERkLyJeD07mHn3pL3tCI2Lz8GMtTB2LPzpgTMJUACg9z5Gb3wR6
-         4cHijDePBntB9idCZNUc3TpbxnNaVhsbPCX2KOG5Fm9dTxUugtZG3QpbkZAHDta0Cf1u
-         2Avksu+reGy6aSblkxmVNAj3aJgm7LazZ0kvjmFTM66AIDzpos6jKWreezxQtN6BOdmx
-         zoFf7+tZLQQk/yYLllnOtoqA1L3VQKsuW8kIZXxfNgkhbDsgTrA8STROw3XaMly9lSgn
-         V8NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVDsrsx3pF5vGsE7+cE5MDVZ1yXn2X23J4WymNtyP0qHnzjxV9BeEZDfyF1L+65AS2SK94Q9qXbQIMFNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzikcJv8CbkMxQUEUiUGNkT8fIwVi3qc9q59zri7QDvlXWMAdlW
-	YJazXsLCTrYPgbWOLl8pMXKD8l9b8SXr1OGh01g/dACyEiIIeDxKUZqG
-X-Gm-Gg: ASbGncuYjAJfDm3TV2U3BJtvg7S3bnZ/pW9lBoQ2cicBqmGmdZPLIvby4P01SjFeAXx
-	9anbhok0x498a/C07CpUDa1K2VTI+Izr4SLApzT7b+8MaAiSXuDQJs1wnR6p2d973BnRpsbSNEK
-	CAqRoOk463cLrHwPR1uWJgeXYSxyMjD1AKI3EUV4OG+UdZeY3cgvZybqW8cjpSe+wyypVrLZ0Yx
-	axNS6oHm3DrDg/HcglrYrjrfKO4fbGa6xzCQJRMCaBbGHQXiXQfyguDnu5Iz78pUdtdokDOuX9W
-	kX+2TIj1m4sftULrzB7liQ0n0RiU2NYjgn5yqUCs++D2VJMb7Fs7gcfqxcWHsQrNHTu+KYqhIYT
-	Ai0mRnG1cpcKhb7nOFDUUOnhyEGrLOKZSdF+hgr9fHkcw5sjJlhDdVea07Lcx+YHJqW9KZfDYiA
-	tFS2y8vVauL5Gq87gy8WN50ZrpBoHRrdY3eCWKjiqsu1CsjfND21BI7BLgaKfMuQwxIFqVkidNe
-	EtdqjjxzmvHxd3wjfmAcLscZiPzQ8mLm2LrOVA0qA==
-X-Google-Smtp-Source: AGHT+IE7BCFzUNiw2i4QfZjW5SFw2tnLjupBLrUZan9DS+NtJPOwUeqzaVj412XY3mXWNnoOXTZFIg==
-X-Received: by 2002:a05:6402:2681:b0:634:ba7e:f6c8 with SMTP id 4fb4d7f45d1cf-63c1f6d5e1bmr2398533a12.34.1760692864549;
-        Fri, 17 Oct 2025 02:21:04 -0700 (PDT)
-Received: from p200300c5871d09695ffbc7296f39d3ed.dip0.t-ipconnect.de (p200300c5871d09695ffbc7296f39d3ed.dip0.t-ipconnect.de. [2003:c5:871d:969:5ffb:c729:6f39:d3ed])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c0eb3a235sm3458175a12.30.2025.10.17.02.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 02:21:04 -0700 (PDT)
-Message-ID: <8dd21b9be370998277cdc014d7e5d4d333adf575.camel@gmail.com>
-Subject: Re: [PATCH v4 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
- for UFS devices
-From: Bean Huo <huobean@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel test robot <lkp@intel.com>, avri.altman@wdc.com, 
- avri.altman@sandisk.com, bvanassche@acm.org, alim.akhtar@samsung.com, 
- jejb@linux.ibm.com, martin.petersen@oracle.com, can.guo@oss.qualcomm.com, 
- beanhuo@micron.com, jens.wiklander@linaro.org,
- oe-kbuild-all@lists.linux.dev,  linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 17 Oct 2025 11:21:02 +0200
-In-Reply-To: <CAPDyKFrsMxyD5ASGmsQ8658eBR0vHOSUqJ4axuSpAXuue6d5Uw@mail.gmail.com>
-References: <20251008201920.89575-4-beanhuo@iokpp.de>
-	 <202510100521.pnAPqTFK-lkp@intel.com>
-	 <eccb18abe33299edde64f96e0c3de88c4183cb78.camel@gmail.com>
-	 <CAPDyKFrsMxyD5ASGmsQ8658eBR0vHOSUqJ4axuSpAXuue6d5Uw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1760692931; c=relaxed/simple;
+	bh=VkRj1wYzRbfRS0ez+8qxzMZrr2DJNkoPHU5GAVvwJOQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zwg6lgbIUr2H7Scj/B1yXYOOGMqBC0uE+GBvukXeW5nqv/yTWJh2wtPO/FA2WBlq9PKbRQzWGky0CkYYg5+lVefiiDbf/dUVLROr1qhzWhuzzRQp1vBHZNshT/sGk8CUR/IOHzqU3lTRZdJsJQ1QyyfEjzXe3sNwV9FCUnOKggo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Dxfb+2CvJoMUgXAA--.48322S3;
+	Fri, 17 Oct 2025 17:21:58 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJDx6sC1CvJoZ7PtAA--.42366S2;
+	Fri, 17 Oct 2025 17:21:57 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf v1] selftests/bpf: Fix set but not used errors
+Date: Fri, 17 Oct 2025 17:21:56 +0800
+Message-ID: <20251017092156.27270-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDx6sC1CvJoZ7PtAA--.42366S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3JF45trWfKry7Zw1fCFyUurX_yoW7GF1xpa
+	4kZ34qkF1SvF1aq3WxGa9FqF4fKr4DXFWFkr10qr98Zr1DJr97Xr1xKF45Jr9xWrZYvFn3
+	Z34xKrs5ua18X3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8xuctUUUUU==
 
-On Fri, 2025-10-17 at 11:11 +0200, Ulf Hansson wrote:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=
-=3Dnext
-> >=20
-> >=20
-> > do I need to add this queued patch for scsi tree as well?
->=20
-> I have just sent the patch to Linus to get included in rc2. Sorry, I
-> failed to send it for rc1.
->=20
-> That said, if you re-spin a version of the series that is based on rc2
-> on Monday that should work, I think.
->=20
+There are some set but not used errors under tools/testing/selftests/bpf
+when compiling with the latest upstream mainline GCC, add the compiler
+attribute __maybe_unused for the variables that may be used to fix the
+errors, compile tested only.
 
-Thanks, I=E2=80=99ll send the updated version to address the unique device =
-ID concern.
+Cc: stable@vger.kernel.org
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c | 3 ++-
+ tools/testing/selftests/bpf/prog_tests/bpf_cookie.c            | 3 ++-
+ tools/testing/selftests/bpf/prog_tests/find_vma.c              | 3 ++-
+ tools/testing/selftests/bpf/prog_tests/perf_branches.c         | 3 ++-
+ tools/testing/selftests/bpf/prog_tests/perf_link.c             | 3 ++-
+ tools/testing/selftests/bpf/test_maps.h                        | 1 +
+ tools/testing/selftests/bpf/test_progs.h                       | 1 +
+ 7 files changed, 12 insertions(+), 5 deletions(-)
 
-
-Kind regards,
-Bean
+diff --git a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
+index d32e4edac930..2b8edf996126 100644
+--- a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
++++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
+@@ -226,7 +226,8 @@ static void test_lpm_order(void)
+ static void test_lpm_map(int keysize)
+ {
+ 	LIBBPF_OPTS(bpf_map_create_opts, opts, .map_flags = BPF_F_NO_PREALLOC);
+-	volatile size_t n_matches, n_matches_after_delete;
++	/* To avoid a -Wunused-but-set-variable warning. */
++	__maybe_unused volatile size_t n_matches, n_matches_after_delete;
+ 	size_t i, j, n_nodes, n_lookups;
+ 	struct tlpm_node *t, *list = NULL;
+ 	struct bpf_lpm_trie_key_u8 *key;
+diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_cookie.c b/tools/testing/selftests/bpf/prog_tests/bpf_cookie.c
+index 75f4dff7d042..119fbe478941 100644
+--- a/tools/testing/selftests/bpf/prog_tests/bpf_cookie.c
++++ b/tools/testing/selftests/bpf/prog_tests/bpf_cookie.c
+@@ -423,7 +423,8 @@ static void tp_subtest(struct test_bpf_cookie *skel)
+ 
+ static void burn_cpu(void)
+ {
+-	volatile int j = 0;
++	/* To avoid a -Wunused-but-set-variable warning. */
++	__maybe_unused volatile int j = 0;
+ 	cpu_set_t cpu_set;
+ 	int i, err;
+ 
+diff --git a/tools/testing/selftests/bpf/prog_tests/find_vma.c b/tools/testing/selftests/bpf/prog_tests/find_vma.c
+index f7619e0ade10..ba4b7cbc1dea 100644
+--- a/tools/testing/selftests/bpf/prog_tests/find_vma.c
++++ b/tools/testing/selftests/bpf/prog_tests/find_vma.c
+@@ -49,7 +49,8 @@ static bool find_vma_pe_condition(struct find_vma *skel)
+ static void test_find_vma_pe(struct find_vma *skel)
+ {
+ 	struct bpf_link *link = NULL;
+-	volatile int j = 0;
++	/* To avoid a -Wunused-but-set-variable warning. */
++	__maybe_unused volatile int j = 0;
+ 	int pfd, i;
+ 	const int one_bn = 1000000000;
+ 
+diff --git a/tools/testing/selftests/bpf/prog_tests/perf_branches.c b/tools/testing/selftests/bpf/prog_tests/perf_branches.c
+index bc24f83339d6..7ce4df59b603 100644
+--- a/tools/testing/selftests/bpf/prog_tests/perf_branches.c
++++ b/tools/testing/selftests/bpf/prog_tests/perf_branches.c
+@@ -64,7 +64,8 @@ static void test_perf_branches_common(int perf_fd,
+ 	int err, i, duration = 0;
+ 	bool detached = false;
+ 	struct bpf_link *link;
+-	volatile int j = 0;
++	/* To avoid a -Wunused-but-set-variable warning. */
++	__maybe_unused volatile int j = 0;
+ 	cpu_set_t cpu_set;
+ 
+ 	skel = test_perf_branches__open_and_load();
+diff --git a/tools/testing/selftests/bpf/prog_tests/perf_link.c b/tools/testing/selftests/bpf/prog_tests/perf_link.c
+index d940ff87fa08..6cbd5b7bcb57 100644
+--- a/tools/testing/selftests/bpf/prog_tests/perf_link.c
++++ b/tools/testing/selftests/bpf/prog_tests/perf_link.c
+@@ -12,7 +12,8 @@
+ 
+ static void burn_cpu(void)
+ {
+-	volatile int j = 0;
++	/* To avoid a -Wunused-but-set-variable warning. */
++	__maybe_unused volatile int j = 0;
+ 	cpu_set_t cpu_set;
+ 	int i, err;
+ 
+diff --git a/tools/testing/selftests/bpf/test_maps.h b/tools/testing/selftests/bpf/test_maps.h
+index e4ac704a536c..8d7413bca13c 100644
+--- a/tools/testing/selftests/bpf/test_maps.h
++++ b/tools/testing/selftests/bpf/test_maps.h
+@@ -5,6 +5,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
++#include <linux/compiler.h>
+ 
+ #define CHECK(condition, tag, format...) ({				\
+ 	int __ret = !!(condition);					\
+diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/selftests/bpf/test_progs.h
+index eebfc18cdcd2..927c159d7fad 100644
+--- a/tools/testing/selftests/bpf/test_progs.h
++++ b/tools/testing/selftests/bpf/test_progs.h
+@@ -16,6 +16,7 @@
+ #include <linux/types.h>
+ typedef __u16 __sum16;
+ #include <arpa/inet.h>
++#include <linux/compiler.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_packet.h>
+ #include <linux/ip.h>
+-- 
+2.42.0
 
 
