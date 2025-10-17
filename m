@@ -1,201 +1,142 @@
-Return-Path: <linux-kernel+bounces-857771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BDABE7E6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:54:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F243DBE7E68
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D81B5E69B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:53:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 851135063CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B83B20C48A;
-	Fri, 17 Oct 2025 09:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A962DAFDE;
+	Fri, 17 Oct 2025 09:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1VTGjfv"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VVmy1HMo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C48F2DCF7B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E02D661D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760694826; cv=none; b=fxxYFWt6Pxq1ZLDgAQvidn9dRI2gBHh9SSmD2K4Qt2wZC4RwAr030eu8CBBi47yW5Ud5dZxhBWdhEUSaKK+rCIZIaR3EHcFR83yXiaRqNnLxYXFxlX/oa2SHjWAozdAuwI08JivIEv02FMFXmNI6NOXIg/dkpyI+16sS/VM4QBQ=
+	t=1760694819; cv=none; b=MIc8/iWb8wRwmV4cN/0rL/3M98S2kFlwb1771gcfqAhfLxZIoRZsUASFtFVlcg/+Y+k3FLDXQDyiyyISrtn993PsQlqt0zs7Sz7wcal6tKlztZWo9jwO66SdG9h2teTJ0ZZ293RqeRthg7ME8ZUlj126qqtjfI96b0Zs7D1f2bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760694826; c=relaxed/simple;
-	bh=e+Xv1Q5eStHuLboRX7hqNdqbltXtyBicS6/Lhqmx7Mw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qTg7rRIlwQEpkTwYXBD/C1THdZ+YhazJ7khmOGfA6L4iCH2qK8jzZzlE69yoC439a0+064/XXdR4N6P8slcITmIq5co9Mtm5bhMSDWjXBKzAIe2c5+YJL4+KsGeOfreZXfbtHUtRYesUMCoaz2ERTARWJrP7YrLTMiB1ORHg244=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1VTGjfv; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b48d8deafaeso362313366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760694823; x=1761299623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EepmnhOf2b8cv48i7uBzvZdSo/kJi3CKbYL63TM2s2s=;
-        b=i1VTGjfvOlsgQI1YaCNKsmGOdj9nmbt01tcU2T2YlZyzX37UrovVurcrSjsEotP7a4
-         19FARLQaPLC8aVUJOnRwk77+YxuAvw5XwJWWBPiOCukxA1VMrG3vahgW0KfOWfc2GncQ
-         BkBPgnA2qTYxrsUqSYQSRtA3S3RELQmn4Wktd8fNfsd6WK3cyIku4G7+8tR6Do/ngKMD
-         Koy9sWyAMSp+5Nt9PWht4ji3mokdCjeMd7fgaFgaSmfJFFvfFsBNowhRTgiiE5L5t9Ob
-         4WEh8CZC+CYhLoytks6oHWi1iP/q9gjnNKffQsL4E8ngkBRB3My27bW4622vSfsSUsSX
-         7umQ==
+	s=arc-20240116; t=1760694819; c=relaxed/simple;
+	bh=KrHjLjMduf6FgkomhnO5FBQ767ZzztcQTAJjtuZ1AKw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HdY2/Aqkh/xs4rs/8Bg2IGHOW6enzfLOr2a+2ih6p6o1lyppPA1vSHQV8SofhdlwF6XQGNlZnN5ruAetgVom+G0q7by52AEijMW7Ugc7WfIUPTb6wkjR7EEixzZdy91sVX78LwFAFOQoygOBwv67rlPEZolZZ2wDDV7fAj2cKxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VVmy1HMo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760694816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0DlN+TetVvDLJy3Oca2Jis/iZUW2CVvAH2lvQ+2XWd8=;
+	b=VVmy1HMoipf5l+dGwumJ5OLCDt0V03W/WkD08/86iEkVd+ZdT5Wfwm+n79e/Vv56+m9RY3
+	BASw0HjNQeenqCx34QWK+LJ8yyuHRhYR3CNkzIRfMwdO8DPP5szed6OOrNuR42CBAldk0f
+	PL2hn/2NfVW2D9sf7VCLaoSKWJyqabA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-agIrSAI6OFa9kP6BvHnBWw-1; Fri, 17 Oct 2025 05:53:35 -0400
+X-MC-Unique: agIrSAI6OFa9kP6BvHnBWw-1
+X-Mimecast-MFC-AGG-ID: agIrSAI6OFa9kP6BvHnBWw_1760694814
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ee888281c3so3955785f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:53:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760694823; x=1761299623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EepmnhOf2b8cv48i7uBzvZdSo/kJi3CKbYL63TM2s2s=;
-        b=fsfdPfnxP0VYvs/jAB4SDzq1fF+VsZndRkh3SulVgjq9YjqZ+f//L/WltYLUfszO+D
-         Nph0Pyx3ROTWvdTa5+MF9zL40qXM+FxeeTJ3IpOB/k18lQOj3Xfo1AWXeNZvQ9gsScHU
-         Bpr7xqSAHSDY5lNoLFV9OnyycZ2RT1e8E2d1agrWm0fnP7RwqLIG8YzdCUIDxjGfDsV/
-         GXlRjQaxqLlcOKUR3/1SlqkUYNjEbdCg7bRDZuBgY1cdZcqgsaONLWvSRAO6GUdRHwA7
-         OrSyPVVbbfwdITn2gnBRjayT+wT9LC+XAKkeUIoVwgPGaDU77Oi6zWbffA5jBw3azf3U
-         ucWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvpX/e2+jUsGrdRqSgxHqGYi34oBjSAVq84SKOcxmSF2M0jlg9oWGUveilcBGZ1nKxhfClh68wiuZyfvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwMz6XhNS9V810SFbX/WcPmmawKfMC0/6ENukfov80VacFUPMz
-	u79n1blXtGjN4U4NyrQpd0F7lohfx8j1uQulh1qJaEhtr8lt022ZFJ7cy3rGmZJbq/D+tIwg8E8
-	BMVRDOdHOoxLz+YSXda3skVjTACLqIOc=
-X-Gm-Gg: ASbGncuA2Ty89GhzmPkKB59KkUegnp56as0Qo+ZFyV0L69a/akIR9ntFhAeubLUzbid
-	IEWYRbqdLHsMQR+mCU7wM3Qj2ZaQtK61xnTS78ACOZpZRK11xL55z2s3a+KuhSzBvQwjg9tJfXe
-	wEJpuQGoeSQJ559Gl9hZm4gMJT6Qz6OpfYcug4IUNL+/wb8V6TpbEaaLWzaQBVZqM6EEuPeLh+1
-	lEze0VRIN7MSp74YYrqhr01IiFJHLsuWdg/qjRfFCYcth/Ny+r6Bfye3lpTDX6s6eA15aTbDA==
-X-Google-Smtp-Source: AGHT+IGnkkXRL26RjJocOTbDHT6wQpAjD7i7LZQcNZb0xfoSFRP0gYibjbMJ3dbGukJMMqFIxLuRJqHhFH9k/kdc2Ow=
-X-Received: by 2002:a17:907:25cc:b0:b38:6689:b9f5 with SMTP id
- a640c23a62f3a-b6471d45e6bmr377170466b.3.1760694822635; Fri, 17 Oct 2025
- 02:53:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760694814; x=1761299614;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0DlN+TetVvDLJy3Oca2Jis/iZUW2CVvAH2lvQ+2XWd8=;
+        b=Mn9T4ssjzgEBzlCqZUPMPfwoERUcQVedVEcvVAYESZad9cjg69N5hW963f01PqdPHj
+         xv13WwaYyf/ojgPa/DY7qVt9TwSeJK0iYDt9+0pVALZlaC0ky0A6W2xfe7aJoWIWyjWT
+         ggIvxPM6RbiYo2XMdOf8iDD/gbqTn8+wt8UFqLNu5Kbiq7lTqS5hiITp4DbbERk4q6nY
+         NzSZOrY9YezM8xUF0ogBQaDqtbqgB8a+fkx5Hct0L3tAD4Q+9JvrCG6p/J8JNzh33WcH
+         kagUn9N6JMd5NnlcibSdc7P/vMo5MOrr+iOluKHkttzsZ9E8eqARUq631AdTdrL5Mi4J
+         HSzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhpjFZQDHJzjcuqoe54cX5c0sDK/cO0leYWRE66NUfIse1cnW/4pB+bDkdhIsJVghMCwhpuZ8co2ih5KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLdffOs92gp9/eIkxQekXk34FCPlpiXDAI8krIDLc+SWS6SK17
+	ESWcKccJCWTAG769IdmdPBfJCMXiNlDYnvvGcT2Q+GvFCklVgejM9oKiqTcGE1qvZqQTXxlVC90
+	quaiocfuLtEmPFgW6a4sUs1t1XU3gwix9KVaBjboMbhshRRLwGjUujj6y113YTri8iw==
+X-Gm-Gg: ASbGncsepv09BgnPcK3nLurSM27xytCL+hD9ZloDyhvqBzEUm1NtbIoy8+8ved7O51d
+	3bQrj5YF1hQZNAHdul7oF4IHYCStxzHuzpyVPA0RKxHhDZ5tNxxVN0XusbNZhLb4KTubciOnCnH
+	KVXRhKWUbMHvKHsrnRt0HrOWfrBsqew62rsu9vh253gWCmAu3hM84WnKZFNg5v54DnMnxu5Ns5V
+	i+OfmXAT8hhS49fDZnm+Q5aBJ+k4xSbv/1TPj9D7GfO9ons/4rTRNUeFz5ZTTGBO5/GBdkbXVLy
+	JqWDSuj7LLfPSli/9szRsEQsSbtAyqyOVsRn2cz3IyY1J0Yw1872IsgvHreIylO1ahWjaka7aeF
+	jJmk7y67kVd6itTjjuzSfQMTL
+X-Received: by 2002:a05:600c:3b8d:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-471179174cfmr23446915e9.27.1760694814030;
+        Fri, 17 Oct 2025 02:53:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7402xyRnw4HcIyhbz1exHXe6Hqqxxq0TgVQu99XfFQVaLsM1t6f2xEYJ5p3QoSdq35UrlVQ==
+X-Received: by 2002:a05:600c:3b8d:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-471179174cfmr23446695e9.27.1760694813527;
+        Fri, 17 Oct 2025 02:53:33 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e1024sm39455850f8f.42.2025.10.17.02.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 02:53:33 -0700 (PDT)
+Message-ID: <352b71331769747895c86c78521975c56f27ea93.camel@redhat.com>
+Subject: Re: [PATCH v2 12/20] verification/rvgen: Add support for Hybrid
+ Automata
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, Steven
+ Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
+ Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Fri, 17 Oct 2025 11:53:32 +0200
+In-Reply-To: <87ikgdx41h.fsf@yellow.woof>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+	 <20250919140954.104920-13-gmonaco@redhat.com> <87ikgdx41h.fsf@yellow.woof>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
- <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
- <20250917174941.000061d3@huawei.com> <5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
- <20250925160058.00002645@huawei.com> <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
- <20250925162426.00007474@huawei.com> <aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
- <20250925182308.00001be4@huawei.com> <aNWRuKGurAntxhxG@gourry-fedora-PF4VCD3F>
- <aNzWwz5OYLOjwjLv@gourry-fedora-PF4VCD3F>
-In-Reply-To: <aNzWwz5OYLOjwjLv@gourry-fedora-PF4VCD3F>
-From: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>
-Date: Fri, 17 Oct 2025 11:53:31 +0200
-X-Gm-Features: AS18NWCQ9wXgY3ohNhZ8GKQ15VfNgQtd-CWHjxzqk37o1eOtpgk7IRUwEDn2cR4
-Message-ID: <CAOi6=wTsY=EWt=yQ_7QJONsJpTM_3HKp0c42FKaJ8iJ2q8-n+w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion infrastructure
-To: Gregory Price <gourry@gourry.net>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>, Wei Xu <weixugc@google.com>, 
-	David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	dave.hansen@intel.com, hannes@cmpxchg.org, mgorman@techsingularity.net, 
-	mingo@redhat.com, peterz@infradead.org, raghavendra.kt@amd.com, 
-	riel@surriel.com, sj@kernel.org, ying.huang@linux.alibaba.com, ziy@nvidia.com, 
-	dave@stgolabs.net, nifan.cxl@gmail.com, xuezhengchu@huawei.com, 
-	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com, 
-	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com, 
-	balbirs@nvidia.com, alok.rathore@samsung.com, yiannis@zptcorp.com, 
-	Adam Manzanares <a.manzanares@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 1, 2025 at 9:22=E2=80=AFAM Gregory Price <gourry@gourry.net> wr=
-ote:
+On Fri, 2025-10-17 at 11:37 +0200, Nam Cao wrote:
+> Gabriele Monaco <gmonaco@redhat.com> writes:
+> > +            if any(u in self.env_types.values() for u in ["ns", "us", =
+"ms",
+> > "s"]):
+> > +                buff.append("#define HA_CLK_NS")
 >
-> On Thu, Sep 25, 2025 at 03:02:16PM -0400, Gregory Price wrote:
-> > On Thu, Sep 25, 2025 at 06:23:08PM +0100, Jonathan Cameron wrote:
-> > > On Thu, 25 Sep 2025 12:06:28 -0400
-> > > Gregory Price <gourry@gourry.net> wrote:
-> > >
-> > > > It feels much more natural to put this as a zswap/zram backend.
-> > > >
-> > > Agreed.  I currently see two paths that are generic (ish).
-> > >
-> > > 1. zswap route - faulting as you describe on writes.
-> >
-> > aaaaaaaaaaaaaaaaaaaaaaah but therein lies the rub
-> >
-> > The interposition point for zswap/zram is the PTE present bit being
-> > hacked off to generate access faults.
-> >
+> That any() twisted my brain. Does the following work?
 >
-> I went digging around a bit.
+>     if not {"ns", "us", "ms", "s"}.isdisjoint(self.env_types.values())
 >
-> Not only this, but the PTE is used to store the swap entry ID, so you
-> can't just use a swap backend and keep the mapping. It's just not a
-> compatible abstraction - so as a zswap-backend this is DOA.
->
-> Even if you could figure out a way to re-use the abstraction and just
-> take a hard-fault to fault it back in as read-only, you lose the swap
-> entry on fault.  That just gets nasty trying to reconcile the
-> differences between this interface and swap at that point.
->
-> So here's a fun proposal.  I'm not sure of how NUMA nodes for devices
-> get determined -
->
-> 1. Carve out an explicit proximity domain (NUMA node) for the compressed
->    region via SRAT.
->    https://docs.kernel.org/driver-api/cxl/platform/acpi/srat.html
->
-> 2. Make sure this proximity domain (NUMA node) has separate data in the
->    HMAT so it can be an explicit demotion target for higher tiers
->    https://docs.kernel.org/driver-api/cxl/platform/acpi/hmat.html
-This makes sense. I've done a dirty hardcoding trick in my prototype
-so that my node is always the last target. I'll have a look on how to
-make this right.
->
-> 3. Create a node-to-zone-allocator registration and retrieval function
->    device_folio_alloc =3D nid_to_alloc(nid)
->
-> 4. Create a DAX extension that registers the above allocator interface
->
-> 5. in `alloc_migration_target()` mm/migrate.c
->    Since nid is not a valid buddy-allocator target, everything here
->    will fail.  So we can simply append the following to the bottom
->
->    device_folio_alloc =3D nid_to_alloc(nid, DEVICE_FOLIO_ALLOC);
->    if (device_folio_alloc)
->        folio =3D device_folio_alloc(...)
->    return folio;
-In my current prototype alloc_migration_target was working (naively).
-Steps 3, 4 and 5 seem like an interesting thing to try after all this
-discussion.
->
-> 6. in `struct migration_target_control` add a new .no_writable value
->    - This will say the new mapping replacements should have the
->      writable bit chopped off.
->
-> 7. On write-fault, extent mm/memory.c:do_numa_page to detect this
->    and simply promote the page to allow writes.  Write faults will
->    be expensive, but you'll have pretty strong guarantees around
->    not unexpectedly running out of space.
->
->    You can then loosen the .no_writable restriction with settings if
->    you have high confidence that your system will outrun your ability
->    to promote/evict/whatever if device memory becomes hot.
-That looks modular enough that will allow me to test both writable and
-no_writable and being able to compare.
->
-> The only thing I don't know off hand is how shared pages will work in
-> this setup.  For VMAs with a mapping that exist at demotion time, this
-> all works wonderfully - less so if the mapping doesn't exist or a new
-> VMA is created after a demotion has occurred.
-I'll keep that in mind.
->
-> I don't know what will happen there.
->
-> I think this would also sate the desire for a "separate CXL allocator"
-> for integration into other paths as well.
->
-> ~Gregory
-Thanks a lot for all the discussion and the input. I can move my
-prototype towards this direction and will get back with what I 've
-learned and an RFC if it makes sense. Please keep me in the loop in
-any related discussions.
 
-Best,
-/Yiannis
+Yeah that should do, thanks for the suggestion!
+
+> > +        match unit:
+> > +            case "us":
+> > +                value *=3D 1000
+> > +            case "ms":
+> > +                value *=3D 1000000
+> > +            case "s":
+> > +                value *=3D 1000000000
+>
+> Use 10**9 instead, so that we don't have to count the zeroes.
+
+Right, that's not C.. Will fix.
+
+Thanks,
+Gabriele
+
 
