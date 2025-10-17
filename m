@@ -1,135 +1,254 @@
-Return-Path: <linux-kernel+bounces-858525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC7BBEB0F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A336BEB0FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 014624E5B8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDEC19C7210
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51925305E1D;
-	Fri, 17 Oct 2025 17:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9141830505F;
+	Fri, 17 Oct 2025 17:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iXdyYkAC"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47838304972
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JDs6UBPa"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6312874F6;
+	Fri, 17 Oct 2025 17:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760721926; cv=none; b=e61f0qcwA2TnysTsucipy4ySheKd6P/q0osoWKEq0oqyqqJAx9/g/jvKtX/NLByb9kb5LFL5jfFAyPeME+R99BqJpjJMknn+u4isk25Au8egauC9SnnbQ2HCxAYub3ogq/uj7fEcBkUq85cjE1MAiLj8CylmyXsNmiz7SZlZntk=
+	t=1760721942; cv=none; b=DBIUx4VyN2m2vNs/g4dIkH0K28QbTQC6Pd4d1lZuL1JdTFD/uY/wSf3eIP7VzWdEpBa6/DrpOvhVTnY3OK24Wvucah8pLv7sBq+1SMrLqRD3CclugC7fTbUxV3HqqH/qqHlhjR/mwIN+jOCWPagubO83UwG81w+Ucazr255YEGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760721926; c=relaxed/simple;
-	bh=/u6Jj/K3X377HoMDRDTQUL339ASOgHeTN5C+ZSo8+2I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fo7Tyk+ayx3/19NNF7FzaM9fG0FjRtD553muN+LFwz7/ZrrfSJL+61Rj2d6FjhfZUuEGdlzYqto7mmWkkpl4Z38GFMPI3nJXl+f4JZlWJNANwZcQQtp6tt1Uxvsw+FKWIcfbN6uIvanzatLypENowlpaW8CLVSHS2WjSx00yPuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iXdyYkAC; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27eca7298d9so47001485ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760721925; x=1761326725; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sq+f9rcJxZK92I68akrKLlI6rzfeTYAt1+/TrDWouI=;
-        b=iXdyYkACGVHPrwLXRc/8s89TuDS2GA35h/sh0F4oqcODGT00LUwEq4PlwUK1tqjmdz
-         8hrfp8VjU/JGT52hZhpiCSp6l7aTpcne/b+hRD5eqZ0qx6eWZckLKAzTO9jaA4sIdw1F
-         DQ/yB4kmKbFAI1yxFVLVrfLoyVEyvZ5Ce4t4cpmZUYPbjgKLpLjz3PamOu2AUSX1m6xg
-         Z4FND7+r7H8ahoDnfV27ZaroZbxYPEAfzODIPf9Uuk5Gr6epa0ZyASi507+Wo2iHDbBS
-         Y5hBnR1CuHb52jK00Aj+7AP9zBngp5rLmRZvuwZrs5xKBCZKrbA+y3ulb/1CtQtPDebB
-         tAhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760721925; x=1761326725;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sq+f9rcJxZK92I68akrKLlI6rzfeTYAt1+/TrDWouI=;
-        b=KxVlsxwE42bVnmszW/GDGZflDEQ9ZBCvFG/lT9Sh881iYQzNVeRq4kDXJ3tZt+bK+N
-         E9rJpsid0YyOfTGz3s9JIv2JJ+/h6PNk0T7RSC3urgqePAz19BKDkUxAFmhXmO1ExabD
-         DpSk4e5MxnZ+1Kr60olgjkONRd7adkYfdr1BamAa+RNwGhuZgGSH+Kz778DLtfNj1ssm
-         PEF2n3fzxoLfIR/D6GdPHS6gz+UFp9U5P4QgQ7BaNQudaTcRIQfF/v3FQ9jaQ65oWVqB
-         u0isvyNSl/R0BL+H1fE++fdHn1Ihm6xc+T8Cg8GZMdyX0SZvkc6+/wU/YOVrxc10/Twv
-         Iq0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVTLfKKsq4RgCXkU/y23GUtrF/KTZ2aR4qQInagKRhJW85QymK1EkhtGDhdGACgYvPV0Hsihi89fM0TuTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZEMsJnS7AC9StClSzC+boNHC69JfvdqEDHJE/hCD8dfuYSfnp
-	XPaXcWQLb2Nat3A0L7IFtKBtAuY0M4FwYrCfXsiplvMQm1MSU4D/fXC5zfgGn/gSYseNkSDSUBp
-	W6ZTigQ==
-X-Google-Smtp-Source: AGHT+IFgsZ+PT6XKCcMr8esc9OEt26E9mJR+4QgjzskkcNHiCpFVcpZMsFgsuZFvfj6HgaTGt+NqFXCZ5XU=
-X-Received: from pjbhg4.prod.google.com ([2002:a17:90b:3004:b0:33b:c15c:f245])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:8c6:b0:290:c0b1:edb8
- with SMTP id d9443c01a7336-290cbb4a2ccmr58854435ad.40.1760721924728; Fri, 17
- Oct 2025 10:25:24 -0700 (PDT)
-Date: Fri, 17 Oct 2025 10:25:23 -0700
-In-Reply-To: <46eb76240a29cb81b6a8aa41016466810abef559.camel@intel.com>
+	s=arc-20240116; t=1760721942; c=relaxed/simple;
+	bh=gz67lVUU0hjFYaasZgCQWH4O/hT/4DosqAavCeCKTUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W3BBm9ofQ70jQQ/imRgB/n3aT3RIFRrg7f6+VlvkVPdwyCmdukddshuWhPC5bjIiu1Hhdcgjlnz3JMeKEHc71T2IcsqiUCOngaEYdM7/CtigHLhSjzEgh/eu5txWwcxFg+7xvDGTw+SvQuM2diYCm8qXvHQhj9JIrEEOWsfUtKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JDs6UBPa; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.65.40] (unknown [20.191.74.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 17F422017268;
+	Fri, 17 Oct 2025 10:25:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 17F422017268
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760721940;
+	bh=PMb5Y7BfOY+/Qx//pfh9da9WjevbUCU/iRoalCjzV1s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JDs6UBPaDZZtO7ZLltKF5QSsdaX4iBPeaWECyIvnAkDjUII+u6bdbVartw3V+kMeQ
+	 UMFl6PXSSZfIPl4gTWyONOaww3JHJ+3qneEqZgBge23hq7OS61zVSPOcC34HNeLKHw
+	 WyyPH2vXcSjbFsA4sbb3zAI8HF/mWqlfsTwzzJ3s=
+Message-ID: <a0090bbf-08b4-4b36-8cf2-18687a83ee8f@linux.microsoft.com>
+Date: Fri, 17 Oct 2025 10:25:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016182148.69085-1-seanjc@google.com> <20251016182148.69085-3-seanjc@google.com>
- <46eb76240a29cb81b6a8aa41016466810abef559.camel@intel.com>
-Message-ID: <aPJ8A8u8zIvp-wB4@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: TDX: WARN if a SEAMCALL VM-Exit makes its way
- out to KVM
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, Dan J Williams <dan.j.williams@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mshv: Fix deposit memory in MSHV_ROOT_HVCALL
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>, "arnd@arndb.de"
+ <arnd@arndb.de>, "mrathor@linux.microsoft.com"
+ <mrathor@linux.microsoft.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
+References: <1760644436-19937-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157E6D02773A9D7A4B9E85BD4F6A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157E6D02773A9D7A4B9E85BD4F6A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025, Kai Huang wrote:
-> On Thu, 2025-10-16 at 11:21 -0700, Sean Christopherson wrote:
-> > WARN if KVM observes a SEAMCALL VM-Exit while running a TD guest, as the
-> > TDX-Module is supposed to inject a #UD, per the "Unconditionally Blocked
-> > Instructions" section of the TDX-Module base specification.
-> > 
-> > Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/vmx/tdx.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > index 097304bf1e1d..ffcfe95f224f 100644
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -2148,6 +2148,9 @@ int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
-> >  		 * - If it's not an MSMI, no need to do anything here.
-> >  		 */
-> >  		return 1;
-> > +	case EXIT_REASON_SEAMCALL:
-> > +		WARN_ON_ONCE(1);
-> > +		break;
-> > 
+On 10/16/2025 6:12 PM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Thursday, October 16, 2025 12:54 PM
+>>
+>> When the MSHV_ROOT_HVCALL ioctl is executing a hypercall, and gets
+>> HV_STATUS_INSUFFICIENT_MEMORY, it deposits memory and then returns
+>> -EAGAIN to userspace.
+>>
+>> However, it's much easier and efficient if the driver simply deposits
+>> memory on demand and immediately retries the hypercall as is done with
+>> all the other hypercall helper functions.
+>>
+>> But unlike those, in MSHV_ROOT_HVCALL the input is opaque to the
+>> kernel. This is problematic for rep hypercalls, because the next part
+>> of the input list can't be copied on each loop after depositing pages
+>> (this was the original reason for returning -EAGAIN in this case).
+>>
+>> Introduce hv_do_rep_hypercall_ex(), which adds a 'rep_start'
+>> parameter. This solves the issue, allowing the deposit loop in
+>> MSHV_ROOT_HVCALL to restart a rep hypercall after depositing pages
+>> partway through.
 > 
-> While this exit should never happen from a TDX guest, I am wondering why
-> we need to explicitly handle the SEAMCALL?  E.g., per "Unconditionally
-> Blocked Instructions" ENCLS/ENCLV are also listed, therefore
-> EXIT_REASON_ELCLS/ENCLV should never come from a TDX guest either.
+>>From reading the above, I'm pretty sure this code change is an
+> optimization that lets user space avoid having to deal with the
+> -EAGAIN result by resubmitting the ioctl with a different
+> starting point for a rep hypercall. As such, I'd suggest the patch
+> title should be "Improve deposit memory ...." (or something similar).
+> The word "Fix" makes it sound like a bug fix.
+> 
+> Or is user space code currently faulty in its handling of -EAGAIN, and
+> this really is an indirect bug fix to make things work? If so, do you
+> want a Fixes: tag so the change is backported?
+> 
 
-Good point.  SEAMCALL was obviously top of mind, I didn't think about all the
-other exits that should be impossible.
+It's the latter case, userspace doesn't handle it correctly, so I
+consider it a fix more than just an improvement.
 
-I haven't looked closely, at all, but I wonder if we can get away with this?
+I'll add a Fixes: tag pointing back to the original /dev/mshv patch.
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 097304bf1e1d..4c68444bd673 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -2149,6 +2149,8 @@ int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
-                 */
-                return 1;
-        default:
-+               /* All other known exits should be handled by the TDX-Module. */
-+               WARN_ON_ONCE(exit_reason.basic <= EXIT_REASON_TDCALL);
-                break;
-        }
+>>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>>  drivers/hv/mshv_root_main.c    | 52 ++++++++++++++++++++--------------
+>>  include/asm-generic/mshyperv.h | 14 +++++++--
+>>  2 files changed, 42 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+>> index 9ae67c6e9f60..731ec8cbbd63 100644
+>> --- a/drivers/hv/mshv_root_main.c
+>> +++ b/drivers/hv/mshv_root_main.c
+>> @@ -159,6 +159,7 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
+>>  	unsigned int pages_order;
+>>  	void *input_pg = NULL;
+>>  	void *output_pg = NULL;
+>> +	u16 reps_completed;
+>>
+>>  	if (copy_from_user(&args, user_args, sizeof(args)))
+>>  		return -EFAULT;
+>> @@ -210,28 +211,35 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
+>>  	 */
+>>  	*(u64 *)input_pg = partition->pt_id;
+>>
+>> -	if (args.reps)
+>> -		status = hv_do_rep_hypercall(args.code, args.reps, 0,
+>> -					     input_pg, output_pg);
+>> -	else
+>> -		status = hv_do_hypercall(args.code, input_pg, output_pg);
+>> -
+>> -	if (hv_result(status) == HV_STATUS_CALL_PENDING) {
+>> -		if (is_async) {
+>> -			mshv_async_hvcall_handler(partition, &status);
+>> -		} else { /* Paranoia check. This shouldn't happen! */
+>> -			ret = -EBADFD;
+>> -			goto free_pages_out;
+>> +	reps_completed = 0;
+>> +	do {
+>> +		if (args.reps) {
+>> +			status = hv_do_rep_hypercall_ex(args.code, args.reps,
+>> +							0, reps_completed,
+>> +							input_pg, output_pg);
+>> +			reps_completed = hv_repcomp(status);
+>> +		} else {
+>> +			status = hv_do_hypercall(args.code, input_pg, output_pg);
+>>  		}
+>> -	}
+>>
+>> -	if (hv_result(status) == HV_STATUS_INSUFFICIENT_MEMORY) {
+>> -		ret = hv_call_deposit_pages(NUMA_NO_NODE, partition->pt_id, 1);
+>> -		if (!ret)
+>> -			ret = -EAGAIN;
+>> -	} else if (!hv_result_success(status)) {
+>> -		ret = hv_result_to_errno(status);
+>> -	}
+>> +		if (hv_result(status) == HV_STATUS_CALL_PENDING) {
+>> +			if (is_async) {
+>> +				mshv_async_hvcall_handler(partition, &status);
+>> +			} else { /* Paranoia check. This shouldn't happen! */
+>> +				ret = -EBADFD;
+>> +				goto free_pages_out;
+>> +			}
+>> +		}
+>> +
+>> +		if (hv_result_success(status))
+>> +			break;
+>> +
+>> +		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY)
+>> +			ret = hv_result_to_errno(status);
+>> +		else
+>> +			ret = hv_call_deposit_pages(NUMA_NO_NODE,
+>> +						    partition->pt_id, 1);
+>> +	} while (!ret);
+>>
+>>  	/*
+>>  	 * Always return the status and output data regardless of result.
+> 
+> This comment about always returning the output data is now incorrect.
+> 
+
+Thanks, I'll fix it
+
+>> @@ -240,11 +248,11 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
+>>  	 * succeeded.
+>>  	 */
+>>  	args.status = hv_result(status);
+>> -	args.reps = args.reps ? hv_repcomp(status) : 0;
+>> +	args.reps = reps_completed;
+>>  	if (copy_to_user(user_args, &args, sizeof(args)))
+>>  		ret = -EFAULT;
+>>
+>> -	if (output_pg &&
+>> +	if (!ret && output_pg &&
+>>  	    copy_to_user((void __user *)args.out_ptr, output_pg, args.out_sz))
+>>  		ret = -EFAULT;
+>>
+>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+>> index ebf458dbcf84..31a209f0e18f 100644
+>> --- a/include/asm-generic/mshyperv.h
+>> +++ b/include/asm-generic/mshyperv.h
+>> @@ -128,8 +128,9 @@ static inline unsigned int hv_repcomp(u64 status)
+>>   * Rep hypercalls. Callers of this functions are supposed to ensure that
+>>   * rep_count and varhead_size comply with Hyper-V hypercall definition.
+> 
+> Nit: This comment could be updated to include the new "rep_start"
+> parameter.
+> 
+
+Thanks, will add
+
+>>   */
+>> -static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+>> -				      void *input, void *output)
+>> +static inline u64 hv_do_rep_hypercall_ex(u16 code, u16 rep_count,
+>> +					 u16 varhead_size, u16 rep_start,
+>> +					 void *input, void *output)
+>>  {
+>>  	u64 control = code;
+>>  	u64 status;
+>> @@ -137,6 +138,7 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+>>
+>>  	control |= (u64)varhead_size << HV_HYPERCALL_VARHEAD_OFFSET;
+>>  	control |= (u64)rep_count << HV_HYPERCALL_REP_COMP_OFFSET;
+>> +	control |= (u64)rep_start << HV_HYPERCALL_REP_START_OFFSET;
+>>
+>>  	do {
+>>  		status = hv_do_hypercall(control, input, output);
+>> @@ -154,6 +156,14 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+>>  	return status;
+>>  }
+>>
+>> +/* For the typical case where rep_start is 0 */
+>> +static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+>> +				      void *input, void *output)
+>> +{
+>> +	return hv_do_rep_hypercall_ex(code, rep_count, varhead_size, 0,
+>> +				      input, output);
+>> +}
+>> +
+>>  /* Generate the guest OS identifier as described in the Hyper-V TLFS */
+>>  static inline u64 hv_generate_guest_id(u64 kernel_version)
+>>  {
+> 
+> Overall, this looks good to me. I don't see any issues with the code.
+> 
+> Michael
+
 
