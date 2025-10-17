@@ -1,283 +1,220 @@
-Return-Path: <linux-kernel+bounces-858399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720A7BEAAC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92080BEA9E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A6CD5A6B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA83B1A67959
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EF4296BC0;
-	Fri, 17 Oct 2025 16:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBD62E8B80;
+	Fri, 17 Oct 2025 16:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwW9bIPI"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="iKEKjpeB";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="xmdlhpyY"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57CD2853E9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717727; cv=none; b=akQXtvQtKp8vShufaHtkAhDzqQc1uUNVEa8zFgYk3/iYSQUtLyjERktXkDVXuUdOsaGQIyYQXZlGeFxyPpWZWd3oP2Uw+7V13beEhIwuIh9CJLuPTRy+LXmMenvJqVIdcAbwPocTKOhzzsGnIyL5tyj/jEjZPj2h1Nq+zawyXsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717727; c=relaxed/simple;
-	bh=oOo5BhNivO0kKJwKDjNTU2xGZSrSteum5coJjcca4KQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=enOqzYtsjaUSK69PuTHDvAGREAfcCijcLddrrFGQNPRjrW08rCFBac8NTAgrL8KPk+kk8TkOD99G4iuHE3L/e35hYqyNGf4TbQkTedYJKZG7Po9Hdwxgk4jXy2SNG1FhqcyYPtPq1ReqcYWqEMiPFneWSfQ0GeQJ5+LgeWUVEYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwW9bIPI; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57f0aa38aadso2991238e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:15:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32732D0C8C;
+	Fri, 17 Oct 2025 16:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760717792; cv=fail; b=cQQmw0xOfeQGLO2tk3+eS71c9ssAyzatlGpXhAKNCrY7zNTRvMo4TKs+Pn6rIW/N8SCeiilK36pHQ4wmpuarD7vCot2Jg0weTNTeFnhKLi247KTAnVINACQTjZRx54A3+UuDzVaH40cOSRd8CSOUREwHdVmWurNe80EZLxR3haQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760717792; c=relaxed/simple;
+	bh=fAp2fZGOFIcWotggI6glpgRDQn7ScdIobNXEWmBC3qo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XYPi+BRb03CPewu4KA1NZdXXbwDYJO4dn2BPRiu6N3oVFV9kdHvEH7C4jPLt5mpK7bF3aIP5h2u6Zq2MHJk4PM9eJmhwEk/dkd5JD1bewt4zFAuYtP9Mk8VpemvHVmnnQZy8hhhyxrh7VfggvrbJdkKg6eDgzh2V52rRg8WQW6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=iKEKjpeB; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=xmdlhpyY; arc=fail smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59H7kLPd4017610;
+	Fri, 17 Oct 2025 11:16:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=nChfaE62jBhoNSnt
+	R41SaGQxXHq1YUpaCWcvEVUZHwU=; b=iKEKjpeBXl2J0E+1WfPiXv3fVQy90qMB
+	ZRT3LPs19GouDAeoWrqg694zvdvnAHMhSojGy2RCz3oOswspY4oejXIIyp+TqD/Q
+	oZmlbD78FPfUgfjtvHDZdBx2i2NgnwalqA2f40ST8iLLr8SysaKYnWadGe1XQSCy
+	TUcqw9kBTBnxcJ+Co5SiKyPBJaFKfO6u25Wj+2E/v8Fz2x0Zt/vZcCmi8AS5LE32
+	MyBkAjEWvwMqq9Bg+BB9vDYJXof4LgXMU7aVcPwxbm3DlM/5f5E2PJfhrNEKpfWS
+	epgsl/thAGWl2XRujh4L6WRg22InSsFMKel9CT0A3cnamQQqiw/Urg==
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11020128.outbound.protection.outlook.com [52.101.56.128])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 49u1mnhsbg-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 11:16:01 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DF/7mQP0d01C0Apzn5+YhWQNinQY3vreWh2/aOJR5luMdu4ZFIVYJX2J38y+SxA9X106VVEZnnpET+sbO7qToJIqqMJaBZPjbeUj9q50DYR/31TNrTApsp+SAZdE1kkUlR5mQ7f+6EUMJ/0O5rfR2ib8FA2Lw8WBm0f2PBTCsfxqrqORmt6pmvXKvgjKvwatGh1QnycEo83b0Y4diN8NvqWhtsvA/TAre728npdvuvZovucd/Z0s+ynqGHU9oPHM0Yt3qw4QmU19xS1AkKZ0Nct2xcH3+QATb14ABp/74I+fAJgseQ9zUjDa9kt17JKzDwKlbkExkH2o3EL6vaU1TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nChfaE62jBhoNSntR41SaGQxXHq1YUpaCWcvEVUZHwU=;
+ b=LcESAGbkvLtxPyiONcPOkcwSpcLkhEW3WyDFOT5WrmdEHf3QBP8qbAF1u2hVpP1aPSloRwzgINtvpaqoLB+jt3qvIMnQOnbYUMOUrb9TvW6s5Zqq3Zr9swMr6xTsgO4MKx9GvrQZFLJfjQrBxAXUmIoy1JlZuJk5CUh8RkSKA6QAN1vwLegaKRK0qSoJrqiqIRi42FlGsmLzdPnpLZEGQvFPLQBx9fjbBMSCnvPeVcd0kYNz3eS1bF91JCDS64HgQeatMa8l+3Y9o9RKGXAs/nSrca0f63xqOnYFkBB2VsWo8f0xdhuFHmvGG1ggfYEotHpqULo0ukuBUNjnIKu1hg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760717724; x=1761322524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngLRmK1oXthdQUYtmQtbPUF1dhiRRUALxIRLtMvIerU=;
-        b=NwW9bIPIrI2NuHJVFGUXIKM2Y9IEnxg4rkAVk8aHgkG9zGgEHTAEXzAaG6d30xvcJs
-         r2ZlCLltDCV74DYthawMLbHOtNIU+tzPUZ8y+ehsdesKwuLbs81AIKNV6/YF/D+JiX4F
-         w6v5Vu+bUAG/Fq+xptruo3eucmYvDcPQpYwuqzBjYIcNL8PaWfiK/ZgsOnjoyaDakKqR
-         yS6Q0aaHvsVnAK4Y0oMn7ECoSNxp1E33rVpiPqSm2UvZcKlgQcQIiXv9oEGfT9z+iP7A
-         sUIfBf3D86UxfHH9hGQb8KIw9pDU9rwhpjcyAQBe7QWSYJKOtZQA/ui3qqjZBFMv+GxJ
-         s1JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760717724; x=1761322524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngLRmK1oXthdQUYtmQtbPUF1dhiRRUALxIRLtMvIerU=;
-        b=V20kq1/vILxLmyVtPy9q64P1i8RA15Ii49HfSCRYcXuXkoxo2xe/NEnciIAHHvepGp
-         TB0vf6TuVsm805S7BXgzWjg2S1l8nOoL0aTmGtPfiqEy7QKfwNiDrZL/NDRpt1ykRZD1
-         LUjKVG/lLhrUSvw6csnv3ae1c6np3r8rBwfO79HbIm2gqIvA7JmCHUfvJYeoh5SSkjdD
-         022ss8dheI6L84//EO5U1oHBJr4j1aDyZcQ/MNk2koN8ZYYT85iBarXn0u5xQiXRDvJV
-         ZWLzOdmY8LMX5544Vs3qJ7J0Fn2jMSrbr7KG2UCuEJ8H/C8PZNIaS7+Zue650lGfCKOB
-         UC1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAzks8FAy0nyYxle6vyCkl8jqCZPY+YSBv1a35b3KGBAbflyVk5bMA0GLAlXH2t/zgdBGXHB05uJqsPA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+4XYAygtuKGMaJD2SaqmyY2a/E00RYBAd4U1xtWSXf2Kgr10
-	dqSDbhONCQYy3lHtnDQdJ1hEhEnCpgf5A9aMrIIAJy94SFN6Ih1kBCJZfZptPXjGhhg=
-X-Gm-Gg: ASbGncvOvWztKQ2pFlu+9rsEf7P562WAhA1wDP2+SdooLKu+VmUrw/17HFjexaPB+5J
-	HWmo5qplYi2vvBTdPxncmU+GyFu9k/27g9hUbAyhAi7L7GulE4fhblWCQjmMEfqM3bvdOvDfSYj
-	dz06pdlNc/ktBYHNPlCqhinsrLhAbhC9DoZhUuLHgGsqqwhvmuf630Zd3bRiG0hDozjkW3VKx7R
-	EbQt5lFp+sUJr42rqvyDOp3gtw6LXIdGovjnDlC9d46ef0+PsXKYSsEiCRrLTMqTeFhWKr9hFS7
-	B5WdAcRcs2YMdE5R/ftxGniPPQdJrZTPXmphwaYzrikcbpvhTsBrISmV8QG+v9FMqRsFuGNHewu
-	THHsw5zK40hiBY6UEcNYmlyRRXgMDFnMcV/d3MOOIdlveI59rSaisnV3A7kpYx9BG
-X-Google-Smtp-Source: AGHT+IF4+HUifUUlo17HSCgYnNGk3aG8u5kLir6yEURWDm6jFdmspJdCdomosbkBnIZiFQb1BeuOoQ==
-X-Received: by 2002:a05:6512:118f:b0:591:c745:3024 with SMTP id 2adb3069b0e04-591d85665d6mr1544436e87.43.1760717723485;
-        Fri, 17 Oct 2025 09:15:23 -0700 (PDT)
-Received: from milan ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591deeaf49bsm24526e87.28.2025.10.17.09.15.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:15:22 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@milan>
-Date: Fri, 17 Oct 2025 18:15:21 +0200
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
- allocator
-Message-ID: <aPJrmdeQY1QvbVdc@milan>
-References: <20251014182754.4329-1-vishal.moola@gmail.com>
- <aO8behuGn5jVo28K@casper.infradead.org>
- <aO9pUS3zLHsap81f@fedora>
- <aPEZdHJlNOofy5tm@milan>
- <aPEubI4kWvzSC5RN@fedora>
- <aPFBY_OtG0YTAaHv@fedora>
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nChfaE62jBhoNSntR41SaGQxXHq1YUpaCWcvEVUZHwU=;
+ b=xmdlhpyYzcI9PEdzA5WxNE9MiAALbMjF3kqHHr0GIcb4HfFtTmGR6lsUYFR0/lsorhC2dmbixbzoKxx9Uj24rxZudlyD6WeT1HhaKPvQZMBaOd+m0NnLA+8LI0G0YqFrLI+y+6UP0+JhKtGK4fY02jQ3GVx+ydVABBVN4tiWLjM=
+Received: from DS7PR03CA0232.namprd03.prod.outlook.com (2603:10b6:5:3ba::27)
+ by DS7PR19MB5782.namprd19.prod.outlook.com (2603:10b6:8:77::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
+ 2025 16:15:55 +0000
+Received: from DS2PEPF00003447.namprd04.prod.outlook.com
+ (2603:10b6:5:3ba:cafe::ce) by DS7PR03CA0232.outlook.office365.com
+ (2603:10b6:5:3ba::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.13 via Frontend Transport; Fri,
+ 17 Oct 2025 16:15:55 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ DS2PEPF00003447.mail.protection.outlook.com (10.167.17.74) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
+ via Frontend Transport; Fri, 17 Oct 2025 16:15:54 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 96308406547;
+	Fri, 17 Oct 2025 16:15:53 +0000 (UTC)
+Received: from lonswws03.ad.cirrus.com (lonswws03.ad.cirrus.com [198.90.188.34])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 35E42820249;
+	Fri, 17 Oct 2025 16:15:53 +0000 (UTC)
+From: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        devicetree@vger.kernel.org,
+        Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+Subject: [PATCH v4 00/11] Add support for Cirrus Logic CS530x DAC and CODEC variants.
+Date: Fri, 17 Oct 2025 17:15:27 +0100
+Message-ID: <20251017161543.214235-1-vitalyr@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPFBY_OtG0YTAaHv@fedora>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003447:EE_|DS7PR19MB5782:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 312ec00d-8ebd-47df-8772-08de0d98732c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|61400799027|36860700013|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QYCQ8KXrCPPlA6b/qGF7YW2DF5T97w9EHsXIMqNtlJtzOAXLX3q2FWpONw3O?=
+ =?us-ascii?Q?MMc3QFHpacZeOrhkHmTQs3NZMzIUQmnrtmFOPsbhcE+Hw3ONYxndqDbOr4mx?=
+ =?us-ascii?Q?VKN5pL7uekBaPCc/eXpy3qBzJvI6Afh0elktHYcwm6IIjtx+lmTUQOPYPd4r?=
+ =?us-ascii?Q?sw+Pzr0keiqji0kwakf1o1oju12l67iVS/3aKG2147pTc+pHTm8l2rUz1gkO?=
+ =?us-ascii?Q?oxG597FITdMqrK0bGHigKFaYw4165Ke9e/1XWwrgYnnEZQ9RT+mNNFswKmoe?=
+ =?us-ascii?Q?JMKET9u04grRtTT/0CaFO1PV37HiCG5SqDvhzorbtUyE/RPRjlT2SzlAC9Dx?=
+ =?us-ascii?Q?puBm/4XH2GCHP+92DJNaLG8E4V1ebUbZvoObMZOVseEaeAxP7frpyBgWGBOl?=
+ =?us-ascii?Q?mud/ibzyreR6C22RNF/iJz4o7DY3Myo0ExATDNGsUDCBk5wfXqjDKQ7unA/1?=
+ =?us-ascii?Q?uruT//L+blTWv50aVyGvqCer99vvY0Ct+0QPWKsFR8QrZpc+NniaFFsIjla3?=
+ =?us-ascii?Q?sWJq3VE6WZWjq0wgell1MXcbuUz4NZN4Td5m+eC9aZmqkkgALUqoAA/SYVQg?=
+ =?us-ascii?Q?zGub5DA5GZXRAxZGaDeJLQ4VQXNrHe/zfkKnJoQwF8edAnqv5Pqc2gJmtjPF?=
+ =?us-ascii?Q?mkI369LS6PRPb5xzWGFk0bqC92GhIp4ikAfBT4wHUC404UtUjROd11sqv20s?=
+ =?us-ascii?Q?TB/Rm9T/5g1lPiDhqOyHV4rGBsFGAzEF9riIwsLIbPT2z0gNl59aS2bMIPBn?=
+ =?us-ascii?Q?hGq4iEZk4VPJpmzM3Qw+eD2oFKIyBpuf5PbsqpZGcQYjgOE4atpu5W58QBdO?=
+ =?us-ascii?Q?Bu0tYDtGvILJuIGJWqxFHhT4KjCkRk93qnFKfkpux8QSEXhOuE9Oi7DOcqnP?=
+ =?us-ascii?Q?gf5iooA4oySNADTfPs/FPTBuY/h91P075/mjdUlt7t/JBX33R9ieYbeKPkca?=
+ =?us-ascii?Q?zi/nMRwSHXlnGEK1n+nworcYCs3VHuwlBoJZKMIVV1CrIjeONB6fcUfjASZB?=
+ =?us-ascii?Q?Aw38ArWV8tkF8pVLeMv2KKsnLyIyba3f06rk/bAhi7iuLjqu5iLbBMIAyoK5?=
+ =?us-ascii?Q?/DCHu5VZh7h9dJTKQv4roysu48fUfkgrYcBuMONxmScJfuAGe7O5/Yg/pkdz?=
+ =?us-ascii?Q?dHGnq1uXgsxEwmhGuxwiCRrRO4QXDZB8dfVvUHivcIVaxH8lfzCKWqhwl77a?=
+ =?us-ascii?Q?HgW8SbC7Oyhmltnlx+YvqOKTEc9zufV211RU9Pe57HmZ6Zx740EMHsxm34h9?=
+ =?us-ascii?Q?+QmAHWPOq12F+cyI73LFF+K2EWRvnkKE1yqYq0Qlolp3xt8svMGtPIj83mvM?=
+ =?us-ascii?Q?+y7352y8/pdLHe5lToVFCQt/wcitzhzp8b2fRMjCQQ0rb+yuVLaMuIhv8Mqr?=
+ =?us-ascii?Q?nKORw42BuKo7OtI6bXMt0utyONXZNFb2WjCR/uARXC7izmT3KvEXXIH1ymNr?=
+ =?us-ascii?Q?tqmEW52bN3j5s/e6rXhtosw7CsaxZH/bWnVGCMz6BOWmJl2syM/TdO95z3WR?=
+ =?us-ascii?Q?X5Y96y1xrkU0Xx3NM0UnleTfyicAM+bH6rZGzdVLOWDCa21jSGlhU2ShKXY3?=
+ =?us-ascii?Q?FsH21WE9K3Ht2q3dB9g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(61400799027)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 16:15:54.8985
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 312ec00d-8ebd-47df-8772-08de0d98732c
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-DS2PEPF00003447.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB5782
+X-Authority-Analysis: v=2.4 cv=POACOPqC c=1 sm=1 tr=0 ts=68f26bc1 cx=c_pps
+ a=4P4HcNC5cxRy117rOhkqbw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=hDw_Ibh-1Z5AH1WijLsA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: jfibBhV5y3Zb6Xw9F9GB-gjUP4vBUS79
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDEyMCBTYWx0ZWRfX51bPMIS/CBoP
+ 3Wph1Y5Cl+5bqiXXVPnKPTEfx7ZTvf4lZHPtrwTYmUaqoRAqh97PJziuAvzsZ9TWL09jW1DNUjA
+ CGRhrG2//fBSKzxXl6RjJvB9DVYRqWtTlSYlBi/OIVrZG+CE8uQWXd75Q7LF++etxcDaye/AGYH
+ w9+Q5baY8t5DeulrmJW2HdkjK5aqrWsC51v5IoRrlyvBZ1814Iuzhsd983dgW5Qw6EKhmq1fx/W
+ 5x9TXmVP8UdYZH+Q9uJo0o28txL+Lh9H1suEJCz64BTIe3iScmdCHK8uGgBLKo06zhO0NPab7Lm
+ Xxwa50fpp+rMsE4VTJx695SDSy7V9y96nLTE1dNphbd5qfzp/QEbCzovaDuvu/hd+xd6N1ySjhy
+ dCE0mA0891giYsLPN9gErz/p7NsowQ==
+X-Proofpoint-GUID: jfibBhV5y3Zb6Xw9F9GB-gjUP4vBUS79
+X-Proofpoint-Spam-Reason: safe
 
-On Thu, Oct 16, 2025 at 12:02:59PM -0700, Vishal Moola (Oracle) wrote:
-> On Thu, Oct 16, 2025 at 10:42:04AM -0700, Vishal Moola (Oracle) wrote:
-> > On Thu, Oct 16, 2025 at 06:12:36PM +0200, Uladzislau Rezki wrote:
-> > > On Wed, Oct 15, 2025 at 02:28:49AM -0700, Vishal Moola (Oracle) wrote:
-> > > > On Wed, Oct 15, 2025 at 04:56:42AM +0100, Matthew Wilcox wrote:
-> > > > > On Tue, Oct 14, 2025 at 11:27:54AM -0700, Vishal Moola (Oracle) wrote:
-> > > > > > Running 1000 iterations of allocations on a small 4GB system finds:
-> > > > > > 
-> > > > > > 1000 2mb allocations:
-> > > > > > 	[Baseline]			[This patch]
-> > > > > > 	real    46.310s			real    34.380s
-> > > > > > 	user    0.001s			user    0.008s
-> > > > > > 	sys     46.058s			sys     34.152s
-> > > > > > 
-> > > > > > 10000 200kb allocations:
-> > > > > > 	[Baseline]			[This patch]
-> > > > > > 	real    56.104s			real    43.946s
-> > > > > > 	user    0.001s			user    0.003s
-> > > > > > 	sys     55.375s			sys     43.259s
-> > > > > > 
-> > > > > > 10000 20kb allocations:
-> > > > > > 	[Baseline]			[This patch]
-> > > > > > 	real    0m8.438s		real    0m9.160s
-> > > > > > 	user    0m0.001s		user    0m0.002s
-> > > > > > 	sys     0m7.936s		sys     0m8.671s
-> > > > > 
-> > > > > I'd be more confident in the 20kB numbers if you'd done 10x more
-> > > > > iterations.
-> > > > 
-> > > > I actually ran my a number of times to mitigate the effects of possibly
-> > > > too small sample sizes, so I do have that number for you too:
-> > > > 
-> > > > [Baseline]			[This patch]
-> > > > real    1m28.119s		real    1m32.630s
-> > > > user    0m0.012s		user    0m0.011s
-> > > > sys     1m23.270s		sys     1m28.529s
-> > > > 
-> > > I have just had a look at performance figures of this patch. The test
-> > > case is 16K allocation by one single thread, 1 000 000 loops, 10 run:
-> > > 
-> > > sudo ./test_vmalloc.sh run_test_mask=1 nr_threads=1 nr_pages=4
-> > 
-> > The reason I didn't use this test module is the same concern Matthew
-> > brought up earlier about testing the PCP list rather than buddy
-> > allocator. The test module allocates, then frees over and over again,
-> > making it incredibly prone to reuse the pages over and over again.
-> > 
-> > > BOX: AMD Milan, 256 CPUs, 512GB of memory
-> > > 
-> > > # default 16K alloc
-> > > [   15.823704] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 955334 usec
-> > > [   17.751685] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1158739 usec
-> > > [   19.443759] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1016522 usec
-> > > [   21.035701] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 911381 usec
-> > > [   22.727688] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 987286 usec
-> > > [   24.199694] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 955112 usec
-> > > [   25.755675] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 926393 usec
-> > > [   27.355670] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 937875 usec
-> > > [   28.979671] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1006985 usec
-> > > [   30.531674] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 941088 usec
-> > > 
-> > > # the patch 16K alloc
-> > > [   44.343380] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2296849 usec
-> > > [   47.171290] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2014678 usec
-> > > [   50.007258] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2094184 usec
-> > > [   52.651141] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1953046 usec
-> > > [   55.455089] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2209423 usec
-> > > [   57.943153] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1941747 usec
-> > > [   60.799043] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2038504 usec
-> > > [   63.299007] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1788588 usec
-> > > [   65.843011] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2137055 usec
-> > > [   68.647031] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2193022 usec
-> > > 
-> > > 2X slower.
-> > > 
-> > > perf-cycles, same test but on 64 CPUs:
-> > > 
-> > > +   97.02%     0.13%  [test_vmalloc]    [k] fix_size_alloc_test
-> > > -   82.11%    82.10%  [kernel]          [k] native_queued_spin_lock_slowpath
-> > >      26.19% ret_from_fork_asm
-> > >         ret_from_fork
-> > >       - kthread
-> > >          - 25.96% test_func
-> > >             - fix_size_alloc_test
-> > >                - 23.49% __vmalloc_node_noprof
-> > >                   - __vmalloc_node_range_noprof
-> > >                      - 54.70% alloc_pages_noprof
-> > >                           alloc_pages_mpol
-> > >                           __alloc_frozen_pages_noprof
-> > >                           get_page_from_freelist
-> > >                           __rmqueue_pcplist
-> > >                      - 5.58% __get_vm_area_node
-> > >                           alloc_vmap_area
-> > >                - 20.54% vfree.part.0
-> > >                   - 20.43% __free_frozen_pages
-> > >                        free_frozen_page_commit
-> > >                        free_pcppages_bulk
-> > >                        _raw_spin_lock_irqsave
-> > >                        native_queued_spin_lock_slowpath
-> > >          - 0.77% worker_thread
-> > >             - process_one_work
-> > >                - 0.76% vmstat_update
-> > >                     refresh_cpu_vm_stats
-> > >                     decay_pcp_high
-> > >                     free_pcppages_bulk
-> > >                     _raw_spin_lock_irqsave
-> > >                     native_queued_spin_lock_slowpath
-> > > +   76.57%     0.16%  [kernel]          [k] _raw_spin_lock_irqsave
-> > > +   71.62%     0.00%  [kernel]          [k] __vmalloc_node_noprof
-> > > +   71.61%     0.58%  [kernel]          [k] __vmalloc_node_range_noprof
-> > > +   62.35%     0.06%  [kernel]          [k] alloc_pages_mpol
-> > > +   62.27%     0.17%  [kernel]          [k] __alloc_frozen_pages_noprof
-> > > +   62.20%     0.02%  [kernel]          [k] alloc_pages_noprof
-> > > +   62.10%     0.05%  [kernel]          [k] get_page_from_freelist
-> > > +   55.63%     0.19%  [kernel]          [k] __rmqueue_pcplist
-> > > +   32.11%     0.00%  [kernel]          [k] ret_from_fork_asm
-> > > +   32.11%     0.00%  [kernel]          [k] ret_from_fork
-> > > +   32.11%     0.00%  [kernel]          [k] kthread
-> > > 
-> > > I would say the bottle-neck is a page-allocator. It seems high-order
-> > > allocations are not good for it.
-> 
-> Ah also just took a closer look at this. I realize that you also did 16k
-> allocations (which is at most order-2), so it may not be a good
-> representation of high-order allocations either.
-> 
-I agree. But then we should not optimize "small" orders and focus on
-highest ones. Because of double degrade. I assume stress-ng fork test
-would alos notice this.
+This patch series introduces DAC, CODEC, and SPI control bus support
+for Cirrus Logic CS530x variants, along with general code cleanup
+and resolution of checkpatch.pl warnings.
 
-> Plus that falls into the regression range I found that I detailed in
-> response to Matthew elsewhere (I've copy pasted it here for reference)
-> 
->   I ended up finding that allocating sizes <=20k had noticeable
->   regressions, while [20k, 90k] was approximately the same, and >= 90k had
->   improvements (getting more and more noticeable as size grows in
->   magnitude).
-> 
-Yes, i did 2-order allocations 
+Changes since v1,v2,v3:
 
-# default
-+   35.87%     4.24%  [kernel]            [k] alloc_pages_bulk_noprof
-+   31.94%     0.88%  [kernel]            [k] vfree.part.0
--   27.38%    27.36%  [kernel]            [k] clear_page_rep
-     27.36% ret_from_fork_asm
-        ret_from_fork
-        kthread
-        test_func
-        fix_size_alloc_test
-        __vmalloc_node_noprof
-        __vmalloc_node_range_noprof
-        alloc_pages_bulk_noprof
-        clear_page_rep
+- Signed off all patches
+- Splitted "tidy up" pach in 3 separate simple patches
+- Fixed commit subject to much preferred subject prefix for binding patches.
+- Moved dt-bindings related patch down the chain
+- Added all relevant maintainers to CC list
 
-# patch
-+   53.32%     1.12%  [kernel]        [k] get_page_from_freelist
-+   49.41%     0.71%  [kernel]        [k] prep_new_page
--   48.70%    48.64%  [kernel]        [k] clear_page_rep
-     48.64% ret_from_fork_asm
-        ret_from_fork
-        kthread
-        test_func
-        fix_size_alloc_test
-        __vmalloc_node_noprof
-        __vmalloc_node_range_noprof
-        alloc_pages_noprof
-        alloc_pages_mpol
-        __alloc_frozen_pages_noprof
-        get_page_from_freelist
-        prep_new_page
-        clear_page_rep
+Simon Trimmer (4):
+  ASoC: cs530x: Correct log message with expected variable
+  ASoC: cs530x: Add CODEC and DAC support
+  ASoC: cs530x: Check the DEVID matches the devtype
+  ASoC: cs530x: Rename i2c related structures
 
-i noticed it is because of clear_page_rep() which with patch consumes
-double in cycles. 
+Vitaly Rodionov (7):
+  ASoC: cs530x: Update the copyright headers
+  ASoC: cs530x: Sort #include directives and tidy up whitespaces
+  ASoC: cs530x: Remove unused struct members and constants
+  ASoC: cs530x: Correct constant naming
+  ASoC: dt-bindings: sound: cirrus: cs530x: Add cs530x variants
+  ASoC: cs530x: Correct MCLK reference frequency values
+  ASoC: cs530x: Add SPI bus support for cs530x parts
 
-Both versions should mostly go over pcp-cache, as far as i remember
-order-2 is allowed to be cached.
+ .../bindings/sound/cirrus,cs530x.yaml         |   4 +
+ sound/soc/codecs/Kconfig                      |  10 +
+ sound/soc/codecs/Makefile                     |   2 +
+ sound/soc/codecs/cs530x-i2c.c                 |  24 +-
+ sound/soc/codecs/cs530x-spi.c                 |  92 ++++
+ sound/soc/codecs/cs530x.c                     | 516 +++++++++++++++---
+ sound/soc/codecs/cs530x.h                     | 120 ++--
+ 7 files changed, 634 insertions(+), 134 deletions(-)
+ create mode 100644 sound/soc/codecs/cs530x-spi.c
 
-I wounder why the patch gives x2 of cycles to clear_page_rep()...
+-- 
+2.43.0
 
---
-Uladzislau Rezki
 
