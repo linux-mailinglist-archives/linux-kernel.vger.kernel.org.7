@@ -1,137 +1,279 @@
-Return-Path: <linux-kernel+bounces-857568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBDCBE7270
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:26:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A541BE726D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EABD4FF6D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E423B8550
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E9928469B;
-	Fri, 17 Oct 2025 08:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91CA286411;
+	Fri, 17 Oct 2025 08:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r+SYuu2D"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYAv31S9"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D82328369D
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5284427FD5B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689570; cv=none; b=Lel07Uu8AeTXEFy3qentENJRA3/MMtxY8vxbtPomP/VkFBWMRJuX0+tNbxQ6ZGZmKtNeBbIJzCu8WL/LgBN4JHlKFRwBGFdlkc22rHpKLNak1ef2fWh3Dup0ZG6WIdyKR2XSKeidd8ZjVJiPlIbx1a3Fp/dg0CYpaBhjqT4thvo=
+	t=1760689558; cv=none; b=AcvaBeACYu3DMRfovvYjOl3TbhxnRDeDptxlFvc2iEkGQptOE6wfwfSvh/tuOOx5rsvQyJyhyfoSpv0fGZCM4KT0YGE5sz8+9l2+jURoenrhzoz/DrrH3x1kTcndbThs4JilZY6qtnQc8XlRCv6aFvDMM1m/DLDN1IQ2vboBs40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689570; c=relaxed/simple;
-	bh=yFK6k6NhAz92VDinM24x4y/M4QwPXWbPL4uuyBP1h4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a0fhE8+Lf5xrFFqf80pKyP2bvpgOkKHPjKIK+xh03tjYkH1Kb7uUBh7e9nIV6PKthXsW9foMNHmxlfexxtQlzP5YaXwdtswvAHjKklYWIVwLBt0gxL2O2tkaWAEX45pnadxgzp1oUe7LzYIyRj/7QpOcWoISZeXwdCp2FhOSUcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r+SYuu2D; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b5c18993b73so282459966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:26:07 -0700 (PDT)
+	s=arc-20240116; t=1760689558; c=relaxed/simple;
+	bh=joEQQ7bhfysAQI45cw9isOk0CSftKCV6J0jUEbDNCvo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NMhxYBbLNFR781iS2Exv1L28aMZLQ7sqQbUQfmDYHjFsjBBEZcNtq+tyKPw4TXR0TiNdK83B8VzIUL9hyZVUqUrYSJw9eaPuuhVVj4xkePcQfLSMg3l2E85geVMmkb9OoEQIXG8PXDSq8XJTNhh5oq2+S6+/1h+YpKIS5YgQyE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYAv31S9; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-421851bcb25so888985f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:25:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760689565; x=1761294365; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyUwehKjLcuHDNejMzdoJjZAJgmXLkyY0r2v2tgM9dk=;
-        b=r+SYuu2DDkYNv6Li/U1leIJ9WwxXoJxGD9ndnSXAH7VPeHWOfh48H32yVNiClAtCHM
-         Pv/SEfjIkKF4QD/jmsMcjf/CbtqX9DD2fq1f6N1tFggBey74g5RquL5lEpL3DaVfnL2Y
-         slBIQBVMi8FpAxqYjUj+KAMhTwgsKpDGnknGrgyRjMUCQmUzSOOLn8mIn9MOqMfh5+mG
-         PVquCDI2ZnljPY7EAichAHwMy11iKEisB3/+Sl3ZIDQrIbLyufLpdjrBiPcJdFUeJ9EB
-         1SLfS34Of8a2ZIb4N2wxnwN2WPniS8CV1DbPXjeJZqZ4LHeOQnu1zDVsoBwjgzdqjtE+
-         aTUw==
+        d=gmail.com; s=20230601; t=1760689555; x=1761294355; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v61flCR5vvlJAAL4RIpZN6lpDmoPC5xj/Uum81coq14=;
+        b=AYAv31S9qtZsFwRC81hJjACZKA5fHyEq4ZNQI1Q2X1xsHe6LkdBVsSa5541zR+Fbmx
+         BEnZZ7OCCscbnmT3nVsNK2/Q7Vju8TcwrZ7gBomlxzhpvrLtDXYH9kCBu4MqZwNf3EJ7
+         a2dlgXKiQe1ZsLl5XlJrMEvHtcCck9enbMZB/0YaGRlI/Bz1SqI9HNbTrpkJhAqMP3qu
+         5ETpBWedePF7xYWqpvDRHXL0S+LKrbrWDslA2UjCFQW+HX7XLYpWdSUQDDmEVb8C/tIQ
+         7aQwvM4ghsfQCiFz8D25emzl/LADqwGqQLFmXrhJQNla0GXC1TpNieks8lg7uwCsJAtZ
+         p9jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760689565; x=1761294365;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VyUwehKjLcuHDNejMzdoJjZAJgmXLkyY0r2v2tgM9dk=;
-        b=SRZQr8zNOywFf0i6WBox8hqS9DIVYVVJAYKIEL4p+VDtgI2n6oT9Uq72yYYnm4neRZ
-         GYYwttm6dJbl+VgwNXHoVxZotu+1G7+QooNWOdoe7qm99F2KcpYxPH+LPVvQBx0dQvYD
-         YQkyJGQXW2lwIEp8SAle/WidTgnHAyN0a0plAUVMhjpXjsY/hOjzakm05okRq9GyUkg9
-         YG0PD8LAy041BLtNkvGwcjWXwo2iG+jgeNlR9aFn579hoggDlY7Z+nB+sfFnEB3DYRO7
-         9SQE3qocledX2XmaBTnJPGo/DVrODvnMMDiAg4wmxSh8VEOsPyGxbzUc94PK88qINcPJ
-         IOqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5BWIl6/APXcGZnI+mNSHEjQIsUpR/IfJHQt/TY/lHOn8zejGFjy/dKVKKTbifWRyQLkRksBEv1rK4PLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyflSkBJgHLT5j2nqcISqh1GMUTR3uvW0tq/Ppt4HdIdAMmygYL
-	IjReW6jZMbcPl5edfFuAg2QGWW6YpzMxZM6YgSpGG1MUCfqM63mbM22p7QaCo63b+BI+is/Ca8L
-	XrIa2NaQ3pD6EsJfvWzrVTdD6YmRgU24qHawIdTvlis2I4j9i+i4DkEw=
-X-Gm-Gg: ASbGncsK+WR+ra2gGle5LHyAYn54pSu7onFJ8/IIlslhS1AhPJSaDClFTr2qRRIz1MI
-	oEM2q0+lHj282VJyoNuA85KBlraQGxDX/q61sS/1S/kuwxMnEJKZGs0z4lnQiDv/pIorgLeHEqS
-	MoVo5xk2GeisFlPPnpam26GtROJrKhd3O3cnr69+3wzH+GPgdDIc6hJS1gea9pzmoYhDwHXiYn7
-	kPiTU5X6wz2MEnqUjW1DP2rLbM9/UMQnYsYMR1Yrsx5WhCJHNsYNHgg29VOA+lv+VnTIRs/lXtz
-	lrzPOQXyVkEV2i47
-X-Google-Smtp-Source: AGHT+IHbtlFXBkl17CEDHiEIXjQIR3AcZWigxlCUhE3F8cQIbFOycTLrDz3Fd9b4pkwziOemPMHap0mwtYPqnRvlsVQ=
-X-Received: by 2002:a17:907:9801:b0:b49:b75e:6983 with SMTP id
- a640c23a62f3a-b6475316890mr278570566b.49.1760689565581; Fri, 17 Oct 2025
- 01:26:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760689555; x=1761294355;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v61flCR5vvlJAAL4RIpZN6lpDmoPC5xj/Uum81coq14=;
+        b=ZkthLOJo2d9KljTyODmLOLmxsYESyeVVcVQXxB8R8l7XK3QtVx7rle8+Kf6FpUb+G6
+         Es/Vn+ocWDPtt98aDuNK0TDxwgdVF2wPOl1XTmRp1+yrCe7giVVQ3ZmItjCwZ4Pboulf
+         ZOmNzU2KvuaKEY8+knvZsoY9BHJ4q87gOvkxDFHvblfw/YjtXQp4ilqxEOicGOtbHhIv
+         24jUrlWPo5nyFPvwax6g0yy3dCdYW2MTSDzupbA/teUeAHvrTO1+F1CfDuOQxeD0OeEQ
+         RBRjlejojajUQeTdfC1ppQobu/NVbsHV5xf8q+/0aGkMM8DywrdfU6PNvWhQEVlHn+yd
+         daSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXr1gxq/p/hD0va4bhwwAatpX32tJmK1snZQpDZQT+/qofhbmp8tvBv5LROcdAwOZSEcLfNIGgpvFGpDxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwT7mV/jCr2jZNf+aJx88Fo4LuQdIpmNje+SHBiffJc/X3gzsO
+	8qxK3/lLYSToeO+OBO+aDmG1EyYT/j+6+DyWtafTsDgwKIgy/g57svUy
+X-Gm-Gg: ASbGncusIaxdPyGNl8r9bLdJMtLUMkKD6P/WsN+JvYILk/R+ajYLXJec0f7C5ky7VmD
+	QGJUoGlG4obBBeeSIE8oVGXaPanlTq6MG3tMA6st8YJVV+ywLiC81pHCUffw2VmMQPDXfwDKENq
+	8Ur8dSYumVspwMqPdp/oCldV+oVUEUHZqrxabfUxecHazxVTkNdqmRPoFfsycGUbrFF0+up0+2f
+	p47ygKB+1gS5fDepPY2EvNMoZyOtxgwBnsFXqMkCTVzk2VCt0IgLYYVpRNVzde2iXTh61Ht+co4
+	nOtQzA2fNhVh9UuAalXY96joNdvD09UB1agvFkxx/7m9Ue4bILZWKPMYHhTWgWn7W0Q8/w1y274
+	cC0akbjSaqvyKGFBaqUEqC8JOzD9DuJ4Q9t9bXD0KTEt0q9Rguvk+AlE/RF8uzlCvfQMNqSgzds
+	0=
+X-Google-Smtp-Source: AGHT+IGEkSRHIiF1Z9hIjowIr0RYX6Ej1bYmZxsMMs5EVs/hxBN6ETWucMvo4l2QUKUsdowZiFc7yQ==
+X-Received: by 2002:a05:6000:2f86:b0:426:fb28:7964 with SMTP id ffacd0b85a97d-42704dac9ddmr2119851f8f.61.1760689554315;
+        Fri, 17 Oct 2025 01:25:54 -0700 (PDT)
+Received: from [10.5.0.2] ([185.128.9.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf6b4sm39603674f8f.25.2025.10.17.01.25.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 01:25:53 -0700 (PDT)
+Message-ID: <10e119ee5a76f1c47d7eb6a15989c8ffc00ffc5f.camel@gmail.com>
+Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron	
+ <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown	
+ <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Date: Fri, 17 Oct 2025 09:26:26 +0100
+In-Reply-To: <20251017085904.07e40e37@bootlin.com>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+		<20251015142816.1274605-3-herve.codina@bootlin.com>
+		<1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
+		<20251015211420.031c61fa@bootlin.com>
+		<de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
+		<20251016160202.3d4d0a5e@bootlin.com>
+		<d7576a0bb9a8d5326d77ae434131540b4359bd2a.camel@gmail.com>
+	 <20251017085904.07e40e37@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017070702.1637092-1-rdunlap@infradead.org> <dfc03399-d4f8-4e52-b097-75fbbfd1c8f7@oss.qualcomm.com>
-In-Reply-To: <dfc03399-d4f8-4e52-b097-75fbbfd1c8f7@oss.qualcomm.com>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Fri, 17 Oct 2025 10:25:54 +0200
-X-Gm-Features: AS18NWCUY9arCyHfiUtW12k5sMm7r8Ddi1bbMBtkAIVhTV3EnWf4cbcOv4bku4E
-Message-ID: <CACMJSetEtS6n8cA0bnH2VORw_4b3Jpw74nqNAqE4W8XLKo6grg@mail.gmail.com>
-Subject: Re: [PATCH] firmware: qcom: tzmem: area: fix qcom_tzmem_policy kernel-doc
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 17 Oct 2025 at 10:17, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 10/17/25 9:07 AM, Randy Dunlap wrote:
-> > Fix kernel-doc warnings by using correct kernel-doc syntax and
-> > formatting to prevent warnings:
-> >
-> > Warning: include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
-> >  'QCOM_TZMEM_POLICY_STATIC' not described in enum 'qcom_tzmem_policy'
-> > Warning: ../include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
-> >  'QCOM_TZMEM_POLICY_MULTIPLIER' not described in enum 'qcom_tzmem_policy'
-> > Warning: ../include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
-> >  'QCOM_TZMEM_POLICY_ON_DEMAND' not described in enum 'qcom_tzmem_policy'
-> >
-> > Fixes: 84f5a7b67b61 ("firmware: qcom: add a dedicated TrustZone buffer allocator")
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > ---
-> > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > Cc: Bjorn Andersson <andersson@kernel.org>
-> > Cc: Konrad Dybcio <konradybcio@kernel.org>
-> > Cc: linux-arm-msm@vger.kernel.org
-> > ---
-> >  include/linux/firmware/qcom/qcom_tzmem.h |   12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > --- linux-next-20251016.orig/include/linux/firmware/qcom/qcom_tzmem.h
-> > +++ linux-next-20251016/include/linux/firmware/qcom/qcom_tzmem.h
-> > @@ -17,11 +17,17 @@ struct qcom_tzmem_pool;
-> >   * enum qcom_tzmem_policy - Policy for pool growth.
-> >   */
-> >  enum qcom_tzmem_policy {
-> > -     /**< Static pool, never grow above initial size. */
-> > +     /**
-> > +      * @QCOM_TZMEM_POLICY_STATIC: Static pool,
-> > +      * never grow above initial size. */
->
-> Didn't know inline '*/' was cool, but if the checkers I'm happy, I'm not
-> going to complain either
->
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->
-> Konrad
+On Fri, 2025-10-17 at 08:59 +0200, Herve Codina wrote:
+> Hi Nuno,
+>=20
+> On Thu, 16 Oct 2025 16:26:28 +0100
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>=20
+> ...
+>=20
+> ...
+> > > > > > > +
+> > > > > > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-
+> > > > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > > > adc_core[0],=C2=A0=C2=A0=C2=A0=20
+> > > > > > > +					=C2=A0=C2=A0 "adc1-avdd", "adc1-
+> > > > > > > vref");
+> > > > > > > +	if (ret)
+> > > > > > > +		return ret;
+> > > > > > > +
+> > > > > > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-
+> > > > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > > > adc_core[1],=C2=A0=C2=A0=C2=A0=20
+> > > > > > > +					=C2=A0=C2=A0 "adc2-avdd", "adc2-
+> > > > > > > vref");
+> > > > > > > +	if (ret)
+> > > > > > > +		return ret;=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> > > > > >=20
+> > > > > > Hmm, is avdd really an optional regulator? I mean can the ADC p=
+ower
+> > > > > > up
+> > > > > > at
+> > > > > > all
+> > > > > > without a supply in AVDD? Even vref seems to be mandatory as we
+> > > > > > can't
+> > > > > > properly
+> > > > > > scale the sample without it.=C2=A0=C2=A0=C2=A0=20
+> > > > >=20
+> > > > > Where do you see that avdd is an optional regulator?=C2=A0=C2=A0=
+=C2=A0=20
+> > > >=20
+> > > > You are using devm_regulator_get_optional(). That's for optional
+> > > > regulators.
+> > > > =C2=A0=20
+> > >=20
+> > > Indeed I use devm_regulator_get_optional().
+> > >=20
+> > > We have two similar function to get regulators:
+> > > - devm_regulator_get() and
+> > > - devm_regulator_get_optional().
+> > >=20
+> > > devm_regulator_get() returns a dummy regulator if the regulator is no=
+t
+> > > described in the device-tree. The calling code has no way to known if
+> > > the regulator was present or not.=C2=A0=20
+> >=20
+> > Yeah because it's mandatory and the part cannot work without power :). =
+So we
+> > should not be allowed to operate without a regulator.
+> >=20
+> > >=20
+> > > On the other hand, devm_regulator_get_optional() returns -ENODEV when=
+ the
+> > > regulator is not described.
+> > >=20
+> > > That's pretty confusing but it is the reality.
+> > >=20
+> > > I use devm_regulator_get_optional() but check for -ENODEV to see if t=
+he
+> > > regulator is provided or not.
+> > >=20
+> > > In order to use the ADC core (is_used flag), I need both the AVDD and=
+ the
+> > > VREF regulator available.=C2=A0=20
+> >=20
+> > And that is why I don't get why are we allowed to proceed if there's no
+> > regulators? That seems wrong to me.=C2=A0
+> >=20
+> > So I think the regulators should be mandatory in the bindings and a dum=
+my
+> > regulator should also not be allowed in this case because that should g=
+et
+> > you=C2=A0
+> > -EINVAL when calling regulator_get_voltage().
+> >=20
+>=20
+> I have 4 regulators: avdd1, vref1, avvd2, vref2.
+>=20
+> The ADC controller can work with 2 internal ADC core (adc_core[0] and
+> adc_core[1])
+> in the driver. Those internal core are not directly accessed by the drive=
+r.
+> Only
+> the ADC controller is accesses.
+>=20
+> Those cores have an AVDD and a VREF power supply.
+>=20
+> We can use either adc_core[0] only, adc_core[1] only or both adc cores.
+>=20
+> Depending on regulator described, the driver uses one or two adc cores.
+>=20
+> This choice is done by:
+> --- 8< ---
+> static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
+> 					 struct iio_dev *indio_dev)
+> {
+> 	int adc_used;
+>=20
+> 	adc_used =3D rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
+> 	adc_used |=3D rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
+>=20
+> 	switch (adc_used) {
+> 	case 0x01:
+> 		indio_dev->channels =3D rzn1_adc1_channels;
+> 		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc1_channels);
+> 		return 0;
+> 	case 0x02:
+> 		indio_dev->channels =3D rzn1_adc2_channels;
+> 		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc2_channels);
+> 		return 0;
+> 	case 0x03:
+> 		indio_dev->channels =3D rzn1_adc1_adc2_channels;
+> 		indio_dev->num_channels =3D
+> ARRAY_SIZE(rzn1_adc1_adc2_channels);
+> 		return 0;
+> 	default:
+> 		break;
+> 	}
+> --- 8< ---
+>=20
+> In rzn1_adc_core_get_regulators(), looking at one core I do the
+> following:
+> =C2=A0- Try to get AVDD (using get_optional)
+> =C2=A0- Try to get VREF (using get_optional)
+> =C2=A0- Core is used only if both regulators are present.
+>=20
+> For one core to be used, both regulators have to be present.
+>=20
+> Regulators are mandatory but adc core usage is optional.
+>=20
+> This optional usage depends on related regulator presence.
+>=20
 
-Yes, very surprising. Almost doesn't look "right".
+Ok, then we could flip the logic and have boolean properties for the adc co=
+re
+usage and depending on that, requesting the regulators. To me, the intent w=
+ould
+be more clear (at the expense of more FW properties).
 
-Anyway:
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Having said that, the above helps a lot in understanding what's going on an=
+d
+explains the get_optional() usage. I'm not still 100% convinced but bah, fi=
+ne :)
+
+I would still argue that you should have a comment (likely in get_regulator=
+s())
+explaining the logic and the optional usage.
+
+Given the above I think you could also remove:
+
+if (!adc_core->vref)
+	return -ENODEV;
+
+from rzn1_adc_core_get_vref_mv() since the channels are only exposed in cas=
+e the
+regulators are present.
+
+
+- Nuno S=C3=A1
 
