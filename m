@@ -1,185 +1,294 @@
-Return-Path: <linux-kernel+bounces-858026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BBCBE89B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:35:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642A6BE89C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913CF622A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:35:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B828835A7CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C8D32ABC6;
-	Fri, 17 Oct 2025 12:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6A632ABC6;
+	Fri, 17 Oct 2025 12:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcDifW+C"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Eyd0U48+"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020083.outbound.protection.outlook.com [52.101.189.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BE12E1F02
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760704549; cv=none; b=pCi9Y+PSQUqmsoehAWb9hkG7y8oGw46sja+tw4Uf8SqfNGoNUq2oPCDkKpytAxq+auGtSkOC8dhyWDpKY3PEFgfQF6XHVw81mki2uuL3KGwLPoJh8YqkefAcSgf06mSbbRdxAOA1tOsu1mKB5+yneWpusRpxCWe+Xl+gDVmi/yo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760704549; c=relaxed/simple;
-	bh=5ScMlkpNB3bO9rP0r5PtsUCVGh6+veBjgyd9l3hbzUk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tJJ6waxdxer2vmV5ir2W4BMBMcFHm+JfDrAniwvpe55n5g/EPJvpCZlLlnwOFHvSF543JuHaffqyHCKzGHlTTtjNIBMrXQ1IvVv1oQ8nepJlbwGqTZzcDTd/MKNdleg408mg3FOl7Br5fEnJ120mUkKEdUJHEDcDS+CfUk9MnT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcDifW+C; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so1372474f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760704546; x=1761309346; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z3ErgCZMqEpbnKuL5giuJkbnaVmFhSFBsDzPMv4Y24k=;
-        b=KcDifW+C4xv4mVIbrV2VtgtdfylQyjozqrobE9GfVnihZAbmhUDcXtKg5fndcIq6Zy
-         4MIm5biZyDAk38IwnkdmOOwaDYXmIinVU5Zxfe6CVDHA3Vhb7z8aKsJqXg0XtdNmsHvl
-         FkqFC535a0eEZM2LBpJxBCry/Yw3Rs4zksBsDiUmca+a0WypGb1J7TtL59sWYIPYuSKf
-         FcQ7077+KdH2A9mTa+YWD+s7WWSUxBX8+SVWGtAokb5nA2ufuHyxT1YCz9pXkUrHw7Pj
-         MyMxlO28rfdEzo/4zsFRwvFoBGLBCrRY4o0GbDt8zUHrsE/PM0J72n6BLsev23YW9tjW
-         ISVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760704546; x=1761309346;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3ErgCZMqEpbnKuL5giuJkbnaVmFhSFBsDzPMv4Y24k=;
-        b=qEghLNMbKivy8N9QItd9FLf5m3j6DZXFJUxE6uTaCPhuP8ypB9j/Mf4wUtaYbwGL8Q
-         4HLu1ifLPros67ab7nvPLJF6Cg+FIMaSJCbgdO0PQnjX8Dv999fy5I02lxpENgib6ahh
-         7h2qq0UNaVW/VTJo0ubWlLndEYSvs1B0+A0K/zIl1Kp6GMANVb5J3J3/7lcpaSV8ixta
-         aEHU35/EzNMieJpye9i8z88AJICfFzS/eVVCTOEz1VH8nUso+wyafw5E7GAt0r6/76eV
-         PgB/CeiNLeTpUVR8RCoffMoSeZWaQSTlkws17IRmsRo1SkcGYA0OX04Rzthu6rCNS7bq
-         pwlA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0saHH7vraPakIQ/ft3s73ePyFIdTAinIlCDS18YpcMSJy6ZcxJQOy4Ub5qGv3VJHXZeUygBaPHb/Rv3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgz5JWX6EMJi3DqYEYqIYZxT1675rT/XN7f6c3gypIqROH5ULq
-	PXOmDj6q/4hWDfw6Js3nLE/g9rhvAqmJns08SEk7ek2jPXa/xi/H/ubc
-X-Gm-Gg: ASbGncv6N2ard0xQUpQLeHwnozUTTtm8j0YKA3r/8asaB88OsFC88rV9gzMYLB+Sd0B
-	J1Uaua80AlvJeOQ7bHXpC47Zv7BZCtZn+6BZhv1KEiMqSS11IBJKPNs/HTTBRnnIw/2KBSgJCDh
-	+yaSQhEEBvK0HcKV+g8aFyGnfNTdgdW0QUgiohKodRNry0rtO3yUp78iOLI9dYBNsM6wXD+Op6t
-	agsZTonoNO214h0JiOPS98+xqZ68cxIGEwFYFVZDN9V9sLDcbJphlknJPfnCaagIGbcH6aK5pzV
-	/WGEDLjIe2eR96IeZx5B8NTfJ3LdtPZKmJrYPACiWf/jwGbw07oQt10c/Sh7BepRrwz9ra/0GBx
-	HCkBtq2tUyxvYXde9sD8o/xSY3N8UOo0ccKJXaUH0/afU+SCcO3xIIGr7thgtauc0YQAz2QD4uq
-	tQOpzYBKxyzGu3cw==
-X-Google-Smtp-Source: AGHT+IGtc3rElmlZjUCj5LU626fWOPul39pomQ3PRsSjDGqzZiz5b3XHgZGsVeR0STAL9AUxbbUF5w==
-X-Received: by 2002:a05:6000:2008:b0:3df:c5e3:55fe with SMTP id ffacd0b85a97d-42704d9895amr2580238f8f.29.1760704546153;
-        Fri, 17 Oct 2025 05:35:46 -0700 (PDT)
-Received: from [10.5.0.2] ([195.158.248.102])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe74sm39639352f8f.35.2025.10.17.05.35.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 05:35:45 -0700 (PDT)
-Message-ID: <ccd58e8103e912d0609fbc625f19ec18e605ad4a.camel@gmail.com>
-Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Michael Hennerich	
- <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Jonathan Cameron	 <jic23@kernel.org>, Andy
- Shevchenko <andy@kernel.org>, Sean Anderson	 <sean.anderson@linux.dev>,
- linux-spi@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-iio@vger.kernel.org
-Date: Fri, 17 Oct 2025 13:36:18 +0100
-In-Reply-To: <66f94eb6-15a9-457f-a7b8-47710652a34b@baylibre.com>
-References: 
-	<20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
-	 <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
-	 <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
-	 <409ad505-8846-443e-8d71-baca3c9aef21@sirena.org.uk>
-	 <12db0930458ceb596010655736b0a67a0ad0ae53.camel@gmail.com>
-	 <8c7bf62a-c5dc-4e4d-8059-8abea15ba94e@sirena.org.uk>
-	 <d9455d90-31ca-4be7-b17c-2b339e92f8a0@baylibre.com>
-	 <9024f05854dcc3cc59345c0a3de900f57c4730d9.camel@gmail.com>
-	 <ad929fe5-be03-4628-b95a-5c3523bae0c8@baylibre.com>
-	 <c4b5a42f5f1d3f577cb986946b642b4edc1300e9.camel@gmail.com>
-	 <66f94eb6-15a9-457f-a7b8-47710652a34b@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A6719DF66;
+	Fri, 17 Oct 2025 12:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760704617; cv=fail; b=s43z/cp//JIlT0GxMexXx5wf5MgiRNJxtLkZBSqh/IGjJH88cZW1+Kk5fGmu7O26HpbWzw+GQHxk8xCa6c4xlHNY3FvFKzkIs1iz6teXaezseBnh4RxPbB0SL4x+LA7RPz20VkE498ze+D34LzoJwnGDZ1ZTTz//NywDRVS5TCU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760704617; c=relaxed/simple;
+	bh=/5dsD6Wa2RkyvluoQsjrM9EIT3T0lln2I3/VThzN0mo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BgZVWSEpbgtX63ECRRbeAek0A9cJdc9vZk4+0mBLeHEPGTjW0v78pdjnHoqh0usJzqVtZ+z5DJHc3qxNmAZsLMIgH1Yir9xH2PEj2gIr0whMOEi4ULbrqYWTwmb3Xz3tXzsPdFa4i0og4EO5BTNgyx5FfvUiC3HMQI7fyrAuDCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Eyd0U48+; arc=fail smtp.client-ip=52.101.189.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fmm3y2+jV4oNlHiczGY1Ut5VcvvsueMFIDmZgTTuHoQlapawf3hCOX5ik4VpbCyvkb6Yk4PLSjGKB4+dpTuYcb4TfXM3KHXPsHx5GFZSgruBamiy+il4FGZ1gMwwdpIbP6gWXL6XuzWqBSC0LzbfIgZE9lUAy8bc/zvU5kENvyD06Cu5rKONZ7PuXFf+KAJH6v9GRpe/DnLU9IzLFt8mn7Aj6rlUwzh+utCVgJ+/gr38mDXlKaxsjQJGL04iEhOrEPj7RgfCrouDlZ1paN8wRvNj/ML9NRxyQoxGKF3iMUvnd9dixHQejWXPKeY9AgP9rL11kR3sx4aC5NRwqZZFyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tjmdPgLuin1uAqr3oZDlYroQcXfTwQyAOkGrncUeKcA=;
+ b=XPIFYMXiL/cUKLGckQeewrXuVKQSxTYmnFMcgQ7vG1riGYaFJMYKZyOMd5hyTnjreyNtTAFfQUdCGE+oY16sFHjTLwXvUUgzIYiHVAu0k8GRrpmDW642bOmTijRcCdvB9uPOyqLhl7QsDY1AWBMmlzK0WKhmS6P9WG/qed1TZabOxOjkDWSW6BXymilZBf/yFLrhInKoDTngLkJ3LYbBLw0JSBbjxgW4ObKkNwXy0T/8UT0+iH171VvLLvgb2pSTxtmNUMlXf8Ew40MT9XKA82XyIgc+mQppaDAj2Bhfmf2d6Wdqbbe+rIpVsPTiFKMvT+EDrPY1a/M9kqOQmY45PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tjmdPgLuin1uAqr3oZDlYroQcXfTwQyAOkGrncUeKcA=;
+ b=Eyd0U48+hAbb5iG6KkzJqpPeYZJr7eTvvkJ/bzqtEjcBumVFejxCCQI+oUdvmixtmpdI/Vf9U4gBTpY8MUQNo4Oc/7NLTG7KvmC7rmf0bcSLAucJIBkVxdZ/c8e35r6gfWeDghlqxu/M4SZ/J6Nz1lLO4WPbiq4WA0Ta0xlPi8Y8CEK699N/QFWlJtnScB4yM+lwxfmrfnGyBTffa1ZtWDC1VNNzWtyo8O0+HOcQmE0qddYxco2wX87Z8se7fEZgCvLg+szxEnjYGI8j+xUFwmLIkYZWkSi05tsTFqGrtK40xEMs0qxGOWBI+jb+qKCdgEMZeCyaif38Xew8YQ/MHA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT6PR01MB11252.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:13b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 12:36:52 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
+ 12:36:52 +0000
+Message-ID: <8669c9f6-74c3-4bd6-833c-1d73158dfc97@efficios.com>
+Date: Fri, 17 Oct 2025 08:36:50 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V3 01/12] ARM: uaccess: Implement missing
+ __get_user_asm_dword()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+References: <20251017085938.150569636@linutronix.de>
+ <20251017093029.874834505@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251017093029.874834505@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQ1P288CA0021.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:9e::27) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT6PR01MB11252:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4b3446d-1a87-486a-5002-08de0d79d93d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U0xnU2QybDhWczZVUlM4Y20veTZZRlZ2ZHRyS3hOOG1zeFh4RitUNWxjMWlw?=
+ =?utf-8?B?OEJqcWxXVXNxaHh1UVRwbkNGSnR0em9wUTZqTHN2NjVGQzc5MmpCVk9jQS8r?=
+ =?utf-8?B?K1NEb3ZPQldJZWtUNHV1eUxLN25sNjdLcFdqdUg2bFBWOFhkWXV5Mm5WL0xy?=
+ =?utf-8?B?UC9NbndjZDN4NkNZOTg4eEExc2hzakk5ZzA2TzB0eE5qa3hiemV4eWhIdDhI?=
+ =?utf-8?B?R0hsZk4wcFNWcWFhY2hlSDlZTUhiTDluQTFuOGNSUk5LMis0b094WEhSZEY1?=
+ =?utf-8?B?MXNxRFdkelJxeUtVdmJrRE9WdTJpK05oODEwZXEwRGIrc1RNT3RoeVI4TFlK?=
+ =?utf-8?B?dnJDbkFCNkpHaXJ1S3ZTTW91bWxsUWtkc2p4SUFjQlk3eFRQYVZ2blFlNVpH?=
+ =?utf-8?B?WWJDWThLL0JBTnZLTklPLzk3d2RGSkw4WWdpRHVlUGZsWDl4MHpPa2xyUFV4?=
+ =?utf-8?B?a0RHQm1oQnIxVHNmWWJIbzF3dlBRMGlEdk8rWDBsL0Y1amEzSFFUQ09oMWpJ?=
+ =?utf-8?B?OEEwRmt3eE5Bdk15ZlZLT1VRQUpjaHllcklHeFArZ0dTS0VNM3ZpejZNSS9n?=
+ =?utf-8?B?NzRoMWJROWkrb3BNTldPSjFJV2tCZGhmUlZJeWJqSFBnMXo0bmp2UUl6RlpL?=
+ =?utf-8?B?b1c3WkR2T0o3L1NjVVMwaVk4N3lhUmpWUnIrckxqVkFiZUowZEhpR1RLc0FM?=
+ =?utf-8?B?QjNUWHoyK2d1RXpZNlBjVFRXNjZXcCtPaHM1U2FySDNRMDgycmlDN0F0TGhD?=
+ =?utf-8?B?aTBVUmc4enBvSjJtaDdBenNXdkdNLzd4bWRpSDlBejExMVFkOHE0bUgzdEp6?=
+ =?utf-8?B?bm9YY29yNzBUQzJLV2tOb3lLYjVBa1ZEYnN2UThpdkN4OG1tUXdYQ2dvYUFS?=
+ =?utf-8?B?bUg3OW9NNXdQZUMwKzJETUxvakpkdlJaZmIwd3A4ZVU3M2lTR1IycXBKODJY?=
+ =?utf-8?B?NWIzZ0grWDdCdmpHd3RIMXE3bnl4N08rL2tVNVVZc0pZV2puVW5NV2s0MG1V?=
+ =?utf-8?B?T2M2aWJ1dkVTUlpLSE9MQ2dGUUI3MTdhUjRBQmFDaG9JeEpjeGpad1ZZWkpY?=
+ =?utf-8?B?b1BGRnptOXRSWXVQNXhzNkNncDRNQXB0Wi81RDdHcEpsMEg4cmF1T2w4dFFx?=
+ =?utf-8?B?MktzR1N5ZHc3cmdic2NLSkg4ZE5IcFlUZUNoOUgvcXZFQ0JubzRVRGRpSTJS?=
+ =?utf-8?B?dVdkbXNaSmlqeU1iMDNCMmZKWWRHRnZNMkprMXprdTU3OU95SGhiS0wwSXVZ?=
+ =?utf-8?B?SWViMmZzQmZNMTEvMFdjaG5VWHpiSFFoZGd0a2pFb0FpY0ZrOGlma3FUdGI4?=
+ =?utf-8?B?VlVyNFlhZ1IxWjBodktpaXFDNkVyV05YblVKRGpaa01MSVhZMXB3QittcW1S?=
+ =?utf-8?B?b3J1SGJITVZiMmtvSGhKY2ZhcERYd0s4RHNiMTVTTTBISk0xYzN5S0t6Uzls?=
+ =?utf-8?B?UnFJeS8wV0VsdCtPS25IOXZSdktONUpKRlZTeHdYMGJQbERkNXdvM2VyM2ww?=
+ =?utf-8?B?Mm5BMlpSK0FTb1pHL2JhdFpxbzNtMXhkY3U1L3U2L1FxMEIzUzdKc0NrZzBw?=
+ =?utf-8?B?N1ZsOVhadW9Cem9Cb2k3a1JLcE9BL3dsU1k2c0Z5bFlpTTNsTFdFdTVhcTdl?=
+ =?utf-8?B?MFAyVFpzL3FhYXR4blI0aGZ6L3NQa21DQUJyQjVERWhwb2Q4WjlZR2RHT1Q1?=
+ =?utf-8?B?SkdTNXYxZHRRNEREMUYxVU9DRVA5dldiTDVEaGUyOXVxTHg0Zm1rUmd3MCtR?=
+ =?utf-8?B?MG96VC9obGJLVElKK1NuV0NnQkFLSU5lL0Zsd3dUcTlLaU5DTVpaMHAzMGhO?=
+ =?utf-8?B?ME5pVXptWm84VjEwVDl3ZElFS3ByRGI2cGxCT09lSXUydmZUbGJTZ2lEanly?=
+ =?utf-8?B?eHFiTWZqUnFFY2k3SzVBOTMxeVIrWjJnN1RwUktML3ZzYVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VVZhWUQ1djl6aVh0RkJwVHVaSW80eGMyMExUNHR3SFR6TlU5NDFMc2NtZWM5?=
+ =?utf-8?B?Q3FYUFRBbmlpY2N1R3hlcUp1cnpSaFdsTUk2WGV0cWRlcEZKbVpFa2tuVEtW?=
+ =?utf-8?B?Y2grSzFGQUFFTU1jdk84VXRmUnlXVkFwMjZPQmQzMXBDQlFZZFlqLzhpTUxh?=
+ =?utf-8?B?RzNpSE1YYjVHS0FEQnR2M2J5c1REV25rdEJRL3dlOHBRSXQzTmNSbW50Y3M4?=
+ =?utf-8?B?UUNLNHpaWXcrYzJtWnVJcEZ2L0VuUCtObWIwZklFRkdGcDR0RjNYck9oTkxD?=
+ =?utf-8?B?cHVyejhDenZSNkswTHVQSmVTOWN5VmVvOU94Q2dDU2lYbGVZb1VSM2h1cE9l?=
+ =?utf-8?B?RE1IR0JOTnVNK0t0VWszQUNKdVFCR2hYVWNlVzIxWVY2dEY1akZyS0J4WTZR?=
+ =?utf-8?B?dUREM2dQZ1hNYVEvQVhCYU9WZFB2enpPM3lndTlOM2Rkb1orMk1Fc0xQUlIr?=
+ =?utf-8?B?aDVNdlllRzFFdWFUbjR2bUxNNnRCWEp1bDlKQjNXOWFSTDJIWmNGOGFIVkVB?=
+ =?utf-8?B?Wk4yMzJPOXBlSW5BWjk5NmpJNGEzRE52N21TQm1GWEpEaG1DTElPZmNDTWds?=
+ =?utf-8?B?Qkx5SjZQY1QxaEI3N3BGcFNMQVBITWZBMU44TXhiTjFteis2MzdweG8wYjdD?=
+ =?utf-8?B?dGhYVXU2MVpKUXBiYTJtMUliM0M2KzZXQ0gyNE80UFZaYXI0MjVlcEYzMElT?=
+ =?utf-8?B?a0VnU1FvSjlQRDRxVkFUK0lxdVdmQ1hBcFRaUVRNZy9yeW0wMGg2NU1hNUhw?=
+ =?utf-8?B?SER6Y0FIOUcvLy9ZNzNuV05vdmNYYVVyd0xSblFrbE9ObXE3dldrSTlwbVhW?=
+ =?utf-8?B?UWRKa0xYc1BJYUg3ZktIUzlTbEk0OG5wZkVBbk03ZWQyZUxkRW1ZTGFDU2Vq?=
+ =?utf-8?B?K1hPR1UvUFNWUnpqeUh2eWV4b1pSZTJ1YndsZ2VaSkdtYXVwbDlmUzJXRWN4?=
+ =?utf-8?B?YmcxSGl2bjRYM2REWWtiT3Z1aHkweUdvZkhZUy8wQWs4YnQzTGhtb05LR3E0?=
+ =?utf-8?B?WFZnQUo1YWlSM0Y0SWNUS1NYV3U5djk3WjZZeC94QnlNTUFaZEh6K0VNQVRu?=
+ =?utf-8?B?K3JzS3FvT3dyYmpaL2ZTY1pac1d4dFk1NTU2aFAxZGpibnB1K1hCMkF5R2xQ?=
+ =?utf-8?B?aE1pZHArSUxqSERMU2lwYUJKeVdCaDkvaFRSbDkyR25kdXJIZXZyMmowU0Fl?=
+ =?utf-8?B?QnpmRUs1aFRlQk5zZGlkRVZ3Sjg4RFNGU2FZY3pxSkwwbERCOGtkY0tUT2kv?=
+ =?utf-8?B?U1FPYTUyM1gxNUg2T0Z6TVpRUXNyWlBxclBjWFIvd0Y5ckxiZGVSaWRYWTEy?=
+ =?utf-8?B?MVpKV0g4eVh4cjFKTDhxOTVVRUx1bFg1ei9oaXpILytnMUd5S25USHI2aTFl?=
+ =?utf-8?B?a3I2TFV6K1RaK0pKK3NyV2hPbEhic21XTHNOSk15Q0QvMGgwRFhNSjMzaXha?=
+ =?utf-8?B?TVpnNjhpZGFKQUE3eE9jTWVaSHJQNVFMMGFRUUE0TlgrWnFRaEkyMjdtZElF?=
+ =?utf-8?B?NWdnSU9pWm5vVGltMU1mV2d1Rno4MFEybFBxckYrL2VPMTFEdmQ3TDRNbmpR?=
+ =?utf-8?B?SFVmR3RzUXV0Ty9xc0ZhaDJOK3I5MjRnZVA0UmZPOHUwYzN3TGFPMnVZaHU4?=
+ =?utf-8?B?SDVCQnVjK1QyUS85bTZRQ2NrYTRrWUtjbnJZS3RWSEpsc2UyZDJHWVdiZDhR?=
+ =?utf-8?B?UHhwOGhzZUZ5UmRpUmlnQ2NPaHR1L1dxZUc0QzJmT2VPem9OOGpJT2t3ZmRX?=
+ =?utf-8?B?NEZldS9ZKzh1blNnS2ZqVXA3U2d4MkZnSUtHd2VCbmR5cjVYMmpSN2NKa0ts?=
+ =?utf-8?B?N0M2RXRraW9WRllJSFN3VDNaN0Y1YmgyVTl3M09MZG45U0ZkdEx4ejRQVTNy?=
+ =?utf-8?B?aC9LR2lwL3hSa0xOeitHN0NrdFNOeUJGTFBOdXVrbitGMTVnUDNUdkViVlRH?=
+ =?utf-8?B?bXhSeUVKRmpWOTRHMlJObUp1eWhxd0hRZEFLbS9QUEt0ZzYzS0VPQmRpSjJh?=
+ =?utf-8?B?cUFkL01SdE1oTU1IN3lES3NwZDNGbGlCc2Z0RjBDZHZzVVVnRDg3ekpUZGFS?=
+ =?utf-8?B?RE5rbS9WOHExNlhYa1phdi9yTzA3cktoQVppMlhCdXMxbVpadzJQMnJXUW1N?=
+ =?utf-8?B?cit5UlNSRGVSWnBaTGtLeHRRSlFNN1ZVY2hpcFo3TDFZcEo2SkVmYTBEV21n?=
+ =?utf-8?Q?u6SKEpC+fH6NJS+MheHHyFI=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4b3446d-1a87-486a-5002-08de0d79d93d
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 12:36:52.3192
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nvOQiYBGkP0X2RW+J8b0j1unNJg1wfnrFlP0ApIDVjsUn2O7ijYxD6/F9Kig+gJJkkLIREAebROOlvM8fAd7yHRhQaf+MKAcP6Wc0mHbDr4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT6PR01MB11252
 
-On Thu, 2025-10-16 at 10:25 -0500, David Lechner wrote:
-> On 10/16/25 4:08 AM, Nuno S=C3=A1 wrote:
-> > On Wed, 2025-10-15 at 13:38 -0500, David Lechner wrote:
-> > > On 10/15/25 11:43 AM, Nuno S=C3=A1 wrote:
-> > > > On Wed, 2025-10-15 at 11:15 -0500, David Lechner wrote:
-> > > > > On 10/15/25 10:18 AM, Mark Brown wrote:
-> > > > > > On Wed, Oct 15, 2025 at 03:43:09PM +0100, Nuno S=C3=A1 wrote:
-> > > > > > > On Wed, 2025-10-15 at 13:01 +0100, Mark Brown wrote:
-> > > > > > > > On Wed, Oct 15, 2025 at 11:16:01AM +0100, Nuno S=C3=A1 wrot=
-e:
-> > > > > > > > > On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
->=20
-> ...
->=20
-> > >=20
-> > > The AXI SPI Engine doesn't know how to do the quad SPI part yet thoug=
-h, so
-> > > it isn't something we could implement right now.
-> > >=20
-> > > If we tried to do it with spi-buses =3D <8>; then we would end up wit=
-h the
-> > > "interleaved" bits (or nibbles depending on the wiring) that requires=
- the
-> > > extra IP block to sort out when using SPI offloading. Technically, we
-> > > could
-> >=20
-> > I think that extra block already exists today. I was thinking the idea =
-was
-> > just:
-> >=20
-> > // the case where we just have one channel with eg: 32 bits words (eg: =
-test
-> > patterns)=20
-> > struct spi_transfer example =3D {
-> > 	rx_buf =3D rx_buf;
-> > 	len =3D 1; /* 1 32bit words */
->=20
-> This would still need to be len =3D 4; since there are 4 bytes in a
-> 32-bit word. (If this was tx with SPI_MULTI_BUS_MODE_MIRROR, then
-> len =3D 1 would be correct, but for striping, it is still the length
-> of all data combined).
+On 2025-10-17 06:08, Thomas Gleixner wrote:
+> When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM variant
+> for no real good reason. This prevents using get_user(u64) in generic code.
+> 
+> Implement it as a sequence of two 4-byte reads with LE/BE awareness and
+> make the unsigned long (or long long) type for the intermediate variable to
+> read into dependend on the the target type.
+> 
+> The __long_type() macro and idea was lifted from PowerPC. Thanks to
+> Christophe for pointing it out.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel.com/
+> ---
+> V2a: Solve the *ptr issue vs. unsigned long long - Russell/Christophe
+> V2: New patch to fix the 0-day fallout
+> ---
+>   arch/arm/include/asm/uaccess.h |   26 +++++++++++++++++++++++++-
+>   1 file changed, 25 insertions(+), 1 deletion(-)
+> 
+> --- a/arch/arm/include/asm/uaccess.h
+> +++ b/arch/arm/include/asm/uaccess.h
+> @@ -283,10 +283,17 @@ extern int __put_user_8(void *, unsigned
+>   	__gu_err;							\
+>   })
+>   
+> +/*
+> + * This is a type: either unsigned long, if the argument fits into
+> + * that type, or otherwise unsigned long long.
+> + */
+> +#define __long_type(x) \
+> +	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
+> +
+>   #define __get_user_err(x, ptr, err, __t)				\
+>   do {									\
+>   	unsigned long __gu_addr = (unsigned long)(ptr);			\
+> -	unsigned long __gu_val;						\
+> +	__long_type(x) __gu_val;					\
+>   	unsigned int __ua_flags;					\
+>   	__chk_user_ptr(ptr);						\
+>   	might_fault();							\
+> @@ -295,6 +302,7 @@ do {									\
+>   	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
+>   	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
+>   	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
+> +	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
+>   	default: (__gu_val) = __get_user_bad();				\
+>   	}								\
+>   	uaccess_restore(__ua_flags);					\
+> @@ -353,6 +361,22 @@ do {									\
+>   #define __get_user_asm_word(x, addr, err, __t)			\
+>   	__get_user_asm(x, addr, err, "ldr" __t)
+>   
+> +#ifdef __ARMEB__
+> +#define __WORD0_OFFS	4
+> +#define __WORD1_OFFS	0
+> +#else
+> +#define __WORD0_OFFS	0
+> +#define __WORD1_OFFS	4
+> +#endif
+> +
+> +#define __get_user_asm_dword(x, addr, err, __t)				\
+> +	({								\
+> +	unsigned long __w0, __w1;					\
+> +	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
+> +	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
+> +	(x) = ((u64)__w1 << 32) | (u64) __w0;				\
+> +})
 
-Right, I was still thinking in the old stuff where the spi engine would alw=
-ays
-have len =3D 1 (which is nok)
+If we look at __get_user_asm_half, it always loads the lower addresses
+first (__gu_addr), and then loads the following address (__gu_addr + 1).
 
->=20
-> > 	/* 4 lanes which is actually quadspi */
-> > 	multi_bus_mode =3D SPI_MULTI_BUS_MODE_STRIPE;=20
-> > };
->=20
-> This will work with the caveat that for non-offload case, the software=
-=20
-> will need to rearrange the bits in rx_buf into the correct order after
-> the spi_sync().
->=20
-> For example, u8 *rx_buf will contain bits of the 32-bit word in the
-> following order:
->=20
-> rx_buf[0] =3D b28 b24 b20 b16 b12 b8 b4 b0
-> rx_buf[1] =3D b29 b25 b21 b17 b13 b9 b5 b1
-> rx_buf[2] =3D b30 b26 b22 b18 b14 b10 b6 b2
-> rx_buf[3] =3D b31 b27 b23 b19 b15 b11 b7 b3
->=20
-> The correct order of course would be (assuming little endian):
->=20
->=20
-> rx_buf[0] =3D b7 b6 b5 b4 b3 b2 b1 b0
+This new code for dword flips the order of word accesses between BE and
+LE, which means that on BE we're reading the second word and then moving
+back one word.
 
-I know, that's what the ad4030 driver has to do.
+I'm not sure whether it matters or not, but I'm pointing it out in case
+it matters in terms of hardware memory access pattern.
+
+Also we end up with __get_user_asm_{half,dword} that effectively do the
+same tricks in very different ways, so it would be good to come up with
+a unified pattern.
+
+Thanks,
+
+Mathieu
 
 
-- Nuno S=C3=A1
+> +
+>   #define __put_user_switch(x, ptr, __err, __fn)				\
+>   	do {								\
+>   		const __typeof__(*(ptr)) __user *__pu_ptr = (ptr);	\
+> 
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
