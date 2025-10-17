@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-858596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5379FBEB3EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:37:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90223BEB3F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A18189A375
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:37:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6E4E1A91
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C116732C952;
-	Fri, 17 Oct 2025 18:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixMNJIQI"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994152877C2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0C7330323;
+	Fri, 17 Oct 2025 18:37:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED05231842;
+	Fri, 17 Oct 2025 18:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760726232; cv=none; b=sHonXoZ3OBahxyHOqAY0xV0hmg00XmGtSZprQP6xLmoM+5lqQ96G3ydSvAwyFQhsbglzMyQ2edE2aU7S45/CKjnjU17ICek9tLK0qBXhS2qF2iDg3uyrHjo9iIzRhcLTsLIku2bRojm/hfHPUAZObgoO7koRLlY69jpMNHSsZqU=
+	t=1760726248; cv=none; b=U7YFKNDOmPmW8n9KwKB9ltRyEJg3c5nA/tZA0Aoy2w5KEDZQ2R31vznC4WXz4YX3kTH225Gq7TzUQ0dPnsCoB959IxX5mXOIITy/p2qC+yrrhOFcybaEbspS8LDtHDrboonL49bIumB3rbZWXznKJ6Oj8ljGCmXvcPokN6SjZRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760726232; c=relaxed/simple;
-	bh=0HYzdDZcUi93MY7xV3bFA4oYlGIU1yq5GRoqS26jaIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iHSarNJyVrT8XkhHfX3fXZi+I5XGL+k0GRipBa8S0veEg7MrzBME6PF2K6aCC0i4GcPJN7c5R0z4ev3ZW8Zf7PWEv/kHBOWtGA1nRNHe5tDoPRMQpOpNIw+7qU/HjJwHUqVYsCbuY4IDoVl250LckZr3yioITqbHrb6Ky8721iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixMNJIQI; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63c1413dbeeso3091192a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760726227; x=1761331027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1rE57XXMWa+VwNPDtVGrV/wXcErqp5ekEXu+eNAT0BQ=;
-        b=ixMNJIQIe9id/ScC49z/ts4yLewQrUrkCGKk5tTUNpWBDZ5NzikPtRlW3hf7bhv/vn
-         8wYyMQeH+ExqWSUjoRSbUu1NNnEy37lWysRigTXaLFSeBPb9fSGd4Ev+1beVjwsrYlo6
-         qy+K2j3YwwecI1gOzjnABn+68ylRp7zP1Orr4legJsmtRRyuRY6vJXLhbrd/QFRs8f8e
-         m1fdXkgP0Oq+XytJLwnvaGXluuENzhyPuMye33mcD1LKw/mVirMHlrXLHp966nsMjujb
-         TCBZrQU2VkJtX9sovsJeN5VYirjwWt68ZGDKTzduZnC7vFZjCF+jSn4eKK6uMpi8WisX
-         GUxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760726227; x=1761331027;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1rE57XXMWa+VwNPDtVGrV/wXcErqp5ekEXu+eNAT0BQ=;
-        b=UAPbbwJTM3Hg9mPe49ezpnwB2VGYE9Rd7eP4atzZ9ipclAj5niVtn51FFPF2Gqlu+X
-         LclW1fwLM3GTLXRbbs+FVQwAf3wjp0GpCXATrlEt5W48z+b9gdndPzu7JZecnmPplj6R
-         7GcRYl71fWQUZnwKqYA6CaGIS6T3XCpG7sshcpDT6dLsiq/Bpc+mbYVczumZsQxh3Jmx
-         u4wAG78hura1VJaoZViiPSeYKEFUo7P4a42G/7JK8S6PZW3NC9+3vhbaKmjQIDbqzpJ/
-         Pc4C7kuCm2Zi1P3w1Soj65mF0Bf7V0Inh+z12m4I56faC2od5vD09mWuurYpaafTHkPY
-         1ARQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaGXD+nCfCRvVsMdFNDWPhO6RPSMIWRz0xyr8eq1Lxgak015oXyMtI4xvOvyPePE3uY7CVo5cNbzHgc8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB3T8ldqxZ2hEagVI4mWHHouknjEhy7U2j4wbcNCK+HHk5tZSC
-	YhCETneX+uAdgpKniDJZWIXEBGCek56s74bT4IwzjZSSEGQgMvoWRGMc
-X-Gm-Gg: ASbGncux12Ug8ZBnwXKuEiGb9QvypnIZtxbUwERIBYbCTR3uG6ysHnvU5FKePMOQTOR
-	5BPPh+ywQOtjwCebH6q12ZoTtrQvGHfCwaSpFnqG4Ov01SYIUFqmNns/LiAtqqzg+q53H27JH78
-	1b3H1QM6v+yU3kKubCyaZ2ny5DFVKs1qxyQVdG6f8z5DYcJKYz2AJu0rL8TGWjTd4LSGXsxE4Qj
-	hwrmtVZjH6RYwvc3RUXfGCXKTke/pNgBvy/wXeM5uy2El/JGpFsYZNGYnLIiV3DoUoOC2+Y5Vim
-	8qEpLUTfLhPBLygvua8xx55sUQ8/kyCo7Lgej4xYgb6iKC+vnGZvSyAZnGj1Jvdb1IBU59NhCUw
-	Zj2ngZs/nUvCuNGtoX/Mqses+M5yOsKhQDOCdSH8tAkSXlvN7SSd5IbiYpcs63xXKKuxj2CWQ2h
-	R7gyGh095IZkOuYAtmvzdD6Tr6RkODQdahWSmT16FQySuknbuonBPy
-X-Google-Smtp-Source: AGHT+IEqDf1CFx+tImN/qmpjBMn9gDXH5AAbouHdZCqZsw8BSWD0GaBU+JjrB00u6MgijpPDdz3IKQ==
-X-Received: by 2002:a05:6402:4316:b0:63b:fbb7:88bc with SMTP id 4fb4d7f45d1cf-63c1f628bcamr3968505a12.5.1760726226709;
-        Fri, 17 Oct 2025 11:37:06 -0700 (PDT)
-Received: from localhost.localdomain (93-87-220-163.dynamic.isp.telekom.rs. [93.87.220.163])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c494999dasm321247a12.37.2025.10.17.11.37.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 11:37:05 -0700 (PDT)
-From: Lazar Aleksic <kripticni.dev@gmail.com>
-To: hansg@kernel.org
-Cc: ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kripticni <kripticni.dev@gmail.com>
-Subject: [PATCH] platform: x86: Kconfig: fix minor typo in help for WIRELESS_HOTKEY
-Date: Fri, 17 Oct 2025 20:35:21 +0200
-Message-ID: <20251017183521.16268-1-kripticni.dev@gmail.com>
-X-Mailer: git-send-email 2.49.1
+	s=arc-20240116; t=1760726248; c=relaxed/simple;
+	bh=V9nRtprV4Fy3L/RtjgTOBjGRXGt7eZgwB6iGwK71cSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SwVxEd4mpJCGuP4vxjUWy7tRr2rP/Jrq7qq1OVR22b/hq8EQkGw1rf2/qsWPtZqWMY0d64LwQtAnhQejjWSU78BvRV+dYCTabkJxPAJWXHhJGUbJaGCXMd9hSdlKIorUmuANmOnhT9Z+3T22EGf124r4Oz4OK7zoaKBEU35AXjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 750591595;
+	Fri, 17 Oct 2025 11:37:17 -0700 (PDT)
+Received: from [10.1.35.23] (e127648.arm.com [10.1.35.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAF653F6A8;
+	Fri, 17 Oct 2025 11:37:23 -0700 (PDT)
+Message-ID: <28ecb23b-ecee-409a-9771-24f801081d07@arm.com>
+Date: Fri, 17 Oct 2025 19:37:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpuidle: governors: menu: Predict longer idle time
+ when in doubt
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Tomasz Figa <tfiga@chromium.org>, Doug Smythies <dsmythies@telus.net>
+References: <4687373.LvFx2qVVIh@rafael.j.wysocki>
+ <5f0aa630-b30a-44c4-a52c-e08179cd3bf9@arm.com>
+ <CAJZ5v0gBtv0bpK2swkc6D0AmanpKAvqO53dgRp2e7p9cWAM3TA@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0gBtv0bpK2swkc6D0AmanpKAvqO53dgRp2e7p9cWAM3TA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: kripticni <kripticni.dev@gmail.com>
+On 10/17/25 10:39, Rafael J. Wysocki wrote:
+> On Fri, Oct 17, 2025 at 10:22 AM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> On 10/16/25 17:25, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> It is reported that commit 85975daeaa4d ("cpuidle: menu: Avoid discarding
+>>> useful information") led to a performance regression on Intel Jasper Lake
+>>> systems because it reduced the time spent by CPUs in idle state C7 which
+>>> is correlated to the maximum frequency the CPUs can get to because of an
+>>> average running power limit [1].
+>>> [snip]
+>> [snip]
+>> Anyway, the patch makes sense, let me run some tests and get back.
+> 
+> Thanks!
 
-Fixed a misspelling of Xiaomi
+Unfortunately this patch regresses my tests about as much as a revert of
+85975daeaa4d would.
+(menu-1 is $SUBJECT, menu-m current mainline, menu-r mainline with
+85975daeaa4d reverted):
 
-Signed-off-by: kripticni <kripticni.dev@gmail.com>
----
- drivers/platform/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 46e62feeda3c..c122016d82f1 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -432,7 +432,7 @@ config WIRELESS_HOTKEY
- 	depends on INPUT
- 	help
- 	 This driver provides supports for the wireless buttons found on some AMD,
--	 HP, & Xioami laptops.
-+	 HP, & Xiaomi laptops.
- 	 On such systems the driver should load automatically (via ACPI alias).
- 
- 	 To compile this driver as a module, choose M here: the module will
--- 
-2.49.1
+device	 gov	 iter	 iops	 idles	 idle_misses	 idle_miss_ratio	 belows	 aboves	
+mmcblk1 	menu-1 	0 	1523 	402522 	119988 	0.298 	98552 	21436
+mmcblk1 	menu-1 	1 	1481 	395766 	118596 	0.300 	97640 	20956
+mmcblk1 	menu-1 	2 	1503 	396560 	117876 	0.297 	97506 	20370
+mmcblk1 	menu-m 	0 	2355 	703732 	22275 	0.032 	2628 	19647
+mmcblk1 	menu-m 	1 	2359 	637522 	24815 	0.039 	4075 	20740
+mmcblk1 	menu-m 	2 	2356 	706980 	23836 	0.034 	3208 	20628
+mmcblk1 	menu-r 	0 	1490 	388180 	118294 	0.305 	97871 	20423
+mmcblk1 	menu-r 	1 	1498 	393402 	119984 	0.305 	99187 	20797
+mmcblk1 	menu-r 	2 	1462 	388597 	119504 	0.308 	98640 	20864
+mmcblk2 	menu-1 	0 	3303 	503938 	170251 	0.338 	150276 	19975
+mmcblk2 	menu-1 	1 	3310 	480508 	132132 	0.275 	114398 	17734
+mmcblk2 	menu-1 	2 	3554 	466884 	113659 	0.243 	95841 	17818
+mmcblk2 	menu-m 	0 	5746 	706262 	24618 	0.035 	3802 	20816
+mmcblk2 	menu-m 	1 	5741 	727174 	24152 	0.033 	3737 	20415
+mmcblk2 	menu-m 	2 	5777 	836940 	12424 	0.015 	335 	12089
+mmcblk2 	menu-r 	0 	3241 	463112 	133052 	0.287 	114616 	18436
+mmcblk2 	menu-r 	1 	3551 	422006 	100494 	0.238 	82425 	18069
+mmcblk2 	menu-r 	2 	3523 	508542 	140085 	0.275 	122880 	17205
+nvme0n1 	menu-1 	0 	5407 	436834 	74314 	0.170 	54133 	20181
+nvme0n1 	menu-1 	1 	5763 	459510 	72673 	0.158 	51530 	21143
+nvme0n1 	menu-1 	2 	6266 	489570 	78651 	0.161 	58609 	20042
+nvme0n1 	menu-m 	0 	10786 	767740 	23840 	0.031 	2855 	20985
+nvme0n1 	menu-m 	1 	10586 	757540 	23612 	0.031 	2933 	20679
+nvme0n1 	menu-m 	2 	11805 	834012 	23528 	0.028 	2768 	20760
+nvme0n1 	menu-r 	0 	5323 	431906 	77426 	0.179 	56166 	21260
+nvme0n1 	menu-r 	1 	5484 	438142 	76033 	0.174 	55956 	20077
+nvme0n1 	menu-r 	2 	5353 	428826 	77024 	0.180 	57016 	20008
+sda 	menu-1 	0 	972 	444116 	149643 	0.337 	129023 	20620
+sda 	menu-1 	1 	954 	557068 	176479 	0.317 	159092 	17387
+sda 	menu-1 	2 	878 	540360 	196405 	0.363 	176792 	19613
+sda 	menu-m 	0 	1634 	1017918 	29614 	0.029 	8587 	21027
+sda 	menu-m 	1 	1622 	878140 	25323 	0.029 	8238 	17085
+sda 	menu-m 	2 	1632 	1027167 	28798 	0.028 	8428 	20370
+sda 	menu-r 	0 	918 	531112 	188314 	0.355 	168375 	19939
+sda 	menu-r 	1 	924 	521378 	185727 	0.356 	165327 	20400
+sda 	menu-r 	2 	880 	529146 	196391 	0.371 	176908 	19483
+nullb0 	menu-1 	0 	101419 	88988 	23923 	0.269 	3080 	20843
+nullb0 	menu-1 	1 	101610 	88484 	23678 	0.268 	2821 	20857
+nullb0 	menu-1 	2 	101369 	89336 	23711 	0.265 	2795 	20916
+nullb0 	menu-m 	0 	101696 	88698 	23860 	0.269 	2910 	20950
+nullb0 	menu-m 	1 	101103 	88120 	23294 	0.264 	3295 	19999
+nullb0 	menu-m 	2 	101880 	86676 	22730 	0.262 	2709 	20021
+nullb0 	menu-r 	0 	101856 	87742 	23493 	0.268 	3204 	20289
+nullb0 	menu-r 	1 	101514 	89070 	23653 	0.266 	2848 	20805
+nullb0 	menu-r 	2 	101754 	86318 	23163 	0.268 	3229 	19934
+mtdblock3 	menu-1 	0 	163 	350284 	115149 	0.329 	97166 	17983
+mtdblock3 	menu-1 	1 	179 	315948 	99038 	0.313 	78243 	20795
+mtdblock3 	menu-1 	2 	134 	481584 	160754 	0.334 	144150 	16604
+mtdblock3 	menu-m 	0 	215 	410034 	70261 	0.171 	55445 	14816
+mtdblock3 	menu-m 	1 	205 	570150 	109273 	0.192 	90189 	19084
+mtdblock3 	menu-m 	2 	252 	866616 	23492 	0.027 	9717 	13775
+mtdblock3 	menu-r 	0 	132 	467365 	161835 	0.346 	144056 	17779
+mtdblock3 	menu-r 	1 	164 	348682 	117704 	0.338 	97859 	19845
+mtdblock3 	menu-r 	2 	132 	483300 	165179 	0.342 	147164 	18015
+
 
 
