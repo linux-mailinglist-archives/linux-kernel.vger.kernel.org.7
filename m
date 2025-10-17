@@ -1,173 +1,135 @@
-Return-Path: <linux-kernel+bounces-857816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65574BE801C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:15:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D764BE8016
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C23CD5660C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590376E15DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D48C30F815;
-	Fri, 17 Oct 2025 10:09:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4730F556;
-	Fri, 17 Oct 2025 10:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41498312835;
+	Fri, 17 Oct 2025 10:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b="E+4hY8wq"
+Received: from out198-16.us.a.mail.aliyun.com (out198-16.us.a.mail.aliyun.com [47.90.198.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD73192D68;
+	Fri, 17 Oct 2025 10:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760695786; cv=none; b=JlA83JG0EpDntPfAqETYZHSG/J/qe8a8VKekagvWpa9d+gdlz4g/HYahPZxBWI9CTU87fdCFRjcAvPrWJvziXoMtj33hOEX9eObEVAYfYsU/MT/wm34V8Jg6TqJn6bwu9OIQn4s2EBvZ2rZqSUDHZ6oGzdNdpaNZ3kt0OckzRAM=
+	t=1760695894; cv=none; b=Xo+PYczQ4KzggXzle762NYUKRQBCa0yrK6ml3Szr2VenJcw0Byz0RKobfhPGu90o1cfUikPe28Z19LRl4YakerPELjZyfmSA3B4vIRtdnUtk5SAnNuoJ8+h48VwvqrRrSj4SiaPp/0QPkvQ5VjLwYrrd34CMxkjFsuynhDyHUy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760695786; c=relaxed/simple;
-	bh=qcygzYRgi9L7d9OTenk5QBRkLySfTb2S886Ji6vP7Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+yP9AQ9FNoBj0FYw/XTRwJtRyk31Oo9RQ2ckYd+JuIB7QsRbB+5/btFT60eTLNUKVGy5LGwPFWcSB5ftfDz/MH12MFcEBMC+nN6vBK2ca4Gzj9393om7+30d4Z7OIWfMikRp/xNuyzmd1KYZ041DO169/Yspzlhh7Fo2Mg5zRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FAF91595;
-	Fri, 17 Oct 2025 03:09:36 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 269A93F59E;
-	Fri, 17 Oct 2025 03:09:44 -0700 (PDT)
-Date: Fri, 17 Oct 2025 11:09:42 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: tanze <tanze@kylinos.cn>
-Cc: james.clark@linaro.org, leo.yan@linux.dev, irogers@google.com,
-	john.g.garry@oracle.com, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	graham.woodward@arm.com, mike.leach@linaro.org
-Subject: Re: [PATCH v2] perf arm_spe: Add a macro definition to handle offset
- value
-Message-ID: <20251017100942.GB281971@e132581.arm.com>
-References: <20251016083019.27935-1-tanze@kylinos.cn>
- <20251017021540.45930-1-tanze@kylinos.cn>
+	s=arc-20240116; t=1760695894; c=relaxed/simple;
+	bh=agLtSGA315wQSbDN3l9qUz1xWxIu7clrjXShj5qul3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TQaLmfGwsS1JjmVdRMzglkNMJKLwStIeTSpJGF48NOQeedGAVecIB95eta6jSvz3J+hqWASllmG/PW//bd7PA/SqSJeanK37RaqfifQEDn6L692YeakntWriTioXAEH6BMOi8j0xWZfLYYW4WQtuiU0Y5bVfMcDZfreVVSwdnwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b=E+4hY8wq; arc=none smtp.client-ip=47.90.198.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=awinic.com; s=default;
+	t=1760695871; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=hD487TBwCfAj/EQzQtUedndjr1GxY9IP6djdv+S7ck4=;
+	b=E+4hY8wqSuOek6jwS7vMbjWDiIOkHSR2SS8+UJvsY6EL/NtqL9uLM0cUcIm43OBBXa8rCLw4nFfevEWDGn0I7+leba9pm9QRBHHc4wH7RFhNlq7+bLaEWpcVjWzpArQ2OwoRYYz8GBHsjyXlY0hGuxm7W4tS+L4michMu3y9UH98k/vbUBJvRMq+dfTi0ibbK6fPM63YbEbpVvtg5eA02Cd3BCtp1NdOLvTEy0X9mzaETmRXSgJwHGYCwzoz7YTxkHThwaY2SEq8Npd1v/e28Faw4Irqe1L7SHOYvu8mYYrFM0M9FEK84OhmTumScXAJn9xtrH3YxIhawfDGMKSG/g==
+Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.f0sBXv9_1760695867 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 17 Oct 2025 18:11:09 +0800
+From: wangweidong.a@awinic.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	arnd@arndb.de,
+	wangweidong.a@awinic.com,
+	srinivas.kandagatla@oss.qualcomm.com,
+	cy_huang@richtek.com,
+	nick.li@foursemi.com,
+	hangyi@everest-semi.com,
+	alexey.klimov@linaro.org,
+	niranjan.hy@ti.com,
+	shenghao-ding@ti.com,
+	linux@treblig.org,
+	rf@opensource.cirrus.com,
+	thorsten.blum@linux.dev,
+	yesanishhere@gmail.com,
+	ardb@kernel.org,
+	ebiggers@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: yijiangtao@awinic.com
+Subject: [PATCH V2 0/7] Rework the awinic driver
+Date: Fri, 17 Oct 2025 18:10:58 +0800
+Message-ID: <20251017101106.370742-1-wangweidong.a@awinic.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017021540.45930-1-tanze@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 10:15:40AM +0800, tanze wrote:
-> Add a macro definition SPE_SYNTH_ID_OFFSET to handle the offset value
-> and improve readability.
-> 
-> Signed-off-by: tanze <tanze@kylinos.cn>
+From: Weidong Wang <wangweidong.a@awinic.com>
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+Rework the awinic driver, extracting common components into 
+separate aw-commmon-firmware.c and aw-common-device.c files.
 
-> ---
-> Hi, Leo Yan
-> 
-> Thank you for your guidance and suggestions. I have made revisions according to your requirements. 
-> Do you have any further suggestions?
-> ---
-> Changes in v2:
-> - Migrate the macro definitions to the synthetic-events.h file
-> - Add modifications to other source files that use the offset value
-> ---
->  tools/perf/util/arm-spe.c          | 2 +-
->  tools/perf/util/cs-etm.c           | 2 +-
->  tools/perf/util/intel-bts.c        | 2 +-
->  tools/perf/util/intel-pt.c         | 2 +-
->  tools/perf/util/powerpc-vpadtl.c   | 3 ++-
->  tools/perf/util/synthetic-events.h | 2 ++
->  6 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-> index 71be979f5077..b082cb1666a6 100644
-> --- a/tools/perf/util/arm-spe.c
-> +++ b/tools/perf/util/arm-spe.c
-> @@ -1732,7 +1732,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
->  	attr.sample_period = spe->synth_opts.period;
->  
->  	/* create new id val to be a fixed offset from evsel id */
-> -	id = evsel->core.id[0] + 1000000000;
-> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
->  
->  	if (!id)
->  		id = 1;
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 30f4bb3e7fa3..46902f7b69f1 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -1726,7 +1726,7 @@ static int cs_etm__synth_events(struct cs_etm_auxtrace *etm,
->  	attr.read_format = evsel->core.attr.read_format;
->  
->  	/* create new id val to be a fixed offset from evsel id */
-> -	id = evsel->core.id[0] + 1000000000;
-> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
->  
->  	if (!id)
->  		id = 1;
-> diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-> index 3625c6224750..98b928eca724 100644
-> --- a/tools/perf/util/intel-bts.c
-> +++ b/tools/perf/util/intel-bts.c
-> @@ -777,7 +777,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
->  	attr.sample_id_all = evsel->core.attr.sample_id_all;
->  	attr.read_format = evsel->core.attr.read_format;
->  
-> -	id = evsel->core.id[0] + 1000000000;
-> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
->  	if (!id)
->  		id = 1;
->  
-> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> index 9b1011fe4826..4fb9600a7369 100644
-> --- a/tools/perf/util/intel-pt.c
-> +++ b/tools/perf/util/intel-pt.c
-> @@ -3987,7 +3987,7 @@ static int intel_pt_synth_events(struct intel_pt *pt,
->  	attr.sample_id_all = evsel->core.attr.sample_id_all;
->  	attr.read_format = evsel->core.attr.read_format;
->  
-> -	id = evsel->core.id[0] + 1000000000;
-> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
->  	if (!id)
->  		id = 1;
->  
-> diff --git a/tools/perf/util/powerpc-vpadtl.c b/tools/perf/util/powerpc-vpadtl.c
-> index 39a3fb3f1330..5ce5d2bf4c6c 100644
-> --- a/tools/perf/util/powerpc-vpadtl.c
-> +++ b/tools/perf/util/powerpc-vpadtl.c
-> @@ -15,6 +15,7 @@
->  #include "powerpc-vpadtl.h"
->  #include "sample.h"
->  #include "tool.h"
-> +#include "util/synthetic-events.h"
->  
->  /*
->   * Structure to save the auxtrace queue
-> @@ -656,7 +657,7 @@ powerpc_vpadtl_synth_events(struct powerpc_vpadtl *vpa, struct perf_session *ses
->  	attr.config = PERF_SYNTH_POWERPC_VPA_DTL;
->  
->  	/* create new id val to be a fixed offset from evsel id */
-> -	id = evsel->core.id[0] + 1000000000;
-> +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
->  	if (!id)
->  		id = 1;
->  
-> diff --git a/tools/perf/util/synthetic-events.h b/tools/perf/util/synthetic-events.h
-> index ee29615d68e5..c8a1fe7a3fa4 100644
-> --- a/tools/perf/util/synthetic-events.h
-> +++ b/tools/perf/util/synthetic-events.h
-> @@ -39,6 +39,8 @@ enum perf_record_synth {
->  };
->  #define PERF_SYNTH_ALL  (PERF_SYNTH_MAX - 1)
->  
-> +#define PERF_SYNTH_EVENT_ID_OFFSET	(1000000000ULL)
-> +
->  int parse_synth_opt(char *str);
->  
->  typedef int (*perf_event__handler_t)(const struct perf_tool *tool, union perf_event *event,
-> -- 
-> 2.25.1
-> 
-> 
+v1 -> v2: Correct the definition error of "__AW88395_H__"
+          Fix the issue of mistakenly deleting "acpi_match_table"
+
+Weidong Wang (7):
+  ASoC: codecs:Rework the awinic driver lib
+  ASoC: codecs: Rework the aw88395 driver
+  ASoC: codecs: Rework the aw87390 driver
+  ASoC: codecs: Rework the aw88081 driver
+  ASoC: codecs: Rework the aw88166 driver
+  ASoC: codecs: Rework the aw88261 driver
+  ASoC: codecs: Rework the aw88399 driver
+
+ sound/soc/codecs/Kconfig                      |   14 +-
+ sound/soc/codecs/Makefile                     |    8 +-
+ sound/soc/codecs/aw-common-device.c           |  508 +++++
+ sound/soc/codecs/aw-common-device.h           |  206 ++
+ .../aw88395_lib.c => aw-common-firmware.c}    |  150 +-
+ sound/soc/codecs/aw-common-firmware.h         |  211 ++
+ sound/soc/codecs/aw87390.c                    |  118 +-
+ sound/soc/codecs/aw87390.h                    |   16 -
+ sound/soc/codecs/aw88081.c                    |  357 +---
+ sound/soc/codecs/aw88081.h                    |   33 -
+ sound/soc/codecs/aw88166.c                    |  819 ++------
+ sound/soc/codecs/aw88166.h                    |   58 -
+ sound/soc/codecs/aw88261.c                    |  427 +---
+ sound/soc/codecs/aw88261.h                    |   52 -
+ sound/soc/codecs/aw88395.c                    | 1333 +++++++++++++
+ .../{aw88395/aw88395_reg.h => aw88395.h}      |   58 +-
+ sound/soc/codecs/aw88395/aw88395.c            |  576 ------
+ sound/soc/codecs/aw88395/aw88395.h            |   58 -
+ sound/soc/codecs/aw88395/aw88395_data_type.h  |  142 --
+ sound/soc/codecs/aw88395/aw88395_device.c     | 1720 -----------------
+ sound/soc/codecs/aw88395/aw88395_device.h     |  214 --
+ sound/soc/codecs/aw88395/aw88395_lib.h        |   92 -
+ sound/soc/codecs/aw88399.c                    | 1027 ++--------
+ sound/soc/codecs/aw88399.h                    |   93 +-
+ 24 files changed, 2929 insertions(+), 5361 deletions(-)
+ create mode 100644 sound/soc/codecs/aw-common-device.c
+ create mode 100644 sound/soc/codecs/aw-common-device.h
+ rename sound/soc/codecs/{aw88395/aw88395_lib.c => aw-common-firmware.c} (89%)
+ create mode 100644 sound/soc/codecs/aw-common-firmware.h
+ create mode 100644 sound/soc/codecs/aw88395.c
+ rename sound/soc/codecs/{aw88395/aw88395_reg.h => aw88395.h} (91%)
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395.c
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395.h
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_data_type.h
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_device.c
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_device.h
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_lib.h
+
+
+base-commit: 98ac9cc4b4452ed7e714eddc8c90ac4ae5da1a09
+-- 
+2.47.0
+
 
