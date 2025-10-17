@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-857756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D1CBE7DEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:45:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F11BE7E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD11D189BEB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:46:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 672F74FFB5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF322D97AB;
-	Fri, 17 Oct 2025 09:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11612DA77E;
+	Fri, 17 Oct 2025 09:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6jaivmL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="c2wKLsme"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1792DA74C
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A0D222582
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760694328; cv=none; b=DT1G1OwjOm7eKUGOM3QcMKNBYENg68QYqX3U0gTcbaZetTPqctn6jU1ixXlisWSU6fTG0Q2CBlJsqds7UDd73hIrgZdXbieKHGnGBja5jdHPYaFz2Nv3kMzcH2fiBofjaYoOO9kg1Z3AgumELrhJCYyrCr9LixNT/X5gb0YlsVs=
+	t=1760694385; cv=none; b=Wuq781DMtnrzAF2AF4ar932nLMLkhHmzpyUDEw7qDGYplEr9JSDtPFiTsz6jVX91bX8EWWTqSySECpJGkpwDp+HHUH/RIKl+r6S4gZmaquyOnnR4Ut3mUPMfhzk+tfaNMnHFodVAC+9WEeAGP6vBLGxexgVBRCktR9lOoLxmBvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760694328; c=relaxed/simple;
-	bh=XtO9sRQeiqTEF3Mgx59O+0CfGSoNUdMMWG3uX2sJANc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pv/Xjecr28/STvIJSbsyPaFIrK/aKue9hg7i9FIZrBa7oZ5HBiX8J7zH2pfqVnqGkZiysRHICcftJCkuZWIDcqEC2R3+7eDZGoORPm0CTjvHfgsgXPGfk7Cae1NGYEueYGFpAKh1TbxmsVT4RG34ernPsj0r4MB1cg1wVcl3ueE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6jaivmL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D27C4CEFE
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760694327;
-	bh=XtO9sRQeiqTEF3Mgx59O+0CfGSoNUdMMWG3uX2sJANc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=S6jaivmL21W3j9X94Ug/vZPu9YmbLoyjEWgbaxTo4XE3WKXOrTeDKG9vdkTCgYWYg
-	 shWpjWn0BvJn0wMWGjEyrwPTD6mgziEtD6Vu0fQ7BSQUyHRBCn4z64q4iaGDdl5JjV
-	 qX6v0jC5yfFkeobv8NlBtsBLIY/cF2YO+yAtgiZLj4j3IJgMjkNuAIX5ONUZdHTm+M
-	 k368bR6By5fuuf1IVbEXp3ZbfMak4TdHOpL9YTKzWt1eyPsCcH4Yet+7u6fk8WhWCo
-	 /9aKX7oKI9Shy7eB72Zh0w03pAVA9CVlmurErvgqjX9yNvyWcMZQRD4dYRwD8MmubZ
-	 vRPt4q+c6lBNg==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c0e357ab51so1389360a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:45:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/xPeMiz4ND6jBIHkB+zLFEWyhlbAV5grMgxZgQfL4ZDjoXr8bT18biJpO4dFl+UVRLHUfFag45/yY1Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywxsIeiI1h5v16ekfr7m8aO+H7jE7WmfhzzSny3/Jriv/iNgTR
-	AjeTSo7mWCg0wVOEAuc/YLmBmAskuNcdWrflUjOuqRhRoimtPxwKKwQmTnciK9V/eND/6kxsHqU
-	3iZ8T4+JBkRyRX8MEc0BnsGGj438X0v0=
-X-Google-Smtp-Source: AGHT+IH4eFtUZLBxcwh2xQ/mf6nJ2K1x5Ot8Mr4XTPJHIaP3cRmxN8m7Qjq/x+6o55VptzdO3OZu5M8S/8tYsiUSlRE=
-X-Received: by 2002:a05:6808:6d82:b0:441:c8af:291d with SMTP id
- 5614622812f47-443a30953d3mr1270420b6e.42.1760694326867; Fri, 17 Oct 2025
- 02:45:26 -0700 (PDT)
+	s=arc-20240116; t=1760694385; c=relaxed/simple;
+	bh=c+DdYce2/cYSGVOYvLZ78SnHDyiu6WUUXPEJEy1vZ+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hv1VQTDEeiY0PJqWqJA/iNx8ftSHByM37c8Ip3IN4Po5xXjz7hEAzfKN/woK4XCG/7hRfxFKhLbx3Qd5MYKhayRmxCun8lnuF0LLwSx6Xvx+mHPJdFZKlK6HCY3xMooIoj9TxoXi9GxDxp5J1B4y5mIXR39jZTtWZP9yWUheZgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=c2wKLsme; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=+KN1
+	gucSczaLlotf+OfFl03qDe19MF1YEMDhNpFE5Lg=; b=c2wKLsmetW3LYR7tlkyH
+	9nhTMK5J+QFKn7V+jf2A82YMD/XNhuQT1ePFDC4ouZhR5mXdMmDQs0d9/YLLRO2V
+	4h/5yso8i+rE87/gH/ob8h6OTFagEDKIY0B9J1ixPubvi4T4EzWKC20QpcvHdwlX
+	lBmw1YwXHoFVkar6YNsQkMgTM7UR0ptT564p+91UZMaIasFOXATTC1khxO2xvYnx
+	Zf8/UPB8lMPniv/7ODSSewsQ5GGDez9bC4Fxs/7ceBxfEhbUrFW90YIc7uufhpmp
+	8jybTA3cOamwG7tnm2NoT8LKAshizcVrN0QkVvq/MZBAmsf2cw/0dkFWaNPVqRba
+	Ng==
+Received: (qmail 4173788 invoked from network); 17 Oct 2025 11:46:21 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 11:46:21 +0200
+X-UD-Smtp-Session: l3s3148p1@G24lm1dBAtMgAwDPXwQHAL/S9V79e5yL
+Date: Fri, 17 Oct 2025 11:46:21 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
+ possible
+Message-ID: <aPIQbaoNyXEcX2tn@shikoro>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <96d66ea4890b5f0d5c0961f8c8fac781a15865b9.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
-In-Reply-To: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 17 Oct 2025 11:45:14 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iFa3_UFkA920Ogn0YAYLq4CjnAD_VjLsmxQxrfm5HEBw@mail.gmail.com>
-X-Gm-Features: AS18NWAfxBP4Jux50tLr0QwuvERSlU0IAnFqGNafXGnfCBKno1UvlTv43pvyLKQ
-Message-ID: <CAJZ5v0iFa3_UFkA920Ogn0YAYLq4CjnAD_VjLsmxQxrfm5HEBw@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully initialized
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="L34mAbg8N3wtnVVm"
+Content-Disposition: inline
+In-Reply-To: <96d66ea4890b5f0d5c0961f8c8fac781a15865b9.camel@pengutronix.de>
+
+
+--L34mAbg8N3wtnVVm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 1:28=E2=80=AFAM Brian Norris <briannorris@chromium.=
-org> wrote:
->
-> PCI devices are created via pci_scan_slot() and similar, and are
-> promptly configured for runtime PM (pci_pm_init()). They are initially
-> prevented from suspending by way of pm_runtime_forbid(); however, it's
-> expected that user space may override this via sysfs [1].
->
-> Now, sometime after initial scan, a PCI device receives its BAR
-> configuration (pci_assign_unassigned_bus_resources(), etc.).
->
-> If a PCI device is allowed to suspend between pci_scan_slot() and
-> pci_assign_unassigned_bus_resources(), then pci-driver.c will
-> save/restore incorrect BAR configuration for the device, and the device
-> may cease to function.
->
-> This behavior races with user space, since user space may enable runtime
-> PM [1] as soon as it sees the device, which may be before BAR
-> configuration.
->
-> Prevent suspending in this intermediate state by holding a runtime PM
-> reference until the device is fully initialized and ready for probe().
->
-> [1] echo auto > /sys/bus/pci/devices/.../power/control
->
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
->
->  drivers/pci/bus.c | 7 +++++++
->  drivers/pci/pci.c | 6 ++++++
->  2 files changed, 13 insertions(+)
->
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index f26aec6ff588..227a8898acac 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -14,6 +14,7 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/proc_fs.h>
->  #include <linux/slab.h>
->
-> @@ -375,6 +376,12 @@ void pci_bus_add_device(struct pci_dev *dev)
->                 put_device(&pdev->dev);
->         }
->
-> +       /*
-> +        * Now that resources are assigned, drop the reference we grabbed=
- in
-> +        * pci_pm_init().
-> +        */
-> +       pm_runtime_put_noidle(&dev->dev);
-> +
->         if (!dn || of_device_is_available(dn))
->                 pci_dev_allow_binding(dev);
->
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b14dd064006c..06a901214f2c 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3226,6 +3226,12 @@ void pci_pm_init(struct pci_dev *dev)
->         pci_pm_power_up_and_verify_state(dev);
->         pm_runtime_forbid(&dev->dev);
->         pm_runtime_set_active(&dev->dev);
-> +       /*
-> +        * We cannot allow a device to suspend before its resources are
-> +        * configured. Otherwise, we may allow saving/restoring unexpecte=
-d BAR
-> +        * configuration.
-> +        */
-> +       pm_runtime_get_noresume(&dev->dev);
->         pm_runtime_enable(&dev->dev);
 
-So runtime PM should not be enabled here, should it?
+> > This does mean RESET_GPIO will never be modular anymore, while it could
+> > still work as a module (the reset core creates the platform device,
+> > which can be probed later), albeit in a non-intuitive way.
+>=20
+> Btw, Bartosz (added to Cc:) is reworking reset-gpio into an auxiliary
+> device driver.
 
->  }
->
-> --
+Thanks for the pointer, but this is too much side-tracking for me ;)
+
+> >     config RESET_TI_TPS380X
+> >             tristate "TI TPS380x Reset Driver"
+> >             select GPIOLIB
+> >=20
+> > I guess this should be changed from select to depends on?
+>=20
+> The drivers referencing GPIOLIB seem to be split in the middle between
+> select and depends...
+
+:(
+
+
+--L34mAbg8N3wtnVVm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjyEGwACgkQFA3kzBSg
+KbYwcQ/+KyW50hRsckBXgPAr9YuEnOH3hIvmhXVU53cB6n4+3weRCFUb9o0VCam2
+n71fj8+E8K/JIrLz6Rv9xmt3a7VeCEJGsh1xF2CNZ6UmtSpVPxakuzx4KLmH7SMU
+zk+8/Za7qxTTCfPmEUyZ+r4SOUjVrysorPU8fYS1jDOvP1sc+8WRWlgdPsN+vKXQ
+fweSr2CpEiJRfDCszIWR2W17/s0VfQ/PFNJeDB4M3YzlvXqC5o1y4wSL2LTZ1UfR
+PkVAgKKjNvik9w0ZtkraPTg9eCBxTnzD2iFr1aaebt7/8pSFupOlKLbA2e9DKGN4
+x0QbtuTM5d7lk2D2CBqNhFdwzIbK/N8FlKe86W2p3sovAlxhpWc9ZKRCe5AyVhe1
+fjvx/o1RLbtTpXv7uWjVSOhn8AeLbds1xV+gIeijMd22lPSq7K81xTKOldh9CN+3
+VYRvvSTyusuMfEm6iVlwaETKwA9BHHLwFASY5X0+VZqwWGAQViCtvChUKDvF3QZm
+zVtZxBjT8i3yjvcQ8y1Xqnkz+f0Uhr79C8qP8RXyLIxeEOQw5xLFVfZiKaDKrldH
+/yF0TMKAGnDIcW+hDSPjcrlhMMXdUHcAo0bJwR+sDv8qANDdo2DffFR0Zukt+9lh
+1h4Oe+UVZ9nI99eJKtvOnlwImAyfriUCZDHmXsR40tXp9l3R+VM=
+=1oBT
+-----END PGP SIGNATURE-----
+
+--L34mAbg8N3wtnVVm--
 
