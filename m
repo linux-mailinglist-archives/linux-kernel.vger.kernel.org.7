@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-857210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9841BE6338
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:17:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB0CBE6335
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D96E5E71B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:17:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A813B0CE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DE525D528;
-	Fri, 17 Oct 2025 03:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87BA25CC79;
+	Fri, 17 Oct 2025 03:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="EAf/u4Bn"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="RPvNcE5i"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A6C247DE1;
-	Fri, 17 Oct 2025 03:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD7A33F9;
+	Fri, 17 Oct 2025 03:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760671014; cv=none; b=t6d78PQv8yhxwdxj3mbNrWNf0XKXb6dwAHS8XmCh7/tmPBeBnAtRfHmJ4sgwRcMv87MGo2OqgEUR4uuoqpp5sINlk3FdQdmS5h9mApLnug4hx5CE0WAMrhp1VXextVeQonIMMK1ihyjtDQIuEW8lBUIuLuH6KrjrNgghMJeTEw0=
+	t=1760671013; cv=none; b=tnWIkVZ4W55LlHJcPEt6xhRNzVC0pRgUwT/VmyMP5bcvXgBt9sy2NXQQSBrf8lz5lQCc4Tu7khSbUMyR+Ts3N1sEAGonSRruJW+f1hxaOTyyIGWtvgAdOShdyWcryVSR0MAhQrIEXUEPKPgpJ6YE82G1y3SpGQ5iZMwFZ+k8zZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760671014; c=relaxed/simple;
-	bh=76HDuGO/++wYQY6OBZ6UZ1PVv6SNT6/hCuPuH7hW1LM=;
+	s=arc-20240116; t=1760671013; c=relaxed/simple;
+	bh=EDEsIcdv1JmDZdZcxGFxjkqpEQ3hQAy33qJweuXOxcw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SvtnRsrAOufFiGju1jYWqhb/k5Ge2V8fvl0f5GvNkKrV72gU7AFvEf+BLcmcxc7Q5C3XOBQ0Oxd0kPUq+0ThNemXG1kJgB7xQizu5tKTaoN9/GlJSiDO/03AWV3wQRREOLpsCTK2q/gRtgKaO0RKndMVea4Kdt7fJkqsQVNlQcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=EAf/u4Bn; arc=none smtp.client-ip=54.204.34.130
+	 In-Reply-To:To:Cc; b=hEKv6PmxiV6gx6nuq/rQsOkeIonEBwxyvIwhNkyV8XLWK/wO57MnpyfdhMpRS5zhPQPk0LTSlYXUIJq4FolVRF7EDQqDNrIB+eEcOydwlHNWm/wi3VksSdVV5zMr4U9ofBM7W9ZyzgygZDsksQz5FqCZBXwi+O2HDVApsXLJcaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=RPvNcE5i; arc=none smtp.client-ip=54.204.34.129
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1760670994;
-	bh=2k5TB4fCGa99Tt+YiRV5hnuUcMUd7EkCwZPqTsiSIzg=;
+	s=mxsw2412; t=1760670998;
+	bh=cqj5dJBJ9v3TLxs+M5clPf0OMBPu+aIIFKjwsP6WivE=;
 	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=EAf/u4Bn9o/SssApJDpi9cdKSX/IH+SfXgmr2oH5b5knhced0cFTQF2eqKC5zog0M
-	 iWPlkz+dSiq9ngTRdbmA+mmB7GPUNt1faCM52fHnp483WcmnFT8tI+S1kz1GNqTZgN
-	 hjMxRBbxqawuF6vbZ8IguoITqDJRuIgYBevIQIuA=
-X-QQ-mid: esmtpsz17t1760670989t67f1a881
-X-QQ-Originating-IP: bNF06A/ELp2eIpzH8vwQ9twel8f+wOMr8u4xsk3Tm/0=
+	b=RPvNcE5iczF+JKW4uDaukrquysazE8flY/J0zwq+NtDhB3pwtKgYewirX6XSJEbxD
+	 RL/HNHksizv4hxMHQ57/z46brcUUsBALJYKzh4sQZNmzsDjSTzvB3y9JWHBTpCY9Zo
+	 nCM7iEm7gWxlOqBjuyIB00WpiCTmEqpANBMRHusY=
+X-QQ-mid: esmtpsz20t1760670993t2cb792c3
+X-QQ-Originating-IP: JLuDV7bloHEqGYnbxaY6YIrvKILYNIlU7Cr0nVxw5KE=
 Received: from = ( [61.145.255.150])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 17 Oct 2025 11:16:26 +0800 (CST)
+	id ; Fri, 17 Oct 2025 11:16:30 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16559823875224781238
+X-BIZMAIL-ID: 3831780666694282224
 EX-QQ-RecipientCnt: 16
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Fri, 17 Oct 2025 11:16:17 +0800
-Subject: [PATCH v5 1/2] ASoC: dt-bindings: Add bindings for SpacemiT K1
+Date: Fri, 17 Oct 2025 11:16:18 +0800
+Subject: [PATCH v5 2/2] ASoC: spacemit: add i2s support for K1 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,7 +57,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-k1-i2s-v5-1-401ae3775fcd@linux.spacemit.com>
+Message-Id: <20251017-k1-i2s-v5-2-401ae3775fcd@linux.spacemit.com>
 References: <20251017-k1-i2s-v5-0-401ae3775fcd@linux.spacemit.com>
 In-Reply-To: <20251017-k1-i2s-v5-0-401ae3775fcd@linux.spacemit.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -69,139 +69,572 @@ Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
  linux-kernel@vger.kernel.org, 
  Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Jinmei Wei <weijinmei@linux.spacemit.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760670980; l=2619;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760670980; l=16427;
  i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=76HDuGO/++wYQY6OBZ6UZ1PVv6SNT6/hCuPuH7hW1LM=;
- b=v0rNyuCf2QOTXtFsX8Swg2RRC4XPK6XUoOaIx9wMTk/my8Yyth3WBX42qzb0jm0IB3sJI9Hll
- fsuGXSOlz9QCs77zZKuI4+e5dmhGH60vN2YraVUyRTSzzTfIQSiETwc
+ bh=EDEsIcdv1JmDZdZcxGFxjkqpEQ3hQAy33qJweuXOxcw=;
+ b=aHqX/t7W8jouFGyJ4AhWpNAnyLxpeMXQeQNgKMgHlw7io83PmBrTIT68SsYspizveBde9ve7Y
+ cazOM5bZhn5ATMhAZ65iw82uwPpuGYD3b0BRgn8DP6Ubdx4QEzAKs8b
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
  pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OLPPkukr/NyPzGMqr0DFQPhbhOR2XYtE6M94qm3z5r41XvItl/yXw1rZ
-	3fHWmH/3gHHxz09a8WyaI6Euw+YRILdklcgeVzIHThZdVrIiJ8HjO5xMiV4Hp8TZvemsimt
-	vpt2Gidkwl5JbiYwlHRjENeoY7dIJ31YZqtdng3nbPIkHwJte3yjR1Kt8vnflRkgeQI9erE
-	RTp1QDtziE2AkQ95xtCwCFWUqKxUdEfu52XJ472IsguLMzDLzgII4h3GKyb1LZBn83zm73P
-	2/7eBvyi9XcVchAPta3/3cCvocSep7PGCr4qRDYEktTFSOtoXfbq+x7HQq5RR7kipIq6m7Y
-	YXDqiVMm5cOGvdBmIYp8PX5XC/Ltct+jidkiIUiKhqrY3q16daOlzH7mWS9SDFAzc8QcSGS
-	j3kBWANIb+H/FlYaBPN2bgokp9VkhneLY5g/ej1FyZd+1fTo+YFM6suqXK+SIr1nE395TDi
-	M9C5Igmgp3wRWqQgXFm6PckQWhWID8bzBcnmd51It0hWEObLxQcrvImjHD8kuN+0lJi3TW+
-	u1RFvSX7N+f7+JYc6xZRAOfinXHnOM5mV0eCQobYyWiP0UotLcPTiaIDUVPqqKuo7x8Cwpp
-	IJFfUcJs2Cab8yv60x6xutn7A2y5ponwxJFoJ5A8ROtbg8ya133nIlBwYikelGHG5oGQ+6W
-	wBYHBE4mpC75e2ZS+cJjgp+3uRlvWfZpZI6fj/yTnrK6ZSJ4YNuiMVzmbhXV9YC3iBZNDLp
-	E2kFIRd/A0d250D89edaRf9Esb1hOlvRJp4bhAo1Mp7fZ2TOws6yJEZcxhQ54qgs0KwEU8V
-	M1A50SWHjZSsFOByakE0/MdFpOw98BT/tHuOO2GySsdxluwUCuigcyuX8P98HTlZIdUI58W
-	X4+zqlz/6TkZ2qvtBFNlH5G13Sm0IFvaMZr6lfyRDblf1BBtsvBo6Mbl9GdSylDC5PgHCgT
-	acOSotzJuo6jKb3rJ8gH4hpVAobuust2CxnAxlDs/5hD2pj/hGdDi7ttYHAlTesa0F3QYAf
-	upIi7pmL6tGNDwNjeBNgiSQUEMSOVYuK7iJ0VtumoA51tT9FXTf6nk+YqUKy5YWXk13tYLN
-	06pKxlEwoE20+nVk/pV1UzqKwWG038JNUUELBMCCirei31/hS2ILahGbb9mfecN5A/M0CMX
-	RFcI
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: NfYN3cci+ToXGXPlMX8nghvOuZt4CqA3LwnAu185DoERC4EPtZSYnDai
+	NoPUiixEd4QZ1ewLTc17YQoVnrljhDnUI9u+UQR59pvsQRhWv1RsM6ay3PNlfo90DxZsxIJ
+	9ibSCkGptKh1OLBjqsRKsuj4C7Hj8Ahbsrxty5hEwjuigvZDsM/kuL8GHVWJ+Svr4heHrK1
+	p3/nFSmwBlai+/DcgCGBWIASgCQPPsnQecszH/FSvj6XE8AGEBM8sSpdzVLBRC0r30FzwVe
+	2pPfBkjm2nZrYwU3HOVqP28n9NSuggX/P7obv9Artzq5WxHcj9Um1QpVz/JfWINigDG2j6k
+	4JwTM8jovRjfhF9dYqr5wjbSDqLgjs/HB+d4rOKNGmJWn2tzwulq0dUKKUHuJM9UGV8YqQ4
+	clWHbThsPipkZOIQIrBjGKkOR/KcsMxYB65Y3rh5cgEhA0s/xn3fY8Pr47NQaDS9ophBlQU
+	eOCcc6DpfJonXuXI4ZFd6RKUd/T5p/JW8yPBij7zr1JoiZpV945u5oOXUPh3zM6qftGYZmj
+	aHkCcvITIDIGWDZny5oaKXdkYaqR5D0QAtLxWYNqQBtVip4kb5ay9iHfE0V4tm+hd+CyxLI
+	NjjXwd9BG4YiF95/lnlwSB4G4i2xwdb6hldf3BiLAhTKgzEF4nnzeC7pSXmr7eR9YWg8mM2
+	FrLsVs4TBWKth0Bw8D8oal768Z4LcD6dM+2xc8BF96vgbqXZbqNIAR2eGJrPDFk5phMMggp
+	b93WMqnUh309Il2PZwU0gSKH5fAQvxYRkWa3BI25DWQY3E4Hzm3KNpm4+c1h1AilUaCBLgA
+	kl+NtgKXnMPBnYl8eOE/X6x08NX16lHcUWcnYkx43gUOEEgibZl5AQ7ACAVD181qjXjRl5J
+	VsbdBG1qTzSwXVtEyzYUlMDZtl8+KvxRe0RLL76bOBl6+Oy4cIzKaNOfNrTdW/pTTY/Voe9
+	8TWAjzdDMyra6fAjWad8xaQuK+t6FDMjv3R+DK4KDTm9VB/dmkXCWZrtX/4K0bcpbtx4sjk
+	mR9la2YKFd5lKYzZuuk97jnyON8z8U5XnDBKdTfs6nMVPvzV559sHFXVFsGj3U61H5orh1F
+	doa4Bjd+7ucyvC87T36HIRvw7WDo+WaWnYn0OFiY9+3iIm3XmraTO42BJ5R34NfSA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 
-Add dt-binding for the i2s driver of SpacemiT's K1 SoC.
+Add ASoC platform driver for the SpacemiT K1 SoC full-duplex I2S
+controller.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
+Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- .../devicetree/bindings/sound/spacemit,k1-i2s.yaml | 87 ++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+ sound/soc/Kconfig           |   1 +
+ sound/soc/Makefile          |   1 +
+ sound/soc/spacemit/Kconfig  |  16 ++
+ sound/soc/spacemit/Makefile |   5 +
+ sound/soc/spacemit/k1_i2s.c | 458 ++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 481 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml b/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml
+diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
+index ce74818bd7152dbe110b9fff7d908b0ddf34a9f5..36e0d443ba0ebe584ffe797c378c838f448ffcb9 100644
+--- a/sound/soc/Kconfig
++++ b/sound/soc/Kconfig
+@@ -127,6 +127,7 @@ source "sound/soc/renesas/Kconfig"
+ source "sound/soc/rockchip/Kconfig"
+ source "sound/soc/samsung/Kconfig"
+ source "sound/soc/sdca/Kconfig"
++source "sound/soc/spacemit/Kconfig"
+ source "sound/soc/spear/Kconfig"
+ source "sound/soc/sprd/Kconfig"
+ source "sound/soc/starfive/Kconfig"
+diff --git a/sound/soc/Makefile b/sound/soc/Makefile
+index 462322c38aa42d4c394736239de0317d5918d5a7..8c0480e6484e75eb0b6db306630ba77d259ba8e3 100644
+--- a/sound/soc/Makefile
++++ b/sound/soc/Makefile
+@@ -70,6 +70,7 @@ obj-$(CONFIG_SND_SOC)	+= rockchip/
+ obj-$(CONFIG_SND_SOC)	+= samsung/
+ obj-$(CONFIG_SND_SOC)	+= sdca/
+ obj-$(CONFIG_SND_SOC)	+= sof/
++obj-$(CONFIG_SND_SOC)	+= spacemit/
+ obj-$(CONFIG_SND_SOC)	+= spear/
+ obj-$(CONFIG_SND_SOC)	+= sprd/
+ obj-$(CONFIG_SND_SOC)	+= starfive/
+diff --git a/sound/soc/spacemit/Kconfig b/sound/soc/spacemit/Kconfig
 new file mode 100644
-index 0000000000000000000000000000000000000000..55bd0b307d22b3611d0fefb1e925e56812848dd1
+index 0000000000000000000000000000000000000000..2179f94f3f179c54cd06e6ced5523ed3f5225cf4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml
-@@ -0,0 +1,87 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/spacemit,k1-i2s.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/sound/soc/spacemit/Kconfig
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0-only
++menu "SpacemiT"
++	depends on COMPILE_TEST || ARCH_SPACEMIT
++	depends on HAVE_CLK
 +
-+title: K1 I2S controller
++config SND_SOC_K1_I2S
++	tristate "K1 I2S Device Driver"
++	select SND_SOC_GENERIC_DMAENGINE_PCM
++	select CMA
++	select DMA_CMA
++	help
++	  Say Y or M if you want to add support for I2S driver for
++	  K1 I2S controller. The device supports up to maximum of
++	  2 channels each for play and record.
 +
-+description:
-+  The I2S bus (Inter-IC sound bus) is a serial link for digital
-+  audio data transfer between devices in the system.
++endmenu
+diff --git a/sound/soc/spacemit/Makefile b/sound/soc/spacemit/Makefile
+new file mode 100644
+index 0000000000000000000000000000000000000000..9069de8ef89c84db8cc7d3a4d3b154fff9bd7aff
+--- /dev/null
++++ b/sound/soc/spacemit/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# K1 Platform Support
++snd-soc-k1-i2s-y := k1_i2s.o
 +
-+maintainers:
-+  - Troy Mitchell <troy.mitchell@linux.spacemit.com>
++obj-$(CONFIG_SND_SOC_K1_I2S) += snd-soc-k1-i2s.o
+diff --git a/sound/soc/spacemit/k1_i2s.c b/sound/soc/spacemit/k1_i2s.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..abc439b53e3d4358570df2e69e636bf54820d9ce
+--- /dev/null
++++ b/sound/soc/spacemit/k1_i2s.c
+@@ -0,0 +1,458 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com> */
 +
-+allOf:
-+  - $ref: dai-common.yaml#
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/reset.h>
++#include <sound/dmaengine_pcm.h>
++#include <sound/pcm.h>
++#include <sound/pcm_params.h>
 +
-+properties:
-+  compatible:
-+    const: spacemit,k1-i2s
++#define SSCR			0x00	/* SPI/I2S top control register */
++#define SSFCR			0x04	/* SPI/I2S FIFO control register */
++#define SSINTEN			0x08	/* SPI/I2S interrupt enable register */
++#define SSDATR			0x10	/* SPI/I2S data register */
++#define SSPSP			0x18	/* SPI/I2S programmable serial protocol control register */
++#define SSRWT			0x24	/* SPI/I2S root control register */
 +
-+  reg:
-+    maxItems: 1
++/* SPI/I2S Work data size, register bits value 0~31 indicated data size 1~32 bits */
++#define SSCR_FIELD_DSS		GENMASK(9, 5)
++#define SSCR_DW_8BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0x7)
++#define SSCR_DW_16BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0xf)
++#define SSCR_DW_18BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0x11)
++#define SSCR_DW_32BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0x1f)
 +
-+  clocks:
-+    items:
-+      - description: clock for I2S sysclk
-+      - description: clock for I2S bclk
-+      - description: clock for I2S bus
-+      - description: clock for I2S controller
++#define SSCR_SSE		BIT(0)		/* SPI/I2S Enable */
++#define SSCR_FRF_PSP		GENMASK(2, 1)	/* Frame Format*/
++#define SSCR_TRAIL		BIT(13)		/* Trailing Byte */
 +
-+  clock-names:
-+    items:
-+      - const: sysclk
-+      - const: bclk
-+      - const: bus
-+      - const: func
++#define SSFCR_FIELD_TFT		GENMASK(3, 0)   /* TXFIFO Trigger Threshold */
++#define SSFCR_FIELD_RFT		GENMASK(8, 5)   /* RXFIFO Trigger Threshold */
++#define SSFCR_TSRE		BIT(10)		/* Transmit Service Request Enable */
++#define SSFCR_RSRE		BIT(11)		/* Receive Service Request Enable */
 +
-+  dmas:
-+    minItems: 1
-+    maxItems: 2
++#define SSPSP_FSRT		BIT(3)		/* Frame Sync Relative Timing Bit */
++#define SSPSP_SFRMP		BIT(4)		/* Serial Frame Polarity */
++#define SSPSP_FIELD_SFRMWDTH	GENMASK(17, 12)	/* Serial Frame Width field  */
 +
-+  dma-names:
-+    minItems: 1
-+    items:
-+      - const: tx
-+      - const: rx
++#define SSRWT_RWOT		BIT(0)		/* Receive Without Transmit */
 +
-+  resets:
-+    maxItems: 1
++#define SPACEMIT_PCM_RATES	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 | \
++				SNDRV_PCM_RATE_48000)
++#define SPACEMIT_PCM_FORMATS	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE)
 +
-+  port:
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
++#define SPACEMIT_I2S_PERIOD_SIZE 1024
 +
-+  "#sound-dai-cells":
-+    const: 0
++struct spacemit_i2s_dev {
++	struct device *dev;
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - dmas
-+  - dma-names
-+  - resets
-+  - "#sound-dai-cells"
++	void __iomem *base;
 +
-+unevaluatedProperties: false
++	struct reset_control *reset;
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/spacemit,k1-syscon.h>
-+    i2s@d4026000 {
-+      compatible = "spacemit,k1-i2s";
-+      reg = <0xd4026000 0x30>;
-+      clocks = <&syscon_mpmu CLK_I2S_SYSCLK>,
-+               <&syscon_mpmu CLK_I2S_BCLK>,
-+               <&syscon_apbc CLK_SSPA0_BUS>,
-+               <&syscon_apbc CLK_SSPA0>;
-+      clock-names = "sysclk", "bclk", "bus", "func";
-+      dmas = <&pdma0 21>, <&pdma0 22>;
-+      dma-names = "tx", "rx";
-+      resets = <&syscon_apbc RESET_SSPA0>;
-+      #sound-dai-cells = <0>;
-+    };
++	struct clk *sysclk;
++	struct clk *bclk;
++	struct clk *sspa_clk;
++
++	struct snd_dmaengine_dai_dma_data capture_dma_data;
++	struct snd_dmaengine_dai_dma_data playback_dma_data;
++
++	bool has_capture;
++	bool has_playback;
++
++	int dai_fmt;
++
++	int started_count;
++};
++
++static const struct snd_pcm_hardware spacemit_pcm_hardware = {
++	.info		  = SNDRV_PCM_INFO_INTERLEAVED |
++			    SNDRV_PCM_INFO_BATCH,
++	.formats          = SPACEMIT_PCM_FORMATS,
++	.rates		  = SPACEMIT_PCM_RATES,
++	.rate_min         = SNDRV_PCM_RATE_8000,
++	.rate_max         = SNDRV_PCM_RATE_192000,
++	.channels_min     = 1,
++	.channels_max     = 2,
++	.buffer_bytes_max = SPACEMIT_I2S_PERIOD_SIZE * 4 * 4,
++	.period_bytes_min = SPACEMIT_I2S_PERIOD_SIZE * 2,
++	.period_bytes_max = SPACEMIT_I2S_PERIOD_SIZE * 4,
++	.periods_min	  = 2,
++	.periods_max	  = 4,
++};
++
++static const struct snd_dmaengine_pcm_config spacemit_dmaengine_pcm_config = {
++	.pcm_hardware = &spacemit_pcm_hardware,
++	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
++	.chan_names = {"tx", "rx"},
++	.prealloc_buffer_size = 32 * 1024,
++};
++
++static void spacemit_i2s_init(struct spacemit_i2s_dev *i2s)
++{
++	u32 sscr_val, sspsp_val, ssfcr_val, ssrwt_val;
++
++	sscr_val = SSCR_TRAIL | SSCR_FRF_PSP;
++	ssfcr_val = FIELD_PREP(SSFCR_FIELD_TFT, 5) |
++		    FIELD_PREP(SSFCR_FIELD_RFT, 5) |
++		    SSFCR_RSRE | SSFCR_TSRE;
++	ssrwt_val = SSRWT_RWOT;
++	sspsp_val = SSPSP_SFRMP;
++
++	writel(sscr_val, i2s->base + SSCR);
++	writel(ssfcr_val, i2s->base + SSFCR);
++	writel(sspsp_val, i2s->base + SSPSP);
++	writel(ssrwt_val, i2s->base + SSRWT);
++	writel(0, i2s->base + SSINTEN);
++}
++
++static int spacemit_i2s_hw_params(struct snd_pcm_substream *substream,
++				  struct snd_pcm_hw_params *params,
++				  struct snd_soc_dai *dai)
++{
++	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
++	struct snd_dmaengine_dai_dma_data *dma_data;
++	u32 data_width, data_bits;
++	unsigned long bclk_rate;
++	u32 val;
++	int ret;
++
++	val = readl(i2s->base + SSCR);
++	if (val & SSCR_SSE)
++		return 0;
++
++	dma_data = &i2s->playback_dma_data;
++
++	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
++		dma_data = &i2s->capture_dma_data;
++
++	switch (params_format(params)) {
++	case SNDRV_PCM_FORMAT_S8:
++		data_bits = 8;
++		data_width = SSCR_DW_8BYTE;
++		dma_data->maxburst = 8;
++		dma_data->addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
++		break;
++	case SNDRV_PCM_FORMAT_S16_LE:
++		data_bits = 16;
++		data_width = SSCR_DW_16BYTE;
++		dma_data->maxburst = 16;
++		dma_data->addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++		break;
++	case SNDRV_PCM_FORMAT_S32_LE:
++		data_bits = 32;
++		data_width = SSCR_DW_32BYTE;
++		dma_data->maxburst = 32;
++		dma_data->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++		break;
++	default:
++		dev_dbg(i2s->dev, "unexpected data width type");
++		return -EINVAL;
++	}
++
++	switch (i2s->dai_fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		if (data_bits == 16) {
++			data_width = SSCR_DW_32BYTE;
++			dma_data->maxburst = 32;
++			dma_data->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++		}
++
++		snd_pcm_hw_constraint_minmax(substream->runtime,
++					     SNDRV_PCM_HW_PARAM_CHANNELS,
++					     1, 2);
++		snd_pcm_hw_constraint_mask64(substream->runtime,
++					     SNDRV_PCM_HW_PARAM_FORMAT,
++					     SNDRV_PCM_FMTBIT_S16_LE);
++		break;
++	case SND_SOC_DAIFMT_DSP_A:
++	case SND_SOC_DAIFMT_DSP_B:
++		snd_pcm_hw_constraint_minmax(substream->runtime,
++					     SNDRV_PCM_HW_PARAM_CHANNELS,
++					     1, 1);
++		snd_pcm_hw_constraint_mask64(substream->runtime,
++					     SNDRV_PCM_HW_PARAM_FORMAT,
++					     SNDRV_PCM_FMTBIT_S32_LE);
++		break;
++	default:
++		dev_dbg(i2s->dev, "unexpected format type");
++		return -EINVAL;
++
++	}
++
++	val = readl(i2s->base + SSCR);
++	val &= ~SSCR_DW_32BYTE;
++	val |= data_width;
++	writel(val, i2s->base + SSCR);
++
++	bclk_rate = params_channels(params) *
++		    params_rate(params) *
++		    data_bits;
++
++	ret = clk_set_rate(i2s->bclk, bclk_rate);
++	if (ret)
++		return ret;
++
++	return clk_set_rate(i2s->sspa_clk, bclk_rate);
++}
++
++static int spacemit_i2s_set_sysclk(struct snd_soc_dai *cpu_dai, int clk_id,
++				   unsigned int freq, int dir)
++{
++	struct spacemit_i2s_dev *i2s = dev_get_drvdata(cpu_dai->dev);
++
++	if (freq == 0)
++		return 0;
++
++	return clk_set_rate(i2s->sysclk, freq);
++}
++
++static int spacemit_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
++				unsigned int fmt)
++{
++	struct spacemit_i2s_dev *i2s = dev_get_drvdata(cpu_dai->dev);
++	u32 sspsp_val;
++
++	sspsp_val = readl(i2s->base + SSPSP);
++	sspsp_val &= ~SSPSP_FIELD_SFRMWDTH;
++	sspsp_val |= SSPSP_FSRT;
++
++	i2s->dai_fmt = fmt;
++
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		sspsp_val |= FIELD_PREP(SSPSP_FIELD_SFRMWDTH, 0x10);
++		break;
++	case SND_SOC_DAIFMT_DSP_B:
++		/* DSP_B: next frame asserted after previous frame end, so clear FSRT */
++		sspsp_val &= ~SSPSP_FSRT;
++		fallthrough;
++	case SND_SOC_DAIFMT_DSP_A:
++		sspsp_val |= FIELD_PREP(SSPSP_FIELD_SFRMWDTH, 0x1);
++		break;
++	default:
++		dev_dbg(i2s->dev, "unexpected format type");
++		return -EINVAL;
++	}
++
++	writel(sspsp_val, i2s->base + SSPSP);
++
++	return 0;
++}
++
++static int spacemit_i2s_trigger(struct snd_pcm_substream *substream,
++				int cmd, struct snd_soc_dai *dai)
++{
++	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
++	u32 val;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		if (!i2s->started_count) {
++			val = readl(i2s->base + SSCR);
++			val |= SSCR_SSE;
++			writel(val, i2s->base + SSCR);
++		}
++		i2s->started_count++;
++		break;
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		if (i2s->started_count)
++			i2s->started_count--;
++
++		if (!i2s->started_count) {
++			val = readl(i2s->base + SSCR);
++			val &= ~SSCR_SSE;
++			writel(val, i2s->base + SSCR);
++		}
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int spacemit_i2s_dai_probe(struct snd_soc_dai *dai)
++{
++	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
++
++	snd_soc_dai_init_dma_data(dai,
++				  i2s->has_playback ? &i2s->playback_dma_data : NULL,
++				  i2s->has_capture ? &i2s->capture_dma_data : NULL);
++
++	reset_control_deassert(i2s->reset);
++
++	spacemit_i2s_init(i2s);
++
++	return 0;
++}
++
++static int spacemit_i2s_dai_remove(struct snd_soc_dai *dai)
++{
++	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
++
++	reset_control_assert(i2s->reset);
++
++	return 0;
++}
++
++static const struct snd_soc_dai_ops spacemit_i2s_dai_ops = {
++	.probe = spacemit_i2s_dai_probe,
++	.remove = spacemit_i2s_dai_remove,
++	.hw_params = spacemit_i2s_hw_params,
++	.set_sysclk = spacemit_i2s_set_sysclk,
++	.set_fmt = spacemit_i2s_set_fmt,
++	.trigger = spacemit_i2s_trigger,
++};
++
++static struct snd_soc_dai_driver spacemit_i2s_dai = {
++	.ops = &spacemit_i2s_dai_ops,
++	.playback = {
++		.channels_min = 1,
++		.channels_max = 2,
++		.rates = SPACEMIT_PCM_RATES,
++		.rate_min = SNDRV_PCM_RATE_8000,
++		.rate_max = SNDRV_PCM_RATE_48000,
++		.formats = SPACEMIT_PCM_FORMATS,
++	},
++	.capture = {
++		.channels_min = 1,
++		.channels_max = 2,
++		.rates = SPACEMIT_PCM_RATES,
++		.rate_min = SNDRV_PCM_RATE_8000,
++		.rate_max = SNDRV_PCM_RATE_48000,
++		.formats = SPACEMIT_PCM_FORMATS,
++	},
++	.symmetric_rate = 1,
++};
++
++static int spacemit_i2s_init_dai(struct spacemit_i2s_dev *i2s,
++				 struct snd_soc_dai_driver **dp,
++				 dma_addr_t addr)
++{
++	struct device_node *node = i2s->dev->of_node;
++	struct snd_soc_dai_driver *dai;
++	struct property *dma_names;
++	const char *dma_name;
++
++	of_property_for_each_string(node, "dma-names", dma_names, dma_name) {
++		if (!strcmp(dma_name, "tx"))
++			i2s->has_playback = true;
++		if (!strcmp(dma_name, "rx"))
++			i2s->has_capture = true;
++	}
++
++	dai = devm_kmemdup(i2s->dev, &spacemit_i2s_dai,
++			   sizeof(*dai), GFP_KERNEL);
++	if (!dai)
++		return -ENOMEM;
++
++	if (i2s->has_playback) {
++		dai->playback.stream_name = "Playback";
++		dai->playback.channels_min = 1;
++		dai->playback.channels_max = 2;
++		dai->playback.rates = SPACEMIT_PCM_RATES;
++		dai->playback.formats = SPACEMIT_PCM_FORMATS;
++
++		i2s->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++		i2s->playback_dma_data.maxburst = 32;
++		i2s->playback_dma_data.addr = addr;
++	}
++
++	if (i2s->has_capture) {
++		dai->capture.stream_name = "Capture";
++		dai->capture.channels_min = 1;
++		dai->capture.channels_max = 2;
++		dai->capture.rates = SPACEMIT_PCM_RATES;
++		dai->capture.formats = SPACEMIT_PCM_FORMATS;
++
++		i2s->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++		i2s->capture_dma_data.maxburst = 32;
++		i2s->capture_dma_data.addr = addr;
++	}
++
++	if (dp)
++		*dp = dai;
++
++	return 0;
++}
++
++static const struct snd_soc_component_driver spacemit_i2s_component = {
++	.name = "i2s-k1",
++	.legacy_dai_naming = 1,
++};
++
++static int spacemit_i2s_probe(struct platform_device *pdev)
++{
++	struct snd_soc_dai_driver *dai;
++	struct spacemit_i2s_dev *i2s;
++	struct resource *res;
++	struct clk *clk;
++	int ret;
++
++	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
++	if (!i2s)
++		return -ENOMEM;
++
++	i2s->dev = &pdev->dev;
++
++	i2s->sysclk = devm_clk_get_enabled(i2s->dev, "sysclk");
++	if (IS_ERR(i2s->sysclk))
++		return dev_err_probe(i2s->dev, PTR_ERR(i2s->sysclk),
++				     "failed to enable sysbase clock\n");
++
++	i2s->bclk = devm_clk_get_enabled(i2s->dev, "bclk");
++	if (IS_ERR(i2s->bclk))
++		return dev_err_probe(i2s->dev, PTR_ERR(i2s->bclk), "failed to enable bit clock\n");
++
++	clk = devm_clk_get_enabled(i2s->dev, "sspa_bus");
++	if (IS_ERR(clk))
++		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa_bus clock\n");
++
++	i2s->sspa_clk = devm_clk_get_enabled(i2s->dev, "sspa");
++	if (IS_ERR(clk))
++		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa clock\n");
++
++	i2s->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
++	if (IS_ERR(i2s->base))
++		return dev_err_probe(i2s->dev, PTR_ERR(i2s->base), "failed to map registers\n");
++
++	i2s->reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	if (IS_ERR(i2s->reset))
++		return dev_err_probe(i2s->dev, PTR_ERR(i2s->reset),
++				     "failed to get reset control");
++
++	dev_set_drvdata(i2s->dev, i2s);
++
++	spacemit_i2s_init_dai(i2s, &dai, res->start + SSDATR);
++
++	ret = devm_snd_soc_register_component(i2s->dev,
++					      &spacemit_i2s_component,
++					      dai, 1);
++	if (ret)
++		return dev_err_probe(i2s->dev, ret, "failed to register component");
++
++	return devm_snd_dmaengine_pcm_register(&pdev->dev, &spacemit_dmaengine_pcm_config, 0);
++}
++
++static const struct of_device_id spacemit_i2s_of_match[] = {
++	{ .compatible = "spacemit,k1-i2s", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, spacemit_i2s_of_match);
++
++static struct platform_driver spacemit_i2s_driver = {
++	.probe = spacemit_i2s_probe,
++	.driver = {
++		.name = "i2s-k1",
++		.of_match_table = spacemit_i2s_of_match,
++	},
++};
++module_platform_driver(spacemit_i2s_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("I2S bus driver for SpacemiT K1 SoC");
 
 -- 
 2.51.0
