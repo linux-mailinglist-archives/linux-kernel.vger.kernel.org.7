@@ -1,174 +1,217 @@
-Return-Path: <linux-kernel+bounces-858258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCAFBE97C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E32BE9781
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBD42568401
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:02:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78D49581107
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2723432E143;
-	Fri, 17 Oct 2025 15:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C4D32E145;
+	Fri, 17 Oct 2025 15:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VWZ2lb80"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mrLew0Rv"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D89932C946;
-	Fri, 17 Oct 2025 15:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467D845C0B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713274; cv=none; b=LY/UmGcVf9UG3ngXEbXF/J1V3U7HQw+Jf7U/B/PndjBO0dUbOb56ehVHkeO2/UEeou6K2jU1f4vyRHrFtUqZe8L5TwqnxpmTq4qVQnAx6LkbldWJ9xcvUOSMJ6RuRz3XZf35Y7vTlqALIqCg1pqOB+2q/xjutvEwYLRhXkHNZnc=
+	t=1760713270; cv=none; b=mdHLU9MUnx0Ty0AgikKvv6qvM//6psfTgQbRZ90uuOqec5Kkxuzyel71g1T9QJvzIcV5/vgBPpImuIM0WayG5guyylc5oGeZA4H8nHaJ1ZdWBEOxMqw5VdcNmPEPGgYWddRuPUVfK2T6SUpHLIGNe4fNiArOdO7jmAzA5b3ojjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713274; c=relaxed/simple;
-	bh=fu1rgFg6zFERmWrukTHtScTFU9VI+YSEm3Jqr3a3rqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J07JHeDck/7Uov7sbn9jM7+3ziAro6YmO2DSLBk3HPesz21L/5kmfcbyeNI460nllP46/XVk7DTCH15sIZPQga9JlkjWZkZI3pyAM8/zxbhlUr3+IeZGUZuflmaNhOYFcNN9RGIh8Gt4n/QA9s9Mt1NUFG8MpjzFYWnABdNwT/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VWZ2lb80; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E464EC041F6;
-	Fri, 17 Oct 2025 15:00:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 28795606DB;
-	Fri, 17 Oct 2025 15:01:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 53F01102F2363;
-	Fri, 17 Oct 2025 17:00:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760713265; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=b9g9x9l+TGh+Jz6FtSUgUJKPZ2bmCq5GDO9amdTb+jU=;
-	b=VWZ2lb805RvAcMpu2w7GsmG4qPzHEvrmTXEmSf8bLkdyqv8tELrbP1N9GAyxwhuevB6DOy
-	ZqLha3EVHs7C3aY05GsxzDYApneZKZroDf1OnCtTXktlSpyHTuHIzyiT2dBcYisbYJ/f7T
-	JjroPIiENIUsrrrjgkPAU1zfgNM5V990gaiQRXv265R9Ht/4SIcK6lfOUNPhmIEqJHYDG0
-	mVJLKaoYho9vY3N3HdSWjsf+FUAkElIPSoSpFZ7JcYofHz0UTYpB6tzfJP75sHyGiOhmcq
-	UMkhtwb88dZwI94C0APecwjz124C0yM9cmIq7lZILPj1skAr+Jf7/L5H4YtUBA==
-Date: Fri, 17 Oct 2025 17:00:54 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-Message-ID: <20251017170054.7a7a6d5f@bootlin.com>
-In-Reply-To: <aPIIVUlHnvi0BXtN@shikoro>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	<20251015142816.1274605-3-herve.codina@bootlin.com>
-	<aPIIVUlHnvi0BXtN@shikoro>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760713270; c=relaxed/simple;
+	bh=4R5c1bGrsnGkOOUnK1CszpzLqwKaTx6S7E1UKViMgWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ALocMH8AYVFJvITnT808F92fSLqry69Q+88m8zAxuX78sbOFk9MAbXhGoSTwbFUKkMof81YqscZmIx6Vpi3Qan4QzQ020cPagF/TCCTOzvxrh/45GvE3GATxcEUCnP9ku/JLzoEn4KZo71sc15wk1qkaS9zSDE4mWe4roNIZluU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mrLew0Rv; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so1078825a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760713265; x=1761318065; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pSuJ0ACXse9H5YfB3aq/7dIEkglg7Np8q6vNe0vp/Qg=;
+        b=mrLew0Rv/a/Zs3SCFa9bmYQCKUBWcjzDoaLXzESw26n/Ve4YTblivYvSSOK9q1xTUh
+         oHpv1Ab6h1ETqLmkxauM+3d3M04Rb+FdXZZ7HNt8WGRTjYgfsreOTT5hVV4TvysBM2fH
+         GNVhJuzh8mjbfo8b8BnDl7laltd5hz9o1ocCFoT0qR1dIqgoGFP8YZigGmlXRh8JXpc7
+         knL/WC6UStYixntWiWcDyE4YOgUGMsVRmBQ6JYCxkmokaBaebNQngljll0sNSD6WtxeG
+         /gtzNM/fh5+OG4atHPixfjTA7xSbhMCROvoXk66oQBRvaGw/IVySssQFA58R2Q9xa+er
+         G65Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760713265; x=1761318065;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pSuJ0ACXse9H5YfB3aq/7dIEkglg7Np8q6vNe0vp/Qg=;
+        b=YkFi3yINpiYZR3BsFMDjZqZtrs/qFRIFJHnonyO+/Njfm4fWmoxWveMIEmqWopS0oz
+         HrfDLgQ7ylWshsPbVQlxCSUMt8Zk99nuC78GuRWMgmEn/DFC9kjHxBczsNwtJdfrBNPg
+         WtKbMkBnhg3moJbHANnD3/SbXo7KqXL/uWSnutB2L+hZNPBKUCx3Mu8v7UyEZEs1to6J
+         U5wqqnOHzYSKnOoCSnQLaaLDjMI5pvfdyNl324Vc/K/RzXf7I6n68ZIalQlOMql0UaGA
+         +tWObFdkPB0stb6BNoMUiYYWLhIDeAyF1DnwhVjNz7/kBpZ7umfuvtRPHYSIDhGlZ/PB
+         xBHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2xeQ6sDnCJgZejTLbgTunQAE5jQGKs+u3tmLs8LwhC8UeANnWtYYl5QyVlAasco33REwO9CLFY3Acapc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSVNCHsPJYR4kBB3/UHC21rnMGzIRGPmxVLoNL+ppKTzNOwZdN
+	dn1TJ22sCj+H8hMLWR9k+g7ilDxkf+dRe0sxJWRDVrzfVp6c1w1VLHWnsjkWRP2h968=
+X-Gm-Gg: ASbGncvJucE0Z4pld/H8GMJok+DTdxBZKsN8x8q0O01hGe0PyRH9AExDDVbA127/5q+
+	vT1z8Vvu6+/SKM1EgFAzZOd9jwOn2AdWijVTPGurq16SysVL43S6i2mTZciHcaBWHd0NVvkCIkh
+	5QBNFAoZ94ALTIXphqkGzVObPeP4nk1D01Z78fCdgGIWlhA+2q9z8TBJecE5cNUKtion0ixLANy
+	vArlgcGi5SSol6rRo7P/eq7s84OaJwvXcUasyrG3drfE/bMScf6wsORfIlXcSwnS5JmlRzo57SX
+	ZC2VLNnUM1FWBYRS6ZnVSDcGMPIxO0Nc7yLlRDWz018cKuqdx+xSx543nPru5E0pelXw/S2jdoQ
+	JciNQQDoXgJd8QN+wVSGm1tUjb/SlTEQsriWpbd7VW7IEvjWqnTa1VK6lI+HDeWNXjYhjtuO1VB
+	NAzdkMDJg2MS0a0o8=
+X-Google-Smtp-Source: AGHT+IFDFe/2+iyA5FeI+RGuDLZ1H4kJaebU9REAfIID6sqcvriuQNr4F8M74Wd8OLwWVRFHd3xISQ==
+X-Received: by 2002:a05:6402:84d:b0:63c:4537:75c0 with SMTP id 4fb4d7f45d1cf-63c45377875mr654360a12.38.1760713264992;
+        Fri, 17 Oct 2025 08:01:04 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-63c0e77b34csm4048961a12.16.2025.10.17.08.01.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 08:01:03 -0700 (PDT)
+Date: Fri, 17 Oct 2025 17:01:00 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
+Message-ID: <cdkpp74ra2ltr7h46psutkwnzyvl4iegcicnhqqj7svm5trltm@w2egfj5nryjm>
+References: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nxlujyqvbxqnez6y"
+Content-Disposition: inline
+In-Reply-To: <20251016113730.245341-1-matthias.schiffer@ew.tq-group.com>
 
-Hi Wolfram,
 
-On Fri, 17 Oct 2025 11:11:49 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+--nxlujyqvbxqnez6y
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] serial: imx: allow CRTSCTS with RTS/CTS GPIOs
+MIME-Version: 1.0
 
-> > +static int rzn1_adc_read_raw_ch(struct rzn1_adc *rzn1_adc, unsigned int chan, int *val)
-> > +{
-> > +	u32 *adc1_data, *adc2_data;
-> > +	int adc1_ch, adc2_ch;
-> > +	u32 adc_data;
-> > +	int ret;
-> > +
-> > +	if (chan < 8) {
-> > +		/* chan 0..7 used to get ADC1 ch 0..7 */
-> > +		adc1_ch = chan;
-> > +		adc1_data = &adc_data;
-> > +		adc2_ch = -1;
-> > +		adc2_data = NULL;
-> > +	} else if (chan < 16) {
-> > +		/* chan 8..15 used to get ADC2 ch 0..7 */
-> > +		adc1_ch = -1;
-> > +		adc1_data = NULL;
-> > +		adc2_ch = chan - 8;
-> > +		adc2_data = &adc_data;
-> > +	} else {
-> > +		return -EINVAL;
-> > +	}  
-> 
-> How about putting part of the logic into the setup function? So, here
-> only:
-> 
-> 	if (chan >= 16)
-> 		return -EINVAL
-> 
-> > +
-> > +	ret = pm_runtime_resume_and_get(rzn1_adc->dev);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	mutex_lock(&rzn1_adc->lock);
-> > +
-> > +	rzn1_adc_vc_setup_conversion(rzn1_adc, chan, adc1_ch, adc2_ch);  
-> 
-> 	rzn1_adc_vc_setup_conversion(rzn1_adc, chan);
-> 
-> And in that function:
-> 
-> > +static void rzn1_adc_vc_setup_conversion(struct rzn1_adc *rzn1_adc, u32 ch,
-> > +					 int adc1_ch, int adc2_ch)
-> > +{
-> > +	u32 vc = 0;
-> > +
-> > +	if (adc1_ch != -1)
-> > +		vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(adc1_ch);
-> > +
-> > +	if (adc2_ch != -1)
-> > +		vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(adc2_ch);
-> > +
-> > +	writel(vc, rzn1_adc->regs + RZN1_ADC_VC_REG(ch));
-> > +}  
-> 
-> 	if (ch < 8)
-> 		vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(ch);
-> 	else
-> 		vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(ch - 8);
-> 
-> And a similar simplification for rzn1_adc_vc_wait_conversion().
-> 
-> Should work and the code is even more readable, I'd say. And has less
-> lines.
-> 
+On Thu, Oct 16, 2025 at 01:37:30PM +0200, Matthias Schiffer wrote:
+> The CTS GPIO is only evaluated when the CRTSCTS termios flag is enabled;
+> it should be possible to enable the flag when only GPIO and no hardware-
+> controlled RTS/CTS are available. UCR2_IRTS is kept enabled in this case,
+> so the hardware CTS is ignored.
+>=20
+> Fixes: 58362d5be352 ("serial: imx: implement handshaking using gpios with=
+ the mctrl_gpio helper")
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+>  drivers/tty/serial/imx.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 500dfc009d03e..4a54a689a0603 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -1117,8 +1117,8 @@ static void imx_uart_set_mctrl(struct uart_port *po=
+rt, unsigned int mctrl)
+>  			ucr2 |=3D UCR2_CTS;
+>  			/*
+>  			 * UCR2_IRTS is unset if and only if the port is
+> -			 * configured for CRTSCTS, so we use inverted UCR2_IRTS
+> -			 * to get the state to restore to.
+> +			 * configured for hardware-controlled CRTSCTS, so we use
+> +			 * inverted UCR2_IRTS to get the state to restore to.
+>  			 */
+>  			if (!(ucr2 & UCR2_IRTS))
+>  				ucr2 |=3D UCR2_CTSC;
+> @@ -1780,7 +1780,7 @@ imx_uart_set_termios(struct uart_port *port, struct=
+ ktermios *termios,
+>  	if ((termios->c_cflag & CSIZE) =3D=3D CS8)
+>  		ucr2 |=3D UCR2_WS;
+> =20
+> -	if (!sport->have_rtscts)
+> +	if (!sport->have_rtscts && !sport->have_rtsgpio)
+>  		termios->c_cflag &=3D ~CRTSCTS;
+> =20
+>  	if (port->rs485.flags & SER_RS485_ENABLED) {
 
-That was what I did on my first driver draft before sending this first
-iteration. I moved to adc1 and adc2 channel numbers in parameters to avoid
-adding this logic here.
+This hunk makes sense.
 
-I think it was better to decouple the IIO chan number from the adc core
-channel used.
+> @@ -1794,7 +1794,7 @@ imx_uart_set_termios(struct uart_port *port, struct=
+ ktermios *termios,
+>  		else
+>  			imx_uart_rts_inactive(sport, &ucr2);
+> =20
+> -	} else if (termios->c_cflag & CRTSCTS) {
+> +	} else if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts) {
 
-I don't know if it will be relevant but we can image a future improvement
-where new IIO chans use both the ADC core 1 and 2. It could make sense.
+I agree to add the parens here and consider this more readable than the
+alternative
 
-IMHO, I think the solution you proposed is similar in term of complexity
-to the RZN1_ADC_NO_CHANNEL approach. On my side, I would prefer the
-RZN1_ADC_NO_CHANNEL approach to keep the decoupling between IIO chan and
-ADC core chans.
+	} else if (termios->c_cflag & CRTSCTS && sport->have_rtscts) {
 
-That's said, I am still open to move in your direction if you still think
-it is more relevant than the RZN1_ADC_NO_CHANNEL approach. Just tell me.
+=2E Note there is no real win here. If the port doesn't have RTS/CTS it
+doesn't matter if it tries to control the RTS line. While you could
+argue it shouldn't set the line, it only makes an externally observable
+difference if one of the SoC's pads is muxed to its RTS function.
+I claim it's more robust in this case (i.e. no uart-has-rtscts property
+but a pinmux for the RTS line) to control the line according to the RTS
+setting. This is (at least IMO) better and more expected than driving
+this line to a constant level. So I oppose to this hunk.
 
-Best regards,
-Hervé
+>  		/*
+>  		 * Only let receiver control RTS output if we were not requested
+>  		 * to have RTS inactive (which then should take precedence).
+> @@ -1803,7 +1803,7 @@ imx_uart_set_termios(struct uart_port *port, struct=
+ ktermios *termios,
+>  			ucr2 |=3D UCR2_CTSC;
+>  	}
+> =20
+> -	if (termios->c_cflag & CRTSCTS)
+> +	if ((termios->c_cflag & CRTSCTS) && sport->have_rtscts)
+>  		ucr2 &=3D ~UCR2_IRTS;
+>  	if (termios->c_cflag & CSTOPB)
+>  		ucr2 |=3D UCR2_STPB;
+
+Hmm, not sure. On one hand the same argument applies as above, but on
+the other if there are pins that are not explicitly configured but still
+in their CTS function this might affect operation in a bad way.
+Also this affects the (very usual) configuration where only RX, TX and
+RTS are used and CTS is not. In this case have_rtscts is true (right?)
+and then if there is an accidental CTS pin this is bad and not fixed by
+your change. Hmmm...
+
+So in sum the 2nd and 3rd code change is controversial. If the first one
+already fixes the problem you're facing, I suggest to go for only that.
+If you still think that the 3rd (and maybe even the 2nd) change is a
+good idea, I'd request to do that in a separate commit as this is a
+separate problem. Also the commit log only describes the first change,
+doesn't it?
+
+Best regards
+Uwe
+
+--nxlujyqvbxqnez6y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjyWikACgkQj4D7WH0S
+/k6wWAf/UxQyG6kZ2TILhgdrnIpfu84pODWejTX1lzvAjT7/3H/Qe8pJrRoNWf8e
+/iwaPdvVerhKNiekWTz4KPUE1rm7ITBLj3fwndHy/K2BNnZngBzXt+2s+WQ+fd6f
+hDZA/hvU5mimICspF0a1ZR3zFWD4VbcMqTrjs2nwFjikC77fJQHXhFAQDDt6vz1w
+nOWQ4ls8DPTKU6X3ELQRiExg1Vts1gmcP4IVr9NMGtwbAmchL0brLh+mgyYRv063
+enP5ezJ8VX2IV9/vb1yeSRMxN38bdLvRhmvImYwgALWjR93kiH5kbJkoy9r13fDR
+oquet7e0kA4duMdCrk/t/iT8vcR4hg==
+=8RNA
+-----END PGP SIGNATURE-----
+
+--nxlujyqvbxqnez6y--
 
