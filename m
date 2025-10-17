@@ -1,200 +1,125 @@
-Return-Path: <linux-kernel+bounces-857875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3C1BE81E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A48BE8230
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5532565286
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAAB36E227F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32CC31A554;
-	Fri, 17 Oct 2025 10:48:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64933191AC;
+	Fri, 17 Oct 2025 10:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O9oZdZhc"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C363176E7
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816D03176EF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760698082; cv=none; b=PdUDtyqYw+CHkcAPnmbS/3kFuJU+d6Jnmsf/dWfnGmfA05E8DnsVeq2grKwLmllwztpl85gfCpxXmZe7fOt7AS9S/VecIZFjzG5Xii3jlImznf8GiA4tVkddU7mEkTTBFqEM8oN7GAxD/aQis9EH0yeOfTZhjH+6bCSWR7jZeEg=
+	t=1760698140; cv=none; b=Op4PLjAeCcycADaEIvRxlqA83lTHhap8J4Z8BrsprQ3D5WPKh1/wcYv2Uxo6d3UKcLvqlXRmcBKGqOVNN5Is1CKUsKZc9K0AKfwwCarP7r2qzAlkTphMrRkrh8kPhwbn+zYdJjB5kee7kPj42NcZZvf1T+FTZDOtDMKE2m4Xa48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760698082; c=relaxed/simple;
-	bh=xsnBDWksIFYs2tN6AROUWU7MAjR27N2SOy5nKWnhUYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lj3VpAV8rD8UARzoDjm8q1pRsA/yFGZJdIbI+fEVFZGk3Mt10JqUafPka+N1yFb1IJr2gYZQeyb3ERWqQTtv7RMOhaazlqVyyXlry3gMBuO/XKFKJWjQonCSxsIoXGUW9kZIY0xi6AsIxP++dnq64zWxD2IrdylLnuTxlh2IiPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v9hzn-0000AL-1j; Fri, 17 Oct 2025 12:47:39 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v9hzl-0042n9-0x;
-	Fri, 17 Oct 2025 12:47:37 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v9hzl-0000000F0Aw-0kGd;
-	Fri, 17 Oct 2025 12:47:37 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1760698140; c=relaxed/simple;
+	bh=95VN5tGZ5majWlgXiME+5rDf3dktfkel7ODceo+E7+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4s4Wl9FOCVuDqCguqQDivPNl60RrTvrwFrSYiHXt9HOXPeKnEBMFJ+cSyn2epmf577k+YVDDS/S1/HpDWN9lQUWJ6WutGnu/6+WtG9h+XYtjmz+Or6anzJ1sW1jHSY0556TGvQKEwfKHp6sJwLOWP259g2KGV6O1ihdh/HOtW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O9oZdZhc; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=95VN
+	5tGZ5majWlgXiME+5rDf3dktfkel7ODceo+E7+4=; b=O9oZdZhcbml16oiXN6oy
+	z6HRZMaxq9nCo5NWIFcQfl+hNYfIx9IlMlBkLHotfuKdPMOeoNbaVAuc36Ut77b8
+	41tnJ9ov55irQt3E5E2A6v05dftIRLUQOgCxhFu/Rk66vn6VyIxA2uXm39nR8JXx
+	vAeyWDLAyET1oOfL+Y+J6mNlZ7V34A8z9FGyAES2CTPBhnNI6mapzvUzDGSQH9oN
+	vCqD2UhwJpno6QsfIwPgeGKbfv3C2l9cK0ENAVyqZYGW+vh8exFzCDe2L7qjF3uT
+	Syw21tnUPmZ1AMNeG6W7LNL4q4U2wUKYLfdegwphWwZ02K7FCvjaMZ+6n9FeKj4S
+	zg==
+Received: (qmail 4194264 invoked from network); 17 Oct 2025 12:48:55 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 12:48:55 +0200
+X-UD-Smtp-Session: l3s3148p1@BzDoelhBVK8gAwDPXwQHAL/S9V79e5yL
+Date: Fri, 17 Oct 2025 12:48:55 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>,
-	Roan van Dijk <roan@protonic.nl>
-Subject: [PATCH net-next v6 5/5] net: phy: dp83td510: add MSE interface support for 10BASE-T1L
-Date: Fri, 17 Oct 2025 12:47:32 +0200
-Message-ID: <20251017104732.3575484-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251017104732.3575484-1-o.rempel@pengutronix.de>
-References: <20251017104732.3575484-1-o.rempel@pengutronix.de>
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
+ possible
+Message-ID: <aPIfF-3SgzW5V_gs@shikoro>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <aPEAx8ZGHBcWZKJF@shikoro>
+ <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OsdqGLUzQojksygi"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
 
-Implement get_mse_capability() and get_mse_snapshot() for the DP83TD510E
-to expose its Mean Square Error (MSE) register via the new PHY MSE
-UAPI.
 
-The DP83TD510E does not document any peak MSE values; it only exposes
-a single average MSE register used internally to derive SQI. This
-implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-refresh interval/number of symbols are estimated from 10BASE-T1L
-symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+--OsdqGLUzQojksygi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For 10BASE-T1L deployments, SQI is a reliable indicator of link
-modulation quality once the link is established, but it does not
-indicate whether autonegotiation pulses will be correctly received
-in marginal conditions. MSE provides a direct measurement of slicer
-error rate that can be used to evaluate if autonegotiation is likely
-to succeed under a given cable length and condition. In practice,
-testing such scenarios often requires forcing a fixed-link setup to
-isolate MSE behaviour from the autonegotiation process.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83td510.c | 61 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+> > Interesting topic. In fact, I think we should make RESET_GPIO bool. I
+> > think the fallback mechanism of the core should work without any module
+> > loading infrastructure. It should be there whenever possible.
+> >
+>=20
+> You have not said *why*. How is this different from any other device
+> whose driver is only loaded when actually needed?
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 23af1ac194fa..6875f418fa78 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -61,6 +61,7 @@
- #define DP83TD510E_MASTER_SLAVE_RESOL_FAIL	BIT(15)
- 
- #define DP83TD510E_MSE_DETECT			0xa85
-+#define DP83TD510E_MSE_MAX			U16_MAX
- 
- #define DP83TD510_SQI_MAX	7
- 
-@@ -249,6 +250,63 @@ struct dp83td510_priv {
- #define DP83TD510E_ALCD_COMPLETE			BIT(15)
- #define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
- 
-+static int dp83td510_get_mse_capability(struct phy_device *phydev,
-+					struct phy_mse_capability *cap)
-+{
-+	/* DP83TD510E documents only a single (average) MSE register
-+	 * (used to derive SQI); no peak or worst-peak counters are
-+	 * described. Advertise only PHY_MSE_CAP_AVG.
-+	 */
-+	cap->supported_caps = PHY_MSE_CAP_AVG;
-+	/* 10BASE-T1L is a single-pair medium, so there are no B/C/D channels.
-+	 * We still advertise PHY_MSE_CAP_CHANNEL_A to indicate that the PHY
-+	 * can attribute the measurement to a specific pair (the only one),
-+	 * rather than exposing it only as a link-aggregate.
-+	 *
-+	 * Rationale:
-+	 *  - Keeps the ethtool MSE_GET selection logic consistent: per-channel
-+	 *    (A/B/C/D) is preferred over WORST/LINK, so userspace receives a
-+	 *    CHANNEL_A nest instead of LINK.
-+	 *  - Signals to tools that "per-pair" data is available (even if there's
-+	 *    just one pair), avoiding the impression that only aggregate values
-+	 *    are supported.
-+	 *  - Remains compatible with multi-pair PHYs and uniform UI handling.
-+	 *
-+	 * Note: WORST and other channels are not advertised on 10BASE-T1L.
-+	 */
-+	cap->supported_caps |= PHY_MSE_CHANNEL_A | PHY_MSE_CAP_LINK;
-+	cap->max_average_mse = DP83TD510E_MSE_MAX;
-+
-+	/* The datasheet does not specify the refresh rate or symbol count,
-+	 * but based on similar PHYs and standards, we can assume a common
-+	 * value. For 10BASE-T1L, the symbol rate is 7.5 MBd. A common
-+	 * diagnostic interval is around 1ms.
-+	 * 7.5e6 symbols/sec * 0.001 sec = 7500 symbols.
-+	 */
-+	cap->refresh_rate_ps = 1000000000; /* 1 ms */
-+	cap->num_symbols = 7500;
-+
-+	return 0;
-+}
-+
-+static int dp83td510_get_mse_snapshot(struct phy_device *phydev, u32 channel,
-+				      struct phy_mse_snapshot *snapshot)
-+{
-+	int ret;
-+
-+	if (channel != PHY_MSE_CHANNEL_LINK &&
-+	    channel != PHY_MSE_CHANNEL_A)
-+		return -EOPNOTSUPP;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_MSE_DETECT);
-+	if (ret < 0)
-+		return ret;
-+
-+	snapshot->average_mse = ret;
-+
-+	return 0;
-+}
-+
- static int dp83td510_led_brightness_set(struct phy_device *phydev, u8 index,
- 					enum led_brightness brightness)
- {
-@@ -893,6 +951,9 @@ static struct phy_driver dp83td510_driver[] = {
- 	.get_phy_stats	= dp83td510_get_phy_stats,
- 	.update_stats	= dp83td510_update_stats,
- 
-+	.get_mse_capability = dp83td510_get_mse_capability,
-+	.get_mse_snapshot = dp83td510_get_mse_snapshot,
-+
- 	.led_brightness_set = dp83td510_led_brightness_set,
- 	.led_hw_is_supported = dp83td510_led_hw_is_supported,
- 	.led_hw_control_set = dp83td510_led_hw_control_set,
--- 
-2.47.3
+? I just did that, but let me repeat:
 
+I think the fallback mechanism of the core should work without any
+module loading infrastructure. It should be there whenever possible.
+
+I might add that module loading infrastructure might be broken in
+userspace. Been there. Also, some drivers might need their reset early?
+
+Looking more into it, I can't find any 'request_module'. Am I
+overlooking something? The fallback feature is only present if the user
+loads the driver manually? If that is true, it would make it rather
+useless IMHO because consumer drivers cannot rely on it. I must be
+missing something...
+
+
+--OsdqGLUzQojksygi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjyHxMACgkQFA3kzBSg
+KbZs0Q//RTgyXoXE8+CDDjjbB+Pt0VuSZZBBts6ROzFLrC3HVN9PfB8o9bRVuRs0
+vEGHpOdH12WjUj1fA9eM8oGPUItdcHB/Ra3u6Gi+8qidAVgOiHUrQ1VeavMHIi0k
+jJhh4V/aXlMd5LkYnCRE7k3a2GE/kiVqZoVyf5HPerXJc/wi9j/96czmNKExmDmK
+Bfx9hb7D1qf5GmJo0cD9PQjubMnppontSp+hsUTmW21yr3vfDRBzZQfCSx4eOY8C
+yr7NwdE0KwrNAf8AJgKjkLfyQtCpAAdwMwoGPYRpfxdw3YNY0jo3W/w1KxYRHNaS
+Xd39RiPXMgNEeoPHkQkWbdU2S7KWLmfIhxO2lKxxaSZlASY0cvu/do6RRwgo3p2L
+V5fhGzAtdnmhi7NMABkomya1dzDvrJTC0BGYLGFrXiRG78KPHNr0xgsnq5ejU5dN
+CkzDxlY6P896C12yH3WlIHA67Ud1nqJ8EP+uJ9IYhGlN5IhFYQEv9EL9YeLnR1lt
+CjNOAMAdZL3Ce0BkrHltmp4dJsnj4WGLAniszRoy7xl3dbKPPF2p11CPsBxrKpk4
+kqvq2EyrF1cGyQYYDaIRNvs4tOiXuXzkxPYKfEztg/F1qElkffyIkVfiPb3q3yS0
+0lrgJUamwxj8RSxBF2C70cy30aHovE7cGu7OJefMf8zuyl269wI=
+=zAMK
+-----END PGP SIGNATURE-----
+
+--OsdqGLUzQojksygi--
 
