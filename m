@@ -1,122 +1,66 @@
-Return-Path: <linux-kernel+bounces-857386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCD8BE6A91
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:27:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20326BE6B3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6E3B4FEC29
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A64C74103C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AF130F921;
-	Fri, 17 Oct 2025 06:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E3130F55B;
+	Fri, 17 Oct 2025 06:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="k15RyFdy"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jvaQLBcM"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B2981720;
-	Fri, 17 Oct 2025 06:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F8E30F546
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682388; cv=none; b=OSTKSAvKn3x15ye2+qauWIHcj446IJFODmhNmBMfHcKQmy1326QOoiKWwhXHafmsgqsedcG2FxpJ4bUVJQcATGW12vCp36vhDJFZuoTNYDmUnfn1zGmXOJpx9Ip10jz4aRgm0q4bOnioh+B/LhDxh7WwvWGQIc+mXy+p0XyCZ9M=
+	t=1760682397; cv=none; b=HsQCGM+aD7Hp6Y39NHlro3uTklpLQ4DPSihjGiRnlbp607IbnPF9CjIFn5s2LaEFc0Y3gdN+vhrCkJGnvKuSY58saPrUuEB2UYampUfb5nJCGXoCKCyZl09zrL31hXZ4OkgtBU16QeExa9SHU9zYjdVJskbEct7K+mKAjMV8YJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682388; c=relaxed/simple;
-	bh=Xim6qWFGZ+WXmsN/CH8emkwIniPHErnqJeZArc8D40Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tzNqBAOo1OwO1ETrn6K0I4hy0+4yj0gG9yXoM61zUBcFbCjV4pbDol+Xow9oNSxtKAESXro1pd3jboHmctXkyr04MqgAArDLnfuLw/x9CicaWTOtjWgRnIrkZmhB3b76QOrTrw7s11r6CcDKqAlYHi2tnoZwxvm/ZB3K/XUd4+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=k15RyFdy; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1760682385;
-	bh=Xim6qWFGZ+WXmsN/CH8emkwIniPHErnqJeZArc8D40Q=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=k15RyFdyVoJeYb08mMxu9adUujB7QSVw0G8fEYvyrO1hC267ta5tTk7xCiorfMzFY
-	 dcaqex8C4Z/PhhZbi/JLLMBLfbHE4sg+dE8wShuqba2NgcTLaL/LisqwJ4qBj84rYP
-	 ILfzVe5i4ngO6+IFyR6aj+1FiHo2d1OVgetdauhjzGJZj60QekvzgKyD8T/0X6yqFA
-	 ciQK0hoEQTN3K3XPo02a5DmhUlAhRcpoR2xO2CUGfUQszFmaWu8tV3NdoCFO8xah4l
-	 XJsNP2GCSaOrHjLJwB8oNVjnU6+k5yO5U52I/inTnecgBf7vDqohqdobpbimsbuRh5
-	 eaq60xEt/THHw==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 539D56477A;
-	Fri, 17 Oct 2025 14:26:20 +0800 (AWST)
-Message-ID: <23813eab1406130dfdb6b63615fe1c1b4b634e29.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Stephen Boyd	
- <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Linus
- Walleij	 <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Shawn Guo	 <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich	 <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Joel Stanley
- <joel@jms.id.au>,  Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean
- <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>,  Daire McNamara <daire.mcnamara@microchip.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof
- =?UTF-8?Q?Wilczy=C5=84ski?=	 <kwilczynski@kernel.org>, Manivannan
- Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod
- Koul <vkoul@kernel.org>, Kishon Vijay Abraham I	 <kishon@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Geert Uytterhoeven	
- <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Florian Fainelli	 <f.fainelli@gmail.com>, Tony
- Lindgren <tony@atomide.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org, 
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, 	linux-phy@lists.infradead.org
-Date: Fri, 17 Oct 2025 16:56:19 +1030
-In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
-References: <20251015232015.846282-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760682397; c=relaxed/simple;
+	bh=gO0EQRqkrVqNRhjkGDZP0iXsm7XVhqjAb3B+vJcWFz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=guqwSsEGAeezxahM2cWuj3ewszJCyu30kjLcfgoXoIln4LonhREn6UOPQZgpzXCxNRlL2Byk+PhyImYslJHcDz8naSRc7qtjR0z6w2kTsljWJyPYfR8sAUnFmOa+tPDCqSRACqB4hcefay011HeDMC+llyzy+5/NGikv8cYvxU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jvaQLBcM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rU29rjhtuTpWekoIYN+zSQ9GeojelStKrMZNJGlnzGE=; b=jvaQLBcMCFAn9BZ776Qg3ylVkv
+	/ur/W4ohFRJ9O41BfXUukw70dG1wES0rRElz3ekgbDWgHCQ6bXLv/9PXnKnyAbIjz01N2ZiiGmVMe
+	RMbpEKKbcyWESGUfJzYHOFUBg+54MqVZu/dZDEtA2dL0sEvHXF2FqbWJQS0WIUVEIFfGuMeUGp7lq
+	8sntHIJZH/JJyllv0r/aj7gLN3dFZ39JAfOxlP7dl/c8SHBJkELUA1TLNVGrPyhVKWhy+EIAz7aYd
+	MykAzaDDp3qOB+WOIn3Hijpmzu3Xdkg/ubp+GMmYJxM6MGqQl4M6Li38ajagYzL4oJ2uEn3GYGYyM
+	EeCepZ3g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9dv9-00000006lzn-49l4;
+	Fri, 17 Oct 2025 06:26:35 +0000
+Date: Thu, 16 Oct 2025 23:26:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Xin Zhao <jackzxcui1989@163.com>
+Cc: tj@kernel.org, jiangshanlai@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] workqueue: Support RT workqueue
+Message-ID: <aPHhmz1C7d9vt2x8@infradead.org>
+References: <20251016102345.2200815-1-jackzxcui1989@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016102345.2200815-1-jackzxcui1989@163.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, 2025-10-15 at 18:16 -0500, Rob Herring (Arm) wrote:
-> yamllint has gained a new check which checks for inconsistent quoting
-> (mixed " and ' quotes within a file). Fix all the cases yamllint found
-> so we can enable the check (once the check is in a release). Use
-> whichever quoting is dominate in the file.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> =C2=A0.../arm/altera/socfpga-clk-manager.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 4 ++--
-> =C2=A0.../bindings/clock/nvidia,tegra124-car.yaml=C2=A0=C2=A0 |=C2=A0 8 +=
-+++----
-> =C2=A0.../bindings/clock/nvidia,tegra20-car.yaml=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 6 +++---
-> =C2=A0.../devicetree/bindings/gpio/gpio-mxs.yaml=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 9 +++++----
-> =C2=A0.../bindings/gpio/snps,dw-apb-gpio.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 4 ++--
-> =C2=A0.../bindings/iio/temperature/adi,ltc2983.yaml | 20 +++++++++-------=
----
-> =C2=A0.../mailbox/qcom,apcs-kpss-global.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 16 +++++++--------
-> =C2=A0.../mailbox/xlnx,zynqmp-ipi-mailbox.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 2 +-
-> =C2=A0.../bindings/media/fsl,imx6q-vdoa.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> =C2=A0.../devicetree/bindings/mfd/aspeed-lpc.yaml=C2=A0=C2=A0 |=C2=A0 4 +=
-+--
-
-For aspeed-lpc.yaml:
-
-Acked-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+This seems to mis an actual user?  Did you accidentally only send
+patch 1 of a series?
 
