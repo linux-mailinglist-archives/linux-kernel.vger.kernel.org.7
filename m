@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-857233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6D2BE644B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCC5BE6457
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 821FA4E7327
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3CD3B08F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EEE30B538;
-	Fri, 17 Oct 2025 04:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="DMrvuDlr"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8543A30BB84;
+	Fri, 17 Oct 2025 04:11:41 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB1023E355;
-	Fri, 17 Oct 2025 04:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636512AD11;
+	Fri, 17 Oct 2025 04:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760674226; cv=none; b=PP07EIeK0unxq0Et2NS/98b4f6NrvRaXu9i7ZKsaKiSTQ2CsOBYJknpuIvKYgzvJGMxmVHLnLN8Vz5iWl2EKPh+gvLjUOTs9u8S8iroByXo51m4Y1Bp1tXGkO8JcyuvdpbEbcLLfRvYykQ0qT/DPEhdGk6n7i5pVtydJG5zyHJ4=
+	t=1760674301; cv=none; b=LbII9wL8AKXdF23PFVce5ky3OppypalTw5BpuKnJIJw7gFWe65a09BEOJAlTcwtbv3JPelrxxpdoOcbEN3fE2lgTLvHwKx8GvOIhQWZamnC6/VIM6p1lN0gqnAyIdZUDUV7TTsAGisVxPsB3vm8T63wfN5jYmMNweR2uBjPk2DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760674226; c=relaxed/simple;
-	bh=3D22VFwjh3UKRkTib78wEtIvOg05dSqsoXPJcUkrEFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsKaTYdnTRh3J8F8kux+fRc5HTe/pTnzCcbrHKYwT0hW8RwVCk7B4iJNpY5/ryIMI2Wi7XHtiJ6SyM7//HBH1WeaWOhtVidmCt3lVT1ehZ836/DJenn6zIl12jnG7TPaIsrdOf8Nqwhl4jLnvkoKR8Ka5hOjRPFQC/imF6JEMyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=DMrvuDlr; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=EpPlT+7SwkvzqCG91Lt33LnkHbmeGe8CImCIda8ktbk=; 
-	b=DMrvuDlrhgie7oLUABRNt2ck14BU8ZEPSCPhfeMdGIh187lS070UcAVGKYFmMnoCO3Y4Sixl4Cl
-	eKM4xVsWoNP2jlCwsOyNGkBgZ78ZXOuitTZpidSju80v8I12GnvgrHqCBOsehqDF2D55W1VmAN0vM
-	X0sSv4JQF5nd+TPEXpQOnbD+ctw0xe8gJI6hIG4ZUe9dLHsirW5To1YQpEBMbG18r1+HTrYYdVl6t
-	uTUyBr8FQ1rAym0/rCcxYOW4DML4Etz5szruhZs4CUoGczu/muqv3h8YguvzHmDdFAmjWUnKIqRFy
-	NunefqaHlhdDEKqZsGb8Cd4kQ5Tatm6I2ysQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1v9bmp-00DKDa-0U;
-	Fri, 17 Oct 2025 12:09:52 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 17 Oct 2025 12:09:51 +0800
-Date: Fri, 17 Oct 2025 12:09:51 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"sj@kernel.org" <sj@kernel.org>,
-	"kasong@tencent.com" <kasong@tencent.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v12 14/23] crypto: iaa - IAA Batching for parallel
- compressions/decompressions.
-Message-ID: <aPHBjyWMTddVNnwl@gondor.apana.org.au>
-References: <20250926033502.7486-1-kanchana.p.sridhar@intel.com>
- <20250926033502.7486-15-kanchana.p.sridhar@intel.com>
- <aPGXUxRZeYLO_CUo@gondor.apana.org.au>
- <PH7PR11MB8121C3BAD72D03573D6B4951C9F6A@PH7PR11MB8121.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1760674301; c=relaxed/simple;
+	bh=3DBTrmpSoQPz0qwYohA6Ub/8HY9k/rKP4hodqUP2sPk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DC3GE/adhZ7fs3LXSSz32ZEvAntp7LdCGzVb4mkHHGj9dY1AsVhovgh9ad5SnU/zvfjLGtSBt92lsXl1RPwhw8Y0i5iqYMVRiGFU1Yu/oQCmR5UK1Yxt345gOkcgfjmfk1xC0N/6Q9eo0tDrtO9kncbWjrks7So/E5yBtDTdWVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5d074234ab0f11f0a38c85956e01ac42-20251017
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:30e60bda-c7be-4f75-bed1-ad962732147d,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:038a3ebec05791a9b37a49a4422c88d9,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 5d074234ab0f11f0a38c85956e01ac42-20251017
+X-User: liqiang01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <liqiang01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1469670305; Fri, 17 Oct 2025 12:11:32 +0800
+From: Li Qiang <liqiang01@kylinos.cn>
+To: miriam.rachel.korenblit@intel.com,
+	johannes.berg@intel.com,
+	emmanuel.grumbach@intel.com,
+	rotem.kerem@intel.com,
+	yedidya.ben.shimol@intel.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Qiang <liqiang01@kylinos.cn>
+Subject: [PATCH] wifi: iwlwifi: mld: add null check for kzalloc() in iwl_mld_send_proto_offload()
+Date: Fri, 17 Oct 2025 12:11:28 +0800
+Message-Id: <20251017041128.1379715-1-liqiang01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH7PR11MB8121C3BAD72D03573D6B4951C9F6A@PH7PR11MB8121.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 04:04:56AM +0000, Sridhar, Kanchana P wrote:
->
-> These are for non-crypto users such as zram. I plan to submit an RFC for
-> zram that enables IAA as a zcomp backend with batching support. These
-> API will be used for this purpose.
+Add a missing NULL pointer check after kzalloc() in
+iwl_mld_send_proto_offload(). Without this check, a failed
+allocation could lead to a NULL dereference.
 
-We should be converting zram to ahash instead of adding this
-interface.
+Fixes: d1e879ec600f9 ("wifi: iwlwifi: add iwlmld sub-driver")
+Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+---
+ drivers/net/wireless/intel/iwlwifi/mld/d3.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/d3.c b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+index 1d4282a21f09..dd85be94433c 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+@@ -1794,6 +1794,10 @@ iwl_mld_send_proto_offload(struct iwl_mld *mld,
+ 	u32 enabled = 0;
+ 
+ 	cmd = kzalloc(hcmd.len[0], GFP_KERNEL);
++	if (!cmd) {
++		IWL_DEBUG_WOWLAN(mld, "Failed to allocate proto offload cmd\n");
++		return -ENOMEM;
++	}
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(vif);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
+
 
