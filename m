@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-857103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA3EBE5F27
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 446C1BE5F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0F9546552
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802605478C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1328506F;
-	Fri, 17 Oct 2025 00:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C06286408;
+	Fri, 17 Oct 2025 00:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AeJO1Vfg"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="meXA5Rbt"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360F821C9FD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACC721FF28
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760661189; cv=none; b=YJ59f0B7/BKoJCy4DAruJOJenhBwBA17kSCgc8IsMN2Hq+Q7wugwCDcLXaQOllqQX8julj9FrRsoe477mUh0fzPwieVx/DoFE/hkpIGhpw+0bdYtK+LjAP9kzcTY7wFPSlxiviyHG/ObnfuSTU+u+1j+Lnb+u7r2I1wjugB/3X4=
+	t=1760661190; cv=none; b=IN/pmsRGpRxUWso3ZIE+PzHv5G2MUk9ATrUerL6/mJylDOl1GV4TkKgrd7TaHPfd/9qvO+bW8PctpQBRdSv9QJ6EW2exRGA63KcjdqOjErCW1N5XiHI4apuIQB5vEYZgxQZoGWeilHWCTihdxfR2LVcLSAtMLDPVocXu+mkypo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760661189; c=relaxed/simple;
-	bh=k9Z9jxwZO5TaNJ3JVHODzpRZ428q5OixM7USLnsTl5s=;
+	s=arc-20240116; t=1760661190; c=relaxed/simple;
+	bh=wYAEXPYHa2xMErFCIfNovZ590pxCtOKCG7ZgmLDnGp4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KccWbWswgNrWVPudV9WiUYO6dKEnSXOnNg/b3RsjQtDJd07TdVPJw2jddq7q7P+cDNC7K57VUhdnWdPlTlIv1+fsQQi+uL39f+K/AZ7U+cmnHA2j7RPonv5Yk1stHA7ELcEweqJ17gZQmvvq0bH55R5e49WAcdB+WudMNLgAKnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AeJO1Vfg; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=Wb/y5LH8b3Q7MGEK2ZGI4cEM568YpReqX+74VpuLgdXksmNtk+75Oe/Z2GMgHhLWInbUCvX+M9j3UeYRM25yRCXB6ODpDmstJBHYwAQ7hcqqf9MCmWhvbPG8h3ujrteaVfyTrI3vsSrLoXXMfY5d8eCyMMJlV1r4MER2+jp1rOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=meXA5Rbt; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-269880a7bd9so17294935ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:33:07 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-334b0876195so1510816a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760661186; x=1761265986; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760661188; x=1761265988; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqN6FPJY384bIppIse52Rb5Kgtgq051USSGGCGlx7fA=;
-        b=AeJO1VfgJohwvULVXJk2NTW8Jdh/YNcAKx0bjr2W0pS6gFtanW3VoUWwICyRiTgFBC
-         DmB7cxRVzPenINwp6L2vRYSBqvKAjIPtYZfjLywoVnkjU5SbrC0jzX3vJw75OwsYrgkK
-         D6lyWr9icVCPOBGk+3FVogjBeK127/EOzaocvc6dWsdB5gYECn9EXW1RpxraSdKQGJHZ
-         dz6zlXeHolZ4zNMcG9oq7hb4tgFjxSq+bwTJqFAV2kCy+NL0F8JWdKFVp2Jg1Ykuky84
-         rKRMx1nrmcn9WkFNHp6K9oMOLeGVsojpM0/IHebO+ovaDaEmNky//Q92VD3vn6OjP3C0
-         crgw==
+        bh=Ylyqozer80U4wIAhCrbCm8kORDI60jP8QTvjhJUGpZY=;
+        b=meXA5Rbtcn2dDXKmEbm8JEbkRlcsdIn3bhSbm4/TT6Wk9tTRL9sZ/PreDT6aGziq4s
+         MdjRT4PmL+YtuWnTf1Kijw2abNvPZljInMlM5nQpenjN9mlpcOV6ZXTOTaaONyTlNv3j
+         NWi1babo8bn8p9Ym74NUNfyckVpgrSLizXex2+ZuprpHw04PIkFbJErTi26CSxpbOL+a
+         xDhoH4UzTFTnXRbz1Buezwbm0MgYmFjPdv+Qsf0AOatgRLT1u442D6dCjlgg0K3RoaF6
+         AvZpcSCsI4MmO0Uq+Ey73ioAwoMRJ06uHNeEV7TJXQAmRE8cs2wnICGOBlwRohwwafB9
+         wSUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760661186; x=1761265986;
+        d=1e100.net; s=20230601; t=1760661188; x=1761265988;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VqN6FPJY384bIppIse52Rb5Kgtgq051USSGGCGlx7fA=;
-        b=pAIbTz0szFMuj95kSL22OWP1CxOorrafyFyRUSmTZfTqhxBjCIYPa1ZuKYyNiRKHDr
-         wPdgZD/FsuZmc0u4CqMmPK/iMwsXx66YI6iVH0y2HfXdyowqTCFSeRafuG5JGKUhcQ1i
-         9GpU/lirNp1daJ3oCciXu8tY5XKk6rrzqFWldp6ILsJfWgW8WqLgvduOxxPVUIEI/3k1
-         o06wBvtS7k4YHwY2nEELqB4EXPV60HdTH9oR58VdKAehdkubKZOqPIMoyuogYSrkDNrS
-         +FosE9FJyVc5PUG0m3Hhkub87cUggJDBKgMIcr6OfXcM94Oz8RkZxxViQi59/f4RLSBG
-         lHAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHZCA0rQSzhLFOparxUkZiPyIIrqV8AgTranFbd+6Gq5OQUXHNYrEIqfREaSmMvSTZCBqlyXz/Eu6p81s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd7awo+m9SNfCTC3xSooadjxQl9yqAQKKXRq2BEzzyRQPHmI0Q
-	099dpUj3c4NK/xsJpswgRyQiiRJkAE/MVJJp4GEG54vphyPEM7Fh5UkZc7My3gYZBnmp87D1V9k
-	JrQ8PmA==
-X-Google-Smtp-Source: AGHT+IECAB7Q2xyCVxo4b5IYRWMRhmsnO9Lb3GIfoRWMBXN6TTKJmV4zclbiOdup5YJYV9LbxCAcEbMCp+c=
-X-Received: from pjzg1.prod.google.com ([2002:a17:90a:e581:b0:33b:51fe:1a78])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d2d0:b0:254:70cb:5b36
- with SMTP id d9443c01a7336-290c9cf37b2mr17571675ad.8.1760661186063; Thu, 16
- Oct 2025 17:33:06 -0700 (PDT)
+        bh=Ylyqozer80U4wIAhCrbCm8kORDI60jP8QTvjhJUGpZY=;
+        b=odML/p7IOztU3jXn8XjkubdVxCA7izDtz/umWtkSouoF5lAW51V7yK5TsqdGaat99p
+         wcFSQ8DlJAVtv+xFSvEj1oocLOcuJcUY5nhT4rSlR0nUptNvItfPUBob9sZT3w9nf8I+
+         NR/SjEfy/AqMpEWWNrdf8G/ZvpNABktBPD+l/iAeKWHFfPfhAswTcI/eHM77D7MVKdaH
+         CdmWjJgGfnftSC0U5WZqN39EjMLVGRNG+lb/n8Q4wgUgHXDQY02mITEuh3T6RlFM09tL
+         s87ec2bg+7G7q6Ks1kB92icP4vndsOVXQ/t9aR9/K4c0XojKTzckCULKIoGpTv24BC+i
+         7kyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/CexMfMzkxNvplisjj4KMZiDN0e8ZVQB6PP52CyiXdCZZMPPczpRyBKxNSSoeZz3K3wgwg6qY79nYTYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxeq/w3v0fQQXcDv8Fml9I+qFxOs6XlgmqIINLwjGrNvtrildgl
+	j97MskUcDa59a8ooX/KUG2g2IHMTrW20nR/FN11VQBC+PJKpuNbedeI6hwhGK/HF9Cu8W4N8xbU
+	LEgrSZQ==
+X-Google-Smtp-Source: AGHT+IFv5wQBYU08VlWSJ3YEyBvWx6CUl5P/6vzeOVA3OyqdlNjTdwYkeUoBdZlGjRBJoj7p6GD6I+E30lo=
+X-Received: from pjbnc11.prod.google.com ([2002:a17:90b:37cb:b0:33b:caf7:2442])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f8c:b0:32b:a2b9:b200
+ with SMTP id 98e67ed59e1d1-33bcf87ab38mr1930441a91.13.1760661187797; Thu, 16
+ Oct 2025 17:33:07 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 16 Oct 2025 17:32:28 -0700
+Date: Thu, 16 Oct 2025 17:32:29 -0700
 In-Reply-To: <20251017003244.186495-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251017003244.186495-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017003244.186495-11-seanjc@google.com>
-Subject: [PATCH v3 10/25] KVM: x86/mmu: Drop the return code from kvm_x86_ops.remove_external_spte()
+Message-ID: <20251017003244.186495-12-seanjc@google.com>
+Subject: [PATCH v3 11/25] KVM: TDX: Avoid a double-KVM_BUG_ON() in tdx_sept_zap_private_spte()
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
@@ -97,123 +97,36 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Binbin Wu <binbin.wu@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Drop the return code from kvm_x86_ops.remove_external_spte(), a.k.a.
-tdx_sept_remove_private_spte(), as KVM simply does a KVM_BUG_ON() failure,
-and that KVM_BUG_ON() is redundant since all error paths in TDX also do a
-KVM_BUG_ON().
+Return -EIO immediately from tdx_sept_zap_private_spte() if the number of
+to-be-added pages underflows, so that the following "KVM_BUG_ON(err, kvm)"
+isn't also triggered.  Isolating the check from the "is premap error"
+if-statement will also allow adding a lockdep assertion that premap errors
+are encountered if and only if slots_lock is held.
 
-Opportunistically pass the spte instead of the pfn, as the API is clearly
-about removing an spte.
-
-Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h |  4 ++--
- arch/x86/kvm/mmu/tdp_mmu.c      |  8 ++------
- arch/x86/kvm/vmx/tdx.c          | 17 ++++++++---------
- 3 files changed, 12 insertions(+), 17 deletions(-)
+ arch/x86/kvm/vmx/tdx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 48598d017d6f..7e92aebd07e8 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1855,8 +1855,8 @@ struct kvm_x86_ops {
- 				 void *external_spt);
- 
- 	/* Update external page table from spte getting removed, and flush TLB. */
--	int (*remove_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
--				    kvm_pfn_t pfn_for_gfn);
-+	void (*remove_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
-+				     u64 spte);
- 
- 	bool (*has_wbinvd_exit)(void);
- 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 9b4006c2120e..c09c25f3f93b 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -362,9 +362,6 @@ static void tdp_mmu_unlink_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
- static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
- 				 int level)
- {
--	kvm_pfn_t old_pfn = spte_to_pfn(old_spte);
--	int ret;
--
- 	/*
- 	 * External (TDX) SPTEs are limited to PG_LEVEL_4K, and external
- 	 * PTs are removed in a special order, involving free_external_spt().
-@@ -377,9 +374,8 @@ static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
- 
- 	/* Zapping leaf spte is allowed only when write lock is held. */
- 	lockdep_assert_held_write(&kvm->mmu_lock);
--	/* Because write lock is held, operation should success. */
--	ret = kvm_x86_call(remove_external_spte)(kvm, gfn, level, old_pfn);
--	KVM_BUG_ON(ret, kvm);
-+
-+	kvm_x86_call(remove_external_spte)(kvm, gfn, level, old_spte);
- }
- 
- /**
 diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index abea9b3d08cf..f5cbcbf4e663 100644
+index f5cbcbf4e663..220989a1e085 100644
 --- a/arch/x86/kvm/vmx/tdx.c
 +++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1806,12 +1806,12 @@ static int tdx_sept_free_private_spt(struct kvm *kvm, gfn_t gfn,
- 	return tdx_reclaim_page(virt_to_page(private_spt));
- }
- 
--static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
--					enum pg_level level, kvm_pfn_t pfn)
-+static void tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
-+					 enum pg_level level, u64 spte)
- {
-+	struct page *page = pfn_to_page(spte_to_pfn(spte));
- 	int tdx_level = pg_level_to_tdx_sept_level(level);
- 	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
--	struct page *page = pfn_to_page(pfn);
- 	gpa_t gpa = gfn_to_gpa(gfn);
- 	u64 err, entry, level_state;
- 	int ret;
-@@ -1822,15 +1822,15 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 	 * there can't be anything populated in the private EPT.
- 	 */
- 	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
--		return -EIO;
-+		return;
- 
- 	/* TODO: handle large pages. */
- 	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
--		return -EIO;
-+		return;
- 
- 	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
- 	if (ret <= 0)
--		return ret;
-+		return;
- 
- 	/*
- 	 * TDX requires TLB tracking before dropping private page.  Do
-@@ -1859,17 +1859,16 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 
- 	if (KVM_BUG_ON(err, kvm)) {
- 		pr_tdx_error_2(TDH_MEM_PAGE_REMOVE, err, entry, level_state);
--		return -EIO;
-+		return;
+@@ -1721,8 +1721,10 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
+ 		err = tdh_mem_range_block(&kvm_tdx->td, gpa, tdx_level, &entry, &level_state);
+ 		tdx_no_vcpus_enter_stop(kvm);
  	}
- 
- 	err = tdh_phymem_page_wbinvd_hkid((u16)kvm_tdx->hkid, page);
- 	if (KVM_BUG_ON(err, kvm)) {
- 		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
--		return -EIO;
-+		return;
+-	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level) &&
+-	    !KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm)) {
++	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
++		if (KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
++			return -EIO;
++
+ 		atomic64_dec(&kvm_tdx->nr_premapped);
+ 		return 0;
  	}
- 
- 	tdx_quirk_reset_page(page);
--	return 0;
- }
- 
- void tdx_deliver_interrupt(struct kvm_lapic *apic, int delivery_mode,
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
