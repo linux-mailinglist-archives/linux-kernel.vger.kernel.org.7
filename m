@@ -1,93 +1,124 @@
-Return-Path: <linux-kernel+bounces-858830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA72BEBF5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:57:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CFCBEBF69
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E2F40686D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 982EA1AE107E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D9F3126D5;
-	Fri, 17 Oct 2025 22:57:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3873126DD;
+	Fri, 17 Oct 2025 22:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEZLflOS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E749E2D7803
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45CD215043;
+	Fri, 17 Oct 2025 22:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760741826; cv=none; b=As+OAEDoviPS6cRGK8M09GAD3JxXsHKUcff4dQ355tRoN7fWpsacU+nOy4dWAyXMyGHkltV3MmUV1j0mV5EbrhilroJrbrlcBU/Xs5BWQyd7ne1sep6FRTJAFcapt5KZp0sgjQiDRJZst7PiZwPvUZSaaqgwS/59r0G2+LpmD3c=
+	t=1760741854; cv=none; b=UG68j2kAdYx0vK2H0bTLS86OLQqxbk/uCewr1PGwkgabNipT86X0RAnTaqiTaF6c17o236FcYhG3NZj1CdT+7HJJDH8zEv3UdE6hMKS7OMDoBWtWo2Lh2ydFBqqqqKbmFjgem/GMBOHgB9I+T4Zu5Qny7uzdN38EUOe2pVJlJF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760741826; c=relaxed/simple;
-	bh=f7KvCyEDTyzOxXZjve5/fBxv3fhXq88Wg/v716HQCy4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Jjdq+LZNrtsegZYnaud7HaFzFLFh44zblS+dUhj5EK4S01nVORgv5d2lmSWg+eMo0LGYBn3MZT+UmEcNDAC8xe+mqqIYpgzs4hAlqsrMjfyoUb2X/io41clAACWNgnuYu4tcc3HtcFRCEyaViKIX5/ATZV5Tbrw+hPnU8BMtSws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430c8321bc1so16418505ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:57:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760741824; x=1761346624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJpgDBAxLccAhUteGLabQLlE9rHnlPNcTGhEEI8GY10=;
-        b=B45GndXXl4b5A1d56hSDoiGJ+xspvFpHNz+OOoaXYdbsF2QdePvxRlnas6z2/5I84T
-         bPaeDmvLP3vGysJMPU1RsMkg+3+tTCEN8GKg3BXDe1/HaNY+nh/NHxaVYbS9ySFiwQTp
-         69SI36+He+8jz6Fj6m3ZV0VDkiD7gflUugflOnPOpnHkCN4PYNYyefFgf4KerFFMfSoN
-         KSmdXzyyGWD+nfMZW7e5n/h+oN9YhdVw8fJQ1g533Qtgvo6K19WzFA9g2ovcPWfH7/jb
-         rq4cKD2Hv7SrGZiso1aZm7WqQReq9c+heeqLSeHgVrejRd6IlB/1p6v7mC0yaztlF5AB
-         Vomw==
-X-Forwarded-Encrypted: i=1; AJvYcCWC6tJWT0IpRiWE+jpQ4kMacMSzyxuX8tyt4etspEiC3RYS33+bILixsacxZ88yAKjNOGQB63SO8gwm+wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzat3i/BfYuzOu+VnrbEn0hHldRvKdFVhDJ55VtDGuOOi6P4QO0
-	gS+Kzd9As4HGeccPv9vWNeTU2UCD54cG42aTwWjLAz2P8i7H53F49g5PpBVk/JC816RiFtIsUN4
-	o0Q3aGJYsxyfr77mWgvYip0O9jVXBX1blBJW7Cn8HATwvreXVVTCVsZppqk8=
-X-Google-Smtp-Source: AGHT+IF+DUySWarTjVDbax0WipWnWUmr3IAi8Ismsyh5rLjk7lt5iY6vnww0yV3GZ+Fljwql2QmO8PvAs1Uull9sCzlzd2U19Y0H
+	s=arc-20240116; t=1760741854; c=relaxed/simple;
+	bh=svjWuiZmHBkfKvpc+w6Z947Rrjkp/USyCf/FaWKrfgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2fP6piJ7+aV2EaoQolJpm4VITiMgfpqJGoa/tchF8iPu+sF2j51qXZSXVqCaqc5bsvYOyt4AJTU/OPA1zLLeUalPnvk0v4RfbDZjr9gMlvBufoT1qfnHIp5PEiJULu2c7Yp6mZzzm49JiBxWAjWmZM0TWT/V38HZVIVwI+T7Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEZLflOS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1BF2C4CEE7;
+	Fri, 17 Oct 2025 22:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760741854;
+	bh=svjWuiZmHBkfKvpc+w6Z947Rrjkp/USyCf/FaWKrfgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QEZLflOSs1zo/q+mt+9o9TpDYslgVwcu+w5YXUB5biXPts/NjEkeUC/NK1162hdXV
+	 xqsfGOUht9rp93spTqqJpSH6uoG86EoYSA24OQjr56LBQ4OsAd84WuXxQ/I9xH0A2e
+	 RiIrukaPdBqSjCyzM5yNnfXREsElWpv354e1ERzh+bdo0+BLhDHbPCfZgfKzlo/SFH
+	 ff/m0en0KPFqmqTOhULg2HC75ya0lp+iY2nfw8RmhI02zHEhmmda1k3utYRW3Wbtdx
+	 7amreqZKt7jueW4aEU6kGE9Het351jL8JLdbHksR6dH0sJ+9C0D79Y3wIXWZHakiKf
+	 kCVQfXY+pVSFg==
+Date: Fri, 17 Oct 2025 22:57:32 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v3 0/6] Hyper-V: Implement hypervisor core collection
+Message-ID: <20251017225732.GC632885@liuwe-devbox-debian-v2.local>
+References: <20251006224208.1060990-1-mrathor@linux.microsoft.com>
+ <20251017223300.GB632885@liuwe-devbox-debian-v2.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda3:0:b0:3f3:4562:ca92 with SMTP id
- e9e14a558f8ab-430c525f51dmr87920195ab.10.1760741823800; Fri, 17 Oct 2025
- 15:57:03 -0700 (PDT)
-Date: Fri, 17 Oct 2025 15:57:03 -0700
-In-Reply-To: <000000000000ae5aca05e68a7748@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f2c9bf.050a0220.1186a4.051b.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] INFO: rcu detected stall in watchdog
-From: syzbot <syzbot+0bab26cf3949891fb534@syzkaller.appspotmail.com>
-To: andrii@kernel.org, anna-maria@linutronix.de, ast@kernel.org, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, frederic@kernel.org, 
-	gregkh@linuxfoundation.org, hdanton@sina.com, hverkuil+cisco@kernel.org, 
-	linux-kernel@vger.kernel.org, penguin-kernel@I-love.SAKURA.ne.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, rafael@kernel.org, sean@mess.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017223300.GB632885@liuwe-devbox-debian-v2.local>
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Oct 17, 2025 at 10:33:00PM +0000, Wei Liu wrote:
+> On Mon, Oct 06, 2025 at 03:42:02PM -0700, Mukesh Rathor wrote:
+> [...]
+> > Mukesh Rathor (6):
+> >   x86/hyperv: Rename guest crash shutdown function
+> >   hyperv: Add two new hypercall numbers to guest ABI public header
+> >   hyperv: Add definitions for hypervisor crash dump support
+> >   x86/hyperv: Add trampoline asm code to transition from hypervisor
+> >   x86/hyperv: Implement hypervisor RAM collection into vmcore
+> >   x86/hyperv: Enable build of hypervisor crashdump collection files
+> > 
+> 
+> Applied to hyperv-next. Thanks.
 
-commit eecd203ada43a4693ce6fdd3a58ae10c7819252c
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Thu Jul 17 14:21:55 2025 +0000
+This breaks i386 build.
 
-    media: imon: make send_packet() more robust
+/work/linux-on-hyperv/linux.git/arch/x86/hyperv/hv_init.c: In function ‘hyperv_init’:
+/work/linux-on-hyperv/linux.git/arch/x86/hyperv/hv_init.c:557:17: error: implicit declaration of function ‘hv_root_crash_init’ [-Werror=implicit-function-declaration]
+  557 |                 hv_root_crash_init();
+      |                 ^~~~~~~~~~~~~~~~~~
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154d6734580000
-start commit:   e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
-dashboard link: https://syzkaller.appspot.com/bug?extid=0bab26cf3949891fb534
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11646580580000
+That's because CONFIG_MSHV_ROOT is only available on x86_64. And the
+crash feature is guarded by CONFIG_MSHV_ROOT.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Applying the following diff fixes the build.
 
-#syz fix: media: imon: make send_packet() more robust
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index e28737ec7054..c1300339d2eb 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -554,7 +554,9 @@ void __init hyperv_init(void)
+                memunmap(src);
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+                hv_remap_tsc_clocksource();
++#ifdef CONFIG_X86_64
+                hv_root_crash_init();
++#endif
+        } else {
+                hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
+                wrmsrq(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+
+> 
+> >  arch/x86/hyperv/Makefile        |   6 +
+> >  arch/x86/hyperv/hv_crash.c      | 642 ++++++++++++++++++++++++++++++++
+> >  arch/x86/hyperv/hv_init.c       |   1 +
+> >  arch/x86/hyperv/hv_trampoline.S | 101 +++++
+> >  arch/x86/include/asm/mshyperv.h |  13 +
+> >  arch/x86/kernel/cpu/mshyperv.c  |   5 +-
+> >  include/hyperv/hvgdk_mini.h     |   2 +
+> >  include/hyperv/hvhdk_mini.h     |  55 +++
+> >  8 files changed, 823 insertions(+), 2 deletions(-)
+> >  create mode 100644 arch/x86/hyperv/hv_crash.c
+> >  create mode 100644 arch/x86/hyperv/hv_trampoline.S
+> > 
+> > -- 
+> > 2.36.1.vfs.0.0
+> > 
 
