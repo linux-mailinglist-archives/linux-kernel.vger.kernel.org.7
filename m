@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-857530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B5CBE7067
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4083BE7077
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64AC5E23A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49A56256AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE8262FC2;
-	Fri, 17 Oct 2025 07:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F995266B56;
+	Fri, 17 Oct 2025 08:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="Bwe+9Ccy"
-Received: from mail3.ecloud.global (mail3.ecloud.global [135.181.139.185])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EePkFiAz"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0780F25A324;
-	Fri, 17 Oct 2025 07:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.139.185
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687916; cv=pass; b=CKC3AqXwqdXvuBPXaxNQ26qPGofGwR8Et1CE2Y3ezYvB89IXFxqQxquueMzGQyKXWLXFTvDWmOuM+5gPZWhPlQeFTRJO/e6jR2qPghXVT057NbG1xxOgnCi+NIHdvw5gHw/AR2LevNvmHKy1FJZmsjt5QGYHJyErbbZ/3XNRk2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687916; c=relaxed/simple;
-	bh=jkVEXnzGazlr4jffF/xWHkM2GQunmNsO0Rm623Owskc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=RUiDpVzGpf2lCa+O2zORfwcOVjtSQkmKK53fF4Qq04dBWvbwgTbP0I6togsjf+BCO5sQ1xm2tbCht4DNg6NfNepNUx5XKgSluAOScjki++0RUTpS0ulsRjT6kR4NiAKFfHbkb539BNLxXDEuHu1/U4ZA5oO95RnafXmYfG3q9Yw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=Bwe+9Ccy; arc=pass smtp.client-ip=135.181.139.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
-Received: from authenticated-user (mail3.ecloud.global [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail3.ecloud.global (Postfix) with ESMTPSA id AEBAD8844C7;
-	Fri, 17 Oct 2025 07:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail3;
-	t=1760687904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5+N/g+Cv9kWgSOuIgoyJn0tjR7NN022I4B62iu5cZoI=;
-	b=Bwe+9CcyUwQRoVsGFfIVFX7RAtwlIiFEUdlhv3ANwuLFytOkKmG5tMD3H6j/XdnEZGik/z
-	L0h0EfmDWuHP/7ytSuLPFEmLJ9P6vVpjHa0TaDtq0Kpmys0p9oR2p0SHL+/9++d5c0P+Bs
-	xTonHHy3cApXXPbD6tCP/sUxOQR4Q0g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
-	s=mail3; t=1760687904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5+N/g+Cv9kWgSOuIgoyJn0tjR7NN022I4B62iu5cZoI=;
-	b=h7XC6EJLNOSr2xCjrKKvzFpTGgC37z8vwGGUEz/yDpwgEM1EFv9ihoX3mWMEs1aZkf1kCW
-	R0/HMKBPOAB88wj5s+pWSl9MJOGGWxCIgq/E0UUExaxLNmyFtIqGxTxHrf1GT0EaXhyeBJ
-	g6KWr2MOYwx31wQ3kzXnhqg6IeYx7yU=
-ARC-Authentication-Results: i=1;
-	mail3.ecloud.global;
-	auth=pass smtp.mailfrom=maud_spierings@murena.io
-ARC-Seal: i=1; s=mail3; d=murena.io; t=1760687904; a=rsa-sha256; cv=none;
-	b=0j0ePx5LqN5bNtXIaCR6iUppWGVksPuWjcEHiLwqt4vi9w6bXwRmsly/cu1e1ko/x/TcZ1
-	rYi2dNWvWgPA6dPOrjf4/OPq/tmcAMEzh45RF3rfArefZ4yrUBvzmxJVntRIKbNGMQ4Cum
-	jWmVbmTk3idqcDHnOavdiktfS2fua0Q=
-Message-ID: <040d8fe8-da2f-4aa5-a2c3-1aec0cf2e8f0@murena.io>
-Date: Fri, 17 Oct 2025 09:58:22 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D122620D5;
+	Fri, 17 Oct 2025 08:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760688009; cv=none; b=BttcvZE3BIZx2VYjVchX/34R2TepgoW5FrVcp0uNSlF0Mk3Huz8cIgmo1ALOhjAWhJ+Aw3Dx9VYYs/olCg9PUK1Xjx9w3STYoHEoJlNH2a77V4tXaukKg7Xrsj+3t+smAvb/PkGRqkgRJYjx1N0rrmQ2gxnt5eNoxCBv4gsPk1w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760688009; c=relaxed/simple;
+	bh=Tc3/ELtbtt0sJENB0B7Or+iGswnWW4vMvbAo+PxCyHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=laACUbdzsGCFRfwRdxyTVMTAjy3WclRMQTeRvwVR6eD6ZESlb/Zg02y8OFRMBJqsvRcupByWBDHdW2xZCkNJ4H3zqxNUC+yT5G4iII4m+7zlA2/KY+nuPi2pUx4oXUsGrnKaV11iHrxLjoSj5dCF6OOxXh0VNyxsrw6mm2FkATs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EePkFiAz; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id AF1DCC041DD;
+	Fri, 17 Oct 2025 07:59:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DA567606DB;
+	Fri, 17 Oct 2025 08:00:02 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0AAFD102F22F0;
+	Fri, 17 Oct 2025 09:59:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760688001; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=qdb3zBaLrjZWsHURH6g1nqx2Ac1GQ6bBBQODdXaFSNI=;
+	b=EePkFiAz+vAhFGrOoRPyHPtjzVhwvdEKp+PMnxHYe3qDGcRf3gJiYsjePY4CMJPpyfVfJ2
+	2cWO3cw7v+xhxRrPJx9ZuCnm9OMFJEiNkz5soqmi4IKQq7UFnQk9Bv8zLFc3n5cGwNH2Dw
+	mdDyHgiXEY5+mWQto3TvNoBvEvgYLQjB+eszduPGsefGe9sCVBvTMkd6cK2DfUZTs3v5Rh
+	mNkcDqPZV+3HIgSpydNxaC1h1vSu1BEhHqTfsJ5chzn5inpRYrmM7O1ldan1f/n+oAdcYL
+	JgHt7NUHdI68zz9LP11u4J7hxqN3lO14wCyFamJ65IcXF8l2912Z7JyMH8EqHA==
+Date: Fri, 17 Oct 2025 09:59:36 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron
+ <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Pascal Eberhard
+ <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+Message-ID: <20251017095936.71cb318b@bootlin.com>
+In-Reply-To: <CAMuHMdV0As4XKG0P0y+pJpTT82Bq8qpq2rHufeX4_q0j-eOPPA@mail.gmail.com>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+	<20251015142816.1274605-3-herve.codina@bootlin.com>
+	<aPHiAObA61OVf8mY@ninjato>
+	<20251017093649.2d5549e4@bootlin.com>
+	<CAMuHMdV0As4XKG0P0y+pJpTT82Bq8qpq2rHufeX4_q0j-eOPPA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-To: andyshrk@163.com
-Cc: Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com,
- andy.yan@rock-chips.com, devicetree@vger.kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, dri-devel@lists.freedesktop.org,
- heiko@sntech.de, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- knaerzche@gmail.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
- tzimmermann@suse.de
-References: <20251016083843.76675-3-andyshrk@163.com>
-Subject: Re: [PATCH v8 2/2] MAINTAINERS: Add entry for Innosilicon hdmi bridge
- library
-Content-Language: en-US
-From: Maud Spierings <maud_spierings@murena.io>
-In-Reply-To: <20251016083843.76675-3-andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Andy,
+Hi Geert,
 
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> Add entry for Innosilicon hdmi bridge library
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> ---
-> 
-> (no changes since v1)
-> 
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f9f985c7d7479..0adcfb1c264a1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12299,6 +12299,14 @@ M:	Samuel Holland <samuel@sholland.org>
->  S:	Maintained
->  F:	drivers/power/supply/ip5xxx_power.c
->  
-> +INNOSILICON HDMI BRIDGE DRIVER
-> +M:	Andy Yan <andy.yan@rock-chips.com>
-> +L:	dri-devel@lists.freedesktop.org
-> +S:	Maintained
-> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-> +F:	drivers/gpu/drm/bridge/inno-hdmi.c
-> +F:	include/drm/bridge/inno_hdmi.h
-> +
->  INOTIFY
->  M:	Jan Kara <jack@suse.cz>
->  R:	Amir Goldstein <amir73il@gmail.com>
-> -- 
-> 2.43.0
+On Fri, 17 Oct 2025 09:40:42 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-I believe this patch should be squashed into the patch that actually 
-creates the files listed in the MAINTAINERS entry, like I do here [1]. 
-Checkpatch should be complaining about patch [1/2] if I'm not mistaken, 
-when you run `b4 prep --check`.
+> Hi Hervé,
+> 
+> On Fri, 17 Oct 2025 at 09:37, Herve Codina <herve.codina@bootlin.com> wrote:
+> > Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:  
+> > > On Wed, Oct 15, 2025 at 04:28:14PM +0200, Herve Codina (Schneider Electric) wrote:  
+> > > > +static void rzn1_adc_vc_setup_conversion(struct rzn1_adc *rzn1_adc, u32 ch,
+> > > > +                                    int adc1_ch, int adc2_ch)
+> > > > +{
+> > > > +   u32 vc = 0;
+> > > > +
+> > > > +   if (adc1_ch != -1)
+> > > > +           vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(adc1_ch);
+> > > > +
+> > > > +   if (adc2_ch != -1)
+> > > > +           vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(adc2_ch);  
+> > >
+> > > Are you open to either use an errno (maybe EACCES) or define something
+> > > custom (maybe RZN1_ADC_NO_CHANNEL) instead of hardcoded -1? I think I
+> > > like the latter a tad more.  
+> >
+> > I prefer RZN1_ADC_NO_CHANNEL too instead of an error code and I will use
+> > that instead of -1 in the next iteration.  
+> 
+> Or just -ENODEV or -ENOENT, and change the checks above to
+> "if (adc1_ch >= 0)"?
 
-Link: 
-https://lore.kernel.org/all/20251009-max25014-v4-1-6adb2a0aa35f@gocontroll.com/ 
-[1]
+I prefer to avoid mixing channel numbers with error code.
 
-Kind regards,
-Maud
+The specific RZN1_ADC_NO_CHANNEL value looks good to me meaning "No channel
+to use".
+
+Best regards,
+Hervé
 
