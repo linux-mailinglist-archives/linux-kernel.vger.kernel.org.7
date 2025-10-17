@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-857250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275F9BE651C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:36:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9E0BE653B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02C334F4570
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:36:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D46E4E7C5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603C73093CB;
-	Fri, 17 Oct 2025 04:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A0C30C60A;
+	Fri, 17 Oct 2025 04:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrPFpm+M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XmLws7r8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDA0248886;
-	Fri, 17 Oct 2025 04:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1AB334689;
+	Fri, 17 Oct 2025 04:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760675770; cv=none; b=QMF3LRXdE3D5xjzfAnlmLEJeW5hJtSs0Ln0Jf5py5LtGoZhx4WDawt/Lxe9/hr6YNtyt7fSEybmqLkk7/+rwiTVI7Xv0I20kRYiDUWXRBkMS8bjRZb9vAuzw8pMnYvaBV6LmRnDw+JhP4/y9CaFc6BXo174X9kMiL2Zu41vB5ec=
+	t=1760676100; cv=none; b=hWNGD/mEGaHGNQsiaDuXIz9rNLBP8O+J5FaXrdxLZNHvz5vdtr0iwAg4tu460BaBY0LzGTOM2U4wARJy4HDa9prkVrleLGJnL0jLgAYlGCJ4NzloQaWAeHl7OxGKUGPXkxsSddOctfIGa+CYxTolO/6gjIzOaZcY6gocmcKFbdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760675770; c=relaxed/simple;
-	bh=TcQuCnjgl7kAjGg2Si4qXoqfZM7leuGYuiZVT0y+ZEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RRzX/+Eg8My5h3VE+Gz/oX2yiLoazxhZRkEPItqblEr4UBmTUqp3VDDeQ3MuUj4BtdbPleDRe/W9QAdTRPI1EP92pJs43iYpZMAfoH0IXGJY61v1FWyZX/dPcyJeks38fevrnz7m6sISlqgEEynPKC9E8bRzWULkvKSX7BqM0gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrPFpm+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77803C4CEE7;
-	Fri, 17 Oct 2025 04:36:07 +0000 (UTC)
+	s=arc-20240116; t=1760676100; c=relaxed/simple;
+	bh=KYWPYbj9AgafJeUcobj6pYXOKDICTH/bM9n4lOeI20M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mBNn0hE1rC9LEokT8jRPf1CFrvkTwwQAjimgZhtRO0bEn+7kPXp+9XxTXxzHb+97DDtQcxc1fZqjWIoJfFX04eUhwp4vZZRNwTnB/MJ7P6xGTBYW/voDzZOYRhne/Pjaf6zbwcM11NrZaNdbvbiMZy3jRWu2uIngEhfrYfbmJns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XmLws7r8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51051C4CEE7;
+	Fri, 17 Oct 2025 04:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760675769;
-	bh=TcQuCnjgl7kAjGg2Si4qXoqfZM7leuGYuiZVT0y+ZEQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=XrPFpm+MX+d1arzlkPp3biV1y0Cyl5zuOXDbWMExmXA6zZVZgLm5Nh2Gt2XFfdIMs
-	 lgv4NE/2oT9bStowlTWW94Vio3/L6NILlai50xDTVL+QM/bf1DGx+6zlXS2YdUjgmc
-	 gJOkL+ocy15W75vD8r+6E9bH3SO+BH9r7p8q81pFoIkZQICSpXEFaaHuBikbC43WN3
-	 9cQ2y/Q4B4b/Ez0ETF/lZN8jayUW9AqXxhp7XSu2pKMm3fRiWBK3rM/hxkgeeRkIko
-	 VReWeRNeNTO59ZI9v8LMDwAox7Bn8v0HTeGTW740SlQPeaKPYWAHJtdbfJYlJOrCpk
-	 tF2I6IMgcy6zg==
-Message-ID: <b331600f-af5f-40b1-8acf-007044fd34f3@kernel.org>
-Date: Fri, 17 Oct 2025 06:36:05 +0200
+	s=k20201202; t=1760676100;
+	bh=KYWPYbj9AgafJeUcobj6pYXOKDICTH/bM9n4lOeI20M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XmLws7r8GpULkOh63waqJm7oKgNtCNBRmv5zeAjqQD7UyYE9LoRJAk9O+oxS6Jf+g
+	 nvfqRPDubwxUdR0hSb9AajRCqamgjPStE3uW7bkWarP2f6GEIHo7S1INwzGU1Fz/Vx
+	 KoHtdBnBs/SlYezVMIkvMWBsqYwTxDKUhggD0kAPJ5eWeeGTvaZ1nrfidxW+Zevft5
+	 JeR47JaIVrMnfKg6y1Y19tKpsULsblZNtDo+XD0Pv6zIauXYkUy1S94QFHUwNH+wph
+	 Ex0iX7FGggXaJFhBIgRYmRuJX0baubB0fNyjFRtK2GLB1/3OG/odcvgo5jQg0QGU7n
+	 ciRwD03hOrE6Q==
+Message-ID: <bb299df0-58b9-4a6e-9625-305785d38eb4@kernel.org>
+Date: Fri, 17 Oct 2025 06:41:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Change Altera socfpga-ecc-manager.yaml
- maintainer
-To: niravkumarlaxmidas.rabara@altera.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, matthew.gerlach@altera.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251017032736.3206400-1-niravkumarlaxmidas.rabara@altera.com>
+Subject: Re: [PATCH v5 02/10] dt-bindings: phy: qcom,qmp-usb: Add Glymur USB
+ UNI PHY compatible
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
+ conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
+ dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+ <20251006222002.2182777-3-wesley.cheng@oss.qualcomm.com>
+ <f5e4ae02-b8fa-4406-b2e0-3602b07b7e23@kernel.org>
+ <00408896-2e25-2dd1-6e6e-2195317ee7fb@oss.qualcomm.com>
+ <14bc2a85-0f1d-3834-9b9c-32654348603a@oss.qualcomm.com>
+ <387c707e-613d-433b-a76d-16ef10dabc59@kernel.org>
+ <2a70f878-269c-1b40-2e8c-77b5851de9a1@oss.qualcomm.com>
+ <99ab26d3-eb44-401d-8a7c-1d9efd2a1a10@kernel.org>
+ <b2b68430-5127-5eca-6bd8-4af31eb9fbed@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,34 +112,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251017032736.3206400-1-niravkumarlaxmidas.rabara@altera.com>
+In-Reply-To: <b2b68430-5127-5eca-6bd8-4af31eb9fbed@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 05:27, niravkumarlaxmidas.rabara@altera.com wrote:
-> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+On 17/10/2025 02:15, Wesley Cheng wrote:
+>>> Technically its all handling the same clock branch (CXO), we have the
+>>> TCSR clkref register that allows us to gate the CXO to the USB PHY, as
+>>
+>>
+>> Ah, exactly. Then clkref is not a clock. You need rather proper clock
+>> hierarchy.
+>>
+>>> CXO is shared across several HW blocks, so it allows us to properly
+>>> powerdown the PHY even though other clients are voting for CXO on.  Then
+>>> we obviously have to remove our vote to the overall CXO, so that it can
+>>> potentially be shutdown.
+>>>
+>>> Maybe we can rename it to "clkref" for the CXO handle and
+>>> "clkref_switch" for the TCSRCC handle?
+>>
+>> Naming is better, but it is still not correct. This is not independent
+>> clock signal. It is the same clock.
+>>
 > 
-> Update Altera socfpga-ecc-manager dt bindings maintainer from
-> <matthew.gerlach@altera.com> to <niravkumarlaxmidas.rabara@altera.com>
-> as Matthew Gerlack is moving out of Altera.
-> 
-> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-> Acked-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
-> 
-> Resending the patch with complete maintainer list.
-> Link to previous patch Acked-by Matthew Gerlach
-> https://lore.kernel.org/lkml/91cd7ccb-e821-48de-8d52-f8889af80a08@altera.com/
+> Hmmm... I guess that's why I kept the same clkref tag, to denote that 
+> its the same clock, but one is a switch/gate for it.  Would you happen 
+> to have any suggestions you might have that makes it clearer for 
+> everyone to understand?
+To me it looks like:
 
+|-----|            |-----------|           |------------------|
+|clock|------------|TCSRCC gate|-----------|clkref to this dev|
+|-----|            |-----------|           |------------------|
 
-So that's a RESEND, mark your patches correctly.
+So you need proper clock controller for TCSR (TCSR Clock Controller, in
+short TCSRCC, what a surprise!) which will take input, add gate and
+produce clock for this device.
 
-It is great you stepped in to take care about this driver. This also
-means you have new responsibilities, like learning how kernel
-development process works, including how and who takes patches. Please
-learn that so you can send the patch to appropriate people, otherwise it
-probably won't be applied. For example I do not apply patches of which I
-am not aware of. I know that many maintainers follow similar rule.
+Nothing non-standard, all Qualcomm SoCs have it, every other platform
+has it in some way.
 
 
 Best regards,
