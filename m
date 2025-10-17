@@ -1,128 +1,80 @@
-Return-Path: <linux-kernel+bounces-857925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CFABE841D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:11:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15E9BE8429
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A6BB4E52E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:11:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FE6E4EA9C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D7933CEA8;
-	Fri, 17 Oct 2025 11:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FA333CEB9;
+	Fri, 17 Oct 2025 11:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lmDcMGPJ"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJbVcIe5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BC33CE8D
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DC32BE03B;
+	Fri, 17 Oct 2025 11:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760699474; cv=none; b=hbBiTvgqddMd9pVt7wVFkYWM9uiOro4wJqdIynyYSqGjfjaWUJZkrZke6YWj0IavAYTF/Dc+7ZDtvY/RwSqV0NO0UVqN99yY/C/bAP5R9Cia7aZ4vvyiYpluWaGzAY7Z9nccUmxZJYYFsc1VURx5QTJrcJiylSylsbqHan52jks=
+	t=1760699521; cv=none; b=kt/pzfsG6QEAMTY9dYoI0hqjJs9UnaKDte4dTa0bIePAVZjMW9BgGwG5RwKEsNluTqaTAiufAVTIWgw1ZFfbXIJRVJldgeAc9Z0kqNvf42rUCgcHAmhnKG2NhEqjN9gbppYE4p/1MshXsvF7HnTn0+irBGA7MoKITVWFsILzuVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760699474; c=relaxed/simple;
-	bh=MhZSD4MoKQuIdmvJLptvhaWaCOk0x2r/AtANTi0X07M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n7eK2iRc5vjCZi7ThOB2LUhjD3lyESVsNtoPIC5F9TFk4TET9Qhm+omlmyvgTXLSC/8r+EOHSBofHXGJJKEAN0o8GTuBsxc1vCFJ5GR+LxemUKXcRmQwXUA6Sr20Qeu3aU+KSW0vhAk+Emf+vwkcGq72XOKWYNepda33QV4N9UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lmDcMGPJ; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-4270848ceffso575061f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760699471; x=1761304271; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i2wzK6MiosI9/ERAVMVfGUCr8MWHBxLmt48MiuCJv8g=;
-        b=lmDcMGPJEblBIjiFQ4SqKsYaWNOqQUYi1CXR8L/6uElRcQR+9C2NOEHJv6BC8D0cqK
-         aXx7tZb6X+bMZ09gqnfhx7ZAntKRK/QLvsT/N8/kjxFAHFdZKkZ910/edYyrggU9RdIb
-         PfMUApfOYzPI6Yc/46E4H3+fvJAv4k8jpb92VVr6ioRMzVnPw4ALPzLxL1cnO3dD1v1v
-         UxAG3wBSsght6vQYY66pE+NADy0duvEQSAxsuJ9PVPf1I1ggnAvT/VLWMnpu5JcydSoo
-         +hsab8Ik7ZM0zZfqwiRbD52O+J0GFQU67s5tFnLCbCaWnIC9WhomWnmACR1NJ88YDqRW
-         7oug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760699471; x=1761304271;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i2wzK6MiosI9/ERAVMVfGUCr8MWHBxLmt48MiuCJv8g=;
-        b=VR6xrM27HMTyLRsd39EUHQIqjbX2JRHgEGYqKiwYGiqyRxloLK3c6sX4j8jkDHp4QK
-         0zUBddN5YWQCRrr4KFcUI0QomVc9U0YF8lVjks7AhyLu0V/xv6A+32/04lJZAc6PXq8P
-         w2w9Cpv4z9/blk5llGRF5kqnkIpHEAAmZfpUKyl1GX3gV5YzI+AIXOcLmj9SJj432lrM
-         kA5b/u72ui4yYwFPuQVOl9QaohnMt6FZDUwP5jyKzc63NAVARVI8PMkV1Byp0kMTXrel
-         YzCtMgEp4FT+FuteA0TvkSRKx+NpYytOkJ/+TSJUDQ4ToZ7+C8QGDPJMEGJ0bp+/VEBX
-         a0sA==
-X-Forwarded-Encrypted: i=1; AJvYcCXq6/3UJL7KpbDNTlGVq14lmYNrRhQXFytr6/SauFwxGB669JbjYZgie3W+er8/z5pgXPzqqQMIcyJZ3O0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH/Ul6iQB35+nnzSY7oPwW+4FiE3nkjkkTa3qKwNhqzTIMmZxy
-	5Ur3U1cr+ZURZgCoPT7KDpZW3QI4yzfDO6qDhJQuXKCxB/lTDcdEegHzNZQs9B8tVgoJ5iepqtR
-	PJ3tZXAMTLYb/cmDdAA==
-X-Google-Smtp-Source: AGHT+IHYFyQyj1kLDpdNGuhEdH6AEjt4MzESRGh/PCle0M85/6aN3reSFKPj5aDv/9IoZZ+HFF5idXBzSlPyeVo=
-X-Received: from wmbg27.prod.google.com ([2002:a05:600c:a41b:b0:46c:db55:f87])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2911:b0:426:ffaa:8e9c with SMTP id ffacd0b85a97d-42704d83d30mr2587924f8f.13.1760699470868;
- Fri, 17 Oct 2025 04:11:10 -0700 (PDT)
-Date: Fri, 17 Oct 2025 11:11:10 +0000
-In-Reply-To: <20251003222729.322059-2-dakr@kernel.org>
+	s=arc-20240116; t=1760699521; c=relaxed/simple;
+	bh=ncrXZRdjnegwC1tCZqNrti5BjJkwd5j1aJR1aarvJhY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=mgVSFY+yEn2oe1GNRf4xwWY1H6EDi7iFyS19Yiitl+HbSWY3zv5lcNIHlpz3Ae1gXW/cpvXQvAa7GTA5wcQJmYTtfUGtWoUteDNr4TSPk9z8fIm3DVImPdQCpogtZbWItKFRtkTYk8JcqR9unRq/zJfukxDSL0midJstoQnRs5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJbVcIe5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2330AC4CEE7;
+	Fri, 17 Oct 2025 11:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760699520;
+	bh=ncrXZRdjnegwC1tCZqNrti5BjJkwd5j1aJR1aarvJhY=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=UJbVcIe5RRfvaKFPR4sBIgBQopg4lPddzojEs5zd42r67lvTSkk/uu/0upISJ5Rwg
+	 q3Zue9DNm2UdIXZep//MaRY1/AQuAH71H9se4fWMp6K7fZfdtYvflhYn6nunJTKlCI
+	 6vcMFFFyjeve0J+edd/5iBeLvvOPXWJ7u5jnmoD2Dfnxp4Em9OGvffjsP/cnXWweQJ
+	 Bk0ODaJUcznRLiDwHFB6MHpLrQweC1B1NaHwmAiImwmahCsePDRMRN+huZMhTKMni7
+	 RY9XKr6RHe2SwXh8DfRjrFo+9wHMODl6f921RcyaZ0JPL9a1DzxZOmiUzffKfw89GZ
+	 hb6FCmIWsTuzQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-2-dakr@kernel.org>
-Message-ID: <aPIkTuGpR7VX_HoD@google.com>
-Subject: Re: [PATCH 1/7] rust: uaccess: add UserSliceReader::read_slice_partial()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 13:11:54 +0200
+Message-Id: <DDKJVYLSARXE.13S98Z9259AN4@kernel.org>
+Subject: Re: [PATCH v2 5/5] nova-core: test configuration routine.
+Cc: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+ <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+ <targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+ <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+To: "Zhi Wang" <zhiw@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251016210250.15932-1-zhiw@nvidia.com>
+ <20251016210250.15932-6-zhiw@nvidia.com>
+ <20251017075522.6f662300.zhiw@nvidia.com>
+In-Reply-To: <20251017075522.6f662300.zhiw@nvidia.com>
 
-On Sat, Oct 04, 2025 at 12:26:38AM +0200, Danilo Krummrich wrote:
-> The existing read_slice() method is a wrapper around copy_from_user()
-> and expects the user buffer to be larger than the destination buffer.
-> 
-> However, userspace may split up writes in multiple partial operations
-> providing an offset into the destination buffer and a smaller user
-> buffer.
-> 
-> In order to support this common case, provide a helper for partial
-> reads.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/uaccess.rs | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> index a8fb4764185a..1b0b57e855c9 100644
-> --- a/rust/kernel/uaccess.rs
-> +++ b/rust/kernel/uaccess.rs
-> @@ -287,6 +287,19 @@ pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
->          self.read_raw(out)
->      }
->  
-> +    /// Reads raw data from the user slice into a kernel buffer partially.
-> +    ///
-> +    /// This is the same as [`Self::read_slice`] but considers the given `offset` into `out` and
-> +    /// truncates the read to the boundaries of `self` and `out`.
-> +    ///
-> +    /// On success, returns the number of bytes read.
-> +    pub fn read_slice_partial(&mut self, out: &mut [u8], offset: usize) -> Result<usize> {
-> +        let end = offset.checked_add(self.len()).ok_or(EINVAL)?.min(out.len());
+On Fri Oct 17, 2025 at 6:55 AM CEST, Zhi Wang wrote:
+> On Thu, 16 Oct 2025 21:02:50 +0000
+> Zhi Wang <zhiw@nvidia.com> wrote:
+>
+> Hi guys:
+>
+> To avoid misunderstanding, this is just meant for folks to test, not for
+> merging. I will drop this one in the next re-spin.
 
-Should this be?
-let end = offset.checked_add(self.len()).unwrap_or(out.len()).min(out.len());
-
-> +        out.get_mut(offset..end)
-> +            .map_or(Ok(0), |dst| self.read_slice(dst).map(|()| dst.len()))
-
-So if out.len() < offset, then we return Ok(0)?
-
-Alice
+I suggest adding it to samples/rust/rust_driver_pci.rs instead. :)
 
