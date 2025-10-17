@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-858815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEA0BEBEBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF72BEBEC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0E36355547
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F4E19A75B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746F82D77F5;
-	Fri, 17 Oct 2025 22:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CC52D7DD8;
+	Fri, 17 Oct 2025 22:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoI/z3Bx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG/zH9Td"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AD1223710;
-	Fri, 17 Oct 2025 22:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF72223710;
+	Fri, 17 Oct 2025 22:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760739995; cv=none; b=cqvvt4GP+FXGt90kgT3NXkS2xvZdPt8Goeeo8ETD5cdGTWyL0d3uXi2hH0n+oqzy/JmynQPR8oKxE/rGOQhYjrwOV5vrJTIXH42+qGJFZTzvKIES8HUJx09xbHyuztHhgL3/sxBNDVSe/vZqltT0F4Aw80p2um33Yc8WDC0YzJg=
+	t=1760740054; cv=none; b=XEIHHhJ3Dnr9PLLd1krWQdq3b037SP/VMcoSrmxjSnKI7FUZFIQ3DzS0PuxeP/3HlglALkaV4cNXFQePSHEQM4x/DldQ9X3tUuV1zM6N2c6+bPwqDj1PUGvD4RU8+GxKtCLN5xzjYB4WPQQL/8x61QveVP0h2HRk2obov2+Nuxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760739995; c=relaxed/simple;
-	bh=gIU73v5rOdsZO3fUZRbgPFMdeQuP2GhMZkte/VOxXjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkataiOmOsDbMaYFBRnUkEvfZ7MlQBq5uVn0jukujS1qt6NqqE/fmfYFwPbI6qOddtDdN7gasSD9eSnGXtUuxXg10N1jVjs7RKsNeupXIX7YPeL2c+RvigvdE0TSbTuFWBmbGfDBPmm4tqxaqvI7PUEKvLuoJ82rdG1nRcfMW4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoI/z3Bx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DF6C4CEE7;
-	Fri, 17 Oct 2025 22:26:35 +0000 (UTC)
+	s=arc-20240116; t=1760740054; c=relaxed/simple;
+	bh=p0l4lq0bjml/HIPy65VCiSl+37cdkkZIB4pXwea07Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JOMxfEM+RFTs4lVaXhscCKEKRSObiiWH8KIkIDgXhnVWItFAvtRdKtbWqrWIvXbCIlymBlkipQSt0XlgjbI7Ggy8WQKwwV74LFY1bszSol3MMOxWsv7ItpxqrJuBSXriUKLJhLQ16EAuFmOpW1UlMwXjVKYOVkq23cCvQTzf9GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG/zH9Td; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD7FC4CEE7;
+	Fri, 17 Oct 2025 22:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760739995;
-	bh=gIU73v5rOdsZO3fUZRbgPFMdeQuP2GhMZkte/VOxXjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UoI/z3BxlTF/aZmtNbmfn/Pp5XeGqGLXAsIV4c3ScQCTX2ApkdcQSJ3i2OKTQrwMN
-	 EUUBmBniqDf8JDkVuG/DaVpqy2VKLsg+O3lEaNEhwHcuqFSO9UMvlzVg4NJ8YMYga2
-	 8VSFBLvWqboHGiIFVPM2FJ9WJ+RzRqTW7bhJ3y7KFeaN1rBH2snL/X2M2O+TfVYR4F
-	 bSWPRChxdsD+SCYCgz5I0vUnsxlrcarqK91MnXUVt/9lMF38IqdqxnPhIYEFJokq6J
-	 +BcHIIqwIQPD2D1POuA5KOPPCQy3Azr2mbuO6sIJ6vYSuIZrWUsxbYcpHNCTT3uojK
-	 FgKzntPQ7757w==
-Date: Fri, 17 Oct 2025 22:26:33 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, arnd@arndb.de,
-	mrathor@linux.microsoft.com, skinsburskii@linux.microsoft.com
-Subject: Re: [PATCH v2] mshv: Fix deposit memory in MSHV_ROOT_HVCALL
-Message-ID: <20251017222633.GA632885@liuwe-devbox-debian-v2.local>
-References: <1760727497-21158-1-git-send-email-nunodasneves@linux.microsoft.com>
- <20251017220655.GA614927@liuwe-devbox-debian-v2.local>
+	s=k20201202; t=1760740053;
+	bh=p0l4lq0bjml/HIPy65VCiSl+37cdkkZIB4pXwea07Ik=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jG/zH9TdQnrlPxC/KU/+AzRE9NScNHjasLFcx5E0L4RN5V+3uPohg4OPawlCF2++R
+	 6rWVkQZHtpT8lNB5wnbDRZPSEe4br2Av03TNE9XBvWd4D2YDK2uQl5YVue0ZjbzGqb
+	 76G1pV8CozbfZHWWYXhx62nW1sfqBBxn85NXrPtLDXX9BpE52Bj4gaHPU/ZDpPyLqF
+	 qH/Ccqg0yHwOMoDDWyHvA+iZ8lVCVIDw/hM6gql5EUg3jq8fXqAhzMmmRFrU3WtVn9
+	 NKKnDAf/iwqKeWDc0uFqH24YKRPjjVlJI84aiM6RrcBIHfHGoeBd1UJDUGwyLKnbET
+	 nWXMnnP9zzabQ==
+Date: Fri, 17 Oct 2025 15:27:31 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <ahmed.zaki@intel.com>, <aleksander.lobakin@intel.com>,
+ <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+ <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <pabeni@redhat.com>, <samsun1006219@gmail.com>,
+ <sdf@fomichev.me>, <syzkaller-bugs@googlegroups.com>,
+ <syzkaller@googlegroups.com>
+Subject: Re: [PATCH V2] usbnet: Prevents free active kevent
+Message-ID: <20251017152731.4bb7f1f9@kernel.org>
+In-Reply-To: <20251017090541.3705538-1-lizhi.xu@windriver.com>
+References: <20251017084918.3637324-1-lizhi.xu@windriver.com>
+	<20251017090541.3705538-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017220655.GA614927@liuwe-devbox-debian-v2.local>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 10:06:55PM +0000, Wei Liu wrote:
-> On Fri, Oct 17, 2025 at 11:58:17AM -0700, Nuno Das Neves wrote:
-> > When the MSHV_ROOT_HVCALL ioctl is executing a hypercall, and gets
-> > HV_STATUS_INSUFFICIENT_MEMORY, it deposits memory and then returns
-> > -EAGAIN to userspace. The expectation is that the VMM will retry.
-> > 
-> > However, some VMM code in the wild doesn't do this and simply fails.
-> > Rather than force the VMM to retry, change the ioctl to deposit
-> > memory on demand and immediately retry the hypercall as is done with
-> > all the other hypercall helper functions.
-> > 
-> > In addition to making the ioctl easier to use, removing the need for
-> > multiple syscalls improves performance.
-> > 
-> > There is a complication: unlike the other hypercall helper functions,
-> > in MSHV_ROOT_HVCALL the input is opaque to the kernel. This is
-> > problematic for rep hypercalls, because the next part of the input
-> > list can't be copied on each loop after depositing pages (this was
-> > the original reason for returning -EAGAIN in this case).
-> > 
-> > Introduce hv_do_rep_hypercall_ex(), which adds a 'rep_start'
-> > parameter. This solves the issue, allowing the deposit loop in
-> > MSHV_ROOT_HVCALL to restart a rep hypercall after depositing pages
-> > partway through.
-> > 
-> > Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+On Fri, 17 Oct 2025 17:05:41 +0800 Lizhi Xu wrote:
+> The root cause of this issue are:
+> 1. When probing the usbnet device, executing usbnet_link_change(dev, 0, 0);
+> put the kevent work in global workqueue. However, the kevent has not yet
+> been scheduled when the usbnet device is unregistered. Therefore, executing
+> free_netdev() results in the "free active object (kevent)" error reported
+> here.
 > 
-> In v1 you said you will add a "Fixes" tag. Where is it?
+> 2. Another factor is that when calling usbnet_disconnect()->unregister_netdev(),
+> if the usbnet device is up, ndo_stop() is executed to cancel the kevent.
+> However, because the device is not up, ndo_stop() is not executed.
+> 
+> The solution to this problem is to cancel the kevent before executing
+> free_netdev(), which also deletes the delay timer.
 
-I added this:
-
-Fixes: 621191d709b1 ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
-
-Let me know if that's not correct.
-
-Wei
+Please add a fixes tag, and repost.
+Please don't send new versions in reply to previous / existing threads.
+Please read at least the tl;dr of:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+-- 
+pw-bot: cr
 
