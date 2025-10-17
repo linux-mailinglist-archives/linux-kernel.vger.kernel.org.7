@@ -1,76 +1,88 @@
-Return-Path: <linux-kernel+bounces-858030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE30BE89EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:42:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA08BE89F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B681AA0721
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520B85E21BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9DD32ABD9;
-	Fri, 17 Oct 2025 12:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B1D32ABE8;
+	Fri, 17 Oct 2025 12:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="W/2CuL+h"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwAnounj"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592432DC328;
-	Fri, 17 Oct 2025 12:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CC72DC328
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760704950; cv=none; b=VxhzRjHI6Ta+zb/va30/ss7ID8GYAfd45nxjzpk/5YBojNlbdcLsdhc+kd+1iMEAb7Eugnxr52UqDUsgAIMeUWL9bsQcgNl4Erx0XpvIfb0mRLYYSsX2D7PfaW0e1mH2SaAu6tIMTXLaKCp985NELEj8YrQliYFL11LBaAtz9Rs=
+	t=1760704955; cv=none; b=MiuN8YKItjD2cTPFW3ezp0WAntH7nA1gMShTrCWIPLwyvMRv94U5rDybveLpQj7UDlxQslRP2EJvlAeRXkxL0rhPLdh5uBV5HFD6+iFdJBQOMMYYA9CC/ETgi+sl2yEsvOZm3D4McqzvKQP/doRo+Yc0WZRfpo9BpbusnS53Ids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760704950; c=relaxed/simple;
-	bh=TNbJPunpNwSCjOy6mxPDMjZw0tWIv7D9t4z0kM4Ese8=;
+	s=arc-20240116; t=1760704955; c=relaxed/simple;
+	bh=POU5j+tvDqO8/nO9ZiDq3h6zTPVpd+d9v/uR7WHAxWs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rIaMqGKwyM32x+/U9lUYrSNmd2xqTl2SX9+KRIx1V128feg3YEoNvhyL/oqzF8nZ4i/8ezcWuwBa656rI1y4AxpReXnNVwNG5dHiFVafNvgyX4x7F/Bpk73IIgVl4pGBmdV/HGTxVIgY5yMmFYdXB8YGwuiW7DWziXdF+CiyzJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=W/2CuL+h; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IGyYcC+d3YKTIer3CKrB01eeg5KvZEEyEjcSchgym/I=; b=W/2CuL+hGNToi9Z5Ya9VSH3ZG5
-	WXVDOEvDRj1FSTKN61nZaKm5ZqpQcULX9Rlh5dVV1ggi4dYw4MJWDeoC777XmSJTFF599UZfuatXs
-	M7bv9lYTfOo3uU+7M0R3YywZwdYEixlTiwaN080t7d22vLUv+nIk9uLoeiv0OIPbFnFVFMgdJDNOl
-	/3QSlONY2oqkPNc63j4RAvUFifA2YC/Ey0yBO4X5NksD4hgiFDRXO7gnQb7becUfjqtEduVUI8JhG
-	rfwNt9ohYZxv/MEpKWS36L2TfV4KLZlYSUsEZzea4G55cBQW5tD+kqSq8F4vHiLXBCEn32jx1OZgd
-	U+bUqVqA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43812)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v9jmi-000000007sy-3bmI;
-	Fri, 17 Oct 2025 13:42:16 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v9jme-000000004Jn-4AHz;
-	Fri, 17 Oct 2025 13:42:13 +0100
-Date: Fri, 17 Oct 2025 13:42:12 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: rohan.g.thomas@altera.com
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Rohan G Thomas <rohan.g.thomas@intel.com>,
-	Boon Khai Ng <boon.khai.ng@altera.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3 1/3] net: stmmac: vlan: Disable 802.1AD tag
- insertion offload
-Message-ID: <aPI5pBXnh5X7OXtG@shell.armlinux.org.uk>
-References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
- <20251017-qbv-fixes-v3-1-d3a42e32646a@altera.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mVLp+bqADFNtbjsYepSbGxAkgjRUXiqKCATI8ZSpFqaxxWrOvpWsjfYx6lIYCHsBfqQpX6Z0SRb0Fe5jM+UPkGLoWBd3skQjbFjFh6e63/5rYynqXcjuDtmSwmNsaIXC9zCZK6QCpeacDAw6NTdMc1TTfQ+M4iD697D1a7apXcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwAnounj; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a213c3c3f5so2586375b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760704953; x=1761309753; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lgf/jis+kn3VwQ0hzMf+yQz2Z7yEVW6ZUVMe2PEq2tA=;
+        b=LwAnounjX9q4ZMAwqGZDDiZn7UPHg3zS+vmxVciNMPdxZLjcS7wiEm6EU8x5LP1RzD
+         s4f8FgYuD/9RnNLjNzJ9bUdqe8PKg0XqLgBGkWbFiKJMItXJYMZ0x7LVKwoNg1YnG9+k
+         UiAyuv8UL8PVu56ZLjNzXb8df9XP3Z33NGU452iCqUxyXPjCXXpPr6t22qTEPSh10MYs
+         xoNQcYgtkaWGD6wEhx77fcQbzfK7xtnfC46rDp6Ijo5t+4HciYLwYgF91y8KGn95Fpmr
+         cgg3VbRLRD6dhk5Ze35eSmobaJTkCf9RkV88xSsattJUCUuuLw+eOgsSkC60RpbeJL66
+         0XpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760704953; x=1761309753;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lgf/jis+kn3VwQ0hzMf+yQz2Z7yEVW6ZUVMe2PEq2tA=;
+        b=Ybd5HOUp2cUYTr4spTIqQChzWPCB0bnaxtbNprw7w6n6ayxcsTDP2MCMqX3klC7dzX
+         WfqaoqIUZ7h7auemnqOOAj8PYZvPMs6k3nZHFD8fNnZocRbd3cfHK8z6OSrS0czCHsqz
+         U+tCP/8E4KHAII81iG6L2JSyYupCNSWPCdUG3YalDImFTpl/tdM5zKUsEAKrGF1mIxVE
+         azmlQdDx3CYp8xrXW/fH9tl7VMt3EtfLprIIX6Ag5GrmVY3wH0r8VxzKWYNj2bsypZpO
+         ReXFW0hoPU6bSd1EKIhlCn4kFkqqIBCiqGXEzVbc0mu/JhF6YnPLWb8+E4wbxRmU3DhO
+         xamA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLldv9nY905CgG5s8NV7A4ASrnedV+TOTU43zH53Ng+QSm71E68CZvKRNvjXwfZQ9WYmvs2X7uTzn9ba8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKclX6KYyO/NJbhw2c5s9t9VIff1+wh2YNcNTQ13v4w4eOIaEr
+	FZPWVdKbmXynxfqD7rAskCLkaMHo100hEsgyzzOdRzxuY5KZsjq4gmMR
+X-Gm-Gg: ASbGncvWW8pG2QJqNF1nGd5SlHn8exuwqDYs+0ACL9KfmktzYvHG0ofccRnTovWWgPE
+	jRtjamKhnAjdA/1zfePe5hHU+n0g0VhnGxvDL7kurymSCIYbeAutRsvBk55xl8WHy9XeeoCljwz
+	eoNWWd0t+UN9CWzgt0XzyZ+k0mC3g9H7ANNvBh9cRBXUCKkxAM44imlkDPc3wj4KGBeNmiFwUFc
+	HBSApbJPmRbsKZOkgMi8QeRyK5GhA5JIysJlw6yByjeJ62+CBhIH5/b1SmNMTQoSDyrtEkra87O
+	zKBH6T99NLL1J30Ce6kcomu/JxmHZOgbqGO7azi/ZJi0vf3AT/CBLe4fZi5xM/jlT4fSDvGybyp
+	H+vcz/9t/hN20i7F0TucTJwkuJ53+Bz0Gcihubpjghu/XxZ7hCBJ6DveXB2kPPaza2sWALO9V6Y
+	yyD5ki/3AScAdGL8wGlMZ/J9M=
+X-Google-Smtp-Source: AGHT+IFqIQl4xcuNro/f+18JqdeaKcp7B+ZvBEPtCwyqAzWqU1DOxii4XUib0aXOYR697MrcKnLO8Q==
+X-Received: by 2002:a05:6a00:1a87:b0:781:2401:74f5 with SMTP id d2e1a72fcca58-7a220d56e59mr4076476b3a.29.1760704953019;
+        Fri, 17 Oct 2025 05:42:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d5b8672sm25561467b3a.69.2025.10.17.05.42.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 05:42:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 17 Oct 2025 05:42:30 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Li Qiang <liqiang01@kylinos.cn>
+Cc: thomas.richard@bootlin.com, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: cgbc-hwmon: Add missing NULL check after
+ devm_kzalloc()
+Message-ID: <fd8d7d4c-adcf-4703-9804-09a35aefc24f@roeck-us.net>
+References: <20251017063414.1557447-1-liqiang01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,30 +91,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017-qbv-fixes-v3-1-d3a42e32646a@altera.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20251017063414.1557447-1-liqiang01@kylinos.cn>
 
-On Fri, Oct 17, 2025 at 02:11:19PM +0800, Rohan G Thomas via B4 Relay wrote:
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 650d75b73e0b0ecd02d35dd5d6a8742d45188c47..dedaaef3208bfadc105961029f79d0d26c3289d8 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4089,18 +4089,11 @@ static int stmmac_release(struct net_device *dev)
->  static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
->  			       struct stmmac_tx_queue *tx_q)
->  {
-> -	u16 tag = 0x0, inner_tag = 0x0;
-> -	u32 inner_type = 0x0;
-> +	u16 tag = 0x0;
->  	struct dma_desc *p;
+On Fri, Oct 17, 2025 at 02:34:14PM +0800, Li Qiang wrote:
+> The driver allocates memory for sensor data using devm_kzalloc(), but
+> did not check if the allocation succeeded. In case of memory allocation
+> failure, dereferencing the NULL pointer would lead to a kernel crash.
+> 
+> Add a NULL pointer check and return -ENOMEM to handle allocation failure
+> properly.
+> 
+> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+> Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
 
-#include <stdnetdevcodeformat.h> - Please maintain reverse christmas-
-tree order.
+Applied.
 
-I haven't yet referred to the databook, so there may be more comments
-coming next week.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Guenter
 
