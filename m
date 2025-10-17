@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-858751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48910BEBB89
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73866BEBB9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AB214E0409
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8ED58126F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422B1354AC9;
-	Fri, 17 Oct 2025 20:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2670C248F4E;
+	Fri, 17 Oct 2025 20:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="rQr+QPgb"
-Received: from mail-10698.protonmail.ch (mail-10698.protonmail.ch [79.135.106.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SnIFHLZZ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2951643B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC97253F1A
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760734093; cv=none; b=dRIn1YTukYKHInAarE/5parKXKpz/kCsbsmkPvHIW03m/K/o3gJd3ptx76cDcxvX14qC8GVgu+WhAe2WspzLHEFNo/JkTots4lN0utMpuJWjkkjZKP4JRBspD8H9Kz/X845Jf/55DOzjWZ+ONVsgSN46+3AC5Uu42kqWsCSIpV8=
+	t=1760734117; cv=none; b=KEjriA/QYQbiPTu3/hcDbRdpDWkxSxc6NnyOW8A2T2tlB6R94Kp4U8ExL83Pi5+MR/siQ2f1GemoV1lGilpIW3Fc9Q5xyy4cAqhugY+O8SAasDgk6Of0eRdQFMEH3NKohbeMHHgZSfl8x1vPJwzMuVKt9bQcHH2N9KprbmvO/1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760734093; c=relaxed/simple;
-	bh=hE5BNME5jjYzsuDXGKZnAOa4a3nDpryR7EZ1q7Ng32s=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jRTWGQ08a/J+DPoKQpOYzrj3xlBiSWhxXML0D51UOnPd3vxVzP5BF0nc6MTU1J8l3Sob6opbRSJQi2M8VDHD1LHEK5M0TmUH2bpkB+DyJh28X2wO98qR+SAo+E9W1gEsRZ2b7/h01OJ0o85giD6uyiTu4mQCrgT0E44366tv034=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=rQr+QPgb; arc=none smtp.client-ip=79.135.106.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1760734083; x=1760993283;
-	bh=hE5BNME5jjYzsuDXGKZnAOa4a3nDpryR7EZ1q7Ng32s=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=rQr+QPgb8R4zaSd0b22Ij2dxFop8j12xIzmdJV1E4EhZHR7gjxCfVJehFnxROn4Mv
-	 10FcjiCvilyZwa0b4DHjMffTr/E1+QO7NCDPeR9zwf9eX+bbquqHjjhCu+ZEcrqSla
-	 Enjz+3QNZSHrrNVxY6udFFp/3XXRYqqy3Jd5JpSjBOhG44o11BJtglqmeCKzTlDc7L
-	 nKKnzoAH4OQ1gdUEJF0Q98rLl59deYosx/pthrI12JiLnF69SyLlDLHp2yfKw8WgKs
-	 1DwfAxSSV9IkV1vawgWOTNjjBmj+qi2qpQV8iw5G2j2EqjD22JaEK/0ToMYjEcqfVB
-	 yEYBuqz20X1FQ==
-Date: Fri, 17 Oct 2025 20:47:58 +0000
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: =?utf-8?Q?Na=C3=BCm_Jumpertz?= <n.jumpertz@protonmail.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Oppo/Oneplus phones and usb3.0 incompatibility
-Message-ID: <YhXrCm5ig-YWPY2OVkmdPl48N1Td6K8qJJ5cW7OtIMQt9ENXrexATCgeXCmuG5Mq1wIDxyhaLZhZeuW15lgKhKEKKLfU3GwjMMhKP1Awyj4=@protonmail.com>
-Feedback-ID: 107994687:user:proton
-X-Pm-Message-ID: ee0bc6c042fc5f5b12019010a0ddd5d060ce24a9
+	s=arc-20240116; t=1760734117; c=relaxed/simple;
+	bh=oQ/gGtYvav+gWWdoIlX8Zb6LNC9cOW2UkrE8R2Ydnos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tEv++JUYPS7pnAdpcby6pWdgmTQ1z2W/OZNPK1zyq9liVbFexGUk55PuN0ja/u0nVskUIxaYWZrO6kgbipvJMOeL08xzxtLf2eEk7530vDk8+2LMPbUz11KVcunHxryMxkngxidVBnRGZMpa1iA7owJ4Po9zw7QB8J7vBLELBOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SnIFHLZZ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47117e75258so10857685e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760734114; x=1761338914; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQ/gGtYvav+gWWdoIlX8Zb6LNC9cOW2UkrE8R2Ydnos=;
+        b=SnIFHLZZs7YhF2m0vcAe6oe2xSQE7X5HerxWIZHUhyYeXUfr/vpSeIuV2rCIv4Ej1Y
+         ZvCk1M9UfrxvmkrBhjvhTfzrpcEjQ5i31aiY1TEDK9+gw7ES+bcHEB9K4Qv2ZL8lFwau
+         w2onrMDpEfDdqPAmxo0vDNbqdxfCYANz0jtb22JO+be/pGGXtDJbiEhV/qr66XMN/Xi3
+         qaVkTy6tgfAXQs1ioibH64ugtYfJtBOZPzPUTpkcUIpSrZjsL7yvUQDdeHjCTLlv+kp1
+         0TghXFfBor0vE/LkNvPq1EqIl92DvkMBSS8QuROhu/tsu/pJEJFPAn4nSNSLPd9Ffx5z
+         06og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760734114; x=1761338914;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oQ/gGtYvav+gWWdoIlX8Zb6LNC9cOW2UkrE8R2Ydnos=;
+        b=r1Mh7yDuubJCB1sLphoAp+KvA51W5nrqXzLnKXuzMoaQLclKRNt9fIkyl8cqYxRFHf
+         z5St4m9XzJ9vWh69S1hJIcqKwoJPY4VGEIrSX3nmUMwx3zAphos0pWctPhzrJ2iE3nI3
+         hSg7+iezLWk+dJEDsaegjWTYymdp3papWudocn4PuVzsIBnrSMqVkKtXj8g/Pkalok41
+         saGIgH+IEfHJgRJkyEoMK4EEAUdtNFPWWJp7a9eGKWuGeWQfkH0TsIRDKMflf+ehUx9q
+         Ik6pKJSD8mVlmp7S1I1sre7U2VWX2pLT5z6oVke1MVDu3if+JOnDlI8gxWmgTEP6HCw+
+         hK1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURVa5AA5YYqXjJPi5nu87XG+7kPEa4ljZqXzc7xAVSSYHD7k13YVZP0y/2r/Ee2wiqauIg0aBLI+JzFR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxApCpNp1vvX3TQJLnGs102o1ayKjA+i12mEWJct8MP+hZx83z9
+	AWmxgJ/vrqnQez7GOPC8cvFz105R8rk09neQZmijky939PU2iA9t7r82Kj4sCyr0ilzMdFi7Hwt
+	HhQ8qJLDM39ZKP1aQ5kWkMWzuh+17Lu8b38iY2yiV2iMqjOybZE1gQw==
+X-Gm-Gg: ASbGncvhqvVVLZIWFi6304q8ePxqDM5L4Wn/sSIk9zmOkLIj/GlCBg1f6j9vM70nMGb
+	t7Hf2wzokGS5+rOnq7IMt/3HYBQxBx5NamRUg4qc9wx07ocFby0n6EH3Yw566zkzYwEUOHPYW4I
+	IhRSA8bNpEeG6HKl9/53gSNa+Sg0B9qjvyv3m1uWXJAYTPRMvu4VvMKKcDEN6t1LvqU27RD4Xin
+	9Atki0GiwnwNnb0Ox3TfmOJgTHN/uLO/7E1QFuyPycdYNRzHMPS0D0IASydGS28WGdffS4+3XdI
+	ndd3mOmIX9Rz25cvsEjf7SM=
+X-Google-Smtp-Source: AGHT+IHAavia4dajmjd1wu0ozenk/EgHnS13fnhiNCGOo15GBQoO3qzrk0f46KUvjIzbKPhJBuIwwZghoR1ZvbV+ZV8=
+X-Received: by 2002:a05:600c:681b:b0:46e:4921:9443 with SMTP id
+ 5b1f17b1804b1-4711792a6bemr42023365e9.37.1760734113965; Fri, 17 Oct 2025
+ 13:48:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251017000051.2094101-1-jthies@google.com> <abd715e2-6edd-4f35-a308-d2ee9a5ca334@panix.com>
+In-Reply-To: <abd715e2-6edd-4f35-a308-d2ee9a5ca334@panix.com>
+From: Jameson Thies <jthies@google.com>
+Date: Fri, 17 Oct 2025 13:48:21 -0700
+X-Gm-Features: AS18NWBOVLDYxDh3NOr1aYj7ImsXftnVZMr0nHmHk5U7INnmD_I0toUf4vs0lBc
+Message-ID: <CAMFSARdUMJ3WX1L8U-2k1w7kmH8Z4y7=MKKEBjCmyY-94wiBig@mail.gmail.com>
+Subject: Re: [PATCH] usb: typec: ucsi: psy: Set max current to zero when disconnected
+To: Kenneth Crudup <kenny@panix.com>
+Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, 
+	bleung@chromium.org, gregkh@linuxfoundation.org, akuchynski@chromium.org, 
+	abhishekpandit@chromium.org, sebastian.reichel@collabora.com, 
+	linux-pm@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+> Rule: add the tag "Cc: stable@vger.kernel.org" in the sign-off area to have the patch automatically included in the stable tree.
+> Subject: [PATCH] usb: typec: ucsi: psy: Set max current to zero when disconnected
+> Link: https://lore.kernel.org/stable/20251017000051.2094101-1-jthies%40google.com
 
-Because of wrong device descriptor, certain oppo/oneplus phones,=20
-like my oppo find x5, can't connect to linux computers using usb3 cables,
-the issue is also on other oppo/oneplus phones such as oneplus 9 pro,=20
-starting from OxygenOs 13 in december 2022=20
-link: https://xdaforums.com/t/connection-problems-to-a-computer-with-linux.=
-4642402/
-The issue is present in kernel 6.17 but also in older versions.
-The connection correctly works using an usb2 cable.
+My mistake, I'll send up a v2 adding the appropriate CCs.
 
-The phone is detected as a USB SuperSpeed device but the device descriptor =
-flag given is USB 2.0,
-so, according to dmesg, the kernel warm reset the phone and don't manage to=
- establishes the connection, which is annoying:
+> I wonder if this is the reason my (Kubuntu 25.04, FWIW) system will
+> sometimes show the battery icon as "Charging" even when it's discharging
+> (or nothing is plugged into either USB-C port)?
 
-[ 3537.701845] usb 2-2: new SuperSpeed USB device number 4 using xhci_hcd
-[ 3537.722594] usb 2-2: got a wrong device descriptor, warm reset device
-[ 3538.105960] usb 2-2: new SuperSpeed USB device number 5 using xhci_hcd
-[ 3538.126933] usb 2-2: got a wrong device descriptor, warm reset device
-[ 3538.313826] usb usb2-port2: attempt power cycle
-[ 3539.241985] usb 2-2: new SuperSpeed USB device number 6 using xhci_hcd
-[ 3539.262410] usb 2-2: got a wrong device descriptor, warm reset device
-[ 3539.646017] usb 2-2: new SuperSpeed USB device number 7 using xhci_hcd
-[ 3539.666993] usb 2-2: got a wrong device descriptor, warm reset device
-[ 3539.853713] usb usb2-port2: unable to enumerate USB device
-
-The issue is due to oppo phones not being conformant to usb standard.
-Maybe the kernel should still establish the connection if warm resets fail,=
- by counting fails or something,
-otherwise oppo phones will never manage to connect through usb3.0 cables, u=
-ntil oppo fixes it.
-
-I'm not a dev, so my solution was just to disable the feature:
----
- drivers/usb/core/hub.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 256fe8c86828..be28296b39de 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -5186,20 +5186,6 @@ hub_port_init(struct usb_hub *hub, struct usb_device=
- *udev, int port1,
- =09=09*dev_descr =3D *descr;
- =09kfree(descr);
-=20
--=09/*
--=09 * Some superspeed devices have finished the link training process
--=09 * and attached to a superspeed hub port, but the device descriptor
--=09 * got from those devices show they aren't superspeed devices. Warm
--=09 * reset the port attached by the devices can fix them.
--=09 */
--=09if ((udev->speed >=3D USB_SPEED_SUPER) &&
--=09=09=09(le16_to_cpu(udev->descriptor.bcdUSB) < 0x0300)) {
--=09=09dev_err(&udev->dev, "got a wrong device descriptor, warm reset devic=
-e\n");
--=09=09hub_port_reset(hub, port1, udev, HUB_BH_RESET_TIME, true);
--=09=09retval =3D -EINVAL;
--=09=09goto fail;
--=09}
--
- =09usb_detect_quirks(udev);
-=20
- =09if (le16_to_cpu(udev->descriptor.bcdUSB) >=3D 0x0201) {
---=20
-2.51.0
-
-
+The update to set max current to 0.1A for BC and default USB operation
+landed only a couple months ago. If the battery icon issue is a recent
+regression, it's definitely possible.
 
