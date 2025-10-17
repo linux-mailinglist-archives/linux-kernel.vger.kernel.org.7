@@ -1,194 +1,98 @@
-Return-Path: <linux-kernel+bounces-858799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19AABEBDEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:57:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07736BEBE06
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F7519A4347
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:57:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0DFA4E5382
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCFF330B3A;
-	Fri, 17 Oct 2025 21:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520142E6CA8;
+	Fri, 17 Oct 2025 21:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HlWhebB9"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4222D63F2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Gf1kCdOI"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA572D97B9;
+	Fri, 17 Oct 2025 21:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760738222; cv=none; b=m/lc5Fia5pPUSskRsfF7ybT8Pv3ZZQ/x4+gntEcEEuYCEnGrc4+pstmioHDBsaeSOxXxTdxDh8+fP4nppeKODo8U1VDUmdQpNyeYM1nl/f2p3fjgPNit4QEuNaafdRfTTQG3hRZjenMk0N8hmPGL7c4+vXIvEkATZkhtkEeY3ZE=
+	t=1760738311; cv=none; b=uyEw9rATNiIYgEHgwKDlQCbU8cRK0+OnFwNPHGIXfefeatALb30XbcGh0ehdVHejnIru+XHzY3ET00pJLiUOrP7+uKz9BCLFyTiSxp1dHYxCv0Cz2gMBDeZFrUNnHfvt9hYjWuQsst92USvPg8K4r2EOkBG+aSVgChnQTXKjuZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760738222; c=relaxed/simple;
-	bh=4daT32qE+1S0C9usnIwJKvKUX0uxiLOyRkF3CT/5mtE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SPYQwa1Gx78bTrz920QVwEUBkBcP/5o0kt639CDsUmYlkDoqnFfYzi+EofpGfWq+Z69MkGuvYb+9R3Zm2Rzw0ZyRk+NZ+x5ji4epeX4cBWgbGkQAMDOK4wYl3Xw5ObEHP3+HBOtZCqPX/9NR0/x7p9mB1UBXW+nf1+eqa71ldQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HlWhebB9; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3324538ceb0so4227490a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760738220; x=1761343020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MvqjTwkA+9MGUzD3s5qogag6sVzTQL35wEzEARE3CmU=;
-        b=HlWhebB9CvqjFRZvDGGQPnJANd3C69q4aRK0LTMqhICyHuLb/zVQC3Z85/lPld0Fx3
-         C+1zkhG+Qqe6cDUr4bbbzN/bueOostxKlHTfyk6ctVJrIhs/VB1jGyZTlHGNbjs8Lwjg
-         ryfjcZizaICHLikIsEkGIfKgyVZdkiuj0K6y/UT7giJnHOKFmkKHqlwkHe/8LGWk1JL5
-         cPATLXg73ZODdvrRWWKBc/dMWIV4hlAO0pDFmOUpFaloIZTuNmqsfL9uExxUEXSUsVWU
-         B0GxwHxYf+PRzJyX2PrjGeAFfxWehE/nmf6PnddPRJr6bLcfia50HLiOicpcRyfCVbkm
-         ZTeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760738220; x=1761343020;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MvqjTwkA+9MGUzD3s5qogag6sVzTQL35wEzEARE3CmU=;
-        b=tHJKXHrcXPeh2+wSS60bYwwxgQ0McWKmIjO4tRI525NuTdk5IoXiptEZ22ToVjHFDf
-         DxAOt5t6swH/XTQKZeSu+OhitpRkWWkdFoWPuIj0U95hu3O8PPPUq0rqMNKXKjOj/UnB
-         FNsXJpuJzTM6ELhXsfVGAISPg5nLczchfsDRirF5KvCEcOt5+qVUWaV39DzQvUDKHlE4
-         M/6tyawlshdt7i8z2+W0O+YjWAjYxSfa0CHZBYyoR+fxTfowIYNGlhl68LjyM6a2tpX/
-         v4Hx48nL8Q7u6bsTiSTF3uL7rYC+6zBFQwxymo/przuB+nW9C36SuzxzgJRUv/zMcNyD
-         uZLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW+8+3mcPZ3nT9EsHP/gXT1qdApAENUJVDJNnz0Kz9LNw/HDwwWXpiT+oycz7uOghs7boTjhPx+MyvN78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG4HbQ1zIZVWm5CF/9GVverAgsJqdHAN0jPHNUNn/4dGabbQzm
-	bR4ZFcEwUxpu2jb4MILJqOVGVQIimowCOsvc/7yKlEo9Iwx1lIAjC5mplx4yHaZ5i0x45TMCa0e
-	suV7JmA==
-X-Google-Smtp-Source: AGHT+IEeqQkjGCUvHwE3Zbz/x+1DGgWs82bZUkFVrP+dus815wDSUbemt2s4DNQEDSZu5MKLsihmgTuZoik=
-X-Received: from pjbse5.prod.google.com ([2002:a17:90b:5185:b0:33b:51fe:1a88])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f10:b0:31e:cc6b:320f
- with SMTP id 98e67ed59e1d1-33bcf84d70fmr6219197a91.5.1760738219874; Fri, 17
- Oct 2025 14:56:59 -0700 (PDT)
-Date: Fri, 17 Oct 2025 14:56:58 -0700
-In-Reply-To: <CALMp9eQ3Ff4pYJgwcyzq-Ttw=Se6f+Q3VK06ROg5FCJe+=kAhg@mail.gmail.com>
+	s=arc-20240116; t=1760738311; c=relaxed/simple;
+	bh=haJvKve6BaJY+bsjN3+KJCpLmZ68RIK1Ud7VhoQz9Pc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=HP2wZcbmuMzhCC0wMZYsFBTfXKfc6qg10p3gheg5mRZqLYM/laoudqk9cS8VpgeIkWG85iMoAK2QY5CVJvBT1NaEpBSWnIcBoO1rBK2Z11sNFZ+zMtGzLprp3/RPV81dTMAn4tmzCIzOwaclFwTFq60ExQno3s3TqZh5dV+QF7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Gf1kCdOI; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+	id 0394A2017275; Fri, 17 Oct 2025 14:58:30 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0394A2017275
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760738310;
+	bh=SfToauKBlwiwuWfObFCUGjtNlLtxMPKEwMNX5NsqqcU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Gf1kCdOIDmEr2p0UjEx0xaPZa/FAcJq1LoVMoENBeEwc8bz5scnMpUrTwPHUdPTK8
+	 scS5amCY3kihFwvsnqKv9Ymc02rQnwhqlM4BcjtY6npDnHatfWTuiOm7AmspfN32yu
+	 3YzDKVVKq80uDtEQsXoATuAHTDhUDFb8J3GvO2c8=
+From: longli@linux.microsoft.com
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH] Hyper-V: add myself as maintainer
+Date: Fri, 17 Oct 2025 14:58:14 -0700
+Message-Id: <1760738294-32142-1-git-send-email-longli@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251009223153.3344555-1-jmattson@google.com> <20251009223153.3344555-3-jmattson@google.com>
- <aO1-IV-R6XX7RIlv@google.com> <CALMp9eRQZuDy8-H3b8tbdZVQSznUK9=yhuBV9vBFAQz3UP+iRg@mail.gmail.com>
- <aO6-CbTRPp1ZNIWq@google.com> <CALMp9eRJaO9z=u5y0e+D44_U_FH1ye2s+cHNHmtERxEe+k2Dsw@mail.gmail.com>
- <aO7JjaymjPMBcjrz@google.com> <CALMp9eQ3Ff4pYJgwcyzq-Ttw=Se6f+Q3VK06ROg5FCJe+=kAhg@mail.gmail.com>
-Message-ID: <aPK7qvIeSdzxdzMZ@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: SVM: Don't set GIF when clearing EFER.SVME
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025, Jim Mattson wrote:
-> On Tue, Oct 14, 2025 at 3:07=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Tue, Oct 14, 2025, Jim Mattson wrote:
-> > > On Tue, Oct 14, 2025 at 2:18=E2=80=AFPM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > >
-> > > > On Tue, Oct 14, 2025, Jim Mattson wrote:
-> > > > > On Mon, Oct 13, 2025 at 3:33=E2=80=AFPM Sean Christopherson <sean=
-jc@google.com> wrote:
-> > > > > >
-> > > > > > On Thu, Oct 09, 2025, Jim Mattson wrote:
-> > > > > > > Clearing EFER.SVME is not architected to set GIF.
-> > > > > >
-> > > > > > But it's also not architected to leave GIF set when the guest i=
-s running, which
-> > > > > > was the basic gist of the Fixes commit.  I suspect that forcing=
- GIF=3D1 was
-> > > > > > intentional, e.g. so that the guest doesn't end up with GIF=3D0=
- after stuffing the
-> > > > > > vCPU into SMM mode, which might actually be invalid.
-> > > > > >
-> > > > > > I think what we actually want is to to set GIF when force-leavi=
-ng nested.  The
-> > > > > > only path where it's not obvious that's "safe" is toggling SMM =
-in
-> > > > > > kvm_vcpu_ioctl_x86_set_vcpu_events().  In every other path, set=
-ting GIF is either
-> > > > > > correct/desirable, or irrelevant because the caller immediately=
- and unconditionally
-> > > > > > sets/clears GIF.
-> > > > > >
-> > > > > > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/neste=
-d.c
-> > > > > > index a6443feab252..3392c7e22cae 100644
-> > > > > > --- a/arch/x86/kvm/svm/nested.c
-> > > > > > +++ b/arch/x86/kvm/svm/nested.c
-> > > > > > @@ -1367,6 +1367,8 @@ void svm_leave_nested(struct kvm_vcpu *vc=
-pu)
-> > > > > >                 nested_svm_uninit_mmu_context(vcpu);
-> > > > > >                 vmcb_mark_all_dirty(svm->vmcb);
-> > > > > >
-> > > > > > +               svm_set_gif(svm, true);
-> > > > > > +
-> > > > > >                 if (kvm_apicv_activated(vcpu->kvm))
-> > > > > >                         kvm_make_request(KVM_REQ_APICV_UPDATE, =
-vcpu);
-> > > > > >         }
-> > > > > >
-> > > > >
-> > > > > This seems dangerously close to KVM making up "hardware" behavior=
-, but
-> > > > > I'm okay with that if you are.
-> > > >
-> > > > Regardless of what KVM does, we're defining hardware behavior, i.e.=
- keeping GIF
-> > > > unchanged defines behavior just as much as setting GIF.  The only w=
-ay to truly
-> > > > avoid defining behavior would be to terminate the VM and completely=
- prevent
-> > > > userspace from accessing its state.
-> > >
-> > > This can't be the only instance of "undefined behavior" that KVM deal=
-s
-> > > with.
-> >
-> > Oh, for sure.  But unsurprisingly, people only care about cases that ac=
-tually
-> > matter in practice.  E.g. the other one that comes to mind is SHUTDOWN =
-on AMD:
-> >
-> >         /*
-> >          * VMCB is undefined after a SHUTDOWN intercept.  INIT the vCPU=
- to put
-> >          * the VMCB in a known good state.  Unfortuately, KVM doesn't h=
-ave
-> >          * KVM_MP_STATE_SHUTDOWN and can't add it without potentially b=
-reaking
-> >          * userspace.  At a platform view, INIT is acceptable behavior =
-as
-> >          * there exist bare metal platforms that automatically INIT the=
- CPU
-> >          * in response to shutdown.
-> >          *
->=20
-> The behavior of SHUTDOWN while GIF=3D=3D0 is clearly architected:
->=20
-> "If the processor enters the shutdown state (due to a triple fault for
-> instance) while GIF is clear, it can only be restarted by means of a
-> RESET."
->=20
-> Doesn't setting GIF in svm_leave_nested() violate this specification?
+From: Long Li <longli@microsoft.com>
 
-Probably?  But SHUTDOWN also makes the VMCB undefined, so KVM is caught bet=
-ween
-a rock and a hard place.  And when using vGIF, I don't see how KVM can do t=
-he
-right thing, because the state of GIF at the time of SHUTDOWN is unknown.
+Also include MANA RDMA driver in the Hyper-V maintained list.
 
-And FWIW, if userspace does RESET the guest (which KVM can't detect with 10=
-0%
-accuracy), GIF=3D1 on RESET, so it's kinda sorta right :-)
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a8a770714101..6912af480f9d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11399,6 +11399,7 @@ M:	"K. Y. Srinivasan" <kys@microsoft.com>
+ M:	Haiyang Zhang <haiyangz@microsoft.com>
+ M:	Wei Liu <wei.liu@kernel.org>
+ M:	Dexuan Cui <decui@microsoft.com>
++M:	Long Li <longli@microsoft.com>
+ L:	linux-hyperv@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
+@@ -11416,6 +11417,7 @@ F:	arch/x86/kernel/cpu/mshyperv.c
+ F:	drivers/clocksource/hyperv_timer.c
+ F:	drivers/hid/hid-hyperv.c
+ F:	drivers/hv/
++F:	drivers/infiniband/hw/mana/
+ F:	drivers/input/serio/hyperv-keyboard.c
+ F:	drivers/iommu/hyperv-iommu.c
+ F:	drivers/net/ethernet/microsoft/
+@@ -11435,6 +11437,7 @@ F:	include/hyperv/hvhdk_mini.h
+ F:	include/linux/hyperv.h
+ F:	include/net/mana
+ F:	include/uapi/linux/hyperv.h
++F:	include/uapi/rdma/mana-abi.h
+ F:	net/vmw_vsock/hyperv_transport.c
+ F:	tools/hv/
+ 
+-- 
+2.34.1
+
 
