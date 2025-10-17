@@ -1,146 +1,265 @@
-Return-Path: <linux-kernel+bounces-858563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A94EBEB267
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:06:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EDCBEB270
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88E094E5C29
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972D6743B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA3631DD9B;
-	Fri, 17 Oct 2025 18:06:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227FE32E147;
+	Fri, 17 Oct 2025 18:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zNwSmndC"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A28299A85
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C48B31DD9B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760724381; cv=none; b=VvLUfIyLClsLPBuWsVOpCaw284s9G408OI9GOSxpuF4v8hvS6FB7XEDUgsbUrFkmMpmt8eXSwiKedljSrodqPEw3OpczamMn5J4mAUdvl/taUgrKsm/Oy3eEo/CfLhMeM7oQ4ijaELRsemNNIpcU2S1v1Qfc+rYCoZQWon1hERE=
+	t=1760724397; cv=none; b=QEI/dsIoQtYQ5nJXa7bTJaAjY4g1a866AF+nddusvp6lufCRhFUW+LND7UHJ9ZMsG2YY2PrBbdwbIOrWgvo0bwOC0oDiya1x9DodbonQJGehhxPOmPOqBDWWpSt6lJdWdv8NwbieZL1IgqmbjqddHU6siDx3XxGHkyZgS/EVaCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760724381; c=relaxed/simple;
-	bh=PRpIF8coTvyiXK1iielJL7vqdi95WfSextDIfNHf+BM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IazHa0/i3Qkznr8SwkvmjADhjtL1N/HTKoDq/Rc8ocBpljvs5S2PG6waVB5Cx6Nq2EQpDkaPJOrYE6ROjf/BmFr+KKpAwPDjDdGEkeQriFAqw7GPqsTFmVhYUeZfYgIeQibW/GqPiMskAgHfRef1bxttRqGCYIGPmSXGRGzrYtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76468C4CEE7;
-	Fri, 17 Oct 2025 18:06:19 +0000 (UTC)
-Date: Fri, 17 Oct 2025 19:06:16 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Huang Ying <ying.huang@linux.alibaba.com>
-Cc: Will Deacon <will@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Gavin Shan <gshan@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] arm64, mm: avoid always making PTE dirty in pte_mkwrite()
-Message-ID: <aPKFmHg-FrkGJxWd@arm.com>
-References: <20251015023712.46598-1-ying.huang@linux.alibaba.com>
+	s=arc-20240116; t=1760724397; c=relaxed/simple;
+	bh=RswICkAVP/gJfU84z7sG0RSQkn8OBmkgeH5K1mNTLgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gCQ6aB4bX24R0Qm2339WdKC9u9X5iaa1x9yuFU7r5Lxz4JuINSC9JNivXUl2hjqsOlFi58KkRdyhD9q1oWve2waXFbTFLsnrLNJooMPAAeBwHmwvA853Pmb5mpLAkwOSI0W4bACqPcftb/KSNINH/CSGtE0JSFqNxvsqjbo1wYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zNwSmndC; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88e68c0a7bfso434569885a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760724394; x=1761329194; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rif0oa9DkHAZwRALv2degzNg53F1yw0lZ1fMrEk6s1E=;
+        b=zNwSmndC1G8BjGCizsb8qzsXiGoY84YbF6A1GNeK0ZVSd9rxTqiFebDxfWSwIp7Go2
+         pDqDTpbI1LWJ38YzR14fYjGoxsC3vmHZpb9ulCMC2EpFrd7q1+qZ1nnTQpI+rC55Y6se
+         b8XyHmQSrk8QPtGyg4NtBoSqpi06Di5AkANIRU9OSeS90U6kmfKKs6Xg4/3mKQmjWHSj
+         FkhmFHbmrzsE3axqYkkahNTr97fL8qovIaJNRcb3QJJq5xhkoY6sOj0ukPP6/eqYk6hu
+         zxd9tZ8mts0+jHH6JEJvrrfso/mJ4NzfGske1/o9fNadOKtYWhcpEEyKEOgYGOO7bm6b
+         DS/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760724394; x=1761329194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rif0oa9DkHAZwRALv2degzNg53F1yw0lZ1fMrEk6s1E=;
+        b=RDgbJzRAJ3lEfmXLm+n68NfUCvT+v6OqtCk5FEZDGuOov4nlDZnOpDWUSBd187G8rx
+         c8zqEVN9NGfBIqhZ7nYV86H0h78hL0JPa9QL5fiWDwx/S/aVW0MFjGD+scwVizXN+9hd
+         l4BRmlrYfobtEfI10b4fpjhCX6YqcPqEOHh0CbrmN9s3vzXOuWtMrIBM6bB90IAarVPt
+         GD8KmhAABOO9oZWOGvrqFfeOs14WduNM7hUkFfW6wDjWTJ8CUln1l7z+ytZ7yfqAydQJ
+         vVFLCW9LIFSEqattJtGcFJIAAUaFbFPb7CMqoU4z+6GnlFi6+R3TsBp1vc02QmqQkwZk
+         +YtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCA7ubF0U6bAt5oyCNjI9dt2e0+W9qjeMCnddGex7haiQL6UfDzhQlBtCLEE14WuOdxQuOdW/sRoGpBHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpSFybeGnlEKyiXBf2blATlF54c88y9ylOuoHzZi5xs09cXN+N
+	X6UxL6DNoJT3PB9qQ1bDQp/PUUhKreHWHXpFioqaqBh2iMN50oPZaQq9fzSY5ZKEvhP1FfbDjc0
+	BFJtqCcaQlBh7Xd9RwjwDUwU3dJfCWNGeji9khLsX
+X-Gm-Gg: ASbGncuFgnmh+eO+UCjy+k5vgI3mvoHmclogtFxqV4oiaBFyNbVAARcW7qPfQ0E/Yo3
+	ZDETD3VRUoJUeGhWvAWhljMSY2YF1oNuFctklZFt2SDVwxfRycm1u0Rfh+cyVakxJ11DILuuXy8
+	yzGwQawxO1c8GFyD7YLwbhh2wgHjQky+620Mp61/FZeDuNaAt12y8MRwwEr8BOL/V8AuOFd5/j7
+	ABzlaeC6f4xFgEchuhEONAbaXIKQZPZHX7tgHSqlp+qc64SGALoCii3jyJvronqKqgKWYXcFZPp
+	IzHu3z8=
+X-Google-Smtp-Source: AGHT+IGs9M6rMBKgqyMBA77+Os13P8a0Trwqj3NIUOuVflQK6sbRWDZHMmwlxaaugj3dXHN2eVpH1oOwE0XiM6XeBZg=
+X-Received: by 2002:ac8:5d0c:0:b0:4b7:8d26:5068 with SMTP id
+ d75a77b69052e-4e89d1d931amr68197211cf.17.1760724393834; Fri, 17 Oct 2025
+ 11:06:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015023712.46598-1-ying.huang@linux.alibaba.com>
+References: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CANn89iJwkbxC5HvSKmk807K-3HY+YR1kt-LhcYwnoFLAaeVVow@mail.gmail.com>
+ <9d886861-2e1f-4ea8-9f2c-604243bd751b@linux.microsoft.com>
+ <CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com>
+ <7bc327ba-0050-4d9e-86b6-1b7427a96f53@linux.microsoft.com> <1d3ac973-7bc7-4abe-9fe2-6b17dbba223b@linux.microsoft.com>
+In-Reply-To: <1d3ac973-7bc7-4abe-9fe2-6b17dbba223b@linux.microsoft.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 17 Oct 2025 11:06:22 -0700
+X-Gm-Features: AS18NWD9oOYYHDWUxXoRuwJar8qOGE2ISFfEALKFndeOAt7P5v6X0t3YuKTfx3M
+Message-ID: <CANn89iKFsuUnwMb-upqwswrCYaTL-MXVwsQdxFhduZeZRAJZ2A@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: mana: Linearize SKB if TX SGEs exceeds
+ hardware limit
+To: Aditya Garg <gargaditya@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com, 
+	kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com, 
+	ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com, 
+	shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, gargaditya@microsoft.com, 
+	ssengar@linux.microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 10:37:12AM +0800, Huang Ying wrote:
-> Current pte_mkwrite_novma() makes PTE dirty unconditionally.  This may
-> mark some pages that are never written dirty wrongly.  For example,
-> do_swap_page() may map the exclusive pages with writable and clean PTEs
-> if the VMA is writable and the page fault is for read access.
-> However, current pte_mkwrite_novma() implementation always dirties the
-> PTE.  This may cause unnecessary disk writing if the pages are
-> never written before being reclaimed.
-> 
-> So, change pte_mkwrite_novma() to clear the PTE_RDONLY bit only if the
-> PTE_DIRTY bit is set to make it possible to make the PTE writable and
-> clean.
-> 
-> The current behavior was introduced in commit 73e86cb03cf2 ("arm64:
-> Move PTE_RDONLY bit handling out of set_pte_at()").  Before that,
-> pte_mkwrite() only sets the PTE_WRITE bit, while set_pte_at() only
-> clears the PTE_RDONLY bit if both the PTE_WRITE and the PTE_DIRTY bits
-> are set.
-> 
-> To test the performance impact of the patch, on an arm64 server
-> machine, run 16 redis-server processes on socket 1 and 16
-> memtier_benchmark processes on socket 0 with mostly get
-> transactions (that is, redis-server will mostly read memory only).
-> The memory footprint of redis-server is larger than the available
-> memory, so swap out/in will be triggered.  Test results show that the
-> patch can avoid most swapping out because the pages are mostly clean.
-> And the benchmark throughput improves ~23.9% in the test.
-> 
-> Fixes: 73e86cb03cf2 ("arm64: Move PTE_RDONLY bit handling out of set_pte_at()")
-> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Gavin Shan <gshan@redhat.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> Cc: Yicong Yang <yangyicong@hisilicon.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/arm64/include/asm/pgtable.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index aa89c2e67ebc..0944e296dd4a 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -293,7 +293,8 @@ static inline pmd_t set_pmd_bit(pmd_t pmd, pgprot_t prot)
->  static inline pte_t pte_mkwrite_novma(pte_t pte)
->  {
->  	pte = set_pte_bit(pte, __pgprot(PTE_WRITE));
-> -	pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
-> +	if (pte_sw_dirty(pte))
-> +		pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
->  	return pte;
->  }
+On Fri, Oct 17, 2025 at 10:41=E2=80=AFAM Aditya Garg
+<gargaditya@linux.microsoft.com> wrote:
+>
+> On 08-10-2025 20:58, Aditya Garg wrote:
+> > On 08-10-2025 20:51, Eric Dumazet wrote:
+> >> On Wed, Oct 8, 2025 at 8:16=E2=80=AFAM Aditya Garg
+> >> <gargaditya@linux.microsoft.com> wrote:
+> >>>
+> >>> On 03-10-2025 21:45, Eric Dumazet wrote:
+> >>>> On Fri, Oct 3, 2025 at 8:47=E2=80=AFAM Aditya Garg
+> >>>> <gargaditya@linux.microsoft.com> wrote:
+> >>>>>
+> >>>>> The MANA hardware supports a maximum of 30 scatter-gather entries
+> >>>>> (SGEs)
+> >>>>> per TX WQE. In rare configurations where MAX_SKB_FRAGS + 2 exceeds
+> >>>>> this
+> >>>>> limit, the driver drops the skb. Add a check in mana_start_xmit() t=
+o
+> >>>>> detect such cases and linearize the SKB before transmission.
+> >>>>>
+> >>>>> Return NETDEV_TX_BUSY only for -ENOSPC from
+> >>>>> mana_gd_post_work_request(),
+> >>>>> send other errors to free_sgl_ptr to free resources and record the =
+tx
+> >>>>> drop.
+> >>>>>
+> >>>>> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+> >>>>> Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+> >>>>> ---
+> >>>>>    drivers/net/ethernet/microsoft/mana/mana_en.c | 26 +++++++++++++
+> >>>>> ++----
+> >>>>>    include/net/mana/gdma.h                       |  8 +++++-
+> >>>>>    include/net/mana/mana.h                       |  1 +
+> >>>>>    3 files changed, 29 insertions(+), 6 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/
+> >>>>> drivers/net/ethernet/microsoft/mana/mana_en.c
+> >>>>> index f4fc86f20213..22605753ca84 100644
+> >>>>> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> >>>>> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> >>>>> @@ -20,6 +20,7 @@
+> >>>>>
+> >>>>>    #include <net/mana/mana.h>
+> >>>>>    #include <net/mana/mana_auxiliary.h>
+> >>>>> +#include <linux/skbuff.h>
+> >>>>>
+> >>>>>    static DEFINE_IDA(mana_adev_ida);
+> >>>>>
+> >>>>> @@ -289,6 +290,19 @@ netdev_tx_t mana_start_xmit(struct sk_buff
+> >>>>> *skb, struct net_device *ndev)
+> >>>>>           cq =3D &apc->tx_qp[txq_idx].tx_cq;
+> >>>>>           tx_stats =3D &txq->stats;
+> >>>>>
+> >>>>> +       BUILD_BUG_ON(MAX_TX_WQE_SGL_ENTRIES !=3D
+> >>>>> MANA_MAX_TX_WQE_SGL_ENTRIES);
+> >>>>> +       #if (MAX_SKB_FRAGS + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES)
+> >>>>> +               if (skb_shinfo(skb)->nr_frags + 2 >
+> >>>>> MANA_MAX_TX_WQE_SGL_ENTRIES) {
+> >>>>> +                       netdev_info_once(ndev,
+> >>>>> +                                        "nr_frags %d exceeds max
+> >>>>> supported sge limit. Attempting skb_linearize\n",
+> >>>>> +                                        skb_shinfo(skb)->nr_frags)=
+;
+> >>>>> +                       if (skb_linearize(skb)) {
+> >>>>
+> >>>> This will fail in many cases.
+> >>>>
+> >>>> This sort of check is better done in ndo_features_check()
+> >>>>
+> >>>> Most probably this would occur for GSO packets, so can ask a softwar=
+e
+> >>>> segmentation
+> >>>> to avoid this big and risky kmalloc() by all means.
+> >>>>
+> >>>> Look at idpf_features_check()  which has something similar.
+> >>>
+> >>> Hi Eric,
+> >>> Thank you for your review. I understand your concerns regarding the u=
+se
+> >>> of skb_linearize() in the xmit path, as it can fail under memory
+> >>> pressure and introduces additional overhead in the transmit path. Bas=
+ed
+> >>> on your input, I will work on a v2 that will move the SGE limit check=
+ to
+> >>> the ndo_features_check() path and for GSO skbs exceding the hw limit
+> >>> will disable the NETIF_F_GSO_MASK to enforce software segmentation in
+> >>> kernel before the call to xmit.
+> >>> Also for non GSO skb exceeding the SGE hw limit should we go for usin=
+g
+> >>> skb_linearize only then or would you suggest some other approach here=
+?
+> >>
+> >> I think that for non GSO, the linearization attempt is fine.
+> >>
+> >> Note that this is extremely unlikely for non malicious users,
+> >> and MTU being usually small (9K or less),
+> >> the allocation will be much smaller than a GSO packet.
+> >
+> > Okay. Will send a v2
+> Hi Eric,
+> I tested the code by disabling GSO in ndo_features_check when the number
+> of SGEs exceeds the hardware limit, using iperf for a single TCP
+> connection with zerocopy enabled. I noticed a significant difference in
+> throughput compared to when we linearize the skbs.
+> For reference, the throughput is 35.6 Gbits/sec when using
+> skb_linearize, but drops to 6.75 Gbits/sec when disabling GSO per skb.
 
-This seems to be the right thing. I recall years ago I grep'ed
-(obviously not hard enough) and most pte_mkwrite() places had a
-pte_mkdirty(). But I missed do_swap_page() and possibly others.
+You must be doing something very wrong.
 
-For this patch:
+Difference between TSO and non TSO should not be that high.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+ethtool -K eth0 tso on
+netperf -H tjbp27
+MIGRATED TCP STREAM TEST from ::0 (::) port 0 AF_INET6 to
+tjbp27.prod.google.com () port 0 AF_INET6
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
-I wonder whether we should also add (as a separate patch):
+540000 262144 262144    10.00    92766.69
 
-diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-index 830107b6dd08..df1c552ef11c 100644
---- a/mm/debug_vm_pgtable.c
-+++ b/mm/debug_vm_pgtable.c
-@@ -101,6 +101,7 @@ static void __init pte_basic_tests(struct pgtable_debug_args *args, int idx)
- 	WARN_ON(pte_dirty(pte_mkclean(pte_mkdirty(pte))));
- 	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite(pte, args->vma))));
- 	WARN_ON(pte_dirty(pte_wrprotect(pte_mkclean(pte))));
-+	WARN_ON(pte_dirty(pte_mkwrite_novma(pte_mkclean(pte))));
- 	WARN_ON(!pte_dirty(pte_wrprotect(pte_mkdirty(pte))));
- }
 
-For completeness, also (and maybe other combinations):
+ethtool -K eth0 tso off
+netperf -H tjbp27
+MIGRATED TCP STREAM TEST from ::0 (::) port 0 AF_INET6 to
+tjbp27.prod.google.com () port 0 AF_INET6
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
-	WARN_ON(!pte_write(pte_mkdirty(pte_mkwrite_novma(pte))));
+540000 262144 262144    10.00    52218.97
 
-I cc'ed linux-mm in case we missed anything. If nothing raised, I'll
-queue it next week.
+Now if I force linearization, you can definitely see the very high
+cost of the copies !
 
-Thanks.
+ethtool -K eth1 sg off
+tjbp26:/home/edumazet# ./netperf -H tjbp27
+MIGRATED TCP STREAM TEST from ::0 (::) port 0 AF_INET6 to
+tjbp27.prod.google.com () port 0 AF_INET6
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
--- 
-Catalin
+540000 262144 262144    10.00    16951.32
+
+>
+> Hence, We propose to  linearizing skbs until the first failure occurs.
+
+Hmm... basically hiding a bug then ?
+
+> After that, we switch to a fail-safe mode by disabling GSO for SKBs with
+>   sge > hw limit using the ndo_feature_check implementation, while
+> continuing to apply  skb_linearize() for non-GSO packets that exceed the
+> hardware limit. This ensures we remain on the optimal performance path
+> initially, and only transition to the fail-safe path after encountering
+> a failure.
+
+Please post your patch (adding the check in ndo_features_check()),
+perhaps one of us is able to help.
 
