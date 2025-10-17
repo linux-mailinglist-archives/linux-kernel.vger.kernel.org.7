@@ -1,192 +1,155 @@
-Return-Path: <linux-kernel+bounces-857205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8612BE62EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D916BE6322
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CDA34E1834
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A605E7228
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2E3247DE1;
-	Fri, 17 Oct 2025 03:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB47424CEEA;
+	Fri, 17 Oct 2025 03:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJ60iesj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="gMJT8zxU"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A1B23EAA7
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 03:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AB623EAA6
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 03:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760670610; cv=none; b=rY4HdPJK/f3SyaiXAx2Y5OH1dk/uRkzLyFrg4k7NVyB61npH1u7RMQaKKiVaPXYWnV5Q5/T9swvmCfDmJXJO7hdxrygwBoKdKXDMcmlFPDIMuAShrhjJr2RRsgzCkMwMDjnSjzAMhPf8o9B1ImIzZlI7FFlSwiug/oy9erUQRFE=
+	t=1760670730; cv=none; b=iPFE28nbiatzmSsqw2JZFGx+/BZaSmjgv32GkZEyMGHllELDFAsJLEWs51pqh9G1OsrT4LCGd7YTaq3K8gT2dxVr8NPTKZESvT5/X8MC1LAzQr7p3ZDNaIvdE4aNuXuonrD8RhcufnUeFJqBkqFogV3wYPZQJ9qBpXBIkTOkV4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760670610; c=relaxed/simple;
-	bh=cqy6kQsSj2WOatKiv0jlGCg0R5teHCD+rRCXXx9ERA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RgpDiL12kMMudcTAeFsI2mHO+vVAlqwdm/7vsc925YXNs2svdxH7vQMIdwUfDMQyr4J0xadpGzVaYlUNznRwx713mjncpo6fSWa1TADjgue/zblEG0Xa+kGRe1t8wJsu1qTmMIjiLm0h6hUr3jybw/IdnFkMxgYKuwbesySZY5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJ60iesj; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760670608; x=1792206608;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cqy6kQsSj2WOatKiv0jlGCg0R5teHCD+rRCXXx9ERA4=;
-  b=BJ60iesjO0XCsilswrmkXa+HB7cWUgGvjn6o8SnEc6+LTppWPmY12DVQ
-   bjPYaDQbqwypbGed6xbWjdJy8vrtvXgdHq/QfHIEg3nX9aX6p2/vx3ZyR
-   c+hDe4msm5C95Zr2kzWzAY9ToXk6P/g3CC7T8OQG/mar/RuMQ1/56/PIL
-   t8haXnSdKvQXADxTCGhmSBIl9UdqnHKU5iOrY2Sk78dWExYP2VhZdhm+W
-   IgVzRuO7HEYLgEPe5Wc1wka3ObC+0a7OafuMhm5ycvdTwGh748qjqjf8s
-   rcLmjN4qUc+4750JpO6f0GnKKktlJhuE+M0Ydcbg6CmszdvkGz+XOTolX
-   g==;
-X-CSE-ConnectionGUID: JozvR5ThQhehOIXQ0g3bCQ==
-X-CSE-MsgGUID: 2lRO3UBZQtSQkog2EKYZAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62922594"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="62922594"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 20:10:07 -0700
-X-CSE-ConnectionGUID: pbN8xQMiSpmrLMnDQoxCtA==
-X-CSE-MsgGUID: 99uAW1LqRZG3Jb2OF0xxrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="213203922"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 16 Oct 2025 20:10:04 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9aqv-0005Tx-2q;
-	Fri, 17 Oct 2025 03:10:01 +0000
-Date: Fri, 17 Oct 2025 11:09:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pingfan Liu <piliu@redhat.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Pingfan Liu <piliu@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCHv2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-Message-ID: <202510171039.kkg2ItuG-lkp@intel.com>
-References: <20251016120041.17990-1-piliu@redhat.com>
+	s=arc-20240116; t=1760670730; c=relaxed/simple;
+	bh=KgW31NEnDhxto3WN62s7zXrxJ5MAVGQG5f7IyV2pPSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AdNWDqbr2QO7Fcf9V5rjj0mTvp9moq/Q9ZlFTRm2M+Zre5ApRT9J9e38nkn5YYk3vLxf2xVdTJUuSpMGW/R59GMrKHcEIhVuQ1g32L0q4SS6x//FI8e9ocm5Rc1/RZ445HC06GfNGBnn2jhQ4y/NR2rikJDPkv+ujcoJ4vY+hmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=gMJT8zxU; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=dcvrMD3sQma3OYREUgSzhCQmw7Fa8hfqaZyefSFbX3o=;
+	b=gMJT8zxUzHGc/AelXSc6QEx7C+SjQ4cXio4lyn84xfFtq0ygyFg6Vm25uv25TuTNI8JNi67O1
+	G6SZ70HTCQGbA5j/tybwGp1RgWoUiw348EQUaNdU0/ZNAQHVBYXXY6DXINVYbN1XNdxXslHzn8J
+	wl/G7VC4fmIpKFA7FGV2WWE=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4cnqbw6LWqz1cyVm;
+	Fri, 17 Oct 2025 11:11:40 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3A9C7140294;
+	Fri, 17 Oct 2025 11:12:02 +0800 (CST)
+Received: from [10.174.177.149] (10.174.177.149) by
+ dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 17 Oct 2025 11:12:01 +0800
+Message-ID: <4c2e5879-e554-49c0-8f05-094031cbb64a@huawei.com>
+Date: Fri, 17 Oct 2025 11:12:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016120041.17990-1-piliu@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/damon: add a min_sz_region parameter to
+ damon_set_region_biggest_system_ram_default()
+To: SeongJae Park <sj@kernel.org>
+CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
+References: <20251016194851.65981-1-sj@kernel.org>
+From: Quanmin Yan <yanquanmin1@huawei.com>
+In-Reply-To: <20251016194851.65981-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-Hi Pingfan,
+Hi SJ,
 
-kernel test robot noticed the following build warnings:
+在 2025/10/17 3:48, SeongJae Park 写道:
+> On Thu, 16 Oct 2025 18:47:17 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+>
+>> After adding addr_unit support for DAMON_LRU_SORT and DAMON_RECLAIM,
+>> the related region setup now requires alignment based on min_sz_region.
+>>
+>> Add min_sz_region to damon_set_region_biggest_system_ram_default()
+>> and use it when calling damon_set_regions(), replacing the previously
+>> hardcoded DAMON_MIN_REGION.
+> Can we add more detailed description of the end user issue on the commit
+> message?  My understanding of the issue is that the monitoring target address
+> ranges for DAMON_LRU_SORT and DAMON_RECLAIM would be aligned on
+> DAMON_MIN_REGION * addr_unit.
+>
+> For example, if user sets the monitoring target address range as [4, 8) and
+> addr_unit as 1024, the aimed monitoring target address range is [4 KiB, 8 KiB).
+> But damon_set_regions() will apply DAMON_MIN_REGION as the core address
+> alignment.  Assuming DAMON_MIN_REGION is 4096, so resulting target address
+> range will be [0, 4096) in the DAMON core layer address system, and [0, 4 MiB)
+> in the physical address space.
+>
+> So the end user effect is that DAMON_LRU_SORT and DAMON_RECLAIM could work for
+> unexpectedly large physical address ranges, when they 1) set addr_unit to a
+> value larger than 1, and 2) set the monitoring target address range as not
+> aligned in 4096*addr_unit.
+>
+> Let me know if I'm misunderstanding something.
+>
+> Also, if you encountered the issue in a real or a realistic use case, adding
+> that on the commit message together would be very helpful.
 
-[auto build test WARNING on tj-cgroup/for-next]
-[also build test WARNING on tip/sched/core tip/master linus/master v6.18-rc1 next-20251016]
-[cannot apply to tip/auto-latest]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thank you for the additional explanation! Your understanding and description of
+the issue are entirely correct.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pingfan-Liu/sched-deadline-Walk-up-cpuset-hierarchy-to-decide-root-domain-when-hot-unplug/20251016-200452
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/20251016120041.17990-1-piliu%40redhat.com
-patch subject: [PATCHv2] sched/deadline: Walk up cpuset hierarchy to decide root domain when hot-unplug
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20251017/202510171039.kkg2ItuG-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251017/202510171039.kkg2ItuG-lkp@intel.com/reproduce)
+Our ultimate goal is to have the monitoring target address range aligned to
+DAMON_MIN_REGION. In the original logic, however, damon_set_regions() did not
+take the newly introduced addr_unit into account, and directly performed core
+address alignment based only on DAMON_MIN_REGION. As a result, the monitoring
+target address range was aligned to DAMON_MIN_REGION * addr_unit, causing
+DAMON_LRU_SORT and DAMON_RECLAIM to potentially operate on incorrect physical
+address ranges. Therefore, we need to use min_sz_region instead of
+DAMON_MIN_REGION in damon_set_regions().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510171039.kkg2ItuG-lkp@intel.com/
+I will add the detailed commit description in the v2 patch.
 
-All warnings (new ones prefixed by >>):
+>> Fixes: 2e0fe9245d6b ("mm/damon/lru_sort: support addr_unit for DAMON_LRU_SORT")
+>> Fixes: 7db551fcfb2a ("mm/damon/reclaim: support addr_unit for DAMON_RECLAIM")
+> Let's break this patch into two patches, so that we have one fix per broken
+> commit.
 
-   In file included from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:18,
-                    from init/main.c:18:
-   include/linux/cpuset.h: In function 'cpuset_task_rd_effective_cpus':
->> include/linux/cpumask.h:125:28: warning: return discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     125 | #define cpu_active_mask   ((const struct cpumask *)&__cpu_active_mask)
-         |                           ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/cpuset.h:282:16: note: in expansion of macro 'cpu_active_mask'
-     282 |         return cpu_active_mask;
-         |                ^~~~~~~~~~~~~~~
+Yes, I actually considered splitting it up before submitting this patch, but found that
+doing so might make the patches look odd. Since we're modifying the input parameters
+of damon_set_region_biggest_system_ram_default(), all the call sites of this function
+need to be updated accordingly. It seems we might need to split this into three patches:
+1. Preparation patch: Add the min_sz_region parameter to
+    damon_set_region_biggest_system_ram_default(), passing ctx->min_sz_region in stat.c,
+    and passing DAMON_MIN_REGION when calling this function in reclaim.c/lru_sort.c?
+2. Fixes patch 1: Modify lru_sort.c to pass param_ctx->min_sz_region.
+3. Fixes patch 2: Modify reclaim.c to pass param_ctx->min_sz_region.
+
+I'm not entirely comfortable with this approach. Would it be acceptable to submit this
+as a single patch?
 
 
-vim +/const +125 include/linux/cpumask.h
+Thanks,
+Quanmin Yan
 
-^1da177e4c3f415 Linus Torvalds   2005-04-16   77  
-^1da177e4c3f415 Linus Torvalds   2005-04-16   78  /*
-^1da177e4c3f415 Linus Torvalds   2005-04-16   79   * The following particular system cpumasks and operations manage
-b3199c025d1646e Rusty Russell    2008-12-30   80   * possible, present, active and online cpus.
-^1da177e4c3f415 Linus Torvalds   2005-04-16   81   *
-b3199c025d1646e Rusty Russell    2008-12-30   82   *     cpu_possible_mask- has bit 'cpu' set iff cpu is populatable
-b3199c025d1646e Rusty Russell    2008-12-30   83   *     cpu_present_mask - has bit 'cpu' set iff cpu is populated
-4e1a7df4548003f James Morse      2024-05-29   84   *     cpu_enabled_mask - has bit 'cpu' set iff cpu can be brought online
-b3199c025d1646e Rusty Russell    2008-12-30   85   *     cpu_online_mask  - has bit 'cpu' set iff cpu available to scheduler
-b3199c025d1646e Rusty Russell    2008-12-30   86   *     cpu_active_mask  - has bit 'cpu' set iff cpu available to migration
-^1da177e4c3f415 Linus Torvalds   2005-04-16   87   *
-b3199c025d1646e Rusty Russell    2008-12-30   88   *  If !CONFIG_HOTPLUG_CPU, present == possible, and active == online.
-^1da177e4c3f415 Linus Torvalds   2005-04-16   89   *
-57f728d59f005df Randy Dunlap     2023-07-31   90   *  The cpu_possible_mask is fixed at boot time, as the set of CPU IDs
-b3199c025d1646e Rusty Russell    2008-12-30   91   *  that it is possible might ever be plugged in at anytime during the
-b3199c025d1646e Rusty Russell    2008-12-30   92   *  life of that system boot.  The cpu_present_mask is dynamic(*),
-b3199c025d1646e Rusty Russell    2008-12-30   93   *  representing which CPUs are currently plugged in.  And
-b3199c025d1646e Rusty Russell    2008-12-30   94   *  cpu_online_mask is the dynamic subset of cpu_present_mask,
-b3199c025d1646e Rusty Russell    2008-12-30   95   *  indicating those CPUs available for scheduling.
-b3199c025d1646e Rusty Russell    2008-12-30   96   *
-b3199c025d1646e Rusty Russell    2008-12-30   97   *  If HOTPLUG is enabled, then cpu_present_mask varies dynamically,
-^1da177e4c3f415 Linus Torvalds   2005-04-16   98   *  depending on what ACPI reports as currently plugged in, otherwise
-b3199c025d1646e Rusty Russell    2008-12-30   99   *  cpu_present_mask is just a copy of cpu_possible_mask.
-^1da177e4c3f415 Linus Torvalds   2005-04-16  100   *
-b3199c025d1646e Rusty Russell    2008-12-30  101   *  (*) Well, cpu_present_mask is dynamic in the hotplug case.  If not
-b3199c025d1646e Rusty Russell    2008-12-30  102   *      hotplug, it's a copy of cpu_possible_mask, hence fixed at boot.
-^1da177e4c3f415 Linus Torvalds   2005-04-16  103   *
-^1da177e4c3f415 Linus Torvalds   2005-04-16  104   * Subtleties:
-57f728d59f005df Randy Dunlap     2023-07-31  105   * 1) UP ARCHes (NR_CPUS == 1, CONFIG_SMP not defined) hardcode
-^1da177e4c3f415 Linus Torvalds   2005-04-16  106   *    assumption that their single CPU is online.  The UP
-b3199c025d1646e Rusty Russell    2008-12-30  107   *    cpu_{online,possible,present}_masks are placebos.  Changing them
-^1da177e4c3f415 Linus Torvalds   2005-04-16  108   *    will have no useful affect on the following num_*_cpus()
-^1da177e4c3f415 Linus Torvalds   2005-04-16  109   *    and cpu_*() macros in the UP case.  This ugliness is a UP
-^1da177e4c3f415 Linus Torvalds   2005-04-16  110   *    optimization - don't waste any instructions or memory references
-^1da177e4c3f415 Linus Torvalds   2005-04-16  111   *    asking if you're online or how many CPUs there are if there is
-^1da177e4c3f415 Linus Torvalds   2005-04-16  112   *    only one CPU.
-^1da177e4c3f415 Linus Torvalds   2005-04-16  113   */
-^1da177e4c3f415 Linus Torvalds   2005-04-16  114  
-4b804c85dc37db6 Rasmus Villemoes 2016-01-20  115  extern struct cpumask __cpu_possible_mask;
-4b804c85dc37db6 Rasmus Villemoes 2016-01-20  116  extern struct cpumask __cpu_online_mask;
-4e1a7df4548003f James Morse      2024-05-29  117  extern struct cpumask __cpu_enabled_mask;
-4b804c85dc37db6 Rasmus Villemoes 2016-01-20  118  extern struct cpumask __cpu_present_mask;
-4b804c85dc37db6 Rasmus Villemoes 2016-01-20  119  extern struct cpumask __cpu_active_mask;
-e40f74c535b8a0e Peter Zijlstra   2021-01-19  120  extern struct cpumask __cpu_dying_mask;
-5aec01b834fd6f8 Rasmus Villemoes 2016-01-20  121  #define cpu_possible_mask ((const struct cpumask *)&__cpu_possible_mask)
-5aec01b834fd6f8 Rasmus Villemoes 2016-01-20  122  #define cpu_online_mask   ((const struct cpumask *)&__cpu_online_mask)
-4e1a7df4548003f James Morse      2024-05-29  123  #define cpu_enabled_mask   ((const struct cpumask *)&__cpu_enabled_mask)
-5aec01b834fd6f8 Rasmus Villemoes 2016-01-20  124  #define cpu_present_mask  ((const struct cpumask *)&__cpu_present_mask)
-5aec01b834fd6f8 Rasmus Villemoes 2016-01-20 @125  #define cpu_active_mask   ((const struct cpumask *)&__cpu_active_mask)
-e40f74c535b8a0e Peter Zijlstra   2021-01-19  126  #define cpu_dying_mask    ((const struct cpumask *)&__cpu_dying_mask)
-b3199c025d1646e Rusty Russell    2008-12-30  127  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+>> ---
+>>   include/linux/damon.h | 3 ++-
+>>   mm/damon/core.c       | 6 ++++--
+>>   mm/damon/lru_sort.c   | 3 ++-
+>>   mm/damon/reclaim.c    | 3 ++-
+>>   mm/damon/stat.c       | 3 ++-
+>>   5 files changed, 12 insertions(+), 6 deletions(-)
+> The code change looks good to me.
+>
+>
+> Thanks,
+> SJ
 
