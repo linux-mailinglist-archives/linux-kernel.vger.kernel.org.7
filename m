@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-857834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B76BE8089
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C963BE80C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A00E4EA81D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:17:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07A3A4E3001
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504F8313523;
-	Fri, 17 Oct 2025 10:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C69330F931;
+	Fri, 17 Oct 2025 10:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TdYYJFWB"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="HxtCmOtk"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7E6313270
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30460217648;
+	Fri, 17 Oct 2025 10:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760696227; cv=none; b=ZC/krVWoA/DtK8z194cNMImsv9fmvwqmDrg0vetp5g//h+iMAivik7Zn1/5da+g4um1neJyrhsihzWXL2/nn9yfzkI4Hg5/fgHPCHO+XR+rliFps4RBMKadbBKl/Us4X+3No9rGbsonfZKgEHn7PUlCiqziajuGQRzJYWR9H+Fo=
+	t=1760696702; cv=none; b=HGljx04T+DDUotvtVA+PL7Rh+1ZNPevfGKt4M2Xqp6jryyYN4J1B+f0ShwlLzQzbxq0py4c2py7V+G/wdVLbBajYQO8uSn/pezngW/1Hn+mYAHphl3SkGdrcH2xLiDk/GMFSmRHx9yJYJFDNNtRGt7GRx7CX/KYWGBGDCMpEHk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760696227; c=relaxed/simple;
-	bh=kjl4ttTH7mf9R32gzLYGA8/6Y+kS2fnJQOWcBKhszkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZmrngUddYfn+BQVCdYW1ZLTuCCHJVlHzSJuUvZyy9o5FJ9Nh2SmUdoEsOrPh7xHQfoAu1nGEGBdcYCf2+wnwfZw3lWHV2+2dBwzBzNDSyhYVjqK7nc+6lJZiGtARY0Q1fiFgQF540jRFkzH7U+Df777WRn596D1maBerpoPdW7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TdYYJFWB; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57f1b88354eso2024590e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 03:17:05 -0700 (PDT)
+	s=arc-20240116; t=1760696702; c=relaxed/simple;
+	bh=pTdAzv9J9dz7yZW0VYVGUU0lqB+SuzjD7KIeaO1rqNc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zx6Z3JNNek9p3X6dQ38XdIcqpi7xPl5bZ7NjJgtHUMzzIGL8c5TsmU/xqQUhgavoTvh/pGuQuiE0dOdjxn148eRr794Qq3pf5DlMbt9LywN8iJDkdnHsTGcwZPuED8A9DT463XOb6z/4gtRH/5D7Z1xu4bfh5qqIrccial56ARI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=HxtCmOtk; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 482792F4;
+	Fri, 17 Oct 2025 10:14:32 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=HxtCmOtk;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 47F982421;
+	Fri, 17 Oct 2025 10:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760696224; x=1761301024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kjl4ttTH7mf9R32gzLYGA8/6Y+kS2fnJQOWcBKhszkQ=;
-        b=TdYYJFWBgR6zxASn6disEU5Zn/G8Go9oVaD0hFxtMXkgiysqM5f1t/9CjGOIPF8Bdx
-         6EN8JEkNfKLWZ7f1re6ZWKUFNIwtQ94FKHD+G12yuASMHR05FeTUs7U48RaXKkXogygC
-         P4emS+VzC6yJQ+XohQXW9mscKbc02KjVxVy0livn3ZcZo3vnKXAYdL+qISdivb4wUFut
-         KPHLgyOflXjtm/+PAjnJ9rlakDdUX2x+LtF8UYbR4l5DEVK6QTqM9zGAqlYLXqfSPeuV
-         xG3K6KiRcPMFLbX9dNFoBIFLXuTua3j8QFo/6yT8h1cMR0teXqOiDW7GzNx+43JiMrRM
-         VhBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760696224; x=1761301024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kjl4ttTH7mf9R32gzLYGA8/6Y+kS2fnJQOWcBKhszkQ=;
-        b=VlTENOioMj6OqCKUPPJEKQ+ugfRKtG0hARHeikVEdMebhks7GCa7gzSQPT2zZ0R9F7
-         Hj2whShDqMSewP8wR3s6H/Afh8rcXGRxSf5GkpiAvHF+Hd9BLGFTQDm4CtuwjT1fMRye
-         tP1oX0rxHrD772/ki8CpGQWHDIJDSCNjdrAaQuh4Jfo3aVHxJWtCMsyefQN/0R1PrHdg
-         2KfCuzO0yUsjrqapOflejctKKECJTlRZpy97h5DSdrGmEVsvf3qBQ+yhvxjF/PS53c2B
-         LuhXvBbPsjUFtKBe9rkn5U5C1OUwtW6DkGM1ErcNHI0KNANvNNFvJCnN39SnbQ8J0ZKJ
-         dEtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMQ8goI2nYpXx9Il3N1j+rsoO2BL8RbwolxEM4AQqKa8yWT1JJ13o9jLmw/E363ZNGYGOLB7MqcOgkj18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUUNmKiQsSEY1MXXoY3VaV15G1HYB0CIxfvbBFmMXAbbbSScd7
-	IrVDeP224ULAFsfe0cjYLINIw1fNuXkqkt8Ep47yANVHsUlM/pYiPCBCj/XTlU0EHdDxGSRaea5
-	dKhD38M9wCyRo3SxXMLrVfVK0Wzw1Z2lsBTZUkZqENA/XTpvYTC8aJ3s=
-X-Gm-Gg: ASbGncvvEOToA09lUwi/ZJk5Mnt9F6vx3FLaUKf+Fl8pBhHWNsKj2nbsSfF/rgobBFo
-	E9tJEb2XHDmnbdQsjMBd3vvFlrMH++goGveTkbn48b6+bPoUYtwlx/gZbx6QF/K0fte0uGM0xoR
-	q6S87yZUXGOwvzgGz7pXJExhMhS7zbgWdPuu7KncNFz76Q7ht/gk1+MX8RViFyo3OgwkeL90mYr
-	VMbEBy26LPKFMY4tpsSUwv86oszlxtZ/YEXEuhojxfr7KEoiTs9hiPGMZhfyFUYQchkJ7VmWGJj
-	ZjrboB9db4VSpvb7
-X-Google-Smtp-Source: AGHT+IFb5texgdvZxKT2zW5oquozJ797AN63wKHy3b9LDVsQ1OxcyWyj+SIaMVrmskHSbiN0SZxwE2rKGHAZHN2+i6c=
-X-Received: by 2002:a05:6512:63d9:b0:591:d860:413b with SMTP id
- 2adb3069b0e04-591d86042c1mr780177e87.28.1760696223659; Fri, 17 Oct 2025
- 03:17:03 -0700 (PDT)
+	d=paragon-software.com; s=mail; t=1760696246;
+	bh=xoEGqKre08Jr7PjsmRWAbKcDgcSndGO/ryih9swplXk=;
+	h=From:To:CC:Subject:Date;
+	b=HxtCmOtksg3mDXqT7iObO6Vh+0VKIbp73WMhvJQkoyvvn4vS1RAzOYzkhpjiqzxZ/
+	 uenaWuB9jY1jMAwi97LnE2K4yhWhncHDe46wJ4Fye9Tw6s3bI7GL5SA0Q9nRFhwZe/
+	 Wg35AE1qsGjcyduiqUiNGEAK3UolOd5z7qFf5Yeg=
+Received: from localhost.localdomain (172.30.20.178) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 17 Oct 2025 13:17:24 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: Support timestamps prior to epoch
+Date: Fri, 17 Oct 2025 12:17:15 +0200
+Message-ID: <20251017101715.5793-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
- <20251015205919.12678-6-wsa+renesas@sang-engineering.com> <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
- <aPEAx8ZGHBcWZKJF@shikoro>
-In-Reply-To: <aPEAx8ZGHBcWZKJF@shikoro>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 17 Oct 2025 12:16:52 +0200
-X-Gm-Features: AS18NWBV_gOes0wy7mHl9bZewgimv-j1-2NrfbKup0xQtjfDtypktWhvdD9A6GA
-Message-ID: <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if possible
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-renesas-soc@vger.kernel.org, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org, 
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Thu, Oct 16, 2025 at 4:28=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Hi Geert,
->
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thank you!
->
-> > This does mean RESET_GPIO will never be modular anymore, while it could
-> > still work as a module (the reset core creates the platform device,
-> > which can be probed later), albeit in a non-intuitive way.
->
-> Interesting topic. In fact, I think we should make RESET_GPIO bool. I
-> think the fallback mechanism of the core should work without any module
-> loading infrastructure. It should be there whenever possible.
->
+Before it used an unsigned 64-bit type, which prevented proper handling
+of timestamps earlier than 1970-01-01. Switch to a signed 64-bit type to
+support pre-epoch timestamps. The issue was caught by xfstests.
 
-You have not said *why*. How is this different from any other device
-whose driver is only loaded when actually needed?
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/ntfs_fs.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Bartosz
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 630128716ea7..2649fbe16669 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -979,11 +979,12 @@ static inline __le64 kernel2nt(const struct timespec64 *ts)
+  */
+ static inline void nt2kernel(const __le64 tm, struct timespec64 *ts)
+ {
+-	u64 t = le64_to_cpu(tm) - _100ns2seconds * SecondsToStartOf1970;
++	s32 t32;
++	/* use signed 64 bit to support timestamps prior to epoch. xfstest 258. */
++	s64 t = le64_to_cpu(tm) - _100ns2seconds * SecondsToStartOf1970;
+ 
+-	// WARNING: do_div changes its first argument(!)
+-	ts->tv_nsec = do_div(t, _100ns2seconds) * 100;
+-	ts->tv_sec = t;
++	ts->tv_sec = div_s64_rem(t, _100ns2seconds, &t32);
++	ts->tv_nsec = t32 * 100;
+ }
+ 
+ static inline struct ntfs_sb_info *ntfs_sb(struct super_block *sb)
+-- 
+2.43.0
+
 
