@@ -1,198 +1,313 @@
-Return-Path: <linux-kernel+bounces-857483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3A9BE6EB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:23:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2942BBE6EBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1BC54F30CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:23:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBE554F8468
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA9B265CA4;
-	Fri, 17 Oct 2025 07:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC4925228C;
+	Fri, 17 Oct 2025 07:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="X8iVSJuE"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010016.outbound.protection.outlook.com [52.101.69.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgUWjHQM"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B183CA6F;
-	Fri, 17 Oct 2025 07:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760685776; cv=fail; b=jLEPeDoRyL/PrZbJC014SHQXLidQyLvglqK8pGsGoWkI0tHUcugFu+E/pNaLuabAO/sl0/dxGmAKvCdH0ghJmLqyuTD1/zvbJ+WoCZ9sSJuwr1ijPkbmGOzP79W/DFD+pMLo8cWQlx22ILjveywCozO6MvSX6mGNhnsG0tjEXFA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760685776; c=relaxed/simple;
-	bh=ZAijHdOxVdQzAfXnl0+XSEHedpTQETxoMCZ5Rlh5T5g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=poCBcdJYSAEB8p+uzxCak0nKIEKmHMh9gUqXJqZv5Nc7Hz1+sQRs1CLRywNCqF7Seu5g4ia/GPQB7JMn9BZXU8p9XySsqZr+6rWxo0S3g0XE7Td3nGg0KWMNC5WwM6QKEWfbvCQPX9p7SFM1fUrewjD7GWJykBQWDvtitNa0x8U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=X8iVSJuE; arc=fail smtp.client-ip=52.101.69.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OUxBVV1sxQk5gQoRZ+snyZtV2l+9eaibuA6aXELCrzh/WwwOz/PA40IHSFTrF8+fKJ4+d5dhLhPrRYJ8yCv4ODvrgCKnK6qjStXyvImHR3MdxVKCKdmZwVNzv/72VVcPhtw75EMN6qncZjV4f4cEtp31C2bZNm8RXmo9II0M9yw8nsHlO+xsR5WS7lo6FeD36UZjw6xMwx+sXRgto8LXoMB1eTOCmrRJvojhUxS1aUK0lMxDYu0BqDa+9GEsLMzbf+W1KidIiKIlPU/3juNRkR/ZRD1fZeRj2zz4NLxPaaqvdNjDb/5fCvOc5v4UR7ILh68iJJWW6WaKxssKpxHebA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZAijHdOxVdQzAfXnl0+XSEHedpTQETxoMCZ5Rlh5T5g=;
- b=LXZs8z0gySLDxjoaB/ZOxGbAyZkx1A2gciSMRcHdNHqXYS2jKsjhsOAgleDnrMytj1tYfwADdLti1EYDuFD8SSRjXW3s2O8XpgfkzfR2W+7HNFTgt/HwOJddSTw7qIpFE5kkyRloN0jr6yAyQgBN6g0dKoiicb8rqVpyFcUd6FbDPGxecuL6H8bKjlxP1ianKzDAiqLmzQYBe1aCxKoV3xdetdkgIJmWlnkVphLghI/vdu/uUOrIIePcRiqd/fmQQQOCNn/rMuZZlVffVVKvqsgqqxDhiifjvJOkSmqFgecDOOeSjuy/JUJs3Sz8QfUn/s8HKc8HFVJp2yiIZMe1mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZAijHdOxVdQzAfXnl0+XSEHedpTQETxoMCZ5Rlh5T5g=;
- b=X8iVSJuEUyOU0w9Pg83bWNxb82dXNXaPKjoOZljXmZK7PAJZyQZoBgmN8gnWWjD48jJa027fboI9KB7Inc8myL80iZa1DkkrHxv998kQro6A+56YEQBl+xNUBEOqWFx6BONm6bP2iPxk1U1Yk5yJGXuxAHV9rYJnnTpqe+gD3AuTifJil1ipBBYNlcS96PF/hNhS7Usw+jMj2LtwSm0jU3zn7Ud28IMKruo5+ONo3gg8fNkY+yrHbvmpgk5dVBs0DwjG76ChNeZq89NazV/BCPeTN8sH4yCUjhR8sCA876owlm/9Kw9yfofIz1bTswhsWGsteczdo1EyFf8ZBmWMIQ==
-Received: from AM7PR04MB7142.eurprd04.prod.outlook.com (2603:10a6:20b:113::9)
- by DU2PR04MB8885.eurprd04.prod.outlook.com (2603:10a6:10:2e0::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 07:22:50 +0000
-Received: from AM7PR04MB7142.eurprd04.prod.outlook.com
- ([fe80::6247:e209:1229:69af]) by AM7PR04MB7142.eurprd04.prod.outlook.com
- ([fe80::6247:e209:1229:69af%6]) with mapi id 15.20.9228.005; Fri, 17 Oct 2025
- 07:22:50 +0000
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, Frank Li
-	<frank.li@nxp.com>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 net] net: enetc: correct the value of
- ENETC_RXB_TRUESIZE
-Thread-Topic: [PATCH v2 net] net: enetc: correct the value of
- ENETC_RXB_TRUESIZE
-Thread-Index: AQHcPnY8f5rpGnda2UySozUoIATsj7TF7+hA
-Date: Fri, 17 Oct 2025 07:22:50 +0000
-Message-ID:
- <AM7PR04MB714270BD923D7982895C5CF596F6A@AM7PR04MB7142.eurprd04.prod.outlook.com>
-References: <20251016080131.3127122-1-wei.fang@nxp.com>
-In-Reply-To: <20251016080131.3127122-1-wei.fang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM7PR04MB7142:EE_|DU2PR04MB8885:EE_
-x-ms-office365-filtering-correlation-id: 1d4f006a-ecb5-475b-1527-08de0d4dfacf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|19092799006|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?rNC++WArIkswtxODfEEe5f1lupy4gGGpzyi3Ru/Nd1/hM+i3ZvFHd0VsGshu?=
- =?us-ascii?Q?LAb2n7RZKEWb38ZShcI/8/Mr/KWykO34aWHyb+IQ6+E3ntFx9iDBF9KHQW9M?=
- =?us-ascii?Q?J2x+4g4Aq0w1r4z39OKeIWOv8Szjez4F1StCNxV6aQTiWEBMP3e1KgWWPRQU?=
- =?us-ascii?Q?HXWbQCx+cOhdxjV4f9xpdQu4S9o4PNeegvAXHAaGN7qDFmulThK7zcerSk6s?=
- =?us-ascii?Q?/dJZbzl2L2jp20mDhRU5Ukcy3v8P31xhX3mqgccnIkmTBjHaypa6s1tUDEgV?=
- =?us-ascii?Q?K1UYWSvl9eeEcOFEnbu0xhHPhpcSzraoreKC5KQdS4Na8iTU5QKfyL+t+stU?=
- =?us-ascii?Q?aDE3pP+UF4H0uU1jp+FlUrun3/TyrhKwWjW0YFNRgAaVy//uYS9jSv2x/fka?=
- =?us-ascii?Q?yrSe+TciRGr6qn+8Ku7DHIRLHnmSkiPuDzJ7girJ65VL7Y7EcPFZMPTJUovz?=
- =?us-ascii?Q?uWv73W7WE/KcgRtjtWD8Ed7daR+5F0B0ksHZuYWeHtREWZ5cvt20GeGKUT+y?=
- =?us-ascii?Q?8PjSncMZbpjCgITthAWgjo+j1rmEtvm497E8CPE5TYG1VZEm4uevIbvmlIen?=
- =?us-ascii?Q?wI6p7Tj2alKNnGK/z/XdPOOr3/ertE0SzVwS4aLOs7GKX0yQBR7bnjno4Xmx?=
- =?us-ascii?Q?59GXWPiFKC8qFniY6zxsTXSevUV3hvzv4Dp394gyyyO/wHe7RASDC8rKzJ4p?=
- =?us-ascii?Q?449TmpGwyhLSK5z+O9ukFK7AkPi3VEkCEEml9tjlTJN41mYuT4Lp0yg8W1UX?=
- =?us-ascii?Q?0SKVV8y7tkSMF4ZrCVrzWRvpfh4TJeAibc451dvHuU58iaAm8WWTHgcKLJfW?=
- =?us-ascii?Q?e4puiqMAl1tXlRefBzlZ6u4l2kVa03zRAkhIvBLjzcj+kei6DopmOFZs0VY7?=
- =?us-ascii?Q?7hktz13K4NMdEbi62K1LR3H8MCHP/LQYZOMm6vzRwf+U8awinzHW5L2RyAjX?=
- =?us-ascii?Q?tlgq5aV4WzwHGX7e/pBWMkyDx+mIX4/JM/temaUxZTMUeETps6FshVzIM1Ac?=
- =?us-ascii?Q?uidg3w5lUO3VrmVCy/jMRNR3BnpYfVOxPjRKppDuidU+PN8OMfVnBNX18adA?=
- =?us-ascii?Q?x9j2eYc/YktVfKpdSq5r+9C2nRSPJFIRLtmlLBlEtQzqWk7NMTBKjxLbnEAz?=
- =?us-ascii?Q?Q1rZms/0G0B5j6VrpwezWWr/NJT1b+z+zGeYQBwRAJTLiRehGxnT/h4k18by?=
- =?us-ascii?Q?GIyWtcNpBR+oa8mYrRJ0ZgEZSd6tXP7Y77g2kCxQmjlJ6bKYcAmpKiD/C9uU?=
- =?us-ascii?Q?/WhNgRs79dVIhMy/FGBCtvQop/XBcjk38Ij3pGNGEr+wh05WtV0FKJjBSDMl?=
- =?us-ascii?Q?ALYU07BygTsAFRvhrZCXi0qQpzFNtVZThvM2t4wEN6SR3j7lwcUDblYrWBNa?=
- =?us-ascii?Q?2NAElfL1wTMWHqK9vIVwBsuG9wpqbrvyPABXsiHkYjQEDmJaCtrRyrqzK3Jl?=
- =?us-ascii?Q?j1aphpqWgLH+u1CjpJkiaTjEgVaaC+6PKOaEk/XzTue0qo427mbwkjztZKbe?=
- =?us-ascii?Q?hywYXDUzluAXdPUJL84Aijwr2Rg1lp5Cln3A?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7142.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(19092799006)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?X4aNum6Cb305WjDD28Pwlt7PCuXDYVS7TZ5LOr3CYjOf4bwFnkTOJd6zLRj5?=
- =?us-ascii?Q?kQjW8hZawMf7tWvD6fEXEwc0+2rqosSoKqQuwDwAtHBUlr55o0aemsVdCmih?=
- =?us-ascii?Q?A6QjxiESiWMswgL42KstKaEEIenTxZaS94eehZPV/+h4ooAoCr9hpPyQIlta?=
- =?us-ascii?Q?LH/zA2GE7xme3QZlbjDH0tbM5S+rNAZSFkciIslDZ+y2wb2U7iNFulfkPKtA?=
- =?us-ascii?Q?yfbiW94i8eyUy3XKwGzn90X7gGXzpoBNWR1wvXQM8O9wtX7ywDtTF/JxHkw9?=
- =?us-ascii?Q?MUtFtJS9d4jYNTA8rwVJVGwfuVrfn2wawiqIgIuN+tRdpkd0fkkc0TgikZWU?=
- =?us-ascii?Q?fWHe5LgiLEuxC0FpTMcUfdn6vVHC3pCYujeLFDy+Yc9swnA0Uf+d3JGh9t1K?=
- =?us-ascii?Q?Jr/PKxrsMwGJYj9348ncWsGXRiSFvz7MM7BgHRowO4TK5I0grXrTTkizDo1M?=
- =?us-ascii?Q?IVsD6CO7lIiaWgQeB18dRwbLNKCmnjGNEZWHXnAV/30lXlOcPYfTM7PtqPSH?=
- =?us-ascii?Q?Hgv0XRV0jLcueYFXrp0mC/aFP5nOxS6BBpt1NPbxI57tcjfDXo/JQHJOrFNm?=
- =?us-ascii?Q?cJz45yxEqUQ1TeIHhCYD8fs/rYJ8s2JwTOX10I/URfdHCpO9m7p0i0XA8lDC?=
- =?us-ascii?Q?M05NjHUXwV4Wh+l4pL823USj97DyBhZLYc89e9Pso3raHnEtsUP9hriSMVlD?=
- =?us-ascii?Q?3nKDq14koTErup674+zxQ8d3AbSnUCerjNqbhr11zZob1ld5KDZWVXODN7i6?=
- =?us-ascii?Q?NNMJvjcvU1vtq2CG4FNO8STDr9ggvGF4qRK4wJCSy9rl5X9TB2+O5dMDGkcq?=
- =?us-ascii?Q?6GcYJlkIuwqGNHgtfQnhj2nOJEifcOWiY/osRyC9UIzFKcCf3PToSKcdxmvx?=
- =?us-ascii?Q?c8OTBXHzChgh7+k5tkDlX9fQ2nyNbX5R4bA3+hDPfEq+6ecNVf/V6xgBz7me?=
- =?us-ascii?Q?MGq6WDSTGHr4aMmyGwqkzu1pxEApYEjMz8EUv5Bvxdg5LidRy8S0fxQRLeV5?=
- =?us-ascii?Q?fOXm8wjUUTXk4HNoEzDb2j4PiO+Fw4XPbEZiX6fubO+9i61GNA1VZOjFtujq?=
- =?us-ascii?Q?Bd7xM/KTbPMf6Sm+DJBzw5+4mJFtM7MZkzil0hpFVI4aBbX299c9wDiOextv?=
- =?us-ascii?Q?Mhzvje0TH3A01QVoGHL+rT+WhhnZyk7iGtRd89axyWluXrIFLf2T0vJ1xGtL?=
- =?us-ascii?Q?fspGy+fbLLNSj796Y32/h+7DQcolPZbkLxUpQmAcdlhuWcorOTgFFAoJO/7w?=
- =?us-ascii?Q?P/BeoE8t/1uu30kClbXshmCbUtA9q4ZCHVm+cpVERq6F5Vp98aaPx6dKZP54?=
- =?us-ascii?Q?CsGFF2mVC4iPxrkyMjKtg/oKsR11MyXSBDqjWdNCwjVvT4A0JPQXQkfGTPsf?=
- =?us-ascii?Q?3A39QI64ucHCei2Dv7lZQOpawZcNr/zIOY0I87vHegm38cz1BoSjo+kmvujB?=
- =?us-ascii?Q?q9j9X9FjX/Kcwu9BuX76QkzejrxSIPfcnWb5bQfAS+XH49Dsvf41e9YKJUSt?=
- =?us-ascii?Q?CpCf2+ygSwXB3Q4srqDEXVWKEjy6F5iys9POwSC7RXSHuZb9gVFyKrgvE4ta?=
- =?us-ascii?Q?oDtFobC7hoXknNqFy/imgzOKhMcPrCOl/iigXgMJ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A8730FC29
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760685782; cv=none; b=lpxkNvMar/A/XDqJwZzW6z0mpto/NcMfBHqkRv48f/uHHQViul66Sn8RvFksNRw4pNIIwr2IJE8ubsLupqMhZHGqRG9gqdIcrwxp9bxkeO2dDhUOWQU/d0tr6rw4glIcTVrt6F4zVZXVV0pTaxcFEwpjT6hoiQrU+W4pQ4j8scw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760685782; c=relaxed/simple;
+	bh=FQNF7rab9sUAzTsVB+VNTyhiHcZIey+qjslzy2HMT58=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=AwnleRkr5/E2hlh8sur3hiWtPG/Lb5HSnwyCH36kk4Vxfp9HlV/zs3M5orCFlNcACe/GWtjQ4d05rFGe4EShO49pTFil/Hw11X4yIwlXq1jJv/XaLdrR07DM0E2wg5T6tt+QsLSOJPLDkqkJzTIdTCIjIFIHs2I6NIUfBPoVcGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgUWjHQM; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-89048f76ec2so161175685a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760685777; x=1761290577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5uDQgzdhwvYDbFaPZiJi3wbXGaN95FTGftwiemGKqQ=;
+        b=GgUWjHQMRuI42ypwEewg/Ji9hLbFsTydfEPGyt0kPYfyvQdJFnqMpvuwFTjyNIrcAi
+         6PjoQoElKAJ+WDgwUmttLuAVFG/QfkFuaGsoTm0YtO/PkB2JQ6pdDSHET41BqsdCGqOo
+         tv73GntyHTKLtzfsHhOvJ0+Z9vpVTrlrmwwRfCOrj18JO1cmvppNbu1vRFT7QMMkWOtw
+         8Ce2M10+zG487+7TETMEX9rTktvU4I/PLz0HEkrjvRF3XMbOyQy22AAf7TUKgE2/XeGV
+         rc2jBwuiavl7lyV4kjWtE1T3IjaAxpg75dDDO1T+sQzWZ6otXF3ABzlMmLPkuDISJ+yh
+         N5mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760685777; x=1761290577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z5uDQgzdhwvYDbFaPZiJi3wbXGaN95FTGftwiemGKqQ=;
+        b=l8BZYcXBWF2Hr8cdnd3RkSRTb0P99RrXm7ZWyKOV2bKo9oc63J8VQ5SPuuuZHeWHan
+         88iFeQxo2HFAetwZ288lMX0mxFzmESgjYZJR62DNuUpl2dSGqQv+P2qQ9Nd+xpV7jgZF
+         W1GmzxViyBnwjCQQeM0Ac+9Gc/qi6oizFWtDtovg/z0xuL/TSUI83UleOSTX1+MfHjej
+         Jhrtzwrncb2rwJZ1YpJGz8Wq3cq50yv7EI/vx3NECkBbDLt+N0M2HwjTrHjFJMeMzxjH
+         3YS2vMnX5avUwTxkJn49Gbi7eXQGcrTtSxQtjJrnCtnyakYiEdWvElMI4Q91r7DQjTWm
+         2P6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQRBYmQnr6Om04aGOWm9rcK1ocLHJ3g6O8K7VouPRgOUb6I/3PX32OrvYf7ZkeSLwd5k1bEGo/XnsgQ2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyoy/WzUx6ih5cg8MtznP8kE1hJtSq1Yz+j+kL6M48tUAURkly
+	JRdzou/XWenBzs92KjZejzo8W6Mwcvo5dis0m14fCEFDHstYQwhMOnIi
+X-Gm-Gg: ASbGnctbZ+t5tNzmWe9DCGmILxnhYhQQFovKeyBi337OudhRdBHg8oPEmrD4MoKC9f5
+	38DK7ahGOfwN/zPq10XtrN1fhDDXBeuJlPsHb56w3H/ZJfYSkHORIeu1AMoBVYtC4C+1DToUxDn
+	ScyfwsZPSPC0shsTSXGB+cu5KTaCr4VqXpL2n48OysMplLuU1vdb8CueLKJ6HEhYgLKZR3MLU8B
+	k7fGMq02kuwA9f77V+REhNppcljaAJPw/iRPsBJ5++UjIViphGPSNGtD4NmNWTZvMkkDU1hg8tU
+	HGpDd9YmlZnoSRr1++ivT4k58lm5XCQrv1w89mnzHTLKZP1DLOC8XktWvDAl6plxr4Pclvw9LyC
+	1C4U5bv2RQinfVhWhImgQqJHxRX+Njks09dsebq3kJ+bAqrpYJm0zlVJGP28=
+X-Google-Smtp-Source: AGHT+IH68U9c8zKEnTirgbxWW9RfQnZi23N/tX6FIzjg1zraSyTWly+MVJoqafLxEp0RN8L6SditnA==
+X-Received: by 2002:ac8:5a88:0:b0:4b2:fdda:f7be with SMTP id d75a77b69052e-4e89d263e09mr32511821cf.3.1760685777426;
+        Fri, 17 Oct 2025 00:22:57 -0700 (PDT)
+Received: from localhost ([2001:67c:1562:8007::aac:4468])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e881c7e74dsm57959301cf.14.2025.10.17.00.22.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 00:22:56 -0700 (PDT)
+Sender: AceLan Kao <acelan@gmail.com>
+From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Andrei Kuchynski <akuchynski@chromium.org>,
+	=?UTF-8?q?=C5=81ukasz=20Bartosik?= <ukaszb@chromium.org>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	"Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] usb: typec: ucsi: Fix workqueue destruction race during connector cleanup
+Date: Fri, 17 Oct 2025 15:22:50 +0800
+Message-ID: <20251017072250.3261616-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7142.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d4f006a-ecb5-475b-1527-08de0d4dfacf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2025 07:22:50.4274
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BjCZzZceW4PKOgH0t9sj35uvKy+0cfE/jUJa325F4wnjKGHQK7orSk6vGydBO9aH43zzkDxOK+oBPo5hXHghMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8885
+Content-Transfer-Encoding: 8bit
 
-> -----Original Message-----
-> From: Wei Fang <wei.fang@nxp.com>
-> Sent: Thursday, October 16, 2025 11:02 AM
-[...]
-> Subject: [PATCH v2 net] net: enetc: correct the value of ENETC_RXB_TRUESI=
-ZE
->=20
-> The ENETC RX ring uses the page halves flipping mechanism, each page is
-> split into two halves for the RX ring to use. And ENETC_RXB_TRUESIZE is
-> defined to 2048 to indicate the size of half a page. However, the page
-> size is configurable, for ARM64 platform, PAGE_SIZE is default to 4K,
-> but it could be configured to 16K or 64K.
->=20
-> When PAGE_SIZE is set to 16K or 64K, ENETC_RXB_TRUESIZE is not correct,
-> and the RX ring will always use the first half of the page. This is not
-> consistent with the description in the relevant kernel doc and commit
-> messages.
->=20
-> This issue is invisible in most cases, but if users want to increase
-> PAGE_SIZE to receive a Jumbo frame with a single buffer for some use
-> cases, it will not work as expected, because the buffer size of each
-> RX BD is fixed to 2048 bytes.
->=20
-> Based on the above two points, we expect to correct ENETC_RXB_TRUESIZE
-> to (PAGE_SIZE >> 1), as described in the comment.
->=20
-> Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet
-> drivers")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+During UCSI initialization and operation, there is a race condition where
+delayed work items can be scheduled but attempt to queue work after the
+workqueue has been destroyed. This occurs in multiple code paths.
 
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+The race occurs when:
+1. ucsi_partner_task() or ucsi_poll_worker() schedule delayed work
+2. Connector cleanup paths call destroy_workqueue()
+3. Previously scheduled delayed work timers fire after destruction
+4. This triggers warnings and crashes in __queue_work()
+
+The issue is timing-sensitive and typically manifests when:
+- Port registration fails due to PPM timing issues
+- System shutdown/cleanup occurs with pending delayed work
+- Module removal races with active delayed work
+
+[  170.605181] ucsi_acpi USBC000:00: con2: failed to register alt modes
+[  181.868900] ------------[ cut here ]------------
+[  181.868905] workqueue: cannot queue ucsi_poll_worker [typec_ucsi] on wq USBC000:00-con1
+[  181.868918] WARNING: CPU: 1 PID: 0 at kernel/workqueue.c:2255 __queue_work+0x420/0x5a0
+...
+[  181.869062] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc7+ #1 PREEMPT(voluntary)
+[  181.869065] Hardware name: Dell Inc. , BIOS xx.xx.xx xx/xx/2025
+[  181.869067] RIP: 0010:__queue_work+0x420/0x5a0
+[  181.869070] Code: 00 00 41 83 e4 01 0f 85 57 fd ff ff 49 8b 77 18 48 8d 93 c0 00 00 00 48 c7 c7 00 8c bc 92 c6 05 27 47 68 02 01 e8 50 24 fd f
+f <0f> 0b e9 32 fd ff ff 0f 0b e9 1d fd ff ff 0f 0b e9 0f fd ff ff 0f
+[  181.869072] RSP: 0018:ffffd53c000acdf8 EFLAGS: 00010046
+[  181.869075] RAX: 0000000000000000 RBX: ffff8ecd0727f200 RCX: 0000000000000000
+[  181.869076] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  181.869077] RBP: ffffd53c000ace38 R08: 0000000000000000 R09: 0000000000000000
+[  181.869078] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[  181.869079] R13: ffffffff913995e0 R14: ffff8ecc824387a0 R15: ffff8ecc82438780
+[  181.869081] FS:  0000000000000000(0000) GS:ffff8eec0b92f000(0000) knlGS:0000000000000000
+[  181.869083] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  181.869084] CR2: 000005593e67a008 CR3: 0000001f41840002 CR4: 0000000000f72ef0
+[  181.869086] PKRU: 55555554
+[  181.869087] Call Trace:
+[  181.869089]  <IRQ>
+[  181.869093]  ? sched_clock+0x10/0x30
+[  181.869098]  ? __pfx_delayed_work_timer_fn+0x10/0x10
+[  181.869100]  delayed_work_timer_fn+0x19/0x30
+[  181.869102]  call_timer_fn+0x2c/0x150
+[  181.869106]  ? __pfx_delayed_work_timer_fn+0x10/0x10
+[  181.869108]  __run_timers+0x1c6/0x2d0
+[  181.869111]  run_timer_softirq+0x8a/0x100
+[  181.869114]  handle_softirqs+0xe4/0x340
+[  181.869118]  __irq_exit_rcu+0x10e/0x130
+[  181.869121]  irq_exit_rcu+0xe/0x20
+[  181.869124]  sysvec_apic_timer_interrupt+0xa0/0xc0
+[  181.869130]  </IRQ>
+[  181.869131]  <TASK>
+[  181.869132]  asm_sysvec_apic_timer_interrupt+0x1b/0x20                                                                                        [  181.869135] RIP: 0010:cpuidle_enter_state+0xda/0x710
+[  181.869137] Code: 8f f7 fe e8 78 f0 ff ff 8b 53 04 49 89 c7 0f 1f 44 00 00 31 ff e8 86 bf f5 fe 80 7d d0 00 0f 85 22 02 00 00 fb 0f 1f 44 00 0
+0 <45> 85 f6 0f 88 f2 01 00 00 4d 63 ee 49 83 fd 0a 0f 83 d8 04 00 00
+[  181.869139] RSP: 0018:ffffd53c0022be18 EFLAGS: 00000246
+[  181.869140] RAX: 0000000000000000 RBX: ffff8eeb9f8bf880 RCX: 0000000000000000
+[  181.869142] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000000
+[  181.869143] RBP: ffffd53c0022be68 R08: 0000000000000000 R09: 0000000000000000
+[  181.869144] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff93914780
+[  181.869145] R13: 0000000000000002 R14: 0000000000000002 R15: 0000002a583b0b41
+[  181.869148]  ? cpuidle_enter_state+0xca/0x710
+[  181.869151]  cpuidle_enter+0x2e/0x50
+[  181.869156]  call_cpuidle+0x22/0x60
+[  181.869160]  do_idle+0x1dc/0x240
+[  181.869163]  cpu_startup_entry+0x29/0x30
+[  181.869164]  start_secondary+0x128/0x160
+[  181.869167]  common_startup_64+0x13e/0x141
+[  181.869171]  </TASK>
+[  181.869172] ---[ end trace 0000000000000000 ]---
+[  226.924460] workqueue USBC000:00-con1: drain_workqueue() isn't complete after 10 tries
+[  329.470977] ucsi_acpi USBC000:00: error -ETIMEDOUT: PPM init failed
+
+Fix this by:
+1. Creating ucsi_destroy_connector_wq() helper function that safely
+   cancels all pending delayed work before destroying workqueues
+2. Applying the safe cleanup to all three workqueue destruction paths:
+   - ucsi_register_port() error path
+   - ucsi_init() error path
+   - ucsi_unregister() cleanup path
+
+This prevents both the initial queueing on destroyed workqueues and
+retry attempts from running workers, eliminating the timer races.
+
+Fixes: b9aa02ca39a4 ("usb: typec: ucsi: Add polling mechanism for partner tasks like alt mode checking")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
+---
+v2. Fixed the deadlock
+   - ucsi_destroy_connector_wq() holds con->lock and calls cancel_delayed_work_sync()
+   - ucsi_poll_worker() (the work being cancelled) also tries to acquire con->lock
+v3. Fixed use-after-free
+   If the poll worker is in flight while the workqueue is torn down,
+   it's possible for the work item (`uwork`) to be freed by both the
+   worker and the destruction path, leading to a use-after-free vulnerability.
+---
+ drivers/usb/typec/ucsi/ucsi.c | 71 +++++++++++++++++++++++------------
+ 1 file changed, 48 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+index 3995483a0aa0..a270efbb1086 100644
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -264,10 +264,13 @@ static void ucsi_poll_worker(struct work_struct *work)
+ 
+ 	mutex_lock(&con->lock);
+ 
+-	if (!con->partner) {
+-		list_del(&uwork->node);
++	if (!con->partner || !con->wq) {
++		/*
++		 * Workqueue is being destroyed. Don't free the work item here;
++		 * ucsi_destroy_connector_wq() will handle cleanup to avoid
++		 * use-after-free race.
++		 */
+ 		mutex_unlock(&con->lock);
+-		kfree(uwork);
+ 		return;
+ 	}
+ 
+@@ -283,13 +286,50 @@ static void ucsi_poll_worker(struct work_struct *work)
+ 	mutex_unlock(&con->lock);
+ }
+ 
++/**
++ * ucsi_destroy_connector_wq - Safely destroy connector workqueue
++ * @con: UCSI connector
++ *
++ * Cancel all pending delayed work and destroy the workqueue to prevent
++ * timer races where delayed work tries to queue on destroyed workqueue.
++ */
++static void ucsi_destroy_connector_wq(struct ucsi_connector *con)
++{
++	struct workqueue_struct *wq;
++	struct ucsi_work *uwork, *tmp;
++	LIST_HEAD(list);
++
++	if (!con->wq)
++		return;
++
++	/*
++	 * Prevent new work from being queued and signal existing work to stop.
++	 * Move all work items to a temporary list while holding the lock,
++	 * then cancel them without the lock to avoid deadlock with
++	 * ucsi_poll_worker() which also acquires con->lock.
++	 */
++	mutex_lock(&con->lock);
++	wq = con->wq;
++	con->wq = NULL; /* Signal workers to stop before canceling */
++	list_splice_init(&con->partner_tasks, &list);
++	mutex_unlock(&con->lock);
++
++	list_for_each_entry_safe(uwork, tmp, &list, node) {
++		cancel_delayed_work_sync(&uwork->work);
++		list_del(&uwork->node);
++		kfree(uwork);
++	}
++
++	destroy_workqueue(wq);
++}
++
+ static int ucsi_partner_task(struct ucsi_connector *con,
+ 			     int (*cb)(struct ucsi_connector *),
+ 			     int retries, unsigned long delay)
+ {
+ 	struct ucsi_work *uwork;
+ 
+-	if (!con->partner)
++	if (!con->partner || !con->wq)
+ 		return 0;
+ 
+ 	uwork = kzalloc(sizeof(*uwork), GFP_KERNEL);
+@@ -1722,10 +1762,8 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
+ out_unlock:
+ 	mutex_unlock(&con->lock);
+ 
+-	if (ret && con->wq) {
+-		destroy_workqueue(con->wq);
+-		con->wq = NULL;
+-	}
++	if (ret)
++		ucsi_destroy_connector_wq(con);
+ 
+ 	return ret;
+ }
+@@ -1851,8 +1889,7 @@ static int ucsi_init(struct ucsi *ucsi)
+ 
+ err_unregister:
+ 	for (con = connector; con->port; con++) {
+-		if (con->wq)
+-			destroy_workqueue(con->wq);
++		ucsi_destroy_connector_wq(con);
+ 		ucsi_unregister_partner(con);
+ 		ucsi_unregister_altmodes(con, UCSI_RECIPIENT_CON);
+ 		ucsi_unregister_port_psy(con);
+@@ -2074,19 +2111,7 @@ void ucsi_unregister(struct ucsi *ucsi)
+ 	for (i = 0; i < ucsi->cap.num_connectors; i++) {
+ 		cancel_work_sync(&ucsi->connector[i].work);
+ 
+-		if (ucsi->connector[i].wq) {
+-			struct ucsi_work *uwork;
+-
+-			mutex_lock(&ucsi->connector[i].lock);
+-			/*
+-			 * queue delayed items immediately so they can execute
+-			 * and free themselves before the wq is destroyed
+-			 */
+-			list_for_each_entry(uwork, &ucsi->connector[i].partner_tasks, node)
+-				mod_delayed_work(ucsi->connector[i].wq, &uwork->work, 0);
+-			mutex_unlock(&ucsi->connector[i].lock);
+-			destroy_workqueue(ucsi->connector[i].wq);
+-		}
++		ucsi_destroy_connector_wq(&ucsi->connector[i]);
+ 
+ 		ucsi_unregister_partner(&ucsi->connector[i]);
+ 		ucsi_unregister_altmodes(&ucsi->connector[i],
+-- 
+2.43.0
+
 
