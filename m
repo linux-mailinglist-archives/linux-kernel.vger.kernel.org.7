@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-858533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54141BEB133
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:32:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E836BEB13C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0145E4EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:32:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B86B4F79F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734D0306B20;
-	Fri, 17 Oct 2025 17:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283CA3074AD;
+	Fri, 17 Oct 2025 17:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kkUTA/rT"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzLT64v5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D3D2F0C75
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607EA2F0C75;
+	Fri, 17 Oct 2025 17:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760722334; cv=none; b=gmTbCEQqL37BfbOE6Gs34UXWIgPgdS0id6P/QImmK42vOdxewBra9A4sCp8WUKgQqo/Vzw9/2dTmGsak0SGtWOu/QXJjlSSz9bktPbVQXQAEFJBdtTeJ2MWEup2ariy0aCgfSNIjkVl4pvxRQ3iQofTacjDo/eMe2dxiFv8Knig=
+	t=1760722345; cv=none; b=dx8ey18a2Pb7KrDb4FozBAegjf0BYabTktikwfUHJfdnnI8xBHMb4OWZFCKVrmuRNZS2kX4NBZuqwcRaxhB/2by8T6CYyERbwwwQD5IvGRdagaCPltRDx3WYvsFQ0UYavVcyY01/LDrotIZEq0d3OqorqrDKL+E9ZxGPTK0ImWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760722334; c=relaxed/simple;
-	bh=Vt4QuNpa1HskNCLVWXjo6kfPhjGorIFy2mKeAkCHnjg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Dp0/0+a2qtsygzuftRO1rhwdQhUDrmQyZkwhOV5Rv6FvL1o5IR0wjUg+nIczUauOF+3bB2/bhAc57l7GJg+3ENhKy0xAXIh0zBhkk/MSAQcMgovabhrJgzGYSw76rLVDiOVGbyhog1kgcVT2H50h3Ko9TW68mYHuYe3B14R8/vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kkUTA/rT; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63994113841so3813105a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760722330; x=1761327130; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUTogbEE62M9rZ8zQUrRDxkGI0cZ9XEO0tggIYX7Y2o=;
-        b=kkUTA/rTwppLA4aG7m5S5grrDWTFDpz6ciNy6kV4zA8zE4Aofs14qS63PkxRmyIbWW
-         qrbZFnzGPS467rF8dpF7ab00FdjWsXT+ctc1lPbg/FsQG0KDXm1b1UJmC5w4trwCpTo3
-         rSkVRrw8pj/NWPc0bKu4SSEVxGomqmA1VoaSZmxmLLM6C6xYGmkPIeLp2XNsp+nS4Srm
-         v4U9c4XSY+Nwbfqj43MCig5IdwjEQbBd6NsQvj7TSh6tlfuCpwa+x+/fD6EFYN6wOUB9
-         iPzPsNV+Vzlhp2KOVY2vg2xSatdoFA/y4wN/jBcmpudmnxw0LtXTK751vWdjBFnMe+n+
-         kamg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760722330; x=1761327130;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUTogbEE62M9rZ8zQUrRDxkGI0cZ9XEO0tggIYX7Y2o=;
-        b=fQDMUtfgzzv0QZ00O5Zcn/cUmyTmPWzo+y/kLhkU/0qtOs+sreXa2+I6h3fsIY5kzr
-         ZqmBndR8ZoWDvf/k5IKHBitdwESU3SVDAZdGzqOffpYL6i1zviKjiEqaMyTO46pINGjK
-         zmOsIrvCrUd2uU+JkkZNIa79WiJOs6uonoY1bFB2gvSHqdoNhUaZk7R1I4TtWbTini8g
-         rqW8x9pTInd1lAFUik5XnPy7BEk/bbT6GVUTOwFEEfLN/Pre7S6QY6XxUieiqGVJNRvX
-         k8/flH9qZYz4+AwTzC3udD+R3vJZUlkWSxkBWET4uwhCA1/S2bDJwQ4Y2q9+nlytIlCR
-         Ut5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUC3gQKoWSbuWKlF42heoSL8v0MmYXwdR9Uwbg/B0zdx4dvSorRTpG062amFaz7SyWUTN1wwVUmS/KPn0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP2gwFc1nYZNSQGzQ5x5oBI4ku89G0Mlx2QETEJr09iR5Vsvnc
-	dvgipBjJiFPzg9Wx9fO02/K5s2DRZ1h+tpf9yvRzXt7UX9OA6dQUOCZz488ZmoBzPc0=
-X-Gm-Gg: ASbGncv+ctdkUqUFgEUMuI6eD4wsyW+MU4JNRDm9pbDB0ocghgAhfDZCSBg/FT6xprU
-	2q0pUFO7s2xZze6mD+mRqhpet40WZkxlW0vymRKRJ08cxcmIRxUL2xeNDFvOhezNJ7WyU7dBcS+
-	8/r7IIKS+HRmTYr3x04iCRUjer9/2CUS2SToIsMnUYsDvGzCbGXs2kvyJnl5aP6TA4M2yCg0Pm2
-	vcdIs5CYv9STcL/TyHKn7TrbpsK5nzKd9T3cnJKVTrs215GkmNpLMBlqPkS6GAzK9gSEdedMnnM
-	AoU45+5Z0zodxSilE1yUe8xFLBm/ntt7QH9hSfA44Mh9/mTyKKIk8AKl2asCde4KKi4iSaTOiR3
-	Clbzrkn/dn2XkRr9yl5/LX7CdlZiuF9L+24jh44CWI7xBEGLATGkpfm6dxD4x8sK9DVW1KQccev
-	Yktw6yxgBt/McrKSO2flQX61qxlUhJ2D+OrDx5
-X-Google-Smtp-Source: AGHT+IEZ+7ajqngcGNRxS4IgmVgR6llUtRmBUAcwez6MZC50YpqE5y+OqWJMpaWDWfZCfD0IY+W7Eg==
-X-Received: by 2002:a05:6402:1d49:b0:63c:43e6:16f7 with SMTP id 4fb4d7f45d1cf-63c43e618d3mr1622123a12.26.1760722329861;
-        Fri, 17 Oct 2025 10:32:09 -0700 (PDT)
-Received: from localhost (mob-176-247-36-41.net.vodafone.it. [176.247.36.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48a928c3sm235947a12.3.2025.10.17.10.32.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 10:32:09 -0700 (PDT)
-From: Francesco Lavra <flavra@baylibre.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	s=arc-20240116; t=1760722345; c=relaxed/simple;
+	bh=mK3Fl2Pn6OcWYGOVgkej8ydEl/IKicHd6XlHsQq/EbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1739g6pMibdG3WCsXSyV6r5K+ENaPdxgE45nRslsGkfTcm8nT68JhxZoqgGby0l/+7dqci/JWmHH262ElcZ5rTm270tCEXSdmjTmD0ZX9kQClPn9P+cJAVPaiYG1EdZKZAWs2b/CrMF0Jx23EP3vPE7wA62sqS8a2xctO9lNDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzLT64v5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76ECFC4CEE7;
+	Fri, 17 Oct 2025 17:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760722345;
+	bh=mK3Fl2Pn6OcWYGOVgkej8ydEl/IKicHd6XlHsQq/EbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UzLT64v5SSaSKewtscDNrZX0ED39JvTzLpjo/a779mwwFtcGjlfBn3DMgLvNFtAxZ
+	 lDVbIMDtirzCw/oAHZnzeFlu9RVbJxJLhbhWN/RjVRw4huh8Gm9sKACSVA1lhTu6hO
+	 7wQsD9UCXR1ATe4KJKkNG+8GWwkpLMyf6PFyP6+pohzQ4LiCP1ClR0918LJzTjXZwW
+	 yeo/PG9b1GAT1n57PrHQAPuJoJwj7FBGtzdZnL9MxQef7ZoLStWWyuaPaND8hWfJVe
+	 qv4LqXoWJGOXv53r4YpzmZ2rIxaVyBkFejAvaZV+dCPzLmUlfpj17UD3sm5BRzU0ab
+	 gUNbSCPx+az0g==
+Date: Fri, 17 Oct 2025 18:32:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Andy Shevchenko <andy@kernel.org>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: imu: st_lsm6dsx: fix array size for st_lsm6dsx_settings fields
-Date: Fri, 17 Oct 2025 19:32:08 +0200
-Message-Id: <20251017173208.1261990-1-flavra@baylibre.com>
-X-Mailer: git-send-email 2.39.5
+	Saravana Kannan <saravanak@google.com>,
+	Will Deacon <will@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+Message-ID: <81bda56c-f18b-4bd9-abf9-9da7c2251f42@sirena.org.uk>
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <CAMRc=Me4Fh5pDOF8Z2XY4MG_DYqPRN+UJh_BzKvmULL96wciYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2218; i=flavra@baylibre.com; h=from:subject; bh=Vt4QuNpa1HskNCLVWXjo6kfPhjGorIFy2mKeAkCHnjg=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBo8n2KwMuel9b5XNmYBoUVfInNSwF1QhazfH4cA 4znIA7EHLiJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaPJ9igAKCRDt8TtzzpQ2 X7q5C/9/OMvjhN/4aiwg+ptdRZZrcPXmWex5mXe9uLy8P5lZ7baavSMvhDKMPljoSL51CS4LcxZ N7y93rQWSD/n8Y4fOXHoVVoKVDo1hF9U/yG3OLsZ2IWOqTS/bRYXmxT52rAnSnxuRYU88urAExw ZBJUIepXoYsKZE5Y9OkE7DuV1gSYvNAZtVnPu+2UikR2Sjm4g2TjaT3sfChQrFMhGgBknPKUXnQ B6jAA8RxX1nmhfFoXQHW3HJo6Zu4taYfulxZwfmqqPCIrL+GSzR/IGLrWV2Foa2YHZKEy6amcm8 dyFt7+GYgx4AyWLEuKWwEy2sCD6chgg7uCUWLF0DoDAi5IwR4xL9icHp/oEAcS2EH4ohWLkF1Mf N6m0cf10ekT1+RXD2oneMEieHxqvsyMWsWHhjGzOZlUK0JdRVNra3yy55mRWR2kRX6ZIw34Do3Y FmKnvGQZF41hP+l/9OxaEEs1KGaZwHngXMzrhT9cSwpI8hmhFu4c36iUURujfxmUiL1E0=
-X-Developer-Key: i=flavra@baylibre.com; a=openpgp; fpr=8657854F953BDCA31EC314E6EDF13B73CE94365F
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KbGHBWGA+KCN6s9I"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Me4Fh5pDOF8Z2XY4MG_DYqPRN+UJh_BzKvmULL96wciYw@mail.gmail.com>
+X-Cookie: Androphobia:
 
-The `decimator` and `batch` fields of struct st_lsm6dsx_settings
-are arrays indexed by sensor type, not by sensor hardware
-identifier; moreover, the `batch` field is only used for the
-accelerometer and gyroscope.
-Change the array size for `decimator` from ST_LSM6DSX_MAX_ID to
-ST_LSM6DSX_ID_MAX, and change the array size for `batch` from
-ST_LSM6DSX_MAX_ID to 2; move the enum st_lsm6dsx_sensor_id
-definition so that the ST_LSM6DSX_ID_MAX value is usable within
-the struct st_lsm6dsx_settings definition.
 
-Fixes: 801a6e0af0c6c ("iio: imu: st_lsm6dsx: add support to LSM6DSO")
-Signed-off-by: Francesco Lavra <flavra@baylibre.com>
----
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+--KbGHBWGA+KCN6s9I
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-index 3cd520bdec46..a4f558899767 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-@@ -252,6 +252,15 @@ struct st_lsm6dsx_event_settings {
- 	u8 wakeup_src_x_mask;
- };
- 
-+enum st_lsm6dsx_sensor_id {
-+	ST_LSM6DSX_ID_GYRO,
-+	ST_LSM6DSX_ID_ACC,
-+	ST_LSM6DSX_ID_EXT0,
-+	ST_LSM6DSX_ID_EXT1,
-+	ST_LSM6DSX_ID_EXT2,
-+	ST_LSM6DSX_ID_MAX,
-+};
-+
- enum st_lsm6dsx_ext_sensor_id {
- 	ST_LSM6DSX_ID_MAGN,
- };
-@@ -337,23 +346,14 @@ struct st_lsm6dsx_settings {
- 	struct st_lsm6dsx_odr_table_entry odr_table[2];
- 	struct st_lsm6dsx_samples_to_discard samples_to_discard[2];
- 	struct st_lsm6dsx_fs_table_entry fs_table[2];
--	struct st_lsm6dsx_reg decimator[ST_LSM6DSX_MAX_ID];
--	struct st_lsm6dsx_reg batch[ST_LSM6DSX_MAX_ID];
-+	struct st_lsm6dsx_reg decimator[ST_LSM6DSX_ID_MAX];
-+	struct st_lsm6dsx_reg batch[2];
- 	struct st_lsm6dsx_fifo_ops fifo_ops;
- 	struct st_lsm6dsx_hw_ts_settings ts_settings;
- 	struct st_lsm6dsx_shub_settings shub_settings;
- 	struct st_lsm6dsx_event_settings event_settings;
- };
- 
--enum st_lsm6dsx_sensor_id {
--	ST_LSM6DSX_ID_GYRO,
--	ST_LSM6DSX_ID_ACC,
--	ST_LSM6DSX_ID_EXT0,
--	ST_LSM6DSX_ID_EXT1,
--	ST_LSM6DSX_ID_EXT2,
--	ST_LSM6DSX_ID_MAX,
--};
--
- enum st_lsm6dsx_fifo_mode {
- 	ST_LSM6DSX_FIFO_BYPASS = 0x0,
- 	ST_LSM6DSX_FIFO_CONT = 0x6,
--- 
-2.39.5
+On Fri, Oct 17, 2025 at 07:26:51PM +0200, Bartosz Golaszewski wrote:
 
+> Upon a closer inspection it turns out that this is not the case - the
+> ENABLE/DISABLE events are emitted when the *logical* regulator is
+> enabled/disabled even if this does not involve a change in the state
+> of the shared pin.
+
+It really should be the actual physical state change that triggers the
+event.
+
+--KbGHBWGA+KCN6s9I
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjyfaEACgkQJNaLcl1U
+h9BErQf/Z/sKUhSw6MAZ93yfrnBWym2QF5z8oMpsH7JQGCNPCw9xhi9ONVG3iIWO
+VmtCGqQumniEy8IL0mHp6No11tieFxS7lSjEg6IoAE1eoFvyPpGMBQ8cNDnuvV5E
+BYwaq8DfHvb6vzVp1eP9DJflPAX3sUePRz+Yg/mIS9yzcF/yUOzDD6JJUC6pMwfB
+K4idkg8y39S6TfnUi2k2btUj1xBzuYDn4/ep/Au7y0NiBrnkliUaxUU7MfF6MfJU
+6zM9mTj4Gbu4R5tb5b+6Q3CgPMMm9Kdjzi/oePlu1LQuCsctb0bBKrq5gn91h8q0
+ScTJfYoYMevt5u1QE0G5oL3mQAinUQ==
+=o7y1
+-----END PGP SIGNATURE-----
+
+--KbGHBWGA+KCN6s9I--
 
