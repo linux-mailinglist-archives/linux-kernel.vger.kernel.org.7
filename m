@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-857660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6295FBE7714
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:10:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47F0BE76BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8431F3B9DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944031AA21D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB002D94A0;
-	Fri, 17 Oct 2025 09:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DDD2D5436;
+	Fri, 17 Oct 2025 09:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="NgmAaihE"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p8PkJAVR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844CD2D5A19;
-	Fri, 17 Oct 2025 09:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFD32DC341
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760691974; cv=none; b=B7fnMElZ/1dTvaZ8tmf6wO7kE7JzQvwvJurmnqlt4ERndD61yrTksWVO0MX1kPYiWCfQbkheATEuINKOUsxYHOjpokF2fgPj27N+LF4P0LpYvwupJg91+jfNrUPREbqeNublhWXivIWtyIlA9HzhSuGPvF54761BggoHn6SukaM=
+	t=1760691990; cv=none; b=uJ+EFrSz+SwY2yXGmaW4hY9QrRoDJIPC8IASDqgFR1cndjYxjdim2deLC3kFelCArrAcPXpLImhwMctr591jkZjLmGi6vuP5hFFfEZQYowcuZIVgMd519xSmz3jR7u00OWETbaVtowJn5LgettkxsWiHySwjGlvJGYkvF3ABio4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760691974; c=relaxed/simple;
-	bh=LoX/Lxbv304qvjIS2a1OaSK5tvEqDMSDHw8eDppiorE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=St08W0OAEEEqOlsLP5kGpa//4+rCxFtF4530W9b3sOBuNLcOaNVIOqyIA6JsiwfJCSR6nTV99dRaayEpJSARZ9iCHAN6w9He6WspGd6+hoajYZyFEKdAI4I6k3yQncBQ4P/D0PiAaVO7Dv2p83egtKptwtgnwH2tRa492mwuWdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=NgmAaihE; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59H5efbc2691225;
-	Fri, 17 Oct 2025 09:05:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=/JgYiI9yeG91Adi49Cc7NZy4njx/Viy4D1GT0w1uQr4=; b=
-	NgmAaihE4W7EaDnOTKsLS6JMJdRgsgFM/GyZJGuaJeLyklP8yp8pLs45Y+1Lp15q
-	vlxAFd8+IVdsKr/w1hPzJMnK4vZ1JbtAi3C7IWRZQryZYSixx0sOKjZlca6nGvvU
-	kjYhy/KWAuUc7tzCJtD9YC1UxOWGouRTDY68q1qLG0zlHoeLV0lj4f8RU2hTRVdf
-	z3ggUdVoOwjYw7CYllg4uXdbqLL1OF5hrxCkOM8iVZdiCUogK+wAlmJ7k/L29pS1
-	zHxdveM0LbND1kHmtvPB9ckoZeFqLDVxdCLFehCv94RbK0SoduWTCcM44lMor1MU
-	6h/Dv8sEaPIuDvGgBBBbzQ==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49sthhbuxp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 17 Oct 2025 09:05:48 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.59; Fri, 17 Oct 2025 02:05:46 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.59 via Frontend Transport; Fri, 17 Oct 2025 02:05:42 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <lizhi.xu@windriver.com>
-CC: <ahmed.zaki@intel.com>, <aleksander.lobakin@intel.com>,
-        <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-        <kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-        <samsun1006219@gmail.com>, <sdf@fomichev.me>,
-        <syzkaller-bugs@googlegroups.com>, <syzkaller@googlegroups.com>
-Subject: [PATCH V2] usbnet: Prevents free active kevent
-Date: Fri, 17 Oct 2025 17:05:41 +0800
-Message-ID: <20251017090541.3705538-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251017084918.3637324-1-lizhi.xu@windriver.com>
-References: <20251017084918.3637324-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1760691990; c=relaxed/simple;
+	bh=tL9LCQhpKIBjQIgS/5f1KpjSDRPB3nJi2aKghBl0jM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YTanJSVdwGfooef3rLoxA6KsYtsqlLGqq3nkKfsiDg5DUedzGjsvVkZRJcNRCCDVijavx3pXJqfS/8P6iT3VOsu6OBvtWh3xCWdZEu/jctrepr/km7hFwO/XOCa5bRyZ1agdNQ1gUGadN8oR1nqZngj261jRAl6Eagh/O8fpbXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p8PkJAVR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b50206773adso529132766b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760691987; x=1761296787; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=418kpMdDHnOQzzDnjco0/swD3OeHn+l/8evRSWETxr8=;
+        b=p8PkJAVRd2Vo0QVBck6JlHDW4H1DfgmBgUNao/9Nxyt77rBPmQMYnnrLCiL5RkCg9F
+         7xOKXf3qxLoKusF2/EHXZkz5XcwpmCBC9VQHrhnlqs5rJUJfDNUFkSX/lA2gE7nYJ+Xm
+         E9uBNrUd87yXlyIindIpkJ2u1iZWt5HaVZkijLxikgHQjmUKd6+oLC9YIKv+AiZUJkFb
+         9j/8iSANWosU8+A+5zyqUOKgpUG8YpPFj4rUtYfiXhauZgIPdHSwOBR/LsFYVled3gcQ
+         le4SDLYgaWgXbzqx8cPJ6UrU3m6tLzByNNerGPfwfG2soIjP6LOC2zEm86p2rMAzwS10
+         JWig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760691987; x=1761296787;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=418kpMdDHnOQzzDnjco0/swD3OeHn+l/8evRSWETxr8=;
+        b=u5SWeH5L1pvmoHEFfmXNzrRRU+k8TbIn6aALYLGjSD/c/Y3Cg93O689j0pek9JpDn2
+         pH/CVeCWfBUP4d8IL2oHBP6sG5GLb6OcEvpj/Vb0bjTHqB3bObxHLdOIqHUztJpGAbdd
+         kdGKjY8nE5hhP5veJ+2xPP8lgbzOTMXoGLUUjNJOvxpzmu0KlbCNNrMB84hl7Jm4xxyK
+         tkQj+6isFf2aKiW81tnBJDU6JYaP3W1JzC8XDLzKYuANzC604Q70HgfqPzCriLa3vuxV
+         3GG8WeVwI+UmGXYltgoZQlHSy71+uZtUY56F1rKci3kC6i4J/VKMJb+53zYEBmrT6mCr
+         WwHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBx+BciPojm1ht0Y2w4CG1aY2Vc/Q1cn8g02IN1x6t5lIk4emHRlRoh+2MqDPuVF9+m+AFip8aWQnMhzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh3w1mZa44RdHXiCnImdUopQl+10jjKxsFaxgC0sM0dZufbm/l
+	tRHm+VunMIm7nkmhYdhofRs+KhKRgPNfq3vL7ugUoyKt64rofm3jJQm6haPezotfYiakTanGAxU
+	Sp9KTZiq/C9mXJIrn0gh47WPuBcZuVqiiD7Flo8D2Dw==
+X-Gm-Gg: ASbGnctkN0O9wgLWMt2cwmw1+q/IYp3+O4ASVkp+OFdZ96IVChtOubJstX2QYpL+nDj
+	RLIluWrHb7dg6LqhSiwRiano7aqZRyxZGWC89p8943923scNLsudVrnZchy4z2QT4CQIvSr2gGU
+	qUfaYbX5JRKXFneN+N8UwiYdx6LqCFSbmR8A9sDWa68gthynVVDPVZ+Vz5Tyl8eN6k4XHlGcQ/G
+	KG94VHs1RtVVmmH8bFSqIK1IVYIrYRZUJ9N5wBrMMMsEU5ZbbAVBi2TDTvrA6oPMiIAxA8CjCNU
+	8ZyyPNFlJVo5eoIpIjUBX/2/V3o=
+X-Google-Smtp-Source: AGHT+IG+w0UsfxJS4d6pFqa8XviZVfLhRM+rhE1KqiFzit259/+EaKQIY+0egVcn1SrXy9IXtpCbr0Z+t9PVc3PXPa4=
+X-Received: by 2002:a17:907:868f:b0:b41:c602:c75d with SMTP id
+ a640c23a62f3a-b645f7ef255mr378423666b.31.1760691986910; Fri, 17 Oct 2025
+ 02:06:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: VV4ZH7_U5ea0fMZ3gSC0haIyQafL_hv8
-X-Proofpoint-ORIG-GUID: VV4ZH7_U5ea0fMZ3gSC0haIyQafL_hv8
-X-Authority-Analysis: v=2.4 cv=QLBlhwLL c=1 sm=1 tr=0 ts=68f206ec cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=pGLkceISAAAA:8
- a=t7CeM3EgAAAA:8 a=eAUpJhlxHBEC5-Y6-xsA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=poXaRoVlC6wW9_mwW8W4:22
- a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDA2NyBTYWx0ZWRfX5zONk/G5X5FH
- nWSMnMoqLtuUXccvjZwjgnyNGg6TARIIFRPymMslnOI9l0mEywrpYLZX34bfR5KbkK0URov24VI
- TmcbWd45O36+7TMCPDjQzPJ9v81UUQvJb8B7MgPvmb/J2t6Y4xJI0IyfqQPhW4K0Pk5nHdwDUXK
- ad+ZhY7+ItFENsWnFNW7CXUoH986ywwi7odeRSfGEhuBcT6b8GDdRn5wvRTmQgg7S2VG2m/qDql
- 0tGgcAgapT1fS6ynW4Pfg6ltrHG5gv2ORqsUgkj6QlkY1oRcTldaLE6+f0z7qezYiOTf5W/z9OX
- yKWd0Pv+xCjs9bzmhDIuaBK9D9DTJ/nM7frtvBX3XUV+LX9Z+eQtbGjHnyLIoFowOt0Hh7dRwyK
- oGJoGOKbN+iNSlLICCnpXFggM3ypIg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510170067
+References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
+ <20251015-arm-psci-system_reset2-vendor-reboots-v16-2-b98aedaa23ee@oss.qualcomm.com>
+ <CACMJSesvTLe28Jz83b=zfHD2rvmf7-i_2+2DoV=dgooVqFEYbA@mail.gmail.com> <fa42adf0-8f15-ad4c-3788-578b1bee1c72@oss.qualcomm.com>
+In-Reply-To: <fa42adf0-8f15-ad4c-3788-578b1bee1c72@oss.qualcomm.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Fri, 17 Oct 2025 11:06:15 +0200
+X-Gm-Features: AS18NWCSgzHU1qRYaMmAnFnfeUajlPBrTb0Y5_GWRI3iwaw1dVFHqq2mvJmjYc8
+Message-ID: <CACMJSesxazA7Nf6sAhUT16KfwtiUNjvb5JOEWkEb1B5fJtihMQ@mail.gmail.com>
+Subject: Re: [PATCH v16 02/14] power: reset: reboot-mode: Add device tree
+ node-based registration
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Souvik Chakravarty <Souvik.Chakravarty@arm.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Yan <andy.yan@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Moritz Fischer <moritz.fischer@ettus.com>, John Stultz <john.stultz@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Stephen Boyd <swboyd@chromium.org>, 
+	Andre Draszik <andre.draszik@linaro.org>, 
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	Elliot Berman <quic_eberman@quicinc.com>, Srinivas Kandagatla <srini@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The root cause of this issue are:
-1. When probing the usbnet device, executing usbnet_link_change(dev, 0, 0);
-put the kevent work in global workqueue. However, the kevent has not yet
-been scheduled when the usbnet device is unregistered. Therefore, executing
-free_netdev() results in the "free active object (kevent)" error reported
-here.
+On Thu, 16 Oct 2025 at 19:19, Shivendra Pratap
+<shivendra.pratap@oss.qualcomm.com> wrote:
+> >>
+> >> -                       info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
+> >
+> > This change is good - devres should not be used in subsystem library
+> > code, only in drivers - but it doesn't seem to belong here, can you
+> > please separate it out and make it backportable?
+>
+> sure. Just to confirm we should separate out the devm_kzalloc part of the
+> change and add a fixes tag.
+>
 
-2. Another factor is that when calling usbnet_disconnect()->unregister_netdev(),
-if the usbnet device is up, ndo_stop() is executed to cancel the kevent.
-However, because the device is not up, ndo_stop() is not executed.
+And preferably put it first in the series to avoid conflicts.
 
-The solution to this problem is to cancel the kevent before executing
-free_netdev(), which also deletes the delay timer.
+> >> @@ -123,8 +136,11 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
+> >>                 return 0;
+> >>
+> >>  error:
+> >> -               list_for_each_entry(info, &reboot->head, list)
+> >> +               list_for_each_entry_safe(info, next, &reboot->head, list) {
+> >> +                       list_del(&info->list);
+> >
+> > Same here, not deleting the entries currently seems like a bug? Do we
+> > depend on the driver detach to clean up the resources on failure?
+>
+> sure, so this should also go as fixes? and should we remove the other
+> dev_err(printk) also as fixes? or that can still got with the change
+> where we add fwnode based registration?
+>
 
-Reported-by: Sam Sun <samsun1006219@gmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=8bfd7bcc98f7300afb84
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
-V1 -> V2: update comments for typos
+It doesn't seem to be strictly required by current code as the users
+use it "correctly" but if the API becomes used in different ways - for
+instance the structure may be reused after failure - it's a good idea
+to backport it. In general we should undo everything we did in the
+same function if we fail at some point.
 
- drivers/net/usb/usbnet.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index bf01f2728531..f0294f0e6612 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -1672,6 +1672,9 @@ void usbnet_disconnect (struct usb_interface *intf)
- 	usb_free_urb(dev->interrupt);
- 	kfree(dev->padding_pkt);
- 
-+	cancel_work_sync(&dev->kevent);
-+	timer_delete_sync(&dev->delay);
-+
- 	free_netdev(net);
- }
- EXPORT_SYMBOL_GPL(usbnet_disconnect);
--- 
-2.43.0
-
+Bart
 
