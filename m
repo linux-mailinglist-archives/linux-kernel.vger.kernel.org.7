@@ -1,123 +1,198 @@
-Return-Path: <linux-kernel+bounces-858407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AC0BEACAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:37:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E28BEA992
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564E65A2A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:18:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E672034B568
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6880A29BD90;
-	Fri, 17 Oct 2025 16:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81642BF3F3;
+	Fri, 17 Oct 2025 16:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JhRrWIif"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+p3BAVb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D708B28312E;
-	Fri, 17 Oct 2025 16:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FA52C029A;
+	Fri, 17 Oct 2025 16:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717772; cv=none; b=p9nfryvGvkTLkIU3CZDd08MLYf+GDbfmnTJWYfRVvw+XxCUEg40vs5ZCW71EVnVZCH/EFcpEn4vMu8bv5ZWJHBUUUHyECTA+wQbWZEU0IyWEc+Dyc/UdgwkWjWNEprmpijUdiy/HmbqPG+Jc0MBGCA2JoVMUYCjfuHNs18vHNqQ=
+	t=1760717756; cv=none; b=MAh4WARoAKcoYluWghq+jQEl/3NgaUToBABpF0zNWE+vmhQYIHaNl/ZmuHzDGv5i7Lt03FmSZLpaG42ZewrNCly0mGrWixYicH54v6toSAdwuiufHAGqE9z5btloDuM6+YhDmFZphRIhqor60naHFp/mjhx3zwK1DiMQmEQoUxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717772; c=relaxed/simple;
-	bh=HAk5XarQfseeqeP7zVYEUF8QINQ4zYPsmcKTZ1AN/VI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1ARuL9GSRVlga2S1PVwGmIBBiws/vc7j3ZDRhWWTCixieAlhbR+j14yUEXmhAITYb8glp+gMw/mieNHi3X6BX3rPQAVrgcDW2d8UI9a4OhDJubeEesC0mygscCElilvVS9FzDchXNMaBNj6zgSdUVXekbBJCGa3I1o8oSpAtkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JhRrWIif; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760717771; x=1792253771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=HAk5XarQfseeqeP7zVYEUF8QINQ4zYPsmcKTZ1AN/VI=;
-  b=JhRrWIif2EBbxV2f13ZNtXvlOttnJVHiiUvAe510mBWwvMmSzFlkYM+Z
-   E0Z98N6xNKZRMR3dj1Gky1Sw2EZ7WiUy+tMyKYqJyGcrniYejW7o2S6Sk
-   6OvNi4PsXOl57+bZGA+KF0Zr8j70yL4ZM/s1wXF1nYDTFWztv+xCoW9bJ
-   3Bb7yNxj7rRFcJ/jXxkwdA7HA1MOARnCyMVP1ou+xpdIepD5xOw9L6Nng
-   KEYYQQvF3hIHSHZuL8L2QUqH3KX7O6pkK+SpzAiYqq5hGYO9PRC0JRJ0O
-   HkvBD+DtpkC/tbdV44kxfgcvmO3JuMCMFe41HSlvKSfuefoICJd3G7kNO
-   w==;
-X-CSE-ConnectionGUID: acaoi076QSmzrV1vHFE54A==
-X-CSE-MsgGUID: t5IAMHs0Rm6fM7n3ajvYsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="62978112"
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="62978112"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:15:53 -0700
-X-CSE-ConnectionGUID: zrBRjgAaQuOVNryk6/wZVA==
-X-CSE-MsgGUID: XToEUZ7rRImx/pOoImC1/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="182712153"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.129])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:15:50 -0700
-Date: Fri, 17 Oct 2025 19:15:47 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/sysfb: Fix a NULL vs IS_ERR() bug
-Message-ID: <aPJrs7_u8KcalNsC@intel.com>
-References: <aPJo1W5Dl4rmGX_P@stanley.mountain>
+	s=arc-20240116; t=1760717756; c=relaxed/simple;
+	bh=iN9QxgdL5sM1aHqGKMzcz8sT8xP19Pb9eUWgXg1nfKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hAFfYk8ql8EZ8VS3JAw9ZYvUy510i5oeeSXoQty03WpgCp0fyWUPtty6Bs59rjWMBb+IH1+XtQuZ0PE5HCyiGKJsdCtOXWm7G6ZOJpu0N3KGU1FeMX5bgBrFlGtjlN9gfJEOwSOM1whpsy9FqZQxzUlhZ3YxGOKssbrZZJEJROA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+p3BAVb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFD7C113D0;
+	Fri, 17 Oct 2025 16:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760717755;
+	bh=iN9QxgdL5sM1aHqGKMzcz8sT8xP19Pb9eUWgXg1nfKI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=S+p3BAVbFYGVjyj1/5eJ59fJTBHTH74pSYvEFU8RBBYNrvFSnJwQSUSOslz3OBEEi
+	 LNjZ47mxlszLJ4gjbHCHwdq7drsAmi4zfzAJ2sBBMuPWAgbWFLE962dme/LuQWTYB/
+	 B9NKliXf2SC5CjoM4N/13vO7CLiEkbOcHYr4nf0IsBU12TqznFYgWqKNIMAafJ+qKZ
+	 sN24tAa7mLR1wi+/NZGYeFKDWLXM91jRd1eoIxWQHUHsf98your/HZo1PQ0FGUpeKd
+	 qjaNY0RFLFpWRpuqM8yTShmr4Ua0/h+KR0Xc4WNtIsr5KGnjJOg3mYCvaa0TtYTqnU
+	 kF6hIuEsLbX2w==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v4 2/2] tracing: Add an option to show symbols in _text+offset for function profiler
+Date: Sat, 18 Oct 2025 01:15:50 +0900
+Message-ID: <176071775059.175601.3827350589430991963.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <176071773144.175601.17884676964675287059.stgit@devnote2>
+References: <176071773144.175601.17884676964675287059.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPJo1W5Dl4rmGX_P@stanley.mountain>
-X-Patchwork-Hint: comment
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 17, 2025 at 07:03:33PM +0300, Dan Carpenter wrote:
-> The drm_atomic_get_crtc_state() function never returns NULL, it returns
-> error pointers.  Update the error checking to match.
-> 
-> Fixes: cb71de092553 ("drm/sysfb: Lookup blit function during atomic check")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/sysfb/drm_sysfb_modeset.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> index 8517c490e815..d2c4d8f3d4d0 100644
-> --- a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> +++ b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> @@ -259,7 +259,7 @@ int drm_sysfb_plane_helper_begin_fb_access(struct drm_plane *plane,
->  	ret = -EINVAL;
->  
->  	crtc_state = drm_atomic_get_crtc_state(plane_state->state, plane_state->crtc);
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Looking at where this gets called, that should be
-drm_atomic_get_new_crtc_state(). Either that or the
-code is more seriously borked.
+Function profiler shows the hit count of each function using its symbol
+name. However, there are some same-name local symbols, which we can not
+distinguish.
+To solve this issue, this introduces an option to show the symbols
+in "_text+OFFSET" format. This can avoid exposing the random shift of
+KASLR. The functions in modules are shown as "MODNAME+OFFSET" where the
+offset is from ".text".
 
-I'll send out a patch that warns about invalid use of 
-*_get_state()...
+E.g. for the kernel text symbols, specify vmlinux and the output to
+ addr2line, you can find the actual function and source info;
 
-> -	if (drm_WARN_ON_ONCE(dev, !crtc_state))
-> +	if (drm_WARN_ON_ONCE(dev, IS_ERR(crtc_state)))
->  		goto err_drm_gem_end_shadow_fb_access;
->  	sysfb_crtc_state = to_drm_sysfb_crtc_state(crtc_state);
->  
-> -- 
-> 2.51.0
+  $ addr2line -fie vmlinux _text+3078208
+  __balance_callbacks
+  kernel/sched/core.c:5064
 
--- 
-Ville Syrjälä
-Intel
+for modules, specify the module file and .text+OFFSET;
+
+  $ addr2line -fie samples/trace_events/trace-events-sample.ko .text+8224
+  do_simple_thread_func
+  samples/trace_events/trace-events-sample.c:23
+
+Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ Changes in v2:
+  - Define a dummy TRACE_ITER_PROF_TEXT_OFFSET if CONFIG_FUNCTION_PROFILER=n.
+---
+ kernel/trace/ftrace.c |   26 +++++++++++++++++++++++++-
+ kernel/trace/trace.c  |    5 +++--
+ kernel/trace/trace.h  |   11 ++++++++++-
+ 3 files changed, 38 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 00b76d450a89..d4802bb93793 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -534,7 +534,9 @@ static int function_stat_headers(struct seq_file *m)
+ 
+ static int function_stat_show(struct seq_file *m, void *v)
+ {
++	struct trace_array *tr = trace_get_global_array();
+ 	struct ftrace_profile *rec = v;
++	const char *refsymbol = NULL;
+ 	char str[KSYM_SYMBOL_LEN];
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	static struct trace_seq s;
+@@ -554,7 +556,29 @@ static int function_stat_show(struct seq_file *m, void *v)
+ 		return 0;
+ #endif
+ 
+-	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
++	if (tr->trace_flags & TRACE_ITER_PROF_TEXT_OFFSET) {
++		long offset;
++
++		if (core_kernel_text(rec->ip)) {
++			refsymbol = "_text";
++			offset = rec->ip - (unsigned long)_text;
++		} else {
++			struct module *mod;
++
++			guard(rcu)();
++			mod = __module_text_address(rec->ip);
++			if (mod) {
++				refsymbol = mod->name;
++				/* Calculate offset from module's text entry address. */
++				offset = rec->ip - (unsigned long)mod->mem[MOD_TEXT].base;
++			}
++		}
++		if (refsymbol)
++			snprintf(str, sizeof(str), "  %s%+ld", refsymbol, offset);
++	}
++	if (!refsymbol)
++		kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
++
+ 	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 2b3fe0a30c7d..9f254c290bcd 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -522,7 +522,8 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
+ 
+ /* trace_options that are only supported by global_trace */
+ #define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
+-	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD)
++	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD |	\
++	       TRACE_ITER_PROF_TEXT_OFFSET)
+ 
+ /* trace_flags that are default zero for instances */
+ #define ZEROED_TRACE_FLAGS \
+@@ -11106,7 +11107,7 @@ __init static int tracer_alloc_buffers(void)
+ 
+ #ifdef CONFIG_FUNCTION_TRACER
+ /* Used to set module cached ftrace filtering at boot up */
+-__init struct trace_array *trace_get_global_array(void)
++struct trace_array *trace_get_global_array(void)
+ {
+ 	return &global_trace;
+ }
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index caec534072e7..3d034dd753c6 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1353,6 +1353,14 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ # define STACK_FLAGS
+ #endif
+ 
++#ifdef CONFIG_FUNCTION_PROFILER
++# define PROFILER_FLAGS					\
++		C(PROF_TEXT_OFFSET,	"prof-text-offset"),
++#else
++# define PROFILER_FLAGS
++# define TRACE_ITER_PROF_TEXT_OFFSET	0UL
++#endif
++
+ /*
+  * trace_iterator_flags is an enumeration that defines bit
+  * positions into trace_flags that controls the output.
+@@ -1391,7 +1399,8 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		FUNCTION_FLAGS					\
+ 		FGRAPH_FLAGS					\
+ 		STACK_FLAGS					\
+-		BRANCH_FLAGS
++		BRANCH_FLAGS					\
++		PROFILER_FLAGS
+ 
+ /*
+  * By defining C, we can make TRACE_FLAGS a list of bit names
+
 
