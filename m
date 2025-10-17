@@ -1,225 +1,255 @@
-Return-Path: <linux-kernel+bounces-857856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BFFBE8146
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:33:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A51BE814F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7589622272
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6A33BB26A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B2C310625;
-	Fri, 17 Oct 2025 10:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405DF2DC765;
+	Fri, 17 Oct 2025 10:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrM7th9d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TMoC/yE+"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012035.outbound.protection.outlook.com [40.107.209.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7B72D6E5B;
-	Fri, 17 Oct 2025 10:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760697192; cv=none; b=EE3ZcAskmrVmCaBaNJjC0mY14q0YXFrK8RbArQxkMd2/SAD20cA5s36nl6E3Cb+aIGNB7x6U8ACBNqeDQjXN7b9y8FMhyUvxsbn/jVCsRzznIxOX4d72CwzLXJWfUHwuGe/+cdWDHrVGxGq24sMPO4lrQ9jywiVZjuelMbQTccM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760697192; c=relaxed/simple;
-	bh=UlVJvvJTFUTe7yzsfT9aVKl3PpSSUeDPxxdIcnrjqZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvbSrSoLWDHi8w9w0Nymy1pCXAaavItrBJmlXtiunMIWe0JDAcyVDAhZ87KsXDm14uZm5QFfV90Ti5wHOiZS/JfXA/12Odo8B+2Fv4EYyyAgVeG+fpTd8jv7BgdV7gN7pcsS7ryQKBrg/FP9PGqcTpDM0h6ZJUy0fSwRhrx+Qrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrM7th9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2B1C4CEE7;
-	Fri, 17 Oct 2025 10:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760697192;
-	bh=UlVJvvJTFUTe7yzsfT9aVKl3PpSSUeDPxxdIcnrjqZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hrM7th9d2+F95CYQjBEYtmy0bQ5YWxqsZ4hUgq1JEFE3JeTQd1vF9mbFJbS48nYnj
-	 rxdDRbyK42U4xbWt7Vy0Vugz4m4EAVvCP+ulBlW+1bzCUXgLhd9Bfhk1Y7+Hvcq3rD
-	 zXnzIddo/t5lyhXK3+knx7Komubs7O7UAT9encgaoCsSgprPyb2etXOmwjVhxodqEP
-	 46dTQLrn3mTIYATsRj8ogGfO3tpgAK6/GsDAlkrWsA67yUdDgrNxUFwpBUkDfxbA1U
-	 V7t3ybzrFA8tzsMALp2SKQM2lePmiM2mEhvDbUrmgIWtsvmxwWHvAbY8Vo00qAPQyZ
-	 /l6DP9rgxkVRg==
-Date: Fri, 17 Oct 2025 16:03:00 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Christian Bruel <christian.bruel@foss.st.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Inochi Amaoto <inochiama@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Mayank Rana <mayank.rana@oss.qualcomm.com>, 
-	Nam Cao <namcao@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Shradha Todi <shradha.t@samsung.com>, Thippeswamy Havalige <thippeswamy.havalige@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: controller: Mark controllers which cannot do
- lockless config access with !PCI_LOCKLESS_CONFIG
-Message-ID: <mxlpkktc34utdc6tr6apf4g5t3cdq6ckdbsern5s24t2bxlsva@e6e667l2wd2j>
-References: <20250925135014.66865-1-marek.vasut+renesas@mailbox.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8991BC3F;
+	Fri, 17 Oct 2025 10:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760697361; cv=fail; b=fYjcFWtVjrAL2R0/9VhUBjFgaJMVHgn/tL1LzEwfGy9mRblf9XvDxZOMigzjXVraDhtFq3VHyNqNTkR57aoCFFzFp+ev9YJtVZNR142rKzq2DCcZWZALaVuNs3q9cT8dkiVmT3t2JhP5YZiNaqbr0cDEN3vg7vpjzi9tcpWy/hU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760697361; c=relaxed/simple;
+	bh=0INH/c3+UtQV+uUid9HA4nvQpVrYidb/dKK1ZXgG82I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JlovOKylwGbEhzfPBO1ei2EJENETUAfWnUKkkfLkwhnxuQKLgUcJQ79lF8XxwBl0+pmtHCygCyVRZJEsfbVr0zEr6M5+JnMwEaGZdKQaA/BiRyb7li3jb2KOle6muUDlt/kuwpymq8cRc2hJ2DbVUjSmhSRMQPwUWUYXH4fnuSg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TMoC/yE+; arc=fail smtp.client-ip=40.107.209.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xl83T9hAKuFzfay0ILoAwTlc3U0zlw1QThnqDO3R92i4/rBC0uCuYCZ8GCBjvaA58vI86y9vW8QENzHk+F0/vcuF93nEYyXBBaKxVkolkEmv+TYoaRIlAQM8M4C7V3Bfrh/NnGF2ncfoCmLBx6N8b/jye/z73EU3gTvopie239TBjf1Mcd28XN6NBVpyaIfCBznbXzd5kbEUsjfLsnmKivqX2HD5NIHPyAyFiqgXslya8/C8U+kaRqK3/TP5V4H/LDbfVwkUGVs+iiBnI3j8V+8lu3hIH9ucYfwmlBE16JGzvBlmRzffBF36S5e9mT1eY/9rc/4PEOrFzpAaAeXpYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RcRVitWow8zzuo5H3VITvuxVFD7TePhwJzEzDvCylbk=;
+ b=Sar3hCUTC/2cVdcXlh+73rmfNq1/QXexjpcAOu7HxgEhwuLPBFki5HrT5jJEvI/EVXbC6bQOTZnm9wt0bcqGKXq++JKF4OxVSKzyfMWIb//l2KpVUxdpeAXcaY/iHwOMHcyYEB1IGzOi8IPe0QtZBUUFF+8FTsKmqpFRkoPr8PFLQn6f3myd0RML5HV7ILR/70sf+WCC0Nzm15pnppt4t/j/Nrz3lPJ4KWszUULEqU4B9U9qjCb1SCHWlTGQTapjV5EPCHVDpQPFydbnXmO29QG8Mss7HdWSP5XHRy2/1D3E92nmefQnBOMXWjGsM2SVK9Ia/I/iXlPVyiXjWgwzSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RcRVitWow8zzuo5H3VITvuxVFD7TePhwJzEzDvCylbk=;
+ b=TMoC/yE+N+YUD+CcjBa7s68/Fp8BPykkiWWikK43FXpVsw1i0Ef8wHiDbDeb9QG0+E/eJDf+iqLxcv4S8jRiDXQJmLTGr5eVGjk6JrGrW0CPrA1DAxYUhMlB+/0b4SK31I/ATKchYpzxhm3HlPtQsKvxBZE6xKiNpt8gmtnFAL4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PR12MB8301.namprd12.prod.outlook.com (2603:10b6:208:40b::13)
+ by MN0PR12MB6199.namprd12.prod.outlook.com (2603:10b6:208:3c4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 10:35:56 +0000
+Received: from IA0PR12MB8301.namprd12.prod.outlook.com
+ ([fe80::e929:57f5:f4db:5823]) by IA0PR12MB8301.namprd12.prod.outlook.com
+ ([fe80::e929:57f5:f4db:5823%4]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
+ 10:35:56 +0000
+Message-ID: <5303684f-3acf-402a-8154-a02a2194ce34@amd.com>
+Date: Fri, 17 Oct 2025 16:05:46 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 09/12] KVM: selftests: Use proper uAPI headers to pick
+ up mempolicy.h definitions
+To: Sean Christopherson <seanjc@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>,
+ Fuad Tabba <tabba@google.com>, Ashish Kalra <ashish.kalra@amd.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20251016172853.52451-1-seanjc@google.com>
+ <20251016172853.52451-10-seanjc@google.com>
+Content-Language: en-US
+From: "Garg, Shivank" <shivankg@amd.com>
+In-Reply-To: <20251016172853.52451-10-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4PR01CA0056.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:274::17) To IA0PR12MB8301.namprd12.prod.outlook.com
+ (2603:10b6:208:40b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250925135014.66865-1-marek.vasut+renesas@mailbox.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PR12MB8301:EE_|MN0PR12MB6199:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a325c7a-69af-4711-1d98-08de0d68f47b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eGVoS0JGMGhDTlpmWjRPOXhkZ0tNTHRiamozejVDN1QzMngrNzBlSGFES3pa?=
+ =?utf-8?B?V2dGTW9qdWFNaEtTVWxTV3lyODNpa1hMVnA4cVE2OGdJeWhZMkVoZWxBWVV2?=
+ =?utf-8?B?QktXQmlTNncwZ0prak1WZFk1dTlsZE1jN0tlYlptRjF6T0VNM3BSSGRKZDBL?=
+ =?utf-8?B?STJYaFRSQ09Hc1dqTkVIYkg1ek9vVnpDbm9VTnpnY0hRVFRwaVlGd3ZxZkZr?=
+ =?utf-8?B?akFYUStEaVFidm1iclFlMWZYeVdSaXMrVVBOY0FXUFQxc29ZOHNmTUxvd3lJ?=
+ =?utf-8?B?Nm1sUjgwMFFtejd0SnJQaHVtTnIxODhFNEwvd2puMnJVQ0MzWEZ5OHJoV3hJ?=
+ =?utf-8?B?ZTlScElBN044SzdjV1dnZUZ4M3crK3lQQXJjWFlGUW55Qk41TGZheVloczZn?=
+ =?utf-8?B?NTcyaWF3Ly9ZM0E0N0tlWGVKTGdUK2cvSkU2bU4rOFVQUmxBSnUrMzhnUW54?=
+ =?utf-8?B?MFJEM1ZjZFF6dW4wcHI5WEh6ZDZndGZFOWZ5V3I4UXkzWTBQclJzN1FLelox?=
+ =?utf-8?B?L25IdkExTnQzblZrVjRxOCsxMXZVOEp1a0VFb3VnM1Y4c0RYWm9OUHdoUzNo?=
+ =?utf-8?B?em9IRzNDZVRCYndiWVY5cHZXOHl0c1owWUt5V3BBVFh2MlZmZ0JPUXk2ZUh4?=
+ =?utf-8?B?bk5CSDNSRHl1Wk42S3B1RHdIVnNnZmROSlNjWHYwb1p3aFk5QVF4Vk1SeW9V?=
+ =?utf-8?B?WU13OWY1bTlmV3daak81QU5URVhDVzJkQTZZdW1NR3ZramVPeCtMMFRsSGZo?=
+ =?utf-8?B?MENtU0hraVhMMjFpZ1pibDUrY1dMMjdIV29ZRlZOL3RDUEVQcDZ5Mm9iZFpT?=
+ =?utf-8?B?Q0RyUkRuQVM2ak5tTjQvSEt2a2l5N0t4M0xQVjFkYUluaHJyOUdZOUZ3NDRT?=
+ =?utf-8?B?a3MyWTYvMW1CRy9FM2k2ci9oOTZUaE45aUtZMm83VkQyTU5OWFJDVHFjNjVz?=
+ =?utf-8?B?V0U1NFpxZktCYUxwVG5iVzNsWHNwd3hBWUQ4c1BVTDU5bXFTcDJHdVNvZEUw?=
+ =?utf-8?B?RTJVY0prSUVaYU9UbDNZMEszdllkUm1leFI2bXFHUnh4NGsxU1BRYW9wcFl3?=
+ =?utf-8?B?SVV1K2oxNmViMjFpUnJYcEJpTGlxVXlhWUhubGRQenp3ekl2dWtBZ3JVUm40?=
+ =?utf-8?B?WnUxMTBUV2VBUGRUMWhjZE9GdmZ5bUpoUEJEcGpMNjF4K0c4YU9CRHBodkZV?=
+ =?utf-8?B?Z1JyOWphL3lrQVlPb1hhV1FuUit5L2d6NFcyMGJVak9WR3NxYlhNYkxZSmFm?=
+ =?utf-8?B?VGVJNTk0RHlPNHZ0QnlJQWRMRUF5NmxzVi9QOFViSVpZOGNWQmJ2ZFJIUWlT?=
+ =?utf-8?B?aG5NWXg5NG5aVFNCWlBwY2dPdjhEUHZ4OGJkYXcyQVhnQnF6UG00dFZ5akpT?=
+ =?utf-8?B?OEcvVnVBbXJQckdINjl1dHI4aThnaEZTM2tOQ2FFVFNNcUVObnhpbkt0VEQz?=
+ =?utf-8?B?Z3JRR2w0K3BmRVo0bnVLbmI1QWVhbGllWWVPK0VKMk14TFpCTEtJWWFyT3B0?=
+ =?utf-8?B?My9XcGVCc3hzd3IxVXh0UXh6YnVuSkR5ZTNlUzUwVmEzSFBsSVR2RWJMR1NK?=
+ =?utf-8?B?QzVqNE9ydm5MaDB3T09XbFY3d1QyVTR4UjdTZngvQUt3ZnIwU0dCQmlrMFJj?=
+ =?utf-8?B?RnNCTlV3U1ZIaTZnektWWFdPQk1QR2lDNGJkUkNrMVF4WUlMSEpXRk9aYmtT?=
+ =?utf-8?B?N2NLUStyUU1idXJBME1LK25XTTM1Zm9QUzNRRW9FQ0pyV3FLQk54Tm4zVU5U?=
+ =?utf-8?B?RGZOK0dRVS9EZHlVd2NjYnpPSm5heTNVekFaRFUrWk5mUktQY0p0em1pekxW?=
+ =?utf-8?B?R2pVR2tOZ2xhTXNnaG1MZVUzVEpRWnZHKzRucFlYRWNrUFFtcURLdXdxVlJE?=
+ =?utf-8?B?M01MWnV6RmVmSFZZejlCSVZXaHF1SEpRYlhsdWxRTC9qZXkxSlp0d3JVMG9i?=
+ =?utf-8?Q?K2V95/aaanoQ/Y5zfW7HFJ7OAs8PBmTP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NUNESnR3ejRwemliR2tveml5Si9TRjU5WWc4TXZseGhQVEozdDVDOVAyR3JL?=
+ =?utf-8?B?b3BFWTcxNmFEbUZPMElMTWZWbmR0ZFdob0x6M3dBaVc1Q0x5Rktmd0J6bnlN?=
+ =?utf-8?B?dmJiK1ZqSUpicHhpUEFjYTdJM3lMZmRDMUdzY1dla0N2cWYyUVB6UW5TcG44?=
+ =?utf-8?B?Z1lhMkJRWnNDdTI0b1RkVTVtMy9wUkdDL2o4d3F4L0VoNFpSa3FBK1VYYzd3?=
+ =?utf-8?B?TnlHcWtLcy9EWWVVUnloOVJlM09sR0RNbnhLdDhERU5Tc1pzV2VkVzh3RG80?=
+ =?utf-8?B?dTk3bDJUMkdCSjZxcVovZlB4dWE2VU1UWFFUdE5pSWZMNVc0dERrR0NZMkFL?=
+ =?utf-8?B?RHRWdGxCdUMwdVdYWEhWVmZ2OHRsRHhoZW9rejlGK2dNRzd4eXNWTHVHaU1v?=
+ =?utf-8?B?ajZYM0NGNmRTTGk4eFVIREM3ZStObDI0N2hsRW9kOTVkV1BsWGV1Um13NGhj?=
+ =?utf-8?B?MUlPaWhFZzU2RHlqNXdlRHRjYVZZZDBsQVhzMWx0d0g1UENyRDFhemJjOXIw?=
+ =?utf-8?B?MVhoZFp4dGRmaWNBdWFKZkNVYXMwQUtZdEhDZUJQVUJLUHd0OUdBTUhQOU5i?=
+ =?utf-8?B?cmpYSE5teHFhdnlwMlRCdWkxMWFFQUQ4MmZDd3VxUlNwL0ljbW93emRudUQ3?=
+ =?utf-8?B?ZXQzS1h2eHViMlR3RGJXb2w5QlAzMFFhU3JWVE5WYytqeFRFcmhDTlA4RlIw?=
+ =?utf-8?B?OHhSUjZqZGNiUklOVGJZcVZSdXU1aDh5V25wWlZzczBqeHljVkpyenlVTktM?=
+ =?utf-8?B?Zk1idCtpM1ljYUo2aHhpSTcxcU11ZTlkd1B1QTAxTlhoSjdMRmFoUm1Lc2VF?=
+ =?utf-8?B?MEFoZXdJMHlNbEtqdXNpV2tWTkhCR1JaSHJKQmhsWDZwZzFnNjJiaEhSTzJQ?=
+ =?utf-8?B?Vmdwa2dJOEthdURsRGM4RkMxTDQwdjRXM0hwSFJIeGdlNUZLRmp0UEw1UTlB?=
+ =?utf-8?B?b0YyZ0xSZ01TSFBwdG1sRm53UDBqY0cwSlRJeTlHcjVEczc0NSt0MldmZEo5?=
+ =?utf-8?B?cHdGU1BaRFR2c3NOWjMyckwxQWdpbmVGTzNHSUtXMlM5cURJVDBIYWxVNExI?=
+ =?utf-8?B?L3pjNzhuRkR3Y2RnaXJsUlluNW5URGZ3WVJEOWsrRG1RWVNYdndJdXhtbGF5?=
+ =?utf-8?B?Z2Z4cUE2MDVyV2dhRS9DbWNCRlcxNUh4N0dYU2Q0clVvTTJSV2x6OG9xcUpP?=
+ =?utf-8?B?RDJRSFhKMWxkWGFjNGJvdVpVbEE3anIrR05SL2lvSDNIN2JMejdRL01ITzlo?=
+ =?utf-8?B?Zld2QmZsVVVvbEJWbExVUGxYZCtQNWRDSzlxV2plV3plbElJRTJmMndIdU9X?=
+ =?utf-8?B?clhGOTJXbVlSZDhsOC9sMDlHc2pZNzhWRUhybXMwZlJYZWc4TmhsTGpXT084?=
+ =?utf-8?B?djBkWEk1Q0VZQlREVnlmRXpWU29NN2hYcVFPa1ZJR3c5b3lnSVBmbURrSTJk?=
+ =?utf-8?B?TmZ3c2RZcDl6c1lEWFcyS3hvQTE1Y3Qxb2NDdG50QWhwM1g3LzlTOFRSU0F1?=
+ =?utf-8?B?NHBDall4SHF1NFNOdFllZllPa0dBRmhYcHZzUUtkRVRlSTY2bzRIMzhHbCtP?=
+ =?utf-8?B?eXRrMmJQVnBCT1oxUzZkc1BWckFZUVBZajZzSDV5RmdEVGNpS1BaOCtoSXlO?=
+ =?utf-8?B?MFhrenc5azdzMGMyWUdDejBtdmNaNXdOZ2hTNmVHeE5hVEFVUUFWcmxrVjdi?=
+ =?utf-8?B?clhvaXJqU0ltZnNNZ3NtYS9lYXhFWlZnRklseWxZNmNsRjlFNjNQWWsrNFFH?=
+ =?utf-8?B?UHF0QU14V1JnN1h2UEpRNkY0R0czelg5R0FRMkR1UUR2bWorVVV3Y2g2dXZ5?=
+ =?utf-8?B?SVEwY1hmeEdVSllrWkptcEprdFJWQU9uRjB3MHZxQlJTN1B6cEtJa0FYcVBO?=
+ =?utf-8?B?bWcrbitzeGhxbEV3L2pWeGl5ZDJCdnVBS1BCMzBkNDMza0crdDJmUXlSMXho?=
+ =?utf-8?B?ZDEvNGZIdllpbDd3UTdhUnJwbDZzT1NKWHVBa1IzMmNoYURQTlo3WDdSNnlZ?=
+ =?utf-8?B?WnVBaGRCVnBHdDR0enBKMTZ1UngzZW85ellXUW5sNWtlaXlJRnNpbnZsdCtZ?=
+ =?utf-8?B?MVVDenpudDhyNG9jZEpJRVRNN0VOQ3VmZGM2ZU9hb2JxN3hFVEsyRFlTbXZP?=
+ =?utf-8?Q?dVt6CCRGRDqQT/nBfD6f+EjDW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a325c7a-69af-4711-1d98-08de0d68f47b
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8301.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 10:35:56.6874
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VPFa4syaK4t+wqlZDckY+nEzvU0b6uZHd+xl+WlwlIFY4YbXMRym7DBIyoZrEZ94Dayb3byhYghdE2zF3nTo+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6199
 
-On Thu, Sep 25, 2025 at 03:49:45PM +0200, Marek Vasut wrote:
-> Add 'depends on !PCI_LOCKLESS_CONFIG' to controllers which cannot do config
-> access without PCI subsystem level spinlock.
 
-May I know on what basis you have added the Kconfig dependency? Because, all
-non-x86 and um drivers are going to suffer from the race if PCI_LOCKLESS_CONFIG
-is selected. But you've only added the dependency to selected drivers.
 
-- Mani
-
-> If PCI_LOCKLESS_CONFIG is ever
-> enabled, those controllers would have to be updated accordingly.
+On 10/16/2025 10:58 PM, Sean Christopherson wrote:
+> Drop the KVM's re-definitions of MPOL_xxx flags in numaif.h as they are
+> defined by the already-included, kernel-provided mempolicy.h.  The only
+> reason the duplicate definitions don't cause compiler warnings is because
+> they are identical, but only on x86-64!  The syscall numbers in particular
+> are subtly x86_64-specific, i.e. will cause problems if/when numaif.h is
+> used outsize of x86.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Christian Bruel <christian.bruel@foss.st.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Inochi Amaoto <inochiama@gmail.com>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Cc: Mayank Rana <mayank.rana@oss.qualcomm.com>
-> Cc: Nam Cao <namcao@linutronix.de>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Shradha Todi <shradha.t@samsung.com>
-> Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> NOTE: I hope I got them all
-> ---
->  drivers/pci/controller/Kconfig      | 6 ++++++
->  drivers/pci/controller/dwc/Kconfig  | 5 +++++
->  drivers/pci/controller/plda/Kconfig | 1 +
->  3 files changed, 12 insertions(+)
+> Opportunistically clean up the file comment as the license information is
+> covered by the SPDX header, the path is superfluous, and as above the
+> comment about the contents is flat out wrong.
 > 
-> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> index 41748d083b933..1a6e937cca929 100644
-> --- a/drivers/pci/controller/Kconfig
-> +++ b/drivers/pci/controller/Kconfig
-> @@ -12,6 +12,7 @@ config PCI_AARDVARK
->  	depends on (ARCH_MVEBU && ARM64) || COMPILE_TEST
->  	depends on OF
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCI_BRIDGE_EMUL
->  	select IRQ_MSI_LIB
->  	help
-> @@ -205,6 +206,7 @@ config PCIE_MEDIATEK_GEN3
->  	tristate "MediaTek Gen3 PCIe controller"
->  	depends on ARCH_AIROHA || ARCH_MEDIATEK || COMPILE_TEST
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select IRQ_MSI_LIB
->  	help
->  	  Adds support for PCIe Gen3 MAC controller for MediaTek SoCs.
-> @@ -244,6 +246,7 @@ config PCIE_RCAR_HOST
->  	bool "Renesas R-Car PCIe controller (host mode)"
->  	depends on ARCH_RENESAS || COMPILE_TEST
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select IRQ_MSI_LIB
->  	help
->  	  Say Y here if you want PCIe controller support on R-Car SoCs in host
-> @@ -332,6 +335,7 @@ config PCIE_XILINX_DMA_PL
->  	bool "Xilinx DMA PL PCIe host bridge support"
->  	depends on ARCH_ZYNQMP || COMPILE_TEST
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCI_HOST_COMMON
->  	select IRQ_MSI_LIB
->  	help
-> @@ -344,6 +348,7 @@ config PCIE_XILINX_NWL
->  	bool "Xilinx NWL PCIe controller"
->  	depends on ARCH_ZYNQMP || COMPILE_TEST
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select IRQ_MSI_LIB
->  	help
->  	 Say 'Y' here if you want kernel support for Xilinx
-> @@ -354,6 +359,7 @@ config PCIE_XILINX_NWL
->  config PCIE_XILINX_CPM
->  	bool "Xilinx Versal CPM PCI controller"
->  	depends on ARCH_ZYNQMP || COMPILE_TEST
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCI_HOST_COMMON
->  	help
->  	  Say 'Y' here if you want kernel support for the
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 34abc859c1071..8eab27775195f 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -2,6 +2,7 @@
+> Fixes: 346b59f220a2 ("KVM: selftests: Add missing header file needed by xAPIC IPI tests")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  tools/testing/selftests/kvm/include/numaif.h | 32 +-------------------
+>  1 file changed, 1 insertion(+), 31 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/include/numaif.h b/tools/testing/selftests/kvm/include/numaif.h
+> index aaa4ac174890..1554003c40a1 100644
+> --- a/tools/testing/selftests/kvm/include/numaif.h
+> +++ b/tools/testing/selftests/kvm/include/numaif.h
+> @@ -1,14 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+> -/*
+> - * tools/testing/selftests/kvm/include/numaif.h
+> - *
+> - * Copyright (C) 2020, Google LLC.
+> - *
+> - * This work is licensed under the terms of the GNU GPL, version 2.
+> - *
+> - * Header file that provides access to NUMA API functions not explicitly
+> - * exported to user space.
+> - */
+> +/* Copyright (C) 2020, Google LLC. */
+
+Given this file got a complete overhaul in this series, Should the copyright be 2020, 2025?
+Not entirely sure what the rules are for this.
+
+LGTM!
+
+Reviewed-by: Shivank Garg <shivankg@amd.com>
+Tested-by: Shivank Garg <shivankg@amd.com>
 >  
->  menu "DesignWare-based PCIe controllers"
->  	depends on PCI
-> +	depends on !PCI_LOCKLESS_CONFIG
+>  #ifndef SELFTEST_KVM_NUMAIF_H
+>  #define SELFTEST_KVM_NUMAIF_H
+> @@ -37,25 +28,4 @@ KVM_SYSCALL_DEFINE(mbind, 6, void *, addr, unsigned long, size, int, mode,
+>  		   const unsigned long *, nodemask, unsigned long, maxnode,
+>  		   unsigned int, flags);
 >  
->  config PCIE_DW
->  	bool
-> @@ -322,6 +323,7 @@ config PCIE_RCAR_GEN4_HOST
->  	tristate "Renesas R-Car Gen4 PCIe controller (host mode)"
->  	depends on ARCH_RENESAS || COMPILE_TEST
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCIE_DW_HOST
->  	select PCIE_RCAR_GEN4
->  	help
-> @@ -390,6 +392,7 @@ config PCIE_UNIPHIER
->  	depends on ARCH_UNIPHIER || COMPILE_TEST
->  	depends on OF && HAS_IOMEM
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here if you want PCIe host controller support on UniPhier SoCs.
-> @@ -410,6 +413,7 @@ config PCIE_SOPHGO_DW
->  	depends on ARCH_SOPHGO || COMPILE_TEST
->  	depends on PCI_MSI
->  	depends on OF
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here if you want PCIe host controller support on
-> @@ -488,6 +492,7 @@ config PCI_KEYSTONE_HOST
->  	bool "TI Keystone PCIe controller (host mode)"
->  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
->  	depends on PCI_MSI
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCIE_DW_HOST
->  	select PCI_KEYSTONE
->  	help
-> diff --git a/drivers/pci/controller/plda/Kconfig b/drivers/pci/controller/plda/Kconfig
-> index 62120101139cb..2a400678312eb 100644
-> --- a/drivers/pci/controller/plda/Kconfig
-> +++ b/drivers/pci/controller/plda/Kconfig
-> @@ -10,6 +10,7 @@ config PCIE_PLDA_HOST
->  config PCIE_MICROCHIP_HOST
->  	tristate "Microchip AXI PCIe controller"
->  	depends on PCI_MSI && OF
-> +	depends on !PCI_LOCKLESS_CONFIG
->  	select PCI_HOST_COMMON
->  	select PCIE_PLDA_HOST
->  	help
-> -- 
-> 2.51.0
-> 
+> -/* Policies */
+> -#define MPOL_DEFAULT	 0
+> -#define MPOL_PREFERRED	 1
+> -#define MPOL_BIND	 2
+> -#define MPOL_INTERLEAVE	 3
+> -
+> -#define MPOL_MAX MPOL_INTERLEAVE
+> -
+> -/* Flags for get_mem_policy */
+> -#define MPOL_F_NODE	    (1<<0)  /* return next il node or node of address */
+> -				    /* Warning: MPOL_F_NODE is unsupported and
+> -				     * subject to change. Don't use.
+> -				     */
+> -#define MPOL_F_ADDR	    (1<<1)  /* look up vma using address */
+> -#define MPOL_F_MEMS_ALLOWED (1<<2)  /* query nodes allowed in cpuset */
+> -
+> -/* Flags for mbind */
+> -#define MPOL_MF_STRICT	     (1<<0) /* Verify existing pages in the mapping */
+> -#define MPOL_MF_MOVE	     (1<<1) /* Move pages owned by this process to conform to mapping */
+> -#define MPOL_MF_MOVE_ALL     (1<<2) /* Move every page to conform to mapping */
+> -
+>  #endif /* SELFTEST_KVM_NUMAIF_H */
 
--- 
-மணிவண்ணன் சதாசிவம்
 
