@@ -1,134 +1,108 @@
-Return-Path: <linux-kernel+bounces-858465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2ACBEADDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F585BEACFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 443365A269B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:41:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE07E1AE1298
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A822C11C3;
-	Fri, 17 Oct 2025 16:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09D82C1581;
+	Fri, 17 Oct 2025 16:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUmdqQiw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GKN0mRz2"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8342C08BB;
-	Fri, 17 Oct 2025 16:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EF02C0F6C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760719302; cv=none; b=eC/HsFhWBxJP5emdWXJNW0nXbmD6e8fiXYgb1nDSF8jlN5WN2GVhQIYnS+safJ4g4Qx5bJxlVmE8D+9b1TuEfsVmcVF6B2uWveBecCzpqJGWfYUSESsi10utUgMjV8yGQ8GPB4nC+5FQlgMGADoX12KVGD+cRB/ekEKDExvMtbQ=
+	t=1760719318; cv=none; b=NYn9sNL7cE3rVMBmaBWJATE13DmfaYQvUUMulSHGJ6Qq+WP21LfvMiOTW7wJjObb4UPQnqlPh21m48AIwyLD6Aq8qx100pIvSFzBKRtJL2ovylfT+BvQtqW1CTDCtd5j0c+z8vwelkm98LGCEM9IgddXjn1FHh9vc44KrXDMxP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760719302; c=relaxed/simple;
-	bh=Kluv6meTOXVV/CYoXDaXYdFXj5omH8c8AFCn633N9wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TyiO/c3ZY3ylAxpfp36/lpfD9abo+O3RNpOBDHbds+84arVRkKPJYR+oPw6SIZw+qNDCRmebZ7qqasFxkX7MOAQ1QGvb9Q01JAM6DMssnd2elJPDvWjjP1OF6KQ1Eg/n0MG3cw2UCtUREyRYdYjYh6vxW+vr8Ls7M/hy/Bhi6IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUmdqQiw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ECCAC4CEE7;
-	Fri, 17 Oct 2025 16:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760719301;
-	bh=Kluv6meTOXVV/CYoXDaXYdFXj5omH8c8AFCn633N9wM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FUmdqQiwUM/WjNay9BbHp1DPnlJq7/YWVm1B970h+DCycwwca++qTTGl6X4Z1ZZPO
-	 OJyM8CyHmxN70NXLDKp7rhw/tr+ToOWKVxkGi95hqSY/xCkMqLxnSGmYzkbK+lxaQi
-	 N8/7QZqmcRzPmRAUoBUp6NMevyV5XlO0bLSnk4lx32AftNLV+zVREzTdJjmZVutnh4
-	 luNy3r2WI8QVEI6eKnicvkitWQvxg7413HDrfuZLlpGw0MJUn7YGOEYN+N1sYtnMXE
-	 fIQkq4X1EzfnOf/7PUlUGO8xE1NrJ1jc9N2QFynKPDz+zMY4HqgPyi22JFgC9xhvXj
-	 D7bAj1o16+UeA==
-Date: Fri, 17 Oct 2025 17:41:35 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	devicetree@vger.kernel.org,
-	Simon Trimmer <simont@opensource.cirrus.com>
-Subject: Re: [PATCH v4 07/11] ASoC: cs530x: Add CODEC and DAC support
-Message-ID: <a0944336-e6e0-4ab2-95c3-be446e20230f@sirena.org.uk>
-References: <20251017161543.214235-1-vitalyr@opensource.cirrus.com>
- <20251017161543.214235-8-vitalyr@opensource.cirrus.com>
+	s=arc-20240116; t=1760719318; c=relaxed/simple;
+	bh=i+RAb8nLWnnpf2YhYzIJxmsBxFjoaO5PIxloEoEaZxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LOUF7WqlYEb5Hl+wmW2RWqQSKod4SaB+jdhC8E4wL/hgnhBg/46u0B29ZPt0ieAu77BT3WmrM/b2/N2v218gX76sJPt1OsO0bj5/+E0zomwREKe9JG5h6priH2ZptpAQgTiGxG3MYK9Eg3PT/+ygxlgXQtpfecsYOY/oQF9Bpfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GKN0mRz2; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0a63577d-b096-4189-8888-409c0503dbf5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760719314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/fxSqtliVjhv/7zwLJMeitd3igvaB6fVVKuCtAXw4wY=;
+	b=GKN0mRz2C/73xDE6mAz2tBQ8VwnX2NUchZFwoeZ2p004lqinM/gLuVXUCPUiuaMBASfjdr
+	5ZctYUNzDlqK/k24gWjpBoTby+7XjcZTip9c0F0NXTkGzkvQBJFwU4HfJ5fRbrj0VZ2ajj
+	LHZw1ya8QtCPoAaDUev7Z7FxKrE5cgc=
+Date: Fri, 17 Oct 2025 09:41:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mtHkEX5ILNkXrGIx"
-Content-Disposition: inline
-In-Reply-To: <20251017161543.214235-8-vitalyr@opensource.cirrus.com>
-X-Cookie: Androphobia:
+Subject: Re: [PATCH] selftests/bpf: Fix redefinition of 'off' as different
+ kind of symbol
+Content-Language: en-GB
+To: Brahmajit Das <listout@listout.xyz>
+Cc: andrii@kernel.org, bpf@vger.kernel.org, eddyz87@gmail.com,
+ linux-kernel@vger.kernel.org, yangtiezhu@loongson.cn
+References: <40982e43-84c5-481b-9a9a-0b678ef7e6e7@linux.dev>
+ <20251017155450.4016595-1-listout@listout.xyz>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20251017155450.4016595-1-listout@listout.xyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
---mtHkEX5ILNkXrGIx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Oct 17, 2025 at 05:15:34PM +0100, Vitaly Rodionov wrote:
+On 10/17/25 8:54 AM, Brahmajit Das wrote:
+> This fixes the following build error
+>
+>     CLNG-BPF [test_progs] verifier_global_ptr_args.bpf.o
+> progs/verifier_global_ptr_args.c:228:5: error: redefinition of 'off' as
+> different kind of symbol
+>     228 | u32 off;
+>         |     ^
+>
+> Suggested-by: Yonghong Song <yonghong.song@linux.dev>
+> Signed-off-by: Brahmajit Das <listout@listout.xyz>
 
-> --- a/sound/soc/codecs/cs530x.c
-> +++ b/sound/soc/codecs/cs530x.c
-> @@ -45,6 +45,18 @@ static const struct reg_default cs530x_reg_defaults[] = {
->  	{ CS530X_IN_VOL_CTRL3_1, 0x8000 },
->  	{ CS530X_IN_VOL_CTRL4_0, 0x8000 },
->  	{ CS530X_IN_VOL_CTRL4_1, 0x8000 },
-> +	{ CS530X_OUT_ENABLES, 0 },
-> +	{ CS530X_OUT_RAMP_SUM, 0x0022 },
-> +	{ CS530X_OUT_FILTER, 0 },
-> +	{ CS530X_OUT_INV, 0 },
-> +	{ CS530X_OUT_VOL_CTRL1_0, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL1_1, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL2_0, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL2_1, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL3_0, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL3_1, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL4_0, 0x8000 },
-> +	{ CS530X_OUT_VOL_CTRL4_1, 0x8000 },
+Please add more context in the commit message about where the
+redefinition of 'off' comes from.
 
-Do these new registers apply to all parts or just some (I'm guessing
-these might be different packaging/binnings of the same die in which
-case this should be fine if a little messy, but just checking).
+Also, please replace [PATCH] to [PATCH bpf] so CI can do proper testing.
+So in the next revision you can have [PATCH bpf v2].
 
->  	/* Write IN_VU bit for the volume change to take effect */
-> -	regmap_write(regmap, CS530X_IN_VOL_CTRL5, CS530X_IN_VU);
-> +	regmap_write(regmap, CS530X_IN_VOL_CTRL5, CS530X_INOUT_VU);
+With the changes in the above, you can carry my ack.
 
-The comment is now out of sync.  I can't help but feel that this change
-might be easier to read if the rename of everything to INOUT were a
-separate patch.
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
-> +		cs530x->dac_pairs_count--;
-> +		if (!cs530x->dac_pairs_count) {
-> +			usleep_range(1000, 1100);
-> +			return regmap_write(regmap, CS530X_OUT_VOL_CTRL5,
-> +					    CS530X_INOUT_VU);
-> +		}
+> ---
+> Please refer: https://lore.kernel.org/bpf/5ca1d6a6-5e5a-3485-d3cd-f9439612d1f3@loongson.cn/
+> ---
+>   .../selftests/bpf/progs/verifier_global_ptr_args.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c b/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c
+> index 6630a92b1b47..1204fbc58178 100644
+> --- a/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c
+> +++ b/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c
+> @@ -225,7 +225,7 @@ int trusted_to_untrusted(void *ctx)
+>   }
+>   
+>   char mem[16];
+> -u32 off;
+> +u32 offset;
 
-Should dac_pairs_count be a supply widget?
-
---mtHkEX5ILNkXrGIx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjycb4ACgkQJNaLcl1U
-h9B4Lgf9GKj6aiJbvrg4PMOCSwR7GZWa2kJfni2TF7qcueGWgUFLTTC1KOebwPLx
-w++KWthtXse2sI6LDVdwir2ULzObC2Gy0/8MAu9/370VYp+6IEKnH8OdqKMt3jaQ
-Ue+buS7teJZwZ826j3O3H5IyIVHYCcih+uTWWfZD6E8zzvZ+YICQSO07nKbKIMWO
-ROGJvH0PGuEGsT3pneQ9zZjDid1liLec/866Y89U2g7WDN9oNNT2DXC4DcqYpL/0
-sKUcmwxhlHRacm3Dx2+O5bJ3ICPiB5pr4RQh1cQ4GNv1F5IHBjnVwqYDzHtXqXzu
-EOwWMxzKjUvE6qehCmpgmNIe3XYwHQ==
-=oCtF
------END PGP SIGNATURE-----
-
---mtHkEX5ILNkXrGIx--
+[...]
 
