@@ -1,99 +1,129 @@
-Return-Path: <linux-kernel+bounces-858650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E8FBEB547
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:04:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35710BEB556
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A050C1AE4A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:04:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC85C4FF45B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF50225A23;
-	Fri, 17 Oct 2025 19:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE26033F8C1;
+	Fri, 17 Oct 2025 19:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbl55exf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j0xAkt8F"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E50A33F8A2;
-	Fri, 17 Oct 2025 19:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549E533F8A7;
+	Fri, 17 Oct 2025 19:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760727865; cv=none; b=rgN57Gl2M8gkYyBjFBkbkyagI0Nx3ufcukoA1BCpMs4ePdUUS3fYWZGtWMnOomJXdVC8rWssGeSWJ6oeA+QfPyHh+aTQtgq5CJmJ0cK9ZZPVNOaSvuYb9epHtMavyJqvpdPfi0GHt+/oWcioKaEZje3dap6NOcrqdtMJZkVfBto=
+	t=1760727941; cv=none; b=JzDMR6ndwCNS8YEOLVybPr1HLx8urtjAE3mqsWh/BhdLMjE21Tyg2jVCtxGmYzPhV9hJHPf9JQV0pLzNP3j91AHRUpRJQ5CmwzH2oDaNSae/vSMFUV4FTNPdofjWXwFXRFWc8+jKAzAycZxDVdsjfod/qD1JagID3Fs7eV/r8IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760727865; c=relaxed/simple;
-	bh=Qt32d63SAE4stAqVZnBzVQMrPivjtQekm9eUkbEgEN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CzbmcI0D/ptwDlHjVcH1gnFnhtXrUq+HI5aRM6htRjKBlbi6c/VJk3ANwuwQZq7Ma6aUJty7cyl6MvLPdLqSWK9cZr5t3sqXWL1Laq8KyIj7WlTEw2M9GRoWy6QeaYmh7rMju83VZCGEVCB0USxYi5BgW1FM/bsEw1KX87BsGmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbl55exf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80F1C4CEE7;
-	Fri, 17 Oct 2025 19:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760727865;
-	bh=Qt32d63SAE4stAqVZnBzVQMrPivjtQekm9eUkbEgEN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sbl55exf6cNSoTFxKXyWbkqtLizHLgPj30XTZKFQq2LeCr6NVK5f1I0sihyUUlFQR
-	 fhy0/lR94ikYDaSL+kBpRKKv6DCdd0uwoDJ146UHAeX9S8MWX7LgGq7zV1SeiOPoiE
-	 WvbaNEEbIdaemxNsDBeicPVLCGaYSHgYRYwQzUuloQxr5YaIedb8SrWMAgM3Ck196T
-	 ffEdF9cqwabagS6ueNZp4ume07sakJhrYNUx2VG+Sy6+aDP2qVdDTpJh8UUeLJ8zwp
-	 W6m8L6v64HrwwTLcYUttGJY0UOg9Op24Pw2s1H24lb0KqWAKFpinO8CTInNd68J0pA
-	 ttq9ha2UPvf5g==
-Date: Fri, 17 Oct 2025 09:04:23 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luigi De Matteis <ldematteis123@gmail.com>
-Subject: Re: [PATCH 06/14] sched_ext: Add a DL server for sched_ext tasks
-Message-ID: <aPKTN7-JtZVT7wG5@slm.duckdns.org>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-7-arighi@nvidia.com>
- <aPJlIUF-KkdOdDvM@slm.duckdns.org>
- <aPKR23mnuuUdmHhZ@gpd4>
+	s=arc-20240116; t=1760727941; c=relaxed/simple;
+	bh=EAZ20eAFYtrCKWFpLn1xY8QMM/Vv8cQrzxqTpD3ltts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AjT9J55/dHsZE+4EWBb4HrxGwBKJAA14bWWl3Sb0LmU7RU2Us/G0ZJHrAENygpDuHjJeikhw8EWY3mXcAXEetyYyT/r9lExmO74jcDm3mgZym+mo0vpQAZf66jfellCFpLEgdgrysNIX0RsoY8kA63purM7wAIja4f5gGYrgaq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j0xAkt8F; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=+wIx9xQFFwn6Kvjt5KdJkNScO1SwKhEm4dQYZjip9DQ=; b=j0xAkt8FRdmIAXtBxWlVY+EOjN
+	GADL9Mv/sIOWib0yRu2vlh/z1GX8FDUZX3+BTcIXwO+6aQiv7aVk2JBJHus3PyDg0a/hlgF3sIZXl
+	bRVeMNQHq6S10vWAczH76Ev5OAn3GhAKPMobtLddNfbLPP9Ia8oZe570hIkuFoVUx7XOW61gk2LV7
+	ZW7Nnb74JcCy4zeQWgZr7y3gUcUQu7XYBJmmHqlANIGqN4hn2FqMe5Nf8hp39qNlRfx2pungyscut
+	FTTHbSkIo6iZKkt9MhNm6WwN/mL21E+4eCu5qWI8EA5+5ZfOCbskFgX6YcPZMjm/sWhx/PJV4uIVz
+	bA2lu7Lw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9pli-00000008nXm-3laS;
+	Fri, 17 Oct 2025 19:05:38 +0000
+Message-ID: <dcb8e0ac-ed47-42a2-9882-c2cd6d6cd6fe@infradead.org>
+Date: Fri, 17 Oct 2025 12:05:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPKR23mnuuUdmHhZ@gpd4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: qcom: tzmem: area: fix qcom_tzmem_policy
+ kernel-doc
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org
+References: <20251017070702.1637092-1-rdunlap@infradead.org>
+ <dfc03399-d4f8-4e52-b097-75fbbfd1c8f7@oss.qualcomm.com>
+ <CACMJSetEtS6n8cA0bnH2VORw_4b3Jpw74nqNAqE4W8XLKo6grg@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CACMJSetEtS6n8cA0bnH2VORw_4b3Jpw74nqNAqE4W8XLKo6grg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 08:58:35PM +0200, Andrea Righi wrote:
-> On Fri, Oct 17, 2025 at 05:47:45AM -1000, Tejun Heo wrote:
-> > On Fri, Oct 17, 2025 at 11:25:53AM +0200, Andrea Righi wrote:
-> > > +static struct task_struct *
-> > > +ext_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
-> > > +{
-> > > +	return pick_task_scx(dl_se->rq, rf);
-> > > +}
-> > 
-> > I wonder whether we should tell pick_task_scx() to suppress the
-> > rq_modified_above() test in this case as a fair or RT task being enqueued
-> > has no reason to restart the picking process. While it will behave fine on
-> > retry, it's probably useful to be explicit here.
+
+
+On 10/17/25 1:25 AM, Bartosz Golaszewski wrote:
+> On Fri, 17 Oct 2025 at 10:17, Konrad Dybcio
+> <konrad.dybcio@oss.qualcomm.com> wrote:
+>>
+>> On 10/17/25 9:07 AM, Randy Dunlap wrote:
+>>> Fix kernel-doc warnings by using correct kernel-doc syntax and
+>>> formatting to prevent warnings:
+>>>
+>>> Warning: include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
+>>>  'QCOM_TZMEM_POLICY_STATIC' not described in enum 'qcom_tzmem_policy'
+>>> Warning: ../include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
+>>>  'QCOM_TZMEM_POLICY_MULTIPLIER' not described in enum 'qcom_tzmem_policy'
+>>> Warning: ../include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
+>>>  'QCOM_TZMEM_POLICY_ON_DEMAND' not described in enum 'qcom_tzmem_policy'
+>>>
+>>> Fixes: 84f5a7b67b61 ("firmware: qcom: add a dedicated TrustZone buffer allocator")
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> ---
+>>> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>> Cc: Bjorn Andersson <andersson@kernel.org>
+>>> Cc: Konrad Dybcio <konradybcio@kernel.org>
+>>> Cc: linux-arm-msm@vger.kernel.org
+>>> ---
+>>>  include/linux/firmware/qcom/qcom_tzmem.h |   12 +++++++++---
+>>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>>>
+>>> --- linux-next-20251016.orig/include/linux/firmware/qcom/qcom_tzmem.h
+>>> +++ linux-next-20251016/include/linux/firmware/qcom/qcom_tzmem.h
+>>> @@ -17,11 +17,17 @@ struct qcom_tzmem_pool;
+>>>   * enum qcom_tzmem_policy - Policy for pool growth.
+>>>   */
+>>>  enum qcom_tzmem_policy {
+>>> -     /**< Static pool, never grow above initial size. */
+>>> +     /**
+>>> +      * @QCOM_TZMEM_POLICY_STATIC: Static pool,
+>>> +      * never grow above initial size. */
+>>
+>> Didn't know inline '*/' was cool, but if the checkers I'm happy, I'm not
+>> going to complain either
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> Konrad
 > 
-> Yeah, that's a valid point. Maybe we can add a new flag to rq->scx.flags?
-> Something like SCX_RQ_DL_SERVER_PICK?
+> Yes, very surprising. Almost doesn't look "right".
+> 
+> Anyway:
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We can factor out the internals of pick_task_scx() into a separate function
-and add a flag there?
-
-Thanks.
+Darn. It looks OK but it totally confuses scripts/kernel-doc.
+It has to end with a separate */ for each comment.
+I'll have to resend this patch.
 
 -- 
-tejun
+~Randy
+
 
