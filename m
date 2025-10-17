@@ -1,273 +1,186 @@
-Return-Path: <linux-kernel+bounces-858327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0ECBEA434
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39179BEA239
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7474943810
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF0174561B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2789D32C93B;
-	Fri, 17 Oct 2025 15:37:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2887033509B;
+	Fri, 17 Oct 2025 15:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ApLfEfHO"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390A9330B01;
-	Fri, 17 Oct 2025 15:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC501330B10
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715454; cv=none; b=PKW3j+U25fU88vNSeBXDPyqgJ1l/EONKgNcyqZ26p4+9LUwfSmgV+qTWq0sO4wY6Jhom6l3Zffl/GEeuXq3P2fkA2YGhea9WuXV5ZOuPYhiO/0Sh817wDAXzj1G4mHEA2WDrriEOvlE3+hslLtzWfulrivbNs6nJS3d0eI1J5rc=
+	t=1760715459; cv=none; b=AXc0S/tq8XHETO0/bXmgRCVsMzyWuaCy1ksfc7OTRx8mKNkVK4Eyig7PBG/EYMjpwgkJAlUceAHsgdBU3Ucig+7p9LF0fGtz17SOL410a+Ao0zYwCLOSRZ/EfkpR6XZBi09AhFe/YdnS9FpvdSpy5HUit0cbT+lnYz210n0HhZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715454; c=relaxed/simple;
-	bh=EayoAPJw6grlDitBvTA/40wyIhYeHzapzOAUVqQ4WpM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rJkt2TurILS2cVyAhyN/khbmH8ZcpvCDqn+pNZ0iwNvUDCjMl4EJIOCIugJvBbEjwst/llK2qRn8MyEfV+dm4SjhYnmbH7WApw+ImXZ4A5iV1l1z4HsvRbu8WddZF4cQBLrYXKWJB1cI9uGkl7mZ97oxVt76Rg/Kn9d8Ij7iTWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cp87775kTz689xS;
-	Fri, 17 Oct 2025 23:36:19 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5848C1402DA;
-	Fri, 17 Oct 2025 23:37:28 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 17 Oct
- 2025 16:37:27 +0100
-Date: Fri, 17 Oct 2025 16:37:25 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>,
-	<james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
-	<vincent.guittot@linaro.org>, <etienne.carriere@st.com>,
-	<peng.fan@oss.nxp.com>, <michal.simek@amd.com>, <quic_sibis@quicinc.com>,
-	<dan.carpenter@linaro.org>, <d-gole@ti.com>, <souvik.chakravarty@arm.com>
-Subject: Re: [PATCH 05/10] firmware: arm_scmi: Add Telemetry protocol
- support
-Message-ID: <20251017163725.0000149e@huawei.com>
-In-Reply-To: <20250925203554.482371-6-cristian.marussi@arm.com>
-References: <20250925203554.482371-1-cristian.marussi@arm.com>
-	<20250925203554.482371-6-cristian.marussi@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1760715459; c=relaxed/simple;
+	bh=jnSlqMUAPa+eyLVz/0g1PqayIf3lM2TbZXxkHURbCkI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D9NpiBYW6GXvISUpwjr2mpHv2kqrNG1wMjpUHpTZGE33YrYPYHO7QePJ5u0xWR1NusRwasEjVG8fe4FMkrBbyonZXkkrqERVvQL2DGCsuwz7t+cnSLbvfbr+NMUGZO/0J+V/laU4dCz6aRfYa5jk3efFqPhIxY0mm+hSIoACf/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ApLfEfHO; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46fc5e54cceso15790295e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:37:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760715456; x=1761320256; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1BoJuRNJXSzQvDBOd11eTytEqGRXiQbkzU89SqMVXiI=;
+        b=ApLfEfHOuY/RJQzuoYZyiZnZZO1FTWYrE4bWeZR1SdgzsYEEGqRF14hcFBY+be4mFr
+         gRMnu9Z/RhHtPzNB286PknMGuRg/3qYjb6K5gLXFBkHtiowUwU16rUPO9eHxa6Pk+D4u
+         a0ckdwVyzpbGBIdM+DO3okprWychINYktP+Gw5tUejYAjdQU6GXDilAmguvEyrXH5U14
+         cM18ApvXDFcMeBMdktwAFdI0OLICHwBp6S640+xx2R01sZTKECLLUA+YsgWbik8uwh9m
+         YKbQQDly0X+fitKrp4J9dAIPCoRuiKEaBsGXI05beDdiozyKd1SiQ1LvugUnnHXbnxOJ
+         w2cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760715456; x=1761320256;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1BoJuRNJXSzQvDBOd11eTytEqGRXiQbkzU89SqMVXiI=;
+        b=Wbvan9lxYuBuTnmeJ/iNulhkGquKGqyWdwlbBp7xzxcMqTYSAOfGNfJoTBYENKxm9S
+         oiEL9mZasqYKvy7CbBIfxAodOQjbfC8sQgjoxOYyvPwU+LN7KslEw9Suecpc4sE9XEsu
+         ChQUo3m898IIiHhCtfsX5aGrCTn64SmqE8CFwYBmPVVLp5dzAvxUZDNAiom4ADwOasKN
+         +gqpbtFglh9R2BTSLSil8dHlkedqIA5N3cAEOyt4Y9PTokNuN7OICULgPPFv7+AGq0xN
+         EVbw82PccVLX4HHMMjW7qWw3mdb4tAsK2gk2HSvowMjjlyLa+pIiu2yPkZhbASxDvF0t
+         dgOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrmP7SbN5B/HKw9hwA5rZAhRH5/kcxu0LLIJ8632TQGl1/Kv4PiBvHo6Kpgb7OFWsHKN9TG3kPVmfJpvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/NooCjaP1uhEeklL1Sffr6Qt3MeenRGH0XxpSykKQzB4NisGR
+	T6BQPiaM6+IiAZpukb61xDZbUllaeCx0oSlt9cNKJXGZsNdjEPaE2Fy9
+X-Gm-Gg: ASbGncsjaqd87inJJTtokuIiaNtLnlwAn2cR0NQzpA30oF4QIf1Nlytd9fZbMOdq/eR
+	CBcShIXHVgCQpxc7W2PwwNu+9My8Nq+j2V73/O0pY3YVfSYUh2GbUQKrXY1BkJkNxaUg4HFHHzI
+	Vehte/KGWtwDPsZihO5tIO2w5vWskxNrGmBFZ8Mhgj3TPO/1DXOBAgbYPjvlAXngYTAcFVrll8w
+	+5OijgEk4hqJVbcdJYjcRmPJ5xNeNnEpl0CWaYtyc+CPkXBKSbFwczH0pLp8emDcspludn4bFpV
+	mWVU7MxDTACpCo9D12fJCfYzjdhQho3imYwp8DgO9NhpLyy7Ijr33VmG2h5ZShmThCXTpnYEbOt
+	v5oGYrWgPETFEdA2/vGDKnIk45VCruBoI6ot4outQbp4HqjEb3/7VrryQjnOaxAdipWsiaxFSlH
+	+Igr6rVKqD3ncRtyCl6dLWglF4AJ7oaiDUH5SeXhs5rqTv+Zg=
+X-Google-Smtp-Source: AGHT+IGxdizsadmNUP4DyqdtkY9tA3P/0PbidzrbWBSZDjJL6m6HC8+kcqTeIt0odZZji+zDr6Brkw==
+X-Received: by 2002:a05:600c:8b78:b0:471:d2f:7987 with SMTP id 5b1f17b1804b1-47117902dbcmr27810585e9.26.1760715455782;
+        Fri, 17 Oct 2025 08:37:35 -0700 (PDT)
+Received: from ?IPv6:2a02:168:6806:0:eb4a:643c:a4f2:32ae? ([2a02:168:6806:0:eb4a:643c:a4f2:32ae])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4714fb1b668sm1687645e9.0.2025.10.17.08.37.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 08:37:35 -0700 (PDT)
+Message-ID: <6d41bc00602c33ffbf68781f563ff2e6c6915a3e.camel@gmail.com>
+Subject: [REGRESSION] ath10k fails initialization, bisected to "wifi:
+ ath10k: avoid unnecessary wait for service ready message"
+From: Klaus Kudielka <klaus.kudielka@gmail.com>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Jeff Johnson
+	 <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>, Baochen Qiang
+	 <quic_bqiang@quicinc.com>, Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>, 
+	regressions@lists.linux.dev
+Date: Fri, 17 Oct 2025 17:37:34 +0200
+In-Reply-To: <175823924851.3217488.17742065327824732992.b4-ty@oss.qualcomm.com>
+References: 
+	<20250811-ath10k-avoid-unnecessary-wait-v1-1-db2deb87c39b@oss.qualcomm.com>
+	 <175823924851.3217488.17742065327824732992.b4-ty@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-5 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Thu, 25 Sep 2025 21:35:49 +0100
-Cristian Marussi <cristian.marussi@arm.com> wrote:
-
-> Add basic support for SCMI V4.0-alpha_0 Telemetry protocol including SHMTI,
-> FastChannels, Notifications and Single Sample Reads collection methods.
-> 
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Hi,
-
-This is very much in the superficial drive by category as reviews
-go.  A few things noted but I've not looked at the code in enough
-detail.
-
-Jonathan
-
-
-> diff --git a/drivers/firmware/arm_scmi/telemetry.c b/drivers/firmware/arm_scmi/telemetry.c
-> new file mode 100644
-> index 000000000000..f03000c173c2
-> --- /dev/null
-> +++ b/drivers/firmware/arm_scmi/telemetry.c
-> @@ -0,0 +1,2117 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * System Control and Management Interface (SCMI) Telemetry Protocol
-> + *
-> + * Copyright (C) 2025 ARM Ltd.
-> + *
-My favorite trivial comment applies.  What does this blank line add
-to readability? I'd drop it.
-
-> + */
-
-> +
-> +struct scmi_de_desc {
-> +	__le32 id;
-> +	__le32 grp_id;
-> +	__le32 data_sz;
-> +	__le32 attr_1;
-> +#define	IS_NAME_SUPPORTED(d)	((d)->attr_1 & BIT(31))
-> +#define	IS_FC_SUPPORTED(d)	((d)->attr_1 & BIT(30))
-> +#define	GET_DE_TYPE(d)		(le32_get_bits((d)->attr_1, GENMASK(29, 22)))
-> +#define	IS_PERSISTENT(d)	((d)->attr_1 & BIT(21))
-> +#define GET_DE_UNIT_EXP(d)						\
-> +	({								\
-> +		int __signed_exp =					\
-> +			le32_get_bits((d)->attr_1, GENMASK(20, 13));	\
-> +									\
-> +		if (__signed_exp & BIT(7))				\
-> +			__signed_exp |= GENMASK(31, 8);			\
-> +		__signed_exp;						\
-> +	})
-> +#define	GET_DE_UNIT(d)		(le32_get_bits((d)->attr_1, GENMASK(12, 5)))
-> +
-> +#define GET_DE_TSTAMP_EXP(d)						\
-> +	({								\
-> +		int __signed_exp =					\
-> +			FIELD_GET(GENMASK(4, 1), (d)->attr_1);		\
-> +									\
-> +		if (__signed_exp & BIT(3))				\
-> +			__signed_exp |= GENMASK(31, 4);			\
-> +		__signed_exp;						\
-See below for sign_extend32() using code to replace these.
+On Thu, 2025-09-18 at 16:47 -0700, Jeff Johnson wrote:
+>=20
+> On Mon, 11 Aug 2025 17:26:45 +0800, Baochen Qiang wrote:
+> > Commit e57b7d62a1b2 ("wifi: ath10k: poll service ready message before
+> > failing") works around the failure in waiting for the service ready
+> > message by active polling. Note the polling is triggered after initial
+> > wait timeout, which means that the wait-till-timeout can not be avoided
+> > even the message is ready.
+> >=20
+> > A possible fix is to do polling once before wait as well, however this
+> > can not handle the race that the message arrives right after polling.
+> > So the solution is to do periodic polling until timeout.
+> >=20
+> > [...]
+>=20
+> Applied, thanks!
+>=20
+> [1/1] wifi: ath10k: avoid unnecessary wait for service ready message
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 commit: 51a73f1b2e56b0324b4a3bb8cebc4221b5=
+be4c7a
+>=20
+> Best regards,
 
 
-> +
-> +struct scmi_msg_resp_telemetry_reading_complete {
-> +	__le32 num_dwords;
-> +	__le32 dwords[];
-__counted_by(num_word);
-
-> +};
-> +
-> +/* TDCF */
-> +
-> +#define TO_CPU_64(h, l)	(((u64)le32_to_cpu((h)) << 32) | le32_to_cpu((l)))
-Some of this stuff sounds very generic and isn't at all.
-
-Personally I think I'd just drop this one as it may be better to see
-the implementation wherever it is used.
-
-> +static int scmi_telemetry_tdcf_line_parse(struct telemetry_info *ti,
-> +					  struct payload __iomem *payld,
-> +					  struct telemetry_shmti *shmti,
-> +					  bool update)
-> +{
-> +	int used_qwords;
-> +
-> +	used_qwords = (USE_LINE_TS(payld) && TS_VALID(payld)) ?
-> +		QWORDS_TS_LINE_DATA_PAYLD : QWORDS_LINE_DATA_PAYLD;
-> +
-> +	/*Invalid lines are not an error, could simply be disabled DEs */
-
-Check for inconsistent comment syntax etc.
-
-> +	if (DATA_INVALID(payld))
-> +		return used_qwords;
-
-> +
-> +static int scmi_telemetry_shmti_scan(struct telemetry_info *ti,
-> +				     unsigned int shmti_id, u64 ts,
-> +				     bool update)
-> +{
-> +	struct telemetry_shmti *shmti = &ti->shmti[shmti_id];
-> +	struct tdcf __iomem *tdcf = shmti->base;
-> +	int retries = SCMI_TLM_TDCF_MAX_RETRIES;
-> +	u64 startm = 0, endm = 0xffffffffffffffff;
-
-No one likes counting fs.  Use a GENMASK probably.
-
-> +	void *eplg = SHMTI_EPLG(shmti);
+Unfortunately, this particular commit completely breaks the ath10k driver i=
+n my setup.
 
 
-> +static void
-> +scmi_telemetry_msg_payld_process(struct telemetry_info *ti,
-> +				 unsigned int num_dwords, unsigned int *dwords,
-
-I'd kind of expect something called dwords to have a fixed size. u32, u64 or
-whatever.
-
-> +				 ktime_t timestamp)
-> +{
-> +	u32 next = 0;
-> +
-> +	while (next < num_dwords) {
-> +		struct payload *payld = (struct payload *)&dwords[next];
-> +		struct scmi_telemetry_de *de;
-> +		struct telemetry_de *tde;
-> +		u32 de_id;
-> +
-> +		next += USE_LINE_TS(payld) ?
-> +			TS_LINE_DATA_PAYLD_WORDS : LINE_DATA_PAYLD_WORDS;
-> +
-> +		if (DATA_INVALID(payld)) {
-> +			dev_err(ti->dev, "MSG - Received INVALID DATA line\n");
-> +			continue;
-> +		}
-> +
-> +		de_id = le32_to_cpu(payld->id);
-> +		de = xa_load(&ti->xa_des, de_id);
-> +		if (!de || !de->enabled) {
-> +			dev_err(ti->dev,
-> +				"MSG - Received INVALID DE - ID:%u  enabled:%d\n",
-> +				de_id, de ? (de->enabled ? 'Y' : 'N') : 'X');
-> +			continue;
-> +		}
-> +
-> +		tde = to_tde(de);
-> +		guard(mutex)(&tde->mtx);
-> +		tde->cached = true;
-> +		tde->last_val = LINE_DATA_GET(&payld->tsl);
-> +		//TODO BLK_TS in notification payloads
-> +		if (USE_LINE_TS(payld) && TS_VALID(payld))
-> +			tde->last_ts = LINE_TSTAMP_GET(&payld->tsl);
-> +		else
-> +			tde->last_ts = 0;
-> +	}
-> +}
+Hardware:
+- Turris Omnia (arch/arm/boot/dts/marvell/armada-385-turris-omnia.dts)
+- Wifi card (output from lspci): Network controller: Qualcomm Atheros QCA98=
+6x/988x 802.11ac Wireless Network Adapter
 
 
-> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-> index 59527193d6dd..6c6db95d0089 100644
-> --- a/include/linux/scmi_protocol.h
-> +++ b/include/linux/scmi_protocol.h
+dmesg output after loading ath10k_pci
 
-...
+[    5.895939] ath10k_pci 0000:02:00.0: pci irq msi oper_irq_mode 2 irq_mod=
+e 0 reset_mode 0
+[    6.152971] ath10k_pci 0000:02:00.0: qca988x hw2.0 target 0x4100016c chi=
+p_id 0x043202ff sub 0000:0000
+[    6.152994] ath10k_pci 0000:02:00.0: kconfig debug 0 debugfs 0 tracing 0=
+ dfs 1 testmode 0
+[    6.154343] ath10k_pci 0000:02:00.0: firmware ver 10.2.4-1.0-00047 api 5=
+ features no-p2p,raw-mode,mfp,allows-mesh-bcast crc32 35bd9258
+[    6.214165] ath10k_pci 0000:02:00.0: board_file api 1 bmi_id N/A crc32 b=
+ebc7c08
 
-> +#define	SCMI_TLM_GET_UPDATE_INTERVAL_SECS(x)				\
-> +	(le32_get_bits((x), GENMASK(20, 5)))
-Why is this one little endian specific and the next just uses assumption of
-CPU Endian?
+So far so good, but then come the problematic error messages:
 
-> +#define SCMI_TLM_GET_UPDATE_INTERVAL_EXP(x)				\
-> +	({								\
-> +		int __signed_exp = FIELD_GET(GENMASK(4, 0), (x));	\
-> +									\
-> +		if (__signed_exp & BIT(4))				\
-> +			__signed_exp |= GENMASK(31, 5);			\
-sign_extend32() from bitops.h should work here and is much more self explanatory.
-That would then make this something like
+[   12.509390] ath10k_pci 0000:02:00.0: wmi unified ready event not receive=
+d
+[   12.580885] ath10k_pci 0000:02:00.0: could not init core (-110)
+[   12.586891] ath10k_pci 0000:02:00.0: could not probe fw (-110)
 
-#define SCMI_TLM_GET_UPDATE_INTERVAL_EXP(x) \
- 	sign_extend32(x, 4);
-or you can mask it first if you like but I don't think it makes any difference
-in practice.
+And the corresponding netdevice does not appear at all.
 
-> +		__signed_exp;						\
-> +	})
-> +
-> +#define SCMI_TLM_BUILD_UPDATE_INTERVAL(s, e)				    \
-> +	(FIELD_PREP(GENMASK(20, 5), (s)) | FIELD_PREP(GENMASK(4, 0), (e)))
 
-> +
-> +struct scmi_telemetry_update_report {
-> +	ktime_t		timestamp;
-> +	unsigned int	agent_id;
-> +	int		status;
-> +	unsigned int	num_dwords;
-> +	unsigned int	dwords[];
+---
 
-More places where __counted_by is appropriate. I'll not comment on any others and
-just assume you'll add them wherever appropriate.
 
-> +};
+If I revert said commit (on top of current mainline), all is good again:
+
+[    6.112174] ath10k_pci 0000:02:00.0: pci irq msi oper_irq_mode 2 irq_mod=
+e 0 reset_mode 0
+[    6.264184] ath10k_pci 0000:02:00.0: qca988x hw2.0 target 0x4100016c chi=
+p_id 0x043202ff sub 0000:0000
+[    6.264199] ath10k_pci 0000:02:00.0: kconfig debug 0 debugfs 0 tracing 0=
+ dfs 1 testmode 0
+[    6.265591] ath10k_pci 0000:02:00.0: firmware ver 10.2.4-1.0-00047 api 5=
+ features no-p2p,raw-mode,mfp,allows-mesh-bcast crc32 35bd9258
+[    6.298955] ath10k_pci 0000:02:00.0: board_file api 1 bmi_id N/A crc32 b=
+ebc7c08
+[    7.458285] ath10k_pci 0000:02:00.0: htt-ver 2.1 wmi-op 5 htt-op 2 cal o=
+tp max-sta 128 raw 0 hwcrypto 1
+[    8.910074] ath10k_pci 0000:02:00.0: pdev param 0 not supported by firmw=
+are
+[    8.934074] ath10k_pci 0000:02:00.0 wlan1: entered allmulticast mode
+[    8.934187] ath10k_pci 0000:02:00.0 wlan1: entered promiscuous mode
+
+
+Best regards, Klaus
+
+
+#regzbot introduced: 51a73f1b2e56b0324b4a3bb8cebc4221b5be4c7a ("wifi: ath10=
+k: avoid unnecessary wait for service ready message")
 
