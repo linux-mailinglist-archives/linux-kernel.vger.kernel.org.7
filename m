@@ -1,84 +1,92 @@
-Return-Path: <linux-kernel+bounces-857480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D947BE6E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:20:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B05BE6E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26FAD3A6FEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:20:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 875F84FD1CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04552242D91;
-	Fri, 17 Oct 2025 07:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE01229B0F;
+	Fri, 17 Oct 2025 07:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WiNWr1Pf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJzyX/Lg"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EF0241695
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3510D10F2
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760685640; cv=none; b=M2n0/F8a0A/f/QqHRI2B8LwKYXTAL9ZUnELU2i3ru8Sxr5Sd33k+Rz5qJ7sDZHHRIvEg4R4SS0/ny4nHmJBuBfD+R6sNryOjx3VgVClgqTiaz5o+mV/L9I3BDHFO/7Ma9D1eog38D4syfS7BOkt4pP6POfASZsJG9DGm5o5COzg=
+	t=1760685356; cv=none; b=H+w9uxcMsoOTzoThiLblqxLA7dLJv+SmDGf2XTHEGl6cPEu0dM8AARyHciICuV5ucBucXV6ZQD9nR+hf1GnLDs752+Pg+JXS02x1oxMHzMVOaR3OgMP/uaVx9ogmNbwoeqfKKI5MCX2K44RqtymLciepL3E9IsAUXEOa62+gNgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760685640; c=relaxed/simple;
-	bh=+Q70WKO2l7or27Kg3QqpFB4NgM3dvZpGl7hkoR13fiI=;
+	s=arc-20240116; t=1760685356; c=relaxed/simple;
+	bh=1dL9wTlycAsLzX2y4MTzrrBzSQsmTrPVywYZGm5zJ1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSPOdDnWPb7KAVXVHwcmGtyRtx9yYwP/pS7/LHmAbPOApwR70NMvw8tUxM7tIQLXj5hmUZMWyboCi0t1xfsvujeQh8y/vEEd7Bp+9CAjZkhyBGBQXJ9Hrf0DUwtQQxTWGs9+4Z+m8AKEQzLyaYswEzICy1OuBaC02Ms3krc6DHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WiNWr1Pf; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760685639; x=1792221639;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+Q70WKO2l7or27Kg3QqpFB4NgM3dvZpGl7hkoR13fiI=;
-  b=WiNWr1Pf10RB+caoPaHfOgIZqNueg60vnFGYfBBqkIY0YfpEQnfWaB3D
-   KHFLme4qNdDmuP2mVo9t9Amu4JzGtH/7kUixawgDFGdzxYOAcoEVv+yfc
-   qPUTfoq3Zfv2PlVYyi1yulF0gUpU1nWw8Cd+XB1QBaRVEl2nOxfWMlJyG
-   Zva21YsrEqZfvWTTmRU4NeHhNlFvgM/ZPgsxKZk+NBCDk7BhM8pxNyvGe
-   I25/6Scycfsv8IpbqvhT9BunC07JhJ33y3X90k3ubl8sBfEX4SyQhZF7T
-   OWs+VMspZcRwEPano9HqLYYhd2oYICr42ZM5QWr6TzjGFx5xjj3/i1H7m
-   w==;
-X-CSE-ConnectionGUID: l9gE5dH8TPKQEEbO38Tunw==
-X-CSE-MsgGUID: QUgyQso7RjmEIIVlU+314A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="66757541"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="66757541"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 00:20:38 -0700
-X-CSE-ConnectionGUID: WabAx5iESUmWJ2UVrKbjpw==
-X-CSE-MsgGUID: 6XsIiTXiSiyeKVbjYiCj1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="187947824"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Oct 2025 00:20:34 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9el4-0005g3-0l;
-	Fri, 17 Oct 2025 07:20:14 +0000
-Date: Fri, 17 Oct 2025 15:14:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kgdb-bugreport@lists.sourceforge.net,
-	Marcos Paulo de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH v6 5/5] kdb: Adapt kdb_msg_write to work with NBCON
- consoles
-Message-ID: <202510171450.G2KdvDMm-lkp@intel.com>
-References: <20251016-nbcon-kgdboc-v6-5-866aac60a80e@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYLYRdCSnwNW88Whi4kTI2EuV9sCR/UN0C3EhEDvus17I8i/OyXO+wGpIK9X/aO0bO+zS6Nu9jR9eRUeMsyZa2HuLWv2d6kCIwhVMWrfczb8f99+5tQDH0NwLO8nOsC/KRLLh1oovwbVZIvI+AbObn1M10Ng6N3kkYXW9ykIKTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJzyX/Lg; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-59066761388so2814492e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760685353; x=1761290153; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=148Eb17gJ8RxWdKQ2rnESJNbo/VxcgJDRGCnUFv20jM=;
+        b=fJzyX/LgmkDUdYEEdotiJst0i7hDjJxIE5IxWhiXN1wq9C/3xiS1hnV034AB1FL/k7
+         hri77aTXsOhmQ+FsEFGoa+sonlAo9Sjvq4S3LtVL4lYpRwOGPIba8TQ/XCeMqtAjrvTg
+         jSncYyDcRwYZ3OC2cKNB2IOM99zjCyJnwdNL9AtCY+Q+IQEUVXgkBnVM0DdL0kbyABmH
+         YIWUQG+4Wn2bpNFnxBdLXhsYy4mibyu80rsLCfM55pc1vAB6lm5qukgtJMhJaZSfKWTI
+         Q8/U7UewEYRU7ZkMGMVJCaY7Ke+XBXEzXtx3zGeYvRrCURnaUtqtcPfhtqXkXmd+5y8H
+         tjWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760685353; x=1761290153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=148Eb17gJ8RxWdKQ2rnESJNbo/VxcgJDRGCnUFv20jM=;
+        b=Imy4kPOB6MoAI3HCmy2DIx1U/ZZ8g9+T0fofc0U77s5/ZSh4tBFudjJRjzWckNaUJx
+         1Uy03fjz2vWjJMygp+uyBtB84duo+ffIUyu5f2Ym/bMPla/+9XttJW2j8vxzJh9QRlbT
+         FRpkz2Gk5BwNKX8ElrcbCnm9i9EfbjjlNXldXOjTyjmSY68AVvntqH64YGBPvUpRa4ul
+         IS/FPqzFpwi0JDomn9J2uPacoL+jMTLvkEERzvTNuEWusVZ8QY+WRPv2qPyZKeCRJcVW
+         RWd/3o8Un3yK5feARvPdv/cTfjcDciGN0JoKPU9yA4eKUZGTrnBmtXHKuSNIqnvNDkKU
+         6jgw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4u6RPbcKRaPK90r9VhTBWpgnntIuqd8OUvr4Q5j6tFaKp1nnCGoqay65kMisb3XLsbQa2WLrobx2pXQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS6aFztKulAugW8v2VS/QSZuF0XHXV/HxXawSXujEMAS0tXzFU
+	UgNyzg4GHv3zxY5YEiixvTuxx2bmX0HOp5Mkc+c4xEmm39KAyxunJI2B
+X-Gm-Gg: ASbGnctzpqjNDSs7NxC4vzaFptsiQuCXvA1vCZM/4oz05Kr7/qw8SHeGw1YNWgaqxDS
+	GF7hf2d5M+c1wZ+8YRRA6Ew+v6oxVmtA85a7cDF4MInMUnRCQBfOVPrVAkDLcdghXmNt79RK3rg
+	sPB3nlbyLvpRWTBkfS7WGS1CPvWfUBlgX3Gi04VcUh+bylZKrTj8XMXDJbJsENHqKosVtTK+kOG
+	5GPiRpQf05db7q0BWuqVuM/WOqVuRsKmWetLNhIbgE4q0vdeJcTaseYvIJt85camxO+i70Cg2fY
+	lfMrV75JG+BRxa7yEj2LZcO+r0ikFaQrERsWtXalAFL0RlychF67hjLIFictjI6JfElUt0fB17Z
+	OytkKSssz06WVFHwVN+RazZISJUFwqEcJaZkOMnbQ/KGwbbB1vvjIdSR+wSjeqCue/Twh0oEWzY
+	QyJL4WnqFaXes=
+X-Google-Smtp-Source: AGHT+IFRf1ySNbsYYj5o+dwvR7Hy0y8DnWvFwza///P/Rp2kadGpW46H/2fJTcVA47GU9k2AX6PYYA==
+X-Received: by 2002:a05:6512:2348:b0:585:1a9b:8b9a with SMTP id 2adb3069b0e04-591d083ec9amr2137907e87.9.1760685352985;
+        Fri, 17 Oct 2025 00:15:52 -0700 (PDT)
+Received: from home-server ([82.208.126.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59088563c13sm7648665e87.78.2025.10.17.00.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 00:15:52 -0700 (PDT)
+Date: Fri, 17 Oct 2025 10:15:50 +0300
+From: Alexey Simakov <bigalex934@gmail.com>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-sctp@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH net] sctp: avoid NULL dereference when chunk data buffer
+ is missing
+Message-ID: <20251017071550.q7qg2a5e7xu6yvlr@home-server>
+References: <20251015184510.6547-1-bigalex934@gmail.com>
+ <aO_67_pJD71FBLmd@t14s.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,123 +95,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016-nbcon-kgdboc-v6-5-866aac60a80e@suse.com>
+In-Reply-To: <aO_67_pJD71FBLmd@t14s.localdomain>
 
-Hi Marcos,
+On Wed, Oct 15, 2025 at 04:50:07PM -0300, Marcelo Ricardo Leitner wrote:
+> On Wed, Oct 15, 2025 at 09:45:10PM +0300, Alexey Simakov wrote:
+> > chunk->skb pointer is dereferenced in the if-block where it's supposed
+> > to be NULL only.
+> 
+> The issue is well spotted. More below.
+> 
+> > 
+> > Use the chunk header instead, which should be available at this point
+> > in execution.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> > 
+> > Fixes: 90017accff61 ("sctp: Add GSO support")
+> > Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+> > ---
+> >  net/sctp/inqueue.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/net/sctp/inqueue.c b/net/sctp/inqueue.c
+> > index 5c1652181805..f1830c21953f 100644
+> > --- a/net/sctp/inqueue.c
+> > +++ b/net/sctp/inqueue.c
+> > @@ -173,7 +173,8 @@ struct sctp_chunk *sctp_inq_pop(struct sctp_inq *queue)
+> 
+> With more context here:
+> 
+>                if ((skb_shinfo(chunk->skb)->gso_type & SKB_GSO_SCTP) == SKB_GSO_SCTP) {
+>                        /* GSO-marked skbs but without frags, handle
+>                         * them normally
+>                         */
+> 
+>                        if (skb_shinfo(chunk->skb)->frag_list)
+>                                chunk->head_skb = chunk->skb;
+> 
+>                        /* skbs with "cover letter" */
+>                        if (chunk->head_skb && chunk->skb->data_len == chunk->skb->len)
+> 		           ^^^^^^^^^^^^^^^^^^
+> 
+> chunk->head_skb would also not be guaranteed.
+> 
+> >  				chunk->skb = skb_shinfo(chunk->skb)->frag_list;
+> 
+> But chunk->skb can only be NULL if chunk->head_skb is not, then.
+> 
+> Thing is, we cannot replace chunk->skb here then, because otherwise
+> when freeing this chunk in sctp_chunk_free below it will not reference
+> chunk->head_skb and will cause a leak.
+> 
+> With that, the check below should be done just before replacing
+> chunk->skb right above, inside the if() block. We're sure that
+> otherwise chunk->skb is non-NULL because of outer if() condition.
+> 
+> Thanks,
+> Marcelo
+> 
+> >  
+> >  			if (WARN_ON(!chunk->skb)) {
+> > -				__SCTP_INC_STATS(dev_net(chunk->skb->dev), SCTP_MIB_IN_PKT_DISCARDS);
+> > +				__SCTP_INC_STATS(dev_net(chunk->head_skb->dev),
+> > +						 SCTP_MIB_IN_PKT_DISCARDS);
+> >  				sctp_chunk_free(chunk);
+> >  				goto next_chunk;
+> >  			}
+I'm not sure, that correctly understand the new location of updated check.
+There a few assumtions below.
+> > -- 
+> > 2.34.1
+> > 
+		/* Is the queue empty?  */
+		entry = sctp_list_dequeue(&queue->in_chunk_list);
+		if (!entry)
+			return NULL;
 
-kernel test robot noticed the following build errors:
+		chunk = list_entry(entry, struct sctp_chunk, list);
 
-[auto build test ERROR on 3a8660878839faadb4f1a6dd72c3179c1df56787]
+		if (skb_is_gso(chunk->skb) && skb_is_gso_sctp(chunk->skb)) {
+			/* GSO-marked skbs but without frags, handle
+			 * them normally
+			 */
+			if (skb_shinfo(chunk->skb)->frag_list)
+				chunk->head_skb = chunk->skb;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marcos-Paulo-de-Souza/printk-nbcon-Export-console_is_usable/20251016-225503
-base:   3a8660878839faadb4f1a6dd72c3179c1df56787
-patch link:    https://lore.kernel.org/r/20251016-nbcon-kgdboc-v6-5-866aac60a80e%40suse.com
-patch subject: [PATCH v6 5/5] kdb: Adapt kdb_msg_write to work with NBCON consoles
-config: sh-randconfig-002-20251017 (https://download.01.org/0day-ci/archive/20251017/202510171450.G2KdvDMm-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251017/202510171450.G2KdvDMm-lkp@intel.com/reproduce)
+			/* skbs with "cover letter" */
+			if (chunk->head_skb && chunk->skb->data_len == chunk->skb->len)
+Adding this check here will not fix problem, since chunk->skb always true here because it dereferencing in
+checks above.
+				chunk->skb = skb_shinfo(chunk->skb)->frag_list;
+Adding here could make sense, chunk->skb changed => do something if it became null.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510171450.G2KdvDMm-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/debug/kdb/kdb_io.c: In function 'kdb_msg_write':
->> kernel/debug/kdb/kdb_io.c:612:43: error: passing argument 1 of 'nbcon_kdb_release' from incompatible pointer type [-Wincompatible-pointer-types]
-     612 |                         nbcon_kdb_release(&wctxt);
-         |                                           ^~~~~~
-         |                                           |
-         |                                           struct nbcon_write_context *
-   In file included from kernel/debug/kdb/kdb_io.c:17:
-   include/linux/console.h:667:54: note: expected 'struct console *' but argument is of type 'struct nbcon_write_context *'
-     667 | static inline void nbcon_kdb_release(struct console *con) { }
-         |                                      ~~~~~~~~~~~~~~~~^~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for I2C_K1
-   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
-   Selected by [y]:
-   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
-
-
-vim +/nbcon_kdb_release +612 kernel/debug/kdb/kdb_io.c
-
-   560	
-   561	static void kdb_msg_write(const char *msg, int msg_len)
-   562	{
-   563		struct console *c;
-   564		const char *cp;
-   565		int cookie;
-   566		int len;
-   567	
-   568		if (msg_len == 0)
-   569			return;
-   570	
-   571		cp = msg;
-   572		len = msg_len;
-   573	
-   574		while (len--) {
-   575			dbg_io_ops->write_char(*cp);
-   576			cp++;
-   577		}
-   578	
-   579		/*
-   580		 * The console_srcu_read_lock() only provides safe console list
-   581		 * traversal. The use of the ->write() callback relies on all other
-   582		 * CPUs being stopped at the moment and console drivers being able to
-   583		 * handle reentrance when @oops_in_progress is set.
-   584		 *
-   585		 * There is no guarantee that every console driver can handle
-   586		 * reentrance in this way; the developer deploying the debugger
-   587		 * is responsible for ensuring that the console drivers they
-   588		 * have selected handle reentrance appropriately.
-   589		 */
-   590		cookie = console_srcu_read_lock();
-   591		for_each_console_srcu(c) {
-   592			short flags = console_srcu_read_flags(c);
-   593	
-   594			if (!console_is_usable(c, flags, true))
-   595				continue;
-   596			if (c == dbg_io_ops->cons)
-   597				continue;
-   598	
-   599			if (flags & CON_NBCON) {
-   600				struct nbcon_write_context wctxt = { };
-   601	
-   602				/*
-   603				 * Do not continue if the console is NBCON and the context
-   604				 * can't be acquired.
-   605				 */
-   606				if (!nbcon_kdb_try_acquire(c, &wctxt))
-   607					continue;
-   608	
-   609				nbcon_write_context_set_buf(&wctxt, (char *)msg, msg_len);
-   610	
-   611				c->write_atomic(c, &wctxt);
- > 612				nbcon_kdb_release(&wctxt);
-   613			} else {
-   614				/*
-   615				 * Set oops_in_progress to encourage the console drivers to
-   616				 * disregard their internal spin locks: in the current calling
-   617				 * context the risk of deadlock is a bigger problem than risks
-   618				 * due to re-entering the console driver. We operate directly on
-   619				 * oops_in_progress rather than using bust_spinlocks() because
-   620				 * the calls bust_spinlocks() makes on exit are not appropriate
-   621				 * for this calling context.
-   622				 */
-   623				++oops_in_progress;
-   624				c->write(c, msg, msg_len);
-   625				--oops_in_progress;
-   626			}
-   627			touch_nmi_watchdog();
-   628		}
-   629		console_srcu_read_unlock(cookie);
-   630	}
-   631	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+			if (WARN_ON(!chunk->skb)) {
+				__SCTP_INC_STATS(dev_net(chunk->head_skb->dev),
+						 SCTP_MIB_IN_PKT_DISCARDS);
+				sctp_chunk_free(chunk);
+				goto next_chunk;
+			}
+		}
 
