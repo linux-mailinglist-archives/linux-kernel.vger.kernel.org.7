@@ -1,104 +1,82 @@
-Return-Path: <linux-kernel+bounces-858749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B34BEBB84
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:46:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78E5BEBA26
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F79580397
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DBB1AE13DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E83277C98;
-	Fri, 17 Oct 2025 20:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1859F233155;
+	Fri, 17 Oct 2025 20:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCZiRoRz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="h32wcaXo"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB9A25A2A4;
-	Fri, 17 Oct 2025 20:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F004A266B64;
+	Fri, 17 Oct 2025 20:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760733991; cv=none; b=K6n0OYjwJMmel6VpchJk/d1PKkOdKAzRw0SkvwQqkDAA0fmSNruByAGre5Zkx4a2xpj0Sea8wUdaLp/ko+7rgaHn20Hq6w8V2y1Awk8LUoz6lcy9kv047RPt8NgPIeORnXXfIo3HnOLBVt/dw7hrCKZ8uAzCktUm9pW8BG4qHEU=
+	t=1760732647; cv=none; b=LtOb+Hgos9CDy84P0R51czT8z9FlwxRBxleN4Zk2DNbpOq3x6n2/yxIUDIxJQSROWCZIpZIgHQd6uVq9SfJJYKZFRyut2uYax1Xn9vn+SdS2DiMl4p4x8e3+CaJygp55rHeeSLK/AxNdL+xvuBq7UwMIrhn5hCeSOi0xvdBMDrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760733991; c=relaxed/simple;
-	bh=Z+ATUnj51MZXhjOSQrJlClW/K6A5QSHNjjw183z2+9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKR2efe6BD38p98jhnTrXFm+qrizf5JNRKTjBTGoFKh9Jf+SFxKkYgzpHYhEdt2Dk5a4/SJceHdoxxSDdLqTV/M1WBvohZjjxGHrZQoqFx2rz7JSybFbiz0LIEcomj3ip4kb+m9doraISSC6OW97QVgxlNDqGfxFgOaBY2sTh6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCZiRoRz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB92C4CEE7;
-	Fri, 17 Oct 2025 20:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760733991;
-	bh=Z+ATUnj51MZXhjOSQrJlClW/K6A5QSHNjjw183z2+9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cCZiRoRzkQQ8z/+LYgDtaYVVo5TWrSOFy+C+K/Zy1r115hT1xTaqBKjZMSstBndxe
-	 lTupfoymnqclZvt9XmyaSstr+XpNPLzC2o/1XBbLpRMs0oecMic3mXu5e3QTf52gKJ
-	 Lv6VvXKkxsVUeutL+P9tS62/9R/V/Fsf2RdZ8viB7+JWxyc0e7iupIu0SiF9Il4tHl
-	 pnnFMOeaLgsxcL6On9MXlqDL3/xxNNJSLhf4OuFEGq/xLu2B/HhaNLKutHBk7/UGvI
-	 u7jfuEKybqvJm+J18FbsIlpMyZi25TmMpo1VZ15GFzgF2ES6RD/cCKuK2Sek2mSzz+
-	 5NCIo822DI1HA==
-Date: Fri, 17 Oct 2025 22:22:32 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v9 4/4] tracing: Add warnings for unused tracepoints for
- modules
-Message-ID: <aPKliHl3k26RO0YJ@levanger>
-References: <20251015203842.618059565@kernel.org>
- <20251015203924.731213165@kernel.org>
- <20251015231928.GC3943617@ax162>
+	s=arc-20240116; t=1760732647; c=relaxed/simple;
+	bh=fsPsUjjkUujeuTdhLIxwXe3cFQrfnlewqh5RwRlKnPY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PvrNku/eecUqkaPci3gmVzFMMD3Elro/zYzJQX+n1dXt/tpp4J1qTPYGrolR1FnbiMviDtLVyoDxBicuJ7TLmcPFCQY9ttEr4GzBUovS8GJc8lzE38QmWOGZJMRreQj3f+O2CYOzymcr14mpXAejrbLDaQgrr6hhgHD/2Bu/Vkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=h32wcaXo; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C60D740B1D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1760732643; bh=fsPsUjjkUujeuTdhLIxwXe3cFQrfnlewqh5RwRlKnPY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=h32wcaXouiAWS/W55OSffUxoAagyz4ByNZSEGxf3JiiZwZGUksNRWFz/1ZQg9+3SF
+	 bnIPwfQNzq+pLibi1mX0hEVjvXGuVXCyRuueHZE00ZQnUFor3PJn1Nwes6+J5kJpnv
+	 X/GllEtsQ7Ou0yU8Y+qRslRO0TG9Dh9iXRaYTfyxjJFzTA7w742K32bqLoKq4LC+Pf
+	 5yqap1tEBKkiPZKL1gKSH5LDgA7DDKnT+tqS/U333kBMGCMLLdGJae9wvcDD6fWAKQ
+	 K2OwO9kwJM/IkEbcDrJ6oKq47IklAjGDTho9OXHcnjbvwuhZYE1/iw6r+80mR561lM
+	 NPbnvqausDyNQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id C60D740B1D;
+	Fri, 17 Oct 2025 20:24:03 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Will Deacon <will@kernel.org>,
+ Markus Heiser <markus.heiser@darmarit.de>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Silvio Fricke <silvio.fricke@gmail.com>
+Subject: Re: [PATCH v2 0/2] Associative arrays documentation formatting
+ cleanups
+In-Reply-To: <20251013095630.34235-2-bagasdotme@gmail.com>
+References: <20251013095630.34235-2-bagasdotme@gmail.com>
+Date: Fri, 17 Oct 2025 14:24:02 -0600
+Message-ID: <874irx1dlp.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015231928.GC3943617@ax162>
+Content-Type: text/plain
 
-On Wed, Oct 15, 2025 at 04:19:28PM -0700, Nathan Chancellor wrote:
-> Hi Steve,
-> 
-> On Wed, Oct 15, 2025 at 04:38:46PM -0400, Steven Rostedt wrote:
-> > diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-> > index 542ba462ed3e..6f909979af91 100644
-> > --- a/scripts/Makefile.modfinal
-> > +++ b/scripts/Makefile.modfinal
-> > @@ -28,6 +28,12 @@ ccflags-remove-y := $(CC_FLAGS_CFI)
-> >  .module-common.o: $(srctree)/scripts/module-common.c FORCE
-> >  	$(call if_changed_rule,cc_o_c)
-> >  
-> > +ifneq ($(WARN_ON_UNUSED_TRACEPOINTS),"")
-> 
-> Drop the "", nowhere else in Kbuild appears to do this.
-> 
-> > +cmd_check_tracepoint = ${objtree}/scripts/tracepoint-update $<;
-> 
-> Please use $(objtree) to be consistent with the rest of Kbuild.
-> 
-> > +else
-> > +cmd_check_tracepoint =
-> > +endif
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-The else part is not required, cp. definition of e.g. cmd_checkdoc in
-scripts/Makefile.build.
+> Hi,
+>
+> Here's two-patch formatting cleanup series for generic associative array
+> implementation docs. The shortlog below should be self-explanatory.
+>
+> Enjoy!
 
-Kind regards
-Nicolas
+Applied, thanks.
+
+jon
 
