@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-858076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE46BE8CED
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:22:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEDABE8CF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7EA1AA4A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322456E25EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FD0350D6D;
-	Fri, 17 Oct 2025 13:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A6734F479;
+	Fri, 17 Oct 2025 13:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rj7BM1pQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P5XGEUdT"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC47350D55;
-	Fri, 17 Oct 2025 13:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745B6320CB9
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760707308; cv=none; b=QA764UmOXqS6do+yeKODDvEON/RBAgDNi15SV7bcj538CM2fgHfpuHQW7orMpldTEfWiJwWTGaRBwaCraOqCH+QgnJn+7xSqmW/w7IkhTVH4/+6sylQ9quIpogUyH4V6KtEjHZ1Olk/LfaXWQ6UmPQl/qKhZKkTtpjBFJIF3gUg=
+	t=1760707359; cv=none; b=H63yqdKxzSKB4JjLhBPXcjJjnOnFQQJpZv0RC3eaeYrhosUdHIoHM7chrCVL0Gvp2yK+vC5Z/M6BRRRrtAlx2lOE5d9b9XwsJxDZKyZeslfoQyodmPP9VWndnON1D/6PTogoLa9lKz9+m90+7Qjw7sKxOO3x73od8UqAEnMbpHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760707308; c=relaxed/simple;
-	bh=buh6Qo5KjkgxJVFk2mMdGDGBqGLkNY435vyDNNGbaXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X2LgXSBWfKooM974UGHueWpxECC1BavgxV+LVDO/mwrCEKK8Pg5DB6q562IVL5Fg6tEqpO2cNdFMmwx/nmG8IhRbuKTiTPQaP2TnBJ9XfZhaiSCVnTnm2B2YQfeJSzXhNWhX8FcfDly9k3Fi5MIJLK6DyrJqylNxvv5L+Mdg/14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rj7BM1pQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E82FC4CEFE;
-	Fri, 17 Oct 2025 13:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760707306;
-	bh=buh6Qo5KjkgxJVFk2mMdGDGBqGLkNY435vyDNNGbaXU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rj7BM1pQ3xSEA0HCSKTVNmanX4zudTAjjWGUJ8Gh4isu4A4LvCsAsGpQSwt7Pt/zy
-	 4w5H6ciDaqEoIhb5BJrK/7jVT+8+PgAKwkXw2ZlrltdCmFM1XHY32847x7Qc5O6mmv
-	 BjnCBoDHekEHSofEZsDINnNOGQo+TkQven7aYJXLmMRg14DTuwHCdnnYTCqAnCADp2
-	 ppqHwQNI20nK7us4nIchnYMsgqpmxAbA2R8le5i47LKOUdwlkUeCd3BvWqkwGSNWZV
-	 K+TesZgGriFuqBJVolBqbbu4273yJPFz0nXfVzrRBCDS4ixnuxiub0f89mFd/PfPaB
-	 w+R0zLB4gIjsg==
-Message-ID: <89f812bc-68ec-4a88-ac58-1f6797496151@kernel.org>
-Date: Fri, 17 Oct 2025 15:21:42 +0200
+	s=arc-20240116; t=1760707359; c=relaxed/simple;
+	bh=jx8LTsLHA8gYmELEACprqZSehQ5I5B2b0owj/V+XDhY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QQzwn7MbIhNbKpk32sZ+uLeoQhVZV2vNGV90uG5q01UP5vO45EyhaIHiWdN5IOfZbey8QD7GN2JJmOl461doZbpggj8AqqQIWMuS3H1KjjIp9daWmaVU9meu24VO9gPYTeXikGmKTwTQwBxZohKk9bwNfUR55iVqGwzqoLxEGCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P5XGEUdT; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso7485385e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760707356; x=1761312156; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GnaDsn7nll18ow1kOpNbSLp5i6GMNaHfVFAbzbbvH9I=;
+        b=P5XGEUdTa56ifSpXe39inGNN3uJ8XOeuuXzFNTKIv/1L9GeVo4244ljv0j5nujdrbl
+         qVASVt0VqVKvUTMXbw0E71l/TVAEGekZ+Jj8vxyoYPOmqSkyZ/bxa06Kfq4fGiw0BYZ8
+         k0LBQDFdR4nvfnoS1K1NbYS7xwYIUMWzFteInHJtLumE5Vynj7qzkipyJX9u2vCoAMpD
+         YPWG5C3RwrexlfQsG0kBiDnwh+1VbyNED/0SwImEXuB//UMp95BEwb6xabAT/AjHV53B
+         zPfCjHjt3Na83R3rszRwe5rSsvUQ54rEFimmpjeBSMCWNMZq73+s+341kWWMS8ppabT+
+         jzBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760707356; x=1761312156;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GnaDsn7nll18ow1kOpNbSLp5i6GMNaHfVFAbzbbvH9I=;
+        b=AR0B0BRPodMTXvTSJ3RKszgHrvRNjl0LIESERq2cT2EpmWKROoZ0XEwuOfxd5yrl4d
+         j2PERleIb8b80hmKnBYYcGHDR5JtipFmsFPdYY9spB1cy/TnHxrjZ3bGrrTszDPMDd2t
+         URe6xSNw1/yhrPQ3cj8bsEPgCyK64a/G5aeAkEe9/uE6xOfeAo/h3GUdtp+gBUN/ji9p
+         +2od5/AJdB+LZ5tXdmHJTM3rsXMoFobhkFMRWHlWbsCV63UPpTs03+iUom2yBXmgwB1p
+         kBszvrHh7dNSiJKRLqlq8K6R0nIsj02gAQcr+6U7OeEfLdcMDgFR4xAZyQkz8Jgynfyg
+         1HXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmfFF9zFb2nWGOLcO1TFhVdsm2yDkDn1tPCIXWjmvUTgaqelgA6x+eeTLnXpf2Ck++6WZJbcH1BYiIsDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa1v2FQ/hj3T7odP9Igaje+dSQiSi4yMQl5duWstRpmRCygCkO
+	vVh6/S9CFjCA+9XE9bpApv5rmWTl7qdnsFt9ZZzoFuStyDoejk9JUzFCwfGOEbLmhh3BBRE5xAc
+	ZAyfTgxWh/oAW/v0gTA==
+X-Google-Smtp-Source: AGHT+IHm/rxQFjzIKD/ix4PvuHjEf9V7l7jdvLwUpstW+PdTOJzmLn/jF0s/g0PNGf6xGAdUynTKR0RdRZTpdF0=
+X-Received: from wmna4.prod.google.com ([2002:a05:600c:684:b0:46e:45f4:a00b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1e1f:b0:471:d2f:799a with SMTP id 5b1f17b1804b1-47117877791mr24693975e9.16.1760707355934;
+ Fri, 17 Oct 2025 06:22:35 -0700 (PDT)
+Date: Fri, 17 Oct 2025 13:22:34 +0000
+In-Reply-To: <20251016210955.2813186-3-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add support for QCS615 talos evk
- board
-To: Sudarshan Shetty <tessolveupstream@gmail.com>, andersson@kernel.org
-Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251014120223.1914790-1-tessolveupstream@gmail.com>
- <20251014120223.1914790-3-tessolveupstream@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251014120223.1914790-3-tessolveupstream@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251016210955.2813186-1-lyude@redhat.com> <20251016210955.2813186-3-lyude@redhat.com>
+Message-ID: <aPJDGqsRFzuARlgP@google.com>
+Subject: Re: [PATCH v4 2/9] rust/drm: Add gem::impl_aref_for_gem_obj!
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Asahi Lina <lina+kernel@asahilina.net>, Shankari Anand <shankari.ak0208@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-On 14/10/2025 14:02, Sudarshan Shetty wrote:
-> Introduce the device tree support for the QCS615-based talos-evk
-> platform, which follows the SMARC (Smart Mobility ARChitecture)
-> standard. The platform is composed of two main hardware
-> components: the talos-evk-som and the talos-evk carrier board.
+On Thu, Oct 16, 2025 at 05:08:15PM -0400, Lyude Paul wrote:
+> In the future we're going to be introducing more GEM object types in rust
+> then just gem::Object<T>. Since all types of GEM objects have refcounting,
+> let's introduce a macro that we can use in the gem crate in order to copy
+> this boilerplate implementation for each type: impl_aref_for_gem_obj!().
 > 
-> The talos-evk-som is a compact System on Module that integrates the
-> QCS615 SoC, PMIC, and essential GPIO connectivity. It follows the
-> SMARC standard, which defines a modular form factor allowing the SoM
-> to be paired with different carrier boards for varied applications.
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  rust/kernel/drm/gem/mod.rs | 53 +++++++++++++++++++++++++++-----------
+>  1 file changed, 38 insertions(+), 15 deletions(-)
+> 
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index 20c2769a8c9d6..981fbb931e952 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -15,6 +15,43 @@
+>  };
+>  use core::{ops::Deref, ptr::NonNull};
+>  
+> +/// A macro for implementing [`AlwaysRefCounted`] for any GEM object type.
+> +///
+> +/// Since all GEM objects use the same refcounting scheme.
+> +macro_rules! impl_aref_for_gem_obj {
+> +    (
+> +        impl $( <$( $tparam_id:ident ),+> )? for $type:ty
+> +        $(
+> +            where
+> +                $( $bind_param:path : $bind_trait:path ),+
+> +        )?
+> +    ) => {
+> +        // SAFETY: All gem objects are refcounted
+> +        unsafe impl $( <$( $tparam_id ),+> )? crate::types::AlwaysRefCounted for $type
+> +        $(
+> +            where
+> +                $( $bind_param : $bind_trait ),+
+> +        )?
+> +        {
+> +            fn inc_ref(&self) {
+> +                // SAFETY: The existence of a shared reference guarantees that the refcount is
+> +                // non-zero.
+> +                unsafe { bindings::drm_gem_object_get(self.as_raw()) };
+> +            }
+> +
+> +            unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
+> +                // SAFETY: `obj` is a valid pointer to an `Object<T>`.
+> +                let obj = unsafe { obj.as_ref() };
+> +
+> +                // SAFETY: The safety requirements guarantee that the refcount is non-zero.
+> +                unsafe { bindings::drm_gem_object_put(obj.as_raw()) };
 
-You already sent next patch so this is simply incomplete. Please squash
-other work here.
+I would prefer to move the call to `.as_raw()` to the `let obj` line so
+that the reference more clearly expires before the call to
+`drm_gem_object_put()`. The reference must not exist during the call to
+`drm_gem_object_put()`.
 
-Best regards,
-Krzysztof
+> +            }
+> +        }
+> +    };
+> +}
+> +
+> +pub(crate) use impl_aref_for_gem_obj;
+
+The usual way to export macros outside the current file is:
+
+1. Annotated with #[macro_export]
+2. Export with `pub use impl_aref_for_gem_obj`
+
+Alice
 
