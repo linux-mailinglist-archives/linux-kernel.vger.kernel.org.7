@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-857981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01663BE8721
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:44:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A05BE8730
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE63C4F48C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84F53AF15F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4CC332EC4;
-	Fri, 17 Oct 2025 11:44:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060BD25FA1D;
+	Fri, 17 Oct 2025 11:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Tkumv47u"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A37332EA1
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7536B332EAE
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760701445; cv=none; b=LChVDhO35lji6nhf75kiPjBTvUmRwY42EDv80vHDkFhtxDykRVGioH4/nmJKf644meryJmLAUd/+p8n1NFPavGuptZ6OJdRXsexQVbVgztyj7CTH6albgfOOWEAwJ8ppwOKAJnNgX6eOemPpSjslwk2ZBS0DJtt4R4SZaiHysqg=
+	t=1760701761; cv=none; b=PL+I0SWjlaNuAhFgwwDQyQBPdNWKJJ6PH8n8t9ipTTPkVd47f/p4FXTU9m5KfQ+wYi++9aMBi6ly1bps+HJFpZmZGhhcL3TGUwaXrO9SRx6ECzNFRORC4oW2a9c+rvTPV5wSGipuhGTlCSrc9Ov61Y0ZGpmm7Qp01opAjAa6M2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760701445; c=relaxed/simple;
-	bh=VA14CuVaucwmHDdUOPES6Dzam19GPUrzkUs1CKPa+i0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=u8sqzCdAF1Rqdq/f1o1EShJSGWDmJaA1VhBR7TqMI7lHDCD6bY07wYp6SyrE5tigTc/Ra3psGkFlGuh018R5EKyyDZH1VVV2OCWPYRM+iv46FbGiVBBFQBymdCc3Z2Ca3HWWOyB26TYq8p3u3QLkstz09hbrlytx1ROeK7DFalE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430c523ce49so13982145ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:44:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760701443; x=1761306243;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KCYrzaTr6InjFT2ivsLTaDpWElCGPJrtTxSNKYQX3N0=;
-        b=JKT55kpUrtRK6UJ+Se5UI/I3XX2454O6G6mr/yPuv9s1s8re4MKHlzNjD7NvZiVFaq
-         V7OQcNd/MBwaZHNSF762UTVdFeRjWaUGtpZ3So/vPflO7ASThAUTO+isAUz3OqrT0Sn+
-         t7VcqjYB1qMqoijnATE6bTR7RYjQCIPg2zCLRjUvj8xvIBkHCsNzrRtjNAGNRWljfzCq
-         3mfKG1afN9moregY2NaGc1evaS9rWWpYpkyZW+wlmojIwQFld4Nj7jVgz7G5t0+EeJJH
-         DJpP9KJ79UnXbsv1IaEXsfk95X+xchC8fraGMXJ+pLgDF0trHdcaSFUlL0NvaOWJw8Vw
-         rhvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnrHuPWmPMju5h82Y+lq13nxr9h4HqjwfiGC2e0mWOW5oJDZNzKWCrtelpxfzhgB3EVQP0MJtzM74DFl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVEeyu1tJR0JYYL/6uKJgxzt035GGYlvAzVodcvcwt/5ZXEOUl
-	/0cM8h3XV6xPOTKrGEUYrG1akoiihk5B/bm0mi8sXof6toeb4YOWyK7GCd1CTO2GK1jfjvGQqgk
-	C3jMIvLO25dAQfX3b56IrsWI3SAItjWdEI6Mxv46TMQ9S+MgKs5lpmHKcScE=
-X-Google-Smtp-Source: AGHT+IGs5iNuIY5JP2lJLX1ZGKji/y/z9c6cTUlVLgXH8ChZyl8GJ7aUQZWgY9ugydkIuZ5yN56STnwNIB/57GWyxXgdCC5ehzCT
+	s=arc-20240116; t=1760701761; c=relaxed/simple;
+	bh=44S46y+nWpOLfu6O0H2bwXFK4yVhFuRHLGVYBzHWRdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GA/B0OIW7u5IFO1rVgUWoqnHAlCU0+VSfKRsAEg4g0FecadAGI93l8LaERUynRkkUPyrEDgoKlKaOHDBoKVwgjTdaAiZcpZMPlVvI2ivntKfiuoS4kqdGcEduARpNRWOJw72gDPof2RlWFwQ+Z4XqD6SorqMR0Rub9fiDCckzHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Tkumv47u; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CE9BC40E01F9;
+	Fri, 17 Oct 2025 11:49:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lD-1nPFIjA6V; Fri, 17 Oct 2025 11:49:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760701749; bh=mZQ8jQbe+LzMYj7Qz3tVp/6j8HTVnhmjlj8KepPo12g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tkumv47uvdD6BVenbuM8RY4GKaFdxLd/6pOqxp2Ccz66EPKyrwM8chjFPBGp7iiXZ
+	 Ax/DXePLaWxvVbVJQTsIeeZvtm0wH/9/SMBTwT1oxu/2E5LLOQdu6xF2kHMC6aMgW9
+	 E4/6fKv8Ol3hNXqI84xi7YuHEyJCoPtd90wtUaQFDqYId0o11xB9ISj8sSpKi3TPJA
+	 ZEt8qhAUNgRMao9yo1CI9B1DRFHNKmGIyNEkOiN4Z+5hmVr715mkOSL1CLs9ZDM1QQ
+	 oto2F3fk7qt6ujGC2xQibxsFiNWmCZ5OQvAxmT7iy7Tu7xR6eKsaqTNM6JkGhv+0xC
+	 1u+9SIJUd//Y1xUriVzI3JDc/q0by4tqaBGy94NdKzeE4YR2SgH63ojyBRkQEO3rOp
+	 8rmk832lsi+YoNZy1Qk0WqoLZllk5qFdAyZaJ0PI/3LRLDkDxzaFzGg/aQCiDAAoP0
+	 lSKa/0cvoYOn5aP4EVas2LqixCtWyjeQfSXl+4Cyv9ip6XajMdxyp2ldXTYPcQriZ/
+	 WWyZSww1zPXLOhtlUENrANRnwH3LTeZ6dnDJFChqJDOLnpAFbIfViUJZzJH/NmhHCe
+	 4XYGZmAScT+Ixn7v6noenPqKtJs2Ts+JmqC0FiGH+MhLZHTg3to0jcpmw9wT5LbFWC
+	 4RsyfZjLiUL6DAWWkmtvp8bw=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8383440E019F;
+	Fri, 17 Oct 2025 11:48:53 +0000 (UTC)
+Date: Fri, 17 Oct 2025 13:48:44 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Gregory Price <gourry@gourry.net>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, peterz@infradead.org,
+	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
+	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
+	darwi@linutronix.de, stable@kernel.org
+Subject: Re: [PATCH] x86/amd: Disable RDSEED on AMD Zen5 Turin because of an
+ error.
+Message-ID: <20251017114844.GAaPItHGKgL0yAPscH@fat_crate.local>
+References: <20251016182107.3496116-1-gourry@gourry.net>
+ <aPFDn-4Cm6n0_3_e@gourry-fedora-PF4VCD3F>
+ <94BA6EDC-5C44-490D-B6F5-0E38C8822F7C@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e03:b0:42d:84ec:b5da with SMTP id
- e9e14a558f8ab-430c5226e7fmr56388885ab.10.1760701443199; Fri, 17 Oct 2025
- 04:44:03 -0700 (PDT)
-Date: Fri, 17 Oct 2025 04:44:03 -0700
-In-Reply-To: <20251017162359.1217053-1-junjie.cao@intel.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f22c03.050a0220.91a22.041e.GAE@google.com>
-Subject: Re: [syzbot] [fbdev?] KASAN: global-out-of-bounds Read in bit_putcs (3)
-From: syzbot <syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com>
-To: junjie.cao@intel.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <94BA6EDC-5C44-490D-B6F5-0E38C8822F7C@zytor.com>
 
-Hello,
+On Thu, Oct 16, 2025 at 12:39:43PM -0700, H. Peter Anvin wrote:
+> The vendor (in this case AMD) can then root-cause the failure and provide
+> a narrower blacklist when the true extent is known.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Yap, we're looking into this, ofc.
 
-Reported-by: syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com
-Tested-by: syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com
+-- 
+Regards/Gruss,
+    Boris.
 
-Tested on:
-
-commit:         0242b25b fbdev: bitblit: bound-check glyph index in bi..
-git tree:       https://github.com/Junjie650/linux.git fix/fbdev-bit_putcs-gobounds-v2
-console output: https://syzkaller.appspot.com/x/log.txt?x=17787dcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce567f861793202d
-dashboard link: https://syzkaller.appspot.com/bug?extid=793cf822d213be1a74f2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+https://people.kernel.org/tglx/notes-about-netiquette
 
