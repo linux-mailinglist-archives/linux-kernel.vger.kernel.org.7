@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-858247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3831BE9611
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:58:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB8EBE9596
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E541885805
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567986E5A6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D6F2459E1;
-	Fri, 17 Oct 2025 14:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70BE337110;
+	Fri, 17 Oct 2025 14:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KlAO6bDX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jlSTYU/P"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EDC3370FB;
-	Fri, 17 Oct 2025 14:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2433370F8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713071; cv=none; b=aB0llvgewPSp0raBrOeXt0vrPu6bF89D4a5lr0nxmkhv6tAL+uX2uxUYtSsXJ+mafD8Dzi5+ECh9iLWUymUrGRtTqKuLUeNprNpDun5wsOks0ROPjcWlU8ky3C98Oo6WJdeJJQijoiRrQT4aH1jJrn1qCp5cEFh0FXV4o7RlQBg=
+	t=1760712744; cv=none; b=SaFWLI+BzaMOnQZxCVauwyyLydNyOwgDqxmuD9Ilm5cqKPw6mZne51neQ2cjnypYP/J6QHpEoIsWYaqDrZzwi0+z5hPuRsOMrqt0bU9WUev8TWHjYIiL8v8IFeSIe2eYo5maN/m9BxoA+9i1lAl54o2CZuTLGWZpfVRWbTWb/x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713071; c=relaxed/simple;
-	bh=yyXdbqmVBwCJBAnDFJ6uojdAFVjK3BND7ZL/z25OXiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KGycjbHmGir7K1wlk/h6uzRBiWLLExMN+uKFazO18PDhx/14MwGPH5JczmX8pimU9Ynp3ww+fgZawyZ7/EG/AsHOaNxVzRE269vzg4ijSl+ZloV123O2Je+qIEXb2IpSGmoseITmw1ZYwWhbGz+W+J1oLsjPoWpRO2hhOCvd4gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KlAO6bDX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B84C4CEE7;
-	Fri, 17 Oct 2025 14:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760713071;
-	bh=yyXdbqmVBwCJBAnDFJ6uojdAFVjK3BND7ZL/z25OXiw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KlAO6bDXr0YEqUbd3vX7IqaM68TdJ5EHbXO1NaZf6BBEbusVCGtxyY9rO1BSqYdE5
-	 BWRw53ySzQ7x3gYfiEc/Q/0kRewETZyJ6FTMoff2Gd/4Osgp1QAIBuyNuSMyoH1NBB
-	 x9R3jRIFBDTr0A1q20lgTD3NzBMisr+KrKOb7+eM=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Leo Yan <leo.yan@arm.com>,
-	Ian Rogers <irogers@google.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	linux-riscv@lists.infradead.org,
-	llvm@lists.linux.dev,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 037/168] tools build: Align warning options with perf
-Date: Fri, 17 Oct 2025 16:51:56 +0200
-Message-ID: <20251017145130.385519209@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251017145129.000176255@linuxfoundation.org>
-References: <20251017145129.000176255@linuxfoundation.org>
-User-Agent: quilt/0.69
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1760712744; c=relaxed/simple;
+	bh=VnfXtL2xC4VzguJRr7gehYXlYD1fT0JPfUxMRmpisNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=edZr/KbeVOKe/wjtZL21UiBlQm05LAA4aSlInSIXHVWWiF5Gf0hBKr4JWzJhUnL/cUNbQLNVXeOimgPlQ/bIf6cbT2r4Sq1Kx+iCEpm7s73Pr8P3lqTBBUwFltcYgW2zllK6JYRFFkA/LgpBPOqxwmyzWLNQrSPtuPX7CGAPEUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jlSTYU/P; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57e36125e8aso2026264e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760712740; x=1761317540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0sfzPDcrhLkEpvH58DO2RFlCkKiwdjaDP32oJmQSiwg=;
+        b=jlSTYU/Pf4KHQOo2/sYFqPfhPJ9nnfwcScfGSjZi94CI+WmL8Xt8ulJ5dHtxrI95ZP
+         gnwH5eWEHKzR8eTuss4+x81t4MXnDDPz1FdsdKImXbNEZtJzkIBRX7CErXppymB5KPMD
+         HngoC9ylRJPljk2WnWw13ohmjvI4CQwj1HbVj0K3lD+xQ6jl+TujcQJn6wymWWFp4X8r
+         IN85GyJmiNn6/o41oHp/ay0FprfN6guLFCHhkcapQ1FKYEpbRq8n2V5e+ZjF8epZa5iO
+         qiMDgzZLH55CJWxg+/DWgTRPuNME15kDdwAMhU3Eg1T7WolQK2AD548xhOz71Fol+cQz
+         /VFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760712740; x=1761317540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0sfzPDcrhLkEpvH58DO2RFlCkKiwdjaDP32oJmQSiwg=;
+        b=Ob0LhPNLrrPDPIjWI4gHKzp/Li9eUlaw0CBeeADyg76KXQBnZm2ljQ2dMOz1Dub+V3
+         aRScfAfCy/6JSYgNVkM38pZFAxpeUbdJXyw9DGYmO2pKDQhvp6OAyg1okdU58hYmg8rS
+         rhvsmyMiFwl2dWx+A4vyTqi/6C13snZbqbzZLH7wrAgyeUArkvXTWCuT+bU1VVjDXj4R
+         FNL/s3QrqhhPuKrauhmbOWKfr9Vpo+335OM1WJZpYXdqbyKOmBDtHWJnQQCp2+A7jbtn
+         4pykYcHwsl/rss6yNg5QyRPNMpDODRialJ6yXPyRTuQlAGOu7Cl7rhtPiB77b3CrBb1d
+         4ZJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkoVT2fs/398/v/SYZm5wq5mbhcB2UWi5d7Mw7GHeh5PDe1t4oVsOgy7CIujso1eMV81B9pB42l9Fmx4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTvOFB/u4H7BHJhp83svlOUEI+E91CLX9GLN/hzjsFmgzSXrCj
+	RmNB4/KK8XD/UxkP2Q08CnDXzteP8TQ/ovZY0279KtMs7j6nZ97P8rwDQeN0gOMRWtPkv6dsD8G
+	l4+e4pYlyM9xEpkvAK0O0pyKtI0SAb8k6lx89k3C6vg==
+X-Gm-Gg: ASbGncsirWXfdgzQOAQ05a9GSWV5cN2T/RUJZTJNtKLUV8yq08EdOEetPm8X0ApFuJe
+	rLZZBbH95UbHrcfKOwxlmmc/xP3GlenT9yxv+aovDLTF4zv77LW2sB7xz72KptQxlpo7xIxngfH
+	7YZKfyTtUxvGpfvBQ5szD2lIgSpWzsX3ZjSPtNWnP5YyVtO4WVk1jQahI2Uz49Agzr9JKAX5zuO
+	3G3Vvdllxw4Ux9NYi3eRHHZb8t6HQt8cRivLwO2tJlwi6u/BAvFGZ80GhEPB5QhrLy+GHbBEuSM
+	JV80CHKVaoowNaUG
+X-Google-Smtp-Source: AGHT+IE72wOQZ+LIs/OXsye4cWPFFSe4QVTCmvrbwwx51cB1q/UrQK9+rzRhjrj+Cx4wEHABWKff44JhW3HgrfK1oZk=
+X-Received: by 2002:a05:6512:33c9:b0:591:c60d:b852 with SMTP id
+ 2adb3069b0e04-591d8597bccmr1632259e87.43.1760712740520; Fri, 17 Oct 2025
+ 07:52:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <aPJW8HIke5pj3doX@sirena.org.uk>
+In-Reply-To: <aPJW8HIke5pj3doX@sirena.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 17 Oct 2025 16:52:08 +0200
+X-Gm-Features: AS18NWCt-sC4eLPZuRtwoQG-DMUhSZhvcy_XwuPsgyaFXgQS-NGNCRoftf4DbFc
+Message-ID: <CAMRc=MePe-dxinjBMu1NZGNsCrj2gp9UF4AfZinrQbYBjmNQQQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the gpio-brgl tree
+To: Ioana Ciornei <ioana.ciornei@nxp.com>, Mark Brown <broonie@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Michael Walle <mwalle@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Oct 17, 2025 at 4:47=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> Hi all,
+>
+> After merging the gpio-brgl tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-qixis-fpga.=
+o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-qixis=
+-fpga.o
+>
+> Caused by commit
+>
+>   e88500247dc32 ("gpio: add QIXIS FPGA GPIO controller")
+>
+> I have used the version from 20251016 instead.
 
-------------------
+Ioana: Can you please send a follow-up fix for this, please?
 
-From: Leo Yan <leo.yan@arm.com>
-
-[ Upstream commit 53d067feb8c4f16d1f24ce3f4df4450bb18c555f ]
-
-The feature test programs are built without enabling '-Wall -Werror'
-options. As a result, a feature may appear to be available, but later
-building in perf can fail with stricter checks.
-
-Make the feature test program use the same warning options as perf.
-
-Fixes: 1925459b4d92 ("tools build: Fix feature Makefile issues with 'O='")
-Signed-off-by: Leo Yan <leo.yan@arm.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Link: https://lore.kernel.org/r/20251006-perf_build_android_ndk-v3-1-4305590795b2@arm.com
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: Bill Wendling <morbo@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: James Clark <james.clark@linaro.org>
-Cc: linux-riscv@lists.infradead.org
-Cc: llvm@lists.linux.dev
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/build/feature/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index 690fe97be1904..1b7886cbbb65a 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -282,10 +282,10 @@ $(OUTPUT)test-libbabeltrace.bin:
- 	$(BUILD) # -lbabeltrace provided by $(FEATURE_CHECK_LDFLAGS-libbabeltrace)
- 
- $(OUTPUT)test-compile-32.bin:
--	$(CC) -m32 -o $@ test-compile.c
-+	$(CC) -m32 -Wall -Werror -o $@ test-compile.c
- 
- $(OUTPUT)test-compile-x32.bin:
--	$(CC) -mx32 -o $@ test-compile.c
-+	$(CC) -mx32 -Wall -Werror -o $@ test-compile.c
- 
- $(OUTPUT)test-zlib.bin:
- 	$(BUILD) -lz
--- 
-2.51.0
-
-
-
+Bartosz
 
