@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-858781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C4CBEBD3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:39:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1884BBEBD5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3D274F1B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DAF56E75C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A6529A30A;
-	Fri, 17 Oct 2025 21:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8152D23BC;
+	Fri, 17 Oct 2025 21:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVbMNtpq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ui97tMPp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6742036E9;
-	Fri, 17 Oct 2025 21:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF24523184A;
+	Fri, 17 Oct 2025 21:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760737152; cv=none; b=dySaMtFuJoAsGB4wTSW3bcnXzz7s0K4tozf94/rpPq93bGeHSqp/g2HD4uWEYAUuGupyHm0S6n5uE/B27W2Fgs2ML9VkEQ/MvXnsTNtm0m+mTnWytpM/+3j9deaGEnGyTw/TeUWRnldn1uIiEHkGC/hZH4qKvHVkZN1LPtadSO4=
+	t=1760737322; cv=none; b=iDRM2MSscX6UZX5SQBp8SjedLVbUNpg92ESBlBN+Tcz9czY0ocP3Iry3gcjjvYNQixK5lZVXlm4JbnrqkwU5g0OKU93gLUE62GrRWiYtNEBGM/bw5atiQcjVTwhTPqKDNl02lJKRCAMaFGYqV7v8BG7up76zPFDZUkyMd5onA6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760737152; c=relaxed/simple;
-	bh=yXIlk8D/SOgscy5bx8QPUUS6GFRrHk7Y9M4GBSF6CVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhuiidQftRf+FrIn2rnXqAA1M8fNo5OodZOXZestycijVnxDk8UYFp3Bpad20dthUhkpjrCcKgmuG8yrQXej7u2/2zR4iS/onWPUefexh6shckAhcOXzzz532cePtfnel9tWjkwaBcalTk6xe1Jc7hiJsFlOaWFGF2DFUFsqyb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVbMNtpq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF26C4CEE7;
-	Fri, 17 Oct 2025 21:39:10 +0000 (UTC)
+	s=arc-20240116; t=1760737322; c=relaxed/simple;
+	bh=NLiqceOlHQmsom02gVpkpbYtvUKxr7b4ZoMng8qNyLg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=EhzmpDf0Ek4pQGKWj13sgbB7jRFM6VOkKALeih5T3PaTBU/cN/7dRZVp9pyGLdEY7Rwr6UQvx0BJ9o7v4b64TVwBd/4a1lTtV8rtuhBl8TskykvB5Ph3+3Uh0T7Shne3+ZLyM0gzXyv15ovH1+J1dS0WefPvnknKAMlw41c7nps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ui97tMPp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC11C4CEE7;
+	Fri, 17 Oct 2025 21:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760737151;
-	bh=yXIlk8D/SOgscy5bx8QPUUS6GFRrHk7Y9M4GBSF6CVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVbMNtpqNTKWd5Vpdx7tn4t+O291TT88Ml9VwniTZkSEXVoMLo9sNW8MpCg3MTb7h
-	 0Lp+5cvgvzm+Mx8ReCwAEEQ7m7XvgmaNirt1yqUUm09Y5JRP8YViZWhVrZvXYOXUfh
-	 yFTwnLlCtg95L/1701kblKSp11Zrnu+YLYwjmReryn43vLjmqrX3VVriEGAli5oaP0
-	 MDdSsGAjbFDtcFj5FUCIRHZT8Dmq3s9jD1BR1w5CBbWfmOBgckVEmJawxRtATp3dHo
-	 lE6w4ohM4MCjwD5tC6HyAVeru3a9fW83qnYkgZrAsd5cAzY29A/s5wDL6NqDVyQ/mn
-	 Pucz+slcOtLTA==
-Date: Fri, 17 Oct 2025 14:41:04 -0700
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
-	Imran Shaik <imran.shaik@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_SM_TCSRCC_8750 from m to
- y
-Message-ID: <tv7zufiknf6ecnvefksgdborg4csqxyndb577crt3mzwzcxley@zlschj2txmzi>
-References: <20251017-update_defconfig_tcsrcc_sm8750-v1-1-34b1b47a0bda@oss.qualcomm.com>
- <30390038-0f90-48a4-befe-475cf88ba1fb@kernel.org>
- <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
- <90c8dda3-f753-43dc-8bb9-d03a808c8704@kernel.org>
- <38b8468f-5006-46a3-a4ea-28e6692ef14a@quicinc.com>
+	s=k20201202; t=1760737321;
+	bh=NLiqceOlHQmsom02gVpkpbYtvUKxr7b4ZoMng8qNyLg=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=Ui97tMPpQpzMT2zJyaSneZDqt7EWGTXci0QQOmYDl+1bF/roKz2+P/3IJ3uaq0KYR
+	 WRvAeFREUYF9Y86L02m42uolFqVWFYFQRHTQYCxpUwcozWm9VCaORQKif2+H+958Ut
+	 1pFdz2Dk1CspwKzAwO2HDQDIGlAo9hPbdt/mtRU0kAN2qkKeYeV980O5RzKRS2V0Pt
+	 c15lwC0EOfqz19uExbgmMmJAE0zUZwIgYtfG0Uds+Kh2XEUDNnjUG04rHTJklAntC2
+	 siIpq1e8AbDlDCYinLisEq/ZJGxaT/8GNQ8qxCG41HIKyTA+Vhe9mPoKrocQXlH+L1
+	 VkR642d1SbcdA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38b8468f-5006-46a3-a4ea-28e6692ef14a@quicinc.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 23:41:56 +0200
+Message-Id: <DDKXACTUJ9IT.3W11J2HE7SLJW@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
+Cc: "Tzung-Bi Shih" <tzungbi@kernel.org>, "Benson Leung"
+ <bleung@chromium.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, "Jonathan Corbet"
+ <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <chrome-platform@lists.linux.dev>, <linux-kselftest@vger.kernel.org>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Bartosz
+ Golaszewski" <brgl@bgdev.pl>, "Wolfram Sang"
+ <wsa+renesas@sang-engineering.com>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Dan Williams" <dan.j.williams@intel.com>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+References: <20251016054204.1523139-1-tzungbi@kernel.org>
+ <20251016054204.1523139-6-tzungbi@kernel.org>
+ <20251016123149.GA88213@nvidia.com> <aPGryj-V5PQZRtoI@google.com>
+ <20251017134916.GK3901471@nvidia.com> <aPJp3hP44n96Rug9@tzungbi-laptop>
+ <009c8e5e-02d3-4017-bb84-e3a8f01b9dc9@kernel.org>
+ <20251017163738.GB316284@nvidia.com>
+ <bee969ed-c050-43a4-961c-07443a45943c@kernel.org>
+ <20251017184415.GE316284@nvidia.com>
+In-Reply-To: <20251017184415.GE316284@nvidia.com>
 
-On Fri, Oct 17, 2025 at 11:19:51AM +0530, Taniya Das wrote:
-> 
-> 
-> On 10/17/2025 10:51 AM, Krzysztof Kozlowski wrote:
-> > On 17/10/2025 07:16, Taniya Das wrote:
-> >>
-> >>
-> >> On 10/17/2025 10:00 AM, Krzysztof Kozlowski wrote:
-> >>> On 16/10/2025 20:53, Taniya Das wrote:
-> >>>> The TCSR clock controller is required  during boot to provide the ref
-> >>>> clocks to the UFS controller. Setting CONFIG_SM_TCSRCC_8750 to y ensures
-> >>>> the UFS driver successfully probe and initialize the device.
-> >>>>
-> >>>> Without this change, the UFS subsystem fails to mount as a usable file
-> >>>> system during boot.
-> >>>
-> >>>
-> >>> That's not what I observed. UFS works fine, especially that it is a
-> >>> module, so no, this is not a desired change and explanation is not only
-> >>> insufficient but actually incorrect.
-> >>>
-> >>
-> >> Krzysztof, on Pakala MTP we are observing the below issue and it
-> >> requires the module of tscrcc to be loaded explicitly. This patch also
-> >> aligns to how it is on all other targets.
-> >>
-> >> /soc@0/phy@1d80000: Failed to get clk index: 2 ret: -517
-> >> [   10.496570] ufshcd-qcom 1d84000.ufs: freq-table-hz property not specified
-> >> [   10.503660] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> >> find vdd-hba-supply regulator, assuming enabled
-> >> [   10.514548] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> >> find vccq2-supply regulator, assuming enabled
-> >> [   10.565955] platform 1d80000.phy: deferred probe pending: (reason
-> >> unknown)
-> >> [   10.573078] platform 1d84000.ufs: deferred probe pending:
-> >> ufshcd-qcom: ufshcd_pltfrm_init() failed
-> >>
-> > 
-> > 
-> > I don't and I am testing regularly, so I assume you have incorrect
-> > config. Maybe I have incorrect one (which works), but then commit msg is
-> > incomplete - you must explain the bug and provide proof that this is the
-> > correct fix for it.
-> > 
-> 
-> We have tried booting up recently and and that is what we observed. The
-> patch from 'm' to 'y' helps the UFS probe is successful and the rootfs
-> is picked from ufs partitions. I will add these fail & success log
-> snippets in the commit text.
+On Fri Oct 17, 2025 at 8:44 PM CEST, Jason Gunthorpe wrote:
+> On Fri, Oct 17, 2025 at 08:19:06PM +0200, Danilo Krummrich wrote:
+>> On 10/17/25 6:37 PM, Jason Gunthorpe wrote:
+>> > On Fri, Oct 17, 2025 at 06:29:10PM +0200, Danilo Krummrich wrote:
+>> >=20
+>> >> I'm not sure about MISC device though. Unless there's a good reason,
+>> >> I think MISC device should be "fenced" instead.
+>> >=20
+>> > misc is a very small wrapper around raw fops, and raw fops are
+>> > optimized for performance. Adding locking that many important things
+>> > like normal files don't need to all fops would not be agreed.
+>> >=20
+>> > The sketch in this series where we have a core helper to provide a
+>> > shim fops that adds on the lock is smart and I think could be an
+>> > agreeable way to make a synchronous misc and cdev unregister for
+>> > everyone to trivially use.
+>>=20
+>> Sure, for MISC devices without a parent for instance there are no device
+>> resources to access anyways.
+>
+> There are many situations with misc that can get people into trouble with=
+out
+> parent:
+>
+>  misc_deregister(x);
+>  timer_shutdown_sync(y);
+>  kfree(z);
+>
+> For example. It is is buggy if the fops touch y or z.
+>
+> This is why a _sync version is such a nice clean idea because with 5
+> letters the above can just be fixed.
+>
+> Wrapping everything in a revocable would be a huge PITA.
 
-Please don't, there's nothing useful in either log, so dumping them in
-the git history will serve no purpose.
+That's a bit of a different problem though. Revocable clearly isn't the
+solution. _sync() works, but doesn't account for the actual problem, which =
+is
+that the file private has at least shared ownership of y and z.
 
-Regards,
-Bjorn
+So, it's more of an ownership / lifetime problem. The file private data sho=
+uld
+either own y and z entirely or a corresponding reference count that is drop=
+ped
+in fops release().
 
-> 
-> [    0.000000] Machine model: Qualcomm Technologies, Inc. SM8750 MTP
-> ....
-> [    3.133373] ufshcd-qcom 1d84000.ufs: freq-table-hz property not specified
-> [    3.144480] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> find vdd-hba-supply regulator, assuming enabled
-> [    3.144585] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
-> find vccq2-supply regulator, assuming enabled
-> [    3.227770] ufshcd-qcom 1d84000.ufs: Resource ufs_mem not provided
-> [    3.238319] ufshcd-qcom 1d84000.ufs: MCQ mode is disabled, err=-19
-> [    3.244707] scsi host0: ufshcd
-> [    3.255170] scsi 0:0:0:49488: Well-known LUN    KIOXIA
-> THGJFLT2E46BATPB 0100 PQ: 0 ANSI: 6
-> [    3.272001] scsi 0:0:0:49476: Well-known LUN    KIOXIA
-> THGJFLT2E46BATPB 0100 PQ: 0 ANSI: 6
-> [    3.287011] scsi 0:0:0:49456: Well-known LUN    KIOXIA
-> THGJFLT2E46BATPB 0100 PQ: 0 ANSI: 6
-> [    3.304264] scsi 0:0:0:0: Direct-Access     KIOXIA   THGJFLT2E46BATPB
-> 0100 PQ: 0 ANSI: 6
-> [    3.331545] sd 0:0:0:0: [sda] 121774080 4096-byte logical blocks:
-> (499 GB/465 GiB)
-> 
-> 
-> Thanks,
-> Taniya.
-> 
+Device resources are different though, since we can't just hold on to them =
+with
+a reference count etc.; they're strictly gone once the bus device is unboun=
+d,
+hence revocable when there is no _sync().
 
