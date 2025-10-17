@@ -1,418 +1,181 @@
-Return-Path: <linux-kernel+bounces-858460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0D6BEAC68
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:35:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5040BEAD67
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12ADE1AE0E89
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:35:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A8E85A4CBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521472BEC44;
-	Fri, 17 Oct 2025 16:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193842BE639;
+	Fri, 17 Oct 2025 16:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2NjocDF"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWojvlBB"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E0B2BE639
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6B2BE05F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718920; cv=none; b=fxMQnVj2bDBwV3pBUn46SiQP2y/V2QVZP1zHYaWM5BZWfiQa+4HW/iv1z6OlqwDpC/TaV3usi9dTz/Yvga1wgfHW9hbnSuo8F3lzaUdB1TrdIoX50NNoEVX5yI0ybjP0m9NfdyQqqzMW0xPFrJlZraDjHJDHVD43c3VqlZo/EXM=
+	t=1760718897; cv=none; b=oMjZEWrWG8itdk/LGhRJHOWv2RlV4KyyRfFnjorAUt0H9WoxqfWGwk2HJX2d7SIVA5q3COrXyMwU0M2GQc1qpe4JQxhZntb+NS180VFxRUARDUr8d0zsAhjQZ2D1P6rBTBZtHa/phNvHoZPn01qHWNnEfrBn/1F9vRjFFBtsUDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718920; c=relaxed/simple;
-	bh=H49Z27nHZ+fdxryXvm9vrn0wLZGUrohUHscjeinVTj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nj3cPe6IoSQB53e/hQ8o+ep5murJv2BhorGDqJGVJHtPahh6UH2yAvHdjWHIKhNWZWscTYDCYPr4mQFIUJBJUYHTQjXLKuBcKfkD5bZtjz8HWxmxXXWDGuVd7Ro+DTaiHr37OGqN/VPohjgOYJoZUI2RK4PI9CdBm2SjI/t2mUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2NjocDF; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1760718897; c=relaxed/simple;
+	bh=kXPamFL6kLZKkX3qr3uqlpBYTcor2P54a8mC37l3HQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pc0+GHC/9/9L1zFYlUxpUPEmM9/vosdvsZwBWWLAT/XjsHvQfrqYsEh58OuWaPvy6lm5Pb3IfT3pyzG+pzQLSHK9se0SfECgQGrna8bJ5CNVfqN+wLj/pRJM3tMq8qiJWck05WXAuLEOkPXlOmgGtHUcAAwEeOaDOnvI/XkV4tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWojvlBB; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b67684e2904so1486253a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:35:18 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7930132f59aso2963456b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760718918; x=1761323718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760718895; x=1761323695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B1lHgyoHKMQ/vyhrtUoKDDc3oR+UCVpAhn4oqMVmHPY=;
-        b=M2NjocDFvXVF7doJb0m12ucuXQJpUv99i04/2oaq9DhULBOgRt801iZsQRWgauk9++
-         nqH7nJ8XuC7/ZOLuINjncJ4LwZ0cOSPeO8t/t3/uVJuQ6Cjh4BVHmLriJweXuF80XNoj
-         8O7YM6qNQs2ZWT0Zzznh+RSd4NSPvIXpgnMKVBjxdVEjMYos2lwhLDc7DodHRSz5ZCsS
-         OYIKdUSnWYIPwWadSBv94RppCE91TmctLdXiofnPRuP3efq4jFd5SsqFeplSX0MydYlm
-         jPmRgsRDMAMxx8UX7N7HiKhDlDOrjwhpT4i54AF/+5WITOsX+cTBUDKIGQhtAbic0eAZ
-         21KA==
+        bh=DiU/qRnryf546DyCg24gqS1SHnp8qC1F8SvAGiAg928=;
+        b=FWojvlBBGTaplpJtxQC0l/z5vOJ5xjKqnz6o/kiYyjTrBJWu2Z1r0bYkqPiz+k0vRE
+         v4Y9TAz1lP2phEfF2rgelamhbsH4G2YIE5bu+53Faobji2nCgh6OBraF3oIp62NQyged
+         iQQdKKKG9zdX3+NlC5T1C6S+wGpTrnm7pSuvocd9fMliawTzCFBWNPXJmDIO2wNB9HI7
+         l7F7fS2znYg3xxCfCrI+isPRv/G0zSgaq1//ctuCu0WkZ050N6h4aiifPNbinIOWY4IU
+         wjBqAnwY8o/B4rCqBu01T093qLqzygMZrvN/FPPH/IZBK1WgyG0ce3sxzUskzaE8fgca
+         88Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760718918; x=1761323718;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B1lHgyoHKMQ/vyhrtUoKDDc3oR+UCVpAhn4oqMVmHPY=;
-        b=tGOb5nuBsZYMjHnsPIGirGc0vFz53/aPvdCpKeaTLyKb/oqS2KuGhU0RGGijeG6Tz0
-         ddwI4C2fl8idIP6vP4g0aqvpqur3IT1vyFOQKUOvip8KvWvTALnvPtH+asBE3ZJJzHXX
-         S69bFGYwCkQkevHgQjy1sxkpq5pMUgFBtDkbbK6Uh5NBrYAbmmKzKZSj62I2+brOWpz/
-         eO+h/0Hv9W9LUAoaIImM+2ylqfsFU3TVLbNLqGFJLAqiRTl6CMFv1L9z06OnLLJetRZW
-         R7tt8POvGMfoKzdtCZ4m47B9OmqE3Fk/EmqmzzOBaUUnVa+3UxFH4t95HKV/4oUsJFDT
-         Ui7g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8WHsItdO/hJ0LfIhDupfo8Hkc+gBKDhRaUMlyeyw5V8vZOOAXbJJ9Q9e14YltFolEBlTOPuw+weg45h4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2JVICfnDfiXAZqD7mtzEvx6UoZZZjd7rwSCy8bFK5OSla2e1H
-	ezPXmzhnGsgTmD//x5lZGEZZAtlkCc16QHFlrKNlXohd2ttSsXntNWJf
-X-Gm-Gg: ASbGncvAeffPT5ECqoBcY0AuQPlI8n0d5AJoLD9EGbeN0BoztUZN3qh1DDtJSMZFNtn
-	rX15olDyEdntUR4QKD/1G3bM/YRTiTNIHJhwUkWyOV/+aLJuoicFsRd+8O+ns9j3/9V+KPM0vzn
-	ZmxjAIEcsXGBfwxP7Dopcc4DVBpv5kg3drOtOQWZbUuaafePwPSV2qKgl4D1amEU+zIVfndQ9M4
-	mmhenILEyGLNHxUziae8EWotBAANDzdfFUnUzNnaULPTJ8gtVQXKGmAVVavRLnkxelbkHQMJ3PQ
-	JD0IONNkBn8/QMnth95PWkZt3jX5pLD+/4st1/f3flu/Lm3yKA+7aQAoY+Y6vqBzF4f3d+MRacl
-	VO5++kDZmn0W4Jfn2Djl1XFjzuEM3htGo+9XgbEkb+kd17u3MmOBz0w86RyGUV55NtunPzqa++q
-	QioCKk+g==
-X-Google-Smtp-Source: AGHT+IE3VXh+TdVPCiYzexlDEDdofLJFwIzTxNzxCwsNcNjIWltjG8LXixIGZpxC+yW/uD668xY7vA==
-X-Received: by 2002:a17:903:3bce:b0:27e:ec72:f67 with SMTP id d9443c01a7336-290c9c89dd4mr52278775ad.6.1760718917322;
-        Fri, 17 Oct 2025 09:35:17 -0700 (PDT)
-Received: from tixy.nay.do ([2405:201:8000:a149:4670:c55c:fe13:754d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099ab474fsm68020775ad.86.2025.10.17.09.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:35:17 -0700 (PDT)
-From: Ankan Biswas <spyjetfayed@gmail.com>
-To: linux@roeck-us.net,
-	corbet@lwn.net
-Cc: skhan@linuxfoundation.org,
-	khalid@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Ankan Biswas <spyjetfayed@gmail.com>
-Subject: [PATCH v2 3/3] Update maxim-ic.com links to analog.com
-Date: Fri, 17 Oct 2025 22:04:31 +0530
-Message-ID: <20251017163501.11285-1-spyjetfayed@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251017105740.17646-1-spyjetfayed@gmail.com>
-References: <20251017105740.17646-1-spyjetfayed@gmail.com>
+        d=1e100.net; s=20230601; t=1760718895; x=1761323695;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DiU/qRnryf546DyCg24gqS1SHnp8qC1F8SvAGiAg928=;
+        b=a3jcdUZBwW5LuzBkqsI+Uo5FX8aT3/arz0fDLXoxt0uYPdQduomWeGpCR/bY8Q72bj
+         RTelZB66mV3gpCxr7lyc7ZxQOO5RNVuQ58seZaZSB3gIsY31VlUJx8NcfU0oY2WM46Wl
+         IvCFzL7627rQBWCPPqfqmZT8ES5doxX66JWtIHlT09FE84kLNc4xbreNNXq+yOt0moFZ
+         j7ZmF+szYe/mkF8NrAqZL8Y8Gb4syT+Ydt3f1FqWhVodqbzODDjuaqYZPH3MrSbCYLe7
+         OuxGNzAFSz9yof+rN76KBGMpH8AzN1z7js6tlDkuO6n97QTHt867qKFtXgfhOUcYo+M8
+         IsNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZNadtqFM6XkMJPvWm1encrwAQ3Gix0lZE5gQ6rVhPyXEAzUnjuB5V0LeAKUfPkulO98wh9nOLNPRrDfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAncG984KpZ+cvHBpR+iMHM6hh9y6c+WL4P6n30kS+Zi/8QmZF
+	n/Ymi3fAdpyVsFxupsi5NtvmJ8b/wn3LcfvFtHYmvI1tlYHXFSaddQY3
+X-Gm-Gg: ASbGncsFl4A78kZuzMpudEMaS3jwNa+dN/IZaWp/jrw84xDHd8scUxaRi4FJxwQXN/d
+	++ccW8Em8wS5+D1YAB9myukfrs6muqnD3Tgt93vYrhgQ/959sNYfy9qim+t6kOsppbiThd0FjJc
+	zVldWP22zc9UbjTWveGl8N1OkueZQmI2SUveP9Iqykhu01y/FcJvQIlqFDXpeTwqufihStHpPiw
+	1jl+RAMcjg4gliqXhaOtSzA35MbPOIZr888KiIuaDEpu0oGejscUzEoclBPpiy4lP18/9IONxwF
+	HdzzTBL56NX6gzP9a8VxT+EtuaWQES4H4dsXwojT9raOco+Yw3D4G5cTuhhVrF8dRb+nm4Lqr0p
+	bW1dRHYkbgK5PeSMc4Foow7e6bGEPm4iBiaa78lBXTEiueTjvlOfr9kLmJwk79g==
+X-Google-Smtp-Source: AGHT+IFJ3+KNPGSuwMfsWk2oP7Mi4HeigQmPSucY0XlswK32zmoftHGchXXTi+JkTmrGrEHybr+mbA==
+X-Received: by 2002:a05:6a20:e291:b0:307:a015:37ef with SMTP id adf61e73a8af0-334a84da469mr5925151637.20.1760718894441;
+        Fri, 17 Oct 2025 09:34:54 -0700 (PDT)
+Received: from CNSZTL-PC.lan ([2401:b60:5:2::a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff15829sm16810b3a.11.2025.10.17.09.34.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 09:34:54 -0700 (PDT)
+Message-ID: <601cd8dc-afb5-4a67-af63-567814d755a4@gmail.com>
+Date: Sat, 18 Oct 2025 00:34:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: fix eMMC corruption on NanoPC-T6
+ with A3A444 chips
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Grzegorz Sterniczuk <grzegorz@sternicz.uk>, Jonas Karlman <jonas@kwiboo.se>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251017073954.130710-1-cnsztl@gmail.com>
+ <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
+ <d9d14ce2-2e65-422e-95fb-eb30b128ad90@gmail.com>
+ <41154cde-a447-0707-4387-cd3dca90b97d@manjaro.org>
+From: Tianling Shen <cnsztl@gmail.com>
+In-Reply-To: <41154cde-a447-0707-4387-cd3dca90b97d@manjaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In 2021, Maxim Integrated was acquired by Analog Devices.
-maxim-ic.com & maximintegrated.com links redirect to analog.com.
+On 2025/10/17 23:15, Dragan Simic wrote:
+> On Friday, October 17, 2025 14:08 CEST, Tianling Shen <cnsztl@gmail.com> wrote:
+>> On 2025/10/17 18:25, Dragan Simic wrote:
+>>> On Friday, October 17, 2025 09:39 CEST, Tianling Shen <cnsztl@gmail.com> wrote:
+>>>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+>>>>
+>>>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O errors and
+>>>> corruption when using HS400 mode. Downgrade to HS200 mode to ensure
+>>>> stable operation.
+>>>
+>>> Could you, please, provide more details about the troublesome eMMC
+>>> chip that gets identified as A3A444, i.e. what's the actual brand
+>>> and model?  Maybe you could send a picture of it?  It might also
+>>> help if you'd send the contents of "/sys/class/block/mmcblkX/device
+>>> /manfid" from your board (where "X" should equal two).
+>>
+>> Unfortunately I don't have this board nor this eMMC chip.
+>> I got the chip model from my friend, it's FORESEE FEMDNN256G-A3A44,
+>> manfid is 0x0000d6.
+> 
+> Thanks for responding and providing the details so quickly!
+> 
+>>> I'm asking for that because I'd like to research it a bit further,
+>>> if possible, because some other eMMC chips that are also found on
+>>> the NanoPc-T6 seem to work fine in HS400 mode. [1]  It may be that
+>>> the A3A444 chip has some issues with the HS400 mode on its own,
+>>> i.e. the observed issues may not be caused by the board.
+>>
+>> Yes, it should be caused by this eMMC chip.
+> 
+> I'd suggest that we move forward by "quirking off" the HS400 mode
+> for the FEMDNN256G-A3A44 eMMC chip in the MMC drivers, instead of
+> downgrading the speed of the sdhci interface on the NanoPC-T6.
+> 
+> That way, the other similar Foresee eMMC chip that's also found
+> on NanoPC-T6 boards, FEMDNN256G-A3A564, will continue to work in
+> the faster HS400 mode, while the troublesome A3A44 variant will
+> be downgraded to the HS200 globally for everyone's benefit.  It's
+> quite unlikely that the A3A44 variant fails to work reliable in
+> HS400 mode on the NanoPC-T6 only, so quirking it off in the MMC
+> drivers should be a sane and safe choice.
+> 
+> If you agree with dropping this patch, I'll be more than happy
+> to implement this HS200 quirk in the MMC drivers.
 
-Update maxim-ic.com & maximintegrated.com links to analog.com links.
+Yes for sure, thank you ;)
+The full cid is d6010341334134343411f63ea7208700.
 
-Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
----
- Documentation/hwmon/max127.rst   |  2 +-
- Documentation/hwmon/max16601.rst |  2 +-
- Documentation/hwmon/max1668.rst  |  2 +-
- Documentation/hwmon/max197.rst   |  4 ++--
- Documentation/hwmon/max20730.rst |  8 ++++----
- Documentation/hwmon/max31722.rst |  4 ++--
- Documentation/hwmon/max31730.rst |  2 +-
- Documentation/hwmon/max31785.rst |  2 +-
- Documentation/hwmon/max34440.rst | 12 ++++++------
- Documentation/hwmon/max6639.rst  |  2 +-
- Documentation/hwmon/max6697.rst  | 20 ++++++++++----------
- 11 files changed, 30 insertions(+), 30 deletions(-)
+Thanks,
+Tianling.
 
-diff --git a/Documentation/hwmon/max127.rst b/Documentation/hwmon/max127.rst
-index dc192dd9c37c..09204b45f27b 100644
---- a/Documentation/hwmon/max127.rst
-+++ b/Documentation/hwmon/max127.rst
-@@ -13,7 +13,7 @@ Supported chips:
- 
-     Prefix: 'max127'
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX127-MAX128.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max127-max128.pdf
- 
- Description
- -----------
-diff --git a/Documentation/hwmon/max16601.rst b/Documentation/hwmon/max16601.rst
-index c8c63a053e40..3b1392bf547e 100644
---- a/Documentation/hwmon/max16601.rst
-+++ b/Documentation/hwmon/max16601.rst
-@@ -35,7 +35,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX16602.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max16602.pdf
- 
- Author: Guenter Roeck <linux@roeck-us.net>
- 
-diff --git a/Documentation/hwmon/max1668.rst b/Documentation/hwmon/max1668.rst
-index 417f17d750e6..e2b8a4056abe 100644
---- a/Documentation/hwmon/max1668.rst
-+++ b/Documentation/hwmon/max1668.rst
-@@ -9,7 +9,7 @@ Supported chips:
- 
-     Addresses scanned: I2C 0x18, 0x19, 0x1a, 0x29, 0x2a, 0x2b, 0x4c, 0x4d, 0x4e
- 
--    Datasheet: http://datasheets.maxim-ic.com/en/ds/MAX1668-MAX1989.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX1668-MAX1989.pdf
- 
- Author:
- 
-diff --git a/Documentation/hwmon/max197.rst b/Documentation/hwmon/max197.rst
-index 02fe19bc3428..00e16056823f 100644
---- a/Documentation/hwmon/max197.rst
-+++ b/Documentation/hwmon/max197.rst
-@@ -11,13 +11,13 @@ Supported chips:
- 
-     Prefix: 'max197'
- 
--    Datasheet: http://datasheets.maxim-ic.com/en/ds/MAX197.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX197.pdf
- 
-   * Maxim MAX199
- 
-     Prefix: 'max199'
- 
--    Datasheet: http://datasheets.maxim-ic.com/en/ds/MAX199.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX199.pdf
- 
- Description
- -----------
-diff --git a/Documentation/hwmon/max20730.rst b/Documentation/hwmon/max20730.rst
-index cb0c95b2b1f6..0ce473bca889 100644
---- a/Documentation/hwmon/max20730.rst
-+++ b/Documentation/hwmon/max20730.rst
-@@ -11,7 +11,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX20710.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max20710.pdf
- 
-   * Maxim MAX20730
- 
-@@ -19,7 +19,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX20730.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max20730.pdf
- 
-   * Maxim MAX20734
- 
-@@ -27,7 +27,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX20734.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max20734.pdf
- 
-   * Maxim MAX20743
- 
-@@ -35,7 +35,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX20743.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max20743.pdf
- 
- Author: Guenter Roeck <linux@roeck-us.net>
- 
-diff --git a/Documentation/hwmon/max31722.rst b/Documentation/hwmon/max31722.rst
-index 0ab15c00b226..b9d176ee7a69 100644
---- a/Documentation/hwmon/max31722.rst
-+++ b/Documentation/hwmon/max31722.rst
-@@ -11,7 +11,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31722-MAX31723.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max31722-max31723.pdf
- 
-   * Maxim Integrated MAX31723
- 
-@@ -21,7 +21,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31722-MAX31723.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max31722-max31723.pdf
- 
- Author: Tiberiu Breana <tiberiu.a.breana@intel.com>
- 
-diff --git a/Documentation/hwmon/max31730.rst b/Documentation/hwmon/max31730.rst
-index def0de19dbd2..1c5a32b64187 100644
---- a/Documentation/hwmon/max31730.rst
-+++ b/Documentation/hwmon/max31730.rst
-@@ -9,7 +9,7 @@ Supported chips:
- 
-     Addresses scanned: 0x1c, 0x1d, 0x1e, 0x1f, 0x4c, 0x4d, 0x4e, 0x4f
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31730.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max31730.pdf
- 
- Author: Guenter Roeck <linux@roeck-us.net>
- 
-diff --git a/Documentation/hwmon/max31785.rst b/Documentation/hwmon/max31785.rst
-index c8c6756d0ee1..92817436759e 100644
---- a/Documentation/hwmon/max31785.rst
-+++ b/Documentation/hwmon/max31785.rst
-@@ -9,7 +9,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX31785.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max31785.pdf
- 
- Author: Andrew Jeffery <andrew@aj.id.au>
- 
-diff --git a/Documentation/hwmon/max34440.rst b/Documentation/hwmon/max34440.rst
-index 8591a7152ce5..b1b4bc0135b1 100644
---- a/Documentation/hwmon/max34440.rst
-+++ b/Documentation/hwmon/max34440.rst
-@@ -17,7 +17,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX34440.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max34440.pdf
- 
-   * Maxim MAX34441
- 
-@@ -27,7 +27,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX34441.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max34441.pdf
- 
-   * Maxim MAX34446
- 
-@@ -37,7 +37,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX34446.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max34446.pdf
- 
-   * Maxim MAX34451
- 
-@@ -47,7 +47,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX34451.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max34451.pdf
- 
-   * Maxim MAX34460
- 
-@@ -57,7 +57,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX34460.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max34460.pdf
- 
-   * Maxim MAX34461
- 
-@@ -67,7 +67,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX34461.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max34461.pdf
- 
- Author: Guenter Roeck <linux@roeck-us.net>
- 
-diff --git a/Documentation/hwmon/max6639.rst b/Documentation/hwmon/max6639.rst
-index c85d285a3489..492c13a5880d 100644
---- a/Documentation/hwmon/max6639.rst
-+++ b/Documentation/hwmon/max6639.rst
-@@ -9,7 +9,7 @@ Supported chips:
- 
-     Addresses scanned: I2C 0x2c, 0x2e, 0x2f
- 
--    Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX6639-MAX6639F.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6639-max6639f.pdf
- 
- Authors:
-     - He Changqing <hechangqing@semptian.com>
-diff --git a/Documentation/hwmon/max6697.rst b/Documentation/hwmon/max6697.rst
-index 90ca224c446a..5b37ff08ff44 100644
---- a/Documentation/hwmon/max6697.rst
-+++ b/Documentation/hwmon/max6697.rst
-@@ -7,61 +7,61 @@ Supported chips:
- 
-     Prefix: 'max6581'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6581.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6581.pdf
- 
-   * Maxim MAX6602
- 
-     Prefix: 'max6602'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6602.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6602.pdf
- 
-   * Maxim MAX6622
- 
-     Prefix: 'max6622'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6622.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6622.pdf
- 
-   * Maxim MAX6636
- 
-     Prefix: 'max6636'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6636.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6636.pdf
- 
-   * Maxim MAX6689
- 
-     Prefix: 'max6689'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6689.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6689.pdf
- 
-   * Maxim MAX6693
- 
-     Prefix: 'max6693'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6693.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6693.pdf
- 
-   * Maxim MAX6694
- 
-     Prefix: 'max6694'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6694.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6694.pdf
- 
-   * Maxim MAX6697
- 
-     Prefix: 'max6697'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6697.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6697.pdf
- 
-   * Maxim MAX6698
- 
-     Prefix: 'max6698'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6698.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6698.pdf
- 
-   * Maxim MAX6699
- 
-     Prefix: 'max6699'
- 
--    Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX6699.pdf
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max6699.pdf
- 
- Author:
- 
--- 
-2.51.0
+> 
+> As a note, FEMDNN256G-A3A44 is found in the Rockchip Qualified
+> eMMC Support List v1.84, [2] but the evidence says the opposite,
+> so we should react appropriately by adding this quirk.
+> 
+> [1] https://github.com/openwrt/openwrt/issues/18844
+> [2] https://dl.radxa.com/rock5/hw/RKeMMCSupportList%20Ver1.84_20240815.pdf
+> 
+>>>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+>>>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
+>>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>>>> index fafeabe9adf9..5f63f38f7326 100644
+>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>>>> @@ -717,8 +717,7 @@ &sdhci {
+>>>>    	no-sd;
+>>>>    	non-removable;
+>>>>    	max-frequency = <200000000>;
+>>>> -	mmc-hs400-1_8v;
+>>>> -	mmc-hs400-enhanced-strobe;
+>>>> +	mmc-hs200-1_8v;
+>>>>    	status = "okay";
+>>>>    };
+> 
 
 
