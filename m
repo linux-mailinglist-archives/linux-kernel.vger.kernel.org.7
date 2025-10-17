@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-857402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E962BE6B1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:33:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF59BE6BB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D9514FEA6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:33:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD64624CD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BB330FF2E;
-	Fri, 17 Oct 2025 06:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2A630F940;
+	Fri, 17 Oct 2025 06:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fLw+iC//"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EV5sMN6i"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0F33101D9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E299521FF28;
+	Fri, 17 Oct 2025 06:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682787; cv=none; b=eycpPUnfP9ASAXC5EMMcNTtKLIeV31fgdOjqNd6ne9zRZr8DJDFfa6B22h9zCOBAAavaKvt41edgaQ6c+xCQOdcSWzxdIE8rtsfu5VgXzWRNhKwGCboS761cASDsEESeRgRm6g+SRj3snuQrPU3qD0c4OcA3ZGt6cEtwM0qfyhw=
+	t=1760682769; cv=none; b=M89TMs/D59E/VnDiUJw3QA80EBNz8XsSzhmOcZGg3/UYrDq36y0JeaSFtrSjlDYihJRj9thMkjsswxI8XBnKZ95Bjr/pjRbfszRXg/JoINr53cb9oQeyrUoJv76sG3MOkN4G7bocvK4k0BolFiN1YJcA1hdJjP0wvi0Z3230yUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682787; c=relaxed/simple;
-	bh=Eh0bw9xfLqENZ7WSEYw/OQLt15jF4Xt8KicazpJsMcY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i/E4H3xyKbZ+tYpq34p30Fz3PfBgfADoarDfx/T/GspculsNt4SRMQQXpkDpmSGZfSe9lRe2MaPfDuefQoP/33epkJhv1QQL/fybcrU9zZ9Hs4F5LYDNPX/548tMi4OeBun9cBzTgKgSPx9byF4Lmo7s4GH07vLk/cxD0evTXxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fLw+iC//; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760682785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UUOUSWGdX6YFzL2A8L1DmUXyIE8Zv8t8/RNyJEsJ61w=;
-	b=fLw+iC//xKWRDJhD8RSSmrBn+HCBcbiu7g9IAQvSf7CkGVXjkxFD5mmdHDuYHk8kTzYqtz
-	GstW8WGrdE9Sy92IYNFChO4lmSNFPuI92/4hFEfAc+e8Nrt8Hu4C0ZRRSGF13Q/+7bliwR
-	VaED+rpcLoexiEzvs513MFgTqNGJdwc=
-Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
- [74.125.224.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-237-r-RCv4MeOhahsBL3_3pLsw-1; Fri, 17 Oct 2025 02:33:03 -0400
-X-MC-Unique: r-RCv4MeOhahsBL3_3pLsw-1
-X-Mimecast-MFC-AGG-ID: r-RCv4MeOhahsBL3_3pLsw_1760682783
-Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-63bd9110435so2268698d50.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:33:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760682783; x=1761287583;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UUOUSWGdX6YFzL2A8L1DmUXyIE8Zv8t8/RNyJEsJ61w=;
-        b=pPyQJUZUC/2DVUePPW8E4Dd5LSmJs2ZGdMQ10cfEqrjvxrGflaOffy6jCO2IBLIF9J
-         ZqfvMgDmq0OF2d2o1xLQLRAuqDZNM60rFkjdCVEXVX526TBpf7V+uLKrFy/tMbtWwuAH
-         IEdW7pWP8Dt1m8xOmsWN2wqn+g24d+OwzXAjrcTrL5FYRn/QWCRB83p6tE2vPECLCBUW
-         4fOC0/mpSaH1QiAhPYl0JxCa9I1rip/KK8Ipj5f+QWa5eaxy0J3MYqKSDav4IXVZohiX
-         IMeMS+q8YA4DdvzqKIYxOuM7por5slNr4B2AFkDY2M4x3lrHp2cZTmZklPAzQo6k9zpP
-         e8ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXrhxXWtK8OPYGOfhf5YrJan1xHWbgcZLrUPLsAio3HFRwx28FoadHLqstjKsR/HjHwBZvwcMfI1mIfQwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwryOhQ07/031CtrbUkmD4Qylki8DyL+daNgiZNl1bS1dnwf/DW
-	FWwVzLPnF18e1T+ei75OA1uSaFekVZDP9yyZPqA3/Au15Q3jm19YuPwUyMuZFeYn4G1nQ2K43u4
-	tr8Q+N+wQKzv0OMLHhRwDMGpYQOG2ecNT0prV+uWi+rex3jaIHtZitegtaUi3K2KsFNdfosQAL/
-	iaUCuxhT2/Ldah6knD2JNYcMj8gfavRE9y2ckpyfza
-X-Gm-Gg: ASbGncuhLPGBaAZFVdQbt04UF98UQms3VaMYokuE3bZuxJ3GTu/aXbExVZahQM/GSCo
-	eh9oroFdB/9NqnE6Va0wp3S5Vyjgzox5NZGb2l4IsipwuOoMjqgaQWt0T1UgERVpFx679O98Vwt
-	MvXHo5dHia8umAA+1FdonEFg9xec9fcRCeNJowqd6MQzqHD1xetidxTz49SDUWTPQWPv0kMJcuy
-	+Ev+f9MRjGfktpROWlS/YMyHfyNW43hYPN9wLPUUPA=
-X-Received: by 2002:a05:690e:159b:20b0:636:1928:b16b with SMTP id 956f58d0204a3-63e160e9837mr1907677d50.1.1760682782731;
-        Thu, 16 Oct 2025 23:33:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfzzpU0/QnSAE3gDCuvNGr0BTm1Q2jkW11j+3JcVjYg06H1vsoa05BOh9Esr2FnoyTCv8k30KTHta7yNbDCr4=
-X-Received: by 2002:a05:690e:159b:20b0:636:1928:b16b with SMTP id
- 956f58d0204a3-63e160e9837mr1907665d50.1.1760682782357; Thu, 16 Oct 2025
- 23:33:02 -0700 (PDT)
+	s=arc-20240116; t=1760682769; c=relaxed/simple;
+	bh=kxWb2v3kc92Dzy3+joMpABr5I3NLk5PWsLbNzW+zSXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lFGjkOsaMt4jAXcqx5rwsB10RB6ug46/YgC67Fh2tOC7OqUVHC6uA4z503ocgpxI9xX+qWMbcVzConjZwjKkeQzAloNU0T2tJvS8fi/TURoyysXSQtmbOGkFRyPQhEHvTI5gp9i3SjNlb2bQ8jnPSRh/34CyyMEffwkjfGSHzBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EV5sMN6i; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id C3ED14E41115;
+	Fri, 17 Oct 2025 06:32:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 91211606DB;
+	Fri, 17 Oct 2025 06:32:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DE510102F22FF;
+	Fri, 17 Oct 2025 08:32:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760682762; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Yfh8KNtPJgL5dEOBYcZ+FOqECZ1ufTn2Q+8/o1+dnNU=;
+	b=EV5sMN6iU4XCN0aL+jp41FSTSRIKiBGUfkWtao0P+0srDp3W2VmOkkY4uZN4NahTNNaQJk
+	YPqJb+trP2jIT68qeWbJwojXn99WyoqqidKisnc6Q0rlgWQky2eQ3iKEVMBmUr+QgS8iUg
+	O4PNT7CIipL4qQZ5dv7e9bbZcIuriy+R1hVGPD+coPCMWYW3PhbZ+N6WolmwEw2pRibZMn
+	Y/9xhUQKVSaRqZukJX9wztATTWLwsSQy2G2STtBV6Xabvuv3sb4bTFWbl2rpvp8Zoc4mmf
+	piHedWYoNwcasNLj/217UwGApttb6xmMck4DyAnIuMwG9pxiab19Z5v9lca/Lw==
+Date: Fri, 17 Oct 2025 08:32:32 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: David Rhodes	 <david.rhodes@cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela	
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Nikita Shubin	
+ <nikita.shubin@maquefel.me>, Axel Lin <axel.lin@ingics.com>, Brian Austin	
+ <brian.austin@cirrus.com>, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Petazzoni 
+ <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+Message-ID: <20251017083232.31e53478@bootlin.com>
+In-Reply-To: <60fbaaef249e6f5af602fe4087eab31cd70905de.camel@gmail.com>
+References: <20251016130340.1442090-1-herve.codina@bootlin.com>
+	<20251016130340.1442090-2-herve.codina@bootlin.com>
+	<60fbaaef249e6f5af602fe4087eab31cd70905de.camel@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010085827.116958-1-eperezma@redhat.com> <20251010085827.116958-2-eperezma@redhat.com>
- <20251010081923-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251010081923-mutt-send-email-mst@kernel.org>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Fri, 17 Oct 2025 08:32:26 +0200
-X-Gm-Features: AS18NWA6LyX5KsRP5REs-F-lAntoOrYBFcpi5dHbv2GWv2WR1X9PGIz96C9KRbQ
-Message-ID: <CAJaqyWdSgTcH1sLcmMbySgW+=G3VvjHoy5mW1xz+QNmnXhEbgw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/7] vduse: make domain_lock an rwlock
-To: "Michael S. Tsirkin" <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	jasowang@redhat.com, Maxime Coquelin <mcoqueli@redhat.com>, 
-	Laurent Vivier <lvivier@redhat.com>, Cindy Lu <lulu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 10, 2025 at 2:34=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Fri, Oct 10, 2025 at 10:58:21AM +0200, Eugenio P=C3=A9rez wrote:
-> > It will be used in a few more scenarios read-only so make it more
-> > scalable.
->
-> Well a mutex is sleepable and rwlock is a spinlock.
->
-> So this does much more than "make it more scalable".
->
-> "A few more scenarios" and "scalable" is also vague.
-> RW has its own issues such as fairness.
->
-> So tell us please,  which operations do you want to speed up and why?
-> What kind of speedup was observed?
->
+Hi Alexander,
 
-I think you're totally right here.
+On Thu, 16 Oct 2025 20:40:34 +0200
+Alexander Sverdlin <alexander.sverdlin@gmail.com> wrote:
 
-Yongji, would it work for you if we leave this conversion on top of
-the series with a simple mutex, and we have bandwith to explore the
-benefits of this? You were the one proposing it [1].
+...
 
-Thanks!
+> > In order to have the I2C or the SPI module loaded automatically, move
+> > the MODULE_DEVICE_TABLE(of, ...) the core to I2C and SPI parts.
+> > Also move cs4271_dt_ids itself from the core part to I2C and SPI parts
+> > as both the call to MODULE_DEVICE_TABLE(of, ...) and the cs4271_dt_ids
+> > table itself need to be in the same file.  
+> 
+> I'm a bit confused by this change.
+> What do you have in SYSFS "uevent" entry for the real device?
 
-[1] https://lore.kernel.org/all/CACycT3v=3D_Nm6fefJGFEyoU+Xf5G=3DKzi0sXhhaB=
-HnJQZcG-4EqA@mail.gmail.com/
+Here is my uevent content:
+--- 8<---
+# cat /sys/bus/i2c/devices/3-0010/uevent 
+DRIVER=cs4271
+OF_NAME=cs4271
+OF_FULLNAME=/i2c@ff130000/cs4271@10
+OF_COMPATIBLE_0=cirrus,cs4271
+OF_COMPATIBLE_N=1
+MODALIAS=of:Ncs4271T(null)Ccirrus,cs4271
+# 
+--- 8< ---
 
+> 
+> If you consider spi_uevent() and i2c_device_uevent(), "MODALIAS=" in the
+> "uevent" should be prefixed with either "spi:" or "i2c:".
+> And this isn't what you adress in your patch.
+> 
+> You provide [identical] "of:" prefixed modalias to two different modules
+> (not sure, how this should work), but cs4271 is not an MMIO device,
+> so it should not generate an "of:" prefixed uevent.
+> 
+> Could you please show the relevant DT snippet for the affected HW?
+
+And this is the related DT part:
+--- 8< ---
+&i2c3 {
+	status = "okay";
+
+	cs4271@10 {
+		compatible = "cirrus,cs4271";
+		reg = <0x10>;
+		clocks = <&cru SCLK_I2S_8CH_OUT>;
+		clock-names = "mclk";
+
+		...
+	};
+};
+--- 8< ---
+
+i2c3 is the following node:
+https://elixir.bootlin.com/linux/v6.17.1/source/arch/arm64/boot/dts/rockchip/rk3399-base.dtsi#L732
+
+About the related module, I have the following:
+--- 8< ---
+# modinfo snd_soc_cs4271_i2c
+filename:       /lib/modules/6.18.0-rc1xxxx-00050-g4fa36970abe5-dirty/kernel/sound/soc/codecs/snd-soc-cs4271-i2c.ko
+license:        GPL
+author:         Alexander Sverdlin <subaparts@yandex.ru>
+description:    ASoC CS4271 I2C Driver
+alias:          i2c:cs4271
+alias:          of:N*T*Ccirrus,cs4271C*
+alias:          of:N*T*Ccirrus,cs4271
+depends:        snd-soc-cs4271
+intree:         Y
+name:           snd_soc_cs4271_i2c
+vermagic:       6.18.0-rc1xxxx-00050-g4fa36970abe5-dirty SMP preempt mod_unload aarch64
+# 
+--- 8< ---
+
+Best regards,
+Hervé
 
