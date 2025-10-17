@@ -1,331 +1,384 @@
-Return-Path: <linux-kernel+bounces-858851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8B0BEC060
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8188CBEC07E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 375224EBD61
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64091AA25D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4207E3043D1;
-	Fri, 17 Oct 2025 23:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3A3311955;
+	Fri, 17 Oct 2025 23:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KX4Fi6Kb"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g8j4QTMo"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012035.outbound.protection.outlook.com [40.107.200.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12A12E4274
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760744366; cv=none; b=NrEr5fCEksZQ8QTBD6bCVshPpDQILbx+33vw3qt1BaaV15+somGQSGThwPn//0el+Cc1UVIzj0iH2+lNrkRxOLf1KXMnsSb7NzcgKwsY8vc4++Rd6Iqxld3tro4EqfNWuA+7HH+sOYv18/YYiv4Pj6rRESPQoVKNPG8dLyVldrk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760744366; c=relaxed/simple;
-	bh=jqJzoT6C1FBrpNFhUT95JPLDMyIMgUDkvwjHq/IDjb0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JHTM+fxsLdvsoNFLCbQc6IilSeyoKdUClN98XomoNhFheN0j8iYbN7BD8E952/Me821PnCOMmE6tbs8Z86SEqZvenw9zeh8FZsF1pxhtUpDWlX2OHPucTFomLa/Vq/nuAMQ42Xjp9Rp3w2ZtVGKhnB6qU8yNjRwLlUE6glN1jso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KX4Fi6Kb; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b5516e33800so3376691a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:39:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760744363; x=1761349163; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yGaR4Lkrg5CO3a3Yp6pfuW13Xlq7zJBAakO+BSHZzSI=;
-        b=KX4Fi6Kb1abq9aDpzepxFz/8Wlk9PPpYPXid9vKscVgq1Cn6Q18eikVt6BRI0AzdEy
-         S5+JbPDKmRZyaL+1ybuAaHEJ4XikMLRrm0Gyxm52oWaJE00FK69IJqiBvBfKP7DJPpIz
-         qZxr0KFr4imiMyBiLsBW1tfQTzafiG9jEkCZViMdYav4AZA+zQxu6MdXA0szi1yg1VHU
-         V4SD+s4cuxsKNtIWLRyvsgtv6cappNc2AAX5qMdplJsdY6lDrUbeWy+s6uq29ufW0cZG
-         nBLySfuVsKh6pC4EA4ZDkJe+RNiv9e8aY1zajNHcS/rwvzdxlFVaE/pOLauljwsPjK/J
-         1XpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760744363; x=1761349163;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yGaR4Lkrg5CO3a3Yp6pfuW13Xlq7zJBAakO+BSHZzSI=;
-        b=VgKOFZLaK6y+nkVF/cDgkrIQR3jAncoPZnvKET7o9f1kFG0hiuOgLf9Bj8iv7PCgWE
-         e/jiUfZjuutC5xsPNAa7eXZMKboAuakLle7g4pdAwQenHSkQF1BS8YlJ30TGRmBcLWnr
-         l2oGL/tN4OqxUo0hcWbW1haIpQu/1ujauxuF7noTGuNVeDN8jQ6AIRJ2wlUf3X/Ohyu7
-         cVMaQ7zHVZUf1vOO5q1epxMdNIcU0W9ubVnRZ3GXiyIyJBiuC4MJRb0Hamkc/0DYaVjP
-         hh85qC6ATON2nz9wHrxOCmEj3tegInOti+yphwo35YZncXpovKjMCLWYbKxoudwet1OS
-         0aUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCTqQyCJfi/aKdeE93eTo2DNMv6HDgGPFfR2/coER58Uc4bpMZiUbYDpqeYIy1OTvLyzRXEpra3vrCu/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOtnLkmfhpv+8B2/UpcYXIORhCMjn7LhsiOINc9gVnQvIOEKEU
-	sZb7zxEJtA1g5DnmUg7yFZ8Adc+2ZuWGGKTSVtFuoARMCrfX/5BnN6Uhj1sxdA16RIkYwgCprpT
-	7v3j5V8Tz1Q9jwA==
-X-Google-Smtp-Source: AGHT+IEjucK5balrGPY+mrMaiiHcJyrBalh7qhOWXHwfTXE717HWXcKk1ifjBXQgbWupeaAm17FGf2JRMiny8w==
-X-Received: from pjpx13.prod.google.com ([2002:a17:90a:a38d:b0:33b:51fe:1a93])
- (user=wusamuel job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:1585:b0:262:cbbc:3125 with SMTP id adf61e73a8af0-334a8564fa3mr7732169637.20.1760744362665;
- Fri, 17 Oct 2025 16:39:22 -0700 (PDT)
-Date: Fri, 17 Oct 2025 23:39:06 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7282C0F7C;
+	Fri, 17 Oct 2025 23:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760744456; cv=fail; b=gFwmPIOcxKEbMjeaD9+dyw9qHfCDkoj29UQZD8/zW7jpFpwQwn51BIkwQ2LLYVYBeTfP+UgbVTFv2s3sL+qv/uUtg38tr+5JDUHwACqCGFj6PCWnQWT2rDjLXsPsDXsZFywYBTXFtlr6Las7Aj+mhafIKie9BQDAVofkZHWEm5c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760744456; c=relaxed/simple;
+	bh=GHTYJpsO+98kdAZ3yMJuVQitawPkn/A+yZKikuvsgpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=STDagcIOWDgLtBGth8XO939yGnbsprOW7U0m51Mor/2g0CV8FQE7xCWhFRgI4MyfiSBjsNOzHJ3m/tHOUlOdl85cKb7VVufyLuSgZOsKX3LH0aTi+kT0WtG8KZ1os6GBN6lF4ocPsB9qdmgrxYONxyKvOm4XO4L97+BeiLCj8Ro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g8j4QTMo; arc=fail smtp.client-ip=40.107.200.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nWyKZ1s3bB0z0F46+QVf0NLcVvEYxEMjmah3vJxbvcnIufF6RuyUPRU7Ax2oBqPD/avzg2wtq/ILD3EX18dVKHWSBN5BLCI6YykV2tiX2QHNBqWWmyOO/oc/9yL/DbOeigCf1IFSxQZL2QvugYqcXVWveBHiAedwlJ0a4PtMk7A6zlYrWAjKjsZ0qkuFx5APCXQrEV1/ArnkLAtuIDsHxDgJ8ilSEj8uwlKDgjRsRYw71ZUDEHfpYom0A1RQk5rpHhDImuvthtJ9i4MdbRf4hpBNgekl+3PmCb1Gsj/wxQUddpSoGvpoo5C7k5c0nqP0tW4X8THLrYoNOvK0DZcOKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b4uhacFgjnegt4IZUWAQcIlzyMCEyF1jTEN6paSmLLU=;
+ b=AVNXWMQ1BWkXcVgkkZf0e9gtqv0HTDfkJCQ7KdxBFxHczkaQ9tpsfx8an+j113flA6TyD6SeUm6dMa5A7cK7HCHg0cNVmrsEUMoiYQr0JqcKCCYRNgLAFrIDzOuqYlZ4IZYHHjGIF1bLVSKDFRwYuLCEoiMY28CuqW5hvtXHad9zEXrfdrHUdRs6f7u02HR0e4kusXcA/eJzHRzlW4p1P/rDCtI2xDk9mAzxaWMjE2J5FEki0xv1VR1/23eeA5yYmVURGCk7w2OYV4OH2x438+dwIx/xpywvqF787F2TNZJFQC8jDKpZhXIer8SDVOEDXzi9Dny+p7f9nhZ39fd+WA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b4uhacFgjnegt4IZUWAQcIlzyMCEyF1jTEN6paSmLLU=;
+ b=g8j4QTMoXfIWXxAr8RPV7UvFrDSLIRbq2HwDgjNE4tZ9xoANKxUrc8jO6EDodHJ2NhkBv+ITDiounC+wnwlbzoMHPQoYanNZbuajpTyYbk5QqCWF0rRW1bN+1JeSx+/8hjujAWFfFm3ZxNS1HZdEkhEG9dUwxZ7C0krAEIVQa7JalBwtyHmbEpOG6Ij1YaobMVAVa/tDRyFS/O1PbsqiM1QAUrxAMh5Ixs/abK4y34qgIL60BkVrYF3yQ64a8XI0Z9Tun/B3F4O7Sg6timo3QqvVkoW/TIeIfU7dj2LPHPe4OW+yvpwws0o0+B3o72f6aFZ0BGVR/he+pYJKzLm5HQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by PH7PR12MB8014.namprd12.prod.outlook.com (2603:10b6:510:27c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
+ 2025 23:40:50 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 23:40:50 +0000
+Date: Fri, 17 Oct 2025 20:40:48 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 9/9] vfio/pci: Add dma-buf export support for MMIO
+ regions
+Message-ID: <20251017234048.GA344394@nvidia.com>
+References: <cover.1760368250.git.leon@kernel.org>
+ <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+X-ClientProxiedBy: BLAPR05CA0029.namprd05.prod.outlook.com
+ (2603:10b6:208:335::10) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017233907.2305303-1-wusamuel@google.com>
-Subject: [PATCH v5] PM: Support aborting sleep during filesystem sync
-From: Samuel Wu <wusamuel@google.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: tuhaowen@uniontech.com, Samuel Wu <wusamuel@google.com>, 
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH7PR12MB8014:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7335667a-b140-4946-7537-08de0dd69a85
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?u0relGhU7zo5CxgW8Hmj8Pp97LthOAW6M/oMhEQwGA0XLFLLH9yt+YChMDp9?=
+ =?us-ascii?Q?k7PmSKNuEnKdh9EmB8dSuZIFg5+jw+Ko4lVNh7IpjQ3j/bHAf+MST5say2lj?=
+ =?us-ascii?Q?oES5rOUTtoXTKbkH0POtG162aXcX+Pf4OPwcyzadNZLCspKCQBaIQOdyi5Kn?=
+ =?us-ascii?Q?KE9kb2TofxkfsDrQFB5aMSTl9GZOTl7f5QwUt5cxc8fwghdQfitRctf3fSgq?=
+ =?us-ascii?Q?ZrICN3ytfzIrnJwRcS2CJVfCG38y/dq3R+21nUYa7JrG4r3znXQoDSrw0Fy1?=
+ =?us-ascii?Q?gIo0lGia8UIZKSPoO7T9xa+CCOfHFvr8+09e8fbTZqtL9nVPLs1OsnfGYvtU?=
+ =?us-ascii?Q?vWd+MEGJxlNGHNDLUZnp11AJWxKeiad6l+GqDDe5uodqYXGzuTDpMEcezLiM?=
+ =?us-ascii?Q?zJGbm2l5HrWDe2PzfEH0apraY90nMoBWfohmbogiJ/yMmRr21IaVTnMevBcA?=
+ =?us-ascii?Q?DCBzC50t0GeFsv4ZxXLT9wfKQbaVC7zU9nIGFZpnZ6Va5ZG8c4PXqlGqh8Mi?=
+ =?us-ascii?Q?VvzcRx0CO5fyqZ/5wmM3QO05NyKw7r4Ueb/nytdN1eTtZwgR7ZNF8RdFr7Fy?=
+ =?us-ascii?Q?alaJQN0m2jSfep/sUk7P4eek14tDPTS929iAr73q0OZlB4EpF34x9+GejhFj?=
+ =?us-ascii?Q?d6qbNHKwXrhDvYB5y2FNtlRn8vXku9PZ25fk12MgsEPOPcF73FMP+24lad7C?=
+ =?us-ascii?Q?6B+at16Q774h1mVvmJqKN1jrFHiMi7RMdv4NsvHZLUskjr+NytZvp0aIpL34?=
+ =?us-ascii?Q?iRrQ0n8YneNgKSI1lm5Dt5heIN/5OuQA0PDxRVmouhTlODKyfTabtA2+V6hS?=
+ =?us-ascii?Q?YPcdKRJCxrUi1PRfc0OetmopBR+GhbO3VDflsVoMTArt0RI2+tXL8rUQkxzl?=
+ =?us-ascii?Q?Obf1iwdqwMbPTTT0AvnVty0fAzNc6ESxXwBDhSZXLgOB08FLiQLhIi+RO1OP?=
+ =?us-ascii?Q?qSUX4CdMXKdclpCiHOTDKPBDzCERxjlBV3QxfmexrV20Z1K5zbSlke/ZScKw?=
+ =?us-ascii?Q?posStlWPFEIgg98BlF9J/DktlA94LXkJvjR8Ko+Pe3niVhtIuZ1YgNBjBKBP?=
+ =?us-ascii?Q?r2cDsSAcFPP59NPONDuEgKoNWXp7PiuHzBxOWzi8rN085I8sKE9+PeV6IfWe?=
+ =?us-ascii?Q?2k6+odGXzlDx/7nivFPPfyxjK2ymRFZWQaABLieiVfght0Kgd4ilLDdfamgI?=
+ =?us-ascii?Q?/H5Gckjj6bmhZ9DlpZ5iaGfgRFKrr2buvlcB6x+T5O8bMhCqY5vbSuS88DYb?=
+ =?us-ascii?Q?q0VQqSErVwlrPWXVmPxdAlHGS6RVSh6Ahk4HlbjKxUjEPvUJta9X3/fNqOEy?=
+ =?us-ascii?Q?0LC1ycDYoPYd+nx5Ff+rXLRMVwfvGfB5I9r4KkRPEtaPBuuFVBv+cngY5WQl?=
+ =?us-ascii?Q?yaf9Xs4fiHoKIhRASPV/gujOriKwqQSnnFqFOMnAg9FjOghxuyFGNcSS5S7b?=
+ =?us-ascii?Q?nGd+urVHWc/7nXw7PPJbcuLJHXpgs5EN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lEKTsYBIWNQ1VK+ABzHCZq4PcJePgOb3GTYPsGep6USPvz0/ZI8KtiScqvsI?=
+ =?us-ascii?Q?oJHeiBaqiC8XITleJKi96ULY8UeTujrFM0DLe0iZqieIpLqNGQ27ZcVd/UCc?=
+ =?us-ascii?Q?DOj0t0fhTFWaoZXpZbjkU+DmHopxKspG0hHFhVubcibFsQQCkXcLGT/4gBpf?=
+ =?us-ascii?Q?8tMuelozRH2dPYHI6gjvmnAeY8XVQkVOtZ8yKwl87eTv0VbqWtccgzJZbJdx?=
+ =?us-ascii?Q?u3MXbP5vrQCx/nXGIowc1hoqy5AyLrLSTcrApmnD/BPikqX78CovqJ+LjOtk?=
+ =?us-ascii?Q?vy5PP7igu7uRgB2GgydAZ3GgmJdwDyYKGLO228qmCaQT8pzTud2VtiConCxa?=
+ =?us-ascii?Q?HSPvIsGPn64cLulRsLQ2rzGJsy7yMM3QX37p3wK2S8Xz8ssLyXYyMTPfzI42?=
+ =?us-ascii?Q?xtl2NWskoiEHLdLwD5lkkMx4XaJvJgEOYkFdv6e0naAa8dsmg2O9CzaaWdyx?=
+ =?us-ascii?Q?ZSR095GIbm2E9nE8t/rhfSYxjr7zDI87gWMWph/95VOBM0uW4vhphsSlruj1?=
+ =?us-ascii?Q?o1vfKcwE005l96Vg4KnMgn9utyCbQEO3LnPeUNJAreo7Ymqi48NsPjCm3Fbi?=
+ =?us-ascii?Q?VbIQyeMjQuCikVmZ0Zng7oJbzqMId0j4dzoolVe1Y5maDakky5OBd+2bhMN5?=
+ =?us-ascii?Q?CTCgyuNZO15zOGxteauy8xmJNUV+5iyVlBrhS4Pv2zX9JZWNlVdcvYsXk/VK?=
+ =?us-ascii?Q?DB5TrUzrKKqsJfGpVLcIGWe61bmcA0e5epaTuwIaKBWI/ndI4oIM8ETM8IfJ?=
+ =?us-ascii?Q?1dejEw5Ml5H1MlSqd4eV+Vyz4wOrtY7a/B4nRQNpbvjQV6NAYHBy7pU4Oq6W?=
+ =?us-ascii?Q?eIIL3bzElx5Zsjjmgn45KwywtInYskv1l0Z/3iJ1lwQwXv9SZcJl93pz8ZIy?=
+ =?us-ascii?Q?vS7WAxcWfJm2wTC84kTGpsCgrIfmvZbQxtZ4bgvJEcIMn/il2udn0p0HwofY?=
+ =?us-ascii?Q?UNexsM4btJq5pTseNF9ZGoivODI0400mu+yKLcqnXeI6//dND/+7AbUMgJav?=
+ =?us-ascii?Q?lVwG/WpfBGKQwQo4nDZD5XS6rdG1g7y+2NFxwP7WcpH8jG4VrMxzsrgPnBVX?=
+ =?us-ascii?Q?8sIu/y1vGV1taX3lv/M6S3TnuZISk8Y5dhPlsbUgo49bS9yGBX2jDMRXnAyy?=
+ =?us-ascii?Q?uODkFeP7tIceoR6Cdy0IwUFKXR5roK++SmXmhxGjIi1eWOJa5RqUdQ3/9opc?=
+ =?us-ascii?Q?OMFF3UIAMHZIaQq5E08dbSfKbo8PDRjUXN92vO1aUHx6CWZuxirfO7pROdgT?=
+ =?us-ascii?Q?xizXtVAZXGrK6mo/CUyfIwnG6GuSr8zGMEiWs4r6edq1/o3nEeHqeeziQnsH?=
+ =?us-ascii?Q?9mCcFHWomf1CiCDaAVR2tWIkOmvGGlcrb9M2p8dHwPBbzx5hU2gRo5d9wTXk?=
+ =?us-ascii?Q?T+D83Phu/Fdd+IGWX0CihigwLf9agD9STTrvcvvyo5wfYiKPETj0jMSfipKF?=
+ =?us-ascii?Q?RJV6laPh1KfpszCXqf35Kb2U9W3CTQimL2zpECT1I1Rs5Ten7C4LYLD4t6Zm?=
+ =?us-ascii?Q?G429yvnas7lg+jf2jpuGZETIyu/h8kjW08lDZZEOVazP087zSQ8hBUZpAIS1?=
+ =?us-ascii?Q?o5QIEF3pur0MHcCyJo7+domFgpmNMZPmsJ/mXxI8?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7335667a-b140-4946-7537-08de0dd69a85
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 23:40:50.3278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mMpK5s2DJZF5w4QR4yzHR0KLISfa5Ht+JQhKpF9zx2leYxaHxXpGj9YzvwEqqdw9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8014
 
-At the start of suspend and hibernate, filesystems will sync to save the
-current state of the device. However, the long tail of the filesystem
-sync can take upwards of 25 seconds. If during this filesystem sync
-there is some wakeup or abort signal, it will not be processed until the
-sync is complete; from a user's perspective, this looks like the device
-is unresponsive to any form of input.
+On Mon, Oct 13, 2025 at 06:26:11PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Add support for exporting PCI device MMIO regions through dma-buf,
+> enabling safe sharing of non-struct page memory with controlled
+> lifetime management. This allows RDMA and other subsystems to import
+> dma-buf FDs and build them into memory regions for PCI P2P operations.
 
-This patch adds functionality to handle a sleep abort signal when in
-the filesystem sync phase of suspend or hibernate. This topic was first
-discussed by Saravana Kannan at LPC 2024 [1], where the general
-consensus was to allow filesystem sync on a parallel thread. In case of
-abort, the suspend process will stop waiting on an in-progress
-filesystem sync, and continue by aborting suspend before the filesystem
-sync is complete.
+I was looking at how to address Alex's note about not all drivers
+being compatible, and how to enable the non-compatible drivers.
 
-Additionally, there is extra care needed to account for back-to-back
-sleeps while maintaining functionality to immediately abort during the
-filesystem sync stage. This patch handles this by serializing the
-sequence with an invariant; a subsequent sleep's filesystem sync
-operation will only start when the previous sleep's filesystem sync has
-finished. While waiting for the previous sleep's filesystem sync to
-finish, the subsequent sleep will still abort early if a wakeup event is
-triggered, solving the original issue of filesystem sync blocking abort.
+It looks like the simplest thing is to make dma_ranges_to_p2p_phys
+into an ops and have the driver provide it. If not provided the no
+support.
 
-[1]: https://lpc.events/event/18/contributions/1845/
+Drivers with special needs can fill in phys in their own way and get
+their own provider.
 
-Suggested-by: Saravana Kannan <saravanak@google.com>
-Signed-off-by: Samuel Wu <wusamuel@google.com>
----
-Changes in v5:
-- Update spin_lock() to spin_lock_irqsave() since abort can be in IRQ context
-- Updated changelog description to be more precise regarding continuing abort
-  sleep before fs_sync() is complete
-- Rename abort_sleep_during_fs_sync() to pm_stop_waiting_for_fs_sync()
-- Simplify from a goto to do-while in pm_sleep_fs_sync()
-- v4 link: https://lore.kernel.org/all/20250911185314.2377124-1-wusamuel@google.com
+Sort of like this:
 
-Changes in v4:
-- Removed patch 1/3 of v3 as it is already picked up on linux-pm
-- Squashed patches 2/3 and 3/3 from v3 into this single patch
-- Added abort during fs_sync functionality to hibernate in addition to suspend
-- Moved variables and functions for abort from power/suspend.c to power/main.c
-- Renamed suspend_fs_sync_with_abort() to pm_sleep_fs_sync()
-- Renamed suspend_abort_fs_sync() to abort_sleep_during_fs_sync()
-- v3 link: https://lore.kernel.org/all/20250821004237.2712312-1-wusamuel@google.com/
-
-Changes in v3:
-- Split v2 patch into 3 patches
-- Moved pm_wakeup_clear() outside of if(sync_on_suspend_enabled) condition
-- Updated documentation and comments within kernel/power/suspend.c
-- v2 link: https://lore.kernel.org/all/20250812232126.1814253-1-wusamuel@google.com/
-
-Changes in v2:
-- Added documentation for suspend_abort_fs_sync()
-- Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration static
-- v1 link: https://lore.kernel.org/all/20250815004635.3684650-1-wusamuel@google.com
-
- drivers/base/power/wakeup.c |  8 ++++
- include/linux/suspend.h     |  4 ++
- kernel/power/hibernate.c    |  5 ++-
- kernel/power/main.c         | 75 +++++++++++++++++++++++++++++++++++++
- kernel/power/suspend.c      |  7 +++-
- 5 files changed, 96 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index d1283ff1080b..689c16b08b38 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_source *ws)
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index ac10f14417f2f3..6d41cf26b53994 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -147,6 +147,10 @@ static const struct vfio_device_ops vfio_pci_ops = {
+ 	.pasid_detach_ioas	= vfio_iommufd_physical_pasid_detach_ioas,
+ };
  
- 	/* Increment the counter of events in progress. */
- 	cec = atomic_inc_return(&combined_event_count);
-+	/*
-+	 * wakeup_source_activate() aborts sleep only if events_check_enabled
-+	 * is set (see pm_wakeup_pending()). Similarly, abort sleep during
-+	 * fs_sync only if events_check_enabled is set.
-+	 */
-+	if (events_check_enabled)
-+		pm_stop_waiting_for_fs_sync();
- 
- 	trace_wakeup_source_activate(ws->name, cec);
- }
-@@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
- void pm_system_wakeup(void)
++static const struct vfio_pci_device_ops vfio_pci_dev_ops = {
++	.get_dmabuf_phys = vfio_pci_core_get_dmabuf_phys,
++};
++
+ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  {
- 	atomic_inc(&pm_abort_suspend);
-+	pm_stop_waiting_for_fs_sync();
- 	s2idle_wake();
+ 	struct vfio_pci_core_device *vdev;
+@@ -161,6 +165,7 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return PTR_ERR(vdev);
+ 
+ 	dev_set_drvdata(&pdev->dev, vdev);
++	vdev->pci_ops = &vfio_pci_dev_ops;
+ 	ret = vfio_pci_core_register_device(vdev);
+ 	if (ret)
+ 		goto out_put_vdev;
+diff --git a/drivers/vfio/pci/vfio_pci_dmabuf.c b/drivers/vfio/pci/vfio_pci_dmabuf.c
+index 358856e6b8a820..dad880781a9352 100644
+--- a/drivers/vfio/pci/vfio_pci_dmabuf.c
++++ b/drivers/vfio/pci/vfio_pci_dmabuf.c
+@@ -309,47 +309,52 @@ int vfio_pci_dma_buf_iommufd_map(struct dma_buf_attachment *attachment,
  }
- EXPORT_SYMBOL_GPL(pm_system_wakeup);
-diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-index b02876f1ae38..dc6829b3836f 100644
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -450,6 +450,8 @@ void restore_processor_state(void);
- extern int register_pm_notifier(struct notifier_block *nb);
- extern int unregister_pm_notifier(struct notifier_block *nb);
- extern void ksys_sync_helper(void);
-+extern void pm_stop_waiting_for_fs_sync(void);
-+extern int pm_sleep_fs_sync(void);
- extern void pm_report_hw_sleep_time(u64 t);
- extern void pm_report_max_hw_sleep(u64 t);
- void pm_restrict_gfp_mask(void);
-@@ -505,6 +507,8 @@ static inline void pm_restrict_gfp_mask(void) {}
- static inline void pm_restore_gfp_mask(void) {}
+ EXPORT_SYMBOL_GPL(vfio_pci_dma_buf_iommufd_map);
  
- static inline void ksys_sync_helper(void) {}
-+static inline pm_stop_waiting_for_fs_sync(void) {}
-+static inline int pm_sleep_fs_sync(void) {}
- 
- #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
- 
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index 14e85ff23551..9c8db4b3c114 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -824,7 +824,10 @@ int hibernate(void)
- 	if (error)
- 		goto Restore;
- 
--	ksys_sync_helper();
-+	error = pm_sleep_fs_sync();
-+	if (error)
-+		goto Restore;
-+
- 	if (filesystem_freeze_enabled)
- 		filesystems_freeze();
- 
-diff --git a/kernel/power/main.c b/kernel/power/main.c
-index 3cf2d7e72567..81a53d833358 100644
---- a/kernel/power/main.c
-+++ b/kernel/power/main.c
-@@ -570,6 +570,81 @@ bool pm_sleep_transition_in_progress(void)
+-static int dma_ranges_to_p2p_phys(struct vfio_pci_dma_buf *priv,
+-				  struct vfio_device_feature_dma_buf *dma_buf,
++int vfio_pci_core_get_dmabuf_phys(struct vfio_pci_core_device *vdev,
++				  struct p2pdma_provider **provider,
++				  unsigned int region_index,
++				  struct phys_vec *phys_vec,
+ 				  struct vfio_region_dma_range *dma_ranges,
+-				  struct p2pdma_provider *provider)
++				  size_t nr_ranges)
  {
- 	return pm_suspend_in_progress() || hibernation_in_progress();
+-	struct pci_dev *pdev = priv->vdev->pdev;
+-	phys_addr_t len = pci_resource_len(pdev, dma_buf->region_index);
++	struct pci_dev *pdev = vdev->pdev;
++	phys_addr_t len = pci_resource_len(pdev, region_index);
+ 	phys_addr_t pci_start;
+ 	phys_addr_t pci_last;
+ 	u32 i;
+ 
+ 	if (!len)
+ 		return -EINVAL;
+-	pci_start = pci_resource_start(pdev, dma_buf->region_index);
++
++	*provider = pcim_p2pdma_provider(pdev, region_index);
++	if (!*provider)
++		return -EINVAL;
++
++	pci_start = pci_resource_start(pdev, region_index);
+ 	pci_last = pci_start + len - 1;
+-	for (i = 0; i < dma_buf->nr_ranges; i++) {
++	for (i = 0; i < nr_ranges; i++) {
+ 		phys_addr_t last;
+ 
+ 		if (!dma_ranges[i].length)
+ 			return -EINVAL;
+ 
+ 		if (check_add_overflow(pci_start, dma_ranges[i].offset,
+-				       &priv->phys_vec[i].paddr) ||
+-		    check_add_overflow(priv->phys_vec[i].paddr,
++				       &phys_vec[i].paddr) ||
++		    check_add_overflow(phys_vec[i].paddr,
+ 				       dma_ranges[i].length - 1, &last))
+ 			return -EOVERFLOW;
+ 		if (last > pci_last)
+ 			return -EINVAL;
+ 
+-		priv->phys_vec[i].len = dma_ranges[i].length;
+-		priv->size += priv->phys_vec[i].len;
++		phys_vec[i].len = dma_ranges[i].length;
+ 	}
+-	priv->nr_ranges = dma_buf->nr_ranges;
+-	priv->provider = provider;
+ 	return 0;
  }
-+
-+static bool pm_sleep_fs_sync_queued;
-+static DEFINE_SPINLOCK(pm_sleep_fs_sync_lock);
-+static DECLARE_COMPLETION(pm_sleep_fs_sync_complete);
-+
-+/**
-+ * pm_stop_waiting_for_fs_sync - Abort fs_sync to abort sleep early
-+ *
-+ * This function causes the suspend process to stop waiting on an in-progress
-+ * filesystem sync, such that the suspend process can be aborted before the
-+ * filesystem sync is complete.
-+ */
-+void pm_stop_waiting_for_fs_sync(void)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
-+	complete(&pm_sleep_fs_sync_complete);
-+	spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
-+}
-+
-+static void sync_filesystems_fn(struct work_struct *work)
-+{
-+	unsigned long flags;
-+
-+	ksys_sync_helper();
-+	spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
-+	pm_sleep_fs_sync_queued = false;
-+	complete(&pm_sleep_fs_sync_complete);
-+	spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
-+}
-+static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
-+
-+/**
-+ * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
-+ *
-+ * Return 0 on successful file system sync, otherwise returns -EBUSY if file
-+ * system sync was aborted.
-+ */
-+int pm_sleep_fs_sync(void)
-+{
-+	bool need_pm_sleep_fs_sync_requeue;
-+	unsigned long flags;
-+
-+	do {
-+		spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
-+		reinit_completion(&pm_sleep_fs_sync_complete);
-+		/*
-+		 * Handle the case where a sleep immediately follows a previous
-+		 * sleep that was aborted during fs_sync. In this case, wait for
-+		 * the previous filesystem sync to finish. Then do another
-+		 * filesystem sync so any subsequent filesystem changes are
-+		 * synced before sleeping.
-+		 */
-+		if (pm_sleep_fs_sync_queued) {
-+			need_pm_sleep_fs_sync_requeue = true;
-+		} else {
-+			need_pm_sleep_fs_sync_requeue = false;
-+			pm_sleep_fs_sync_queued = true;
-+			schedule_work(&sync_filesystems);
-+		}
-+		spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
-+
-+		/*
-+		 * Completion is triggered by fs_sync finishing or an abort sleep
-+		 * signal, whichever comes first
-+		 */
-+		wait_for_completion(&pm_sleep_fs_sync_complete);
-+		if (pm_wakeup_pending())
-+			return -EBUSY;
-+	} while (need_pm_sleep_fs_sync_requeue);
-+
-+	return 0;
-+}
-+
- #endif /* CONFIG_PM_SLEEP */
++EXPORT_SYMBOL_GPL(vfio_pci_core_get_dmabuf_phys);
  
- #ifdef CONFIG_PM_SLEEP_DEBUG
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 4bb4686c1c08..c019a4396c1f 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -31,6 +31,7 @@
- #include <linux/compiler.h>
- #include <linux/moduleparam.h>
- #include <linux/fs.h>
-+#include <linux/workqueue.h>
+ static int validate_dmabuf_input(struct vfio_pci_core_device *vdev,
+ 				 struct vfio_device_feature_dma_buf *dma_buf,
+ 				 struct vfio_region_dma_range *dma_ranges,
+-				 struct p2pdma_provider **provider)
++				 size_t *lengthp)
+ {
+ 	struct pci_dev *pdev = vdev->pdev;
+ 	u32 bar = dma_buf->region_index;
+@@ -365,10 +370,6 @@ static int validate_dmabuf_input(struct vfio_pci_core_device *vdev,
+ 	if (bar >= VFIO_PCI_ROM_REGION_INDEX)
+ 		return -ENODEV;
  
- #include "power.h"
+-	*provider = pcim_p2pdma_provider(pdev, bar);
+-	if (!*provider)
+-		return -EINVAL;
+-
+ 	bar_size = pci_resource_len(pdev, bar);
+ 	for (i = 0; i < dma_buf->nr_ranges; i++) {
+ 		u64 offset = dma_ranges[i].offset;
+@@ -397,6 +398,7 @@ static int validate_dmabuf_input(struct vfio_pci_core_device *vdev,
+ 	if (overflows_type(length, size_t) || length & DMA_IOVA_USE_SWIOTLB)
+ 		return -EINVAL;
  
-@@ -588,14 +589,16 @@ static int enter_state(suspend_state_t state)
- 	if (state == PM_SUSPEND_TO_IDLE)
- 		s2idle_begin();
++	*lengthp = length;
+ 	return 0;
+ }
  
-+	pm_wakeup_clear(0);
- 	if (sync_on_suspend_enabled) {
- 		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
--		ksys_sync_helper();
-+		error = pm_sleep_fs_sync();
- 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
-+		if (error)
-+			goto Unlock;
+@@ -407,10 +409,13 @@ int vfio_pci_core_feature_dma_buf(struct vfio_pci_core_device *vdev, u32 flags,
+ 	struct vfio_device_feature_dma_buf get_dma_buf = {};
+ 	struct vfio_region_dma_range *dma_ranges;
+ 	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+-	struct p2pdma_provider *provider;
+ 	struct vfio_pci_dma_buf *priv;
++	size_t length;
+ 	int ret;
+ 
++	if (!vdev->pci_ops->get_dmabuf_phys)
++		return -EOPNOTSUPP;
++
+ 	ret = vfio_check_feature(flags, argsz, VFIO_DEVICE_FEATURE_GET,
+ 				 sizeof(get_dma_buf));
+ 	if (ret != 1)
+@@ -427,7 +432,7 @@ int vfio_pci_core_feature_dma_buf(struct vfio_pci_core_device *vdev, u32 flags,
+ 	if (IS_ERR(dma_ranges))
+ 		return PTR_ERR(dma_ranges);
+ 
+-	ret = validate_dmabuf_input(vdev, &get_dma_buf, dma_ranges, &provider);
++	ret = validate_dmabuf_input(vdev, &get_dma_buf, dma_ranges, &length);
+ 	if (ret)
+ 		goto err_free_ranges;
+ 
+@@ -444,10 +449,16 @@ int vfio_pci_core_feature_dma_buf(struct vfio_pci_core_device *vdev, u32 flags,
  	}
  
- 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
--	pm_wakeup_clear(0);
- 	pm_suspend_clear_flags();
- 	error = suspend_prepare(state);
- 	if (error)
--- 
-2.51.0.858.gf9c4a03a3a-goog
-
+ 	priv->vdev = vdev;
+-	ret = dma_ranges_to_p2p_phys(priv, &get_dma_buf, dma_ranges, provider);
++	priv->nr_ranges = get_dma_buf.nr_ranges;
++	priv->size = length;
++	ret = vdev->pci_ops->get_dmabuf_phys(vdev, &priv->provider,
++					     get_dma_buf.region_index,
++					     priv->phys_vec, dma_ranges,
++					     priv->nr_ranges);
+ 	if (ret)
+ 		goto err_free_phys;
+ 
++
+ 	kfree(dma_ranges);
+ 	dma_ranges = NULL;
+ 
+diff --git a/include/linux/vfio_pci_core.h b/include/linux/vfio_pci_core.h
+index 37ce02e30c7632..4ea2095381eb24 100644
+--- a/include/linux/vfio_pci_core.h
++++ b/include/linux/vfio_pci_core.h
+@@ -26,6 +26,7 @@
+ 
+ struct vfio_pci_core_device;
+ struct vfio_pci_region;
++struct p2pdma_provider;
+ 
+ struct vfio_pci_regops {
+ 	ssize_t (*rw)(struct vfio_pci_core_device *vdev, char __user *buf,
+@@ -49,9 +50,26 @@ struct vfio_pci_region {
+ 	u32				flags;
+ };
+ 
++struct vfio_pci_device_ops {
++	int (*get_dmabuf_phys)(struct vfio_pci_core_device *vdev,
++			       struct p2pdma_provider **provider,
++			       unsigned int region_index,
++			       struct phys_vec *phys_vec,
++			       struct vfio_region_dma_range *dma_ranges,
++			       size_t nr_ranges);
++};
++
++int vfio_pci_core_get_dmabuf_phys(struct vfio_pci_core_device *vdev,
++				  struct p2pdma_provider **provider,
++				  unsigned int region_index,
++				  struct phys_vec *phys_vec,
++				  struct vfio_region_dma_range *dma_ranges,
++				  size_t nr_ranges);
++
+ struct vfio_pci_core_device {
+ 	struct vfio_device	vdev;
+ 	struct pci_dev		*pdev;
++	const struct vfio_pci_device_ops *pci_ops;
+ 	void __iomem		*barmap[PCI_STD_NUM_BARS];
+ 	bool			bar_mmap_supported[PCI_STD_NUM_BARS];
+ 	u8			*pci_config_map;
 
