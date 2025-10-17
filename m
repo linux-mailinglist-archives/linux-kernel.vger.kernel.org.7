@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-857828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CFCBE8019
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:15:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD94DBE8050
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE4A1A657C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415473A2F4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52AD31197A;
-	Fri, 17 Oct 2025 10:15:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584B31196C;
+	Fri, 17 Oct 2025 10:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mESr5QPA"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EAF2D6E40
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8672D6E5B;
+	Fri, 17 Oct 2025 10:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760696144; cv=none; b=i5AgM3ptDLOctTZv7VBwnSrrSphTfP+A7xdAYbAEIv7o4tmiuI1kSarT16DKgtjo/MwGa/hNBMMl9o5bm0rM4FcQbLBuHygCV2FNSSGbCJLyz3jyZ9ThUfNUEmRDmIMJ0m0jM6A5rf5tamp8crJLVj9ca0wD2/mF9BGThvuoLts=
+	t=1760696127; cv=none; b=swRg2XvIPMAjFSs95iIkkzfe9VziMwgDnjsx6bcSDByGeTQxTLlmsrspS/DXFEyvKWBaMgPlu78jDGBR5jborKdJsJz1GoocczNQB+ijeQDV6m3maPCyOUR67nRRYJsceJMktzqcNvWNZfS+LbcFwkMTcEa7hLkfX2SkqUwJX1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760696144; c=relaxed/simple;
-	bh=JvApeXOv0FX+Ib72v+YP0lpk09mQjzAd5OsdmdYCMgg=;
+	s=arc-20240116; t=1760696127; c=relaxed/simple;
+	bh=0ZRBA+nKWLHvVQU5bLDfqU164MIzoUT/GKn7+SZOtgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T64O9FQ6rCxJkVP4mLfKM38WDsy1ZC+jOXNmHlbiSOm68Bbey/zQmp+roTSmlgHeRSvimvGxnKFR6U6r8dFLbVhd0FC7jM2nQFMa75TlIFZixwWQHDShVdhu8+8cFQyiA8l1JGBGosz6DKBOVPLr03S1eJjjXpWlhEpEblZEhJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9hUW-0004KA-Ed; Fri, 17 Oct 2025 12:15:20 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9hUS-0042fz-22;
-	Fri, 17 Oct 2025 12:15:16 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 39238488F55;
-	Fri, 17 Oct 2025 10:15:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFDp/wt5mx8hBrGJ60jox0OAKrYkdTXWycOYX6PWRNbYDPMurUeVDx6Ykcs955oivFRlETjHvl6bdm30f6Tj6H2Je6T+rciIsQjnwU8Bk689wx1kcIbjewhzXFLDkCY/WtXmbLFuxrbVHc/xxV/PdT/6puDHg8ljh7VR+qXtCEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mESr5QPA; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=foxZlAn+rwPCGv1EUUcZaOp0f3TbSZApKlY3+roEXio=; b=mESr5QPA5RKifin8wuK4L0aypL
+	WM4yr6k0hjnZvn+AKVC0ztwCCVXJEHDcW4vP+XJxd0ziJ5RRG9aSItE4P1CO/53kl2/UQ+6jzH14f
+	8mmORddVkj4qz6RD0smXvwmPaPDaudD1SZ3nnyTjvemzMvYhPFhsVHV7PxgCCj7eFLRdqBcCKcXk9
+	xW/RAqPKFLoW1FMMCwr3bes8t55GEE1BAdt9v41Z7jfbl0xKpcw6fBcFh0LbCKBzFlaVHC53noGeq
+	jDzotC36/rsRJQTISlIz28EMRFXSK++Um8LUT7j6exlKCFRGIbUGrRkUPjTMo7D3HLaTsiKQXFbTW
+	SioC9xKQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9hUS-00000007Sf6-0q00;
+	Fri, 17 Oct 2025 10:15:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C04ED30023C; Fri, 17 Oct 2025 12:15:15 +0200 (CEST)
 Date: Fri, 17 Oct 2025 12:15:15 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Vincent Mailhol <mailhol@kernel.org>, 
-	Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
-	Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
-	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>, Dhruva Gole <d-gole@ti.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 0/4] can: m_can: Add am62 wakeup support
-Message-ID: <20251017-hospitable-efficient-firefly-c3f32b-mkl@pengutronix.de>
-References: <20251001-topic-mcan-wakeup-source-v6-12-v10-0-4ab508ac5d1e@baylibre.com>
+Subject: Re: [PATCH v2 3/4] sched: idle: Respect the CPU system-wakeup QoS
+ limit for s2idle
+Message-ID: <20251017101515.GX4067720@noisy.programming.kicks-ass.net>
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <20251016151929.75863-4-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fozm3zg4iurpuf5k"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251001-topic-mcan-wakeup-source-v6-12-v10-0-4ab508ac5d1e@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20251016151929.75863-4-ulf.hansson@linaro.org>
 
+On Thu, Oct 16, 2025 at 05:19:23PM +0200, Ulf Hansson wrote:
 
---fozm3zg4iurpuf5k
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v10 0/4] can: m_can: Add am62 wakeup support
-MIME-Version: 1.0
+No objections to this.
 
-On 01.10.2025 16:30:18, Markus Schneider-Pargmann (TI.com) wrote:
-> This series adds support for wakeup capabilities to the m_can driver,
-> which is necessary for enabling Partial-IO functionality on am62, am62a,
-> and am62p SoCs. It implements the wake-on-lan interface for m_can
-> devices and handles the pinctrl states needed for wakeup functionality.
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Added to linux-can-next.
-
-Thanks,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---fozm3zg4iurpuf5k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyFzAACgkQDHRl3/mQ
-kZwe2AgAnPbCetz/ZW8pmf453IkrJQ9tVaKg6orkrb1BWNSDmwRSwyCI5kBiqbs7
-sycHDvAfjslKfBNKekJRgW/UjWfdcT72QzIrFGFgqivqALwcAMwwcSV8dEnlRBc7
-qk//Vp8BCtuNbGujOBsbFxY8oEFpqdhUb9incywBKFsMHzpFX4Lw93ZpMuv0RF7k
-jhniWakeh1IyA8SWZRCdaMuzykyD+sevWi7+YwzGQ2ajuCn/r2r+k9iROvBwrlw5
-CYvbGfKyBUEvlnV/BW91o8jH3tIkGYC/loWHpt5QSLeRvcnDaMH2Xn1/+uLNoYx/
-sQuxSGk6G9Pzfgrna0pxjUuMpoVxJA==
-=JGCw
------END PGP SIGNATURE-----
-
---fozm3zg4iurpuf5k--
+> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+> index c39b089d4f09..c1c3d0166610 100644
+> --- a/kernel/sched/idle.c
+> +++ b/kernel/sched/idle.c
+> @@ -131,12 +131,13 @@ void __cpuidle default_idle_call(void)
+>  }
+>  
+>  static int call_cpuidle_s2idle(struct cpuidle_driver *drv,
+> -			       struct cpuidle_device *dev)
+> +			       struct cpuidle_device *dev,
+> +			       u64 max_latency_ns)
+>  {
+>  	if (current_clr_polling_and_test())
+>  		return -EBUSY;
+>  
+> -	return cpuidle_enter_s2idle(drv, dev);
+> +	return cpuidle_enter_s2idle(drv, dev, max_latency_ns);
+>  }
+>  
+>  static int call_cpuidle(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+> @@ -205,12 +206,13 @@ static void cpuidle_idle_call(void)
+>  		u64 max_latency_ns;
+>  
+>  		if (idle_should_enter_s2idle()) {
+> +			max_latency_ns = cpu_wakeup_latency_qos_limit() *
+> +					 NSEC_PER_USEC;
+>  
+> -			entered_state = call_cpuidle_s2idle(drv, dev);
+> +			entered_state = call_cpuidle_s2idle(drv, dev,
+> +							    max_latency_ns);
+>  			if (entered_state > 0)
+>  				goto exit_idle;
+> -
+> -			max_latency_ns = U64_MAX;
+>  		} else {
+>  			max_latency_ns = dev->forced_idle_latency_limit_ns;
+>  		}
+> -- 
+> 2.43.0
+> 
 
