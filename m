@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-858187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3A9BE93CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:39:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B8ABE93E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7FCA4FC43D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE5D40158B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3C432E12C;
-	Fri, 17 Oct 2025 14:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8782432E13E;
+	Fri, 17 Oct 2025 14:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fArdjF6v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4COkUjF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97452F690B;
-	Fri, 17 Oct 2025 14:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260C532E12B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760711874; cv=none; b=H92h4Do3C5DJT7GB7TtaKQiRklr/h2Azq21LMubsw8sMuZq3gEEVfUNKKea+I4fB6I8T2XCMOmHo8X347M9rLPOp/sm16CAr/SDEZyEV8wddegD8HuzgVLPWfcwjhLtnuFQxK6zdqzSyrTdvkpILYLjJ5MzBxn18FsYmMnFZQCo=
+	t=1760712080; cv=none; b=Xj8WT5K/rQnX+LcxYaPpHZmrJogJpfx1lmfXrdzBttwvQ1AHE4gNVwUrVCWk4Ly0oKxgbCWrWghov8WAYKzgTZXcCKf6Dk/E54ygLrOns/1Tqbk53AFBeKaa9cuKpkokduY5epej36Q/cUhP8TkvXxeV9W6hni6gguE0bzFz49s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760711874; c=relaxed/simple;
-	bh=0qxIre/WeVkJIS/N7KH8ntjpRQspUV9n4A2lexaUEjY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=ii/5raN+3TJB+IDRugFrXt+5/3drwUS73obHSfo069uuaXVV4PbZAp2xfsEZi3hvuY/nvSzvJMxQZAvv0Yj8VO3S2/f8dOwk1RqFcG7ep35VSqEUaQPhjdqUkXNiEnGKVsWgfue3qCSkPbh8RJ1DIf8Aq3Hm+z7MD1tvxDUFers=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fArdjF6v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9A7C4CEE7;
-	Fri, 17 Oct 2025 14:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760711873;
-	bh=0qxIre/WeVkJIS/N7KH8ntjpRQspUV9n4A2lexaUEjY=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=fArdjF6voxuD1qN7Z6qV70VWmdpHspckKKeBE4gKMAD6qS8USNgMttR1w/e3b7C2z
-	 +XNBdIH94icY+JtPk+cf81q7rBNxw6pu5fpegYfj8P2pD95dwlkBl341C1Cm/lLiVg
-	 o6fiTezZJpCTYv3c0sfELavflu19ieD6+t+ko2dMqhGdwgL3etJizuxTbSgj2/zti6
-	 yNJ9isOAxXyh+OpOXFJCa5JjuF4H3ZswyJ0WGFL3xpbXxuYwEY7V5gP5rakrNVejnC
-	 22lW/Z+wT9ESbGyWFFkzw2YU4jUGMbSf6o87NPYgYX19lXVcbY9thU4G0wYO61ALnd
-	 QM5iSQavPcPXg==
+	s=arc-20240116; t=1760712080; c=relaxed/simple;
+	bh=mV+y5b8s0cJZa3zlLL+rOha+CPveUHdKmGcQc0YzlF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAtD6Or1VQ0IvOP55hCtzCpTlFu2+//yGOxXverl79q0iaNDwxlAF88sqnAInBOQIBD6fYNeG5RtCTe1Z3+BEkQ7J0fFShhGXUS7LplPeYQZ2PuATL+wG9WrCTE3bgFoEiBW3/oyCn0njWEX8qYEr3mhSTN/fZXiqcJy51Vv7GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4COkUjF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760712078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IuiYUfx2UQmSZfg+6sdpv7icyFzK7DxF2mfdCQCP5oQ=;
+	b=e4COkUjFlGm9N4WbVBcTKPlc7yYeLL7e5YO4DdCdjnP0qJ9ttTAB+5lGt6bVLniWD1hWxk
+	E1zrI6XEdpUfw6PplEMXDzFN++ztG25BoSySXPLsX+RqA29w5SJAEQdQ1z8VsWFJyjSbGl
+	uzaede+Hl4QU2W3ypuQSWXgAC6AWHP4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-pBeb2vfEMfijmMAnVTVENQ-1; Fri,
+ 17 Oct 2025 10:41:15 -0400
+X-MC-Unique: pBeb2vfEMfijmMAnVTVENQ-1
+X-Mimecast-MFC-AGG-ID: pBeb2vfEMfijmMAnVTVENQ_1760712073
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A337619560B0;
+	Fri, 17 Oct 2025 14:41:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.241])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A684C19560AD;
+	Fri, 17 Oct 2025 14:41:05 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 17 Oct 2025 16:39:53 +0200 (CEST)
+Date: Fri, 17 Oct 2025 16:39:45 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
+ for non-rt
+Message-ID: <20251017143944.GB21102@redhat.com>
+References: <aMf1RzZHjdoPNOv_@uudg.org>
+ <20250915113812.GB3245006@noisy.programming.kicks-ass.net>
+ <20250915123539.GC23082@redhat.com>
+ <20250916100953.GG3245006@noisy.programming.kicks-ass.net>
+ <20250916113043.GA32038@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 17 Oct 2025 16:37:48 +0200
-Message-Id: <DDKO9M4P06HS.3UMGG3QR7BX67@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <mmaurer@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20251003222729.322059-1-dakr@kernel.org>
- <20251003222729.322059-4-dakr@kernel.org> <aPI9tNoh0I3KGDjl@google.com>
-In-Reply-To: <aPI9tNoh0I3KGDjl@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916113043.GA32038@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri Oct 17, 2025 at 2:59 PM CEST, Alice Ryhl wrote:
-> On Sat, Oct 04, 2025 at 12:26:40AM +0200, Danilo Krummrich wrote:
->> Introduce support for read-only, write-only, and read-write binary files
->> in Rust debugfs. This adds:
->>=20
->> - BinaryWriter and BinaryReader traits for writing to and reading from
->>   user slices in binary form.
->> - New Dir methods: read_binary_file(), write_binary_file(),
->>   `read_write_binary_file`.
->> - Corresponding FileOps implementations: BinaryReadFile,
->>   BinaryWriteFile, BinaryReadWriteFile.
->>=20
->> This allows kernel modules to expose arbitrary binary data through
->> debugfs, with proper support for offsets and partial reads/writes.
->>=20
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Peter,
+
+So I think that delayed_put_task_struct() has to stay and this means
+that we have 2 RCU grace periods in the "typical" case when the exiting
+task without extra references is reaped (or autoreaped if a subthread).
+
+As I said I won't really argue, but what is your final thought on this?
+Should we forget this patch from Luis? I'd prefer to restore the !RT
+exception...
+
+And another question. Sasha and Greg are going to add 8671bad873eb
+("sched: Do not call __put_task_struct() on rt if pi_blocked_on is set")
+to -stable. Do you think it is fine to backport this commit as is?
+
+Oleg.
+
+On 09/16, Oleg Nesterov wrote:
 >
->> +extern "C" fn blob_write<T: BinaryReader>(
->> +    file: *mut bindings::file,
->> +    buf: *const c_char,
->> +    count: usize,
->> +    ppos: *mut bindings::loff_t,
->> +) -> isize {
->> +    // SAFETY:
->> +    // - `file` is a valid pointer to a `struct file`.
->> +    // - The type invariant of `FileOps` guarantees that `private_data`=
- points to a valid `T`.
->> +    let this =3D unsafe { &*((*file).private_data.cast::<T>()) };
->> +
->> +    // SAFETY: `ppos` is a valid `loff_t` pointer.
->> +    let pos =3D unsafe { &mut *ppos };
->> +
->> +    let mut reader =3D UserSlice::new(UserPtr::from_ptr(buf.cast_mut().=
-cast()), count).reader();
->> +
->> +    let ret =3D || -> Result<isize> {
->> +        let offset =3D (*pos).try_into()?;
+> On 09/16, Peter Zijlstra wrote:
+> >
+> > On Mon, Sep 15, 2025 at 02:35:40PM +0200, Oleg Nesterov wrote:
+> > > On 09/15, Peter Zijlstra wrote:
+> > > >
+> > > > Why have !RT behave differently? That is, why isn't this simply a
+> > > > 'buggy' comment/changelog issue?
+> > >
+> > > Well, this was discussed several times, in particular see
+> > > https://lore.kernel.org/all/CAHk-=whtj+aSYftniMRG4xvFE8dmmYyrqcJyPmzStsfj5w9r=w@mail.gmail.com/
+> > >
+> > > And task_struct->rcu_users was introduced to avoid RCU call in put_task_struct() ...
+> >
+> > Ah, I forgot about that thing.. Although I had vague memories of that
+> > argument on rcu_assign_pointer() vs RCU_INIT_POINTER().
+> >
+> > > But I won't really argue if you decide to remove this !RT optimization, although
+> > > I think it would be better to do this in a separate patch.
+> >
+> > Right. So when they wanted to remove that preemptible() clause, I was
+> > like why again do we have this !RT exception at all, and can't we get
+> > rid of that.
+> >
+> > If git isn't confusing me again, this got merged in this cycle. But so
+> > far no benchmark came and told us this was a bad idea.
 >
-> So offsets larger than the buffer result in Ok(0) unless the offset
-> doesn't fit in an usize, in which case it's an error instead? I think we
-> should treat offsets that are too large in the same manner no matter
-> how large they are.
-
-The offset being larger than thhe buffer is fine, userspace has to try to r=
-ead
-until the kernel indicates that there are no more bytes left to read by
-returning zero.
-
-But if the offset is larger than a usize there isn't a chance this can ever=
- be
-successful in the first place, hence I'd consider this an error.
-
->> +        let read =3D this.read_from_slice(&mut reader, offset)?;
->> +        *pos +=3D bindings::loff_t::try_from(read)?;
+> I still think it would be safer to merge this patch from Luis before
+> v6.17, then possibly remove this special case in a separate patch...
 >
-> This addition could overflow and panic the kernel.
-
-I don't see a real scenario where this could overflow when read_from_slice(=
-) was
-successful, but I (also) think this should be checked_add() instead.
-
->> +        Ok(read.try_into()?)
->> +    }();
->> +
->> +    match ret {
->> +        Ok(n) =3D> n,
->> +        Err(e) =3D> e.to_errno() as isize,
->> +    }
->> +}
->> +
->> +pub(crate) trait BinaryWriteFile<T> {
->> +    const FILE_OPS: FileOps<T>;
->> +}
+> > So what do we do now... do we restore the !RT exception (so far there
+> > aren't any numbers to suggest this mattered) or do we let it be for a
+> > bit and then go and clean things up?
 >
-> Hmm ... this is inconsistent with how we do vtables in other parts of
-> `kernel`. Normally a struct is used instead of a trait (see e.g.
-> miscdevice or block). But the inconsistency is already present.
+> It is not that simple. Please note that put_task_struct_rcu_user()
+> delays put(tsk->usage), not free(tsk).
+>
+> So for example with this change
+>
+> > @@ -305,7 +288,7 @@ void release_task(struct task_struct *p)
+> >  	if (thread_group_leader(p))
+> >  		flush_sigqueue(&p->signal->shared_pending);
+> >
+> > -	put_task_struct_rcu_user(p);
+> > +	put_task_struct(p);
+> >
+> >  	p = leader;
+> >  	if (unlikely(zap_leader))
+>
+> This code
+>
+> 	rcu_read_lock();
+> 	tsk = find_task_by_vpid(...);
+> 	if (tsk)
+> 		get_task_struct(tsk);
+> 	rcu_read_unlock();
+>
+> becomes wrong, get_task_struct(tsk) can increment tsk->usage == 0.
+>
+> Oleg.
 
-The reason I went with a trait is because that's consistent within the file=
-.
-
-Otherwise, I don't mind one or the other. If we always want to use a struct=
-, I'm
-fine with that. :)
 
