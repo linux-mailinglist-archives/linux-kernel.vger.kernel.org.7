@@ -1,150 +1,140 @@
-Return-Path: <linux-kernel+bounces-857559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D27EBE7225
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A34BE722B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE991A60B44
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E52B58599A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D7D28469B;
-	Fri, 17 Oct 2025 08:22:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52E427FB1E;
-	Fri, 17 Oct 2025 08:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BA328850D;
+	Fri, 17 Oct 2025 08:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="I4BBg2wO"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4294E28727B;
+	Fri, 17 Oct 2025 08:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689378; cv=none; b=mSWuvat7sFwIMscCS8rj7ZOhs/AunpYm0drb0XQ5M86CemPyoNVuH5hx3X1PTxMLGnSgf3OoT1cYZfk+mVf/OQMTVmEowC2Fvl5jzhg+F9ymrZebikyeX2czy+x5ePBzEbv/CMCrHQP2RMM2Qb1PGVW2V00rKFK0fdEssJqG0RE=
+	t=1760689381; cv=none; b=ETRiw03vwBKgGLYSQAUisCBZLgY5xbNaklMkyXYmdjeg9D6vgiDznjs/xRgkxrRyTkcZK8ZLP9kSb/RGE8hQxeYqdNOqQk9ZmyTR2OJSIEs3D3AVHkhIlzZ21qZbsyZMjlqGXFgwpZCLCyb8jSFiyX8r5C2UqF9p5OZyBD/GF/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689378; c=relaxed/simple;
-	bh=Y33sX9z6wohCICItsP2ZbZOBCRRm85TnYRsDA/wCAIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VD86Z/bmqMFH4WOWvndUGS/xhnf0e2VfYvjvT1ryc4hyuc1Q0kSI2jKmtyhQHWFhYaWqZPt1pecc94IjeXHRfWvBarrpoLnwFVi61TXvbGqdKUo1Bi8FgiDb5suqiCKE/190dIV6iZmPiVNECn7NZqCOjpfd09nxWhLcwFbitkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31CD51595;
-	Fri, 17 Oct 2025 01:22:47 -0700 (PDT)
-Received: from [10.1.35.23] (e127648.arm.com [10.1.35.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 910843F59E;
-	Fri, 17 Oct 2025 01:22:53 -0700 (PDT)
-Message-ID: <5f0aa630-b30a-44c4-a52c-e08179cd3bf9@arm.com>
-Date: Fri, 17 Oct 2025 09:22:51 +0100
+	s=arc-20240116; t=1760689381; c=relaxed/simple;
+	bh=OxPPXWaxtS5ARtDeuNtZSj/+wvLkD+KBGcHhEj+azrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VX+LBgE9r6A+ylw0gEX7fx/k0b41iXdEFoKUQhkMePY5LWTD1P7Xeloy39rD50cFuHEbcayofHX/v9HQwV/Y5ScLbbDRsKI6aaPTsjL+6tBUjePm4U6uSXxU+L3uGKMYPUsyxyyQErf55FlmmSdi3BHSwAkwleDrz0WSdwOsbuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=I4BBg2wO; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=f1UgrtkRd8hzFxDQXSida2T4QLJIXoBHA//CXqka/gA=; 
+	b=I4BBg2wOqPtr6WipkUrHnbVRKlhH3MvAlzxSK3Wjf63bV0xvxpVwYT4FC4NYcEK/JZvLqD4sJgK
+	ZxoNrza5jDZ+S91IQBRgCHU6248RxE3RC+9W+bIqXmFNPLsOmqrJMkvwxJv+EKkdUbDrOtqdgaxkz
+	rY3vFbOsHgFOgRpmVWTeMP8GIJvJZnqeqtxMEQnRI3w/4aiDNWY8Ohk6c/hCw71Ty6h9a76GH1RaJ
+	sVKgCXaSvUiWFbqnscUi0zfTojMo96+JNBjy1zCtnT3BMBvs0fWUxdRcvP8DbJEnc3oL22bkpPLwk
+	ip70R+iNHAELfA4TgbBMa3JfqGlXax/5kkOQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v9fjj-00DN5a-1w;
+	Fri, 17 Oct 2025 16:22:56 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 17 Oct 2025 16:22:55 +0800
+Date: Fri, 17 Oct 2025 16:22:55 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: meenakshi.aggarwal@nxp.com
+Cc: horia.geanta@nxp.com, V.sethi@nxp.com, pankaj.gupta@nxp.com,
+	gaurav.jain@nxp.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] trusted-keys: Add support for protected keys using
+ CAAM
+Message-ID: <aPH83_rWq8E1dYZ2@gondor.apana.org.au>
+References: <20251006071753.3073538-1-meenakshi.aggarwal@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpuidle: governors: menu: Predict longer idle time
- when in doubt
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Tomasz Figa <tfiga@chromium.org>, Doug Smythies <dsmythies@telus.net>
-References: <4687373.LvFx2qVVIh@rafael.j.wysocki>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <4687373.LvFx2qVVIh@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006071753.3073538-1-meenakshi.aggarwal@nxp.com>
 
-On 10/16/25 17:25, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Oct 06, 2025 at 09:17:50AM +0200, meenakshi.aggarwal@nxp.com wrote:
+> From: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
 > 
-> It is reported that commit 85975daeaa4d ("cpuidle: menu: Avoid discarding
-> useful information") led to a performance regression on Intel Jasper Lake
-> systems because it reduced the time spent by CPUs in idle state C7 which
-> is correlated to the maximum frequency the CPUs can get to because of an
-> average running power limit [1].
+> Overview:
+> This patch set adds:
+> - Support for creating and loading protected keys via `keyctl` interface.
+> - Documentation updates to describe protected key usage and options.
+> - CAAM-specific implementation for protected key encryption algorithms.
 > 
-> Before that commit, get_typical_interval() would have returned UINT_MAX
-> whenever it had been unable to make a high-confidence prediction which
-> had led to selecting the deepest available idle state too often and
-> both power and performance had been inadequate as a result of that in
-> some cases.  This was not a problem on systems with relatively
-> aggressive average running power limits, like the Jasper Lake systems
-> in question, because on those systems it was compensated by the ability
-> to run CPUs at relatively higher frequencies.
+> User can create protected/encrypted key using keyctl interface:
 > 
-> Commit 85975daeaa4d addressed that by causing get_typical_interval() to
-> return a number based on the recent idle duration information available
-> to it in those cases, but that number is usually smaller than the
-> maximum idle duration observed recently which may be regarded as an
-> overly optimistic choice.
+> KEYNAME=dm_trust_key_hw
+> KEY="$(keyctl add trusted $KEYNAME 'new 32 pk key_enc_algo=1' @s)"
+> keyctl pipe $KEY >~/$KEYNAME.blob
+> keyctl list @s
 > 
-> Namely, it may be argued that when the samples considered by
-> get_typical_interval() are spread too much for a high-confidence
-> prediction to be made, the function should fall back to returning a
-> number that is likely to be an upper bound for the duration of the
-> upcoming idle interval and that number needs to be at least equal to
-> the maximum recently observed idle time.  Otherwise, the governor may
-> miss an oportunity to reduce power without hurting performance in a
-> noticeable way.  Of course, it may also be argued the other way around,
-> but the available data indicate that get_typical_interval() should
-> rather tend to return larger numbers as that causes the governor to
-> behave more closely to its past behavior from before the problematic
-> commit.
+> dm-crypt can load the protected key buffer from the keyring and use it to
+> initialize encrypted volumes, ensuring that key material is never exposed in plaintext.
 > 
-> Accordingly, modify get_typical_interval() to return the maximum
-> recently observed idle time when it is unable to make a high-
-> confidence prediction.
+> The Protected key buffer is passed to the CAAM driver via the kernel crypto API.
+> CAAM driver will decapsulate the protected key buffer and perform cipher operation.
 > 
-> Fixes: 85975daeaa4d ("cpuidle: menu: Avoid discarding useful information")
-> Closes: https://lore.kernel.org/linux-pm/36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7/ [1]
-> Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Tested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Cc: All applicable <stable@vger.kernel.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/menu.c |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Protected Keys are identified by a header structure:
 > 
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -116,6 +116,7 @@ static void menu_update(struct cpuidle_d
->  static unsigned int get_typical_interval(struct menu_device *data)
->  {
->  	s64 value, min_thresh = -1, max_thresh = UINT_MAX;
-> +	unsigned int max_overall = 0;
+> struct caam_pkey_info {
+> 	u8  is_pkey;
+> 	u8  key_enc_algo;
+> 	u16 plain_key_sz;
+> 	u8 key_buf[];
+> };
+> 
+> This information is populated based on the parameters provided during key creation such as 'new 32 pk key_enc_algo=1'
+> 
+> Internal Workflow:
+> ::
+> 
+>  +------------------------+     +-------------------------------+
+>  |   Seal Function        |     | paes_skcipher_setkey()        |
+>  | - Constructs key buffer|---->| - Parses header and key_buf[] |
+>  | - Adds header metadata |     | - Initializes cipher context  |
+>  +------------------------+     +-------------------------------+
+> 
+> I welcome feedback and suggestions from the community.
+> 
+> Thank you for your time and consideration.
+> 
+> Best regards,
+> Meenakshi Aggarwal 
+> 
+> Meenakshi Aggarwal (3):
+>   Doc: trusted-keys as protected keys
+>   KEYS: trusted: caam based protected key
+>   crypto:caam: Add support of paes algorithm
+> 
+>  .../security/keys/trusted-encrypted.rst       |  87 +++++++++++-
+>  drivers/crypto/caam/blob_gen.c                |  86 +++++++++---
+>  drivers/crypto/caam/caamalg.c                 | 128 ++++++++++++++++--
+>  drivers/crypto/caam/caamalg_desc.c            |  87 +++++++++++-
+>  drivers/crypto/caam/caamalg_desc.h            |  13 +-
+>  drivers/crypto/caam/desc.h                    |   9 +-
+>  drivers/crypto/caam/desc_constr.h             |   8 +-
+>  include/soc/fsl/caam-blob.h                   |  26 ++++
+>  security/keys/trusted-keys/trusted_caam.c     | 108 +++++++++++++++
+>  9 files changed, 518 insertions(+), 34 deletions(-)
+> 
+> -- 
+> 2.25.1
 
-nit: for reverse xmas this should be one further down?
-Maybe s/max_overall/max_first_pass/?
-
->  	unsigned int max, min, divisor;
->  	u64 avg, variance, avg_sq;
->  	int i;
-> @@ -151,6 +152,9 @@ again:
->  	if (!max)
->  		return UINT_MAX;
->  
-
-Or alternatively a comment:
-/* Save the max before we discard any intervals */
-or something.
-
-> +	if (max_overall < max)
-> +		max_overall = max;
-> +>  	if (divisor == INTERVALS) {
->  		avg >>= INTERVAL_SHIFT;
->  		variance >>= INTERVAL_SHIFT;
-> @@ -198,7 +202,7 @@ again:
->  		 * maximum, so return the latter in that case.
->  		 */
->  		if (divisor >= INTERVALS / 2)
-> -			return max;
-> +			return max_overall;
->  
->  		return UINT_MAX;
->  	}
-> 
-
-Anyway, the patch makes sense, let me run some tests and get back.
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
