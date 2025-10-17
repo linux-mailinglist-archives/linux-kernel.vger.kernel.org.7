@@ -1,426 +1,223 @@
-Return-Path: <linux-kernel+bounces-858485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B75BEAEFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:59:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7F1BEAFC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB8E0565B3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D707471DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6342EC090;
-	Fri, 17 Oct 2025 16:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFC42F12D2;
+	Fri, 17 Oct 2025 16:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="Vjb9vFUa"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11022125.outbound.protection.outlook.com [52.101.53.125])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fejDpFCL";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="ihQEL+Qr"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E3C2EB878;
-	Fri, 17 Oct 2025 16:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078C12C0F92;
+	Fri, 17 Oct 2025 16:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760720109; cv=fail; b=pjkKtSg22iDe9FZ4PMYy9tMGsQCYAdGTcE6SYuAWTM2pe0cm6DpLYqcCxkTp2Ozi/xqqlk+9uBEnPBrDTtc2I+tlsn5o+7FXunNGMwrJpdYJpOoGmxby/Qdn3VLI/o+Gf4gYbkVXzqG8lYXyDof6UAc/ZTr0fRb3zBTCpVmUqv8=
+	t=1760720279; cv=fail; b=slVQrJUnOjrJoycJXsLi5udkNP2CA78Robqvh94odlF0yrfkwN7o59UEd2YEvDYuNfGc8Mv35OA6BtADeH/DuxBBHZzmIy1KGsxawez7JzkHl9PfycfTBu9G0wPmSpmM+8qxLsc+LDAIEWgKXeP4vcw5pZTpJGK48jcWKACVang=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760720109; c=relaxed/simple;
-	bh=qUObrPCZLE4ghkfrkn7ejAINRD11yGStqRMSolrS3lw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Big1lQSxahPyMVvhFr3mgbDiiP/QtLed3NILpZn43ADPjNEfPpQVuUTQyyYm1TxRmR+uXbOsCFHO/lgX6AKo5yGQdVh6HmXN/Qjhs66hdjK3E1IPFhqFrADIDspfkMbUrY7M8i1IhNWazj494fMxS0IYmjV9lPyay/TQ3wBiYRQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=Vjb9vFUa reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.53.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1760720279; c=relaxed/simple;
+	bh=7gWzX8/mewedR4skGrPMWSZQUk0tc4EisgGlzv9l2F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtanFKwdje0BMzWtdA4lqugW+dHF6ijdi+DC9BvwVvGCgVfvONHfA09AijMjW32fIMtUhVvlrF8qVsSDTHN2Smdg1i6SMFRcU18eSBYqYZZQInLtsk7FFd49Qr4/K93KeZTwa5Dcu3fjO/WdQrhkU6JtQvA0u3U9JZOYHIS8Rsg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fejDpFCL; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=ihQEL+Qr; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59H0Ykp74021107;
+	Fri, 17 Oct 2025 11:57:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=LV6tD0RGIoNS93ooyVi6GvGnSf7Ko7JrUGP30atv4jQ=; b=
+	fejDpFCLP0EhSh4fbBdlsbR52kHIWHDLXJTg6ZpCeAdJfCWqZDx8qrRm3nZ1d8m2
+	Ny6XDHei67UFaRK7GFBblp07lMaAXstXIkNJ7JvIru9k4zXYtNFikfVAJP/FgKoy
+	ckr5HH7wb8ag/WvVo9mJE9XxHKMYOAHoxDqzL2JqpjL+FW8p7LFzuAX3ipSCJpeh
+	EJDCyv11276DsRVxv/kSFagqI+p9KYiiNi4CBop1xTMhz7X+azNa0Q3HEYgHjfFC
+	Gjpy3+G/yi/x2HW4MUnjZuQdEdCNWsEg0TGLo94uzstlBEorNp5OB06rW/6XN7J7
+	Z2+7wJ1yJ/Oy0jWJ7Cgo2g==
+Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11020072.outbound.protection.outlook.com [52.101.201.72])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 49ubc98xxn-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 11:57:48 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=alpAm7kpyDPRPvIGEKw1yvfMIqY1oZ8Y+qQ1Z8abhyctWQEoX8IKcsgQhT5yhue47Qwch0SQ8rQFB5KmQANOi1riYj3QWIzf8UotlLaaNiewr1dGDpoZ/YhJoLN/u8fJd1kvpV1qfe0EQS15tyGWsSEKLiw08cqhE+dYnga5wyPIN7cwJt8Vk/NfWZF3J54zB/Jw/bcMpXccKSXkZn9vnBcfZJBIUuC/eM0RMYWnn9uGCjNu7yPO7LAYqqbfRkVYOSuoiMkZmPx+aSdjTSUW2qLHlv5FRZL6AuvbfxCTvSvi2OPeUss3Frk7Mx+jItHH3nWEmsIFTAMM4K33gZDdmw==
+ b=B8mzvjgrZcPpf+fkmOyZHvOUKEScuk/rdQyX6aO50aj173I5mDWyGthX2tWA2xWqDdmavyhpY8EsKreykOjyi4Z+af8AtwpMlqAIUrpKL5LFije7NU/qVfo1ciQ1A9y7r94Uqr1+JaxkEgJQxH4ck/u0VcS1v7jEkJX0lTGhHZXdRbGRFEigV3dNve0D5sIam2a2JA9tQI/Is7563d4hVCo2Re4pz8loL65fZhHMmebSYxTht1a9Lu5KrT58f4zOaKhsUcdwqe+QxLZbfnDA1HpmjLR3asUJT6YUZCh3iC35b3TwLTGWbSyk+BKCqTGmgefemdc/uoesaYq5lv+hZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pJqk+YRZoI8V/54IbVXfm8c/bCOizX2MZHh15rKh/QY=;
- b=HbN9xBbmoUz6hTk9vX7A47TURYvew0ZhsIf3dC4CYoes67aJTC0F6keW/o6bp2j4AUm51iZLDzWDcB4SWIzZd5a9yKEs5Ov3GkOm64pnqENEMjxzxUJwiZQYq787dr8N/GjOzcPuQutBexRa0h44RXaB/h5ucDYtJrrCzW8WcSRosikuVvnV0XQra5qo2P3B2T1GWexocIERaJWlNKSJtnbSfrxySuyWl+WVRCDkgUL7Pk6Tf/8HU4RIk6pI8TjV6gCsLxilhlulPvZkYWIEsd7Z7ZdO1WNB1SbFYOseh1sjw6SLNltCFjCKetaR6+ytYWka9DAtbVhFgqTDNjSYVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
+ bh=LV6tD0RGIoNS93ooyVi6GvGnSf7Ko7JrUGP30atv4jQ=;
+ b=IxCsw4fMuBS7zxai66COm2dIwEHP3Sh8G2sTJ1sDzUNRP7BdBB9oRGOJgMfwxp9hW2tOuzfUvyUeEJ/Tv8xi1g2bqavw+XY82dsap7IHZISl9C8An71+9zjhOdskcETE5YEnEcQtLJOryu1gdV9iJ+Gt2DaLFf4sjRNpRFDNAAGcV3bnXf/qBp+IP/L9svMRJQ9VPPzVVj3Nx9e7mQCKHR9ybEoiKaZh//6mOb7W5TznQm5jrNI8v1uaYBd13ZRIkxGfvnA8CAQt6VLyFyCzmsaT5kZwTNv/ymFVL9BVwFRb5PnPkt6W8KqsXXg3zMbadCGpkaQKwAWU+EfmZ83Pxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pJqk+YRZoI8V/54IbVXfm8c/bCOizX2MZHh15rKh/QY=;
- b=Vjb9vFUa3BN+UjyqrCKKPkkQ5nd819/Tp+v7X+N1Nfg46cRvij0fks6qwIqJV88U67XvolY5vdQY113mFqsuhHoXmogCfq8CKRI+TSFmcfLPeSDqDR8Szz7w6wEsVtAIi359fA8/Pcl5rwJjHeSgWiEQO5AAVTv9NR2Vxps8eA0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- SA1PR01MB8621.prod.exchangelabs.com (2603:10b6:806:375::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.11; Fri, 17 Oct 2025 16:55:02 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%3]) with mapi id 15.20.9228.009; Fri, 17 Oct 2025
- 16:55:02 +0000
-Message-ID: <8d7274bd-7ec6-4521-938a-a8ae47ccf619@amperemail.onmicrosoft.com>
-Date: Fri, 17 Oct 2025 12:54:58 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] Revert "mailbox/pcc: support mailbox management of
- the shared buffer"
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Adam Young <admiyo@os.amperecomputing.com>,
- Robbie King <robbiek@xsightlabs.com>, Huisong Li <lihuisong@huawei.com>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Cristian Marussi <cristian.marussi@arm.com>
-References: <20251016-pcc_mb_updates-v1-0-0fba69616f69@arm.com>
- <20251016-pcc_mb_updates-v1-1-0fba69616f69@arm.com>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <20251016-pcc_mb_updates-v1-1-0fba69616f69@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CYXPR02CA0002.namprd02.prod.outlook.com
- (2603:10b6:930:cf::28) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+ bh=LV6tD0RGIoNS93ooyVi6GvGnSf7Ko7JrUGP30atv4jQ=;
+ b=ihQEL+QrAxc+UPppDO9qkAvcg8rP2hH2PJlzSMDLN9ZYSpHM1E5kSO8ZUM/Yj+6zoyCmP47u4yVEGzk43F0MnSXNsWJPCY0DqXPv18H+uGMYnShUvobOBy+GqsBpjGZZ0WkTv7T8VEIDjC8VR+8nPRV2eOVtyHnFflym0LD2b9w=
+Received: from DS7PR05CA0045.namprd05.prod.outlook.com (2603:10b6:8:2f::7) by
+ DS4PPFF446EBDEB.namprd19.prod.outlook.com (2603:10b6:f:fc00::a62) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 16:57:45 +0000
+Received: from DS2PEPF00003446.namprd04.prod.outlook.com
+ (2603:10b6:8:2f:cafe::a) by DS7PR05CA0045.outlook.office365.com
+ (2603:10b6:8:2f::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.5 via Frontend Transport; Fri,
+ 17 Oct 2025 16:57:39 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ DS2PEPF00003446.mail.protection.outlook.com (10.167.17.73) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
+ via Frontend Transport; Fri, 17 Oct 2025 16:57:44 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 216A1406547;
+	Fri, 17 Oct 2025 16:57:43 +0000 (UTC)
+Received: from lonswws03.ad.cirrus.com (lonswws03.ad.cirrus.com [198.90.188.34])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id BCA37820249;
+	Fri, 17 Oct 2025 16:57:42 +0000 (UTC)
+Date: Fri, 17 Oct 2025 17:57:41 +0100
+From: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 09/11] ASoC: cs530x: Correct MCLK reference frequency
+ values
+Message-ID: <aPJ1hS-YD2M6nsJi@lonswws03.ad.cirrus.com>
+References: <20251017161543.214235-1-vitalyr@opensource.cirrus.com>
+ <20251017161543.214235-10-vitalyr@opensource.cirrus.com>
+ <a16503e6-870a-43ce-a705-27c0ea199303@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a16503e6-870a-43ce-a705-27c0ea199303@sirena.org.uk>
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|SA1PR01MB8621:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19d8bc77-3dfe-4f46-fee5-08de0d9dea17
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003446:EE_|DS4PPFF446EBDEB:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb9ceaaa-62a6-48fa-6e29-08de0d9e4aec
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|1800799024|366016|7053199007;
+	BCL:0;ARA:13230040|36860700013|82310400026|61400799027|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZFRwYzdyamUxU3hzeksrYmJ0VUlCU3ZZeklrMG5KWVRJbHplRkJLazA3U0ZT?=
- =?utf-8?B?NUNwNExuSjdzWXp2dXVKaVhSUWNMbjlVRi9QV0pQNW91cDlkaFl2K0tpOUti?=
- =?utf-8?B?QlQ4T2JuanRlMzlRdGJqZXZuMmZXdllpbWU1WE4rYVpXdXlsMXFveG82TVJx?=
- =?utf-8?B?RS9kUGhqVm43bWVzT2d3blBZZ0d3TEdwNzQrUHpraFBpTmQ4b3lDNzJpNVQ5?=
- =?utf-8?B?blVyWVZSZ2NRVDdOTGw3N2N3QTdzYmhiT3ZiT3Z1blB3ays3T0tEazFQRjU5?=
- =?utf-8?B?bVNHVi9YNjlpY0o0V0RvbWpKWXJlUVZqYXQ4dHQvd1U5UnFoTDNYTFJ3RkZv?=
- =?utf-8?B?KzhuNm0zaDk1OXZYdzFkekV1c3kxR3FrQlNuTWMxdkw4SjlTaFVJb29ZeUxN?=
- =?utf-8?B?OW1wbmgzSCtmUHg1aWJFeUZyY09Ud0xNdUg3ckQwTUd6WHBuUytVcXg0ZWc1?=
- =?utf-8?B?Z21jekpuNTBYK3dYQ3d1Qk5LR3czL3dHNW95ejB2cGRySTRhbmYxemx2OFlM?=
- =?utf-8?B?K3dFNklYK1RCSTA1dWs2UTdXdEcxZnRyVTVsY1NuUklzN3hlcm5NTDlHYXRJ?=
- =?utf-8?B?cEdkWEJoc0FuUW9lRXUwaERQbk5jYXkzMXdQKzV3NlB3THNGRmdGU3B6OXZ5?=
- =?utf-8?B?cjdIWDQvRHNBVlZaQzhrQ1h1eDdVSC9EbnJGeFU4aG1EaTRnTktaUlVqTkNx?=
- =?utf-8?B?ZTFIT0ZNTDJCUUJXVkU4NVRwUkxSTm5CUjBpVGV4NVhqaUZ6MVA4N05lMlZN?=
- =?utf-8?B?SW9aVUU4M2trL0hzQmpFMlI4ejlKR0ZpK0MwdTdXY0hjUlE0Um5GR05CNDFE?=
- =?utf-8?B?TEZPZHVrbSs1Yi9yNmpvNWhiQUpKd0duckNKWDA3MjRETmxYa0RqQjl4Rlpp?=
- =?utf-8?B?ek5xRGgwaHpFbng4R0FnMVFzOUdQU1NGMGJzSlBWQ0RTd3RDWERQWWg0OWhk?=
- =?utf-8?B?cXRSVG1KeDQzRDkyajE5OG53Vll2dlEydUh4djVJTW9VWkhuWEFhOHRQRy9O?=
- =?utf-8?B?M0F5emNITGtnTFFHamlOOEg5RVJjMFVDTVlQT3dScFc5Y2ZjMGNpN3VwU3ZG?=
- =?utf-8?B?eDVQeEJqWCtaYXZCNkJVcy82US9ueWhoc3ZLTWJ4MlRCQk05MkdvSE5vL2lm?=
- =?utf-8?B?N0lRRFdEZFdscXRqNHNCeFRlb0w0eWJvTjgzOHExSHcrRVJvT3dCOUxSVHRY?=
- =?utf-8?B?VXdJMGxhWWlMc0hZR25KZGpjQlFOY0RIbjZ5am9idUN4Rm1LZkNKOHZyZFN4?=
- =?utf-8?B?c0U5V0ZZQ0gzd2RoQzcwT0JOTW42MjFxbURicnZVMEovRWJpb25QMGRXbktM?=
- =?utf-8?B?VjB2em5sM0p6cy9qNW9aRnZSd3hySllJY2hVOFlobUp6T1VMRTlnaGdtaUNu?=
- =?utf-8?B?WXMram42d3ppRnlHWUpITjJwTk11Z0kxSXJVNmdDZVBpL0p5aEtsME9OYW1Y?=
- =?utf-8?B?VG1Pa2FNQ0pldXBndTBFVTBaWnBaQ0VwMVhoazN4ZktqS3l4ZlFaM243MHY1?=
- =?utf-8?B?bEpPRzdWUFN3ZkhnaFFFMFNnU2hlWTlIamVLM25UaW5XQU1wanFRQ3N3VFlD?=
- =?utf-8?B?SXhNWkdFOEN3a2NtaGVucjJ2RFpXMFYxcWlqVUxrOW1ka3RHZ1dSZ0hFQ2JK?=
- =?utf-8?B?eU9tVlJwUU5sL0p3algwV2I3NkZ2VzRuOGR6Ynd3WDZzTm5uWDFzUjhrNzZy?=
- =?utf-8?B?R2N5NFhBY0ErekUwcGVubVQ3bHpUeDF1Y0xuOTFQNXBRZktCL2drbmlIVGlK?=
- =?utf-8?B?QnNFenFtUlF3YnVHdmwyM2YwSWx2Zk9Jd3FVOWhCckx1MmhjeG1mazBwQlFY?=
- =?utf-8?B?Ym5DdzlneGxxcFI3dC9TUUJUMEhFM3BQem51YzZhc2FSWVNuTWlaZS9XM2xk?=
- =?utf-8?B?N1B2bEg4RGM3UHpHKytDS2pmU01Id1BiQ0psTFNrMTUzWFV6Mmt6NFM3dUhQ?=
- =?utf-8?Q?yhBpNhUlkAB+J3Nn+G0z7CMJZ/WiwZxK?=
+	=?utf-8?B?TStJaS9SVm9WZnY2VEFkL282dWJYR21FUlpFVW1qTEZHd2ZEUHJ4Q2gxcUlO?=
+ =?utf-8?B?UCtFMk96OFpZY1R2b0pDOC9HcFBWV0tYdllFNkRoNEE2WjhBbDAzYXBwTlQ3?=
+ =?utf-8?B?UFR4ZzQ2RmJ5M00wYjhEMUlNYXhYbGJRTDBiRTV5NXpuUmMrS3F0eUZhV3Iv?=
+ =?utf-8?B?NGlPU0JDNGFuSjRHOVU0Uyt2VHJ1RDhnaC9RT2U3ZDUyamZjVUc3bmtRa1Bh?=
+ =?utf-8?B?emxDU0tVdkVubjNERStwRzJFVXFCd2JpdHM5UXJsTXlQbkRsZ0JjSkFXdnJK?=
+ =?utf-8?B?djlwc3ZNdUpmazhnRmk1UkN6QTZ1T1RXcm9BanBpVmZLanZvMGxUSEF2WTNY?=
+ =?utf-8?B?b25YZWJUeWhjZUdtQlFSTDhjVjZEeGRoQ3ZoY3B6R3NZN0k3emlQaWt6NDhu?=
+ =?utf-8?B?bDUwQzFRTG0yMmtUcGRoZUdUdnk3eVhvcmRnOGRpQktXL2M3eU1ZeTJwZzkx?=
+ =?utf-8?B?NHRhNlo3L3owM0tXTDdRdXFmbGhnOVlKTnJreUFqeXVQUnJ3TXFHVkx2WVcv?=
+ =?utf-8?B?VzdHZ1l2blRrdmRQNWJuclBvNDdFVTRRRUVlSTJsMWNWUjdwYjV3NWtaNTNz?=
+ =?utf-8?B?V0hGT1dLRmFPdmNwckFLMURoT2xvbG1mQWtuc2gyQkJXTkVXTEJMYkdCazlZ?=
+ =?utf-8?B?Y1FaUlA4ZTRBWVMvNHVpTndLdGFGYUlYbFZDTUtJK2loNGF0L3F5ZlNaV1dP?=
+ =?utf-8?B?SVcrYTkvVEdtZ25GeGtwcTZtRTlnVzhFOG5TMC8vVkg5ZkNremNRSVN4NVpp?=
+ =?utf-8?B?R1p1UGlaZC8rMHBhYVhFU1JURjh2R01DYjRzQmZIWXdPbkFGdnVZWlpNTkt3?=
+ =?utf-8?B?YlNGUHVFcE5QN0xpOGZzNUJneW4rVU1KNVpnbWVRQkd5aS9Ma1lDdnZxaWlD?=
+ =?utf-8?B?NDRqZ002UmVJZDNqZGNSNDlWeFFDbEVyWmtUWWpnYnhrMmp6YzJQN0lxb1po?=
+ =?utf-8?B?U3VORnZmQzVxZTB2dkpVTyt0QXdTVk85RlRwbWkrY2lVeEhFS0JTUHBRbC9z?=
+ =?utf-8?B?MHpWUCtKbVJxdHZCbUo3alU2U0pFNG9GTG5JcEZKSEcyZE8wbUxCYUJ4NGlX?=
+ =?utf-8?B?Y1FVMVd3S2xGUWQ5Z002RDE0L2g4YjF0a2NyQkthVWZrNlZVc2RuZ25sWjRF?=
+ =?utf-8?B?MGlVMEIrMXNmSXFHZlVmNi8vNnB4QXQ5NkpTeHExWWE4QzJzU2JwNzVwWndN?=
+ =?utf-8?B?Z0xSQ0xNSVRnVitHa2FYektHWkl6c2l1V1ZYaUhlS2RSOHJ3WFN1UUJKL2Fm?=
+ =?utf-8?B?bnM0Mnd4QWg4bUtXWFNEUEhGcWRhaVphTVh0OUZCcjJMQ0wyTGpCMy9XYk5k?=
+ =?utf-8?B?aW9zK0FGeStvcnN3QUY4MWg3bEl1RkNSTG1sQUoxM1prLzZCT0hUU2ZyNUFx?=
+ =?utf-8?B?Y3A5c3A4SmtncnZQNFJJaXVzZmUxQ3owUE44eVB3Y3p6SmRTOUEyM1kvbFZO?=
+ =?utf-8?B?RldNc1ZSdGdaMWVKSjQzS1REakg2eVhtY1VaTGR6NTNlU3pTZnJQM2JTMlVN?=
+ =?utf-8?B?ZkE0Ri9kWk1EMWhhbE9Nbm9obVp0QlB0VHdhOHFqZGU5TjBETEl2U0x3TlJs?=
+ =?utf-8?B?NTVwa3hwb1JuTE5BZmVkUmdzb0FKdEZ3ZFJaWW40MDBCWTk5eVF5Vy9sZlZZ?=
+ =?utf-8?B?Z0p2R3A5S0JxaWVyWTRMcFdtUHRjY1Z1TWRpUFg5eWZNb3dINmp5MVVlbWR2?=
+ =?utf-8?B?WTZDa2x0enZxUGVPU1F0NkdnTVNOcTl0dTc3cW1ESTZUZUNlZk1xWEdXNHps?=
+ =?utf-8?B?Q09FUnphWXVPay83NW0zN0l1bkFFWGJTaTVYWG45QlBDOXFhamI4K0xFVGl2?=
+ =?utf-8?B?K2JlU0pRRVJXNDh2bU1Pc3g0Zk5GTnM1V3haY1RVSHl1TWYxTzJmUVZqVVpO?=
+ =?utf-8?B?bU5NYUZ0MDk5WHo1NUgwTUFtS1d1T1BwQjlnakJtL2dQVXlPS2RFR3p6MkFt?=
+ =?utf-8?B?WFRXUG9zSWdtd05XQjVDSTl4dDJXUVN5Ty8rN2hhSFBNSDllZitRZEdseUIy?=
+ =?utf-8?B?eFZBVFNhK2N5R0RwVnpzd2hEdDlvNWZhYTczZUtlbFZobisrME5ZWmduTHR4?=
+ =?utf-8?B?cTNTb2xta3RMenlrRVBqOFpUTmw5bHJEMTR6eVQ0Uk9tekxKMmRXdnYwTWxQ?=
+ =?utf-8?Q?VMA4=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y2NWaVR3aWdRcmtjcmhBaE5zODd2TGNuenBkZnR5RFZjeUR2VWRNeHVKN3J2?=
- =?utf-8?B?YjJNTW1jb0Zvam0yZVBRWHBTTHRFbVBpaDMxL01oQmJRaVVhTTdKK1BHUXBm?=
- =?utf-8?B?allEUlFHaGlqMHFraThIeWVNQmVsZnUzMktKRTdMRUFVRTZaM1Bic0pXZGJw?=
- =?utf-8?B?VzdTeVhmMjZ0dHI0VnZBc2xzSGRNcG9LUXJHSmlibjl4NjMxYmRzekhrMGtt?=
- =?utf-8?B?ZUZmWDVCK0cwVUxTbzlBYUJoUTZqUmhQUmo2TWF4R3BrUXlSVFFtTXhpQ3lq?=
- =?utf-8?B?UFp0ZEFiZTZQc0U2VjEyci9ZdE1aWE51eGxJTlJ6WkxYZk1qb3lhM2d3MnF6?=
- =?utf-8?B?eHVoWGFUUmlvbktmYWFjMGFMRFYxc2wyNmJwOFNtQzhMVFFqTWtOa3FBNGN1?=
- =?utf-8?B?Q0IvcEIwYVZSUzFLQm93T2I4UCtNdU1uYjVUcnpldFdPY25SeDJmY1NpRXdy?=
- =?utf-8?B?b2VjaFB3SDBWejkrQTVzOVVIUW1sNDJpUUJIV3FFcDNTV3FrbjB6eklKT0w2?=
- =?utf-8?B?cXByc2VRSFgyMEFGUUI3YWhJYkdGZkVXdm85SkVLelo3dzFSK2pEdmJGbHRX?=
- =?utf-8?B?NkFLUUpVMWhvVkdQNTB5OXdaVk5HZVhUR2VHTlBuN3YxK1YvaklzS0xJRk4v?=
- =?utf-8?B?Q2xLcm8vaHJvWnRhNUZ3ejl1blBqS0NCMmRGRnQ5cXZ3cDRmdHRsVldlZkI3?=
- =?utf-8?B?ZVVMaFpucDc3KzMrdjlUVGF1WHBOZEoxTmk5elpJZ05pZE5BZGNkYXA5ZXZI?=
- =?utf-8?B?OGNGYkRwL0pwTElKd0tBa2RKNzVDazRiMW9TNDNzRmxoOW5reUZpMEkzWkQy?=
- =?utf-8?B?RE9GR2N2VUttUC8rS1lZL3NnVlE3bDR6SkpQRmhaMC9BYmVIZCs1NzdUTXor?=
- =?utf-8?B?SlRQSEtFVERaQWwyNnZxekdHWW9URGV3RWZQR2xzUjBSMFBCUDBkVzJ6VUVY?=
- =?utf-8?B?MUVPbEpMcVBuZm50b2cyMUp3Y0ZMNmhNTW9IRkRiY1RtZEZFNlk3citaMVN1?=
- =?utf-8?B?MnZaRlo4UVBTazdZK3pTMDc5QWpVR1plZUp0eXhPVlpPczVyLzlLaXNFRmxB?=
- =?utf-8?B?a0M2TXFKQzBEYnVycHdWM0Q2MHd3MENJMjlPUVRSdVhhY3FUTWxkM3pubjRB?=
- =?utf-8?B?VjA4Z3RLMmpQN1pIZ0RJcDdDcXFHVFJJSTczd0ptL3d2R0FlR0Yyazhvcy9j?=
- =?utf-8?B?SDc3V3AweDQvT0Z4Mlo4QU5mWGVISXZKZWtFS01MK1NrdzJJVzJZdHpqbGps?=
- =?utf-8?B?TTFGSmIrSitEL0E1d0wwOC9vNFNTWlg5SW9JZHFwVGZGZlg2Z3JucEk3SVBl?=
- =?utf-8?B?cmE4UWpHQmZ6alQ4cytzZWpYbm82VlIxcllMdXVuMFpaaWVDa1BVM3JGbFBM?=
- =?utf-8?B?RW1YaVZUWE5mK1dDUTM1NXJDcDZWc2t6amQydzhqR0NCY29jQVhoVGxRazZB?=
- =?utf-8?B?VGYxTVo3UkowR3ZXMnRtWEErYzNPTkdpQzBSWjdyR1dlSmYrUkVOL1lUWWJV?=
- =?utf-8?B?L3h1Wm5BWCttZWwwZ3Evem4wZ3VPY1R5cnZEcjd0UVNOMU42ZDc0U2ZHMG84?=
- =?utf-8?B?NGlwTkVIMHRmNkNqdFV6enl5eUlVc3JDT1A5NnU0UHJrazFRRU4zQkNOcUQ0?=
- =?utf-8?B?SUdTS0g3ZGsxMnc0N0RuQWdCWUJmQnQ0ejRiRWdQb0ZMajhYTUlnV1psNFc1?=
- =?utf-8?B?S1Q0VWZleFNZK3FsN1NXZjlwR2RPU2hrSmU0WUJ4c09HOVYvYTRKK2lmMzBw?=
- =?utf-8?B?S3dqQWZydFlZUW94ZlR5eXpETDZiZllzQ2Zudm9mcmxjN0xENTI5ZHFoYlpr?=
- =?utf-8?B?WTQxNVExUlNhTDZFdG9SY1NQMnpjek1VdlZkMU1XYjBkSkFmQWdCVUxWeVEr?=
- =?utf-8?B?ZlRjRm9aVDNTM2YzV1c5b1pqdGtlLy9odENwVXhwUmNqTmRITEtqWXBYRTFs?=
- =?utf-8?B?L1RmUzMrelRucm9OQm80T0tXTU1VdUFpZ01RaFpZNk0xa1ZucU5EdC9HMjZN?=
- =?utf-8?B?aWhjTlBHbVdrcmh3K1JObGphNlYyMDVST0JqV0dlNTAraGpQLyt3NFlZNk9x?=
- =?utf-8?B?ZmkrYkhTTXpqeDExaGJ2OEFNb0tkdnFyUTFHQVJMU3JFUW9wQ2JybEFSWDZl?=
- =?utf-8?B?QysxZ2RkZzE2Nk9jd1VLZVp4ZStoV3d3aVk2Z3kralNXN0RFVmVPUHBVVU5U?=
- =?utf-8?B?NDFCbEpQRFBIdFZrdGE2N3ZST3JOVVNSYmJOTm04ZUNaUHBsSmU0cjhLNWVD?=
- =?utf-8?Q?X11wg6GHHRSFAps2PAOkOsP/z81yjXB2dhiszrak7Y=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19d8bc77-3dfe-4f46-fee5-08de0d9dea17
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 16:55:02.2857
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(61400799027)(376014)(7416014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 16:57:44.3720
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aj7hd5eDDO3gNe9029gfoHoOtXJJtz2+BccvbL9GoILHK3imm+hwhWmB5KgxKadJwvJSmgkHSZmWp7cY/UfxPWe0rkykPEqTV1ektr8svepgmGmfIabkjdztHEb/G24G
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB8621
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb9ceaaa-62a6-48fa-6e29-08de0d9e4aec
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-DS2PEPF00003446.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFF446EBDEB
+X-Proofpoint-ORIG-GUID: TIZfYS_l3QyOjZrgMprfq9Ql-1B2GTnh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDEyNiBTYWx0ZWRfXw/MqXKxqHotn
+ 3wKdZd15iAkAElTADFPqauwKiaw5pG3pLCRYUFAs4dInmka2nUSLAJVfr8AxloFkiRXuBiRVWZw
+ toyz7mePXizUS8s+sZz1Qk02zw8iHA19YEqGfaESoSBgcUJsasqs9r50WKTlAa9pk3vqQCAEa2s
+ N1fY2uj8j0VDLpsmPfyHyUJCEODqon+efcvRsOaQ0SPz3nACePQFh8MSqnXHqvCUR+wGBF6OltO
+ 9wOYOWc40bk03rJHTY6BZGIXoEVQLeYSi9fVaDsixSq9D7vxauWoHAaBWH6fxbsoS44WiWFes0g
+ xYOe1tQVnbKRhGC45TT7MIc5mDByLttc1M8RWPA/PX1m4U5mQf6ZhZ6UYK2yKRsNQFbGX4lgrhc
+ I40V2v9KoK3gRV5UsGCIQuGWQnz+9g==
+X-Proofpoint-GUID: TIZfYS_l3QyOjZrgMprfq9Ql-1B2GTnh
+X-Authority-Analysis: v=2.4 cv=H7bWAuYi c=1 sm=1 tr=0 ts=68f2758c cx=c_pps
+ a=IBJHqVCGmmUWI27oiwGTEA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=qAyo7-W0RYy2w9U-SnQA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Reason: safe
 
-Tested-by: Adam Young <admiyo@os.amperecomputing.com>
+On Fri, Oct 17, 2025 at 05:44:06PM +0100, Mark Brown wrote:
+> On Fri, Oct 17, 2025 at 05:15:36PM +0100, Vitaly Rodionov wrote:
+> > The MCLK frequency must be 49.152 MHz (for 48 kHz-related
+> > sample rates) or 45.1584 MHz (for 44.1 kHz-related sample rates).
+> 
+> >  	switch (source) {
+> >  	case CS530X_SYSCLK_SRC_MCLK:
+> > -		if (freq != 24560000 && freq != 22572000) {
+> > -			dev_err(component->dev, "Invalid MCLK source rate %d\n",
+> > -				freq);
+> > +		switch (freq) {
+> > +		case CS530X_SYSCLK_REF_45_1MHZ:
+> > +		case CS530X_SYSCLK_REF_49_1MHZ:
+> > +			break;
+> > +		default:
+> > +			dev_err(component->dev, "Invalid MCLK source rate %d\n", freq);
+> >  			return -EINVAL;
+> >  		}
+> >  		break;
+> 
+> This will break any existing user that sets MCLK won't it?  Hopefully
+> they were managing to function, even if the clocks were out of spec.
 
-On 10/16/25 15:08, Sudeep Holla wrote:
-> This reverts commit 5378bdf6a611a32500fccf13d14156f219bb0c85.
->
-> Commit 5378bdf6a611 ("mailbox/pcc: support mailbox management of the shared buffer")
-> attempted to introduce generic helpers for managing the PCC shared memory,
-> but it largely duplicates functionality already provided by the mailbox
-> core and leaves gaps:
->
-> 1. TX preparation: The mailbox framework already supports this via
->    ->tx_prepare callback for mailbox clients. The patch adds
->    pcc_write_to_buffer() and expects clients to toggle pchan->chan.manage_writes,
->    but no drivers set manage_writes, so pcc_write_to_buffer() has no users.
->
-> 2. RX handling: Data reception is already delivered through
->     mbox_chan_received_data() and client ->rx_callback. The patch adds an
->     optional pchan->chan.rx_alloc, which again has no users and duplicates
->     the existing path.
->
-> 3. Completion handling: While adding last_tx_done is directionally useful,
->     the implementation only covers Type 3/4 and fails to handle the absence
->     of a command_complete register, so it is incomplete for other types.
->
-> Given the duplication and incomplete coverage, revert this change. Any new
-> requirements should be addressed in focused follow-ups rather than bundling
-> multiple behavioral changes together.
->
-> Fixes: 5378bdf6a611 ("mailbox/pcc: support mailbox management of the shared buffer")
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->   drivers/mailbox/pcc.c | 102 ++------------------------------------------------
->   include/acpi/pcc.h    |  29 --------------
->   2 files changed, 4 insertions(+), 127 deletions(-)
->
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 0a00719b2482..f6714c233f5a 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -306,22 +306,6 @@ static void pcc_chan_acknowledge(struct pcc_chan_info *pchan)
->   		pcc_chan_reg_read_modify_write(&pchan->db);
->   }
->   
-> -static void *write_response(struct pcc_chan_info *pchan)
-> -{
-> -	struct pcc_header pcc_header;
-> -	void *buffer;
-> -	int data_len;
-> -
-> -	memcpy_fromio(&pcc_header, pchan->chan.shmem,
-> -		      sizeof(pcc_header));
-> -	data_len = pcc_header.length - sizeof(u32) + sizeof(struct pcc_header);
-> -
-> -	buffer = pchan->chan.rx_alloc(pchan->chan.mchan->cl, data_len);
-> -	if (buffer != NULL)
-> -		memcpy_fromio(buffer, pchan->chan.shmem, data_len);
-> -	return buffer;
-> -}
-> -
->   /**
->    * pcc_mbox_irq - PCC mailbox interrupt handler
->    * @irq:	interrupt number
-> @@ -333,8 +317,6 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->   {
->   	struct pcc_chan_info *pchan;
->   	struct mbox_chan *chan = p;
-> -	struct pcc_header *pcc_header = chan->active_req;
-> -	void *handle = NULL;
->   
->   	pchan = chan->con_priv;
->   
-> @@ -358,17 +340,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->   	 * required to avoid any possible race in updatation of this flag.
->   	 */
->   	pchan->chan_in_use = false;
-> -
-> -	if (pchan->chan.rx_alloc)
-> -		handle = write_response(pchan);
-> -
-> -	if (chan->active_req) {
-> -		pcc_header = chan->active_req;
-> -		if (pcc_header->flags & PCC_CMD_COMPLETION_NOTIFY)
-> -			mbox_chan_txdone(chan, 0);
-> -	}
-> -
-> -	mbox_chan_received_data(chan, handle);
-> +	mbox_chan_received_data(chan, NULL);
->   
->   	pcc_chan_acknowledge(pchan);
->   
-> @@ -412,24 +384,9 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
->   	pcc_mchan = &pchan->chan;
->   	pcc_mchan->shmem = acpi_os_ioremap(pcc_mchan->shmem_base_addr,
->   					   pcc_mchan->shmem_size);
-> -	if (!pcc_mchan->shmem)
-> -		goto err;
-> -
-> -	pcc_mchan->manage_writes = false;
-> -
-> -	/* This indicates that the channel is ready to accept messages.
-> -	 * This needs to happen after the channel has registered
-> -	 * its callback. There is no access point to do that in
-> -	 * the mailbox API. That implies that the mailbox client must
-> -	 * have set the allocate callback function prior to
-> -	 * sending any messages.
-> -	 */
-> -	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
-> -		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
-> -
-> -	return pcc_mchan;
-> +	if (pcc_mchan->shmem)
-> +		return pcc_mchan;
->   
-> -err:
->   	mbox_free_channel(chan);
->   	return ERR_PTR(-ENXIO);
->   }
-> @@ -460,38 +417,8 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
->   }
->   EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
->   
-> -static int pcc_write_to_buffer(struct mbox_chan *chan, void *data)
-> -{
-> -	struct pcc_chan_info *pchan = chan->con_priv;
-> -	struct pcc_mbox_chan *pcc_mbox_chan = &pchan->chan;
-> -	struct pcc_header *pcc_header = data;
-> -
-> -	if (!pchan->chan.manage_writes)
-> -		return 0;
-> -
-> -	/* The PCC header length includes the command field
-> -	 * but not the other values from the header.
-> -	 */
-> -	int len = pcc_header->length - sizeof(u32) + sizeof(struct pcc_header);
-> -	u64 val;
-> -
-> -	pcc_chan_reg_read(&pchan->cmd_complete, &val);
-> -	if (!val) {
-> -		pr_info("%s pchan->cmd_complete not set", __func__);
-> -		return -1;
-> -	}
-> -	memcpy_toio(pcc_mbox_chan->shmem,  data, len);
-> -	return 0;
-> -}
-> -
-> -
->   /**
-> - * pcc_send_data - Called from Mailbox Controller code. If
-> - *		pchan->chan.rx_alloc is set, then the command complete
-> - *		flag is checked and the data is written to the shared
-> - *		buffer io memory.
-> - *
-> - *		If pchan->chan.rx_alloc is not set, then it is used
-> + * pcc_send_data - Called from Mailbox Controller code. Used
->    *		here only to ring the channel doorbell. The PCC client
->    *		specific read/write is done in the client driver in
->    *		order to maintain atomicity over PCC channel once
-> @@ -507,37 +434,17 @@ static int pcc_send_data(struct mbox_chan *chan, void *data)
->   	int ret;
->   	struct pcc_chan_info *pchan = chan->con_priv;
->   
-> -	ret = pcc_write_to_buffer(chan, data);
-> -	if (ret)
-> -		return ret;
-> -
->   	ret = pcc_chan_reg_read_modify_write(&pchan->cmd_update);
->   	if (ret)
->   		return ret;
->   
->   	ret = pcc_chan_reg_read_modify_write(&pchan->db);
-> -
->   	if (!ret && pchan->plat_irq > 0)
->   		pchan->chan_in_use = true;
->   
->   	return ret;
->   }
->   
-> -
-> -static bool pcc_last_tx_done(struct mbox_chan *chan)
-> -{
-> -	struct pcc_chan_info *pchan = chan->con_priv;
-> -	u64 val;
-> -
-> -	pcc_chan_reg_read(&pchan->cmd_complete, &val);
-> -	if (!val)
-> -		return false;
-> -	else
-> -		return true;
-> -}
-> -
-> -
-> -
->   /**
->    * pcc_startup - Called from Mailbox Controller code. Used here
->    *		to request the interrupt.
-> @@ -583,7 +490,6 @@ static const struct mbox_chan_ops pcc_chan_ops = {
->   	.send_data = pcc_send_data,
->   	.startup = pcc_startup,
->   	.shutdown = pcc_shutdown,
-> -	.last_tx_done = pcc_last_tx_done,
->   };
->   
->   /**
-> diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
-> index 9af3b502f839..840bfc95bae3 100644
-> --- a/include/acpi/pcc.h
-> +++ b/include/acpi/pcc.h
-> @@ -17,35 +17,6 @@ struct pcc_mbox_chan {
->   	u32 latency;
->   	u32 max_access_rate;
->   	u16 min_turnaround_time;
-> -
-> -	/* Set to true to indicate that the mailbox should manage
-> -	 * writing the dat to the shared buffer. This differs from
-> -	 * the case where the drivesr are writing to the buffer and
-> -	 * using send_data only to  ring the doorbell.  If this flag
-> -	 * is set, then the void * data parameter of send_data must
-> -	 * point to a kernel-memory buffer formatted in accordance with
-> -	 * the PCC specification.
-> -	 *
-> -	 * The active buffer management will include reading the
-> -	 * notify_on_completion flag, and will then
-> -	 * call mbox_chan_txdone when the acknowledgment interrupt is
-> -	 * received.
-> -	 */
-> -	bool manage_writes;
-> -
-> -	/* Optional callback that allows the driver
-> -	 * to allocate the memory used for receiving
-> -	 * messages.  The return value is the location
-> -	 * inside the buffer where the mailbox should write the data.
-> -	 */
-> -	void *(*rx_alloc)(struct mbox_client *cl,  int size);
-> -};
-> -
-> -struct pcc_header {
-> -	u32 signature;
-> -	u32 flags;
-> -	u32 length;
-> -	u32 command;
->   };
->   
->   /* Generic Communications Channel Shared Memory Region */
->
+Hopefully, there are no existing users yet. This was used only on our development board,
+and we’d like to fix it proactively before any users encounter issues.
+
+
 
