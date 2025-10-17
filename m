@@ -1,103 +1,1765 @@
-Return-Path: <linux-kernel+bounces-858062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D76BE8BF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:08:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F8FBE8C06
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623D41AA4C50
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:09:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075EB4F506E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2D5345729;
-	Fri, 17 Oct 2025 13:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50208345725;
+	Fri, 17 Oct 2025 13:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i1xG+71F"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CjtUTSgO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7C226CE36
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08360331A7C;
+	Fri, 17 Oct 2025 13:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760706528; cv=none; b=VawUhnebH4F5VGyoJqFgbVBoKZBmcA1UhqNrkSjVLSOttNR3T1V6XoqNyCJ2ltDdLqTqI9pHdVR2SERBV82/R3KseihvD4yjXxL9tW8fLKuhPlAyRnI50oZ8SgohT4yEZBgLAQvVr5SsOBtDEVv4zdux/xc/CfLavjRUkkMuB18=
+	t=1760706585; cv=none; b=OBJRXbF0Yi2gd7Lpg/rdY/TX4931KYpcWC/xvEwXyf7e/MffGK4p70xb52jDuf7isW37TKQgkQBlz7YAz8tD2hOmbLlRhxpMWQziKnou1qw1vbM7jhj/Lnjup18QG1arERwAg4VnQ62tEAqQtw8Ijnsd/zft/VJvU2b/rfnxX3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760706528; c=relaxed/simple;
-	bh=YPT7YaFxJr/DP2krd+n0zCPmvIWHZQOhW/R2XbFhEDo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RSCUsyMwHH6WAltwVbVt9KZ/aYra5F+7KsOfYUD21Mo4M9ALcCIxyAY2dkU1JrYDmtFWEJ1yK8bjVrflqQqzJph5zLKPcf4jPf6n4Adl7gut9yFwcypZO1v13KWoZwbxN+z/Mq+45el0cuZEvddxEOuEM8eFCH8v2af0AilAaew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i1xG+71F; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4710d174c31so23116875e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760706525; x=1761311325; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nSoaI0Nu4BM4dbSgZ9LtXWIMvqWvuCY8C+cLR0Gw67Y=;
-        b=i1xG+71FPl1VINMXC0UKt7vue4mGJfU2csQuPwsKs/VCb/tDkhJYa3K/K77QwRLE4z
-         P9WmVIzo6rnYxNt9otYoubXHFwaNqVk3G2eHONFsBlcB94W4vIufBb5LYL2Z6c9kFbC+
-         ygfdl1i+wa9J1cyl65fnLBJBZogh9J26OzSHo6tXgimMPKQDSjnBbqyhQMDzYAixJQFq
-         jq+BrnWGw2D0L8iY1U0XgZkrJpwnkUpxXwIc2QVpr19HGNPCGr0uSkTY23/aJc1uRu++
-         JwzKq6IIKjmvl25j2a4RzQZh3QdzgbKF6wWc+K2TbKDZ+oSRygR9pY8WbxPafdMMIcry
-         SKrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760706525; x=1761311325;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nSoaI0Nu4BM4dbSgZ9LtXWIMvqWvuCY8C+cLR0Gw67Y=;
-        b=Golm6325RVAMGyPFAPy+Whx6OSHpMOTL3851zja2dZT3s7fvRcofOQSmnTS94s1Gyg
-         5J2pcM/qC3hJcVrf0fsJeBnd1Bssm5VDrUNg7Ii5gb/rYdA/mpbHxUbRi8YSPBskU5pS
-         GDIJu6+OthDDiQl4kWTMqmwPYbdLM+ZKvAejagIN2jH4Cu1/PkegnLuB+FvvdgzPwoDt
-         0x2rL7uEiPsNpQAuLCHOcKnfcxcyOs8Eov6QFaYLAY7n7npRO/Qx3p2S56oHAM4yJGMb
-         sWqa4k+qU7y7NC9bB9mECrLPPx8tbtaKmBHIyu68coA7NWOta20KqVESDR8ZPpwS8WG/
-         hV2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWWf0amX6EVqXE3sYG0djkuvHQAX2aX6uSaZCQuUi6kL75p7QLRtELW6SThSmxN+mszC0ibiyp+JufGBIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfczdCeYfiDxs1X+CAfWzXVuFIojEEKCFlBqT/ed6lq/Ozgwob
-	0Xj8oYyEJdLdQL6UPaYyHuZwRIPyMFfVsyvElbzIqHkaSGAFrCk+ju3SoHky8EY+svcMPQBD9HF
-	ivkh6oyQzgohhhsCLvw==
-X-Google-Smtp-Source: AGHT+IGfS/GiLnB3eiTHz9v+40BS/boW4LbipGvMYHkAEl/D+2dbSk1rf0yTiwtqOLvzpgJw+OmfNTk1aMxX91w=
-X-Received: from wmmh11.prod.google.com ([2002:a05:600c:414b:b0:46e:4943:289b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:350b:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-4711791cd8fmr37761135e9.34.1760706524883;
- Fri, 17 Oct 2025 06:08:44 -0700 (PDT)
-Date: Fri, 17 Oct 2025 13:08:43 +0000
-In-Reply-To: <20251016210541.650056-1-lossin@kernel.org>
+	s=arc-20240116; t=1760706585; c=relaxed/simple;
+	bh=78JM2O/8XlHKkqhm9D2UIkEARtsqqnPOP7Td7fHpLaI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=H2jX0GgduZ2sS2ZOzc30ST8TDzPl/wfJASIKdtfjWbQeEXvo2ZCFZ6LY09ATRWscgDscpvQCcM1Ui7EEE+X40bwcfkc6oD/veKh05011cu2xdKQVKbKbSAcuVZ2horLvNDxhvU9erQt1YhltOq92Uxg4X+L+lW/m2oC7Za3J/aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CjtUTSgO; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760706582; x=1792242582;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=78JM2O/8XlHKkqhm9D2UIkEARtsqqnPOP7Td7fHpLaI=;
+  b=CjtUTSgOmxffSB2BX8ozs3euYBQHbaKG5YeA5dx1txFw91CC7FU3eDa4
+   f53rC1Z+AKDBC1/M3vUpcUpW7ZRiD8dyXbSlh1JGEErNZkERlE651uuUV
+   u+nEYstwcI2F4Ki6Mg7Wm2WvGjOt4oNWxVAp3Q/jK6rm3UxWamK2DiWcE
+   uAl/8CVqpA1XWyRhuXE1GPBPohIJDdAuAQMF7ae748WyDIEO1VDLO1Rqn
+   /NNiSSKdRvC4j0Xv41bOD7lBzFns1/ZmHbbsjn2+F9O1qCgKk+ymlp4cu
+   qnNC2yGwIqNAJdcc+QWvc/qmPPxe+s3ZtbVrI86bhYalPHRj0lGEs+0el
+   A==;
+X-CSE-ConnectionGUID: q4HXyWFtRMy6R5r9zpEOgQ==
+X-CSE-MsgGUID: nApIGoigR76s3tcJ1E3unw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62963655"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="62963655"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 06:09:41 -0700
+X-CSE-ConnectionGUID: DOnud/CJQ5G3apkydmlTGg==
+X-CSE-MsgGUID: dMhqm7ezQe+cpizRixzeVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="186759212"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.123])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 06:09:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 17 Oct 2025 16:09:32 +0300 (EEST)
+To: Denis Benato <benato.denis96@gmail.com>
+cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    "Limonciello, Mario" <mario.limonciello@amd.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Alok Tiwari <alok.a.tiwari@oracle.com>, 
+    Derek John Clark <derekjohn.clark@gmail.com>, 
+    Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
+Subject: Re: [PATCH v14 9/9] platform/x86: asus-armoury: add ppt_* and nv_*
+ tuning knobs
+In-Reply-To: <20251015014736.1402045-10-benato.denis96@gmail.com>
+Message-ID: <ce2bc8a9-92c6-55e6-8ee4-ed716efa57a1@linux.intel.com>
+References: <20251015014736.1402045-1-benato.denis96@gmail.com> <20251015014736.1402045-10-benato.denis96@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016210541.650056-1-lossin@kernel.org>
-Message-ID: <aPI_2ye1h_yeExgF@google.com>
-Subject: Re: [PATCH] add `[pin_]init_scope` to execute code before creating an initializer
-From: Alice Ryhl <aliceryhl@google.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
-	Christian Schrefl <chrisi.schrefl@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 16, 2025 at 11:05:39PM +0200, Benno Lossin wrote:
-> In more complex cases, initializers need to run arbitrary code before
-> assigning initializers to fields. While this is possible using the
-> underscore codeblock feature (`_: {}`), values returned by such
-> functions cannot be used from later field initializers.
-> 
-> The two new functinos `[pin_]init_scope` allow users to first run some
-> fallible code and then return an initializer which the function turns
-> into a single initializer. This permits using the same value multiple
-> times by different fields.
-> 
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
+On Wed, 15 Oct 2025, Denis Benato wrote:
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> From: "Luke D. Jones" <luke@ljones.dev>
+> 
+> Adds the ppt_* and nv_* tuning knobs that are available via WMI methods
+> and adds proper min/max levels plus defaults.
+> 
+> The min/max are defined by ASUS and typically gained by looking at what
+> they allow in the ASUS Armoury Crate application - ASUS does not share
+> the values outside of this. It could also be possible to gain the AMD
+> values by use of ryzenadj and testing for the minimum stable value.
+> 
+> The general rule of thumb for adding to the match table is that if the
+> model range has a single CPU used throughout, then the DMI match can
+> omit the last letter of the model number as this is the GPU model.
+> 
+> If a min or max value is not provided it is assumed that the particular
+> setting is not supported. for example ppt_pl2_sppt_min/max is not set.
+> If a <ppt_setting>_def is not set then the default is assumed to be
+> <ppt_setting>_max
+> 
+> It is assumed that at least AC settings are available so that the
+> firmware attributes will be created - if no DC table is available
+> and power is on DC, then reading the attributes is -ENODEV.
+> 
+> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Tested-by: Mateusz Schyboll <dragonn@op.pl>
+> Tested-by: Porfet Lillian <porfet828@gmail.com>
+> ---
+>  drivers/platform/x86/asus-armoury.c        |  294 ++++-
+>  drivers/platform/x86/asus-armoury.h        | 1210 ++++++++++++++++++++
+>  include/linux/platform_data/x86/asus-wmi.h |    3 +
+>  3 files changed, 1501 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+> index e27f964aebf8..43a1e7017d16 100644
+> --- a/drivers/platform/x86/asus-armoury.c
+> +++ b/drivers/platform/x86/asus-armoury.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/platform_data/x86/asus-wmi.h>
+>  #include <linux/printk.h>
+> +#include <linux/power_supply.h>
+>  #include <linux/types.h>
+>  
+>  #include "asus-armoury.h"
+> @@ -45,6 +46,17 @@
+>  #define ASUS_MINI_LED_2024_STRONG 0x01
+>  #define ASUS_MINI_LED_2024_OFF    0x02
+>  
+> +/* Power tunable attribute name defines */
+> +#define ATTR_PPT_PL1_SPL        "ppt_pl1_spl"
+> +#define ATTR_PPT_PL2_SPPT       "ppt_pl2_sppt"
+> +#define ATTR_PPT_PL3_FPPT       "ppt_pl3_fppt"
+> +#define ATTR_PPT_APU_SPPT       "ppt_apu_sppt"
+> +#define ATTR_PPT_PLATFORM_SPPT  "ppt_platform_sppt"
+> +#define ATTR_NV_DYNAMIC_BOOST   "nv_dynamic_boost"
+> +#define ATTR_NV_TEMP_TARGET     "nv_temp_target"
+> +#define ATTR_NV_BASE_TGP        "nv_base_tgp"
+> +#define ATTR_NV_TGP             "nv_tgp"
+> +
+>  #define ASUS_POWER_CORE_MASK	GENMASK(15, 8)
+>  #define ASUS_PERF_CORE_MASK		GENMASK(7, 0)
+>  
+> @@ -73,11 +85,26 @@ struct cpu_cores {
+>  	u32 max_power_cores;
+>  };
+>  
+> +struct rog_tunables {
+> +	const struct power_limits *power_limits;
+> +	u32 ppt_pl1_spl;			// cpu
+> +	u32 ppt_pl2_sppt;			// cpu
+> +	u32 ppt_pl3_fppt;			// cpu
+> +	u32 ppt_apu_sppt;			// plat
+> +	u32 ppt_platform_sppt;		// plat
+> +
+> +	u32 nv_dynamic_boost;
+> +	u32 nv_temp_target;
+> +	u32 nv_tgp;
+> +};
+> +
+>  static struct asus_armoury_priv {
+>  	struct device *fw_attr_dev;
+>  	struct kset *fw_attr_kset;
+>  
+>  	struct cpu_cores *cpu_cores;
+> +	/* Index 0 for DC, 1 for AC */
+> +	struct rog_tunables *rog_tunables[2];
+>  	u32 mini_led_dev_id;
+>  	u32 gpu_mux_dev_id;
+>  	/*
+> @@ -719,7 +746,34 @@ static ssize_t cores_efficiency_current_value_store(struct kobject *kobj,
+>  ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
+>  		    "Set the max available efficiency cores");
+>  
+> +/* Define helper to access the current power mode tunable values */
+> +static inline struct rog_tunables *get_current_tunables(void)
+> +{
+> +	return asus_armoury
+> +		.rog_tunables[power_supply_is_system_supplied() ? 1 : 0];
+
+Please name these indexes.
+
+You can split this to multiple statements so it can be more favorably 
+indented.
+
+> +}
+> +
+>  /* Simple attribute creation */
+> +ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, ATTR_PPT_PL1_SPL, ASUS_WMI_DEVID_PPT_PL1_SPL,
+> +		       "Set the CPU slow package limit");
+> +ATTR_GROUP_ROG_TUNABLE(ppt_pl2_sppt, ATTR_PPT_PL2_SPPT, ASUS_WMI_DEVID_PPT_PL2_SPPT,
+> +		       "Set the CPU fast package limit");
+> +ATTR_GROUP_ROG_TUNABLE(ppt_pl3_fppt, ATTR_PPT_PL3_FPPT, ASUS_WMI_DEVID_PPT_PL3_FPPT,
+> +		       "Set the CPU fastest package limit");
+> +ATTR_GROUP_ROG_TUNABLE(ppt_apu_sppt, ATTR_PPT_APU_SPPT, ASUS_WMI_DEVID_PPT_APU_SPPT,
+> +		       "Set the APU package limit");
+> +ATTR_GROUP_ROG_TUNABLE(ppt_platform_sppt, ATTR_PPT_PLATFORM_SPPT, ASUS_WMI_DEVID_PPT_PLAT_SPPT,
+> +		       "Set the platform package limit");
+> +ATTR_GROUP_ROG_TUNABLE(nv_dynamic_boost, ATTR_NV_DYNAMIC_BOOST, ASUS_WMI_DEVID_NV_DYN_BOOST,
+> +		       "Set the Nvidia dynamic boost limit");
+> +ATTR_GROUP_ROG_TUNABLE(nv_temp_target, ATTR_NV_TEMP_TARGET, ASUS_WMI_DEVID_NV_THERM_TARGET,
+> +		       "Set the Nvidia max thermal limit");
+> +ATTR_GROUP_ROG_TUNABLE(nv_tgp, "nv_tgp", ASUS_WMI_DEVID_DGPU_SET_TGP,
+> +		       "Set the additional TGP on top of the base TGP");
+> +ATTR_GROUP_INT_VALUE_ONLY_RO(nv_base_tgp, ATTR_NV_BASE_TGP, ASUS_WMI_DEVID_DGPU_BASE_TGP,
+> +			     "Read the base TGP value");
+> +
+> +
+>  ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE, "0;1;2",
+>  		       "Show the current mode of charging");
+>  
+> @@ -746,6 +800,16 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+>  	{ &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>  	{ &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>  
+> +	{ &ppt_pl1_spl_attr_group, ASUS_WMI_DEVID_PPT_PL1_SPL },
+> +	{ &ppt_pl2_sppt_attr_group, ASUS_WMI_DEVID_PPT_PL2_SPPT },
+> +	{ &ppt_pl3_fppt_attr_group, ASUS_WMI_DEVID_PPT_PL3_FPPT },
+> +	{ &ppt_apu_sppt_attr_group, ASUS_WMI_DEVID_PPT_APU_SPPT },
+> +	{ &ppt_platform_sppt_attr_group, ASUS_WMI_DEVID_PPT_PLAT_SPPT },
+> +	{ &nv_dynamic_boost_attr_group, ASUS_WMI_DEVID_NV_DYN_BOOST },
+> +	{ &nv_temp_target_attr_group, ASUS_WMI_DEVID_NV_THERM_TARGET },
+> +	{ &nv_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
+> +	{ &nv_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
+> +
+>  	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+>  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+>  	{ &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
+> @@ -754,8 +818,75 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+>  	{ &screen_auto_brightness_attr_group, ASUS_WMI_DEVID_SCREEN_AUTO_BRIGHTNESS },
+>  };
+>  
+> +/**
+> + * is_power_tunable_attr - Determines if an attribute is a power-related tunable
+> + * @name: The name of the attribute to check
+> + *
+> + * This function checks if the given attribute name is related to power tuning.
+> + *
+> + * Return: true if the attribute is a power-related tunable, false otherwise
+> + */
+> +static bool is_power_tunable_attr(const char *name)
+> +{
+> +	static const char * const power_tunable_attrs[] = {
+> +		ATTR_PPT_PL1_SPL,	ATTR_PPT_PL2_SPPT,
+> +		ATTR_PPT_PL3_FPPT,	ATTR_PPT_APU_SPPT,
+> +		ATTR_PPT_PLATFORM_SPPT, ATTR_NV_DYNAMIC_BOOST,
+> +		ATTR_NV_TEMP_TARGET,	ATTR_NV_BASE_TGP,
+> +		ATTR_NV_TGP
+> +	};
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(power_tunable_attrs); i++) {
+> +		if (!strcmp(name, power_tunable_attrs[i]))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/**
+> + * has_valid_limit - Checks if a power-related attribute has a valid limit value
+> + * @name: The name of the attribute to check
+> + * @limits: Pointer to the power_limits structure containing limit values
+> + *
+> + * This function checks if a power-related attribute has a valid limit value.
+> + * It returns false if limits is NULL or if the corresponding limit value is zero.
+> + *
+> + * Return: true if the attribute has a valid limit value, false otherwise
+> + */
+> +static bool has_valid_limit(const char *name, const struct power_limits *limits)
+> +{
+> +	u32 limit_value = 0;
+> +
+> +	if (!limits)
+> +		return false;
+> +
+> +	if (!strcmp(name, ATTR_PPT_PL1_SPL))
+> +		limit_value = limits->ppt_pl1_spl_max;
+> +	else if (!strcmp(name, ATTR_PPT_PL2_SPPT))
+> +		limit_value = limits->ppt_pl2_sppt_max;
+> +	else if (!strcmp(name, ATTR_PPT_PL3_FPPT))
+> +		limit_value = limits->ppt_pl3_fppt_max;
+> +	else if (!strcmp(name, ATTR_PPT_APU_SPPT))
+> +		limit_value = limits->ppt_apu_sppt_max;
+> +	else if (!strcmp(name, ATTR_PPT_PLATFORM_SPPT))
+> +		limit_value = limits->ppt_platform_sppt_max;
+> +	else if (!strcmp(name, ATTR_NV_DYNAMIC_BOOST))
+> +		limit_value = limits->nv_dynamic_boost_max;
+> +	else if (!strcmp(name, ATTR_NV_TEMP_TARGET))
+> +		limit_value = limits->nv_temp_target_max;
+> +	else if (!strcmp(name, ATTR_NV_BASE_TGP) ||
+> +		 !strcmp(name, ATTR_NV_TGP))
+> +		limit_value = limits->nv_tgp_max;
+> +
+> +	return limit_value > 0;
+> +}
+> +
+>  static int asus_fw_attr_add(void)
+>  {
+> +	const struct power_limits *limits;
+> +	bool should_create;
+> +	const char *name;
+>  	int err, i;
+>  
+>  	asus_armoury.fw_attr_dev = device_create(&firmware_attributes_class, NULL, MKDEV(0, 0),
+> @@ -812,12 +943,28 @@ static int asus_fw_attr_add(void)
+>  		if (!asus_wmi_is_present(armoury_attr_groups[i].wmi_devid))
+>  			continue;
+>  
+> -		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> -					 armoury_attr_groups[i].attr_group);
+> -		if (err) {
+> -			pr_err("Failed to create sysfs-group for %s\n",
+> -			       armoury_attr_groups[i].attr_group->name);
+> -			goto err_remove_groups;
+> +		/* Always create by default, unless PPT is not present */
+> +		should_create = true;
+> +		name = armoury_attr_groups[i].attr_group->name;
+> +
+> +		/* Check if this is a power-related tunable requiring limits */
+> +		if (asus_armoury.rog_tunables[1] && asus_armoury.rog_tunables[1]->power_limits &&
+> +		    is_power_tunable_attr(name)) {
+> +			limits = asus_armoury.rog_tunables[1]->power_limits;
+> +			/* Check only AC, if DC is not present then AC won't be either */
+> +			should_create = has_valid_limit(name, limits);
+> +			if (!should_create)
+> +				pr_debug("Missing max value for tunable %s\n", name);
+> +		}
+> +
+> +		if (should_create) {
+> +			err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> +				armoury_attr_groups[i].attr_group);
+
+Misindented.
+
+> +			if (err) {
+> +				pr_err("Failed to create sysfs-group for %s\n",
+> +				       armoury_attr_groups[i].attr_group->name);
+> +				goto err_remove_groups;
+> +			}
+>  		}
+>  	}
+>  
+> @@ -846,6 +993,135 @@ static int asus_fw_attr_add(void)
+>  
+>  /* Init / exit ****************************************************************/
+>  
+> +/* Set up the min/max and defaults for ROG tunables */
+> +static void init_rog_tunables(void)
+> +{
+> +	const struct power_limits *ac_limits, *dc_limits;
+> +	const struct power_data *power_data;
+> +	const struct dmi_system_id *dmi_id;
+> +	bool ac_initialized = false, dc_initialized = false;
+> +
+> +	/* Match the system against the power_limits table */
+> +	dmi_id = dmi_first_match(power_limits);
+> +	if (!dmi_id) {
+> +		pr_warn("No matching power limits found for this system\n");
+> +		return;
+> +	}
+> +
+> +	/* Get the power data for this system */
+> +	power_data = dmi_id->driver_data;
+> +	if (!power_data) {
+> +		pr_info("No power data available for this system\n");
+> +		return;
+> +	}
+> +
+> +	/* Initialize AC power tunables */
+> +	ac_limits = power_data->ac_data;
+> +	if (ac_limits) {
+> +		asus_armoury.rog_tunables[1] =
+> +			kzalloc(sizeof(*asus_armoury.rog_tunables[1]), GFP_KERNEL);
+> +		if (!asus_armoury.rog_tunables[1])
+> +			goto err_nomem;
+> +
+> +		asus_armoury.rog_tunables[1]->power_limits = ac_limits;
+
+Please add a local variable for asus_armoury.rog_tunables[1] (which 
+should be using that named index anyway making it even longer if done 
+w/o local var).
+
+> +
+> +		/* Set initial AC values */
+> +		asus_armoury.rog_tunables[1]->ppt_pl1_spl =
+> +			ac_limits->ppt_pl1_spl_def ?
+> +				ac_limits->ppt_pl1_spl_def :
+> +				ac_limits->ppt_pl1_spl_max;
+> +
+> +		asus_armoury.rog_tunables[1]->ppt_pl2_sppt =
+> +			ac_limits->ppt_pl2_sppt_def ?
+> +				ac_limits->ppt_pl2_sppt_def :
+> +				ac_limits->ppt_pl2_sppt_max;
+> +
+> +		asus_armoury.rog_tunables[1]->ppt_pl3_fppt =
+> +			ac_limits->ppt_pl3_fppt_def ?
+> +				ac_limits->ppt_pl3_fppt_def :
+> +				ac_limits->ppt_pl3_fppt_max;
+> +
+> +		asus_armoury.rog_tunables[1]->ppt_apu_sppt =
+> +			ac_limits->ppt_apu_sppt_def ?
+> +				ac_limits->ppt_apu_sppt_def :
+> +				ac_limits->ppt_apu_sppt_max;
+> +
+> +		asus_armoury.rog_tunables[1]->ppt_platform_sppt =
+> +			ac_limits->ppt_platform_sppt_def ?
+> +				ac_limits->ppt_platform_sppt_def :
+> +				ac_limits->ppt_platform_sppt_max;
+> +
+> +		asus_armoury.rog_tunables[1]->nv_dynamic_boost =
+> +			ac_limits->nv_dynamic_boost_max;
+> +		asus_armoury.rog_tunables[1]->nv_temp_target =
+> +			ac_limits->nv_temp_target_max;
+> +		asus_armoury.rog_tunables[1]->nv_tgp = ac_limits->nv_tgp_max;
+> +
+> +		ac_initialized = true;
+> +		pr_debug("AC power limits initialized for %s\n", dmi_id->matches[0].substr);
+> +	}
+> +
+> +	/* Initialize DC power tunables */
+> +	dc_limits = power_data->dc_data;
+> +	if (dc_limits) {
+> +		asus_armoury.rog_tunables[0] =
+> +			kzalloc(sizeof(*asus_armoury.rog_tunables[0]), GFP_KERNEL);
+> +		if (!asus_armoury.rog_tunables[0]) {
+> +			if (ac_initialized)
+> +				kfree(asus_armoury.rog_tunables[1]);
+> +			goto err_nomem;
+> +		}
+> +
+> +		asus_armoury.rog_tunables[0]->power_limits = dc_limits;
+
+Ditto.
+
+> +
+> +		/* Set initial DC values */
+> +		asus_armoury.rog_tunables[0]->ppt_pl1_spl =
+> +			dc_limits->ppt_pl1_spl_def ?
+> +				dc_limits->ppt_pl1_spl_def :
+> +				dc_limits->ppt_pl1_spl_max;
+> +
+> +		asus_armoury.rog_tunables[0]->ppt_pl2_sppt =
+> +			dc_limits->ppt_pl2_sppt_def ?
+> +				dc_limits->ppt_pl2_sppt_def :
+> +				dc_limits->ppt_pl2_sppt_max;
+> +
+> +		asus_armoury.rog_tunables[0]->ppt_pl3_fppt =
+> +			dc_limits->ppt_pl3_fppt_def ?
+> +				dc_limits->ppt_pl3_fppt_def :
+> +				dc_limits->ppt_pl3_fppt_max;
+> +
+> +		asus_armoury.rog_tunables[0]->ppt_apu_sppt =
+> +			dc_limits->ppt_apu_sppt_def ?
+> +				dc_limits->ppt_apu_sppt_def :
+> +				dc_limits->ppt_apu_sppt_max;
+> +
+> +		asus_armoury.rog_tunables[0]->ppt_platform_sppt =
+> +			dc_limits->ppt_platform_sppt_def ?
+> +				dc_limits->ppt_platform_sppt_def :
+> +				dc_limits->ppt_platform_sppt_max;
+> +
+> +		asus_armoury.rog_tunables[0]->nv_dynamic_boost =
+> +			dc_limits->nv_dynamic_boost_max;
+> +		asus_armoury.rog_tunables[0]->nv_temp_target =
+> +			dc_limits->nv_temp_target_max;
+> +		asus_armoury.rog_tunables[0]->nv_tgp = dc_limits->nv_tgp_max;
+> +
+> +		dc_initialized = true;
+> +		pr_debug("DC power limits initialized for %s\n", dmi_id->matches[0].substr);
+> +	}
+> +
+> +	if (!ac_initialized)
+> +		pr_debug("No AC PPT limits defined\n");
+
+These can be moved into else blocks, no?
+
+> +
+> +	if (!dc_initialized)
+> +		pr_debug("No DC PPT limits defined\n");
+> +
+> +	return;
+> +
+> +err_nomem:
+> +	pr_err("Failed to allocate memory for tunables\n");
+> +}
+> +
+>  static int __init asus_fw_init(void)
+>  {
+>  	char *wmi_uid;
+> @@ -870,6 +1146,9 @@ static int __init asus_fw_init(void)
+>  		}
+>  	}
+>  
+> +	init_rog_tunables();
+> +
+> +	/* Must always be last step to ensure data is available */
+>  	return asus_fw_attr_add();
+>  }
+>  
+> @@ -878,6 +1157,9 @@ static void __exit asus_fw_exit(void)
+>  	sysfs_remove_file(&asus_armoury.fw_attr_kset->kobj, &pending_reboot.attr);
+>  	kset_unregister(asus_armoury.fw_attr_kset);
+>  	device_destroy(&firmware_attributes_class, MKDEV(0, 0));
+> +
+> +	kfree(asus_armoury.rog_tunables[0]);
+> +	kfree(asus_armoury.rog_tunables[1]);
+
+Reverse order to match the order on the init side.
+
+>  }
+>  
+>  module_init(asus_fw_init);
+> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
+> index a6c4caefdef9..d99db5f5f6a0 100644
+> --- a/drivers/platform/x86/asus-armoury.h
+> +++ b/drivers/platform/x86/asus-armoury.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _ASUS_ARMOURY_H_
+>  #define _ASUS_ARMOURY_H_
+>  
+> +#include <linux/dmi.h>
+>  #include <linux/types.h>
+>  #include <linux/platform_device.h>
+>  
+> @@ -189,4 +190,1213 @@
+>  		.name = _fsname, .attrs = _attrname##_attrs		\
+>  	}
+>  
+> +#define ATTR_GROUP_INT_VALUE_ONLY_RO(_attrname, _fsname, _wmi, _dispname)	\
+> +	WMI_SHOW_INT(_attrname##_current_value, "%d\n", _wmi);			\
+> +	static struct kobj_attribute attr_##_attrname##_current_value =		\
+> +		__ASUS_ATTR_RO(_attrname, current_value);			\
+> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);		\
+> +	static struct kobj_attribute attr_##_attrname##_type =			\
+> +		__ASUS_ATTR_RO_AS(type, int_type_show);				\
+> +	static struct attribute *_attrname##_attrs[] = {			\
+> +		&attr_##_attrname##_current_value.attr,				\
+> +		&attr_##_attrname##_display_name.attr,				\
+> +		&attr_##_attrname##_type.attr, NULL				\
+> +	};									\
+> +	static const struct attribute_group _attrname##_attr_group = {		\
+> +		.name = _fsname, .attrs = _attrname##_attrs			\
+> +	}
+> +
+> +/*
+> + * ROG PPT attributes need a little different in setup as they
+> + * require rog_tunables members.
+> + */
+> +
+> +#define __ROG_TUNABLE_SHOW(_prop, _attrname, _val)				\
+> +	static ssize_t _attrname##_##_prop##_show(				\
+> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf)	\
+> +	{									\
+> +		struct rog_tunables *tunables = get_current_tunables();		\
+> +										\
+> +		if (!tunables || !tunables->power_limits)			\
+> +			return -ENODEV;						\
+> +										\
+> +		return sysfs_emit(buf, "%d\n", tunables->power_limits->_val);	\
+> +	}									\
+> +	static struct kobj_attribute attr_##_attrname##_##_prop =		\
+> +		__ASUS_ATTR_RO(_attrname, _prop)
+> +
+> +#define __ROG_TUNABLE_SHOW_DEFAULT(_attrname)					\
+> +	static ssize_t _attrname##_default_value_show(				\
+> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf)	\
+> +	{									\
+> +		struct rog_tunables *tunables = get_current_tunables();		\
+> +										\
+> +		if (!tunables || !tunables->power_limits)			\
+> +			return -ENODEV;						\
+> +										\
+> +		return sysfs_emit(						\
+> +			buf, "%d\n",						\
+> +			tunables->power_limits->_attrname##_def ?		\
+> +				tunables->power_limits->_attrname##_def :	\
+> +				tunables->power_limits->_attrname##_max);	\
+> +	}									\
+> +	static struct kobj_attribute attr_##_attrname##_default_value =		\
+> +		__ASUS_ATTR_RO(_attrname, default_value)
+> +
+> +#define __ROG_TUNABLE_RW(_attr, _wmi)						\
+> +	static ssize_t _attr##_current_value_store(				\
+> +		struct kobject *kobj, struct kobj_attribute *attr,		\
+> +		const char *buf, size_t count)					\
+> +	{									\
+> +		struct rog_tunables *tunables = get_current_tunables();		\
+> +										\
+> +		if (!tunables || !tunables->power_limits)			\
+> +			return -ENODEV;						\
+> +										\
+> +		return attr_uint_store(kobj, attr, buf, count,			\
+> +				       tunables->power_limits->_attr##_min,	\
+> +				       tunables->power_limits->_attr##_max,	\
+> +				       &tunables->_attr, _wmi);			\
+> +	}									\
+> +	static ssize_t _attr##_current_value_show(				\
+> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf)	\
+> +	{									\
+> +		struct rog_tunables *tunables = get_current_tunables();		\
+> +										\
+> +		if (!tunables)							\
+> +			return -ENODEV;						\
+> +										\
+> +		return sysfs_emit(buf, "%u\n", tunables->_attr);		\
+> +	}									\
+> +	static struct kobj_attribute attr_##_attr##_current_value =		\
+> +		__ASUS_ATTR_RW(_attr, current_value)
+> +
+> +#define ATTR_GROUP_ROG_TUNABLE(_attrname, _fsname, _wmi, _dispname)	\
+> +	__ROG_TUNABLE_RW(_attrname, _wmi);				\
+> +	__ROG_TUNABLE_SHOW_DEFAULT(_attrname);				\
+> +	__ROG_TUNABLE_SHOW(min_value, _attrname, _attrname##_min);	\
+> +	__ROG_TUNABLE_SHOW(max_value, _attrname, _attrname##_max);	\
+> +	__ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);	\
+> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);	\
+> +	static struct kobj_attribute attr_##_attrname##_type =		\
+> +		__ASUS_ATTR_RO_AS(type, int_type_show);			\
+> +	static struct attribute *_attrname##_attrs[] = {		\
+> +		&attr_##_attrname##_current_value.attr,			\
+> +		&attr_##_attrname##_default_value.attr,			\
+> +		&attr_##_attrname##_min_value.attr,			\
+> +		&attr_##_attrname##_max_value.attr,			\
+> +		&attr_##_attrname##_scalar_increment.attr,		\
+> +		&attr_##_attrname##_display_name.attr,			\
+> +		&attr_##_attrname##_type.attr,				\
+> +		NULL							\
+> +	};								\
+> +	static const struct attribute_group _attrname##_attr_group = {	\
+> +		.name = _fsname, .attrs = _attrname##_attrs		\
+> +	}
+> +
+> +/* Default is always the maximum value unless *_def is specified */
+> +struct power_limits {
+> +	u8 ppt_pl1_spl_min;
+> +	u8 ppt_pl1_spl_def;
+> +	u8 ppt_pl1_spl_max;
+> +	u8 ppt_pl2_sppt_min;
+> +	u8 ppt_pl2_sppt_def;
+> +	u8 ppt_pl2_sppt_max;
+> +	u8 ppt_pl3_fppt_min;
+> +	u8 ppt_pl3_fppt_def;
+> +	u8 ppt_pl3_fppt_max;
+> +	u8 ppt_apu_sppt_min;
+> +	u8 ppt_apu_sppt_def;
+> +	u8 ppt_apu_sppt_max;
+> +	u8 ppt_platform_sppt_min;
+> +	u8 ppt_platform_sppt_def;
+> +	u8 ppt_platform_sppt_max;
+> +	/* Nvidia GPU specific, default is always max */
+> +	u8 nv_dynamic_boost_def; // unused. exists for macro
+> +	u8 nv_dynamic_boost_min;
+> +	u8 nv_dynamic_boost_max;
+> +	u8 nv_temp_target_def; // unused. exists for macro
+> +	u8 nv_temp_target_min;
+> +	u8 nv_temp_target_max;
+> +	u8 nv_tgp_def; // unused. exists for macro
+> +	u8 nv_tgp_min;
+> +	u8 nv_tgp_max;
+> +};
+> +
+> +struct power_data {
+> +		const struct power_limits *ac_data;
+> +		const struct power_limits *dc_data;
+> +		bool requires_fan_curve;
+> +};
+> +
+> +/*
+> + * For each available attribute there must be a min and a max.
+> + * _def is not required and will be assumed to be default == max if missing.
+> + */
+> +static const struct dmi_system_id power_limits[] = {
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA401W"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 75,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 30,
+> +				.ppt_pl2_sppt_min = 31,
+> +				.ppt_pl2_sppt_max = 44,
+> +				.ppt_pl3_fppt_min = 45,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA507N"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 45,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 54,
+> +				.ppt_pl2_sppt_max = 65,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA507R"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80
+> +			},
+> +			.dc_data = NULL
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA507X"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 85,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 45,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 54,
+> +				.ppt_pl2_sppt_max = 65,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA507Z"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 105,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 15,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 85,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 45,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 60,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA607P"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 30,
+> +				.ppt_pl1_spl_def = 100,
+> +				.ppt_pl1_spl_max = 135,
+> +				.ppt_pl2_sppt_min = 30,
+> +				.ppt_pl2_sppt_def = 115,
+> +				.ppt_pl2_sppt_max = 135,
+> +				.ppt_pl3_fppt_min = 30,
+> +				.ppt_pl3_fppt_max = 135,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 115,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_def = 45,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_def = 60,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 25,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA608WI"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 90,
+> +				.ppt_pl1_spl_max = 90,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 90,
+> +				.ppt_pl2_sppt_max = 90,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_def = 90,
+> +				.ppt_pl3_fppt_max = 90,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 115,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 45,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 54,
+> +				.ppt_pl2_sppt_max = 65,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_def = 65,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA617NS"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 15,
+> +				.ppt_apu_sppt_max = 80,
+> +				.ppt_platform_sppt_min = 30,
+> +				.ppt_platform_sppt_max = 120
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 25,
+> +				.ppt_apu_sppt_max = 35,
+> +				.ppt_platform_sppt_min = 45,
+> +				.ppt_platform_sppt_max = 100
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA617NT"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 15,
+> +				.ppt_apu_sppt_max = 80,
+> +				.ppt_platform_sppt_min = 30,
+> +				.ppt_platform_sppt_max = 115
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 15,
+> +				.ppt_apu_sppt_max = 45,
+> +				.ppt_platform_sppt_min = 30,
+> +				.ppt_platform_sppt_max = 50
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FA617XS"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 15,
+> +				.ppt_apu_sppt_max = 80,
+> +				.ppt_platform_sppt_min = 30,
+> +				.ppt_platform_sppt_max = 120,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 25,
+> +				.ppt_apu_sppt_max = 35,
+> +				.ppt_platform_sppt_min = 45,
+> +				.ppt_platform_sppt_max = 100,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FX507VI"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 135,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 135,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 45,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 60,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "FX507Z"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 90,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 135,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 15,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 45,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 60,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GA401Q"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_max = 80,
+> +			},
+> +			.dc_data = NULL
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			// This model is full AMD. No Nvidia dGPU.
+> +			DMI_MATCH(DMI_BOARD_NAME, "GA402R"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 15,
+> +				.ppt_apu_sppt_max = 80,
+> +				.ppt_platform_sppt_min = 30,
+> +				.ppt_platform_sppt_max = 115,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_apu_sppt_min = 25,
+> +				.ppt_apu_sppt_def = 30,
+> +				.ppt_apu_sppt_max = 45,
+> +				.ppt_platform_sppt_min = 40,
+> +				.ppt_platform_sppt_max = 60,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GA402X"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 35,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_def = 65,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 35,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 65,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 35,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GA503R"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 35,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 65,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 25,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 54,
+> +				.ppt_pl2_sppt_max = 60,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GA605W"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 85,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 31,
+> +				.ppt_pl2_sppt_max = 44,
+> +				.ppt_pl3_fppt_min = 45,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GU603Z"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 60,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 135,
+> +				/* Only allowed in AC mode */
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 40,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 40,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GU604V"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 65,
+> +				.ppt_pl1_spl_max = 120,
+> +				.ppt_pl2_sppt_min = 65,
+> +				.ppt_pl2_sppt_max = 150,
+> +				/* Only allowed in AC mode */
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 40,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 40,
+> +				.ppt_pl2_sppt_max = 60,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GU605CW"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 45,
+> +				.ppt_pl1_spl_max = 85,
+> +				.ppt_pl2_sppt_min = 56,
+> +				.ppt_pl2_sppt_max = 110,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 80,
+> +				.nv_tgp_def = 90,
+> +				.nv_tgp_max = 110,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 85,
+> +				.ppt_pl2_sppt_min = 32,
+> +				.ppt_pl2_sppt_max = 110,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 90,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 135,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 38,
+> +				.ppt_pl2_sppt_max = 53,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GV301Q"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 45,
+> +				.ppt_pl2_sppt_min = 65,
+> +				.ppt_pl2_sppt_max = 80,
+> +			},
+> +			.dc_data = NULL
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GV301R"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 45,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 54,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 35,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GV601R"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 35,
+> +				.ppt_pl1_spl_max = 90,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 54,
+> +				.ppt_pl2_sppt_max = 100,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_def = 80,
+> +				.ppt_pl3_fppt_max = 125,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 28,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 54,
+> +				.ppt_pl2_sppt_max = 60,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_def = 80,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GV601V"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_def = 100,
+> +				.ppt_pl1_spl_max = 110,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 135,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 40,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 40,
+> +				.ppt_pl2_sppt_max = 60,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "GX650P"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 110,
+> +				.ppt_pl1_spl_max = 130,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 125,
+> +				.ppt_pl2_sppt_max = 130,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_def = 125,
+> +				.ppt_pl3_fppt_max = 135,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_def = 25,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_def = 35,
+> +				.ppt_pl2_sppt_max = 65,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_def = 42,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G513I"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				/* Yes this laptop is very limited */
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_max = 80,
+> +			},
+> +			.dc_data = NULL,
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G513QM"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				/* Yes this laptop is very limited */
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 100,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_max = 190,
+> +			},
+> +			.dc_data = NULL,
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G513R"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 35,
+> +				.ppt_pl1_spl_max = 90,
+> +				.ppt_pl2_sppt_min = 54,
+> +				.ppt_pl2_sppt_max = 100,
+> +				.ppt_pl3_fppt_min = 54,
+> +				.ppt_pl3_fppt_max = 125,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 50,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 50,
+> +				.ppt_pl3_fppt_min = 28,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G614J"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 140,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 175,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 55,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 70,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G634J"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 140,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 175,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 55,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 70,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G713PV"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 30,
+> +				.ppt_pl1_spl_def = 120,
+> +				.ppt_pl1_spl_max = 130,
+> +				.ppt_pl2_sppt_min = 65,
+> +				.ppt_pl2_sppt_def = 125,
+> +				.ppt_pl2_sppt_max = 130,
+> +				.ppt_pl3_fppt_min = 65,
+> +				.ppt_pl3_fppt_def = 125,
+> +				.ppt_pl3_fppt_max = 130,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 65,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 75,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G733C"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 170,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 175,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 35,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G733P"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 30,
+> +				.ppt_pl1_spl_def = 100,
+> +				.ppt_pl1_spl_max = 130,
+> +				.ppt_pl2_sppt_min = 65,
+> +				.ppt_pl2_sppt_def = 125,
+> +				.ppt_pl2_sppt_max = 130,
+> +				.ppt_pl3_fppt_min = 65,
+> +				.ppt_pl3_fppt_def = 125,
+> +				.ppt_pl3_fppt_max = 130,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 65,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 65,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 75,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G814J"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 140,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 140,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 55,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 70,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "G834J"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 28,
+> +				.ppt_pl1_spl_max = 140,
+> +				.ppt_pl2_sppt_min = 28,
+> +				.ppt_pl2_sppt_max = 175,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 25,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 55,
+> +				.ppt_pl2_sppt_min = 25,
+> +				.ppt_pl2_sppt_max = 70,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			},
+> +			.requires_fan_curve = true,
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "H7606W"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 15,
+> +				.ppt_pl1_spl_max = 80,
+> +				.ppt_pl2_sppt_min = 35,
+> +				.ppt_pl2_sppt_max = 80,
+> +				.ppt_pl3_fppt_min = 35,
+> +				.ppt_pl3_fppt_max = 80,
+> +				.nv_dynamic_boost_min = 5,
+> +				.nv_dynamic_boost_max = 20,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +				.nv_tgp_min = 55,
+> +				.nv_tgp_max = 85,
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 25,
+> +				.ppt_pl1_spl_max = 35,
+> +				.ppt_pl2_sppt_min = 31,
+> +				.ppt_pl2_sppt_max = 44,
+> +				.ppt_pl3_fppt_min = 45,
+> +				.ppt_pl3_fppt_max = 65,
+> +				.nv_temp_target_min = 75,
+> +				.nv_temp_target_max = 87,
+> +			}
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "RC71"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 7,
+> +				.ppt_pl1_spl_max = 30,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_max = 43,
+> +				.ppt_pl3_fppt_min = 15,
+> +				.ppt_pl3_fppt_max = 53
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 7,
+> +				.ppt_pl1_spl_def = 15,
+> +				.ppt_pl1_spl_max = 25,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_def = 20,
+> +				.ppt_pl2_sppt_max = 30,
+> +				.ppt_pl3_fppt_min = 15,
+> +				.ppt_pl3_fppt_def = 25,
+> +				.ppt_pl3_fppt_max = 35
+> +			}
+
+Please check you've a comma in any non-terminator entry.
+
+> +		},
+> +	},
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_NAME, "RC72"),
+> +		},
+> +		.driver_data = &(struct power_data) {
+> +			.ac_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 7,
+> +				.ppt_pl1_spl_max = 30,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_max = 43,
+> +				.ppt_pl3_fppt_min = 15,
+> +				.ppt_pl3_fppt_max = 53
+> +			},
+> +			.dc_data = &(struct power_limits) {
+> +				.ppt_pl1_spl_min = 7,
+> +				.ppt_pl1_spl_def = 17,
+> +				.ppt_pl1_spl_max = 25,
+> +				.ppt_pl2_sppt_min = 15,
+> +				.ppt_pl2_sppt_def = 24,
+> +				.ppt_pl2_sppt_max = 30,
+> +				.ppt_pl3_fppt_min = 15,
+> +				.ppt_pl3_fppt_def = 30,
+> +				.ppt_pl3_fppt_max = 35
+> +			}
+> +		},
+> +	},
+> +	{}
+> +};
+> +
+>  #endif /* _ASUS_ARMOURY_H_ */
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 3d236f8498d8..8fedf818563f 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -145,6 +145,9 @@
+>  
+>  #define ASUS_WMI_DEVID_APU_MEM		0x000600C1
+>  
+> +#define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
+> +#define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
+> +
+>  /* gpu mux switch, 0 = dGPU, 1 = Optimus */
+>  #define ASUS_WMI_DEVID_GPU_MUX		0x00090016
+>  #define ASUS_WMI_DEVID_GPU_MUX_VIVO	0x00090026
+> 
+
+-- 
+ i.
+
 
