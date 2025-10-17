@@ -1,184 +1,104 @@
-Return-Path: <linux-kernel+bounces-858514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE17BEB069
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703E4BEB0AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38C704EC892
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 043E13BAA0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477FA2FE577;
-	Fri, 17 Oct 2025 17:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C062FFDC6;
+	Fri, 17 Oct 2025 17:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="crq1HVv8"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3b3JcaV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0952FE56A
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086632F7455;
+	Fri, 17 Oct 2025 17:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760721068; cv=none; b=M9m8boezXAWMtubw25+dCfIcJFr98E7Zj9KJBShZIlLaRL9V8bdc4a4cOvLvGSlJh8M+CkxRTP0y8CnWCiSsOJk3MDVSMPpReAMAvvuTuQ09+AVqsAVN+iQvWZsrLdPNqg1utb1TdWgdJv9R0GpnNiiDG2K7yrUakSxwx+1QZ/U=
+	t=1760721237; cv=none; b=EPzmRL0/G5F5C2pR6rSmnDagFWvd5TZpjXbZ95sfCrPn7Nb63uhR0pHlKybWFqO+tJFhgkgc/bF7PmtNzdZNlI5tqqu9KAo5ivU3Z6tThaOtVvIAPYimx/cCmTA/by5HSkzkWMaPbbUTQEJVgoi4qwkwOXrVcXg9cNYoBMOPZ2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760721068; c=relaxed/simple;
-	bh=aBjjIxnkY/FA3VjaRF/v5raEcuHOjy9Oe4kTong4tPk=;
+	s=arc-20240116; t=1760721237; c=relaxed/simple;
+	bh=Zc+ypsDehD+D6EjfX9MaxxSVOwS713BdXCX/6JkDy1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oo6yBbWTDMwb+BCNlUYaBH0r7iV3ZXtuvOY3F1y1DXtgbeiFjvbxh8+Kw4pwPRZZkn/hexDKfmixWxSJCHE7JTlHxHV4lDrOy2fmRhvOmvP/0cisLXkpq3DCmnVEiNdRVIm4/RYm4LlBr7e8P5cWMG80hcW/m4SjId8Rxli3spg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=crq1HVv8; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3352018e051so2552576a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760721064; x=1761325864; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wBM/oeHMFZtatvJ+zW6/cnV/R+5GapNosgNZTWLHrZg=;
-        b=crq1HVv8qH695bk3+v5Cz9kS/qrgPWdQ+zJLT3PY0JJ8YKP3aBkrnfiAeOjnylfV70
-         a+MQaEhTO7ktQ710/nlibXmsxK9xO8J6PrMcSn6nefbYxkjIzUdwMKR9+6YTj/0hFfn1
-         fxIM9WNbdM+YFxjwiu0xcEA9gfklIZ3MJm5MY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760721064; x=1761325864;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wBM/oeHMFZtatvJ+zW6/cnV/R+5GapNosgNZTWLHrZg=;
-        b=C7Ds+L9lM4VVfSw4YqbOCXRLIlR5/oLOUzjbKU0UymmKGr9hjsDwCzO10U+dAd2+4n
-         ZHHmQ/n0Yqnt3VSaa98TqMOtqfYKmuMKfcN7uKaeongeTt5XFQhB0RiSqsciWsQRLJpY
-         4osXdiZKTo1F0r/Xnjy8b5i5SFz++uB2IDumkaeNkUTfAXv6vPVawKI4zVqjaW1ZTpmE
-         TXQ45Pej6mbwN/3el1ERdth9zL/lwJEA7BYsm/1KzANYt9G3JMZqqRsalPwvIlbnQXOo
-         TaRC06U/ynKEQRf0JJor7gWw3dc3i2rELur3PFPkQYY0jsmrgJAA0QhGEhZEYP1ILxM5
-         gKlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPRnfxHAjLD3ut7G7plGf73oVr5uKhFZmsGWHDCDEej7JvtPmkkLHu6G/yvWPfNreCKrkFRqoyC8EhRPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0BdRI7HhdUl1mz2zpIy4OczGAIQ6uKuJtxxVqMxe9qqzb62fR
-	fO31pp4A7FWT9800fW0eW9SzBDbdaVPl0S+4ZVKLlfkd6GNMpfYB8t4/G21pADe0Cg==
-X-Gm-Gg: ASbGncsXkOr6IumIPOCfcH8H9SXrTfsarii1oRch+KaLwDrDb7PRn84r9boDYTEz73y
-	pqqT+Hp4pnVYl10MrdA+efJV+xj1iVSC+LjkiLnnq096NxFk+hWeV6mvUH2LSOMZXOnpvqgJlk3
-	P3Pq3AkU1DXdpRyfWf3Zq0/jQ65oPMiMvbZd9632BiapsAYFahd6bNszy0iEGLMwkrGSXDvnwma
-	vhwKA0tbAkwdwECujoesL1xrb7ojOviRR7GKHtojeX4mrrYMKs9gtpSwXDF5uQXzoynHff/eTXF
-	hLYp+tgMhRYx9kY5GHsCCSRhXl8sa1OwN+Bpkr+s1qDsQEqzffHNlEwJrVcaBNHN7GLJNo8zJkU
-	NMcYv1yV/NcKVFzWCDhmnwka46tqgMibBa4Li6Xvv/kF4pWBk0UBYeCuMAXQXxNmKJ43XOBab4+
-	h91kPnoprwmhzPfMTfd+nwCqeA/PqhRlRljPQxQSup47mkoqhJhhYoZRWWgRo=
-X-Google-Smtp-Source: AGHT+IHKYNW+lzSgEoR/ftLOyWk4dENf+z842xkhdFHWXcXQluEhrxtoUMASXE6ncX8JmfeiyZU3fg==
-X-Received: by 2002:a17:90b:3dc4:b0:332:8133:b377 with SMTP id 98e67ed59e1d1-33bcf87f8c3mr4875586a91.15.1760721064328;
-        Fri, 17 Oct 2025 10:11:04 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:5ca9:a8d0:7547:32c6])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-33bb65222a6sm6105739a91.4.2025.10.17.10.11.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 10:11:03 -0700 (PDT)
-Date: Fri, 17 Oct 2025 10:11:01 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-	linux-pci@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully
- initialized
-Message-ID: <aPJ4pZFENCTx9yhy@google.com>
-References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
- <CAJZ5v0iFa3_UFkA920Ogn0YAYLq4CjnAD_VjLsmxQxrfm5HEBw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LWyCdSAsqznyym06qIIzZyKfmx7XpKm6p0EWIpL7zy6OtfpiUhCcg5CFRFLwIsSP6P4lbiIWRY6ieGSBms0jLS/HQ8CxQaTScHsGOiaZP5GG4NxCQVPZurdRow9heNcabVFCV2upPB1J5HQdLM4Pn+1Krn/+pi7CBlb7O4jKrW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3b3JcaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46650C4CEE7;
+	Fri, 17 Oct 2025 17:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760721236;
+	bh=Zc+ypsDehD+D6EjfX9MaxxSVOwS713BdXCX/6JkDy1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N3b3JcaVsGssqTSDliSQf4B8QRyePHJqsfnUBuurk8TnjaVSmZXKRjiQR36KHZOQ9
+	 vckQglIOadTsS8LvFnioBKHfz91LE3sIhjQzxnzoiDoMqsiLRaCq2J6kItOxJ++788
+	 OFNqc4WcskLOEo+Qg+kypMA6NrIB5zH5SM6wf3nRt55KexXQjcMd9/mHLn+u3cqtMx
+	 0tgqmFeWm2Z0fLhGwRrG/6/Vkez5K7tecI43bJarRS9fCC02oWisB4B4THSMj1LO/k
+	 xm/9MIsjNM3IvuCZ1ugzRVcA9X8oawlGvoxgFkY/YPMGOFteY3/u+bdtmaSeRn1G2A
+	 JElBpSLx3c81Q==
+Date: Fri, 17 Oct 2025 10:12:23 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 21/21] arm64/fpsimd: Allocate kernel mode FP/SIMD
+ buffers on the stack
+Message-ID: <20251017171223.GF1566@sol>
+References: <20251008154533.3089255-23-ardb+git@google.com>
+ <20251008154533.3089255-44-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0iFa3_UFkA920Ogn0YAYLq4CjnAD_VjLsmxQxrfm5HEBw@mail.gmail.com>
+In-Reply-To: <20251008154533.3089255-44-ardb+git@google.com>
 
-Hi Rafael,
+On Wed, Oct 08, 2025 at 05:45:55PM +0200, Ard Biesheuvel wrote:
+> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> index 61d62bfd5a7b..226e635c53d9 100644
+> --- a/arch/arm64/include/asm/processor.h
+> +++ b/arch/arm64/include/asm/processor.h
+> @@ -172,7 +172,7 @@ struct thread_struct {
+>  	unsigned long		fault_code;	/* ESR_EL1 value */
+>  	struct debug_info	debug;		/* debugging */
+>  
+> -	struct user_fpsimd_state	kernel_fpsimd_state;
+> +	struct user_fpsimd_state	*kernel_fpsimd_state;
 
-On Fri, Oct 17, 2025 at 11:45:14AM +0200, Rafael J. Wysocki wrote:
-> On Fri, Oct 17, 2025 at 1:28 AM Brian Norris <briannorris@chromium.org> wrote:
-> >
-> > PCI devices are created via pci_scan_slot() and similar, and are
-> > promptly configured for runtime PM (pci_pm_init()). They are initially
-> > prevented from suspending by way of pm_runtime_forbid(); however, it's
-> > expected that user space may override this via sysfs [1].
-> >
-> > Now, sometime after initial scan, a PCI device receives its BAR
-> > configuration (pci_assign_unassigned_bus_resources(), etc.).
-> >
-> > If a PCI device is allowed to suspend between pci_scan_slot() and
-> > pci_assign_unassigned_bus_resources(), then pci-driver.c will
-> > save/restore incorrect BAR configuration for the device, and the device
-> > may cease to function.
-> >
-> > This behavior races with user space, since user space may enable runtime
-> > PM [1] as soon as it sees the device, which may be before BAR
-> > configuration.
-> >
-> > Prevent suspending in this intermediate state by holding a runtime PM
-> > reference until the device is fully initialized and ready for probe().
-> >
-> > [1] echo auto > /sys/bus/pci/devices/.../power/control
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > ---
-> >
-> >  drivers/pci/bus.c | 7 +++++++
-> >  drivers/pci/pci.c | 6 ++++++
-> >  2 files changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> > index f26aec6ff588..227a8898acac 100644
-> > --- a/drivers/pci/bus.c
-> > +++ b/drivers/pci/bus.c
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/of.h>
-> >  #include <linux/of_platform.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> >  #include <linux/proc_fs.h>
-> >  #include <linux/slab.h>
-> >
-> > @@ -375,6 +376,12 @@ void pci_bus_add_device(struct pci_dev *dev)
-> >                 put_device(&pdev->dev);
-> >         }
-> >
-> > +       /*
-> > +        * Now that resources are assigned, drop the reference we grabbed in
-> > +        * pci_pm_init().
-> > +        */
-> > +       pm_runtime_put_noidle(&dev->dev);
-> > +
-> >         if (!dn || of_device_is_available(dn))
-> >                 pci_dev_allow_binding(dev);
-> >
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index b14dd064006c..06a901214f2c 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -3226,6 +3226,12 @@ void pci_pm_init(struct pci_dev *dev)
-> >         pci_pm_power_up_and_verify_state(dev);
-> >         pm_runtime_forbid(&dev->dev);
-> >         pm_runtime_set_active(&dev->dev);
-> > +       /*
-> > +        * We cannot allow a device to suspend before its resources are
-> > +        * configured. Otherwise, we may allow saving/restoring unexpected BAR
-> > +        * configuration.
-> > +        */
-> > +       pm_runtime_get_noresume(&dev->dev);
-> >         pm_runtime_enable(&dev->dev);
-> 
-> So runtime PM should not be enabled here, should it?
+Perhaps this field deserves a comment?
 
-Hmm, I suppose not. Does that imply it would be a better solution to
-simply defer pm_runtime_enable() to pci_bus_add_device() or some similar
-point? I'll give that a shot, since that seems like a simpler and
-cleaner solution.
+> @@ -1834,7 +1837,7 @@ void fpsimd_save_and_flush_cpu_state(void)
+>   * The caller may freely use the FPSIMD registers until kernel_neon_end() is
+>   * called.
+>   */
+> -void kernel_neon_begin(void)
+> +void kernel_neon_begin(struct user_fpsimd_state *state)
 
-Thanks,
-Brian
+Similarly, the 'state' parameter to kernel_neon_begin() and
+kernel_neon_end() could use documentation.
 
-> >  }
-> >
-> > --
+> -		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq())
+> +		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq()) {
+> +			/*
+> +			 * Record the caller provided buffer as the kernel mode
+> +			 * FP/SIMD buffer for this task, so that the state can
+> +			 * be preserved and restored on a context switch.
+> +			 */
+> +			WARN_ON(current->thread.kernel_fpsimd_state != NULL);
+> +			current->thread.kernel_fpsimd_state = state;
+>  			set_thread_flag(TIF_KERNEL_FPSTATE);
+> +		}
+
+'state' can be NULL here, right?  So in that case we do set
+TIF_KERNEL_FPSTATE, but we assume context switching cannot happen?
+
+- Eric
 
