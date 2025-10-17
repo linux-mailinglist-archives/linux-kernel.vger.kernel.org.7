@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-858251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFD5BE96E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485F6BE98FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0E56566341
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD82F6E8496
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880ED2F12A6;
-	Fri, 17 Oct 2025 14:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7F232E13A;
+	Fri, 17 Oct 2025 15:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UDt5ITYQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="22VG2ftr"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47CF20A5E5;
-	Fri, 17 Oct 2025 14:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0407632E14C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713174; cv=none; b=YqXlGIcknBmcScIYZAi1LPSPztCD/vlRumSNBNoizsTMy+mMzssX6ZXFp3aVzeAyizely2ogM/G55hDlR9L6U57Vu2N3tcGrqgQITUqW6sJ5RBn4u2RA9YLMLMtK7pW9MhVR8SIjCcl0/F1ZXmiNUKEDv6xZWy9DfmKxGcE3znE=
+	t=1760713319; cv=none; b=QU3tjvQCEmw5Igi0gKYSBUcvqgel7YhisqT6h/Krr430viXcAl0j58wEJvvgaclucg8dR2YfnqmAkqCjbT4occaipECgxcTI1ns1rEtTWvawvm1AksDTDep4ykMrFP6JpdtphR0QXWJfYNkNRSXiULyPA9S3X1jsx9G5vaLpyW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713174; c=relaxed/simple;
-	bh=wCwdoqCpwUBfmspipDYUeh37Nqgj8V/mgqQAYD6ESY8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=gcUhUhqOY1dMHg7RqOiB2YnLVxUsXnZeuniK4cC3zxuuo1MwE1emBqAy1345jQ4WBSdbp44ncl/YR/yhQmcj9FM9JN17M7kcqmqVMXQbSSy50xlstbz/HtwEIKR2ZnaGnZZoywZhrFcSW6mw9KbDk7EMxFZKVzh8SvJtjKh3B1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UDt5ITYQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:2112:eb18:6ce9:5a39:76a2])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5E0041E2F;
-	Fri, 17 Oct 2025 16:57:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760713068;
-	bh=wCwdoqCpwUBfmspipDYUeh37Nqgj8V/mgqQAYD6ESY8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UDt5ITYQwqCSv1cwF3AD4/sySP3ESQK+uSNC/dmib9VoTE+J4d8PX2DGc8DRW8q0P
-	 BR5vNAxSpYlxx6jvpn4yMVGsK9ewuezy4VJ0lIADI8s1ullODuutNQIB85sLBIIL1w
-	 JvlIQMjGzfBKHDEJ1ezecbH1TMbf6CeCD6efbLKM=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760713319; c=relaxed/simple;
+	bh=FfsFoKWSKYMslkjGboQj+clwjopcTUOyJUtqNxBB8I0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=m5W2GIX0EVOeQy99k4U6jGocOSDj1xCUT9V2YpfaUKGB5Gtr9PG/EWAEc5JflavWLlLtZXSjX16s6XCyFs1txgM8YKXMeRRlaFO73p5A8B+Um7Dzag2P2iMIsoL7dR3q76Zo8uJdoQruY9MEflkunw3wQ3UTjL43ONg/Ei/cRVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=22VG2ftr; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 64E034E41145;
+	Fri, 17 Oct 2025 15:01:56 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 392E2606DB;
+	Fri, 17 Oct 2025 15:01:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE159102F2364;
+	Fri, 17 Oct 2025 17:01:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760713315; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=7WJkdH6BRRi4yhVXnTMucIDdc1efpn72Af3qKfr+EfI=;
+	b=22VG2ftrt/gp5Ibko6RFr4eXr0KkJFDy9Q31TsVgbfSOajXRkcBiylb50l3GsCuP0t+8GU
+	+4ZE/1Jar0Sw5WQBfq5HLsprU3IRu/7adk4A9+JeyUN+yUiGWx8jCXrI/Z+Zy4YObkaHU1
+	M+PZYxQEPRDJA7Rq1Td9zX7c8jZogc8Jkqo5JzXfC7ErS2aC24To/bdUoYYMp87z7VAsDL
+	/GCBFTatF6wENGOcUskjS17h/pU5TtTwBfxqWj+PbJUrMlwotYVu+qVY3CYzSoFiJxkGoR
+	Aqn9Vr8Dyj1gznupP/s80MjIwhITDNND8MVef+MIBOOhwya4ps2yeCf3tJs9yA==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Subject: [PATCH 0/3] i2c: designware: Improve support of multi-messages
+ transfer
+Date: Fri, 17 Oct 2025 16:59:31 +0200
+Message-Id: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <r3xhpxaxtibzqipzf6hyv3j6mzws3nr76wh24xccaqrm5folye@6f3cpexbd4or>
-References: <20251017-imx219-1080p-v1-0-9173d5a47a0c@ideasonboard.com> <20251017-imx219-1080p-v1-2-9173d5a47a0c@ideasonboard.com> <r3xhpxaxtibzqipzf6hyv3j6mzws3nr76wh24xccaqrm5folye@6f3cpexbd4or>
-Subject: Re: [PATCH 2/2] media: i2c: imx219: Simplify imx219_get_binning() function
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@kernel.org>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, =?utf-8?q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Fri, 17 Oct 2025 20:29:23 +0530
-Message-ID: <176071316343.36451.9727221351195694024@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANNZ8mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0MT3UyjZN2Uct2URGND0zRzUwsjSzMloOKCotS0zAqwQdGxtbUAvV1
+ 8vlgAAAA=
+X-Change-ID: 20251014-i2c-dw-da315f758296
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Jan Dabros <jsd@semihalf.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-rt-devel@lists.linux.dev, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Jacopo
+Extend what can be done when transferring multiple messages in a single
+call to .xfer().
 
-Thanks for the review,
+Allow changing the target address by waiting for a STOP then looping
+in i2c_dw_xfer() instead of erroring out when a change of address is
+detected. The loop then re-run i2c_dw_xfer_init() which changes the
+target address and restart the transfer for the rest of the messages.
 
-Quoting Jacopo Mondi (2025-10-17 15:19:37)
-> On Fri, Oct 17, 2025 at 01:43:50PM +0530, Jai Luthra wrote:
-> > In imx219_set_pad_format() there is now a constraint to enforce hbin =
-=3D=3D
-> > vbin. So, simplify the logic in imx219_get_binning() function by
-> > removing dead code that handles the case where hbin !=3D vbin.
-> >
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >  drivers/media/i2c/imx219.c | 16 +++-------------
-> >  1 file changed, 3 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > index 300935b1ef2497050fe2808e4ceedda389a75b50..48efdcd2a8f96b678f98192=
-23e0f9895fb4025ea 100644
-> > --- a/drivers/media/i2c/imx219.c
-> > +++ b/drivers/media/i2c/imx219.c
-> > @@ -409,24 +409,14 @@ static void imx219_get_binning(struct v4l2_subdev=
-_state *state, u8 *bin_h,
-> >       u32 hbin =3D crop->width / format->width;
-> >       u32 vbin =3D crop->height / format->height;
-> >
-> > -     *bin_h =3D IMX219_BINNING_NONE;
-> > -     *bin_v =3D IMX219_BINNING_NONE;
-> > -
-> > -     /*
-> > -      * Use analog binning only if both dimensions are binned, as it c=
-rops
-> > -      * the other dimension.
-> > -      */
-> >       if (hbin =3D=3D 2 && vbin =3D=3D 2) {
-> >               *bin_h =3D IMX219_BINNING_X2_ANALOG;
-> >               *bin_v =3D IMX219_BINNING_X2_ANALOG;
->=20
-> So we're always going for BINNING_ANALOG_X2 whenever we bin now
->=20
-> I tested the binned mode 1640x1232 and 640x480 (which should bin then
-> crop) and both works fine.
->=20
-> I was wondering if we should then just rename ANALOG_X2 to X2 but the
-> datasheet actually defines that mode as "x2 analog (special) binning"
-> so I would keep the current name.
->=20
-> I didn't know, but the sensor can also x4 bin!
+Handle controllers that lack the ability to emit a RESTART when two
+consecutive messages have the same address and direction, by waiting
+for a STOP and restarting the rest of the transfer.
 
-I actually tested the x4 binning with 640x480 sometime ago, it's available
-here:
-https://github.com/jailuthra/linux/tree/imx219_binning_4x
+The i2c controllers found in the EyeQ6Lplus and EyeQ7H SoC from
+Mobileye lack such capability, so compatible strings are added because
+this cannot be detected at runtime.
 
-Will hopefully be upstream support for both x4 and x2 modes once Sakari's
-series with binning controls is merged :-)
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+Benoît Monin (3):
+      dt-bindings: i2c: dw: Add Mobileye I2C controllers
+      i2c: designware: Enable transfer with different target addresses
+      i2c: designware: Support of controller with IC_EMPTYFIFO_HOLD_MASTER disabled
 
->=20
-> Anyway, for this patch, I would keep a comment around that says we
-> always use the special analog binning mode which is now the default.
->=20
+ .../bindings/i2c/snps,designware-i2c.yaml          |  2 +
+ drivers/i2c/busses/i2c-designware-core.h           |  1 +
+ drivers/i2c/busses/i2c-designware-master.c         | 97 ++++++++++++++--------
+ drivers/i2c/busses/i2c-designware-platdrv.c        |  6 +-
+ 4 files changed, 68 insertions(+), 38 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251014-i2c-dw-da315f758296
 
-Indeed, will add this in v2.
+Best regards,
+-- 
+Benoît Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> This little nit apart
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Tested-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->=20
-> Thanks
->   j
->=20
-> > -
-> > -             return;
-> > +     } else {
-> > +             *bin_h =3D IMX219_BINNING_NONE;
-> > +             *bin_v =3D IMX219_BINNING_NONE;
-> >       }
-> >
-> > -     if (hbin =3D=3D 2)
-> > -             *bin_h =3D IMX219_BINNING_X2;
-> > -     if (vbin =3D=3D 2)
-> > -             *bin_v =3D IMX219_BINNING_X2;
-> >  }
-> >
-> >  static inline u32 imx219_get_rate_factor(struct v4l2_subdev_state *sta=
-te)
-> >
-> > --
-> > 2.51.0
-> >
-
-Thanks,
-    Jai
 
