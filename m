@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-858000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A5BBE884C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:06:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2F7BE8855
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE29E1AA3C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C7162688A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A779E2E5B27;
-	Fri, 17 Oct 2025 12:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D462E6125;
+	Fri, 17 Oct 2025 12:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Fqnk4XHt"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHDf+r6b"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691BF2D77E6
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9572DF716
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760702769; cv=none; b=oHwy53rVaMFuRRUBk4P1H0jqmmvIZtAjoZ/DhVGEFND0VbWI/nVP2yFQS/WLPIOBxsPHeZc7hIJxO+EN5eQhU4ZGx1LHsz2hPV0adctJ9KqNwcu5fBxZ2s838AxHLXK8+aLdanrPdu3oMfUHklrIm1sln3kFVZv05iXsK2eSesY=
+	t=1760702890; cv=none; b=rph+guHA1BPequKeuJS55XxL3SU/xWtOjVe2U3s/frZrrxZfIQlvoJzox7Gc3UYGkIToW33hMH6lmJoUYUdwIe8y1TCWs5KpahQmVUtA9b2QY8c5Oq281e55TQ+nWdxS2pZ8h5PIBE28wAKbq+Arm1heqb8HqUUeijvPdmKby1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760702769; c=relaxed/simple;
-	bh=+NgMevCRO6L5hXhJaaqAwueyAJujC7V7TL40Xm8q1k4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=s0LUuZqtQMR81QkD9w9DfspVPWKdfcd5sUy1RzksE6jLMLNmakLM55gnH/gnlBN71/0NJ9BNj3Ce04kPazjCuEL4fGAL8xQGt8IPL6+klfDxTUQsAxaHEO7sCcmIOZNsY1uVz4/9U1LWaXU/wfMpA2FlbhBcwSqZ4pvY9p962dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Fqnk4XHt; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47100eae3e5so18165775e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:06:06 -0700 (PDT)
+	s=arc-20240116; t=1760702890; c=relaxed/simple;
+	bh=pacw/ENbcv+KCNhsoYxWKd5E57eceNXFXgqAbXeIWAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tjnEqJGvQWXJBHYzGAF4FHl2FGCJuRWkveKwRah8R3ansfmq3Lua07nfPa4qw7DT0ScffJsYzhv+eE1RCzImLbL6iJujNg/4g5KhDhotWPguAXnpqYTARnXH4fmXOBzmM6M1MkO2+B7Zilj40Ypf14gcbZ+qysZBLz9y2N30LeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHDf+r6b; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b62ed9c3e79so1259202a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760702765; x=1761307565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nMJOXnoCYtJ81aWFXZNVAXjz4V/A/3LlOZhUuqnJKQw=;
-        b=Fqnk4XHt0Jh8dbaATrWbwwB0fCERbcjPoxZy9iLPmC+nH9PLpP2XBinYA3vtAAfLHF
-         taz05ifTkug5bXHCJwHPgBEtg/PfG7xcMRgUMKnQd6PAa9to+7jT2AzW1Cff1rAvXmmK
-         W704HX0Pof3v/op/toy78Jrkxhdlu8toJ2DrHhJK4eOcbHgT/UfaU1HeTVJFYuPavPni
-         1CEsIEl+ZM4hbkPrTTi2ejrFbVcgCHsB/0izQ20yDwbBL9t8KBRD7i5blgLfuoltF6uQ
-         Il/XVjSk418McwOotZ4E+GhRZnVUJ1ewsYnNtLtL0LwXWxNpjev7u7k+nIkQ7u69Qcf8
-         XnrQ==
+        d=gmail.com; s=20230601; t=1760702888; x=1761307688; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D1OQBcJjNvMdiwaszp4KDFRPLfNnLBhAgYvcBECQKgE=;
+        b=aHDf+r6bLAe2akeLxNcvR40L0o0J3ca95uI8CRwCJQ0G+EQw+IKeoKc0o3YOCU83Wt
+         SOqcx9BSx+rWzR4i3c0uPIL+JSwNE+sq1NhjlSPV/Tb/nswX6Qzxz2fy7hBjnbDIs9Q5
+         aI6Wzl8OI5C7K9qIH2qke0QvI4M00QnzncCtjyxcUdbO95Ke96Bxx8/wO1cAxmOi5vTU
+         HCW+XexCM4TzEo/0OD3DwvF6RYREDbcG05ROtCv/j3QbWc8D4FhEh3Thes2eTEGYc+jQ
+         37YTsSfMdC/HfVgKVw9nzZJd40m9OADp94fcm6YLMm3rygqoD193CCeH1kEyoNNj+nej
+         kAgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760702765; x=1761307565;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMJOXnoCYtJ81aWFXZNVAXjz4V/A/3LlOZhUuqnJKQw=;
-        b=WfKXYDcKYWjGZBN2O5oB1yGzOe9nlmjXIoLzd3bceHK5EZ0Ds+/QaGq+KZZv65Xjnv
-         gJBDBXPBmbMvS+MFr/XdHXqQ+Znr1UxXKR1o3tni5Lb2KxW4H2MfRUgDaf92FxfYYXId
-         CAFIxIN1Gut06IFhGOBCER/gp+AfWSzXuCpqGwDkKXc3SKPCY0eKY02JmGB1b8hs8SzB
-         ro1pGq6as6/qrwJZPtWAeROwZnEwNUXeOvUrM69keVu3qnUF4xyZ2qAnCMR3Xk1sBgWP
-         4/5elYY2lj9RyCNJSw1aN9LrpnTfY89TAzeFADrwTUNf52TnjsVgM8rIN+6ve65d80zL
-         xNFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXneDMOxq9IefNjOqa1ASFoHfrusGFmDYPdfhbwKszNUyWgNgBH8poSwWjmGSmnMk5eJrhA6l8lmOsqaTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKNQRK2oDzy3ieoUVc1OE42EoEp03z0wGeZfNwhX5YkuyWfiZs
-	zkkcts/dYgOv17OiukyNUuq8L7DY5AveAreaNdtlST4+itIzi9l4AJAD9eCSMhphxPI=
-X-Gm-Gg: ASbGncsBdgvuYEyaGUu6VC9vkvi+ZqMinqaied4uqfu1SOeTzoS0YEiFECsOwqhMWB6
-	+lHCBJW/GuyCgW7/C7dO8mMbr6fEdVJcG2GkEyVn2K71bxO/8KtIF1yxsC5lhrlCqf8qg5ZIAT2
-	UVhtcm2aOce7xN2vb/o1uU/Z0S/qPGfGf/Az7x3qPLpqZyB8M/wmGpam9NKsQkdKFs/q1jgZ8/o
-	OlQISnzjhfemlcRGATjzzHd5jUgKcQHvvgQRuSnRpbDQEQUtiY+2oi7ENbV/b29JoLqKiqFcErx
-	cPQ2AtWAqtIx/cCXbqCb4m2lB2gVMzzlEawQdDdGLzQmvI2d9kRHqdT5RQvs1TPySPpjInh1oYe
-	O0Fkq02IO0NtW+oQJ1V92pTq/wxx0NjJ4OdHAQOyLXtH4g68r77nx0vlmTvktZ+Ov7Os9OcR8/m
-	CZaxidR6ltwfxa7K/urV8a
-X-Google-Smtp-Source: AGHT+IFRqPYZeqMdMjuOp1opwrAil9k3VDnWPeVIrTRqMOXEXLvF1v38xSucSH6cagYDSWL467ybBA==
-X-Received: by 2002:a05:600c:4eca:b0:45d:f83b:96aa with SMTP id 5b1f17b1804b1-4711786c6f0mr28564785e9.7.1760702764657;
-        Fri, 17 Oct 2025 05:06:04 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144239bdsm107319845e9.3.2025.10.17.05.06.04
+        d=1e100.net; s=20230601; t=1760702888; x=1761307688;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D1OQBcJjNvMdiwaszp4KDFRPLfNnLBhAgYvcBECQKgE=;
+        b=eHlVb1nRRaxsCcCvIfULwTXty8N1i3U/xeS2GB2K4yFVoczsLeX1hrhhjeIPDgL4KW
+         O6d64J5ORZ6gDArBqzwxMXmgR5cBFr/USM6X7kPBuVZFv7ps0zbCvHlK9z9TP1TfVgNN
+         yKQAnSQGbjhHEF+81BsF3EQD+SDFjBVtDJUACJowsrTVKsniKAxdVKlBdqIWKCtbA2L/
+         gBPDISZFNxxm8dA9YelXvypTyX5GX8Kk/BOQnQdDrzN6E7mqPSot1iib+iIgtG5cmMXh
+         5MnUuCF4/jF7MsjNYiCqgG8AiU1Q/D4z3GHplvSHkF4h+Xw4cKjRblZER5L8IVz6gJch
+         bBVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0HcgC6+ahaTwSsYs7Id3x1SYTm/FIpDuIwtLnN3O30Ji6yzP8UQwCkS7xXO0krSc56Ru26J97CqpLT6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbvj6cXufI1KRBRW9zxBfdZV1GsKjGensotiAfPc80VGjpUYNG
+	HjXQdATudvXROS/7a86mfC3ij/CtEw3Tk9jpxJRCMCUp94i/xaRKK3lF
+X-Gm-Gg: ASbGncuoTGQC7fWzFcZCcBGl85PtMqoK0NVw5EQHg0T7HrNebr7BVxSjQ7mcG0GC4gR
+	xMIxW4CcaoDZOvTq06X1a8jLygSRYsDARMk2kgTaAOnQIaAy/WBeQOtwLRBRNG4gtbhCbTaz8WN
+	SP/Xko36FmYCXKsYZk09nSJSS8fPRv3hMxy/goCGd982m5PHTLbZaAUE8DYTzc08AGImRnzqp7l
+	R1aYMYxG15j+KKgjHieQYLLPdwrep5/m8+JTK1KtEtDUKz4+jB2H5Djh2ItqLj66Aj8tXE4w3tR
+	0BhArj+pW6FF1juRlp1U0Gj0ICAcG/mwbWWZWPIuD34RDoKgJT1nDZ43IRG+IR1Mc8aiRE6yvBx
+	dQEV6RSHrStXCyijSJfRZ+QpfryzpD79z+HeutGcUfvzIeKcMnM6TkCSmpRFXqg==
+X-Google-Smtp-Source: AGHT+IFnsq6kZGk/fHm/e4FGVx4CFf8u3uhudH43GQxU6NT4qAtaZrIavqrUcVzL980LCDRQymv9AQ==
+X-Received: by 2002:a17:902:d50a:b0:27d:339c:4b0 with SMTP id d9443c01a7336-290cba4efb1mr43185145ad.35.1760702887862;
+        Fri, 17 Oct 2025 05:08:07 -0700 (PDT)
+Received: from CNSZTL-PC.lan ([2401:b60:5:2::a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a228a5b5csm5822966a12.13.2025.10.17.05.08.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 05:06:04 -0700 (PDT)
-Message-ID: <e0b031d6-2b2d-4788-ac9c-b76e6a4bfab0@suse.com>
-Date: Fri, 17 Oct 2025 14:06:03 +0200
+        Fri, 17 Oct 2025 05:08:07 -0700 (PDT)
+Message-ID: <d9d14ce2-2e65-422e-95fb-eb30b128ad90@gmail.com>
+Date: Fri, 17 Oct 2025 20:08:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,30 +81,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] module: Simplify warning on positive returns from
- module_init()
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-References: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
- <20251013-module-warn-ret-v1-2-ab65b41af01f@intel.com>
-Content-Language: en-US
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20251013-module-warn-ret-v1-2-ab65b41af01f@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] arm64: dts: rockchip: fix eMMC corruption on NanoPC-T6
+ with A3A444 chips
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Grzegorz Sterniczuk <grzegorz@sternicz.uk>, Jonas Karlman <jonas@kwiboo.se>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251017073954.130710-1-cnsztl@gmail.com>
+ <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
+From: Tianling Shen <cnsztl@gmail.com>
+In-Reply-To: <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/13/25 6:26 PM, Lucas De Marchi wrote:
-> It should now be rare to trigger this warning - it doesn't need to be so
-> verbose. Make it follow the usual style in the module loading code.
-> 
-> For the same reason, drop the dump_stack().
-> 
-> Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Hi Dragan,
 
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+On 2025/10/17 18:25, Dragan Simic wrote:
+> Hello Tianling,
+> 
+> On Friday, October 17, 2025 09:39 CEST, Tianling Shen <cnsztl@gmail.com> wrote:
+>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+>>
+>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O errors and
+>> corruption when using HS400 mode. Downgrade to HS200 mode to ensure
+>> stable operation.
+> 
+> Could you, please, provide more details about the troublesome eMMC
+> chip that gets identified as A3A444, i.e. what's the actual brand
+> and model?  Maybe you could send a picture of it?  It might also
+> help if you'd send the contents of "/sys/class/block/mmcblkX/device
+> /manfid" from your board (where "X" should equal two).
 
--- 
+Unfortunately I don't have this board nor this eMMC chip.
+I got the chip model from my friend, it's FORESEE FEMDNN256G-A3A44, 
+manfid is 0x0000d6.
+
+> 
+> I'm asking for that because I'd like to research it a bit further,
+> if possible, because some other eMMC chips that are also found on
+> the NanoPc-T6 seem to work fine in HS400 mode. [1]  It may be that
+> the A3A444 chip has some issues with the HS400 mode on its own,
+> i.e. the observed issues may not be caused by the board.
+
+Yes, it should be caused by this eMMC chip.
+
 Thanks,
-Petr
+Tianling.
+
+> 
+> [1] https://github.com/openwrt/openwrt/issues/18844
+> 
+>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+>> ---
+>>   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>> index fafeabe9adf9..5f63f38f7326 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+>> @@ -717,8 +717,7 @@ &sdhci {
+>>   	no-sd;
+>>   	non-removable;
+>>   	max-frequency = <200000000>;
+>> -	mmc-hs400-1_8v;
+>> -	mmc-hs400-enhanced-strobe;
+>> +	mmc-hs200-1_8v;
+>>   	status = "okay";
+>>   };
+> 
+
 
