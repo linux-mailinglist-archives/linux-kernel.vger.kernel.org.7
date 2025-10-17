@@ -1,82 +1,129 @@
-Return-Path: <linux-kernel+bounces-858750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A161EBEBB88
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:48:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48910BEBB89
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C01019C2BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:48:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AB214E0409
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC55248891;
-	Fri, 17 Oct 2025 20:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422B1354AC9;
+	Fri, 17 Oct 2025 20:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgMufUkP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="rQr+QPgb"
+Received: from mail-10698.protonmail.ch (mail-10698.protonmail.ch [79.135.106.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7594A354AC3;
-	Fri, 17 Oct 2025 20:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2951643B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760734077; cv=none; b=bAC0kSWQmjhmY2KuRHLn8ff+A2sGqh7Aj+r3cdMVSIqXYtg9dLorJDOvhA/BRq7GtBfP4pt0Ae9VrHQQZy7MVb119sLkuv1Vyna803shfzob9v79FSRfDfvw1Ea12ck7XqiJA7Ek7mn5xUkPs/fKAAIaygsoirKythyPA4QFMks=
+	t=1760734093; cv=none; b=dRIn1YTukYKHInAarE/5parKXKpz/kCsbsmkPvHIW03m/K/o3gJd3ptx76cDcxvX14qC8GVgu+WhAe2WspzLHEFNo/JkTots4lN0utMpuJWjkkjZKP4JRBspD8H9Kz/X845Jf/55DOzjWZ+ONVsgSN46+3AC5Uu42kqWsCSIpV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760734077; c=relaxed/simple;
-	bh=O8fQW7RQR2qcHxqYBZ3Q/tOPGBCdUxepaseyU6sgiZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flAXrE168p2yqOLq6YSO1OW+rptL/8vKSNtmSuFkSvaXYcO9by1j99T99Yiq0Ja3+f7UD/ISlYheXKBYJH9hnMDdH1jjqhTrDnoUFwq94Fz+JfeTNoJFo/YBpCQpzm/JvpK/02jFzuQIlu1dKCn1GQqly4qcnG6Z0R5Mfx1QQSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgMufUkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D2D1C4CEE7;
-	Fri, 17 Oct 2025 20:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760734077;
-	bh=O8fQW7RQR2qcHxqYBZ3Q/tOPGBCdUxepaseyU6sgiZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rgMufUkPPVGZnew4j1HY0sMIV4nLX1GA42qX7jzXzOBanz5iYxkIdA+Lm3tXWDcAG
-	 aDwwlHUuPLA0ZbgsCH9I1cVaX25+BLIRaO9HuTFhpqFGbq256fiL60JPhCvfHdjv0J
-	 uempxQ3eOCfWzdlsjhbNx1dRJ5+QNC3hFvExjIWBPh5pvV9dq6qjUt5rdaXR0nCZBG
-	 gzWtadRywTqSra2R54fAenvEq1kb/mmTvcIpEiiZXDpgKSmC13SphNxKgqLYdhcp0b
-	 o0H5i5/khbIlkuUeAtPWJOtRM5nj76Dxb9MHlVACynY/qKDc1XYo3aVizPfyi5d0oK
-	 bYjEDwr9mO6zQ==
-Date: Fri, 17 Oct 2025 22:47:52 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] i2c: pcf8584: Remove debug macros from
- i2c-algo-pcf.c
-Message-ID: <vop42qhict2oqppb6ozg46fxwwwk5egp2po4rlnxhhjlt4xojc@yq77b2qmx6eq>
-References: <aNbWejNZLYGuNvCI@ninjato>
- <20250927041400.172949-1-chiru.cezar.89@gmail.com>
- <20250927041400.172949-2-chiru.cezar.89@gmail.com>
+	s=arc-20240116; t=1760734093; c=relaxed/simple;
+	bh=hE5BNME5jjYzsuDXGKZnAOa4a3nDpryR7EZ1q7Ng32s=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jRTWGQ08a/J+DPoKQpOYzrj3xlBiSWhxXML0D51UOnPd3vxVzP5BF0nc6MTU1J8l3Sob6opbRSJQi2M8VDHD1LHEK5M0TmUH2bpkB+DyJh28X2wO98qR+SAo+E9W1gEsRZ2b7/h01OJ0o85giD6uyiTu4mQCrgT0E44366tv034=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=rQr+QPgb; arc=none smtp.client-ip=79.135.106.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1760734083; x=1760993283;
+	bh=hE5BNME5jjYzsuDXGKZnAOa4a3nDpryR7EZ1q7Ng32s=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=rQr+QPgb8R4zaSd0b22Ij2dxFop8j12xIzmdJV1E4EhZHR7gjxCfVJehFnxROn4Mv
+	 10FcjiCvilyZwa0b4DHjMffTr/E1+QO7NCDPeR9zwf9eX+bbquqHjjhCu+ZEcrqSla
+	 Enjz+3QNZSHrrNVxY6udFFp/3XXRYqqy3Jd5JpSjBOhG44o11BJtglqmeCKzTlDc7L
+	 nKKnzoAH4OQ1gdUEJF0Q98rLl59deYosx/pthrI12JiLnF69SyLlDLHp2yfKw8WgKs
+	 1DwfAxSSV9IkV1vawgWOTNjjBmj+qi2qpQV8iw5G2j2EqjD22JaEK/0ToMYjEcqfVB
+	 yEYBuqz20X1FQ==
+Date: Fri, 17 Oct 2025 20:47:58 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: =?utf-8?Q?Na=C3=BCm_Jumpertz?= <n.jumpertz@protonmail.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Oppo/Oneplus phones and usb3.0 incompatibility
+Message-ID: <YhXrCm5ig-YWPY2OVkmdPl48N1Td6K8qJJ5cW7OtIMQt9ENXrexATCgeXCmuG5Mq1wIDxyhaLZhZeuW15lgKhKEKKLfU3GwjMMhKP1Awyj4=@protonmail.com>
+Feedback-ID: 107994687:user:proton
+X-Pm-Message-ID: ee0bc6c042fc5f5b12019010a0ddd5d060ce24a9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250927041400.172949-2-chiru.cezar.89@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Cezar,
+Hi all,
 
-On Sat, Sep 27, 2025 at 07:13:58AM +0300, Cezar Chiru wrote:
-> Remove debug macros and printk and dev_debg function calls from file
-> as no change was done for 16 years.
+Because of wrong device descriptor, certain oppo/oneplus phones,=20
+like my oppo find x5, can't connect to linux computers using usb3 cables,
+the issue is also on other oppo/oneplus phones such as oneplus 9 pro,=20
+starting from OxygenOs 13 in december 2022=20
+link: https://xdaforums.com/t/connection-problems-to-a-computer-with-linux.=
+4642402/
+The issue is present in kernel 6.17 but also in older versions.
+The connection correctly works using an usb2 cable.
 
-You have also removed the module parameter.
+The phone is detected as a USB SuperSpeed device but the device descriptor =
+flag given is USB 2.0,
+so, according to dmesg, the kernel warm reset the phone and don't manage to=
+ establishes the connection, which is annoying:
 
-> Request by I2C SUBSYSTEM maintainer Wolfram Sang.
+[ 3537.701845] usb 2-2: new SuperSpeed USB device number 4 using xhci_hcd
+[ 3537.722594] usb 2-2: got a wrong device descriptor, warm reset device
+[ 3538.105960] usb 2-2: new SuperSpeed USB device number 5 using xhci_hcd
+[ 3538.126933] usb 2-2: got a wrong device descriptor, warm reset device
+[ 3538.313826] usb usb2-port2: attempt power cycle
+[ 3539.241985] usb 2-2: new SuperSpeed USB device number 6 using xhci_hcd
+[ 3539.262410] usb 2-2: got a wrong device descriptor, warm reset device
+[ 3539.646017] usb 2-2: new SuperSpeed USB device number 7 using xhci_hcd
+[ 3539.666993] usb 2-2: got a wrong device descriptor, warm reset device
+[ 3539.853713] usb usb2-port2: unable to enumerate USB device
 
-Please, remove this last sentence, it's not a useful information
-to add in a git log. You can either add it in the cover letter or
-after the "---" section. I'd say in the cover letter as you have
-already done.
+The issue is due to oppo phones not being conformant to usb standard.
+Maybe the kernel should still establish the connection if warm resets fail,=
+ by counting fails or something,
+otherwise oppo phones will never manage to connect through usb3.0 cables, u=
+ntil oppo fixes it.
 
-The patch looks good. Thanks for taking care of it.
+I'm not a dev, so my solution was just to disable the feature:
+---
+ drivers/usb/core/hub.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-Andi
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 256fe8c86828..be28296b39de 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -5186,20 +5186,6 @@ hub_port_init(struct usb_hub *hub, struct usb_device=
+ *udev, int port1,
+ =09=09*dev_descr =3D *descr;
+ =09kfree(descr);
+=20
+-=09/*
+-=09 * Some superspeed devices have finished the link training process
+-=09 * and attached to a superspeed hub port, but the device descriptor
+-=09 * got from those devices show they aren't superspeed devices. Warm
+-=09 * reset the port attached by the devices can fix them.
+-=09 */
+-=09if ((udev->speed >=3D USB_SPEED_SUPER) &&
+-=09=09=09(le16_to_cpu(udev->descriptor.bcdUSB) < 0x0300)) {
+-=09=09dev_err(&udev->dev, "got a wrong device descriptor, warm reset devic=
+e\n");
+-=09=09hub_port_reset(hub, port1, udev, HUB_BH_RESET_TIME, true);
+-=09=09retval =3D -EINVAL;
+-=09=09goto fail;
+-=09}
+-
+ =09usb_detect_quirks(udev);
+=20
+ =09if (le16_to_cpu(udev->descriptor.bcdUSB) >=3D 0x0201) {
+--=20
+2.51.0
+
+
 
