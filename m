@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-858472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8020DBEAE28
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C2FBEAE1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B46E05883F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460677C2DBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE692E03E6;
-	Fri, 17 Oct 2025 16:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDAE2D7809;
+	Fri, 17 Oct 2025 16:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYM79maS"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cPub76OH"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79242DF3FD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61B72C08CE;
+	Fri, 17 Oct 2025 16:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760719385; cv=none; b=KYwR0Nxqri/J7za3qdQEk3GdEbq3GUxzXUV4TsonmeIp7gb3+t5I0xP9q4RadTfUNc+oV7MeicT4khBFvDDjfU2syOBl2/YnhSLzTSGN/pNtjIHmFEEPGdT/c8bwpX3BPfhI5psCAoAqwsqs+ff4vbDN7UQdQhsD5L6+HloH6W8=
+	t=1760719413; cv=none; b=tw88VtSnN7TWih0Cghrf8zxWwzkGJLnoJ4gklJ5J5b7fgDvdVI5zcx3kiIodoTyEC01pGIUp8w0eJhoUXKLGexsAxOZUPf01hmxvf+cpPKAc3A4PhOGO/gTD7UbiyT6pg9BariyWujLGPEtRTE1NpEGOTaLuoIz12nfP6fZzwbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760719385; c=relaxed/simple;
-	bh=Q3sAr5IgC4u/2uxZQzODES4J6Xqsz5aUfWZySpoCpzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZom+bhAjRMV61r7Z0Vddh7UHpsjAela1GJmGSl5RGsR+HNNtwRzQcAkN+vBykbpoTF62ECE2se2IMlLYcFeWH4v0/EyAzxNq3KrH1zVc/iRCAaN86RWdB6lF69n2UGnI7Djyy/ni7qAgvkDK2dRzPALpeHczPiE1KuYx3LXJI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eYM79maS; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-427091cd4fdso422804f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760719382; x=1761324182; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=G6gCBpn1xaSdsDN3kuu/6RChT6cW/pr078XU7axphUc=;
-        b=eYM79maSRCBjK3X69Aak89HAGLyGmO5tFGeRxbudnCUoqiHLn47/ZgoJJz/sxzByU0
-         cyF3ahES36u7PjReT/xnXVNrlyhxv66bhAHl8U0TsV9hl1xz1DOQIrEiUVM69SzlWV5o
-         psV0cIdUxSbBkXS9TLBTJdmUlGHq15XYzG2/9nzuCGeKaIcV7ZiaqkNWtOr9GzCwbhu0
-         sEj5zJhEq+/StU6RrMIBVOUi8A0C8QkuZClbZN2cidG0+IAEJaof/N9bbIOekXmVJv0E
-         oAe+E7AO8vKi+xu0+kP9/+mZAgpbFAzocnC8XLigY2apL7RwlZECy0L/Il6MsegCRPbQ
-         gHQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760719382; x=1761324182;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6gCBpn1xaSdsDN3kuu/6RChT6cW/pr078XU7axphUc=;
-        b=cgsn5RK9kHffQ5/qK3tqQYgHY5rbpT8EFSweZECiR9uLXQ+XoP2nn49edKTgKQy2td
-         7b8HC+s0/eHiRk1vJ52e6Cmm04MN3uuQKUmkMPMSzUsSvoOl7YVttXR5o6jzqV3Slw/4
-         FivBSr0zKiS2xDSlRgiskwJCTF3fZ9gzvfnBf1WAcE4AGO8oINYmTvq6m8375F5ckYbV
-         b1oOXltDa8Lwq+90RA5+D4ndq5Oqc3iui0RB9fYsS0raUj2jvXl93DXqwUyjQIH+fiDN
-         ptJvhsfBCbji87Xb/YUXqTIsK5Rgb2ESr3KpObHnaORZtkC9c/XsO8x1ez552GNRxhVV
-         y1Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrEibR5tlUTRwjg/OOQZ89cvYZcnzrQ9JG70a7lQMDVTPstflRnXwVPsP16LLXUHcCPT5/3YchnPUqbNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu/ZBXjDwxr6OCNE+dCdi+A4rj5HN95ySaLr28BEPXE2ytMCji
-	hiM8ry/kzTW7NRuZlIH/Qkxp0TpMzT+NahDCCtVtx3VQdnxEt4NX4xXyl7NVYY9RIBE=
-X-Gm-Gg: ASbGncsCwIc8D8m5s50TaR+ehrlcgMAmrZRvhaD2zxCNoV1QatOJxb2a0G++VxZhDzn
-	8/vJGZxhYD8RAMspczDXV98AcejxAXJQ/YNIaFC0h1JivlFHE6EL0tt5BlAiS7Bwfu9+pNlVmqO
-	qQKSfV8VRelSeXWYEDkK+hz02oQS+/lvNcjbutIf5ePs9d0tLffEWfk+MpAst7xsyrujFtQEl+v
-	K/VR6NrJNEHgmlBCsElcdpGDEgzq59DGUB5S1O6bOx38ucFclFVp59FvxNr2onppFeaORPux2vu
-	VWGn4eZS9rg0+9XIPiK0o+S3Ak/oU2GWnDlRDehSbma2HUABc5drS+GKxkeKPgAB/we/eQcBHGL
-	VovTX0D2Bw6TISMPFlIsN6p48RVMgZbCQz2y2FbnCvF2mEy+k5DPHB5RkyjRci589TpwWiAsLR3
-	9EXpSbaCksVth2vErt
-X-Google-Smtp-Source: AGHT+IGMBA0qJ4gxpjjM3xG9IuatY3oWeNvAk3ViyCHo+q3HrYjHTp52+8ZLn0SPVSWIlQ60ex3wqw==
-X-Received: by 2002:a5d:5d08:0:b0:427:a34:648c with SMTP id ffacd0b85a97d-4270a34652cmr1088821f8f.58.1760719381734;
-        Fri, 17 Oct 2025 09:43:01 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-427f00ce06bsm76237f8f.45.2025.10.17.09.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:43:01 -0700 (PDT)
-Date: Fri, 17 Oct 2025 19:42:56 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/sysfb: Fix a NULL vs IS_ERR() bug
-Message-ID: <aPJyEMWmWpWkcQvE@stanley.mountain>
-References: <aPJo1W5Dl4rmGX_P@stanley.mountain>
- <aPJrs7_u8KcalNsC@intel.com>
+	s=arc-20240116; t=1760719413; c=relaxed/simple;
+	bh=gp5HyTgsHyFmfnF6hdUrKz5gfsHMR9+I91SzhNTG9hA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lti2lwELpDa2fqIoTCntCcxZHKbFTHza6qb2kjYu/AZaNjAhzV41ZkUzmZ/vfB6tuS8BzUqO5SFSMKZznwvcsDudgAIlXKhlcrPIn9AFKNktX3E01CW2JJ3C+Ot8k3sbEVPi6rZ/xFdwioKWgMziPQhAjgGu8Had6WyRegBhPfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cPub76OH; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59HGhMsa319088;
+	Fri, 17 Oct 2025 11:43:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760719402;
+	bh=eviPgkXhGssPXTl5A+LvFuwYCmWSA2helRRT7n9ZZ/U=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=cPub76OHc19+gUbA5l1uytsQo+Areo+ZpBOqJKogg1ydUFyMxFgGPsKdPOQogO/a0
+	 P1r7UJ1YYmZ4KVd1GvbcTn1gE9BIp5cGj0AJ09lIlXUjNT3cqKy31GiNzoL3e/4DqV
+	 2kUVN9Z3EMO30Py9JyDut3vg59KnL6c6SLW8qXg4=
+Received: from DLEE212.ent.ti.com (dlee212.ent.ti.com [157.170.170.114])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59HGhMcS2932206
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 17 Oct 2025 11:43:22 -0500
+Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 17 Oct
+ 2025 11:43:21 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 17 Oct 2025 11:43:21 -0500
+Received: from [10.249.132.21] ([10.249.132.21])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59HGh9Hh1591946;
+	Fri, 17 Oct 2025 11:43:12 -0500
+Message-ID: <07032efd-52a2-44e1-89bd-81602be9eb32@ti.com>
+Date: Fri, 17 Oct 2025 22:13:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPJrs7_u8KcalNsC@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] crypto: ti - Add support for AES-XTS in DTHEv2
+ driver
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Manorit Chawdhry
+	<m-chawdhry@ti.com>,
+        Kamlesh Gurudasani <kamlesh@ti.com>,
+        Shiva Tripathi
+	<s-tripathi1@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+        Vishal
+ Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251009111727.911738-1-t-pratham@ti.com>
+ <20251009111727.911738-2-t-pratham@ti.com>
+ <aPHW_zyWwA36Usy1@gondor.apana.org.au>
+Content-Language: en-US
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <aPHW_zyWwA36Usy1@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Oct 17, 2025 at 07:15:47PM +0300, Ville Syrjälä wrote:
-> On Fri, Oct 17, 2025 at 07:03:33PM +0300, Dan Carpenter wrote:
-> > The drm_atomic_get_crtc_state() function never returns NULL, it returns
-> > error pointers.  Update the error checking to match.
-> > 
-> > Fixes: cb71de092553 ("drm/sysfb: Lookup blit function during atomic check")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/gpu/drm/sysfb/drm_sysfb_modeset.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> > index 8517c490e815..d2c4d8f3d4d0 100644
-> > --- a/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> > +++ b/drivers/gpu/drm/sysfb/drm_sysfb_modeset.c
-> > @@ -259,7 +259,7 @@ int drm_sysfb_plane_helper_begin_fb_access(struct drm_plane *plane,
-> >  	ret = -EINVAL;
-> >  
-> >  	crtc_state = drm_atomic_get_crtc_state(plane_state->state, plane_state->crtc);
+On 17-10-2025 11:11, Herbert Xu wrote:
+> On Thu, Oct 09, 2025 at 04:11:31PM +0530, T Pratham wrote:
+>>
+>> +static int dthe_cipher_xts_init_tfm(struct crypto_skcipher *tfm)
+>> +{
+>> +	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(tfm);
+>> +	struct dthe_data *dev_data = dthe_get_dev(ctx);
+>> +
+>> +	ctx->dev_data = dev_data;
+>> +	ctx->keylen = 0;
+>> +
+>> +	const char *alg_name = crypto_tfm_alg_name(crypto_skcipher_tfm(tfm));
 > 
-> Looking at where this gets called, that should be
-> drm_atomic_get_new_crtc_state(). Either that or the
-> code is more seriously borked.
+> Just use the name "xts(aes)" directly.
+
+Ah, right. This can be simplified.>
+>> +	ctx->skcipher_fb = crypto_alloc_skcipher(alg_name, 0,
+>> +						 CRYPTO_ALG_NEED_FALLBACK);
 > 
+> You should allocate a fallback that is synchronous only.  Then you
+> can store the sub-request on the stack with SYNC_SKCIPHER_REQUEST_ON_STACK.
+> Otherwise the sub-request reqsize may overflow your request object.
 
-I can't comment on that.  Let's drop this patch and instead (probably
-I guess?) change it to drm_atomic_get_new_crtc_state().
+Understood. Will correct this.>
+> Cheers,
 
-regards,
-dan carpenter
+---
+Regards
+T Pratham <t-pratham@ti.com>
 
 
