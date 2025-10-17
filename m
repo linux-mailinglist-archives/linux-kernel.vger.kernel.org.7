@@ -1,568 +1,203 @@
-Return-Path: <linux-kernel+bounces-858163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152CEBE92D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:26:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8607BE92DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28AFF5654E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA2D624EF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222D53396F1;
-	Fri, 17 Oct 2025 14:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC7C339702;
+	Fri, 17 Oct 2025 14:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="rGPiBtUm"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iTKX2ION"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013022.outbound.protection.outlook.com [40.107.159.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BC03396EC
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760710880; cv=none; b=AgXYCNn1ki5DSoLPoxB2EnVsaC6GGXG1cak/Q9R3Ot6jy+fQRi0Bn9RijPLBhIXWgACzwnh5gG6Ec6Q+AxcePDWL2FtY2UpqkrjCqWQFzX0wjKnURoAWNzzZKcM+f/fREg7fJo0LpoEjd+yha9vSv22+OcGmBWHI2gObg2f3pM4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760710880; c=relaxed/simple;
-	bh=T5DbWNLZPZ8w2UDbLucYBupyis7t2YeILN5raue7V58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWFrwscB9h6LN8iMblXmiuEhe+A3HF24mtG3hGxamKCUMfyXSq4v1NG3kYFLjK8dpLjE+KVwM9IUCRft3KTifyFwmgO7OvUdd5BgVQWNWS17P5VtBqCMhIFVrJDd6t2WWzIMRavP38OUqy4IiYN3arlImcGjz+hO8yBSz69pa+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=rGPiBtUm; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id 9VXwvQp3YZx2i9lKRvuLIQ; Fri, 17 Oct 2025 14:21:11 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 9lKOv2HkXHyqZ9lKOvyB7a; Fri, 17 Oct 2025 14:21:09 +0000
-X-Authority-Analysis: v=2.4 cv=G4EcE8k5 c=1 sm=1 tr=0 ts=68f250d7
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=HaFmDPmJAAAA:8
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=c3N2V53nFsz6MthyhhEA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CjaQGKVGTxZ1bRrGBuHqQUNCs7DDwt+H3CUoVjyRlBc=; b=rGPiBtUm6P9UpV1D6RLs8LEXBz
-	XfdDUsn5cxFw/wYeaTOk28Om3ET45Q4wYDiAnWStomzzkdyGS9M9VrNCbI6WFAeky0V04Vh44WWaa
-	LtyLNDmgdPQJ8G/3Rqh4bO8rCpd47ipbg9fuBUsb4/mFQWkl7acLknZJ53/+maoyazwHcconvliaI
-	cph3K9F5/jXxotvIvqxQRXwjvhgDrl7sMu6t5G1gsqO2tR+PiMeN9Kxwe+zPZHbYo7TChebv1fYxu
-	dYQxCAnQkd+WqcJHb64czAqR6ibd7ZLRikEOSOT45T6+EEpfBExai14YLSt9Qum4D/jNX970IuWHv
-	XUUhnclA==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:50342 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <re@w6rz.net>)
-	id 1v9lKO-00000002hUO-16hY;
-	Fri, 17 Oct 2025 08:21:08 -0600
-Message-ID: <6bf478b8-2194-4ffb-aaac-8e3e314ad71c@w6rz.net>
-Date: Fri, 17 Oct 2025 07:21:06 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E23C3396FA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760710900; cv=fail; b=UyXYktehrqm7N62ChNFtomyivwEmaMIyQah+l1cv11s3xf95eqjhtz0ndcunofItTuMXF8vXRMr6D2PO+f/zYPv8hIJgv8Ioa+fEyiqvWpLXtS2v0szAB7iZGZqj84vPN1pzbe3jdwJg+/nfx0I6X/YuCfsRCPdYTRid2xaJjfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760710900; c=relaxed/simple;
+	bh=hFsAu6887zgL3ZMOdpa/pCrubzJ68uRRV2oLITN0TF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DJkv/dqkHpheDHjiGkTM6PZfdIJgx88cCe8MDS+fRJmZVpSECUiCdxmflC7dHX9HA/l4Wgdb2uouQv4Fp57rSSoMtIah/B7FbEhwZ776N3rFuWrq2aZAoENGeQONaS8P2avZcCP2HYwvvUcJxEp3kfqsdU+Xj1B5sRylXdNBalM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iTKX2ION; arc=fail smtp.client-ip=40.107.159.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e0jUDZnGUTEfI0lHDbPmQcWSucxSQVaiWrF2W1AXqmAwl8uqSlY2UcS788t6rTn9HARVjEJVNwAJICUMHO1WvxIRKpF3tlgprQHAXoM2hb7Aq3Cy7S6Bis0DHVZp3DhsUxjU7OF5+NKLXz3ujVJaty58BfngTKKTS1c94dYt4HxJXoIR6PXeHoRFwcA1g38pzy8Abqpaf8xYy3kiMWRuJq11UNmzozk337CT9J+B0p2/F2+CtR7UAGKBlQQfXFfgbx6FvBAMuEyaZkJ1OLnLoifKMZYXQwXOPo3tFp+HIfCjZ/mrTZVqv8BAqik07fx/TQeJGy7CxV44CQem25Eycw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F6uKIFLNI8W1KLSAMV/F5aLJF0wp0FzqcSGrsPgnbl0=;
+ b=F//iyoLSU2A6zJjGq66rORodfYhhp6Jkq/HgkALIeboFZvuiKuCuQRG778VU3TC6D+M+WwUA5kjC8jOzcI0W1ZtTPSN66QFiqfeMQc3L3JFu15C53Ur75gD6wxTqSeIvUgB2RibQ8eFoOdiTha7C3sV8/iFUNoLahHE6WtXzTqREbCNWdeaNpvGi8YtXnDkuGG92Zgk/JP7AkYi+d7Qd7kLrR6ommfkIjDEA/n+KvcM40xJKAL3iZ+ArPWOPJpKWZedygeH6Y6AVp2t6+vxf7VYaaUf6pg0y43oi3DXwzNDk2GWRDCKZ4/usrgS3ltoPaGnKnLqvgrMVfPZLrjw+lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F6uKIFLNI8W1KLSAMV/F5aLJF0wp0FzqcSGrsPgnbl0=;
+ b=iTKX2IONMLRn5n/tsuAo9qpO7aQatkJoGmG+tsb/szBIr/j/osG8wWWrLQmBkgipUvd8sW5/eeUwL5E/wILB5KW7ZehqGU5PWXWJo+BlNgC3ashFQkj05fw3329DSc9LKNsAWAJdODEDRpCIJnHNlGxYMFmMr38h4GGV1UlGUm5pOPrCXFqvYxM9F+/y0c9Wwm1QpVhgIZae8ETyxu/puxGhqV6uNrH+EHnynD7CxKR01hTnmlJKmXYMGzNK9UoUOwKuxa2bkAtesyPA4a/4xj/1X3YvdnmZxlhcMdx2mnGs5dI5tfe8Owf5ka126Bawuq3skNK7uK/FseR4MK6kuA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by GVXPR04MB10449.eurprd04.prod.outlook.com (2603:10a6:150:1dd::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
+ 2025 14:21:33 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 14:21:33 +0000
+Date: Fri, 17 Oct 2025 10:21:24 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] firmware: imx: scu-irq: Free mailbox client on
+ failure at imx_scu_enable_general_irq_channel()
+Message-ID: <aPJQ5Ef9Il3HWGJt@lizhi-Precision-Tower-5810>
+References: <20251017-imx-firmware-v2-0-b58f68ec2ea9@nxp.com>
+ <20251017-imx-firmware-v2-2-b58f68ec2ea9@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017-imx-firmware-v2-2-b58f68ec2ea9@nxp.com>
+X-ClientProxiedBy: PH7P220CA0180.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:33b::30) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Conor Dooley <conor@kernel.org>,
- bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>,
- Paul Walmsley <pjw@kernel.org>, Greentime Hu <greentime.hu@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>, regressions@lists.linux.dev
-References: <20251013212801.GA865570@bhelgaas>
- <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
- <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
- <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
- <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
- <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
- <18ef2c73-fb10-47b3-838f-bc9d3fd2dbc2@w6rz.net>
- <xfpqp3oign7c3336wxo5yexgitxotttrxgkyzbfknjmfk6pmdc@drsk3ardfl5t>
- <432e4026-208f-459e-82dc-e74ef5da6a87@oss.qualcomm.com>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <432e4026-208f-459e-82dc-e74ef5da6a87@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v9lKO-00000002hUO-16hY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:50342
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 6
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfA7msqPfuzyz6aX6vxTB89kDkVNBZDLWInMWjmU63v9gkO3Kh9WVDyxc/RLvoCy/NcLvU0F5QgwvKBGfGdgLBo3RHghtMyMxb9+3ZZK93/m/XM3P45kb
- qHEX70EcmJw/wpR9vvNHVZ797vfEoEaKmruV5O90dTT5hIjXIGYykXkBYcd4TbHcy15tPD28e8n6/IZjj27hHZVsFREfE63gZlY=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GVXPR04MB10449:EE_
+X-MS-Office365-Filtering-Correlation-Id: 630a9ded-715d-4050-e3c4-08de0d887911
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tQEajJUbE7Xm75WiUUxF7mOQQdJcUttdhpjafaCNZlmEhzzVeew7us8nsDgD?=
+ =?us-ascii?Q?qF42Uj/bFyd8p7ywOcg1FPvKQTutlSWpztIrV4rhhl2RoPrQd5psbC6ZShcz?=
+ =?us-ascii?Q?APlnaPkfY13ynX97IGJ7Uahj6F66duRcV/Qph8kyP8gtht8fLECi8Yc2JFiC?=
+ =?us-ascii?Q?pgNs4sIZ8VFzdAMqWrmlt/1tWXdzsvE5PWm1o5gUA6OAcywyoLIWieGAhYKm?=
+ =?us-ascii?Q?rnS7X2mixkmm5XNDtsF3Qe40qaeLZWHrtQSCa7k7MJZjXqqsqwoJ7N1qMiQo?=
+ =?us-ascii?Q?yT6Uy0UBmBER/D6Bhts5hGdF3eA0vI5y3XRvODVXzfust+7Wd6nd8WVrky++?=
+ =?us-ascii?Q?OrzWbIGKT6UFwevGM0wUxLTcghBBJ/0aOVzf/+GLdAcHHwgrP6+HxdMAQAxD?=
+ =?us-ascii?Q?kDBsgZTaB1vCZTa23W/X+Pl283Mti4Vm3GT2bNWMIGqOT4qTxjks5CjZdcar?=
+ =?us-ascii?Q?/+eZ1P3ljcPMFFCjY8szH0sEP/2a2eRooCJU/XTwpHN1BURivWQitxWjm/p9?=
+ =?us-ascii?Q?yoRNNasc2kjbxdkGrvWBCXk4Mti3u8zSCU8dfakRwHKqRRaTDJSbTbeZIJqb?=
+ =?us-ascii?Q?yl58cKO9zzES9wtwglLp2oDUUQ1/8q22dUSbc4A66mbRzX6mojPl0IFSkuZv?=
+ =?us-ascii?Q?4vdpITdPsVzUU6mxsJQSRRDZ9PApXLHjsJMz3d4cmoiWoowaL3U2rbbQKB5Y?=
+ =?us-ascii?Q?I0b7TgrXAy+IyvsG5szaf+AKYZZousZKReo3MpCjZ0m3uCz7rGDV1LnVvrc6?=
+ =?us-ascii?Q?w2uMUitdpq/L6kYY3MOsd43TeN1jsR/mf+1uwhY2HQxa5fmmxHfg4kB/0+EK?=
+ =?us-ascii?Q?okEf2pcLw/bC8Ktu/LyHkYBiBpRwKpvvcIPI8AH76+7Zz0i9stpGk4Gg5WpQ?=
+ =?us-ascii?Q?ZwD5gFb2H6ZiE+fQDU0MIUTPJeB3ksLJJpsAYDy86HuSprRkPu35zvZvLYpc?=
+ =?us-ascii?Q?0jEY3wfe7YF/VeoPqiY80ja6W8lGiLrSl6ZmEvPclQQAGHiWznjW3xfQ/bi0?=
+ =?us-ascii?Q?Jx1/jWVRoWnJmgg0UWYSXLKQ1Ip7x+m8AuHu/+gFflxzoFtJBXJKYejeIoP+?=
+ =?us-ascii?Q?8sNp7wmhZfqEH6q+bzhCMhXL6hyZYkPqvP3oZUtQxt8VaugTPKlRN800Sxjt?=
+ =?us-ascii?Q?AKiePPtqByDs8rt6lab5lHSDb3HN49599ZxcWdzix0cR6cb2v9DEYqTVLFNf?=
+ =?us-ascii?Q?KshQ48nSrHeXR557sHLcnXQ97AsnLFJpaLLzoZqm0Iitf6rNwlRM839akqnb?=
+ =?us-ascii?Q?BWBh11DY/Qkpl8UziAaafi/bu0rFYVGfrTP0VoisRuGhyvAy1LOGLFgbAoQA?=
+ =?us-ascii?Q?9GLgoy3O3x+B+M01tDicghWdpNj/5jZXiBwQrjfpgA7JD+bmtnzfPohv6Msm?=
+ =?us-ascii?Q?ZO7IcynlobN8utSwRil6uFlNvaVY7jk1KzeRJhVERumwfKS6ewJzVa96uLJY?=
+ =?us-ascii?Q?9pzF7uDi1TMQWnH6d0q7Gtkjm1HrnaXNB/J3MwxbxLMX1zh7HAGLdjuh3gGv?=
+ =?us-ascii?Q?w1lUWlv70Xj1dHEQOIQcXlkdpwhTEGvgQkS7?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/iEEslt8F3BaGKJtXwyXRfUrnvg+RT3PVVWx1kN1RpLSeplUAZd5Pqi39tNG?=
+ =?us-ascii?Q?O3bHyMC+UJb+vpOLjV7z4nRDUec9oLjadNMPwfTWl3YwjWh4MlDlYgg+IdTg?=
+ =?us-ascii?Q?PPBvXsnmBZSPo5PXBObJbRlHub1I1MTgo3AoYZSbngKl7TsxZrSrzWXG0JBj?=
+ =?us-ascii?Q?h/K4Hb2GlBSIdsZ68OD618bJigTcwbp+GFVtK5AmPQN3hfkCa+LgTdT/1FqC?=
+ =?us-ascii?Q?KYEBdlH853s7dWoUjc/jh8warHm5kXNk9X/NS7BryGAS+BR+fi0yDUfg7oOU?=
+ =?us-ascii?Q?ep5gGkUKALZg1+qTMCUpfJORGla0l6iJ437K1TOFEVi+jsV97P/3yf27OH+m?=
+ =?us-ascii?Q?+X56J3tDz4BCeH0vEzWUbNXrEQnjwC+YEd7NWJE/4JOGx8WrNBKiCS3+e9Hy?=
+ =?us-ascii?Q?ja1sZgAri/qngEf6RepdZxmvNaawnD+fR1yTzEAvvrBzFh1Apsq1GY9axD7c?=
+ =?us-ascii?Q?U9+8gFrDIc1OSCFl92ay4PSmB95CJ/Jwpe5RMhQPqumCXGe7CdP9zRhZYnRq?=
+ =?us-ascii?Q?97Rz1+8Q+7MlZoW7azAsxkhfXlW49XWmob2P/VxJW0cYCh3OzfYvjxuL5/BO?=
+ =?us-ascii?Q?31VMt+WOlkfYQMc9+4+L9hbKLzGTOkwqAEdQj4xVweQRkO7w7QpKcW0uT90w?=
+ =?us-ascii?Q?JQAzpkmH/Rp9R3QTtw/De3dRO0gaod0Qn6/3NQ47BnWYbeio5Fnp/ZI6/ZB0?=
+ =?us-ascii?Q?OA0TIx7LH7wczm0/CEfxEjnsdix1AcEJ3oaBAG/NBvCJBe3/X3Xzvaml5qWt?=
+ =?us-ascii?Q?8N+V2qrPC4FuR9JRkUZM+3V4ZO7C20D9hL6MVFnLx8q1vp/nwUkiTYHKWOlV?=
+ =?us-ascii?Q?3sUuEKAlHlM846wOmZiqwx6+jCZ40EXC2LstEJKsboL4C7AAHPzfaShTnxU8?=
+ =?us-ascii?Q?tfO0+jg5CfFW/K7SW1x62MTVTEKwFrY9724DnclQrA4/hMh6LrLZUTp72xzi?=
+ =?us-ascii?Q?1Lue8rVI1Vw547o5y+yjRLruRPb81c+W5m16M4fXosFQYnhwvOwMvvXyS+T5?=
+ =?us-ascii?Q?APHWwGnnUMJgM77kTt1uVCoVLl4yAZLIngW6sK/KiR1iHrCb7H9sb+3r9d0c?=
+ =?us-ascii?Q?5AssBW+uxVG6t1/DntXzv4NpoCxl2OTqL7ZiyvDZwTUQFPHhJjx2BH5HlAEx?=
+ =?us-ascii?Q?l09VYyOzgng5mAWK/3GN2KGx4HTOh1bFM5AR03RPdGa7aUeZgaLXQhknp+5e?=
+ =?us-ascii?Q?XzLnP/BE6V7RiZq+PcryD14h4sGeIE3CVpENC6ZB9OV6gs/3XurdCK/wqNg/?=
+ =?us-ascii?Q?ynV5hBtj/IAVpTcvTBZILTURq3dGaN09WiU0yf/TAmcPg62O4d3wkTJypUgD?=
+ =?us-ascii?Q?/kRxZD3zMiZ6PlRUjmjvjfd/HAaqfVVjQ3BJfVrgqyFEtTSzf78Y3vp7nNoM?=
+ =?us-ascii?Q?pRjGaAgo/ZUaEgflnLTXCCFzrYzcu8EJD1WY6LKcdtSGH/evMQZHHbpMYfFw?=
+ =?us-ascii?Q?drP+SsSUmVxg5268eW/IiuWG3s206FHAA3Gt9/jrP3+4Ivhi/aAPAroQheox?=
+ =?us-ascii?Q?I3g/pq6KQA7RchQIEu9V8vE91Kw2iq5BvwZlUN8Emcwcw0beBfssPuKqEztV?=
+ =?us-ascii?Q?WDg64JUva25wGVK6PTOwvERqpi0d7r6Veo2xdqld?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 630a9ded-715d-4050-e3c4-08de0d887911
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 14:21:33.2747
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YFcEMrZwjziqXMOTjLgUjOYgtmAkSMiHIiMk1XFv/aBf5BiM229fQ3JWA/FlyBDPd8YBBUfpPsLk75wvxGMQHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10449
 
-On 10/17/25 04:43, Krishna Chaitanya Chundru wrote:
+On Fri, Oct 17, 2025 at 09:56:25AM +0800, Peng Fan wrote:
+> The IRQ mailbox is an optional channel and does not need to be kept until
+> driver removal when an error occurs. Free the allocated memory in the
+> error path.
 >
+> Add 'goto free_cl' when mbox_request_channel_byname() fails, to keep free
+> at one place.
 >
-> On 10/15/2025 7:33 PM, Manivannan Sadhasivam wrote:
->> On Tue, Oct 14, 2025 at 03:41:39PM -0700, Ron Economos wrote:
->>> On 10/14/25 09:25, Manivannan Sadhasivam wrote:
->>>> On Mon, Oct 13, 2025 at 10:52:48PM -0700, Ron Economos wrote:
->>>>> On 10/13/25 22:36, Krishna Chaitanya Chundru wrote:
->>>>>>
->>>>>> On 10/14/2025 10:56 AM, Ron Economos wrote:
->>>>>>> On 10/13/25 22:20, Krishna Chaitanya Chundru wrote:
->>>>>>>>
->>>>>>>> On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
->>>>>>>>> [+cc FU740 driver folks, Conor, regressions]
->>>>>>>>>
->>>>>>>>> On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
->>>>>>>>>> The SiFive FU740 PCI driver fails on the HiFive
->>>>>>>>>> Unmatched board with Linux
->>>>>>>>>> 6.18-rc1. The error message is:
->>>>>>>>>>
->>>>>>>>>> [    3.166624] fu740-pcie e00000000.pcie: host bridge
->>>>>>>>>> /soc/pcie@e00000000
->>>>>>>>>> ranges:
->>>>>>>>>> [    3.166706] fu740-pcie e00000000.pcie: IO
->>>>>>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>>>>>>>> [    3.166767] fu740-pcie e00000000.pcie: MEM
->>>>>>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>>>>>>>> [    3.166805] fu740-pcie e00000000.pcie: MEM
->>>>>>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>>>>>>>> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
->>>>>>>>>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
->>>>>>>>>> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
->>>>>>>>>> [    3.579552] fu740-pcie e00000000.pcie: Failed to
->>>>>>>>>> configure iATU in ECAM
->>>>>>>>>> mode
->>>>>>>>>> [    3.579655] fu740-pcie e00000000.pcie: probe with
->>>>>>>>>> driver fu740-pcie
->>>>>>>>>> failed with error -22
->>>>>>>>>>
->>>>>>>>>> The normal message (on Linux 6.17.2) is:
->>>>>>>>>>
->>>>>>>>>> [    3.381487] fu740-pcie e00000000.pcie: host bridge
->>>>>>>>>> /soc/pcie@e00000000
->>>>>>>>>> ranges:
->>>>>>>>>> [    3.381584] fu740-pcie e00000000.pcie: IO
->>>>>>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>>>>>>>> [    3.381682] fu740-pcie e00000000.pcie: MEM
->>>>>>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>>>>>>>> [    3.381724] fu740-pcie e00000000.pcie: MEM
->>>>>>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>>>>>>>> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll
->>>>>>>>>> T, 8 ob, 8 ib, align
->>>>>>>>>> 4K, limit 4096G
->>>>>>>>>> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
->>>>>>>>>> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->>>>>>>>>> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->>>>>>>>>> [    3.988164] fu740-pcie e00000000.pcie: PCI host
->>>>>>>>>> bridge to bus 0000:00
->>>>>>>>>>
->>>>>>>>>> Reverting the following commits solves the issue.
->>>>>>>>>>
->>>>>>>>>> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc:
->>>>>>>>>> Support ECAM mechanism by
->>>>>>>>>> enabling iATU 'CFG Shift Feature'
->>>>>>>>>>
->>>>>>>>>> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom:
->>>>>>>>>> Prepare for the DWC ECAM
->>>>>>>>>> enablement
->>>>>>>>>>
->>>>>>>>>> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc:
->>>>>>>>>> Prepare the driver for
->>>>>>>>>> enabling ECAM mechanism using iATU 'CFG Shift Feature'
->>>>>>>>> As Conor pointed out, we can't fix a code regression with a DT 
->>>>>>>>> change.
->>>>>>>>>
->>>>>>>>> #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the
->>>>>>>>> driver for enabling ECAM mechanism using iATU 'CFG Shift
->>>>>>>>> Feature'")
->>>>>>>> Hi Conor,
->>>>>>>>
->>>>>>>> Can you try with this patch and see if it is fixing the issue.
->>>>>>>> diff --git a/drivers/pci/controller/dwc/pcie-fu740.c
->>>>>>>> b/drivers/pci/controller/dwc/pcie-fu740.c
->>>>>>>> index 66367252032b..b5e0f016a580 100644
->>>>>>>> --- a/drivers/pci/controller/dwc/pcie-fu740.c
->>>>>>>> +++ b/drivers/pci/controller/dwc/pcie-fu740.c
->>>>>>>> @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct
->>>>>>>> platform_device *pdev)
->>>>>>>>
->>>>>>>>           platform_set_drvdata(pdev, afp);
->>>>>>>>
->>>>>>>> +       pci->pp.native_ecam = true;
->>>>>>>> +
->>>>>>>>           return dw_pcie_host_init(&pci->pp);
->>>>>>>>    }
->>>>>>>>
->>>>>>>> - Krishna Chaitanya.
->>>>>>>>
->>>>>>> I've already tried it. It doesn't work. Same error message as 
->>>>>>> before.
->>>>>> Can you share us dmesg logs for this change.
->>>>>>
->>>>>> - Krishna Chaitanya.
->>>>> [    3.159763] fu740-pcie e00000000.pcie: host bridge 
->>>>> /soc/pcie@e00000000
->>>>> ranges:
->>>>> [    3.159853] fu740-pcie e00000000.pcie:       IO
->>>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>>> [    3.159916] fu740-pcie e00000000.pcie:      MEM
->>>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>>> [    3.159953] fu740-pcie e00000000.pcie:      MEM
->>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>>> [    3.160039] fu740-pcie e00000000.pcie: ECAM at [mem
->>>>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
->>>>> [    3.571421] fu740-pcie e00000000.pcie: No iATU regions found
->>>>> [    3.571472] fu740-pcie e00000000.pcie: Failed to configure iATU 
->>>>> in ECAM
->>>>> mode
->>>>> [    3.571529] fu740-pcie e00000000.pcie: probe with driver 
->>>>> fu740-pcie
->>>>> failed with error -22
->>>>>
->>>>> Same as before the change. The entire log is here:
->>>>>
->>>>> https://www.w6rz.net/dmesg.txt
->>>>>
->>>> Weird that the driver still creates ECAM even after skipping it 
->>>> using the flag.
->>>> The flag is not meant for that purpose, but it should've worked 
->>>> anyway.
->>>>
->>>> Can you try this diff and share the dmesg log?
->>>>
->>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c 
->>>> b/drivers/pci/controller/dwc/pcie-designware-host.c
->>>> index 20c9333bcb1c..58080928df9f 100644
->>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
->>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
->>>> @@ -523,8 +523,12 @@ static int dw_pcie_host_get_resources(struct 
->>>> dw_pcie_rp *pp)
->>>>           pp->cfg0_size = resource_size(res);
->>>>           pp->cfg0_base = res->start;
->>>>
->>>> +       dev_info(dev, "%s: %d native_ecam: %d", __func__, __LINE__,
->>>> +pp->native_ecam);
->>>> +
->>>>           pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res);
->>>>           if (pp->ecam_enabled) {
->>>> +               dev_info(dev, "%s: %d ECAM ENABLED", __func__, 
->>>> __LINE__);
->>>>                   ret = dw_pcie_create_ecam_window(pp, res);
->>>>                   if (ret)
->>>>                           return ret;
->>>> @@ -533,6 +537,7 @@ static int dw_pcie_host_get_resources(struct 
->>>> dw_pcie_rp *pp)
->>>>                   pp->bridge->sysdata = pp->cfg;
->>>>                   pp->cfg->priv = pp;
->>>>           } else {
->>>> +               dev_info(dev, "%s: %d ECAM DISABLED", __func__, 
->>>> __LINE__);
->>>>                   pp->va_cfg0_base = 
->>>> devm_pci_remap_cfg_resource(dev, res);
->>>>                   if (IS_ERR(pp->va_cfg0_base))
->>>>                           return PTR_ERR(pp->va_cfg0_base);
->>>>
->>>> - Mani
->>>>
->>> After testing with this patch, I must have transferred the wrong 
->>> image to
->>> the target when testing before. The "pci->pp.native_ecam = true;" 
->>> patch to
->>> pcie-fu740.c does work.
->>
->> Thanks! However, it was not a proper fix. The issue seems to be due the
->> assumption that the whole DBI space (Root Port + misc registers) lies 
->> at the
->> start of the ECAM region. This is true for Qcom, but not for all DWC 
->> glue
->> platforms.
->>
->> Krishna is working on a patch that decouples the DBI region from ECAM 
->> so that
->> the driver will continue using DBI for accessing Root Port config 
->> space and ECAM
->> for bus > 0.
->>
->> This is one step backwards for ECAM since the driver is supposed to 
->> use ECAM for
->> accessing all devices starting from the Root Port. But since DWC has 
->> clubbed
->> non-Root Port specific registers in the DBI space, we have to live 
->> with this
->> limitation as ECAM is supposed to access only Root Port specific 
->> registers.
->>
->> The patch will be posted after internal validation asap.
->>
-> Hi Ron,
->
-> Can you try with this series and let us know if it is helping you or
-> not.
->
-> https://lore.kernel.org/all/20251017-ecam_fix-v1-0-f6faa3d0edf3@oss.qualcomm.com/ 
->
->
-> - Krishna Chaitanya.
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-The patch works good. Here's the log of PCI messages.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-[    3.221506] fu740-pcie e00000000.pcie: host bridge 
-/soc/pcie@e00000000 ranges:
-[    3.221594] fu740-pcie e00000000.pcie:       IO 
-0x0060080000..0x006008ffff -> 0x0060080000
-[    3.221658] fu740-pcie e00000000.pcie:      MEM 
-0x0060090000..0x007fffffff -> 0x0060090000
-[    3.221696] fu740-pcie e00000000.pcie:      MEM 
-0x2000000000..0x3fffffffff -> 0x2000000000
-[    3.221783] fu740-pcie e00000000.pcie: ECAM at [mem 
-0xdf0000000-0xdffffffff] for [bus 00-ff]
-[    3.323453] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, 
-align 4K, limit 4096G
-[    3.523137] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
-[    3.723138] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-[    3.827134] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-[    3.827445] fu740-pcie e00000000.pcie: PCI host bridge to bus 0000:00
-[    3.827479] pci_bus 0000:00: root bus resource [bus 00-ff]
-[    3.827503] pci_bus 0000:00: root bus resource [io 0x0000-0xffff] 
-(bus address [0x60080000-0x6008ffff])
-[    3.827529] pci_bus 0000:00: root bus resource [mem 
-0x60090000-0x7fffffff]
-[    3.827551] pci_bus 0000:00: root bus resource [mem 
-0x2000000000-0x3fffffffff pref]
-[    3.827750] pci 0000:00:00.0: [f15e:0000] type 01 class 0x060400 PCIe 
-Root Port
-[    3.827797] pci 0000:00:00.0: BAR 0 [mem 0x00000000-0x000fffff]
-[    3.827821] pci 0000:00:00.0: ROM [mem 0x00000000-0x0000ffff pref]
-[    3.827844] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
-[    3.827866] pci 0000:00:00.0:   bridge window [io 0x0000-0x0fff]
-[    3.827888] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.827912] pci 0000:00:00.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.827998] pci 0000:00:00.0: supports D1
-[    3.828018] pci 0000:00:00.0: PME# supported from D0 D1 D3hot
-[    3.829345] pci 0000:01:00.0: [1b21:2824] type 01 class 0x060400 PCIe 
-Switch Upstream Port
-[    3.829398] pci 0000:01:00.0: PCI bridge to [bus 00]
-[    3.829424] pci 0000:01:00.0:   bridge window [io 0x0000-0x0fff]
-[    3.829446] pci 0000:01:00.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.829475] pci 0000:01:00.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.829509] pci 0000:01:00.0: enabling Extended Tags
-[    3.829597] pci 0000:01:00.0: PME# supported from D0 D3hot D3cold
-[    3.835150] pci 0000:01:00.0: ASPM: DT platform, enabling L0s-up 
-L0s-dw L1 ASPM-L1.1 ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
-[    3.835188] pci 0000:01:00.0: ASPM: DT platform, enabling ClockPM
-[    3.835274] pci 0000:01:00.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.835433] pci 0000:02:00.0: [1b21:2824] type 01 class 0x060400 PCIe 
-Switch Downstream Port
-[    3.835483] pci 0000:02:00.0: PCI bridge to [bus 00]
-[    3.835508] pci 0000:02:00.0:   bridge window [io 0x0000-0x0fff]
-[    3.835530] pci 0000:02:00.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.835557] pci 0000:02:00.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.835592] pci 0000:02:00.0: enabling Extended Tags
-[    3.835680] pci 0000:02:00.0: PME# supported from D0 D3hot D3cold
-[    3.836142] pci 0000:02:02.0: [1b21:2824] type 01 class 0x060400 PCIe 
-Switch Downstream Port
-[    3.836193] pci 0000:02:02.0: PCI bridge to [bus 00]
-[    3.836217] pci 0000:02:02.0:   bridge window [io 0x0000-0x0fff]
-[    3.836240] pci 0000:02:02.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.836267] pci 0000:02:02.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.836302] pci 0000:02:02.0: enabling Extended Tags
-[    3.836391] pci 0000:02:02.0: PME# supported from D0 D3hot D3cold
-[    3.836840] pci 0000:02:03.0: [1b21:2824] type 01 class 0x060400 PCIe 
-Switch Downstream Port
-[    3.836890] pci 0000:02:03.0: PCI bridge to [bus 00]
-[    3.836915] pci 0000:02:03.0:   bridge window [io 0x0000-0x0fff]
-[    3.836936] pci 0000:02:03.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.836965] pci 0000:02:03.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.836999] pci 0000:02:03.0: enabling Extended Tags
-[    3.837088] pci 0000:02:03.0: PME# supported from D0 D3hot D3cold
-[    3.837513] pci 0000:02:04.0: [1b21:2824] type 01 class 0x060400 PCIe 
-Switch Downstream Port
-[    3.837563] pci 0000:02:04.0: PCI bridge to [bus 00]
-[    3.837588] pci 0000:02:04.0:   bridge window [io 0x0000-0x0fff]
-[    3.837610] pci 0000:02:04.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.837638] pci 0000:02:04.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.837672] pci 0000:02:04.0: enabling Extended Tags
-[    3.837760] pci 0000:02:04.0: PME# supported from D0 D3hot D3cold
-[    3.838260] pci 0000:02:08.0: [1b21:2824] type 01 class 0x060400 PCIe 
-Switch Downstream Port
-[    3.838311] pci 0000:02:08.0: PCI bridge to [bus 00]
-[    3.838336] pci 0000:02:08.0:   bridge window [io 0x0000-0x0fff]
-[    3.838358] pci 0000:02:08.0:   bridge window [mem 0x00000000-0x000fffff]
-[    3.838386] pci 0000:02:08.0:   bridge window [mem 
-0x00000000-0x000fffff 64bit pref]
-[    3.838421] pci 0000:02:08.0: enabling Extended Tags
-[    3.838509] pci 0000:02:08.0: PME# supported from D0 D3hot D3cold
-[    3.839437] pci 0000:02:00.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.839472] pci 0000:02:02.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.839501] pci 0000:02:03.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.839530] pci 0000:02:04.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.839557] pci 0000:02:08.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.839788] pci_bus 0000:03: busn_res: [bus 03-ff] end is updated to 03
-[    3.839964] pci 0000:04:00.0: [1b21:1142] type 00 class 0x0c0330 PCIe 
-Legacy Endpoint
-[    3.840056] pci 0000:04:00.0: BAR 0 [mem 0x00000000-0x00007fff 64bit]
-[    3.840181] pci 0000:04:00.0: PME# supported from D3cold
-[    3.847149] pci 0000:04:00.0: ASPM: DT platform, enabling L0s-up 
-L0s-dw L1 ASPM-L1.1 ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
-[    3.847190] pci 0000:04:00.0: ASPM: DT platform, enabling ClockPM
-[    3.847225] pci_bus 0000:04: busn_res: [bus 04-ff] end is updated to 04
-[    3.847421] pci_bus 0000:05: busn_res: [bus 05-ff] end is updated to 05
-[    3.847743] pci 0000:06:00.0: [15b7:5002] type 00 class 0x010802 PCIe 
-Endpoint
-[    3.847823] pci 0000:06:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
-[    3.847852] pci 0000:06:00.0: BAR 4 [mem 0x00000000-0x000000ff 64bit]
-[    3.860322] pci 0000:06:00.0: ASPM: DT platform, enabling L0s-up 
-L0s-dw L1 ASPM-L1.1 ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
-[    3.860362] pci 0000:06:00.0: ASPM: DT platform, enabling ClockPM
-[    3.860414] pci_bus 0000:06: busn_res: [bus 06-ff] end is updated to 06
-[    3.860613] pci_bus 0000:07: busn_res: [bus 07-ff] end is updated to 07
-[    3.860645] pci_bus 0000:02: busn_res: [bus 02-ff] end is updated to 07
-[    3.860671] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 07
-[    3.860751] pci 0000:00:00.0: BAR 0 [mem 0x60100000-0x601fffff]: assigned
-[    3.860781] pci 0000:00:00.0: bridge window [mem 
-0x60200000-0x606fffff]: assigned
-[    3.860808] pci 0000:00:00.0: bridge window [mem 
-0x2000000000-0x20004fffff 64bit pref]: assigned
-[    3.860834] pci 0000:00:00.0: ROM [mem 0x60090000-0x6009ffff pref]: 
-assigned
-[    3.860857] pci 0000:00:00.0: bridge window [io 0x1000-0x5fff]: assigned
-[    3.860886] pci 0000:01:00.0: bridge window [mem 
-0x60200000-0x606fffff]: assigned
-[    3.860912] pci 0000:01:00.0: bridge window [mem 
-0x2000000000-0x20004fffff 64bit pref]: assigned
-[    3.860937] pci 0000:01:00.0: bridge window [io 0x1000-0x5fff]: assigned
-[    3.860975] pci 0000:02:00.0: bridge window [mem 
-0x60200000-0x602fffff]: assigned
-[    3.861001] pci 0000:02:00.0: bridge window [mem 
-0x2000000000-0x20000fffff 64bit pref]: assigned
-[    3.861026] pci 0000:02:02.0: bridge window [mem 
-0x60300000-0x603fffff]: assigned
-[    3.861050] pci 0000:02:02.0: bridge window [mem 
-0x2000100000-0x20001fffff 64bit pref]: assigned
-[    3.861075] pci 0000:02:03.0: bridge window [mem 
-0x60400000-0x604fffff]: assigned
-[    3.861099] pci 0000:02:03.0: bridge window [mem 
-0x2000200000-0x20002fffff 64bit pref]: assigned
-[    3.861124] pci 0000:02:04.0: bridge window [mem 
-0x60500000-0x605fffff]: assigned
-[    3.861148] pci 0000:02:04.0: bridge window [mem 
-0x2000300000-0x20003fffff 64bit pref]: assigned
-[    3.861173] pci 0000:02:08.0: bridge window [mem 
-0x60600000-0x606fffff]: assigned
-[    3.861197] pci 0000:02:08.0: bridge window [mem 
-0x2000400000-0x20004fffff 64bit pref]: assigned
-[    3.861221] pci 0000:02:00.0: bridge window [io 0x1000-0x1fff]: assigned
-[    3.861242] pci 0000:02:02.0: bridge window [io 0x2000-0x2fff]: assigned
-[    3.861264] pci 0000:02:03.0: bridge window [io 0x3000-0x3fff]: assigned
-[    3.861285] pci 0000:02:04.0: bridge window [io 0x4000-0x4fff]: assigned
-[    3.861306] pci 0000:02:08.0: bridge window [io 0x5000-0x5fff]: assigned
-[    3.861332] pci 0000:02:00.0: PCI bridge to [bus 03]
-[    3.861353] pci 0000:02:00.0:   bridge window [io 0x1000-0x1fff]
-[    3.861378] pci 0000:02:00.0:   bridge window [mem 0x60200000-0x602fffff]
-[    3.861401] pci 0000:02:00.0:   bridge window [mem 
-0x2000000000-0x20000fffff 64bit pref]
-[    3.861431] pci 0000:04:00.0: BAR 0 [mem 0x60300000-0x60307fff 
-64bit]: assigned
-[    3.861469] pci 0000:02:02.0: PCI bridge to [bus 04]
-[    3.861489] pci 0000:02:02.0:   bridge window [io 0x2000-0x2fff]
-[    3.861512] pci 0000:02:02.0:   bridge window [mem 0x60300000-0x603fffff]
-[    3.861534] pci 0000:02:02.0:   bridge window [mem 
-0x2000100000-0x20001fffff 64bit pref]
-[    3.861561] pci 0000:02:03.0: PCI bridge to [bus 05]
-[    3.861581] pci 0000:02:03.0:   bridge window [io 0x3000-0x3fff]
-[    3.861603] pci 0000:02:03.0:   bridge window [mem 0x60400000-0x604fffff]
-[    3.861625] pci 0000:02:03.0:   bridge window [mem 
-0x2000200000-0x20002fffff 64bit pref]
-[    3.861657] pci 0000:06:00.0: BAR 0 [mem 0x60500000-0x60503fff 
-64bit]: assigned
-[    3.861692] pci 0000:06:00.0: BAR 4 [mem 0x60504000-0x605040ff 
-64bit]: assigned
-[    3.861727] pci 0000:02:04.0: PCI bridge to [bus 06]
-[    3.861747] pci 0000:02:04.0:   bridge window [io 0x4000-0x4fff]
-[    3.861769] pci 0000:02:04.0:   bridge window [mem 0x60500000-0x605fffff]
-[    3.861791] pci 0000:02:04.0:   bridge window [mem 
-0x2000300000-0x20003fffff 64bit pref]
-[    3.861819] pci 0000:02:08.0: PCI bridge to [bus 07]
-[    3.861838] pci 0000:02:08.0:   bridge window [io 0x5000-0x5fff]
-[    3.861861] pci 0000:02:08.0:   bridge window [mem 0x60600000-0x606fffff]
-[    3.861883] pci 0000:02:08.0:   bridge window [mem 
-0x2000400000-0x20004fffff 64bit pref]
-[    3.861910] pci 0000:01:00.0: PCI bridge to [bus 02-07]
-[    3.861929] pci 0000:01:00.0:   bridge window [io 0x1000-0x5fff]
-[    3.861951] pci 0000:01:00.0:   bridge window [mem 0x60200000-0x606fffff]
-[    3.861973] pci 0000:01:00.0:   bridge window [mem 
-0x2000000000-0x20004fffff 64bit pref]
-[    3.862000] pci 0000:00:00.0: PCI bridge to [bus 01-07]
-[    3.862019] pci 0000:00:00.0:   bridge window [io 0x1000-0x5fff]
-[    3.862040] pci 0000:00:00.0:   bridge window [mem 0x60200000-0x606fffff]
-[    3.862061] pci 0000:00:00.0:   bridge window [mem 
-0x2000000000-0x20004fffff 64bit pref]
-[    3.862087] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
-[    3.862107] pci_bus 0000:00: resource 5 [mem 0x60090000-0x7fffffff]
-[    3.862126] pci_bus 0000:00: resource 6 [mem 
-0x2000000000-0x3fffffffff pref]
-[    3.862147] pci_bus 0000:01: resource 0 [io  0x1000-0x5fff]
-[    3.862166] pci_bus 0000:01: resource 1 [mem 0x60200000-0x606fffff]
-[    3.862185] pci_bus 0000:01: resource 2 [mem 
-0x2000000000-0x20004fffff 64bit pref]
-[    3.862208] pci_bus 0000:02: resource 0 [io  0x1000-0x5fff]
-[    3.862227] pci_bus 0000:02: resource 1 [mem 0x60200000-0x606fffff]
-[    3.862246] pci_bus 0000:02: resource 2 [mem 
-0x2000000000-0x20004fffff 64bit pref]
-[    3.862269] pci_bus 0000:03: resource 0 [io  0x1000-0x1fff]
-[    3.862288] pci_bus 0000:03: resource 1 [mem 0x60200000-0x602fffff]
-[    3.862307] pci_bus 0000:03: resource 2 [mem 
-0x2000000000-0x20000fffff 64bit pref]
-[    3.862330] pci_bus 0000:04: resource 0 [io  0x2000-0x2fff]
-[    3.862349] pci_bus 0000:04: resource 1 [mem 0x60300000-0x603fffff]
-[    3.862368] pci_bus 0000:04: resource 2 [mem 
-0x2000100000-0x20001fffff 64bit pref]
-[    3.862391] pci_bus 0000:05: resource 0 [io  0x3000-0x3fff]
-[    3.862410] pci_bus 0000:05: resource 1 [mem 0x60400000-0x604fffff]
-[    3.862430] pci_bus 0000:05: resource 2 [mem 
-0x2000200000-0x20002fffff 64bit pref]
-[    3.862453] pci_bus 0000:06: resource 0 [io  0x4000-0x4fff]
-[    3.862472] pci_bus 0000:06: resource 1 [mem 0x60500000-0x605fffff]
-[    3.862492] pci_bus 0000:06: resource 2 [mem 
-0x2000300000-0x20003fffff 64bit pref]
-[    3.862514] pci_bus 0000:07: resource 0 [io  0x5000-0x5fff]
-[    3.862533] pci_bus 0000:07: resource 1 [mem 0x60600000-0x606fffff]
-[    3.862553] pci_bus 0000:07: resource 2 [mem 
-0x2000400000-0x20004fffff 64bit pref]
-[    3.863320] pcieport 0000:00:00.0: PME: Signaling with IRQ 36
-[    3.864092] pcieport 0000:00:00.0: AER: enabled with IRQ 36
-[    3.864563] pcieport 0000:01:00.0: enabling device (0000 -> 0003)
-[    3.864769] pcieport 0000:02:00.0: enabling device (0000 -> 0003)
-[    3.865381] pcieport 0000:02:02.0: enabling device (0000 -> 0003)
-[    3.866107] pcieport 0000:02:03.0: enabling device (0000 -> 0003)
-[    3.866669] pcieport 0000:02:04.0: enabling device (0000 -> 0003)
-[    3.867371] pcieport 0000:02:08.0: enabling device (0000 -> 0003)
-[    3.867885] pci 0000:04:00.0: enabling device (0000 -> 0002)
-
+>  drivers/firmware/imx/imx-scu-irq.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/firmware/imx/imx-scu-irq.c b/drivers/firmware/imx/imx-scu-irq.c
+> index f2b902e95b738fae90af9cbe54da4f488219906f..d6fd04404e2a3113a6d22b1a580e6c0ac48f5975 100644
+> --- a/drivers/firmware/imx/imx-scu-irq.c
+> +++ b/drivers/firmware/imx/imx-scu-irq.c
+> @@ -219,8 +219,7 @@ int imx_scu_enable_general_irq_channel(struct device *dev)
+>  	if (IS_ERR(ch)) {
+>  		ret = PTR_ERR(ch);
+>  		dev_err(dev, "failed to request mbox chan gip3, ret %d\n", ret);
+> -		devm_kfree(dev, cl);
+> -		return ret;
+> +		goto free_cl;
+>  	}
+>
+>  	INIT_WORK(&imx_sc_irq_work, imx_scu_irq_work_handler);
+> @@ -255,6 +254,8 @@ int imx_scu_enable_general_irq_channel(struct device *dev)
+>
+>  free_ch:
+>  	mbox_free_channel(ch);
+> +free_cl:
+> +	devm_kfree(dev, cl);
+>
+>  	return ret;
+>  }
+>
+> --
+> 2.37.1
+>
 
