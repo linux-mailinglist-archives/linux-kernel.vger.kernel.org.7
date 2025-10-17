@@ -1,179 +1,233 @@
-Return-Path: <linux-kernel+bounces-858243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B146BE960B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:58:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4D6BE95DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC411581C2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A23D188BA52
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFD1241663;
-	Fri, 17 Oct 2025 14:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BB61F3B8A;
+	Fri, 17 Oct 2025 14:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NN54Td8G"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JZydLYRh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PGrVVqWQ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JZydLYRh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PGrVVqWQ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869AB337117;
-	Fri, 17 Oct 2025 14:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E67337100
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713007; cv=none; b=fGcgdOdn27gwnEay6ua6vPsCkauRYqKWBLc98GLnn/AqlPSaXJ/Ql0ne+JmQ2YATmKAaFipWIwZNkQdgaIZARtJeUwWkK2DayTAXhUb31qqBiSsOR8zpDR7rtKTnWkZ5WrK91g0N9/ViQp9eVUSEi2VzQTmNYIJh44nyouTWFzc=
+	t=1760713028; cv=none; b=awoULwZrELYXp137PoJlU6nYZ11rO4eFxCh4cySW2jq5Sgx95pNZlE9SGZvTq+N9HDaaE9Whed0VGytHdcOyE/f514csjNWkpyljZu40RkhwEIXzvlqrsOosYuM6sM9I3udDF7KYQPywV6SPo0f0V/iglrAVl5+0HT8NXXt+Pws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713007; c=relaxed/simple;
-	bh=mK9ZbonMbWsp633o910gNhAdgygON/96T9uAKGz/UkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZ5P374PxPtrSZWOqCDs2zd2tm3AgquNX3yA6gBljydT6Y/LGTY1A7jDWpD3cqzQ9movlgyIke2YDBa4RqHwxpIKSJKMoS1q9m5VjknLtNCmfsMj6cZShGH1/I+DdDsxkrB8/aOi+la42lIggrO2GNqed5K2/L8lFsBMMbVu8nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NN54Td8G; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0iQ5uE1LF/9zrVlIEvBCEHh+yAwilCOCDNUE/+lsYd4=; b=NN54Td8GpX/6qu3eC9n9KLc0e7
-	UdzjNrtf2+m6LjnRy+XewIM6D+E+zI3KKlbsuLEsR9mRmnAP9ZF/9eIMYcar2BfC/SRUWV7KzS51C
-	IwvjJOfSkKdAgDjK9UBCnRwkQEc9n/7e1UqLyu8FcIXtYkiDx3JzN2mTU98vMqn8dDl0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v9lsV-00BID6-6i; Fri, 17 Oct 2025 16:56:23 +0200
-Date: Fri, 17 Oct 2025 16:56:23 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Frank <Frank.Sae@motor-comm.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
-	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] net: stmmac: Add glue driver for Motorcomm
- YT6801 ethernet controller
-Message-ID: <81124574-48ab-4297-9a74-bba7df68b973@lunn.ch>
-References: <20251014164746.50696-2-ziyao@disroot.org>
- <20251014164746.50696-5-ziyao@disroot.org>
- <f1de6600-4de9-4914-95e6-8cdb3481e364@lunn.ch>
- <aPJMsNKwBYyrr-W-@pie>
+	s=arc-20240116; t=1760713028; c=relaxed/simple;
+	bh=mFJ63TMcpI15J5SsDsAll190FmFL2DnbPN8YowOCi1s=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=IQ4CJax9+3ah9UzttG1mCgSZd2sVK5qA+XKwdpveM/g7FtSKmbtDem+P6cRp15RUeaufOWaJjfPdN5xT1MPe6h+UTFK0CBJhdmGM4oZBQIMp/M76aE0ZxF/kZ35ESSUSOENH1ifb4IGenYjvkOW0giUhz9TkoZEOB5vSkFWEaM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JZydLYRh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PGrVVqWQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JZydLYRh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PGrVVqWQ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A550A21D49;
+	Fri, 17 Oct 2025 14:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760713024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=sMKMh/beb67Xb5bKYH/wVt3lfHdlvz+S3/3zC2ViDJ8=;
+	b=JZydLYRhnlx395jiJiaHadyU4NP8R7QEVO+PAN0LRtJToFa+gobfxbEcHE/lHqJdgFTIli
+	gLyD7jbh8dnaIMG7iZ0qON0GIc6ffhJEueZvf0S5/1iYJ9jmX+dL5CWU9y9FS+3usqfGeg
+	bSBCfTMI2Xnq9aksLUB5phkqj9lbPjo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760713024;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=sMKMh/beb67Xb5bKYH/wVt3lfHdlvz+S3/3zC2ViDJ8=;
+	b=PGrVVqWQZCzSycFs0haRVnzm4zpVmoS9Zqr7Y3WVSCQEmmcRdNgAuxTfY7eljfnQ+8RIRo
+	eB5df0QeSgraKUCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760713024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=sMKMh/beb67Xb5bKYH/wVt3lfHdlvz+S3/3zC2ViDJ8=;
+	b=JZydLYRhnlx395jiJiaHadyU4NP8R7QEVO+PAN0LRtJToFa+gobfxbEcHE/lHqJdgFTIli
+	gLyD7jbh8dnaIMG7iZ0qON0GIc6ffhJEueZvf0S5/1iYJ9jmX+dL5CWU9y9FS+3usqfGeg
+	bSBCfTMI2Xnq9aksLUB5phkqj9lbPjo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760713024;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=sMKMh/beb67Xb5bKYH/wVt3lfHdlvz+S3/3zC2ViDJ8=;
+	b=PGrVVqWQZCzSycFs0haRVnzm4zpVmoS9Zqr7Y3WVSCQEmmcRdNgAuxTfY7eljfnQ+8RIRo
+	eB5df0QeSgraKUCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B1E413A71;
+	Fri, 17 Oct 2025 14:57:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eRTOGEBZ8miUdAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 17 Oct 2025 14:57:04 +0000
+Date: Fri, 17 Oct 2025 16:57:04 +0200
+Message-ID: <87a51p60fz.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.18-rc2
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPJMsNKwBYyrr-W-@pie>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
 
-> > > +static void motorcomm_reset_phy(struct dwmac_motorcomm_priv *priv)
-> > > +{
-> > > +	u32 reg = readl(priv->base + EPHY_CTRL);
-> > > +
-> > > +	reg &= ~EPHY_RESET;
-> > > +	writel(reg, priv->base + EPHY_CTRL);
-> > > +
-> > > +	reg |= EPHY_RESET;
-> > > +	writel(reg, priv->base + EPHY_CTRL);
-> > > +}
-> > 
-> > How does this differ to the PHY doing its own reset via BMCR?
-> 
-> It's named as EPHY_RESET according to the vendor driver, but with my
-> testing, it seems to reset at least the internal MDIO bus as well: with
-> this reset asserted (which is the default state after power on or
-> resumption from D3hot), mdiobus_scan() considers each possible MDIO
-> address corresponds to a PHY, while no one could be connected
-> successfully.
-> 
-> > We need to be careful of lifetimes here. It would be better if the PHY
-> > controlled its own reset. We don't want phylib to configure the PHY
-> > and then the MAC driver reset it etc.
-> 
-> Though it's still unclear the exact effect of the bit on the PHY since
-> there's no public documentation, it's essential to deassert it in MAC
-> code before registering and scanning the MDIO bus, or we could even not
-> probe the PHY correctly.
-> 
-> For the motorcomm_reset_phy() performed in probe function, it happens
-> before the registration of MDIO bus, and the PHY isn't probed yet, thus
-> I think it should be okay.
+Linus,
 
-Since it resets more than the PHY, it probably should have a different
-name, and maybe a comment describing what is actually resets.
+please pull sound fixes for v6.18-rc2 from:
 
-And maybe rather than asserting and then deasserting reset, maybe just
-deassert the reset? That makes it less dangerous in terms of
-lifetimes.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.18-rc2
 
-> > > +static int motorcomm_resume(struct device *dev, void *bsp_priv)
-> > > +{
-> > > +	struct dwmac_motorcomm_priv *priv = bsp_priv;
-> > > +	struct pci_dev *pdev = to_pci_dev(dev);
-> > > +	int ret;
-> > > +
-> > > +	pci_restore_state(pdev);
-> > > +	pci_set_power_state(pdev, PCI_D0);
-> > > +
-> > > +	ret = pcim_enable_device(pdev);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	pci_set_master(pdev);
-> > > +
-> > > +	motorcomm_reset_phy(priv);
-> > 
-> > Does the PHY support WoL? You probably should not be touching it if it
-> > can wake the system.
-> 
-> Yes, it supports WoL, though the functionality isn't implemented in this
-> series.
->
-> As I mentioned before, it's necesasry to at least deassert EPHY_RESET
-> after resuming from D3hot state, or phy_check_link_status() will always
-> fail with -EBUSY for the PHY and it cannot be correctly resumed.
+The topmost commit is 2a786348004b34c5f61235d51c40c1c718b1f8f9
 
-When WoL is implemented, what state will the MAC and the PHY be in? Is
-it possible to put the MAC into a deeper suspend state than the PHY,
-since the MAC is probably not needed? The PHY obviously needs to keep
-working, so it cannot be put into a reset state. So resume should not
-need to take it out of reset. Also, i _think_ the phylib core will
-assume a PHY used for WoL is kept alive and configured, so it will not
-reconfigure it on resume.
+----------------------------------------------------------------
 
-So it seems like this code will need some changes when WoL is
-implemented. So leave it as is for the moment.
+sound fixes for 6.18-rc2
 
-> > Is this required? If you look at other glue drivers which allocate
-> > such a structure, they set members in it:
-> > 
-> > dwmac-intel.c:	plat->mdio_bus_data->needs_reset = true;
-> > dwmac-loongson.c:		plat->mdio_bus_data->needs_reset = true;
-> > dwmac-tegra.c:	plat->mdio_bus_data->needs_reset = true;
-> > stmmac_pci.c:	plat->mdio_bus_data->needs_reset = true;
-> > stmmac_platform.c:		plat->mdio_bus_data->needs_reset = true;
-> > 
-> > You don't set anything.
-> 
-> Yes, it's required, since stmmac_mdio.c won't register a MDIO bus if
-> plat_stmmacenet_data.mdio_bus_data is NULL.
+A collection of small fixes.  All changes are rather boring
+device-specific fixes and quirks.
 
-Why? Maybe zoom out, look at the big picture for this driver, and
-figure out if that is the correct behaviour for stmmac_mdio to
-implement. Is it possible to synthesizer this IP without MDIO?
+- A few fixes for missing NULL checks
+- ASoC NAU8821 fixes for jack and irq handling
+- Various fixes for ASoC TAS2781, IDT821034, sc8280xp, max9809x,
+  wcd938x, and SoundWire
+- Usual HD-audio and USB-audio quirks
 
-I was also wondering about all the other parameters you set. Why have
-i not seen any other glue driver with similar code? What makes this
-glue driver different?
+----------------------------------------------------------------
 
-	   Andrew
+Baojun Xu (2):
+      ASoC: tas2781: Support more newly-released amplifiers tas58xx in the driver
+      ASoC: tas2781: Update ti,tas2781.yaml for adding tas58xx
+
+Christophe Leroy (1):
+      ASoC: codecs: Fix gain setting ranges for Renesas IDT821034 codec
+
+Cristian Ciocaltea (5):
+      ASoC: nau8821: Cancel jdet_work before handling jack ejection
+      ASoC: nau8821: Generalize helper to clear IRQ status
+      ASoC: nau8821: Consistently clear interrupts before unmasking
+      ASoC: nau8821: Add DMI quirk to bypass jack debounce circuit
+      ASoC: nau8821: Avoid unnecessary blocking in IRQ handler
+
+Cryolitia PukNgae (1):
+      ALSA: usb-audio: apply quirk for Huawei Technologies Co., Ltd. CM-Q3
+
+Dawn Gardner (1):
+      ALSA: hda/realtek: Fix mute led for HP Omen 17-cb0xxx
+
+Denis Arefev (2):
+      ALSA: hda: cs35l41: Fix NULL pointer dereference in cs35l41_get_acpi_mute_state()
+      ALSA: hda: Fix missing pointer check in hda_component_manager_init function
+
+Frank Li (1):
+      ASoC: dt-bindings: Add compatible string fsl,imx-audio-tlv320
+
+Jiaming Zhang (1):
+      ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
+
+Le Qi (2):
+      ASoC: dt-bindings: qcom,sm8250: Add QCS615 sound card
+      ASoC: qcom: sc8280xp: Add support for QCS615
+
+Li Qiang (1):
+      ASoC: amd/sdw_utils: avoid NULL deref when devm_kasprintf() fails
+
+Pauli Virtanen (3):
+      ALSA: usb-audio: add mixer_playback_min_mute quirk for Logitech H390
+      ALSA: usb-audio: add volume quirks for MS LifeChat LX-3000
+      ALSA: usb-audio: fix vendor quirk for Logitech H390
+
+Randy Dunlap (1):
+      ALSA: firewire: amdtp-stream: fix enum kernel-doc warnings
+
+Sharique Mohammad (1):
+      ASoC: max98090/91: fixed max98091 ALSA widget powering up/down
+
+Shenghao Ding (1):
+      ALSA: hda/tas2781: Set tas2781_hda::tasdevice_priv::chip_id as TAS5825 in case of tas5825
+
+Shuming Fan (1):
+      ASoC: sdw_utils: add rt1321 part id to codec_info_list
+
+Srinivas Kandagatla (1):
+      ASoC: codecs: wcd938x-sdw: remove redundant runtime pm calls
+
+Stuart Hayhurst (1):
+      ALSA: hda/intel: Add MSI X870E Tomahawk to denylist
+
+Takashi Iwai (1):
+      ALSA: hda/realtek: Add quirk entry for HP ZBook 17 G6
+
+---
+ .../devicetree/bindings/sound/fsl-asoc-card.yaml   |   1 +
+ .../devicetree/bindings/sound/qcom,sm8250.yaml     |   1 +
+ .../devicetree/bindings/sound/ti,tas2781.yaml      |  43 ++++++-
+ include/sound/tas2781.h                            |   3 +
+ sound/firewire/amdtp-stream.h                      |   2 +-
+ sound/hda/codecs/realtek/alc269.c                  |   2 +
+ sound/hda/codecs/side-codecs/cs35l41_hda.c         |   2 +
+ sound/hda/codecs/side-codecs/hda_component.c       |   4 +
+ sound/hda/codecs/side-codecs/tas2781_hda_i2c.c     |   1 +
+ sound/hda/controllers/intel.c                      |   1 +
+ sound/soc/amd/acp/acp-sdw-sof-mach.c               |   2 +-
+ sound/soc/codecs/idt821034.c                       |  12 +-
+ sound/soc/codecs/max98090.c                        |   6 +-
+ sound/soc/codecs/nau8821.c                         | 133 +++++++++++++--------
+ sound/soc/codecs/nau8821.h                         |   2 +-
+ sound/soc/codecs/tas2781-i2c.c                     |  21 +++-
+ sound/soc/codecs/wcd938x-sdw.c                     |  22 +---
+ sound/soc/qcom/sc8280xp.c                          |   1 +
+ sound/soc/sdw_utils/soc_sdw_utils.c                |  20 ++++
+ sound/usb/card.c                                   |  10 +-
+ sound/usb/mixer.c                                  |  15 +++
+ sound/usb/quirks.c                                 |   5 +
+ 22 files changed, 219 insertions(+), 90 deletions(-)
+
 
