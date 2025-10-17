@@ -1,261 +1,331 @@
-Return-Path: <linux-kernel+bounces-857119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEC7BE5FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:43:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF06BBE6051
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2653A6226DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D73B19C741D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEB721C167;
-	Fri, 17 Oct 2025 00:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E9A214801;
+	Fri, 17 Oct 2025 01:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="e9h7HaYl";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="WJkFP/IG"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="qH6CuFvu"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azolkn19010025.outbound.protection.outlook.com [52.103.23.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90857433BC;
-	Fri, 17 Oct 2025 00:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E58C38DD8;
+	Fri, 17 Oct 2025 01:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.23.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760661293; cv=fail; b=U2BrmD++gp/eALRyGERtqAAw1k8EukLXTDmSDuEvZok4xRN7dJ7d1P9kaIS/Kj1mLX3rqzoLh0hDzXbp1p5AmL2IBINAEusqQvn5v+QXsiawLU+8sqJHZNcuuv01bunQvK+lLVBcjSm5Hi5IJrkjNDb/t4TLFDx8gB3YcJi0nFk=
+	t=1760663587; cv=fail; b=PBLMhTdNQW0X5mOQ63tsWARmsXgCOYJC9Pm7bbhVZzQyq6CkaIOS6q3lOXXXZs5aIQ3wUWz63HUr/IFrK2xY70Lz2CP+dOtd+hqPBAXlZ5mVB3MIaKxtwGEY91EVlu+mJtBh/s04hqyWPXx/lOvGPGsPHwFyglhAOkxXjPKr0RQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760661293; c=relaxed/simple;
-	bh=rbNbXdWm3EPlvd4bvv5yt9qSBCTe9hHJMw0O1keyHlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Vu5qi2XXOy687RwcfN113pGdY5WGv2q6jz+SgIcARF2KJ1XspxHNUQCV1GFRS5QEZ+dXojlNjODFAMKGwvlSv0bKXD42+f7ZmAukKbfp4+3v0X8nOEE8CqTX+ZwDSe6rJDd9gD1HpjrlsP1hapD2nbYEYgOPoT1TRu1DZGM1jj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=e9h7HaYl; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=WJkFP/IG; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127837.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59GG0KoW3705263;
-	Thu, 16 Oct 2025 17:33:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=proofpoint20171006; bh=lAnWTPUPzmONM
-	tbRIapMi/bGv6w1kjV7s2kC8A1gGoM=; b=e9h7HaYlSfUmhRmsddUIS5p9gc/Pa
-	DePRRd1vlE8J0KlSM3NPqlG+d54Mpp9ATrV+9Te8+XYveatufBNjibFZEaLb0rVO
-	BjNgm1mWsCtZXtdbvIQLToPitKR91VBeJG2JWkUUVBgflZA/12OMENCh3pLhH5IY
-	oGGlNiGLS8wN3sqNlh9Om9ZhA5Ahp0TZdt9GYCjZOrtvaFVXbHkklMiXX396IUX1
-	qWuBercpYbWNfmCiba5sbZza0qHtsRocGY1mdzc88OUUKaNhM3YqwCDSqF5f9I1P
-	o3VAS859PRl/EQ8IWcsRrN2gSmeLMMuYNojtHTi1EONn+5Y3UNAoCSC2w==
-Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11023140.outbound.protection.outlook.com [40.93.196.140])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 49u3umh33n-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 16 Oct 2025 17:32:59 -0700 (PDT)
+	s=arc-20240116; t=1760663587; c=relaxed/simple;
+	bh=pKxLz7fSa6EFenDLFACgs6J9UO/UUaPZoWnph6SNfnI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=r34ZCVVm6KwK3zFxpvE09UE23jt00cyTpKnI/CRj6u/1fdt03ozsg/9IIYmGoAlAAleuUXccYMELyBvLqoatQPvDuRc6C0EL+QwSLZFWmE7Lmt4BRwqly0J7VHiK/o63cMevsVHqAZbcBXMFp7QSUSOsOKGp8lBorOq2RmyflkM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=qH6CuFvu; arc=fail smtp.client-ip=52.103.23.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i/1Tw1532hy72J17Uh722bYB/8jNyQXniNyFCbfgxISCviZDIufkJ28KOWD4dLF1b5uAU0l1pDCy5T5P4hqZR0+mqtU/O776ZJnre7n8nk4dAqaf0QAPJ89bj++Xi3JdimuNVBq/XgJ2z25wO+Ia9VTNGwY2SC3RaIaSVcLTSH2TvbzREmkpEsx+yiq09HhB1jLoWdz/DoiJ7tN4sh6p4ArJcC7KI8IVdhCQruz5OpinPW43Un6ErAfuZcZfMjzhqwfKZH6e2HmtxQ+iW+KPeCPbEobRWopfyeoP9aB+DIHkqiSrNtnf256IBxkGTI7eZ/On8awveJo1UkG+Sr11Rw==
+ b=N94Mkfn9sPihsF+Z29fq28AZwDDMPLbBaAM2U9ROEIeESOo5QSXKEvJXbH6q2iZ13T4qXpVEm9SeYF2Bim4LdlDO5h8W1L/DYN7bTn+vN8jeJZKKapS1uPjytNlXb+28Hw9km8AWW2LAK4tB2j+c+AUKle/tX3sbkUWGEQ0sGGcO3ZR0P4qrcxZbt1DM0YqY6ENF57ey7v+5yk6zTalq6XJRU8AoG2fr/+pN/+9lUKACBCoWb6ExOBWvJ6wHF4ry8WLZRsJpZ57hOFpAlebjPW0Fxm5OWIkJ6BZlcnKN5ts+ZNERzCmoODDb1F1fz3s5CAB/bNz2I7vEEynOukjv3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lAnWTPUPzmONMtbRIapMi/bGv6w1kjV7s2kC8A1gGoM=;
- b=puBOzGmiRAieIrjdC8QzezmmMLoYC6c12AI2MEsy8Wu1s7Kjjk1SHaoB7tRkDoD/AUwSocANnfaYvYm4AwuTAU2Y1b/Vgee7OoQx5zFQYEzBwGUeO309FPYneucZesxRXRGOhTODfZDbo/Y0aAMjb9WZYKMXhvm+E/RJZ/4in8tVp/XKBNn9YrSFqdRzHabUJdRZ1ZNWlkNd41IziR+LQC09/sD8VnRYraLCxnboxLsF19F6EqDpQD9ZuGl2B6ydJvJZ0rMszHcFDDP6XF+mpYEkc4af5sLxxk5bOsCnXHHTEduFDtoWx6CtycbsUjH+hX0vqv/jEW5Ok02s7zhyoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
+ bh=6VbbGFD5f5z6JTYgOfQ0zhNsvZK2PvrwjsHIRWX+wHE=;
+ b=qAggR/kKH0QyQydQPTgtpETD2fNWHq6jbWuiaex2AtVQMU+Dt36L6Vv1S/A/1ASMD66hWgGAv2E7gD/6TpmxgdTDxZ1B84XDKu8UYI6RRtJpWyP0xBrrqhUdRD2JLjsKf/dSngTIyDje/rdUzRKmBc7W0ZLBNmTr+av+lrkOBecBgg8avGROhMKeDF3QUX5APNSK1Rdxza32YshGU27YfEvH6/8Is7WWtuxLYbL0wL/yiWWLrYez1X3ICqzTxx3c2eVD39zwxsUCsQZJhVg1O9/xZxbY4bJTWLfLd7d/GGNeUKcJkdc7AkHoq0B7Z/Ib7ajXz9SyTtIo1S451vRrZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lAnWTPUPzmONMtbRIapMi/bGv6w1kjV7s2kC8A1gGoM=;
- b=WJkFP/IGjQitPxnQpBnX2dRM01OLOA18F1J8sQYK+6cr2d7Oa2TFLbvxTh4cCS1to58LGHaj4Kz1Q0QF6I0qKT8K/a5ldcFTRk9DpnjUc5WePd7m12640XW9uv1eyHjacuzxqDu1VsK4/rahIbru1ztsRJVEuCCMHkHDLHQ7hJsGggk0APbnADD7iyGVzjBzoMCc7c0x6k8OwLKHtTUfR+XwTJaBmpBTuDFHHKXNlba9OHFKDEMaFiPEYNJf5J3HC/qL5LVJs/FfDkrzsh51OC2S7YGtgN+kXm1Tn/I8fo17rk63E8YK1tRV0wfchKbW8jOxIDTW81srylG1PR/qDQ==
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10) by CO1PR02MB8602.namprd02.prod.outlook.com
- (2603:10b6:303:15d::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 00:32:56 +0000
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054%5]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
- 00:32:56 +0000
-From: Jon Kohler <jon@nutanix.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
-        Brendan Jackman <jackmanb@google.com>,
-        "Ahmed S. Darwish" <darwi@linutronix.de>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jon Kohler <jon@nutanix.com>
-Subject: [PATCH] x86/its: use Sapphire Rapids+ feature to opt out
-Date: Thu, 16 Oct 2025 18:12:49 -0700
-Message-ID: <20251017011253.2937710-1-jon@nutanix.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH7PR17CA0069.namprd17.prod.outlook.com
- (2603:10b6:510:325::29) To LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10)
+ bh=6VbbGFD5f5z6JTYgOfQ0zhNsvZK2PvrwjsHIRWX+wHE=;
+ b=qH6CuFvum96aBWzFoH8LshkE60Cs2j8yxHKDvbHULipuTXk+PW7YhYBBwzOEAJhYcFe2vE9YCUo2+lw2xgbxD47EHNPmx0kLM1LRqTCXMdqpjucME10l+sKYb3SEMxkDDG8lT6PKcALjpk6s6ujYA7XoYVTqb9I3FO6bug+ckBdjQwzXm0emqon13yNQAAt7oKFEv+onsAeiNdOlpwRzYemmFyq9UDUqSctC9AXYlvoCRtUadtZ6xF/7/ofGpLug8KHRXaRvU2BWVe0FDJgz7FnYLVinnm4FXhmVG+5AYotH2h4fCLJHyXVoJsD0VDEMiSaT10raezpocI/J0jKZMA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by IA3PR02MB10568.namprd02.prod.outlook.com (2603:10b6:208:53b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
+ 2025 01:12:58 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.9228.009; Fri, 17 Oct 2025
+ 01:12:58 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
+Subject: RE: [PATCH] mshv: Fix deposit memory in MSHV_ROOT_HVCALL
+Thread-Topic: [PATCH] mshv: Fix deposit memory in MSHV_ROOT_HVCALL
+Thread-Index: AQHcPtae4hOlmQ8RLke3rh0l8QIZ4rTFhImg
+Date: Fri, 17 Oct 2025 01:12:57 +0000
+Message-ID:
+ <SN6PR02MB4157E6D02773A9D7A4B9E85BD4F6A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1760644436-19937-1-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1760644436-19937-1-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|IA3PR02MB10568:EE_
+x-ms-office365-filtering-correlation-id: 31436a8e-e833-4074-ec5a-08de0d1a4f25
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|19110799012|8062599012|8060799015|13091999003|41001999006|11091999009|31061999003|12121999013|15080799012|440099028|3412199025|40105399003|51005399003|102099032|12091999003|56899033;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?yDpK4jBjw+p1+Zlg2b6YV11vjkAgTek0Ohbw694hHOGgkgZFb8fo1Y8tWRyV?=
+ =?us-ascii?Q?B8M/mohayQVfiM65oCkLuMcCnelQyfbv1E2xouyNUOEscoWTkiVu26UbbrS3?=
+ =?us-ascii?Q?mX5o+M0C/882BkeRD/cDbRfBI3B3UGL3kcsCVzxvO7JVXWGLYSixldINUESA?=
+ =?us-ascii?Q?eCFRV3cwTJFe3MIXAJwU9V52WViJ3S9UtaE8iTVh/cRKM4C9ahQhrp4xPbYG?=
+ =?us-ascii?Q?jl74XOUPlYWzeNqYYw8grusKQemAbuaBaofV73PkfZteJs9GIWlXByTHE88G?=
+ =?us-ascii?Q?CyKGriiNnTzeJ5QUtow9xuMDh8UyZ5o9efSHNYjRp+8x81CJmPM6Gy+gFbcx?=
+ =?us-ascii?Q?M7vlxDdw96I/ULIZJVnVd3/QAKtijh7J5LJXzpXvZngMbNBBbwHVNibo5F2C?=
+ =?us-ascii?Q?5gWszIyTnpQL+jkH/xXcnTfJdq4evUgGQhf6QjuD9CgIOsGy4JoLsPQ27k0B?=
+ =?us-ascii?Q?WQKxhRydDOZR0kzR4C8DKxhVvFfqnRiH9UOYJco7vC5EtmsFWXUV5Ps8exYR?=
+ =?us-ascii?Q?rN8f7pSnn3oDQmMnuHX4tP+yDsSdGhOYJv5PtGn1W+50+3q9AIcRIZA9Eb/k?=
+ =?us-ascii?Q?GSeZ7583oVZG/aO4puXS+pM/hNyl/Akk53dr5k+1/07hAZqqMDWsSXyHPtWu?=
+ =?us-ascii?Q?FA3wreWjZj8Bc9UAkvvpEsoHRdhqBifdisW31eIJVA9ISrAU1zES8GZU8ooi?=
+ =?us-ascii?Q?ZnqFagbMSOJVmOXh7sNX3KD3wUJsABo6LM7C3xUDLRgUkOykD5BsObdNyu9x?=
+ =?us-ascii?Q?vmdRgtoowxsZ4n6coUrSDB3XyQC+41bg5YQsRmurGv1ONZL3LP9r3hOjMZBz?=
+ =?us-ascii?Q?TGY03tDcNvscn9bAJS5tCHBuPXqsEw+Ctx1Th2LqNJZTl8tHCNfSByEAoAac?=
+ =?us-ascii?Q?i/tyNUiPdlVvBZ3abCVBN3MxK75uA4ZHJyh5JhJnBqemiFAcKAuWCljXlPtR?=
+ =?us-ascii?Q?frbmGHACXx6CgC282NHLTJlVeSY4tT1LEKCsqx8q9EqgDDi7L/m0GkyyGrUH?=
+ =?us-ascii?Q?TBazp4idjlmg6CTsRqt7NswXeD0liXh+5t1/pLSHqkW+VF5suC6TbYxLzKGV?=
+ =?us-ascii?Q?bYsz0AGnLkaOL1BXDossG7IlN5ELJZT/+9UN0+dKLhaukZokchEVF3kmO5mO?=
+ =?us-ascii?Q?4Lbhy8AmR4j28SE23ElvgWfBovl+j5zAGaSqY1oTCpa5y9oqIot/NW5b+LiA?=
+ =?us-ascii?Q?GXot1MZUhbaH45hd8j/nUtTqOrRtQezkasV1NXAyklEDU3Krp103q/8nL+dM?=
+ =?us-ascii?Q?jAsam8Vtzn1CvCzuKsxrvwh3MaQcdmX5lmeq98hCILaRgoRKd1UAUa4aPwFV?=
+ =?us-ascii?Q?PrY/4IvFzSuSCn5Kyg04pm0Pl/b4OV4hNxgyMi6gg3AxlA=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?9Pr85wrnB1IJvVTeFIOmP1c9m9d8BDO5S5DBv19W5tQEjVZuyo35iXD8FrCV?=
+ =?us-ascii?Q?1eAJRMeLZZPNTKO7q0Kjp2mb8bvYU3TlGRk/+Gfrm7i6uex8aAb/hjqPOboa?=
+ =?us-ascii?Q?HBbktCLSnJH0JRDb7pF/+2Hx9lz8u71GMfIcRQtprJG8HTWSpREgPkiOIsE8?=
+ =?us-ascii?Q?3DQ6NUkJBgEZ043jHm6T17Zme4zqo4Vdp1dSdDD8l00MT2M13zZqv/e4+ysu?=
+ =?us-ascii?Q?OPzFMR/b/Ei9VYqWVAHBhCWGUQ0tVQuxKby79DrS/PzJsw2wZjas7P761Bav?=
+ =?us-ascii?Q?xGrxRMSrqtxdAYbxo4gCnqmPx0MxE+y/O/7X5ZWlDZvdYgJScT2n4r7ID9AF?=
+ =?us-ascii?Q?Y5yKhv0vUgmhyUeF7xRDYD+jlw8/HM4vrNfZ8znu43Ar6wbwhRNjP3r/FWo4?=
+ =?us-ascii?Q?Cngvp5JambeTUqW0zwIZ2VpV8H+CVo8MSkNtNJKxr7I8J76qlrZxQFLv27tV?=
+ =?us-ascii?Q?jagfUrrjbSMt5+T49BWm8GTNPqgK5YZfwT9yTCEbk6yUaKtEdkqSjVq39srp?=
+ =?us-ascii?Q?T/LMu+UpPG7xonBhEiQIFm8LuxQAGm48iE+IPP7l60XTcIpfUhJnddHrNbnP?=
+ =?us-ascii?Q?Kq6Cxt0pgAcxpBsdc0p+CeWfgvPx7jFk7vSZRlOguVRm5JFTzPTmIIpCD9R6?=
+ =?us-ascii?Q?kkppwVg7jPdLlXENSFVjZaEyE5QpJdwTCx5opjtisyCQB6969tnm73ZfeSPY?=
+ =?us-ascii?Q?6jL1HENTmtv4Y0v2EluxhzzTNlbVDrzs3iOqd2kf8P965L7kEUGcnVPnXAWw?=
+ =?us-ascii?Q?e7YyDGJ8Vtw8HoQCgEHBZJrXXDIWdsMkv0CjtGK+GtnKVoZN9AjGu1z5McLS?=
+ =?us-ascii?Q?94CNznGW2VgNGxE4s0HFMKHzz/1NaCdK4w7wsb4OTqKcl/ytpQtn7u0urVzp?=
+ =?us-ascii?Q?lcmz8TXXoAdYpHqJqp3U+rqzW577OB4urj+w17Fr/+rb+x9HeRnyh0MuV6Q4?=
+ =?us-ascii?Q?/ofidHGHyPrtilWVSz4wNlGvlMEUwk4dlfYxFafi91qMFuGtqKukvhQM1REC?=
+ =?us-ascii?Q?/546Qidu1M4LTZGdOYgmsgUHeCgL2BkHeFBEoHYfbLOgkmx1W5cMNknU9nbZ?=
+ =?us-ascii?Q?Y0d8Mvbufij7lyK4tKJgM/plzdD/GyDc5+YSRQFCLSYws7Icq1IRHhLkiPsB?=
+ =?us-ascii?Q?CysAnvx9dclS2bN+tQ5bIZuGDk2KY+udtVTkxHsD2q1sUwj/R5ev//FHaP+m?=
+ =?us-ascii?Q?tQqSFIWgE5k9Osw0rq054YHzghIWVQLVJGcckPFKIyM+lCbh27P0m2B3xjI?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR02MB10287:EE_|CO1PR02MB8602:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2362ec97-db35-4bf1-0c0b-08de0d14b774
-x-proofpoint-crosstenant: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DG11LNFiDDhMbkK0Fvz1fI1LcxLPdncPGoT+jXKSC0Xnk2zdXo5B2w210ujc?=
- =?us-ascii?Q?UiMzGIfX1syIHBWHQFTobIlAJkVrI188WqaoIIfneq65gqgdGRMhPuy0i0V3?=
- =?us-ascii?Q?L5SA3S6ffDreXiPvRMt2NIZAngqUgM9X/ezfFMHl6PEh+Yt8LCEZ3Mo9o9Cw?=
- =?us-ascii?Q?b73sgUR5jN2iXSz2BdvrH5fuOf5GWP6pOJNA6f3wwU8xQonsn5EwW++evquT?=
- =?us-ascii?Q?f1MNpQNi9jDLkcapJcwFQyEKLHzrtsmfkZy3lkhtGhdvmtr1iBUsNMjcpwU3?=
- =?us-ascii?Q?yMRNNRWT9NMUSRpYVqL9TGxCQqIDVLR/andII/AzTGuv4N4xiI48ubKYujRG?=
- =?us-ascii?Q?8bls7doiVc1J5YuDRhGlZ3YLjnJNRqmKqvNfXzMHVAMIadFsv8GtDdNJHhie?=
- =?us-ascii?Q?oBwbKa5JB9C2IUiEVwVSOniwZjHY78AtcojLmi5Y7Yt7tdfO/eRZIy/Srum2?=
- =?us-ascii?Q?hxa1xrjhxenyN2BTzrWMCo1Fz0LtyfZbBqQCtULK8iGlVZLJ8Ru4kJaPzvQu?=
- =?us-ascii?Q?7fBEhJpanK92wBPVGLEF9o1VVy77OIKbUuI+0N1AXlCjhNy0njofC7z1nbHc?=
- =?us-ascii?Q?qQ6ZDjI1SamuWh0EETS/SlIHD1seR584azJDTFLfsfNIVrVv3NRE2pUS1Hgt?=
- =?us-ascii?Q?vykbPgmezEZV6XoAU49w595V+3I6My/hOl6L2C71ln1FYP7d8cHE1fCtqIuP?=
- =?us-ascii?Q?Wxky5JE50Ele7D7FF72T8Ry09o2oAtiagrWTEmw6pzQ91Cj9HnuDQlAt5IvW?=
- =?us-ascii?Q?iHy9PFj3m9S2OHVpomu5X33FTufkWaM8IMzcmq6vNIwPtnrzk4xqfa/7fzU7?=
- =?us-ascii?Q?BOYUdxlcE7NHWnnLNvPrkbrl1RaeVcOX+OeJLAT1JsSRUzjNR6kjEfM5Kdg8?=
- =?us-ascii?Q?+816BWu6SeE6rL23IGdjqCJKFEBCOBLMexTH0Ol5kL5stZc8DYp4Gp5Lper8?=
- =?us-ascii?Q?mImqnfmfJfO9Pngv24y2T5N9yRzEkPt2IFsrqfMSjG6S9c+SV9gW6acZ3T2D?=
- =?us-ascii?Q?f+QVCNHj8t3EwiVyCkiN5O8T5sJemi3IYzqfHmeszj04Rj17VWUUT7eDISuB?=
- =?us-ascii?Q?h2JjnQWjd77LQndQQxc5gKnT5KyY+8+2m1F9mGjqwNlmX/UTcSYAIUNHpHCZ?=
- =?us-ascii?Q?ftIo1v1AuuMllXkJ65GDTAFWB5DLupsitcYad3aZYBSUTyHBwsDm4k+h+msA?=
- =?us-ascii?Q?/SQjpS7IWjwA4cNSotvgSS0XUWATrMcmVdbaQRvz4Df6vEp/loGefZS4if1d?=
- =?us-ascii?Q?Qwo36ssmHU534AuxBhNI0XZ6kcS8vvPfZrClZum69TKDZDvQoIoREvbKOJZW?=
- =?us-ascii?Q?rE/iMR5o/qkOX1kvMfjuMHYchfaMdo4MGK7ufUVyd99wG3jphpU4n+tWxD3M?=
- =?us-ascii?Q?n0BJUOF0yT4K9ei3fI3BgvT/ch7hTQflyz1PcWBqr4CeqYK2WAbzr8He4CS0?=
- =?us-ascii?Q?rK9jT93LdVZiQHPg/IH6RBMiWDpeJjKzsW3PDPjuIul1CxvB4CQrig7WyDvS?=
- =?us-ascii?Q?AXihjjAJEO4A5X7Oi7UrYtE4lgu38162lnHiIPfPSkIFhp0nN9hiu0FBBQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xBWU6AaM5jbuh6fSmgAOlZqCn6OzrZ2Fba8n8r2IyBaFJ9QwnAuYDfpB9HHY?=
- =?us-ascii?Q?b9HkbhMCuaPvJmzB3lAB9z/BK0ufYdg3CrkzAtFDhXQOnQ/1PDznVmwr5ysw?=
- =?us-ascii?Q?N8ajr9RixdUxGzDtKpamXpEo8teXgLpUVl8aZicksK8x3ko5qk6RVGzQ6FgI?=
- =?us-ascii?Q?MT2Bpmw+6Sg8YT7WcBOhoKC6gdeK6dVmsXsS06MFcrCIVI+C6dZzpGJ8TrTk?=
- =?us-ascii?Q?LmkVe8e3B6xVKKQ/bQUA669DTcZxGOyE8sVZgeLFmXATu6LPbXExdnbj6dvk?=
- =?us-ascii?Q?67iEg/dZwLE24W46yGqJSPdh2jia4sJfoySuOXK8lFwMeRB91FYafLbszk0X?=
- =?us-ascii?Q?grSDfIWfN/RtWsr+QWKHsOKLaAAx3p5I305pTZcFVcNFQkJkfCpJWmP+KpPm?=
- =?us-ascii?Q?2czTCwgUoJvwTXBrmQAxF1ad/vrpBdGGY0iMvIEzztQYnthKcfuViQLQcSTe?=
- =?us-ascii?Q?rzA0hWSMCnQ6yUQGZEnUSi3ii9HFrLYWl7ZeYme8hF9FwMtPrzNE+VaKUcdR?=
- =?us-ascii?Q?GvVBF914EU/bN0ADej/KmbiViT6aJCvM2IzWoQhERuHJr0kPXGBbjKkGuNdk?=
- =?us-ascii?Q?mJAkrs4VsbweQ/yWN5e6zCporXuBFElb+5oXu5SX0Mea1Xk/RF8R5hAy9WZ7?=
- =?us-ascii?Q?rLX9IMHcbFbBGuLJZphTUvLmqUUmQNl795oH1+ars2ZfnieSbDyyLGsDHhXj?=
- =?us-ascii?Q?0j+J01aCMKrEFmApn7bifkrGq8fT9XnzPpD5rRVepKov2BrAjgZIq9CuHwu+?=
- =?us-ascii?Q?nGgEQc8nrfvyWizYYKGc+BGk25C/qMYlgrKiYIGfSm34GrxMrF23tl74c1p8?=
- =?us-ascii?Q?Wf9m/AGu0RAk1l2V5j+oLpbAPYNDA/9QpatS91kgS6sZWRrCF/LpSQYKGiL+?=
- =?us-ascii?Q?BIKHDAspjYnl4B2VhAsHnXH7wJTZ63KO1q4kl4FF8Im9HR//shNpvWygZ4cf?=
- =?us-ascii?Q?d7pXeroTUIhQ+4WAJQ1BquDhFcDIZvO9Co1uH7aMxPR8f9P8LkrWuNWViE2H?=
- =?us-ascii?Q?dzja/L2Xfk4yYOemtd3nJko/G7HMKd0ZYqB2ovhf0FYGUNGTqER5dYA7Wk/7?=
- =?us-ascii?Q?rVmDN1xYeVU/Q1XEOWzu5r7LaEat2CXp36PyJpEKIHC8XFu7PNZ5pk+PHanT?=
- =?us-ascii?Q?uGT9KHRXXufucDoTDjwWInKqqrV71AqyFV325XMgHIHazwUzw6ewbJ8WI1KQ?=
- =?us-ascii?Q?imJrjJ+++ftBgVqMWXhmFVIeFeGhSqR7L8/tAqZPQjKughhYNGKfaUNr3JNw?=
- =?us-ascii?Q?JuirpZe0I0lOOhL2hT7Ozf4sS6/XFPDjzNKp3blCVQLX3CEEyildjM3b1BY3?=
- =?us-ascii?Q?g4f3NUq06JNVjGumFfZkBCPki43/GgjWMniWhZzBTfB9jxziIsWvoy96N8+m?=
- =?us-ascii?Q?kzEFJ+7wXDwBF/Bw2g1PFVqw3yqdvFWVrbEeWIUiJ8L8LHwJT/lgrHw/+MOs?=
- =?us-ascii?Q?RxTPLCYDSKyVi346wd/Gk7YYWM8lzVRu/FRiKze6JD8fwIHgLZ2aMx2+iawX?=
- =?us-ascii?Q?6UeYPF2EaT1YKZC/JKPsj/ysvykyZHillNNbls8ioF6bbrBVIXaJNvH40XKg?=
- =?us-ascii?Q?OS9P5d2HqP5GGwNp7UBKRlcjefeg97GaEo0uqSou9j90w5V8vbXexfRYIl1E?=
- =?us-ascii?Q?iQ=3D=3D?=
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2362ec97-db35-4bf1-0c0b-08de0d14b774
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
+X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 00:32:56.4205
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31436a8e-e833-4074-ec5a-08de0d1a4f25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2025 01:12:58.0843
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q/KAFq7LaghgbXyLYFbjloRsz7i7ULqWmBGz6UPLzzQuCdpeFuw1ymg+qQKFmOf+XUyw8XiuF18ujhmcASsO53ybLGrvBZvXltmHft+QndQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR02MB8602
-X-Authority-Analysis: v=2.4 cv=foDRpV4f c=1 sm=1 tr=0 ts=68f18ebb cx=c_pps
- a=qcfn1AlnsIIAWGxC+ugzFg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10 a=0kUYKlekyDsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=QyXUC8HyAAAA:8 a=64Cc0HZtAAAA:8
- a=sHQuVjOH8-NXzyl9kj0A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: To425BxAebEB3my_9nPWoJUiBZLguMQK
-X-Proofpoint-ORIG-GUID: To425BxAebEB3my_9nPWoJUiBZLguMQK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDAwMiBTYWx0ZWRfX1n+ngu8ZLwdk
- HL8K1c9zjF4UtyxefiI72IWCfeWLQnMsgHOP1y5zkmkpdjfeCgOeYh6CZx92I9XZFw6Lgg5F8nF
- bxSaU1fx2MEnrj94VAC8yv1MV66jlgCREvIdgM9fJWIOfLx+f1N7oXvOXKQNMtvmyu+9P6whhtx
- a45PTW1qbErGe2lvy+THJWX+0v7029f4CPjtaL7pKkjqHM3lrbkyHTn1HreWCpK0vaOvBs0xMzE
- 3Dtz8mEOPsxDlaRu1d9byD/zSn0CVxw93mmwrmV3tm0qq9O/G1qlc/XbUocvbeHzuSpE1CoDuDN
- PG0LXO5uuvRRVZOQkrcx4rT/WZIlZi6H9SKSDiLs2O9rLaX/r59b+3c5qmcTWB4kN2Uf8srsQRb
- /P+L3rhO2yyGx5JZo+swLzGjvHEkUw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Reason: safe
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR02MB10568
 
-A VMM may not expose ITS_NO or BHI_CTL, so guests cannot rely on those
-bits to determine whether they might be migrated to ITS-affected
-hardware. Rather than depending on a control that may be absent, detect
-ITS-unaffected hosts via a CPU feature that is exclusive to Sapphire
-Rapids and newer processors.
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Thursday, Oct=
+ober 16, 2025 12:54 PM
+>=20
+> When the MSHV_ROOT_HVCALL ioctl is executing a hypercall, and gets
+> HV_STATUS_INSUFFICIENT_MEMORY, it deposits memory and then returns
+> -EAGAIN to userspace.
+>=20
+> However, it's much easier and efficient if the driver simply deposits
+> memory on demand and immediately retries the hypercall as is done with
+> all the other hypercall helper functions.
+>=20
+> But unlike those, in MSHV_ROOT_HVCALL the input is opaque to the
+> kernel. This is problematic for rep hypercalls, because the next part
+> of the input list can't be copied on each loop after depositing pages
+> (this was the original reason for returning -EAGAIN in this case).
+>=20
+> Introduce hv_do_rep_hypercall_ex(), which adds a 'rep_start'
+> parameter. This solves the issue, allowing the deposit loop in
+> MSHV_ROOT_HVCALL to restart a rep hypercall after depositing pages
+> partway through.
 
-Use X86_FEATURE_BUS_LOCK_DETECT as the canary: it is present on
-Sapphire Rapids+ parts and provides a reliable indicator that the guest
-won't be moved to ITS-affected hardware. This avoids false negatives
-caused by VMMs that omit ITS_NO or BHI_CTL. For example, QEMU added
-bhi-ctrl only in v9.2.0 [1], well after adding the Sapphire Rapids
-model in v8.0.0 [2].
+From reading the above, I'm pretty sure this code change is an
+optimization that lets user space avoid having to deal with the
+-EAGAIN result by resubmitting the ioctl with a different
+starting point for a rep hypercall. As such, I'd suggest the patch
+title should be "Improve deposit memory ...." (or something similar).
+The word "Fix" makes it sound like a bug fix.
 
-[1] 10eaf9c0fb7 ("target/i386: Add more features enumerated by CPUID.7.2.EDX")
-[2] 7eb061b06e9 ("i386: Add new CPU model SapphireRapids")
+Or is user space code currently faulty in its handling of -EAGAIN, and
+this really is an indirect bug fix to make things work? If so, do you
+want a Fixes: tag so the change is backported?
 
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Fixes: 159013a7ca1 ("x86/its: Enumerate Indirect Target Selection (ITS) bug")
-Signed-off-by: Jon Kohler <jon@nutanix.com>
----
- .../admin-guide/hw-vuln/indirect-target-selection.rst       | 5 +++--
- arch/x86/kernel/cpu/common.c                                | 6 ++++--
- 2 files changed, 7 insertions(+), 4 deletions(-)
+>=20
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root_main.c    | 52 ++++++++++++++++++++--------------
+>  include/asm-generic/mshyperv.h | 14 +++++++--
+>  2 files changed, 42 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index 9ae67c6e9f60..731ec8cbbd63 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -159,6 +159,7 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_par=
+tition *partition,
+>  	unsigned int pages_order;
+>  	void *input_pg =3D NULL;
+>  	void *output_pg =3D NULL;
+> +	u16 reps_completed;
+>=20
+>  	if (copy_from_user(&args, user_args, sizeof(args)))
+>  		return -EFAULT;
+> @@ -210,28 +211,35 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_p=
+artition *partition,
+>  	 */
+>  	*(u64 *)input_pg =3D partition->pt_id;
+>=20
+> -	if (args.reps)
+> -		status =3D hv_do_rep_hypercall(args.code, args.reps, 0,
+> -					     input_pg, output_pg);
+> -	else
+> -		status =3D hv_do_hypercall(args.code, input_pg, output_pg);
+> -
+> -	if (hv_result(status) =3D=3D HV_STATUS_CALL_PENDING) {
+> -		if (is_async) {
+> -			mshv_async_hvcall_handler(partition, &status);
+> -		} else { /* Paranoia check. This shouldn't happen! */
+> -			ret =3D -EBADFD;
+> -			goto free_pages_out;
+> +	reps_completed =3D 0;
+> +	do {
+> +		if (args.reps) {
+> +			status =3D hv_do_rep_hypercall_ex(args.code, args.reps,
+> +							0, reps_completed,
+> +							input_pg, output_pg);
+> +			reps_completed =3D hv_repcomp(status);
+> +		} else {
+> +			status =3D hv_do_hypercall(args.code, input_pg, output_pg);
+>  		}
+> -	}
+>=20
+> -	if (hv_result(status) =3D=3D HV_STATUS_INSUFFICIENT_MEMORY) {
+> -		ret =3D hv_call_deposit_pages(NUMA_NO_NODE, partition->pt_id, 1);
+> -		if (!ret)
+> -			ret =3D -EAGAIN;
+> -	} else if (!hv_result_success(status)) {
+> -		ret =3D hv_result_to_errno(status);
+> -	}
+> +		if (hv_result(status) =3D=3D HV_STATUS_CALL_PENDING) {
+> +			if (is_async) {
+> +				mshv_async_hvcall_handler(partition, &status);
+> +			} else { /* Paranoia check. This shouldn't happen! */
+> +				ret =3D -EBADFD;
+> +				goto free_pages_out;
+> +			}
+> +		}
+> +
+> +		if (hv_result_success(status))
+> +			break;
+> +
+> +		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY)
+> +			ret =3D hv_result_to_errno(status);
+> +		else
+> +			ret =3D hv_call_deposit_pages(NUMA_NO_NODE,
+> +						    partition->pt_id, 1);
+> +	} while (!ret);
+>=20
+>  	/*
+>  	 * Always return the status and output data regardless of result.
 
-diff --git a/Documentation/admin-guide/hw-vuln/indirect-target-selection.rst b/Documentation/admin-guide/hw-vuln/indirect-target-selection.rst
-index d9ca64108d23..3cfe4b9f9bd0 100644
---- a/Documentation/admin-guide/hw-vuln/indirect-target-selection.rst
-+++ b/Documentation/admin-guide/hw-vuln/indirect-target-selection.rst
-@@ -98,8 +98,9 @@ Mitigation in guests
- ^^^^^^^^^^^^^^^^^^^^
- All guests deploy ITS mitigation by default, irrespective of eIBRS enumeration
- and Family/Model of the guest. This is because eIBRS feature could be hidden
--from a guest. One exception to this is when a guest enumerates BHI_DIS_S, which
--indicates that the guest is running on an unaffected host.
-+from a guest. One exception to this is when a guest enumerates BHI_DIS_S or
-+BUS_LOCK_DETECT, either of which indicates that the guest is running on an
-+unaffected host and would not be migratable to an affected host.
- 
- To prevent guests from unnecessarily deploying the mitigation on unaffected
- platforms, Intel has defined ITS_NO bit(62) in MSR IA32_ARCH_CAPABILITIES. When
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index c7d3512914ca..3de4b51d8681 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1361,9 +1361,11 @@ static bool __init vulnerable_to_its(u64 x86_arch_cap_msr)
- 	/*
- 	 * If a VMM did not expose ITS_NO, assume that a guest could
- 	 * be running on a vulnerable hardware or may migrate to such
--	 * hardware.
-+	 * hardware, except in the situation where the guest is presented
-+	 * with a feature that only exists in non-vulnerable hardware.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-+	if (boot_cpu_has(X86_FEATURE_HYPERVISOR) ||
-+	    boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
- 		return true;
- 
- 	if (cpu_matches(cpu_vuln_blacklist, ITS))
--- 
-2.43.0
+This comment about always returning the output data is now incorrect.
 
+> @@ -240,11 +248,11 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_p=
+artition *partition,
+>  	 * succeeded.
+>  	 */
+>  	args.status =3D hv_result(status);
+> -	args.reps =3D args.reps ? hv_repcomp(status) : 0;
+> +	args.reps =3D reps_completed;
+>  	if (copy_to_user(user_args, &args, sizeof(args)))
+>  		ret =3D -EFAULT;
+>=20
+> -	if (output_pg &&
+> +	if (!ret && output_pg &&
+>  	    copy_to_user((void __user *)args.out_ptr, output_pg, args.out_sz))
+>  		ret =3D -EFAULT;
+>=20
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyper=
+v.h
+> index ebf458dbcf84..31a209f0e18f 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -128,8 +128,9 @@ static inline unsigned int hv_repcomp(u64 status)
+>   * Rep hypercalls. Callers of this functions are supposed to ensure that
+>   * rep_count and varhead_size comply with Hyper-V hypercall definition.
+
+Nit: This comment could be updated to include the new "rep_start"
+parameter.
+
+>   */
+> -static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhe=
+ad_size,
+> -				      void *input, void *output)
+> +static inline u64 hv_do_rep_hypercall_ex(u16 code, u16 rep_count,
+> +					 u16 varhead_size, u16 rep_start,
+> +					 void *input, void *output)
+>  {
+>  	u64 control =3D code;
+>  	u64 status;
+> @@ -137,6 +138,7 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 r=
+ep_count, u16 varhead_size,
+>=20
+>  	control |=3D (u64)varhead_size << HV_HYPERCALL_VARHEAD_OFFSET;
+>  	control |=3D (u64)rep_count << HV_HYPERCALL_REP_COMP_OFFSET;
+> +	control |=3D (u64)rep_start << HV_HYPERCALL_REP_START_OFFSET;
+>=20
+>  	do {
+>  		status =3D hv_do_hypercall(control, input, output);
+> @@ -154,6 +156,14 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 =
+rep_count, u16 varhead_size,
+>  	return status;
+>  }
+>=20
+> +/* For the typical case where rep_start is 0 */
+> +static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhe=
+ad_size,
+> +				      void *input, void *output)
+> +{
+> +	return hv_do_rep_hypercall_ex(code, rep_count, varhead_size, 0,
+> +				      input, output);
+> +}
+> +
+>  /* Generate the guest OS identifier as described in the Hyper-V TLFS */
+>  static inline u64 hv_generate_guest_id(u64 kernel_version)
+>  {
+
+Overall, this looks good to me. I don't see any issues with the code.
+
+Michael
 
