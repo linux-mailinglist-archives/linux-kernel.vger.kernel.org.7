@@ -1,183 +1,113 @@
-Return-Path: <linux-kernel+bounces-857452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E6ABE6D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:58:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498ADBE6D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF0F3A8E74
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:56:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EA31897191
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3563148BB;
-	Fri, 17 Oct 2025 06:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA038315D52;
+	Fri, 17 Oct 2025 06:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdHkbG4T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTaWssND"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991B6313E34;
-	Fri, 17 Oct 2025 06:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216D231691F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760684089; cv=none; b=lwIvAath6ttZLxO/uLuZgAe6cDQgsY7slv7QvQ+ybpgAW4gz2UBCNgnuRWUHA3eAesr7NLSZSMASuXKB6dsNYRejn9VSMuXj6vH2Kg7TVOUeE4WBwo2Vmr9+Avd+h7ohsZSw7EYV9xwHZElLgUUlqHkGw791w2ZKyVLZeTEgKdg=
+	t=1760684108; cv=none; b=bSzgLnBgg9+HTjKDvsiyrWfmgkUO3JgS07eQ4xYsuIN9Vd+4R6wICFz5rVDn1ckf+AYyW1Fo2mfSSYy/KDNne4a+NDa1N9j2dcwhX2K249YPL9kHQ5zUCd2f3k8Cord3SHvzs0ZIf34mVvel/o90TEcTa4x05RNWztTZX2exV+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760684089; c=relaxed/simple;
-	bh=1JZmJiFo8oUcLKlECBlUmb3PrlN6gPc3xOaEfyecm4k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kDheQzHACfwBY5E0MSK1aV4rvsjpx50NoA4AptZfDDyCiCiArzPJoJDXhrvPhyE06UDKwiq8rj7ErZLNDzadmIFfn/OCNwIx6nmEj3PB3ulVDB+fznfo23kibFPzfBnmbR45dckdBz+WTjuDiVpFoDtc3XWNCp/5NRD6fkwG2go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdHkbG4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ED2C4CEF9;
-	Fri, 17 Oct 2025 06:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760684088;
-	bh=1JZmJiFo8oUcLKlECBlUmb3PrlN6gPc3xOaEfyecm4k=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=mdHkbG4TxAB8Bs5b2cwI4RvkwO+5CFjhRD3wO2Pp7IvKkWfPRsXo3K3+qFRrxReaf
-	 KnqtBXjHNUN3AqXHFQ3qdNp7nMXiV5Dmr7NyAR7qjCu88lPJZ9oqoEPPjLCZCzhuhl
-	 lUbu3eeZAlxBGDkiGCgruyW4dDXoVjNFvUk8okr5WH+mFUSY4wFepaMesVdoG5rMLJ
-	 UaivwXG/GAmX/SvX+0svaeWYMZzBjwuZ/XQpKEKpzaSYy69xLkuv265px85GmR2QcE
-	 gGOq1bBC5UpFCXjDWsc6TjhJrauiIAt61S/Tp0ifBgndaqNmESCRilVRhuF/15bbq9
-	 vamZ+Zc5FDtlA==
-Message-ID: <8580ae8e-50e9-481c-b9f3-125b6d1cb494@kernel.org>
-Date: Fri, 17 Oct 2025 08:54:44 +0200
+	s=arc-20240116; t=1760684108; c=relaxed/simple;
+	bh=8tn0gsWadcmuVvf+2fan/jdMsAl0+pqxz9YytNP2Gok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cvEfOj7Pfeo/1Hcu8I0pAObRjUNvwq7dXbImSMcEvu+q3mwUJRMnLIXWeSCh1cO7uwLu0ngxaaaqmEeMzDUjUvs7WQ9QeKHO6MQ4Q2ILIHnA4I0EcsX0iRwcXt5XzGGQ1fVgg+leXpTAse9cdDH69XV97LEeh1/SCA3o5xNAxdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTaWssND; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b679450ecb6so1211579a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760684105; x=1761288905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jAqfv53kZsbzluNJMMw+hqN+0n9Obgjt6ztN3dEZZ3M=;
+        b=VTaWssNDzmVvKZR3UXVprut0l4vOhrLgflFvQZV7740D+i/vXESZM+WJmEEBZU48kU
+         vJSzqR/c+I0Xz7+OxJl/erepGNNP09oE30+1GKGtyLgPjR0aZoP/7DmP4L8hTJl+Hxwv
+         HKgljNr49VBtWPM+cxK1jZOnK791/EMuBCQljRwl45WoKHidiYKUcwEj7r8ZSYQ3pRI6
+         kC9rsMSPxjO1VZfMFGWEh3ocABHBxc2EZ38ixgEdOc20lkBLkcZ3LLkXhBARs2GEUq1j
+         Tfut44c2d4xwqoNrLPmRlMxp3YUA5qPnN9QyxM5g8F01uo3T0jMevQs62jO0Vc+eYuKJ
+         n8AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760684105; x=1761288905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jAqfv53kZsbzluNJMMw+hqN+0n9Obgjt6ztN3dEZZ3M=;
+        b=R61xR8BCu0wejFOittNmauQOkusTFZExqNaoXJSaEL+G5OUZ9Ifi95zjLryZfrr7yY
+         RU22amLg+wtVRLH4iG/ZNIS+vjk3S5F0S9+u32f1jD+/nkHL873h69JgFTovH3TtMIj7
+         jPnjVEU7q5hU41Z/XxifV52ELrizsxIc1yYIj+TEKjF4u/CD5MEA6dN+mfSu7CZnarn6
+         QC4r9Ur1yL5l2C5kkbfcetgJZAIeSNEayxqXyqUyFNhxSq3zINViofC/fN8VGG/W3Hba
+         jq9Owkah5V09HslFYvcGIKKYV1d4WymasTvML78J5jMeFU8ghgWMWOt9bwBb6Df+6Q9x
+         0G9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjxfp7qb6/Xu4/sk001TzA83akpjUX4t/fifBLD8BNyAS5BIKVi+k+Tg/WLnglIsco9+mCz69G83TU0uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5/J+81i6kHjCWhkjkWcjmacvOpILIa63R0RIktB02z6fGSQlN
+	fP76aToB8ICsxs5bpz6K19/XwirkZLh32WYT7NaEsPFVt0sR0EiHn4ey1Ea6h4GSO/2ifGkJ4u4
+	Gx5I/Lq0rnhNM4LJtc8p+ESb4itiVVhfx8tDersM=
+X-Gm-Gg: ASbGncvXArv5P38E3I7rNpF+L5wgYTrfCIhkY/SvJhg5RqDreT4nKXISgJHhFh8KYIS
+	UmxSxOgOWqPSbwTtas/dTDrBbc5YNwvSzr+C6YpT8nPr4R1m8+FNuB2PlNS2GtBNU6eMP/IQKPQ
+	Ur5w+1eRw2h7JC7D/irn3w9FeZqtZjvVgJf9WIJ4Gm6PXoE9T86FvpFr6TxoVd1LJU+9TraRGDC
+	AC8q8BCk/F5QXj9uvY4zb8+NlmL3CMWGGtJOgsTcUWtNZUvgs5NAwO3/Ak=
+X-Google-Smtp-Source: AGHT+IFA1wbUFs0rKwKqAf6a9VqNqes/rB49gdi9wcqB+3od0alN9RlDJV05z8oscCylAZCpE64BJvJsh33fzkKAz/E=
+X-Received: by 2002:a17:902:ccd2:b0:269:a23e:9fd7 with SMTP id
+ d9443c01a7336-290c9cf2d7bmr32033405ad.26.1760684104996; Thu, 16 Oct 2025
+ 23:55:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_SM_TCSRCC_8750 from m to
- y
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
- Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
- Imran Shaik <imran.shaik@oss.qualcomm.com>,
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- linux-kernel@vger.kernel.org
-References: <20251017-update_defconfig_tcsrcc_sm8750-v1-1-34b1b47a0bda@oss.qualcomm.com>
- <30390038-0f90-48a4-befe-475cf88ba1fb@kernel.org>
- <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
- <90c8dda3-f753-43dc-8bb9-d03a808c8704@kernel.org>
- <38b8468f-5006-46a3-a4ea-28e6692ef14a@quicinc.com>
- <03ac36fb-a227-438e-bdf6-f787e26008b3@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <03ac36fb-a227-438e-bdf6-f787e26008b3@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251016131651.83182-1-pilgrimtao@gmail.com> <aPHh1eTQRDO3z6Yb@infradead.org>
+In-Reply-To: <aPHh1eTQRDO3z6Yb@infradead.org>
+From: Tao pilgrim <pilgrimtao@gmail.com>
+Date: Fri, 17 Oct 2025 14:54:53 +0800
+X-Gm-Features: AS18NWDZdxBzJF4fAJo9f2GgN5oBARXmET52Mi5LxrI2DP2bqSoRyMbXbjTk_DU
+Message-ID: <CAAWJmAZDt4yiqNr0246Pu3WQZBG11Wnhkk1VB9fxTQLg0+qwvg@mail.gmail.com>
+Subject: Re: [PATCH] block: Remove redundant hctx pointer dereferencing operation
+To: Christoph Hellwig <hch@infradead.org>
+Cc: axboe@kernel.dk, dlemoal@kernel.org, yukuai3@huawei.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chengkaitao <chengkaitao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/10/2025 07:56, Krzysztof Kozlowski wrote:
-> On 17/10/2025 07:49, Taniya Das wrote:
->>
->>
->> On 10/17/2025 10:51 AM, Krzysztof Kozlowski wrote:
->>> On 17/10/2025 07:16, Taniya Das wrote:
->>>>
->>>>
->>>> On 10/17/2025 10:00 AM, Krzysztof Kozlowski wrote:
->>>>> On 16/10/2025 20:53, Taniya Das wrote:
->>>>>> The TCSR clock controller is required  during boot to provide the ref
->>>>>> clocks to the UFS controller. Setting CONFIG_SM_TCSRCC_8750 to y ensures
->>>>>> the UFS driver successfully probe and initialize the device.
->>>>>>
->>>>>> Without this change, the UFS subsystem fails to mount as a usable file
->>>>>> system during boot.
->>>>>
->>>>>
->>>>> That's not what I observed. UFS works fine, especially that it is a
->>>>> module, so no, this is not a desired change and explanation is not only
->>>>> insufficient but actually incorrect.
->>>>>
->>>>
->>>> Krzysztof, on Pakala MTP we are observing the below issue and it
->>>> requires the module of tscrcc to be loaded explicitly. This patch also
->>>> aligns to how it is on all other targets.
->>>>
->>>> /soc@0/phy@1d80000: Failed to get clk index: 2 ret: -517
->>>> [   10.496570] ufshcd-qcom 1d84000.ufs: freq-table-hz property not specified
->>>> [   10.503660] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
->>>> find vdd-hba-supply regulator, assuming enabled
->>>> [   10.514548] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
->>>> find vccq2-supply regulator, assuming enabled
->>>> [   10.565955] platform 1d80000.phy: deferred probe pending: (reason
->>>> unknown)
->>>> [   10.573078] platform 1d84000.ufs: deferred probe pending:
->>>> ufshcd-qcom: ufshcd_pltfrm_init() failed
->>>>
->>>
->>>
->>> I don't and I am testing regularly, so I assume you have incorrect
->>> config. Maybe I have incorrect one (which works), but then commit msg is
->>> incomplete - you must explain the bug and provide proof that this is the
->>> correct fix for it.
->>>
->>
->> We have tried booting up recently and and that is what we observed. The
->> patch from 'm' to 'y' helps the UFS probe is successful and the rootfs
->> is picked from ufs partitions. I will add these fail & success log
->> snippets in the commit text.
-> 
-> That's not enough. You need to explain why UFS fails. After explaining
-> this, I guess bug in UFS would be exposed thus that one should be fixed.
-> You just provided band-aid without fixing the real problem.
-> 
-> NAK
+On Fri, Oct 17, 2025 at 2:27=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Thu, Oct 16, 2025 at 09:16:51PM +0800, chengkaitao wrote:
+> > From: Chengkaitao <chengkaitao@kylinos.cn>
+> >
+> > The {*q =3D hctx->queue} statement in the dd_insert_requestfunction is
+> > redundant. This patch removes the operation and modifies the function's
+> > formal parameters accordingly.
+>
+> What formal parameters?
+>
+> Basically you're passing a pointless extra argument instead of deriving
+> it locally.  Why would you do that?
 
-
-... and to prove your analysis is wrong (because your setup is likely
-having issues) I even tested now linux next with defconfig. Works all
-fine on next-20251013. You did not share which kernel even has this
-issue, maybe some downstream tree?
-
-
-Best regards,
-Krzysztof
+The value of 'hctx->queue' is already stored in '*q' within dd_insert_reque=
+sts,
+we can directly reuse the result instead of dereferencing hctx again in the
+dd_insert_request function. We can eliminate an LDR instruction.
+--=20
+Yours,
+Kaitao Cheng
 
