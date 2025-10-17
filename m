@@ -1,98 +1,147 @@
-Return-Path: <linux-kernel+bounces-857507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4BDBE6FA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE139BE6FAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2EB3546F92
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:41:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8970561684
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0EC23E354;
-	Fri, 17 Oct 2025 07:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C73324676C;
+	Fri, 17 Oct 2025 07:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kmC517HF"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DAySF/xR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8D323AB98;
-	Fri, 17 Oct 2025 07:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F40023EA86;
+	Fri, 17 Oct 2025 07:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760686883; cv=none; b=LgS6qoklrQQ8tzul+D76xnPlGXKrvqFB2HQTTar9O+IUwZzWMNtbN+qhxzXFwumFrW7j7XI1ObSsHXYyA022OXfQ29YBslD9El9zsPzhrazjdwOOrtX5jE8WUxiPh0LazxLYuU3pCPGrDQ9aeUaqtsJH/otOzz7nl0Cd1UNHzGI=
+	t=1760686884; cv=none; b=RV/Xl13cEtzS6sQ/kxazrAv7p9x7nah/h/ZhHfC8n+5/GtcMwIfExghSaPGTTRbBNWE6Jt05+mCcdpt5VmDxyvVjklEqTehBEaUm/fdPArZBq2TsK+2DqTBqIREfmqsKwcmtQSGSJg87gz10xJHZJ0CnICfdUWgsPU+ZfMCak5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760686883; c=relaxed/simple;
-	bh=k28j/cY0o1c6CApdJrdkT4hyekVTeYH1pZD3ZM9FMIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axZF2Yjt8MOBWS4hws+VXAs/rMe96/TgL/QYESOnIPYFz07PA1bVhzMsSqsvKC2CfEU57LhU0UP7Lh3y3iR1KjA1zcCJ3XRc0TSvSTMNjln6hECQ51n2I/+lgu9R0wTZwhRRMOA8X7CPlm2HHOmpCg6PjfepIW4u3HO+H5DmPR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kmC517HF; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 8BBEF4E40B36;
-	Fri, 17 Oct 2025 07:41:20 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5957F606DB;
-	Fri, 17 Oct 2025 07:41:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 803E4102F2334;
-	Fri, 17 Oct 2025 09:41:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760686879; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=VX7GP8oohyF3dyuDoiAgWrPjx6bOSi6RJBB6J06GFiM=;
-	b=kmC517HFbZScjlehfud3oDP6g69BdC06DjtToA75prfaAXeD7Xq3ruUWPChEEVj69xkJrU
-	YrNFh8qGDLHLmVvvE1+pBv8RlwORovJxDINA92uG8LHtpjAaapa9JM5v2IghkCihLGS2f6
-	lLYG8j/RBKOcXHShHwwvz2hrm9RdQhLeGaViG1mP6kQ7Eh5on4JwTll8QnNYlLu4GkRkjO
-	Y8ywR2LBeBg4KETkN838vRz2s4cQTbC3qmELbTq5WD+bhx1oFkRmiv43JmzlBlwHVXYUS2
-	Kq79u8ah2ozEIeDRcV8lSdEpEN6G9eeUA8GKx8RA8OIL0eYR6w/41Dqboxcojg==
-Message-ID: <0adaf9b2-2cfa-4d32-a8fd-1aef53bb2a78@bootlin.com>
-Date: Fri, 17 Oct 2025 09:41:02 +0200
+	s=arc-20240116; t=1760686884; c=relaxed/simple;
+	bh=mgJWBkBfXdtKnxWbZVUu/4ZVAdw06XdfHp/03SfU8qQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eL0GYeegyT8LXQu60TVA6HL+5a+nJhf+ZB/ifrWtAcx++xvdY+eR4Y9hJSks5ZvICaimVf2hsmHCSxeFCPmzksRTWB9PVPjGT40haI/9I9/uQnoCdsFclWqqJtZYUhbnlEVQG7wCuwRvJxpBpBwDswINXXUoBeaWdQuGxN6sYtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DAySF/xR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D839C4CEE7;
+	Fri, 17 Oct 2025 07:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760686883;
+	bh=mgJWBkBfXdtKnxWbZVUu/4ZVAdw06XdfHp/03SfU8qQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DAySF/xRd018SWv5FuwBnhgSbi6LisNNVgJV5Cs/WSfMMe77pYlhSRpH9F4fq2G4m
+	 0fx+S1LzSqIubB6bNPwKl2o3lzs6V6mhDzwB5x+B9Ol/xqa1MZoiO5spIUEo3HhHy4
+	 XGuLRTrGt2/3kYB96md354bDemqHFHZ401xDuKlg=
+Date: Fri, 17 Oct 2025 09:41:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Deepak Sharma <deepak.sharma.472935@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	syzbot+6c905ab800f20cf4086c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] drivers: core: Fix synchronization of removal of device
+ with rpm work
+Message-ID: <2025101714-fiction-reprocess-9368@gregkh>
+References: <20250917030955.41708-1-deepak.sharma.472935@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4 2/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
-To: Horatiu Vultur <horatiu.vultur@microchip.com>, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, vladimir.oltean@nxp.com,
- vadim.fedorenko@linux.dev, rmk+kernel@armlinux.org.uk,
- christophe.jaillet@wanadoo.fr, rosenp@gmail.com, steen.hegelund@microchip.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251017064819.3048793-1-horatiu.vultur@microchip.com>
- <20251017064819.3048793-3-horatiu.vultur@microchip.com>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251017064819.3048793-3-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917030955.41708-1-deepak.sharma.472935@gmail.com>
 
-Hi Horatiu,
-
-On 17/10/2025 08:48, Horatiu Vultur wrote:
-> The PTP initialization is two-step. First part are the function
-> vsc8584_ptp_probe_once() and vsc8584_ptp_probe() at probe time which
-> initialize the locks, queues, creates the PTP device. The second part is
-> the function vsc8584_ptp_init() at config_init() time which initialize
-> PTP in the HW.
+On Wed, Sep 17, 2025 at 08:39:55AM +0530, Deepak Sharma wrote:
+> Syzbot reports a use-after-free at `rpm_suspend`, while the free
+> occurs at the `usb_disconnect`
 > 
-> For VSC8574 and VSC8572, the PTP initialization is incomplete. It is
-> missing the first part but it makes the second part. Meaning that the
-> ptp_clock_register() is never called.
-> 
-> There is no crash without the first part when enabling PTP but this is
-> unexpected because some PHys have PTP functionality exposed by the
-> driver and some don't even though they share the same PTP clock PTP.
-> 
-> Fixes: 774626fa440e ("net: phy: mscc: Add PTP support for 2 more VSC PHYs")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> All line numbers references will be for commit ID
+> d69eb204c255c35abd9e8cb621484e8074c75eaa
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Which is 6.17-rc5?
 
+Please always include the full commit information when referencing git
+ids.  This would be:
+	d69eb204c255 ("Merge tag 'net-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
+
+Which is an odd point in our tree :)
+
+> This points to a possible synchronization issue. In `usb_disconnect`
+> there's a call to `pm_runtime_barrier` but it does nothing more than
+> acting as a sort of "flush" (while cancelling what's the pending
+> rpm actions not started yet). There does not seem to be any increase
+> in device usage count either in this stacktrace after this stacktrace
+
+How is syzbot triggering any of this?  How is it disconnecting a device,
+is this through the gadget api or something else?
+
+> Then we have an eventual call to `device_del`, which further leads
+> to a call to `device_pm_remove`. No code synchronizing in any way
+> so far with the PM system after that `pm_runtime_barrier`
+> 
+> Let's say now that the timer expiration queued work for `rpm_suspend`
+> executed in this period of absent synchronization. We can create few
+> interesting situations here, I will address one
+> 
+> Let's say that we unlock the `dev->power.lock` at `rpm_suspend`
+> work at `drivers/base/power/runtime.c:723` and then the code
+> `device_pm_remove` proceeds as normal clearing up the device.
+> Any further calls are not going to cancel the tasks we have pending
+> and since the lock has been given up, we will proceed, and end up
+> deleting the device too, which will lead to a use-after-free
+> as observed.
+> 
+> So at the device removal, we could add a `pm_runtime_forbid`,
+> followed by a `pm_runtime_barrier`. This leads to the completion of
+> any pending work and forbids any other new work to be added.
+> 
+> Once we return, we can do `device_pm_remove`. `pm_runtime_forbid`
+> does not seem to influence the behavior of `device_pm_remove`
+> (tho it does lead to a call to `pm_runtime_get_noresume()` which
+> touches the device usage count, but it would still work the same)
+> 
+> Reported-by: syzbot+6c905ab800f20cf4086c@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=6c905ab800f20cf4086c
+> Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+> ---
+>  drivers/base/core.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index d22d6b23e758..616fd02d18ed 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -3876,7 +3876,13 @@ void device_del(struct device *dev)
+>  	device_remove_file(dev, &dev_attr_uevent);
+>  	device_remove_attrs(dev);
+>  	bus_remove_device(dev);
+> +	/* We need to forbid and then proceed with a barrier here,
+> +	 * so that any pending work is flushed 
+> +	*/
+
+Trailing whitespace which checkpatch should have caught :(
+
+Also odd comment style.
+
+And you don't document what type of barrier or what type of pending work
+you are flushing.
+
+> +	pm_runtime_forbid(dev);
+> +	pm_runtime_barrier(dev);
+>  	device_pm_remove(dev);
+> +	pm_runtime_allow(dev);
+
+Why are you allowing this to happen again?  The device is going away, it
+should be stopped by now as per the bus removal.
+
+This all feels very fragile.
+
+thanks,
+
+greg k-h
 
