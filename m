@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-857634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA3DBE7505
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:57:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE96BE7502
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0DB188F815
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:57:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04AA8501EAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511C92BDC3B;
-	Fri, 17 Oct 2025 08:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD9B2D5C76;
+	Fri, 17 Oct 2025 08:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E2w0ov/O"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Uww1N1ua"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EDA2D3A94
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8375A2D4B4B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760691390; cv=none; b=K9vtBf4RGXrbxBUmNTzRwtP7n/fLgm8BIvNmWm3Nmt7uOWwOqOKek/0wQa2cZNESy0ohGcDMvZOgGkX6MBqrUJMg2qRjcFbg0qLfU76VniX6RzPBr0jE+ng3TeXoFVNky7akR0QMhQlO/llYtc/VGPMbjBacbt0BtT4tb/qQDeA=
+	t=1760691392; cv=none; b=DFH5dy0rrx6kv38J11nsUMqZMbVL7zTSger12p7xYWSuQUE5vZQaf3VJYBd7EOOKoa5NN4nUdVqOedNWI+zx3NJaaMdNtWSanJ04zOPLNXTd0Oz1j+GHdjszrmOKRJ7DnLkL/Um8iyERPzY70zOXQjd4I9ZU2uFq/1yJzic5woc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760691390; c=relaxed/simple;
-	bh=UOMDuytwV5b0FWFmJzLikQVcSaE25eP4RAV2dWnOfww=;
+	s=arc-20240116; t=1760691392; c=relaxed/simple;
+	bh=yBNFWfi7nb0NEEgHL4lbgPtCESQBjN8cUW0xWV+hUrs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JhDkvzYfGLEIWeOhs06tVvOlkM9MzgQlqRUGpqRufvj5f4pP5U55AVoLoT0oj2XNyXs+qKqInKYZUIvfnxRkzFeXqHRqGK0DF87/j6784PcIfRDj4/UfOlEf5owIR0/f8xX/g1EiHj2J31gnrtUTIU5HPnVtSkKJy6Hw7tJc0BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E2w0ov/O; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=gIA2dz37tZ9bEacdktaniDkMDPZ3O6LVvcbSlQmnSme8ZBhFxg48D5AHGtq6H8xRKiKLsq13AeDLprcNrBIIdWB/5aXnDKx0/EqEk3YJUkyA33o9peLKSurLQZzPGMWtHcb6QHZTaWt2TFXMz2XWgUiarVlz1i3GTPHdIPhOOmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Uww1N1ua; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H7sQOq028676
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:28 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H83NPg025387
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=IRPASGCwKLk
-	EyaUY/ExfpyqCkRwquY7kf3u//UZGcCA=; b=E2w0ov/OpoeALdj9/AORL6KicqO
-	Xjj0RR1g2dWTA09mXMW/5gypmUh6v7JSLfS2iP+w2bGqMWEiMxzbpXYVt8/idCk3
-	SC7myjvPKN1pmijmccEhgUA3b6ffb5JW+Gv0G9lKR9JDpUYygcl4i/WnrHKbOynF
-	QUJmOnKeaAitD6pC4ndtmCwX4WI15bIU4vVFkGaOw/bOc7T+LFGgNsZ6tQFgFTdS
-	Qtke5N1iA73FS73nMeFkXYcMKqePqy2W+a5JAkORuR4fweloIuhLBpaR0JpKU+C5
-	q4nAQmvu8s/M5Tz7iAGIdjDcAb0i3aDiPDQlHEHa52rg1vl4l8WAntSTCWQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49u1h0u71g-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=nDvlp40m+Ni
+	viZ7Prwo/9bXT1BrtIsyNq1nV9QUwJU8=; b=Uww1N1uaGi2FFme7I1wBWjSasQC
+	UC7KEVUT6M7RGACcM9I6LHdfcAbrDaWnrOCAWRez7gyz//R+I79xTnkjXv6vXJO6
+	gISuVFCDPphBj/fD+W6iyRX4f14GizHC/4Pz2WSZNxjPuFWlB4x54tsurhdHneT2
+	YBN+tVzXeTd1ysKe3XIuN/TeauwyRSDqejeA/kb5b4A8Q0MRpa6121qXwYvEDUWM
+	AAhDAjlNQ9JGx99ooR67w+AZ3SepEJ/kNXNBYLIQ6yQ5AJWFTt5OmoK2Lcr45cGe
+	c9peTsMf5rAThxJXa/xgYSnWia06cXffGzLHO2BtQrJFvhJTi+sMukDXc5w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdkkj5p-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:28 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-86df46fa013so753275385a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:56:28 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:29 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-88f1dad9992so762228085a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:56:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760691387; x=1761296187;
+        d=1e100.net; s=20230601; t=1760691388; x=1761296188;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IRPASGCwKLkEyaUY/ExfpyqCkRwquY7kf3u//UZGcCA=;
-        b=pc05tWH3hlC+w6efbDioNbv2ZxZ4yjmUSnEvHwBijos/720rw2T1pfkXqDxCBq4M3L
-         jKtzmKR4UucvlMFhyDNLjnuBuR1oaccSkmLLrAJMQUGPJ3rmy+fhDF6Sy81hHJp1o3fv
-         +e1pQQErdZlo64BR7MRn2zAz2In7kMN1l7MCbl6ikwXXaMDu4gWJMQFrtXXt4n/EAvKc
-         Cf5OGQWVB8Q4TkFAOu7uYLAC7TP1VMlEh49CaxRJFtAo0yxz48h8pPeEsKkUMOLAauz4
-         fzodLHu3rfBJYdn+5DrIlHhlNtpNPZZtc1pytoof+TgXgpdKMxGSf9KzzTh1chr85DQx
-         qNJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdlBGJK3PFo+3W5umxAt7eStz9R8qJmvJdnZ9aqpi7h8iW3e8P5TDtwzD5LQE2dto1HdMuuol+9A2an9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb6jb0moMJxbVwt0sQerYd5TMYpmHM03QsKV/bcYXnQ6428fhe
-	GKvaa5Xek74NeYrXWkyVhDQv90WODP/B1wc9Qq5DUml4zCLl4oC+nhFwllwzegeE8cdW6tqncsE
-	K3BG2sH3QDvImPqi0sMtl/e2ovFifyVbse9/WOxTEfxWhm5QR3CY4+n0xmYxG+0c0/lE=
-X-Gm-Gg: ASbGncvUYC9eOkwdEHpdrJcARP/ds/DTmpduRiV2BTGXGsLqRbmZCj/oMnviVwjCL0j
-	gXPRr+rkOdROU15JVFplRRkV1VYYIdmmP0LZBUSFoRdBSZr3NSYITIVa7oL9QoSHxzciJFqX6/l
-	bln1j5j9fryRSEiT6NJK3/aN4aNTqqpmPip4npU9DXk0jW0v3tm8rYovA1Tw9KdbsLizFzJHDqc
-	q5TXFURJ0BWMjN2VKDbsuJtmJrUyU4C0LBiA1PFvV3zqrYLZ6UUsdKZ6alfjx9GE64bEObKnD8+
-	HgQj3qmzYd0LdcWmPXYmPTP4E+Q8+lSPeiADLKqZwrxbs0PweqS6EuOFUVEIOx9PRqVT2AWecO4
-	nC4TCzxU/4Zwp
-X-Received: by 2002:ac8:6292:0:b0:4e8:a307:a42b with SMTP id d75a77b69052e-4e8a307aab3mr7543581cf.4.1760691386919;
-        Fri, 17 Oct 2025 01:56:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFt2aeEBG2tuomsaj8skDLmIMc21It7yI43sXPDyV3iT1PdQ3O8uYgGBS9IoNvVISB3p2rJGQ==
-X-Received: by 2002:ac8:6292:0:b0:4e8:a307:a42b with SMTP id d75a77b69052e-4e8a307aab3mr7543391cf.4.1760691386395;
-        Fri, 17 Oct 2025 01:56:26 -0700 (PDT)
+        bh=nDvlp40m+NiviZ7Prwo/9bXT1BrtIsyNq1nV9QUwJU8=;
+        b=djL81HDG5vYZQPbkjuae49lxucVFqr5zDTTwtyaGqbyClE6lkeSa0U/LPy2qfFs2dC
+         BCmKLb+/+hV0Goy3RSQ3sgnjj94ptK6FR24S1iPYqtnVYLnokFSyHDLwPhlQpBIMGCUS
+         MvKsSEqNaaNAAGNEAGBZYab/n3tC8A92Uqf5+rjSmRQdi3Df9OF72lq6ruXxsKT1NSHv
+         CjI+kupS222ifzB03QDhWtNPMxZlDHg+54sZ8MuHuoF9JZuqfbYCBezTpv9EOSx3IIfW
+         cwnqNEhfVM9V0A0cLguzPSyiqAfALr6Bn9RVURF7CI25tmwJT7LcQMmYBtzvGvTQVRbD
+         NjjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeGHZPIUJ/YA++hPCpVfrPj2YfcBZp/dM39+3lfsjrz4ef7DhLBbnfpLqVIYtJXSNKmeiUZKGqXukC+2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt4n1VqGiwtrlO+zHU5FSJKLbYPinin8a8LI2MzYmC2blQPlxM
+	k3ZY1y0vAfaGPtXgX7Q/EZHwrmiHUrqKsYUUVJufKE2cQLSOxpvSRbsH2IwCX7dSCMe70yho4q5
+	jIbuLXjBneGOKP4DC1GhVEgf6H+6gg5Q0o617TcEhXZ7nOTw2VQju2CV/595Fdok4/+s=
+X-Gm-Gg: ASbGncsDQ6ttqiS2Hc3FfRZv83Zo2qERS430RVk80UdKsZ7kfhrwtQP9OLGKbN4sUoD
+	LBNtNDsp6ZDELaY/YWTwNfijbtNCxZeUP2P4GfPahaDKIC58pW/yBrDMeOK/3jH21k49Slp26lu
+	LMsAu8RZhybAawviUh5DAnh2nglTC47tDXTu7Cme0I0LXf+h+nqK00lV2aWk43U0j3Y25Hy/uec
+	b3Xgh16hoXYIvfuii37xN5kH6nFdTxm35B1uxOUFtAaJ1CxDaqhmfuUyNFxCc3FsBp9L6tcdY53
+	+A0hmiVsuUoDo6pdfwxvXE9JnuwBbKWCdsQtsEaDnr5nUUr8ASVCxdnO/ZSBYe9AhnqtoqZsJV3
+	OlgBKkt3GUSZ2
+X-Received: by 2002:a05:620a:d89:b0:84b:226b:bf4b with SMTP id af79cd13be357-8907011469dmr371062085a.44.1760691388340;
+        Fri, 17 Oct 2025 01:56:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUPr93d8Ajmplggb+ldAlBxbQLvNV0HTydv4xrmLHHI5+c/49iamayVLMQxclCht+/wql+7w==
+X-Received: by 2002:a05:620a:d89:b0:84b:226b:bf4b with SMTP id af79cd13be357-8907011469dmr371060085a.44.1760691387891;
+        Fri, 17 Oct 2025 01:56:27 -0700 (PDT)
 Received: from debian ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711444d919sm70764985e9.14.2025.10.17.01.56.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711444d919sm70764985e9.14.2025.10.17.01.56.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 01:56:25 -0700 (PDT)
+        Fri, 17 Oct 2025 01:56:27 -0700 (PDT)
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 To: broonie@kernel.org
 Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
         linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH 04/12] ASoc: qcom: q6adm: Use automatic cleanup of kfree()
-Date: Fri, 17 Oct 2025 09:52:59 +0100
-Message-ID: <20251017085307.4325-5-srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 05/12] ASoc: qcom: q6afe: Use automatic cleanup of kfree()
+Date: Fri, 17 Oct 2025 09:53:00 +0100
+Message-ID: <20251017085307.4325-6-srinivas.kandagatla@oss.qualcomm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251017085307.4325-1-srinivas.kandagatla@oss.qualcomm.com>
 References: <20251017085307.4325-1-srinivas.kandagatla@oss.qualcomm.com>
@@ -98,28 +98,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=esXSD4pX c=1 sm=1 tr=0 ts=68f204bc cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+X-Proofpoint-ORIG-GUID: oC_sf4mwkYCUti2Zg-TKvwJLfrEKx30m
+X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68f204bd cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=tHfk9jisluZWoJm7kAAA:9 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: knQrltX-wDQ_D_f6zjV4lU8v4NgArLGW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDA5OSBTYWx0ZWRfX16HqWAKdJ76J
- Tzk5MJQEh3OoFZ215AB4NHxw3c5C9jO13HQEw0y9tGHT//EhGsDaVR9A3O2kInqbTBP6Y8Yuc9x
- 3gHF4eKOWo8vPiceQ6C7kKkRUlfOpeAAMlkp8sxhefrPTkQwvxtQcWlx/Ag40vdaHNdUlsgilVW
- DzhisFxp7gUXueBxZUDlXF4DE7pK+p2kOh6APFSBieBptcfMwDBjJqGai4+0SYUdoLQ/8FmJtxK
- 9Fg3qe8hbPND2Dbu0b2scG8JBk+ae0O/cm84dWLncNxhiAZUXS/BeCUPWVxwaciRmZUv9C6pG7W
- spegHL8hcu+sCMzQnf2h2ta2i+4VwujjSMLXC7+Z0NJCspmdecOJ6RnvtRPKfmeafpR7t4f5leF
- 3WMVDhOWJcuPhEUUrJaqYiCe3e2p8Q==
-X-Proofpoint-ORIG-GUID: knQrltX-wDQ_D_f6zjV4lU8v4NgArLGW
+ a=92AZDs2nESXm7HPk3LYA:9 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: oC_sf4mwkYCUti2Zg-TKvwJLfrEKx30m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX7IZr7roli7nG
+ zpQbgbV3ThZqscUMeWrp6PqJ9r3se/GnCL2ebsaIAT/OdpbBkWlNfocQbachGSqIUuimyU9xfUf
+ yFkQWdHXkde8GB1iHefa0m2eYrMy6nS5MixYlkDrD4S7D6PT4wx4UwcwW1Z3Fwrrr1XsDazDbmU
+ 9SndiYhqzOEIhXl2lNyfxj+cx1fxJm3ecnNnIVxi8Yp4iJHI234EQpd/+sTf6LZterBZ0HGVW7h
+ BhISAB5IWOvh6QkXtDEkRo7HrPbbI2g2T+Ii9Jy7bIZIfpEze6DcDN/NIM4dP583c5zTrRbgNoN
+ qniNCvURJbiLgzWkeR0EBPRpiCCTmqXKlFKXoWYr0uJrTGdXMuRxee/RipH/DXEW4iP34g3DH8E
+ uA/puRj98cTi0L88lzwbXtEclzKDjg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 impostorscore=0 bulkscore=0 spamscore=0
- malwarescore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510160099
+ definitions=main-2510110018
 
 Its common pattern in q6dsp code to allocate temporary buffer
 to send gpr/apr packets and free at the function exit.
@@ -129,90 +129,138 @@ No functional changes.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 ---
- sound/soc/qcom/qdsp6/q6adm.c | 33 +++++++++------------------------
- 1 file changed, 9 insertions(+), 24 deletions(-)
+ sound/soc/qcom/qdsp6/q6afe.c | 41 +++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 29 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6adm.c b/sound/soc/qcom/qdsp6/q6adm.c
-index 1530e98df165..6477c7875c12 100644
---- a/sound/soc/qcom/qdsp6/q6adm.c
-+++ b/sound/soc/qcom/qdsp6/q6adm.c
-@@ -325,11 +325,8 @@ static int q6adm_device_open(struct q6adm *adm, struct q6copp *copp,
- 	struct q6adm_cmd_device_open_v5 *open;
- 	int afe_port = q6afe_get_port_id(port_id);
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 7b59d514b432..56f85f1c2425 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -1077,11 +1077,9 @@ static int q6afe_set_param(struct q6afe *afe, struct q6afe_port *port,
+ 	struct afe_svc_cmd_set_param *param;
+ 	struct afe_port_param_data_v2 *pdata;
  	struct apr_pkt *pkt;
--	void *p;
 -	int ret, pkt_size;
+-	void *p, *pl;
 -
--	pkt_size = APR_HDR_SIZE + sizeof(*open);
+-	pkt_size = APR_HDR_SIZE + sizeof(*param) + sizeof(*pdata) + psize;
 -	p = kzalloc(pkt_size, GFP_KERNEL);
-+	int ret, pkt_size = APR_HDR_SIZE + sizeof(*open);
++	int ret, pkt_size = APR_HDR_SIZE + sizeof(*param) + sizeof(*pdata) + psize;
++	void *pl;
 +	void *p __free(kfree) = kzalloc(pkt_size, GFP_KERNEL);
  	if (!p)
  		return -ENOMEM;
  
-@@ -354,14 +351,9 @@ static int q6adm_device_open(struct q6adm *adm, struct q6copp *copp,
- 	ret = q6dsp_map_channels(&open->dev_channel_mapping[0],
- 				 channel_mode);
+@@ -1112,7 +1110,6 @@ static int q6afe_set_param(struct q6afe *afe, struct q6afe_port *port,
  	if (ret)
--		goto err;
--
--	ret = q6adm_apr_send_copp_pkt(adm, copp, pkt,
--				      ADM_CMDRSP_DEVICE_OPEN_V5);
-+		return ret;
+ 		dev_err(afe->dev, "AFE set params failed %d\n", ret);
  
--err:
--	kfree(pkt);
--	return ret;
-+	return q6adm_apr_send_copp_pkt(adm, copp, pkt, ADM_CMDRSP_DEVICE_OPEN_V5);
- }
- 
- /**
-@@ -464,15 +456,12 @@ int q6adm_matrix_map(struct device *dev, int path,
- 	struct q6adm_session_map_node_v5 *node;
- 	struct apr_pkt *pkt;
- 	uint16_t *copps_list;
--	int pkt_size, ret, i, copp_idx;
--	void *matrix_map;
--	struct q6copp *copp;
--
-+	int ret, i, copp_idx;
- 	/* Assumes port_ids have already been validated during adm_open */
--	pkt_size = (APR_HDR_SIZE + sizeof(*route) +  sizeof(*node) +
-+	struct q6copp *copp;
-+	int pkt_size = (APR_HDR_SIZE + sizeof(*route) +  sizeof(*node) +
- 		    (sizeof(uint32_t) * payload_map.num_copps));
--
--	matrix_map = kzalloc(pkt_size, GFP_KERNEL);
-+	void *matrix_map __free(kfree) = kzalloc(pkt_size, GFP_KERNEL);
- 	if (!matrix_map)
- 		return -ENOMEM;
- 
-@@ -510,16 +499,13 @@ int q6adm_matrix_map(struct device *dev, int path,
- 		if (port_idx < 0) {
- 			dev_err(dev, "Invalid port_id %d\n",
- 				payload_map.port_id[i]);
--			kfree(pkt);
- 			return -EINVAL;
- 		}
- 		copp_idx = payload_map.copp_idx[i];
- 
- 		copp = q6adm_find_copp(adm, port_idx, copp_idx);
--		if (!copp) {
--			kfree(pkt);
-+		if (!copp)
- 			return -EINVAL;
--		}
- 
- 		copps_list[i] = copp->id;
- 		kref_put(&copp->refcount, q6adm_free_copp);
-@@ -552,7 +538,6 @@ int q6adm_matrix_map(struct device *dev, int path,
- 
- fail_cmd:
- 	mutex_unlock(&adm->lock);
 -	kfree(pkt);
  	return ret;
  }
- EXPORT_SYMBOL_GPL(q6adm_matrix_map);
+ 
+@@ -1131,11 +1128,9 @@ static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
+ 	struct q6afe *afe = port->afe;
+ 	struct apr_pkt *pkt;
+ 	u16 port_id = port->id;
+-	int ret, pkt_size;
+-	void *p, *pl;
+-
+-	pkt_size = APR_HDR_SIZE + sizeof(*param) + sizeof(*pdata) + psize;
+-	p = kzalloc(pkt_size, GFP_KERNEL);
++	int ret, pkt_size = APR_HDR_SIZE + sizeof(*param) + sizeof(*pdata) + psize;
++	void *pl;
++	void *p __free(kfree) = kzalloc(pkt_size, GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+@@ -1168,7 +1163,6 @@ static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
+ 		dev_err(afe->dev, "AFE enable for port 0x%x failed %d\n",
+ 		       port_id, ret);
+ 
+-	kfree(pkt);
+ 	return ret;
+ }
+ 
+@@ -1285,7 +1279,7 @@ int q6afe_port_stop(struct q6afe_port *port)
+ 	int port_id = port->id;
+ 	int ret = 0;
+ 	int index, pkt_size;
+-	void *p;
++	void *p __free(kfree) = NULL;
+ 
+ 	index = port->token;
+ 	if (index < 0 || index >= AFE_PORT_MAX) {
+@@ -1316,7 +1310,6 @@ int q6afe_port_stop(struct q6afe_port *port)
+ 	if (ret)
+ 		dev_err(afe->dev, "AFE close failed %d\n", ret);
+ 
+-	kfree(pkt);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(q6afe_port_stop);
+@@ -1676,7 +1669,7 @@ int q6afe_port_start(struct q6afe_port *port)
+ 	int ret, param_id = port->cfg_type;
+ 	struct apr_pkt *pkt;
+ 	int pkt_size;
+-	void *p;
++	void *p __free(kfree) = NULL;
+ 
+ 	ret  = q6afe_port_set_param_v2(port, &port->port_cfg, param_id,
+ 				       AFE_MODULE_AUDIO_DEV_INTERFACE,
+@@ -1722,7 +1715,6 @@ int q6afe_port_start(struct q6afe_port *port)
+ 		dev_err(afe->dev, "AFE enable for port 0x%x failed %d\n",
+ 			port_id, ret);
+ 
+-	kfree(pkt);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(q6afe_port_start);
+@@ -1845,11 +1837,8 @@ int q6afe_unvote_lpass_core_hw(struct device *dev, uint32_t hw_block_id,
+ 	struct afe_cmd_remote_lpass_core_hw_devote_request *vote_cfg;
+ 	struct apr_pkt *pkt;
+ 	int ret = 0;
+-	int pkt_size;
+-	void *p;
+-
+-	pkt_size = APR_HDR_SIZE + sizeof(*vote_cfg);
+-	p = kzalloc(pkt_size, GFP_KERNEL);
++	int pkt_size = APR_HDR_SIZE + sizeof(*vote_cfg);
++	void *p __free(kfree) = kzalloc(pkt_size, GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+@@ -1871,7 +1860,6 @@ int q6afe_unvote_lpass_core_hw(struct device *dev, uint32_t hw_block_id,
+ 	if (ret < 0)
+ 		dev_err(afe->dev, "AFE failed to unvote (%d)\n", hw_block_id);
+ 
+-	kfree(pkt);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(q6afe_unvote_lpass_core_hw);
+@@ -1883,11 +1871,8 @@ int q6afe_vote_lpass_core_hw(struct device *dev, uint32_t hw_block_id,
+ 	struct afe_cmd_remote_lpass_core_hw_vote_request *vote_cfg;
+ 	struct apr_pkt *pkt;
+ 	int ret = 0;
+-	int pkt_size;
+-	void *p;
+-
+-	pkt_size = APR_HDR_SIZE + sizeof(*vote_cfg);
+-	p = kzalloc(pkt_size, GFP_KERNEL);
++	int pkt_size = APR_HDR_SIZE + sizeof(*vote_cfg);
++	void *p __free(kfree) = kzalloc(pkt_size, GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+@@ -1911,8 +1896,6 @@ int q6afe_vote_lpass_core_hw(struct device *dev, uint32_t hw_block_id,
+ 	if (ret)
+ 		dev_err(afe->dev, "AFE failed to vote (%d)\n", hw_block_id);
+ 
+-
+-	kfree(pkt);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(q6afe_vote_lpass_core_hw);
 -- 
 2.51.0
 
