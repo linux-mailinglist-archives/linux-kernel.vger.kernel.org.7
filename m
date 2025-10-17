@@ -1,147 +1,124 @@
-Return-Path: <linux-kernel+bounces-858058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A5ABE8BCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:06:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C588BE8BDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9D31AA51AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3081885AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC656331A59;
-	Fri, 17 Oct 2025 13:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350A5331A5C;
+	Fri, 17 Oct 2025 13:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tMDLw6cH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DWuiRtD9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LfC3onij"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0C42DE713;
-	Fri, 17 Oct 2025 13:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289A81D5CE8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760706348; cv=none; b=l1yob46mKyTmSiCKPrvyNyGQ6noARmebN93mtQA97nBlB3JgBbKxOBdN5bvwZKiLp0F99V+B9XT5YuXAYMbz8fEKyRQ+/XcGhZKb/Ma8RkL8uI+4RHLh2AwjxONS2GkwdaDE4n+YpsW/PRKkJPkiqWqc/tgLpvhk01haGBT2kwM=
+	t=1760706387; cv=none; b=Vabhutd05KoyqMRIxQP3srjQtfzxnhc5qcO13QtXQupR9Ekd2vfaVNWJvMzXOYlyqnL29MVTj/XEi/qGei0EkfL6ROSuXLu97+RdCEzzTQ7x13JafDfZocYnI/iCifvM7rZ9AEQMbyJJIews8JVoTLpwEdW6eMq0zvsMLOVOyj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760706348; c=relaxed/simple;
-	bh=zEz9ga+C3NjrrB+uajYQC/2V9em72t3wQWjrmGwWgyE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dl9Whw7Y8g5Xe8B1Nsz8AXO188MJgsQAE5Azyh+5OLUz4uWVIv0M6YZ6NCBUkp+xo2+awPm4W2spi8tnOUIf03CCI7/OOGfFjBdUkh0CxR850i3xnSiqe4Q69OncMuWFI3xPhiZmawJOnUlRXEmZHJ+Xas6wX5sJsARBL/SE9Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tMDLw6cH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DWuiRtD9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760706345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPtEh82id2JnaP5JMh/vbCgClw5ZFVRwFNHrSzBjt1M=;
-	b=tMDLw6cHx2JEMIytXTYHequZeGQSavqZnuyx2RiVKGr3QbmobXCb9DfmPyPvlHzahvLEgg
-	LtQxqNUYasgpfkE1fkXCyx3FiL7jVJJaBm8Eik+56H4sgfjZPoOfgVgdDjzsmstFdW3rBB
-	qZTFix9vLUy+kOmLyTV6d0eQ5ZimXv4epxqYN2rTK2dMkW2dYbBJInyOwAP32D2ci5uKHc
-	CpJIXOBsbIaAJ674NPJ/nHzFop9E4HOZgsY21HSTdEkGson6e/0Z5zPF3sZVIEEYzqoT1N
-	qKfi2b+CVWJsFOEa8Vb3MVQ2KCAawBchzODnOqjksQQCVj1RbgDLuVqr1g/K5A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760706345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPtEh82id2JnaP5JMh/vbCgClw5ZFVRwFNHrSzBjt1M=;
-	b=DWuiRtD97Bun9qnHe9Qehx7Rf5DsXdqkJAcpPEWlhBIs2pUDJ4jWkGMaoWPPth2XW86csp
-	4HIBpvjemIyMLQCg==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
- Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v2 10/20] rv: Add Hybrid Automata monitor type
-In-Reply-To: <4d27225b5a38210a40efcdb8eb778ca0ec3808f1.camel@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
- <20250919140954.104920-11-gmonaco@redhat.com> <87ldl9x6h7.fsf@yellow.woof>
- <4d27225b5a38210a40efcdb8eb778ca0ec3808f1.camel@redhat.com>
-Date: Fri, 17 Oct 2025 15:05:44 +0200
-Message-ID: <87frbhwudz.fsf@yellow.woof>
+	s=arc-20240116; t=1760706387; c=relaxed/simple;
+	bh=mWKAIcrMZVv1wc3CtzrZKiBn8JYPxLviInXEx8ShWoA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=knW/IcoGPb3+sCyaVSPy75bX4rtTVf78zUe2J0Bnr5+G2iw61NI9Dhirct984MKs1IxUTZV8OAZCNDqC3X5c57BwoGNiicdqSIItp9OQzqg2NFMFSvAAazIWNrZajQxnfN2jw4AWAYowkp1AcWwNGHxjUVXjX7aKFcQ4by415TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LfC3onij; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-394587df7c4so768376fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:06:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760706385; x=1761311185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GepDfW9E0nUagdgkcApQSbzos+mlrZqdCRnH825BS7s=;
+        b=LfC3onijhmia9bDrgFEDUMNoUqm4GeU1x109mLJ5hDbU/vafwOGN5SGiDzYwu7LPOi
+         rGDqcdTZSmjltySNDNDp8LuiVAHqwPRCQTs6TtLQRnLMVtadVj3Z+x+Gjsa2RBW2/ybN
+         WZrEIlWWeV7FqD3J1zi+8ztDJVUfyiUcwpG2ETiPMjeonLo11hL3+5ZhRmaU/LnbAKci
+         U+ue2+LUMqsRydYpCMxGnZWa9dg+y6dCFnTHOF9HNWMqcnWmdXbhNDYLRHItrjNRm7dZ
+         PztLgRbGZPgHcwZparRgc4qAlehCIZvuZWgSGq0mwdx4j/SUxtwICV5Oxi84H3l0C2gI
+         +WxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760706385; x=1761311185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GepDfW9E0nUagdgkcApQSbzos+mlrZqdCRnH825BS7s=;
+        b=GhZNKbdWWBRmQppWW0Tl9hM7oorxpNtLWabJASLCtLaexLuG9o5hGuzQ7quYwD2KFA
+         ToNRnXMs4YzKX1cG9jKyzefPzAr1iPUHiiWrRyR9tTV9kLQaaYGO2YVdUJQCqRcn2MlG
+         pQ4BG+FNrc37Gx2CsZ+naBTasKK3BXfhAY4z58r7/lqEx3Pw+MQrflKlT7hOuknXex76
+         HxKNEaJJE4MAGHwVAXlQEfr/hla0W/eDelOm4ok7cdf0EJJDY1qpfPokinQyZILrxcTM
+         If0ISfammTg1WUAs6wY81S7W7KfJGCtaxL/Yhtz0rTG7fMvflqneOczwt3G1s4iWpF+0
+         mHhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCNC2b0w5pUZhoyUts7QCrqLTucGWI9y61xmK8Tu4aN/n7cLQf5JeTKUh6mcj1kLrA/OuUD+Z/RhNpGYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgGozsd6oZZ6gOlilrZfxHFqh/fS8xQ39dokoHll/LKCgLv3j+
+	n7SQlLVSYPpxXBVEQs4nbBVTjZxlIH3deXTtmgbBZXcyuwIsDjDlEvIPj7cH/U9jlNGS8uXidoE
+	pqfnn1EOVkyxrJb3kbGmg5LYJ3dqNbyY=
+X-Gm-Gg: ASbGncs/fZAHL9p3e++GDtQbxVx3GuoA2Mylni+KD1ovtbWRwwVEzL7/DkyPMNGHhly
+	/eZab4rS9JYNPTXcH3EV4fUeylv2nYHmzs0C8fCroTEGpJ6CMsWw5F49mv5b594rNZyi1OYH7zf
+	/5/3sPQIzwXLik4biESlwJZqof/tBA7a/BkC/MErbxFgDPJE/ae1znUgqK4cw4kaPvnAq1dpEHr
+	vtD4xxw6e5KH60SviILem9q/0Io0bX7U83mbWfSa0yK0HD8IUFFp8uRFYEFU1xrIHOEgcg=
+X-Google-Smtp-Source: AGHT+IG+lXlLFDl3T0YzSok7m2AbHR6xmpCoLDHgVg8GL/Fi0AuigLh2vODu4DJgLx6XCplrx613O2JGiUegL6nmmjc=
+X-Received: by 2002:a05:6871:80e:b0:344:34e3:5140 with SMTP id
+ 586e51a60fabf-3c98d179d64mr1418450fac.45.1760706385045; Fri, 17 Oct 2025
+ 06:06:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251016211740.653599-1-lossin@kernel.org> <CANiq72k8KmpFyKAFZ293GDUWx5=HJtksR02hTU8-H9PX7xsT+g@mail.gmail.com>
+ <DDK2SA1D77HM.38KOTOTF8FJXI@kernel.org> <CANiq72=Qh9sJLKwACr_McnbGdu8JfzqDuv1AgCjSdwKtt-9Gdw@mail.gmail.com>
+In-Reply-To: <CANiq72=Qh9sJLKwACr_McnbGdu8JfzqDuv1AgCjSdwKtt-9Gdw@mail.gmail.com>
+From: Guillaume Gomez <guillaume1.gomez@gmail.com>
+Date: Fri, 17 Oct 2025 15:06:13 +0200
+X-Gm-Features: AS18NWCeDsB-JZadx55OaJQ8kOop29eKTZv6rb0-8XIQRp_yPbVPdOnyL_WRHqk
+Message-ID: <CAAOQCfQzhxDzaJOb3GyVPgcVD0npso4bJ8zuy_63ZSr-rnQ0nA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: pin-init: fix broken rust doc link
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	Alban Kurti <kurti@invicto.ai>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> Alright, this is the simplest way I could think to represent clocks, still it
-> seems confusing.
+Indeed, although, please open an issue on rust repository so the team
+can discuss how this feature would look like.
+
+Le ven. 17 oct. 2025 =C3=A0 14:59, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> a =C3=A9crit :
 >
-> Let's start from guards (invariants are not special but I'm trying to do
-> something to keep precision), the value of a clock is the time that passed since
-> the last reset, as that's when the value is set to 0. Storing that timestamp and
-> just comparing the difference whenever you need to know the valuation of said
-> clock seemed the most straightforward thing to me. The clock representation
-> doesn't include the guard constraint, that is validated during the event using
-> the current valuation (i.e. now - reset_time).
+> On Thu, Oct 16, 2025 at 11:47=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
+ wrote:
+> >
+> > Thanks a lot for the added context! I will add it when applying. The
+> > `__pinned_drop!` macro will be gone with the syn patches this cycle, so
+> > in this case, we don't care what the resolution will be.
 >
-> What is important to note is that, at time of reset, you don't know what guard
-> is going to fire, you may as well have a state with event A asking for clk<10
-> and event B requiring clk<20, also the guard may be in a later state and may
-> depend on the path.
+> In the end, it wasn't intentional, so Guillaume created this PR:
 >
-> Invariants are bound to the form clk < N, and get "armed" when we reach the
-> state, from there we know exactly when the invariant is going to expire, so we
-> can save that (very important when using the timer wheel). Note here that the
-> expiration isn't exactly N from now, but it's the valuation of the clock (reset
-> might have occurred a few states earlier, see the nomiss case) subtracted by N,
-> this is what the "passed" means later.
+>     https://github.com/rust-lang/rust/pull/147809
 >
-> That said, I couldn't think of a simpler implementation but any suggestion is
-> welcome, of course.
-
-Ok, now things start to make sense. Thanks for the explanation.
-
-At least to me, using the same variable to store different time values
-is a bit confusing.
-
-Is it possible that we always store the timestamp of the last clock reset?
-
-The invariant bound value (N) is fixed for each state, so we can have
-the bound value in ha_verify_invariants() instead. For example, the
-Python script can generate something like
-
-static inline bool ha_verify_invariants(struct ha_monitor *ha_mon,
-                                       enum states curr_state, enum events event,
-                                       enum states next_state, u64 time_ns)
-{
-       if (curr_state == enqueued_stall)
-               return ha_check_invariant_jiffy(ha_mon, threshold_jiffies, time_ns);
-       return true;
-}
-
-Is that possible?
-
-> Kinda, it would solve the problem for this specific subtraction, but racing
-> handlers could still lead to problems although the subtraction is "correct".
+> Thus 1.92 may end up without this change in behavior.
 >
-> Since this is the only time the env storage needs to be an atomic_t and it's
-> fairly rare (only complicated models require calling this function at all,
-> others are happy with READ_ONCE/WRITE_ONCE) I didn't want to change the storage
-> implementation for some perceived safety.
+> Guillaume and I also discussed the possibility of checking these
+> things nevertheless (i.e. without needing a second pass) as well as
+> the related topic of having a runtime solution for toggling
+> private/hidden items (and thus getting them checked too). We could
+> perhaps try a custom thing in rust.docs.kernel.org to see how it looks
+> and if people like it.
 >
-> I wrote that comment exactly to motivate why we aren't using atomic_t, but I
-> should probably reword that. Does this make sense to you?
-
-I think if we always store the timestamp since last reset, we can get
-rid of this function. Let's see how that discussion go..
-
-> As mentioned before, this is true for the stall case, where the reset occurred
-> when reaching the state with the invariant (passed is close to 0), if you look
-> at the nomiss case, reset happens before being ready (its invariant would have
-> passed close to 0), but the same invariant is enforced in running, here we will
-> see a passed far from 0 and need to take that into account when setting the
-> invariant.
-
-Make sense, thanks!
-
-Nam
+> Cheers,
+> Miguel
 
