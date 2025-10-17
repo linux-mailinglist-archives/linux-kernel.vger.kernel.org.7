@@ -1,211 +1,116 @@
-Return-Path: <linux-kernel+bounces-857782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC83BE7EE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:03:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CF0BE7F20
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A8364E5FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9E71A61F92
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A782DECA1;
-	Fri, 17 Oct 2025 10:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61D4311973;
+	Fri, 17 Oct 2025 10:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H4E9SeDq"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="o3hKbIoh"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29912D595F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D117192D68;
+	Fri, 17 Oct 2025 10:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760695398; cv=none; b=VtKGqWeOJ0U67RiWu8lAEjuJU32c2+oOX9bykVGkfRLrjm6trKTOEUdO6qC1U5Q28nW+q7EFpCFrzE4gY20HxtTokNXA+pfhpjaqrCg37xadOs36g1rl05BOwPVhsVoEF25BMV33VuN1RZK3C4axXpqFppEE2YT9m0a3gWB5bPk=
+	t=1760695636; cv=none; b=OXHac5kOEaSDR2SSdzP65R9PdTncb461pV1ZmABlUDjwMrqi4hGVmK8uwUErsRQbDeMxn3UdVXt+qk9Mc4vJLI4QihOUMbVusM0Xo/IwxdA5oqK3V0kGtJqMYMGE9/ayexLBKGVREmpN4yw74wYrB9HB+09kBsc58ZuSWT3N7t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760695398; c=relaxed/simple;
-	bh=yPYJA9nWA9ckhRTcnQ1HkAudNskYOmW67TDLW3UqjHg=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=FjwL4EPITmrr/h/N7fT9DufrwEBIMJ9c2JipVV46egppFkLbrLpTd6U/AnVEHJrzuBviISLODXe50g8Ygy9RSOwkHPTKaNIQWzdUhCS7Kb6fSqKL7xaVGSx3WHatq3tbFteGbcQxLgMzVRzrMmYDWXW2LjUZbqIM+u4wsB1hcks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H4E9SeDq; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain; charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760695393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7T9fbRkF3jqCU0uPzbOUF0lxcaNuHAGLnaDOYW7kx98=;
-	b=H4E9SeDqU1sLWo2YpFChIWayvi4ND0Pf01lnG/s/cCcYpLSed1wy0J76NDDxw/r2ws8Sop
-	SIS4X0VeIEtCTi9oDOAxuaO3AttPVpTdLmBHJn2cuI7QKJCgiHXaJbvzxPV3ld6lvaWpfN
-	+cK9hsHrcT8GWxj/Ppba3k7f3PlxqEY=
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
+	s=arc-20240116; t=1760695636; c=relaxed/simple;
+	bh=cMgcWlcNEaLGVhzpqUmzdVFaAi5wv7dfTqoSQ2NjCDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SFeW0H6F8o6brqwZDY8NOBOQStUzQUw8wwma2zmdE0i0WmkROpmArRKbSy1wD1Ia4eF7s+2zUsT07Ta9XcgdEpVVx5JajkkR0/FbSj2MT513ONREbus7n/j2M8qKb6lmdsTYVEIRscpQTQi29bW6uOhy72VrN6DQaqc2lrRiKwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=o3hKbIoh; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from debian (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 7C5C44076729;
+	Fri, 17 Oct 2025 10:07:10 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 7C5C44076729
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1760695630;
+	bh=AgczVpBUOFdifsC4fNu0U21e7j0us/Endy89rAucTwM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=o3hKbIohUYgLGA7aqda52MK1JicLdnCKu+Rj7RLPiHfcJTGPS6/zkewuVprZsV6r6
+	 I3tjE2+35G18abQG/6GpOs1HRvNjsQ6PzDKa6ewFzr9GP3zJwWw38YHxtecKfqGfRl
+	 bledJdeX3mvocAhPW6Gbft9HQCNkACGLTYOSqOL0=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	Po-Hao Huang <phhuang@realtek.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH rtw-next v3 1/9] wifi: rtw89: usb: use common error path for skbs in rtw89_usb_rx_handler()
+Date: Fri, 17 Oct 2025 13:03:03 +0300
+Message-ID: <20251017100658.66581-2-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251017100658.66581-1-pchelkin@ispras.ru>
+References: <20251017100658.66581-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
-Date: Fri, 17 Oct 2025 18:02:57 +0800
-Message-Id: <8F4AE1E9-7412-40D6-B383-187021266174@linux.dev>
-References: <a9ca7cc6-f4d1-4fba-a9aa-2826b9a604bc@suse.cz>
-Cc: Harry Yoo <harry.yoo@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Suren Baghdasaryan <surenb@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-In-Reply-To: <a9ca7cc6-f4d1-4fba-a9aa-2826b9a604bc@suse.cz>
-To: Vlastimil Babka <vbabka@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Allow adding rx_skb to rx_free_queue for later reuse on the common error
+handling path, otherwise free it.
 
+Found by Linux Verification Center (linuxtesting.org).
 
-> On Oct 17, 2025, at 16:22, Vlastimil Babka <vbabka@suse.cz> wrote:
->=20
-> =EF=BB=BFOn 10/17/25 09:40, Harry Yoo wrote:
->>> On Fri, Oct 17, 2025 at 02:42:56PM +0800, Hao Ge wrote:
->>> Hi Harry
->>>=20
->>>=20
->>> Thank you for your quick response.
->>>=20
->>>=20
->>> On 2025/10/17 14:05, Harry Yoo wrote:
->>>> On Fri, Oct 17, 2025 at 12:57:49PM +0800, Hao Ge wrote:
->>>>> From: Hao Ge <gehao@kylinos.cn>
->>>>>=20
->>>>> In the alloc_slab_obj_exts function, there is a race condition
->>>>> between the successful allocation of slab->obj_exts and its
->>>>> setting to OBJEXTS_ALLOC_FAIL due to allocation failure.
->>>>>=20
->>>>> When two threads are both allocating objects from the same slab,
->>>>> they both end up entering the alloc_slab_obj_exts function because
->>>>> the slab has no obj_exts (allocated yet).
->>>>>=20
->>>>> And One call succeeds in allocation, but the racing one overwrites
->>>>> our obj_ext with OBJEXTS_ALLOC_FAIL. The threads that successfully
->>>>> allocated will have prepare_slab_obj_exts_hook() return
->>>>> slab_obj_exts(slab) + obj_to_index(s, slab, p), where slab_obj_exts(sl=
-ab)
->>>>> already sees OBJEXTS_ALLOC_FAIL and thus it returns an offset based
->>>>> on the zero address.
->>>>>=20
->>>>> And then it will call alloc_tag_add, where the member codetag_ref *ref=
+Fixes: 2135c28be6a8 ("wifi: rtw89: Add usb.{c,h}")
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+---
 
->>>>> of obj_exts will be referenced.Thus, a NULL pointer dereference occurs=
-,
->>>>> leading to a panic.
->>>>>=20
->>>>> In order to avoid that, for the case of allocation failure where
->>>>> OBJEXTS_ALLOC_FAIL is assigned, we use cmpxchg to handle this assignme=
-nt.
->>>>>=20
->>>>> Thanks for Vlastimil and Suren's help with debugging.
->>>>>=20
->>>>> Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures un=
-conditionally")
->>>> I think we should add Cc: stable as well?
->>>> We need an explicit Cc: stable to backport mm patches to -stable.
->>> Oh sorry, I missed this.
->>>>=20
->>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->>>>> ---
->>>>>  mm/slub.c | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>=20
->>>>> diff --git a/mm/slub.c b/mm/slub.c
->>>>> index 2e4340c75be2..9e6361796e34 100644
->>>>> --- a/mm/slub.c
->>>>> +++ b/mm/slub.c
->>>>> @@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct sla=
-bobj_ext *obj_exts)
->>>>>  static inline void mark_failed_objexts_alloc(struct slab *slab)
->>>>>  {
->>>>> -    slab->obj_exts =3D OBJEXTS_ALLOC_FAIL;
->>>>> +    cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
->>>>>  }
->>>> A silly question:
->>>>=20
->>>> If mark_failed_objexts_alloc() succeeds and a concurrent
->>>> alloc_slab_obj_exts() loses, should we retry cmpxchg() in
->>>> alloc_slab_obj_exts()?
->>>=20
->>> Great point.
->>>=20
->>> We could modify it like this, perhaps?
->>>=20
->>>  static inline void mark_failed_objexts_alloc(struct slab *slab)
->>>  {
->>> +       unsigned long old_exts =3D READ_ONCE(slab->obj_exts);
->>> +       if( old_exts =3D=3D 0 )
->>> +               cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
->>>  }
->>=20
->> I don't think this makes sense.
->> cmpxchg() fails anyway if old_exts !=3D 0.
+v2: - do goto 'free_or_reuse' (Ping-Ke)
 
-Aha, sorry I misunderstood what you meant.
+ drivers/net/wireless/realtek/rtw89/usb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->>=20
->>> Do you have any better suggestions on your end?
->>=20
->> I meant something like this.
->>=20
->> But someone might argue that this is not necessary anyway
->> if there's a severe memory pressure :)
->>=20
->> diff --git a/mm/slub.c b/mm/slub.c
->> index a585d0ac45d4..4354ae68b0e1 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -2139,6 +2139,11 @@ int alloc_slab_obj_exts(struct slab *slab, struct k=
-mem_cache *s,
->>        slab->obj_exts =3D new_exts;
->>    } else if ((old_exts & ~OBJEXTS_FLAGS_MASK) ||
->>           cmpxchg(&slab->obj_exts, old_exts, new_exts) !=3D old_exts) {
->> +
->> +        old_exts =3D READ_ONCE(slab->obj_exts);
->> +        if (old_exts =3D=3D OBJEXTS_ALLOC_FAIL &&
->> +            cmpxchg(&slab->obj_exts, old_exts, new_exts) =3D=3D old_exts=
-)
->> +            goto out;
->=20
-> Yeah, but either we make it a full loop or we don't care.
-> Maybe we could care because even without a severe memory pressure, one sid=
-e
-> might be using kmalloc_nolock() and fail more easily. I'd bet it's what's
-> making this reproducible actually.
+diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wireless/realtek/rtw89/usb.c
+index 6cf89aee252e..e8e064cf7e0a 100644
+--- a/drivers/net/wireless/realtek/rtw89/usb.c
++++ b/drivers/net/wireless/realtek/rtw89/usb.c
+@@ -410,8 +410,7 @@ static void rtw89_usb_rx_handler(struct work_struct *work)
+ 
+ 		if (skb_queue_len(&rtwusb->rx_queue) >= RTW89_USB_MAX_RXQ_LEN) {
+ 			rtw89_warn(rtwdev, "rx_queue overflow\n");
+-			dev_kfree_skb_any(rx_skb);
+-			continue;
++			goto free_or_reuse;
+ 		}
+ 
+ 		memset(&desc_info, 0, sizeof(desc_info));
+@@ -422,7 +421,7 @@ static void rtw89_usb_rx_handler(struct work_struct *work)
+ 			rtw89_debug(rtwdev, RTW89_DBG_HCI,
+ 				    "failed to allocate RX skb of size %u\n",
+ 				    desc_info.pkt_size);
+-			continue;
++			goto free_or_reuse;
+ 		}
+ 
+ 		pkt_offset = desc_info.offset + desc_info.rxd_len;
+@@ -432,6 +431,7 @@ static void rtw89_usb_rx_handler(struct work_struct *work)
+ 
+ 		rtw89_core_rx(rtwdev, &desc_info, skb);
+ 
++free_or_reuse:
+ 		if (skb_queue_len(&rtwusb->rx_free_queue) >= RTW89_USB_RX_SKB_NUM)
+ 			dev_kfree_skb_any(rx_skb);
+ 		else
+-- 
+2.51.0
 
-=46rom my understanding, it only affected the obj_ext associated with this a=
-llocation, which was subsequently deallocated, leading to the loss of this c=
-ount. Is this correct?
-
-
->=20
->>        /*
->>         * If the slab is already in use, somebody can allocate and
->>         * assign slabobj_exts in parallel. In this case the existing
->> @@ -2152,6 +2157,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct k=
-mem_cache *s,
->>        return 0;
->>    }
->>=20
->> +out:
->>    kmemleak_not_leak(vec);
->>    return 0;
->> }
->>=20
->>>>=20
->>>>> --
->>>>> 2.25.1
->>>=20
->>=20
->=20
 
