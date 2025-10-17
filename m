@@ -1,115 +1,136 @@
-Return-Path: <linux-kernel+bounces-857950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA62FBE8517
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:26:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB57BE8508
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEEB1899C10
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5652D4E28DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4611343D92;
-	Fri, 17 Oct 2025 11:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A710E343D84;
+	Fri, 17 Oct 2025 11:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAKGPXcp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fABidgn9"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DCF343D89;
-	Fri, 17 Oct 2025 11:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB0032ED3F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700383; cv=none; b=kysSkusLkzgxBrnk5LheDYCpvohbGtt5VnazHXhHIjGEwK73E+2YnO6WXDTRHa949Erk0R9FknquzsUXAWnn5cO/SzbnBifhSe8a/X9zo/b0DUwJJ4X0SImPtTWLzH4hI0dTXT7R6NVHgH/NMQD9VNxaf4584OijH3lVxQ+O1qA=
+	t=1760700358; cv=none; b=dvtV/GlAsN9WIkIRoUmrMc1J8c/pWkYFB01fwKNCJIvnGmGvb3u/9kkxqSCfksjpnDuFQTN/kL8lcp7Wc88XOrfSp/pQItGStLYrI/ERI0NLffv3SRN+l9DUUKMebFxRt2kbhiFIJDgVCtOz7tNF83DhG0WwqvTU2psvklti7WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700383; c=relaxed/simple;
-	bh=pPzUuwGvogXsvvUv9K+pic8Th4sHIWdVh+uLPnCifM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JAN9BcaIzewW62cwCWUxaiQrq9+S3e/+AxTddOQ0HFoUGTKjq9wdqaiHVOMS9QNOyjbTcp6m4Vr6MXtRscSYnnXkL6Vd9QfOlp9VPT/UYSbSXX1OFYKVdQ06vlueAve4+MA7C6u16fYDHoggxmT/XE/5SBLABuewb01Q4S7JgPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAKGPXcp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C915CC4CEE7;
-	Fri, 17 Oct 2025 11:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760700382;
-	bh=pPzUuwGvogXsvvUv9K+pic8Th4sHIWdVh+uLPnCifM8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JAKGPXcpTbpaITsnF/iMnIYPT2LZAdmUxVKIXGQd1fL00dJ5T8wqO3rem4CutDXMT
-	 dzZK3xWiBflJxgLAqsUtE3nWKIHQ5q2KILVbaGwDURTZi/MCBTBTSkM5FWZPOXI2GV
-	 9cPSkc7Yp7XZJYbhSSyZNvc/TRmoFs51k001AYgJS9b2yoT7FG32tstUxsm4MV9eWw
-	 dsXzdEBZJ7T4YR688CmgstmYgO79Lo63SbHTmgUlnLwA6+kFr0Bkpkc1yecVR2fNuN
-	 tIhw/QEvp50XhnBNLzMbTgs0Ir4ebXR1HHbws7LcVIq+9KHMA9YDM84JWUl1421WZ9
-	 2T2mz56TkGY+A==
-From: Philipp Stanner <phasta@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
+	s=arc-20240116; t=1760700358; c=relaxed/simple;
+	bh=aWvD+LLrLF9YK8GnZm5gsYiNIJjDuBqyzw6Mr1QGTag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFxqPMePwFCDf0pfN/3U2oMXwbVoKvUkVpp+0P5TJXusmZvzEunKFCgXPLfRBmBRDmN9CjRM5dUqlQUJL5Qq8qJCWqMAKExyrW9tGD1GGOPjmsEvQi253aNegH5cdfqbIDq3uDYhLSIpBU7DVhkxCeazNDyuUlrUkxe5sqTAdr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fABidgn9; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=aWvD
+	+LLrLF9YK8GnZm5gsYiNIJjDuBqyzw6Mr1QGTag=; b=fABidgn93jmvg9ZisEcP
+	Lk0H3NKOriPyUAhNiEmb58pFrcorfCMfQCUMisFcIOxaOAfeC8ca5aPhgKHlI73H
+	ZbohZ53gjJFEx7ICJXdFwuVvksx6wULWJlyZaTYn+nRxgg97PEWBhke66ygKhUU7
+	yX8tFG3uV82GmDaCNoCte9P4g8jP2a2cKsOnkx1kBKwtJUhPRWp05rKtQro/4GkV
+	USplM4Y3eTLFR49U57Pww26JZjQ0BSmuZtNHWWAKw2JF8QABzrVa+RiqvsTEN2Ei
+	lp8jXMtsK6MG8Y3dxCNAHIHFKOgw3AZUw5D4EjBN6NuTbTiJXtlqkkTuf3jm33ZC
+	sQ==
+Received: (qmail 11438 invoked from network); 17 Oct 2025 13:25:51 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 13:25:51 +0200
+X-UD-Smtp-Session: l3s3148p1@NTwB/1hB/uMgAwDPXwQHAL/S9V79e5yL
+Date: Fri, 17 Oct 2025 13:25:51 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v2] drm/sched: Add warning for removing hack in drm_sched_fini()
-Date: Fri, 17 Oct 2025 13:25:44 +0200
-Message-ID: <20251017112543.177674-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
+ possible
+Message-ID: <aPInv9NELU7N9QDn@shikoro>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <aPEAx8ZGHBcWZKJF@shikoro>
+ <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
+ <aPIfF-3SgzW5V_gs@shikoro>
+ <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mXhh8XpVdeKHr1Bl"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
 
-The assembled developers agreed at the X.Org Developers Conference 2025
-that the hack added for amdgpu in drm_sched_fini() shall be removed. It
-shouldn't be needed by amdgpu anymore.
 
-As it's unclear whether all drivers really follow the life time rule of
-entities having to be torn down before their scheduler, it is reasonable
-to warn for a while before removing the hack.
+--mXhh8XpVdeKHr1Bl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add a warning in drm_sched_fini() that fires if an entity is still
-active.
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
-Changes in v2:
-  - Fix broken brackets.
----
- drivers/gpu/drm/scheduler/sched_main.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> > I think the fallback mechanism of the core should work without any
+> > module loading infrastructure. It should be there whenever possible.
+> >
+>=20
+> It's not really a fallback, is it? This is the path we'll always take
+> if the driver requests a reset control on a firmware node which has a
+> reset-gpios property. If the driver goes with the gpiod API, it will
+> get a regular descriptor. It's deterministic enough to not warrant the
+> term "fallback".
 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 46119aacb809..87ea373f266e 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -1419,7 +1419,7 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
- 		struct drm_sched_rq *rq = sched->sched_rq[i];
- 
- 		spin_lock(&rq->lock);
--		list_for_each_entry(s_entity, &rq->entities, list)
-+		list_for_each_entry(s_entity, &rq->entities, list) {
- 			/*
- 			 * Prevents reinsertion and marks job_queue as idle,
- 			 * it will be removed from the rq in drm_sched_entity_fini()
-@@ -1441,7 +1441,10 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
- 			 * drivers that keep entities alive for longer than
- 			 * the scheduler.
- 			 */
-+			if (!s_entity->stopped)
-+				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n");
- 			s_entity->stopped = true;
-+		}
- 		spin_unlock(&rq->lock);
- 		kfree(sched->sched_rq[i]);
- 	}
--- 
-2.49.0
+I dunno for how many drivers this is really applicable, but I really
+liked the cleanup of the pca954x driver. Don't handle GPIOs internally,
+just get a reset, and it might be a GPIO. I think it is very useful and
+I would like to see it wherever possible.
 
+We could now make these drivers depend on RESET_GPIO. This would make
+sense in a way but is uncomfortable for the user who has not RESET_GPIO
+enabled before. The driver would just disappear because of unmet
+dependencies. Yes, this can happen all the time because we always find
+new dependencies and describe them. I just hoped it could be avoided in
+this case.
+
+> Then I believe the platform's config should make sure the driver is
+> built-in. I don't think it makes sense to just cram it into the kernel
+> image for the few users it currently has.
+
+For Morimoto-san, the PCA954x update resulted in a regression. It is
+worth thinking how to avoid that. The driver is so small, I wouldn't
+mind the extra space if it saves users from disappearing devices. But
+mileages vary...
+
+
+--mXhh8XpVdeKHr1Bl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjyJ7sACgkQFA3kzBSg
+KbZEbxAAqiaXS9a0L9TGTMWpxJnVJeLQf+9Ge06OCtpjIwWdYJ5SGNRCSSqXLEiN
+oM8lShGPB/27ENIRZPujguWRsXyDII/fqYuPcGpnF5UIaEhfj8HbVUN+gSZzUDA9
+hdlxQJ9v7Ewf5ng1w4oWzOdqh3giuXMQ/2jKeCeY71hfIfsj2g687r9UH0JY6vg6
+mHD9hJzl9atAhB9F1931utvhQhZSC5Hk+gm4Lvce7I/qOtiPLtZ7UJUCo7s/gXlv
+w7C0qalLlU7bKFYldQzJCwzZmYE62JHWTCv353agnE20Vt5TqFf0446RjNnVJBvw
+7CRWPuLSunNNFXRwIUQibnT7EM/2yy1GrdbdRMr8wN57y7T2DBGuNR/Esa66nsJ6
+CtH5LeE5Yezk3f4rAiVOjLNnxh+bSpSLmwdb20bgJ6NmoUP3QI+OZZot3XjfcudT
+anXQaMgQAGnC4yCL3ILENQbSemFpMMmbWBiA1+Wtj6p7dVFl+7gvw5T5vZjrFjjr
+pwYoqZqHmx+QSfDSpDBr5PFqxhWCS5gXRgY/WrU1EsTt5Vx7H+oh/pM+hqW9Korq
+rXRy3BE8VF/mO9cyhoWQ1mJ/kTN1jLIwRnOqzhrfnr4ycdapAOB3ehZovh07GJgX
+IJhnLl0/9n/8RpxRtW5dUBd8TsJ6nJTC9WHJoV6gtwB4prYkvLM=
+=1Ev6
+-----END PGP SIGNATURE-----
+
+--mXhh8XpVdeKHr1Bl--
 
