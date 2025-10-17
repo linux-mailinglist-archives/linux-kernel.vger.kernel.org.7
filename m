@@ -1,87 +1,252 @@
-Return-Path: <linux-kernel+bounces-857268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88B3BE65E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:08:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11088BE65EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E205E19C4608
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBC75882BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291730C616;
-	Fri, 17 Oct 2025 05:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20A330C378;
+	Fri, 17 Oct 2025 05:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="OGM95IMB"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cJ9KJbli"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A910F2;
-	Fri, 17 Oct 2025 05:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5753F10F2
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760677683; cv=none; b=N4aUsKn8V0/mjZtOCJNjnGfEVxcrydP+YD7eO9pFR/5RNAHg1FMJAvBf7DfAtoA2S/G91Dmzee/djd1Ks5Ed2pTM8vyxORsCdWqBXzvXlPxVzbgK93o5YeWpP9wf5CVFE4/wv8GHUusGzoLUKq/ILZOwN1qsW7bAtQsR4tQSo8U=
+	t=1760677727; cv=none; b=tCqJ47jrAw9kIn/xgJkFYoUiiL3OhHLxWoudWzjFIiz7hLDzKJV7mthK353HgDfcKkspOU1vUIF9G/xdqvgDDrZxdfFRuUQ8MiJ6MgBuvkShXI6zkG8imGNeqRC8aHWHobFEXzuWfv37EA6iqc1XgBSTeFpQGaA70EzLXwdmbdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760677683; c=relaxed/simple;
-	bh=lMKro1feHta3Ev1l0OElUNRw/Zk/TZv7q1l/O5EtEYo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U6BwtF5/qd9aEr5wxHb0TftmdkCT9KcLarCY+bCsaWXVJxGKxWpl6ATWltLSpeiQeFpu1MTljvgxj8bUxF2XvxzX+aC0ydjEfN+YT1+ENVtM0CzAXXeZGENNtPB93V3R8KcNL7QNaH6k8tD2rigOcAwy2vKcmvUiJ5YUCwBovAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=OGM95IMB; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1760677727; c=relaxed/simple;
+	bh=hyPjYGP1xwzjHp7pMDDq+6R8T1+Yj34JkvhPu8848qs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XG30LiTzbA1VT3xG4TpFqlN/WeC1mYo4Bu3KN1oRMaWJhlA9dEHq37cNcWoq2RU6RxWE/GBYJ4yhtrOJqgljJybnkgCNHkmGLa+Qv0I4L0Gw+20DX86ff+fLCEV2Fc2Z2QN3XQHtPa0YgKwejpq7gh9LYSZAAOYPDOUzYXBWUlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cJ9KJbli; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-87bf3d1e7faso32037816d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:08:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1760677679;
-	bh=lMKro1feHta3Ev1l0OElUNRw/Zk/TZv7q1l/O5EtEYo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=OGM95IMBtiyOqcKal/dEideDcepT9sptwo/Xw+NOzQRmzIeUAnshfynJtDxc/7ZjF
-	 nMlpFLYjQf7BOPFIN6EM8iyvPrzAvcOoUEZfSv1dags2cyaDA8ARoVoWaqwLK/I6ma
-	 GjKL6et/Lgff6UDz+wX3FwhCda7jyYx0SAkZSd1rPyVBIYYlk53HlSrEh3hOPq7xh3
-	 JTT+ofoadN30UyYWhhUq8umhJwRwueq138SpWZ70fC5fS2KMpz6U04RIu6i+aLMczo
-	 X36BvXTM9J+h/NjXtcQcJA2FeusqtxyNrgwMn6elhj4RzFxNdIkmgdAjVEiXAdcyMn
-	 ZUolDo7r0o7mw==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 60FC0766F5;
-	Fri, 17 Oct 2025 13:07:56 +0800 (AWST)
-Message-ID: <a96786b9020ad278fbda8c2007ad1c98ca41a4a7.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v3 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Kevin Tung <kevin.tung.openbmc@gmail.com>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley	 <joel@jms.id.au>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm	 <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Amithash Prasasd <amithash@meta.com>, 
- Kevin Tung <Kevin.Tung@quantatw.com>, Ken Chen <Ken.Chen@quantatw.com>, Leo
- Yang <Leo-Yang@quantatw.com>
-Date: Fri, 17 Oct 2025 15:37:55 +1030
-In-Reply-To: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
-References: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+        d=google.com; s=20230601; t=1760677725; x=1761282525; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Ls03Fjg3NKvbeBhnQ2QS3Goh2x4n3GOEI4nKYlVSPU=;
+        b=cJ9KJbliOhBDJuUw8kJdxkgDv2hzwS0Cyo39GB+yTQSkoiUjG4DguETTD++7GAeL84
+         QwK2Yp7eONX2KX3AjUZ4e/4J0xphdpTfaV9AdeRXG0ZMNa7GEGD9mjI3fQga1jt5qgcg
+         U4quC8QfUspeO+1HER2pV9AZ7AIoL9D3rGkEB/Z19ZDfkIdLpbiNkTBTvBfduISaEoOd
+         Yu/vaawbC6XcPCbb9lFVD+5cl7tQdk9jCdMirjbC7m3sY9mA/fyfn5ZJVNcErH/3qIa7
+         mvYB5kz/X0EbKg9oDVEQC1UmA//BUGanP5WRHdSOxkmrUClObl7vtkyk/uhjvBPO20zp
+         IMmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760677725; x=1761282525;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Ls03Fjg3NKvbeBhnQ2QS3Goh2x4n3GOEI4nKYlVSPU=;
+        b=t7ZTVATBD6v6bn4EYp/6syi0c7mmql/qDuv8NWp+qIrf3giJN8H9ArRMXFwuJXo2C7
+         Fw6waXCOU4+uPjrsOlgISdONd9ldmXryJlSd1zmoWY3rDZLBPNlUAb+ts+HvA3K0tYoj
+         PX6Mf3gvRE/FCfUG1+FP3M1cTjCaPCp0uvs1eM9PYeRqfY1zDtjek2n3S9RrgqlPK+bJ
+         9g5oHiAK0G2U2JFpNywtu6kGDvo4ScUm4t3R2g16xDMNzTY7S0rBJn2U3NaxGMz8WfRj
+         2jhCsgN7kaL5khjZ9wsc5MLqVXXVBW/KXaor5MqFuJvQwXEA7a/XYdZyfLfDltuoSCsD
+         kdnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUIuzLPv2u1PeF13XEiMuZ1YjcHDqxKCS/DjU7UplLBjpdkMzjzWFcdyBH42ucMju+j/748keWCJh9pMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKOLJ1W6CZ0GC9O3nHy9VOZBMDJ7noigWdXDrBBkUet+kPZkjE
+	KW/ogXNqdb/ncsPeY8gNzYt7sUQRb699ji1txw/U26zSHjRAewwQySSZqEYDCKX//rhQCygNybl
+	0h6+wkytlcd4AikQsRCukkLztWbsNdyRYPEBo+JrA5X+TXiHH8lZSQWYT2l8=
+X-Gm-Gg: ASbGncsPPkETc2OueSIe/Ux01zZjKtn7WSOCyTgkBHRZ5cuVDjd1XZrSX9lDzloOzNq
+	PCUtDWsfh7HDtXt+jRQpV2fBTYoqnbh7osKB7hu4aJwDaAI6+AaDVNWsql2vOCLCFNSJAuHIPiV
+	wFroDbTs0kky0KlrSgtt19SQNOxEJKsFTk5p/eBtvVA5wtG4/C2sabJOBrjStoiLw6Dcdq4gR/9
+	OhVnf7HYzhgsnNN/OIIAfH/XkXJjk3y6iFDXdhys1osIXEMALJLhHmwDbPDhV6qkYVPOg==
+X-Google-Smtp-Source: AGHT+IH6vQqYt44bSxBxmYZfhlQmqGOrwd0vVEKhCgYdSQmmoAQYeY6NBZZttnTdblWSnj7PPcdZ2efTpRMMfXnWxm4=
+X-Received: by 2002:a05:6214:4010:b0:87c:19fa:b083 with SMTP id
+ 6a1803df08f44-87c2056a832mr45758046d6.8.1760677725028; Thu, 16 Oct 2025
+ 22:08:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251015072303.81266-1-florian.schmaus@codasip.com>
+In-Reply-To: <20251015072303.81266-1-florian.schmaus@codasip.com>
+From: David Gow <davidgow@google.com>
+Date: Fri, 17 Oct 2025 13:08:32 +0800
+X-Gm-Features: AS18NWAgHYL-DGdIe1-BOLOairJlilmnnAdW5eA8TN9bz-NddRGgwa1jN_2xPRM
+Message-ID: <CABVgOSmpBnHLjmkhnnBoM9OJrexTs9Lhe-bkspu+vj1NYMUNLQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: test_dev_action: Correctly cast 'priv' pointer to long*
+To: Florian Schmaus <florian.schmaus@codasip.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000661a71064153ba5b"
 
-On Wed, 2025-10-01 at 16:47 +0800, Kevin Tung wrote:
-> Summary:
-> Add device tree for the Meta (Facebook) Yosemite5 compute node,
-> based on the AST2600 BMC.
->=20
-> The Yosemite5 platform provides monitoring of voltages, power,
-> temperatures, and other critical parameters across the motherboard,
-> CXL board, E1.S expansion board, and NIC components. The BMC also
-> logs relevant events and performs appropriate system actions in
-> response to abnormal conditions.
->=20
-> Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
+--000000000000661a71064153ba5b
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks, I've applied this to the BMC tree.
+On Wed, 15 Oct 2025 at 15:23, Florian Schmaus
+<florian.schmaus@codasip.com> wrote:
+>
+> The previous implementation incorrectly assumed the original type of
+> 'priv' was void**, leading to an unnecessary and misleading
+> cast. Correct the cast of the 'priv' pointer in test_dev_action() to
+> its actual type, long*, removing an unnecessary cast.
+>
+> As an additional benefit, this fixes an out-of-bounds CHERI fault on
+> hardware with architectural capabilities. The original implementation
+> tried to store a capability-sized pointer using the 'priv'
+> pointer. However, the 'priv' pointer's capability only granted access
+> to the memory region of its original long type, leading to a bounds
+> violation since the size of a long is smaller than the size of a
+> capability. This change ensures that the pointer usage respects the
+> capabilities' bounds.
+>
+> Signed-off-by: Florian Schmaus <florian.schmaus@codasip.com>
+> ---
 
-Andrew
+Thanks for this.
+
+One simple formatting issue below, otherwise this is fine.
+
+Also, it'd be good to add a 'Fixes' tag:
+Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
+
+Reviewed-by: David Gow <davidgow@google.com>
+
+Cheers,
+-- David
+
+>  lib/kunit/kunit-test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
+> index 8c01eabd4eaf..957b67818489 100644
+> --- a/lib/kunit/kunit-test.c
+> +++ b/lib/kunit/kunit-test.c
+> @@ -739,7 +739,7 @@ static struct kunit_case kunit_current_test_cases[] = {
+>
+>  static void test_dev_action(void *priv)
+>  {
+> -       *(void **)priv = (void *)1;
+> +       *(long*)priv = 1;
+
+checkpatch whinges here:
+ERROR: "(foo*)" should be "(foo *)"
+#39: FILE: lib/kunit/kunit-test.c:742:
++       *(long*)priv = 1;
+
+
+>  }
+>
+>  static void kunit_device_test(struct kunit *test)
+> --
+> 2.51.0
+>
+
+--000000000000661a71064153ba5b
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+Dxz3AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFHZtY3XkWtC2
+e2Idfk+0JyK7BLzzMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBo
+hqjbVaHxZoT6HHUuwQcTlbgXpuVi59bQPrSwb/6Pn1t3h3SLeuUCvOYpoQjxlWy/FexsPW+nWS0I
+PUmWpt6sxbIRTKPfb7cPk32XezfnA0jexucybiXzkZKTrbI7zoMOzDIWpTKYZAonB9Zzi7Dso4An
+ZOtz/E3yhdR/q1MK30d5fiCS0vorEd0Oy8Jzcc7TJ2HGMzEEXiFFvVrJYJHvfYOeXE4ywAG6YWO0
+x78+bXeB9vkeWHhOYKyYXuAXrnHASddEICg1QlJCHDAISMC1Wn/tjqTMTt3sDAe+dhi9V1FEGTbG
+g9PxPVP4huJEMIBu/MWNMzHfiW4E7eCHVPrmtX7CFDlMik7qsgQBbO5h6EcxBamhIflfMgoISsRJ
+Vyll2E5BNVwkNstMgU3WMg5yIaQcuGFgFnMTrQcaLEEFPV3cCP9pgXovYDirnB7FKNdCZNHfeBY1
+HEXJ2jIPDP6nWSbYoRry0TvPgxh5ZeM5+sc1L7kY75C8U4FV3t4qdC+p7rgqfAggdvDPa5BJbTRg
+KAzwyf3z7XUrYp38pXybmDnsEcRNBIOEqBXoiBxZXaKQqaY921nWAroMM/6I6CVpTnu6JEeQkoi4
+IgGIEaTFPcgAjvpDQ8waLJL84EP6rbLW6dop+97BXbeO9L/fFf40kBhve6IggpJSeU9RdCQ5czGC
+Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAYQLf/BIzLow9kWqD8My
+PzANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgORsYRllpy8TAQ0GE0Fec4iKS63Id
+3hd5uA4l1qtEH3wwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUx
+MDE3MDUwODQ1WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
+AQEBBQAEggEAhefg4Jq/n1rnZOvegpgJSfgLrwDkOuFt6/vWl4cX0y4EopWKEH9Rgf2t9CAW6OcC
+ccMfuoncP4+qLHrfkfOZjyMIqHFFYqg8eRm0JDXWmaxWVpn8cmOwXME+X9diLbIvlgCbno5S90c2
+QccScVVzKP6Vntvd8WPR1CfhbuCZXZkP1dKt8O/gJgEjDYLOgLXT9/E6bdyyZ+V7KUNlgr/SzErQ
+AlkI3n/fLL21yOhocBmoGV+YfszVV1etfBellaRJeDVT0NNJOOVyOh5nsna3KNjl1gdSGXPVa2rL
+cwiPQQGGKBkZvaWnvL1+F0HFNkzMhAOCk6ZvSOJm5KYUf1aTTg==
+--000000000000661a71064153ba5b--
 
