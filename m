@@ -1,171 +1,136 @@
-Return-Path: <linux-kernel+bounces-857311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490D3BE67C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:51:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCC4BE682C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89D4B4FDB0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF731A629CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B136E30BB9A;
-	Fri, 17 Oct 2025 05:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB0930EF95;
+	Fri, 17 Oct 2025 05:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="leproxXA"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fVyRJno5"
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492BC213E6A
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931DF19DF8D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760680276; cv=none; b=VXqPZfz/sJdw3q0/oygMLjzMzz3Ri24KPopZymAGJVyHdbRI8IyG2XKh2owgfzIfNxXBGFJ4Iqpc4pGvwZk8IIiC1tvMPaMYd8Q4E16z8LqSMvxolJ5K18h8eeJuGmDGjg/p7M+ixTfye7SymBqETUAHAiismdPfxvk4i3Mp6J4=
+	t=1760680700; cv=none; b=Cs2x9yhQE8Hi88QyA0UFx9+eKJyroTgxg7eZDI/GTSTwM2ZVBnYK9AnP3stafSjriHi0iB3qPg6Tj3lI6HcB/8kvvZwxkPW23kTvjtbAtwaOt/OM6A/CX1eh826qX+SvB2qRiKaUwOYhqF9lV2BGfRFDIJ8PhGRYcydlzfxRfAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760680276; c=relaxed/simple;
-	bh=13KaXPPBpbfcG6C8nBRjdaf4oecJDmYDO7c9uepKSiE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IAqkl5GyykcA1y3+1W7I5KOaAcxuMw2T4dEo+Jsqn4hHSW0nkAHYc/ukhwYAk7bk69uZfTVSn4UdR38b48/Hy6ED0umU4wUTrcUoOBwlTfjyy2ReRTfG5UjjdxWQ1RINs2gHfgLW3La7bD4KGndRzE68V2GEE/iZR5/PCT0sjWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=leproxXA; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-332560b7171so2568435a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:51:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760680274; x=1761285074; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ehYGuUNYau4pdQan1QOF5/3bIPq29aJSlHS/4iCE5o=;
-        b=leproxXArdzVgcOAox240/ISo8GzS2a9RUTRCqJ7mEQ43Wyo2yAZSusg3tScp5mOGD
-         Y1pO83PYtShvug1kou5dlutUOtuKw8HNdO1kTKaL6iP4uK4gc9RQRYX8cRtNgO2FN4V+
-         fzXGSoQvO3I5A7arscY+fj13hWp+Wv7CEOzPPTcGnKLM2HTYMPiGVLDpwNu93eU/iZdu
-         1zXwBy0VwsaCmHacWIjokno5ttLWyQPUEQ2OriBXsuCzWgU5r8TKMb2oBvJleW0Jimxi
-         6f8NOhPPaRk5gyLkI2Q9sn2gOeV1mxq733Mf9VYT5SwWMVzJ+b9JV7GwKjZfb7oIy9fK
-         k2VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760680274; x=1761285074;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ehYGuUNYau4pdQan1QOF5/3bIPq29aJSlHS/4iCE5o=;
-        b=GLRnnifEcawnZYPjZpNfuz4Y3o57VlI1WjjftqN9xioa0dxC5rkl2eDzBWkNVOyHRq
-         urXqNX3m+WxcgajEp3MzIF11vAl4sVxTlP0NCjCEL/gu0LAwHm+kwtke34s/XVhDOhUC
-         q+rtQAEoMJWArIEGEkfZ0/x8GXwUJrV9xaxs0skUi55OibY0OmtNNJZZMZxzePsS8L3/
-         HEqQ2xMguF1FUMHXeuYPvGn01tPaQSFRVGO1auoS8XzkVqsznJtRF9hrAmjvsUIVE9fx
-         /fBjpCM6e25aadvra2UmGpZNbObWuafQVIwQcTl7eilCoi6yeHfKEGwh9U7RP5HNy/A0
-         j/lw==
-X-Forwarded-Encrypted: i=1; AJvYcCXX5kIc9rEDgiMyd28tY448hjrEeLudLlzU7zODUtEmmJfzyy3JA6qicfJtVZ5kkiBBc4uNulU45GIoaL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyed0TZhDzPUMfxbx+RYX7iKSaJOgQSqb2MpQ03etXzouW0IJlB
-	Vb92lYpvdVE3aT2ITsrQvklOHIlEVUdt+rkzimpclhCetWgcjGKyyYT04sAfCpGITfRbuaTBx8m
-	Uo+rGZQ==
-X-Google-Smtp-Source: AGHT+IF/lzWram1mWybPkde6TISe124U50FS51hqLQw7Zc7FZYIDpxH+DNi5gWGs/h3xtwwt9cS60OYOz6I=
-X-Received: from pjbse5.prod.google.com ([2002:a17:90b:5185:b0:33b:51fe:1a88])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc4:b0:32e:716d:4d2b
- with SMTP id 98e67ed59e1d1-33bc9b77638mr3445872a91.3.1760680273652; Thu, 16
- Oct 2025 22:51:13 -0700 (PDT)
-Date: Fri, 17 Oct 2025 05:48:50 +0000
-In-Reply-To: <20251017024827.3137512-1-wangliang74@huawei.com>
+	s=arc-20240116; t=1760680700; c=relaxed/simple;
+	bh=q2z1XVsfOxaQEanFyl/O3jRiEJIBBrPJ+WgI7M7UIYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mEwWunLgbjItlRKx0QhEKja3KkMa8ONN92HDMeeRH4MKLd2u2uOgoBXiAnU+box/u+QxyQ7spLY5UT2smRVad+Y0l3IUbkUsDgnMq3L/laKC0rcSqfGir4H3ZRWn798q09WTfdLY9zn6KbtDRK9fugtfF+fs7DAY5IHIbupfQKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fVyRJno5; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id 9dL6vKtrFnE4g9dL6vORDv; Fri, 17 Oct 2025 07:49:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1760680162;
+	bh=a0DQw3/InaKVaaSpMVnNMO5+IxlhSvGdj3eQnTfqumg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=fVyRJno51WqygWBj7WjqLDoeuHsi4uG6O/0wxesYAKJ8J6CQf0ciMrTi9unLA3WI0
+	 04OrTRao7g2IUE+JWk07hhZQNoW5YLJbqlHW49zOucJ8hWAr6XtZnMKpq1nbAflaIr
+	 vlipTADdKGmCQ+beSEjuJ1jTfpniiB40wknKLOdwOsBXz8UuCHeiniJUi5w+qZIzGR
+	 +CqCWGASLZMRr2Vgf2z2t2q0FMbzBEgP/IWe+3brKaC3KzgscryyxyAITUarAqDxtP
+	 UYZqXl6Ew+7cdvuYUb3XDQgmO0dd2Q/F197f3kv+0bWy9v2KY+FMBrhq7uNLUT8Z10
+	 dD8Tj225Mj3GA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 17 Oct 2025 07:49:22 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <25cab1de-ccc9-41b1-a7b1-8bfff44c74fc@wanadoo.fr>
+Date: Fri, 17 Oct 2025 07:49:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017024827.3137512-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017055106.3603987-1-kuniyu@google.com>
-Subject: Re: [PATCH net v2] net/smc: fix general protection fault in __smc_diag_dump
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: wangliang74@huawei.com
-Cc: alibuda@linux.alibaba.com, davem@davemloft.net, dust.li@linux.alibaba.com, 
-	edumazet@google.com, guwen@linux.alibaba.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-s390@vger.kernel.org, mjambigi@linux.ibm.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sidraya@linux.ibm.com, tonylu@linux.alibaba.com, 
-	wenjia@linux.ibm.com, yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
-	Kuniyuki Iwashima <kuniyu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] 9p: Use kvmalloc for message buffers on supported
+ transports
+To: Pierre Barre <pierre@barre.sh>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ asmadeus <asmadeus@codewreck.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, v9fs@lists.linux.dev,
+ ericvh@kernel.org, lucho@ionkov.net, linux-kernel@vger.kernel.org
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <8602724.2ttRNpPraX@silver>
+ <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
+ <5019358.GXAFRqVoOG@silver>
+ <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Wang Liang <wangliang74@huawei.com>
-Date: Fri, 17 Oct 2025 10:48:27 +0800
-> The syzbot report a crash:
+Le 16/10/2025 à 15:58, Pierre Barre a écrit :
+> While developing a 9P server (https://github.com/Barre/ZeroFS) and
+> testing it under high-load, I was running into allocation failures.
+> The failures occur even with plenty of free memory available because
+> kmalloc requires contiguous physical memory.
 > 
->   Oops: general protection fault, probably for non-canonical address 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
->   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead0000001f]
->   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PREEMPT(full)
->   Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
->   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
->   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c:89
->   Call Trace:
->    <TASK>
->    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
->    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
->    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
->    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
->    netlink_dump_start include/linux/netlink.h:341 [inline]
->    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
->    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
->    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
->    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
->    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
->    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
->    sock_sendmsg_nosec net/socket.c:714 [inline]
->    __sock_sendmsg net/socket.c:729 [inline]
->    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
->    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
->    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->    </TASK>
+> This results in errors like:
+> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
 > 
-> The process like this:
+> This patch introduces a transport capability flag (supports_vmalloc)
+> that indicates whether a transport can work with vmalloc'd buffers
+> (non-physically contiguous memory). Transports requiring DMA should
+> leave this flag as false.
 > 
->                (CPU1)              |             (CPU2)
->   ---------------------------------|-------------------------------
->   inet_create()                    |
->     // init clcsock to NULL        |
->     sk = sk_alloc()                |
->                                    |
->     // unexpectedly change clcsock |
->     inet_init_csk_locks()          |
->                                    |
->     // add sk to hash table        |
->     smc_inet_init_sock()           |
->       smc_sk_init()                |
->         smc_hash_sk()              |
->                                    | // traverse the hash table
->                                    | smc_diag_dump_proto
->                                    |   __smc_diag_dump()
->                                    |     // visit wrong clcsock
->                                    |     smc_diag_msg_common_fill()
->     // alloc clcsock               |
->     smc_create_clcsk               |
->       sock_create_kern             |
+> The fd-based transports (tcp, unix, fd) set this flag to true, and
+> p9_fcall_init will use kvmalloc instead of kmalloc for these
+> transports. This allows the allocator to fall back to vmalloc when
+> contiguous physical memory is not available.
 > 
-> With CONFIG_DEBUG_LOCK_ALLOC=y, the smc->clcsock is unexpectedly changed
-> in inet_init_csk_locks(). The INET_PROTOSW_ICSK flag is no need by smc,
-> just remove it.
+> Additionally, if kmem_cache_alloc fails, the code falls back to
+> kvmalloc for transports that support it.
 > 
-> After removing the INET_PROTOSW_ICSK flag, this patch alse revert
-> commit 6fd27ea183c2 ("net/smc: fix lacks of icsk_syn_mss with IPPROTO_SMC")
-> to avoid casting smc_sock to inet_connection_sock.
+> Signed-off-by: Pierre Barre <pierre@barre.sh>
+> ---
+> Changes in v3:
+> - Added explicit .supports_vmalloc = false to DMA-based transports
+>    (suggested by Christian Schoenebeck)
 > 
-> Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
-> Tested-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
+>   include/net/9p/transport.h |  4 ++++
+>   net/9p/client.c            | 11 +++++++++--
+>   net/9p/trans_fd.c          |  3 +++
+>   net/9p/trans_rdma.c        |  1 +
+>   net/9p/trans_usbg.c        |  1 +
+>   net/9p/trans_virtio.c      |  1 +
+>   net/9p/trans_xen.c         |  1 +
+>   7 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
+> index 766ec07c9599..f0981515148d 100644
+> --- a/include/net/9p/transport.h
+> +++ b/include/net/9p/transport.h
 
-nit: looks like this diff is not tested by syzbot, you may
-want to send diff to syzbot.
+...
 
+> @@ -44,6 +47,7 @@ struct p9_trans_module {
+>   	int maxsize;		/* max message size of transport */
+>   	bool pooled_rbuffers;
+>   	int def;		/* this transport should be default */
 
-> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+Unrelated to this patch, but it looks like 'def' could be a bool.
+This would save a few bytes in the structure, should it matter.
 
-Change itself looks good.
+CJ
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
-
-Thanks!
+> +	bool supports_vmalloc;	/* can work with vmalloc'd buffers */
+>   	struct module *owner;
+>   	int (*create)(struct p9_client *client,
+>   		      const char *devname, char *args);
 
