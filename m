@@ -1,56 +1,76 @@
-Return-Path: <linux-kernel+bounces-857526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D116BE704C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:55:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B16EBE705B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124D73B5AFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 592F1424885
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D972825F984;
-	Fri, 17 Oct 2025 07:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hHX7cuNv"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A3D2620D5;
+	Fri, 17 Oct 2025 07:57:11 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0817013B58B;
-	Fri, 17 Oct 2025 07:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C3F13B58B;
+	Fri, 17 Oct 2025 07:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687744; cv=none; b=jp0qruIradUL1F39VRwV3YpJd8ZlRTtlPNbDOxu6k3EpchyTGuJLppLij/FONZM4PycAjZC1lWODP8BrXYJJVr6JWtAcRDB7GnG5p+xBG0JTAYR4Yi972WvEPCMj4WtRBgYHi7UIJHds3dvh72sBwlGwmTfho/A9UtXWOYSmyaw=
+	t=1760687831; cv=none; b=MQazmNR8rYGpkkuABMo6pZ2/+k+eP9mPc3B778WprDsNX6f6MTqfdZNc8b2LqJCsWZ4FkBrh6WJw/v4eJVfkiYUyNPzRCPTTJHUiyhS9x8jRAUDHY1NB1rqNpWxx9PFStw+CMKpvfHTfx2zws7tTxN82fTR85ZJERQh+9UpBzj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687744; c=relaxed/simple;
-	bh=2fz1S3Kzkgsjs1DYhI+q0hi82bc7Ka676ydtOGJ+ZaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYJygW5HjYJFcGuThgaghTeEqQ/cB5484znTSYNxhCzXFdwpe3RBzDfxvmo3G7VwECwKjS1vRNm2BOVnnAqc6ZcSm5JXx5CjPdiiyhZF6aycB/vkAyQIJYS4X3oCozvBtcn1oK6XKNC+VzPQwhRcbcu+B5yksR8CWO5TQcOnQv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hHX7cuNv; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Mn
-	u2oNtIWCNdbYeygyyRsLrXV5t1jA6LgAK0JbxNW/I=; b=hHX7cuNvsAtO+FBoJp
-	Otog39NnON2BGdtVXRoZ/rEXJIQ6VFrtd21OprAVi+Ml4lIG6HHHYpNAwD+32niA
-	mCpJmtLRz/QWqsM+CkG8LBzlEQaD893YUojB6GFvfNnb3mxBfQnSJwVMvi6tra4s
-	OFMnvZljqwuQIKuGIbX0fZaMI=
-Received: from neo-TianYi510Pro-15ICK.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDHDxpc9vFoBuN0Aw--.52908S2;
-	Fri, 17 Oct 2025 15:55:10 +0800 (CST)
-From: liuqiangneo@163.com
-To: satishkh@cisco.com,
-	sebaddel@cisco.com,
-	kartilak@cisco.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1760687831; c=relaxed/simple;
+	bh=T9V9+6+9nbG76trsipkPX6d2o1N96gvwsqNgwqnTbZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VRqzBgpLfI6ZC+4djcEzNDDb0m31c3Pgk6nIZygfABWHWoSwenEGyL/Faru8W0SSIUxN82ry00WADf5e91nE+w50prjGbgVfXI8JMryGFEa4/85YLd02WcNsVg76UP5udONUyOc9kdla0QGNM9Bhe7ZzwZ9FNQfZAFAsjPls1gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: db969f9aab2e11f0a38c85956e01ac42-20251017
+X-CID-CACHE: Type:Local,Time:202510171554+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:105bdecb-3893-49a2-941b-865f2675d5a3,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:3c6bae45bb7855bd36bad98adcf3d041,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: db969f9aab2e11f0a38c85956e01ac42-20251017
+Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <pengyu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 916814478; Fri, 17 Oct 2025 15:56:58 +0800
+From: Yu Peng <pengyu@kylinos.cn>
+To: tj@kernel.org
+Cc: changlianzhi@uniontech.com,
+	dmitry.torokhov@gmail.com,
+	gregkh@linuxfoundation.org,
+	jiangshanlai@gmail.com,
+	jirislaby@kernel.org,
+	legion@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Qiang Liu <liuqiang@kylinos.cn>
-Subject: [PATCH] scsi:fnic: Self-assignment of intr_time_type has no effect
-Date: Fri, 17 Oct 2025 15:55:03 +0800
-Message-ID: <20251017075504.143491-1-liuqiangneo@163.com>
-X-Mailer: git-send-email 2.43.0
+	linux-serial@vger.kernel.org,
+	lkp@intel.com,
+	mingo@kernel.org,
+	myrrhperiwinkle@qtmlabs.xyz,
+	oe-lkp@lists.linux.dev,
+	oliver.sang@intel.com,
+	pengyu@kylinos.cn,
+	syzbot+79c403850e6816dc39cf@syzkaller.appspotmail.com,
+	tglx@linutronix.de
+Subject: [PATCH v3 1/2] workqueue: Add initialization macro for work items that disabled by default
+Date: Fri, 17 Oct 2025 15:56:54 +0800
+Message-Id: <20251017075655.3781522-1-pengyu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <aOVnoCnHa2vzB54g@slm.duckdns.org>
+References: <aOVnoCnHa2vzB54g@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,35 +78,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHDxpc9vFoBuN0Aw--.52908S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrury7GryUKw15Kw43tr4xWFg_yoW3XrX_Wr
-	WjqF1xArWFkFs5Ga1aq3y8XFWav3WUWwn29F1YgFyfA3y3ZFs5J34vqrnrZwn8Aa1UJFZx
-	WayUtr1FyryDtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8LvtJUUUUU==
-X-CM-SenderInfo: 5olx1xxdqj0vrr6rljoofrz/1tbiXw-pYWjx8LOOpwAAsr
 
-From: Qiang Liu <liuqiang@kylinos.cn>
+In certain scenarios, workqueue tasks that are disabled by default are
+required. Similar to DECLARE_TASKLET_DISABLED, the DECLARE_WORK_DISABLED
+macro is added to achieve this functionality.
 
-Remove the self-assignment statement of the intr_time_type variable
-
-Signed-off-by: Qiang Liu <liuqiang@kylinos.cn>
+Signed-off-by: Yu Peng <pengyu@kylinos.cn>
 ---
- drivers/scsi/fnic/fnic_res.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/workqueue.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/scsi/fnic/fnic_res.c b/drivers/scsi/fnic/fnic_res.c
-index 763475587b7f..9801e5fbb0dd 100644
---- a/drivers/scsi/fnic/fnic_res.c
-+++ b/drivers/scsi/fnic/fnic_res.c
-@@ -134,7 +134,6 @@ int fnic_get_vnic_config(struct fnic *fnic)
- 			    c->luns_per_tgt));
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 45d5dd470ff6..b6c72d59351b 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -102,6 +102,7 @@ enum wq_misc_consts {
+ /* Convenience constants - of type 'unsigned long', not 'enum'! */
+ #define WORK_OFFQ_BH		(1ul << WORK_OFFQ_BH_BIT)
+ #define WORK_OFFQ_FLAG_MASK	(((1ul << WORK_OFFQ_FLAG_BITS) - 1) << WORK_OFFQ_FLAG_SHIFT)
++#define WORK_OFFQ_DISABLED	(1ul  << WORK_OFFQ_DISABLE_SHIFT)
+ #define WORK_OFFQ_DISABLE_MASK	(((1ul << WORK_OFFQ_DISABLE_BITS) - 1) << WORK_OFFQ_DISABLE_SHIFT)
+ #define WORK_OFFQ_POOL_NONE	((1ul << WORK_OFFQ_POOL_BITS) - 1)
+ #define WORK_STRUCT_NO_POOL	(WORK_OFFQ_POOL_NONE << WORK_OFFQ_POOL_SHIFT)
+@@ -110,6 +111,8 @@ enum wq_misc_consts {
+ #define WORK_DATA_INIT()	ATOMIC_LONG_INIT((unsigned long)WORK_STRUCT_NO_POOL)
+ #define WORK_DATA_STATIC_INIT()	\
+ 	ATOMIC_LONG_INIT((unsigned long)(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC))
++#define WORK_DATA_DISABLED_INIT()	\
++		ATOMIC_LONG_INIT((unsigned long)(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC | WORK_OFFQ_DISABLED))
  
- 	c->intr_timer = min_t(u16, VNIC_INTR_TIMER_MAX, c->intr_timer);
--	c->intr_timer_type = c->intr_timer_type;
+ struct delayed_work {
+ 	struct work_struct work;
+@@ -242,6 +245,13 @@ struct execute_work {
+ 	__WORK_INIT_LOCKDEP_MAP(#n, &(n))				\
+ 	}
  
- 	/* for older firmware, GET_CONFIG will not return anything */
- 	if (c->wq_copy_count == 0)
++#define __WORK_DISABLED_INITIALIZER(n, f) {					\
++	.data = WORK_DATA_DISABLED_INIT(),				\
++	.entry	= { &(n).entry, &(n).entry },				\
++	.func = (f),							\
++	__WORK_INIT_LOCKDEP_MAP(#n, &(n))				\
++	}
++
+ #define __DELAYED_WORK_INITIALIZER(n, f, tflags) {			\
+ 	.work = __WORK_INITIALIZER((n).work, (f)),			\
+ 	.timer = __TIMER_INITIALIZER(delayed_work_timer_fn,\
+@@ -251,6 +261,9 @@ struct execute_work {
+ #define DECLARE_WORK(n, f)						\
+ 	struct work_struct n = __WORK_INITIALIZER(n, f)
+ 
++#define DECLARE_WORK_DISABLED(n, f)						\
++	struct work_struct n = __WORK_DISABLED_INITIALIZER(n, f)
++
+ #define DECLARE_DELAYED_WORK(n, f)					\
+ 	struct delayed_work n = __DELAYED_WORK_INITIALIZER(n, f, 0)
+ 
 -- 
-2.43.0
+2.25.1
 
 
