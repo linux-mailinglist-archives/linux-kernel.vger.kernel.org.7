@@ -1,96 +1,225 @@
-Return-Path: <linux-kernel+bounces-857855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05441BE813D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:33:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BFFBE8146
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FAEC19A787C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7589622272
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD06221D00A;
-	Fri, 17 Oct 2025 10:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B2C310625;
+	Fri, 17 Oct 2025 10:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ADsVBid6"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrM7th9d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B123346A6
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7B72D6E5B;
+	Fri, 17 Oct 2025 10:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760697175; cv=none; b=DzhWLKB4BA3v9e96XT6m3AowS3nIa16aKVazXYg7WNVLwkaGHsZJiOquLH2eDUY0Ovk0BcP4DJPCS4GR1Stz3OUPbR8Jz6ZwXCzcFd8E2d9D6ciTaocHLhnXEF6Kqm1ubc4ub9Xt5Z0bblIreMdy7qVUo+zSg7BgnDtqWtFJ+44=
+	t=1760697192; cv=none; b=EE3ZcAskmrVmCaBaNJjC0mY14q0YXFrK8RbArQxkMd2/SAD20cA5s36nl6E3Cb+aIGNB7x6U8ACBNqeDQjXN7b9y8FMhyUvxsbn/jVCsRzznIxOX4d72CwzLXJWfUHwuGe/+cdWDHrVGxGq24sMPO4lrQ9jywiVZjuelMbQTccM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760697175; c=relaxed/simple;
-	bh=gI+lsI99W3VGPpT5/jzydPZ0hzvGQAzZgNUidtfC/ug=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=T3vUbmDfooxIsv/n6cUAoJKFjPqWctYsADAFnAnGaUNsgnLfb1tW9wdNdeX5q94f/jcz23uy8JMRDn5xWU/oxlg+wzT4rYhcKsM/aF578O1I90UoEvK8xhi6dBv0sR3+RRYhV5P3IOuD4gviLm8wX+yPdVVFpLHn1Pdpi+Lfu8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ADsVBid6; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=wj+WCRcYc5nfyqI/50vIC5NGiZlcs4drP/9wRD28+Yw=;
-  b=ADsVBid6B80mQ9HaRrHY35ByFAMAF2ifC821wGU9nkR0o6WhQeN6BeZU
-   sbrCno0MZlyz9sHTwOB2HMEPioyNQsqF6hzgYnnAAiz2NP3fOe9c01EFt
-   CmQ5u+IZQcSLIn9DEp55lTB6ShuzWggC9eI8CACTGf9//B3CG638jAQ3a
-   A=;
-X-CSE-ConnectionGUID: feMLIk4kTgiffT72J1gSHw==
-X-CSE-MsgGUID: O3Me8zbdRKeVb0rGoo63Ww==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,236,1754949600"; 
-   d="scan'208";a="128488925"
-Received: from bb116-15-226-202.singnet.com.sg (HELO hadrien) ([116.15.226.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 12:32:42 +0200
-Date: Fri, 17 Oct 2025 18:32:35 +0800 (+08)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-cc: Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] Coccinelle: pm_runtime: Fix typo in report
- message
-In-Reply-To: <20251017103032.75686-2-thorsten.blum@linux.dev>
-Message-ID: <ec9e6ef-d047-d084-1e29-514246869336@inria.fr>
-References: <20251017103032.75686-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760697192; c=relaxed/simple;
+	bh=UlVJvvJTFUTe7yzsfT9aVKl3PpSSUeDPxxdIcnrjqZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvbSrSoLWDHi8w9w0Nymy1pCXAaavItrBJmlXtiunMIWe0JDAcyVDAhZ87KsXDm14uZm5QFfV90Ti5wHOiZS/JfXA/12Odo8B+2Fv4EYyyAgVeG+fpTd8jv7BgdV7gN7pcsS7ryQKBrg/FP9PGqcTpDM0h6ZJUy0fSwRhrx+Qrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrM7th9d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2B1C4CEE7;
+	Fri, 17 Oct 2025 10:33:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760697192;
+	bh=UlVJvvJTFUTe7yzsfT9aVKl3PpSSUeDPxxdIcnrjqZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hrM7th9d2+F95CYQjBEYtmy0bQ5YWxqsZ4hUgq1JEFE3JeTQd1vF9mbFJbS48nYnj
+	 rxdDRbyK42U4xbWt7Vy0Vugz4m4EAVvCP+ulBlW+1bzCUXgLhd9Bfhk1Y7+Hvcq3rD
+	 zXnzIddo/t5lyhXK3+knx7Komubs7O7UAT9encgaoCsSgprPyb2etXOmwjVhxodqEP
+	 46dTQLrn3mTIYATsRj8ogGfO3tpgAK6/GsDAlkrWsA67yUdDgrNxUFwpBUkDfxbA1U
+	 V7t3ybzrFA8tzsMALp2SKQM2lePmiM2mEhvDbUrmgIWtsvmxwWHvAbY8Vo00qAPQyZ
+	 /l6DP9rgxkVRg==
+Date: Fri, 17 Oct 2025 16:03:00 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Christian Bruel <christian.bruel@foss.st.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Inochi Amaoto <inochiama@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Mayank Rana <mayank.rana@oss.qualcomm.com>, 
+	Nam Cao <namcao@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Shradha Todi <shradha.t@samsung.com>, Thippeswamy Havalige <thippeswamy.havalige@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: controller: Mark controllers which cannot do
+ lockless config access with !PCI_LOCKLESS_CONFIG
+Message-ID: <mxlpkktc34utdc6tr6apf4g5t3cdq6ckdbsern5s24t2bxlsva@e6e667l2wd2j>
+References: <20250925135014.66865-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250925135014.66865-1-marek.vasut+renesas@mailbox.org>
 
+On Thu, Sep 25, 2025 at 03:49:45PM +0200, Marek Vasut wrote:
+> Add 'depends on !PCI_LOCKLESS_CONFIG' to controllers which cannot do config
+> access without PCI subsystem level spinlock.
 
+May I know on what basis you have added the Kconfig dependency? Because, all
+non-x86 and um drivers are going to suffer from the race if PCI_LOCKLESS_CONFIG
+is selected. But you've only added the dependency to selected drivers.
 
-On Fri, 17 Oct 2025, Thorsten Blum wrote:
+- Mani
 
-> s/Unecessary/Unnecessary/
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-
-Reviewed-by: Julia Lawall <julia.lawall@inria.fr>
-
+> If PCI_LOCKLESS_CONFIG is ever
+> enabled, those controllers would have to be updated accordingly.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > ---
->  scripts/coccinelle/api/pm_runtime.cocci | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/coccinelle/api/pm_runtime.cocci b/scripts/coccinelle/api/pm_runtime.cocci
-> index 2c931e748dda..e29ac3a87d96 100644
-> --- a/scripts/coccinelle/api/pm_runtime.cocci
-> +++ b/scripts/coccinelle/api/pm_runtime.cocci
-> @@ -110,5 +110,5 @@ p2 << r.p2;
->  pm_runtime_api << r.pm_runtime_api;
->  @@
->
-> -msg = "%s returns < 0 as error. Unecessary IS_ERR_VALUE at line %s" % (pm_runtime_api, p2[0].line)
-> +msg = "%s returns < 0 as error. Unnecessary IS_ERR_VALUE at line %s" % (pm_runtime_api, p2[0].line)
->  coccilib.report.print_report(p1[0],msg)
-> --
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Christian Bruel <christian.bruel@foss.st.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Inochi Amaoto <inochiama@gmail.com>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Mayank Rana <mayank.rana@oss.qualcomm.com>
+> Cc: Nam Cao <namcao@linutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shradha Todi <shradha.t@samsung.com>
+> Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> NOTE: I hope I got them all
+> ---
+>  drivers/pci/controller/Kconfig      | 6 ++++++
+>  drivers/pci/controller/dwc/Kconfig  | 5 +++++
+>  drivers/pci/controller/plda/Kconfig | 1 +
+>  3 files changed, 12 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index 41748d083b933..1a6e937cca929 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -12,6 +12,7 @@ config PCI_AARDVARK
+>  	depends on (ARCH_MVEBU && ARM64) || COMPILE_TEST
+>  	depends on OF
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCI_BRIDGE_EMUL
+>  	select IRQ_MSI_LIB
+>  	help
+> @@ -205,6 +206,7 @@ config PCIE_MEDIATEK_GEN3
+>  	tristate "MediaTek Gen3 PCIe controller"
+>  	depends on ARCH_AIROHA || ARCH_MEDIATEK || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select IRQ_MSI_LIB
+>  	help
+>  	  Adds support for PCIe Gen3 MAC controller for MediaTek SoCs.
+> @@ -244,6 +246,7 @@ config PCIE_RCAR_HOST
+>  	bool "Renesas R-Car PCIe controller (host mode)"
+>  	depends on ARCH_RENESAS || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select IRQ_MSI_LIB
+>  	help
+>  	  Say Y here if you want PCIe controller support on R-Car SoCs in host
+> @@ -332,6 +335,7 @@ config PCIE_XILINX_DMA_PL
+>  	bool "Xilinx DMA PL PCIe host bridge support"
+>  	depends on ARCH_ZYNQMP || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCI_HOST_COMMON
+>  	select IRQ_MSI_LIB
+>  	help
+> @@ -344,6 +348,7 @@ config PCIE_XILINX_NWL
+>  	bool "Xilinx NWL PCIe controller"
+>  	depends on ARCH_ZYNQMP || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select IRQ_MSI_LIB
+>  	help
+>  	 Say 'Y' here if you want kernel support for Xilinx
+> @@ -354,6 +359,7 @@ config PCIE_XILINX_NWL
+>  config PCIE_XILINX_CPM
+>  	bool "Xilinx Versal CPM PCI controller"
+>  	depends on ARCH_ZYNQMP || COMPILE_TEST
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCI_HOST_COMMON
+>  	help
+>  	  Say 'Y' here if you want kernel support for the
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 34abc859c1071..8eab27775195f 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -2,6 +2,7 @@
+>  
+>  menu "DesignWare-based PCIe controllers"
+>  	depends on PCI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  
+>  config PCIE_DW
+>  	bool
+> @@ -322,6 +323,7 @@ config PCIE_RCAR_GEN4_HOST
+>  	tristate "Renesas R-Car Gen4 PCIe controller (host mode)"
+>  	depends on ARCH_RENESAS || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCIE_DW_HOST
+>  	select PCIE_RCAR_GEN4
+>  	help
+> @@ -390,6 +392,7 @@ config PCIE_UNIPHIER
+>  	depends on ARCH_UNIPHIER || COMPILE_TEST
+>  	depends on OF && HAS_IOMEM
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here if you want PCIe host controller support on UniPhier SoCs.
+> @@ -410,6 +413,7 @@ config PCIE_SOPHGO_DW
+>  	depends on ARCH_SOPHGO || COMPILE_TEST
+>  	depends on PCI_MSI
+>  	depends on OF
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here if you want PCIe host controller support on
+> @@ -488,6 +492,7 @@ config PCI_KEYSTONE_HOST
+>  	bool "TI Keystone PCIe controller (host mode)"
+>  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCIE_DW_HOST
+>  	select PCI_KEYSTONE
+>  	help
+> diff --git a/drivers/pci/controller/plda/Kconfig b/drivers/pci/controller/plda/Kconfig
+> index 62120101139cb..2a400678312eb 100644
+> --- a/drivers/pci/controller/plda/Kconfig
+> +++ b/drivers/pci/controller/plda/Kconfig
+> @@ -10,6 +10,7 @@ config PCIE_PLDA_HOST
+>  config PCIE_MICROCHIP_HOST
+>  	tristate "Microchip AXI PCIe controller"
+>  	depends on PCI_MSI && OF
+> +	depends on !PCI_LOCKLESS_CONFIG
+>  	select PCI_HOST_COMMON
+>  	select PCIE_PLDA_HOST
+>  	help
+> -- 
 > 2.51.0
->
->
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
