@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-858367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD73BEABD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:33:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B615BEA9CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C07B7C86C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA5685C024B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A88F137923;
-	Fri, 17 Oct 2025 16:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBoIBZkF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45F425F994;
+	Fri, 17 Oct 2025 16:02:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA25330B35;
-	Fri, 17 Oct 2025 16:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0778625D209
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760716918; cv=none; b=WX4IEkZzt4rKUl28pInZauepduvJW1+JOX8cK0cr05QLS0VDpTXZDN09CHaf5GzdGDlmZzgCZZ9hxglXROaJjyuGO8Ufn5aafYpeWT/mGdCzsEp9DVwT2nQE9I6Q51BNkLzBUc1uio8/VVTIpqcyFnOgeNkumkT73FDIUlwQIHs=
+	t=1760716957; cv=none; b=AHv7k5Kvy7QnfMA/CNep8ltzNtKhwSzP9tHVSpvfBH+9+yseDE5RH2s8g77NCIeG84x0FwU4QMo2hZXtcu4V2fPlqKFWP+5HT1GqHc1CYh98LnEiD/HepjQZ6ORUflEGf0oy5J7YNcLAU5+Xpp68TsQt56EX26z0z/FO0CYZN6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760716918; c=relaxed/simple;
-	bh=QKceSGaY38ubIJxFqjBFxdozyMDtA0Dx78G823wgoEQ=;
+	s=arc-20240116; t=1760716957; c=relaxed/simple;
+	bh=7pnwO9ocWsSmARWhWORudDHyt94U84Wbc7RgQgo5MQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKljDcW6ZnMq+F9HXOMUfQNhfDxX7OZ6jKI3kBHjywt2M9tZ1d5cXixBYRUtpkxw0uIQSTnGlF/7NW1zu0lO9oLx3iairZCAi/QyUv5MMC7EIoP3kHzUWxKAQXHzASMuCpEz6UP5RZheeKJ/UYYsuvGquOUPJd0v+v37Xpjtgt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBoIBZkF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE7DC4CEE7;
-	Fri, 17 Oct 2025 16:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760716918;
-	bh=QKceSGaY38ubIJxFqjBFxdozyMDtA0Dx78G823wgoEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hBoIBZkF/T4PGDBCdEkR8JNVNR7OaJA375S1C1ZwwtHU5ItFsMytfeZaDJmNs/TPK
-	 obQTXDazN6Is5B0tIupFJOKMJGwTl4N1shOpiY3oYsfF6FM6gz0Q2SQKfiGXEYhQSv
-	 t16L29q67/PxAOq+CYjnbAUa2SGZULzC0QVkalxsD1TMcDgS1cOkzQniMLqxODlA41
-	 MQooD3vP2T8tpjZcRt0PGxQ3jOQpWTS3w/qsV9VjKPkeIuW7XRxL22s4uWcpSPTkEC
-	 1OAKUrueyLFsOoU7xzsEV5EyikFrtomK4Yju7SCiqJbu25LYYtL0ZMrvSLmIjBs1hJ
-	 eKGcM9fGWM8UQ==
-Date: Fri, 17 Oct 2025 17:01:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	cix-kernel-upstream@cixtech.com
-Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-Message-ID: <20251017-sporty-public-fca6e77b2368@spud>
-References: <20251017074646.3344924-1-gary.yang@cixtech.com>
- <20251017074646.3344924-2-gary.yang@cixtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSL2cK/UBXdsSOCLUPneqmE6HoE1aOLxJ0bvHtVWX1tdPyYWaCctM4wSJHMH3zuY5MsqfQd4qQ/iAz7LWMdBKwD9720Rzz3KY3nSKZSbHWtm2DA3QY7RQDfJ+hlrIc77k94OT97jJWWXmWXSC3Yqq5cf/XNBwCZkUtgtIgSreI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9muM-0003ML-Jf; Fri, 17 Oct 2025 18:02:22 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9muL-0045FL-2X;
+	Fri, 17 Oct 2025 18:02:21 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 767D1489404;
+	Fri, 17 Oct 2025 16:02:21 +0000 (UTC)
+Date: Fri, 17 Oct 2025 18:02:21 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
+	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
+	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
+Message-ID: <20251017-spirited-ruby-carp-5d7fe9-mkl@pengutronix.de>
+References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
+ <20251017-spectacular-xanthic-swan-9427e8-mkl@pengutronix.de>
+ <a729eeda-22d8-4f3e-bb6b-0cd2f3a06d2a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,173 +65,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fta6H4olrjk+9Tyz"
+	protocol="application/pgp-signature"; boundary="vvbf7cai7jwked76"
 Content-Disposition: inline
-In-Reply-To: <20251017074646.3344924-2-gary.yang@cixtech.com>
+In-Reply-To: <a729eeda-22d8-4f3e-bb6b-0cd2f3a06d2a@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
---fta6H4olrjk+9Tyz
-Content-Type: text/plain; charset=us-ascii
+--vvbf7cai7jwked76
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
+MIME-Version: 1.0
 
-On Fri, Oct 17, 2025 at 03:46:44PM +0800, Gary Yang wrote:
-> The pin-controller is used to control the Soc pins.
-> There are two pin-controllers on Cix Sky1 platform.
-> One is used under S0 state, the other is used under
-> S0 and S5 state.
+On 18.10.2025 00:40:22, Vincent Mailhol wrote:
+> On 17/10/2025 at 22:53, Marc Kleine-Budde wrote:
+> > On 13.10.2025 20:01:22, Vincent Mailhol wrote:
+> >> Following all the refactoring on the CAN netlink done in series [1],
+> >> [2] and [3], this is now time to finally introduce the CAN XL netlink
+> >> interface.
+> >>
+> >> Similarly to how CAN FD reuses the bittiming logic of Classical CAN,
+> >> CAN XL also reuses the entirety of CAN FD features, and, on top of
+> >> that, adds new features which are specific to CAN XL.
+> >>
+> >> Patch #1 adds a check in can_dev_dropped_skb() to drop CAN FD frames
+> >> when CAN FD is turned off.
+> >>
+> >> Patch #2 adds CAN_CTRLMODE_RESTRICTED. Note that contrary to the other
+> >> CAN_CTRL_MODE_XL_* that are introduced in the later patches, this
+> >> control mode is not specific to CAN XL. The nuance is that because
+> >> this restricted mode was only added in ISO 11898-1:2024, it is made
+> >> mandatory for CAN XL devices but optional for other protocols. This is
+> >> why this patch is added as a preparation before introducing the core
+> >> CAN XL logic.
+> >=20
+> > What about merging patches 1+2 now?
 >=20
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
-> ---
->  .../bindings/pinctrl/cix,sky1-pinctrl.yaml    | 94 +++++++++++++++++++
->  1 file changed, 94 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pi=
-nctrl.yaml
+> If patch 1 had to be squashed,
+
+Sorry - I was offering you to take patches 1+2 into can-next-testing
+now.
+
+> it should probably be in patch 3
+> "can: netlink: add initial CAN XL support". The MTU workaround as
+> introduced in patch 1 does not share any of the logic of the
+> CAN_CTRLMODE_RESTRICTED as introduced in patch 2. Patch 1 is really
+> just a preparation for CAN XL. You could remove patch 2 from the
+> series and it will still work (aside from missing one of ISO mandatory
+> features). Remove patch 1, and the thing breaks apart because it is
+> required by patch 3.
 >=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.y=
-aml b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..4ad160734353
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> If I were to squash 1 and 2, I am not sure how I would describe those
+> two different changes in a single patch message.
 
-Please use a filename matching a compatible, probably the first one.
+regards,
+Marc
 
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/cix,sky1-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Cix Sky1 Soc Pin Controller
-> +
-> +maintainers:
-> +  - Gary Yang <gary.yang@cixtech.com>
-> +
-> +description:
-> +  The pin-controller is used to control Soc pins. There are two pin-cont=
-rollers
-> +  on Cix Sky1 platform. one is used under S0 state, the other one is use=
-d under
-> +  S0 and S5 state.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - cix,sky1-iomuxc
-> +      - cix,sky1-iomuxc-s5
-> +
-> +  reg:
-> +    items:
-> +      - description: gpio base
-> +
-> +# Client device subnode's properties
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-I'd drop these comments, they're just stating what's "obvious" for
-bindings.
-
-> +patternProperties:
-> +  '-cfg$':
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    description:
-> +      A pinctrl node should contain at least one subnode representing the
-> +      pinctrl groups available on the machine.
-> +
-> +    patternProperties:
-> +      'pins$':
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        description:
-> +          Each subnode will list the pins it needs, and how they should
-> +          be configured, with regard to muxer configuration, bias pull,
-> +          and drive strength.
-> +
-> +        allOf:
-> +          - $ref: pincfg-node.yaml#
-> +          - $ref: pinmux-node.yaml#
-> +
-> +        properties:
-> +          pinmux:
-> +            description:
-> +              Values are constructed from pin number and mux setting
-
-I think this should actually say how the values are constructed, one
-shouldn't have to reverse engineer it from a macro in the example.
-
-> +
-> +          bias-disable: true
-> +
-> +          bias-pull-up: true
-> +
-> +          bias-pull-down: true
-> +
-> +          drive-strength:
-> +            description:
-> +              typical current when output high level.
-> +            enum: [ 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 17, 18, 20, 21, 23,
-> +                    24 ]
-> +
-> +
-> +        required:
-> +          - pinmux
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Pinmux controller node
-
-Drop this comment too.
-
-> +  - |
-> +    #define CIX_PAD_GPIO012_FUNC_GPIO012 (11 << 8 | 0x0)
-
-> +    #define DS_LEVEL4 (8)
-
-Delete this define entirely, it actually just obfuscates the actually
-amperage.
-
-> +    iomuxc: pinctrl@4170000 {
-
-Unused labels should be removed from binding examples.
-
-pw-bot: changes-requested
-
-Thanks,
-Conor.
-
-> +        compatible =3D "cix,sky1-iomuxc";
-> +        reg =3D <0x4170000 0x1000>;
-> +
-> +        wifi_vbat_gpio: wifi-vbat-gpio-cfg {
-> +            pins {
-> +                pinmux =3D <CIX_PAD_GPIO012_FUNC_GPIO012>;
-> +                bias-pull-up;
-> +                drive-strength =3D <DS_LEVEL4>;
-> +           };
-> +        };
-> +    };
-> --=20
-> 2.49.0
->=20
-
---fta6H4olrjk+9Tyz
+--vvbf7cai7jwked76
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPJocQAKCRB4tDGHoIJi
-0iZyAQCXi00+BFpGerAO8331wYcnK7l8ya18y6X2WdMXteZ53gD8CjFUYulWSNl9
-uaPjJOtH6eNa09G51u+sFzFYoBVQCQY=
-=eShT
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyaIgACgkQDHRl3/mQ
+kZw5dgf9Hl7TWYBa57CItoz+e98AvXno7s92zcIQYCJ0ZIb7Dr9hGNETjfYPzZsc
+AI5QN1BrjNsTRkJGOHfr58+zE1rMlXvrpgHqfUnlBsi1XaKDvxj9989j3vS8FN6J
+ej7IzmHkp/V/SDbkaeEgDW7LyPmSOgu0P2BjMqkAdgza61zt8eRxOiao68o9AhiX
+AnqZA75DB6dtiq9qP0C9pCYpYBWDTsn88QEGodgP5W7PRMXPVc4/YQB2F6Jp+8iJ
+gaJg8f33wUm9wzukB9Oxegu0dg8SrXaSFjsjrxTRnFfBbUOlA6YKTFtL9hA0uFT5
+B6dslMxtlKnKxn/7KmSrfb3K4db2CQ==
+=elj5
 -----END PGP SIGNATURE-----
 
---fta6H4olrjk+9Tyz--
+--vvbf7cai7jwked76--
 
