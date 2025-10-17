@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-857601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F24BE738B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:43:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860C9BE7397
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8FD719A7D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B3E3B25A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B262E2BD016;
-	Fri, 17 Oct 2025 08:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432A325F984;
+	Fri, 17 Oct 2025 08:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EA8Ptb1j"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZlhuXG9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7311F25F984
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954B3296BCB;
+	Fri, 17 Oct 2025 08:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690576; cv=none; b=kEQIrvfzdlLu7Dx0bWiNuq06MMvfYqzwToer6oZrHsRwFpeqS3165xsNicn9tz8bKWQoc5OGZolY3DmXufmWKzVbj8lYlmSiv8J8NrYCj7tWhuH0L3W+bFP+OjNHQuZ8zPDo2x8K1T/R73FyxArwQN/FnJRYxXQVifC+gVCfKfg=
+	t=1760690589; cv=none; b=Ib1vZbxVJHLUofZx++k+OOH+LnSrcSH7LmuuHzVwyHStENK9/YSKgn/nGUT+Dx4Rp5BWfKYFgznPS0d1BCma7jWo+K0UPIbnVVfYDKz2Qkf6fSbNf1UKLwBcR/F/tCM9FtWnLdX0tqTbK7DCV2Ungotdn536iy5Uim+jiBLYHPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690576; c=relaxed/simple;
-	bh=qSUMFR75goMMtDYJDGq5W9aDIq4ECJWmBjA175zM9x4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ReUCm4L1IfUHDwTYxq+Lr+JTHKxrp7sUv08qVoQl4OdVLCGT4d2Sh8imVYfaofalT3yjcO7cynjyhnHQzmWi1GnVOmRk6iWXJGTExtMAVoO/1bRWms4sIf2hCbq+u2hZrBZFMFr4K6GMqzRUgMTzB7V+pDSGWTIMMNJIUYduj28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EA8Ptb1j; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760690575; x=1792226575;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qSUMFR75goMMtDYJDGq5W9aDIq4ECJWmBjA175zM9x4=;
-  b=EA8Ptb1jrGm/ECrd6OEuE9z9n19a0/ygZ0Yyn75Vv6sNAlFQY0WSiAmZ
-   B9goo5m0d0J0GiITkRCulZLusa+wjCUUjB/43gIJiSw9pl/1BbZtUIJiA
-   yX5d28QBP9/tD3qr6TK5T3BIcvsxtBIu/oleJvC2GYP2Qt5tEBgmOUvQv
-   xi8wVBC7JH8remLC2ltMJho/vp1ubwVRsGugzUZxc9lE1WlOwfQCxBzek
-   cc9KOKw4rzEyxqFCraTWKP7bZ/pQNK1lYoTfBO0WcppPhjVHMTnY1pMcz
-   o0clkTg8hGgpru50z2InjWqbr1rmlpMDWmCxLO9FELj7RYB7Ve7B8AJ3W
-   g==;
-X-CSE-ConnectionGUID: EQCiCmjcQkWdLZ/UnT3ZDA==
-X-CSE-MsgGUID: I/YWYrsJT+2pXHMC6Aa+kQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62806790"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62806790"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 01:42:55 -0700
-X-CSE-ConnectionGUID: 7FOmOAIrSb+0xDJtrJMAFA==
-X-CSE-MsgGUID: qNbZHmYLSTuQM9x//DHQzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="183088248"
-Received: from vtg-chrome.bj.intel.com ([172.16.116.150])
-  by fmviesa008.fm.intel.com with ESMTP; 17 Oct 2025 01:42:52 -0700
-From: bingbu.cao@intel.com
-To: linux-firmware@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	sakari.ailus@linux.intel.com,
-	hao.yao@intel.com
-Subject: [PATCH] Intel IPU7: Update product signed firmware binary
-Date: Fri, 17 Oct 2025 16:42:49 +0800
-Message-Id: <20251017084249.2796351-2-bingbu.cao@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251017084249.2796351-1-bingbu.cao@intel.com>
-References: <20251017084249.2796351-1-bingbu.cao@intel.com>
+	s=arc-20240116; t=1760690589; c=relaxed/simple;
+	bh=w3yiEGMdzJiDv0/xbQkFRtwluVFnBEMxzuh275dPyKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c9kBxKsnhcNrP4FMWibj3PKo+b1oWvD/n0PsLc3D+fbwjNDiKHx0kc6gCTpZOZLR+ZJTxoS+ohYxYuwNnuuecIGCNt0l5/XdB2tBfbYFSP2vxMFKQYLQ/nQ+XT+sz+E/63ndB4Toi9HN/zLQdtjRPQUOoc5g9zEHVwH2VVHvkkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZlhuXG9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9CDC4CEE7;
+	Fri, 17 Oct 2025 08:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760690589;
+	bh=w3yiEGMdzJiDv0/xbQkFRtwluVFnBEMxzuh275dPyKA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AZlhuXG9cYcve/lHlMhTJnhEFd7K1h2ayZYp1HZDdR1sx/OX8BTVCDxKZ2ms0Wgx+
+	 WysICmp3exGCd/7pEBiwWOpysEvgVDYNeY3d1edMOv0maoPJ/oiB7x1OGkQtM4bxyS
+	 9ZADRetv1CWTBFvv3wSJakwfxSTNUqeF8QhIpJ5OAInvzHVNJmkA9TUucjIYZHM/Xj
+	 pzeV4Kv3R8YE8j4JTTUlK6XJuYvqAOdpc8p3IqAcqykEt2BGgaLXfmEwFlGT6sY9JJ
+	 jIWAOJgAqh0A3QpUhaAuUmDKqEyvF4zMkD1RCgI/lwn8ugtaPLA7XaW94iUyf0wvwc
+	 10ggX8MjncW1A==
+Message-ID: <564b0802-d413-4a6b-b46c-d4e3e7846c6c@kernel.org>
+Date: Fri, 17 Oct 2025 10:43:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] MAINTAINERS: Change Altera socfpga-ecc-manager.yaml
+ maintainer
+To: niravkumarlaxmidas.rabara@altera.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>
+References: <20251017083849.3213192-1-niravkumarlaxmidas.rabara@altera.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251017083849.3213192-1-niravkumarlaxmidas.rabara@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bingbu Cao <bingbu.cao@intel.com>
+On 17/10/2025 10:38, niravkumarlaxmidas.rabara@altera.com wrote:
+> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> 
+> Update Altera socfpga-ecc-manager dt bindings maintainer from
+> <matthew.gerlach@altera.com> to <niravkumarlaxmidas.rabara@altera.com>
+> as Matthew Gerlack is moving out of Altera.
+> 
+> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> Acked-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> ---
+> 
+> changes in v2:
+> - Update maintainer name in yaml bindings as well.
+> - Use correct maintainer list for patch submission. 
 
-Update IPU7 firmware binary, it is a product signed binary
-used in latest Intel Pather Lake SOCs. Its version is same
-as the old one, but it's product signed binary which can
-be used in released product.
+No. Who is the maintainer of subsystem with the driver you are now
+changing? This is your maintainer you are targeting with this patchset.
 
-Signed-off-by: Bingbu Cao <bingbu.cao@intel.com>
----
- WHENCE                   |   2 +-
- intel/ipu/ipu7ptl_fw.bin | Bin 266240 -> 266240 bytes
- 2 files changed, 1 insertion(+), 1 deletion(-)
+Again, read submitting patches, do the homework.
 
-diff --git a/WHENCE b/WHENCE
-index c95b791e4477..9ff1918f5f9c 100644
---- a/WHENCE
-+++ b/WHENCE
-@@ -1398,7 +1398,7 @@ File: intel/ipu/ipu7_fw.bin
- Version: master_release_20240628_1854
- 
- File: intel/ipu/ipu7ptl_fw.bin
--Version: master_release_20250515_1232
-+Version: master_release_20250515_1232_ProductSigned
- 
- Licence: Redistributable. See LICENSE.intel for details
- 
-diff --git a/intel/ipu/ipu7ptl_fw.bin b/intel/ipu/ipu7ptl_fw.bin
-index 32526904344e1df4108d8184c375fe23f9fca092..491f61e64e9d779da3fdb1733c03405eec074a17 100644
-GIT binary patch
-delta 809
-zcmV+^1J?Y2pb&td5U|Vve@FV_NZ;44qovZ{PgO|bxO7A6Xa%9b>&v5TL4cN{8;EHE
-zEn@&W%B41|b;S8t7K#?kR)fT0Cwm9dB4XhRYdg~QwA|{e@5TFi^U~tz2GadLGNF4t
-z?A9}ct~ftJx**?I?u|=`?y(>{AY=x;N^<;(v#imW5SW(rIe2%af4GkT-xTX0i107x
-z)pZcnVV;4H*Ek4?%_kL9yA_R8+I8LmY@~36w)gO#^2WqkG(1dX?o`^ecOSab<=~mC
-z%~&-yX5(_Yy~m7l4N{I&SIQur*CrW<oJYM;0OU8AlmN1Q@35jmUrovqHPr-R;jfrx
-zjW1V(k^DH_B~_h>f9R?_t|^;Wa`1ncnH;t@0jpA+_dQj48oj0|=i7IRV?i1B@srs`
-z@q7QyiHiH99T_lT%rG;hU1m#KI2Gm3VfAOi9zfyNe;O4Clc#GAf0ycF8SQ5)CrHYb
-zMDl__IwI&iqQjSFI`w_IQ_oy;y{kVdv=t(S8ZxCLEVQxlf9EsH0RRC2eND^A4Fb4K
-zjMn5(GR+bCfG2&ntZEf&v1kZ>6r8t;?!2P}V*8F|a&+sgEO+eWp_>L~e!ah3q9(M^
-z;6^9F;LW*o7vE9Aootrjpfny+^A4FJ1FooqiU?C`(LDE)*odT=q3o!AUnO#R7Q^X-
-z7_gVPl`H1?f5B6a%l#nzRaYQq4|K36t-yD~CO!lp$sVUD!P^x<HFn#-i2|;CKBm`%
-z;}v2pHVv4C_Nk_*4v-clkIZ6)=QDNF>9}uf%!$oR;pMNOoJm;!JeCQ+ILi^y=5A7C
-zJO)8|mry-<5Q4Zjg`|{s>9=i@_r`CP+bPT)y-C)te|St|;&#$+a4GW;&n8vbR$<yI
-z|3|z_*~!SI-31$?-U4X<urVxEM;KaL?yilPHVY@umd_~O!6jcBI|gA;88Z;6u4A!<
-zxK^T;88db8wy$xG$~nG+@E<9PcK4P`?XiY+s}DtQ|Mhl82rc2G&}hyR5;X4&xNb`+
-nBDa7h3Q`o?U${*P=`3J_&;*Cj1ObQ81OkW91OvCw1OzY(x;c?#
-
-delta 809
-zcmV+^1J?Y2pb&td5U|Vvf0;z$Mq&>fEp&7g@i=EZKFeW}+tk6YUmtP@+)-f;EkTIW
-zEg#*>R+-WKI*IomAz9MYgiNc>(N6v~vZQI~jgKwW*_i8P2xVii(lAc)k>$p?DzFH_
-zw=DOPY$-`Sa^6i;6mEct{zM!ZmQ%CVZi>%qe+Od@c&8h^y)DRLe^RYQW*v5q0ew~J
-ziCZ0j@L(&v;$BU8ZAFc`GE;2>AkVJ2ZtZR;tR-_$C^2!-b+k24m;oz5&Yu{mE;O6N
-z(@DfxQ;S9>&64-^K;Kqj^@(i-i20>2flWVAF!WkGY_|+{lzL-`<#zSBw^{h5%GsCi
-zPv$u7kJ`Of(6q7}e<6Dhv@C(k0K*7z9DT`*6yDAhcYILAWtR3n#J}42uD4$z7<W9!
-zZ{PUwjK%=-VVEudAiiu$KB@v3X`moOQC$jli>6Gt*AJS1Qyz*pV-m}@dU-T6aZzuz
-z*;PmalL}w0DgqTUO@K?DMha_vw;2JLKttS5t)x!W<b}ohf3P*q0RRC2A(&CF`N5a+
-z6Y2Hz$;iAc{lSFj?5{+GrO;qdM@->EiX_52L0z#g&#ylgoWIi<{__V9#rRS=K`>$N
-zh4BkXe1#F{-H?FqO=H)u7*({#Hgq`5G@6=ap^{F2UdEnhoJmAJ?r#qt?wnr8h!+S_
-zuCj>o7@b=ke?;&>(FM8iIagWo0EGNqgq#1(d|L-tdAP{ndv`AN{pj^+AXms7lj<AX
-zeKhsX6!`dw1VZx!%oNG|71sJ+=)4<{elPInVga<8?N7h0Kh!>yVmtOw*Fxu5f^8(P
-zz@ZGInZ6x;W+z38C&&A=S}JT{cIhK<H3{*EW|>)jf6neGnDNsPuU7@K+2LZ}Hw8<$
-zir(b&kW$yZ^ceC#U?5=PC(!L#{V?D9u%vcucbB-naviWVi9~NKU2iMPTp+8hZnIst
-zqD*Si!AT6v3Y&y@oQ`wlk_bW`a+Cdq+h2`wGa8Ukd>BSZ_e0a!5FgswmM6XdMprRw
-n*7d`U3OPV=TZ`alWbP@0&;*Cj1ObQ81OkW91OvCw1OzY(NvDlu
-
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
