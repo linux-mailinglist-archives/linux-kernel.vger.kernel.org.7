@@ -1,482 +1,226 @@
-Return-Path: <linux-kernel+bounces-858646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D6BBEB53E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51FFBEB571
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904D67C1F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3E76E66E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3F633B950;
-	Fri, 17 Oct 2025 18:59:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C25333DEF3;
-	Fri, 17 Oct 2025 18:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA97335083;
+	Fri, 17 Oct 2025 18:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KY5H7t8H"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B320833506F;
+	Fri, 17 Oct 2025 18:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760727585; cv=none; b=mhpy1NBbFFtrc0UyAAl1d0AxMMFrWd+Z20VGf3YK0zcUUT35l/iDIiJyuSdgqo9mX9V6JAt+sCZ4z/JdSN5sslweFokZ2DKXE1+0/L/r8nhpyR3izqOlQ3Y2Gzw2as+8ds2zpOnm86Z5ui0TO+Xmz+NwNHKkLYRjd0a6XbYZyac=
+	t=1760727500; cv=none; b=CcRC72a+9aqGqQYsj4LX4KT7kZEAlfL4rxXBcS87j6u4XFQZCVdS6s+aLW5gfQuWK9UMU4mNanhiEo9ZOuhkuVXNOn749Mp2MgJVdDk95IUb8orwyXBWiR30PaZ6xvOx0losmd6bzz/+HMBsxQRZBPbG1fPbHYBiYO8l6f5+2ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760727585; c=relaxed/simple;
-	bh=W0/oc2L5I1tI25T7cNYTIiSCCB8vbiXf5k0VZAfQB/Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=krwr8AOmD+viamADb8FRXmrxw7/bU9iwiB8j+oTAhVo5bPevKel6e2HjLKXCcnsA3iOD10/dOe5QrmmFeCSLEy8L5pcy/B/MdO4dUZm+yDcEs8dw6aYfyeNGK4BChiyCP9BlhQGNs7ZkCokj+icgphDnI2TMMZveRTiIm5OVDX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94CEF1595;
-	Fri, 17 Oct 2025 11:59:33 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70B3C3F66E;
-	Fri, 17 Oct 2025 11:59:36 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org
-Cc: James Morse <james.morse@arm.com>,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>,
-	Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Ben Horgan <ben.horgan@arm.com>
-Subject: [PATCH v3 29/29] arm_mpam: Add kunit tests for props_mismatch()
-Date: Fri, 17 Oct 2025 18:56:45 +0000
-Message-Id: <20251017185645.26604-30-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20251017185645.26604-1-james.morse@arm.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
+	s=arc-20240116; t=1760727500; c=relaxed/simple;
+	bh=4ug6qqoqVRA1LBi/xSaf5h1E1/MeVjCP/DrgemLJmp0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=l4Cq1j9pRAql5n19NeIijx67w79GEjh6F95z8SrRJRE1Qs6gmH9FXTAmPtvOgplvo4I5RjZxT5VIO8hTuyyIM7lehuRlWCZmYmS23kA18Rnk4WHg80hzCZ8Kud9R7+k4mXHoFZjo0v7DcKzqrkVa64w52oiMm7x7tFvMdD6jimM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KY5H7t8H; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1032)
+	id 3DB2E2017247; Fri, 17 Oct 2025 11:58:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3DB2E2017247
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760727498;
+	bh=5eVlAgQPegevoQZ7UoS18YxnCMHqHm6zo/5HXQP1WjQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KY5H7t8HygH5t9EqNvNdF/UlSSpJOglb3P745gIdLHeybrUE0A71eOtRAnfskCzGh
+	 nHz77p8/VzlkF7/w/ZWVtBDkWLWYnhqkWybnpY2cNyOmul66HHyTYuRhsklEtjDeJf
+	 PR9TH70fqVQBUumeLWEZDo+dCY1NIbN8YUYkZeS0=
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mhklinux@outlook.com
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	arnd@arndb.de,
+	mrathor@linux.microsoft.com,
+	skinsburskii@linux.microsoft.com,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: [PATCH v2] mshv: Fix deposit memory in MSHV_ROOT_HVCALL
+Date: Fri, 17 Oct 2025 11:58:17 -0700
+Message-Id: <1760727497-21158-1-git-send-email-nunodasneves@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-When features are mismatched between MSC the way features are combined
-to the class determines whether resctrl can support this SoC.
+When the MSHV_ROOT_HVCALL ioctl is executing a hypercall, and gets
+HV_STATUS_INSUFFICIENT_MEMORY, it deposits memory and then returns
+-EAGAIN to userspace. The expectation is that the VMM will retry.
 
-Add some tests to illustrate the sort of thing that is expected to
-work, and those that must be removed.
+However, some VMM code in the wild doesn't do this and simply fails.
+Rather than force the VMM to retry, change the ioctl to deposit
+memory on demand and immediately retry the hypercall as is done with
+all the other hypercall helper functions.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+In addition to making the ioctl easier to use, removing the need for
+multiple syscalls improves performance.
+
+There is a complication: unlike the other hypercall helper functions,
+in MSHV_ROOT_HVCALL the input is opaque to the kernel. This is
+problematic for rep hypercalls, because the next part of the input
+list can't be copied on each loop after depositing pages (this was
+the original reason for returning -EAGAIN in this case).
+
+Introduce hv_do_rep_hypercall_ex(), which adds a 'rep_start'
+parameter. This solves the issue, allowing the deposit loop in
+MSHV_ROOT_HVCALL to restart a rep hypercall after depositing pages
+partway through.
+
+Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 ---
-Changes since v2:
- * Comment on why packing is only needed for kunit tests,
- * Made the reset code a function not a macro.
 
-Changes since v1:
- * Waggled some words in comments.
- * Moved a bunch of variables to be global - shuts up a compiler warning.
+Changes in v2:
+- Improve commit message [Michael]
+- Fix up some incorrect/incomplete comments [Michael]
+
 ---
- drivers/resctrl/mpam_internal.h     |  14 +-
- drivers/resctrl/test_mpam_devices.c | 320 ++++++++++++++++++++++++++++
- 2 files changed, 333 insertions(+), 1 deletion(-)
+ drivers/hv/mshv_root_main.c    | 58 ++++++++++++++++++----------------
+ include/asm-generic/mshyperv.h | 17 ++++++++--
+ 2 files changed, 44 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-index 6632699ae814..4f25681b56ab 100644
---- a/drivers/resctrl/mpam_internal.h
-+++ b/drivers/resctrl/mpam_internal.h
-@@ -25,6 +25,12 @@ struct platform_device;
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index 9ae67c6e9f60..64e1bdf3b57c 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -159,6 +159,7 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
+ 	unsigned int pages_order;
+ 	void *input_pg = NULL;
+ 	void *output_pg = NULL;
++	u16 reps_completed;
  
- DECLARE_STATIC_KEY_FALSE(mpam_enabled);
+ 	if (copy_from_user(&args, user_args, sizeof(args)))
+ 		return -EFAULT;
+@@ -210,41 +211,42 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
+ 	 */
+ 	*(u64 *)input_pg = partition->pt_id;
  
-+#ifdef CONFIG_MPAM_KUNIT_TEST
-+#define PACKED_FOR_KUNIT __packed
-+#else
-+#define PACKED_FOR_KUNIT
-+#endif
+-	if (args.reps)
+-		status = hv_do_rep_hypercall(args.code, args.reps, 0,
+-					     input_pg, output_pg);
+-	else
+-		status = hv_do_hypercall(args.code, input_pg, output_pg);
+-
+-	if (hv_result(status) == HV_STATUS_CALL_PENDING) {
+-		if (is_async) {
+-			mshv_async_hvcall_handler(partition, &status);
+-		} else { /* Paranoia check. This shouldn't happen! */
+-			ret = -EBADFD;
+-			goto free_pages_out;
++	reps_completed = 0;
++	do {
++		if (args.reps) {
++			status = hv_do_rep_hypercall_ex(args.code, args.reps,
++							0, reps_completed,
++							input_pg, output_pg);
++			reps_completed = hv_repcomp(status);
++		} else {
++			status = hv_do_hypercall(args.code, input_pg, output_pg);
+ 		}
+-	}
+ 
+-	if (hv_result(status) == HV_STATUS_INSUFFICIENT_MEMORY) {
+-		ret = hv_call_deposit_pages(NUMA_NO_NODE, partition->pt_id, 1);
+-		if (!ret)
+-			ret = -EAGAIN;
+-	} else if (!hv_result_success(status)) {
+-		ret = hv_result_to_errno(status);
+-	}
++		if (hv_result(status) == HV_STATUS_CALL_PENDING) {
++			if (is_async) {
++				mshv_async_hvcall_handler(partition, &status);
++			} else { /* Paranoia check. This shouldn't happen! */
++				ret = -EBADFD;
++				goto free_pages_out;
++			}
++		}
 +
- static inline bool mpam_is_enabled(void)
++		if (hv_result_success(status))
++			break;
++
++		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY)
++			ret = hv_result_to_errno(status);
++		else
++			ret = hv_call_deposit_pages(NUMA_NO_NODE,
++						    partition->pt_id, 1);
++	} while (!ret);
+ 
+-	/*
+-	 * Always return the status and output data regardless of result.
+-	 * The VMM may need it to determine how to proceed. E.g. the status may
+-	 * contain the number of reps completed if a rep hypercall partially
+-	 * succeeded.
+-	 */
+ 	args.status = hv_result(status);
+-	args.reps = args.reps ? hv_repcomp(status) : 0;
++	args.reps = reps_completed;
+ 	if (copy_to_user(user_args, &args, sizeof(args)))
+ 		ret = -EFAULT;
+ 
+-	if (output_pg &&
++	if (!ret && output_pg &&
+ 	    copy_to_user((void __user *)args.out_ptr, output_pg, args.out_sz))
+ 		ret = -EFAULT;
+ 
+diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+index ebf458dbcf84..ecedab554c80 100644
+--- a/include/asm-generic/mshyperv.h
++++ b/include/asm-generic/mshyperv.h
+@@ -126,10 +126,12 @@ static inline unsigned int hv_repcomp(u64 status)
+ 
+ /*
+  * Rep hypercalls. Callers of this functions are supposed to ensure that
+- * rep_count and varhead_size comply with Hyper-V hypercall definition.
++ * rep_count, varhead_size, and rep_start comply with Hyper-V hypercall
++ * definition.
+  */
+-static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+-				      void *input, void *output)
++static inline u64 hv_do_rep_hypercall_ex(u16 code, u16 rep_count,
++					 u16 varhead_size, u16 rep_start,
++					 void *input, void *output)
  {
- 	return static_branch_likely(&mpam_enabled);
-@@ -180,7 +186,13 @@ struct mpam_props {
- 	u16			dspri_wd;
- 	u16			num_csu_mon;
- 	u16			num_mbwu_mon;
--};
-+
-+/*
-+ * Kunit tests use memset() to set up feature combinations that should be
-+ * removed, and will false-positive if the compiler introduces padding that
-+ * isn't cleared during sanitisation.
-+ */
-+} PACKED_FOR_KUNIT;
+ 	u64 control = code;
+ 	u64 status;
+@@ -137,6 +139,7 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
  
- #define mpam_has_feature(_feat, x)	test_bit(_feat, (x)->features)
- #define mpam_set_feature(_feat, x)	set_bit(_feat, (x)->features)
-diff --git a/drivers/resctrl/test_mpam_devices.c b/drivers/resctrl/test_mpam_devices.c
-index 0cfb41b665c4..3e8d564a0c64 100644
---- a/drivers/resctrl/test_mpam_devices.c
-+++ b/drivers/resctrl/test_mpam_devices.c
-@@ -4,6 +4,324 @@
+ 	control |= (u64)varhead_size << HV_HYPERCALL_VARHEAD_OFFSET;
+ 	control |= (u64)rep_count << HV_HYPERCALL_REP_COMP_OFFSET;
++	control |= (u64)rep_start << HV_HYPERCALL_REP_START_OFFSET;
  
- #include <kunit/test.h>
+ 	do {
+ 		status = hv_do_hypercall(control, input, output);
+@@ -154,6 +157,14 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+ 	return status;
+ }
  
-+/*
-+ * This test catches fields that aren't being sanitised - but can't tell you
-+ * which one...
-+ */
-+static void test__props_mismatch(struct kunit *test)
++/* For the typical case where rep_start is 0 */
++static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
++				      void *input, void *output)
 +{
-+	struct mpam_props parent = { 0 };
-+	struct mpam_props child;
-+
-+	memset(&child, 0xff, sizeof(child));
-+	__props_mismatch(&parent, &child, false);
-+
-+	memset(&child, 0, sizeof(child));
-+	KUNIT_EXPECT_EQ(test, memcmp(&parent, &child, sizeof(child)), 0);
-+
-+	memset(&child, 0xff, sizeof(child));
-+	__props_mismatch(&parent, &child, true);
-+
-+	KUNIT_EXPECT_EQ(test, memcmp(&parent, &child, sizeof(child)), 0);
++	return hv_do_rep_hypercall_ex(code, rep_count, varhead_size, 0,
++				      input, output);
 +}
 +
-+static struct list_head fake_classes_list;
-+static struct mpam_class fake_class = { 0 };
-+static struct mpam_component fake_comp1 = { 0 };
-+static struct mpam_component fake_comp2 = { 0 };
-+static struct mpam_vmsc fake_vmsc1 = { 0 };
-+static struct mpam_vmsc fake_vmsc2 = { 0 };
-+static struct mpam_msc fake_msc1 = { 0 };
-+static struct mpam_msc fake_msc2 = { 0 };
-+static struct mpam_msc_ris fake_ris1 = { 0 };
-+static struct mpam_msc_ris fake_ris2 = { 0 };
-+static struct platform_device fake_pdev = { 0 };
-+
-+static inline void reset_fake_hierarchy(void)
-+{
-+	INIT_LIST_HEAD(&fake_classes_list);
-+
-+	memset(&fake_class, 0, sizeof(fake_class));
-+	fake_class.level = 3;
-+	fake_class.type = MPAM_CLASS_CACHE;
-+	INIT_LIST_HEAD_RCU(&fake_class.components);
-+	INIT_LIST_HEAD(&fake_class.classes_list);
-+
-+	memset(&fake_comp1, 0, sizeof(fake_comp1));
-+	memset(&fake_comp2, 0, sizeof(fake_comp2));
-+	fake_comp1.comp_id = 1;
-+	fake_comp2.comp_id = 2;
-+	INIT_LIST_HEAD(&fake_comp1.vmsc);
-+	INIT_LIST_HEAD(&fake_comp1.class_list);
-+	INIT_LIST_HEAD(&fake_comp2.vmsc);
-+	INIT_LIST_HEAD(&fake_comp2.class_list);
-+
-+	memset(&fake_vmsc1, 0, sizeof(fake_vmsc1));
-+	memset(&fake_vmsc2, 0, sizeof(fake_vmsc2));
-+	INIT_LIST_HEAD(&fake_vmsc1.ris);
-+	INIT_LIST_HEAD(&fake_vmsc1.comp_list);
-+	fake_vmsc1.msc = &fake_msc1;
-+	INIT_LIST_HEAD(&fake_vmsc2.ris);
-+	INIT_LIST_HEAD(&fake_vmsc2.comp_list);
-+	fake_vmsc2.msc = &fake_msc2;
-+
-+	memset(&fake_ris1, 0, sizeof(fake_ris1));
-+	memset(&fake_ris2, 0, sizeof(fake_ris2));
-+	fake_ris1.ris_idx = 1;
-+	INIT_LIST_HEAD(&fake_ris1.msc_list);
-+	fake_ris2.ris_idx = 2;
-+	INIT_LIST_HEAD(&fake_ris2.msc_list);
-+
-+	fake_msc1.pdev = &fake_pdev;
-+	fake_msc2.pdev = &fake_pdev;
-+
-+	list_add(&fake_class.classes_list, &fake_classes_list);
-+}
-+
-+static void test_mpam_enable_merge_features(struct kunit *test)
-+{
-+	reset_fake_hierarchy();
-+
-+	mutex_lock(&mpam_list_lock);
-+
-+	/* One Class+Comp, two RIS in one vMSC with common features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = NULL;
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc1.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two RIS in one vMSC with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = NULL;
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc1.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/* Multiple RIS within one MSC controlling the same resource can be mismatched */
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_vmsc1.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+	KUNIT_EXPECT_EQ(test, fake_vmsc1.props.cmax_wd, 4);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't control the same resource,
-+	 * mismatched features can not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 0);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with incompatible overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	mpam_set_feature(mpam_feat_mbw_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_mbw_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 5;
-+	fake_ris2.props.cpbm_wd = 3;
-+	fake_ris1.props.mbw_pbm_bits = 5;
-+	fake_ris2.props.mbw_pbm_bits = 3;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't control the same resource,
-+	 * mismatched features can not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_mbw_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.mbw_pbm_bits, 0);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with overlapping features that need tweaking */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_mbw_min, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_mbw_min, &fake_ris2.props);
-+	mpam_set_feature(mpam_feat_cmax_cmax, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmax, &fake_ris2.props);
-+	fake_ris1.props.bwa_wd = 5;
-+	fake_ris2.props.bwa_wd = 3;
-+	fake_ris1.props.cmax_wd = 5;
-+	fake_ris2.props.cmax_wd = 3;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * RIS with different control properties need to be sanitised so the
-+	 * class has the common set of properties.
-+	 */
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_mbw_min, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmax, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.bwa_wd, 3);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 3);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class Two Comp with overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = &fake_class;
-+	list_add(&fake_comp2.class_list, &fake_class.components);
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp2;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp2.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class Two Comp with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = &fake_class;
-+	list_add(&fake_comp2.class_list, &fake_class.components);
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp2;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp2.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple components can't control the same resource, mismatched features can
-+	 * not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 0);
-+
-+	mutex_unlock(&mpam_list_lock);
-+}
-+
- static void test_mpam_reset_msc_bitmap(struct kunit *test)
+ /* Generate the guest OS identifier as described in the Hyper-V TLFS */
+ static inline u64 hv_generate_guest_id(u64 kernel_version)
  {
- 	char __iomem *buf = kunit_kzalloc(test, SZ_16K, GFP_KERNEL);
-@@ -58,6 +376,8 @@ static void test_mpam_reset_msc_bitmap(struct kunit *test)
- 
- static struct kunit_case mpam_devices_test_cases[] = {
- 	KUNIT_CASE(test_mpam_reset_msc_bitmap),
-+	KUNIT_CASE(test_mpam_enable_merge_features),
-+	KUNIT_CASE(test__props_mismatch),
- 	{}
- };
- 
 -- 
-2.39.5
+2.34.1
 
 
