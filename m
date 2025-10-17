@@ -1,157 +1,143 @@
-Return-Path: <linux-kernel+bounces-857998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0E3BE8818
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0229ABE8834
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 475B34E7154
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9566D1AA3CA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F392E0B71;
-	Fri, 17 Oct 2025 12:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D172DC78A;
+	Fri, 17 Oct 2025 12:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tZTlu/6O"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A8WEISlI"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F69B332EAC;
-	Fri, 17 Oct 2025 12:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5FD332EAC
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760702651; cv=none; b=keJvHYsjNbaYy3hrAZpNoXPbX1iqmC1Th7s9Bm8MDxWkNwE6YSmToZWGu8XEtqPLscLOW4xw0yKM9Y4hcl1BZPcsS+6wJQR3PcSnUkhyi5EJngQrdbt2UumnB9es1CODAFnv3tBYxQNgrXUoeOHvfEHIpQFpx1L7XeFcuh3k36M=
+	t=1760702701; cv=none; b=EyF9yerVwKU8Teao4BY7xN+6nkkavxnibVpml/+qM2oKfKFpv8GPxxovz5K8mWRJKPwAJuhahSyr6Rr9noGry9IUTjIXpXWvrBCAXKK7Ih5D2Nf8290i4mnZL2QJ2YMC+xkWK0ULRXzsZ4Z8V0hy7AOA/4VtTnbPrO2z+bs3Puc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760702651; c=relaxed/simple;
-	bh=vdD0DY7vv6B06BpL8Nf6nhwFo1Pzupdq+v4mwBkQhYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RR6tLxBEQURHbx/YUHDKEmeODmuX9d0db+NrMq+ADFm2LBE+VK5FGMpsiYK2Y+doRbDJv8qgOLXKpcHdKOZFHo8yzam4pWBc/+LmRayq8Re98NSzf6FQ5g+sBQeHwzgOCBDxzLNRS6BMToM4UKvYlbrZ771k9u1DFp51cVyG9eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tZTlu/6O; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=i8hy4I4lhZmL+EEXM3yS2UscyTn4FYoKIxBvgeZOabU=; b=tZTlu/6OIKaBb+A4VKrWCxXjZN
-	5Rs9ynrQsIONsvNEONgyNruAKzRbBFv6WoMND58aJn4jL2jAv74EzvmPwDUrClpQYNrzJ5W511CV6
-	cDhA4z+jmMNUOZYiLmRYJbqX1CVuV2Kyhf7eakaJ6+9Hnf4aaQ4OkI7KkhD8J2eLeMjYkgUXgXDoS
-	WMzE0zgQ5Pc59xxud7RL03vGiRRfPoCMBopvHFg+lZcsC2wo7wuT4brmhGDHhpT/+qqzqsiOZKvKy
-	xfU3WQLMIZ+EBRMTx7F51cNoLQz0blIHPVFaSjwFT75EErV1sdwC3z46KSHHPTToSZ7WCCAFwpLL5
-	8v5APkNw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40520)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v9jBf-000000007op-1gwt;
-	Fri, 17 Oct 2025 13:03:59 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v9jBa-000000004Hj-2XOP;
-	Fri, 17 Oct 2025 13:03:54 +0100
-Date: Fri, 17 Oct 2025 13:03:54 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>
-Subject: [PATCH net-next 0/6] net: add phylink managed WoL and convert stmmac
-Message-ID: <aPIwqo9mCEOb7ZQu@shell.armlinux.org.uk>
+	s=arc-20240116; t=1760702701; c=relaxed/simple;
+	bh=zxJeEPERBSwecyf1Dj4zrIfVzfgAX3Kmnnlh4mTeqXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=VwPUhFF7A5FOxW6DHlsjPwMsxtg/RoDyykQ+QaAdxKsNoGVF27ykc9YBQ9kyrMPY1DU2KGOZQLACxyMYEOiYYQAUXp/xxHK94wN8fNgzvU73Y22HSHhZoyMIYwoCizMRy7VP+K6xn0x7UNI4OssHo85Xm8uIdrurUoW2axCP7gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A8WEISlI; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so16979295e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760702698; x=1761307498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PZTjBl4diZiotg4HGvoRg3VptpOxC83MZHMSgyQDmPQ=;
+        b=A8WEISlIbovZ6tG8QMcFTY4U2hkQ1301H8qJQMZbP2/xznDwFs390/usER8/CssPB1
+         u9dp/KKeii5YwSA+Kf4bk/kod1P1zIxDB43Ja8n6cSUiyI+fghy4uOculPVXqU/WO1Hm
+         /wtlzSua/wYGBj11q+RZmGESl7Bf3ilEZdY0tE5w0WI0JToOCIz9fITp7lFAKQ5hFoGG
+         jbd57O2Zqva0Dp4M1FxJN4ymLhCisGENxyF0rR2hzgCfge2YabgN8MaWHTUWe5tRcJ3k
+         ALddsU/O+hI7DW/VX62uC1Qm09P92KxPYh4WA5W4V4Z6bz9iGuMP1/1owRzWVN4QD7X6
+         CU3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760702698; x=1761307498;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZTjBl4diZiotg4HGvoRg3VptpOxC83MZHMSgyQDmPQ=;
+        b=XcHYT3GR7Vk5I9DoIoqo95CUwBTUBpUPsyKv2QLpqndop80N/11+3KnWhjmg5M/OV6
+         Lzrsb7WcfsSFXWmwg5YSJaonY09QnLutWUrrsUR7UZsEjpdXA+BjRYsgAVdHp3H+q6e3
+         BhlkPLAz8rKatEXFAyOveBWDbtO4EtscGuls3KUgji1Fbp+mvXoocby4JTdnSQ8AJeqj
+         PH7pt3Q+c8WOMcNQJDSmnCd+8SexIXMQwZNr3yDEOmhmiqC0pQlDVSWhwCUKuXozpvXQ
+         pSDsAdWdQypcMdq1Twmd1ddELdRrHjmtE2aQ0yTb7t31opEpF80RrP+0kLTMMM0cTb7D
+         JpjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUELxo6IjW4MA6VBkpbLwMZZEPQR4JQ7oVHAP14/523WzfI5/dfIQ7BxfUhNioRJPG1t3aqxnUckY4DZLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpvSfXNo2mGWxoDqggIIucW6lMSwVcd+mcGX80791hNgsD/tPD
+	alQG5gWVqTXgZs+NpvF0uDAt1sjXb6vTjPpW1ZHat/uqUXeEX46i1m1uH0Cgr4U+9PB+yXvSfAq
+	Cif88
+X-Gm-Gg: ASbGncuSqSyOf9CeBDkPTXHm1rL8UIY1jIpjcpFbZshHOsaFjRfS9zY9PXMDXKEjJdO
+	GxheIa8e3ZkKS2ANJ34F1Wbdy88MdCcr1VuY9AqhmDMJr7yfUfU4AFQS3ePVXsWBbESA3V9+quh
+	DbS6/1niNIpdrnXqIv/I26ylehC5jzhE6pe9pW1rRHGnEV/axy/aIrKnJwpGVa67sModAFsVcSh
+	/WkDXuBTa3ai4aYFL9EMOutJ/LmqIKc7P3ELrBa4MIYGogPuBUjgdesINpPx5buAqnKWFqtGiOI
+	z/oC4CXRD6HIdd+XRd7gV3ybqFY+shF8i1JyeAsd6mIA5f8m1Cyl3JBF57Nd1tEL009Vv/wvfzn
+	+HVEhsJlLdehwGb1VloV4N9ImrBm7BszwxhUvBP6Hktb3gipSQqTEDMlP2yNlmrsj0nuFv7VnfJ
+	UPRpyxznBgqV1WBo4R3Bmhw7hGgPKrxBw=
+X-Google-Smtp-Source: AGHT+IE1Fi7czH22W1V/P5wbD0Ci5V+g/0c5ggrDBbguznUJ3ayVv+bCUogPL7mV/v2uhjxPJ6rRbQ==
+X-Received: by 2002:a05:600c:8a16:10b0:46e:24a4:c247 with SMTP id 5b1f17b1804b1-471099254f6mr46174395e9.5.1760702698035;
+        Fri, 17 Oct 2025 05:04:58 -0700 (PDT)
+Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47121ed98e9sm4493705e9.3.2025.10.17.05.04.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 05:04:57 -0700 (PDT)
+Message-ID: <01ef4392-cfd4-4cf6-8af2-153b9e333d44@suse.com>
+Date: Fri, 17 Oct 2025 14:04:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] module: Override -EEXISTS module return
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+References: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
+ <20251013-module-warn-ret-v1-1-ab65b41af01f@intel.com>
+Content-Language: en-US
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20251013-module-warn-ret-v1-1-ab65b41af01f@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 10/13/25 6:26 PM, Lucas De Marchi wrote:
+> The -EEXIST errno is reserved by the module loading functionality. When
+> userspace calls [f]init_module(), it expects a -EEXIST to mean that the
+> module is already loaded in the kernel. If module_init() returns it,
+> that is not true anymore.
+> 
+> Add a warning and override the return code to workaround modules
+> currently returning the wrong code. It's expected that they eventually
+> migrate to a better suited error.
+> 
+> Closes: https://lore.kernel.org/all/aKLzsAX14ybEjHfJ@orbyte.nwl.cc/
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> ---
+>  kernel/module/main.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index c66b261849362..74ff87b13c517 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -3038,6 +3038,11 @@ static noinline int do_init_module(struct module *mod)
+>  	if (mod->init != NULL)
+>  		ret = do_one_initcall(mod->init);
+>  	if (ret < 0) {
+> +		if (ret == -EEXIST) {
+> +			pr_warn("%s: init suspiciously returned -EEXIST: Overriding with -EBUSY\n",
+> +				mod->name);
+> +			ret = -EBUSY;
+> +		}
+>  		goto fail_free_freeinit;
+>  	}
+>  	if (ret > 0) {
+> 
 
-This series is implementing the thoughts of Andrew, Florian and myself
-to improve the quality of Wake-on-Lan (WoL) implementations.
+I assume you intentionally omitted the "(reserved for loaded modules)"
+part from my previous suggestion [1] to keep the error message short.
 
-This changes nothing for MAC drivers that do not wish to participate in
-this, but if they do, then they gain the benefit of phylink configuring
-WoL at the point closest to the media as possible.
+Looks ok to me then.
 
-We first need to solve the problem that the multitude of PHY drivers
-report their device supports WoL, but are not capable of waking the
-system. Correcting this is fundamental to choosing where WoL should be
-enabled - a mis-reported WoL support can render WoL completely
-ineffective.
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
-The only PHY drivers which uses the driver model's wakeup support is
-drivers/net/phy/broadcom.c, and until recently, realtek. This means
-we have the opportunity for PHY drivers to be _correctly_ converted
-to use this method of signalling wake-up capability only when they can
-actually wake the system, and thus providing a way for phylink to
-know whether to use PHY-based WoL at all.
-
-However, a PHY driver not implementing that logic doesn't become a
-blocker to MACs wanting to convert. In full, the logic is:
-
-- phylink supports a flag, wol_phy_legacy, which forces phylink to use
-  the PHY-based WoL even if the MDIO device is not marked as wake-up
-  capable.
-
-- when wol_phy_legacy is not set, we check whether the PHY MDIO device
-  is wake-up capable. If it is, we offer the WoL request to the PHY.
-
-- if neither wol_phy_legacy is set, or the PHY is not wake-up capable,
-  we do not offer the WoL request to the PHY.
-
-In both cases, after setting any PHY based WoL, we remove the options
-that the PHY now reports are enabled from the options mask, and offer
-these (if any) to the MAC. The mac will get a "mac_set_wol()" method
-call when any settings change.
-
-Phylink mainatains the WoL state for the MAC, so there's no need for
-a "mac_get_wol()" method. There may be the need to set the initial
-state but this is not supported at present.
-
-I've also added support for doing the PHY speed-up/speed-down at
-suspend/resume time depending on the WoL state, which takes another
-issue from the MAC authors.
-
-Lastly, with phylink now having the full picture for WoL, the
-"mac_wol" argument for phylink_suspend() becomes redundant, and for
-MAC drivers that implement mac_set_wol(), the value passed becomes
-irrelevant.
-
-Changes since RFC:
-- patch 3: fix location of phylink_xxx_supports_wol() helpers
-- patch 3: handle sopass for WAKE_MAGICSECURE only when the MAC is
-  handling magic secure.
-
- drivers/net/ethernet/stmicro/stmmac/stmmac.h       | 11 +--
- .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 31 +-------
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 45 +++++++----
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  4 +-
- drivers/net/phy/phy_device.c                       | 14 +++-
- drivers/net/phy/phylink.c                          | 92 +++++++++++++++++++++-
- include/linux/phy.h                                | 21 +++++
- include/linux/phylink.h                            | 28 +++++++
- 8 files changed, 182 insertions(+), 64 deletions(-)
+[1] https://lore.kernel.org/linux-modules/ce7f293c-d9f9-4137-bcad-8cc492d34773@suse.com/
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
+Petr
 
