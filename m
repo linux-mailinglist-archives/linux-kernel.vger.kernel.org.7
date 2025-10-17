@@ -1,216 +1,313 @@
-Return-Path: <linux-kernel+bounces-857693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC957BE7BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:30:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE08BE7B3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A38188842A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:26:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07F8635B600
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CD5340DA5;
-	Fri, 17 Oct 2025 09:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1EA320CCA;
+	Fri, 17 Oct 2025 09:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Q5sqojef";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="QQRnK8te"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JsaKqEez"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D6C340D94;
-	Fri, 17 Oct 2025 09:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692358; cv=fail; b=O98VXC0KSX6Budns3wfDdBvTNS67uCjQmzs3acDXLsmvSAkLUsvqJLQKbTJhhmBjDZktgJozV/U7EBCki/5TAX/bP7VONQk5XBuK6MSu+F5ieZM/R5T14B0Xz1gRiDsKb2lJxO78zk04rNGYdI/2ycB+Tkwq3xsAnkwsI4uUFrI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760692358; c=relaxed/simple;
-	bh=leA+84L81ecEY6u1l+0lsBrQI30mLLLA7At3MTYzFRA=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qOzt1kVINiiK2q90ErNcPFE2eKpKxuHpFS6uw5NctClT7K1L5E7x/OtcF1PYh8K0IQT7FXu+YT3pXHXoQHQvc2y9T0TQr3kap58Osa1aqnGfYmnB1bSYPGCk97S48zX3SeWrkzS3/2JvrR5/XiXqXsmFZhVdgl5/7uERRElLDlQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Q5sqojef; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=QQRnK8te; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 68b858d2ab3911f0ae1e63ff8927bad3-20251017
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:To:From; bh=leA+84L81ecEY6u1l+0lsBrQI30mLLLA7At3MTYzFRA=;
-	b=Q5sqojefDm+fAw3R6PNvfkNwJgHh2kK1hVZFMZHDgMr7c5J/jgVr8dF8wNv7Zrgu6Xkys4nHmq5L2K+OKdBjEo4hwHwGu9QpYw/p7dymZOLBIQCQutHXTRWCX7zHbaVTl89Lj/rtVROx7fyy1fk7zFV44veE+VUsZGcLLZigyrM=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:526616ef-6f6c-4d51-92ce-e27118ae35e0,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:631b47b9-795c-4f99-91f3-c115e0d49051,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111|836|888|898,
-	TC:-5,Content:0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 68b858d2ab3911f0ae1e63ff8927bad3-20251017
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <peter.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 556773488; Fri, 17 Oct 2025 17:12:30 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 17 Oct 2025 17:12:28 +0800
-Received: from SI4PR04CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Fri, 17 Oct 2025 17:12:26 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pSzO4vXj/kbCTiLkMP4Nm6lcRQOn0/gd1JmuOxRrgYOoM28u6vGjPaC/OEuUVQOSdq+0oTOoSFRPcgl2akD6Iol+AfH6O5/kpNGR9J9plMIWPPtSHjCpggpN+VLYTC2JHEcL/hfHQAUEV8wSx5kxwHtgbQlHSXQzNZVr0CIV08qombBp0I2BcyyjxpLBp+Ns8uLbPs2Hzb8WWEIFEqR/tcB5B8C7PMZqp6vAcvz5XPvzWkc/bSmk8aL0+nOI9NmV3NCSByKdjBgdvoPRa4pqYsBc2s1qa1eY/d5kqWJJ94Y1APo+LYqPPw3dtQVmXKtecK2ZHBXABb0FSQOQUzRM7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=leA+84L81ecEY6u1l+0lsBrQI30mLLLA7At3MTYzFRA=;
- b=xdhoAyHbiz4hre+WMtK/v3X2Ox4EHZMXCBc219TWA4AIlTRRwG3LLLH+UYFrD9KW+WEcEi7myb2XkxOh2oisc0eHwnQM+demtTN1W2/EcAfGUpb7PsaL6UYOVSZAak5v9d2FGR5j65TESJA05fiDiBimMlsw/FcDIfRsMNCXBA8IxbxAqgRpFHhRcm5czqhqZZyH2+tZ+kf7cJUMuwp2nr/jHZoD+D8bT6qHjX6+ip4MCIMX127x8d/nKJ5WOQf2h4pljUO1geuInjLHkae3g7VfU10f0F3xjaDj6vS0sDHc4xGBQgo8ZOkhiAyhZHMyW/X+anR72eYo7uOi30/3Zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=leA+84L81ecEY6u1l+0lsBrQI30mLLLA7At3MTYzFRA=;
- b=QQRnK8teHx3vtoO/X0RwEy3k++rmKxzKBWbFS3z3l3bhWvVbC0L8l/mMwcGap1pzc742KmF8UNeLYz9xI6IQ3c4PbRuOxZPnymHtDE4BLsgLLOvn453VIPdmIIpABgiUlCEK92RWUWyIWE/ZHTMJsw+lQZnXWah1CHHIepHUWC4=
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com (2603:1096:301:66::6)
- by TYZPR03MB8588.apcprd03.prod.outlook.com (2603:1096:405:b5::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
- 2025 09:12:24 +0000
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c]) by PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c%6]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
- 09:12:24 +0000
-From: =?utf-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>
-To: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"wkon.kim@samsung.com" <wkon.kim@samsung.com>, "bvanassche@acm.org"
-	<bvanassche@acm.org>, "James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ufs: core: Initialize a value of an attribute as
- returned by uic cmd
-Thread-Topic: [PATCH v2] ufs: core: Initialize a value of an attribute as
- returned by uic cmd
-Thread-Index: AQHcPMTIO+8CK43TzEaJJLNmh4ZFhbTGEsKA
-Date: Fri, 17 Oct 2025 09:12:24 +0000
-Message-ID: <38ddeceac8c97739a976afd5dc66561b56023992.camel@mediatek.com>
-References: <CGME20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca@epcas1p3.samsung.com>
-	 <20251014044046.84046-1-wkon.kim@samsung.com>
-In-Reply-To: <20251014044046.84046-1-wkon.kim@samsung.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PSAPR03MB5605:EE_|TYZPR03MB8588:EE_
-x-ms-office365-filtering-correlation-id: 971715ef-5fd6-48f0-3f1e-08de0d5d491d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?dXRSd0sxMEdLRS9zTnVTd2traHNGUnB1ek1kTVV2VU9OR0xYOGdYaTltV0J0?=
- =?utf-8?B?OVllbitmd2hDQ1prYWxFWVdXVHNHa3Y5SjZleE1rajRHa25JdDI0U1h5cml0?=
- =?utf-8?B?NXBXU2lmNFZ4cFNTMysvM1ZUN1VyeTNNVGx2aUFpd2l2WWxFV1RLSW9TcGds?=
- =?utf-8?B?dVVJbktVU28vRitIeE9vT0gza0hwTjBwbkZTejdVV2puMlQrNElTUEE2bzZX?=
- =?utf-8?B?OXd1V1I0WTByY2tNQjhsbHlBcUFmTmhuWHJsQTRpOC9HQUVsdVN1cjJDUXhQ?=
- =?utf-8?B?Wnp1Z0FYelkveGdiM2FxZWhGVE5wM01zTXBSbnMyOGNLN0ZXM3k2R1gxVndr?=
- =?utf-8?B?c1RmckVXN0VZQ3RNeFNiaXZ3blpLSVVPSTZQNEl3TDdMNmJ4eXFrVnp4c0t4?=
- =?utf-8?B?Z3ZFZFdXbXhPMWtJN1dYMndKS0NtVUcwbXc5MXBXZ2lZVm5kbUxmeHRSN05B?=
- =?utf-8?B?SHFqSElOTVBDM1lqczQ1TTU3VHdQSHVYbDBmK2Z3NHMzQmFpOWwxY01VNGNO?=
- =?utf-8?B?UklidnQ2YVpJQ1VZeXpWL3BCeW5VU09DRWpzNFJkT2Noc25mL0pMSDBQNnd3?=
- =?utf-8?B?QVdKZXBEUGZadTI2bEtEOVVJVWdSbitMbFVOajA2eUN2eU5PbXRKa2NpRkhW?=
- =?utf-8?B?bm5PSmo5TXNKRGNZbzUvSzlKeWhXeFAxYjZGNjZBSlBNcU9ySkJpUEZOY0wz?=
- =?utf-8?B?emRNQ2s2bTdhZ2tqTEpXVnZKc3o2R3A2RGh5MHdiZFN0cUxFZm00NVlrcmQw?=
- =?utf-8?B?ME1UNUFydkJDUXh1dTY5TU9iSnVCSDRoMFAzV0tFVlVxVkllUTc1MWdNNmhG?=
- =?utf-8?B?N0JxM1VqaEtoTUxIdHg0YXJIejVDVjBsRVpZZm9JcmZzc2xBZCtrcjdlSUtq?=
- =?utf-8?B?LzdlT0tXemZoZ0RBWlQrMDVqbkRzU1dheEREcHlFV2FNQVJBbkUwc3Y5R0Jk?=
- =?utf-8?B?VlN1RmM2Q21pSjZuVmdxK2JMOVBtelFDQ092QlNEVzlkUllXSzZHUWx5Y0lo?=
- =?utf-8?B?WFdrQmNQWGh3aTJ2V0hINkh3bEVCZkcxZ2lBcG9leGNHbzhZeExZSGl2WWNi?=
- =?utf-8?B?dzdBb2JVa09MdjVpR0k1N0F2c3Q5YUJ4eWVKS25EdUdOajZBcmFjdlUxZENh?=
- =?utf-8?B?VzJGcTByeFp1K1BMK2E2Q0haSnV6dU5LblU3bTdkYjEzSzh4K1VHL3JOSEc3?=
- =?utf-8?B?MFVHR3hSVFlONFJnc1Z5UE9ieFRTbE5GNXpneHZMMCt4SWE3YkVyS0lUdkdJ?=
- =?utf-8?B?TmpCeCt2ejhodHNHNlVWRVRRa1hqNDkzNEZ4ZHhKbFNXM1kwcGc0UXNDNGpQ?=
- =?utf-8?B?TzJYalkzOXZOTHhBczZWdlIrRjM4UFJpcGdJeTlCeVpJVmZhbHVFZVR4T2xJ?=
- =?utf-8?B?QTZJRFlydkxRc0Y3WDVmUFRPRjRlRnh6TUdsakJaaTFkNG1WM1B0UHZ4Nk1N?=
- =?utf-8?B?NXFLOHl4d1gxQUlBOCtHRDN3QXVSUUhCbjdQV0pEM1Z6OUVobTRHWm9Fcmp6?=
- =?utf-8?B?cUNscjhwZ01xZ3NZYVo0ZDhyL3gxemJROHo4bDJqTStTQmh5SmY1bHlBcTFI?=
- =?utf-8?B?YTRSY1ZkL2RuUU91cW9XN05IOVBOZ0V6cHFsRUg3N1N0cFpoaE9xcXpoc2lC?=
- =?utf-8?B?VFJLcWVUTHIyR054enROV1FTdXNHSERKSkU4dFd6c1BrOUIvZ1dSVkFWdXFo?=
- =?utf-8?B?T25QOFlkVW1sSDlCTjVXNnoxMXdFbE5GSnM5VEYrUVJKQ3duYWFvMTlqUmlW?=
- =?utf-8?B?cS9iakExbE1SaVdsMjcrRFljaGFlNVBDd3VsamJocnpkczhQMDdGK1NYaFVY?=
- =?utf-8?B?cWQ5Sm9FRTQ4bWZ5OWptaEkxd0NKejJoaWkybWcySTFwdDc2NnltUXFURlVr?=
- =?utf-8?B?S3o1T2pVYWs0YTVBd2VEV2Q3ZHRUc3pldUdXUWlESVJXSUxPNUgvMGQrcDlt?=
- =?utf-8?B?dFRUWk40WXIxQnVabklPaUM1K2FsdjBwaC9kRVVsNzlKUVdIRXZHMXR6dEE0?=
- =?utf-8?B?M2lIM3NhR2VNb245UlpqR1VJdEl3akVzSVlVUkgxNUdHcHVHQmlOVDhQdTV4?=
- =?utf-8?Q?X+fdNA?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB5605.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dWsvOUdTTmxPZHVHVXNXRXFHejZRV1FIV3lnZ1IxcXdYTFkvd2FGdXFsR2kz?=
- =?utf-8?B?UjB1UU9hOVVRRGNsUGhySG9QZW9jdVNXYmFBY2FUTGk3S3FzQ2YraXFKN2RW?=
- =?utf-8?B?emR3aERMbjQ1QVZrZFpQZkFKU2tMSWxzQ3NJQVUyNUJmVlJLa05VR0Y0d05E?=
- =?utf-8?B?c1g4S2VKTmRrMGJUa2dpL1B0QlY0MG5YWkZMdnhZd2NaTXVnMCtlclhpMDVP?=
- =?utf-8?B?bHFYTVNON3lHUGh6cVVORVdaRXU5ekRjbFc3cEFpajFWcllOdm1kdGZTeDVI?=
- =?utf-8?B?NjQxLzIzZnBvd0NWZUZUUjlHM2VISjd1OXdOU1p2a3IzWmtiVk83bW9iVlN6?=
- =?utf-8?B?RFRhdUNqRkdYWmZWcHBIdlR2Y2NzK0lHU3BoZ29MSW1UandXQ3NHck1HZGNN?=
- =?utf-8?B?ZDk3R1BkNzZJWmd2L2VPYTNzQkdaNXY1dW9jdUorajNsV1FRc1ZrU2JZanZG?=
- =?utf-8?B?bHF4Mk1FYWZhNy93dHJLTk44K2hQajRzSUxWSm8vTjBMWmgzRUJPOUFuSkZ4?=
- =?utf-8?B?UVVwVm9Ic0lFQ051UlhLVWNBTGpZU1dmVVduZEpzNVlPVmtLU2pYYlppWWpy?=
- =?utf-8?B?OVNBckN2Sks1aW83ZEl3TGtJMTBnZUNaenhzVGZrMXpmSlBGWVp0Tmp6VUNF?=
- =?utf-8?B?NXhBRzVqL000dllQZ1VTbTd1ZlpHUkoxdElHUGw5NFFFRVZtZ2pMSTlHNmF5?=
- =?utf-8?B?ZEMzUzlSQlJCQ2IybjFYcHBFZjhXRzhSdXI3dStsOHY3bWZpdmFjZDlINDJD?=
- =?utf-8?B?QzhFRUQyaThlK0lxdUYzb1BzU3BhR2ltWi81QlhubHNHaWFXMEVxOS9BanVu?=
- =?utf-8?B?aVhZVzZOZC9LYi9Sb1BUVXlxYkdMcDJSa1c3VUZXNXBNbi9YTTlkZVJqdXp3?=
- =?utf-8?B?bmNxRmlCVGl2QXhGNDZ1N25zamdlbkVTeEkrcC9Jb2UzSVNCVG15V2V5ZlY3?=
- =?utf-8?B?b0gwcXlsbk9RRFF3WFR4MTBUY2RGaW0vN2JBeU1UYjNJbUR3dDJVYWh1N0lF?=
- =?utf-8?B?Q3A5b3BxRE1LOHhtbnBCYTFvRmFvQ1dKai9oZG1NdExFc0dRSWozZXJaL0VE?=
- =?utf-8?B?MmpRY2VQNHB4QjBtZTZkMHFMQUtmN1BHanBZaFdlcUh1ZmFUN3BFMzFMaVFT?=
- =?utf-8?B?eG5oQlVLU1dzQzRIVks4aThxd2ZoUXA2aVh4RjlkZWxWVjErZ1VXdE15QVJo?=
- =?utf-8?B?dkdadEQxWk5hYzZHZnV3dE5tYTk5UUN1bldJaXJUM0dpbmpmVjM3MWVXNVlN?=
- =?utf-8?B?aDBqSk4rTkcwclNUZmZTNjgrbzQ4TmdCaC9nOW43TFQxY2J1d3FnNHVYbExs?=
- =?utf-8?B?UEppMkFJcU91WHhLZnFWUWRaaVNRdWJFYU5KeHVnQWZZNW5NTC9hUmJkOXBT?=
- =?utf-8?B?aE9sVE9nVXpET1lDbU1UMVZ2M2NiYkYreU9PQmozcFdmeFVWT096QWsvN3NH?=
- =?utf-8?B?OVNtb3dWQWl0RngrZlJzNGFNSHI2bEZZTk1tTGV3Y0FIdzcwR0ZFL0EwMXVu?=
- =?utf-8?B?Vkl1OUkxLzR2M0tPZjVoamIzdVJ0S3lENThvQWdlTUdOVXVKZU1reEE0WXl5?=
- =?utf-8?B?bDNxOHVHc2duOGs3NGpzK2dHVS9reHV5eFdwMzdlYU8rRXc3bnlYVFNlMkc0?=
- =?utf-8?B?aWg2SEduZ0NOekhFMDA5bXZwWGVFc283TUVZS2Z1RUgwbmFZSHdiQU5wVWN3?=
- =?utf-8?B?MGsvR3VFYWdsS0I2SnNCTURiYzh2NXZ6bm1XS3JkRWVqeHB5SS9Fc0s3eWZt?=
- =?utf-8?B?Vlg2cmxVVFUwSEJZSmpMVlU2clR2bE91Smo4ZURJZU5vTVVYL3NBNjRZc0lq?=
- =?utf-8?B?WEVOZjJEZUFJVmg2OFBKdUk2RktKWUpxRy9Sb0Y3Z2Jmd29XR2VyWjVOd2Rh?=
- =?utf-8?B?UURRQ0VwbEZoYjMvYzRVM2E4UzhrKzlVbks1T2Exd0xIVGpySFVKajBNQmp6?=
- =?utf-8?B?Y2JKQ3dKTitzZVVpRGVDN21DUSsyK0RKT2RVL29WRXdrT2pIYkRVOUNQQmJG?=
- =?utf-8?B?SVA2L0V5WENpSnM4TlByTjV5NHBqWktqSnAzRVJLcVNuWFo1Znp0WkFFSTVB?=
- =?utf-8?B?c2NHRXNJOEZtNW9jR2tKQmZ6eFk1NjdWbUxnbGJnT0pUZUk5QnJFMG5CV1Bu?=
- =?utf-8?B?ajAzblhVQS8vKzNLc05MdUExeDVFK3BpZERabmkxL2p5TysvTncyQ3dYZEJi?=
- =?utf-8?B?NVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6788CD0B5645BB4D974DCEBB8D927240@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A563C30DD3F;
+	Fri, 17 Oct 2025 09:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760692506; cv=none; b=tJYqgU4S/XzACjx8umDOEfzQ67eB3LicZUbRDJL7zdsF6YQLYL98EddAKdO7DXevRXi+aS9Q/kNppBzjnWYqWT+sgzRZMFKkWH0lgEmmvkJmIrTXSq6PjCRdMm6sJKPzhN9T+21Cyh4TBxMZF6fh3fIop7ItdFDc9GqYpH5Xlb0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760692506; c=relaxed/simple;
+	bh=mSjk6FZr791b9H75YuvBcHRyC9djxbilNgqrZo54H6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B8EIvXtoaUWKFaF3dTWnCzt825Yt+NJ1hSvlH6rbsr0LteKtBqhSITx9t38zqEcNRTCDha8awwCja5+TzEN2ws+eo2Vi6VaVuBVDcDm7rDSnn4mFbZF5Fy/WZFFimuLtYc69fzIThJdKI58k/8gkCPVVIMGEIRJk5bSNIki3xj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JsaKqEez; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H7iHlk001398;
+	Fri, 17 Oct 2025 09:14:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=+3Upo5
+	OE7pHxEFe3tmbZpeawhzh4FlEoIXRxd4VSv28=; b=JsaKqEezcfpud5WrRLycdc
+	H+oQQuOQKt9AWS2MA2f2AWZxfvs/fKy1XLjRxCuyz+56f5TaICphCw6V+vG/C2bz
+	F5gbzyBcSi8cacGtFSmpTAFrTlG2aUVsmy31GO+qAMN+54h8jCVe9POxWOaK8fN7
+	/hJEpyoIAS2JTMgkwbRRg9OFM1BAa8/e1C7ZI4h8ECcspk29fPXdeARq+uJw8Tjf
+	D5t5GR/pWKBSuIjzJXOp2kI6eD4WxDfkehxYD18sHbNqW2XhzgpvGBF1H6XEoi2M
+	HcjAvo8sAVrEbNJQz08zCz9y9YqXcAvYvdU1ercKZUeSINmh7JZlhpwWWcKvdf1A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp8c6xn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 09:14:31 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59H9EULh021760;
+	Fri, 17 Oct 2025 09:14:30 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp8c6wu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 09:14:30 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59H8ubTK003613;
+	Fri, 17 Oct 2025 09:14:29 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xyc2fw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 09:14:29 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59H9ENpC44826910
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 Oct 2025 09:14:23 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A877D2004D;
+	Fri, 17 Oct 2025 09:14:23 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12A9920043;
+	Fri, 17 Oct 2025 09:14:22 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.111.16.217])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Fri, 17 Oct 2025 09:14:21 +0000 (GMT)
+Date: Fri, 17 Oct 2025 11:12:41 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+        Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Madhavan Srinivasan
+ <maddy@linux.ibm.com>,
+        Anup Patel <anup@brainfault.org>, Paul Walmsley
+ <pjw@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou
+ <aou@eecs.berkeley.edu>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Kirill A. Shutemov" <kas@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        kvm@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, linux-coco@lists.linux.dev,
+        linux-kernel@vger.kernel.org, Ira Weiny
+ <ira.weiny@intel.com>,
+        Kai Huang <kai.huang@intel.com>, Michael Roth
+ <michael.roth@amd.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Vishal Annapurve
+ <vannapurve@google.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Binbin Wu
+ <binbin.wu@linux.intel.com>
+Subject: Re: [PATCH v3 01/25] KVM: Make support for
+ kvm_arch_vcpu_async_ioctl() mandatory
+Message-ID: <20251017111241.3ce81f4f@p-imbrenda>
+In-Reply-To: <20251017003244.186495-2-seanjc@google.com>
+References: <20251017003244.186495-1-seanjc@google.com>
+	<20251017003244.186495-2-seanjc@google.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB5605.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 971715ef-5fd6-48f0-3f1e-08de0d5d491d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2025 09:12:24.2570
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IX+AZJa5/VC08Ye1DVOk/c6BEL5FuqK9YPEIGaZVWXL6V12Gjy3D8WJfHHFzetNrTLz1cqD6jg3eZxeaWMxxXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8588
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: WPthx5jfwUZwmBXm82Ziu6FlbYNGp6QD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA4NCBTYWx0ZWRfX5i24UI+B1MAY
+ VWfB/xDHmOzuGKZz+zkZ2l9x8ZFHXJp4bGgLzsCYZhO0HnyGdmaDMrR3mpcUClvHV/6yUf/DJgW
+ ovv0s0yH2DpJzEoDalTUQ7xn8+BsGsuUL1Evgi81/rNK8f7liy/e1u5Eplk2Ps1PMqe9VGG88Gd
+ B/PWIRzNBJouLYr5zASWk7TtznxP5X/Q7AcX7MyEwpCz/kio7cNBjUypNeg4aqEfYVvH1iNdnqr
+ DDQxOpdTs6xRl/ZL81gMulg8gwbv+0DLWp2ISeg0UnUuPhPGkSeiVmEYx2auRl+f/B7rfTpWlo4
+ 36AvglRUTKXS0RgNKsrmRPKBst0ScMzACFqT/FpbRDvXiLwKYRDDM1MCJ2Zszccck9R4e2QBfwT
+ CUAxfvzW0pSyHs9EaJzGgT7XBGLbiw==
+X-Proofpoint-GUID: R3CWxwVp1MSUDtnlqjQzPeUreuCpS978
+X-Authority-Analysis: v=2.4 cv=af5sXBot c=1 sm=1 tr=0 ts=68f208f7 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8 a=Pqhxwy0yHowpa1wmBDEA:9
+ a=3CZKy65qupELU2PZ:21 a=CjuIK1q_8ugA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510120084
 
-T24gVHVlLCAyMDI1LTEwLTE0IGF0IDEzOjQwICswOTAwLCBXb25rb24gS2ltIHdyb3RlOg0KPiAN
-Cj4gRnJvbTogd2tvbi1raW0gPHdrb24ua2ltQHNhbXN1bmcuY29tPg0KPiANCj4gSWYgdWZzaGNk
-X3NlbmRfY21kKCkgZmFpbHMsICptaWJfdmFsIGhhcyBhIGdhcmJhZ2UgdmFsdWUuDQo+IEEgdmFs
-dWUgb2YgYW4gYXR0cmlidXRlIGNhbiBoYXZlIGFuIHVuaW50ZW5kZWQgcmVzdWx0Lg0KPiB1ZnNo
-Y2RfZG1lX2dldF9hdHRyKCkgYWx3YXlzIGluaXRpYWxpemVzICptaWJfdmFsLg0KPiANCj4gU2ln
-bmVkLW9mZi1ieTogV29ua29uIEtpbSA8d2tvbi5raW1Ac2Ftc3VuZy5jb20+DQoNClJldmlld2Vk
-LWJ5OiBQZXRlciBXYW5nIDxwZXRlci53YW5nQG1lZGlhdGVrLmNvbT4NCg==
+On Thu, 16 Oct 2025 17:32:19 -0700
+Sean Christopherson <seanjc@google.com> wrote:
+
+> Implement kvm_arch_vcpu_async_ioctl() "natively" in x86 and arm64 instead
+> of relying on an #ifdef'd stub, and drop HAVE_KVM_VCPU_ASYNC_IOCTL in
+> anticipation of using the API on x86.  Once x86 uses the API, providing a
+> stub for one architecture and having all other architectures opt-in
+> requires more code than simply implementing the API in the lone holdout.
+> 
+> Eliminating the Kconfig will also reduce churn if the API is renamed in
+> the future (spoiler alert).
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Acked-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+
+> ---
+>  arch/arm64/kvm/arm.c       |  6 ++++++
+>  arch/loongarch/kvm/Kconfig |  1 -
+>  arch/mips/kvm/Kconfig      |  1 -
+>  arch/powerpc/kvm/Kconfig   |  1 -
+>  arch/riscv/kvm/Kconfig     |  1 -
+>  arch/s390/kvm/Kconfig      |  1 -
+>  arch/x86/kvm/x86.c         |  6 ++++++
+>  include/linux/kvm_host.h   | 10 ----------
+>  virt/kvm/Kconfig           |  3 ---
+>  9 files changed, 12 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index f21d1b7f20f8..785aaaee6a5d 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -1828,6 +1828,12 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+>  	return r;
+>  }
+>  
+> +long kvm_arch_vcpu_async_ioctl(struct file *filp, unsigned int ioctl,
+> +			       unsigned long arg)
+> +{
+> +	return -ENOIOCTLCMD;
+> +}
+> +
+>  void kvm_arch_sync_dirty_log(struct kvm *kvm, struct kvm_memory_slot *memslot)
+>  {
+>  
+> diff --git a/arch/loongarch/kvm/Kconfig b/arch/loongarch/kvm/Kconfig
+> index ae64bbdf83a7..ed4f724db774 100644
+> --- a/arch/loongarch/kvm/Kconfig
+> +++ b/arch/loongarch/kvm/Kconfig
+> @@ -25,7 +25,6 @@ config KVM
+>  	select HAVE_KVM_IRQCHIP
+>  	select HAVE_KVM_MSI
+>  	select HAVE_KVM_READONLY_MEM
+> -	select HAVE_KVM_VCPU_ASYNC_IOCTL
+>  	select KVM_COMMON
+>  	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
+>  	select KVM_GENERIC_HARDWARE_ENABLING
+> diff --git a/arch/mips/kvm/Kconfig b/arch/mips/kvm/Kconfig
+> index ab57221fa4dd..cc13cc35f208 100644
+> --- a/arch/mips/kvm/Kconfig
+> +++ b/arch/mips/kvm/Kconfig
+> @@ -22,7 +22,6 @@ config KVM
+>  	select EXPORT_UASM
+>  	select KVM_COMMON
+>  	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
+> -	select HAVE_KVM_VCPU_ASYNC_IOCTL
+>  	select KVM_MMIO
+>  	select KVM_GENERIC_MMU_NOTIFIER
+>  	select KVM_GENERIC_HARDWARE_ENABLING
+> diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
+> index 2f2702c867f7..c9a2d50ff1b0 100644
+> --- a/arch/powerpc/kvm/Kconfig
+> +++ b/arch/powerpc/kvm/Kconfig
+> @@ -20,7 +20,6 @@ if VIRTUALIZATION
+>  config KVM
+>  	bool
+>  	select KVM_COMMON
+> -	select HAVE_KVM_VCPU_ASYNC_IOCTL
+>  	select KVM_VFIO
+>  	select HAVE_KVM_IRQ_BYPASS
+>  
+> diff --git a/arch/riscv/kvm/Kconfig b/arch/riscv/kvm/Kconfig
+> index c50328212917..77379f77840a 100644
+> --- a/arch/riscv/kvm/Kconfig
+> +++ b/arch/riscv/kvm/Kconfig
+> @@ -23,7 +23,6 @@ config KVM
+>  	select HAVE_KVM_IRQCHIP
+>  	select HAVE_KVM_IRQ_ROUTING
+>  	select HAVE_KVM_MSI
+> -	select HAVE_KVM_VCPU_ASYNC_IOCTL
+>  	select HAVE_KVM_READONLY_MEM
+>  	select HAVE_KVM_DIRTY_RING_ACQ_REL
+>  	select KVM_COMMON
+> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
+> index cae908d64550..96d16028e8b7 100644
+> --- a/arch/s390/kvm/Kconfig
+> +++ b/arch/s390/kvm/Kconfig
+> @@ -20,7 +20,6 @@ config KVM
+>  	def_tristate y
+>  	prompt "Kernel-based Virtual Machine (KVM) support"
+>  	select HAVE_KVM_CPU_RELAX_INTERCEPT
+> -	select HAVE_KVM_VCPU_ASYNC_IOCTL
+>  	select KVM_ASYNC_PF
+>  	select KVM_ASYNC_PF_SYNC
+>  	select KVM_COMMON
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index b4b5d2d09634..ca5ba2caf314 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7240,6 +7240,12 @@ static int kvm_vm_ioctl_set_clock(struct kvm *kvm, void __user *argp)
+>  	return 0;
+>  }
+>  
+> +long kvm_arch_vcpu_async_ioctl(struct file *filp, unsigned int ioctl,
+> +			       unsigned long arg)
+> +{
+> +	return -ENOIOCTLCMD;
+> +}
+> +
+>  int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+>  {
+>  	struct kvm *kvm = filp->private_data;
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 5bd76cf394fa..7186b2ae4b57 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -2437,18 +2437,8 @@ static inline bool kvm_arch_no_poll(struct kvm_vcpu *vcpu)
+>  }
+>  #endif /* CONFIG_HAVE_KVM_NO_POLL */
+>  
+> -#ifdef CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL
+>  long kvm_arch_vcpu_async_ioctl(struct file *filp,
+>  			       unsigned int ioctl, unsigned long arg);
+> -#else
+> -static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
+> -					     unsigned int ioctl,
+> -					     unsigned long arg)
+> -{
+> -	return -ENOIOCTLCMD;
+> -}
+> -#endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
+> -
+>  void kvm_arch_guest_memory_reclaimed(struct kvm *kvm);
+>  
+>  #ifdef CONFIG_HAVE_KVM_VCPU_RUN_PID_CHANGE
+> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+> index 5f0015c5dd95..267c7369c765 100644
+> --- a/virt/kvm/Kconfig
+> +++ b/virt/kvm/Kconfig
+> @@ -78,9 +78,6 @@ config HAVE_KVM_IRQ_BYPASS
+>         tristate
+>         select IRQ_BYPASS_MANAGER
+>  
+> -config HAVE_KVM_VCPU_ASYNC_IOCTL
+> -       bool
+> -
+>  config HAVE_KVM_VCPU_RUN_PID_CHANGE
+>         bool
+>  
+
 
