@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-857415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6353FBE6BDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FE6BE6BF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0EE2B354DD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71EEF3A4C18
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF3F30FC31;
-	Fri, 17 Oct 2025 06:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9D030DD3F;
+	Fri, 17 Oct 2025 06:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WokAg896"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwccKLcY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B123536B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69271D6187
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760683417; cv=none; b=CqAwGuwE7EXhQf5YZw2i4Qhy7cdRVoJ+vRWkhgHLMh+/gsXuMSXZ0d5Ll5XH8qZaeWzisQy5OS8SPA3QUr9Zv+wowDyIjGzLsMAcW4IJdQMkC9XwbQktS0lkm+z80dgqF8YMoE4M7qIWcaBCgEMrgLAULnL6CK1YveOxXysC5qk=
+	t=1760683464; cv=none; b=SENRVsNkdMrdSpYApeDMbtv+NnnQ6kHUTxMtK7df9EkVNmithPuH1VLJuqMnkkPq/drQGjnHpHiVb8NLiQcqwvPB4wfwE9M3TJG8JnCrJFOgXPT7qvZO6s4jn72hkYuDCzlIFf+TJGIbbE/alKUGyBAI+C/rupKfoFSCiewwTY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760683417; c=relaxed/simple;
-	bh=goiNe26JI97XimIaJqB0nQh2LC62mtWHX8LAPMghZtc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Cf8o5RTW+3QyMkzyrTgeTeiD42Rtir3ojMdQQQgCxYyTzKsSH1CBIsnJAhDhdUUQWF5dmRYPF9Bb5EBx4YnuZkGNRiMT5KxdlQx6KBNv2ywLmOLvN6ENSqjd2i2t/ypQ/qYz646xsK6WZTp+wCHLI6Y1OrhCcTy3ZqoWZRtLQ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WokAg896; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251017064327euoutp015904daad1bab2384b34d6700fdc63414~vNDsHUak33251832518euoutp01W
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:43:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251017064327euoutp015904daad1bab2384b34d6700fdc63414~vNDsHUak33251832518euoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760683407;
-	bh=pmOERI3SUEXraCgPIeHw+QXcfM6eSSu/gHX94UGDCzg=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=WokAg896tCCv63IRBiccsVar42fKcVYzFnOA+JFwG5K7FKWRIYNZZQonCiKxs0uq6
-	 Q3HXOXddKG6MYJL9GkAUI+7PeTOk69m0xIFW1kjpd1kLduazEoiyVrEwE+7VhyrFrQ
-	 iUy4xUJnQ63u9uz54QPWZkDuZ/oHClyNGxJIUWFU=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251017064327eucas1p29f30c1de202c52dc09548aa9fc6f54b7~vNDrsbPeZ1312513125eucas1p2d;
-	Fri, 17 Oct 2025 06:43:27 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251017064324eusmtip201695dfb1cec04fbd125e4f2c643fd35~vNDpvJ8tS0730207302eusmtip2G;
-	Fri, 17 Oct 2025 06:43:24 +0000 (GMT)
-Message-ID: <1731abfc-c7e4-4ff0-a1b3-7d86c8025866@samsung.com>
-Date: Fri, 17 Oct 2025 08:43:24 +0200
+	s=arc-20240116; t=1760683464; c=relaxed/simple;
+	bh=7P4jh6kluLcdpaCNJenQWmykCB2CsHxYxuiH71O7f8U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=kbD1jqD+uExzZ3XXNNLnxi3NHgLTyRycci5Ir1cC1iPE6JGroczdwORt1wBI2Dsb5WJlsMB4J1BUWO5DGWPmJbcSoSMOUvo2ODACTYUUHqjmfMgr6UjC70D+nPNrTwK+beNk2HmBBUJtdoB9YOrHiWVtpjIS+/h54/P9B1kXVHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwccKLcY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A2FC4CEF9;
+	Fri, 17 Oct 2025 06:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760683463;
+	bh=7P4jh6kluLcdpaCNJenQWmykCB2CsHxYxuiH71O7f8U=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=MwccKLcYN/pX/zuOJmFiMxLkdXV91iDq/NMuWvu79+cX6Urmuqgrq3fyqMRBYVr3q
+	 AVfb8urT5KUy8SWL1ZemxNKEqyEECzYsk0QQwieDtvUtJx7dcyOWmJohUwTtrmoCtT
+	 FueWx3yXWx5n0coD0oVYd+ZC5Z+yqLxBzhnacTZN49Y3pFUIkHyMbtzUdFacaTRAWM
+	 2OOtm0nhgIWXaoD31QaON754lNuzQFBMdySQr/gK0o60bHTgX7MXinI33Bxs3Razdw
+	 B4IpHyXDtqSjuDf9fc/NcK3xod9LEjUP/V13okNO4riM7r+qWwsU78PuS3paMSsftZ
+	 o33a16Pctc3yA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v3 00/10] pmdomain: samsung: add supoort for Google
- GS101
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>,
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	stable@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251017064327eucas1p29f30c1de202c52dc09548aa9fc6f54b7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251016155848eucas1p193debe70e38b1694bfb250d748f4aa14
-X-EPHeader: CA
-X-CMS-RootMailID: 20251016155848eucas1p193debe70e38b1694bfb250d748f4aa14
-References: <CGME20251016155848eucas1p193debe70e38b1694bfb250d748f4aa14@eucas1p1.samsung.com>
-	<20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=4fee797e4721044d08e9601b3b5e8700f6c06056cbf5c56b70d2e0a6e636;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 17 Oct 2025 08:44:18 +0200
+Message-Id: <DDKE72QORJS2.29XWZ4U0T0K4I@kernel.org>
+Subject: Re: [PATCH] mtd: spi-nor: atmel: add at25dn011
+Cc: "Marcus Folkesson" <marcus.folkesson@gmail.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Simon Richter" <simon@sinic.eu>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel
+ Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>, <linux-mtd@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20251017060529.21169-1-simon@sinic.eu>
+In-Reply-To: <20251017060529.21169-1-simon@sinic.eu>
 
-On 16.10.2025 17:58, André Draszik wrote:
-> This series adds support for the power domains on Google GS101. It's
-> fairly similar to SoCs already supported by this driver, except that
-> register acces does not work via plain ioremap() / readl() / writel().
-> Instead, the regmap created by the PMU driver must be used (which uses
-> Arm SMCC calls under the hood).
+--4fee797e4721044d08e9601b3b5e8700f6c06056cbf5c56b70d2e0a6e636
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+Hi Simon,
+
+On Fri Oct 17, 2025 at 8:05 AM CEST, Simon Richter wrote:
+> Add AT25DN011 with 1Mbit.
+> Used on multiple custom boards and tested with this patch.
+
+Could you add your testing to the next version of your patch (below
+a "---" line). See also [1].
+
 >
-> The DT update to add the new required properties on gs101 will be
-> posted separately.
->
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Link: https://www.renesas.com/en/document/dst/at25dn011-datasheet?r=3D160=
+8506
 
-Works fine on existing Exynos based boards.
+Newer flash and no SFDP :|
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
+> Signed-off-by: Simon Richter <simon@sinic.eu>
 > ---
-> Changes in v3:
-> - use additionalProperties, not unevaluatedProperties in patch 2
-> - fix path in $id in patch 2 (Rob)
-> - drop comment around 'select' in patch 2 (Rob)
-> - collect tags
-> - Link to v2: https://lore.kernel.org/r/20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org
+>  drivers/mtd/spi-nor/atmel.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
-> Changes in v2:
-> - Krzysztof:
->    - move google,gs101-pmu binding into separate file
->    - mark devm_kstrdup_const() patch as fix
->    - use bool for need_early_sync_state
->    - merge patches 8 and 10 from v1 series into one patch
-> - collect tags
-> - Link to v1: https://lore.kernel.org/r/20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org
->
-> ---
-> André Draszik (10):
->        dt-bindings: power: samsung: add google,gs101-pd
->        dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separate binding
->        dt-bindings: soc: samsung: gs101-pmu: allow power domains as children
->        pmdomain: samsung: plug potential memleak during probe
->        pmdomain: samsung: convert to using regmap
->        pmdomain: samsung: convert to regmap_read_poll_timeout()
->        pmdomain: samsung: don't hardcode offset for registers to 0 and 4
->        pmdomain: samsung: selectively handle enforced sync_state
->        pmdomain: samsung: add support for google,gs101-pd
->        pmdomain: samsung: use dev_err() instead of pr_err()
->
->   .../devicetree/bindings/power/pd-samsung.yaml      |   1 +
->   .../bindings/soc/google/google,gs101-pmu.yaml      | 106 +++++++++++++++++
->   .../bindings/soc/samsung/exynos-pmu.yaml           |  20 ----
->   MAINTAINERS                                        |   1 +
->   drivers/pmdomain/samsung/exynos-pm-domains.c       | 126 +++++++++++++++------
->   5 files changed, 200 insertions(+), 54 deletions(-)
-> ---
-> base-commit: 58e817956925fdc12c61f1cb86915b82ae1603c1
-> change-id: 20251001-gs101-pd-d4dc97d70a84
+> diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
+> index 82c592f0a1e1..0c2908bce0bc 100644
+> --- a/drivers/mtd/spi-nor/atmel.c
+> +++ b/drivers/mtd/spi-nor/atmel.c
+> @@ -171,6 +171,11 @@ static const struct flash_info atmel_nor_parts[] =3D=
+ {
+>  		.name =3D "at45db081d",
+>  		.size =3D SZ_1M,
+>  		.no_sfdp_flags =3D SECT_4K,
+> +	}, {
+> +		.id =3D SNOR_ID(0x1f, 0x42, 0x00),
+> +		.name =3D "at25dn011",
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+No .name please, the ID is enough. We've deprecated the use of a
+name.
 
+> +		.size =3D SZ_128K,
+> +		.no_sfdp_flags =3D SECT_4K | SPI_NOR_DUAL_READ
+
+missing trailing comma.
+
+-michael
+
+>  	}, {
+>  		.id =3D SNOR_ID(0x1f, 0x42, 0x16),
+>  		.name =3D "at25sl321",
+
+[1] https://docs.kernel.org/driver-api/mtd/spi-nor.html
+
+--4fee797e4721044d08e9601b3b5e8700f6c06056cbf5c56b70d2e0a6e636
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPHlwxIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gmLwF+JiHyu3n9XMBIhiXLnXajztj5wG7/MjHp
+WunFdtYCZ+VyTvOPA/DytJuplHSgtXWHAX42m2HDy4l8RGIG/10nc2uLX0iousfN
+vFX+Y4mQhWsB9wyr8iYxD9fVyGdi8tzbF0w=
+=w87x
+-----END PGP SIGNATURE-----
+
+--4fee797e4721044d08e9601b3b5e8700f6c06056cbf5c56b70d2e0a6e636--
 
