@@ -1,95 +1,99 @@
-Return-Path: <linux-kernel+bounces-857846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C68CBE8101
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:27:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB18BE8107
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29AED1AA1CCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:28:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 389954F3C59
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D263126A4;
-	Fri, 17 Oct 2025 10:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746FB31064A;
+	Fri, 17 Oct 2025 10:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivyB4e0+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LQG4n4Va"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C254311C05;
-	Fri, 17 Oct 2025 10:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D599D29BDB1
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760696843; cv=none; b=XfoJ4lpI6gBd1owvgXZF58/TjC9zyHmILyl1I8ArL3JwI5vIAZedGeb54UfjjbgSTn9vs3svzWZwdQBVxKRrIDfTzDXBC/5YjCMMS8ub39pHqK3ANHWH38QsGE3BYtyFXckpohpfJQC1bBlxY0GCz1LmyVsyCd6zbBJXyQDbj1I=
+	t=1760696911; cv=none; b=FRU3cSyFCJDBYs2AT+aMCDedGT/EHvmklOsMVSEDQZGuuqRcAoV890uqw/DtR2sEDx7w7EwKxfBnSUnCrWL0/PNn4w5J0Uxt5xzIq1I8w4EAEfVhj1V7es9uFDG+Bv5qMNeE9j5ZsJwunGVwbfVKXQp2eQ0aOCf+gyQuy+dWZkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760696843; c=relaxed/simple;
-	bh=AXb2xoWF36PJ82m6BEQX2BdaIWmKUFdyItrBQFX0b8c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=c6QLXEhGP2Z68ZyczSx277uqrocgnRNjbMnI7OIOFWO6mzg/SkVi/hYedXcTHprjAZASj9JR2iZDwgZUtH1aUqJW96T0I/2sDBbpi34EAUd+Cqps4pMNuIbqGQZz0s5DI4WasXv/1q0wHn7DvE29+q0uPv93Ugl/hmMzeonyP5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivyB4e0+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4ACC4AF0B;
-	Fri, 17 Oct 2025 10:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760696843;
-	bh=AXb2xoWF36PJ82m6BEQX2BdaIWmKUFdyItrBQFX0b8c=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
-	b=ivyB4e0+t/GWg+1SNSB43y07tXoByzNyL5FagwcIOvm/vwYuJGFvPkac++hLkjZFg
-	 gi/QmUs86qqqH9c1OOwq1pfIwq0ooGvegZODBLL27kaWwKkb5L+kZtzbwFFRFRPBII
-	 KJ+LMHtEKKhObCscaZra1PV9fj3VsNG4E08+JMrOKqkRN/z9N6k4CFz5Q1t4ga5iVg
-	 IrFA4enPWxzurEv+mkZ2HM0GjBublSHznMwhAwrbRSGeCsXnbTQ6YPiXUWgCGwsZ5N
-	 N2zfXogkrJJtT3sn7nr705gDpKZGvh+Imyi849qPBjGE8L4MU5d4ZIo8Mh+0zZGXfE
-	 9gV+S93/twu+A==
+	s=arc-20240116; t=1760696911; c=relaxed/simple;
+	bh=cwbKcDkqcazpSY0xW+hoZDJvn6Vdm8ZtWoRuzYArkyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E4VPfWBr80A7+VVi/X4tZVXRUKQtH8y9CJ5vh7XKDYzlhRJ8UgH9J1Gj57xNC+vP/nDBMKdjugzWaDjGfB4ejO/J+sY60onJyurs0KZtJtLqrbo4biVpgcqWn/5LpghkgeXj1cb0sZHbEKfLjv8Xw9sLAQA6fcyhXrGsu/qkCWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LQG4n4Va; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760696907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=W1IDrz3RmQ+DjnJHgkvZJfeGuFV4FYY3VXTJn4UzdsY=;
+	b=LQG4n4Vai/wW3aF62q1eiUNmJjL5j3yRF7CeP3SbZ8TiUo9B8fklD1tcXvOIKbIQDhkTN+
+	BuQVstW4GNimda8ZTHaPXOaCfuAXBZ1TGQCSEYCQRj/yTtLznR5VJlXq8+B2m/kuwNgGWI
+	TN1vWPrCLBg0AHc+mvYBIoymOLwKMik=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND 1/2] stm class: Replace kmalloc + copy_from_user with memdup_user
+Date: Fri, 17 Oct 2025 12:27:42 +0200
+Message-ID: <20251017102743.75394-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=209572d5d449fea800561efc9231a1c1fc1c44a605e3fc288225d653e647;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Fri, 17 Oct 2025 12:27:18 +0200
-Message-Id: <DDKIXTB6YXUM.3VY1GNCC6GFCN@kernel.org>
-To: "Michael Walle" <mwalle@kernel.org>, "Nishanth Menon" <nm@ti.com>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-Subject: Re: [PATCH v1 1/2] rm64: dts: ti: k3-j722s-evm: explicitly use
- PLL1_HSDIV6 audio refclk
-Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20251017102228.530517-1-mwalle@kernel.org>
-In-Reply-To: <20251017102228.530517-1-mwalle@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---209572d5d449fea800561efc9231a1c1fc1c44a605e3fc288225d653e647
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Replace kmalloc() followed by copy_from_user() with memdup_user() to
+simplify and improve stm_char_write().
 
-On Fri Oct 17, 2025 at 12:22 PM CEST, Michael Walle wrote:
+Allocate and copy only 'count' bytes instead of 'count + 1' since the
+extra byte is unused.
 
-> [PATCH v1 1/2] rm64: dts: ti: k3-j722s-evm: explicitly use PLL1_HSDIV6 au=
-dio refclk
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/hwtracing/stm/core.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Dang. I just noticed the subject has a typo. Will fix it in the next
-version, or if there are no futher remarks, could it be fixed while
-applying?
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index cdba4e875b28..5834f796e86b 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -645,15 +645,9 @@ static ssize_t stm_char_write(struct file *file, const char __user *buf,
+ 			return err;
+ 	}
+ 
+-	kbuf = kmalloc(count + 1, GFP_KERNEL);
+-	if (!kbuf)
+-		return -ENOMEM;
+-
+-	err = copy_from_user(kbuf, buf, count);
+-	if (err) {
+-		kfree(kbuf);
+-		return -EFAULT;
+-	}
++	kbuf = memdup_user(buf, count);
++	if (IS_ERR(kbuf))
++		return PTR_ERR(kbuf);
+ 
+ 	pm_runtime_get_sync(&stm->dev);
+ 
+-- 
+2.51.0
 
--michael
-
---209572d5d449fea800561efc9231a1c1fc1c44a605e3fc288225d653e647
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPIaBxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gJfwF+MlA538hR89tlDMYyXTdFilZkhwrQOqDO
-KX70l82R34q8yCx2xEAatnjiIiI4D9FvAYDevXZvMHZLxxjOJwsBxB2A0CyDYCAr
-eos4cbNK+BO7LLznbJ+6BkL4Gy2I9IQviL0=
-=jeCh
------END PGP SIGNATURE-----
-
---209572d5d449fea800561efc9231a1c1fc1c44a605e3fc288225d653e647--
 
