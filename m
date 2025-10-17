@@ -1,123 +1,97 @@
-Return-Path: <linux-kernel+bounces-858370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693D8BEA966
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:17:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C80BEAE1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD21940FAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7AAD964474
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F92242935;
-	Fri, 17 Oct 2025 16:03:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650E119F121
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6247925744D;
+	Fri, 17 Oct 2025 16:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaX/3V5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19E219F121
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760716982; cv=none; b=rR3C8k3nLU6ou3OXpcb2qbp0EVvuBHrSTFxxafU1N6QV1JgobRJOHCacyItIRKyFdUAp5B9Oye9swx+jT9jESguU7GA0Bi1BiJ4CVk0hoWsDntHQOofMPKdXYtt305WChDawb67laL9s4KRhRWoHzy7U8vp5Kie2YY8zLGBs3wY=
+	t=1760716991; cv=none; b=qPE8Oz3JIVaUGgmwbhSv9MK+F3yetvGXBB1twgoy+jHlxISlBrzALVEQVenLDgvzxMdH+ZDmd+Zr4is/d54RvyGJKjnbVtFDKHZIMBqVCgpYdwYvjVz6AKt3hs4t59jmwqeefoFVAGibJXcxHo2WNk4t17mz8gcVDksPrXgwqiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760716982; c=relaxed/simple;
-	bh=YpdGhLHMIr9Qg6PpYo9FDKATcWwDWU6bk/o/355PlQM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQFA8L+RKW/lZmMYfxrTxsbGnYWoioqvBhsBaRmQicXOW5a0AvHTHeSBJy+7f01EzD9yWlWyqHur9d2gqj83qD7tWGzHDg03hUOAr4/dGScMhvRJszZTlXP6Gw17vHH8PGMpots5+FcdjzRaMoiRocTdnwm3lE3YyAUrARvIYMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEE281595;
-	Fri, 17 Oct 2025 09:02:52 -0700 (PDT)
-Received: from localhost.localdomain (unknown [10.163.68.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9F9F33F59E;
-	Fri, 17 Oct 2025 09:02:56 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: anshuman.khandual@arm.com,
-	wangkefeng.wang@huawei.com,
-	ryan.roberts@arm.com,
-	baohua@kernel.org,
-	pjaroszynski@nvidia.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [RESEND] [PATCH v2] arm64/mm: Elide TLB flush in certain pte protection transitions
-Date: Fri, 17 Oct 2025 21:32:51 +0530
-Message-Id: <20251017160251.96717-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1760716991; c=relaxed/simple;
+	bh=6vFG6WI7taiW5nsoiE3TFRN2Y1H5m66A5DBtZRZ4Ewg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ge0QX7vTnQzi04f2CCK1eA4KFjiW1F2GBFiX45iB99djnaNvsNc8UoD7wYL16g/IhDM57EM2NJPJ1KunlywTZ+Iz0TIK2pQSV3jbGVJmmxh2bJvw6k9A3//MvGghOOl7yJvyytehXzHxee9tdFnkoVeEfEYFmtmMscKEfyrwp9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaX/3V5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C330C4CEE7;
+	Fri, 17 Oct 2025 16:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760716991;
+	bh=6vFG6WI7taiW5nsoiE3TFRN2Y1H5m66A5DBtZRZ4Ewg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LaX/3V5O6AD3R9KJv0Ci2FuhEJ5uWAGag+KcgsDbrPKtymsvBYiW8BtP/3hVYN9Rx
+	 Btec76LDttklXNKDaERWdjjFUUk0P7kV76BUIEFxMdxf2kmmjQBpBCnQ6etFYIC7DK
+	 LFrORwu6WdjnhwfYIdiQMDeIcumoicxDwkX8tVtrVoUvh6ES3KXAr6AcbCg8s/e/7E
+	 SOiNRj4ZdQdwyiV3MkXEmxlgFzYvDIHbXZzidegCiAVG/X4FsVj/Gr9M3MTthamEjw
+	 sCB7XEFwxiN+a4FbeOCyGeXFN+KZeDs9rn0htmXtSYWm3wuCrwX5/vT8HfemWJMNRx
+	 cHwoPfHsi7VYg==
+Date: Fri, 17 Oct 2025 09:03:08 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Alexander Graf <graf@amazon.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 03/56] cpu: Reset global mitigations
+Message-ID: <lrwbwfedilu4x3rizxn4i7pg3nuvoolbsnpfyb3ijbtf4ttjet@amyxglszq2fi>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-4-david.kaplan@amd.com>
+ <fxgzzp3yokq24swgfkokdnqb7jf53s3na2wjitr5koiamfizgm@d7uvxnuzkebd>
+ <LV3PR12MB926591EA45E7186AA3BD2A7E94F6A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <LV3PR12MB92656CCC8F8776F50FE92B8894F6A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB92656CCC8F8776F50FE92B8894F6A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Currently arm64 does an unconditional TLB flush in mprotect(). This is not
-required for some cases, for example, when changing from PROT_NONE to
-PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
-growing into the non-main heaps), and unsetting uffd-wp in a range.
+On Fri, Oct 17, 2025 at 02:19:43PM +0000, Kaplan, David wrote:
+> > > Considering this will have no effect on other arches (or even on x86 at
+> > > this point in the series), should CONFIG_DYNAMIC_MITIGATIONS depend on
+> > > an arch-specific CONFIG_HAVE_DYNAMIC_MITIGATIONS?
+> > >
+> > > Then the weak function can be removed (and weak functions should be
+> > > avoided anyway, IMO).
+> > >
+> >
+> > Ok.  I agree, the feature doesn't make sense without arch-specific support anyway,
+> > so that seems reasonable.
+> 
+> Well, so right now CONFIG_DYNAMIC_MITIGATIONS is only defined in
+> arch/x86/Kconfig so it's already arch-specific.  It's part of the CPU
+> mitigations menu there.
+> 
+> So I guess these weak functions aren't actually needed in the first
+> place.
+> 
+> Alternatively I suppose I could make CONFIG_DYNAMIC_MITIGATIONS a
+> generic feature (which requires an arch to support it).
 
-Therefore, implement pte_needs_flush() for arm64, which is already
-implemented by some other arches as well.
+I'd say generic is probably the way to go, as the sysfs files and
+mitigations= interfaces are already generic, and users might want this
+on other arches eventually.
 
-Running a userspace program changing permissions back and forth between
-PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
-for the none->rw transition, I get a reduction from 3.2 microseconds to
-2.85 microseconds, giving a 12.3% improvement.
-
-Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
-mm-selftests pass. Based on 6.18-rc1.
-
-v1->v2:
- - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
-   pteval_t, return !!diff (Ryan)
-
- arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 18a5dc0c9a54..40df783ba09a 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
- {
- 	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
- }
-+
-+static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newval)
-+{
-+	ptdesc_t diff = oldval ^ newval;
-+
-+	/* invalid to valid transition requires no flush */
-+	if (!(oldval & PTE_VALID))
-+		return false;
-+
-+	/* Transition in the SW bits requires no flush */
-+	diff &= ~PTE_SWBITS_MASK;
-+
-+	return !!diff;
-+}
-+
-+static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
-+{
-+	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
-+}
-+#define pte_needs_flush pte_needs_flush
-+
-+static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
-+{
-+	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
-+}
-+#define huge_pmd_needs_flush huge_pmd_needs_flush
-+
- #endif
- 
- #endif
 -- 
-2.30.2
-
+Josh
 
