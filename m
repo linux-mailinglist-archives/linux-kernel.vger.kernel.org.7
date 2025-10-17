@@ -1,110 +1,150 @@
-Return-Path: <linux-kernel+bounces-857581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21107BE72F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:33:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E530BE733D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E9719C5A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD34D6E0878
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667442C1589;
-	Fri, 17 Oct 2025 08:32:20 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D882C028C;
+	Fri, 17 Oct 2025 08:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIudQB0K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D291E29A31D;
-	Fri, 17 Oct 2025 08:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4227E29A31D;
+	Fri, 17 Oct 2025 08:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689940; cv=none; b=XM321112OHnG9MJ8nvhQUnSb3zLB4jYmlXejRkn9OKkrzke79jvQLqk84qPRGnvjupGhfe1XQIROrauqIg9w5AJ94AY1zotnneTHeiSFYQVvmDU6y2S8msdpEYgrOK4ijfqej0VU35snOC5db80nBrXbTc6sOafFLAYBWRuJr+8=
+	t=1760689990; cv=none; b=CNIB3orZ87KspuMEQbaR3vevhlYY/NpLhiyhQ3o2NdfUypSAdFRQfw2Gkkwkiu+cLH2lE5zDHRcNUO+aAm0KbXLTijnBvvY8GB49YaJS77B4fQ3RMwTeectbqPwmT02fOIhaOJ4FNNqeFbwTuToIKgf/ESgP5udwnsczpZrOrXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689940; c=relaxed/simple;
-	bh=lKOf9JuIDX4uy3fcGx8kK8IIwOIACYdHYSQFsVoys3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gr7KoVzA9sfK0zNhS/VQmTGxvmwu0fSzzPPujIDHxA3PbTLvdkNqt9kbSFAILNTidnhvB3h4o5LCQP2dYR6xo/mBfXxJb3TqMaBWzCyuQncX7+yJvyrxXf/d1hwxQTho5HCDhWyFgnVHS4H+zsgiPaHnji83FhmLdWz+SEDqCoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id AE0C42C051C7;
-	Fri, 17 Oct 2025 10:32:07 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 8541A4A12; Fri, 17 Oct 2025 10:32:07 +0200 (CEST)
-Date: Fri, 17 Oct 2025 10:32:07 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-pci@vger.kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully
- initialized
-Message-ID: <aPH_B7SiJ8KnIAwJ@wunner.de>
-References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
+	s=arc-20240116; t=1760689990; c=relaxed/simple;
+	bh=ALPubsE7iL0y6ckYIsK2z8DnJSwyHG1uWAH3bkMSxcA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IVZei5B64XYcHDsPx8sP3tS3zc+VWFa835Vg7UNGGSLIEtVOpmhTzUPx9eRT0tmZchyGmT9ycaLxRNxuVdMj0qYYiSv6RkSkqd4vxVbWYpfcb4lHNGsVmpyROFXCY5YMvyasIjMgNdl6y+lowYrVfNkuWV2ICnJnPdgRf/2eyS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIudQB0K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 99387C4CEE7;
+	Fri, 17 Oct 2025 08:33:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760689989;
+	bh=ALPubsE7iL0y6ckYIsK2z8DnJSwyHG1uWAH3bkMSxcA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=WIudQB0K5PljL/kCwIvm9XF3aQMCt2I0xeG09dcX4x5ymat1gtvytAiuzXVkmGerB
+	 f9r2ygpHUBY3Wje4znVH5THu6nz4Ak8M4flIaJWtPt4cPfSiNf3mHPaFjOAmjI/shR
+	 MnzvvE74KJo4eoFnusTkgmK/qi961O6syPZpSp/QfqsSuCwOf/zzDEyiMAVMGOAyQR
+	 P0SCNIGIFsm0YYbAFVv2mq31G85lcJot9KBgRoMwuqMI57xVVylbetjSbhq61Hn6dt
+	 zMGdDTCUfd2hL6Ah8hWqY7atAJd9OHwAI70KtU5wdmmob11JrQAfLNGRwxj8gi0j5a
+	 WykninJLFx8ww==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB8ECCD19A;
+	Fri, 17 Oct 2025 08:33:09 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH 0/7] sysctl: Move jiffies converters out of kernel/sysctl.c
+Date: Fri, 17 Oct 2025 10:32:10 +0200
+Message-Id: <20251017-jag-sysctl_jiffies-v1-0-175d81dfdf82@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAr/8WgC/x2M0QpAQBAAf0X77MrJEb8iibPLSuhWIvl3m8dpm
+ nlAMDAKVNEDAU8W3lYFG0fgp24d0fCgDGmSOpvYzMzdaOQWfyztzETamoJUOKSydzlouAckvv5
+ p3bzvB7mTV4xkAAAA
+X-Change-ID: 20251014-jag-sysctl_jiffies-7f0145ef9b56
+To: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2447;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=ALPubsE7iL0y6ckYIsK2z8DnJSwyHG1uWAH3bkMSxcA=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjx/zMz6r0/GrkigbyDYiU3B7C56XjyMs54l
+ W5ZjFYJ9dlr5IkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8f8zAAoJELqXzVK3
+ lkFPYB0L/AitYQV44fDBP/FpA+Cme8q1tS7K8z482NOTlJAE0ZWj5gNCdtqcK4fVlZWe0+GrgKp
+ 4pYvnzaU7HuJ8i1kyHCwEEC4OO31OuCm6S78wLP5Cr33mfYSe/vbPIHEHZoGgf5fFDlTjHHQzHm
+ tcvuuZGFb1J9W6jGizn6AvzR1dMKFc7p7qblDL1jcwzaUREvsbNsJ3SgN0yyiNWbvoqPH1Vp/c2
+ VktCzVhqeUue0fSkNTeQyCBIVmKWuSQBFdAarbbqDmvX4t7LWQkGv7F2pBtGRlKQyYHtMCrTsRA
+ cOFdVPZVQCnrXAnYP91OpOc4A0UlYIpG/64HKtbJcij0RuezfBRGLL/I/u7KQnDyGGOd9LBghWG
+ zYoU+FmML952xC7pJ1AZbxrPXe4AiNf7zRHP++eC6JVtxQ9/CrlKYXVJzbwMGarWqby32x04jCr
+ QHtxcitHVHoGTgfvD2jS99GFC2jsPOAdUt28i1Rfqp+YrYUTiC43iyEhbd5jRJTC68qybT6Fmn7
+ UQ=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-[cc += Ilpo]
+Move the jiffies converters into kernel/time/jiffies.c and replace the
+pipe-max-size proc_handler converter with a macro based version. This is
+all part of the effort to relocate non-sysctl logic out of
+kernel/sysctl.c into more relevant subsystems. And is based on the
+preparation series in [1].
 
-On Thu, Oct 16, 2025 at 03:53:35PM -0700, Brian Norris wrote:
-> PCI devices are created via pci_scan_slot() and similar, and are
-> promptly configured for runtime PM (pci_pm_init()). They are initially
-> prevented from suspending by way of pm_runtime_forbid(); however, it's
-> expected that user space may override this via sysfs [1].
-> 
-> Now, sometime after initial scan, a PCI device receives its BAR
-> configuration (pci_assign_unassigned_bus_resources(), etc.).
-> 
-> If a PCI device is allowed to suspend between pci_scan_slot() and
-> pci_assign_unassigned_bus_resources(), then pci-driver.c will
-> save/restore incorrect BAR configuration for the device, and the device
-> may cease to function.
-> 
-> This behavior races with user space, since user space may enable runtime
-> PM [1] as soon as it sees the device, which may be before BAR
-> configuration.
-> 
-> Prevent suspending in this intermediate state by holding a runtime PM
-> reference until the device is fully initialized and ready for probe().
+What was done?
+==============
 
-Not sure if that is comprehensible by everybody.  The point is that
-unbound devices are left in D0 but are nevertheless allowed to
-(logically) runtime suspend.  And pci_pm_runtime_suspend() may call
-pci_save_state() while config space isn't fully initialized yet,
-or pci_pm_runtime_resume() may call pci_restore_state() (via
-pci_pm_default_resume_early()) and overwrite initialized config space
-with uninitialized data.
+* Moved converter macros (SYSCTL_USER_TO_KERN{,_INT_CONV,UINT_CONV},
+  SYSCTL_KERN_TO_USER{,INT_CONV} & SYSCTL_{,U}INT_CONV_CUSTOM) to
+  sysctl.h so they can be used in jiffies.c and pipe.c.
 
-Have you actually seen this happen in practice?  Normally enumeration
-happens during subsys_initcall time, when user space isn't running yet.
-Hotplug may be an exception though.
+* Moved jiffie converters (proc_dointvec_ms_jiffies{,_minmax},
+  proc_dointvec{_,_userhz_}jiffies & proc_doulongvec_ms_jiffies_minmax)
+  to kernel/time/jiffies.c.
 
-Patch LGTM in principle, but adding Ilpo to cc who is refactoring PCI
-resource allocation and may judge whether this can actually happen.
+* Replaced do_proc_dopipe_max_size_conv in fs/pipe.c with a macro
+  version; no functional changes intended.
 
-I think the code comments you're adding are a little verbose and a simple
-/* acquired in pci_pm_init() */ in pci_bus_add_device() may be sufficient.
+Why it is done?
+===============
 
-Also, I think it is neither necessary nor useful to actually cc the e-mail
-to stable@vger.kernel.org if you include a stable designation in the
-patch.  I believe stable maintainers only pick up backports from that list,
-not patches intended for upstream.
+Motivation is to move non-sysctl logic out of kernel/sysctl.c which had
+become a dumping ground for ctl_tables until this trend was changed by
+the commits leading to (and including) 73184c8e4ff4 ("sysctl: rename
+kern_table -> sysctl_subsys_table"). Same motivation as in [1].
 
-Thanks,
+Testing
+=======
 
-Lukas
+Tested by running sysctl kunit tests and selftests on x86_64 architecture
+to ensure no functional regressions.
+
+Comments are greatly appreciated
+
+Best
+
+[1] https://lore.kernel.org/20251016-jag-sysctl_conv-v2-0-a2f16529acc4@kernel.org
+
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Joel Granados (7):
+      sysctl: Allow custom converters from outside sysctl
+      sysctl: Move INT converter macros to sysctl header
+      sysctl: Move UINT converter macros to sysctl header
+      sysctl: Move jiffies converters to kernel/time/jiffies.c
+      sysctl: Move proc_doulongvec_ms_jiffies_minmax to kernel/time/jiffies.c
+      sysctl: Create pipe-max-size converter using sysctl UINT macros
+      sysctl: Wrap do_proc_douintvec with the public function proc_douintvec_conv
+
+ fs/pipe.c               |  28 ++---
+ include/linux/jiffies.h |  11 ++
+ include/linux/sysctl.h  | 145 +++++++++++++++++++---
+ kernel/sysctl.c         | 312 +++++++-----------------------------------------
+ kernel/time/jiffies.c   | 125 +++++++++++++++++++
+ 5 files changed, 314 insertions(+), 307 deletions(-)
+---
+base-commit: 130e5390ba572bffa687f32ed212dac1105b654a
+change-id: 20251014-jag-sysctl_jiffies-7f0145ef9b56
+
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
+
+
 
