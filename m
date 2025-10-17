@@ -1,243 +1,130 @@
-Return-Path: <linux-kernel+bounces-857911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D60BE835A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDF3BE8345
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5B785815AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3D31AA2764
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28DA32A3D4;
-	Fri, 17 Oct 2025 10:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF5932D0D2;
+	Fri, 17 Oct 2025 11:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fiYzf6Qp"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWvUWl5n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E04321457;
-	Fri, 17 Oct 2025 10:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F26132D0C8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760698735; cv=none; b=gcO+vp3N8pkartVdjAA6R/oWoYimoN2qZu0AiAeykGkSZn6CB1ZdGW8X1orWTiFBO+DPDtwbvQYKh3KWkL/EKeRSCcDoFlNtw/jtm1CCXtj4vmvwGwReJjCK8BgYyMPb27apy0GHMj1YC9rTXkSgYGBCZLcVw7tsGRCUKXvQr9s=
+	t=1760698832; cv=none; b=E3n0PLZnaBEQbrzqnJufUwd7z/uTVW32X7OBmQoyJgacltg4dbPPBV/VxQsMoL3+/a0rblT7LhUIEUNNlkabZv28xIlrDY2XnYFYT4ccgMT+3Lk3wT+QA3tVtCA1Vx+1qPvKEr4Xi1nmqirviaQh5T09G0DyR/RsqY6Db5REY5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760698735; c=relaxed/simple;
-	bh=lx/9Pua2k4+2D0Z8qUeVfaHKKC8xHRg3maUp3g/ReZc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=imi9dvBc15J1BUehUJ3me8stR3CxqVKa5VwKXc7aMhj7pZGrq5vdoHXt9iVq0iChWTwj9AaCp3U31ZXVIeVZkc4fXeEPXonMYzNpu4g6cAwCHYNAOiQPoCC7FRDS9+4anoI/Ulo9kjDPc5DW30zRUxlDTGPVslUmWwjTs8tAVPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fiYzf6Qp; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59HAwOol252484;
-	Fri, 17 Oct 2025 05:58:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760698704;
-	bh=KTD192e+GHwuTmB/AOyJZZkgH94hw9SU/1NoyZZJevE=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=fiYzf6QpiDzcdgAB4Yzy6YXrIRbHZzqmWBTidch/tF3LHnuU94Is7ZNWwiZJidBHe
-	 x7CV6vKCWnOh5j/QHRDyCohtWK1PgdlpKQtIhaK4NNvhq4hFt6J5WhfcjHcN5G/IRX
-	 r0cLchne4HJyiezJ4yG5oH1CJb6bZYQkCwcuiXTw=
-Received: from DLEE205.ent.ti.com (dlee205.ent.ti.com [157.170.170.85])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59HAwOVW2358912
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 17 Oct 2025 05:58:24 -0500
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE205.ent.ti.com
- (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 17 Oct
- 2025 05:58:23 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 17 Oct 2025 05:58:23 -0500
-Received: from [172.24.235.208] (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59HAwF6J1183031;
-	Fri, 17 Oct 2025 05:58:16 -0500
-Message-ID: <8ace674c-9d57-4500-b155-caa662903774@ti.com>
-Date: Fri, 17 Oct 2025 16:28:15 +0530
+	s=arc-20240116; t=1760698832; c=relaxed/simple;
+	bh=0qKoqeZEFFOD2RlWkl69ruJZbnMDtQNF0IQVriRGDxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZPO5BRSg/jyv/k70Z/YUTyxlulodUGdE+X0FVO2tK6kQgU2+v5xKlF6sBJbOmInXymKXRcnhHFOppcLV7EL5yn+zvs5yCfy9NhpxGC/WcFxO6A4KJr+Ni50h+tk4GhUqc9ql5W9TtC5Qa1Zk1NBbLN0WtxH5kTBmHYXmsP4m6JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWvUWl5n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87CAC16AAE
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760698831;
+	bh=0qKoqeZEFFOD2RlWkl69ruJZbnMDtQNF0IQVriRGDxI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EWvUWl5nqTu29sldpT18woB5mT2hLN7XcQmiPTwyYqdXHu+jnVksMP04uDJo2FWId
+	 4waqpD0TRzeyYRxJyOG+KEvd5B4kPr3T4CVxPDayI/eVuAIa7DeXuZSrik+8eZN7v4
+	 LOuqUX8hLZGgrZq0E+I+Ne/tD7zeWxatENHTNaQT6XhXdB9sD/ewxDfqRU3BdtbZdG
+	 QPZMDM+rejO5ZkUON1ph6fVZPVRUKL2HLcUQ/mDGUCK/bLV5XfIqQh99SGJsRbcg3Y
+	 4ahOPJqRncQedXOEULxkPrZ+OpZ+tWNuIZLVsrXnJIW3z5j28FogNDbN/BmUf7rz89
+	 mpc1xYLK4W6Xg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57d8ff3944dso2149301e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:00:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWos4idkkoh0mOLCWgdHnn6VH7b6XX/vKXdE59f9D4/0JdUotmhWh9mTxlD92QJ3WuaUR4+IhtjC8DElUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA/cLd8RI/kH8tBN0zzNUsKo/VKsvXPHLaW4owkOlwBSj/tigL
+	m/oKEfHBNE+EuUXjpnVuGUsEcKRWGPUbiBrfRgkrQQhRYjSg2CQ6SC5+rt4vm6QA8jh58TPMUk5
+	nmj3srqLSkZGGCXeRPjTTnBHciQWIM0c=
+X-Google-Smtp-Source: AGHT+IHxN2kS3odkWkazx6Kii1GVS0Wt6GhSEw2kpURhNsBRjiYw7sCxVK13poY4URZHjBG3Xbuf2j46mmtwgrQHRjc=
+X-Received: by 2002:a05:6512:3b24:b0:57b:8a82:1dcf with SMTP id
+ 2adb3069b0e04-591d84fd0c5mr1144213e87.18.1760698830068; Fri, 17 Oct 2025
+ 04:00:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: drm/bridge: MHDP8546 bridge binding
- changes for DSC
-From: Harikrishna shenoy <h-shenoy@ti.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <sjakhade@cadence.com>, <yamonkar@cadence.com>,
-        <lumag@kernel.org>, <dianders@chromium.org>, <jani.nikula@intel.com>,
-        <luca.ceresoli@bootlin.com>, <andy.yan@rock-chips.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>,
-        <s-jain1@ti.com>, <tomi.valkeinen@ideasonboard.com>
-References: <20250915103041.3891448-1-h-shenoy@ti.com>
- <20250915103041.3891448-2-h-shenoy@ti.com>
- <20250918-dandelion-guan-of-storm-fa2051@kuoka>
- <d2367789-6b54-4fc2-bb7c-609c0fe084d3@ti.com>
-Content-Language: en-US
-In-Reply-To: <d2367789-6b54-4fc2-bb7c-609c0fe084d3@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
+ <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn> <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
+ <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
+ <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
+ <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
+ <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
+ <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
+ <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
+ <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com> <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
+In-Reply-To: <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 17 Oct 2025 13:00:17 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
+X-Gm-Features: AS18NWCIYrjb5KW9LhHY0tpEoyBeBcU1fB0oUJiskEYiezDhT-2dTfp0F9THCv4
+Message-ID: <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 16 Oct 2025 at 17:49, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> On Thu, Oct 16, 2025 at 04:52:20PM +0200, Ard Biesheuvel wrote:
+> > On Tue, 14 Oct 2025 at 18:47, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > > The idea is that libstub code doesn't belong in vmlinux.o because it's
+> > > not a part of the kernel proper, and doesn't need to be validated or
+> > > modified by objtool for any reason.
+> > >
+> >
+> > I don't see a reason to change this on architectures that a) do not
+> > use objtool and b) link the EFI stub into vmlinux. If LoongArch wants
+> > to change this, that is fine, but that still does not mean it needs to
+> > change on other architectures too.
+> >
+> > EFI related boot errors are a nightmare to debug, and I will be the
+> > one getting the reports when this regresses arm64 on hardware that 2
+> > people on the planet have access to.
+>
+> The idea was to have more consistency, so vmlinux.o never has libstub,
+> regardless of arch, but that's your call.
+>
 
+The code in libstub ends up in .init.text, which will be mapped
+executable during boot on architectures that incorporate it into
+vmlinux.
 
-On 22/09/25 13:11, Harikrishna Shenoy wrote:
-> 
-> 
-> On 9/18/25 07:00, Krzysztof Kozlowski wrote:
->> On Mon, Sep 15, 2025 at 04:00:40PM +0530, Harikrishna Shenoy wrote:
->>> From: Swapnil Jakhade<sjakhade@cadence.com>
->>>
->>> Add binding changes for DSC(Display Stream Compression) in the MHDP8546
->>> DPI/DP bridge.
->>>
->>> Signed-off-by: Swapnil Jakhade<sjakhade@cadence.com>
->>> Signed-off-by: Harikrishna Shenoy<h-shenoy@ti.com>
->>> ---
->>>   .../display/bridge/cdns,mhdp8546.yaml         | 24 ++++++++++++-------
->>>   1 file changed, 15 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
->>> index c2b369456e4e..2a05a7d5847f 100644
->>> --- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
->>> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
->>> @@ -27,13 +27,12 @@ properties:
->>>             Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
->>>         - description:
->>>             Register block of mhdptx sapb registers.
->>> +      - description:
->>> +          Register block for mhdptx DSC encoder registers.
->>>   
->>>     reg-names:
->>> -    minItems: 1
->>> -    items:
->>> -      - const: mhdptx
->>> -      - const: j721e-intg
->>> -      - const: mhdptx-sapb
->>> +    description:
->>> +      Names corresponding to entries in the reg property.
->> No, top-level should have broadest constraints. In your case it is
->> min/maxItems.
->>
->> Description is completely redundant. Wasn't here before, so why adding
->> it?
->>
-> Noted, will remove description and add minItems:1.
->>>   
->>>     clocks:
->>>       maxItems: 1
->>> @@ -100,18 +99,25 @@ allOf:
->>>         properties:
->>>           reg:
->>>             minItems: 2
->>> -          maxItems: 3
->>> +          maxItems: 4
->>>           reg-names:
->>>             minItems: 2
->>> -          maxItems: 3
->>> +          items:
->>> +            - const: mhdptx
->>> +            - const: j721e-intg
->>> +            - const: mhdptx-sapb
->>> +            - const: dsc
->>>       else:
->>>         properties:
->>>           reg:
->>>             minItems: 1
->>> -          maxItems: 2
->>> +          maxItems: 3
->>>           reg-names:
->>>             minItems: 1
->>> -          maxItems: 2
->>> +          items:
->>> +            - const: mhdptx
->>> +            - const: mhdptx-sapb
->> This is wrong. Previously CDNS variant had two items means it had
->> "j721e-intg". Now it's something else.
->>
->> First, this is an ABI break.
->>
->> Second, there is no explanation at all for it in the commit msg! Looks
->> like random change.
->>
->> Read carefully writing-bindings doc.
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> Hi Krzysztof,
-> 
-> 
-> Keeping this patch series aside, The existing binding-docs clearly have 
-> a bug.
-> 
-> Since even for cadence specific compatible "cdns,mhdp8546" it 
-> compulsorily expects "j721e-intg" register space
-> 
-> which is NOT part of the cadence IP block mhdp8546 and hence not 
-> applicable to "cdns,mhdp8546".
-> 
-> This was also discussed here [1] and can also be referred in this TRM 
-> section [2],
-> 
-> which clearly show that "j721e-intg" is part of TI wrapper IP block and 
-> should be
-> 
-> applicable to "ti,j721e-mhdp8546" compatible.
-> 
-> Yes agreed it breaks the ABI but it also fixes a bug and I don't see any 
-> one using only "cdns,mhdp8546" yet.
-> 
-> so I am thinking it's more appropriate to fix this as a separate patch 
-> independent of this series.
-> 
-> Kindly let me know if I should submit a separate patch to fix this bug 
-> or I should just ignore this bug.
-> 
-> Depending on your suggestion, if it's agreed upon to send the bug fix 
-> patch first, I will send out an independent
-> 
-> bug fix to remove "j721e-intg" for compatible "cdns,mhdp8546" and then 
-> rebase the series for adding DSC reg blocks
-> 
-> on top of bug fix.
-> 
-> [1]: https://lore.kernel.org/all/20250903220312.GA2903503- 
-> robh@kernel.org/ <https://lore.kernel.org/all/20250903220312.GA2903503- 
-> robh@kernel.org/>
-> [2]: Link to TRM ZIP:https://www.ti.com/lit/zip/spruil1 <https:// 
-> www.ti.com/lit/zip/spruil1>
-> Table 2-1. MAIN Domain Memory Map
-> DSS_EDP0_V2A_CORE_VP_REGS_APB are EDP core register identified by name 
-> mhdptx in DT.
-> DSS_EDP0_INTG_CFG_VP identified by j721e-intg in DT.
-> 
-> Section 12.6.6.16.4: EDP_CFG Registers
-> 
-> Driver use: TI j721e Cadence MHDP8546 DP wrapper(drivers/gpu/drm/bridge/ 
-> cadence/cdns-mhdp8546-j721e.c)
-> 
-> 
-> Regards.
+If objtool validation is never needed for such code, on the basis that
+it is not actually called even though it is present, then I think that
+is fine.
 
-Hi Krzysztof,
+For the other architectures, I don't have any objections in principle,
+I'm just being cautious due to the regression risk.
 
-Could you please let us know your thoughts on above, will re-spin it 
-accordingly.
+> I'd still propose we keep the KBUILD_VMLINUX_LIBS_PRELINK mechanism to
+> allow other arches to opt in as needed.
+>
 
-Regards.
+Again, no objection in principle. To me, it just seems a lot of churn
+just to avoid having to teach objtool about indirect calls to noreturn
+functions.
 
-> 
+> And that variable might even be useful for other cases (x86 startup
+> code?)
+>
 
+Not all x86 startup code is in .init.text; some of it sticks around
+and is still used at runtime. I reckon that implies that objtool
+validation will remain needed for that, no?
 
