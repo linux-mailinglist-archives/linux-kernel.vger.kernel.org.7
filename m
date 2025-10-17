@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-857788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF62DBE7F08
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:05:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F493BE7F11
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B961A6132E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:05:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D0DA50422F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C0C30F920;
-	Fri, 17 Oct 2025 10:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pn/pxqk9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5449130B525;
-	Fri, 17 Oct 2025 10:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235D3126B5;
+	Fri, 17 Oct 2025 10:05:19 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39D431197E;
+	Fri, 17 Oct 2025 10:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760695508; cv=none; b=be2Qf6zXGWY9D33ei4LfBFWojGVKm+sdglNREuoSIrgaa0kZ93xkmV5FEgdLf73oQ+WkAu85GqWlcR6diBXrpZYj4fRAgx+1/NjSBSnDrZnOEXtMeO37GlfYKMjD/Ve3Hajuwk1ubpwA1WqVBLydvcAsA3dZpK+h6wv2VOqwxtY=
+	t=1760695519; cv=none; b=GsgnAckKaioihJRd/iycbkXOd/1tAl+tB+ArA33VDmTunPpt0xheYhAkLoCgsHR2E/nkjE+i0MEOoA9My6NiWtDO0okAuIBOI/psKuQ+dWPec66PjKoUOLZch8NcegbAY0pcDEEjd8256SMsedr9+AvGG3IqRp6s4ZYD2pzrd1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760695508; c=relaxed/simple;
-	bh=d27FnODMUOTQgewcjbJxNy4ZOjzPLw8pcBAW8xniqKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eir44Q1brq21tKZT+7T2Q4sipfxebNGWK1qHcMI62Sx6IBC9puRBsNOdfQheIywggw3jom+5swpqDWdXjQ0V9ou6d7J/ydv78+wMOBZvQ6fMMdgD7wOEtuv2Z3ftUvWupMebWi6otEALZiVL7U8Taw9NeH2eUj+S8nSrpHk0TMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pn/pxqk9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8282C4CEE7;
-	Fri, 17 Oct 2025 10:04:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760695507;
-	bh=d27FnODMUOTQgewcjbJxNy4ZOjzPLw8pcBAW8xniqKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pn/pxqk9AqSC3QFrOOd7LLwBp4ePoZ1T9yh86VDVXBsW5Gq3/wIsU5yXbDIGM7GVq
-	 PvQIRqzMmxMVWIIS3ZO+YbNMqsw9rISbkqG46JqUszkWEKOdS4DIDs66v6UqK12K+7
-	 KlxyuhRHYpmifcmbMVwfH6iEHPSt84mkXY7LpM0vaYK21qfN3iMTt1ESP3D/iI9Qua
-	 WpEZLRAotG6oXakdDm7fvqYsWsIW5khfRfpSsxd+rZEZNeqpfyiK+WRawf0ye65MZw
-	 Snf9HP2LbS18RSzM4svYqEw3jqH8qu/Q24iOhCCZOp+YYA7MHF3F7aC/TBnaXiHIs4
-	 6xSMhDBRFkATw==
-Date: Fri, 17 Oct 2025 15:34:51 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Chia-Lin Kao <acelan.kao@canonical.com>, Dragan Simic <dsimic@manjaro.org>, 
-	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev, FUKAUMI Naoki <naoki@radxa.com>
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <22owgu6qb34bh47cevupnwnvwwfhtn4lwfav6fuxfydaiujw6y@oeh3q2u4wo2h>
-References: <7df0bf91-8ab1-4e76-83fa-841a4059c634@rock-chips.com>
- <20251015233054.GA961172@bhelgaas>
- <hwueivbm2taxwb2iowkvblzvdv2xqnsapx6lenv56vuz7ye6do@fugjdkoyk5gy>
- <0dd51970-a7ac-4500-b96f-d1e328e7a3b2@rock-chips.com>
+	s=arc-20240116; t=1760695519; c=relaxed/simple;
+	bh=6z5qiYejD0Z6XSlHGhdgDanXj77un6wBOUOjfeB4nq0=;
+	h=To:Cc:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=f/dzP8m7Tnw0IxR8DrqLaLGW9grOv0muiivFbX7K8eA16Q8WMGkk8q7MpJuXGuwLX6O/onELB9Ux5NBwee9CpgndE3kWDrLr8dTQc7NdqHX1QDfVibNsq7M7eWRTEBhTIvXthrmfZ4BzGtfSCFPH6ZZ3hrrnb8FpSWD4u4aUy2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxmdHWFPJoUkwXAA--.50505S3;
+	Fri, 17 Oct 2025 18:05:11 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJBxicDWFPJoHdXtAA--.42500S3;
+	Fri, 17 Oct 2025 18:05:10 +0800 (CST)
+To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: [selftests/bpf QUESTION] What is the proper way to fix the build
+ error
+Message-ID: <5ca1d6a6-5e5a-3485-d3cd-f9439612d1f3@loongson.cn>
+Date: Fri, 17 Oct 2025 18:05:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0dd51970-a7ac-4500-b96f-d1e328e7a3b2@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowJBxicDWFPJoHdXtAA--.42500S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Xw45Ww1fuw18Aw1kJr4fWFX_yoW8Jr4rpw
+	4kJ390gFn8tF1xZa1xAw4jgF1qgFs5AFZ5Gw4xZrykuw18tw4vgFZ7Kry5W3s8u395Jwn5
+	Zas29w43uF10y3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwmhFDUUU
+	U
 
-On Fri, Oct 17, 2025 at 05:47:44PM +0800, Shawn Lin wrote:
-> Hi Mani and Bjorn
-> 
-> 在 2025/10/17 星期五 11:36, Manivannan Sadhasivam 写道:
-> > On Wed, Oct 15, 2025 at 06:30:54PM -0500, Bjorn Helgaas wrote:
-> > > On Wed, Oct 15, 2025 at 09:00:41PM +0800, Shawn Lin wrote:
-> > > > ...
-> > > 
-> > > > For now, this is a acceptable option if default ASPM policy enable
-> > > > L1ss w/o checking if the HW could supports it... But how about
-> > > > adding supports-clkreq stuff to upstream host driver directly? That
-> > > > would help folks enable L1ss if the HW is ready and they just need
-> > > > adding property to the DT.
-> > > > ...
-> > > 
-> > > > The L1ss support is quite strict and need several steps to check, so we
-> > > > didn't add supports-clkreq for them unless the HW is ready to go...
-> > > > 
-> > > > For adding supports of L1ss,
-> > > > [1] the HW should support CLKREQ#, expecially for PCIe3.0 case on Rockchip
-> > > > SoCs , since both  CLKREQ# of RC and EP should connect to the
-> > > > 100MHz crystal generator's enable pin, as L1.2 need to disable refclk as
-> > > > well. If the enable pin is high active, the HW even need a invertor....
-> > > > 
-> > > > [2] define proper clkreq iomux to pinctrl of pcie node
-> > > > [3] make sure the devices work fine with L1ss.(It's hard to check the slot
-> > > > case with random devices in the wild )
-> > > > [4] add supports-clkreq to the DT and enable
-> > > > CONFIG_PCIEASPM_POWER_SUPERSAVE
-> > > 
-> > > I don't understand the details of the supports-clkreq issue.
-> > > 
-> > > If we need to add supports-clkreq to devicetree, I want to understand
-> > > why we need it there when we don't seem to need it for ACPI systems.
-> > > 
-> > > Generally the OS relies on what the hardware advertises, e.g., in Link
-> > > Capabilities and the L1 PM Substates Capability, and what is available
-> > > from firmware, e.g., the ACPI _DSM for Latency Tolerance Reporting.
-> > > 
-> > > On the ACPI side, I don't think we get any specific information about
-> > > CLKREQ#.  Can somebody explain why we do need it on the devicetree
-> > > side?
-> > > 
-> > 
-> > I think there is a disconnect between enabling L1ss CAP and CLKREQ#
-> > availability.. When L1ss CAP is enabled for the Root Port in the hardware, there
-> > is no guarantee that CLKREQ# is also available. If CLKREQ# is not available,
-> > then if L1ss is enabled by the OS, it is not possible to exit the L1ss states
-> > (assuming that L1ss is entered due to CLKREQ# in deassert (default) state).
-> > 
-> > Yes, there seems to be no standard way to know CLKREQ# presence in ACPI, but
-> > in devicetree, we have this 'supports-clkreq' property to tell the OS that
-> > CLKREQ# is available in the platform. But unfortunately, this property is not
-> > widely used by the devicetrees out there. So we cannot use it in generic
-> > pci/aspm.c driver.
-> > 
-> > We can certainly rely on the BIOS to enable L1ss as the fw developers would
-> > have the knowledge of the CLKREQ# availability. But BIOS is not a thing on
-> > mobile and embedded platforms where L1ss would come handy.
-> > 
-> > What I would suggest is, the host controller drivers (mostly for devicetree
-> > platforms) should enable L1ss CAP for the Root Port only if they know that
-> > CLKREQ# is available. They can either rely on the 'supports-clkreq' property or
-> > some platform specific knowledge (for instance, on all Qcom platforms, we
-> > certainly know that CLKREQ# is available, but we don't set the DT property).
-> 
-> While we're on the topic of ASPM, may I ask a silly question?
-> I saw the ASPM would only be configured once the function driver calling
-> pci_enable_device. So if the modular driver hasn't been insmoded, the
-> link will be in L0 even though there is no transcation on-going. What is
-> the intention behind it?
-> 
+Hi,
 
-I don't see where ASPM is configured during pci_enable_device(). It is currently
-configured for all devices during pci_scan_slot().
+When compiling tools/testing/selftests/bpf, there is a build error:
 
-- Mani
+   CLNG-BPF [test_progs] verifier_global_ptr_args.bpf.o
+progs/verifier_global_ptr_args.c:228:5: error: redefinition of 'off' as 
+different kind of symbol
+   228 | u32 off;
+       |     ^
+/home/fedora/newfixbpf.git/tools/testing/selftests/bpf/tools/include/vmlinux.h:21409:2: 
+note: previous definition is here
+  21409 |         off = 0,
+        |         ^
+1 error generated.
 
--- 
-மணிவண்ணன் சதாசிவம்
+tools/testing/selftests/bpf/tools/include/vmlinux.h:21409
+
+enum i40e_ptp_gpio_pin_state {
+         end = -2,
+         invalid = -1,
+         off = 0,
+         in_A = 1,
+         in_B = 2,
+         out_A = 3,
+         out_B = 4,
+};
+
+The previous definition of "off" is in
+drivers/net/ethernet/intel/i40e/i40e_ptp.c:
+
+enum i40e_ptp_gpio_pin_state {
+	end = -2,
+	invalid,
+	off,
+	in_A,
+	in_B,
+	out_A,
+	out_B,
+};
+
+CONFIG_I40E is set in the defconfig file to build i40e_ptp.c after the
+commit 032676ff8217 (LoongArch: Update Loongson-3 default config file)
+in 6.18-rc1.
+
+What is the proper way to fix the build error?
+(1) just disable CONFIG_I40E (CONFIG_I40E=n), then no "off" in vmlinux.h
+(2) set it as a module (CONFIG_I40E=m), then no "off" in vmlinux.h
+(3) modify the variable name "off" in verifier_global_ptr_args.c
+
+Thanks,
+Tiezhu
+
 
