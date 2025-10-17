@@ -1,87 +1,121 @@
-Return-Path: <linux-kernel+bounces-858816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF72BEBEC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:27:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDC5BEBEC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F4E19A75B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:28:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC69E4EBC96
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CC52D7DD8;
-	Fri, 17 Oct 2025 22:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG/zH9Td"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F012D8370;
+	Fri, 17 Oct 2025 22:28:18 +0000 (UTC)
+Received: from vulcan.kevinlocke.name (vulcan.kevinlocke.name [107.191.43.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF72223710;
-	Fri, 17 Oct 2025 22:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC17C25F984
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.191.43.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760740054; cv=none; b=XEIHHhJ3Dnr9PLLd1krWQdq3b037SP/VMcoSrmxjSnKI7FUZFIQ3DzS0PuxeP/3HlglALkaV4cNXFQePSHEQM4x/DldQ9X3tUuV1zM6N2c6+bPwqDj1PUGvD4RU8+GxKtCLN5xzjYB4WPQQL/8x61QveVP0h2HRk2obov2+Nuxo=
+	t=1760740097; cv=none; b=GQrWcMWsF4ymG2bRT2cNlb0zXGeQ5l8rQziT0SXcYHEKR2/JryZV3CpmDO19lMPJA2fQg7LB7q8VhcADf+bmzvt1sEe0JTIB5fiPo85NReMX6zKl5rHcDx81v5Y9jYqEXRqDZi3KMVKHplGtQiyag1MGl0xxfsgL4I7kVsUMZaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760740054; c=relaxed/simple;
-	bh=p0l4lq0bjml/HIPy65VCiSl+37cdkkZIB4pXwea07Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JOMxfEM+RFTs4lVaXhscCKEKRSObiiWH8KIkIDgXhnVWItFAvtRdKtbWqrWIvXbCIlymBlkipQSt0XlgjbI7Ggy8WQKwwV74LFY1bszSol3MMOxWsv7ItpxqrJuBSXriUKLJhLQ16EAuFmOpW1UlMwXjVKYOVkq23cCvQTzf9GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG/zH9Td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD7FC4CEE7;
-	Fri, 17 Oct 2025 22:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760740053;
-	bh=p0l4lq0bjml/HIPy65VCiSl+37cdkkZIB4pXwea07Ik=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jG/zH9TdQnrlPxC/KU/+AzRE9NScNHjasLFcx5E0L4RN5V+3uPohg4OPawlCF2++R
-	 6rWVkQZHtpT8lNB5wnbDRZPSEe4br2Av03TNE9XBvWd4D2YDK2uQl5YVue0ZjbzGqb
-	 76G1pV8CozbfZHWWYXhx62nW1sfqBBxn85NXrPtLDXX9BpE52Bj4gaHPU/ZDpPyLqF
-	 qH/Ccqg0yHwOMoDDWyHvA+iZ8lVCVIDw/hM6gql5EUg3jq8fXqAhzMmmRFrU3WtVn9
-	 NKKnDAf/iwqKeWDc0uFqH24YKRPjjVlJI84aiM6RrcBIHfHGoeBd1UJDUGwyLKnbET
-	 nWXMnnP9zzabQ==
-Date: Fri, 17 Oct 2025 15:27:31 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: <ahmed.zaki@intel.com>, <aleksander.lobakin@intel.com>,
- <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
- <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
- <netdev@vger.kernel.org>, <pabeni@redhat.com>, <samsun1006219@gmail.com>,
- <sdf@fomichev.me>, <syzkaller-bugs@googlegroups.com>,
- <syzkaller@googlegroups.com>
-Subject: Re: [PATCH V2] usbnet: Prevents free active kevent
-Message-ID: <20251017152731.4bb7f1f9@kernel.org>
-In-Reply-To: <20251017090541.3705538-1-lizhi.xu@windriver.com>
-References: <20251017084918.3637324-1-lizhi.xu@windriver.com>
-	<20251017090541.3705538-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1760740097; c=relaxed/simple;
+	bh=ij6MUkJ9dU7E4kMTI/ySrTPmiZRkB6bStcg4mIU9zX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbivH7CaE7O0mQOciPy9nxV1R8yI+Gdl4ya/VAC9c/IK3c8Zo89HgmUkC2gqSYTQBGp0/68+EoT/a+UNSYBODA3xGX3ZdqvA6GTLhfcbACTGDx4RPM+yFYDPU5N7JEtZ2qkO1oFyekT8J2VugGhDxwTnGj5Rw+z4u/GwmhvbQ8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kevinlocke.name; spf=pass smtp.mailfrom=kevinlocke.name; arc=none smtp.client-ip=107.191.43.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kevinlocke.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kevinlocke.name
+Received: from kevinolos.kevinlocke.name (unknown [IPv6:2607:24c0:2300:9fc5:8482:3d29:9ba1:1a9d])
+	(Authenticated sender: kevin@kevinlocke.name)
+	by vulcan.kevinlocke.name (Postfix) with ESMTPSA id D76A045610B5;
+	Fri, 17 Oct 2025 22:28:13 +0000 (UTC)
+Received: by kevinolos.kevinlocke.name (Postfix, from userid 1000)
+	id 382D21300146; Fri, 17 Oct 2025 16:28:12 -0600 (MDT)
+Date: Fri, 17 Oct 2025 16:28:12 -0600
+From: Kevin Locke <kevin@kevinlocke.name>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
+Message-ID: <aPLC_HdznsRcJbjk@kevinlocke.name>
+Mail-Followup-To: Kevin Locke <kevin@kevinlocke.name>,
+	David Laight <david.laight.linux@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	linux-kernel@vger.kernel.org
+References: <20251016214707.5c3d373b@pumpkin>
+ <a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
+ <20251017151256.111f2669@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017151256.111f2669@pumpkin>
 
-On Fri, 17 Oct 2025 17:05:41 +0800 Lizhi Xu wrote:
-> The root cause of this issue are:
-> 1. When probing the usbnet device, executing usbnet_link_change(dev, 0, 0);
-> put the kevent work in global workqueue. However, the kevent has not yet
-> been scheduled when the usbnet device is unregistered. Therefore, executing
-> free_netdev() results in the "free active object (kevent)" error reported
-> here.
+On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:
+> On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:
+>> Remove the "x" suffixes which unnecessarily complicate the code.
 > 
-> 2. Another factor is that when calling usbnet_disconnect()->unregister_netdev(),
-> if the usbnet device is up, ndo_stop() is executed to cancel the kevent.
-> However, because the device is not up, ndo_stop() is not executed.
-> 
-> The solution to this problem is to cancel the kevent before executing
-> free_netdev(), which also deletes the delay timer.
+> The problems arise when $1 is (say) "-x", a simple LR parser will treat
+> [ -x = -x ] as a check for the file "=" being executable and then give
+> a syntax error for the second -x.
+> I can't imagine why shellcheck should warn about a leading x (or any other
+> character) provided field splitting is disabled (eg by "").
+> The leading x has definitely been needed in the past.
 
-Please add a fixes tag, and repost.
-Please don't send new versions in reply to previous / existing threads.
-Please read at least the tl;dr of:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
--- 
-pw-bot: cr
+Yep, it definitely has been.  The rationale on the wiki is that it's
+not necessary for modern shells (and presumably that it unnecessarily
+complicates the code): https://www.shellcheck.net/wiki/SC2268
+However, it notes Zsh had issues as recently as 2015, which is not as
+old as I would have expected.
+
+> POSIX does require the three argument 'test' look for the middle argument
+> being an operator - but there might be historic shells that don't so that.
+> OTOH you are probably looking for code from the early 1980s!
+> But the POSIX spec (last time I read it) does point out the problems
+> with arbitrary strings being treated as operators causing complex expressions
+> be mis-parsed - which a leading x fixes.
+
+Good point.  I just reread it and can confirm that the current version
+still notes issues mitigated by the X prefix with "historical shells"
+and with greater than 4 argument cases:
+https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
+
+>> I think they are safe to
+>> remove to clean up the code a bit.  Here's a patch to do just that,
+>> which can be applied on top of my previous patch.
+>> 
+>> Since -o is an XSI extension to POSIX, I've stuck with ||, but I think
+>> you are right that x would not be required in that case either.
+> 
+> I'm not sure there are any common shells that don't support -o and -a.
+> They get used quite a lot.
+> I'm pretty sure they were supported by the pre-POSIX System-V shells
+> (or the /bin/[ program they ran).
+
+You are probably right.  I still remember when Debian policy allowed
+them and posh added support in 2007/2008:
+https://lists.debian.org/debian-devel/2006/11/msg00710.html
+(I was corrected by Clint Adams about -a and -o being XSI extensions
+some years before then when I noted posh lacked support, which is
+probably why I still remember it.)
+
+I find && and || more readable, but I'm open to changing it if you
+feel strongly.
+
+Do I understand correctly that you are in favor of using the x prefix?
+I have a slight preference for leaving it off, but I'm open to adding
+it if you (or others) feel strongly.
+
+Thanks for the interesting discussion,
+Kevin
 
