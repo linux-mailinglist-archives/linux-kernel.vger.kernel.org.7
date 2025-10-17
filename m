@@ -1,368 +1,186 @@
-Return-Path: <linux-kernel+bounces-858522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A23BEB0D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:19:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DD9BEB0DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD861AE2C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:19:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A40524E1374
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBE32FFF88;
-	Fri, 17 Oct 2025 17:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4422305E1B;
+	Fri, 17 Oct 2025 17:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9tKkjPr"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Zj0wxQXN"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F4C2FFDC8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECE02F12C5;
+	Fri, 17 Oct 2025 17:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760721563; cv=none; b=BecTcc3K7P1mdiC5qJuxJvRA1Ypq0dTxpDkF6LXBS5QOs6SaSEXCqlyxNinw6p13vsNncOaBHezqwohYZ753/vY2FkpY/NqQ5EBQF/v0SO8qX+8BjeWsp+D1R38UkbHPDKUWDT9sPVeEQVEXRe9D5+CF9TYRO5y6oyK+lWsVFY0=
+	t=1760721605; cv=none; b=tuK+ZlCA09ZKucKvd+pImJl7jA01TBqTQT6nH/RW5utjZ39clIeoNwK78TvFKKfIoP2USCAvnvqDHYIJ5kmfnlBID+SjfEpjttRW/cjotPcbC8Cgem5wkWZz/+EPiUQ2jC0UQNtmASTq6SDYs4AWgglvmWHaGssfwxnJHJVU1WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760721563; c=relaxed/simple;
-	bh=qicDVyeNt92wuALdVRPwGGTRoCBfAuIytTgnqL/VZqI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocsGGEIGEvZUpM8ZASkaiixBdfk7B29iprHjTNA/h25mVEKkLALLdrBiGfmJ/QWClBsvamzuRvAMTF222eCZwV2ebWPrc4bapif27Tq2briWtHxNN1Bzq1aHVoPusCWqJNZQ7ULWySc88ISznYcJEfhsOx9Ziqs1q9l2Gn06Wo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9tKkjPr; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57edfeaa05aso2490858e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760721559; x=1761326359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XL9gAVclE3lngHX2cLTVrJb1oTHIHA33oNB16rrMnlk=;
-        b=U9tKkjPrefk3Yup/CuvysY2DjxZrMvaaux85Fh1Id/QO6QZ3y9i8jDGNg3+Ghr3QTE
-         DI5Maz+RRVi5oO7nRUv/Aa42tyjzdJN720WIvXaPlDt54YJVwnZbh2dppgSk6MFQBGfY
-         xjsZF/Kf4VYCAg1AmEhCKPV/cwQxbcVHIznGxHc4g22HQPWa8J1NNZCVpoNs+falKDWn
-         tg2NeO/Ewq71LkZW/nOy0pxTYGcWBdNdO+BaF4quIyTk7YeYQuAS+ECwCuOyR9WUFSNF
-         fZluGmy+E8tgNKgg8Yv+35weNOVwte01UjIy2k3sihoI8rh/XUAa5+Dt9ByKdRr5ntvg
-         DENQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760721559; x=1761326359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XL9gAVclE3lngHX2cLTVrJb1oTHIHA33oNB16rrMnlk=;
-        b=p2bg3kZn6sHOZutKx/ZWlwwXm4F/DmYS2Nlkr68CS6GxGqgg5cIyjUPpatPrXXpUJV
-         hUVQiuGi3vVdTBrc22JW0XITWkYsvZqBsT4mFXn2OzPpc1Pf8aZ3SQE1IzfRUxb7dQIq
-         QgGhuz1+/f0r7f6dqNknzv/qCpzKeTxBmHUjbh3ooS9GTi3Jc19BvuL4i7bQO/l0YbXP
-         zBC1N+KWT2zBQ26KxOEpL+0a0SthAX3LVRbitd0QaRxAj+Jv0s0GsNdvOGgywCackAmw
-         Wc9kfQzczRDRhCK63/Ubap8Dd0/7/AsIeNvHWZuLtoveD6Zlycw2MU44PRLFPdU9jUui
-         WOGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXC1gceI3jbnuRSmLIDPR7AuvkqBICxM0B3uZ016x+Wku8dGFqyqZ4xI7k3VDZpdAJ+s0tSGrnBv46cosE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS1mcn6r1Ug1XA1GouAUHgo1jaZNZmSJ7DgDGUVyoar/M7OITi
-	LkARqRIf7VWx1ofwYObRG9bc1Kzp5KQNSPLSgrRcY/frmvg3r8EgIt3FjPznD8OB
-X-Gm-Gg: ASbGncuiil4KOG2MBWcgZXiz1Ls0M5Rj9hgBEY6vkVTYJ1vbZJLDefjAnToyr+PNrYn
-	IiJK7RoLEM+Rp7UYs3hptuAaUTrykKBB7+iZj0kfdhfg8LP2H9QCDIDWHh85YJBPolUFKfQWbqp
-	T5Kvf7AUeMlJI/j+b+OckFdZIq6/f2iMhCU0mvlG8mpZLKJfrPEiR657nEB9uSI4EAy77Vbtse8
-	6mkqj0I5bZpTei0x+YV3pIe/sJTbmVg1nvbVAQjWsUi5SLls/0nD+dPAGiJ+OypaeNgPKOgdKaF
-	i5V+PtSoN2nEoIbhKyuf9lmFJnDEpZOmdhlIULBAUPPnMGns1JbqV2fp2ocqBbhHQcBtC4uEAI+
-	Wp4Zb4gX36J/wBq+ssdLTRoFa2yrnJun624UYH8KLmAbXXfhCiPhWnw==
-X-Google-Smtp-Source: AGHT+IEJh1k63FP41WgVNhCjLX6axNuwSzkm8YuK2vtNhdoknX19jYuXL0p34J/QM8svaETz5NjFyw==
-X-Received: by 2002:a05:6512:2397:b0:58b:27b:ed30 with SMTP id 2adb3069b0e04-591d84fae4cmr1760705e87.22.1760721558398;
-        Fri, 17 Oct 2025 10:19:18 -0700 (PDT)
-Received: from milan ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def25a1csm58096e87.105.2025.10.17.10.19.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 10:19:18 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@milan>
-Date: Fri, 17 Oct 2025 19:19:16 +0200
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
- allocator
-Message-ID: <aPJ6lLf24TfW_1n7@milan>
-References: <20251014182754.4329-1-vishal.moola@gmail.com>
- <aO8behuGn5jVo28K@casper.infradead.org>
- <aO9pUS3zLHsap81f@fedora>
- <aPEZdHJlNOofy5tm@milan>
- <aPEubI4kWvzSC5RN@fedora>
- <aPFBY_OtG0YTAaHv@fedora>
- <aPJrmdeQY1QvbVdc@milan>
+	s=arc-20240116; t=1760721605; c=relaxed/simple;
+	bh=7eU7v/gSC0RzDIzvKfvaFqAYhZNli1o2i++9MEqwsx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rdmFokb00R83Mzdpt06ZXaQiP8qo7Q3i61H7RgVYr9wNtzRiKaQSOJV9GrqG7CUbjdzlWHR6vQM4bcNZ04BYynk7TZiU/VY7gpAYvA4JhrWRJbyFR+pfffrkGCInk/g+K0vn+rOOt5Z1PF1juFohPrNw4qPuhwAqMmp0+Ks0V68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Zj0wxQXN; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1760721594; x=1761326394; i=w_armin@gmx.de;
+	bh=7eU7v/gSC0RzDIzvKfvaFqAYhZNli1o2i++9MEqwsx8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Zj0wxQXNNdqjZCTpsdow9yVms4KFeFOAGc50xiaYuByALRsj6Colh7iOhLH3XMU5
+	 LEA0St2OybTBBpNvvtqbb3IqKgXJP+G7q5j0PQDu8eZ+UtO6eG88wrhf5LLYXcOvm
+	 vjzphkV6J3HD4TsEZtpCpdzdlEsqMpCowa1ZP664xu5IBkQIrq+Awv0ykotGcrv05
+	 JlB2qyVtKad2CnrrX1cYgwZ43H35iM8SNVlBaHDBPHsVG23xUA72KgI75Ad8LcPk5
+	 sic7kAw6cOwrhSCMgpO0BcIBv1VyTtfs1B74zv+XYSFOCw/1htAYg7jc8BnPcN0MT
+	 weNsKeq3IGue4Dmiug==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MvK0X-1uJM5b1Z57-00s3Qg; Fri, 17
+ Oct 2025 19:19:54 +0200
+Message-ID: <9e63e9de-b9af-478d-90ad-d7fca59aaea8@gmx.de>
+Date: Fri, 17 Oct 2025 19:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPJrmdeQY1QvbVdc@milan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] platform/x86: Add Uniwill laptop driver
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ wse@tuxedocomputers.com, ggo@tuxedocomputers.com, llvm@lists.linux.dev,
+ oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ rdunlap@infradead.org, alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org,
+ lee@kernel.org, pobrn@protonmail.com
+References: <20250928013253.10869-2-W_Armin@gmx.de>
+ <202509290415.uez00SgW-lkp@intel.com>
+ <6146d57b-f855-40b1-a644-3af6b28ceea4@gmx.de>
+ <20251002233627.GA3978676@ax162>
+ <402f254d-7217-43e8-867f-66daab3ead86@gmx.de>
+ <20251006190819.GA2406882@ax162>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20251006190819.GA2406882@ax162>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:jCSIiP7A6/WJzpkIJUGLnWIYZcVxQ9zb8ydRgCPk+KAJhj21Bv2
+ EAmRmKRWIhyIjuXJO1lK+h874W8vKgW86aa1+da4H/uROVBGO64TQ87XW2oT9D7PgV5EXub
+ 3NmbZlA7Xamb6zV6a+CaAYQmdWS7m2D8tyN+3/oZdx04tAs90l0NHzJOYMfLoDvmpeB4hJ/
+ 3xfRDB0ekigEWsB7Ps5tg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7yuLrp7jHU4=;htu/TOWIHCm/XbqooOOdUQU0HS3
+ I0Uon/SNp+JVB3yxo4COD1u0QA9GZesbAEAqg2uNYldH3ErDjH2ISdU5Rt9ZfqdwcWn2A8Oaq
+ h+MbUYy8pZ6LsD3SqQfDsNYs7SSefaKV/YRtWE3FE8EaXbqpXaeUBEQeWh8s8KTNv+UVlvPrA
+ SbuMEeARRllmK2zTRAlZYdybVJUkxiOctqsmY0ZoNQhp6C9V4kP1+tlEQ26wQyO8rzVgXWXSq
+ 3WqYPei7xmheXVF+zSCEo+y31m/IdZZNjh+hZrrtvCD/vS9v3k+ydBH0WUyhtH5NzmEKrk46I
+ A/Kdw5co3+4Av1C/s37mS/38tWVM3r+TwGnxuSTNWXHOe1OIUBQxTHrvFrsVgFDmJEpSPgHMy
+ 5qVzh/BGuO3DFM9fFQfmOQgw3W4RrPS1G7Q7KSEdFBcDzkW4swS7y4JTCZLieG45YotOZZIeG
+ uuJjwdTa78+0fl/uF2ldWqJb2KrLZCM2T8r0RMAF01Fo0nqt41QWchzP8qMVSzkNF/lYN02BL
+ AT76jX7xD8rid+zYvPotdIgF3iEFBCJyIjUsO1r6SJ1fG0886VRlhny3GkKw+fDfUgDO/vg+s
+ AigqlmhxVr/hyZC5tX2yh2zrg/2jLW5v17m6Np+w6U+Miteht/LM+JwkDvlBazccg83wsTc0X
+ TwC88HL+G7TYB1GugcruKL2NsrNVE5IoGr185UL8p9lahx21j7eemmXcD/Rbo8JVSlR5uThpb
+ HCfhY9dfVo9dED9qSaX7dZyHKUSgc61RTiz3llCJ0dcGqapWYYkhnO8jZuwpCSN9nMM9xv10c
+ HVV6Nc5fRb2xNoQg7XRT39EMTwwsQXFh0jo9b0zuDfoQtkIK3nURHR3RiYJVe7BBenOXfITKM
+ l1qjjR7SgQ5gl8TzAHgl+/rGXbpnua8Cr6l50JXTbhHoyXMkIDP4O0LUP12xIxNNR/bF7F2zT
+ TvyL3OKvwvNnw0Y1y2eWA9P7fhfHzBFW9qZ3Y8rdoHu7VNHwLPQ0muE29dIM1KrrKnpZW6aZ7
+ 4wtt3/sGpNRUZi+xtqbwMZo2p1sA1YV2aYKIdMnR5wZIAmD4dJOr5CwF+XlldHXtVyF1wXVZU
+ iF9fz94i0y2PiZiQcoANcp+5u3UlJIcuI6sSDJcMT/wspqXbVNk0WIcRjyFR3N9PZPCl0Fwpj
+ tCE3SUAbBR+3Id83dA+c+K9p8M+rqzsIBL9C/o5zmpScGPw+5Zmsl3bFb7NPeHfxLp+TZjFPZ
+ WtkESX0gZd/DIDlRqATTt9lbKSy+JePfWN99XP4XUwjLCaUONuhN/81oYz3d0gDpb3I5LMCmA
+ SngJf+B2oBxmqbe9S+TqO6muHWDabVxW115oqirXgqe8Rx/cQhwCP1/1+9ra2c9/en9Fkjcd6
+ ecd7WWT8IqDTvK4YqZ7HGM/xHDZINbesGSU/WY8aGIKVw6oB1/GiLIDplMsn4dUbgsIFho8RB
+ EncDsjc6LJ71UnRavge/aM4bRWfqJN2rCo6Pm6Vo0xz/GXXK01TSjPChNlSW4XTDaSn2oisVG
+ macvC5EES074nEIRZonYbxpah1pFuK61VJ+nSCPZhg+g/NBMoau9J9V5luW8oHB5ljbiWd5Nq
+ Ayupizk1Ad0U2R0rWaldE/JejgtxFVLSy5NoCx2gXZrtGjn+4PdsRN5k2ML0srH/f81u/F6G7
+ 6CyI5GcXdjdK7NP0KTCx5K233D8IEWhWlbrmnFw576geYZMZbFBAhsQnevTZ7GAdzxI3Z6tvR
+ 02aMBkkFrbPbAnTXOR/32hqeZEqf1LV15/ErgeNWk28/oMwR2z7JIFP0TKp/nbXzp59C3hB1i
+ 35pLJ3VUvQls+kMfp/mhR9FqvWwfCEfHL5xe3nASOSSI2XoocLWVjf+vOFPBd5TYDzKoduJec
+ dFHSKBIpjoM/lDFpPbbziiQIThUHPAB4u3C8s67XCarqjykQh//arOcFAlC9ZdR5BP8REXNbZ
+ AfyqPsxnFMIhM6dYrbu/KxyuDqXKiUYwP+nE96SYc9rD1F6gy6uKxq3PGJp+gilcX3jpi8gQS
+ /2pyIzb1cUonob5IFmQdJHUKSkWBVOsW4N7tfwZtSUMHt0TIvBBsk4Kp51f6NEOBksYFMlTzr
+ GQc3Js+M2ZcvdbLfk7z4vHGradn31il4VT9Ux6GneHA1hx6Wt8o6ixNHkNI2wNaufL9LuEY5G
+ uzwmEgT0rECt+UMuzOkstL5XY7vxFQh5esZYlW2+uLwv2K44vpnyBoNzaoN8N1KHJ+PaEuNDO
+ DvM6/pKqpscLbixcP7Lxek8EVpFUPYxlvCDQBX57ZQNYOGPYTNdliM9zqOYCZQ6o01YSO5lQc
+ 9qglZ7S7EGom60Tsq2KGST1OynMXDko/jnNT7tNDbbGK3sMlV10qbdLN6eYxKm6+kBIo08wrS
+ XVgii47RW1Tnh2S6TPtCAGc6GpKTDOF1uN5fFgFk3xU1B2X1AQP9q+hKnXTP98VSG+Cw98BU/
+ b5RkcNMTCd0/FYNlvayX6gn7fwAIcH7mF7dDKq1atmNyDUxnZy/UyRws88c525iJoTzTJxUXa
+ C+d4Pg4OAw71jSHVRoRlw5LbOp5GQcbCxd64JefPjX7RUdz3qmhkLqJnZor4C/VNfxFg0m7S3
+ jr82zis9a08+k6a1zEJPGr00q7KainLi5Yxhak/HnGUPQagcaLdFFpbUSjyVyEw0SQAApCcSw
+ bQxkhpq22+jfl9R3zZB1ICGnKuo9IzHKzHVZn0C3afKvfPGnt36Ys494gA9V/f3Im02AYSmeF
+ 3VEtg0zrAxM5QsTrQIcsfdlaV5J+3e2dL9mguKKts7vHKwQmvHM2+mM9Wo7TrpobHYfGkCXUD
+ PEwX8+yv+DgtPWZwAZjsOui2DnfdWeEgEKz89VfITp33wm47dpBU2Nq1vqEFvvJQE9/85fpv3
+ /KrrMieXaDTDoIEtIXt1/P/iVDuLT5/oZtKprhBgU4Z3JrdyUvZSxDF9VntA+0RrFj9JMLRqo
+ wrn3nlh4vIZmy/thQ1dSuAkoCuim6fxWr6XdG+qhSOdg1PQE+3tRsqCv2sqHSE0/++nQEC0Gb
+ f4pwh0f8RiWLYsPJpcP4JCNnrsSuSyFQSl0nXImC7cfvg/rjReBJzIpQS9+hhxv8pmAyTQgQ4
+ PYXGNESemn/7Jfe5w+FwH/iQq8iv3JP62u7Y56WkflVZ51jiaMXdSREpKign1CpHbusVwg618
+ uII+0HwZT1ZfrtRpDRp8fIGiQQppbIJajaYiY1SPSPxhqV/FeurFfu8YsoNzdBCQzagPji54C
+ u11BMwCgAmoWWiyZD5XZD7zIRJq/IjyCpd0AIE4MsEdpBf/rPnulncqS2oq4CAPrZaOopjpai
+ lmPTKfdaXOPSlG3kNmIBlSkUEui42fxDNH0D+6Ss3ZenAyny6bdlfziLrsz1qg0bpguTbaCFB
+ kpoui+bCBkoUrU37NuO4Bad1uZnxYIOAWd1oxnqXqt/LOoomTbAVaEYg1rtQ3JeWVPhPQysgy
+ jV4OrDDrW16UMwTOGsOQ9RWc5mCCkoetLvDK2CT4KNH9Kiy+Bfx5wQSgjG1r681TsZsyc4c5R
+ mxoueuZZGXbZSeyN5BB3PtYYRkgC2+h9bCDoo76vakGeqtl7E98DHP74X2Mrhvs/N1vw2GJqo
+ XU1fD1/4IsXF4EU/aOhcVHMT2u365CGp6tMTpPMVfK+lQg4BLbdpJeoZAIz2+90oqwKCfVavP
+ 03I5vy4DQMA40FSZ4YM7YhdfYD+RtRf7AT9tfZnWvXSyF4hos2Ez1miXxrdWSZNromTMneYXG
+ hN61hkzsjCNQBAEUb8kusNrldoN1HYWNch2PBkOkqkX//+HxxSl/CuKyieWGD1sYZp5Vb1YLD
+ 9CkJMOGlGyEHxNynR9Bvcw4eyr61WnhhhR81A9kEdq3ii1QlYqmmnzhzp3RaSP20+/ky/X4HT
+ VfCUV6Qgm80RVfoL/XrypEQu7EgKz4+rF8uF3BCdbVHVJj2XXHTFhV0yzgR6Dt8eKpbty0k0A
+ hDDRQRm9lgj7s6lJ82DJ/6Ph4ld5Q+oAB8LsbE6LR/L1bMreDTFZc77qHlO/Qbl6KDiU++A1+
+ WJyJAlxx1dnFZ2z4kWannC3LCjBxqiHuzXV0oshPGDZiLyMGDgK0TSyafX6XdVMnXiWeMq4se
+ x+upCPkMHF8mnH1j1CB2WCklbWiozVMo0dTAb843BRqtKTbxkVoLKMi0DmhGCX+pr1xveU4pC
+ Lzr/gZqNUaj9AlPFgVDfN8CFeveoI2Nel9NxN2+v6KJUG5VcFRy+va7sAtobCaERUhvii4zNV
+ 46go0FumsXk/DzKHlwm8mTFrOBVYx4Qudq0a4D76Pa9QpEgTT1XR9dDVJDjTBUe7k0E8IkOGD
+ OSWFW8pX4t6gREePfnmSODb6dWkGJP9IroPl6dLOr0LzDo9iX3MCFLXTLHapeZcllBiXYzUxd
+ 8idq3J5F3H9UPmv8KEP/TuIN6Vb1HY09MN+rhKCNjEhUaE68a8KeHpK+/fWMleBigcwol01wo
+ k9e0BZsQ9krEkpHDKLoXWyZYnQLAQeblyYCnDHwdO1/SLRfD6BOXZoq26i8FY0jhiUJnXSHit
+ PoLZZG1tbc4VdS17DajkVZbaJ00LtyCvm1c6VXGmnB1zzZHYvTIvcy7Y96wiLfeByKfSlookx
+ WGRuxUlcI3Y3SeO1MpRimawqWpAAdFseqSrJT5aZZEh6YrjvD//02xXLhhHyxqAUADhBuAY7X
+ sZODY/eZD2bi8cqOgF/r8Kcb1z3HATBAIlOSygqHLbY1lLtVgtat5gMAmyeE2SPVQmonkFHDC
+ yWEM4ciBfETisWn8x7C9GuqZuBLTw0ek5UvZzakXDgsqZUumAIPOviMbkiZ0DTdu7e0Z7gtAc
+ ryOatP1GlLnT18CELBcAOy1EP9TE1XDu0J3QKB2tmUQj7VZZsmKIh0ZuaGQucHNJiecscIoon
+ c11j9D+uNKeh9FgV49U4gWQOqwvF2Tut5wnDVbP58SKJLo8O1XFBRp5nIKtfxMOexxQq2n/vQ
+ ybqGNhTrDQNBfLiyib/JoIaDALit7rKmPU4=
 
-On Fri, Oct 17, 2025 at 06:15:21PM +0200, Uladzislau Rezki wrote:
-> On Thu, Oct 16, 2025 at 12:02:59PM -0700, Vishal Moola (Oracle) wrote:
-> > On Thu, Oct 16, 2025 at 10:42:04AM -0700, Vishal Moola (Oracle) wrote:
-> > > On Thu, Oct 16, 2025 at 06:12:36PM +0200, Uladzislau Rezki wrote:
-> > > > On Wed, Oct 15, 2025 at 02:28:49AM -0700, Vishal Moola (Oracle) wrote:
-> > > > > On Wed, Oct 15, 2025 at 04:56:42AM +0100, Matthew Wilcox wrote:
-> > > > > > On Tue, Oct 14, 2025 at 11:27:54AM -0700, Vishal Moola (Oracle) wrote:
-> > > > > > > Running 1000 iterations of allocations on a small 4GB system finds:
-> > > > > > > 
-> > > > > > > 1000 2mb allocations:
-> > > > > > > 	[Baseline]			[This patch]
-> > > > > > > 	real    46.310s			real    34.380s
-> > > > > > > 	user    0.001s			user    0.008s
-> > > > > > > 	sys     46.058s			sys     34.152s
-> > > > > > > 
-> > > > > > > 10000 200kb allocations:
-> > > > > > > 	[Baseline]			[This patch]
-> > > > > > > 	real    56.104s			real    43.946s
-> > > > > > > 	user    0.001s			user    0.003s
-> > > > > > > 	sys     55.375s			sys     43.259s
-> > > > > > > 
-> > > > > > > 10000 20kb allocations:
-> > > > > > > 	[Baseline]			[This patch]
-> > > > > > > 	real    0m8.438s		real    0m9.160s
-> > > > > > > 	user    0m0.001s		user    0m0.002s
-> > > > > > > 	sys     0m7.936s		sys     0m8.671s
-> > > > > > 
-> > > > > > I'd be more confident in the 20kB numbers if you'd done 10x more
-> > > > > > iterations.
-> > > > > 
-> > > > > I actually ran my a number of times to mitigate the effects of possibly
-> > > > > too small sample sizes, so I do have that number for you too:
-> > > > > 
-> > > > > [Baseline]			[This patch]
-> > > > > real    1m28.119s		real    1m32.630s
-> > > > > user    0m0.012s		user    0m0.011s
-> > > > > sys     1m23.270s		sys     1m28.529s
-> > > > > 
-> > > > I have just had a look at performance figures of this patch. The test
-> > > > case is 16K allocation by one single thread, 1 000 000 loops, 10 run:
-> > > > 
-> > > > sudo ./test_vmalloc.sh run_test_mask=1 nr_threads=1 nr_pages=4
-> > > 
-> > > The reason I didn't use this test module is the same concern Matthew
-> > > brought up earlier about testing the PCP list rather than buddy
-> > > allocator. The test module allocates, then frees over and over again,
-> > > making it incredibly prone to reuse the pages over and over again.
-> > > 
-> > > > BOX: AMD Milan, 256 CPUs, 512GB of memory
-> > > > 
-> > > > # default 16K alloc
-> > > > [   15.823704] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 955334 usec
-> > > > [   17.751685] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1158739 usec
-> > > > [   19.443759] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1016522 usec
-> > > > [   21.035701] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 911381 usec
-> > > > [   22.727688] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 987286 usec
-> > > > [   24.199694] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 955112 usec
-> > > > [   25.755675] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 926393 usec
-> > > > [   27.355670] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 937875 usec
-> > > > [   28.979671] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1006985 usec
-> > > > [   30.531674] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 941088 usec
-> > > > 
-> > > > # the patch 16K alloc
-> > > > [   44.343380] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2296849 usec
-> > > > [   47.171290] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2014678 usec
-> > > > [   50.007258] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2094184 usec
-> > > > [   52.651141] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1953046 usec
-> > > > [   55.455089] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2209423 usec
-> > > > [   57.943153] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1941747 usec
-> > > > [   60.799043] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2038504 usec
-> > > > [   63.299007] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1788588 usec
-> > > > [   65.843011] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2137055 usec
-> > > > [   68.647031] Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2193022 usec
-> > > > 
-> > > > 2X slower.
-> > > > 
-> > > > perf-cycles, same test but on 64 CPUs:
-> > > > 
-> > > > +   97.02%     0.13%  [test_vmalloc]    [k] fix_size_alloc_test
-> > > > -   82.11%    82.10%  [kernel]          [k] native_queued_spin_lock_slowpath
-> > > >      26.19% ret_from_fork_asm
-> > > >         ret_from_fork
-> > > >       - kthread
-> > > >          - 25.96% test_func
-> > > >             - fix_size_alloc_test
-> > > >                - 23.49% __vmalloc_node_noprof
-> > > >                   - __vmalloc_node_range_noprof
-> > > >                      - 54.70% alloc_pages_noprof
-> > > >                           alloc_pages_mpol
-> > > >                           __alloc_frozen_pages_noprof
-> > > >                           get_page_from_freelist
-> > > >                           __rmqueue_pcplist
-> > > >                      - 5.58% __get_vm_area_node
-> > > >                           alloc_vmap_area
-> > > >                - 20.54% vfree.part.0
-> > > >                   - 20.43% __free_frozen_pages
-> > > >                        free_frozen_page_commit
-> > > >                        free_pcppages_bulk
-> > > >                        _raw_spin_lock_irqsave
-> > > >                        native_queued_spin_lock_slowpath
-> > > >          - 0.77% worker_thread
-> > > >             - process_one_work
-> > > >                - 0.76% vmstat_update
-> > > >                     refresh_cpu_vm_stats
-> > > >                     decay_pcp_high
-> > > >                     free_pcppages_bulk
-> > > >                     _raw_spin_lock_irqsave
-> > > >                     native_queued_spin_lock_slowpath
-> > > > +   76.57%     0.16%  [kernel]          [k] _raw_spin_lock_irqsave
-> > > > +   71.62%     0.00%  [kernel]          [k] __vmalloc_node_noprof
-> > > > +   71.61%     0.58%  [kernel]          [k] __vmalloc_node_range_noprof
-> > > > +   62.35%     0.06%  [kernel]          [k] alloc_pages_mpol
-> > > > +   62.27%     0.17%  [kernel]          [k] __alloc_frozen_pages_noprof
-> > > > +   62.20%     0.02%  [kernel]          [k] alloc_pages_noprof
-> > > > +   62.10%     0.05%  [kernel]          [k] get_page_from_freelist
-> > > > +   55.63%     0.19%  [kernel]          [k] __rmqueue_pcplist
-> > > > +   32.11%     0.00%  [kernel]          [k] ret_from_fork_asm
-> > > > +   32.11%     0.00%  [kernel]          [k] ret_from_fork
-> > > > +   32.11%     0.00%  [kernel]          [k] kthread
-> > > > 
-> > > > I would say the bottle-neck is a page-allocator. It seems high-order
-> > > > allocations are not good for it.
-> > 
-> > Ah also just took a closer look at this. I realize that you also did 16k
-> > allocations (which is at most order-2), so it may not be a good
-> > representation of high-order allocations either.
-> > 
-> I agree. But then we should not optimize "small" orders and focus on
-> highest ones. Because of double degrade. I assume stress-ng fork test
-> would alos notice this.
-> 
-> > Plus that falls into the regression range I found that I detailed in
-> > response to Matthew elsewhere (I've copy pasted it here for reference)
-> > 
-> >   I ended up finding that allocating sizes <=20k had noticeable
-> >   regressions, while [20k, 90k] was approximately the same, and >= 90k had
-> >   improvements (getting more and more noticeable as size grows in
-> >   magnitude).
-> > 
-> Yes, i did 2-order allocations 
-> 
-> # default
-> +   35.87%     4.24%  [kernel]            [k] alloc_pages_bulk_noprof
-> +   31.94%     0.88%  [kernel]            [k] vfree.part.0
-> -   27.38%    27.36%  [kernel]            [k] clear_page_rep
->      27.36% ret_from_fork_asm
->         ret_from_fork
->         kthread
->         test_func
->         fix_size_alloc_test
->         __vmalloc_node_noprof
->         __vmalloc_node_range_noprof
->         alloc_pages_bulk_noprof
->         clear_page_rep
-> 
-> # patch
-> +   53.32%     1.12%  [kernel]        [k] get_page_from_freelist
-> +   49.41%     0.71%  [kernel]        [k] prep_new_page
-> -   48.70%    48.64%  [kernel]        [k] clear_page_rep
->      48.64% ret_from_fork_asm
->         ret_from_fork
->         kthread
->         test_func
->         fix_size_alloc_test
->         __vmalloc_node_noprof
->         __vmalloc_node_range_noprof
->         alloc_pages_noprof
->         alloc_pages_mpol
->         __alloc_frozen_pages_noprof
->         get_page_from_freelist
->         prep_new_page
->         clear_page_rep
-> 
-> i noticed it is because of clear_page_rep() which with patch consumes
-> double in cycles. 
-> 
-> Both versions should mostly go over pcp-cache, as far as i remember
-> order-2 is allowed to be cached.
-> 
-> I wounder why the patch gives x2 of cycles to clear_page_rep()...
-> 
-And here we go with some results "without" pcp exxecise:
+Am 06.10.25 um 21:08 schrieb Nathan Chancellor:
 
-static int fix_size_alloc_test(void)
-{
-	void **ptr;
-	int i;
+> On Sun, Oct 05, 2025 at 08:06:57PM +0200, Armin Wolf wrote:
+>> Am 03.10.25 um 01:36 schrieb Nathan Chancellor:
+>>
+>>> Hi Armin,
+>>>
+>>> On Thu, Oct 02, 2025 at 08:41:19PM +0200, Armin Wolf wrote:
+>>>> i think this is a problem inside the clang compiler. I did not encounter this warning when
+>>>> build for x86-64 using gcc.
+>>> Clang is actually saving you from yourself, it is a bug in GCC that it
+>>> does not warn for this:
+>>>
+>>> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91951
+>> Oh my, i didn't expect that. Thank you for explaining this issue to to me,
+>> it seems that i still have much to learn.
+> In your defense, it is quite a subtle interaction. It is probably worth
+> throwing something in the documentation that explicitly calls this out,
+> though I am not immediately sure of where...
+>
+> Cheers,
+> Nathan
+>
+Maybe Documentation/core-api/cleanup.rst would be a suitable place for warning
+people about this.
 
-	if (set_cpus_allowed_ptr(current, cpumask_of(1)) < 0)
-		pr_err("Failed to set affinity to %d CPU\n", 1);
+Thanks,
+Armin Wolf
 
-	ptr = vmalloc(sizeof(void *) * test_loop_count);
-	if (!ptr)
-		return -1;
-
-	for (i = 0; i < test_loop_count; i++)
-		ptr[i] = vmalloc((nr_pages > 0 ? nr_pages:1) * PAGE_SIZE);
-
-	for (i = 0; i < test_loop_count; i++) {
-		if (ptr[i])
-			vfree(ptr[i]);
-	}
-
-	return 0;
-}
-
-time sudo ./test_vmalloc.sh run_test_mask=1 nr_threads=1 nr_pages=nr-pages-in-order
-
-# default order-1
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1423862 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1453518 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1451734 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1455142 usec
-
-# patch order-1
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1431082 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1454855 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1476372 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 1433379 usec
-
-# default order-2
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2198130 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2208504 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2219533 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2214151 usec
-
-# patch order-2
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2110344 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2044186 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2083308 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 2073572 usec
-
-# default order-3
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3718592 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3740495 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3737213 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3740765 usec
-
-# patch order-3
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3350391 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3374568 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3286374 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 3261335 usec
-
-# default order-6(64 pages)
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 23847773 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 24015706 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 24226268 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 24078102 usec
-
-# patch order-6
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 20128225 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 19968964 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 20067469 usec
-Summary: fix_size_alloc_test passed: 1 failed: 0 xfailed: 0 repeat: 1 loops: 1000000 avg: 19928870 usec
-
-Now i see that results align with my initial thoughts when i first time
-saw your patch.
-
-The question which is not clear for me still, why pcp case is doing better
-even for cached orders.
-
-Do you have any thoughts?
-
---
-Uladzislau Rezki
 
