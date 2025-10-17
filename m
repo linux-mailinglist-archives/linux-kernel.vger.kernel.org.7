@@ -1,85 +1,163 @@
-Return-Path: <linux-kernel+bounces-858320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFBFBEA8CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345E5BEA73E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49E0940BF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB17941741
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E5F32C93E;
-	Fri, 17 Oct 2025 15:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EzKCTc+C"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CF1330B22;
+	Fri, 17 Oct 2025 15:34:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC178332907
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20023330B00
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715266; cv=none; b=CFInhRlfnbPsttQDIDgphCNp/n6uV43+b1jIEA+8Y4Y1bWpy075USVqQLZDy6kx334v2UYsHoqKfwjfDOAECrkljwJ6kTAaN2xfHkmdVLV15swrRayVm3NQfLjcG5RLhsNHrjtRaHF4XwO4PSy3b+0JhMvqhf10203S7Y9mL1SI=
+	t=1760715297; cv=none; b=qM7thEjG7nDde0DuAQrLR2IZjfBsY1AMdtApwqu4CAsLoyflM3HzdIRsth02wIWhp3FjYncPl+Ma9ugd2SclLjBe6Sx/y14XT3Z+d72oEf3ELKi66RRnJq2ybk1deeQ/9oHFSObaG92uS04Tbb870y9nX67+ciqH0g7EjnKdEzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715266; c=relaxed/simple;
-	bh=hIH8QsiqeXv72GRmxBr/rX2xeu7w44knK028WD5AoSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B1w7sL9ntXexKZYXM7wsESQJrS25RwCw8jqk0ZRJ8hEt/ixnS0pWCOPTivusKg0S9tYFtaZidhtby4lNm6AK+tr0E7ERCyxSYuyCU/voz5ABbbUmwVJUI5opiyaYzbwY7oswkOQKfpuuuqNGYZshT3TWeizjWDSQ/+hgv2Fn/qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EzKCTc+C; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760715261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nJwvRv6dMoUoyTETozUE5MnUM4OdGxrB2ilGTiyql9M=;
-	b=EzKCTc+CqXmcddIdxWThNfEJ4KHqzAwU0ajC8Pc6otQtY/RKiKVxyNCLfzLOyW9nYJ5N0w
-	nrnhJBseClpbHZRlphvUxKPXobmZ3GPE09Z6WHYynpYJITI13BpgAik/c0oofRo09/NNQf
-	jiAFHkTbGYrejNY4utnw9b0ove7djbw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: Replace deprecated strcpy in cpufreq_unregister_governor
-Date: Fri, 17 Oct 2025 17:33:54 +0200
-Message-ID: <20251017153354.82009-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760715297; c=relaxed/simple;
+	bh=mQGMC1kGzNhg+CDr8KB0wyiCAqA5MX1g+2SpQ2e0ZdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ctvis0vjDhE3cujRqmMRy4mRAmO4kO7lKsWcyGrlzmKNsGQVYjNh9Qq1ein9fe1IYLRC59FDoAil9J1eKfPib33GNyFpxLYakT3LmhbKO19vVgE+sgcMfgu7v2dG90PMOstwC4Mg69axxqihxG7B2WIgo6SIN8eBAyuutgIJhho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9mTc-0007nI-UD; Fri, 17 Oct 2025 17:34:44 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9mTc-00459a-0g;
+	Fri, 17 Oct 2025 17:34:44 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D8AB548938B;
+	Fri, 17 Oct 2025 15:34:43 +0000 (UTC)
+Date: Fri, 17 Oct 2025 17:34:41 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
+	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
+	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
+ FD is off
+Message-ID: <20251017-fierce-orangutan-of-happiness-180503-mkl@pengutronix.de>
+References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
+ <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
+ <20251017-determined-jackdaw-of-painting-e2ff64-mkl@pengutronix.de>
+ <20251017-bizarre-enchanted-quokka-f3c704-mkl@pengutronix.de>
+ <00e3d382-99e7-4b64-955a-cceffe9e471f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="azoyov6dmsdpxtxg"
+Content-Disposition: inline
+In-Reply-To: <00e3d382-99e7-4b64-955a-cceffe9e471f@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-strcpy() is deprecated; assign the NUL terminator directly instead.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/cpufreq/cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--azoyov6dmsdpxtxg
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
+ FD is off
+MIME-Version: 1.0
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 852e024facc3..0d3e77cf96a7 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2550,7 +2550,7 @@ void cpufreq_unregister_governor(struct cpufreq_governor *governor)
- 	for_each_inactive_policy(policy) {
- 		if (!strcmp(policy->last_governor, governor->name)) {
- 			policy->governor = NULL;
--			strcpy(policy->last_governor, "\0");
-+			policy->last_governor[0] = '\0';
- 		}
- 	}
- 	read_unlock_irqrestore(&cpufreq_driver_lock, flags);
--- 
-2.51.0
+On 18.10.2025 00:30:45, Vincent Mailhol wrote:
+> >> What about merging both can_dev_dropped_skb() an
+> >> can_dropped_invalid_skb() in the skb.c, so that there is no stub in the
+> >> header file anymore.
+> >=20
+> > Ouch! Don't do this. We still need can_dropped_invalid_skb() for virtual
+> > interfaces. See commit ae64438be192 ("can: dev: fix skb drop check").
+>=20
+> Exactly!
+>=20
+> > But then I'm asking: Why is there the difference between virtual and
+> > non-virtual interface in the first place? Can we get rid of it?
+>=20
+> The fact is that:
+>=20
+>   - We need a function for the physical interfaces to check the
+>     CAN_CTRLMODE_LISTENONLY, i.e. with an access to struct can_priv.
+>=20
+>   - We need a similar function but which work for the virtual
+>     interfaces which do not have a can_priv member.
+>=20
+> So unless we do a major code refactor so that the virtual interfaces,
+> I do not see how we could get rid of it.
 
+Ack...There are more interesting/important tasks.
+
+> >> Someone (i.e. me) used can_dropped_invalid_skb() in a driver, that mea=
+ns
+> >> the check for CAN_CTRLMODE_LISTENONLY is missing :/ (I'll send a fix).
+>=20
+> At least, this does not seem like a security breach like it was the
+> case for the missing net_device_ops->ndo_change_mtu().
+>=20
+> > These drivers need this fix:
+> >=20
+> > | drivers/net/can/bxcan.c:845:     if (can_dropped_invalid_skb(ndev, sk=
+b))
+> > | drivers/net/can/esd/esdacc.c:257:        if (can_dropped_invalid_skb(=
+netdev, skb))
+> > | drivers/net/can/rockchip/rockchip_canfd-tx.c:75: if (can_dropped_inva=
+lid_skb(ndev, skb))
+>=20
+> Yeah, I think that this is a pitfall, but at the same time, I do not
+> see how to get rid of this can_dev_dropped_skb() and
+> can_dropped_invalid_skb() pair. The best I can think of it to be
+> careful on this problem doing the code review now that we are aware
+> about it.
+
+Ack.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--azoyov6dmsdpxtxg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyYg0ACgkQDHRl3/mQ
+kZz+ZggAiUqLfRFBnoDDH33QiFuJ5wr26Ua4KP57M3IomqRYfm1ZZJC+RrgmHq/A
+P6cCL0NykI2rcF7A0AFoxueWBmG+/LsrawdzGVYjetcV0t90V4b9OFHcI1u+RUcv
+wdO/zP5leAm1ngSYhQeU41Z0vwtY695q6zj0lq1+BRxWSHL0YrVCRhylePn2IZxX
+fXss03GpijPqVBZny1FMmIaOf54Goq4Y0JwMFbw+25+K8xsXhVEq+zG9Mt+gcG/z
+7a0bkZb25VFiqS12y5czj+SO8pZLTNschn7CTtKzIXRR/gzvG6tDd4cewk3pmyxf
+kZ4ihIpvH7fZLV++eEMYhENmMTveZw==
+=yXQn
+-----END PGP SIGNATURE-----
+
+--azoyov6dmsdpxtxg--
 
