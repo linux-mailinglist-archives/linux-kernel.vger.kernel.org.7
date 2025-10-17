@@ -1,129 +1,216 @@
-Return-Path: <linux-kernel+bounces-858267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF15BE973F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:05:08 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567B1BEA5A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F371A66CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:05:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABD7335C68A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B019C32C94B;
-	Fri, 17 Oct 2025 15:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135D83328E9;
+	Fri, 17 Oct 2025 15:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNlQy1mE"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FLtxIBv7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3622F12D2;
-	Fri, 17 Oct 2025 15:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62B0330B20;
+	Fri, 17 Oct 2025 15:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713375; cv=none; b=D1jdVoQZQV8KpZB5P716Hvqxte66qOlx2LVUieIBRtGLqyrctOUxQVgMFEOU2EZ7Ezx75/33GoX4+HS4t/R4O3VUd7o6K3pzrhlO5CVH80ZsyvEHx/OqqPiRi/hiNJ7NEBRuq/zGOCqNcwiWRkkISJwr1yPLAzsLr3s+qEnFbcw=
+	t=1760716714; cv=none; b=VItbilOda1UscBT9bfkNO8zeUTLr59sm6QtsXniJjsjh/4kfLW6C8cltA3hTumIiyu+l1FZXbw6Qp6hbJj5T5gNWTICOi8akwTyq8JIbZ9oEqNV+42Pr1CJG5zqFOWvwtHfepVRQk1gUBQ03czqQH701SJrC9qkRjw5LHWidl5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713375; c=relaxed/simple;
-	bh=bAZ0BT5xZHOO/NsmoKd/KzC0AdyxPMWSSpt44hrFE+Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Bl0u0qU0uMl4HhpupRXBSxLxhFjaXPr6pEfrB16SRoGjsIDQl1hjcCTkEIwTkx9je795dmUN0giPfzcAu+SLnBw3f3ow8FLfCvCiZPRZ/4hdaqyag3T8a/lcO0FCTk4K1WGiOXKBpC7U1TvQZPNDZZHGld8ZfdAqOCraNmfIgqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNlQy1mE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DAE7C4CEF9;
-	Fri, 17 Oct 2025 15:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760713374;
-	bh=bAZ0BT5xZHOO/NsmoKd/KzC0AdyxPMWSSpt44hrFE+Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=eNlQy1mEhvMOzguI/PVpsWwDoodRrNMmDFypdO7YygFNE+048Ej0AUZaRRUKT0lZL
-	 B/71aqKRIDHI+eVEA7nza/JCHECATBOoSZ4ENSbTlVIoRb67rqLrbvZGwBzpm6gzUs
-	 PWFe5sVpYIORYXbFlc91BGHSD1sdzr1w3JBzoJduw8vZ0MWhjrjXxsiu9xfGeCE+SN
-	 DGEOna0Y56eihEYjfheglQozuHYECePY23PrAzH9OSL3uZL1zz0OVdrrXbhLFt6e22
-	 7Iki7kG6tBmrrNTe6Ymu9i4X2iGmZNnt4NGN49ZNscp4s6iWv538NTkqJ8ii9m75mW
-	 xle3Yn7TJ6+5g==
-Message-ID: <a0accbb0e4ea7ad101dcaecf6ded576fc0c43a56.camel@kernel.org>
-Subject: Re: [PATCH v1] NFS: Fix possible NULL pointer dereference in
- nfs_inode_remove_request()
-From: Trond Myklebust <trondmy@kernel.org>
-To: liubaolin <liubaolin12138@163.com>, anna@kernel.org
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Liu
-	 <liubaolin@kylinos.cn>
-Date: Fri, 17 Oct 2025 11:02:52 -0400
-In-Reply-To: <9243fe19-8e38-43e4-8ea4-077fa4512395@163.com>
-References: <20251012083957.532330-1-liubaolin12138@163.com>
-	 <5f1eb044728420769c5482ea95240717c0748f46.camel@kernel.org>
-	 <9243fe19-8e38-43e4-8ea4-077fa4512395@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760716714; c=relaxed/simple;
+	bh=20X28MMOWSoptgGAWTUrviJnQniEpl6Ktq66BRGKH/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZAofDs6tjmANaLbJ9W+e6KCrPnM+TOawvwYARgHuRjq6MrABoWQprJt+xBPk+g9pQAVbzGKMgSufSvLt+VwFee82XIfw0Abkz0K/FGDEoTvyyN4f8fsiwBKHt0Nfvh9eD+d46+gmniEvkiJAhbA4WSYn3D8E3wNnx3oynGIZxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FLtxIBv7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 687B5C4CEE7;
+	Fri, 17 Oct 2025 15:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760716713;
+	bh=20X28MMOWSoptgGAWTUrviJnQniEpl6Ktq66BRGKH/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FLtxIBv7SZeCQWvR3ANCLmaMyydymZnc8EmPjl/1wQ2ZU6GZiD2nKCaUbGU/mGLlp
+	 fTOdia6A6ekGANEzH++1tbYBhBm/NR7Jy2B8blUuCuIxDXrSTaYf19VuAHrRtgTE73
+	 ZyIsy6hsoafgxjCLHqBFDNZjVm7M30+2G2ZqFt0Y=
+Date: Fri, 17 Oct 2025 17:03:02 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Eliav Farber <farbere@amazon.com>
+Cc: stable@vger.kernel.org, linux@armlinux.org.uk, jdike@addtoit.com,
+	richard@nod.at, anton.ivanov@cambridgegreys.com,
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+	hpa@zytor.com, tony.luck@intel.com, qiuxu.zhuo@intel.com,
+	mchehab@kernel.org, james.morse@arm.com, rric@kernel.org,
+	harry.wentland@amd.com, sunpeng.li@amd.com,
+	alexander.deucher@amd.com, christian.koenig@amd.com,
+	airlied@linux.ie, daniel@ffwll.ch, evan.quan@amd.com,
+	james.qian.wang@arm.com, liviu.dudau@arm.com,
+	mihail.atanassov@arm.com, brian.starkey@arm.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, robdclark@gmail.com, sean@poorly.run,
+	jdelvare@suse.com, linux@roeck-us.net, fery@cypress.com,
+	dmitry.torokhov@gmail.com, agk@redhat.com, snitzer@redhat.com,
+	dm-devel@redhat.com, rajur@chelsio.com, davem@davemloft.net,
+	kuba@kernel.org, peppe.cavallaro@st.com, alexandre.torgue@st.com,
+	joabreu@synopsys.com, mcoquelin.stm32@gmail.com, malattia@linux.it,
+	hdegoede@redhat.com, mgross@linux.intel.com,
+	intel-linux-scu@intel.com, artur.paszkiewicz@intel.com,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	sakari.ailus@linux.intel.com, clm@fb.com, josef@toxicpanda.com,
+	dsterba@suse.com, xiang@kernel.org, chao@kernel.org, jack@suse.com,
+	tytso@mit.edu, adilger.kernel@dilger.ca, dushistov@mail.ru,
+	luc.vanoostenryck@gmail.com, rostedt@goodmis.org, pmladek@suse.com,
+	sergey.senozhatsky@gmail.com, andriy.shevchenko@linux.intel.com,
+	linux@rasmusvillemoes.dk, minchan@kernel.org, ngupta@vflare.org,
+	akpm@linux-foundation.org, kuznet@ms2.inr.ac.ru,
+	yoshfuji@linux-ipv6.org, pablo@netfilter.org, kadlec@netfilter.org,
+	fw@strlen.de, jmaloy@redhat.com, ying.xue@windriver.com,
+	willy@infradead.org, sashal@kernel.org, ruanjinjie@huawei.com,
+	David.Laight@aculab.com, herve.codina@bootlin.com, Jason@zx2c4.com,
+	keescook@chromium.org, kbusch@kernel.org, nathan@kernel.org,
+	bvanassche@acm.org, ndesaulniers@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-edac@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	tipc-discussion@lists.sourceforge.net
+Subject: Re: [PATCH v2 00/27 5.10.y] Backport minmax.h updates from v6.17-rc7
+Message-ID: <2025101704-rumble-chatroom-60b5@gregkh>
+References: <20251017090519.46992-1-farbere@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017090519.46992-1-farbere@amazon.com>
 
-T24gRnJpLCAyMDI1LTEwLTE3IGF0IDE0OjU3ICswODAwLCBsaXViYW9saW4gd3JvdGU6Cj4gW1lv
-dSBkb24ndCBvZnRlbiBnZXQgZW1haWwgZnJvbSBsaXViYW9saW4xMjEzOEAxNjMuY29tLiBMZWFy
-biB3aHkKPiB0aGlzIGlzIGltcG9ydGFudCBhdCBodHRwczovL2FrYS5tcy9MZWFybkFib3V0U2Vu
-ZGVySWRlbnRpZmljYXRpb27CoF0KPiAKPiA+IFRoaXMgbW9kaWZpY2F0aW9uIGFkZHJlc3NlcyBh
-IHBvdGVudGlhbCBpc3N1ZSBkZXRlY3RlZCBieSBTbWF0Y2gKPiA+IGR1cmluZyBhIHNjYW4gb2Yg
-dGhlIE5GUyBjb2RlLiBBZnRlciByZXZpZXdpbmcgdGhlIHJlbGV2YW50IGNvZGUsIEkKPiA+IGNv
-bmZpcm1lZCB0aGF0IHRoZSBjaGFuZ2UgaXMgcmVxdWlyZWQgdG8gcmVtb3ZlIHRoZSBwb3RlbnRp
-YWwgcmlzay4KPiAKPiAKCkknbSBzb3JyeSwgYnV0IEknbSBzdGlsbCBub3Qgc2VlaW5nIHdoeSB3
-ZSBjYW4ndCBqdXN0IHJlbW92ZSB0aGUgY2hlY2sKZm9yIGEgTlVMTCBmb2xpby4KClVuZGVyIHdo
-YXQgY2lyY3Vtc3RhbmNlcyBkbyB5b3Ugc2VlIHVzIGNhbGxpbmcKbmZzX2lub2RlX3JlbW92ZV9y
-ZXF1ZXN0KCkgd2l0aCBhIHJlcXVlc3QgdGhhdCBoYXMgcmVxLT53Yl9oZWFkID09Ck5VTEw/IEkn
-bSBhc2tpbmcgZm9yIGEgY29uY3JldGUgZXhhbXBsZS4KCj4gCj4g5ZyoIDIwMjUvMTAvMTMgMTI6
-NDcsIFRyb25kIE15a2xlYnVzdCDlhpnpgZM6Cj4gPiBPbiBTdW4sIDIwMjUtMTAtMTIgYXQgMTY6
-MzkgKzA4MDAsIEJhb2xpbiBMaXUgd3JvdGU6Cj4gPiA+IFtZb3UgZG9uJ3Qgb2Z0ZW4gZ2V0IGVt
-YWlsIGZyb20gbGl1YmFvbGluMTIxMzhAMTYzLmNvbS4gTGVhcm4gd2h5Cj4gPiA+IHRoaXMgaXMg
-aW1wb3J0YW50IGF0Cj4gPiA+IGh0dHBzOi8vYWthLm1zL0xlYXJuQWJvdXRTZW5kZXJJZGVudGlm
-aWNhdGlvbsKgXQo+ID4gPiAKPiA+ID4gRnJvbTogQmFvbGluIExpdSA8bGl1YmFvbGluQGt5bGlu
-b3MuY24+Cj4gPiA+IAo+ID4gPiBuZnNfcGFnZV90b19mb2xpbyhyZXEtPndiX2hlYWQpIG1heSBy
-ZXR1cm4gTlVMTCBpbiBjZXJ0YWluCj4gPiA+IGNvbmRpdGlvbnMsCj4gPiA+IGJ1dCB0aGUgZnVu
-Y3Rpb24gZGVyZWZlcmVuY2VzIGZvbGlvLT5tYXBwaW5nIGFuZCBjYWxscwo+ID4gPiBmb2xpb19l
-bmRfZHJvcGJlaGluZChmb2xpbykgdW5jb25kaXRpb25hbGx5LiBUaGlzIG1heSBjYXVzZSBhCj4g
-PiA+IE5VTEwKPiA+ID4gcG9pbnRlciBkZXJlZmVyZW5jZSBjcmFzaC4KPiA+ID4gCj4gPiA+IEZp
-eCB0aGlzIGJ5IGNoZWNraW5nIGZvbGlvIGJlZm9yZSB1c2luZyBpdCBvciBjYWxsaW5nCj4gPiA+
-IGZvbGlvX2VuZF9kcm9wYmVoaW5kKCkuCj4gPiA+IAo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBCYW9s
-aW4gTGl1IDxsaXViYW9saW5Aa3lsaW5vcy5jbj4KPiA+ID4gLS0tCj4gPiA+IMKgIGZzL25mcy93
-cml0ZS5jIHwgMTEgKysrKysrLS0tLS0KPiA+ID4gwqAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0
-aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQgYS9mcy9uZnMv
-d3JpdGUuYyBiL2ZzL25mcy93cml0ZS5jCj4gPiA+IGluZGV4IDBmYjY5MDU3MzZkNS4uZTE0ODMw
-OGMxOTIzIDEwMDY0NAo+ID4gPiAtLS0gYS9mcy9uZnMvd3JpdGUuYwo+ID4gPiArKysgYi9mcy9u
-ZnMvd3JpdGUuYwo+ID4gPiBAQCAtNzM5LDE3ICs3MzksMTggQEAgc3RhdGljIHZvaWQgbmZzX2lu
-b2RlX3JlbW92ZV9yZXF1ZXN0KHN0cnVjdAo+ID4gPiBuZnNfcGFnZSAqcmVxKQo+ID4gPiDCoMKg
-wqDCoMKgwqDCoMKgIG5mc19wYWdlX2dyb3VwX2xvY2socmVxKTsKPiA+ID4gwqDCoMKgwqDCoMKg
-wqDCoCBpZiAobmZzX3BhZ2VfZ3JvdXBfc3luY19vbl9iaXRfbG9ja2VkKHJlcSwgUEdfUkVNT1ZF
-KSkgewo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgZm9saW8g
-KmZvbGlvID0gbmZzX3BhZ2VfdG9fZm9saW8ocmVxLQo+ID4gPiA+IHdiX2hlYWQpOwo+ID4gPiAt
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGlu
-ZyA9IGZvbGlvLT5tYXBwaW5nOwo+ID4gPiAKPiA+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgc3Bpbl9sb2NrKCZtYXBwaW5nLT5pX3ByaXZhdGVfbG9jayk7Cj4gPiA+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChsaWtlbHkoZm9saW8pKSB7Cj4gPiA+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgYWRkcmVzc19z
-cGFjZSAqbWFwcGluZyA9IGZvbGlvLQo+ID4gPiA+IG1hcHBpbmc7Cj4gPiA+ICsKPiA+ID4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNwaW5fbG9jaygmbWFw
-cGluZy0+aV9wcml2YXRlX2xvY2spOwo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgZm9saW8tPnByaXZhdGUgPSBOVUxMOwo+ID4gPiDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZm9saW9fY2xlYXJfcHJp
-dmF0ZShmb2xpbyk7Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBjbGVhcl9iaXQoUEdfTUFQUEVELCAmcmVxLT53Yl9oZWFkLQo+ID4gPiA+IHdi
-X2ZsYWdzKTsKPiA+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfQo+ID4gPiAtwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzcGluX3VubG9jaygmbWFwcGluZy0+aV9wcml2YXRl
-X2xvY2spOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgc3Bpbl91bmxvY2soJm1hcHBpbmctPmlfcHJpdmF0ZV9sb2NrKTsKPiA+ID4gCj4gPiA+IC3C
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZvbGlvX2VuZF9kcm9wYmVoaW5kKGZvbGlvKTsK
-PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZvbGlv
-X2VuZF9kcm9wYmVoaW5kKGZvbGlvKTsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgfQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgIH0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoCBuZnNf
-cGFnZV9ncm91cF91bmxvY2socmVxKTsKPiA+ID4gCj4gPiA+IC0tCj4gPiA+IDIuMzkuMgo+ID4g
-PiAKPiA+IAo+ID4gV2hhdCByZWFzb24gaXMgdGhlcmUgdG8gYmVsaWV2ZSB0aGF0IHdlIGNhbiBl
-dmVyIGNhbGwKPiA+IG5mc19pbm9kZV9yZW1vdmVfcmVxdWVzdCgpIHdpdGggYSBOVUxMIHZhbHVl
-IGZvciByZXEtPndiX2hlYWQtCj4gPiA+IHdiX2ZvbGlvLCBvciBldmVuIHdpdGggYSBOVUxMIHZh
-bHVlIGZvciByZXEtPndiX2hlYWQtPndiX2ZvbGlvLQo+ID4gPiBtYXBwaW5nPwo+ID4gCj4gPiAK
-PiAKCi0tIApUcm9uZCBNeWtsZWJ1c3QKTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1t
-ZXJzcGFjZQp0cm9uZG15QGtlcm5lbC5vcmcsIHRyb25kLm15a2xlYnVzdEBoYW1tZXJzcGFjZS5j
-b20K
+On Fri, Oct 17, 2025 at 09:04:52AM +0000, Eliav Farber wrote:
+> This series backports 27 patches to update minmax.h in the 5.10.y
+> branch, aligning it with v6.17-rc7.
+> 
+> The ultimate goal is to synchronize all long-term branches so that they
+> include the full set of minmax.h changes.
+> 
+> - 6.12.y has already been backported; the changes are included in
+>   v6.12.49.
+> - 6.6.y has already been backported; the changes are included in
+>   v6.6.109.
+> - 6.1.y has already been backported; the changes are currently in the
+>   6.1-stable tree.
+> - 5.15.y has already been backported; the changes are currently in the
+>   5.15-stable tree.
 
+With this series applied, on an arm64 server, building 'allmodconfig', I
+get the following build error.
+
+Oddly I don't see it on my x86 server, perhaps due to different compiler
+versions?
+
+Any ideas?
+
+thanks,
+
+greg k-h
+
+------------------------
+
+In function ‘rt2800_txpower_to_dev’,
+    inlined from ‘rt2800_config_channel’ at ../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4022:25:
+./../include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+./../include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
+  290 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+./../include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+../include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+../include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+../include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
+  218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
+      |                                    ^~~~~~~~~~~~~~~
+../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
+ 3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+      |                        ^~~~~~~
+In function ‘rt2800_txpower_to_dev’,
+    inlined from ‘rt2800_config_channel’ at ../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4024:25:
+./../include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+./../include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
+  290 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+./../include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+../include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+../include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+../include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
+  218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
+      |                                    ^~~~~~~~~~~~~~~
+../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
+ 3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+      |                        ^~~~~~~
+In function ‘rt2800_txpower_to_dev’,
+    inlined from ‘rt2800_config_channel’ at ../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4028:4:
+./../include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+./../include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
+  290 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+./../include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
+  309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+../include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
+  188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+      |         ^~~~~~~~~~~~~~~~
+../include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
+  195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+      |         ^~~~~~~~~~~~
+../include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
+  218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
+      |                                    ^~~~~~~~~~~~~~~
+../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
+ 3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
+      |                        ^~~~~~~
+make[6]: *** [../scripts/Makefile.build:286: drivers/net/wireless/ralink/rt2x00/rt2800lib.o] Error 1
+make[5]: *** [../scripts/Makefile.build:503: drivers/net/wireless/ralink/rt2x00] Error 2
+make[4]: *** [../scripts/Makefile.build:503: drivers/net/wireless/ralink] Error 2
+make[4]: *** Waiting for unfinished jobs....
 
