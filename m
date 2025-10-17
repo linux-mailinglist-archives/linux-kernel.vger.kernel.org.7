@@ -1,174 +1,294 @@
-Return-Path: <linux-kernel+bounces-858614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4F7BEB490
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:54:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95982BEB472
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B27ED4FE30E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:54:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E469581B83
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1747B332ECA;
-	Fri, 17 Oct 2025 18:53:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D562332EA4;
-	Fri, 17 Oct 2025 18:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8781032C955;
+	Fri, 17 Oct 2025 18:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlifDMN/"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AFE332904
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760727236; cv=none; b=XoQqBvTbV5BXW1upJw1V1edBkNyPDuIq/NER8eHQYHsvy+LYaMYelgeR4YA69W0fFTLZgr5K3XLXNiFoMWm07LzfJfIcOQKP0Y+tieirOfq/LxJCXYeb6ZGdtDM/b7WenMdhxkEhqJdY5L/dw6ycf5g/+xLO0AVtRrU/Q4laQqs=
+	t=1760727104; cv=none; b=l+4uhtC1QTW98qER3iNyJwS5zN2IreOO1GkbyXMB78ELX8AmwJyuFGIBytfJndrsQ1rV3GwSyQdy6Dm66JDRBKfl6y0gb/U6loxBqlUFldfPxjz7PhvACK1rmt6bKUJ6UEOLIEqflH2bY1Xa0Y3GRdPY3IM0vK1uI+t3CahYD+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760727236; c=relaxed/simple;
-	bh=QOlmNvUsKhd6u6e0k5iyOXyqQT4bhwZhGl4uKNdAABg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dw97VBTJyeBXTzBIlhTRZ5gnd4h86RBLGOCAIoOqVFRXFvBbfsxWDfWfqhfsMUzkYkb8bfo7tFSKy32lfiuXsvjUcJMiqDZAYRvads3Ngh12Tp/iQVYaUbLl7WNMuHESYNtdr2NtnUi/QiUSY1l+B3Gvt2V5Wmjb+Hkd+e4KLZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A93AF1515;
-	Fri, 17 Oct 2025 11:53:46 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB1733F66E;
-	Fri, 17 Oct 2025 11:53:48 -0700 (PDT)
-Message-ID: <e1874826-2f18-4fae-b83d-cf099c0cf1e6@arm.com>
-Date: Fri, 17 Oct 2025 19:51:32 +0100
+	s=arc-20240116; t=1760727104; c=relaxed/simple;
+	bh=gXqMz+CcZKPeGt9WvOXq76EJR6tDE24GCMGXdrKpDu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E49VT3YFgWFyKstKnLBbc0Yj5iHSVxAXCTvv9SxBbMbyFp6hUI4dlApTNGxHzEoXfO9+Ve8ti/Youau2+OEmCs5N5UJyN19Fx5GKDg70vXzT78RWQ3xwryQPTMOVDXvIHRK8DADQUniH8C8+Odx7hk2T7lkwQtZ+qLZ3InWTH34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlifDMN/; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-87c103928ffso32917056d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760727101; x=1761331901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kcMHrjvb7aW8dOEyGXLP26k9PcHppfS2rsN7ygfXW0s=;
+        b=YlifDMN/c6vzWfG76u/120EPvwuMWFthOAow4pFmcd4wRErr+JpLRZql/RdI3ZFvcB
+         i/kn+nu5cNXXW48slMOD4L6lHLVy3FA4mmGcR3j7sUmM/LE4seQpds7VwSE9vlLwVh3o
+         X1HTtMLfOIpOJyJOjUCEWK8GwEwrWZX/JQPe4/ixsO1syLpRFZhVfUI0Ov235fj/Q76A
+         WJZ59va+96A/5qkKYYeqeNYf62Q9XkdErfCxy9xNt6llZj9JDoLeCM2K0Ze4Yd+TiJPv
+         A6K/xxN5jA/qgnJr3ePqiE3FHyhC5XCOvqxac3E8yeWImyX2jvnjQPJXoRM1N0UQNxHH
+         rODQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760727101; x=1761331901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kcMHrjvb7aW8dOEyGXLP26k9PcHppfS2rsN7ygfXW0s=;
+        b=Qyp92xD9NE97CVeMdSMPvu++CtNAaGgPsGPEnI+XH2ejc8ncFDhad+DUTd/5xuFLmk
+         9jR3nITF4Ei8eDqpU+lJM4dpFAFj7LQ/KBXckPYDV+w5iNQKq6jO1NfdLDUOgV9gSSKg
+         YHMtnIjG5HDBDnx4uIEzHB6YQikuT1VVHuxf4VOpRdJAEnN7BS0y4JL4P3ljijcGfK5y
+         gTZ6Kwgtm9+KcHPp3Yf191aYYNQm3ycm2YP16F/xUeZnvLVXgxeiSAvUttY1H4JGHm5W
+         W6BnbdgstkeNjdDPtRg9oiwEdUijTBqQSJnOlXh2yfFbfejp2WP+Go4OV+IxmabrGCzE
+         E/wA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsYVoyXHGvPnSHG50df+c3zW1EBJrzmNVGxlHOQIvWbUAbc2L/3/dGHOnwu1IB1vgiV1llE2P3qEzX8r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk60b0kYsbo7Isvisq6VQbeUW0xZSpzks8XHJostvi8ofF1wMK
+	toK0eGkWFWRGm6y6WRYPF29pQKVgQH8JZeEkJ9K9/yV/C0t8tjXdFl/X
+X-Gm-Gg: ASbGnctua68Bd36HwD3PliZFoRAhYwrNPjJ/2khbfVbOKUu2WdsA4oTPGZot/guPm5F
+	oqjkC2nO+nZ9JefhuZK9FBmwOoetC22GwPmqJfrrxBXaANaw2xq/MytLRiB5Pdvi1SM1zZEpDBG
+	6msWFXQY+LDtAOJF1eP2G6x26lZrLH12oqn3paUYEDJtcdJr6YPPXARoH1i89MJvLOQEBabQbO0
+	Z4RffkvRO1Q3IhaUccC/sQDYqEBwvKxREEvsuQLSE4c2fehH0wBzHWOLmSv9wn+sPX61UD0OBIp
+	dCoQOIPfc230Z01oKRzo31WzKbh7DDKiZ94x6kM7LSZNSB64ayQ27T0y+vUvH5yNlB7K2TUVF4x
+	MNDoe54nVKFY/7w4u5aE894Ss2rF7FnBe3ThVj077Qb+Aq/FO0s/vPWDXyhrTgjKMtVVwaYsV+w
+	J9iR3gZxU=
+X-Google-Smtp-Source: AGHT+IGgZXVqJ39mGvceINRef9aDCQGOzv3U5h5nFkBRWec10RvkxHjWCypd6ooOxs18G5q6X1BFng==
+X-Received: by 2002:ac8:7f48:0:b0:4e8:910a:ad95 with SMTP id d75a77b69052e-4e89d20f6cdmr65322091cf.6.1760727100900;
+        Fri, 17 Oct 2025 11:51:40 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8aaf87ecdsm3689291cf.16.2025.10.17.11.51.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 11:51:40 -0700 (PDT)
+Date: Fri, 17 Oct 2025 14:51:38 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org, qat-linux@intel.com,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v4 2/4] bitfield: Add non-constant field_{prep,get}()
+ helpers
+Message-ID: <aPKQMdyMO-vrb30X@yury>
+References: <cover.1760696560.git.geert+renesas@glider.be>
+ <67c1998f144b3a21399672c8e4d58d3884ae2b3c.1760696560.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/29] arm_mpam: Add the class and component structures
- for firmware described ris
-To: Gavin Shan <gshan@redhat.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-9-james.morse@arm.com>
- <a66c6df0-f5e7-4704-a341-d34d07b8c6e1@redhat.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <a66c6df0-f5e7-4704-a341-d34d07b8c6e1@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67c1998f144b3a21399672c8e4d58d3884ae2b3c.1760696560.git.geert+renesas@glider.be>
 
-Hi Gavin,
-
-On 07/10/2025 00:13, Gavin Shan wrote:
-> On 9/11/25 6:42 AM, James Morse wrote:
->> An MSC is a container of resources, each identified by their RIS index.
->> Some RIS are described by firmware to provide their position in the system.
->> Others are discovered when the driver probes the hardware.
->>
->> To configure a resource it needs to be found by its class, e.g. 'L2'.
->> There are two kinds of grouping, a class is a set of components, which
->> are visible to user-space as there are likely to be multiple instances
->> of the L2 cache. (e.g. one per cluster or package)
->>
->> Add support for creating and destroying structures to allow a hierarchy
->> of resources to be created.
-
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index efc4738e3b4d..c7f4981b3545 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
-
->> +static struct mpam_class *
->> +mpam_class_get(u8 level_idx, enum mpam_class_types type)
->> +{
->> +    bool found = false;
->> +    struct mpam_class *class;
->> +
->> +    lockdep_assert_held(&mpam_list_lock);
->> +
->> +    list_for_each_entry(class, &mpam_classes, classes_list) {
->> +        if (class->type == type && class->level == level_idx) {
->> +            found = true;
->> +            break;
->> +        }
->> +    }
->> +
->> +    if (found)
->> +        return class;
->> +
->> +    return mpam_class_alloc(level_idx, type);
->> +}
->> +
+On Fri, Oct 17, 2025 at 12:54:10PM +0200, Geert Uytterhoeven wrote:
+> The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> constants.  However, it is very common to prepare or extract bitfield
+> elements where the bitfield mask is not a compile-time constant.
 > 
-> The variable @found can be avoided if the found class can be returned immediately.
+> To avoid this limitation, the AT91 clock driver and several other
+> drivers already have their own non-const field_{prep,get}() macros.
+> Make them available for general use by consolidating them in
+> <linux/bitfield.h>, and improve them slightly:
+>   1. Avoid evaluating macro parameters more than once,
+>   2. Replace "ffs() - 1" by "__ffs()",
+>   3. Support 64-bit use on 32-bit architectures.
 > 
->     list_for_each_entry(class, &mpam_classes, classes_list) {
->         if (class->type == type && class->level == level_idx)
->             return class;
->     }
+> This is deliberately not merged into the existing FIELD_{GET,PREP}()
+> macros, as people expressed the desire to keep stricter variants for
+> increased safety, or for performance critical paths.
 > 
->     return mpam_class_alloc(level_idx, type);
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Acked-by: Crt Mori <cmo@melexis.com>
+> ---
+> v4:
+>   - Add Acked-by,
+>   - Rebase on top of commit 7c68005a46108ffa ("crypto: qat - relocate
+>     power management debugfs helper APIs") in v6.17-rc1,
+>   - Convert more recently introduced upstream copies:
+>       - drivers/edac/ie31200_edac.c
+>       - drivers/iio/dac/ad3530r.c
 
-Yes, feedback like this already came from Jonathan.
+Can you split out the part that actually introduces the new API?
 
+...
 
->> +static int mpam_ris_get_affinity(struct mpam_msc *msc, cpumask_t *affinity,
->> +                 enum mpam_class_types type,
->> +                 struct mpam_class *class,
->> +                 struct mpam_component *comp)
->> +{
->> +    int err;
->> +
->> +    switch (type) {
->> +    case MPAM_CLASS_CACHE:
->> +        err = mpam_get_cpumask_from_cache_id(comp->comp_id, class->level,
->> +                             affinity);
->> +        if (err)
->> +            return err;
->> +
->> +        if (cpumask_empty(affinity))
->> +            pr_warn_once("%s no CPUs associated with cache node",
->> +                     dev_name(&msc->pdev->dev));
->> +
->> +        break;
-> 
-> "\n" missed in the error message and dev_warn_once() can be used:
-> 
->         if (cpumask_empty(affinity))
->             dev_warn_once(&msc->pdev->dev, "No CPUs associated with cache node\n");
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 7ff817bdae19b468..c999fe70076f6684 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -220,4 +220,40 @@ __MAKE_OP(64)
+>  #undef __MAKE_OP
+>  #undef ____MAKE_OP
+>  
+> +/**
+> + * field_prep() - prepare a bitfield element
+> + * @mask: shifted mask defining the field's length and position
+> + * @val:  value to put in the field
+> + *
+> + * field_prep() masks and shifts up the value.  The result should be
+> + * combined with other fields of the bitfield using logical OR.
+> + * Unlike FIELD_PREP(), @mask is not limited to a compile-time constant.
+> + */
+> +#define field_prep(mask, val)						\
+> +	({								\
+> +		__auto_type __mask = (mask);				\
+> +		typeof(mask) __val = (val);				\
+> +		unsigned int __shift = sizeof(mask) <= 4 ?		\
+> +				       __ffs(__mask) : __ffs64(__mask);	\
+> +		(__val << __shift) & __mask;	\
 
-Yup, I'd mopped up most of these but missed this one.
+__ffs(0) is undef. The corresponding comment in
+include/asm-generic/bitops/__ffs.h explicitly says: "code should check
+against 0 first".
 
+I think mask = 0 is a sign of error here. Can you add a code catching
+it at compile time, and maybe at runtime too? Something like:
 
->> +    case MPAM_CLASS_MEMORY:
->> +        get_cpumask_from_node_id(comp->comp_id, affinity);
->> +        /* affinity may be empty for CPU-less memory nodes */
->> +        break;
->> +    case MPAM_CLASS_UNKNOWN:
->> +        return 0;
->> +    }
->> +
->> +    cpumask_and(affinity, affinity, &msc->accessibility);
->> +
->> +    return 0;
->> +}
+ #define __field_prep(mask, val)
+ ({
+	unsigned __shift = sizeof(mask) <= 4 ? __ffs(mask) : __ffs64(mask);
+        (val << __shift) & mask;
+ })
 
+ #define field_prep(mask, val)
+ ({
+        unsigned int __shift;
+	__auto_type __mask = (mask), __ret = 0;
+	typeof(mask) __val = (val);				
+
+        BUILD_BUG_ON_ZERO(const_true(mask == 0));
+
+        if (WARN_ON_ONCE(mask == 0))
+                goto out;
+        
+        __ret = __field_prep(__mask, __val);
+ out:
+        ret;
+ })
+
+> +
+> +/**
+> + * field_get() - extract a bitfield element
+> + * @mask: shifted mask defining the field's length and position
+> + * @reg:  value of entire bitfield
+> + *
+> + * field_get() extracts the field specified by @mask from the
+> + * bitfield passed in as @reg by masking and shifting it down.
+> + * Unlike FIELD_GET(), @mask is not limited to a compile-time constant.
+> + */
+> +#define field_get(mask, reg)						\
+> +	({								\
+> +		__auto_type __mask = (mask);				\
+> +		typeof(mask) __reg =  (reg);				\
+
+This would trigger Wconversion warning. Consider
+        unsigned reg = 0xfff;
+        field_get(0xf, reg);
+
+<source>:6:26: warning: conversion to 'int' from 'unsigned int' may change the sign of the result [-Wsign-conversion]
+    6 |     typeof(mask) __reg = reg;
+      |                          ^~~
+
+Notice, the __auto_type makes the __mask to be int, while the reg is
+unsigned int. You need to do:
+
+        typeof(mask) __reg = (typeof(mask))(reg); 
+
+Please enable higher warning levels for the next round.
+
+Also, because for numerals __auto_type is int, when char is enough - are
+you sure that the macro generates the optimal code? User can workaround it
+with:
+        
+        field_get((u8)0xf, reg)
+
+but it may not be trivial. Can you add an example and explanation please?
+
+> +		unsigned int __shift = sizeof(mask) <= 4 ?		\
+> +				       __ffs(__mask) : __ffs64(__mask);	\
+
+Can you use BITS_PER_TYPE() here?
+
+> +		(__reg & __mask) >> __shift;	\
+> +	})
+> +
+
+When mask == 0, we shouldn't touch 'val' at all. Consider
+
+        field_get(0, get_user(ptr))
+
+In this case, evaluating 'reg' is an error, similarly to memcpy().
 
 Thanks,
+Yury
 
-James
+>  #endif
+> diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+> index 828af3095b86ee0a..6eee89cbc0867f2b 100644
+> --- a/sound/usb/mixer_quirks.c
+> +++ b/sound/usb/mixer_quirks.c
+> @@ -3311,10 +3311,6 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
+>  #define RME_DIGIFACE_REGISTER(reg, mask) (((reg) << 16) | (mask))
+>  #define RME_DIGIFACE_INVERT BIT(31)
+>  
+> -/* Nonconst helpers */
+> -#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
+> -#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
+> -
+>  static int snd_rme_digiface_write_reg(struct snd_kcontrol *kcontrol, int item, u16 mask, u16 val)
+>  {
+>  	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
+> -- 
+> 2.43.0
 
