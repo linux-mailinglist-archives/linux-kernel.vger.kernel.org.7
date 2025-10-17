@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-858005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E9CBE8871
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13754BE8865
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6814EAB37
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 569D51AA21B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE1C32ABD0;
-	Fri, 17 Oct 2025 12:13:07 +0000 (UTC)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD152E0B71;
+	Fri, 17 Oct 2025 12:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CsCKHhUA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F4C2E5B2A
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07962E6122;
+	Fri, 17 Oct 2025 12:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760703186; cv=none; b=XbUB9CX0PFbvazJ1lILC75RffWNd8e2mzGigD5Vb5yibqlYdeAbXZM65hctP+GZt4bNzJx8/UJebuHl0QEu/SzGgru3PfP9LAdI/gndhS/Z7CVR2FgTVb2BKLNBspbxEW70NhT28vPbZLAnkJU7+dOibVRrpjBcu6Cv7lLqsb1M=
+	t=1760703184; cv=none; b=G4EwsDdAnsp7rLaIh01qka3fRONho1SDV0y28PmC+yreEXffMlJyis+8IrJ26VNa/M9bIeNqgjhV/AT/cOUn9isEVYP6uftQ/jX7nu/pj/kYvFSJj7agfGDe3n07LsoH7i74bds7eBSzlJjDpKxPCebBvo7MqPy+m9hv1xUJADE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760703186; c=relaxed/simple;
-	bh=8mg+fNbsu+KeGEu7BuN5o0N6+N/QSVNQ6UDJqE5kDiE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=af1D96jU7ypIXxrQNNIC5y3fMOpGhRUaQNJkaPu2okyTg96QQQ+DQxYGgUSZENC92zwwc1Ys33M64NlgVxeWFMvV0jXrkhgvylhDUs0nJE3GtpnOKyOGQ3ZpAuhmyV/8JkGn4zaijIT8B7D5feQu9fGbTFm6q0svuJGuMB8pEps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b609a32a9b6so1083611a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:13:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760703183; x=1761307983;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AbvlmTTew8suBTsuq02Ewef+SzGUQT2VDP01I1YDZS4=;
-        b=W0RCwHCRWR6GvXFaztmK1lUtKqOsdb3/T0bnI4EQrYlxalA0tK+zHekAgymJejhh/m
-         /zWv7/FFiP6LhwF84dLRJwEBRQHdwptTCVRN6r15LupaOr4xJxUkHUp7/AZ/Qetl8I6k
-         X7SCQbyu2T2QT7DmDNBPh/unmbJTBnvez0NP2J4THj1kjjwxOHW7geUJX+rrlzGM+2gI
-         wlDkK03GtfvDq9D2v6zr3ih4i2YL4stnC17Yh+psujODwOAKlt8fKpj9h21i9CU+fIL0
-         FPvalYUl6Bx13Upf5X6wRvOJ+nJ1uqUmZr58exYaDfXp/XkdjRCCOM7u64OmnthxXYez
-         OQPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlJdyABNsNbcJlzJih76tWai20yLeX8HblfbQDBrirgKHgovnbjOpySsNro2npgBVJBwhSjeGNfmMtbTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9CxXxguT8IrPwBGjp6hRdTpYrJHJV4IGWlWNltAvQvLmFl5Fg
-	PsLxDiqz/ZKPWFxE3+SMri/16Z4eRvjCrKkKpXkjAP6FOPcKd0hyjH2y
-X-Gm-Gg: ASbGncu8VqJcYnw3htxtUkgFH01qaJedIn2xB4QS7Rc0qvnKfTejDzYCytFmhOuAuC3
-	AV4jWKsXPqNRkuces045lv2UuwIg3Cclhx3xjF2Js379MJDx3bBZbH2QkaoxrRZuSQgxW59yuN+
-	4RjWtrJTv1/ngdEX3+5YlX0BcI+Wc1ZnY4x3zups+Yytiwr9aA/zXovn8t5gUulBbZkyNs1q8Io
-	41Qv6dbWg5P9rkDKLx8y/nNPVWZDSPG5Cx1VBgbBb7Fso9XA7h4g0PGTF4i5wggpgFwXmIz5lWE
-	0aO5m7E061wsIQIXGBSzqH4HOoRp/QAdyxUNwKEG5ARNfGp3Lpn/Ke4axXkKHH3bA6gMLfST7HV
-	8vZDfKUK8vPkf58v+Ow9W6J7mSU0vV+0017ghB0+VoDPxyk/59ololeIOwVyMgvO43mbZ7W3bOy
-	I5CVEaHE8VKQoeQymWxUcup9RgJODFP02TU8Dtkw==
-X-Google-Smtp-Source: AGHT+IHfpLf94DuGp8KVk2x2Wh18b+nC6KvwnJiN04mhJAqBLprpNtm8s3d7xOrQlj13RcC9M3vsrw==
-X-Received: by 2002:a17:902:f552:b0:269:ae5a:e32b with SMTP id d9443c01a7336-290c9ca741bmr45567155ad.13.1760703182994;
-        Fri, 17 Oct 2025 05:13:02 -0700 (PDT)
-Received: from localhost.localdomain ([116.128.244.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2923d9dc3dcsm281815ad.28.2025.10.17.05.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 05:13:02 -0700 (PDT)
-From: Hongyu Xie <xiehongyu1@kylinos.cn>
-To: mathias.nyman@intel.com
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hongyu Xie <xiehongyu1@kylinos.cn>
-Subject: [PATCH v1] usb: xhci: limit run_graceperiod for only usb 3.0 devices
-Date: Fri, 17 Oct 2025 20:12:54 +0800
-Message-Id: <20251017121254.2887283-1-xiehongyu1@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1760703184; c=relaxed/simple;
+	bh=8BmUp4VDyPpHD3kmyBsQAiKThyIv/1V6ZE7dXLhnVeo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=khxeDsvZQJMVomeqzooXV9BJyMcOsGnpAO/XzvArSVeWHGIYmciYURx5TK03udLN+hwJijQKyaP9vjyOzanRJ+ImBq2lkEKsqDCDFTWeP7jPhh4iG6qHoLFZCMDac4kCeD6zji8FMGXCjJQqT0AR0lZMexP8evpmw3fqhA44hDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CsCKHhUA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C280FC4CEE7;
+	Fri, 17 Oct 2025 12:13:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760703184;
+	bh=8BmUp4VDyPpHD3kmyBsQAiKThyIv/1V6ZE7dXLhnVeo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CsCKHhUA3/7vqBPMBFreZBAGlwQs/eJTNJHXnHigh1IP61TTRouU6wXBUzkJ+F8mu
+	 SFEAh++jDxVF2XNUpHFefhsVHn5Itu2v75a1yWJgs7LXacq4TCyJN9q0XUpUNao3JG
+	 p1ssQk162uzRDwp60kZUZGGw1lug+tswodeoZFyCPnqTOeFHRYUWViZ795VC9bW8FH
+	 +zAakdVhCSllJpsUR0vxkcQEtr2VId2gkPdts1m9jU4/ec/gpytk3hdE84FtLZnofR
+	 IvQZCfan9JEBWqmYn4IsbFUbQu6ElJNC6RKkR/BWhdqrmJqfeCoUFPCV4R1m5wZ6cq
+	 7t4e3Gs0rO17g==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <20250918-glymur-rpmh-regulator-driver-v3-0-184c09678be3@oss.qualcomm.com>
+References: <20250918-glymur-rpmh-regulator-driver-v3-0-184c09678be3@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/4] rpmh-regulators: Update rpmh-regulator driver
+ and dt-bindings for Glymur
+Message-Id: <176070318151.57631.15443673679580823321.b4-ty@kernel.org>
+Date: Fri, 17 Oct 2025 13:13:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
-run_graceperiod blocks usb 2.0 devices from auto suspending after
-xhci_start for 500ms.
+On Thu, 18 Sep 2025 14:57:00 +0530, Kamal Wadhwa wrote:
+> This series contains patches to update rpmh-regulator driver and
+> dt-bindings for supporting the PMIC voltage regulators present on the
+> boards with Qualcomm's next gen compute SoC - Glymur.
+> 
+> Device tree changes aren't part of this series and will be posted
+> separately after the official announcement of the Glymur SoC.
+> 
+> [...]
 
-Log shows:
-[   13.387170] xhci_hub_control:1271: xhci-hcd PNP0D10:03: Get port status 7-1 read: 0x2a0, return 0x100
-[   13.387177] hub_event:5779: hub 7-0:1.0: state 7 ports 1 chg 0000 evt 0000
-[   13.387182] hub_suspend:3903: hub 7-0:1.0: hub_suspend
-[   13.387188] hcd_bus_suspend:2250: usb usb7: bus auto-suspend, wakeup 1
-[   13.387191] hcd_bus_suspend:2279: usb usb7: suspend raced with wakeup event
-[   13.387193] hcd_bus_resume:2303: usb usb7: usb auto-resume
-[   13.387296] hub_event:5779: hub 3-0:1.0: state 7 ports 1 chg 0000 evt 0000
-[   13.393343] handle_port_status:2034: xhci-hcd PNP0D10:02: handle_port_status: starting usb5 port polling.
-[   13.393353] xhci_hub_control:1271: xhci-hcd PNP0D10:02: Get port status 5-1 read: 0x206e1, return 0x10101
-[   13.400047] hub_suspend:3903: hub 3-0:1.0: hub_suspend
-[   13.403077] hub_resume:3948: hub 7-0:1.0: hub_resume
-[   13.403080] xhci_hub_control:1271: xhci-hcd PNP0D10:03: Get port status 7-1 read: 0x2a0, return 0x100
-[   13.403085] hub_event:5779: hub 7-0:1.0: state 7 ports 1 chg 0000 evt 0000
-[   13.403087] hub_suspend:3903: hub 7-0:1.0: hub_suspend
-[   13.403090] hcd_bus_suspend:2250: usb usb7: bus auto-suspend, wakeup 1
-[   13.403093] hcd_bus_suspend:2279: usb usb7: suspend raced with wakeup event
-[   13.403095] hcd_bus_resume:2303: usb usb7: usb auto-resume
-[   13.405002] handle_port_status:1913: xhci-hcd PNP0D10:04: Port change event, 9-1, id 1, portsc: 0x6e1
-[   13.405016] hub_activate:1169: usb usb5-port1: status 0101 change 0001
-[   13.405026] xhci_clear_port_change_bit:658: xhci-hcd PNP0D10:02: clear port1 connect change, portsc: 0x6e1
-[   13.413275] hcd_bus_suspend:2250: usb usb3: bus auto-suspend, wakeup 1
-[   13.419081] hub_resume:3948: hub 7-0:1.0: hub_resume
-[   13.419086] xhci_hub_control:1271: xhci-hcd PNP0D10:03: Get port status 7-1 read: 0x2a0, return 0x100
-[   13.419095] hub_event:5779: hub 7-0:1.0: state 7 ports 1 chg 0000 evt 0000
-[   13.419100] hub_suspend:3903: hub 7-0:1.0: hub_suspend
-[   13.419106] hcd_bus_suspend:2250: usb usb7: bus auto-suspend, wakeup 1
-[   13.419110] hcd_bus_suspend:2279: usb usb7: suspend raced with wakeup event
-[   13.419112] hcd_bus_resume:2303: usb usb7: usb auto-resume
-[   13.420455] handle_port_status:2034: xhci-hcd PNP0D10:04: handle_port_status: starting usb9 port polling.
-[   13.420493] handle_port_status:1913: xhci-hcd PNP0D10:05: Port change event, 10-1, id 1, portsc: 0x6e1
-[   13.425332] hcd_bus_suspend:2279: usb usb3: suspend raced with wakeup event
-[   13.431931] handle_port_status:2034: xhci-hcd PNP0D10:05: handle_port_status: starting usb10 port polling.
-[   13.435080] hub_resume:3948: hub 7-0:1.0: hub_resume
-[   13.435084] xhci_hub_control:1271: xhci-hcd PNP0D10:03: Get port status 7-1 read: 0x2a0, return 0x100
-[   13.435092] hub_event:5779: hub 7-0:1.0: state 7 ports 1 chg 0000 evt 0000
-[   13.435096] hub_suspend:3903: hub 7-0:1.0: hub_suspend
-[   13.435102] hcd_bus_suspend:2250: usb usb7: bus auto-suspend, wakeup 1
-[   13.435106] hcd_bus_suspend:2279: usb usb7: suspend raced with wakeup event
+Applied to
 
-usb7 and other usb 2.0 root hub were rapidly toggling between suspend
-and resume states. More, "suspend raced with wakeup event" confuses people.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-So, limit run_graceperiod for only usb 3.0 devices
+Thanks!
 
-Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
----
- drivers/usb/host/xhci-hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/4] dt-bindings: rpmh-regulator : Add compatibles for PMH01XX & PMCX0102
+      commit: 835dfb12fc389f36eb007657f163bd1c539dcd45
+[2/4] dt-bindings: rpmh-regulator: Update pmic-id DT prop info for new CMD-DB
+      commit: 1356c98ef911e14ccfaf374800840ce5bdcb3bbd
+[3/4] regulator: rpmh-regulator: Add support for new resource name format
+      commit: 6a8cdef7dc2a4c0dbde3f7d7100b3d99712a766b
+[4/4] regulator: rpmh-regulator: Add RPMH regulator support for Glymur
+      commit: 65efe5404d151767653c7b7dd39bd2e7ad532c2d
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index b3a59ce1b3f4..5e1442e91743 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1671,7 +1671,7 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
- 	 * SS devices are only visible to roothub after link training completes.
- 	 * Keep polling roothubs for a grace period after xHC start
- 	 */
--	if (xhci->run_graceperiod) {
-+	if (hcd->speed >= HCD_USB3 && xhci->run_graceperiod) {
- 		if (time_before(jiffies, xhci->run_graceperiod))
- 			status = 1;
- 		else
--- 
-2.25.1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
