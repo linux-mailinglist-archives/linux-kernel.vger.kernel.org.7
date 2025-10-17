@@ -1,82 +1,99 @@
-Return-Path: <linux-kernel+bounces-857403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6C0BE6B2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:33:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA0BBE6B33
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190B51A6695B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:34:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF6B44FEF42
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC3330FC06;
-	Fri, 17 Oct 2025 06:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CA530FC31;
+	Fri, 17 Oct 2025 06:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="STF6XOpt"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kgXwThbl"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D800C3090C7;
-	Fri, 17 Oct 2025 06:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B55130CD83;
+	Fri, 17 Oct 2025 06:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682811; cv=none; b=lV618Zd/Fso8XNBRDwaEk84wdkrzhbjswMeve/vZmH1EKCVWBDk/lSajdVL9TI2OmzB5LmxIfWJk9RGX2HjAwedYSFG+/jPUTEvXkf9MZy6unz9KuJWXFT+vEfLgLEnxwMjFxaX9/a+LtCJlL5B6jr/KFKy87esXnik3Dbw14NQ=
+	t=1760682836; cv=none; b=ZzoLcLqt80cbYaD2CVN/TZjQPd0A/QVW4DGeQg0I3mLkbj9XyHek2l7C7z96gkX9pKchlyqNum8IPlqAMTZvJX4pYyqeGn6fJkcEWTOVyKUwP/bCmqba+tJejU0lJ3pXpVyJsCVQbqZ3dxt/VWtMKR2OIJZ3qOxHi4JoB0koPuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682811; c=relaxed/simple;
-	bh=l4zzfEVXv3kCRK1+tRhEDpGxTNtWTV7qUWhG7JQ8YIo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KwzcoWOU83qR6x2suZZsWmrBG5kJQhI2lAU2kAO6mYeXp0oYBCc77XXxwQCFsBrruCLCE/HpeySW54dV2ZH34fAFTFw+iIU4OUyJhN3fRKcT9wxw9FbKShJoexoFgjVnG/HInBj2Odryyen9maLvyQQJdyMegqiKi52KhLqbOAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=STF6XOpt; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1760682807;
-	bh=l4zzfEVXv3kCRK1+tRhEDpGxTNtWTV7qUWhG7JQ8YIo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=STF6XOptFjEdvztYJZwPnC0JyF6vqPLgDYj+odIW6iC4xrMsgOUu1dfvk5Hggrdfk
-	 Z1nlI8gOrbCAB5obJh5jS0l47Ed0gTddOrs8sXOSM2qvt+AL3pcz2x3BlrqSPptDfb
-	 Ghzz7Tsp1a83YtdmlKCHDDndNwStg1z+lbxlhI893/kEk5sgabe9Wkj8J/p/xxp0PU
-	 OItXpZqj7Z7cNUNnxhjvgAdyBiYYHEr7ORzntoPlKozXdtE+XbDi5HtEOU8Sv/VsdA
-	 EslNzMXdoPc8kCH2pGRB4AF/2Jjx2sOGSgxLLWhqLltHKnc89xnqVBcK+rHgVO+dVf
-	 O4+fKXtQSvVNw==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E420D7702D;
-	Fri, 17 Oct 2025 14:33:26 +0800 (AWST)
-Message-ID: <8bf232de1d4254afc408b415d3476c2c2183a4ac.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] ARM: dts: aspeed: bletchley: remove WDTRST1 assertion
- from wdt1
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Cosmo Chou <chou.cosmo@gmail.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, joel@jms.id.au
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	cosmo.chou@quantatw.com
-Date: Fri, 17 Oct 2025 17:03:26 +1030
-In-Reply-To: <20251016052727.881576-1-chou.cosmo@gmail.com>
-References: <20251016052727.881576-1-chou.cosmo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760682836; c=relaxed/simple;
+	bh=YdpC769FfX0px2Zp06ljN5K9YnnYGfJEgYolY7kusbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmLScGP7sjq9Luk2olp6HH7GA1KZ7lU19AfxnRHC0UQVvoe07KzFhsckPP555uko2esxwKHvNQjOGl1G5JxrCzvCmL0BEL/6JNvW8Hcce73yUE/hPkMHU3kctJnJrkDFP3vsbkDSLo8L5EwivXjfHrpxE6srSj1kgxHFR9TfsUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kgXwThbl; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ML0ZgsQwKly9k9OLN9ariPKzCdeQwaMi+RURL/74y5o=; b=kgXwThblotIMu/PlIEfFDKXZfo
+	K95mDhvWqtDdyERtA/kL/z+tdlffM6N8LIh88s49u3HkUN//18g2gwifMWr/9OLicGxqj94QKXQby
+	zKeSAFtwAkReclA4mMI8OZwxnOHpbXdSYVqBf38EmZy5+KdM5Y8/88abcL2lfrknINoN2BCEYl4Ko
+	y36VGJpN+dporTSjGe3LQGDS+0xxuWxfrZMUdS1l8dp24dR6D932C8DCnVv0AoDH1j0E1YF/VdNL9
+	pnoI2wt49ziVh6Wkfy872ZsRyFO2x/UTllIrX8rgdnhy1QTt8qP8o9PCeO2YkNmnYBMv137O+AE5L
+	gBDRqq8g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9e2D-00000006nxh-02Mg;
+	Fri, 17 Oct 2025 06:33:53 +0000
+Date: Thu, 16 Oct 2025 23:33:52 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 9/9] vfio/pci: Add dma-buf export support for MMIO
+ regions
+Message-ID: <aPHjUP7pdIXuEPIq@infradead.org>
+References: <cover.1760368250.git.leon@kernel.org>
+ <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 2025-10-16 at 13:27 +0800, Cosmo Chou wrote:
-> Remove the external signal configuration from wdt1 to prevent the
-> WDTRST1 pin from being asserted during watchdog resets.
+On Mon, Oct 13, 2025 at 06:26:11PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Add support for exporting PCI device MMIO regions through dma-buf,
+> enabling safe sharing of non-struct page memory with controlled
+> lifetime management. This allows RDMA and other subsystems to import
+> dma-buf FDs and build them into memory regions for PCI P2P operations.
+> 
+> The implementation provides a revocable attachment mechanism using
+> dma-buf move operations. MMIO regions are normally pinned as BARs
+> don't change physical addresses, but access is revoked when the VFIO
+> device is closed or a PCI reset is issued. This ensures kernel
+> self-defense against potentially hostile userspace.
 
-Yes, this is certainly the immediate impact of the patch.
+This still completely fails to explain why you think that it actually
+is safe without the proper pgmap handling.
 
-But what's the motivation? And if asserting WDTRST1 was the wrong thing
-to be doing, why was it done to start with?
-
-Please address both questions in an update to the commit message.
-
-Thanks,
-
-Andrew
 
