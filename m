@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-858685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8782BEB6C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4C8BEB6CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA33B624CD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447F862584E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABDC2566E2;
-	Fri, 17 Oct 2025 20:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BDB2561AE;
+	Fri, 17 Oct 2025 20:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiTm0Tj2"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoDgKL6q"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74823A98E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD0C23A98E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760731230; cv=none; b=Pe8Fpa1Gxw6uecvSmeuXuRzxP/MojgoY78+SxnMx3WFoszN/pDKqdVeE95fv6cgF2g6FR1nr23K2jobMMBvoCuKojRq9MZDoCFHRycpzYg8d4OpcNam+0RzY9gUiNTeVtHWayCyBJX7nFIj/C1mctmgh0mYYnV0amGp6a1JMsxM=
+	t=1760731244; cv=none; b=fIQ8OzKkmaa8yMCUcm+gdp+Qq4mVdFdZHXbnQYVIagvd0Dt+JwgLxZ2GtAFNrbRJAKBl8vnSLBPNb+ms2yBnUDXsFgKFJomrINL6rUuwff4fcYz318GGv248Upr3W0wr2h0cWy5hOBD15ofbkkKpE6NArbUMdFJ8q/IuIUHixus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760731230; c=relaxed/simple;
-	bh=l9a8wUxnUFKjAxqJPfeNN/SOxfzcybhdFcIL4XU/Lq0=;
+	s=arc-20240116; t=1760731244; c=relaxed/simple;
+	bh=F2zDecP6+oFfoSg8W+FxJSa/s3jTLYNPTNsWj2Zuph0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uzRUEHBXG7t9EaAci43T84QMrbqzoSHg6xrQ2WHrLFNl0+PoIiHRGNip/NmvoquWkIR7zV/E676ob/6BZ6SHlrcvTEYynSkN67MkAK+GXRI6P5vYiOcgMCFfuDGejohIl07pstzLRJLVE9cAdlkPnxZs0bEFFNbnvxyR62h1T/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiTm0Tj2; arc=none smtp.client-ip=209.85.208.180
+	 In-Reply-To:To:Cc; b=X/Mxe9vX9RLcqtPQkBykYSkKCb2OugckJe7qXOsfqawp6rp7PC1V/i+tg8RYUf3zvXUI5xrE86QZ3t5teUV2ws7IAKgILKe42TeOEp0iXEOneAAGylnVhtws3e3sm/GmXxWYMnMdGdf4pkM8z+zPr4b6kGGpSGmLFPmv+mJSGmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CoDgKL6q; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3612c38b902so21584811fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:00:28 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-367874aeeacso23853161fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760731226; x=1761336026; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760731241; x=1761336041; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W7XqOWl1cfsF52QRqm2uO00zKVuXynKW/bvPOkip0X0=;
-        b=JiTm0Tj2DSi5R7TX7So6hieCFl7rQPQ4a/tGMVDgIfYP4OJ4JTae0EXFcE2wtaBWZ+
-         mOMULhN6uWglZUdFceH9bih+nXYNOmfHsr2VCTh6kDjutf5V8G1RbCXQN20OPLXc6NQK
-         3tj0J6u28plgIPQWk1yxZNMD4AByAJyaFkv98J/ym0KP0Hlu3cNl3wR26avUHYmRbhrj
-         zH1LGsKOtBEDAxRCuxix0w8mAufqNaPqmL0KDzrsq8jcNmHscjOmn716IuOmtYYQcGMd
-         2UkGyKUzt6GXGydvvDqlRMMipE4I7L0EqUkbvwEDeeeULlVzACsaa5XKQq/bHMlA0Lja
-         O3Pw==
+        bh=xQNJSxr8t/BdOOWVzHAAqI48NQwvfIqpyN0Al86/+Ik=;
+        b=CoDgKL6qeSpEtOdkltiQdM6lKq8SKshtM0o1TwwAIBBTknGFxW593YMFj0VIcdfLoG
+         xRB1VUhpRIB/AmGKtTTd0F0gFWoODULuI6hrDBkrjINmugpZpGPuMXooBsgpVdvIH6r+
+         KHiLC8BKbySk7nolP/XlhQpJaco+zt0lMMAHfsWv3XtzG61l718SD4RWv2w9Qudq+peY
+         aPmVIoCE4O4WA4jC0UOxRGt3zlP/JMWgJO7jRKdrr6Cn7w3WqmJ+JcLtSSdD/xPaOcqS
+         QwvmZxFffVRb0zTvw8+OsBRpqTGeo+pE57cgkck3wPBzaCpLdkEoC6CwmoA5giT/wroH
+         F3bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760731226; x=1761336026;
+        d=1e100.net; s=20230601; t=1760731241; x=1761336041;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W7XqOWl1cfsF52QRqm2uO00zKVuXynKW/bvPOkip0X0=;
-        b=WSm9SjwsN9y9GRC52cmQLA3Xf/FcWb4QI+zT4QLZfRCxd2jhjQm8U9/9gZvmBQa/8/
-         FD2vANpqrO/r92uLCfI3wpLnD/Ot59FBzypMh+4vSKDPHUyAk2FnY3SvxOWlI8CWDCVv
-         /GJIz9fUAnKhnk7rRilpxmQIqK4yszCUr+hIPx0oX+WBJ5lCIiEaRgmY5AOdOtaEpwk8
-         k7bS3T0QxLvdMlYlSKmsAPzMsS5CBcE7ZcMqqB7HMuzEMN7PIGJHGPDe3MyfjBFTA6ok
-         K2Ml+Er88ExlI2dVnTujxiuYD1KByTssuwcEMPuo88duwR631/I2a/zusn+dh9TuyxLQ
-         nUxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKdkdFfIlPI0D7g+aN5dp89Gf6FxXUrcetmSJ/rRzpbDO+mwVs9E2wWUHHvpb7hbyHpqcBkQOP3HnYSvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKbhF4EdlKY7N13xoRVDGgmImGAHnOzODeVkgB9d02POASCwT8
-	71JYs5LoXQGeuzJ5aArWQSfDNqYoimrPxnTm5K8/JPzo/rnphuLq9O7H
-X-Gm-Gg: ASbGncvkbDFj8KBOwOol+y5h4mkXBxLvlFljLL/WGlLyFxijHuiN9C2RDG2C0AKHjoV
-	i0BE342ZwSawuxYM3vcNr9AN3DjbjByRLPUGy5N0BuXPsnnXWNYzebx86mq7EyEN30Mgka/XGkd
-	7HUSmxLBr+I15s79evSV201jpza8l9rw5neptgITbP/lpn8rnm8+pkZJu54VefWilUadWlMdC5u
-	s2sRdF9/YEOQ7LyikrfVp2Gda+3sOuMtJLjQTVUBSokZBFeY7uePj53p2tqDFFMjmVfMWvPAEZM
-	v1a8txAzF+HjV1tNxZCyKqyYzBfZmuJyJquhy9MbjwTd/zXX+EIrRA7NtcAs2az2YbPqILQdhQe
-	nCNw6BDux9dwhzpdCOSkr74I70d+EtxGTI7jUlIRID0DZSl8jty2XGXWIg6F7Cpo1BfxwoJYjdu
-	J7H/+3o6A3ua/g5GgHs1YnGDJiDYCorS0dQg8G+BPnf2RttO/2ilo=
-X-Google-Smtp-Source: AGHT+IFrm/3xtNQT3MBQMvkncf7kZPyKKqAIptXvvBOXIh8nfNhykS0BMD1amwffzbPJvG3jZUH5AQ==
-X-Received: by 2002:a2e:bc11:0:b0:36e:f1ae:d4bc with SMTP id 38308e7fff4ca-37797888c0cmr16609961fa.14.1760731226308;
-        Fri, 17 Oct 2025 13:00:26 -0700 (PDT)
+        bh=xQNJSxr8t/BdOOWVzHAAqI48NQwvfIqpyN0Al86/+Ik=;
+        b=C8sRQGo7s/+BdVocbFYwubV71POwjCC5/k8auLM0x4N0MIKx2h4lJyPY0c/P98hngI
+         DUQlieEFAni7K4j0QUOUhqpd6twWUWihHB8aGa59uC9DDTErmcGbhWdS3ZhFglhiEqW5
+         rhscqpTaCuyjt8R+AuvthiHupAI2B6sWlyflrS6Cb2kQDQUb1hl2RH6e+Q0LMoT9e7Lc
+         /rU4rQL/ODf/up8ieJcrwRpDJbpNt16ISgszQoakWeoHpDDxuHFSIfsYxU8SjgC6rWc1
+         5e4R66rF7yU0+jRqr1ZZU/SACnqkAOMHZGiZ1N/9SmhFYRcmeB1LcrTjzxGfI9nqfALS
+         zqAg==
+X-Forwarded-Encrypted: i=1; AJvYcCV88AGQX/6rXKBmv6oqVQiLp8BhD+AEJFjesYSX86eM8wRD4qxw5KcKRLB6934ddMKAZAdX02X7B68vGac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV0RTEd3aoK5iEUjB4Ty3gxs955OCruf8PlauNoO+wBjemLvqG
+	V8xaTRuA7u+EERx91Inr4jrEIKf+uB5tj3gm4Jz2DKD7V8wKfzaqr42K
+X-Gm-Gg: ASbGncu4Qr6ruk7CAisVgxd6crmB1+/LGv7Ab78foxP4zOq2dAtufVDQ1AbuUW1Z1sk
+	scn3Cf8NVCh8/k0sqUTiBUIBbtN5T/HcBiAmjNw9wgJEwFY+oF1wQMojfQLvY58qZpHwLNEYc2S
+	I2wgwXr/TXSzraUDnrBlVTFA7vfNHDXVXPOa/L4cjIv5jtF9FNzE6gkHQ6OJ4iXyVS0oLAD0oey
+	3miTvLzxoWLPr8wrEgjo5RrXNmPKm9Osf2Hsm5jHZiAnjh3bFCrvgxRXBTn6zJoomnQy/cMLb96
+	TNkh+UzcPuxUZ0lp/2fyQnVY3s+I0sD1EwEHRxb5B6CXZoj+nAD4YOEsmLSWlCaODn2s81xZX60
+	pYUEYDs1aDhpEhonQyEpN9GWEr990lrmZ9HGeu49VlzpZ5LUIwXHv79wiBPVjnU70E6IFlEaPw7
+	nhTc6gmVfED7t8CxwMCAdljIIkpL7n3CgHT+bSfQZFEP1ySEPaQBkT5aqfJD4Mdg==
+X-Google-Smtp-Source: AGHT+IGNU4fQjBz2jSA6DBrpEqZEn5tDNBRAgHPtQC9tAm1M2lku7pLWWHwNUw5re71jbQvu9jXrmA==
+X-Received: by 2002:a2e:bd03:0:b0:333:e590:1bc9 with SMTP id 38308e7fff4ca-37797a0e735mr14647271fa.24.1760731240714;
+        Fri, 17 Oct 2025 13:00:40 -0700 (PDT)
 Received: from [192.168.1.244] (public-nat-13.vpngate.v4.open.ad.jp. [219.100.37.245])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a921d99bsm1580861fa.22.2025.10.17.13.00.10
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-377a921d99bsm1580861fa.22.2025.10.17.13.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 13:00:26 -0700 (PDT)
+        Fri, 17 Oct 2025 13:00:40 -0700 (PDT)
 From: Vladimir Lypak <vladimir.lypak@gmail.com>
-Date: Fri, 17 Oct 2025 19:58:36 +0000
-Subject: [PATCH 2/6] drm/msm/dpu: Propagate error from
- dpu_assign_plane_resources
+Date: Fri, 17 Oct 2025 19:58:37 +0000
+Subject: [PATCH 3/6] drm/msm/dpu: Disable scaling for unsupported scaler
+ types
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-b4-dpu-fixes-v1-2-40ce5993eeb6@gmail.com>
+Message-Id: <20251017-b4-dpu-fixes-v1-3-40ce5993eeb6@gmail.com>
 References: <20251017-b4-dpu-fixes-v1-0-40ce5993eeb6@gmail.com>
 In-Reply-To: <20251017-b4-dpu-fixes-v1-0-40ce5993eeb6@gmail.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>, 
@@ -104,48 +104,31 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  Vladimir Lypak <vladimir.lypak@gmail.com>
 X-Mailer: b4 0.14.2
 
-The dpu_plane_virtual_assign_resources function might fail if there is
-no suitable SSPP(s) for the plane. This leaves sspp field in plane
-state uninitialized and later leads to NULL dereference during commit:
+Scaling is not implemented for some type of scalers (QSEED2 and RGB) but
+it was unintentionally re-enabled with change below. The remaining
+condition in dpu_plane_atomic_check_pipe is not enough because it only
+checks for length of scaler block (which is present). This patch adds a
+additional check for setup_scaler operation.
 
-Call trace:
- _dpu_crtc_blend_setup+0x194/0x620 [msm] (P)
- dpu_crtc_atomic_begin+0xe4/0x240 [msm]
- drm_atomic_helper_commit_planes+0x88/0x358
- msm_atomic_commit_tail+0x1b4/0x8b8 [msm]
- commit_tail+0xa8/0x1b0
- drm_atomic_helper_commit+0x180/0x1a0
- drm_atomic_commit+0x94/0xe0
- drm_mode_atomic_ioctl+0xa88/0xd60
- drm_ioctl_kernel+0xc4/0x138
- drm_ioctl+0x364/0x4f0
- __arm64_sys_ioctl+0xac/0x108
- invoke_syscall.constprop.0+0x48/0x100
- el0_svc_common.constprop.0+0x40/0xe8
- do_el0_svc+0x24/0x38
- el0_svc+0x30/0xe0
- el0t_64_sync_handler+0xa0/0xe8
- el0t_64_sync+0x198/0x1a0
-
-Fixes: 3ed12a3664b3 ("drm/msm/dpu: allow sharing SSPP between planes")
+Fixes: 8f15005783b8 ("drm/msm/dpu: move scaling limitations out of the hw_catalog")
 Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
 ---
  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-index f54cf0faa1c7c8c00eb68b8b45ca2fc776f7f62f..d198a65a2c5fef5fbdebc9c383a4b08bc71b8bf3 100644
+index d198a65a2c5fef5fbdebc9c383a4b08bc71b8bf3..6effe0fa4837284a1f038e4907c4c91d239aeb8b 100644
 --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
 +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -1278,7 +1278,7 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
- 							     state, plane_state,
- 							     prev_adjacent_plane_state);
- 		if (ret)
--			break;
-+			return ret;
- 
- 		prev_adjacent_plane_state = plane_state;
- 	}
+@@ -740,7 +740,7 @@ static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
+ 	 * We already have verified scaling against platform limitations.
+ 	 * Now check if the SSPP supports scaling at all.
+ 	 */
+-	if (!sblk->scaler_blk.len &&
++	if (!(sblk->scaler_blk.len && pipe->sspp->ops.setup_scaler) &&
+ 	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
+ 	      drm_rect_width(&new_plane_state->dst)) ||
+ 	     (drm_rect_height(&new_plane_state->src) >> 16 !=
 
 -- 
 2.51.0
