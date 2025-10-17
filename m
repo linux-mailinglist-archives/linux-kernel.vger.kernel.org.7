@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-858350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9B2BEA5FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:00:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8AABEA5EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C60188D88C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5186619C13CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118772F12C2;
-	Fri, 17 Oct 2025 15:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8712E62BE;
+	Fri, 17 Oct 2025 15:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Law6VkvY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="o+sp+Vf/"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33BB330B06;
-	Fri, 17 Oct 2025 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C6D1448E0;
+	Fri, 17 Oct 2025 15:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760716531; cv=none; b=hIkn0yxgKYCUbjN5SmbvFHOAvb/xZRwx7DaUkpa5GmOJy9JO6jP+pFYlonSldHZ3s66jBYejVbZulV2+r0tmjvvW7leJteD2oZyuE0H4kXw4r14pextRCoUeXkQOe6PLlJgS8BOlPMZopMV2xc60GUhKrksk6SgqFl/n676NMf4=
+	t=1760716525; cv=none; b=JiH6uxeSiw6PuC+lnGez0FHj1fYpio+8EeqqeHeYX33PtK0701yMlChl0PPNMUb3ZwOIxNxjoCsx5hJMcqSsXCo8ELy9KXCl9qGBRAKmrIoonWTKYrg50486es5QVW33IHe6Jzuqjk84hvL0/DcpyCq5ohIbCS6ZKBWQR/WODys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760716531; c=relaxed/simple;
-	bh=ZgVr9GspgScV9WlFUPX0TIfcaYWqCC6wShUnY8A19pI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVp5USfpwAeQjv0lwX2xDsEV6r67b+i8X1BQQAekKLDx6ITePPjIJ1xJVj4JWG6BCdszl2P/qt+hOYwfHHn0ohz/fhyTd4QwKC2c/jrxANyFVxhSqZBv7Fbfz4oEAD5FNMWuAKCGKJ+G6zNBo+mAStYrdm3Dd9odC1H07Q+Qn/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Law6VkvY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59HEGCDs001269;
-	Fri, 17 Oct 2025 15:54:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ZQ1TtLHokmslhzFjee4cGuD5m+V7qM
-	5aPPie4zC6OAs=; b=Law6VkvY0ICKNKchLEppxjum8vOcIanSKnBL7OT7PTmQg0
-	/6qxbBVReHS20QCrAw8Mw10mAM94rLvvh5tD8wbUb+e/utZivGuGVMyuc5GqkixP
-	9WWXmRLKv6pzkRAEKw2FfWsg1p5GZVTfuvuxnFm6T98IRMQAUQ+8yc/rD5Z5b3uH
-	X8d0zz6VYhOyCbAzuvtAz8NrnXH38xtQ7MCVtxDrzdSoscnaYPFy05mStbIeDDtp
-	SKaXWeccmeQ4KD9PLzrxCjVQVpjNf13uY8Trn2RjdAn/nkDZsccyOmP07vNlXyJ4
-	AsYtlADdQJJL2sQy3nsR9lxvDfusEAX4XJPoEovw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp8em13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 15:54:20 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59HFmLFW024554;
-	Fri, 17 Oct 2025 15:54:19 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49rfp8em10-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 15:54:19 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59HFlK7X015010;
-	Fri, 17 Oct 2025 15:54:18 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r3sjwvr0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 15:54:18 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59HFsGL659048250
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 Oct 2025 15:54:16 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 503512004B;
-	Fri, 17 Oct 2025 15:54:16 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 980F420049;
-	Fri, 17 Oct 2025 15:54:15 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 17 Oct 2025 15:54:15 +0000 (GMT)
-Date: Fri, 17 Oct 2025 17:54:14 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
-Message-ID: <55f8b155-5468-43fc-b6fc-f509f4becd5b-agordeev@linux.ibm.com>
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-7-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1760716525; c=relaxed/simple;
+	bh=LiB/8SOQ6pHviq19ZsPlD52HcMRhPceRSzpy+JzRraA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DzYEznpxAhzz57QA1v3T6ABQZjd5vWLoyPW23heYZk9o3tugHgqzjX6r1I7Xp7pbn8sA0XAfvSwHmYCNuW8BpnqEURquuFMQABihi620kx+CdavPN2ofr438E9eWj8ZoU3c+yxDdbDxKVLsyLv8gxBHZ+yDUawQu77s+PhFVPSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=o+sp+Vf/; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cp8Y328NDz9t7F;
+	Fri, 17 Oct 2025 17:55:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1760716519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=64C4ZVgpgDDBsS1KhiL9t0Rq8Ol9iYeLpNcDR1OLqqk=;
+	b=o+sp+Vf/rVU9gD+manASlMMeM/8WMWYx3r5g/jIhAbxLsukGRafR1ogLgUn9a2Z9hl17TI
+	o14IG8XJ+7CRQq+0nISdl7YgpNcDm8fnK5+rjfFEnn73oAckjwgF1cIQ4QHurRpk4lh0vz
+	FBHWU2i27ztNe665NX9sCNu+gegBv11DgYBY/JYRQCIMdLe13VQEGhgMCwEyDNE/Lmst2C
+	vwi5wkilMoUi8PTPZPuXFVr17pDVm3FLKeWsBB3X+A2tGLc6wVvNFtz3Zd00GBi1chXGYu
+	CnL2NDfVwgLfL1pl6pfK6RL9hMguAzun8YeVrq/hSzECaC3BKdPAcbugT4iQhw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of listout@listout.xyz designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=listout@listout.xyz
+From: Brahmajit Das <listout@listout.xyz>
+To: yonghong.song@linux.dev
+Cc: andrii@kernel.org,
+	bpf@vger.kernel.org,
+	eddyz87@gmail.com,
+	linux-kernel@vger.kernel.org,
+	yangtiezhu@loongson.cn
+Subject: [PATCH] selftests/bpf: Fix redefinition of 'off' as different kind of symbol
+Date: Fri, 17 Oct 2025 21:24:50 +0530
+Message-ID: <20251017155450.4016595-1-listout@listout.xyz>
+In-Reply-To: <40982e43-84c5-481b-9a9a-0b678ef7e6e7@linux.dev>
+References: <40982e43-84c5-481b-9a9a-0b678ef7e6e7@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015082727.2395128-7-kevin.brodsky@arm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 2uFWZ81CE4CiNc9aZu2A8JlAcBwqq-tc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA4NCBTYWx0ZWRfX2Zriy77SuQpm
- /GHNuVH/UFB6mOfHOC2AuP5g7c+urTyXE81dQ6L6B0AwkiPLgihig9dwBQiKw0AYwvyn2/UBXXe
- VcGvFB11D3W4lhURudq3zaSM9GHtCo5XdEsYeLbFUmnzVB67HZP20B2Uxwsqr/DnC0GUNt8pn+Q
- lYbw9Nsugz7aigNaGXWz8mjQ5H0X7sXZm5KLMDqasP/WlwVPUM+i7GhB70V9ACBzBfu/gATiLsp
- HWtKR/YcgMc3XVsjOXDXb6rwcyJoPiLdVPL4d9Uovyfy1Y+6KXUtJGTOvjrlEvC+BEx9y22ul4M
- iyiO9mTSInwQOYOlHV2G1yBHcLyrhGstPiwazxXG+Q1pEZlUKx7CHtMC4Sa0JzAFx3fiGUVZ0Ll
- LSljgWznsRluu1F2sKhweaOdRoS3mQ==
-X-Proofpoint-GUID: B3M2xirfIqNJrZzR03DBgN9gZToY0y4x
-X-Authority-Analysis: v=2.4 cv=af5sXBot c=1 sm=1 tr=0 ts=68f266ac cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=1KDjgaeL6VvqQMJ9c2UA:9
- a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
- a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510120084
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4cp8Y328NDz9t7F
 
-On Wed, Oct 15, 2025 at 09:27:20AM +0100, Kevin Brodsky wrote:
+This fixes the following build error
 
-Hi Kevin,
+   CLNG-BPF [test_progs] verifier_global_ptr_args.bpf.o
+progs/verifier_global_ptr_args.c:228:5: error: redefinition of 'off' as
+different kind of symbol
+   228 | u32 off;
+       |     ^
 
-...
-> * lazy_mmu_mode_pause() ... lazy_mmu_mode_resume()
->     This is for situations where the mode is temporarily disabled
->     by first calling pause() and then resume() (e.g. to prevent any
->     batching from occurring in a critical section).
-...
-> +static inline void lazy_mmu_mode_pause(void)
-> +{
-> +	arch_leave_lazy_mmu_mode();
+Suggested-by: Yonghong Song <yonghong.song@linux.dev>
+Signed-off-by: Brahmajit Das <listout@listout.xyz>
+---
+Please refer: https://lore.kernel.org/bpf/5ca1d6a6-5e5a-3485-d3cd-f9439612d1f3@loongson.cn/
+---
+ .../selftests/bpf/progs/verifier_global_ptr_args.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-I think it should have been arch_pause_lazy_mmu_mode(), wich defaults
-to  arch_leave_lazy_mmu_mode(), as we discussed in v2:
+diff --git a/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c b/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c
+index 6630a92b1b47..1204fbc58178 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c
++++ b/tools/testing/selftests/bpf/progs/verifier_global_ptr_args.c
+@@ -225,7 +225,7 @@ int trusted_to_untrusted(void *ctx)
+ }
+ 
+ char mem[16];
+-u32 off;
++u32 offset;
+ 
+ SEC("tp_btf/sys_enter")
+ __success
+@@ -240,9 +240,9 @@ int anything_to_untrusted(void *ctx)
+ 	/* scalar to untrusted */
+ 	subprog_untrusted(0);
+ 	/* variable offset to untrusted (map) */
+-	subprog_untrusted((void *)mem + off);
++	subprog_untrusted((void *)mem + offset);
+ 	/* variable offset to untrusted (trusted) */
+-	subprog_untrusted((void *)bpf_get_current_task_btf() + off);
++	subprog_untrusted((void *)bpf_get_current_task_btf() + offset);
+ 	return 0;
+ }
+ 
+@@ -298,12 +298,12 @@ int anything_to_untrusted_mem(void *ctx)
+ 	/* scalar to untrusted mem */
+ 	subprog_void_untrusted(0);
+ 	/* variable offset to untrusted mem (map) */
+-	subprog_void_untrusted((void *)mem + off);
++	subprog_void_untrusted((void *)mem + offset);
+ 	/* variable offset to untrusted mem (trusted) */
+-	subprog_void_untrusted(bpf_get_current_task_btf() + off);
++	subprog_void_untrusted(bpf_get_current_task_btf() + offset);
+ 	/* variable offset to untrusted char/enum (map) */
+-	subprog_char_untrusted(mem + off);
+-	subprog_enum_untrusted((void *)mem + off);
++	subprog_char_untrusted(mem + offset);
++	subprog_enum_untrusted((void *)mem + offset);
+ 	return 0;
+ }
+ 
+-- 
+2.51.0
 
-https://lore.kernel.org/linux-mm/d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com/#t
-
-> +}
-> +
-> +static inline void lazy_mmu_mode_resume(void)
-> +{
-> +	arch_enter_lazy_mmu_mode();
-> +}
-
-Thanks!
 
