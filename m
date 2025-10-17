@@ -1,161 +1,84 @@
-Return-Path: <linux-kernel+bounces-858087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A67EBE8D70
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2350ABE8D79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39A36E2CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED396E2C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E55350D4C;
-	Fri, 17 Oct 2025 13:28:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67BD350D66;
+	Fri, 17 Oct 2025 13:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p7FlZSQc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0oOt3xZi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024E334F46B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78B4350D4B;
+	Fri, 17 Oct 2025 13:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760707690; cv=none; b=rwn4XshKGyfXBDRbcwhYHv1uJT759S0hl+kYqcN0lbijOxKcGwGKtbaB503dusnBK3AfxF4lNyKN6xLGtFkDEZMF44fpM4LxyvMm4gpsTkDl44DsTZBmKRennw3EP//NIr7NiL9DPgNxZrNr3MeY82l50SZKSLnlYCsFtr3jSpU=
+	t=1760707745; cv=none; b=iSKhbVlxBu7rri7GU7vkOG33l51OcniR0QZw5NAxwuKjzerlNzDYO1IRiMkoRFa7gWxegQ010BNP/ICgK/sDmj33T4XEsiMhCSRbGGlmvHrbFPB6VTVd2s8qchnRq8oLXkIwGiGuhd+RxkW2ElqZZshGZOmINBCt46VcrCMxi30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760707690; c=relaxed/simple;
-	bh=A5bWtoCjcE3KSfxQyHBw3n1i7oJtoEpPjwfpCY7WRnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nH+wLaI6gpW4Cg9uufBb6A39IHgTuHGSFqCuAr6BdxM3CPa1MGfHmHc6dS3WHwuJzCu6r4pSECUqb7+Qyt+XGlFh+0BTNOO9BswHQi1mtcr0vBxEQlh2ca4lAxHzaMMwdaOyczvpE99vW8NYOptDxC8BNRnFC928EdpxQE4y9+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9kUv-0005Bi-Od; Fri, 17 Oct 2025 15:27:57 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9kUv-00448u-07;
-	Fri, 17 Oct 2025 15:27:57 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A53524891AC;
-	Fri, 17 Oct 2025 13:27:56 +0000 (UTC)
-Date: Fri, 17 Oct 2025 15:27:56 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
-	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
- FD is off
-Message-ID: <20251017-bizarre-enchanted-quokka-f3c704-mkl@pengutronix.de>
-References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
- <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
- <20251017-determined-jackdaw-of-painting-e2ff64-mkl@pengutronix.de>
+	s=arc-20240116; t=1760707745; c=relaxed/simple;
+	bh=FCb6l5ObniXxTIJOJBll3JU9Fu/sYJFKIcRGtHY6frc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Nx1Gz8cKwFfl1iAxk71sCSOu5HYDSB2xhAYYIuMK89j5bN527l2HJ65ctPkzZ02LG93zlFhoREz3UTOipxjPyepWecwmwSOv/1Qbuj7vPDS18PuxGxm3tp21OhSRoXn8ADFzi/cOMIptNVV2HwU2BFplJGALrhDg+J7mjbqzplQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p7FlZSQc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0oOt3xZi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760707740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FCb6l5ObniXxTIJOJBll3JU9Fu/sYJFKIcRGtHY6frc=;
+	b=p7FlZSQcAvWYom6XD4RC1BVusPQNBd77BuXglxpg+DCDbQRSihlZad8s8KkFq8GzZ5iZIe
+	2HrVaHGAht83q1/fXEHKj72H9MFP1752bzcQKbS3B/bO6sZlyWs8G+h895amFBLurzAry5
+	0QxOLP6shaQDSAdcons0opzYr3pnqDtXzimvuHl5c5f3b9wAj0eg8TArIxrwc4vnbIw8YH
+	1nwqaBQyHsT92OTeqb0azRGz05XF3UNvI9Rqzjeu7rrGY1rDd8y0/ZhnVQPjTGLHkHJi8N
+	7PX/F07JCYIFyWiBOOYu2u8+piT2Iw6UkCct//Ed9ip/LG5WMAokADy2EDPvEA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760707740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FCb6l5ObniXxTIJOJBll3JU9Fu/sYJFKIcRGtHY6frc=;
+	b=0oOt3xZiIZOnwlVFS3EqsCKSMb5+HZD9ZLIItx6umf2eU145EyuqLUWvc0JOH6XIQPhxLJ
+	5ZcJL149p74D26DA==
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: alex@ghiti.fr, aou@eecs.berkeley.edu, cmirabil@redhat.com,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, dramforever@live.com,
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, lzampier@redhat.com, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, robh@kernel.org, samuel.holland@sifive.com,
+ zhangxincheng@ultrarisc.com
+Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
+In-Reply-To: <20251016195902.338629-1-cmirabil@redhat.com>
+References: <87h5vy20o9.ffs@tglx> <20251016195902.338629-1-cmirabil@redhat.com>
+Date: Fri, 17 Oct 2025 15:28:59 +0200
+Message-ID: <87plalzmg4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kukgz24an2ugwfuw"
-Content-Disposition: inline
-In-Reply-To: <20251017-determined-jackdaw-of-painting-e2ff64-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
+On Thu, Oct 16 2025 at 15:58, Charles Mirabile wrote:
+> On Thu, Oct 16, 2025 at 07:53:26PM +0200, Thomas Gleixner wrote:
+> What do you think about the attached patch (it should be not corrupt :^)
+> I think I adressed your concerns, and I ran it through clang-format too.
+>
+> I folded everything into one diff for ease of review, but when we send it
+> officially there will be a separate patch for the caching refactor.
 
---kukgz24an2ugwfuw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
- FD is off
-MIME-Version: 1.0
-
-On 17.10.2025 10:28:38, Marc Kleine-Budde wrote:
-> On 13.10.2025 20:01:23, Vincent Mailhol wrote:
-> > Currently, the CAN FD skb validation logic is based on the MTU: the
-> > interface is deemed FD capable if and only if its MTU is greater or
-> > equal to CANFD_MTU.
-> >=20
-> > This logic is showing its limit with the introduction of CAN XL. For
-> > example, consider the two scenarios below:
-> >=20
-> >   1. An interface configured with CAN FD on and CAN XL on
-> >=20
-> >   2. An interface configured with CAN FD off and CAN XL on
-> >=20
-> > In those two scenarios, the interfaces would have the same MTU:
-> >=20
-> >   CANXL_MTU
-> >=20
-> > making it impossible to differentiate which one has CAN FD turned on
-> > and which one has it off.
-> >=20
-> > Because of the limitation, the only non-UAPI-breaking workaround is to
-> > do the check at the device level using the can_priv->ctrlmode flags.
-> > Unfortunately, the virtual interfaces (vcan, vxcan), which do not have
-> > a can_priv, are left behind.
-> >=20
-> > Add a check on the CAN_CTRLMODE_FD flag in can_dev_dropped_skb() and
-> > drop FD frames whenever the feature is turned off.
-> >=20
-> > Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
->=20
-> What about merging both can_dev_dropped_skb() an
-> can_dropped_invalid_skb() in the skb.c, so that there is no stub in the
-> header file anymore.
-
-Ouch! Don't do this. We still need can_dropped_invalid_skb() for virtual
-interfaces. See commit ae64438be192 ("can: dev: fix skb drop check").
-
-But then I'm asking: Why is there the difference between virtual and
-non-virtual interface in the first place? Can we get rid of it?
-
-> Someone (i.e. me) used can_dropped_invalid_skb() in a driver, that means
-> the check for CAN_CTRLMODE_LISTENONLY is missing :/ (I'll send a fix).
-
-These drivers need this fix:
-
-| drivers/net/can/bxcan.c:845:     if (can_dropped_invalid_skb(ndev, skb))
-| drivers/net/can/esd/esdacc.c:257:        if (can_dropped_invalid_skb(netd=
-ev, skb))
-| drivers/net/can/rockchip/rockchip_canfd-tx.c:75: if (can_dropped_invalid_=
-skb(ndev, skb))
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---kukgz24an2ugwfuw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyRFcACgkQDHRl3/mQ
-kZyC0gf8Cmqu+KY3qH0hjVVMNdhs2wwaTKwgMC8LTtL7xxJpMD2vYOY65agtvTUh
-JnwvSV3FRM1HRhXnp1Gcv087RogGk1+cD9GqyMMmuMqPBFK2ZZf6FTskUSfI0yAP
-TRVNbXk3m3MR+9GKUXuIwVZIzIj3ZZOzWKv6b6S42TCLFk/fVRDWjh9mgIWRLe1h
-D8PwpaQQovNOzKAAu8R4878fYZpcUuZmHa0LC0jeA0n5ip8Wu1c+3vsHLIesC5kG
-VY4gTmh75UcRblS95NKNQsFGW0jeKDjlSx4luiB07izE/vjcLRayv1voqZwHiBvz
-76g/P8DbWOMf/13O8bYDqg8nhJp8yA==
-=KkI2
------END PGP SIGNATURE-----
-
---kukgz24an2ugwfuw--
+Looks about right and it's a net win for everyone due to the suspend
+path cleanup.
 
