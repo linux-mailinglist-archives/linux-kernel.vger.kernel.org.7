@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-857561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD589BE722E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:24:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2C1BE7231
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B803A6CA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:24:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB0574ECEA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBC9283C8E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C360F28688E;
 	Fri, 17 Oct 2025 08:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="huNCcGvr"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992627FD5B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8673B27FB1E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689454; cv=none; b=jYbEQzJ+wQQN9gOvTeu2JMn3PwmFGl9ehMqHQQT4NdNlJwdlVG4cjfLjLelxov7OKtIbybDXCNLz4V9xNEKfmTsL529WCm907fVZUP3XsJc7dQhe0clfGqNXQQIEc0u1HUhQouGuuGQGrF2wSjLeSw8pGUAhAjq4piWzg11pKBA=
+	t=1760689455; cv=none; b=hVuKC9HJeonE1qC+QzV/hODzL+cqJ2OT4rQ57gBCjP4ideUTBHxpDV6rB/uYXMWGsHK1EsAuHtWxfdEd1inPyTwV+AQdLsXVA614ic28LCXcUQJkm/TJKRkKqsV2/XNgX8kNl4xrbeGOnzwwefGcdiFXHj82GiE4sHhwt8s0jhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689454; c=relaxed/simple;
-	bh=McM2mvMkVPJy9yLZ+uSH+FTXEhHL97V1HuSxYXMMEXs=;
+	s=arc-20240116; t=1760689455; c=relaxed/simple;
+	bh=I7MwRrHaBOC+C2IkZVdU0moxP+iJOWsDodusA5znRsI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HnclbpBtQv6T+z6cRm9QM8ud8G6e+t+asINqCEXn8y2oa9wB9PKDSx4mb2RVo9CCW4TeFwVmmgoEQx0/K6R3dc2510hJgzXXDCpIE7jbPdYAIvfDw5+IbF4g2Dw7kkMbROdnTr6ELChVxAHnSY6KM4Rh9lRh1NDN8VjDw2l3E48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=huNCcGvr; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ev
-	ao6NDYDHHUvt38y+3qbDIqPKeXIb3vM3lrstmESlc=; b=huNCcGvrtBl2873RiK
-	kh3XtYCfBMM3A7o4Gtx3zCVJSvR5YkxdMArlK8CS0aQ06ycfT6cMLEMcE1UUx1dl
-	0QsbL0hwJ9YBvOsn0Tu0aeejSFaTr5mu0vWsOhTHoyVq3kas7zkTsRj53TaskGiy
-	CeLonXajkdNDkg9Q85B9Kykfg=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBngNUU_fFoP8qQAw--.60681S2;
-	Fri, 17 Oct 2025 16:23:49 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: hch@infradead.org
-Cc: jackzxcui1989@163.com,
-	jiangshanlai@gmail.com,
-	linux-kernel@vger.kernel.org,
-	tj@kernel.org
-Subject: Re: [PATCH] workqueue: Support RT workqueue
-Date: Fri, 17 Oct 2025 16:23:48 +0800
-Message-Id: <20251017082348.2998547-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aPHhmz1C7d9vt2x8@infradead.org>
-References: <aPHhmz1C7d9vt2x8@infradead.org>
+	 MIME-Version; b=tMEZxtOJpy0xLUP7e3O9jX/EZST4PpNqiqsZvPgLd9cpWyTgQpe3JT5weIfyWWagcejOdrnExyjGycqDp73PxGx78DWzBw9Z+R8dWp6MMlQylsJU/9Q4CpfYoF/WOkv/Wqg+5+bzgU7TgaCEWp4W8Ipc3QxRLUO4poUKo9N3rEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a62a1414ab3211f0a38c85956e01ac42-20251017
+X-CID-CACHE: Type:Local,Time:202510171614+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:6103bf7d-72ff-4b14-a8ee-b095e0870a80,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:2e1847c0b96745a96810794bc074a1b7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:5,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: a62a1414ab3211f0a38c85956e01ac42-20251017
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 21650974; Fri, 17 Oct 2025 16:24:07 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: syzbot+4b717071f1eecb2972df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] jfs: test syz test
+Date: Fri, 17 Oct 2025 16:24:03 +0800
+Message-Id: <d5067a639f2341e6cce0a48f810c22d2e36c33a8.1760688719.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <68f1c794.a00a0220.361615.000f.GAE@google.com>
+References: <68f1c794.a00a0220.361615.000f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,44 +66,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBngNUU_fFoP8qQAw--.60681S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar1DWFyDCr4kJF4xGr18AFb_yoW8Gw47pF
-	4YyrZrtr4DAa909Fs7Gr4xXr4Sgwn7tFyUGF48G34Ivrn8JryvvF4fK3yava4UWr93uw17
-	AFWFvrZ8Cr1UZ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUFii3UUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCwBUbJWjx-RWIDQAA3f
 
-On Thu, 16 Oct 2025 23:26:35 -0700 Christoph Hellwig <hch@infradead.org> wrote:
-> This seems to mis an actual user?  Did you accidentally only send
-> patch 1 of a series?
+#syz test
+---
+ fs/jfs/jfs_dmap.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-It is a cross-module issue, I'm not quite sure if there is a better way to handle
-this. Initially, I was thinking of proposing a patch to RT workqueue. If that gets
-accepted, we could then use the newly created system_rt_wq in the patch to fix
-the issues we found.
-One of the issue is that where the DMA completion work task for UART data is not
-processed in a timely manner, it leads to anomalies in handling IMU timestamps.
-The proposed change could be to add a new function called tty_flip_buffer_push_rt,
-which would be implemented as follows:
-
-void tty_flip_buffer_push_rt(struct tty_port *port,
-                             struct workqueue_struct *wq)
-{
-    struct tty_bufhead *buf = &port->buf;
-
-    tty_flip_buffer_commit(buf->tail);
-    queue_work(system_rt_wq, &buf->work);
-}
-EXPORT_SYMBOL(tty_flip_buffer_push_rt);
-
-Our 8250 driver is implemented based on the TTY layer, but the tty_flip_buffer_push
-function belongs to the TTY layer. Therefore, a possible patch for a user of the RT
-workqueue could be the addition of the tty_flip_buffer_push_rt function to utilize
-system_rt_wq. In addition, other changes, such as modifications to the GPU driver
-code we maintain on our platform, can also use this RT workqueue, just pass WQ_RT
-flag when creating the workqueue.
-
---
-Xin Zhao
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index cdfa699cd7c8..9d26c5dc4efd 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1435,6 +1435,11 @@ dbAllocAG(struct bmap * bmp, int agno, s64 nblocks, int l2nb, s64 * results)
+ 			blkno &= ~(MAXL1SIZE - 1);
+ 		else		/* bmp->db_aglevel == 0 */
+ 			blkno &= ~(MAXL0SIZE - 1);
++		
++		if (unlikely(budmin < 0)) {
++   			WARN_ON_ONCE(1);
++    			budmin = 0;
++		}		
+ 
+ 		blkno +=
+ 		    ((s64) (ti - le32_to_cpu(dcp->leafidx))) << budmin;
+-- 
+2.25.1
 
 
