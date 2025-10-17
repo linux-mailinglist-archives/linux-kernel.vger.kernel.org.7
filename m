@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-857522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CBABE7034
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55976BE7037
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1210F5E77F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 655DB5E81B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6CA25CC74;
-	Fri, 17 Oct 2025 07:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DED2609DC;
+	Fri, 17 Oct 2025 07:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hg+PuDHp"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CeFEqUky"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14B81DC9B1
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D2425A2A4
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687627; cv=none; b=l4t0An5iX4S3RKxqMOr9v83deQpMOeQJfXQBArqj3U/U5f9iPdFhPsZ96U5hkrlgxfHL6Dsx+a2oMYdLkhr4WkAzy7f+uOLy3t0VyTaqJuP6hzfFL8u34Acef4X8L6omvj3zGU58mUPBg+0CZ2Y30jtrf7fiwiq9Z3CufwQwuKk=
+	t=1760687628; cv=none; b=H6rdsgLBOhGOfz+oC/zuuJ0k5erDRRGFGus9v+2ndYH8MYq8FLmTFenrXm/rKLKaTPKaNNcOYOzuczM6/47Ngye4241odLwQVRajJWe27oPPLa24s1Plp0bsoCiVcWyxydAL9nc4g2Z8vxxFMHWT1FfOsWnWGbNl56t/YazgpCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687627; c=relaxed/simple;
-	bh=4ahqgDxIys8XLQOy98EriuenP4pI6rogZedFloREwxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2Trwwy0SHM3uUxCTXhn8XMtg7Q+VENIYACOBEoUg9GhFyVEmD1B6iM2S1iK1UuLpuwvH5kW3EXK9NsqmrZ+vY1kmWqCXM5cycwMQxf6Y/Axo1BmweR/1E64YvmnKPlDU3Rj++iPIDxpsnqgAq8y/3FrSqT7XPABPiblgP6gQqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hg+PuDHp; arc=none smtp.client-ip=115.124.30.100
+	s=arc-20240116; t=1760687628; c=relaxed/simple;
+	bh=jmTav0LD6uHB/CeeFFtp58fzJPAWJOfH/X2W35DCJ7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BTZ4lkaKIF1vq7Nd5Tff2JUfGtBZetyU4wVyyXnMVzzfg0WrMsJYQyL0o4oLC8ycFYihrgUIyB8tINVvrFXO/niGBNLefXl/U9tnb4LpHzXaaFZeXsd42dYNYiS9fwWkcX7N1l2/cfM7hUrxNiJPte1UVcQbkcrgUJHsz/+Xe9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CeFEqUky; arc=none smtp.client-ip=115.124.30.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1760687622; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=CcbInidATEQDx0TmsZjwQ7ET4Bs8aihoSMbGsPd8THA=;
-	b=hg+PuDHpTiHlri80s3xUGDC843CjMOgI/WwcWHtlcAdkiuYXMphhLPQrCXCO6/FQeeQwC3g33kBGWFPYIa6j+tdTCIymh/EQVZj6m/5i8wGhslqyjPIlb7QHpPwCvyNfe/TC9v/8lIPd/hpgjYbAuuTroPhNZM5ITNIYKPB83ZQ=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WqP7nGd_1760687620 cluster:ay36)
+	t=1760687623; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=D0OKcU2IWVvgxpGGM/x3bGo2RcncD8hKQxZ9riDYf6c=;
+	b=CeFEqUkyPd2kh2S8BKbobenqkv0L0goNojPFTGtOV+2u7dvOdt2r3Wos/kNaHltYt+f4oNt655wmqnIGcZL2noiOJrY7iMYetqTIerSM+x/J7DyCdvfO6pcjQ3sP4sfexPTabtnE0o/VVH8TSjdlDnCHJq5f45Wyk/jAltw7B7s=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WqPAmKl_1760687621 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Fri, 17 Oct 2025 15:53:40 +0800
+          Fri, 17 Oct 2025 15:53:42 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hannes@cmpxchg.org
@@ -50,10 +51,12 @@ Cc: david@redhat.com,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] optimize the logic for handling dirty file folios during reclaim
-Date: Fri, 17 Oct 2025 15:53:05 +0800
-Message-ID: <cover.1760687075.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH v2 1/2] mm: vmscan: filter out the dirty file folios for node_reclaim()
+Date: Fri, 17 Oct 2025 15:53:06 +0800
+Message-ID: <c91f5ecc5152b647904c7503618a01885d913928.1760687075.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.7
+In-Reply-To: <cover.1760687075.git.baolin.wang@linux.alibaba.com>
+References: <cover.1760687075.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,22 +65,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since we no longer attempt to write back filesystem folios during reclaim,
-some logic for handling dirty file folios in the reclaim process also needs
-to be updated. Please check the details in each patch.
+After commit 6b0dfabb3555 ("fs: Remove aops->writepage"), we no longer
+attempt to write back filesystem folios in pageout(), and only tmpfs/shmem
+folios and anonymous swapcache folios can be written back. Therefore,
+we should also filter out the dirty filesystem folios for node_reclaim()
+to avoid unnecessary LRU scans.
 
-Changes from v1:
-- Fix the folio_test_reclaim() check.
-- Rebase on the mm-new branch.
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ mm/vmscan.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Baolin Wang (2):
-  mm: vmscan: filter out the dirty file folios for node_reclaim()
-  mm: vmscan: simplify the logic for activating dirty file folios
-
- include/linux/mmzone.h |  4 ----
- mm/vmscan.c            | 33 ++++++++-------------------------
- 2 files changed, 8 insertions(+), 29 deletions(-)
-
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c80fcae7f2a1..65f299e4b8f0 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -7601,9 +7601,11 @@ static unsigned long node_pagecache_reclaimable(struct pglist_data *pgdat)
+ 	else
+ 		nr_pagecache_reclaimable = node_unmapped_file_pages(pgdat);
+ 
+-	/* If we can't clean pages, remove dirty pages from consideration */
+-	if (!(node_reclaim_mode & RECLAIM_WRITE))
+-		delta += node_page_state(pgdat, NR_FILE_DIRTY);
++	/*
++	 * Since we can't clean folios through reclaim, remove dirty file
++	 * folios from consideration.
++	 */
++	delta += node_page_state(pgdat, NR_FILE_DIRTY);
+ 
+ 	/* Watch for any possible underflows due to delta */
+ 	if (unlikely(delta > nr_pagecache_reclaimable))
 -- 
 2.43.7
 
