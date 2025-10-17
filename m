@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-857476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EC0BE6E64
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:12:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6E4BE6E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34013A17FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:12:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C35974E23F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FA03112A0;
-	Fri, 17 Oct 2025 07:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441553115B9;
+	Fri, 17 Oct 2025 07:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FyWsD4Uw"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b="mR9mfrq9"
+Received: from mail-24420.protonmail.ch (mail-24420.protonmail.ch [109.224.244.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317F530FC3D
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC123B60C;
+	Fri, 17 Oct 2025 07:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760685151; cv=none; b=k7yiIHdhEUfHtnBZWT19a/pS/ZckjK5I+sk8GHcHRE9cWEUUKDQr751L/9rpjM1OnrLp7L+KSbcQ37Jg9eN/nxM+CjpJFxKe9JJa9bjK4PRZkHuc3FXhzqxqz0HUQYS3fSvO827XjKUI4kZgYj6F+R/DXU58jzFEiStBJVR+FW4=
+	t=1760685211; cv=none; b=cxGdM1WZuhOsW49RKjJYG7uh4S5vjswRA4GYCnJrdEnUQYrF+g5bxp3+t53EVXUzQ78uKV8x6TcmPSzH/bOPO1kgYYhmrA/Z9wIsWfDHjikscRKlrOj9XHmn6+5FoXhI22xA3YRfl2pgtYv8oBRTbC/LtPqs77IK27LS/SM01l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760685151; c=relaxed/simple;
-	bh=25YUziEhf9uU4zAhrMwI7Nzd6K8Li1d73QSpIFvWNy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f0Uv4F8gHihHv0qUqKhSIZpJZbm2K8p/aX64Az4daeuHdUfcMJ4Y81S2cvPlYUf3fu/181h2lUI5PCtA/6aoGAaRPubeyv1OW2mgc6R7R098deHo3HG20n/66d9c/6n+knNwNf76tnwAi1QdvT5B/3WnBmbjvcA7K73vW7NHDHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FyWsD4Uw; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-591c9934e0cso1811280e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760685148; x=1761289948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25YUziEhf9uU4zAhrMwI7Nzd6K8Li1d73QSpIFvWNy0=;
-        b=FyWsD4UwUsYXqKuj+6OHL8sM15xUnl/aRGH9KGC3WPoUXNxbmsrZ7Iqhq4UJhqkevj
-         GE2OUwBSaGqqmRen3P/7lAzvmQk1ujQS2MgKFSmW0LOTtrDNNy/mvfuz+l2BBe1tqjB8
-         Mk6weoPuxdW1lCUq1wDyzTAZtdaUWOS8cQscukLNPhnF5WVA0BUcgNGnJS8Mk6hSLvfb
-         QdPWmaOw9xa5INbayYaoIZtZBjhOlUiC9bEkGyL5s/fRAia5z3iVth4YjQ3o4lnlt69p
-         T2hIPhsvo6Q0jRU11R5LtSH8YpZoo80Lr9Wds5SFkmOITF0SLmjxWh+gczBxHHmEnhk2
-         wyJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760685148; x=1761289948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25YUziEhf9uU4zAhrMwI7Nzd6K8Li1d73QSpIFvWNy0=;
-        b=lgHyPBLBwvK63nh1RAh42Hpk/CIEhBJFUNDkCDwXm1paLK0NZUxvqnuL8z411bYj+Z
-         dAl4/8+b/YpHdzoWtQmK/fQ1RwXLPIwM4YzZDCxy9Uf+Ds3TNa/lPLIu8IXOu2SoPxty
-         jvdwBvW58dMRaOtucqUvn1jcniwinBy2jJr83q49rWyugcRlGUvzAIrj8RqT7hg8zg4n
-         x8hpjnRy6CuBsHJQAmDwtnpLzwo09nXkUWeEnRX48c3BFno5qyPcEDvnnJkMuthHZ8rw
-         POBHdgydTTlJJcUgHF65d9+s4wZu2maSyaA7u4Y0A4eyTv0rzZOl8mmt5oKl9wzTzOCO
-         YmAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfuw3ydORAeSBfqEfwFh8CcXH7OROGhrM6OrfaeLgr0hLfBEVJs3V/HOYXAgzukp4R89pB24ANG6MMTsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+kBTEvsWf3lk0eAoIxHuRBccSmzy+qh16VPYlEPJewBIh/JST
-	gi9Ma7N5mCwup8f4TPgdKSm3tC7UvZY5QbZTL2yodWIOeJCsUc1Ai0jbvWwgUJF6rlplcD+VJbU
-	dqtAASv8lQVqicYZS0VoaG99X1CuHZhTqr/4JSWV89w==
-X-Gm-Gg: ASbGncspWzVLFQ6y3hkjTm9Ic/t7yIiwluGgN8orrKC0R5igYGPA/s5JOafbrU7ZhAf
-	uf1PnxG5RkkJyuM+0qHSp+okVKNG11JyWfSXSfZSIPptnLOi4i/pUJGSZLjxqrxCiwmH3hGd9ss
-	dKzvQjgoqimeR5PzsHGt15Q9NJzN0MtwrPCJjag4lJwKxDjsuxmzH/HOr4GDwtD8Z8+YqL4o/YB
-	/hqMBe6ocQROg4Ck2nt9bsFh/RlOMEYP+8+Qo/2Sv1ywjAmJ43GYGAr5U5+/vnSa6i+yxRr5qhw
-	vqygzJbgZj7xJ5Mq0FKbI3YlEBt1ThCAc2cdsg==
-X-Google-Smtp-Source: AGHT+IFxsGx5ftXqLpFiYlA84nFq8R9lxAW0hXzt0jnPlbVMKUOA3s65BQF+cV2LW4ytM3YBAr0RQpHCOIZdAc+N9t4=
-X-Received: by 2002:a05:6512:ea8:b0:591:c346:1106 with SMTP id
- 2adb3069b0e04-591d84cee43mr889809e87.9.1760685148094; Fri, 17 Oct 2025
- 00:12:28 -0700 (PDT)
+	s=arc-20240116; t=1760685211; c=relaxed/simple;
+	bh=xN4LN3ZOHc6lC4RDOQKMn7iNewkLfY6kTLmXWvcDkCs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EA85j25kVXRHnwW4Yen1CdHVpJLQh2Lr9ZCx+lwG+4CSbG4GUCB2hHy3Ck5HAQTZKuCdNtC7gXY05/l+vnWQMBwUmTLDIEkFfDssHaBsMCaRrBFVXCQwn+jzFoZpGa42vsZZEhBtAC2RelgFIVaOtckoJJM/V55Vm1Dvqp7/8Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com; spf=pass smtp.mailfrom=joelselvaraj.com; dkim=pass (2048-bit key) header.d=joelselvaraj.com header.i=@joelselvaraj.com header.b=mR9mfrq9; arc=none smtp.client-ip=109.224.244.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=joelselvaraj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelselvaraj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=joelselvaraj.com;
+	s=protonmail3; t=1760685199; x=1760944399;
+	bh=XZ0y0x47KXEaW/FqBaoha0+6MvP5HERJCdzBJ7hziJo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=mR9mfrq94vGkrvWy0W0qS7mNkXAcgKzI5fuspU/OBawddPbWmnnUO9EaCPdO3M7lX
+	 pbH04+99ox3kQ376hpnjs/dlghlmu0pK6Wr2+YZ1YbCRdNfnbsizmaCkH9XkT2RCog
+	 apEpkmtspj8lBO1W+zVJrWBKh1+w6b8pyQ87uMgd8m2xAm4oFf51WhEW2C25+iqv9E
+	 FhkpPmay678p9OKWR9S6nParXcTtNTTmId8e63uHAJZ/fCl/9Z3K/m1d4AopVckZ9i
+	 Pk4+BhahsinbY0ujVYJIQrdSl7IEw7CxWNjxayIxL1Nz06nuuhWpRySu6MqJEG4Ixo
+	 OrXiEdzRyH02w==
+Date: Fri, 17 Oct 2025 07:13:15 +0000
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+From: Joel Selvaraj <foss@joelselvaraj.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-shift-axolotl: fix touchscreen properties
+Message-ID: <267eb29d-b506-43df-9380-3d79798c772c@joelselvaraj.com>
+In-Reply-To: <8a5eecdd-d80f-4955-8ab7-cf6fd991a3b7@oss.qualcomm.com>
+References: <20250919-shift-axolotl-fix-touchscreen-dts-v1-1-60e26ad4e038@joelselvaraj.com> <8a5eecdd-d80f-4955-8ab7-cf6fd991a3b7@oss.qualcomm.com>
+Feedback-ID: 113812696:user:proton
+X-Pm-Message-ID: cfc2211d903c068688da7ddae29ce3a7fa9c81b6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
-In-Reply-To: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 17 Oct 2025 09:12:16 +0200
-X-Gm-Features: AS18NWDblNzpuLCnzeXon3yTi_RZXCYBcRhb_slg09UcNYGLrahNCin0h6f8tMA
-Message-ID: <CAMRc=Me=atAoPSGdTOn32rEHh3djTSVveYg0QYxYdb9yivy5YQ@mail.gmail.com>
-Subject: Re: [PATCH 0/9] reset: rework reset-gpios handling
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 6, 2025 at 3:00=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> Machine GPIO lookup is a nice, if a bit clunky, mechanism when we have
-> absolutely no idea what the GPIO provider is or when it will be created.
-> However in the case of reset-gpios, we not only know if the chip is
-> there - we also already hold a reference to its firmware node.
->
-> In this case using fwnode lookup makes more sense. However, since the
-> reset provider is created dynamically, it doesn't have a corresponding
-> firmware node (in this case: an OF-node). That leaves us with software
-> nodes which currently cannot reference other implementations of the
-> fwnode API, only other struct software_node objects. This is a needless
-> limitation as it's imaginable that a dynamic auxiliary device (with a
-> software node attached) would want to reference a real device with an OF
-> node.
->
-> This series does three things: extends the software node implementation,
-> allowing its properties to reference not only static software nodes but
-> also existing firmware nodes, updates the GPIO property interface to use
-> the reworked swnode macros and finally makes the reset-gpio code the
-> first user by converting the GPIO lookup from machine to swnode.
->
-> Another user of the software node changes in the future could become the
-> shared GPIO modules that's in the works in parallel[1].
->
-> Merging strategy: the series is logically split into three parts: driver
-> core, GPIO and reset respectively. However there are build-time
-> dependencies between all three parts so I suggest the reset tree as the
-> right one to take it upstream with an immutable branch provided to
-> driver core and GPIO.
->
-> [1] https://lore.kernel.org/all/20250924-gpio-shared-v1-0-775e7efeb1a3@li=
-naro.org/
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+Hi Konrad Dybcio,
 
-Are there any comments on the software node part before I respin it
-with Philipp's comments addressed?
+On 10/6/25 9:49 AM, Konrad Dybcio wrote:
+> On 9/19/25 11:02 AM, Joel Selvaraj via B4 Relay wrote:
+>> From: Joel Selvaraj <foss@joelselvaraj.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts | 17 ++++++++-------=
+--
+>>   1 file changed, 8 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/ar=
+m64/boot/dts/qcom/sdm845-shift-axolotl.dts
+>> index 89260fce6513937224f76a94e1833a5a8d59faa4..d4062844234e33b0d501bcb7=
+d0b6d5386c822937 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+>> @@ -434,20 +434,19 @@ &i2c5 {
+>>   =09status =3D "okay";
+>>
+>>   =09touchscreen@38 {
+>> -=09=09compatible =3D "focaltech,fts8719";
+>> +=09=09compatible =3D "focaltech,ft5452";
+>>   =09=09reg =3D <0x38>;
+>> -=09=09wakeup-source;
+>=20
+> All the changes look good given your commit message, but you dropped
+> this wakeup-source property without explanation. It's fine to do so
+> if it's intended, but please mention it if so
 
-Bartosz
+In reference to the touchscreen/edt-ft5x06.c driver which is used here,=20
+I am bit confused how wakeup-source works. Does specifying wakeup-source=20
+in dts automatically makes "device_may_wakeup(dev)" return true, even if=20
+device_init_wakeup is NOT configured in the driver? I noticed some=20
+drivers do:
+
+device_init_wakeup(dev,device_property_read_bool(dev, "wakeup-source"));
+
+but the edt-ft5x06 driver doesnt do the init, but directly checks for=20
+may_wakeup in suspend/resume.
+
+Few scenarios based on the driver code and my understanding:
+1. if device_may_wakeup will return true when wakeup-source is=20
+specified, I probably want to just remove it, because irq and regulator=20
+is not disabled during suspend and this will likely cause power drain.
+
+2. The driver has an option to specify wake-gpio. In which case, the=20
+touchscreen is put in some low power hibernate mode with irq and=20
+regulators still enabled. But the touchscreen controller used in this=20
+device doesn't seem to have support for a wake-gpio (atleast based on=20
+downstream code). So that is not an option.
+
+3. if device_may_wakeup will always return false since=20
+device_init_wakeup is not configured and since no wake-gpio is=20
+available, the irq and regulators will be disabled during suspend.=20
+Therefore, the device will not wake up from sleep even if wakeup-source=20
+is specified as the irq is not going to be triggered.
+
+So probably no point in specifying wakeup-source either way I think? But=20
+I am not sure which of these explanation is correct and thus not sure=20
+what to mention in the v2 patch commit message. Also, there is a=20
+possibility I am not understanding something. A little help from someone=20
+will be very nice and sorry if I am obviously missing something.
+
+Thanks,
+Joel Selvaraj
+
+
+>=20
+> Konrad
+>=20
+
+
 
