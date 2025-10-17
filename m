@@ -1,108 +1,144 @@
-Return-Path: <linux-kernel+bounces-858780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFB3BEBD39
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:37:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FAABEBD45
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F3B1AE15D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:38:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B425435739E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD322D46DA;
-	Fri, 17 Oct 2025 21:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BD62D0631;
+	Fri, 17 Oct 2025 21:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FE1dBvUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fzLZ7AIS"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDBB2036E9;
-	Fri, 17 Oct 2025 21:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3B423184A
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760737045; cv=none; b=QBEOw+lxd0phQdSYgpcjwzORj5sVJAnKLSsfC/7pmws2jYUff+l/qhwnux6NCqx828MuZQ/rTeRlbtDMebwv4dV48O2RlQZBzNGm8Z1J2xkbFlDJPzmDaaYNbbbIdmRFwuyuHJqDI0guOMt5524LKvHzZApbuARHSysWWsl9e70=
+	t=1760737224; cv=none; b=hxstxwr7OunIMu9fJqmapqYtml8QD+HiknwXLIO0HtDaCuTD50kvp/E7oK5TRjNrgRKg+CSPdcqqZYNJgqfL4ZYK8JqAFFxY36Ptc/sG5VeUsorWtWgqzj0xOZLSNfuZwJ0mXx0Msd4ZGHuFSTfskNCv28pca2lVYr5Vy5a7bg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760737045; c=relaxed/simple;
-	bh=nYpBafhW7YwCHT2Y3O7Vz/Cfc9k402BvH2+Wh0f/DtA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cd9pi7fG1cFjyUBuUA1T/KvVxayvLCNYinxzZkHNwWjUhC+wEPrsqY5nFy0FPpfaInFwhXASPu6m1jVDCLQTUayfplYuiHjIslNzlecVsYjfQe0r6lmQNS8Cm6yrAvC/W3mk+L54YHlZiMJTWC54Glq3d9zcJJ9Uxn+NWnfLmMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FE1dBvUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7221C4CEE7;
-	Fri, 17 Oct 2025 21:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760737044;
-	bh=nYpBafhW7YwCHT2Y3O7Vz/Cfc9k402BvH2+Wh0f/DtA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FE1dBvUVul1ShFrtQ9a2yuuluVLEiX3PNARQaVwbXQaU+qoOwkoZFLo6b4wiRoAnn
-	 EAWR1VKBFA4zRtgkP4k2hogdZvMF/OsA2XiB7rwYq/IaAOtbxaSzMwRQdJIRLlTGrz
-	 ijhhPTnwyBb6OdZP8xn3qakbxsmeiLKTac97LR64=
-Date: Fri, 17 Oct 2025 14:37:22 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>, Jonathan Corbet
- <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, Guo Ren
- <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- "David S . Miller" <davem@davemloft.net>, Andreas Larsson
- <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He
- <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, Dave Young
- <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, James Morse
- <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov
- <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
- ntfs3@lists.linux.dev, kexec@lists.infradead.org,
- kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>,
- iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon
- <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v4 11/14] mm/hugetlbfs: update hugetlbfs to use
- mmap_prepare
-Message-Id: <20251017143722.d045a2cd9d1839803da3f28a@linux-foundation.org>
-In-Reply-To: <c64e017a-5219-4382-bba9-d24310ad2c21@lucifer.local>
-References: <cover.1758135681.git.lorenzo.stoakes@oracle.com>
-	<e5532a0aff1991a1b5435dcb358b7d35abc80f3b.1758135681.git.lorenzo.stoakes@oracle.com>
-	<aNKJ6b7kmT_u0A4c@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-	<20250923141704.90fba5bdf8c790e0496e6ac1@linux-foundation.org>
-	<aPI2SZ5rFgZVT-I8@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-	<c64e017a-5219-4382-bba9-d24310ad2c21@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760737224; c=relaxed/simple;
+	bh=xec44dz02vCzqSvijFwW8T2pHLkXyzKFGftXYWemhVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rr9OKRsbTfDEcEKlhc8Qm6NheoUkvt1agW86GOgDnlxvKyIboP5EkuzOcHi20AW+OhHDncUGz4VYw6ATdqY/2V2uyFuMILJliP/ZDVhTR7DUCxM0EvbX6cLU6aJL+PMvlKLX425+BFeiPYrAaZxGHjK8OSWTu1bSvrTJ0bSCYME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fzLZ7AIS; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760737209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hqHjkEGF/llF28r0KVHF88JX9zjukAmNil/u6FvmQxs=;
+	b=fzLZ7AISgoCCLOzUnu8Ze+zJBMVwV4g50CzFM0nk2VGdJYWih62y9aeUZInyTEYO+WKK28
+	lgsks1RFgkRvY7BkniSUbQkpo/JwXM/49dNmuJiABrl511+ZL/Pje5qSVYC5motBTNpCAy
+	dbq0I46MOCfHUeGpCj0mNJx/pHGWm5k=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: [PATCH] KVM: TDX: Use struct_size and simplify tdx_get_capabilities
+Date: Fri, 17 Oct 2025 23:39:14 +0200
+Message-ID: <20251017213914.167301-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 17 Oct 2025 13:46:20 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Retrieve the number of user entries with get_user() first and return
+-E2BIG early if 'user_caps' is too small to fit 'caps'.
 
-> > The issue is reproducible again in linux-next with the following commit:
-> > 5fdb155933fa ("mm/hugetlbfs: update hugetlbfs to use mmap_prepare")
-> 
-> Andrew - I see this series in mm-unstable, not sure what it's doing there
-> as I need to rework this (when I get a chance, back from a 2 week vacation
-> and this week has been - difficult :)
-> 
-> Can we please drop this until I have a chance to respin?
+Allocate memory for 'caps' only after checking the user buffer's number
+of entries, thus removing two gotos and the need for premature freeing.
 
-No probs, gone.
+Use struct_size() instead of manually calculating the number of bytes to
+allocate for 'caps', including the nested flexible array.
+
+Finally, copy 'caps' to user space with a single copy_to_user() call.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Compile-tested only.
+---
+ arch/x86/kvm/vmx/tdx.c | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 0a49c863c811..23d638b4a003 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -2282,37 +2282,29 @@ static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+ 	if (cmd->flags)
+ 		return -EINVAL;
+ 
+-	caps = kzalloc(sizeof(*caps) +
+-		       sizeof(struct kvm_cpuid_entry2) * td_conf->num_cpuid_config,
+-		       GFP_KERNEL);
+-	if (!caps)
+-		return -ENOMEM;
+-
+ 	user_caps = u64_to_user_ptr(cmd->data);
+-	if (get_user(nr_user_entries, &user_caps->cpuid.nent)) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
++	ret = get_user(nr_user_entries, &user_caps->cpuid.nent);
++	if (ret)
++		return ret;
+ 
+-	if (nr_user_entries < td_conf->num_cpuid_config) {
+-		ret = -E2BIG;
+-		goto out;
+-	}
++	if (nr_user_entries < td_conf->num_cpuid_config)
++		return -E2BIG;
++
++	caps = kzalloc(struct_size(caps, cpuid.entries,
++				   td_conf->num_cpuid_config), GFP_KERNEL);
++	if (!caps)
++		return -ENOMEM;
+ 
+ 	ret = init_kvm_tdx_caps(td_conf, caps);
+ 	if (ret)
+ 		goto out;
+ 
+-	if (copy_to_user(user_caps, caps, sizeof(*caps))) {
++	if (copy_to_user(user_caps, caps, struct_size(caps, cpuid.entries,
++						      caps->cpuid.nent))) {
+ 		ret = -EFAULT;
+ 		goto out;
+ 	}
+ 
+-	if (copy_to_user(user_caps->cpuid.entries, caps->cpuid.entries,
+-			 caps->cpuid.nent *
+-			 sizeof(caps->cpuid.entries[0])))
+-		ret = -EFAULT;
+-
+ out:
+ 	/* kfree() accepts NULL. */
+ 	kfree(caps);
+-- 
+2.51.0
+
 
