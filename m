@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-858071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28933BE8C80
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:17:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F65BE8C98
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD88D1895011
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:18:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4722F4E6178
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E9A34F479;
-	Fri, 17 Oct 2025 13:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD47534DCFF;
+	Fri, 17 Oct 2025 13:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jlLyrrzw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NRGgT9Rd"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4983B34DCF2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7DF32ABFF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760707064; cv=none; b=jd8VlmUMxrGCE49UQYeTCSNqJlHgMdrSS7SsLhGjak5Vq9Q1TlngmL09yivM0yeEuqUw3BOohM+egEVhtp2ogCWyytMExp0byIorpPL936SfklfK+zLrcjnx7LAoCO5q9J7EBjLBylYQDvxSCwDVjBRaONWcbUvwfSW1waCW3lA=
+	t=1760707170; cv=none; b=Sufv4PE2bZkTg7rAEt7f2pb+Ek1ZXHpAVwbCdXqPmFbK2jR5t1KjuaH+4yMm0S48GUS7GjAhDB4ZrEfiN06PLZvyUYbmtMadfguD+lvcjl0h1zavf1Kx6wOo+JrMoeDsiU9Ft4TLqe0pWPRVCgKxmR35KdHgeUZYZ0yxsZAGfV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760707064; c=relaxed/simple;
-	bh=bBet7OKcIFo8/SortnaFr6ndbpW4yi8PlghaYES4Z50=;
+	s=arc-20240116; t=1760707170; c=relaxed/simple;
+	bh=P+H5RElLDJEkmrUIc1XvLeO5VEpS1h+eN9vO4n+EAko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjDBuOJ3/QEUFXO14lNovHQoyTvfvTIMDUYqkBCImxTOujs8gSTDxBiYDv7AUjgC85/A3fVNHlyqmmnQNjBsNNq3vK1aMvu2QPudl+6Wu+1tmxSppDSbn2r1LHmPupjlAX/kT7KGfv8Yv+i+XcTWWxLx1Tv1oEjd1KEfMF/dZa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jlLyrrzw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H7psjj017062
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:17:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=3LILjlfqEYOLQkEETs/dYDTn
-	PSt3uyaP94CFMKgd6Sk=; b=jlLyrrzwtrCiJc+Phc1WGAhn3uCYpQEpV6fp4kmQ
-	IgSDmMmz4nwq/hXvFoNCiLhVJQQ2/gHO/M2xmyip868BiXM7Wa5rhetqO2bY2Vkj
-	dX77ZmUZpKQ41bKC4YLYVbfYTpsaXiScROwBzLmsR/6VsfoME4Vi4ksSJXoKXxJy
-	ywT4AnumPn12zPcWe3TOUBv52zWiNFm1wU2Ir9VyuRG0DN4JPfrX8IckxmsAO/sz
-	B5HSU7OvjAiz5JQhl6hIC6B8GYIX2rE6c/o3l4xzvXioX04K4TKxKvn+lfjvxhV6
-	VZp5BuiJ3Etwr0MwahRyuBBRJTQVie5h7esPIr9IaejlIQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfm5vf6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:17:42 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-88f7eff9d5fso716397085a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:17:42 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChLE+sCp1A1174+/UNCWhWsPVwn+ryp5Sjl/WsVhqSKbhTyFIudswv5xzrFo72XLSE6Jcff7OF+2hLXmKiEcYlSp1DOegFMgz8Kd1k8OOnK6rubvGQkJD2U7lr5kknwLr6UpwaeNGgixpV/olmu23Z/OgYm9AdKtUHM/C+aVJ3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=NRGgT9Rd; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63c45c11be7so191428a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:19:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1760707167; x=1761311967; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CjGy9FZ+rKEjrnntHU4EtXwsShUyCILycOc13M5bggE=;
+        b=NRGgT9RdxxQS0BVaapjgvs2/fmVGW7oaYIhAmo+otxlUI2SkFIk7xkz+ZmVfbaC73W
+         gthH1/WpfggAXZvXm4Z1fo5h3OJOXt4EhTXRSxAq5du3Tx6/eUn9RdHBVihu7qpcMdtC
+         rzkBW2H1SDPdmeCjcRS76UtYEFa/3vSPm8cW8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760707061; x=1761311861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3LILjlfqEYOLQkEETs/dYDTnPSt3uyaP94CFMKgd6Sk=;
-        b=qt0Wv4Sc/5yHbe1DdLegtTSwoXnFQawop+kWUPT70G1pJY5Y7dMMQDG6BQ3rIq0UHz
-         PUUuxCxhs56kJDI+IxWuw9ThuPrjaVADXYu2RXMCj2x+8V1COy9EgPlIGnqwr6+dMLSb
-         XkPoyco5EdFc8jZ0vy+kSS3pov44qQ52dlMEJOTpxI6zpztG57LzwGZofBPg+KhbfVpB
-         RUje7FNL5nHt5ep1lhX/FoaN4D/2fnP3spozqTu4VgiQ3FDEnB5ZpccwIEzP0TwMpOJ7
-         O2KM845XsZsr9lpKV1X0CNM1qWgtASFpfk0iTdqhMgyh1tN7htG0wnK576XCuTs8iZob
-         wZ/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVc75BDhTJMdnrl1kwX5JrXFxvfSNuiPZuYQ4CqosBUpC65yTasuvcwPxI262mZuW1ypAO5jByBU7V9IhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhIHRQbY9sFSPHqNho+s4WM6BLDCaxq6z0PTwyQbFxDgGuiahl
-	9D457KRiPGBQ1NKJo2RjdGFFXo6JhS+4B69xyv8BdIVR20X6zDsGzEO5JQkcYqGEgZ6jHMc3SVL
-	hZjdxPDVjh3ewg9Udr1wESRsoSNTBBePWP/eKYub3Tdbrs+B1NQaqz/WkGeucEuZmt9Xhz+8VRU
-	M=
-X-Gm-Gg: ASbGncvHbhOwwJXSzzOCdn+IiNHUT2NGktm2GzYVWU+GrY4uoB7in9WYm27EEsYeEhI
-	oHNFGwyBwOh9FVjT/yp0sQfYAvgpcPGm7Wwy6ioQ4ac/nc/3rbsqw1RvoWltZ3VM3AYwvvlg+l6
-	WrMp0zYL0IMtCkC6g4gXdCvQgssyrm5SufgJu6o0C5J6EZgwyMzK04SUkF823T3xYnTW8u02dIh
-	PVH0tyE7VNQJtVj7ljRNZKEtAiQqQRyK4e2ixLvSW+RXHxXJQlU7FOvPI4pJAjbw0EdJxF18Ynt
-	4KMrM93WytRZ1v+O3mQMkGbmUkTwBJl8sEmiCxz4fuu5SyxnvekDl2hu8YyKlz1fuIOjsSa7VpZ
-	UcTsQ0J/7nZJwYNgMOTexcGPgCS0LYKkekNKxeZvnqNDH/e3AbORvfkFBHmKA74KksOvGN6NlAX
-	aLFWoGUXbL5kE=
-X-Received: by 2002:a05:622a:1482:b0:4e6:ebcc:23fb with SMTP id d75a77b69052e-4e89d2b9904mr60570481cf.36.1760707060800;
-        Fri, 17 Oct 2025 06:17:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7v+jw5TyUGE2GPu1mMtX3P0F0LCVH2wPKYMO3Oz7sZ6e30VO+kzOqFROiuxwu8cIa+k2C/g==
-X-Received: by 2002:a05:622a:1482:b0:4e6:ebcc:23fb with SMTP id d75a77b69052e-4e89d2b9904mr60569691cf.36.1760707060268;
-        Fri, 17 Oct 2025 06:17:40 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea3ee2asm60957181fa.50.2025.10.17.06.17.39
+        d=1e100.net; s=20230601; t=1760707167; x=1761311967;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CjGy9FZ+rKEjrnntHU4EtXwsShUyCILycOc13M5bggE=;
+        b=fQyJHkHgxj2Zvs8VD1LWshIyd9obqbkMnPPUyBboNiu/nQ7KiXlHWwwWD3PZUKp+Dq
+         mrNfy59W2Ma5JEiT/uzsVfKRoB7k5kc4sWHpOhxzArIn1Y46tkQLTumFFO2wof6wa7rY
+         89j+KUY+9UY00Kkw5m+sycwZL+HKigllctwzpBJEdhqJQ77vGCd265UcURybl4fMnX3z
+         Z0/IkS3LzrZAimgj4sAkny6FrGtPjJHoqo4bnW7YjHqWrKlUxV/WuVOU1PKn8ZrNmxR6
+         WocW8XH+B3yVBgIt1pKChWmApd4HKe1jFn50JPefId5NqIwabj7hKz3NGKoOrglvgbgx
+         8xHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGIepwL8GIbAWtrA8BsDFhtbpj+pLiWF61jeUH02xjRUCTm1mI0hpM8URRIv1L5+i9IZZmijv8NxOXCuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEg+wJZRtpVttnkoJ+wfsYCstal3v3ZJHV1SIk4ORrL9OhUPrg
+	86iIOqGvQrJ6GDjrjYyR6zpOXjL9/YQBF+6XmQKcjxqZSqya2y3/Ky/obUbFSQ2ZyuE=
+X-Gm-Gg: ASbGncvAE271/9xaVqSt5sibXkaSK4WlLDNWg0Hn9YtpeHgrjvgwvCEnNo3WRCEpqp2
+	osuIeScakCmYq0+vkzshifchx1+88hDLzPxWhVlXO1WPvW+vGpmsVbJ7cmE557jEoFWwHxkssGR
+	IB3aE63iU62h1tq0/ag8C/f/d3GFgs1ZLLdNjVLz1WUqKFLV/XnvJQpylHxq5y+OK+dida/0ATn
+	coVqzIgQU1iT1KCPKwP/Qtc7AQNhdeno93PXuDQ6mOWSOpLLF2F49WKiD5SsH8/4Y5aIkOS5p0R
+	egm+5OjeztDnDPL8rdTZdM88E+hFMSzEsS4Wd8oc3/nrNU8vF3hsLAyEdPC8osg+932HMhE6h4I
+	WfBMOymLhMh6x+PXxa7XqCJG5OcLcYE4EzW0uXFFV+iDOAZuYoqv8clt4rk7GA3pR/26U9vbAIA
+	/59NnLPJE8gidu/eNzET7EUw==
+X-Google-Smtp-Source: AGHT+IF7xNCCKtq8yrDup53uFHw15lFv/JcHO9zr7mifpvlVmxJCIL5ZwW7/XX61lvzCkalWE2LFdg==
+X-Received: by 2002:a17:907:74e:b0:b04:67f3:890f with SMTP id a640c23a62f3a-b6475e09c31mr453693466b.33.1760707166624;
+        Fri, 17 Oct 2025 06:19:26 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cb9e7a23dsm818970666b.23.2025.10.17.06.19.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 06:17:39 -0700 (PDT)
-Date: Fri, 17 Oct 2025 16:17:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: prasad.kumpatla@oss.qualcomm.com, Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rao Mandadapu <quic_srivasam@quicinc.com>, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Subject: Re: [PATCH v3 5/5] ASoC: dt-bindings: qcom: Add Kaanapali LPASS
- macro codecs
-Message-ID: <nvomxjtxisrwb6gnqf2xvzo2sxgwsoquvvdiujrbhvjm7atwgw@g2jpwjusfcz4>
-References: <20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com>
- <20251015-knp-audio-v2-v3-5-e0e3e4167d87@oss.qualcomm.com>
- <6nyqz5fsqyqgtsqk6xxm4iorzoelhkgnghm5xczh6iamvmdfpa@2vff2lk6sq7e>
- <3d96ff4a-1d3d-4089-b571-b4d28062566a@kernel.org>
+        Fri, 17 Oct 2025 06:19:25 -0700 (PDT)
+Date: Fri, 17 Oct 2025 15:19:23 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 16/29] drm/encoder: Create get_current_crtc hook
+Message-ID: <aPJCW7MfmuxwkL59@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-16-14ad5315da3f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,50 +112,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3d96ff4a-1d3d-4089-b571-b4d28062566a@kernel.org>
-X-Proofpoint-GUID: 02z1kF_7B_xFs72_qKRi4WfRkB-JNDQY
-X-Proofpoint-ORIG-GUID: 02z1kF_7B_xFs72_qKRi4WfRkB-JNDQY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMCBTYWx0ZWRfX3/kTa0U08Yzv
- ++XsuKM33qB3RJkeUytNhJqjp0h8hVmiZIG+ryaXipqrKm9ebGLnlzjF7Yypre0xUNOVxMw2pwt
- 3k0Ct6vmEyPUcgzXmBJrzh4SX4TF+zBynmI8xA2OTeH87prn5xDenkqAYGgjtXKw9ZVRAYMSsdG
- lR1pyMlShpTztizS6mTJBc4alQ8KVHdWn62BeEXdU5WIGxN+Yj97J4VnLoKcEOONeVNtZ5Mr17t
- veqaVLsByo9foKxSB57a6aFoVBmS97cjdBZCL7jbKNU7VV+1ds+7hdgrrZzvPZlwrIcFxZvqO0N
- ih3+Oi3HV6O8d+aSlM+nkupq8vNhNu0wylFVSBnj2hbPaztstxun7n82n83kZpYumIbZF1pvShh
- hMNqhZ/CkJ/l41MJpd/dFRG9iMlHcA==
-X-Authority-Analysis: v=2.4 cv=V71wEOni c=1 sm=1 tr=0 ts=68f241f6 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=ugvR7wMMjgv2hvCkpHgA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 spamscore=0 adultscore=0 suspectscore=0
- impostorscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110020
+In-Reply-To: <20250902-drm-state-readout-v1-16-14ad5315da3f@kernel.org>
+X-Operating-System: Linux phenom 6.12.38+deb13-amd64 
 
-On Thu, Oct 16, 2025 at 08:59:29AM +0200, Krzysztof Kozlowski wrote:
-> On 16/10/2025 02:54, Dmitry Baryshkov wrote:
-> > On Wed, Oct 15, 2025 at 01:27:19PM +0530, Prasad Kumpatla via B4 Relay wrote:
-> >> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> >>
-> >> Add bindings for Qualcomm Kaanapali (LPASS) RX, TX, VA and WSA
-> >> macro codecs, which is likely compatible with earlier SM8550.
-> >>
-> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> > 
-> > What does this serie of SoBs mean?
+On Tue, Sep 02, 2025 at 10:32:44AM +0200, Maxime Ripard wrote:
+> In order for drivers to implement drm_connectors atomic_state_readout
+> hooks, they need to query the hardware and lookup the CRTC to set
+> drm_connector_state.crtc.
 > 
-> To me looks fine (see v1 and v2). Prasad wrote the patch, Jingyi changed
-> it and sent. Then Prasad took that changed patch and changed more.
-> Perfectly fine.
+> It should be easy enough for drivers that are tightly integrated from
+> the CRTC to the connectors, but if the driver uses bridges, there's no
+> coupling between the CRTC and encoder, and the bridge driver.
+> 
+> The only thing the bridge has access to is the encoder, but the
+> relationship between a CRTC and an encoder isn't a fixed mapping at the
+> framework level, and thus the bridge can't deduce which CRTC is feeding
+> its encoder.
+> 
+> Thus, let's create a new hook for encoders to implement to return the
+> CRTC they are currently connected to.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  include/drm/drm_encoder.h | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
+> index 977a9381c8ba943b4d3e021635ea14856df8a17d..7abb5e35ac950c941b56fc311a52789bbc427df6 100644
+> --- a/include/drm/drm_encoder.h
+> +++ b/include/drm/drm_encoder.h
+> @@ -86,10 +86,23 @@ struct drm_encoder_funcs {
+>  	 * @debugfs_init:
+>  	 *
+>  	 * Allows encoders to create encoder-specific debugfs files.
+>  	 */
+>  	void (*debugfs_init)(struct drm_encoder *encoder, struct dentry *root);
+> +
+> +	/**
+> +	 * @get_current_crtc:
 
-ok
+Bit a bikeshed, but crossed my mind reading this: I think some kind of
+prefix for all the state-readout/comparison related stuff and maybe even
+putting all the new helpers into a new c/h files would be good. That way
+we have a nice place for a DOC: section and people have a better chance of
+understanding what they can ignore. Might still be good to put a standard
+one-sentence explainer here that this is part of the state
+readout/fastboot support and maybe link to the main helper function for
+that.
+
+For the prefix I'm lacking good ideas, but maybe asro for atomic state
+readout? It's at least unique (to my knowledge), unlike all the other
+shorthands I could come up with (like atomic fast boot and afb). Spelling
+it out is way too long unfortunately.
+
+Oh also, since this is part of the optional helpers it should be in
+drm_encoder_helper_funcs, only uabi interfaces should be put into these
+here. This also applies to all the other hooks.
+-Sima
+
+
+> +	 *
+> +	 * This optional hook is used during initialization to read out
+> +	 * the initial state by connectors that support atomic state
+> +	 * hardware readout.
+> +	 *
+> +	 * Returns:
+> +	 *
+> +	 * The CRTC currently associated with the encoder if enabled, NULL otherwise.
+> +	 */
+> +	struct drm_crtc *(*get_current_crtc)(struct drm_encoder *encoder);
+>  };
+>  
+>  /**
+>   * struct drm_encoder - central DRM encoder structure
+>   * @dev: parent DRM device
+> 
+> -- 
+> 2.50.1
+> 
 
 -- 
-With best wishes
-Dmitry
+Simona Vetter
+Software Engineer
+http://blog.ffwll.ch
 
