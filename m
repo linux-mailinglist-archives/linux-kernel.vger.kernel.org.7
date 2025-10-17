@@ -1,87 +1,145 @@
-Return-Path: <linux-kernel+bounces-858502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB140BEAFAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6404BEB039
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5B8F335F7EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC725879D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DA12FD1A8;
-	Fri, 17 Oct 2025 17:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1982DC32C;
+	Fri, 17 Oct 2025 17:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFsttR0j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyMB2QFh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA3A2FC863;
-	Fri, 17 Oct 2025 17:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1BE2FB974;
+	Fri, 17 Oct 2025 17:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760720789; cv=none; b=iFSCWm/qUUSstTmfHC+8aDms23qgVqpaDBwVfUrdU0/6ihPAFSTzWOMtHRbF+3VzWUgpHv1p/ROGQf7QDNqnIARNllY8voqNWpy9CIiSv5zcgylJkjvQRY32dAZ/cspYcTWHORfCrTq5C3oX5bo/NKcWp5ACv7ymswebfPpF8QA=
+	t=1760720717; cv=none; b=G8h/xr5I3QVBq2ubegOiOHUV0qj/jQZ2jSJsvze8o0DIOvd6CumUWX9+tuQDwXR1kaSiOZsjSiwUrIVWYydloYcVQjCXi3UDNLC5UXG2Usthg8fQLYshaapynfqy2np1I8jWd69CisHOBJUPK2rbnl0dTIeOa+tWxVO1UXURPnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760720789; c=relaxed/simple;
-	bh=IxOsuJ9eV4kD5BLNCDQgKv6gJY2/5S9nBRSu63LVZec=;
+	s=arc-20240116; t=1760720717; c=relaxed/simple;
+	bh=QB0Gc9ncYgSpVBw7Sv+xdUvjxJSRAnUxhhUy/5mCqRc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JL/jQCMYPqx8gpDImDXMSLOx6nWI3e19PhlRfKPAuvJCoa6IvrOyNmTylYvSr1Lm8uRr0dKzl6Bg47oiIGhkzw3F2uzjx2sQST186ee6pwg6kcMB6L8bur2PW4pjBqtX/fgypzAscjA1btqk5ckKnKufANs/pufhYlQoYLGo1Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFsttR0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A065AC113D0;
-	Fri, 17 Oct 2025 17:06:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GeDIs4wU6JUSpUab6FFUistCBTN+FmPIPftNy6a1qZAPb8SzbtlABlzFtvDMJY2nG7mSKOvShwuwV0KgdTHo1m9rpy61zKGNIPrcofuEz/+LpODh33TwBXg7XGA1Oon/7sDh/UR4qF01YkMxUV+/ZVaVU91IOC1Xhk/O/N16hPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IyMB2QFh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73862C4CEE7;
+	Fri, 17 Oct 2025 17:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760720788;
-	bh=IxOsuJ9eV4kD5BLNCDQgKv6gJY2/5S9nBRSu63LVZec=;
+	s=k20201202; t=1760720716;
+	bh=QB0Gc9ncYgSpVBw7Sv+xdUvjxJSRAnUxhhUy/5mCqRc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QFsttR0jKWDN5HM8+UFu04Ft7wUGOnEPfMuLI7PgPya5yajETIqZ69yBUfZ07PPc7
-	 Rpr07abkBlET43gaZWkGMQmgdAqVrW1gmXJ6vIo8BVLhuTqYMHK/UqLFo3UW6jt9CM
-	 FtTxjyKPHyms30CfyBGxpQzgefBAtNITTRtxyycfmS+qzLj5Vqu04/ac8q85dbvhmF
-	 UoE2H3FEfj4o9Gt6QX4CILfR6RuWFKtrrdUajj+k0MPrUsMv+nUQM+m4Jwx3Ahe/CD
-	 E6Vj+mQsT8Q2vnJ1PzN69CUeyEKsZqjE89vbSg2BOgx3fiHEw717+woJXokI+b5EW5
-	 H4l4q41O2cX+w==
-Date: Fri, 17 Oct 2025 10:04:56 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 03/21] crypto/arm64: sm4-ce-gcm - Avoid pointless
- yield of the NEON unit
-Message-ID: <20251017170456.GD1566@sol>
-References: <20251008154533.3089255-23-ardb+git@google.com>
- <20251008154533.3089255-26-ardb+git@google.com>
+	b=IyMB2QFhdPvWwqmedF1cUtHx/GMJGwYeTjLQ9zGpgPpBZYqkdHWu3wPNj8c1hBdHB
+	 WQ48f/D5edLCK38H4+LbFg4btdTgcmUIm4/yYIKsOx8X1V0/ks5mfKfqXLc6DYntOp
+	 fi03qQ2pfmq3kW6OEWDnRsypKH6R/KCaVg4vjO71XVJtMNFstSQ7cOfj3om9m2DnUk
+	 cz+nM0NDNlTZNl5gyuCgzvLXNsB8pGZ30qhYeVWGm9EF3yUF9FMeGOQcp5ZdmLADAY
+	 E5u2UaJwn6iktWGlFMLvRxa4kF+rXf9pu7Uo6m4fI6bC/vubJuHCmUHspN+KvMcjwR
+	 llQ+KB3I7rfkw==
+Date: Fri, 17 Oct 2025 10:05:13 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+Message-ID: <jxfb5a2c2qber623l2gwewirwod54bbgfnvt7t7f3jah2ea33g@2uyhy3auzmpx>
+References: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
+ <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
+ <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
+ <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
+ <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
+ <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com>
+ <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
+ <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
+ <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
+ <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251008154533.3089255-26-ardb+git@google.com>
+In-Reply-To: <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
 
-On Wed, Oct 08, 2025 at 05:45:37PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
+On Fri, Oct 17, 2025 at 06:26:47PM +0200, Ard Biesheuvel wrote:
+> On Fri, 17 Oct 2025 at 18:22, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > On Fri, Oct 17, 2025 at 01:00:17PM +0200, Ard Biesheuvel wrote:
+> > > On Thu, 16 Oct 2025 at 17:49, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > > >
+> > > > On Thu, Oct 16, 2025 at 04:52:20PM +0200, Ard Biesheuvel wrote:
+> > > > > On Tue, 14 Oct 2025 at 18:47, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > > > > > The idea is that libstub code doesn't belong in vmlinux.o because it's
+> > > > > > not a part of the kernel proper, and doesn't need to be validated or
+> > > > > > modified by objtool for any reason.
+> > > > > >
+> > > > >
+> > > > > I don't see a reason to change this on architectures that a) do not
+> > > > > use objtool and b) link the EFI stub into vmlinux. If LoongArch wants
+> > > > > to change this, that is fine, but that still does not mean it needs to
+> > > > > change on other architectures too.
+> > > > >
+> > > > > EFI related boot errors are a nightmare to debug, and I will be the
+> > > > > one getting the reports when this regresses arm64 on hardware that 2
+> > > > > people on the planet have access to.
+> > > >
+> > > > The idea was to have more consistency, so vmlinux.o never has libstub,
+> > > > regardless of arch, but that's your call.
+> > > >
+> > >
+> > > The code in libstub ends up in .init.text, which will be mapped
+> > > executable during boot on architectures that incorporate it into
+> > > vmlinux.
+> > >
+> > > If objtool validation is never needed for such code, on the basis that
+> > > it is not actually called even though it is present, then I think that
+> > > is fine.
+> > >
+> > > For the other architectures, I don't have any objections in principle,
+> > > I'm just being cautious due to the regression risk.
+> > >
+> > > > I'd still propose we keep the KBUILD_VMLINUX_LIBS_PRELINK mechanism to
+> > > > allow other arches to opt in as needed.
+> > > >
+> > >
+> > > Again, no objection in principle. To me, it just seems a lot of churn
+> > > just to avoid having to teach objtool about indirect calls to noreturn
+> > > functions.
+> >
+> > Well, one of these days we will need to do that with some kind of
+> > compiler -fannotate-noreturn feature or plugin or whatever, but this was
+> > more about "why are we validating libstub code anyway, it doesn't seem
+> > necessary and x86 doesn't do it, so lets make them consistent".
+> >
 > 
-> Kernel mode NEON sections are now preemptible on arm64, and so there is
-> no need to yield it when calling APIs that may sleep.
-> 
-> Also, move the calls to kernel_neon_end() to the same scope as
-> kernel_neon_begin(). This is needed for a subsequent change where a
-> stack buffer is allocated transparently and passed to
-> kernel_neon_begin().
-> 
-> While at it, simplify the logic.
-> 
-> Acked-by: Eric Biggers <ebiggers@kernel.org>
-> [ardb: Simplify convoluted logic]
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  arch/arm64/crypto/sm4-ce-gcm-glue.c | 25 +++++---------------
->  1 file changed, 6 insertions(+), 19 deletions(-)
+> Sure. So objtool validation is not needed even if the code is
+> incorporated into vmlinux, and therefore mapped executable at boot?
+> I.e., objtool does not check for gadgets or other things that may be
+> problematic even if they are never called directly from reachable
+> code?
 
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Well, boot-time gadgets aren't really a thing.  And, as you said,
+libstub is in .init.text, so it gets freed (and presumably mapped
+non-executable) during boot, so we don't have to worry about any gadgets
+hanging around in memory after the fact.
 
-- Eric
+That said, objtool also generates ORC metadata, so in addition to
+security-type things, it also cares about any code that might show up on
+a stack trace during a boot-time warning/oops.  So it *does* care about
+.init.text code in that sense.
+
+But IIUC, the libstub code runs *very* early, and wouldn't show up in a
+stack trace anyway, because there are no traces of it on the stack once
+it branches to head.S code (which doesn't save the link register).
+
+-- 
+Josh
 
