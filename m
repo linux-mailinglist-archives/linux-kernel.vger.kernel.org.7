@@ -1,240 +1,214 @@
-Return-Path: <linux-kernel+bounces-858942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51F6BEC4D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:05:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08CF7BEC5E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 902E63551C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:05:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA9464E4473
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD4724DCE9;
-	Sat, 18 Oct 2025 02:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFC026F296;
+	Sat, 18 Oct 2025 02:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e3/+m6pa"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARMU9uNV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6902512C8
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE991F3B9E
+	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760752955; cv=none; b=MsLr+ygHRnRD0aSplCIcEA+fMxZE5hOGUPhB3pRV28ijLjWaivAy9USrWa3WomcyA4WpHIUipGZL1HvwOn714WlM10sqCQv7SbfEAeM8J84Dzi0BANZmFbnz3ptTSVyFvOxVNu7ydIx5Bh+bsfuLDv3DfTpwt2+0fesRG6Ihz0o=
+	t=1760755707; cv=none; b=iitH15M1sSMX2E8mBoYE+1CgSW3avXbaRiMOAv4cjmOU1EqxP5TwyyIVKCPe+tfftjw1hdwz3tKm3NWkTP6NkFyRIbFtg0t1zryKF9jb2+e++d0G0lUTYESIcIyKjcM7ewpwLnwrXoMaVsRlBBhWcTEkwOUS60RIZUO/kVtv13k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760752955; c=relaxed/simple;
-	bh=29+P4pWa8FWUP1XwE/tCMa4X1wBauIadGEuAgBL8wcs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uTy3Gde7F5eq2cGZ/+wuImzm03P6YMmZzJvTxUYWJJ23H48MuXlT6HC8F7baaRCBCWNrcO5UOR8gpg2Hnc0Wyvf3eLX4TlZM1tvE7h5kDudw6ES+zTfWz5pdyJzw3RkWCEIfPUtyG9ZUIvbP4WM/rZH05uWobWfappt8GN1tAcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e3/+m6pa; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 5269EC041FD;
-	Sat, 18 Oct 2025 02:02:11 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A72FE60701;
-	Sat, 18 Oct 2025 02:02:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 45F7E102F236C;
-	Sat, 18 Oct 2025 04:02:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760752949; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=3WsXha5E73t8H3r1jXZgYyBkA1sGJtDmBUPYHsAPgho=;
-	b=e3/+m6paQCIv/rZUbfcao0pEFooQwtorz9C3j91XWW0gJAu5PLHhN4mcXXjugPumMAsdQJ
-	ZPduGQF6mPCIJDxpSF58lpxXtZ7SkdOPu3NBHaajGbYAOl/RiO6owRyGoR4E2b3oNlVrpS
-	3hKrRsewvxLRMoZ2J+cwG5LWmCTwNjE68eY9I9uUOT2TmvmU+W8VkItnzqNY33KRarHsGY
-	Pa/3tLgizGCWUaRDZhjTQtGfYoOkQk6vTZq0flVggUtZ8n2iehePL/G8paGMYYckmToNrh
-	9WgTPJ0JzppGhUw74p8/EIY5mZYaHZvX+JAME/qG4Q9+Zt+WuneCIvI0ttt0bQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Sat, 18 Oct 2025 04:01:19 +0200
-Subject: [PATCH 19/22] drm/vkms: Introduce configfs for connector EDID
+	s=arc-20240116; t=1760755707; c=relaxed/simple;
+	bh=tEp8HH2rBzZ9bHQxIDQ0t/JriZ4BYmHaJTITiE1LyPQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z7+gRNFuuvkVX+YsufuJN32oe3yQwOvpDjI4Z3U87L2J16oOoefSRz7JLOLMwiBcgrgWta66pU4eudEZzFww9dI5KcNktPEtHrunsOKxIVh1lOvz82/adteCjhVXwjZopj8EVPWx+myZUcs+7iaHPX+QcDrJUN2LbYrvjfMWgmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARMU9uNV; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760755705; x=1792291705;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=tEp8HH2rBzZ9bHQxIDQ0t/JriZ4BYmHaJTITiE1LyPQ=;
+  b=ARMU9uNVcNGolsG5o0k/qcBXMFdQQzpo6cQnCZqz2hVM6wNSsNpjspv6
+   YP1LpD0hzYbCPaKSaNTkZ9i3lXVJLRfhhId859chPuHdC6rT5g+bcOgy4
+   qz8CYYrbBS453eebYQ2DjZ6WM0mDmVLz4nz+vo+RcqaEnuF+LvbRUL2jx
+   Cy1nWvKkSeiFL04Lx0xMI/Ss66fMGHwV6TG+vo4GeeAZZxW6ZSVALgaTg
+   LWoVwkKwaMJIO9tpncwD7K9FubqPRQ5WkL1c7UwqMxUolIyhN8yKKJw5r
+   HmtQuDGa6z1tK8suAxo6A/P7YMDkc3dvv7cOu9fRucrxU3+R1ddYhy5x+
+   Q==;
+X-CSE-ConnectionGUID: Ciaih6B8SR6fjJnZpbtjbQ==
+X-CSE-MsgGUID: HrnbavuoSZOMC0vY9Nf6lA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62876617"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62876617"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 19:48:25 -0700
+X-CSE-ConnectionGUID: NoGyMQ7ZTdSUCMLtUYDo0g==
+X-CSE-MsgGUID: DQPBNYLuTRa+xl2lmWU85A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,237,1754982000"; 
+   d="scan'208";a="182495563"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.125.108.63])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 11:26:03 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Joerg Roedel
+ <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+ <robin.murphy@arm.com>, Kevin
+ Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>, Vasant Hegde
+ <vasant.hegde@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Alistair Popple
+ <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, Uladzislau
+ Rezki <urezki@gmail.com>, Jean-Philippe Brucker
+ <jean-philippe@linaro.org>, Andy
+ Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>, David Hildenbrand
+ <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R
+ .
+ Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike
+ Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>, Matthew
+ Wilcox <willy@infradead.org>, iommu@lists.linux.dev, security@kernel.org,
+ x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, "Jiang,
+ Dave" <dave.jiang@intel.com>
+Subject: Re: [PATCH v6 0/7] Fix stale IOTLB entries for kernel address space
+In-Reply-To: <c3eee56a-7fe3-454c-878f-cff37467fb7e@intel.com>
+References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
+ <20251014174339.c7b7d2cfb9f60d225e4fe5ec@linux-foundation.org>
+ <6b187b20-6017-4f85-93ac-529d5df33aa2@linux.intel.com>
+ <ecee3200-c8e2-47ec-a219-c88e8e905b32@intel.com>
+ <11cad2be-9402-4d45-8d2b-c92d8962edfc@linux.intel.com>
+ <20251017140101.GM3901471@nvidia.com>
+ <c3eee56a-7fe3-454c-878f-cff37467fb7e@intel.com>
+Date: Fri, 17 Oct 2025 11:26:02 -0700
+Message-ID: <87zf9pjsg5.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251018-vkms-all-config-v1-19-a7760755d92d@bootlin.com>
-References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
-In-Reply-To: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
-To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, jose.exposito89@gmail.com, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com, 
- airlied@gmail.com, thomas.petazzoni@bootlin.com, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4873;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=29+P4pWa8FWUP1XwE/tCMa4X1wBauIadGEuAgBL8wcs=;
- b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBo8vT/s/CkQqnu5wUsyu7DMmkVLS/BHAGpY03MX
- eDbMs4G4RyJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaPL0/wAKCRAgrS7GWxAs
- 4gdsEACi8ysFOTzAs6OWBQ0nBsvZF0gjkHu9dgzrC+VUepM8QCoRO1Lp8Yd4UukCcZVnmqEqY52
- nMMdJFWNT2wBTduT0zIk40lLwPUMnh5gtTKcerulGPg1r1N2AXJZ1XOhZZcsX4ec3tHB6gInJ9l
- Ql68HZsMbY7U+/Kcx3Q6Ca5+3Y+be98fk6orfSv3lEkPNNC8utDUlexF7tX6Bz37ghWBykC0n41
- phtGlwidsgZBtNEENF/zvOI8kn0cmo5W8UtfIPmsfXxlSi57KgZUapSAzQpqgQtKOIcHFxwOGa0
- TD27JS3+4WBNxIqbtsuHlBKyoE77VJzO2JASJvLGvRHwGsOY+FD10hrDA53d3wZkjSyH+GUF8Qp
- hR3K1p6FJgZcsHBBzdpioAbTDVniMmaNRSQy2M6DvqnGT1e6mNEqEsoRqq7z//ULlOckQrshQDV
- M6HVxhFH1bxMDh5+9LyXmn1y/BuxpXhm53QH5dfqscDCOXFL299GO4+HniZB66YapPUCSaFX8Tr
- GXrYC+967k0TuWC/aDOTNUL9xuGtEPR9pFdqElYt7IVEHfJ+kJtCJNr7GX08d/wxytgyO2AobxH
- LloEw0XMBoEt/QoSwN8dVFdybfq7fWusuarO9adN3odt7jMAbM7fJKHZVhFXXqxd+/hVw9Ydorc
- 5AQWORh2bVuTW7Q==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
 
-Introduce new attributes to configure EDID of a connector:
-- edid_enable - chose if the connector will have an EDD or not
-- edid - raw edid content
+Dave Hansen <dave.hansen@intel.com> writes:
 
-Due to limitation of ConfigFS, the max len of EDID is PAGE_SIZE (4kB on
-x86), it should be sufficient for many tests. One possible evolution is
-using a ConfigFS blob to allow bigger EDID.
+> On 10/17/25 07:01, Jason Gunthorpe wrote:
+>>>> The other alternative is to have arch_vmap_pmd_supported() return false
+>>>> when SVA is active, or maybe when it's supported on the platform.
+>>>>
+>>>> Either of those are 10-ish lines of code and easy to backport.
+>>> Hi iommu folks, any insights on this?
+>> IDK, the only SVA user on x86 I know is IDXD, so if you do the above
+>> plan you break IDXD in all stable kernels. Doesn't sound OK?
+>
+> Vinicius, any thoughts on this?
+>
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- Documentation/gpu/vkms.rst           |  5 ++-
- drivers/gpu/drm/vkms/vkms_configfs.c | 81 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 84 insertions(+), 2 deletions(-)
+This won't break IDXD exactly/totally, it would cause it to be
+impossible for users to create shared DSA/IAA workqueues (which are the
+nicer ones to use), and it will cause the driver to print some not happy
+messages in the kernel logs. The in-kernel users of IDXD (iaa_crypto for
+zswap, for example) will continue to work.
 
-diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index 650d6f6e79fd..bbd03f61e61c 100644
---- a/Documentation/gpu/vkms.rst
-+++ b/Documentation/gpu/vkms.rst
-@@ -135,7 +135,7 @@ Last but not least, create one or more connectors::
- 
-   sudo mkdir /config/vkms/my-vkms/connectors/connector0
- 
--Connectors have 3 configurable attribute:
-+Connectors have 5 configurable attribute:
- 
- - status: Connection status: 1 connected, 2 disconnected, 3 unknown (same values
-   as those exposed by the "status" property of a connector)
-@@ -144,6 +144,9 @@ Connectors have 3 configurable attribute:
-   If supported_colorspaces is not 0, the HDR_OUTPUT_METADATA will also be created.
-   Value is a bitfield, 0x1 = NO_DATA, 0x2 = SMPTE_170M_YCC... see enum drm_colorspace
-   for full list.
-+- edid_enabled: Enable or not EDID for this connector. Some connectors may not have an
-+  EDID but just a list of modes, this attribute allows to disable EDID property.
-+- edid: Content of the EDID. Ignored if edid_enabled is not set
- 
- 
- To finish the configuration, link the different pipeline items::
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index 909f4557caec..a977c0842cd6 100644
---- a/drivers/gpu/drm/vkms/vkms_configfs.c
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0+
--#include "asm-generic/errno-base.h"
- #include <linux/cleanup.h>
- #include <linux/configfs.h>
- #include <linux/mutex.h>
-@@ -1222,14 +1221,94 @@ static ssize_t connector_supported_colorspaces_store(struct config_item *item,
- 	return count;
- }
- 
-+static ssize_t connector_edid_enabled_show(struct config_item *item, char *page)
-+{
-+	struct vkms_configfs_connector *connector;
-+	bool enabled;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+		enabled = vkms_config_connector_get_edid_enabled(connector->config);
-+
-+	return sprintf(page, "%d\n", enabled);
-+}
-+
-+static ssize_t connector_edid_enabled_store(struct config_item *item,
-+					    const char *page, size_t count)
-+{
-+	struct vkms_configfs_connector *connector;
-+	struct vkms_config_connector *connector_cfg;
-+	bool enabled;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+	connector_cfg = connector->config;
-+
-+	if (kstrtobool(page, &enabled))
-+		return -EINVAL;
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+	{
-+		vkms_config_connector_set_edid_enabled(connector_cfg, enabled);
-+
-+		if (connector->dev->enabled &&
-+		    vkms_config_connector_get_status(connector_cfg) !=
-+		    connector_status_disconnected)
-+			vkms_trigger_connector_hotplug(connector->dev->config->dev);
-+	}
-+	return count;
-+}
-+
-+static ssize_t connector_edid_show(struct config_item *item, char *page)
-+{
-+	struct vkms_configfs_connector *connector;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+	{
-+		unsigned int len = 0;
-+		const u8 *edid = vkms_config_connector_get_edid(connector->config, &len);
-+
-+		memcpy(page, edid, min(len, PAGE_SIZE));
-+		return min(len, PAGE_SIZE);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static ssize_t connector_edid_store(struct config_item *item,
-+				    const char *page, size_t count)
-+{
-+	struct vkms_configfs_connector *connector;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+	{
-+		vkms_config_connector_set_edid(connector->config, page, count);
-+
-+		if (connector->dev->enabled &&
-+		    vkms_config_connector_get_status(connector->config) !=
-+		    connector_status_disconnected)
-+			vkms_trigger_connector_hotplug(connector->dev->config->dev);
-+	}
-+
-+	return count;
-+}
-+
- CONFIGFS_ATTR(connector_, status);
- CONFIGFS_ATTR(connector_, type);
- CONFIGFS_ATTR(connector_, supported_colorspaces);
-+CONFIGFS_ATTR(connector_, edid_enabled);
-+CONFIGFS_ATTR(connector_, edid);
- 
- static struct configfs_attribute *connector_item_attrs[] = {
- 	&connector_attr_status,
- 	&connector_attr_type,
- 	&connector_attr_supported_colorspaces,
-+	&connector_attr_edid_enabled,
-+	&connector_attr_edid,
- 	NULL,
- };
- 
+In short, I am not happy, but I think it's workable, even better if
+there are alternatives in case people complain.
+
+> I'm thinking that even messing with arch_vmap_pmd_supported() would be
+> suboptimal. The easiest thing is to just stick the attached patch in
+> stable kernels and disable SVA at compile time.
+>
+> There just aren't enough SVA users out in the wild to justify more
+> complexity than this.
+> diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+> index c9103a6fa06e..0b0e0283994f 100644
+> --- a/arch/x86/entry/vsyscall/vsyscall_64.c
+> +++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+> @@ -124,7 +124,8 @@ bool emulate_vsyscall(unsigned long error_code,
+>  	if ((error_code & (X86_PF_WRITE | X86_PF_USER)) != X86_PF_USER)
+>  		return false;
+>  
+> -	if (!(error_code & X86_PF_INSTR)) {
+> +	/* Avoid emulation unless userspace was executing from vsyscall page: */
+> +	if (address != regs->ip) {
+>  		/* Failed vsyscall read */
+>  		if (vsyscall_mode == EMULATE)
+>  			return false;
+> @@ -136,13 +137,16 @@ bool emulate_vsyscall(unsigned long error_code,
+>  		return false;
+>  	}
+>  
+> +
+> +	/* X86_PF_INSTR is only set when NX is supported: */
+> +	if (cpu_feature_enabled(X86_FEATURE_NX))
+> +		WARN_ON_ONCE(!(error_code & X86_PF_INSTR));
+> +
+>  	/*
+>  	 * No point in checking CS -- the only way to get here is a user mode
+>  	 * trap to a high address, which means that we're in 64-bit user code.
+>  	 */
+>  
+> -	WARN_ON_ONCE(address != regs->ip);
+> -
+>  	if (vsyscall_mode == NONE) {
+>  		warn_bad_vsyscall(KERN_INFO, regs,
+>  				  "vsyscall attempted with vsyscall=none");
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 39f80111e6f1..e3ce9b0b2447 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -665,6 +665,7 @@ static unsigned long mm_mangle_tif_spec_bits(struct task_struct *next)
+>  static void cond_mitigation(struct task_struct *next)
+>  {
+>  	unsigned long prev_mm, next_mm;
+> +	bool userspace_needs_ibpb = false;
+>  
+>  	if (!next || !next->mm)
+>  		return;
+> @@ -722,7 +723,7 @@ static void cond_mitigation(struct task_struct *next)
+>  		 */
+>  		if (next_mm != prev_mm &&
+>  		    (next_mm | prev_mm) & LAST_USER_MM_IBPB)
+> -			indirect_branch_prediction_barrier();
+> +			userspace_needs_ibpb = true;
+>  	}
+>  
+>  	if (static_branch_unlikely(&switch_mm_always_ibpb)) {
+> @@ -732,9 +733,11 @@ static void cond_mitigation(struct task_struct *next)
+>  		 * last on this CPU.
+>  		 */
+>  		if ((prev_mm & ~LAST_USER_MM_SPEC_MASK) != (unsigned long)next->mm)
+> -			indirect_branch_prediction_barrier();
+> +			userspace_needs_ibpb = true;
+>  	}
+>  
+> +	this_cpu_write(x86_ibpb_exit_to_user, userspace_needs_ibpb);
+> +
+>  	if (static_branch_unlikely(&switch_mm_cond_l1d_flush)) {
+>  		/*
+>  		 * Flush L1D when the outgoing task requested it and/or
+> diff --git a/drivers/iommu/intel/Kconfig b/drivers/iommu/intel/Kconfig
+> index f2f538c70650..a5d66bfd9e50 100644
+> --- a/drivers/iommu/intel/Kconfig
+> +++ b/drivers/iommu/intel/Kconfig
+> @@ -48,7 +48,10 @@ config INTEL_IOMMU_DEBUGFS
+>  
+>  config INTEL_IOMMU_SVM
+>  	bool "Support for Shared Virtual Memory with Intel IOMMU"
+> -	depends on X86_64
+> +	# The kernel does not invalidate IOTLB entries when freeing
+> +	# kernel page tables. This can lead to IOMMUs walking (and
+> +	# writing to) CPU page tables after they are freed.
+> +	depends on BROKEN
+>  	select MMU_NOTIFIER
+>  	select IOMMU_SVA
+>  	help
 
 -- 
-2.51.0
-
+Vinicius
 
