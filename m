@@ -1,164 +1,310 @@
-Return-Path: <linux-kernel+bounces-858453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B979BEAD61
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:44:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1E5BEAF33
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317B294595B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD3C947C5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F74229B239;
-	Fri, 17 Oct 2025 16:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5164B2BE04C;
+	Fri, 17 Oct 2025 16:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="h+yf/BFO"
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcrtRK6w"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F8E29ACFD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584D829A9C9
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718581; cv=none; b=LYyLBgV76Pb/Uim2ASeOteWpNkBTzNSySbVp5XUTjJhZiJsHic/CZRrlTCN2itEvPDTMnbWhGX1mtDn/yoqtaDPFnQaqb3ywKPoYaRz6skAhY65e12PkHH1HD9ThnKd3E9ETNp6VwN0pERY4b0IBiZaZ1KydDuMBsvZyGRwEDsc=
+	t=1760718548; cv=none; b=kr6OuR4vTPdY/PQnNHTXTSTdE7mjHGaOypBxPd0QnoFlD/MBHJTcDWimvjD4xAa2RRtE49LYX5kEasCTYZ9/s+OK3iIQuvSSlFvyvOtc8q3qSXUx3f16uVjKxv743XpvHc3UnRyWKkIJlkYq9XCRzg4jXWM3gi29jKtM/dGS6eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718581; c=relaxed/simple;
-	bh=eV1WddDeHMTZSyEjfX0bIHbGWLdnj4dm4RsOBi2TVy8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEuLJd3OWhJyNsyJ4NfLzg18bBEi3isShUiMvARNYozsQLU+sGeQZ2XoQU4ui8otSxJi4XviPBDiBwqdCyGjD0gN3jrc9aBQiUs/5XUJge024z+V3eOGZ7UpDW8IxTbNia2hbPNeVXm3q/NpMb3x+lz2/RE/F8SoK83Gdojhu8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=h+yf/BFO; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 59H6KqHh2325437
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:29:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=Bkyn0FBJ6g8s0v6Hz+7R
-	E2uFqPMbmbU7KYaLZN2Gtv4=; b=h+yf/BFO4eWQ2YNlKXYCAzoOy6O+EVbrigmF
-	fVBiduEvnKALWQMf6JZsUpNl7scvTXH5f1y2otm2y7zk+0HM96n1YJxFZ6UqWXQa
-	IQYSm2Asje6hvvvZjJ1nGUu9krps0a1jSa65wSRx3+K3lRsyDc7VOpM8YcPHiJrZ
-	h7xL/ZZYDwad1PUztuGYFZ3/2lq7v0/n173Bk1TeAynsf59ipRaBkf8f5zzj1txV
-	om/Sc4PBA6lRcrI+VwdbGbe9kUcimSxy+4PeQxbhf0XbMcI1z9VYfDtncqyc0rBp
-	l1pi3uPH30F4zV/PflDiTNhiQ5c/X17IWSiN1yKAWgFDqsuztg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by m0001303.ppops.net (PPS) with ESMTPS id 49ugey3kbn-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:29:37 -0700 (PDT)
-Received: from twshared71707.17.frc2.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Fri, 17 Oct 2025 16:29:36 +0000
-Received: by devgpu012.nha5.facebook.com (Postfix, from userid 23751)
-	id C07981C0074; Fri, 17 Oct 2025 09:29:26 -0700 (PDT)
-Date: Fri, 17 Oct 2025 09:29:26 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
- <20251015132452.321477fa@shazbot.org>
- <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
- <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
- <20251016160138.374c8cfb@shazbot.org>
+	s=arc-20240116; t=1760718548; c=relaxed/simple;
+	bh=yEacwEfMwbmHYq38jVAByL/81V0BvkN0d9vmDB2lRfc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nB4lhec1A/COKJc6BH6XIHE3VvDhzoeTWHVzX6Y7aMC/2XBnzu87+SMYDNfy0UOVyOmSgjOB0wcc6/+YFWgJb7uufzYEsLAaq9YTSwZ9BnbWcWGh+bxmg+osTtnL5xauwrKYFXbIrQCmRzBKJpeZukkq8Jv/j0hg3wvsZUqywNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcrtRK6w; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso15998405e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760718542; x=1761323342; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=e+3TGUDzD/qAyFWP9lnrWAHSPYDqqbyBteI4cDb1byY=;
+        b=IcrtRK6wU8V3tHklKg8BVdjCQddjC0gmpo0XJoIx4Y+pbNYh4gat2lgjsxeE0yvq2H
+         Ul2htKaNWBYwemv1Eygp3q/DxcDsE4T+v0fBOSDMDL4/wAHGZla5rTR7WeFu7ZpABg+j
+         6C9bu/uvlCo5rhxFHjoqAuZNI7TtolVgajz7wQNANKBJQv0uPKXTClcguy6SjY/N9PJi
+         cqDVpw9q46Ftd4SiOKFnySM6VnZQ4gspv9PScfZScGMysB4VPCkSYHML5UvH4KKxOK2A
+         WXhemg1pu+iscJIu0ozi5uEB8FliQcse+Gqqi5ey0nv4WThli0UJxYFJHWVQBdp73/wo
+         PooA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760718542; x=1761323342;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e+3TGUDzD/qAyFWP9lnrWAHSPYDqqbyBteI4cDb1byY=;
+        b=M5bbJB6IBc48w2+5W3QATvLxZUQSfCUkY9o1Uv86lmeemLX36hMalCApteaXWVzCMo
+         7N5EIY+TpAalNfVQx++bJZ3BWt3FGFokXKoorjXK2dzVVEuApgi6l1//ODQ6nJQy13fh
+         bL8fk+Tw+EzPFaysZaR7ad78idMJ6aLRmqsqK3KQJPs7ktfP7hreSvx6u6d/ExBIpEZn
+         6rLQ4ahjM+lw+E6GiW5H09cseak8iz9DPaRF1BnMIx8shrump8e51LLsl2ofgNj2UcaJ
+         +j3MtdkfL0St2UbaXRj7Vs4F/VELefcEdo9U0sJw9sAFGb6w/4dNHu31DG8nTI/+m5hf
+         k+mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDvj7JTHEtvKRd028OQHWU0yPzJYX2Gvylmgi/Zyj13NAuPIBS/0cHa9jLFhcuc5xlPjcjHnZGxC+U08Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTBfy29HHlRk6gpE9tbn6TMPnXEyVWm5QauxzkNhbRj4y1C5R3
+	tYi3vkyb7upizNw4Kv0mJwWLjKFrJLcAo9WccQGyHgZcCFw9cW7hm/k8
+X-Gm-Gg: ASbGncvFWW8bqWyDIsaBG0be2BYL0wRAD6Xfv/45yueEdVAOwDR3GFxZDJ0gRydy65u
+	NejgZs/jzYn1FrMdqBLB4ryXDLDKqH9YJJkJFigjz6caa8bHHsYl3xjnh4qhJ/CdZQadYYrBiNb
+	xVKkuKWBskgrP3rkAxP/Xhuno+qSPChyXB63lAbeiKFAYIMXns6Nii+qxjXIFl8s01k31s2Xgqj
+	BAFB77SdtcXq4KpUPVk/mtz7tMaoqhk3gyijWtYcKykcWhOxHrhLQ+evNi+P3s7NDZVbTLSzsKR
+	NhHKSyTQGH1knBLoumyAUHBid5H9bBuLIH3X+J3bsKzxNAUmt9x08suV//L4+2sCZw6xLPYwXdx
+	fi2GEW9PKHUivL1t9orpeIgwTvnSqdGqKccodXxga/+z22EEUa2DjZWfpZ2nb6BnSUz2/VZiZXe
+	Ez0hhrxABF
+X-Google-Smtp-Source: AGHT+IG5OKG+QrsjrH3z6FdMIuRoh2OBw5hKsfK6m8d77lQkl/Z16nX3GNAwzHu4tF5ikt9sqtVHiA==
+X-Received: by 2002:a05:6000:2584:b0:3e7:63dc:1ff6 with SMTP id ffacd0b85a97d-42704d7eb9emr2630461f8f.8.1760718542320;
+        Fri, 17 Oct 2025 09:29:02 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm89738f8f.19.2025.10.17.09.29.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 09:29:01 -0700 (PDT)
+Message-ID: <f73f73e6b2aae53fa6bdae7c9d2970ba1caed7e5.camel@gmail.com>
+Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron	
+ <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown	
+ <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Date: Fri, 17 Oct 2025 17:29:34 +0100
+In-Reply-To: <20251017174322.07997789@bootlin.com>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+		<20251015142816.1274605-3-herve.codina@bootlin.com>
+		<1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
+		<20251015211420.031c61fa@bootlin.com>
+		<de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
+		<20251016160202.3d4d0a5e@bootlin.com>
+		<d7576a0bb9a8d5326d77ae434131540b4359bd2a.camel@gmail.com>
+		<20251017085904.07e40e37@bootlin.com>
+		<10e119ee5a76f1c47d7eb6a15989c8ffc00ffc5f.camel@gmail.com>
+	 <20251017174322.07997789@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251016160138.374c8cfb@shazbot.org>
-X-FB-Internal: Safe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDEyMSBTYWx0ZWRfX4uIPdvLkJyru
- kzVzFeSj6zAri/p14Fqu2jGiCsSxAxY5UC0limb3iSh/RUplMeypXO4MWjuGNBy7pMB8DA8Qb0a
- 54is3K2ZzRMVeEmGnDiqUK3m+urL2xwHakzuw/3oj5GOZxcu5GihJYil/A4lAEaS4fe4SwFubJn
- CiRH6RAB/Iiyy8HncE/IgeqIOB+kbJ07OaTA/Bm04QrLwafwZ4eF3IsgcoWddccS9wrD1+WIFi2
- 5aldg4lU+MAUygPO5GXHIr3kaAAmUdMQQRSna+gk4euVzZ4GWcU9fEPmcAHEJkfELIeftW6zWb8
- jwAr6vhKA/IQ0idNUjQBwQ2roNm/VbVar1acM/f3Pmfh51PVnZ0skz9ATMVpT82hFlwoX7zC/qK
- qpInIiuOtNtBd+sjCR7XxrWL7/7uBg==
-X-Proofpoint-GUID: GxsBfqQacT0QfWRaUYZILxcQv3b4PF_N
-X-Authority-Analysis: v=2.4 cv=Wokm8Nfv c=1 sm=1 tr=0 ts=68f26ef1 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yjjgb6GWclcem6OkC4IA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: GxsBfqQacT0QfWRaUYZILxcQv3b4PF_N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_06,2025-10-13_01,2025-03-28_01
 
-On Thu, Oct 16, 2025 at 04:01:38PM -0600, Alex Williamson wrote:
-> The legacy vfio container represents a single IOMMU context, which is
-> typically managed by a single domain.  The replay comes into play when
-> groups are under IOMMUs with different properties that prevent us from
-> re-using the domain.  The case that most comes to mind for this is
-> Intel platforms with integrated graphics where there's a separate IOMMU
-> for the GPU, which iirc has different coherency settings.
+On Fri, 2025-10-17 at 17:43 +0200, Herve Codina wrote:
+> I Nuno,
+>=20
+> On Fri, 17 Oct 2025 09:26:26 +0100
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>=20
+> > On Fri, 2025-10-17 at 08:59 +0200, Herve Codina wrote:
+> > > Hi Nuno,
+> > >=20
+> > > On Thu, 16 Oct 2025 16:26:28 +0100
+> > > Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+> > >=20
+> > > ...
+> > >=20
+> > > ...=C2=A0=20
+> > > > > > > > > +
+> > > > > > > > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc,
+> > > > > > > > > &rzn1_adc-
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> > > > > > > > > > adc_core[0],=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> > > > > > > > > +					=C2=A0=C2=A0 "adc1-avdd",
+> > > > > > > > > "adc1-
+> > > > > > > > > vref");
+> > > > > > > > > +	if (ret)
+> > > > > > > > > +		return ret;
+> > > > > > > > > +
+> > > > > > > > > +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc,
+> > > > > > > > > &rzn1_adc-
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> > > > > > > > > > adc_core[1],=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+> > > > > > > > > +					=C2=A0=C2=A0 "adc2-avdd",
+> > > > > > > > > "adc2-
+> > > > > > > > > vref");
+> > > > > > > > > +	if (ret)
+> > > > > > > > > +		return ret;=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=20
+> > > > > > > >=20
+> > > > > > > > Hmm, is avdd really an optional regulator? I mean can the A=
+DC
+> > > > > > > > power
+> > > > > > > > up
+> > > > > > > > at
+> > > > > > > > all
+> > > > > > > > without a supply in AVDD? Even vref seems to be mandatory a=
+s we
+> > > > > > > > can't
+> > > > > > > > properly
+> > > > > > > > scale the sample without it.=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=20
+> > > > > > >=20
+> > > > > > > Where do you see that avdd is an optional regulator?=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=20
+> > > > > >=20
+> > > > > > You are using devm_regulator_get_optional(). That's for optiona=
+l
+> > > > > > regulators.
+> > > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > >=20
+> > > > > Indeed I use devm_regulator_get_optional().
+> > > > >=20
+> > > > > We have two similar function to get regulators:
+> > > > > - devm_regulator_get() and
+> > > > > - devm_regulator_get_optional().
+> > > > >=20
+> > > > > devm_regulator_get() returns a dummy regulator if the regulator i=
+s not
+> > > > > described in the device-tree. The calling code has no way to know=
+n if
+> > > > > the regulator was present or not.=C2=A0=C2=A0=C2=A0=20
+> > > >=20
+> > > > Yeah because it's mandatory and the part cannot work without power =
+:).
+> > > > So we
+> > > > should not be allowed to operate without a regulator.
+> > > > =C2=A0=20
+> > > > >=20
+> > > > > On the other hand, devm_regulator_get_optional() returns -ENODEV =
+when
+> > > > > the
+> > > > > regulator is not described.
+> > > > >=20
+> > > > > That's pretty confusing but it is the reality.
+> > > > >=20
+> > > > > I use devm_regulator_get_optional() but check for -ENODEV to see =
+if
+> > > > > the
+> > > > > regulator is provided or not.
+> > > > >=20
+> > > > > In order to use the ADC core (is_used flag), I need both the AVDD=
+ and
+> > > > > the
+> > > > > VREF regulator available.=C2=A0=C2=A0=C2=A0=20
+> > > >=20
+> > > > And that is why I don't get why are we allowed to proceed if there'=
+s no
+> > > > regulators? That seems wrong to me.=C2=A0
+> > > >=20
+> > > > So I think the regulators should be mandatory in the bindings and a
+> > > > dummy
+> > > > regulator should also not be allowed in this case because that shou=
+ld
+> > > > get
+> > > > you=C2=A0
+> > > > -EINVAL when calling regulator_get_voltage().
+> > > > =C2=A0=20
+> > >=20
+> > > I have 4 regulators: avdd1, vref1, avvd2, vref2.
+> > >=20
+> > > The ADC controller can work with 2 internal ADC core (adc_core[0] and
+> > > adc_core[1])
+> > > in the driver. Those internal core are not directly accessed by the
+> > > driver.
+> > > Only
+> > > the ADC controller is accesses.
+> > >=20
+> > > Those cores have an AVDD and a VREF power supply.
+> > >=20
+> > > We can use either adc_core[0] only, adc_core[1] only or both adc core=
+s.
+> > >=20
+> > > Depending on regulator described, the driver uses one or two adc core=
+s.
+> > >=20
+> > > This choice is done by:
+> > > --- 8< ---
+> > > static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
+> > > 					 struct iio_dev *indio_dev)
+> > > {
+> > > 	int adc_used;
+> > >=20
+> > > 	adc_used =3D rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
+> > > 	adc_used |=3D rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
+> > >=20
+> > > 	switch (adc_used) {
+> > > 	case 0x01:
+> > > 		indio_dev->channels =3D rzn1_adc1_channels;
+> > > 		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc1_channels);
+> > > 		return 0;
+> > > 	case 0x02:
+> > > 		indio_dev->channels =3D rzn1_adc2_channels;
+> > > 		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc2_channels);
+> > > 		return 0;
+> > > 	case 0x03:
+> > > 		indio_dev->channels =3D rzn1_adc1_adc2_channels;
+> > > 		indio_dev->num_channels =3D
+> > > ARRAY_SIZE(rzn1_adc1_adc2_channels);
+> > > 		return 0;
+> > > 	default:
+> > > 		break;
+> > > 	}
+> > > --- 8< ---
+> > >=20
+> > > In rzn1_adc_core_get_regulators(), looking at one core I do the
+> > > following:
+> > > =C2=A0- Try to get AVDD (using get_optional)
+> > > =C2=A0- Try to get VREF (using get_optional)
+> > > =C2=A0- Core is used only if both regulators are present.
+> > >=20
+> > > For one core to be used, both regulators have to be present.
+> > >=20
+> > > Regulators are mandatory but adc core usage is optional.
+> > >=20
+> > > This optional usage depends on related regulator presence.
+> > > =C2=A0=20
+> >=20
+> > Ok, then we could flip the logic and have boolean properties for the ad=
+c
+> > core
+> > usage and depending on that, requesting the regulators. To me, the inte=
+nt
+> > would
+> > be more clear (at the expense of more FW properties).
+>=20
+> This introduces a new property and duplicates the information:
+> - flag to tell if adc core is used
+> - regulators described only if used
+>=20
+> And so, the possible flag set to "adc core used" but regulators not
+> described. This is error prone.
+>=20
+>=20
+> I have chosen to rely only on regulators description to avoid the
+> information redundancy.
+> =C2=A0 - regulators described -> adc core used
+> =C2=A0 - regulators not described -> adc core not used
 
-Thanks, this context is helpful and makes sense.
+I'll leave it up to you but while I know it introduces new properties, you =
+could
+still do it in a way that minimizes errors:
 
-> That mechanism for triggering replay requires a specific hardware
-> configuration, but we can easily trigger it through code
-> instrumentation, ex:
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 5167bec14e36..2cb19ddbb524 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -2368,7 +2368,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
->                     d->enforce_cache_coherency ==
->                             domain->enforce_cache_coherency) {
->                         iommu_detach_group(domain->domain, group->iommu_group);
-> -                       if (!iommu_attach_group(d->domain,
-> +                       if (0 && !iommu_attach_group(d->domain,
->                                                 group->iommu_group)) {
->                                 list_add(&group->next, &d->group_list);
->                                 iommu_domain_free(domain->domain);
-> 
-> We might consider whether it's useful for testing purposes to expose a
-> mechanism to toggle this.  For a unit test, if we create a container,
-> add a group, and build up some suspect mappings, if we then add another
-> group to the container with the above bypass we should trigger the
-> replay.
+ - In the bindings, if the property is set, then the regulators are a
+__required__;
+ - In the driver, if the boolean is true, then use devm_regulator_get()
 
-Thanks for the tip. I did this, and validated via bpftrace-ing iommu_map that
-the container's mappings (one of which lies at the end of address space) are
-replayed correctly. Without the fix, the loop body
+- Nuno S=C3=A1
 
-while (iova < dma->iova + dma->size) { ... iommu_map() ... }
-
-would never be entered for the end of address space mapping due to
-
-dma->iova + dma->size == 0
-
-$ sudo bpftrace -e 'kprobe:iommu_map { printf("pid=%d comm=%s domain=%p iova=%p paddr=%p size=%p prot=%p gfp=%p\n", pid, comm, (void*)arg0, (void*)arg1, (void*)arg2, (void*)arg3, (void*)arg4, (void*)arg5); }'
-Attached 1 probe
-# original mappings
-pid=616477 comm=test_dma_map_un domain=0xff11012805dac210 iova=0x10000000000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
-pid=616477 comm=test_dma_map_un domain=0xff11012805dac210 iova=0x10000001000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
-pid=616477 comm=test_dma_map_un domain=0xff11012805dac210 iova=0xfffffffffffff000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
-# replayed mapping
-pid=616477 comm=test_dma_map_un domain=0xff11012805dab610 iova=0x10000000000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
-pid=616477 comm=test_dma_map_un domain=0xff11012805dab610 iova=0x10000001000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
-pid=616477 comm=test_dma_map_un domain=0xff11012805dab610 iova=0xfffffffffffff000 paddr=0x12ecfdd0000 size=0x1000 prot=0x7 gfp=0x400cc0
-
-> In general though the replay shouldn't have a mechanism to trigger
-> overflows, we're simply iterating the current set of mappings that have
-> already been validated and applying them to a new domain.
-
-Agree. Overflow means that some other invariant has broken, and nonsensical
-vfio_dma have infiltrated iommu->dma_list. The combination of iommu->lock
-serialization + overflow checks elsewhere should have prevented that.
-
-> In any case, we can all take a second look at the changes there.
-Thanks!
-
-Alex
 
