@@ -1,230 +1,222 @@
-Return-Path: <linux-kernel+bounces-857155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB84CBE60CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:40:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B65BE60D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16FD94E8DEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:40:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07DF64F037F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDFC2248B8;
-	Fri, 17 Oct 2025 01:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755992248B0;
+	Fri, 17 Oct 2025 01:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTzar67k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BVA0W5fx"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010046.outbound.protection.outlook.com [52.101.56.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD21DC120;
-	Fri, 17 Oct 2025 01:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760665234; cv=none; b=q+qL+k78qzhsB5NfNali0P3u1lEeIWQQNJ9jsQaEX8zatJ5lsQ9AyWXGss+TkTmzrkVLnbNmsYh3OqvJ8KphA8DH1dm4IV/ZCf3n1LGBhrCXJ9T0ab0ZY5Hu5eUbF32dP/b9MmCe2xorQcs/jkjkmZlBkrIHjBTBknCSVrs7K6s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760665234; c=relaxed/simple;
-	bh=INxxigTmqp4oaXvINkHMLTxCH3tFQVLxHePuh/Meru0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QaY6wBrOe9j0/cWVrbyCGSoG5kui/yWIHNIO5Y2Kq5r0Wp8UGYtQv8BGo2e1F5F6W0tI8QpRIr2E4DNnHOVvZV2Mw83WQILEcdDIQRDUIkRnwJwemWjvCZ7+50N3h5vLTqt9Dybik9UEYBGr19N360Qn10NqeQxVK8Nkjh5841Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTzar67k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D0CC4CEF1;
-	Fri, 17 Oct 2025 01:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760665234;
-	bh=INxxigTmqp4oaXvINkHMLTxCH3tFQVLxHePuh/Meru0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mTzar67ka8O3EQTMoLik8RNVXY+Zqikw5XwtyeqQng5k3dYfYwwVvENSJHMXSs0Mi
-	 bDQv7v0lBLM/VAJiqD8WNsbAxOTRBoPOhSR8b0nqZmtEBUFtHCzN8NgNe3oGR4bj/N
-	 mXK8FryoMv4/ldaaVCKRdYDf6PCRfrDHI2ABcCJcIrz/eHQVwCh3ZEBIm2SW16YtaO
-	 38QcEmQIf+kH94G/ONe+ajjQWsamwL/dH7uuLncoAbxRwQwsAyDmOsfNNRiMhzmswE
-	 VajOi/RMGlPgbowKqCGXxbXi6k9sPhc2w/qEboTBvRVuj+J8iBK7oH37agf9haTBr4
-	 fsmQCNNQG11dg==
-Date: Thu, 16 Oct 2025 18:40:31 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org, Andrew
- Lunn <andrew@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>, Michael Chan
- <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, Joshua
- Washington <joshwash@google.com>, Harshitha Ramamurthy
- <hramamurthy@google.com>, Jian Shen <shenjian15@huawei.com>, Salil Mehta
- <salil.mehta@huawei.com>, Jijie Shao <shaojijie@huawei.com>, Sunil Goutham
- <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Subbaraya
- Sundeep <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>, Bharat
- Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>, Tariq
- Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Alexander Duyck
- <alexanderduyck@fb.com>, kernel-team@meta.com, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Joe Damato <joe@dama.to>, David Wei
- <dw@davidwei.uk>, Willem de Bruijn <willemb@google.com>, Breno Leitao
- <leitao@debian.org>, Dragos Tatulea <dtatulea@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>
-Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
- buffer providers
-Message-ID: <20251016184031.66c92962@kernel.org>
-In-Reply-To: <CAHS8izOnzxbSuW5=aiTAUja7D2ARgtR13qYWr-bXNYSCvm5Bbg@mail.gmail.com>
-References: <cover.1760364551.git.asml.silence@gmail.com>
-	<20251013105446.3efcb1b3@kernel.org>
-	<CAHS8izOupVhkaZXNDmZo8KzR42M+rxvvmmLW=9r3oPoNOC6pkQ@mail.gmail.com>
-	<20251014184119.3ba2dd70@kernel.org>
-	<CAHS8izOnzxbSuW5=aiTAUja7D2ARgtR13qYWr-bXNYSCvm5Bbg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165E8C120;
+	Fri, 17 Oct 2025 01:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760665298; cv=fail; b=d0ku7wlvoc6ACr4/q10dMXINDM1cvp+wy3B5TIVKwlOwv0EnjPCb43vu6fHIyQsYzVfdiLHAS/WZ9aBvZB319kEqhM8R40z+wykq9lehXIbL0WbWQE/dCZhyuxPzf4IbpwDS2xuTIOWw9l8FzJ7WKlgqTfj0zjOxA9CYDjnWb8s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760665298; c=relaxed/simple;
+	bh=jHIeLh3e8AB3alB4toSW0uokBSSefQyzajwmm0EKfw4=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=elqtpQr+ubSj6mGe1uIpNHPXJ2XEnuywBxm+2biS2hHb4CClSyATy+3mW4YD2dWWVy4M1neCS9wdXGozV0DKKQxsRv3eU15Iu0GHGIigPodmtX1cop5rWvrUcAFTreSyTBmBcvjhXk1ZPpbOoLyCKA/EyemTaScqV6d3aMOYBHw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BVA0W5fx; arc=fail smtp.client-ip=52.101.56.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kxSJ8Nltm0iaIsLc5pTN1E2i11fUs/VcghoA7Zv3ccvRjs/AJO1LV1egN35JOgDvkvFw9kZXRjOcz8/d3jDX0qT7ZLedndLCiWN+cevi3gFZAoni3TjnAD/jcOMoVw+3lzRlfbKnI5688Q4PdWfhEhTs9bYCOMl8dX+9PFc4E48F2k6pKN4FnK1k59zOGEGdYW1779L18wMjhMW7hoaUlA3pOQvbik6ANj7+zW49JWXZ0xnoY8RhaxAtJgn44Rr62PKqwKGXc5SLqq6cuMeTW2xTUH4el7w3cWmj7gMhjIdajUqU0lGMABKd3nOE+wiWS7w7Myp50ZbvL4OXP5tqHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jHIeLh3e8AB3alB4toSW0uokBSSefQyzajwmm0EKfw4=;
+ b=dDmXPhwNmnc5t3P/oK00T9Ofs5T8z366P90+eXXAB9oOkoNx2ueQFV5RmIWlS23D90TnZHl4GtELAVT5SxaFYucVZA1HUDF3V8JwhyM9xc2LZEm0WG2hrlBTDer8iBbWzj6jxmcqnaNE2L0uY6WSQXn4euJpYI4hPHt+LaD0PLTizPEcCWLZ2p2wyaqW5kprZwyRJ2qCfvr5hDiPTp1J6rRYpQ3MsDKTpI8eO/b0EEgWLVQAozxK9E0WQEfZV0FjNK1Xgb8OSUeZXIMmBTvvE6k9f+3oiV6k55djQM6BwlkX59n4HhsDhIz2ajV0B791P06kyU0u6SFH3Ywk/+eqaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jHIeLh3e8AB3alB4toSW0uokBSSefQyzajwmm0EKfw4=;
+ b=BVA0W5fxRYQnT0n5jVwiv4PTRWk3yAIfBq7pHtOovZ5GhYRgkEOA0QGg5baAaZCJp8Ox4/2Dp6yGco+rL06ToQuVJxF6ujSI7v/8K3xPjUNAm/DyvhiQoodnIbMAMbouleSUMbe9YiXWThi1AaVbByhuOzC/qfyF2vE0b3GiZrETJ1EatE5IBW/p+zzO3RrW48qTuR/GFpSCsnb0Wof1oXTyJYrO4lqylkrAR7xlaeiGN9p0T7jKe8NfP2mSoajkApveiVBZalcZLMJiR5jladYrR4Djh5GNSr45aXLK8JOgKcfXI3FYy1KYONNr4wbX88eAaTxaEdN/r77F5/CJYA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by MW4PR12MB7213.namprd12.prod.outlook.com (2603:10b6:303:22a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
+ 2025 01:41:33 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 01:41:33 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 10:41:29 +0900
+Message-Id: <DDK7R7X621Y7.4D5CSTY8BOG2@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alistair Popple" <apopple@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+Cc: <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v5 09/14] gpu: nova-core: Add bindings and accessors for
+ GspSystemInfo
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251013062041.1639529-1-apopple@nvidia.com>
+ <20251013062041.1639529-10-apopple@nvidia.com>
+ <DDJJ5GJI5HJ8.2388S19QXO8G0@nvidia.com>
+ <5jw63qwbeb2g7ngxpapn3prgv4dbceb7uhmw6ddntljznkxiks@ppnp6gknek2z>
+In-Reply-To: <5jw63qwbeb2g7ngxpapn3prgv4dbceb7uhmw6ddntljznkxiks@ppnp6gknek2z>
+X-ClientProxiedBy: TY4P286CA0054.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:36e::11) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW4PR12MB7213:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3383ffc7-e3ff-43fc-5edc-08de0d1e4d53
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d1NXLzUyekpvbURBZjVaaDBXc05wdEFyTmRPVXY1TFJNcFg0ZE9MSVNRVE5Z?=
+ =?utf-8?B?aXM5SkphZGNXOTM4TDZZbjhxcVFFSjdJeGFFNzF5QitWem1INTNGT2toSzNC?=
+ =?utf-8?B?a1NLMnVPMVlLTEVjTjhtamxZcjFzdFJtMjhxQmM2RW1JZEtoWERuLzMvSldM?=
+ =?utf-8?B?b2hvL2hLSnA0VmJibXl6VXdvNTkxRE5odVg0bGpMTURhaGRicWc5cmVlM1BP?=
+ =?utf-8?B?akxEVTRmcGR3OTZmZkdOa1B2Q0xPS2p5alJLaktvZTFjbUpzM1E4b0RVNnUx?=
+ =?utf-8?B?ZDhaUlc1MjBtOXNmeFZkOWg2STNvbVlxSWlaUm1UVVZVY0Y1ekZKYzl2Mitj?=
+ =?utf-8?B?WEJrY2hLbGoyTlF3MksrTzVaQ1lCUUVXVXhQalduNGNZR2dWdHR4NnVaQzJp?=
+ =?utf-8?B?aXZwR2FhcFdqVnRBVDZ5WnQ5R1dZQzZBcUZuZUY5ZUJuSkJGL2pGS2dHUVNp?=
+ =?utf-8?B?OFBoelpPNitFTmVNU21JTGdndmcycVFWKzFMeFB1L0gxKzE1SlduMURnalVY?=
+ =?utf-8?B?MUxyYUtKR1VLR1NyVy90MFU1L3BiOGlsQzNJNWYvNHo0LzZsOUVYQ1RPU1Vn?=
+ =?utf-8?B?bzdzODFJL01WdHBoSTJXWXdxY3pDZXYrcUM4RERDWGtyWXFYd05sdHVhUXpz?=
+ =?utf-8?B?aW4wUEo1cDZIOXdseVVWS2kyUFVmMGZmRVNBYTU1aWpvcE9xSkF6UHluZW4y?=
+ =?utf-8?B?MGRoTjhxQkVZazlZNFJ6d2lUdzRaOEl3VzFQQUhWOTNwR0dFYjhTWUs4dGhY?=
+ =?utf-8?B?eFZyWjVGTVBzMnVCajlCajB1czRwcmxOaFdXN1BpNEIrcUU0VXk5OFhBdS9j?=
+ =?utf-8?B?U0tUNHE2SHNRRFFTMlVlQkRqU3JtNWFxYUZaaGN3NXdlYnRWQnBXQW1GZ0ti?=
+ =?utf-8?B?MUZ4R3hzZ01zQ1VJa1NwTVJnZytUeGNHS3BIQlVPMmJGR3dIdmVGK3k3akIz?=
+ =?utf-8?B?ajZqVnNLRHVsdlQrejdianpXa0xhRzJUMHpCalhVSEJJU042cUxJUXVNeStP?=
+ =?utf-8?B?WGZLSlRZL1VUUTFrNGZDYk5jRVFrOXM2dFFnWjBkY3ZWblRYSlNVbkVxMkoy?=
+ =?utf-8?B?VGlqQjZFSmV0Sy84Mk9JTHhMeGRxcE94YnoyWm5hd2VDazJXcFE3MWVPQzBV?=
+ =?utf-8?B?MlJiT0c1b1Y3aWZ1UUkwRWtaNldLUlBUd0k0Rk1TTjVZTmpueHh2RnVUZzBU?=
+ =?utf-8?B?aFI5ajNCNXFkSndDOVNyTE1sWHlMQ2hXbzhGRjVOOTNvWExPeTNZQ3ZyNjlJ?=
+ =?utf-8?B?dU1RQzVsaXN2a1VReDRFWjRLOE4rM1ozZVBXQ1FBV2JNaXlVUVRmcEExMnBD?=
+ =?utf-8?B?QnN1QVRLZTNIRE40UWM0eVZHaUFIYzhBY2M1ZVlBbkRFNlVLSjJDMmRiUEJn?=
+ =?utf-8?B?WDZITGNmYzVWRDJlcUZ0eFlUY2I3cnBQSGp4OHNVc2lNMlY1N0JYOFpVUU1r?=
+ =?utf-8?B?V2JDdFVjc1o1WmxrMUZTM3RvMDhzVi9BTm9FUDVyTTh4MlhWZjZsaHJhdjVV?=
+ =?utf-8?B?TEg2YlB1aWhjTjN2eVVoL0crYjBVTmpvU3FLb2JHNmMwVGI5NGpYRVMxSXpL?=
+ =?utf-8?B?MWE5Q3Z2MjFaanFhUFczcUxnZUFPSndFVmdVRDhhL01DdjNkMlZaM1ZPbllt?=
+ =?utf-8?B?citycnVRMVpjcWY2bE9McWsyOEpLbTRtamJIUFRWY29uS09oOC9KUTh3SGt4?=
+ =?utf-8?B?WkhpZmpPMnB1RWxzYUk0NS9JQmtKMDl5Z3NwcnVWVWtVMlVTYTVUM2tBK2Zh?=
+ =?utf-8?B?SEpQNkVyS0tZbW5tU1NPZnpBZVZhTXdCRno4S0k1TC9uZkk1NEtsTXQrSytQ?=
+ =?utf-8?B?RVV6anQ0QmgwMjErSTBPaHU1SUY5b2pBQkJGanh5c0djSGNVcmhqdWZlci9V?=
+ =?utf-8?B?eHBQVi8rY25CQmhaL3VTUHNhanpQTGVHR3pMZXJtWnl5cWZiNVdPSHd5Y1J2?=
+ =?utf-8?Q?vMf62EKLZsBlhGgz795vkaJ1jWsjMPCH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZjJVUTl2UXJjTTg1c3hsaU05NU5MQXFUUWVMSTBYeTBGQ0cvSnhYbzEvL0VS?=
+ =?utf-8?B?SU9EVHhwMSs2UUplb2lmUm5TMW1HU1l1eExHQnNDMVdjWUh1dkFOamVZTXNm?=
+ =?utf-8?B?cGNLMndJeGkwZDd6V0UwK2gxWUZVcXp5ek5UdE0wYnU3a29wNkpVT1pRUDdq?=
+ =?utf-8?B?dG54VE5WajgrSVh4VFZ5RE85d2lVaEZiRGR3ZlNzOEoyclVJT1RQbzU0cWQw?=
+ =?utf-8?B?S3dYMFYzMGZIUGd5T0E0RVNQVTkzbndLcEtWR0FUM0FVRTVSSTZWc0Jod3JG?=
+ =?utf-8?B?cXlkbmMyNS9objkyR0h3ZXNDclVNWHJaWTNnbVFrR0hTYTdncE5Gc0c1bVR5?=
+ =?utf-8?B?czdJYm1kOFZPWDFKZENxZUwyM2tGM3c5UW5qN0crTWxWVzlUdWNScVRHTHU1?=
+ =?utf-8?B?ZWQvZTg0V21lclRMbzhVMVY1citiRE5PbHl4UlA0dllSV2p0dWYzOWRHTFQ3?=
+ =?utf-8?B?MHovQnlpd2tFclg1QXJEeWVYd212K1FxbzBENWhxOEpidnZrTCtrYWpFcDIr?=
+ =?utf-8?B?TmtGemF1cWZhL3RHYnJtU2RlTE9Za2VjM2RpSU9ycDMwbjV3YUs0TkJsNk5R?=
+ =?utf-8?B?N1N1Zkp3ZnR3blpOYkUvTzZINk9iYkg0UHVOcGtCM1E1empjZjJuMXdwN1R1?=
+ =?utf-8?B?aldhTXZjRUw0WE0rcjBTaVpkcWxCQTRqVGthY1R5RlpTT1B4NC9tL1kvR1Jq?=
+ =?utf-8?B?VzB1bDBhNUxQc2FBVDA3b3ppdnQvSmRoN3J6MHdhd1VBSzdjWmtUYkFVV0RM?=
+ =?utf-8?B?ZXdmVHZSS081eG8rNWp4NlozV29EMko1bDRvaWhHczVWU25RR0hkOENWVE92?=
+ =?utf-8?B?M0lFQ0JLSW5HVlNsWFVIK3k1dEw2RU4zcXVrR1FnK0l4MnM2dEFyWnNDOW9P?=
+ =?utf-8?B?V3F5MURJNzE1b0REM0RWK3IyMURBMWN1VkJDQW5ETzgyZFVaRHRFSkVYVFFn?=
+ =?utf-8?B?Z01yU3lmOWh5ODJqSmwwVGZ4RzdrK2g3VjhXUWNndGFWdTYwL0FmcVc5VkNq?=
+ =?utf-8?B?dy93ZE5leHBaa2MxMlRsdEovb0N5SitnOVRBUGZYeThTUWNNQ1A5blUxeE40?=
+ =?utf-8?B?YmxPcG5halZ2QnBsU0VoQmNTOWFYb2N6Q1hGK0tPblg4VEd0SlZqZHdoUEl4?=
+ =?utf-8?B?Ym42OElRNW1tMERHKzhHWDMwTmQ1NUIxeVBoYUtIWUdQV1pWUENzWlpDTW04?=
+ =?utf-8?B?b2RON3pNb3hraGF1cWowb2ZEOWtBQ0ozOWtxRFdYYUJKbXVkSFY2ZWkwVzJ3?=
+ =?utf-8?B?VW1YVGtNa2dtTE5JZ0o5OWtXc0JXRlZVOFlHWmh2blZGMUs0RS9xY2dRWGNQ?=
+ =?utf-8?B?Q1VQMG5FMmJIT2J2bHhPdWJLMmh6dE9xVGM3TkNyVFZ2RmRyemM0TlgycEQ1?=
+ =?utf-8?B?d1JoMStDTDV6NlBqU25QOTdsaXVxWnJCcjFYdWFvY2tjeWFFL2RUc1Ztc3VK?=
+ =?utf-8?B?UUU4V2lHN0dhdXRsdEZWQXNJN0o3ak01WWY2ZUNuOWY3Y3gzODNsNkV2RFFU?=
+ =?utf-8?B?ZitvTmZzamtkQ2pGV042U084V1FZdWJ1ZzlHbDlZQkxDMnEzREF4YkFicTRI?=
+ =?utf-8?B?YkdLdUF1bFgxWkpVTitlZzJ4NVRpRlc4ZU1TZDNPWmtieG1LK1AzU0xyZnFW?=
+ =?utf-8?B?NkNZMW1jUHlrQTdFSU9pM24vNThOaU8yZGFTTFpSUzJPQUZ1bUYvU0VqZlB5?=
+ =?utf-8?B?bHFMZTdhQjdZcFJ5eDhPc3hzR3J1TjRCYzh0czJkOXh1RW9vRWxHbGNMUnIw?=
+ =?utf-8?B?UTEwSEdzOGc3WkRyOUoyM3ZMWUl1NkhpNkJlZ3RnMFJ5cXhFUkRqWHVtT1dS?=
+ =?utf-8?B?Mk1kQXdYbUxjUW1XKzV6ajJNMVBSbEYzZ1pRc3h2dDFMbEE3Tmt0bUo3aExW?=
+ =?utf-8?B?ODU2anc1VXNSand6UXhFNXp5QU5wdkRwWk5sRDhUNmd0S1d5YUx6WnBkc3ZL?=
+ =?utf-8?B?OVRJekFScGhLZFdBT3haZTRKbEZueEYxRFZvbVBVblJZOVVXTkdNcVR2cWpj?=
+ =?utf-8?B?bDBGS0Q2Q0JaMGNRN0hVaFBMM2lJeTlxMXdvUlBwV3lzSldKVjBOd3ZVMUR1?=
+ =?utf-8?B?eXVuTzk2WHBidmgzWkxmbTNNWHVwMkdsM0k1OTVWdENLNnVCNXo2RGZmTHQr?=
+ =?utf-8?B?WkJDU2FHMlRwYzNVQ2p0ZDNmL3kxRHpTcTJOT0dLeCs0d1ZqTlBTSWN1YlhQ?=
+ =?utf-8?Q?xSTxQ5T/+vK48aTXvZBeKR+7lvzAcVKTu3W+nNXvXDAo?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3383ffc7-e3ff-43fc-5edc-08de0d1e4d53
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 01:41:33.1928
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nPguYVO42tjKbBvaotm7coohfoU8ost5GHS702TdOzCW0FUkVFJkk38ThyxvxNkzEOZwrU4XXl55AFWDK5v5Aw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7213
 
-On Wed, 15 Oct 2025 10:44:19 -0700 Mina Almasry wrote:
-> I think what you're saying is what I was trying to say, but you said
-> it more eloquently and genetically correct. I'm not familiar with the
-> GRO packing you're referring to so. I just assumed the 'buffer sizes
-> actually posted to the NIC' are the 'buffer sizes we end up seeing in
-> the skb frags'.
+On Fri Oct 17, 2025 at 9:56 AM JST, Alistair Popple wrote:
+> On 2025-10-16 at 17:24 +1100, Alexandre Courbot <acourbot@nvidia.com> wro=
+te...
+>> On Mon Oct 13, 2025 at 3:20 PM JST, Alistair Popple wrote:
+>> > Adds bindings and an in-place initialiser for the GspSystemInfo struct=
+.
+>> >
+>> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>>=20
+>> I am getting a new unused warnings on this patch - we should either
+>> annotate or merge.
+>
+> Yeah there are quite a few unused warnings. They're a pain to deal with d=
+uring
+> patch revisions and rebasing/rewriting so I was waiting until all the com=
+ments
+> settled down before dealing with them as it's pretty tedious work adding =
+lint
+> statements in one patch and removing them in the next.
+>
+> As you say the easiest solution is just to merge patches, but that just p=
+romotes
+> larger patches. I wish we didn't have to make that trade off, but I guess=
+ if we
+> want clippy bisection to be clean we have to.
+>
+> I will probably just merge all the bindings into the patches that use the=
+m.
 
-I don't think that code path exists today, buffers posted are frags
-in the skb. But that's easily fixable.
-
-> I guess what I'm trying to say in a different way, is: there are lots
-> of buffer sizes in the rx path, AFAICT, at least:
->=20
-> 1. The size of the allocated netmems from the pp.
-> 2. The size of the buffers posted to the NIC (which will be different
-> from #1 if the page_pool_fragment_netmem or some other trick like
-> hns3).
-> 3. The size of the frags that end up in the skb (which will be
-> different from #2 for GRO/other things I don't fully understand).
->=20
-> ...and I'm not sure what rx-buf-len should actually configure. My
-> thinking is that it probably should configure #3, since that is what
-> the user cares about, I agree with that.
->=20
-> IIRC when I last looked at this a few weeks ago, I think as written
-> this patch series makes rx-buf-len actually configure #1.
-
-#1 or #2. #1 for otx2. For the RFC bnxt implementation they were
-equivalent. But hns3's reading would be that it's #2.
-
-=46rom user PoV neither #1 nor #2 is particularly meaningful.
-Assuming driver can fragment - #1 only configures memory accounting
-blocks. #2 configures buffers passed to the HW, but some HW can pack
-payloads into a single buf to save memory. Which means that if previous
-frame was small and ate some of a page, subsequent large frame of
-size M may not fit into a single buf of size X, even if M < X.
-
-So I think the full set of parameters we should define would be
-what you defined as #1 and #2. And on top of that we need some kind of
-min alignment enforcement. David Wei mentioned that one of his main use
-cases is ZC of a buffer which is then sent to storage, which has strict
-alignment requirements. And some NICs will internally fragment the
-page.. Maybe let's define the expected device behavior..
-
-Device models
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Assume we receive 2 5kB packets, "x" means bytes from first packet,
-"y" means bytes from the second packet.
-
-A. Basic-scatter
-----------------
-Packet uses one or more buffers, so 1:n mapping between packets and
-buffers.
-                       unused space
-                      v
- 1kB      [xx] [xx] [x ] [yy] [yy] [y ]
-16kB      [xxxxx            ] [yyyyy             ]
-
-B. Multi-packet
----------------
-The configurations above are still possible, but we can configure=20
-the device to place multiple packets in a large page:
-=20
-                 unused space
-                v
-16kB, 2kB [xxxxx |yyyyy |...] [..................]
-      ^
-      alignment / stride
-
-We can probably assume that this model always comes with alignment
-cause DMA'ing frames at odd offsets is a bad idea. And also note
-that packets smaller that alignment can get scattered to multiple
-bufs.
-
-C. Multi-packet HW-GRO
-----------------------
-For completeness, I guess. We need a third packet here. Assume x-packet
-and z-packet are from the same flow and GRO session, y-packet is not.
-(Good?) HW-GRO gives us out of order placement and hopefully in this
-case we do want to pack:
-
-16kB, 2kB [xxxxxzzzzz |.......] [xxxxx.............]
-                     ^
-      alignment / stride
-
-
-End of sidebar. I think / hope these are all practical buffer layouts
-we need to care about.
-
-
-What does user care about? Presumably three things:
- a) efficiency of memory use (larger pages =3D=3D more chance of low fill)
- b) max size of a buffer (larger buffer =3D fewer iovecs to pass around)
- c) alignment
-I don't think we can make these map 1:1 to any of the knobs we discussed
-at the start. (b) is really neither #1 (if driver fragments) nor #2 (if
-SW GRO can glue back together).
-
-We could simply let the user control #1 - basically user control
-overrides the places where driver would previously use PAGE_SIZE.
-I think this is what Stan suggested long ago as well.
-
-But I wonder if user still needs to know #2 (rx-buf-len) because
-practically speaking, setting page size >4x the size of rx-buf-len
-is likely a lot more fragmentation for little extra aggregation.. ?
-Tho, admittedly I think user only needs to know max-rx-buf-len
-not necessarily set it.
-
-The last knob is alignment / reuse. For allowing multiple packets in
-one buffer we probably need to distinguish these cases to cater to
-sufficiently clever adapters:
- - previous and next packets are from the same flow and
-   - within one GRO session
-   - previous had PSH set (or closed the GRO for another reason,
-     this is to allow realigning the buffer on GRO session close)
-  or
-   - the device doesn't know further distinctions / HW-GRO
- - previous and next are from different flows
-And the actions (for each case separately) are one of:
- - no reuse allowed (release buffer =3D -1?)
- - reuse but must align (align to =3D N)
- - reuse don't align (pack =3D 0)
-
-So to restate do we need:
- - "page order" control
- - max-rx-buf-len
- - 4 alignment knobs?
-
-Corner cases
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-I. Non-power of 2 buffer sizes
-------------------------------
-Looks like multiple devices are limited by width of length fields,
-making max buffer size something like 32kB - 1 or 64kB - 1.
-Should we allow applications to configure the buffer to=20
-
-    power of 2 - alignment=20
-
-? It will probably annoy the page pool code a bit. I guess for now
-we should just make sure that uAPI doesn't bake in the idea that
-buffers are always power of 2.
-
-II. Fractional page sizes
--------------------------
-If the HW has max-rx-buf-len of 16k or 32k, and PAGE_SIZE is 64k
-should we support hunking devmem/iouring into less than a PAGE_SIZE?
+Miguel's suggestion of adding a temporary, file-global `expect(unused)`
+directive would also work very well if you want to preserve the patch
+sequence.
 
