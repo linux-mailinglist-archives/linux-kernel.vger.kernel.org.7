@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-858096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A11BE8DEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDEABE915D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38F958530B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E461AA1FAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8661369967;
-	Fri, 17 Oct 2025 13:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DB136CDF6;
+	Fri, 17 Oct 2025 14:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SA02Nfsw"
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="B1tAqyXV"
+Received: from sonic316-54.consmr.mail.gq1.yahoo.com (sonic316-54.consmr.mail.gq1.yahoo.com [98.137.69.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1CB369960
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5A436CDE7
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760707880; cv=none; b=nmWXvCLoaM2s+Q8igmCOr/hEkmQ+0PSIfzAVdJ+o1HNMk5r9XanCpjIQTmNoa1ImdZo8PYG2raAxf+A5lIT6wI/Ir3q0rYCZ6f+AgkvGUhkSW5mw2aCVsIs/2yeitnYZnssvmppZkkLJkyiz6qBpuoQAZNjseHjTRZAnBM3CTgw=
+	t=1760709716; cv=none; b=IMzK7ySdfKLA1d1KBF887/gn3Y7YU4/LWxMhS1UZvkc4R9yvAhJRxOGf+8G0WY7dQlDxsA8HA2slHkr8zV4klteTabyQzbf07uwrPA9pSAq9lfTN+V1/8f1Ps/uyt/arQX9r0fMESE59kXgp27X8nyY5FCgzcNTKi8EP1Zx4GsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760707880; c=relaxed/simple;
-	bh=9J3gYQc0b7N83X4ObbdhI51mWDQfnawAW2aJ6+zSLLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n7P9bK/977963qUw+e8odH8/n4st7XeOwdtcmDj2hliBcOvGBWsu2G9wHW0a3NBdD+62JSG7JqR4UgbdJS6rRQSdi1EOku5BJdg955H9yt2FbLrnCx2B7++RpIoHruozbnsmn3MPUS45aP42sNg4cEK9tUpzwWt1J12M1Egiemk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SA02Nfsw; arc=none smtp.client-ip=74.125.224.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63e0dd765a0so1689401d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760707877; x=1761312677; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x2BAJwgG2rchT5766h6wzsoqRB39jvTToguWS8dkekE=;
-        b=SA02NfswANxqN5SHinNzq0BGAxKnuOy9Z4VXioXpuI0Nt1cb6bLuwPtpSWcEHHLFPg
-         rAWDW0Wwop/UiDg9pDlXIQAmW2Wl/d6sa0E9v4ElENlguII8JS/GndgMJx9GE/4fYO5g
-         BwR92f8Vb55sjZDO6SKiPQFQhugcYkM3gorhqInyGKIItj5p8AB1KOSMgRwfW7iAeMMH
-         VY+MnZEBp35PnNRm+S65dD3mk1YCrmAe8Li/nfowqm2fsv73TpMFyd5xF7XCi8Pc38HX
-         oq4Udr/+Mhe5cY7eKVoawCb8IjE0scPUNLrLHAYsb0W/1cMHVeyVWjiVzRLo8fAdrtqK
-         4BRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760707877; x=1761312677;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x2BAJwgG2rchT5766h6wzsoqRB39jvTToguWS8dkekE=;
-        b=cPlV7IKj9fA6QcgYNmHuchvxPBS2AifaXMqwtm21DNh48oXObXP4APFz+jEtE5y+JR
-         OD4rglINIq6kgiZvo28ehI7bOCxg9uWfsSZIuazzYgFirl/aZ5FlEUwbW/iu9/0CapAl
-         w4yAzR2HFKP33iJjnQ7CNpi7e5qdEdJMvmkRQZw4xPR/QbLiOzYXswsGUVX5sQAvBpeE
-         otjoSPiLC5oHAY2lQ+7Gni0pI3Nu41QS/87gxFRhU/XR5/KPiPBKFsa2/R/rGSb8pVlV
-         tTLRWzjDdu8OKydQVODLI81yKlva7fg2rGx99QPom4mHK9ZaqFLkZbESuZ6BhXdzpHWg
-         aQAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXF188t3C1KhlyD+lBOdqEZ3rGgaf4KJfuyhWne9TLWguTNLfV/ikY7ayz7QwL1FYGiw6QYgZnIC6kXN9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0vORjAof9xyykwmVELk4eV5mgOeDbTz7MoQrWV/YV2HaX8Pcp
-	k/Cw43vcx9fA3r4oAcuc4FLnQH9BjTPrWE4hKx4kobhS31Yes06SwydiSRINfPaaQjNdpz7gGd+
-	DhASFmzPgS2lvM2DxcLzmuFpjvUcd0QFwMDPlCn3hfg==
-X-Gm-Gg: ASbGnculiEsQnnd5iYM1NjW/VQbH5VFvphSt7P1V334Qnwz2FSlyd5odTsSvfHD/jD5
-	dqp43qAo7iIa6h69DWRM0pNuGPX4N4weImpk2lVzOQTBU7YvbHU5lqgCQMaTraSOVOQfm1dh22A
-	Yo2g8aVMGEdCu7S6X06/VWTRvNGj+zp7Bh/tB7T5y+hR090QeSjvz5oAmDdzVMRwehIe8r3r8Cu
-	CY/BYRxYBxus4dF9rkW2m6QFX2ijNGJEDIoXkxccZ0u52WMGuJ86b2qbO5sQQ==
-X-Google-Smtp-Source: AGHT+IG77y33qe+YSWiCuw+bGYaaF+09RYcnrxdmlGwlAWMUhZclurVy0LNRRN3kFjrGJM6cFb4D106JxZl8pArLwK8=
-X-Received: by 2002:a05:690c:31e:b0:782:9037:1491 with SMTP id
- 00721157ae682-7837780ba2dmr27683357b3.42.1760707877501; Fri, 17 Oct 2025
- 06:31:17 -0700 (PDT)
+	s=arc-20240116; t=1760709716; c=relaxed/simple;
+	bh=lRUWcpTWGYmqT2dWQv0TTLLEpP6zwqCTwDigPWa9O/0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc:
+	 References; b=Kb82OjzRvC0MPfYj7zTzejQ35XJ0qlzwA5R4hc2h3DGjIbxBnj6OLX+4oYojJ/TQ2iW66oOaOulziyC7RaP5HDyJbuD3EFCebHMGspY+D0lXwkSyfU0OVp2N5RfaGl6T7vVq5niuo3X5k3Q4MdTr/AzFVWriddCTzDnjJUxzwac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=B1tAqyXV; arc=none smtp.client-ip=98.137.69.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760709714; bh=EMa4KlUiE227lmZJYVcf84OPn7YPVxdmQXazQtbytCw=; h=From:Date:Subject:To:Cc:References:From:Subject:Reply-To; b=B1tAqyXVqK/Ot5Cposy538EU/489PE7jJ5jRb8lSByafpS0+4Azn74sol/O4XKFj1LHHkJ8CqiuXGw0pl024EwaoUXav4WIf//gt0G0Ut0y4jxmuBPlP7NujcsTnHmBUycJW7Nyr1NucxtT4pHOTrxnOjUjsXlMPGbxCYpAGdHE0at1aqd7NW7jJtQOvur+g5Dx2EeQmFb8uRTXLgOhKffdn4Oo331GebRyw+0rf1INTa2jKZtJaMgGkPrjs3MjpDzqBwJ8UEzHGvsflfsw6XE9GdFD72DqIg+WGzRIayNC13OncNCa7KEBQHfx1g9upmqvgbu77RzU0AmMRAa99cQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760709714; bh=AZkUwtjOwWuqwXKXNIL025q9a7kOEMJ6hmFH+sqmyiO=; h=X-Sonic-MF:From:Date:Subject:To:From:Subject; b=Ighaio6Aprv5qkHb7NHxCFD0lfebuaDrVSnmTP9vOEVeW4XFxjN0VGNQN5cI/KKySm/kNMWTUOQDq/nlT6HTxk1YNh3uLn49sXs+itA9ju3m3gsxgNs49Nyzd5jAdItOSP35WPPSSx9wdRB6lwdnwqZfRN0nYaelGx2BU09T4gQVVJKxsUKhHrYD4u/vIRokDb2ZRvuIioiqqv/LjiZCZeRqZ+kUD4qx16nSoGuBfHz9PUd4ZGcodoxfbqMcEjF/clJtvxlmMQLLzq4+RtUtj/bamAF7LDAYzNMMp5Dx5XO9bFlJ4ctijnULHhKiD9Xfs9VmNykWGjc6Q5azP2YzBg==
+X-YMail-OSG: 1qGCdhcVM1kMXAjtQZH.hVnxztwT8qEur40HHfLn0DU2ZPfVj.h4QwOXixQ0Dkg
+ Sff04oRaENTWyuGROP4RZ2TMIhZFBzIL8BoXBFQu86801LiL8MiD67GTcHf8Fl7XtZTIoPN9FvGT
+ 1G4nD9.JDimffc1A_P9XTG4XlTfDJDPyN8BGhxsIQh.KBPY96TtQv8KPj1ePPypizA4fUnsL9mvf
+ Dzgt3zts8HgeIUgN_5Pp8TG8pJl5jwsDvbxOzRKP4p5Y.PYrirgqihgCScF0Z5nrdpHit2Be5321
+ CoD1FH_8ZC2wDCD5yPSwwpaFi1JkANeAOW.3RZiWC7jCUtf_ZuuK4UgZzfnFggcMhn_jAvsyNUTi
+ pLPnGGtnj01NsF5jSJG1sOmmjG9b6bMRPa3N9b_ZY0KSTvxdPbT9KWouhYO7yZho698sdxpo_z_u
+ g27.wFKF_tCUS745qwpQLmeMZntwOg7PTgys.DISRd8iP9Y1fuukIw6d7JzDwalW.tj5T6GciIPr
+ oqmIkBnReFBzOZBuS0b7oX4GjV3pdSy4eAKa3U6X5OdvbiMipmtY_Pg9jBEB1ck1YteWXMHVwIy4
+ XUisweBcnnmEp5LB18X7PqX1cgrHP5bFS7_GDxERxtG2nOYIV.dmrvr03h3bZmK6bUFW.mD.pzWh
+ IPaxBpfev9swHOhvrbVTKmiO18YBFCFvXnLTSLsowP5E96Rwas5yR2AsB2fpWO21dRCi_pVJR512
+ o4f.9K3rOiyZLdZrNEvGvlovZ38hY6gLYG43tNIW8W_6b1bMhWTMKFanPJcoGGxgB2BovrFJxDxm
+ 8c4TLho6v42ZIkmB4Etif8bMpmHgEVW3hCzyO3GS9KpN8.Y73VdY6HLYh57ufy.cGKY1jjAp4hZV
+ niToRK1CUtYmb37zsPBU7zipkapppUKZ_3iVrVglX.UWOkNAPnq8u3E_PEFPYiIha4ag9_5gUcLT
+ p2l_RT6YMtrucuqvC2..fE9rNCsd2MiMZhx9VFDajOoVvdlVabjUBwfLIo1c8B5LEHvVfoUN1My0
+ Gxl9jkvXEKbyncmoKBb.GbxaOmar3uATK1NcF0EGwYu17byEARJoMZxnjJxNNHCScOaPoxeAazgt
+ gb_vNU8dGG_pysSu3OhpEW89gH0.dCOSgcJCg6EaEmrMdWjPrslJ12XqzCTPVQeyC.NwGwJWlsbA
+ 6HBtDXcilepxvmDY_yWUYagL7dQdusMyi50LRBQ_balFV6DiytiEqzRlhvnnemC_Zsj1Kx81IOQ1
+ h4asEDLXs_gp2ClLmYArKB5W7ZXUmAgCSfh1R06052q7x6rms9OvXD9p.SSyxLA637FDuj2W6gPI
+ OItXcBJSLpabtSZeJ27oDKO2LmkOjALgwGKsoKov_BQ3948kirRrTrQgUMNknGd49lr6_Eg_zUa5
+ zX1KPB7VpVxmMfFWNFvyKRv97pT4mz5SLi4RpSUNihmHGG80jZTqv5u4CRoc4UzBKkc8H4ks8S6k
+ u.85MWqa8BvdrkWh4WUfxROjNioNtaQaVLhB2njXdSesWfxkKevy_tJfNUNvvGJWgMqScRe1ydxO
+ 8SdkzSzU2ZRA5eb04ZhsTJ7aRc7uS7vdubygTO25T_DolRZPatnzEgbare0joUJg0weL6KtlT_c2
+ yFjDCq87Qx4AaVbU0_sbCoD8FOUw2hb8hBINhYOH0_lBwCiPHi1FF1FZFUzdGSvZHml2bFB8Dg_s
+ PjO0NcVlvEr4tpbX7IY_FrZL9nLEH0iSvItnIY3kZg47oj5izo_Y_JU2btrZGO3lsw3aIbhzQbOD
+ Rmi74.ExiHExdzFRy_5K91mAZEOkzrvT5OA5ryRy7SshATtl7aofH_bHGWh_.ohe_wFD9fK2KVGy
+ pVNnPzu4SAowqdHPfDPrD6e7hpW06GSaXKPKAq8BV0_eWrEXAQAtFUmfMge.zKcQ2Ia4dG33RHzD
+ pmkYwGmOB.Z3qfImOPs6PkpROmmjdgjgI5QnsN2wAwoJBeF445liGB4zTP4.sF.iYNeyl.oYUl10
+ kIOu.ex8PY2qgsrC7._UoXpzRRV53S0AFx_waCg1I.pvZuqpXHZKq7T_fZ5NME1V6YM46_GTL5Xw
+ lY1iggdfLcp28LkeL325Z8VWPIYUBvkjw9T6rOTC0nMAX8NvuVfKUcRRBo77.LXMisSeGqJWg5.7
+ 3jQvdHsFR7xOAnJ.4GVPDsRVyqoj1X0.x_AVMieRPX4U_fsRunzaUZIprJOMUkQmhkcWBn6VbaO1
+ 6_GN97Y4rqx7Z407Gh.Aewgg0q2GIGnIa_lJxQjMHy2H1UUHDgwVcpjQL_7sBrLIUMbBpriiykRl
+ oMrkS4vPHkj5yw_y8eWAqjJzOq.wV
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 65cd7e36-a227-4486-9003-3fe66f46082e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 17 Oct 2025 14:01:54 +0000
+Received: by hermes--production-ir2-cdb597784-5nnrf (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1c6a6a081dbc139ec1a9e765da42c59c;
+          Fri, 17 Oct 2025 13:31:29 +0000 (UTC)
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Date: Fri, 17 Oct 2025 14:30:45 +0100
+Subject: [PATCH] net: unix: clarify BSD behavior comment in
+ unix_release_sock()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010133856.13167-1-johan@kernel.org>
-In-Reply-To: <20251010133856.13167-1-johan@kernel.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 17 Oct 2025 15:30:41 +0200
-X-Gm-Features: AS18NWAoXkFnAoP3lqA8ems1jp1Az55C_wUWwzdzNqFgVrU5xVeCIfkHfuYkqhQ
-Message-ID: <CAPDyKFoSCjPA8SfNuUtMfGwsyS65-qoQ=Mf3g95TLx3pnuk8FA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: wmt-sdmmc: fix compile test default
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mikko Rapeli <mikko.rapeli@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251017-fix-fix-me-v1-1-8c509d7122ed@yahoo.com>
+X-B4-Tracking: v=1; b=H4sIAARF8mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0Nz3bTMCjDOTdU1tUwyNrNMS0tOSzJVAmooKEoFyoANi46trQUAWPH
+ BCVwAAAA=
+X-Change-ID: 20251017-fix-fix-me-59b369ffcfb5
+To: Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+X-Mailer: b4 0.14.3
+References: <20251017-fix-fix-me-v1-1-8c509d7122ed.ref@yahoo.com>
 
-On Fri, 10 Oct 2025 at 15:40, Johan Hovold <johan@kernel.org> wrote:
->
-> Enabling compile testing should not enable every individual driver (we
-> have "allyesconfig" for that).
->
-> Fixes: 7cd8db0fb0b2 ("mmc: add COMPILE_TEST to multiple drivers")
-> Cc: Mikko Rapeli <mikko.rapeli@linaro.org>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+The long-standing comment in unix_release_sock() mentioned a "FIXME" about
+BSD sending ECONNRESET to connected sockets upon closure, while Linux waits
+for the last reference. This behavior has existed since early UNIX socket
+implementations and is intentional.
 
-Applied for fixes, thanks!
+Update the comment to clarify that this is a deliberate design difference,
+not a pending fix, and remove the outdated FIXME marker.
 
-Kind regards
-Uffe
+Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+---
+ net/unix/af_unix.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 768098dec231..c21230a69f42 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -734,14 +734,13 @@ static void unix_release_sock(struct sock *sk, int embrion)
+ 	/* ---- Socket is dead now and most probably destroyed ---- */
+ 
+ 	/*
+-	 * Fixme: BSD difference: In BSD all sockets connected to us get
+-	 *	  ECONNRESET and we die on the spot. In Linux we behave
+-	 *	  like files and pipes do and wait for the last
+-	 *	  dereference.
++	 * Note: BSD sends ECONNREST to all sockets connected to a closing peer
++	 * and terminates immediately. Linux, however, intentionally behaves more
++	 * like pipes - waiting for the final dereference before destruction.
+ 	 *
+-	 * Can't we simply set sock->err?
+-	 *
+-	 *	  What the above comment does talk about? --ANK(980817)
++	 * This behaviour is by design and aligns with Linux's file semantics.
++	 * Historical note: this difference from BSD has been present since the
++	 * early UNIX socket implementation and is not considered a bug.
+ 	 */
+ 
+ 	if (READ_ONCE(unix_tot_inflight))
 
-> ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 2c963cb6724b..10d0ef58ef49 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -950,7 +950,7 @@ config MMC_USHC
->  config MMC_WMT
->         tristate "Wondermedia SD/MMC Host Controller support"
->         depends on ARCH_VT8500 || COMPILE_TEST
-> -       default y
-> +       default ARCH_VT8500
->         help
->           This selects support for the SD/MMC Host Controller on
->           Wondermedia WM8505/WM8650 based SoCs.
-> --
-> 2.49.1
->
+---
+base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
+change-id: 20251017-fix-fix-me-59b369ffcfb5
+
+Best regards,
+-- 
+Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+
 
