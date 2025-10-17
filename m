@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-857497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7B2BE6F60
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D55FBE6F5C
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B14B1562028
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:37:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DDA1B35A7B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8168D23A98E;
-	Fri, 17 Oct 2025 07:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28A7239E65;
+	Fri, 17 Oct 2025 07:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBrnVN+G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vv2SXQAh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B5239E65
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D30322C339
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760686647; cv=none; b=EWcj5hSRFH8TN0FxcD9XR7ibCFN9QyQ1Ge9ev9cWq7jWT1FM2zVC9JdXL5UcincYE2h+FiQ29VC3rIJSSP9mgduoIAe05wWYIx6qGnSn2lph/1VXqjbhd+IlvSG5BFYuBl/9z8ova5MOuJXT07gmdb/Z/GPeijnCoUfvqvu0dIM=
+	t=1760686703; cv=none; b=BdQDSCNu54HkZzpevzkKG/a6by18MUpniXE7+HDUUGpugDJWOvtRqSGpU4AtscQMLtLQ4EXuy2qJVyt1yPtQTCYp3io6lKB1MDZjDw+DLkE+IkMQCDNc00y5Fpf7MTqSP5RNYpQf2sLeb0kGy6jHJou2bk7wvcJH/rExQeGE0AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760686647; c=relaxed/simple;
-	bh=dBK7cPC9iAHNs3jlccSM11qLIpnf+7WOuhUQ8BMgHQs=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=f5MIzXuRa0B/AIR8DByq4QvDKQT71mJ6hNW8ssPaUMcUd/YwBsykhIuMSv+IlZRVa5HC3OwK87jqmjJwDV+D5XLlNiyxEdgF+BPaPZ7IRxRdFuJs1Pz1GsThTEJsxWLUW43HD/4gi3+gY1S0edVx+92LY38BU4qtQZ+VkJps8uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBrnVN+G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AF2C4CEFE;
-	Fri, 17 Oct 2025 07:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760686647;
-	bh=dBK7cPC9iAHNs3jlccSM11qLIpnf+7WOuhUQ8BMgHQs=;
-	h=Date:From:To:cc:Subject:From;
-	b=LBrnVN+Gd6VvuVc6t6TIPDtQ4Sp0ej1culVBROwY7WjRDE9wsJoYKHzEo6PoUrcry
-	 pQKR1IvYWJWSle5t10+itRAKZ3C0Z25YJzQmplbh2ERno/She+H87eQCgZWux0BEst
-	 Q2XtNO3K8HxNm48vLcyIUVhqrjN0ya3WRbZMVK00a3W02NCh5+FTQgm68ra7StjTAE
-	 5eViJzh3/xHw+xOcu8lhnVFP0dVtcdUTZNVZyGqW/LYeJoB7oJvBaZJL3BRzzKpt9k
-	 u5+73XmXDZ563R689OZ8P26ToB8591LoS3cmolkyEWGKllTiF0RJ4EkYWv5wVDwps9
-	 EzhFf4n4VKiMA==
-Date: Fri, 17 Oct 2025 01:37:24 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: torvalds@linux-foundation.org
-cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V updates for v6.18-rc2
-Message-ID: <f21ca0d7-dd9f-3dc9-34ca-c1444702370a@kernel.org>
+	s=arc-20240116; t=1760686703; c=relaxed/simple;
+	bh=1xR3x2p3tXsNA4DvviIFatm78+RRJrSmhV0Vasqy5JI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J6aakH5aS35zZEOXWSSCzzy2lc6snQRRLjZ9vR3enCTg5bCSk5j+2CJjcgyK3E2gWW6HESmoU2ZyqlxY7fyUI6wfc5PPhLZia9D9QT5atoB81fqhl73vajQqYvR5ItS6vjfbpPLHcq5BbZwEslH7ZeVSSLWO8iNrNS+ClXbMGMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vv2SXQAh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760686699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vwE3xOWvcSpkeyeMXo0ARX5UbAfzECMBwVn6tM+Q/Ds=;
+	b=Vv2SXQAh8WzdqnakWbCRJ2mHMwkCFRtd6z1/w+DurUvfrESFROMcYkw1q6f6n1HpJYkdQo
+	sm1qtFCVr99CYt35v9v7N8Mz8qAZhpDYpeQz8T0T5wCtI+3bBt0rSIoxtGkAwwHtWX4wrk
+	/ICNHT0LfepYGfgeOmgPKJM+BtgyaLU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-18-7GbW2nOQPy2HSDujM8ermQ-1; Fri, 17 Oct 2025 03:38:17 -0400
+X-MC-Unique: 7GbW2nOQPy2HSDujM8ermQ-1
+X-Mimecast-MFC-AGG-ID: 7GbW2nOQPy2HSDujM8ermQ_1760686697
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b5fcada9d24so211187466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:38:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760686697; x=1761291497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vwE3xOWvcSpkeyeMXo0ARX5UbAfzECMBwVn6tM+Q/Ds=;
+        b=SZcz546MUlbZHz0WqRXW/EXjrIBhf+Igt0426fWymaUw8ZQWqOGRBzX2qOiDTsRjVZ
+         Op0xA/w6hiWJlRAafpQxyrwnazUHOJ92BHGOjJ6eT+j7ebQX/NtIwBc07OrKSGf/+LMB
+         SAwuRlsgNjJYPh3ou2nNBaGkLop5/dzjgb54sTxmQLizV0u2bDPsi2ZDLQIHx8BzbFoZ
+         rBA/UjecOt/vZv1vUFRHhu3SSkmX28R2i5otsR4EthmbxyEkK315bDR/UqB4qAZgMVB1
+         FmCnJFf7nBx1UBS/vmDgNJOEP3wK6NWGuldD5ztFl+Re/BSmmmpAf27ztLjneUHW4dQD
+         UpCw==
+X-Gm-Message-State: AOJu0Ywtbr4gXRQPJBisvGs1FiE66dFDKf4bLafqJ7pZKPe4A/PGFJrC
+	o2CrZtQLWG3jOD5H4/bQDEkpIyN1mwm2vARUU+iCW3cbdEkzEy39yXq3oH7WMGRz8ff/mr0ZV7b
+	2AfK4oxFHqPibPxJgAqmpmSfAgx6Ajt9AalutQAv3gpmZkl/wPOK0juc98OXH7rgEOxrMX3O+zH
+	gzegl+aEVwc9mOQnR8p0vFN3uoeAno4XKTv0HJYaKR
+X-Gm-Gg: ASbGnct4zS6INpQM2QdA16kKF+qNTJxq+3kPdDxAy8v+2IBNGG2JpQmf7c5j8aHf5le
+	7OgZb0vJ9DyXX2PQuJFLdudeCdDcGgGrmINzqDhxzbao6JT1a7D+pAn78uFIiMuEZDZQckW3Qdq
+	6JMTQFV/ORgCKDThvwal2KbAKut1DDiU72aroqbAzGDZqdi0xml3D8L17vDx5UJ94IhXTm2tSWB
+	WENgyTqM6lO8Q==
+X-Received: by 2002:a17:907:9691:b0:b64:6776:1ee2 with SMTP id a640c23a62f3a-b6473f42d78mr267631866b.52.1760686696655;
+        Fri, 17 Oct 2025 00:38:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETvQK8H1/2i5HNhE2R8KrdEFfqmdiqiQ1Yyb8MzQowPWJTSEJRTSXf97XI37+HGFw6Cuuibf+3ZWnRVCFNtKw=
+X-Received: by 2002:a17:907:9691:b0:b64:6776:1ee2 with SMTP id
+ a640c23a62f3a-b6473f42d78mr267629266b.52.1760686696193; Fri, 17 Oct 2025
+ 00:38:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-1986118873-1760686615=:2568925"
-Content-ID: <780db4b4-8477-116f-ab35-9f9db1c1abcd@kernel.org>
+References: <20251007095341.186923-1-tglozar@redhat.com>
+In-Reply-To: <20251007095341.186923-1-tglozar@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Fri, 17 Oct 2025 09:38:04 +0200
+X-Gm-Features: AS18NWBD9D8J6fwp3TFhCJma1f647xufvtF8gv38JqAH5X5RFzQIY04cHnhavb8
+Message-ID: <CAP4=nvSmJOdoO8q125sdzvR7ix1oVsNobSRtWb7ADUADdzEPiw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] tools/rtla: Fix --on-threshold always triggering
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, 
+	Luis Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>, 
+	Crystal Wood <crwood@redhat.com>, Wander Lairson Costa <wander@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Steven,
 
---8323329-1986118873-1760686615=:2568925
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <ba9789f0-4c79-f1c3-ad3a-3b198d8dd505@kernel.org>
+=C3=BAt 7. 10. 2025 v 11:53 odes=C3=ADlatel Tomas Glozar <tglozar@redhat.co=
+m> napsal:
+>
+> Commit 8d933d5c89e8 ("rtla/timerlat: Add continue action") moved the
+> code performing on-threshold actions (enabled through --on-threshold
+> option) to inside the RTLA main loop.
+>
+> The condition in the loop does not check whether the threshold was
+> actually exceeded or if stop tracing was requested by the user through
+> SIGINT or duration. This leads to a bug where on-threshold actions are
+> always performed, even when the threshold was not hit.
+>
+> (BPF mode is not affected, since it uses a different condition in the
+> while loop.)
+>
+> Add a condition that checks for !stop_tracing before executing the
+> actions. Also, fix incorrect brackets in hist_main_loop to match the
+> semantics of top_main_loop.
+>
+> Fixes: 8d933d5c89e8 ("rtla/timerlat: Add continue action")
+> Fixes: 2f3172f9dd58 ("tools/rtla: Consolidate code between osnoise/timerl=
+at and hist/top")
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> Reviewed-by: Crystal Wood <crwood@redhat.com>
+> ---
+> v2:
+> - add one more patch fixing a bug noticed by Crystal in context of
+> the following one (doing v2 just to avoid conflicts, the first two
+> patches were not changed)
+>
+>  tools/tracing/rtla/src/common.c | 24 +++++++++++++++---------
+>  1 file changed, 15 insertions(+), 9 deletions(-)
+>
 
-Linus,
+It seems that this patchset containing fixes for recently merged RTLA
+code consolidation [1] has no further comments. Could you take it?
+(Unless you have any comments, of course.)
 
-The following changes since commit 5472d60c129f75282d94ae5ad072ee6dfb7c7246:
+[1] https://lore.kernel.org/linux-trace-kernel/20250907022325.243930-1-crwo=
+od@redhat.com/T/
 
-  Merge tag 'trace-v6.18-2' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace (2025-10-09 12:18:22 -0700)
+Thanks,
+Tomas
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linux-6.18-rc2
-
-for you to fetch changes up to 852947be66b826c3d0ba328e19a3559fdf7ac726:
-
-  riscv: kprobes: convert one final __ASSEMBLY__ to __ASSEMBLER__ (2025-10-10 16:04:25 -0600)
-
-----------------------------------------------------------------
-RISC-V updates for v6.18-rc2
-
-Some RISC-V fixes for v6.18-rc2, including changes to:
-
-- Disable CFI with Rust for any platform other than x86 and ARM64
-
-- Keep task mm_cpumasks up-to-date to avoid triggering M-mode firmware
-  warnings if the kernel tries to send an IPI to an offline CPU
-
-- Improve kprobe address validation performance and avoid desyncs
-  (following x86)
-
-- Avoid duplicate device probes by avoiding DT hardware probing when
-  ACPI is enabled in early boot
-
-- Use the correct set of dependencies for CONFIG_ARCH_HAS_ELF_CORE_EFLAGS,
-  avoiding an allnoconfig warning
-
-- Fix a few other minor issues
-
-----------------------------------------------------------------
-Conor Dooley (1):
-      rust: cfi: only 64-bit arm and x86 support CFI_CLANG
-
-Danil Skrebenkov (1):
-      RISC-V: clear hot-unplugged cores from all task mm_cpumasks to avoid rfence errors
-
-Fabian Vogt (1):
-      riscv: kprobes: Fix probe address validation
-
-Florian Schmaus (1):
-      riscv: entry: fix typo in comment 'instruciton' -> 'instruction'
-
-Han Gao (1):
-      riscv: acpi: avoid errors caused by probing DT devices when ACPI is used
-
-Miquel SabatÈ Sol‡ (1):
-      riscv: kgdb: Ensure that BUFMAX > NUMREGBYTES
-
-Paul Walmsley (1):
-      riscv: kprobes: convert one final __ASSEMBLY__ to __ASSEMBLER__
-
-Thomas Weiﬂschuh (1):
-      riscv: Respect dependencies of ARCH_HAS_ELF_CORE_EFLAGS
-
- arch/Kconfig                                   |  1 +
- arch/riscv/Kconfig                             |  2 +-
- arch/riscv/include/asm/kgdb.h                  |  9 +++++++--
- arch/riscv/kernel/cpu-hotplug.c                |  1 +
- arch/riscv/kernel/entry.S                      |  2 +-
- arch/riscv/kernel/probes/kprobes.c             | 13 +++++++++----
- arch/riscv/kernel/setup.c                      |  7 +++++--
- arch/riscv/kernel/tests/kprobes/test-kprobes.h |  4 ++--
- 8 files changed, 27 insertions(+), 12 deletions(-)
-
-text data bss dec hex filename           
-  +8    .   .  +8  +8 vmlinux.rv64       
-  +4    .   .  +4  +4 vmlinux.rv64_nosmp 
-   .    .   .   .   . vmlinux.rv32       
-   .    .   .   .   . vmlinux.rv32_nosmp 
-   .    .   .   .   . vmlinux.nommu_virt 
-   .    .   .   .   . vmlinux.allnoconfig
-   x    x   x   x   x vmlinux.allmodconfig
---8323329-1986118873-1760686615=:2568925--
 
