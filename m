@@ -1,66 +1,72 @@
-Return-Path: <linux-kernel+bounces-857624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59376BE749C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D978BE74A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A756F5643EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:50:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8665622A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79DF2C3774;
-	Fri, 17 Oct 2025 08:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07CB2C21E1;
+	Fri, 17 Oct 2025 08:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iwe0TBnp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="JDSc3UiG"
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DB726F292;
-	Fri, 17 Oct 2025 08:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D705826F44C;
+	Fri, 17 Oct 2025 08:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690901; cv=none; b=ZwSLv+7oOJk99a7uR8zJsKVFrknOW4QGs/Vauuo7YGP8GpkGwGC+38VA13cXQ7/hgbegOrmAwtqgL4MAAw4PRopmIzDJpSns9dewcAJ9AVrLDmx9RWY8R2/7UhFFyeZ9ZSu2TTUACvpTC1UFsjOzmhHQ4MpcYsEh0TzMVocxLck=
+	t=1760690999; cv=none; b=mev1GDnfu18DWFfdhd8w1J+oDlCGudHSBelodcS3oXHxn9S98ig2z1h7EAmtkNsBG+VQV75bYA1xD4t+AgvyaqPsMnwqyHMdoMHwo/pNKlay8Uq4QrzdpDlvZ0oaLOBxW79akv5WgKFhDsVSQK6FSJoB6zORvHr2enyf5kgQPTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690901; c=relaxed/simple;
-	bh=RVkyfa65ji+iVeG5m+BwMXCO2f+xUvygzZyer4ipAO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MbAsEUAz8rNCrZDxNARqHw3U+f1LrZ+QvsxJ54x4Y0+Nma0vQukcO7Y0fuQhPAAmgtjCtWPV4OTLZ0GLow7kLiA/rKPahB7PgCfY1dtOwPBJK/IHuqh2N7hR0p5nOWJ4Au+C0mFyZi+WvSA4OOygjyi0bzBm47LnnGebpyo7ldA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iwe0TBnp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC231C4CEE7;
-	Fri, 17 Oct 2025 08:48:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760690900;
-	bh=RVkyfa65ji+iVeG5m+BwMXCO2f+xUvygzZyer4ipAO8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Iwe0TBnpFzClt9Y20jsB2ePw+lmYNVEtgobf2uCd312bcIBSiTLvmqB/vK58wjCg7
-	 Br8cEfkG6bbncGNfesJ5W91OmPOwRWmFvs04zN7PSjoqrvJsqXTJukcFan1g4IwhEZ
-	 jidHTOVTykUEe5TYltVzRTC07oxAsXm7vVk05eo84HxModSdqO8TrNr7gvz6P7u2aO
-	 CWEWQcvakcB4jIyvWtlrvBPrlZoCU6xTminoCCqSqphTFH83rFesouhB9DODt1Hfim
-	 MYc/Kiq60SPXBrXU49Wte2OqeH9t0bIvd2nCiOJbqo+q1QnpNuopvT2nlhWkgCE0BI
-	 BYIJrfhLwtHvQ==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [PATCH v3 5/5] irqchip/gic-its: Rework platform MSI deviceID detection
-Date: Fri, 17 Oct 2025 10:47:52 +0200
-Message-ID: <20251017084752.1590264-6-lpieralisi@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251017084752.1590264-1-lpieralisi@kernel.org>
-References: <20251017084752.1590264-1-lpieralisi@kernel.org>
+	s=arc-20240116; t=1760690999; c=relaxed/simple;
+	bh=Jh8KxGa426q94Ijq8kI+AebY3xfvGryjfcUsyjuRlsc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z9BmZmGZdle9dqsMM18h0hw4+ARG2NFEagZFUVQv7TwCfmFaS9DJ5h2YCe4qXtKS+X/j2WGwyGtqxni+XwJsrTyUH0dzswF4vDRTxGjHi6V3FluXM1sgGUzsKPzLwInF+W8ccF0RQv9/MFphxJvDvuCqRJ4YRfS+nHYsoiQeIPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=JDSc3UiG; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59H5e2lA3490858;
+	Fri, 17 Oct 2025 08:49:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=ug/2E/nD8chEPuYG/rbfdQvE+iVPQsZrIDwrtFEgKN0=; b=
+	JDSc3UiGhrkQqvSNu3Uhe0L9YaiQpg3Zhut8rer1V32E9LqpDvWrvjtXe+bjfJ5X
+	cBL8GPY69nI2uOuaBNB/xqbzagFKzU1cdT9ygT8Z3BEySCcZEHgPRWgqu7Erspu4
+	ElLCAiW5cRJ/bOOWhNNZT7Aljq+iuvqhjNH/V6Rc8XUBnMO2By3Sq0JMnrxV3XqI
+	QO/igX2tu8hdaAc41K90nXgpqagL3xpzaPaF/oaqqNNE1p2AvphYpI/Mni7zm/HO
+	at8ccfbJQCve0xUe9p91304+xccCQzCRQ+bG26h5vNzY9jTMsZH3Z8GuiOmNcf9Q
+	podJlDrPFDK4PAWhio5kjA==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49qcewqes7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 17 Oct 2025 08:49:23 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Fri, 17 Oct 2025 01:49:22 -0700
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Fri, 17 Oct 2025 01:49:18 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <samsun1006219@gmail.com>
+CC: <ahmed.zaki@intel.com>, <aleksander.lobakin@intel.com>,
+        <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+        <kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>, <sdf@fomichev.me>,
+        <syzkaller-bugs@googlegroups.com>, <syzkaller@googlegroups.com>
+Subject: [PATCH] usbnet: Prevents free active kevent
+Date: Fri, 17 Oct 2025 16:49:18 +0800
+Message-ID: <20251017084918.3637324-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAEkJfYPrHq1H9DfVPBKGqp5jZVhsfWZBccdFY+rvP9nS02SBxQ@mail.gmail.com>
+References: <CAEkJfYPrHq1H9DfVPBKGqp5jZVhsfWZBccdFY+rvP9nS02SBxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,158 +74,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: WkuLmktTWkjMtdxUZTbpFyOtiZaigocC
+X-Proofpoint-ORIG-GUID: WkuLmktTWkjMtdxUZTbpFyOtiZaigocC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDA2NSBTYWx0ZWRfX4nyFtCdF2pyG
+ JGof/8N7kqL6p3PCHAq+vgHMmbqBg+qwhHeKRtUSiU6iJaaRJ87uqmZ6818ce3PD6XQh9y9YzGE
+ JEH3NSXxR6vFnpXcreJMWuZitku6SU24poKtZw8Mgm0owEywBqk1TQZU5q5BHqK7/kqS5JO49Yy
+ KyGkeVxDQ/whnyQG/JHT7jJmwSdfVoNvU5/AE2t/YmGGQEo+JdR5yKPkwTzkV0Ckhs9NzR/05+k
+ vi60AFIJKMWkAnOT/7Ekp2OXaN9v6aG2U2SvHmPfCrgQsGYrihgZI9WPBXu78QF9B7aQJfb97RF
+ tF9CdDt2/6Qw9IB2ZFyUJMmDE0Ays1oKrcLGUts+E+8lNMYiGhqDPDk0USwp01X2sk9WxqzPKuI
+ QMncqChWet6neAFKvAgMjKhvVMeTDQ==
+X-Authority-Analysis: v=2.4 cv=M+xA6iws c=1 sm=1 tr=0 ts=68f20313 cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=pGLkceISAAAA:8
+ a=t7CeM3EgAAAA:8 a=uWKex4Jl0yNLDR3AargA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=FdTzh2GWekK77mhwV6Dw:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510170065
 
-Current code retrieving platform devices MSI devID in the GIC ITS MSI
-parent helpers suffers from some minor issues:
+The root cause of this issue are:
+1. When probing the usbnet device, executing usbnet_link_change(dev, 0, 0);
+places the kevent in the waitqueue. However, the kevent has not yet been
+scheduled when the usbnet device is unregistered. Therefore, executing
+free_netdev() results in the "free active object (kevent)" error reported
+here.
 
-- It leaks a struct device_node reference
-- It is duplicated between GICv3 and GICv5 for no good reason
-- It does not use the OF phandle iterator code that simplifies
-  the msi-parent property parsing
+2. Another factor is that when calling usbnet_disconnect()->unregister_netdev(),
+if the usbnet device is up, ndo_stop() is executed to cancel the kevent.
+However, because the device is not up, ndo_stop() is not executed.
 
-Consolidate GIC v3 and v5 deviceID retrieval in a function that addresses
-the full set of issues in one go by merging GIC v3 and v5 code and
-converting the msi-parent parsing loop to the more modern OF phandle
-iterator API, fixing the struct device_node reference leak in the process.
+The solution to this problem is to cancel the kevent before executing
+free_netdev(), which also deletes the delay timer.
 
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Sascha Bischoff <sascha.bischoff@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>
-Cc: Marc Zyngier <maz@kernel.org>
+Reported-by: Sam Sun <samsun1006219@gmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=8bfd7bcc98f7300afb84
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
- drivers/irqchip/irq-gic-its-msi-parent.c | 91 ++++++------------------
- 1 file changed, 23 insertions(+), 68 deletions(-)
+ drivers/net/usb/usbnet.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/irqchip/irq-gic-its-msi-parent.c b/drivers/irqchip/irq-gic-its-msi-parent.c
-index eb1473f1448a..12f45228c867 100644
---- a/drivers/irqchip/irq-gic-its-msi-parent.c
-+++ b/drivers/irqchip/irq-gic-its-msi-parent.c
-@@ -142,83 +142,38 @@ static int its_v5_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
- #define its_v5_pci_msi_prepare	NULL
- #endif /* !CONFIG_PCI_MSI */
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index bf01f2728531..f0294f0e6612 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1672,6 +1672,9 @@ void usbnet_disconnect (struct usb_interface *intf)
+ 	usb_free_urb(dev->interrupt);
+ 	kfree(dev->padding_pkt);
  
--static int of_pmsi_get_dev_id(struct irq_domain *domain, struct device *dev,
--				  u32 *dev_id)
-+static int of_pmsi_get_msi_info(struct irq_domain *domain, struct device *dev, u32 *dev_id,
-+				phys_addr_t *pa)
- {
--	int ret, index = 0;
-+	struct of_phandle_iterator it;
-+	int ret;
- 
- 	/* Suck the DeviceID out of the msi-parent property */
--	do {
--		struct of_phandle_args args;
-+	of_for_each_phandle(&it, ret, dev->of_node, "msi-parent", "#msi-cells", -1) {
-+		/* GICv5 ITS domain matches the MSI controller node parent */
-+		struct device_node *np __free(device_node) = pa ? of_get_parent(it.node)
-+								: of_node_get(it.node);
- 
--		ret = of_parse_phandle_with_args(dev->of_node,
--						 "msi-parent", "#msi-cells",
--						 index, &args);
--		if (args.np == irq_domain_get_of_node(domain)) {
--			if (WARN_ON(args.args_count != 1))
--				return -EINVAL;
--			*dev_id = args.args[0];
--			break;
--		}
--		index++;
--	} while (!ret);
-+		if (np == irq_domain_get_of_node(domain)) {
-+			u32 args;
- 
--	if (ret) {
--		struct device_node *np = NULL;
-+			if (WARN_ON(of_phandle_iterator_args(&it, &args, 1) != 1))
-+				ret = -EINVAL;
- 
--		ret = of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &np, dev_id);
--		if (np)
--			of_node_put(np);
--	}
-+			if (!ret && pa)
-+				ret = its_translate_frame_address(it.node, pa);
- 
--	return ret;
--}
-+			if (!ret)
-+				*dev_id = args;
- 
--static int of_v5_pmsi_get_msi_info(struct irq_domain *domain, struct device *dev,
--				   u32 *dev_id, phys_addr_t *pa)
--{
--	int ret, index = 0;
--	/*
--	 * Retrieve the DeviceID and the ITS translate frame node pointer
--	 * out of the msi-parent property.
--	 */
--	do {
--		struct of_phandle_args args;
--
--		ret = of_parse_phandle_with_args(dev->of_node,
--						 "msi-parent", "#msi-cells",
--						 index, &args);
--		if (ret)
--			break;
--		/*
--		 * The IRQ domain fwnode is the msi controller parent
--		 * in GICv5 (where the msi controller nodes are the
--		 * ITS translate frames).
--		 */
--		if (args.np->parent == irq_domain_get_of_node(domain)) {
--			if (WARN_ON(args.args_count != 1))
--				return -EINVAL;
--			*dev_id = args.args[0];
--
--			ret = its_translate_frame_address(args.np, pa);
--			if (ret)
--				return -ENODEV;
--			break;
--		}
--		index++;
--	} while (!ret);
--
--	if (ret) {
--		struct device_node *np = NULL;
--
--		ret = of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &np, dev_id);
--		if (np) {
--			ret = its_translate_frame_address(np, pa);
--			of_node_put(np);
-+			of_node_put(it.node);
-+			return ret;
- 		}
- 	}
- 
--	return ret;
-+	struct device_node *msi_ctrl __free(device_node) = NULL;
++	cancel_work_sync(&dev->kevent);
++	timer_delete_sync(&dev->delay);
 +
-+	return of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &msi_ctrl, dev_id);
+ 	free_netdev(net);
  }
- 
- int __weak iort_pmsi_get_dev_id(struct device *dev, u32 *dev_id)
-@@ -234,7 +189,7 @@ static int its_pmsi_prepare(struct irq_domain *domain, struct device *dev,
- 	int ret;
- 
- 	if (dev->of_node)
--		ret = of_pmsi_get_dev_id(domain->parent, dev, &dev_id);
-+		ret = of_pmsi_get_msi_info(domain->parent, dev, &dev_id, NULL);
- 	else
- 		ret = iort_pmsi_get_dev_id(dev, &dev_id);
- 	if (ret)
-@@ -262,7 +217,7 @@ static int its_v5_pmsi_prepare(struct irq_domain *domain, struct device *dev,
- 	if (!dev->of_node)
- 		return -ENODEV;
- 
--	ret = of_v5_pmsi_get_msi_info(domain->parent, dev, &dev_id, &pa);
-+	ret = of_pmsi_get_msi_info(domain->parent, dev, &dev_id, &pa);
- 	if (ret)
- 		return ret;
- 
+ EXPORT_SYMBOL_GPL(usbnet_disconnect);
 -- 
-2.50.1
+2.43.0
 
 
