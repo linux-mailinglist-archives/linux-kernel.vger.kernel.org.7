@@ -1,325 +1,385 @@
-Return-Path: <linux-kernel+bounces-858225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042E5BE9536
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5669DBE954F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7C5F035BDC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591584231AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1FB3328E6;
-	Fri, 17 Oct 2025 14:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F379232E142;
+	Fri, 17 Oct 2025 14:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J9VrrRU/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w/OoGnv5"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0413328E5
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C19633290A
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760712471; cv=none; b=Y2RwC+Zf1TRas4HERVbFkiMfq1unXy0PQNkIzY4hC/HlSYloGmou4ZIXJUWZtPjPDPSqAJi8/X7uXDIORXKHjguQeAjOGmv8Zy9+Ocz4gLPnwgNmYxPeAixTSzmDKYRE+uqefY+f9neO2/00BUpJciSWs5UKEKVBmmkfsFHZdMI=
+	t=1760712481; cv=none; b=AMc1pov32I1iWTosJxb7gRrV/DKdurcEeJ8Y94gEaW20Ud6Vr8lvXZ/bhB1Z8+bk7v9/WCXqbnP037R4QiLRCYdEYMS/ZvmPXBXMjTKdHnpetzvnoR4m0ZgOVgA6ib1IkzrxRreFolwZ3PpKTtmxnBnvPOg9M6ucvxWJ/Gg9wHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760712471; c=relaxed/simple;
-	bh=DiyVdXABTrVQ08Fd2LFM1CVCN+GGwKGDZECsTWV1E3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBORkb8FiNBD2NPFlnoR3ryP1Ebz3dLPUov2Mj0/OjaC0DDWaSC70UFqVHm6s32Ibo1D+cUGtWnq4WjwnKc6AKO47NNu5/RfZSjwbH01Ac5KoMrRW7VUhvq99Latap5UK4v0SbQ+yepyg4UVn1dP8BCsr1v1RmNDdrmr6B5YkT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J9VrrRU/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H8EA3P006211
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QiH2J+dIVcecXrrAGCkcTfZdS4TOBQ+cjT9NDaaTuF0=; b=J9VrrRU/jdbJq9bO
-	0EAk7acvt5zAn0ZR59QlF+A/Q6sJ6hGysgUBLOJNpFyYH5hoku1AQ7vdpigqUUKQ
-	Rm+70vC4PnW2Wmddofi1eEZNooEf1eeffMljto/pEOdgZ3l5f5DYUuHBJ30s54eE
-	Caf6AjtQO9quon4iMBrGB2J7+F+/9NlXMEAxoHn+rwaM8199FfxSTKqcfAZC9xGK
-	iSxcDik/1ObWfEE1zbFpICVyLn3u4CGMRytMtYQ4Xg4nFUs16nLIo8enaDh1/aZG
-	lr+n274IM3bv1A9bgfVy5Yf7YQnEnVfdPArXuAuCgGEcwIn9Nm7kD5ndBLjPNy9/
-	q+7X9w==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwxwj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:48 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b55118e2d01so1420304a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:47:48 -0700 (PDT)
+	s=arc-20240116; t=1760712481; c=relaxed/simple;
+	bh=HJplxAoLXGiZQF9kf+B/09KOCU0GgE9brxiuiplLdIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNyi5YkmSW0BhtYRsA1ApnQKDD4enVy/QzYARUfAiirzPMqWr41ZRWf0DDG01vb4AzuyT6vYIXU0qO5mPD8Bktajv9krL+RYLAJ5B08TXGm20gLtml3LwjuEO/u9P8BhIxu1na+SnwAHzjDHaGip1Qh68j/mkDrHXvErLSNhm2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w/OoGnv5; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-339e71ccf48so2878719a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760712479; x=1761317279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tz8UYunYEGaNriyw6WiQDuHxIstZZ889aQV5Kr6HI54=;
+        b=w/OoGnv57NnvXDelt1RdKoY4MWMlWZ0NfIEoIWEnXtxvudbUowiKxSVkhHRW3ZSR7J
+         rOdr7qkWO+S5Mm5/84C4rjNcpa9d6RXVF/AHJEz38EdepCdC/x7rvwBbF3jFux1JLF8T
+         4s0OtA48xnYgmi7NX15zhBVFI0fPYH8xbbi5U5RJsQAH47j9ZMUh57YpG1GcsTaY6yaJ
+         HvZ30XVnxzxx+HAKqYZQA4vuRjAGr3nUtwYauHR3EWexTimQOKK5NAdGUF2Hi+PpB1Mi
+         9cSFu3ON9QGoN/pC4wUID3VxreoYPH47A6xPYSrurZZvrdKdOUE3yhFdhhHVqlYixSHy
+         YmUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760712468; x=1761317268;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QiH2J+dIVcecXrrAGCkcTfZdS4TOBQ+cjT9NDaaTuF0=;
-        b=A0vWf2TImQ6b6UlPmnnh+GyGpNOLJSGayaJNxgAdEzCsAUibQmh1FHYzWlU3OshqiI
-         pcqFZYn+9UaqszdsoL7moP5Ltm1pZqOUQF0Gk6PxRQMdsGw/NIH409JgBYNgZFHe4gv5
-         prvxerxiCXTJhOpYz28vPy/rDfjG9K1BM0rlJbVDSFMoZ5XUdyWAvSa1uDchweCFW4pG
-         ZXQkRPOXuaGQRBWyT+DPbblS+BkiAipjFWqQNsQ+sRCgGvak8RWkba61o6Vhw3EXmoG6
-         3QmcS1uOssl2EtNCW8kb9oiUuPMVdVancRkk1wa6uq9UW7K4KAmbYltTbhfjg8g5C4QF
-         thAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWYs2Bcs78jOWFpnl6izGDnWkjZ9F37Q86yCB6UymladH20njJrR0qP/VMjehX7ZZrKCk3x3dVXbFIyps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Qe6pENz9zJ0o+D7JMyQhYVeUJtYTOutt7wmfMwxU3VrEQz9f
-	ZOVm8abLu4WxXoO2sRfDfbp7p0z4pkzU8fOfHLXfJugQnAkWmrEjQRhC+WoQ+fwz9ziE8krvy+g
-	eU4W+o97OnOFzckE+mhNcHgGvJ+UKT5zJKDQV7BMgVZVsW9XfE3+zDPmGu5EJtYfhet0=
-X-Gm-Gg: ASbGncs+3blRO5khNJWDseETwFaJ7mz478HkR25rUXcZgMVIIM01YpF5wGTlB3SPoMz
-	JWxzenlKFydJQTS7/Eony25C07RBplIwagJqsmbRnpCnxbQ2UsbjypQvvBu232C+4dly/MaxB7R
-	kkcKVaz24tLURS1fGCpNP7SkQqcY4GB/k/9cQqLgmzTylvmPOHWYqbXNzMsoItlTSnrPRtHhVN6
-	5PGtFFBo489weFjWguCzi0crhbTmtngOyI9KTj7nZyNcEGF+Y2tJ7Cs6eJGPBYpihJFHklMpAFu
-	3059dCg4GsknqoOrik9rPw3FD7LqG5CXInyAzMPzmv5uDWVSYO+UOTQ1I5KhTBKSgV81bSZ55Us
-	WRuUIr6B6c53CDkhGVPmeWLkyuEy8EYwBeg==
-X-Received: by 2002:a17:902:cf42:b0:269:ed31:6c50 with SMTP id d9443c01a7336-290c9c896b0mr41632605ad.10.1760712467526;
-        Fri, 17 Oct 2025 07:47:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOjKbFTkJh0ezCxCdJ3kP6joxM9yMTBKLaFVhNRS3DcOSUHjMrOrZfMhR8o9cNnCg8mifCEA==
-X-Received: by 2002:a17:902:cf42:b0:269:ed31:6c50 with SMTP id d9443c01a7336-290c9c896b0mr41632325ad.10.1760712467017;
-        Fri, 17 Oct 2025 07:47:47 -0700 (PDT)
-Received: from [10.216.52.245] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099388dbasm66275665ad.47.2025.10.17.07.47.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 07:47:46 -0700 (PDT)
-Message-ID: <2c8e7d94-cacb-427f-02ec-ecc83a189479@oss.qualcomm.com>
-Date: Fri, 17 Oct 2025 20:17:33 +0530
+        d=1e100.net; s=20230601; t=1760712479; x=1761317279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tz8UYunYEGaNriyw6WiQDuHxIstZZ889aQV5Kr6HI54=;
+        b=SOP/A4ZJ5KYk/WG2pDaAExH2mB/9b/eN2Hf3UToXZGWy6bivbUHR+MdGCcbCUTOsgX
+         M8qxRgH6QvH2ciSiRDoxlp7gEfGbIvu/tlHshsrJhHdlis0H/KXg0xvgTwagUE/FgU8L
+         6x10gTRg+e4YWk9vvKp5DGYmB6OkRjZpUm/wYI9nfofF1kLE1iEEb97Q1biJksNsJor5
+         hge6lf+SrWfPLNamqfKemDmrt02/RSk2gpzgeBHnLtEZq4T51FyRuV7q3o63lj2NIRmM
+         rXd2q2+Z60XTAg9RTybKN8ejaCSzMfwbovz/jBvRtMu7oSrhugToOzdQuIXOMX+yUx5N
+         HoMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3D2YxMHtjmwlLHXALQdCX/r/w0wC9RSH5Pjlpn9fmuVqKB5A7t+k15ktk4/d6PaOrQizB3QHker2QR4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG2mAD/eaFpoY3D/nKJha3T3BpbTKo1WZP6DxEsudOALxs5qh5
+	8dw974iyWkdAdD2TFDNkDNdI/D4bEAt6Gnjif9SG+kK5TYPNy+AOPjDGRkt13NPXK9vmbWYro2g
+	k92J5t6c=
+X-Gm-Gg: ASbGncv02kygTqaU9r0NggMQ5CEM3hv6xw7RCrcn98yJC8HFUwsHi3agrTeWkAbBevJ
+	RlRDphXo4+nvO+vSv/rDOtczLXpFI2qwGMoD50xydOXx/WISqpQJEPrjFcS516fqp+bHPfLFAdj
+	XBEwb/T3mEYf0g7VcGOdz3eI6gNLUl92wm/dGCc4ragEHYQPvZZvdt7IZr1Im8Iu30/WQx64K7V
+	1loIVqZslztYMTux9hdapudYRM31+ihPDOdXaAVP8u237IvMvaFqefNlCK+XZZvB7xgDyKybbss
+	nYaMKDv5lsyXJmmpHjU+UC1oZ/fcmdbncO221Win2ulGHTSRW3cXJGud6PHsNRAdnF4J1OaLMrM
+	uMYs2NEiF9UWk3JHUTeC6qQs/aj/rTl8xM/oQHl3ufMWKb+0Hb4ZwhrBul+iJ6I4iNdc1BeSoht
+	ckutmChn/7nVpL4Q==
+X-Google-Smtp-Source: AGHT+IFFv67bzyQb985R+6jllClmrOMayTWiNbjhxT/kqbV+V00yKrZ2LAKj91q+RwNLrzPymSKT2w==
+X-Received: by 2002:a17:90b:4f41:b0:32d:17ce:49d5 with SMTP id 98e67ed59e1d1-33bcf8ec618mr5302922a91.23.1760712478687;
+        Fri, 17 Oct 2025 07:47:58 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a70a:89e5:9a8a:630f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bb6298651sm5788314a91.0.2025.10.17.07.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 07:47:58 -0700 (PDT)
+Date: Fri, 17 Oct 2025 08:47:56 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Dawei Li <dawei.li@linux.dev>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
+Subject: Re: [PATCH v5 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Message-ID: <aPJXHCRWiN9bm54D@p14s>
+References: <20251015151718.3927-1-dawei.li@linux.dev>
+ <aPEP9EdZ8tIAVwyE@p14s>
+ <20251016162844.GA2725@wendao-VirtualBox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v16 01/14] power: reset: reboot-mode: Synchronize list
- traversal
-Content-Language: en-US
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
- <20251015-arm-psci-system_reset2-vendor-reboots-v16-1-b98aedaa23ee@oss.qualcomm.com>
- <CACMJSeu_Y2Rra8x22kWN0B38jKZEwq7=B9C75zH18QdjDHAWqg@mail.gmail.com>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <CACMJSeu_Y2Rra8x22kWN0B38jKZEwq7=B9C75zH18QdjDHAWqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX/p+5SILVS6gV
- Y2xGgki5iH4q6V35YPNYIu8AKiMqrXtqikuB5IvE7prrDuWWlXRVeVsbuWHgCmtGziBfI6VXrug
- xpZ7M412Ji0/lx9qsSO3nEMGbkkTz9Bl054hTOCq9Aq19D3ZFu/FLjcSXPKXbr6X+KpggtUXx1x
- xuJf3XKGFsn6hvZ2to8Rb892axMBbY4k4rbGj7r7VV2r1GxyREIkoejSyg+mf89i8kPcG9yHo/w
- xAFk2JOoAQ4VcB2RQYWYVT9ITY0dzKl8MHnpgZongQ431v7KTMdOsxSYnh88VVrizKMm3iV3j7S
- SIiq3X89llOS8pVrU8DihZKUXF44nTQjO29T9ChzhUywot+9QqTocGXvqHVJVV07MsWLCzfVVLO
- yZ46PZLy/IcnGEew5aZxfIpb32lVPg==
-X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68f25714 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=js1QHsEmXU4TG3GKDNEA:9 a=QEXdDO2ut3YA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: ggu1hsweNuC0G2X540t4lOTxxltInFbF
-X-Proofpoint-ORIG-GUID: ggu1hsweNuC0G2X540t4lOTxxltInFbF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016162844.GA2725@wendao-VirtualBox>
 
-
-
-On 10/15/2025 8:02 PM, Bartosz Golaszewski wrote:
-> On Wed, 15 Oct 2025 at 06:38, Shivendra Pratap
-> <shivendra.pratap@oss.qualcomm.com> wrote:
->>
->> List traversals must be synchronized to prevent race conditions
->> and data corruption. The reboot-mode list is not protected by a
->> lock currently, which can lead to concurrent access and race.
->>
->> Introduce a mutex lock to guard all operations on the reboot-mode
->> list and ensure thread-safe access. The change prevents unsafe
->> concurrent access on reboot-mode list.
->>
->> Fixes: 4fcd504edbf7 ("power: reset: add reboot mode driver")
->> Fixes: ca3d2ea52314 ("power: reset: reboot-mode: better compatibility with DT (replace ' ,/')")
->>
->> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
->> ---
->>  drivers/power/reset/reboot-mode.c | 96 +++++++++++++++++++++------------------
->>  include/linux/reboot-mode.h       |  4 ++
->>  2 files changed, 57 insertions(+), 43 deletions(-)
->>
->> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
->> index fba53f638da04655e756b5f8b7d2d666d1379535..8fc3e14638ea757c8dc3808c240ff569cbd74786 100644
->> --- a/drivers/power/reset/reboot-mode.c
->> +++ b/drivers/power/reset/reboot-mode.c
->> @@ -29,9 +29,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
->>         if (!cmd)
->>                 cmd = normal;
->>
->> -       list_for_each_entry(info, &reboot->head, list)
->> -               if (!strcmp(info->mode, cmd))
->> -                       return info->magic;
->> +       scoped_guard(mutex, &reboot->rb_lock) {
->> +               list_for_each_entry(info, &reboot->head, list)
->> +                       if (!strcmp(info->mode, cmd))
->> +                               return info->magic;
->> +       }
->>
->>         /* try to match again, replacing characters impossible in DT */
->>         if (strscpy(cmd_, cmd, sizeof(cmd_)) == -E2BIG)
->> @@ -41,9 +43,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
->>         strreplace(cmd_, ',', '-');
->>         strreplace(cmd_, '/', '-');
->>
->> -       list_for_each_entry(info, &reboot->head, list)
->> -               if (!strcmp(info->mode, cmd_))
->> -                       return info->magic;
->> +       scoped_guard(mutex, &reboot->rb_lock) {
->> +               list_for_each_entry(info, &reboot->head, list)
->> +                       if (!strcmp(info->mode, cmd_))
->> +                               return info->magic;
->> +       }
->>
->>         return 0;
->>  }
->> @@ -78,46 +82,50 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
->>
->>         INIT_LIST_HEAD(&reboot->head);
->>
->> -       for_each_property_of_node(np, prop) {
->> -               if (strncmp(prop->name, PREFIX, len))
->> -                       continue;
->> -
->> -               info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
->> -               if (!info) {
->> -                       ret = -ENOMEM;
->> -                       goto error;
->> -               }
->> -
->> -               if (of_property_read_u32(np, prop->name, &info->magic)) {
->> -                       dev_err(reboot->dev, "reboot mode %s without magic number\n",
->> -                               info->mode);
->> -                       devm_kfree(reboot->dev, info);
->> -                       continue;
->> -               }
->> -
->> -               info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->> -               if (!info->mode) {
->> -                       ret =  -ENOMEM;
->> -                       goto error;
->> -               } else if (info->mode[0] == '\0') {
->> -                       kfree_const(info->mode);
->> -                       ret = -EINVAL;
->> -                       dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
->> -                               prop->name);
->> -                       goto error;
->> +       mutex_init(&reboot->rb_lock);
->> +
->> +       scoped_guard(mutex, &reboot->rb_lock) {
->> +               for_each_property_of_node(np, prop) {
->> +                       if (strncmp(prop->name, PREFIX, len))
->> +                               continue;
->> +
->> +                       info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
->> +                       if (!info) {
->> +                               ret = -ENOMEM;
->> +                               goto error;
->> +                       }
->> +
->> +                       if (of_property_read_u32(np, prop->name, &info->magic)) {
->> +                               dev_err(reboot->dev, "reboot mode %s without magic number\n",
->> +                                       info->mode);
->> +                               devm_kfree(reboot->dev, info);
->> +                               continue;
->> +                       }
->> +
->> +                       info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->> +                       if (!info->mode) {
->> +                               ret =  -ENOMEM;
->> +                               goto error;
->> +                       } else if (info->mode[0] == '\0') {
->> +                               kfree_const(info->mode);
->> +                               ret = -EINVAL;
->> +                               dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
->> +                                       prop->name);
->> +                               goto error;
->> +                       }
->> +
->> +                       list_add_tail(&info->list, &reboot->head);
+On Fri, Oct 17, 2025 at 12:28:44AM +0800, Dawei Li wrote:
+> Hi, Mathieu, 
 > 
-> This seems to be the only call that actually needs synchronization.
-> All of the above can be run outside the critical section.
+> On Thu, Oct 16, 2025 at 09:32:04AM -0600, Mathieu Poirier wrote:
+> > I have applied this set.
+> > 
+> > Thanks,
+> > Mathieu
+> 
+> It seems that it is v4 being applied? [1]
 
-sure. will add it only around the required lines.
+I don't know how it came to that but it is fixed now.
+
+Thanks for bringing this to my attention,
+Mathieu
 
 > 
->>                 }
->>
->> -               list_add_tail(&info->list, &reboot->head);
->> -       }
->> -
->> -       reboot->reboot_notifier.notifier_call = reboot_mode_notify;
->> -       register_reboot_notifier(&reboot->reboot_notifier);
->> +               reboot->reboot_notifier.notifier_call = reboot_mode_notify;
->> +               register_reboot_notifier(&reboot->reboot_notifier);
->>
->> -       return 0;
->> +               return 0;
->>
->>  error:
->> -       list_for_each_entry(info, &reboot->head, list)
->> -               kfree_const(info->mode);
->> +               list_for_each_entry(info, &reboot->head, list)
->> +                       kfree_const(info->mode);
->> +       }
->>
->>         return ret;
->>  }
->> @@ -133,8 +141,10 @@ int reboot_mode_unregister(struct reboot_mode_driver *reboot)
->>
->>         unregister_reboot_notifier(&reboot->reboot_notifier);
->>
->> -       list_for_each_entry(info, &reboot->head, list)
->> -               kfree_const(info->mode);
->> +       scoped_guard(mutex, &reboot->rb_lock) {
->> +               list_for_each_entry(info, &reboot->head, list)
->> +                       kfree_const(info->mode);
->> +       }
+> The only difference between v4 and v5 is commit message, though.
 > 
-> Please destroy the mutex here.
-
-sure thanks. will add destroy here.
-
-thanks,
-Shivendra
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/commit/?h=rpmsg-next&id=00af63201cbb7903e5deb2a9fdebd97f979492e5
+> 
+> > 
+> > On Wed, Oct 15, 2025 at 11:17:15PM +0800, Dawei Li wrote:
+> > > Hi,
+> > > 
+> > > This is V5 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+> > > for rpmsg subsystem.
+> > > 
+> > > Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> > > abstracted in procedures below:
+> > > - fd = open("/dev/rpmsg_ctrlX")
+> > > - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+> > >   generated.
+> > > - fd_ep = open("/dev/rpmsgY", O_RDWR)
+> > > - operations on fd_ep(write, read, poll ioctl)
+> > > - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> > > - close(fd_ep)
+> > > - close(fd)
+> > > 
+> > > This /dev/rpmsgY abstraction is less favorable for:
+> > > - Performance issue: It's time consuming for some operations are
+> > > involved:
+> > >   - Device node creation.
+> > >     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+> > >     overhead is based on coordination between DEVTMPFS and userspace
+> > >     tools such as udev and mdev.
+> > >   - Extra kernel-userspace switch cost.
+> > >   - Other major costs brought by heavy-weight logic like device_add().
+> > > 
+> > > - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+> > >     that a dynamically created device node can be opened only once.
+> > > 
+> > > - For some container application such as docker, a client can't access
+> > >   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+> > >   is generated dynamically and whose existence is unknown for clients in
+> > >   advance, this uAPI based on device node doesn't fit well.
+> > > 
+> > > An anonymous inode based approach is introduced to address the issues
+> > > above. Rather than generating device node and opening it, rpmsg code just
+> > > creates an anonymous inode representing eptdev and return the fd to
+> > > userspace.
+> > > 
+> > > Performance demo
+> > > 
+> > > A simple C application is tested to verify performance of new uAPI.
+> > > Please be noted that all '#' in code are preceded with space to suppress
+> > > checkpatch complaints.
+> > > 
+> > > $ cat test.c
+> > > 
+> > >  #include <linux/rpmsg.h>
+> > > 
+> > >  #include <sys/types.h>
+> > >  #include <sys/stat.h>
+> > >  #include <sys/ioctl.h>
+> > >  #include <fcntl.h>
+> > >  #include <string.h>
+> > >  #include <stdio.h>
+> > >  #include <unistd.h>
+> > >  #include <stdlib.h>
+> > >  #include <errno.h>
+> > >  #include <sys/time.h>
+> > > 
+> > >  #define N (1 << 20)
+> > > 
+> > > int main(int argc, char *argv[])
+> > > {
+> > > 	int ret, fd, ep_fd, loop;
+> > > 	struct rpmsg_endpoint_info info;
+> > > 	struct rpmsg_endpoint_fd_info fd_info;
+> > > 	struct timeval start, end;
+> > > 	int i = 0;
+> > > 	double t1, t2;
+> > > 
+> > > 	fd = -1;
+> > > 	ep_fd = -1;
+> > > 	loop = N;
+> > > 
+> > > 	if (argc == 1) {
+> > > 		loop = N;
+> > > 	} else if (argc > 1) {
+> > > 		loop = atoi(argv[1]);
+> > > 	}
+> > > 
+> > > 	printf("loop[%d]\n", loop);
+> > > 
+> > > 	strcpy(info.name, "epx");
+> > > 	info.src = -1;
+> > > 	info.dst = -1;
+> > > 
+> > > 	strcpy(fd_info.name, "epx");
+> > > 	fd_info.src = -1;
+> > > 	fd_info.dst = -1;
+> > > 	fd_info.fd = -1;
+> > > 
+> > > 	while (fd < 0) {
+> > > 		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+> > > 		if (fd < 0) {
+> > > 			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+> > > 		}
+> > > 	}
+> > > 
+> > > 	gettimeofday(&start, NULL);
+> > > 
+> > > 	while (loop--) {
+> > > 		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+> > > 		if (ret < 0) {
+> > > 			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed,
+> > > 			ret[%d]\n", ret);
+> > > 		}
+> > > 
+> > > 		ep_fd = -1;
+> > > 		i = 0;
+> > > 
+> > > 		while (ep_fd < 0) {
+> > > 			ep_fd = open("/dev/rpmsg0", O_RDWR);
+> > > 			if (ep_fd < 0) {
+> > > 				i++;
+> > > 				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+> > > 			}
+> > > 		}
+> > > 
+> > > 		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> > > 		if (ret < 0) {
+> > > 			printf("old RPMSG_DESTROY_EPT_IOCTL failed, ret[%d], errno[%d]\n",
+> > > 			ret, errno);
+> > > 		}
+> > > 
+> > > 		close(ep_fd);
+> > > 	}
+> > > 	
+> > > 	gettimeofday(&end, NULL);
+> > > 
+> > > 	printf("time for old way: [%ld] us\n",
+> > > 		1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> > > 	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> > > 
+> > > 	if (argc == 1) {
+> > > 		loop = N;
+> > > 	} else if (argc > 1) {
+> > > 		loop = atoi(argv[1]);
+> > > 	}
+> > > 
+> > > 	printf("loop[%d]\n", loop);
+> > > 
+> > > 	gettimeofday(&start, NULL);
+> > > 
+> > > 	while (loop--) {
+> > > 		fd_info.fd = -1;
+> > > 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+> > > 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+> > > 		if (ret < 0 || fd_info.fd < 0) {
+> > > 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+> > > 		}
+> > > 
+> > > 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> > > 		if (ret < 0) {
+> > > 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+> > > 		}
+> > > 
+> > > 		close(fd_info.fd);
+> > > 	}
+> > > 	
+> > > 	gettimeofday(&end, NULL);
+> > > 
+> > > 	printf("time for new way: [%ld] us\n",
+> > > 	1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> > > 	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> > > 
+> > > 	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+> > > 
+> > > 	close(fd);
+> > > }
+> > > 
+> > > Performance benchmark
+> > > 
+> > > - Legacy means benchmark based on old uAPI
+> > > - New means benchmark based on new uAPI(the one this series introduce)
+> > > - Time are in units of us(10^-6 s)
+> > > 
+> > > Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+> > > 1	1000	148362			1153		128.674761	
+> > > 2	1000	145640			1121		129.919715	
+> > > 3	1000	145303			1174		123.767462	
+> > > 4	1000	150294			1142		131.605954	
+> > > 5	1000	160877			1175		136.916596	
+> > > 6	1000	154400			1134		136.155203	
+> > > 7	1000	143252			1163		123.174549	
+> > > 8	1000	148758			1161		128.129199
+> > > 9	1000	149044			1112		134.032374
+> > > 10	1000	146895			1192		123.234060
+> > > 11	10000	1428967			11627		122.900748
+> > > 12	10000	1367015			10557		129.488965
+> > > 13	10000	1371919			11663		117.630027
+> > > 14	10000	1358447			11080		122.603520
+> > > 15	10000	1375463			11245		122.317741
+> > > 16	10000	1364901			11153		122.379718
+> > > 17	10000	1352665			10735		126.005123
+> > > 18	10000	1400873			11341		123.522882
+> > > 19	10000	1391276			10892		127.733750
+> > > 20	10000	1394367			11110		125.505581
+> > > 21	100000	14069671		115569		121.742604
+> > > 22	100000	13663364		117074		116.707074
+> > > 23	100000	13735740		115638		118.782234
+> > > 24	100000	13714441		119362		114.897882
+> > > 25	100000	13904366		118282		117.552679
+> > > 26	100000	13870560		117717		117.829710
+> > > 27	100000	13713605		118312		115.910516
+> > > 28	100000	13872852		114347		121.322396
+> > > 29	100000	13777964		119072		115.711200
+> > > 30	100000	13725654		116296		118.023440
+> > > 
+> > > Changelog:
+> > > 
+> > > Changes in v5:
+> > > - Rebased on v6.18.rc1.
+> > > - Fix checkpatch warning on commit msg on patch[1/3].
+> > > - Other minor commit msg tweaks.
+> > > - Update performance testing results.
+> > > - Link to v4:
+> > >   https://lore.kernel.org/all/20250609151531.22621-1-dawei.li@linux.dev/
+> > > 
+> > > Changes in v4:
+> > > - Build warning of copy_to_user (Dan).
+> > > - ioctl() branches reorder (Beleswar).
+> > > - Remove local variable fd and pass &ept_fd_info.fd to
+> > >   rpmsg_anonymous_eptdev_create().
+> > > - Link to v3:
+> > >   https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/
+> > > 
+> > > Changes in v3:
+> > > - s/anon/anonymous (Mathieu)
+> > > - API naming adjustment (Mathieu)
+> > >   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+> > >   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+> > > - Add parameter 'flags' to uAPI so user can specify file flags
+> > >   explicitly on creating anonymous inode.
+> > > - Link to v2:
+> > >   https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/
+> > > 
+> > > Changes in v2:
+> > > - Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+> > > - Link to v1:
+> > >   https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+> > > 
+> > > Dawei Li (3):
+> > >   rpmsg: char: Reuse eptdev logic for anonymous device
+> > >   rpmsg: char: Implement eptdev based on anonymous inode
+> > >   rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+> > > 
+> > >  drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
+> > >  drivers/rpmsg/rpmsg_char.h |  23 +++++++
+> > >  drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
+> > >  include/uapi/linux/rpmsg.h |  27 +++++++-
+> > >  4 files changed, 182 insertions(+), 32 deletions(-)
+> > > 
+> > > ---
+> > > 
+> > > Thanks,
+> > > 
+> > > 	Dawei
+> > > 
+> > > -- 
+> > > 2.25.1
+> > > 
+> 
+> Thanks,
+> 
+> 	Dawei
 
