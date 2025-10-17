@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-858745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39550BEBB30
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:38:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28166BEBB45
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3B68344D26
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCFF36E8574
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1412F0C75;
-	Fri, 17 Oct 2025 20:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2FB2701C4;
+	Fri, 17 Oct 2025 20:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gqI4ABPY"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyjxt46m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC64254B1B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71856354ACA;
+	Fri, 17 Oct 2025 20:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760733464; cv=none; b=tH4OY/h3vPDX/exaAb6rsKEhEL6o1+ABc41+RUOFh+o5o3mF6wnj3mRyeK3Q324MqVweZQh4T75eqNnO1w0ipgzk3brZzurxM13XVau2H4VJBDeunBKuj/5zYXuYsAzsFPEC30bb8ea5ivawoEUL/vVvyCOBYJpzF3OrgL7FqzA=
+	t=1760733575; cv=none; b=US8UsybuSreax3WGVFIwozhca/9ujUhaPHuHkzhnbi97G/Y9/TsaPepZE0a+/EJYMtOMnPwQzUCHvCH36fWMv/ZEaOr7zVNr3zOeVZ49r6Cw3pvngCKPFCxzzf4YRTXYNk8pNWgJo6aKH2Dr9UYwxUji0+7UApJ34PDi9e+fv88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760733464; c=relaxed/simple;
-	bh=MctnxTuATai4l54nWLFKFelAF8yZCCN6uTLE/mlmEHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XdguKzC9Q/37QugjYcIKEqUxsmZCXKnwL2vx5Onon0G3pW/XP9soNplM8091X05mQibvZWGuTtukdW3Ku/NV4HY68+XhOjaJutpu1tgxB14R5+TRApSVdqKiBt7GeVYUJopKRHOnVI+flH+Gggua4pHWcRfIMuokYRSFjIPHZtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gqI4ABPY; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-793021f348fso2267542b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760733462; x=1761338262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ZeBq3Lk7BVfi39KwhzSp3L/wgMnqHyapiXXWG829qc=;
-        b=gqI4ABPYZ4QxRCc4QY3quTX9wWdAeBGRG4f2PXIHFN3czNr438NrTWUk8dW6xUs91Z
-         IqDmV28cJc8njMpB0h5e6xXleESDsYjrODmGS6FduS67qsKnILcQCObgOz6J5Q0PJ0SZ
-         U1p4pUfI6fQq4zt1eEvwMffrKUtyF1tfAfGDs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760733462; x=1761338262;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ZeBq3Lk7BVfi39KwhzSp3L/wgMnqHyapiXXWG829qc=;
-        b=sLc7d54GO+sapVx87Yh15yCsdvM/YF1ES603mR0ejkyLqc8ETIlVBrrozin1hzW1HU
-         PtAM+f99EYFHcDn4DoCvbBmqiad9274mw+5nxiZ9VAk8rfWcdQlB7rFgNSfGqiTj6YXw
-         cBBvSIQFeTBj3dnTv8tmIFPHQJZqvEog6iReKmMr5oL9B1yIwsNg+iYcKCE9NCQ+Y9oF
-         BCHB69PU0zQW4tQavSYvrMy88h0cs2UbNruCrIrQPFBLH67HpdTuVcuPqY2DJ07Dum2h
-         D2Kl7pMzlYWqr4ZZd/hP6GIT4M58Th0J0X1ebJvJhUiE8HQNvUqLk7EkqOrsLA7bhz01
-         dDSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvhCa/UwQEZDAtwW31qxKPW/Z/slZEFZfm0+0iHrWaAaDeqjVOWtmTvldIvQRiN/N3kEynQ53oM27OpfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDBHW4gPK7p6ZwR0gT0nVQlIS8lZOokNSL1pGGJgQSNZzp7+52
-	xqnlhRdSZLrlEKyR/z/wuYUnXYvI78xs2QDeRWIlqa/KLeHAhcS64RPNTU1KvpiBoA==
-X-Gm-Gg: ASbGncvcVzZPmGXUoNfPCYEm7jKgHEqSptFcSQ+8ySD4dyh7BlEL2y9sBQdUPNhcm6q
-	9WERf/ZvcDjWv8/1GKUXT/0EtRD+ELWcV/BmapyD6FiCaKOLIpbrqhqCN0qHGcMas6Jhkecjbxr
-	StY1Dc4DKAknN2BZcQ+xjHtsKZZgLHE0U7Hyj+JKjlYzpfowJUGic1ciPFrfM6VEYJTRfuABEeO
-	nJHSNrTtmHs9WoO0vDwWNQ0Y6TFRipWHF+ZPh4eZK4e2C7wqnpHpHfeiE5XgyMi+8pKoKP+Kq8p
-	owywfsf+ErqAuLZpWABLj8ohZaApRxjJl6aCI1H0nvIbYNs4Po5ZovI75EJFk9PBlw4zBb2twST
-	0bLOj0bcJTZFeYqR6/fYnkJ16/g3e7ahXKeWVp5//VzARqmBOt1MEXy4Us0SMWta3m6v93+ZicX
-	BAP5U1vZjpcyCtrwME0kMz8Cg836GleNsUIaEsJg==
-X-Google-Smtp-Source: AGHT+IE/YYS3o1+JuvtET9j/q+byOk9MK+q6kmDUXS3KntYy67SnJd6kX1S96rUUu+Rtdegc54AW9Q==
-X-Received: by 2002:a05:6a20:2590:b0:334:9fbb:35c3 with SMTP id adf61e73a8af0-334a862167fmr6473965637.46.1760733462564;
-        Fri, 17 Oct 2025 13:37:42 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:5ca9:a8d0:7547:32c6])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-33bb65268b1sm2837858a91.2.2025.10.17.13.37.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 13:37:41 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Joe Perches <joe@perches.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	workflows@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v2 2/2] docs: checkpatch: Drop networking comment style
-Date: Fri, 17 Oct 2025 13:37:12 -0700
-Message-ID: <20251017203719.1554224-2-briannorris@chromium.org>
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-In-Reply-To: <20251017203719.1554224-1-briannorris@chromium.org>
-References: <20251017203719.1554224-1-briannorris@chromium.org>
+	s=arc-20240116; t=1760733575; c=relaxed/simple;
+	bh=Jv7RcvpMgkLVVym4ySFqR0X+tsnatgRC2rS+YiPrsuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNjM6Emu7Z8zlmuPDQLCtxLN/IxMLUf+Evtoy1+fbFL1CeVWp2uiDECgX4KcXaGQKixnWNgjYRnDyXK87d5o6x69BN0W5jDr3yBszMVfBDpsAm3dQF4w8a6USeYiAzlhtwQT/B7ihsdu+NrMy/RKvObbe6Xh0AHAJTrHbv/G/Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyjxt46m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED68C113D0;
+	Fri, 17 Oct 2025 20:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760733575;
+	bh=Jv7RcvpMgkLVVym4ySFqR0X+tsnatgRC2rS+YiPrsuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hyjxt46mCMY3uoLo1aH6FH4LHZLPr4fGEkEfr5ijGz4W2bbKQkkm2rHXSi2nRa46O
+	 7w3m69IieFkpWLMLn2GCwuiaAgKEu7CuvJXXRiOR1AsypRUDQ/+9M5lkjdiQHcpWIB
+	 oOD9NViE15XMUhQlDru2Q6GaCSQ3eIiNuXoOi5OW7SwpRF/RRSev1gMMXSi3+Iot0j
+	 M6n4gKpI5tSIGR3SKqg7Bm2ECGieJYvAfB0iU1dPavVXWR5NKyKpDMyozNB1M5it2o
+	 kbFW0HbXgf9vRxhEg199z8Yp2aM4qzjnz2DylrpmnVtOrwwuw+Uz1rm6INAUltPPL7
+	 WsIOBFOS836gA==
+Date: Fri, 17 Oct 2025 22:39:30 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Cezar Chiru <chiru.cezar.89@gmail.com>
+Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] i2c: pcf8584: Fix errors and warnings reported by
+ checkpatch
+Message-ID: <joong74bnb7by3ptmynxhbj2vdznp7b5u6ivlnm2tfu4rlplya@vvgfpcmm4f4i>
+References: <aNbWejNZLYGuNvCI@ninjato>
+ <20250927041400.172949-1-chiru.cezar.89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250927041400.172949-1-chiru.cezar.89@gmail.com>
 
-Networking no longer has their own comment style, and checkpatch no
-longer checks for this.
+Hi Cezar,
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
----
+can you please send your new version series as not
+--in-reply-to?
 
-Changes in v2:
- * new in v2
+I find it very confusing.
 
- Documentation/dev-tools/checkpatch.rst | 7 -------
- 1 file changed, 7 deletions(-)
+Thanks,
+Andi
 
-diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-index d7fe023b3080..dfaad0a279ff 100644
---- a/Documentation/dev-tools/checkpatch.rst
-+++ b/Documentation/dev-tools/checkpatch.rst
-@@ -465,13 +465,6 @@ Comments
-        * for multi line comments.
-        */
- 
--    The networking comment style is a bit different, with the first line
--    not empty like the former::
--
--      /* This is the preferred comment style
--       * for files in net/ and drivers/net/
--       */
--
-     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#commenting
- 
-   **C99_COMMENTS**
--- 
-2.51.0.858.gf9c4a03a3a-goog
-
+On Sat, Sep 27, 2025 at 07:13:57AM +0300, Cezar Chiru wrote:
+> Hello maintainers,
+> 
+> This patch series fixes 18 errors and multiple warnings reported by 
+> checkpatch.pl on drivers/i2c/algos/i2c-algo-pcf.c file.
+> 
+> The series PATCH v1 to PATCH v4 is a response to the discussion on the
+> mailing list with Markus Elfring who had comments on my earlier 
+> submissions. 
+> He suggested:
+>  -to split my initial submission in a patch series
+>  -had some valid points on imperative mood usage in commit messages
+>  -wrapping commit message to 75 columns per line
+>  -change some of the commit message to point usage of checkpatch.pl
+> The series PATCH v4 to PATCH v6 is a response to the discussion on the
+> mailing list with I2C SUBSYSTEM maintainer Wolfram Sang who requested
+> some changes:
+> He requested:
+>  - to remove debug macros from i2c-algo-pcf.c as no code change was done
+>  for almost 16 years.
+>  - remove wrapping paranthesis from value assigned of '(0)''.
+>  - resolve conficts caused by debug macros removal.
+>  - remove also printk and dev_dbg function calls related to DEB macros.
+> 
+> Here is a brief summary and order of patches to be applied:
+> Patch 1/3: i2c: pcf8584: Remove debug macros from i2c-algo-pcf.c
+> This patch remove the define of debug macros and also their usage from
+> code along with printk and dev_dbg function calls.
+> 
+> Patch 2/3: i2c: pcf8584: Fix do not use assignment inside if conditional
+> This patch takes the assignement from if conditional and moves it by 1 line
+> up.
+> 
+> Patch 3/3: i2c: pcf8584: Fix space(s) required before or after different
+>            operators
+> This patch adds space(s) around some binary operators.
+> 
+> Testing:
+>    *built kernel and modules with I2C_ALGOPCF=m and my 3 patches applied on
+>    top of 6.17.0-rc7.
+>    *installed kernel and external modules generated by build on my laptop
+>    *rebooted and loaded i2c-algo-pcf.ko without i2c_debug parameter.
+>    *when loading the .ko with i2c_debug parameter an error is seen in dmesg
+>    and this is expected as the parameter was removed.
+>    *No success message related to i2c_algo_pcf was seen in dmesg but also 
+>    no failures.
+>    *Module loading and unloading successful.
+>    *No PCF8584 Hardware was available.
+> 
+> Cezar Chiru (3):
+>   i2c: pcf8584: Remove debug macros from i2c-algo-pcf.c
+>   i2c: pcf8584: Fix do not use assignment inside if conditional
+>   i2c: pcf8584: Fix space(s) required before or after different
+>     operators
+> 
+>  drivers/i2c/algos/i2c-algo-pcf.c | 93 +++++++-------------------------
+>  1 file changed, 18 insertions(+), 75 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
 
