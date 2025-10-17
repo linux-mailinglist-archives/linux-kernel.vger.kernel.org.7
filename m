@@ -1,146 +1,140 @@
-Return-Path: <linux-kernel+bounces-857593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B89BE732E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A4CBE72C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3CC61AA0C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A5A425D87
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1429BD81;
-	Fri, 17 Oct 2025 08:34:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4634829D26D;
+	Fri, 17 Oct 2025 08:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="hHnQCcSY"
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF792877F7
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96B2550CA;
+	Fri, 17 Oct 2025 08:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690095; cv=none; b=df9Qn6SXWXLuiqWhwUSkAMfBgDXEJAHtAngpzuhG4tb6M9YEgQaInFFSd0B3VkLLVgzPgK81k58xUNr/jg8K6DQUKuMsXa61Pcl/fK7CnTAq2sinyNT3ux79v0SUAf88vaPWoxo0XJ0lDuIqxNc68KJtGXZ2Kwd8feOCDk3suwA=
+	t=1760689872; cv=none; b=lh87Nqh6tSrLS1tgW9tZDOnXyBIV9/TO/QaBnPFldlYpSu6qROuVOZJApCgt/PS4fuZi/KiKcnuyqcXsmNA/zFRH0ss1BlJ52CyRUe7K7Yhj4c2MyOKBhzzbGH6XyVeJWiC4XBtEIBuWz73jQOAIOmg7LFJDfImr6FUfIgcqcHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690095; c=relaxed/simple;
-	bh=ZYFWlfVM9p4mPmv77EzBu7ebgttLvW0BaITgV2fZhFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IV02PK6vW/KwOQVijahFrm5H8SSOlJnKAqk8IzNR+i1YDt1SVCiKHoFmbO9F0PaeHfMZcRIL9Y1LLWHrKM8dHqJEv3Zu3626Li6NFjMugwdp6RVd4vCp5Hef7Jx4vp+ebXwTb9y3X0X9J2+MsT2pB64STJ4Wc7HCP9Y879T/ZqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9fv8-0001Er-AB; Fri, 17 Oct 2025 10:34:42 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9fv7-0041up-1q;
-	Fri, 17 Oct 2025 10:34:41 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A5037488DA2;
-	Fri, 17 Oct 2025 08:28:38 +0000 (UTC)
-Date: Fri, 17 Oct 2025 10:28:38 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
-	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
- FD is off
-Message-ID: <20251017-determined-jackdaw-of-painting-e2ff64-mkl@pengutronix.de>
-References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
- <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
+	s=arc-20240116; t=1760689872; c=relaxed/simple;
+	bh=DSUs2mbkH8lek0l8MPD34EnQfWqnkl24o4RehNW2FlM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gavsh4MKnfDhBM5bE+4ixYxIG50ulthXdEkHGslOVomWSh8jJ5iJ0wSuWiHQzP0JDmDPZcNksgyQJ6sthVuZ0ONcwRefD6FJkXBkdoo87Ha9iWD1AzScmHI0vR0yJGZHzjU7W1V+ZlB8/o4v6BbKi9Yvy2OOmuqPxal6NUzCr+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=hHnQCcSY; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=e7/1EPoR8jyh3eJyTN4+nPLIEdQslkNN274sLaWndFA=;
+	b=hHnQCcSYvdb2Z5D7biPb87t3lzzcoTUaN3+eAXrzWJkfTzrbLI9Xw3ObdCFqH+HV7PqTZAOnz
+	YZa6hfDyQN0COsPlAhswy8DN2f5PRSAb3yqiSM6IGqJRStpJB2ACPcQkYUySR0hDE9H84Czwk+U
+	Ve5sF7YkRqTGKeb3GSyPdA8=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cnygY6B9Xz12LKX;
+	Fri, 17 Oct 2025 16:30:17 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id D827C140123;
+	Fri, 17 Oct 2025 16:31:01 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 17 Oct 2025 16:31:00 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
+	<netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, <Markus.Elfring@web.de>, <pavan.chebbi@broadcom.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, luosifu
+	<luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
+	<shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
+	<wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Luo Yang
+	<luoyang82@h-partners.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
+	<gur.stavi@huawei.com>
+Subject: [PATCH net-next v02 0/6] net: hinic3: PF initialization
+Date: Fri, 17 Oct 2025 16:30:45 +0800
+Message-ID: <cover.1760685059.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kzeksx7g66zyfwwf"
-Content-Disposition: inline
-In-Reply-To: <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
+
+This is [1/3] part of hinic3 Ethernet driver second submission.
+With this patch hinic3 becomes a complete Ethernet driver with
+pf and vf.
+
+The driver parts contained in this patch:
+Add support for PF framework based on the VF code.
+Add PF management interfaces to communicate with HW.
+Add ops to configure NIC features.
+Support mac filter to unicast and multicast.
+Add netdev notifier.
+
+Changes:
+
+PATCH 01 V01: https://lore.kernel.org/netdev/cover.1760502478.git.zhuyikai1@h-partners.com/
+
+PATCH 01 V02:
+* Change the order of hinic3_netdev_event (Jakub Kicinski)
+* Use netdev_hold/put instead of dev_hold/put (Jakub Kicinski)
+* Remove the semicolon at the end of switch case (Jakub Kicinski)
+* Remove redundant PF judgement in hinic3_rx_tx_flush (Paven Chebbi)
+* change hinic3_send_mbox_to_mgmt errcode to EFAULT (Paven Chebbi)
+* Optimize hinic3_set_bdf_ctxt parameters (Paven Chebbi)
+* Modify main and CC recipients (Markus Elfring)
+
+Fan Gong (6):
+  hinic3: Add PF framework
+  hinic3: Add PF management interfaces
+  hinic3: Add NIC configuration ops
+  hinic3: Add mac filter ops
+  hinic3: Add netdev register interfaces
+  hinic3: Fix netif_queue_set_napi queue_index parameter passing error
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   1 +
+ .../net/ethernet/huawei/hinic3/hinic3_csr.h   |   6 +
+ .../ethernet/huawei/hinic3/hinic3_filter.c    | 413 ++++++++++++++++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  99 +++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |   6 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   |  24 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  93 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.h |  55 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  |  89 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  23 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 159 ++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   |  69 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  | 261 ++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  |  55 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  |   2 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.c  | 309 ++++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |  53 +++
+ .../huawei/hinic3/hinic3_mgmt_interface.h     |  69 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         | 380 ++++++++++++++++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 280 +++++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  47 ++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  83 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  20 +
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  18 +
+ 24 files changed, 2556 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_filter.c
 
 
---kzeksx7g66zyfwwf
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
- FD is off
-MIME-Version: 1.0
+base-commit: 16a2206354d169bfd13552ad577e07ce66e439ab
+-- 
+2.43.0
 
-On 13.10.2025 20:01:23, Vincent Mailhol wrote:
-> Currently, the CAN FD skb validation logic is based on the MTU: the
-> interface is deemed FD capable if and only if its MTU is greater or
-> equal to CANFD_MTU.
->=20
-> This logic is showing its limit with the introduction of CAN XL. For
-> example, consider the two scenarios below:
->=20
->   1. An interface configured with CAN FD on and CAN XL on
->=20
->   2. An interface configured with CAN FD off and CAN XL on
->=20
-> In those two scenarios, the interfaces would have the same MTU:
->=20
->   CANXL_MTU
->=20
-> making it impossible to differentiate which one has CAN FD turned on
-> and which one has it off.
->=20
-> Because of the limitation, the only non-UAPI-breaking workaround is to
-> do the check at the device level using the can_priv->ctrlmode flags.
-> Unfortunately, the virtual interfaces (vcan, vxcan), which do not have
-> a can_priv, are left behind.
->=20
-> Add a check on the CAN_CTRLMODE_FD flag in can_dev_dropped_skb() and
-> drop FD frames whenever the feature is turned off.
->=20
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-
-What about merging both can_dev_dropped_skb() an
-can_dropped_invalid_skb() in the skb.c, so that there is no stub in the
-header file anymore.
-
-Someone (i.e. me) used can_dropped_invalid_skb() in a driver, that means
-the check for CAN_CTRLMODE_LISTENONLY is missing :/ (I'll send a fix).
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---kzeksx7g66zyfwwf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjx/jIACgkQDHRl3/mQ
-kZwAcAf+KYQBiRZQxXmER1iYmGFEJtTy42LYexZFEnNa9vBjwM/t8bkv36+fMctp
-dVWP92QmuWulv4ec9aN4n6e8TVw9DMtC+JnAKbdhE3itR/3FX0iHt5hTf4qV0Bve
-nvDvP3iBir41BJyFZswj3cdpatbnIM+nJtLeYz/t/xwkZdgMD/CiM2tfwW3mY1Cd
-Lf0F1AaUwKWVvoHGI/fHFfHC3bWaEBEu+BQ4ZC0Ek1slpwBqCGKVBgbSDSSHtBlO
-lDpDbGHDR2tYcfMPDLtRnbr9T/YVqr8KWbzkkvZw96Ve5FEl0JmANSAlanepsqdB
-94/lWHlDpWOReDgZWaFX6vfLRljMVA==
-=ylWo
------END PGP SIGNATURE-----
-
---kzeksx7g66zyfwwf--
 
