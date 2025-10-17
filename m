@@ -1,361 +1,377 @@
-Return-Path: <linux-kernel+bounces-858160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51972BE92C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E476EBE9275
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4A195815E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACD6F428E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1329C336EFA;
-	Fri, 17 Oct 2025 14:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IH+kjjnK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056A0336EFF
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C606A36CE1F;
+	Fri, 17 Oct 2025 14:17:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5536CE04;
+	Fri, 17 Oct 2025 14:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760710670; cv=none; b=Gchgh2g2nJgkFWJlJ0gUeesAgMOJ4jAAw5gD9ayCx4QU7LzgbeKcGLEUJcui1eCyICg2lhA0lY0d4U4Mp4cQQbv6ONU8/Sox5lnTJLyh47XuTsi+Vyuwo2MrJFtpufQeympVlR+QhNVM2kWUqdrvZ4MnfiVQNlFQzfy2XxEwbVU=
+	t=1760710645; cv=none; b=WXsqezOVfZa8fzdvv2CJYe5TooJdtLVnJ8BINnttvEoqnyvwgz16o/B6tcjDYqFUDNu3pVsSCCLcvs2bIkiUIAy5BWv8N/RAEJoXZfh+hpnldPFZTWIwsnfoF4tB4RAVKirxCEXEqzra5SDg4OAjH3HM9PVQQ2ddH9Q+vL8Nsjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760710670; c=relaxed/simple;
-	bh=94zn2oaEs2/tPLmKQcuLmcTARdo0LUWMIIHm7rC4jyI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qoIY7NvWmnYoRFnwEfnnE9mEWqJbZvpL2+JysSbfL7pX56fMco4k3dNfVU953xGaK+jmSIVvOLOTFnESlvY/lNmTAV23gzREDgaWjueMICP1UMyWPGsogDb8EwGI6kF8JhFpesyEyWHzVR7WULb7f7cCLKHKNcLlsAni036bspE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IH+kjjnK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H8DUpY022287
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:17:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZkUetV3KJGXhfQiLm06E+7IVEXhrZeYr95rdHWhTFog=; b=IH+kjjnKhPTI9d7I
-	uHwlosNjcSa6+EsiiBnIEhaSsYnUOUXBp91TwSJ3DszSs78yO/towp0XHbjRpuDx
-	KrjqoK6HFq+sI+L6Uwlo2aJP5/VJzwa62jAmdkC84V3vksXZ+of9FX8H1k2Ddfkn
-	eqNBh9+tp2mNDtoc0TE3UXClIv+SSECUKkqzvXK53PXZ+UzY2tlpejfgWG0zvlyG
-	kcUn55iZPerGq73bSk8uIZ4vSnnE8Ya+UKWn7zVJLqzd6ZlyHdJyaZvGWe7DwFn5
-	QtX/TSk5cAKZyaVzSL6ShnqHI0xAJtijcG1sbpcLHcL/MwHf93Bf2w8sPnJyd6Tt
-	VS/WeQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rtrthffy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:17:48 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7811a602576so2787876b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:17:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760710667; x=1761315467;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZkUetV3KJGXhfQiLm06E+7IVEXhrZeYr95rdHWhTFog=;
-        b=QQOOAXR4dQP7vurAImslaMQ/0hEyFqnLt5Ub3ZHpoythnfaBqTbTMgGhS+J4QQu1o8
-         IpVPCf7UlwOuwBpBmX4Gm/dfhtpgLW9vlG4uTs+1QpMX2uo2mTJMXWP7aSRC9LCZn4A8
-         nVAKmnrYto/im9mS45Q/asuWK1LMigwQfB/Fffg4sF5BFLIf/EcQncvIkwMPJW89D+E7
-         PLG5UuLTx40U7IeKgqyxyJbsnRglX7tO2J9/9smvA2IdlfmVrIddR2k0cJymKi2W9T04
-         tx0hVmI9+3aWfr+lYiJC+4Q/umnAfj9NA1h8NVxqWv7dTVA53n2HqkrOaoIQ4Vm7TDXX
-         jsZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOg/DLtUaxU85dc90x4r0XQow1blZQSKCNAsf2gOXP2gea+pZasa7dXaP66qswUt2742kyWONgLDxPMJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9g7Cn4VE8KFK91BnX3z61hBkRuKPU47BFEuM+n+KtfIQQcsYO
-	lvJjNMMFn3IYLaD7pIk/4I7ZFEKgi2ophTCa0OaPvDGeQSccgfqNQOucQNUtK9mhMLvWrKNQHB+
-	Aem5Tg80fY84OT7fm45ed3vm/k+tH+sfCxiFOb71VjSo2XuOuVj+kBFXpSROTnIRBlrE=
-X-Gm-Gg: ASbGncuhXJbtyoxoafmmzYgu7zCxLDny4fxxG4R5gwJBIFNIQVoMA8FSCvKgQSo2WWA
-	3OSUj3/vWZEx56q65mctdzp3MItiQLHopUCsiEJERsGKBvFk5aFEmdoTxjeDPVYXtKrwSiYrnsb
-	3ADIExc+/Yd8bfLPXM+QzalrMTs5dKSTpv0aJshJUdq8m9kUfF1QHJtDnNKPH1fopsEM8jj7gBH
-	cS/tdLpSWqGqGjKTrAu1T/5Vtr22LOLpRc5QdjCg3ZLnd9FK5q4O1I+gW29Lf0schL4Qu39a/d0
-	h8/r3hFbp7zRFwbBJ5VWEgcJ2VJhPRtoM3t8zGje9GqyIfhoCezb8e6dekiwb9yyHkM++I8rnSj
-	xnT5ozFY9eoveK7MGWRZwDErXBW0TqxCGWQ==
-X-Received: by 2002:a05:6a20:42a3:b0:334:a82b:97d0 with SMTP id adf61e73a8af0-334a84cf411mr4798304637.22.1760710666479;
-        Fri, 17 Oct 2025 07:17:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1K0BwIFhCxW9E7gPpQWafSheAdYCei9+vs2ra04WnLUz4ftpn6En0/NIln+gDf3YNJ5bVgA==
-X-Received: by 2002:a05:6a20:42a3:b0:334:a82b:97d0 with SMTP id adf61e73a8af0-334a84cf411mr4798226637.22.1760710665576;
-        Fri, 17 Oct 2025 07:17:45 -0700 (PDT)
-Received: from hu-vgarodia-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0966d7sm25895826b3a.40.2025.10.17.07.17.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 07:17:44 -0700 (PDT)
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Date: Fri, 17 Oct 2025 19:46:29 +0530
-Subject: [PATCH v2 8/8] media: iris: Add platform data for kaanapali
+	s=arc-20240116; t=1760710645; c=relaxed/simple;
+	bh=jbuJIqHb7ReKr/58anU/M0Jdg6SzL+H6M9yNiSxCoG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IIODFO/U+dBwN+gM1ogDqjSn/TjVTpWaP9x+UBOFH6VL6YeohQM+a3lYNt6FU1XKc/tFbumhqJaUF6i+sGVJP7NCNA7+EoK3Ud+krCNYFEyUvekZo/Sg4so4R1uBKIcAmd2TcKfbgeQylciNXE7cch/OhmtLWUi4keRrd6ABtbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5C84153B;
+	Fri, 17 Oct 2025 07:17:13 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A27283F59E;
+	Fri, 17 Oct 2025 07:17:19 -0700 (PDT)
+Date: Fri, 17 Oct 2025 15:17:11 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+	James Morse <james.morse@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
+ per-arch
+Message-ID: <aPJP52jXJvRYAjjV@e133380.arm.com>
+References: <aNFliMZTTUiXyZzd@e133380.arm.com>
+ <aNXJGw9r_k3BB4Xk@agluck-desk3>
+ <aNqQAy8nOkLRYx4F@e133380.arm.com>
+ <d15d97d1-286c-4857-8688-4d8369271c2c@intel.com>
+ <aNv53UmFGDBL0z3O@e133380.arm.com>
+ <1c4b6b46-16f9-4887-93f5-e0f5e7f30a6f@intel.com>
+ <aO0Oazuxt54hQFbx@e133380.arm.com>
+ <bf18c704-66d0-40cb-8696-435ac1c928b5@intel.com>
+ <aO/CEuyaIyZ5L28d@e133380.arm.com>
+ <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-knp_video-v2-8-f568ce1a4be3@oss.qualcomm.com>
-References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
-In-Reply-To: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vishnu Reddy <quic_bvisredd@quicinc.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760710621; l=8413;
- i=vikash.garodia@oss.qualcomm.com; s=20241104; h=from:subject:message-id;
- bh=94zn2oaEs2/tPLmKQcuLmcTARdo0LUWMIIHm7rC4jyI=;
- b=as7o9C9nsEeN8DXB+6qFiEG1BQUd8dRFgYVoGup0byiSf1Y5WMnzktmgq1vC6Ibo6keD2RdjV
- kBSqAIzGCNoATIZQwDSQpS7hcdqjj89jngTXlEAqBRnWOMlu+31ZbBi
-X-Developer-Key: i=vikash.garodia@oss.qualcomm.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-Proofpoint-ORIG-GUID: 0doQIDPOgrGdhgHvFWdqB4rYdFWhYg7k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyMiBTYWx0ZWRfXyshl21PNv+jF
- dJqIPX1txh/6cqmiqrBS4VTHuWuPbM+O1RXrOkDpO1sA3FGySd0s0dxKM68KIcs70mOF1P5QU2/
- d+2z6ycK5Zwy/9uDhbL5wS7IenLJzFifgrzj1gkCsYXrBmh6Ha7TbIdm/IOq5upCAR4w1Ynxy+d
- izRFTpS5sqOAzkLBZnProtH7nyzAtGI7/jK8R2lOrfAPSCdEXGHGUtwI5RwLsZQX7l2cTn/ljHy
- ZK4D/+TiSmE3PV1r/lu3YKdczAHCTXCwksfTeFBN0Xgc/KtO/ubnaczSdtOtGM16cNdbQ5p25f2
- PTXzC0k5wKRbH2eBQzIKFNO7pS7HAq1iOME6bb8CtkJ1o9VGkMD/q0JHteK/NSh9K8OskvQz2fl
- FBV5BjInY17ZA5ZMI7IGYM7AQUccRw==
-X-Authority-Analysis: v=2.4 cv=SfD6t/Ru c=1 sm=1 tr=0 ts=68f2500c cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=253cHNSug-08pUEeBzYA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 0doQIDPOgrGdhgHvFWdqB4rYdFWhYg7k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
 
-Add support for the kaanapali platform by re-using the SM8550
-definitions and using the vpu4 ops.
-Move the configurations that differs in a per-SoC platform
-header, that will contain SoC specific data.
+Hi Reinette,
 
-Co-developed-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
-Signed-off-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
-Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
----
- .../platform/qcom/iris/iris_platform_common.h      |  1 +
- .../media/platform/qcom/iris/iris_platform_gen2.c  | 86 ++++++++++++++++++++++
- .../platform/qcom/iris/iris_platform_kaanapali.h   | 63 ++++++++++++++++
- drivers/media/platform/qcom/iris/iris_probe.c      |  4 +
- 4 files changed, 154 insertions(+)
+On Thu, Oct 16, 2025 at 09:31:45AM -0700, Reinette Chatre wrote:
+> Hi Dave,
+> 
+> On 10/15/25 8:47 AM, Dave Martin wrote:
+> > Hi Reinette,
+> > 
+> > On Tue, Oct 14, 2025 at 03:55:40PM -0700, Reinette Chatre wrote:
+> >> Hi Dave,
+> >>
+> >> On 10/13/25 7:36 AM, Dave Martin wrote:
 
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index d6d4a9fdfc189797f903dfeb56d931741b405ee2..f77bad531f067f59b48c3e4caa40a463d454c47e 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -41,6 +41,7 @@ enum pipe_type {
- 	PIPE_4 = 4,
- };
- 
-+extern struct iris_platform_data kaanapali_data;
- extern struct iris_platform_data qcs8300_data;
- extern struct iris_platform_data sm8250_data;
- extern struct iris_platform_data sm8550_data;
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-index 00c6b9021b98aac80612b1bb9734c8dac8146bd9..104c24fd47770dff770a5230cf957d78c89b01f7 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-@@ -12,6 +12,7 @@
- #include "iris_vpu_buffer.h"
- #include "iris_vpu_common.h"
- 
-+#include "iris_platform_kaanapali.h"
- #include "iris_platform_qcs8300.h"
- #include "iris_platform_sm8650.h"
- #include "iris_platform_sm8750.h"
-@@ -744,6 +745,91 @@ static const u32 sm8550_enc_op_int_buf_tbl[] = {
- 	BUF_SCRATCH_2,
- };
- 
-+struct iris_platform_data kaanapali_data = {
-+	.get_instance = iris_hfi_gen2_get_instance,
-+	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-+	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu4x_buf_size,
-+	.vpu_ops = &iris_vpu4x_ops,
-+	.set_preset_registers = iris_set_sm8550_preset_registers,
-+	.icc_tbl = sm8550_icc_table,
-+	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
-+	.clk_rst_tbl = kaanapali_clk_reset_table,
-+	.clk_rst_tbl_size = ARRAY_SIZE(kaanapali_clk_reset_table),
-+	.bw_tbl_dec = sm8550_bw_table_dec,
-+	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
-+	.pmdomain_tbl = kaanapali_pmdomain_table,
-+	.pmdomain_tbl_size = ARRAY_SIZE(kaanapali_pmdomain_table),
-+	.opp_pd_tbl = sm8550_opp_pd_table,
-+	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
-+	.clk_tbl = kaanapali_clk_table,
-+	.clk_tbl_size = ARRAY_SIZE(kaanapali_clk_table),
-+	.opp_clk_tbl = kaanapali_opp_clk_table,
-+	/* Upper bound of DMA address range */
-+	.dma_mask = 0xe0000000 - 1,
-+	.fwname = "qcom/vpu/vpu40_p2_s7.mbn",
-+	.pas_id = IRIS_PAS_ID,
-+	.inst_caps = &platform_inst_cap_sm8550,
-+	.inst_fw_caps_dec = inst_fw_cap_sm8550_dec,
-+	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
-+	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
-+	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
-+	.tz_cp_config_data = tz_cp_config_kaanapali,
-+	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_kaanapali),
-+	.core_arch = VIDEO_ARCH_LX,
-+	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
-+	.ubwc_config = &ubwc_config_sm8550,
-+	.num_vpp_pipe = 2,
-+	.max_session_count = 16,
-+	.max_core_mbpf = NUM_MBS_8K * 2,
-+	.max_core_mbps = ((8192 * 4352) / 256) * 60,
-+	.dec_input_config_params_default =
-+		sm8550_vdec_input_config_params_default,
-+	.dec_input_config_params_default_size =
-+		ARRAY_SIZE(sm8550_vdec_input_config_params_default),
-+	.dec_input_config_params_hevc =
-+		sm8550_vdec_input_config_param_hevc,
-+	.dec_input_config_params_hevc_size =
-+		ARRAY_SIZE(sm8550_vdec_input_config_param_hevc),
-+	.dec_input_config_params_vp9 =
-+		sm8550_vdec_input_config_param_vp9,
-+	.dec_input_config_params_vp9_size =
-+		ARRAY_SIZE(sm8550_vdec_input_config_param_vp9),
-+	.dec_output_config_params =
-+		sm8550_vdec_output_config_params,
-+	.dec_output_config_params_size =
-+		ARRAY_SIZE(sm8550_vdec_output_config_params),
-+
-+	.enc_input_config_params =
-+		sm8550_venc_input_config_params,
-+	.enc_input_config_params_size =
-+		ARRAY_SIZE(sm8550_venc_input_config_params),
-+	.enc_output_config_params =
-+		sm8550_venc_output_config_params,
-+	.enc_output_config_params_size =
-+		ARRAY_SIZE(sm8550_venc_output_config_params),
-+
-+	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
-+	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
-+	.dec_output_prop_avc = sm8550_vdec_subscribe_output_properties_avc,
-+	.dec_output_prop_avc_size =
-+		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_avc),
-+	.dec_output_prop_hevc = sm8550_vdec_subscribe_output_properties_hevc,
-+	.dec_output_prop_hevc_size =
-+		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_hevc),
-+	.dec_output_prop_vp9 = sm8550_vdec_subscribe_output_properties_vp9,
-+	.dec_output_prop_vp9_size =
-+		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_vp9),
-+
-+	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
-+	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
-+	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
-+	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-+
-+	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
-+	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
-+};
-+
- struct iris_platform_data sm8550_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_kaanapali.h b/drivers/media/platform/qcom/iris/iris_platform_kaanapali.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..247fb9d7cb632d2e9a1e9832d087cb03ac9b7cf3
---- /dev/null
-+++ b/drivers/media/platform/qcom/iris/iris_platform_kaanapali.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef __IRIS_PLATFORM_KAANAPALI_H__
-+#define __IRIS_PLATFORM_KAANAPALI_H__
-+
-+#define VIDEO_REGION_VM0_SECURE_NP_ID		1
-+#define VIDEO_REGION_VM0_NONSECURE_NP_ID	5
-+
-+static const char *const kaanapali_clk_reset_table[] = {
-+	"bus0",
-+	"bus1",
-+	"core_freerun_reset",
-+	"vcodec0_core_freerun_reset",
-+};
-+
-+static const char *const kaanapali_pmdomain_table[] = {
-+	"venus",
-+	"vcodec0",
-+	"vpp0",
-+	"vpp1",
-+	"apv",
-+};
-+
-+static const struct platform_clk_data kaanapali_clk_table[] = {
-+	{ IRIS_AXI_CLK, "iface" },
-+	{ IRIS_CTRL_CLK, "core" },
-+	{ IRIS_HW_CLK, "vcodec0_core" },
-+	{ IRIS_AXI1_CLK, "iface1" },
-+	{ IRIS_CTRL_FREERUN_CLK, "core_freerun" },
-+	{ IRIS_HW_FREERUN_CLK, "vcodec0_core_freerun" },
-+	{ IRIS_BSE_HW_CLK, "vcodec_bse" },
-+	{ IRIS_VPP0_HW_CLK, "vcodec_vpp0" },
-+	{ IRIS_VPP1_HW_CLK, "vcodec_vpp1" },
-+	{ IRIS_APV_HW_CLK, "vcodec_apv" },
-+};
-+
-+static const char *const kaanapali_opp_clk_table[] = {
-+	"vcodec0_core",
-+	"vcodec_apv",
-+	"vcodec_bse",
-+	"core",
-+	NULL,
-+};
-+
-+static struct tz_cp_config tz_cp_config_kaanapali[] = {
-+	{
-+		.cp_start = VIDEO_REGION_VM0_SECURE_NP_ID,
-+		.cp_size = 0,
-+		.cp_nonpixel_start = 0x01000000,
-+		.cp_nonpixel_size = 0x24800000,
-+	},
-+	{
-+		.cp_start = VIDEO_REGION_VM0_NONSECURE_NP_ID,
-+		.cp_size = 0,
-+		.cp_nonpixel_start = 0x25800000,
-+		.cp_nonpixel_size = 0xda400000,
-+	},
-+};
-+
-+#endif /* __IRIS_PLATFORM_KAANAPALI_H__ */
-diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-index ad82a62f8b923d818ffe77c131d7eb6da8c34002..a0902f3aaa1ca6021cfd414787da747a6dda1010 100644
---- a/drivers/media/platform/qcom/iris/iris_probe.c
-+++ b/drivers/media/platform/qcom/iris/iris_probe.c
-@@ -348,6 +348,10 @@ static const struct dev_pm_ops iris_pm_ops = {
- };
- 
- static const struct of_device_id iris_dt_match[] = {
-+	{
-+		.compatible = "qcom,kaanapali-iris",
-+		.data = &kaanapali_data,
-+	},
- 	{
- 		.compatible = "qcom,qcs8300-iris",
- 		.data = &qcs8300_data,
+[...]
 
--- 
-2.34.1
+> >>> [...] if we offer independent schemata for MBW_MIN and MBW_MAX, the user
+> >>> can program MBW_MIN=75% and MBW_MAX=25% for the same PARTID, and that
+> >>> will read back just as programmed.  The architecture does not promise
+> >>> what the performance effect of this will be, but resctrl does not need
+> >>> to care.
+> >>
+> >> The same appears to be true for Intel RDT where the spec warns ("Undesirable
+> >> and undefined performance effects may result if cap programming guidelines
+> >> are not followed.") but does not seem to prevent such configurations. 
+> > 
+> > Right.  We _could_ block such a configuration from reaching the hardware,
+> > if the arch backend overrides the MIN limit when the MAX limit is
+> > written and vice-versa, when not doing to would result in crossed-over
+> > bounds.
+> > 
+> > If software wants to program both bounds, then that would be fine: in:
+> > 
+> > # cat <<-EOF >/sys/fs/resctrl/schemata
+> > 	MB_MAX: 0=128
+> > EOF
+> > 
+> > # cat <<-EOF >/sys/fs/resctrl/schemata
+> > 	MB_MIN: 0=256
+> > 	MB_MAX: 0=1024
+> > EOF
+> > 
+> > ... internally programming some value >=256 before programming the
+> > hardware with the new min bound would not stop the final requested
+> > change to MB_MAX from working as userspace expected.
+> > 
+> > (There will be inevitable regulation glitches unless the hardware
+> > provides a way to program both bounds atomically.  MPAM doesn't; I
+> > don't think RDT does either?)
+> > 
+> > 
+> > But we only _need_ to do this if the hardware architecture forbids
+> > programming cross bounds or says that it is unsafe to do so.  So, I am
+> > thinking that the generic code doesn't need to handle this.
+> > 
+> > [...]
+> 
+> Sounds reasonable to me.
 
+OK
+
+[...]
+
+> >>> So long as the entries affecting a single resource are ordered so that
+> >>> each entry is strictly more specific than the previous entries (as
+> >>> illustrated above), then reading schemata and stripping all the hashes
+> >>> would allow a previous configuration to be restored; to change just one
+> >>> entry, userspace can uncomment just that one, or write only that entry
+> >>> (which is what I think we should recommend for new software).
+> >>
+> >> This is a good rule of thumb.
+> > 
+> > To avoid printing entries in the wrong order, do we want to track some
+> > parent/child relationship between schemata.
+> > 
+> > In the above example,
+> > 
+> > 	* MB is the parent of MB_HW;
+> > 
+> > 	* MB_HW is the parent of MB_MIN and MB_MAX.
+> > 
+> > (for MPAM, at least).
+> 
+> Could you please elaborate this relationship? I envisioned the MB_HW to be
+> something similar to Intel RDT's "optimal" bandwidth setting ... something
+> that is expected to be somewhere between the "min" and the "max".
+> 
+> But, now I think I'm a bit lost in MPAM since it is not clear to me what
+> MB_HW represents ... would this be the "memory bandwidth portion
+> partitioning"? Although, that uses a completely different format from
+> "min" and "max".
+
+I confess that I'm thinking with an MPAM mindset here.
+
+Some pseudocode might help to illustrate how these might interact:
+
+	set_MB(partid, val) {
+		set_MB_HW(partid, percent_to_hw_val(val));
+	}
+
+	set_MB_HW(partid, val) {
+		set_MB_MAX(partid, val);
+
+		/*
+		 * Hysteresis to avoid steady flows from ping-ponging
+		 * between low and high priority:
+		 */
+		if (hardware_has_MB_MIN())
+			set_MB_MIN(partid, val * 95%);
+	}
+
+	set_MB_MIN(partid, val) {
+		mpam->MBW_MIN[partid] = val;
+	}
+
+	set_MB_MAX(partid, val) {
+		mpam->MBW_MAX[partid] = val;
+	}
+
+with
+
+	get_MB(partid) {
+		return hw_val_to_percent(get_MB_HW(partid));
+	}
+
+	get_MB_HW(partid) { return get_MB_MAX(partid); }
+
+	get_MB_MIN(partid) { return mpam->MBW_MIN[partid]; }
+
+	get_MB_MAX(partid) { return mpam->MBW_MAX[partid]; }
+
+
+The parent/child relationship I suggested is basically the call-graph
+of this pseudocode.  These could all be exposed as resctrl schemata,
+but the children provide finer / more broken-down control than the
+parents.  Reading a parent provides a merged or approximated view of
+the configuration of the child schemata.
+
+In particular,
+
+	set_child(partid, get_child(partid));
+	get_parent(partid);
+
+yields the same result as
+
+	get_parent(partid);
+
+but will not be true in general, if the roles of parent and child are
+reversed.
+
+I think still this holds true if implementing an "MB_HW" schema for
+newer revisions of RDT.  The pseudocode would be different, but there
+will still be a tree-like call graph (?)
+
+
+Going back to MPAM:
+
+Re MPAM memory bandwidth portion partitioning (a.k.a., MBW_PART or
+MBWPBM), this is a bitmap-type control, analogous to RDT CAT: memory
+bandwidth is split into discrete, non-overlapping chunks, and each
+PARTID is configured with a bitmap saying which chunks it can use.
+This could be done by time-slicing, or controlling which memory
+controllers/ports a PARTID can issue requests to, or something like
+that.
+
+If the MBW_MAX control isn't implemented, then the MPAM current driver
+maps this bitmap control onto the resctrl "MB" schema in a simple way,
+but we are considering dropping this, since the allocation model
+(explicit, static allocation of discrete resources) is not really the
+same as for RDT MBA (dynamic prioritisation based on recent resource
+consumption).
+
+Programming MBW_MAX=50% for four PARTIDs means that the PARTIDs contend
+on an equal footing for memory bandwidth until one exceeds 50% (when it
+will start to be penalised).  Prorgamming bitmaps can't have the same
+effect.  For example, with { 1100, 0110, 0011, 1001 }, no group can use
+more than 50% of the full bandwidth, whatever happens.  Worse, certain
+pairs of groups are fully isolated from each other, while others are
+always in contention, not matter how little actual traffic is generated.
+This is potentially useful, but it's not the same as the MIN/MAX model.
+
+So, it may make more sense to expose this as a separate, bitmap schema.
+
+(The same goes for "Proportional stride" partitioning.  It's another,
+different, control for memory bandwidth.  As of today, I don't think
+that we have a reference platform for experimenting with either of
+these.)
+
+
+> > When schemata is read, parents should always be printed before their
+> > child schemata.  But really, we just need to make sure that the
+> > rdt_schema_all list is correctly ordered.
+> > 
+> > 
+> > Do you think that this relationship needs to be reported to userspace?
+> 
+> You brought up the topic of relationships in
+> https://lore.kernel.org/lkml/aNv53UmFGDBL0z3O@e133380.arm.com/ that prompted me
+> to learn more from the MPAM spec where I learned and went on tangent about all
+> the other possible namespaces without circling back.
+>
+> I was hoping that the namespace prefix would make the relationships clear,
+> something like <resource>_<control>, but I did not expect another layer in
+> the hierarchy like your example above. The idea of "parent" and "child" is
+> also not obvious to me at this point. resctrl gives us a "resource" to start
+> with and we are now discussing multiple controls per resource. Could you please
+> elaborate what you see as "parent" and "child"?
+
+See above -- the parent/child concept is not an MPAM thing; apologies
+if I didn't make that clear.
+
+> We do have the info directory available to express relationships and a
+> hierarchy is already starting to taking shape there.
+
+I'm wondering whether using a common prefix will be future-proof?  It
+may not always be clear which part of a name counts as the common
+prefix.
+
+There were already discussions about appending a number to a schema
+name in order to control different memory regions -- that's another
+prefix/suffix relationship, if so...
+
+We could handle all of this by documenting all the relationships
+explicitly.  But I'm thinking that it could be easier for maintanance
+if the resctrl core code has explicit knowledge of the relationships.
+
+
+That said, using a common prefix is still a good idea.  But maybe we
+shouldn't lean on it too heavily as a way of actually describing the
+relationships?
+
+> > Since the "#" convention is for backward compatibility, maybe we should
+> > not use this for new schemata, and place the burden of managing
+> > conflicts onto userspace going forward.  What do you think?
+> 
+> I agree. The way I understand this is that the '#' will only be used for
+> new controls that shadow the default/current controls of the legacy resources.
+> I do not expect that the prefix will be needed for new resources, even if
+> the initial support of a new resource does not include all possible controls.
+
+OK.  Note, relating this to the above, the # could be interpreted as
+meaning "this is a child of some other schema; don't mess with it
+unless you know what you are doing".
+
+Older software doesn't understand the relationships, so this is just
+there to stop it from shooting itself in the foot.
+
+[...]
+
+> >>>> MPAM has the "HARDLIM" distinction associated with these MAX values
+> >>>> and from what I can tell this is per PARTID. Is this something that needs
+> >>>> to be supported? To do this resctrl will need to support modifying
+> >>>> control properties per resource group.
+> >>>
+> >>> Possibly.  Since this is a boolean control that determines how the
+> >>> MBW_MAX control is applied, we could perhaps present it as an
+> >>> additional schema -- if so, it's basically orthogonal.
+> >>>
+> >>>  | MB_HARDMAX: 0=0, 1=1, 2=1, 3=0 [...]
+> >>>
+> >>> or
+> >>>
+> >>>  | MB_HARDMAX: 0=off, 1=on, 2=on, 3=off [...]
+> >>>
+> >>> Does this look reasonable?
+> >>
+> >> It does.
+> > 
+> > OK -- note, I don't think we have any immediate plan to support this in
+> > the MPAM driver, but it may land eventually in some form.
+> > 
+> 
+> ack.
+
+(Or, of course, anything else that achieves the same goal...)
+
+[...]
+
+> >>> MPAM doesn't allow different controls for a PARTID depending on the
+> >>> exception level, but it is possible to program different PARTIDs for
+> >>> hypervisor/kernel and userspace (i.e., EL2/EL1 and EL0).
+
+[...]
+
+> >>> Hopefully this is orthogonal to the discussion of schema descriptions,
+> >>> though ...?
+> >>
+> >> Yes.
+> > 
+> > OK; I suggest that we put this on one side, for now, then.
+> > 
+> > There is a discussion to be had on this, but it feels like a separate
+> > thing.
+> 
+> agreed.
+> 
+> > 
+> > 
+> > I'll try to pull the state of this discussion together -- maybe as a
+> > draft update to the documentation, describing the interface as proposed
+> > so far.  Does that work for you?
+> 
+> It does. Thank you very much for taking this on.
+> 
+> Reinette
+
+OK, I'll aim to follow up on this next week.
+
+Cheers
+---Dave
 
