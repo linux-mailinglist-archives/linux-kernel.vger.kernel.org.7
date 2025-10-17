@@ -1,107 +1,186 @@
-Return-Path: <linux-kernel+bounces-858331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A8BBEA819
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:11:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692CCBEABAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A98C9454EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:41:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244D27C0F58
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C886D332ED8;
-	Fri, 17 Oct 2025 15:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B363B330B30;
+	Fri, 17 Oct 2025 15:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQz1Xnx2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0KTt603"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25981332903;
-	Fri, 17 Oct 2025 15:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E3C330B0D;
+	Fri, 17 Oct 2025 15:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715614; cv=none; b=hoWkIYq6FuK2PAEyFHT3AyoMPkxX/pNS6AX3ubN3jAFOCRvmWHrJQ0+p1N86eGQFfSVq/2iCEaxKTzAiAkFu2FezPWJhsDdtffETkvlREleqMALIZ1sJGtBXkjMpiDa0YZVR0ljFsL3vVEYFlHVNlc8O6Xw9NmcZSTgQrS/Tz3c=
+	t=1760715948; cv=none; b=YLuLYD0wmy0Qajw+9vgOx2kq+MfhSCZD5//abyBJIjXSKknNfercZXaADg+BruygjhqVRnWsMgg6K7pHoWlHQZ7dfGRQMhrFj27wG7bda49HFkkEAmLBavIgi6+4vEaHUvU2+AUmFqNOlnS1KKG15/CvyrX2xMEiaTbiBwuGygg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715614; c=relaxed/simple;
-	bh=IQkNW1F4nV6Vxf2WS9P9qIikl4xugxlZvh+MEW6AR3c=;
+	s=arc-20240116; t=1760715948; c=relaxed/simple;
+	bh=e40RiWetjsxLvkNuwYGmbCfc+JdkI+evIoSOLsfzX5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxOZONIIPwQg39i6i9EgxUTXNAVf8bCHUi6WUjKC0MATqp39aLC9YnibIzWIAgJo30XPPjkJ94z7V1jbvVs3buw0vpgKq5Rs1AiR8N1+v6DTJzSdK6w9FBVjPkwItehbVKNizVC/VH+Lrz371HvdLER8S5oCCWyHzCmoGdhvPsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQz1Xnx2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C725AC4CEE7;
-	Fri, 17 Oct 2025 15:40:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=evr+/Gf00xFS0v+It682cXzMGoCPwZw0E9whfgpedENqHJESt9Fi+4rVMjXCGMmlFMTV2tNEHg2GBKFYCFvt9jebLF9D9DiIBmrVwgPlCRMmi+rdo+P70jHs/wBDj/7XXHkZTPnjQ/Y5cuH9ucGVebloL9X0lFeZXTVPJVmSkkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0KTt603; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B41AC4CEFE;
+	Fri, 17 Oct 2025 15:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760715613;
-	bh=IQkNW1F4nV6Vxf2WS9P9qIikl4xugxlZvh+MEW6AR3c=;
+	s=k20201202; t=1760715947;
+	bh=e40RiWetjsxLvkNuwYGmbCfc+JdkI+evIoSOLsfzX5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MQz1Xnx2ndMO4J1MPHj1jpyr+DWmWgpPMl9nbXgnvW1QDZk1196EDbInzlMrQiRCq
-	 p5HkDiqkDwA2T00U2v6RVqpqELnlWHaafqOQbgcvm87n+pq8UkNMGs/NUwKqCVsIFm
-	 PUlu4grZXXs1jegNpRChwRAC6zMHmcFkof4/fD9Hh9oGexChzpO/mAaXf13eqFy56u
-	 FjbnHaH7bsIfBBoqHei1+XjmUF0kqINw7sXXRLALomHRWFc5Fgwm8Cnt3HVfhFiget
-	 079tpLQw0PP23ZLv8co1aHKSZi6B6t7m9b6WQuzYKBSXap51HWCLsQfCzwQQ94uJXl
-	 82yVTEAqmmJPQ==
-Date: Fri, 17 Oct 2025 05:40:12 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luigi De Matteis <ldematteis123@gmail.com>
-Subject: Re: [PATCH 06/14] sched_ext: Add a DL server for sched_ext tasks
-Message-ID: <aPJjXBifYNbXY0bI@slm.duckdns.org>
-References: <20251017093214.70029-1-arighi@nvidia.com>
- <20251017093214.70029-7-arighi@nvidia.com>
+	b=X0KTt603Yf31FFgAAhASvEZ2oNQ58Cji9gxknQ4KWZAlwFKi3LL31v8VC6QOHOAj+
+	 M6gtZL8qw7AEBY6RAvHQjLJW281SB4TIovX0ilHly2zJL4syQ8wjekpq3K7tmPwbGb
+	 aIQKYsncha82wYQiSq6tQdMJtbTYAqC2eQWi2T8vv99nvjvI1WzSx/L5EQmAvAvkhQ
+	 YRF91VJNtvzVCXjm8hcac6oT8qz5yUP3tI04KEl66zMMTvB3jOBOUOTK5VYumvXI29
+	 h2yiEUPE0IamV2CAT3s7TE4as1f205bSvXF+R8EGxR0ciekXaZ31B7LiWNgOgOGwOc
+	 L9hp0005Z0WCA==
+Date: Fri, 17 Oct 2025 16:45:43 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: renesas,r9a09g077: Document
+ pin configuration properties
+Message-ID: <20251017-anthem-duplicity-c96e4253d986@spud>
+References: <20251014191121.368475-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251014191121.368475-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251016-dimmed-affidavit-90bae7e162aa@spud>
+ <CA+V-a8un1cF=acNjG=79_v7oaR8gzBQ+3z1As8AqrJnOnk-OUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="E/tp+y/c9Usv3Xlg"
 Content-Disposition: inline
-In-Reply-To: <20251017093214.70029-7-arighi@nvidia.com>
+In-Reply-To: <CA+V-a8un1cF=acNjG=79_v7oaR8gzBQ+3z1As8AqrJnOnk-OUw@mail.gmail.com>
 
-On Fri, Oct 17, 2025 at 11:25:53AM +0200, Andrea Righi wrote:
-> From: Joel Fernandes <joelagnelf@nvidia.com>
-> 
-> sched_ext currently suffers starvation due to RT. The same workload when
-> converted to EXT can get zero runtime if RT is 100% running, causing EXT
-> processes to stall. Fix it by adding a DL server for EXT.
-> 
-> A kselftest is also provided later to verify:
-> 
-> ./runner -t rt_stall
-> ===== START =====
-> TEST: rt_stall
-> DESCRIPTION: Verify that RT tasks cannot stall SCHED_EXT tasks
-> OUTPUT:
-> TAP version 13
-> 1..1
-> ok 1 PASS: CFS task got more than 4.00% of runtime
-> 
-> [ arighi: drop ->balance() now that pick_task() has an rf argument ]
-> 
-> Cc: Luigi De Matteis <ldematteis123@gmail.com>
-> Co-developed-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-I don't see anything preventing this to come after patch 11 so that all
-sched_ext changes are at the end. Am I correct? That'd make applying the
-patches easier. All the debug and deadline changes can be applied to
-sched/core and I can pull that and apply sched_ext changes on top.
+--E/tp+y/c9Usv3Xlg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Fri, Oct 17, 2025 at 04:33:56PM +0100, Lad, Prabhakar wrote:
+> Hi Conor,
+>=20
+> Thank you for the review.
+>=20
+> On Thu, Oct 16, 2025 at 5:41=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Tue, Oct 14, 2025 at 08:11:20PM +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Document the pin configuration properties supported by the RZ/T2H pin=
+ctrl
+> > > driver. The RZ/T2H SoC supports configuring various electrical proper=
+ties
+> > > through the DRCTLm (I/O Buffer Function Switching) registers.
+> > >
+> > > Add documentation for the following standard properties:
+> > > - bias-disable, bias-pull-up, bias-pull-down: Control internal
+> > >   pull-up/pull-down resistors (3 options: no pull, pull-up, pull-down)
+> > > - input-schmitt-enable, input-schmitt-disable: Control Schmitt trigger
+> > >   input
+> > > - slew-rate: Control output slew rate (2 options: slow/fast)
+> > >
+> > > Add documentation for the custom property:
+> > > - renesas,drive-strength: Control output drive strength using discrete
+> > >   levels (0-3) representing low, medium, high, and ultra high strengt=
+h.
+> > >   This custom property is needed because the hardware uses fixed disc=
+rete
+> > >   levels rather than configurable milliamp values.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > >  .../bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml | 13 +++++++++++=
+++
+> > >  1 file changed, 13 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g=
+077-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g=
+077-pinctrl.yaml
+> > > index 36d665971484..9085d5cfb1c8 100644
+> > > --- a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pin=
+ctrl.yaml
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pin=
+ctrl.yaml
+> > > @@ -72,6 +72,19 @@ definitions:
+> > >        input: true
+> > >        input-enable: true
+> > >        output-enable: true
+> > > +      bias-disable: true
+> > > +      bias-pull-down: true
+> > > +      bias-pull-up: true
+> > > +      input-schmitt-enable: true
+> > > +      input-schmitt-disable: true
+> > > +      slew-rate:
+> > > +        enum: [0, 1]
+> >
+> > What are the meanings of "0" and "1" for slew rate? Why isn't this given
+> I'll add a description for it (0 =3D slow, 1 =3D fast) and the same values
+> are programmed in the register to configure the slew rate.
+>=20
+> > as the actual rates? The docs surely give more detail than just "slow"
+> > and "fast".
+> You mean to represent slew-rate in some sort of a unit?
 
--- 
-tejun
+Usually slew-rate is measured in a unit derived from volts per second.
+What rates do "slow" and "fast" actually represent?
+
+> > > +      renesas,drive-strength:
+> > > +        description:
+> > > +          Drive strength configuration value. Valid values are 0 to =
+3, representing
+> > > +          increasing drive strength from low, medium, high and ultra=
+ high.
+> >
+> > I see what you wrote in the commit message, but I don't really get why
+> > you need a custom property. I would imagine most devices only have some
+> > some small set of "fixed discrete levels", yet manage with milli- or
+> > micro-amps fine. Converting from mA to register values in a driver is
+> > not difficult, and I figure the documentation for the device probably
+> > doesn't just give vague strengths like "medium" or "ultra high", but
+> > probably provides currents?
+> >
+> > I dunno, I am just confused by the need to shove register values into
+> > these properties, rather than using the actual units.
+> >
+> I'm checking this with the HW team. I'll get back on this once I have
+> some feedback.
+>=20
+> Cheers,
+> Prabhakar
+
+--E/tp+y/c9Usv3Xlg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPJkpgAKCRB4tDGHoIJi
+0s3MAP9YizOciJUJl7rtAmgZ0KBowiJDC/FYFB0FeHTK47UjkQEA8ndu2smIcIZJ
+nOSy5kNBMpmDRVIhroG4JLyImSz1Bg0=
+=VFiF
+-----END PGP SIGNATURE-----
+
+--E/tp+y/c9Usv3Xlg--
 
