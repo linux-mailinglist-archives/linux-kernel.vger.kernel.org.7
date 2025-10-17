@@ -1,170 +1,112 @@
-Return-Path: <linux-kernel+bounces-857244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8981BE64E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:26:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBA8BE64FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 94CF5353219
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:26:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9D2473521AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E4E30C37C;
-	Fri, 17 Oct 2025 04:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="txmF71fc"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B353D30C637;
+	Fri, 17 Oct 2025 04:30:07 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25578632B;
-	Fri, 17 Oct 2025 04:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF5530B525;
+	Fri, 17 Oct 2025 04:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760675144; cv=none; b=h3j7CpgApe8SseSQ4joSc6RPQuuTqpM8tdPXGwFBUTjehG2m38jNgD7iR3m6zte/cAn0IW84kH+svdSgtygTxscySyalZKH7DSX06Nf2axujEeV64I5Yn+oY6QAuDGlg1r1voJzgx1DPifQ5nh7lLm3sVBk9Y/uaFetE8vjKxUs=
+	t=1760675407; cv=none; b=D16R0A5KpjtajLExlH8wtXakkGNqccvPMpo9+Fx9yGAwRda1Xm21IqAyA7l2egkYsOPSn0jbKXtFZaTtr4IjtlVh0r5VDOaz/mmGVEwfYrykO83rHszB4rLZyNjlrHo+gUrKjzXYkj3p09ZGdcnlu1BnqJB9T9XjmJ64X9xhLD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760675144; c=relaxed/simple;
-	bh=1xhS+0G/fq5C2jfg8PLUBZhBH4fQrVEQImqMPY7sgZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qiwwqez3qWY2j3jcnnOY5Y+XkFMxWPoIErr8/xb869pAIDX8cGBAjhs5EoK+dM7OHza3Sfk0I19n78eXq4HTBNTTTYiEPDip5IWSAGl21N8fbufFz7vj0Tr2vK19dw0Bmn8IyVcKlM+kCv5z60e4hw+8FudGbyNBX186FGp5CtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=txmF71fc; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=21WaAzhmVvUKKBaFCzrkvcQRqL9tINZoUoeJdr3eA0c=; b=txmF71fcWTj/jMFenJPwU0s70u
-	H4H3GTw539in/Td3VnQngYuL0g4VQEjlqRoIZuwHqpoysHzdr7ZYcxqNtATA/vG+1Dgks112BrG5m
-	ce7s84TVxs+Li6P8sXTIhfERmAQ2gUosJFFKny436MHqHpGnYRALzd8cfV3xP5lEgReDIpoTCK+ox
-	aHVvyv/C1Zbn6woAbA5MlgeyOF05NLkYFifSGxAEcSW+cFoZ9QgRVDt3gWpojVcJMpW/iZaXROe6U
-	ojcIobdxB7VVlT6KWS5GlOSTXzsfHW+5HtRHb0IqKPmDOr0RutePIZ8hqBKD8E3CF20X3JffCrJB7
-	h+QQIkhw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9c29-00000006X0i-3ZsM;
-	Fri, 17 Oct 2025 04:25:41 +0000
-Message-ID: <aa388d29-b83b-454e-a686-638c80c6a7bf@infradead.org>
-Date: Thu, 16 Oct 2025 21:25:41 -0700
+	s=arc-20240116; t=1760675407; c=relaxed/simple;
+	bh=I/Bep9Gu6JYMo2nmAbWQIn0Ojy74IiaczacxPmDthiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOwSeU9pp2poSB7VnqtrcZ9fJaBDi1FP20guY9NYPSnfkrsPKKvpd5dnyTTR7fRafJSMikAxbUisl9w5wg+ryap8CjR4UucKP3EmLOAZ1lKyipoKmWS68dvd9GmO8sfkdGaaaDBS1K0ZU2cKUFKmDnlcx63Yr1zxatynUzwnLfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id EAB54227A87; Fri, 17 Oct 2025 06:29:54 +0200 (CEST)
+Date: Fri, 17 Oct 2025 06:29:54 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: alistair23@gmail.com
+Cc: chuck.lever@oracle.com, hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
+	kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	kch@nvidia.com, hare@suse.de,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v4 5/7] nvme-tcp: Support KeyUpdate
+Message-ID: <20251017042954.GA30271@lst.de>
+References: <20251017042312.1271322-1-alistair.francis@wdc.com> <20251017042312.1271322-6-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: sysrq: Rewrite /proc/sysrq-trigger
- usage
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Serial <linux-serial@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Cengiz Can <cengiz@kernel.wtf>,
- Tomas Mudrunka <tomas.mudrunka@gmail.com>, Jiri Slaby
- <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
-References: <20251016103609.33897-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251016103609.33897-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017042312.1271322-6-alistair.francis@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi,
+On Fri, Oct 17, 2025 at 02:23:10PM +1000, alistair23@gmail.com wrote:
+> From: Alistair Francis <alistair.francis@wdc.com>
+> 
+> If the nvme_tcp_try_send() or nvme_tcp_try_recv() functions return
+> EKEYEXPIRED then the underlying TLS keys need to be updated. This occurs
+> on an KeyUpdate event.
+> 
+> If the NVMe Target (TLS server) initiates a KeyUpdate this patch will
+> allow the NVMe layer to process the KeyUpdate request and forward the
+> request to userspace. Userspace must then update the key to keep the
+> connection alive.
+> 
+> This patch allows us to handle the NVMe target sending a KeyUpdate
+> request without aborting the connection. At this time we don't support
+> initiating a KeyUpdate.
+> 
+> Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
 
-On 10/16/25 3:36 AM, Bagas Sanjaya wrote:
-> /proc/sysrq-trigger usage documentation (in "On all" section) states
-> that it is not recommended to write extra characters to it to avoid
-> undefined behavior, which is contradictive to previous sentence that
-> such characters are ignored. Also, in order to actually process them
-> (as a string), prepending it with underscore is required.
-> 
-> Rewrite the description.
-> 
-> Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> Changes since v1 [1]:
-> 
->   - Rewrite the whole "On all" section (Jon, Randy)
-> 
-> [1]: https://lore.kernel.org/linux-doc/20251008112409.33622-1-bagasdotme@gmail.com/
-> 
->  Documentation/admin-guide/sysrq.rst | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
-> index 9c7aa817adc72d..6157d93e03a1e2 100644
-> --- a/Documentation/admin-guide/sysrq.rst
-> +++ b/Documentation/admin-guide/sysrq.rst
-> @@ -75,16 +75,13 @@ On other
->  	submit a patch to be included in this section.
+Totally independent of the current Link-tag flamewar, spec reference
+should be in the free flowing commit text.
+
+> +	if (result == -EKEYEXPIRED) {
+> +		return -EKEYEXPIRED;
+> +	} else if (result == -EAGAIN) {
+> +		return -EAGAIN;
+> +	} else if (result < 0) {
+
+returns do not need and should not be followed by else statements.
+
+>  		dev_err(queue->ctrl->ctrl.device,
+>  			"receive failed:  %d\n", result);
+>  		queue->rd_enabled = false;
+>  		nvme_tcp_error_recovery(&queue->ctrl->ctrl);
+> +	}
 >  
->  On all
-> -	Write a single character to /proc/sysrq-trigger.
-> -	Only the first character is processed, the rest of the string is
-> -	ignored. However, it is not recommended to write any extra characters
-> -	as the behavior is undefined and might change in the future versions.
-> -	E.g.::
+>  	return result < 0 ? result : (queue->nr_cqe = nr_cqe);
 
-I didn't quite follow Tomas's objection to the patch.
-However, if we need to keep most of the paragraph above, I think
-that it should at least say something like:
+Also the overall flow here, but old and newly added feels really odd,
+up to the point of intentional obfuscation in the last return line.
 
-	In this mode, only the first character is processed; the rest of the string
-	is silently ignored. To write multiple characters, see the
-	alternative mode below.
+I'd expect this to be more something like:
 
+	if (result < 0) {
+		if (result != -EKEYEXPIRED && result != -EAGAIN) {
+	 		dev_err(queue->ctrl->ctrl.device,
+	 			"receive failed:  %d\n", result);
+	 		queue->rd_enabled = false;
+	  		nvme_tcp_error_recovery(&queue->ctrl->ctrl);
+		}
+		return result;
+	}
 
-At any rate, this patch LGTM.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Or there is yet another alternative wording below.
-
-> +	Write a single character to /proc/sysrq-trigger. E.g.::
->  
->  		echo t > /proc/sysrq-trigger
->  
-> -	Alternatively, write multiple characters prepended by underscore.
-> -	This way, all characters will be processed. E.g.::
-> +	If a string (multiple characters) is written instead, only the
-> +	first character is processed unless the string is prepended by
-> +	an underscore, like::
->  
->  		echo _reisub > /proc/sysrq-trigger
->  
-> 
-> base-commit: a1af37b935c73049c54cb1412cf0e850212af420e
-
-
-Alternative rewrite:
-
-On all
-	To write a single character to /proc/sysrq-trigger::
-
-		echo command_key > /proc/sysrq-trigger
-
-	E.g::
-		echo t > /proc/sysrq-trigger
-
-	Only the first character is processed; any following characters
-	are silently ignored.
-	However, it is not recommended to write any extra characters
-	as the behavior is undefined and might change in the future versions.
-
-	Alternatively, to write multiple characters to /proc/sysrq-trigger,
-	prepend then with an underscore.
-	This way, all characters will be processed. E.g.::
-
-		echo _reisub > /proc/sysrq-trigger
-
-
-I am still OK with removing the 2 "However" lines. We don't typically
-document or provide warnings for how the code might be changed in the
-future. If someone modifies this code and the documentation needs to be
-updated, it should be updated at that time.
-
--- 
-~Randy
+	queue->nr_cqe = nr_cqe;
+	return nr_cqe;
+}
 
