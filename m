@@ -1,219 +1,79 @@
-Return-Path: <linux-kernel+bounces-858302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B818EBE9FEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:38:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19B0BEA2E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C037584535
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:27:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F37375A1A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0152F12CA;
-	Fri, 17 Oct 2025 15:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E641433711F;
+	Fri, 17 Oct 2025 15:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YFlb0FRW"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oS0r83PG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67211D5CE0
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8031946C8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714846; cv=none; b=tnPT1/i8NqUBx61tLxJvAgajQdp8ljqOkIhnTEEVQK31CMINrI0cmYgECwbSP4wGaDAW3639Sbb3ZGfUL+TAwIZoFQfbGHz2Ej0uNxObqyVoJCraDxfp0y2K+77FGzco70jmTzZSKoNGLjMMcAzwpwBHJ9ecuR8Wc6FYOTjISDY=
+	t=1760715046; cv=none; b=eTbIPBEaqPTYbHCIu3XQ7Zh0H4Xsf7L7Um7BJDl75YJXTbr5ydN9m5Ca0p7VUULTVCa/M2qqJAe3+EAGvKDGmvFTG5kmCNRDCqawZrXbSIw/W7jGpqO7p36UqTiqFHcDTW45Ox2TMfYaunIVJfWN9GV7cnWJ/DZc8aGyFwJ8Eg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714846; c=relaxed/simple;
-	bh=3aZ/p1HpFYU923O5p/q4vA96EIt39CRccY3dgGPfSyc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hqmqe7sOlr7AkFmdjJXYiaocArZSqEl+zpuXOBLEU8vMq+9aNCGiTpxZmg0XahNCrZ0/2/KU30CQgT1ghRnay6Ar4G8u4hQRpMWpazNS8IvvuCxaRdjDj1b4TOFsnPH0wG+5FfB3jJ+H2KaMdIPzHqOd258L2xJxJiXqj5pNFTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YFlb0FRW; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-26e4fcc744dso13727955ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760714844; x=1761319644; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ss/8g+etyv1zIY4NyclRxI5mt3qeT/bquVhBLMxoBys=;
-        b=YFlb0FRWdjxGG4URhU2n56aqJjJ5Mvrw9BaFsiJrXzopsg8VKEQhi28W8PP45uRcbX
-         tlQUaKn2YIC52l24s0njKwRJWDRfViGiLYUNHuYGggDKYKdfpMncxThOOKHuXBB2SavO
-         EWFTIlOP1sgkFtUq4UqbGVOXfZx5KfQFuFcCIt4PDqOstR22YTtu7s67YGRfKXAYx/wl
-         aSFbzBX/qLpwNNxkApbvopOmvMBJcP3v+X1RxFggHek5r68j4t2uNnxRe6y1T9KrjjY5
-         2cM7zA4JCb9KwC2ewPFEXjmlVnAxzC5rqouqcSl788JXnWdfHMMFVbOMCwkDKqfVDlWA
-         T9ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760714844; x=1761319644;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ss/8g+etyv1zIY4NyclRxI5mt3qeT/bquVhBLMxoBys=;
-        b=XtPGGBj+g6BCE+V1o7vTQTWC2V2dYQz/BmM/tedIZO1+2n9JbrpJgPTCttjNW8EFqt
-         rYRkcQOFfHpGk6EijEQi72MavrT+Ixq7NHj8ukhQkz7NJER4j0M9mr6IgMcTi8iruFog
-         UR4SA+IOK/NaQovc6gfy1K7hyyae6bglMWnaBt6q1sDUwSo8e8teoMKL4mB/STZ8vFTg
-         6DHHDSUpZjivs4vF7N+znSctrFNVvjqf4kagp+Xk6DtUKkwoPXwudK4BVSOX2pSMPzUW
-         tF9knZrZnefKCP4mdWmMz4sj9g6b/V3tt8jW93P1fji+XuEUStAXQI5XqJNUlFk4Eahx
-         WoJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqrTdn+dpepVONeerLQVK3OrOM3O1HkqphCtQJu1j609ujrEdQ2+4YJPTmpL/Nl0PPLDGrBvaR3we8bTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSIjj4RYEisWUNYoGPTbhnVPCivi5H8kfNOiFWe88yu3253+Ba
-	P3jc3uZQez51lsygAXZELw2csA/tf1BoCQxOT01I50+aJ4bMIdJdu5fO7l61pPcYlA/rWtuJiQP
-	QKR32oQ==
-X-Google-Smtp-Source: AGHT+IGU12bTnRG/I4W0jIR1RxuzbBA+lTiUxcvs3Lm7U4yONDzuiQ14vzbiGb18p1Twgo/9xWWrXrqIhvA=
-X-Received: from plrd20.prod.google.com ([2002:a17:902:aa94:b0:24c:7ef0:65c3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f78b:b0:290:ab61:6a4f
- with SMTP id d9443c01a7336-290c9cb367fmr42913425ad.15.1760714844098; Fri, 17
- Oct 2025 08:27:24 -0700 (PDT)
-Date: Fri, 17 Oct 2025 08:27:22 -0700
-In-Reply-To: <aPHU+RZKwCK0BK7t@intel.com>
+	s=arc-20240116; t=1760715046; c=relaxed/simple;
+	bh=4/Efo52pUqgliVCdTmMb32ALCL+VU1GtLvRS0tzhQx0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=h5iLadPpMm5T3nGJWWkuvaoYcYPDZk/5nh6OWxdBxnrzrnHVF4DyXQ9FZ9Ty5umo3tBTlyO5jbowX3UBSRMDuxPIsskIRMs5htVQr6KA+RMuLUJtKIJvzFhW5KSNpPJXtyBqzhP70JDkaGJBHbcPjRcuQuhfvkZUWKQ+w8lWtlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oS0r83PG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B96EDC4CEE7;
+	Fri, 17 Oct 2025 15:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760715045;
+	bh=4/Efo52pUqgliVCdTmMb32ALCL+VU1GtLvRS0tzhQx0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=oS0r83PGSuWgJV1LXR1ZdK9J/YmCVJD7KPozmwXVXD1i65intFzzZ3XZpbG+rGd3B
+	 WylazXP7ud3e6MLueJ/z92SJICNxUkgdFo76MMLUws6ef9tP4E31WxTPEaSRUKCGCD
+	 wVm+zZRX+3EZKeXJ4HpR29ix4pHoELKLhP99ge3xx0vrW/1yK5mYfSpXXceNLDDAm4
+	 FHxJfHOwbmZ0qLc+1O7IF2JGzL8CvGABhxAxGfYrewi8xb/4aOdPX/V95OlLt/H72Y
+	 xcDUtERMJoDP4TgHBuJMuPH8nDTu5/uhCjnUnznBceM57CFobyNllgv13UjJ0wm5TR
+	 dhpk3mnFQtBxQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFDD39EF978;
+	Fri, 17 Oct 2025 15:30:30 +0000 (UTC)
+Subject: Re: [git pull] drm fixes for 6.18-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9ty=C+PAgZD44Y_LkUuKkRtLFGffjX9rZX8=fkP0s-8zSg@mail.gmail.com>
+References: <CAPM=9ty=C+PAgZD44Y_LkUuKkRtLFGffjX9rZX8=fkP0s-8zSg@mail.gmail.com>
+X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
+ <dri-devel.lists.freedesktop.org>
+X-PR-Tracked-Message-Id: <CAPM=9ty=C+PAgZD44Y_LkUuKkRtLFGffjX9rZX8=fkP0s-8zSg@mail.gmail.com>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-10-17
+X-PR-Tracked-Commit-Id: 62cab426d0e340cd38893227c279705cc9e8416a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e96687c6d3b7814e6516dfa732946d3f40142819
+Message-Id: <176071502928.2669258.8216523114880112616.pr-tracker-bot@kernel.org>
+Date: Fri, 17 Oct 2025 15:30:29 +0000
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016222816.141523-1-seanjc@google.com> <20251016222816.141523-3-seanjc@google.com>
- <aPHU+RZKwCK0BK7t@intel.com>
-Message-ID: <aPJgWhywMXZdiyU5@google.com>
-Subject: Re: [PATCH v4 2/4] KVM: x86: Leave user-return notifier registered on reboot/shutdown
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, kvm@vger.kernel.org, 
-	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Hou Wenlong <houwenlong.hwl@antgroup.com>
-Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Oct 17, 2025, Chao Gao wrote:
-> > bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
-> >@@ -14363,6 +14377,11 @@ module_init(kvm_x86_init);
-> > 
-> > static void __exit kvm_x86_exit(void)
-> > {
-> >+	int cpu;
-> >+
-> >+	for_each_possible_cpu(cpu)
-> >+		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
-> 
-> Is it OK to reference user_return_msrs during kvm.ko unloading? IIUC,
-> user_return_msrs has already been freed during kvm-{intel,amd}.ko unloading.
-> See:
-> 
-> vmx_exit/svm_exit()
->   -> kvm_x86_vendor_exit()
->        -> free_percpu(user_return_msrs);
+The pull request you sent on Fri, 17 Oct 2025 16:14:43 +1000:
 
-Ouch.  Guess who didn't run with KASAN...
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-10-17
 
-And rather than squeezing the WARN into this patch, I'm strongly leaning toward
-adding it in a prep patch, as the WARN is valuable irrespective of how KVM handles
-reboot.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e96687c6d3b7814e6516dfa732946d3f40142819
 
-Not yet tested...
+Thank you!
 
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 Oct 2025 06:10:30 -0700
-Subject: [PATCH 2/5] KVM: x86: WARN if user-return MSR notifier is registered
- on exit
-
-When freeing the per-CPU user-return MSRs structures, WARN if any CPU has
-a registered notifier to help detect and/or debug potential use-after-free
-issues.  The lifecycle of the notifiers is rather convoluted, and has
-several non-obvious paths where notifiers are unregistered, i.e. isn't
-exactly the most robust code possible.
-
-The notifiers they are registered on-demand in KVM, on the first WRMSR to
-a tracked register.  _Usually_ the notifier is unregistered whenever the
-CPU returns to userspace.  But because any given CPU isn't guaranteed to
-return to userspace, e.g. the CPU could be offlined before doing so, KVM
-also "drops", a.k.a. unregisters, the notifiers when virtualization is
-disabled on the CPU.
-
-Further complicating the unregister path is the fact that the calls to
-disable virtualization come from common KVM, and the per-CPU calls are
-guarded by a per-CPU flag (to harden _that_ code against bugs, e.g. due to
-mishandling reboot).  Reboot/shutdown in particular is problematic, as KVM
-disables virtualization via IPI function call, i.e. from IRQ context,
-instead of using the cpuhp framework, which runs in task context.  I.e. on
-reboot/shutdown, drop_user_return_notifiers() is called asynchronously.
-
-Forced reboot/shutdown is the most problematic scenario, as userspace tasks
-are not frozen before kvm_shutdown() is invoked, i.e. KVM could be actively
-manipulating the user-return MSR lists and/or notifiers when the IPI
-arrives.  To a certain extent, all bets are off when userspace forces a
-reboot/shutdown, but KVM should at least avoid a use-after-free, e.g. to
-avoid crashing the kernel when trying to reboot.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/x86.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b4b5d2d09634..334a911b36c5 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -575,6 +575,27 @@ static inline void kvm_async_pf_hash_reset(struct kvm_vcpu *vcpu)
- 		vcpu->arch.apf.gfns[i] = ~0;
- }
- 
-+static int kvm_init_user_return_msrs(void)
-+{
-+	user_return_msrs = alloc_percpu(struct kvm_user_return_msrs);
-+	if (!user_return_msrs) {
-+		pr_err("failed to allocate percpu user_return_msrs\n");
-+		return -ENOMEM;
-+	}
-+	kvm_nr_uret_msrs = 0;
-+	return 0;
-+}
-+
-+static void kvm_free_user_return_msrs(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
-+
-+	free_percpu(user_return_msrs);
-+}
-+
- static void kvm_on_user_return(struct user_return_notifier *urn)
- {
- 	unsigned slot;
-@@ -10032,13 +10053,9 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
- 		return -ENOMEM;
- 	}
- 
--	user_return_msrs = alloc_percpu(struct kvm_user_return_msrs);
--	if (!user_return_msrs) {
--		pr_err("failed to allocate percpu kvm_user_return_msrs\n");
--		r = -ENOMEM;
-+	r = kvm_init_user_return_msrs();
-+	if (r)
- 		goto out_free_x86_emulator_cache;
--	}
--	kvm_nr_uret_msrs = 0;
- 
- 	r = kvm_mmu_vendor_module_init();
- 	if (r)
-@@ -10141,7 +10158,7 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
- out_mmu_exit:
- 	kvm_mmu_vendor_module_exit();
- out_free_percpu:
--	free_percpu(user_return_msrs);
-+	kvm_free_user_return_msrs();
- out_free_x86_emulator_cache:
- 	kmem_cache_destroy(x86_emulator_cache);
- 	return r;
-@@ -10170,7 +10187,7 @@ void kvm_x86_vendor_exit(void)
- #endif
- 	kvm_x86_call(hardware_unsetup)();
- 	kvm_mmu_vendor_module_exit();
--	free_percpu(user_return_msrs);
-+	kvm_free_user_return_msrs();
- 	kmem_cache_destroy(x86_emulator_cache);
- #ifdef CONFIG_KVM_XEN
- 	static_key_deferred_flush(&kvm_xen_enabled);
 -- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
