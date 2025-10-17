@@ -1,83 +1,173 @@
-Return-Path: <linux-kernel+bounces-857687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC50BBE7B12
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:27:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9DFBE7A03
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996671AA2850
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:23:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F10C2350E2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA7732ED59;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C2832ED29;
 	Fri, 17 Oct 2025 09:11:54 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZCfAQq1z"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A4132ED20;
-	Fri, 17 Oct 2025 09:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7AB32ED27
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692313; cv=none; b=pFbrMR+HkgDSMhXotaXOYsh9yowYJAr7PFWu1xQdSE+QUfGXKY28M/wqGCOY2TOvwYjeiyDUj3CnWrC2D/fIs4u+otaufSYGyulUCF4gOF4SvIlgJKCRUAfVbc3WcsgtWp55jizOEVu+3OA9JX4n1Pcd8Yha3BR6mub+thhCJbM=
+	t=1760692313; cv=none; b=JTF/Zcs/GMOQeczbJkyXxSh4GRr576aLnP0PuTqGsR+ii55yphHPu/Z+amnek7+y6+45FmmWDZnvlcYbkXhEMlSXJGqy56Bx3uuyyW7qp+ow746qlB4jd7k3xwCM9T7r6Jy8ZllRYSoto4VdeJSPMWIz+psVIeOnXu8DS0XDQXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760692313; c=relaxed/simple;
-	bh=uYC2wxwAVvGgTVDNiX1Ux3FSlpVHASHy/4GGzQUT5Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cRt4PRDIhv227OyTaQKvD6goSXXjQTcVd85KBnC596zgWsjbKVkUbUiaKJzp7SDVDbXVA93AePSlDRj0bPRhFFuGssttrxWnhdMw7I87P0Tes1s7HzX8wXR8fQN99ZJjLGXIstAEeIygc0vZp6QG+krK6LBG34JWa8W0mLOouyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 1922DACBCB;
-	Fri, 17 Oct 2025 09:11:49 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 266B220026;
-	Fri, 17 Oct 2025 09:11:47 +0000 (UTC)
-Date: Fri, 17 Oct 2025 05:11:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, Luis
- Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
- Crystal Wood <crwood@redhat.com>, Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH v2 1/3] tools/rtla: Fix --on-threshold always triggering
-Message-ID: <20251017051146.5f6a8901@batman.local.home>
-In-Reply-To: <CAP4=nvSmJOdoO8q125sdzvR7ix1oVsNobSRtWb7ADUADdzEPiw@mail.gmail.com>
-References: <20251007095341.186923-1-tglozar@redhat.com>
-	<CAP4=nvSmJOdoO8q125sdzvR7ix1oVsNobSRtWb7ADUADdzEPiw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	bh=0hgg194Q/ekxMWTEcaeVe7kZCiTUQT1i7oIY+ktAtx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbzVBhkQRO3m1sBHtc5Z+1Swvmo9X55y5L4g8Qr9hU32Hom94IjugDOw0JCPta6f6ZwcBUNSS/2oSzxgg0YWsby2/DmItoK2VbU4QZRUPZfmDtZFd5AYTKoU/EdvHEVfXwE1u7GvO7AITimDG21KHt6ZwMJMLJDuk4GNnclkIY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZCfAQq1z; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=XU38
+	XK8Y5L6BI7SVZs41SwdmXYWo1x2J+raJQ3DofEg=; b=ZCfAQq1zIgwN/KtLQOSM
+	yk5JZGhvWc9FLwm5gWFXwH+PPqsLRx6E96vxP+X9FAC7D32Dg+mX8zx8I1olBM4m
+	dj5mIKBm9E+cLTywGIFHIRdoI+CKaOwqkCKnolxCsP2e2cLUR6nFnvYgCOVaSPCc
+	z+Jhoj/q5PpSF5G2kyeH80MV5NKdfwHTpaQBfPrLSsqyPgl3LIHT+/Sj+rYbr8pI
+	6Gz49Ublwpo5/8mxU6AXWrkwxRPil+sAombQWLtSRTbGnYQ7hhICnheP4/+0SyG1
+	Oq/BYmD4oVw9Fii1ttNN6Y1Vc5z81G4VYtEAZPiJi5njgN4Ou0m6TE2vAd8tVSqC
+	jA==
+Received: (qmail 4163213 invoked from network); 17 Oct 2025 11:11:49 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 11:11:49 +0200
+X-UD-Smtp-Session: l3s3148p1@p+emH1dBON0gAwDPXwQHAL/S9V79e5yL
+Date: Fri, 17 Oct 2025 11:11:49 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+Message-ID: <aPIIVUlHnvi0BXtN@shikoro>
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+ <20251015142816.1274605-3-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 266B220026
-X-Stat-Signature: 5zu4637dqwbigrce7tz44t9zi7po7orh
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18JqUHJ7tYvqNpnB7K/4WNZqdbys4aWpzc=
-X-HE-Tag: 1760692307-524040
-X-HE-Meta: U2FsdGVkX19UZ1LNtvfFurFTE7TZxISoxjyIuoNA6zajS1JWop0iJKFqJeH8IJWnxlrT1wMI9fqLNTZls8I5RitgDAK7vpSetWeaq0Mw/6xmj0TAbu8+c3yvCpCxyHz2aNI7SnESjFjude2+whM1F+x2OXLzNdxK+eMYQQqNf6um/52eoDVXxHIv2OetnSu93qvKAzNeGKglyX/Xiy3RTslJjer7tFRsqI/qaVmN82L4HP1NY/24tUk8LByZ7+hSlVYeZmDDTxkzsUK8P1wXl4XDp1p6eZiuRqR9cEOkf46u2cTDDzmZPsKkK24U2/8mhmsyy2Pj3EvaDGmMybMuqrHxD1biSzYnkodpgTIXwPK5qybDkcHJdw==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/EqJJDSnotcPcZ45"
+Content-Disposition: inline
+In-Reply-To: <20251015142816.1274605-3-herve.codina@bootlin.com>
 
-On Fri, 17 Oct 2025 09:38:04 +0200
-Tomas Glozar <tglozar@redhat.com> wrote:
-> 
-> It seems that this patchset containing fixes for recently merged RTLA
-> code consolidation [1] has no further comments. Could you take it?
-> (Unless you have any comments, of course.)
-> 
-> [1] https://lore.kernel.org/linux-trace-kernel/20250907022325.243930-1-crwood@redhat.com/T/
 
-I'll take a look at it next week. I added it to my "delegate" in Patchwork:
+--/EqJJDSnotcPcZ45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  https://patchwork.kernel.org/project/linux-trace-kernel/list/?series=1008975
 
-So hopefully, I don't forget.
+> +static int rzn1_adc_read_raw_ch(struct rzn1_adc *rzn1_adc, unsigned int chan, int *val)
+> +{
+> +	u32 *adc1_data, *adc2_data;
+> +	int adc1_ch, adc2_ch;
+> +	u32 adc_data;
+> +	int ret;
+> +
+> +	if (chan < 8) {
+> +		/* chan 0..7 used to get ADC1 ch 0..7 */
+> +		adc1_ch = chan;
+> +		adc1_data = &adc_data;
+> +		adc2_ch = -1;
+> +		adc2_data = NULL;
+> +	} else if (chan < 16) {
+> +		/* chan 8..15 used to get ADC2 ch 0..7 */
+> +		adc1_ch = -1;
+> +		adc1_data = NULL;
+> +		adc2_ch = chan - 8;
+> +		adc2_data = &adc_data;
+> +	} else {
+> +		return -EINVAL;
+> +	}
 
-We need to start making you the maintainer too ;-)
+How about putting part of the logic into the setup function? So, here
+only:
 
--- Steve
+	if (chan >= 16)
+		return -EINVAL
+
+> +
+> +	ret = pm_runtime_resume_and_get(rzn1_adc->dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mutex_lock(&rzn1_adc->lock);
+> +
+> +	rzn1_adc_vc_setup_conversion(rzn1_adc, chan, adc1_ch, adc2_ch);
+
+	rzn1_adc_vc_setup_conversion(rzn1_adc, chan);
+
+And in that function:
+
+> +static void rzn1_adc_vc_setup_conversion(struct rzn1_adc *rzn1_adc, u32 ch,
+> +					 int adc1_ch, int adc2_ch)
+> +{
+> +	u32 vc = 0;
+> +
+> +	if (adc1_ch != -1)
+> +		vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(adc1_ch);
+> +
+> +	if (adc2_ch != -1)
+> +		vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(adc2_ch);
+> +
+> +	writel(vc, rzn1_adc->regs + RZN1_ADC_VC_REG(ch));
+> +}
+
+	if (ch < 8)
+		vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(ch);
+	else
+		vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(ch - 8);
+
+And a similar simplification for rzn1_adc_vc_wait_conversion().
+
+Should work and the code is even more readable, I'd say. And has less
+lines.
+
+
+--/EqJJDSnotcPcZ45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjyCFUACgkQFA3kzBSg
+Kbb9xA//REppm1IeO+V8SP2avOxXXGrd9frH85ALT8nxSvi6YqgB/MxFXnSC0RcW
+z1aA/t8QwAMHDote89j8jlpRaugXvcgNNxMvn4JVheYyU4aNZwu/IcyJ/qhhQkd9
+dlXUfhUIM2hvowXEMagYfz85aOtev0rCl9FmWwS81RlQ6K8oKZZTU03m3R3r6sUb
+3QhCkyP9UrzZgZxTm8euT+W4jU2ZCglrbEwqHEw+5k9zVc60un5TV+3a1tFzhFM2
+FoGPv3Srpew1KmgUahaDcIzUXFczrwjR5S/CZRftI4KKWL1mP70gX/7pFwOZmGIt
+RohyF7Aa4c56+ACb7BHi395BYpCofoPq9tN48+7C/SleydJLvNcuhvZR5cp6QMhZ
+98Jd7jgRqYqEY7R7JLewFeitt4qJN+55fd5IVgKrTIaKfLXWeBKjw/V2AESIzzJQ
+v2wDgcMOa2ssIveyDnb4Q982yNk1pzcVabyTRn4fkEweuauvzwj2L4CPDcne8acl
+EFvv/QkxR1uV1Al7IkMqJ2LORT8GGb80XMpn7uZpIY8UwdyZYDTf5Nc6r0SOmNDe
+tv8N0XSgQhSUFq0S7eNR1R0n4KpwzD+VkpMrWHGyX3vpiqO51Vnh0oVE3Tf74CaN
+jR4mhnjf+BAZW8AVE6CFUxTwCjizamtvFirx/lUlCtOgli95bB4=
+=x7ej
+-----END PGP SIGNATURE-----
+
+--/EqJJDSnotcPcZ45--
 
