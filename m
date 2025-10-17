@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-858847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D03BEC02A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:34:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0A1BEC03C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C2B3BF75D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:34:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E5C24EA0D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6A223AB87;
-	Fri, 17 Oct 2025 23:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1402E5B32;
+	Fri, 17 Oct 2025 23:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i1NXAIjC"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QFsWNFaY"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F1B2D63EF
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A532E4254
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760744078; cv=none; b=pfzBhgArgB8MAJpxLllkxmAoDWXFNsbVU8tEkKQ9blD6qFDU0aJuRSvnehoqqsqeByUflcQ6llffZIfcTlacE9lugt1+lYph9Yi7tMSdAvbI5NWWFdY+mhPdVoLtKvm818oZZLKP6Q0mfsgmdnsDp9MCI2U0+viHVZf3iCY6lw0=
+	t=1760744107; cv=none; b=B/DC1Z0piD8qfukz77UmbVMg4fL5VpllSFQBYfmxPqakfxvgfyz3e3MOj6UDXck6CMcqtyFsEzD/yowUPdPO/68O1OCL9urY6yMoly2iS+SQ2+vC/CARP4Qqim44S3XHday9oYTqoBs0d3dOCgbATEFlVuIa1SIi0L+viLXeRs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760744078; c=relaxed/simple;
-	bh=pYcbVyw+NDcF/YeLk7YmCeCpRP76yrQzGpy88DcfPE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TkWngUkTurd/g/kmaVMAbYq1Nf3Abu4Bw/Oi0lIOoMp56aLn9SlaBEV5teQneW5fiAXkPNU1OLicwWyPw02ROAsn9jlno8B88En2ErgNkZOnO7MimtH8fxr9JNtZAclYfPRBmNCG6LpOEavM4xf+SCGZEY5LRb4kglXTPkmp3X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i1NXAIjC; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <056a0000-f74c-47d9-9fdb-04f0646c174b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760744073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tqNv9XZ3cHZq/nZ+ajuryy76A/vXM/wJUR3p9n98Y3I=;
-	b=i1NXAIjC5akXkLmD1o92ACUQy2bwsjwVySCw29oQ8btNNAmvRMqiBXLjUpid1Zl2eECReg
-	t1gOL/ZegEOz3PFDn85Sj/7l79eGcptPsu8qOxOupI1oEvklUPuXw6ovE14jXt33NHSfhV
-	4GEN5CSXX2OOcy7LPicH1qHOSa1QDHA=
-Date: Fri, 17 Oct 2025 16:34:27 -0700
+	s=arc-20240116; t=1760744107; c=relaxed/simple;
+	bh=RtIfXss6eIKXPLj3ncfE4505sTF0A4And7X+BcVgVZE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MTSEjY1KcMXVEsV5dBgkuEyCr4Wuo8vraaT3asEasTzNRigKjITuzYVphrKUSPfUcx4fghCA0zQ6aPl0VYGrRx7HIAVrR/57ZuHnmo//rUpSuctXAgsTPhEjtte/nArvwP6STpGfQos2n0kLLs7EoohRJkBF28WzkG2K9e1HQrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QFsWNFaY; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2924b3b9d47so868835ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760744103; x=1761348903; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SE2EEGb0HouxauO/aNI7gyJ7SeBT6HKDFtX26SdNI+k=;
+        b=QFsWNFaYfmeHlULGysriKzn5ca/Jsr9d01MiJXHFgpEqXkTuZ/5vKB2kc6ZUn0uP00
+         ZetfR94XcEyfI/2l5T/AtlIe8eHrMpo1osI/czUEgM2umQ3pUQJ6xpFKx/jrL1ENO9Gn
+         mydUN5M+g9LIsab6JNupi6+nOKHBXx4XqEBVmybQwkIhwcxEWrsjMQln4Ewtw63xosbx
+         tIKoLHx1ygqAP2BoiuV9VyVqEE/5iCwmGZPHnZgWEc31lbdys9XgUp5FjEv/PL1zFARU
+         JxUHpMvSpbd2SqiMJTr49O/PHX1yHWF8eyWkIchlT+3Z9aHqtQmchV5iVeZhe4wfSx3/
+         IjcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760744103; x=1761348903;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SE2EEGb0HouxauO/aNI7gyJ7SeBT6HKDFtX26SdNI+k=;
+        b=TcZ7VM7I+9q+ZLQncxxdnv8EKDv+vYpETk1ZikoNWKXEUzpgHndfMdRfHauAXcce5h
+         9LgbtL5FUaxvPA0nYwaFD9hTaBCgkd8mT4vFy6wZI6Ln1/EZlGeU5RZTTGAtKZII5D3m
+         +c/X5Ovb4wkXA6lijSxk4uW01KvtSjDl9LsQEMAvUcIi5OyChEK1w18INFhpbt8nvGuh
+         SNm4lgyYVxuRYlwEwZLDweXfUzDzJaWS+CXkB5OWQZW9T+kjE+lxaeH9f7D38W4QVZSh
+         ZTGkDRawmH/ddcw8f9FiHfReU1mOmIxRZpMJeai26ttOyNcrxfakxt7YmytaP+Aeu50R
+         cSeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEdBAWiEoHtVlOfWxtVtug6kdcI4/hpcVOzLuOVC//EFrMout8x28AH+8z45l7R6gtN/syLsxTCIyGGgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgJQubT4UwzAf2WuXsg1HDi4zjq1o7D+rFxaZNQX4iXLy60lcl
+	igYTLID7OYgYk30+kvp6TqchEnTM4v41+fEqU4dwXwnMQV5Ev0ynCYUFPCrD6qnmho5wkm3zSHb
+	0Rnlxww==
+X-Google-Smtp-Source: AGHT+IFz9LrlEbh/GEOZE08yXGgYI/4R0E7gunWHRVlyUcEr6QWUdol+r9ZsCt+kLhqmYgnF5LBEIR69e4Y=
+X-Received: from pll21.prod.google.com ([2002:a17:902:c215:b0:290:cd84:e7c])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22c1:b0:278:704:d6d0
+ with SMTP id d9443c01a7336-290c9cb2666mr71637135ad.19.1760744103403; Fri, 17
+ Oct 2025 16:35:03 -0700 (PDT)
+Date: Fri, 17 Oct 2025 23:34:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 3/5] selftests/bpf: make test_tc_tunnel.bpf.c
- compatible with big endian platforms
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?=
- <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com>
- <20251017-tc_tunnel-v1-3-2d86808d86b2@bootlin.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20251017-tc_tunnel-v1-3-2d86808d86b2@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251017233459.2409975-1-royluo@google.com>
+Subject: [PATCH v4 0/2] Add Google Tensor SoC USB controller support
+From: Roy Luo <royluo@google.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Peter Griffin <peter.griffin@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>, 
+	Badhri Jagan Sridharan <badhri@google.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+This series introduces USB controller support for the Google Tensor G5
+SoC (codename: Laguna), a new generation of Google silicon first
+launched with Pixel 10 devices.
+
+The Tensor G5 represents a significant architectural overhaul compared
+to previous Tensor generations (e.g., gs101), which were based on Samsung
+Exynos IP. Although the G5 still utilizes Synopsys IP for the USB
+components, the custom top-level integration introduces a completely new
+design for clock, reset scheme, register interfaces and programming
+sequence, necessitating new drivers and device tree bindings.
+
+The USB subsystem on Tensor G5 integrates a Synopsys DWC3 USB 3.1
+DRD-Single Port controller with hibernation support, and a custom PHY
+block comprising Synopsys eUSB2 and USB 3.2/DP combo PHYs. The PHY
+support is sent as a separate patch series.
+
+Co-developed-by: Joy Chakraborty <joychakr@google.com>
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+Co-developed-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Roy Luo <royluo@google.com>
+---
+Changes in v4:
+- Separate controller and phy changes into two distinct patch series.
+- Rename dwc3 core interrupt as "core".
+- Remove u2phy_apb clk/reset (moved to PHY)
+- Configure usb2only mode when usb3 phy is not present.
+- Adopt pm_ptr PM macros to fix build warnings.
+Link to v3: https://lore.kernel.org/linux-usb/20251010201607.1190967-1-royluo@google.com
+
+Changes in v3:
+- Align binding file name with the compatible string
+- Simplify the compatible property in binding to a single const value.
+- Add descriptive comments and use item list in binding.
+- Rename binding entries for clarity and brevity.
+Link to v2: https://lore.kernel.org/linux-usb/20251008060000.3136021-1-royluo@google.com
+
+Changes in v2:
+- Reorder patches to present bindings first.
+- Update dt binding compatible strings to be SoC-specific (google,gs5-*).
+- Better describe the hardware in dt binding commit messages and
+  descriptions.
+- Adjust PHY driver commit subjects to use correct prefixes ("phy:").
+- Move PHY driver from a subdirectory to drivers/phy/.
+Link to v1: https://lore.kernel.org/linux-usb/20251006232125.1833979-1-royluo@google.com/
+---
+Roy Luo (2):
+  dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+  usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+
+ .../bindings/usb/google,gs5-dwc3.yaml         | 135 ++++
+ drivers/usb/dwc3/Kconfig                      |  10 +
+ drivers/usb/dwc3/Makefile                     |   1 +
+ drivers/usb/dwc3/dwc3-google.c                | 608 ++++++++++++++++++
+ 4 files changed, 754 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
+ create mode 100644 drivers/usb/dwc3/dwc3-google.c
 
 
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+-- 
+2.51.0.858.gf9c4a03a3a-goog
 
-On 10/17/25 7:29 AM, Alexis Lothoré (eBPF Foundation) wrote:
-> +#define ETH_HLEN	14
-> +#define TC_ACT_OK	0
-> +#define TC_ACT_SHOT	2
-> +#define ETH_P_MPLS_UC	0x8847
-> +#define ETH_P_IP	0x0800
-> +#define ETH_P_IPV6	0x86DD
-> +#define ETH_P_TEB	0x6558
-> +
-> +#define MPLS_LS_S_MASK	0x00000100
-> +#define BPF_F_ADJ_ROOM_ENCAP_L2(len)			\
-> +	(((__u64)len & BPF_ADJ_ROOM_ENCAP_L2_MASK)	\
-> +	 << BPF_ADJ_ROOM_ENCAP_L2_SHIFT)
-> +
-
-Some of them (e.g. TC_ACT_OK) should be already in bpf_tracing_net.h, so 
-include that header instead. Not sure the remaining ones (e.g. MPLS) 
-will be very useful, so I would leave it here for now instead of adding 
-them to bpf_tracing_net.h.
 
