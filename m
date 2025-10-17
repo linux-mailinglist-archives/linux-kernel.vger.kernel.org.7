@@ -1,149 +1,159 @@
-Return-Path: <linux-kernel+bounces-858537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB31BEB17B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:38:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1C7BEB199
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 732FB4E50DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2713B1EDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F050307AD0;
-	Fri, 17 Oct 2025 17:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19263093CE;
+	Fri, 17 Oct 2025 17:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZnZFgIjf"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCYhCFuD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801BB21576E;
-	Fri, 17 Oct 2025 17:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E025307ACE;
+	Fri, 17 Oct 2025 17:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760722709; cv=none; b=Njq0OfF4FqT9kGF4/v5Ws2cMrlKNQWn8LTjvBu51ECenpQUEXBycU14gjYz9UdyGDJAOrM8MAo6N3p7lTV391Hp0FE6r8VPvubnJKrxqBsAmkXSJyG7AgrUSOG7rMOqi3HNuQFTr0qJHZCtUO9kzsEHZHMEoMbvO7ANfBww566c=
+	t=1760722809; cv=none; b=LwGPrFffVVDLaBZW7/x3AT2i+K+68hXDrW4eP+HuB5MR1Jyfg0m4wOZofvB92GE1FI6cAG+TKW6r49/Fu/KZrEXr91X0rO5GqGRzZ8DIGalu0NElqLa03u7Z1O+5sRZC60JYKWB0zDKD8tkgr89l5BHe8lIGT4w/hdD5QR8fqnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760722709; c=relaxed/simple;
-	bh=3HdUj0gn3DEUrSYbt10rDq3r6Cxde9MHzvEbHk7eiaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aErCj+CdJX9009/qiWCH8Pfpovvj9F4aQB88eJtv50Qi+KnQIzAVdiVWegdqWB9D6gCUuiGc8euFjIUD//9+v0G6wrsoj4hDli3nEqp/QcTv9UqmNdYBrJ/2dwr3tcMqlg5LMxv4shl8A8lQFrRz5LjCjgkc6JF/THYNJXdR35w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZnZFgIjf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=eXk8ilpgowFnp9IUDy5Nr5norSdI0m1xretE6+YcfLo=; b=ZnZFgIjfWC6Jy5gtsRj/XVDZdp
-	e2UDDYPl/gO2hlfkL2zJOaCYJphiT0ihkWpBMtfUT2Q70+ygu/F1s4UOJy9vNgy9BwXoibiEZjeHT
-	LgUXmf9UIln9fQLd1BhUQTPeWXweOFGeFD6+1xdFryktjmBXRw7luR7OabyYvjIj72wZMAhCpFWQ5
-	fExo5n+eeRiLwUVlFdBCtv/2UbNhrQhstf62ZODZ3dw2yu48n4WSq51PBdf8R5x/R9oYQPNC55mli
-	RVs4GLQXe23d74e5RsovgtJz7te0QfQyHOVeP1gwGCG81eQhnCwTMdYp2U8LwqSGu0mhqw1ehmcUt
-	a7wgUIlg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9oPL-00000008c4b-2fU7;
-	Fri, 17 Oct 2025 17:38:27 +0000
-Message-ID: <7e793098-ff46-4840-a5e0-18c42ae1c145@infradead.org>
-Date: Fri, 17 Oct 2025 10:38:27 -0700
+	s=arc-20240116; t=1760722809; c=relaxed/simple;
+	bh=k9b1mXzMWi5+ag/o4MoRly+N/Vmf2GG6Dk0obDic1rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prPxBqTrgJR4N528YQfcgghrA2Oe9oeDgoypogsjpihAiSP40BM7mrnQhLUZLJayE8+ukrtO7bjzOf0mjnBaMITsDBBhltzUueHIqCiFDPMBnY4HNi+Qy4gyXxOg+XL6i5t40j/PPHBYc4KUIw3RdoMIna0HimzWsOLkjIikxD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCYhCFuD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75765C4CEE7;
+	Fri, 17 Oct 2025 17:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760722808;
+	bh=k9b1mXzMWi5+ag/o4MoRly+N/Vmf2GG6Dk0obDic1rI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PCYhCFuDxRC2QibdvAbD5CmMMGI03vqqEMfhZ5/7BlO3EHbIF9xDHGbVzZcjonhtx
+	 LiuaE3084aMcg+y1elHFZTBcZVsOBfMgQIdz/5dwNHRN3EzOjk6bRcbBY4xfL/XeAX
+	 eHmqwojAIOVa3QCXmPUsyLkkgcj1unz5jyatpMq5Oiz8qM2v3+BgDsKijhDqEUMwVh
+	 2cqtRPaERYAWIT3hXavq/i/KB+YmZAbAq401tFuSHUDN2uWEL6wlXTZyDzb4S5SftD
+	 wzR5sotACf7MCuIrPSr/Z6SxNKW1r6zpTdUTqVtpT0icFqwVrPsxYGp7Lw1WV6IZ2y
+	 KUMf2VNDpTYUQ==
+Date: Fri, 17 Oct 2025 10:38:35 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_varada@quicinc.com
+Subject: Re: [PATCH v2] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
+ devices
+Message-ID: <20251017173835.GA161400@sol>
+References: <20251014093503.347678-1-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: ABI: sysfs-module: list all taint flags
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org
-References: <20251015221348.1125295-1-rdunlap@infradead.org>
- <c58152f1-0fbe-4f50-bb61-e2f4c0584025@suse.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <c58152f1-0fbe-4f50-bb61-e2f4c0584025@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014093503.347678-1-quic_mdalam@quicinc.com>
 
-
-
-On 10/17/25 4:38 AM, Petr Pavlu wrote:
-> On 10/16/25 12:13 AM, Randy Dunlap wrote:
->> The list of module taint flags has not been updated lately as the
->> taint flags list grows. Instead of trying to keep multiple lists
->> updated, just refer to the list of kernel taint flags since they are
->> the same.
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> ---
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: linux-doc@vger.kernel.org
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Luis Chamberlain <mcgrof@kernel.org>
->> Cc: Petr Pavlu <petr.pavlu@suse.com>
->> Cc: Daniel Gomez <da.gomez@kernel.org>
->> Cc: Sami Tolvanen <samitolvanen@google.com>
->> Cc: linux-modules@vger.kernel.org
->> ---
->>  Documentation/ABI/testing/sysfs-module        |   10 ++--------
->>  Documentation/admin-guide/tainted-kernels.rst |    2 ++
->>  2 files changed, 4 insertions(+), 8 deletions(-)
->>
->> --- linux-next-20251014.orig/Documentation/ABI/testing/sysfs-module
->> +++ linux-next-20251014/Documentation/ABI/testing/sysfs-module
->> @@ -52,14 +52,8 @@ What:		/sys/module/*/taint
->>  Date:		Jan 2012
->>  KernelVersion:	3.3
->>  Contact:	Kay Sievers <kay.sievers@vrfy.org>
->> -Description:	Module taint flags:
->> -			==  =====================
->> -			P   proprietary module
->> -			O   out-of-tree module
->> -			F   force-loaded module
->> -			C   staging driver module
->> -			E   unsigned module
->> -			==  =====================
->> +Description:	Module taint flags: same as the kernel taint flags.
->> +		See: :ref:`taint_flags` in Documentation/admin-guide/tainted-kernels.rst
+On Tue, Oct 14, 2025 at 03:05:03PM +0530, Md Sadre Alam wrote:
+> Enable Inline Crypto Engine (ICE) support for eMMC devices that operate
+> without Command Queue Engine (CQE).This allows hardware-accelerated
+> encryption and decryption for standard (non-CMDQ) requests.
 > 
-> The module taint flags that can appear in /sys/module/*/taint are
-> a subset of the kernel taint flags. By looking at the calls to
-> add_taint_module(), they are as follows:
+> This patch:
+> - Adds ICE register definitions for non-CMDQ crypto configuration
+> - Implements a per-request crypto setup via sdhci_msm_ice_cfg()
+> - Hooks into the request path via mmc_host_ops.request
+> - Initializes ICE hardware during CQE setup for compatible platforms
 > 
-> Present:
-> TAINT_PROPRIETARY_MODULE
-> TAINT_OOT_MODULE
-> TAINT_FORCED_MODULE
-> TAINT_CRAP
-> TAINT_UNSIGNED_MODULE
+> With this, non-CMDQ eMMC devices can benefit from inline encryption,
+> improving performance for encrypted I/O while maintaining compatibility
+> with existing CQE crypto support.
 > 
-> Missing:
-> TAINT_LIVEPATCH
-> TAINT_TEST
-> 
-> + potentially TEST_AUX.
-> 
-> Since this text specifically documents what can appear in
-> /sys/module/*/taint, I think we should still maintain a list of these
-> flags for accuracy.
-> 
-> Additionally, Documentation/admin-guide/tainted-kernels.rst provides
-> taint descriptions for the kernel as a whole, which can be misleading
-> for individual modules. For instance, for TAINT_LIVEPATCH, the document
-> says "kernel has been live patched", but in the context of
-> /sys/module/*/taint, it means "this is a livepatch module".
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 
+How was this tested?
 
-Hi Petr,
+>  #ifdef CONFIG_MMC_CRYPTO
+>  
+> +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq,
+> +			     u32 slot)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct mmc_host *mmc = msm_host->mmc;
+> +	struct cqhci_host *cq_host = mmc->cqe_private;
+> +	unsigned int crypto_params = 0;
+> +	int key_index = 0;
+> +	bool bypass = true;
+> +	u64 dun = 0;
+> +
+> +	if (mrq->crypto_ctx) {
+> +		dun = mrq->crypto_ctx->bc_dun[0];
+> +		bypass = false;
+> +		key_index = mrq->crypto_key_slot;
+> +	}
+> +
+> +	crypto_params = FIELD_PREP(ICE_HCI_PARAM_CE, !bypass) |
+> +			FIELD_PREP(ICE_HCI_PARAM_CCI, key_index);
+> +
+> +	cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
+> +
+> +	if (mrq->crypto_ctx)
+> +		cqhci_writel(cq_host, lower_32_bits(dun), NONCQ_CRYPTO_DUN);
+> +
+> +	/* Ensure crypto configuration is written before proceeding */
+> +	wmb();
+> +
+> +	return 0;
+> +}
 
-Thank you for your comments and corrections.
+This would probably be easier to read with separate code paths for
+crypto_ctx != NULL and crypto_ctx == NULL.  Also 'bypass' should be
+inverted and renamed to 'crypto_enable' to match the bitfield.  Or just
+prepare the bitfield directly, without an intermediate variable.
 
-I'll drop this patch.
+> @@ -2131,6 +2185,8 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>  	struct cqhci_host *cq_host;
+>  	bool dma64;
+>  	u32 cqcfg;
+> +	u32 config;
+> +	u32 ice_cap;
+>  	int ret;
+>  
+>  	/*
+> @@ -2185,6 +2241,18 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>  	if (ret)
+>  		goto cleanup;
+>  
+> +	/* Initialize ICE for non-CMDQ eMMC devices */
+> +	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
+> +	config &= ~DISABLE_CRYPTO;
+> +	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
+> +	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
+> +	if (ice_cap & ICE_HCI_SUPPORT) {
+> +		config = cqhci_readl(cq_host, CQHCI_CFG);
+> +		config |= CRYPTO_GENERAL_ENABLE;
+> +		cqhci_writel(cq_host, config, CQHCI_CFG);
+> +	}
+> +	sdhci_msm_ice_enable(msm_host);
 
--- 
-~Randy
+This is after __sdhci_add_host() was called, which is probably too late.
 
+> +#ifdef CONFIG_MMC_CRYPTO
+> +	host->mmc_host_ops.request = sdhci_msm_request;
+> +#endif
+>  	/* Set the timeout value to max possible */
+>  	host->max_timeout_count = 0xF;
+
+A lot of the code in this patch also seems to actually run on
+CQE-capable hosts.  Can you explain?  Why is it needed?  Is there any
+change in behavior on them?
+
+- Eric
 
