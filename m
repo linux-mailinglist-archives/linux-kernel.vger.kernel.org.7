@@ -1,175 +1,147 @@
-Return-Path: <linux-kernel+bounces-858835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE10BEBF7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:04:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA54BEBF84
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F1236E71CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE7F6E87AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510663128CA;
-	Fri, 17 Oct 2025 23:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0AE313537;
+	Fri, 17 Oct 2025 23:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kFyt/6ay"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="mFCHNQ4m"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F3F2D3750
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2252530BF68
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760742255; cv=none; b=urYNM6JmQKI67gjY0VWChfEQt0UqDqMdAOPOVMxMr8nhWQQfYbOF/RmXdJgpoya4w0+C5k1SGlqTGIfnT0LC/qUPSBglYKuPoJ3wBfHUmqMa7H8QNFg0M1sU1e7MMXiXGQdC2T7UF4MGzUtpWz038B8WmdtyHZXr1y/l+Ko/WFE=
+	t=1760742269; cv=none; b=UxC0tMNkqRJPpsVZMo//g3g88WjHr/EkXX/w7sFwfp9xir99nOpJRlAepVFzhupEW6T4ded6XUwDuAj1qvSNqtBoSpghJF0LguJivzOKtuGexkYSttMJazRSEcqW29eMdTCvxix74O9Gi8RWboBepF8GRE9+JBeLH4+mToX8lJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760742255; c=relaxed/simple;
-	bh=i8hrEKHJUIgVQVWD0OgBI/SQp27vpOUUG35N/5EJfgE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=J72TZwF1e/xjuIWx8uTA0ascU2k3JRYgp62fBGC0XNBYhN6bd6/5hLn69zdoJqKAdi5QP0innjrvO4lUhu6xFnNefkXbALjHnMb9pa9If07MKbJXMpFDaMWS91a/QEshD2gK82trP0cPUHLnXxgjo4fRypCbomHxGwFUgvDwt/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kFyt/6ay; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2924b3b9d47so720895ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760742253; x=1761347053; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AzD0fpnckg8jWbZQ4jUwVcqQTJ9vmG7SI/LJT+caamI=;
-        b=kFyt/6aymn6kOb0POpepDTT5wcB/Y4cgtFceNY+Jrk/4VcmYi1o1WOWP27IuGxbBHl
-         4CxNVAqKpJm27vcgHgceWYkwh838PlwuQSTISYw5rGHAFSvb0gZqKUkDm44BVPe9QdHJ
-         7MqC62NKrHcLkL0Hp8g+GMWCAJk0saxHKTlc5Aesz/Mo7+TAh/4is5QwiRrcDnfwR5Um
-         vQzmI4WCQEHxOu+pbRX2Q0gPh2DiA9b6pkMAwJ1J8r+3XTbOEHTVPKid85VNFgqMWWyt
-         FKry63Cyf7FFxFjp9Pge9bmy7chF605mRu4aELuWPm2iGKfj+QbcQUbKX3AzAiYCGZI4
-         EraA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760742253; x=1761347053;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AzD0fpnckg8jWbZQ4jUwVcqQTJ9vmG7SI/LJT+caamI=;
-        b=oxOu2ZfsWThQ1yXgSqwT+obELx5sCgaOTAxsSF5UA7Jxofw+HxgFPOAv3wsWxkVdzF
-         EJ6y6x2eaLcTbzowWptCQpr9JOBQi/mO2ZWEcvU2AA6EgLWoHCjdvSe8EXtRRjiz/8XC
-         qBFyZKL+diE0vv0MCQVkeA+fQ0YRyLUOvuLwPNQCWpeXpBlJO6RULLQ3PDWNiC7u/Pet
-         hqIa32+0J/lUDdghgp1WUhVHruFwzibQ2a7F7vE1hIp+Y2T62ddnULj3NC6RsGlSWUNu
-         O/qGI4GwG/wEEuHNzkAj1rWQTEnJZ8iq2Za9vYHefXBDaxgDdKhx+z6SuNeAZp7VXaFn
-         QX8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWJplFiin4c3WKFSnbpV7AyTr8HDgx2wAMpB3imOkQyGj/WElseuqWvNsKJ2R25DmzvPq4VG/8BF2Noiec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBmnaR7vo5MhTcwlXGJ4ODGVqdHNK9jPYUdYcSYArYndPgjNBE
-	tbePjXZaTKkeAuwMASAbVEsTneuYnC+T0k4axm/WebbC8Jutryqnu9gST+ThZAhznQwjmClaGKG
-	lwbQq90ft2Q==
-X-Google-Smtp-Source: AGHT+IFx3VaV4oEkTi3FWP0Aq4AqnROHtqpso3n6ZcyFQpXBwS438EUTG8fyxaxI8u1r++yMVb/Mljz9N+Yk
-X-Received: from plqs22.prod.google.com ([2002:a17:902:a516:b0:28e:82ea:1815])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d505:b0:27d:69bd:cc65
- with SMTP id d9443c01a7336-290cb079f3amr56675185ad.45.1760742253368; Fri, 17
- Oct 2025 16:04:13 -0700 (PDT)
-Date: Fri, 17 Oct 2025 16:03:57 -0700
+	s=arc-20240116; t=1760742269; c=relaxed/simple;
+	bh=Jq/H+/b1GArkCNQOxIQJRBTfifohop9pfe++XjDov1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FOubazPnHIsOnO7QiSDf5Z5k9C5Dsbn/tj5cTxyNqWDbpA6aYta4ipLaPbKHVdY1F6BjbEvsgiF92kpHj6U43U8dx1zMo2sh171VTKQuqyIKD3DIaD70aAOIVBkFrvHrSoGLUBduBNOkpgu/hwQwIdoI9qtPJKYc92I23x3kmk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=mFCHNQ4m; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5004b.ext.cloudfilter.net ([10.0.29.208])
+	by cmsmtp with ESMTPS
+	id 9qm6v8hOheNqi9tUov5mri; Fri, 17 Oct 2025 23:04:26 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 9tUnv2DlNBc9y9tUnvEsK0; Fri, 17 Oct 2025 23:04:26 +0000
+X-Authority-Analysis: v=2.4 cv=ZcMdNtVA c=1 sm=1 tr=0 ts=68f2cb7a
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=TfA6R2l6Ho_dUAMD9YgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Q30APisvJzq6aSX98cdE30C6F5BhW+o0cOfsgqyy9YA=; b=mFCHNQ4mDeLhcfyHalwstifybz
+	MI01e26lOhKrVa/9H/NfD84j0Oe6H6grBDhaovdd0wmGgP3mkKhS+4Ye8O+ammc3sWB4Zep7WcMze
+	fqjspB5NKHsN3ptar73bvUV7SnIZJPpO3AvVAjWYuUngJlR2S0C3zMd7Aj5VH98YdYxxaDNOfeT6G
+	Kj2IRN428IxniTv36TL8XBaTjsZeRyN0C0cASBy0giJUVewmNYeqpOlecdH9kLow8OK1vdcIkBzyz
+	wJ5zSP5iAZa3GlQroektpt4PBHPh8VyscnJhA29Or42brNN93OZ4CX8hdfxeO7BOOCy9BpyEHTQ2E
+	e11CNG2Q==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:44386 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <re@w6rz.net>)
+	id 1v9tUn-00000001Xiu-1FXj;
+	Fri, 17 Oct 2025 17:04:25 -0600
+Message-ID: <90bc04ea-e7ec-49b9-ae6e-d0e2c85bbf96@w6rz.net>
+Date: Fri, 17 Oct 2025 16:04:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017230357.15663-1-irogers@google.com>
-Subject: [PATCH v2] perf parse-events: Make X modifier more respectful of groups
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 000/371] 6.17.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251017145201.780251198@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20251017145201.780251198@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v9tUn-00000001Xiu-1FXj
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:44386
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOIUVti3JifQFpDCxRnx7WbkiCm8SEDRVFjKgbeL9Cntd8fJ6cii9LENcIoUIuEWCkIku/QNuaugVa8X7YDK5GUDeHaduDpUbv5kIsbCbfrPokjLSqjD
+ g9oHraTVpF2thjKRD2K3CfTj6qVe6eL7fyP6uhkxmiLJ/73YzpeUa+G5PtzHqIsB94DDMySbbViNalEJdlprSUkI9CW1bLov8Ik=
 
-Events with an X modifier were reordered within a group, for example
-slots was made the leader in:
-```
-$ perf record -e '{cpu/mem-stores/ppu,cpu/slots/uX}' -- sleep 1
-```
+On 10/17/25 07:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.4 release.
+> There are 371 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Fix by making `dont_regroup` evsels always use their index for
-sorting. Make the cur_leader, when fixing the groups, be that of
-`dont_regroup` evsel so that the `dont_regroup` evsel doesn't become a
-leader.
+Build fails for RISC-V with:
 
-On a tigerlake this patch corrects this and meets expectations in:
-```
-$ perf stat -e '{cpu/mem-stores/,cpu/slots/uX}' -a -- sleep 0.1
+In file included from ./include/linux/pgtable.h:6,
+                  from ./include/linux/mm.h:31,
+                  from arch/riscv/kernel/asm-offsets.c:8:
+./arch/riscv/include/asm/pgtable.h:963:21: error: redefinition of 
+'pudp_huge_get_and_clear'
+   963 | static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+       |                     ^~~~~~~~~~~~~~~~~~~~~~~
+./arch/riscv/include/asm/pgtable.h:946:21: note: previous definition of 
+'pudp_huge_get_and_clear' with type 'pud_t(struct mm_struct *, long 
+unsigned int,  pud_t *)'
+   946 | static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+       |                     ^~~~~~~~~~~~~~~~~~~~~~~
 
- Performance counter stats for 'system wide':
+Reverting 06536c4857271eeb19d76dbb4af989e2654a94e0 riscv: use an atomic 
+xchg in pudp_huge_get_and_clear() fixes the build.
 
-        83,458,652      cpu/mem-stores/
-     2,720,854,880      cpu/slots/uX
-
-       0.103780587 seconds time elapsed
-
-$ perf stat -e 'slots,slots:X' -a -- sleep 0.1
-
- Performance counter stats for 'system wide':
-
-       732,042,247      slots                (48.96%)
-       643,288,155      slots:X              (51.04%)
-
-       0.102731018 seconds time elapsed
-```
-
-Closes: https://lore.kernel.org/lkml/18f20d38-070c-4e17-bc90-cf7102e1e53d@linux.intel.com/
-Fixes: 035c17893082 ("perf parse-events: Add 'X' modifier to exclude an event from being regrouped")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/parse-events.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 3aec86aebdc6..0c0dc20b1c13 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1973,14 +1973,18 @@ static int evlist__cmp(void *_fg_idx, const struct list_head *l, const struct li
- 	 * event's index is used. An index may be forced for events that
- 	 * must be in the same group, namely Intel topdown events.
- 	 */
--	if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(lhs)) {
-+	if (lhs->dont_regroup) {
-+		lhs_sort_idx = lhs_core->idx;
-+	} else if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(lhs)) {
- 		lhs_sort_idx = *force_grouped_idx;
- 	} else {
- 		bool lhs_has_group = lhs_core->leader != lhs_core || lhs_core->nr_members > 1;
- 
- 		lhs_sort_idx = lhs_has_group ? lhs_core->leader->idx : lhs_core->idx;
- 	}
--	if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(rhs)) {
-+	if (rhs->dont_regroup) {
-+		rhs_sort_idx = rhs_core->idx;
-+	} else if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(rhs)) {
- 		rhs_sort_idx = *force_grouped_idx;
- 	} else {
- 		bool rhs_has_group = rhs_core->leader != rhs_core || rhs_core->nr_members > 1;
-@@ -2078,10 +2082,10 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 	 */
- 	idx = 0;
- 	list_for_each_entry(pos, list, core.node) {
--		const struct evsel *pos_leader = evsel__leader(pos);
-+		struct evsel *pos_leader = evsel__leader(pos);
- 		const char *pos_pmu_name = pos->group_pmu_name;
- 		const char *cur_leader_pmu_name;
--		bool pos_force_grouped = force_grouped_idx != -1 &&
-+		bool pos_force_grouped = force_grouped_idx != -1 && !pos->dont_regroup &&
- 			arch_evsel__must_be_in_group(pos);
- 
- 		/* Reset index and nr_members. */
-@@ -2095,8 +2099,8 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 		 * groups can't span PMUs.
- 		 */
- 		if (!cur_leader || pos->dont_regroup) {
--			cur_leader = pos;
--			cur_leaders_grp = &pos->core;
-+			cur_leader = pos->dont_regroup ? pos_leader : pos;
-+			cur_leaders_grp = &cur_leader->core;
- 			if (pos_force_grouped)
- 				force_grouped_leader = pos;
- 		}
--- 
-2.51.0.858.gf9c4a03a3a-goog
+The problem is that this patch was already applied to 6.17 just before 
+release, so the function pudp_huge_get_and_clear() ends up being 
+duplicated in the file.
 
 
