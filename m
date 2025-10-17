@@ -1,92 +1,216 @@
-Return-Path: <linux-kernel+bounces-858825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE7EBEBF2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:50:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C44BEBF11
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738616E6269
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98B819A4EFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49D53126D6;
-	Fri, 17 Oct 2025 22:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B975230F7F6;
+	Fri, 17 Oct 2025 22:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pi0nOEam"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1QiSTzF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE302D7803;
-	Fri, 17 Oct 2025 22:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B8E354AC2;
+	Fri, 17 Oct 2025 22:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760741423; cv=none; b=VNbljBm+1997wnQ53P/XNyJPL+1pJYsgzzMMROAEHBHtOr1RG0kjSfYXabihKxUeQIbIaHUSrxdDzRMgVlsHonZ8QYWd5frtB/7jg+jO7q4IGikk1SuaD9tCPRS+20xKzulH5lR5VQgDKGROd3P8jwnG9/N82pOTTtnK4xLdkBs=
+	t=1760741321; cv=none; b=Owx2MqhLMDh1r+M+dCIkBABK36xBdZLavF/2MNDv4WP7lHtl1q8nnjSSHMKsJXDloTtRCD0v2g2aW/Fer1rckO2dEvj7eGYzSFqnH0imlGzCZTygvQfaC7g2HaIOrJbVY81hPu1/GyAFz0r0uhFFvr4AWWkdwp+8qOyahyMTMk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760741423; c=relaxed/simple;
-	bh=GPQmksuK2+DVq7N6Av/crui8RyWbd0z+p5E8e3rCPEY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fX9rDS14XE/GxU4m5FgTx+igto3ADPayKfTeOaJIv+jpogMeeoo/PGSe92t2/eLCyuYuZoYaDAfQkBZtA1EBjugexXirVLmSj0OfLPhls9ilI/8l9INhwTU0aEuEy1ahx5Ab8MB7dof44QElXkLz4rM9kOf88Z3PCzcGmKLC2Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pi0nOEam; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C9CC4CEE7;
-	Fri, 17 Oct 2025 22:50:22 +0000 (UTC)
+	s=arc-20240116; t=1760741321; c=relaxed/simple;
+	bh=zbmvSr84SjB/AG7+xOYNcFL8wwxEJ7CQL6TjSv0xA9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMtnnqHaeuQKjFXqP4Xz4CWlJ3FrVSLMHmpuFFBIJuanDCCCjR1fKuIE4TN7VnxzZUnE2D1ykAqF6J3Z6A1oh0UE9Jir7f0jyisaNxWRJh032xd1Wqx9uMa/6khfhDpp5J42v8sjKDtDxWDnxqiCMMGPKx3uqOxrdtoMjpCT/Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1QiSTzF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C656DC4CEE7;
+	Fri, 17 Oct 2025 22:48:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760741422;
-	bh=GPQmksuK2+DVq7N6Av/crui8RyWbd0z+p5E8e3rCPEY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Pi0nOEamyDDf7yVlfIPAL2n6W3tbMm9m0S13GtEE7qKXWY2rqBzFLL6pqjrw9TxCc
-	 JpidkhrFzfDU2aBzvSIv75YcwBetyvgYf1j1P5927dEVnewwMWsVNk0qVTsThPVufa
-	 nzpbdS3mx54Ni+R+7i1SJp0YvF1j7x2kb5aiMN6XkHr3Ivcc6K28jVLfQnuB/WuYxd
-	 eD1HiAmfHLFk31IPxomIN8Qo43hoj5btVPBGVSV3ZwkDzh6uufpJzSYBxd46qFGsf2
-	 sIjXxERObxTiHY4dtq6KObiT7ZRSXp1SmsxJWqAlUV5B5J7vGqzmLpi6WVQrSMOydg
-	 bwc6k7boANLZg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33ECE39EFA5D;
-	Fri, 17 Oct 2025 22:50:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1760741320;
+	bh=zbmvSr84SjB/AG7+xOYNcFL8wwxEJ7CQL6TjSv0xA9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n1QiSTzFQmEoBk+dzBldRK3Wi5gfJDu/ukdCclu0Sq/Y2r3+WZ6kxpDQfzG48/csg
+	 xOpACdxgTxwf4jLa+Ooso4AjpfvZnN31Kfr2VwqBx8TCB4LQlV9cD+O6sO69yv6m6h
+	 tZt8deyOBCEmEdOTAwT+N76jZxYZ6Y2ZRhqn4N2QnbrOLK7NF4AualuoXLRbXz8nBg
+	 IVL1jVV0V7+ayp6i+9RXxKLnS/ESHepCingKFfk0Z4Bjg/iRywSwGhPb6an73Ofgdh
+	 BsE8j9Lj7iL9/sUJuqDJ/5BEAK6x/+PKXSfuknoEV+lA8+vN7pzLIRG3RmeyHERHUD
+	 UQqEpzsIUiOVw==
+Date: Fri, 17 Oct 2025 15:50:34 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mahadevan P <mahadevan.p@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: lemans: add DT changes to enable MDSS1
+ and DPU
+Message-ID: <p2pjxm5tpxcbgweehwqxhvuovff2p3elfm2nbu2pet74lub6wt@hhr4x7v2h6uj>
+References: <20250925-lemans_dual-v1-1-9c371803198d@oss.qualcomm.com>
+ <nnvjazbxpywrmjnt67isba6m3ld6rqdaiid4qeczunmuablntz@vlbrjnxj5r2k>
+ <d451f8f0-d2ab-44eb-bfcc-ec1e9dbba060@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: hibmcge: support pci_driver.shutdown()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176074140600.2812574.7675764447909082136.git-patchwork-notify@kernel.org>
-Date: Fri, 17 Oct 2025 22:50:06 +0000
-References: <20251014134018.1178385-1-shaojijie@huawei.com>
-In-Reply-To: <20251014134018.1178385-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
- shenjian15@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com,
- lantao5@huawei.com, huangdonghua3@h-partners.com,
- yangshuaisong@h-partners.com, jonathan.cameron@huawei.com,
- salil.mehta@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <d451f8f0-d2ab-44eb-bfcc-ec1e9dbba060@oss.qualcomm.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 14 Oct 2025 21:40:18 +0800 you wrote:
-> support pci_driver.shutdown() for hibmcge driver.
+On Fri, Sep 26, 2025 at 02:54:17PM +0530, Mahadevan P wrote:
 > 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
->  .../net/ethernet/hisilicon/hibmcge/hbg_main.c   | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> On 9/26/2025 3:11 AM, Dmitry Baryshkov wrote:
+> > On Thu, Sep 25, 2025 at 02:28:07PM +0530, Mahadevan wrote:
+> > > Add devicetree changes to enable second Mobile Display
+> > > Subsystem (MDSS1) and its Display Processing Unit(DPU) for
+> > > Qualcomm LEMANS platform.
+> > No outputs? Should it be enabled on any of the devices?
+> 
+> Outputs  and enablement are include as part of this series:
+> https://lore.kernel.org/all/20250926085956.2346179-1-quic_mkuntuma@quicinc.com/
+> I will update the commit message to use the phrase "to support" for better
+> clarity.
+> 
 
-Here is the summary with links:
-  - [net-next] net: hibmcge: support pci_driver.shutdown()
-    https://git.kernel.org/netdev/net-next/c/0746da01767e
+Have Mani include your patch in his series, with you as author and him
+adding his signed-off-by after yours.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+That way you're managing the dependency on your side, rather than
+relying on others doing that work for you.
 
+Thank you,
+Bjorn
 
+> > 
+> > > Signed-off-by: Mahadevan <mahadevan.p@oss.qualcomm.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/lemans.dtsi | 88 ++++++++++++++++++++++++++++++++++++
+> > >   1 file changed, 88 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+> > > index 48f753002fc459a3e9fac0c0e98cbec6013fea0f..45c11c050d3f8853701fd20cf647aef5c6a9a8c9 100644
+> > > --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+> > > @@ -6751,6 +6751,94 @@ compute-cb@3 {
+> > >   			};
+> > >   		};
+> > > +		mdss1: display-subsystem@22000000 {
+> > Why do you need this label?
+> 
+> display-controller@22001000 is using mdss1 as interrupt parent.
+> 
+> > 
+> > > +			compatible = "qcom,sa8775p-mdss";
+> > > +			reg = <0x0 0x22000000 0x0 0x1000>;
+> > > +			reg-names = "mdss";
+> > > +
+> > > +			/* same path used twice */
+> > > +			interconnects = <&mmss_noc MASTER_MDP_CORE1_0 QCOM_ICC_TAG_ALWAYS
+> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> > > +					<&mmss_noc MASTER_MDP_CORE1_1 QCOM_ICC_TAG_ALWAYS
+> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+> > > +					 &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> > > +			interconnect-names = "mdp0-mem",
+> > > +					     "mdp1-mem",
+> > > +					     "cpu-cfg";
+> > > +
+> > > +			resets = <&dispcc1 MDSS_DISP_CC_MDSS_CORE_BCR>;
+> > > +
+> > > +			power-domains = <&dispcc1 MDSS_DISP_CC_MDSS_CORE_GDSC>;
+> > > +
+> > > +			clocks = <&dispcc1 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> > > +				 <&gcc GCC_DISP1_HF_AXI_CLK>,
+> > > +				 <&dispcc1 MDSS_DISP_CC_MDSS_MDP_CLK>;
+> > > +
+> > > +			interrupts = <GIC_SPI 865 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			interrupt-controller;
+> > > +			#interrupt-cells = <1>;
+> > > +
+> > > +			iommus = <&apps_smmu 0x1800 0x402>;
+> > > +
+> > > +			#address-cells = <2>;
+> > > +			#size-cells = <2>;
+> > > +			ranges;
+> > > +
+> > > +			status = "disabled";
+> > > +
+> > > +			mdss1_mdp: display-controller@22001000 {
+> > Why do you need this label?
+> 
+> will remove.
+> 
+> > 
+> > > +				compatible = "qcom,sa8775p-dpu";
+> > > +				reg = <0x0 0x22001000 0x0 0x8f000>,
+> > > +				      <0x0 0x220b0000 0x0 0x3000>;
+> > > +				reg-names = "mdp", "vbif";
+> > > +
+> > > +				clocks = <&gcc GCC_DISP1_HF_AXI_CLK>,
+> > > +					 <&dispcc1 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> > > +					 <&dispcc1 MDSS_DISP_CC_MDSS_MDP_LUT_CLK>,
+> > > +					 <&dispcc1 MDSS_DISP_CC_MDSS_MDP_CLK>,
+> > > +					 <&dispcc1 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+> > > +				clock-names = "nrt_bus",
+> > > +					      "iface",
+> > > +					      "lut",
+> > > +					      "core",
+> > > +					      "vsync";
+> > > +
+> > > +				assigned-clocks = <&dispcc1 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+> > > +				assigned-clock-rates = <19200000>;
+> > > +
+> > > +				operating-points-v2 = <&mdss1_mdp_opp_table>;
+> > > +				power-domains = <&rpmhpd SA8775P_MMCX>;
+> > > +
+> > > +				interrupt-parent = <&mdss1>;
+> > > +				interrupts = <0>;
+> > > +
+> > > +				mdss1_mdp_opp_table: opp-table {
+> > > +					compatible = "operating-points-v2";
+> > > +
+> > > +					opp-375000000 {
+> > > +						opp-hz = /bits/ 64 <375000000>;
+> > > +						required-opps = <&rpmhpd_opp_svs_l1>;
+> > > +					};
+> > > +
+> > > +					opp-500000000 {
+> > > +						opp-hz = /bits/ 64 <500000000>;
+> > > +						required-opps = <&rpmhpd_opp_nom>;
+> > > +					};
+> > > +
+> > > +					opp-575000000 {
+> > > +						opp-hz = /bits/ 64 <575000000>;
+> > > +						required-opps = <&rpmhpd_opp_turbo>;
+> > > +					};
+> > > +
+> > > +					opp-650000000 {
+> > > +						opp-hz = /bits/ 64 <650000000>;
+> > > +						required-opps = <&rpmhpd_opp_turbo_l1>;
+> > > +					};
+> > > +				};
+> > > +			};
+> > > +		};
+> > > +
+> > >   		dispcc1: clock-controller@22100000 {
+> > >   			compatible = "qcom,sa8775p-dispcc1";
+> > >   			reg = <0x0 0x22100000 0x0 0x20000>;
+> > > 
+> > > ---
+> > > base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+> > > change-id: 20250923-lemans_dual-c03ad5c84a84
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Mahadevan <mahadevan.p@oss.qualcomm.com>
+> > > 
+> Thanks,
+> Mahadevan
 
