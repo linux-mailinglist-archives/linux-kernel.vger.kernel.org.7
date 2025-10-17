@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-857743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DC1BE7D00
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B36DBE7DC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1CFCB3467F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279596E1930
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA92D7DD8;
-	Fri, 17 Oct 2025 09:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658792BD02A;
+	Fri, 17 Oct 2025 09:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J1sxqMSo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sgjhlAJB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hMuhADEP"
+Received: from mail-m32101.qiye.163.com (mail-m32101.qiye.163.com [220.197.32.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689D221B185;
-	Fri, 17 Oct 2025 09:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B442D7388;
+	Fri, 17 Oct 2025 09:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760693837; cv=none; b=EuVErt550M4pMiimBUCVWngIYosDT5QTug1YNcJllMwAIzrX5XfErrgHm7cIH/nwZ6Fd5vIpV4jmwIyvEcI4+pIlCuL7G6alDuF2mU82JsLh5kULGa6P6HG+v+WIbrA8DxYNUCygzUIOWmIjMK3D8KRsVDZJHOgx+ujEtn7GSng=
+	t=1760693934; cv=none; b=TFkaTxGCZuuqhl95bQE70MuGJcfvjsf0iA+foM3bjcO1EpUNhjzaw65UijE4INspzWtusLn/H7embIdfL2IuknftY9JTMgdLgk/0GYDKYQkW89z2/1ZoN59oiRWKfXjxZl0GVTsnUUY+ZNu6Z84HuTGSyDke+S8+7uxe4tr1j+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760693837; c=relaxed/simple;
-	bh=0zxVCCLSKYEJ9MFiUmZTlkExtnbAcidKE9azgZvpVQA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fb0nc0k35EkMnyixCIXi6s9c7HzoFF5Nj3kmkaijiILhsHXtglmHEMQEB9tJX6EogFJ1aPk6qCD2okGvfF1CKMXvjNV0XxrT5yDxUw1eT4Vs+gOX+JBuZhALRwT7zVM5z+9wCGqUrF9Fx5p05piZC7lNspfwHNyfhTFeomMt/2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J1sxqMSo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sgjhlAJB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760693834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AMBhtsatbX/1a6Y9dAaC1Mra9IEVObiajnh+VSzVjng=;
-	b=J1sxqMSoDl/C3rQLYE8oHzxqEN9Dc962p2/jIvAwWPRagbwQMZ4KZruuk24ZbL8xPtALJu
-	9HfQM30AX19gsMgY7TWx7B6SulSltSrqmE2QWQeVtEPDTJPA9q27glFaIDsfzn7wcxrRNl
-	IOVfz2PJXVD0GMd1RSeZDmhxi3prGi6g3T5SbQrLSsZ3+vpJkNqUhRHYBHZpbx6fJr/Xig
-	wHdFFjRn2zuws/KA6VUl5UzjRTMgBwpmzqk+C0R/9wOyL+BsFIjUYI95L/rOqP/4h6jJc6
-	Cap+jte7NHcu9DQIegp456AcHGp1wjCDcOnWAxw6b2kizlDzohZl9gcF2/58Mg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760693834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AMBhtsatbX/1a6Y9dAaC1Mra9IEVObiajnh+VSzVjng=;
-	b=sgjhlAJBtFyS40nLLzMZkBVCSngFa1Iq9hDTLvn67GMuvpiWmJTSMoaUOr+xD53QIVUe9n
-	IJNV/om0o7BZRKCw==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
- Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v2 12/20] verification/rvgen: Add support for Hybrid
- Automata
-In-Reply-To: <20250919140954.104920-13-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
- <20250919140954.104920-13-gmonaco@redhat.com>
-Date: Fri, 17 Oct 2025 11:37:14 +0200
-Message-ID: <87ikgdx41h.fsf@yellow.woof>
+	s=arc-20240116; t=1760693934; c=relaxed/simple;
+	bh=GQ6R570uQrtw7VpX38UcuaUMLbdw1hKLzXQSSJtmD4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=suY7kXhcuPGJPyMdn+OcuMsPKfFFg0Kkj5+PiStO2ICv7J4JNawfX+0agEgkZI/oILEUlf7+Gw2t6W0Et/AVVOZCAK5afkyo+kOrMD1Qdo+jhif6gqqDzgCQtNwAXdyX96Bur5hDD9edTCZKq5ZN9MZshuQnbcKeUHpH/oCjTq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hMuhADEP; arc=none smtp.client-ip=220.197.32.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from xf.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 264523269;
+	Fri, 17 Oct 2025 17:38:40 +0800 (GMT+08:00)
+From: Finley Xiao <finley.xiao@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	zhangqing@rock-chips.com,
+	sugar.zhang@rock-chips.com,
+	huangtao@rock-chips.com,
+	Finley Xiao <finley.xiao@rock-chips.com>
+Subject: [PATCH v4 0/2] Add power-controller support for RV1126B
+Date: Fri, 17 Oct 2025 17:38:32 +0800
+Message-ID: <20251017093834.331998-1-finley.xiao@rock-chips.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99f189210a03a9kunmbe68a2b91698e9
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkNCHlZCS0pDQk1MQ01JQkpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=hMuhADEPSmwP6nPasnEsJ31HuhbuNxT3etn3+hJJkFF62U7zWJC8lq+LcH/zBZZl7vGpFiijdsoOn54FZy4hlmlP7K0O+I9MNURftFqGk8K+ZAfI9ik/F1H0BPPUBQHk8FcYzX4o4naL5CW7pSQ64Kwd4wlHa9s63crTXOuFojs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=LjF9ZqEFw1pOCkzkvk35rLOTjYm8/YyQQGfvrv/Wf0E=;
+	h=date:mime-version:subject:message-id:from;
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> +            if any(u in self.env_types.values() for u in ["ns", "us", "ms", "s"]):
-> +                buff.append("#define HA_CLK_NS")
+Add support for the power domain controller on the RV1126B SoC.
 
-That any() twisted my brain. Does the following work?
+Finley Xiao (2):
+  dt-bindings: power: rockchip: Add support for RV1126B
+  pmdomain: rockchip: Add support for RV1126B
 
-    if not {"ns", "us", "ms", "s"}.isdisjoint(self.env_types.values())
+ .../power/rockchip,power-controller.yaml      |  2 +
+ drivers/pmdomain/rockchip/pm-domains.c        | 41 +++++++++++++++++++
+ .../power/rockchip,rv1126b-power-controller.h | 17 ++++++++
+ 3 files changed, 60 insertions(+)
+ create mode 100644 include/dt-bindings/power/rockchip,rv1126b-power-controller.h
 
-> +        match unit:
-> +            case "us":
-> +                value *= 1000
-> +            case "ms":
-> +                value *= 1000000
-> +            case "s":
-> +                value *= 1000000000
+-- 
+2.43.0
 
-Use 10**9 instead, so that we don't have to count the zeroes.
-
-Nam
 
