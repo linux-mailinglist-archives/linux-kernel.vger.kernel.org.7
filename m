@@ -1,84 +1,113 @@
-Return-Path: <linux-kernel+bounces-857303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB9CBE6757
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74A0BE6762
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 115C24F3024
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6870A3B9F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699C213E6A;
-	Fri, 17 Oct 2025 05:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0612B26F44C;
+	Fri, 17 Oct 2025 05:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JiQ6gRez"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vy53zA3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CD710F2;
-	Fri, 17 Oct 2025 05:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A55019DF8D;
+	Fri, 17 Oct 2025 05:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760679931; cv=none; b=N5m0MUr+f+pYjJUd+eh5GvHPnDe7vvgxmTRLGBgY2pvb86g5LVgZQlNwWlxgDjDNziCKrCqZ+yc+DnnZ6l5PsAwzmwK+CNlW6Zad2N29li2sgJjuPVRY6GqcjHK2ctY67ikWz//l4obT5OM8f+te9B4i2fbIlHUop5TJUDwamu4=
+	t=1760680003; cv=none; b=I8jNUmZgjoILbTZAVh+UKZkyiqM/W2iEqLR77CFp8zzqo2VHqcNDP7fA+u7H98fTd74avfpFBzOAZvh0pE/YMY0llkW+/BP2gUF2lbiQXMFhyEkZrTWsj5/BK52y9vH1HSmi8PNLLiC+n5g56N8s6TLYfPXXoFbjZ+/WfNebAqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760679931; c=relaxed/simple;
-	bh=1uuzDn0GT71dh/ktbzd/JTAdLfrKJJzvs7F8icuP93c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XCpOawiYjmMzq0PdTqN9OqlIBfvT8qDUWvMnLApuEPraLoVoY0BXugqYOXmo774b4K2y0iOqVoqymhr2522Nk6J4yCbKdhieV25GAWRarBjaOwxTT0zhPDU40NXWReEFlLWqUYx7edYRpdZ4+NWpBv4o8AlwqIg8ydrfxnrEyjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JiQ6gRez; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vZ9xee/ukSucSamVxyglLx+zdlZLqJBw/ptRINWoxPY=; b=JiQ6gRezzkLSHv+TOaGM5lc+2Y
-	HsJA6Jk5wd6SlEBJcj1f+Quytu/JgjiacjX2/ggqOlz7XhlhL84HLdzHur3oEeof97VtDnxIZA0eO
-	05YeSDQ/4tWugHocypB4WExdykJopoyFmCUWXPMvZWex7+HgOx/zMUAEodZopP6DQzCfdaqRJW8ZI
-	8++QSvK3bDUgNkAc5K2xo1FZmkrfvklQA90ALk8IB+yWI9se8Q1jvCarsjdVgro+T1DQk/FH3fAKY
-	YvD63NK5SAlvjjIvbfZG5K55NiPSqvKOaJoMtUDCREev1/JRvDYHUjMVjAaiLiZcDQv7iLDc9yFpy
-	ZiupVT7g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9dHM-00000006eIY-3Hc2;
-	Fri, 17 Oct 2025 05:45:28 +0000
-Date: Thu, 16 Oct 2025 22:45:28 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Carlos Maiolino <cem@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Oleksandr Natalenko <oleksandr@natalenko.name>,
-	Pavel Reichl <preichl@redhat.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH v2 3/3] xfs: quietly ignore deprecated mount options
-Message-ID: <aPHX-Iq2KOccWw-h@infradead.org>
-References: <20251015050133.GV6188@frogsfrogsfrogs>
- <20251015050431.GX6188@frogsfrogsfrogs>
- <93c2e9a0-f374-4211-b4a0-06c716e7d950@suse.cz>
- <20251015153702.GY6188@frogsfrogsfrogs>
+	s=arc-20240116; t=1760680003; c=relaxed/simple;
+	bh=Cd8WJV+T0Qre6U0JnCFD9btzHPXjuOFvcMNsbRnbuXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B79guNKxcpaewpoIUnWYeyCOpD/DzVJocs9dXxW1glr9DRJBZ3QZRmIui5j0oJbNFw3ETBTZ/uPegmNLrQXdSpE+i8Wets7b0MNWCk6T6+viaebda2XvnDEnNHc+OGPHhuYH44wZ6L3HYvlZE49fJmGAVblrd2nWpyPzrNc9E2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vy53zA3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA9BC4CEE7;
+	Fri, 17 Oct 2025 05:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760680003;
+	bh=Cd8WJV+T0Qre6U0JnCFD9btzHPXjuOFvcMNsbRnbuXg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Vy53zA3intR7g8oMAxuhQNRY+p4RE8H9LVZIXfZfkUF1ICV+oZZgXWqxsOsDLJGCE
+	 eQK9O0RrsMQNcxxO+Pq5e8XVGpTbYXCwKi8ZxXBOEHQgJrTnT/SmpEAWZtmsEn7n+a
+	 v8lYqua2pATeu0pUnPi3y0/7uT75IKYADWfqZJtsFZDP3QfswERnL//Qs/GQ5EPjxQ
+	 5Ai/t48CfmF826k/8FqhIo3XeWfStBDegiNMeWfIBDgrw/M6rO6YTDKi/6BtgJns3o
+	 irM1LNNkdoGjKw6/gYeblsH1O+Hz+89L2o+/QEe72j2asF+RPJfMS5FzfT4MSbA1Zo
+	 CaAZ5ZRiJcmSQ==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1v9dIa-000000001oW-3W25;
+	Fri, 17 Oct 2025 07:46:45 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org,
+	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+Subject: [PATCH] phy: broadcom: bcm63xx-usbh: fix section mismatches
+Date: Fri, 17 Oct 2025 07:45:37 +0200
+Message-ID: <20251017054537.6884-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015153702.GY6188@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 08:37:02AM -0700, Darrick J. Wong wrote:
-> won't have to deal with attr1 structures anymore, because V5 always has
-> attr2.
+Platform drivers can be probed after their init sections have been
+discarded (e.g. on probe deferral or manual rebind through sysfs) so the
+probe function and match table must not live in init.
 
-There's isn't really any attr1 structures anyway, it's really just
-lex flexible (aka) dump partitioning of the space in the inode.
+Fixes: 783f6d3dcf35 ("phy: bcm63xx-usbh: Add BCM63xx USBH driver")
+Cc: stable@vger.kernel.org	# 5.9
+Cc: Álvaro Fernández Rojas <noltari@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/phy/broadcom/phy-bcm63xx-usbh.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> I think you're right, we should keep this forever.  It's not that big of
-> a deal to accumulate all the dead mount options via fsparam_dead, and
-> probably a good tombstone to prevent accidental reuse in the future.
-
-Agreed.
+diff --git a/drivers/phy/broadcom/phy-bcm63xx-usbh.c b/drivers/phy/broadcom/phy-bcm63xx-usbh.c
+index 647644de041b..29fd6791bae6 100644
+--- a/drivers/phy/broadcom/phy-bcm63xx-usbh.c
++++ b/drivers/phy/broadcom/phy-bcm63xx-usbh.c
+@@ -375,7 +375,7 @@ static struct phy *bcm63xx_usbh_phy_xlate(struct device *dev,
+ 	return of_phy_simple_xlate(dev, args);
+ }
+ 
+-static int __init bcm63xx_usbh_phy_probe(struct platform_device *pdev)
++static int bcm63xx_usbh_phy_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct bcm63xx_usbh_phy	*usbh;
+@@ -432,7 +432,7 @@ static int __init bcm63xx_usbh_phy_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id bcm63xx_usbh_phy_ids[] __initconst = {
++static const struct of_device_id bcm63xx_usbh_phy_ids[] = {
+ 	{ .compatible = "brcm,bcm6318-usbh-phy", .data = &usbh_bcm6318 },
+ 	{ .compatible = "brcm,bcm6328-usbh-phy", .data = &usbh_bcm6328 },
+ 	{ .compatible = "brcm,bcm6358-usbh-phy", .data = &usbh_bcm6358 },
+@@ -443,7 +443,7 @@ static const struct of_device_id bcm63xx_usbh_phy_ids[] __initconst = {
+ };
+ MODULE_DEVICE_TABLE(of, bcm63xx_usbh_phy_ids);
+ 
+-static struct platform_driver bcm63xx_usbh_phy_driver __refdata = {
++static struct platform_driver bcm63xx_usbh_phy_driver = {
+ 	.driver	= {
+ 		.name = "bcm63xx-usbh-phy",
+ 		.of_match_table = bcm63xx_usbh_phy_ids,
+-- 
+2.49.1
 
 
