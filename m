@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-858256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BB3BE97FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:08:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83898BE9757
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8B3620EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:01:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 260F5563C4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F02F32E159;
-	Fri, 17 Oct 2025 15:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FA532E14E;
+	Fri, 17 Oct 2025 15:00:40 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E13632C948
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628372F691E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713240; cv=none; b=LA/dYZ5fSgs8zMvfhGc65MTe6vn/TCUkV1DGeIBhYPqSTc1ajTnnKRqrbBam8f2oLyJK3pMZd/ibztxOB1by1xHemc/q8jtpJvEG3jXEVRvxClz47S6vfodIj7gq7NGcSN27xbcvt0tDuWFm4lVNqFe1Ow8p22r7xWt91vKLwOY=
+	t=1760713240; cv=none; b=RQaPBlwU3V/4ygUfTFSsfEpQmircU60OJp5yxXmdBoTDwMnk71G9HUmBSPD/cXTuJoMZ6cOuC02ITN/SZcbyN4sBZ8yqjzYITCTx2/nl/YwkWAzmu88QqXrCPKzg5Wlip0OLK7uKLcZ+8BgO4ntgROqncxNPPuN7NdyU3bZUiXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760713240; c=relaxed/simple;
-	bh=F4a/XMUroicMRAYsm6IQd8Sb7/zo6UMhiCf/jB5UKcA=;
+	bh=do8Wgxd/SePEpeQkAsWrN+ulD9bfSWdKS4T6ApEwOUo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=urWuVBA2CBqUgzh54ZgxdxDBsFlL7h1o4wH9CZvhxBlYgCQkNR6MUBu58GPoriJPeBk9ziZw5X6nZJ+4YNRXR9uMvim9rvK1PvLyNyhCQ5G4yapHGarCXaR4UWkgAQDy3WUWJ/Fe97wJgngOtpYueHfREjzFVE+/2f+vb1RFaK0=
+	 In-Reply-To:To:Cc; b=PKHxO5k5Iigq8D8Nhd8RHkgoB5qerL6MFmXIJOwlnz4bCtCnYx7w7dnqbHEXwoKqd6DLnqyqROAVUPpZToiYUPy30pqVoZiHsWYzlxmCKorAJRlWzEaOsOvz+p3xV2kLPXYXvXHV0W9x2NRf6TTGkBmVlQKG7GBZFqyfhlIqQkg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,23 +32,23 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <mkl@pengutronix.de>)
-	id 1v9lwJ-00028E-Pd; Fri, 17 Oct 2025 17:00:19 +0200
+	id 1v9lwJ-00028F-Pd; Fri, 17 Oct 2025 17:00:19 +0200
 Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <mkl@pengutronix.de>)
-	id 1v9lwJ-0044jY-08;
+	id 1v9lwJ-0044jZ-0N;
 	Fri, 17 Oct 2025 17:00:19 +0200
 Received: from hardanger.blackshift.org (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
 	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B1B9848928A;
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C0D6A48928B;
 	Fri, 17 Oct 2025 15:00:18 +0000 (UTC)
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Fri, 17 Oct 2025 17:00:00 +0200
-Subject: [PATCH can 2/3] can: esd: acc_start_xmit(): use
+Date: Fri, 17 Oct 2025 17:00:01 +0200
+Subject: [PATCH can 3/3] can: rockchip-canfd: rkcanfd_start_xmit(): use
  can_dev_dropped_skb() instead of can_dropped_invalid_skb()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-fix-skb-drop-check-v1-2-556665793fa4@pengutronix.de>
+Message-Id: <20251017-fix-skb-drop-check-v1-3-556665793fa4@pengutronix.de>
 References: <20251017-fix-skb-drop-check-v1-0-556665793fa4@pengutronix.de>
 In-Reply-To: <20251017-fix-skb-drop-check-v1-0-556665793fa4@pengutronix.de>
 To: Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
@@ -70,15 +70,15 @@ Cc: kernel@pengutronix.de, linux-can@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-rockchip@lists.infradead.org, Marc Kleine-Budde <mkl@pengutronix.de>
 X-Mailer: b4 0.15-dev-2196b
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1181; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=F4a/XMUroicMRAYsm6IQd8Sb7/zo6UMhiCf/jB5UKcA=;
- b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBo8ln+Ky5PD8g/b+iC8YlHzgku2aPt+KmkZSjxG
- LCPwGfVZs6JATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaPJZ/gAKCRAMdGXf+ZCR
- nD9OB/9HSM0rxxe1NUTauClQoPA95TEmusUCxgUDXWHYlfwjPJbSmhlwYpj03L3MfQLS3w7Q4g/
- fzMGbdGgTLb7xxkcRWKXU2N+vK3s1mgp12/OExQuOrX78mqlI06dexI3qvDpyMxQ65ImqN+gDEh
- hOMuJsXIkPoCNP+VY+iYETzZf8TLyvCzyP2v5nA1WEgcgMq6sQyAHW2QczVT8isqVFNoeEF274z
- ZFOdYCyVkmvhwDwAmCp0+yEbYH8o03ipDv5RHQhaiuPO/uUNgSsahn71LzCUfPIBCYwxOyh9pgY
- IKX027FSBam3ZCgx2ewbUT70+Xg+QUz6BvrxehjH9kWagBft
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1226; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=do8Wgxd/SePEpeQkAsWrN+ulD9bfSWdKS4T6ApEwOUo=;
+ b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBo8loAzlnTFkscuFLWoJevL9wZCAxD/XhVtKVyT
+ 9cJR3/TvYyJATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaPJaAAAKCRAMdGXf+ZCR
+ nFH3B/9qk6/QRm+Ue+6x+T4+qzokomC+tS3HS7duJg/kTEO0kLDl0XBKzZ8c3pRByh+d6fNMbHc
+ RYV3oGCG6S6P5FokWoSfxTxb2S0KdrpooyWsiOagVv2RDy9qWlzr9GG+IFqF4tXB4InOKq+rcts
+ MfayrVhn1ONZxd+WkCIxVEgZ7EsiJfEz57jFqJ2/S7xH04URxxmSwYj5WwJ0tMSAwHHn6X3vJ1v
+ OLuZwfKs4GFwihpejvX5cx0dKmQOZZveBwM+UJ8bmFfOYJ0+X3FQpwM9poSR7HUvn1WZ7ReuPFa
+ l+dtdTeUuQmTFx7LqiYzUSPxju6tTkf/ciJFQSWKfgkN4z/2
 X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
  fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -95,25 +95,25 @@ skbs in for listen-only mode.
 
 Reported-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Closes: https://lore.kernel.org/all/20251017-bizarre-enchanted-quokka-f3c704-mkl@pengutronix.de/
-Fixes: 9721866f07e1 ("can: esd: add support for esd GmbH PCIe/402 CAN interface family")
+Fixes: ff60bfbaf67f ("can: rockchip_canfd: add driver for Rockchip CAN-FD controller")
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
- drivers/net/can/esd/esdacc.c | 2 +-
+ drivers/net/can/rockchip/rockchip_canfd-tx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/esd/esdacc.c b/drivers/net/can/esd/esdacc.c
-index c80032bc1a52..73e66f9a3781 100644
---- a/drivers/net/can/esd/esdacc.c
-+++ b/drivers/net/can/esd/esdacc.c
-@@ -254,7 +254,7 @@ netdev_tx_t acc_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	u32 acc_id;
- 	u32 acc_dlc;
+diff --git a/drivers/net/can/rockchip/rockchip_canfd-tx.c b/drivers/net/can/rockchip/rockchip_canfd-tx.c
+index 865a15e033a9..12200dcfd338 100644
+--- a/drivers/net/can/rockchip/rockchip_canfd-tx.c
++++ b/drivers/net/can/rockchip/rockchip_canfd-tx.c
+@@ -72,7 +72,7 @@ netdev_tx_t rkcanfd_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	int err;
+ 	u8 i;
  
--	if (can_dropped_invalid_skb(netdev, skb))
-+	if (can_dev_dropped_skb(netdev, skb))
+-	if (can_dropped_invalid_skb(ndev, skb))
++	if (can_dev_dropped_skb(ndev, skb))
  		return NETDEV_TX_OK;
  
- 	/* Access core->tx_fifo_tail only once because it may be changed
+ 	if (!netif_subqueue_maybe_stop(priv->ndev, 0,
 
 -- 
 2.51.0
