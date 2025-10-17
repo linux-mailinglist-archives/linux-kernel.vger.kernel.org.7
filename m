@@ -1,300 +1,244 @@
-Return-Path: <linux-kernel+bounces-858110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF414BE8F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:41:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E6BE8FA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AC41886254
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C071891864
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD782F692B;
-	Fri, 17 Oct 2025 13:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F422F692B;
+	Fri, 17 Oct 2025 13:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDTH5z6Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Kru8cKT/"
+Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022089.outbound.protection.outlook.com [40.107.193.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BA32F6903;
-	Fri, 17 Oct 2025 13:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760708413; cv=none; b=h/4KyqMakFfkmznleCylONYGkt6agwv7o/WlGMqJ0co6i2on3PYaev8ulScMcIQ9NfJvoCatSgauWJx6PztuaTrqKfedLNs7o60RS+sZFrWxgRUODYU/ujleZaDmLYsbTj4oWMuVWzJoiSRdnZQalhy7MBl4ntLA7WA/yGEGw/Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760708413; c=relaxed/simple;
-	bh=X8SCmld5sXx4ricWkl9PJ7pW6tb6c1+ScVBZg/V93ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=asWlSfbSQzHTVD+8vORYT0fkSTRj8+ZBb3jKRmvOM8MDVhUDpLX9P7iVAjwnpUzWLPMwLAjhRbBXf5Ld6OHBHDMBQatjVkv4o61nb+2pxT+xVIB5B5YtiolYVwvodrd8UTTpVUw56nuA5qdbptQKnaWqpOVb/iUqm4/xYjKNboY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDTH5z6Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3A6C4CEE7;
-	Fri, 17 Oct 2025 13:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760708409;
-	bh=X8SCmld5sXx4ricWkl9PJ7pW6tb6c1+ScVBZg/V93ag=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jDTH5z6QJhJU+7m9ezxCXn64ywZmOGeLZmaJ8S+ttQNGXoXd1YNoF24GOfTSUCyuj
-	 A657tHYBDsX0urWgWMt+2rvB+HLGyo5/6OGLgYwXAIwXOM5K6ub/qVmNyAVSYDvymq
-	 VJZ+6LPtvzGbPeKBV2D8z5VR6JYzudMj5cj1Na0rYmKbKc8UYdHVPSEZ5RPqoET1Bf
-	 M8NglehC1zaGCAygv5NgSuucwLWjU3qu+wFojZXivPgqgPH3TrxOABs+50hk7s7uS1
-	 BHxiir8DmbXlDfSA83RSdsMjaxAT/b3/gkRyHbIIKPRcquQJ/4/fakqeQUNZc1Xfae
-	 TmQUeAf20bx6A==
-Message-ID: <d8a78b7c-e3a9-44b5-986d-8ac32f328eb6@kernel.org>
-Date: Fri, 17 Oct 2025 15:40:00 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158412F6903;
+	Fri, 17 Oct 2025 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760708505; cv=fail; b=MlGB6U82j8oEUB+hsHh8yzmn1MDXk86zR8UHXyPVOI7RCawOcHpDp90XlzReVTNz3Qlo/AH8hxv8/7NcbiH7MozzQdizpG7WBgxmJYdXnqa1xkWxiCNqmhCcFkul8+Qq6RmCQkPIFXpX40lwh+tqdc2dq3HqtVwepCq00fG6sM4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760708505; c=relaxed/simple;
+	bh=NSemkYLe+LXVTTPmkbAl8ZREXV9Whh4h+PYZmJWmiLg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Tfl7CXGbRsnuXeTwGcpABcqrWCSnkCmD7Q/jXj0kiSMaKKf+O+AYG2278JCtFEc4Wo1WBCM45GpLKp0TaVuDWcbKh0AWtEzt/aVV86yKtUgo8YEjLP1dO0mybZzpDiS7smrCd77zOETja2+kNMJK5/A72mlsVkYGDfLfB0BNITs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Kru8cKT/; arc=fail smtp.client-ip=40.107.193.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q+tDq+b8WxiFREvkqdCCEBsSnu8HLp2XBDUOrHVQANc71gAu/k6s5TOzebhQthp0AJ2iK69YG3csihFNw285usehkSTUaimtSgO/dpJmL/81+0tDs1psA6qFPASlOEkGC4esbEd+cgqh7tLd8OMoGWU9N/Htj5GNl+u4Y+oYOmW+h4uTM/Ovn+xCEbRt5AGerhy2nR2ANHNX9fxt7tLA+7l6XH2f0WXmJvgx3rN9X806SAEPDJ0jd9CmhvfmTvsuI7cv72ttsQK01b2HYeUQIWB7C/TG1rWYY4zGQ5l3351FQ0dsnO2sKJKYkcQ5yRxmE6KS+fB0oAPRgj3l4hz4Ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nl7yWbP675TgXtyIXaRAQdfswzSBiztOzdZ3bFYA1oY=;
+ b=bZyaJb7hj5ld+P8oMrMG7S92G3mFrCWFRxaVsUiUrpZS/5Isy5XmmVEExKFFkNcUaNmvWnShEDoDPrfsE+bFm+ujJFbswh3XIykkgV5sJZ4Lz0zqjAdyuw5qtmT3Wbomh05V8pjTdd7YaWWIf9L+KuY8WjVBV24yejcpcC35G1TwXA9FASiYYGOUufSe6+OKrAcsy6UAzbWjsU8vie9+hzyAq9TfZKkZJl3SZG6GCETBfelBCe3ppE7mE/+XWNjqcGCC/rtaEOBXePnNkaFzO+4W+GTWq9PcefBSGgzbIK0WagOhTb1U+JmVE2PsXdwTVyQ9VEnTNbdJelYcKW60jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nl7yWbP675TgXtyIXaRAQdfswzSBiztOzdZ3bFYA1oY=;
+ b=Kru8cKT/Q/56TZHtwVqXC/DdN8N8lcnEJ7LQ7+kOa+ZpNmDJtLPSorStMMgwIE0Lxvq/hBryw+299t+M1sQe672TssG+SEpddQ9ZZ6OJVht1SVlrkJ4gKd2lCyQwfYviffwc7/gVH9cKiiCvMFQOeBMXGxZzAI6e9hD3SuksmFArq4dAcAOtv6xGNS9PvUnONrOBBVPV29AX2cW/0ZWe05cbc61kJI9lChX2YW52mcIjzs4JocFR7hSoBxspDIHm7YqSS6vSmC44SRzfcVMTEu4iWw75aryUc777Y4RZKG26wvlNKWdDRQc50N1a13JyHUmdXrumxyyQi9E3hY1Rgg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:4b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 13:41:37 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
+ 13:41:37 +0000
+Message-ID: <eb6c111c-4854-4166-94d0-f45d4f6e7018@efficios.com>
+Date: Fri, 17 Oct 2025 09:41:35 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V3 08/12] uaccess: Provide put/get_user_masked()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+References: <20251017085938.150569636@linutronix.de>
+ <20251017093030.315578108@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251017093030.315578108@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT3PR01CA0074.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:84::32) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
- Gen3 ADC
-To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org,
- lumag@kernel.org, dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
- daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org,
- thara.gopinath@gmail.com, lee@kernel.org, rafael@kernel.org,
- subbaraman.narayanamurthy@oss.qualcomm.com, david.collins@oss.qualcomm.com,
- anjelique.melendez@oss.qualcomm.com, kamal.wadhwa@oss.qualcomm.com,
- rui.zhang@intel.com, lukasz.luba@arm.com, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
- neil.armstrong@linaro.org, stephan.gerhold@linaro.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
- <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
- <20250829-classic-dynamic-clam-addbd8@kuoka>
- <5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
- <4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
- <a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
- <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
- <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
- <20250927144757.4d36d5c8@jic23-huawei>
- <a3158843-dfac-4adc-838a-35bb4b0cbea4@oss.qualcomm.com>
- <CAGE=qrrCvq28pr9Y7it-CGMW=szKUnU+XBj1TmpoUwuASM05ig@mail.gmail.com>
- <31bd08ce-823a-4a71-baca-a9d1e02fcb6a@oss.qualcomm.com>
- <08eb477f-ea34-4a31-b181-bfc629aef4c8@kernel.org>
- <68a9b8e8-bdf4-430f-baef-6a293ccea78d@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <68a9b8e8-bdf4-430f-baef-6a293ccea78d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB6572:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c29c143-4215-4b01-de49-08de0d82e4e1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cmk2SW9ZZlJOS1V4YXBQaWhFcEZaQVVMTWxhbkJEWlBjemRUMEhqcElSc1No?=
+ =?utf-8?B?dnFRaEU2a0ZQV0d1YlhKNlVPUXM5MTU3RVgrK28wWVFhT3RsMk1OcWhZQW1o?=
+ =?utf-8?B?ejRaRFFkcXl2NUpIOGV6cUExU0hoTWVlSnpNYUY3aktnN3RxS242dzZpM2ll?=
+ =?utf-8?B?empEbXVucWF2ZG90dTM5YjVDRCtsRmZRUUJSWDdzK0VLOHR1anRRdWN3dHpZ?=
+ =?utf-8?B?NVBNd2dzQnppQU9JV1JRbjAyQzlvd0pVWUxacmY0Wi9taWpOa1RRV0IrR3c0?=
+ =?utf-8?B?UDkzZU9xTWIrUUZCcGRTZHNsRjdFOU9iclFzU0MrS00rTGd1MWF6eTJ3M2Zk?=
+ =?utf-8?B?OTVQdERVY1o0NUtJcXRWY3dGZk1xY1RGeEtEeE83Tmh6dVAzRnN2dnFlSHZi?=
+ =?utf-8?B?dUZoVmxKaHRRbHhnM0ZDc3ZESXBMQWV5dm05QXVvNUJVbEVCL1UwK0lXck9r?=
+ =?utf-8?B?T2JQdkFJcStzZCszaVRKNHVYcU5DZHFsL0hXeGFodzZuZFh1K3BMN1FnYUZX?=
+ =?utf-8?B?Q2Y3VDl6ZVNBc21CQWV2K2ppcjNib2hocDV6L01FRi9xbDd2T0R4dTNiN1pl?=
+ =?utf-8?B?SmwrRklOaEpMMjBKTjB2R3YvbitXV282ZjJ5cUhsL3RmRjR6dmY5ZUdwYy9t?=
+ =?utf-8?B?WnlTQk40WmE1Y2Q0M2FiVW9mUFdVN0o2M204QTIzV1U0UHA4UE0yOHRzM2Vr?=
+ =?utf-8?B?UGF3L1FrcU5ncFVTVkJWcHVPcy9jOTA3ajRPMDdIcStJN0NYVDlGN1doNlJH?=
+ =?utf-8?B?VkR3V2w5WHFZRjRhS29nMkRLeUdLUHR6SDFVYktVSUlQZzZPZnJxQ0VLbXNU?=
+ =?utf-8?B?dmNpZ0wzL09XYlRkWlBMeDFNWWZqMHpEdzFTTUZIN3p0MU5OSXdEczYwWUVQ?=
+ =?utf-8?B?VXhWQkY1SUdKRG1EZE9jS0ZoTXVhNG1uZlQ3cC95Yy8wNDhnZStCU2dPekZX?=
+ =?utf-8?B?Tmc1NGtmL2pmaTlhZThlUmVQUFc5SlB6RlBMbUlHMS9DNFovUDJGb2padlRO?=
+ =?utf-8?B?NHZuanM2c3hUSTVxUzJNL3BacW9JRStNZnBSZzJaSTlhZkt2SVVZTHQ4R0NS?=
+ =?utf-8?B?TW1acGlyTkZNOVJFbVl4QUZUcXVEZnFUdy9FN0RPOC84QXhXd2l5Z2M5ZzdW?=
+ =?utf-8?B?QVZCSnZoNmZqYTBsK0FaZmZyeFBFRjRmc1dZVXZXOFEwMlJMQ3NnTWlGSWpw?=
+ =?utf-8?B?aVE2ZUdBSXl3d2pubHNGYXlBOXR5OEVwWU5iZk5MbmY2WEVYckdJRENhVko3?=
+ =?utf-8?B?N2xDc0V5aWF6YjMzc0ZWODJqNlVnUmJjZWNOWEVwNkNWVE44cDRiaTMwYzAx?=
+ =?utf-8?B?WE9VZ2ExQmJrZkt3enkvc1c1YXVPZXZPbTFmcithQ0xDT2lCN1FUQ1NqQi8r?=
+ =?utf-8?B?SXhqRUlyZXh3LytBclJKWjZpMWNkc1c1eXJQMUVJaHF1WjkrVlhMY2J6ejRM?=
+ =?utf-8?B?cWw3b3FjbWtPM2c4RTZMbW8zb09SK2RFWE1JQWxhNk56WnFGaGpGTWo2R2hC?=
+ =?utf-8?B?SlJid29hWFNNNHlwSTdTT2QvclZ0UnlBWG1XTENOK2hWTG1qYlFnMllzSDBD?=
+ =?utf-8?B?dk8zZ3BLWVRNS2Facng0YmpZMGZmbW11aDRJb21UbWt4V3prTFhjeGZrOGk2?=
+ =?utf-8?B?ejF1UmhuMmhUVVRoRGZiQko4NzJqNjlYakx6M01QZ1YxNGF5T2IxclhHZm03?=
+ =?utf-8?B?YnhCblNTc1lYSjllRHpRQ2loUGZBWWl3VElLcXduaHNaUzVMMHZaS2JUMzdp?=
+ =?utf-8?B?L0xBbU5peSs4L2xsWVJqWUNHdEExYklTQ0w0VmJPVzAwZWpKZWNHQVJqWndo?=
+ =?utf-8?B?ZlkyQVN1T1gzZW4vUGt1M3NtbStocDZhN3ZoblhsTWFabFI5dy9GNXNwNCto?=
+ =?utf-8?B?YjF1bTI1akRHVGNsNytDeWlSTTlGU0dyQkx5RkFhc2tyb0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VXUwMk9pdU80VDFTVzd4Q0t5TzUwYnRiMjFjdnZoOUxiSG1GUDNSd3p3TFJV?=
+ =?utf-8?B?QnRFU1Fjb3owYktkeXBSZ1JrdW1iZURLQjFiY2pGTkFBRStma2N4bldyRU8w?=
+ =?utf-8?B?M1pzeDBPNVRXUUxDK2Y0YjcxSW5SQnpOb1VxVElyQzB2ZU5iM2lpQ2FCMndY?=
+ =?utf-8?B?YmNnWi9DRzRObWVHako5N1lnV3VHUzNSTEMwM2dQbmc0aS9rd2kydjJLUUZ5?=
+ =?utf-8?B?c05tT2tJeEkwMGZzc3VSbFRGZkU2U2E3b1JIdmh6RkpXdE9NdkMzM0drQlpx?=
+ =?utf-8?B?SjQ3dUc2eEd1ZXpISHNJd1I1VnBBMXJncmdTTXFmV1p2QXZaR3FoTWJYL1lu?=
+ =?utf-8?B?aDZoYmd3Skc3UGV6clYrUXRzSUh6UUZWbkxVQ1Q2bWcwMG0vN3VXSHFqeVBD?=
+ =?utf-8?B?TG9FQkRQb2RRMTdKZzRRQlpaeUZTeHI1OUYraU5lWlhaSHhCU1J6a082ZVNR?=
+ =?utf-8?B?eHp3T2dtWUROVkgyK0RQYVNmKy9lY3FPUHZjejJvcFRNRWQrcVVWRmk0ZkZW?=
+ =?utf-8?B?MEhSZFZEM1NBR1BoRkRScEtCdTVETlpreTB4VHpUOVhrL0N1cy9zNGdCZmpo?=
+ =?utf-8?B?TTMzTmlVVURkbWJuQUhrTFhzMldRYmNYOExGVDFZYTRXenlJK0lWZkFTb3Bl?=
+ =?utf-8?B?QS9qMDhxRkRBaXRMR1RINHVlcGJJUURKb1U1NE1oSHZDc0RhbXMzT2l6Q0p6?=
+ =?utf-8?B?UGpOY1l6M3FRSFNQRFAxY0xKaUJybzhJT0QrLzV4RTdDK2oxTGdMVXZJNUIy?=
+ =?utf-8?B?WUpRZGJVRTNxcnNOempOWllDajgyNlRxRStCU3N6Qm1ZMlJpWDJQcFRVUVhl?=
+ =?utf-8?B?K3dSeVgrbFQ4ZzNkWHRiRWpHT2h6cVJTSlRvamx5WmRMc3dMZ3R0RUMwU1FT?=
+ =?utf-8?B?MnlYVWhpZWU2NUtOTlZRdzB3enFmUENFbmZ4dlhLVTdQbGg1SDViLzZERGRS?=
+ =?utf-8?B?L2lUd3hWemxiSkpIYmJwT3dUeXhGYXpESnY0Y2VDb0VNcTRxdUdnYnF5ZDhm?=
+ =?utf-8?B?SWNXT3hPMThLK2sxODFzSmlYVXlJOFdVLy93T3FteUhxY2JMK0RqaURPd3ox?=
+ =?utf-8?B?LzZUQ3c1T0d6a3gyb2pqeStMTlVyMjQ5L1ROVW1tZzhZQ0NYSTdoVWYzZjE1?=
+ =?utf-8?B?VnBWN1NzWGhQM3F1TkpCREdUUmRwNDE5UFp2REdIR2Z4MkRNSzRBbUFDTERh?=
+ =?utf-8?B?dXNscStMNWEvc0RuamEzYkgwL0pZaHQ1ZGI4QVQ2UlBjeFlsQnRqRzRsY1ND?=
+ =?utf-8?B?WmNQOERqNitqSE1CMDUzcVE3VmhTOFpYRFdiMTNrNldXeWRhd0h1V25zNUtP?=
+ =?utf-8?B?Qi9uRVBwVjgvbFZPMlZCK3BiSzlhdFoyMkxNai9ZR0xRU296Ym0yQStwUTdG?=
+ =?utf-8?B?RHhvOHRseVltaktQc2ZlcWcycnVTSE5iR1hIWEZvWmR3NCtTTnU3ZC82WVYz?=
+ =?utf-8?B?VnJxYWNtb0xGWUhZeXVHWUR6M3pNMzF6N2txS2NWQ0xQaldtU0pReUNJY2Ny?=
+ =?utf-8?B?dUNXMWszU29NVVRldTFyYzlhM1hEaUpyREY4c0g1Vk1DQnovdXNYTlh2eGVM?=
+ =?utf-8?B?N1VZa3lOTHF1RFZTMEtQcDhNZkhlWllnZXpLMzNOVjRjUFZTbjk2VjhPRHd3?=
+ =?utf-8?B?MjBKSlhhNWplaHlUVVdUNkRpUzFHUk5KMnpiL3ZvMzJqVFFyQ3FMTndKcUtS?=
+ =?utf-8?B?QlN5UUszQ0VSYnZVVnZoaUhLczd3RXUwS2lrd0lvK2gvVVBvd0pnZnpDVmlI?=
+ =?utf-8?B?YXYxVURod21MVnVka2hwNTd4cFNwMVQ2ZE9iMDdCcWhZQUtGWVJJWmlEcUxw?=
+ =?utf-8?B?eFBmeTJtWGdRRE1xaks0clBsSUkyeG1xKzFzTEs3bnN3SmdmZ2xGNUdKa3hE?=
+ =?utf-8?B?d093ZUhCTHVmM3M2WHlRSVpzUUh1bWpGYTlDbGVsZG5pNStPb2NKT0JSSGRr?=
+ =?utf-8?B?NTNxMWsvSDlKZ1kvanNGQnNMWUduOCswejd5OUM0Y1dldnhGTG5VOUdWZE9v?=
+ =?utf-8?B?T3RrSDhGRGh3U1hOZUhrVXNUcWJEdHZyNTd4em5DMXZnNGJBOWp2TE11enFj?=
+ =?utf-8?B?blRRcXZFSGRGbzlBSU5MUFJxWFBCMGJVOVBpT0I4YWNLdkwrWTFMOWdDMU4y?=
+ =?utf-8?B?NUZFNUd5UlBhb1hQRnBkSHBuUjIvVFJYMFkydEp4d2tXNnNQcGNwdU41WERv?=
+ =?utf-8?Q?mLJ86evoePLRALk+kfxGc38=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c29c143-4215-4b01-de49-08de0d82e4e1
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 13:41:37.1691
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xc/L86BH8zAUDNdqzlseI4xK8pMC3rS9LQ+t9Ueijl8CSbxCiNDQHF8+Alri6wFvLwgoDGxJbE8wFwCFj4x62LBBAPNqDJg6VmOoCGFTosk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB6572
 
-On 17/10/2025 13:18, Jishnu Prakash wrote:
-> Hi Krzysztof,
-> 
-> On 10/9/2025 5:22 AM, Krzysztof Kozlowski wrote:
->> On 08/10/2025 23:20, Jishnu Prakash wrote:
->>> Hi Krzysztof,
->>>
->>> On 10/4/2025 12:22 PM, Krzysztof Kozlowski wrote:
->>>> On Sat, 4 Oct 2025 at 11:42, Jishnu Prakash
->>>> <jishnu.prakash@oss.qualcomm.com> wrote:
->>>>>
->>>>> Hi Jonathan,
->>>>>
->>>>> On 9/27/2025 7:17 PM, Jonathan Cameron wrote:
->>>>>> On Fri, 19 Sep 2025 20:17:43 +0530
->>>>>> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
->>>>>>
->>>>>>> Hi Krzysztof,
->>>>>>>
->>>>>>> On 9/18/2025 5:45 AM, Krzysztof Kozlowski wrote:
->>>>>>>> On 18/09/2025 04:47, Jishnu Prakash wrote:
->>>>>>>>> Hi Krzysztof,
->>>>>>>>>
->>>>>>>>> On 9/17/2025 5:59 AM, Krzysztof Kozlowski wrote:
->>>>>>>>>> On 16/09/2025 16:28, Jishnu Prakash wrote:
->>>>>>>>>>>> You cannot have empty spaces in ID constants. These are abstract
->>>>>>>>>>>> numbers.
->>>>>>>>>>>>
->>>>>>>>>>>> Otherwise please point me to driver using this constant.
->>>>>>>>>>>
->>>>>>>>>>> These constants are for ADC channel numbers, which are fixed in HW.
->>>>>>>>>>>
->>>>>>>>>>> They are used in this driver: drivers/iio/adc/qcom-spmi-adc5-gen3.c,
->>>>>>>>>>> which is added in patch 4 of this series.
->>>>>>>>>>>
->>>>>>>>>>> They can be found in the array named adc5_gen3_chans_pmic[].
->>>>>>>>>>
->>>>>>>>>> Really? So point me to the line there using ADC5_GEN3_VREF_BAT_THERM.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> We may not be using all of these channels right now - we can add them
->>>>>>>>> later based on requirements coming up. For now, I'll remove the channels
->>>>>>>>> not used in adc5_gen3_chans_pmic[].
->>>>>>>>
->>>>>>>> You are not implementing the feedback then. Please read it carefully.
->>>>>>>>
->>>>>>>
->>>>>>> Sorry, I misunderstood - so you actually meant I should remove the
->>>>>>> empty spaces in the definitions, like this?
->>>>>>>
->>>>>>> -#define ADC5_GEN3_VREF_BAT_THERM               0x15
->>>>>>> +#define ADC5_GEN3_VREF_BAT_THERM 0x15
->>>>>>>
->>>>>>> I thought this at first, but I somehow doubted this later, as I saw some
->>>>>>> other recently added files with empty spaces in #define lines, like:
->>>>>>>
->>>>>>> include/dt-bindings/iio/adc/mediatek,mt6373-auxadc.h
->>>>>>> include/dt-bindings/regulator/st,stm32mp15-regulator.h
->>>>>>>
->>>>>>> I can make this change, if you prefer this. Please let me know
->>>>>>> if I'm still missing something.
->>>>>>>
->>>>>>> Also please let me know if you want me to remove the unused
->>>>>>> channels - I would prefer to keep them if there's no issue,
->>>>>>> as we might need them later.
->>>>>>>
->>>>>> He is referring to 0x14 and below not being defined values.  So what
->>>>>> do they mean if they turn up in the DT?
->>>>>>
->>>>>
->>>>> Thanks for your clarification. To address your first point above, the macros
->>>>> added here only represent the ADC channel numbers which are supported for
->>>>> ADC5 Gen3 devices. If there are numbers missing in between (like 0x14),
->>>>> that is because there exist no valid ADC channels in HW matching those
->>>>> channel numbers.
->>>>>
->>>>> For your question above, if any of the undefined channels are used in the DT,
->>>>> they should ideally be treated as invalid when parsed in the driver probe and
->>>>> lead to an error. When I checked the code again, I saw we do not have such an
->>>>> explicit check right now, so I will add that in the next patch series.
->>>>>
->>>>> And to be clear on which channel numbers are supported, I think it may be
->>>>> best if, for now, we only add support for the channel numbers referenced in
->>>>> the array adc5_gen3_chans_pmic[] in drivers/iio/adc/qcom-spmi-adc5-gen3.c.
->>>>>
->>>>> There are only 18 channel numbers used in this array and I would remove
->>>>> all channels except for these from the binding files. During parsing, we
->>>>> would use this array to confirm if an ADC channel added in DT is supported.
->>>>>
->>>>> In case we need to add support for any more channels later, we could add
->>>>> their macros in the binding file and update the array correspondingly at
->>>>> that time.
->>>>>
->>>>> Does all this sound fine? Please let me know if you have any more concerns
->>>>> or queries.
->>>>
->>>> No, it doesn't.  You keep ignoring my arguments and responding to
->>>> something else. I prefer not to store hardware values as bindings,
->>>> because these are not bindings (and you failed to prove which SW
->>>> interface they bind) and it's really not necessary.
-> 
-> Sorry about the delay in replying. Let me go step by step
-> over the use of the macros and how they are used by clients
-> SW.
-> 
-> 1. In ADC Gen3, this is the superset of channels supported on all
-> PMICs (with ADC):
-> 
-> Ref: include/dt-bindings/iio/adc/qcom,spmi-vadc.h
+On 2025-10-17 06:09, Thomas Gleixner wrote:
+> Provide conveniance wrappers around scoped masked user access similiar to
 
-That's not a driver. Not SW.
+convenience
+similar
 
-> 
-> /* ADC channels for PMIC5 Gen3 */
-> 
-> #define ADC5_GEN3_REF_GND		0x00
-> #define ADC5_GEN3_1P25VREF		0x01
-> #define ADC5_GEN3_VREF_VADC		0x02
-> #define ADC5_GEN3_DIE_TEMP		0x03
-> ....
-> 
-> 
-> 2. Since some PMICs may not have all of these channels supported in
-> HW, we have the PMIC-specific channel definitions (starting with PMIC
-> name like PM8550_..) made referencing the above definitions.
-> 
-> Ref: include/dt-bindings/iio/adc/qcom,pm8550-adc5-gen3.h:
+> +/**
+> + * get_user_masked - Read user data with masked access
+> + * @_val:	The variable to store the value read from user memory
+> + * @_usrc:	Pointer to the user space memory to read from
+> + *
+> + * Return: true if successful, false when faulted
 
-That's not a driver. Not SW.
+^ '.' (or not) across sentences. Your choice, but it's irregular across
+the series.
+
+> + */
+> +#define get_user_masked(_val, _usrc)				\
+> +({								\
+> +	__label__ efault;					\
+> +	typeof((_usrc)) _tmpsrc	= (_usrc);			\
+
+Remove extra () around _usrc in typeof.
+
+UNIQUE_ID for _tmpsrc ?
+
+> +	bool ____ret = true;					\
+
+Why so many underscores ? It there are nesting concerns,
+it may be a sign that UNIQUE_ID is needed.
 
 
-> ...
->     #define PM8550_ADC5_GEN3_DIE_TEMP(sid)	((sid) << 8 | ADC5_GEN3_DIE_TEMP)
-> ...
-> 
-> side note: This is also used for the "reg" property in the ADC channel
-> definition DT nodes.
-> 
-> Here `sid` is needed as there can be different instances of same PMIC
-> using different `sid`s on a single SoC, and also on different SoCs, the
-> same PMIC may have different `sid`s.
-> 
-> 
-> 3. This PMIC-specific definition will be used by clients like below
-> (in io-channels) to get the ADC channel they need to read.
-> 
->     pmic@1 {
->         temp-alarm@a00 {
->             compatible = "qcom,spmi-temp-alarm";
-> 	    ...
->             io-channels = <&pmk8550_adc PM8550_ADC5_GEN3_DIE_TEMP(1)>;
->             io-channel-names = "thermal";
->         };
->     };
+> + */
+> +#define put_user_masked(_val, _udst)				\
+> +({								\
+> +	__label__ efault;					\
+> +	typeof((_udst)) _tmpdst	= (_udst);			\
 
-That's not a driver. Not SW.
+Remove extra () around _udst in typeof.
 
-> 
-> 
-> Can you please provide your suggestions on changes we can make
-> in the above points ?
+UNIQUE_ID for _tmpsrc ?
 
-You just pasted DT. I asked about SW, software. Please read carefully
-previous comments.
+> +	bool ____ret = true;	
 
+UNIQUE_ID for ____ret ?
 
-Best regards,
-Krzysztof
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
