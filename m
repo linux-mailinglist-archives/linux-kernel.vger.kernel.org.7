@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-857467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D8CBE6E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:07:10 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDC6BE6E28
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE041A637CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:07:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1B79435A9CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28EE3101D5;
-	Fri, 17 Oct 2025 07:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E7B3101D5;
+	Fri, 17 Oct 2025 07:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="smX0nXXb"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O2cU4Ekx"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93F62882CF;
-	Fri, 17 Oct 2025 07:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0991024166D;
+	Fri, 17 Oct 2025 07:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760684825; cv=none; b=ZBhnNv+pBWIC9j8Oc5gCd/04njzAsP/tLoheoDNoo5FaivnsxQWSor4oyoNlVwHEyi3HmimCuE2PwFlQls+2NVBkJ2uWdyQvOxi9xnZtRO3vyltk9PmBiF9qGBdxzxz/xWaZHVJP1BOH+/qfGFAkVTvrmFNDpjjT/RlfQ/zFyek=
+	t=1760684851; cv=none; b=qQX67SQamwQ6Z7ybV3Bf9RbGPPWihbiWrSBFerBfe874Xxl4YCXFCT3kVah5iM5ZIFtfXss57CJRjXgsUlmdEw/MW5XuyUU7Rmu6u5ZobZXdbxSWr4e+ljgxyjUPggAsosI6051vstNEIoLLcfVNelxNWEvUAoXh/2yjiZEAN3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760684825; c=relaxed/simple;
-	bh=xBh1R3UthDEmxmkM8IMXCgp+M1OFHkv/MTrcimlOEDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RJi0T4QyiPlLL7YN/eWl6t0gtnyB73+vrklVkvCfmbtMhKBskWBbQbzUKBt2hKIXm2BeYI5saxFB3FkSmh0BrkxQykLEAYSuGa+CgJVYOodzmiILUYRSqsA7rCiwYgE5C6djH6hOtoeyj/5J1AMXkzWmffDW5tm1XCKE0Ntn/4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=smX0nXXb; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1760684851; c=relaxed/simple;
+	bh=cY/Weje5coPtoLUsq2fidT5RhMfyCgPWKAH7j7GAfQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sUmYl/dwJWL5kQghnmI1O/EBwoJwsxQUem89V8bcPflTbhhuaXLOS73Eegt36xK31huqYmS0Ky+5d8St8dOnKS6sMD9u1suqtDa9UA17sLwh5ogp5YuBWOZRDG3BGlZsTRuniqI3d0ZUauWBKtOHXL3U9p4byIwgD+oDUcMR210=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O2cU4Ekx; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=vy03HBxcOKZ1/JJzbpc0jDLnVA41ktEh3OYdHPxBGuY=; b=smX0nXXbiOm8leylrnmbwToSK2
-	LOzDEp94Q4H2wKC6xxHgPugiFRdIDOc3kPdsFzXtBzYxwDiUCJVNfolCnl0jXpRIt5pT8ao5y5T2E
-	misgK3OX/amIMCmBSG/xTV4geCqgVYRKmC4AuYY1gcNq5H+/xjVKfhR6fDVg8tVC+i7K03RpsFjF4
-	xTkpivFwSkle2c2MeMvaarfBFZDUx4PGQ/xXFo88KumG4nTiQpm439Reh/rXAtpqzGhbE5sBjBqvv
-	qS88FTlQ+tupyL1majtv2lXcvVOI67H4p0xEt25GBRyvQuXtPim0UOxLd6BL7SIGYlEbeztDFDv9Y
-	Ay996eyQ==;
+	bh=z60jJjD1yYvrzflT05tbaE9g1ERMGfi3yyxZR5gxLms=; b=O2cU4EkxLN2MKtJxICFUDgMX3e
+	YTpWBZmxPUqQ0ydHNkddfN2XZlvl9YXxWzr5nm8ZbMpEabvS/LFhf1r/V7+XQzthteHTcdohfB/41
+	LOWSLHq8Kta/jfg7rUcdG8+/SUzvLe+wGuQVZRXPFuMXADogIj9OfwnFn7eEE9J69WkL5Qme7RK+6
+	qFc0TGl5Dc8j13BZPu7ew9fHiH99+1opq+Bo5KQgxF1VdzwQFJXpIN2QcXjTFBEJ2x2olNS8iZkWd
+	bcWZ+3ns+y6wPz0rH1bcBvCm+xlrlw6M9xqKutMRJfHGpr42sfK4vIa7oqv8mT1/D5hO8h5nn4STY
+	gGi2GEMQ==;
 Received: from [50.53.43.113] (helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9eYJ-00000006viL-2AdD;
-	Fri, 17 Oct 2025 07:07:03 +0000
+	id 1v9eYj-00000006vp9-2Xu4;
+	Fri, 17 Oct 2025 07:07:29 +0000
 From: Randy Dunlap <rdunlap@infradead.org>
 To: linux-kernel@vger.kernel.org
 Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH] firmware: qcom: tzmem: area: fix qcom_tzmem_policy kernel-doc
-Date: Fri, 17 Oct 2025 00:07:02 -0700
-Message-ID: <20251017070702.1637092-1-rdunlap@infradead.org>
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-iio@vger.kernel.org
+Subject: [PATCH] iio: adc: qcom-vadc-common: fix vadc_scale_fn_type kernel-doc
+Date: Fri, 17 Oct 2025 00:07:27 -0700
+Message-ID: <20251017070728.1637804-1-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,50 +63,90 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Fix kernel-doc warnings by using correct kernel-doc syntax and
-formatting to prevent warnings:
+Fix multiple warnings in enum vadc_scale_fn_type by adding a leading
+'@' to the kernel-doc descriptions.
 
-Warning: include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
- 'QCOM_TZMEM_POLICY_STATIC' not described in enum 'qcom_tzmem_policy'
-Warning: ../include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
- 'QCOM_TZMEM_POLICY_MULTIPLIER' not described in enum 'qcom_tzmem_policy'
-Warning: ../include/linux/firmware/qcom/qcom_tzmem.h:25 Enum value
- 'QCOM_TZMEM_POLICY_ON_DEMAND' not described in enum 'qcom_tzmem_policy'
+Fixed 14 warnings in this one enum, such as:
+Warning: include/linux/iio/adc/qcom-vadc-common.h:123 Enum value
+ 'SCALE_DEFAULT' not described in enum 'vadc_scale_fn_type'
+Warning: ../include/linux/iio/adc/qcom-vadc-common.h:123 Enum value
+ 'SCALE_THERM_100K_PULLUP' not described in enum 'vadc_scale_fn_type'
+Warning: ../include/linux/iio/adc/qcom-vadc-common.h:123 Enum value
+ 'SCALE_PMIC_THERM' not described in enum 'vadc_scale_fn_type'
 
-Fixes: 84f5a7b67b61 ("firmware: qcom: add a dedicated TrustZone buffer allocator")
+Also prevent the warning on SCALE_HW_CALIB_INVALID by marking it
+"private:" so that kernel-doc notation is not needed for it.
+
+This leaves only one warning here, which I don't know the
+appropriate description of:
+qcom-vadc-common.h:125: warning: Enum value
+ 'SCALE_HW_CALIB_PMIC_THERM_PM7' not described in enum 'vadc_scale_fn_type'
+
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>
+Cc: Nuno Sá <nuno.sa@analog.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org
 ---
- include/linux/firmware/qcom/qcom_tzmem.h |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ include/linux/iio/adc/qcom-vadc-common.h |   27 ++++++++++-----------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
---- linux-next-20251016.orig/include/linux/firmware/qcom/qcom_tzmem.h
-+++ linux-next-20251016/include/linux/firmware/qcom/qcom_tzmem.h
-@@ -17,11 +17,17 @@ struct qcom_tzmem_pool;
-  * enum qcom_tzmem_policy - Policy for pool growth.
+--- linux-next-20251016.orig/include/linux/iio/adc/qcom-vadc-common.h
++++ linux-next-20251016/include/linux/iio/adc/qcom-vadc-common.h
+@@ -83,27 +83,27 @@ struct vadc_linear_graph {
+ /**
+  * enum vadc_scale_fn_type - Scaling function to convert ADC code to
+  *				physical scaled units for the channel.
+- * SCALE_DEFAULT: Default scaling to convert raw adc code to voltage (uV).
+- * SCALE_THERM_100K_PULLUP: Returns temperature in millidegC.
++ * @SCALE_DEFAULT: Default scaling to convert raw adc code to voltage (uV).
++ * @SCALE_THERM_100K_PULLUP: Returns temperature in millidegC.
+  *				 Uses a mapping table with 100K pullup.
+- * SCALE_PMIC_THERM: Returns result in milli degree's Centigrade.
+- * SCALE_XOTHERM: Returns XO thermistor voltage in millidegC.
+- * SCALE_PMI_CHG_TEMP: Conversion for PMI CHG temp
+- * SCALE_HW_CALIB_DEFAULT: Default scaling to convert raw adc code to
++ * @SCALE_PMIC_THERM: Returns result in milli degree's Centigrade.
++ * @SCALE_XOTHERM: Returns XO thermistor voltage in millidegC.
++ * @SCALE_PMI_CHG_TEMP: Conversion for PMI CHG temp
++ * @SCALE_HW_CALIB_DEFAULT: Default scaling to convert raw adc code to
+  *	voltage (uV) with hardware applied offset/slope values to adc code.
+- * SCALE_HW_CALIB_THERM_100K_PULLUP: Returns temperature in millidegC using
++ * @SCALE_HW_CALIB_THERM_100K_PULLUP: Returns temperature in millidegC using
+  *	lookup table. The hardware applies offset/slope to adc code.
+- * SCALE_HW_CALIB_XOTHERM: Returns XO thermistor voltage in millidegC using
++ * @SCALE_HW_CALIB_XOTHERM: Returns XO thermistor voltage in millidegC using
+  *	100k pullup. The hardware applies offset/slope to adc code.
+- * SCALE_HW_CALIB_THERM_100K_PU_PM7: Returns temperature in millidegC using
++ * @SCALE_HW_CALIB_THERM_100K_PU_PM7: Returns temperature in millidegC using
+  *	lookup table for PMIC7. The hardware applies offset/slope to adc code.
+- * SCALE_HW_CALIB_PMIC_THERM: Returns result in milli degree's Centigrade.
++ * @SCALE_HW_CALIB_PMIC_THERM: Returns result in milli degree's Centigrade.
+  *	The hardware applies offset/slope to adc code.
+- * SCALE_HW_CALIB_PMIC_THERM: Returns result in milli degree's Centigrade.
++ * @SCALE_HW_CALIB_PMIC_THERM: Returns result in milli degree's Centigrade.
+  *	The hardware applies offset/slope to adc code. This is for PMIC7.
+- * SCALE_HW_CALIB_PM5_CHG_TEMP: Returns result in millidegrees for PMIC5
++ * @SCALE_HW_CALIB_PM5_CHG_TEMP: Returns result in millidegrees for PMIC5
+  *	charger temperature.
+- * SCALE_HW_CALIB_PM5_SMB_TEMP: Returns result in millidegrees for PMIC5
++ * @SCALE_HW_CALIB_PM5_SMB_TEMP: Returns result in millidegrees for PMIC5
+  *	SMB1390 temperature.
   */
- enum qcom_tzmem_policy {
--	/**< Static pool, never grow above initial size. */
-+	/**
-+	 * @QCOM_TZMEM_POLICY_STATIC: Static pool,
-+	 * never grow above initial size. */
- 	QCOM_TZMEM_POLICY_STATIC = 1,
--	/**< When out of memory, add increment * current size of memory. */
-+	/**
-+	 * @QCOM_TZMEM_POLICY_MULTIPLIER: When out of memory,
-+	 * add increment * current size of memory. */
- 	QCOM_TZMEM_POLICY_MULTIPLIER,
--	/**< When out of memory add as much as is needed until max_size. */
-+	/**
-+	 * @QCOM_TZMEM_POLICY_ON_DEMAND: When out of memory
-+	 * add as much as is needed until max_size. */
- 	QCOM_TZMEM_POLICY_ON_DEMAND,
+ enum vadc_scale_fn_type {
+@@ -120,6 +120,7 @@ enum vadc_scale_fn_type {
+ 	SCALE_HW_CALIB_PMIC_THERM_PM7,
+ 	SCALE_HW_CALIB_PM5_CHG_TEMP,
+ 	SCALE_HW_CALIB_PM5_SMB_TEMP,
++	/* private: */
+ 	SCALE_HW_CALIB_INVALID,
  };
  
 
