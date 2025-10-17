@@ -1,186 +1,252 @@
-Return-Path: <linux-kernel+bounces-858544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEE5BEB1C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B128BEB1BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579256E633E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B57B6E2907
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E831B3081D5;
-	Fri, 17 Oct 2025 17:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B1A306B01;
+	Fri, 17 Oct 2025 17:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLPW7+KD"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c1xyhNNP"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA8D320CC2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BEE261595
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760723007; cv=none; b=H2+7GuVb9ZuSy9+o7i1S/to2dmXI/QRHT6fz1uZTFAEmR8KZcwBGBcFe3m4cjc1/KrcIN7kzWv7+j+d6K/juLu81mfUgcY7PLnlaCp4Yd5hnFbwQ1xUUbchshb3ateh914eVKjXX6gdKznMzfjdjWbbKe0aBfUQHVm5VR6xEIuw=
+	t=1760723003; cv=none; b=rdZhC8389WdLyOS/EYLz7hwVNCyEMFgRZOHJyXitxugOT9gnBjy9Qh35wIfgUzsB0yELPJF9daO+WU7vFqyBeeQllN3hqCg+Kusc4W9d21wy0HI4yxE8rE6h6VxWzz/t+im3b+sjND0bLxUjNixRSUUBkHZ9x1DtRn/tUDCn3V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760723007; c=relaxed/simple;
-	bh=SzwG80orR0KyjbJGsDL4Lk6XBr5LlL2ziF5DJdoF8vQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BI6prTorEDz7LLx0siz7MFLE6kCnD8Yrbu5pJXDWj9PYnIlIxzJt9Lz/iuCkzm748XugjWdhSEyRGOMOFmqPETe+Z/4XBRA9SBND7RLinsnkK3nCH4FnHErq2r+xI39ftbUtOApq4LS79fN0guBykho/j5Wj1p3fZs7TIyejbrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLPW7+KD; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4711f156326so8222895e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:43:25 -0700 (PDT)
+	s=arc-20240116; t=1760723003; c=relaxed/simple;
+	bh=fNeu3PTzUlSonYkGlDlZUhg3INQX4HKAUUy+rCL2EDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg2X4/tL7qV5OX2pVnCdNOIRcaPmI6QAuD0MH5Xpkqe0wsNkUqBMdbUP/vG4CZJNtZxEdUFoLa0et4U3N65NIqp5bK+CzUCDEGjj86EFDu74Yh48ojYuoeQQfDFn/4ZYRm7OSIHIDhs8LpzQDrcnq9kiO1rd2HwwcH/Kwx2BN3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c1xyhNNP; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-782023ca359so2237719b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760723004; x=1761327804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FRzeZLlvSYSmX6btyx8XyIjkEXrJ2cxReJu1vLvlzYs=;
-        b=aLPW7+KDdS8vqadRPp/FdcmdJQX/ZyappqQoF3fSUSW1CIiGWou0Wrg0kXRZmAFtWV
-         oMOUg8zCRqqv++8nVTdV+fuxCIYavX4CEJS27JkuTIEc7MqOrcZmXvER5BEdps4ilfkc
-         jsfVIy4FlvZUzCoIcaZNb3qrAjxwSi3U5bndGb4JP1jsYfOLUmLiwMS75lbXz6RiEGmt
-         K0lQFzRzYKnd2GVfdExbTR+u3takJ3J+pZS1O1w6Pc5Eye98ClOaWl9HWqYdZsvzg21h
-         +P92Mz8Rm3SD4DLFR7E0d1vfP/SYiusdDOCDx8a6eCXSvWWlRrZAv58+QLhRc6dHuCuB
-         brHQ==
+        d=chromium.org; s=google; t=1760723001; x=1761327801; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=m21nEebS/lDv6RHO5+kxYBjvg2aPuyB4qwGDVVvkyhk=;
+        b=c1xyhNNPUoZm3k76fWMUXnMXD9PqPFdPpPeY4VH/bcLa9vhYjLdroB0Sh01OHToY3I
+         s71oOxe3v8n25XjQ5qlUiZZ/OU4QMs/PMvAreT9Mm5ZiY5hWHv4Ie8rfiD5W0Ar1VvVs
+         HZa4LafUsn+ZcoUeK3L5gCr1Km4OzinETRBA0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760723004; x=1761327804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FRzeZLlvSYSmX6btyx8XyIjkEXrJ2cxReJu1vLvlzYs=;
-        b=lJGBSXwZz7WID8gdby4SSb9wl3Wvzh7xAXAUnF3En3TNJmvOQaRwpdi+MZ4R1jX/Wc
-         JXO6GiIVcgYFd03KEmdXFWwmRglluuSxD4VaFattDefmjmR4TUQdsSoAurNR7F98iEph
-         h/MthFJwjoeJL5XfT2G2xMKre1s2VJjsQGQMCZsUTDm28sdoqpabc91aaCLUBsRF5uc2
-         vkXo6hWTNnBhcgsEzA3DvoAtZWL55bTOy5vy8KXOobBdNIfi9LYSN3ECaTXRiKwH0ReP
-         wc5V2tXHL6UrqrDuldfG0OMIrE8VOfftAe81Mpbq2Zlg+XHoMXYrdcInsqwVKG9muK9p
-         GlRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMRnjR00LBTMgUPw6NiyBtV/F7aVwPKSBL9y5KyJwWlN9sCjkV5z0Jf0Wjg7S4FJaVU3Ajn9uIdTnQ5pI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoEExlc5FQE35uTny6OyWfSSZOAiGWXs7sHWfEx0KGqDVE0PDP
-	mzElEoug++WQxdKftnOZHKIWWUsFq8LOdpRyGwyBPZCbrIiM1ecPlCOs9k1wGIWKBy+cVtL0UGm
-	GpngHww6yvtAb9RqBKbkU2LqimuCDHtdc1A==
-X-Gm-Gg: ASbGncv8ZDXbGznX2cspgxqnHNM0/9b6z/1upYXNMVEDgoiE+Voto4tSyxlpNiAFQ9G
-	0gj2SnGz2k4BcuxukXFuP+OkMHpo2T75d8jgSgHufIlD28iGJHR+Iy7T9E5qEYHeHdCFKU2kRkx
-	sMTyL2hrQ9jMkKccjRbh13vCJHHrkbMWWVP/T+e3jHAwK9GmPq0Q8cWbRf7KDklyOqW4acYAb8J
-	rs2Qy0d40kOYWHBr54sM33VFAbtVRWDbS9yIK595LEpsoP5KoyADUxHmZ4uC3XNkH2EEi1wnmj9
-	0IyBMRQ8Gn3VlszNQoFIzgqBrkDu
-X-Google-Smtp-Source: AGHT+IGwjv5q5HxRJPZy7uGhifIefXNDIaOZVKZU/13/4yaI1fvzOvO97tQTSB/cm6SYZUm/7ygu5jhmpr1UQwH7RBk=
-X-Received: by 2002:a05:600c:1d9b:b0:471:7a:791a with SMTP id
- 5b1f17b1804b1-4711787672dmr33538135e9.7.1760723003430; Fri, 17 Oct 2025
- 10:43:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760723001; x=1761327801;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m21nEebS/lDv6RHO5+kxYBjvg2aPuyB4qwGDVVvkyhk=;
+        b=epeotOqi/jlIBdRVKLRKaVFmsJVMwGDRzkP6TFmsZM04P5fG8/xV5NYKJ4919Dnhes
+         QB6qULcgNSlQ2V1c0j4rQ46hnZY/1j5ox9J6dFJeG/k5Rhw1CbWbeDLmdVPfqoHATr/I
+         LG9kxyiDodOaXCGGBPEdreoJ/lBiNqBIef92ibajM39WHbiKd6HWHxbB9C4vpPOSM8fH
+         vLIxuQvfjDo4tEb2NbQmkTjyCMAFRMc6IEhaMY41ZNLBlgvqT8wc95Y/1cgFxJdTYx3q
+         ujXVIK5KBgz6+TFjc/Lh8prw7fLGGZGTzzexUgzhGSth5pjBYLeM8TKDk4EIr3cT+Tpm
+         8IQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcuJGaQb4cCMUiWBCvkMvro2R6iEldS+1UiOPy+OjAgv4V0akswp4TppnLWlKyvkECKSXq2Rd0qfzA9jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8d+eFqcF5ZAlkb/hv41dNSqja9Gz6upQBCc5CFEHHBylGz2XJ
+	YesPWsXlBrnocIMVkXz2MXrLoJHZrYBFVLLnctqWS1wEEa2emTS56mtg6+epufTWMQ==
+X-Gm-Gg: ASbGncsrUFAOVKhfE5NgljftGOvNCfYPc3U7E71ux6toORdQ/AL0a5C9P+XMwK6vYxm
+	Gy2ALKa5W6y3tSdGKB/X9hnQrvOC/aHq4XXwcV3edZAMMkiYWc019wsb6vNYi046hX4E64Huxs3
+	mRxcaiNp9zRqykN6ffU+CT1r4XgGfFCMfw+JmPlid2riUiB+vT4kEw1fEFaWIVNNI4n1mDyua6a
+	LyQgSig57iEqlbkcj3XjOu9Bes+IDNQ/AhCS9icrG5iR1G96peqrnm6gcooSODWabkIc2mPoo2V
+	Pp33bqTqJ6yrQmj0PHpyPbxZYPPAkjyCCjX0fLifHf/bRSdKUwT1K3s0aWwdTa9SGLlOmtOklxa
+	3jQoTn1kVKuRMAQxZGg6Zf7ygUxT82kMEGlvMEVDtvsBBUpnA2q+O9kaEwzueZxY0pBdU/fZfIy
+	SrMLfsLcnaAH79WOIuOFDC2EQzsM0+yyJM7RYxqbFtwNJJhX9a19jNxHTzzAM=
+X-Google-Smtp-Source: AGHT+IEmKohETn9m2ghQ2ok5r1R0o1KkS97y/E+/L3+8ANZcSoCW1/9ppcCESL9vaPrGruCpstEuoQ==
+X-Received: by 2002:a05:6a00:1a87:b0:781:2401:74f5 with SMTP id d2e1a72fcca58-7a220d56e59mr5117972b3a.29.1760723000694;
+        Fri, 17 Oct 2025 10:43:20 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:5ca9:a8d0:7547:32c6])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7a22ff184basm165783b3a.15.2025.10.17.10.43.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 10:43:20 -0700 (PDT)
+Date: Fri, 17 Oct 2025 10:43:18 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
+	LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully
+ initialized
+Message-ID: <aPKANja_k1gogTAU@google.com>
+References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
+ <aPH_B7SiJ8KnIAwJ@wunner.de>
+ <67381f3b-4aee-a314-b5dd-2b7d987a7794@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017092156.27270-1-yangtiezhu@loongson.cn>
- <CAADnVQJjSNEuX=HJKrD=pefC4C9dQk2aqP+hnRscUEDTntVXyA@mail.gmail.com> <1ce0c35c4c444ba85f753df5b0d0c5cd4870d887.camel@gmail.com>
-In-Reply-To: <1ce0c35c4c444ba85f753df5b0d0c5cd4870d887.camel@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 17 Oct 2025 10:43:11 -0700
-X-Gm-Features: AS18NWCvCrEwueVkZLL5kNJdSq_uFBaX05ife2xVW1Aux4shB_Th_00Bw7YdeU4
-Message-ID: <CAADnVQKPOjNJ4KuCtyApnr27UbJtpqgZZS3ToVhmnUiXnSfrjQ@mail.gmail.com>
-Subject: Re: [PATCH bpf v1] selftests/bpf: Fix set but not used errors
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <67381f3b-4aee-a314-b5dd-2b7d987a7794@linux.intel.com>
 
-On Fri, Oct 17, 2025 at 10:40=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.co=
-m> wrote:
->
-> On Fri, 2025-10-17 at 10:20 -0700, Alexei Starovoitov wrote:
-> > On Fri, Oct 17, 2025 at 2:35=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongso=
-n.cn> wrote:
-> > >
-> > > There are some set but not used errors under tools/testing/selftests/=
-bpf
-> > > when compiling with the latest upstream mainline GCC, add the compile=
-r
-> > > attribute __maybe_unused for the variables that may be used to fix th=
-e
-> > > errors, compile tested only.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > > ---
-> > >  tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c | 3 +=
-+-
-> > >  tools/testing/selftests/bpf/prog_tests/bpf_cookie.c            | 3 +=
-+-
-> > >  tools/testing/selftests/bpf/prog_tests/find_vma.c              | 3 +=
-+-
-> > >  tools/testing/selftests/bpf/prog_tests/perf_branches.c         | 3 +=
-+-
-> > >  tools/testing/selftests/bpf/prog_tests/perf_link.c             | 3 +=
-+-
-> > >  tools/testing/selftests/bpf/test_maps.h                        | 1 +
-> > >  tools/testing/selftests/bpf/test_progs.h                       | 1 +
-> > >  7 files changed, 12 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic=
-_ops.c b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> > > index d32e4edac930..2b8edf996126 100644
-> > > --- a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> > > +++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> > > @@ -226,7 +226,8 @@ static void test_lpm_order(void)
-> > >  static void test_lpm_map(int keysize)
-> > >  {
-> > >         LIBBPF_OPTS(bpf_map_create_opts, opts, .map_flags =3D BPF_F_N=
-O_PREALLOC);
-> > > -       volatile size_t n_matches, n_matches_after_delete;
-> > > +       /* To avoid a -Wunused-but-set-variable warning. */
-> > > +       __maybe_unused volatile size_t n_matches, n_matches_after_del=
-ete;
-> >
-> > I think it's better to disable the warning instead of hacking the tests=
-.
-> > Arguably it's a grey zone whether n_matches++ qualifies as a "use".
-> > It's certainly not a nop, since it's a volatile variable.
-> >
-> > pw-bot: cr
->
-> Maybe something like below?
->
-> --- a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> +++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_basic_ops.c
-> @@ -223,6 +223,8 @@ static void test_lpm_order(void)
->         tlpm_clear(l2);
->  }
->
-> +static int print_stats; /* debug knob */
-> +
->  static void test_lpm_map(int keysize)
->  {
->         LIBBPF_OPTS(bpf_map_create_opts, opts, .map_flags =3D BPF_F_NO_PR=
-EALLOC);
-> @@ -334,14 +336,14 @@ static void test_lpm_map(int keysize)
->         tlpm_clear(list);
->
->         /* With 255 random nodes in the map, we are pretty likely to matc=
-h
-> -        * something on every lookup. For statistics, use this:
-> -        *
-> -        *     printf("          nodes: %zu\n"
-> -        *            "        lookups: %zu\n"
-> -        *            "        matches: %zu\n"
-> -        *            "matches(delete): %zu\n",
-> -        *            n_nodes, n_lookups, n_matches, n_matches_after_dele=
-te);
-> +        * something on every lookup.
->          */
-> +       if (print_stats)
-> +               printf("          nodes: %zu\n"
-> +                      "        lookups: %zu\n"
-> +                      "        matches: %zu\n"
-> +                      "matches(delete): %zu\n",
-> +                      n_nodes, n_lookups, n_matches, n_matches_after_del=
-ete);
+Hi Ilpo and Lukas,
 
-For this particular one, yes. But other tests just do j++ to have
-non-empty loop body that does something to make sure that
-compilers don't remove the loop.
+I'll reply to both of you inline:
+
+On Fri, Oct 17, 2025 at 02:49:35PM +0300, Ilpo Järvinen wrote:
+> On Fri, 17 Oct 2025, Lukas Wunner wrote:
+> 
+> > [cc += Ilpo]
+> > 
+> > On Thu, Oct 16, 2025 at 03:53:35PM -0700, Brian Norris wrote:
+> > > PCI devices are created via pci_scan_slot() and similar, and are
+> > > promptly configured for runtime PM (pci_pm_init()). They are initially
+> > > prevented from suspending by way of pm_runtime_forbid(); however, it's
+> > > expected that user space may override this via sysfs [1].
+> 
+> Is this true as pm_runtime_forbid() also increases PM usage count?
+
+Yes it's true. See below.
+
+> "void pm_runtime_forbid(struct device *dev);
+> 
+> unset the power.runtime_auto flag for the device and increase its 
+> usage counter (used by the /sys/devices/.../power/control interface to 
+> effectively prevent the device from being power managed at run time)"
+
+Right, but sysfs `echo auto > .../power/control` performs the inverse --
+pm_runtime_allow() -- which decrements that count.
+
+> > > Now, sometime after initial scan, a PCI device receives its BAR
+> > > configuration (pci_assign_unassigned_bus_resources(), etc.).
+> > > 
+> > > If a PCI device is allowed to suspend between pci_scan_slot() and
+> > > pci_assign_unassigned_bus_resources(), then pci-driver.c will
+> > > save/restore incorrect BAR configuration for the device, and the device
+> > > may cease to function.
+> > > 
+> > > This behavior races with user space, since user space may enable runtime
+> > > PM [1] as soon as it sees the device, which may be before BAR
+> > > configuration.
+> > > 
+> > > Prevent suspending in this intermediate state by holding a runtime PM
+> > > reference until the device is fully initialized and ready for probe().
+> >
+> > Not sure if that is comprehensible by everybody.
+
+Yeah, thanks for trying to clarify. After getting too far into the weeds
+on a bug, I sometimes don't spend the appropriate time on writing a
+simple problem description. Maybe I can do better on a v2.
+
+> > The point is that
+> > unbound devices are left in D0 but are nevertheless allowed to
+> > (logically) runtime suspend.  And pci_pm_runtime_suspend() may call
+> > pci_save_state() while config space isn't fully initialized yet,
+> > or pci_pm_runtime_resume() may call pci_restore_state() (via
+> > pci_pm_default_resume_early()) and overwrite initialized config space
+> > with uninitialized data.
+
+Ack.
+
+> > Have you actually seen this happen in practice?
+
+Yes, that's why I spent my time debugging and submitting this patch :)
+
+> > Normally enumeration
+> > happens during subsys_initcall time, when user space isn't running yet.
+> > Hotplug may be an exception though.
+
+Hotplug, rescan (e.g., when pwrctrl is in use, power may be stablished
+later on, and it triggers a bus rescan; pwrctrl drivers can be modules),
+or PCI controller drivers built as modules.
+
+I happen to be using both pwrctrl and controller drivers as modules, so
+I hit it that way.
+
+> Adding that pm_runtime_get_noresume() doesn't look useful given 
+> pm_runtime_forbid() already increases PM usage count. If this problem is 
+> actually seen in practice, there could a bug elsewhere where something 
+> decrements usage count too early so this change "helps" by double 
+> incrementing the usage count.
+> 
+> To find more information what's going on, one could try to trace events 
+> for the PM usage count (though last time I looked not all paths that 
+> change PM usage count were covered by the event and adding the 
+> trace_event() calls into the header turned out too much magic for me to 
+> figure out so I couldn't solve the problem).
+
+See above. forbid() is not a guaranteed blocker, because user space can
+undo it.
+
+> > Patch LGTM in principle, but adding Ilpo to cc who is refactoring PCI
+> > resource allocation and may judge whether this can actually happen.
+> 
+> I can see there could be other failure modes besides just saving wrong 
+> config if devices get suspended underneath the resource assignment 
+> algorithm.
+> 
+> Besides hotplug, also BAR resize does changes the resources and BARs.
+> This case is not helped by this patch.
+
+Is that the 'resource_N_resize' sysfs attributes? Becuase that holds PM
+references (pci_config_pm_runtime_{get,put}()) and therefore should not
+generally have the same problem. pci-driver.c's runtime suspend will
+save a new copy of the registers the next time we suspend after resize.
+
+(Now, some drivers could have problems if they try to stash a static
+copy via pci_store_saved_state()/pci_load_saved_state(), but that
+invites plenty of its own problems anyway.)
+
+> I also recently learned some DT platforms do the "actual" scan for the bus 
+> later on Link Up event through irq which could perhaps occur late enough, 
+> I dunno for sure.
+
+Sure, but that'd be covered by my patch, as those (re)scans would
+discover new devices in the same scan+add flow.
+
+> > I think the code comments you're adding are a little verbose and a simple
+> > /* acquired in pci_pm_init() */ in pci_bus_add_device() may be sufficient.
+> 
+> I'm also not entirely convinced these always pair
+
+That's a very valid question. There are so many variations of scan+add
+that it's been hard for me to tell. I've studied the code pretty
+closely, and tested what I could, but I don't have hotplug systems on
+hand, and I definitely could miss something.
+
+FWIW, Rafael suggested/implied an alternative, where I could simply
+delay pm_runtime_enable() until pci_bus_add_device(). That would dodge
+the pairing questions, I think.
+
+> or if the pci_dev may 
+> get removed before pci_bus_add_device(), see e.g., enable_slot() in 
+> hotplug/acpiphp_glue.c that does acpiphp_sanitize_bus() before 
+> pci_bus_add_devices() (which could have other bugs too as is).
+
+I believe it should be OK if a device is removed before the
+pm_runtime_put_noidle() half of the pair. It just means the device gets
+destroyed with a nonzero PM usage count, which is legal.
+
+> > Also, I think it is neither necessary nor useful to actually cc the e-mail
+> > to stable@vger.kernel.org if you include a stable designation in the
+> > patch.  I believe stable maintainers only pick up backports from that list,
+> > not patches intended for upstream.
+> 
+> Probably some tool will auto-insert the Cc: tags as receipients so it 
+> might be non-trivial to get rid of it.
+
+Yeah, git-send-email applies "Cc:" lines automatically, so I expect it's
+very common for people to do that. I use U-Boot's patman, which wraps
+git-send-email. I just assume stable@ folks expect that or are at least
+used to it, because ... well, "Cc:" usually means "copy this on the
+email" ...
+
+git-send-email has --suppress-cc, and maybe I can convince my tools to
+do that. (e.g., `git config sendemail.suppresscc cc`)
+
+Brian
 
