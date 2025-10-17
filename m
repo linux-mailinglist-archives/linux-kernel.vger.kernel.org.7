@@ -1,58 +1,70 @@
-Return-Path: <linux-kernel+bounces-857598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73767BE7373
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:40:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0789BE7388
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61C744E96E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6922819A7C8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1788D2BD582;
-	Fri, 17 Oct 2025 08:40:17 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711429B8D9;
+	Fri, 17 Oct 2025 08:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n5TQlk6C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B861021B185;
-	Fri, 17 Oct 2025 08:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44DD2550CA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690416; cv=none; b=R62wCbWkOliWKVDvBySslLwzwdDAy9MgAxkQgBQx5vT+2IUkjkuVcvZ+4Qx0hYZ1IfiKILJdcaoHbqClAbRW6kXqSQXfWPd93uleCOEh4HWs+g6hlexKb0F9PujZDtfBKsI7fX5E0Owi9WXDA0spEfZlhlGx/Eevh31q6V4hsR8=
+	t=1760690575; cv=none; b=VH93fNvc98wxku/JCbFN5OcYCpgPNxVGMC1Ytikfa3spvzqRy5k4V4iatPxjxRdi0GKO3uzm9nb7sH90E28KecBaa0B3+AErXoPJI/vz1vYqjPkQpIyu9ZLN9ML16FX5/th4mBXn4Ulsuy9VLNR8uWOE8db9ZZgQb60gQhhMkVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690416; c=relaxed/simple;
-	bh=dsZvQxJtweRSbWprsBUkU2SOnynoqRWoBCApBCXh3Qg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=baqDEEOF/fKZFnRY5uzmi/kCrhudUfpW63761ASUlsnjKERvjza0snx6yjNvO1WKy/DTZHMoWV+gzWre3gwCVUDpCJ1dr6c7NUJMtJAYpBM0BDBC52j85luyN/uys9nfCFsvRn+RV647vKk01GSMZzELCHnX7qAE+yeSjo8kX9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpsz3t1760690358tf89476e9
-X-QQ-Originating-IP: /A5aLrgRw/j8SKmd3JVMi6f9jX/yuWXc2XR2LUdo+jU=
-Received: from bigfoot-server-arm-node1.classf ( [183.250.239.212])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 17 Oct 2025 16:39:16 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10021269870126242908
-EX-QQ-RecipientCnt: 12
-From: Junhao Xie <bigfoot@radxa.com>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Amol Maheshwari <amahesh@qti.qualcomm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ling Xu <quic_lxu5@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Junhao Xie <bigfoot@radxa.com>,
-	stable@kernel.org,
-	Xilin Wu <sophon@radxa.com>
-Subject: [PATCH] misc: fastrpc: Fix dma_buf object leak in fastrpc_map_lookup
-Date: Fri, 17 Oct 2025 16:39:06 +0800
-Message-ID: <48B368FB4C7007A7+20251017083906.3259343-1-bigfoot@radxa.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1760690575; c=relaxed/simple;
+	bh=qSUMFR75goMMtDYJDGq5W9aDIq4ECJWmBjA175zM9x4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z0Gqj0a3TibadXMrClBeYyeB3mYpDJ/zLlBM5rOy3Ws2IbwtniQ/BC8C8SQG/l3uh1yrMoD+A1pIYjWKNMXL5rt9UK+77Yiqe2X6aAh+fLNZEtgjUBNQib7/QZ3e7NNeJTrILbhCok4iCyWExm6tZ9tOuhIxVuCFzlsZAO5AscA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n5TQlk6C; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760690574; x=1792226574;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qSUMFR75goMMtDYJDGq5W9aDIq4ECJWmBjA175zM9x4=;
+  b=n5TQlk6CecT8h3qcB7qT2C0v5y1j283XxXMluhYOGlWNaEeQ4K7K60Ki
+   D7QoGEiT/FxAjPz5U7EJkYjTK9oyOv4CDXjXA80TT543/+n7NM7ts8tct
+   rRr1Kyz6x3l78uVQGI6TRxAGuroQhCh8yxKQxSgi5HMr6rTRl9hao2uU/
+   gO8hrEW05tOYMuB0MWuIN6H14NOEIb1X1uea7HP05cl2v+V8TeP8S+eIa
+   k0OfkkCUytaaH78ohdoN9iD2QDA+H4cw6dc3XjflMzgqIAiVf4iXtKqn0
+   w/UlwAhyT2IndLbQPGtRb3LlAAvUdIHJN9Umc0VpG6BRvt30a81ksUG5U
+   Q==;
+X-CSE-ConnectionGUID: FSkCKHiJSTaMNVpFrGlTqg==
+X-CSE-MsgGUID: rFHA0CrnSm6PnJaY9srtwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62806786"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62806786"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 01:42:53 -0700
+X-CSE-ConnectionGUID: L2k1SLEcRfGCDknAM0ccTA==
+X-CSE-MsgGUID: F0rLOPu/RpiHkfuCv+UzZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="183088232"
+Received: from vtg-chrome.bj.intel.com ([172.16.116.150])
+  by fmviesa008.fm.intel.com with ESMTP; 17 Oct 2025 01:42:50 -0700
+From: bingbu.cao@intel.com
+To: linux-firmware@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	sakari.ailus@linux.intel.com,
+	hao.yao@intel.com
+Subject: [PATCH] Intel IPU7: Update product signed firmware binary
+Date: Fri, 17 Oct 2025 16:42:48 +0800
+Message-Id: <20251017084249.2796351-1-bingbu.cao@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,57 +72,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: OYM3GZRvbPalLiATFyBjHVySEMnZJbrPaHEmf0UANKERrzk59tlfdMzE
-	1xVTYc05P4fnjfJf28d2OOdTKxK30dnaWuuB7Nu5kL3M5l6e546UvECTxFlLljqwE9s0PeL
-	uS5gOemc3MZYV16PsD7c0yH0Y7QzDc+mlpQ7W6aX6KiNoCL97HEYM+hu3uUNqq5Hte7fWn/
-	7ol9cdSXCzLv+ERwWrjbaMQ6RJAd487S9M8l/0+JV3qcOqW2ActcHnDhCmQ/LR2C9dQzpYD
-	SnmIol/jN5MVdChcxjZLRZ1mOLKzPao/Hy+5/yq1wy1A1N0lOYCThR+jm4h89/bmPK/Qq6l
-	dJNE/7nj6ekgz3cANWfPr5c+Vn7EgpP0P2At+PoKELaFqIkceDT0j7M3yjk66U+gCRpy8FK
-	E0bipQx8dowM0eSgzFUzXfqcYkjVf2RZ+VKplS6Z7FxvH+QSiV3SQxaX03z5Mly27nm5QV3
-	hxYAIUKXHh7UC0top63w1ACj4lH8Llkpp7TA6eaiUZ6Zb+WPfYbzUojPIJZRPba++Yopghx
-	QvfAVnrTEEs306aSLr8xSpxIkZ9Blevq5I9x4FsSZ6nhvZO66iPn6JchUloSj7n2hJpztW2
-	EhIFRoVv1+6dM9xJdOrGZiCNYleuB/hI/T9U9w6DUazM3eXeA8k1vyGE2+If524evhKdCdW
-	vFAVprC0v/NmMyKDCZbQr3HXQuqj+L2VISrWecmWAPxzxJaXSqP5vVmGs8Rbo9yjOf6Oe1n
-	TDPMJvW5gFbsueQYlfIPZeft+3HFd7QD4uxmO+jYniGTYrh38B7GXqDMT06vpEroKhre2us
-	bofaZWb4Is5ySxdEZhTyC2+isAuz7OZPUQagdkxSWaKcxH6xPrOzsDop0gRAs+VEnqSdFms
-	bjVAjF2sYg//ngFTNpMBfpkSf8gZZgxBYRYhxT+h3e6IaOijTTw8HZCfuPVWo7c6b1plh6a
-	VWpgg23v/RHreGIgctvr1Xg0SDgsTxM3xhvW+CNasByBbcbiL8sPLRzWznzG2wVn3BF/AJp
-	cgRnwohQ==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
 
-In fastrpc_map_lookup, dma_buf_get is called to obtain a reference to
-the dma_buf for comparison purposes. However, this reference is never
-released when the function returns, leading to a dma_buf memory leak.
+From: Bingbu Cao <bingbu.cao@intel.com>
 
-Fix this by adding dma_buf_put before returning from the function,
-ensuring that the temporarily acquired reference is properly released
-regardless of whether a matching map is found.
+Update IPU7 firmware binary, it is a product signed binary
+used in latest Intel Pather Lake SOCs. Its version is same
+as the old one, but it's product signed binary which can
+be used in released product.
 
-Fixes: 9031626ade38 ("misc: fastrpc: Fix fastrpc_map_lookup operation")
-Cc: stable@kernel.org
-Signed-off-by: Junhao Xie <bigfoot@radxa.com>
-Tested-by: Xilin Wu <sophon@radxa.com>
+Signed-off-by: Bingbu Cao <bingbu.cao@intel.com>
 ---
- drivers/misc/fastrpc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ WHENCE                   |   2 +-
+ intel/ipu/ipu7ptl_fw.bin | Bin 266240 -> 266240 bytes
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 621bce7e101c1..ee652ef01534a 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -381,6 +381,8 @@ static int fastrpc_map_lookup(struct fastrpc_user *fl, int fd,
- 	}
- 	spin_unlock(&fl->lock);
+diff --git a/WHENCE b/WHENCE
+index c95b791e4477..9ff1918f5f9c 100644
+--- a/WHENCE
++++ b/WHENCE
+@@ -1398,7 +1398,7 @@ File: intel/ipu/ipu7_fw.bin
+ Version: master_release_20240628_1854
  
-+	dma_buf_put(buf);
-+
- 	return ret;
- }
+ File: intel/ipu/ipu7ptl_fw.bin
+-Version: master_release_20250515_1232
++Version: master_release_20250515_1232_ProductSigned
  
+ Licence: Redistributable. See LICENSE.intel for details
+ 
+diff --git a/intel/ipu/ipu7ptl_fw.bin b/intel/ipu/ipu7ptl_fw.bin
+index 32526904344e1df4108d8184c375fe23f9fca092..491f61e64e9d779da3fdb1733c03405eec074a17 100644
+GIT binary patch
+delta 809
+zcmV+^1J?Y2pb&td5U|Vve@FV_NZ;44qovZ{PgO|bxO7A6Xa%9b>&v5TL4cN{8;EHE
+zEn@&W%B41|b;S8t7K#?kR)fT0Cwm9dB4XhRYdg~QwA|{e@5TFi^U~tz2GadLGNF4t
+z?A9}ct~ftJx**?I?u|=`?y(>{AY=x;N^<;(v#imW5SW(rIe2%af4GkT-xTX0i107x
+z)pZcnVV;4H*Ek4?%_kL9yA_R8+I8LmY@~36w)gO#^2WqkG(1dX?o`^ecOSab<=~mC
+z%~&-yX5(_Yy~m7l4N{I&SIQur*CrW<oJYM;0OU8AlmN1Q@35jmUrovqHPr-R;jfrx
+zjW1V(k^DH_B~_h>f9R?_t|^;Wa`1ncnH;t@0jpA+_dQj48oj0|=i7IRV?i1B@srs`
+z@q7QyiHiH99T_lT%rG;hU1m#KI2Gm3VfAOi9zfyNe;O4Clc#GAf0ycF8SQ5)CrHYb
+zMDl__IwI&iqQjSFI`w_IQ_oy;y{kVdv=t(S8ZxCLEVQxlf9EsH0RRC2eND^A4Fb4K
+zjMn5(GR+bCfG2&ntZEf&v1kZ>6r8t;?!2P}V*8F|a&+sgEO+eWp_>L~e!ah3q9(M^
+z;6^9F;LW*o7vE9Aootrjpfny+^A4FJ1FooqiU?C`(LDE)*odT=q3o!AUnO#R7Q^X-
+z7_gVPl`H1?f5B6a%l#nzRaYQq4|K36t-yD~CO!lp$sVUD!P^x<HFn#-i2|;CKBm`%
+z;}v2pHVv4C_Nk_*4v-clkIZ6)=QDNF>9}uf%!$oR;pMNOoJm;!JeCQ+ILi^y=5A7C
+zJO)8|mry-<5Q4Zjg`|{s>9=i@_r`CP+bPT)y-C)te|St|;&#$+a4GW;&n8vbR$<yI
+z|3|z_*~!SI-31$?-U4X<urVxEM;KaL?yilPHVY@umd_~O!6jcBI|gA;88Z;6u4A!<
+zxK^T;88db8wy$xG$~nG+@E<9PcK4P`?XiY+s}DtQ|Mhl82rc2G&}hyR5;X4&xNb`+
+nBDa7h3Q`o?U${*P=`3J_&;*Cj1ObQ81OkW91OvCw1OzY(x;c?#
+
+delta 809
+zcmV+^1J?Y2pb&td5U|Vvf0;z$Mq&>fEp&7g@i=EZKFeW}+tk6YUmtP@+)-f;EkTIW
+zEg#*>R+-WKI*IomAz9MYgiNc>(N6v~vZQI~jgKwW*_i8P2xVii(lAc)k>$p?DzFH_
+zw=DOPY$-`Sa^6i;6mEct{zM!ZmQ%CVZi>%qe+Od@c&8h^y)DRLe^RYQW*v5q0ew~J
+ziCZ0j@L(&v;$BU8ZAFc`GE;2>AkVJ2ZtZR;tR-_$C^2!-b+k24m;oz5&Yu{mE;O6N
+z(@DfxQ;S9>&64-^K;Kqj^@(i-i20>2flWVAF!WkGY_|+{lzL-`<#zSBw^{h5%GsCi
+zPv$u7kJ`Of(6q7}e<6Dhv@C(k0K*7z9DT`*6yDAhcYILAWtR3n#J}42uD4$z7<W9!
+zZ{PUwjK%=-VVEudAiiu$KB@v3X`moOQC$jli>6Gt*AJS1Qyz*pV-m}@dU-T6aZzuz
+z*;PmalL}w0DgqTUO@K?DMha_vw;2JLKttS5t)x!W<b}ohf3P*q0RRC2A(&CF`N5a+
+z6Y2Hz$;iAc{lSFj?5{+GrO;qdM@->EiX_52L0z#g&#ylgoWIi<{__V9#rRS=K`>$N
+zh4BkXe1#F{-H?FqO=H)u7*({#Hgq`5G@6=ap^{F2UdEnhoJmAJ?r#qt?wnr8h!+S_
+zuCj>o7@b=ke?;&>(FM8iIagWo0EGNqgq#1(d|L-tdAP{ndv`AN{pj^+AXms7lj<AX
+zeKhsX6!`dw1VZx!%oNG|71sJ+=)4<{elPInVga<8?N7h0Kh!>yVmtOw*Fxu5f^8(P
+zz@ZGInZ6x;W+z38C&&A=S}JT{cIhK<H3{*EW|>)jf6neGnDNsPuU7@K+2LZ}Hw8<$
+zir(b&kW$yZ^ceC#U?5=PC(!L#{V?D9u%vcucbB-naviWVi9~NKU2iMPTp+8hZnIst
+zqD*Si!AT6v3Y&y@oQ`wlk_bW`a+Cdq+h2`wGa8Ukd>BSZ_e0a!5FgswmM6XdMprRw
+n*7d`U3OPV=TZ`alWbP@0&;*Cj1ObQ81OkW91OvCw1OzY(NvDlu
+
 -- 
-2.50.1
+2.34.1
 
 
