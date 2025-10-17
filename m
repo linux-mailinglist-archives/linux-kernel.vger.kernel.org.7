@@ -1,160 +1,149 @@
-Return-Path: <linux-kernel+bounces-857147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E0CBE6091
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 756FCBE609A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137925E3E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783F95E2A13
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EA8221543;
-	Fri, 17 Oct 2025 01:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A772253EC;
+	Fri, 17 Oct 2025 01:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdM5qpIW"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n1RjOknR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF11520297E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E150B1758B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760664448; cv=none; b=uicIoDqePtNJE4FpAPAmitDMu4B054MBMQsaalQmbGA/i1fr6NKbnf/byCOD9AISaRh5We3ojhk/l12aLvkA7C9+JTfwX8NaaG/4fOOoXgrnPY236iok+YFGvyrbbw59gD0/v9+izMZAsNgpGWzE81W50nkDn3r8yw/caLR4wqA=
+	t=1760664802; cv=none; b=tR9UINywIz7I2BbuO5WLrawB/0QHAba8Lx2sawZX7lf9l39kpD1FwGvobCYbD+MxtcfRT3dCS/tJxGId8wpPOkR++YJeFZG2x/TQlmY+9EYlLMebudWcDTy7yF9mPuEp/dY794KvSOUzWuFNz07xgO0UrG/QMrfzfSAdHRRYT8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760664448; c=relaxed/simple;
-	bh=LnnvdTSOkEWVM7Fr1wE40a3/3/XIdKXdhXj9eV6Jx5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxoQn6woc4f25WGkT5C1RI8m6Vd6J1uAZkD3WFgJcOTifHLbsDZcskuBdYUYOHTTlzs5sMEE6amdnImdueYJLbA9eh3zBKptsfC62ODuUkmzi70tj6DyYN7k32PNil4f7j7g6aaygDi1m/fvMHRyE95SspQU3vo27AEIz5h/3xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdM5qpIW; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b48d8deaef9so267924566b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760664445; x=1761269245; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=toN8uDcHs2UA1ksRfEWAocNXcohSpkKSetMRHMkBztA=;
-        b=QdM5qpIWid+9Accll4vTtrUjPGsRkaPaIZwq9DCNeCyX7GXozaHHqov/rmAKWbRt8w
-         Rzq5OSCLelnZpYQX5rivDU99oLEGYJ327sz7hUX0Uld8MYrlVqD3FtRquBD/1svseWpL
-         a8MHG/8NkUxFGun6RRmZXxsH8T5esFqo+GB2QrYRkXLS3XQir9bWU89465jU65O145VM
-         aMmsj0ABqyUU/JREolqciiO14MN/0Y47yj1lZ64fsPOXJHBPeSbNPWBI3KJbTOVCxFJt
-         gxznmvfsRDoyMymsPXynRpp4y6R4zAtZzKLziifszWTdis013z7/SRKsFPDFFvrNtd7b
-         CLCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760664445; x=1761269245;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=toN8uDcHs2UA1ksRfEWAocNXcohSpkKSetMRHMkBztA=;
-        b=PVo+ZNbfmOlNQRcUsB5wdm3VUqcmpzr3ugD+hnKJEXnEb27UTBgLR9nxL98owP/INq
-         cyZPd+FlaZsHHzKtHBScjNT5uGrYfxpmhhIkOl+ICtz2mIlaW4zIbJNGiyPZqsh+H8Cg
-         uvksRLTmyYXb7/SDpDqUThcHqt7kc6EX5Yhxk6iMjvzLz2O+QfWS/mFWDDbXi66B7xuo
-         I5F+uFzFC5JAe/DDc34J2K3x2OTEW5VTeNidR+8oQLRPZz5VWlU5f48j123BDU8IRgWY
-         rNRTfJR231uJ+Ww05ec+Ck4BTadHqqyo/JHRB4xGbbyD59lzq0moQJTjDB2Lq9/e7RId
-         xe6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXUThc83af8Ea1X9VWKxSZJiQwPTSXA56kiZKL4wARUu8P4Uz1gemTm+KeVY+TWfHwRZa9suwV9TL44rmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXKFyP6ilcQRLX0eZpw4OYPILGE48lyCiNQTgg7mBOyVfyZSi8
-	k03GtVQAmGvV1h/mQtOdBeLkGWNcBKLFMCNULiadem1nhJUxfAE6fXee
-X-Gm-Gg: ASbGncvBRMbpv09EQ1p9H2DYSc0ZqQjcA7kAIiGZdSiF7LuyZHuNklV4OlvhKIZpjW9
-	VLDv1Bsff7DufwUEusDY4hkZ6dFrCclx9qMFSiefvmTzTGEr1+CXLvHP7uwvaujNl8854X6MOW4
-	Pw3C9FNj4ML5LJyG7oaQWwqTVEQE7SCy2xGSfRRM57jizcBHVLxKBBE6LSbztuzLGnBQ2065VpY
-	d6Qoll7qDN52gVtrFH5szx0ypWFYq97rNqYpaTJnAHCWyPI1DIHFjsZWy7tYI+rckwPRCLodmvV
-	YmUqNHGYh9orcmKqYyN2r5q/090ltt5zDXa6olFGwKhkI5UB8ErMKLmqHCoYijKQ16jyA/BnHtI
-	TPyyA29OX+7YaruafcFBNJoEJlS94SJApkwlvH6fpWHRMFiCHH8yhe6tpAPJklADiOEZeJD+bto
-	z5MV0=
-X-Google-Smtp-Source: AGHT+IFUmSUGHTa+ZyXOVo0fn2Et40lgRl36aDqlQg4U7gnNhP3iSC3H9vQYVs/vX439nT0/+aepnQ==
-X-Received: by 2002:a17:907:3ea6:b0:b46:31be:e8ea with SMTP id a640c23a62f3a-b646ec7e5bemr217152666b.0.1760664445061;
-        Thu, 16 Oct 2025 18:27:25 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccd6b03f3sm653857266b.74.2025.10.16.18.27.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Oct 2025 18:27:24 -0700 (PDT)
-Date: Fri, 17 Oct 2025 01:27:24 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-	npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
-	ioworker0@gmail.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: guard is_zero_pfn() calls with
- pte_present()
-Message-ID: <20251017012724.4bo5oj2g6tdmp2fv@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251016033643.10848-1-lance.yang@linux.dev>
- <17c4c5f9-6ac8-4914-838f-f511dfbf948f@arm.com>
+	s=arc-20240116; t=1760664802; c=relaxed/simple;
+	bh=InToWeKulfFCiasailhcft0AF/qT17xeW6w86HnWH7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WcexIq+ssi4ouXrMykGz8cnJjFHuucp8B9MS7nqefoOtI5pyDcjlHbb++4oybaAaDYQ5Fwy9eYxqVOEJdp2Nzp13unSnXspNfYF4Gv6DHqElRVjF5BRX+NvD2DzmIUkzkt5z/Wt4SO+T+HhigC5TAASF4AAIxK8AXBulyiineA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n1RjOknR; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760664801; x=1792200801;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=InToWeKulfFCiasailhcft0AF/qT17xeW6w86HnWH7M=;
+  b=n1RjOknRsp+UZv6ClPA7BGrlsJU6Q1wT7dzfDzxMJi21oKgbCVLxjgNa
+   H2ZeZi3JnYsFGBmAhVQeRsFflbjZyL9m5f7XCWajnNNAg8ypfJRcynI61
+   cDeUdddiFWSrXE9wwQXEjtkDQVKF/mW3ABwbwDvJNKWnhZJU6jYsUfczH
+   OicXYSVSALFY13e54fkFjpkFcIoz8esSPOQe0Ww6StA9K4PgyPEyWIBxB
+   mhml5FzIzZdKhqXlYPySeYYpKcuJQLRWwaTvKHR+REpQX+eTozYD32QsI
+   7vhvcpnVGga2sE+2jUJg1m4Se/G9qVZOxE1RX8LBC8+lKe4UwEP/EgdoW
+   g==;
+X-CSE-ConnectionGUID: iHvpj8vXTVeAhtSTczrXRA==
+X-CSE-MsgGUID: ADULQptRQD2wEV4gLHg78w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="73541210"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="73541210"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 18:33:20 -0700
+X-CSE-ConnectionGUID: 4hyF6p1zQ125ZX6UsPL5oA==
+X-CSE-MsgGUID: ip+saoXoRX2OIkKrk46nPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="186627047"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 18:33:13 -0700
+Message-ID: <ba9e0f6c-1d46-4447-a694-debacea44f48@linux.intel.com>
+Date: Fri, 17 Oct 2025 09:29:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17c4c5f9-6ac8-4914-838f-f511dfbf948f@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/7] mm: Introduce deferred freeing for kernel page
+ tables
+To: David Hildenbrand <david@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
+ <20251014130437.1090448-7-baolu.lu@linux.intel.com>
+ <e62bad6a-bd49-48d9-aa2d-9e2022f829b3@redhat.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <e62bad6a-bd49-48d9-aa2d-9e2022f829b3@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 16, 2025 at 11:47:06AM +0530, Dev Jain wrote:
->
->On 16/10/25 9:06 am, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->> 
->> A non-present entry, like a swap PTE, contains completely different data
->> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
->> non-present entry, it will spit out a junk PFN.
->> 
->> What if that junk PFN happens to match the zeropage's PFN by sheer
->> chance? While really unlikely, this would be really bad if it did.
->> 
->> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
->> in khugepaged.c are properly guarded by a pte_present() check.
->> 
->> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+On 10/17/25 03:35, David Hildenbrand wrote:
+> On 14.10.25 15:04, Lu Baolu wrote:
+>> From: Dave Hansen <dave.hansen@linux.intel.com>
+>>
+>> This introduces a conditional asynchronous mechanism, enabled by
+>> CONFIG_ASYNC_KERNEL_PGTABLE_FREE. When enabled, this mechanism defers the
+>> freeing of pages that are used as page tables for kernel address 
+>> mappings.
+>> These pages are now queued to a work struct instead of being freed
+>> immediately.
+>>
+>> This deferred freeing allows for batch-freeing of page tables, providing
+>> a safe context for performing a single expensive operation (TLB flush)
+>> for a batch of kernel page tables instead of performing that expensive
+>> operation for each page table.
+>>
+>> On x86, CONFIG_ASYNC_KERNEL_PGTABLE_FREE is selected if CONFIG_IOMMU_SVA
+>> is enabled, because both Intel and AMD IOMMU architectures could
+>> potentially cache kernel page table entries in their paging structure
+>> cache, regardless of the permission.
+> 
+> See below, I assume this is patch #7 material.
+> 
+>>
+>> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 >> ---
->>   mm/khugepaged.c | 13 ++++++++-----
->>   1 file changed, 8 insertions(+), 5 deletions(-)
->> 
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index d635d821f611..0341c3d13e9e 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
->>   		pte_t pteval = ptep_get(_pte);
->>   		unsigned long pfn;
->> -		if (pte_none(pteval))
->> +		if (!pte_present(pteval))
->>   			continue;
->>   		pfn = pte_pfn(pteval);
->>   		if (is_zero_pfn(pfn))
->> @@ -690,9 +690,10 @@ static void __collapse_huge_page_copy_succeeded(pte_t *pte,
->>   	     address += nr_ptes * PAGE_SIZE) {
->>   		nr_ptes = 1;
->>   		pteval = ptep_get(_pte);
->> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
->> +		if (pte_none(pteval) ||
->> +		    (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
->>   			add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
->> -			if (is_zero_pfn(pte_pfn(pteval))) {
->> +			if (!pte_none(pteval)) {
->
->Could save a level of indentation by saying
->if (pte_none(pteval))
->    continue;
->
+>>   arch/x86/Kconfig     |  1 +
+>>   mm/Kconfig           |  3 +++
+>>   include/linux/mm.h   | 16 +++++++++++++---
+>>   mm/pgtable-generic.c | 37 +++++++++++++++++++++++++++++++++++++
+>>   4 files changed, 54 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index fa3b616af03a..ded29ee848fd 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -279,6 +279,7 @@ config X86
+>>       select HAVE_PCI
+>>       select HAVE_PERF_REGS
+>>       select HAVE_PERF_USER_STACK_DUMP
+>> +    select ASYNC_KERNEL_PGTABLE_FREE     if IOMMU_SVA
+> 
+> That should belong into patch #7, no?
 
-Vote for this :-)
+Yes. Done.
 
-No other comment.
-
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-
--- 
-Wei Yang
-Help you, Help me
+Thanks,
+baolu
 
