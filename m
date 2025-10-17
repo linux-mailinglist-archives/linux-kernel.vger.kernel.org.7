@@ -1,431 +1,182 @@
-Return-Path: <linux-kernel+bounces-858178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255B7BE932F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:30:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F157BE9389
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32DB1AA35E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:30:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 191A3564D97
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8496C32C922;
-	Fri, 17 Oct 2025 14:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C172F6930;
+	Fri, 17 Oct 2025 14:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W1c6y7AT"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uDvkCIu+"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012030.outbound.protection.outlook.com [40.93.195.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4055C332ED8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760711380; cv=none; b=YQzAc5B5EfmZzNutr1Ym8qf2GpRDeJiKvOfaOFOhWYX4tAzD5D2TEWTZrMSB0n/l0WEIRiJFvWV/HfccnXnof4iFd65ZSAa9qQk8/Rh46lHxHQ8p71WpKc3HN1rJAgyvE2Svktx6CKJBD/lGjA8OkVoBANTEUH9IiNTZMMLSxDc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760711380; c=relaxed/simple;
-	bh=yZNrXnuhvIGexvS5EGtRmXZuWyasmi5dAGGIa6BXW/I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F+0YUVUhxchtQEIPqY3Ad8FZS9rjzpcG62pZ9Yi3hp7ON6WnWG6zAjaDyYhA62MHhXyi6qXpDrMHfoE78UthkyQDmMFE24P0ep6Za4iD76BJSXd+uZZsmf7KQtvBb7ljClTXWBaWVqZ0kcvyjs9nQMmI+JmA85uZCxiHk7G80GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W1c6y7AT; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 66A074E41147;
-	Fri, 17 Oct 2025 14:29:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 36216606DB;
-	Fri, 17 Oct 2025 14:29:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AA00F102F235B;
-	Fri, 17 Oct 2025 16:29:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760711374; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ftwr4rofYyoL8+AUwR6byHdRTkmIIk8XU5ISZhyl4tY=;
-	b=W1c6y7ATJNfplWdJkqEl95dU5sW2k/j7c+64+Iv9fTWyflLN49SVep/zUXWFRQgmgbku0g
-	joHUjJwY3b7lOB2ZO5tWs3RCvqeBnl0u4pcLLBswRgLDeXodADOu3JN4cmhIDrgIjop/KI
-	Zko2VhkItX977cyo5mrrOa3aLdb7nUB/gDrPctHbXMhvZPeeVQtBCdX/yCzhkDkYSz45tG
-	BU3EMY3DujpHjPk/GP/I3umhIvuOvb//ODFwRMvHFPIow/cgJbxl9x5VayqbRw+MYxtj0f
-	q1kWiG2FAa5BP7Msw/cFxz1rN7XDRtu6pzOUUIIidT6Y+Se20cwFjRsImsrleQ==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Fri, 17 Oct 2025 16:29:05 +0200
-Subject: [PATCH bpf-next 5/5] selftests/bpf: remove test_tc_tunnel.sh
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC757339715;
+	Fri, 17 Oct 2025 14:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760711509; cv=fail; b=Y7tfhggZPnq0M+n+9Z2iZyvp+uO3INp0INTiC457BIJcNFL3cucJnXxn3JAGVFqpbeTfeo+v1iu+IpDh0Nv6zni6RMEotqRoANA8ML2qXXIpsZfxP4GlQI4fs6Ow7SUU/q0rTiKn2OLoRQr6YCMJ/ot6hsvqJ/hPFRIcAe8dGtQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760711509; c=relaxed/simple;
+	bh=A24KhgdyjQPPTAW/tf2UDSeHxzU/3LlHV/vefYCTSpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=asO2gNS2v0TmBwk+L9538f913pJ/VHrpq50pQf03Fk8f7Anynz+WOMTw8ANE2soh+r/LdB5qV1z792s/7o1Xbrdz8+uT0WOyY5xNFpOcdiYyHENcvq4mtgx6YcZNPRUWbPfuqLmbT7Vt/fx6iM1r3KlG0Z1VXp9p+NKgD+b8/vM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uDvkCIu+; arc=fail smtp.client-ip=40.93.195.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KNtXT8qhV2JH6YOAIK48h0tUsxyrbNqEg+9o4/GqgXo7hs6bG6UFsWkxkKBW19uuZsfbareqWqec5qfZUQmZKQ1DkNAfmhnRHIcCmOS2N3V2tRRfr+Ruj35g9jsREEaMvfdzj1UqJFQ2XgL8vdlnlW5fKTD+elNwPxTu6i7QB9PPc5tACVFCTNRstaQiNuN4cvYLDJrzcJTDn+DRsfcFlq/tPz9RPJkEEqEi+Ct+9zXqQwXBPhR7fFCObYfM6vhq+d+S0niMWEgzSFlcQ7KJ8D7L9aYYUlyGiNpDDfzRKA36ceYa08LX8Ide4OCaxP0BnwdwChQjlBD9T5/xb6Xy2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1kZEbcRpDeXecPuDswWwZk4wwnszot1vbaYmF/5YE9I=;
+ b=V1Co4Hwb3R6wCV+trvLc/5d9fcZyHeFAw5II5k+tVt7zo+9BBeCiWwr0HKR0UdThDTIbIO1ZYylu6zsMEtQAH+DgiNrW+vz0UxcZSLKgG/c3U/Jw98/BNoaCcaC0HeK+kFeG9ZjD3nRHGiU2EoF0K6rZ4Fdd3F8KZstytbFawH0CRTfsbNfw5A9MI/nwd48MecqSMccd9NSegKiVxFDEtUFl3R54EGn/ZBb+jtrt6Ls/AoEuyAhFAIFE+NmbGN3860qiM1xJ8a9ftGI2b90Jb45MHdm6+bIU2Jkzxn2WQHsB3EsRdzBpyWAS47YE6X9g2RNEv3/k3y1wO2cdQBAfKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1kZEbcRpDeXecPuDswWwZk4wwnszot1vbaYmF/5YE9I=;
+ b=uDvkCIu+Wykn4/L3xgcdBjkmB2Rp0CTzk86XHjoS+KtIPaOW7Vn4dznYy2YSEWj5YN/rrAUtwbdICKdfpCLdF6wnrOfgEivDXgSRSP1+1BfZZj+oqZ1HAwkhaGZF5MkK1pSnu4nRxiBkqJpN07DiT23TgnnHQnteIE8UoffMtxE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ MW4PR12MB5643.namprd12.prod.outlook.com (2603:10b6:303:188::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
+ 2025 14:31:44 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
+ 14:31:44 +0000
+Date: Fri, 17 Oct 2025 10:31:39 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: x86@kernel.org, linux-edac@vger.kernel.org, bp@alien8.de,
+	tony.luck@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/mce: Add support for PHYSADDRV and
+ PHYSADDRVALIDSUPPORTED bits
+Message-ID: <20251017143139.GA1131586@yaz-khff2.amd.com>
+References: <20251015172452.3649720-1-avadhut.naik@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015172452.3649720-1-avadhut.naik@amd.com>
+X-ClientProxiedBy: BN0PR10CA0011.namprd10.prod.outlook.com
+ (2603:10b6:408:143::13) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251017-tc_tunnel-v1-5-2d86808d86b2@bootlin.com>
-References: <20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com>
-In-Reply-To: <20251017-tc_tunnel-v1-0-2d86808d86b2@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MW4PR12MB5643:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4920047-47d8-440a-5364-08de0d89e50c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vU2K6H99Ew/M3V1Qfsc7Zkv1nZ8pyyQHXVXxMi7+SJEmB5Q8LGoZnJYk48Cm?=
+ =?us-ascii?Q?qdj/7U+ClMjAcQmDCmThrgH3dVViTQvEPmneW+1QpgLLntQ2E6i8v2LoMO3h?=
+ =?us-ascii?Q?bTlucRRxH0OrwwQPsv/gNKqWEP9eto+UpAjxZ0bN7hxgVZnBj9YqXMtQqvMG?=
+ =?us-ascii?Q?ousJPF+ynaaXBIouSBzaiQiul+qmSpZLLVxSF1PmiCL8mHYi99cnTJo4e/Ti?=
+ =?us-ascii?Q?fCco2Cnap8XUMlF60AjZFK888XxxpzpXzasc9BdrhxINs04HouI6oVsy+mWs?=
+ =?us-ascii?Q?C+9XBvjg/noCXrFpkeGeoHwS3kFPXjDNNk2jThhT2unlWf03uH9mFbjEIBJP?=
+ =?us-ascii?Q?5DTTVLHG+edgeT9YtM0FO3KI8IKCj0n5s1K6oexlh7h4238TpPta0DBZbBcG?=
+ =?us-ascii?Q?EoQG2Qm5kbreyA5wg2mi+9dgiQtCFWPIW9uE0UUyDagYYgdD5N+3DJIeLFix?=
+ =?us-ascii?Q?OXT7lfBI2W9wOa59nlt2DzQSvtacEGvcW1CMkKgC3PS7hVKL56Vknx2iPRoR?=
+ =?us-ascii?Q?bARP/02CWc5WCwLvUW2NDbBr/H8WysLEPW29jE+qE5I7Mlog2GnmSN5NN/jw?=
+ =?us-ascii?Q?y/TTdEh6TOlL3lJsF9goINw4MYJQFy0sSXph44Ys5/hWfkRdPAcPyA8Pnb4d?=
+ =?us-ascii?Q?L0dtGrN/aIyeODnxl/bs2xS8LSsJzGYRHm3FqIJzjqxqrYO6ddrnZBRzLQ97?=
+ =?us-ascii?Q?s8L6vW+5NjuGvW2zFC7lQhexfkIlkz84ku0ueLTAVIqbjxQIgt7etg5sqBnA?=
+ =?us-ascii?Q?Q81el+k9NR5KZk0Lurm7XNP2PB1KzLuONyxx4Gz2QjScLZvBevznpRLm7LTM?=
+ =?us-ascii?Q?bCgUn94WfT+WYlP/otnBT6u9h/KsZ4Y9Ctkt/C2YT36e0UBEt86O1EXxohNj?=
+ =?us-ascii?Q?5vws845+Ri0BCfxTTNJEr3oVAhHrcpcqMCcDLqHHURjh0V8iRIoz5ZiqTZn7?=
+ =?us-ascii?Q?tcvhArIt0qOQ1JO/dN7j/nNiQ/FSOPGbv8q7a0q+nMUqYtGy9a4aMkde1Icj?=
+ =?us-ascii?Q?U69PcwC6sgxmQa++liCy1lbXj+jzUpLSKe1usYtjIZpzhdCNhaaKqkSEMA4C?=
+ =?us-ascii?Q?v1iDdHLajrQ7GD4uXCvAWmzjeL1iSo/FOeOcdEPNsqwzjKwPUDXn2aZh9e7r?=
+ =?us-ascii?Q?ClllCtRH2o0NsdXrUuwMICVWoaFcm8Ly8czdLmc1GKe5Zqd6LSG0oQNcqxbT?=
+ =?us-ascii?Q?zf9H2d04VzlXryl9Ca/QuNNHgMxKikoQ4Iy61xjb9OuFLnR/caIAtiovqY37?=
+ =?us-ascii?Q?bsZQZ4VdTHcIaKfc6ck4yEgRiF3AQ4swIdKqpqkInelKiJyFQuv/gI8t+UbK?=
+ =?us-ascii?Q?yHQEVMvFwMtgxfMGueERFwlTaaq6gNWJg1R3fskaaY9VDFlaEMqry3wEWg2r?=
+ =?us-ascii?Q?Hv+IuqX0pu34BZrGoaQXD/6ZEixsymQ3c/1jBA9GnnLo3PPcaPTItL33h78H?=
+ =?us-ascii?Q?hrQDHRDZmx718uXcXMdkqm6hMdOytXqQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PMhSJRXbrTzlGcoyZvazyeqA/ZFymuMBeUF/V8b3mtVFy5Dpv40vOkcHqyu7?=
+ =?us-ascii?Q?fLwidwo3nvimXj9ze6UG1ZDojAdXbiOUf2L7j12WIhGfqB/t/hJq9ZUJ6CqM?=
+ =?us-ascii?Q?Anqo6kBDapP01UQGbzXQITz1RLC2P+TF5TIWcfuMrplnzCheLlSExyPDbFRS?=
+ =?us-ascii?Q?9Ko5dJ4hyK1vspDHfDDbpocCW1AriYS5Hs0c7ZRfyLbhhLJxaBFKZt6sbB+L?=
+ =?us-ascii?Q?4zE2k0LVDII3WUzLRE6E4kctdXx/ycN4+tIAusLtcVeac+RbpyD9pS2MZK+B?=
+ =?us-ascii?Q?1NFKSnhjIVrO4vmPvyty1mVq4TSI+P5cPin0vLRkV1K6UQTZMfRXliC86+1+?=
+ =?us-ascii?Q?lZbEnicjBCLsJghKglooNiS8r7iSBSs6w5jK+cA0NU0e5PPwJpZtOCYUC4UE?=
+ =?us-ascii?Q?jmGL2WARq5iaPKbF+Nvg1beiyoWjtZgMGaIHkQYDyHPsunkKVIanWflx+5VF?=
+ =?us-ascii?Q?c9/Wt1l/SH0ojzL4UuUjM9OriXI6ubtp9mb/6+rwoJTKDOOQev2oylnhwY2V?=
+ =?us-ascii?Q?gRQbeH9gWHFrVH9VyjfbFeFYTzvhOrHM04l6dncaBjQ7c4SK1MRrHxCtV8Dn?=
+ =?us-ascii?Q?w4tPR8spHG/mxXgrvOhMR2i6Ks13IrnXr6TAmycybPY4g9ukpQc1K/CUabnT?=
+ =?us-ascii?Q?yeezimZi9+EIGhOCI62nfxgNN7izpMc/nXbASjWA1ENebfW0NSs17yocr0QO?=
+ =?us-ascii?Q?lwP6nCqkS4C7daMikaBTvSx4hk+Imdlc8rv3bU99VJoK6f/VbOgdQ0b1VsdQ?=
+ =?us-ascii?Q?nHf+MV0bdkZw5sPpNMfgv7rkME5Kqca5JUB6MxevR9U3EGBWfVPBsaWOz+2s?=
+ =?us-ascii?Q?a2f7jxpIu0cLRoy9Xaa7ZIfM7BNDC+erw8N8Ci+Ghp2IxlTLQLnYpmDjl8tz?=
+ =?us-ascii?Q?CZUeiU8JgFhtdTMcPtgQCo3I0NNi+Sn92HvUhV7idEZRVtpT7mR6WwB6yL/l?=
+ =?us-ascii?Q?dblhCRLYFD4TQ/Ks8qup0cUofGPhmMGL15zQt83Hqs1el34sZ3uZwc+GyY0o?=
+ =?us-ascii?Q?Y6wfbBV+x5n67ZOOLLCw6bmpxEA6uJexeHgFpT3yUgfrRZmOQWGnTJgvwzB0?=
+ =?us-ascii?Q?EzQkVnQP8fDON/jwUMZ66r99NdJxS1jaNhxxsaurFN7c9giHWlfc3S4e3CpN?=
+ =?us-ascii?Q?efgl5ADSmHGklgpoxF1IyVm5PjF4j67g17T/Q2Ha3sRmI4u6XaUOqHA30x6K?=
+ =?us-ascii?Q?cmZ7DjdaALkaZu2M3Tzj/ZsnFn5qtc0Uqd2xKmVofPaF4Wr3aq4QY+FzzjLu?=
+ =?us-ascii?Q?PP9XaMvYRbNHRfelbHSJttC8QjLnwzzutyJABpFfl4t+IFj4DMGWgXAV3tyn?=
+ =?us-ascii?Q?4NCrSVmvyfZs3NRcHpQEVfiKOqVsBYcqnF1pGZ3NLNYRTOOSMOlE09JBSnzC?=
+ =?us-ascii?Q?+RTIfnVhmWLemdti/wPzDzJOxZR7qtxd0cqpHme3i2fLbEuUtEoqBzqotpEo?=
+ =?us-ascii?Q?hcp+JcuntFaBbnql+6HmlFnKaxxc5GaK2Bf6YtBg44F1hy6I0qp4/HwlqDxP?=
+ =?us-ascii?Q?d6ap6NX6MNqbTvGbbDAKJNGZXlkoUYxzuO8c5uB9+lwlM/A7uIZusl6TnAvS?=
+ =?us-ascii?Q?0SJquuNBQdnS9jXPJrWOztClPeCy8MX+klgyoRAm?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4920047-47d8-440a-5364-08de0d89e50c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 14:31:44.0199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q1k8bJiqLRDufQOtgjyCC7BovbXXN/fhQJd9KEkUiDMg6AbYVIoeJ993lZQbDohEfOCTWFDnhbml9KKU7GloaA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5643
 
-Now that test_tc_tunnel.sh scope has been ported to the test_progs
-framework, remove it.
+On Wed, Oct 15, 2025 at 05:22:25PM +0000, Avadhut Naik wrote:
+> Starting with Zen6, AMD's Scalable MCA systems will incorporate two new
+> bits in MCA_STATUS and MCA_CONFIG MSRs. These bits will indicate if a
+> valid System Physical Address (SPA) is present in MCA_ADDR.
+> 
+> PhysAddrValidSupported bit (MCA_CONFIG[11]) serves as the architectural
+> indicator and states if PhysAddrV bit (MCA_STATUS[54]) is Reserved or
+> if it indicates validity of SPA in MCA_ADDR.
+> 
+> PhysAddrV bit (MCA_STATUS[54]) advertises if MCA_ADDR contains valid
+> SPA or if it is implementation specific.
+> 
+> Use and prefer MCA_STATUS[PhysAddrV] when checking for a usable address.
+> 
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> ---
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile          |   1 -
- tools/testing/selftests/bpf/test_tc_tunnel.sh | 320 --------------------------
- 2 files changed, 321 deletions(-)
+Minor nit:
+The $SUBJECT could be simpler, like "Use new physical address valid
+bit". And leave the details and proper field names for the commit
+message.
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 2f248dab922f57e2c14053cb0bdfbb547efe1292..58c768d9da575d8bb9274d3287123eb214a8d14d 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -104,7 +104,6 @@ TEST_FILES = xsk_prereqs.sh $(wildcard progs/btf_dump_test_case_*.c)
- # Order correspond to 'make run_tests' order
- TEST_PROGS := test_kmod.sh \
- 	test_lirc_mode2.sh \
--	test_tc_tunnel.sh \
- 	test_tc_edt.sh \
- 	test_xdping.sh \
- 	test_bpftool_build.sh \
-diff --git a/tools/testing/selftests/bpf/test_tc_tunnel.sh b/tools/testing/selftests/bpf/test_tc_tunnel.sh
-deleted file mode 100755
-index cb55a908bb0d70c251bc55c9c8994fc023d44f64..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/bpf/test_tc_tunnel.sh
-+++ /dev/null
-@@ -1,320 +0,0 @@
--#!/bin/bash
--# SPDX-License-Identifier: GPL-2.0
--#
--# In-place tunneling
--
--BPF_FILE="test_tc_tunnel.bpf.o"
--# must match the port that the bpf program filters on
--readonly port=8000
--
--readonly ns_prefix="ns-$$-"
--readonly ns1="${ns_prefix}1"
--readonly ns2="${ns_prefix}2"
--
--readonly ns1_v4=192.168.1.1
--readonly ns2_v4=192.168.1.2
--readonly ns1_v6=fd::1
--readonly ns2_v6=fd::2
--
--# Must match port used by bpf program
--readonly udpport=5555
--# MPLSoverUDP
--readonly mplsudpport=6635
--readonly mplsproto=137
--
--readonly infile="$(mktemp)"
--readonly outfile="$(mktemp)"
--
--setup() {
--	ip netns add "${ns1}"
--	ip netns add "${ns2}"
--
--	ip link add dev veth1 mtu 1500 netns "${ns1}" type veth \
--	      peer name veth2 mtu 1500 netns "${ns2}"
--
--	ip netns exec "${ns1}" ethtool -K veth1 tso off
--
--	ip -netns "${ns1}" link set veth1 up
--	ip -netns "${ns2}" link set veth2 up
--
--	ip -netns "${ns1}" -4 addr add "${ns1_v4}/24" dev veth1
--	ip -netns "${ns2}" -4 addr add "${ns2_v4}/24" dev veth2
--	ip -netns "${ns1}" -6 addr add "${ns1_v6}/64" dev veth1 nodad
--	ip -netns "${ns2}" -6 addr add "${ns2_v6}/64" dev veth2 nodad
--
--	# clamp route to reserve room for tunnel headers
--	ip -netns "${ns1}" -4 route flush table main
--	ip -netns "${ns1}" -6 route flush table main
--	ip -netns "${ns1}" -4 route add "${ns2_v4}" mtu 1450 dev veth1
--	ip -netns "${ns1}" -6 route add "${ns2_v6}" mtu 1430 dev veth1
--
--	sleep 1
--
--	dd if=/dev/urandom of="${infile}" bs="${datalen}" count=1 status=none
--}
--
--cleanup() {
--	ip netns del "${ns2}"
--	ip netns del "${ns1}"
--
--	if [[ -f "${outfile}" ]]; then
--		rm "${outfile}"
--	fi
--	if [[ -f "${infile}" ]]; then
--		rm "${infile}"
--	fi
--
--	if [[ -n $server_pid ]]; then
--		kill $server_pid 2> /dev/null
--	fi
--}
--
--server_listen() {
--	ip netns exec "${ns2}" nc "${netcat_opt}" -l "${port}" > "${outfile}" &
--	server_pid=$!
--}
--
--client_connect() {
--	ip netns exec "${ns1}" timeout 2 nc "${netcat_opt}" -w 1 "${addr2}" "${port}" < "${infile}"
--	echo $?
--}
--
--verify_data() {
--	wait "${server_pid}"
--	server_pid=
--	# sha1sum returns two fields [sha1] [filepath]
--	# convert to bash array and access first elem
--	insum=($(sha1sum ${infile}))
--	outsum=($(sha1sum ${outfile}))
--	if [[ "${insum[0]}" != "${outsum[0]}" ]]; then
--		echo "data mismatch"
--		exit 1
--	fi
--}
--
--wait_for_port() {
--	for i in $(seq 20); do
--		if ip netns exec "${ns2}" ss ${2:--4}OHntl | grep -q "$1"; then
--			return 0
--		fi
--		sleep 0.1
--	done
--	return 1
--}
--
--set -e
--
--# no arguments: automated test, run all
--if [[ "$#" -eq "0" ]]; then
--	echo "ipip"
--	$0 ipv4 ipip none 100
--
--	echo "ipip6"
--	$0 ipv4 ipip6 none 100
--
--	echo "ip6ip6"
--	$0 ipv6 ip6tnl none 100
--
--	echo "sit"
--	$0 ipv6 sit none 100
--
--	echo "ip4 vxlan"
--	$0 ipv4 vxlan eth 2000
--
--	echo "ip6 vxlan"
--	$0 ipv6 ip6vxlan eth 2000
--
--	for mac in none mpls eth ; do
--		echo "ip gre $mac"
--		$0 ipv4 gre $mac 100
--
--		echo "ip6 gre $mac"
--		$0 ipv6 ip6gre $mac 100
--
--		echo "ip gre $mac gso"
--		$0 ipv4 gre $mac 2000
--
--		echo "ip6 gre $mac gso"
--		$0 ipv6 ip6gre $mac 2000
--
--		echo "ip udp $mac"
--		$0 ipv4 udp $mac 100
--
--		echo "ip6 udp $mac"
--		$0 ipv6 ip6udp $mac 100
--
--		echo "ip udp $mac gso"
--		$0 ipv4 udp $mac 2000
--
--		echo "ip6 udp $mac gso"
--		$0 ipv6 ip6udp $mac 2000
--	done
--
--	echo "OK. All tests passed"
--	exit 0
--fi
--
--if [[ "$#" -ne "4" ]]; then
--	echo "Usage: $0"
--	echo "   or: $0 <ipv4|ipv6> <tuntype> <none|mpls|eth> <data_len>"
--	exit 1
--fi
--
--case "$1" in
--"ipv4")
--	readonly addr1="${ns1_v4}"
--	readonly addr2="${ns2_v4}"
--	readonly ipproto=4
--	readonly netcat_opt=-${ipproto}
--	readonly foumod=fou
--	readonly foutype=ipip
--	readonly fouproto=4
--	readonly fouproto_mpls=${mplsproto}
--	readonly gretaptype=gretap
--	;;
--"ipv6")
--	readonly addr1="${ns1_v6}"
--	readonly addr2="${ns2_v6}"
--	readonly ipproto=6
--	readonly netcat_opt=-${ipproto}
--	readonly foumod=fou6
--	readonly foutype=ip6tnl
--	readonly fouproto="41 -6"
--	readonly fouproto_mpls="${mplsproto} -6"
--	readonly gretaptype=ip6gretap
--	;;
--*)
--	echo "unknown arg: $1"
--	exit 1
--	;;
--esac
--
--readonly tuntype=$2
--readonly mac=$3
--readonly datalen=$4
--
--echo "encap ${addr1} to ${addr2}, type ${tuntype}, mac ${mac} len ${datalen}"
--
--trap cleanup EXIT
--
--setup
--
--# basic communication works
--echo "test basic connectivity"
--server_listen
--wait_for_port ${port} ${netcat_opt}
--client_connect
--verify_data
--
--# clientside, insert bpf program to encap all TCP to port ${port}
--# client can no longer connect
--ip netns exec "${ns1}" tc qdisc add dev veth1 clsact
--ip netns exec "${ns1}" tc filter add dev veth1 egress \
--	bpf direct-action object-file ${BPF_FILE} \
--	section "encap_${tuntype}_${mac}"
--echo "test bpf encap without decap (expect failure)"
--server_listen
--wait_for_port ${port} ${netcat_opt}
--! client_connect
--
--if [[ "$tuntype" =~ "udp" ]]; then
--	# Set up fou tunnel.
--	ttype="${foutype}"
--	targs="encap fou encap-sport auto encap-dport $udpport"
--	# fou may be a module; allow this to fail.
--	modprobe "${foumod}" ||true
--	if [[ "$mac" == "mpls" ]]; then
--		dport=${mplsudpport}
--		dproto=${fouproto_mpls}
--		tmode="mode any ttl 255"
--	else
--		dport=${udpport}
--		dproto=${fouproto}
--	fi
--	ip netns exec "${ns2}" ip fou add port $dport ipproto ${dproto}
--	targs="encap fou encap-sport auto encap-dport $dport"
--elif [[ "$tuntype" =~ "gre" && "$mac" == "eth" ]]; then
--	ttype=$gretaptype
--elif [[ "$tuntype" =~ "vxlan" && "$mac" == "eth" ]]; then
--	ttype="vxlan"
--	targs="id 1 dstport 8472 udp6zerocsumrx"
--elif [[ "$tuntype" == "ipip6" ]]; then
--	ttype="ip6tnl"
--	targs=""
--else
--	ttype=$tuntype
--	targs=""
--fi
--
--# tunnel address family differs from inner for SIT
--if [[ "${tuntype}" == "sit" ]]; then
--	link_addr1="${ns1_v4}"
--	link_addr2="${ns2_v4}"
--elif [[ "${tuntype}" == "ipip6" ]]; then
--	link_addr1="${ns1_v6}"
--	link_addr2="${ns2_v6}"
--else
--	link_addr1="${addr1}"
--	link_addr2="${addr2}"
--fi
--
--# serverside, insert decap module
--# server is still running
--# client can connect again
--ip netns exec "${ns2}" ip link add name testtun0 type "${ttype}" \
--	${tmode} remote "${link_addr1}" local "${link_addr2}" $targs
--
--expect_tun_fail=0
--
--if [[ "$tuntype" == "ip6udp" && "$mac" == "mpls" ]]; then
--	# No support for MPLS IPv6 fou tunnel; expect failure.
--	expect_tun_fail=1
--elif [[ "$tuntype" =~ "udp" && "$mac" == "eth" ]]; then
--	# No support for TEB fou tunnel; expect failure.
--	expect_tun_fail=1
--elif [[ "$tuntype" =~ (gre|vxlan) && "$mac" == "eth" ]]; then
--	# Share ethernet address between tunnel/veth2 so L2 decap works.
--	ethaddr=$(ip netns exec "${ns2}" ip link show veth2 | \
--		  awk '/ether/ { print $2 }')
--	ip netns exec "${ns2}" ip link set testtun0 address $ethaddr
--elif [[ "$mac" == "mpls" ]]; then
--	modprobe mpls_iptunnel ||true
--	modprobe mpls_gso ||true
--	ip netns exec "${ns2}" sysctl -qw net.mpls.platform_labels=65536
--	ip netns exec "${ns2}" ip -f mpls route add 1000 dev lo
--	ip netns exec "${ns2}" ip link set lo up
--	ip netns exec "${ns2}" sysctl -qw net.mpls.conf.testtun0.input=1
--	ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.lo.rp_filter=0
--fi
--
--# Because packets are decapped by the tunnel they arrive on testtun0 from
--# the IP stack perspective.  Ensure reverse path filtering is disabled
--# otherwise we drop the TCP SYN as arriving on testtun0 instead of the
--# expected veth2 (veth2 is where 192.168.1.2 is configured).
--ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.all.rp_filter=0
--# rp needs to be disabled for both all and testtun0 as the rp value is
--# selected as the max of the "all" and device-specific values.
--ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.testtun0.rp_filter=0
--ip netns exec "${ns2}" ip link set dev testtun0 up
--if [[ "$expect_tun_fail" == 1 ]]; then
--	# This tunnel mode is not supported, so we expect failure.
--	echo "test bpf encap with tunnel device decap (expect failure)"
--	! client_connect
--else
--	echo "test bpf encap with tunnel device decap"
--	client_connect
--	verify_data
--	server_listen
--	wait_for_port ${port} ${netcat_opt}
--fi
--
--# serverside, use BPF for decap
--ip netns exec "${ns2}" ip link del dev testtun0
--ip netns exec "${ns2}" tc qdisc add dev veth2 clsact
--ip netns exec "${ns2}" tc filter add dev veth2 ingress \
--	bpf direct-action object-file ${BPF_FILE} section decap
--echo "test bpf encap with bpf decap"
--client_connect
--verify_data
--
--echo OK
+But in any case, looks good to me.
 
--- 
-2.51.0
+Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
 
+Thanks,
+Yazen
 
