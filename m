@@ -1,229 +1,174 @@
-Return-Path: <linux-kernel+bounces-857603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7B2BE73D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:44:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40268BE73E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45EDB19A7D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCF25831D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E1529D269;
-	Fri, 17 Oct 2025 08:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F1F29E0FD;
+	Fri, 17 Oct 2025 08:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QagcDIXo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rEsXJxeo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w2sMkOcO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B67A2550CA
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7FE296BCB;
+	Fri, 17 Oct 2025 08:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690640; cv=none; b=Bev4WQ1VoCCX8wlJ+MIHDMN4kbeo3JVW6f1NgCb00iuj+/Zn8t1IfxK5lHHIpoAnDndRwtLna6aVZ8hQ4cHVk5Um5lguPHG1vHsSUxLVggU2Pf+WICsB46IoPr6hZh4rhofqLephxgCBKYXEHzI9AeEvqaYYIQ1/xPsp6rJySw8=
+	t=1760690681; cv=none; b=mvB8bmuK/wdsfj4yEwcnLgnovx4JkiUxLimX6ga60lJK+pt8Oq/t4WbUp43GooUfgO7ewW2zGBxrwWFEgZqYLsTYyxX1KT27HNKADetdkT6JZ9zO3Pz4ojrgTNECcJRhb3MahLP6HMqH6rqiAKpb34+tFVpHjiZY7tH/Ldm9iB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690640; c=relaxed/simple;
-	bh=GidaS+48bcDLvQiWYT7MP4ypjR0vm2Whz4EHEwIley8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fM8aLs9WkXkeH0KXz4GKazBUk6v8jQWZYpbEWyf2l1fW01mIX8SnOBqeZfuqV3GoXHx1LMRJOVZkTAwyBt9tk9bg6hcLhEtqK/eepn2V4Py/p8LpLBd0mdb+oNhywczqWFebHYyhKsbeySbJ2Jv4PDeGd2JjdDfmh9N4Ic/Vn5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QagcDIXo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760690637;
+	s=arc-20240116; t=1760690681; c=relaxed/simple;
+	bh=qgDPBAQBZGrfdUAUp9hOLmJDvBaLqtxByWYhlThGNhw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i6Cc2gX5QAIbw3EIZBMe4FuqALKNjFdidAXGrClC7PYQzXP4FxGqjFXtrk98kf3q6rtMRxCCZCawGZxETZdAGqKYdjMFZSIeAhjopvLa1oZ2Dz9JH0Vzt6uhFHZEA7rIaZPlIyLHLEYjdIX/qUy29StKyFn6cab1qVWhDiec7DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rEsXJxeo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w2sMkOcO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760690677;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hdjQ4qyzWoJmN2qqSnfHvdTH6aak7xEA6dFVesveV1s=;
-	b=QagcDIXouBpYfKdlbhmbSP6mK0HINo2Yuh/nq3YdlpfbvWsiIqIYZiFtZG17Wn4aL7xwx8
-	UZ9wLbE7PLmbNUPU571e/4pHc6zFL9/BLz46xgnhH1Eig5HwIteXcTmH2GfJbYyFxZoK8D
-	k9WHDF3dFjtAOzSCEpujCqNiBl9tnPk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-IwL1EtE9PtKUmGKYeJs7YA-1; Fri, 17 Oct 2025 04:43:55 -0400
-X-MC-Unique: IwL1EtE9PtKUmGKYeJs7YA-1
-X-Mimecast-MFC-AGG-ID: IwL1EtE9PtKUmGKYeJs7YA_1760690634
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso4600835e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:43:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760690634; x=1761295434;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hdjQ4qyzWoJmN2qqSnfHvdTH6aak7xEA6dFVesveV1s=;
-        b=l60PngTXsz+baeQlnkD214r/IxPef5r5eNlRRuTUZzJE8k2EG4khPOkU/Qan1L2af7
-         RS6yiX6T6EVtu8edSx0t5okFcSWFSwhVdLHpK3ZYBsOJzqjVoFoqXTYHUPPQHWi9SQAi
-         Tksyq1ZF7j9/Bw/W4tl0FT7sliQr7Y3mV9EOrXbQQOt9bLtixcnztjwpeIbMvJ+5Oige
-         x4U89HHecPYixKyQHurvSuh1k2R6Ev7iQH2qedxB3DH58NmjVxzmLQNfg6fHpJmmm6nl
-         4WnLeDTC5dIcjWV2I/21PZ4OK4h9ANmuKo97XPde1Raod3RfpVxcNCUE78be9kW3I304
-         F3oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdnYbhfKSwkBTfhuGn0HnmrQeiBxplvOTphFYpSNpmXem+QQEE9L1fJsar/zjQa5q7Era1IZOLzDYG/z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysi7U/w+6Xzxm3xBNSgSnOxkma1yVsyBGScySESa9cs3Rck/pc
-	GWD6VxYWTRV+Q/Hcq7ft6dj9yr9jv26xGtZcpT4h9NeHPBuWQIQ8ELsFK/VldmuXuOt+oEpuj6c
-	36D4d5AHZWizXTXKCTD7PfyA5jokpxCS2fwLbaD3ja7fuTcMQ5v3sS+W+Ucwk83MhIg==
-X-Gm-Gg: ASbGncvdJjcpxb/852tr++odU3gE2EDpc9nCummGU1PeRgllDahZ3A2EJil9MnPU83H
-	wOFtypkyIPQDrUt3iU1Nq0CmoLFC9g0Kc8mHlMErERXa1QIGU28i8b0k65xVxOtk58tLM4AGUKb
-	zDlGD2EgU1eOywueYDD4FYyWpTdqRFS0tb80mlqvtO0xVr3fD4hDXagqlCZ36se6BO7rG8FgnfV
-	x0tQ2p7RSOmABQhPU25/GJU9PvIsC596lItAvZeZND5IndxJpGdGd+uRMCFni96s/+WGe1/46sX
-	vhj43MVKr9mMR7PU2BSGCYkdwNRdvbrVVpgWMqgUrzwK0OUUGEnzd062LjBcIv5CC1hHSgxPpqq
-	9txBhWzQOpbMBY+1AzgZtLg5hNbL6fPnzBWz3D8aDf2nUsjAeXGIKXx0M/h2/OHtqfG93p9pGw0
-	oYt7KftcWpbLDcjZWQWP0BHnR/IMA=
-X-Received: by 2002:a05:6000:26d1:b0:425:75c6:7125 with SMTP id ffacd0b85a97d-42704d5219emr2173325f8f.16.1760690634354;
-        Fri, 17 Oct 2025 01:43:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWpf5r9YWNP2HCmN5FwKsBoth7gpS6CovBTFafFM53yr6iZIzCOSgetIwZnTDLGS7ar2cFYg==
-X-Received: by 2002:a05:6000:26d1:b0:425:75c6:7125 with SMTP id ffacd0b85a97d-42704d5219emr2173295f8f.16.1760690633874;
-        Fri, 17 Oct 2025 01:43:53 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42708bcea1bsm1267844f8f.14.2025.10.17.01.43.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 01:43:53 -0700 (PDT)
-Message-ID: <4a7a7fbb-e33e-4033-91e7-efce7915cf7f@redhat.com>
-Date: Fri, 17 Oct 2025 10:43:52 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=8l98EgvkPcRXAFtf3Mvaaqt6iRB7ATL73UNXw0Nrql0=;
+	b=rEsXJxeoful2dBoqN0sCZLBmCEYFUySJsXMrqk/i/FXYQ6RbPGwnxw9/Gy7kYremFABHtl
+	n9+GnsckKysMFkQvVKlBI/b2ZmDExPhsrP6u20y0oDKcGcHg9vh9MCiKivaW5OCUQSPt6o
+	dZWTL4xEdvqu2xGRLFSU3m/3hVo2Qbn7ihuupIqxByryiQBd9TUr/VZeT23XSiUOXAoBTI
+	KOLszVt2Dyfb5mkWzroJh7baRsEV7w/F71nPO1OnUq83N29KJbEzX0BAg7szgwp4V4BKcY
+	MjeWV0N6FkpGFGEcxKkWTAohte/hai3Mvz/o6/91Vg/zcIZNDZNWF2Q5tLoC2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760690677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8l98EgvkPcRXAFtf3Mvaaqt6iRB7ATL73UNXw0Nrql0=;
+	b=w2sMkOcOzBN5V2hNMw0VQfIe7Iw+KoJlbhkmXyVafyljEUM/VjgLDLizctD8ow3jFCxRg+
+	T+pUsQw03SFaeACw==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
+ Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v2 10/20] rv: Add Hybrid Automata monitor type
+In-Reply-To: <20250919140954.104920-11-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+ <20250919140954.104920-11-gmonaco@redhat.com>
+Date: Fri, 17 Oct 2025 10:44:36 +0200
+Message-ID: <87ldl9x6h7.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: guard is_zero_pfn() calls with
- pte_present()
-To: Lance Yang <lance.yang@linux.dev>, Wei Yang <richard.weiyang@gmail.com>,
- Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, baohua@kernel.org, ioworker0@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20251016033643.10848-1-lance.yang@linux.dev>
- <17c4c5f9-6ac8-4914-838f-f511dfbf948f@arm.com>
- <20251017012724.4bo5oj2g6tdmp2fv@master>
- <1674efca-6d4e-4247-8b1c-b6816360d8bb@redhat.com>
- <ab918a83-edb2-4a19-821d-a96de9e097eb@linux.dev>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <ab918a83-edb2-4a19-821d-a96de9e097eb@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 17.10.25 10:37, Lance Yang wrote:
-> 
-> 
-> On 2025/10/17 16:11, David Hildenbrand wrote:
->> On 17.10.25 03:27, Wei Yang wrote:
->>> On Thu, Oct 16, 2025 at 11:47:06AM +0530, Dev Jain wrote:
->>>>
->>>> On 16/10/25 9:06 am, Lance Yang wrote:
->>>>> From: Lance Yang <lance.yang@linux.dev>
->>>>>
->>>>> A non-present entry, like a swap PTE, contains completely different
->>>>> data
->>>>> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
->>>>> non-present entry, it will spit out a junk PFN.
->>>>>
->>>>> What if that junk PFN happens to match the zeropage's PFN by sheer
->>>>> chance? While really unlikely, this would be really bad if it did.
->>>>>
->>>>> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
->>>>> in khugepaged.c are properly guarded by a pte_present() check.
->>>>>
->>>>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->>>>> ---
->>>>>     mm/khugepaged.c | 13 ++++++++-----
->>>>>     1 file changed, 8 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>>>> index d635d821f611..0341c3d13e9e 100644
->>>>> --- a/mm/khugepaged.c
->>>>> +++ b/mm/khugepaged.c
->>>>> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t
->>>>> *_pte,
->>>>>             pte_t pteval = ptep_get(_pte);
->>>>>             unsigned long pfn;
->>>>> -        if (pte_none(pteval))
->>>>> +        if (!pte_present(pteval))
->>>>>                 continue;
->>>>>             pfn = pte_pfn(pteval);
->>>>>             if (is_zero_pfn(pfn))
->>>>> @@ -690,9 +690,10 @@ static void
->>>>> __collapse_huge_page_copy_succeeded(pte_t *pte,
->>>>>              address += nr_ptes * PAGE_SIZE) {
->>>>>             nr_ptes = 1;
->>>>>             pteval = ptep_get(_pte);
->>>>> -        if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
->>>>> +        if (pte_none(pteval) ||
->>>>> +            (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
->>>>>                 add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
->>>>> -            if (is_zero_pfn(pte_pfn(pteval))) {
->>>>> +            if (!pte_none(pteval)) {
->>>>
->>>> Could save a level of indentation by saying
->>>> if (pte_none(pteval))
->>>>      continue;
->>>>
->>>
->>> Vote for this :-)
->>
->> I suspect there will be a v2, correct?
-> 
-> I was hoping a v2 wouldn't be necessary for this ;p
-> 
-> Of course, if we'd prefer a v2, I'm happy to send one out.
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> diff --git a/include/rv/ha_monitor.h b/include/rv/ha_monitor.h
+> new file mode 100644
+> index 000000000000..fb885709b727
+> --- /dev/null
+> +++ b/include/rv/ha_monitor.h
+> @@ -0,0 +1,469 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2025-2028 Red Hat, Inc. Gabriele Monaco <gmonaco@redhat.com>
+> + *
+> + * Hybrid automata (HA) monitor functions, to be used together
+> + * with automata models in C generated by the dot2k tool.
+> + *
+> + * This type of monitors extends the Deterministic automata (DA) class by
+> + * adding a set of environment variables (e.g. clocks) that can be used to
+> + * constraint the valid transitions.
+> + *
+> + * The dot2k tool is available at tools/verification/dot2k/
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+                                     non-existent
+> +/*
+> + * ktime_get_ns is expensive, since we usually don't require precise accounting
+> + * of changes within the same event, cache the current time at the beginning of
+> + * the constraint handler and use the cache for subsequent calls.
+> + * Monitors without ns clocks automatically skip this.
+> + */
+> +#ifdef HA_CLK_NS
+> +#define ha_update_ns_cache() ktime_get_ns()
+> +#else
+> +#define ha_update_ns_cache() 0
+> +#endif /* HA_CLK_NS */
 
-I lost track of what the result will be, so a v2 would be nice at least 
-for me :)
+ha_update_ns_cache() itself does not cache, its caller does. So I think
+it is misleading to name this "cache".
 
--- 
-Cheers
+Why is "update" in the name? Isn't something like ha_get_ns() betters
+describe this macro?
 
-David / dhildenb
+> +/*
+> + * The clock variables have 2 different representations in the env_store:
+> + * - The guard representation is the timestamp of the last reset
+> + * - The invariant representation is the timestamp when the invariant expires
 
+Why does guard representation store the last reset?
+
+For example, what if I specifiy the guard as "clk > 500ns". Shouldn't
+the guard representation be "500ns"?
+
+> +static inline u64 ha_get_passed_ns(struct ha_monitor *ha_mon, enum envs env,
+> +				   u64 expire, u64 time_ns)
+> +{
+> +	u64 passed = 0;
+> +
+> +	if (env < 0 || env >= ENV_MAX_STORED)
+> +		return 0;
+> +	if (ha_monitor_env_invalid(ha_mon, env))
+> +		return 0;
+> +	passed = ha_get_env(ha_mon, env, time_ns);
+> +	ha_set_invariant_ns(ha_mon, env, expire - passed, time_ns);
+
+The function is named *get*() which indicates that it only reads. But it
+also writes.
+
+> +/*
+> + * Retrieve the last reset time (guard representation) from the invariant
+> + * representation (expiration).
+> + * It the caller's responsibility to make sure the storage was actually in the
+> + * invariant representation (e.g. the current state has an invariant).
+> + * The provided value must be the same used when starting the invariant.
+> + *
+> + * This function's access to the storage is NOT atomic, due to the rarity when
+> + * this is used. If a monitor allows writes concurrent to this, likely
+> + * other things are broken and need rethinking the model or additional locking.
+
+Does atomic_sub() solves your "NOT atomic" problem?
+
+> +static inline void ha_start_timer_jiffy(struct ha_monitor *ha_mon, enum envs env,
+> +					u64 expire, u64 time_ns)
+> +{
+> +	u64 passed = ha_get_passed_jiffy(ha_mon, env, expire, time_ns);
+> +
+> +	mod_timer(&ha_mon->timer, get_jiffies_64() + expire - passed);
+> +}
+
+I don't understand this "passed" thing. I see this function being called
+in ha_setup_invariants() of stall monitor. Stall monitor is validating
+that the task does not stay in "enqueued" state for more than
+"threshold_jiffies". If so, what is the purpose of "passed"? From my
+understanding, it should be just 
+
+static inline void ha_start_timer_jiffy(struct ha_monitor *ha_mon, enum envs env,
+					u64 expire, u64 time_ns)
+{
+	mod_timer(&ha_mon->timer, get_jiffies_64() + expire);
+}
+
+what do I miss?
+
+Nam
 
