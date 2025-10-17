@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-857360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B89BE6A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D222BE6A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0DE6250E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D69B741999
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21773254B1;
-	Fri, 17 Oct 2025 06:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7C731062E;
+	Fri, 17 Oct 2025 06:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDT2h+jN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gI4ptFeP"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9C310635;
-	Fri, 17 Oct 2025 06:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223C830F958
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760681493; cv=none; b=lTuXOj0+qEH/oVPWcg+/oDvCu2a7sOedLjGUT4hAJnOgvDsPtD4zZla31uLyY97AtjOSOg7vaZl1buIhS5i0kPZXWxnUR1LfpJD/LilDYUgiX2CyodyBmO3BwNCtQ6xyRF+FZm1bGnC5i/fd7l9svP30xGTg2BKAajgFlxa8sKs=
+	t=1760681599; cv=none; b=u/ODVHzrcl8A13UVFxVOKJ/8rO7KQrEJrOHn/HkVWVBfrYEaf/mnfuA2g1f7nZrA9BY1tV0Vo6G7GjQMXL12zdVQ3wHmQ2X3GtJG7CSbgcBl9NDPF137mX5pYulDXQPMYKxXMFL93jU6L2nED2aPpoL80PeQttNwVhQFMFh0Hog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760681493; c=relaxed/simple;
-	bh=NTA7XXehFna8Lnz9z9hQDJQmt5EcD5cxGnspoWjl5V8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iBdJZAUvAXRPDQvTXKdO8GemFoJqEqMa6+1wa571bDoCkdb4CG/Mb2Mn2wKedcFCz84xggkYoXx8J3H+JaF4f+lyR86A+CoH8iYJjx2O7ljSH0Tp9iQZenYAFR3xzb3XKfqShX7YAfMh0WzlTqAE9CSwH6TZQrpprouHAluD9oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDT2h+jN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A785AC116B1;
-	Fri, 17 Oct 2025 06:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760681492;
-	bh=NTA7XXehFna8Lnz9z9hQDJQmt5EcD5cxGnspoWjl5V8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NDT2h+jN4Fo/V782pJVCyAoFMDQnca+b11ea9IbVH3hZjx0JvKZtsDb6BBFbxJjEW
-	 KgBXOBYWrEY29jdKBiR3vbIBwAvxiCfFNcudI8kD5AngbnR6YCXGd7Gm/Un9geOOhy
-	 D77x5NWxRh1HnfG5BNY2cWp5KPcDogJIY8suYnFlWyVt8y6Y1DXGOic69Oiyeaku6O
-	 jiFtYZC1AUghnKzEeE8N/MiZXcEBeLnF3tKQAUsTXa2lO5xM7Z9LrWnpYHdCdguVeL
-	 bcGn/MEskl7O9AeiTXgrczZsx8a2QjKycNOYotd5N4YdFzfYbTDfRO3+PgA6xYZSvE
-	 hyX8lEwLBY9nA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8C4CCD1A2;
-	Fri, 17 Oct 2025 06:11:32 +0000 (UTC)
-From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
-Date: Fri, 17 Oct 2025 14:11:21 +0800
-Subject: [PATCH net v3 3/3] net: stmmac: est: Fix GCL bounds checks
+	s=arc-20240116; t=1760681599; c=relaxed/simple;
+	bh=eF6t9Vq9NRea3XnH1BHglCTN0IeLN7yA62hWb+lXoeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kaHgDhOCzJvcv2v/JACN+6QI5jhU9Vxa2IX69tKRnO6sQxs5uEq4Am9syv2q2gNk+k32sLW9k0Mw+O8A/KTdGQq38X6s8kSKSBJSWF/AYTsiuaL2h1U9mtUuqiaJXfNJi6LuwxA7T8cNcO69aKh2/9L+Nl3ykmipB0HM18ZEdz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gI4ptFeP; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4711b95226dso2047865e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760681595; x=1761286395; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RHSNJ2BDwx1sBbfCkuw18NdbM457O5a6eDYxm9b/Apw=;
+        b=gI4ptFePjPd23cusxBMiooO9gPjaVXKeuVH16Sq9TrAYSb68PcoIxvuviViJjSARD/
+         k+SHjLrGB17S00Zg4tuMgiNDgHHEjjz7ue1ZRQ2FGpD+yKVE4b7mgmemATWoGEdT8Fmc
+         DUP1s85K/bsUFBIJNTpNjb9GNHnyg1/MP7qdMibT1hUzCI+VqE5cxpbXdlZcPVlSfTm2
+         eEFOPgyzttZuLv3gN18aj2y8aQD2W/GPahATDDgV4yXUe+01hpVY5tPO4SPtvZiFdT0+
+         bEdYNCX8lHsTm1ugX/cqKpyk8hoZPpLRPS7WN9YnAcrH7hSiuIkWGxi6SNkIxnDJQtj+
+         Q7EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760681595; x=1761286395;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RHSNJ2BDwx1sBbfCkuw18NdbM457O5a6eDYxm9b/Apw=;
+        b=iJoajxyy3yxSY94wPbUqEbqFlZI1m1pgEwhGPkC/0A9tzGKckHGfhgGXth+r03ct9D
+         wCeD3CmQp/a3kL11+zgRjd2Gr9bvGIyBbTVk7z9tgeUbu7C+g7YO3qtBaiDLgFW2G+HY
+         XkbrZVnoKP9KND7NfhZ3W8Co7moXDDzj/IbY/hrn74ElsqDT6QVe1/bgIXdRJ2PJ/S+k
+         HfsjdWNEbNRZwFCaHBpHG4GezyeTFJqEcQQMfc7ZkkWsy9OCikVGYxmLAVqchaOzQ0FL
+         4M4gxiYR09eOu8pYdZbUU89vO65qbsi+mx5rNNhMdtOefI5PFLM1O5Df4/Aaal5VPz89
+         BAvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX467H1oeO+bzuQMf35+D99hKZHub90387/FkqaqlazyAFMoc/KDUbaoRm6yBJZg6mgc1EpIPtOKfJcxII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZYL9w9Kg142CBzjO/70yKBFe1D+Yy4Td0fg3TmJUFu+OjsIam
+	8+tGuMnIsLbOX617o+wP95xGBteAtbf28AXahywNP8tH8PTrPj+DwHvuCh2zf+mo9J4=
+X-Gm-Gg: ASbGncsS9agxbzCzbw4pfBIC/iSUw7UGPBPbhl5fqMDmq17gOWFlzIJyE2Xdh+lL69C
+	wfaa2kK3muAqQmYZp3mIAy4v3pEI8Nhe/Qnt39y+ifkqP1dOlheR72BODblcQ8VcU8VhgT8JYGu
+	+3ixq/9tBJCKZjEsznVYlLo2RWhY2xtRooHhlJHOIFXHKzPAzPi1ipA/7IG0SC/Vb6enpIohA+a
+	IECnwfpySNeIJyPgrH8f+grisKUPXl2wb2CyRIo217DIOQchN80emayBkdSKqJAqpycF44nqUPz
+	nxen4REobc9bMhRQJr8WgKOW2GN2G2Gw5cJQ7R8Eotrs7jeKTUCZG2lGFNRC4r4lGF6C5fDNa6N
+	qzUFzq6ypXglNIDE/oM77bCYXDolB2TQCIkkNWOpPxR1KYITmx+IcKM1yA5lY6iiMh4ZtITuQnN
+	EbT7FphpxY9G9LpMgs
+X-Google-Smtp-Source: AGHT+IFi56b/X0lBjC6eoQ5DueToZROug6pRk4AZnyscKkreLGme/V1PG6KxmiRrNewDQ22JeqVkQg==
+X-Received: by 2002:a05:600c:34d0:b0:471:1717:409 with SMTP id 5b1f17b1804b1-471179071b4mr16544585e9.23.1760681595439;
+        Thu, 16 Oct 2025 23:13:15 -0700 (PDT)
+Received: from orion.home ([2a02:c7c:7259:a00:6426:9b9b:6d3d:1da8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47114429679sm61624745e9.8.2025.10.16.23.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 23:13:14 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	sboyd@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	srini@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH v5] dt-bindings: mfd: qcom,spmi-pmic: add compatibles for audio blocks
+Date: Fri, 17 Oct 2025 07:13:14 +0100
+Message-ID: <20251017061314.644783-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-qbv-fixes-v3-3-d3a42e32646a@altera.com>
-References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
-In-Reply-To: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Jose Abreu <Jose.Abreu@synopsys.com>, 
- Rohan G Thomas <rohan.g.thomas@intel.com>, 
- Boon Khai Ng <boon.khai.ng@altera.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Rohan G Thomas <rohan.g.thomas@altera.com>, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760681491; l=1340;
- i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
- bh=mX5G4ROq0gDY4G0a4Qm/T3N17XaJr2mEhgFfcjCdoJk=;
- b=z8V58A1VlIr5ekLOqI6PBxwoKAM5sCuB+v2xtlazP8QRxqeoIu3e4AOJzUJiniz/MDLjGmNFn
- YWFLDF9+3quBrbhbs5cVU0EvUePkFdXCjLg7rESERbIkmMEmkC4wGuz
-X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
- pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
-X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
- with auth_id=494
-X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
-Reply-To: rohan.g.thomas@altera.com
+Content-Transfer-Encoding: 8bit
 
-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+If/when pm4125 audio codec will be added to a device tree file, then dtbs
+check will emit messages that pmic audio-codec@f000 doesn't match any
+of the regexes: '^pinctrl-[0-9]+$'.
 
-Fix the bounds checks for the hw supported maximum GCL entry
-count and gate interval time.
+Add the compatibles for two possible audio codecs so the devicetree for
+such audio blocks of PMIC can be validated properly while also
+removing reference to qcom,pm8916-wcd-analog-codec schema file.
 
-Fixes: b60189e0392f ("net: stmmac: Integrate EST with TAPRIO scheduler API")
-Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 97e89a604abd7a01bb8e904c38f10716e0a911c1..3b4d4696afe96afe58e0c936429f51c22ae145be 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -981,7 +981,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 	if (qopt->cmd == TAPRIO_CMD_DESTROY)
- 		goto disable;
- 
--	if (qopt->num_entries >= dep)
-+	if (qopt->num_entries > dep)
- 		return -EINVAL;
- 	if (!qopt->cycle_time)
- 		return -ERANGE;
-@@ -1012,7 +1012,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 		s64 delta_ns = qopt->entries[i].interval;
- 		u32 gates = qopt->entries[i].gate_mask;
- 
--		if (delta_ns > GENMASK(wid, 0))
-+		if (delta_ns > GENMASK(wid - 1, 0))
- 			return -ERANGE;
- 		if (gates > GENMASK(31 - wid, 0))
- 			return -ERANGE;
+v5: implemented Krzysztof's suggestion, completely rewrote commit messasge
 
+Previous version:
+https://lore.kernel.org/linux-arm-msm/20250915-pm4125_audio_codec_v1-v4-2-b247b64eec52@linaro.org/
+
+ Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
+index 078a6886f8b1..2a7a92371b55 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
+@@ -137,7 +137,11 @@ patternProperties:
+ 
+   "^audio-codec@[0-9a-f]+$":
+     type: object
+-    $ref: /schemas/sound/qcom,pm8916-wcd-analog-codec.yaml#
++    properties:
++      compatible:
++        enum:
++          - qcom,pm4125-codec
++          - qcom,pm8916-wcd-analog-codec
+ 
+   "^battery@[0-9a-f]+$":
+     type: object
 -- 
-2.43.7
-
+2.47.3
 
 
