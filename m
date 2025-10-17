@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-857422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BABBE6C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:47:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4721EBE6DA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DBAB5E25E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:46:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 534D1561977
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B6B3101BC;
-	Fri, 17 Oct 2025 06:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192A6312822;
+	Fri, 17 Oct 2025 06:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uc+OZZt6"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hMGsVRd0"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65717310764
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B619E222578;
+	Fri, 17 Oct 2025 06:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760683555; cv=none; b=ZRrUNYfUODU45oXJLTOCcGH5xiWWP37TG43PzgFQq/zPlIuBqScWf10AZzpbw24TxZxm2rL3HUFEm4CiU5HrKtA5t7IT+NWubbEOO5vYSgy6nwWsNs3vsPj+siNhTCoaM6I6uHBnSyh/D2fT4rKULMJXEkOlbM9paoJxSSINxj0=
+	t=1760684052; cv=none; b=jttHoMpDgBbw3XXiUQkcyx8wPZLxm2d2F3Y+w9yDMyJSbzG9erH28bQKHnOGYnyI2mPlGKaMgz+EoEZZqiecWimzGnBLrhibQZJCRGsGornuV6eFDTDcUBikA+hl9KgOeCy99UCut+HJyEeN66q4xAJntGpGb7jXyQRqkLgowDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760683555; c=relaxed/simple;
-	bh=Y8VoXhImxF1w1dbi0lgAcXI04oMk6uKN2d6iSlSdjTk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=jF63FQx7uRkjLEbFfySqX9pBooR1XNqglSVsS3WT7LoORcU/dSaw50bB5LQiTYsXVHXUViTR7zrJ1fuVKYy0cb09ohuWjYkihKjhV5Res7V/FWUFdvpOATQJUqhAg7rUQamRtE2bFmTaX7A02FjPUTwx7+tfuFuX0W0QzNtfg1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uc+OZZt6; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so14254935e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760683552; x=1761288352; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cxXwBRH3OdLI6ivv4eNJ4mVtVC/UotONZ6PQtTD+YIs=;
-        b=uc+OZZt6bbuvCyutKKMIvPG3rVkJ2GIgOy5aVU3oE7vOzD4iXxA9OBh6ERxTy7Z306
-         6oMQlEyYtTEcY6RMqDgtMo0KBk3c7SQTGcZx4O0PkbSbZeh5Lj/f3ET5DX448msxCLIp
-         fIlPrD5ofd6qLa8I0I+vilTBnCF6OpGa0Pl41MZmELHLG7WEb/gGLSGT8UEnJme0OREz
-         80XFbD/F4+ZGdgeRXqyWNQ5v06bb+q2uI1hguEZdJvA61akneZyY8cIbE8y0ftpS1EN7
-         SnggNWsBVgZtWXUFnaDcjnY0DoAazpF6WIC8i6pZmE0i3wcCaWHfoyazoFoaHC8e1dX2
-         g7UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760683552; x=1761288352;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cxXwBRH3OdLI6ivv4eNJ4mVtVC/UotONZ6PQtTD+YIs=;
-        b=NDnHpb3kUzjY8F/V1CWzn2jYaCdYFPZyFWfBy57h/8litR4wEEAl4fYIgle+tVlUOl
-         HexSJvecrziiiCYHTNNKj40LP/ewBvRLCiUojcKwmRj1PtX6sMo9t1RSuMPVI/OZj03W
-         p6/XETEeA7eH2/3MNLhbef+aYOGvtwnMCt1i+i4YW6/wswoSuCeJavidyeLUAM+UrFPC
-         sJnMK1ACKpn4hlqs05mRrkEzWcjcn3F7uRpzU8T+XpARt4glbrrzWjAhVtvfzu/8+k5Y
-         xzQrWULHby2KhukZi+Wb1stqeseFNpzSv1GYbFmUkTSiv2QOYBKhiLY2BerLpg0i3kQ9
-         paWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKdgKdwS/X+OSDlZQF5B7sGrRtW/B/mUEhJengUyKbpvA3vmdFBnaQC0uO5edv/oaLjzGiGIivizCLrVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd2olyzK5j61K+uHvxh/eOi60FMdsGfZWEmYK3ju5j2pQY95W0
-	TW4RhPvIlVA6cou7FlA/fdgVzAvVgJqejmgB1UOQcT2ZpQr/U4LcSCUVHV+Ijkp/bR4OWvTipd5
-	+pNwv
-X-Gm-Gg: ASbGncusk+wVYvPly56aMz+biVFBaQWCQ1gW4eJOyD5nqvEoCDCFeUH30ajMHwFUClj
-	M4ykcJHNRhF3IOSDhtRLCKoezyt7lC5Oy4VTZTc4nk+XLaWC35IHQeW+qiIUqscGB/1XxFJsDWv
-	P1HwE7ulBhUWCE5bumM5hZ6d6EMUzU9a1WnYT96QUH3buuctkbQLZJyKNualowuri/+WK3rVklh
-	8eHfXrGAtSesPvXjJILGJ4WUciMUgEvvEIDnnYgqiFh4hvAw5Ik0i3SulAHSporpZdWhH99lxUt
-	lvo0YU4DNTs90yI7MIGjK1i9HSVqgIhbCsmYvWlXispqzBwhfPA33G6QdY2Pw3crd91n6kDYLF6
-	knefxFpbsT5Oqo7r7mA4QFfRZLGtM8KGro/bXTg3wFrzYggc7SBUvd+xGTykMUIAnL+PP4Hu9bS
-	mO3YuO
-X-Google-Smtp-Source: AGHT+IGkGQlk9WZP2Ulpn4AcpV8f96nPE/t/dP3omgDpA/THfd4k+GylVoGgGF64mCc4wmfibWovUA==
-X-Received: by 2002:a05:600c:1551:b0:46e:2801:84aa with SMTP id 5b1f17b1804b1-471177b143emr18469735e9.0.1760683551674;
-        Thu, 16 Oct 2025 23:45:51 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:6426:9b9b:6d3d:1da8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c91sm63630395e9.11.2025.10.16.23.45.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 23:45:51 -0700 (PDT)
+	s=arc-20240116; t=1760684052; c=relaxed/simple;
+	bh=n8N515s/KBGxxKPtSDSRkOGEAFRIT2T+Tu0aFDfDoPQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k89pJ7AbvaRsmezyWYZDJjFzbKI3WRggqiqUKoyvTheHimVU/z3+4B8G8kSpznYOQeDka2PZYEJ1YsyDS2Dc6gsLk7hx3ws4ehKq8Z9oZOyDPSjwu2V5xYgK89gWzzNQEyjFK84tUsSWY+Y3pcX/7QEPl8Fxa/2xWyMO2ggTCz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hMGsVRd0; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1760684050; x=1792220050;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=n8N515s/KBGxxKPtSDSRkOGEAFRIT2T+Tu0aFDfDoPQ=;
+  b=hMGsVRd0lIxtX3XPkTQFeLrYyYCvjVyj3bYuVFOTOYfY+LvKQ34YvesJ
+   Xl8TxzCtBJ6iokT1nnaSNVEAW+VHoP/2Au1yxQ5cxqS2rDs/SjFf3jPYp
+   +rfLy5GwmAGKADi22XPwmmkFJr1yMEtsb9Zu92UMOQhye0KbNf4LPr8yG
+   z3TrEXFHsqsMxHJ56g0To+Yll1Rfpd/7i8szq5RiyNFKw00J8FB6Xu595
+   KEoeoO9VVvriMsqH2l/+ZvZpPphPPVIwjTb58ZQ9xPgRtqI/bFQPlI4Po
+   BbOg1HZ3KQ/WonZ1Oc468d018M+YmteENHByqTBlO7jg7Fns+1AL086m8
+   w==;
+X-CSE-ConnectionGUID: +cWLnLSSQKWQk8EtywTa8g==
+X-CSE-MsgGUID: FrSTrx4/QA2jz6W2jtDopw==
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="215250381"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Oct 2025 23:54:03 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 16 Oct 2025 23:53:43 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 16 Oct 2025 23:53:40 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
+	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
+	<christophe.jaillet@wanadoo.fr>, <rosenp@gmail.com>,
+	<steen.hegelund@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net v4 0/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
+Date: Fri, 17 Oct 2025 08:48:17 +0200
+Message-ID: <20251017064819.3048793-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 17 Oct 2025 07:45:50 +0100
-Message-Id: <DDKE88TY46WS.1XKHP5I1S3CF6@linaro.org>
-Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <srini@kernel.org>,
- <krzysztof.kozlowski@linaro.org>, <linux-sound@vger.kernel.org>
-Subject: Re: [PATCH v5] dt-bindings: mfd: qcom,spmi-pmic: add compatibles
- for audio blocks
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, <lee@kernel.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <sboyd@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20251017061314.644783-1-alexey.klimov@linaro.org>
- <2e4e0ad1-a030-4933-8bc9-7b9782234a15@kernel.org>
-In-Reply-To: <2e4e0ad1-a030-4933-8bc9-7b9782234a15@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri Oct 17, 2025 at 7:25 AM BST, Krzysztof Kozlowski wrote:
-> On 17/10/2025 08:13, Alexey Klimov wrote:
->> If/when pm4125 audio codec will be added to a device tree file, then dtb=
-s
->> check will emit messages that pmic audio-codec@f000 doesn't match any
->> of the regexes: '^pinctrl-[0-9]+$'.
->
->
-> Future errors because of present mistakes are not a reason to do
-> something. This makes no sense because there is no DTBs with that
-> compatible, so drop this sentence. We never document compatibles,
-> because in the future they will be errors (if I get it right?).
+The first patch will update the PHYs VSC8584, VSC8582, VSC8575 and VSC856X
+to use PHY_ID_MATCH_MODEL because only rev B exists for these PHYs.
+But for the PHYs VSC8574 and VSC8572 exists rev A, B, C, D and E.
+This is just a preparation for the second patch to allow the VSC8574 and
+VSC8572 to use the function vsc8584_probe().
 
-Ok. I can hold it off till it will be started to be used then.
+We want to use vsc8584_probe() for VSC8574 and VSC8572 because this
+function does the correct PTP initialization. This change is in the second
+patch.
 
->> Add the compatibles for two possible audio codecs so the devicetree for
->> such audio blocks of PMIC can be validated properly while also
->> removing reference to qcom,pm8916-wcd-analog-codec schema file.
->
-> And that's now incomplete. You add new device here and because preferred
-> and sufficient is to list compatibles, you change existing audio codec
-> child schema reference into just list of compatibles.
+v3->v4:
+- rebase on net-main
+v2->v3:
+- split into a series, first patch will update VSC8584, VSC8582, VSC8575
+  and VSC856X to use PHY_ID_MATCH_MODEL, second patch will do the actual
+  fix
+- improve commit message and start use vsc8584_probe()
+v1->v2:
+- rename vsc8574_probe to vsc8552_probe and introduce a new probe
+  function called vsc8574_probe and make sure that vsc8504 and vsc8552
+  will use vsc8552_probe.
 
-So the way I understand this is that commit description is incomplete.
-I can change it to your liking, okay.
-FWIW, "add new device here" is said as
-"Add the compatibles for two possible audio codecs" and removal of
-child schema reference is also mentioned as "while also                    =
-                   =20
-removing reference to qcom,pm8916-wcd-analog-codec schema file".
-But I can change it, okay.
+Horatiu Vultur (2):
+  phy: mscc: Use PHY_ID_MATCH_MODEL for VSC8584, VSC8582, VSC8575,
+    VSC856X
+  phy: mscc: Fix PTP for VSC8574 and VSC8572
 
->> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
->
->
-> I don't think I suggested this patch. What's more, it wasn't here at v4.
+ drivers/net/phy/mscc/mscc.h      |  8 ++++----
+ drivers/net/phy/mscc/mscc_main.c | 29 +++++++----------------------
+ 2 files changed, 11 insertions(+), 26 deletions(-)
 
-The original idea was to fix the warning or error emitted by dtbs check
-but now the whole body os the change is your suggestion. Now it seems
-it was not even needed at that point earlier which is a new finding.
-Your prefference -- drop it or keep it.
+-- 
+2.34.1
 
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-
-Best regards,
-Alexey
 
