@@ -1,47 +1,88 @@
-Return-Path: <linux-kernel+bounces-857602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860C9BE7397
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:43:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7B2BE73D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B3E3B25A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45EDB19A7D30
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432A325F984;
-	Fri, 17 Oct 2025 08:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E1529D269;
+	Fri, 17 Oct 2025 08:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZlhuXG9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QagcDIXo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954B3296BCB;
-	Fri, 17 Oct 2025 08:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B67A2550CA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690589; cv=none; b=Ib1vZbxVJHLUofZx++k+OOH+LnSrcSH7LmuuHzVwyHStENK9/YSKgn/nGUT+Dx4Rp5BWfKYFgznPS0d1BCma7jWo+K0UPIbnVVfYDKz2Qkf6fSbNf1UKLwBcR/F/tCM9FtWnLdX0tqTbK7DCV2Ungotdn536iy5Uim+jiBLYHPg=
+	t=1760690640; cv=none; b=Bev4WQ1VoCCX8wlJ+MIHDMN4kbeo3JVW6f1NgCb00iuj+/Zn8t1IfxK5lHHIpoAnDndRwtLna6aVZ8hQ4cHVk5Um5lguPHG1vHsSUxLVggU2Pf+WICsB46IoPr6hZh4rhofqLephxgCBKYXEHzI9AeEvqaYYIQ1/xPsp6rJySw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690589; c=relaxed/simple;
-	bh=w3yiEGMdzJiDv0/xbQkFRtwluVFnBEMxzuh275dPyKA=;
+	s=arc-20240116; t=1760690640; c=relaxed/simple;
+	bh=GidaS+48bcDLvQiWYT7MP4ypjR0vm2Whz4EHEwIley8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9kBxKsnhcNrP4FMWibj3PKo+b1oWvD/n0PsLc3D+fbwjNDiKHx0kc6gCTpZOZLR+ZJTxoS+ohYxYuwNnuuecIGCNt0l5/XdB2tBfbYFSP2vxMFKQYLQ/nQ+XT+sz+E/63ndB4Toi9HN/zLQdtjRPQUOoc5g9zEHVwH2VVHvkkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZlhuXG9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9CDC4CEE7;
-	Fri, 17 Oct 2025 08:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760690589;
-	bh=w3yiEGMdzJiDv0/xbQkFRtwluVFnBEMxzuh275dPyKA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AZlhuXG9cYcve/lHlMhTJnhEFd7K1h2ayZYp1HZDdR1sx/OX8BTVCDxKZ2ms0Wgx+
-	 WysICmp3exGCd/7pEBiwWOpysEvgVDYNeY3d1edMOv0maoPJ/oiB7x1OGkQtM4bxyS
-	 9ZADRetv1CWTBFvv3wSJakwfxSTNUqeF8QhIpJ5OAInvzHVNJmkA9TUucjIYZHM/Xj
-	 pzeV4Kv3R8YE8j4JTTUlK6XJuYvqAOdpc8p3IqAcqykEt2BGgaLXfmEwFlGT6sY9JJ
-	 jIWAOJgAqh0A3QpUhaAuUmDKqEyvF4zMkD1RCgI/lwn8ugtaPLA7XaW94iUyf0wvwc
-	 10ggX8MjncW1A==
-Message-ID: <564b0802-d413-4a6b-b46c-d4e3e7846c6c@kernel.org>
-Date: Fri, 17 Oct 2025 10:43:05 +0200
+	 In-Reply-To:Content-Type; b=fM8aLs9WkXkeH0KXz4GKazBUk6v8jQWZYpbEWyf2l1fW01mIX8SnOBqeZfuqV3GoXHx1LMRJOVZkTAwyBt9tk9bg6hcLhEtqK/eepn2V4Py/p8LpLBd0mdb+oNhywczqWFebHYyhKsbeySbJ2Jv4PDeGd2JjdDfmh9N4Ic/Vn5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QagcDIXo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760690637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hdjQ4qyzWoJmN2qqSnfHvdTH6aak7xEA6dFVesveV1s=;
+	b=QagcDIXouBpYfKdlbhmbSP6mK0HINo2Yuh/nq3YdlpfbvWsiIqIYZiFtZG17Wn4aL7xwx8
+	UZ9wLbE7PLmbNUPU571e/4pHc6zFL9/BLz46xgnhH1Eig5HwIteXcTmH2GfJbYyFxZoK8D
+	k9WHDF3dFjtAOzSCEpujCqNiBl9tnPk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-230-IwL1EtE9PtKUmGKYeJs7YA-1; Fri, 17 Oct 2025 04:43:55 -0400
+X-MC-Unique: IwL1EtE9PtKUmGKYeJs7YA-1
+X-Mimecast-MFC-AGG-ID: IwL1EtE9PtKUmGKYeJs7YA_1760690634
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso4600835e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:43:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760690634; x=1761295434;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hdjQ4qyzWoJmN2qqSnfHvdTH6aak7xEA6dFVesveV1s=;
+        b=l60PngTXsz+baeQlnkD214r/IxPef5r5eNlRRuTUZzJE8k2EG4khPOkU/Qan1L2af7
+         RS6yiX6T6EVtu8edSx0t5okFcSWFSwhVdLHpK3ZYBsOJzqjVoFoqXTYHUPPQHWi9SQAi
+         Tksyq1ZF7j9/Bw/W4tl0FT7sliQr7Y3mV9EOrXbQQOt9bLtixcnztjwpeIbMvJ+5Oige
+         x4U89HHecPYixKyQHurvSuh1k2R6Ev7iQH2qedxB3DH58NmjVxzmLQNfg6fHpJmmm6nl
+         4WnLeDTC5dIcjWV2I/21PZ4OK4h9ANmuKo97XPde1Raod3RfpVxcNCUE78be9kW3I304
+         F3oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdnYbhfKSwkBTfhuGn0HnmrQeiBxplvOTphFYpSNpmXem+QQEE9L1fJsar/zjQa5q7Era1IZOLzDYG/z8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysi7U/w+6Xzxm3xBNSgSnOxkma1yVsyBGScySESa9cs3Rck/pc
+	GWD6VxYWTRV+Q/Hcq7ft6dj9yr9jv26xGtZcpT4h9NeHPBuWQIQ8ELsFK/VldmuXuOt+oEpuj6c
+	36D4d5AHZWizXTXKCTD7PfyA5jokpxCS2fwLbaD3ja7fuTcMQ5v3sS+W+Ucwk83MhIg==
+X-Gm-Gg: ASbGncvdJjcpxb/852tr++odU3gE2EDpc9nCummGU1PeRgllDahZ3A2EJil9MnPU83H
+	wOFtypkyIPQDrUt3iU1Nq0CmoLFC9g0Kc8mHlMErERXa1QIGU28i8b0k65xVxOtk58tLM4AGUKb
+	zDlGD2EgU1eOywueYDD4FYyWpTdqRFS0tb80mlqvtO0xVr3fD4hDXagqlCZ36se6BO7rG8FgnfV
+	x0tQ2p7RSOmABQhPU25/GJU9PvIsC596lItAvZeZND5IndxJpGdGd+uRMCFni96s/+WGe1/46sX
+	vhj43MVKr9mMR7PU2BSGCYkdwNRdvbrVVpgWMqgUrzwK0OUUGEnzd062LjBcIv5CC1hHSgxPpqq
+	9txBhWzQOpbMBY+1AzgZtLg5hNbL6fPnzBWz3D8aDf2nUsjAeXGIKXx0M/h2/OHtqfG93p9pGw0
+	oYt7KftcWpbLDcjZWQWP0BHnR/IMA=
+X-Received: by 2002:a05:6000:26d1:b0:425:75c6:7125 with SMTP id ffacd0b85a97d-42704d5219emr2173325f8f.16.1760690634354;
+        Fri, 17 Oct 2025 01:43:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWpf5r9YWNP2HCmN5FwKsBoth7gpS6CovBTFafFM53yr6iZIzCOSgetIwZnTDLGS7ar2cFYg==
+X-Received: by 2002:a05:6000:26d1:b0:425:75c6:7125 with SMTP id ffacd0b85a97d-42704d5219emr2173295f8f.16.1760690633874;
+        Fri, 17 Oct 2025 01:43:53 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42708bcea1bsm1267844f8f.14.2025.10.17.01.43.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 01:43:53 -0700 (PDT)
+Message-ID: <4a7a7fbb-e33e-4033-91e7-efce7915cf7f@redhat.com>
+Date: Fri, 17 Oct 2025 10:43:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +90,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: Change Altera socfpga-ecc-manager.yaml
- maintainer
-To: niravkumarlaxmidas.rabara@altera.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>
-References: <20251017083849.3213192-1-niravkumarlaxmidas.rabara@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: guard is_zero_pfn() calls with
+ pte_present()
+To: Lance Yang <lance.yang@linux.dev>, Wei Yang <richard.weiyang@gmail.com>,
+ Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, baohua@kernel.org, ioworker0@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251016033643.10848-1-lance.yang@linux.dev>
+ <17c4c5f9-6ac8-4914-838f-f511dfbf948f@arm.com>
+ <20251017012724.4bo5oj2g6tdmp2fv@master>
+ <1674efca-6d4e-4247-8b1c-b6816360d8bb@redhat.com>
+ <ab918a83-edb2-4a19-821d-a96de9e097eb@linux.dev>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251017083849.3213192-1-niravkumarlaxmidas.rabara@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <ab918a83-edb2-4a19-821d-a96de9e097eb@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 17/10/2025 10:38, niravkumarlaxmidas.rabara@altera.com wrote:
-> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+On 17.10.25 10:37, Lance Yang wrote:
 > 
-> Update Altera socfpga-ecc-manager dt bindings maintainer from
-> <matthew.gerlach@altera.com> to <niravkumarlaxmidas.rabara@altera.com>
-> as Matthew Gerlack is moving out of Altera.
 > 
-> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-> Acked-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
+> On 2025/10/17 16:11, David Hildenbrand wrote:
+>> On 17.10.25 03:27, Wei Yang wrote:
+>>> On Thu, Oct 16, 2025 at 11:47:06AM +0530, Dev Jain wrote:
+>>>>
+>>>> On 16/10/25 9:06 am, Lance Yang wrote:
+>>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>>
+>>>>> A non-present entry, like a swap PTE, contains completely different
+>>>>> data
+>>>>> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
+>>>>> non-present entry, it will spit out a junk PFN.
+>>>>>
+>>>>> What if that junk PFN happens to match the zeropage's PFN by sheer
+>>>>> chance? While really unlikely, this would be really bad if it did.
+>>>>>
+>>>>> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
+>>>>> in khugepaged.c are properly guarded by a pte_present() check.
+>>>>>
+>>>>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>>>> ---
+>>>>>     mm/khugepaged.c | 13 ++++++++-----
+>>>>>     1 file changed, 8 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>>>> index d635d821f611..0341c3d13e9e 100644
+>>>>> --- a/mm/khugepaged.c
+>>>>> +++ b/mm/khugepaged.c
+>>>>> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t
+>>>>> *_pte,
+>>>>>             pte_t pteval = ptep_get(_pte);
+>>>>>             unsigned long pfn;
+>>>>> -        if (pte_none(pteval))
+>>>>> +        if (!pte_present(pteval))
+>>>>>                 continue;
+>>>>>             pfn = pte_pfn(pteval);
+>>>>>             if (is_zero_pfn(pfn))
+>>>>> @@ -690,9 +690,10 @@ static void
+>>>>> __collapse_huge_page_copy_succeeded(pte_t *pte,
+>>>>>              address += nr_ptes * PAGE_SIZE) {
+>>>>>             nr_ptes = 1;
+>>>>>             pteval = ptep_get(_pte);
+>>>>> -        if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>>>>> +        if (pte_none(pteval) ||
+>>>>> +            (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
+>>>>>                 add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
+>>>>> -            if (is_zero_pfn(pte_pfn(pteval))) {
+>>>>> +            if (!pte_none(pteval)) {
+>>>>
+>>>> Could save a level of indentation by saying
+>>>> if (pte_none(pteval))
+>>>>      continue;
+>>>>
+>>>
+>>> Vote for this :-)
+>>
+>> I suspect there will be a v2, correct?
 > 
-> changes in v2:
-> - Update maintainer name in yaml bindings as well.
-> - Use correct maintainer list for patch submission. 
+> I was hoping a v2 wouldn't be necessary for this ;p
+> 
+> Of course, if we'd prefer a v2, I'm happy to send one out.
 
-No. Who is the maintainer of subsystem with the driver you are now
-changing? This is your maintainer you are targeting with this patchset.
+I lost track of what the result will be, so a v2 would be nice at least 
+for me :)
 
-Again, read submitting patches, do the homework.
+-- 
+Cheers
 
-Best regards,
-Krzysztof
+David / dhildenb
+
 
