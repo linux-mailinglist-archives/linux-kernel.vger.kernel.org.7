@@ -1,131 +1,92 @@
-Return-Path: <linux-kernel+bounces-858039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94881BE8A80
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7107BE8A86
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FAA6E2323
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EE03B9257
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006B7330310;
-	Fri, 17 Oct 2025 12:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B8B32D0FA;
+	Fri, 17 Oct 2025 12:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="das2UgJ/"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PP6kxqme";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QKbWpXkO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DEF33031B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1037C2E0917
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760705335; cv=none; b=tF45HBrKkC+r+XdTY1zDY6umWVu2dl4RC68Fk8I8WvpMPA9Yibe802goNqrJG0aLN2yOFgS/L/Cdaz6V064vigOnet9/PwwSxlt5TnZtKHbqroI0jDoaaLilp5jLoYe52+tU46yiQneisnUDBPYUeqRE5Z3iTIoicbHt3Gjq3fI=
+	t=1760705374; cv=none; b=GCVi/DFTEK8F/Lb+hpV6bpZPZUliZ1GIvsDVbqREgpARqK/VSEAw2FWYTghDpN6OoXq0TX4rBV8dwrqHBit5FTDlQ9lX0JyhZpy+MeTd+mMuaA+bMmfBaf8Nq1h/ciMpnEbFjhUwtxxIB5+PrdY8ZkFzJowCMGW+1jQqyVXsjXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760705335; c=relaxed/simple;
-	bh=lw5cb12WTQW5V8LKlGN3d+ABzL6hKt0x7IsEIl0HPdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffdSCgacTa0OiERrT6qmepXUClqElCgJhUxNXd7ql5B2O/0U9QOtMse/85tNgv+XXc/hOXkUMjnkQVAKAVchiP5v4Kxxblv5CO4xFtGNL9viyjf9vp5PXmO5xwyc9ybuGCAagTNfa/Sr7bh+ZEajCw4h8nT9cct0RDbehTq+UGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=das2UgJ/; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-796f9a8a088so1865469b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760705332; x=1761310132; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vm1q1yJNMMPqej5XCUEQWCVG1hgmSTxZ5v4pBOj1eAo=;
-        b=das2UgJ/OdqBeODEJnZopFMVZMcNTNIGK5EzrEA0l0rCSYDsvAiPr+V5pTm12X4GzU
-         Kk3cXA2toWNcsOxJvdEVZ1UslLRMSTe4yOdSlqq0KTsOQL+G+43zSNz6qqQXeX6hB9Ow
-         NO+atH17rp0lZbnJzZiWpkRi0CKNRa2XCUmarZ/TIfayUzS9VQ340mrdpNYmm17RX6g5
-         cPIDbR3gLcv1XprIsxlsDM/wlIUZ9/sYX5UG/xzuhZS9hm3ygjRo5Bvwc+qwGbHAlnv0
-         HP3h9SKz4l0fQGovkJk06dvt7rjyDB1U76wCNBTP6LB09ve++fvJyvj42A8XsPSTb5dZ
-         oieg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760705332; x=1761310132;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vm1q1yJNMMPqej5XCUEQWCVG1hgmSTxZ5v4pBOj1eAo=;
-        b=WxdO/92s9uhp4phKKxwhnPm1MbUeWLa8Odd+d/S4C6A6Q8S6JYyWhyRkqHHkW7aGlG
-         bgG6jmhrG1fPkKRw/wfPAykvRshnhT3cO+eE7ELzRLvKXVrLmPKmu8+DblICYz9YWAUN
-         DsBwYBDOH2Bv7VBsOHKJvkiHoAhD1o4rqB/y2SI1ei0IKR+LWETasFBetYoWEDUDi+ZL
-         eeb7246RJVZDEm5KHVGCG4jXfL/PLuHvNByqJJBfoBKdhBpTY/LJl3iVphPq/UKUY5O2
-         1JYK165E4d1VfoWSb9oOdF4PQM+HDO16+1n1lzfLfSNZEnpIzJ8SXcXXO+FK9eThwAAf
-         y49w==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1uIqCE2LAGtwcitpLSaVNrsi7B8NL0lt30X23bZfaFPrhkwhV+0R0E6MFzgOGiZkNXcuu/N9nr9DIkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2XCjcwwolrfAtr9VkZHahIGp+byQXfIzqH23yLGzkWE+C6DTp
-	/I4HoenUc1XPC24T2QPgpcjkCyJFhW+qQSKwWhp9FxtldbKTTKguO4qZ
-X-Gm-Gg: ASbGncvjjrWQO+UctkiGzduDXoJ0Esvb3K4QOA+nwqy16Z1R5D36p+ai8XzmUrumdOT
-	wcZ+3TYDB0X8g6/h/cAY6ggI4wzOo5e7XX+HpRtBlEwbl/bwpdJqkYTVLnxQe/gseBcARi5A6Oe
-	nmVV5OHQ1yX+jVwP2GnPPtUNDKAcV3KZ5ltRt/Z5kOFujEd70fWe45xE0uFYA1Cy4/6Qe1UTEvC
-	wt8xgRjVmpEb6o52AeXWPLlkMM/LeqNw0Njtbs0Wu5CktUwq5vhEBxPwVqGz538YR24omn/Bzau
-	Hp3opmKLImy1/E52c9CcSLoxRJqg4lgIa9gSHfbQpociSBMDc4hg/VuXk0JUxGTA8vjRGdIViZ/
-	V5WrwJteVKCyWc2PuHa8yCyl6d85MEdK71DkPclUIj8Xo6CEVIjBTS7zX70h2qQeDvOW048vHCR
-	z58yLBy6pKxI0lZQ8coJL4RQ0=
-X-Google-Smtp-Source: AGHT+IFwTxIM7KbRMRI4pagPw+NiPSPIsNhdBx3JaSyasAkdLl7zRtFXNHdz/QIh6BaZIRnxB4f6nQ==
-X-Received: by 2002:a05:6a21:4d17:b0:334:a9f2:558c with SMTP id adf61e73a8af0-334a9f255cemr3877419637.5.1760705332044;
-        Fri, 17 Oct 2025 05:48:52 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b06076bsm6390184b3a.4.2025.10.17.05.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 05:48:51 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 17 Oct 2025 05:48:49 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ankan Biswas <spyjetfayed@gmail.com>
-Cc: corbet@lwn.net, skhan@linuxfoundation.org, khalid@kernel.org,
-	david.hunter.linux@gmail.com, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH 1/3] docs/hwmon: Fix broken maxim-ic.com links to
- analog.com
-Message-ID: <826742f1-d1b3-49cf-a1d2-5a64d1e58d16@roeck-us.net>
-References: <20251017105740.17646-1-spyjetfayed@gmail.com>
- <20251017105740.17646-2-spyjetfayed@gmail.com>
+	s=arc-20240116; t=1760705374; c=relaxed/simple;
+	bh=pO7K6XrTRrHHZja1IVrUX6Qp6eDbKW+UAY/Gl/rNUT8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YZo5wsVrWKjgDvZJ5FenDvVe3YOOqNm5iCiNpUWZ7T97JXuw8ccLlKX6blLBDH+W4BacHfGErcLHiTUzTyEfhAo/lbNF2ZO9MSXiG7xBOIrxjXh6M5KrkTlZ02pAjyU/Lfu1mPrzd1sRWt5pybFtmDNKTAlKOp22lk0jTiP9yMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PP6kxqme; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QKbWpXkO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760705370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7FUXXO+qfYr+iBt+EHhpzMOAT7zbThRLrSDiAiXPzPY=;
+	b=PP6kxqme9cQp4apgSmBbIcSk0t2aINTyhb0bSZBZ8fbIWoLE39TP4LAA3Ckxt54j3xZXDC
+	D/wwIgyoi+ZtQmhyng6f8cyooSPeIA1oqhiODtMVsqKW6pp88hGZG3lI4sMhKJPopdyIiw
+	+FHEzAXCQzHHHfviJO0gKNQ+Rs3DviaJj+ve+o1+TahEoIpjJm/kOy1nRCW2krUbdlbjgC
+	b2Yht9IHXConMqpTFmGqJY6mA9f6OA5ToC8o/D2sjP11AaikKhCVo87kEsBpINeL7noUD7
+	pGlL6TF64ANnkwSyZRKc9vWvSdzigxfzkpT+BL/42vzYZB8GQpnzBs4BEFVy5A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760705370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7FUXXO+qfYr+iBt+EHhpzMOAT7zbThRLrSDiAiXPzPY=;
+	b=QKbWpXkO9Lp5vW3lPtNnamnG0kva0AiRNlwDMqD2iH7fBQq/xSw90Otq5v5EnwQfkVGtqS
+	lfT+8v/QwWsw7EAQ==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
+ <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
+ <tim.c.chen@intel.com>, TCMalloc Team <tcmalloc-eng@google.com>
+Subject: Re: [patch 06/19] sched/mmcid: Prevent pointless work in
+ mm_update_cpus_allowed()
+In-Reply-To: <20251017111223.GD4067720@noisy.programming.kicks-ass.net>
+References: <20251015164952.694882104@linutronix.de>
+ <20251015172834.694547089@linutronix.de>
+ <20251017111223.GD4067720@noisy.programming.kicks-ass.net>
+Date: Fri, 17 Oct 2025 14:49:29 +0200
+Message-ID: <87y0p9zo9y.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017105740.17646-2-spyjetfayed@gmail.com>
+Content-Type: text/plain
 
-On Fri, Oct 17, 2025 at 04:27:16PM +0530, Ankan Biswas wrote:
-> In 2021, Maxim Integrated was acquired by Analog Devices.
-> maxim-ic.com & maximintegrated.com links redirect to analog.com.
-> 
-> Broken redirects fixed to their proper analog.com links.
-> Fixes warnings in 'make linkcheckdocs'.
-> 
-> Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
-> ---
->  Documentation/hwmon/jc42.rst     |  6 +++---
->  Documentation/hwmon/max16064.rst |  2 +-
->  Documentation/hwmon/max16065.rst | 16 ++++++++--------
->  Documentation/hwmon/max1619.rst  |  4 ++--
->  Documentation/hwmon/max31790.rst |  4 +++-
->  Documentation/hwmon/max6650.rst  |  8 ++++++--
->  Documentation/hwmon/max8688.rst  |  4 +++-
->  7 files changed, 26 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/hwmon/jc42.rst b/Documentation/hwmon/jc42.rst
-> index 19d10512f6c0..df47a5d265cc 100644
-> --- a/Documentation/hwmon/jc42.rst
-> +++ b/Documentation/hwmon/jc42.rst
-> @@ -5,7 +5,7 @@ Supported chips:
->  
->    * Analog Devices ADT7408
->  
-> -    Datasheets:
-> +    Datasheet: Publicly available at the Analog Devices website
+On Fri, Oct 17 2025 at 13:12, Peter Zijlstra wrote:
+> On Wed, Oct 15, 2025 at 07:29:34PM +0200, Thomas Gleixner wrote:
+>
+>> +	if (!mm || READ_ONCE(mm->mm_cid.nr_cpus_allowed) == nr_cpu_ids)
+>>  		return;
+>
+> FWIW this doesn't work on architectures that change their
+> cpu_possible_mask around (eg. Power).
 
-Please refrain from making such unnecessary changes.
+No. Power does not change it after boot either. Half of the kernel would
+explode if that'd be the case.
 
-Guenter
+Thanks,
+
+        tglx
 
