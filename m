@@ -1,136 +1,157 @@
-Return-Path: <linux-kernel+bounces-857859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA760BE8167
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:36:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BC0BE8158
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8A6E50299A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E581E3BD515
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE85F311C3B;
-	Fri, 17 Oct 2025 10:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4C12D8398;
+	Fri, 17 Oct 2025 10:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fWi1v8hN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/HScOWq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D072D31064E;
-	Fri, 17 Oct 2025 10:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D831824A3;
+	Fri, 17 Oct 2025 10:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760697388; cv=none; b=noevPh2EteEqXXj9KRKSflCXeZsnAyOmGAKwTSxHiTOjVKjWTVSGRP4/oITVsm/42uKXDRxlglUD7PvLKHBynAxdoa/sWF1GS3tYc6u0JCJBVvnJxtxPymw0i4tNTNYQifuY1zi+0tHPmYk376nKF4SRaIPi29Y0q660uIHYv1Q=
+	t=1760697375; cv=none; b=jx8WP0w1pmm3gBsGgi10hVBs7NTyNieFO7GxtyohZIgXKr5IlagYxSlwSVU2dgrbrfx40iny532R89wJBP80f1VoX/gMXaHwBvBQaaAmB4B+9hnbWMUABSXh1A3wrkvqwaA8lDbZsJYuCwSPf1V5cLvkLsXqgUvj+B7ddtxF0GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760697388; c=relaxed/simple;
-	bh=DJ2Eal9c2IfaoDNTZlkIgXr5gbRYlBIk/L81n8p0tTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drFERyHyQg655GySWSY2QRqSBihMbfzQQJWZ/NkAsFO/yH+jnh2cSIev3cDRKZHabIhw7IU+JWHv+lPp5NVnSIMBYBjzq7YShhX0QKAvAFGPoRv4bt5W+ZvZo0O1Y7U9zAp9kTa9KjUg5OzbhQLWtZKDklpue+5VKOac2GlckCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fWi1v8hN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0hEYjK4XGVjCrvoOJeg0ZEh8+ica9r/qK/NZKGu0EA4=; b=fWi1v8hNQkssTp7wPTCPBDiNCW
-	tjfosPU8LE2dZl3bBZZN83/L6douPhSRNHcYuF//L/0kQ6A3xLfHaa9fw9YSKULC9TDbDeBzFd5QT
-	o5Y82LuzrMqrLzagAtt7nAxLS5vsJ06A9OcTR+2If2BEi6ybOAste9RRdfttxtW/w32Vs6JeNYEA9
-	OfmnYJcY3uH2+LkO4EeXq9GrtctUlvK8lELPMnbD2ITa7k/xEDDTaGg4sB1quZswTO2o5KohK6S8z
-	XGmg8eH28de1pujpSKSj+enhHUebEceGs0B++WfyKTTQuwVClbwH0B4LxCPim6iwiepl0M2k279wY
-	LdnPU2uA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9hoR-00000007TnX-3lDP;
-	Fri, 17 Oct 2025 10:36:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E92A630023C; Fri, 17 Oct 2025 12:35:54 +0200 (CEST)
-Date: Fri, 17 Oct 2025 12:35:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [patch V3 12/12] select: Convert to scoped masked user access
-Message-ID: <20251017103554.GY4067720@noisy.programming.kicks-ass.net>
-References: <20251017085938.150569636@linutronix.de>
- <20251017093030.570048808@linutronix.de>
+	s=arc-20240116; t=1760697375; c=relaxed/simple;
+	bh=opNui8Mv9U7I0QBWdXEv1ciqiflu8tqFjRdSebW1eHs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QDz9HOVRcLR1mZSoZ1EzukVnrF9FUOVzrTEl8vKgqmilqyUZ1cCUyg3zPgeENuqM16wh3Jr+v8vH19dXRdG2Dg38+O8xYJkeZfNJq1TM/iuY78ipqgbLDaYxqQFCR8NuoKLcnbySkRpjTDptpvu9PwwgKkGzQ+I/KO59LGxfP9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/HScOWq; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760697373; x=1792233373;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=opNui8Mv9U7I0QBWdXEv1ciqiflu8tqFjRdSebW1eHs=;
+  b=f/HScOWqqHV77QUTpf6hIqufuYbeyMqNsblRXb8ijsybkP0bNo8+sN4m
+   y2wSXh+LCEPfkjHsWt3iOjapidRTfm/tY0z2lWlEH7ZfkeYdY6jCqytEI
+   o4SUh07GG8f3i0S1ltfrx+dE7YBCojVvNqf8n1buGyB6+RAJAm+rccqWG
+   Zdc2X0Ove/BDhDCSFoZ3F2gy/jyBwWY9tG3HKtrJfxmgPNtZWxlZSIXEz
+   kr7drfOUrCy7wrMIuzHrJn3iN5E7JlLPnkzQKI+OmI7R57wWe4SPnfyrP
+   q4EDyXHVjYjHCgoHSlepnQqe80OOD5+fAF88W5heiuWb4ndl4Xg6tYn0x
+   g==;
+X-CSE-ConnectionGUID: I1jUad1TRQKsrCrMg1CKMw==
+X-CSE-MsgGUID: DxtlXR/eS5eD2UFwzuKo5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="74020882"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="74020882"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 03:36:12 -0700
+X-CSE-ConnectionGUID: 1SSFR2hAS3eE+KzsEciHzg==
+X-CSE-MsgGUID: yFhjv57hR3GbfYn2LwTLmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="187974632"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.123])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 03:36:08 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 17 Oct 2025 13:36:04 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: Denis Benato <benato.denis96@gmail.com>, 
+    platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v6 0/7] HID: asus: Fix ASUS ROG Laptop's Keyboard backlight
+ handling
+In-Reply-To: <CAGwozwH3VnTsx8p5N6S1yp4Z9mFfPUdZ4frrnPAveLH2a00K6g@mail.gmail.com>
+Message-ID: <18bb12d2-c258-5064-1702-005f9d5b0dd3@linux.intel.com>
+References: <20251013201535.6737-1-lkml@antheas.dev> <160c3adf-9333-4486-ba4c-d3359ea73337@gmail.com> <CAGwozwGzOQ-LCk6B202-CuKq=gepn6Mt4LitJJZ7dfMLaDVs7Q@mail.gmail.com> <c075a9f4-8103-dbcc-a1e7-4eaec5e90597@linux.intel.com>
+ <CAGwozwH3VnTsx8p5N6S1yp4Z9mFfPUdZ4frrnPAveLH2a00K6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017093030.570048808@linutronix.de>
+Content-Type: multipart/mixed; boundary="8323328-1043059048-1760697364=:1052"
 
-On Fri, Oct 17, 2025 at 12:09:18PM +0200, Thomas Gleixner wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> Replace the open coded implementation with the scoped masked user access
-> guard.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
-> V3: Adopt to scope changes
-> ---
->  fs/select.c |   12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> ---
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -776,17 +776,13 @@ static inline int get_sigset_argpack(str
->  {
->  	// the path is hot enough for overhead of copy_from_user() to matter
->  	if (from) {
-> -		if (can_do_masked_user_access())
-> -			from = masked_user_access_begin(from);
-> -		else if (!user_read_access_begin(from, sizeof(*from)))
-> -			return -EFAULT;
-> -		unsafe_get_user(to->p, &from->p, Efault);
-> -		unsafe_get_user(to->size, &from->size, Efault);
-> -		user_read_access_end();
-> +		scoped_masked_user_rw_access(from, Efault) {
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Should this not be: scoped_masked_user_read_access() ?
+--8323328-1043059048-1760697364=:1052
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> +			unsafe_get_user(to->p, &from->p, Efault);
-> +			unsafe_get_user(to->size, &from->size, Efault);
-> +		}
->  	}
->  	return 0;
->  Efault:
-> -	user_read_access_end();
->  	return -EFAULT;
->  }
->  
-> 
+On Thu, 16 Oct 2025, Antheas Kapenekakis wrote:
+> On Thu, 16 Oct 2025 at 17:09, Ilpo J=C3=A4rvinen
+> > On Thu, 16 Oct 2025, Antheas Kapenekakis wrote:
+> > > On Thu, 16 Oct 2025 at 13:57, Denis Benato <benato.denis96@gmail.com>=
+ wrote:
+> > > > On 10/13/25 22:15, Antheas Kapenekakis wrote:
+> > > > > This is a two part series which does the following:
+> > > > >   - Clean-up init sequence
+> > > > >   - Unify backlight handling to happen under asus-wmi so that all=
+ Aura
+> > > > >     devices have synced brightness controls and the backlight but=
+ton works
+> > > > >     properly when it is on a USB laptop keyboard instead of one w=
+/ WMI.
+> > > > >
+> > > > > For more context, see cover letter of V1. Since V5, I removed som=
+e patches
+> > > > > to make this easier to merge.
+> > > > >
+> > > > > All comments with these patches had been addressed since V4.
+> > > > I have loaded this patchset for users of asus-linux project to try =
+out.
+> > > >
+> > > > One of them opened a bug report about a kernel bug that happens
+> > > > consistently when closing the lid of his laptop [1].
+> > > >
+> > > > He also sent another piece of kernel log, but didn't specify anythi=
+ng more
+> > > > about this [2].
+> > > >
+> > > > [1] https://pastebin.com/akZx1w10
+> > > > [2] https://pastebin.com/sKdczPgf
+> > >
+> > > Can you provide a link to the bug report? [2] seems unrelated.
+> > >
+> > > As for [1], it looks like a trace that stems from a sysfs write to
+> > > brightness stemming from userspace that follows the same chain it
+> > > would on a stock kernel and times out. Is it present on a stock
+> > > kernel?
+> > >
+> > > Ilpo should know more about this, could the spinlock be interfering?
+> >
+> > [1] certainly seems to do schedule() from do_kbd_led_set() so it's not
+> > possible to use spinlock there.
+> >
+> > So we're back to what requires the spinlock? And what the spinlock
+> > protects?
+>=20
+> For that invocation, since it is coming from the cdev device owned by
+> asus_wmi, it protects asus_ref.listeners under do_kbd_led_set.
+> asus_wmi is protected by the fact it is owned by that device. Spinlock
+> is not required in this invocation due to not being an IRQ.
+>=20
+> Under asus_hid_event (second to last patch), which is called from an
+> IRQ, a spinlock is required for protecting both listeners and the
+> asus_ref.asus, and I suspect that scheduling from an IRQ is not
+> allowed either. Is that correct?
+
+Yes, it's not allowed either.
+
+hid-asus seems to already use workqueue (though include for it is=20
+missing) likely to workaround a similar challenge.
+
+--=20
+ i.
+
+--8323328-1043059048-1760697364=:1052--
 
