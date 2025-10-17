@@ -1,192 +1,197 @@
-Return-Path: <linux-kernel+bounces-857994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7589BE87BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:56:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743C1BE87FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA0C1562693
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:55:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0F28564374
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A66B3128AF;
-	Fri, 17 Oct 2025 11:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E4232ABED;
+	Fri, 17 Oct 2025 11:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VXhdKugO"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013013.outbound.protection.outlook.com [40.107.201.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="el6s3a0o"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9A42C11F5;
-	Fri, 17 Oct 2025 11:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760702135; cv=fail; b=reKxv91va3a2818iTUjNHhDtn+Kjmp7ALTJMdl/2ZlPEDR7iYGP/+eappluAgyNqlOQvPAwQkzvUA3mjEcUA9sGrp7vb1mazONJwTEp+wX/B12irFB0wr6N5OeoR6cXXcCEo/3jFrdR9NyLDvD98PWTnIdxYkpYFXFpRhxtN4r0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760702135; c=relaxed/simple;
-	bh=/nbCotrcrlNguseUTMPrWss2V9a2q2IXI9UKPymYkO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IWqbkAGKS13IwNgwhTqnKigtAtFLiTSo6QdVM/6GeQ7Lip5PZB4G3x7itkP13W4LntQbPktR1JRupkFmmRIqFKn0ADtk1E/Ap+mT3nw5QInlNJuCQCSX+GrbjEm3TE9tqEiFl8f58nnRkyAeGDkZWWPlHocGh+kGWnHEn06Hvfk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VXhdKugO; arc=fail smtp.client-ip=40.107.201.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Oa+65+KY5htx5BInWyP/BPZzPKyiPiK+AHeoshTrfE7gxvWg/1qPQX9O55pMgbsnH9OLGPJk/rT9g/uErheo/BdQiRtHn1NBNaUDN8/SR4MF+IMQFjn8uXztMsCp6cxRIYNSpBf6VGRuMKBeQZ2NOHxSJoHGtDmpwrT/ErNe+iqCfCL6bDkVBl2R9pMxkHnRiXUq36LS6FO3v9KDk9wKtdpvRznabvIaIKo0lFjdMwe/UVt9CHtl5XV/8TgGbfD+RHy+BW/sZ6mvxe46+TLrwDA1xvOpiUP4L7hOCaRxIZPUU8OskxC3/R3q4+AZJgomYdYKVoKLkeLJBwUoUguazQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K74F9KGlgPlbL6DMmMBJ5agyEfEeQoSW0boygtkOuXE=;
- b=ckWorcjHpV57VdN5JMinqHVnqJOqZbjz/WNvzNNeEsAyLK/NpMqGm7D2BdbQFPKWChwmK66At07SK/NRUn7uRdzRqdHm3zTyPuQZex4AzvI3HTCJkVdeF3dDEW1hrR34BPs3Rv31pVredYL5+spFXtHiEbGXzIfcqOgGJGyi8uk3o8/TlpoM/4NIOCbif8Nyfc98WqcMkoc25PT/EPV8p43++NExF76FEo/eWdHkoQcGAqoQSNt/D+AFROOd3+Nkj3nelsoLaAUP8x+6Jdfww6Hl2FxcA+6fzLDd7BcHXgA9nRCR44U/aBqnqOyt0sRoYIgyWpxP8A/f7v5aff0kTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K74F9KGlgPlbL6DMmMBJ5agyEfEeQoSW0boygtkOuXE=;
- b=VXhdKugOGK49/nJxhfFvDNWdU2lUPUubcDePQlFjI+9uzFE62XjWkyK1RJvO4/Yf7LmvfXKH0qcFsclyjkf1UF3pKzXWFmWpouQmneb2tt3YTwWRkPIoqxa0wgmO5RKH75WlR4sWWeOM/mCRESQB+suDguRCajSQZxs6AUsxs0Pq/Ph6ai045Rq4tYqmORJG6rc1KUEjnbL6r1jWaXzDh67rnI/wl0x87ILYUYuEx5C5hCKEOtkNU/ur2wnI5+5h4jAa5OEG8wkGQq5U9HJIJpq9K74kCdsSAQI+SUMixMRYIEhgTJE4h4L4cEZLovvjyaQbBOOqbhvEorqLFsXxEQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by PH8PR12MB6938.namprd12.prod.outlook.com (2603:10b6:510:1bd::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.11; Fri, 17 Oct
- 2025 11:55:29 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
- 11:55:26 +0000
-Date: Fri, 17 Oct 2025 08:55:24 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v5 8/9] vfio/pci: Enable peer-to-peer DMA transactions by
- default
-Message-ID: <20251017115524.GG3901471@nvidia.com>
-References: <cover.1760368250.git.leon@kernel.org>
- <a04c44aa4625a6edfadaf9c9e2c2afb460ad1857.1760368250.git.leon@kernel.org>
- <aPHjG2PS5DVgcG93@infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPHjG2PS5DVgcG93@infradead.org>
-X-ClientProxiedBy: SA0PR12CA0012.namprd12.prod.outlook.com
- (2603:10b6:806:6f::17) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586CA32ABEA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760702381; cv=none; b=kokcQ5IorZczdMxwizRNGJuiYY/8AyratLU0Uj4b1fRxRKMseX9WP3O8eaQjOcIaU5gCO4oGtrGjJt6gSPwEsgbviynIuuxFqWJqhXtHxCgML0LHGH05CrGNRvffT4/q9QXieVOAOxnoPlnJcQlTtW0XvHWmF7VHOj4eDqxLoDI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760702381; c=relaxed/simple;
+	bh=LG3sF3rZbztZzgrUxQZWSYnY1+JyeCt74DWhB5owrMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6MFd2LRiWxP4KyW+Icr0ZqSpbD0RKzwq1ix9RRW0E4JC2weYRB8bQEmNkYeaP5VZmzBT4jswR/SdEMEW2Yi6ZOthEUxoZKfPvgDg8T4cftyBSDjPOO+Gkm7ZsQxPxP4JjBiivlz6q/o4SIihEh7xrcQ7RNzSFnL/Ffc1b0UYdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=el6s3a0o; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso1740204a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760702379; x=1761307179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fk1GdENKWNibQkO0GSg/5Yk3ivOrqB8eCm9WGHcdZCc=;
+        b=el6s3a0ordMfC0RjnsXeaOEf2o6PVf6qvcTYBC/r6DEGmoRawQNXm20z5L79z08dSK
+         PB27dK6XNwGBrFNVAaQdDlEj93EGgAh7OuRmhUW1MV2r7Oh25l2Ovcva3jYk5P+HwW6w
+         FAKTORWXvcFVcyejV5v+UHKzf338ooBcZQlPm8SvZIf5BrT8Iiiw02jTMWRrWLE+cfcu
+         +k6ix5AGhDRLGVvhqIbLIpWVOzAU7Esgfk6z7wMG08n0VLTXGIyvPj8XO84pBC3Pgyq+
+         r9FGhEJ0PcHpvP20rbuo2JbtW+VQOwu8zd74ET0ZGWqWIZtXcRQfiKezAyhGkvO3Z7Mz
+         WLdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760702379; x=1761307179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fk1GdENKWNibQkO0GSg/5Yk3ivOrqB8eCm9WGHcdZCc=;
+        b=g3uHxoT3CNOxJ6BHosLWA+O2fSjLMLzLKXVc3dhXFVuvd6/B3e1mSJZQzsOxeku2nk
+         gTynefrnGUJpAsJHapzj0Hf8pmTpNcCshTngEZUypZbYTbzphbT8a/e7ev3i+MDbqKNm
+         pUCSnvp2ZOsBUggmYgQosTtvbD8kDfJx+LHsXMKU5q0ktLDPFYN7qsAMD3HaiqWTmS76
+         EfCIisB06aMIQO3EN7JfHlEcxcy1cg5oSSzJ7sYn+uoajrBzJ33+wx82h0YwoEGLWjKT
+         keqjstZuC9t1d2E79rpAghCNGaBkKg6ah9PvaljWvNlDAgY/3LHEse1D6aYJBUA5Ho/O
+         6G3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXSf0Lyn1ZJq+q0C/DkUeTNZw7Xw2t6DlzsGRb6nEVVXG1ezvRDbUh67qy3z/0VVbNwneJb38N1Fs4odGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfWuC4LzadorPeRInS9R8wthO8i2b+jkyWsIxq5l81xv7NePsi
+	ECpjnyyQeUZChducqsHp0NjHKLZny/P9CUrCm03GaYSPhjzZP0YjBUCAleBODZw53jpKMHvDEba
+	X0exuq0+hmLhHq4YMTphBdyFEn7lYED4=
+X-Gm-Gg: ASbGncuvwLcXSR2I2mIfOBKJevZ0nOrU75jmx5jd5VLItoeu7rvRMdtc732VWlZ43yV
+	hmvodTKhhB0ksnmxip4F9U2bcrS6bMtSpSzNjjJVS/tFOjevFlgqBkwveTpAhzTzJHiQ6evDoSm
+	HetXPlBkytwG2SPjm5JsNsHl4QzM1L7vN4Wc1ytxmi/BQwndAPBSWY8fOst9m2i0QQ/U/9lzVhL
+	vR8Ky3s0pHyIOH3KpLehigXsYqIu5VkgnMfBEoYvFDMgVjwN3aP8Yp1VyKsaTIJz5V2RVI=
+X-Google-Smtp-Source: AGHT+IFR7B6IZVqUUr8Fbkh9l8dYExsNH5cKIZvLhvjjfyMpdU5E4vr6LBOIwSYMe626YV78pDKXpBEURjOJ90SwrsE=
+X-Received: by 2002:a17:90b:1d0e:b0:330:7a11:f111 with SMTP id
+ 98e67ed59e1d1-33bcf9222e2mr4552030a91.35.1760702379186; Fri, 17 Oct 2025
+ 04:59:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH8PR12MB6938:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94c7a0aa-69f3-493a-297c-08de0d740f5c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Lk/JeJcORYBGeY9FyxwzDVo4VFIdFcb8dcteg0duQXkoW+a69ou4kyJZVzv9?=
- =?us-ascii?Q?7FKGl0ujRlOkGQClqet6FTmUlnOVMPCwReDyAA/PFhIk3wzOlucYw6sg5few?=
- =?us-ascii?Q?r3ASUeBbucsM6iCZr/3MvlSWdVV0qsiCyXAyNpnQ0m+5mEVhGzXvtlDWYmRI?=
- =?us-ascii?Q?kT38bne2gJ+mB2ych35ZsoC7RTFHeL/qF8vc2YfuGh25hpZMA2NrPe3TgVbQ?=
- =?us-ascii?Q?AevIGB1UbFpxcRAYNlhtRyqTVKHuuCfTmm3nZ7w749vy+rSnATQ5TqnN+aue?=
- =?us-ascii?Q?f6A2wD4/VJmxJpQgj0t0BlxWxLHThHeZNizqoPBV5m6y4iiHtf/Bxtk1Qv7A?=
- =?us-ascii?Q?Jy1rX1VFnCvvMMjgjxzoWKuqeKzMc8AfDAZveNZksX0VcCd9DSMfkLnHTxtC?=
- =?us-ascii?Q?4V93w4FBFn3EcimrRWUoQ8s+39EIj73nR0kKDP5HajO7AAF3qnrhSPlyKgQF?=
- =?us-ascii?Q?deAVIvF9BZETezFE5sKYEETeY1atUBxyecFtfuYMW5WxbjIbPAPUc5QCqp2y?=
- =?us-ascii?Q?J3U1XykK/idrjkwCeYrw++OYZ3Z1Mzrt7R1/f1L2DRC2TnuCaQjEL844RGAI?=
- =?us-ascii?Q?6/G/PGGcenE7aS1g5CFtSPyIttCWumVfP8fW73HdqH8WpzR4wSZmdJDF3AxP?=
- =?us-ascii?Q?dhIqtp9l1+7vEFo73yQQpbMZfUwtpvEYujRU/F9a058zfKdCHeQaynJcv1Ww?=
- =?us-ascii?Q?VTVbLN36LCseflqtEVfmqsZ6Juben+9NlJQnIzlA1hq4qcUOCf+ij9BfJgrY?=
- =?us-ascii?Q?jaI+SstNdmN+11hlu7peHidfF2koIDkE7MVCAsDRFqxLccFZwNdunFsjNGS+?=
- =?us-ascii?Q?m0zqNtEJXC91te0gmBlfWzT/9/sLBU/PKeNAwyZ8NfAC8/OJxJBr/07has6B?=
- =?us-ascii?Q?LJ8wikBNca8tGPhijPCDkLWIteFxlaKleExfusRfNBGGcjsDPirVCkY2MMsR?=
- =?us-ascii?Q?hZ+KEXUZBXfL2hwKss18s2GDe2rKMicIYVrGU2m5WxVpg+sOOdtj6LDSAnSR?=
- =?us-ascii?Q?oZkv/QeEUWyp13FHCmWHRsry+mkXlq/Wjpq7Duu6iRY3zxVPpSejlwIZO+HH?=
- =?us-ascii?Q?A7OH54VUp88kcqcRzkEHotDQZYoZ8hSRAl3wWOW/iPRJSUWR5SiBl9uiCjIZ?=
- =?us-ascii?Q?7hq89hJkApZFZo0M1augzImYdtDLg4Mi0H9EfN1kZ/Ar3RZcRsDpyIsMiZ99?=
- =?us-ascii?Q?rAhnpZdeHPHfQDwBUUgypB1nFymLnLv7XVaAzh5TQif7sWGQSq1MR7Jryqq5?=
- =?us-ascii?Q?l/warxM5BCqL5TiX13Op2VRre3TginqknwOEY4rTVPlMaTX9O38bNxpfbuHx?=
- =?us-ascii?Q?r300GK1bEUJaAs07Kl81UGVa3AlxU/Bx81Qgt+n2fBNy6+UvfjqC+qKk6MEG?=
- =?us-ascii?Q?++eJWV7jvnC2EAjL93s1xPvdtxO81FN/qhXplP+3BE8DiKAG6DIqEB1r0rrN?=
- =?us-ascii?Q?9FCpMIKxVcp8iZrLmXpH4tKHeUB1IA2u?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UE6AbP28Ked03KQKP0GrTGz9UMpYN96NE78+AIdpz2DYIoXcYJYxWlhZXbVH?=
- =?us-ascii?Q?l0mXMrriB9+IeDQ11VPByt/vTx2y0V+/2l5XzgM/b6DJLa1QFWS8jEzPQpFC?=
- =?us-ascii?Q?80zsEi59zXY9IUBAqss9S3eUSoVdAx37w+TzVrS+9SS3PDTsrIRSOmnWF0vi?=
- =?us-ascii?Q?z5I189qFlHJim7cyZUmX3bXG1y06o4I9jrhv1dgxIBJ1K2VrmYmE1f/0GReW?=
- =?us-ascii?Q?0NYLY6IBzpM1D1vmllW5I3owx9m/LV5n0RByWxc4PFpUvZMw4Fma5ex4DwuV?=
- =?us-ascii?Q?UlIouCePpa98LlTnH+Sj5uiZIQbCbEKXHbIZx8D6ZZoC7RFJpmwW0Q2RlLUQ?=
- =?us-ascii?Q?RezlROkpbW24mlC9OacVkXm9VYJrLK5OuBz31HP97moEKex4qf40G5+LGNbC?=
- =?us-ascii?Q?Vxb57ru5zQ3TiJkvHIQK70O60OQApQCZJy3c1VdVJcjB23yXfh8vTgE3Zjh1?=
- =?us-ascii?Q?LDOifzvALF44j0av0uJYd+6kAL9YVxrHJFubhKj4o5cyQZ+3XuhCR1sPiOgi?=
- =?us-ascii?Q?M7sYyXj4q/YsjJShFTz0545kH4zHDy5uIJ5lUFGH+8OqJRMZbIIIwTQldg4m?=
- =?us-ascii?Q?0tKl15ZBfE4aHyG2IuDD9xTGi0n+ZVaUWb2tTVIYUJtI/M091VTPiOT2XgqL?=
- =?us-ascii?Q?5q60G0UC25NtC4nSZOQy0i/+v4Tk4OTFflpUz3UUmg/a23iBL1sR6kw2SOZi?=
- =?us-ascii?Q?EgMayEfca4stjBHumrPYY37BAq2RWPpe1K3cJ72eKDWAIO/hjnT9UPvU1y79?=
- =?us-ascii?Q?jZwqKHIpx0k2RqCr4A7gBwK4vlstJ6sKasgTKBDLZldkBBkuHNRDfvQ0nMgH?=
- =?us-ascii?Q?KtfGIVf9zgRjJ5zDLOLB3QYhaCCHMiBq8gC0RoiqxOU9SnFf+mmutgJt6esQ?=
- =?us-ascii?Q?t2T6MRlZpsBvIaeYCCEpUI7PKGLiKLweY7JiAfUJ1DisFpjGQwp7P07LblQK?=
- =?us-ascii?Q?ChEjtmRVPsmexo3H0By/ObbFN57UePH66OOmV0rIxm20fERMqRkoRMIexr7/?=
- =?us-ascii?Q?F5rkw2QvBi6pdGY4ijfCqIkV1ZvJRoCW4iuKuZkCMZmALbkfdrM0n2HWveDU?=
- =?us-ascii?Q?K8zWRCpUuRZ6NNhuupyhE19kHEMOV2yKmXjtF7HfBIZN8a7M3VnqkKNllfGZ?=
- =?us-ascii?Q?kWcbWQd7T23EAjZpqcLgBkOgmxfddBtNon2dpKJloGYqsDxyabstbsbb0Ks0?=
- =?us-ascii?Q?8K8hWNtQPG3i91xVQOt+N6P8et/QL5dHmf6EuXAuEZupZ0eHhzgfLswUXkYx?=
- =?us-ascii?Q?V36J81ZkFI/TMdpDUI1mKHUHezipV29MTK0DlT/T6Ei0gWqytpSfE2ni8G2t?=
- =?us-ascii?Q?qX/TCtMR8Wm8gXQYlGQ3XkrT2zbCBAfM6r5a/FNKVcpP2NGY7KRr444Jvlp/?=
- =?us-ascii?Q?IRE14GY0ThFujKoQHu+UiMVpO4wSMrVAp81G70t4ahHHmL+IfvjUmyzJSYAs?=
- =?us-ascii?Q?iKTXNGWJxtheJMcdU2f1oYz+vgtFPt6DqJ8MkTIWeTuKlklwbNsybxGK1nQo?=
- =?us-ascii?Q?2YL5/miJGainpMLYVRPRpTIU/iXRJWbTA22BwuEbcjhXW0GArYnri6KVsIYT?=
- =?us-ascii?Q?cxIIXLdJuIK+BWefpty4xFXoz+gpjDwZ6V5+VBGH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94c7a0aa-69f3-493a-297c-08de0d740f5c
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 11:55:26.1596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pOy9aCAjjLmz7OdYPH4lLeue18rXKogU4vpHUvLkh0XxBRw9bcWpmJw+enYz+cAB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6938
+References: <d849e8a98bf88bd12fd13a8f6b6e84290dcaaf6e.1758859391.git.zhanghongru@xiaomi.com>
+ <b30e8d56703dfd84778fa73845eaa1ec@paul-moore.com>
+In-Reply-To: <b30e8d56703dfd84778fa73845eaa1ec@paul-moore.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 17 Oct 2025 07:59:27 -0400
+X-Gm-Features: AS18NWBeYyxAH_evsaxR2TF9DWHgPf0qWcmlrNwnjehtMs1KbEN7D3XwyZ95NAE
+Message-ID: <CAEjxPJ5CYtyfMPcaM2ugyMJQ2d+YQz4oXVBOcm7=gHsOk-2sRg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] selinux: Make avc cache slot size configurable
+ during boot
+To: Paul Moore <paul@paul-moore.com>
+Cc: Hongru Zhang <zhanghongru06@gmail.com>, omosnace@redhat.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, zhanghongru@xiaomi.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 11:32:59PM -0700, Christoph Hellwig wrote:
-> On Mon, Oct 13, 2025 at 06:26:10PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Make sure that all VFIO PCI devices have peer-to-peer capabilities
-> > enables, so we would be able to export their MMIO memory through DMABUF,
-> 
-> How do you know that they are safe to use with P2P?
+On Thu, Oct 16, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Sep 26, 2025 Hongru Zhang <zhanghongru06@gmail.com> wrote:
+> >
+> > On mobile device high-load situations, permission check can happen
+> > more than 90,000/s (8 core system). With default 512 cache nodes
+> > configuration, avc cache miss happens more often and occasionally
+> > leads to long time (>2ms) irqs off on both big and little cores,
+> > which decreases system real-time capability.
+> >
+> > An actual call stack is as follows:
+> >  =3D> avc_compute_av
+> >  =3D> avc_perm_nonode
+> >  =3D> avc_has_perm_noaudit
+> >  =3D> selinux_capable
+> >  =3D> security_capable
+> >  =3D> capable
+> >  =3D> __sched_setscheduler
+> >  =3D> do_sched_setscheduler
+> >  =3D> __arm64_sys_sched_setscheduler
+> >  =3D> invoke_syscall
+> >  =3D> el0_svc_common
+> >  =3D> do_el0_svc
+> >  =3D> el0_svc
+> >  =3D> el0t_64_sync_handler
+> >  =3D> el0t_64_sync
+> >
+> > Although we can expand avc nodes through /sys/fs/selinux/cache_threshol=
+d
+> > to mitigate long time irqs off, hash conflicts make the bucket average
+> > length longer because of the fixed size of cache slots, leading to
+> > avc_search_node latency increase.
+> >
+> > Make avc cache slot size also configurable, and with fine tuning, we ca=
+n
+> > mitigate long time irqs off with slightly avc_search_node performance
+> > regression.
+> >
+> > Theoretically, the main overhead is memory consumption.
+> >
+> > avc_search_node avg latency test results (about 100,000,000 times) on
+> > Qcom SM8750, 6.6.30-android15-8:
+> >
+> > Case 1:
+> > +---------+---------------------+------------------------+
+> > |         | no-patch (512/512)  | with-patch (512/512)   |
+> > +---------+---------------------+------------------------+
+> > | latency |        85 ns        |         87 ns          |
+> > +---------+---------------------+------------------------+
+> >
+> > Case 2:
+> > +---------+---------------------+------------------------+
+> > |         | no-patch (8192/512) | with-patch (8192/8192) |
+> > +---------+---------------------+------------------------+
+> > | latency |        277 ns       |         106 ns         |
+> > +---------+---------------------+------------------------+
+> >
+> > Case 1 shows 512 nodes configuration has ~2% performance regression
+> > with patch.
+> > Case 2 shows 8192 nodes configuration has ~61% latency benifit with
+> > patch.
+> >
+> > Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
+> > Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  4 ++
+> >  security/selinux/avc.c                        | 68 +++++++++++++------
+> >  2 files changed, 50 insertions(+), 22 deletions(-)
+>
+> I would expect the number of active AVC nodes, and AVC churn in general,
+> to be very policy dependent; some policies and use cases simply result in
+> more AVC nodes than others.  With that in mind, I'm wondering if instead
+> of using a kernel command line parameter to specify the number of AVC
+> buckets, we should instead include an AVC size "hint" in the policy that
+> we can use to size the AVC when loading a new policy.
+>
+> Thoughts?
+>
+> I think it would be important to consider it strictly as a "hint" as
+> that would make life easier, e.g. if the previous policy hinted at a
+> larger AVC we may not want to bother with reducing the number of buckets.
+> I would suggest starting with an implementation that uses the hint as a
+> power of two for the number of AVC slots/buckets, with a value of '0'
+> indicating a default value (512 slots, e.g. '2^9').
 
-All PCI devices are "safe" for P2P by spec. I've never heard of a
-non-complaint device causing problems in this area.
-
-The issue is always SOC support inside the CPU and that is delt with
-inside the P2P subsystem logic.
-
-If we ever see a problem it would be delt with by quirking the broken
-device through pci-quirks and having the p2p subsystem refuse any p2p
-with that device.
-
-Jason
+So, aside from Hongru's points about this requiring a change to the
+binary policy format and compiler and introducing possible
+atomicity/locking issues in the AVC code when accessing the number of
+buckets, I am also uncertain that this is something that is fully
+determinable from policy alone. A small AVC might be fine even with a
+large policy depending on the actual workload that is running on the
+system in question. Hence, I was fine with this being a kernel
+parameter. If we did want to introduce dynamism here despite these
+considerations, then two possibilities come to mind:
+1. Allow it to be set/modified via a new /sys/fs/selinux/avc node in
+the same manner as other existing tunables in selinuxfs. This avoids
+the need to modify the policy format / compiler and allows tuning on
+an end system based on its workload.
+and/or
+2. Compute the AVC number of buckets based on the policy avtab size
+which is already available from existing binary policies. This
+likewise avoids the need to modify the policy format / compiler while
+automatically tuning the number of buckets based on the size of the
+policy.
 
