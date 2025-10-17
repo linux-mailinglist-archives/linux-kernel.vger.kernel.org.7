@@ -1,232 +1,127 @@
-Return-Path: <linux-kernel+bounces-857893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54794BE826C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:53:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47B5BE832D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33761AA46EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6BC6E43B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF0A31DDB7;
-	Fri, 17 Oct 2025 10:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="tn4aYz9l"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03161321428;
+	Fri, 17 Oct 2025 10:52:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE3031BC94;
-	Fri, 17 Oct 2025 10:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6737321426
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760698317; cv=none; b=gs/i601HRGFAHvYzAfWbBc9F6IIoSESkkhkHtnEPxnD9YKkphKsrWXAbn6yx2SpPymwCPQKJaIRleVC8ztYaRORHeXJPv8PJV9N29CyNZh5Cdb36Cty2ec4NiahQSzSUxdyBM97J31XKBIAgdDAiHSwqNrveQ9wC3X1LWcSaN2s=
+	t=1760698325; cv=none; b=e17l/RXu3Kd8d3v7rLFLdLXIaQVNp9grXT9QHprVgfat3bLfrdzZfw2AlI/AtUi1R3FWnUD+ugM1cvbcMZtQ37TDIGPTc3zGoELexyQMp5onmjjv773uYGBQ8yPLIwlKxKzHvZvl9jmbZnBY8eGKXrlNmzXA+nKhWx//8lPe/kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760698317; c=relaxed/simple;
-	bh=fMPKXdNY2FwPTY1ab30JP2n3709l1BR0etSRjYvT2no=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DNUetc42BeZyqwHbAO/O48DibHW0fbZe9HkOEcndTXFMCnUsqzoxlNqxCCeTDGid5mvj0NFwW1KBpMtvtyesDSqcklK/8I9Q1a7L7BflaFCE+x+9py/6LDr00VE+d3YgPBBqYJL2JY2yAaTSAPqbZoQrv52b/yEGnYr6KS/6cVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=tn4aYz9l; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=XK6rShI1laVwxqZnNYg1sUJOrdVDcwamBttA7hfuCSM=;
-  b=tn4aYz9lmkDrc4N/iK2W/dM81CNjYMahGWFcq4rSfyrAOMJ30S0qvU5x
-   DDrS1DB49dy9J+mDsmpdTC6EmQpk42hAVCNU91tBng/7RP3/kJKfUQYys
-   dvZSuay+w3oYltOCgaKnt47F1KY4PVI6Z3oE5kX432CUOCAhWVjp27mxF
-   g=;
-X-CSE-ConnectionGUID: TVVds0QUR5GM1FOFhwN2PA==
-X-CSE-MsgGUID: 9dq6U7JzTjaJHe2aNq8FFA==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,236,1754949600"; 
-   d="scan'208";a="128490637"
-Received: from bb116-15-226-202.singnet.com.sg (HELO hadrien) ([116.15.226.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 12:51:38 +0200
-Date: Fri, 17 Oct 2025 18:51:31 +0800 (+08)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Thomas Gleixner <tglx@linutronix.de>
-cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
-    Nicolas Palix <nicolas.palix@imag.fr>, kernel test robot <lkp@intel.com>, 
-    Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-    Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-    Christophe Leroy <christophe.leroy@csgroup.eu>, 
-    linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-    Heiko Carstens <hca@linux.ibm.com>, 
-    Christian Borntraeger <borntraeger@linux.ibm.com>, 
-    Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-    Andrew Cooper <andrew.cooper3@citrix.com>, 
-    Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-    Davidlohr Bueso <dave@stgolabs.net>, 
-    =?ISO-8859-15?Q?Andr=E9_Almeida?= <andrealmeid@igalia.com>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V3 09/12] [RFC] coccinelle: misc: Add scoped_masked_$MODE_access()
- checker script
-In-Reply-To: <20251017093030.378863263@linutronix.de>
-Message-ID: <46ea566b-6c42-a73-31da-ba15ed82aaf@inria.fr>
-References: <20251017085938.150569636@linutronix.de> <20251017093030.378863263@linutronix.de>
+	s=arc-20240116; t=1760698325; c=relaxed/simple;
+	bh=WS238Cu3bDpTBRMXAM1Z08hgqvGtjH7a5kLfbscgq3M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mYJzUE4VTEyrXhgx+2PF1ae4SJ1nYNe+QXIOazWtCsyC8k17AupbLAspxD9pRatd8zDrGYyWpzUM3jIPphdU80IDdltxzm1olWxC6c28zqtLXoNQvBjsW987e9rYPl+qRcCbL5EFvZOZ+suQGvRu+Kml5PA/xIGh2Yz2wUwD5TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-9286199b46fso183205739f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 03:52:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760698323; x=1761303123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YrVD2+wt400thVh0zpZCcgoCSJVZOHGCfjdO43pb434=;
+        b=vcbaTFctSSVjyBAb2gS66EWc1zmH23qchUIjNHtyyLZk2z3HRXSmHilSnrxeh9zT6j
+         qdeQQr3oipWRTWLIxDXG2U2jwKkdLm04L7FM7oO0EpYB7d74H8PSP986QEOPX17dcQEv
+         rE25GF4j5mXqWPJ8CwtpyhWgUxL8BUfIw88Pa6ESdbDGi6uf/mTQWxzDs5gdN1ysUDV7
+         4ZXvdAKwDPpKViqgMgSxmxD/VWv5ClC6KdIpzZRroY1eBHCfJpDBVBQ/fA3I/fgSGroH
+         k1E0HbpKIGR1Dmo3Y3E1uTw80wyV9SDHr+ZK1wXMRO4lAmfDg8MKK3oHq4oamPLCrSeO
+         cVvg==
+X-Gm-Message-State: AOJu0YywKIiwodrXCvmhzMYEeevJdv0cFa+mfB+1W+Mwglf48ZUXxsx8
+	rwSiGlg/1cXRtrZS/N5u7LC0gQa4MloIO1vkv4ol10zQxUD0fDiQR3gElno+FOVyiBCf9B58Njq
+	GLTLxg4bOQGmw+Hq9wfCixKJRluZGjaQFlQYiu0JJXn3AZOLRG8BHTvglPBg=
+X-Google-Smtp-Source: AGHT+IG+mWjXWQXEqcecHbVj/TqxYznOpVRcQy23d4akM3dJH+RCjGqn+5UvwecvpljMPbKvz13e6bYGVUybIJYQYuAg7W22j7ji
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a92:ca46:0:b0:430:aca2:53ca with SMTP id
+ e9e14a558f8ab-430c51ebb58mr47337615ab.5.1760698322943; Fri, 17 Oct 2025
+ 03:52:02 -0700 (PDT)
+Date: Fri, 17 Oct 2025 03:52:02 -0700
+In-Reply-To: <d5067a639f2341e6cce0a48f810c22d2e36c33a8.1760688719.git.xiaopei01@kylinos.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f21fd2.050a0220.91a22.041b.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbAllocAG (3)
+From: syzbot <syzbot+4b717071f1eecb2972df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xiaopei01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in dbAllocAG
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6656 at fs/jfs/jfs_dmap.c:1440 dbAllocAG+0xd67/0x1080 fs/jfs/jfs_dmap.c:1440
+Modules linked in:
+CPU: 1 UID: 0 PID: 6656 Comm: syz.0.22 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:dbAllocAG+0xd67/0x1080 fs/jfs/jfs_dmap.c:1440
+Code: 89 d8 48 c1 e8 03 42 80 3c 30 00 74 08 48 89 df e8 fe e7 e6 fe 48 8b 3b 48 c7 c6 a0 1a 24 8b e9 d2 f9 ff ff e8 ea 35 85 fe 90 <0f> 0b 90 48 8b 44 24 78 42 0f b6 04 20 84 c0 0f 85 d5 02 00 00 48
+RSP: 0018:ffffc90004e4f300 EFLAGS: 00010293
+RAX: ffffffff8339c746 RBX: ffff888036d4f000 RCX: ffff88802e0a8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000100 R11: 0000000000000002 R12: dffffc0000000000
+R13: 0000000000000155 R14: 0000000000000000 R15: 00000000000000ff
+FS:  00007efe0bfed6c0(0000) GS:ffff888126cc6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000565151f06950 CR3: 0000000041956000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ dbAlloc+0x5a8/0xba0 fs/jfs/jfs_dmap.c:877
+ extBalloc fs/jfs/jfs_extent.c:336 [inline]
+ extAlloc+0x54a/0xfb0 fs/jfs/jfs_extent.c:127
+ jfs_get_block+0x346/0xab0 fs/jfs/inode.c:254
+ __block_write_begin_int+0x6b5/0x1900 fs/buffer.c:2145
+ block_write_begin+0x8a/0x120 fs/buffer.c:2256
+ jfs_write_begin+0x35/0x80 fs/jfs/inode.c:306
+ generic_perform_write+0x29d/0x8c0 mm/filemap.c:4242
+ generic_file_write_iter+0x118/0x550 mm/filemap.c:4385
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5d5/0xb40 fs/read_write.c:686
+ ksys_write+0x14b/0x260 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efe0c99eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efe0bfed038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007efe0cbf6090 RCX: 00007efe0c99eec9
+RDX: 0000000000000014 RSI: 0000200000000380 RDI: 0000000000000005
+RBP: 00007efe0ca21f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007efe0cbf6128 R14: 00007efe0cbf6090 R15: 00007ffeba24aff8
+ </TASK>
 
 
+Tested on:
 
-On Fri, 17 Oct 2025, Thomas Gleixner wrote:
+commit:         98ac9cc4 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1606cb04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b717071f1eecb2972df
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17cfbdcd980000
 
-> A common mistake in user access code is that the wrong access mode is
-> selected for starting the user access section. As most architectures map
-> Read and Write modes to ReadWrite this goes often unnoticed for quite some
-> time.
->
-> Aside of that the scoped user access mechanism requires that the same
-> pointer is used for the actual accessor macros that was handed in to start
-> the scope because the pointer can be modified by the scope begin mechanism
-> if the architecture supports masking.
->
-> Add a basic (and incomplete) coccinelle script to check for the common
-> issues. The error output is:
->
-> kernel/futex/futex.h:303:2-17: ERROR: Invalid pointer for unsafe_put_user(p) in scoped_masked_user_write_access(to)
-> kernel/futex/futex.h:292:2-17: ERROR: Invalid access mode unsafe_get_user() in scoped_masked_user_write_access()
->
-> Not-Yet-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Julia Lawall <Julia.Lawall@inria.fr>
-> Cc: Nicolas Palix <nicolas.palix@imag.fr>
-> ---
->  scripts/coccinelle/misc/scoped_uaccess.cocci |  108 +++++++++++++++++++++++++++
->  1 file changed, 108 insertions(+)
->
-> --- /dev/null
-> +++ b/scripts/coccinelle/misc/scoped_uaccess.cocci
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/// Validate scoped_masked_user*access() scopes
-> +///
-> +// Confidence: Zero
-> +// Options: --no-includes --include-headers
-> +
-> +virtual context
-> +virtual report
-> +virtual org
-> +
-> +@initialize:python@
-> +@@
-> +
-> +scopemap = {
-> +  'scoped_masked_user_read_access_size'  : 'scoped_masked_user_read_access',
-> +  'scoped_masked_user_write_access_size' : 'scoped_masked_user_write_access',
-> +  'scoped_masked_user_rw_access_size'    : 'scoped_masked_user_rw_access',
-> +}
-> +
-> +# Most common accessors. Incomplete list
-> +noaccessmap = {
-> +  'scoped_masked_user_read_access'       : ('unsafe_put_user', 'unsafe_copy_to_user'),
-> +  'scoped_masked_user_write_access'      : ('unsafe_get_user', 'unsafe_copy_from_user'),
-> +}
-> +
-> +# Most common accessors. Incomplete list
-> +ptrmap = {
-> +  'unsafe_put_user'			 : 1,
-> +  'unsafe_get_user'			 : 1,
-> +  'unsafe_copy_to_user'		 	 : 0,
-> +  'unsafe_copy_from_user'		 : 0,
-> +}
-> +
-> +print_mode = None
-> +
-> +def pr_err(pos, msg):
-> +   if print_mode == 'R':
-> +      coccilib.report.print_report(pos[0], msg)
-> +   elif print_mode == 'O':
-> +      cocci.print_main(msg, pos)
-> +
-> +@r0 depends on report || org@
-> +iterator name scoped_masked_user_read_access,
-> +	      scoped_masked_user_read_access_size,
-> +	      scoped_masked_user_write_access,
-> +	      scoped_masked_user_write_access_size,
-> +	      scoped_masked_user_rw_access,
-> +	      scoped_masked_user_rw_access_size;
-> +iterator scope;
-> +statement S;
-> +@@
-> +
-> +(
-> +(
-> +scoped_masked_user_read_access(...) S
-> +|
-> +scoped_masked_user_read_access_size(...) S
-> +|
-> +scoped_masked_user_write_access(...) S
-> +|
-> +scoped_masked_user_write_access_size(...) S
-> +|
-> +scoped_masked_user_rw_access(...) S
-> +|
-> +scoped_masked_user_rw_access_size(...) S
-> +)
-> +&
-> +scope(...) S
-> +)
-> +
-> +@script:python depends on r0 && report@
-> +@@
-> +print_mode = 'R'
-> +
-> +@script:python depends on r0 && org@
-> +@@
-> +print_mode = 'O'
-> +
-> +@r1@
-> +expression sp, a0, a1;
-> +iterator r0.scope;
-> +identifier ac;
-> +position p;
-> +@@
-> +
-> +  scope(sp,...) {
-> +    <+...
-> +    ac@p(a0, a1, ...);
-> +    ...+>
-> +  }
-
-This will be more efficient and equally useful with <... ...>
-Using + requires that there is at least one match, which has a cost.
-
-julia
-
-
-> +
-> +@script:python@
-> +pos << r1.p;
-> +scope << r0.scope;
-> +ac << r1.ac;
-> +sp << r1.sp;
-> +a0 << r1.a0;
-> +a1 << r1.a1;
-> +@@
-> +
-> +scope = scopemap.get(scope, scope)
-> +if ac in noaccessmap.get(scope, []):
-> +   pr_err(pos, 'ERROR: Invalid access mode %s() in %s()' %(ac, scope))
-> +
-> +if ac in ptrmap:
-> +   ap = (a0, a1)[ptrmap[ac]]
-> +   if sp != ap.lstrip('&').split('->')[0].strip():
-> +      pr_err(pos, 'ERROR: Invalid pointer for %s(%s) in %s(%s)' %(ac, ap, scope, sp))
->
->
 
