@@ -1,123 +1,177 @@
-Return-Path: <linux-kernel+bounces-857706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5787EBE7C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:34:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E87BBE7BBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42EC42253B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:30:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 000F335BFFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB95311C3F;
-	Fri, 17 Oct 2025 09:20:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937273128A6;
+	Fri, 17 Oct 2025 09:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j/q5tp5/"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17FB3115B8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4298F2D8767
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692805; cv=none; b=iLwzTh+IRibo5QjoEe0JygowY4THDFznLQKvpMkEoUjjx7VWIuuJSUsSsAv7qGzrNzKmaK5iv5hellZr+Cf/dUu5sF1K/Z828/slo50EbuGGf+uiS1K/tB/vLrcG6sP87wOowqLxAspqNDfrrrDRbg/3jOMv2kSzktobUOwea88=
+	t=1760692845; cv=none; b=prkbQKUEeM9J5bgnBMZaV84SIk6LG8L+UuA5DKGdmcKtGvKk34AYoZOhMVmZ7xUZB8/eDJ0u6neZpKEd9sxA+FFHL2ath96YfdQLhZGKvmpAWzstiJO6NQupr11IavfJ19z9hzyRAnwW5zA+vJdgKTF0ikIQ1k937nFNNdPhhzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760692805; c=relaxed/simple;
-	bh=v+b2itQo3qtdbNNDymti9Y+w3BnxKEthz95gxcwY/Tc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gIZwxIjdsgTAoDLteR7R1qqa1lnq+EiTWfFY0vMKmHN9g3QhFEnY6eKUzx/94Eyyiwwj3PfKxppPC+pq7oUzwYLdaKn2r55TsuNTxxB4CLBUrWP+/ebmHPEn2ei62Xbtb2XpWVe+VkkAC6FG0NARu0ug2K2mwm8zrUKAliMO134=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430c684035eso11548255ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:20:03 -0700 (PDT)
+	s=arc-20240116; t=1760692845; c=relaxed/simple;
+	bh=arpQCWK126GMa9425WGmA2NWCbIvN4MCYLjOgF9A6W8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jT1KSTyZscJ6tlLr0vSx7zwBHuTBmKpkfRtbhOGfD3FQ65bdRqehFzS4g6ytT2/X/UcRP0af7iv6RHf7SEk+GWoHMLGZ1/y+ZMPl8Ef9sJOZ1wPJzcyv2yyx6uIUY1AvcIsKBJmuKsebhgzGph14Nz5IQVCwB+eljpxiReGE+ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j/q5tp5/; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-290d4d421f6so5775555ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760692843; x=1761297643; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LhknjiEqyUugoHigEu5rPV98JBjQEuOdpnABFTzWfmA=;
+        b=j/q5tp5/kRtLiFIkzt8qE92PeYtgHPsmLnUNlT/g06UQpfj3VMoKEmDiTLthbV8mNL
+         KyxzXq+FgoknaGFEwrayiZ/WIA50n31v24ldR8sntyfaCSE9Sg3gS++ui+xiRHJYRE0e
+         +vV83x8tNXBXNYgTzaCxV/rYH3SR8klrETwl3FVGgimkDKIln2eRAPSMsUehJ8vm9bnd
+         QHDdlX1y88BvxZJmFTAMjTWSStE3kQxOgWmIa/KtOPABvnHMSmLS95cUtXErzIp8IWFN
+         g+t+c8UU2tgqLjCD4dMfSCO2d8JVPcqwbN+I5LRa+MV7/VS0oOCovEpFjygrIaYti4Fe
+         hcGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760692803; x=1761297603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qAC+6lRoCT+KFlg/f9zEFHL3RIpw6+ZChDwUaOt3Bpk=;
-        b=RWSZdZnWIHT0Jz4NTxBh6A5YL7k6rmxrx+zw199Kv0Dh8dl6r5mn3gqSk/QTGPBqQ6
-         kkpza/ndvxT/LUkOkbys/OwB/00tf+5WMmxxzbHExs0pDCNMf/XXA1FvodgCIZ8sv6mx
-         pCcaFC2J0wBXPluTdOuEN39gC6X8YlYnoBrE5Ro+JYWeQmVtnkuoftj4sl+/ALveAAKK
-         RhPjKcaw5SObZU3Wc7L/O4kYfKyoD/UAyOG0R3Wftegh+ps9u0ak7ZsXzlJ5XTJ9ZImv
-         5FVIrRK1m7G2vsgol60rDjNPufHC+OLgUfjLxYgwk9xpVmNkScyRT2spHyqRJGWU6cPX
-         KzNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTMl1NCv7AzraR75omy+nhA8Dco6Id8xW9hx755SHhBCXDivrZuBZTHQuxMalUe8toDCfDXuXENotBa5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkcl8wvzEGA7zMsVAF7wzy/7CkkGdCk1eG8m1G2OgNlN8zDOst
-	rEy/QuYFmtcck4v6ZurIg1VgCjn9at5fnt0oursVz1UAu6VDFxa01GsCGHE4IaqaloNX0vyZ104
-	SbF9SihZUmTifvwdLlCE4tTd3bwVB+XRz3hZ8SOFFyqG7YXFttM2O8ei5wf4=
-X-Google-Smtp-Source: AGHT+IFx9xHDxm4N5DE2EEVn1dwOaSFsoujGsgoZpu9AxJ1mBTy6VJOb4zyqSaD/cWZLIPHM20DJnKiYqun3WhZYRglrN+1ZsSFi
+        d=1e100.net; s=20230601; t=1760692843; x=1761297643;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LhknjiEqyUugoHigEu5rPV98JBjQEuOdpnABFTzWfmA=;
+        b=lDDT/ia0+FJZrAZsnP0vFySw1vDoo1SACAh4G/KZ7qDeFauEK1xb/IDbku6i4lUQdN
+         YXohmbrgINTOCb1TU+Em/MC6WJhg0wPHNAIXIzEcRGU4lSq7++pNPDkM7oRelQ17QFAl
+         edHgHcMMbPLlnPMKfbZuAOyjS2bY3MDfXI/iSsBCx2ax0BmqZ5G69dcrDMlgDuYIOcim
+         TsyfBaBCZg1Dwf9crF3Ud+FJ9AVGuKhpdCT6qHgHaGGpx91GxVKpLVXTn/Xrx/01jYyj
+         Exc+UgwebTc6PFoiRPicrfvgQisBr12+I6pgHWTaUBdVplkAY+zvZT8Jj8g5jp3PgLAY
+         Kytw==
+X-Gm-Message-State: AOJu0YwSaF2nGlqycHsfjtsu5yUT0O06WE3guiJe9UcpWBal3boHkj8O
+	rCr6UFUeSFo1ZFDs1D+vdU+SLSjdQHXDRcBF9LiOe0uj6jp5R5HrQzrkaoD/uGbhfw2mys0fa4w
+	pg/ZnkvU/mlrO7ZEEiTiSAbBQAjnFpWCZoZQnpbfYD4yElnuClPTB9Oc=
+X-Gm-Gg: ASbGncuwPDlauDnENpDW+bxDc6dJ4f0dSJoQdIgCjNv98Gj1jZ9JEZ5XHOkY/GhIjfN
+	gGeFywdhLCqaTuNU74hxceeylnowSmyQAZw0rSF7j20AvGA/5clhSntWdO3b+7yfdj4VdLp3Xem
+	zsgoWAP44Oj+NEfO2yckwGBphcPN6P2XcxVyBe3q8yvPI2h82RmjwH1c/2OGD9so50ljmQWuCjI
+	Xg8GnXBOIaE1ACCC5T9o9d2m3oUviyCzTm9vv1vLkE9qa6IdHQUZZnyBmUKdG0qHkgw/1/yF1J2
+	ZMErxclDBb/bX7G7x95k5OS70CuW15JrrO3TXFJRnqHa3feyFA==
+X-Google-Smtp-Source: AGHT+IH8McWMlP4j6h/In61PzhIcYXxJLdaulFUt4hQVbIPHKC+IElEF8O1paYDYvmL7uBRRfha5zKIJziU3JZlwoqY=
+X-Received: by 2002:a17:903:b0e:b0:25c:d4b6:f111 with SMTP id
+ d9443c01a7336-290cb65b633mr37181575ad.47.1760692843202; Fri, 17 Oct 2025
+ 02:20:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:430:af6a:de13 with SMTP id
- e9e14a558f8ab-430b3ff7705mr89553095ab.2.1760692803102; Fri, 17 Oct 2025
- 02:20:03 -0700 (PDT)
-Date: Fri, 17 Oct 2025 02:20:03 -0700
-In-Reply-To: <20251017085719.821125-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f20a43.a70a0220.b3ac9.0029.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] WARNING in chown_common
-From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, yzbot@syzkaller.appspotmail.com
+References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
+In-Reply-To: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 17 Oct 2025 14:50:31 +0530
+X-Gm-Features: AS18NWDlNGurivO1eFZTkxH5OkdGuvePuO7Z9_9bbaV5WCId2Ea8RDnwy82C9Ic
+Message-ID: <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
+Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
+ PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
+To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	LTP List <ltp@lists.linux.it>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, chrubis <chrubis@suse.cz>, 
+	Petr Vorel <pvorel@suse.cz>, Andrea Cervesato <andrea.cervesato@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
++ LTP mailing list,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in chown_common
+On Fri, 17 Oct 2025 at 14:21, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> The LTP syscalls ioctl_pidfd05 test failed due to following error on
+> the Linux mainline
+> kernel v6.18-rc1-104-g7ea30958b305 on the arm64, arm and x86_64.
+>
+> The Test case is expecting to fail with EINVAL but found ENOTTY.
 
-WARNING: CPU: 0 PID: 5970 at kernel/locking/rwsem.c:1381 __up_write kernel/locking/rwsem.c:1380 [inline]
-WARNING: CPU: 0 PID: 5970 at kernel/locking/rwsem.c:1381 up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Modules linked in:
-CPU: 0 UID: 0 PID: 5970 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
-RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Code: d0 48 c7 c7 20 ff 6a 8b 48 c7 c6 40 01 6b 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 b3 36 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 94 6e 9e 8f 80 e1 07 80 c1 03
-RSP: 0018:ffffc9000d497c50 EFLAGS: 00010296
-RAX: 29f4d5975a11a300 RBX: ffff888043da5058 RCX: ffff888034730000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 0000000000000000
-R13: ffff888043da50b0 R14: ffff888043da5058 R15: 1ffff110087b4a0c
-FS:  00007f49f65fe6c0(0000) GS:ffff88808d300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c005567000 CR3: 0000000058d8f000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:990 [inline]
- chown_common+0x3fb/0x580 fs/open.c:794
- do_fchownat+0x161/0x270 fs/open.c:823
- __do_sys_lchown fs/open.c:848 [inline]
- __se_sys_lchown fs/open.c:846 [inline]
- __x64_sys_lchown+0x85/0xa0 fs/open.c:846
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f49f6f8eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f49f65fe038 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
-RAX: ffffffffffffffda RBX: 00007f49f71e6270 RCX: 00007f49f6f8eec9
-RDX: 000000000000ee01 RSI: 0000000000000000 RDI: 00002000000006c0
-RBP: 00007f49f7011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f49f71e6308 R14: 00007f49f71e6270 R15: 00007fff9d14f498
- </TASK>
+[Not a kernel regression]
 
+From the recent LTP upgrade we have newly added test cases,
+ioctl_pidfd()
 
-Tested on:
+The test case is meant to test,
 
-commit:         98ac9cc4 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=171475e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
-dashboard link: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1448b67c580000
+Add ioctl_pidfd05 test
+Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO
+ is used.
+ This happens when:
+   - info parameter is NULL
+   - info parameter is providing the wrong size
 
+However, we need to investigate the reason for failure.
+
+Test case: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+
+>
+> Please investigate this reported regression.
+>
+> First seen on v6.18-rc1-104-g7ea30958b305
+> Good: 6.18.0-rc1
+> Bad: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
+>
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+>
+> Test regressions: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL:
+> ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL:
+> ENOTTY (25)
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## Test error log
+> tst_buffers.c:57: TINFO: Test is using guarded buffers
+> tst_test.c:2021: TINFO: LTP version: 20250930
+> tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
+> @1760657272 aarch64
+> tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+> tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
+> which might slow the execution
+> tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
+> ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
+> ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
+> info_invalid) expected EINVAL: ENOTTY (25)
+> Summary:
+> passed   1
+> failed   1
+>
+> ## Source
+> * Kernel version: 6.18.0-rc1
+> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> * Git describe: v6.18-rc1-104-g98ac9cc4b445
+> * Git commit: 98ac9cc4b4452ed7e714eddc8c90ac4ae5da1a09
+> * Architectures: arm64, x86_64
+> * Toolchains: gcc-13 clang
+> * Kconfigs: defconfig+lkftconfig
+>
+> ## Build
+> * Test log: https://lkft.validation.linaro.org/scheduler/job/8495154#L15590
+> * Test details:
+> https://regressions.linaro.org/lkft/linux-mainline-master/v6.18-rc1-104-g98ac9cc4b445/ltp-syscalls/ioctl_pidfd05/
+> * Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/34AVGrBMrEy9qh7gqsguINdUFFt
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34AVFcbKDpJQfCdAQupg3lZzwFY/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/34AVFcbKDpJQfCdAQupg3lZzwFY/config
+>
+> --
+> Linaro LKFT
+
+- Naresh
 
