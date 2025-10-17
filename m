@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-860403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-860402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B387BBF00DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:57:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3D5BF00D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 10:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9465D4E9463
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:57:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E2674E1A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Oct 2025 08:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31552ED16D;
-	Mon, 20 Oct 2025 08:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D913C2ECEA3;
+	Mon, 20 Oct 2025 08:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hysJY61T";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yphqrgjp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EpSYi1MA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jrfKw8GG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q3pAoFvo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RnFXPdtb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KGQie0CN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rAlV/3XS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0D12EC0AE
-	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245F81DE89A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 Oct 2025 08:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760950611; cv=none; b=rND40x5h0QClm5su2q/ZZuZzCPE6XhNb/sS0LgUyNus7/ksbtr+8I+gN08fGIcGqcX3y/PaBeazhQLUiLd3rwpDgnsoSQmwcq+4DBKNvqZo/EY9m9u+qIRyC78WboS6Cy5K8AV4wree2h3XgprRAIaKT7I/yAj/yOad13xrtfj4=
+	t=1760950610; cv=none; b=BcbG6gII6MqnqGGViJwH+0Oj2k3MLEDrR8TDyFgO0LCJyGbFHT9/f4Yv2KCElxXHPyHbwEGaz0no4okGljNUuqwMiQtWXp239LW2W2vlob1rBwutxv0i62wtOXnJO9Yk2urOMenAsgppqmMx6S1MPypRWE6QCCBGwIihPTnA+t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760950611; c=relaxed/simple;
-	bh=SQvT/VmAgOnKSszNJm2VTEpH72nC9+Uz2s0uKj8XT6g=;
+	s=arc-20240116; t=1760950610; c=relaxed/simple;
+	bh=O35ESG+CO6L+vYAIhwzEsFkVM5CsePJXfmkQN+z6Zyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iluYwnltbypHK96OZnBP6EUdhyiPIuh+m43bdvPpg3icKuKOFxSDktTZGD7ttnmjBWcfaSFStc0pXcAjAWBR2th2KtFCTp1d+mxewjSMtqPYftqeaXVkVRQaEUYPBw1szC2u53GKaLevARUanBbdwSN1chILoHI7xqWXxScO98k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hysJY61T; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yphqrgjp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EpSYi1MA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jrfKw8GG; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7f4vO9VtwY4dzY5G3Y3uGZ5gIo7i5nIX5Ck9YqzxsttIdsMbjsbYy9cvMOkjjjHE/+pCi6sF4zvOLvNqN8aruSRp3DjzQ+I3mL1bW+1zAr69vPVl64aP4wFm8SLHezKhNcPsY/xV2MsFOXODtJFZHFrNYHMXP+/KoAfEko/DXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q3pAoFvo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RnFXPdtb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KGQie0CN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rAlV/3XS; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A1FDE211C4;
-	Mon, 20 Oct 2025 08:56:39 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 32D861F770;
+	Mon, 20 Oct 2025 08:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760950603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1760950601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
-	b=hysJY61TD2iuyWjQVvb5FPwtn981mOlDkrB441JsmqUX2OVDVI4zg/zCz1S42k7fR1cfpP
-	bjgQdVacBY/DmcwZjtCAOnBLZZ+Lr31cLe4Ufk3eOfOK0Rtiyd3v96Lb507KbggzyXLOlm
-	5e7L7Fu7xIkXn1ikN81nkjkU6FUsXkE=
+	bh=o9ijt+7DsaOqkgmtY9R0bnmem4vaIfKpn2VHGuf9pRY=;
+	b=q3pAoFvoLqlwl8I45bzp9548CHXcHsnUDTMOvXkIO/Be7KtGrkMfFOd7YMjRKdPbkyFisk
+	ieM0RvFOGTd1aCvg/h/Hhs/6m4HUWQMcEHpivPLgn+Zzh31OO2Q6M47940YCSXAuD+hW6s
+	BnW/j2rf3DWq1bNnDjK9GOHhaoo/6vE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760950603;
+	s=susede2_ed25519; t=1760950601;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
-	b=yphqrgjpQ136lF9ZFjK7Fnee0a8FAXTtPw8WkJPvDwNzcE8imxq4sehvIj4b9tDbh4feKY
-	aO3kGbnh+JlzUJDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
+	bh=o9ijt+7DsaOqkgmtY9R0bnmem4vaIfKpn2VHGuf9pRY=;
+	b=RnFXPdtbDi1AXhDtITUVwD1AGMiTkbjrFeneBP9U/2HJe7NyLCTebovLFxlqtmsJJFUuEx
+	TLHaSZTzzN7pdRDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KGQie0CN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="rAlV/3XS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760950599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1760950597; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
-	b=EpSYi1MA5UN0J3n/KeHJ1nJ97rrmcBfsN9lz7pvVhcliLpA+8ReUeiuGGUaRPow5jzxg/Y
-	4HM36omUklV/9RZsO5RUPAeHULkeBdHSOYEwFvYDhJH7cSD2XiUWAq9po2Yxaj8Ppo89wU
-	8sG89rYgbei04SKZODB079q94d+ALek=
+	bh=o9ijt+7DsaOqkgmtY9R0bnmem4vaIfKpn2VHGuf9pRY=;
+	b=KGQie0CNyg6O1x6IA9clIECzK0ILwegkwgZbN2KpdWeY68qzXPQ8WR2r2xdJXU/bxapPG8
+	kCUClTIJDiicDH50hOaDjP2cffjlsP3Ai4g/Qy4eK8ltVzoifRzTl/PqunV9NPagiuTvD2
+	VIly2uWetD7vsAzQKTno7tw9SZqW7nc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760950599;
+	s=susede2_ed25519; t=1760950597;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0eKocUC4aWPoU3oJsUDdbKkljgX7L699KQPGrl9Fq+c=;
-	b=jrfKw8GGk70Lm1J5gwt/b6DyGS0j3iaiNjS9Gyn9IJ8GuAJZ9Kygon57sY3/AdOmIuP1A8
-	WS+2ykGKNs+yvsBg==
+	bh=o9ijt+7DsaOqkgmtY9R0bnmem4vaIfKpn2VHGuf9pRY=;
+	b=rAlV/3XSxsgsNbkD6gSM551432jp9CxgErsUUZkxpzNQwN0DdGVYPM+sbRS+xrp9MJdS93
+	TSCgqjkAR5/JLCBQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 272AD13B0B;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10BE813B03;
 	Mon, 20 Oct 2025 08:56:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HI+HCUH59WhmZQAAD6G6ig
+	id wSYOBEH59WhZZQAAD6G6ig
 	(envelope-from <jack@suse.cz>); Mon, 20 Oct 2025 08:56:33 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id ECD6FA28E4; Thu, 16 Oct 2025 18:21:19 +0200 (CEST)
-Date: Thu, 16 Oct 2025 18:21:19 +0200
+	id B6C9EA28F0; Fri, 17 Oct 2025 14:43:14 +0200 (CEST)
+Date: Fri, 17 Oct 2025 14:43:14 +0200
 From: Jan Kara <jack@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Aubrey Li <aubrey.li@linux.intel.com>, Jan Kara <jack@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, Nanhai Zou <nanhai.zou@intel.com>, 
-	Gang Deng <gang.deng@intel.com>, Tianyou Li <tianyou.li@intel.com>, 
-	Vinicius Gomes <vinicius.gomes@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Chen Yu <yu.c.chen@intel.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH] mm/readahead: Skip fully overlapped range
-Message-ID: <mze6nnqy2xwwqaz5xpwkthx3x4n6yd5vgbnyateyjlyjefiwde@qclv7inpacqe>
-References: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
- <20250922204921.898740570c9a595c75814753@linux-foundation.org>
- <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
- <cghebadvzchca3lo2cakcihwyoexx7fdqtibfywfm4xjo7eyp2@vbccezepgtoe>
- <6bcf9dfe-c231-43aa-8b1c-f699330e143c@linux.intel.com>
- <20251011152042.d0061f174dd934711bc1418b@linux-foundation.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Cyril Hrubis <chrubis@suse.cz>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, LTP List <ltp@lists.linux.it>, 
+	Andrey Albershteyn <aalbersh@kernel.org>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	Petr Vorel <pvorel@suse.cz>, Andrea Cervesato <andrea.cervesato@suse.com>
+Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
+ PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
+Message-ID: <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
+References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
+ <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
+ <aPIPGeWo8gtxVxQX@yuki.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,76 +111,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251011152042.d0061f174dd934711bc1418b@linux-foundation.org>
+In-Reply-To: <aPIPGeWo8gtxVxQX@yuki.lan>
 X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 32D861F770
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DATE_IN_PAST(1.00)[88];
+	DATE_IN_PAST(1.00)[68];
 	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -3.01
 
-Sorry for not replying earlier. I wanted make up my mind about this and
-other stuff was keeping preempting me...
-
-On Sat 11-10-25 15:20:42, Andrew Morton wrote:
-> On Tue, 30 Sep 2025 13:35:43 +0800 Aubrey Li <aubrey.li@linux.intel.com> wrote:
+On Fri 17-10-25 11:40:41, Cyril Hrubis wrote:
+> Hi!
+> > > ## Test error log
+> > > tst_buffers.c:57: TINFO: Test is using guarded buffers
+> > > tst_test.c:2021: TINFO: LTP version: 20250930
+> > > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
+> > > @1760657272 aarch64
+> > > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+> > > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
+> > > which might slow the execution
+> > > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
+> > > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
+> > > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
+> > > info_invalid) expected EINVAL: ENOTTY (25)
 > 
-> > file_ra_state is considered a performance hint, not a critical correctness
-> > field. The race conditions on file's readahead state don't affect the
-> > correctness of file I/O because later the page cache mechanisms ensure data
-> > consistency, it won't cause wrong data to be read. I think that's why we do
-> > not lock file_ra_state today, to avoid performance penalties on this hot path.
-> > 
-> > That said, this patch didn't make things worse, and it does take a risk but
-> > brings the rewards of RocksDB's readseq benchmark.
+> Looking closely this is a different problem.
 > 
-> So if I may summarize:
+> What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
+> size with:
 > 
-> - you've identifed and addressed an issue with concurrent readahead
->   against an fd
+> struct pidfd_info_invalid {
+>         uint32_t dummy;
+> };
+> 
+> #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
+> 
+> 
+> And we expect to hit:
+> 
+>         if (usize < PIDFD_INFO_SIZE_VER0)
+>                 return -EINVAL; /* First version, no smaller struct possible */
+> 
+> in fs/pidfs.c
+> 
+> 
+> And apparently the return value was changed in:
+> 
+> commit 3c17001b21b9f168c957ced9384abe969019b609
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Fri Sep 12 13:52:24 2025 +0200
+> 
+>     pidfs: validate extensible ioctls
+>     
+>     Validate extensible ioctls stricter than we do now.
+>     
+>     Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+>     Reviewed-by: Jan Kara <jack@suse.cz>
+>     Signed-off-by: Christian Brauner <brauner@kernel.org>
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index edc35522d75c..0a5083b9cce5 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
+>                  * erronously mistook the file descriptor for a pidfd.
+>                  * This is not perfect but will catch most cases.
+>                  */
+> -               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
+> +               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
+>         }
+>  
+>         return false;
+> 
+> 
+> So kernel has changed error it returns, if this is a regression or not
+> is for kernel developers to decide.
 
-Right but let me also note that the patch modifies only
-force_page_cache_ra() which is a pretty peculiar function. It's used at two
-places:
-1) When page_cache_sync_ra() decides it isn't worth to do a proper
-readahead and just wants to read that one one.
-
-2) From POSIX_FADV_WILLNEED - I suppose this is Aubrey's case.
-
-As such it seems to be fixing mostly a "don't do it when it hurts" kind of
-load from the benchmark than a widely used practical case since I'm not
-sure many programs call POSIX_FADV_WILLNEED from many threads in parallel
-for the same range.
-
-> - Jan points out that we don't properly handle concurrent access to a
->   file's ra_state.  This is somewhat offtopic, but we should address
->   this sometime anyway.  Then we can address the RocksDB issue later.
-
-The problem I had with the patch is that it adds more racy updates & checks
-for the shared ra state so it's kind of difficult to say whether some
-workload will not now more often clobber the ra state resulting in poor
-readahead behavior. Also as I looked into the patch now another objection I
-have is that force_page_cache_ra() previously didn't touch the ra state at
-all, it just read the requested pages. After the patch
-force_page_cache_ra() will destroy the readahead state completely. This is
-definitely something we don't want to do.
+Yes, it's mostly a question to Christian whether if passed size for
+extensible ioctl is smaller than minimal, we should be returning
+ENOIOCTLCMD or EINVAL. I think EINVAL would make more sense but Christian
+is our "extensible ioctl expert" :).
 
 								Honza
 -- 
