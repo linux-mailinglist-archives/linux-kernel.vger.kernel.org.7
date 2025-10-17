@@ -1,98 +1,165 @@
-Return-Path: <linux-kernel+bounces-858080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201FFBE8D34
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF44BE8D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C3D0503A7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DE206E256C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D96D34F49F;
-	Fri, 17 Oct 2025 13:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PY0x1lJL"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40647332ECD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC64334F488;
+	Fri, 17 Oct 2025 13:25:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666A62D641D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760707483; cv=none; b=WjkmYuy0loLJ7uBNjcQUUuhpAOfhNDlROn7pti4RkHdqz9WXkBhZk+WpaX4EcenHjw9JU4FFRJSBM+YbgCVuVwKDA2aixKtbm+Ec42bmBqa1DHL2nCF1hIMJc1bWRqvKfmfQ+/VUJkjvOvyQ7MLAOfthIyHicH/nTqhKTlR9PFo=
+	t=1760707524; cv=none; b=URRoxRGiiKRRTor9mF8bcZkUUUfZP0KYqT9gHRNQ46PQjLlzmjXa2pTAfvg1q4OYLm/eV5eAfvYMAI9RWL2RCjV5I3rThurY8EJmOQKaEDvWtxRl8uxX5bj7K2MS4ZqkO0KvqHxfqy9kLM532TsW9GdvMdJ+JLQDY8qm+djLfBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760707483; c=relaxed/simple;
-	bh=GgEzp2Fj75nh7OEKAeNg1afv+M1lZPOXZ1gMVZJFyFU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EndrRdOAdc7l2XNyGqcerO7qlYZys9wUuV7roAj7EwTdlQVV6g5BIp7976guQYykZHGEnvPE2nHCXHS+wDsmpRsp9Ia0knhhmqKV5B4HwZhcEcWFQPD2fUhZnOaEZMAWfsYmbg+vyOqMkXxUWOcD/uWqG/2TxZhgsyIrSDuKE7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PY0x1lJL; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b4068ff9c19so246118966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760707481; x=1761312281; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAPzxmZAKRETv1aAgqTv/3Qe7/Q8DRU161MvWKOur7I=;
-        b=PY0x1lJL6/OVlUOvGYH6SPyKwg1RpJCQy6ysblvld2lGliHCrnCRbeM/7NsY/Nm82f
-         vNYMjNCAePdDgMoA2gX13493Zk6LKV4jIRwkXTe8EA7MVhTi2pCAMc2Fa1/77CmXnAh9
-         Eau3HfVn8p+BRz4wnAbPMIji3C8DWcbfpGqJRa4pDX4GHAO2WGlKvWR9bc45exnScTGe
-         prVAywqhp2C9880X9euyiteDnpxwNUHSUq7tJbH69Cqy0tLra3KkY18vNZpPQ02Bc5Zo
-         TCp98cC+PLPzdOJVaHVo2nPITVBdez1HzHaHNHSsXtdCockw2h7FATG88TeUH1RtSAmU
-         zEyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760707481; x=1761312281;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAPzxmZAKRETv1aAgqTv/3Qe7/Q8DRU161MvWKOur7I=;
-        b=IucFX/3AdCwMbGQDvudxV7y+iVBfsXdA+s9IKOBk6ZRZGEeVy2uDVDyJ8WDUARuk/R
-         8uWPYCxRqWEt7dUvj4U8tUZDYqBEqgdOqNqug7vkfNtvQW4XbVwzCDLDs1m0Ug+VRGZq
-         rZTQMSPuUF9eHbJhmVRbPJRfEuDeaqIAXby7IaZ81asEKekU62fUo3WYHCxjgrEvZ/82
-         i5mzoowQtSyY7dCGp0cuGRPM7h6kxB6fwLeSxyRluOyXd1I9Pc/K14a/gcwbKpj//fdA
-         y5uz91wFj0LeFc4MxSjA4o04v9RIV80M/7P6eZ6kDp1Dwks+W6v4eKtQrJ0o6HikZcD1
-         zp9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWLSFXQe3N6KkOiIdkti7A1QgGSixT+a7uSEc/UJUp8vp6dOBG6xsoLcI6QA1eVWuYEsFdCctuYCTYGhfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3y7cUuuJVxt3UW3SXNn35ESGdeviA/dNmRO8czxHl1cB3HBFQ
-	tdurGeecrUzSl8LNDuFrQEJBreSVnuFfjEEzgIS8bANCR1mYd/+0pkvJTq+REbeXIvHwpilJLjj
-	kw+pNFQTqKNefKlcT/Q==
-X-Google-Smtp-Source: AGHT+IG+iL14vecShPyktC8BwMaW/uSlauMbjVXn7jXOXVhUbEdp41zM5x6FEcncWa9dDOidM50s71O00B81dbI=
-X-Received: from ejap10.prod.google.com ([2002:a17:906:228a:b0:b47:8176:fd79])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:3e85:b0:b3a:7af8:c4a2 with SMTP id a640c23a62f3a-b6472b5f826mr440021066b.10.1760707476223;
- Fri, 17 Oct 2025 06:24:36 -0700 (PDT)
-Date: Fri, 17 Oct 2025 13:24:35 +0000
-In-Reply-To: <20251016210955.2813186-6-lyude@redhat.com>
+	s=arc-20240116; t=1760707524; c=relaxed/simple;
+	bh=Vt7VPD5PpCe+VrVpG8PpLDMDCXp2h8ZUzDo/2QBWPQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hN5zyp0FeDDoaPTWKEGkWHIvlcijZsAJtcpobmVrFyVVM83myX+n0OIGyN7XLybo2yKNzsDGqBA+hNaahdpJZVsMJFXqW8e29uzIXVPHNTYd7m24pI+SMEET8xxIqhOSYrxn9e1jgHdsaESVgJniFvHU1TUXRuKh3nrbjCGWw8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19A711595;
+	Fri, 17 Oct 2025 06:25:14 -0700 (PDT)
+Received: from [10.57.36.104] (unknown [10.57.36.104])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83C933F66E;
+	Fri, 17 Oct 2025 06:25:18 -0700 (PDT)
+Message-ID: <f1cad54b-5f25-4a1a-9e61-c96d72ac3637@arm.com>
+Date: Fri, 17 Oct 2025 14:25:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016210955.2813186-1-lyude@redhat.com> <20251016210955.2813186-6-lyude@redhat.com>
-Message-ID: <aPJDk2mEAOWoyZC7@google.com>
-Subject: Re: [PATCH v4 5/9] rust: gem: Introduce DriverObject::Args
-From: Alice Ryhl <aliceryhl@google.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Danilo Krummrich <dakr@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina+kernel@asahilina.net>, Shankari Anand <shankari.ak0208@gmail.com>, 
-	"open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 04/12] drm/panfrost: Handle error when allocating AS
+ number
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20251015000930.356073-1-adrian.larumbe@collabora.com>
+ <20251015000930.356073-5-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251015000930.356073-5-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 16, 2025 at 05:08:18PM -0400, Lyude Paul wrote:
-> This is an associated type that may be used in order to specify a data-type
-> to pass to gem objects when construction them, allowing for drivers to more
-> easily initialize their private-data for gem objects.
+On 15/10/2025 01:09, Adrián Larumbe wrote:
+> If we reach the beginning of the LRU AS list, then return an error.
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_job.c     | 6 +++++-
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c     | 5 +++--
+>  drivers/gpu/drm/panfrost/panfrost_mmu.h     | 2 +-
+>  drivers/gpu/drm/panfrost/panfrost_perfcnt.c | 8 ++++++--
+>  4 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index 0722f297d142..d53e9db945ad 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -217,7 +217,11 @@ static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  		goto err_hwsubmit;
+>  	}
+>  
+> -	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
+> +	ret = panfrost_mmu_as_get(pfdev, job->mmu);
+> +	if (ret < 0)
+> +		goto err_hwsubmit;
+> +
+> +	cfg = ret;
+>  
+>  	panfrost_devfreq_record_busy(&pfdev->pfdevfreq);
+>  
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index 1d696eeea2fa..cf272b167feb 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -258,7 +258,7 @@ static int panfrost_mmu_cfg_init(struct panfrost_mmu *mmu,
+>  	}
+>  }
+>  
+> -u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+> +int panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  {
+>  	int as;
+>  
+> @@ -300,7 +300,8 @@ u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  			if (!atomic_read(&lru_mmu->as_count))
+>  				break;
+>  		}
+> -		WARN_ON(&lru_mmu->list == &pfdev->as_lru_list);
+> +		if (WARN_ON(&lru_mmu->list == &pfdev->as_lru_list))
+> +			return -EBUSY;
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+I was about to apply this series, but sparse told me that this is
+broken. We're holding the as_lock here, so we need to drop that before
+returning.
+
+Thanks,
+
+Steve
+
+>  
+>  		list_del_init(&lru_mmu->list);
+>  		as = lru_mmu->as;
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.h b/drivers/gpu/drm/panfrost/panfrost_mmu.h
+> index 022a9a74a114..e6e6966a0cca 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.h
+> @@ -16,7 +16,7 @@ void panfrost_mmu_fini(struct panfrost_device *pfdev);
+>  void panfrost_mmu_reset(struct panfrost_device *pfdev);
+>  void panfrost_mmu_suspend_irq(struct panfrost_device *pfdev);
+>  
+> -u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu);
+> +int panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu);
+>  void panfrost_mmu_as_put(struct panfrost_device *pfdev, struct panfrost_mmu *mmu);
+>  
+>  struct panfrost_mmu *panfrost_mmu_ctx_get(struct panfrost_mmu *mmu);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> index 718eb44b40f8..7020c0192e18 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> @@ -130,9 +130,11 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
+>  		goto err_vunmap;
+>  	}
+>  
+> -	perfcnt->user = user;
+> +	ret = panfrost_mmu_as_get(pfdev, perfcnt->mapping->mmu);
+> +	if (ret < 0)
+> +		goto err_vunmap;
+>  
+> -	as = panfrost_mmu_as_get(pfdev, perfcnt->mapping->mmu);
+> +	as = ret;
+>  	cfg = GPU_PERFCNT_CFG_AS(as) |
+>  	      GPU_PERFCNT_CFG_MODE(GPU_PERFCNT_CFG_MODE_MANUAL);
+>  
+> @@ -164,6 +166,8 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
+>  	/* The BO ref is retained by the mapping. */
+>  	drm_gem_object_put(&bo->base);
+>  
+> +	perfcnt->user = user;
+> +
+>  	return 0;
+>  
+>  err_vunmap:
+
 
