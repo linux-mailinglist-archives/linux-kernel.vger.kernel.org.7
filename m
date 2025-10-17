@@ -1,127 +1,149 @@
-Return-Path: <linux-kernel+bounces-858426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2B4BEAA6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:23:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4802CBEAD8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406511896785
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:23:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A51A5C5266
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4162C08C2;
-	Fri, 17 Oct 2025 16:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A8C2C2ABF;
+	Fri, 17 Oct 2025 16:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="t0ucrUBL"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RE5ZjTxH"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6062C08A8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76F82C0F93
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718042; cv=none; b=hAKTc8Fe5DpcPFBwzBTo2iN0N2GagfchwrPgllAbxgmPgJhw0x3whnzhOwirMFuz9VW/XrGxgpCNng2cdeXOKrsiR+lD5O2gu+0GuFxl6cWh80xdx8T9W9HAa11fyzK4GPj++ieGEWtonED38eiWZLDnUJ2dkHYRzAfLHk+1MN8=
+	t=1760718048; cv=none; b=CY/U5YYldzasqbr65wHus9dlx2NYmEa+oFL4sRuwwYtl5haZYGPQyNIzdWR14zKAeHVEzf21WX4sXNhumKY8AI5Bka5wQMGpKfIYaoL9gAd7J2OJ/jCMtzmJO36EHG5u/dx78k70ZEeMqambPQm+wRYz30CfxO/9E3SCp6JXGmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718042; c=relaxed/simple;
-	bh=gxKOH8Xdwc40yMCcxjDPNybQvl0viUGO00L2ILr5yMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WzvosBsqiL3dhJb6kuKL5kq+aaDxsWkLPKjsLSV81uNX8WfYZUXA0FjWObZ67ky9enqXJYlcVh/EvP0fbGsq8SL7rgZfonq+bes6Zdf6SyzFWGD475OU8dOgIN+F0v45M6qkzLVTjKilNWP32jhmKSSOZJRPN4FBo/2H48MFbBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=t0ucrUBL; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-430ab5ee3afso18128215ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:20:40 -0700 (PDT)
+	s=arc-20240116; t=1760718048; c=relaxed/simple;
+	bh=jPnIBNXjWFgFyMR6aOnBqBJY3wZ36RIzhFnOSbYyl8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lucJ9G9ChuchhNwJVWhE/4cvjeJOMgj9FjZAfCGoXLP/Vyy0I12WKFfnHVvD0qjnDocLNB5djGKpxNvvHrnoQgXiXxLj44x7C1E+ec5MFJpwFFHJXJAKVxqKmv/M8DxDOUH+yP0nVm/sMlqXjBktvJ7KR+75a8mGSoA4CSvRs54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RE5ZjTxH; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-887764c2868so208678039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760718040; x=1761322840; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CVQ6phuTO84kFBkRt8EnO28DbxtrTEoiT+THIp/h4p4=;
-        b=t0ucrUBLoRssJrKtvP3DBh+uDh0k5SGtZBapjoXMoaMf7wd9frsENoYcYCQpU8V71Z
-         VAbienV/ZTHNxuCs+GrjYtTpm5ODskSEp5yN3CbbjUvbiwFq4YjKkSZbVz26OJ+x3sLL
-         1Y4D8a583G+VJe0QCabnO4va87db47AcNmDrHkSv88DP1ca+FJlPbR5AXuTWj42voQCr
-         oxLnLapdNY3Q1OkCs+WmbG9fQXs2Gft53TNQX3xwnPWZBXg02vz5uL/HPVTn6TtAS7tf
-         Hw6aHBUJWM+DFqyDyvnU5gUle0/7XcAwmuzhmrRNNLhMw4DQhvTYK2QXIjmkmeS/83Bc
-         A2hw==
+        d=ventanamicro.com; s=google; t=1760718045; x=1761322845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHcp/aWTKuBzfOH84Xc834di52qmuKsQVMyFNNeyUD0=;
+        b=RE5ZjTxHWpSyS/gTIOEr2E0b7TshmBK12gGzmFK0QIG0wYfT0dODRDAFZUnQ35Qase
+         KmfBGSzd98vsvsQxzaG7aD+k14XvjaL6GtvjUXuWULC257CxoaF6wElyIq9OqCz+e0ey
+         HiyCHuysunF6Ez722nAYzZjEm0Xa/y424Sudb85AEegBkdICvAlSt3noNPUgH/j+rvYe
+         33TfzSB0TjvrsfLvViSFk3OaVMksWcGQuMe3nKaGdk8a2dCHdeVEWJqQRtdIgcDB1X2z
+         i7V1mQ+9/94No048cacCi2C9BJEjCI/p5y7vV98ESjikw/L/l1B8zFrjNNP/+omSPnas
+         fBeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760718040; x=1761322840;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVQ6phuTO84kFBkRt8EnO28DbxtrTEoiT+THIp/h4p4=;
-        b=NGG8XO0YVvYESqcNZTNpkXKOXRWe7nbOSpjeBllB0azk34X2J6uP2NFaakEL4tGraB
-         +bcrLXr02no2YhBK4hdVePbaG7lu85Dt/zX8jzVD6A6K3VfVsSgNdM3Vx2KrVMK0K/6H
-         xLVJKpJsOvEhpv7bTH00kHOj3S3T+X3yRyxzjVWftlzHzNnR0TR1jew8Qh+Y6kS3hEKL
-         fW+Hr6YY2kHjS5iB8pB27eZhZQJUQltLb76i7OB8ygUfBrlRrFPXM8ikvNPcPJNcILnL
-         6iKOyVUlEv282EYUzV5JSh6uQSCUFviNSBrvDZkE5KEM7Ft2LvUKK9YVDtWSevNdAzkb
-         Me1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWu+HcMfHFGeB9fxqMNSxCTaYZ4gWdlBnUhf/AlokLdgNQMRGDoQDpriz91616eK5IR1RdBywhM8/cf6sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+zVxeF3eltcd+M1Ht1QcEjIDMqmBU7SHjPax30C6ORk4300Sv
-	A50mWWD2vjDRVdHMoAYNBeXPeOm4E8ruT6FeO0aiBnipSYe/DZEBh2y0tZ8ntTkjDsg=
-X-Gm-Gg: ASbGnct/z/1nvxxOZ9+07zsRS/o71QOMGiIzn70Wxu3FWdnlwu9kCD8ASqiF0aLO4eU
-	kK5UIKiSFVq/ZtXx1JMou39D1YP6GNhDGNHBWQRvl2SdiUJ+kV0kpNZTf0h04M9vr8fXKoSDlM2
-	8RQvSAZvuXUabT6sbtfYbF6S7ZmUf/6Wv7gq/Io1shfo8kKGda5Rm2Ik6D99BHjnhlUxyYlzKjq
-	Kq6hRvuEdjquKPOEUqJQk/1r2rRuToQ7OR0em78CsMSW18e24DoLMZagVs+TOt8Gy9NFjunM1g8
-	4+//dP2g4ud+8MRXIdaPSEmKR+mtnSe/x3lUZwllLOLnzV4jQ3WqKujPRWMKk1Qqgywv1xj0SFO
-	z0YneMuE3x2DXkC/raPqSyhotjIs2F7rCkTBwLT9tFrouNAcksJWo2HiIwWwPS5w/l8PKIbgwLe
-	oAmYP1CC9gZAhaVQd+45TBD3mxcm/B7rKA8QfkIxQ=
-X-Google-Smtp-Source: AGHT+IHkLguz0srIwb9Y0kZ8Jj/SerEa4TnF03jUDSOPF34f5dBqn26UDMGx8TBiPYMDv2ZC0jD7cw==
-X-Received: by 2002:a05:6e02:1d9d:b0:430:a65c:a833 with SMTP id e9e14a558f8ab-430c52ccf5fmr57021215ab.31.1760718039725;
-        Fri, 17 Oct 2025 09:20:39 -0700 (PDT)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a97689basm12877173.49.2025.10.17.09.20.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 09:20:39 -0700 (PDT)
-Message-ID: <3ccf196c-aa57-4977-9dea-a54172e427fa@riscstar.com>
-Date: Fri, 17 Oct 2025 11:20:37 -0500
+        d=1e100.net; s=20230601; t=1760718045; x=1761322845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uHcp/aWTKuBzfOH84Xc834di52qmuKsQVMyFNNeyUD0=;
+        b=G3/CxnZLeAscRjnJI8qGCwA56hvZOjOGXnS9ccXRVsmTZNVWWpWLdVoO8VEUN5XKCb
+         8DlnaKeoArlZr7oMMB1uDD5bDhUFRgB94c9PfRtBFVIgeCSCIMe1UUH09PtJLjOf+SKZ
+         WIomGGRwpnywWVlZiag54pN3T0QTOG84x4JZNYJOei0uECFfqwuoED5KqINBV8U7uKOp
+         /b512AAE5/1OHiaNhtGzz0+3RFEbbaGDjKx1oKwxiEx9p4rJe5290vcS2XodKE1b4G6x
+         s3HLEDpRi/9hPgkmK+nrprbSDgHCGGlf9yF/zzDQNk2khywRyU0KZ8v4znriEs6qPuBy
+         9JrA==
+X-Forwarded-Encrypted: i=1; AJvYcCULiaGipSIFmiWNNNkSiEShcmIJyMf2VLDfuQcq8xKKgPVPPqp8INzgdyLJ1p/cVCkJymGZp5EtQQE08g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzh8ivKqM55PkZw2+pYJvE1t7T17ipxuije0pMoEwIYv+uGjow
+	9gzgoeOjTNk+mRe7fUM86913QIvK4mI8RCWUM6oxzRHAhzMfoRKZHL9P6stWxXyD6OM=
+X-Gm-Gg: ASbGncsH5grQD2rIhg8J3CqiI8FrygxhVcP2YN5zcIBNjSNs7rD9+JmrbGXPhndoYXo
+	DLRVuwJ2tQihVtR4GRbJMWmLUcVsXIP6FECE6MnAgDHIof4cbhnCp0PptMlpQBJPQmEX6PlacBL
+	sFYcpjpOKkithTKPYPNjqJlw1b1fh5lEbTQJRHmsF9lMOg8MOsGAA2YKJzTfbADE6gxTFcY63H+
+	Hprfv93KjRB9AHw+2iL0VrRkNz4PQPA/ZnAvyZP+So4FJh8Txzyn+82Q+7yo5YUxCAoek2ewYeI
+	WbiR3+gWep2lE8nNPGQ3biGI62igXc0GFDkQ4POtPGEJ2lyEP169UEBOqFSAkJvcfkaHMgabpwZ
+	PZqR79neSLSX0rXtARQidJvIhvdiqa1BYj/Cpe+802q7lMY9IP+Kj/U+wKGBtouf1kSZyGpq5XV
+	KMsA==
+X-Google-Smtp-Source: AGHT+IGb7WVIYEXYDolygsCFth05K0mPGRPpQvAMXm74hPFwBGeILraMt8hiRJ5jXXj3KN04uw/DDg==
+X-Received: by 2002:a05:6e02:1905:b0:42f:9e54:76d0 with SMTP id e9e14a558f8ab-430c52ac0d8mr55233645ab.23.1760718044856;
+        Fri, 17 Oct 2025 09:20:44 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430d07a874csm804025ab.19.2025.10.17.09.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 09:20:44 -0700 (PDT)
+Date: Fri, 17 Oct 2025 11:20:43 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Atish Patra <atish.patra@linux.dev>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 4/4] KVM: riscv: selftests: Add SBI MPXY extension to
+ get-reg-list
+Message-ID: <20251017-7e149a197ad3d9d99bd45a4b@orel>
+References: <20251017155925.361560-1-apatel@ventanamicro.com>
+ <20251017155925.361560-5-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: phy: spacemit: add SpacemiT
- PCIe/combo PHY
-To: Rob Herring <robh@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
- lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org, guodong@riscstar.com,
- pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- p.zabel@pengutronix.de, christian.bruel@foss.st.com, shradha.t@samsung.com,
- krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
- namcao@linutronix.de, thippeswamy.havalige@amd.com, inochiama@gmail.com,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251013153526.2276556-1-elder@riscstar.com>
- <20251013153526.2276556-2-elder@riscstar.com>
- <20251015145217.GA3554740-robh@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20251015145217.GA3554740-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017155925.361560-5-apatel@ventanamicro.com>
 
-On 10/15/25 9:52 AM, Rob Herring wrote:
->> +  resets:
->> +    items:
->> +      - description: DWC PCIe Data Bus Interface (DBI) reset
->> +      - description: DWC PCIe application AXI-bus Master interface reset
->> +      - description: DWC PCIe application AXI-bus slave interface reset
->> +      - description: PHY reset; must be deasserted for PHY to function
->> +
->> +  reset-names:
->> +    items:
->> +      - const: dbi
->> +      - const: mstr
->> +      - const: slv
->> +      - const: phy
-> I think phy should be first as that's the main one to the phy and the
-> others are somewhat questionable. Otherwise,
+On Fri, Oct 17, 2025 at 09:29:25PM +0530, Anup Patel wrote:
+> The KVM RISC-V allows SBI MPXY extensions for Guest/VM so add
+> it to the get-reg-list test.
 > 
-> Reviewed-by: Rob Herring (Arm)<robh@kernel.org>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  tools/testing/selftests/kvm/riscv/get-reg-list.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
+> index 705ab3d7778b..cb54a56990a0 100644
+> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
+> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
+> @@ -133,6 +133,7 @@ bool filter_reg(__u64 reg)
+>  	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_SUSP:
+>  	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_STA:
+>  	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_FWFT:
+> +	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_MPXY:
+>  	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_EXPERIMENTAL:
+>  	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_VENDOR:
+>  		return true;
+> @@ -639,6 +640,7 @@ static const char *sbi_ext_single_id_to_str(__u64 reg_off)
+>  		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_SUSP),
+>  		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_STA),
+>  		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_FWFT),
+> +		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_MPXY),
+>  		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_EXPERIMENTAL),
+>  		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_VENDOR),
+>  	};
+> @@ -1142,6 +1144,7 @@ KVM_SBI_EXT_SUBLIST_CONFIG(sta, STA);
+>  KVM_SBI_EXT_SIMPLE_CONFIG(pmu, PMU);
+>  KVM_SBI_EXT_SIMPLE_CONFIG(dbcn, DBCN);
+>  KVM_SBI_EXT_SIMPLE_CONFIG(susp, SUSP);
+> +KVM_SBI_EXT_SIMPLE_CONFIG(mpxy, MPXY);
+>  KVM_SBI_EXT_SUBLIST_CONFIG(fwft, FWFT);
+>  
+>  KVM_ISA_EXT_SUBLIST_CONFIG(aia, AIA);
+> @@ -1222,6 +1225,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
+>  	&config_sbi_pmu,
+>  	&config_sbi_dbcn,
+>  	&config_sbi_susp,
+> +	&config_sbi_mpxy,
+>  	&config_sbi_fwft,
+>  	&config_aia,
+>  	&config_fp_f,
+> -- 
+> 2.43.0
+>
 
-OK I'll arrange them that way in v3.  Thank you.	-Alex
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
