@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-857922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCADBE840E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:09:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DDDBE841A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E340C1A662DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCF41AA33E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECAC339B53;
-	Fri, 17 Oct 2025 11:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3633A009;
+	Fri, 17 Oct 2025 11:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cBXuRErk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cIzL5Ck/"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD1033769C;
-	Fri, 17 Oct 2025 11:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F3333CEB1
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760699356; cv=none; b=RyrkAb7QmoGcwvqF5rXvBPakks0c0xlkFwDKkxD30pi0enUgPVNX7j93THDH3KXexLEw7wtQuKCo7mnwsBzdhk3/M+AvRcv1LfprnG/F2WJXSmrcN+d7W10CUb0TGeyEs9xzJmlOmIRL9imfV55UxNpFFmDC2fHappXvfFsgdIU=
+	t=1760699400; cv=none; b=XZmXQf3lzb6ElIZUJ/Vu92v7/soY14ubQW4MMZMpJ7Mog2tW8/jS3/i9RcJOZPZ9wV6lbgJiZ5U6RQ50CezYlzOP36SieJvjJbPhlyENj0QvAT1+TUAwNWcOCaKWmOzGq96qtd8UlyOQDq6Q6SnYTzyzMcmG2lLFpqa9M/LBXko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760699356; c=relaxed/simple;
-	bh=sIikt0cxc57OKfiMJajrJD2O++vocOL5adNAafB+1Gk=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LBrE/oOaxlXZxrSBe5VVRMBdohCay/Jq4/hhDEyP6Dn5lCuVyS1pQArDiSVojBQcrbjUEJrIC45EEyP9vnyc9oqW6kO5XdRjsw6xYFJ9KoSCvwyqB8xwBFBhvaKgGXirOPxEVVBpE2ESpGG+0nkIEgyywWjneLBW1L4q1IySSw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cBXuRErk; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760699355; x=1792235355;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sIikt0cxc57OKfiMJajrJD2O++vocOL5adNAafB+1Gk=;
-  b=cBXuRErkxn04mMLRFEMXfI8fvdGJRjyeQ+7ecu9yYzSblEG8IJhAI3zR
-   CEzKt1ORQlI1NS59iYQVDx3dUqkyzbHo1KL1REgQ7p+vEZ1VeT9bloLoJ
-   zEeaA9wRjec6bWDa5kVtXYN/Nqgk4m0BLAuAUmX1szugmdEC0XwDbFjqA
-   ew58ZjZyrQ+2bfuKk6OyP/xKAoGsVk/KGkHBAawWoJi+DtqExKuKH0YBN
-   rqM1sTT6ov9YWJrZ63MyjYk5Jw8AeA05YzKmg/Pn5svnm7s4AtM14AAZl
-   NMVAIvLTQUFSbN3JhGBt6qJvZUwsAbfA+IFsSEY0RI0WiRs+vIBwyANx/
-   A==;
-X-CSE-ConnectionGUID: ccN4GNr6Rs6RNdrD8YFQeA==
-X-CSE-MsgGUID: 82W+c5VzSDmrNvf0mWaCsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="74251364"
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="74251364"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 04:09:14 -0700
-X-CSE-ConnectionGUID: CmcgfCFARe+eDZ4nDZ8uEA==
-X-CSE-MsgGUID: 1br6QaVQQkOyUtX94fM9dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="219864219"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.123])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 04:09:10 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] MIPS: Malta: Use pcibios_align_resource() to block io range
-Date: Fri, 17 Oct 2025 14:09:03 +0300
-Message-Id: <20251017110903.1973-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1760699400; c=relaxed/simple;
+	bh=jJ3sJSfGGDZPPWMFLprjMHiW/EllfBTeLQIZoh/ZyxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uZuUWxLfzY9PzW/wxY/TPWD7ki0S8KekG41uZFgWb09KTBecZuHXt0oT++KZdmtxONHPQwDPD0gH91bsJ0C/8/LnQZBUdHK1fEu8n/MxOPLLw3Kv31BJ1SsI42aTdMK8a7TecJbc2yowtZ8vMUXhJqEjD1aqXwfg/fRSr9VhiCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cIzL5Ck/; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57a604fecb4so2151109e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760699396; x=1761304196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jJ3sJSfGGDZPPWMFLprjMHiW/EllfBTeLQIZoh/ZyxI=;
+        b=cIzL5Ck/8wNnAqKxninMiulfKB+lAxTj8XIrxSS+iiRAcsawulROWtwlmJks4eMX9H
+         atmf234J/YT3RmK7vU6F8DHOb661sc5v1x6O27o/8H5Ud4eJ+uKzOUoLd3SiHzsDSoiD
+         Kw7nffjX5GxU3YxFgGapg00/9VfD5zTt3HlBXmYSa2FVUHznEGuu6Dapc53yohmiHPZu
+         cMYJ0nbkoanZnpgE+Dl2sbronm9lea2LLe2sp5JI6TyEdED8TZYU+cnNbW+geOKTtnlS
+         PXfPn0ctDbcz87Yg8BZWOxVmmbHqtg5vALxJcsXpl75RYQCV6NhyXHVMcII87hMVt6zs
+         T2ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760699396; x=1761304196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jJ3sJSfGGDZPPWMFLprjMHiW/EllfBTeLQIZoh/ZyxI=;
+        b=aQtDmlbUeYCNIZid2X1aiaaLl55EZw/YNZi5Z6xeHujGxnZFrAAcwIUcH9FRQgNY1p
+         VihggOCDWpDeP72hikHId/165TvOUDkV0/ZAk6gvTuXluy4xeAHUtdlprbMnFycWSB4s
+         YkVHsZ5zFTQ9XgBvCW/uCqQJZJhOo4hpqo57toAOHUc9QHAjM0o/uPIFPtJ+2+VKMrRe
+         qNGTvAOokEBIl2qy6d4cV1/0FAPq53k6qSFyL68Hg/BgzsMWoE1aPFiQZsD/OpSopOvA
+         z4m8YxZWLt3Lb/kUB3eIHZ2BSmfD65XO3jf95ycDXTZErnS3zTYpMCVEbEoZh8GJsXB+
+         ZNLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrpOcXN/AsQTG7wCsQOjGbtA6IxyinWnOXN3gjVYN3B2+D/Zhk6YHuWwcVePjIzWlR6VLCb19aSBx+gB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhTwzHHgAfUHsf/kvfJ33TOxtEERWGHOctp5B7yY+XEe5wmwum
+	xdZoS5HhwXbOelSr+noyjR6ISKOzuGPpvSRpO0oAlu/Magjwlcg6Fq456Lp8GZPxvQpOEPXd9rA
+	CeVnqCY6EoMeUGH7WJW6Ah6TU2NLEuHb3wVyVi9aet8OqwoiWTYpuIk1oCg==
+X-Gm-Gg: ASbGncvW3Br9bHC6msKcExUp5pAZcjtFWiyFPD2o7uY/W0jXKvkbihQYHldCjIURzcr
+	yWg8wQEYg7zhUTm0ZbrKngxAbCN47h5oW4gNzJaq8PoU/wrVEP7mgya2flea3akOBAXDjHd+Nx0
+	qUc7gYzXeZScjhlIFH9E8xI8t9kDA7NrMjRTLb9zPlMMINu4r2gXSH6oIcytv0/1kWFzN6wwW+S
+	cQy1z+8G5u6fPyntiOS101IfhqAW4F+PoeChN6AbsDO5CzbJO+E1oPHHZl5THsHJvznCkULqqkV
+	OP8dwh24uncU8NwL
+X-Google-Smtp-Source: AGHT+IHAQb+PujZ3FlhVbP/5obfB82tUK18MuZgZkVjEsCxRPkQtT5FNrzDdnND37AsMEzZd7iYSCgmCJUb3JOw9GHc=
+X-Received: by 2002:a05:6512:1324:b0:563:3ac3:1ec1 with SMTP id
+ 2adb3069b0e04-591d857942amr1167284e87.54.1760699396306; Fri, 17 Oct 2025
+ 04:09:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-6-wsa+renesas@sang-engineering.com> <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <aPEAx8ZGHBcWZKJF@shikoro> <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
+ <aPIfF-3SgzW5V_gs@shikoro>
+In-Reply-To: <aPIfF-3SgzW5V_gs@shikoro>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 17 Oct 2025 13:09:44 +0200
+X-Gm-Features: AS18NWA8jH3FhagHn3D8_Lt6AEhdFJCJ9BjuVsTGnGPGq3eRCDcchI99tLK0230
+Message-ID: <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if possible
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-renesas-soc@vger.kernel.org, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org, 
+	Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-According to Maciej W. Rozycki <macro@orcam.me.uk>, the
-mips_pcibios_init() for malta adjusts root bus IO resource start
-address to prevent interfering with PIIX4 I/O cycle decoding. Adjusting
-lower bound leaves PIIX4 IO resources outside of the root bus resource
-and assign_fixed_resource_on_bus() does not link the resources into the
-resource tree.
+On Fri, Oct 17, 2025 at 12:48=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+>
+> > > Interesting topic. In fact, I think we should make RESET_GPIO bool. I
+> > > think the fallback mechanism of the core should work without any modu=
+le
+> > > loading infrastructure. It should be there whenever possible.
+> > >
+> >
+> > You have not said *why*. How is this different from any other device
+> > whose driver is only loaded when actually needed?
+>
+> ? I just did that, but let me repeat:
+>
+> I think the fallback mechanism of the core should work without any
+> module loading infrastructure. It should be there whenever possible.
+>
 
-Prior to commit ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-the arch specific pcibios_enable_resources() did not check if the
-resources were assigned which diverges from what PCI core checks,
-effectively hiding the PIIX4 IO resources were not properly within the
-resource tree. After starting to use pcibios_enable_resources() from
-PCI core, enabling PIIX4 fails:
+It's not really a fallback, is it? This is the path we'll always take
+if the driver requests a reset control on a firmware node which has a
+reset-gpios property. If the driver goes with the gpiod API, it will
+get a regular descriptor. It's deterministic enough to not warrant the
+term "fallback".
 
-ata_piix 0000:00:0a.1: BAR 0 [io  0x01f0-0x01f7]: not claimed; can't enable device
-ata_piix 0000:00:0a.1: probe with driver ata_piix failed with error -22
+> I might add that module loading infrastructure might be broken in
+> userspace. Been there. Also, some drivers might need their reset early?
+>
 
-MIPS PCI code already has support for enforcing lower bounds using
-PCIBIOS_MIN_IO in pcibios_align_resource() without altering the IO
-window start address itself. Make malta PCI code too to use
-PCIBIOS_MIN_IO.
+Then I believe the platform's config should make sure the driver is
+built-in. I don't think it makes sense to just cram it into the kernel
+image for the few users it currently has.
 
-Fixes: ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
-Fixes: aa0980b80908 ("Fixes for system controllers for Atlas/Malta core cards.")
-Link: https://lore.kernel.org/linux-pci/9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net/
-Link: https://lore.kernel.org/linux-pci/alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk/
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
+> Looking more into it, I can't find any 'request_module'. Am I
+> overlooking something? The fallback feature is only present if the user
+> loads the driver manually? If that is true, it would make it rather
+> useless IMHO because consumer drivers cannot rely on it. I must be
+> missing something...
+>
 
-v2:
+The reset-gpio driver has a MODULE_DEVICE_TABLE().
 
-- Remove if and always set PCIBIOS_MIN_IO (suggested by Maciej).
-- Minor improvement to the changelog
-
- arch/mips/pci/pci-malta.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/mips/pci/pci-malta.c b/arch/mips/pci/pci-malta.c
-index 6aefdf20ca05..2e35aeba45bc 100644
---- a/arch/mips/pci/pci-malta.c
-+++ b/arch/mips/pci/pci-malta.c
-@@ -230,8 +230,7 @@ void __init mips_pcibios_init(void)
- 	}
- 
- 	/* PIIX4 ACPI starts at 0x1000 */
--	if (controller->io_resource->start < 0x00001000UL)
--		controller->io_resource->start = 0x00001000UL;
-+	PCIBIOS_MIN_IO = 0x1000;
- 
- 	iomem_resource.end &= 0xfffffffffULL;			/* 64 GB */
- 	ioport_resource.end = controller->io_resource->end;
-
-base-commit: 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
--- 
-2.39.5
-
+Bart
 
