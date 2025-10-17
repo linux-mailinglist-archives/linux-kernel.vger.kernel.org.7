@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-858439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8417BEAAF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FCDBEAB65
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 84A2735F236
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:27:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD67335F768
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9454828B415;
-	Fri, 17 Oct 2025 16:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F4E29B77C;
+	Fri, 17 Oct 2025 16:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWOhR5wZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b="Gfk5dmlR";
+	dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b="5M09VXGp"
+Received: from mail.0la.ch (mail.0la.ch [78.47.82.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9E2286D55
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC5B296BC0
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.82.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718421; cv=none; b=etwjh1ol95zDCV/48cm3Ymln2E5VcOeFcBY+PDcDx8oVZnfXP15SRWvmVKYxbIDIq2GGWx5BL7gmv0i7DyZjQh3EYXeSqX3hlnn+44Ju8EGFCMAHKJ4LcAvOC6m5dU7P08HYZ4pb5M8lTM9DlQQRl8ObZUp2pnuP0dItxslgQwY=
+	t=1760718514; cv=none; b=adETnVOin713bTkbf3oKXa9yk18Rb/AEVxdZWXmGpKOvV+QjxBPCEB6HuAl6KBe1kI72CVfGyqYBWy/iW5sgfWXPsojSygNdJkthMqya/1/jxARrRAxJRJ+M/6v1xQocix+aRolK6zZt8MVpFe46yWXtwsouYOGmTd+LxWH5lCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718421; c=relaxed/simple;
-	bh=8VfD/406RwiCMgcEBlvmZiOjcE4YxqTzVMxVhrToZ+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uw2OoDunpvNUb4qYCo+CB2H74xS+42pr31km2U1kx8xneaoVaHsQMJe9mox9mVst8HLlB4VGJG67+d0jiBDo9QsJHfs/pyjdZJAdkuRR6KzGG0QdM5tEaQSGM0soxfIJU9EblM72XIWfnvtAC2ODkFd+xfEBmQnRQDiceMHKQmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWOhR5wZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 878E2C116C6
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760718420;
-	bh=8VfD/406RwiCMgcEBlvmZiOjcE4YxqTzVMxVhrToZ+M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iWOhR5wZY5f4efgdHeBk9A0dCweP+3u1cQnDOe2XVZwcc1wRwNCTgP/muD5ig6YcP
-	 PeF6kjDvfnWbEfT5Aej7wdpfEekT7xq1bn9oLTWuTYWoAz2SKh1hLKa5tlSRsQUVNk
-	 NF1mw4a0MyQTVXmD2FCkRGr2+OBu8mD123o8LfVZNKkPTGSlEmACDAKqPDgrC+8vXG
-	 ENluhb/p+wEIWaz8MidGKvNhHnC20oz8qC8FloBAzkon9MlZTFBZcRXzEtmoiot9Y7
-	 fDnd71OoDxAcnUFT/gUy2tUPCRPbA+ra60G0elSXDyAKhgqi0ET42t6dYLePSCgzzS
-	 MdZA9zt3hW+vw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so2520712e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:27:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdHCVPhq6UrVA7OHoo/c57KVW1TuNNgJv2Le4eZ4jJ2511qN79vWoOJEdctuyUe7SbpHeQ0XKt71y9Tlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZGQU4O+GIlZBiho2XwA9OU9J5439mOGleCBWf2lUhAIp4jTyz
-	2J3MR4PYCEjyV39EvI0veh9Ej1n32E8k6CWf3yJ1scym3r4Rf1gPRRRRdlqioxYk8JE8Nl3R6Vq
-	9hIKueJ43tSM3GBiD24mKLkX3HIMstbE=
-X-Google-Smtp-Source: AGHT+IFprw8czhfbQksqvWLP33iOCV9x+wGKMsbvBVEwL3PGVUpyMkEAQwIKJCflJAogYYqB0NgG9EMzSKWajs6p15M=
-X-Received: by 2002:a05:6512:2c03:b0:591:c202:45db with SMTP id
- 2adb3069b0e04-591d8546902mr1595944e87.39.1760718418870; Fri, 17 Oct 2025
- 09:26:58 -0700 (PDT)
+	s=arc-20240116; t=1760718514; c=relaxed/simple;
+	bh=0O28JTWdc9NgXEwyajabq//FDFzSVup4D1anMceWfJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VuqBkOTasYz6zym6ZD3498O4vcyYyDjfgD/LZsyYxtC9ZEzPFFVYlq3RkPG0mjaFFv59Jf07Tzj/E6ypdjlHeWvju8quUoaTEjuQglTzpEVU5j1WChF+SDbSblzeKYMTSn9ys90kDLvHCqJS5g+URoaZ/OveMTiNMQjzmJosPRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw; spf=pass smtp.mailfrom=lach.pw; dkim=pass (2048-bit key) header.d=lach.pw header.i=@lach.pw header.b=Gfk5dmlR; dkim=permerror (0-bit key) header.d=lach.pw header.i=@lach.pw header.b=5M09VXGp; arc=none smtp.client-ip=78.47.82.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lach.pw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lach.pw
+DKIM-Signature: v=1; a=rsa-sha256; s=202502r; d=lach.pw; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1760718477; bh=TISoBNwEXTy+2dwSC0N2Ya5
+	Q1DPGHIdmijcD806QkPc=; b=Gfk5dmlR2UvzChTy9lgkesT5yQfzvJf/nYFNUMdE3M5DVMr1cT
+	0y0JAdLq4H46eQN0UfO8SYBsrY3XvUDef+hAHWpoAv13jPMQmkdgxrn/nzUYH870+GRNMzcnmXD
+	H42s2SfexpchXRA8Fpnx7OpLJWrwFd84GHDxx8RxWAOi6qOuqo1XZoJe6fqgU+pefkFwOM/T6oT
+	6oFWFzN+GrOJXEyQRcEAmeswDqMjpHIjyAb4wkKpDCTgkBHLpjuXO1sg6ukJ87hoy2wnIfwdqhM
+	Ucd4kBq+jsZtwmu0kX7cwaKHF6iliPX06hPP2qyF4asPaOhEQza+H9L1h8v/IOX14PQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202502e; d=lach.pw; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1760718477; bh=TISoBNwEXTy+2dwSC0N2Ya5
+	Q1DPGHIdmijcD806QkPc=; b=5M09VXGp4u3s0GzWxgdA1v4amtDjSXrUBgBNoieyfkVTD6WP4U
+	8XYLPECocfu/xHk9NuauGXloB6iOiGCMZRDw==;
+From: Yaroslav Bolyukin <iam@lach.pw>
+To: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Wayne Lin <Wayne.Lin@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Lach <iam@lach.pw>
+Subject: [PATCH v5 0/7] DisplayID DSC passthrough timing support
+Date: Fri, 17 Oct 2025 18:27:29 +0200
+Message-ID: <20251017162736.45368-1-iam@lach.pw>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
- <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
- <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
- <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
- <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
- <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
- <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
- <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com>
- <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
- <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com> <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
-In-Reply-To: <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 17 Oct 2025 18:26:47 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
-X-Gm-Features: AS18NWDwz4zbZmQW5XvAmIIWD850b5AgZUuR52rVREJ1ppW8ezbZ6L0AdbIPLIo
-Message-ID: <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 17 Oct 2025 at 18:22, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> On Fri, Oct 17, 2025 at 01:00:17PM +0200, Ard Biesheuvel wrote:
-> > On Thu, 16 Oct 2025 at 17:49, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> > >
-> > > On Thu, Oct 16, 2025 at 04:52:20PM +0200, Ard Biesheuvel wrote:
-> > > > On Tue, 14 Oct 2025 at 18:47, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> > > > > The idea is that libstub code doesn't belong in vmlinux.o because it's
-> > > > > not a part of the kernel proper, and doesn't need to be validated or
-> > > > > modified by objtool for any reason.
-> > > > >
-> > > >
-> > > > I don't see a reason to change this on architectures that a) do not
-> > > > use objtool and b) link the EFI stub into vmlinux. If LoongArch wants
-> > > > to change this, that is fine, but that still does not mean it needs to
-> > > > change on other architectures too.
-> > > >
-> > > > EFI related boot errors are a nightmare to debug, and I will be the
-> > > > one getting the reports when this regresses arm64 on hardware that 2
-> > > > people on the planet have access to.
-> > >
-> > > The idea was to have more consistency, so vmlinux.o never has libstub,
-> > > regardless of arch, but that's your call.
-> > >
-> >
-> > The code in libstub ends up in .init.text, which will be mapped
-> > executable during boot on architectures that incorporate it into
-> > vmlinux.
-> >
-> > If objtool validation is never needed for such code, on the basis that
-> > it is not actually called even though it is present, then I think that
-> > is fine.
-> >
-> > For the other architectures, I don't have any objections in principle,
-> > I'm just being cautious due to the regression risk.
-> >
-> > > I'd still propose we keep the KBUILD_VMLINUX_LIBS_PRELINK mechanism to
-> > > allow other arches to opt in as needed.
-> > >
-> >
-> > Again, no objection in principle. To me, it just seems a lot of churn
-> > just to avoid having to teach objtool about indirect calls to noreturn
-> > functions.
->
-> Well, one of these days we will need to do that with some kind of
-> compiler -fannotate-noreturn feature or plugin or whatever, but this was
-> more about "why are we validating libstub code anyway, it doesn't seem
-> necessary and x86 doesn't do it, so lets make them consistent".
->
+From: Lach <iam@lach.pw>
 
-Sure. So objtool validation is not needed even if the code is
-incorporated into vmlinux, and therefore mapped executable at boot?
-I.e., objtool does not check for gadgets or other things that may be
-problematic even if they are never called directly from reachable
-code?
+VESA DisplayID spec allows the device to force its DSC bits per pixel
+value.
 
-> > > And that variable might even be useful for other cases (x86 startup
-> > > code?)
-> > >
-> >
-> > Not all x86 startup code is in .init.text; some of it sticks around
-> > and is still used at runtime. I reckon that implies that objtool
-> > validation will remain needed for that, no?
->
-> I wasn't aware of that, in that case I guess the x86 startup code
-> belongs in vmlinux.o, or at least the runtime portions of it.
->
+For example, the HTC Vive Pro 2 VR headset uses this value in
+high-resolution modes (3680x1836@90-120, 4896x2448@90-120), and when the
+kernel doesn't respect this parameter, garbage is displayed on the HMD
+instead.
 
-OK thanks for confirming.
+Me and other users have successfully tested the old (v3) version of this
+patch (which was applying DSC BPP value unconditionally, thus incorrect:
+https://lkml.org/lkml/2023/2/26/116) on Vive Pro 2 and
+Bigscreen Beyond VR headsets, and have been using it daily, it is known
+to work and doesn't seem to break anything else since 2022.
+
+Previously, I didn't have enough dedication to get it merged, I hope
+this time I will manage to get it to v6.19 :D
+
+Regarding driver support - I have looked at amdgpu and Nvidia's
+open-gpu-kernel-modules, and both seem to have some indication for this
+value; however, in Linux, it is unused in both.
+
+First patch implements parsing of DSC BPP values and display mode VII
+timings flag which mandates that the DSC BPP value should actually be
+used for this display mode.
+
+The second patch implements handling of this value for AMDGPU driver.
+
+The only thing that I don't like in the current implementation, is how
+the value of `dsc_passthrough_timings_support` flag is propagated from
+the connector display modes to the mode created in `DRM_IOCTL_MODE_SETCRTC`
+handler (which is used for VR display initialization in Monado and
+StreamVR), it feels like this flag should be initialized by the kernel
+itself, but as far as I can see there is no correct way to do this, as
+the timing constraints calculation belongs to the individual drivers.
+
+Another problem with how this flag is set, is that there is no hard
+connection between modes creaded in `SETCRTC` and the modes actually
+defined by connector, so I implement an assumption that this flag should
+be the same between choosen mode and the preferred display mode. Given
+that previously due to the missing support for this flag displays
+were only showing garbage, I believe this assumption won't break
+anything.
+
+Both of those downsides are due to the fact my understanding of DRM
+subsystem is not that high. If another implementation would be proposed
+by AMDGPU maintainers - I will gladly implement it here.
+
+v4->v5:
+ * The patch was split into multiple
+ * Disabled MSO parsing for eDP displays
+ * Disabled MSO logs if not used
+ * Passing of type VII timings block data
+ * Minor codestyle changes: lines moved around, naming
+v3->v4:
+ * This patch now parses timings support flag on type VII block, instead
+   of applying it unconditionally. Previously I didn't understand the
+   spec properly.
+ * Now it also is not being applied for non-supported and/or non-VII
+   blocks in amdgpu driver.
+
+Regards,
+
+Lach
+
+Yaroslav Bolyukin (7):
+  drm/edid: rename VESA block parsing functions to more generic name
+  drm/edid: prepare for VESA vendor-specific data block extension
+  drm/edid: MSO should only be used for non-eDP displays
+  drm/edid: parse DSC DPP passthru support flag for mode VII timings
+  drm/edid: for consistency, use mask everywhere for block rev parsing
+  drm/edid: parse DRM VESA dsc bpp target
+  drm/amd: use fixed dsc bits-per-pixel from edid
+
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  12 +++
+ drivers/gpu/drm/drm_displayid_internal.h      |  11 ++
+ drivers/gpu/drm/drm_edid.c                    | 101 +++++++++++-------
+ include/drm/drm_connector.h                   |   6 ++
+ include/drm/drm_modes.h                       |  10 ++
+ 5 files changed, 103 insertions(+), 37 deletions(-)
+
+-- 
+2.51.0
+
 
