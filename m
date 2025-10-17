@@ -1,142 +1,246 @@
-Return-Path: <linux-kernel+bounces-857989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6826BE8778
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:53:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4545BE8784
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62409501AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:53:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 57D6135BA52
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453062D7DFF;
-	Fri, 17 Oct 2025 11:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88602311978;
+	Fri, 17 Oct 2025 11:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ML3YeOoZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A4iKTKK7"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011039.outbound.protection.outlook.com [40.93.194.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C201332ECF
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760701984; cv=none; b=mnWHMZ1IE5I3P1kQJoDdGc6dFQEN+QmRMGBNS2KLgEg2gqgJdFxV8b7XPzD5W84xUqYCKGuHwTRRUA1hiJeToRxc+YgG0tPdYhl8iZ0W0fR2ev7zJF50hroPhnEWBj+ZCZ4Ra53TpkJC8et7+u7JDCFzbMUxahHQPno1ViCGbFw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760701984; c=relaxed/simple;
-	bh=SUzpcE7GtmXGvI8wFQ0DdKbyJGu0fVJWNzJBCAVp96w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WpaJhyI+DPFo/NNF+gCs1uszSJqyZTwLJW+5d3XKtwe3b1SpmTfCjW2EUhkrCRbiN9QDD1sv0pPHiqWvfkUYV+l7E+umOjS3NC78VOYkwsTzWq5kyYPEcTMDtcKHqcWfb683fi+TEjVyIlLH+0roauY+TWPQSKkMGRjKd16jBgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ML3YeOoZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760701982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WxfvbcLLu67MIwlxOvZ0TKOWYqHJfoFEyrjda7z1bsQ=;
-	b=ML3YeOoZU3J9lEjDbUryHfLAW1qv3Gifh+qMCHFaLyMyduByb4sxp0VXOUoPEiAO+Njqdr
-	eJ9ue/NkwTGHwrEzUMbuipqIYzvade7+1JcTiyuEFmDUTCvYQbW8pIkeWSHH3MOsByR39i
-	q1QZB6SNRFZJJDHvcS5tc+YqPHNM5k0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-mW5Pr7ymOmGt2AhT7Q-dUQ-1; Fri, 17 Oct 2025 07:53:00 -0400
-X-MC-Unique: mW5Pr7ymOmGt2AhT7Q-dUQ-1
-X-Mimecast-MFC-AGG-ID: mW5Pr7ymOmGt2AhT7Q-dUQ_1760701980
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47107fcb257so22319565e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:53:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760701979; x=1761306779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WxfvbcLLu67MIwlxOvZ0TKOWYqHJfoFEyrjda7z1bsQ=;
-        b=fMz9WhpP4uBkXCl4bwf1ml/Uh7Sqp70PY0TMU4luTNQ4JzrD1O08lTUkaNtU7AHU/X
-         vcDfX/NaRaQYpNNTrf+xUGmDRv3ccug3+uGYLszwtoDhesbpo5QvgZM+paZ0rqsIFY55
-         j5xMxKOFglnYloaeHiBZXxEk/ggggTzk5465W7xL+Mfhy3BVGwuLHY2CH82KpmpnRJGL
-         V7cIZm0ib44gqAoqEsxHTMlX5kBoV9fdJmrcdvjOAX9auVanvnEyF5BtqRDfGYfLvngV
-         kUcK0XSCa/qC8xL5/qJ2WTtP09BTV62AtOD5AVxr+Y/ZOoxcyFUwcIEA3xV4Rd37F+0f
-         VywQ==
-X-Gm-Message-State: AOJu0Yy+JApObik+tTouuQ+FP95CAonaeOAZeRlpixd2d0pVv3Hts59O
-	0t4ipt/09WWslExBFDd2UnrNPhJypWRQT38easzKXBJT48n2pHQzmP+9hie5oLvkRA7ONBlbsQu
-	zE2RoMlzDtghZlm4jos9KuUOyTD/9pVUM6ZHZ1OYfFr5gvwuAGaVOX20eKH8DOdj9PBfvENtwD1
-	hOm2Z9AR7mi6gSilDTZiSGTkJ9MPlKe36wmvMh6VIB
-X-Gm-Gg: ASbGncsEpehx9P5oga7eP5SstqxQhPeCh+OQ8IsmBRZhgr4+n+U+/zLgkeKVM2w6Vy0
-	0vbMlyZV6E4LdiBe+ewpL5r/KQyVu3BKCei4ipPx4LSHmW/7bZaW2R/e8FLxkMySEidl626/394
-	Oc1ddPURcEAn/GNaR2nez54v4H2LHWwE3WaPUf8EGR+ONAGLh31y6GEpWp1edPWMGd1UXvXFZi2
-	rFBx2Ta/rSkXuS0kg==
-X-Received: by 2002:a05:600c:529b:b0:471:350:f7a4 with SMTP id 5b1f17b1804b1-471178a400cmr23491395e9.17.1760701979575;
-        Fri, 17 Oct 2025 04:52:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEywczK+EIpYFNZr6LFF+2TgMnXQ228HOGM0S1gJjRCt05BeFqbOEfG8iq+xaitGHL34pj0bRg3/qZRX9c/GpI=
-X-Received: by 2002:a05:600c:529b:b0:471:350:f7a4 with SMTP id
- 5b1f17b1804b1-471178a400cmr23491215e9.17.1760701979206; Fri, 17 Oct 2025
- 04:52:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3202798FA;
+	Fri, 17 Oct 2025 11:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760702008; cv=fail; b=HBw0pMC1Pzl9U6my8swHhmPYVvLDRbFMkSq8JpkSRUghBkiA5JnW6U0cfxzCvcEl/NB2iXepwBJADE974wlWQjk70cDJ7eFHBnjIOBPcPG0eJn3B34kCFjNyCBoHAEA1DMTs1SeY2wgp/Y/g68ewZRi7znaPZI4DPIbcWKWGpw0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760702008; c=relaxed/simple;
+	bh=yAqiTbhD9/ex9UbylXt0ODSybTYieMPnRljUGdtnGm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=O4zmOIpPWoZG8WoREFjZ+OVZH6q8Zf1R1vfu4M/Em5X4doJJdPfBwUdTXRpLNs0W1RkdQImtoKd8U3DO4Yya06IDwyLI2IcpZ+7ocjHA2xKDYxCAmIdoWaRtnrNkJfymjZTX2L8u/Or1vBRNB9hQzNf/5iAaMsdBtIIOnWZqMEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A4iKTKK7; arc=fail smtp.client-ip=40.93.194.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QxPmKpTdhYqVK912jz2EV+layQ+ymM+7Laai/RBcvzPyUBU6hFaN5yp0i/Tinmxibnvb7cN4x67j5XtSiN0pvi2WwNMzvqQMOhk8svGmHKUmBTrxsv0FeRFm8MhIjFdX7jwpM2PIZ+qrJ+mZibTJmvNd68yROTc1NMPZiP4kEUXjRtqEZN+XxNPgZ8hHrZ/Hqzh0XzyU5cGZfxFXE+aqCcoU3tp7UFBCbqargOdlrmoaFNX7CdIOPUiONMQJAgKO06XdJl70cJJhWnV7W9vdI3LPqqqe91ulg64sXW/fm55JNrNltDJD87Tf/N7Dj5muRdjLLA6qqE/tMapoOxRWJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=27Gv78aElBuonLA+v504SMPOqjIriIvAdUy4o9f81Gc=;
+ b=u0xWnujkxdtYV5TWtusKVI3qt620N5+UOJmx/7Br0NJQuQXWvhiH+OnVI63svwdtwjzZB6auj4hsPGuYO9SYfZOfUXO8IJUukH8kwg8hsUNigCV8kaBgguYQ7IY8H385ml1LsQ6Z3RBoB45IA7iEYuimFnrA5HgyDWxGMx9lRcn1+xGCvvbQBAXVvcCcV43NbA3UCOaokA57Fl1zy0h/o8Z+ea0xMbcTHaumrRz1/MzTCMFN3uUUjRm9iq68cC8d/QWfFdQaHSse9afRwnIu5YiVGf5W+hAijH7w3mlliZmvL7R6cpSeZ3Hi5z2SsKb5hgFNlOhKzqwu/h1g1ZTvYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=27Gv78aElBuonLA+v504SMPOqjIriIvAdUy4o9f81Gc=;
+ b=A4iKTKK7tXAngqVwnTTOu8yQQWoUGHbNAjfPQLSihno/ximb9W/ZMEnDkDL/eAOnPCXsupwoj1YasLr+kjh3oTbEhOwWWqunJCk04YxGCz2rqggMqGnbR9OB/H46xSY8CLQuRsKjA4myhR3lHzkc/3FkPb1EQlnSMI4/9mQEhucw9pt6thzx/EqRjoH2FVsZQTZq8jftP/nE3EdPjpMqGFZATt2p+LR7sh0caWMBCL1ISpQbokyD3yLKK0TnRgaiQVVlbY9Mv098DjMJVShbOm/890F11mKpLRreC3UQUF88gwmnTWqTut5BVJ6fUlzULdCE1rkGSpNMjjcyY+Asyw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by PH8PR12MB6938.namprd12.prod.outlook.com (2603:10b6:510:1bd::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.11; Fri, 17 Oct
+ 2025 11:53:23 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 11:53:23 +0000
+Date: Fri, 17 Oct 2025 08:53:20 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mm@kvack.org,
+	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/9] PCI/P2PDMA: Separate the mmap() support from the
+ core logic
+Message-ID: <20251017115320.GF3901471@nvidia.com>
+References: <cover.1760368250.git.leon@kernel.org>
+ <1044f7aa09836d63de964d4eb6e646b3071c1fdb.1760368250.git.leon@kernel.org>
+ <aPHibioUFZV8Wnd1@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPHibioUFZV8Wnd1@infradead.org>
+X-ClientProxiedBy: SA0PR11CA0108.namprd11.prod.outlook.com
+ (2603:10b6:806:d1::23) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016084301.27670-1-lzampier@redhat.com> <20251016084301.27670-4-lzampier@redhat.com>
- <87sefj179h.ffs@tglx>
-In-Reply-To: <87sefj179h.ffs@tglx>
-From: Lucas Zampieri <lzampier@redhat.com>
-Date: Fri, 17 Oct 2025 12:52:48 +0100
-X-Gm-Features: AS18NWAyr_OiJTgLStN1G7hKO9txtKoLZhRKznNbGHfdcjMfX9CrDwQ5omJQ6-g
-Message-ID: <CAOOg__AHpFsxU==JPX_usRnkJSL6agadsGZUxdh0L0DriFwcQg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Charles Mirabile <cmirabil@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Vivian Wang <dramforever@live.com>, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH8PR12MB6938:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1273d5a0-8c89-47a1-46d6-08de0d73c5c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DrD+CfmFVXOn0+YsJ79duhiCv4MyocnFvbdU9CV/QtEcNt4dBlCyqdS/RPpv?=
+ =?us-ascii?Q?vc+56mf3RRwie2JAXqLZBgT34zQHNkeIwqgKortSpd0MfrAd7g6a4RiSRuCH?=
+ =?us-ascii?Q?4SwF1PiQRS5CU1LEJb3suc0KydakxkMDLnjAvIOQf0Ucm31BkKHId1W/iMFI?=
+ =?us-ascii?Q?1bl/vSMWXEgi0VWsMocHMBB3yHeYzO7LkeRE8r3cRKrIbyK68vlYzfvIvbU2?=
+ =?us-ascii?Q?9fdaMsHtDwHGrA5h0BzkYqTlV3IiP/OkMwW4+lmm2R1QlFIgqowVhYwwe1fu?=
+ =?us-ascii?Q?rtY8nNflrCc/bbAEcEkfEXVXb7VMDvfvW/8jWb3dOmkZyTrkInsKjEGlX68i?=
+ =?us-ascii?Q?m1vI70rq4ml1plweisGkGeC1N8ZFM37vBt4N/sNG0+Kusddf/7mk4JY02CB2?=
+ =?us-ascii?Q?mkBfS7bwqu+YANMnZ070RI074ezr5pP3cTvdP195XqxGcajaki+TXBc7Trpf?=
+ =?us-ascii?Q?hRNbA9yxGt7kwzOuJcsACNJRFjOqRk9tpkuDF3+03xPEPEEQBItPFspjCdxJ?=
+ =?us-ascii?Q?nv5ud/oG3EZvUw6t26d9+nO59dff/+XZcO2eGIsUb2cacuj5CXrb4BxggP2j?=
+ =?us-ascii?Q?EyvoS9DfknW32Tph2Y0Q/P5nG6uYEnDQ3tfRypfYaeLjvObg0FYAc5yPZ/x/?=
+ =?us-ascii?Q?OBqW/sed1DleH4bNQ0a+ysb17YtdrlR4RGaZKEM3T+MiDUcTda3/dv8ijSVn?=
+ =?us-ascii?Q?++OmIcmKHqXVcsS4nd8K6xAU0YPBWeS/uVfST3pYb5YUTRMErgJr4V2W44XS?=
+ =?us-ascii?Q?yjHtDAy+lCpzuCbNLVk5e6RqeUTn6FviTMzZU5g/e3UgSP0B6UJnycwpyibB?=
+ =?us-ascii?Q?c9luokHDFJoWHiArMZT3GVnH9Wc5m08QQO5R4azgGTWDcsJfjZeqjRiKsdUd?=
+ =?us-ascii?Q?s4miRjw+uqLOhtqSpEo5tEF0HyxY8Jn8ZHrdBTEm+kfEBYLtajPm1HA7GYCi?=
+ =?us-ascii?Q?Mox2WCyS58qqCrXJwTpdIoHGwN4j/U1ie8jpR2tRH3LaCv10yI1D6nOGxMo4?=
+ =?us-ascii?Q?YLacXtTyR2z4GwVW1cQZCNuSKQBWn07HbDkdaEZfkv39FfuN/T0EOcxd2f01?=
+ =?us-ascii?Q?FdtUorDIy8BcW1eWCUtxHRWOBY++Tq12l4isZoEScZxPBiCtbYZFfH0qpAPl?=
+ =?us-ascii?Q?gHEwyUKgj03yDjumBupLkW01BjAeFUIr5yv8c2zU7/nZf7Mhw3iCszd3bq/H?=
+ =?us-ascii?Q?LJqW/7SIPqC2/QrzOQPLJ2Eox+W7a9k7zCZtuz3v/BUTBRzALiBiZ5rHwQxf?=
+ =?us-ascii?Q?HzlE68WQXXsKyDvUQaSlVLSaRPdG0Y9RzIao3fiY7tLtvJ8k94NCcUR6F0iq?=
+ =?us-ascii?Q?Vu3D075glgB733gU30pbhwHZCLXZj1Xjrf7VNb42GaMwILxP8KLcrU9+FV01?=
+ =?us-ascii?Q?2H+GBbPKAc93w1RZhRXjiS0IN7xNZDzwMNrOrOlVc2t8FgqHRK+Jjy9Qh9WW?=
+ =?us-ascii?Q?YC7m5zbuDyAw1Foi4Vicrpn/DOBM99BaTJlHOYSm9FEUXJXSdGOPbg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pwDyegh6YKnvSYenNn4AsR59Wj495AfmCLlFfHXvi7+HzISHrl/EMAfhwjcD?=
+ =?us-ascii?Q?VOSYFnplqBtXYM9ZJq4/65zfMvDfKBI10IbpWjwSNaZng3ioAaNZV9DxV70m?=
+ =?us-ascii?Q?et6yzsYCRhXkNgJklpPAr/MyU2aCyx3WJ2GXUTBT5gM84HCJL3/VMeL/9t3S?=
+ =?us-ascii?Q?IU/djpwYnholsmTtWMOpgx66OIu+pHj8nKiQDLPjFDY2QLxIGd0I//jWyvpf?=
+ =?us-ascii?Q?liMvDBumDrqtseaAG/fchczImzC3ddKrxTQYbkWULV88AHAxYcGj2fK4dGUo?=
+ =?us-ascii?Q?YL+i4c8b48Tubip1e+JFFYlPM0bKkBT5vVh+YhO0JFrf9MtSI/1VcZxJ7NBv?=
+ =?us-ascii?Q?+oOxAaYVOxXFZL8mYcR2DdrbC9q7qfb1wwDOKu/ou9fISL1slLQP7mFESqSD?=
+ =?us-ascii?Q?LeAwO7DZ/1yujhrXVeA991Euok1fEhp9CWGu9uiMt68thhelrG346lmFriRl?=
+ =?us-ascii?Q?E5rdYCk1XmnNzMnE6JFKD36lGWyD1atAXmQvoXmAcRIFB67FwNc7EiAnq8XD?=
+ =?us-ascii?Q?f+Nb7h4kzYxmVRLAj+UydW4G5O0E1dmOJ3kp7FA49RpZOSeVRbWzFdd9KuCb?=
+ =?us-ascii?Q?OKBcBJeVfkPCR8wQos/IyckLYQwNKNiyXvYa9Ss+azcPY9aAO3QBF3E8MJbW?=
+ =?us-ascii?Q?tkFpwkI53QGNOBs85rDVKAjQBuasUyXUnKTM5pCK6ti9CBMnRCedkMYruEQP?=
+ =?us-ascii?Q?cqQ51mOB/HgWlxjciopPMDeto3/kf6k11Z+nm8z+ZeMobb0gTLOlyYPEFamZ?=
+ =?us-ascii?Q?DaMpjaH8dL6Pkx1FL9o721nGdvDYJ/KQ+eLzLUlyZToc1dNaDRvKA1iUh+KG?=
+ =?us-ascii?Q?N2EXaU/VZ6bFu1RGXgMqPCIyql0kvIHON1iy1Pb0dJL8zxetzJzJNJ6IW2Ip?=
+ =?us-ascii?Q?mXEKgzM0dp7tGo98EUOdvuOC5Z6FotEjI3ghsJ0vxPYK/F/3LjYYYqhskycd?=
+ =?us-ascii?Q?1P/ffYCaFdGu5I1MDOThLH0CIXBhbRxX43FwlhmZkYytaf6H0gbp7n4ASED8?=
+ =?us-ascii?Q?rzDMBfvmJs68R1u4WU29KCN20fvOxG65Yl1rnTJ71g9Qt9TUdSz3TzHT6Ksq?=
+ =?us-ascii?Q?tKw2CkbMLmSSF0McCk4++f7pcYxiDm16KYu6Y0459q5DLwfu0NhKZKZfjYv6?=
+ =?us-ascii?Q?L0GSguxqI8h+h0kcU+bYQ6Iw8uFWPQ+FU8VH3sXJDI//JUSfE05mgtN2c/ZM?=
+ =?us-ascii?Q?o/ESIgCzeNTJm67tgH13udpor1vkpHpx4nNLlLIIAxUU9ixe8vagzb/l67VP?=
+ =?us-ascii?Q?Z+NUTC6KiNT6+Us6oo7Fc99qtmUzI2/aqsXgXUsA1SvJSmRhLraPZy+GUtM7?=
+ =?us-ascii?Q?HgFaR1XOOGEPS+Hko7RqxP5rVQzgtZ4XAaNseXJ3yUir1jaNaCpBcWgV4oxf?=
+ =?us-ascii?Q?+KJiWQLachiNp6OloDMs0Xcgir9LCns1mZYR6pYvbHTvdBhFm+4BlTNB0zUq?=
+ =?us-ascii?Q?Ll/X5kEyymuphogG+x8Ypli+YS602UtGwvpErLvby8GJjmK9uRxC0vjBRe24?=
+ =?us-ascii?Q?2facAf2eGFUEf0bFtmmgK4UntwepQI4h9vwhmS0Q7LJcH8LOtEZyUvgOGWRe?=
+ =?us-ascii?Q?ACavMyKdmaAmkBjzvqUl252r9z6xH1BVgjutKuTz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1273d5a0-8c89-47a1-46d6-08de0d73c5c5
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 11:53:23.5695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hhytHHPZ8320KQI8Fyy2p7tWDgsyyn9FG+N8swcrjr5Q+aWvKcn96SHnH0XWgK2y
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6938
 
-Hi Thomas
+On Thu, Oct 16, 2025 at 11:30:06PM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 13, 2025 at 06:26:03PM +0300, Leon Romanovsky wrote:
+> > The DMA API now has a new flow, and has gained phys_addr_t support, so
+> > it no longer needs struct pages to perform P2P mapping.
+> 
+> That's news to me.  All the pci_p2pdma_map_state machinery is still
+> based on pgmaps and thus pages.
 
-I'm really sorry for that.
+We had this discussion already three months ago:
 
-On Thu, Oct 16, 2025 at 11:16=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> On Thu, Oct 16 2025 at 09:42, Lucas Zampieri wrote:
-> > @@ -430,6 +516,8 @@ static const struct of_device_id plic_match[] =3D {
->       ^^^^^^^^^^^^
-> How on earth did you manage to screw up the hunk header?
->
-I was copying hunks over from one file to another to avoid
-format-patch as it was screwing the email headers, after that I
-learned that there's --[no-]encode-email-headers in format-patch for
-that.
+https://lore.kernel.org/all/20250729131502.GJ36037@nvidia.com/
 
-> Applying: irqchip/plic: Add support for UltraRISC DP1000 PLIC
-> error: corrupt patch at line 116
->
-> >         .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-> >       { .compatible =3D "thead,c900-plic",
-> >         .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-> > +     { .compatible =3D "ultrarisc,cp100-plic",
-> > +       .data =3D (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERR=
-ATUM) },
-> >       {}
-> >  };
-> >
-> > @@ -664,12 +752,16 @@ static int plic_probe(struct fwnode_handle *fwnod=
-e)
->      ^^^^^^^^^^^^^^^
-> Ditto here.
->
-> I fixed it up manually. Please be more careful next time.
->
-For sure, wont happen again, thanks for taking the time of manually fixing =
-it.
+These couple patches make the core pci_p2pdma_map_state machinery work
+on struct p2pdma_provider, and pgmap is just one way to get a
+p2pdma_provider *
 
-Lucas Zampieri
+The struct page paths through pgmap go page->pgmap->mem to get
+p2pdma_provider.
 
+The non-struct page paths just have a p2pdma_provider * without a
+pgmap. In this series VFIO uses
+
++	*provider = pcim_p2pdma_provider(pdev, bar);
+
+To get the provider for a specific BAR.
+
+> > Lifecycle management can be delegated to the user, DMABUF for instance
+> > has a suitable invalidation protocol that does not require struct page.
+> 
+> How?
+
+I think I've answered this three times now - for DMABUF the DMABUF
+invalidation scheme is used to control the lifetime and no DMA mapping
+outlives the provider, and the provider doesn't outlive the driver.
+
+Hotplug works fine. VFIO gets the driver removal callback, it
+invalidates all the DMABUFs, refuses to re-validate them, destroys the
+P2P provider, and ends its driver. There is no lifetime issue.
+
+Obviously you cannot use the new p2provider mechanism without some
+kind of protection against use after hot unplug, but it doesn't have
+to be struct page based.
+
+For VFIO the invalidation scheme is linked to dma_buf_move_notify(),
+for instance the hotunplug case goes:
+
+static const struct vfio_device_ops vfio_pci_ops = {
+   .close_device	= vfio_pci_core_close_device,
+
+	vfio_pci_dma_buf_cleanup(vdev);
+
+		dma_buf_move_notify(priv->dmabuf);
+
+And then if we follow that into an importer like RDMA:
+
+static struct dma_buf_attach_ops mlx5_ib_dmabuf_attach_ops = {
+   .move_notify = mlx5_ib_dmabuf_invalidate_cb,
+
+	mlx5r_umr_update_mr_pas(mr, MLX5_IB_UPD_XLT_ZAP);
+	ib_umem_dmabuf_unmap_pages(umem_dmabuf);
+	
+	    dma_buf_unmap_attachment(umem_dmabuf->attach, umem_dmabuf->sgt,
+				 DMA_BIDIRECTIONAL);
+               vfio_pci_dma_buf_unmap()
+
+XLT_ZAP tells the HW to stop doing DMA and the unmap_pages -> 
+unmap_attachment -> vfio_pci_dma_buf_unmap()
+flow will tear down the DMA API mapping and remove it from the
+IOMMU. All of this happens before device_driver remove completes.
+
+There is no lifecycle issue here and we don't need pgmap to solve a
+livecycle problem or to help find the p2pdma_provider.
+
+Jason
 
