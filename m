@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-857948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB57BE8508
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:26:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B07BE8514
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5652D4E28DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F39418840C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A710E343D84;
-	Fri, 17 Oct 2025 11:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fABidgn9"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771943451A0;
+	Fri, 17 Oct 2025 11:26:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB0032ED3F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84678343D8F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700358; cv=none; b=dvtV/GlAsN9WIkIRoUmrMc1J8c/pWkYFB01fwKNCJIvnGmGvb3u/9kkxqSCfksjpnDuFQTN/kL8lcp7Wc88XOrfSp/pQItGStLYrI/ERI0NLffv3SRN+l9DUUKMebFxRt2kbhiFIJDgVCtOz7tNF83DhG0WwqvTU2psvklti7WU=
+	t=1760700365; cv=none; b=brLFg7yHWeHUcluud4d6DMOQnL7ZxBBHDxyOQ6coLmSl7nqc4J/0bBmoTQ+iZtAIMdmL0dIMvpoyQemqRBpAIgNQFtRPrAwsK8zkaHPxIVykwyMdsooa0AM9WeN5+JlZ7e1KAdMj9NBjkixc1IFcb0ROPWhQUM5MNgUwIHyDNSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700358; c=relaxed/simple;
-	bh=aWvD+LLrLF9YK8GnZm5gsYiNIJjDuBqyzw6Mr1QGTag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFxqPMePwFCDf0pfN/3U2oMXwbVoKvUkVpp+0P5TJXusmZvzEunKFCgXPLfRBmBRDmN9CjRM5dUqlQUJL5Qq8qJCWqMAKExyrW9tGD1GGOPjmsEvQi253aNegH5cdfqbIDq3uDYhLSIpBU7DVhkxCeazNDyuUlrUkxe5sqTAdr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fABidgn9; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=aWvD
-	+LLrLF9YK8GnZm5gsYiNIJjDuBqyzw6Mr1QGTag=; b=fABidgn93jmvg9ZisEcP
-	Lk0H3NKOriPyUAhNiEmb58pFrcorfCMfQCUMisFcIOxaOAfeC8ca5aPhgKHlI73H
-	ZbohZ53gjJFEx7ICJXdFwuVvksx6wULWJlyZaTYn+nRxgg97PEWBhke66ygKhUU7
-	yX8tFG3uV82GmDaCNoCte9P4g8jP2a2cKsOnkx1kBKwtJUhPRWp05rKtQro/4GkV
-	USplM4Y3eTLFR49U57Pww26JZjQ0BSmuZtNHWWAKw2JF8QABzrVa+RiqvsTEN2Ei
-	lp8jXMtsK6MG8Y3dxCNAHIHFKOgw3AZUw5D4EjBN6NuTbTiJXtlqkkTuf3jm33ZC
-	sQ==
-Received: (qmail 11438 invoked from network); 17 Oct 2025 13:25:51 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 13:25:51 +0200
-X-UD-Smtp-Session: l3s3148p1@NTwB/1hB/uMgAwDPXwQHAL/S9V79e5yL
-Date: Fri, 17 Oct 2025 13:25:51 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
- possible
-Message-ID: <aPInv9NELU7N9QDn@shikoro>
-References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
- <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
- <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
- <aPEAx8ZGHBcWZKJF@shikoro>
- <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
- <aPIfF-3SgzW5V_gs@shikoro>
- <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+	s=arc-20240116; t=1760700365; c=relaxed/simple;
+	bh=1MThs79OKYHqj9DZO2UpepV+2jm7L4LOJ4PO826Wapk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s0HGf1/0a58HPNY/tS6exkS8FAwcxFHDpFp3I4zIZtpnotPvVAjp2ekhuN6fBmz+xP7EP6gw6e/IKFHcrjAlNxtCC+VEw7r1Y67d20OP/hINJ7/lsHooptXFx46HsZC4i/gBZj1QZeeebzmX/lGGgDHkB+BGaF0Rtn7FWGnWLi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-93e7b032f1aso47856439f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:26:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760700362; x=1761305162;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1MY72UhKs0CgDuuzl0+uYHVQxX1MwW1PLrShehamj9k=;
+        b=dUid4BqCWoUojILYm1nS1XjcufwnkJ5hvgMZa4aQuzQJO25PoQOH5xCYpx7z1/heVd
+         QnLspWJBUXqxMYoo4E+gi7PCdEe7Joz1bP/PyDod75CEoGF4pIQe0Z8GAPV0Ihto6L+G
+         zf6U5Xe+QYIL625xf6kjbZNF5YMlbgzDo/+GWXmKw8E+q+B7+gV9hacsjN5DgzpvX1Wk
+         tnL8nnQW0vvRHnXxvnSJhlUwu5tsd6qGB6lh0erFPM0B22HFHuKXz7aEFrFv4Bqau/xV
+         rURR/8LEM9hssGip/R/EhRJuh+60eVLe2WyE/vbwrzOKfSiTOSAtvjpx6WFpVs3ayWWl
+         AWFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqwD5uVUWxx2zKiTmp1NW0AlAh4loWUVagYSNNNXho1zsl8cs1uS6AklY9kfpXjDfab72DuxlvyWeXqB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Se9QiY3WPC+AlHvjfPiXvreYxM2BHykQw95ygrqV9xqdNNTW
+	2nYKw117V9KUcMV2sqzHjg4lGzqhysZ8Rds4NCUh0zvNi2G8ipCbOArRPgF1zanLCzEmtnOUGz/
+	nTLuS6WAW8ATTDEWJfcyfX2sZJ/MHxflSaqtKdbFfCvzDKyuwjbQI/xLwVSE=
+X-Google-Smtp-Source: AGHT+IHAfen7ewgxq7v8VDJAdjXprtkrHIbsOFTJO8nWMMsHNOrIU20Yc2LQVjnx8fadlcC4JgR/1UmJG8KH25Cst5GGrB7dN9UR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mXhh8XpVdeKHr1Bl"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+X-Received: by 2002:a05:6e02:3810:b0:430:ae84:d126 with SMTP id
+ e9e14a558f8ab-430c524613cmr45975785ab.4.1760700362601; Fri, 17 Oct 2025
+ 04:26:02 -0700 (PDT)
+Date: Fri, 17 Oct 2025 04:26:02 -0700
+In-Reply-To: <28b06392-394e-4c77-a4db-5174cb605834@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f227ca.050a0220.91a22.041d.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---mXhh8XpVdeKHr1Bl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
 
-> > I think the fallback mechanism of the core should work without any
-> > module loading infrastructure. It should be there whenever possible.
-> >
->=20
-> It's not really a fallback, is it? This is the path we'll always take
-> if the driver requests a reset control on a firmware node which has a
-> reset-gpios property. If the driver goes with the gpiod API, it will
-> get a regular descriptor. It's deterministic enough to not warrant the
-> term "fallback".
+Tested on:
 
-I dunno for how many drivers this is really applicable, but I really
-liked the cleanup of the pca954x driver. Don't handle GPIOs internally,
-just get a reset, and it might be a GPIO. I think it is very useful and
-I would like to see it wherever possible.
+commit:         2433b847 Add linux-next specific files for 20251016
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=106275e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76790fe131481879
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=137d9c58580000
 
-We could now make these drivers depend on RESET_GPIO. This would make
-sense in a way but is uncomfortable for the user who has not RESET_GPIO
-enabled before. The driver would just disappear because of unmet
-dependencies. Yes, this can happen all the time because we always find
-new dependencies and describe them. I just hoped it could be avoided in
-this case.
-
-> Then I believe the platform's config should make sure the driver is
-> built-in. I don't think it makes sense to just cram it into the kernel
-> image for the few users it currently has.
-
-For Morimoto-san, the PCA954x update resulted in a regression. It is
-worth thinking how to avoid that. The driver is so small, I wouldn't
-mind the extra space if it saves users from disappearing devices. But
-mileages vary...
-
-
---mXhh8XpVdeKHr1Bl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjyJ7sACgkQFA3kzBSg
-KbZEbxAAqiaXS9a0L9TGTMWpxJnVJeLQf+9Ge06OCtpjIwWdYJ5SGNRCSSqXLEiN
-oM8lShGPB/27ENIRZPujguWRsXyDII/fqYuPcGpnF5UIaEhfj8HbVUN+gSZzUDA9
-hdlxQJ9v7Ewf5ng1w4oWzOdqh3giuXMQ/2jKeCeY71hfIfsj2g687r9UH0JY6vg6
-mHD9hJzl9atAhB9F1931utvhQhZSC5Hk+gm4Lvce7I/qOtiPLtZ7UJUCo7s/gXlv
-w7C0qalLlU7bKFYldQzJCwzZmYE62JHWTCv353agnE20Vt5TqFf0446RjNnVJBvw
-7CRWPuLSunNNFXRwIUQibnT7EM/2yy1GrdbdRMr8wN57y7T2DBGuNR/Esa66nsJ6
-CtH5LeE5Yezk3f4rAiVOjLNnxh+bSpSLmwdb20bgJ6NmoUP3QI+OZZot3XjfcudT
-anXQaMgQAGnC4yCL3ILENQbSemFpMMmbWBiA1+Wtj6p7dVFl+7gvw5T5vZjrFjjr
-pwYoqZqHmx+QSfDSpDBr5PFqxhWCS5gXRgY/WrU1EsTt5Vx7H+oh/pM+hqW9Korq
-rXRy3BE8VF/mO9cyhoWQ1mJ/kTN1jLIwRnOqzhrfnr4ycdapAOB3ehZovh07GJgX
-IJhnLl0/9n/8RpxRtW5dUBd8TsJ6nJTC9WHJoV6gtwB4prYkvLM=
-=1Ev6
------END PGP SIGNATURE-----
-
---mXhh8XpVdeKHr1Bl--
+Note: testing is done by a robot and is best-effort only.
 
