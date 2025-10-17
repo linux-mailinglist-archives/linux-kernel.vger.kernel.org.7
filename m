@@ -1,232 +1,139 @@
-Return-Path: <linux-kernel+bounces-857462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEF5BE6DE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:04:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C067BE6E07
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C035C562C88
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F59400CAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E6130F818;
-	Fri, 17 Oct 2025 06:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75783112A0;
+	Fri, 17 Oct 2025 07:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fAk5Ef0D"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mljrpGyt"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176B930C623;
-	Fri, 17 Oct 2025 06:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3172222C4
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760684368; cv=none; b=mtqt1jHe+tvkfglINyKie2VvjkoCnFs2wpSLJmluXNBwBdtF1mBP0ryyeCRyZyspyIYCUo+Nd2QrmoCNw+NvPuLOFlGjqxyCkvPDEo5xaXJcIgjbPo69ADUkVp6uEDiF6rU8u69wfdP3hqyRs1wbBDTeOBOr0762nZlLYU3xwvM=
+	t=1760684754; cv=none; b=lisaKutBP9U7cd7pYM4GsgIDXs4kY0ZPdXA+MBlePLtfQ1G0Q6cspsKpZmckXLGlYGlNWpsSmmsQs9SaOSK/8NYmyJWQgSi3YofgGAU9BvQjhRkNBQv41bK67/UtbJch34YMZLhhaCCKJOdm30OZ8zkIOp6Xw7LmXaQVSBs5Zng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760684368; c=relaxed/simple;
-	bh=8OQY8QOLNWepduPiOkPoOwkFH3ACC14yEP8MXSuDiMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YK5iD+dueSROR7siSjzDnvSHT/a+BGhcND0HDabhxz1h23gpsjTbaKxC/SEbT6LJ5dwp6Wx/vEDvQbaivnsDj6ZM8MnsXA54gVi1xKZZWopxNW44mPruhnegDXSE6PdfHvqoHXsN00fUVGqIRkP+PDUw6WxGMlqSZ5F6wu8/fvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fAk5Ef0D; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 63D631A1460;
-	Fri, 17 Oct 2025 06:59:18 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2C911606DB;
-	Fri, 17 Oct 2025 06:59:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0AE80102F22FF;
-	Fri, 17 Oct 2025 08:59:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760684357; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=6VjiAwlnAaPSfGdrf60Hyg6jUXaFHDvITlfpGvqxAm0=;
-	b=fAk5Ef0DF+6h6xHBiRHRQk91kJx2IEl7f6IDerNI+IHsad5AiDg2/9F66BmxmpFLluvDJF
-	L5WmRKBzzQLcK8GIYKXJp67GUWY/FOI10a63IvKvGudc4Knyb4esZevhL/ary20yTJpV4B
-	nzZxc7Z4qAcxApCXYK1zOqNIh6Qf8t+TKtGGlnR8H9GKIeSKkkDM8RUP4Chotl78DGvsOI
-	hwFo/M1vobrnYHn0nuciBtZ9l0URBA+qLimc+Ak/2rxPp5UQ6AZkvGwfOMQ0bBr5jz7vms
-	eXxvbrlT+GSObjJ5m6rAHQrchLGUTw1DuS5rajwzQe4udfTNgFYkCKwAu+V/6g==
-Date: Fri, 17 Oct 2025 08:59:04 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron	
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?=	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley	 <conor+dt@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-Message-ID: <20251017085904.07e40e37@bootlin.com>
-In-Reply-To: <d7576a0bb9a8d5326d77ae434131540b4359bd2a.camel@gmail.com>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	<20251015142816.1274605-3-herve.codina@bootlin.com>
-	<1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
-	<20251015211420.031c61fa@bootlin.com>
-	<de57f5274b2fe0aac3621dc10cb6d4d0d98d3063.camel@gmail.com>
-	<20251016160202.3d4d0a5e@bootlin.com>
-	<d7576a0bb9a8d5326d77ae434131540b4359bd2a.camel@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760684754; c=relaxed/simple;
+	bh=aN/adSg86Z/2K3CsfOHuhlwfWvy9MERo85FrklqoiUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUu/bF+xrE58jLh9GOmhXTABoO9ko1z0nJKvxRXfqDhdo/0tLCERoMCSBh4qHXwKU+p9QBB/p8L9ZRkACZEHCMHC3N11z6Do73vwlTd4E9II6L4qpAmQfzzJrKfaxNRShjKq/+08s4EZ/HJdwC9A0fBifCzTJTkgYTMTRa5YpYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mljrpGyt; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760684745; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=HQ7W+r503Iw+EOno8tbHH25ahpTKxYi2lcfSqIDRr1E=;
+	b=mljrpGytJhJTasL21Ll5C9vY9qx+zcZ1AkMsh91zIpl52F0rEaookBTS8YgEEZkn1RZkXEpuR6h3AytNdHvasgDW6GItKrfh4AAIFXOLLPtuUrmAPbd5OfN/l6ki8y8dJr5ygL5Lxh7gyuBwem9iQU5y6uKGgL3BTx77kwQAVNk=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WqOynSt_1760684740 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 17 Oct 2025 15:05:45 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Robert Morris <rtm@csail.mit.edu>
+Subject: [PATCH 1/2] erofs: avoid infinite loops due to corrupted subpage compact indexes
+Date: Fri, 17 Oct 2025 15:05:38 +0800
+Message-ID: <20251017070539.901367-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Nuno,
+Robert reported an infinite loop observed by two crafted images.
 
-On Thu, 16 Oct 2025 16:26:28 +0100
-Nuno Sá <noname.nuno@gmail.com> wrote:
+The root cause is that `clusterofs` can be larger than `lclustersize`
+for !NONHEAD `lclusters` in corrupted subpage compact indexes, e.g.:
 
-...
+  blocksize = lclustersize = 512   lcn = 6   clusterofs = 515
 
-...
-> > > > > > +
-> > > > > > +	ret = rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-    
-> > > > > > > adc_core[0],    
-> > > > > > +					   "adc1-avdd", "adc1-vref");
-> > > > > > +	if (ret)
-> > > > > > +		return ret;
-> > > > > > +
-> > > > > > +	ret = rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc-    
-> > > > > > > adc_core[1],    
-> > > > > > +					   "adc2-avdd", "adc2-vref");
-> > > > > > +	if (ret)
-> > > > > > +		return ret;      
-> > > > > 
-> > > > > Hmm, is avdd really an optional regulator? I mean can the ADC power up
-> > > > > at
-> > > > > all
-> > > > > without a supply in AVDD? Even vref seems to be mandatory as we can't
-> > > > > properly
-> > > > > scale the sample without it.    
-> > > > 
-> > > > Where do you see that avdd is an optional regulator?    
-> > > 
-> > > You are using devm_regulator_get_optional(). That's for optional regulators.
-> > >   
-> > 
-> > Indeed I use devm_regulator_get_optional().
-> > 
-> > We have two similar function to get regulators:
-> > - devm_regulator_get() and
-> > - devm_regulator_get_optional().
-> > 
-> > devm_regulator_get() returns a dummy regulator if the regulator is not
-> > described in the device-tree. The calling code has no way to known if
-> > the regulator was present or not.  
-> 
-> Yeah because it's mandatory and the part cannot work without power :). So we
-> should not be allowed to operate without a regulator.
-> 
-> > 
-> > On the other hand, devm_regulator_get_optional() returns -ENODEV when the
-> > regulator is not described.
-> > 
-> > That's pretty confusing but it is the reality.
-> > 
-> > I use devm_regulator_get_optional() but check for -ENODEV to see if the
-> > regulator is provided or not.
-> > 
-> > In order to use the ADC core (is_used flag), I need both the AVDD and the
-> > VREF regulator available.  
-> 
-> And that is why I don't get why are we allowed to proceed if there's no
-> regulators? That seems wrong to me. 
-> 
-> So I think the regulators should be mandatory in the bindings and a dummy
-> regulator should also not be allowed in this case because that should get you 
-> -EINVAL when calling regulator_get_voltage().
-> 
+Move the corresponding check for full compress indexes to
+`z_erofs_load_lcluster_from_disk()` to also cover subpage compact
+compress indexes.
 
-I have 4 regulators: avdd1, vref1, avvd2, vref2.
+It also fixes the position of `m->type >= Z_EROFS_LCLUSTER_TYPE_MAX`
+check, since it should be placed right after
+`z_erofs_load_{compact,full}_lcluster()`.
 
-The ADC controller can work with 2 internal ADC core (adc_core[0] and adc_core[1])
-in the driver. Those internal core are not directly accessed by the driver. Only
-the ADC controller is accesses.
+Fixes: 8d2517aaeea3 ("erofs: fix up compacted indexes for block size < 4096")
+Fixes: 1a5223c182fd ("erofs: do sanity check on m->type in z_erofs_load_compact_lcluster()")
+Reported-by: Robert Morris <rtm@csail.mit.edu>
+Closes: https://lore.kernel.org/r/35167.1760645886@localhost
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/zmap.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-Those cores have an AVDD and a VREF power supply.
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index e5581dbeb4c2..6aca228cd2a5 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -55,10 +55,6 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+ 	} else {
+ 		m->partialref = !!(advise & Z_EROFS_LI_PARTIAL_REF);
+ 		m->clusterofs = le16_to_cpu(di->di_clusterofs);
+-		if (m->clusterofs >= 1 << vi->z_lclusterbits) {
+-			DBG_BUGON(1);
+-			return -EFSCORRUPTED;
+-		}
+ 		m->pblk = le32_to_cpu(di->di_u.blkaddr);
+ 	}
+ 	return 0;
+@@ -240,21 +236,29 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
+ static int z_erofs_load_lcluster_from_disk(struct z_erofs_maprecorder *m,
+ 					   unsigned int lcn, bool lookahead)
+ {
++	struct erofs_inode *vi = EROFS_I(m->inode);
++	int err;
++
++	if (vi->datalayout == EROFS_INODE_COMPRESSED_COMPACT) {
++		err = z_erofs_load_compact_lcluster(m, lcn, lookahead);
++	} else {
++		DBG_BUGON(vi->datalayout != EROFS_INODE_COMPRESSED_FULL);
++		err = z_erofs_load_full_lcluster(m, lcn);
++	}
++	if (err)
++		return err;
++
+ 	if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+ 		erofs_err(m->inode->i_sb, "unknown type %u @ lcn %u of nid %llu",
+-				m->type, lcn, EROFS_I(m->inode)->nid);
++			  m->type, lcn, EROFS_I(m->inode)->nid);
+ 		DBG_BUGON(1);
+ 		return -EOPNOTSUPP;
++	} else if (m->type != Z_EROFS_LCLUSTER_TYPE_NONHEAD &&
++		   m->clusterofs >= (1 << vi->z_lclusterbits)) {
++		DBG_BUGON(1);
++		return -EFSCORRUPTED;
+ 	}
+-
+-	switch (EROFS_I(m->inode)->datalayout) {
+-	case EROFS_INODE_COMPRESSED_FULL:
+-		return z_erofs_load_full_lcluster(m, lcn);
+-	case EROFS_INODE_COMPRESSED_COMPACT:
+-		return z_erofs_load_compact_lcluster(m, lcn, lookahead);
+-	default:
+-		return -EINVAL;
+-	}
++	return 0;
+ }
+ 
+ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
+-- 
+2.43.5
 
-We can use either adc_core[0] only, adc_core[1] only or both adc cores.
-
-Depending on regulator described, the driver uses one or two adc cores.
-
-This choice is done by:
---- 8< ---
-static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
-					 struct iio_dev *indio_dev)
-{
-	int adc_used;
-
-	adc_used = rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
-	adc_used |= rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
-
-	switch (adc_used) {
-	case 0x01:
-		indio_dev->channels = rzn1_adc1_channels;
-		indio_dev->num_channels = ARRAY_SIZE(rzn1_adc1_channels);
-		return 0;
-	case 0x02:
-		indio_dev->channels = rzn1_adc2_channels;
-		indio_dev->num_channels = ARRAY_SIZE(rzn1_adc2_channels);
-		return 0;
-	case 0x03:
-		indio_dev->channels = rzn1_adc1_adc2_channels;
-		indio_dev->num_channels = ARRAY_SIZE(rzn1_adc1_adc2_channels);
-		return 0;
-	default:
-		break;
-	}
---- 8< ---
-
-In rzn1_adc_core_get_regulators(), looking at one core I do the
-following:
- - Try to get AVDD (using get_optional)
- - Try to get VREF (using get_optional)
- - Core is used only if both regulators are present.
-
-For one core to be used, both regulators have to be present.
-
-Regulators are mandatory but adc core usage is optional.
-
-This optional usage depends on related regulator presence.
-
-
-> > 
-> > Hum, do you think it's worth a try?  
-> 
-> Not sure. But it got me thinking about all this handling in the pm runtime
-> routines. So if in the resume() call you fail at some point and then disable
-> stuff in your return path and then we get an unbind won't things (clocks and
-> regulators) be unbalanced leading to splats? In fact by just looking at the
-> unbind path [1] I can see:
-> 
-> 1. We call pm_runtime_get_sync(dev) which can fail;
-> 2. Later on we call pm_runtime_put_sync(dev).
-> 
-> Not really sure if there's special handling in the pm core to be aware that
-> resuming failed (the refcount seems to be incremented [2] before resuming so...)
-> 
-> Maybe I would keep it simple and get and enable clocks/regulators during probe
-> and only care of rzn1_adc_power() in the runtime routines. My 2 cents.
-> 
-> [1]: https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/dd.c#L1249
-> [2]: https://elixir.bootlin.com/linux/v6.17.1/source/drivers/base/power/runtime.c#L1189
-> 
-
-I see, thanks for those clarifications.
-I will simplify and, as you proposed, I will only take care of rzn1_adc_power().
-
-Best regards,
-Hervé
 
