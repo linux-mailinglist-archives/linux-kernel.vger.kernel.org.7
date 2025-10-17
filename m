@@ -1,231 +1,171 @@
-Return-Path: <linux-kernel+bounces-857919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C01DBE83DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB31BE83F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 720F55077A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:06:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C1354F4537
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C7F3321B1;
-	Fri, 17 Oct 2025 11:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9B63321CD;
+	Fri, 17 Oct 2025 11:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICzucdh2"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qwAL2V6b"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2890B3314BB
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87565328B5F;
+	Fri, 17 Oct 2025 11:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760699170; cv=none; b=gn+PJbmyFWTC/azwJqatYSgHhdWcbEqfb5jcGPry5+Zaz/68HTAgk7mo1NSn2BU4vU0IgNA2k9R7R/kE2yxS3Br/PHed9L0FxZtHbyeY2MODinDuo/5b2cUv/cAva6IBh1NZ+DkuvxcB97jICwp4D1TDcFo8YmTKEvnCivH9C7I=
+	t=1760699231; cv=none; b=SviucGxecueu7O6mZQbvXL/j2YWQ5BGWJ9/eLOJmWt4fqcGeUilMaozLQa8BbRF2ONLKiZFJaovfvWfDJpVeI5b/blUxkUw2nkkZ4akp26xbcoZ8ekdwkI5DWYP8ChIgoYjr1N0ahy9gJdXJZKJwLLMTEhwc4jjkBrq8d8DMh9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760699170; c=relaxed/simple;
-	bh=xzQfCkUEgadYLpzqT93CHRmbHNjxwXb4AN0nnSfXYBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VF2EDkYBRNt+blOv9vYgNkKkn+QbG9C4DpWVs2zR8ayBQEm27K7/4spWicGl6x2wyDkk6X4qrtNrXtsvw4VRTnNdv/qGfcHGAaXx31xKZDN9zTNXmDqbn/oEjyerIYx7qDajgbJ5d0bOqp8k9SYycbKWxcKHTWHEkw7hUhzWT5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICzucdh2; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290a3a4c7ecso19441225ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:06:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760699168; x=1761303968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=67IESv2a/v8Pf8yKPhY3ug7MsqHojZ5k4tSpnUKX3+0=;
-        b=ICzucdh2DQJSWZ9+ktmrxaPKba9vTeNvo7pxjkT1e4rMY34oz+7ONT9ZJQGY1UBy3h
-         cF/fWGZlgdn112mWA9DXCUP+a3ze8RDFUJqR89Kx1f8srGI8Ymm64DK2/grWBdjI4ej3
-         wua8AttLgQwcj6zlRJekJqtOWsJz0l5195VX0VoSPW1sx4WIFIT2NEJXaIwdMAutAlmU
-         qn0V05lom72ZuUTg5TpeOlkd62XnvXLH41BIOd8ffjxrL52kpFW19MfR/ZawXkXRwJSk
-         BJIRnljszL1phtwO0BPVim8j915Y/VZ8lq163Kzp4bEJRXUIVXM+BYg3OjiH8OX3GNFV
-         lO8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760699168; x=1761303968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=67IESv2a/v8Pf8yKPhY3ug7MsqHojZ5k4tSpnUKX3+0=;
-        b=MchCyFzjWEZ6qidCsD4VXaP2vkS0wB1DZbVZSRQ0M2KjmiFvQtY49Du68fsaLx3kdS
-         4pa+vHgAzjAKE4Kne/FM/meYRbJqtMQUEL77fTLz7M5KV7D+yWmreMQEzPCP6rmBLxGa
-         XdBIDIM/w+67a04oOYbZe7iGeJh1s0gK3Si27qI1CFZzn4zTD4t9o/Lf5PVeZhwZme24
-         WGDirBsA3I3cuiI0AxnG6U/POOsVbF9AH96D5L77NVXD/nZsEkIWsAIp7Fo40Po0+sjv
-         jYeFx8LcwKKHS16jV8F1T0+1BP6jF4GArmfU8n0KxYhdXD2ZiGQkjW+mCSTx6nInDclW
-         S+cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVk7dMWCMT4sC1bM18Cjk099SAluplUHD+HP2lfkJGEXFOm0KeP13qPRm7b0xZ2MNOHjCtk9bQv/tCh4h8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZS0RufG8GB0Om+Mmm0lNZXotqdIHd3g42qruOnTvdYvfWE8kJ
-	RRh+Z9FNwyt95ABfOoxYSeHWLE/NREcUqNnSAuq2VLqQTEqdEbJsLMiv
-X-Gm-Gg: ASbGnctmoyQ/ADpdmsFZ6MBD4zNmBDP7OQWQwYNzkLa1+lLPbjXEgcSedY2Ut8x6Zgm
-	A9ZQz1MRQNuuzEXtx8vAqVEbAcJqGEfjzSFh0WKO2ANZ9IINMJuIqUab6pxhQVPI0ZFwXlMnKKA
-	zq6+h2dYpo//8sn+AJjJ7KqqRDNyVoLK+r9X9sB9rxIh+RnmL5+EdlT/kHurZd7RUWNrV8Z9x9c
-	5jlVnWbZWxMo2roObiLRvpGkoAoiQF3jdXacLB0zGpOUyQAgJrkjDaodm9mzOxBhqgNRKqe+HkA
-	rx8ifWaQ4Ee/iPkeJrFk8OMtQn8zmvnqH7u9DWKE1pcNu1Osvi0Maugqz4VdiwhtGo28RCOWnOS
-	lWFPqDkAI3KlaL4DEY+jLJ3rcCOTgI0AgKzHTbRh5Olfk1rFVH5KL5RdhaFHRI2SNU24dA9XkuZ
-	jlWLhhry550JYfsv7o98rse19C
-X-Google-Smtp-Source: AGHT+IHzhvlggPHZaUtm7049vZphaYLbBwyOQ68yKmFVwhS+ouCLslfd4ghVDEV6+hTwf8xect5v6g==
-X-Received: by 2002:a17:903:2884:b0:266:3098:666 with SMTP id d9443c01a7336-290ca121a21mr28881865ad.32.1760699168235;
-        Fri, 17 Oct 2025 04:06:08 -0700 (PDT)
-Received: from t14s.localdomain ([177.37.143.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290993466absm61409965ad.35.2025.10.17.04.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 04:06:07 -0700 (PDT)
-Received: by t14s.localdomain (Postfix, from userid 1000)
-	id 47AE211C1FCF; Fri, 17 Oct 2025 08:06:05 -0300 (-03)
-Date: Fri, 17 Oct 2025 08:06:05 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Alexey Simakov <bigalex934@gmail.com>
-Cc: Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH net] sctp: avoid NULL dereference when chunk data buffer
- is missing
-Message-ID: <aPIjHd4jkx__LFTR@t14s.localdomain>
-References: <20251015184510.6547-1-bigalex934@gmail.com>
- <aO_67_pJD71FBLmd@t14s.localdomain>
- <20251017071550.q7qg2a5e7xu6yvlr@home-server>
+	s=arc-20240116; t=1760699231; c=relaxed/simple;
+	bh=YM1qJhiYW/aJM7mu78MMauGEvaYVNdHVJZF/56mG06A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4kauBaFC5aK6CN0I+tqgEChB9QjzU6jTpffCbjE1zf0ZFFxLvgg0rtozRXDazvh2LY3zeIpjSWUS/gNcFzP9e0mjJyg5bS4DrQob7lQIscBQAk+Auv+878KAgqtRtv3Fg+ZO/ZbCcaOaDnmkH74T3B9IWOsKg3ddnLQOomPFEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qwAL2V6b; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760699200; x=1761304000; i=markus.elfring@web.de;
+	bh=mBs//QP/LI/q0shbH30wWUG5UPKzyBqKbrx2NSC0/iA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qwAL2V6bkyx6cmydBafs8WZ0S0BOEVtckYXPJzlqKcsMU/uTEwFV8ffzv2njWc5y
+	 +FVsqIN+ACzBv3T+qcNbzR+XcvdyGYB/lyvXO/kRPlyXWVGwe3nEMESRe2DF+tniA
+	 XvEYuFTlnvA+XJE3BSzwhwShlqbYTFLQVTJklBwmdvTcNPJKHh3EUu9LDtsUy4m7/
+	 yPu9o4c0YSKldWHx3WdsQCUgM4Rbsi6qfmEcGck4aj7MfS9mjroqy6hHct1UjTR0e
+	 UIttH3UQY3j/gOnO6jusnUxBceGFD6V+VJKI3/iVCsxBDvEPGlt7CHTSkZ9KF51O7
+	 bQAOj4oN15FQy6oPbQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.195]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9ISh-1v69nL1Bvb-0067bb; Fri, 17
+ Oct 2025 13:06:40 +0200
+Message-ID: <51baad8c-6997-4e3b-81df-6d0380fc48d0@web.de>
+Date: Fri, 17 Oct 2025 13:06:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017071550.q7qg2a5e7xu6yvlr@home-server>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/4] Add SPAcc ahash support
+To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>,
+ Manjunath Hadli <manjunath.hadli@vayavyalabs.com>,
+ Ruud Derwig <Ruud.Derwig@synopsys.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Aditya Kulkarni <adityak@vayavyalabs.com>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ T Pratham <t-pratham@ti.com>
+References: <20251007065020.495008-3-pavitrakumarm@vayavyalabs.com>
+ <fe4d7cd9-0566-4d1b-97c0-91cc1f952077@web.de>
+ <CALxtO0m1R0kf5Am+oEPAgqommQph9zs6+xfTM0GzGHV+YEXT3Q@mail.gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CALxtO0m1R0kf5Am+oEPAgqommQph9zs6+xfTM0GzGHV+YEXT3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DOUqFi5mKdhYzqNv9/13UKY+qECSIwj2ZbFzXXp7zmcukapKswf
+ yXlhHpC+NyCtA0zfrD36QrmTHyx1n8cCfIHa25+hDYKRQL//E1UDXQqdBNFsFuj5Y2Fpvxy
+ 8mfDlLaCrLC3kL+YuVvXDwtpOxFgMX6SynxfXF7kgR60OZsjIroA9uG+4qBi+uXPMOHwKQR
+ Q8zeuNt3gGPd8cXTqcBlg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cRf46H0vaUY=;rhkQYmVCzYmb72mZbhYIBoGZV33
+ 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
 
-On Fri, Oct 17, 2025 at 10:15:50AM +0300, Alexey Simakov wrote:
-> On Wed, Oct 15, 2025 at 04:50:07PM -0300, Marcelo Ricardo Leitner wrote:
-> > On Wed, Oct 15, 2025 at 09:45:10PM +0300, Alexey Simakov wrote:
-> > > chunk->skb pointer is dereferenced in the if-block where it's supposed
-> > > to be NULL only.
-> > 
-> > The issue is well spotted. More below.
-> > 
-> > > 
-> > > Use the chunk header instead, which should be available at this point
-> > > in execution.
-> > > 
-> > > Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> > > 
-> > > Fixes: 90017accff61 ("sctp: Add GSO support")
-> > > Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
-> > > ---
-> > >  net/sctp/inqueue.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/net/sctp/inqueue.c b/net/sctp/inqueue.c
-> > > index 5c1652181805..f1830c21953f 100644
-> > > --- a/net/sctp/inqueue.c
-> > > +++ b/net/sctp/inqueue.c
-> > > @@ -173,7 +173,8 @@ struct sctp_chunk *sctp_inq_pop(struct sctp_inq *queue)
-> > 
-> > With more context here:
-> > 
-> >                if ((skb_shinfo(chunk->skb)->gso_type & SKB_GSO_SCTP) == SKB_GSO_SCTP) {
-> >                        /* GSO-marked skbs but without frags, handle
-> >                         * them normally
-> >                         */
-> > 
-> >                        if (skb_shinfo(chunk->skb)->frag_list)
-> >                                chunk->head_skb = chunk->skb;
-> > 
-> >                        /* skbs with "cover letter" */
-> >                        if (chunk->head_skb && chunk->skb->data_len == chunk->skb->len)
-> > 		           ^^^^^^^^^^^^^^^^^^
-> > 
-> > chunk->head_skb would also not be guaranteed.
-> > 
-> > >  				chunk->skb = skb_shinfo(chunk->skb)->frag_list;
-> > 
-> > But chunk->skb can only be NULL if chunk->head_skb is not, then.
-> > 
-> > Thing is, we cannot replace chunk->skb here then, because otherwise
-> > when freeing this chunk in sctp_chunk_free below it will not reference
-> > chunk->head_skb and will cause a leak.
-> > 
-> > With that, the check below should be done just before replacing
-> > chunk->skb right above, inside the if() block. We're sure that
-> > otherwise chunk->skb is non-NULL because of outer if() condition.
-> > 
-> > Thanks,
-> > Marcelo
-> > 
-> > >  
-> > >  			if (WARN_ON(!chunk->skb)) {
-> > > -				__SCTP_INC_STATS(dev_net(chunk->skb->dev), SCTP_MIB_IN_PKT_DISCARDS);
-> > > +				__SCTP_INC_STATS(dev_net(chunk->head_skb->dev),
-> > > +						 SCTP_MIB_IN_PKT_DISCARDS);
-> > >  				sctp_chunk_free(chunk);
-> > >  				goto next_chunk;
-> > >  			}
-> I'm not sure, that correctly understand the new location of updated check.
-> There a few assumtions below.
-> > > -- 
-> > > 2.34.1
-> > > 
-> 		/* Is the queue empty?  */
-> 		entry = sctp_list_dequeue(&queue->in_chunk_list);
-> 		if (!entry)
-> 			return NULL;
-> 
-> 		chunk = list_entry(entry, struct sctp_chunk, list);
-> 
-> 		if (skb_is_gso(chunk->skb) && skb_is_gso_sctp(chunk->skb)) {
-> 			/* GSO-marked skbs but without frags, handle
-> 			 * them normally
-> 			 */
-> 			if (skb_shinfo(chunk->skb)->frag_list)
-> 				chunk->head_skb = chunk->skb;
-> 
-> 			/* skbs with "cover letter" */
-> 			if (chunk->head_skb && chunk->skb->data_len == chunk->skb->len)
-> Adding this check here will not fix problem, since chunk->skb always true here because it dereferencing in
-> checks above.
+>> =E2=80=A6
+>>> +do_shash_err:
+>>> +     crypto_free_shash(hash);
+>>> +     kfree(sdesc);
+>>> +
+>>> +     return rc;
+>>> +}
+>> =E2=80=A6
+>>
+>> * You may use an additional label for better exception handling.
+> PK: Ack, I will go with an additional label.
 
-Exactly.
+Can scope-based resource management become applicable for more use cases?
 
-> 				chunk->skb = skb_shinfo(chunk->skb)->frag_list;
-> Adding here could make sense, chunk->skb changed => do something if it became null.
-
-Yes. But then it needs to restore chunk->skb somehow. So instead it's better
-to do the WARN_ON(!skb_shinfo(chunk->skb)->frag_list).
-
-if (skb_is_gso(chunk->skb) && skb_is_gso_sctp(chunk->skb)) {
-	/* GSO-marked skbs but without frags, handle
-	 * them normally
-	 */
-	if (skb_shinfo(chunk->skb)->frag_list)
-		chunk->head_skb = chunk->skb;
-
-	/* skbs with "cover letter" */
-	if (chunk->head_skb && chunk->skb->data_len == chunk->skb->len) {
-		if (WARN_ON(!skb_shinfo(chunk->skb)->frag_list)) {
-			__SCTP_INC_STATS(dev_net(chunk->skb->dev),
-			                                 ^-- can be skb again
-					 SCTP_MIB_IN_PKT_DISCARDS);
-			sctp_chunk_free(chunk);
-			   ^---- so this can actually free chunk->skb
-			goto next_chunk;
-		}
-		chunk->skb = skb_shinfo(chunk->skb)->frag_list;
-	}
-}
-
-Makes sense?
-
-> 
-> 			if (WARN_ON(!chunk->skb)) {
-> 				__SCTP_INC_STATS(dev_net(chunk->head_skb->dev),
-> 						 SCTP_MIB_IN_PKT_DISCARDS);
-> 				sctp_chunk_free(chunk);
-> 				goto next_chunk;
-> 			}
-> 		}
+Regards,
+Markus
 
