@@ -1,348 +1,495 @@
-Return-Path: <linux-kernel+bounces-857732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0595BE7D6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:41:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E40BE7D2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE85C6E5815
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:36:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8FB75814EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6CC3126D0;
-	Fri, 17 Oct 2025 09:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0502DC32A;
+	Fri, 17 Oct 2025 09:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gv5dVcj7";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dJWKy4Wb"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ceG2T7pc"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010055.outbound.protection.outlook.com [52.101.229.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB55024678C;
-	Fri, 17 Oct 2025 09:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5C2D877F;
+	Fri, 17 Oct 2025 09:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760693650; cv=fail; b=rBpJRlrrhjfNzhoQN6v1EBMSdueINiALo4M3v28Czuhx6olwb8D983GZRC2iBh1LRpepja9bsNuMkMJy/ZB3GccOE4Q/VEQjHJzfm3hxY0FBKHvW3VeE6cbmAoI2B92TGCXonygxJ1JIEMKMXxmTsylFE5WGai+YIpXYPxiE8Ac=
+	t=1760693605; cv=fail; b=iSzSmUfHGQ88rfPL3J7AcfRaeGcuvVvicCH1hQsLbPffG5uF808qWCtoOcGTB5QecONYEdKLlz0IzZf7hs6OE+kezZQPD7VFp0spbeYeHXOr0E3NJAQyaLWt7/SOeBfLjHK/ONV1JDd68eM5q062oZReSWTZZZovtTH/82PYxEY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760693650; c=relaxed/simple;
-	bh=YAzI97qVABzKnMm+p9wAwLILc8+SgJCjjBV4+mOJN1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LZ7qIsCv90wOn/1KrMFtETd4eWqWrdlST8mNmdP97pES2ZT11ywlG/Fg5gSgpvRyFvfOPWizWMdKcNM7+Ze4G1UvEk7A5GrIqti1QRmG3IIlgij42PNf+HSq3cFIrqHFVj1Ww2Fzsop4SWVEuRn6Ys96Tvj58z1y35Ssx/xwm2E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Gv5dVcj7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dJWKy4Wb; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H7uCd6007981;
-	Fri, 17 Oct 2025 09:33:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=65I1b0M+Jx5XI1IJ3h
-	5RvcoBQzTgV85EpuOD7QLS3Uc=; b=Gv5dVcj7Uejz6ptU4WaqiPIg375+lHSXhX
-	dFPw/ujkOsBTeWD74b4BQNyvArxmC0WB59a/3Qh9/dS18A2tQBN4QYtfmJjyGlb0
-	fgrLdJXDDrs+dvrT+K5CjCJdwplwlwM6ul7juZgPoXhE6li9ht3jXBtIim1L9gk6
-	CGkW8uBbrf5nPfUsfC8JfQE3HIrLJ7dkJUrSGHDbIzNiMEIZ2XLQSQ73HTtga6SV
-	H4Sbvy6SyqLed+q+3gQrwRvHD8pkUEeVgXdx3BGkJl/5elX9WQgv9WUSvh/fkJay
-	hGCbgp+2/Hn9Crio4GnrRYns3VErIah0LcctjP9Aue8bxMpQrk9g==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qdtytnm9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 Oct 2025 09:33:17 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59H9CvPm025776;
-	Fri, 17 Oct 2025 09:33:15 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013026.outbound.protection.outlook.com [40.93.201.26])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49qdpjv3k2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 Oct 2025 09:33:15 +0000
+	s=arc-20240116; t=1760693605; c=relaxed/simple;
+	bh=URdFbfaDwD6UYWorhzCkbqL0S+PhnJnvhZviwhRyoh4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q7a3KQARPCYOnMx7R6DH8KQgt7kHOmj51sLD7wdVy+Z+SBQXA7qyxJJuTCkA0vPAzA60MWbzt1e3HTGsRHjAm+UR+kzy35lftdsZKH0bwV331mem/2NAXKPoqRhvTLPzJaAyiZQN31/qud2piLbvQgCozjgb/UsXb3Ku5b8plcQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ceG2T7pc; arc=fail smtp.client-ip=52.101.229.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k/qEANaLnPBU1XugT8pI4ktgZts/hNP+a7dqTdgj7p6kCQKp/M/P97nAgqg+IqSjkoeh+KtmuBXAoAwu5Ua3IJ8FpEixu8WTrKeWjS2oQKZfvaOygUYbFIMydGpd/MzTQjsaPmm4n2baOHwqrzVVxV4FgCI7DmoZ5YWYmIQBQd0ImuFtl4svHnyCSNphEaf0C1PJF4m85KXeI/l3wwp+ws+/brGbM/jD98Ncs06bkxKZwJDL6P7wepMydfUcqsruo3l4h01a62NKnrpCHUzlfTnL//ImITpw78zJYt2REvcXueioYvj+dMZ7wlAVUo4CDGdli71KBwgehF5j6JUjOQ==
+ b=j8Y0NuVghy2IQnlnFKMcmPly4icokUfd95VaYO5fCpgQn5n83uj5xQcfGwXMhhhpsbKPcdBn/DtTDrh17ZRrKgAveW/sUG+UtRVkRs8zRsdq2Ylm4/efReFugMrbUiCzwUES+odPShXwT/pG+Uc3oBu0vV0D2tNVK7fgY9AJStSqrNpDQQG7F5JFHQ7ClC2ZRoA/NfIh98SNkjMn54Z6hPDYqIpAO8PYVSK9+vx1f3p/8+bVKa/ZGzUbT6M7V3EwItMdHotZpXEpgzvVnjgdaEY/8gf1BjaQB47JarHQSsPxhR2F9iJOPjw/Wd0aLb1+A8Le7ipgHeH9AzsgzFaJdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=65I1b0M+Jx5XI1IJ3h5RvcoBQzTgV85EpuOD7QLS3Uc=;
- b=Wg0j/adjd+VXLkYbvRFdey144bK2Mq6sP8EnyWNcLrPyfdNT6ens+TS70g2x5EUNWcXW9ZGtNM3O+vbNV2abDWeHz417qKNm2s3wS36FVBm9RYtpMQ7q3y3Ul9XRCCarUlORKE6K0FRUJ7r4kcIJvi6PZeLd7TtAYZEOscbmBL10Lwkbwe+uJrTGfzzij38a0/mHtiGT9Ld4h5IZ0xMN1kdELnwxLZyfne3xRjPKM6IVf7Tbxhexu1RO8qiiXYztc/Yed5aWZx3bbGIpe/kfs1JtPYkCNNxitH0O02++mTeJxPmwqiA6Euzms+keceugceg/AW4tIsQILTCZVl4xZg==
+ bh=KUmQ9u2YFb5WTRz0diUempdxZPukisnyR2+LiAvbwDo=;
+ b=qPeWG7Fz14q6jmddggS+JpLwMhklYKS4Bukt9OViQuY0XxSs0uDaA4f1H4GqU6gM+uyxJ918fJ6rU76w0eYI2fiyVbb48xH1s9a7kBAbme2cSdDYUGwYcGUGUU/HxoJe9yjPKufY+6tfzX5aKUhkkvKZuN9crK28yloQ5jYigrWRqh2kI5qWzxuggs6quJvzQDtDbpOEj4v7dCfpEOOwJXyslfmWp4s5PXe/QqesvcOLyQVDqwcYoP2HueF7AlQx1vGTpvVttcndZbhdiP3/2lSpxqC6wm8PcxcUEDJi1GLpXCAhtsw2a0u1+5wfhruR7w1695CSPgPGvoSds/eTaw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=65I1b0M+Jx5XI1IJ3h5RvcoBQzTgV85EpuOD7QLS3Uc=;
- b=dJWKy4WbTZukgw0RwQF6UWbDG2/2nNEKQtxqsUGOcoArDNQu0IflxOHxoyLYaf/CnDCbJAUB2XKZyDWkluy1wIsuo2HvaCe6uf1LIiDCnIe0JchsGYObo315zecXLu5d5C/bucT+7/PLwJf/KwAD9teZSy5/S48uwdCnrDrPSKQ=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH7PR10MB7036.namprd10.prod.outlook.com (2603:10b6:510:274::13) with
+ bh=KUmQ9u2YFb5WTRz0diUempdxZPukisnyR2+LiAvbwDo=;
+ b=ceG2T7pcMywJQ/jVKuWjbbbbEieLuzZelzLVkNUiaye0pu5624GYsLkvFXcgUHdDjTgCUkxLBJYo8Ygxc83G072jzRdyiR3e8fG5v2FAfq37yngR0lTh/VEisMkedij7RWabzysgExH2pN2wx0u8hDp5XX05kB1sLN6YN5uxiBI=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OSCPR01MB13062.jpnprd01.prod.outlook.com (2603:1096:604:335::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 09:33:12 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
- 09:33:12 +0000
-Date: Fri, 17 Oct 2025 10:33:10 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
-        kernel@pankajraghav.com,
-        syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
-        mcgrof@kernel.org, nao.horiguchi@gmail.com,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Wei Yang <richard.weiyang@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio
- handling.
-Message-ID: <03be502e-0979-42cf-a6ba-dea55c4ba375@lucifer.local>
-References: <20251016033452.125479-1-ziy@nvidia.com>
- <20251016033452.125479-3-ziy@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016033452.125479-3-ziy@nvidia.com>
-X-ClientProxiedBy: LO2P123CA0057.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1::21) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.6; Fri, 17 Oct
+ 2025 09:33:19 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
+ 09:33:19 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: biju.das.au <biju.das.au@gmail.com>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, magnus.damm
+	<magnus.damm@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
+	<biju.das.au@gmail.com>
+Subject: RE: [PATCH v3 2/9] phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
+Thread-Topic: [PATCH v3 2/9] phy: renesas: Add Renesas RZ/G3E USB3.0 PHY
+ driver
+Thread-Index: AQHcJxsB4WEAEevS/ki9ydDHX5kXSrTGQ8KQ
+Date: Fri, 17 Oct 2025 09:33:19 +0000
+Message-ID:
+ <TY3PR01MB113463C03C6860C5B945BE52586F6A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250916150255.4231-1-biju.das.jz@bp.renesas.com>
+ <20250916150255.4231-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250916150255.4231-3-biju.das.jz@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB13062:EE_
+x-ms-office365-filtering-correlation-id: 5b88e284-011d-44da-186f-08de0d60356d
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?D8VuDKveIxqJ97oVNltYxst5narRG8ewzu/CDLSREY+Je+LlJ7uQ553AIcAC?=
+ =?us-ascii?Q?hTmNpn2Z4Z0ecsB42Fp5Ct6bp2TFMRYny3ztT3fU1FSli0Iz1DNLJgWExSO4?=
+ =?us-ascii?Q?Pmi3lDM7zbISrhm/JbufnfBGgdDjGS42/dl2U1dppctFSlO/foT6IroGJ0TN?=
+ =?us-ascii?Q?iYo+gpGG47HHwEZuEmJfQrRbWw3/YU2AsU68C8CjL290EC+Tg5g58CA+Kaxz?=
+ =?us-ascii?Q?0zWPDBoJ0dDZu/vXZn/Ip39oxiTRsoR3/wykeWoxH6AwjbgHy3Ih9+XQJfqx?=
+ =?us-ascii?Q?+LhmFJ6xB9jlwbTbI9sIi434m4MDtz2T0RBkvXFfGXBVnv7Jp2y/O9SO4kvX?=
+ =?us-ascii?Q?6kXfIuzL15RLYLLOvi7Kf8acbVvrWT0IavbITKluV4UOKDJTCjtBr0p64lK+?=
+ =?us-ascii?Q?lnOrVqGWFNpxLA7WwA3BiziYc9n1Johlk2ay67U/rN741UxXklFfPqia4WY7?=
+ =?us-ascii?Q?syM86ZGaGN1G8YlK1EJbnvtYwaeOmsuMaQJZPNq2XgRRsd2WTz1UdU2Q/K4b?=
+ =?us-ascii?Q?f27pzknChvN6X3TmIq9LhdpeDfnyuE7CBaC3rLtcqUEfvGhgmC5kM8oK8GnI?=
+ =?us-ascii?Q?Ysm3bhlrvoPi+iJpdYo3kyNNGyTYzIYRGxqe6NYuLzW/kqnyZol8a4ozS1Yt?=
+ =?us-ascii?Q?9MKA0Hszex2Yz36E9g98VmF2cL3qWZ+6/7fe5bignRAkkH1mFg858tf7umzs?=
+ =?us-ascii?Q?BoOEGyzRxxRmDrTbjq7clS2nBQpqeiOY5LkEvV0WKFtaqj253knti0PA3SIy?=
+ =?us-ascii?Q?hDyT+/+SZgD98rMEVv/dGm3IoBFD6/zq8Dpjr4LT2fBr2Q+tdchi0KeUWb4u?=
+ =?us-ascii?Q?GnlvJZyxa29bOQGoVUXIznj5lqhx9j6cYmXmGgHS9a5Cp0vdFi0FHQXLR+gI?=
+ =?us-ascii?Q?kPWIec7Ae0M0gLSJRo67pEDMWLdSRPJUbuS86nLgdDrLLOM+YQAcp5wR8rZf?=
+ =?us-ascii?Q?Znpc48JrnEOQJYLI59vfGBbAl9K168Wv+leLsn1B+6X1bd8O8Sif/ewr1wzl?=
+ =?us-ascii?Q?uF5OTIVBKwgXuYTJpEWOXoJU+cVTXdy8yOtCb0/ojlte5o+o7AY7PsoPMfm+?=
+ =?us-ascii?Q?OWMIgoolNo667gn0tg0dgjTcBD3Ssb5znz7FL4HVVdJ6hoYThRJIZ6sKyrHK?=
+ =?us-ascii?Q?AnPk70Vk01c9IeMxRp4B+Xd5o8X//7JzZ0/O6CFMbdkZZfnOJAbx6zHItas8?=
+ =?us-ascii?Q?NDvAdneRqAQ5j7PMOeB/3RM9rctMSUatctSNg2LdB9dnfCOxNvUCxg8EmGrc?=
+ =?us-ascii?Q?ePnsOhpW8ERqYDJkmIXAc6qJBTWkMK6z/BoF/5XBf0fQ/ndKHS0eruKYcUOf?=
+ =?us-ascii?Q?JLvhxUdj2Mh4Vbtg3Ck43kzQIIg1U8eW4TYWnhg8XDvz20TgUw/YBWeY3qye?=
+ =?us-ascii?Q?OEIeNj0YUPJBsrJiAtXhcOx10DVrzPYmHykGqzsh5TE//B9pm7G9oELjB6U8?=
+ =?us-ascii?Q?sqA4IkVSqYBaI9e2kq9jq8zRMBMLYBmilB4ynVKibUL1oa5P3nsFwbdG+zHM?=
+ =?us-ascii?Q?R5oy6hAcd+D3psOhrtcsEduNezCqE6OMqfYQ?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?sXR+2Z2JSgJyTwK8ZVBUrvFG+Kjo4IdU/hTfcm7JlEaQt1Q5jTQemNdOXRQD?=
+ =?us-ascii?Q?MRICI4kAtOiV8Bh650D/vc+nR1IciVTgmTkloidmWEiXLJUhJC8VJv3YeLpR?=
+ =?us-ascii?Q?Pq3xzdiZ4Eu3tYe8DSJIkp0BrgpQFpg/+6Ki6J0RFne3HyRp0dUVnpL9fsr9?=
+ =?us-ascii?Q?NBV6K8IKrr3yv89hQoSQZ3HttMqnfUe4xedO0XzbNk3zCDKf2cwKjk/sM3QI?=
+ =?us-ascii?Q?QzGmLfRmOk+dMP7pkn1m8l42qkPFCDui2a2Dd3E7RsrfhZ7d9lqHHGW4zdOp?=
+ =?us-ascii?Q?zfFcANxHhpJLjuPnGTVRG4pSOjjoz+sN5op6M4DimsIU9NMsX/jQCUH/sWPk?=
+ =?us-ascii?Q?0hErfp5c74+2GtnhFOByeGexN1pLPRINUgawmuqLggxKtNdMLYhYphLnidhg?=
+ =?us-ascii?Q?oupdvphdnbM3NVISMqzqIO/sSh19MQX3D8XV4dA4hi7JXIzK7vlExIjkuDOo?=
+ =?us-ascii?Q?8Fda8wQogMXlTquB9bvxK7xv27Q5evGuPJ6vmM4RpN3rhXWEgPIvcm5zKOkQ?=
+ =?us-ascii?Q?mAk5IJ8t6VkrjZWXy/CcprnPl+4IrBZviz9da47tbrX7W/W2xM2BuvkvmvOv?=
+ =?us-ascii?Q?QcoQZV7gC+izBgXYQ+wa3zJ8Ci8DcNcOEK5U0n8LAJCXS54BR/Jf9DB/WCbp?=
+ =?us-ascii?Q?PltcoGpktuZIPG6dk0XkYL4HHsQgrpmC/yQ1u7iW7mM/wukn/uUvQxK4R+44?=
+ =?us-ascii?Q?Y2kAtoJRThayxskKarBS2BN6cZJeoW6VBWIAW3O1MzDtjX7mY8GMm2jRp1T9?=
+ =?us-ascii?Q?XFy+zYzfnLknL5MWyVV5imehbuuke5gWjURPRgEFElVRsDs0cIwLXlcG5M6i?=
+ =?us-ascii?Q?eiurAAbiD57LvP/KkdMHxEkxlUoJ+0W/+OfOW9Wz88PxXoMhEaG1EYW4QjW6?=
+ =?us-ascii?Q?v3eQMXK/mxJH/HjO4Q7exiqF7zwI4QSDNrJnnuK78bucQV30m/39v1RM8VWo?=
+ =?us-ascii?Q?zVQnGGhsjbSoQWdQAR0bPJTDap3LzxSUnprldeojGFinmQU/jeyqZLfAysCs?=
+ =?us-ascii?Q?HBLzKxax7PGszjSxzgR/6PCJzJJNLEzk5DqyVCLtZDApkyfKsqKs22ZeXvky?=
+ =?us-ascii?Q?QSuOND4m53E+8yr7ajXHCtTuZwxJwAqJJ/QXiVun7FxV7jYWLv87gxqBWMQ4?=
+ =?us-ascii?Q?6S4SpcVO6OuRNl1WSx3q4mIi3QC8hnTKklvkLX0EAF/DPZ+nYVMTDS4yPprw?=
+ =?us-ascii?Q?re4ktgTUw8D62a9c5Fjn1A+lht6vbeX4dD/3ZSMe+INXZL2LixhKZvN1cuke?=
+ =?us-ascii?Q?7EUJWDPjMA15JRi/iYJ6qd/tb+PvR2a8WljFswEGgwbFsTHLMGzjUnHtoQGC?=
+ =?us-ascii?Q?76d92wWlmssU9NYZ8z5Pxg69Qv3HltPGPPraoG/8fKFhNfq63ErwOuKazi++?=
+ =?us-ascii?Q?OeyjiTlKl2s1PSc238r/cU6/aKrl/UnQfG3o8EUB+uhk5zRu08+bDEVUFeFD?=
+ =?us-ascii?Q?AVLib60Plry5QPLaAjaUhfkbT1IsjQbfe852ezlHNLB2AOwUEPqp8ZOYQLmr?=
+ =?us-ascii?Q?x6X4tVX9t7gaS/FbsxljhYFDB6pWHj/UevgTltLNrspUWyao03WaUBEiKYWE?=
+ =?us-ascii?Q?rEHByItO1gNxmJe8880IMx+nXaYNVpw/f+DggKBo?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB7036:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66f9b18f-9126-4dbe-1a83-08de0d603109
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dhaiAxGU5nbudT08e9AtOCmVR9Xtgw80E1Xzck0UIAVPvM7PH3lM3xnJ+Zen?=
- =?us-ascii?Q?ZBnZDKz7dLNAfXQqRLy4ylfPIBFJviEUKdfs8o+i4YLU7+IxxKVVL2fYLOrW?=
- =?us-ascii?Q?7025kEhski5xhkXsvzEyWkVCJHj83P+PWQxIvN53WPGtQOsNoy3eQ4yC+HQV?=
- =?us-ascii?Q?/BbqJ86jfHIpbj5y+RBDlZRvDIapgPPm0ltjh852wr3xbEgIzzpRpLmN63ti?=
- =?us-ascii?Q?qJ5YiMDm1oEurUYKGo4qbGZg9sZXgwPmlPgMNdiKy774ELi1VtJuuKFUp4MS?=
- =?us-ascii?Q?3dx4ZCxvE5VHyhQMdKZvzhnMQ2y0xIyqDx+LXJA+JH6S0xjmZtfB5OAe3yvt?=
- =?us-ascii?Q?oCfs62Sh6fGksUWYMHrm9VA1B5R/o+58FGHzFffzsKOY4+AAgGLDNEsu04M/?=
- =?us-ascii?Q?pDWNKiaklFk6amjlpQpeiX5j7gbQlk8eWgYCg85K4Bef66qIUELu+t8Ig3b4?=
- =?us-ascii?Q?dDioeJKYvgbfe/OhlIkWo5ZKGABO2USSo0kYqaNE1mg+VSV9g8BOpXYQJrMv?=
- =?us-ascii?Q?Cw8MJ9kj9ZjZKK0z/zb29NbNYk4q3rCNjdAPV8wO86g6VpbayVPZWF/Y8ZKA?=
- =?us-ascii?Q?w8V+RW+7dVJOJSRqADAckLEdCMENX336PA1IJneLqWQAVjJj/+9PDxEnrJeZ?=
- =?us-ascii?Q?VFsjY6EtucTyH9KG5B3fO5VsO2UW479jlCkuS21Cu+1/J7ClHYvPCrgSYdks?=
- =?us-ascii?Q?YkYcQiI06sAtlkrs5MufmkfQzBZG1ZwQfTgV3rKqFTRlpGFcUsXMlEcOMuCM?=
- =?us-ascii?Q?WaomlNruPTaX6xtAVvuUBREC/JyHqjMMIldgyf1uGUIjz1fXmLkVjWmEnvc1?=
- =?us-ascii?Q?OJ5GbNtieRp+F+vt1lQn+yGZpyaw3PVwzREJM2ANkp7fAN07A/za7Y7MGnch?=
- =?us-ascii?Q?v6odcPtwiVQKJqX5wosBM+uSzjkrdWknF9PEdDT6vDZ/ALyORzLpgqw4qGYv?=
- =?us-ascii?Q?KPRiEhNpQ3E78vStJbR6n0vyTt2sELFzCUquW+wN0ddn21AkY8iCE76VWs45?=
- =?us-ascii?Q?Q2dwQ6t8d6DC4BLtwED/gORyjd2wtHqamVa9GsZxrxolneh3yys3gaT5AgVh?=
- =?us-ascii?Q?CsBWRZycCx/Rqj4hPMYQiHdA1lcKuZwiAn+nFnUM4QzOhzpDLGexeCX6M9sX?=
- =?us-ascii?Q?IEF/DFLBqe5BOmpWtmK//L1Rf9ErJLwHfYsd735W3af1IlwGHWwMzilNkEHA?=
- =?us-ascii?Q?YCNxlM24hGyeFo0zXJ6Me/5nSoJ1+AZO2pJSAanZjZIPt6TQKqJg9+CeS5Fv?=
- =?us-ascii?Q?luOnPQCuz69OZyMijB7catLhdBrxsarEvEzJLiIIGo6lLH1axeKx0h+a+r20?=
- =?us-ascii?Q?Q8QJyEzul5UIhB9X0FqHuHK+RvKytIEyylsHL5fmqp+gbKCj0JxZTSYdgBSH?=
- =?us-ascii?Q?fh6LVxmslVBjN0yvogh5T+K5OQGeukkX6EbfF57MdHhJ6a0h3XkcJrvP0pmy?=
- =?us-ascii?Q?Un8Z5rMTNyf+01ykBoFFdhpp2E19ml3V?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?A5+DHeSHCOCARwPf80UAidaRBn0B7eepHYoIltd57fWoffAebDHqTcOVQXKr?=
- =?us-ascii?Q?IkwtXQUXdhGuKD33nf0BeyWES47egth+PxRb9pzWLJWyPIvgYLkryTnfK0ZM?=
- =?us-ascii?Q?zQ2km+N5qtOiFtPO0RKrINH9+G+cxcOEEXHi8HykkhtUgLA0GoggwqVrQUlT?=
- =?us-ascii?Q?Ok0JB1cA2SJbQ+tq8268AZ1MGUywuzAb+Z4cW0Qk+MtAXf+Uypne4GZJXAZM?=
- =?us-ascii?Q?1JqFngUhDOt/s3ywDm9MSu7mP4B8HufwNV1Hr6SYC7HQsrZyL/0cN939TjEY?=
- =?us-ascii?Q?SH5hRMgohAPhEVkxE5vKukPe81Ii9m7FjW4+lRPQwd2TCKblyq3982Wo5iEZ?=
- =?us-ascii?Q?gEM+5bp3Z6olqYKuN13pzc4BnPlHYCpsUaLDC1JuEJ06snQUfMv8zNts+oUz?=
- =?us-ascii?Q?jiqBZB5sAEvd13CRRCw7HSFmMw4MD80X9SALRFgXPY8FXNLg/c3kEuOeiV7B?=
- =?us-ascii?Q?dBo3dK0DT8PKsnC/HxJbsh779J5zZqFm3D50BPLVFhTb+mtbMdW+aWQqfoBN?=
- =?us-ascii?Q?6owv/dwYn7xM3vM8cmMzXkxyrkJmOx2xXSleweXbRh8+0xsET6c/xn3aw0C1?=
- =?us-ascii?Q?at9rqEfZPCK+IOs87IJHcLnRK9mRCACJrHqlIL4nxbtxsbpBinZd/SAhuzqs?=
- =?us-ascii?Q?x+HxaS+xFaRuBU2WCV87+Q/N2apJR84m/T/ReQVqedYlQEsPUIlVLuuVRw5u?=
- =?us-ascii?Q?tf6AveWyjqk3nJvTUXW8DO0xvH53+eb41ZANY8YwUJ7NGL0ebLKVHJRVV5O8?=
- =?us-ascii?Q?VJqGH3jZhyU3xoAlwi+uvnJTSMIUcD5LY4LwnHKNRnAmwh63Or6WLgt8TQfV?=
- =?us-ascii?Q?hAz0pdkcoVUV7nABxDNOqY6IERgJ+3ro2DC0zKtrgQk0O08vgPkKr872ymz7?=
- =?us-ascii?Q?65I1p3pdplS4b8RoGoq1Zs88Ly5OLnEXzlgZDq9SzH+DpMgAIl13Knjhnt7F?=
- =?us-ascii?Q?8EpSqgI1CVkHv9FLd4uG+8I3bq/mO+7xcTtSTZr9z2N9Mg3WEqZaENPBrISc?=
- =?us-ascii?Q?N2zzWfAKeocSlFKSgZg/CFAkxskTdvTXXMPRH09nhKjek0ygx8mOaQdM11wb?=
- =?us-ascii?Q?Eh245yTVeAgr3hHEDObOvvFkx3RU+zCqPHHSkWo7/duWrkEISxhr1I494DwF?=
- =?us-ascii?Q?pm7SAJP4H5qQ1QLJUtDCPDS7pT+MjpR3H6D7CAIlzfbsGq+bnqT2m0s9slmX?=
- =?us-ascii?Q?OSsgBKQI5RqZT3E7O0eaVDhPvMQOZzE9IHU9L4ICtrjlHLluk7LlsepmI9uE?=
- =?us-ascii?Q?SrROlkh2hFhZzscunh3rl8TaYloto8XYefSt7+R7RH7MA76h5lNEM8/2oJUN?=
- =?us-ascii?Q?zqcPdwS+wHZziPP/A4R1/S3YKe8RMxalaefN5WzXj7vml9haLwwUtMw/spq1?=
- =?us-ascii?Q?L1KxTi+YS6I6ggDGfX78r6WxtF3QOzi4984whUXhpHoq77gEJa3N4PNJFbUZ?=
- =?us-ascii?Q?Ba3l0yallyaYNkyU3PDwzIr8ITD9s6e8Nyi9THocQA3FC33Wl7rA3EgfM3k1?=
- =?us-ascii?Q?dRNUd/OwYhFa9Ht0yxsl971VbK8VaxwD9b4WjzDEj/bIc0WKAngvUAHIXuEd?=
- =?us-ascii?Q?fNsYxupVfL6KyfpC1k06mXasaqTmto1RY5xYnDmE/Ib0zDiEMCiOeAZ14tLr?=
- =?us-ascii?Q?yw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	J61E6MEnX53rBAULv4cW4DAH54cUxpiFTEn8WyUjx70nvqMXGlAnQCZZCKOs36ofClYuGrwVOq9lp2Z0CMt9/8etE8mjOQtKevgu0nYGAlXGCrBCm5rmTY0kidwEr9Q8RA1X4bWihIpB2uVL4d7O2CZOGqJqx01ppQMa4opTD2xqhgti0CkcLLeNQ5LEAW0WaaUd5oDJRQH9VIOox/yo8a5CJ1MQH745qUO0+tmey/W2KDjzLeL5X1Nj7Ox7xJrGUkbDiajKyoABsRNN2e6YG2jDgd18jOIKdsN/9RQLio4V7lc2oqQe7L7y/b0RPTRafrUsyUum3P2s4OUnDFUSJvoIrAvJTz9U+z6UMk+nmzJPXAVi05s0Fm4dMjgkcbTvYlUwLGw4LE+IG6DaOzplpk7K0O43V8H7EOyGBGbBvM1H69VsOTseCg/4+QnsdCm28OHA5QG7r3VKcEQg/bOwbSeQxL0pNjB0Nz64xSXMwBtlIeIYMSEMKaqC4JeIYbfIYzRJP3yaSqijP6+pdHNrvCrHyricZm/U/edU+vXrmcPqOXOujpr630z/JQQt0zFrHem9HKyqQ8Ux3C/0NcP8M+//YZslwRWmoKq5EiIsagc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66f9b18f-9126-4dbe-1a83-08de0d603109
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 09:33:12.4579
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b88e284-011d-44da-186f-08de0d60356d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2025 09:33:19.7533
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eIBHLczOZrh6k0MP8zCVb4XsDW9dU0ciZ5qqpmn3LzAEysohWRpfNLIkElUuXOjQnB547rTiu/YFsYGEADoSzb+ooWmjB6j7oD0yObzd2SY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7036
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510170070
-X-Proofpoint-GUID: wU1cz44xshNHpYTgZy794Fyk-jcjafOg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAwNyBTYWx0ZWRfX27uC+6rW46U4
- PBx5Nd3LWEQO+MjZGcFPBmGX+QZWzG7RHVbrbnHybKp9JhlY20b+gpk22DxP05RNqEkDZGTNSUy
- ZoeqbGx2FRY1XGk/ZHhsGjcGFtyKkJr8srF6nKXaemO/jMm0aAO3CrCiTlixomzYiIOd50pPA+f
- CU3kSao0o0cfexiyZKGSBrMOTXm9QWI1jZpi91H53odUhimFzev+h5js5pLnJ4YDy6cC02N1m7F
- g0rKS81K6OxmYHjJdopVpxrBlbM2yQkogpsw50V+QzufQ+VB4TW45Dc1jVrZVEUimprHxLvoLwA
- Vu5D36+/PrHx4+99jR68cTXBQ9xgLpJP8RnPtElMyLdLSEt3qrXQcPkeS4TIXnSPlT1tBuLTfK5
- 1HVIqUXi7z62flxWucoTWPofKm0XAttMT/qvm3cuiS5k4Q2U/ME=
-X-Authority-Analysis: v=2.4 cv=OolCCi/t c=1 sm=1 tr=0 ts=68f20d5d b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8 a=-7auoy8IQrukDM3GDh4A:9
- a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12091
-X-Proofpoint-ORIG-GUID: wU1cz44xshNHpYTgZy794Fyk-jcjafOg
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dpYASxc1Ud+SQPmRZqx135M3j09SEX2PldEonzFC4xLvbVHEo777pCKbLK0NxDLmfDkGJBvcLnYK8Z453tZ8T5BThSa1JPbvgfP/w57snuY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13062
 
-On Wed, Oct 15, 2025 at 11:34:51PM -0400, Zi Yan wrote:
-> Large block size (LBS) folios cannot be split to order-0 folios but
-> min_order_for_folio(). Current split fails directly, but that is not
-> optimal. Split the folio to min_order_for_folio(), so that, after split,
-> only the folio containing the poisoned page becomes unusable instead.
->
-> For soft offline, do not split the large folio if it cannot be split to
-> order-0. Since the folio is still accessible from userspace and premature
-> split might lead to potential performance loss.
->
-> Suggested-by: Jane Chu <jane.chu@oracle.com>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Hi All,
+
+> -----Original Message-----
+> From: Biju <biju.das.au@gmail.com>
+> Sent: 16 September 2025 16:03
+> Subject: [PATCH v3 2/9] phy: renesas: Add Renesas RZ/G3E USB3.0 PHY drive=
+r
+>=20
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> Add Renesas RZ/G3E USB3.0 PHY driver. This module is connected between US=
+B3 Host and PHY module.
+> The main functions of this module are:
+>  1) Reset control
+>  2) Control of PHY input pins
+>  3) Monitoring of PHY output pins
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->  mm/memory-failure.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index f698df156bf8..443df9581c24 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->   * there is still more to do, hence the page refcount we took earlier
->   * is still needed.
->   */
-> -static int try_to_split_thp_page(struct page *page, bool release)
-> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
-> +		bool release)
->  {
->  	int ret;
->
->  	lock_page(page);
-> -	ret = split_huge_page(page);
-> +	ret = split_huge_page_to_list_to_order(page, NULL, new_order);
-
-I wonder if we need a wrapper for these list==NULL cases, as
-split_huge_page_to_list_to_order suggests you always have a list provided... and
-this is ugly :)
-
-split_huge_page_to_order() seems good.
-
->  	unlock_page(page);
->
->  	if (ret && release)
-> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
->  	folio_unlock(folio);
->
->  	if (folio_test_large(folio)) {
-> +		int new_order = min_order_for_split(folio);
-
-Newline after decl?
-
->  		/*
->  		 * The flag must be set after the refcount is bumped
->  		 * otherwise it may race with THP split.
-> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
->  		 * page is a valid handlable page.
->  		 */
->  		folio_set_has_hwpoisoned(folio);
-> -		if (try_to_split_thp_page(p, false) < 0) {
-> +		/*
-> +		 * If the folio cannot be split to order-0, kill the process,
-> +		 * but split the folio anyway to minimize the amount of unusable
-> +		 * pages.
-> +		 */
-> +		if (try_to_split_thp_page(p, new_order, false) || new_order) {
-
-Please use /* release= */false here
-
-
-I'm also not sure about the logic here, it feels unclear.
-
-Something like:
-
-	err = try_to_to_split_thp_page(p, new_order, /* release= */false);
-
-		/*
-		 * If the folio cannot be split, kill the process.
-		 * If it can be split, but not to order-0, then this defeats the
-		 * expectation that we do so, but we want the split to have been
-		 * made to
-		 */
-
-	if (err || new_order > 0) {
-	}
-
-
-> +			/* get folio again in case the original one is split */
-> +			folio = page_folio(p);
->  			res = -EHWPOISON;
->  			kill_procs_now(p, pfn, flags, folio);
->  			put_page(p);
-> @@ -2621,7 +2630,15 @@ static int soft_offline_in_use_page(struct page *page)
->  	};
->
->  	if (!huge && folio_test_large(folio)) {
-> -		if (try_to_split_thp_page(page, true)) {
-> +		int new_order = min_order_for_split(folio);
+> v2->v3:
+>  * Replaced devm_reset_control_get_{shared}->{shared_deasserted}
+>  * Dropped remove() callback
+> v1->v2:
+>  * Replaced magic numbers with macros.
+> ---
+>  drivers/phy/renesas/Kconfig          |   7 +
+>  drivers/phy/renesas/Makefile         |   1 +
+>  drivers/phy/renesas/phy-rzg3e-usb3.c | 259 +++++++++++++++++++++++++++
+>  3 files changed, 267 insertions(+)
+>  create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
+>=20
+> diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig in=
+dex
+> e342eef0640b..16211072098e 100644
+> --- a/drivers/phy/renesas/Kconfig
+> +++ b/drivers/phy/renesas/Kconfig
+> @@ -40,3 +40,10 @@ config PHY_RCAR_GEN3_USB3
+>  	select GENERIC_PHY
+>  	help
+>  	  Support for USB 3.0 PHY found on Renesas R-Car generation 3 SoCs.
 > +
-> +		/*
-> +		 * If the folio cannot be split to order-0, do not split it at
-> +		 * all to retain the still accessible large folio.
-> +		 * NOTE: if getting free memory is perferred, split it like it
-
-Typo perferred -> preferred.
-
-
-> +		 * is done in memory_failure().
-
-I'm confused as to your comment here though, we're not splitting it like
-memory_failure()? We're splitting a. with release and b. only if we can target
-order-0.
-
-So how would this preference in any way be a thing that happens? :) I may be
-missing something here.
-
-> +		 */
-> +		if (new_order || try_to_split_thp_page(page, new_order, true)) {
-
-Same comment as above with /* release= */true.
-
-You should pass 0 not new_order to try_to_split_thp_page() here as it has to be
-0 for the function to be invoked and that's just obviously clearer.
-
-
->  			pr_info("%#lx: thp split failed\n", pfn);
->  			return -EBUSY;
->  		}
+> +config PHY_RZ_G3E_USB3
+> +	tristate "Renesas RZ/G3E USB 3.0 PHY driver"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	select GENERIC_PHY
+> +	help
+> +	  Support for USB 3.0 PHY found on Renesas RZ/G3E SoCs.
+> diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile =
+index
+> 8896d1919faa..0e98083f2f0c 100644
+> --- a/drivers/phy/renesas/Makefile
+> +++ b/drivers/phy/renesas/Makefile
+> @@ -4,3 +4,4 @@ obj-$(CONFIG_PHY_RCAR_GEN2)		+=3D phy-rcar-gen2.o
+>  obj-$(CONFIG_PHY_RCAR_GEN3_PCIE)	+=3D phy-rcar-gen3-pcie.o
+>  obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+=3D phy-rcar-gen3-usb2.o
+>  obj-$(CONFIG_PHY_RCAR_GEN3_USB3)	+=3D phy-rcar-gen3-usb3.o
+> +obj-$(CONFIG_PHY_RZ_G3E_USB3)		+=3D phy-rzg3e-usb3.o
+> diff --git a/drivers/phy/renesas/phy-rzg3e-usb3.c b/drivers/phy/renesas/p=
+hy-rzg3e-usb3.c
+> new file mode 100644
+> index 000000000000..6b3453ea0004
+> --- /dev/null
+> +++ b/drivers/phy/renesas/phy-rzg3e-usb3.c
+> @@ -0,0 +1,259 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas RZ/G3E USB3.0 PHY driver
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corporation  */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+> +
+> +#define USB3_TEST_RESET				0x0000
+> +#define USB3_TEST_UTMICTRL2			0x0b04
+> +#define USB3_TEST_PRMCTRL5_R			0x0c10
+> +#define USB3_TEST_PRMCTRL6_R			0x0c14
+> +
+> +#define USB3_TEST_RSTCTRL			0x1000
+> +#define USB3_TEST_CLKCTRL			0x1004
+> +#define USB3_TEST_RAMCTRL			0x100c
+> +#define USB3_TEST_CREGCTRL			0x1010
+> +#define USB3_TEST_LANECONFIG0			0x1030
+> +
+> +#define USB3_TEST_RESET_PORTRESET0_CTRL		BIT(9)
+> +#define USB3_TEST_RESET_SIDDQ			BIT(3)
+> +#define USB3_TEST_RESET_PHY_RESET		BIT(2)
+> +#define USB3_TEST_RESET_PORTRESET0		BIT(1)
+> +#define USB3_TEST_RESET_RELEASE_OVERRIDE	(0)
+> +
+> +#define USB3_TEST_UTMICTRL2_CTRL_MASK		GENMASK(9, 8)
+> +#define USB3_TEST_UTMICTRL2_MODE_MASK		GENMASK(1, 0)
+> +
+> +#define USB3_TEST_PRMCTRL5_R_TXPREEMPAMPTUNE0_MASK	GENMASK(2, 1)
+> +
+> +#define USB3_TEST_PRMCTRL6_R_OTGTUNE0_MASK	GENMASK(2, 0)
+> +
+> +#define USB3_TEST_RSTCTRL_HARDRESET_ODEN	BIT(9)
+> +#define USB3_TEST_RSTCTRL_PIPERESET_ODEN	BIT(8)
+> +#define USB3_TEST_RSTCTRL_HARDRESET		BIT(1)
+> +#define USB3_TEST_RSTCTRL_PIPERESET		BIT(0)
+> +#define USB3_TEST_RSTCTRL_ASSERT	\
+> +	(USB3_TEST_RSTCTRL_HARDRESET_ODEN | USB3_TEST_RSTCTRL_PIPERESET_ODEN | =
+\
+> +	 USB3_TEST_RSTCTRL_HARDRESET | USB3_TEST_RSTCTRL_PIPERESET)
+> +#define USB3_TEST_RSTCTRL_RELEASE_HARDRESET	\
+> +	(USB3_TEST_RSTCTRL_HARDRESET_ODEN | USB3_TEST_RSTCTRL_PIPERESET_ODEN | =
+\
+> +	 USB3_TEST_RSTCTRL_PIPERESET)
+> +#define USB3_TEST_RSTCTRL_DEASSERT	\
+> +	(USB3_TEST_RSTCTRL_HARDRESET_ODEN | USB3_TEST_RSTCTRL_PIPERESET_ODEN)
+> +#define USB3_TEST_RSTCTRL_RELEASE_OVERRIDE	(0)
+> +
+> +#define USB3_TEST_CLKCTRL_MPLLA_SSC_EN		BIT(2)
+> +
+> +#define USB3_TEST_RAMCTRL_SRAM_INIT_DONE	BIT(2)
+> +#define USB3_TEST_RAMCTRL_SRAM_EXT_LD_DONE	BIT(0)
+> +
+> +#define USB3_TEST_CREGCTRL_PARA_SEL		BIT(8)
+> +
+> +#define USB3_TEST_LANECONFIG0_DEFAULT		(0xd)
+> +
+> +struct rz_usb3 {
+> +	void __iomem *base;
+> +	struct reset_control *rstc;
+> +	bool skip_reinit;
+> +};
+> +
+> +static void rzg3e_phy_usb2test_phy_init(void __iomem *base) {
+> +	u32 val;
+> +
+> +	val =3D readl(base + USB3_TEST_UTMICTRL2);
+> +	val |=3D USB3_TEST_UTMICTRL2_CTRL_MASK | USB3_TEST_UTMICTRL2_MODE_MASK;
+> +	writel(val, base + USB3_TEST_UTMICTRL2);
+> +
+> +	val =3D readl(base + USB3_TEST_PRMCTRL5_R);
+> +	val &=3D ~USB3_TEST_PRMCTRL5_R_TXPREEMPAMPTUNE0_MASK;
+> +	val |=3D FIELD_PREP(USB3_TEST_PRMCTRL5_R_TXPREEMPAMPTUNE0_MASK, 2);
+> +	writel(val, base + USB3_TEST_PRMCTRL5_R);
+> +
+> +	val =3D readl(base + USB3_TEST_PRMCTRL6_R);
+> +	val &=3D ~USB3_TEST_PRMCTRL6_R_OTGTUNE0_MASK;
+> +	val |=3D FIELD_PREP(USB3_TEST_PRMCTRL6_R_OTGTUNE0_MASK, 7);
+> +	writel(val, base + USB3_TEST_PRMCTRL6_R);
+> +
+> +	val =3D readl(base + USB3_TEST_RESET);
+> +	val &=3D ~USB3_TEST_RESET_SIDDQ;
+> +	val |=3D USB3_TEST_RESET_PORTRESET0_CTRL | USB3_TEST_RESET_PHY_RESET |
+> +	       USB3_TEST_RESET_PORTRESET0;
+> +	writel(val, base + USB3_TEST_RESET);
+> +	fsleep(10);
+> +
+> +	val &=3D ~(USB3_TEST_RESET_PHY_RESET | USB3_TEST_RESET_PORTRESET0);
+> +	writel(val, base + USB3_TEST_RESET);
+> +	fsleep(10);
+> +
+> +	val =3D readl(base + USB3_TEST_UTMICTRL2);
+> +	val &=3D ~USB3_TEST_UTMICTRL2_CTRL_MASK;
+> +	writel(val, base + USB3_TEST_UTMICTRL2);
+> +
+> +	writel(USB3_TEST_RESET_RELEASE_OVERRIDE, base + USB3_TEST_RESET); }
+> +
+> +static int rzg3e_phy_usb3test_phy_init(void __iomem *base) {
+> +	int ret;
+> +	u32 val;
+> +
+> +	writel(USB3_TEST_CREGCTRL_PARA_SEL, base + USB3_TEST_CREGCTRL);
+> +	writel(USB3_TEST_RSTCTRL_ASSERT, base + USB3_TEST_RSTCTRL);
+> +	fsleep(20);
+> +
+> +	writel(USB3_TEST_CLKCTRL_MPLLA_SSC_EN, base + USB3_TEST_CLKCTRL);
+> +	writel(USB3_TEST_LANECONFIG0_DEFAULT, base + USB3_TEST_LANECONFIG0);
+> +	writel(USB3_TEST_RSTCTRL_RELEASE_HARDRESET, base + USB3_TEST_RSTCTRL);
+> +
+> +	ret =3D readl_poll_timeout_atomic(base + USB3_TEST_RAMCTRL, val,
+> +					val & USB3_TEST_RAMCTRL_SRAM_INIT_DONE, 1, 10000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	writel(USB3_TEST_RSTCTRL_DEASSERT, base + USB3_TEST_RSTCTRL);
+> +	writel(USB3_TEST_RAMCTRL_SRAM_EXT_LD_DONE, base + USB3_TEST_RAMCTRL);
+> +	writel(USB3_TEST_RSTCTRL_RELEASE_OVERRIDE, base + USB3_TEST_RSTCTRL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzg3e_phy_usb3_init_helper(void __iomem *base) {
+> +	rzg3e_phy_usb2test_phy_init(base);
+> +
+> +	return rzg3e_phy_usb3test_phy_init(base);
+> +}
+> +
+> +static int rzg3e_phy_usb3_init(struct phy *p) {
+> +	struct rz_usb3 *r =3D phy_get_drvdata(p);
+> +	int ret =3D 0;
+> +
+> +	if (!r->skip_reinit)
+> +		ret =3D rzg3e_phy_usb3_init_helper(r->base);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct phy_ops rzg3e_phy_usb3_ops =3D {
+> +	.init =3D rzg3e_phy_usb3_init,
+> +	.owner =3D THIS_MODULE,
+> +};
+> +
+> +static int rzg3e_phy_usb3_probe(struct platform_device *pdev) {
+> +	struct device *dev =3D &pdev->dev;
+> +	struct phy_provider *provider;
+> +	struct rz_usb3 *r;
+> +	struct phy *phy;
+> +	int ret;
+> +
+> +	r =3D devm_kzalloc(dev, sizeof(*r), GFP_KERNEL);
+> +	if (!r)
+> +		return -ENOMEM;
+> +
+> +	r->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(r->base))
+> +		return PTR_ERR(r->base);
+> +
+> +	r->rstc =3D devm_reset_control_get_shared_deasserted(dev, NULL);
+> +	if (IS_ERR(r->rstc))
+> +		return dev_err_probe(dev, PTR_ERR(r->rstc), "failed to get deasserted
+> +reset\n");
+> +
+> +	/*
+> +	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
+> +	 * And then, phy-core will manage runtime pm for this device.
+> +	 */
+> +	ret =3D devm_pm_runtime_enable(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	phy =3D devm_phy_create(dev, NULL, &rzg3e_phy_usb3_ops);
+> +	if (IS_ERR(phy))
+> +		return dev_err_probe(dev, PTR_ERR(phy), "failed to create USB3
+> +PHY\n");
+> +
+> +	platform_set_drvdata(pdev, r);
+> +	phy_set_drvdata(phy, r);
+> +
+> +	provider =3D devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +	if (IS_ERR(provider))
+> +		return dev_err_probe(dev, PTR_ERR(provider), "failed to register PHY
+> +provider\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzg3e_phy_usb3_suspend(struct device *dev) {
+> +	struct rz_usb3 *r =3D dev_get_drvdata(dev);
+> +
+> +	pm_runtime_put(dev);
+> +	reset_control_assert(r->rstc);
+> +	r->skip_reinit =3D false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzg3e_phy_usb3_resume(struct device *dev) {
+> +	struct rz_usb3 *r =3D dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret =3D reset_control_deassert(r->rstc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		goto reset_assert;
+> +
+> +	ret =3D rzg3e_phy_usb3_init_helper(r->base);
+> +	if (ret)
+> +		goto pm_put;
+> +
+> +	r->skip_reinit =3D true;
+> +
+> +	return 0;
+> +
+> +pm_put:
+> +	pm_runtime_put(dev);
+> +reset_assert:
+> +	reset_control_assert(r->rstc);
+> +	return ret;
+> +}
+> +
+> +static const struct dev_pm_ops rzg3e_phy_usb3_pm =3D {
+> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(rzg3e_phy_usb3_suspend,
+> +rzg3e_phy_usb3_resume) };
+> +
+> +static const struct of_device_id rzg3e_phy_usb3_match_table[] =3D {
+> +	{ .compatible =3D "renesas,r9a09g047-usb3-phy" },
+> +	{ /* Sentinel */ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, rzg3e_phy_usb3_match_table); static struct
+> +platform_driver rzg3e_phy_usb3_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "phy_rzg3e_usb3",
+> +		.of_match_table =3D rzg3e_phy_usb3_match_table,
+> +		.pm =3D pm_sleep_ptr(&rzg3e_phy_usb3_pm),
+> +	},
+> +	.probe	=3D rzg3e_phy_usb3_probe,
+> +};
+> +module_platform_driver(rzg3e_phy_usb3_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Renesas RZ/G3E USB3.0 PHY Driver");
+> +MODULE_AUTHOR("biju.das.jz@bp.renesas.com>");
 > --
-> 2.51.0
->
+> 2.43.0
+
+Gentle Ping.
+
+Cheers,
+Biju
+
 
