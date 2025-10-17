@@ -1,109 +1,73 @@
-Return-Path: <linux-kernel+bounces-858805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF22BEBE33
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:10:48 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3B9BEBE3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DEECC354B70
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:10:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DCF35354D5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34E02D4B57;
-	Fri, 17 Oct 2025 22:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF97E2D4801;
+	Fri, 17 Oct 2025 22:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="gV3JvCJP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="girOaNid"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05D62BEC5E;
-	Fri, 17 Oct 2025 22:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5424925F984;
+	Fri, 17 Oct 2025 22:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760739043; cv=none; b=HKV8XYA2A7cDu6sLt3G5xLqHLgebDkz+SvvrSTYVAOSr/O2LPjDZuzFFxP9+J6FZe8/kPAFPGDH6HBYJqtbijCfYFmFPZLDpJnbVmxqldn9iUkClxLWgUIXuZunUCu0m08M8uVWDI+1JOuaEBfFFJsCW7lWCfc+JjGB5TnvxRrQ=
+	t=1760739102; cv=none; b=NU76gg+Toj5MdxEoHEIRHDVQUi/TJvDrH0NR+2IUgjRn37rbhTddHU8twn293CaO/1b4fJA4k64wL8KteLCqbJIGXCAJl5IX1hSslXgzYCUIo6uiWaXRU2EaE/xWdxqGnF7AxXUbVWp22F1Ai5GsIUocvawfHF9Yaz8ImRpo1Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760739043; c=relaxed/simple;
-	bh=EEsZGRbAPEeFOFZf1zr44Anq0yETmx+SNImVAINwq8w=;
+	s=arc-20240116; t=1760739102; c=relaxed/simple;
+	bh=g2HrjUwo80wZqc/Ke42Z36dlvTNKp51JohZatowvxoM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8pGBO8TL/bq9XMaF+uv0juJN3FEF9u6NsvsETj+WXFcTarzz5NKvKzs68OFn69o3GdU+xXZcD+nXJ9d6Z4tjUJwt58WjnpdtLK6HCLQhwauPPrp3m1hNiMeDD+6EMF6QDUjh/0MeH5t0TvZJudhcj9NQq+eRii41zISB1Hjsbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=gV3JvCJP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A629C4CEE7;
-	Fri, 17 Oct 2025 22:10:40 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="gV3JvCJP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1760739038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KYxrKJmqrlF5+oXJtNZxXyzrFuUCGdcIV9hIKRkfibI=;
-	b=gV3JvCJPrdxpQPhIFynu21AXaps8an+hE6VpSAj0ZBKrf2R+6AkeNj+rH/LAxH3g5oQx6N
-	KZTV9eaDQ6XezVNOle3djGdoyT16wpzyZMvhlg8jlTUXAIIxSUs/pC4iKrErdvkaIiOs0m
-	XVvwKLZYJYO3yJWVhOKCl2HgGYY5r0c=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e56e64a5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 17 Oct 2025 22:10:38 +0000 (UTC)
-Date: Sat, 18 Oct 2025 00:10:34 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, peterz@infradead.org, mario.limonciello@amd.com,
-	riel@surriel.com, yazen.ghannam@amd.com, me@mixaill.net,
-	kai.huang@intel.com, sandipan.das@amd.com, darwi@linutronix.de,
-	stable@kernel.org, linux-crypto@vger.kernel.org, tytso@mit.edu
-Subject: Re: [PATCH] x86/amd: Disable RDSEED on AMD Zen5 Turin because of an
- error.
-Message-ID: <aPK-2iYHnt8DYFAF@zx2c4.com>
-References: <20251016182107.3496116-1-gourry@gourry.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSlSHkSG6Bv9nnhBY/EsPex6x54+Cg3ByVuz7PVtTVO/zVqkB6Y7wOkwc9IXdKxvtcOmBTsXwUE1xkoiT28tViteD3c7Rdd8iOxjH5ay3UvjkQ2bC2qLnw+7A1XZxsjRH1fmeaK2W/8MA/Cq558GRyL/mwvEbFSsZuq3rcpk1NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=girOaNid; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD25C4CEE7;
+	Fri, 17 Oct 2025 22:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760739101;
+	bh=g2HrjUwo80wZqc/Ke42Z36dlvTNKp51JohZatowvxoM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=girOaNiddH3G1/iHgXYG10kBDfdyLs3Ey1ni9yTm+I6tu5pPN05VioKFVz1I8rYzi
+	 Fjfx7tVVTAjbpYXJ70XswMT7Xr0W9nLmwrQFbkkqyX/p79nYT+AnBYIja7rKL1hnsg
+	 lPTLbjKZVe6r4t9Gf3I4vWoa0FTp3bnlga6lMNKtcRkc1F+mNqkl8OlSxBVV7njZGf
+	 Q4oZWc54RZQ75QdZyJyoX8h5takFyy+9JDrGa0czj9XOjpnW2jMIBt2aoIEgk+lEHX
+	 RJrQ7sJkTrWiZA39z/wJu/RIE0Huw75cUq17lWIj+b7a8V16Y2SUSVqQFd1h4JMPcu
+	 nmt09biJDwoYA==
+Date: Fri, 17 Oct 2025 22:11:40 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] arch/x86: mshyperv: Remove duplicate asm/msr.h
+ header
+Message-ID: <20251017221140.GC614927@liuwe-devbox-debian-v2.local>
+References: <20251015015014.3636204-1-jiapeng.chong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251016182107.3496116-1-gourry@gourry.net>
+In-Reply-To: <20251015015014.3636204-1-jiapeng.chong@linux.alibaba.com>
 
-On Thu, Oct 16, 2025 at 02:21:07PM -0400, Gregory Price wrote:
-> Under unknown architectural conditions, Zen5 chips running rdseed
-> can produce (val=0,CF=1) as a "random" result over 10% of the time
-> (when rdseed is successful).  CF=1 indicates success, while val=0
-> is typically only produced when rdseed fails (CF=0).
+On Wed, Oct 15, 2025 at 09:50:14AM +0800, Jiapeng Chong wrote:
+> ./arch/x86/kernel/cpu/mshyperv.c: asm/msr.h is included more than once.
 > 
-> This suggests there is an architectural issue which causes rdseed
-> to misclassify a failure as a success under unknown conditions.
-> 
-> This was reproduced reliably by launching 2-threads per available
-> core, 1-thread per for hamming on RDSEED, and 1-thread per core
-> collectively eating and hammering on ~90% of memory.
-> 
-> Fix was modeled after a different RDSEED issue in Zen2 Cyan Skillfish.
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=26164
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-Yikes. I suppose we should get some more info from AMD, so that they can
-really figure out what's affected and why and such. In the meanwhile,
-maybe it makes sense to disable a broad set of Zen 5 subfamilies? From a
-random.c perspective, it'll use RDRAND instead, which appears to be
-unaffected according to your report.
-
-(Though, how could you tell if it was affected? RDRAND runs everything
- through its internal DRBG, so if part of the key that it uses is made of
- fixed zeros, we probably wouldn't notice. AMD really needs to look into
- this.)
-
-Impact-wise on random.c, assuming the most pessimistic conditions -- no
-other entropy source being used other than RDSEED, which is never
-actually the case but good for analysis here -- the first usage of
-getrandom() will use 512 bits (random_init_early()) + 256 bits
-(extract_entropy()) = 768 bits of RDSEED output, so assuming your 10%
-failure rate, that's still 688 bits, which is roughly 2.69x as much as
-we really "need" anyway. So I suspect overkill engineering is saving us
-a bit here, and there's not any security impact to random.c.
-
-Users who don't use getrandom() and try to use RDSEED directly might be
-in a different situation, however. Don't do this. Just use getrandom().
-
-Jason
+Applied to hyperv-next. Thanks.
 
