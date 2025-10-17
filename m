@@ -1,169 +1,126 @@
-Return-Path: <linux-kernel+bounces-858381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0517DBEADAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D821BEAEAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF1C1627ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA61E940ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AD127BF99;
-	Fri, 17 Oct 2025 16:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B32857C1;
+	Fri, 17 Oct 2025 16:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtSviiKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5f2MTTJ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616DD26B0A9;
-	Fri, 17 Oct 2025 16:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96690283FEF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717391; cv=none; b=qREF5xZYfz8j4tTdwHuxw+ZYqRQqN55rRX3y6OgPoYTZgs0hzvEcE6nq0yyUG+iDC24kUbfUs2Ia5BaxpplYzpi8qPIwBN4ZfU6L+ylVXc4BC+9yPQ3xRO4oXaBDYJVH0pTKa78mxyLZnYHpt1LwJuYCg8Dj1bgYz3vF8k+KuHg=
+	t=1760717395; cv=none; b=Aa0v15P6YlhsYWVjOnJfYCtMvlE3PM7eQMc9hISmIi0RQKmhaVpSuYutb8fD//0Y3i6f8vvv5Dwpwqhw63j7P0CcNm4jh4P5WAJIJqVxKXFeAST2biEZ6xQODzLUEVURo/dSO9m+1tK8Qhb+H7kTJ1dW1+xz5oAvUb+FPE4V8TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717391; c=relaxed/simple;
-	bh=BOrYC+tXjLjRqJyXcD4crvrBNK2lkUpKkjfEmyc87bI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWy895WajwE+h8mx6Pi2PYix+/PvfztRajECItZdikbvNHHv5lhxGisse8tPX4JO0xzFRLKewC9ErT44yMIAJY6utZePsszk7mX8ag/vyKI5fjBwAIjLZZ0djNPioX/lMqLB9MPuNZuqA7eF0yZakSVaCNBXaDxWk6Q/EwtNQFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtSviiKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE17C4CEE7;
-	Fri, 17 Oct 2025 16:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760717391;
-	bh=BOrYC+tXjLjRqJyXcD4crvrBNK2lkUpKkjfEmyc87bI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YtSviiKK7XhOypmn1B0JMTFJNg+aK9xkicr5kleBJoGLQsIHX6oRtRnPJgXbXWtLH
-	 cVrvwZYIhcft0nkxK/ZQBpXxxHeWHw5/VEilYnGTD4lEZyzXP8wqDKjbklEc7PQZxX
-	 jrw7mNWuagcjs3SnKes4mzFKMKH2tiSDMTY+zRgHS/b+KVlZKnLK4gb6spqja1+1F5
-	 LtRKkkOtABvH8jmUIF+maywb5ma9DVPFdB4So5FQ7XdD3Y3FN97CNzQWMZICjSRgyi
-	 XbXdYmBkEWUiq556ItdRa+tvmxGUk+V9ozsqtDgWFGhyHQtvMVM573eif+FMsCQ1J7
-	 ilRe5q/VN9eDQ==
-Date: Fri, 17 Oct 2025 17:09:24 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Eliav Farber <farbere@amazon.com>, stable@vger.kernel.org,
-	linux@armlinux.org.uk, jdike@addtoit.com, richard@nod.at,
-	anton.ivanov@cambridgegreys.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-	tony.luck@intel.com, qiuxu.zhuo@intel.com, mchehab@kernel.org,
-	james.morse@arm.com, rric@kernel.org, harry.wentland@amd.com,
-	sunpeng.li@amd.com, alexander.deucher@amd.com,
-	christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-	evan.quan@amd.com, james.qian.wang@arm.com, liviu.dudau@arm.com,
-	mihail.atanassov@arm.com, brian.starkey@arm.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, robdclark@gmail.com, sean@poorly.run,
-	jdelvare@suse.com, linux@roeck-us.net, fery@cypress.com,
-	dmitry.torokhov@gmail.com, agk@redhat.com, snitzer@redhat.com,
-	dm-devel@redhat.com, rajur@chelsio.com, davem@davemloft.net,
-	kuba@kernel.org, peppe.cavallaro@st.com, alexandre.torgue@st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com, malattia@linux.it,
-	hdegoede@redhat.com, mgross@linux.intel.com,
-	intel-linux-scu@intel.com, artur.paszkiewicz@intel.com,
-	jejb@linux.ibm.com, martin.petersen@oracle.com,
-	sakari.ailus@linux.intel.com, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, xiang@kernel.org, chao@kernel.org, jack@suse.com,
-	tytso@mit.edu, adilger.kernel@dilger.ca, dushistov@mail.ru,
-	luc.vanoostenryck@gmail.com, rostedt@goodmis.org, pmladek@suse.com,
-	sergey.senozhatsky@gmail.com, andriy.shevchenko@linux.intel.com,
-	linux@rasmusvillemoes.dk, minchan@kernel.org, ngupta@vflare.org,
-	akpm@linux-foundation.org, kuznet@ms2.inr.ac.ru,
-	yoshfuji@linux-ipv6.org, pablo@netfilter.org, kadlec@netfilter.org,
-	fw@strlen.de, jmaloy@redhat.com, ying.xue@windriver.com,
-	willy@infradead.org, sashal@kernel.org, ruanjinjie@huawei.com,
-	David.Laight@aculab.com, herve.codina@bootlin.com, Jason@zx2c4.com,
-	keescook@chromium.org, kbusch@kernel.org, bvanassche@acm.org,
-	ndesaulniers@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-edac@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-hwmon@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-btrfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	tipc-discussion@lists.sourceforge.net
-Subject: Re: [PATCH v2 00/27 5.10.y] Backport minmax.h updates from v6.17-rc7
-Message-ID: <20251017160924.GA2728735@ax162>
-References: <20251017090519.46992-1-farbere@amazon.com>
- <2025101704-rumble-chatroom-60b5@gregkh>
+	s=arc-20240116; t=1760717395; c=relaxed/simple;
+	bh=UiLYr8jJW28eUVROI2Zqetwow8c8Jur2bmph5Wn4+jI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pUZrlRXVi3HTCKzCwQvyu/OtkK2uFbRrIxxZxAB99VeW4D1B/LdPEoBu3HQ8ixbs5QIQlwAnQZE+H6mK7dxJkgGCcVeq0VMVdkgBRTMpILaB7jhKpAgifjCgLJbTZnYPpmgUFgMLRW0RtHSCBxk4iOJT9doga2yUfEhMzBNiFpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5f2MTTJ; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bcb7796d4so1522324a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760717393; x=1761322193; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xco4bIjlvyRAGDvFYX9qeWZinCThHE/ogACqSwyAjPk=;
+        b=V5f2MTTJShkRqg9+rITcfSBO3cLyRSYQ9oN3YHtA4hJ6EwGQZ+wDQwGQQjCBwBQwXV
+         qWgANYG9lLM2orWkotio7Jpr1qLvqHvCRhcgJPDnuIjPJukJFC5IINxupDEC++hMnYCq
+         vrF0OklSywvO5UnvZm58PJAk1oOX2IdGatT0pZlgbWvQfnmBJs/HkdZFjqhcIbfkHHoa
+         mpfAgjds7rloyx7Zaw1IYE3mE8wwl2vp3B6f/qT1Ztk1N7WNy3wp61GOpDPBCVfcK60Y
+         i/akICWyVnet62AH34s+xRWNgCpa18BCTwLnEpfkwB0nCg0tYmZp3q8S1yYbtkocX+2P
+         sZyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760717393; x=1761322193;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xco4bIjlvyRAGDvFYX9qeWZinCThHE/ogACqSwyAjPk=;
+        b=kUo4l8AUqxXXCjqixOlJZelg+gtO43ecFnBuVm/eYJgW6ZyLsNiUHsPFwjxF9eztO7
+         BNanr69FWMakWAm+yEtSfDIHXVVQmnGvuNowq/nOg+6ugvWYce7TmOruXc8U7Sm16bqR
+         FlIFUatKiUvkJN1a2iJLZ0Vp1MjCW6TZMK27Qh5eCMhMcf1Y8xuNhHcyA4mIT37/chre
+         0/42mY/KzdqdgJHNSjfeA8CtIJmjRkh+y/0Z1LsOHqnZSJfs8VW/4j0kkXXja8WS6cZF
+         va87EsLMiojgddgU6Qnqieake1NbGVjkY2QBr3XnC0Vib8M115zL6BE2U6UpkZtrKSx9
+         Kotw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8ddjGElBhYWyd74a4dgIEb/THVgRqYy1jHyKR6ChExUaHX28u0LS9R671Owkkurli+7/e05xhbTI2ZS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWiV1pKs9uaaPm90E9To5D1oGLo57ujzJsWW6LQAb1RL894TT4
+	nyNCQEn1iCz1ela9IObQK6elbrn+ZVJ/eajZEee2TXQ+ErXNQn25rhZ7Yd9kn5H1YP6xcGMTL4o
+	k2P9rDg==
+X-Google-Smtp-Source: AGHT+IEX3Sb5zJcmsRpA1W1vQ5QaKm+SHN+64AlkRsSY2B5yN0+QDo/O6QpFaF3gXFyeWZi0UF8r+4DiSYM=
+X-Received: from pjqc13.prod.google.com ([2002:a17:90a:a60d:b0:332:7fae:e138])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b0f:b0:33b:6ef4:c904
+ with SMTP id 98e67ed59e1d1-33bcf8faaf5mr5262194a91.20.1760717392946; Fri, 17
+ Oct 2025 09:09:52 -0700 (PDT)
+Date: Fri, 17 Oct 2025 09:09:50 -0700
+In-Reply-To: <ad3b910a-ff83-4738-888b-5432d09de073@maciej.szmigiero.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025101704-rumble-chatroom-60b5@gregkh>
+Mime-Version: 1.0
+References: <90ea0b66874d676b93be43e9bf89a9a831323107.1758647049.git.maciej.szmigiero@oracle.com>
+ <pssrvpxpo7ncvfkgunuwbenztcw4p4d3aavvbmgzcr23fg7biy@aeylu42ii3k6> <ad3b910a-ff83-4738-888b-5432d09de073@maciej.szmigiero.name>
+Message-ID: <aPJqToq-589NovVS@google.com>
+Subject: Re: [PATCH v3] KVM: selftests: Test TPR / CR8 sync and interrupt masking
+From: Sean Christopherson <seanjc@google.com>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Naveen N Rao <naveen@kernel.org>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, 
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Oct 17, 2025 at 05:03:02PM +0200, Greg KH wrote:
-> On Fri, Oct 17, 2025 at 09:04:52AM +0000, Eliav Farber wrote:
-> > This series backports 27 patches to update minmax.h in the 5.10.y
-> > branch, aligning it with v6.17-rc7.
+On Fri, Oct 17, 2025, Maciej S. Szmigiero wrote:
+> On 25.09.2025 12:43, Naveen N Rao wrote:
+> > On Tue, Sep 23, 2025 at 07:32:14PM +0200, Maciej S. Szmigiero wrote:
+> > > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+> > > 
+> > > Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
+> > > * TPR is 0 on reset,
+> > > * TPR, PPR and CR8 are equal inside the guest,
+> > > * TPR and CR8 read equal by the host after a VMExit
+> > > * TPR borderline values set by the host correctly mask interrupts in the
+> > > guest.
+> > > 
+> > > These hopefully will catch the most obvious cases of improper TPR sync or
+> > > interrupt masking.
+> > > 
+> > > Do these tests both in x2APIC and xAPIC modes.
+> > > The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
+> > > bit of exercise too.
+> > > 
+> > > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
 > > 
-> > The ultimate goal is to synchronize all long-term branches so that they
-> > include the full set of minmax.h changes.
+> > Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
 > > 
-> > - 6.12.y has already been backported; the changes are included in
-> >   v6.12.49.
-> > - 6.6.y has already been backported; the changes are included in
-> >   v6.6.109.
-> > - 6.1.y has already been backported; the changes are currently in the
-> >   6.1-stable tree.
-> > - 5.15.y has already been backported; the changes are currently in the
-> >   5.15-stable tree.
 > 
-> With this series applied, on an arm64 server, building 'allmodconfig', I
-> get the following build error.
-> 
-> Oddly I don't see it on my x86 server, perhaps due to different compiler
-> versions?
-> 
-> Any ideas?
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> ------------------------
-> 
-> In function ‘rt2800_txpower_to_dev’,
->     inlined from ‘rt2800_config_channel’ at ../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:4022:25:
-> ./../include/linux/compiler_types.h:309:45: error: call to ‘__compiletime_assert_1168’ declared with attribute error: clamp() low limit -7 greater than high limit 15
->   309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->       |                                             ^
-> ./../include/linux/compiler_types.h:290:25: note: in definition of macro ‘__compiletime_assert’
->   290 |                         prefix ## suffix();                             \
->       |                         ^~~~~~
-> ./../include/linux/compiler_types.h:309:9: note: in expansion of macro ‘_compiletime_assert’
->   309 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->       |         ^~~~~~~~~~~~~~~~~~~
-> ../include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
->    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->       |                                     ^~~~~~~~~~~~~~~~~~
-> ../include/linux/minmax.h:188:9: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
->   188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
->       |         ^~~~~~~~~~~~~~~~
-> ../include/linux/minmax.h:195:9: note: in expansion of macro ‘__clamp_once’
->   195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
->       |         ^~~~~~~~~~~~
-> ../include/linux/minmax.h:218:36: note: in expansion of macro ‘__careful_clamp’
->   218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
->       |                                    ^~~~~~~~~~~~~~~
-> ../drivers/net/wireless/ralink/rt2x00/rt2800lib.c:3980:24: note: in expansion of macro ‘clamp_t’
->  3980 |                 return clamp_t(char, txpower, MIN_A_TXPOWER, MAX_A_TXPOWER);
->       |                        ^~~~~~~
+> Was this patch picked up or are there any other review comments here?
+> I can't seem to find it in any KVM upstream tree.
 
-Missing commit 3bc753c06dd0 ("kbuild: treat char as always unsigned")?
+Not applied yet, though it's in my queue to look at.
 
-Cheers,
-Nathan
+The main reason for the delay is that I think I made a mistake by shoving the ICR
+test into xapic_state_test.c. Bundling the ICR test with APIC ID tests was "fine"
+at the time, but it obviously encourages using the test as a dumping ground for
+similar APIC tests.  And I don't want selftests to end up like KUT where there
+are these huge, inscrutable tests that are painful to debug.
+
+So I don't want to apply this patch before deciding whether or not to split
+xapic_state_test.c, e.g. into xapic_id_test.c and xapic_icr_test.c, and then
+this could add xapic_tpr_test.c.  But I haven't looked closely enough at your
+patch to make a concrete suggestion (at a glance, it looks like there's not much
+overlap with the ICR test, so I'm leaning strongly towards splitting).
 
