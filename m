@@ -1,89 +1,78 @@
-Return-Path: <linux-kernel+bounces-857997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C914BE8803
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0E3BE8818
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4779E4F0A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:03:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 475B34E7154
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450462D94AF;
-	Fri, 17 Oct 2025 12:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F392E0B71;
+	Fri, 17 Oct 2025 12:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VOv+wNfj"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tZTlu/6O"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4151332EAC
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F69B332EAC;
+	Fri, 17 Oct 2025 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760702575; cv=none; b=Z4CXlZKfETyVFhWrlrZzAua2bWzZ2ZUF4ueRtkbI27ND6iEjDu8ta3azAGsJuKDzkGFrFaDNhCZP/y6jek+7BBhFSpdwVLXGCYjsfx94mBpWuTdaRfODwWllld4iJSlzTraezBedss7zEW2zoQPHjxDS5HFw8+PdwqhxHbiTSfA=
+	t=1760702651; cv=none; b=keJvHYsjNbaYy3hrAZpNoXPbX1iqmC1Th7s9Bm8MDxWkNwE6YSmToZWGu8XEtqPLscLOW4xw0yKM9Y4hcl1BZPcsS+6wJQR3PcSnUkhyi5EJngQrdbt2UumnB9es1CODAFnv3tBYxQNgrXUoeOHvfEHIpQFpx1L7XeFcuh3k36M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760702575; c=relaxed/simple;
-	bh=giDerTFT7zFIgeOoQMXXqNLTe9hhWXHGn7G/GN63yZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReWCR+2EFJQZNtnYV/Wqw+tZSSD/myD3vofUrReo3hHsGTI67nWohgH1o699KxMqWu4KhmSoR7zQRz0uqngu+d1UIO7/LNajKWK1dRgzbC0/JfK5HWqQybV1Dc7y5dC9jFKSVpVjfFgNZ9nA8tGHVer9PYXK36+CJbFJeujNdZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VOv+wNfj; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so1594584f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760702571; x=1761307371; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/JPR8GH5hcgadFN4LhX9XG9fVjAZMNhtsFHX93XBRmk=;
-        b=VOv+wNfjyCx9joUi6ndU7XAVK+zOCugw/zzq+MwElm9gTo3u+/pIuRmbsn6hB8MQ0p
-         olE6NmKpiJQ56BSviDhd8KCNgUnzbNTwpGFvtYXunpwn28e6TtNYACQQzMTkJ+/KJgkR
-         lFdAuVYjAu3TDQhLJntbtf2YT1GEZqDzPcENtcWtEctBko8z6n7arx82L8mw9G5B8Hlz
-         GistNpKQrHwsq21G54PlZa26r4HJ8/4COzaz7+GhPoUUIL57kmmhsQs02EPXPhvpqnyO
-         N8J5mDHiu1RrXHxRskp+Th1MziEVsa9TII+ABoawGeLKx8UsgNc7s3TinRj7ji1arlVP
-         u7QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760702571; x=1761307371;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/JPR8GH5hcgadFN4LhX9XG9fVjAZMNhtsFHX93XBRmk=;
-        b=mg5CQbXeuMPVMlLVB8X/fG4NVvoel+LA7rON5P9uxh/m1QYTRgNLMfbickI+ZvNZmf
-         Abq2OT/3G8jzsIhrlgfmxTtE7OaulRphE+P2j05uDik1W7tnilk2HTgvym7fHyBNSZhY
-         5npXZVrAUxJ/bMZde+7zICm16x1Zy1IshzBoRFP9dnHJHvLzWgyrk+dF1WAocuqI5J/O
-         6cE+wXKBuO9uNGYJZcvatgkyj3Q39OI/Z2JlQDURuze66oky/e9/OxpvkTR8NjfjebqY
-         a6tY7hGEV9e0TE5qcwgmrrUT21BHfWACmEyszW6g1o2pTYh+rtd0In8CeMVNHoMGInzz
-         Bjnw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5bhnpbd/+ImP0t461Wp8tyEM6CAB9WXvl0MRKrpdTdICojfvH88YBEb+w5F8OtqpM5xqcFaWLJoJjySU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Uf9qQsHP5yJzA27Q2tZTbDTYlGuvv2EWjltEOOSGwxW/rqXH
-	Ay3tEDKirgarPTsCIhcjq+gzMx5ptmOA96H1BxxZLAJpZhDNKwASmIhqTUadIvQKgrw=
-X-Gm-Gg: ASbGncvrDON4ZNoUnIzp7vkLHDeYSNKkNi5R/oPvnnBjeg5RjYi8Q5c1SWaP6eRD2Gd
-	vYY/XlfWTpEC1CJrSlfIAZwqPL/UlnM6FJIV2Sbk/xgzT8h7Dyg0rg6GpnJVAiLfU0PeSVoVgL/
-	k4Kr69d2sff1mAtYeEae3+eLwcfspv4OQ4dNGc2ruTsIsi4XyrdXTCaN5olkmFVteaIEPx9gm6U
-	3AiLqtxpseQbjMp79tHvvIQALxJBuubReYOd9mqTYR6/W6i4+L1VnBqWQbC/lsuoVTnvrfUVqJv
-	F92BBaYv7TmC1K3Yl/nS5YaXQ9GyQv7XS/OGF5CzBcVRp/xJWKaie3a/r63FL1ECej7Rj0tXGL7
-	HRYNkAo3iqYlxRMR/8ZaFZeg3FJM6Sukp8P3CzJUATph7uF5nLBgAZfDpk8cNU07SdZIEjc1EpN
-	5hznGis60TDtM=
-X-Google-Smtp-Source: AGHT+IE06r98UHWFT2Xk7ldaGKsG7wzyanlhTrg8kwfuMMKG0UEDDaMDa+nIp24NV8a0FkDRNf9r/w==
-X-Received: by 2002:a5d:64c3:0:b0:426:dbef:9abf with SMTP id ffacd0b85a97d-42704d8e0b2mr2471395f8f.23.1760702571075;
-        Fri, 17 Oct 2025 05:02:51 -0700 (PDT)
-Received: from localhost (109-81-16-57.rct.o2.cz. [109.81.16.57])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4270665ef67sm4048567f8f.28.2025.10.17.05.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 05:02:50 -0700 (PDT)
-Date: Fri, 17 Oct 2025 14:02:49 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com,
-	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev,
-	lorenzo.stoakes@oracle.com, hughd@google.com, willy@infradead.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm: vmscan: simplify the logic for activating
- dirty file folios
-Message-ID: <aPIwafJOKUh3N4zX@tiehlicka>
-References: <cover.1760687075.git.baolin.wang@linux.alibaba.com>
- <ba5c49955fd93c6850bcc19abf0e02e1573768aa.1760687075.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1760702651; c=relaxed/simple;
+	bh=vdD0DY7vv6B06BpL8Nf6nhwFo1Pzupdq+v4mwBkQhYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RR6tLxBEQURHbx/YUHDKEmeODmuX9d0db+NrMq+ADFm2LBE+VK5FGMpsiYK2Y+doRbDJv8qgOLXKpcHdKOZFHo8yzam4pWBc/+LmRayq8Re98NSzf6FQ5g+sBQeHwzgOCBDxzLNRS6BMToM4UKvYlbrZ771k9u1DFp51cVyG9eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tZTlu/6O; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=i8hy4I4lhZmL+EEXM3yS2UscyTn4FYoKIxBvgeZOabU=; b=tZTlu/6OIKaBb+A4VKrWCxXjZN
+	5Rs9ynrQsIONsvNEONgyNruAKzRbBFv6WoMND58aJn4jL2jAv74EzvmPwDUrClpQYNrzJ5W511CV6
+	cDhA4z+jmMNUOZYiLmRYJbqX1CVuV2Kyhf7eakaJ6+9Hnf4aaQ4OkI7KkhD8J2eLeMjYkgUXgXDoS
+	WMzE0zgQ5Pc59xxud7RL03vGiRRfPoCMBopvHFg+lZcsC2wo7wuT4brmhGDHhpT/+qqzqsiOZKvKy
+	xfU3WQLMIZ+EBRMTx7F51cNoLQz0blIHPVFaSjwFT75EErV1sdwC3z46KSHHPTToSZ7WCCAFwpLL5
+	8v5APkNw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40520)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v9jBf-000000007op-1gwt;
+	Fri, 17 Oct 2025 13:03:59 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v9jBa-000000004Hj-2XOP;
+	Fri, 17 Oct 2025 13:03:54 +0100
+Date: Fri, 17 Oct 2025 13:03:54 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>
+Subject: [PATCH net-next 0/6] net: add phylink managed WoL and convert stmmac
+Message-ID: <aPIwqo9mCEOb7ZQu@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,118 +81,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ba5c49955fd93c6850bcc19abf0e02e1573768aa.1760687075.git.baolin.wang@linux.alibaba.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri 17-10-25 15:53:07, Baolin Wang wrote:
-> After commit 6b0dfabb3555 ("fs: Remove aops->writepage"), we no longer
-> attempt to write back filesystem folios through reclaim.
-> 
-> However, in the shrink_folio_list() function, there still remains some
-> logic related to writeback control of dirty file folios. The original
-> logic was that, for direct reclaim, or when folio_test_reclaim() is false,
-> or the PGDAT_DIRTY flag is not set, the dirty file folios would be directly
-> activated to avoid being scanned again; otherwise, it will try to writeback
-> the dirty file folios. However, since we can no longer perform writeback on
-> dirty folios, the dirty file folios will still be activated.
-> 
-> Additionally, under the original logic, if we continue to try writeback dirty
-> file folios, we will also check the references flag, sc->may_writepage, and
-> may_enter_fs(), which may result in dirty file folios being left in the inactive
-> list. This is unreasonable. Even if these dirty folios are scanned again, we
-> still cannot clean them.
-> 
-> Therefore, the checks on these dirty file folios appear to be redundant and can
-> be removed. Dirty file folios should be directly moved to the active list to
-> avoid being scanned again. Since we set the PG_reclaim flag for the dirty folios,
-> once the writeback is completed, they will be moved back to the tail of the
-> inactive list to be retried for quick reclaim.
+Hi,
 
-Is there any actual problem you are trying to address or is this a code
-clean up? How have you evaluated this change? 
+This series is implementing the thoughts of Andrew, Florian and myself
+to improve the quality of Wake-on-Lan (WoL) implementations.
 
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->  include/linux/mmzone.h |  4 ----
->  mm/vmscan.c            | 25 +++----------------------
->  2 files changed, 3 insertions(+), 26 deletions(-)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 7fb7331c5725..4398e027f450 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1060,10 +1060,6 @@ struct zone {
->  } ____cacheline_internodealigned_in_smp;
->  
->  enum pgdat_flags {
-> -	PGDAT_DIRTY,			/* reclaim scanning has recently found
-> -					 * many dirty file pages at the tail
-> -					 * of the LRU.
-> -					 */
->  	PGDAT_WRITEBACK,		/* reclaim scanning has recently found
->  					 * many pages under writeback
->  					 */
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 65f299e4b8f0..c922bad2b8fd 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1387,21 +1387,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
->  
->  		mapping = folio_mapping(folio);
->  		if (folio_test_dirty(folio)) {
-> -			/*
-> -			 * Only kswapd can writeback filesystem folios
-> -			 * to avoid risk of stack overflow. But avoid
-> -			 * injecting inefficient single-folio I/O into
-> -			 * flusher writeback as much as possible: only
-> -			 * write folios when we've encountered many
-> -			 * dirty folios, and when we've already scanned
-> -			 * the rest of the LRU for clean folios and see
-> -			 * the same dirty folios again (with the reclaim
-> -			 * flag set).
-> -			 */
-> -			if (folio_is_file_lru(folio) &&
-> -			    (!current_is_kswapd() ||
-> -			     !folio_test_reclaim(folio) ||
-> -			     !test_bit(PGDAT_DIRTY, &pgdat->flags))) {
-> +			if (folio_is_file_lru(folio)) {
->  				/*
->  				 * Immediately reclaim when written back.
->  				 * Similar in principle to folio_deactivate()
-> @@ -1410,7 +1396,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
->  				 */
->  				node_stat_mod_folio(folio, NR_VMSCAN_IMMEDIATE,
->  						nr_pages);
-> -				folio_set_reclaim(folio);
-> +				if (!folio_test_reclaim(folio))
-> +					folio_set_reclaim(folio);
->  
->  				goto activate_locked;
->  			}
-> @@ -6105,11 +6092,6 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  		if (sc->nr.writeback && sc->nr.writeback == sc->nr.taken)
->  			set_bit(PGDAT_WRITEBACK, &pgdat->flags);
->  
-> -		/* Allow kswapd to start writing pages during reclaim.*/
-> -		if (sc->nr.unqueued_dirty &&
-> -			sc->nr.unqueued_dirty == sc->nr.file_taken)
-> -			set_bit(PGDAT_DIRTY, &pgdat->flags);
-> -
->  		/*
->  		 * If kswapd scans pages marked for immediate
->  		 * reclaim and under writeback (nr_immediate), it
-> @@ -6850,7 +6832,6 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
->  
->  	clear_bit(LRUVEC_NODE_CONGESTED, &lruvec->flags);
->  	clear_bit(LRUVEC_CGROUP_CONGESTED, &lruvec->flags);
-> -	clear_bit(PGDAT_DIRTY, &pgdat->flags);
->  	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
->  }
->  
-> -- 
-> 2.43.7
-> 
+This changes nothing for MAC drivers that do not wish to participate in
+this, but if they do, then they gain the benefit of phylink configuring
+WoL at the point closest to the media as possible.
+
+We first need to solve the problem that the multitude of PHY drivers
+report their device supports WoL, but are not capable of waking the
+system. Correcting this is fundamental to choosing where WoL should be
+enabled - a mis-reported WoL support can render WoL completely
+ineffective.
+
+The only PHY drivers which uses the driver model's wakeup support is
+drivers/net/phy/broadcom.c, and until recently, realtek. This means
+we have the opportunity for PHY drivers to be _correctly_ converted
+to use this method of signalling wake-up capability only when they can
+actually wake the system, and thus providing a way for phylink to
+know whether to use PHY-based WoL at all.
+
+However, a PHY driver not implementing that logic doesn't become a
+blocker to MACs wanting to convert. In full, the logic is:
+
+- phylink supports a flag, wol_phy_legacy, which forces phylink to use
+  the PHY-based WoL even if the MDIO device is not marked as wake-up
+  capable.
+
+- when wol_phy_legacy is not set, we check whether the PHY MDIO device
+  is wake-up capable. If it is, we offer the WoL request to the PHY.
+
+- if neither wol_phy_legacy is set, or the PHY is not wake-up capable,
+  we do not offer the WoL request to the PHY.
+
+In both cases, after setting any PHY based WoL, we remove the options
+that the PHY now reports are enabled from the options mask, and offer
+these (if any) to the MAC. The mac will get a "mac_set_wol()" method
+call when any settings change.
+
+Phylink mainatains the WoL state for the MAC, so there's no need for
+a "mac_get_wol()" method. There may be the need to set the initial
+state but this is not supported at present.
+
+I've also added support for doing the PHY speed-up/speed-down at
+suspend/resume time depending on the WoL state, which takes another
+issue from the MAC authors.
+
+Lastly, with phylink now having the full picture for WoL, the
+"mac_wol" argument for phylink_suspend() becomes redundant, and for
+MAC drivers that implement mac_set_wol(), the value passed becomes
+irrelevant.
+
+Changes since RFC:
+- patch 3: fix location of phylink_xxx_supports_wol() helpers
+- patch 3: handle sopass for WAKE_MAGICSECURE only when the MAC is
+  handling magic secure.
+
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       | 11 +--
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 31 +-------
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 45 +++++++----
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  4 +-
+ drivers/net/phy/phy_device.c                       | 14 +++-
+ drivers/net/phy/phylink.c                          | 92 +++++++++++++++++++++-
+ include/linux/phy.h                                | 21 +++++
+ include/linux/phylink.h                            | 28 +++++++
+ 8 files changed, 182 insertions(+), 64 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
