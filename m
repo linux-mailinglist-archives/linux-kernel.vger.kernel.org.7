@@ -1,146 +1,159 @@
-Return-Path: <linux-kernel+bounces-857629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53E0BE74C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:55:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E143ABE74E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A493D502641
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951E5621887
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B97629D279;
-	Fri, 17 Oct 2025 08:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34F025F984;
+	Fri, 17 Oct 2025 08:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ds7lp1vJ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TQA/E1Mz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FC74409
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC88F26F44C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760691131; cv=none; b=rQJQXyDjTkT1hJyb0EuFfIHhTOPxnMO7Wx+++qEmocKEZ0fYU1ZPx3lyJ5Rn2QnonGSzFt1sSWFkiZiViroTVm8kbiGe2i57TgLn5XGrwNtyyHc9n0/6VD26WXU/WM+d5tAdozV7U37254iJwJFYfLDwOXRQ33aQF2p4xs8jEy4=
+	t=1760691384; cv=none; b=czT3BQXUrFCSHB8pPMnqDEyFH8JLNrOYBvwouLP6b0Dklua+fCWMt0Ylw+9irYI2N9ddExCGCuOJGUQGybTdd19QkQIiKL4HDN+xoSPZwLBDiXT+pj8p1J2Dt1T0cKFOEBsaRC8mo2oNWCbzClCjzDzPIgpGooNG7eSYMfeOlG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760691131; c=relaxed/simple;
-	bh=2oLMnCZ23LLTDdFKDD3O2sUs72MeFy/tN37/VGxtlsA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=L4X+R0UqfVSH9jp58MOokksurVF6cO7BmDJz+JMafK3RiZcsKeN9opTfXxStFOTwa8bl33rKTpqy2IRWMig0rqe0hVGAkzZljImmgxQ0WKxRzXmwDJMnPrXMpc2t4s/35/m7bkHANzU8UgegAsu/hoxwTyJlRP5aXdazZWszshI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ds7lp1vJ; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-292322d10feso309245ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760691128; x=1761295928; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J+y1vB4iqnryB//UhMXxu9OFiqC1kDkx0s8+5S3KEFo=;
-        b=ds7lp1vJAhMfZEy3rXTjECwKGoxjvE2Wbdw6EdyDbPI9JQFiiaHIY1butP8qXAOnGj
-         nDV0MoztSaExsAcpoS/qXcrqw0gFPGoHbu/GERV3s21uMQUUJ0sDyD69MxWPH72bR8Jc
-         AGAfxM9TadlB0twAq3ZAxESDfL1rZBFnFoYVYGyEFpppHY8MLAVTtCcMW8d3paJ1+YAN
-         QE9DxM6E5lv3pxwqgQUrwTVSdv7VQKJyWSVnY1buoiNhE6QJ+XfaEx41GF716y+2JVJl
-         e7QcC8eU6I1QPGocTztgesmJ0jHEt2vwJWy5Qu3DPnrHrrFwYYiBRutifuTQ18sSDA/E
-         4M3w==
+	s=arc-20240116; t=1760691384; c=relaxed/simple;
+	bh=QHBpsKbpDzuuRtkESyqE06ii+O7O5OYSBw6m4JT44II=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dkIyyWEZA3EZPpyFFxLzbZP7Nz/oF68YDY367mwnf55931h7jXeY3fKuVo2xU9reGn18xt1bRHDP11Jdp5j6OiJG1Nez85Uetztmm16xAEADetZL/27Kl/j2cQ7UulhJzXs4SlOHHPHnuzK8FkKhob0apEbfw4fubuNOP+W9Jnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TQA/E1Mz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H7qu4d006824
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=GgKHoqXT0qjE288x+uapHdxBiaCQzLjnRUN
+	NopeAlSA=; b=TQA/E1MzQ0IhJ4JKwA1t7t5JDNLfkd0/4o8vFZiN5/EtmvIVsOg
+	ab57IwU6BOGI2naOeK09x8GRZp6WKDeg4B0MnN2uPu60QS89hwxuL48qYy4n9z8k
+	HzhJdzTO3fwFWFOonrSrGmMrkItH7qC5PAlTxyOe6b/goLBMeVae4j6WMco4/+3+
+	/Ti2lqge3j4y5Za7HU/1u5I3cRR96rhI973zizXI1A2oqMNGBJTISHRGer9rb6aa
+	hrieAZcfum0/5u0BuMyXqDq3Joo6AdI8GeeGwTF+fzwfNft57afSmE630mOLreWA
+	fv0Dev5p+NUXN89dpIrPl1FHREOpVHHR3HQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwwvmu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:22 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-890f1090e44so145549985a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:56:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760691128; x=1761295928;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J+y1vB4iqnryB//UhMXxu9OFiqC1kDkx0s8+5S3KEFo=;
-        b=WLvW0f+2RLFBCJGJkQ6BoJ79l1LihYSsITtUMjw+OFmv3KJcw6m9/pqYIlEhcVFmzK
-         ysRefTsUfsfFSpvg7X+RhFOQCl/dE97MUt0y19U/qpv2otfa2KlPkHGHIR5e6sgO2g4G
-         2P0o0yyxOYar2jqhQc99efZEvmgRcBT+aZdD4qek+Tgt3zhnaKgjNbaRxTCTAmTMgKkd
-         ZN7qgT2miqFQkXO8MArTqChDvVnBpszOHgpYXg/xhnQL5+Z0t+XH2I6MA84/kD19fWNe
-         bPNFxkq6sPMqAbS3LMHGUb36tN9xo/cajBWBgyFML3tqvMrbOBB9XvPF2G9kSJb3ssUA
-         Ck8w==
-X-Gm-Message-State: AOJu0Yzp8Dt2ddiQIAiRG/FUuO6xrlFmoyrX9nyTsnaS5WxFYs+jaTL3
-	V8ZnL5vc3IhO4jzN2Q+un45T4R15AL2mw5dd8FV9CzdCQ7aDKbeL2IXTPBwFvLXHY2sV+0Y/1w9
-	snmOLhlnHRSz54Jvf2FMNCql2zp4zn57yTX1Alp6U7pO1Go5LyYt5/VE=
-X-Gm-Gg: ASbGncsQsRIbDK3pDLG4LHcODeI299ICawqu7gTqs15xAGAJbf/+fVnja5+k0Xf7pdM
-	3M1dRVMICtOE0/WAUyilSfFVba81cYRyZAHmM61KYlhV1MJ7FeS7LEkEUvS83JpjlHjQ0TI6UdI
-	1aimS405jGrPTCy4FaKrvJzEDkOGZj1eJc3qEVc9iJizihAsIvIoqM78WqiftNWYLpy3sCrVHYO
-	cHin+jbq8EQ4s/EMNsoB5hK1NkUDbevGUsRek3nraV7Q0ws5CoRp3l+AtFDn0tZNyo6Ld/VZUfL
-	2gwDX184CKnMo75LuqBfquZD6VGaBi9YbagX7j3JVUkZhEhvYxBQ0iles3A4
-X-Google-Smtp-Source: AGHT+IHnzdCZiWkeq6B0nWCC7+Ta7WqnE/RTfJHl80GUdwDwM+iInU4JzJQ1fseC0j68aNlkWHaYLC2Le5AdhB426tw=
-X-Received: by 2002:a17:903:2310:b0:290:ad7a:bb50 with SMTP id
- d9443c01a7336-290ad7abe3amr60139775ad.27.1760691127941; Fri, 17 Oct 2025
- 01:52:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760691381; x=1761296181;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GgKHoqXT0qjE288x+uapHdxBiaCQzLjnRUNNopeAlSA=;
+        b=j6ilPiOniJiiu4pfjrOBHTeLKAsH5b0CCww5Ik27ecdVSJotI49QIE6Uyvo2VBcqz3
+         abXBTpv1lXyczvEPmXHiPlpLanpxc7jmcYALdbWOP2Hyqgi7JopIt+6IvcRW17cXHFrY
+         rw0W9nv4C/1/YWVhcUqxP8gioGCUR1wf5EeHR+UdHpdOs0INPJq55QTwDP9edPNGOhH3
+         y4S/Dpsa9QpZOOhfDZBKOGGC4fTbGnj5xklozZi2jhyjxD8EK4ga91Tu191hUTc41NcE
+         NL88GWxRcke2aSwYbHXKgYitnntpUg4HKKbIgnpnyJvtcbjHNbmCwpRTJVy3WvO5E8bw
+         HCeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc997NwQeRjSaFMQQyKkIFH415zQTaW78DXHmvotVV5LWG7CTp4zwHst5mVbjWYrAyk+8d0vn6GICTfaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr6UBZBl70syjcE2MC1XKAcOsqF840T6Vbdl7afXe21GcC7BRJ
+	8IulM9cc7xBpJkoaNThDHoM2kWW1bwbT3SXNQA5kNe86m1q53XGESdB6cvaxRIgaNWVX4lhLWbL
+	fABBerHxzSe+F6Qd1TY95gWaEoiswBGl/Mwua943PjH1mIbB94dzzJu0oVxPjnt4ivc8=
+X-Gm-Gg: ASbGnctv8q2dPkh/B5KIW1igxO9q/mKto99NngeGHj1BQJzs2AxjxIPqqgROLrmTnHG
+	P+YdrRyNTXNYYuOMUOkosvyqY/HKGDssFgOQfiH9vc+HxPyK4NpZI7yubr7WGTVOAKZEVOG4m++
+	hVODmXSZbDcmOoJibNIUvoqHmtG0xYnrK/GxRnAWdh1Z7KxMcW53pvow1dbFxv2XYzhob+Co5VD
+	fmY1nhCBTm4hKa+bRzXrE/6RMO0o2Cdrz7GE4r+rQ286spQ7K0VESqJC8DvtHw2ibSRYRhtwD6W
+	jEGIVr6AfP823t/NT8cMeQvumgpp3QMTEH5FfFn6zh3jxnEJWBqYSmeyMFk4+3XTalhSRjCANsr
+	p1WsVO7tt7rcu
+X-Received: by 2002:a05:622a:1791:b0:4e6:d87a:280 with SMTP id d75a77b69052e-4e89d3a47d3mr35994191cf.55.1760691380715;
+        Fri, 17 Oct 2025 01:56:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEC4UOU4CztdtiviPzgPboziVO3y4fuMgxWeeOy7auZ+T//H6htzc8sa0xc+JXaw3/TGhF01Q==
+X-Received: by 2002:a05:622a:1791:b0:4e6:d87a:280 with SMTP id d75a77b69052e-4e89d3a47d3mr35993981cf.55.1760691380214;
+        Fri, 17 Oct 2025 01:56:20 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711444d919sm70764985e9.14.2025.10.17.01.56.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 01:56:19 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: broonie@kernel.org
+Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 00/12] ASoC: qcom: q6dsp: few cleanups
+Date: Fri, 17 Oct 2025 09:52:55 +0100
+Message-ID: <20251017085307.4325-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 17 Oct 2025 14:21:56 +0530
-X-Gm-Features: AS18NWDmy4VY4bYGS9Uinoj_a_bgUwsPBK0TlYzxtMKYza6ex6eRnnUZiu6_1_8
-Message-ID: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
-Subject: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
- PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
-To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Andrey Albershteyn <aalbersh@kernel.org>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX2431eGDs6/I8
+ ONVq52r8n5XqHW6I+5G//+kTBziDQgLAGCNlTrd5Lxj9OfUUHxl6dTBa8XxNSYb4T+7q+MAToDU
+ dGAKiNDJC3Tk0+TapxYZMrK/4Bdbiipo+Jfv6FyxIivc9XXVNO0Pl+ukfP7YEgqOHlaErTISzWV
+ vrvYTnADFPMbPp+jegiAreDlp9Jl3P+ykGP5bH/VdVMhKa3uMX1YjSDf7UuJqqqrQFZJZp9ZfLu
+ v7/xnb7KFB8T7wZ3iDemSv1XMuptBzcg6vBM/4jIlVOnbx3JteQEJfRu9DP4MChcpwoywpt5hUB
+ BuNZRUrVHYWj7LYCPqmm4MkDyozzyoNzKb4jUhTaepb7FFtdeKF4vUaen2JfLKOF3Z8E+jGCOMU
+ 0za4JBqzYCkguP25dYf1deJelsE5Qw==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68f204b6 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=WpVtij-2m0Y91tUO0AgA:9
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: maaLKa0xIjneP6-z7QjtJSjHHZ16VVuC
+X-Proofpoint-ORIG-GUID: maaLKa0xIjneP6-z7QjtJSjHHZ16VVuC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
-The LTP syscalls ioctl_pidfd05 test failed due to following error on
-the Linux mainline
-kernel v6.18-rc1-104-g7ea30958b305 on the arm64, arm and x86_64.
+This patchset does 3 things.
+- simplify code via __free(kfree) mechanism.
+- use spinlock guards
+- few cleanups discovered during doing above 2.
 
-The Test case is expecting to fail with EINVAL but found ENOTTY.
+No functional changes
 
-Please investigate this reported regression.
 
-First seen on v6.18-rc1-104-g7ea30958b305
-Good: 6.18.0-rc1
-Bad: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
+Thanks,
+--sirni
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
 
-Test regressions: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL:
-ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL:
-ENOTTY (25)
+Srinivas Kandagatla (12):
+  ASoC: qdsp6: q6asm: do not sleep while atomic
+  ASoc: qcom: audioreach: remove unused variables
+  ASoc: qcom: audioreach: Use automatic cleanup of kfree()
+  ASoc: qcom: q6adm: Use automatic cleanup of kfree()
+  ASoc: qcom: q6afe: Use automatic cleanup of kfree()
+  ASoc: qcom: q6apm: Use automatic cleanup of kfree()
+  ASoc: qcom: q6prm: Use automatic cleanup of kfree()
+  ASoc: qcom: q6asm: Use automatic cleanup of kfree()
+  ASoC: qcom: q6afe: Use guard() for spin locks
+  ASoC: qcom: q6apm-dai: Use guard() for spin locks
+  ASoC: qcom: q6asm-dai: Use guard() for spin locks
+  ASoC: qcom: q6asm: Use guard() for spin locks
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+ sound/soc/qcom/qdsp6/audioreach.c | 234 +++++++++---------------------
+ sound/soc/qcom/qdsp6/q6adm.c      |  33 ++---
+ sound/soc/qcom/qdsp6/q6afe.c      |  49 ++-----
+ sound/soc/qcom/qdsp6/q6apm-dai.c  |  23 +--
+ sound/soc/qcom/qdsp6/q6apm.c      |  57 +++-----
+ sound/soc/qcom/qdsp6/q6asm-dai.c  |  23 +--
+ sound/soc/qcom/qdsp6/q6asm.c      | 189 ++++++------------------
+ sound/soc/qcom/qdsp6/q6prm.c      |  27 +---
+ 8 files changed, 170 insertions(+), 465 deletions(-)
 
-## Test error log
-tst_buffers.c:57: TINFO: Test is using guarded buffers
-tst_test.c:2021: TINFO: LTP version: 20250930
-tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
-@1760657272 aarch64
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-which might slow the execution
-tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
-ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
-info_invalid) expected EINVAL: ENOTTY (25)
-Summary:
-passed   1
-failed   1
+-- 
+2.51.0
 
-## Source
-* Kernel version: 6.18.0-rc1
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-* Git describe: v6.18-rc1-104-g98ac9cc4b445
-* Git commit: 98ac9cc4b4452ed7e714eddc8c90ac4ae5da1a09
-* Architectures: arm64, x86_64
-* Toolchains: gcc-13 clang
-* Kconfigs: defconfig+lkftconfig
-
-## Build
-* Test log: https://lkft.validation.linaro.org/scheduler/job/8495154#L15590
-* Test details:
-https://regressions.linaro.org/lkft/linux-mainline-master/v6.18-rc1-104-g98ac9cc4b445/ltp-syscalls/ioctl_pidfd05/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/34AVGrBMrEy9qh7gqsguINdUFFt
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34AVFcbKDpJQfCdAQupg3lZzwFY/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/34AVFcbKDpJQfCdAQupg3lZzwFY/config
-
---
-Linaro LKFT
 
