@@ -1,147 +1,147 @@
-Return-Path: <linux-kernel+bounces-857416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFC7BE6BE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6353FBE6BDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 188F04F8CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:43:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0EE2B354DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7FB30F94B;
-	Fri, 17 Oct 2025 06:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF3F30FC31;
+	Fri, 17 Oct 2025 06:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SF6trazP"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WokAg896"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAC7222578
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B123536B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760683431; cv=none; b=KOgqBAIBxoog1P4rxN0haMa+bd3+24jZ9ux9H6e0TKe+TbQrP//2jo3UdxwIDkaP7Ce+EOJ4Ogl797QVRDjTPGhYyvmVd7UiyWOBNR0xWpwRJNjYQ7tZ4Ldu/s968kJXsNRnqY9UeiiccZQ2nHcks7VTpDPsg484uJXHAYLkccc=
+	t=1760683417; cv=none; b=CqAwGuwE7EXhQf5YZw2i4Qhy7cdRVoJ+vRWkhgHLMh+/gsXuMSXZ0d5Ll5XH8qZaeWzisQy5OS8SPA3QUr9Zv+wowDyIjGzLsMAcW4IJdQMkC9XwbQktS0lkm+z80dgqF8YMoE4M7qIWcaBCgEMrgLAULnL6CK1YveOxXysC5qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760683431; c=relaxed/simple;
-	bh=3H0BxXJo8aB6HEq3FCJuAwdi4rJ4YI3wLy7UJ8usk0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K35S3t7nzI+13jMSbAimxlpGpj5bAxe3Yhn4xHGKPVLx5Z0u20jMZA2znDLtcbcjt1T01zf/rHik78Gk3zHn1qLQVPPC9go7TGbhz4Zv/KTqre7wjhTeJ0Avq2eImtPfplB/3xVJnt07xTAH8mq8tES+WaMX+lloUIxWubbyHjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SF6trazP; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <556352a6-70dc-4709-a0d2-038e2cd4fd88@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760683425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=27ILP3PisFWMzeZ0qER84rVbx10h57G1tQZ/rIsZYvs=;
-	b=SF6trazPBL787T7iEDAxBvdVButWkO6CS5V+nuyrFgUYLqFoXBQRYYcui4o8yhzXVDAw6Q
-	73trCNxynS1BqseH1RPxZQBN4Ly7rQp7FOJSdRs+TKSYB8InQ60aiRNZv0gsjG4iTOwKtA
-	DPrLw/8OxW3fwKx1kn7FASkApJxUPgI=
-Date: Fri, 17 Oct 2025 14:42:56 +0800
+	s=arc-20240116; t=1760683417; c=relaxed/simple;
+	bh=goiNe26JI97XimIaJqB0nQh2LC62mtWHX8LAPMghZtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Cf8o5RTW+3QyMkzyrTgeTeiD42Rtir3ojMdQQQgCxYyTzKsSH1CBIsnJAhDhdUUQWF5dmRYPF9Bb5EBx4YnuZkGNRiMT5KxdlQx6KBNv2ywLmOLvN6ENSqjd2i2t/ypQ/qYz646xsK6WZTp+wCHLI6Y1OrhCcTy3ZqoWZRtLQ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WokAg896; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251017064327euoutp015904daad1bab2384b34d6700fdc63414~vNDsHUak33251832518euoutp01W
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:43:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251017064327euoutp015904daad1bab2384b34d6700fdc63414~vNDsHUak33251832518euoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760683407;
+	bh=pmOERI3SUEXraCgPIeHw+QXcfM6eSSu/gHX94UGDCzg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=WokAg896tCCv63IRBiccsVar42fKcVYzFnOA+JFwG5K7FKWRIYNZZQonCiKxs0uq6
+	 Q3HXOXddKG6MYJL9GkAUI+7PeTOk69m0xIFW1kjpd1kLduazEoiyVrEwE+7VhyrFrQ
+	 iUy4xUJnQ63u9uz54QPWZkDuZ/oHClyNGxJIUWFU=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251017064327eucas1p29f30c1de202c52dc09548aa9fc6f54b7~vNDrsbPeZ1312513125eucas1p2d;
+	Fri, 17 Oct 2025 06:43:27 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251017064324eusmtip201695dfb1cec04fbd125e4f2c643fd35~vNDpvJ8tS0730207302eusmtip2G;
+	Fri, 17 Oct 2025 06:43:24 +0000 (GMT)
+Message-ID: <1731abfc-c7e4-4ff0-a1b3-7d86c8025866@samsung.com>
+Date: Fri, 17 Oct 2025 08:43:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] slab: Avoid race on slab->obj_exts in alloc_slab_obj_exts
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
- <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Suren Baghdasaryan <surenb@google.com>, Shakeel Butt
- <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Hao Ge <gehao@kylinos.cn>
-References: <20251017045749.3060696-1-hao.ge@linux.dev>
- <aPHcqbQkPV--NCt8@hyeyoo>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3 00/10] pmdomain: samsung: add supoort for Google
+ GS101
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Krzysztof
+	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
+	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+	Kozlowski <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>,
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	stable@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <aPHcqbQkPV--NCt8@hyeyoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CMS-MailID: 20251017064327eucas1p29f30c1de202c52dc09548aa9fc6f54b7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251016155848eucas1p193debe70e38b1694bfb250d748f4aa14
+X-EPHeader: CA
+X-CMS-RootMailID: 20251016155848eucas1p193debe70e38b1694bfb250d748f4aa14
+References: <CGME20251016155848eucas1p193debe70e38b1694bfb250d748f4aa14@eucas1p1.samsung.com>
+	<20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
 
-Hi Harry
-
-
-Thank you for your quick response.
-
-
-On 2025/10/17 14:05, Harry Yoo wrote:
-> On Fri, Oct 17, 2025 at 12:57:49PM +0800, Hao Ge wrote:
->> From: Hao Ge <gehao@kylinos.cn>
->>
->> In the alloc_slab_obj_exts function, there is a race condition
->> between the successful allocation of slab->obj_exts and its
->> setting to OBJEXTS_ALLOC_FAIL due to allocation failure.
->>
->> When two threads are both allocating objects from the same slab,
->> they both end up entering the alloc_slab_obj_exts function because
->> the slab has no obj_exts (allocated yet).
->>
->> And One call succeeds in allocation, but the racing one overwrites
->> our obj_ext with OBJEXTS_ALLOC_FAIL. The threads that successfully
->> allocated will have prepare_slab_obj_exts_hook() return
->> slab_obj_exts(slab) + obj_to_index(s, slab, p), where slab_obj_exts(slab)
->> already sees OBJEXTS_ALLOC_FAIL and thus it returns an offset based
->> on the zero address.
->>
->> And then it will call alloc_tag_add, where the member codetag_ref *ref
->> of obj_exts will be referenced.Thus, a NULL pointer dereference occurs,
->> leading to a panic.
->>
->> In order to avoid that, for the case of allocation failure where
->> OBJEXTS_ALLOC_FAIL is assigned, we use cmpxchg to handle this assignment.
->>
->> Thanks for Vlastimil and Suren's help with debugging.
->>
->> Fixes: f7381b911640 ("slab: mark slab->obj_exts allocation failures unconditionally")
-> I think we should add Cc: stable as well?
-> We need an explicit Cc: stable to backport mm patches to -stable.
-Oh sorry, I missed this.
+On 16.10.2025 17:58, André Draszik wrote:
+> This series adds support for the power domains on Google GS101. It's
+> fairly similar to SoCs already supported by this driver, except that
+> register acces does not work via plain ioremap() / readl() / writel().
+> Instead, the regmap created by the PMU driver must be used (which uses
+> Arm SMCC calls under the hood).
 >
->> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->> ---
->>   mm/slub.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 2e4340c75be2..9e6361796e34 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -2054,7 +2054,7 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
->>   
->>   static inline void mark_failed_objexts_alloc(struct slab *slab)
->>   {
->> -	slab->obj_exts = OBJEXTS_ALLOC_FAIL;
->> +	cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
->>   }
-> A silly question:
+> The DT update to add the new required properties on gs101 will be
+> posted separately.
 >
-> If mark_failed_objexts_alloc() succeeds and a concurrent
-> alloc_slab_obj_exts() loses, should we retry cmpxchg() in
-> alloc_slab_obj_exts()?
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-Great point.
+Works fine on existing Exynos based boards.
 
-We could modify it like this, perhaps?
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-  static inline void mark_failed_objexts_alloc(struct slab *slab)
-  {
-+       unsigned long old_exts = READ_ONCE(slab->obj_exts);
-+       if( old_exts == 0 )
-+               cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
-  }
-
-Do you have any better suggestions on your end?
-
+> ---
+> Changes in v3:
+> - use additionalProperties, not unevaluatedProperties in patch 2
+> - fix path in $id in patch 2 (Rob)
+> - drop comment around 'select' in patch 2 (Rob)
+> - collect tags
+> - Link to v2: https://lore.kernel.org/r/20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org
 >
->> -- 
->> 2.25.1
+> Changes in v2:
+> - Krzysztof:
+>    - move google,gs101-pmu binding into separate file
+>    - mark devm_kstrdup_const() patch as fix
+>    - use bool for need_early_sync_state
+>    - merge patches 8 and 10 from v1 series into one patch
+> - collect tags
+> - Link to v1: https://lore.kernel.org/r/20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org
+>
+> ---
+> André Draszik (10):
+>        dt-bindings: power: samsung: add google,gs101-pd
+>        dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separate binding
+>        dt-bindings: soc: samsung: gs101-pmu: allow power domains as children
+>        pmdomain: samsung: plug potential memleak during probe
+>        pmdomain: samsung: convert to using regmap
+>        pmdomain: samsung: convert to regmap_read_poll_timeout()
+>        pmdomain: samsung: don't hardcode offset for registers to 0 and 4
+>        pmdomain: samsung: selectively handle enforced sync_state
+>        pmdomain: samsung: add support for google,gs101-pd
+>        pmdomain: samsung: use dev_err() instead of pr_err()
+>
+>   .../devicetree/bindings/power/pd-samsung.yaml      |   1 +
+>   .../bindings/soc/google/google,gs101-pmu.yaml      | 106 +++++++++++++++++
+>   .../bindings/soc/samsung/exynos-pmu.yaml           |  20 ----
+>   MAINTAINERS                                        |   1 +
+>   drivers/pmdomain/samsung/exynos-pm-domains.c       | 126 +++++++++++++++------
+>   5 files changed, 200 insertions(+), 54 deletions(-)
+> ---
+> base-commit: 58e817956925fdc12c61f1cb86915b82ae1603c1
+> change-id: 20251001-gs101-pd-d4dc97d70a84
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
