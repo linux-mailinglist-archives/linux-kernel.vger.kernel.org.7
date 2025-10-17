@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-857826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85836BE805C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:18:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CFCBE8019
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02F54502847
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:14:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE4A1A657C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A60631064E;
-	Fri, 17 Oct 2025 10:14:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6468A30F7E4
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52AD31197A;
+	Fri, 17 Oct 2025 10:15:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EAF2D6E40
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760696079; cv=none; b=Zcg/6C5Pfkc7v6N5HP23wZlb20JhdCombOKWNb8EKhuTmr9dxek6xA68XFfZHUqq742T7TSaARcjfUpORAO2ulRjroxYmRSAfHROGsFZyqV0TlUMruQGwm9PvnK8os0Qki2yK7P4GFxFOwYDB6tAVfaM6F8JHQONl3RT4sbcQoQ=
+	t=1760696144; cv=none; b=i5AgM3ptDLOctTZv7VBwnSrrSphTfP+A7xdAYbAEIv7o4tmiuI1kSarT16DKgtjo/MwGa/hNBMMl9o5bm0rM4FcQbLBuHygCV2FNSSGbCJLyz3jyZ9ThUfNUEmRDmIMJ0m0jM6A5rf5tamp8crJLVj9ca0wD2/mF9BGThvuoLts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760696079; c=relaxed/simple;
-	bh=ROA3+5qaWE/8NTHqxvNFP0tarbA48jVEEAai9Pm43go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSb/PfpuyPpL5iU0jfZKwRJKQfuL8cB2hiLUmc5nNJ1h90+D+tNtM1Ae0hDl00v/pCsgkKMk/X7k+mdWjOylMX8Id2R+puFGgCSxnIKh7sWlUw3+a3KiFAltIrzQ+YaiPaK2g4k9ORkrdYxGJo5TTAMpo36HjTUzjLGm3peD+U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 023021595;
-	Fri, 17 Oct 2025 03:14:30 -0700 (PDT)
-Received: from [10.163.39.14] (unknown [10.163.39.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DAB8D3F59E;
-	Fri, 17 Oct 2025 03:14:33 -0700 (PDT)
-Message-ID: <8bb759bc-3fb4-4c15-869a-6cfc83752031@arm.com>
-Date: Fri, 17 Oct 2025 15:44:30 +0530
+	s=arc-20240116; t=1760696144; c=relaxed/simple;
+	bh=JvApeXOv0FX+Ib72v+YP0lpk09mQjzAd5OsdmdYCMgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T64O9FQ6rCxJkVP4mLfKM38WDsy1ZC+jOXNmHlbiSOm68Bbey/zQmp+roTSmlgHeRSvimvGxnKFR6U6r8dFLbVhd0FC7jM2nQFMa75TlIFZixwWQHDShVdhu8+8cFQyiA8l1JGBGosz6DKBOVPLr03S1eJjjXpWlhEpEblZEhJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9hUW-0004KA-Ed; Fri, 17 Oct 2025 12:15:20 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9hUS-0042fz-22;
+	Fri, 17 Oct 2025 12:15:16 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 39238488F55;
+	Fri, 17 Oct 2025 10:15:16 +0000 (UTC)
+Date: Fri, 17 Oct 2025 12:15:15 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Vincent Mailhol <mailhol@kernel.org>, 
+	Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 0/4] can: m_can: Add am62 wakeup support
+Message-ID: <20251017-hospitable-efficient-firefly-c3f32b-mkl@pengutronix.de>
+References: <20251001-topic-mcan-wakeup-source-v6-12-v10-0-4ab508ac5d1e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64/mm: Rename try_pgd_pgtable_alloc_init_mm
-To: Linu Cherian <linu.cherian@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yang Shi <yang@os.amperecomputing.com>
-References: <20251017051437.2836080-1-linu.cherian@arm.com>
- <20251017051437.2836080-3-linu.cherian@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20251017051437.2836080-3-linu.cherian@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fozm3zg4iurpuf5k"
+Content-Disposition: inline
+In-Reply-To: <20251001-topic-mcan-wakeup-source-v6-12-v10-0-4ab508ac5d1e@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 17/10/25 10:44 AM, Linu Cherian wrote:
-> With BUG_ON in pgd_pgtable_alloc_init_mm moved up to higher layer,
-> gfp flags is the only difference between try_pgd_pgtable_alloc_init_mm
-> and pgd_pgtable_alloc_init_mm. Hence rename the "try" version
-> to pgd_pgtable_alloc_init_mm_gfp.
-> 
-> Reviewed-by: Dev Jain <dev.jain@arm.com>
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> Reviewed-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+--fozm3zg4iurpuf5k
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v10 0/4] can: m_can: Add am62 wakeup support
+MIME-Version: 1.0
 
-> ---
-> Changelog:
-> v4:
-> No changes.
-> 
->  arch/arm64/mm/mmu.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 99555ebbab38..f604a7983de3 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -560,7 +560,7 @@ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
->  }
->  
->  static phys_addr_t
-> -try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
-> +pgd_pgtable_alloc_init_mm_gfp(enum pgtable_type pgtable_type, gfp_t gfp)
->  {
->  	return __pgd_pgtable_alloc(&init_mm, gfp, pgtable_type);
->  }
-> @@ -568,7 +568,7 @@ try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
->  static phys_addr_t __maybe_unused
->  pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
->  {
-> -	return __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
-> +	return pgd_pgtable_alloc_init_mm_gfp(pgtable_type, GFP_PGTABLE_KERNEL);
->  }
->  
->  static phys_addr_t
-> @@ -595,7 +595,7 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
->  	pte_t *ptep;
->  	int i;
->  
-> -	pte_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PTE, gfp);
-> +	pte_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PTE, gfp);
->  	if (pte_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	ptep = (pte_t *)phys_to_virt(pte_phys);
-> @@ -640,7 +640,7 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
->  	pmd_t *pmdp;
->  	int i;
->  
-> -	pmd_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PMD, gfp);
-> +	pmd_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PMD, gfp);
->  	if (pmd_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	pmdp = (pmd_t *)phys_to_virt(pmd_phys);
+On 01.10.2025 16:30:18, Markus Schneider-Pargmann (TI.com) wrote:
+> This series adds support for wakeup capabilities to the m_can driver,
+> which is necessary for enabling Partial-IO functionality on am62, am62a,
+> and am62p SoCs. It implements the wake-on-lan interface for m_can
+> devices and handles the pinctrl states needed for wakeup functionality.
 
+Added to linux-can-next.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--fozm3zg4iurpuf5k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyFzAACgkQDHRl3/mQ
+kZwe2AgAnPbCetz/ZW8pmf453IkrJQ9tVaKg6orkrb1BWNSDmwRSwyCI5kBiqbs7
+sycHDvAfjslKfBNKekJRgW/UjWfdcT72QzIrFGFgqivqALwcAMwwcSV8dEnlRBc7
+qk//Vp8BCtuNbGujOBsbFxY8oEFpqdhUb9incywBKFsMHzpFX4Lw93ZpMuv0RF7k
+jhniWakeh1IyA8SWZRCdaMuzykyD+sevWi7+YwzGQ2ajuCn/r2r+k9iROvBwrlw5
+CYvbGfKyBUEvlnV/BW91o8jH3tIkGYC/loWHpt5QSLeRvcnDaMH2Xn1/+uLNoYx/
+sQuxSGk6G9Pzfgrna0pxjUuMpoVxJA==
+=JGCw
+-----END PGP SIGNATURE-----
+
+--fozm3zg4iurpuf5k--
 
