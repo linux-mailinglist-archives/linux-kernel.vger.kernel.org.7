@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-858576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAF3BEB2FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:19:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE634BEB301
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F0C7435E6DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 657C61AE30FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6261D5CE0;
-	Fri, 17 Oct 2025 18:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1873030C617;
+	Fri, 17 Oct 2025 18:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DXnsiiY2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vwq2wUjl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B88D2FFFA0
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739721C84BC;
+	Fri, 17 Oct 2025 18:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760725160; cv=none; b=B7Tp83+DgNUaeIVTt0FHIum60m1VsEgDXUbZSEqMwq5IwxHucZBCR3WD4Lti/P7Raf1GrGs3t2xLLpEOHIeXIFz4/5ToEH4sakEE9A3vkaZR0wDSOq3opjXgeeP2VVTfHYImO6axw7naLigwcWOKA6kFAmajDyCJhyq0+pSZ+c4=
+	t=1760725215; cv=none; b=jX0Fq5lhW8YjRCtSBWo82VkGoyR5MWjvHJvmAG3nsmqA1z7OgYFcd/ki8fgpuNufn2l+OJv3SCvsMH+LDiYgHobuPWuuugpA73U4RDPeHpXEHxKCkI3DdMFYtBnfLFROS+p2lpd6VPC8z/iHsarlRlB4BbbNpjrQjACuK4HO8eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760725160; c=relaxed/simple;
-	bh=0VUJLZ3I4mtjqRs+CwUQzNRrK66FrFJHQjRJGkP6kq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S94/7UHGUVGp0PK5SnJMluKbeaXAg4TxM+PwtCyQ7MU7hItIqiMb3ZodiXmhqim+uIrXvR347LL7QJH5vjGQBmqoX3pGRppaYSq3m+bd0TJG8ZfhSUeFcPH1o4d3HSIl8nm3oX3u476vCJm4LykCSTEuubu32utMdKW1srUjs8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DXnsiiY2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7uUhkATpARUrToc6ttPKITddJF3W/eoSEDtVOLu74zE=; b=DXnsiiY2ZqZt4F3aTCVS3uJdAS
-	dHTDPx8PsNw7c5FK++GnJhoa5mbvnQWBGdot8AGXd+nRGIxJDcy5UjcB0w6BDgux2GLQh8vFIf6Lh
-	uKkw74+adnmzNsIiEIHCZxEDPGlk3xUNoQRiA8uHArZ9W+zeU7BiQcDuQoX4dQgPlxEsAv0aYNBkF
-	4eShhz9Cgv592tvkcWvXpgzYjJLlOHp3NYCRsgCssoddZBAMwhC2lpNdXTCaEN+Ooh6U2qxAHDI7U
-	8hp4fo7wDJDbFp5stTYbJxC3EONQCAM7c3HRSuM0zoDpY7NsGr/aDE9/GE39Shh9UIRkEPtWX8YQL
-	1YYzocCw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9p2k-0000000H8MZ-1531;
-	Fri, 17 Oct 2025 18:19:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0F86230023C; Fri, 17 Oct 2025 20:19:11 +0200 (CEST)
-Date: Fri, 17 Oct 2025 20:19:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	TCMalloc Team <tcmalloc-eng@google.com>
-Subject: Re: [patch 06/19] sched/mmcid: Prevent pointless work in
- mm_update_cpus_allowed()
-Message-ID: <20251017181911.GR1386988@noisy.programming.kicks-ass.net>
-References: <20251015164952.694882104@linutronix.de>
- <20251015172834.694547089@linutronix.de>
- <20251017111223.GD4067720@noisy.programming.kicks-ass.net>
- <87y0p9zo9y.ffs@tglx>
- <20251017175853.GH3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1760725215; c=relaxed/simple;
+	bh=N7DJTkgdFq2cVtwSeDRgEDmegzhxtatOlmC9hFsx/jU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eAoIPjmOeo+XdIHjUOLVotAA50K+gqaq/3gVMTMi0BZ9YZrXSLrlf6Sk+RSvhB7nB6RxA4yPj+OvnlJQLNkxdf8pLdIHTrxcOm6IHMwdhNNgGQMC6FbueCvNtqlqgWMsLXlOsqqY/gGU/3c+/dTg5ligeeBcK/vMDJr8VGSCOlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vwq2wUjl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6BBC4CEE7;
+	Fri, 17 Oct 2025 18:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760725215;
+	bh=N7DJTkgdFq2cVtwSeDRgEDmegzhxtatOlmC9hFsx/jU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Vwq2wUjlPQJ305VOVK2SUdxUZv760Gg2pHU/yKSLZwbT+CW2S4XSTDxOuK8fXDRd4
+	 GsPNGXzw6fKokxPiVFRR1goVQ7VTX6Ah5i9z1BDLQceUOCTibvomTJpiiP6ZLr2du6
+	 S02vW7CQLJ/YgK5IYYldYJghS+ADZYHw4qzM/x4bXsQjDoGj0fM3F58xYTGd6fCHlo
+	 ksPaoup8k/GOIAZOh1+ew70+l/6K2YIuE7q/7mw3go4kCoHUzMGrYYmlwKU5rIQH2N
+	 7qPAXa9d1qjFJ8KwKrDUqRrfYw+lrT+zsecq9IcP5ZhBo/wyMIfCFRKwe9v7th2hUP
+	 CUZYfpRtzAsfA==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 03/10] mm/damon/core: implement DAMOS_QUOTA_NODE_MEMCG_USED_BP
+Date: Fri, 17 Oct 2025 11:20:03 -0700
+Message-ID: <20251017182006.124211-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251009212042.60084-4-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017175853.GH3419281@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 07:58:53PM +0200, Peter Zijlstra wrote:
-> On Fri, Oct 17, 2025 at 02:49:29PM +0200, Thomas Gleixner wrote:
-> > On Fri, Oct 17 2025 at 13:12, Peter Zijlstra wrote:
-> > > On Wed, Oct 15, 2025 at 07:29:34PM +0200, Thomas Gleixner wrote:
-> > >
-> > >> +	if (!mm || READ_ONCE(mm->mm_cid.nr_cpus_allowed) == nr_cpu_ids)
-> > >>  		return;
-> > >
-> > > FWIW this doesn't work on architectures that change their
-> > > cpu_possible_mask around (eg. Power).
-> > 
-> > No. Power does not change it after boot either. Half of the kernel would
-> > explode if that'd be the case.
+On Thu,  9 Oct 2025 14:20:35 -0700 SeongJae Park <sj@kernel.org> wrote:
+
+> Implement the handling of the new DAMOS quota goal metric for per-memcg
+> per-node memory usage, namely DAMOS_QUOTA_NODE_MEMCG_USED_BP.  The
+> metric value is calculated as the sum of active/inactive anon/file pages
+> of the given cgroup for a given NUMA node.
 > 
-> Power very much does changes cpu_possible_mask; it doesn't change
-> nr_cpu_ids. Anyway, the point is that a full mask won't be nr_cpu_ids.
-
-Gah, bad memories, it is cpu_present_mask they change.
-
-> Same is true when you offline a CPU come to think of it.
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/damon/core.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 > 
-> Same is true if the cpumask is sparse.
-> 
-> Anyway, just saying, checking against nr_cpu_ids might not be the best
-> shortcut here.
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index 93848b4c6944..1eacf78aa358 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+[...]
+> @@ -2058,6 +2093,9 @@ static void damos_set_quota_goal_current_value(struct damos_quota_goal *goal)
+>  	case DAMOS_QUOTA_NODE_MEM_FREE_BP:
+>  		goal->current_value = damos_get_node_mem_bp(goal);
+>  		break;
+> +	case DAMOS_QUOTA_NODE_MEMCG_USED_BP:
+> +		goal->current_value = damos_get_node_memcg_used_bp(goal);
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> -- 
+> 2.39.5
 
-Put another way, nr_cpus_allowed == nr_cpu_ids only work when none of
-the masks involved have holes. The moment anything {possible, present,
-online} has holes in, it goes sideways.
+In addition to damos_set_quota_goal_current_value(), this patch should also
+update damos_commit_quota_goal_union(), like below.  I will add that on the
+next spin.
+
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -825,6 +825,10 @@ static void damos_commit_quota_goal_union(
+        case DAMOS_QUOTA_NODE_MEM_FREE_BP:
+                dst->nid = src->nid;
+                break;
++       case DAMOS_QUOTA_NODE_MEMCG_USED_BP:
++               dst->nid = src->nid;
++               dst->memcg_id = src->memcg_id;
++               break;
+        default:
+                break;
+        }
+
+
+Thanks,
+SJ
 
