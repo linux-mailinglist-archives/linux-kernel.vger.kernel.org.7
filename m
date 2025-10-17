@@ -1,157 +1,157 @@
-Return-Path: <linux-kernel+bounces-857180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12997BE61BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:35:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99ABDBE61C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70BD65E06B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:35:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F24004F658F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEF624111D;
-	Fri, 17 Oct 2025 02:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84142459E1;
+	Fri, 17 Oct 2025 02:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwwRWecl"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cy/oem3V"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD620749C
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB112405E7
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760668543; cv=none; b=ZqLZomNL6RV2qv9QPFjasJIZWWtwtUXmduV6USA3bx1NPc3PWlXBR3vA3qAB9ntJ3IkjgwQZc1sowl8tXM30fWzg+F+pUU5ncV7Vifs502p7UPB4VfnlgEF0kBMqDItb7RoGrIYN/O9E57JI0rIzo5pSSTRwFg0cL/SJvOmM9CI=
+	t=1760668560; cv=none; b=tnsaIBJrQ/DqT3wmgrfmCTyhDzj6vV/duFkADdV93wjTL2EasM371Kul7M6oDGLsimV47oXEFjzIX2mPjr/Ud52Ti+z8fuZ6CbToGAXkDH0cx7DugNbHJTx5F6qQCG9y1oipxPkcDgE30PYdC8VDSJWsr4Wb93aStigT7dIre7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760668543; c=relaxed/simple;
-	bh=/Y4NkuCgmGUWUfR+kvpddk3y3FMwBwv5AcFpAd1wGhE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GZDQrGrldwSmlLI6knQ0Ao2UuLvC6LVypR5t+QdqNwMcE9djpJeDGvjElqoslLh++uS1OmnOAoWcXYNwpK70zNbWShRFXt5fziUQ/BqLhP3vFIxOjGCH7P2zHdqnA1tOu58XgM6ULsMUup8i0GTCzZtA5hNfrD24x0RtoKz+kVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwwRWecl; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33ba8d20888so1512224a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760668541; x=1761273341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HR6tnneuwvqkl6QJfT9Tg3nFbSQjiTdIH5de8jfTJRY=;
-        b=kwwRWeclDz/gW7hnz8o4wyEpHi2N7008YBvDuvnWZylzlG+58cEEmlebC5AFNaSdik
-         l+/bJrVqcn6oF8l7st/Lq6GUK4yuIr/XAFFh6sA9PQhjaooXjSYF0cNfaxjnW3Muf5pP
-         DBY8OeeztBwalTZ60W9GHvbyHZhUDDeEuwQTBtmGGHTilVv4AI6TU2cLl02aSsMHn4Lt
-         C3e9IbvEPFrQi4OO5HtKiOt+BKm8oAxAmfq6l+1n2RlvaKCzDzmpwdD5NhkzxoyWSYjr
-         BCGGSiqh05HHYGzhch4L3XgvwJcge+PLZZ2tnJa8y/8kgA5bURADF+bz2JBRt3b1S6Qh
-         c3Aw==
+	s=arc-20240116; t=1760668560; c=relaxed/simple;
+	bh=PoY93QrFluiRf482zySA19jKnEH/DBPNuZphN1G6VcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBTUpeUhZYs/tuHyG8oDS6hOlaSYSp6JruZwJyAyUMfIGCx7gfTabX5g1i2DLgOMryM53KYfUxgPsBiLOtaIiJeu+BZ79dROb4ud9dZ/0Id+3yOvMn9vFph+F3v8zBffoyW1DxOSmGPtJ95ng2hiwJ4VFW9kk/FMQm2Cm4hYH2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cy/oem3V; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLY5l020358
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:35:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=pnta0ElwtxRwPXhkcckaPVCu
+	qE+PUgPrCXZcvvyV8VU=; b=cy/oem3VT/N+gkNmaxhKasRfMmHNHtM0/B1QS2l0
+	zzK3JBNlR/jZ62z3fp6IKF4UseUftnd12jwgPv7qCGN8HEAk3S/5aG0o+YgXBP6D
+	YwPaelPkXozleWIVid3Me5eAOJrBDEzXDup8XeCKzRpEfh1mPzkrbgS4fZ06GEMZ
+	G17dHHS5wQWr3DjJdxx+1JLCmbxEChutOfNm/dTZ6JOKCV1fIMrWHSu22uLcqLOW
+	28l5lwJ8otRaWZb4ecCrvCw+PEIPuiiVGHOGUl/WENIJTqKXjrdquFjhr2NvARQz
+	+si+dT+RzFLwLNDCfotFREn2ziHSukT9eV1dwKHSzZoDEA==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49tqvpky43-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:35:56 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-33ba9047881so2035226a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 19:35:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760668541; x=1761273341;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HR6tnneuwvqkl6QJfT9Tg3nFbSQjiTdIH5de8jfTJRY=;
-        b=ggbY0kuaJqagpL18CWEub5LYFiDfuZFJp/TUPliVe8+euzuzWcV44u+BRtGgNx/w7R
-         M6VVFPNQn/qnY8ynaDCwEEQH9mcNbrv5JL8hsWmpky6dCNuLS+KUEXxTxhn+LkMcMXmd
-         pT75LOj/fPXuWK7qmLpxVsmkPO7sxTHKgeGpsJBR9JkNi51Eht8L2LI5Zt4igvX/UPfp
-         dYSH/z8zs7CgE35Os6z0asIzJ+IWhSpxbKvq/w12s3AKdNqvnmoeSEL7+kFaHyfUFZDn
-         ewhvs+ns7hBWlAB2jUN/OSHjB5twxSCBN/K9HipJ39LpcxTmObEz2OZ3UkC5QLdk8YGr
-         mDwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWdIrlU9apggzlwIPaCITQIqGT7qE+rObu6KUQp+S22iOxKonZhJO6N0nnB+wNfMFV4Hb5Y/VEe8jJaJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ7gxegDOE6rK+0jkPgArKWixr/5lp/9M8gSJhlLli8V6jXnZM
-	d/mzjgIrsTkygiUXK+sw5aX6OCUEEf1Ni6A0CcdlNQQpWSlJ+kXxTN6y
-X-Gm-Gg: ASbGncvcP5Fj6rXcQJJjQACXSygZoFp/BXtmuvkTNIflQWWAG/nlBamnCbgrk+dArdj
-	jqH5uZ8aigognl+sNBSOnhLe3trZu5ytFINgXxAomkZwIxXg4XBkWzfD5krbRWsDOVJL0iYIzez
-	s+Z5Jec9/urjlwI6k08WdyuwkSuFcxY2TwLjEFn18yHsuALpC600l/DVRH2NWBaJsciWb4C64am
-	KMGnWcAh3JCwjhqWitrFkm0J5mLtvqzqS7btgTGq+J5FQXd0QHIm/amRtIK4T3pZJUJdiuB2nGW
-	UH9UqpProssLjlqkrcw9akVYNc0SX/zNnGfIaSR1VfIqG2V5zoNM4853jrszPXK8EeAa2EUrlnv
-	OnujlxfSG5IXj8dGeKbGEAexvvWleBM+F5yaTPn3lzbBlMMB8L5TRVK5UicTw1PFKGrHAORGiv/
-	hTh4OmX1A06CS7YN15288qvzcHxyGas0gxYAEiL6IhPw==
-X-Google-Smtp-Source: AGHT+IFfYDvYZ45pW+WxgEkGA6abEIJy0OcTmO++8gLwaAe73KEPHQyTKPYzy+zuZlTY3UeOAnHp0g==
-X-Received: by 2002:a17:90b:5868:b0:32d:fd14:600b with SMTP id 98e67ed59e1d1-33b9e0a4a30mr7899793a91.7.1760668540774;
-        Thu, 16 Oct 2025 19:35:40 -0700 (PDT)
-Received: from sw.. (220-128-98-63.hinet-ip.hinet.net. [220.128.98.63])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd7b31703sm968972a91.15.2025.10.16.19.35.37
+        d=1e100.net; s=20230601; t=1760668556; x=1761273356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pnta0ElwtxRwPXhkcckaPVCuqE+PUgPrCXZcvvyV8VU=;
+        b=b1TOn+tK6CCg3/N0jvfHCBsT/zVkXddqABW0QgbMaXGA+hUxAJsXX4aNe20UhXSfZ+
+         OjNdJL/Esl3Msec8uRsFTMrniT4wQSOIMF8zhn04+j3bDeTfUfTuh2Y2nlErT0m0+OpI
+         IaWiAsi+v5NKTfJJyM4PkExxLYp4VnHJx67kqWbVp8ca6ESoTG9gPwNzOSIStaqHFU8U
+         /nx12Cbhlbwb2SxKBMFZJiCOppbGmJbsw0hXFUgsq603KccpI0qt5YHBPpG74lsA26SQ
+         zrVsnI+ijlrZdKopObdVRDZjtF9q7i2+EmsjNv/Dyvq7AGANuNeFlV7+oep3WgtOCeTs
+         A/Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8mQSpu13j81yq70AGHm1wpg7Pxhnkk6EptB7Q0f37rWkslNMXnu2Qp/Tcs0D2cxe65cdu8yBPwMftKXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvw5I1V5QN2khGRVveBtePfYjWxBkOQXmOiLE6H0hyUEDZOerM
+	RCt4o/lI1WLPV82NMQdsFQyi9zr/rqR3rDERa4rCe8QW8i2SY+hLqKFs0SYiDUBqLDnw8rib0Qj
+	Eu+yMW/ZIw+tpU48CIQo/cHANM72P1Zda6/5tPBcXtN29nbA7fmWZHoCHlubTK+fdifk=
+X-Gm-Gg: ASbGncu4970vKqmzTtZ459CDlskn9GoajMVnP9sIIQagbcr9RQMoAXo6EJlucCiUAcL
+	uS5G//WeULTpcjKCzuILIfwHAe42As6J5iFxzddhInZ06AyccuLJu/lF6XnYufM7PavtHGYJgnM
+	pkrZGcteT8jX9DZkyRMpNDl93fmscN+Q9Y4DhJbJlDZUlQpB5aFvwOx44oUP7KCwi4jYdsBbAOs
+	EDMIT8EgFgyQJf7pFcK/ddh17HzYVxCs+MLvfuP5jHm/fdjVjW56X8Zl9No+tMubA/nY4bnRdtS
+	S49CtRPgmXxIz2MwMW6++dmpflkQVsLLi35wLYNX4sSixNlzVaZsJFOOSzHx13dhByDtNbhcYvI
+	Hfy3dB+dD6wodyu7apPqw1k+exyLBlezeTCn8gtuc7Xhn7w==
+X-Received: by 2002:a17:90b:3b4f:b0:314:2cd2:595d with SMTP id 98e67ed59e1d1-33bc9bb57a5mr2474415a91.8.1760668555627;
+        Thu, 16 Oct 2025 19:35:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWaqgs8yi7UTt2AbGY82T7BUeI2rUPDLBynvD9H35dUeDbKXFf60ihFhe6zjxdPRmQf21ffQ==
+X-Received: by 2002:a17:90b:3b4f:b0:314:2cd2:595d with SMTP id 98e67ed59e1d1-33bc9bb57a5mr2474387a91.8.1760668555176;
+        Thu, 16 Oct 2025 19:35:55 -0700 (PDT)
+Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd7b3da78sm946297a91.19.2025.10.16.19.35.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 19:35:40 -0700 (PDT)
-From: Szuying Chen <chensiying21@gmail.com>
-X-Google-Original-From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-To: akpm@linux-foundation.org,
-	andriy.shevchenko@linux.intel.com,
-	dan.j.williams@intel.com,
-	gourry@gourry.net,
-	jhubbard@nvidia.com,
-	akinobu.mita@gmail.com,
-	sumanthk@linux.ibm.com,
-	peterz@infradead.org,
-	huang.ying.caritas@gmail.com,
-	linux-kernel@vger.kernel.org
-Cc: Andrew_Su@asmedia.com.tw,
-	Yd_Tseng@asmedia.com.tw,
-	Ed_Huang@asmedia.com.tw,
-	Cindy1_Hsu@asmedia.com.tw,
-	Jesse1_Chang@asmedia.com.tw,
-	Richard_Hsu@asmedia.com.tw,
-	Chloe_Chen@asmedia.com.tw
-Subject: [PATCH] kernel: resourse: Add conditional handling for ACPI device
-Date: Fri, 17 Oct 2025 10:35:31 +0800
-Message-Id: <20251017023531.5616-1-Chloe_Chen@asmedia.com.tw>
-X-Mailer: git-send-email 2.39.2
+        Thu, 16 Oct 2025 19:35:54 -0700 (PDT)
+Date: Thu, 16 Oct 2025 19:35:52 -0700
+From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Subject: Re: [PATCH v2 6/6] phy: qcom: qmp-pcie: add QMP PCIe PHY tables for
+ Kaanapali
+Message-ID: <aPGriPZ3u54RCpVx@hu-qianyu-lv.qualcomm.com>
+References: <20251015-kaanapali-pcie-upstream-v2-0-84fa7ea638a1@oss.qualcomm.com>
+ <20251015-kaanapali-pcie-upstream-v2-6-84fa7ea638a1@oss.qualcomm.com>
+ <k7xjihanbqelhm6pytrugv73pc6bmspn75vy5a2thcqnxkzwhd@bsyp2nqkl5rf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <k7xjihanbqelhm6pytrugv73pc6bmspn75vy5a2thcqnxkzwhd@bsyp2nqkl5rf>
+X-Authority-Analysis: v=2.4 cv=aPD9aL9m c=1 sm=1 tr=0 ts=68f1ab8c cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=SE4x-66S8WGdbeowD1cA:9 a=CjuIK1q_8ugA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDAxNyBTYWx0ZWRfXwUBil5TI48Zo
+ /nw2Fh1dPDAvMztHuPzzcbKxBjMekMhqYuA7jIL7iENAqurXg83tmcKvJDDIfnnYorcyGK+8VRx
+ hwTAwF8I2wGIwT68zsa7eI6hli1LXB4DzJSZ3T7l0pEXvPRyREMPFTzDSLjKZI5dNOz/HXWfaDJ
+ H21QDrVMCpOyTdrk/0qotdaxUptdkyCcUihrs8KsQvJAobwmThQq3e00FKERWIxOHQ1qC+5YKWX
+ cE8TZN7bH37eoBNC4GPSRP1sRjFAQOUnDvh1mcKWS6N2WCn8o0QLNeuIJHw8pT9uKkN+nAxTizt
+ e2m9y/4o15Sr+Rk6ajTlsn+V7J3+B2Jupn6rUzgz/u3EZuJCy0SZ7/ezUo5Ge/jEaLHPvAA7MbG
+ 3MrdP7g4Q/j16OGRxh9azQtJWmEtoA==
+X-Proofpoint-ORIG-GUID: l7cErwg-EsRP0xqHhPp4sA8Gwmfl5w-i
+X-Proofpoint-GUID: l7cErwg-EsRP0xqHhPp4sA8Gwmfl5w-i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510160017
 
-To avoid address conflicts and related errors, specific checks for
-the ACPI device "AMDIF031" should be bypassed.
+On Thu, Oct 16, 2025 at 03:05:15AM +0300, Dmitry Baryshkov wrote:
+> On Wed, Oct 15, 2025 at 03:27:36AM -0700, Qiang Yu wrote:
+> > Add QMP PCIe PHY support for the Kaanapali platform.
+> > 
+> > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> 
+> Who is the actual author of the patch? Do you miss the Co-developed-by
+> tag?
+>
 
-Signed-off-by: Szuying Chen <Chloe_Chen@asmedia.com.tw>
----
- kernel/resource.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+I wrote this patch but Jingyi help submit v1.
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index b9fa2a4ce089..9ffcd5bdb62e 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -177,6 +177,27 @@ static struct resource *alloc_resource(gfp_t flags)
- 	return kzalloc(sizeof(struct resource), flags);
- }
-
-+static int IgnoreResource(struct resource *tmp)
-+{
-+	char *pt, *name_sep;
-+	char *name;
-+
-+	pt = kstrdup(tmp->name, GFP_KERNEL);
-+	name_sep = pt;
-+	if (!name_sep)
-+		goto out;
-+
-+	name = strsep(&name_sep, ":");
-+	if (strcmp(name, "AMDIF031") == 0) {
-+		kfree(pt);
-+		return 1;
-+	}
-+
-+out:
-+	kfree(pt);
-+	return 0;
-+}
-+
- /* Return the conflict entry if you can't request it */
- static struct resource * __request_resource(struct resource *root, struct resource *new)
- {
-@@ -202,6 +223,8 @@ static struct resource * __request_resource(struct resource *root, struct resour
- 		p = &tmp->sibling;
- 		if (tmp->end < start)
- 			continue;
-+		if (IgnoreResource(tmp))
-+			continue;
- 		return tmp;
- 	}
- }
---
-2.39.2
-
+- Qiang Yu
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 194 +++++++++++++++++++++++++++++++
+> >  1 file changed, 194 insertions(+)
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
