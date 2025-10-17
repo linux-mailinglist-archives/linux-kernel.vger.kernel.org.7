@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-857251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9E0BE653B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89912BE6544
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D46E4E7C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411453BCF3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A0C30C60A;
-	Fri, 17 Oct 2025 04:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A019030C37E;
+	Fri, 17 Oct 2025 04:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XmLws7r8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOxblIDt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1AB334689;
-	Fri, 17 Oct 2025 04:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F38334689;
+	Fri, 17 Oct 2025 04:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760676100; cv=none; b=hWNGD/mEGaHGNQsiaDuXIz9rNLBP8O+J5FaXrdxLZNHvz5vdtr0iwAg4tu460BaBY0LzGTOM2U4wARJy4HDa9prkVrleLGJnL0jLgAYlGCJ4NzloQaWAeHl7OxGKUGPXkxsSddOctfIGa+CYxTolO/6gjIzOaZcY6gocmcKFbdw=
+	t=1760676294; cv=none; b=GdQjrSxcP9x+4tU44ZcIgpsPiBHOKi6HxpHbcX5JBeyU8/kBlpwUf7WIZmOA+QkOH9t7CIen8FgmVlMb0Aa22PZ746KVG3INh8K26MTONfWIVYCszhS/M/DkS4EhSNrDZOYF3ofyVjb4WPXpkul7Xl4cNNVEFoZ2oy2aAkTcAVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760676100; c=relaxed/simple;
-	bh=KYWPYbj9AgafJeUcobj6pYXOKDICTH/bM9n4lOeI20M=;
+	s=arc-20240116; t=1760676294; c=relaxed/simple;
+	bh=SSTkBucb3JgRyyCqeNakRbmMDwqm8r6x8qKrd9uPk8w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBNn0hE1rC9LEokT8jRPf1CFrvkTwwQAjimgZhtRO0bEn+7kPXp+9XxTXxzHb+97DDtQcxc1fZqjWIoJfFX04eUhwp4vZZRNwTnB/MJ7P6xGTBYW/voDzZOYRhne/Pjaf6zbwcM11NrZaNdbvbiMZy3jRWu2uIngEhfrYfbmJns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XmLws7r8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51051C4CEE7;
-	Fri, 17 Oct 2025 04:41:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=JEtpjrz38Xbtfxlt3foM18Cq/wwXGP4rUPN9tPaM4ENHF19VAfR1FmYJuyaXlv/barN5ljtMVvP9NMGtNLx1aOFgWaUDw7qSJQ/qQDaTByWKPTjXgNtHHzua7c7aGMDmFyJdG7wpc6b6vpt6NEg4v8ArRixoYYZLNM4lZ29Lh1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOxblIDt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F539C4CEE7;
+	Fri, 17 Oct 2025 04:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760676100;
-	bh=KYWPYbj9AgafJeUcobj6pYXOKDICTH/bM9n4lOeI20M=;
+	s=k20201202; t=1760676293;
+	bh=SSTkBucb3JgRyyCqeNakRbmMDwqm8r6x8qKrd9uPk8w=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XmLws7r8GpULkOh63waqJm7oKgNtCNBRmv5zeAjqQD7UyYE9LoRJAk9O+oxS6Jf+g
-	 nvfqRPDubwxUdR0hSb9AajRCqamgjPStE3uW7bkWarP2f6GEIHo7S1INwzGU1Fz/Vx
-	 KoHtdBnBs/SlYezVMIkvMWBsqYwTxDKUhggD0kAPJ5eWeeGTvaZ1nrfidxW+Zevft5
-	 JeR47JaIVrMnfKg6y1Y19tKpsULsblZNtDo+XD0Pv6zIauXYkUy1S94QFHUwNH+wph
-	 Ex0iX7FGggXaJFhBIgRYmRuJX0baubB0fNyjFRtK2GLB1/3OG/odcvgo5jQg0QGU7n
-	 ciRwD03hOrE6Q==
-Message-ID: <bb299df0-58b9-4a6e-9625-305785d38eb4@kernel.org>
-Date: Fri, 17 Oct 2025 06:41:34 +0200
+	b=NOxblIDtox5CRTYai+aOrI33TDQrS5M1T7e6Ej1NyGLUSzavS5iX9HhRdSKFzIXSA
+	 ItaSyY6YCZ/UPfbBALJS+Cpj7nNMGtxjhq4vqr9SZ26AepewdxPa2SQdhU64Djqfbt
+	 qdM5L2Ji6yhco4eAQyxx4o34tiwNLkloTdFZOgZkCyj0B+aeMgFD6GyZQr0k8DuQUm
+	 8gyUUrqyVmGhfR4vom0uitgiVxHGMjj4vinvbGC4ThlNPMZVP8Oad7OhG2Lmxs3ecR
+	 FcTUVRtID/30F8lgtVE0JbmEoK0V0XqwyW2GT/M6p3oB4Xs6MA0F0dZy80ijrFVGCd
+	 tKeP+eAIHU8SQ==
+Message-ID: <c03cc208-5415-40e3-82fd-fc19d31fbc74@kernel.org>
+Date: Fri, 17 Oct 2025 06:44:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/10] dt-bindings: phy: qcom,qmp-usb: Add Glymur USB
- UNI PHY compatible
-To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
- conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
- dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
- <20251006222002.2182777-3-wesley.cheng@oss.qualcomm.com>
- <f5e4ae02-b8fa-4406-b2e0-3602b07b7e23@kernel.org>
- <00408896-2e25-2dd1-6e6e-2195317ee7fb@oss.qualcomm.com>
- <14bc2a85-0f1d-3834-9b9c-32654348603a@oss.qualcomm.com>
- <387c707e-613d-433b-a76d-16ef10dabc59@kernel.org>
- <2a70f878-269c-1b40-2e8c-77b5851de9a1@oss.qualcomm.com>
- <99ab26d3-eb44-401d-8a7c-1d9efd2a1a10@kernel.org>
- <b2b68430-5127-5eca-6bd8-4af31eb9fbed@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: rockchip: Add support for
+ RV1126B
+To: Finley Xiao <finley.xiao@rock-chips.com>, heiko@sntech.de
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ ulf.hansson@linaro.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ zhangqing@rock-chips.com, sugar.zhang@rock-chips.com
+References: <20251017031425.310946-1-finley.xiao@rock-chips.com>
+ <20251017031425.310946-2-finley.xiao@rock-chips.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,46 +104,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <b2b68430-5127-5eca-6bd8-4af31eb9fbed@oss.qualcomm.com>
+In-Reply-To: <20251017031425.310946-2-finley.xiao@rock-chips.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/10/2025 02:15, Wesley Cheng wrote:
->>> Technically its all handling the same clock branch (CXO), we have the
->>> TCSR clkref register that allows us to gate the CXO to the USB PHY, as
->>
->>
->> Ah, exactly. Then clkref is not a clock. You need rather proper clock
->> hierarchy.
->>
->>> CXO is shared across several HW blocks, so it allows us to properly
->>> powerdown the PHY even though other clients are voting for CXO on.  Then
->>> we obviously have to remove our vote to the overall CXO, so that it can
->>> potentially be shutdown.
->>>
->>> Maybe we can rename it to "clkref" for the CXO handle and
->>> "clkref_switch" for the TCSRCC handle?
->>
->> Naming is better, but it is still not correct. This is not independent
->> clock signal. It is the same clock.
->>
+On 17/10/2025 05:14, Finley Xiao wrote:
+> Add power domain IDs for RV1126B SoC.
+> Add a new compatible because register fields have changed.
 > 
-> Hmmm... I guess that's why I kept the same clkref tag, to denote that 
-> its the same clock, but one is a switch/gate for it.  Would you happen 
-> to have any suggestions you might have that makes it clearer for 
-> everyone to understand?
-To me it looks like:
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> 
 
-|-----|            |-----------|           |------------------|
-|clock|------------|TCSRCC gate|-----------|clkref to this dev|
-|-----|            |-----------|           |------------------|
+Missing ---. Please read how commits and patches are created in
+submitting patches.
 
-So you need proper clock controller for TCSR (TCSR Clock Controller, in
-short TCSRCC, what a surprise!) which will take input, add gate and
-produce clock for this device.
+> Changes in v2:
+> - update the commit message
+> - update the license
+> - rename AISP to AIISP
 
-Nothing non-standard, all Qualcomm SoCs have it, every other platform
-has it in some way.
+because this breaks canonical patch format. See yourself, run checkpatch
+or verify signed-off tools.
 
 
 Best regards,
