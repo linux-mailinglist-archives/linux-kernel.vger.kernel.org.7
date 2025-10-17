@@ -1,215 +1,130 @@
-Return-Path: <linux-kernel+bounces-857750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A241BE7DDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:45:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E72BE7DF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244EA400A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:39:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C61FE5017C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8B12BEC41;
-	Fri, 17 Oct 2025 09:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GAoPDIcC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o/MKD3Bb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cXuafEbT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B7hzEdwA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA86D2D0634;
+	Fri, 17 Oct 2025 09:42:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72112D0634
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052CC1EC01B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760693991; cv=none; b=oXlAlu9n3LBlhtTrovj5k/qvGd1wZ2xcBg9oQPJTVFuniDlusPH/uOvQBkGVynzQYu3AxEshBW07xIwvJ3FDhZdQXE5k5KPR8v1U5x7/eIAEndVj3HYKekvP1wa5qqg9d1ZuHDYsh0diAxNlZQO25bNsfkLQNcqhGhJzrDcrs5o=
+	t=1760694170; cv=none; b=l03by2I94j4VbcONIMxUhjPTT3jyK2b6qHDWTBKgQyy/JbLzyGX9aelnH5HCQwqsVQvf2vTX7Y+lHnneoX06EZRC5378u67u16lChw2fHa825csI3PaiCTWr5xPmiV/qDTfxmy3MpJARnktjMu8DJW4h1bW92pD0qDtY8JGTi/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760693991; c=relaxed/simple;
-	bh=fUk/rh0WLjPqCjEuA4oTo6WbPH0FxjFUt1aN31cxz28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTwHhQKIH76MElTHwGwulUoWdzhbjS/SVRiN0Y2bkEL243ivtefqm8ZH1XmUFdlmxwd+Zv/bTjc+tgPKDv7zW3IDafE6BSeNqTjqcgpKOBsKIKJtL82XsumjR/A1hg6GF8XR1dIjGT1SbTFXCCDVCUUSirG+LCdzp1YbIx1LEgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GAoPDIcC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o/MKD3Bb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cXuafEbT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B7hzEdwA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E3D4C1FBEF;
-	Fri, 17 Oct 2025 09:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760693988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rxsh8YLpkHchYlKNshAf0z+s1yJbhAt1iJY0i+ejDYU=;
-	b=GAoPDIcCV6+vpN2iDFtj/3mvkDJEFoKmHBl0/NbpADziwHIRGKrxk6WZTnuXaIj+tsCpwC
-	WCXA/uELPzNIHv90Xx2h/icyFYRnyiziC6S6WKonTkApJfTGXkOy0KyiI/sn2zYvQGZY1v
-	kIfHSL9p6TANqJwIQ1u4JI3ZEXDeJ98=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760693988;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rxsh8YLpkHchYlKNshAf0z+s1yJbhAt1iJY0i+ejDYU=;
-	b=o/MKD3Bbm3JaNR/TROHgWTnoVERx9RZ98wLS52tZYuyVSfVETzAzXZvjm6WE3qhhQU5x1I
-	KGxxJtV/NbOp0PBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cXuafEbT;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B7hzEdwA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760693987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rxsh8YLpkHchYlKNshAf0z+s1yJbhAt1iJY0i+ejDYU=;
-	b=cXuafEbTAX9/XZgTNg/BOLkg8giGNM+h+2RNoboAK9WVqwtwTkKDotiqMCgJsFmPrNJx1D
-	pFii51bEOdPeD0tWKFfXHNRd3nemr8T5I+8PcA9CEf/B5W25sMe41NKjCdomHjbg1Whx75
-	CKQKbFiNAPSIjyvaduIumr23JuRiRKc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760693987;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rxsh8YLpkHchYlKNshAf0z+s1yJbhAt1iJY0i+ejDYU=;
-	b=B7hzEdwAsrhSUk1zN5WRAOe2DljWClmcfy8BvsMauxdR6uwn4FPAXDkjh8Z99eMZvR/FnP
-	UEqNwwtqu0tR9rDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D078B136C6;
-	Fri, 17 Oct 2025 09:39:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 73ROMeMO8mjeOgAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Fri, 17 Oct 2025 09:39:47 +0000
-Date: Fri, 17 Oct 2025 11:40:41 +0200
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	LTP List <ltp@lists.linux.it>,
-	Andrey Albershteyn <aalbersh@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Petr Vorel <pvorel@suse.cz>,
-	Andrea Cervesato <andrea.cervesato@suse.com>
-Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
- PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
-Message-ID: <aPIPGeWo8gtxVxQX@yuki.lan>
-References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
- <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
+	s=arc-20240116; t=1760694170; c=relaxed/simple;
+	bh=JCqGKaZ0Qqlff5bNu7CzAY3onTeQvwYh5WB8W5/RQOE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ikohVCvvFstnlBEjS66x7SXVtbMNsdJq+PaM8kEYZ+AxYq4W63Fq3NhxMnSOp9KhM5YmN0G2QBziUW8r2wP9Z+C1NfUXgRvOXpaXAmeBp8UHpzYhgmClKvJLJaUJ3Icton43fXeYn1QCW6xgQRmzFPpvtZbd21VDduGcNvZ2Ido=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9gyx-0006k4-2D; Fri, 17 Oct 2025 11:42:43 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9gyw-0042N9-1e;
+	Fri, 17 Oct 2025 11:42:42 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9gyw-000000003VT-1nSR;
+	Fri, 17 Oct 2025 11:42:42 +0200
+Message-ID: <96d66ea4890b5f0d5c0961f8c8fac781a15865b9.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
+ possible
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang
+	 <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Kuninori Morimoto
+	 <kuninori.morimoto.gx@renesas.com>, Krzysztof Kozlowski
+	 <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org, Bartosz
+ Golaszewski <brgl@bgdev.pl>
+Date: Fri, 17 Oct 2025 11:42:42 +0200
+In-Reply-To: <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+	 <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
+	 <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
-X-Rspamd-Queue-Id: E3D4C1FBEF
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,yuki.lan:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi!
-> > ## Test error log
-> > tst_buffers.c:57: TINFO: Test is using guarded buffers
-> > tst_test.c:2021: TINFO: LTP version: 20250930
-> > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
-> > @1760657272 aarch64
-> > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-> > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-> > which might slow the execution
-> > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-> > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
-> > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
-> > info_invalid) expected EINVAL: ENOTTY (25)
+On Do, 2025-10-16 at 15:02 +0200, Geert Uytterhoeven wrote:
+> Hi Wolfram,
+>=20
+> On Thu, 16 Oct 2025 at 14:16, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > Reset core uses the reset_gpio driver for a fallback mechanism. So,
+> > include it always once its dependencies are met to enable the fallback
+> > mechanism whenever possible. This avoids regressions when drivers remov=
+e
+> > open coded solutions in favor of this fallback.
+> >=20
+> > Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > Closes: https://lore.kernel.org/r/87a51um1y1.wl-kuninori.morimoto.gx@re=
+nesas.com
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Thanks for your patch!
+>=20
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -5,6 +5,7 @@ config ARCH_HAS_RESET_CONTROLLER
+> >  menuconfig RESET_CONTROLLER
+> >         bool "Reset Controller Support"
+> >         default y if ARCH_HAS_RESET_CONTROLLER
+> > +       select RESET_GPIO if GPIOLIB
+> >         help
+> >           Generic Reset Controller support.
+> >=20
+>=20
+> Makes sense, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> This does mean RESET_GPIO will never be modular anymore, while it could
+> still work as a module (the reset core creates the platform device,
+> which can be probed later), albeit in a non-intuitive way.
 
-Looking closely this is a different problem.
+Btw, Bartosz (added to Cc:) is reworking reset-gpio into an auxiliary
+device driver.
 
-What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
-size with:
+[1] https://lore.kernel.org/all/20251006-reset-gpios-swnodes-v1-0-6d3325b9a=
+f42@linaro.org/
 
-struct pidfd_info_invalid {
-        uint32_t dummy;
-};
+> BTW, could we run into a circular dependency?
+>=20
+>     config RESET_TI_TPS380X
+>             tristate "TI TPS380x Reset Driver"
+>             select GPIOLIB
+>=20
+> I guess this should be changed from select to depends on?
 
-#define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
+The drivers referencing GPIOLIB seem to be split in the middle between
+select and depends...
 
-
-And we expect to hit:
-
-        if (usize < PIDFD_INFO_SIZE_VER0)
-                return -EINVAL; /* First version, no smaller struct possible */
-
-in fs/pidfs.c
-
-
-And apparently the return value was changed in:
-
-commit 3c17001b21b9f168c957ced9384abe969019b609
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Fri Sep 12 13:52:24 2025 +0200
-
-    pidfs: validate extensible ioctls
-    
-    Validate extensible ioctls stricter than we do now.
-    
-    Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-    Reviewed-by: Jan Kara <jack@suse.cz>
-    Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index edc35522d75c..0a5083b9cce5 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-                 * erronously mistook the file descriptor for a pidfd.
-                 * This is not perfect but will catch most cases.
-                 */
--               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-+               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
-        }
- 
-        return false;
-
-
-So kernel has changed error it returns, if this is a regression or not
-is for kernel developers to decide.
-
--- 
-Cyril Hrubis
-chrubis@suse.cz
+regards
+Philipp
 
