@@ -1,124 +1,148 @@
-Return-Path: <linux-kernel+bounces-858454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4507DBEAD9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:46:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4355BEAE80
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 445315A908F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F19960E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B376E29B8E8;
-	Fri, 17 Oct 2025 16:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976B6298CDE;
+	Fri, 17 Oct 2025 16:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QazJII0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJMcpOPR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A7625BEF8;
-	Fri, 17 Oct 2025 16:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00199137923;
+	Fri, 17 Oct 2025 16:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718624; cv=none; b=FSC52ifn4QiubjDec30TFXKk5mRzID6GGrddxjAhZUzy6dkyndVwabFRGEkCILje6Ac6q0y7Iwn1CR4n5PZzx8z3GfN9JmKPjJU1X9wEjDFcxQgbsvPu5s2eoQdPSPsQqUZxrV18oLFRCm28NxnXJcRms/ImNpj0Y+frHIAcMJo=
+	t=1760718652; cv=none; b=k9FMOEkkapHvZ95irYcleTtx/z1uJrfRYXp5oaBwemJ8o+mX9K2TKRPTf77TEY1IR+/AL9u1k/sB07vSyhVzIz8bKcnZqZQu7wfQoUqsYEDjyf1TfxdQ81Rwv6E3d+VY6Y/rWWXGzY28LyBWIPaP5nMfb+/z0Y/Ttb+lvy0cI6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718624; c=relaxed/simple;
-	bh=0A95aUQlDuwkcx0jSODD8EHq026+LKD+s5SAlpUXlEg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=foAnZ4zRIUaW0IUxLNe5b3+QmKEyNTb1z3ozF31RPMlLZ/vhAHquZ9WgN0lTg9T3u7Cjoy2xP/XOko8M/5bJVzD52JLWNh1BaJ9wFGsNY36OfxyAFc8Rp2c9Fo9v7nA4lhO91ZrCH3T1qCVN/1DPzhW9RUwrNlANDJtAIgdSbLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QazJII0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B149C4CEE7;
-	Fri, 17 Oct 2025 16:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760718623;
-	bh=0A95aUQlDuwkcx0jSODD8EHq026+LKD+s5SAlpUXlEg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QazJII0s7tH8e2F7DgxwngRuHw2DH80TtOZ6Uqj3lAFc+iJ8oZN6PNVihCp48SU0q
-	 gYk0Fr5azA4bIs+Yx9J41/OChxwqzXjL/9wv3vJx1uY9e6z24ihD2L3gjwXIerHp6U
-	 +keBxh984t/6Y99GvpuwwACopO7NRW8C3Lq3ahLMlcFuH/bubjLEyxrudUBMZyJIH3
-	 8ejTNSJrY6rHwCzOT+ZFFeI/EkXRN9JPvpGgGOEhHHg3S0DH2PBsU8nts77BysSQHx
-	 SgHicqQE/P4XiaNgAsaS4Xq3gSvYz3btgM119QfJ7WKtdeK0Nh+BXam/MLiNEm2134
-	 f6QZXMDLSZU/A==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 1/5] mm/damon/core: add damon_target->obsolete for pin-point removal
-Date: Fri, 17 Oct 2025 09:30:19 -0700
-Message-ID: <20251017163021.116255-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAMvvPS5gjn6J1dF1O+Hj3CmVcPTQG__zRwqqdBMoRNtptQeOyg@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1760718652; c=relaxed/simple;
+	bh=xamKdc8Fy5z0epEQXm3Wn0WLPZuqYDYYH6wCE5QSiow=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=nApw5YdNuOPMUVnQUBFvdfv2g5HBWNmCd9W/XpeneNBZx0/vYQKOREG7NCM/uLBC6s7NAOHisiNIWXa7LeoirXmNiuvnaFnbn5y+01wRXLak32POZIoqHaL7SuXpTZB+SG5MbLVzJGWFywungsWtLz7n777aEnLVgFxblQNTJfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJMcpOPR; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760718651; x=1792254651;
+  h=message-id:date:mime-version:from:to:cc:subject:
+   content-transfer-encoding;
+  bh=xamKdc8Fy5z0epEQXm3Wn0WLPZuqYDYYH6wCE5QSiow=;
+  b=CJMcpOPRu4b4lr/HiCh7AxVhq8jyvfAfrYd/0Wx8DkOnMcpWMhKn84jC
+   6eJkHeL2nEPT3I4N1kcjyuTYwCzArgykbPndhgyVk6+vQebDK2XJkY9nq
+   nK3MIvI7KjFE/TuS70SJy8NJgxV0tlyFKfYn6yAoOuzBY8npzfoG2gr7y
+   YZ7xWs3Gp4CUxKNKC17swP/fDlJDq6aI28Rwcdm1G7UYJDoxB+zy4R8da
+   y0cn6kE90BoG6E5MBN0iiHtgJwvvnGA/0jw7UOVwfQwoKNflsrhpZ8NbL
+   upRYvfJSi67ZtJdc0mJlTWQQXQRJ0DD+pyeXs/4bpsF3OdaqmcT/nBoYu
+   g==;
+X-CSE-ConnectionGUID: mTnngB8KRIC+0IrbUm86Ig==
+X-CSE-MsgGUID: p7TpgJ7dRUSFaTO3rb3COA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="63081518"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="63081518"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:30:50 -0700
+X-CSE-ConnectionGUID: IPaMK2wETFqPXTkZGZ7+GQ==
+X-CSE-MsgGUID: j8isfBWFQCafPWqdPO0t6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="181907541"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.48]) ([10.125.108.48])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:30:50 -0700
+Message-ID: <ea01d693-0d81-419c-ae20-6332feadd412@intel.com>
+Date: Fri, 17 Oct 2025 09:30:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>
+Subject: [GIT PULL] Compute Express Link (CXL) Fixes for 6.18-rc2
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On Fri, 17 Oct 2025 09:52:16 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+Hi Linus, please pull from
 
-> Thanks for working on this SJ!
+git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
 
-My pleasure!
+...to receive a small collection of CXL fixes. In addition to some misc fixes
+for the CXL subsystem, a number of fixes for CXL extended linear cache support
+are included to make it functional again.
 
-> 
-> On Thu, Oct 16, 2025 at 4:47 PM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > DAMON's monitoring targets parameters update function,
-> > damon_commit_targets(), is not providing a way to remove a target in the
-> > middle of existing targets list.  Extend the API by adding a field to
-> > struct damon_target.  If the field of a damon_commit_targets() source
-> > target is set, it indicates the matcing target on the existing targets
-> > list is obsolete.  damon_commit_targets() understands that and remove
-> > those from the list, while respecting the index based matching for other
-> > non-obsolete targets.
-> >
-> > Signed-off-by: SeongJae Park <sj@kernel.org>
-> > ---
-> >  include/linux/damon.h |  6 ++++++
-> >  mm/damon/core.c       | 10 +++++++++-
-> >  2 files changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/damon.h b/include/linux/damon.h
-> > index 524dea87cac7..8a7b45b9e40d 100644
-> > --- a/include/linux/damon.h
-> > +++ b/include/linux/damon.h
-> > @@ -92,17 +92,23 @@ struct damon_region {
-> >   * @nr_regions:                Number of monitoring target regions of this target.
-> >   * @regions_list:      Head of the monitoring target regions of this target.
-> >   * @list:              List head for siblings.
-> > + * @obsolete:          Whether the commit destination target is obsolete.
-> >   *
-> >   * Each monitoring context could have multiple targets.  For example, a context
-> >   * for virtual memory address spaces could have multiple target processes.  The
-> >   * @pid should be set for appropriate &struct damon_operations including the
-> >   * virtual address spaces monitoring operations.
-> > + *
-> > + * @obsolte is used only for damon_commit_targets() source targets, to specify
-> > + * the matching destination targets are obsolte.  Read damon_commit_targets()
-> > + * to see how it is handled.
-> >   */
-> Nit: Twice in the above comment you've written "obsolte" instead of "obsolete."
+While 0f6f1982cb28 ("cxl: Set range param for region_res_match_cxl_range() as const")
+is not a fix, it's a small change that addresses a compile warning that arose from the fix
+f4d027921c81 ("cxl: Fix match_region_by_range() to use region_res_match_cxl_range()").
 
-Thank you for catching this, I will definitely fix those on the next spin.
+These have all appeared in -next for a few days with no reported issues.
 
-> 
-> With that fixed
-> Reviewed-by: Bijan Tabatabai <bijan311@gmail.com>
-> for the entire series.
+---
 
-Thank you!
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-Thanks,
-SJ
+are available in the Git repository at:
 
-[...]
+  git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git tags/cxl-fixes-6.18-rc2
+
+for you to fetch changes up to a4bbb493a3247ef32f6191fd8b2a0657139f8e08:
+
+  cxl/trace: Subtract to find an hpa_alias0 in cxl_poison events (2025-10-14 14:48:14 -0700)
+
+----------------------------------------------------------------
+cxl fixes for v6.18-rc2
+
+- Avoid missing port component registers setup due to dport enumeration
+  failure
+- Add check for no entries in cxl_feature_info to address accessing
+  invalid pointer.
+- Use %pa printk format to emit resource_size_t in
+  validate_region_offset()
+
+CXL extended linear cache support fixes:
+- Fix setup of memory resource in cxl_acpi_set_cache_size()
+- Set range param for region_res_match_cxl_range() as const.
+  (Addresses a compile warning for match_region_by_range() fix)
+- Fix match_region_by_range() to use region_res_match_cxl_range()
+- Subtract to find an hpa_alias0 in cxl_poison events to correct
+  the alias math calculation.
+
+----------------------------------------------------------------
+Alison Schofield (2):
+      cxl/region: Use %pa printk format to emit resource_size_t
+      cxl/trace: Subtract to find an hpa_alias0 in cxl_poison events
+
+Dave Jiang (4):
+      cxl/features: Add check for no entries in cxl_feature_info
+      cxl/acpi: Fix setup of memory resource in cxl_acpi_set_cache_size()
+      cxl: Set range param for region_res_match_cxl_range() as const
+      cxl: Fix match_region_by_range() to use region_res_match_cxl_range()
+
+Li Ming (1):
+      cxl/port: Avoid missing port component registers setup
+
+ drivers/cxl/acpi.c          |  2 +-
+ drivers/cxl/core/features.c |  3 +++
+ drivers/cxl/core/port.c     | 26 ++++++++++++++------------
+ drivers/cxl/core/region.c   | 11 ++++-------
+ drivers/cxl/core/trace.h    |  2 +-
+ 5 files changed, 23 insertions(+), 21 deletions(-)
 
