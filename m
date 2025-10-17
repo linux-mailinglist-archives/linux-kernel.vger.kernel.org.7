@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-858369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55671BEA9A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 693D8BEA966
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470ED964022
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD21940FAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B973E275B06;
-	Fri, 17 Oct 2025 16:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHoSw/PZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD5726E717;
-	Fri, 17 Oct 2025 16:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F92242935;
+	Fri, 17 Oct 2025 16:03:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650E119F121
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760716964; cv=none; b=KUNYRsttCcXZwm7O4tWXcLvOzY9F/D1sFzJtPlIvl2WS6xP8dGqfJhATx1LW0Qqf9jdpLC8GSb6t1Zbi/kEAMezlmo2+UKHggiUWi0tb6Tp0dtpLCh7wDHn9Rko+DFhZ0oYH6C2/4nORPYYlGuoE4rI5EOFgKmjqg3r+jT+hCz8=
+	t=1760716982; cv=none; b=rR3C8k3nLU6ou3OXpcb2qbp0EVvuBHrSTFxxafU1N6QV1JgobRJOHCacyItIRKyFdUAp5B9Oye9swx+jT9jESguU7GA0Bi1BiJ4CVk0hoWsDntHQOofMPKdXYtt305WChDawb67laL9s4KRhRWoHzy7U8vp5Kie2YY8zLGBs3wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760716964; c=relaxed/simple;
-	bh=xojrpFlz1LFNv97U0p6wiXyxxqPnBp1q0KSfoha5XPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B154F9uOvNxv5ebOnrypo3h/x7dbeE2iwQmYCmfkS77N6WPSLIzqr7Dkr8hOUmTjTh/BsgYgm7IqMH6WxER/q8r9d+7mgAE8unSsIefqtPg/c+A7q0fWqULtVxgGgc5bzqA/DP6m+YhlaM8rWr2z7FxonOmjkgmcpF7sty3WjTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHoSw/PZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91458C4CEE7;
-	Fri, 17 Oct 2025 16:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760716963;
-	bh=xojrpFlz1LFNv97U0p6wiXyxxqPnBp1q0KSfoha5XPA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LHoSw/PZokmUd2Wc0/IYOV1WttAmj1Ak5JnKJdEt0h3QSQBtfIxDIQgkomsBc5l1n
-	 el08IFWZToc9N5U0hSwBjvv342efsu0yc9Pu/pyZduyk7DUre0EMfyqYvky97Rtbyr
-	 UwxD7s+NEdOCv2uCjfPi0bvGrM/DCp7rLM2p78bga74zGKcvBiuQ2hJgghXCYTpYBt
-	 YhCluy32wjj8x2k1Wgl7X5llmtwOzeZd6aZV0HdwChvfpoNyeERpOl/Yxr5Ldz5WCX
-	 G6O4HPO/muoUrNzAuvYRoJYtif8/ypWig3+XayEUkcGrrvIhW15CsBBBr3vrcDr9RS
-	 SE7KW+1EMRJgA==
-Date: Fri, 17 Oct 2025 17:02:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1760716982; c=relaxed/simple;
+	bh=YpdGhLHMIr9Qg6PpYo9FDKATcWwDWU6bk/o/355PlQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQFA8L+RKW/lZmMYfxrTxsbGnYWoioqvBhsBaRmQicXOW5a0AvHTHeSBJy+7f01EzD9yWlWyqHur9d2gqj83qD7tWGzHDg03hUOAr4/dGScMhvRJszZTlXP6Gw17vHH8PGMpots5+FcdjzRaMoiRocTdnwm3lE3YyAUrARvIYMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEE281595;
+	Fri, 17 Oct 2025 09:02:52 -0700 (PDT)
+Received: from localhost.localdomain (unknown [10.163.68.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9F9F33F59E;
+	Fri, 17 Oct 2025 09:02:56 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: anshuman.khandual@arm.com,
+	wangkefeng.wang@huawei.com,
+	ryan.roberts@arm.com,
+	baohua@kernel.org,
+	pjaroszynski@nvidia.com,
 	linux-arm-kernel@lists.infradead.org,
-	cix-kernel-upstream@cixtech.com
-Subject: Re: [PATCH v4 3/3] arm64: dts: cix: Add pinctrl nodes for sky1
-Message-ID: <20251017-expectant-tingly-95cd6d57962c@spud>
-References: <20251017074646.3344924-1-gary.yang@cixtech.com>
- <20251017074646.3344924-4-gary.yang@cixtech.com>
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [RESEND] [PATCH v2] arm64/mm: Elide TLB flush in certain pte protection transitions
+Date: Fri, 17 Oct 2025 21:32:51 +0530
+Message-Id: <20251017160251.96717-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H64nj9AQoov3hoOl"
-Content-Disposition: inline
-In-Reply-To: <20251017074646.3344924-4-gary.yang@cixtech.com>
+Content-Transfer-Encoding: 8bit
 
+Currently arm64 does an unconditional TLB flush in mprotect(). This is not
+required for some cases, for example, when changing from PROT_NONE to
+PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
+growing into the non-main heaps), and unsetting uffd-wp in a range.
 
---H64nj9AQoov3hoOl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Therefore, implement pte_needs_flush() for arm64, which is already
+implemented by some other arches as well.
 
-On Fri, Oct 17, 2025 at 03:46:46PM +0800, Gary Yang wrote:
-> +#define DS_LEVEL0	2
-> +#define DS_LEVEL1	3
-> +#define DS_LEVEL2	5
-> +#define DS_LEVEL3	6
-> +#define DS_LEVEL4	8
-> +#define DS_LEVEL5	9
-> +#define DS_LEVEL6	11
-> +#define DS_LEVEL7	12
-> +#define DS_LEVEL8	13
-> +#define DS_LEVEL9	14
-> +#define DS_LEVEL10	17
-> +#define DS_LEVEL11	18
-> +#define DS_LEVEL12	20
-> +#define DS_LEVEL13	21
-> +#define DS_LEVEL14	23
-> +#define DS_LEVEL15	24
+Running a userspace program changing permissions back and forth between
+PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
+for the none->rw transition, I get a reduction from 3.2 microseconds to
+2.85 microseconds, giving a 12.3% improvement.
 
-All of these just hide the amperage, please drop them.
+Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+mm-selftests pass. Based on 6.18-rc1.
 
---H64nj9AQoov3hoOl
-Content-Type: application/pgp-signature; name="signature.asc"
+v1->v2:
+ - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
+   pteval_t, return !!diff (Ryan)
 
------BEGIN PGP SIGNATURE-----
+ arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPJonwAKCRB4tDGHoIJi
-0iOeAQDyBaIb9gA3BPzuk30EVWGx8N+rGqa+2Z8gxw7jelG+/QD8DPxps1C5UQBi
-wFmCW5uuw60FSmq8tcTuX3dEPar0jgQ=
-=Z8KD
------END PGP SIGNATURE-----
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index 18a5dc0c9a54..40df783ba09a 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
+ {
+ 	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
+ }
++
++static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newval)
++{
++	ptdesc_t diff = oldval ^ newval;
++
++	/* invalid to valid transition requires no flush */
++	if (!(oldval & PTE_VALID))
++		return false;
++
++	/* Transition in the SW bits requires no flush */
++	diff &= ~PTE_SWBITS_MASK;
++
++	return !!diff;
++}
++
++static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
++{
++	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
++}
++#define pte_needs_flush pte_needs_flush
++
++static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
++{
++	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
++}
++#define huge_pmd_needs_flush huge_pmd_needs_flush
++
+ #endif
+ 
+ #endif
+-- 
+2.30.2
 
---H64nj9AQoov3hoOl--
 
