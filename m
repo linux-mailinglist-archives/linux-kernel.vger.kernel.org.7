@@ -1,217 +1,169 @@
-Return-Path: <linux-kernel+bounces-858324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233F8BEA314
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:50:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE27BEA0BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075054FB3F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C841887C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2949A2745E;
-	Fri, 17 Oct 2025 15:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793CF336EFB;
+	Fri, 17 Oct 2025 15:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yhTknygV"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHR94A4w"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FD8336EDB
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5CE336EDC
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715361; cv=none; b=etZ2JaebFBMuJWax1083EaP2v3k/oHq9RUgZBrYjbsOZmV1fa9H/lapI0d3WzCY0tqghaNooCWngHfcQbRw9HSVj34ucfkB1s7v8rPHCEbZ8byHbc3Je3GljkMD16L5/6lPMGABMjtxmbUevh/SuCGkUt+DnLxB3TmmGGTCBW6c=
+	t=1760715362; cv=none; b=I4Ycb3QP9hqirFA9vJD++QIYB95lOzQ95g1xiirERAp/HVUcaDj6AwwHELXqYo1awuXibfmQImz2RTa9m7WA0Zq2oqefRcMm5JefW5+jjOW2vPL60Fi1zK66EPJESJrEZ6DI7jEwCzeOxvCCy4FRAM85Y2EDYOkH90WfHoCWmjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715361; c=relaxed/simple;
-	bh=TjjLU52Q5d/rZNqi2NManBkuFZiSVeO6kuhlVXPTWTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgR1VGCSfipZ2WyYAinHtKNtQ0v2uCpPY0AIOnolecIoTwSwvFUIe/eHJASkPufXNfpwwAJG/Vi1F/iCfdF7fSC3fROL7FaS3ZJDZdDS0gTP5TBwJ5aVWDsclOO7GPR4KPTtCUuU4vRmkm0yl9aiZrUwTE/DtQoAoxQbBLdDT0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yhTknygV; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7835321bc98so2018069b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:35:59 -0700 (PDT)
+	s=arc-20240116; t=1760715362; c=relaxed/simple;
+	bh=K2qsVubYn8CjPdJ5wxrhOx1EatQUzPg4cvi5piJsRvg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EVDU65RGPV76NsQ0iG402KfYnI8DmU7HBxlM1vVpJ7VbDjXksyLfYxu8yK4xpzxQtgicr3MDRq/QTfZGSNJHh5irrCvOvlNRuJoSv2nbNuvNlWy13vTy4PCPpEoo05RY3dSNQhh6k+vmCNSFOWRbW+q4kJD4wr7Unr9CI92TnwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHR94A4w; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4270a3464bcso261405f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760715358; x=1761320158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0WEmOLvT/CbsBcdqkr/ZZZBMBFXH3ro5/9WyE8yUpjQ=;
-        b=yhTknygV4Koe21N3K/uypVYA5rk3uPDuFNCKPlvlsju2XXO2gCQpucVUl5rHPKagEp
-         V1xHGhuQcxRAObIUUa07H1+OHmy1BcBHiOnIVVjkAACHl0EASr991oP4lAR1Fa+nPl2X
-         Kw6SvBi2CVOVizX+UscRs+hosEHc+3fEigeiNJQorIBq5/Ox4A7gwMNiNJ15XNisEM2t
-         k3P3WkhvedephgwoNbQjRtxGjkj4Qjq9Ufexv9N8cEHjRV7yhBtYsDBQzs1x4IHoL+pn
-         KqBui2tyrfRO7U7e1Vr/mt2PIThbrfYE1NbeN8QAxBGubp0UmPRfNAmOeACclwtvw/CH
-         DkcQ==
+        d=gmail.com; s=20230601; t=1760715357; x=1761320157; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jXEmmH8KoIy+3oXIIcxfKQybPt2IeFDnPMZ3gpQBr8I=;
+        b=OHR94A4wi7UuKhVMy2p0jHbB3azRh7iDoA0SAMo0JnGyTVamlfctEEb5IM9J8yLEGx
+         zz2xkVhJ5cyQOfGqNyWJVmeUDdclYaxJoIUrqIUgG2knhD3PhO/3MwW/wnowhHVESIbB
+         TKncrp0Di3lZZOokMU4xXnlJBeNK7All53/UD6H6QetaYzz76dCL9Lx9RNyIVnSEZLGD
+         4baLTmyQt0KplV3SpaAtgqnK/6rrz4IJwTeaaVOHCrynn5xSejre7O4Uj+OxAe+orFE3
+         czCRg3zFr/sMoz/HwIc622Gqixe4Xee4tJWJVrBYjV7rPlpeVRaRR0coA0uO5y+mrdIx
+         TP4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760715358; x=1761320158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0WEmOLvT/CbsBcdqkr/ZZZBMBFXH3ro5/9WyE8yUpjQ=;
-        b=erGItPRaa69YNB2PdzQmDf08H8rkOS4te4i0HFmM6K4wfhfe0LxVhwfsjyCfP18eqK
-         +PUwlLimGToM2F5fzcAhuUrN6u799ohhYod/YuLPunLFiWaWroT90TEfHMQpDn8jj/NA
-         GIYgmUR+8viuOyD+WuQHCgZMwGDqk+QEaWKPAEOiuq/A0bh1NXPDc3yy77V++LfMr52q
-         v8YE01vGZ9peNhF0cLGt27GSMSUItLeYKdBMWLbkxdllbqx1PnA0ov9ox2XAT2GuYQQc
-         y3c6Se/jwBENj/ZyySWH9VoR9cnF2C5vG3CQ94RpLVs1gYAa9ZE2wCkOpuYJjQEi6RsS
-         1vCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQnQjw06l5Mam3dp3rv/mABi04qZ8PmkFCC3c6/FKEa/ILSM5URPYpaRQ7e9Dw62vn++jNv5q7tiLfmu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmBVIu+oY9ZScfO/zMRwMUbIG2ajT0VQqPugAqZQ3xXne/XKEb
-	2CXCTbXaRGzpl5dZYSLyCyImd/GfnbSIHMXTsiZw0wW9XJkLlvIbIZ8TgITdEh1BUhP9uWJG1Gp
-	YYGkhc5o=
-X-Gm-Gg: ASbGncvU/j2M7gTV+8K1VmZuxMxvapDER6ZhfBowMPwJBuB+yWlkIB5hilgzkaN4IjR
-	d/Jtw5Zo1PzyeCakXNKHc1iretodFr86rlSGlJfseFE9n4CRVQKfrzIB7683IDYxlYHX5tHG9Zj
-	B/LvocE+VVPV9ayi3VvbCKTH79sDRPjftNsaVoZRgyv1B84EM9iLJQ05cnho2zV00pZerspUoeg
-	iWNBVMyiD8N+IVql/gqDHy7FYNSnQ71McqPWBaQvnNUZgHcrGU5sIoFFkZIRAaN/XaXhGkIF0Ps
-	0E2WFCN894spxaQIMsTEZ7GMcJKHzM2k2eufFm6RkzDsj5S2igbimvjDFCCXazf1FyJneqAIoMW
-	L6zuKNjog9gV6p2KkqQsu4gTMpFxMA2gwVP1aeVRJCu2FMpoNQ0HVROABNEvE3UTkScZ6cNK1F0
-	AwiZJ4XSlK/NFY2A==
-X-Google-Smtp-Source: AGHT+IGedO9tFL/EpWFPArjedfoWI3S0dMZGzYNYhP+QQWKivTjQyK5CIRcouFVSwQFSWwwBtOsaNA==
-X-Received: by 2002:a05:6a21:3283:b0:2f6:ec69:d448 with SMTP id adf61e73a8af0-334a860700emr5515770637.31.1760715358374;
-        Fri, 17 Oct 2025 08:35:58 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:a70a:89e5:9a8a:630f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd79dda6fsm3329615a91.10.2025.10.17.08.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1760715357; x=1761320157;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jXEmmH8KoIy+3oXIIcxfKQybPt2IeFDnPMZ3gpQBr8I=;
+        b=JZrnfMUZ0z8HZJ54kCyBaiuqjPhK7qdMcyzVW2i0+nsN9HOGUdSnlR9wAEWb4XXiED
+         roK6RxmbR88iZN98OSZyHV7fXDPpL9u5j8jqFpTQ2o4Ad8+38UbiIZw3KmjYpcYhrysC
+         GorQlvy1AyGgiSdVcTjQECnuhQpGowkr8HbYcNcimzECucdgZGhFIxBdWArD6B3f+qJh
+         HcHqf9g5d8XlyiTFf02jIh45gXgVi0SWE8QHk5LoX/7JTNPtBGm6/z03YqS0fvgA5fG+
+         cKEswLzQY8haimkXF4zvStezIvIHFIlDgD+uUShmx1tKHsiBwQlNHfcf/z3JjkAYA8BC
+         7r6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7kvQMLxojcn4Dtmj3LBS2qb+JQoEUBHpLXqeHOYKoVaYWJsHb6dwpBEDN1F2ACPbiYNbzTR1jjs6kXvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZvM2ztuV7WeaKsu+I/xOyc7GN9cABPemHGEsw2ul2H+IeIdCp
+	dBKKCdJLfOvjriSFJ12yTuJnW19mouhA1ZCbq9szkaHPE01XJf8h9nmH
+X-Gm-Gg: ASbGncvJ/EAJ0C/MEepqvDe/g/m+1TuoKKcR1PMJxxmipWnx+iCeDcnaNpTxwSk7dfw
+	ftoGGivEEPOt8ow6topw+KdhjYa9/OxgfanVJOUYwfdYKJ50UT4EgvyTzCWq+bgNNPjh6O/QFUL
+	fGg1l/35G8ql6QqUIpCh0nx1zhfw33wsJNoKnEiY12ANMbcbyiMzSjmfWH4MKnZc1egTP3gVbTY
+	v7eRCgbvdrqqLwt+uAN/Th8xeNctGcARe4Th4FRWG76QR+WpvvNJc7nMjmKj+PETjGiNsMX6IGO
+	eSv+p/OS3PuNrHNOVJiZdtSX/3TuyUcDpqGo6Bm+XHXZHLntv2skYR1NueycfV0QgZwgmcL/vBl
+	VSSZZN8UIMIemWuKYzHZRJbZ81LdO6Ibk7MzIs1r6sO9L6fyWPPMIPEO4e3eUba4EWxDG9bhNeJ
+	eSKowf/Q2oMwjWu5xcUw==
+X-Google-Smtp-Source: AGHT+IFyT1Ik0zXeCGBE2QwHTLZmpbbOjcSgg1Wptb8qYhrZIBd25XN2NSqPB/D9VelyoqlG3l71LA==
+X-Received: by 2002:a05:600c:820b:b0:46e:6d5f:f59 with SMTP id 5b1f17b1804b1-47117878465mr37367015e9.4.1760715357144;
         Fri, 17 Oct 2025 08:35:57 -0700 (PDT)
-Date: Fri, 17 Oct 2025 09:35:55 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] remoteproc: core: full attach detach during recovery
-Message-ID: <aPJiW2ROdaUuCiwi@p14s>
-References: <20251002153343.766352-1-tanmay.shah@amd.com>
- <aPELVfhkk0qDXqa9@p14s>
- <9e22a020-937b-4965-b7f8-140853ad7d37@amd.com>
+Received: from giga-mm.home ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe69sm42472598f8f.32.2025.10.17.08.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 08:35:56 -0700 (PDT)
+Message-ID: <336e169019bd3eadc475c981abef3db07149a5db.camel@gmail.com>
+Subject: Re: [PATCH 1/3] ASoC: cs4271: Fix cs4271 I2C and SPI drivers
+ automatic module loading
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald	
+ <rf@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	 <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela	
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Nikita Shubin	
+ <nikita.shubin@maquefel.me>, Axel Lin <axel.lin@ingics.com>, Brian Austin	
+ <brian.austin@cirrus.com>, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Date: Fri, 17 Oct 2025 17:35:56 +0200
+In-Reply-To: <20251017171024.5a16da34@bootlin.com>
+References: <20251016130340.1442090-1-herve.codina@bootlin.com>
+		<20251016130340.1442090-2-herve.codina@bootlin.com>
+		<60fbaaef249e6f5af602fe4087eab31cd70905de.camel@gmail.com>
+		<20251017083232.31e53478@bootlin.com>
+		<d6bd466a5d11b016183db0ac3c25185fad3036fc.camel@gmail.com>
+	 <20251017171024.5a16da34@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e22a020-937b-4965-b7f8-140853ad7d37@amd.com>
 
-On Thu, Oct 16, 2025 at 11:12:26AM -0500, Tanmay Shah wrote:
-> 
-> Hello,
-> 
-> Please find my comments below:
-> 
-> On 10/16/25 10:12 AM, Mathieu Poirier wrote:
-> > Good morning,
-> > 
-> > On Thu, Oct 02, 2025 at 08:33:46AM -0700, Tanmay Shah wrote:
-> > > Current recovery operation does only virtio device reset, but do not
-> > > free and re-allocate all the resources. As third-party is booting the
-> > > remote processor during attach-detach, it is better to free and
-> > > re-allocate resoruces as resource table state might be unknown to linux
-> > > when remote processor boots and reports crash.
-> > 
-> > 1) When referring to "third-party", should I assume boot loader?
-> 
-> Here, "third-party" could be a bootloader or another core in a heterogeneous
-> system. In my-case it is a platform management controller.
+Hi Herve,
 
-Ok
+On Fri, 2025-10-17 at 17:10 +0200, Herve Codina wrote:
+> > > > > In order to have the I2C or the SPI module loaded automatically, =
+move
+> > > > > the MODULE_DEVICE_TABLE(of, ...) the core to I2C and SPI parts.
+> > > > > Also move cs4271_dt_ids itself from the core part to I2C and SPI =
+parts
+> > > > > as both the call to MODULE_DEVICE_TABLE(of, ...) and the cs4271_d=
+t_ids
+> > > > > table itself need to be in the same file.=C2=A0=C2=A0=C2=A0=20
+> > > >=20
+> > > > I'm a bit confused by this change.
+> > > > What do you have in SYSFS "uevent" entry for the real device?=C2=A0=
+=20
+> > >=20
+> > > Here is my uevent content:
+> > > --- 8<---
+> > > # cat /sys/bus/i2c/devices/3-0010/uevent=20
+> > > DRIVER=3Dcs4271
+> > > OF_NAME=3Dcs4271
+> > > OF_FULLNAME=3D/i2c@ff130000/cs4271@10
+> > > OF_COMPATIBLE_0=3Dcirrus,cs4271
+> > > OF_COMPATIBLE_N=3D1
+> > > MODALIAS=3Dof:Ncs4271T(null)Ccirrus,cs4271
+> > > #=20
+> > > --- 8< ---=C2=A0=20
+> >=20
+> > that's what I get with SPI-connected CS4271, and this is actually what =
+I'd
+> > expect (linux-next as of 2433b8476165):
+> >=20
+> > # cat /sys/bus/spi/devices/spi0.0/uevent
+> > DRIVER=3Dcs4271
+> > OF_NAME=3Dcodec
+> > OF_FULLNAME=3D/soc/spi@808a0000/codec@0
+> > OF_COMPATIBLE_0=3Dcirrus,cs4271
+> > OF_COMPATIBLE_N=3D1
+> > MODALIAS=3Dspi:cs4271
+>=20
+> So, this is without my patch applied.
 
-> 
-> 
-> > 2) Function rproc_attach_recovery() calls __rproc_detach(), which in turn calls
-> > rproc_reset_rsc_table_on_detach().  That function deals explicitly with the
-> > resource table.
-> 
-> As per my understanding, rproc_reset_rsc_table_on_detach() will setup clean
-> resource table, that sets vring addresses to 0xffffffff. Please let me know
-> if this understanding is not correct.
-> 
-> If we do not, call rproc_attach(), then correct vring addresses are not
-> setup in the resource table for next attach to work. Because,
-> rproc_handle_resources() and rproc_alloc_registered_carveouts() are not
-> called as part __rproc_attach().
+this is the modalias of the device, it doesn't depend on your patch series.
 
-Your assessment is correct.  When the clean_table was introduced, it was to
-address the detach->attach scenario.  At that time the only recovery we
-supported was to stop and start again, which did not involved the clean_table.
-Re-attaching on crash was introduced later in a scenario that may not have
-included a resource table.
+I'd say that modalias for SPI device is correct but commit c973b8a7dc50
+lacks MODULE_DEVICE_TABLE(spi, ...) in the driver.
 
-> 
-> > 3) The code in this patch mixes __rproc_detach() with rproc_attach(), something
-> > that is likely not a good idea.  We either do __rproc_detach/__rproc_attach or
-> > rproc_detach/rproc_attach but I'd like to avoid the mix-and-match to keep the
-> > amount of possible states to a minimum.
-> > 
-> 
-> I agree to this. I can find a way to call rproc_detach() and rproc_attach()
-> sequentially, instead of __rproc_detach() and rproc_attach() calls. I might
-> have to remove rproc_trigger_attach_recovery completely, but that is
-> implementation details. We can work it out later, once we agree to the
-> current problem & solution.
-> 
+I'd argue that I2C modalias is correct in the driver:
 
-Humm... You might just be able to call rproc_detach/rproc_attach from
-rproc_attach_recovery() if you enhance rproc_detach to be called in a CRASHED
-context [1].  Let's see what you find when trying this on real HW.
+# modinfo snd-soc-cs4271-i2c
+...
+alias:          i2c:cs4271
 
-[1]. https://elixir.bootlin.com/linux/v6.17.1/source/drivers/remoteproc/remoteproc_core.c#L2065
+But I still have to understand what happened to I2C core.
 
+> I don't have any CS4271 connected on SPI bus to perform the same test
+> with my patch applied.
 
-> > If I understand correctly, the main motivation for this patch is the management
-> > of the resource table.  But as noted in (2), this should be taken care of.  Am I
-> > missing some information?
-> > 
-> 
-> The main motivation is to make the attach operation works during
-> attach_recovery(). The __rproc_detach() works as expected, but attach
-> doesn't work. After recovery, I am not able to strat RPMsg communication.
-> 
-> Please let me know if I am missing something.
-> 
-> Thanks,
-> Tanmay
-> 
-> > Thanks,
-> > Mathieu
-> > 
-> > > 
-> > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> > > ---
-> > > 
-> > > Note: RFC patch for design discussion. Please do not merge.
-> > > 
-> > >   drivers/remoteproc/remoteproc_core.c | 15 ++++++++++++++-
-> > >   1 file changed, 14 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index 825672100528..4971508bc5b2 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -1786,7 +1786,20 @@ static int rproc_attach_recovery(struct rproc *rproc)
-> > >   	if (ret)
-> > >   		return ret;
-> > > -	return __rproc_attach(rproc);
-> > > +	/* clean up all acquired resources */
-> > > +	rproc_resource_cleanup(rproc);
-> > > +
-> > > +	/* release HW resources if needed */
-> > > +	rproc_unprepare_device(rproc);
-> > > +
-> > > +	rproc_disable_iommu(rproc);
-> > > +
-> > > +	/* Free the copy of the resource table */
-> > > +	kfree(rproc->cached_table);
-> > > +	rproc->cached_table = NULL;
-> > > +	rproc->table_ptr = NULL;
-> > > +
-> > > +	return rproc_attach(rproc);
-> > >   }
-> > >   static int rproc_boot_recovery(struct rproc *rproc)
-> > > 
-> > > base-commit: 56d030ea3330ab737fe6c05f89d52f56208b07ac
-> > > -- 
-> > > 2.34.1
-> > > 
-> 
+--=20
+Alexander Sverdlin.
 
