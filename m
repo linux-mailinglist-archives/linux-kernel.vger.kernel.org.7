@@ -1,127 +1,152 @@
-Return-Path: <linux-kernel+bounces-858144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA745BE91EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:14:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E90BE91ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B691AA30BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:14:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A85622AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1941A32C958;
-	Fri, 17 Oct 2025 14:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC5732C933;
+	Fri, 17 Oct 2025 14:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BTpqMGqw"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Arpm9A9O"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE9C32C940
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F88A32C924;
+	Fri, 17 Oct 2025 14:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760710396; cv=none; b=VKg10vkGVaEq3O/0W5iTRXd8B/OqvJZTrKCu//yXwN4loaZcKFKz4L7T/HPW5Vvh226GWDZMl/oPObjlpsb7w7pXGjAZOcaqwwYcsrBr1lxpBxpPp3uTa3WfzmhQKvgwV8pDhW5l5igtjziBzqXwvc2D/ws05d2sNwNB6AUMzyU=
+	t=1760710456; cv=none; b=dcXNXUp04YIlueYkiEbKeYIms+FF6e/ltAYNa6C1UGcItXviEGHpfnqFmh2LpOEBONPRy2WhFRrkU6Er/SHny0aUSw7EGKJwSBj0cxR+CXyE+CQxPfuL7uwNMmsIUwPIQmNKj8NwKUfG5MZoaBg+hthhucBGEX6WTGsif90PHq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760710396; c=relaxed/simple;
-	bh=gwvpwm1LLRYUen6mXbmoaSqbBuwMxLRMvKkgD974mLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XLOfxyqphVTyxV+uuYOHzamMEkOLJoiDvHEPViCz9hjGgH6irAMAuMTR/B9gjzGL6WjYpS6yv+FfyVpAvmgwQcMLcWnawD4m5Kv6GWfepPdky5X7qlD6IpWvbV2CDFZvFPtuhepZWx8P/iAMlsmr8C48n8dWNyQ6892ZqX/FzJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=BTpqMGqw; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7c2816c0495so444059a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1760710394; x=1761315194; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCa1krvPa6thrRIUKnGByTp8gWYsBMbtC33XqRP3axo=;
-        b=BTpqMGqwxaZ6CDDNfBuKcbk+uRF49QVIjV97gQfT2fmPpf0/l5CwtOkfTEbllOz+cB
-         2Gl7waz6z+QszVqJcVt2PyWTQCzLeVklgf18bfsWeDrsluREtEDgk1/Mk//IcOrjVWVz
-         TJlAV8mViakZlv4u50SAK0UjJ89HQFwFW01Kugn3w+AYSp+CulJgvDYnICMor+EwZ3te
-         DxR1uBfDMckXKcRhet6NWTMcWztztcLW+WTdAr+dfxt0f3BeL7l405pGNm7PV97ATEZz
-         +jslxSlqz9gAzPjiu0yLRmy19Ca1ucsFvCE+QuEpKVRQ0HPiY78lRGVTTxry1+kmz/sT
-         xhIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760710394; x=1761315194;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OCa1krvPa6thrRIUKnGByTp8gWYsBMbtC33XqRP3axo=;
-        b=kiAqgz7N4IZH1ZmUXly1d0WeUE1NtFUxqGoNbRYEJsFaDWA8x8+E33g4nstdrxG4yk
-         SaueBbhb7j91QpvSqEMIWXbnZ9r/GS8CynZfi8XAroyZB5O5qoKtYndaFwP8dmiDylLe
-         j7EcA7yw7JOf+Njcbul2Hyutxk6s4sn0mUd+qVI9hv7MJi4zlhywHAEsTn3e34dcL3FL
-         jT29TETxeuoEAPm1W97Br/TRHRN7wMUoMUw6uSl8j31Im+fPdtTrJdaO+gN5CId4IPkF
-         iftkBsEcg5or6OOCEpoDygo4fkSQNModtKt1sjLmQtAThK2MnkXcEFhGs2GjBTosPMY4
-         uTAA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8XUc1Y0qwnLAUMoEtY5ggxLYVZyOxbpBnkxx6RCL7NlFrSNbDRqmxLenMS18Fg7MR/PlzLkIvDyJ6DKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU0lh54hPmMAMFZbkNK8zsUC3qWOKShmYJGwGyMhpsApTnYHh0
-	Dinhlc4l1BQhO0VEUQuBO3mmV68mCOnCUrZ764IulH5rnGwGry0RyL44SIv/37IMiuw=
-X-Gm-Gg: ASbGnct3LzmTCBjPj1ashhUThRH2U9pGLpCRlIQsSFJ8O5lSfxU6brCns9G21jAZlBH
-	sBnYwbyKv979zW2NrlCsgov/ANJDS2JjDLKkDxaPQSBAqoAOvUj2TiWl9L6Vj/+szui3tN0E3zB
-	DdcHekd5T/HiYRDgyUVZzh0Ek7vhXOHnJq10LrAFNKnWdHN/qC964owa3pJmue/2e6tDvjM5tIR
-	XvgNbGUPuINvgdRbN4udD2LwcN+Ry2VRhMaeQl5FF/SuOKQ87vGOUphyElgDpVzc7ydubc7+mmg
-	O2v24N8OIU0/hhi7FFJcuYuXklfWwkbg1wiuFgNQJ6PsoZXmiNBpI8YIqfXJaZt2Xw9N3RvIttT
-	a01DFToQegLTnGKoFfYZQEaR6Q6SEAuR3iF4YgQ2gDhDnAZJXPk0w7VohPww9
-X-Google-Smtp-Source: AGHT+IFpxOdk6Ni6feiUl7Z+NLPVA5NFJEIRLr3ye6HX+wgeHy3UR1Agbev9kB5TSYS6S/8PSXPR5Q==
-X-Received: by 2002:a05:6830:610b:b0:79e:5341:392c with SMTP id 46e09a7af769-7c27ca2832amr1811887a34.7.1760710393815;
-        Fri, 17 Oct 2025 07:13:13 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f90687e8sm7323680a34.15.2025.10.17.07.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 07:13:13 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v9lCi-00000001JNh-0d7r;
-	Fri, 17 Oct 2025 11:13:12 -0300
-Date: Fri, 17 Oct 2025 11:13:12 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, joro@8bytes.org, praan@google.com
-Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
-Message-ID: <20251017141312.GP3938986@ziepe.ca>
-References: <20250929155001.3287719-1-smostafa@google.com>
- <20250929155001.3287719-5-smostafa@google.com>
- <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
- <aO9vI1aEhnyZx1PL@google.com>
- <b48193a4-a37b-41ba-b4ba-8b5c67d812bd@arm.com>
- <20251015151002.GH3938986@ziepe.ca>
- <73a1d5d0-8077-450c-a38f-c1b027088258@arm.com>
- <20251016172524.GN3938986@ziepe.ca>
- <aPI-8YfqC83QlltH@google.com>
+	s=arc-20240116; t=1760710456; c=relaxed/simple;
+	bh=QYQqRTcp8A/geB7A9/E0yxzmXaEU4W1lxA8D4eW1+oA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QfhVNCcDxhEGfsnExW+8oY+3epCzQT6yZ3XCHJQl2dGyn03Hb2mTQyHX3PktkCrmHvQG0Of+HPNmK4h/TbIsOeRfDW8ZVqqDZN92feeGhYjKQgR007MxfzMGePqStiJg88ARyJDR9g4udHdSO8IYcrxpMRBc5bDxR8iWJZXRCX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Arpm9A9O; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 800384E41144;
+	Fri, 17 Oct 2025 14:14:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4CBB6606DB;
+	Fri, 17 Oct 2025 14:14:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B6758102F235A;
+	Fri, 17 Oct 2025 16:13:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760710445; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=MuAoz+V2YdChsKDB39UbimB2KEWOPHvxJjC4UXDWnig=;
+	b=Arpm9A9OBvgEKac+NiV1ZGQn15/YYbia7KI4e1jFMpKpOU0TTJdEpbNdI2hnjdUJVhT7yb
+	PvsJv9qGJn5HA4Ehfp7rW7Q1wuse5EcZSRA9e1Lvci6rPhqkJ8kVH14PmNNdhjmGIFZH8n
+	WidX9RUsOVCBymMSMx7+GQgq/OTQPbDIvzhDN+U9xFIwkiE55WOxYmRajK/LiygrEyTRhh
+	5I8n0StC23Z5eQ47cw6OEqmKsZ+0lcxW3pXxbGCHR0EEIT6xtJnskYuVbbERq9CgddhxIu
+	aqnRPdydrgnPjN2mGcPwHOSaDeJQ864Aq0AWwetufhuOmzgViXxiqIsNv/xAWQ==
+Message-ID: <3e268abd-620c-470b-ba3b-222a0c39cac5@bootlin.com>
+Date: Fri, 17 Oct 2025 16:13:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPI-8YfqC83QlltH@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 1/5] ethtool: introduce core UAPI and driver
+ API for PHY MSE diagnostics
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
+ Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Kory Maincent <kory.maincent@bootlin.com>, Nishanth Menon <nm@ti.com>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+ linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
+ Roan van Dijk <roan@protonic.nl>
+References: <20251017104732.3575484-1-o.rempel@pengutronix.de>
+ <20251017104732.3575484-2-o.rempel@pengutronix.de>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20251017104732.3575484-2-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 17, 2025 at 01:04:49PM +0000, Mostafa Saleh wrote:
+Hi Oleksij,
 
-> Is simple enough and verbose and can distinguished from test failures,
-> it will look like:
-> [    2.095812]     ok 1 arm_lpae_do_selftests # SKIP Failed to allocated device!
-                   ^^^^^
+On 17/10/2025 12:47, Oleksij Rempel wrote:
+> Add the base infrastructure for Mean Square Error (MSE) diagnostics,
+> as proposed by the OPEN Alliance "Advanced diagnostic features for
+> 100BASE-T1 automotive Ethernet PHYs" [1] specification.
+> 
+> The OPEN Alliance spec defines only average MSE and average peak MSE
+> over a fixed number of symbols. However, other PHYs, such as the
+> KSZ9131, additionally expose a worst-peak MSE value latched since the
+> last channel capture. This API accounts for such vendor extensions by
+> adding a distinct capability bit and snapshot field.
+> 
+> Channel-to-pair mapping is normally straightforward, but in some cases
+> (e.g. 100BASE-TX with MDI-X resolution unknown) the mapping is ambiguous.
+> If hardware does not expose MDI-X status, the exact pair cannot be
+> determined. To avoid returning misleading per-channel data in this case,
+> a LINK selector is defined for aggregate MSE measurements.
+> 
+> All investigated devices differ in MSE capabilities, such
+> as sample rate, number of analyzed symbols, and scaling factors.
+> For example, the KSZ9131 uses different scaling for MSE and pMSE.
+> To make this visible to userspace, scale limits and timing information
+> are returned via get_mse_capability().
+> 
+> Some PHYs sample very few symbols at high frequency (e.g. 2 us update
+> rate). To cover such cases and allow for future high-speed PHYs with
+> even shorter intervals, the refresh rate is reported as u64 in
+> picoseconds.
+> 
+> This patch defines new UAPI enums for MSE capability flags and channel
+> selectors in ethtool_netlink (generated from YAML), kernel-side
+> `struct phy_mse_capability` and `struct phy_mse_snapshot`, and new
+> phy_driver ops:
+> 
+>   - get_mse_capability(): report supported capabilities, scaling, and
+>     sampling parameters for the current link mode
+>   - get_mse_snapshot(): retrieve a correlated set of MSE values from
+>     the latest measurement window
+> 
+> These definitions form the core API; no driver implements them yet.
+> 
+> Standardization notes:
+> OPEN Alliance defines presence and interpretation of some metrics but does
+> not fix numeric scales or sampling internals:
+> 
+> - SQI (3-bit, 0..7) is mandatory; correlation to SNR/BER is informative
+>   (OA 100BASE-T1 v1.0 6.1.2; OA 1000BASE-T1 v2.2 6.1.2).
+> - MSE is optional; OA recommends 2^16 symbols and scaling to 0..511,
+>   with a worst-case latch since last read (OA 100BASE-T1 v1.0 6.1.1; OA
+>   1000BASE-T1 v2.2 6.1.1). Refresh is recommended (~0.8-2.0 ms for
+>   100BASE-T1; ~80-200 us for 1000BASE-T1). Exact scaling/time windows
+>   are vendor-specific.
+> - Peak MSE (pMSE) is defined only for 100BASE-T1 as optional, e.g.
+>   128-symbol sliding window with 8-bit range and worst-case latch (OA
+>   100BASE-T1 v1.0 6.1.3).
+> 
+> Therefore this UAPI exposes which measures and selectors a PHY supports,
+> and documents where behavior is standard-referenced vs vendor-specific.
+> 
+> [1] <https://opensig.org/wp-content/uploads/2024/01/
+>      Advanced_PHY_features_for_automotive_Ethernet_V1.0.pdf>
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-The test "passed" though, and since we never expect this failure it
-seems wrong to make it pass.
+This looks good to me,
 
-I think there is no point in distinguishing "infrastructure" from
-anything else. Either the test runs to completion and does everything,
-or it fails.
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-The use of skip is for things where we probe something and detect we
-can't run the test. Like maybe you have a test that relies on
-PAGE_SIZE=4096, or CONFIG_XX so skip other systems.
+Maxime
 
-While, "I hit an OOM so I skip the test" seems wrong to me. Maybe the
-OOM was caused by the "unit under test" leaking memory??
-
-Jason
 
