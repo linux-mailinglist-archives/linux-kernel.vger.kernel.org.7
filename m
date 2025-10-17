@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-857529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D0CBE7061
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:57:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B5CBE7067
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E7E5E35B51F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:57:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64AC5E23A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25A5261B9F;
-	Fri, 17 Oct 2025 07:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE8262FC2;
+	Fri, 17 Oct 2025 07:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVDFZY74"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="Bwe+9Ccy"
+Received: from mail3.ecloud.global (mail3.ecloud.global [135.181.139.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A972550A4
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687845; cv=none; b=LstmiD1GdRUlJXLrfq+bW3l8vpLKw9UmW6z1nHxBoJJAG1s/Nu8ANMbpgeBSJkQDug6rdZPnM4M2FGi7Ljzefoy7AEf1WnMN6RA/Nh4cPZA51To4wUBifcE0oZmHTehFYedinnSDqoPavayxQUB9a6bY47/gII3tekutug6QBrs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687845; c=relaxed/simple;
-	bh=v+cwEQu/l0K0aFYXom/va+vqcAeLTQs97OiCDReEkHw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WjrxpTIEIIBhOnQ1E0FscIiYigBDH7e0FLpzQRShe5+G3WrLVMoGz7DovwJwRZjcI8Q6Xm470WVKmgZURyuCRb3iIsN7nxJ3nWXJTOsKy20geNMBaMbkJgYAutzR2xiiBryVzcIUx+GX++irWK4tGLUD7ey7j85lhEBq67Gi+XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vVDFZY74; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-62fcb646334so2302195a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760687840; x=1761292640; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YeonnmR22YpdBnRA2e84Q5k99IvmMWnT+8o9upY5Y8U=;
-        b=vVDFZY74BUn7SwR+HcQh6hCO1CcPD/ge0uBt1oCTtBtsXJOsEaQ73+aVEkOkuBJCX+
-         dXBWWSMGJHNuVLRk8PBekaN7dgLC7asULPOlUPz0xR4jZMhyI8nx1Vbfpk++GzdeSnBt
-         9lkyXcd9CgfE7RpACmj2CPKikse6SOBWudwQLoNCINaowcZQpceES1ik6BmSJ3i5uDIk
-         KUq3Tn5L3BPmTBZCwCZENGnxC30CBd2voS2xbFXheUbOLfzRiC/XDQFQ0NegJIHdkbwo
-         racm6skY8qS+x4TN5P7EYxqhyZVXAL6elqNJPDQGD1S6R49r1rWmly7ZNX63DBcnBJxa
-         FwQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760687840; x=1761292640;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YeonnmR22YpdBnRA2e84Q5k99IvmMWnT+8o9upY5Y8U=;
-        b=eq/GaC3uIsm4wAVnMmuPeDHRltSKqTeu90eNvp5CIjX9cgNdTjRXVhZLH6Dsn2c71s
-         yvBW6Hs8QZQk9HxLTnJ+RSS8LVBPl5CajLs3ASWixeCNnwpAZpSIM+IgZNoBXqJAw2pE
-         aSYBvygUU74k6qQrBBY2yVknHowbv9qK27y1C5rMS4UwcMddvl/H7qwIhiKVhgUwLWH+
-         zLUREKyVOK/1NB3nPa97JNlPm+0baPdGmTleL200RSehxpLPGPvmJ3C92yJaY4LGPg8H
-         BCRJhHHrcPGs9HJbxm8GT/CRwkjfFQqWTWfQGurDin3wsoVOVthY2u5TgYVpxsmdZ2JA
-         0JJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAD50JNnskGkPAxAHxOpar6TAhxrXqKFMSG42+RBK4vg1IixCDupS2yp8ocgl3fFEzxJZjcFrWD7ep2aA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa20JAqxNwuFU+yHKsjcgZ2L1cHZIzsBnfX34sjm3kEhqdVUbE
-	4WWhy6mI9IaGRYmz9zt7SuySRSKD1bjSv+ydYU5gR22Zg0KLWJAgq8/4PtXb4oRb/A3/u971kYc
-	57Kbf7yg+o09syUxz5BqvLvKdA5vJLA==
-X-Google-Smtp-Source: AGHT+IFurVwu13hTVgjqFkuyg+jJU8SJ/2HWVhpsWHXh/EE63aqE9d17vw6ppnqZ4TszNyVb3fhURmcJUleEuWeLYDE=
-X-Received: from edya15.prod.google.com ([2002:aa7:cf0f:0:b0:639:f07d:725a])
- (user=sebastianene job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:20c2:20b0:63b:f93a:57b with SMTP id 4fb4d7f45d1cf-63c1f6b50c1mr2138541a12.20.1760687839997;
- Fri, 17 Oct 2025 00:57:19 -0700 (PDT)
-Date: Fri, 17 Oct 2025 07:57:10 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0780F25A324;
+	Fri, 17 Oct 2025 07:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.139.185
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760687916; cv=pass; b=CKC3AqXwqdXvuBPXaxNQ26qPGofGwR8Et1CE2Y3ezYvB89IXFxqQxquueMzGQyKXWLXFTvDWmOuM+5gPZWhPlQeFTRJO/e6jR2qPghXVT057NbG1xxOgnCi+NIHdvw5gHw/AR2LevNvmHKy1FJZmsjt5QGYHJyErbbZ/3XNRk2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760687916; c=relaxed/simple;
+	bh=jkVEXnzGazlr4jffF/xWHkM2GQunmNsO0Rm623Owskc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=RUiDpVzGpf2lCa+O2zORfwcOVjtSQkmKK53fF4Qq04dBWvbwgTbP0I6togsjf+BCO5sQ1xm2tbCht4DNg6NfNepNUx5XKgSluAOScjki++0RUTpS0ulsRjT6kR4NiAKFfHbkb539BNLxXDEuHu1/U4ZA5oO95RnafXmYfG3q9Yw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=Bwe+9Ccy; arc=pass smtp.client-ip=135.181.139.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
+Received: from authenticated-user (mail3.ecloud.global [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail3.ecloud.global (Postfix) with ESMTPSA id AEBAD8844C7;
+	Fri, 17 Oct 2025 07:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail3;
+	t=1760687904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5+N/g+Cv9kWgSOuIgoyJn0tjR7NN022I4B62iu5cZoI=;
+	b=Bwe+9CcyUwQRoVsGFfIVFX7RAtwlIiFEUdlhv3ANwuLFytOkKmG5tMD3H6j/XdnEZGik/z
+	L0h0EfmDWuHP/7ytSuLPFEmLJ9P6vVpjHa0TaDtq0Kpmys0p9oR2p0SHL+/9++d5c0P+Bs
+	xTonHHy3cApXXPbD6tCP/sUxOQR4Q0g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
+	s=mail3; t=1760687904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5+N/g+Cv9kWgSOuIgoyJn0tjR7NN022I4B62iu5cZoI=;
+	b=h7XC6EJLNOSr2xCjrKKvzFpTGgC37z8vwGGUEz/yDpwgEM1EFv9ihoX3mWMEs1aZkf1kCW
+	R0/HMKBPOAB88wj5s+pWSl9MJOGGWxCIgq/E0UUExaxLNmyFtIqGxTxHrf1GT0EaXhyeBJ
+	g6KWr2MOYwx31wQ3kzXnhqg6IeYx7yU=
+ARC-Authentication-Results: i=1;
+	mail3.ecloud.global;
+	auth=pass smtp.mailfrom=maud_spierings@murena.io
+ARC-Seal: i=1; s=mail3; d=murena.io; t=1760687904; a=rsa-sha256; cv=none;
+	b=0j0ePx5LqN5bNtXIaCR6iUppWGVksPuWjcEHiLwqt4vi9w6bXwRmsly/cu1e1ko/x/TcZ1
+	rYi2dNWvWgPA6dPOrjf4/OPq/tmcAMEzh45RF3rfArefZ4yrUBvzmxJVntRIKbNGMQ4Cum
+	jWmVbmTk3idqcDHnOavdiktfS2fua0Q=
+Message-ID: <040d8fe8-da2f-4aa5-a2c3-1aec0cf2e8f0@murena.io>
+Date: Fri, 17 Oct 2025 09:58:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017075710.2605118-1-sebastianene@google.com>
-Subject: [PATCH] KVM: arm64: Check the untrusted offset in FF-A memory share
-From: Sebastian Ene <sebastianene@google.com>
-To: maz@kernel.org, oliver.upton@linux.dev, will@kernel.org, 
-	catalin.marinas@arm.com, suzuki.poulose@arm.com, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	joey.gouly@arm.com
-Cc: ayrton@google.com, yuzenghui@huawei.com, qperret@google.com, 
-	vdonnefort@google.com, kernel-team@android.com, 
-	Sebastian Ene <sebastianene@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+To: andyshrk@163.com
+Cc: Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com,
+ andy.yan@rock-chips.com, devicetree@vger.kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com, dri-devel@lists.freedesktop.org,
+ heiko@sntech.de, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+ knaerzche@gmail.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
+ tzimmermann@suse.de
+References: <20251016083843.76675-3-andyshrk@163.com>
+Subject: Re: [PATCH v8 2/2] MAINTAINERS: Add entry for Innosilicon hdmi bridge
+ library
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@murena.io>
+In-Reply-To: <20251016083843.76675-3-andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Verify the offset to prevent OOB access in the hypervisor
-FF-A buffer in case an untrusted large enough value
-[U32_MAX - sizeof(struct ffa_composite_mem_region) + 1, U32_MAX]
-is set from the host kernel.
+Hi Andy,
 
-Signed-off-by: Sebastian Ene <sebastianene@google.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> Add entry for Innosilicon hdmi bridge library
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
+> 
+> (no changes since v1)
+> 
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f9f985c7d7479..0adcfb1c264a1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12299,6 +12299,14 @@ M:	Samuel Holland <samuel@sholland.org>
+>  S:	Maintained
+>  F:	drivers/power/supply/ip5xxx_power.c
+>  
+> +INNOSILICON HDMI BRIDGE DRIVER
+> +M:	Andy Yan <andy.yan@rock-chips.com>
+> +L:	dri-devel@lists.freedesktop.org
+> +S:	Maintained
+> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> +F:	drivers/gpu/drm/bridge/inno-hdmi.c
+> +F:	include/drm/bridge/inno_hdmi.h
+> +
+>  INOTIFY
+>  M:	Jan Kara <jack@suse.cz>
+>  R:	Amir Goldstein <amir73il@gmail.com>
+> -- 
+> 2.43.0
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 4e16f9b96f63..58b7d0c477d7 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -479,7 +479,7 @@ static void __do_ffa_mem_xfer(const u64 func_id,
- 	struct ffa_mem_region_attributes *ep_mem_access;
- 	struct ffa_composite_mem_region *reg;
- 	struct ffa_mem_region *buf;
--	u32 offset, nr_ranges;
-+	u32 offset, nr_ranges, checked_offset;
- 	int ret = 0;
- 
- 	if (addr_mbz || npages_mbz || fraglen > len ||
-@@ -516,7 +516,12 @@ static void __do_ffa_mem_xfer(const u64 func_id,
- 		goto out_unlock;
- 	}
- 
--	if (fraglen < offset + sizeof(struct ffa_composite_mem_region)) {
-+	if (check_add_overflow(offset, sizeof(struct ffa_composite_mem_region), &checked_offset)) {
-+		ret = FFA_RET_INVALID_PARAMETERS;
-+		goto out_unlock;
-+	}
-+
-+	if (fraglen < checked_offset) {
- 		ret = FFA_RET_INVALID_PARAMETERS;
- 		goto out_unlock;
- 	}
--- 
-2.51.0.858.gf9c4a03a3a-goog
+I believe this patch should be squashed into the patch that actually 
+creates the files listed in the MAINTAINERS entry, like I do here [1]. 
+Checkpatch should be complaining about patch [1/2] if I'm not mistaken, 
+when you run `b4 prep --check`.
 
+Link: 
+https://lore.kernel.org/all/20251009-max25014-v4-1-6adb2a0aa35f@gocontroll.com/ 
+[1]
+
+Kind regards,
+Maud
 
