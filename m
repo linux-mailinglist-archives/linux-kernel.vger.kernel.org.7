@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-857104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446C1BE5F30
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A0ABE5F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802605478C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 445F9548FD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C06286408;
-	Fri, 17 Oct 2025 00:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA560283159;
+	Fri, 17 Oct 2025 00:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="meXA5Rbt"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lC5orD7w"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACC721FF28
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BEC21ADCB
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760661190; cv=none; b=IN/pmsRGpRxUWso3ZIE+PzHv5G2MUk9ATrUerL6/mJylDOl1GV4TkKgrd7TaHPfd/9qvO+bW8PctpQBRdSv9QJ6EW2exRGA63KcjdqOjErCW1N5XiHI4apuIQB5vEYZgxQZoGWeilHWCTihdxfR2LVcLSAtMLDPVocXu+mkypo0=
+	t=1760661191; cv=none; b=iuNm1ZWkdqpNxXdtXsallI5s9V6Iqx81T3k7UAO1YZBT6e6TgxE2QTM9XnNy+rgpTPYOsQs/r7Z853jYfN21JxxJMFHaWJsIYgW5GcA0UakUFfLWEFcvc1uwMPdbQXfWj1E9+5EcNcg9fiIMW1yGeq4sVD1gkV9aI3nCnkNzI+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760661190; c=relaxed/simple;
-	bh=wYAEXPYHa2xMErFCIfNovZ590pxCtOKCG7ZgmLDnGp4=;
+	s=arc-20240116; t=1760661191; c=relaxed/simple;
+	bh=T+m3BYVvUt838TFNeB0JdBMWut/8n0JmQsfeAiJxDYg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wb/y5LH8b3Q7MGEK2ZGI4cEM568YpReqX+74VpuLgdXksmNtk+75Oe/Z2GMgHhLWInbUCvX+M9j3UeYRM25yRCXB6ODpDmstJBHYwAQ7hcqqf9MCmWhvbPG8h3ujrteaVfyTrI3vsSrLoXXMfY5d8eCyMMJlV1r4MER2+jp1rOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=meXA5Rbt; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=sCJ0Z/anpGta0I/DBcHHQ9xoXiAjrLw9y9jW/rxoGm4AVOixOkYgKIoIUvd2bBKIQiF/lWc+m1mKWERK/viba65O1F/RuHCMa9cIyBQa+7IogOH4InO8O0ZtoP662JHCz1u1d92fD59QM/qOsnjafgxJ3x4TlfclnitwQlVxgbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lC5orD7w; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-334b0876195so1510816a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:33:08 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27eca7298d9so29216575ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:33:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760661188; x=1761265988; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760661189; x=1761265989; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ylyqozer80U4wIAhCrbCm8kORDI60jP8QTvjhJUGpZY=;
-        b=meXA5Rbtcn2dDXKmEbm8JEbkRlcsdIn3bhSbm4/TT6Wk9tTRL9sZ/PreDT6aGziq4s
-         MdjRT4PmL+YtuWnTf1Kijw2abNvPZljInMlM5nQpenjN9mlpcOV6ZXTOTaaONyTlNv3j
-         NWi1babo8bn8p9Ym74NUNfyckVpgrSLizXex2+ZuprpHw04PIkFbJErTi26CSxpbOL+a
-         xDhoH4UzTFTnXRbz1Buezwbm0MgYmFjPdv+Qsf0AOatgRLT1u442D6dCjlgg0K3RoaF6
-         AvZpcSCsI4MmO0Uq+Ey73ioAwoMRJ06uHNeEV7TJXQAmRE8cs2wnICGOBlwRohwwafB9
-         wSUA==
+        bh=YenbGRez6bu/UEaTbB8eZbtDNA5csFA4mZUF4JnZu9w=;
+        b=lC5orD7w5mscrpd6JATzDFcCWOtnaM6ug7gsHILNGUreXKkVd0RT3sswpdI532lmkj
+         txsneJ655rxlruFVxZxNUFEJ2ebYZZitSlpjK1yRn6ROTXWIDJE4PvTiWImoIeCADUiW
+         BszffPRMU88cnUNyA9Xxr+QmVF4e1IGYmmTDBLGFlVYEqitvoNLSBQjO6Gf3pxYEmOxw
+         TYRknCt7FWurtMgnIzp65n/5N34sFkfEoNWT85Z8kyRkAv1ZEb1iacvHWzLvJlxN0+mX
+         NbGh4tFSAq4UxHv6XULANkETVRv+28d8ENIpXo6eXkJcWbS3uc0DRHM0nTHgfCILpjth
+         FArg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760661188; x=1761265988;
+        d=1e100.net; s=20230601; t=1760661189; x=1761265989;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ylyqozer80U4wIAhCrbCm8kORDI60jP8QTvjhJUGpZY=;
-        b=odML/p7IOztU3jXn8XjkubdVxCA7izDtz/umWtkSouoF5lAW51V7yK5TsqdGaat99p
-         wcFSQ8DlJAVtv+xFSvEj1oocLOcuJcUY5nhT4rSlR0nUptNvItfPUBob9sZT3w9nf8I+
-         NR/SjEfy/AqMpEWWNrdf8G/ZvpNABktBPD+l/iAeKWHFfPfhAswTcI/eHM77D7MVKdaH
-         CdmWjJgGfnftSC0U5WZqN39EjMLVGRNG+lb/n8Q4wgUgHXDQY02mITEuh3T6RlFM09tL
-         s87ec2bg+7G7q6Ks1kB92icP4vndsOVXQ/t9aR9/K4c0XojKTzckCULKIoGpTv24BC+i
-         7kyg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/CexMfMzkxNvplisjj4KMZiDN0e8ZVQB6PP52CyiXdCZZMPPczpRyBKxNSSoeZz3K3wgwg6qY79nYTYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxeq/w3v0fQQXcDv8Fml9I+qFxOs6XlgmqIINLwjGrNvtrildgl
-	j97MskUcDa59a8ooX/KUG2g2IHMTrW20nR/FN11VQBC+PJKpuNbedeI6hwhGK/HF9Cu8W4N8xbU
-	LEgrSZQ==
-X-Google-Smtp-Source: AGHT+IFv5wQBYU08VlWSJ3YEyBvWx6CUl5P/6vzeOVA3OyqdlNjTdwYkeUoBdZlGjRBJoj7p6GD6I+E30lo=
-X-Received: from pjbnc11.prod.google.com ([2002:a17:90b:37cb:b0:33b:caf7:2442])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f8c:b0:32b:a2b9:b200
- with SMTP id 98e67ed59e1d1-33bcf87ab38mr1930441a91.13.1760661187797; Thu, 16
- Oct 2025 17:33:07 -0700 (PDT)
+        bh=YenbGRez6bu/UEaTbB8eZbtDNA5csFA4mZUF4JnZu9w=;
+        b=Bc5oHePOyeD+eReCcBOZi4cVgpsOHf4YjuJnxCtWN+xVcY9aT9/N2MNVzuot2C28O7
+         E2B/gOgOUouqUEdA+s/2YemIBNKbWtLXVDOGaeYsf+yO2pl/dxNbZxtpSdMM5nM0SedO
+         wyrmWFpVnNDF+xrF4OALoapxnwyssm448CPnznKfhE3HxMOSJlRMCMxXvY5vi/2nq2Fl
+         aKW1eNsnu5+yMP0qzskCKn0QnepWLQXodaw9+k+hisg6AFQMzcOh+13EMuFoDKJkOasR
+         cutiitzzAvbkLRhz8nVZf3ya+o0gBO+b9yzRYSBAWwaN0E3eFwGfOkQP8JjJG4Y8QpPe
+         nb9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWEfn4wVwKbsUJuCebod/Q/qxc47A8mfBPDIyO2Qr+7mUVVr2BqWJJyPFJRb5Yy5U149dhiAeP5gXLbjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKwMWiGfZ1pcA08O62FfbZJGBPBLgnn57vUVaCHfPkvSAhZiSB
+	7VykFVKBbhry/B9sCaHiVl5EYJdR/pZsHIVU3gxsGicg2NmJZgfQ2Ahu1rVBfmS35zIEmjvXbxW
+	GS/SYhg==
+X-Google-Smtp-Source: AGHT+IFzwgrTUpyTLmlR4n7vLZlT3Ntvx3uZ2AlOGbeNdkR1Pz/L5L7m7JolYZt52l8hjag9eabuD/ERTOw=
+X-Received: from pjbpf6.prod.google.com ([2002:a17:90b:1d86:b0:33b:5907:81cb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19f0:b0:286:d3c5:4d15
+ with SMTP id d9443c01a7336-290cb947798mr22501395ad.36.1760661189400; Thu, 16
+ Oct 2025 17:33:09 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 16 Oct 2025 17:32:29 -0700
+Date: Thu, 16 Oct 2025 17:32:30 -0700
 In-Reply-To: <20251017003244.186495-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251017003244.186495-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017003244.186495-12-seanjc@google.com>
-Subject: [PATCH v3 11/25] KVM: TDX: Avoid a double-KVM_BUG_ON() in tdx_sept_zap_private_spte()
+Message-ID: <20251017003244.186495-13-seanjc@google.com>
+Subject: [PATCH v3 12/25] KVM: TDX: Use atomic64_dec_return() instead of a
+ poor equivalent
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
@@ -97,36 +98,50 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Binbin Wu <binbin.wu@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Return -EIO immediately from tdx_sept_zap_private_spte() if the number of
-to-be-added pages underflows, so that the following "KVM_BUG_ON(err, kvm)"
-isn't also triggered.  Isolating the check from the "is premap error"
-if-statement will also allow adding a lockdep assertion that premap errors
-are encountered if and only if slots_lock is held.
+Use atomic64_dec_return() when decrementing the number of "pre-mapped"
+S-EPT pages to ensure that the count can't go negative without KVM
+noticing.  In theory, checking for '0' and then decrementing in a separate
+operation could miss a 0=>-1 transition.  In practice, such a condition is
+impossible because nr_premapped is protected by slots_lock, i.e. doesn't
+actually need to be an atomic (that wart will be addressed shortly).
+
+Don't bother trying to keep the count non-negative, as the KVM_BUG_ON()
+ensures the VM is dead, i.e. there's no point in trying to limp along.
 
 Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/vmx/tdx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx/tdx.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index f5cbcbf4e663..220989a1e085 100644
+index 220989a1e085..6c0adc1b3bd5 100644
 --- a/arch/x86/kvm/vmx/tdx.c
 +++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1721,8 +1721,10 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
- 		err = tdh_mem_range_block(&kvm_tdx->td, gpa, tdx_level, &entry, &level_state);
+@@ -1722,10 +1722,9 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
  		tdx_no_vcpus_enter_stop(kvm);
  	}
--	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level) &&
--	    !KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm)) {
-+	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
-+		if (KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
-+			return -EIO;
-+
- 		atomic64_dec(&kvm_tdx->nr_premapped);
+ 	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
+-		if (KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
++		if (KVM_BUG_ON(atomic64_dec_return(&kvm_tdx->nr_premapped) < 0, kvm))
+ 			return -EIO;
+ 
+-		atomic64_dec(&kvm_tdx->nr_premapped);
  		return 0;
  	}
+ 
+@@ -3157,8 +3156,7 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+ 		goto out;
+ 	}
+ 
+-	if (!KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
+-		atomic64_dec(&kvm_tdx->nr_premapped);
++	KVM_BUG_ON(atomic64_dec_return(&kvm_tdx->nr_premapped) < 0, kvm);
+ 
+ 	if (arg->flags & KVM_TDX_MEASURE_MEMORY_REGION) {
+ 		for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
