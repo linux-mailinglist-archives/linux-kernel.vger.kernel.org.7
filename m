@@ -1,198 +1,114 @@
-Return-Path: <linux-kernel+bounces-858406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E28BEA992
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:18:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AA3BEAA28
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E672034B568
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7471AA28B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81642BF3F3;
-	Fri, 17 Oct 2025 16:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D38C296BC2;
+	Fri, 17 Oct 2025 16:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+p3BAVb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="XmsHA4iR"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FA52C029A;
-	Fri, 17 Oct 2025 16:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E705C287246
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717756; cv=none; b=MAh4WARoAKcoYluWghq+jQEl/3NgaUToBABpF0zNWE+vmhQYIHaNl/ZmuHzDGv5i7Lt03FmSZLpaG42ZewrNCly0mGrWixYicH54v6toSAdwuiufHAGqE9z5btloDuM6+YhDmFZphRIhqor60naHFp/mjhx3zwK1DiMQmEQoUxg=
+	t=1760717841; cv=none; b=NG9p9NOEb3YfyHsOBQeRPGykP6sBHcVL46tPvlOL+NHuZvr5sLu3Gb1nvLvLm9UKO4pUSKpNLN1Plc64vE98ARKson7f4vqbKOV9Xa58LE5s8jW99SHqWzIgxbxnKnIl3bnKTyKx52PjHFMXvPdt9z06imioy5Elzeeb6iX9epc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717756; c=relaxed/simple;
-	bh=iN9QxgdL5sM1aHqGKMzcz8sT8xP19Pb9eUWgXg1nfKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hAFfYk8ql8EZ8VS3JAw9ZYvUy510i5oeeSXoQty03WpgCp0fyWUPtty6Bs59rjWMBb+IH1+XtQuZ0PE5HCyiGKJsdCtOXWm7G6ZOJpu0N3KGU1FeMX5bgBrFlGtjlN9gfJEOwSOM1whpsy9FqZQxzUlhZ3YxGOKssbrZZJEJROA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+p3BAVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFD7C113D0;
-	Fri, 17 Oct 2025 16:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760717755;
-	bh=iN9QxgdL5sM1aHqGKMzcz8sT8xP19Pb9eUWgXg1nfKI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S+p3BAVbFYGVjyj1/5eJ59fJTBHTH74pSYvEFU8RBBYNrvFSnJwQSUSOslz3OBEEi
-	 LNjZ47mxlszLJ4gjbHCHwdq7drsAmi4zfzAJ2sBBMuPWAgbWFLE962dme/LuQWTYB/
-	 B9NKliXf2SC5CjoM4N/13vO7CLiEkbOcHYr4nf0IsBU12TqznFYgWqKNIMAafJ+qKZ
-	 sN24tAa7mLR1wi+/NZGYeFKDWLXM91jRd1eoIxWQHUHsf98your/HZo1PQ0FGUpeKd
-	 qjaNY0RFLFpWRpuqM8yTShmr4Ua0/h+KR0Xc4WNtIsr5KGnjJOg3mYCvaa0TtYTqnU
-	 kF6hIuEsLbX2w==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] tracing: Add an option to show symbols in _text+offset for function profiler
-Date: Sat, 18 Oct 2025 01:15:50 +0900
-Message-ID: <176071775059.175601.3827350589430991963.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <176071773144.175601.17884676964675287059.stgit@devnote2>
-References: <176071773144.175601.17884676964675287059.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1760717841; c=relaxed/simple;
+	bh=pPbWyGESoeFda9PL7qjMzI+KDFiJUk2WW07WgvOC0eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twCFdWsmKn+ZxxfO/XsTQrbaUJZHeaIR00va5pAlUgU6rO7S8t/6vQ4EpFZnMI2VxWCcUiVR1p0yBGHQT2ERMticoSNCk0rNnie8AfKh+V+/8dcf6rMO+I9NS3jS7hpQc6EhgUYHLv5D0T+eAVwYzO/1CWw7onAMRv1pdLrSPzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=XmsHA4iR; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-430cadec5deso5715335ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1760717839; x=1761322639; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SE59U9D9FBD2TsP2y/MjrBzEhIdNihINvSqWeLt6f7A=;
+        b=XmsHA4iRMCoUXkqoAhZz91mStbZj7/xZ0iyoONrFgdOm+jKx2lxaEn9Bc9f0rGxOuf
+         9TISpV5P6qO8uTPgf6zJCqv+r8fhg8OVHCKf6oJGNjc16iBIiZt11YPTbnFmz5Xe+5kK
+         IXUHAFPnBwQ7CbtyhIULtonUKMoPq0CMgcCRSo2Kojsn+wp4m+bCSRXg7Hy0QftbjPHP
+         RXvTCpWz5U0Xp2XxOlKCSMfgi9TQQIm4V9f2ItyBVPkqA00asRhSutVjKgSy4vVfcBDH
+         nQyIKlJZDPZ1c8LrumBep6Im4uutjqMDVxG6UV0fOiRHzuXkaVCe0yTODZhTSn8kN1xX
+         JMuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760717839; x=1761322639;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SE59U9D9FBD2TsP2y/MjrBzEhIdNihINvSqWeLt6f7A=;
+        b=nNyqqODQghFO0UcYiFWncFmILHuGx9hkjtCbMoVAl8IkDPA8OB3odU+hsQroFFyjif
+         IVwKobqGvCe08nflAu2WcJO/9IuimNvdlkQBA3t/naGFK8Jk3beokAPcR/jeN+Yp3S7O
+         a49G3wYqZAmNOqdDDdJicC5HGrVuv6r8YoOHFojiKGrAtw2rK2OpSksZnUqUpMkwWSKt
+         umkVVktjPX5ZwlBv12A7uceftnZK6qBnFQfvyyzROGDUhgKvDNJyFstHKHm3kHzA1BsV
+         aY4ijmsDX4r6gvhax+vSatzPEqIsOBZhlanXSdCnu0nuuvOrT7hi8AZlKrLEFpFSh8/k
+         +fhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrAJZ4ayJpwk5RS7B3WYq31QMixAVbY+MMNdu5hnakCV4X/pa3S5AglndeHRDBkAQk0OoiLqQBW0NdNqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQPNnt8J6N+SPdp3bYhIqUuhv4o+10onOvbe0t//UMqTML3/Hn
+	K1E0vk//rSO3omLS/O7tidEvtWbfW/cYffV1XzIVy9C/N3CDzZGB215DUGXEIjr/U0k=
+X-Gm-Gg: ASbGnctbOfSP1q86hiMKbFh0u2uKzsggIVBGRzjRuXzlmDma7pXfwk9zCpff9do51+W
+	BeLp43603a/vVxk5mTpnjl0oE2YeqcYVUG1/5e375ad2Z0zL+Q/NJxidbBA1RnhiXEhVUpFtGxW
+	r6MUDy0Cwph2fqvTCmftP4SJx0XDEL0opp7I2o+UegQDbtIFELrPVVlr9a1DwY/EA+qFegmJeCt
+	1toKgt3iIM+8JFid7BaeYGG8GcDKEPf2PeFp3nLc9Jopn40M11q2mqYyGADz+GYJvgqrPyLG/Tl
+	fkl6HUVD0Q3cdwPLD4VA1uw/fI+V/RbNgmQeCxI0+aDQ2s+LwD0ZhYaFvLHxkj0xLXGnk5IGKXu
+	43tbxax7S83RuPK+bOwgECf2zzDa1ZEA/DTxU0OMGLYZUUv3xfMMnZfTnAFD/o3R7/QBPvO5w2W
+	8rsg==
+X-Google-Smtp-Source: AGHT+IE/MHK6bGWFUML6lB8EABvgh/StOgVAz5yCP4m6sZL2slTHOrBxRy/hwICm8V+ly8yQelL67Q==
+X-Received: by 2002:a05:6e02:b44:b0:430:ae1a:3375 with SMTP id e9e14a558f8ab-430c529df57mr60456845ab.26.1760717838760;
+        Fri, 17 Oct 2025 09:17:18 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a979ab14sm8576173.65.2025.10.17.09.17.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 09:17:18 -0700 (PDT)
+Date: Fri, 17 Oct 2025 11:17:17 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Atish Patra <atish.patra@linux.dev>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/4] RISC-V: KVM: Add separate source for forwarded SBI
+ extensions
+Message-ID: <20251017-68a09a4da911ec4eec058592@orel>
+References: <20251017155925.361560-1-apatel@ventanamicro.com>
+ <20251017155925.361560-3-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017155925.361560-3-apatel@ventanamicro.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Fri, Oct 17, 2025 at 09:29:23PM +0530, Anup Patel wrote:
+> Add a separate source vcpu_sbi_forward.c for SBI extensions
+> which are entirely forwarded to KVM user-space.
+> 
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/Makefile           |  1 +
+>  arch/riscv/kvm/vcpu_sbi_base.c    | 12 ------------
+>  arch/riscv/kvm/vcpu_sbi_forward.c | 27 +++++++++++++++++++++++++++
+>  arch/riscv/kvm/vcpu_sbi_replace.c |  7 -------
+>  4 files changed, 28 insertions(+), 19 deletions(-)
+>  create mode 100644 arch/riscv/kvm/vcpu_sbi_forward.c
+>
 
-Function profiler shows the hit count of each function using its symbol
-name. However, there are some same-name local symbols, which we can not
-distinguish.
-To solve this issue, this introduces an option to show the symbols
-in "_text+OFFSET" format. This can avoid exposing the random shift of
-KASLR. The functions in modules are shown as "MODNAME+OFFSET" where the
-offset is from ".text".
-
-E.g. for the kernel text symbols, specify vmlinux and the output to
- addr2line, you can find the actual function and source info;
-
-  $ addr2line -fie vmlinux _text+3078208
-  __balance_callbacks
-  kernel/sched/core.c:5064
-
-for modules, specify the module file and .text+OFFSET;
-
-  $ addr2line -fie samples/trace_events/trace-events-sample.ko .text+8224
-  do_simple_thread_func
-  samples/trace_events/trace-events-sample.c:23
-
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v2:
-  - Define a dummy TRACE_ITER_PROF_TEXT_OFFSET if CONFIG_FUNCTION_PROFILER=n.
----
- kernel/trace/ftrace.c |   26 +++++++++++++++++++++++++-
- kernel/trace/trace.c  |    5 +++--
- kernel/trace/trace.h  |   11 ++++++++++-
- 3 files changed, 38 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 00b76d450a89..d4802bb93793 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -534,7 +534,9 @@ static int function_stat_headers(struct seq_file *m)
- 
- static int function_stat_show(struct seq_file *m, void *v)
- {
-+	struct trace_array *tr = trace_get_global_array();
- 	struct ftrace_profile *rec = v;
-+	const char *refsymbol = NULL;
- 	char str[KSYM_SYMBOL_LEN];
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	static struct trace_seq s;
-@@ -554,7 +556,29 @@ static int function_stat_show(struct seq_file *m, void *v)
- 		return 0;
- #endif
- 
--	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-+	if (tr->trace_flags & TRACE_ITER_PROF_TEXT_OFFSET) {
-+		long offset;
-+
-+		if (core_kernel_text(rec->ip)) {
-+			refsymbol = "_text";
-+			offset = rec->ip - (unsigned long)_text;
-+		} else {
-+			struct module *mod;
-+
-+			guard(rcu)();
-+			mod = __module_text_address(rec->ip);
-+			if (mod) {
-+				refsymbol = mod->name;
-+				/* Calculate offset from module's text entry address. */
-+				offset = rec->ip - (unsigned long)mod->mem[MOD_TEXT].base;
-+			}
-+		}
-+		if (refsymbol)
-+			snprintf(str, sizeof(str), "  %s%+ld", refsymbol, offset);
-+	}
-+	if (!refsymbol)
-+		kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-+
- 	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 2b3fe0a30c7d..9f254c290bcd 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -522,7 +522,8 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
- 
- /* trace_options that are only supported by global_trace */
- #define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
--	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD)
-+	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD |	\
-+	       TRACE_ITER_PROF_TEXT_OFFSET)
- 
- /* trace_flags that are default zero for instances */
- #define ZEROED_TRACE_FLAGS \
-@@ -11106,7 +11107,7 @@ __init static int tracer_alloc_buffers(void)
- 
- #ifdef CONFIG_FUNCTION_TRACER
- /* Used to set module cached ftrace filtering at boot up */
--__init struct trace_array *trace_get_global_array(void)
-+struct trace_array *trace_get_global_array(void)
- {
- 	return &global_trace;
- }
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index caec534072e7..3d034dd753c6 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1353,6 +1353,14 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- # define STACK_FLAGS
- #endif
- 
-+#ifdef CONFIG_FUNCTION_PROFILER
-+# define PROFILER_FLAGS					\
-+		C(PROF_TEXT_OFFSET,	"prof-text-offset"),
-+#else
-+# define PROFILER_FLAGS
-+# define TRACE_ITER_PROF_TEXT_OFFSET	0UL
-+#endif
-+
- /*
-  * trace_iterator_flags is an enumeration that defines bit
-  * positions into trace_flags that controls the output.
-@@ -1391,7 +1399,8 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		FUNCTION_FLAGS					\
- 		FGRAPH_FLAGS					\
- 		STACK_FLAGS					\
--		BRANCH_FLAGS
-+		BRANCH_FLAGS					\
-+		PROFILER_FLAGS
- 
- /*
-  * By defining C, we can make TRACE_FLAGS a list of bit names
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
