@@ -1,124 +1,146 @@
-Return-Path: <linux-kernel+bounces-857789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F493BE7F11
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BFCBE800D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D0DA50422F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321136E0538
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235D3126B5;
-	Fri, 17 Oct 2025 10:05:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39D431197E;
-	Fri, 17 Oct 2025 10:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760695519; cv=none; b=GsgnAckKaioihJRd/iycbkXOd/1tAl+tB+ArA33VDmTunPpt0xheYhAkLoCgsHR2E/nkjE+i0MEOoA9My6NiWtDO0okAuIBOI/psKuQ+dWPec66PjKoUOLZch8NcegbAY0pcDEEjd8256SMsedr9+AvGG3IqRp6s4ZYD2pzrd1U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760695519; c=relaxed/simple;
-	bh=6z5qiYejD0Z6XSlHGhdgDanXj77un6wBOUOjfeB4nq0=;
-	h=To:Cc:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=f/dzP8m7Tnw0IxR8DrqLaLGW9grOv0muiivFbX7K8eA16Q8WMGkk8q7MpJuXGuwLX6O/onELB9Ux5NBwee9CpgndE3kWDrLr8dTQc7NdqHX1QDfVibNsq7M7eWRTEBhTIvXthrmfZ4BzGtfSCFPH6ZZ3hrrnb8FpSWD4u4aUy2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxmdHWFPJoUkwXAA--.50505S3;
-	Fri, 17 Oct 2025 18:05:11 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxicDWFPJoHdXtAA--.42500S3;
-	Fri, 17 Oct 2025 18:05:10 +0800 (CST)
-To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: [selftests/bpf QUESTION] What is the proper way to fix the build
- error
-Message-ID: <5ca1d6a6-5e5a-3485-d3cd-f9439612d1f3@loongson.cn>
-Date: Fri, 17 Oct 2025 18:05:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F906322C81;
+	Fri, 17 Oct 2025 10:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b="dquGaOQJ"
+Received: from sienna.cherry.relay.mailchannels.net (sienna.cherry.relay.mailchannels.net [23.83.223.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87840322C97;
+	Fri, 17 Oct 2025 10:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.165
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760695768; cv=pass; b=Jm63g1IYlnUKbX7Gfb2JEaCYVXZGH4WijD4owroOOPTVEoGYdAn7uAB6FAly48XSwG9rV4m6qOqmEuwpIvjqj1ZX+HGukzLUUG7ZvkG11VztBWihvl1Rln+jUuMypS6S73gtqezgSJ0vHH01RJOswFPAWplMveEhZ8puea7AL6I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760695768; c=relaxed/simple;
+	bh=JCf9+BIVt/3dAPNMzv6qmO3EfmD/eUtnNliLYOf6oI4=;
+	h=From:To:Cc:Subject:Message-ID:In-Reply-To:References:MIME-Version:
+	 Date; b=XYMT+swBz3lOoSBElKJZVnKOY1oa72g+21zcB8GJNHZnip3qvkuXZNAxU0B2eKg5SavXev5xo++8sEmNGADMQqvVwoDEAcEfw3kCF/5+nf0B10YYgjumbaLAeURmNRWAjhpvzeO9key5RyobY+o4Bv4EUekTT6bhOiOF/nNqnqo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com; spf=pass smtp.mailfrom=rootcommit.com; dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b=dquGaOQJ; arc=pass smtp.client-ip=23.83.223.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rootcommit.com
+X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 266F06C1FA2;
+	Fri, 17 Oct 2025 10:02:34 +0000 (UTC)
+Received: from fr-int-smtpout18.hostinger.io (trex-green-5.trex.outbound.svc.cluster.local [100.116.100.136])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 18B856C2079;
+	Fri, 17 Oct 2025 10:02:31 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1760695353; a=rsa-sha256;
+	cv=none;
+	b=47EyyEKQnI0TgEXkP+KaoKBRVN3THrt1Hw2+4i/c9A0be8OOMacShCS5IcJRnwo3gO1SEy
+	j5wxGjhpufJZ0EzzphVR0rFL/NHwHBTPr68nkEk3TLiHjIwIGyqAP0Y5wTdx+wgfbJ6+mW
+	poMNQa7KQMKmL022lvxvpf8U8sfB9fj1mZAmVzRw0wL0YmeUBDS/nW7Kleo0z3T/FDmtlJ
+	25kaTH/vlTvk/Ns30IwNFKTD3XtOkgHCep2cJSQMiv7L5p8DBghKwwBnUtr3FrSagHEkSF
+	cEIENGwLh7Z9xhjhuJFTfKj45H9KdlMGFw2jMfnFRw1Dw1/z/aHv6OG0I1KflQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1760695353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=INLfLanNrxPT8zZfl4wJScpkqHE8+TQnHHl9RjngRPU=;
+	b=pcqnvVptgS4/Pat+gdc00QGJR2YyQk3kS4DnaufmLm05GSJQ+upSdE04buWQxnM06y2x6l
+	jf6b8Qa/k7x5G6mtiqQoFgT5n8CNXQ5paiFUkBmmp449AseRu4BZ9MHe86M0AnEG8ouBdw
+	XsytIsJh+pEdoRR53+OBlitXSPwd/oYkOCMrBIviuAW4gBULTWbrGBa+q15aRlVcjVjuth
+	qEvpNS0DmUZw+NnrSH1/ef0yKwbULo9eRnjCPI8WpooPUZ5AasHJb0MXEkjuMLUAcHSfRY
+	HVqzQVh76LfDC93EJBAHkxrqPDt55/exZxspMjxcAoSat59dMBOW/RJSKH4vpg==
+ARC-Authentication-Results: i=1;
+	rspamd-645b74df65-b2gqj;
+	auth=pass smtp.auth=hostingeremail
+ smtp.mailfrom=michael.opdenacker@rootcommit.com
+X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId:
+ hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Thoughtful-Zesty: 4925f2f243cb1525_1760695353949_1738770027
+X-MC-Loop-Signature: 1760695353948:450799911
+X-MC-Ingress-Time: 1760695353948
+Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
+ [148.222.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.116.100.136 (trex/7.1.3);
+	Fri, 17 Oct 2025 10:02:33 +0000
+Received: from localhost.localdomain (unknown [IPv6:2001:861:4450:d360:2f55:e31:2877:ead4])
+	(Authenticated sender: michael.opdenacker@rootcommit.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cp0jt6bm4z1yVn;
+	Fri, 17 Oct 2025 10:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
+	s=hostingermail-a; t=1760695347;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=INLfLanNrxPT8zZfl4wJScpkqHE8+TQnHHl9RjngRPU=;
+	b=dquGaOQJ50FuM7nM1sHO4ZKdjfqy1yDixC7SDNjV6UsVxpz11jxtBIYTccQGNTzanQ6jQg
+	BGjF4WVVOIbCSjETaOXvEvnwsBFU+Ob5gISMMpgEHxtQBmXgJRc29M2Mu9/tdu3P3q+d+J
+	79WJ1Rkd56ApYmlmwMSUbfpLwDL2xANQrgqvA3hMKu2ubY7dR5Od0Fi/jhV8MqM+Z4NqDa
+	JA7cBUwHePhqsm7OtGJg3Wibk4HTbKdCcTygPnA+Xla52qQ5caHaNLQFbgh8yRvFOX9PTb
+	SJp3CDvrZ6W0ZgbEGMD3ZnrcEc9wj382BSfTP3WNMldys70E0hvJpKO0k/6w9g==
+From: michael.opdenacker@rootcommit.com
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Yixun Lan <dlan@gentoo.org>
+Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	netdev@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] net: spacemit: compile k1_emac driver as built-in by default
+Message-ID: <20251017100106.3180482-3-michael.opdenacker@rootcommit.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251017100106.3180482-1-michael.opdenacker@rootcommit.com>
+References: <20251017100106.3180482-1-michael.opdenacker@rootcommit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowJBxicDWFPJoHdXtAA--.42500S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Xw45Ww1fuw18Aw1kJr4fWFX_yoW8Jr4rpw
-	4kJ390gFn8tF1xZa1xAw4jgF1qgFs5AFZ5Gw4xZrykuw18tw4vgFZ7Kry5W3s8u395Jwn5
-	Zas29w43uF10y3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwmhFDUUU
-	U
+Content-Transfer-Encoding: 8bit
+Date: Fri, 17 Oct 2025 10:02:26 +0000 (UTC)
+X-CM-Envelope: MS4xfE6wcYjsPboHb55vSh1fH6aAWNprdRcSXrdFEIWCopkxczg0fg2oi4JZPXzc17U5fumSNVpTQ8GaIZON2ODWTprzV/SxzxeWxfEWpBdLQlVustMLg1B4 2E0aVkcpL22tFkCW+q4brCQZgjglw8+hW8ijuQ3LjCEHFFNj/MLKvibvf12FqDvdjs7+hGGLstgVYb7ndMW6Tc4U5/PK6tOv8tFM/vEDLVETlLQXgGPIY0qS tMULin+Mbyl2H0Ew/sba+/10YOYSa11413QPUJbvsZIW75r4f1a1fv5ybKbR0maxYoVPICqBcLbM32/WeTXJ1dApTQ6m7VGpvkYrPg+c1Kn9lo0Bt79/7jlM jcteHgroEZ5+ATgAnxmL0a4qDakovt8sGmr0Elzn3WPwqbNX8O8iKaA3o1zltND/hHL0db6jBCiIKTlwCsVwtNnpI11j6eLz3Phb4D9O7AVnWd4pGoHUxDv8 zwPKO2q1g0VD8zjs1aFIIiAWCXNGMbhNTdVvftsqS04neH4yUtvS516o93DY8YSmd+kWiVoq1mBTLcSXCXaoTMS9Af/DwfBv7Bt53WGVj1Kc3D9aUosUiFBr V83j3WnUctOYwGQah0sySMk0lM0ZuqxUSb2OOOVH7j2LYw==
+X-CM-Analysis: v=2.4 cv=Lflu6Sfi c=1 sm=1 tr=0 ts=68f21433 a=/5xBaVTRis1tCxhfvtIJdg==:617 a=xqWC_Br6kY4A:10 a=d70CFdQeAAAA:8 a=WyZDyWQnYPSBde5YxlwA:9 a=NcxpMcIZDGm-g932nG_k:22
+X-AuthUser: michael.opdenacker@rootcommit.com
 
-Hi,
+From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
 
-When compiling tools/testing/selftests/bpf, there is a build error:
+Supports booting boards on NFS filesystems, without going
+through an initramfs.
 
-   CLNG-BPF [test_progs] verifier_global_ptr_args.bpf.o
-progs/verifier_global_ptr_args.c:228:5: error: redefinition of 'off' as 
-different kind of symbol
-   228 | u32 off;
-       |     ^
-/home/fedora/newfixbpf.git/tools/testing/selftests/bpf/tools/include/vmlinux.h:21409:2: 
-note: previous definition is here
-  21409 |         off = 0,
-        |         ^
-1 error generated.
+Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+---
+ drivers/net/ethernet/spacemit/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-tools/testing/selftests/bpf/tools/include/vmlinux.h:21409
-
-enum i40e_ptp_gpio_pin_state {
-         end = -2,
-         invalid = -1,
-         off = 0,
-         in_A = 1,
-         in_B = 2,
-         out_A = 3,
-         out_B = 4,
-};
-
-The previous definition of "off" is in
-drivers/net/ethernet/intel/i40e/i40e_ptp.c:
-
-enum i40e_ptp_gpio_pin_state {
-	end = -2,
-	invalid,
-	off,
-	in_A,
-	in_B,
-	out_A,
-	out_B,
-};
-
-CONFIG_I40E is set in the defconfig file to build i40e_ptp.c after the
-commit 032676ff8217 (LoongArch: Update Loongson-3 default config file)
-in 6.18-rc1.
-
-What is the proper way to fix the build error?
-(1) just disable CONFIG_I40E (CONFIG_I40E=n), then no "off" in vmlinux.h
-(2) set it as a module (CONFIG_I40E=m), then no "off" in vmlinux.h
-(3) modify the variable name "off" in verifier_global_ptr_args.c
-
-Thanks,
-Tiezhu
-
+diff --git a/drivers/net/ethernet/spacemit/Kconfig b/drivers/net/ethernet/spacemit/Kconfig
+index 85ef61a9b4ef..7fe1b2a308d1 100644
+--- a/drivers/net/ethernet/spacemit/Kconfig
++++ b/drivers/net/ethernet/spacemit/Kconfig
+@@ -18,7 +18,7 @@ config SPACEMIT_K1_EMAC
+ 	depends on ARCH_SPACEMIT || COMPILE_TEST
+ 	depends on MFD_SYSCON
+ 	depends on OF
+-	default m if ARCH_SPACEMIT
++	default y if ARCH_SPACEMIT
+ 	select PHYLIB
+ 	help
+ 	  This driver supports the Ethernet MAC in the SpacemiT K1 SoC.
 
