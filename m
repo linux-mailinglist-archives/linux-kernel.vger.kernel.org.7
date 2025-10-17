@@ -1,175 +1,93 @@
-Return-Path: <linux-kernel+bounces-858778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A764DBEBD15
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:32:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43DFBEBD1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B822356E96
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B24F1AE12CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531722C0F7C;
-	Fri, 17 Oct 2025 21:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C4527E07E;
+	Fri, 17 Oct 2025 21:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cTCq9UAn"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GdLvCsIh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D794265CAD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C3419ABC6;
+	Fri, 17 Oct 2025 21:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760736735; cv=none; b=Iyl68HlZMwjAFzW0ITcwFZdIIOsfhq5I8wNOV1vdsKnb9WFHLayQjAu2Wv7QLakp67CRM4TWxmAbPqyNkNG5bWabTHw3hC8spAhdOAGG71cCDilk6EHg5exzcUXs0PhcsWlqXG6xjmreS+et7oUdAyDnvngiHiz5HUTDkKRSbIw=
+	t=1760736896; cv=none; b=FB+QhfvfReQ0RGN2s3nlJNIvv2DIG05hIfWaD33UMua9lTlqgz5Ankw28afnd+mRt05GHymlzBs2UaFqrH9Qdyf8hfskTgvQXVTXipMEtYzDFu/LoTqadmOL8OELR/MXDPp5OizKy9BLz2f/73QQQgpM6VhlCamuwA6bt3+Lym4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760736735; c=relaxed/simple;
-	bh=xWGoKK25YqsvRNSCotzWxd+xc9eg4i6XzKSv+4uybPI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=V5LClKJMxywQG5mLqCa0iKs5aRA3mwh8hNh30jCjymlUaFAO8a7zm2GQPYqbRR5xJSfd3AIqJHlK05DVzvHlvoqwgZuTzyqKPFPqq6M5e7t1H4VjPImfPeg2XpJYrGO3MTZz0pS7Nes6vPYltRm/iW89T90W01PkjdkD2yutTAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cTCq9UAn; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b60968d52a1so3977351a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760736733; x=1761341533; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9gtDefYWAVjsVDW6WMvanANrfYGRojaTuaBTWReOyJI=;
-        b=cTCq9UAntOlG2NhBbEPHD4AXtaFLJmP2LCpfh9nRei+33ZqqVdI1vezprSnc+SVS70
-         omW4lrLFt3DNWLsMhtxoD8D+GbwIEUuBULTiuaJQUM/IZnS5yHHqSjtKPVtJlgXkeP8+
-         NSXBN8xm0n5vVhb92oZXwjmJ2RSywhpHlyCD791Y0BakZaHKx3iLw2RzHklGZUmmtMks
-         fwTAaTdlzHdCToSwSQH/GVjHZqKvyUNPG1Fx6axp63MR4RQ+cQMyfK97+hUw6BeEO2l9
-         UPz16RCxwxJxc7sS0LsB9wlSuc6EbmHa4x6OCGXtto18uMd4xqi0AoztrBlZl357hC+6
-         0vUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760736733; x=1761341533;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gtDefYWAVjsVDW6WMvanANrfYGRojaTuaBTWReOyJI=;
-        b=XUBG/vtHl6jFP4A+GNNXmix4v4S+nTlRBDXFxUuLiU8Sd0E8DkLVumt2rkusCLvVde
-         s1Jpv0mqrMPV96+V0uj0jNybwBTnwwfD7bC84Rf6aoNbGmhCaIwblMqlafxk/ERYkqOP
-         AYswMxPP96IbwUAq0P4ti/GcgkXuSPa0z9++zjWfOzC/e5evGfO0hOP1D6RZPsQCbSLR
-         1FyE/LZiLhEMjacB5Z8LaN953iVKAoaOp+Ql5b+Rg6Y0+R+1Kv6byEnHp+RByON9ssAd
-         ertqX4aY9rr4slwAoRgLFLl2Q2kZo/8nMTtadc23u263dT3vZ/jixWtuDFxyXP97qSTx
-         u9dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXz4JCbrCIzN44QvHuhg2smDr+zZFNFGjO52t/toG4XQ/L1bsA6W6ne4utZ1E64EtMO/fWOSzTveeUk+ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiehLVPcUW3tJzR54IFFQbu2niUN5W4YAqIvgWDZFHjfQ7rQrY
-	iiETGo9pRbUX8XXyuiDRb42T1eNHQBTKneeKptAUoa/ydryKdFEBSm3Wsy6i2A05O4syWlB9D8p
-	jLfpUiA==
-X-Google-Smtp-Source: AGHT+IEbt2E83StVcKSsWn4g67eKo6J1vttk/tak3E0xY04KXB5yu7Mc5sleQhcQRAZLOADrOnbQ1UEniCU=
-X-Received: from pjtk2.prod.google.com ([2002:a17:90a:c502:b0:327:7035:d848])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:244b:b0:253:1e04:4e8
- with SMTP id adf61e73a8af0-334a85fdb31mr6566741637.56.1760736733495; Fri, 17
- Oct 2025 14:32:13 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 Oct 2025 14:32:10 -0700
+	s=arc-20240116; t=1760736896; c=relaxed/simple;
+	bh=iwPzv8SqY16yQkSLGOkVZKof4DlBtEdJgYXEwqfjIAE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WywZlkF55M73RCLvmThVd3CHMh33nHYUEJOj9lvFm2/TfDER8Q9R57uUhfCv5kv5N45InQuYi1BtZRgL57vFcsBdBYi9v5iWGEJgSXJuUWbhRNsMgp8VJpnufau4Gw+VRzLS+dpAGa5IjvUDQBVML5PJP6EyrSVZYjizhIcEkRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GdLvCsIh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FB7C4CEE7;
+	Fri, 17 Oct 2025 21:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1760736896;
+	bh=iwPzv8SqY16yQkSLGOkVZKof4DlBtEdJgYXEwqfjIAE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GdLvCsIho3XclYFzpp6oB+yPpPb40TMeMlfUlFFOCFFOMk649ZKu/MDl03vw0teOI
+	 kLw5tDIXF+XnU4M+B4AV9pTXnbc/y9kEi7aYr5e6DwTpbGv6jV9z+y70jClJo2Gliu
+	 /pDqNy8ZPo/HEDNPdSqjfNVSetT9D5l6Mki6CiRE=
+Date: Fri, 17 Oct 2025 14:34:55 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>, Wei Yang
+ <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm-nonmm-unstable
+ tree
+Message-Id: <20251017143455.712b94e1cfa744fa7a46215e@linux-foundation.org>
+In-Reply-To: <aPJD4ANRWUDVDqKc@sirena.org.uk>
+References: <aPJD4ANRWUDVDqKc@sirena.org.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017213210.339764-1-seanjc@google.com>
-Subject: [GIT PULL] KVM: guest_memd fixes+tests and a PMU fix for 6.18
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Proactively add a guest_memfd flag, INIT_SHARED, to head off a lurking ABI
-collision that will necessitate a new flag at some point.  Without INIT_SHARED,
-we'll likely end up with x86 CoCo VMs initializing memory to PRIVATE by default,
-SHARED if MMAP, and PRIVATE if INIT_PRIVATE (the potential new flag we're
-trying to avoid).
+On Fri, 17 Oct 2025 14:25:52 +0100 Mark Brown <broonie@kernel.org> wrote:
 
-Allow mmap() on x86 CoCo VMs, i.e. on private memory, to try and detect any
-other lurking ABI issues.
+> After merging the mm-nonmm-unstable tree, today's linux-next build
+> (x86 allmodconfig) failed like this:
+> 
+> In file included from /tmp/next/build/samples/vfs/test-list-all-mounts.c:11:
+> /tmp/next/build/samples/vfs/../../tools/testing/selftests/pidfd/pidfd.h:28:10: fatal error: kselftest.h: No such file or directory
+>    28 | #include "kselftest.h"
+>       |          ^~~~~~~~~~~~~
 
-In addition to the guest_memfd fixes/cleanups, fix a PMU goof where KVM calls
-into perf on a hybrid CPU and gets yelled at.  There's no functional issue, but
-the WARN is obviously less than ideal.
+Well that:
 
-The following changes since commit 6b36119b94d0b2bb8cea9d512017efafd461d6ac:
+#include "../../tools/testing/selftests/pidfd/pidfd.h"
 
-  KVM: x86: Export KVM-internal symbols for sub-modules only (2025-09-30 13:40:02 -0400)
+was a strange thing to do.
 
-are available in the Git repository at:
+I'll toss this on top:
 
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.18-rc2
+--- a/samples/vfs/Makefile~selftests-complete-kselftest-include-centralization-fix
++++ a/samples/vfs/Makefile
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ userprogs-always-y += test-fsmount test-statx mountinfo test-list-all-mounts
+ 
++CFLAGS += -I../../tools/testing/selftests
++
+ userccflags += -I usr/include
+_
 
-for you to fetch changes up to 505f5224b197b77169c977e747cbc18b222f85f9:
-
-  KVM: selftests: Verify that reads to inaccessible guest_memfd VMAs SIGBUS (2025-10-10 14:25:30 -0700)
-
-----------------------------------------------------------------
-KVM x86 fixes for 6.18:
-
- - Expand the KVM_PRE_FAULT_MEMORY selftest to add a regression test for the
-   bug fixed by commit 3ccbf6f47098 ("KVM: x86/mmu: Return -EAGAIN if userspace
-   deletes/moves memslot during prefault")
-
- - Don't try to get PMU capabbilities from perf when running a CPU with hybrid
-   CPUs/PMUs, as perf will rightly WARN.
-
- - Rework KVM_CAP_GUEST_MEMFD_MMAP (newly introduced in 6.18) into a more
-   generic KVM_CAP_GUEST_MEMFD_FLAGS
-
- - Add a guest_memfd INIT_SHARED flag and require userspace to explicitly set
-   said flag to initialize memory as SHARED, irrespective of MMAP.  The
-   behavior merged in 6.18 is that enabling mmap() implicitly initializes
-   memory as SHARED, which would result in an ABI collision for x86 CoCo VMs
-   as their memory is currently always initialized PRIVATE.
-
- - Allow mmap() on guest_memfd for x86 CoCo VMs, i.e. on VMs with private
-   memory, to enable testing such setups, i.e. to hopefully flush out any
-   other lurking ABI issues before 6.18 is officially released.
-
- - Add testcases to the guest_memfd selftest to cover guest_memfd without MMAP,
-   and host userspace accesses to mmap()'d private memory.
-
-----------------------------------------------------------------
-Ackerley Tng (1):
-      KVM: selftests: Add test coverage for guest_memfd without GUEST_MEMFD_FLAG_MMAP
-
-Dapeng Mi (1):
-      KVM: x86/pmu: Don't try to get perf capabilities for hybrid CPUs
-
-Sean Christopherson (12):
-      KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS
-      KVM: guest_memfd: Add INIT_SHARED flag, reject user page faults if not set
-      KVM: guest_memfd: Invalidate SHARED GPAs if gmem supports INIT_SHARED
-      KVM: Explicitly mark KVM_GUEST_MEMFD as depending on KVM_GENERIC_MMU_NOTIFIER
-      KVM: guest_memfd: Allow mmap() on guest_memfd for x86 VMs with private memory
-      KVM: selftests: Stash the host page size in a global in the guest_memfd test
-      KVM: selftests: Create a new guest_memfd for each testcase
-      KVM: selftests: Add wrappers for mmap() and munmap() to assert success
-      KVM: selftests: Isolate the guest_memfd Copy-on-Write negative testcase
-      KVM: selftests: Add wrapper macro to handle and assert on expected SIGBUS
-      KVM: selftests: Verify that faulting in private guest_memfd memory fails
-      KVM: selftests: Verify that reads to inaccessible guest_memfd VMAs SIGBUS
-
-Yan Zhao (1):
-      KVM: selftests: Test prefault memory during concurrent memslot removal
-
- Documentation/virt/kvm/api.rst                       |  15 ++++++++--
- arch/x86/kvm/pmu.c                                   |   8 ++++--
- arch/x86/kvm/x86.c                                   |   7 +++--
- include/linux/kvm_host.h                             |  12 +++++++-
- include/uapi/linux/kvm.h                             |   5 ++--
- tools/testing/selftests/kvm/guest_memfd_test.c       | 175 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------
- tools/testing/selftests/kvm/include/kvm_util.h       |  25 ++++++++++++++++
- tools/testing/selftests/kvm/include/test_util.h      |  19 +++++++++++++
- tools/testing/selftests/kvm/lib/kvm_util.c           |  44 ++++++++++------------------
- tools/testing/selftests/kvm/lib/test_util.c          |   7 +++++
- tools/testing/selftests/kvm/mmu_stress_test.c        |   5 ++--
- tools/testing/selftests/kvm/pre_fault_memory_test.c  | 131 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------
- tools/testing/selftests/kvm/s390/ucontrol_test.c     |  16 +++++------
- tools/testing/selftests/kvm/set_memory_region_test.c |  17 ++++++-----
- virt/kvm/Kconfig                                     |   1 +
- virt/kvm/guest_memfd.c                               |  75 +++++++++++++++++++++++++++++++-----------------
- virt/kvm/kvm_main.c                                  |   4 +--
- 17 files changed, 378 insertions(+), 188 deletions(-)
+but there's probably a better way...
 
