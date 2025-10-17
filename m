@@ -1,122 +1,141 @@
-Return-Path: <linux-kernel+bounces-857531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4083BE7077
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:00:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D59BE7089
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49A56256AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:00:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DD994E15C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F995266B56;
-	Fri, 17 Oct 2025 08:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C656262FD9;
+	Fri, 17 Oct 2025 08:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EePkFiAz"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IOIcl56y"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D122620D5;
-	Fri, 17 Oct 2025 08:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4127C1A0BFA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760688009; cv=none; b=BttcvZE3BIZx2VYjVchX/34R2TepgoW5FrVcp0uNSlF0Mk3Huz8cIgmo1ALOhjAWhJ+Aw3Dx9VYYs/olCg9PUK1Xjx9w3STYoHEoJlNH2a77V4tXaukKg7Xrsj+3t+smAvb/PkGRqkgRJYjx1N0rrmQ2gxnt5eNoxCBv4gsPk1w=
+	t=1760688170; cv=none; b=Nbl+6QdZWlPT3Ta8UlfMx+RFbxUg3FYIbbNxPkXwNxRKQlCVhayz6F3zKzr7F2SK3yEAOZxops8WvZqT2Akb/HQvpqOzSlv1epvJCK6kfZw8eIvJ32i7cK56NjwecMzk+H6yCkbO3UWblM9KfKuE9FGawBwedA0Ln/j74hV/P7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760688009; c=relaxed/simple;
-	bh=Tc3/ELtbtt0sJENB0B7Or+iGswnWW4vMvbAo+PxCyHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=laACUbdzsGCFRfwRdxyTVMTAjy3WclRMQTeRvwVR6eD6ZESlb/Zg02y8OFRMBJqsvRcupByWBDHdW2xZCkNJ4H3zqxNUC+yT5G4iII4m+7zlA2/KY+nuPi2pUx4oXUsGrnKaV11iHrxLjoSj5dCF6OOxXh0VNyxsrw6mm2FkATs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EePkFiAz; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id AF1DCC041DD;
-	Fri, 17 Oct 2025 07:59:43 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DA567606DB;
-	Fri, 17 Oct 2025 08:00:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0AAFD102F22F0;
-	Fri, 17 Oct 2025 09:59:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760688001; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qdb3zBaLrjZWsHURH6g1nqx2Ac1GQ6bBBQODdXaFSNI=;
-	b=EePkFiAz+vAhFGrOoRPyHPtjzVhwvdEKp+PMnxHYe3qDGcRf3gJiYsjePY4CMJPpyfVfJ2
-	2cWO3cw7v+xhxRrPJx9ZuCnm9OMFJEiNkz5soqmi4IKQq7UFnQk9Bv8zLFc3n5cGwNH2Dw
-	mdDyHgiXEY5+mWQto3TvNoBvEvgYLQjB+eszduPGsefGe9sCVBvTMkd6cK2DfUZTs3v5Rh
-	mNkcDqPZV+3HIgSpydNxaC1h1vSu1BEhHqTfsJ5chzn5inpRYrmM7O1ldan1f/n+oAdcYL
-	JgHt7NUHdI68zz9LP11u4J7hxqN3lO14wCyFamJ65IcXF8l2912Z7JyMH8EqHA==
-Date: Fri, 17 Oct 2025 09:59:36 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-Message-ID: <20251017095936.71cb318b@bootlin.com>
-In-Reply-To: <CAMuHMdV0As4XKG0P0y+pJpTT82Bq8qpq2rHufeX4_q0j-eOPPA@mail.gmail.com>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	<20251015142816.1274605-3-herve.codina@bootlin.com>
-	<aPHiAObA61OVf8mY@ninjato>
-	<20251017093649.2d5549e4@bootlin.com>
-	<CAMuHMdV0As4XKG0P0y+pJpTT82Bq8qpq2rHufeX4_q0j-eOPPA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760688170; c=relaxed/simple;
+	bh=+Zz86raGXQ4tEA6M4IJ4q4AZu+RYhIAQ0gpsL4WG+Og=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GhoVcA4rTN8u+iNU3HEmdZn7NO8HUV7eVVrh2VYm4KXtkHxC9Md6goO6gD3lwxPGmzjElNQDWtPHJAf+2IvJS+m9yhS43+AVOfLlKEHZglF5lgMCKqEa8nBS+APX3cESloJdSi5V51x7m9UX0Ydk69cxX1wWVMZIife1+NfxCd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IOIcl56y; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee12807d97so1513780f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760688167; x=1761292967; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g6jUScl2NITZ+PoGEq7AwOuZFPu/G6TgC/xMdzTqEyA=;
+        b=IOIcl56ypedoZC49+uSoe3y1328eMGiPMbrWp5qmwmZqUG6bxn+xEXJ3KeA3B2H7eE
+         elb3UWhXa0C4aaeD/hudbPo7sxeRtKcS4xb8vthzqTQB1hlqXYlxUS8++MKSAvNweHjQ
+         wPa/jXLvaVZQQ/O4K5D7o6Wujk/f/ZCEo8eOEDqlWsu2ygqJNdV72uwjsMoETpX/shsD
+         bW/7ar9zyM12sywZ94gT5SDQDyntvEK96oMib7PU+g+3O/L1XkVl8LzFxwxOWMdLkbHo
+         HQ64ygdN7nl3OjeJrgvigRGXSOZlMVgxV2x8nL1E36k+bx8aNVv39sOCPLpXIqlPbxv3
+         kK4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760688167; x=1761292967;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g6jUScl2NITZ+PoGEq7AwOuZFPu/G6TgC/xMdzTqEyA=;
+        b=HGgqP/kyq3TqAkX0I/gThX81o1eZgZK9DS+mOmZi0FnbO1+eSG48IMUqzZqoLPAnqP
+         zNa6O4w86jU7DquPOE/ncynsDWPXXEpvRhorn1N5/25R3qtG4qg4U3zDXZXdKpXEBsl5
+         YYn3ffIfyborRQk3pQYHtG7pZi5w0Zwl5VZDRQ6DreIFw3giYZOVYGkStOajsMnfwtWu
+         GFpmT01ZPotQTO1N/wnUYt7AhSSGgJwK41no8yVhQfkX8QywH6+VzwO3SGeQYvLAOCDw
+         6/PAPsW9hdWmgcYP6f9b+X1+m8SOTQtycR+qIWzY61o4guo5w9NaNahFMTkRUIJtAIBw
+         j87Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmYBFX/PK6MvP32iabv9gjO8cWst9GVWt04JO3AjiEMVDLJf+haPqO1rCCY+k1sIG09nK05cpNxPihT1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws6wtha3So0dVYWhimhXvJFNQC7c91lC2wuNgpRxk+8ZIfgHo+
+	SL6LNGexoY8xpaRcAa8hQ1Z04PMim1+IcKjBry1FmOGBKK4YI2d3LXK7ROe3qXobXB8=
+X-Gm-Gg: ASbGncuwwCBkjfBF07JyehvY7bTRvwSJfN7q65iDbYokC8gJhXmI5ONyBCqCfll669u
+	WJoXlbzMuukNbZFCrVDW7fkHqQzkdenDbfbCqY9vZ4RQ73TDnu+cpu8D/icv5QPy0Da7BdKKk+t
+	LL5WDk8zESjLoJ/eY3CnsJdzGL7cC5WFjnQk3oW/DM13+5wy6t4dXG662e8dRFAhe6/yez4Xph1
+	nvjySdp8dGG+EmFBJsLFqmxAFmtSEah6rp4EbGGkNa55Ru3iZlo+3p6e6EmHLC+6UP+hvTE6QHN
+	W7TMl1A4ZGdq1jvWFH5Skdf3/bNQ8Rd4As02cpgxcv4pKOSah+ohvEAXJ5N8tP7ecw/2RVE1NF6
+	ulGoSVUiXbgNcAm6hbaSnHyPxICeEKicDA86WBMg1ngt6d8MuknC/sy9Oo5aSXWUh0hwMZds=
+X-Google-Smtp-Source: AGHT+IH+3cqatsdxr7KnVnzTd2G0piwrqv+5MDST6gZ033Fz0Y9dVGarFXa+3uevs+8omXzS46lViQ==
+X-Received: by 2002:a05:6000:470a:b0:425:8577:9cd4 with SMTP id ffacd0b85a97d-42704da392fmr1867346f8f.54.1760688167461;
+        Fri, 17 Oct 2025 01:02:47 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6c59:a281:27c9:93a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42708bcea1bsm1082308f8f.14.2025.10.17.01.02.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 01:02:46 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] reset: remove last remaining user of the legacy lookup
+ and drop unused code
+Date: Fri, 17 Oct 2025 10:02:40 +0200
+Message-Id: <20251017-da850-reset-lookup-v1-0-362a309a9f09@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACD48WgC/x3MQQ5AMBBA0avIrE3SVqS4iliUGUyISotIxN01l
+ m/x/wORg3CEJnsg8CVR/Jag8wyG2W0To1AyGGVKrbRFclWpMHDkA1fvl3NHHlxhyZCluocU7oF
+ Huf9p273vB/I6i0xkAAAA
+X-Change-ID: 20251017-da850-reset-lookup-eca37d2d7d9b
+To: David Lechner <david@lechnology.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1046;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=+Zz86raGXQ4tEA6M4IJ4q4AZu+RYhIAQ0gpsL4WG+Og=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo8fgieyvnPPpUx87hUI3kShF3FIW7747ARrkfT
+ z88AlKReOGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPH4IgAKCRARpy6gFHHX
+ cuK8D/sHa0OZJF7j3ijUfnr6NiZoBEgUXeJHwvw37LgQUgRWVv0/8SZFl+jBB+6bjTQEnMB9eup
+ UJh15hLQ/555Xc7KSC9MZSB1MAkmn8sPcagTXxoXZyedkGYaV1Kt/FScT41ZevjQUcfOTcOwy7y
+ FjzDf/FtNSrkDlenP3Qotm1mBsNkdmli/nvVwzobKmzLNz5g3w9A/ZzB7h8glS6U0aFQXK3VUbi
+ LfhTX1T1uy2rqNdJ/zH3+qWp74gMfzd1QsSagblV0n0X55mDNV8YIeInblU3y8LGkXWgY5EKzJA
+ EPlJuNX40GaS4mKc2g8qGrXs81rhMsMPz65l4b7yW9dsdZy5T58QYbfohTF1O+0Z/MZZqBnD/Tw
+ tMkctzQrLlsWlKMPlVQWyC3K0QDajWAxILY3U3XN8JtV1Fi+Op8mOD9AItrG48p9BKiD1YJsWID
+ 5Zf6X0yDGOb3bVAI9RHchmqpiZSzBgKVypIHTDkpkadWTjYcptyUENp95Q79hKBlHX8kujtfSNu
+ tqskZtlwF0cMY+gNfx6pLllr0SXmVEnmVWW7RsneVUQR8Vb3nUnanz8OSjcUgGtt/wfJaeHoDDk
+ qhtFwkKKviq40FsS9ALv0YGspPt2v8fWmHRvSC4BuAT81PTGYo014wHFI1p87ue21ofX5pdLQrr
+ VhqLB7qM+s0YXZA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Geert,
+The TI DaVinci platform is the only remaining user of reset platform
+lookup. Except that we no longer have any legacy, non-DT boards in
+mainline so we can now safely remove it from the PSC driver and drop the
+legacy lookup support from reset core.
 
-On Fri, 17 Oct 2025 09:40:42 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+The DaVinci clock driver doesn't see a lot of traffic these days so I
+suggest a simple Ack from the clock maintainers and routing it through
+the reset core for v6.19.
 
-> Hi Hervé,
-> 
-> On Fri, 17 Oct 2025 at 09:37, Herve Codina <herve.codina@bootlin.com> wrote:
-> > Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:  
-> > > On Wed, Oct 15, 2025 at 04:28:14PM +0200, Herve Codina (Schneider Electric) wrote:  
-> > > > +static void rzn1_adc_vc_setup_conversion(struct rzn1_adc *rzn1_adc, u32 ch,
-> > > > +                                    int adc1_ch, int adc2_ch)
-> > > > +{
-> > > > +   u32 vc = 0;
-> > > > +
-> > > > +   if (adc1_ch != -1)
-> > > > +           vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(adc1_ch);
-> > > > +
-> > > > +   if (adc2_ch != -1)
-> > > > +           vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(adc2_ch);  
-> > >
-> > > Are you open to either use an errno (maybe EACCES) or define something
-> > > custom (maybe RZN1_ADC_NO_CHANNEL) instead of hardcoded -1? I think I
-> > > like the latter a tad more.  
-> >
-> > I prefer RZN1_ADC_NO_CHANNEL too instead of an error code and I will use
-> > that instead of -1 in the next iteration.  
-> 
-> Or just -ENODEV or -ENOENT, and change the checks above to
-> "if (adc1_ch >= 0)"?
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (2):
+      clk: davinci: psc: drop unused reset lookup
+      reset: remove legacy reset lookup code
 
-I prefer to avoid mixing channel numbers with error code.
-
-The specific RZN1_ADC_NO_CHANNEL value looks good to me meaning "No channel
-to use".
+ drivers/clk/davinci/psc-da850.c  |   7 ---
+ drivers/reset/core.c             | 120 +--------------------------------------
+ include/linux/reset-controller.h |  33 -----------
+ 3 files changed, 2 insertions(+), 158 deletions(-)
+---
+base-commit: 2433b84761658ef123ae683508bc461b07c5b0f0
+change-id: 20251017-da850-reset-lookup-eca37d2d7d9b
 
 Best regards,
-Hervé
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
