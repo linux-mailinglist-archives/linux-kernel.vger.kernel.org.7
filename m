@@ -1,231 +1,142 @@
-Return-Path: <linux-kernel+bounces-858204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2458DBE9479
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:46:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0362CBE940A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2593B2E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4912F189B59E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A88336EDE;
-	Fri, 17 Oct 2025 14:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE5732E14A;
+	Fri, 17 Oct 2025 14:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QjQZx2Vo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZXy9W3p"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4EB369998
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCBB32E144
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760712258; cv=none; b=SUstZykLdhxVQa4HwVl50Sc25NEARVbvfAVZS09ZkEkCNyvyjCmfjyDVR1DDkJ6wLXjbPJIktLvaor6ssOIkT+x8Isjh6AVzx1P1MOHNSTwxxV+Ipmv2Op3x3LWRx8svXDSQZu+FnIJrvMi4lSrwywfqG/6Ofj6HFHBZicQ0c78=
+	t=1760712179; cv=none; b=gaiPSO6nSgIxeItmxvS2SvMu7M4VaGLYh2BtbJBu2xcOzPPertSQSoes82OxU6d8rm3bZAAev6c5XbWhiljpip8s/Va2BMqENA8Xa5ZfPfycr2IiKocy/i6BBK5ltITlfzjA0wx3w4zBgFdmorMM1mhbYf8Vwbbl1FQL/9qEe9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760712258; c=relaxed/simple;
-	bh=mXnxE1KldyKcvhCCZJc0/0qoZmPaRMy9UrALeuJo0KA=;
+	s=arc-20240116; t=1760712179; c=relaxed/simple;
+	bh=Xx7XdhV/7kyHbdK+hFaFGxPdJ2gUXJJwY77QDduTYHY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tG6vxGAC1gcdfzBwdfbVE8qyms7ZD4oOMzlhqE+EQqA9xEnB9K0YeOtj6UJvHG6jknqynCRuc68FeDuuINUMPAXDyf3pTnFys4pf+VUgKZxcQ3dGmXbWDem9JOEGNA3S6mhzwm5hiSMMMdwcKBuzL0BV3rwpwWLk1wXEzHOrHY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QjQZx2Vo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760712255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AHTrsmHTTJS2rcDKbRhEgjpwAwqBovgsbc5ckkuHzgA=;
-	b=QjQZx2Vo9vakjvQyDZtQe3Q/bFymrqiNEVPWz6GEufoMLqVd+WzwmvGAZEHn4HvlDirQNS
-	yRZf1b9np29qJqs2n5nHivV376S1SDNba4b9jz9wAGE8OzN9yT96S0drWzlw8IfipcjBgh
-	GmGTZIBOrNh8cJ8UW5nWE45HL8xiQi4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-171-K-gS7dkEPy615H8WP1RGeg-1; Fri,
- 17 Oct 2025 10:44:11 -0400
-X-MC-Unique: K-gS7dkEPy615H8WP1RGeg-1
-X-Mimecast-MFC-AGG-ID: K-gS7dkEPy615H8WP1RGeg_1760712249
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 707E7180034C;
-	Fri, 17 Oct 2025 14:44:09 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.57])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F23D219560B0;
-	Fri, 17 Oct 2025 14:44:05 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>,
-	Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-crypto@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 09/17] crypto: SHAKE tests
-Date: Fri, 17 Oct 2025 15:42:53 +0100
-Message-ID: <20251017144311.817771-10-dhowells@redhat.com>
-In-Reply-To: <20251017144311.817771-1-dhowells@redhat.com>
-References: <20251017144311.817771-1-dhowells@redhat.com>
+	 MIME-Version:Content-Type; b=PUyrAX1gmiT/0RJsp+VZkf5iydI0HsOATfvCS+/a2nZNmPjkrQc5EH7DOuln6ZkhTDfT8b7RGNo3L7zadknTvX1VVX1QwSN3sADijqn8i05v/Aifgqa0hpagzgbDkUvPAKza1vhwZnr3uVoXsdQU0mc97pCYHaDM9vxj7I+/uTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZXy9W3p; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b55517e74e3so2189664a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760712177; x=1761316977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CWOesE9+ukIK9ZiHh+lbkgu9u3o79T9+p9YpsPsRmb0=;
+        b=TZXy9W3pShhFUSTGxQjyxBwrE9KC2qX0Egwu2vzQhBWZfrUuJ/ZKxOF/Xuc9FsdTEs
+         qI/IMahV8U6b4hD6NnYFieKG19ma9PbNTB6N7UC2CUpTVht0gikUj2M25Hm6vy82oFLS
+         UUBIgEctKo0j5Is2j/wmIoYS3oU4WumET/urzvDE3OdwnHuCUNNKUQP55fHa73z8czI8
+         VFQH30nB7/3FJVY+IDghM9aVn++EBTp/lhTPaY5Jsiavv8Ym/rLCzqKUjOYMyFShYM7/
+         vfo2zvHjOus0oJOj71tH1aWaNBrkYq3UwzrqOODQnv17eOAnEmJ92XluWzNX55EjPzoY
+         In6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760712177; x=1761316977;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CWOesE9+ukIK9ZiHh+lbkgu9u3o79T9+p9YpsPsRmb0=;
+        b=rmYG/2te+K3/YRt+5izRGDiBGkKNw1YG8XO+aD7PBbULS0lqIJzNrGOnn8d65AVCTc
+         PRteTbX4Gtb+3D2UK/V8nCoCrLjysHEKdkk6mYdosyAq3BAPT9D5jEZSZZT9GWozkohk
+         V9rosU5ASvqKi4MkaJMYX9N/7wQw0zFSb/imwzP0Mvc31F2mmivAhVRoCSD7Q3XyKc2e
+         8/NAKhLHnjK3ZxrksXoVMQbJA0Q4izpEZ1hfVsO1IWR/soxdFC9LXClx0psoTOqdVJpo
+         FgKoNSph6LV/cf6xGEof6W+7EzkKRJmdbk+QR11jJsnLwjxk+Tmb834dz1++75lcOsOB
+         Ig9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKWO0mEyd6xPJtSqlNwdQDLM5JAtmU6Z4xyXiqbbbj2m7kRVGRIz5AdwCNf+Z7VcqR4bD30oVm0aZlkZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq3BOa2gLvFYJncFMMsy8g5ewdf+eCsBi9wFsy1egQ1x48n538
+	nT/idKh4mfobvjbZWxO9jRuAO9NWvTbEU6wPlxdxlJs307kc+TDB2Z2Z
+X-Gm-Gg: ASbGncuYQpfQIW5fhZBia6cb03ow29Eql/9q1JW887LjCQ8FobyKanCErQROrtWiTS3
+	rlkXYP3ZqV/MddTN580WMfKzg8JAO5kgw0LY37SE4sWU7sFaj+I358e6VysX3ln7sc5g/b5JqF3
+	zDEUupg4WYyHx8SAGjzHmDKN1ZBmSWY5SyL4QikYa7YFig46A+961CB9eb5o69TZ1GGkt/1kzjB
+	xTWS39TwCHAgvvEGS4Ws83d9xSo/zWLCcAVjvtmBoCpgoM0Y+n1DThYeRbJo1RuetIhKvN+MdQt
+	f0VDExkeskvqmus6ALyoZOETIqal2yXAVY8lfQPsaQk30dvUQTSgAPtDStmy4nWL9RROzQ7skvA
+	XwVDz3rrHpxXZ27xHnVK3au8mAZjvHzwqDpZPYxIGU6G9+F9UiFlWBSfJrHJxlsde3D5WUiizTC
+	y9eP/53KgbC5g7NoAN4h6icUkmJUjI
+X-Google-Smtp-Source: AGHT+IEJKRDsRmaiczSDYsoY6FCHyVAPf70YNE0uDneNM7ZCLgU1sUXAy2/5HTm7bMMrNP2iuBaHgA==
+X-Received: by 2002:a17:903:2b06:b0:269:b30c:c9b8 with SMTP id d9443c01a7336-290cba4e91fmr47934175ad.56.1760712177453;
+        Fri, 17 Oct 2025 07:42:57 -0700 (PDT)
+Received: from cacher.localnet ([111.94.119.234])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7de45sm66292355ad.54.2025.10.17.07.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 07:42:56 -0700 (PDT)
+From: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>
+To: jlee@suse.com, basak.sb2006@gmail.com, rayanmargham4@gmail.com,
+ Armin Wolf <W_Armin@gmx.de>
+Cc: kuurtb@gmail.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] platform/x86: acer-wmi: Add fan control support
+Date: Fri, 17 Oct 2025 21:42:53 +0700
+Message-ID: <12762215.O9o76ZdvQC@cacher>
+In-Reply-To: <20251016180008.465593-1-W_Armin@gmx.de>
+References: <20251016180008.465593-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
----
- crypto/sha3_generic.c | 14 ++++++++--
- crypto/testmgr.c      | 14 ++++++++++
- crypto/testmgr.h      | 59 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 85 insertions(+), 2 deletions(-)
+On Friday, October 17, 2025 1:00=E2=80=AFAM Armin Wolf wrote:
+> This patch series aims to add fan control support to the acer-wmi
+> driver. The patches are compile-tested only and need to be tested
+> on real hardware to verify that they actually work.
+>=20
+> I CCed three users who requested support for this feature. I would be
+> very happy if one of you could test those patches and report back.
+>=20
+> Changes since v3:
+> - fix error in WMID_gaming_set_fan_behavior()
+>=20
+> Changes since v2:
+> - get rid of nested bit masks
+>=20
+> Changes since v1:
+> - remove unnecessary blank line
+>=20
+> Changes since RFC v2:
+> - improve error handling when setting fan behavior
+> - Add Reviewed-by tags
+> - whitelist PHN16-72
+>=20
+> Changes since RFC v1:
+> - remove duplicate include and replace hwmon_pwm_mode with
+>   hwmon_pwm_enable in second patch
+>=20
+> Armin Wolf (4):
+>   platform/x86: acer-wmi: Fix setting of fan behavior
+>   platform/x86: acer-wmi: Add fan control support
+>   platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
+>   platform/x86: acer-wmi: Add support for PHN16-72
+>=20
+>  drivers/platform/x86/acer-wmi.c | 292 +++++++++++++++++++++++++++++---
+>  1 file changed, 269 insertions(+), 23 deletions(-)
+Hello,
 
-diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
-index 3e5a23022596..3a338fb704c2 100644
---- a/crypto/sha3_generic.c
-+++ b/crypto/sha3_generic.c
-@@ -30,6 +30,16 @@ int crypto_sha3_init(struct shash_desc *desc)
- }
- EXPORT_SYMBOL(crypto_sha3_init);
- 
-+static int crypto_shake_init(struct shash_desc *desc)
-+{
-+	struct sha3_ctx *ctx = crypto_sha3_desc(desc);
-+
-+	memset(ctx, 0, sizeof(*ctx));
-+	ctx->block_size = crypto_shash_blocksize(desc->tfm);
-+	ctx->padding = 0x1f;
-+	return 0;
-+}
-+
- static int crypto_sha3_update(struct shash_desc *desc, const u8 *data,
- 			      unsigned int len)
- {
-@@ -97,7 +107,7 @@ static struct shash_alg algs[] = { {
- 	.base.cra_module	= THIS_MODULE,
- }, {
- 	.digestsize		= SHAKE128_DEFAULT_SIZE,
--	.init			= crypto_sha3_init,
-+	.init			= crypto_shake_init,
- 	.update			= crypto_sha3_update,
- 	.finup			= crypto_sha3_finup,
- 	.descsize		= sizeof(struct sha3_ctx),
-@@ -108,7 +118,7 @@ static struct shash_alg algs[] = { {
- 	.base.cra_module	= THIS_MODULE,
- }, {
- 	.digestsize		= SHAKE256_DEFAULT_SIZE,
--	.init			= crypto_sha3_init,
-+	.init			= crypto_shake_init,
- 	.update			= crypto_sha3_update,
- 	.finup			= crypto_sha3_finup,
- 	.descsize		= sizeof(struct sha3_ctx),
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 6a490aaa71b9..88d412ceb6f2 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -5516,6 +5516,20 @@ static const struct alg_test_desc alg_test_descs[] = {
- 		.suite = {
- 			.hash = __VECS(sha512_tv_template)
- 		}
-+	}, {
-+		.alg = "shake128",
-+		.test = alg_test_hash,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.hash = __VECS(shake128_tv_template)
-+		}
-+	}, {
-+		.alg = "shake256",
-+		.test = alg_test_hash,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.hash = __VECS(shake256_tv_template)
-+		}
- 	}, {
- 		.alg = "sm3",
- 		.test = alg_test_hash,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 268231227282..c0eca7f72aa0 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -4690,6 +4690,65 @@ static const struct hash_testvec sha3_512_tv_template[] = {
- };
- 
- 
-+/* From: https://csrc.nist.gov/projects/cryptographic-standards-and-guidelines/example-values */
-+static const struct hash_testvec shake128_tv_template[] = {
-+	{
-+		.plaintext = "",
-+		.psize	= 0,
-+		.digest	=
-+		"\x7f\x9c\x2b\xa4\xe8\x8f\x82\x7d\x61\x60\x45\x50\x76\x05\x85\x3e",
-+	}, {
-+		.plaintext =
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3",
-+		.psize	= 200,
-+		.digest	=
-+		"\x13\x1a\xb8\xd2\xb5\x94\x94\x6b\x9c\x81\x33\x3f\x9b\xb6\xe0\xce",
-+	}
-+};
-+
-+/* From: https://csrc.nist.gov/projects/cryptographic-standards-and-guidelines/example-values */
-+static const struct hash_testvec shake256_tv_template[] = {
-+	{
-+		.plaintext = "",
-+		.psize	= 0,
-+		.digest	=
-+		"\x46\xb9\xdd\x2b\x0b\xa8\x8d\x13\x23\x3b\x3f\xeb\x74\x3e\xeb\x24"
-+		"\x3f\xcd\x52\xea\x62\xb8\x1b\x82\xb5\x0c\x27\x64\x6e\xd5\x76\x2f"
-+	}, {
-+		.plaintext =
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3"
-+		"\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3",
-+		.psize	= 200,
-+		.digest	=
-+		"\xcd\x8a\x92\x0e\xd1\x41\xaa\x04\x07\xa2\x2d\x59\x28\x86\x52\xe9"
-+		"\xd9\xf1\xa7\xee\x0c\x1e\x7c\x1c\xa6\x99\x42\x4d\xa8\x4a\x90\x4d",
-+	}
-+};
-+
-+
- /*
-  * MD5 test vectors from RFC1321
-  */
+I've tested your patch, had a weird thing where i need to reboot to windows=
+=20
+first to make fan control works again, but it all works well now, both CPU =
+and=20
+GPU fan control works just fine.
+
+Thanks,
+=46a-Iz Faadhillah Ibrahim
+
+
 
 
