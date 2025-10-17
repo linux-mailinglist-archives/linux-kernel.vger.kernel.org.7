@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-858855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78309BEC0BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:52:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F8EBEC0C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FE5F4EDB4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EEA1AA77D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2297E2D8762;
-	Fri, 17 Oct 2025 23:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CF73128BA;
+	Fri, 17 Oct 2025 23:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o3jvYXt0"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RBGTmlyo"
+Received: from mail-yx1-f74.google.com (mail-yx1-f74.google.com [74.125.224.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E6D28B415
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E5531282E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 23:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760745139; cv=none; b=WAWj6Jo+C8nTgGMMqonlm7y4rd7ekiP0dGC9q2dod42LkDvCN52r6S1ulgW2o0G20gdv7f/QC0dnbVFKvp0f11jPI2Lig++Ejy2Wq2OOxoIwWPcLRLQpkXH0u67QCerR+WjDqEQbGZ+TWbTptL6z8P8T0li6m9cnOLs26OoTX+M=
+	t=1760745144; cv=none; b=CIexbT9efGA9Kd2SFsIZ9B2XAgD1MhxUPBFEAUIRX+5bmiGU4T0w7AhG1JPjhpGLX3DOehnc7avD6tRTvywkjd39X77CeaDTxiRXQRmstJc4oMve0T4DPHGEw/oUUSLX04X3xsmKWzGc2Ot7iUm6SS2mfc6ZTte4m8zZlkrtXOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760745139; c=relaxed/simple;
-	bh=8bQcQXKOnjjGmI+q61EF/zlP1JyrJVr+At0emP3d0zo=;
+	s=arc-20240116; t=1760745144; c=relaxed/simple;
+	bh=w3VS8GBp6KrcSMhsJH/JtdAOWF0UsrXSzoUdEpZu+rw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WHfVHjKH3y50F1k5QMq1pWNKi5THfeH8YM8zM2AFVhlzGUz1JDeaAlR0SZ6y9O2kYdR0/vt0758mnlOpoeGCXKQZGWpCd773PzfI5M8ABNZ0gZbnVPKNcIz7HVpHF37pj/fbXkowxKMsMSksL52z23AVpw4XJ+J5TlKzyXq3DBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o3jvYXt0; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=AZpgcDyDLYcvyDR0JL1BM0HilQbfBszMDJNQ2SuZATdaBv9uNJLdysTBIfHdQznmnrIowASCop4Er73c0rWh1cIo8XdM3HOrY2+xAZrQqFLxJwMynctqQQnsQW0E1epD9JVh8roTT4HpXTBx3DklJYvh/kOiU3GQckx5l9kdnlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RBGTmlyo; arc=none smtp.client-ip=74.125.224.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28e538b5f23so27649575ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:52:17 -0700 (PDT)
+Received: by mail-yx1-f74.google.com with SMTP id 956f58d0204a3-63610e0c8eeso3475134d50.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:52:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760745137; x=1761349937; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760745141; x=1761349941; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFUd4KPZzUTUCisRlC6z64P8M16hH71AE+17EZ2+Cpk=;
-        b=o3jvYXt0e6G5GxPaSloyxEo9MMUna9Ts1UE0vKy9i8Vn8m3hf+jSnnzBPgu4Dv8bBF
-         M7+P6Cvobau9GEzrs9d4J97SHbW9OCdHS1l2EwrsBMCIkTlLQee7tWw2zVW/xbfsXcdS
-         7amUn1m/31X98bkpjbDoiDV3aGv8t1hxSBnhu0cg58gsLmriZHax466d52jqd28miiGh
-         uzXMR4s85+tH5pzCnittcagnsXSXq7x2hu2B0Qv1axPDWWGmb7m3Eckp/fS/vnPKCkoO
-         s8TaAkQfF8wPEsR5cJ+UtJkmaNTCJp/IbKFCpvGm1MRV2MxhPwYJiZrwcQQM5ByAANB6
-         n+bA==
+        bh=TTJvnCX97zl8Q3Az39cCSa2xLcWpPk7njCqUODW2NfI=;
+        b=RBGTmlyo4eFPk14B8KAPL4rDrPXtWsEw59IH4CU28BxhsRFycWD7nie7ZBGPWsi0Rc
+         SG/Of9TNvSlVK8WtEcFfra1P6C7tNkHFmUN5NtDD8liw4+bG3JDgX+4fAR2/mtZxJH22
+         NWHdgnussguh4fWOocmJvLtpt+xBQEd+i9w7YGIXvLYcVJvInZJa4tBfb5j8vD8Cw1R6
+         pd7Xlz//ThGUK5gOeJUC79/r2ENi2MhxQqF7cbzQo6NMyrdqg/imOLNOE6REY7Cp71qk
+         4TdKzKi29M7gWuelWJzFD+tsUS7gbjSKvl87OhDaeIp+AMI7NSm1vVVvms76HtT/bgJR
+         PAzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760745137; x=1761349937;
+        d=1e100.net; s=20230601; t=1760745141; x=1761349941;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFUd4KPZzUTUCisRlC6z64P8M16hH71AE+17EZ2+Cpk=;
-        b=v3KwDF7NrI7zzXf6u/DnktftbiJG2jPD4USCyNzvT7gPkroweKguq3LFbT5qR0YemF
-         06FSdYpShAhWS/v0WiXxLBiAn9jNhGgo6ROlBUDUg/h25B4TrDBwVsHbC/gC3HXJSLdy
-         a4aLIZPFNAvIqYKrcALBwZQFnPMazB+sgCcKRbBxzjKNPXjesaACtzyTQeKcH1r7d76c
-         r6pD4jmqf24V598flYEsqavcWoi8HBTFIDdpTC9PbK7uAvh+B/hMXc9BB766DrESGteB
-         pLtefavvxodaLxbXeNwuoKeicT/qn5EJP0YeQM7g5E6VmT9xDfWJa0831aVxeg0X3fPh
-         ds4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXlqDDO2mucosZSBOFtsrOHn5aARZHyHrL4cl1OubPyjKgheclaqwKf+nAn/mubZ77tvREotPGql8aGSUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9AzXwrYcqjMenwpdUbaY+78CqhtkPs1iMVX3yr5jiWVEO6WuN
-	cQCRy+GRNfVZEXpW6JwNQedmDaxEZyP+ePtbnNdJvY5FC8XWqDEPMa8UYDecDwcWLA0eKOt5TOh
-	oTMYgzg==
-X-Google-Smtp-Source: AGHT+IGtonGWIlL28ar3C4SMS3Z4eGNFhKCMbFqjIxEvFkEnJLs3JqhHMERukcTD3gq5IHrZVsg/cEtJU7Y=
-X-Received: from plbkg4.prod.google.com ([2002:a17:903:604:b0:290:be3d:aff6])
- (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:384c:b0:27e:d9a0:ba08
- with SMTP id d9443c01a7336-290cb27dae5mr68350725ad.43.1760745137248; Fri, 17
- Oct 2025 16:52:17 -0700 (PDT)
-Date: Fri, 17 Oct 2025 23:51:58 +0000
+        bh=TTJvnCX97zl8Q3Az39cCSa2xLcWpPk7njCqUODW2NfI=;
+        b=JjGRWq1g3QxKU5T5pSKgMBvtnHnBfIolygoNY7B/UdlYsOj/QQQIO6cF1WR5lEvggM
+         OglEqQod5oUDcduFOsAT/LXIXfiGc/LXBhhHuPJ8AraPWI+6hvhlOpHPXYd3IVt7Nc1u
+         NHHe/RRKErH55XX3tKkxxUzA8PgKpUppBik4aprLnRTLRVWQ0V22kRjNl08RUDC02vGJ
+         whSwpkuoJsYWl1slQ7eja3PEfw931qU5QGHxKUSxxpYQUokVR6EEUD5M4+Gw7c/YeXZF
+         DahEkGvO58wfKNiuUzMeiZLEMdZcWXSptDownY/hb0OrXaOIYPOIZQmd5sHSgE3xMDxF
+         2lzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyEr9Sizj3XIi3HSpCvpV97b6i28smClX25G+xYgBmvGK3hyUQxmzYXWOzb+oDmPGIAZiIVBQqXDlokqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ4ZSfhLmACmFwFUaTJra/b/oAyTntieeTyPwuEEwFE+htPLL5
+	ObmnNC9bXuhhN6sZSO1//MBWtxd/klF8qzeIkk/0lRhhHizNQ2NXYShGr84YT1myq9TF245bG/r
+	tM/nE3w==
+X-Google-Smtp-Source: AGHT+IEB8647GbAUz8tnDDb+FEo04Ip6jQ7zKRQGu482r5jTXozTqpF5nH0nY6K+/jQ8CqmLbpwGoZ34vMg=
+X-Received: from ybsb2.prod.google.com ([2002:a05:6902:302:b0:eb8:98e4:aa59])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690e:1483:b0:63e:29ad:ad4
+ with SMTP id 956f58d0204a3-63e29ad0e36mr136107d50.30.1760745140757; Fri, 17
+ Oct 2025 16:52:20 -0700 (PDT)
+Date: Fri, 17 Oct 2025 23:51:59 +0000
 In-Reply-To: <20251017235159.2417576-1-royluo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251017235159.2417576-1-royluo@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017235159.2417576-2-royluo@google.com>
-Subject: [PATCH v4 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+Message-ID: <20251017235159.2417576-3-royluo@google.com>
+Subject: [PATCH v4 2/2] phy: Add Google Tensor SoC USB PHY driver
 From: Roy Luo <royluo@google.com>
 To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -86,132 +86,336 @@ Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, Ro
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Document the device tree bindings for the USB PHY interfaces integrated
-with the DWC3 controller on Google Tensor SoCs, starting with G5
-generation. The USB PHY on Tensor G5 includes two integrated Synopsys
-PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP.
+Support the USB PHY found on Google Tensor G5. This particular USB PHY
+supports both high-speed and super-speed operations, and is integrated
+with the SNPS DWC3 controller that's also on the SoC.
+This initial patch specifically adds functionality for high-speed.
 
-Due to a complete architectural overhaul in the Google Tensor G5, the
-existing Samsung/Exynos USB PHY binding for older generations of Google
-silicons such as gs101 are no longer compatible, necessitating this new
-device tree binding.
-
+Co-developed-by: Joy Chakraborty <joychakr@google.com>
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+Co-developed-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Naveen Kumar <mnkumar@google.com>
 Signed-off-by: Roy Luo <royluo@google.com>
 ---
- .../bindings/phy/google,gs5-usb-phy.yaml      | 104 ++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+ drivers/phy/Kconfig          |  13 ++
+ drivers/phy/Makefile         |   1 +
+ drivers/phy/phy-google-usb.c | 271 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 285 insertions(+)
+ create mode 100644 drivers/phy/phy-google-usb.c
 
-diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 58c911e1b2d2..fe32d1356002 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -101,6 +101,19 @@ config PHY_NXP_PTN3222
+ 	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
+ 	  Speed and High Speed.
+ 
++config PHY_GOOGLE_USB
++	tristate "Google Tensor SoC USB PHY driver"
++	depends on HAS_IOMEM
++	depends on OF
++	depends on TYPEC
++	select GENERIC_PHY
++	help
++	  Enable support for the USB PHY on Google Tensor SoCs, starting with
++	  the G5 generation. This driver provides the PHY interfaces to
++	  interact with the SNPS eUSB2 and USB 3.2/DisplayPort Combo PHY, both
++	  of which are integrated with the DWC3 USB controller.
++	  This driver currently supports USB high-speed.
++
+ source "drivers/phy/allwinner/Kconfig"
+ source "drivers/phy/amlogic/Kconfig"
+ source "drivers/phy/broadcom/Kconfig"
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index c670a8dac468..1d7a1331bd19 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
+ obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
+ obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
+ obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
++obj-$(CONFIG_PHY_GOOGLE_USB)		+= phy-google-usb.o
+ obj-y					+= allwinner/	\
+ 					   amlogic/	\
+ 					   broadcom/	\
+diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
 new file mode 100644
-index 000000000000..c92c20eba1ea
+index 000000000000..75e4233a5ab5
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2025, Google LLC
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/phy/phy-google-usb.c
+@@ -0,0 +1,271 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * phy-google-usb.c - Google USB PHY driver
++ *
++ * Copyright (C) 2025, Google LLC
++ */
 +
-+title: Google Tensor Series (G5+) USB PHY
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/reset.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/mutex.h>
++#include <linux/cleanup.h>
++#include <linux/usb/typec_mux.h>
 +
-+maintainers:
-+  - Roy Luo <royluo@google.com>
++#define USBCS_USB2PHY_CFG19_OFFSET 0x0
++#define USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV GENMASK(19, 8)
 +
-+description: |
-+  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
-+  Google Tensor SoCs, starting with the G5 generation.
-+  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
-+  and USB 3.2/DisplayPort combo PHY IP.
-+  The hardware can support three PHY interfaces, which are selected using the
-+  first phandle argument in the PHY specifier::
-+    0 - USB high-speed.
-+    1 - USB super-speed.
-+    2 - DisplayPort
++#define USBCS_USB2PHY_CFG21_OFFSET 0x8
++#define USBCS_USB2PHY_CFG21_PHY_ENABLE BIT(12)
++#define USBCS_USB2PHY_CFG21_REF_FREQ_SEL GENMASK(15, 13)
++#define USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL BIT(19)
 +
-+properties:
-+  compatible:
-+    const: google,gs5-usb-phy
++#define USBCS_PHY_CFG1_OFFSET 0x28
++#define USBCS_PHY_CFG1_SYS_VBUSVALID BIT(17)
 +
-+  reg:
-+    items:
-+      - description: USB2 PHY configuration registers.
-+      - description: USB 3.2/DisplayPort combo PHY top-level registers.
++enum google_usb_phy_id {
++	GOOGLE_USB2_PHY,
++	GOOGLE_USB_PHY_NUM,
++};
 +
-+  reg-names:
-+    items:
-+      - const: u2phy_cfg
-+      - const: dp_top
++struct google_usb_phy_instance {
++	int index;
++	struct phy *phy;
++	int num_clks;
++	struct clk_bulk_data *clks;
++	struct reset_control *rsts;
++};
 +
-+  "#phy-cells":
-+    const: 1
++struct google_usb_phy {
++	struct device *dev;
++	void __iomem *u2phy_cfg_base;
++	void __iomem *dp_top_base;
++	struct google_usb_phy_instance insts[GOOGLE_USB_PHY_NUM];
++	/* serialize phy access */
++	struct mutex phy_mutex;
++	struct typec_switch_dev *sw;
++	enum typec_orientation orientation;
++};
 +
-+  clocks:
-+    items:
-+      - description: USB2 PHY clock.
-+      - description: USB2 PHY APB clock.
++static inline struct google_usb_phy *to_google_usb_phy(struct google_usb_phy_instance *inst)
++{
++	return container_of(inst, struct google_usb_phy, insts[inst->index]);
++}
 +
-+  clock-names:
-+    items:
-+      - const: usb2_phy
-+      - const: u2phy_apb
++static void set_vbus_valid(struct google_usb_phy *gphy)
++{
++	u32 reg;
 +
-+  resets:
-+    items:
-+      - description: USB2 PHY reset.
-+      - description: USB2 PHY APB reset.
++	if (gphy->orientation == TYPEC_ORIENTATION_NONE) {
++		reg = readl(gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET);
++		reg &= ~USBCS_PHY_CFG1_SYS_VBUSVALID;
++		writel(reg, gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET);
++	} else {
++		reg = readl(gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET);
++		reg |= USBCS_PHY_CFG1_SYS_VBUSVALID;
++		writel(reg, gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET);
++	}
++}
 +
-+  reset-names:
-+    items:
-+      - const: usb2_phy
-+      - const: u2phy_apb
++static int google_usb_set_orientation(struct typec_switch_dev *sw,
++				      enum typec_orientation orientation)
++{
++	struct google_usb_phy *gphy = typec_switch_get_drvdata(sw);
 +
-+  power-domains:
-+    maxItems: 1
++	dev_dbg(gphy->dev, "set orientation %d\n", orientation);
 +
-+  orientation-switch:
-+    type: boolean
-+    description:
-+      Indicates the PHY as a handler of USB Type-C orientation changes
++	gphy->orientation = orientation;
 +
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - "#phy-cells"
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+  - orientation-switch
++	if (pm_runtime_suspended(gphy->dev))
++		return 0;
 +
-+additionalProperties: false
++	guard(mutex)(&gphy->phy_mutex);
 +
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
++	set_vbus_valid(gphy);
 +
-+        usb_phy: usb_phy@c450014 {
-+            compatible = "google,gs5-usb-phy";
-+            reg = <0 0x0c450014 0 0xc>,
-+                  <0 0x0c637000 0 0xa0>;
-+            reg-names = "u2phy_cfg", "dp_top";
-+            #phy-cells = <1>;
-+            clocks = <&hsion_usb2_phy_clk>, <&hsion_u2phy_apb_clk>;
-+            clock-names = "usb2_phy", "u2phy_apb";
-+            resets = <&hsion_resets_usb2_phy>,
-+                     <&hsion_resets_u2phy_apb>;
-+            reset-names = "usb2_phy", "u2phy_apb";
-+            power-domains = <&hsio_n_usb_pd>;
-+            orientation-switch;
-+        };
-+    };
-+...
++	return 0;
++}
++
++static int google_usb2_phy_init(struct phy *_phy)
++{
++	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
++	struct google_usb_phy *gphy = to_google_usb_phy(inst);
++	u32 reg;
++	int ret = 0;
++
++	dev_dbg(gphy->dev, "initializing usb2 phy\n");
++
++	guard(mutex)(&gphy->phy_mutex);
++
++	reg = readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
++	reg &= ~USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL;
++	reg &= ~USBCS_USB2PHY_CFG21_REF_FREQ_SEL;
++	reg |= FIELD_PREP(USBCS_USB2PHY_CFG21_REF_FREQ_SEL, 0);
++	writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
++
++	reg = readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG19_OFFSET);
++	reg &= ~USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV;
++	reg |= FIELD_PREP(USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV, 368);
++	writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG19_OFFSET);
++
++	set_vbus_valid(gphy);
++
++	ret = clk_bulk_prepare_enable(inst->num_clks, inst->clks);
++	if (ret)
++		return ret;
++
++	ret = reset_control_deassert(inst->rsts);
++	if (ret) {
++		clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
++		return ret;
++	}
++
++	reg = readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
++	reg |= USBCS_USB2PHY_CFG21_PHY_ENABLE;
++	writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
++
++	return ret;
++}
++
++static int google_usb2_phy_exit(struct phy *_phy)
++{
++	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
++	struct google_usb_phy *gphy = to_google_usb_phy(inst);
++	u32 reg;
++
++	dev_dbg(gphy->dev, "exiting usb2 phy\n");
++
++	guard(mutex)(&gphy->phy_mutex);
++
++	reg = readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
++	reg &= ~USBCS_USB2PHY_CFG21_PHY_ENABLE;
++	writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
++
++	reset_control_assert(inst->rsts);
++	clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
++
++	return 0;
++}
++
++static const struct phy_ops google_usb2_phy_ops = {
++	.init		= google_usb2_phy_init,
++	.exit		= google_usb2_phy_exit,
++};
++
++static struct phy *google_usb_phy_xlate(struct device *dev,
++					const struct of_phandle_args *args)
++{
++	struct google_usb_phy *gphy = dev_get_drvdata(dev);
++
++	if (args->args[0] >= GOOGLE_USB_PHY_NUM) {
++		dev_err(dev, "invalid PHY index requested from DT\n");
++		return ERR_PTR(-ENODEV);
++	}
++	return gphy->insts[args->args[0]].phy;
++}
++
++static int google_usb_phy_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct google_usb_phy *gphy;
++	struct phy *phy;
++	struct google_usb_phy_instance *inst;
++	struct phy_provider *phy_provider;
++	struct typec_switch_desc sw_desc = { };
++	int ret;
++
++	gphy = devm_kzalloc(dev, sizeof(*gphy), GFP_KERNEL);
++	if (!gphy)
++		return -ENOMEM;
++
++	dev_set_drvdata(dev, gphy);
++	gphy->dev = dev;
++
++	ret = devm_mutex_init(dev, &gphy->phy_mutex);
++	if (ret)
++		return ret;
++
++	gphy->u2phy_cfg_base = devm_platform_ioremap_resource_byname(pdev,
++								     "u2phy_cfg");
++	if (IS_ERR(gphy->u2phy_cfg_base))
++		return dev_err_probe(dev, PTR_ERR(gphy->u2phy_cfg_base),
++				    "invalid usb2 cfg\n");
++
++	gphy->dp_top_base = devm_platform_ioremap_resource_byname(pdev,
++								  "dp_top");
++	if (IS_ERR(gphy->dp_top_base))
++		return dev_err_probe(dev, PTR_ERR(gphy->dp_top_base),
++				    "invalid dp top\n");
++
++	inst = &gphy->insts[GOOGLE_USB2_PHY];
++	inst->index = GOOGLE_USB2_PHY;
++	phy = devm_phy_create(dev, NULL, &google_usb2_phy_ops);
++	if (IS_ERR(phy))
++		return dev_err_probe(dev, PTR_ERR(phy),
++				     "failed to create usb2 phy instance\n");
++	inst->phy = phy;
++	phy_set_drvdata(phy, inst);
++	ret = devm_clk_bulk_get_all_enabled(dev, &inst->clks);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to get u2 phy clks\n");
++	inst->num_clks = ret;
++
++	inst->rsts = devm_reset_control_array_get_exclusive(dev);
++	if (IS_ERR(inst->rsts))
++		return dev_err_probe(dev, PTR_ERR(inst->rsts),
++				     "failed to get u2 phy resets\n");
++
++	phy_provider = devm_of_phy_provider_register(dev, google_usb_phy_xlate);
++	if (IS_ERR(phy_provider))
++		return dev_err_probe(dev, PTR_ERR(phy_provider),
++				     "failed to register phy provider\n");
++
++	pm_runtime_enable(dev);
++
++	sw_desc.fwnode = dev_fwnode(dev);
++	sw_desc.drvdata = gphy;
++	sw_desc.name = fwnode_get_name(dev_fwnode(dev));
++	sw_desc.set = google_usb_set_orientation;
++
++	gphy->sw = typec_switch_register(dev, &sw_desc);
++	if (IS_ERR(gphy->sw))
++		return dev_err_probe(dev, PTR_ERR(gphy->sw),
++				     "failed to register typec switch\n");
++
++	return 0;
++}
++
++static void google_usb_phy_remove(struct platform_device *pdev)
++{
++	struct google_usb_phy *gphy = dev_get_drvdata(&pdev->dev);
++
++	typec_switch_unregister(gphy->sw);
++	pm_runtime_disable(&pdev->dev);
++}
++
++static const struct of_device_id google_usb_phy_of_match[] = {
++	{
++		.compatible = "google,gs5-usb-phy",
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, google_usb_phy_of_match);
++
++static struct platform_driver google_usb_phy = {
++	.probe	= google_usb_phy_probe,
++	.remove = google_usb_phy_remove,
++	.driver = {
++		.name		= "google-usb-phy",
++		.of_match_table	= google_usb_phy_of_match,
++	}
++};
++
++module_platform_driver(google_usb_phy);
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Google USB phy driver");
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
