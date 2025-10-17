@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-858051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E16BE8AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA18DBE8AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB5124F6271
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:59:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFB5E4F5DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81644330330;
-	Fri, 17 Oct 2025 12:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C422331A40;
+	Fri, 17 Oct 2025 13:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rJszCSWM"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iNRGiHYq"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3936F330324
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4DE33033D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760705976; cv=none; b=oi4xjeNjqTDPxaLu9I9NvlJRN1BA3toRGUXy679AucloDSzXEJQn4CrXQNp2KxdYTvCm0kKSWAlwbCVBQLbRPKGNdv1Lewm4Qc3te4GWy2N2SmoTluUs7PgrtonhNypjKe0+iKk22lNrreSl6OleYd/uX4wH56w1KeL3pSgD950=
+	t=1760706010; cv=none; b=OPwRC5mC6nfGnMqIm8btF7MbymCYRMsCxxpoRPvNXE4jcVjAz/oddkhV8WOtxQDb0RtarRZevU9fVyfmaqKwwbOObQ5f6OjLrPTppR0kapjwiys3W8GH8hdby0MA5fifSxc8lR28aZzhEFpZt/zYhDDjKK+K0De2Wj5+qf65buo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760705976; c=relaxed/simple;
-	bh=l4GFIm7f4CwtY0wlDOtvx7H306fjo9qh2uuYaEWaQMQ=;
+	s=arc-20240116; t=1760706010; c=relaxed/simple;
+	bh=TrjEM6d5YGsT/vS/4b6HKA867y/TiowVc5HcG6zK26k=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QS1WvCvi/8UQfJdx113wli0L985cESJjQGauVT5RpRDZLPXIGCw2sgbSz8Q6eX5S8hT39YBpt1qi8dOmJCuYNnlb2j3hxwH/olKiFPbBEgLE1JnEz+KNxSmqjKbI7ZrkiyFiR5uaLTAbdqiP9sY0wkLmFC/f8yk/KT/GKE9N9jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rJszCSWM; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=lzjgot3zk7x4CnApQgRmWayHOTtYxKhq5EMd1ymECOg6ZnunLOD1356aMNPRrGrqLVEsqAbCNPMR42F4zmOCrEbHsG7bpmtwtH03BvNEDuta/OygbebmxSrejVeZU4enfYNOiU7NpCdoyyzkLEDmKRiZAkLecjuM+NSrDsZaFlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iNRGiHYq; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47111dc7c5dso11650485e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:59:35 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso1339019a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760705973; x=1761310773; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760706008; x=1761310808; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UT83P2uD5TrvVVGd6VJB0Xdi2KNYIEGAXRO1Z6cxYXw=;
-        b=rJszCSWMfdUecjp5MqY87uF1G7LZRRr1gtFFvadYgPbgeI3MSK0oRM5D3rOxqSHpZ3
-         sfZGv11J10SRWbdl1XTmsnx9F1EVQl9WuXu9PITCGNr1II6T2FVkbYrIRlbUm92GhXs0
-         qymXZZbw4IiZ9Cz9x6jEsJl2H/P5P+MUJ/MbokR12BzjZJ2KYrtjX5CO2tLP3Ob3U1Kb
-         7G+pLiqVOsJpDlOb1pl7GDex5VPH6CNRA+psbWE323ye5DZlA/VJGSJfBOEEBUUQP209
-         ILq207DqB7KEWXY9lUXQZYG7j2fWIDKdV4KRGcwTpI8RlRbGrMcm5uo10+M17YpWFVv9
-         tWcw==
+        bh=WUZCvZegcXj7XnjfJMwDIAYl6hSvlcsfXFHMYRfMfEE=;
+        b=iNRGiHYq2u0LF32kUHh0syK1DRh6+GntdVwbBnkQRVtQEpZ66sKxxYxRk7xGJb8eM0
+         5R6ZaYEGhH74JPtfJWF3feWzCDG2fuv+HCEtIHRYaFggAP84uwT0xjC+jCVFUAYJbD4N
+         xNzxqPyK6nWV3qLbNSeDVm8eVuaFttOFHBC8JWEw1ModNOO04sI8B4Sm7s1XB1k2tCMo
+         6X8XTk3pW4fr+ZNqdqZ12xmUVqzjgWYflZtBnjSwZv3VZ607/1nz3vwaaONB0wQ8u4o3
+         gdxie06dKVDJUf4aLL2wiUeuFRwSkZg93lTo2uUoh+PHmslG0a/22vdNNeeBbuKfKBjC
+         SJMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760705973; x=1761310773;
+        d=1e100.net; s=20230601; t=1760706008; x=1761310808;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UT83P2uD5TrvVVGd6VJB0Xdi2KNYIEGAXRO1Z6cxYXw=;
-        b=PFFOG5vzqLnA/SPk7+Uq1IzsYwOJkaQGT2qx06JXsUwhcyjT78koCnteyTods5qyOf
-         AqEc+V2EDbUt+ctKcO+qicj2Ikb0S6Ev0bEKViiMgxWQ6e8HdV2+pmEHR7kWrjLeuDv5
-         lmFaAwHpL69n/Aq14GEydp/CGyX3jGIFV/dwQIa7iPfANwRsS43B+ap1pUVyc4+DbRZa
-         OIaHV3KwVJaKBPBMrjz69bSvMamxGmNQjSUvOt1YHhNuUrS4/skVFX7nI8T56bKQ3mia
-         VUePgagcN5YXTBvmV5L5pWJDBnux7Rt66/ZBZnR0C4weY47ysi68ELY9POwe4yXRDa8q
-         2V+g==
-X-Forwarded-Encrypted: i=1; AJvYcCV0zjd2F6wb3iHeobzo2CLFluRfYBO3u3c44GYe4QSk1bcKGToxvMcvOvT2pMHa6zAF53zfVxWM7PJtO4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxTmfvETP6Tglh80CJ/p6gciZ+xmZ0p/hhIlE/M2ZcIx3TqnAQ
-	EH1Dd4LaHPzMmuahnH0kB9G3qaDBjqm6E0VoVj0+fp2JTtXZXt55ui9BOxDC0l7iVlCMc16XgEU
-	44qxlBcAePVbn2eglWw==
-X-Google-Smtp-Source: AGHT+IFPk2lGWN99Ruq9BU1qrM3/rov2RiXwLUP88d5zBmG1G/Hu6Kpahj1RqZwLTFJv5EiDIoN4lFZjni35Nds=
-X-Received: from wmwq24.prod.google.com ([2002:a05:600d:8358:b0:470:fd92:351d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3422:b0:471:793:e795 with SMTP id 5b1f17b1804b1-4710987730fmr33023585e9.0.1760705973572;
- Fri, 17 Oct 2025 05:59:33 -0700 (PDT)
-Date: Fri, 17 Oct 2025 12:59:32 +0000
-In-Reply-To: <20251003222729.322059-4-dakr@kernel.org>
+        bh=WUZCvZegcXj7XnjfJMwDIAYl6hSvlcsfXFHMYRfMfEE=;
+        b=GSr2UDJuBfroNZ5x/gTZStz1NXKvsVXuPHKMI30VrSFP4rwv8PhuBpEzLZ97nyYby3
+         JYAUvxUl1NrPB0ShrFuQhOtA6SumLQnZCjeivxZrMhdC+EGfztaYgRJs9zYJJOyUAMOC
+         ZtoKfaRpcwytMb21VGhxsV6wRUYJVisooUfkC6u2pVaFbuvxYhEHSzaIHgVa9MFOlv+j
+         LETMJbiwaA0MjReAp/wzlN9NXigVjRLAWZ7/z2Sx2mmXk2sHYiVJx7dcEnYYoCWKxvkI
+         S1p9HS9i58DOX+pK+bTKvXPalJiaWu+e6EeDSRmV0YMiXMUjobU0JrfgbHUZ8bOV94kn
+         Mj9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVM4aCaK4cDLh2ImjrN32r1gYs1Nuqif6wQ/YgfzRmpCnkeSWgTlGCFfXgeUEYgK9vsvoDw4P9TQeX/siw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeImZivbPrRg1jWv/+7aqEl4XY80ynITEOw7XuWSMJOP7C5w7H
+	KAg6GtYKoAFI5G3WHniAOXXzkjiUCjx47b/Ax6i0IyfYK5u7rvfnmNprsGv8FrOR4+0XGSBYO6D
+	XSn4qrQ==
+X-Google-Smtp-Source: AGHT+IGLI5QmCG55PPTkQ5mJ2PfNQXM41NATOrypdPmoCpqJirgnCyNoTTGdML7+fvfGa0KmmZ+U+lr/W+E=
+X-Received: from pjbmr8.prod.google.com ([2002:a17:90b:2388:b0:330:49f5:c0a7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:394b:b0:2ea:41f1:d53a
+ with SMTP id adf61e73a8af0-334a8620170mr5065867637.41.1760706008492; Fri, 17
+ Oct 2025 06:00:08 -0700 (PDT)
+Date: Fri, 17 Oct 2025 06:00:06 -0700
+In-Reply-To: <2d00cefad4a5316357e76db7292e8d7ac2793eb1.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251003222729.322059-1-dakr@kernel.org> <20251003222729.322059-4-dakr@kernel.org>
-Message-ID: <aPI9tNoh0I3KGDjl@google.com>
-Subject: Re: [PATCH 3/7] rust: debugfs: support for binary large objects
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+References: <20251016182148.69085-1-seanjc@google.com> <20251016182148.69085-2-seanjc@google.com>
+ <2d00cefad4a5316357e76db7292e8d7ac2793eb1.camel@intel.com>
+Message-ID: <aPI91kOhPAK_Bkla@google.com>
+Subject: Re: [PATCH v2 1/2] KVM: VMX: Inject #UD if guest tries to execute
+ SEAMCALL or TDCALL
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, Dan J Williams <dan.j.williams@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Sat, Oct 04, 2025 at 12:26:40AM +0200, Danilo Krummrich wrote:
-> Introduce support for read-only, write-only, and read-write binary files
-> in Rust debugfs. This adds:
+On Fri, Oct 17, 2025, Kai Huang wrote:
 > 
-> - BinaryWriter and BinaryReader traits for writing to and reading from
->   user slices in binary form.
-> - New Dir methods: read_binary_file(), write_binary_file(),
->   `read_write_binary_file`.
-> - Corresponding FileOps implementations: BinaryReadFile,
->   BinaryWriteFile, BinaryReadWriteFile.
+> > --- a/arch/x86/kvm/vmx/nested.c
+> > +++ b/arch/x86/kvm/vmx/nested.c
+> > @@ -6728,6 +6728,14 @@ static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu,
+> >  	case EXIT_REASON_NOTIFY:
+> >  		/* Notify VM exit is not exposed to L1 */
+> >  		return false;
+> > +	case EXIT_REASON_SEAMCALL:
+> > +	case EXIT_REASON_TDCALL:
+> > +		/*
+> > +		 * SEAMCALL and TDCALL unconditionally VM-Exit, but aren't
+> > +		 * virtualized by KVM for L1 hypervisors, i.e. L1 should
+> > +		 * never want or expect such an exit.
+> > +		 */
+> > +		return false;
 > 
-> This allows kernel modules to expose arbitrary binary data through
-> debugfs, with proper support for offsets and partial reads/writes.
+> Sorry for commenting late.
 > 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> I think from emulating hardware behaviour's perspective, if L1 doesn't
+> support TDX (obviously true), SEAMCALL/TDCALL in L2 should cause VMEXIT to
+> L1.  In other words, L1 is expecting a VMEXIT in such case.
 
-> +extern "C" fn blob_write<T: BinaryReader>(
-> +    file: *mut bindings::file,
-> +    buf: *const c_char,
-> +    count: usize,
-> +    ppos: *mut bindings::loff_t,
-> +) -> isize {
-> +    // SAFETY:
-> +    // - `file` is a valid pointer to a `struct file`.
-> +    // - The type invariant of `FileOps` guarantees that `private_data` points to a valid `T`.
-> +    let this = unsafe { &*((*file).private_data.cast::<T>()) };
-> +
-> +    // SAFETY: `ppos` is a valid `loff_t` pointer.
-> +    let pos = unsafe { &mut *ppos };
-> +
-> +    let mut reader = UserSlice::new(UserPtr::from_ptr(buf.cast_mut().cast()), count).reader();
-> +
-> +    let ret = || -> Result<isize> {
-> +        let offset = (*pos).try_into()?;
+No, because from L1's perspective, the opcodes map to undefined instructions and
+thus should #UD in L2.  There's no super explicit enumeration, but IMO it's fair
+to say that for L1 to think the instructions exists, it would need to observe
+IA32_SEAMRR_PHYS_{BASE,MASK} for SEAMCALL, and MSR_IA32_MKTME_KEYID_PARTITIONING
+as well for TDCALL.  KVM doesn't emulate any of those instructions, and so L1
+should never expect SEAMCALL or TDCALL to do anything other than #UD.
 
-So offsets larger than the buffer result in Ok(0) unless the offset
-doesn't fit in an usize, in which case it's an error instead? I think we
-should treat offsets that are too large in the same manner no matter
-how large they are.
-
-> +        let read = this.read_from_slice(&mut reader, offset)?;
-> +        *pos += bindings::loff_t::try_from(read)?;
-
-This addition could overflow and panic the kernel.
-
-> +        Ok(read.try_into()?)
-> +    }();
-> +
-> +    match ret {
-> +        Ok(n) => n,
-> +        Err(e) => e.to_errno() as isize,
-> +    }
-> +}
-> +
-> +pub(crate) trait BinaryWriteFile<T> {
-> +    const FILE_OPS: FileOps<T>;
-> +}
-
-Hmm ... this is inconsistent with how we do vtables in other parts of
-`kernel`. Normally a struct is used instead of a trait (see e.g.
-miscdevice or block). But the inconsistency is already present.
-
-Alice
+> Whether L1 can handle such VMEXIT is another story -- it may inject a #UD to
+> L2 or may not (similar to the current upstream KVM), but it is L1's
+> responsibility.
+> 
+> So I think while this patch certainly honors the correct behaviour for L2,
+> it doesn't honor for L1.  But I think ultimately L1 should be the one who
+> is responsible for emulating hardware behaviour for L2.
+> 
+> E.g., assuming we have a KVM selftest in L1 to test SEAMCALL/TDCALL in
+> normal VMX L2.  L1 should be able to catch it's own bug when such VMEXIT
+> isn't handled correctly.  But with this patch, L1 will never be able to
+> catch this IIUC.
 
