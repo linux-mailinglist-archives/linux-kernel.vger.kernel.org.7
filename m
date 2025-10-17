@@ -1,204 +1,297 @@
-Return-Path: <linux-kernel+bounces-858820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193A8BEBEE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:35:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89772BEBEFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E119D4F1126
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:35:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C0844EC001
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4E12DC32A;
-	Fri, 17 Oct 2025 22:35:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC57C31DD8A;
+	Fri, 17 Oct 2025 22:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0ghqj1C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E572D8DCA
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD08238149
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760740530; cv=none; b=JnCuN28xOCgT2h2PEH7EBz0BKeN5uSk+2vZJ8U1L0eLsE9ODMbRu2z5htutZlLMQ9x433gKZDNdCQAPGe3+GJ23Dfdrl0+Ai78sMIYoe93JNXxRe9Y7C1D5rBYKDOueEPwoZHajXavY7NrAV2l2OTvo5zmHTDa/rXMqIyAuLjB4=
+	t=1760740892; cv=none; b=crYPHH0wNUxJRFTiRYqtZlG8TWecoEX2eR91AR0XVmgxII1+yJAe4Fsgj5yg31mDUV2HcfUSxZzvhIe07NkewC62ggKu1q5hqM1JTL49+Wc19qpHkdLUEEh6PcCbeEMPfYkoJmfvIks1OE/xBhE+eIAeFhowJ0T7upkLplSv9iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760740530; c=relaxed/simple;
-	bh=PKv5bHN/3qCTKYaMRzD720nJxijAFGERs4zcYZwRP5U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HMQc/m3+OU7sXrPd72vpPB0txORcLURlTDqjrz7KbUrAcwqvt0Nu98LQ4b+AdNuMjciXlHM7G9OpReqC5HX7tSTJltoisB6WshwVAHSN7BvOBIGRRIcAox3QVEfLlxZsHJhYi3hdMDOuFC9RfKSEVR0b/0WrOTytMhPq7fLxVwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-429278a11f7so28798875ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:35:28 -0700 (PDT)
+	s=arc-20240116; t=1760740892; c=relaxed/simple;
+	bh=I+vLvWX9tt3ZjPonM8Tn9nuLD6RlJN9iZ3xM1BPuumg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YOHXTXING/vBfi+aF4i1x6M0+SKfdb3W4+naoU5ssumJ0FHhkWsRats0Qk5Qrb1Fl2kI78Mh1RxZOysxyFGDWw7vLFCjIL1lqjwiwDI+K3GFw+j8zNEd+VoZJpwhsZ6CqqHLunXfDirwrODB/e87Wch36b9dVG+cw9DSL+abEhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K0ghqj1C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760740889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uH8LJn4ypQODNYJ3orBEKrIWWsg1DgFIAiLDa76fO34=;
+	b=K0ghqj1CKccbW/66yfFOaUDNKTW4Bxnzak2WDcbJAVvM8FLHQ2o5veFkHSt5/aX5O+DZ/R
+	48JxTqsOr/VB7zNZuIx46Rhe0cQxdN+RJy38co+Md8/AC86XTz+aA6gMEom8VcKs7WMRUE
+	Jp9tgjXxGmwvG9Ak3hPWBhx8V/I9HVM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-iqlh7St8NWKHJdj1WiUB5w-1; Fri, 17 Oct 2025 18:41:28 -0400
+X-MC-Unique: iqlh7St8NWKHJdj1WiUB5w-1
+X-Mimecast-MFC-AGG-ID: iqlh7St8NWKHJdj1WiUB5w_1760740887
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-47114d373d5so20296395e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:41:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760740528; x=1761345328;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ma2tyPSgOIy6o4oAc1xh2wdxokLE5qmVDJsVioLtCws=;
-        b=OysSD0ubaQTM/Fk6Ama3+IAmrSq4TvG4oJpE0vltKeVeXcQAXhYm7WWBEEYMkvIiES
-         jPa7n5MRTBvSjgfTjDRw0X20sjtInFEQWQkCrSXJRGE7LRCbEIET8kuDHnNxi6PUZF8K
-         L6IacPHl1sOgAcwtONaN7GYkXWCjsEtRZQsXJWc2aTJ5JOxkj8+y/DTWXIii8xIT0ZPP
-         8v867siJhJOI8VGnrUlWv0Kpr9PTxVEB//cmHk0LQJXGlpqY8LaLwBZl1Ld+jJFgjkTf
-         K4IM/dbLirIaY2K081ydYDj7MoYlqZLsKfkVyJ6bOHgYMLagiszpLrbTuoFM07i3Afyt
-         W7MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNLcvCex31jv3JjqYTe+EmzPeiYb4RvY6jsRinYtGOxVXRUwf8Gr8U/zKT/0HaC9jzZCgYnr1MXzXqVTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIsHeAQomnXllj5kC2tmJ4tcq7pRV9d31LQ6MmcbrZ6yK5Exb8
-	3j1dAau2h4Lb417OI1WVwBqEQrCfrzFVmB/ADc4dRmXOnZf0o7SzuLIw23KtYqzxIIlgPn+DkFP
-	bgIeK6/exrxr2pOhxndJFU1Ik0Jhn6UDZOQFYQVQ3SQgfGYiXWgQ17gE1trs=
-X-Google-Smtp-Source: AGHT+IH3DZ2NU6UZRw9U4zZaYJYKjFeinvNIbfLhLZvXm067ybibJLcCEJFxIO9Dr7rB1HsP10zKysdAY/O4LZdnV4aivD4F5iGJ
+        d=1e100.net; s=20230601; t=1760740887; x=1761345687;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uH8LJn4ypQODNYJ3orBEKrIWWsg1DgFIAiLDa76fO34=;
+        b=XbWdP58qXYY+E3Yl7Ej9oCHc+OUdbe2h9WsYfg8qTUpDdLR0tVmxIFPjQagFrOXXNr
+         vmIkliQCH3BpK4kfbddvxbbrT7H9aUJh5+vD6u+klk+81AZx6v+w2WpnjTMpVdSz3kXi
+         yCaUrH+nz8vUv0LRhJRunf9JL8/DIn3ST7FwUHp7A0Jt7fFatkIUFnusfwaR3Mu/vER/
+         AcG8cYJfvT+I/UrvUDLatRG1VVXNkOMp2ApV3XOHPjgOmP6/XE/2H+eR8DSmXu0oUKkP
+         X4W7NsNwjvQLWpG9h5M9Z1bVltjFNKkxP/1KWGW0y9os5sqEP1B/vpCVDVO5YdmT0AfK
+         S94A==
+X-Forwarded-Encrypted: i=1; AJvYcCUljH5lpTr8Sh0PTnUY7QOrItxS17deLxU9dCUVP3ckzznsR53CdyaLxBVCyeZuJsMhcrBRmZuaE6EcR1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd2NHBhjmR0cOEbwVmoCqokzHAOx9jW7M5PaPJiScB/cxzpBkG
+	q1Y1s7+zor+V4HF38WWN5WZFJfE4Pl7JsJUFHQ5YmkRGZ40P0SVp96bJrAglKD38GeCcVx8BfaA
+	6hF6kddBWPaROgXjqnc6MW9Pq1v9akINxCn10eoVMJC9FoTLkw4lidXzn6z3L4Cz5nA==
+X-Gm-Gg: ASbGnctR6kdyKybvlRl7AmT0xssd4WFCxNQsyMFM34Le6h493SO1pWuq/GQleSPqM+O
+	EOkign6dgABuWPyyXgp3hVjnuw460ZobFugkj/GtxLNRvZFjsZW3dcIflV7NtN1zRqOZrj1hDyh
+	wnGj70GvFNYrUI52pmmK6Tg3pxo8VzssH/fM5oWdvaxF8IxE8F+LZfnX0P4NfUJH+d9h8Mc4YGE
+	2jqcMTm6i4aHoC5ClHPtjfNcWa8pjfKYbV0XKfX5096uvlwDtxRw5PpuYt+FwPMQ7+i+1SEcbjp
+	IBaAN2uLXMY5sMC0dtTHUSGjnZQcadNdAPFdrKrfCKJzWlYVpLh9bpdBD4CD39wSGGdfW/0OdfZ
+	xw6JVbs07mToAVTNNgrG3s7ODwfX6DmobvbkrtF1v5nkPtdCwJXEDR3u1nOvAivuy62WxKH6z3D
+	HP6JiVg9SHciS3yb+8Fxs6+kVK5Jo=
+X-Received: by 2002:a05:600c:681b:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-47117925e39mr44634055e9.36.1760740887436;
+        Fri, 17 Oct 2025 15:41:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOhQlU/0jutSd2tKVW+63SmQtJ+uWLZ1QBUrTpaFXK1fSJ1MmohMxqY5ZVQykyp7L0xHjr7w==
+X-Received: by 2002:a05:600c:681b:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-47117925e39mr44633605e9.36.1760740886944;
+        Fri, 17 Oct 2025 15:41:26 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f19sm1596288f8f.9.2025.10.17.15.41.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 15:41:26 -0700 (PDT)
+Message-ID: <cb85aaa3-e456-4fd8-b323-46c75d453a02@redhat.com>
+Date: Sat, 18 Oct 2025 00:41:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2708:b0:430:adcb:b38d with SMTP id
- e9e14a558f8ab-430c528dbdbmr66174275ab.24.1760740527943; Fri, 17 Oct 2025
- 15:35:27 -0700 (PDT)
-Date: Fri, 17 Oct 2025 15:35:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68f2c4af.050a0220.91a22.0430.GAE@google.com>
-Subject: [syzbot] [can?] kernel panic: kmsan.panic set ... (3)
-From: syzbot <syzbot+adeb80b314a69f963c25@syzkaller.appspotmail.com>
-To: kernel@pengutronix.de, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mkl@pengutronix.de, o.rempel@pengutronix.de, 
-	robin@protonic.nl, socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: KVM/s390x regression
+From: David Hildenbrand <david@redhat.com>
+To: Balbir Singh <balbirs@nvidia.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Liam.Howlett@oracle.com, airlied@gmail.com, akpm@linux-foundation.org,
+ apopple@nvidia.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
+ byungchul@sk.com, dakr@kernel.org, dev.jain@arm.com,
+ dri-devel@lists.freedesktop.org, francois.dugast@intel.com,
+ gourry@gourry.net, joshua.hahnjy@gmail.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, lyude@redhat.com,
+ matthew.brost@intel.com, mpenttil@redhat.com, npache@redhat.com,
+ osalvador@suse.de, rakie.kim@sk.com, rcampbell@nvidia.com,
+ ryan.roberts@arm.com, simona@ffwll.ch, ying.huang@linux.alibaba.com,
+ ziy@nvidia.com, kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-next@vger.kernel.org
+References: <20251001065707.920170-4-balbirs@nvidia.com>
+ <20251017144924.10034-1-borntraeger@linux.ibm.com>
+ <9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
+ <c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
+ <8c778cd0-5608-4852-9840-4d98828d7b33@redhat.com>
+ <74272098-cfb7-424b-a55e-55e94f04524e@linux.ibm.com>
+ <84349344-b127-41f6-99f1-10f907c2bd07@redhat.com>
+ <c9f28d0c-6b06-47a2-884d-7533f7b49c45@nvidia.com>
+ <3a2db8fc-d289-415b-ae67-5a35c9c32a76@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <3a2db8fc-d289-415b-ae67-5a35c9c32a76@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 18.10.25 00:15, David Hildenbrand wrote:
+> On 17.10.25 23:56, Balbir Singh wrote:
+>> On 10/18/25 04:07, David Hildenbrand wrote:
+>>> On 17.10.25 17:20, Christian Borntraeger wrote:
+>>>>
+>>>>
+>>>> Am 17.10.25 um 17:07 schrieb David Hildenbrand:
+>>>>> On 17.10.25 17:01, Christian Borntraeger wrote:
+>>>>>> Am 17.10.25 um 16:54 schrieb David Hildenbrand:
+>>>>>>> On 17.10.25 16:49, Christian Borntraeger wrote:
+>>>>>>>> This patch triggers a regression for s390x kvm as qemu guests can no longer start
+>>>>>>>>
+>>>>>>>> error: kvm run failed Cannot allocate memory
+>>>>>>>> PSW=mask 0000000180000000 addr 000000007fd00600
+>>>>>>>> R00=0000000000000000 R01=0000000000000000 R02=0000000000000000 R03=0000000000000000
+>>>>>>>> R04=0000000000000000 R05=0000000000000000 R06=0000000000000000 R07=0000000000000000
+>>>>>>>> R08=0000000000000000 R09=0000000000000000 R10=0000000000000000 R11=0000000000000000
+>>>>>>>> R12=0000000000000000 R13=0000000000000000 R14=0000000000000000 R15=0000000000000000
+>>>>>>>> C00=00000000000000e0 C01=0000000000000000 C02=0000000000000000 C03=0000000000000000
+>>>>>>>> C04=0000000000000000 C05=0000000000000000 C06=0000000000000000 C07=0000000000000000
+>>>>>>>> C08=0000000000000000 C09=0000000000000000 C10=0000000000000000 C11=0000000000000000
+>>>>>>>> C12=0000000000000000 C13=0000000000000000 C14=00000000c2000000 C15=0000000000000000
+>>>>>>>>
+>>>>>>>> KVM on s390x does not use THP so far, will investigate. Does anyone have a quick idea?
+>>>>>>>
+>>>>>>> Only when running KVM guests and apart from that everything else seems to be fine?
+>>>>>>
+>>>>>> We have other weirdness in linux-next but in different areas. Could that somehow be
+>>>>>> related to use disabling THP for the kvm address space?
+>>>>>
+>>>>> Not sure ... it's a bit weird. I mean, when KVM disables THPs we essentially just remap everything to be mapped by PTEs. So there shouldn't be any PMDs in that whole process.
+>>>>>
+>>>>> Remapping a file THP (shmem) implies zapping the THP completely.
+>>>>>
+>>>>>
+>>>>> I assume in your kernel config has CONFIG_ZONE_DEVICE and CONFIG_ARCH_ENABLE_THP_MIGRATION set, right?
+>>>>
+>>>> yes.
+>>>>
+>>>>>
+>>>>> I'd rule out copy_huge_pmd(), zap_huge_pmd() a well.
+>>>>>
+>>>>>
+>>>>> What happens if you revert the change in mm/pgtable-generic.c?
+>>>>
+>>>> That partial revert seems to fix the issue
+>>>> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+>>>> index 0c847cdf4fd3..567e2d084071 100644
+>>>> --- a/mm/pgtable-generic.c
+>>>> +++ b/mm/pgtable-generic.c
+>>>> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
+>>>>                if (pmdvalp)
+>>>>                     *pmdvalp = pmdval;
+>>>> -       if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
+>>>> +       if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
+>>>
+>>> Okay, but that means that effectively we stumble over a PMD entry that is not a migration entry but still non-present.
+>>>
+>>> And I would expect that it's a page table, because otherwise the change
+>>> wouldn't make a difference.
+>>>
+>>> And the weird thing is that this only triggers sometimes, because if
+>>> it would always trigger nothing would ever work.
+>>>
+>>> Is there some weird scenario where s390x might set a left page table mapped in a PMD to non-present?
+>>>
+>>
+>> Good point
+>>
+>>> Staring at the definition of pmd_present() on s390x it's really just
+>>>
+>>>       return (pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT) != 0;
+>>>
+>>>
+>>> Maybe this is happening in the gmap code only and not actually in the core-mm code?
+>>>
+>>
+>>
+>> I am not an s390 expert, but just looking at the code
+>>
+>> So the check on s390 effectively
+>>
+>> segment_entry/present = false or segment_entry_empty/invalid = true
+> 
+> pmd_present() == true iff _SEGMENT_ENTRY_PRESENT is set
+> 
+> because
+> 
+> 	return (pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT) != 0;
+> 
+> is the same as
+> 
+> 	return pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT;
+> 
+> But that means we have something where _SEGMENT_ENTRY_PRESENT is not set.
+> 
+> I suspect that can only be the gmap tables.
+> 
+> Likely __gmap_link() does not set _SEGMENT_ENTRY_PRESENT, which is fine
+> because it's a software managed bit for "ordinary" page tables, not gmap
+> tables.
+> 
+> Which raises the question why someone would wrongly use
+> pte_offset_map()/__pte_offset_map() on the gmap tables.
+> 
+> I cannot immediately spot any such usage in kvm/gmap code, though.
+> 
 
-syzbot found the following issue on:
+Ah, it's all that pte_alloc_map_lock() stuff in gmap.c.
 
-HEAD commit:    98ac9cc4b445 Merge tag 'f2fs-fix-6.18-rc2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a7d52f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-dashboard link: https://syzkaller.appspot.com/bug?extid=adeb80b314a69f963c25
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
+Oh my.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+So we're mapping a user PTE table that is linked into the gmap tables 
+through a PMD table that does not have the right sw bits set we would 
+expect in a user PMD table.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fd52c1c69e8d/disk-98ac9cc4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/20aa9a5c71e1/vmlinux-98ac9cc4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3d3726631c9d/bzImage-98ac9cc4.xz
+What's also scary is that pte_alloc_map_lock() would try to pte_alloc() 
+a user page table in the gmap, which sounds completely wrong?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+adeb80b314a69f963c25@syzkaller.appspotmail.com
+Yeah, when walking the gmap and wanting to lock the linked user PTE 
+table, we should probably never use the pte_*map variants but obtain
+the lock through pte_lockptr().
 
-Kernel panic - not syncing: kmsan.panic set ...
-CPU: 1 UID: 0 PID: 8119 Comm: syz.4.12965 Tainted: G    B   W           syzkaller #0 PREEMPT(none) 
-Tainted: [B]=BAD_PAGE, [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <IRQ>
- __dump_stack+0x26/0x30 lib/dump_stack.c:94
- dump_stack_lvl+0x53/0x270 lib/dump_stack.c:120
- dump_stack+0x1e/0x25 lib/dump_stack.c:129
- vpanic+0x435/0xd30 kernel/panic.c:489
- panic+0x15d/0x160 kernel/panic.c:626
- kmsan_report+0x31c/0x320 mm/kmsan/report.c:218
- __msan_warning+0x1b/0x30 mm/kmsan/instrumentation.c:315
- can_receive+0x12c/0x4a0 net/can/af_can.c:656
- can_rcv+0x1ff/0x3b0 net/can/af_can.c:690
- __netif_receive_skb_one_core net/core/dev.c:6079 [inline]
- __netif_receive_skb+0x477/0xac0 net/core/dev.c:6192
- process_backlog+0x485/0xa00 net/core/dev.c:6544
- __napi_poll+0xdd/0x8a0 net/core/dev.c:7594
- napi_poll net/core/dev.c:7657 [inline]
- net_rx_action+0xbc8/0x1c30 net/core/dev.c:7784
- handle_softirqs+0x169/0x6e0 kernel/softirq.c:622
- __do_softirq+0x14/0x1b kernel/softirq.c:656
- do_softirq+0x99/0x100 kernel/softirq.c:523
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0xa1/0xb0 kernel/softirq.c:450
- __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:167 [inline]
- _raw_spin_unlock_bh+0x2d/0x40 kernel/locking/spinlock.c:210
- spin_unlock_bh include/linux/spinlock.h:396 [inline]
- release_sock+0x21d/0x270 net/core/sock.c:3744
- j1939_sk_sendmsg+0xeb/0x2760 net/can/j1939/socket.c:1285
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x333/0x3d0 net/socket.c:742
- ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2630
- ___sys_sendmsg+0x271/0x3b0 net/socket.c:2684
- __sys_sendmsg+0x1aa/0x300 net/socket.c:2716
- __compat_sys_sendmsg net/compat.c:346 [inline]
- __do_compat_sys_sendmsg net/compat.c:353 [inline]
- __se_compat_sys_sendmsg net/compat.c:350 [inline]
- __ia32_compat_sys_sendmsg+0xa4/0x100 net/compat.c:350
- ia32_sys_call+0x3f6c/0x4310 arch/x86/include/generated/asm/syscalls_32.h:371
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf705d539
-Code: 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f544d55c EFLAGS: 00000206 ORIG_RAX: 0000000000000172
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000080000140
-RDX: 000000000404c881 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-----------------
-Code disassembly (best guess):
-   0:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   4:	10 07                	adc    %al,(%rdi)
-   6:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   a:	10 08                	adc    %cl,(%rax)
-   c:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  20:	00 51 52             	add    %dl,0x52(%rcx)
-  23:	55                   	push   %rbp
-  24:	89 e5                	mov    %esp,%ebp
-  26:	0f 34                	sysenter
-  28:	cd 80                	int    $0x80
-* 2a:	5d                   	pop    %rbp <-- trapping instruction
-  2b:	5a                   	pop    %rdx
-  2c:	59                   	pop    %rcx
-  2d:	c3                   	ret
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	90                   	nop
-  31:	90                   	nop
-  32:	90                   	nop
-  33:	90                   	nop
-  34:	90                   	nop
-  35:	90                   	nop
-  36:	90                   	nop
-  37:	90                   	nop
-  38:	90                   	nop
-  39:	90                   	nop
-  3a:	90                   	nop
-  3b:	90                   	nop
-  3c:	90                   	nop
-  3d:	90                   	nop
-  3e:	90                   	nop
-  3f:	90                   	nop
+All magic we end up doing with RCU etc in __pte_offset_map_lock()
+does not apply to the gmap PMD table.
 
+-- 
+Cheers
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+David / dhildenb
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
