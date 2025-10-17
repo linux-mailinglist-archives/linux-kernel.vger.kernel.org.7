@@ -1,250 +1,139 @@
-Return-Path: <linux-kernel+bounces-858025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEA1BE89AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:35:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABC8BE89A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B5E62077B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435D46202D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBAC32ABDB;
-	Fri, 17 Oct 2025 12:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7929C2E1F02;
+	Fri, 17 Oct 2025 12:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F0IX6/UM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MuqT940t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563F52DC328
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA619DF66
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760704511; cv=none; b=hyP2RPYbv+8gcWMah4unxUhjVJg5ZqLLpP2BS3RD/VUarwdnvZFKV01DJSeNEa4VP8Ij8b8je0/+rjfJuvn2KJve9EHrOKzWDm3Miafb9212dx2XPgfQcuK5pwTMdeJkBjERPLVgYwHpSS4gPYBHSAoeix5rKvcy2qWYlYCJrU8=
+	t=1760704508; cv=none; b=ald8//NK9xp9B5S+Hir232t0kJjKEMSz8XmvYyFXIrxeXUv2n4niU9bxlOKNE9gQT37GV6dkLdNan85mz9UwC2DXBGHa3HimcR5T/pJibbl6JbKxugHKrV4vZ9hGErqeOVDtc9gN4FwJFqrWtE3IgTQmvJPKZB4Vf0z6ukBGilg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760704511; c=relaxed/simple;
-	bh=iaw1jVnnLuJts76p7DSureSsQ4Z0cgkcTp8t5SENrMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Pst5mnLRCDVdvwnjqmG1tQxpPlOsIRWmsmnoQBiTPO4XhDNQwthclg/PiWGLDbV4Jq+U+B/BaOvmGAeWY5ysYlxVLvi0T+TfGXW5AZob5K6FgrUc7TjYjVscXMVDuyOZhMFXoJLjXjQtpCM+3pXLuqcpV2WDyAv9gGc918hYUCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F0IX6/UM; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760704509; x=1792240509;
-  h=date:from:to:cc:subject:message-id;
-  bh=iaw1jVnnLuJts76p7DSureSsQ4Z0cgkcTp8t5SENrMQ=;
-  b=F0IX6/UMKXZpmpms3tO11Gmij0+DRgUuW2HCn+YGs2UfDm8fpEb9v9Mt
-   ep+dUqSJ+ISDu+Oimxtpelfp6ne5qtqGY4JPvsEL7TaHo9375VhctO987
-   wkHshntN3nhIIXZ4UeeMN4ItFal3UG3lvS9yYro7U+pIwTm4EinUkajIO
-   GvpNyfE+EKazLaRrLRr/KRHbnvyfoGhMRRrbQXoYdfHAd3GmPhhCvQQuk
-   gcZr5qN3Wr8WhIlA6OxbxZadEyJPHLJyd6obQQn1sTG2Y7zLJ/dgN8TF6
-   NoxTI/ZrM7HQvbCJCsZrpg/B1yOWdlPyyfZEBPMeNfMaF/gg5mknJ2qW4
-   g==;
-X-CSE-ConnectionGUID: HjdyEVTgSN6n61d3GTouew==
-X-CSE-MsgGUID: f/fFejWeSSOWh1cI42QEdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="50481081"
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="50481081"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 05:35:08 -0700
-X-CSE-ConnectionGUID: 4QMp3L2HS22vOTdr9QJ9qw==
-X-CSE-MsgGUID: 5RpQV9DJRtWOkf/j4FFuUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
-   d="scan'208";a="182670102"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 17 Oct 2025 05:35:06 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9jfk-0005xf-21;
-	Fri, 17 Oct 2025 12:35:04 +0000
-Date: Fri, 17 Oct 2025 20:34:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/sgx] BUILD SUCCESS
- 0f2753efc5baff2f0b2a921fe77990c7b12955dc
-Message-ID: <202510172007.S9oNha9P-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1760704508; c=relaxed/simple;
+	bh=hooOmsIKnj5D8GAzQfDmrdxtW9sI7j7j97T+qU4bFO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQC+ebKjww3tgERdEspT0hF4TxiSJl+dCfWDPmFiZ6yGiecdQipY/GFEBtOKTlRyvZ5CsVF6mvfajyZDIeTfBf+prWuG1qlkW+feEK8XeHzb8FAOC4ecUpXzYatTF1+m0AoVleuy6tYoaj8+vQ5tvubtXEjXDFjxLFBmuhukLrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MuqT940t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760704503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Xkl9mNK4xtIyBibAQFYw8DQjKmVQW6nrzyawypmZes=;
+	b=MuqT940tFTZN3aZy+EjV5vLTKTDP+PSOfZMpLlpwckSNLlU5zcFvZkIfwlYF664MSnmg39
+	puYDcvd/wZHy3OsSURJ3Yjce3Y97IakDXGzNEycSnEVFLsHAcYFOwdifiDYv+kwdBb8hIQ
+	hxi5nEKhcv08t8Ryd48X09HiduhVKmE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-264-Q2xijE8oP6etRjV_EeZN9g-1; Fri,
+ 17 Oct 2025 08:35:01 -0400
+X-MC-Unique: Q2xijE8oP6etRjV_EeZN9g-1
+X-Mimecast-MFC-AGG-ID: Q2xijE8oP6etRjV_EeZN9g_1760704500
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5ED0519560AD;
+	Fri, 17 Oct 2025 12:35:00 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.64.136])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C6ABA1800451;
+	Fri, 17 Oct 2025 12:34:56 +0000 (UTC)
+Date: Fri, 17 Oct 2025 09:34:55 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
+	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>
+Subject: Re: [PATCH v2 2/3] rtla/tests: Extend action tests to 5s
+Message-ID: <f2opu4ftzneryyownttyf7rnt5tkmhjlooxkjzqht3kh4u2rms@in33hwth6z5f>
+References: <20251007095341.186923-1-tglozar@redhat.com>
+ <20251007095341.186923-2-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007095341.186923-2-tglozar@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sgx
-branch HEAD: 0f2753efc5baff2f0b2a921fe77990c7b12955dc  x86/sgx: Enable automatic SVN updates for SGX enclaves
+On Tue, Oct 07, 2025 at 11:53:40AM +0200, Tomas Glozar wrote:
+> In non-BPF mode, it takes up to 1 second for RTLA to notice that tracing
+> has been stopped. That means that action tests cannot have a 1 second
+> duration, as the SIGALRM will be racing with the threshold overflow.
+> 
+> Previously, non-BPF mode actions were buggy and always executed
+> the action, even when stopping on duration or SIGINT, preventing
+> this issue from manifesting. Now that this has been fixed, the tests
+> have become flaky, and this has to be adjusted.
+> 
+> Fixes: 4e26f84abfb ("rtla/tests: Add tests for actions")
+> Fixes: 05b7e10687c ("tools/rtla: Add remaining support for osnoise actions")
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/tests/osnoise.t  | 4 ++--
+>  tools/tracing/rtla/tests/timerlat.t | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/tracing/rtla/tests/osnoise.t b/tools/tracing/rtla/tests/osnoise.t
+> index e3c89d45a6bb..08196443fef1 100644
+> --- a/tools/tracing/rtla/tests/osnoise.t
+> +++ b/tools/tracing/rtla/tests/osnoise.t
+> @@ -39,9 +39,9 @@ check "hist stop at failed action" \
+>  check "top stop at failed action" \
+>  	"timerlat top -T 2 --on-threshold shell,command='echo -n abc; false' --on-threshold shell,command='echo -n defgh'" 2 "^abc" "defgh"
+>  check "hist with continue" \
+> -	"osnoise hist -S 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+> +	"osnoise hist -S 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+>  check "top with continue" \
+> -	"osnoise top -q -S 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+> +	"osnoise top -q -S 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+>  check "hist with trace output at end" \
+>  	"osnoise hist -d 1s --on-end trace" 0 "^  Saving trace to osnoise_trace.txt$"
+>  check "top with trace output at end" \
+> diff --git a/tools/tracing/rtla/tests/timerlat.t b/tools/tracing/rtla/tests/timerlat.t
+> index b5d1e7260a9b..b550a6ae2445 100644
+> --- a/tools/tracing/rtla/tests/timerlat.t
+> +++ b/tools/tracing/rtla/tests/timerlat.t
+> @@ -60,9 +60,9 @@ check "hist stop at failed action" \
+>  check "top stop at failed action" \
+>  	"timerlat top -T 2 --on-threshold shell,command='echo -n 1; false' --on-threshold shell,command='echo -n 2'" 2 "^1ALL"
+>  check "hist with continue" \
+> -	"timerlat hist -T 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+> +	"timerlat hist -T 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+>  check "top with continue" \
+> -	"timerlat top -q -T 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+> +	"timerlat top -q -T 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
+>  check "hist with trace output at end" \
+>  	"timerlat hist -d 1s --on-end trace" 0 "^  Saving trace to timerlat_trace.txt$"
+>  check "top with trace output at end" \
+> -- 
+> 2.51.0
+> 
 
-elapsed time: 826m
+In general, my pupils dilate when I see time based synchronization.
+However, in this case, it seems harmless.
 
-configs tested: 158
-configs skipped: 125
+Reviewed-by: Wander Lairson Costa <wander@redhat.com>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    clang-22
-alpha                               defconfig    clang-19
-arc                               allnoconfig    clang-22
-arc                                 defconfig    clang-19
-arc                   randconfig-001-20251017    clang-22
-arc                   randconfig-002-20251017    clang-22
-arm                               allnoconfig    clang-22
-arm                                 defconfig    clang-19
-arm                      integrator_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251017    clang-22
-arm                   randconfig-002-20251017    clang-22
-arm                   randconfig-003-20251017    clang-22
-arm                   randconfig-004-20251017    clang-22
-arm64                             allnoconfig    clang-22
-arm64                               defconfig    clang-19
-arm64                 randconfig-001-20251017    clang-22
-arm64                 randconfig-002-20251017    clang-22
-arm64                 randconfig-003-20251017    clang-22
-arm64                 randconfig-004-20251017    clang-22
-csky                              allnoconfig    clang-22
-csky                                defconfig    clang-19
-csky                  randconfig-001-20251017    gcc-15.1.0
-csky                  randconfig-002-20251017    gcc-15.1.0
-hexagon                           allnoconfig    clang-22
-hexagon                             defconfig    clang-19
-hexagon               randconfig-001-20251017    gcc-15.1.0
-hexagon               randconfig-002-20251017    gcc-15.1.0
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    clang-20
-i386                             allyesconfig    clang-20
-i386        buildonly-randconfig-001-20251017    clang-20
-i386        buildonly-randconfig-002-20251017    clang-20
-i386        buildonly-randconfig-003-20251017    clang-20
-i386        buildonly-randconfig-004-20251017    clang-20
-i386        buildonly-randconfig-005-20251017    clang-20
-i386        buildonly-randconfig-006-20251017    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20251017    clang-20
-i386                  randconfig-002-20251017    clang-20
-i386                  randconfig-003-20251017    clang-20
-i386                  randconfig-004-20251017    clang-20
-i386                  randconfig-005-20251017    clang-20
-i386                  randconfig-006-20251017    clang-20
-i386                  randconfig-007-20251017    clang-20
-i386                  randconfig-011-20251017    gcc-12
-i386                  randconfig-012-20251017    gcc-12
-i386                  randconfig-013-20251017    gcc-12
-i386                  randconfig-014-20251017    gcc-12
-i386                  randconfig-015-20251017    gcc-12
-i386                  randconfig-016-20251017    gcc-12
-i386                  randconfig-017-20251017    gcc-12
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251017    gcc-15.1.0
-loongarch             randconfig-002-20251017    gcc-15.1.0
-m68k                             allmodconfig    clang-19
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    clang-19
-m68k                                defconfig    clang-19
-microblaze                       allmodconfig    clang-19
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    clang-19
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                        bcm63xx_defconfig    gcc-15.1.0
-mips                           jazz_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20251017    gcc-15.1.0
-nios2                 randconfig-002-20251017    gcc-15.1.0
-openrisc                          allnoconfig    clang-22
-openrisc                            defconfig    gcc-14
-parisc                            allnoconfig    clang-22
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251017    gcc-15.1.0
-parisc                randconfig-002-20251017    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    clang-22
-powerpc               randconfig-001-20251017    gcc-15.1.0
-powerpc               randconfig-002-20251017    gcc-15.1.0
-powerpc               randconfig-003-20251017    gcc-15.1.0
-powerpc64             randconfig-001-20251017    gcc-15.1.0
-powerpc64             randconfig-002-20251017    gcc-15.1.0
-powerpc64             randconfig-003-20251017    gcc-15.1.0
-riscv                             allnoconfig    clang-22
-riscv                               defconfig    gcc-14
-riscv                 randconfig-001-20251017    clang-22
-riscv                 randconfig-002-20251017    clang-22
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    gcc-14
-s390                  randconfig-001-20251017    clang-22
-s390                  randconfig-002-20251017    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-14
-sh                          kfr2r09_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251017    clang-22
-sh                    randconfig-002-20251017    clang-22
-sh                           se7712_defconfig    gcc-15.1.0
-sh                           sh2007_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251017    clang-22
-sparc                 randconfig-002-20251017    clang-22
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20251017    clang-22
-sparc64               randconfig-002-20251017    clang-22
-um                                allnoconfig    clang-22
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                             i386_defconfig    gcc-15.1.0
-um                    randconfig-001-20251017    clang-22
-um                    randconfig-002-20251017    clang-22
-um                           x86_64_defconfig    gcc-14
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251017    clang-20
-x86_64      buildonly-randconfig-001-20251017    gcc-14
-x86_64      buildonly-randconfig-002-20251017    clang-20
-x86_64      buildonly-randconfig-002-20251017    gcc-14
-x86_64      buildonly-randconfig-003-20251017    clang-20
-x86_64      buildonly-randconfig-004-20251017    clang-20
-x86_64      buildonly-randconfig-004-20251017    gcc-14
-x86_64      buildonly-randconfig-005-20251017    clang-20
-x86_64      buildonly-randconfig-006-20251017    clang-20
-x86_64                              defconfig    clang-20
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20251017    gcc-14
-x86_64                randconfig-002-20251017    gcc-14
-x86_64                randconfig-003-20251017    gcc-14
-x86_64                randconfig-004-20251017    gcc-14
-x86_64                randconfig-005-20251017    gcc-14
-x86_64                randconfig-006-20251017    gcc-14
-x86_64                randconfig-007-20251017    gcc-14
-x86_64                randconfig-008-20251017    gcc-14
-x86_64                randconfig-071-20251017    clang-20
-x86_64                randconfig-072-20251017    clang-20
-x86_64                randconfig-073-20251017    clang-20
-x86_64                randconfig-074-20251017    clang-20
-x86_64                randconfig-075-20251017    clang-20
-x86_64                randconfig-076-20251017    clang-20
-x86_64                randconfig-077-20251017    clang-20
-x86_64                randconfig-078-20251017    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-14
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-14
-x86_64                           rhel-9.4-ltp    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251017    clang-22
-xtensa                randconfig-002-20251017    clang-22
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
