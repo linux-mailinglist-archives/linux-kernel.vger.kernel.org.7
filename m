@@ -1,181 +1,218 @@
-Return-Path: <linux-kernel+bounces-858696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28DDBEB757
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:12:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E488BEB8D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A136D6E7D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:12:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDA9A4F720C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47EE30F803;
-	Fri, 17 Oct 2025 20:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F90346768;
+	Fri, 17 Oct 2025 20:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LUiqEcl7"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011019.outbound.protection.outlook.com [52.101.52.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rc7HKZiT"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C3F2FC865
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760731943; cv=fail; b=GJFS/NOaaqlMZBt4J3gtvU9h5OHvp1jBfcEYVgm/bER+o3/hl0nBASbk8rFA9uF+YdHCY32cl8AbrnmSY3f26OurD5kycbmizfmLZBFZTU6vY3ydgEtuXfC3EsCf3yYHlo8SekA32Yejyar52avCkxSqdlcXb7ANzGWOmwkPQOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760731943; c=relaxed/simple;
-	bh=YGqwRnPXXkBDQdm2W+vKCZrg8OEGl68m5NXePWtpKSk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEt2n17/MnSh3YZ9kvepKtv7aCkV0Yg+WtWLL41SeRruv24DKvnJZv7l7Lbt+A4F2bxgb2I/EgduF2QnFjqm1U+k9FkFyr7JS/7u2q1/krcYO/24vps6H+uKSVq++9dG9S4Zes/PSwBgjHvLYgG8EHniVE581QzlSyaRblNWzns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LUiqEcl7; arc=fail smtp.client-ip=52.101.52.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SH1savcuk+thmgrwrdWbAGW+ifX/bS36j+VUDZ1DMRlOBkLLYeTed0ay3zz/3mcN9oRKKv81ClOQPh9UwzkSpDaXswFdF/5aYbnxjQxHnvKQP6Sc36MFsYrOdqr5TfQheHFp3RVhas2gmOQyLkhrX1R+tssiFiELndeUwPbSK6B45WkQXQK7nmU8kE8fTmxPwFF+ZCwtIXSmEezTYi5FVpduepSnf+yd2fDBeIZs5Xt29Kcu1JyE3Z6+qr8E2/MAvLg5+hl/6jhfX23KBCeLGHKQoyjGukGIg8ASlnhNAWkLhfngKAGLt8QkPmdkhxXf1V4r60aC6M6/Q7f0DWH34A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=77crYBTpyQpWVi9KV8oYHSGXMPQcPlgTIH2r+NN3ORw=;
- b=HL7jJ44XVtl07R9vRvPvY0YW6drxkJFd5/ue8wvomAq9UJazDxZmQJBcgjO/qFT2UGa8x4Z1pCTlmLMzCwNyV2aruSd4udRcBApQjy/DT450ODhGpCvasrTFRKVIY4yPAl3YF88Wkjq38u5/nqH7A/Rye1Az0+I6S8Hq05qxE0zBX5b4HYPNem41M8z2ksaoFdyQ8kelLvmHdkSpyxYnb865QwdwA4fXtMF6kuWNqwRLsNUN/M6iqzQ2wdI6/5kCGHVc7177oD0k++Z8c5KqVeUIGtVx2nhOfWD5AJgDflFuYp0229X0BJgQw4UkdwzB/LHn1NmU4inAsgZaLspBFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=77crYBTpyQpWVi9KV8oYHSGXMPQcPlgTIH2r+NN3ORw=;
- b=LUiqEcl7guW098Ag1v04mK4XXqmkUE/E+5WImfEOvS4iFdqPSX1egc9YSRn504kmOluk6gWZI+Z3ALDaz4BeDGRPIhwlDLM58X3gfY2vehvZYG2LNBfs8EPTm/1DBa2M5b/nTD1jcNRB41CSxrKGDaeDy+7vcH+PS9Ow0CqLIL+D1e6Tv53qhx8ttVaTMn9dbex+x6pUa26YqDtEJA9lZe7XFNffdkAAYB7LP7PmyC6PCers/cgsORoMqU2JoFqG5noa8Kz3mP04kiwY2PmIk57yH9VboeAmATaMm+ExC0axnCt/5Fz6W36XqAOetXv3YyIxPdCYLMEqdEl30mXESA==
-Received: from CH0PR03CA0259.namprd03.prod.outlook.com (2603:10b6:610:e5::24)
- by MW6PR12MB9018.namprd12.prod.outlook.com (2603:10b6:303:241::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Fri, 17 Oct
- 2025 20:12:18 +0000
-Received: from DS3PEPF000099D8.namprd04.prod.outlook.com
- (2603:10b6:610:e5:cafe::d) by CH0PR03CA0259.outlook.office365.com
- (2603:10b6:610:e5::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.12 via Frontend Transport; Fri,
- 17 Oct 2025 20:12:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DS3PEPF000099D8.mail.protection.outlook.com (10.167.17.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Fri, 17 Oct 2025 20:12:17 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 17 Oct
- 2025 13:12:06 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 17 Oct
- 2025 13:12:05 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 17 Oct 2025 13:12:03 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FC3342175
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760731990; cv=none; b=dinhWycozmtMD6De8IIwOPjGb7TQvWKALTd9SqbN8Q4ry2qGRakMxh6J0gs0nt2JVyDLNTn8oVmazTQxPfD7XEDh9FEGQcFdcg4Tpdt6IfkybqQWYHvX3J01ocTMUXyL+yK5JqkDP4MB8af1XxkUUD7rGcVEYjPMAVvjd1T70xs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760731990; c=relaxed/simple;
+	bh=9Ff3PWoIrWIqdLj70SRHRgapMbRCOgIGvC+YSHiKL44=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SWIMdWwidfMwmYyGAK5LH13m+gqdNGrjF08wXkg8+LwXhvVuxwsPEZsfagbVD1HMS4m0Eya6IrmYCmanL64APkjvCPuz8cmQ30mOmWviSzrPrUsUsQW2SnFd/gn6cAcbdnHvfjRdqVIp34OfO184IxwP4vPOYST0dByqGBEAHz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rc7HKZiT; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b6097ca315bso3673313a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760731984; x=1761336784; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lnebmp8Qf5EWIBCxuV2pnQrOdRPzx0FMFYBdpouvbtI=;
+        b=Rc7HKZiTiWNa7OS7+uWerDu71X6Vq+ZLEq71VcHQfFvFKwnqDE5IxDqREgfGAzg/sN
+         gEHtuecplKJu7ytrshDwiHypjYxz7EjDOdO1hZOFTB7yK2Bx/BuVbfCD6aJCajUkz90S
+         jDIK4CYid8Y2hKZQ/YUX3CrYW0+u3WRKM0QnUjnhNAAFRB+GtToqLklW9lA2AydJyqqv
+         XYpDuZ+4Yb2bNaePZshtPsH8uVfbFLPnXVCRrqFIk0nqVZkvQicGnDwWgEoC5KnA7qla
+         CFPCJGtqKirVtOGT8qDG5km6cDpxoxBJN7BhE/QUDJDW75pb4dcaDkJZZcynBvGgjc4v
+         oFsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760731984; x=1761336784;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lnebmp8Qf5EWIBCxuV2pnQrOdRPzx0FMFYBdpouvbtI=;
+        b=MO05PLh7b/CH0p2bBY1Eu5oQEU8hU05qkGrnzumJMyWXwz0Wao6GU35xVyCt5/zpAN
+         Mt7iIu9eHqV1xaeJJHua0WjCiRL+Us9NNDOsB4v/ILQgKc7jclwIViWCzRYdaxLu0ru4
+         RieH7YeldzqM+et6cYsNHw6ZABaqEPxr2JopmkKeeMHOfNFl/GIGxRKZuxToSRHyqMd/
+         2VFANH+++d0zVpgwEXSGjAyduWwJ3mIkWKxtgM4HVIZZBGqD5Jwaxdf3vG9rtMcXoFC0
+         LTmWHYO/2kO4tQhVXkw+MlQuR0sGJj1cmhYVpndkEdbDgwnw+rUHZ2GFkCVVIM2jP/Y+
+         ECiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYVkROxpQNQhyn3fDjihO/HsU9INR8sFDcJFb3Ml75crD5tFvHThQVcRlu4wnhFazyfG26enPx6aZf/aE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaIc9oM5bJAf/+uLBO0jhygQcPwy/NpDJ8+MixLlY6YG6hSTQo
+	yc4pywV3cPXOvVhrU0T3wcjFe3QnFsEjzxo/WJEzm5N1dXXrzYc6RRhpunFbAWTMjIqVY/V+XCq
+	4VwDxtaXMdxVMQapUiSxMDYeFWw==
+X-Google-Smtp-Source: AGHT+IEB52F61621aMByRkpbPgTkpDpb2zZJPIEfSZTfaBbai+oIczGx5aQpE8WOhm5/i6XAmSimYUjcxZtR+kNbuQ==
+X-Received: from pjtk2.prod.google.com ([2002:a17:90a:c502:b0:327:7035:d848])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:244b:b0:253:1e04:4e8 with SMTP id adf61e73a8af0-334a85fdb31mr6337050637.56.1760731983589;
+ Fri, 17 Oct 2025 13:13:03 -0700 (PDT)
 Date: Fri, 17 Oct 2025 13:12:02 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: kernel test robot <lkp@intel.com>
-CC: <will@kernel.org>, <jgg@nvidia.com>, <oe-kbuild-all@lists.linux.dev>,
-	<jean-philippe@linaro.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<balbirs@nvidia.com>, <miko.lenczewski@arm.com>, <peterz@infradead.org>,
-	<kevin.tian@intel.com>, <praan@google.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/7] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <aPKjEvxCJoRhzU7K@Asurada-Nvidia>
-References: <345bb7703ebd19992694758b47e371900267fa0e.1760555863.git.nicolinc@nvidia.com>
- <202510172156.WHU485ad-lkp@intel.com>
+In-Reply-To: <cover.1760731772.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <202510172156.WHU485ad-lkp@intel.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D8:EE_|MW6PR12MB9018:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1c04a5b-3e78-421e-ac3e-08de0db97892
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oSUbwoXwsoIf15yj7yzHHZX7UJwkLuA17+Dsr4YwZUP+7dWsUpI6a3l++aBU?=
- =?us-ascii?Q?2cDvsUn90Dag9OXKbeXplnel8hTYcMHGqCD2GvQby3HrW6Ou4XgwKT2+F4+Q?=
- =?us-ascii?Q?ej+phtEssFCehLzo5MmF4zTU0hr9cKZlHy6EMxaWXD27Fat2s+h2fG0VjmB9?=
- =?us-ascii?Q?etDABlRwkgH4SEpPggwq2ivR67gTn6SpHWW1atg58fMAglHIba3bcIeN6VeI?=
- =?us-ascii?Q?pQhTechXcJNwOJVJZNEddS0aqp6TiBT9+oUUjw72kIr4ZD7Rqpwu/FvkH6dU?=
- =?us-ascii?Q?w1ISgZbaVPExEirQCMI0gTG53nwgvFUloaQlJOJBcXqRl0QCVYx6t/1o+FXz?=
- =?us-ascii?Q?lNbkHGR0vNRU40g7U/E3TJ6Any1INoZQMyAfhIwyuHA3ExKuDt/XojlhFBC8?=
- =?us-ascii?Q?aI+XyTdyicKexz5aauMEdSIIYO/SQz9bpMpmMy/9h0A/wYVN0/Dp2Yqi6YpR?=
- =?us-ascii?Q?pZOHuUimnl02X8iDOq7RjMWRe0j+NA8CtyMY0RfwUUPeylO+OcNNFviT2khe?=
- =?us-ascii?Q?6jcHri9ZbUitX79x1ZP4bOnjR1/f1Hgs+d3Q1xAzmOTIQyWk/VoYpRvg7vVZ?=
- =?us-ascii?Q?z55JpDV2LdOwpN+962+mAj2TgNhS3AdQtxKGQXGHJz7XdwrjNCVLzezzpPmi?=
- =?us-ascii?Q?hIFSX5TUZYOMLC9MvHEV1k1CDDHovocWO+DLQdRSIx4142xglTpt//gUS20s?=
- =?us-ascii?Q?pT9hmK+l/d9Ql9eIo6niBwLS2FsUJKiEwLrGhyahr6A88CQ61fs3WEHDaoWQ?=
- =?us-ascii?Q?3Dc4V/T++qUY9C6baQ2JUiw49Bw4hTmI1dapFjZxv6TkM6GpqsE6+xdsvrfp?=
- =?us-ascii?Q?b8lCE8mVUhM69hWnTkMnZMs6ZDp7uGTxcOoKf4RDqaVtqz/SbdmtO+aqLoe7?=
- =?us-ascii?Q?YyVqr1ZdvjXIrHF3iLn4SUsj+8eKgQ9OS1B62//d/EYLDqpM8j4kljxlFr9z?=
- =?us-ascii?Q?PxW9vsOFNllpumhLjf2tlaJkcSRrU1p4BTkvQJe8cW0A/QHYSonMbMditED0?=
- =?us-ascii?Q?E4/iAH9pxojKg93z1KMwqe5PKrN+/U0o2xG9CnKFcSgRBViVVnFZ+FCa2S8R?=
- =?us-ascii?Q?5mskVj6+/rPOvulp9J81tAXHCgc77zGOeCt2200nAtV8Egd/A0TVswdrUyc+?=
- =?us-ascii?Q?y/zqJ2MVlABX3JOZjwcFxwTrqyd5O36b1GKZ/GKccj9/cpsxHlAIr/ApbEpb?=
- =?us-ascii?Q?mBQcCKKv7eD89eElrIA0rVBf4UawdahUqmp5p/MkQ8Wnt8VGnvxKPt4dAHbw?=
- =?us-ascii?Q?b0iVsEyGsawJiIdtB528kxLN6WHANtjSG1RtkD874JRpgEsRAKPrkSs0wvIj?=
- =?us-ascii?Q?ltjHWcZS3gbKrDSEi/FGKIsBrQZUunye9fOcFKnA1R3q4BmH0w/YWaHHbnio?=
- =?us-ascii?Q?EO8yvJK0tG9wjgtshl359EYVkn/q74Mc0Sb6iXyrpioUCzmmq9exXHYAdHaG?=
- =?us-ascii?Q?foiUL7e3ivkCrBtcDBIKGxdtYIQ3HZQHCduSdOenExaE7+sojHg7A6y4Czz2?=
- =?us-ascii?Q?J9pYlnHhJtzm6F6zEIPNmTLfoqAowU/mZwbfdszvPFKe6+wiCWMRNGWa+jlZ?=
- =?us-ascii?Q?fH+EaOcSFJvXCV2m2Sc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 20:12:17.4574
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1c04a5b-3e78-421e-ac3e-08de0db97892
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D8.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB9018
+Mime-Version: 1.0
+References: <cover.1760731772.git.ackerleytng@google.com>
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <612a3bcc787fb76379b081e802b9c67ccbeb8a87.1760731772.git.ackerleytng@google.com>
+Subject: [RFC PATCH v1 21/37] KVM: selftests: guest_memfd: Test indexing in guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Cc: ackerleytng@google.com, akpm@linux-foundation.org, 
+	binbin.wu@linux.intel.com, bp@alien8.de, brauner@kernel.org, 
+	chao.p.peng@intel.com, chenhuacai@kernel.org, corbet@lwn.net, 
+	dave.hansen@intel.com, dave.hansen@linux.intel.com, david@redhat.com, 
+	dmatlack@google.com, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	haibo1.xu@intel.com, hannes@cmpxchg.org, hch@infradead.org, hpa@zytor.com, 
+	hughd@google.com, ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, 
+	shakeel.butt@linux.dev, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 17, 2025 at 09:47:07PM +0800, kernel test robot wrote:
->    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c: note: in included file:
-> >> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct callback_head *head @@     got struct callback_head [noderef] __rcu * @@
->    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse:     expected struct callback_head *head
->    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse:     got struct callback_head [noderef] __rcu *
-> >> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h:1048:9: sparse: sparse: cast removes address space '__rcu' of expression
-...
->   1045	
->   1046	static inline void arm_smmu_domain_free(struct arm_smmu_domain *smmu_domain)
->   1047	{
-> > 1048		kfree_rcu(smmu_domain->invs, rcu);
+The existing guest_memfd conversion tests only use single-page memory
+regions. This provides no coverage for multi-page guest_memfd objects,
+specifically whether KVM correctly handles the page index for conversion
+operations. An incorrect implementation could, for example, always operate
+on the first page regardless of the index provided.
 
-Looks like it should be:
- static inline void arm_smmu_domain_free(struct arm_smmu_domain *smmu_domain)
+Add a new test case to verify that conversions between private and shared
+memory correctly target the specified page within a multi-page guest_memfd.
+
+To support this test, add a new GMEM_CONVERSION_MULTIPAGE_TEST_INIT_SHARED
+macro that handles setting up and tearing down the VM for each page
+iteration. The teardown logic is adjusted to prevent a double-free in this
+new scenario.
+
+Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ .../kvm/guest_memfd_conversions_test.c        | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+diff --git a/tools/testing/selftests/kvm/guest_memfd_conversions_test.c b/tools/testing/selftests/kvm/guest_memfd_conversions_test.c
+index d57e66ee11310..54e7deec992d4 100644
+--- a/tools/testing/selftests/kvm/guest_memfd_conversions_test.c
++++ b/tools/testing/selftests/kvm/guest_memfd_conversions_test.c
+@@ -63,6 +63,9 @@ static void gmem_conversions_do_teardown(test_data_t *t)
  {
--       kfree_rcu(smmu_domain->invs, rcu);
-+       struct arm_smmu_invs *invs = rcu_dereference(smmu_domain->invs);
+ 	/* No need to close gmem_fd, it's owned by the VM structure. */
+ 	kvm_vm_free(t->vcpu->vm);
 +
-+       kfree_rcu(invs, rcu);
-        kfree(smmu_domain);
++	/* NULL this out to avoid second free on full teardown in multipage tests. */
++	t->vcpu->vm = NULL;
  }
+ 
+ FIXTURE_TEARDOWN(gmem_conversions)
+@@ -101,6 +104,29 @@ static void __gmem_conversions_##test(test_data_t *t, int nr_pages)		\
+ #define GMEM_CONVERSION_TEST_INIT_SHARED(test)					\
+ 	__GMEM_CONVERSION_TEST_INIT_SHARED(test, 1)
+ 
++/*
++ * Repeats test over nr_pages in a guest_memfd of size nr_pages, providing each
++ * test iteration with test_page, the index of the page under test in
++ * guest_memfd. test_page takes values 0..(nr_pages - 1) inclusive.
++ */
++#define GMEM_CONVERSION_MULTIPAGE_TEST_INIT_SHARED(test, __nr_pages)		\
++static void __gmem_conversions_multipage_##test(test_data_t *t, int nr_pages,	\
++						const int test_page);		\
++										\
++TEST_F(gmem_conversions, test)							\
++{										\
++	const uint64_t flags = GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_INIT_SHARED; \
++	int i;									\
++										\
++	for (i = 0; i < __nr_pages; ++i) {					\
++		gmem_conversions_do_setup(self, __nr_pages, flags);		\
++		__gmem_conversions_multipage_##test(self, __nr_pages, i);	\
++		gmem_conversions_do_teardown(self);				\
++	}									\
++}										\
++static void __gmem_conversions_multipage_##test(test_data_t *t, int nr_pages,	\
++						const int test_page)
++
+ struct guest_check_data {
+ 	void *mem;
+ 	char expected_val;
+@@ -207,6 +233,36 @@ GMEM_CONVERSION_TEST_INIT_SHARED(init_shared)
+ 	test_convert_to_shared(t, 0, 'C', 'D', 'E');
+ }
+ 
++/*
++ * Test indexing of pages within guest_memfd, using test data that is a multiple
++ * of page index.
++ */
++GMEM_CONVERSION_MULTIPAGE_TEST_INIT_SHARED(indexing, 4)
++{
++	int i;
++
++	/*
++	 * Start with the highest index, to catch any errors when, perhaps, the
++	 * first page is returned even for the last index.
++	 */
++	for (i = nr_pages - 1; i >= 0; --i)
++		test_shared(t, i, 0, i, i * 2);
++
++	for (i = 0; i < nr_pages; ++i) {
++		if (i == test_page)
++			test_convert_to_private(t, i, i * 2, i * 4);
++		else
++			test_shared(t, i, i * 2, i * 3, i * 4);
++	}
++
++	for (i = 0; i < nr_pages; ++i) {
++		if (i == test_page)
++			test_convert_to_shared(t, i, i * 4, i * 5, i * 6);
++		else
++			test_shared(t, i, i * 4, i * 5, i * 6);
++	}
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	TEST_REQUIRE(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM));
+-- 
+2.51.0.858.gf9c4a03a3a-goog
 
-Will fix.
-
-Thanks
-Nicolin
 
