@@ -1,297 +1,127 @@
-Return-Path: <linux-kernel+bounces-858822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89772BEBEFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:41:43 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01580BEBEF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C0844EC001
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:41:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A273135643F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC57C31DD8A;
-	Fri, 17 Oct 2025 22:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0E43254A1;
+	Fri, 17 Oct 2025 22:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0ghqj1C"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E838ksIe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD08238149
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646232D9EEF;
+	Fri, 17 Oct 2025 22:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760740892; cv=none; b=crYPHH0wNUxJRFTiRYqtZlG8TWecoEX2eR91AR0XVmgxII1+yJAe4Fsgj5yg31mDUV2HcfUSxZzvhIe07NkewC62ggKu1q5hqM1JTL49+Wc19qpHkdLUEEh6PcCbeEMPfYkoJmfvIks1OE/xBhE+eIAeFhowJ0T7upkLplSv9iA=
+	t=1760740814; cv=none; b=p58wgUjSLinIIMdKm42NPcLII3AiQ/Am7EKc8Lcd33hInr0tc9ptofvN1kzBhw3O4dskWKMjQI+2eFKV0mZe+Uo9Pz7C4qbJeCNjQvNzHnd9zyFpELMOFcsN1NbAIkGzDZ+2bQJPEukm6rB2vapxaSHmNC3eILtdU+3LPIqWkNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760740892; c=relaxed/simple;
-	bh=I+vLvWX9tt3ZjPonM8Tn9nuLD6RlJN9iZ3xM1BPuumg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YOHXTXING/vBfi+aF4i1x6M0+SKfdb3W4+naoU5ssumJ0FHhkWsRats0Qk5Qrb1Fl2kI78Mh1RxZOysxyFGDWw7vLFCjIL1lqjwiwDI+K3GFw+j8zNEd+VoZJpwhsZ6CqqHLunXfDirwrODB/e87Wch36b9dVG+cw9DSL+abEhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K0ghqj1C; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760740889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uH8LJn4ypQODNYJ3orBEKrIWWsg1DgFIAiLDa76fO34=;
-	b=K0ghqj1CKccbW/66yfFOaUDNKTW4Bxnzak2WDcbJAVvM8FLHQ2o5veFkHSt5/aX5O+DZ/R
-	48JxTqsOr/VB7zNZuIx46Rhe0cQxdN+RJy38co+Md8/AC86XTz+aA6gMEom8VcKs7WMRUE
-	Jp9tgjXxGmwvG9Ak3hPWBhx8V/I9HVM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-iqlh7St8NWKHJdj1WiUB5w-1; Fri, 17 Oct 2025 18:41:28 -0400
-X-MC-Unique: iqlh7St8NWKHJdj1WiUB5w-1
-X-Mimecast-MFC-AGG-ID: iqlh7St8NWKHJdj1WiUB5w_1760740887
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-47114d373d5so20296395e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:41:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760740887; x=1761345687;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uH8LJn4ypQODNYJ3orBEKrIWWsg1DgFIAiLDa76fO34=;
-        b=XbWdP58qXYY+E3Yl7Ej9oCHc+OUdbe2h9WsYfg8qTUpDdLR0tVmxIFPjQagFrOXXNr
-         vmIkliQCH3BpK4kfbddvxbbrT7H9aUJh5+vD6u+klk+81AZx6v+w2WpnjTMpVdSz3kXi
-         yCaUrH+nz8vUv0LRhJRunf9JL8/DIn3ST7FwUHp7A0Jt7fFatkIUFnusfwaR3Mu/vER/
-         AcG8cYJfvT+I/UrvUDLatRG1VVXNkOMp2ApV3XOHPjgOmP6/XE/2H+eR8DSmXu0oUKkP
-         X4W7NsNwjvQLWpG9h5M9Z1bVltjFNKkxP/1KWGW0y9os5sqEP1B/vpCVDVO5YdmT0AfK
-         S94A==
-X-Forwarded-Encrypted: i=1; AJvYcCUljH5lpTr8Sh0PTnUY7QOrItxS17deLxU9dCUVP3ckzznsR53CdyaLxBVCyeZuJsMhcrBRmZuaE6EcR1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd2NHBhjmR0cOEbwVmoCqokzHAOx9jW7M5PaPJiScB/cxzpBkG
-	q1Y1s7+zor+V4HF38WWN5WZFJfE4Pl7JsJUFHQ5YmkRGZ40P0SVp96bJrAglKD38GeCcVx8BfaA
-	6hF6kddBWPaROgXjqnc6MW9Pq1v9akINxCn10eoVMJC9FoTLkw4lidXzn6z3L4Cz5nA==
-X-Gm-Gg: ASbGnctR6kdyKybvlRl7AmT0xssd4WFCxNQsyMFM34Le6h493SO1pWuq/GQleSPqM+O
-	EOkign6dgABuWPyyXgp3hVjnuw460ZobFugkj/GtxLNRvZFjsZW3dcIflV7NtN1zRqOZrj1hDyh
-	wnGj70GvFNYrUI52pmmK6Tg3pxo8VzssH/fM5oWdvaxF8IxE8F+LZfnX0P4NfUJH+d9h8Mc4YGE
-	2jqcMTm6i4aHoC5ClHPtjfNcWa8pjfKYbV0XKfX5096uvlwDtxRw5PpuYt+FwPMQ7+i+1SEcbjp
-	IBaAN2uLXMY5sMC0dtTHUSGjnZQcadNdAPFdrKrfCKJzWlYVpLh9bpdBD4CD39wSGGdfW/0OdfZ
-	xw6JVbs07mToAVTNNgrG3s7ODwfX6DmobvbkrtF1v5nkPtdCwJXEDR3u1nOvAivuy62WxKH6z3D
-	HP6JiVg9SHciS3yb+8Fxs6+kVK5Jo=
-X-Received: by 2002:a05:600c:681b:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-47117925e39mr44634055e9.36.1760740887436;
-        Fri, 17 Oct 2025 15:41:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOhQlU/0jutSd2tKVW+63SmQtJ+uWLZ1QBUrTpaFXK1fSJ1MmohMxqY5ZVQykyp7L0xHjr7w==
-X-Received: by 2002:a05:600c:681b:b0:45f:2ed1:d1c5 with SMTP id 5b1f17b1804b1-47117925e39mr44633605e9.36.1760740886944;
-        Fri, 17 Oct 2025 15:41:26 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a0f19sm1596288f8f.9.2025.10.17.15.41.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 15:41:26 -0700 (PDT)
-Message-ID: <cb85aaa3-e456-4fd8-b323-46c75d453a02@redhat.com>
-Date: Sat, 18 Oct 2025 00:41:23 +0200
+	s=arc-20240116; t=1760740814; c=relaxed/simple;
+	bh=0HegR9daNkosgD9iCJo0B2G1/81wLynrRR6+gZ/j10Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLaLEup1kmKDUeD+LmOiLbFdi6W69jKdFQR0YVgNyjLcH2iRcxUTXIrifCNnuoGqqIdwPwZsSAQ49TSYrL9GF5jUoNN8u1PZ/loU9llnN7VTuffxCwq5tMXr+7KpG2/yKJGGykoofhnIQ1z3FXEIls3iJRiZw+3rSpB8gxhbhGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E838ksIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D74C4CEE7;
+	Fri, 17 Oct 2025 22:40:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760740813;
+	bh=0HegR9daNkosgD9iCJo0B2G1/81wLynrRR6+gZ/j10Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E838ksIeG34YriLkkogKNfQZ8Y1EPk6nGfrhDkbxSxI2dm4pgcuubQLIsTDo01ayb
+	 Hl1WS5NTpeUaOTTpNxtyn3HB7Ds28XSExSYc/tGGmP5kouAKq9q/FqOMPQ6kF5ezGE
+	 gzQB8M/CCMsZt2JPaNRevh4QtL9c8oZxFQLLbV0jAKVPMkahF6rld7ortskrNmXhZE
+	 GauRpGZaM9IHGU4YTAXQoGEBIqGLjU43qGC4xvZPXxtsipjm7GejAyxvU8rrzMHTMj
+	 JOA4xMp2sy5ZUGmlEyRID3HO7PhqCt2Gepm7wm26uqH0JsruifOlLBkkerR5uccFDI
+	 hq8Fq1jXIUMlA==
+Date: Fri, 17 Oct 2025 15:42:07 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: qcm2290: add LPASS LPI pin
+ controller
+Message-ID: <zmi5grjg2znxddqzfsdsr35ad5olj3xgwwt6hvkiaynxzm5z33@gsgrdguj563n>
+References: <20251007-rb1_hdmi_audio-v2-0-821b6a705e4c@linaro.org>
+ <20251007-rb1_hdmi_audio-v2-3-821b6a705e4c@linaro.org>
+ <b6223af9-2d9e-4ccd-b297-79f63167242b@oss.qualcomm.com>
+ <DDEN5NSLDIHD.C1IELQW0VOG3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: KVM/s390x regression
-From: David Hildenbrand <david@redhat.com>
-To: Balbir Singh <balbirs@nvidia.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: Liam.Howlett@oracle.com, airlied@gmail.com, akpm@linux-foundation.org,
- apopple@nvidia.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
- byungchul@sk.com, dakr@kernel.org, dev.jain@arm.com,
- dri-devel@lists.freedesktop.org, francois.dugast@intel.com,
- gourry@gourry.net, joshua.hahnjy@gmail.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, lyude@redhat.com,
- matthew.brost@intel.com, mpenttil@redhat.com, npache@redhat.com,
- osalvador@suse.de, rakie.kim@sk.com, rcampbell@nvidia.com,
- ryan.roberts@arm.com, simona@ffwll.ch, ying.huang@linux.alibaba.com,
- ziy@nvidia.com, kvm@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-next@vger.kernel.org
-References: <20251001065707.920170-4-balbirs@nvidia.com>
- <20251017144924.10034-1-borntraeger@linux.ibm.com>
- <9beff9d6-47c7-4a65-b320-43efd1e12687@redhat.com>
- <c67386be-5278-411d-97e7-43fc34bf7c98@linux.ibm.com>
- <8c778cd0-5608-4852-9840-4d98828d7b33@redhat.com>
- <74272098-cfb7-424b-a55e-55e94f04524e@linux.ibm.com>
- <84349344-b127-41f6-99f1-10f907c2bd07@redhat.com>
- <c9f28d0c-6b06-47a2-884d-7533f7b49c45@nvidia.com>
- <3a2db8fc-d289-415b-ae67-5a35c9c32a76@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <3a2db8fc-d289-415b-ae67-5a35c9c32a76@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDEN5NSLDIHD.C1IELQW0VOG3@linaro.org>
 
-On 18.10.25 00:15, David Hildenbrand wrote:
-> On 17.10.25 23:56, Balbir Singh wrote:
->> On 10/18/25 04:07, David Hildenbrand wrote:
->>> On 17.10.25 17:20, Christian Borntraeger wrote:
->>>>
->>>>
->>>> Am 17.10.25 um 17:07 schrieb David Hildenbrand:
->>>>> On 17.10.25 17:01, Christian Borntraeger wrote:
->>>>>> Am 17.10.25 um 16:54 schrieb David Hildenbrand:
->>>>>>> On 17.10.25 16:49, Christian Borntraeger wrote:
->>>>>>>> This patch triggers a regression for s390x kvm as qemu guests can no longer start
->>>>>>>>
->>>>>>>> error: kvm run failed Cannot allocate memory
->>>>>>>> PSW=mask 0000000180000000 addr 000000007fd00600
->>>>>>>> R00=0000000000000000 R01=0000000000000000 R02=0000000000000000 R03=0000000000000000
->>>>>>>> R04=0000000000000000 R05=0000000000000000 R06=0000000000000000 R07=0000000000000000
->>>>>>>> R08=0000000000000000 R09=0000000000000000 R10=0000000000000000 R11=0000000000000000
->>>>>>>> R12=0000000000000000 R13=0000000000000000 R14=0000000000000000 R15=0000000000000000
->>>>>>>> C00=00000000000000e0 C01=0000000000000000 C02=0000000000000000 C03=0000000000000000
->>>>>>>> C04=0000000000000000 C05=0000000000000000 C06=0000000000000000 C07=0000000000000000
->>>>>>>> C08=0000000000000000 C09=0000000000000000 C10=0000000000000000 C11=0000000000000000
->>>>>>>> C12=0000000000000000 C13=0000000000000000 C14=00000000c2000000 C15=0000000000000000
->>>>>>>>
->>>>>>>> KVM on s390x does not use THP so far, will investigate. Does anyone have a quick idea?
->>>>>>>
->>>>>>> Only when running KVM guests and apart from that everything else seems to be fine?
->>>>>>
->>>>>> We have other weirdness in linux-next but in different areas. Could that somehow be
->>>>>> related to use disabling THP for the kvm address space?
->>>>>
->>>>> Not sure ... it's a bit weird. I mean, when KVM disables THPs we essentially just remap everything to be mapped by PTEs. So there shouldn't be any PMDs in that whole process.
->>>>>
->>>>> Remapping a file THP (shmem) implies zapping the THP completely.
->>>>>
->>>>>
->>>>> I assume in your kernel config has CONFIG_ZONE_DEVICE and CONFIG_ARCH_ENABLE_THP_MIGRATION set, right?
->>>>
->>>> yes.
->>>>
->>>>>
->>>>> I'd rule out copy_huge_pmd(), zap_huge_pmd() a well.
->>>>>
->>>>>
->>>>> What happens if you revert the change in mm/pgtable-generic.c?
->>>>
->>>> That partial revert seems to fix the issue
->>>> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->>>> index 0c847cdf4fd3..567e2d084071 100644
->>>> --- a/mm/pgtable-generic.c
->>>> +++ b/mm/pgtable-generic.c
->>>> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
->>>>                if (pmdvalp)
->>>>                     *pmdvalp = pmdval;
->>>> -       if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
->>>> +       if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
->>>
->>> Okay, but that means that effectively we stumble over a PMD entry that is not a migration entry but still non-present.
->>>
->>> And I would expect that it's a page table, because otherwise the change
->>> wouldn't make a difference.
->>>
->>> And the weird thing is that this only triggers sometimes, because if
->>> it would always trigger nothing would ever work.
->>>
->>> Is there some weird scenario where s390x might set a left page table mapped in a PMD to non-present?
->>>
->>
->> Good point
->>
->>> Staring at the definition of pmd_present() on s390x it's really just
->>>
->>>       return (pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT) != 0;
->>>
->>>
->>> Maybe this is happening in the gmap code only and not actually in the core-mm code?
->>>
->>
->>
->> I am not an s390 expert, but just looking at the code
->>
->> So the check on s390 effectively
->>
->> segment_entry/present = false or segment_entry_empty/invalid = true
+On Fri, Oct 10, 2025 at 01:29:38PM +0100, Alexey Klimov wrote:
+> On Tue Oct 7, 2025 at 1:39 PM BST, Konrad Dybcio wrote:
+> > On 10/7/25 4:03 AM, Alexey Klimov wrote:
+> >> Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
+> >> controller device node required for audio subsystem on Qualcomm
+> >> QRB2210 RB1. QRB2210 is based on qcm2290 which is based on sm6115.
+> >> 
+> >> While at this, also add description of lpi_i2s2 pins (active state)
+> >> required for audio playback via HDMI/I2S.
+> >> 
+> >> Cc: Srinivas Kandagatla <srini@kernel.org>
+> >> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> >> ---
+> >
+> > [...]
+> >
+> >> +			lpi_i2s2_active: lpi-i2s2-active-state {
+> >> +				data-pins {
+> >> +					pins = "gpio12";
+> >> +					function = "i2s2_data";
+> >> +					bias-disable;
+> >> +					drive-strength = <8>;
+> >> +					output-high;
+> >
+> > I.. doubt output-high is what you want?
 > 
-> pmd_present() == true iff _SEGMENT_ENTRY_PRESENT is set
-> 
-> because
-> 
-> 	return (pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT) != 0;
-> 
-> is the same as
-> 
-> 	return pmd_val(pmd) & _SEGMENT_ENTRY_PRESENT;
-> 
-> But that means we have something where _SEGMENT_ENTRY_PRESENT is not set.
-> 
-> I suspect that can only be the gmap tables.
-> 
-> Likely __gmap_link() does not set _SEGMENT_ENTRY_PRESENT, which is fine
-> because it's a software managed bit for "ordinary" page tables, not gmap
-> tables.
-> 
-> Which raises the question why someone would wrongly use
-> pte_offset_map()/__pte_offset_map() on the gmap tables.
-> 
-> I cannot immediately spot any such usage in kvm/gmap code, though.
+> Why? Or is it because of some in-kernel gpiod?
 > 
 
-Ah, it's all that pte_alloc_map_lock() stuff in gmap.c.
+What does "output-high" mean for a non-gpio function?
 
-Oh my.
+Regards,
+Bjorn
 
-So we're mapping a user PTE table that is linked into the gmap tables 
-through a PMD table that does not have the right sw bits set we would 
-expect in a user PMD table.
-
-What's also scary is that pte_alloc_map_lock() would try to pte_alloc() 
-a user page table in the gmap, which sounds completely wrong?
-
-Yeah, when walking the gmap and wanting to lock the linked user PTE 
-table, we should probably never use the pte_*map variants but obtain
-the lock through pte_lockptr().
-
-All magic we end up doing with RCU etc in __pte_offset_map_lock()
-does not apply to the gmap PMD table.
-
--- 
-Cheers
-
-David / dhildenb
-
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sm4250.dtsi#n66
+> 
+> >> +				};
+> >> +
+> >> +				sck-pins {
+> >> +					pins = "gpio10";
+> >> +					function = "i2s2_clk";
+> >> +					bias-disable;
+> >> +					drive-strength = <8>;
+> >> +					output-high;
+> >> +				};
+> >> +
+> >> +				ws-pins {
+> >> +					pins = "gpio11";
+> >
+> > Please re-sort pin entries by the gpio index
+> >
+> > https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-of-nodes
+> 
+> Ok.
+> 
+> Thanks,
+> Alexey.
+> 
 
