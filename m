@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-858316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C51BEA7A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2BEBEAB92
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DE86E7771
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DEE4742E96
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B236CDEC;
-	Fri, 17 Oct 2025 15:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1825C2D6E40;
+	Fri, 17 Oct 2025 15:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jPnzHf94"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oLE88u86"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70312335077;
-	Fri, 17 Oct 2025 15:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A16330B00;
+	Fri, 17 Oct 2025 15:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715182; cv=none; b=keI4vhUsJMlFf7A/Ha5ucqKhaK/RcLm3Dqt7lhEconpPTE01nL2NIwRmQWwDM8mOcV+hG1MYkbkkbu8rKxE0jdf7rPC7HfHNf9MN4xjFWhcbkD9BMMZIdxD5KYkivZIQlKlJaRUMcQ1Hk4ORfAlIxFZjPxHMI1ssW66BehtWA1M=
+	t=1760716325; cv=none; b=fYfX1ghdC7lyxMSMUnThebpjKnJdOmoci+BT4tr0OT1W2PA1PAale3vA03od79aY7eoFVPGB+uII/u0xit8k+zJX5hKfCTVGEzu0Qpnx5dvKXwnSKr4cpoCNGAddQa1mAZowUd/Sgesuq3c5SJPVh82Fy2FdwqA6WDTB6tuqPNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715182; c=relaxed/simple;
-	bh=5a6ifg43ezPanofD6uJjf8qbBzhdAsHineZEHZv0N1Q=;
+	s=arc-20240116; t=1760716325; c=relaxed/simple;
+	bh=exOzAKYyZqWdz3l/rN4xuKsrpx1NjgptUR/yfAc9w/0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jKD7wOVDb9qM0IWidmNN9aSdmJQA06hpAuBJ1Elr1OILt2x9M8XXM56LfxcpAtSS2pnBAcaypGDpJ5TGP51PXZ6GPFcPKkCrDEV4mVA/nU/32i/2PMlgA03HZ4A5GDC4TMyUjXkLW1QB3k2WX7WxbCSp8wWNXGqX/+LNy17H8nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jPnzHf94; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B451CC4CEE7;
-	Fri, 17 Oct 2025 15:33:01 +0000 (UTC)
+	 MIME-Version; b=rvqq7aWOtwXh8VeyZ2Nhx4hSAOddtHzjfRkwgcXtXWCQG6VL4d/W/eyr3KwSeA/HQp8zDuqEjW7890U64rJYtopQKgUjG/qVy3kzfkGGsCHO7QEAitox3qYSrmntg7mZaQb72pw4uRRgZQRpyGjylXuwyrqdC9e+sDJ/ZPWD3JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oLE88u86; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5444CC116B1;
+	Fri, 17 Oct 2025 15:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760715182;
-	bh=5a6ifg43ezPanofD6uJjf8qbBzhdAsHineZEHZv0N1Q=;
+	s=korg; t=1760716324;
+	bh=exOzAKYyZqWdz3l/rN4xuKsrpx1NjgptUR/yfAc9w/0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jPnzHf94jvwhzrck+KF3UdU03gYL4WdoP2D3Eu6WEOLUMHIP9MfMTUosh2prChv/H
-	 bt2ZBsPSvevU+CBc00A9jA2mSOL0dkdBou4cBoMnjYfYh8GDbBJRHp44wUn87rno+O
-	 jV1rMOkNOVFP2v6bX5EcGF2yLLRy6RIchDcemwaU=
+	b=oLE88u86G77oJrcRTZwIecPAKmfrB6e9/tRB1tYMLffW9mPUH4RJqJ1WVwaSJFkXt
+	 nGPmwQs1QjumTeLc1rs0NjnkmhRfKwU4pxwRTW2JFYpTibuLzbogPnUT9sXgSExHoQ
+	 1CyvTft/pwR1LmSoVXthVo4ck0GfuE2xx2a1NW9I=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -62,12 +62,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-perf-users@vger.kernel.org,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.17 094/371] tools build: Align warning options with perf
-Date: Fri, 17 Oct 2025 16:51:09 +0200
-Message-ID: <20251017145205.339985008@linuxfoundation.org>
+Subject: [PATCH 5.15 152/276] tools build: Align warning options with perf
+Date: Fri, 17 Oct 2025 16:54:05 +0200
+Message-ID: <20251017145148.027432958@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251017145201.780251198@linuxfoundation.org>
-References: <20251017145201.780251198@linuxfoundation.org>
+In-Reply-To: <20251017145142.382145055@linuxfoundation.org>
+References: <20251017145142.382145055@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.17-stable review patch.  If anyone has any objections, please let me know.
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -121,11 +121,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index b41a42818d8ac..bd615a708a0aa 100644
+index aa3b0d75e44b7..37aa85a81e0a0 100644
 --- a/tools/build/feature/Makefile
 +++ b/tools/build/feature/Makefile
-@@ -316,10 +316,10 @@ $(OUTPUT)test-libcapstone.bin:
- 	$(BUILD) # -lcapstone provided by $(FEATURE_CHECK_LDFLAGS-libcapstone)
+@@ -268,10 +268,10 @@ $(OUTPUT)test-libbabeltrace.bin:
+ 	$(BUILD) # -lbabeltrace provided by $(FEATURE_CHECK_LDFLAGS-libbabeltrace)
  
  $(OUTPUT)test-compile-32.bin:
 -	$(CC) -m32 -o $@ test-compile.c
