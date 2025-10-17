@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-857509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15E7BE6FB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:43:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBAABE6FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17F8C5023E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:42:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDD994F89D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AB123E354;
-	Fri, 17 Oct 2025 07:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3C823EA9F;
+	Fri, 17 Oct 2025 07:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rtasIfaI"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rbgnTyiR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38ED222D4FF;
-	Fri, 17 Oct 2025 07:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05ED23D7E7;
+	Fri, 17 Oct 2025 07:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760686973; cv=none; b=l6aI/uK39G4h7Pq/7sP9b/zfJ8D+H5LOcf5Y9VfYI45PJsfOSNPR/ZJqgZwTpp07qvtAppHjHpyp6HmZOIuyn1yX3QS8bSS2AA/joFO4fIVIjeVuv24PYw2Dp76z3xSViFadC19/iOVu0S3RqtvEH26QdS9DeqCiUipaYD3zTu0=
+	t=1760687012; cv=none; b=DhVcHoLFJzmdD86pkR/ODAGzve4eBX/BOHyBXZQxlsubdfOWJz9IKwTaJkgORl6sAkSFeSH670HBMUyh6KFWFCYnj+/u+q7izlo9gKDHYGJPRDbiKUr1pLp3nPBhYG9sUQLaIUysBRDotTgTAx2zG882fxT/kvmnekh6YLcrfFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760686973; c=relaxed/simple;
-	bh=8lF/IkG8BuKqpPmY28HPChkuY6z78bRVariz9ZPuiHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPeD/ftBN55Yizriy5Q3Bh1xSY5TJ1zYBnThX//vLVGPSC6SiHNehZnX9yTTrOW5u5+FbSzFhdg6VltZ46Of1Fpf2jAIiUnpk8Fl/5p5S9GNSMPQA0EL6oyWF9HqcAqR6KHdqodIl3FxsC0rqY1y8DVg/0Yq3IUjWz6FOHERpRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rtasIfaI; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 61D484E40B36;
-	Fri, 17 Oct 2025 07:42:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 37CF7606DB;
-	Fri, 17 Oct 2025 07:42:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB12E102F2292;
-	Fri, 17 Oct 2025 09:42:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760686966; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=qbTFg4rC1Ve+JxEYeVc+wYtUBa68qS4Pco5KgKDMaUQ=;
-	b=rtasIfaIECYu2oieUTyQCB9tZYqGJPJJFkl+1dbacEDK6eEx2HmHEO8ZjeBjbmu33uVUFt
-	k7yfrNrhN/Yvfb/lNc0cz/SMPw+jCcu7EKK4icqTSiXRgEMq3rBzYnx7vlS1OjtKfC/zKu
-	xcIODd4Wi6yOmUl90MWUm3aZxNjLGLPHYEz7m1Ttxmd2KeoqL2Ovko8OPuoG6VmbnXHp5B
-	bgufpgtlho4IRy+IAH+/jWywku3G0RHUJj3P4aySeAaVYSRww2JrN9HtsSSkCJQmVLSe1+
-	Bg9BS/7tjoN7UGZLAOMV12pikQCmSwAoHuynuftTMZtmBvWHt72mBmUbgB4qFA==
-Message-ID: <4f9bbf6c-146e-46e9-9506-e5fd444ae195@bootlin.com>
-Date: Fri, 17 Oct 2025 09:42:43 +0200
+	s=arc-20240116; t=1760687012; c=relaxed/simple;
+	bh=Ghawdb9l72IEZCfQwNVJ0wErDbWEow5FhFKT+ciucco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKQV21R9X9YZe7Rhgcu8MrDPCIs+LUfswhMkApl+CiNDuhkaCJCHFJeXLG6vzPrPj6by9uVe8xPnKRS+NrbfjdO9oqabQ9vugnxNf4i2iICVja1LAZbjXTYk3zDlwiA6jc/ce+s/8FD5UUa3+ivPXRdxmDWd168TmItxw2ZVZNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rbgnTyiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3942C4CEE7;
+	Fri, 17 Oct 2025 07:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760687011;
+	bh=Ghawdb9l72IEZCfQwNVJ0wErDbWEow5FhFKT+ciucco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rbgnTyiRwNqzWTCsT9SFJ0M0y6ewfizs6HV6j9R9MCeXDn5I+PfLLTbX7sIZzLKdb
+	 2CLT0UiaisCdgatT2tsNx53BuVw1axilp0cVSfN3oo61y9gcRgaA5AbPgN6rFvEW+K
+	 y3LwXgi9MYsbutny94X7lRDSlaUPH76FX4X3wTQI=
+Date: Fri, 17 Oct 2025 09:43:28 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Iwona Winiarska <iwona.winiarska@intel.com>,
+	Joel Stanley <joel@jms.id.au>, Maxime Ripard <mripard@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from round_rate()
+ to determine_rate()
+Message-ID: <2025101721-twiddling-huskiness-4852@gregkh>
+References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
+ <aMatZAX6eFI1RmDH@redhat.com>
+ <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
+ <aPEZSY6RC-UVclxN@redhat.com>
+ <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
+ <2025101759-runner-landing-374b@gregkh>
+ <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4 1/2] phy: mscc: Use PHY_ID_MATCH_MODEL for VSC8584,
- VSC8582, VSC8575, VSC856X
-To: Horatiu Vultur <horatiu.vultur@microchip.com>, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, vladimir.oltean@nxp.com,
- vadim.fedorenko@linux.dev, rmk+kernel@armlinux.org.uk,
- christophe.jaillet@wanadoo.fr, rosenp@gmail.com, steen.hegelund@microchip.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251017064819.3048793-1-horatiu.vultur@microchip.com>
- <20251017064819.3048793-2-horatiu.vultur@microchip.com>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251017064819.3048793-2-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
 
-Hi Horatiu,
-
-On 17/10/2025 08:48, Horatiu Vultur wrote:
-> As the PHYs VSC8584, VSC8582, VSC8575 and VSC856X exists only as rev B,
-> we can use PHY_ID_MATCH_MODEL to match exactly on revision B of the PHY.
-> Because of this change then there is not need the check if it is a
-> different revision than rev B in the function vsc8584_probe() as we
-> already know that this will never happen.
-> These changes are a preparation for the next patch because in that patch
-> we will make the PHYs VSC8574 and VSC8572 to use vsc8584_probe() and
-> these PHYs have multiple revision.
+On Fri, Oct 17, 2025 at 05:57:44PM +1030, Andrew Jeffery wrote:
+> On Fri, 2025-10-17 at 08:41 +0200, Greg Kroah-Hartman wrote:
+> > On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
+> > > Hi Greg,
+> > > 
+> > > On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
+> > > > Hi Andrew and Iwona,
+> > > > 
+> > > > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
+> > > > > Hi Brian,
+> > > > > 
+> > > > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
+> > > > > > Hi Iwona, Joel, and Andrew,
+> > > > > > 
+> > > > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
+> > > > > > > The round_rate() clk ops is deprecated, so migrate this
+> > > > > > > driver from
+> > > > > > > round_rate() to determine_rate() using the Coccinelle
+> > > > > > > semantic patch
+> > > > > > > appended to the "under-the-cut" portion of the patch.
+> > > > > > > 
+> > > > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
+> > > > > > 
+> > > > > > Would it be possible to get this picked up for v6.18? I'd
+> > > > > > like to remove
+> > > > > > this API from drivers/clk in v6.19.
+> > > > > 
+> > > > > My (strong) preference is that Iwona applies it, but I'll keep
+> > > > > an eye
+> > > > > out for any unusual delays.
+> > > > 
+> > > > This patch wasn't picked up for v6.18. Any chance this can get
+> > > > picked up
+> > > > now for v6.19?
+> > > > 
+> > > > I'm hoping to get this merged so that we can remove the
+> > > > round_rate() clk
+> > > > op from the clk core. The clk maintainer (Stephen) mentioned this
+> > > > work
+> > > > in his last pull to Linus.
+> > > > 
+> > > > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel.org/
+> > > 
+> > > Are you happy to pick this up directly in Iwona's absence?
+> > 
+> > Why me?
 > 
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> I figured that would be sensible since Iwona historically sent you PRs
+> for the PECI subsystem.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+I did not remember that, sorry.  The MAINTAINERS file does not mention
+this at all, and it lists many other maintainers that should be able to
+take this patch:
+	$ ./scripts/get_maintainer.pl  drivers/peci/controller/peci-aspeed.c
+	Iwona Winiarska <iwona.winiarska@intel.com> (maintainer:ASPEED PECI CONTROLLER)
+	Joel Stanley <joel@jms.id.au> (maintainer:ARM/ASPEED MACHINE SUPPORT)
+	Andrew Jeffery <andrew@codeconstruct.com.au> (maintainer:ARM/ASPEED MACHINE SUPPORT)
+	linux-aspeed@lists.ozlabs.org (moderated list:ASPEED PECI CONTROLLER)
+	openbmc@lists.ozlabs.org (moderated list:ASPEED PECI CONTROLLER)
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/ASPEED MACHINE SUPPORT)
+	linux-kernel@vger.kernel.org (open list)
+	ASPEED PECI CONTROLLER status: Supported
+	PECI SUBSYSTEM status: Supported
+	ARM/ASPEED MACHINE SUPPORT status: Supported
 
+thanks,
+
+greg k-h
 
