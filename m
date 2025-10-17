@@ -1,188 +1,175 @@
-Return-Path: <linux-kernel+bounces-857317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3151BE6805
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78933BE6808
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 303513565EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28361A65370
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE2230E0F4;
-	Fri, 17 Oct 2025 05:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0A330F536;
+	Fri, 17 Oct 2025 05:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YVYPJ5xJ"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CedNOCEh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B230B1C84BC
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E6430F527
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760680487; cv=none; b=FNgJWybRXtO+4/3Bs6nWcxQhZsGQbjJXp0FawRd/eiUPq16vHX0+RWi7Xdv4kOCmDhT5qhRuwChiADCDmxCHxy7g5rJ03V0r+daseYaHexIJ1IksDql4k6RLwLpSySqLIXgf8/KC4mZokSYoAo2hEunypM+G0Y+YYfFfvaAttQs=
+	t=1760680492; cv=none; b=Vc/4zviXtsL8bJKVE5SgKr4I5iNtS9IZ25o/ztVdfLPnZBTNSWqgI/ScmQCiX8h6a1rvYZKFbZpqBIPCmxfMr/zP400TZA3LeG8aUYUYSIb40iVes0w5sdnPb1wdwB4EMtE0O24YSppPv6yvcO3OJo3/sEfr5jqeKz+nXk8pN8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760680487; c=relaxed/simple;
-	bh=AzoQ4i/srN8FpTZFrJJz4zAfUAY4stVL58foSLnf8aw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BmfDNLp+/ztzHIT86urXTV42A6rrM0vjtgfMJDtT3SYrjNzux59agkWmkZpH4pnwLGfHzm/rwaXADU97ikqVlFe6wOgoCCVpX1Iy5jzJwp5HWI278j28hoZ21RaZmDvgk2gvwiBZaWhKcGbSAKM4RsTZXQ5GKQaYKekONtUo9yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YVYPJ5xJ; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7836853a0d6so18428487b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760680484; x=1761285284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=26UkdI1wBp0Xi61UmFjaGlIQEnXQ+0LgrUBcqpJYfDU=;
-        b=YVYPJ5xJz5DjfRTUt3IakV/uIpcmUTe7xVV7l7vG5DOcHtbm9OySV/oHs/DWg4HOIM
-         J3CH+kYYKmNG1EcZyUXb7r8vB8PzwWfRXIeoXmj5htH/5EOTTUDhwLRfV3NOAWjW1CVS
-         N/1jFj64F7cZLt7FElmAj18gb5dDqhi3Jz7x0+a6Ja09KRIi8L9nUjN1UUwWbrGYBwKz
-         YRigM97U3KHj4NJp9jlFV8YS/5QiqVXIPY26mabJyHemtxZK5DLJ+auAhHmKaxqxv7Ht
-         4qR0U4HOgJ8ojOqfHEb/6itYvVfF1DAIWNtY0dQqHB+jOwV1gP86JcvRsUQHyqk0FZbE
-         VrXw==
+	s=arc-20240116; t=1760680492; c=relaxed/simple;
+	bh=SNmMw0sTgquEx0KNzWAeChkFRwGDfFp1CMVORD7GjL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jAj8mi9QgQgRwKuG+2PpaNf5JuQmgo/qI74IGJkaK/lgVSBV2MQzhA+jxzutXf8ZrelZDWFioxT5pSWa8kEY9/W4ohv76+a156S61f5Wk9VJE6oRTeYq+v7ejU3op5EASadn7I4fAiFIVT0f5JPGRKgJMtqSnGPMqsC3uRs8tbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CedNOCEh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLLQ7006088
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:54:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VkqSu9s5dxWjR7I4tDBayWcEUvhFWsAikTkxnFFF10w=; b=CedNOCEhG5heA1Ze
+	KebbOO8GsfEj6SNrJBu5xNiVfOS2i4XEfoF0cn/bOauvSah3QOgNG0c21Y8Pr6g9
+	0DT/PGsurHsMhS+1uvtx20w/oKTiuwiugetgXvBnNMsLxrogNF4KT2CTS8mH6rpl
+	KmbsoSf/630/Wqq5+wwfIEfLTub/+mzl2CrGJdgD/4egpsBUCaiG3SzTrkVwUG5u
+	NUiZ8Rhc57eVhdGAuHBAhsJT8ySTxwrFLbnJSvB4dwmPH+HkoRhfUl7ikElVUcFv
+	iEZYMufLap/+rA++dEE2d+vzrZin7E8cXW1g7wGgWbxkDBLJYPbH+INWu9YHnmjJ
+	GlM74g==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwwbck-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:54:50 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-28a5b8b12bbso34439355ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:54:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760680484; x=1761285284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=26UkdI1wBp0Xi61UmFjaGlIQEnXQ+0LgrUBcqpJYfDU=;
-        b=KAU3GT2LqosqHdMu6/n63UZ/MqouAKgIzaxzLWtJwVUTxz796BfYQgVGTI9jVZDh1u
-         GtdL3Id+zAYGp32cYNBqCpBlEahfYlYGD7Tg4eZmhKyEXdA2VQu/GtPGUfPxnXEHsSd5
-         XuYGl/idStUlNVwvMc7DRGDJ3JiI91SBaaI2EDYy2Xtf8T/WMh1SgvUUqnAtI6ZeDoFJ
-         bO2qrbLnKEebcxpZXRbDPi12qmXQ/IFpJEBGNsbA708Z7xs4FEZ2cJHxY5crdkS8We0h
-         F9rDKys7DlE/4oTzNFnBsL7dHb7eSNeQduHXkd/Ry21dG/z0kJzRuijqtCFqNIhhLC8O
-         CZPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWz3ONBBxOnT+wyLcL39jkPIKSAcUN6xkmNt5zGj1THNM7+eMivpX0x/xoaXFTDw6tm9BwkCDit0m+c+B0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ7XP6x9Qa0DLiH5lBCNLWYBRYeI3curNi5Jcm29GY7EocNzzI
-	/+troovhiZx9/hu97AlMWMLl6VD8pAzy3S3iGJZU9VTuSf6kxkMthrBAhQhCib8eIxeBpPzZODx
-	ahV1SuHbMVLBfalvUH79cr1VM9sqiOFaQmNr5IoYI
-X-Gm-Gg: ASbGnctpNzFCpcvM45k4GXFaJMNEJsfwxsOloHGLaEXTf29nyqqjjglHjr6OSOW3hAA
-	ttNAAes0E8Qk8CIEmwV5rueouN+u6TwBlDnLeyxD5WhIbK+jipXdYy4BiJRBnxxf9vxEk5JGk98
-	caYet3PiezTf2ZwvHIR9FDAsvX7+Bw+4tePEfBUs4Ml1EhUyeCvWQ6YUKD54rr/0l6uvWDO8PMI
-	ul0P/ksUDwBDlqbYo5hypXSTqG/nbujP6w580oolbc9Nv8tTOvZ7fOvefY=
-X-Google-Smtp-Source: AGHT+IHsN8XKGFc1pmq1dLy5gZIAu/2/L7IYb6L12Ta0DohYp6BNuhOBNV89pr4e5xJtcC1TCmMzZcpB8Bt4srH6t4M=
-X-Received: by 2002:a05:690e:168b:b0:63e:1113:bde2 with SMTP id
- 956f58d0204a3-63e1113c469mr2815324d50.20.1760680483191; Thu, 16 Oct 2025
- 22:54:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760680489; x=1761285289;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VkqSu9s5dxWjR7I4tDBayWcEUvhFWsAikTkxnFFF10w=;
+        b=rtaPaPGyVllTThPJ94bg/vNZ1zuN4WH/40OQhQ5PzBgieS62vYX94pdgPJNGtLO+pL
+         d3/qkqrHEj8lb5EEpae2Y/ZxUqD74oL+GawZ8DG/nquKJpzo3Z8E5sHUsvjtTvI87Usm
+         hCRXTIh3JiTyAGALec0F/9LP+vK6MO+kzT2a/XHAqQBo8uAc/OkDzk3PZDdaBIzgA4HS
+         UsfJoC5/IbPCqceOrj/H/pP7XQesCMZ83kpq3hQAwk1GFLLD6EqMjqtLmF1NyDnpDdoi
+         7y32A7fiefmbfHZhm9XDCJGO+PCUhU5y0pyD9FFt9o4BXjO8lzSiwUkT+A5s++4+7ET/
+         rlog==
+X-Forwarded-Encrypted: i=1; AJvYcCU9l6nhcFFNj/WDdIek9xklNxlg1ly3mhUY3gub95Y7S6t8DNSExHY/vjQVC5ys2dPGWc7PccG4v9PxFFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNk7s3gvUZyG/Z2ugt7FpKUbgN8/poe0pqtDMFKNFjWj3ndSI2
+	23j/xf7Km08g9ox5P6/U2WNQacYZHxXkEBSWsw8j/ceMt/jiADP2JpilFfCUtNxReIDGy9WtcLI
+	LGcdD5CkU+JVJPO0IQg/AQMc8ggwunH7oFzEvJI9T9w4R/bvVhEkvHTvZ+62l4cq+7Io=
+X-Gm-Gg: ASbGncu+gX0Y/vEinvUwjL85DL3qSdpBjx80gA10nSHrpWUj1Y+6BKpgshK7D2HABtF
+	v6SkffdN39zC3jZuWWlLGMi13+voLDi7rFlLemzAjF8UqOl4i9cHnbIxtj6NcYnNjbPedF2cwhd
+	P7Ttq40kMgYdz16HCEElfss6htdj2hVaugq+B6ApWPO4wqfTO6uzgmY1HBORMp815Vgia52hagX
+	H/urQUPcJeUcDRufJMYYgnJz19TDfWI1ziK+UW/cJM5RE0zMdYQqx9LM2pB+2k1Rss40FkGDfqg
+	Dt2Tr8ELjrrn+Gt4XZnl0XehDYfswP9iW6YHD6uAFhU3hJ8Pxc1sOA9cHyfxu1GWhsYZaz32sV3
+	wL136PqPYduDPLNd4Eb4OoOH/4xGahuf+wXPAhaSfrHSbEta0wgQGbFwbyBAJOVU5+IEIWw==
+X-Received: by 2002:a17:902:f693:b0:265:47:a7bd with SMTP id d9443c01a7336-290c9cf8efemr23014725ad.4.1760680489227;
+        Thu, 16 Oct 2025 22:54:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHd8a0IlV6YWKUfG9MbGZ0cIY2N4OtBfpsKGv/NleymxB5I+xnN9bB5sCluTNXsZQxkWj93rg==
+X-Received: by 2002:a17:902:f693:b0:265:47:a7bd with SMTP id d9443c01a7336-290c9cf8efemr23014535ad.4.1760680488823;
+        Thu, 16 Oct 2025 22:54:48 -0700 (PDT)
+Received: from [10.249.28.124] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7b4a2sm50581445ad.67.2025.10.16.22.54.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 22:54:48 -0700 (PDT)
+Message-ID: <c18043c0-253a-4681-8ade-659b8652a90e@oss.qualcomm.com>
+Date: Fri, 17 Oct 2025 13:54:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017024827.3137512-1-wangliang74@huawei.com> <20251017055106.3603987-1-kuniyu@google.com>
-In-Reply-To: <20251017055106.3603987-1-kuniyu@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 16 Oct 2025 22:54:31 -0700
-X-Gm-Features: AS18NWCfR7jSXBSalgtHDaSKYVywq8UEZkUHYIuFi4bvybirdzcP5DjBZY6mcTU
-Message-ID: <CANn89iKXU71cZYefVSQDa-1rc0oGs0vjFUkL=oPyG93c-ezP1A@mail.gmail.com>
-Subject: Re: [PATCH net v2] net/smc: fix general protection fault in __smc_diag_dump
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: wangliang74@huawei.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	dust.li@linux.alibaba.com, guwen@linux.alibaba.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-s390@vger.kernel.org, mjambigi@linux.ibm.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sidraya@linux.ibm.com, tonylu@linux.alibaba.com, 
-	wenjia@linux.ibm.com, yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] media: qcom: iris: Add rotation support for
+ encoder
+To: Bryan O'Donoghue <bod@kernel.org>, vikash.garodia@oss.qualcomm.com,
+        dikshita.agarwal@oss.qualcomm.com, abhinav.kumar@linux.dev,
+        mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
+        quic_renjiang@quicinc.com, Wangao Wang <wangao.wang@oss.qualcomm.com>
+References: <20251015092708.3703-1-wangao.wang@oss.qualcomm.com>
+ <VvDBI2gT4oH7ZFT0ooUS3sR8qVBmREmQCBoO6TyzK-3QbZzvQP6xByAlET8sWzpVPkJEeoa8pOCgjIHmayqBug==@protonmail.internalid>
+ <20251015092708.3703-3-wangao.wang@oss.qualcomm.com>
+ <437c380e-885e-4458-9913-788ece5a4ecc@kernel.org>
+From: Wangao Wang <wangao.wang@oss.qualcomm.com>
+In-Reply-To: <437c380e-885e-4458-9913-788ece5a4ecc@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX1+7IrKpm7sum
+ Y0qW2vlY4d+5dgY2zbrk56vkxEssE53luk4K6jPQVDmWz1c1ZkzBO+SOVctGTx0EHJpcc6dk2am
+ LBG8yQee4dvRBM0ZiZWo2wn4pVnXjAFFEeFtTC93jeueW8jGAFVolyLW7chy5lzkMysPUgwFH+Y
+ LTlQk1qEuy//EJ9flJEa/MbMHIxr1VQDynWo8F4HFYZjrm4dyqMK8tPilF8DIaic8KBeXANJSgL
+ l6tR/yalc6ltfTlAl254vxy+Lx4erEL/I75Pj2B6ixmVxclVebwVogghjFaR7XsL+u9chUikPHS
+ CZuReR+VOs3feLc87ygMWH3yMaezjq63mRjxg3SIhREseb7iM8JIC6u+RxssgMoGJqN6Q6y7hl1
+ Qh/kgWGcoXMMClqxgV1KQuuQB/Wt3w==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68f1da2a cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=sT30tPJYCz54KknbIz8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: zvZYP5Khy5TZOCsvy7aGr530DqMFDd1F
+X-Proofpoint-ORIG-GUID: zvZYP5Khy5TZOCsvy7aGr530DqMFDd1F
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
-On Thu, Oct 16, 2025 at 10:51=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google.c=
-om> wrote:
->
-> From: Wang Liang <wangliang74@huawei.com>
-> Date: Fri, 17 Oct 2025 10:48:27 +0800
-> > The syzbot report a crash:
-> >
-> >   Oops: general protection fault, probably for non-canonical address 0x=
-fbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
-> >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4e=
-ad0000001f]
-> >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PREE=
-MPT(full)
-> >   Hardware name: Google Compute Engine/Google Compute Engine, BIOS Goog=
-le 08/18/2025
-> >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-> >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c=
-:89
-> >   Call Trace:
-> >    <TASK>
-> >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
-> >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
-> >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
-> >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
-> >    netlink_dump_start include/linux/netlink.h:341 [inline]
-> >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
-> >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
-> >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
-> >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
-> >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
-> >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
-> >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
-> >    sock_sendmsg_nosec net/socket.c:714 [inline]
-> >    __sock_sendmsg net/socket.c:729 [inline]
-> >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
-> >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
-> >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
-> >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >    </TASK>
-> >
-> > The process like this:
-> >
-> >                (CPU1)              |             (CPU2)
-> >   ---------------------------------|-------------------------------
-> >   inet_create()                    |
-> >     // init clcsock to NULL        |
-> >     sk =3D sk_alloc()                |
-> >                                    |
-> >     // unexpectedly change clcsock |
-> >     inet_init_csk_locks()          |
-> >                                    |
-> >     // add sk to hash table        |
-> >     smc_inet_init_sock()           |
-> >       smc_sk_init()                |
-> >         smc_hash_sk()              |
-> >                                    | // traverse the hash table
-> >                                    | smc_diag_dump_proto
-> >                                    |   __smc_diag_dump()
-> >                                    |     // visit wrong clcsock
-> >                                    |     smc_diag_msg_common_fill()
-> >     // alloc clcsock               |
-> >     smc_create_clcsk               |
-> >       sock_create_kern             |
-> >
-> > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpectedly chan=
-ged
-> > in inet_init_csk_locks(). The INET_PROTOSW_ICSK flag is no need by smc,
-> > just remove it.
-> >
-> > After removing the INET_PROTOSW_ICSK flag, this patch alse revert
-> > commit 6fd27ea183c2 ("net/smc: fix lacks of icsk_syn_mss with IPPROTO_S=
-MC")
-> > to avoid casting smc_sock to inet_connection_sock.
-> >
-> > Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3Df775be4458668f7d220e
-> > Tested-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
->
-> nit: looks like this diff is not tested by syzbot, you may
-> want to send diff to syzbot.
->
->
-> > Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-> > Signed-off-by: Wang Liang <wangliang74@huawei.com>
->
-> Change itself looks good.
->
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+On 10/16/2025 12:08 AM, Bryan O'Donoghue wrote:
+>> iris_hfi_gen2_set_bitstream_resolution(struct iris_inst *inst, u32 pl
+>>           payload_type = HFI_PAYLOAD_U32;
+>>       } else {
+>>           codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
+>> -        resolution = ALIGN(inst->enc_bitstream_width, codec_align) << 
+>> 16 |
+>> -            ALIGN(inst->enc_bitstream_height, codec_align);
+>> +        if (is_rotation_90_or_270(inst))
+>> +            resolution = ALIGN(inst->enc_bitstream_height, 
+>> codec_align) << 16 |
+>> +                ALIGN(inst->enc_bitstream_width, codec_align);
+>> +        else
+>> +            resolution = ALIGN(inst->enc_bitstream_width, 
+>> codec_align) << 16 |
+>> +                ALIGN(inst->enc_bitstream_height, codec_align);
+> 
+> That complex assignement can be expressed as a macro, static inline or 
+> just a regular method instead of copy/paste the same code with one 
+> variable changed.
+> 
+You're right, this code is reused in several places. I will address it 
+in v2.>>   inline bool is_scaling_enabled(struct iris_inst *inst)
+>>   {
+>> -    return inst->crop.left != inst->compose.left ||
+>> -        inst->crop.top != inst->compose.top ||
+>> -        inst->crop.width != inst->compose.width ||
+>> -        inst->crop.height != inst->compose.height;
+>> +    return inst->fmt_dst->fmt.pix_mp.width != inst->fmt_src- 
+>> >fmt.pix_mp.width ||
+>> +        inst->fmt_dst->fmt.pix_mp.height != inst->fmt_src- 
+>> >fmt.pix_mp.height;
+> 
+> These long chains of indirection make the code not very readable
+> 
+> Please take pointers to &fmt_dts->fmt and &fmt_src->fmt and reduce this 
+> clause.
+> 
+Sure, will update in v2.
 
-Agreed
+-- 
+Best Regards,
+Wangao
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
 
