@@ -1,286 +1,308 @@
-Return-Path: <linux-kernel+bounces-857091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDE1BE5E52
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:31:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46E8BE5E5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6BFC5E780B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:31:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 379123556C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A71A236435;
-	Fri, 17 Oct 2025 00:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B239020C461;
+	Fri, 17 Oct 2025 00:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Nv/6+oTR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAtG5wzk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE9721C9EA
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760661043; cv=none; b=TN+3oVbDeiXNHtg+cEh2h6sKYdW+NcraqyArACaETAFUZ9+1f3e+NPuYuH6b1H7BebNnoG9LdmevlUIH26bT6xluXzSo9Hs8zvN11yimjhpfUxvuETPM34dkThlIcQXBDqX7AmUeUPYpDSZjdeeqYoVU/ZOqzAZh2raHjapOEN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760661043; c=relaxed/simple;
-	bh=RU9u5+e96IskdKy79odK/nlpmnOUEqJHM5ulM9nXXPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G4CY3doXgCdwuyJutLPAq33HBeSRbeQF24oPyge9aC/zY/q0hheMiOySeUvU5v4OFiY1BgpJXOJnFG30uRRa09ciXkGt1EihHi7lV2lSb+Ev/0NmcJ7A9n5v4GUnFNfT6S1WLdwWm4NgXxPlyT5dmk+O2ABWq354pjspVrKfjE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Nv/6+oTR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLRBe002098
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:30:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=wpu47feRnS3
-	JH7+rgGPW+V0fZ+MEpc12dYMVX48Lock=; b=Nv/6+oTRgyYG17bC+QOCQgSY0Nb
-	UGlxpdK+31nkQg++9X0lFLRdmwKmTMbp0neZzKPVX27agiOdlzQk/Znl32qMoays
-	qAOJ4TDhcKY8nobZYY3rC+VwUjy05v2/jdAiBgkKCVwmx9fK+OHugio0KBz1nBa0
-	ySn4E8Jl5YmwwN6gB4FXUN+pa0X/J9hx8aZjncAY7QmOhuVhUi6Tb8mIbbiPdY5a
-	9YTKwcS9BqysRE2O1AaEw+Jy5KPG02Kmdqg1VBVc9BmpXo3VSShYohVdYyv9BfIy
-	uJMb14fnJD3Gm7CszzK0hVrZZ//UoX7pwxsnNPcmfrQG1yDrhRn317qKM6A==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa8jaen-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:30:40 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a144677fd9so2446725b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:30:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760661040; x=1761265840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wpu47feRnS3JH7+rgGPW+V0fZ+MEpc12dYMVX48Lock=;
-        b=ixec46yIN8+Yg0+IUsg+f2lOw5IAYdWFuP52nmWoKVBIk70GSiIlsvas4wlnNgZTtM
-         ys+L/D0waU+XuY8zrZwvE/u6QuLnJmjZNzaM/+P1l8lqpxhfUQwYWhFOL6byDXqSszBh
-         KYl2tfSuEUbxrVwuRBMJGkQh/1pKwAMHmZLkpi1C+WCKbQivdBrNXisrdgaxvxKmZjLa
-         9Jo+IZPXqbfIjQQBr9ipBmI0oE8HvaJWY4OdYCyWrCdxIB+m6HVzwUQjtMTZjSv3w4GU
-         pYahElRPQ21TBumgdyIBIlyRnQC7qBk+9sufQVUxlvUmdSzbXPiIVaHa7LmYPkH4ynBy
-         g8vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYtZBiuN9yte1RDhV6BeVN+OBFp9jRLx+SqsyfE0vdkYJH19UcyamTyubhGOAXX90iK47GXUAbS3JdWiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfjUVn+tv+8SeIjB8tA+fgrq1GBjksteO/tvNtriYxo60+e4LH
-	Kb+E4l6p+gO0JhtIPltmG6vbY1RihIHX++AgH7D0dXg7HeRS8MwHngLu1ihYuFPxoJVHKv5BC14
-	VeNHsm3jKOADyx9XOAhGR6L2wCe6L2Ikr3srEvWFDX6HY4fkuL2yvGKPq1j5Xv6VkIkE=
-X-Gm-Gg: ASbGncvr6TK3J9AWqzi2G63lutG5d93ws7Zz8uSsuZgMMLST7ZAqqISm1ZPghlkw7Pk
-	sMs0M5vtMXtfsKPZlgIWpdqk8At2hGctsHbzghiSgIM+sDd8oRuXXBlWMG0GR4aS8solLa7nPaw
-	zIksR3GIhp0cHkvzDcNmiDQasi/fVrarWgdfcw3ojyu0Vm4flEC/10eNhol3j7CY3iF/qaU/mke
-	0W/mZGlbNAA9Ght7EmYp0fwdIZcGqSlGS3SRhyo1+RRCUzar5eIZqqTHwxvhJUQkNU7saxiu/QQ
-	CpyB7I+vJGIT9ABHLlkYfSeS4Xci3vvHFaYV11I1DlqMOqhc+rN7EmWKmWrCVUStaoxlXOrA04/
-	XRRzIUsA6XUDn/tMKd6gWO4CUVWkwPjMBYEWCAZRp2bBCURwG3MNzLNBlPsql3w==
-X-Received: by 2002:a05:6a00:1394:b0:781:2177:1c9b with SMTP id d2e1a72fcca58-7a220d232e6mr2450104b3a.17.1760661039528;
-        Thu, 16 Oct 2025 17:30:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2YuCrZTacPd+e4WwFad3XNi1Thwu/0jwICzedcCNVrK3jC8KhvIoGcsNp34j49mGFrBpEyQ==
-X-Received: by 2002:a05:6a00:1394:b0:781:2177:1c9b with SMTP id d2e1a72fcca58-7a220d232e6mr2450074b3a.17.1760661039073;
-        Thu, 16 Oct 2025 17:30:39 -0700 (PDT)
-Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0966d7sm23613050b3a.40.2025.10.16.17.30.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 17:30:38 -0700 (PDT)
-From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] soc: qcom: pmic_glink: Add PDR service path and service name to client data
-Date: Thu, 16 Oct 2025 17:30:33 -0700
-Message-Id: <20251017003033.268567-4-anjelique.melendez@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251017003033.268567-1-anjelique.melendez@oss.qualcomm.com>
-References: <20251017003033.268567-1-anjelique.melendez@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBA3288D0;
+	Fri, 17 Oct 2025 00:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760661122; cv=fail; b=SrzRLCfj5auXLSDETjzLDWAe50KxPANthKSrWUHfUT/fTgQL9HCbJfS9R9zFo0Q81KMvXWxDUnj7/ZCUoKv0FHYlAbC+AtqFxPDV0l2qhf7JV0WWvXfccFMM8mgcME41RYx9jpeSaT/isyUI/PGZCsjvTGluP0SXPTFQCvSclMw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760661122; c=relaxed/simple;
+	bh=AVDNi2RpszKQ0oU3+G5r4LTBip3FZ4nxnFI8WZ0b0Ps=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nt6rkEgNp3rCV5VSOyovTAU0KMlRce1EJE0diFJh1R2t5xiSw5TzmT7IJWb8Cj6ofOT+EXb4jStRTHSO+Wbq7eaMJaJCNLd4RXWdDhTO79PLEfYZOgBl+/CxQs/IUuVolFlfjb1AA7B3PvTNJ1H6hZlIt7otJ8Gy+2UDSB82a78=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAtG5wzk; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760661121; x=1792197121;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:mime-version;
+  bh=AVDNi2RpszKQ0oU3+G5r4LTBip3FZ4nxnFI8WZ0b0Ps=;
+  b=NAtG5wzka4jFbl+ad6VTsuZ/Wce2zVrkyEj2w0lKUGyMPlsDClr/FmaJ
+   EZqPTk2Xg0aibEgR3WgJc4+mMV4orFKDs79ewjkl1f3spP5Jis+SmlAQn
+   J+f03vo5RFY9h/QHrajSjqxiPf2jicl+oymBleizTF7C5w2iK9HLzsCWj
+   fB5Sl3d0tyPtwS2CBgQGmnhRhDCs3GSjmBHeVrZbeMHQTJMfSgSvPc/Jq
+   GvPp/xNsZ61ZtIjTVUjpZbjcJiCu+WTeGH3NrZXbUYkEJvrjfnOsUpM8+
+   K0ZeaYNEC0alAnwVL5HO9TiswSPqDAvpMU6GGs7ugi/rLSVjsiDoq5oSn
+   w==;
+X-CSE-ConnectionGUID: Hwuxx742T3CSBK9BWqFmwg==
+X-CSE-MsgGUID: 5QwnQRITSGycFTJdSSZokw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62958747"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="asc'?scan'208";a="62958747"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 17:32:00 -0700
+X-CSE-ConnectionGUID: LFdfWizDTBa/l8w75r+JFQ==
+X-CSE-MsgGUID: DKpd1URuRF6c+t5Z0sLvAA==
+X-ExtLoop1: 1
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 17:32:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 16 Oct 2025 17:31:59 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 16 Oct 2025 17:31:59 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.52) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 16 Oct 2025 17:31:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IvJ8/IEWiB9bDpyt73e22lzpZPH/2hmjWUO+3stN+OMYJV9ZKazT0CHnAruThOfAaPPVPLT+RmQYA8yrhPK0Hi/3bYfaDxv449lx93jFEBFzo16tOo3cXmTuiHsn8VD25QbQJjSkf+/lZOGyrBNeCSZVRURnXTFuSWyfsBoUhZK8sYwFBZXgP/Byf78ohfdOZ22C4BeFHQUplN5NljT/TEQW7yzEzu1Nd/VbTBJ2jnKNYR1wewrZOtVQ4grFruCy5ILYMyTz5/6wl27WRP9Qi/CIQPNSs6Z+UBhfw/lLEkTpK+6cl67KTaWvD8YG47ccXODB9NgwOFXYsz0o50oXiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AVDNi2RpszKQ0oU3+G5r4LTBip3FZ4nxnFI8WZ0b0Ps=;
+ b=f/kEIMGtaPPbY0Q+VJceaN/Rl4WLL3WDGotqvjPDVBykRo9Z0TtguLGZ7ZyTGY20W/bYVsTEZuGbiI2iKsg/GyvrzcteP54M2RSv6Rp/uVoKLh7r99n15UnvSVcvvq7Scv3sSV3o8RSHHMIuVGFKt2taXZbzM2aTBl/5m1659fWUaq51FDfa0SKRtenRzOssDY6SG8o0Z62dt36TokQmroQqERh41sSNrUXW78kT+0YdbYx3uhHPOKSYlpGmWT4tFykrMndg5LdcywKBsAxeTsPfZdr1LzrSPUZ4Qslvb+ZsxR/I4KwWhHooFdU6jx01NbIMAXKB+RuFq/qzppd3KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by SA1PR11MB5922.namprd11.prod.outlook.com (2603:10b6:806:239::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
+ 2025 00:31:51 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3%4]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 00:31:51 +0000
+Message-ID: <4ae9d5d8-2d88-43d0-95be-ae75f0506548@intel.com>
+Date: Thu, 16 Oct 2025 17:31:49 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 06/14] ice: Extend PTYPE bitmap coverage for GTP
+ encapsulated flows
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Simon Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Paolo
+ Abeni" <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Alexander Lobakin
+	<aleksander.lobakin@intel.com>, <netdev@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dan Nowlin
+	<dan.nowlin@intel.com>, Qi Zhang <qi.z.zhang@intel.com>, Jie Wang
+	<jie1x.wang@intel.com>, Junfeng Guo <junfeng.guo@intel.com>, "Jedrzej
+ Jagielski" <jedrzej.jagielski@intel.com>, Aleksandr Loktionov
+	<aleksandr.loktionov@intel.com>, Rafal Romanowski
+	<rafal.romanowski@intel.com>
+References: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
+ <20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com>
+ <aPDjUeXzS1lA2owf@horms.kernel.org>
+ <64d3e25a-c9d6-4a43-84dd-cffe60ac9848@intel.com>
+ <aPFBazc43ZYNvrz7@horms.kernel.org>
+ <902dab41-51f0-4e01-8149-921fb80db23d@intel.com>
+ <20251016165648.2f53e1fc@kernel.org>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <20251016165648.2f53e1fc@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------Rv5A0aXRuOSXz0TPcY73yllj"
+X-ClientProxiedBy: MW2PR16CA0008.namprd16.prod.outlook.com (2603:10b6:907::21)
+ To CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: bm69HleRDwCj13h9qsXvLfYEtZ6US5OK
-X-Proofpoint-ORIG-GUID: bm69HleRDwCj13h9qsXvLfYEtZ6US5OK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfXypLf76OEJBW+
- lvIxzPYWuoLHkBcbALMFxFOIEO1fcvtr/B+Wa+ac6pk9ZYjatWPtZrC4/eTLLQ8LJfvd0zc0gQx
- RVF8U3Rtlbap40yEazfYgM9ZOUq2tlc/40WdrHF/BtLnrtjBgSdHTIMEnTc4v3rF9dl1YxWL4OA
- pHyMEpo7tli5FJgkYP+RGSgp9CuG56cHZV/gs4WqjfBbg/s/z4D2+ZQ7HIFiUOceIVCt4y2UnuT
- cZRAgTUstyBCONbVd1mLo2MX4JU/yus9erca117TeQaQEOjlIGWBMGRPB+Nh8C+3wqWjPZfTgkP
- djTZRwdQE6gL46Pmcfo03fMCKBszrxoiB2w3uo5Bnai4nznqqYDBFMyxBQRXhKqk6deJ39KDdrX
- oYMLk9JoWszkfJYHzYKakb2hcMeysg==
-X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68f18e30 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=qLYHXgdTuLTpAkILo5MA:9 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SA1PR11MB5922:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4896f2c9-51cc-4904-4289-08de0d1490ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?clBDZnJxVk9iS0JBUWZCWWtWN1k0Z005MVc1MVJlOUhZZWp5Z08rZ2Z4MWx2?=
+ =?utf-8?B?cmVxRTM0em81V3JDVHVWUlExUnRBWlZxUTkxVXlOTHlMckl0eHVBWWwzM1ZX?=
+ =?utf-8?B?aFNnY2IvNEZQWFNDdmRtRHQ1T3FySUxVeFBKUERKSXdmZWhDanNRYXdRTzFr?=
+ =?utf-8?B?NXhkUWNRYW1uTHJlSFFqMHJnTk1QVmdCWEVmdGprQTFpNm9lWHZodWd6YkQ3?=
+ =?utf-8?B?THl2dmJWM1hLV3dtOExSWnZXV2dXYi90Y3V4c01qVHIvOXFuZ0oxWTd0ODFX?=
+ =?utf-8?B?ci9LUzF3ekdieWV1Tmk0TWVWbUtkbE80MkM3Sis0YkdHNGk4bncwL2swZEtm?=
+ =?utf-8?B?eXJKZmRSd2haRFN6SHI1a0pGK1hha2RaZzBHUjJ5UlUwZUdnSkM0bDZJRDJh?=
+ =?utf-8?B?aFVSL2xMd0p5cVZDMzBpTHN2RmVEQVF5eDJlNUpUZ3VUS1E1dlZZQWsvd1Vj?=
+ =?utf-8?B?dVVxMG94M1dPdnRtWkkzRTF3NXpMamt3aWNLQ0hYZ1Ixa0lCWUxGendQWDB1?=
+ =?utf-8?B?MndFamg0dldnZjJQT3RLeGZFemY2dHppMzlxZEpyYTNtbEpvTVVKVHdibVhT?=
+ =?utf-8?B?NHFqZEZZb2hIRWFZWG45KzRyQXFibFpxK2FOVFRSNTROc3dqaWdoaUlUNEZn?=
+ =?utf-8?B?aGR0Ykpxc3RhRzk5OFE5aUhsQjBqeitBUjRNZ1NDQ0xrQlRoMzJKdHNKK3F6?=
+ =?utf-8?B?MnJDcUZOZVFXMHBxNk5RZURnbDV0Mk1QcTBmaWV1QlVSMlFleUFrak91OElL?=
+ =?utf-8?B?MUptL3h0S0s1cWtXTHFaM0hCZ0dxOGJHYjFNTlh3TGlteWg3a1VFV0ZSdTRC?=
+ =?utf-8?B?Y2hWdU1yS1JwSm9yYmRkV2JFNnNoMmloeU1qcHU1T2pNYUZTbnFoOWJuWUZ2?=
+ =?utf-8?B?dnpaeTZxZFM0S3BreGFYSTBabGtuQytpcUdLRVdmNmdOc3EvU280eUh5bzNj?=
+ =?utf-8?B?cExtenJKTnY1UmVBYTl5aVJzSHNhQ08yM0lGeHpPK3FjUDJMMVpPY0ZkcEFn?=
+ =?utf-8?B?dFc0LzRnSnE2djBpTitXMVg3NlBLcCtjQUl6OStoTzc4SkdOUVc2RHdGYnNy?=
+ =?utf-8?B?ZXBhVHJwQmR1N3BOUGZjNmcwL29TL3Nleis3ZUxGN2ZQZFgxTlRtTEFlMWJr?=
+ =?utf-8?B?ZmMvR3RvTW91WTRqZGtrTjFTRjdvUzNHSXJkQ1NwbnU5ZHpGYWF4dEYxQVFm?=
+ =?utf-8?B?d1VVNWxaSnhRNG1FaW91dEJVMXFodmF2VmM4V3o2d2M4aXJIVXA0U1JGa1Ra?=
+ =?utf-8?B?Z09iZTBXdTZyaHo0OUQ3eUFYck9HRmNrSmZrWEFPZ3V6citkbjR0eUZRRFNr?=
+ =?utf-8?B?UzNUUElpVEt0ZEd4N2RqY1B3L0cxT1MrRk40dFNYOCt0WjliZ0U2RmU2NDlR?=
+ =?utf-8?B?cHMvV3VHWXBReFdRMEJVcVRGSkZ2UkZNbW1BNFdiTXEwVzB0enVvTWo3bjY4?=
+ =?utf-8?B?aFZERUlOOU1QRkdIVjJSdVptQzFBc2NieXpkelErcldyWGxwT3ByMG42bURZ?=
+ =?utf-8?B?Q3ozVEhZVG5uNEI1WitlRlZOdDB1b2lTaUhmb0hEaC9TUzc2U25ybGFwa1VW?=
+ =?utf-8?B?Vjd6bGp0RUhIdGxDMFpEQ2d4YTI5Y25WakZlWktYeFFkZnFtdW9JYjVyQ1dN?=
+ =?utf-8?B?bHlRUXUyVy9uSVdPMERVbGtnZUIwYzlvRWhEMWZSeElRM2VjZFVZeVBJTXM0?=
+ =?utf-8?B?UDJmUURMa0ZKS2gzVDY5MnRLZ2lUMlFSOVF1aVp4WXJKQTR0bFQ0Zk8yQk1p?=
+ =?utf-8?B?dDFOSHZ2KzVmMDR5dENVOG9iTytyQ01jenJhREd5eHVqQ1RaOTNFODZ1Smtp?=
+ =?utf-8?B?L0JONktob09zV2dBT0FnSlZhSG9Kc3NFTEtpbU9qV1ZOMFFrYTcwdU00WndN?=
+ =?utf-8?B?bXVCVktjOG83SFlvL2FvRkdmNE5rVDJMU2d5N3ZkaXhXd0tmUFFDTmtrOTZQ?=
+ =?utf-8?Q?ioZZiiueQqw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WHAyQ2ZkdnY5bG56bG8rWE53RHdJTEhqSXZ0Q09yN0RpNElaakVlUG93ckVT?=
+ =?utf-8?B?SE9lTmp1UlZWRVAwTWg0eVRodXgwNEVrc0x5Y3h5VUhzWnlRS1Rydmt6NUV0?=
+ =?utf-8?B?Y09HTjlMbU1aUG1hMllHRW5OaWRycmdjVVJvNkZYbEsyYTA0eGR6djZqVS9u?=
+ =?utf-8?B?dFdKRS9KZ2xxUXJnQnpHUnVXeUZZcHpjb2dGN2RuakJnc01YNEtGZjNoelNZ?=
+ =?utf-8?B?SW5NMVdrM25vekl4bm5rWVNOL1ZZSkFtVFh4ZUJSUFY5YndmUEJDUFJGZCtJ?=
+ =?utf-8?B?MXhzaVVVVkZPZkdjQjRhTVg5N2JqUXM4QTJQTE8rQXluTUV5TXBVaGF5L1RH?=
+ =?utf-8?B?djhvbE9HYU5ad3RZWFQ0eXAxL0dkemhOWHZlODJDRGx5UnlmV0pnMmRJSFRB?=
+ =?utf-8?B?SFlDc1lPZTluVVN0MThxMU9Vb2JWLzhnOEpMUk1oT2xpdUJaN0V6NFFUWGE4?=
+ =?utf-8?B?TGFVcDhoQjQwUWE3Zm1VbUc1Tm9TTUxJU1h0MXZlL3IrVFQ1RGtNdHBoaW81?=
+ =?utf-8?B?ZVR3SW02emFYanVlRUhUSzhsQWg4N0JxLzdLaVptOXRzdEtZOVg5L3FJOFZz?=
+ =?utf-8?B?MlE4b0owNGdjMUthOXF6WDlIcXdCN0JmU0JqVlV6c3RyTVZrSzBqK1VzWjJE?=
+ =?utf-8?B?Q0YycHFiZU9mQmxVUzZqdGFiQTZ0Q3ZUMUdWZ05QNXhjbm4yNHM2cjRpM05W?=
+ =?utf-8?B?UEJtZGxFUXp0SGFFdndNdTA0d1hublI2bWhFZk5qYzR5RTRtOW0zWlliT2do?=
+ =?utf-8?B?TUd4QjFTMTBvOE4wTEhHODA2dGxnZlRZcUlNYjZ2TThxOGZ0M1Z3WjcwcTdD?=
+ =?utf-8?B?dG5kdXplanlCVU56ek5Pc1V5SCtXcVdoMFNaem45ZHR4U0FOT3BDd3E5Qmsz?=
+ =?utf-8?B?QjNCZ3psOG9lTFZSeS9BSFVRdlpzY0syQjlIREx2TXdMV2xnaEFGMitHdWl5?=
+ =?utf-8?B?VklGeVNEdFdMRkpDWTl2c2MzaDZFRFNZYjV3cEdmaTNLTEV3UFRtRXVNVkY0?=
+ =?utf-8?B?WFpGd0JKeEJ2UWtURzR3UjU5dTJGREpDRzFiSjBpcm0wMFVhTWdEaFNaM1Jh?=
+ =?utf-8?B?Z0VxRldZQ1B6dERJRFp6cWpPVVhYM3ExNVlUY0F5Rk5UaW9tSkhubktlT1V0?=
+ =?utf-8?B?NlBVOTFqc3l0Lys5cWxVTnZONEVHVFBRN2daeXg4TmtWVDBBSlZQYzJZSllj?=
+ =?utf-8?B?dTJDbnlLaWs0M08wSlE0M0VFamhjMHVReUFIRW5kbHBUaU8rVWxvY1g0cVNh?=
+ =?utf-8?B?dkkrck1vOUFBZWEzMlEzaWRGRlY3b01vMGNuaG95Ukx5K1JCNHBPNjB5OTEr?=
+ =?utf-8?B?V29wVnpxc05oT1dWYWRuZUtPY1k2SGh0OFRLRVdncEhRbTFaNXlPdUtwRFVY?=
+ =?utf-8?B?WUM5N29mTm1kc3dseTZGcmtSMFdueCtkd1E1YlU2LzMyYmQwNzl0STF5RHhJ?=
+ =?utf-8?B?VU05aDg0MUpNczYwMElwanJkUHh5THE0bTluT2k0U090dTI1bWlQL0o3eGZk?=
+ =?utf-8?B?bWxuaUtDR2xQU0lQdjYwdDhLV3hJcWFicVd5N05EWWExcTdDZUxPRTAxSFJ0?=
+ =?utf-8?B?aDZsdTFob2d6dXVTeHg0b1AvZUY1VXc1M0RlQnMxNzBhdnY3ZmZuZlFIYm1J?=
+ =?utf-8?B?YlhZQkRNeUdwZjJqelE3UWdwSU1pcjlGRjVLa0FuTy9lTWcyWU1zalNsbFF3?=
+ =?utf-8?B?NDRhRm9qdmk1MWdzcGxuOUp0eVdyV2pKZ1VHeGY3aE5XMGovb3NNcWswOWN6?=
+ =?utf-8?B?RDk0bitOeFFxQnExbHlDbnlLZUxWTUZkb3MvMjFHM1V6V0lpaG44QmhRbHV2?=
+ =?utf-8?B?eE9uSFFpLzBpM0EyUXNFK2hqWE44ZUJ6anh0Nk5TNmI0U2MzaVY2Y0JrVzBj?=
+ =?utf-8?B?eVNVRXpCbVllcElJSkt5ZEg2aWpRYStJbG12bHN3V2ZIUGYrWDkrOHZWS0l0?=
+ =?utf-8?B?WEh0bklzcVRJbUxWQVNlMURMWE56bHR1S28vUGltOERVOTVRVXRuaWl2M0s2?=
+ =?utf-8?B?blpYUzRmT0tJRXJ3V0NyVzZBUk0wVDhrd28wQ3VxNk9EZDZ4aU03RzVPN25K?=
+ =?utf-8?B?QlFEeGdjdTMraEdzRVVIT3grV0kvSDZ4cmZIQWpkOFRuNlRZSW5rdnNhSUlu?=
+ =?utf-8?B?WmFtS2dxckYxbVV3eHJGeDNKZWxpRFJhVVY5QjBCRWo3emNUSHIrak9BVXFs?=
+ =?utf-8?B?b1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4896f2c9-51cc-4904-4289-08de0d1490ed
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 00:31:51.6819
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d5qzGyNFTlNhB7yfYhL8xen1e6jaPHgUaUDmiRuFnsdVzaYqi0/uei499t4bICYBLQOmfZRsP/kE8R12p2PVsEk2L0TQ9pAOyJKtbMMwKuk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5922
+X-OriginatorOrg: intel.com
 
-Currently, the charger PD service path and service name are hard coded
-however these paths are not guaranteed to be the same between PMICs. For
-example, on Kaanapali, Charger FW runs on SOCCP(another subsystem) which
-does not have any specific charger PDs defined.
+--------------Rv5A0aXRuOSXz0TPcY73yllj
+Content-Type: multipart/mixed; boundary="------------r87B772jULzg5N34jB7KlZ6E";
+ protected-headers="v1"
+From: Jacob Keller <jacob.e.keller@intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Simon Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dan Nowlin <dan.nowlin@intel.com>, Qi Zhang <qi.z.zhang@intel.com>,
+ Jie Wang <jie1x.wang@intel.com>, Junfeng Guo <junfeng.guo@intel.com>,
+ Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+ Rafal Romanowski <rafal.romanowski@intel.com>
+Message-ID: <4ae9d5d8-2d88-43d0-95be-ae75f0506548@intel.com>
+Subject: Re: [PATCH net-next 06/14] ice: Extend PTYPE bitmap coverage for GTP
+ encapsulated flows
+References: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
+ <20251015-jk-iwl-next-2025-10-15-v1-6-79c70b9ddab8@intel.com>
+ <aPDjUeXzS1lA2owf@horms.kernel.org>
+ <64d3e25a-c9d6-4a43-84dd-cffe60ac9848@intel.com>
+ <aPFBazc43ZYNvrz7@horms.kernel.org>
+ <902dab41-51f0-4e01-8149-921fb80db23d@intel.com>
+ <20251016165648.2f53e1fc@kernel.org>
+In-Reply-To: <20251016165648.2f53e1fc@kernel.org>
 
-Define PDR service path and service name as client data so that each
-PMIC generation can properly define these paths.
+--------------r87B772jULzg5N34jB7KlZ6E
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-While at it, add the qcom,kaanapali-pmic-glink compatible string.
 
-Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
----
- drivers/soc/qcom/pmic_glink.c | 65 ++++++++++++++++++++++-------------
- 1 file changed, 41 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-index 627f96ca322e..f64449de2305 100644
---- a/drivers/soc/qcom/pmic_glink.c
-+++ b/drivers/soc/qcom/pmic_glink.c
-@@ -23,13 +23,19 @@ enum {
- 	PMIC_GLINK_CLIENT_UCSI,
- };
- 
-+struct pmic_glink_data {
-+	unsigned long	client_mask;
-+	char		*pdr_service_name;
-+	char		*pdr_service_path;
-+};
-+
- struct pmic_glink {
- 	struct device *dev;
- 	struct pdr_handle *pdr;
- 
- 	struct rpmsg_endpoint *ept;
- 
--	unsigned long client_mask;
-+	const struct pmic_glink_data *data;
- 
- 	struct auxiliary_device altmode_aux;
- 	struct auxiliary_device ps_aux;
-@@ -292,7 +298,6 @@ static struct rpmsg_driver pmic_glink_rpmsg_driver = {
- 
- static int pmic_glink_probe(struct platform_device *pdev)
- {
--	const unsigned long *match_data;
- 	struct pdr_service *service;
- 	struct pmic_glink *pg;
- 	int ret;
-@@ -309,12 +314,10 @@ static int pmic_glink_probe(struct platform_device *pdev)
- 	spin_lock_init(&pg->client_lock);
- 	mutex_init(&pg->state_lock);
- 
--	match_data = (unsigned long *)of_device_get_match_data(&pdev->dev);
--	if (!match_data)
-+	pg->data = of_device_get_match_data(&pdev->dev);
-+	if (!pg->data)
- 		return -EINVAL;
- 
--	pg->client_mask = *match_data;
--
- 	pg->pdr = pdr_handle_alloc(pmic_glink_pdr_callback, pg);
- 	if (IS_ERR(pg->pdr)) {
- 		ret = dev_err_probe(&pdev->dev, PTR_ERR(pg->pdr),
-@@ -322,27 +325,30 @@ static int pmic_glink_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI)) {
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI)) {
- 		ret = pmic_glink_add_aux_device(pg, &pg->ucsi_aux, "ucsi");
- 		if (ret)
- 			goto out_release_pdr_handle;
- 	}
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE)) {
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE)) {
- 		ret = pmic_glink_add_aux_device(pg, &pg->altmode_aux, "altmode");
- 		if (ret)
- 			goto out_release_ucsi_aux;
- 	}
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_BATT)) {
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_BATT)) {
- 		ret = pmic_glink_add_aux_device(pg, &pg->ps_aux, "power-supply");
- 		if (ret)
- 			goto out_release_altmode_aux;
- 	}
- 
--	service = pdr_add_lookup(pg->pdr, "tms/servreg", "msm/adsp/charger_pd");
--	if (IS_ERR(service)) {
--		ret = dev_err_probe(&pdev->dev, PTR_ERR(service),
--				    "failed adding pdr lookup for charger_pd\n");
--		goto out_release_aux_devices;
-+	if (pg->data->pdr_service_name && pg->data->pdr_service_path) {
-+		service = pdr_add_lookup(pg->pdr, pg->data->pdr_service_name,
-+					 pg->data->pdr_service_path);
-+		if (IS_ERR(service)) {
-+			ret = dev_err_probe(&pdev->dev, PTR_ERR(service),
-+					    "failed adding pdr lookup for charger_pd\n");
-+			goto out_release_aux_devices;
-+		}
- 	}
- 
- 	mutex_lock(&__pmic_glink_lock);
-@@ -352,13 +358,13 @@ static int pmic_glink_probe(struct platform_device *pdev)
- 	return 0;
- 
- out_release_aux_devices:
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_BATT))
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_BATT))
- 		pmic_glink_del_aux_device(pg, &pg->ps_aux);
- out_release_altmode_aux:
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE))
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE))
- 		pmic_glink_del_aux_device(pg, &pg->altmode_aux);
- out_release_ucsi_aux:
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI))
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI))
- 		pmic_glink_del_aux_device(pg, &pg->ucsi_aux);
- out_release_pdr_handle:
- 	pdr_handle_release(pg->pdr);
-@@ -372,23 +378,34 @@ static void pmic_glink_remove(struct platform_device *pdev)
- 
- 	pdr_handle_release(pg->pdr);
- 
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_BATT))
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_BATT))
- 		pmic_glink_del_aux_device(pg, &pg->ps_aux);
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE))
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE))
- 		pmic_glink_del_aux_device(pg, &pg->altmode_aux);
--	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI))
-+	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI))
- 		pmic_glink_del_aux_device(pg, &pg->ucsi_aux);
- 
- 	guard(mutex)(&__pmic_glink_lock);
- 	__pmic_glink = NULL;
- }
- 
--static const unsigned long pmic_glink_sm8450_client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
--							   BIT(PMIC_GLINK_CLIENT_ALTMODE) |
--							   BIT(PMIC_GLINK_CLIENT_UCSI);
-+static const struct pmic_glink_data pmic_glink_sm8450_data = {
-+	.client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
-+		       BIT(PMIC_GLINK_CLIENT_ALTMODE) |
-+		       BIT(PMIC_GLINK_CLIENT_UCSI),
-+	.pdr_service_name = "tms/servreg",
-+	.pdr_service_path = "msm/adsp/charger_pd",
-+};
-+
-+static const struct pmic_glink_data pmic_glink_kaanapali_data = {
-+	.client_mask = BIT(PMIC_GLINK_CLIENT_BATT) |
-+		       BIT(PMIC_GLINK_CLIENT_ALTMODE) |
-+		       BIT(PMIC_GLINK_CLIENT_UCSI),
-+};
- 
- static const struct of_device_id pmic_glink_of_match[] = {
--	{ .compatible = "qcom,pmic-glink", .data = &pmic_glink_sm8450_client_mask },
-+	{ .compatible = "qcom,kaanapali-pmic-glink", .data = &pmic_glink_kaanapali_data },
-+	{ .compatible = "qcom,pmic-glink", .data = &pmic_glink_sm8450_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, pmic_glink_of_match);
--- 
-2.34.1
+On 10/16/2025 4:56 PM, Jakub Kicinski wrote:
+> On Thu, 16 Oct 2025 14:37:53 -0700 Jacob Keller wrote:
+>> What version of git are you using? I'm using git v2.51.0 Perhaps this
+>> isn't a b4 or git issue but some other tooling that is causing an issu=
+e
+>> (patchwork?).
+>=20
+> Looks like patchwork, it serves us:
+> https://patchwork.kernel.org/project/netdevbpf/patch/20251015-jk-iwl-ne=
+xt-2025-10-15-v1-6-79c70b9ddab8@intel.com/mbox
+> which has the -- "corrected" to ---
+>=20
 
+That seems like a patchwork issue which should be corrected, in the
+event that someone accidentally or intentionally uses '--' in their
+commit message.
+
+> Doesn't matter all that much cause there are also kdoc issues on
+> patches 4 and 5. Obligatory advertisement:
+> https://github.com/linux-netdev/nipa?tab=3Dreadme-ov-file#running-local=
+ly
+
+=2E_. yep. Turns out our NIPA automation was down while Tony was out and =
+I
+didn't get emails, but didn't think to double check that I got passing
+results either... Hooray.
+
+--------------r87B772jULzg5N34jB7KlZ6E--
+
+--------------Rv5A0aXRuOSXz0TPcY73yllj
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaPGOdgUDAAAAAAAKCRBqll0+bw8o6G/U
+AQC8+AlLOs6IiJSokr9ruDIw9xCIltDWiTzDfAouXjQkKAD/adOax7hyuR6VCnaTTRk+JLoKY3Q9
+NLtexRWjjEdPXAg=
+=C9Ov
+-----END PGP SIGNATURE-----
+
+--------------Rv5A0aXRuOSXz0TPcY73yllj--
 
