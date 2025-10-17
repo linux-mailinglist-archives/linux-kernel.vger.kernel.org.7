@@ -1,214 +1,273 @@
-Return-Path: <linux-kernel+bounces-858965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08CF7BEC5E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:48:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D33BEC624
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 04:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA9464E4473
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:48:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA0FC352C31
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 02:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFC026F296;
-	Sat, 18 Oct 2025 02:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613B626F477;
+	Sat, 18 Oct 2025 02:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARMU9uNV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBJWggKY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE991F3B9E
-	for <linux-kernel@vger.kernel.org>; Sat, 18 Oct 2025 02:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760755707; cv=none; b=iitH15M1sSMX2E8mBoYE+1CgSW3avXbaRiMOAv4cjmOU1EqxP5TwyyIVKCPe+tfftjw1hdwz3tKm3NWkTP6NkFyRIbFtg0t1zryKF9jb2+e++d0G0lUTYESIcIyKjcM7ewpwLnwrXoMaVsRlBBhWcTEkwOUS60RIZUO/kVtv13k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760755707; c=relaxed/simple;
-	bh=tEp8HH2rBzZ9bHQxIDQ0t/JriZ4BYmHaJTITiE1LyPQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z7+gRNFuuvkVX+YsufuJN32oe3yQwOvpDjI4Z3U87L2J16oOoefSRz7JLOLMwiBcgrgWta66pU4eudEZzFww9dI5KcNktPEtHrunsOKxIVh1lOvz82/adteCjhVXwjZopj8EVPWx+myZUcs+7iaHPX+QcDrJUN2LbYrvjfMWgmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARMU9uNV; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC87242D84;
+	Sat, 18 Oct 2025 02:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760756041; cv=fail; b=Q3RbRH2fMZUs1VO6B4b/aF4G+edR5yEw5ShHPaZbVS25TeS/diMzMZlIZBCALp22vidNaUgf9yQruRbW2rmKg5VDwVzr5grEeYLAl499t7DtiWymsWsGGqDiByL1aMugYItxukcSo11ilW8fgxqmJfgBe6TTehaaBIwcmJfN+g0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760756041; c=relaxed/simple;
+	bh=s5IYrQXp1atJgbaCbSgWdI2/dRuhn9v6uaF7UWtmbEo=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XkGZMkRpe6k2HuoonyI8Ev/dwryNlLnmSKXEZA0QcTllldvMrxWAseppO5kvxRYZ9opf8nXcjazEQtpyHdOdR3tzdhfP0NCtxUtrTNlqADGDEKDnsmDobiLX5c1Q10gzql7bhP6EaefFNkbH01jw6fnGDYpr2adHbYKRDvpV0lo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBJWggKY; arc=fail smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760755705; x=1792291705;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=tEp8HH2rBzZ9bHQxIDQ0t/JriZ4BYmHaJTITiE1LyPQ=;
-  b=ARMU9uNVcNGolsG5o0k/qcBXMFdQQzpo6cQnCZqz2hVM6wNSsNpjspv6
-   YP1LpD0hzYbCPaKSaNTkZ9i3lXVJLRfhhId859chPuHdC6rT5g+bcOgy4
-   qz8CYYrbBS453eebYQ2DjZ6WM0mDmVLz4nz+vo+RcqaEnuF+LvbRUL2jx
-   Cy1nWvKkSeiFL04Lx0xMI/Ss66fMGHwV6TG+vo4GeeAZZxW6ZSVALgaTg
-   LWoVwkKwaMJIO9tpncwD7K9FubqPRQ5WkL1c7UwqMxUolIyhN8yKKJw5r
-   HmtQuDGa6z1tK8suAxo6A/P7YMDkc3dvv7cOu9fRucrxU3+R1ddYhy5x+
-   Q==;
-X-CSE-ConnectionGUID: Ciaih6B8SR6fjJnZpbtjbQ==
-X-CSE-MsgGUID: HrnbavuoSZOMC0vY9Nf6lA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62876617"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62876617"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 19:48:25 -0700
-X-CSE-ConnectionGUID: NoGyMQ7ZTdSUCMLtUYDo0g==
-X-CSE-MsgGUID: DQPBNYLuTRa+xl2lmWU85A==
+  t=1760756040; x=1792292040;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=s5IYrQXp1atJgbaCbSgWdI2/dRuhn9v6uaF7UWtmbEo=;
+  b=KBJWggKYWGFA8kDRtdNlDe1L2YvH5YDjI6ZSmi+qpOOfSC7pUNN54H5F
+   /g5A1KHeJbaVTXiBtjnWRshNtauV3aiaihezSO0dv8cUiKT6M7Vpnx8Do
+   OhDEq8QUD/YuTWWGxFgeP3YwwpVFrRuRzAJl9gYcrLEQBClRqvsFnP9ta
+   GwE8FTRIVQf9lcSvf+wMAK5RTSu5VVqf0MEklPOsx5v94cwUG233FDXaz
+   8Ij/Bch96aQewv6ZBIV2D9+fvfFexU3U5AAYyPUzN3OwsBWnPpE45k9Zq
+   JjvDKKfEqVIoWuv2gc16vNevC5Zu9dJThzN9FHOTOocXfhDPmgKqmsMmm
+   A==;
+X-CSE-ConnectionGUID: e7+YLlM0R+qcVl9jrskcBw==
+X-CSE-MsgGUID: TdBPi7qWTCm402aEvOge/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="73572954"
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="73572954"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 19:53:59 -0700
+X-CSE-ConnectionGUID: 8SwYbQmcT3GCqjIITPZh0g==
+X-CSE-MsgGUID: rnCKD1rHQEShFR6pmzUhWw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,237,1754982000"; 
-   d="scan'208";a="182495563"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.125.108.63])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 11:26:03 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Joerg Roedel
- <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
- <robin.murphy@arm.com>, Kevin
- Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>, Vasant Hegde
- <vasant.hegde@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Alistair Popple
- <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, Uladzislau
- Rezki <urezki@gmail.com>, Jean-Philippe Brucker
- <jean-philippe@linaro.org>, Andy
- Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>, David Hildenbrand
- <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R
- .
- Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike
- Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>, Matthew
- Wilcox <willy@infradead.org>, iommu@lists.linux.dev, security@kernel.org,
- x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, "Jiang,
- Dave" <dave.jiang@intel.com>
-Subject: Re: [PATCH v6 0/7] Fix stale IOTLB entries for kernel address space
-In-Reply-To: <c3eee56a-7fe3-454c-878f-cff37467fb7e@intel.com>
-References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
- <20251014174339.c7b7d2cfb9f60d225e4fe5ec@linux-foundation.org>
- <6b187b20-6017-4f85-93ac-529d5df33aa2@linux.intel.com>
- <ecee3200-c8e2-47ec-a219-c88e8e905b32@intel.com>
- <11cad2be-9402-4d45-8d2b-c92d8962edfc@linux.intel.com>
- <20251017140101.GM3901471@nvidia.com>
- <c3eee56a-7fe3-454c-878f-cff37467fb7e@intel.com>
-Date: Fri, 17 Oct 2025 11:26:02 -0700
-Message-ID: <87zf9pjsg5.fsf@intel.com>
+X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
+   d="scan'208";a="188179925"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 19:51:33 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 17 Oct 2025 12:28:23 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 17 Oct 2025 12:28:23 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.37) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 17 Oct 2025 12:28:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bB+cStzQkccpgmXLchqP1yvcoBtSzni7qfPS38IeWFWWvnH3vXLv6Y9zGLKXxDY4XcG+KSx813CjlEZEsXk03B+2WDBSV33+lS2LhBBPb6EjaDfz5UWoP5zKHWCXufza3P/l5XAkfqStaHIPORkkJ9yD1ICBF4k7w2UJ99uocYvP+nbnnZ9EoKUGFK4K9MLCfwKd3NMXKQHUn1iuYVQWHMjGhj5B8JZ9D+MynpnLH4FmBuVVQWpKCbnKHqM5/PlL84rwnIENH/TC3uh1i669fSVyjuzhO30Sb1Jpz+6uYQGHQCXEBsEe9Z8Stw1O0i9Z3acrfaOkwqgJViXOQFZcNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pIZw0tCVTG06wj39SfBIFcx3CX1CKMLo1RyPU9DshYk=;
+ b=s9gUMsS377KvH1xngwz9tg6xksJ4AoiA5kU6kVYiXhSekIDBJiNdGyChTEESvcFZXQmwiE07HAXbkjBn16BnWjuJEPg5aPhC4+qbVdDBXbt78810mGz4/sHhxn9X+1yPBKR6HQ6iTUqemF+DT7veld3hEPgHLHYExTlKTXlrQcS6BXHyg+OgvKiklGSAnhgaOmA8xQ6oV8IPDW4bKh7yQ1HH35BgbM1vSs9dDt++7LVETeiBNHwK9C2vvpD6viii1VHV51MKdKT/Igb2fhfbOizfKzDZ0NmIXKwqFC4EOCVm+1VjQQvUFSm8Y1EK8zC6dugt+bXqWPoTn6OZvBdb7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7997.namprd11.prod.outlook.com (2603:10b6:8:125::14)
+ by DS0PR11MB8082.namprd11.prod.outlook.com (2603:10b6:8:157::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 19:28:18 +0000
+Received: from DS0PR11MB7997.namprd11.prod.outlook.com
+ ([fe80::9105:2b7c:b256:7a6c]) by DS0PR11MB7997.namprd11.prod.outlook.com
+ ([fe80::9105:2b7c:b256:7a6c%7]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
+ 19:28:18 +0000
+Message-ID: <cb92cd41-b5bc-4aa1-9cef-f2e73bc05d03@intel.com>
+Date: Fri, 17 Oct 2025 12:28:15 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 05/15] x86/cpu: Defer CR pinning enforcement until
+ late_initcall()
+Content-Language: en-US
+To: <x86@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Kees Cook <kees@kernel.org>
+CC: Jonathan Corbet <corbet@lwn.net>, "H . Peter Anvin" <hpa@zytor.com>, "Andy
+ Lutomirski" <luto@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, "Kirill A
+ . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse
+	<dwmw@amazon.co.uk>, Sean Christopherson <seanjc@google.com>, Vegard Nossum
+	<vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, "David
+ Laight" <david.laight.linux@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, Tony Luck <tony.luck@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>
+References: <20251007065119.148605-1-sohil.mehta@intel.com>
+ <20251007065119.148605-6-sohil.mehta@intel.com>
+From: Sohil Mehta <sohil.mehta@intel.com>
+In-Reply-To: <20251007065119.148605-6-sohil.mehta@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR05CA0008.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::13) To DS0PR11MB7997.namprd11.prod.outlook.com
+ (2603:10b6:8:125::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7997:EE_|DS0PR11MB8082:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce86b25a-355f-470f-e515-08de0db35365
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZVVXdUJDMDFXLzU0aGYyUzFXTnRaT2RSaXFEbjhSaW1pcFFvWU5FcHNWQW9o?=
+ =?utf-8?B?UEdkb0I5ZGREY0ttNWtnRExQZDQ4UHRWeXVKN3VUaWtmREh2WjVyd1c3SERa?=
+ =?utf-8?B?bGRtRGd3YktEVHRsZThWMEhiMHdtQVVFRHlYZGtLVDh1bTB3Mnc1UGUwU21D?=
+ =?utf-8?B?RUV5NDEwUUNxdW55NjhqRjFXYm1zTGhyNVF3aU1Wc2d2dUFkNUNwWnZQcDlM?=
+ =?utf-8?B?Uy9SVDY3Q01xSS8xTVRyVTNaS1FDamxZMkdOMEJiaW0zTnVxRGVSRjRHc0VT?=
+ =?utf-8?B?MlZaZUNIMEEydkhLb2tLdHhkQyt4U05BbDBoNndrdHJpZ3BLZmdBQmd3YktF?=
+ =?utf-8?B?ZXRHRFd1SzhFTzhmOXEvOU5ZZ0RoL2t1RGozVCtlY2FpTnpFOENKUkdVem1r?=
+ =?utf-8?B?S2wwNVR5RXRsN2tBMnRweFJoSmZuQ0E2OWNVOFMzWndoTnZIaFg4Wno5Q3BC?=
+ =?utf-8?B?QUFOcjROL2o0ODJSYStmSDNlNEY2S2xRVGlWZFo3OU5ZVjFkditYT3lRcmlp?=
+ =?utf-8?B?K0dQQUJYRC9TUlltbTJBUE9xeDExYUpYSnRHM21sbUtydjFyMjJXZEdMTnZW?=
+ =?utf-8?B?RkJBUTNlbXgyTzVINURpNkUzUSsxMWxGU0MzY3BzMlZLWWtlVitwVDJCcENF?=
+ =?utf-8?B?MWtuWUUxT1BZL2piZkxiMG45Znc5eWVDL3FsKzRPOVFTZ0Q2Mk1valNuMm1h?=
+ =?utf-8?B?RTR2RVI0VnZPQmZNbFBSTHFNazRyZHZOVzVhK01VSTFFcTlGK2tqcnBIYzMz?=
+ =?utf-8?B?WmY1ZStjQ2NRTUlDd3lSZUpCRHJrelJzaUNkWU5selkrY1ZuMG04Qkwvc0Zx?=
+ =?utf-8?B?Sk5hQUg3Y1MvaWRpQ3E2b0dibnAvZTFTWmhxYTFMUU5DMFZBdHhONkVZQTNm?=
+ =?utf-8?B?Q2RraE9ZemJjb21wRyt1dkpoQTFMT2lLOWZxZVBRNklMdjN6S25UYUs0MGZ6?=
+ =?utf-8?B?QnJDQnpibnYzTWY4eDBhb0pOMXVvazR6UXdJVFQxcUJVdDdJQWsxSWIvdEZy?=
+ =?utf-8?B?QnhWNTNwdXR5aEVodU92ejg0d1JlUkI2b3hKRms3MlQxZkVMaUNZY3JGcEZ0?=
+ =?utf-8?B?UUxpN1FqQUNDQUt6WVBielJyNXBKaHQ1Y05PLythOENRMVVDQW9yK0ZqNHNh?=
+ =?utf-8?B?VUhyaDU3dnYvaENoTVJOemZ2SDJQRFVzVXdxL0pvcXV5ZDdZS0hOejJOcUhY?=
+ =?utf-8?B?VVlodWNCa2pqVGZ1NTYvczBzeFRWOEEwek4xU2tHU01JRlR2VGlXWVVleFdw?=
+ =?utf-8?B?bkRGNTRZRy9kYk1YTkpDRWNWYmM3T24xbE9Dbko1KzIxL3RnZzU0aWV1Yko0?=
+ =?utf-8?B?UWwzY1BaMlJ1Y0R2T3MxUXRpbXdJZ3NOeU5nRXVZbFpFclErU1JDUXZvL3Vn?=
+ =?utf-8?B?UVRYTm5Ld0dIdHpveWkrb0RSVFZBTWl2RER3MXlQWWtxUk9SK2M2ZVMreFVp?=
+ =?utf-8?B?ZGtWNDloTnR6ckZ4THhLK0E0WTU5YTQ0bEVDTWhkRFgxMUlZOGdxaXFSTmho?=
+ =?utf-8?B?U1NEZDZrQ1h5VUY3b3BMclp0NWNrWVBrbmJvMTFIS1pSMHkwSjlRdmNiMDRH?=
+ =?utf-8?B?cVV1K0E2SHVLZjA5Y3JwM3J2dWhrZWFYdTNnTUMvUWNTaXNqS0NmUElldWIr?=
+ =?utf-8?B?VzVDMTJ2cVMxMVFkdVA5TmlLMWpEMUxFSWluVHhuUXF1NExHT1FEb1pUL0Mv?=
+ =?utf-8?B?ZkJOWXVFRFBlUzc4Y21PQ0orbVYxOXRJc0Jsd1NZeGt6Z1YyejlMazBKMkcy?=
+ =?utf-8?B?ZHRJZnJUaUdIUXdGUmhzeDBhQ0owYTZqblFVZ1VNVlBvOTlaYURNbnNWUy90?=
+ =?utf-8?B?MzEweTREVXRMblRKRHNld1pidDdRVW9Ob3U0K28vbGhwU0JrZmV4NExVV2ZY?=
+ =?utf-8?B?aXpMTExvOEpKVTBZVXF4RHlLZm5seWM1SjJGWXNHZXBEcnhUQ1VkSk5zWTE2?=
+ =?utf-8?Q?SEUIu2znG7DjEkQTraT5cAcVe+xshfEX?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7997.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b1pzbzNEcHJNckR2dXRybHVxL0hWQUVodTArWnpwL0xjK1lEUDltOUhUTXM1?=
+ =?utf-8?B?dG1FOUYyOXRJdlBaaDViajNMSlFNYWNqZUdxOS9BQ2E0TVdienNXbytMcTBE?=
+ =?utf-8?B?UVlvYm5ndUxNdUNmSUtDTnl0R05RNmhtTWZRQmhWbXBNSmJmaE9VeUo0NDJq?=
+ =?utf-8?B?VEs2WFdZZGlaTUZVRXFJRU4xQUFUVDdkNVJ6cEYzK3prU28yeU1mR3lmQlJT?=
+ =?utf-8?B?VjQ2emsxUGNhY2xpNE1haXo0eDZ4Vlc1UlNQb004d2FTNmtQeWUzb0pxd0xr?=
+ =?utf-8?B?dkxXRDNmMDVKZldwZ01qZ0JzQjNMd3FyRXhFOVBBSmNRR0NkTmtaa05TODJa?=
+ =?utf-8?B?bDBzL0l0eWdWWXJzZzUvbk1tRkpVT2ZYUER0SXVwSm0vSVY3M09HNmI4S3Vy?=
+ =?utf-8?B?WkkycXZraFU1NnNkRHpJdnI3R3Z5OTFOMGE3b3hkbXFFTzlHSWlKVDZPQmc0?=
+ =?utf-8?B?a1FncnU2OU8vS2JYVWlZbUUvaEJNMUhVUUc5OElKUHpTVHVsS1ZZUkNXSm5h?=
+ =?utf-8?B?K21rU3ZLWmhuV1ZKVDFOZFRDVnV2NVNSU0xHZEY4T0dGZGRyRCtCc1c4ZURN?=
+ =?utf-8?B?aEQ2VkFHV0lZSFA0c2lPQ2xEV0NzY0Zma1Y3RDNYNWIwSHE3cng1K0p0bjFq?=
+ =?utf-8?B?eWg1czRqdXUveTM1QUJvS2p3aVQvMmEyRWlBc3lCeTcyQ25uYkRTQXV2Nkg3?=
+ =?utf-8?B?RGYwZElBSXI4RjVGVkN5M25ZeldsblpsWEdEL0M0M0Q1Y2VGbVNuNDJ5UTZu?=
+ =?utf-8?B?akZrNUFUT2N0SlhKTFRMVmNpSnJnZzc3UmhicmNqSUFBdG5jTis3RnJ1U0JF?=
+ =?utf-8?B?cFlmeVRGNURQaE42QnBjaUZxMENIS2lLYk1lamczeUh6a1J6ODZHWmRaMGVU?=
+ =?utf-8?B?TUNYWHBYbzZlSmt3Uy9OZjREK1pYbzN6T1BOTm5vQXk0N1JkaDNuR0pjT3Fs?=
+ =?utf-8?B?NW4xL2lDNDR1eXhRN0lzbVhhcmtQSHRITDQ1enlianJPVjB0UmlTNTFzOUhk?=
+ =?utf-8?B?VWxlNjdvWWJidTJQUk1mL3lrajlyU1FnV2xPV0MreVBFTG1FZWpCbWdZOFd0?=
+ =?utf-8?B?SlFKSUxQLzNVOXFFYlROS1lSd0hXZHFZd1RlNE8vZSswLzVXYlNUQ2svQnpm?=
+ =?utf-8?B?SlIveGlLRzdwb0tiNm5KYzc4T1VVa2lOUkVvOVQzTkFOZWZnNmhMa3lOZ0xK?=
+ =?utf-8?B?WVVvZTN6RG4zckU4bUlrb0JpQmhRalY0ZDJNeC9jSlh1WDdXWXBnVnZZOERt?=
+ =?utf-8?B?WXRvY2Y0bFpROFcvT1oxUmVxYlNRSHpxalZaQS9UOVVNYTJqM1NaclF4OG5S?=
+ =?utf-8?B?a3hvWDJicE1MSC9YS04xTCtvSEVjYzIrMWFwanV2VEFsY3RJY0FRZVNDeXpB?=
+ =?utf-8?B?bXRESjk5S0pRUGpMMGtMMEtHYXV6bEFPeTNuRUJVcFB2ZjFVUWRJN1BhNHBD?=
+ =?utf-8?B?d2NNUDAxZmZDZ0MvTC9kV21wRnY4aDExT1dEVmpFRVZwcVdHeVhSQnNhSzRr?=
+ =?utf-8?B?MXZEZjZjdm5nYThKdnE3bWhjUzBYdk9rSTlueWFJUnBHQjc3UmxteWhSbFY2?=
+ =?utf-8?B?UEc4djRmVkFXcVhxck11cTFmVUthQVlxMnJzZDJRZzlUdzZJdWpLY0wyczFD?=
+ =?utf-8?B?bDdRZUdXNENpSFM2bGNzUVI1dXVZTTA2Yk5sY2ZtKzhmVEVHM3lzZjNxZ1J6?=
+ =?utf-8?B?WXFQdEQyNnY4ZTlkYkR3UTN5eG1LVDA3UStOam5kRE56dVlZQXh5SktYN1dY?=
+ =?utf-8?B?WE1yM1pYMUdOSFNCYmNFM1Z3QlhXdHBWQVFxZy9lRGo1NWRBdnl0bERTWVpW?=
+ =?utf-8?B?cUNxK2M4QU01eTVMQW9NUzFNYTFsSXJ3SVgxU2NHSyt3b21ycXZLV1R2bXZJ?=
+ =?utf-8?B?Y1JwV21xRUljeEFUaURVTm9aaXJ6SlBYYkY4QzI1MmhyVU5nWTlvWUZaS2pV?=
+ =?utf-8?B?WElGbGpMeHNDS0haZk5xV1ZuOEZEb3hmdWEwdUUzV1pPZ1Rody9mdHQvTnZn?=
+ =?utf-8?B?dzRjc2U1cVVHdmtlMnFYZEtOUkdVb0RqSlRYWHV1cG9jWG9yMGYwTjFDYWlI?=
+ =?utf-8?B?Qmt6ejJQRWlFVDhXRWl6N3VxZmRYSGxRTVhlYjNRc0RUVUdpaUlKNys1aHRZ?=
+ =?utf-8?Q?wbhqmEtm+f4W10/I01Rrlxm7f?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce86b25a-355f-470f-e515-08de0db35365
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7997.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 19:28:18.5229
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dZh3gKSXrTeCEZET+xmB7txQz5HPBrxDoHOIOaohD36sGq77P4LxcuQHfue3h40etgc7zalwHoHSvXfNLHyXCg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8082
+X-OriginatorOrg: intel.com
 
-Dave Hansen <dave.hansen@intel.com> writes:
+On 10/6/2025 11:51 PM, Sohil Mehta wrote:
+> Save the pinned bits while initializing the boot CPU because they are
+> needed later to program the value on APs when they come up.
+> 
 
-> On 10/17/25 07:01, Jason Gunthorpe wrote:
->>>> The other alternative is to have arch_vmap_pmd_supported() return false
->>>> when SVA is active, or maybe when it's supported on the platform.
->>>>
->>>> Either of those are 10-ish lines of code and easy to backport.
->>> Hi iommu folks, any insights on this?
->> IDK, the only SVA user on x86 I know is IDXD, so if you do the above
->> plan you break IDXD in all stable kernels. Doesn't sound OK?
->
-> Vinicius, any thoughts on this?
->
+Because we are deferring CR pinning, there is no need to program the APs
+with the pinned bits. The pinned bits would get enabled during AP bring
+up like the rest of CR4 features that are not pinned. This patch can be
+simplified to:
 
-This won't break IDXD exactly/totally, it would cause it to be
-impossible for users to create shared DSA/IAA workqueues (which are the
-nicer ones to use), and it will cause the driver to print some not happy
-messages in the kernel logs. The in-kernel users of IDXD (iaa_crypto for
-zswap, for example) will continue to work.
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 61ab332eaf73..d041f04c1969 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -476,8 +476,6 @@ void cr4_init(void)
 
-In short, I am not happy, but I think it's workable, even better if
-there are alternatives in case people complain.
+        if (boot_cpu_has(X86_FEATURE_PCID))
+                cr4 |= X86_CR4_PCIDE;
+-       if (static_branch_likely(&cr_pinning))
+-               cr4 = (cr4 & ~cr4_pinned_mask) | cr4_pinned_bits;
 
-> I'm thinking that even messing with arch_vmap_pmd_supported() would be
-> suboptimal. The easiest thing is to just stick the attached patch in
-> stable kernels and disable SVA at compile time.
->
-> There just aren't enough SVA users out in the wild to justify more
-> complexity than this.
-> diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-> index c9103a6fa06e..0b0e0283994f 100644
-> --- a/arch/x86/entry/vsyscall/vsyscall_64.c
-> +++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-> @@ -124,7 +124,8 @@ bool emulate_vsyscall(unsigned long error_code,
->  	if ((error_code & (X86_PF_WRITE | X86_PF_USER)) != X86_PF_USER)
->  		return false;
->  
-> -	if (!(error_code & X86_PF_INSTR)) {
-> +	/* Avoid emulation unless userspace was executing from vsyscall page: */
-> +	if (address != regs->ip) {
->  		/* Failed vsyscall read */
->  		if (vsyscall_mode == EMULATE)
->  			return false;
-> @@ -136,13 +137,16 @@ bool emulate_vsyscall(unsigned long error_code,
->  		return false;
->  	}
->  
-> +
-> +	/* X86_PF_INSTR is only set when NX is supported: */
-> +	if (cpu_feature_enabled(X86_FEATURE_NX))
-> +		WARN_ON_ONCE(!(error_code & X86_PF_INSTR));
-> +
->  	/*
->  	 * No point in checking CS -- the only way to get here is a user mode
->  	 * trap to a high address, which means that we're in 64-bit user code.
->  	 */
->  
-> -	WARN_ON_ONCE(address != regs->ip);
-> -
->  	if (vsyscall_mode == NONE) {
->  		warn_bad_vsyscall(KERN_INFO, regs,
->  				  "vsyscall attempted with vsyscall=none");
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 39f80111e6f1..e3ce9b0b2447 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -665,6 +665,7 @@ static unsigned long mm_mangle_tif_spec_bits(struct task_struct *next)
->  static void cond_mitigation(struct task_struct *next)
->  {
->  	unsigned long prev_mm, next_mm;
-> +	bool userspace_needs_ibpb = false;
->  
->  	if (!next || !next->mm)
->  		return;
-> @@ -722,7 +723,7 @@ static void cond_mitigation(struct task_struct *next)
->  		 */
->  		if (next_mm != prev_mm &&
->  		    (next_mm | prev_mm) & LAST_USER_MM_IBPB)
-> -			indirect_branch_prediction_barrier();
-> +			userspace_needs_ibpb = true;
->  	}
->  
->  	if (static_branch_unlikely(&switch_mm_always_ibpb)) {
-> @@ -732,9 +733,11 @@ static void cond_mitigation(struct task_struct *next)
->  		 * last on this CPU.
->  		 */
->  		if ((prev_mm & ~LAST_USER_MM_SPEC_MASK) != (unsigned long)next->mm)
-> -			indirect_branch_prediction_barrier();
-> +			userspace_needs_ibpb = true;
->  	}
->  
-> +	this_cpu_write(x86_ibpb_exit_to_user, userspace_needs_ibpb);
-> +
->  	if (static_branch_unlikely(&switch_mm_cond_l1d_flush)) {
->  		/*
->  		 * Flush L1D when the outgoing task requested it and/or
-> diff --git a/drivers/iommu/intel/Kconfig b/drivers/iommu/intel/Kconfig
-> index f2f538c70650..a5d66bfd9e50 100644
-> --- a/drivers/iommu/intel/Kconfig
-> +++ b/drivers/iommu/intel/Kconfig
-> @@ -48,7 +48,10 @@ config INTEL_IOMMU_DEBUGFS
->  
->  config INTEL_IOMMU_SVM
->  	bool "Support for Shared Virtual Memory with Intel IOMMU"
-> -	depends on X86_64
-> +	# The kernel does not invalidate IOTLB entries when freeing
-> +	# kernel page tables. This can lead to IOMMUs walking (and
-> +	# writing to) CPU page tables after they are freed.
-> +	depends on BROKEN
->  	select MMU_NOTIFIER
->  	select IOMMU_SVA
->  	help
+        __write_cr4(cr4);
 
--- 
-Vinicius
+@@ -486,15 +484,17 @@ void cr4_init(void)
+ }
+
+ /*
+- * Once CPU feature detection is finished (and boot params have been
+- * parsed), record any of the sensitive CR bits that are set, and
+- * enable CR pinning.
++ * Before userspace starts, record any of the sensitive CR bits that
++ * are set, and enable CR pinning.
+  */
+-static void __init setup_cr_pinning(void)
++static int __init setup_cr_pinning(void)
+ {
+        cr4_pinned_bits = this_cpu_read(cpu_tlbstate.cr4) & cr4_pinned_mask;
+        static_key_enable(&cr_pinning.key);
++
++       return 0;
+ }
++late_initcall(setup_cr_pinning);
+
+ static __init int x86_nofsgsbase_setup(char *arg)
+ {
+@@ -2119,7 +2119,6 @@ static __init void identify_boot_cpu(void)
+        enable_sep_cpu();
+ #endif
+        cpu_detect_tlb(&boot_cpu_data);
+-       setup_cr_pinning();
+
+        tsx_init();
+        tdx_init();
+
 
