@@ -1,85 +1,171 @@
-Return-Path: <linux-kernel+bounces-857306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F703BE6775
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:48:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490D3BE67C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2E2D4F1680
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:48:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89D4B4FDB0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ED330DD35;
-	Fri, 17 Oct 2025 05:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B136E30BB9A;
+	Fri, 17 Oct 2025 05:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pvZJcKRr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="leproxXA"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671492BCF46;
-	Fri, 17 Oct 2025 05:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492BC213E6A
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760680091; cv=none; b=lSfC0o0M/i6lhM+lONIIY4kj6MppaMdWixoPJV4/rnwka71FIv0HHN8iL1PiFm1WXF80j5a55dLnFmZAIreIbG2eSsUWUiNA+RfjNgMoU0U4y4/LmZTquGeXVLEgJ1IApaSNqK9284za+gAQJlfCrxi9DuNYwjF4n5+lXy0ysjM=
+	t=1760680276; cv=none; b=VXqPZfz/sJdw3q0/oygMLjzMzz3Ri24KPopZymAGJVyHdbRI8IyG2XKh2owgfzIfNxXBGFJ4Iqpc4pGvwZk8IIiC1tvMPaMYd8Q4E16z8LqSMvxolJ5K18h8eeJuGmDGjg/p7M+ixTfye7SymBqETUAHAiismdPfxvk4i3Mp6J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760680091; c=relaxed/simple;
-	bh=/D1xjtDE7vt7S5YR0II2CgOu0uNUMXVLlv+mb6ExZyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlkoXLjh4Kkw2/I6mErPZz1BeOmTrT74hLimQDVV9/XCnItsXZM5rmRLjfliIhPd/hkgkAUvohIeP6vNE6wTQ4xc/37LEJiXuv0R7QYIgyfbusqI7VaYuVVvTAqmoASgEl1DwT6rIbs29NMlBXS6I1994ligOixrqNgP7w4X8HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pvZJcKRr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ui64RbRW2HAd1Vvnb+lfM4MFFsBWBkv2XNTXAnl7Z+I=; b=pvZJcKRrTqxh2ccjM6RYNmFEqz
-	s4MwnQtEIUwXGvBypXxd8uLDtB9mNFW4/7W0St7m3tQ0TOJEbE+4GMUiZVlSakxzsOTMaMCxSyBkg
-	txN2Euiq4iTEbZ4R2ZF83xy7vjmLzK7WhVXJ7blfpKTg2Is+JEcGfzx+qKOiY49kCaG7Tv9y+Y/e9
-	4KEF8L+RkAb4t8acPS7mKhDMyd68vwxvL3hMq1M9mCIrGqqikN5zK/vVrHt4KYLw3XlUHKhiHhkDp
-	ATyrlj5aXurlZMY+3PzFrN6UXftXV5PrC0p7+w2ltMa/4gXcnfs7oUV+ox56K6PupDJu1aRuNHIxr
-	1oQt19bA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9dJv-00000006eV8-2qly;
-	Fri, 17 Oct 2025 05:48:07 +0000
-Date: Thu, 16 Oct 2025 22:48:07 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Carlos Maiolino <cem@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	Oleksandr Natalenko <oleksandr@natalenko.name>,
-	Pavel Reichl <preichl@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH 4/3] xfs: fix locking in xchk_nlinks_collect_dir
-Message-ID: <aPHYl6uFyxQjhwP5@infradead.org>
-References: <20251015050133.GV6188@frogsfrogsfrogs>
- <20251016162520.GB3356773@frogsfrogsfrogs>
+	s=arc-20240116; t=1760680276; c=relaxed/simple;
+	bh=13KaXPPBpbfcG6C8nBRjdaf4oecJDmYDO7c9uepKSiE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IAqkl5GyykcA1y3+1W7I5KOaAcxuMw2T4dEo+Jsqn4hHSW0nkAHYc/ukhwYAk7bk69uZfTVSn4UdR38b48/Hy6ED0umU4wUTrcUoOBwlTfjyy2ReRTfG5UjjdxWQ1RINs2gHfgLW3La7bD4KGndRzE68V2GEE/iZR5/PCT0sjWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=leproxXA; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-332560b7171so2568435a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760680274; x=1761285074; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ehYGuUNYau4pdQan1QOF5/3bIPq29aJSlHS/4iCE5o=;
+        b=leproxXArdzVgcOAox240/ISo8GzS2a9RUTRCqJ7mEQ43Wyo2yAZSusg3tScp5mOGD
+         Y1pO83PYtShvug1kou5dlutUOtuKw8HNdO1kTKaL6iP4uK4gc9RQRYX8cRtNgO2FN4V+
+         fzXGSoQvO3I5A7arscY+fj13hWp+Wv7CEOzPPTcGnKLM2HTYMPiGVLDpwNu93eU/iZdu
+         1zXwBy0VwsaCmHacWIjokno5ttLWyQPUEQ2OriBXsuCzWgU5r8TKMb2oBvJleW0Jimxi
+         6f8NOhPPaRk5gyLkI2Q9sn2gOeV1mxq733Mf9VYT5SwWMVzJ+b9JV7GwKjZfb7oIy9fK
+         k2VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760680274; x=1761285074;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ehYGuUNYau4pdQan1QOF5/3bIPq29aJSlHS/4iCE5o=;
+        b=GLRnnifEcawnZYPjZpNfuz4Y3o57VlI1WjjftqN9xioa0dxC5rkl2eDzBWkNVOyHRq
+         urXqNX3m+WxcgajEp3MzIF11vAl4sVxTlP0NCjCEL/gu0LAwHm+kwtke34s/XVhDOhUC
+         q+rtQAEoMJWArIEGEkfZ0/x8GXwUJrV9xaxs0skUi55OibY0OmtNNJZZMZxzePsS8L3/
+         HEqQ2xMguF1FUMHXeuYPvGn01tPaQSFRVGO1auoS8XzkVqsznJtRF9hrAmjvsUIVE9fx
+         /fBjpCM6e25aadvra2UmGpZNbObWuafQVIwQcTl7eilCoi6yeHfKEGwh9U7RP5HNy/A0
+         j/lw==
+X-Forwarded-Encrypted: i=1; AJvYcCXX5kIc9rEDgiMyd28tY448hjrEeLudLlzU7zODUtEmmJfzyy3JA6qicfJtVZ5kkiBBc4uNulU45GIoaL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyed0TZhDzPUMfxbx+RYX7iKSaJOgQSqb2MpQ03etXzouW0IJlB
+	Vb92lYpvdVE3aT2ITsrQvklOHIlEVUdt+rkzimpclhCetWgcjGKyyYT04sAfCpGITfRbuaTBx8m
+	Uo+rGZQ==
+X-Google-Smtp-Source: AGHT+IF/lzWram1mWybPkde6TISe124U50FS51hqLQw7Zc7FZYIDpxH+DNi5gWGs/h3xtwwt9cS60OYOz6I=
+X-Received: from pjbse5.prod.google.com ([2002:a17:90b:5185:b0:33b:51fe:1a88])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc4:b0:32e:716d:4d2b
+ with SMTP id 98e67ed59e1d1-33bc9b77638mr3445872a91.3.1760680273652; Thu, 16
+ Oct 2025 22:51:13 -0700 (PDT)
+Date: Fri, 17 Oct 2025 05:48:50 +0000
+In-Reply-To: <20251017024827.3137512-1-wangliang74@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016162520.GB3356773@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+References: <20251017024827.3137512-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251017055106.3603987-1-kuniyu@google.com>
+Subject: Re: [PATCH net v2] net/smc: fix general protection fault in __smc_diag_dump
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: wangliang74@huawei.com
+Cc: alibuda@linux.alibaba.com, davem@davemloft.net, dust.li@linux.alibaba.com, 
+	edumazet@google.com, guwen@linux.alibaba.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-s390@vger.kernel.org, mjambigi@linux.ibm.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sidraya@linux.ibm.com, tonylu@linux.alibaba.com, 
+	wenjia@linux.ibm.com, yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
+	Kuniyuki Iwashima <kuniyu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> +static uint
-> +xchk_nlinks_ilock_dir(
-> +	struct xfs_inode	*ip)
-> +{
-> +	uint			lock_mode = XFS_ILOCK_SHARED;
-> +
-> +	if (xfs_need_iread_extents(&ip->i_df))
-> +		lock_mode = XFS_ILOCK_EXCL;
-> +
-> +	if (xfs_has_parent(ip->i_mount) && xfs_inode_has_attr_fork(ip) &&
-> +	    xfs_need_iread_extents(&ip->i_af))
-> +		lock_mode = XFS_ILOCK_EXCL;
+From: Wang Liang <wangliang74@huawei.com>
+Date: Fri, 17 Oct 2025 10:48:27 +0800
+> The syzbot report a crash:
+> 
+>   Oops: general protection fault, probably for non-canonical address 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
+>   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead0000001f]
+>   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PREEMPT(full)
+>   Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+>   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+>   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c:89
+>   Call Trace:
+>    <TASK>
+>    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+>    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+>    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
+>    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
+>    netlink_dump_start include/linux/netlink.h:341 [inline]
+>    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
+>    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+>    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
+>    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+>    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+>    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+>    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+>    sock_sendmsg_nosec net/socket.c:714 [inline]
+>    __sock_sendmsg net/socket.c:729 [inline]
+>    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
+>    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
+>    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
+>    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>    </TASK>
+> 
+> The process like this:
+> 
+>                (CPU1)              |             (CPU2)
+>   ---------------------------------|-------------------------------
+>   inet_create()                    |
+>     // init clcsock to NULL        |
+>     sk = sk_alloc()                |
+>                                    |
+>     // unexpectedly change clcsock |
+>     inet_init_csk_locks()          |
+>                                    |
+>     // add sk to hash table        |
+>     smc_inet_init_sock()           |
+>       smc_sk_init()                |
+>         smc_hash_sk()              |
+>                                    | // traverse the hash table
+>                                    | smc_diag_dump_proto
+>                                    |   __smc_diag_dump()
+>                                    |     // visit wrong clcsock
+>                                    |     smc_diag_msg_common_fill()
+>     // alloc clcsock               |
+>     smc_create_clcsk               |
+>       sock_create_kern             |
+> 
+> With CONFIG_DEBUG_LOCK_ALLOC=y, the smc->clcsock is unexpectedly changed
+> in inet_init_csk_locks(). The INET_PROTOSW_ICSK flag is no need by smc,
+> just remove it.
+> 
+> After removing the INET_PROTOSW_ICSK flag, this patch alse revert
+> commit 6fd27ea183c2 ("net/smc: fix lacks of icsk_syn_mss with IPPROTO_SMC")
+> to avoid casting smc_sock to inet_connection_sock.
+> 
+> Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
+> Tested-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
 
-Please add a comment explaining the need for the conditions, this is too
-much black magic otherwise.
+nit: looks like this diff is not tested by syzbot, you may
+want to send diff to syzbot.
 
+
+> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+
+Change itself looks good.
+
+Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+
+Thanks!
 
