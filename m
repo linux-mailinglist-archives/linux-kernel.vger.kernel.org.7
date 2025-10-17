@@ -1,149 +1,225 @@
-Return-Path: <linux-kernel+bounces-857758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B6FBE7E0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:47:08 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36465BE7E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BBE189CD9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:47:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AEEC035C868
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0532D239B;
-	Fri, 17 Oct 2025 09:47:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E072192D68
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B138B2D662F;
+	Fri, 17 Oct 2025 09:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdMMJD97"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBE7222582
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760694422; cv=none; b=SzeORKXPn8ydWOBXLBDDx+u7hQTDAqQLEZe1Lu2lEd/O+1F6OpozbeceHxko5PpFTlYKiYhaF/t1J82TGQ2bxjXTK949pn47kHG243Z8FXoUNG8ZQ46AjUDzU32W3CCd93DSPWpGypleSb2ePb674iopjw/+7bMzZgOxdyvxjdA=
+	t=1760694433; cv=none; b=dd4iSg6yxWpteUeGK9PwGm8b7/p2zq/3DHTR2zh53R5862HYPhdy2p3Q6O5aNCsU14ExVbpExifMVntY/jkLdKxqrxjahjhOZyXKg29YMH00EgvdqAtu0m04dDXBmqOxkPLC/BCLsLJv85uxupTekw4RgSSFADG89usQHitzTQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760694422; c=relaxed/simple;
-	bh=B/4q+IYEyz3cNALxVED72Rfo8GWvYwBHoxLzYfxvcqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VjdXVl8s0hlYQ/Sr/tl0Qp2KAaAPnDqfxLExCQIshu4rtY7AGyfEo6YXPcHC8ax9+KnyKujnk/L0hVLWqGoQtlStF9QtevbwCE4F9MUV5gUo2dVLd1wxoO6FxzYg8poAY4ZcnW24ezXam9dNTg+mj06d/RsiPwyplG4qg0aG4zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CED71595;
-	Fri, 17 Oct 2025 02:46:46 -0700 (PDT)
-Received: from [10.57.36.33] (unknown [10.57.36.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACB043F66E;
-	Fri, 17 Oct 2025 02:46:51 -0700 (PDT)
-Message-ID: <1849523e-fff1-40e3-9d96-ae389cca6078@arm.com>
-Date: Fri, 17 Oct 2025 11:46:49 +0200
+	s=arc-20240116; t=1760694433; c=relaxed/simple;
+	bh=HDU1FACluX6LCqIfLVToKdMVxXgddwHgsUQEywEtEwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bttkETjpBHZVx7jNPRHtNFNqoUrH4RH9i4mYUYb6vXkBdDVLS7MDiJXnhpLwCERqcqXYIOKoVedScPp2MhPMBViT2xbyjIP7GQFiWXFwEEvSI3liraEuYcQdaCmMT5GOJv7wHMDe9KMkqQSeSL/CdSkstxYkpu2nMuaciHQwoXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdMMJD97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFA2C116D0
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760694432;
+	bh=HDU1FACluX6LCqIfLVToKdMVxXgddwHgsUQEywEtEwU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HdMMJD97cDtRto4/3Mqp8A2yH0kXg+5O2LNBRHNYXRmv1HC0hf0fYXHfddi7IvYEJ
+	 h7r0j5nV2evBXGB0OsrwVK9mOaJAIT/z+iPQe+qxrqOhSWWV3yHO5GNGlORAXdUPoV
+	 ZEsYNIZxLz0MPnhNiPPfPRlSH5RuMTJCtwgNvqsa/8TxcL85FiG+SDILptCYHMYMBn
+	 uCGAG8dTvTg20Qff1lNXlOAZuquXgauTWFSYR4OE20+dOBmTFDQf08buNmXvfOrjdj
+	 /NLdrAYtKr9S6W109qBvrvJ91JiUbe+8EEaQbvdQLhEsxPMwsbjKwCcwfAAKr5/lON
+	 sb8A2R9dE6Big==
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-43f50c2765dso1010803b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:47:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXE+vDJ5P4aPln/tA064MzAS1ckrRCjRfVcW4b5GyZqnIO/ipCqf1EElvTTTtCiUx+pfbBUpWc1iKFfSU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYYMDgV56IRK3zCXPo2X8BcP6q2J4vY7wNIDHyQ2yhS0UHQRbG
+	mcyWJ1n2cWOlWfhdL/qT6dsrpRZ/9jI4MsjsuBdAAxrraYerMzLxR9U/w9AepJObGMPR0fAF0Wl
+	Nx9KetYJsWwMD9luHAThOaWWh2T/9fG8=
+X-Google-Smtp-Source: AGHT+IF6Zim4KFjK/5YwE9BLg4NQGMqj3sOP2xD9ENA7fnIjMq+2fpDogmWr3naNZ7Jjzb62XZWXqD1zoRl37XI46rs=
+X-Received: by 2002:a05:6808:1383:b0:439:b9b3:af48 with SMTP id
+ 5614622812f47-443a3144e71mr1265508b6e.51.1760694432040; Fri, 17 Oct 2025
+ 02:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: Fix UAF race between device unplug and FW
- event processing
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251008105322.4077661-1-ketil.johnsen@arm.com>
- <20251009114531.0e85fa21@fedora>
-Content-Language: en-US
-From: Ketil Johnsen <ketil.johnsen@arm.com>
-In-Reply-To: <20251009114531.0e85fa21@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251016-rneri-wakeup-mailbox-v6-0-40435fb9305e@linux.intel.com> <20251016-rneri-wakeup-mailbox-v6-1-40435fb9305e@linux.intel.com>
+In-Reply-To: <20251016-rneri-wakeup-mailbox-v6-1-40435fb9305e@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 17 Oct 2025 11:46:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iB4iZFs8C6EZayLVPbLz50MJ9GEniSHfbP31-yHRg1Bw@mail.gmail.com>
+X-Gm-Features: AS18NWCpLzOnPH0RKu6aTn1sl9Pr7sXnawYuZXgmcYTVDY3oZ6tv4PUbka5tAd4
+Message-ID: <CAJZ5v0iB4iZFs8C6EZayLVPbLz50MJ9GEniSHfbP31-yHRg1Bw@mail.gmail.com>
+Subject: Re: [PATCH v6 01/10] x86/acpi: Add helper functions to setup and
+ access the wakeup mailbox
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Saurabh Sengar <ssengar@linux.microsoft.com>, 
+	Chris Oo <cho@microsoft.com>, "Kirill A. Shutemov" <kas@kernel.org>, linux-hyperv@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ricardo Neri <ricardo.neri@intel.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/10/2025 11:45, Boris Brezillon wrote:
-> On Wed,  8 Oct 2025 12:53:20 +0200
-> Ketil Johnsen <ketil.johnsen@arm.com> wrote:
-> 
->> The function panthor_fw_unplug() will free the FW memory sections.
->> The problem is that there could still be pending FW events which are yet
->> not handled at this point. process_fw_events_work() can in this case try
->> to access said freed memory.
->>
->> The fix is to stop FW event processing after IRQs are disabled but before
->> the FW memory is freed.
->>
->> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
->> ---
->>   drivers/gpu/drm/panthor/panthor_fw.c    |  3 +++
->>   drivers/gpu/drm/panthor/panthor_sched.c | 12 ++++++++++++
->>   drivers/gpu/drm/panthor/panthor_sched.h |  1 +
->>   3 files changed, 16 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
->> index 9bf06e55eaee..4f393c5cd26f 100644
->> --- a/drivers/gpu/drm/panthor/panthor_fw.c
->> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
->> @@ -1172,6 +1172,9 @@ void panthor_fw_unplug(struct panthor_device *ptdev)
->>   		panthor_fw_stop(ptdev);
->>   	}
->>   
->> +	/* Any pending FW event processing must stop before we free FW memory */
->> +	panthor_sched_stop_fw_events(ptdev);
->> +
->>   	list_for_each_entry(section, &ptdev->fw->sections, node)
->>   		panthor_kernel_bo_destroy(section->mem);
->>   
->> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
->> index 0cc9055f4ee5..d150c8d99432 100644
->> --- a/drivers/gpu/drm/panthor/panthor_sched.c
->> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
->> @@ -1794,6 +1794,18 @@ void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events)
->>   	sched_queue_work(ptdev->scheduler, fw_events);
->>   }
->>   
->> +/**
->> + * panthor_sched_stop_fw_events() - Stop processing FW events.
->> + */
->> +void panthor_sched_stop_fw_events(struct panthor_device *ptdev)
->> +{
->> +	if (!ptdev->scheduler)
->> +		return;
->> +
->> +	atomic_set(&ptdev->scheduler->fw_events, 0);
->> +	cancel_work_sync(&ptdev->scheduler->fw_events_work);
->> +}
-> 
-> Hm, I'd rather have this called from sched_unplug() and then have an
-> extra check in panthor_sched_report_fw_events() to bail out if the
-> scheduler component is no longer functional. This way this helper stays
-> private to panthor_sched.c.
+On Fri, Oct 17, 2025 at 4:48=E2=80=AFAM Ricardo Neri
+<ricardo.neri-calderon@linux.intel.com> wrote:
+>
+> In preparation to move the functionality to wake secondary CPUs up from t=
+he
+> ACPI code, add two helper functions.
+>
+> The function acpi_setup_mp_wakeup_mailbox() stores the physical address o=
+f
+> the mailbox and updates the wakeup_secondary_cpu_64() APIC callback.
+>
+> There is a slight change in behavior: now the APIC callback is updated
+> before configuring CPU hotplug offline behavior. This is fine as the APIC
+> callback continues to be updated unconditionally, regardless of the
+> restriction on CPU offlining.
+>
+> The function acpi_madt_multiproc_wakeup_mailbox() returns a pointer to th=
+e
+> mailbox. Use this helper function only in the portions of the code for
+> which the variable acpi_mp_wake_mailbox will be out of scope once it is
+> relocated out of the ACPI directory.
+>
+> The wakeup mailbox is only supported for CONFIG_X86_64 and needed only wi=
+th
+> CONFIG_SMP=3Dy.
+>
+> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-A heads up on this from me:
+This should have been
 
-I found a new race in the driver, somewhat similar to this one, as I was 
-trying your suggested approach here. Simply put, panthor_device_unplug() 
-calls drm_dev_unplug() at a time where there could be a running 
-panthor_device_suspend(). This causes the suspend routine to skip a lot 
-of work, for instance skip sync with running IRQ handlers, and boom, IRQ 
-handlers will access a powered off GPU.
+Acked-by: Rafael J. Wysocki (Intel) <rafael.j.wysocki@intel.com>
 
-I will (most likely) push a v2 with both races fixed, as they both 
-relate to interrupt processing while GPU is off.
+The "(Intel)" part is missing and I omitted it when I sent the tag.
+Sorry for the confusion.
 
-> 
->> +
->>   static const char *fence_get_driver_name(struct dma_fence *fence)
->>   {
->>   	return "panthor";
->> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
->> index f4a475aa34c0..4393599ed330 100644
->> --- a/drivers/gpu/drm/panthor/panthor_sched.h
->> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
->> @@ -51,6 +51,7 @@ void panthor_sched_resume(struct panthor_device *ptdev);
->>   
->>   void panthor_sched_report_mmu_fault(struct panthor_device *ptdev);
->>   void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events);
->> +void panthor_sched_stop_fw_events(struct panthor_device *ptdev);
->>   
->>   void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile);
->>   
-> 
-
+> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> ---
+> Changes since v5:
+>  - Fixed grammar error in the subject of the patch. (Rafael)
+>  - Added Acked-by tag from Rafael. Thanks!
+>  - Added Reviewed-by tag from Dexuan. Thanks!
+>
+> Changes since v4:
+>  - None
+>
+> Changes since v3:
+>  - Squashed the two first patches of the series into one, both introduce
+>    helper functions. (Rafael)
+>  - Renamed setup_mp_wakeup_mailbox() as acpi_setup_mp_wakeup_mailbox().
+>    (Rafael)
+>  - Dropped the function prototype for !CONFIG_X86_64. (Rafael)
+>
+> Changes since v2:
+>  - Introduced this patch.
+>
+> Changes since v1:
+>  - N/A
+> ---
+>  arch/x86/include/asm/smp.h         |  3 +++
+>  arch/x86/kernel/acpi/madt_wakeup.c | 20 +++++++++++++++-----
+>  2 files changed, 18 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+> index 22bfebe6776d..47ac4381a805 100644
+> --- a/arch/x86/include/asm/smp.h
+> +++ b/arch/x86/include/asm/smp.h
+> @@ -149,6 +149,9 @@ static inline struct cpumask *cpu_l2c_shared_mask(int=
+ cpu)
+>         return per_cpu(cpu_l2c_shared_map, cpu);
+>  }
+>
+> +void acpi_setup_mp_wakeup_mailbox(u64 addr);
+> +struct acpi_madt_multiproc_wakeup_mailbox *acpi_get_mp_wakeup_mailbox(vo=
+id);
+> +
+>  #else /* !CONFIG_SMP */
+>  #define wbinvd_on_cpu(cpu)     wbinvd()
+>  static inline void wbinvd_on_all_cpus(void)
+> diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/ma=
+dt_wakeup.c
+> index 6d7603511f52..c3ac5ecf3e7d 100644
+> --- a/arch/x86/kernel/acpi/madt_wakeup.c
+> +++ b/arch/x86/kernel/acpi/madt_wakeup.c
+> @@ -37,6 +37,7 @@ static void acpi_mp_play_dead(void)
+>
+>  static void acpi_mp_cpu_die(unsigned int cpu)
+>  {
+> +       struct acpi_madt_multiproc_wakeup_mailbox *mailbox =3D acpi_get_m=
+p_wakeup_mailbox();
+>         u32 apicid =3D per_cpu(x86_cpu_to_apicid, cpu);
+>         unsigned long timeout;
+>
+> @@ -46,13 +47,13 @@ static void acpi_mp_cpu_die(unsigned int cpu)
+>          *
+>          * BIOS has to clear 'command' field of the mailbox.
+>          */
+> -       acpi_mp_wake_mailbox->apic_id =3D apicid;
+> -       smp_store_release(&acpi_mp_wake_mailbox->command,
+> +       mailbox->apic_id =3D apicid;
+> +       smp_store_release(&mailbox->command,
+>                           ACPI_MP_WAKE_COMMAND_TEST);
+>
+>         /* Don't wait longer than a second. */
+>         timeout =3D USEC_PER_SEC;
+> -       while (READ_ONCE(acpi_mp_wake_mailbox->command) && --timeout)
+> +       while (READ_ONCE(mailbox->command) && --timeout)
+>                 udelay(1);
+>
+>         if (!timeout)
+> @@ -227,7 +228,7 @@ int __init acpi_parse_mp_wake(union acpi_subtable_hea=
+ders *header,
+>
+>         acpi_table_print_madt_entry(&header->common);
+>
+> -       acpi_mp_wake_mailbox_paddr =3D mp_wake->mailbox_address;
+> +       acpi_setup_mp_wakeup_mailbox(mp_wake->mailbox_address);
+>
+>         if (mp_wake->version >=3D ACPI_MADT_MP_WAKEUP_VERSION_V1 &&
+>             mp_wake->header.length >=3D ACPI_MADT_MP_WAKEUP_SIZE_V1) {
+> @@ -243,7 +244,16 @@ int __init acpi_parse_mp_wake(union acpi_subtable_he=
+aders *header,
+>                 acpi_mp_disable_offlining(mp_wake);
+>         }
+>
+> +       return 0;
+> +}
+> +
+> +void __init acpi_setup_mp_wakeup_mailbox(u64 mailbox_paddr)
+> +{
+> +       acpi_mp_wake_mailbox_paddr =3D mailbox_paddr;
+>         apic_update_callback(wakeup_secondary_cpu_64, acpi_wakeup_cpu);
+> +}
+>
+> -       return 0;
+> +struct acpi_madt_multiproc_wakeup_mailbox *acpi_get_mp_wakeup_mailbox(vo=
+id)
+> +{
+> +       return acpi_mp_wake_mailbox;
+>  }
+>
+> --
+> 2.43.0
+>
 
