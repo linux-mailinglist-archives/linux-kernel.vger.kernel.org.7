@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-858556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A7ABEB227
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA0DBEB231
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C6B64ECE9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952057435B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78D132C948;
-	Fri, 17 Oct 2025 17:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A861305E20;
+	Fri, 17 Oct 2025 18:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bb/LqG49"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mrchkv0b"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DA12C21D4
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990F2A1CF;
+	Fri, 17 Oct 2025 18:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760723994; cv=none; b=ZjpkfILxW88RRGOYvhtydI00he156bkqFqKqTAtpZu9DuGpfCKdld4whwjL3qASMwo7JMFUz1hoRZE5iGl0fcgoMkqxOIign6G0UbBsiwahexTtaSF63Iff3sZE/711WZwHatynWvIPhABYd+195ejUUGqtQO0+HuLr4HFxSZQ4=
+	t=1760724035; cv=none; b=XQxQohv7nkp+GmX2g14KB7QbZ4pNkgcqTsNQRyIam8iMRZ0D/RZYMMCgBcmK220rsNujo6TrPwMn2NKm64p/gvPxdBMklkUZTBQMpt6n9PM16MaNzBF9Dw31JY/c/jKQ7q4ZypCOFD4raN3vjiLvkvFYi54uRUgLdRhyWxQucNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760723994; c=relaxed/simple;
-	bh=ZzH+32i9zF1DJuIb4vfgQHzdhY7TJS9MME3F6gVefh4=;
+	s=arc-20240116; t=1760724035; c=relaxed/simple;
+	bh=GZ7v0lVVO4ZixjnVSc9SgJ1rH+QvUcanWIv9AQ5xrxY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgrZMMmam8wbV0oMlEFzG995YngP1am/uGXuz+Bsz+FDLf9FIR8TfXeyqTtrSH5YrY50u0jj3Yi45jeNAB604Iq0Ki2th6JfFGpb2Ao4KBRRkGDcNZes9Rnx5c3+YHg9sytMGfH1i91jt5w2bpWLrHC9cb4ANYXDBPX3B0zl/H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bb/LqG49; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-471005e2ba9so5225e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760723991; x=1761328791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cm/Xe7cjynibkOQ6Px4QnhuGS+eC9ZhGU5GEHOrppAM=;
-        b=bb/LqG49/a3gOCRXMNQTPRI75zkhcmF5MKzUpsZpEBsas7CPLblgZn1h9cuwej7wUH
-         hzJh8VmGMphiOVXyAxVmTHirlbISz/HooRetwBvYxo9vqDP+RfnNJiEFE6h1buN7Zy+F
-         EyVRbLsRGMwigCHXP3DKjrShThuM4xz9dmef4yH17IWf1H3Ez9Yp/T8S7n1NW4aYHzjS
-         SwJ34N4GcVUxZp8fZ1ZKF4G/QHO8e1xxwouIb3BvtOwjMl7wlmOK3u2zrasqYpmpGJkR
-         UafrX24dhtRbRi595TokFrb305ir0SHmOXhJcj7VICk4icy/41eom5GBrJZphNRQ0pVe
-         WvAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760723991; x=1761328791;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cm/Xe7cjynibkOQ6Px4QnhuGS+eC9ZhGU5GEHOrppAM=;
-        b=GjS7DdbI8tA5du/O+LL8bJtrtMYeKaK/8eTD/sIra1tYe4a8lIjvZdMCyTxVZD0Swu
-         ll2fjLGmA+L6vTrRyF/nogepkCD5y11uC5Icsq/Y0CwcvYaehDfe+oCPt4zAsJllcoRl
-         2CDYP8dACTep86Dn1xAilTMHVmB2Q7iZnBXBiqljFyzWnAYUAcgGgTJXpiiTct0MqzVW
-         7o5KfMTG5btd+rMd4xvdNdKh6U1XlX9Wd0SryHWiS10mz1SItCkt3KgVIkYtRuNSxPQ7
-         uBbRdlsAlHFpU0JMoqzga6DwWq8WDzHq77PcHbLCYBA0zfJUhbesYPhBz4n77Ki/7n/Y
-         gs7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVMDk25JXUJTwMgUbSf1jlxKC/7V1rvJZv1l8DH8g/kjCv01qawtMj4PQwQ8/JgFGP7HiQRDBApD9n6H+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2XyBnzKL3VAiqYd1wk1nhL1B1MU+886hkfEVAKDSh501s6QZw
-	ot0cyOhO7tlMc/C2eEMiYczUJuoYS1O0Yk33F9F21gReG4ijUx93kGM55PR2pbl7WA==
-X-Gm-Gg: ASbGncuQeKcovUaXdV0+cAg6nvLVzZXzugqZUmk/E5lOiDhPISK8k4VbUyM1IMl1zI0
-	3/So1Gx+v+EjYWFdG2JfqXRH5J4n7PoGiGjtzIU2eWzFBdHdG4/wRZ/ugZyPsm68T0DAtODZy/F
-	C+mFVlHyGHuMQbzFF9JR5kNavEnHFT7fLuyuB3etegN5q2qv5hYfVaLseK++psWPHcaR6vy+CbM
-	AJX1L0WbKpsvvTUSe189Mkk/sg9p1zMyQT1s/U+X/0fEc2vFFqJZFc4vzieOSTprCvzpgx5LSTl
-	mb9tTp7Mk/JjTodH8ILxNbevzvjeZkl8eUEf6Qe6zmbUkRrQQHEY7P/OHvVIAytaa4rrJb0SXHG
-	nLULFGn9W0nu3zKmoAiFvUcyRF5CJ4qQUeZHai1rMthPg/nb7yHjLSQM/driaTARK4ThFyX4RZ/
-	xzr2p1N+VzJ8SeLzPkFW/0I+ZRbLsM5ks/cHRAgA==
-X-Google-Smtp-Source: AGHT+IE8/FXhVVJrozgI0Wh8A6TqTcaQumti7JajkJKRLGU4JC0DDWkhAHhYmkS9bQHIRIjtvr95Fw==
-X-Received: by 2002:a05:600c:4797:b0:46e:1b09:1cda with SMTP id 5b1f17b1804b1-470ff2e9434mr4517485e9.5.1760723990610;
-        Fri, 17 Oct 2025 10:59:50 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00b988dsm420433f8f.35.2025.10.17.10.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 10:59:49 -0700 (PDT)
-Date: Fri, 17 Oct 2025 17:59:46 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, joro@8bytes.org, praan@google.com
-Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
-Message-ID: <aPKEEuCYbbJbN9Cr@google.com>
-References: <20250929155001.3287719-1-smostafa@google.com>
- <20250929155001.3287719-5-smostafa@google.com>
- <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
- <aO9vI1aEhnyZx1PL@google.com>
- <b48193a4-a37b-41ba-b4ba-8b5c67d812bd@arm.com>
- <20251015151002.GH3938986@ziepe.ca>
- <73a1d5d0-8077-450c-a38f-c1b027088258@arm.com>
- <20251016172524.GN3938986@ziepe.ca>
- <aPI-8YfqC83QlltH@google.com>
- <20251017141312.GP3938986@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qP0uNhWBBNBVZeeR7GIQk80JTuHm/6jB5/02UXJn7M0LLXSP06HUunixhGF+CmaotFxHUyNY6WNlZuzpgnJG5rEG9TFrXe+Grn4qwVh2LtQNV+CeFYBIp3UI5W+W5ZMnQN/JZlCb6zeyQ9Ip0MHr4Nc+7JzeRdUl6ITCJUAkJ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mrchkv0b; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=a8e1nHNRNY+fRq9VzrMFLdqyFf97VXcTRyEF3zJS7I0=; b=mr
+	chkv0beppn3xXjua1HaNtMpoiS4Mz7tbQX9/zDtbcKUM3m/QOpeEzWzDXS9H+8Ss8Nla456Pl1+hb
+	3PJm1IStYj+WRNj48bOZuXq1/SdvzdqkL/qGRKGuFs23XEHfpKF+EFzK7JZvCVpHVjwXvlox/4RXf
+	kUd5U/lPjOhbveg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v9oka-00BJTC-W6; Fri, 17 Oct 2025 20:00:24 +0200
+Date: Fri, 17 Oct 2025 20:00:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next 07/15] net: macb: simplify
+ macb_adj_dma_desc_idx()
+Message-ID: <3a36ff13-893d-429f-b46e-ade24836d27a@lunn.ch>
+References: <20251014-macb-cleanup-v1-0-31cd266e22cd@bootlin.com>
+ <20251014-macb-cleanup-v1-7-31cd266e22cd@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251017141312.GP3938986@ziepe.ca>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014-macb-cleanup-v1-7-31cd266e22cd@bootlin.com>
 
-On Fri, Oct 17, 2025 at 11:13:12AM -0300, Jason Gunthorpe wrote:
-> On Fri, Oct 17, 2025 at 01:04:49PM +0000, Mostafa Saleh wrote:
+On Tue, Oct 14, 2025 at 05:25:08PM +0200, Théo Lebrun wrote:
+> The function body uses a switch statement on bp->hw_dma_cap and handles
+> its four possible values: 0, is_64b, is_ptp, is_64b && is_ptp.
 > 
-> > Is simple enough and verbose and can distinguished from test failures,
-> > it will look like:
-> > [    2.095812]     ok 1 arm_lpae_do_selftests # SKIP Failed to allocated device!
->                    ^^^^^
+> Instead, refactor by noticing that the return value is:
+>    desc_size * MULT
+> with MULT = 3 if is_64b && is_ptp,
+>             2 if is_64b || is_ptp,
+>             1 otherwise.
 > 
-> The test "passed" though, and since we never expect this failure it
-> seems wrong to make it pass.
+> MULT can be expressed as:
+>    1 + is_64b + is_ptp
 > 
-> I think there is no point in distinguishing "infrastructure" from
-> anything else. Either the test runs to completion and does everything,
-> or it fails.
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
 > 
-> The use of skip is for things where we probe something and detect we
-> can't run the test. Like maybe you have a test that relies on
-> PAGE_SIZE=4096, or CONFIG_XX so skip other systems.
-> 
-> While, "I hit an OOM so I skip the test" seems wrong to me. Maybe the
-> OOM was caused by the "unit under test" leaking memory??
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 7f74e280a3351ee7f961ff5ecd9550470b2e68eb..44a411662786ca4f309d6f9389b0d36819fc40ad 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -136,19 +136,13 @@ static unsigned int macb_dma_desc_get_size(struct macb *bp)
+>  static unsigned int macb_adj_dma_desc_idx(struct macb *bp, unsigned int desc_idx)
+>  {
+>  #ifdef MACB_EXT_DESC
+> -	switch (bp->hw_dma_cap) {
+> -	case HW_DMA_CAP_64B:
+> -	case HW_DMA_CAP_PTP:
+> -		desc_idx <<= 1;
+> -		break;
+> -	case HW_DMA_CAP_64B_PTP:
 
-I see, both are fine with me, it seems the kunit maintainer is more
-inclined twords the failure approach [1].
+I _think_ this makes HW_DMA_CAP_64B_PTP unused and it can be removed?
 
-So, I can keep the test failing, is it OK Robin?
-
-[1] https://lore.kernel.org/all/CABVgOS=NfRcXYzJVMMKqeXP8SyTewffwb7vdGN1D8esO2f0KOA@mail.gmail.com/
-
-Thanks,
-Mostafa
-
-> 
-> Jason
+  Andrew
 
