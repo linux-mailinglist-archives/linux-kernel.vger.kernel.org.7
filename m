@@ -1,111 +1,165 @@
-Return-Path: <linux-kernel+bounces-858292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC56BE9D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:27:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF77BE9BB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0330C4FF930
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BC82189126F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F9532C952;
-	Fri, 17 Oct 2025 15:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0795132C958;
+	Fri, 17 Oct 2025 15:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjzG1vrt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQihjODK"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EA31D5CE0;
-	Fri, 17 Oct 2025 15:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D4D289811
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714254; cv=none; b=UqeMbd770WDxvtR71PSPVHjyz22FdS4oGtXZU4MhKa+nJOh2UmfN96pXv8LxOQ79fCJYOeQqLqTAcy/sGsvdz58yff3drMPsp5lJAbTmsltkX4GrZwwgKmv6e/0MS+yXdjZzsxOmMjL3807Vtw/7nLKN7e344B4r929g9TXpsHs=
+	t=1760714336; cv=none; b=YPqjFa+Pj3AxAIwwO9rH/6qP2lbHbVfy4j3uIIbgbfI+KMW28K0iqKlm/3FPeqTII8yZvzHsMKaaAbZfil4fQaoEfgh4yTqamRGtNWShQAGtUvohpDdPUWJdSz6wwjhSZIwH7n4yRu8wct6Q0da6OBbwj2jyWlTU/nHHbH8ycpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714254; c=relaxed/simple;
-	bh=UELNKYaVfuic64Q2TAthiZ0D/w24Xzmlvf+JP/ejdcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgSXQB5iA7wwAfU0cRlxAo+TFJ44pca/zXBlUTK1RtWlEeWhmEfrEWnsiCdGp4FOLmne7kIIQsiXkGwVK1rwl074+XVKLTiPNQOLei1TsnaaDTYUwMQ+NdaSttDxNZNhGXngvPWorS+LB3E0cxJ+CQB5oEHYRhMB4CC97wqqEEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjzG1vrt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C928C4CEFE;
-	Fri, 17 Oct 2025 15:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760714254;
-	bh=UELNKYaVfuic64Q2TAthiZ0D/w24Xzmlvf+JP/ejdcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JjzG1vrtjafVsJEfJLgW80QEFGVUAVTdJGBCdoy+5jZnY1/DFYZz1ByQaK5GWPyhL
-	 Owt/47qNWgZkADS+7hOSY9LtM6z6yBuOM962KpKFSl+8Q7NhYoM4XbY3qzWXE0+iMH
-	 ZA25pMI02VQbRcDl3ro4C+fYfaLkwpRW5Cqea+BhXXz+7838TJUxRvvOxpdXefI3Tn
-	 TCdcgReh80zCu8rkKgQsSKnUmBGSsiS99M8Tt5WJXRuVaLqQfDQToGVKZ7bnbbVNxp
-	 xkKPv2x0O1mOupQSBzoZCfZyfL+jWwqfHCA3E4NmVVhgciMQMiexZ5BWIVBivHqPdu
-	 9dudKMddAEJsg==
-Date: Fri, 17 Oct 2025 20:47:21 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ron Economos <re@w6rz.net>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Conor Dooley <conor@kernel.org>, bhelgaas@google.com, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv <linux-riscv@lists.infradead.org>, Paul Walmsley <pjw@kernel.org>, 
-	Greentime Hu <greentime.hu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	regressions@lists.linux.dev
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-Message-ID: <v5ziiexkr5tncfocmxtke52kewdjhaxq3mrz3bh52p35ercjzm@vpxhbsxgnqrc>
-References: <20251013212801.GA865570@bhelgaas>
- <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
- <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
- <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
- <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
- <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
- <18ef2c73-fb10-47b3-838f-bc9d3fd2dbc2@w6rz.net>
- <xfpqp3oign7c3336wxo5yexgitxotttrxgkyzbfknjmfk6pmdc@drsk3ardfl5t>
- <432e4026-208f-459e-82dc-e74ef5da6a87@oss.qualcomm.com>
- <6bf478b8-2194-4ffb-aaac-8e3e314ad71c@w6rz.net>
+	s=arc-20240116; t=1760714336; c=relaxed/simple;
+	bh=CZLi+sXLLQWJ1szeixL4fKYphUAlCf2Ajj9YbKRav30=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u4/iK8LcyS91C5EH8SO4d2q9tQff6Q7eaybTLCLKn4OrPcQ5giVK3XLKfFwJOIKqmrmFd98IRAi0jVTr7dZ5fceH5dAgV6c1buwwMjQcaVYzTUe3x3ph8dMb48MdtPxqR1a7QyMAMelnUN359ey3MC0nZvOgigWiJv1tM0oDD9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQihjODK; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b62fcddfa21so1333928a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760714333; x=1761319133; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aky7O16wp7MCKRn7P+HfqmW9xe7HTb5Qd8ARsCmuj+Y=;
+        b=IQihjODKFDhO4uKpBjb8YYadD7C3UXztk0gWiXd9tErycbns//00PuTNCpryz6fcRi
+         xpszTuHsU56UZy76t5fqLOr+scnOQUvN3EjM/bX6dotEkKrNpXOqb3R6jnqHHNBxn6cr
+         tKVW1p80jRdppKubYJFwXUWxt5ENHdn60h0HXlWfZZzKe1XjAPd80yUUr3FXyWF5fEeg
+         Rq+qIcj0skdnc4Aj/8CS1wwkTi8fxOCZ1HVqr8EvbWpvxnsG+JTqxiLpLNKWJTL1AkPo
+         MoKpgt7E1nrFBy8wgvc/xV2eMdBPTPdkfIv9N8VAMhIHFID8yiYVEumfaqVVGAM71ltS
+         TDAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760714333; x=1761319133;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aky7O16wp7MCKRn7P+HfqmW9xe7HTb5Qd8ARsCmuj+Y=;
+        b=ZbMey1UABpm6XhPUYIxoI33uClVnrJOrbSJPs18ZQ4x3VghRIzx/HIFnk4OFzmKA/B
+         x3KYcQzkF5Cx1Tb1z/S9yeqeLBxGE49jWmZ3Yc7K34OlUprY5z+dbB7ZZMT5aNDooxyd
+         MTE3stOGHDZWxQRfZXvCtuVIjwwJw80rFV/XslfnrvNUiqXCUyM0UCYNzlw/vcuqsiiy
+         CtLkzo7GfZI9tHzUdNgj8mdXv/YNBLsYiQsqMinYp/Ed8NLZiMR8MtN1YePAdr0bkP8u
+         ydgBUDfmueRaFCt72FwHhfII/B6XKSDb5jHbjXmvw9ZaXwESCW0aaWPlgi2qhzeINO8M
+         wkQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbRWPZLrD2AQy0iVM7LrfgbUHNrjtidjMR0eTbqxOhSMwDRKGd6h+K8HErTQBRZkxlP9UO/zJ+TvNzSjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx44Yto1LR+8hZ+etA9lzq+M4HVbtnSlyHmLbcIa4bMynkXH6aK
+	6BobrsMhW5ra2eLVzoWg5cPDOR+jk0a8yu8LgpGbXBlygqtcyc4BOmuT
+X-Gm-Gg: ASbGnct55RKSwqTNgzNATjEaizI37fG8TVM2Fxm/toqFqrTVdLTO37HKeejeKX9smPi
+	fCqY4evpYqyAtng/Nq+4tO2Ndd9y9JCORKHAbBEHfPuejFaUIZP9GoZNfVjJWFmkK2Hr8F8tuaE
+	qASHrNMOOvv1UeApLgR0rjG20Nc5OfQNqefOSoA+S/ZXVvXl7JDZtyX6ViA822ll10exGnBTTQS
+	/yTtAh4aaUKn4ixOFHUygVyAnYDoqQKWBUqpDUuYAC1f6HHfGnxhbPn8+K3t/vqm4gXcO+esJRe
+	lzHm74NI00LnzDPI/vDiajdWzezg7zYVtxXwh5DbmIjfbKnPcXSXQZUQtAbFglcyk3Ea1UdDIWv
+	+QTa5Yc9d9wsSyw+ZA3EhH2gtOzRHWDbZ+9UXnesd8pIArsnSPIDwMQjAG3HD0aOTWG0mIE4Y6y
+	a/KWAVSygYuoSBSd0izluZW7eXgnz4ofN+k4zDhRKaO0E=
+X-Google-Smtp-Source: AGHT+IErUrkf0E6Co1oQ9IYvwro69w/l75nuO5GilwN7XkDgpAP+XCdmvjp8T0T5H471WqUuqlgsOg==
+X-Received: by 2002:a17:903:32c9:b0:249:3efa:3c99 with SMTP id d9443c01a7336-290cba4e6cdmr51489385ad.61.1760714332790;
+        Fri, 17 Oct 2025 08:18:52 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c07:c7d3:fdc9:5e8f:28db:7f80])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a756sm67193955ad.14.2025.10.17.08.18.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 08:18:52 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Paul Barker <paul@pbarker.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/4] net: ravb: Fix SoC-specific configuration and descriptor handling issues
+Date: Fri, 17 Oct 2025 16:18:26 +0100
+Message-ID: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6bf478b8-2194-4ffb-aaac-8e3e314ad71c@w6rz.net>
 
-On Fri, Oct 17, 2025 at 07:21:06AM -0700, Ron Economos wrote:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[...]
+Hi all,
 
-> > Hi Ron,
-> > 
-> > Can you try with this series and let us know if it is helping you or
-> > not.
-> > 
-> > https://lore.kernel.org/all/20251017-ecam_fix-v1-0-f6faa3d0edf3@oss.qualcomm.com/
-> > 
-> > 
-> > - Krishna Chaitanya.
-> 
-> The patch works good. Here's the log of PCI messages.
-> 
-> [    3.221506] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
-> ranges:
-> [    3.221594] fu740-pcie e00000000.pcie:       IO
-> 0x0060080000..0x006008ffff -> 0x0060080000
-> [    3.221658] fu740-pcie e00000000.pcie:      MEM
-> 0x0060090000..0x007fffffff -> 0x0060090000
-> [    3.221696] fu740-pcie e00000000.pcie:      MEM
-> 0x2000000000..0x3fffffffff -> 0x2000000000
-> [    3.221783] fu740-pcie e00000000.pcie: ECAM at [mem
-> 0xdf0000000-0xdffffffff] for [bus 00-ff]
+This series addresses several issues in the Renesas Ethernet AVB (ravb)
+driver related to SoC-specific resource configuration and descriptor
+ordering.
 
-As a nice side effect of the regression fix, your platform is now using ECAM
-mode by default :) Thanks for testing.
+Different Renesas SoCs implement varying numbers of descriptor entries and
+queue capabilities, which were previously hardcoded or misconfigured.
+Additionally, a potential ordering hazard in descriptor setup could cause
+the DMA engine to start prematurely, leading to TX stalls on some
+platforms.
 
-I hope Bjorn will merge this series for 6.18-rcX.
+The series includes the following changes:
 
-- Mani
+Make DBAT entry count configurable per SoC
+The number of descriptor base address table (DBAT) entries is not uniform
+across all SoCs. Pass this information via the hardware info structure and
+allocate resources accordingly.
+
+Allocate correct number of queues based on SoC support
+Use the per-SoC configuration to determine whether a network control queue
+is available, and allocate queues dynamically to match the SoC's
+capability.
+
+Enforce descriptor type ordering to prevent early DMA start
+Ensure proper write ordering of TX descriptor type fields to prevent the
+DMA engine from observing an incomplete descriptor chain. This fixes
+observed TX stalls on RZ/G2L platforms running RT kernels.
+
+All four patches include Fixes tags and should be considered for stable
+backporting.
+
+Tested on R/G1x Gen2, RZ/G2x Gen3 and RZ/G2L family hardware.
+
+Note, I've not added net-next in the subject as these are bug fixes for
+existing functionality.
+
+v1->v2:
+- Split up patch 3/3 from v1 into two separate patches for clarity
+  of using dma_wmb() for enforcing ordering.
+- Updated commit message for patch 3/4
+- Added Reviewed-by tag from Niklas for patches 1 and 2.
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  net: ravb: Make DBAT entry count configurable per-SoC
+  net: ravb: Allocate correct number of queues based on SoC support
+  net: ravb: Enforce descriptor type ordering
+  net: ravb: Ensure memory write completes before ringing TX doorbell
+
+ drivers/net/ethernet/renesas/ravb.h      |  2 +-
+ drivers/net/ethernet/renesas/ravb_main.c | 40 +++++++++++++++++++-----
+ 2 files changed, 34 insertions(+), 8 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
