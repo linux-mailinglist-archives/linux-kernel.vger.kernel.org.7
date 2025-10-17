@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-858672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33516BEB630
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:28:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA79ABEB638
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F4B6E515D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:27:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83A521AE0CBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A1730F7EB;
-	Fri, 17 Oct 2025 19:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A07E2FC86B;
+	Fri, 17 Oct 2025 19:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZRm8HSWQ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="iqEBbqsz"
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F328D33F8A5;
-	Fri, 17 Oct 2025 19:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C911D5ABA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 19:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760729269; cv=none; b=CB7YqO9et1vfG4uyzbNvsHLo9RgSh7FO08W67d4rlaNT6TMYvo7uaIdAyjZYuVuXFKBYZOAd/K8PUOdFw8eGh83yU2Rez6YjFN2376IkfoldQV21G3JelMfgyNxrNLVEHyc5udGA+RBebRvLa0VmHcimmQIKdj9rtm2QOVUXpuw=
+	t=1760729426; cv=none; b=PFMSawmGinvwyvl3epFfGfp+Va3+hKZfWbH/OYVD9SDsmxHo4Dv2v1H4BhvoTKaE5FzuVe0g/ruxzeHC2l1sdySadEswMDDP0pL3fQo3FdI1BcTOIw5fLQfj/+oSjTcTLf8SCn1aKKHrUtoqpuTXD/g9QB46FKsCiQEgLY5fZhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760729269; c=relaxed/simple;
-	bh=mcoBV77KiMRh2mU/rmsiY4X9DXeBVgX4cPU+NVWl+tw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4cc7xMFw4Km91t/mK3rdeflN+IiDRsCcrW5Uh4RuktNAFXrFsSs8pjqbakwo/WXA7S8Sw7YveWkAecZeU/OIOPevp/Zr0HOlfFRjQaaaCff0cQJuTr5N3regXVA/f2JyJZe/6MWD3UsHXK4bquAOxbwK4Fviksum5mvTh/f3eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZRm8HSWQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=U5Ytw4RP5PrcMrnCeeRigKUwGeJ5Azr3SrQLjgFx4k4=; b=ZRm8HSWQtJOLBeP+ciSYefVzWA
-	gtSH7khtTB5h2BtAsFx+OS/infp8XuI/eUjo56YQ66jFO53RvPKCRdvx8QmifOIUeoDaf0//KK+dQ
-	lAGGFYNJyJSnib1bg3mpcDymylQXEbxbHCdKk8LjXdjFpa9wSsvLfq4PScaS9I37W9gpHLee3uNCa
-	F+5ptiIjYikACvk1Pu/vNni04xP0VFDk71R587scN3LB5wpEF4+TH6G56SoBkNr2oC+MmuQA8Gf44
-	klITQjxW0AHSCBNtMu4HpZEW8ZjBo1jHCJsmjMZ0UkuON+3yQ4xnLSMJDsGLwor24A+J4AB5CC3y0
-	zpKkFTeA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9q76-00000008qBs-2RBQ;
-	Fri, 17 Oct 2025 19:27:44 +0000
-Message-ID: <7928c851-649d-47f4-a747-3314c0d45706@infradead.org>
-Date: Fri, 17 Oct 2025 12:27:43 -0700
+	s=arc-20240116; t=1760729426; c=relaxed/simple;
+	bh=6RT3JtlulKLUnhnz8zcUfbFxYUf9YDFWOKriEy8vET8=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=JVh/eCx3YyKrIyTjflThhwyjDMEGdRDN+Bp1Mmd/WcGg++IcWnR5yU9p0A9qVVewwUhHuGvKzr1XxRoGq/y8r7wxb5DCpvaiGB18NQE+Vj0IyzxlqjIoZI49Npswu8f2vdf5qlqXC/VUuhTpp/Wgu04ka8Bu0+0EP9BZ8FBu/1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=iqEBbqsz; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1760729407; x=1760988607;
+	bh=6RT3JtlulKLUnhnz8zcUfbFxYUf9YDFWOKriEy8vET8=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=iqEBbqsz4QPNMGCU8IIU6kwK2HBXxqSIBxFQYQCxyGYCfyh7CIQFz8ShYGDfUwmBb
+	 7/kh/LvqFjkm6zx7KARKmRqO/t6EZdWFZNhtq2u5OW2ESKwbZehY9V33izg7DWr2ip
+	 0nabzjb1Aq9lS2Mz3o+LRJSc+jKqQe19QRIfHdkAbf5JsXpJWlpvXucz8Tj7TKoVtp
+	 qyLsruPbzA3cRRaXkDhaibSj/7mNKRUrTquS6toJtzTcGbqJAsm2sbty0Pm4/GEAk0
+	 yj+VtQIaJr3hdhvIUmIz+PZrnhUrbmsxusJDU38W8GkWYd5pZsLlNYwTIQX6ENlkLo
+	 t8j05ThFZ7D/A==
+Date: Fri, 17 Oct 2025 19:30:01 +0000
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org
+From: Yannis Bolliger <yannis.bolliger@protonmail.com>
+Subject: [PATCH] extcon: usbc-tusb320: Make typec-power-opmode optional
+Message-ID: <aPKZJ6WTZlhSOyST@yaene-desktop>
+Feedback-ID: 22612187:user:proton
+X-Pm-Message-ID: 8b22bec5ec77fd0d754ec66c255469f73072efa4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: trusted-encrypted: fix htmldocs build error
-To: Gopi Krishna Menon <krishnagopi487@gmail.com>, zohar@linux.ibm.com,
- James.Bottomley@HansenPartnership.com, jarkko@kernel.org, corbet@lwn.net,
- Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
- Pankaj Gupta <pankaj.gupta@nxp.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linux.dev, khalid@kernel.org
-References: <20251017181135.354411-1-krishnagopi487@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251017181135.354411-1-krishnagopi487@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Adding patch signers.
+The driver returned an error in the probe function when a usb c
+connector is configured in the DT without a "typec-power-opmode"
+property. This property is used to initialize the CURRENT_MODE_ADVERTISE
+register of the TUSB320, which is unused when operating as a UFP.
+Requiring this property causes unnecessary configuration overhead and
+inconsistency with the USB connector DT bindings, which do not specify
+it as required.
 
-Fixes: 95c46f40aac4 ("docs: trusted-encrypted: trusted-keys as protected keys")
+This change makes typec-power-opmode optional. When the property is not
+present, the driver will skip programming the CURRENT_MODE_ADVERTISE
+register and rely on the hardware default.
 
-although that might not matter if this patch is only in a -next tree.
+Signed-off-by: Yannis Bolliger <yannis.bolliger@protonmail.com>
+---
+ drivers/extcon/extcon-usbc-tusb320.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/extcon/extcon-usbc-tusb320.c b/drivers/extcon/extcon-u=
+sbc-tusb320.c
+index 2eab341de6b7..b8ff91010e63 100644
+--- a/drivers/extcon/extcon-usbc-tusb320.c
++++ b/drivers/extcon/extcon-usbc-tusb320.c
+@@ -454,20 +454,17 @@ static int tusb320_typec_probe(struct i2c_client *cli=
+ent,
+ =09priv->port_type =3D priv->cap.type;
+=20
+ =09/* This goes into register 0x8 field CURRENT_MODE_ADVERTISE */
+-=09ret =3D fwnode_property_read_string(connector, "typec-power-opmode", &c=
+ap_str);
+-=09if (ret)
+-=09=09goto err_put;
+-
+-=09ret =3D typec_find_pwr_opmode(cap_str);
+-=09if (ret < 0)
+-=09=09goto err_put;
+-
+-=09priv->pwr_opmode =3D ret;
+-
+-=09/* Initialize the hardware with the devicetree settings. */
+-=09ret =3D tusb320_set_adv_pwr_mode(priv);
+-=09if (ret)
+-=09=09goto err_put;
++=09if (!fwnode_property_read_string(connector, "typec-power-opmode",
++=09=09=09=09=09 &cap_str)) {
++=09=09ret =3D typec_find_pwr_opmode(cap_str);
++=09=09if (ret < 0)
++=09=09=09goto err_put;
++=09=09priv->pwr_opmode =3D ret;
++=09=09/* Initialize the hardware with the devicetree settings. */
++=09=09ret =3D tusb320_set_adv_pwr_mode(priv);
++=09=09if (ret)
++=09=09=09goto err_put;
++=09}
+=20
+ =09priv->cap.revision=09=09=3D USB_TYPEC_REV_1_1;
+ =09priv->cap.accessory[0]=09=09=3D TYPEC_ACCESSORY_AUDIO;
+--=20
+2.51.0
 
 
-On 10/17/25 11:11 AM, Gopi Krishna Menon wrote:
-> Running "make htmldocs" generates the following build error and
-> warning in trusted-encrypted.rst:
-> 
-> Documentation/security/keys/trusted-encrypted.rst:18: ERROR: Unexpected indentation.
-> Documentation/security/keys/trusted-encrypted.rst:19: WARNING: Block quote ends without a blank line; unexpected unindent.
-> 
-> Add a blank line before bullet list and fix the indentation of text to
-> fix the build error and resolve the warning.
-> 
-> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-> ---
-> 
-> Tested by running "make htmldocs" before and after the change,
-> ensuring that output renders correctly in browsers.
-> 
->  Documentation/security/keys/trusted-encrypted.rst | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-> index 2bcaaa7d119b..eae6a36b1c9a 100644
-> --- a/Documentation/security/keys/trusted-encrypted.rst
-> +++ b/Documentation/security/keys/trusted-encrypted.rst
-> @@ -14,10 +14,11 @@ Trusted Keys as Protected key
->  =============================
->  It is the secure way of keeping the keys in the kernel key-ring as Trusted-Key,
->  such that:
-> +
->  - Key-blob, an encrypted key-data, created to be stored, loaded and seen by
-> -            userspace.
-> +  userspace.
->  - Key-data, the plain-key text in the system memory, to be used by
-> -            kernel space only.
-> +  kernel space only.
->  
->  Though key-data is not accessible to the user-space in plain-text, but it is in
->  plain-text in system memory, when used in kernel space. Even though kernel-space
-
--- 
-~Randy
 
