@@ -1,163 +1,156 @@
-Return-Path: <linux-kernel+bounces-858322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345E5BEA73E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F541BEA983
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB17941741
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED90943FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CF1330B22;
-	Fri, 17 Oct 2025 15:34:57 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86A136CDF5;
+	Fri, 17 Oct 2025 15:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glaN3tjI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20023330B00
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03463335079;
+	Fri, 17 Oct 2025 15:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715297; cv=none; b=qM7thEjG7nDde0DuAQrLR2IZjfBsY1AMdtApwqu4CAsLoyflM3HzdIRsth02wIWhp3FjYncPl+Ma9ugd2SclLjBe6Sx/y14XT3Z+d72oEf3ELKi66RRnJq2ybk1deeQ/9oHFSObaG92uS04Tbb870y9nX67+ciqH0g7EjnKdEzs=
+	t=1760715469; cv=none; b=IJbMOwEjWgV/zM0wz5Ew7u3RD/9eGisjWCFIVvT7H8/Gl/qsrJM0XKpywq/p5BXFJUiB4JRX4gH6zuiP0kaEqz6f8fwtvkfvmNsLud+g+fCfo5v0ev6qAh63LtIqHh0EmL00ZzZPJoJ7ijG03348eQjCmPltL+t0grmqOWVk5cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715297; c=relaxed/simple;
-	bh=mQGMC1kGzNhg+CDr8KB0wyiCAqA5MX1g+2SpQ2e0ZdE=;
+	s=arc-20240116; t=1760715469; c=relaxed/simple;
+	bh=fMtsEtk+yymjMrBDxyIo4cPm8zug+9QHbs06gVATPdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ctvis0vjDhE3cujRqmMRy4mRAmO4kO7lKsWcyGrlzmKNsGQVYjNh9Qq1ein9fe1IYLRC59FDoAil9J1eKfPib33GNyFpxLYakT3LmhbKO19vVgE+sgcMfgu7v2dG90PMOstwC4Mg69axxqihxG7B2WIgo6SIN8eBAyuutgIJhho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9mTc-0007nI-UD; Fri, 17 Oct 2025 17:34:44 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9mTc-00459a-0g;
-	Fri, 17 Oct 2025 17:34:44 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D8AB548938B;
-	Fri, 17 Oct 2025 15:34:43 +0000 (UTC)
-Date: Fri, 17 Oct 2025 17:34:41 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
-	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
- FD is off
-Message-ID: <20251017-fierce-orangutan-of-happiness-180503-mkl@pengutronix.de>
-References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
- <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
- <20251017-determined-jackdaw-of-painting-e2ff64-mkl@pengutronix.de>
- <20251017-bizarre-enchanted-quokka-f3c704-mkl@pengutronix.de>
- <00e3d382-99e7-4b64-955a-cceffe9e471f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKiD/tUm2YUbS67zf8Rn8fV0Xh8Vzm/UDwbwIf6aeJucFQH+jcWx1gflsM4jzAX14EyNl+YlcO4WXJsUQs5/uQ6FsU/ngceD08k4KfMIExa0hZz1iZBDrVHEHK+EgbKaufK4iIkLjWpSmJS8Mof4tHGBC15bH3Rme/0afmXKVRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glaN3tjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517C7C4CEE7;
+	Fri, 17 Oct 2025 15:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760715468;
+	bh=fMtsEtk+yymjMrBDxyIo4cPm8zug+9QHbs06gVATPdw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=glaN3tjI9nSulUo1uDQTr6u/p7SSb0kvNXzx2Zp6DuspOMCnukW5J3S0lElQsi5ps
+	 NU7SnkAchBwn0irmQoYZSIpWoSv+3TbtNt64vMYO481yMyvMPzcpQx5t3VMgHBTJen
+	 yhmZRIYfVW59jRSrc/uakK1ie2xa6NeGwPCM2lcZV0luckrXKLeKBnLy5oZLoxMgeE
+	 nE8tsoajMLfPXrjbX5CC85UtPw+EVov/SnbBeW9yDHk1AvKLpY1AgL8tuGWDaqTD7R
+	 9dIbQtOT1pb+aP2DhguS+sCRD1Zm5OVChREj1YubPcGAhuLirGmqnHkQktgznRurqh
+	 J3MzLTnTQS+bw==
+Date: Fri, 17 Oct 2025 10:37:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Daniel Stone <daniel@fooishbar.org>, Frank Li <Frank.li@nxp.com>,
+	Sui Jingfeng <sui.jingfeng@linux.dev>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 2/2] accel: Add Arm Ethos-U NPU driver
+Message-ID: <20251017153746.GA1579747-robh@kernel.org>
+References: <20251016-ethos-v5-0-ba0aece0a006@kernel.org>
+ <20251016-ethos-v5-2-ba0aece0a006@kernel.org>
+ <aPHhXl6qdU1mMCNt@lstrano-desk.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="azoyov6dmsdpxtxg"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <00e3d382-99e7-4b64-955a-cceffe9e471f@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPHhXl6qdU1mMCNt@lstrano-desk.jf.intel.com>
 
+On Thu, Oct 16, 2025 at 11:25:34PM -0700, Matthew Brost wrote:
+> On Thu, Oct 16, 2025 at 04:06:05PM -0500, Rob Herring (Arm) wrote:
+> > Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
+> > relatively simple interface with single command stream to describe
+> > buffers, operation settings, and network operations. It supports up to 8
+> > memory regions (though no h/w bounds on a region). The Ethos NPUs
+> > are designed to use an SRAM for scratch memory. Region 2 is reserved
+> > for SRAM (like the downstream driver stack and compiler). Userspace
+> > doesn't need access to the SRAM.
 
---azoyov6dmsdpxtxg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
- FD is off
-MIME-Version: 1.0
+Thanks for the review.
 
-On 18.10.2025 00:30:45, Vincent Mailhol wrote:
-> >> What about merging both can_dev_dropped_skb() an
-> >> can_dropped_invalid_skb() in the skb.c, so that there is no stub in the
-> >> header file anymore.
-> >=20
-> > Ouch! Don't do this. We still need can_dropped_invalid_skb() for virtual
-> > interfaces. See commit ae64438be192 ("can: dev: fix skb drop check").
->=20
-> Exactly!
->=20
-> > But then I'm asking: Why is there the difference between virtual and
-> > non-virtual interface in the first place? Can we get rid of it?
->=20
-> The fact is that:
->=20
->   - We need a function for the physical interfaces to check the
->     CAN_CTRLMODE_LISTENONLY, i.e. with an access to struct can_priv.
->=20
->   - We need a similar function but which work for the virtual
->     interfaces which do not have a can_priv member.
->=20
-> So unless we do a major code refactor so that the virtual interfaces,
-> I do not see how we could get rid of it.
+[...]
 
-Ack...There are more interesting/important tasks.
+> > +static struct dma_fence *ethosu_job_run(struct drm_sched_job *sched_job)
+> > +{
+> > +	struct ethosu_job *job = to_ethosu_job(sched_job);
+> > +	struct ethosu_device *dev = job->dev;
+> > +	struct dma_fence *fence = NULL;
+> > +	int ret;
+> > +
+> > +	if (unlikely(job->base.s_fence->finished.error))
+> > +		return NULL;
+> > +
+> > +	fence = ethosu_fence_create(dev);
+> 
+> Another reclaim issue: ethosu_fence_create allocates memory using
+> GFP_KERNEL. Since we're already in the DMA fence signaling path
+> (reclaim), this can lead to a deadlock.
+> 
+> Without too much thought, you likely want to move this allocation to
+> ethosu_job_do_push, but before taking dev->sched_lock or calling
+> drm_sched_job_arm.
+> 
+> We really should fix the DRM scheduler work queue to be tainted with
+> reclaim. If I recall correctly, we'd need to update the work queue
+> layer. Let me look into that—I've seen this type of bug several times,
+> and lockdep should be able to catch it.
 
-> >> Someone (i.e. me) used can_dropped_invalid_skb() in a driver, that mea=
-ns
-> >> the check for CAN_CTRLMODE_LISTENONLY is missing :/ (I'll send a fix).
->=20
-> At least, this does not seem like a security breach like it was the
-> case for the missing net_device_ops->ndo_change_mtu().
->=20
-> > These drivers need this fix:
-> >=20
-> > | drivers/net/can/bxcan.c:845:     if (can_dropped_invalid_skb(ndev, sk=
-b))
-> > | drivers/net/can/esd/esdacc.c:257:        if (can_dropped_invalid_skb(=
-netdev, skb))
-> > | drivers/net/can/rockchip/rockchip_canfd-tx.c:75: if (can_dropped_inva=
-lid_skb(ndev, skb))
->=20
-> Yeah, I think that this is a pitfall, but at the same time, I do not
-> see how to get rid of this can_dev_dropped_skb() and
-> can_dropped_invalid_skb() pair. The best I can think of it to be
-> careful on this problem doing the code review now that we are aware
-> about it.
+Likely the rocket driver suffers from the same issues...
 
-Ack.
+> 
+> > +	if (IS_ERR(fence))
+> > +		return fence;
+> > +
+> > +	if (job->done_fence)
+> > +		dma_fence_put(job->done_fence);
+> > +	job->done_fence = dma_fence_get(fence);
+> > +
+> > +	ret = pm_runtime_get_sync(dev->base.dev);
+> 
+> I haven't looked at your PM design, but this generally looks quite
+> dangerous with respect to reclaim. For example, if your PM resume paths
+> allocate memory or take locks that allocate memory underneath, you're
+> likely to run into issues.
+> 
+> A better approach would be to attach a PM reference to your job upon
+> creation and release it upon job destruction. That would be safer and
+> save you headaches in the long run.
 
-regards,
-Marc
+Our PM is nothing more than clock enable/disable and register init. 
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+If the runtime PM API doesn't work and needs special driver wrappers, 
+then I'm inclined to just not use it and manage clocks directly (as 
+that's all it is doing).
 
---azoyov6dmsdpxtxg
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> This is what we do in Xe [1] [2].
+> 
+> Also, in general, this driver has been reviewed (RB’d), but it's not
+> great that I spotted numerous issues within just five minutes. I suggest
+> taking a step back and thoroughly evaluating everything this driver is
+> doing.
 
------BEGIN PGP SIGNATURE-----
+Well, if it is hard to get simple drivers right, then it's a problem 
+with the subsystem APIs IMO.
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyYg0ACgkQDHRl3/mQ
-kZz+ZggAiUqLfRFBnoDDH33QiFuJ5wr26Ua4KP57M3IomqRYfm1ZZJC+RrgmHq/A
-P6cCL0NykI2rcF7A0AFoxueWBmG+/LsrawdzGVYjetcV0t90V4b9OFHcI1u+RUcv
-wdO/zP5leAm1ngSYhQeU41Z0vwtY695q6zj0lq1+BRxWSHL0YrVCRhylePn2IZxX
-fXss03GpijPqVBZny1FMmIaOf54Goq4Y0JwMFbw+25+K8xsXhVEq+zG9Mt+gcG/z
-7a0bkZb25VFiqS12y5czj+SO8pZLTNschn7CTtKzIXRR/gzvG6tDd4cewk3pmyxf
-kZ4ihIpvH7fZLV++eEMYhENmMTveZw==
-=yXQn
------END PGP SIGNATURE-----
-
---azoyov6dmsdpxtxg--
+Rob
 
