@@ -1,88 +1,53 @@
-Return-Path: <linux-kernel+bounces-858812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62C2BEBEA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:23:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6847BEBEAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 223774E6DA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:23:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62DB54EA3D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4DE2D73B0;
-	Fri, 17 Oct 2025 22:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344822D838E;
+	Fri, 17 Oct 2025 22:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f24F8Ork"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="E3T2gVK1"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4110223710
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8832D6623;
+	Fri, 17 Oct 2025 22:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760739822; cv=none; b=Zz8n2CY3X3RPzFRuZNc92j8puhayqbspvuOBeWEqzt/FjwdifOIeNzH9Lf41WV+/GJs4jSk2oh6iHFRJhS5h5/iKrEwLXjfWEMl7yFNRIUoKmw5jsy2OUvFG0oPWQlB6NvHPHFCjB+Ge/8bCzkubjxC6TZO5BePefJ8WivkFmOQ=
+	t=1760739838; cv=none; b=uqQCbxR/Em7fJriHdvNv0nwkqqPwdQdiNwMTLB1YOmTDmFqPAPFPl4xZc9Fwu8kGn8KA/QXTEpMsE+o+vs05tCqA4R/lWXo4eysE+w4R/xPnTfcROcPr4q1m32Zu8ULJtlAI5EGBYNFDUWscENcVc7qhDH50RuaMkxNqU1E0RXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760739822; c=relaxed/simple;
-	bh=jTj7xqNHkwK0XKRTevJnTx2StPgugAcwWUIPPT3GbPY=;
+	s=arc-20240116; t=1760739838; c=relaxed/simple;
+	bh=k57UuCSMmRlVgop265bhkHiUpcn0On7JMC1T9TCwVVE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPkYSB7WtE8o6+N147L6vYdGg6oFz7i2mO+KhtXHxFBhnXj7Sik6etA9bPFs8MIbMWpR4bqsv6WQu7x6jnfqskuA2fd6iXOE6wzjnp/+cGtAu3ijKcv7N/duB1GaXuc8G+EVtfB3v3F5mW+fcOUrN4qju5t6J4x0pTsD9sRZSW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f24F8Ork; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760739819;
+	 In-Reply-To:Content-Type; b=FwLEYlz9RHDKVFQoPYqI3LvTortAmszQfk50t5qgF7SUwx8ehw0/+48MxrsUP1cVOp4EpNKi07m3rzvZ+bHO02RqY1pKmLwZ3f6Ho/NBiJz3cd1AnT3BFEEv3eEPwHVtSHTyrmcbmRDdGUqh8AlO0vrTKzyfsxpsrmU1/jaMVXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=E3T2gVK1; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 43BAC534114A;
+	Sat, 18 Oct 2025 00:23:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1760739830;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x+dVoUUzmBb0nQ+poBRDWT3Sih6gX5/+Nw8MS974GdY=;
-	b=f24F8OrkdzqevNO/4AlmVC/vK/39SR3bOrYRYyZjXyqN3Z5+ZqeuD9VFW2mlfJGij6DPLD
-	nOhM26lBkbmbzAFgcxufa+4R7nRugJENnyppgNF1WkkiX3xJ5+tLMbeQXF/1F2dB8K1R9z
-	IYhCJ7iEx4qL9hwlod2yDCnhgztGVI4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-339-VIEIv65FPBaxtxV3RG0Odw-1; Fri, 17 Oct 2025 18:23:38 -0400
-X-MC-Unique: VIEIv65FPBaxtxV3RG0Odw-1
-X-Mimecast-MFC-AGG-ID: VIEIv65FPBaxtxV3RG0Odw_1760739817
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-471125c8bc1so28899905e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:23:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760739817; x=1761344617;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x+dVoUUzmBb0nQ+poBRDWT3Sih6gX5/+Nw8MS974GdY=;
-        b=WXh4qUYSZABOzFTCQQ2LO08YMZIuRH0dPiA6IWURiGRmYOleDrbQNvO9wyci/76f4t
-         K7fwho0WTp7ONkCRtfFCzMo+dViW9HAZw6ay103+0yQZtl2/D4Um/ufPzeNI/r0Qwzd4
-         E4yZ7PpgLyqqtveS8Y65IGPYyf9x2lLzIqAB7kP2kG5IN1abgcryDkpn/bhcyy+QtKFa
-         xqVCD4Y58fCkUgOcCgyxuH3lN5BLlpwt7LRHTdrGIvkNRYoWgUtG7CWlNIKu2sw3tA3h
-         aHFL5BlLGwbsHn5OYdOlV/FuKhP4kIBuXxpz6MlptzI5wqAYlbSKRna7Ypcb8d28Onw/
-         C0nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY0DTiqfltTEVcwnoj8ildksVZKDN3E4vHy+P5ZOu74quxKf+TnLcgxIdYYeSunqmx3QqdY6ZHmaQDVKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHDV0gQrnjzKtapsEXsDjFXnE81VM4m/LrntotS4Gf+VX0NGtT
-	wOQanKiZ/U/3/6RPG8X+7n1gmSz1rViVabNi/Bbf55f0EuO2oyetCXn19ORCIEoNBeBpPD7vnJV
-	UZ3bF++V0Qh1RTj/jcZKdQVuLapFrzbZS502pc/279xKDlJVSPyG3mQCoc31gr96v3A==
-X-Gm-Gg: ASbGnct4CJ/pLzFj9RoqyUNX5i4wd4d4SI4126BdEaNun5fpmJQBfki8NJB44PI1f7m
-	ELUFyk3Mb6kCr8XtSjk9AYOHPAmkCL9QJDnjcnKzHlr/Hiidtn3C7XLlmlp2QJQDyzKZDGQAUBH
-	baDlFgrnmLLpB1vZIFHPSa0R3IEZ4AXKPNug4qr5eR6ktfNutkEoxEYiCoycdVL3rcveSXn8pFu
-	TdBHRIgAyTbsW1qXrV2KdW2j9F4ptZcJHE1dIbM27b5+xCFAZy7zV89r3VNgMS32Z5M5MGWMqEx
-	l7t4me66cNPr/7s0wWm45kZiJAeHMcgPe15HDXty5YbQiPaRkkZPacWuAZRUBCVQiOtvitzA2ZF
-	IsMVlpHn4L/7CZHnJ1bISN1/3MugxotLq4PRVpBwbzdNTKCTue/9Q1V6TgordnNZJdKPMdsOwrz
-	C0l8HFNAAMI5DqoiJ42qrZE0wJ1gw=
-X-Received: by 2002:a05:600c:4fc1:b0:471:b5d:2db7 with SMTP id 5b1f17b1804b1-4711790697amr33239545e9.24.1760739817110;
-        Fri, 17 Oct 2025 15:23:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtlt0Ihr/Aaaf0M+Q3hhi1pZYNkt89VmRxQ2siQChpIBmDIjC60WiNcyPKF+UdUFpnxAaGqw==
-X-Received: by 2002:a05:600c:4fc1:b0:471:b5d:2db7 with SMTP id 5b1f17b1804b1-4711790697amr33239455e9.24.1760739816699;
-        Fri, 17 Oct 2025 15:23:36 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a976sm1525851f8f.32.2025.10.17.15.23.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 15:23:35 -0700 (PDT)
-Message-ID: <844af749-374e-49b3-91f0-a72e951981c8@redhat.com>
-Date: Sat, 18 Oct 2025 00:23:34 +0200
+	bh=jD5F/N0KEuXEiVnf+3dquFNXLJT066nqOZL5j3p2oYM=;
+	b=E3T2gVK1YsvGbXnDN5lh57W6h0ytPJAod18QH6IEBIaYvUAQ71uVlARL0IYisb5nffMaMd
+	k1Rrolf2LvYR0jhDO9Q04HPszuH1aQaC1Ygh/Hqo26dBUxTsZ3vTS4Tnd4C8SmsGzSbwtR
+	0VILGHodwl9BnveR8CXmNYDgHd/96Gs=
+Message-ID: <73975160-05db-494c-a7ad-d67422edd69b@ixit.cz>
+Date: Sat, 18 Oct 2025 00:23:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,265 +55,496 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ksm: use range-walk function to jump over holes in
- scan_get_next_rmap_item
-To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Xu Xin <xu.xin16@zte.com.cn>, craftfever <craftfever@airmail.cc>,
- Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251016012236.4189-1-pedrodemargomes@gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for Pixel 3 and Pixel 3
+ XL
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Pundir <amit.pundir@linaro.org>, Casey Connolly <casey@connolly.tech>,
+ Joel Selvaraj <foss@joelselvaraj.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <20251005-pixel-3-v1-0-ab8b85f6133f@ixit.cz>
+ <20251005-pixel-3-v1-2-ab8b85f6133f@ixit.cz>
+ <n4xims4y5sssqxkchg2tikc7idkzds5ru7ayidcgxdfx77je2d@qo34qucbebnn>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251016012236.4189-1-pedrodemargomes@gmail.com>
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <n4xims4y5sssqxkchg2tikc7idkzds5ru7ayidcgxdfx77je2d@qo34qucbebnn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16.10.25 03:22, Pedro Demarchi Gomes wrote:
-> Currently, scan_get_next_rmap_item() walks every page address in a VMA
-> to locate mergeable pages. This becomes highly inefficient when scanning
-> large virtual memory areas that contain mostly unmapped regions.
+
+
+On 06/10/2025 00:03, Dmitry Baryshkov wrote:
+> On Sun, Oct 05, 2025 at 03:16:29PM +0200, David Heidelberg via B4 Relay wrote:
+>> From: David Heidelberg <david@ixit.cz>
+>>
+>> This adds initial device tree support for the following phones:
+>>
+>>   - Google Pixel 3 (blueline)
+>>   - Google Pixel 3 XL (crosshatch)
 > 
-> This patch replaces the per-address lookup with a range walk using
-> walk_page_range(). The range walker allows KSM to skip over entire
-> unmapped holes in a VMA, avoiding unnecessary lookups.
-> This problem was previously discussed in [1].
+> Great to finally see it being submitted!
 > 
-> [1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
+>>
+>> Both phone boards use the same identifiers and differ only slightly
+>> in their connected peripherals.
+>>
+>> Supported functionality includes:
+>>   - Debug UART
+>>   - UFS
+>>   - Charger
+>>   - USB-C (peripheral mode)
+>>   - Display (Pixel 3 only)
 > 
-> ---
+> No remoteprocs / IPA / GPU / Venus / WiFi / BT? The firmware is
+> accessible to download from Google and it can be further repackaged (but
+> not redistributed). See [1], [2].
+> 
+> The phones share all firmware except for the bdwlan, so hopefully you
+> can add 'Google/blueline/foo.mbn' to the common file.
+> 
+> [1] https://github.com/linux-msm/meta-qcom-extras/blob/master/recipes-bsp/firmware-nexus/firmware-qcom-pixel3.bb
+> [2] https://github.com/linux-msm/meta-qcom-extras/blob/master/recipes-bsp/firmware-nexus/firmware-qcom-pixel.inc
+> 
+>>
+>> GPIOs 0–3 and 81–84 are not accessible from the application CPUs,
+>> so they are marked as reserved to allow the Pixel 3 to boot.
+>>
+>> The rmtfs region is allocated using UIO, making it technically "dynamic."
+>>
+>> Its address and size can be read from sysfs:
+>>
+>> $ cat /sys/class/uio/uio0/name
+>> /sys/class/uio/uio0/maps/map0/addr
+>> 0x00000000f2701000
+>>
+>> $ cat /sys/class/uio/uio0/maps/map0/size
+>> 0x0000000000200000
+>>
+>> Like the OnePlus 6, the Pixel 3 requires 1 kB of reserved memory on either
+>> side of the rmtfs region to work around an XPU bug that would otherwise
+>> cause erroneous violations when accessing the rmtfs_mem region.
+>>
+>> Co-developed-by: Amit Pundir <amit.pundir@linaro.org>
+>> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+>> Co-developed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Co-developed-by: Casey Connolly <casey@connolly.tech>
+>> Signed-off-by: Casey Connolly <casey@connolly.tech>
+>> Co-developed-by: Joel Selvaraj <foss@joelselvaraj.com>
+>> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+>> Co-developed-by: Sumit Semwal <sumit.semwal@linaro.org>
+>> Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+>> Co-developed-by: Vinod Koul <vkoul@kernel.org>
+>> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile                  |   2 +
+>>   .../arm64/boot/dts/qcom/sdm845-google-blueline.dts | 128 ++++++
+>>   arch/arm64/boot/dts/qcom/sdm845-google-common.dtsi | 467 +++++++++++++++++++++
+>>   .../boot/dts/qcom/sdm845-google-crosshatch.dts     | 137 ++++++
+>>   4 files changed, 734 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 4bfa926b6a085..ba05dc935dc7c 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -239,6 +239,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-db845c.dtb
+>>   sdm845-db845c-navigation-mezzanine-dtbs	:= sdm845-db845c.dtb sdm845-db845c-navigation-mezzanine.dtbo
+>>   
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-db845c-navigation-mezzanine.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-google-crosshatch.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-google-blueline.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-lg-judyln.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-lg-judyp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-mtp.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-google-blueline.dts b/arch/arm64/boot/dts/qcom/sdm845-google-blueline.dts
+>> new file mode 100644
+>> index 0000000000000..df88982018b9e
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-google-blueline.dts
+>> @@ -0,0 +1,128 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "sdm845-google-common.dtsi"
+>> +
+>> +/ {
+>> +	model = "Google Pixel 3";
+>> +	compatible = "google,blueline", "qcom,sdm845";
+>> +
+>> +	battery: battery {
+>> +		compatible = "simple-battery";
+>> +
+>> +		charge-full-design-microamp-hours = <2970000>;
+>> +		voltage-min-design-microvolt = <3600000>;
+>> +		voltage-max-design-microvolt = <4400000>;
+>> +	};
+>> +
+>> +	chosen {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		/* for u-boot */
+>> +		framebuffer: framebuffer@9d400000 {
+>> +			compatible = "simple-framebuffer";
+>> +			reg = <0 0x9d400000 0 (2160 * 1080 * 4)>;
+>> +			width = <1080>;
+>> +			height = <2160>;
+>> +			stride = <(1080 * 4)>;
+>> +			format = "a8r8g8b8";
+>> +		};
+>> +	};
+>> +
+>> +	reserved-memory {
+>> +		framebuffer_region@9d400000 {
+> 
+> Can't we use cont_splash_mem and let bootloader set it?
+> 
+>> +			no-map;
+>> +			reg = <0 0x9d400000 0 0x02400000>; // FIXME
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&gmu {
+>> +	status = "okay";
+>> +};
+> 
+> No need to, it's enabled by default.
+> 
+>> +
+>> +&mdss {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dsi0 {
+>> +	status = "okay";
+>> +	vdda-supply = <&vdda_mipi_dsi0_1p2>;
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			endpoint {
+>> +				remote-endpoint = <&panel_in>;
+>> +				data-lanes = <0 1 2 3>;
+>> +				qcom,te-source = "mdp_vsync_e";
+> 
+> &mdss_dsi1_out {
+> 	remote-endpoint = <&panel_in>;
+> 	.....
+> };
+> 
+> 
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	panel@0 {
+>> +		compatible = "lg,sw43408";
+>> +		reg = <0>;
+>> +
+>> +		vddi-supply = <&vreg_l14a_1p88>;
+>> +		vpnl-supply = <&vreg_l28a_3p0>;
+>> +
+>> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&panel_reset_pins &panel_te_pin &panel_pmgpio_pins>;
+>> +
+>> +		port {
+>> +			panel_in: endpoint {
+>> +				remote-endpoint = <&mdss_dsi0_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss_dsi0_out {
+>> +	remote-endpoint = <&panel_in>;
+>> +	data-lanes = <0 1 2 3>;
+>> +};
+>> +
+>> +&mdss_dsi0_phy {
+>> +	vdds-supply = <&vdda_mipi_dsi0_pll>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pm8998_gpios {
+>> +	panel_pmgpio_pins: panel-pmgpio-active-state {
+> 
+> Are these two actually used by the panel? I think they were only used
+> for sw43402, but not for sw43408.
 
-This patch does to much in a single patch which makes it
-rather hard to review.
+Yes, I tested and it seems the display behaves same way.>
+>> +		pins = "gpio2", "gpio5";
+>> +		function = "normal";
+>> +		input-enable;
+>> +		bias-disable;
+>> +		power-source = <0>;
+>> +	};
+>> +};
+>> +
+>> +
+>> +	volume-keys {
+> 
+> gpio-keys ?
+> 
+>> +		compatible = "gpio-keys";
+>> +		label = "Volume keys";
+>> +		autorepeat;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&volume_up_gpio>;
+>> +
+>> +		key-vol-up {
+>> +			label = "Volume Up";
+>> +			linux,code = <KEY_VOLUMEUP>;
+>> +			gpios = <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
+>> +			debounce-interval = <15>;
+>> +		};
+>> +	};
+>> +
+>> +	vph_pwr: vph-pwr-regulator {
+> 
+> Nit: BCP is regulator-foo-bar
 
-As a first step, we should focus on leaving most of
-scan_get_next_rmap_item() alone and only focus on replacing
-folio_walk by walk_page_range_vma().
+Can you clarify, all other device-tree use this format, do you mean 
+regulator-pwr-vph?
 
-Follow-up cleanups could try cleaning up scan_get_next_rmap_item()
--- and boy oh boy, does that function scream for quite some cleanups.
+Thank you
+David
 
-This is something minimal based on your v3. I applied plenty of more
-cleanups and I wish we could further shrink the pmd_entry function,
-but I have to give up for today (well, it's already tomorrow :) ).
+> 
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vph_pwr";
+>> +		regulator-min-microvolt = <3700000>;
+>> +		regulator-max-microvolt = <3700000>;
+>> +	};
+>> +
+>> +	vreg_s4a_1p8: vreg-s4a-1p8-regulator {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vreg_s4a_1p8";
+>> +
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +		regulator-always-on;
+>> +		regulator-boot-on;
+>> +
+>> +		vin-supply = <&vph_pwr>;
+>> +	};
+>> +};
+>> +
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-google-crosshatch.dts b/arch/arm64/boot/dts/qcom/sdm845-google-crosshatch.dts
+>> new file mode 100644
+>> index 0000000000000..dc9938ffc0ab8
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-google-crosshatch.dts
+>> @@ -0,0 +1,137 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "sdm845-google-common.dtsi"
+>> +
+>> +/ {
+>> +	model = "Google Pixel 3 XL";
+>> +	compatible = "google,crosshatch", "qcom,sdm845";
+>> +
+>> +	battery: battery {
+>> +		compatible = "simple-battery";
+>> +
+>> +		charge-full-design-microamp-hours = <3480000>;
+>> +		voltage-min-design-microvolt = <3600000>;
+>> +		voltage-max-design-microvolt = <4400000>;
+>> +	};
+>> +
+>> +	chosen {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+> 
+> These are all the same as the -blueline. Please move common options to
+> the -common.dtsi
+> 
+>> +
+>> +		/* for u-boot */
+>> +		framebuffer: framebuffer@9d400000 {
+>> +			compatible = "simple-framebuffer";
+>> +			reg = <0 0x9d400000 0 (2960 * 1440 * 4)>;
+>> +			width = <1440>;
+>> +			height = <2960>;
+>> +			stride = <(1440 * 4)>;
+>> +			format = "a8r8g8b8";
+>> +		};
+>> +	};
+>> +
+>> +	reserved-memory {
+>> +		framebuffer_region@9d400000 {
+>> +			no-map;
+>> +			reg = <0 0x9d400000 0 0x02400000>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&gmu {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss {
+> 
+> More and more common properties. Please move them to the common file.
+> 
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dsi0 {
+>> +	vdda-supply = <&vdda_mipi_dsi0_1p2>;
+>> +
+>> +	status = "okay";
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			endpoint {
+>> +				remote-endpoint = <&panel_in>;
+>> +				data-lanes = <0 1 2 3>;
+>> +				qcom,te-source = "mdp_vsync_e";
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	panel@0 {
+>> +		compatible = "samsung,s6e3ha8";
+>> +		reg = <0>;
+>> +
+>> +		vci-supply = <&vreg_l28a_3p0>; // downstream
+>> +		vdd3-supply = <&vreg_l28a_3p0>;
+>> +		vddr-supply = <&vreg_l14a_1p88>;
+>> +
+>> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&panel_reset_pins &panel_te_pin &se8_spiflash &panel_pmgpio_pins>;
+> 
+> - Why do you need spiflash here?
+> - I don't think this uses pmgpios too.
+> 
+>> +
+>> +		port {
+>> +			panel_in: endpoint {
+>> +				remote-endpoint = <&mdss_dsi0_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss_dsi0_out {
+>> +	data-lanes = <0 1 2 3>;
+>> +	remote-endpoint = <&panel_in>;
+>> +};
+>> +
+>> +&mdss_dsi0_phy {
+>> +	vdds-supply = <&vdda_mipi_dsi0_pll>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pm8998_gpios {
+>> +	panel_pmgpio_pins: panel-pmgpio-active-state {
+>> +		pins = "gpio2", "gpio5";
+>> +		function = "normal";
+>> +		input-enable;
+>> +		bias-disable;
+>> +		power-source = <0>;
+>> +	};
+>> +};
+>> +
+>> +&tlmm {
+>> +	se8_spiflash: se8-spiflash-state {
+>> +		pins = "gpio65", "gpio66", "gpio67", "gpio68";
+>> +		function = "gpio";
+>> +		input-enable;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	panel_te_pin: panel-te-state {
+>> +		pins = "gpio12";
+>> +		function = "mdp_vsync";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
+>> +
+>> +	panel_reset_pins: panel-active-state {
+>> +		pins = "gpio6";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	panel_suspend: panel-suspend-state {
+>> +		pins = "gpio6";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-pull-down;
+>> +	};
+>> +
+>> +};
+>>
+>> -- 
+>> 2.51.0
+>>
+>>
+> 
 
-
-Briefly tested with ksm selftests and my machine did not burn down my building.
-
-
- From d971b88056fe3fefe50e5d4fa5b359e8c8331b2c Mon Sep 17 00:00:00 2001
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-Date: Wed, 15 Oct 2025 22:22:36 -0300
-Subject: [PATCH] ksm: use range-walk function to jump over holes in
-  scan_get_next_rmap_item
-
-Currently, scan_get_next_rmap_item() walks every page address in a VMA
-to locate mergeable pages. This becomes highly inefficient when scanning
-large virtual memory areas that contain mostly unmapped regions.
-
-This patch replaces the per-address lookup with a range walk using
-walk_page_range_vma(). The range walker allows KSM to skip over entire
-unmapped holes in a VMA, avoiding unnecessary lookups.
-This problem was previously discussed in [1].
-
-[1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
-
-Reported-by: craftfever <craftfever@airmail.cc>
-Closes: https://lkml.kernel.org/r/020cf8de6e773bb78ba7614ef250129f11a63781@murena.io
-Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-Co-developed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-  mm/ksm.c | 116 ++++++++++++++++++++++++++++++++++++++++++++++++-------
-  1 file changed, 103 insertions(+), 13 deletions(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 3aed0478fdcef..8bd2b78c4f869 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -2455,6 +2455,94 @@ static bool should_skip_rmap_item(struct folio *folio,
-  	return true;
-  }
-  
-+struct ksm_next_page_arg {
-+	struct folio *folio;
-+	struct page *page;
-+	unsigned long addr;
-+};
-+
-+static int ksm_next_page_pmd_entry(pmd_t *pmdp, unsigned long addr, unsigned long end,
-+		struct mm_walk *walk)
-+{
-+	struct ksm_next_page_arg *private = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+	pte_t *start_ptep = NULL, *ptep, pte;
-+	struct mm_struct *mm = walk->mm;
-+	struct folio *folio;
-+	struct page *page;
-+	spinlock_t *ptl;
-+	pmd_t pmd;
-+
-+	if (ksm_test_exit(mm))
-+		return 0;
-+	cond_resched();
-+
-+	pmd = pmdp_get_lockless(pmdp);
-+	if (!pmd_present(pmd))
-+		return 0;
-+
-+	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && pmd_leaf(pmd)) {
-+		ptl = pmd_lock(mm, pmdp);
-+		pmd = pmdp_get(pmdp);
-+
-+		if (!pmd_present(pmd)) {
-+			goto not_found_unlock;
-+		} else if (pmd_leaf(pmd)) {
-+			page = vm_normal_page_pmd(vma, addr, pmd);
-+			if (!page)
-+				goto not_found_unlock;
-+			folio = page_folio(page);
-+
-+			if (folio_is_zone_device(folio) || !folio_test_anon(folio))
-+				goto not_found_unlock;
-+
-+			page += ((addr & (PMD_SIZE - 1)) >> PAGE_SHIFT);
-+			goto found_unlock;
-+		}
-+		spin_unlock(ptl);
-+	}
-+
-+	start_ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-+	if (!start_ptep)
-+		return 0;
-+
-+	for (ptep = start_ptep; addr < end; ptep++, addr += PAGE_SIZE) {
-+		pte = ptep_get(ptep);
-+
-+		if (!pte_present(pte))
-+			continue;
-+
-+		page = vm_normal_page(vma, addr, pte);
-+		if (!page)
-+			continue;
-+		folio = page_folio(page);
-+
-+		if (folio_is_zone_device(folio) || !folio_test_anon(folio))
-+			continue;
-+		goto found_unlock;
-+	}
-+
-+not_found_unlock:
-+	spin_unlock(ptl);
-+	if (start_ptep)
-+		pte_unmap(start_ptep);
-+	return 0;
-+found_unlock:
-+	folio_get(folio);
-+	spin_unlock(ptl);
-+	if (start_ptep)
-+		pte_unmap(start_ptep);
-+	private->page = page;
-+	private->folio = folio;
-+	private->addr = addr;
-+	return 1;
-+}
-+
-+static struct mm_walk_ops ksm_next_page_ops = {
-+	.pmd_entry = ksm_next_page_pmd_entry,
-+	.walk_lock = PGWALK_RDLOCK,
-+};
-+
-  static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
-  {
-  	struct mm_struct *mm;
-@@ -2542,21 +2630,23 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
-  			ksm_scan.address = vma->vm_end;
-  
-  		while (ksm_scan.address < vma->vm_end) {
-+			struct ksm_next_page_arg ksm_next_page_arg;
-  			struct page *tmp_page = NULL;
--			struct folio_walk fw;
-  			struct folio *folio;
--
--			if (ksm_test_exit(mm))
--				break;
--
--			folio = folio_walk_start(&fw, vma, ksm_scan.address, 0);
--			if (folio) {
--				if (!folio_is_zone_device(folio) &&
--				     folio_test_anon(folio)) {
--					folio_get(folio);
--					tmp_page = fw.page;
--				}
--				folio_walk_end(&fw, vma);
-+			int found;
-+
-+			found = walk_page_range_vma(vma, ksm_scan.address,
-+						    vma->vm_end,
-+						    &ksm_next_page_ops,
-+						    &ksm_next_page_arg);
-+
-+			if (found > 0) {
-+				folio = ksm_next_page_arg.folio;
-+				tmp_page = ksm_next_page_arg.page;
-+				ksm_scan.address = ksm_next_page_arg.addr;
-+			} else {
-+				VM_WARN_ON_ONCE(found < 0);
-+				ksm_scan.address = vma->vm_end - PAGE_SIZE;
-  			}
-  
-  			if (tmp_page) {
 -- 
-2.51.0
-
-
--- 
-Cheers
-
-David / dhildenb
+David Heidelberg
 
 
