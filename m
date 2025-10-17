@@ -1,126 +1,177 @@
-Return-Path: <linux-kernel+bounces-858742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368D4BEBB18
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1977BEBB27
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C96944FB46C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:31:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A01ED4E3542
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCC0247DE1;
-	Fri, 17 Oct 2025 20:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F60259CB6;
+	Fri, 17 Oct 2025 20:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="QuywydNj"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YE0P+VuH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B2D1D5CD9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB0B264A76
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760733088; cv=none; b=MS4we4kt6U+BZDKw3XdLgIHsVMsTBCtkUmkQk2MHG0eIDVtboSD2z+otpeyMGCVnJPafq2ShKQvhBuvagi2Xc2ib2jhonaw0GD86Iq0apf3CuJwO0XhAF0/Sq/yhxxMxoM7Ka+BlBDfGCam9SJzCzG9FThBthHbJYljd+6Wq2ZY=
+	t=1760733295; cv=none; b=PvZqw6Nlorl3CR//7Zb8jWzeg+sAoG3V1VBj1EzkO5SuS2TRb7LWsbxaO6QCDJzJlw2PXW0AgKSR4u0eMD4UvNUJtSSYYqUhEbp2q9PWOvGEk9gzKX4oB4ZLIvU3lB0qp6AAYNExNEyDTAlor+aureRy226wgkf3vrYgjWOZ2+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760733088; c=relaxed/simple;
-	bh=MKk7ulg8THfN6IMYxwH8fJ0oDGq7pR+r1xwzI/IoyqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tS8Hr3iGCHSFyufjtwLbiwWOU/kW8lkOmxmShewOYrzmZFygnqH2eHpiUz44gIfCNKcV4uArQxxSNvhnNRaa/pkbLG9xuqfkMl7VbaakDuymLWJ2d95RA7HCL/RPbKIWul7f/ek3QcWvgbmU/MW4SvEqPmDZb2DEp3We4yvHNCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=QuywydNj; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-81efcad9c90so41598846d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ciq.com; s=s1; t=1760733085; x=1761337885; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0lPpXtKNC8Pcljol6lZmI6XFoGZEJXZUpwOt8AD0/Gk=;
-        b=QuywydNjcm27vQc791n5AmY//nevEF1Kg5ym8e4hlgMfm3jZ7Xc8kCd6zGSOzwLHVl
-         06B7afgDe/8nWP/DNfIlABHnfk4pNPlLfQvB1N6e68/0m/WaUR/ZQwzFKxvXvW5pJoB+
-         54UcDNbuQ/yIc2EjV/W6UPTRX9mzCd6aPPtfYpJMXlel3UF3ZsX4N5LI1B056BZO6m98
-         WCuUMsLOV3zMNEIVL4SJ++Hctj7bwHgXi0gPwIq/UvvXytrws5YKIBzvUX7UW320nRix
-         CUu0HR4QwimBe2zGbInM08vqSgx7FgJm4B3NJWrGVqWVDj2lqwc+mHp+t8wiZftzTS61
-         H8kQ==
+	s=arc-20240116; t=1760733295; c=relaxed/simple;
+	bh=42h9WSzMxsMUKDKrWXddy7f79A2qL8IcQSDKGHUFEPs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T+xhEc7YsEklsRyzWUf/3fXe/zEfQ0sBsaoJQ+Ewur7YMxnz2uQMUpxZNC9HXM/mQ8Fi7aQDRzNK+P/bdv0cym6S7FmM9IZ7rDVqde2VID3+zSwKwlcZLLZHFsbl3O8siQUg6QdsVKxQQF84sOpPwbdZtEx4RCr4bFmjQwbMAF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YE0P+VuH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59HJGmmT005388
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:34:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=oEl0y/mrPeKiP6ZEhHI8gxlLx/zzQxxwPZk
+	FL4UCulg=; b=YE0P+VuHAAntcQPIu2XocWH6w7YDJMBwSwQ9FxrOSkyTvJGBAkj
+	S0EGsr93+tWrkjXOyJ2H117yW9hS1Pkw5hsn+meKiA66/SVBr4i1YPEVibM5YTZ7
+	cYMaABFuXOFbZOhdTUFkroNa7WBRcEOCkRJO13w5vWthUm/xcgqsnge7QjF24zyx
+	Aa6yziQ9K73GZmHkW0qrCzAFrhiU/e5/vF310rOIWkOWTdwIv+GhYNHuRbbLh66C
+	fuqYCoOWFnd0Ao6knx20Mp+C0ngXFyoqk9wsOcXjkAUXZtrioC2vesFBSHtQuIVX
+	+oCITS47+sqdIATiJNndv5PjzCn5pSMRI3g==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfm5wt3p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 20:34:52 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-272b7bdf41fso30952805ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:34:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760733085; x=1761337885;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0lPpXtKNC8Pcljol6lZmI6XFoGZEJXZUpwOt8AD0/Gk=;
-        b=sRP35PEeiqXFIb/cuxWMTb3gUP871z+Zf6dvIKJ3yB83d+Ncnmp7Wbc2ypstajGS3E
-         qgwwwC55WSbpoCSVRQVY2jCruDIP+1woJdHDcLwOKUd85YT/eOwIRcHbpVxoaRr6yRLg
-         0PjZ7VPXSw145ZK2cuQjDj/h1aUtAPFV0xTZH0u4EjVMkRHSzD/dryprekFIP0RbS/EP
-         sGNxPYkshCe1Z/AU2p3YHUfRNTfv0+82Jt2cGYKAzZCgw6QZ/W0X/JiANf03X4XfbrBP
-         wcIbfZ/KLYDqGSCiQZNBlQcgxPaN1PvoqNbS1y66qgn79EoBJR8ddlPebRBpFQVOVpgQ
-         yxpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZUtj1wx0M6JG0gWY1A2i599nNA8g8NygNC5AT2J3wEzrNqed/fuiFRf67w0sWqvejx+DLKVCg+jOx70s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/mBQHVlkb/lrA3JWKX+a122EFWaUkvBh5tPYMMUbxxU9leKTK
-	Jtmb8BNYiCk6T8h6McfZORoeiKMyb5+IR9JSsfnwiJ3epaaiB2GaQxyI96cgzeJJy4DnmzcpCxn
-	pxA6WJvFVh6yq7IihWD142L7Qs4F0HP0RZbvlomAPag==
-X-Gm-Gg: ASbGncupkDrkuN0vcsBey5VzoUKee2XQ5KJlNnEVjUIvHKnJvRw11bl5UbOY8Ff44wr
-	WQPoQpBPyATiLwamAyB7vVnp+E7gqiWHDdg5oXn7ijluRQ8oJ9ykiE4O9ipyiYO30Ns5WAzw18E
-	31nDAXoM9EcFcpux9fSMX6OGb8O25CtZgec1jTyOsoIMjbDZ2Nr0u4vS6XmhR0eQcYwP8PfaFck
-	twQy4sGJ0FW+1+27bGobp6f+iddH+HjKmnE26wTOz/BwirKd3URL4uW2qHqBA==
-X-Google-Smtp-Source: AGHT+IGQFfaB9wOSLxDZqrYjsq7EvvuhGYx/LCDuuPQUSKlNN3GFBd2FmzvCC7AVAg1tdTIrtigxUrv4wdP7WpBC77c=
-X-Received: by 2002:a05:6214:c64:b0:87c:a721:42f1 with SMTP id
- 6a1803df08f44-87ca72143c0mr20321786d6.52.1760733085286; Fri, 17 Oct 2025
- 13:31:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760733291; x=1761338091;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oEl0y/mrPeKiP6ZEhHI8gxlLx/zzQxxwPZkFL4UCulg=;
+        b=HSYx0aNmZE8/Os8ETteH32qOfaeSudjG6LWUaD3dCZ3Y96CREPU2O3QZqOQYCahWf/
+         iMjzTr52PX7Sfl8pjyuom1+dk0S835h4Utd1OzyreYbezKMbSCcApKuwTpJ6IOxWpqFl
+         OBdHSNmdiuVxn9Pupv4/G54WcOQS0/Hq+6frSW13/AMavlrdY6CDBcwg6DwZli1ktuQf
+         EkW1F6jORruIepHHxU0Ypvy9gSm01QzcjAiQr5fDVAQjPcV0Oq7RbtgJXro7619qYePv
+         sETu3qCZHlBC0leVaan0CKDciUW+IN9fULmAjGVyz4ePS+L9DKWQQQ0S47hMJuAvRNk4
+         M2UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWl6EEf9sVrKf7wWuZi6GaDiFRfrgyU/yEt3Je0bKu8uezJuQklodqKgeFPN8l5H4D1BrOUQWW6sAiFPLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX2KvCSOgVNYbU+QDWVR6VaYbjhtOQJQcKUkUSdMGnL5p4bodi
+	ehNxL00jULGumITrY12lrdDVLcmX0HLgr1F49bmQQft4a9G+tKvrQ9khMIP/4t4p5RMfibOA5qi
+	uGHSY015n18EIErV8sZYzeOJJK/ZkBfUgMsieIS78SL2sMFNvxCCCp9bPKvAMtuamJo8=
+X-Gm-Gg: ASbGncsDjbUooTZdy48401zoC8bTZFr6fxLGrqbMwfLUQ87Fsqa4NZe1zZIwqaCxPa+
+	zEBJGprEykSqN8MFxzV/xkv9AwpExFYYcLrlcvd7KhMqvXHy182aR79UpX3jhzgcnX1zo1l52Z7
+	0Nb9FbAqkPj6aM83drUt8eQXmy66qzRKrCIHlbZtIpVKQEn9xPb3IsB60ox1AwKtpcVj7idwtNl
+	wg87+FPAnoM6SjdnF/M9/oJoBcv4dhsM+Cr5wGS9mKapWJq43A1RgO0WHQQ7q3Qlgg0ghSMwdqL
+	muiOEi2H0L7la0DGf9Kq7dnHFupTbGcEfb1akq8SFLQYHs97e/ATOxKUfH975oX5Ww7zslByBYX
+	CYuChKfCrGY+Ov4ZsMxTX9ZbQBSDAoJurDlPY
+X-Received: by 2002:a17:902:f70f:b0:290:c3ad:8432 with SMTP id d9443c01a7336-290cb65b628mr57435355ad.46.1760733291376;
+        Fri, 17 Oct 2025 13:34:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyX8Pk5DWSmJTsM6HLUZcbzX8C/j29RAvl1Yd/dyx9V0AATvuYl8gaM8mWgVvFK0PQX18sbg==
+X-Received: by 2002:a17:902:f70f:b0:290:c3ad:8432 with SMTP id d9443c01a7336-290cb65b628mr57435115ad.46.1760733290959;
+        Fri, 17 Oct 2025 13:34:50 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a76b33505sm627897a12.22.2025.10.17.13.34.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 13:34:50 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH] phy: qcom: qmp-combo: Add polarity inversion support for SAR2130P
+Date: Sat, 18 Oct 2025 02:04:38 +0530
+Message-Id: <20251017203438.744197-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017145147.138822285@linuxfoundation.org>
-In-Reply-To: <20251017145147.138822285@linuxfoundation.org>
-From: Brett Mastbergen <bmastbergen@ciq.com>
-Date: Fri, 17 Oct 2025 16:31:13 -0400
-X-Gm-Features: AS18NWAWVvdm9jPTS1ddtyd-wd5oGJSWRBN2RKy5mD95QqYr0wV-qU9IWXqpvdI
-Message-ID: <CAOBMUvgT47EEqCi9_np-Fx6j7dR9=RhqY_tsb7+gMYi7Jb05WA@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/277] 6.12.54-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: NAfwnMPVAoHrN1u0dZ_dYUh1Jmg0SV65
+X-Proofpoint-ORIG-GUID: NAfwnMPVAoHrN1u0dZ_dYUh1Jmg0SV65
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMCBTYWx0ZWRfX+sVnaPh2EAnK
+ nXCPYPK9Tp8OPLL9VsbOzFJsIZD+Gq9tiYFEH3PpO0nLhG+QZkqhuGvnNAfe9nT41cLRrPKzNH7
+ TTh/NouTVD/r8IzbIfzL9064QsBJmRsoVBer+sQCnxHD8q/AtYCTgq9BgbCjq3UXbRzlvWCvSC8
+ QxEIHaW8OrrDWjKGtXMuYrqqODMk1FYpkFQaQgPyVE9UqHWRDwy83HmzX9ZB5BGJhrBwjgbX26r
+ sPpVxMzi4r4Fwj3Ku46cNMpK+S3jSMq1G/RiY1GfY3OgbbNKxM05A/CX56x0xQTfuCPBVBA+4JH
+ Cvhy+7RKOjHcNTZyiBVz4E6JQQr4YoB3jKetbmUOW0/aO5RUGDk0PZS8i48/MOCj/I8yOTs7NAG
+ eRqmkybsGfri7mPS1KzXryNOkWRjdg==
+X-Authority-Analysis: v=2.4 cv=V71wEOni c=1 sm=1 tr=0 ts=68f2a86c cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=LWLmvgxapxzxGbpwlLUA:9 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 spamscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110020
 
-On Fri, Oct 17, 2025 at 11:16=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.54 release.
-> There are 277 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.54-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+On SAR2130P QXR Platform, the CC Lines are inverted and the lane
+programming is to be done reverse compared to other targets.
 
-Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
-Intel Core i7-12600H
+As per the HW specifics, Bit-2 of TYPEC_CTRL register indicates
+port select polarity. This bit is to be set for SAR2130P.
 
-Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks,
-Brett
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+index 7b5af30f1d02..813c88f0a16f 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+@@ -60,6 +60,7 @@
+ /* QPHY_V3_DP_COM_TYPEC_CTRL register bits */
+ #define SW_PORTSELECT_VAL			BIT(0)
+ #define SW_PORTSELECT_MUX			BIT(1)
++#define INVERT_CC_POLARITY			BIT(2)
+ 
+ #define PHY_INIT_COMPLETE_TIMEOUT		10000
+ 
+@@ -1820,6 +1821,7 @@ struct qmp_phy_cfg {
+ 	/* Offset from PCS to PCS_USB region */
+ 	unsigned int pcs_usb_offset;
+ 
++	bool invert_cc_polarity;
+ };
+ 
+ struct qmp_combo {
+@@ -2010,6 +2012,7 @@ static const struct qmp_phy_cfg sar2130p_usb3dpphy_cfg = {
+ 	.num_resets		= ARRAY_SIZE(msm8996_usb3phy_reset_l),
+ 	.vreg_list		= qmp_phy_vreg_l,
+ 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
++	.invert_cc_polarity     = true,
+ };
+ 
+ static const struct qmp_phy_cfg sc7180_usb3dpphy_cfg = {
+@@ -3046,6 +3049,10 @@ static int qmp_combo_com_init(struct qmp_combo *qmp, bool force)
+ 	val = SW_PORTSELECT_MUX;
+ 	if (qmp->orientation == TYPEC_ORIENTATION_REVERSE)
+ 		val |= SW_PORTSELECT_VAL;
++
++	if (cfg->invert_cc_polarity)
++		val |= INVERT_CC_POLARITY;
++
+ 	writel(val, com + QPHY_V3_DP_COM_TYPEC_CTRL);
+ 
+ 	switch (qmp->qmpphy_mode) {
+-- 
+2.34.1
+
 
