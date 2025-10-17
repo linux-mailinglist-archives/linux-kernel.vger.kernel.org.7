@@ -1,131 +1,179 @@
-Return-Path: <linux-kernel+bounces-857713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F10BE7CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18134BE7CBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8648F3AFB65
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC651893A35
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D833E3191D7;
-	Fri, 17 Oct 2025 09:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259A319840;
+	Fri, 17 Oct 2025 09:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qJ42qLwB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKFY8Vh8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3yWDbeVl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKFY8Vh8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3yWDbeVl"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2691DC985;
-	Fri, 17 Oct 2025 09:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADA83191DE
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760693033; cv=none; b=tyRwrKtNJPv03/xPDFU4yKz66os0uzPh+HG99v/DdZx3zong+ZenDCjOpUhlLD9Igs0xyOiWZUy0BzmHrE+nAw8Z6EpTJodhp1fP6YCwkozjyZjiW02NHFFqh9CZqHpvneX9RVH90XLOBXopgozBp47XPk+GqQ5U/WUA0dNEX0I=
+	t=1760693066; cv=none; b=HaJB039elRSBBWVMq6JQRDKOcXxUz0BsNF4XzOuaQ3+M81fExRGxbJrdzMAes3VQLHltRn5A0C5UFavPF0NM9l2Oia9cPpdrJ0REbnY6WZEREeYe1ewmn1PnMqrefis5R/pJxTXEk2zm7eQTx+EuyzRMZcYjMItGc3T7LhH8IHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760693033; c=relaxed/simple;
-	bh=Yx+F/b7bx3085dSktR/oo/zKJrjeNdPp6uiApzbMGF8=;
+	s=arc-20240116; t=1760693066; c=relaxed/simple;
+	bh=CzRxUmZMpdqoJdJbYx8tsBe/1Zkx5cGL8TVZx6KKtKM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7eUoEA99QMQC5wvChW+Ex6tOmEKtJN2Kb++CeUcV9LL/qWyF7+gs1X5wK5p05j2C1ufD2Zrytg17HFHn0V9Cui1obYk2VZGuNkFeKyz69Wfd3s5yKUg6yoSd5NDmWaIVWUl0SqC5JJnYlMfzSUUI0A/K7uPz2zmHaGBVZdtk0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qJ42qLwB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C40931118;
-	Fri, 17 Oct 2025 11:22:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760692928;
-	bh=Yx+F/b7bx3085dSktR/oo/zKJrjeNdPp6uiApzbMGF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qJ42qLwBarBIjjYx6xU1lARUVtRJTobqwKSuyXKJ+cuXVxIBnjwKY6y28tRZSXNNq
-	 ImF3xa+xnKcwJB4UW8digW+VqBausZFjvovAVYAejYZyuQcoY5KAMwoKQTvI8T7EE/
-	 Pm5nuKYQ0w4svfY/clh+dqfbXVq7CLqbyL2+WLWw=
-Date: Fri, 17 Oct 2025 11:23:46 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@kernel.org>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: i2c: imx219: Fix 1920x1080 mode to use 1:1
- pixel aspect ratio
-Message-ID: <cmj3pqfy7zvcdjw63ndkuwfcxapt5puv3swvnhfhjbqs5w7d2v@fmi3okbzhdvt>
-References: <20251017-imx219-1080p-v1-0-9173d5a47a0c@ideasonboard.com>
- <20251017-imx219-1080p-v1-1-9173d5a47a0c@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2d8PrKzJOp1PcBAhL61dHFbAmyi34kZ6lHkvSy4Op7JElmjUIgP7FJocTBz9qk/kiXs80zcRGe6Ujar+ZgDZfUNhSrb25S6xQy/fhB49wbxUq9M0V5uOwwFu/N1ctY6ef+lZMzSfKJ93nIstZ5YJu/YlWPySrdUP5Og/B51MNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKFY8Vh8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3yWDbeVl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKFY8Vh8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3yWDbeVl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A8E6621ADB;
+	Fri, 17 Oct 2025 09:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760693056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xF4Nmh+lcrsfJ2k6MuR3XQ4K/GCNpUVcvrk/IUSwmog=;
+	b=oKFY8Vh8HdrgJWICXdGPQ225mw6C6q5EbPtYZWcw4WC6fsesTzs5bqNpJ9f0oK0egLicXe
+	cf60H9QPy5RjoTytk/ocqnmkyJDZzeD37cf6VJR1z2TIQDCqllTyC7ette2eEz6vK+LR/U
+	64KWDhUkQvy7IPtW98HtETSdlA56TKU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760693056;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xF4Nmh+lcrsfJ2k6MuR3XQ4K/GCNpUVcvrk/IUSwmog=;
+	b=3yWDbeVll4eUeffk/SPEjI9XXhw0hebSLvu6Vz1D4Q0wn9dT7izbSvZ0u+f8QzRgF0NOih
+	ZWTu2oTLZeJcH5Dg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760693056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xF4Nmh+lcrsfJ2k6MuR3XQ4K/GCNpUVcvrk/IUSwmog=;
+	b=oKFY8Vh8HdrgJWICXdGPQ225mw6C6q5EbPtYZWcw4WC6fsesTzs5bqNpJ9f0oK0egLicXe
+	cf60H9QPy5RjoTytk/ocqnmkyJDZzeD37cf6VJR1z2TIQDCqllTyC7ette2eEz6vK+LR/U
+	64KWDhUkQvy7IPtW98HtETSdlA56TKU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760693056;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xF4Nmh+lcrsfJ2k6MuR3XQ4K/GCNpUVcvrk/IUSwmog=;
+	b=3yWDbeVll4eUeffk/SPEjI9XXhw0hebSLvu6Vz1D4Q0wn9dT7izbSvZ0u+f8QzRgF0NOih
+	ZWTu2oTLZeJcH5Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 928D813A71;
+	Fri, 17 Oct 2025 09:24:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GyMBI0AL8mjmKgAAD6G6ig
+	(envelope-from <chrubis@suse.cz>); Fri, 17 Oct 2025 09:24:16 +0000
+Date: Fri, 17 Oct 2025 11:25:10 +0200
+From: Cyril Hrubis <chrubis@suse.cz>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	LTP List <ltp@lists.linux.it>,
+	Andrey Albershteyn <aalbersh@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	Petr Vorel <pvorel@suse.cz>,
+	Andrea Cervesato <andrea.cervesato@suse.com>
+Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
+ PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
+Message-ID: <aPILdh2XzsYgEg66@yuki.lan>
+References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
+ <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017-imx219-1080p-v1-1-9173d5a47a0c@ideasonboard.com>
+In-Reply-To: <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-Hi Jai
+Hi!
+> > The LTP syscalls ioctl_pidfd05 test failed due to following error on
+> > the Linux mainline
+> > kernel v6.18-rc1-104-g7ea30958b305 on the arm64, arm and x86_64.
+> >
+> > The Test case is expecting to fail with EINVAL but found ENOTTY.
+> 
+> [Not a kernel regression]
+> 
+> From the recent LTP upgrade we have newly added test cases,
+> ioctl_pidfd()
+> 
+> The test case is meant to test,
+> 
+> Add ioctl_pidfd05 test
+> Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO
+>  is used.
+>  This happens when:
+>    - info parameter is NULL
+>    - info parameter is providing the wrong size
+> 
+> However, we need to investigate the reason for failure.
+> 
+> Test case: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
 
-On Fri, Oct 17, 2025 at 01:43:49PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> Commit 0af46fbc333d ("media: i2c: imx219: Calculate crop rectangle
-> dynamically") meant that the 1920x1080 mode switched from using no
-> binning to using vertical binning but no horizontal binning, which
-> resulted in stretched pixels.
->
-> Until proper controls are available to independently select horizontal
-> and vertical binning, restore the original 1:1 pixel aspect ratio by
-> forcing binning to be uniform in both directions.
+Already fixed in:
 
-I think it makes sense and I wonder if binning in one direction and
-not in the other will ever be needed in the general case.
+commit 00c3e947cece63ce81cdaf12b5a2071984aa7815
+Author: Avinesh Kumar <akumar@suse.de>
+Date:   Thu Sep 25 10:19:11 2025 +0200
 
-For this driver indeed, this fixes a visible regression
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+    Introduce ioctl_pidfd_get_info_supported() function
 
-Thanks
-  j
->
-> Cc: stable@vger.kernel.org
-> Fixes: 0af46fbc333d ("media: i2c: imx219: Calculate crop rectangle dynamically")
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> [Add comment & reword commit message]
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx219.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index c680aa6c3a55a9d865e79ad337b258cb681f98fe..300935b1ef2497050fe2808e4ceedda389a75b50 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -856,7 +856,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  	const struct imx219_mode *mode;
->  	struct v4l2_mbus_framefmt *format;
->  	struct v4l2_rect *crop;
-> -	u8 bin_h, bin_v;
-> +	u8 bin_h, bin_v, binning;
->  	u32 prev_line_len;
->
->  	format = v4l2_subdev_state_get_format(state, 0);
-> @@ -877,9 +877,12 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  	bin_h = min(IMX219_PIXEL_ARRAY_WIDTH / format->width, 2U);
->  	bin_v = min(IMX219_PIXEL_ARRAY_HEIGHT / format->height, 2U);
->
-> +	/* Ensure bin_h and bin_v are same to avoid 1:2 or 2:1 stretching */
-> +	binning = min(bin_h, bin_v);
-> +
->  	crop = v4l2_subdev_state_get_crop(state, 0);
-> -	crop->width = format->width * bin_h;
-> -	crop->height = format->height * bin_v;
-> +	crop->width = format->width * binning;
-> +	crop->height = format->height * binning;
->  	crop->left = (IMX219_NATIVE_WIDTH - crop->width) / 2;
->  	crop->top = (IMX219_NATIVE_HEIGHT - crop->height) / 2;
->
->
-> --
-> 2.51.0
->
+    Check if ioctl(PIDFD_GET_INFO) is implemented or not
+    before proceeding in ioctl_pidfd05 test.
+
+
+-- 
+Cyril Hrubis
+chrubis@suse.cz
 
