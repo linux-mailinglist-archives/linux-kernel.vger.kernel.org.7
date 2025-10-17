@@ -1,235 +1,300 @@
-Return-Path: <linux-kernel+bounces-858265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D315DBE9932
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:14:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D0ABE9706
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDF7742A29
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:03:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 757A158017D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A2D36996C;
-	Fri, 17 Oct 2025 15:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE0032C93A;
+	Fri, 17 Oct 2025 15:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V6v37aVg"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="U/uAIHQd"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013062.outbound.protection.outlook.com [40.107.162.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D220336EE2;
-	Fri, 17 Oct 2025 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713326; cv=none; b=iHm+cb1Cm+ibs6VboaKd3RHaccbjRgxI5HU0AJtC9gSZKiW+zMjMLfoGpCnMulTWjqRw4J2Fjnlzd0ZBcaIY4PjnblGSbJZcJ9WURzYt2gfOoqotF7SiDkJx1QT4WekC9jP6oqdTX+Lgq+k2PUrTDz4B6HjvSXYfTJxzxcNXPag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713326; c=relaxed/simple;
-	bh=CLWJhBu9K0krsl2W5BEPYqb1gmwqh8HxemHp6ZEorGM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UlVCx8Z7ohn5P3Z/H2GbZKSBXzucQxTkDESsF9V+boXisP1YglJkLUxCqOPjuzZErp23HuX1KSTkNt2SluLFgM1tgFVFgzHYqvefgD+/acg1rllejUJSuiLUHwfIMTz6ueLRWLjlw/5+lXrKP9/WPWiIC1tuVVgHyM6mRyOYuE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V6v37aVg; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9E24C1A1486;
-	Fri, 17 Oct 2025 15:02:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 727DA606DB;
-	Fri, 17 Oct 2025 15:02:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B1385102F2364;
-	Fri, 17 Oct 2025 17:01:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760713321; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=OumetMRwPwRmXg7GTajWsCFnQn15iaJvKy3TjGNKXhI=;
-	b=V6v37aVgwogvdcW9UXTbBHOAWJDdPJ7oWTOX6zn3PJRGeZE92VLrH5MicWn7An8n/yL65P
-	lY4YM62v7/t8AEtLNlVTQj9rSJXIrXQlUFIJmM6/9zooVWqE2wZme/HErsqokpwIy0ml7c
-	WA4LXvYoC7MrwKpIMAzIDdobV+CAUFZ1zWBevf9wTTvUAd4NkjCONMBx7t0Ua2LnyjdHu9
-	gy+h9df4mS/rXLNPlcWnCpsRIrVB8+75qZMXW8PzyWPu+fz1mIoZ3aY+V8ACnoluhLhE/q
-	MYWzG1z0pWFWURGhD4238EUruBBewPu3kSqb4VR2c9asyVdkhVSeyUxI23K9pg==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Fri, 17 Oct 2025 16:59:34 +0200
-Subject: [PATCH 3/3] i2c: designware: Support of controller with
- IC_EMPTYFIFO_HOLD_MASTER disabled
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5395B2F12D7;
+	Fri, 17 Oct 2025 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760713209; cv=fail; b=BhKC2rv6vGICx+vXYCIRRmusdse2EdaNWydYF1mjMLiS06d/P29JPARrq0W/U1eZiiHdlgKJO9BzWzP+W5l+aliYqSVXQEBA9VuMk8vk2Y1yMnhywLbqUbcPGHU0cYqNXf+NAwT9s2LTUVxapNmHiUPnBpZLWihIoo1ARJE6+6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760713209; c=relaxed/simple;
+	bh=M0zsPGF82hykh120SzaYs2kejNe1n2UrjM5EuN+alrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nTUOQtfW3HdqabVC78fPba8ivMkSu1y8VHEUsIL+dXKX34oZJARs1sliIxxlC2+gywFvCFUg+oEoKbHiv2qJDrnwpCmPgmGoHb6xQ6ejG+wgma2xDsNqSIRVosewxapEooLBpKy2P7pcY966QpLYAZgpyHzjA1FR6r+UpUDCBHQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=U/uAIHQd; arc=fail smtp.client-ip=40.107.162.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bb3cx4+DY97fcagb9/h+mvFwPTBrBk/cqXQwOctk9N30Bk37H7XBA7jfbG+WNoxNJQ3F557abX5mkRk2BCdsEzq2GjfBee9b/p+oS5cb9o7Lumih/5qOgyfhs9MYY8Ob/LL+Y6I/x5XAI6cMaL5asrTcXuS1wALUMya+K7RT2MAktmF8HgPVAr/28NzNjYy9Z3NOCr7CwNxvKLs18k57VeSRB6q5Z9x5sMtKer/29fgRb/lwJYBUsVygXXodIcWPLdZfMoikurVs6Wi8RKBskEUFa53HqVnajkM5iphxmsuyP+r0ZeGoNWpWOwVKyuF5M/nCbHjjKAPgTopybHg42Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p1dcKcpVVLGTBkOUmuh0NmoX92wivO5TSnNxU/70zrA=;
+ b=L5hWcciM9qN/S3LDmGzt92e/faXp6jUmVv5W9gkuj/2B83TaeJldBbvlw5Sjhvpzd8gzqeIWf0te7PftG99j7VLl4/TbMcy23nZHBSzRr5XmA44d3RSYQxvWCeFK7CshJ9W5jjr3xof/tYeiOK455DMgb3tqAFVmZjkhHTS5SH7h/OS+lNzD14L/7+Z/EdNC4x3pNfZRmYE3gWzu1LYtcMDTzk1EWN7pWj+w3Y1kC1wp8vCihPr4YnAuPR3Avp8CgQ9dJcMD8F+7b5nr7EgwfNY23aHkxsEN4teDFRELsMCUowtauAvRRwQH/J3fn0REnMOKJFR7EZVfBSZKgrBAZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p1dcKcpVVLGTBkOUmuh0NmoX92wivO5TSnNxU/70zrA=;
+ b=U/uAIHQdYEIOGLr3Ypu+BesfWnq9l4PZUJL+LkQ+/c0u4B25y1Kv4dwpXJRNdYQA1w6Vrjs2/Z7iKVgecL8xiEtgiNlNF3V3V7ukeIKciHMs6j3QT8nDTAG57529Kta4EAGKU4tzsGz5jfZTt0cpZArVEsZII4NDL19OmwRAH4eEPHBX33FeaFX3bjumD/o2YLOHBbz7vCK3AsjEM/IvqJpmCrOfQrbpMhkNsMofKU8uMy4A+3OMy6+adpzLGBvIS13lxW1lPesFdFAT3OtUZbz4COgW2ZQ9wiGgFFbkuMWeUeBGk8opc9iHr6T6AyOneOaHpbIU62LQ5KvAPQ5CoQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by DB9PR04MB8395.eurprd04.prod.outlook.com (2603:10a6:10:247::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 15:00:02 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 15:00:02 +0000
+Date: Fri, 17 Oct 2025 10:59:53 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
+Message-ID: <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+X-ClientProxiedBy: SJ0PR05CA0076.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::21) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251017-i2c-dw-v1-3-7b85b71c7a87@bootlin.com>
-References: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
-In-Reply-To: <20251017-i2c-dw-v1-0-7b85b71c7a87@bootlin.com>
-To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
- Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Jan Dabros <jsd@semihalf.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-rt-devel@lists.linux.dev, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DB9PR04MB8395:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70409378-ba3b-49c4-f51f-08de0d8dd96d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qhSeeiGbXZ6tVuPoUv7qEyEXzBkwUXP6On75/iJrljljGezHVu8diL4uVCYq?=
+ =?us-ascii?Q?zJ70ww/i1rSGE74i+fxfmq+BfpfQbaSOFplinpbKdubGvBOduFStAoUmyeW1?=
+ =?us-ascii?Q?lGwtbM5A/++oGlRryizhmMTufQINyRHED1G/tN/gMKai0R8DWmZnH+v6KpuF?=
+ =?us-ascii?Q?0vLmuGy980mNnBknqhcStiY7PTXfVN9FVPnekUnbRn4b8oABJfx8Ev3U3FIi?=
+ =?us-ascii?Q?1o7qieC2yvqaJHPCujcvAx/2+H4WyKWVlEOrPaAV58ozut+aXcYWqEDG49ll?=
+ =?us-ascii?Q?qZmMdf+cji7lAjqWtB7ZHmBktIAKuq4nSwmbdfDTlYmP85Pn7r3i/OTWki0N?=
+ =?us-ascii?Q?6450qJp1JPfVJDfrpHUhSHpEguytgmBBusJqIuSXkwvkMQLnli0mpr4zAWF6?=
+ =?us-ascii?Q?cOFzWHjjggBkZfOeYbpY0lrh5rmxnIVJ2Z29DKjQ9g4mDGm8e8w4Rve2Z8O+?=
+ =?us-ascii?Q?UPsmbktYNaxOctJp/nQli4+e3Kzrc3+Y7Xh3ZOKLA2rariWkWcKwgxsBIGjx?=
+ =?us-ascii?Q?0TkW5MlPIJiW8oD8Z3SqE/RiIJ7DV62yeE8vTH/XQVRnR14M7pRwdjETplpz?=
+ =?us-ascii?Q?NvGGa98a11CC81EyOh5jKoA9K5pOp6WJAkyc2pAZJoBt9HkryFmXl1zK56fZ?=
+ =?us-ascii?Q?D4gyJEDrVWkq5Dde37pprF+QsAj4MRQDypFbqKzQxgupAEeXw+MC/jwrTM6o?=
+ =?us-ascii?Q?FJbnEzTwjKyO0TYOd89rK2HiEf+vefYuDB73auggi3N+Ub64fQ80XZ0Aes6i?=
+ =?us-ascii?Q?eXjQtfgKmqBp1pn/OczDyJSNqkJZtJsf753YssB/RoK/6/e59IwFY4ZW4bSv?=
+ =?us-ascii?Q?fV1EoVRPWKbvc/WzKCBfGfek4mHcsukMuEU0jEGS0f8Gfx8Cs9oSF+94nlc8?=
+ =?us-ascii?Q?ajAE6/1DbsqSTP0p5gtYDw8xlGzdjm5TAl8+4YJczXpW0+vsq/STeLLj2Yoz?=
+ =?us-ascii?Q?MD+ziXur9sIy22zzR9d1Oga7wRx9sG/kGP7Y2pDVaseAvkEnXMVcV1Znxd+Z?=
+ =?us-ascii?Q?mUxII7MnxBe/EdGqbo14vmkJSBkW3Mr6UycAd1aVaf7Tq+y6pKtS7uepnW8q?=
+ =?us-ascii?Q?n60ZjNV6TrmHsSJA4CZuAZdI3QaBD8gQX8CHUnLUSZYotryWD0TjMeNqTGry?=
+ =?us-ascii?Q?hwhZb73qX9nVgVVUTZfpb5aVnIP52MJOvrtnRo4jjhfIaBKLi7MQn49K191x?=
+ =?us-ascii?Q?Sc7xCQ13sOV1Z79snC+YqxTqwHjSgDt8xnwK9eonUlmOo9kjUMYHEep9qRfg?=
+ =?us-ascii?Q?W/9I3pTURKovGqXORZ1SzkqJMK4JmNPgHtbP7LwJSEbvzkuwTA3AS0S9HyUe?=
+ =?us-ascii?Q?dh/hizyTtvkr1uvZAih5jt4paS4QgDm227DktMeIb9xFzZSZb2WbCocT6SdK?=
+ =?us-ascii?Q?2a2MvWp8eZONTISHjyM4Q36DxC3dnXk356UCZI+PDIZuamo5HuSJiiPSCwR1?=
+ =?us-ascii?Q?PjqVEMsPtzjj00mUVcpVh6F7lJUH17ad8fgi+nB2dE9km2gd+i/RcQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XS57Wb2GTBTGavpn+vC+H1l9rf0uInctymws5T2cfy67RUQsE78DkTEQGJ0s?=
+ =?us-ascii?Q?ElAwaUDdtAkSyWjehr+ng/tV8/CnGMPQVUlO3fT1ZdL4J1pi8OKhicV4/ugh?=
+ =?us-ascii?Q?84vTydv8tEHG5heWSfYUZR4RMgzaWD/gUf4WTDiGt5Sob2xYIRwOnPyhFLtt?=
+ =?us-ascii?Q?mfR6U/umQr/VcBhdQ9qGho5+x1jiYBbYa0pgW09T9A/ZMrSXxxQKLbSMYWQn?=
+ =?us-ascii?Q?I9JctowVa+rdylBbdEi3K3QX8aHwmipYaiZiqknzho0tKqtBGf+GrX00C8RE?=
+ =?us-ascii?Q?MLyCO8f6OQMBrbGlrwQx1W2ztJcKRLPOkd3cbAsm0wOc1Sj6LI6sV1aNKhI7?=
+ =?us-ascii?Q?j1/Slfklc+I+pi4N4Jhw6JEnCxoyjjk8SyAZfiV/b5CEs+L/CzIyR+1PO0xt?=
+ =?us-ascii?Q?/sn3pHcIO2yJ9zQM2WiE9tRrSonrc2y6rZn5F9yAcaSjKV+mMLIBfCMeU95B?=
+ =?us-ascii?Q?knjy3uMOOiod6b1W/LINifpKb+52lt9/DI0cc+XwPWxAEKWOO8oYZWpfxzbt?=
+ =?us-ascii?Q?joaGZv0h/GeBl1AaDgscDzZkgr6qw3vE1ejk/8TFV6Mq5wOKQXXKL9JBgW46?=
+ =?us-ascii?Q?49rtjY6sV4CTbEjfIELFk9eAyXpqe6sJWS3ef3D8ylrhnvxqPN2CuwQd4iMF?=
+ =?us-ascii?Q?q6BOrLob8B/Acy4jQzZ58yuIm/p6qq/QdyLo8ebXdXfCk0usvWUNX3mcfhdX?=
+ =?us-ascii?Q?bGwloaDZVz6PCiBhY3i4qBJbaBzpjoqHfLRSnBRz0lNfv8Te7coJ5UvjSCgW?=
+ =?us-ascii?Q?bLsOuhUzcjXdHwapIQY0iRwBbfpHU8YDALG/zq1ExEsYqpFAuEPpb9b15nHH?=
+ =?us-ascii?Q?3i4NdUUfailPnskMK37imOlj8Fd3wjpwbQ8lnsiJJaQXgEwY4Y1iUUUITYhm?=
+ =?us-ascii?Q?Rjs+KXftWI03DiorJFMyMrfxpwxUAuK7CUof88oRUWYIvQY9xm/kqvlFd5nL?=
+ =?us-ascii?Q?QReMmpS7NzTuc/Oy3L6MDkEOHU1OezLYAPU2MQNnYbwGegnnnOYRU1hSkF6n?=
+ =?us-ascii?Q?s9BHUjIutQvpAktTjLQ3bdbrZjNWG5/8T7VZ241WqprxTixSNiP6oeVNacMz?=
+ =?us-ascii?Q?EtztLAd+B6Ex4Hf7+IlC+WkXptS9uW93J6MvJtK6iC9VxGnso/cF4Q0IGcH2?=
+ =?us-ascii?Q?7/g6rUI0ifCpDO3eZV8ep7qKlsvc6Hv+iPQCDVFIjs5gdnYQrJT1i/UM6+m/?=
+ =?us-ascii?Q?T0ZZ/Km+fCiMRjYWHA8X3nX+G/0v1TYAsY341PmalEmk4Ukgjs4d1GVxap7T?=
+ =?us-ascii?Q?dEntaPWqITwnBWd9q461p5n0wh7VO9ftp7GoA6ItEtz8bSK5+dC1J6UtaJiz?=
+ =?us-ascii?Q?t78uYnyMlmlF0obaXB7MYuD2ZLKl9VnaXmyqBdFjvtmi+YKAYj6uM03k5Mfd?=
+ =?us-ascii?Q?BtsQsGQKIQMZ/5pCHzv2ghgWyHNzvkj9nTv7OdNSLNOPTg0dpYuH1fKKCCV/?=
+ =?us-ascii?Q?7cFSuqT4mBjOgY0QuIFJjVQiKRRB/xeZ85fPAe1GvpQ9sfHBNEa8NIGuHfge?=
+ =?us-ascii?Q?PwEujPoMfHf1UvSNYlq7vYICPU4EPbs75Gy0WzccDWTIoAiTjvHU9xa8jimT?=
+ =?us-ascii?Q?eCfpVEgiDoRHRNlw48I=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70409378-ba3b-49c4-f51f-08de0d8dd96d
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 15:00:02.3882
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l1/j2wx/Cu0wluxJLJWgzz+2C/VfrLQNUG9c+CuAzSDa568W5RVojKT11OlLmMjMOU5/qeo+NyjxTWmlYBZiZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8395
 
-If IC_EMPTYFIFO_HOLD_MASTER_EN parameter is 0, "Stop" and "Repeated
-Start" bits in command register doesn't exist, thus it is impossible to
-send several consecutive write messages in a single hardware batch. The
-existing implementation worked with such configuration incorrectly: all
-consequent write messages joined into a single message without any
-Start/Stop or Repeated Start conditions. For example, the following
-command:
+On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+> Add documentation for i.MX8ULP's SIM LPAV module.
+>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
+>  include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
+>  .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
+>  3 files changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>  create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+> new file mode 100644
+> index 000000000000..fb3b9028a4c3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
+> +
+> +maintainers:
+> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> +
+> +description:
+> +  The i.MX8ULP LPAV subsystem contains a block control module known as
+> +  SIM LPAV, which offers functionalities such as clock gating or reset
+> +  line assertion/de-assertion.
+> +
+> +properties:
+> +  compatible:
+> +    const: fsl,imx8ulp-sim-lpav
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: lpav_bus
+> +      - const: hifi_core
+> +      - const: hifi_plat
 
-    i2ctransfer -y 0 w1@0x55 0x00 w1@0x55 0x01
+dt prefer use -
+lpav-bus, ...
 
-does the same as
-
-    i2ctransfer -y 0 w2@0x55 0x00 0x01
-
-To fix it, for the controllers that behave this way, if the next message
-to the same slave device has the same direction as the previous one, it
-is sent to the controller only after the previous message is sent and
-STOP_DET IRQ flag is raised by the controller.
-
-This behavior is activated by compatible entries, because the state of
-the IC_EMPTYFIFO_HOLD_MASTER_EN parameter cannot be detected at runtime.
-Add the compatible entries of Mobileye SoCs needing the work-around and
-sort the entries alphabetically.
-
-There is another possible problem with this controller configuration:
-When the CPU is putting commands to the FIFO, this process must not be
-interrupted because if FIFO buffer gets empty, the controller finishes
-the I2C transaction and generates STOP condition on the bus.
-
-In a PREEMPT-RT kernel, interrupt handlers are by default executed in
-thread and may be interrupted, which can lead to breaking an I2C message
-by inserting an unwanted STOP.
-
-To ensure proper operation on realtime kernel, use IRQF_NO_THREAD flag
-when requesting IRQ.
-
-Based on the work of Dmitry Guzman <dmitry.guzman@mobileye.com>
-
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
----
- drivers/i2c/busses/i2c-designware-core.h    |  1 +
- drivers/i2c/busses/i2c-designware-master.c  | 45 +++++++++++++++++++++--------
- drivers/i2c/busses/i2c-designware-platdrv.c |  6 ++--
- 3 files changed, 38 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 347843b4f5dd7..a31a8698e511a 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -311,6 +311,7 @@ struct dw_i2c_dev {
- #define ACCESS_NO_IRQ_SUSPEND			BIT(1)
- #define ARBITRATION_SEMAPHORE			BIT(2)
- #define ACCESS_POLLING				BIT(3)
-+#define NO_EMPTYFIFO_HOLD_MASTER		BIT(4)
- 
- #define MODEL_MSCC_OCELOT			BIT(8)
- #define MODEL_BAIKAL_BT1			BIT(9)
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index f9a180b145da8..e5af0439ec832 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -443,18 +443,6 @@ i2c_dw_xfer_msg(struct dw_i2c_dev *dev)
- 	for (; dev->msg_write_idx < dev->msgs_num; dev->msg_write_idx++) {
- 		u32 flags = msgs[dev->msg_write_idx].flags;
- 
--		/*
--		 * If target address has changed, we need to
--		 * reprogram the target address in the I2C
--		 * adapter when we are done with this transfer.
--		 * This can be done after STOP_DET IRQ flag is raised.
--		 * So, disable "TX FIFO empty" interrupt.
--		 */
--		if (msgs[dev->msg_write_idx].addr != addr) {
--			intr_mask &= ~DW_IC_INTR_TX_EMPTY;
--			break;
--		}
--
- 		if (!(dev->status & STATUS_WRITE_IN_PROGRESS)) {
- 			/* new i2c_msg */
- 			buf = msgs[dev->msg_write_idx].buf;
-@@ -470,6 +458,25 @@ i2c_dw_xfer_msg(struct dw_i2c_dev *dev)
- 				need_restart = true;
- 		}
- 
-+		/*
-+		 * If target address has changed, we need to
-+		 * reprogram the target address in the I2C
-+		 * adapter when we are done with this transfer.
-+		 * This can be done after STOP_DET IRQ flag is raised.
-+		 * So, disable "TX FIFO empty" interrupt.
-+		 * Also force a stop-then-start between two messages
-+		 * in the same direction if we need to restart on a
-+		 * adapter that does not handle restart.
-+		 */
-+		if (msgs[dev->msg_write_idx].addr != addr ||
-+		    ((need_restart &&
-+		     dev->flags & NO_EMPTYFIFO_HOLD_MASTER &&
-+		     ((msgs[dev->msg_write_idx].flags & I2C_M_RD) ==
-+		      (msgs[dev->msg_write_idx - 1].flags & I2C_M_RD))))) {
-+			intr_mask &= ~DW_IC_INTR_TX_EMPTY;
-+			break;
-+		}
-+
- 		regmap_read(dev->map, DW_IC_TXFLR, &flr);
- 		tx_limit = dev->tx_fifo_depth - flr;
- 
-@@ -1062,6 +1069,20 @@ int i2c_dw_probe_master(struct dw_i2c_dev *dev)
- 		irq_flags = IRQF_SHARED | IRQF_COND_SUSPEND;
- 	}
- 
-+	/*
-+	 * The first writing to TX FIFO buffer causes transmission start. If
-+	 * IC_EMPTYFIFO_HOLD_MASTER_EN is not set, when TX FIFO gets empty, I2C
-+	 * controller finishes the transaction. If writing to FIFO is
-+	 * interrupted, FIFO can get empty and the transaction will be finished
-+	 * prematurely. FIFO buffer is filled in IRQ handler, but in PREEMPT_RT
-+	 * kernel IRQ handler by default is executed in thread that can be
-+	 * preempted with another higher priority thread or an interrupt. So,
-+	 * IRQF_NO_THREAD flag is required in order to prevent any preemption
-+	 * during filling the FIFO buffer and possible data lost.
-+	 */
-+	if (dev->flags & NO_EMPTYFIFO_HOLD_MASTER)
-+		irq_flags |= IRQF_NO_THREAD;
-+
- 	ret = i2c_dw_acquire_lock(dev);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 34d881572351c..5e459175dcdb2 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -345,9 +345,11 @@ static void dw_i2c_plat_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id dw_i2c_of_match[] = {
--	{ .compatible = "snps,designware-i2c", },
--	{ .compatible = "mscc,ocelot-i2c", .data = (void *)MODEL_MSCC_OCELOT },
- 	{ .compatible = "baikal,bt1-sys-i2c", .data = (void *)MODEL_BAIKAL_BT1 },
-+	{ .compatible = "mobileye,eyeq6lplus-i2c", .data = (void *)NO_EMPTYFIFO_HOLD_MASTER },
-+	{ .compatible = "mobileye,eyeq7h-i2c", .data = (void *)NO_EMPTYFIFO_HOLD_MASTER },
-+	{ .compatible = "mscc,ocelot-i2c", .data = (void *)MODEL_MSCC_OCELOT },
-+	{ .compatible = "snps,designware-i2c", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, dw_i2c_of_match);
-
--- 
-2.51.0
-
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  mux-controller:
+> +    $ref: /schemas/mux/reg-mux.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - mux-controller
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/imx8ulp-clock.h>
+> +
+> +    clock-controller@2da50000 {
+> +        compatible = "fsl,imx8ulp-sim-lpav";
+> +        reg = <0x2da50000 0x10000>;
+> +        clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
+> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
+> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
+> +        clock-names = "lpav_bus", "hifi_core", "hifi_plat";
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +
+> +        mux-controller {
+> +            compatible = "reg-mux";
+> +            #mux-control-cells = <1>;
+> +            mux-reg-masks = <0x8 0x00000200>;
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+> index 827404fadf5c..c62d84d093a9 100644
+> --- a/include/dt-bindings/clock/imx8ulp-clock.h
+> +++ b/include/dt-bindings/clock/imx8ulp-clock.h
+> @@ -255,4 +255,9 @@
+>
+>  #define IMX8ULP_CLK_PCC5_END		56
+>
+> +/* LPAV SIM */
+> +#define IMX8ULP_CLK_SIM_LPAV_HIFI_CORE		0
+> +#define IMX8ULP_CLK_SIM_LPAV_HIFI_PBCLK		1
+> +#define IMX8ULP_CLK_SIM_LPAV_HIFI_PLAT		2
+> +
+>  #endif
+> diff --git a/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h b/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+> new file mode 100644
+> index 000000000000..adf95bb26d21
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright 2025 NXP
+> + */
+> +
+> +#ifndef DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H
+> +#define DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H
+> +
+> +#define IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST	0
+> +#define IMX8ULP_SIM_LPAV_HIFI4_DSP_RST		1
+> +#define IMX8ULP_SIM_LPAV_HIFI4_DSP_STALL	2
+> +#define IMX8ULP_SIM_LPAV_DSI_RST_BYTE_N		3
+> +#define IMX8ULP_SIM_LPAV_DSI_RST_ESC_N		4
+> +#define IMX8ULP_SIM_LPAV_DSI_RST_DPI_N		5
+> +
+> +#endif /* DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H */
+> --
+> 2.43.0
+>
 
