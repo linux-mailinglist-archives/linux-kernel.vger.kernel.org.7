@@ -1,179 +1,203 @@
-Return-Path: <linux-kernel+bounces-858661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94186BEB5D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:10:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA8EBEB5E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40D2D35FBCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CD519A3545
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901FB2E9EB2;
-	Fri, 17 Oct 2025 19:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E482FFDC8;
+	Fri, 17 Oct 2025 19:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQIuYTX7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPsNtg+u"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758F12FE587;
-	Fri, 17 Oct 2025 19:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C045E2EB85D
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 19:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760728209; cv=none; b=nUDbiKxS2XA1BsOLC/vP+a7jUQrt29Kuds/ZfWEycfueNypkCnBOG+idIJs2HVjI0ykQvF8WKf/Z2yYyz7z8yDeFGHCCq6XXE/MjdKamujzj++snavfSu21RQ6t/BrWCAI9lD4dLIXzXHUkx/gLBnpo9nuafCRWrtmRdq94GucA=
+	t=1760728295; cv=none; b=OCQUt9BhLfZThMxyeEsW4FhQpNPyLw2CmgWMX8PvHyQvzOQqnHQzh8L7lovDQrHZi9RFl7H5s+W1rcaYvDDFt2uEGygH8/juNjFw8MP5VqeTsHkrZddXLJlUUPemr3DEBs/wK2plCyO6AWG80IE+pEXAO6ZNflyGJ3FdUGnQg5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760728209; c=relaxed/simple;
-	bh=0f9esdWuiStJECWkAZn/SOlcYyopP8tRdxicHx6d+OE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sfos71s2ArwfzIVmIy1w0gWOlvOaVMiG5VJL2SkxAJxxk4+zib7R7b6kpGMTnK573JqlX9Cw/eFAQEuR2s1I04bvHNLyi7qMIAXvlztImXCeInkm/qHQsbE41Kfxma1R6H4llIqQdE8A18Kkfb4s75sMkUTaOriIZX6yU2YxOtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQIuYTX7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48629C4CEE7;
-	Fri, 17 Oct 2025 19:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760728207;
-	bh=0f9esdWuiStJECWkAZn/SOlcYyopP8tRdxicHx6d+OE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tQIuYTX7Y8ndmbugWjDJuqFowJB7D7ZiJxGsYXMan2X1frNeiQ8YGxQbMg/3yjLaC
-	 mqcqv8ai0cWhv8xBVcbfBQpuQ5wQ0hZVJkOV7CsP44+KjcBLqFev+qnLGGbZIvaZp5
-	 Iw6JDOMtoJtnRmlC4yfsSzjwuCDB8EyyQXkNoxXOLyB+CYFj1SNTamNdmpO1LynQVA
-	 8NTSwP3+ugqRYINZ0tVfKinm8YF9hz2cD2+xDPe+Hzu1PCLOy/GHfbhg6Ti4v5S968
-	 9IYlgNeSyv5X7YRW6lgBAjuE10VbPCOosZNhY+J2bpgkX+BawOq3FAYObFLenZM1y1
-	 23bIt1hqFSnqQ==
-Date: Fri, 17 Oct 2025 14:10:05 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Ron Economos <re@w6rz.net>
-Subject: Re: [PATCH 1/2] PCI: dwc: Fix ECAM enablement when used with vendor
- drivers
-Message-ID: <20251017191005.GA1041995@bhelgaas>
+	s=arc-20240116; t=1760728295; c=relaxed/simple;
+	bh=rZlVo0hqETHHWosbDDO1yCZXsWvpf7FQP7auewrGHgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rgcOAxueSkYhyDhbCCAUBVcZxXo1+chp2J2GMXxEQbzjLFjxUlHoROhifTCsHZcAZqh+Hjz7fLHY2mOPSmUnVq+5J5wROrvKIi+lilIkJ6P6cey77Vz7yLHcnF9Upk/6lPBlb0Nmnr3dmRgB7K8NieQ1WLKHqMt7fTo/76TCPFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPsNtg+u; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3dbf11fa9eso439995266b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760728291; x=1761333091; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hhR7N/1fveVtt6wxaFP4nn/bZMr+K94/sut3rmsfdTg=;
+        b=ZPsNtg+uEziD3Lq0OoqRsQwYiROSHbXhXNbmwPYq6A+WQ3BTG2glApmFPScJQg28fK
+         x4P4bRtnVsnmQC+jcVEIY4FfONyUoAnSQHWKqOw4s8MMftkySjdRsaoCYNtoX3aNKutZ
+         MkqCvr/ShEXbxWd5pE9GcdDxhCs4g+EWOOCuVvxZj0Kp1a17WacGXDFgUfUesqjIyuXm
+         UkysWd7Mn669Wq9kwKKKFR/JW+rrzm+T3Za7qPqJAwmd8JSEtzKoI1jil9v5rt96GkAV
+         OKOlcemI798oPT9QBkMFFUlMSOhUtyEsz0V6JYLjP3+ReU+vTGP9VmqFKhShdbvJe6L1
+         aiFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760728291; x=1761333091;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hhR7N/1fveVtt6wxaFP4nn/bZMr+K94/sut3rmsfdTg=;
+        b=qSYWhVIAqiSj+B81kmRn9hNRIfU/vDVo4lwSBsXGtIKbn06AjqasQff2uiSGWO4a+0
+         6GHZSlbvb2kzIJ7mypv/LTH9jirnrCF9d7ITQbizMOz3TCv+AkLPVOmAuUFJbk/G+9Ac
+         ECQCmUVaedgjfW+v1drlNjh3lacxpzMxZtxV2IX/MSYpC3EkD0MwBMkYcNBjZWEC3q/s
+         Unaq8b0kMjt3mJBQwg6XvKp+0nyjYTl+p2yegFq+TI0N+K75HkE/uvjKl81cQoIf19lR
+         O/Zj+p8wT8Nr9jfpvM5klgUZyGTKq+gv5r/m7pzGXsAa0Waqcns2vm0b/80j2vQPxZLi
+         hIiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPrGl6XtOfpE2uqon8MM/VqMZC9PvHBycPZSwC1lGTsxnvrleMGqf3N9LXyjMf2f1DdmxAbtXvT88jrFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSQpzDBk5JIlTOObglMDRVWriuZCvVsVCThaj+VPMSI+Vq9FDR
+	mrnmTD0ArRaQc3NZ7fu6EhKPMNiQB25wYH81CyhMjmd7pLhh/CG3sC+rdfF8qfRHZP3Kvsko9g4
+	0pbqJwFaOprNJaeXLHrWChLpiSdbiGQ4=
+X-Gm-Gg: ASbGncur+01SOSiVHw7523fqNrjxuDcyYAqayod5H05k0Oo8Qx0FrVuwTOQlmdDGif7
+	yl5IvpI4Do3s68fQkELdgCBwo9asQ+XYb5FOzEjUnpWdsBPzG6Tmqram46h8jc4pZCxLWZfC9i6
+	f5eIT7gNnR5Uo2hADzywXa9SS4BX8EIlwqsJvvxtKGLvusv3YaAMwNMsbBV8jhozMpk//cjTCMj
+	arb5wsmJwVmz5LQ6Ule9eX4EsZ2OKc1NS59alpZRmUgCb4SvBVvZRhxtVAZaSTOwkev43GNcHM7
+	h//sUg==
+X-Google-Smtp-Source: AGHT+IFDOlJ6XYwDeGzUOeuUv7tu/n9jNAnoTgbcA/YtbUqQ9ooDi0ZvO1Y7Lz1HWF/EaVHKgjB6T0ljyIDFi13wLII=
+X-Received: by 2002:a17:907:940f:b0:b40:e687:c2c with SMTP id
+ a640c23a62f3a-b647394ce7fmr469325666b.37.1760728290384; Fri, 17 Oct 2025
+ 12:11:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017-ecam_fix-v1-1-f6faa3d0edf3@oss.qualcomm.com>
+References: <20251016033452.125479-1-ziy@nvidia.com> <20251016033452.125479-3-ziy@nvidia.com>
+In-Reply-To: <20251016033452.125479-3-ziy@nvidia.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 17 Oct 2025 12:11:17 -0700
+X-Gm-Features: AS18NWBFTKLOBvlIpa6FLOiYX2FyPcTBMCd4lweftBhZd_zGhKkHrG1wKzTNxSo
+Message-ID: <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio handling.
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
+	kernel@pankajraghav.com, 
+	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, mcgrof@kernel.org, 
+	nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 05:10:53PM +0530, Krishna Chaitanya Chundru wrote:
-> When the vendor configuration space is 256MB aligned, the DesignWare
-> PCIe host driver enables ECAM access and sets the DBI base to the start
-> of the config space. This causes vendor drivers to incorrectly program
-> iATU regions, as they rely on the DBI address for internal accesses.
-> 
-> To fix this, avoid overwriting the DBI base when ECAM is enabled.
-> Instead, introduce a custom ECAM PCI ops implementation that accesses
-> the DBI region directly for bus 0 and uses ECAM for other buses.
-> 
-> Fixes: f6fd357f7afb ("PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'")
-> Reported-by: Ron Economos <re@w6rz.net>
-> Closes: https://lore.kernel.org/all/eac81c57-1164-4d74-a1b4-6f353c577731@w6rz.net/
-> Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+On Wed, Oct 15, 2025 at 8:38=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>
+> Large block size (LBS) folios cannot be split to order-0 folios but
+> min_order_for_folio(). Current split fails directly, but that is not
+> optimal. Split the folio to min_order_for_folio(), so that, after split,
+> only the folio containing the poisoned page becomes unusable instead.
+>
+> For soft offline, do not split the large folio if it cannot be split to
+> order-0. Since the folio is still accessible from userspace and premature
+> split might lead to potential performance loss.
+>
+> Suggested-by: Jane Chu <jane.chu@oracle.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 > ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 28 +++++++++++++++++++----
->  1 file changed, 24 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 20c9333bcb1c4812e2fd96047a49944574df1e6f..e92513c5bda51bde3a7157033ddbd73afa370d78 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -23,6 +23,7 @@
->  #include "pcie-designware.h"
->  
->  static struct pci_ops dw_pcie_ops;
-> +static struct pci_ops dw_pcie_ecam_ops;
->  static struct pci_ops dw_child_pcie_ops;
->  
->  #define DW_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS		| \
-> @@ -471,9 +472,6 @@ static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *re
->  	if (IS_ERR(pp->cfg))
->  		return PTR_ERR(pp->cfg);
->  
-> -	pci->dbi_base = pp->cfg->win;
-> -	pci->dbi_phys_addr = res->start;
-> -
->  	return 0;
->  }
->  
-> @@ -529,7 +527,7 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->  		if (ret)
->  			return ret;
->  
-> -		pp->bridge->ops = (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
-> +		pp->bridge->ops = &dw_pcie_ecam_ops;
->  		pp->bridge->sysdata = pp->cfg;
->  		pp->cfg->priv = pp;
->  	} else {
-> @@ -842,12 +840,34 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
->  
-> +static void __iomem *dw_pcie_ecam_conf_map_bus(struct pci_bus *bus, unsigned int devfn, int where)
-> +{
-> +	struct pci_config_window *cfg = bus->sysdata;
-> +	struct dw_pcie_rp *pp = cfg->priv;
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	unsigned int busn = bus->number;
-> +
-> +	if (busn > 0)
-> +		return pci_ecam_map_bus(bus, devfn, where);
-
-Is there a way to avoid the "root bus is bus 00" assumption here?  It
-looks like something like this might work (it inverts the condition
-to take care of the root bus special case first):
-
-  if (bus == pp->bridge->bus) {
-    if (PCI_SLOT(devfn) > 0)
-      return NULL;
-
-    return pci->dbi_base + where;
-  }
-
-  return pci_ecam_map_bus(bus, devfn, where);
-
-> +	if (PCI_SLOT(devfn) > 0)
-> +		return NULL;
-
-This essentially says only one function (00.0) can be on the root bus.
-I assume that someday that will be relaxed and there may be multiple
-Root Ports and maybe RCiEPs on the root bus, so it would be nice if we
-didn't have to have this check.
-
-What happens without it?  Does the IP return the ~0 data that the PCI
-core would interpret as "there's no device here"?
-
-Regardless, I love this series because it removes quite a bit of code
-and seems so much cleaner.
-
-> +	return pci->dbi_base + where;
-> +}
-> +
->  static struct pci_ops dw_pcie_ops = {
->  	.map_bus = dw_pcie_own_conf_map_bus,
->  	.read = pci_generic_config_read,
->  	.write = pci_generic_config_write,
->  };
->  
-> +static struct pci_ops dw_pcie_ecam_ops = {
-> +	.map_bus = dw_pcie_ecam_conf_map_bus,
-> +	.read = pci_generic_config_read,
-> +	.write = pci_generic_config_write,
-> +};
-> +
->  static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  mm/memory-failure.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index f698df156bf8..443df9581c24 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn,=
+ struct page *p,
+>   * there is still more to do, hence the page refcount we took earlier
+>   * is still needed.
+>   */
+> -static int try_to_split_thp_page(struct page *page, bool release)
+> +static int try_to_split_thp_page(struct page *page, unsigned int new_ord=
+er,
+> +               bool release)
 >  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> 
-> -- 
-> 2.34.1
-> 
+>         int ret;
+>
+>         lock_page(page);
+> -       ret =3D split_huge_page(page);
+> +       ret =3D split_huge_page_to_list_to_order(page, NULL, new_order);
+>         unlock_page(page);
+>
+>         if (ret && release)
+> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
+>         folio_unlock(folio);
+>
+>         if (folio_test_large(folio)) {
+> +               int new_order =3D min_order_for_split(folio);
+>                 /*
+>                  * The flag must be set after the refcount is bumped
+>                  * otherwise it may race with THP split.
+> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
+>                  * page is a valid handlable page.
+>                  */
+>                 folio_set_has_hwpoisoned(folio);
+> -               if (try_to_split_thp_page(p, false) < 0) {
+> +               /*
+> +                * If the folio cannot be split to order-0, kill the proc=
+ess,
+> +                * but split the folio anyway to minimize the amount of u=
+nusable
+> +                * pages.
+> +                */
+> +               if (try_to_split_thp_page(p, new_order, false) || new_ord=
+er) {
+
+folio split will clear PG_has_hwpoisoned flag. It is ok for splitting
+to order-0 folios because the PG_hwpoisoned flag is set on the
+poisoned page. But if you split the folio to some smaller order large
+folios, it seems you need to keep PG_has_hwpoisoned flag on the
+poisoned folio.
+
+Yang
+
+
+> +                       /* get folio again in case the original one is sp=
+lit */
+> +                       folio =3D page_folio(p);
+>                         res =3D -EHWPOISON;
+>                         kill_procs_now(p, pfn, flags, folio);
+>                         put_page(p);
+> @@ -2621,7 +2630,15 @@ static int soft_offline_in_use_page(struct page *p=
+age)
+>         };
+>
+>         if (!huge && folio_test_large(folio)) {
+> -               if (try_to_split_thp_page(page, true)) {
+> +               int new_order =3D min_order_for_split(folio);
+> +
+> +               /*
+> +                * If the folio cannot be split to order-0, do not split =
+it at
+> +                * all to retain the still accessible large folio.
+> +                * NOTE: if getting free memory is perferred, split it li=
+ke it
+> +                * is done in memory_failure().
+> +                */
+> +               if (new_order || try_to_split_thp_page(page, new_order, t=
+rue)) {
+>                         pr_info("%#lx: thp split failed\n", pfn);
+>                         return -EBUSY;
+>                 }
+> --
+> 2.51.0
+>
+>
 
