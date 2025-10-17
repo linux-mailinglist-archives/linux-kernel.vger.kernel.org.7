@@ -1,140 +1,101 @@
-Return-Path: <linux-kernel+bounces-857560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A34BE722B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD589BE722E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E52B58599A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B803A6CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BA328850D;
-	Fri, 17 Oct 2025 08:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBC9283C8E;
+	Fri, 17 Oct 2025 08:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="I4BBg2wO"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="huNCcGvr"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4294E28727B;
-	Fri, 17 Oct 2025 08:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992627FD5B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689381; cv=none; b=ETRiw03vwBKgGLYSQAUisCBZLgY5xbNaklMkyXYmdjeg9D6vgiDznjs/xRgkxrRyTkcZK8ZLP9kSb/RGE8hQxeYqdNOqQk9ZmyTR2OJSIEs3D3AVHkhIlzZ21qZbsyZMjlqGXFgwpZCLCyb8jSFiyX8r5C2UqF9p5OZyBD/GF/E=
+	t=1760689454; cv=none; b=jYbEQzJ+wQQN9gOvTeu2JMn3PwmFGl9ehMqHQQT4NdNlJwdlVG4cjfLjLelxov7OKtIbybDXCNLz4V9xNEKfmTsL529WCm907fVZUP3XsJc7dQhe0clfGqNXQQIEc0u1HUhQouGuuGQGrF2wSjLeSw8pGUAhAjq4piWzg11pKBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689381; c=relaxed/simple;
-	bh=OxPPXWaxtS5ARtDeuNtZSj/+wvLkD+KBGcHhEj+azrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VX+LBgE9r6A+ylw0gEX7fx/k0b41iXdEFoKUQhkMePY5LWTD1P7Xeloy39rD50cFuHEbcayofHX/v9HQwV/Y5ScLbbDRsKI6aaPTsjL+6tBUjePm4U6uSXxU+L3uGKMYPUsyxyyQErf55FlmmSdi3BHSwAkwleDrz0WSdwOsbuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=I4BBg2wO; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=f1UgrtkRd8hzFxDQXSida2T4QLJIXoBHA//CXqka/gA=; 
-	b=I4BBg2wOqPtr6WipkUrHnbVRKlhH3MvAlzxSK3Wjf63bV0xvxpVwYT4FC4NYcEK/JZvLqD4sJgK
-	ZxoNrza5jDZ+S91IQBRgCHU6248RxE3RC+9W+bIqXmFNPLsOmqrJMkvwxJv+EKkdUbDrOtqdgaxkz
-	rY3vFbOsHgFOgRpmVWTeMP8GIJvJZnqeqtxMEQnRI3w/4aiDNWY8Ohk6c/hCw71Ty6h9a76GH1RaJ
-	sVKgCXaSvUiWFbqnscUi0zfTojMo96+JNBjy1zCtnT3BMBvs0fWUxdRcvP8DbJEnc3oL22bkpPLwk
-	ip70R+iNHAELfA4TgbBMa3JfqGlXax/5kkOQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1v9fjj-00DN5a-1w;
-	Fri, 17 Oct 2025 16:22:56 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 17 Oct 2025 16:22:55 +0800
-Date: Fri, 17 Oct 2025 16:22:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: meenakshi.aggarwal@nxp.com
-Cc: horia.geanta@nxp.com, V.sethi@nxp.com, pankaj.gupta@nxp.com,
-	gaurav.jain@nxp.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] trusted-keys: Add support for protected keys using
- CAAM
-Message-ID: <aPH83_rWq8E1dYZ2@gondor.apana.org.au>
-References: <20251006071753.3073538-1-meenakshi.aggarwal@nxp.com>
+	s=arc-20240116; t=1760689454; c=relaxed/simple;
+	bh=McM2mvMkVPJy9yLZ+uSH+FTXEhHL97V1HuSxYXMMEXs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HnclbpBtQv6T+z6cRm9QM8ud8G6e+t+asINqCEXn8y2oa9wB9PKDSx4mb2RVo9CCW4TeFwVmmgoEQx0/K6R3dc2510hJgzXXDCpIE7jbPdYAIvfDw5+IbF4g2Dw7kkMbROdnTr6ELChVxAHnSY6KM4Rh9lRh1NDN8VjDw2l3E48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=huNCcGvr; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ev
+	ao6NDYDHHUvt38y+3qbDIqPKeXIb3vM3lrstmESlc=; b=huNCcGvrtBl2873RiK
+	kh3XtYCfBMM3A7o4Gtx3zCVJSvR5YkxdMArlK8CS0aQ06ycfT6cMLEMcE1UUx1dl
+	0QsbL0hwJ9YBvOsn0Tu0aeejSFaTr5mu0vWsOhTHoyVq3kas7zkTsRj53TaskGiy
+	CeLonXajkdNDkg9Q85B9Kykfg=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBngNUU_fFoP8qQAw--.60681S2;
+	Fri, 17 Oct 2025 16:23:49 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: hch@infradead.org
+Cc: jackzxcui1989@163.com,
+	jiangshanlai@gmail.com,
+	linux-kernel@vger.kernel.org,
+	tj@kernel.org
+Subject: Re: [PATCH] workqueue: Support RT workqueue
+Date: Fri, 17 Oct 2025 16:23:48 +0800
+Message-Id: <20251017082348.2998547-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aPHhmz1C7d9vt2x8@infradead.org>
+References: <aPHhmz1C7d9vt2x8@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006071753.3073538-1-meenakshi.aggarwal@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBngNUU_fFoP8qQAw--.60681S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar1DWFyDCr4kJF4xGr18AFb_yoW8Gw47pF
+	4YyrZrtr4DAa909Fs7Gr4xXr4Sgwn7tFyUGF48G34Ivrn8JryvvF4fK3yava4UWr93uw17
+	AFWFvrZ8Cr1UZ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUFii3UUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCwBUbJWjx-RWIDQAA3f
 
-On Mon, Oct 06, 2025 at 09:17:50AM +0200, meenakshi.aggarwal@nxp.com wrote:
-> From: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
-> 
-> Overview:
-> This patch set adds:
-> - Support for creating and loading protected keys via `keyctl` interface.
-> - Documentation updates to describe protected key usage and options.
-> - CAAM-specific implementation for protected key encryption algorithms.
-> 
-> User can create protected/encrypted key using keyctl interface:
-> 
-> KEYNAME=dm_trust_key_hw
-> KEY="$(keyctl add trusted $KEYNAME 'new 32 pk key_enc_algo=1' @s)"
-> keyctl pipe $KEY >~/$KEYNAME.blob
-> keyctl list @s
-> 
-> dm-crypt can load the protected key buffer from the keyring and use it to
-> initialize encrypted volumes, ensuring that key material is never exposed in plaintext.
-> 
-> The Protected key buffer is passed to the CAAM driver via the kernel crypto API.
-> CAAM driver will decapsulate the protected key buffer and perform cipher operation.
-> 
-> Protected Keys are identified by a header structure:
-> 
-> struct caam_pkey_info {
-> 	u8  is_pkey;
-> 	u8  key_enc_algo;
-> 	u16 plain_key_sz;
-> 	u8 key_buf[];
-> };
-> 
-> This information is populated based on the parameters provided during key creation such as 'new 32 pk key_enc_algo=1'
-> 
-> Internal Workflow:
-> ::
-> 
->  +------------------------+     +-------------------------------+
->  |   Seal Function        |     | paes_skcipher_setkey()        |
->  | - Constructs key buffer|---->| - Parses header and key_buf[] |
->  | - Adds header metadata |     | - Initializes cipher context  |
->  +------------------------+     +-------------------------------+
-> 
-> I welcome feedback and suggestions from the community.
-> 
-> Thank you for your time and consideration.
-> 
-> Best regards,
-> Meenakshi Aggarwal 
-> 
-> Meenakshi Aggarwal (3):
->   Doc: trusted-keys as protected keys
->   KEYS: trusted: caam based protected key
->   crypto:caam: Add support of paes algorithm
-> 
->  .../security/keys/trusted-encrypted.rst       |  87 +++++++++++-
->  drivers/crypto/caam/blob_gen.c                |  86 +++++++++---
->  drivers/crypto/caam/caamalg.c                 | 128 ++++++++++++++++--
->  drivers/crypto/caam/caamalg_desc.c            |  87 +++++++++++-
->  drivers/crypto/caam/caamalg_desc.h            |  13 +-
->  drivers/crypto/caam/desc.h                    |   9 +-
->  drivers/crypto/caam/desc_constr.h             |   8 +-
->  include/soc/fsl/caam-blob.h                   |  26 ++++
->  security/keys/trusted-keys/trusted_caam.c     | 108 +++++++++++++++
->  9 files changed, 518 insertions(+), 34 deletions(-)
-> 
-> -- 
-> 2.25.1
+On Thu, 16 Oct 2025 23:26:35 -0700 Christoph Hellwig <hch@infradead.org> wrote:
+> This seems to mis an actual user?  Did you accidentally only send
+> patch 1 of a series?
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+It is a cross-module issue, I'm not quite sure if there is a better way to handle
+this. Initially, I was thinking of proposing a patch to RT workqueue. If that gets
+accepted, we could then use the newly created system_rt_wq in the patch to fix
+the issues we found.
+One of the issue is that where the DMA completion work task for UART data is not
+processed in a timely manner, it leads to anomalies in handling IMU timestamps.
+The proposed change could be to add a new function called tty_flip_buffer_push_rt,
+which would be implemented as follows:
+
+void tty_flip_buffer_push_rt(struct tty_port *port,
+                             struct workqueue_struct *wq)
+{
+    struct tty_bufhead *buf = &port->buf;
+
+    tty_flip_buffer_commit(buf->tail);
+    queue_work(system_rt_wq, &buf->work);
+}
+EXPORT_SYMBOL(tty_flip_buffer_push_rt);
+
+Our 8250 driver is implemented based on the TTY layer, but the tty_flip_buffer_push
+function belongs to the TTY layer. Therefore, a possible patch for a user of the RT
+workqueue could be the addition of the tty_flip_buffer_push_rt function to utilize
+system_rt_wq. In addition, other changes, such as modifications to the GPU driver
+code we maintain on our platform, can also use this RT workqueue, just pass WQ_RT
+flag when creating the workqueue.
+
+--
+Xin Zhao
+
 
