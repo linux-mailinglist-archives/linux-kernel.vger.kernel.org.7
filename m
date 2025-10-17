@@ -1,642 +1,472 @@
-Return-Path: <linux-kernel+bounces-857209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB0CBE6335
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:17:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C6BBE633E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A813B0CE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:17:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B5EC4F5ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87BA25CC79;
-	Fri, 17 Oct 2025 03:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B4623EAA7;
+	Fri, 17 Oct 2025 03:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="RPvNcE5i"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MID1yg9G"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011030.outbound.protection.outlook.com [52.101.65.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD7A33F9;
-	Fri, 17 Oct 2025 03:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760671013; cv=none; b=tnWIkVZ4W55LlHJcPEt6xhRNzVC0pRgUwT/VmyMP5bcvXgBt9sy2NXQQSBrf8lz5lQCc4Tu7khSbUMyR+Ts3N1sEAGonSRruJW+f1hxaOTyyIGWtvgAdOShdyWcryVSR0MAhQrIEXUEPKPgpJ6YE82G1y3SpGQ5iZMwFZ+k8zZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760671013; c=relaxed/simple;
-	bh=EDEsIcdv1JmDZdZcxGFxjkqpEQ3hQAy33qJweuXOxcw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hEKv6PmxiV6gx6nuq/rQsOkeIonEBwxyvIwhNkyV8XLWK/wO57MnpyfdhMpRS5zhPQPk0LTSlYXUIJq4FolVRF7EDQqDNrIB+eEcOydwlHNWm/wi3VksSdVV5zMr4U9ofBM7W9ZyzgygZDsksQz5FqCZBXwi+O2HDVApsXLJcaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=RPvNcE5i; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1760670998;
-	bh=cqj5dJBJ9v3TLxs+M5clPf0OMBPu+aIIFKjwsP6WivE=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=RPvNcE5iczF+JKW4uDaukrquysazE8flY/J0zwq+NtDhB3pwtKgYewirX6XSJEbxD
-	 RL/HNHksizv4hxMHQ57/z46brcUUsBALJYKzh4sQZNmzsDjSTzvB3y9JWHBTpCY9Zo
-	 nCM7iEm7gWxlOqBjuyIB00WpiCTmEqpANBMRHusY=
-X-QQ-mid: esmtpsz20t1760670993t2cb792c3
-X-QQ-Originating-IP: JLuDV7bloHEqGYnbxaY6YIrvKILYNIlU7Cr0nVxw5KE=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 17 Oct 2025 11:16:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3831780666694282224
-EX-QQ-RecipientCnt: 16
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Fri, 17 Oct 2025 11:16:18 +0800
-Subject: [PATCH v5 2/2] ASoC: spacemit: add i2s support for K1 SoC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323B233F9;
+	Fri, 17 Oct 2025 03:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760671176; cv=fail; b=b5/LMW3udCfucqPnAZoBerM/9qYnEt6i0mqDXTEGO3qN9V+lnn+Ro856X1lZcoY58lYOYu2Ol5d2gdsDTe7/6YJu70msgNUkKVRU3G5ipOGqR7W2krms4LJV5HACqCGaUT2WuQIpVj1KLJ0vNFpUq2UP0/SIU/Hh+io6Erf+f9E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760671176; c=relaxed/simple;
+	bh=VDrnnsKKcfn5dSig6U2efjVg0XRzDwfe8cpnoxd8B44=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=AmdwRRRB278MbdRgpCcofpPx2spzk+xzUGikI28azUp2bdZAFGAIxAVGA5rHUtCrpxrFz8n0oATD+FSx3/6Glsq1cSFfFkAWIgt5uAsm1koxE9l6MNiUZ+zLFir1vUp9pDAsKl2PYOdMxAxt076vPwI8gm+3jH5kOUIUSyigBNU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MID1yg9G; arc=fail smtp.client-ip=52.101.65.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SN0ApSqACg+OgZqQDsbr1Pu9MTKYBtFY8q0JRjNAUpEY80Xmca5vYxYCz7AfKNcy3uiRadUu9CSZp55Zf7FFqEs18Yjcup9hnWtD0h0M21b4lVDz5Ow3rVU/03m6a1E5t6wOaUXvzqxBr6DMeWiu1PlUy2NRZ14DpdIAd5AMNGO8KLznSvjqWD8weNHWOcpjlAg6TltkgQX662HPeae2ZVoXGDVp32vQFfZezxcB/9zWpTIKjjpqAbXKHZOTRsqfl3hHLSDRuRwWWQ2zDPd8CfJDO44CwS8ViLIeRJFx3DGgiMZ/wTerP95ODEQKzoMgQMIEq8rt4rimlsDSNjJe6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z0Lf7lba9u/y+JPXfrpgFiKAZNC5Yq9yQNqpUuATwKs=;
+ b=LtNFdf86Bnr/Gu6hhYGpGW5xUTW+wyDcRPrxtv4/TYmKlje4bluMPBrRdElZ2ZkD0fIq/ESrRTKfKupK011dSEB6mLAaG6DrB6EMQXHYEJFG5bqRHHtFUSJFBUUVinlKhUs7uhy4zabBLYrCQIH5cILrpYPUJWOMYKwN2GgGfAuqabFAXjN3aMfr2GXodT1Cpb5ynHKeSIk1y6MGa7y/9o1rbUVUk7tqniTt+cIMc2H+KmDgMqRfLOe6oTdq5qJB7EAhQCpUoCTLatsC0pqKOQmC1cME7lYFQShf4IhqkbBhZRXDHxqhOYW53hIIR++KId2lYbBkOsBTva82pCLCWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z0Lf7lba9u/y+JPXfrpgFiKAZNC5Yq9yQNqpUuATwKs=;
+ b=MID1yg9GQu959/j6EB7fnqcwe5kl9Ku7IzeUcvsmJPDhizhZxDNKNcMVB4yGb6MD/CHK1V1gwMsQougcGHCogaDX5JPxttMdVjhIOb7vdnJUf/xZJmKuZofofd0dFdtd2b2XMSqcKdRQwIlrMXHoUG2KP9+WVlusr30viya0LV+McnCe73WFftIKUceBP6psVbYAVRTUNXL71LQkGZD2EbZm36Pjjc8MO91GVNEQ421SxgZkDd8xF4d/xdRRWh8pPe4OuD/WOO+Nofu57DpFxgCXTgT65uq6Sun1Mr2leQyIpQsxN282B0OKtLPX/+Zk7eR6YivP0WgyxXxXzLI4Mw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
+ by GV1PR04MB10352.eurprd04.prod.outlook.com (2603:10a6:150:1c4::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 03:19:29 +0000
+Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
+ ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
+ ([fe80::261e:eaf4:f429:5e1c%7]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
+ 03:19:28 +0000
+From: Joy Zou <joy.zou@nxp.com>
+Date: Fri, 17 Oct 2025 11:19:07 +0800
+Subject: [PATCH v4] dmaengine: fsl-edma: add runtime suspend/resume support
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251017-b4-edma-runtime-v4-1-87c64dd30229@nxp.com>
+X-B4-Tracking: v=1; b=H4sIAKq18WgC/42OzQ6DIBAGX8VwloZdQLSnvkfTAwq0HPwJWGNjf
+ Peih/bU2ONsMvPtQqIN3kZyzhYS7OSj77sEIs9I89Dd3VJvEhNkKFkFSGtBrWk1Dc9u9K2lyJ0
+ SQjOJqibJGoJ1ft6L11vih49jH177wATb9XdrAgq0KpVwRskSAC/dPJyaviVbaeIHNk+2YaqsD
+ DagZf2x8+zAQiO0cCUvGHf/W7VFdAoKUEJ+P13X9Q2t47ITVgEAAA==
+X-Change-ID: 20250912-b4-edma-runtime-23f744a0527b
+To: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>
+Cc: imx@lists.linux.dev, dmaengine@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Joy Zou <joy.zou@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SG3P274CA0016.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::28)
+ To AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-k1-i2s-v5-2-401ae3775fcd@linux.spacemit.com>
-References: <20251017-k1-i2s-v5-0-401ae3775fcd@linux.spacemit.com>
-In-Reply-To: <20251017-k1-i2s-v5-0-401ae3775fcd@linux.spacemit.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Jinmei Wei <weijinmei@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760670980; l=16427;
- i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=EDEsIcdv1JmDZdZcxGFxjkqpEQ3hQAy33qJweuXOxcw=;
- b=aHqX/t7W8jouFGyJ4AhWpNAnyLxpeMXQeQNgKMgHlw7io83PmBrTIT68SsYspizveBde9ve7Y
- cazOM5bZhn5ATMhAZ65iw82uwPpuGYD3b0BRgn8DP6Ubdx4QEzAKs8b
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NfYN3cci+ToXGXPlMX8nghvOuZt4CqA3LwnAu185DoERC4EPtZSYnDai
-	NoPUiixEd4QZ1ewLTc17YQoVnrljhDnUI9u+UQR59pvsQRhWv1RsM6ay3PNlfo90DxZsxIJ
-	9ibSCkGptKh1OLBjqsRKsuj4C7Hj8Ahbsrxty5hEwjuigvZDsM/kuL8GHVWJ+Svr4heHrK1
-	p3/nFSmwBlai+/DcgCGBWIASgCQPPsnQecszH/FSvj6XE8AGEBM8sSpdzVLBRC0r30FzwVe
-	2pPfBkjm2nZrYwU3HOVqP28n9NSuggX/P7obv9Artzq5WxHcj9Um1QpVz/JfWINigDG2j6k
-	4JwTM8jovRjfhF9dYqr5wjbSDqLgjs/HB+d4rOKNGmJWn2tzwulq0dUKKUHuJM9UGV8YqQ4
-	clWHbThsPipkZOIQIrBjGKkOR/KcsMxYB65Y3rh5cgEhA0s/xn3fY8Pr47NQaDS9ophBlQU
-	eOCcc6DpfJonXuXI4ZFd6RKUd/T5p/JW8yPBij7zr1JoiZpV945u5oOXUPh3zM6qftGYZmj
-	aHkCcvITIDIGWDZny5oaKXdkYaqR5D0QAtLxWYNqQBtVip4kb5ay9iHfE0V4tm+hd+CyxLI
-	NjjXwd9BG4YiF95/lnlwSB4G4i2xwdb6hldf3BiLAhTKgzEF4nnzeC7pSXmr7eR9YWg8mM2
-	FrLsVs4TBWKth0Bw8D8oal768Z4LcD6dM+2xc8BF96vgbqXZbqNIAR2eGJrPDFk5phMMggp
-	b93WMqnUh309Il2PZwU0gSKH5fAQvxYRkWa3BI25DWQY3E4Hzm3KNpm4+c1h1AilUaCBLgA
-	kl+NtgKXnMPBnYl8eOE/X6x08NX16lHcUWcnYkx43gUOEEgibZl5AQ7ACAVD181qjXjRl5J
-	VsbdBG1qTzSwXVtEyzYUlMDZtl8+KvxRe0RLL76bOBl6+Oy4cIzKaNOfNrTdW/pTTY/Voe9
-	8TWAjzdDMyra6fAjWad8xaQuK+t6FDMjv3R+DK4KDTm9VB/dmkXCWZrtX/4K0bcpbtx4sjk
-	mR9la2YKFd5lKYzZuuk97jnyON8z8U5XnDBKdTfs6nMVPvzV559sHFXVFsGj3U61H5orh1F
-	doa4Bjd+7ucyvC87T36HIRvw7WDo+WaWnYn0OFiY9+3iIm3XmraTO42BJ5R34NfSA==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|GV1PR04MB10352:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bdb8e4d-68de-4df9-5fa2-08de0d2bfb4e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|19092799006|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dWNPMkRCdmFwaSt3L2JKcHNSVWwyVWhGWURacXZjL1hZbFNQeEp2c0dBWjA0?=
+ =?utf-8?B?VFZXci93UE9GWjJWV1RkMERWRXRGTXZMaWVtMmJKSzd4V0ppNWc3YmRGZ28w?=
+ =?utf-8?B?QnMvTEdqV1RjNkllaDNmVk1kZ1Z0THUveUJzOTVoTDQzY2dQU3hpdFBXWUJ1?=
+ =?utf-8?B?TGhpVElwdXpRcWJEK3J6MXBPbjFxT3pMWituZU5PN0NiMnRNNHpLbFp3OHZ1?=
+ =?utf-8?B?cWVqRGxUeWNLR0diLzZEc2JUZ0R6WXgybzN2MGRSVWJsaU9lUWZoMUpYOWpl?=
+ =?utf-8?B?L0JER283bWFVSm1EUXNmOWJZcmRQU3Y2R2tVZ1lRdFhYU3h3TVRpcXlUNlRB?=
+ =?utf-8?B?b3dLVUxtVEthUFl4Q3JGb0lhakRtSTBEMCs5aXZWUTFJNFZYNTFQZE5QRDlK?=
+ =?utf-8?B?VFJMWkRzTmJ5NkwybXNSSkwxR2FYeTg5UXMyaWsvYTBzSzIxVm82eEFVNlY1?=
+ =?utf-8?B?ck1yTFZydVNQM21BdDRUN0N6d3c5NDhIR21lbUo1LzlxOWJFaWJKUEM5ZzJp?=
+ =?utf-8?B?OUc4MnlIaFoxM3hzNENZZFNuUko5VnVWUkx2TGU1U0phMXdRT1VHSDgvbWFw?=
+ =?utf-8?B?WjlUZDJOWkdrcGcySSt3RFA4ait2V3dCazZUUHNzUXdscUE3WjFlblQzaEs1?=
+ =?utf-8?B?eFEwVlEwcllIY1gra0tDSG9VZlExdXVXZUZqQjBmdXJRSStRdGRvcW52OEND?=
+ =?utf-8?B?OWtKYmRiZDVXNDc4UkJtTFhGKy9mdVJkWkxOSFNmTnZDSi9DTWNoUUROSFJp?=
+ =?utf-8?B?aExERXdONXZobmdMMHZRcVdZVEhwc1JpcW9FNzNvV2VxVzlzeUJ5cjBiLzRQ?=
+ =?utf-8?B?cXkzYnpLT1RKbEpIY00yaDFrSTlaSmVqU3U4Y3pvRkhNOFdKVVFnWGJ5UG1v?=
+ =?utf-8?B?azVDN3dCTHVscml0ZEVoRHlXSXdFbkxOYXBpWkhJaFk3OWk1TFRHbTAxWk1q?=
+ =?utf-8?B?cmdwUDRuUEJ1bzJzTFBrd042Tk5nWnhWK3VKaUFzd08xdEIzRVRyWFdxWU50?=
+ =?utf-8?B?anRqQkNJREtxOTZDeGYvZE5GQlMzcGdsL2w1SmxQQ0hBQVZiQnladFpEdTEr?=
+ =?utf-8?B?Rmp4QTVDMk5HSHpicDNTS2VMMlVwSkpRWXJUenRteWNjUlcwemp3RkszYmJk?=
+ =?utf-8?B?Y0NsUzdZem81WHhNamE1ZExlcTZUL0FWQnpSYUQvV2hlbDdDTGhCbmVJd0Yx?=
+ =?utf-8?B?NHFvaDhQRUh1UHhFdWl0Vk1xOVVmemdFMStvK1VIWDBicE96TmVrN3pZRHRK?=
+ =?utf-8?B?Qzk4b1NqUlZHUVkyRjJGL3BmSU1WQ1RmaUZmZFZudDlLUjhObVl5WVlVZnNp?=
+ =?utf-8?B?eGswZ1hjQTBWR0FNSm9PWnlBd0g1eUpSOVNFUS9ERUlZYUx2clRoTlpZWWQ0?=
+ =?utf-8?B?aUNDa2FRaHA1MUpOY1F5TCt2SUxIYTA1K3kxOFJNZ01HbU1wR2dkRmZHbEk1?=
+ =?utf-8?B?L2VsMHBCQWpnOGV6bnJUZ1ZtT2RXVzhsRHowWFJPNVh0ZFNVdVVkOHduM3Rs?=
+ =?utf-8?B?cEZMZnovRGxxWWE2VnA0ekdDTG9XaWdRdkwyOUJXemFtSWxNNWpPamdnRWMy?=
+ =?utf-8?B?SkxGUEhXWHp1R0hiZEpFdkRvUndHUUVITzN5bWZlRmVxcGRxcXNHcjNiOXRZ?=
+ =?utf-8?B?K3VYTS9nZkdJMjVnN2lJaTd3VzRaZ1BFV0hybWVFR2N2WHkrckVPNFk1Smx6?=
+ =?utf-8?B?Q21pajhNT3lFd280OTRYb3FDMmM2YmtxRTdvczg2UTREdlZUWktKU0N3NXZX?=
+ =?utf-8?B?a0JWV1hPd3pDR3pwbWM3c0pPUEJxTmh5cE40QXgvdTBHek1ncDdISHhySmhR?=
+ =?utf-8?B?WDNyTHZFS1hxbmdST1ZpblZic2RjUG1Ccm9OWWNEVlJtbi8xditNTm5CSXh3?=
+ =?utf-8?B?UXJpckNTYVBxZ2FyY05Qa2k1dHlyZ2FxcWRnTythc2xQY1dJUlpLNWlmTGcy?=
+ =?utf-8?B?UjBycUIvb2c0MHdkL2xFV3QrTVh0Y0VEQ3ExTVhFUExiTTNwZkw0U05uWjRE?=
+ =?utf-8?B?WERrck1QazQ3VU0yT2w0Y2tnYmlHckM2UDhKdWxXNFJmWEhnQXBrd1NlbEcy?=
+ =?utf-8?Q?8CaKA/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RlpERW9TTzc1NVk2R1BEVXFOTFdsNm1oTjRNVUV3RVZVYjVkTUdpSmd1ekdC?=
+ =?utf-8?B?MXF0VzlmYy9ycUFJTGxnaGtZQXZCQTZrQTFESWlaSUhZcmVFK0RBSHFlRzB6?=
+ =?utf-8?B?YlcwVk9BZlhoZUZLcFlPWDg1cWttRkdNVTc0WUcvTHM4bFVxanBtbHJkMnpy?=
+ =?utf-8?B?OWZkNEFWUHZqMlBqWUI1RVZ4anRYTWZiV29zQTFzVkVVc0srcEpNWWlKckNp?=
+ =?utf-8?B?ZllGaml6Q3ZtS3FKOXh3WDJiRTlJQ2xCdko2c1VHLzFlSk9jeVZ6VVRuSFVh?=
+ =?utf-8?B?RjBWQ1ZrVHRDdXYrMy9VSGNNdnZHcnl4bGRPaHJ1c3N6eXhlSU10enR1UDFF?=
+ =?utf-8?B?OHNTTE9xQ0l5Sy9KaXdnTFhlRlZsQUo5aHRLdlg1Z0VJeTArRTUxYkNIaHJt?=
+ =?utf-8?B?cHpIeGpuYmVaU21XQ0RhV3RueXZBL2pyNkUxOWZpNXBkSTRId3IwS0xUelhv?=
+ =?utf-8?B?TUhzOXJveWx0NFNEVStrRzNrRFZpcXhIaWlBNFp1elpySlFLOG5IRUZjbjJV?=
+ =?utf-8?B?WnNUNzhYU0pWbDc2TFpWYmQ4eHBmdFN4YTZNcTFoUEhRRXlQL05IRVlNTlBC?=
+ =?utf-8?B?YkxzY2dZMkhjZlJ4RHVOaXg2KzlRL1dsckpQTi9NZ05rb05mS2ZRMlZLWlRQ?=
+ =?utf-8?B?eFQ5bFZQSGNlbFF5bVl1dGkvQWZEOTJnSDRsNVQvNnl0UmQ4anY2b2J3VFBO?=
+ =?utf-8?B?c0x0ZkQ1bC9FL1VMQjVGM0tzdkhxOHFIa2JGUzBOa3BKWVMwNXk1M1hPUDZM?=
+ =?utf-8?B?ZU1jV21XOFlJM0d2M2x1aThRNXMzVUk5TFE4THl3QUZyTGR5YkpBeldYM3dx?=
+ =?utf-8?B?VXpYVWw5a3NLN2dwMlU4ZlhGQnNJaFFXVWZSbkVYYnRFWXlybEVXOFFRT3BV?=
+ =?utf-8?B?VEEra1VrTmtFdTB5Wk5mVU5PUEhnOHNyMUF3bFFxZnNneWpqM3NObjVQa0ZX?=
+ =?utf-8?B?NkhubDNBTFZwelRGcUR5MEljcHFmd0poOXRrd0dsN1JQeG8yN3VPSEd3b1pv?=
+ =?utf-8?B?TWdraksySEdFdjdkbkhWQ2h2OFluUURJRVJ2OFNhalY2Qjlaem04U3M0ZVNr?=
+ =?utf-8?B?SUJqVlR1VXhTM1BMV1RMMEhUQ2J1UU5tSEtuTldsUUdhaUZIUmpHNUxEeVBj?=
+ =?utf-8?B?SkdwSEM0blVwOXIwSDJRa2cwYVVBRlhmd2l0K1JIbDBoeWVaREZrVmZlVzlr?=
+ =?utf-8?B?aUE0MWJqMnNvOVlzaEIvV05QdDBhMi9BdkVwTmI5cjZnblNjOFh2M2hWQjJB?=
+ =?utf-8?B?V285Z1hRL0d5T1lmejF0SU9QRnQ3eXQwRGZGSTNmWU9sUlY1eUtKd1dXb1d2?=
+ =?utf-8?B?OFZSbmhCQ3Z2aHEvd0doQ3hZSGhtelhsTlpOODBYdUpIRFBmQTJaR05oY1VS?=
+ =?utf-8?B?aDhNY3NhaHZCZ0Q1NStQKy9sbG00bmZBcXFaQWdtYXd4QS9qSVp2cnVUaUhU?=
+ =?utf-8?B?MFlnajd5NE1DVzlnV0tJd0J2Zk01WEp6RUZlQWhOcHVuczJnNytBTHFPdWg3?=
+ =?utf-8?B?Q3hzbU8vd0hqUEhzbCtvZmprR1ZnbEpnSHY3enFVM1dXY2FzTXZsS1BKSEZk?=
+ =?utf-8?B?VWlxN1BoaVpralN4WkltdFZHS1JoeElGK21xQjBwOC9GMGlza0Z4M3ZFZDZE?=
+ =?utf-8?B?b0NBOGNIdzZKSEk2Z01Yb0d2UGZGZEpuci8yTVZIbjJVUkpob0w2d09lOW81?=
+ =?utf-8?B?eG1SYVFucHlxS1R3TXh5MU15VmNiQ01aZWRqTHpscFVSdk56eFpIT0pFa2Jm?=
+ =?utf-8?B?dEpSc1R2ZUVlalhiQlptdEIrVkNQV3F3bDBGVHZPVm5HWXdHK2RHR0F3L2xO?=
+ =?utf-8?B?NW56RStkWTZoL1JEWTg0YVZSZU90T3VSR25NZ3AvOFIxSEJzQ1lzaFZCZEpp?=
+ =?utf-8?B?MEtLUWJ1Y0RPZHBvdExTelU4UnFwQWpyQkU0R1A0NzIxZjRYUExTYVlDMTF0?=
+ =?utf-8?B?ZGVFR1BKZXd2UWk1akh0VVBGb0gxK05xRk9jTkh5VUxacE0wSVBKdDI0VzVH?=
+ =?utf-8?B?YTQ1YkI2bVpJcVF0YWhuZEZ0ZHBUZUhQL2gvc0tQTWtPdFN1dlpoTGlXekt4?=
+ =?utf-8?B?YUZQSjBRYlkvR0JrTExGK0EwV2lpb1hlSW9vUUJYVy9UWDFURjlTa0dNZVRU?=
+ =?utf-8?Q?Q0ZNzLKfeInzKSWw9f8IWrWiz?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bdb8e4d-68de-4df9-5fa2-08de0d2bfb4e
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 03:19:28.7254
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rV76FVHevbdGux3pYRmn3XhasiGmv9jJeI/REZUEuXQ9JcW2O43nh0GLQ1Ve11Gl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10352
 
-Add ASoC platform driver for the SpacemiT K1 SoC full-duplex I2S
-controller.
+Introduce runtime suspend and resume support for FSL eDMA. Enable
+per-channel power domain management to facilitate runtime suspend and
+resume operations.
 
-Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Implement runtime suspend and resume functions for the eDMA engine and
+individual channels.
+
+Link per-channel power domain device to eDMA per-channel device instead of
+eDMA engine device. So Power Manage framework manage power state of linked
+domain device when per-channel device request runtime resume/suspend.
+
+Trigger the eDMA engine's runtime suspend when all channels are suspended,
+disabling all common clocks through the runtime PM framework.
+
+Signed-off-by: Joy Zou <joy.zou@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
- sound/soc/Kconfig           |   1 +
- sound/soc/Makefile          |   1 +
- sound/soc/spacemit/Kconfig  |  16 ++
- sound/soc/spacemit/Makefile |   5 +
- sound/soc/spacemit/k1_i2s.c | 458 ++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 481 insertions(+)
+Changes for V4:
+- fix a typo dmaegnine/dmaengine in the subject.
+- Link to v3: https://lore.kernel.org/imx/20250912-b4-edma-runtime-v3-1-be22f7161745@nxp.com/
 
-diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
-index ce74818bd7152dbe110b9fff7d908b0ddf34a9f5..36e0d443ba0ebe584ffe797c378c838f448ffcb9 100644
---- a/sound/soc/Kconfig
-+++ b/sound/soc/Kconfig
-@@ -127,6 +127,7 @@ source "sound/soc/renesas/Kconfig"
- source "sound/soc/rockchip/Kconfig"
- source "sound/soc/samsung/Kconfig"
- source "sound/soc/sdca/Kconfig"
-+source "sound/soc/spacemit/Kconfig"
- source "sound/soc/spear/Kconfig"
- source "sound/soc/sprd/Kconfig"
- source "sound/soc/starfive/Kconfig"
-diff --git a/sound/soc/Makefile b/sound/soc/Makefile
-index 462322c38aa42d4c394736239de0317d5918d5a7..8c0480e6484e75eb0b6db306630ba77d259ba8e3 100644
---- a/sound/soc/Makefile
-+++ b/sound/soc/Makefile
-@@ -70,6 +70,7 @@ obj-$(CONFIG_SND_SOC)	+= rockchip/
- obj-$(CONFIG_SND_SOC)	+= samsung/
- obj-$(CONFIG_SND_SOC)	+= sdca/
- obj-$(CONFIG_SND_SOC)	+= sof/
-+obj-$(CONFIG_SND_SOC)	+= spacemit/
- obj-$(CONFIG_SND_SOC)	+= spear/
- obj-$(CONFIG_SND_SOC)	+= sprd/
- obj-$(CONFIG_SND_SOC)	+= starfive/
-diff --git a/sound/soc/spacemit/Kconfig b/sound/soc/spacemit/Kconfig
-new file mode 100644
-index 0000000000000000000000000000000000000000..2179f94f3f179c54cd06e6ced5523ed3f5225cf4
---- /dev/null
-+++ b/sound/soc/spacemit/Kconfig
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+menu "SpacemiT"
-+	depends on COMPILE_TEST || ARCH_SPACEMIT
-+	depends on HAVE_CLK
-+
-+config SND_SOC_K1_I2S
-+	tristate "K1 I2S Device Driver"
-+	select SND_SOC_GENERIC_DMAENGINE_PCM
-+	select CMA
-+	select DMA_CMA
-+	help
-+	  Say Y or M if you want to add support for I2S driver for
-+	  K1 I2S controller. The device supports up to maximum of
-+	  2 channels each for play and record.
-+
-+endmenu
-diff --git a/sound/soc/spacemit/Makefile b/sound/soc/spacemit/Makefile
-new file mode 100644
-index 0000000000000000000000000000000000000000..9069de8ef89c84db8cc7d3a4d3b154fff9bd7aff
---- /dev/null
-+++ b/sound/soc/spacemit/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# K1 Platform Support
-+snd-soc-k1-i2s-y := k1_i2s.o
-+
-+obj-$(CONFIG_SND_SOC_K1_I2S) += snd-soc-k1-i2s.o
-diff --git a/sound/soc/spacemit/k1_i2s.c b/sound/soc/spacemit/k1_i2s.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..abc439b53e3d4358570df2e69e636bf54820d9ce
---- /dev/null
-+++ b/sound/soc/spacemit/k1_i2s.c
-@@ -0,0 +1,458 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com> */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/reset.h>
-+#include <sound/dmaengine_pcm.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+
-+#define SSCR			0x00	/* SPI/I2S top control register */
-+#define SSFCR			0x04	/* SPI/I2S FIFO control register */
-+#define SSINTEN			0x08	/* SPI/I2S interrupt enable register */
-+#define SSDATR			0x10	/* SPI/I2S data register */
-+#define SSPSP			0x18	/* SPI/I2S programmable serial protocol control register */
-+#define SSRWT			0x24	/* SPI/I2S root control register */
-+
-+/* SPI/I2S Work data size, register bits value 0~31 indicated data size 1~32 bits */
-+#define SSCR_FIELD_DSS		GENMASK(9, 5)
-+#define SSCR_DW_8BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0x7)
-+#define SSCR_DW_16BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0xf)
-+#define SSCR_DW_18BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0x11)
-+#define SSCR_DW_32BYTE		FIELD_PREP(SSCR_FIELD_DSS, 0x1f)
-+
-+#define SSCR_SSE		BIT(0)		/* SPI/I2S Enable */
-+#define SSCR_FRF_PSP		GENMASK(2, 1)	/* Frame Format*/
-+#define SSCR_TRAIL		BIT(13)		/* Trailing Byte */
-+
-+#define SSFCR_FIELD_TFT		GENMASK(3, 0)   /* TXFIFO Trigger Threshold */
-+#define SSFCR_FIELD_RFT		GENMASK(8, 5)   /* RXFIFO Trigger Threshold */
-+#define SSFCR_TSRE		BIT(10)		/* Transmit Service Request Enable */
-+#define SSFCR_RSRE		BIT(11)		/* Receive Service Request Enable */
-+
-+#define SSPSP_FSRT		BIT(3)		/* Frame Sync Relative Timing Bit */
-+#define SSPSP_SFRMP		BIT(4)		/* Serial Frame Polarity */
-+#define SSPSP_FIELD_SFRMWDTH	GENMASK(17, 12)	/* Serial Frame Width field  */
-+
-+#define SSRWT_RWOT		BIT(0)		/* Receive Without Transmit */
-+
-+#define SPACEMIT_PCM_RATES	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 | \
-+				SNDRV_PCM_RATE_48000)
-+#define SPACEMIT_PCM_FORMATS	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE)
-+
-+#define SPACEMIT_I2S_PERIOD_SIZE 1024
-+
-+struct spacemit_i2s_dev {
-+	struct device *dev;
-+
-+	void __iomem *base;
-+
-+	struct reset_control *reset;
-+
-+	struct clk *sysclk;
-+	struct clk *bclk;
-+	struct clk *sspa_clk;
-+
-+	struct snd_dmaengine_dai_dma_data capture_dma_data;
-+	struct snd_dmaengine_dai_dma_data playback_dma_data;
-+
-+	bool has_capture;
-+	bool has_playback;
-+
-+	int dai_fmt;
-+
-+	int started_count;
-+};
-+
-+static const struct snd_pcm_hardware spacemit_pcm_hardware = {
-+	.info		  = SNDRV_PCM_INFO_INTERLEAVED |
-+			    SNDRV_PCM_INFO_BATCH,
-+	.formats          = SPACEMIT_PCM_FORMATS,
-+	.rates		  = SPACEMIT_PCM_RATES,
-+	.rate_min         = SNDRV_PCM_RATE_8000,
-+	.rate_max         = SNDRV_PCM_RATE_192000,
-+	.channels_min     = 1,
-+	.channels_max     = 2,
-+	.buffer_bytes_max = SPACEMIT_I2S_PERIOD_SIZE * 4 * 4,
-+	.period_bytes_min = SPACEMIT_I2S_PERIOD_SIZE * 2,
-+	.period_bytes_max = SPACEMIT_I2S_PERIOD_SIZE * 4,
-+	.periods_min	  = 2,
-+	.periods_max	  = 4,
-+};
-+
-+static const struct snd_dmaengine_pcm_config spacemit_dmaengine_pcm_config = {
-+	.pcm_hardware = &spacemit_pcm_hardware,
-+	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
-+	.chan_names = {"tx", "rx"},
-+	.prealloc_buffer_size = 32 * 1024,
-+};
-+
-+static void spacemit_i2s_init(struct spacemit_i2s_dev *i2s)
-+{
-+	u32 sscr_val, sspsp_val, ssfcr_val, ssrwt_val;
-+
-+	sscr_val = SSCR_TRAIL | SSCR_FRF_PSP;
-+	ssfcr_val = FIELD_PREP(SSFCR_FIELD_TFT, 5) |
-+		    FIELD_PREP(SSFCR_FIELD_RFT, 5) |
-+		    SSFCR_RSRE | SSFCR_TSRE;
-+	ssrwt_val = SSRWT_RWOT;
-+	sspsp_val = SSPSP_SFRMP;
-+
-+	writel(sscr_val, i2s->base + SSCR);
-+	writel(ssfcr_val, i2s->base + SSFCR);
-+	writel(sspsp_val, i2s->base + SSPSP);
-+	writel(ssrwt_val, i2s->base + SSRWT);
-+	writel(0, i2s->base + SSINTEN);
-+}
-+
-+static int spacemit_i2s_hw_params(struct snd_pcm_substream *substream,
-+				  struct snd_pcm_hw_params *params,
-+				  struct snd_soc_dai *dai)
-+{
-+	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
-+	struct snd_dmaengine_dai_dma_data *dma_data;
-+	u32 data_width, data_bits;
-+	unsigned long bclk_rate;
-+	u32 val;
-+	int ret;
-+
-+	val = readl(i2s->base + SSCR);
-+	if (val & SSCR_SSE)
-+		return 0;
-+
-+	dma_data = &i2s->playback_dma_data;
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
-+		dma_data = &i2s->capture_dma_data;
-+
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S8:
-+		data_bits = 8;
-+		data_width = SSCR_DW_8BYTE;
-+		dma_data->maxburst = 8;
-+		dma_data->addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+		break;
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+		data_bits = 16;
-+		data_width = SSCR_DW_16BYTE;
-+		dma_data->maxburst = 16;
-+		dma_data->addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		data_bits = 32;
-+		data_width = SSCR_DW_32BYTE;
-+		dma_data->maxburst = 32;
-+		dma_data->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		break;
-+	default:
-+		dev_dbg(i2s->dev, "unexpected data width type");
-+		return -EINVAL;
-+	}
-+
-+	switch (i2s->dai_fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+		if (data_bits == 16) {
-+			data_width = SSCR_DW_32BYTE;
-+			dma_data->maxburst = 32;
-+			dma_data->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		}
-+
-+		snd_pcm_hw_constraint_minmax(substream->runtime,
-+					     SNDRV_PCM_HW_PARAM_CHANNELS,
-+					     1, 2);
-+		snd_pcm_hw_constraint_mask64(substream->runtime,
-+					     SNDRV_PCM_HW_PARAM_FORMAT,
-+					     SNDRV_PCM_FMTBIT_S16_LE);
-+		break;
-+	case SND_SOC_DAIFMT_DSP_A:
-+	case SND_SOC_DAIFMT_DSP_B:
-+		snd_pcm_hw_constraint_minmax(substream->runtime,
-+					     SNDRV_PCM_HW_PARAM_CHANNELS,
-+					     1, 1);
-+		snd_pcm_hw_constraint_mask64(substream->runtime,
-+					     SNDRV_PCM_HW_PARAM_FORMAT,
-+					     SNDRV_PCM_FMTBIT_S32_LE);
-+		break;
-+	default:
-+		dev_dbg(i2s->dev, "unexpected format type");
-+		return -EINVAL;
-+
-+	}
-+
-+	val = readl(i2s->base + SSCR);
-+	val &= ~SSCR_DW_32BYTE;
-+	val |= data_width;
-+	writel(val, i2s->base + SSCR);
-+
-+	bclk_rate = params_channels(params) *
-+		    params_rate(params) *
-+		    data_bits;
-+
-+	ret = clk_set_rate(i2s->bclk, bclk_rate);
-+	if (ret)
+Changes for V3:
+- rebased onto commit 8f21d9da4670 ("Add linux-next specific files for 20250911")
+  to align with latest changes.
+- Remove pm_runtime_dont_use_autosuspend() from fsl_edma3_detach_pd().
+  because the autosuspend is not used.
+- Move some edma channel registers initialization after the chan_dev
+  pm_runtime_enable().
+- Add clk_prepare_enable() return check in fsl_edma_runtime_resume.
+- Add flag FSL_EDMA_DRV_HAS_DMACLK check in fsl_edma_runtime_resume/suspend().
+- Link to v2: https://lore.kernel.org/imx/20241226052643.1951886-1-joy.zou@nxp.com/
+
+Changes for V2:
+- drop ret from fsl_edma_chan_runtime_suspend().
+- drop ret from fsl_edma_chan_runtime_resume() and return clk_prepare_enable().
+- add review tag
+- Link to v1: https://lore.kernel.org/imx/20241220021109.2102294-1-joy.zou@nxp.com/
+---
+ drivers/dma/fsl-edma-common.c |  15 ++---
+ drivers/dma/fsl-edma-main.c   | 129 +++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 116 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 4976d7dde08090d16277af4b9f784b9745485320..55cb094088d569b87cde78a36734a1fc7e251b73 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -243,9 +243,6 @@ int fsl_edma_terminate_all(struct dma_chan *chan)
+ 	spin_unlock_irqrestore(&fsl_chan->vchan.lock, flags);
+ 	vchan_dma_desc_free_list(&fsl_chan->vchan, &head);
+ 
+-	if (fsl_edma_drvflags(fsl_chan) & FSL_EDMA_DRV_HAS_PD)
+-		pm_runtime_allow(fsl_chan->pd_dev);
+-
+ 	return 0;
+ }
+ 
+@@ -823,8 +820,12 @@ int fsl_edma_alloc_chan_resources(struct dma_chan *chan)
+ 	struct fsl_edma_chan *fsl_chan = to_fsl_edma_chan(chan);
+ 	int ret = 0;
+ 
+-	if (fsl_edma_drvflags(fsl_chan) & FSL_EDMA_DRV_HAS_CHCLK)
+-		clk_prepare_enable(fsl_chan->clk);
++	ret = pm_runtime_get_sync(&fsl_chan->vchan.chan.dev->device);
++	if (ret < 0) {
++		dev_err(&fsl_chan->vchan.chan.dev->device, "pm_runtime_get_sync() failed\n");
++		pm_runtime_disable(&fsl_chan->vchan.chan.dev->device);
 +		return ret;
-+
-+	return clk_set_rate(i2s->sspa_clk, bclk_rate);
-+}
-+
-+static int spacemit_i2s_set_sysclk(struct snd_soc_dai *cpu_dai, int clk_id,
-+				   unsigned int freq, int dir)
-+{
-+	struct spacemit_i2s_dev *i2s = dev_get_drvdata(cpu_dai->dev);
-+
-+	if (freq == 0)
-+		return 0;
-+
-+	return clk_set_rate(i2s->sysclk, freq);
-+}
-+
-+static int spacemit_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
-+				unsigned int fmt)
-+{
-+	struct spacemit_i2s_dev *i2s = dev_get_drvdata(cpu_dai->dev);
-+	u32 sspsp_val;
-+
-+	sspsp_val = readl(i2s->base + SSPSP);
-+	sspsp_val &= ~SSPSP_FIELD_SFRMWDTH;
-+	sspsp_val |= SSPSP_FSRT;
-+
-+	i2s->dai_fmt = fmt;
-+
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+		sspsp_val |= FIELD_PREP(SSPSP_FIELD_SFRMWDTH, 0x10);
-+		break;
-+	case SND_SOC_DAIFMT_DSP_B:
-+		/* DSP_B: next frame asserted after previous frame end, so clear FSRT */
-+		sspsp_val &= ~SSPSP_FSRT;
-+		fallthrough;
-+	case SND_SOC_DAIFMT_DSP_A:
-+		sspsp_val |= FIELD_PREP(SSPSP_FIELD_SFRMWDTH, 0x1);
-+		break;
-+	default:
-+		dev_dbg(i2s->dev, "unexpected format type");
-+		return -EINVAL;
 +	}
+ 
+ 	fsl_chan->tcd_pool = dma_pool_create("tcd_pool", chan->device->dev,
+ 				fsl_edma_drvflags(fsl_chan) & FSL_EDMA_DRV_TCD64 ?
+@@ -852,6 +853,7 @@ int fsl_edma_alloc_chan_resources(struct dma_chan *chan)
+ 		free_irq(fsl_chan->txirq, fsl_chan);
+ err_txirq:
+ 	dma_pool_destroy(fsl_chan->tcd_pool);
++	pm_runtime_put_sync_suspend(&fsl_chan->vchan.chan.dev->device);
+ 
+ 	return ret;
+ }
+@@ -883,8 +885,7 @@ void fsl_edma_free_chan_resources(struct dma_chan *chan)
+ 	fsl_chan->is_sw = false;
+ 	fsl_chan->srcid = 0;
+ 	fsl_chan->is_remote = false;
+-	if (fsl_edma_drvflags(fsl_chan) & FSL_EDMA_DRV_HAS_CHCLK)
+-		clk_disable_unprepare(fsl_chan->clk);
++	pm_runtime_put_sync_suspend(&fsl_chan->vchan.chan.dev->device);
+ }
+ 
+ void fsl_edma_cleanup_vchan(struct dma_device *dmadev)
+diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-main.c
+index 97583c7d51a2e8e7a50c7eb4f5ff0582ac95798d..e06f4240fdeb8839493f00c63b640eb3aa795b91 100644
+--- a/drivers/dma/fsl-edma-main.c
++++ b/drivers/dma/fsl-edma-main.c
+@@ -642,7 +642,6 @@ static void fsl_edma3_detach_pd(struct fsl_edma_engine *fsl_edma)
+ 			device_link_del(fsl_chan->pd_dev_link);
+ 		if (fsl_chan->pd_dev) {
+ 			dev_pm_domain_detach(fsl_chan->pd_dev, false);
+-			pm_runtime_dont_use_autosuspend(fsl_chan->pd_dev);
+ 			pm_runtime_set_suspended(fsl_chan->pd_dev);
+ 		}
+ 	}
+@@ -673,23 +672,8 @@ static int fsl_edma3_attach_pd(struct platform_device *pdev, struct fsl_edma_eng
+ 			dev_err(dev, "Failed attach pd %d\n", i);
+ 			goto detach;
+ 		}
+-
+-		fsl_chan->pd_dev_link = device_link_add(dev, pd_chan, DL_FLAG_STATELESS |
+-					     DL_FLAG_PM_RUNTIME |
+-					     DL_FLAG_RPM_ACTIVE);
+-		if (!fsl_chan->pd_dev_link) {
+-			dev_err(dev, "Failed to add device_link to %d\n", i);
+-			dev_pm_domain_detach(pd_chan, false);
+-			goto detach;
+-		}
+-
+ 		fsl_chan->pd_dev = pd_chan;
+-
+-		pm_runtime_use_autosuspend(fsl_chan->pd_dev);
+-		pm_runtime_set_autosuspend_delay(fsl_chan->pd_dev, 200);
+-		pm_runtime_set_active(fsl_chan->pd_dev);
+ 	}
+-
+ 	return 0;
+ 
+ detach:
+@@ -697,6 +681,29 @@ static int fsl_edma3_attach_pd(struct platform_device *pdev, struct fsl_edma_eng
+ 	return -EINVAL;
+ }
+ 
++/* Per channel dma power domain */
++static int fsl_edma_chan_runtime_suspend(struct device *dev)
++{
++	struct fsl_edma_chan *fsl_chan = dev_get_drvdata(dev);
 +
-+	writel(sspsp_val, i2s->base + SSPSP);
++	clk_disable_unprepare(fsl_chan->clk);
 +
 +	return 0;
 +}
 +
-+static int spacemit_i2s_trigger(struct snd_pcm_substream *substream,
-+				int cmd, struct snd_soc_dai *dai)
++static int fsl_edma_chan_runtime_resume(struct device *dev)
 +{
-+	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
-+	u32 val;
++	struct fsl_edma_chan *fsl_chan = dev_get_drvdata(dev);
 +
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+	case SNDRV_PCM_TRIGGER_RESUME:
-+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		if (!i2s->started_count) {
-+			val = readl(i2s->base + SSCR);
-+			val |= SSCR_SSE;
-+			writel(val, i2s->base + SSCR);
++	return clk_prepare_enable(fsl_chan->clk);
++}
++
++static struct dev_pm_domain fsl_edma_chan_pm_domain = {
++	.ops = {
++	       RUNTIME_PM_OPS(fsl_edma_chan_runtime_suspend, fsl_edma_chan_runtime_resume, NULL)
++	}
++};
++
+ static int fsl_edma_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -826,11 +833,6 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 		}
+ 		fsl_chan->pdev = pdev;
+ 		vchan_init(&fsl_chan->vchan, &fsl_edma->dma_dev);
+-
+-		edma_write_tcdreg(fsl_chan, cpu_to_le32(0), csr);
+-		fsl_edma_chan_mux(fsl_chan, 0, false);
+-		if (fsl_chan->edma->drvdata->flags & FSL_EDMA_DRV_HAS_CHCLK)
+-			clk_disable_unprepare(fsl_chan->clk);
+ 	}
+ 
+ 	ret = fsl_edma->drvdata->setup_irq(pdev, fsl_edma);
+@@ -889,6 +891,45 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	pm_runtime_enable(&pdev->dev);
++
++	for (i = 0; i < fsl_edma->n_chans; i++) {
++		struct fsl_edma_chan *fsl_chan = &fsl_edma->chans[i];
++		struct device *chan_dev;
++
++		if (fsl_edma->chan_masked & BIT(i))
++			continue;
++
++		chan_dev = &fsl_chan->vchan.chan.dev->device;
++		dev_set_drvdata(chan_dev, fsl_chan);
++		dev_pm_domain_set(chan_dev, &fsl_edma_chan_pm_domain);
++
++		if (fsl_chan->pd_dev) {
++			fsl_chan->pd_dev_link = device_link_add(chan_dev, fsl_chan->pd_dev,
++								DL_FLAG_STATELESS |
++								DL_FLAG_PM_RUNTIME |
++								DL_FLAG_RPM_ACTIVE);
++			if (!fsl_chan->pd_dev_link) {
++				dev_pm_domain_detach(fsl_chan->pd_dev, false);
++				fsl_edma3_detach_pd(fsl_edma);
++				return dev_err_probe(&pdev->dev, -EINVAL,
++						     "Failed to add device_link to %d\n", i);
++			}
++			pm_runtime_put_sync_suspend(fsl_chan->pd_dev);
 +		}
-+		i2s->started_count++;
-+		break;
-+	case SNDRV_PCM_TRIGGER_STOP:
-+	case SNDRV_PCM_TRIGGER_SUSPEND:
-+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		if (i2s->started_count)
-+			i2s->started_count--;
++		pm_runtime_enable(chan_dev);
 +
-+		if (!i2s->started_count) {
-+			val = readl(i2s->base + SSCR);
-+			val &= ~SSCR_SSE;
-+			writel(val, i2s->base + SSCR);
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
++		if (fsl_chan->pd_dev)
++			pm_runtime_get_sync(fsl_chan->pd_dev);
++
++		edma_write_tcdreg(fsl_chan, cpu_to_le32(0), csr);
++		fsl_edma_chan_mux(fsl_chan, 0, false);
++		if (fsl_chan->edma->drvdata->flags & FSL_EDMA_DRV_HAS_CHCLK)
++			clk_disable_unprepare(fsl_chan->clk);
++		if (fsl_chan->pd_dev)
++			pm_runtime_put_sync_suspend(fsl_chan->pd_dev);
 +	}
++
+ 	ret = of_dma_controller_register(np,
+ 			drvdata->dmamuxs ? fsl_edma_xlate : fsl_edma3_xlate,
+ 			fsl_edma);
+@@ -929,6 +970,13 @@ static int fsl_edma_suspend_late(struct device *dev)
+ 		fsl_chan = &fsl_edma->chans[i];
+ 		if (fsl_edma->chan_masked & BIT(i))
+ 			continue;
++
++		if (pm_runtime_status_suspended(&fsl_chan->vchan.chan.dev->device) ||
++		    (!(fsl_edma->drvdata->flags & FSL_EDMA_DRV_HAS_PD) &&
++		     (fsl_edma->drvdata->flags & FSL_EDMA_DRV_SPLIT_REG) &&
++		     !fsl_chan->srcid))
++			continue;
++
+ 		spin_lock_irqsave(&fsl_chan->vchan.lock, flags);
+ 		/* Make sure chan is idle or will force disable. */
+ 		if (unlikely(fsl_chan->status == DMA_IN_PROGRESS)) {
+@@ -955,6 +1003,13 @@ static int fsl_edma_resume_early(struct device *dev)
+ 		fsl_chan = &fsl_edma->chans[i];
+ 		if (fsl_edma->chan_masked & BIT(i))
+ 			continue;
++
++		if (pm_runtime_status_suspended(&fsl_chan->vchan.chan.dev->device) ||
++		    (!(fsl_edma->drvdata->flags & FSL_EDMA_DRV_HAS_PD) &&
++		     (fsl_edma->drvdata->flags & FSL_EDMA_DRV_SPLIT_REG) &&
++		     !fsl_chan->srcid))
++			continue;
++
+ 		fsl_chan->pm_state = RUNNING;
+ 		edma_write_tcdreg(fsl_chan, 0, csr);
+ 		if (fsl_chan->srcid != 0)
+@@ -967,6 +1022,37 @@ static int fsl_edma_resume_early(struct device *dev)
+ 	return 0;
+ }
+ 
++/* edma engine runtime system/resume */
++static int fsl_edma_runtime_suspend(struct device *dev)
++{
++	struct fsl_edma_engine *fsl_edma = dev_get_drvdata(dev);
++	int i;
++
++	for (i = 0; i < fsl_edma->drvdata->dmamuxs; i++)
++		clk_disable_unprepare(fsl_edma->muxclk[i]);
++
++	if (fsl_edma->drvdata->flags & FSL_EDMA_DRV_HAS_DMACLK)
++		clk_disable_unprepare(fsl_edma->dmaclk);
 +
 +	return 0;
 +}
 +
-+static int spacemit_i2s_dai_probe(struct snd_soc_dai *dai)
++static int fsl_edma_runtime_resume(struct device *dev)
 +{
-+	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
++	struct fsl_edma_engine *fsl_edma = dev_get_drvdata(dev);
++	int i, ret;
 +
-+	snd_soc_dai_init_dma_data(dai,
-+				  i2s->has_playback ? &i2s->playback_dma_data : NULL,
-+				  i2s->has_capture ? &i2s->capture_dma_data : NULL);
++	for (i = 0; i < fsl_edma->drvdata->dmamuxs; i++) {
++		ret = clk_prepare_enable(fsl_edma->muxclk[i]);
++		if (ret)
++			return ret;
++	}
 +
-+	reset_control_deassert(i2s->reset);
-+
-+	spacemit_i2s_init(i2s);
-+
++	if (fsl_edma->drvdata->flags & FSL_EDMA_DRV_HAS_DMACLK)
++		return clk_prepare_enable(fsl_edma->dmaclk);
 +	return 0;
 +}
 +
-+static int spacemit_i2s_dai_remove(struct snd_soc_dai *dai)
-+{
-+	struct spacemit_i2s_dev *i2s = snd_soc_dai_get_drvdata(dai);
-+
-+	reset_control_assert(i2s->reset);
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dai_ops spacemit_i2s_dai_ops = {
-+	.probe = spacemit_i2s_dai_probe,
-+	.remove = spacemit_i2s_dai_remove,
-+	.hw_params = spacemit_i2s_hw_params,
-+	.set_sysclk = spacemit_i2s_set_sysclk,
-+	.set_fmt = spacemit_i2s_set_fmt,
-+	.trigger = spacemit_i2s_trigger,
-+};
-+
-+static struct snd_soc_dai_driver spacemit_i2s_dai = {
-+	.ops = &spacemit_i2s_dai_ops,
-+	.playback = {
-+		.channels_min = 1,
-+		.channels_max = 2,
-+		.rates = SPACEMIT_PCM_RATES,
-+		.rate_min = SNDRV_PCM_RATE_8000,
-+		.rate_max = SNDRV_PCM_RATE_48000,
-+		.formats = SPACEMIT_PCM_FORMATS,
-+	},
-+	.capture = {
-+		.channels_min = 1,
-+		.channels_max = 2,
-+		.rates = SPACEMIT_PCM_RATES,
-+		.rate_min = SNDRV_PCM_RATE_8000,
-+		.rate_max = SNDRV_PCM_RATE_48000,
-+		.formats = SPACEMIT_PCM_FORMATS,
-+	},
-+	.symmetric_rate = 1,
-+};
-+
-+static int spacemit_i2s_init_dai(struct spacemit_i2s_dev *i2s,
-+				 struct snd_soc_dai_driver **dp,
-+				 dma_addr_t addr)
-+{
-+	struct device_node *node = i2s->dev->of_node;
-+	struct snd_soc_dai_driver *dai;
-+	struct property *dma_names;
-+	const char *dma_name;
-+
-+	of_property_for_each_string(node, "dma-names", dma_names, dma_name) {
-+		if (!strcmp(dma_name, "tx"))
-+			i2s->has_playback = true;
-+		if (!strcmp(dma_name, "rx"))
-+			i2s->has_capture = true;
-+	}
-+
-+	dai = devm_kmemdup(i2s->dev, &spacemit_i2s_dai,
-+			   sizeof(*dai), GFP_KERNEL);
-+	if (!dai)
-+		return -ENOMEM;
-+
-+	if (i2s->has_playback) {
-+		dai->playback.stream_name = "Playback";
-+		dai->playback.channels_min = 1;
-+		dai->playback.channels_max = 2;
-+		dai->playback.rates = SPACEMIT_PCM_RATES;
-+		dai->playback.formats = SPACEMIT_PCM_FORMATS;
-+
-+		i2s->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-+		i2s->playback_dma_data.maxburst = 32;
-+		i2s->playback_dma_data.addr = addr;
-+	}
-+
-+	if (i2s->has_capture) {
-+		dai->capture.stream_name = "Capture";
-+		dai->capture.channels_min = 1;
-+		dai->capture.channels_max = 2;
-+		dai->capture.rates = SPACEMIT_PCM_RATES;
-+		dai->capture.formats = SPACEMIT_PCM_FORMATS;
-+
-+		i2s->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-+		i2s->capture_dma_data.maxburst = 32;
-+		i2s->capture_dma_data.addr = addr;
-+	}
-+
-+	if (dp)
-+		*dp = dai;
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_component_driver spacemit_i2s_component = {
-+	.name = "i2s-k1",
-+	.legacy_dai_naming = 1,
-+};
-+
-+static int spacemit_i2s_probe(struct platform_device *pdev)
-+{
-+	struct snd_soc_dai_driver *dai;
-+	struct spacemit_i2s_dev *i2s;
-+	struct resource *res;
-+	struct clk *clk;
-+	int ret;
-+
-+	i2s = devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
-+	if (!i2s)
-+		return -ENOMEM;
-+
-+	i2s->dev = &pdev->dev;
-+
-+	i2s->sysclk = devm_clk_get_enabled(i2s->dev, "sysclk");
-+	if (IS_ERR(i2s->sysclk))
-+		return dev_err_probe(i2s->dev, PTR_ERR(i2s->sysclk),
-+				     "failed to enable sysbase clock\n");
-+
-+	i2s->bclk = devm_clk_get_enabled(i2s->dev, "bclk");
-+	if (IS_ERR(i2s->bclk))
-+		return dev_err_probe(i2s->dev, PTR_ERR(i2s->bclk), "failed to enable bit clock\n");
-+
-+	clk = devm_clk_get_enabled(i2s->dev, "sspa_bus");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa_bus clock\n");
-+
-+	i2s->sspa_clk = devm_clk_get_enabled(i2s->dev, "sspa");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa clock\n");
-+
-+	i2s->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(i2s->base))
-+		return dev_err_probe(i2s->dev, PTR_ERR(i2s->base), "failed to map registers\n");
-+
-+	i2s->reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(i2s->reset))
-+		return dev_err_probe(i2s->dev, PTR_ERR(i2s->reset),
-+				     "failed to get reset control");
-+
-+	dev_set_drvdata(i2s->dev, i2s);
-+
-+	spacemit_i2s_init_dai(i2s, &dai, res->start + SSDATR);
-+
-+	ret = devm_snd_soc_register_component(i2s->dev,
-+					      &spacemit_i2s_component,
-+					      dai, 1);
-+	if (ret)
-+		return dev_err_probe(i2s->dev, ret, "failed to register component");
-+
-+	return devm_snd_dmaengine_pcm_register(&pdev->dev, &spacemit_dmaengine_pcm_config, 0);
-+}
-+
-+static const struct of_device_id spacemit_i2s_of_match[] = {
-+	{ .compatible = "spacemit,k1-i2s", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, spacemit_i2s_of_match);
-+
-+static struct platform_driver spacemit_i2s_driver = {
-+	.probe = spacemit_i2s_probe,
-+	.driver = {
-+		.name = "i2s-k1",
-+		.of_match_table = spacemit_i2s_of_match,
-+	},
-+};
-+module_platform_driver(spacemit_i2s_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("I2S bus driver for SpacemiT K1 SoC");
+ /*
+  * eDMA provides the service to others, so it should be suspend late
+  * and resume early. When eDMA suspend, all of the clients should stop
+@@ -975,6 +1061,7 @@ static int fsl_edma_resume_early(struct device *dev)
+ static const struct dev_pm_ops fsl_edma_pm_ops = {
+ 	.suspend_late   = fsl_edma_suspend_late,
+ 	.resume_early   = fsl_edma_resume_early,
++	 RUNTIME_PM_OPS(fsl_edma_runtime_suspend, fsl_edma_runtime_resume, NULL)
+ };
+ 
+ static struct platform_driver fsl_edma_driver = {
 
+---
+base-commit: 1fdbb3ff1233e204e26f9f6821ae9c125a055229
+change-id: 20250912-b4-edma-runtime-23f744a0527b
+
+Best regards,
 -- 
-2.51.0
+Joy Zou <joy.zou@nxp.com>
 
 
