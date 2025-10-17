@@ -1,296 +1,319 @@
-Return-Path: <linux-kernel+bounces-858017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54F3BE8944
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 455DABE8951
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45C114E97FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:25:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 863214E52DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B56321421;
-	Fri, 17 Oct 2025 12:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC85E31DD9A;
+	Fri, 17 Oct 2025 12:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gzgL/a94"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020085.outbound.protection.outlook.com [52.101.191.85])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XCZUY45/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F1B1B3937;
-	Fri, 17 Oct 2025 12:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760703907; cv=fail; b=aR1Zs4nSyWm8HlzYV6/LXAti1o921X4ONZJvecTCX+VJxMHBV7AJzXqJRii6Hb9wK1z84AYost5S86TDJah7d5JBwboQlBAGht2YUggRywiRsUkykLJHUIs50DYz7eG2WwvOMy4csTALEUh9xw7v1bhXVy2+8g+Aot5H3A/HxmA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760703907; c=relaxed/simple;
-	bh=c46VOM4wqaagdH01/lesbqFeSBW1oP8CNOqBP3PN22A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qML7CCutHcjg3T5C5bEt/jICPwVkSKfiFyEQA1XsuXKvOxhWOnzm76TM5SyfgtMqOsdDvGExBKUHGsK7h5EGTV8smKtNS6EWI7IRBfk0F4FXBBVbI0retGkiXYJB721nnS9d9y67iHhfT8Okn4UyNrMnYXX5/tOWRRrMcb8ITZg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gzgL/a94; arc=fail smtp.client-ip=52.101.191.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Djo9K3ZXpCSMnJ+aRBnNbS9X+WqgATpUF4WwCeyp2DdFdvm1J5gAK+dZfF5TFyIK1zYVEdbQXVLCJvED/4zxLCyJtnRNdam+IIU3rJTkMt04yTfAiYCqG7oC1dzwdER8SpKeSziqJ8d9DycTw3gENczcwmUlj0mDowvDFqWZvlazclMSBnWaIP1U211OpmuKjjag5V0zOh3ZFTG4Jdt9SHqmbxgY5Yo+XrnLXxhtW1y183RFDiaKGVlgCOL12u62BA7CfS/VX/rtXS3jZKgrtsA7FAoXZWYFJkbvgeiwYra4vIJWpln+xktMsFNx6RkDaKjoykZUPQRmMJGMXFJCLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kR01a+ZdzG0MgE2rp7hdekzGWEsSJ6PCmmUxupacaiM=;
- b=r0DnX0Qxl22pJ5oFj2fjVpV3TE5KabVaxQPD5DWFSnX+iJUTkX4i5mJcbOGiN018StdqoSrEvmzppJsagR/tG/Due0CqFF75B6ev6tsqfUYCDvlKZ0Q2ZqB6sqJHZJ01qv0XLI4l3H9cPsMfvX/jvEyi2KE38v7r0Jt38KB6qeSJKiOP6AL4BYaOIUEMERnE2u7Cjtpqe4keNm8/uQvHRXXONOVbjKnecqxMXAGZUH6xJzv2jni4Ur3yWmorSX6HHps90guZGmsxTr+fxQkxQ+fplcgxPZBPOJWQUonkRRJWnXbezQTizrsQ397chvSNOcmYH39emln/xrbhIVh0+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kR01a+ZdzG0MgE2rp7hdekzGWEsSJ6PCmmUxupacaiM=;
- b=gzgL/a943xesuplt8tZt87u4RTOBdwMBqbKhTzGw+FofLfzYDIUlQNogNUV+3mjqpQWkS7rgro0nodgTiSsDFXwcsSX4jpU27Jcu2m0VFOgguIkjkqIA7ZwD7BBVHOCD75xNzubpERQMqCMm2gTtdCQnpGVCMfL1xRY8MIIluIICy0smW5fGhai7O2nznxrz/6L6ytNKPrw7MEtlOJ3xi0AFkzoWlv1CKCQHxd6E6dmrbcqo3OyX0XFE32ZQM4hYUswBmHKNFc79HuCOX06HLE/z+Br7LohcVOSzpLcSNKetfVtoV9hZp/C4vdgtONxC/dLesC6S14dAxrcJ5PZf7w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PR01MB9018.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:cd::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 12:25:02 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
- 12:25:01 +0000
-Message-ID: <3a4c9133-0296-4996-b8a9-46350d6b5f66@efficios.com>
-Date: Fri, 17 Oct 2025 08:25:00 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V3 00/12] uaccess: Provide and use scopes for user masked
- access
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-References: <20251017085938.150569636@linutronix.de>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20251017085938.150569636@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4PR01CA0126.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:d5::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A95332EC8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760704027; cv=none; b=Jj8auEacJXALJ1t7dQYZF1xA+JrFtz0UoizaD7u2orciEETVahbCx+9zY+ZkWF2oka1NF6xRBJqAB6NVb7wuuKPFFVzqMr3IUh/jMkzAeR7Ie/RCAInFFZVPui5VguAVGhqE+m8ie2FlTxuvrVignzbdGpdDpfkzW+Rm/JjGzF8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760704027; c=relaxed/simple;
+	bh=MA+ZFvNl4j2bqhlcFrUZEXBrhz0R4mtp8R9orXWBg+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hBiZ57IPJIDa3Pzauf8cPeH5ENlbPDWt7hDD12Uxg9vP8zzqL267ijfD1/+++ZX8IqAyS9JnN0aWIT6RTaT7RMfmPpVKp6sCpBKGCJLDpgNdUhAgPLtPz2spuar2UMyZwvGXn4C0LPJ/Zoc7xtpsuBxedDkHRB1QNNL9O/hCiic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XCZUY45/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760704024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XQkmJKuk6FjrOcWrRKn1umJ+bry4bJqwXSlL2tail78=;
+	b=XCZUY45/UR72IjeJikO00IQ17s69l7m9kdJwNumtLOZl51qNUOxMPKFnZE4NAL+zgwpVzo
+	5sDuCKc3CkcQn62ux/fpyk79I2TrNCAjQXCvbER3aDS9ssj4N8UTSyF2giFYSN39zj0XsR
+	vZ7zuOmJeVtUmoBfgwyxAg3em/C90Qo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-L9EMB0LGPqOlOz6ujHAB9w-1; Fri,
+ 17 Oct 2025 08:27:00 -0400
+X-MC-Unique: L9EMB0LGPqOlOz6ujHAB9w-1
+X-Mimecast-MFC-AGG-ID: L9EMB0LGPqOlOz6ujHAB9w_1760704018
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5F2818002DD;
+	Fri, 17 Oct 2025 12:26:57 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.72.112.96])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7E4971800446;
+	Fri, 17 Oct 2025 12:26:48 +0000 (UTC)
+From: Pingfan Liu <piliu@redhat.com>
+To: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pingfan Liu <piliu@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCHv3] sched/deadline: Walk up cpuset hierarchy to decide root domain when hot-unplug
+Date: Fri, 17 Oct 2025 20:26:36 +0800
+Message-ID: <20251017122636.17671-1-piliu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PR01MB9018:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71eb4084-b67a-45be-23c3-08de0d7831da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MXJ5ZmlXazBndEpXYWgrM0V6NTdsRllQbUNmd2x3NDJlbHR0ZFlkUUJ3aitF?=
- =?utf-8?B?bncxUzc1VVJxQ29hdjhaRXU0WW9nd1RVeTdXUFk2VHBHekJSNm5tS3NiSXBJ?=
- =?utf-8?B?NmRwRnk3VWhTRmdnWjBkcGVmci94dUp5M0hWL3Ewa1g5SkRnMytlUjlSd011?=
- =?utf-8?B?enI1ZTJGMDdXbTFxWFcremJScHRUd09rbERaNjgzdHM5N20vb0FSc25UYlpT?=
- =?utf-8?B?REllUnJZOXR3c3ZpZTJFN2V4NjFRYng0RDJWSUJWcmpoT3pYOU9HcVdVckZo?=
- =?utf-8?B?enIxRW5pMW1nRlY3TnNiVENKTlpDZnVZakMxUHJwU0g4N3pTd0h6QkpCUko5?=
- =?utf-8?B?c0Uwdlp0dFFNZkRJSWlUTlVGanloSlk4aXozckRYRFhja2lmUGdSQnd1V1BJ?=
- =?utf-8?B?WW1FSTloNXpFaFJsOHA4bENHZTJ5eHR2OEJ6L01DcXdRZ1d4NjFhdlE0V0Yv?=
- =?utf-8?B?YjRqWjgwR21oNHB2bUI2ZWErN0V2TTZINkhocmtZdDZaNFZLWTEvcjY0aU1H?=
- =?utf-8?B?Z3JhY2JjNEJ4bTRhMXl1RERWTkxHY0RZTFFtVTdWR25tNlNQc3ZJRTlvTlc3?=
- =?utf-8?B?VDFzMHMzRkNiL0NiR3Jud0ppYWh2b0tJSTQ1Y2s5MEwrZlJ4Tnd5Wk85N0la?=
- =?utf-8?B?RS9wS1JJbHVlOCtQSFVMeCtLbUhicktRSGdpTHhXTTBHRlpaQXpGcXJ0UjJi?=
- =?utf-8?B?dGZqNFRrRXYzZnlGbkREbVpiS2UzakpOMSswU1hwblNUc1lQdDhWK3B2aith?=
- =?utf-8?B?ZUVYYnRFSlRiNWZTUlVYV0F5Smx6VHZleldQbjZZbWhWRjJKTENBeDZROEZ0?=
- =?utf-8?B?SFUveVhJbW5qeFVXZERBencwMTNpSWlSek9IeTRnM21ZUXN0clVWL3lYM0tY?=
- =?utf-8?B?YXFrVE5vamZqMjhteW5VOFJxUmpVMEhkQ1R3RXZtWEtZWXdvb093aXhVMzdt?=
- =?utf-8?B?WUVXbUl6QUZJR0NjTWVDdUFVbmUwdEdLN2Fuc0hzeGRjNHJjU2RGRmRSeEtC?=
- =?utf-8?B?SVVHMytoWlV0VEEyQkNCYUtuZEZaRGs1VmZzUzhUZjZTcWFzRkJ0YWUzQSty?=
- =?utf-8?B?QmJYZEtueVpxK2VyeTdQQWxSUHBIcHVCZ2toSis5VEdnTWNHeDBRUlVrWlJx?=
- =?utf-8?B?VU5pVEJoMVQrUlducWxEUHovR1ZwQm51T1cxODdRK2R4d0ZoWmkwVGF3V2JU?=
- =?utf-8?B?NVZtbGRqSy9EV0JhWW9tRmR5c3JNYVBSN3BwbnQwanJRMlNHVWtjazFtRmJT?=
- =?utf-8?B?QkFqLzFOVDRSMFJsU05sVzkvWEtKckxxa1pva1RuTHowTXV2UGRQZjN2QTht?=
- =?utf-8?B?NHVmR2FwVU1VbkE2aVNPWjhHbUlmeVhqSVB5MDhFb1llc1FZeG5waXlVdk5D?=
- =?utf-8?B?cGFYZlF4YTNIOFpnanU2Y3lqUFA0UnV2YTdBYlUxbFhraW0vRVRteFE5bFlp?=
- =?utf-8?B?NDBwdStBWTB2Z3M1VFBwZ3FaU09YU3pPVE40dnNDMDIyL1pHVVdQOXprelhJ?=
- =?utf-8?B?NnBXaUpGbDFQeXJRQnp6Vkd2YWlNTWdDOGNaVUJMSE1SOENLcEhnWnl4K3RL?=
- =?utf-8?B?Zmh2REJyeCthR0dVVlhXWUpnTW8veEJEYXZTeXB4MjA3enp3bDN4NE9McXc0?=
- =?utf-8?B?a2V2a2FXaWxpUDAxRXFuc1BXL0NzZGpiK3lsYVpqenJjdFV0cmRrdjEzOXVr?=
- =?utf-8?B?cys3ZG4xYVorZEhOeURlTzUzaU0vNkFVOFhrNEdMQjBDdzBPdVFVa3hNWkhJ?=
- =?utf-8?B?Um9sV0V5M0kwNzZCVzMvbG1FVnNJTkp1YVdaTUZ3cVBxNEVFODNNZnlpdXBu?=
- =?utf-8?B?a1J2K3VZaCs3T1Jick9LdDRkdW14T0phYWdtNlF1d080MU5ZWHdicHptRENU?=
- =?utf-8?B?UGlJU0ZLU29EeUZTQXp2bmsrcjIvL2h4ckVibE9KalgrY2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Wmc2aWR1dTd6bjN1WHYrNDI0MzV0RE9zZUxtaEdadHJxVE9OOElIcldmSmh3?=
- =?utf-8?B?ZVVVeUtLdXI2N2lkekY1cVo0RGRhMFFOek5QL3ZJVy9zRFhMZWVpWnl2N2dL?=
- =?utf-8?B?dU9JaUIrYnFsdjhNeWR6N3dtdGxwdVVIdk9DbmR5azVLcVkxNE43bjYwdnhR?=
- =?utf-8?B?cE0rVjF5Yll4eExYT3BWNkN4RVlEN0xHSTlBMUNSZUtyTnA5UTAxZGFGWmMx?=
- =?utf-8?B?RkdCeDhOVkN5ZkorblhMaGlUcXFSNjFPNStQNzZNOHVTNy9CbmJwblFEWDAr?=
- =?utf-8?B?NEpIVVNLSGc4UlJiTlBMb3FjSGpoMlptZnlvOEJkVzMyd1RwckdUZUYwQXJV?=
- =?utf-8?B?di9uNGNQeDlkbmlUcUxHbTZuRWZMYTdua21UcStFUnpYWEY1cHFGOFFzUzVr?=
- =?utf-8?B?TVlvL2RaM0ZjdGJpMjRRNXRFRS8yY1ZDWk0wWUtSL1VIQkw2NmxDMVBEaDhW?=
- =?utf-8?B?R2h6dXZ1eHBKQzlyUk9Sa1kyQzAzQloyMnpWcjgyUWVJbVFsbDBDNjlhMGJV?=
- =?utf-8?B?UHIxdjd2NWtxRUVWQjJSRUgyU1JITGNhelpTMmJ2dnNXRy9nVEFsQjhiSlN5?=
- =?utf-8?B?Z2VPMUdtV3RXRTVGQkp5QlFQd01CYUJJeVNMZ2JNQ2I2Q3JwNmJhSWNXaUps?=
- =?utf-8?B?T0psNjBMczRJMEJyakNmODIxZUt4RW9HamtKcithczIremh1Tmhad1ZmajFm?=
- =?utf-8?B?enI5RnBybUZGdkV6WndtV3ljSlFZUkk5dElSZ05SMmZlTzB5ckpJa2ZvSUsy?=
- =?utf-8?B?VWZxSTdYVlYrTk9FeTYxdm1vdXdkbW1tSkRhM1BGUXNGdjltQmpxVXk2ZXNG?=
- =?utf-8?B?NnhMbnVOMnRmQzZwU3RncEVWYlFDMUgyajNtd1o3UHpDYXlFa2Mzb2kyQWN0?=
- =?utf-8?B?c01vSy9yMXRIdmM3UGh4Q3NTTjVobXNrQWtzbDdnV3pYVDlBYzdqOFdTV2pU?=
- =?utf-8?B?dHQvZXJJTzNyMjlGb3BzVXB1bmNkOU0zU0lVTGVZQ21WQjhzeHNSUmVJNnJE?=
- =?utf-8?B?MXQrMXVqT1Nrc0JpWU1VTC9VdUZrOTNrbk9RN3VUeThpNCtrRGRkbnVJb2dT?=
- =?utf-8?B?NEJuSlRaei9sSFdRMFhOUHBoWk50R2JlV0xqZEJNVWxDWFBseGVBbFhvblhq?=
- =?utf-8?B?anEweEpEZVovYjhLWGlNRkFOMEVNbXh4RXpXZjBtZ1NJSE0vU0c1enRnb3Uv?=
- =?utf-8?B?Yk5XTkpVemxSdWNkaStxK0JsNG8wdWxOYUtOZ1YzczVGT1VJTnRNMHZtMVFr?=
- =?utf-8?B?RktiNVVWTVBud0owNlo0R3k2emlIeFJ1YVZVK2V5WFh4T2kwUW42NXBvNXdT?=
- =?utf-8?B?Q1Q2UlJDZ1gzL05ta1AzYVUybUhPc05JekhLa2pkTm4zRnlYS0ZFTU00cDhK?=
- =?utf-8?B?bXBua2V2MGpPZ1BBN01ieHRET2NXUWxLbUVOZ2t1bU5QQmxadEJEcHlqamRC?=
- =?utf-8?B?S25qamlxUTFDdVRXck5aM0FoTWtUWUZsdkhiSms2UmVCVXp6K3FFUVpFTTZx?=
- =?utf-8?B?N3FhL3NsRVo4bnNXQ0ozWlZOSk11RjVER2ExWXZZMDBJVndBQVdzaS8yWTJy?=
- =?utf-8?B?am9RUmxKWk9zQmJMeEh5VHNLMmw4WnpiZkthdTlmVjcvT0pkSVZDbHQxNS9p?=
- =?utf-8?B?RFNMc1dRZVp2Q3NLS2w4d2Q4WTBNZlJ2c3UyWEtJajVlUDJmU0g5RERWaDFP?=
- =?utf-8?B?c3UwMlE1UGVjMVdGZmZ0ano2K1Jocmw3QzZ4NVJYRFBCejRMZ3Rsam5JeVUz?=
- =?utf-8?B?WVVUZkNvRk9talRyc0NEZG5jdmpkcTNKcnNrcVdUMUg4NWdlTWZ3VEhDM2tT?=
- =?utf-8?B?YmxCcGR4QTNqRXh5RXE4eXRwQXZ1SGE3YmNueFQ5d2NQUXlMRFFtWkdQbEhC?=
- =?utf-8?B?VjRkRjhkcXlhc3U1dWJaSmFJUnQzRC9WcHhoQUhpdlFzMys0QndpeEJxT25h?=
- =?utf-8?B?SHVTVmtIa2dZMGJPVE9LRXliMVFETUdzTDI0cGR3TGdVSzVhN2JTcHNFWFpD?=
- =?utf-8?B?cGswVm5OWEJqSlUyWGxSQTY5Y1dCV0tpT05DNUNvbmREYWRQdmJDcnFuTFVC?=
- =?utf-8?B?TWlpeFNnelZGaW1FU0xkYW50SldObCtmbkNBdUZERzM5OWx4TUM5amtMYkZz?=
- =?utf-8?B?NElaSWZKWUF6V1hNRUhtZ0d6QzBqOUwzWThZUU13cExtQTQzT2F2MWQ3eFBn?=
- =?utf-8?Q?H/4M141eFKvCqBv2iTlCLzc=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71eb4084-b67a-45be-23c3-08de0d7831da
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 12:25:01.8491
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pwLCdkEgKxgJGtvZO8Tsmwm9RKgc6rWg8dg+DUo3EtDH5A8jS+DDUqiVtAt9/O2fkUMzCHwPU5yTbEWpyLPC/77YS4IVXS1hAE1CbC3XplQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PR01MB9018
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 2025-10-17 06:08, Thomas Gleixner wrote:
-> This is a follow up on the V2 feedback:
-> 
->     https://lore.kernel.org/20250916163004.674341701@linutronix.de
-> 
-> The main concern over the V2 implementation was the requirement to have
-> the code within the macro itself.
-> 
-> The main reason for that was the issue with ASM GOTO within a auto cleanup
-> scope. Clang refuses to build when the ASM GOTO label is outside of the
-> scope and GCC silently miscompiles the code and misses the cleanup.
-> 
-> After some back and forth discussion Linus suggested to put the local label
-> workaround into the user access functions themself.
-> 
-> The second reason for having this construct was to make the potential
-> modification of the pointer (when the architecture supports masking) scope
-> local, as that preserves the original pointer for the failure path.
-> 
-> Andrew thankfully pointed me to nested for() loops and after some head
-> scratching I managed to get all of it hidden in that construct.
-> 
-> So now the scoped access looks like this:
-> 
-> 	scoped_masked_user_read_access(ptr, efault) {
-> 	        // @ptr is aliased. An eventual mask modification is scope local
-> 		unsafe_get_user(val, ptr, efault);
-> 		...
-> 	}
+When testing kexec-reboot on a 144 cpus machine with
+isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
+encounter the following bug:
 
-Now we're talking! It indeed looks much more like C now. I'll go review
-the implementation.
+[   97.114759] psci: CPU142 killed (polled 0 ms)
+[   97.333236] Failed to offline CPU143 - error=-16
+[   97.333246] ------------[ cut here ]------------
+[   97.342682] kernel BUG at kernel/cpu.c:1569!
+[   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+[   97.353281] Modules linked in: rfkill sunrpc dax_hmem cxl_acpi cxl_port cxl_core einj vfat fat arm_smmuv3_pmu nvidia_cspmu arm_spe_pmu coresight_trbe arm_cspmu_module rndis_host ipmi_ssif cdc_ether i2c_smbus spi_nor usbnet ast coresight_tmc mii ixgbe i2c_algo_bit mdio mtd coresight_funnel coresight_stm stm_core coresight_etm4x coresight cppc_cpufreq loop fuse nfnetlink xfs crct10dif_ce ghash_ce sha2_ce sha256_arm64 sha1_ce sbsa_gwdt nvme nvme_core nvme_auth i2c_tegra acpi_power_meter acpi_ipmi ipmi_devintf ipmi_msghandler dm_mirror dm_region_hash dm_log dm_mod
+[   97.404119] CPU: 0 UID: 0 PID: 2583 Comm: kexec Kdump: loaded Not tainted 6.12.0-41.el10.aarch64 #1
+[   97.413371] Hardware name: Supermicro MBD-G1SMH/G1SMH, BIOS 2.0 07/12/2024
+[   97.420400] pstate: 23400009 (nzCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+[   97.427518] pc : smp_shutdown_nonboot_cpus+0x104/0x128
+[   97.432778] lr : smp_shutdown_nonboot_cpus+0x11c/0x128
+[   97.438028] sp : ffff800097c6b9a0
+[   97.441411] x29: ffff800097c6b9a0 x28: ffff0000a099d800 x27: 0000000000000000
+[   97.448708] x26: 0000000000000000 x25: 0000000000000000 x24: ffffb94aaaa8f218
+[   97.456004] x23: ffffb94aaaabaae0 x22: ffffb94aaaa8f018 x21: 0000000000000000
+[   97.463301] x20: ffffb94aaaa8fc10 x19: 000000000000008f x18: 00000000fffffffe
+[   97.470598] x17: 0000000000000000 x16: ffffb94aa958fcd0 x15: ffff103acfca0b64
+[   97.477894] x14: ffff800097c6b520 x13: 36312d3d726f7272 x12: ffff103acfc6ffa8
+[   97.485191] x11: ffff103acf6f0000 x10: ffff103bc085c400 x9 : ffffb94aa88a0eb0
+[   97.492488] x8 : 0000000000000001 x7 : 000000000017ffe8 x6 : c0000000fffeffff
+[   97.499784] x5 : ffff003bdf62b408 x4 : 0000000000000000 x3 : 0000000000000000
+[   97.507081] x2 : 0000000000000000 x1 : ffff0000a099d800 x0 : 0000000000000002
+[   97.514379] Call trace:
+[   97.516874]  smp_shutdown_nonboot_cpus+0x104/0x128
+[   97.521769]  machine_shutdown+0x20/0x38
+[   97.525693]  kernel_kexec+0xc4/0xf0
+[   97.529260]  __do_sys_reboot+0x24c/0x278
+[   97.533272]  __arm64_sys_reboot+0x2c/0x40
+[   97.537370]  invoke_syscall.constprop.0+0x74/0xd0
+[   97.542179]  do_el0_svc+0xb0/0xe8
+[   97.545562]  el0_svc+0x44/0x1d0
+[   97.548772]  el0t_64_sync_handler+0x120/0x130
+[   97.553222]  el0t_64_sync+0x1a4/0x1a8
+[   97.556963] Code: a94363f7 a8c47bfd d50323bf d65f03c0 (d4210000)
+[   97.563191] ---[ end trace 0000000000000000 ]---
+[   97.595854] Kernel panic - not syncing: Oops - BUG: Fatal exception
+[   97.602275] Kernel Offset: 0x394a28600000 from 0xffff800080000000
+[   97.608502] PHYS_OFFSET: 0x80000000
+[   97.612062] CPU features: 0x10,0000000d,002a6928,5667fea7
+[   97.617580] Memory Limit: none
+[   97.648626] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]
 
-Thanks,
+Tracking down this issue, I found that dl_bw_deactivate() returned
+-EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
+When a CPU is inactive, its rd is set to def_root_domain. For an
+blocked-state deadline task (in this case, "cppc_fie"), it was not
+migrated to CPU0, and its task_rq() information is stale. As a result,
+its bandwidth is wrongly accounted into def_root_domain during domain
+rebuild.
 
-Mathieu
+The key point is that root_domain is only tracked through active rq->rd.
+To avoid using a global data structure to track all root_domains in the
+system, we need a way to locate an active CPU within the corresponding
+root_domain.
 
+The following rules stand for deadline sub-system and help locating the
+active cpu
+  -1.any cpu belongs to a unique root domain at a given time
+  -2.DL bandwidth checker ensures that the root domain has active cpus.
 
-> 	return 0;
-> efault:
->          // @ptr is unmodified
-> 	do_stuff(ptr);
-> 	return -EFAULT;
-> 
-> 
-> Changes vs. V2:
-> 
->      - Fix the unsigned long long pointer issue in ARM get_user() -
->        Christophe, Russell
-> 
->      - Provide a generic workaround for the ASM GOTO issue and convert the
->        affected architecture code over - Linus
-> 
->      - Reimplement the scoped cleanup magic with nested for() loops - Andrew
-> 
->      - Provide variants with size provided by the caller - Mathieu
-> 
->      - Add get/put_user_masked() helpers for single read/write access
-> 
->      - Fixup the usage in futex, x86. select
-> 
->      - A clumsy attempt to implement a coccinelle checker which catches
->        access mismatches, e.g. unsafe_put_user() inside a
->        scoped_masked_user_read_access() region. That needs more thought and
->        more coccinelle foo and is just there for discussion.
-> 
-> The series is based on v6.18-rc1 and also available from git:
-> 
->      git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/masked
-> 
-> Thanks,
-> 
-> 	tglx
-> ---
-> Thomas Gleixner (12):
->        ARM: uaccess: Implement missing __get_user_asm_dword()
->        uaccess: Provide ASM GOTO safe wrappers for unsafe_*_user()
->        x86/uaccess: Use unsafe wrappers for ASM GOTO
->        powerpc/uaccess: Use unsafe wrappers for ASM GOTO
->        riscv/uaccess: Use unsafe wrappers for ASM GOTO
->        s390/uaccess: Use unsafe wrappers for ASM GOTO
->        uaccess: Provide scoped masked user access regions
->        uaccess: Provide put/get_user_masked()
->        coccinelle: misc: Add scoped_masked_$MODE_access() checker script
->        futex: Convert to scoped masked user access
->        x86/futex: Convert to scoped masked user access
->        select: Convert to scoped masked user access
-> 
-> ---
->   arch/arm/include/asm/uaccess.h               |   26 ++
->   arch/powerpc/include/asm/uaccess.h           |    8
->   arch/riscv/include/asm/uaccess.h             |    8
->   arch/s390/include/asm/uaccess.h              |    4
->   arch/x86/include/asm/futex.h                 |   75 ++----
->   arch/x86/include/asm/uaccess.h               |   12 -
->   fs/select.c                                  |   12 -
->   include/linux/uaccess.h                      |  313 ++++++++++++++++++++++++++-
->   kernel/futex/futex.h                         |   37 ---
->   scripts/coccinelle/misc/scoped_uaccess.cocci |  108 +++++++++
->   10 files changed, 497 insertions(+), 106 deletions(-)
+Now, let's examine the blocked-state task P.
+If P is attached to a cpuset that is a partition root, it is
+straightforward to find an active CPU.
+If P is attached to a cpuset that has changed from 'root' to 'member',
+the active CPUs are grouped into the parent root domain. Naturally, the
+CPUs' capacity and reserved DL bandwidth are taken into account in the
+ancestor root domain. (In practice, it may be unsafe to attach P to an
+arbitrary root domain, since that domain may lack sufficient DL
+bandwidth for P.) Again, it is straightforward to find an active CPU in
+the ancestor root domain.
 
+This patch groups CPUs into isolated and housekeeping sets. For the
+housekeeping group, it walks up the cpuset hierarchy to find active CPUs
+in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
 
+Signed-off-by: Pingfan Liu <piliu@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: "Michal Koutný" <mkoutny@suse.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+To: cgroups@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+---
+ include/linux/cpuset.h  | 18 ++++++++++++++++++
+ kernel/cgroup/cpuset.c  | 27 +++++++++++++++++++++++++++
+ kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
+ 3 files changed, 69 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 2ddb256187b51..7c00ebcdf85d9 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -130,6 +130,7 @@ extern void rebuild_sched_domains(void);
+ 
+ extern void cpuset_print_current_mems_allowed(void);
+ extern void cpuset_reset_sched_domains(void);
++extern void task_get_rd_effective_cpus(struct task_struct *p, struct cpumask *cpus);
+ 
+ /*
+  * read_mems_allowed_begin is required when making decisions involving
+@@ -276,6 +277,23 @@ static inline void cpuset_reset_sched_domains(void)
+ 	partition_sched_domains(1, NULL, NULL);
+ }
+ 
++static inline void task_get_rd_effective_cpus(struct task_struct *p,
++		struct cpumask *cpus)
++{
++	const struct cpumask *hk_msk;
++	struct cpumask msk;
++
++	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
++	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
++		if (!cpumask_and(&msk, p->cpus_ptr, hk_msk)) {
++			/* isolated cpus belong to a root domain */
++			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
++			return;
++		}
++	}
++	cpumask_and(cpus, cpu_active_mask, hk_msk);
++}
++
+ static inline void cpuset_print_current_mems_allowed(void)
+ {
+ }
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 27adb04df675d..f7b18892ed093 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1102,6 +1102,33 @@ void cpuset_reset_sched_domains(void)
+ 	mutex_unlock(&cpuset_mutex);
+ }
+ 
++/* caller hold RCU read lock */
++void task_get_rd_effective_cpus(struct task_struct *p, struct cpumask *cpus)
++{
++	const struct cpumask *hk_msk;
++	struct cpumask msk;
++	struct cpuset *cs;
++
++	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
++	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
++		if (!cpumask_and(&msk, p->cpus_ptr, hk_msk)) {
++			/* isolated cpus belong to a root domain */
++			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
++			return;
++		}
++	}
++	/* In HK_TYPE_DOMAIN, cpuset can be applied */
++	cs = task_cs(p);
++	while (cs != &top_cpuset) {
++		if (is_sched_load_balance(cs))
++			break;
++		cs = parent_cs(cs);
++	}
++
++	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
++	cpumask_and(cpus, cs->effective_cpus, hk_msk);
++}
++
+ /**
+  * cpuset_update_tasks_cpumask - Update the cpumasks of tasks in the cpuset.
+  * @cs: the cpuset in which each task's cpus_allowed mask needs to be changed
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 72c1f72463c75..0a35b165d42a0 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2884,6 +2884,8 @@ void dl_add_task_root_domain(struct task_struct *p)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 	struct dl_bw *dl_b;
++	unsigned int cpu;
++	struct cpumask msk;
+ 
+ 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
+ 	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+@@ -2891,16 +2893,32 @@ void dl_add_task_root_domain(struct task_struct *p)
+ 		return;
+ 	}
+ 
+-	rq = __task_rq_lock(p, &rf);
+-
++	/* prevent race among cpu hotplug, changing of partition_root_state */
++	lockdep_assert_cpus_held();
++	/*
++	 * If @p is in blocked state, task_cpu() may be not active. In that
++	 * case, rq->rd does not trace a correct root_domain. On the other hand,
++	 * @p must belong to an root_domain at any given time, which must have
++	 * active rq, whose rq->rd traces the valid root domain.
++	 */
++	task_get_rd_effective_cpus(p, &msk);
++	cpu = cpumask_first_and(cpu_active_mask, &msk);
++	/*
++	 * If a root domain reserves bandwidth for a DL task, the DL bandwidth
++	 * check prevents CPU hot removal from deactivating all CPUs in that
++	 * domain.
++	 */
++	BUG_ON(cpu >= nr_cpu_ids);
++	rq = cpu_rq(cpu);
++	/*
++	 * This point is under the protection of cpu_hotplug_lock. Hence
++	 * rq->rd is stable.
++	 */
+ 	dl_b = &rq->rd->dl_bw;
+ 	raw_spin_lock(&dl_b->lock);
+-
+ 	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
+-
+ 	raw_spin_unlock(&dl_b->lock);
+-
+-	task_rq_unlock(rq, p, &rf);
++	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+ }
+ 
+ void dl_clear_root_domain(struct root_domain *rd)
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.49.0
+
 
