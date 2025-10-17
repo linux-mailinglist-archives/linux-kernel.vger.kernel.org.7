@@ -1,207 +1,191 @@
-Return-Path: <linux-kernel+bounces-858168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8139EBE92F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:28:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578C5BE931D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB6AD5655A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:25:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 909FF4F857D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC816289811;
-	Fri, 17 Oct 2025 14:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43558339716;
+	Fri, 17 Oct 2025 14:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V9pErdmI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F76yofh+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754EC33970F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265EE33970F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760711122; cv=none; b=MwAiDmZRfYYjb6tvK4o3ez8ugy+yU4eUqCO8CNEbWM5B5hTxUFKbg+/vwzqVYx9kIZQ+kK3WhbM7rfEeIhmUjEygFEx9lA9rIOY6ZcY6KT89axob35V5HUFEWRULZ2QeOr3J7KgJCiD35r8PZeQ96h1erbWEcqOxqm6SO/r4IS4=
+	t=1760711180; cv=none; b=qukmNBKf/rJfPuGxSJVRqqs7VDqlEksxYGvJU5HMhUZ+KPfdfkpq0O6tIcdeMCyEQb9whVWgSgq9HSnqPSsN1CEfUs7JACgM9tX57AZUlpjEu/+slxdCDQ3nm2HBbW/8PFglsssS8HAQWoufGZ8UDHJBh58+0cmiubxcAukiZ1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760711122; c=relaxed/simple;
-	bh=WvPiwTls8EwkUxiAY19dvsorF4ZCWBhUHbOY89tSmC4=;
+	s=arc-20240116; t=1760711180; c=relaxed/simple;
+	bh=GEi6gBQmI47L7JB2L547+kIiTNO1mJCQfz3AZmP/Oco=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z7x7c+ofAPPsQ4JvePmbCel5vBN2txhW8KMNfQTmT96PBGRsEy/ngP1SQErbcuMGn7ayqE89P7Hyt5QbuKCjVUiXyQbwYBiRL8nrUVfLUoXQbmaj7u+cnlrklMyL5jBgLMCemk/HrgNeBbmNwy2ljpbhFRHILLxQdh2LCmqHXu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V9pErdmI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H7bV51022181
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:25:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	X6I4YOibOxnI0AMuF9jQqhBPQ7jDc9rITl8QqtHTs9g=; b=V9pErdmIvPeRmzT8
-	Fo9QxijlwjOsM/Tl3rHj8cXNaN4ElNURNUB9PNqCurg1wp6PgVRfhZoMOh7ohSB9
-	ciz518YlXJjgB5jyj/bWOor02A7aQZurvS4YTPzsY+r9Tu5oczy2q/3xPZctY/1C
-	adSCpm9pQU5xAdbuQ8OG2AA5q5QUap0EHmo8sRIMS8e/2vDSe2I3MChYFMbnrRcj
-	0pW9Hhl4u2oyBu7QkDidC/eNg5kHGvSBRe5sTWqA2uHy2tD0eazWN+vf0kullEVu
-	BYihnVk2HjBjeIWuO+d8aV57ns5OsDa6Pj4EF6gDuLaxQcPyG2K634F4fFPM3N33
-	iWbU0Q==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rtrthg3g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:25:20 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33428befc49so3311679a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:25:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760711112; x=1761315912;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X6I4YOibOxnI0AMuF9jQqhBPQ7jDc9rITl8QqtHTs9g=;
-        b=n4LRTrBnKJphbbLfpuJ161QH6q/TSbaSowIb6iiZe3VlhlNc8V89deVq03qcG/uL13
-         Nq9VCXSf9CTYT4bCYLpVwWnhsV4X529NRfbDpp2gtUrvjbnXIO9rIGWPjIb/WXOqPlz2
-         KA9ySJZxlknRHzKDjOoYkJPi1Q8sqBiX2xV1mJoRatKwdTxyr3GPiX0zxOoXpKD88kq7
-         PHMp8C1KdxySfxdC6pUgs7dudQnrAljysdTH27LJiC/MqmeDA0z/YSFR2/jmO34LSDI5
-         03U6we9oSJ16xHajbVJ0kk9XQYEp6A2EVqzoFt/mg+s5niDyp44Q/uAgKLS09P4335hT
-         EG2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWL8bYFbpKG6XiRCHuR+Yvq3Z//ILWwIuEjcCdTxhndUGGM4e20n4jQrAPYebfC9uPR3wiypdzitBM/bck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3UjIQgYvMAiUJj4tmZHuyMtEpG1NWQtX79gPPKizgttFVdBwD
-	jIhBGBb8kmbg9MSa5DwXyLjCJ+NjDHCeYlTiUb61dDjkK6hvKt0HOcnz2JhMEU8Pn1dxW3ynBFm
-	O9V8i488LItXQLz4SGqO2zxJNJcFAsYRtzY+2l2ylGRh0SezeFbo43arz9NmQO66F59k=
-X-Gm-Gg: ASbGncstwC/d7spOZFhdh9zE715n2I+o+boRSDapXRBZK3y+P3/EKKtjEbGGnx9GSsk
-	J40bj+e1RfAqhKV3+VhbnSoQ+8cPqbmEoevVV1pMIN8aWTlfZNTUv/bvCl1KEnjmmU75v9ROYpV
-	qG6VNxtlcLSi1z+5e8chun0pOLgdp7yg7wRV5j70HZieOmbuLf/VhXWEkubZ96p6A/D/mJjWgRX
-	+D5SxPd98UmX/h3bNDYpXf6wbdxgZuzkEieU8X3hx9tvct2KRdLLYAqy1Z78smWthevry//YZf8
-	S44HRL/MOQ32Bgo2zdTmsaQDVCaTuf0jCsQs9pcpbs0SBpqbGHScRip0WxgWI51qyYD1oi7BuLm
-	RAvnmS7vnVX06aYdFtPyvg7DexSzCydWXiA==
-X-Received: by 2002:a17:90a:d004:b0:32b:94a2:b0c4 with SMTP id 98e67ed59e1d1-33b9e2925e2mr10031251a91.16.1760711112023;
-        Fri, 17 Oct 2025 07:25:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpzi1hN1yMdY6cSIJhZZaWyqTeCWz6N72ovTz031iQmmVMeTy7gJVlncPuK2idTupafEuVXw==
-X-Received: by 2002:a17:90a:d004:b0:32b:94a2:b0c4 with SMTP id 98e67ed59e1d1-33b9e2925e2mr10031171a91.16.1760711111346;
-        Fri, 17 Oct 2025 07:25:11 -0700 (PDT)
-Received: from [10.216.52.245] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd79b344dsm3149510a91.3.2025.10.17.07.25.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 07:25:10 -0700 (PDT)
-Message-ID: <0683413c-b447-8e3e-8bfd-3edce5a0e14f@oss.qualcomm.com>
-Date: Fri, 17 Oct 2025 19:54:58 +0530
+	 In-Reply-To:Content-Type; b=rEnQw5OqvhNg7attVoxuK07PGaFB2bvp0RTUviVuizTTConMq9M0xrYdoO/0g00bfUDuJZOg5YPgUyMucuYVAMrUQh9llilR2MyDjh74Rpkg3sAYG7NKk+P5Zu5gl2fdaTjzY0WZa2wtNJGLjEeNjObjLGc0kkaiDiNeQYc0b0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F76yofh+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760711179; x=1792247179;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GEi6gBQmI47L7JB2L547+kIiTNO1mJCQfz3AZmP/Oco=;
+  b=F76yofh+a7bFtTZF0gXEv4Up0cscj6+hn/4HkBF0UmqgM9CLJtkEun5Z
+   8rLIh3wV+osxB2Llj4wXLalj1uqur6v94d+ORNR21gSrEFjqE00GxecJ9
+   wj3oQSTLPzSNGs6syy/r8jgsLZGy8/ggoiXsPk8Pb12xCdJ9q/SCtX0Ve
+   AghoXftE/hmsZVUmyLy1dNgIF1QgrMVp31iVg95sRCaXZQjSpAqoed4BP
+   R93KGtWh2DofXeoXg40H/RoaT10Ey/1YixEwdCOQTT9LMucPoC43q5764
+   2XfXP90l3q/kQDtQRVysj7xOq4InOuKSKIIRoUafxx8Nl4bfysHeEPPiR
+   g==;
+X-CSE-ConnectionGUID: LO7vfoajTySAO5NnmvLsNw==
+X-CSE-MsgGUID: bNYsCV4nRlGMLEIgj1g6xA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="63012274"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="63012274"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 07:26:18 -0700
+X-CSE-ConnectionGUID: ofWPS03CQiGEZ6k2lcrNDw==
+X-CSE-MsgGUID: PrmO9UHNTNariydWTakaiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="187841778"
+Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.108.40]) ([10.125.108.40])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 07:26:18 -0700
+Message-ID: <a7fa4a93-2d80-4c1d-af91-9dad9626ed9f@intel.com>
+Date: Fri, 17 Oct 2025 07:26:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v16 02/14] power: reset: reboot-mode: Add device tree
- node-based registration
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
- <20251015-arm-psci-system_reset2-vendor-reboots-v16-2-b98aedaa23ee@oss.qualcomm.com>
- <CACMJSesvTLe28Jz83b=zfHD2rvmf7-i_2+2DoV=dgooVqFEYbA@mail.gmail.com>
- <fa42adf0-8f15-ad4c-3788-578b1bee1c72@oss.qualcomm.com>
- <CACMJSesxazA7Nf6sAhUT16KfwtiUNjvb5JOEWkEb1B5fJtihMQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: WARNING: CPU: 1 PID: 0 at arch/x86/kernel/cpu/cpuid-deps.c:123
+ do_clear_cpu_cap+0xdc/0x130 on Intel(R) Atom(TM) CPU N450 system
+To: Salvatore Bonaccorso <carnil@debian.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ =?UTF-8?Q?Lauren=C8=9Biu_P=C4=83ncescu?= <lpancescu@gmail.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Sohil Mehta <sohil.mehta@intel.com>, "Chang S. Bae"
+ <chang.seok.bae@intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org,
+ 1117002@bugs.debian.org
+References: <aPJNPPFKsPKJWlLn@eldamar.lan>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <CACMJSesxazA7Nf6sAhUT16KfwtiUNjvb5JOEWkEb1B5fJtihMQ@mail.gmail.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aPJNPPFKsPKJWlLn@eldamar.lan>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: NiWpbMYnYvy7mHdssZ_sFOIKNEC3M63w
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyMiBTYWx0ZWRfX5Uj8LyH6e7Ag
- bN7Bka0FdcWiti08Dm0VfKige2aoHmNvzRjV9XvkBLO8myYSYS9MjgXvgnlZ7K0xARzcm54k8aF
- 4y314qUc80RRSRqRRg2WPCJEqHIrnuuebW3+RQ45vXTwrAi6YUgaS91oP9ZXaCThJ1og8E50hUD
- 2ZCu2Tdf8+cvLpBs2i123AXN4ONu6D1hH9AbR1c43oU8Odtbi+Bm4rKwo4d/SzBs+kPh4icNNsE
- x+q/Svum4uab96H1X+rBGgjcDT8OfYozW9HkFWdlhYVi9zhIBZqRwxqQHh3It6u3PAOaF2YMxsU
- QD/O8ku7XU3I5u30urHgywlpVUh25ZeWkg9bjz14iTfuMtAW6yHTklYRXBH4dN+rTwBAgDmeFaf
- p649RCaoWpIB4MMN27FvJY6Wdtshjw==
-X-Authority-Analysis: v=2.4 cv=SfD6t/Ru c=1 sm=1 tr=0 ts=68f251d0 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=9sdP-RPgOja0Ng7vnc8A:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-GUID: NiWpbMYnYvy7mHdssZ_sFOIKNEC3M63w
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130022
 
-
-
-On 10/17/2025 2:36 PM, Bartosz Golaszewski wrote:
-> On Thu, 16 Oct 2025 at 19:19, Shivendra Pratap
-> <shivendra.pratap@oss.qualcomm.com> wrote:
->>>>
->>>> -                       info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
->>>
->>> This change is good - devres should not be used in subsystem library
->>> code, only in drivers - but it doesn't seem to belong here, can you
->>> please separate it out and make it backportable?
->>
->> sure. Just to confirm we should separate out the devm_kzalloc part of the
->> change and add a fixes tag.
->>
+On 10/17/25 07:05, Salvatore Bonaccorso wrote:
+> [    0.008282] RAX: 0000000000000000 RBX: ffffcd5fc00bfd18 RCX: 0000000000000000
+> [    0.008282] RDX: 0000000000000001 RSI: 0000000000000070 RDI: ffffcd5fc00bfd78
+> [    0.008282] RBP: 0000000000000070 R08: 0000000000000000 R09: 706f20676e697274
+> [    0.008282] R10: 7473207473616620 R11: 64656c6261736944 R12: ffffffffb8f20ba0
+> [    0.008282] R13: ffff8ad332718090 R14: 000000000000061c R15: 0000000000000000
+> [    0.008282] FS:  0000000000000000(0000) GS:ffff8ad378ec7000(0000) knlGS:0000000000000000
+> [    0.008282] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.008282] CR2: 0000000000000000 CR3: 000000005842c000 CR4: 00000000000006f0
+> [    0.008282] Call Trace:
+> [    0.008282]  <TASK>
+> [    0.008282]  do_clear_cpu_cap+0x106/0x130
+> [    0.008282]  early_init_intel.cold+0x4d/0x11a
+> [    0.008282]  init_intel+0x2a/0x2c0
+> [    0.008282]  identify_cpu+0x18c/0x750
+> [    0.008282]  identify_secondary_cpu+0x50/0xa0
+> [    0.008282]  start_secondary+0x7c/0x160
+> [    0.008282]  common_startup_64+0x13e/0x141
+> [    0.008282]  </TASK>
+> [    0.008282] ---[ end trace 0000000000000000 ]---
+> [    0.354753] smp: Brought up 1 node, 2 CPUs
+> [    0.354797] smpboot: Total of 2 processors activated (6666.06 BogoMIPS)
 > 
-> And preferably put it first in the series to avoid conflicts.
+> Any ideas?
 
-Ack.
+That's a fun one.
 
-> 
->>>> @@ -123,8 +136,11 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
->>>>                 return 0;
->>>>
->>>>  error:
->>>> -               list_for_each_entry(info, &reboot->head, list)
->>>> +               list_for_each_entry_safe(info, next, &reboot->head, list) {
->>>> +                       list_del(&info->list);
->>>
->>> Same here, not deleting the entries currently seems like a bug? Do we
->>> depend on the driver detach to clean up the resources on failure?
->>
->> sure, so this should also go as fixes? and should we remove the other
->> dev_err(printk) also as fixes? or that can still got with the change
->> where we add fwnode based registration?
->>
-> 
-> It doesn't seem to be strictly required by current code as the users
-> use it "correctly" but if the API becomes used in different ways - for
-> instance the structure may be reused after failure - it's a good idea
-> to backport it. In general we should undo everything we did in the
-> same function if we fail at some point.
+This looks to be this code:
 
-sure. will update it.
+                        pr_info("Disabled fast string operations\n");
+                        setup_clear_cpu_cap(X86_FEATURE_REP_GOOD);
+ 
+because we can see the pr_info() and I'm assuming that the 'feature' is
+X86_FEATURE_REP_GOOD (0x70) which we can see in RSI/RBP.
 
-thanks,
-Shivendra
+But X86_FEATURE_REP_GOOD isn't even a real CPU feature, it's one of the
+synthetic ones. The only way I can see this happening is if
+MSR_IA32_MISC_ENABLE_FAST_STRING is mismatched between the boot CPU and
+a secondary.
+
+Could you boot the system on a known good kernel and run this, please?
+
+	rdmsr -a 0x000001a0
+
+That'll dump out MSR_IA32_MISC_ENABLE on all the CPUs.
+
+When was the last kernel that worked for you? Also, do you have old
+microcode? Can you dump the beginning of /proc/cpuinfo, please?
+
+processor	: 21
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 7 155H
+stepping	: 4
+microcode	: 0x24
+
+I can see your microcode version in dmesg, but not the cpu
+model/family/stepping.
+
+
 
