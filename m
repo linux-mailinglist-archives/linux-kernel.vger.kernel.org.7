@@ -1,90 +1,90 @@
-Return-Path: <linux-kernel+bounces-857230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D298BE643C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:08:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C8ABE6436
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A231F622B3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1041A64D6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E94E2AD11;
-	Fri, 17 Oct 2025 04:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B4F30EF96;
+	Fri, 17 Oct 2025 04:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F1ZXj4Gr"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ThTAtmGc"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF1330C37E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4A430DEAF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760674096; cv=none; b=mzJIpB26yv8jp7fGsO62tZvOOpHEm/aUh+GvvQgakj7O0ntJWcZ4FnvzNxumf9hCyzimlOhsX9qv7NePoSMGQx3nZtFu+TgC/nbZ79pWW7cDHBtOpwvFFQsNfiO9zAuy4iWdsZo3hhndXNUxMzEPobYEclR2YBpc2+igO5ohEwk=
+	t=1760674098; cv=none; b=kMrZitKnDSiO+BrBMZYKaocYG+9P5gGYKA8sZo49z+up1oBfUaz13xm+R0Ffk4qP3y1j6k+95jL/RVIPPHYeeP7ycsNTzeHDeQYiaDJJyzh638uD6HciY0MLBonliB+eXrHRUEXu8Ai+rI5MqE7AiM9BZ+7mmHUEqfk7gVDk2C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760674096; c=relaxed/simple;
-	bh=3PCgNAWoDGSnLHmbTyI/u/LdOj2mopBhYs1h1lRSsw4=;
+	s=arc-20240116; t=1760674098; c=relaxed/simple;
+	bh=Jc3WcMYm9z1rzFSWkpg1DGFRH0PcKnzZH2dfx2eVJ3U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e3c5GVT545s7UXQHUgHG0WWLmru8+ki5Ldy2DXPk1tnc/oi02OI4fUFZud2QXb0mrhJKN8Q8eH4QmWFb8BF2pxJPTrETqI4M9c/XhMeBf6Ras0FzdpBL9eiB2qTX2fPmyHTRWN/lg2q9qIixJ6gry/RzfJFNg8EjViQkvHuJ/OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F1ZXj4Gr; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=erCyP+JsLyvRnw2UqgVYrWCgAM4KGlpkfw9BwPyzpfvxlPFsjFMa5ddscv+4cwomNhYXnOnuoA29FOw6ubvI/PJfmz0vxMJq1RzfBtj/ToaEpvV1O62qirxL+Y4Fhny2CDbF1rnTIelvBiWnnr3j1nc2+IR1t6om3xKfLgCUS8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ThTAtmGc; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLcqZ009689
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:08:14 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GKLOv0006565
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:08:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cWolfLazVFYT84mp58WCfAKVs/5R8s1zPglUdTg+gis=; b=F1ZXj4GrM3fQPJjk
-	7g331XXg15LcXc21lt/oKyWMFI3ecoFwHEWcIYJdR8Um0Mav7jhvX8Vox/PnqxxM
-	ItfTIquI/zS464lt2wFloU3nAKdOTssQwIv2bP5PIgAV/E4P+gYZxP17yeo5f36x
-	gHOhet6a4g//2be958W8eqqnGNl0cnm/XWRgObW3YbhMEph5xK7ubI0L3O+eJJ6K
-	AXhaarQguSlLQT3ImgXPw0qhpDSyRkLZlYd/ILb9f3A9x2R0T3y909cGg0hM7meh
-	uJ5AgzMLzXcX+R77X193YPDCAB6xe3KB1SkasGmP/1St6waPCWgC1xLJMKq6pmXR
-	hUPxgA==
+	asdZZKjyk0fwGLdaYXPlNfa31eWk+R36oHWV8aFgJSY=; b=ThTAtmGcdpJlA5Iu
+	0VVpNooDZ7YMhimleUcUOHwbkxt5UN8/Gro4pOjBMjlr/J7/5QvZdvYRyrtHosTF
+	JP8SjW6iUyo034TH98H/wBu4TPJyzitz20cxdGjD5tRGJ5RpSgEHz/U7gu9TfXm/
+	mR+fZbDRvNrJfskXZFDDZZ4U9Qtgco4cZHn6FI2/oDvxJzM9NTieOVCQU6g7Wp1p
+	Vi8W43cgztWJMWodvTs9lXjVI0fYNq5fkGJjUX94TEtz1zeOc9/k53c2UG8t3cz9
+	oYr5kQ8G0SBszhYe0H5TXwKYnsmjC+ztBoEWEreFcCAKXbf2QK99KFVv3GhLw09L
+	NUiquA==
 Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0canw9-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qff12rh0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:08:13 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-27ee41e062cso21376905ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:08:13 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:08:16 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-28a5b8b12bbso32578175ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:08:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760674093; x=1761278893;
+        d=1e100.net; s=20230601; t=1760674095; x=1761278895;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cWolfLazVFYT84mp58WCfAKVs/5R8s1zPglUdTg+gis=;
-        b=pPj8lZOu3cCzoVMmgnjjSXiEchu3c0+WmJb59gtWV+UZ3s1eOqkHFEBjiwMok/tL+n
-         9NrA3iIiKoywLuCfVwZNmKlJZzhvkOerAdKFmliAM9ZDxCLipf6O+2ejv1+CAiRlQubV
-         aH3CL4g63SwE+UYPhbi3jZYxgqQF0N2NHTOvuWxUHD1EOjzoPOAwCepyWg/XSgMcUXBA
-         dKw+lU6EtrMRhsvKuPPtst1z7o6NXvsUJd5CWfyuB1LW7rAtdMIYADJio9+rzjjinjkL
-         YbPjivrwjW6M/gJkTVilo7r9ztkRfX6ZQKM+WJADc5wCjoNLIg3X1PTG9v6jCBGCr/zB
-         RSjw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1cT/Or1d6syf2YSu0id2wO5JjQlFhsfyCTfA28ldJ2jnHwRPoomWx6NOeMQaB7dHVbK6YomrdWKodpgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyenskFdz1rTvnmTY2nQb3SMpkSksJWGiPrdzJ0j1H3wKY6xvl3
-	y5BpXxP7kI6Nj/XpfZ2xwcCAgMFcItTg19qjxX7Yb+Wp/em0apT7/afQHo7THd/fZ3uORay1Mf8
-	xoZx6i9vkSL9x+ODBRoe41N7GaiJ4ZsJOi5AaDFOqn8xKtrfNdjc9BxL+2v6Dv+FPE4M=
-X-Gm-Gg: ASbGncu2TYBzIk+vwHKg13pf55zNewdLTn6EtdpltakWevZWxA/6UdaQk/p4bJTwieU
-	CnNToUwJmE5Tz+cfFnsOxPZFvggiPFvKPAukIYvfLDjuLpprdcXNNTDzkW8D6wDgwRLoi0uPpBp
-	oiIEJxLReZ0EMujFRgVeD0pyeFZ6Ov1fEYhruLF23gJNvr5CI9+x3b6go7SwO+5YYBGkY3UWuLw
-	DG+M3LfG2Aqdw2EUwVFOXH1PkDB+z7pwigpJVAlzkkYBbTa0S9irvyM4qK2QvhBr7QFeGJd+qTG
-	jqqb3ftuQ4Ho9J+fXNzQ7ZkucGJGuk5eaH2/1RWRYYlQ4uv9vMi3Pf1L493+iIbfRP9bQxIy1CP
-	WJV+Yt1Lh6hw6OaiSQyQBg38aBigjZgAOVZVpb3ggDM4CZLWRcToiOt35AgTSu2hkYLbRqMwJoW
-	4pZX8dWmjhOsJMviRcG0IZ/f4=
-X-Received: by 2002:a17:902:ec87:b0:264:70e9:dcb1 with SMTP id d9443c01a7336-290cba481bemr29330355ad.56.1760674092883;
-        Thu, 16 Oct 2025 21:08:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXQc/rF6+4aCLOlalhTrIqG/9+ZR208dHO2zKfTlxMoTdojrxoUaPi3LlK1PsMdL9w63V5vA==
-X-Received: by 2002:a17:902:ec87:b0:264:70e9:dcb1 with SMTP id d9443c01a7336-290cba481bemr29330005ad.56.1760674092376;
-        Thu, 16 Oct 2025 21:08:12 -0700 (PDT)
+        bh=asdZZKjyk0fwGLdaYXPlNfa31eWk+R36oHWV8aFgJSY=;
+        b=IyAWerkE87GVAZycYgOVxwRoLLFcBrKLhA7Q8XpN8y275/8h5bZZBwUG1HyeMdUgAt
+         XOk6udjd0mGN3OLXrFrXX+er46j3R5NRmTRNe5uGUjsz1COzmIBTkmRmoH42W0RrK0OD
+         uKG3/gUllChpn4E9uXCvkQXHbqN0xZa3p5RmCa+T0EHPPhItHMfuJC/w1lk9ZbyCv3of
+         EKYIj0fZmb7ajlBg0N/fwp98dO/KGLhgythMDZ9WIQcd64nez6FB2Ly0H45+0sohyG5O
+         VoPS7/u1JOoIIMt7IdvfW0gQVVWzf9DBHAK8rZNrr3tSEP03wBr5fQ/p2pMuB61mDXL/
+         Bq+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXBMmgW+yomWpSqD81dz7+Q654kIPzYH9P4UwvkaB/4R3ZZ2uyR6CLPXOYjFgY/5BDjWqLBsRWtJ9SJBOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhzMU6qA03s+RB+WxULJMCa4U5D4gYXtsLccFGAFLLufUBCApJ
+	WkteKW0EM7RymD/CpLE4ncF3iwQ48tQ+/o53lN4yjJ48bmjiWYOqQWyKDKKZ4UVo1OOwXwjxG+p
+	w1PAuCtBxP5kSMpAOvw2BQXgYLt3jXq+NdYVY8Rj4ZkOYpKi77e43JiuCHYCZ0YS8eZU=
+X-Gm-Gg: ASbGncsRJekyVNKRAyIDESv5VYQRPrGjupOfsk1rRKIeiBlWKFx2GmfGt/QdjVTUGAL
+	1aIHRipIBYVMiQpFnBLslQ/pd7uzOVPTpWT4l3rJP6LSsP1RZ54Jz/tTU2t3i0MmbOS/hx+hqvm
+	cSjhKdXvhd0BpVoxL1Ur5z/8rKBYXeuprkKMS5SX2f/waLho3qrGhoyN+IRaK+peQfbuJn8GRdJ
+	Wp/CGAUupAD6rVe+3ywrT/AVweX2OhnNKsM5Ylz+Px/DB2clbnSpyNj/bnnnLGePEik/+2FRQGC
+	aZAgaUuSR7LW7A+3UghKfKxxQshqlaSbNFJhqG/W8rvUC34rfQB8lg2nF/VRXOVL9h7ujbs6vvM
+	mcjdVlJ62j5mh+As4XY+7MIkx5Hj0K0zV0+J576AbQ7BM/fZg9CPm8TsHK4zc3Ly46mYaV7jWc/
+	olepEuMcAcMMqCWURAsY+RtKQ=
+X-Received: by 2002:a17:903:19cf:b0:27b:472e:3a22 with SMTP id d9443c01a7336-290cc6da03emr27126905ad.56.1760674095311;
+        Thu, 16 Oct 2025 21:08:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSFzb7wjzoXwJcRXVoLB6Wm6cPtg9l7YEyvW8Iduat+Gr7L4HFg6g+CmISuItqlx3N8AR1nw==
+X-Received: by 2002:a17:903:19cf:b0:27b:472e:3a22 with SMTP id d9443c01a7336-290cc6da03emr27126655ad.56.1760674094879;
+        Thu, 16 Oct 2025 21:08:14 -0700 (PDT)
 Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7afcbsm47635345ad.76.2025.10.16.21.08.10
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7afcbsm47635345ad.76.2025.10.16.21.08.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 21:08:12 -0700 (PDT)
+        Thu, 16 Oct 2025 21:08:14 -0700 (PDT)
 From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Date: Fri, 17 Oct 2025 09:37:58 +0530
-Subject: [PATCH ath-next 2/4] wifi: ath11k: wrap
- ath11k_mac_op_get_txpower() with lock-aware internal helper
+Date: Fri, 17 Oct 2025 09:37:59 +0530
+Subject: [PATCH ath-next 3/4] wifi: ath11k: add support for Tx Power
+ insertion in RRM action frame
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,7 +93,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-add_tx_power_insertion_support-v1-2-f08feacfca93@oss.qualcomm.com>
+Message-Id: <20251017-add_tx_power_insertion_support-v1-3-f08feacfca93@oss.qualcomm.com>
 References: <20251017-add_tx_power_insertion_support-v1-0-f08feacfca93@oss.qualcomm.com>
 In-Reply-To: <20251017-add_tx_power_insertion_support-v1-0-f08feacfca93@oss.qualcomm.com>
 To: Jeff Johnson <jjohnson@kernel.org>
@@ -101,119 +101,229 @@ Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Proofpoint-GUID: YhzXBADkdv9mCbarC-g9Oo8xxKeM2rOA
-X-Proofpoint-ORIG-GUID: YhzXBADkdv9mCbarC-g9Oo8xxKeM2rOA
-X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68f1c12e cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXw47UVa47q+9t
+ j3IsNDXDg/1rM2vzWRD2IuBbGGozQK9aKIC3Wej/iHu/guCiASmGfis4hcstzUfSGWZv/p3BUTB
+ C7mDVziYBiO5pFDQo9a1yZBNMFLJgv6GSfHJSTn+1GwmGUXY0NJxS+VQBhoVWYyMaGNtqcafje0
+ vnf4br/SM9LvBYuqMaPvi9lIaPTWC4UTtZk8M8kTw3nLK18+xINnh45yE4YLjG84uKQ/ei59f09
+ 9YcxUulGdMJH/UNCJP+giAZoyj5sh7jHH+wKOTUvrCMnMJ///e2ZdMQM82Du/fcA7q9zJdE5NgK
+ cNEx3JimAUEU9pT71u2Nsh8sH/slaepmu1OCz1kyA==
+X-Proofpoint-GUID: zp9MjVtt_0s_sEp9ntP5UVVmUTLhwLuZ
+X-Authority-Analysis: v=2.4 cv=PriergM3 c=1 sm=1 tr=0 ts=68f1c130 cx=c_pps
  a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=HHL2EbrfMguBWQQB2GUA:9 a=QEXdDO2ut3YA:10
+ a=EUspDBNiAAAA:8 a=U2OQ5zEU71Qse62bi5cA:9 a=QEXdDO2ut3YA:10
  a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfX5wn9+bqHve98
- oXcA/5evydQcFwqB+hGhuBIKfSPfjapiBzWZwWUthu6P0oID157MHeLUe6cUYA0GgHVfwzy272k
- bj/AS21WO8TfBdn2rFNy02Dmeaa0hOj5biWwptsLxoeV/KUrOKmh3D6J6PxddoQE7cwXdW1yuaw
- ru+o8e9CLr0livnVsHQPBoAMRj2GMkZphOaq9/RfiXp+e9SVg1xMkidCsa8Sh9S9od7Vb8RDli1
- vdFfCW4kP2ljWHfm87hh56CCGkNnho2bUdikczfyRtBr0Bf4XfzlRO0jsNX5zorHzfy826gGeOS
- gioQpSEV5emVC+bH3m735ldkNsMwPli1FAm1/mPZ+Dyb8vHBxWqYsFQQwyUPE86v3QFM2676ZeD
- fd032NNYXVeDb8+HBgYfV3i4sB7NBg==
+X-Proofpoint-ORIG-GUID: zp9MjVtt_0s_sEp9ntP5UVVmUTLhwLuZ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-17_02,2025-10-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
+ malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ spamscore=0 suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-Refactor ath11k_mac_op_get_txpower() by introducing a new internal function
-ath11k_mac_handle_get_txpower(), which assumes the caller holds the
-appropriate lock. This prepares the codebase for future change where the
-internal function may be invoked directly with the lock already acquired,
-improving modularity and lock handling consistency.
+For certain action frames like the TPC Report IE in the spectrum management
+TPC Report action frame, and in the Radio Measurement Link Measurement
+Report action frame there is a requirement to fill in the current
+and max Tx power of the device in the packet.
 
-No functional change intended.
+Add support to populate these fields in the relevant packets.
+
+In software-encrypted cases such as PMF, skip insertion since the packets
+are already encrypted and cannot be modified.
 
 Tested-on: QCN9074 hw1.0 PCI WLAN.HK.2.9.0.1-02146-QCAHKSWPL_SILICONZ-1
 
 Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 ---
- drivers/net/wireless/ath/ath11k/mac.c | 31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+ drivers/net/wireless/ath/ath11k/mac.c | 166 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 166 insertions(+)
 
 diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireless/ath/ath11k/mac.c
-index a7bd0ddf5fdf..cd6e98ee1232 100644
+index cd6e98ee1232..773ea1d4b358 100644
 --- a/drivers/net/wireless/ath/ath11k/mac.c
 +++ b/drivers/net/wireless/ath/ath11k/mac.c
-@@ -4103,12 +4103,10 @@ static int ath11k_mac_get_fw_stats(struct ath11k *ar, u32 pdev_id,
- 	return ret;
+@@ -6251,6 +6251,159 @@ static void ath11k_mgmt_over_wmi_tx_purge(struct ath11k *ar)
+ 		ath11k_mgmt_over_wmi_tx_drop(ar, skb);
  }
  
--static int ath11k_mac_op_get_txpower(struct ieee80211_hw *hw,
--				     struct ieee80211_vif *vif,
--				     unsigned int link_id,
--				     int *dbm)
-+static int ath11k_mac_handle_get_txpower(struct ath11k *ar,
-+					 struct ieee80211_vif *vif,
-+					 int *dbm)
- {
--	struct ath11k *ar = hw->priv;
- 	struct ath11k_base *ab = ar->ab;
- 	struct ath11k_fw_stats_pdev *pdev;
- 	int ret;
-@@ -4119,15 +4117,13 @@ static int ath11k_mac_op_get_txpower(struct ieee80211_hw *hw,
- 	 * of these. Hence, we request the FW pdev stats in which FW reports
- 	 * the minimum of all vdev's channel Tx power.
- 	 */
--	mutex_lock(&ar->conf_mutex);
-+	lockdep_assert_held(&ar->conf_mutex);
- 
- 	/* Firmware doesn't provide Tx power during CAC hence no need to fetch
- 	 * the stats.
- 	 */
--	if (test_bit(ATH11K_CAC_RUNNING, &ar->dev_flags)) {
--		mutex_unlock(&ar->conf_mutex);
-+	if (test_bit(ATH11K_CAC_RUNNING, &ar->dev_flags))
- 		return -EAGAIN;
--	}
- 
- 	ret = ath11k_mac_get_fw_stats(ar, ar->pdev->pdev_id, 0,
- 				      WMI_REQUEST_PDEV_STAT);
-@@ -4148,14 +4144,12 @@ static int ath11k_mac_op_get_txpower(struct ieee80211_hw *hw,
- 	*dbm = pdev->chan_tx_power / 2;
- 
- 	spin_unlock_bh(&ar->data_lock);
--	mutex_unlock(&ar->conf_mutex);
- 
- 	ath11k_dbg(ar->ab, ATH11K_DBG_MAC, "txpower from firmware %d, reported %d dBm\n",
- 		   pdev->chan_tx_power, *dbm);
- 	return 0;
- 
- err_fallback:
--	mutex_unlock(&ar->conf_mutex);
- 	/* We didn't get txpower from FW. Hence, relying on vif->bss_conf.txpower */
- 	*dbm = vif->bss_conf.txpower;
- 	ath11k_dbg(ar->ab, ATH11K_DBG_MAC, "txpower from firmware NaN, reported %d dBm\n",
-@@ -4163,6 +4157,21 @@ static int ath11k_mac_op_get_txpower(struct ieee80211_hw *hw,
- 	return 0;
- }
- 
-+static int ath11k_mac_op_get_txpower(struct ieee80211_hw *hw,
-+				     struct ieee80211_vif *vif,
-+				     unsigned int link_id,
-+				     int *dbm)
++static int ath11k_mac_mgmt_action_frame_fill_elem_data(struct ath11k_vif *arvif,
++						       struct sk_buff *skb)
 +{
-+	struct ath11k *ar = hw->priv;
-+	int ret;
++	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
++	u8 category, *buf, iv_len, action_code, dialog_token;
++	int cur_tx_power, max_tx_power;
++	struct ath11k *ar = arvif->ar;
++	struct cfg80211_chan_def def;
++	struct ath11k_skb_cb *skb_cb;
++	struct ieee80211_mgmt *mgmt;
++	unsigned int remaining_len;
++	bool has_protected;
 +
-+	mutex_lock(&ar->conf_mutex);
-+	ret = ath11k_mac_handle_get_txpower(ar, vif, dbm);
-+	mutex_unlock(&ar->conf_mutex);
++	lockdep_assert_held(&ar->conf_mutex);
 +
-+	return ret;
++	/* make sure category field is present */
++	if (skb->len < IEEE80211_MIN_ACTION_SIZE)
++		return -EINVAL;
++
++	remaining_len = skb->len - IEEE80211_MIN_ACTION_SIZE;
++	has_protected = ieee80211_has_protected(hdr->frame_control);
++
++	/* In case of SW crypto and hdr protected (PMF), packet will already be encrypted,
++	 * we can't put in data in this case
++	 */
++	if (test_bit(ATH11K_FLAG_HW_CRYPTO_DISABLED, &ar->ab->dev_flags) &&
++	    has_protected)
++		return 0;
++
++	mgmt = (struct ieee80211_mgmt *)hdr;
++	buf = (u8 *)&mgmt->u.action;
++
++	/* FCTL_PROTECTED frame might have extra space added for HDR_LEN. Offset that
++	 * many bytes if it is there
++	 */
++	if (has_protected) {
++		skb_cb = ATH11K_SKB_CB(skb);
++
++		switch (skb_cb->cipher) {
++		/* Cipher suite having flag %IEEE80211_KEY_FLAG_GENERATE_IV_MGMT set in
++		 * key needs to be processed. See ath11k_install_key()
++		 */
++		case WLAN_CIPHER_SUITE_CCMP:
++		case WLAN_CIPHER_SUITE_CCMP_256:
++		case WLAN_CIPHER_SUITE_GCMP:
++		case WLAN_CIPHER_SUITE_GCMP_256:
++			iv_len = IEEE80211_CCMP_HDR_LEN;
++			break;
++		case WLAN_CIPHER_SUITE_TKIP:
++			iv_len = 0;
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		if (remaining_len < iv_len)
++			return -EINVAL;
++
++		buf += iv_len;
++		remaining_len -= iv_len;
++	}
++
++	category = *buf++;
++	/* category code is already taken care in %IEEE80211_MIN_ACTION_SIZE hence
++	 * no need to adjust remaining_len
++	 */
++
++	switch (category) {
++	case WLAN_CATEGORY_RADIO_MEASUREMENT:
++		/* need action code and dialog token */
++		if (remaining_len < 2)
++			return -EINVAL;
++
++		/* Packet Format:
++		 *	Action Code | Dialog Token | Variable Len (based on Action Code)
++		 */
++		action_code = *buf++;
++		dialog_token = *buf++;
++		remaining_len -= 2;
++
++		if (ath11k_mac_vif_chan(arvif->vif, &def))
++			return -ENOENT;
++
++		cur_tx_power = arvif->vif->bss_conf.txpower;
++		max_tx_power = min(def.chan->max_reg_power, (int)ar->max_tx_power / 2);
++		ath11k_mac_handle_get_txpower(ar, arvif->vif, &cur_tx_power);
++
++		switch (action_code) {
++		case WLAN_RM_ACTION_LINK_MEASUREMENT_REQUEST:
++			/* need variable fields to be present in len */
++			if (remaining_len < 2)
++				return -EINVAL;
++
++			/* Variable length format as defined in IEEE 802.11-2024,
++			 * Figure 9-1187-Link Measurement Request frame Action field
++			 * format.
++			 *	Transmit Power | Max Tx Power
++			 * We fill both of these.
++			 */
++			*buf++ = cur_tx_power;
++			*buf = max_tx_power;
++
++			ath11k_dbg(ar->ab, ATH11K_DBG_MAC,
++				   "RRM: Link Measurement Req dialog_token %u cur_tx_power %d max_tx_power %d\n",
++				   dialog_token, cur_tx_power, max_tx_power);
++			break;
++		case WLAN_RM_ACTION_LINK_MEASUREMENT_REPORT:
++			/* need variable fields to be present in len */
++			if (remaining_len < 3)
++				return -EINVAL;
++
++			/* Variable length format as defined in IEEE 802.11-2024,
++			 * Figure 9-1188-Link Measurement Report frame Action field format
++			 *	TPC Report | Variable Fields
++			 *
++			 * TPC Report Format:
++			 *	Element ID | Len | Tx Power | Link Margin
++			 *
++			 * We fill Tx power in the TPC Report (2nd index)
++			 */
++			buf[2] = cur_tx_power;
++
++			/* TODO: At present, Link margin data is not present so can't
++			 * really fill it now. Once it is available, it can be added
++			 * here
++			 */
++			ath11k_dbg(ar->ab, ATH11K_DBG_MAC,
++				   "RRM: Link Measurement Report dialog_token %u cur_tx_power %d\n",
++				   dialog_token, cur_tx_power);
++			break;
++		default:
++			return -EINVAL;
++		}
++		break;
++	default:
++		/* nothing to fill */
++		return 0;
++	}
++
++	return 0;
 +}
 +
- static int ath11k_mac_op_hw_scan(struct ieee80211_hw *hw,
- 				 struct ieee80211_vif *vif,
- 				 struct ieee80211_scan_request *hw_req)
++static int ath11k_mac_mgmt_frame_fill_elem_data(struct ath11k_vif *arvif,
++						struct sk_buff *skb)
++{
++	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
++
++	if (!ieee80211_is_action(hdr->frame_control))
++		return 0;
++
++	return ath11k_mac_mgmt_action_frame_fill_elem_data(arvif, skb);
++}
++
+ static void ath11k_mgmt_over_wmi_tx_work(struct work_struct *work)
+ {
+ 	struct ath11k *ar = container_of(work, struct ath11k, wmi_mgmt_tx_work);
+@@ -6270,6 +6423,19 @@ static void ath11k_mgmt_over_wmi_tx_work(struct work_struct *work)
+ 		arvif = ath11k_vif_to_arvif(skb_cb->vif);
+ 		mutex_lock(&ar->conf_mutex);
+ 		if (ar->allocated_vdev_map & (1LL << arvif->vdev_id)) {
++			/* Fill in the data which is required to be filled by the driver
++			 * For example: Max Tx power in Link Measurement Request/Report
++			 */
++			ret = ath11k_mac_mgmt_frame_fill_elem_data(arvif, skb);
++			if (ret) {
++				/* If we couldn't fill the data due to any reason,
++				 * let's not discard transmitting the packet.
++				 */
++				ath11k_dbg(ar->ab, ATH11K_DBG_MAC,
++					   "Failed to fill the required data for the mgmt packet err %d\n",
++					   ret);
++			}
++
+ 			ret = ath11k_mac_mgmt_tx_wmi(ar, arvif, skb);
+ 			if (ret) {
+ 				ath11k_warn(ar->ab, "failed to tx mgmt frame, vdev_id %d :%d\n",
 
 -- 
 2.34.1
