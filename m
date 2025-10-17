@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-857217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA4FBE6372
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96794BE63DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F7FD4EE86A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:37:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23B505E16BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB1299AB3;
-	Fri, 17 Oct 2025 03:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470401C862E;
+	Fri, 17 Oct 2025 04:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="NrA2hetM"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cZQwLLYg"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0C227FB3A;
-	Fri, 17 Oct 2025 03:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADDC1643B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760672256; cv=none; b=iu6d+6ztg910KuNd8D+IIwVrN+W71LCz9zr7QcxniCYktaLgSxpN/41HIfBi54fBDcf1UeTDQqS/I9risxLztPkW3jfeGaqvz70kJlGQz0d8yGQaMalcrYlMpog4Fjfi85MvFSUBsMe8H2q/wRJqi13kU5RW3suLhoHjymUoUl0=
+	t=1760673644; cv=none; b=kU5ObDBhN29/5M5XZU5XWeAnHrlglCv+xeVq0ue1oQWzUfRldCzwaGapF9tNEPZ+sFzv1go2/+NvS0lrNfP8hIyyh946qch23wNDSWDh7P0zuOZRazbPBfJgDqdHK75br72AigdMkm5uKfBLnhJTnT93Z1O9UjngINNcA/GIPqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760672256; c=relaxed/simple;
-	bh=6sKxFmD7xtbhw/U6fWw/5xDqmGg+lEMB/j657bkCRcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+lOqSK/aNDBsjll22W5VconReNyNutKShTZGhXFcFEFbG0D2P5ZHcFRmV6dBcNyULBAHKi8OM1oETCX8DuO5lEsqtzfxn6NC2IVQOUA6g2toGfNSa2IA4NFTEtnFFWEWo9t+IrZF/WsmIZHlJOMZxipAmDNvLXD8gqfKAEqFG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=NrA2hetM; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1760672216;
-	bh=oBjWx1I4AnKMBoTG5upDqtcSRJpj6kwgVgcH9gHhiWk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=NrA2hetMPmqFFX5VpPiNznP6QG+gEN5FQ0Npwqqr/HbKLiz6wkybhayL4h1d/eiR5
-	 m8O8yCQN9xVCfoKwSSZrfsf5fQpCXpKqC94gyHeplIGhf3QqXXfvcS5hRkhfolud+U
-	 KVqnqKGvtPqwKVUzAt3UMoz4JDzcPUQZEOTsLuR0=
-X-QQ-mid: esmtpgz14t1760672214t0abf1794
-X-QQ-Originating-IP: TlDX3I/w/Ks7UHXpGBXnho4hAw+exomsa25mQwPtHzQ=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 17 Oct 2025 11:36:52 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14831178928690405288
-EX-QQ-RecipientCnt: 17
-Date: Fri, 17 Oct 2025 11:36:51 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH v5 0/2] ASoC: spacemit: add i2s support to K1 SoC
-Message-ID: <A22605E3906E8F62+aPG50wdFlFzSMORA@kernel.org>
-References: <20251017-k1-i2s-v5-0-401ae3775fcd@linux.spacemit.com>
+	s=arc-20240116; t=1760673644; c=relaxed/simple;
+	bh=9T6sgg5C5mrHRqZhwDwXXoB3rRIUDQqAqJJoxh+6nSk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HSo0cpGXE+3ORBSfe4K+4RTkinDK12VnbdyjA01G+hXi1G4LsmZ2QI6tRv/9QRwMnfKCn7ie6GX+8OW+q0/xvgTIpsNd6vqu3B38JbzdOxidWHYAcArclxycCSg/poZyV6WD9j0+tIsYr0CZKILMyxUw4Wcwoiux0tSpPtaWpsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cZQwLLYg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Gcr6gbWp08XzOkcHEtKDLGEufzx9+hOK6htukdjtybk=; b=cZQwLLYgUG59WG34/oGf89aGq9
+	ktP1wMF3WJU6ilKmQlzmqUmt16VeJnReMGMEDCF99f0z8f4yM5aHerZQesOupCjNQpmmVuWQ1mW7B
+	/T21rrPUbwYHWwzAiQCvHDgoj4IzfqSienmf07Pc1YXkFx7seiDrcpZ3ZUkvrLbfRx3W6ErqyZyii
+	VEEkYAGy7Qn4I86o51i1lf4WFmna/hzfe/DJy72BGPIGYdCg271udhuwmk1/6nvqHiUCzY4gxl5bo
+	kM9qZbREEbQKahW4dDS6SIkiLKhYkLscwH8PliWgq+M5dgDPgJIpi+pdswpwtDVgz7MhMTQadeJSr
+	EWqZIdgQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9bdx-00000006UOo-07j3;
+	Fri, 17 Oct 2025 04:00:41 +0000
+Message-ID: <1db6799c-8d24-41dc-aa1c-83d7b6ccb188@infradead.org>
+Date: Thu, 16 Oct 2025 21:00:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017-k1-i2s-v5-0-401ae3775fcd@linux.spacemit.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: Mp6z4bZjgTSTBwMUNg8zA9wA/BtlxsS9MvS/mi3uCzcjbQONLrFwQzbz
-	dz5OzhjNhIXMdzbgh/z+kgzyVmiEZE1XTmMUgo+3svy/SPM2C/AcoK9jP9QO6O8klYpQmYS
-	55IxhdsElLrIPghaVjkI/eS/o6hTz3ohnbLuzB9AaOKxxw6clpBvD3UuYmu3Raz13gdcKM4
-	qbPVQM4Bg5ILXQH3zJiCv92C/ulr67NraHCgYxj1gaIJQzYmq2QnqHYLsZqB/8XZaCYkymP
-	K0x3ypYmu+wftAFUX0NhCP+klCe85C7+MkF7jTihyDVUxEbUlz2KtOBmYpWtEFVntUnZ9R6
-	Gi0oymDYJchg8GupgKq5ow9e4dJZFE85qyaoh0MYZ1CpKboznjT2r2qhODxSFHEkCsdSdB+
-	43VId5UPNcVy2Pj0y7Z7zi7r5rsGE69Zu/EauTiEFRrHRe+dT2gdeq/o8WQc/4KVK7OI2NG
-	Y79OpeVURHVXtNyqbWUYMGPaynT2v6GAYVugQIOW3qC2S/dpfBc9Xi2Ij+2HABuh+e80UTZ
-	blXJBR5w7EPhcsL/I1ECHWoR4HVhxA6jqEFVtW5OKaOQs3jq3cpZ4xXD3KYyxRAUmfTpw8L
-	Vv29lgO/O6aTsMC+gkwXrXYoD/Y6n5G2fviaurpcFQGwxOfBwFKU+taucR0x6T189WPB02l
-	G4YT2P+Vr1e6LGazbLf1FEhIagTYPQxwrPtY2s7Cqgm6eK9/zs+Mx52VI2kba0cqW6xjfTf
-	uDV1uFKWVu/rVH2OLUVdH6+lOYZzBi0Y1qHDzPMVgWcn5fKRocfUrv8Z3V5rnyZ65szvmNG
-	YKA5t2DQn/cMrj0zepSB1AwEDBA4noDHLdfd/wwB+93EelsrBm2tCthal30yWhQi3+55Fc6
-	OjfF1Q5YXwQ9BOnAxeGy21VNyEXBY9qLCoOltTGi65fybAc4sJWWA43h4ufS6vhamYoM/6n
-	6dA4oe+c9qSnUrN3XmemxZc56cW3U2T4bv3V8un+BnW3P3za6vFii/sAhvInnsNmIXMdeke
-	4PjgDtmtYhEWjAzliw7Sq8UlIs+vBPaQT+WglQz7jXGlidmHynU8xkV0f7USxez2i8edzoW
-	sZrnwJhI2rvtxN5YmB1vYA=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
+To: Kevin Locke <kevin@kevinlocke.name>, Jonathan Corbet <corbet@lwn.net>,
+ Thorsten Leemhuis <linux@leemhuis.info>,
+ David Laight <david.laight.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20251016214707.5c3d373b@pumpkin>
+ <a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
+Content-Language: en-US
+In-Reply-To: <a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 11:16:16AM +0800, Troy Mitchell wrote:
-> On the K1 SoC, there is a full-duplex I2S controller.
+
+
+On 10/16/25 4:47 PM, Kevin Locke wrote:
+> An "x" suffix was appended to test variable expansions, presumably to
+> avoid issues with empty strings in some old shells, or perhaps with the
+> intention of avoiding issues with dashes or other special characters
+> that an "x" prefix might have avoided.  In either case, POSIX ensures
+> that such protections are not necessary, and are unlikely to be
+> encountered in shells currently in use, as indicated by shellcheck
+> SC2268.
 > 
-> The I2S is programmable, with the sample width configurable
-> to 8, 16, 18, or 32 bits.
+> Remove the "x" suffixes which unnecessarily complicate the code.
 > 
-> A dedicated FIFO is provided for transmit (TXFIFO) and another
-> for receive (RXFIFO). In non-packed mode, both FIFOs are 32
-> entries deep and 32 bits wide, giving a total of 32 samples each.
-> 
-> The register definitions can be found here[1]
-> 
-> Link:
-> https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#18.2-spi%2Fi2s [1]
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
+> Suggested-by: David Laight <david.laight.linux@gmail.com>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
 > ---
-> Changes in v5:
-> - Patch 1/2:
->   - nothing
-> - Patch 2/2:
->   - dont't read sspsp value in spacemit_i2s_init()
->   - set SSPSP_FSRT bit for DSP_A mode (was missing in previous version)
-The changelog here is wrong..
-Correct version:
-    - do not set SSPSP_FSRT for DSP_B
-
-Best regards,
-Troy
-> - Link to v4: https://lore.kernel.org/all/20250921-k1-i2s-v4-0-4f819f50e468@linux.spacemit.com/
 > 
+> Thanks David, that's a good point about the x suffixes.  Since
+> shellcheck warns about the x prefixes (SC2268) and I'm not aware of any
+> shells currently in use which require them, I think they are safe to
+> remove to clean up the code a bit.  Here's a patch to do just that,
+> which can be applied on top of my previous patch.
+> 
+> Since -o is an XSI extension to POSIX, I've stuck with ||, but I think
+> you are right that x would not be required in that case either.
+> 
+> Thanks again,
+> Kevin
+> 
+> 
+>  tools/debugging/kernel-chktaint | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+> index 051608a63d9f..051ac27b58eb 100755
+> --- a/tools/debugging/kernel-chktaint
+> +++ b/tools/debugging/kernel-chktaint
+> @@ -18,8 +18,8 @@ retrieved from /proc/sys/kernel/tainted on another system.
+>  EOF
+>  }
+>  
+> -if [ "$1"x != "x" ]; then
+> -	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
+> +if [ "$1" != "" ]; then
+> +	if  [ "$1" = "--help" ] || [ "$1" = "-h" ] ; then
+>  		usage
+>  		exit 1
+>  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
+
+-- 
+~Randy
+
 
