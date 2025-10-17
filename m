@@ -1,201 +1,89 @@
-Return-Path: <linux-kernel+bounces-858748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD1FBEBB7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:46:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B165BEBA20
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F4AE4E5B24
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C7071A6606F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C9C253956;
-	Fri, 17 Oct 2025 20:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44CC3321CC;
+	Fri, 17 Oct 2025 20:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8UkHgKP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="m20+4tFW"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B2F354AC9;
-	Fri, 17 Oct 2025 20:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47F130F803;
+	Fri, 17 Oct 2025 20:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760733989; cv=none; b=Yfn3zIdXSad7pA13wp/Ja15XuBtGYwOX58nxUN+dOfFcW8rNciF9HM99W8JN/bNUcThg3yBx60TIt7Qwj3NxAvcZqfdlmC5Q15n/92aKyNnkqOwC8xQg1j1PTjZVLeXKOxBIlF6H6O1guY6kJNhW7GVlo/3CNpQJZtd1dm5bXDQ=
+	t=1760732416; cv=none; b=d8D9gy68dJmpy3/TQ7CYe/KAQKeG9/UEbtmM9O/SXpm9q2bEn1+kjPUd/0FhFZvtgKV4oxmuk8ekIk14hEK6ngE+KQNFUUiIqFO1bbmtS/KTPjSBcSBSXYJ96pXAhkcIRbuZdTaoungwCuhBYmYbR8etsSk4ihpSavKlbALLjgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760733989; c=relaxed/simple;
-	bh=n5voMkpzvEXXvxmSXe4Ca95hjXPOO788xsJ2QkEupAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCWsBvVnzepFf/8KIVjG4iqQ3jPWvyoD2VQDhiJ5qMV/FGs9ybtcdEkNw4zzFko438VgZBqSNBPbnYll7zx5Ukl1facyI0TRBCYsl/aYX+7dsnzD/iF4MTObySvdQ4MDM400YdYAanVMdcvBLQGS/K5VycBG0dkQDiavtQWElaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8UkHgKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B4C7C4CEE7;
-	Fri, 17 Oct 2025 20:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760733988;
-	bh=n5voMkpzvEXXvxmSXe4Ca95hjXPOO788xsJ2QkEupAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k8UkHgKPu/CtQAbDWbYN1KU4OrS1W0ve82R+RDZ+C7wBvWiwrgzUjXwJXbTqmSCLK
-	 IBq4k/z3BmX7jINbxdF6jhVrSfTPXDJzZolYe0u3oTdHZ6QlIMppR7BSDibjdxSPZv
-	 4WmOJzUGyZ4kuFbr0TSlb7bzIMsBdqvZLo6+A793kEgckxmPdL6OzOY4GLPSlts+RG
-	 LUDXZVDqtBx7IQMziTKYGn4+lKQosA6Au3fk6P60vE2ANiQAswF4lgo4aa0sGwwuhc
-	 A6nTyAtOOCLdPF4i7Ha3qSWRd4vv6nudLlpRlxVfZC1e7Ybl48Gr3KRXuurHqLfO5V
-	 wxU467mKTUvNA==
-Date: Fri, 17 Oct 2025 22:15:20 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v9 2/4] tracing: Add a tracepoint verification check at
- build time
-Message-ID: <aPKj2Ilnq7F0xLFx@levanger>
-References: <20251015203842.618059565@kernel.org>
- <20251015203924.391455037@kernel.org>
+	s=arc-20240116; t=1760732416; c=relaxed/simple;
+	bh=lVxo7gpzo9tLZUsK8z0AhiQwbHsKn7Y4N5YA5m8Tc30=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I5vDU2waOD7X28fZEDmhP1ztOLzeLcmZRgMhmx/CxtJF+3FOc1ypKa/MNIz/m+EXOU/WZGinCvKHGf/i/e6TzQU0zxnt9mdi10uKoMa/tA+kVYQFF/c/tq6+93HHGzIWL2VjMODSzRYUGV8wYrhitrwHr5jErRK193vIDfG0WrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=m20+4tFW; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DB58340B1D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1760732412; bh=gKNyP3PkTBwfQLMgcJn8O5cidAK7WPYBk+zGX9Nl70Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=m20+4tFWbFdjib2qVxpgeTKBIhvHFQUOAchkGYXIscuWxTcGosAg7mMh3T7/RNtsX
+	 1ReGUX6jhBJHwcnFOdC6elDK8JGaWwLDh83qTLnuP1N2UtoyDjprJ37HfI+ZPkijC6
+	 SxqGlBYBJKG9lkBTkaghDOy1jJpZFSykbLabEwoT80ydM2ioKE0qTlw6WWsqvjdRwY
+	 vyfhWOECECVSVRDueqWtDK7cALmJMHR7uyQtM3hn5e3qvuR1Ilh73TvXQUQqH0ymy/
+	 rvrsJZFpjJY9YmNEI6Wr9XL4xL8ATTOcTRXaBUx/2lrRwwAFIeQzsGrM95cB5KtyUC
+	 DFTHQOcCMNRZg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id DB58340B1D;
+	Fri, 17 Oct 2025 20:20:11 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Yohei Kojima <Yohei.Kojima@sony.com>
+Cc: Yohei Kojima <Yohei.Kojima@sony.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: admin-guide: Fix a typo in kernel-parameters.txt
+In-Reply-To: <edda15e3fcae13265278d3c3bd93ab077345d78f.1760498951.git.Yohei.Kojima@sony.com>
+References: <edda15e3fcae13265278d3c3bd93ab077345d78f.1760498951.git.Yohei.Kojima@sony.com>
+Date: Fri, 17 Oct 2025 14:20:11 -0600
+Message-ID: <878qh91ds4.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015203924.391455037@kernel.org>
+Content-Type: text/plain
 
-On Wed, Oct 15, 2025 at 04:38:44PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> If a tracepoint is defined via DECLARE_TRACE() or TRACE_EVENT() but never
-> called (via the trace_<tracepoint>() function), its metadata is still
-> around in memory and not discarded.
-> 
-> When created via TRACE_EVENT() the situation is worse because the
-> TRACE_EVENT() creates metadata that can be around 5k per trace event.
-> Having unused trace events causes several thousand of wasted bytes.
-> 
-> Add a verifier that injects a string of the name of the tracepoint it
-> calls that is added to the discarded section "__tracepoint_check".
-> For every builtin tracepoint, its name (which is saved in the in-memory
-> section "__tracepoint_strings") will have its name also in the
-> "__tracepoint_check" section if it is used.
-> 
-> Add a new program that is run on build called tracepoint-update. This is
-> executed on the vmlinux.o before the __tracepoint_check section is
-> discarded (the section is discarded before vmlinux is created). This
-> program will create an array of each string in the __tracepoint_check
-> section and then sort it. Then it will walk the strings in the
-> __tracepoint_strings section and do a binary search to check if its name
-> is in the __tracepoint_check section. If it is not, then it is unused and
-> a warning is printed.
-> 
-> Note, this currently only handles tracepoints that are builtin and not in
-> modules.
-> 
-> Enabling this currently with a given config produces:
-> 
-> warning: tracepoint 'sched_move_numa' is unused.
-> warning: tracepoint 'sched_stick_numa' is unused.
-> warning: tracepoint 'sched_swap_numa' is unused.
-> warning: tracepoint 'pelt_hw_tp' is unused.
-> warning: tracepoint 'pelt_irq_tp' is unused.
-> warning: tracepoint 'rcu_preempt_task' is unused.
-> warning: tracepoint 'rcu_unlock_preempted_task' is unused.
-> warning: tracepoint 'xdp_bulk_tx' is unused.
-> warning: tracepoint 'xdp_redirect_map' is unused.
-> warning: tracepoint 'xdp_redirect_map_err' is unused.
-> warning: tracepoint 'vma_mas_szero' is unused.
-> warning: tracepoint 'vma_store' is unused.
-> warning: tracepoint 'hugepage_set_pmd' is unused.
-> warning: tracepoint 'hugepage_set_pud' is unused.
-> warning: tracepoint 'hugepage_update_pmd' is unused.
-> warning: tracepoint 'hugepage_update_pud' is unused.
-> warning: tracepoint 'block_rq_remap' is unused.
-> warning: tracepoint 'xhci_dbc_handle_event' is unused.
-> warning: tracepoint 'xhci_dbc_handle_transfer' is unused.
-> warning: tracepoint 'xhci_dbc_gadget_ep_queue' is unused.
-> warning: tracepoint 'xhci_dbc_alloc_request' is unused.
-> warning: tracepoint 'xhci_dbc_free_request' is unused.
-> warning: tracepoint 'xhci_dbc_queue_request' is unused.
-> warning: tracepoint 'xhci_dbc_giveback_request' is unused.
-> warning: tracepoint 'tcp_ao_wrong_maclen' is unused.
-> warning: tracepoint 'tcp_ao_mismatch' is unused.
-> warning: tracepoint 'tcp_ao_key_not_found' is unused.
-> warning: tracepoint 'tcp_ao_rnext_request' is unused.
-> warning: tracepoint 'tcp_ao_synack_no_key' is unused.
-> warning: tracepoint 'tcp_ao_snd_sne_update' is unused.
-> warning: tracepoint 'tcp_ao_rcv_sne_update' is unused.
-> 
-> Some of the above is totally unused but others are not used due to their
-> "trace_" functions being inside configs, in which case, the defined
-> tracepoints should also be inside those same configs. Others are
-> architecture specific but defined in generic code, where they should
-> either be moved to the architecture or be surrounded by #ifdef for the
-> architectures they are for.
-> 
-> This tool could be updated to process modules in the future.
-> 
-> I'd like to thank Mathieu Desnoyers for suggesting using strings instead
-> of pointers, as using pointers in vmlinux.o required handling relocations
-> and it required implementing almost a full feature linker to do so.
-> 
-> To enable this check, run the build with: make UT=1
-> 
-> Link: https://lore.kernel.org/all/20250528114549.4d8a5e03@gandalf.local.home/
-> 
-> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com> # for using strings instead of pointers
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Yohei Kojima <Yohei.Kojima@sony.com> writes:
+
+> Fix a typo in the stacktrace parameter description in kernel-parameters.txt
+>
+> Signed-off-by: Yohei Kojima <Yohei.Kojima@sony.com>
 > ---
-> Changes since v8: https://lore.kernel.org/20250828203741.401496225@kernel.org
-> 
-> - Instead of using a config option to enable this, enable it via: make UT=1
->   This will allow it to go into linux-next without triggering all the
->   current warnings but also allow people to find and fix current unused
->   tracepoints.
-> 
->  Makefile                          |  15 ++
->  include/asm-generic/vmlinux.lds.h |   1 +
->  include/linux/tracepoint.h        |  11 ++
->  scripts/Makefile                  |   3 +
->  scripts/link-vmlinux.sh           |   7 +
->  scripts/tracepoint-update.c       | 232 ++++++++++++++++++++++++++++++
->  6 files changed, 269 insertions(+)
->  create mode 100644 scripts/tracepoint-update.c
-> 
-> diff --git a/Makefile b/Makefile
-> index 17cfa11ca716..a3141890f38f 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -157,6 +157,20 @@ endif
+>  Documentation/admin-guide/kernel-parameters.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 6c42061ca20e..f29ba44b5be2 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -7150,7 +7150,7 @@
+>  			limit. Default value is 8191 pools.
 >  
->  export KBUILD_EXTRA_WARN
->  
-> +# To check for unused tracepoints (tracepoints that are defined but never
-> +# called), run with:
-> +#
-> +# make UT=1
-> +#
-> +# Each unused tracepoints can take up to 5KB of memory in the running kernel.
-> +# It is best to remove any that are not used.
-> +
-> +ifeq ("$(origin UT)", "command line")
-> +  WARN_ON_UNUSED_TRACEPOINTS := $(UT)
-> +endif
-> +
-> +export WARN_ON_UNUSED_TRACEPOINTS
+>  	stacktrace	[FTRACE]
+> -			Enabled the stack tracer on boot up.
+> +			Enable the stack tracer on boot up.
 
-Is there a special reason why you chose to introduce a new command-line
-variable instead of extending KBUILD_EXTRA_WARN / W ?
+Applied, thanks.
 
-Kind regards,
-Nicolas
+jon
 
