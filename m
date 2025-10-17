@@ -1,104 +1,93 @@
-Return-Path: <linux-kernel+bounces-857744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3064BE7D81
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:42:28 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DC1BE7D00
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757141AA2701
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:39:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1CFCB3467F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449702040B6;
-	Fri, 17 Oct 2025 09:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA92D7DD8;
+	Fri, 17 Oct 2025 09:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ikjvnVPy"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J1sxqMSo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sgjhlAJB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDAC223710
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689D221B185;
+	Fri, 17 Oct 2025 09:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760693864; cv=none; b=RfmZPJ7yeGKcnCXuduOiAUbE4jIIAa1fohCrMK/RT7uzhrD1+tGQYdo7xQ3ZvYxu2GFwui7N2S7Yz+Om8d4qvn4X9T6JLLBUUo30qL3CYUOl9O2OetAhInGDZgWDdD/NL5QNTpsJ9iqkmyy7z54ph/Did+RPVDiM7TYP+lrCwyc=
+	t=1760693837; cv=none; b=EuVErt550M4pMiimBUCVWngIYosDT5QTug1YNcJllMwAIzrX5XfErrgHm7cIH/nwZ6Fd5vIpV4jmwIyvEcI4+pIlCuL7G6alDuF2mU82JsLh5kULGa6P6HG+v+WIbrA8DxYNUCygzUIOWmIjMK3D8KRsVDZJHOgx+ujEtn7GSng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760693864; c=relaxed/simple;
-	bh=kG/XQ+koZva2N0IsJhFjDoZbbk5+t6+2MnH1jmZzry4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INO47nKS1+VED/wdbJj51Jo/1AsFJDH1UX4n1/n3NwOjwfynM/HdD2uVqy03gjuF33xCyXsmcsHB6jSlgpD+QmH2q4hfS96vG7U5NpkQ3D7FoxDrXovZyKFal8iQg3HtfLI9bxxVelCyqnI8afHGMsKr3yK0f1G+zsrBLFEBJu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ikjvnVPy; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760693858;
+	s=arc-20240116; t=1760693837; c=relaxed/simple;
+	bh=0zxVCCLSKYEJ9MFiUmZTlkExtnbAcidKE9azgZvpVQA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fb0nc0k35EkMnyixCIXi6s9c7HzoFF5Nj3kmkaijiILhsHXtglmHEMQEB9tJX6EogFJ1aPk6qCD2okGvfF1CKMXvjNV0XxrT5yDxUw1eT4Vs+gOX+JBuZhALRwT7zVM5z+9wCGqUrF9Fx5p05piZC7lNspfwHNyfhTFeomMt/2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J1sxqMSo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sgjhlAJB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760693834;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FLBYN9hxjP1ZEXOKeUWi+RhuhLrIWgdnsFzXHfFvcco=;
-	b=ikjvnVPypXR1CmRzxKu02pel8Zj0SApHyVeLGHRuUefsNxuy+Un3DmyDkEEG9qV6mh2Ycx
-	G4hhKwNTJJhSJZK5AQ9mNwPhyUF7qqnMW9oOjScOsQkzj6NAPSjmHQH1orsallqRqyj0/F
-	xpzns8Ru6440OJ22hyr/CbonC31Qb0o=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Steve Wahl <steve.wahl@hpe.com>,
-	Justin Ernst <justin.ernst@hpe.com>,
-	Kyle Meyer <kyle.meyer@hpe.com>,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Russ Anderson <russ.anderson@hpe.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/platform/uv: Use str_enabled_disabled in uv_nmi_setup_hubless_intr
-Date: Fri, 17 Oct 2025 11:37:12 +0200
-Message-ID: <20251017093711.38194-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AMBhtsatbX/1a6Y9dAaC1Mra9IEVObiajnh+VSzVjng=;
+	b=J1sxqMSoDl/C3rQLYE8oHzxqEN9Dc962p2/jIvAwWPRagbwQMZ4KZruuk24ZbL8xPtALJu
+	9HfQM30AX19gsMgY7TWx7B6SulSltSrqmE2QWQeVtEPDTJPA9q27glFaIDsfzn7wcxrRNl
+	IOVfz2PJXVD0GMd1RSeZDmhxi3prGi6g3T5SbQrLSsZ3+vpJkNqUhRHYBHZpbx6fJr/Xig
+	wHdFFjRn2zuws/KA6VUl5UzjRTMgBwpmzqk+C0R/9wOyL+BsFIjUYI95L/rOqP/4h6jJc6
+	Cap+jte7NHcu9DQIegp456AcHGp1wjCDcOnWAxw6b2kizlDzohZl9gcF2/58Mg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760693834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AMBhtsatbX/1a6Y9dAaC1Mra9IEVObiajnh+VSzVjng=;
+	b=sgjhlAJBtFyS40nLLzMZkBVCSngFa1Iq9hDTLvn67GMuvpiWmJTSMoaUOr+xD53QIVUe9n
+	IJNV/om0o7BZRKCw==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
+ Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v2 12/20] verification/rvgen: Add support for Hybrid
+ Automata
+In-Reply-To: <20250919140954.104920-13-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+ <20250919140954.104920-13-gmonaco@redhat.com>
+Date: Fri, 17 Oct 2025 11:37:14 +0200
+Message-ID: <87ikgdx41h.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-Replace hard-coded strings with the str_enabled_disabled() helper. This
-unifies the output and helps the linker with deduplication, which can
-result in a smaller binary. Additionally, silence the following
-Coccinelle/coccicheck warning reported by string_choices.cocci:
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> +            if any(u in self.env_types.values() for u in ["ns", "us", "ms", "s"]):
+> +                buff.append("#define HA_CLK_NS")
 
-  opportunity for str_enabled_disabled(uv_pch_intr_now_enabled)
+That any() twisted my brain. Does the following work?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/x86/platform/uv/uv_nmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+    if not {"ns", "us", "ms", "s"}.isdisjoint(self.env_types.values())
 
-diff --git a/arch/x86/platform/uv/uv_nmi.c b/arch/x86/platform/uv/uv_nmi.c
-index 5c50e550ab63..565ab43fa6b4 100644
---- a/arch/x86/platform/uv/uv_nmi.c
-+++ b/arch/x86/platform/uv/uv_nmi.c
-@@ -18,6 +18,7 @@
- #include <linux/sched/debug.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/string_choices.h>
- #include <linux/clocksource.h>
- 
- #include <asm/apic.h>
-@@ -340,7 +341,7 @@ static void uv_nmi_setup_hubless_intr(void)
- 		uv_pch_intr_now_enabled ? GPIROUTNMI : 0);
- 
- 	nmi_debug("UV:NMI: GPP_D_0 interrupt %s\n",
--		uv_pch_intr_now_enabled ? "enabled" : "disabled");
-+		str_enabled_disabled(uv_pch_intr_now_enabled));
- }
- 
- static struct init_nmi {
--- 
-2.51.0
+> +        match unit:
+> +            case "us":
+> +                value *= 1000
+> +            case "ms":
+> +                value *= 1000000
+> +            case "s":
+> +                value *= 1000000000
 
+Use 10**9 instead, so that we don't have to count the zeroes.
+
+Nam
 
