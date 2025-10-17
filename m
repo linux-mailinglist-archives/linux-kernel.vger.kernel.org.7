@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-858330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA3DBEA428
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:53:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20EBBEA1E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E477C23FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A4A1895503
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA83F336EE2;
-	Fri, 17 Oct 2025 15:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2A0336EC0;
+	Fri, 17 Oct 2025 15:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhMnnZBA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE9ky3Jo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185752F12C2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AF2332905;
+	Fri, 17 Oct 2025 15:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715492; cv=none; b=MJ+vuzZV6La6A5p0PGLgZNO2m9a+3TrEEXFk7nssIiYIYP9j+23VBrQGH//VRfPQkY7Pg4qydFD/JtR/44/zraaI9DhAqW47Zgxk66sQnnSt6NSSZ8vzKk4b+QjX0I7EA0I/hkFmfVxdxqfyz0BUccRSZLe8JT/SyXYsB2QBGS4=
+	t=1760715625; cv=none; b=B8WI3UgXudfo7rEUngvKmvsvFv52QpNzOHCkgd9cEjsKfxlAK3zpE9hK6NqoQkqGjzFeE77rE/LM9JHen6pZz08w74HnzOAKPeW/Uw66FUVxKVikw4FuBb1bRgPY6xlZCMUBUFmJmQK4+bRAAb4DET39SqZtvXzbz0d4/tJbVAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715492; c=relaxed/simple;
-	bh=HmJ5sLRF0ITiH4IIMbjAK8f8ZeHXbyY5BOXzEkq9rcc=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=mM6OlokNmdK4hiTPz3JxdqbAOhXE0gDJjQRxR7aaxa+pzKOZ76HP7vD0DdCANeMAvWCbJUKG5K297dRQ4VC3v4DXPgm7Od6Lfhro6OYnTD3rUe7BUQM5UhIQgepb0kvXhfqV/zdlTzUXnauvJJDlTCYCq5zsZ1VEbTau6MEs9TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhMnnZBA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78449C4CEE7;
-	Fri, 17 Oct 2025 15:38:11 +0000 (UTC)
+	s=arc-20240116; t=1760715625; c=relaxed/simple;
+	bh=tIBihhto3yHLjwCtkr7qZV1vif9bLZjjrf1fWoABO2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y4ZcBsueCSOvkjbIlJX29LHEGsG5F1OEFT+KOPJPBRbEEvfCL4LBc/1C1RkCJ6ObMmOOC3mGe9UqhbsNzcBNQBAwrFtW3oQmsdDcsngvKr7gu3ZL0mIC4iwM/zAZb8OlHfphaMJLClu4vKPJpuWPror7htTekc8aI7qlIzsA5MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE9ky3Jo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3103C4CEFE;
+	Fri, 17 Oct 2025 15:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760715491;
-	bh=HmJ5sLRF0ITiH4IIMbjAK8f8ZeHXbyY5BOXzEkq9rcc=;
-	h=Date:From:To:cc:Subject:From;
-	b=UhMnnZBA5zJnnSCXY1QTzL4TVFKLkUFNQ5pw1UcVMhQZlozJBpmSwL1/Ogak44PRC
-	 OhmTbSuHpXBULzWsQKeM4F525Taqvmmh2HLGI6iJQC3/BxW/ZOY0EWkVeU1mkE2j4D
-	 KHX+j8TfpT0iLxKj2Za8SS8DGiULvZ3z0CjIRj3m1mf6CA7iZmJI5ZMkQL5SL3iqfy
-	 AC2pklk7g6EBaw+b0+6r8cuXuG1O0h8BW/N04b4cg0MwVUb8L3fVpb3nK7wbKc8zC6
-	 XPBW9Ci44MQ8K9frNHfZuu/+4Vp41I1OwhK+I9Cxhrnm121a2EHxS7r+2ct442r648
-	 RYvxiCbgxLneg==
-Date: Fri, 17 Oct 2025 17:38:09 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] HID fixes for 6.18
-Message-ID: <q5p7s5oo-ps69-7659-69nn-48685q1694no@xreary.bet>
+	s=k20201202; t=1760715624;
+	bh=tIBihhto3yHLjwCtkr7qZV1vif9bLZjjrf1fWoABO2o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NE9ky3Jo9NBq8B11m0/dr+zVBACQCkA0BR45t8ECLH0jrEoDwgmksvpGjSZWuzTgI
+	 nK5762ee42gfrrGGBl93EmOiwzW4AI7z5d6C+iEosL6Get7J3dJhIFJODA6VHtRNWJ
+	 Va498OpPMOMxoSG3Cycb1mlQXKaW6gxBrmA1KaEGCRh3vz0+tj44dOnbLe9q2V1eQx
+	 UKIqsnsxIkVd+Rw2C+R/kjVIdOrSufCBks8eFEURaoky2vJGxghl1ohuQ1ffuxXMpy
+	 79V4lgMduBgq1TOvGlLWeLUfN6Ahlwo/OmRpaT4hexC6hMjj0I/IRX1L9kg4ZTkBlE
+	 VNyGaLI4iLbiw==
+Message-ID: <a729eeda-22d8-4f3e-bb6b-0cd2f3a06d2a@kernel.org>
+Date: Sat, 18 Oct 2025 00:40:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
+ =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
+ <20251017-spectacular-xanthic-swan-9427e8-mkl@pengutronix.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20251017-spectacular-xanthic-swan-9427e8-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Linus,
+On 17/10/2025 at 22:53, Marc Kleine-Budde wrote:
+> On 13.10.2025 20:01:22, Vincent Mailhol wrote:
+>> Following all the refactoring on the CAN netlink done in series [1],
+>> [2] and [3], this is now time to finally introduce the CAN XL netlink
+>> interface.
+>>
+>> Similarly to how CAN FD reuses the bittiming logic of Classical CAN,
+>> CAN XL also reuses the entirety of CAN FD features, and, on top of
+>> that, adds new features which are specific to CAN XL.
+>>
+>> Patch #1 adds a check in can_dev_dropped_skb() to drop CAN FD frames
+>> when CAN FD is turned off.
+>>
+>> Patch #2 adds CAN_CTRLMODE_RESTRICTED. Note that contrary to the other
+>> CAN_CTRL_MODE_XL_* that are introduced in the later patches, this
+>> control mode is not specific to CAN XL. The nuance is that because
+>> this restricted mode was only added in ISO 11898-1:2024, it is made
+>> mandatory for CAN XL devices but optional for other protocols. This is
+>> why this patch is added as a preparation before introducing the core
+>> CAN XL logic.
+> 
+> What about merging patches 1+2 now?
 
-please pull from
+If patch 1 had to be squashed, it should probably be in patch 3
+"can: netlink: add initial CAN XL support". The MTU workaround as
+introduced in patch 1 does not share any of the logic of the
+CAN_CTRLMODE_RESTRICTED as introduced in patch 2. Patch 1 is really
+just a preparation for CAN XL. You could remove patch 2 from the
+series and it will still work (aside from missing one of ISO mandatory
+features). Remove patch 1, and the thing breaks apart because it is
+required by patch 3.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025101701
+If I were to squash 1 and 2, I am not sure how I would describe those
+two different changes in a single patch message.
 
-to receive HID fixes for 6.18, namely:
 
-=====
-- fix for sticky fingers handling in hid-multitouch (Benjamin Tissoires)
-- fix for reporting of 0 battery levels (Dmitry Torokhov)
-- build fix for hid-haptic in certain configurations (Jonathan Denose)
-- improved probe and avoiding spamming kernel log by hid-nintendo (Vicki 
-  Pfau)
-- fix for OOB in hid-cp2112 (Deepak Sharma)
-- interrupt handling fix for intel-thc-hid (Even Xu)
-- a couple of new device IDs and device-specific quirks
-=====
-
-Thanks!
-
-----------------------------------------------------------------
-Abhishek Tamboli (1):
-      HID: intel-thc-hid: intel-quickspi: Add ARL PCI Device Id's
-
-Benjamin Tissoires (2):
-      HID: multitouch: fix sticky fingers
-      selftests/hid: add tests for missing release on the Dell Synaptics
-
-Colin Ian King (1):
-      HID: hid-debug: Fix spelling mistake "Rechargable" -> "Rechargeable"
-
-Deepak Sharma (1):
-      HID: cp2112: Add parameter validation to data length
-
-Dmitry Torokhov (1):
-      HID: hid-input: only ignore 0 battery events for digitizers
-
-Even Xu (1):
-      HID: intel-thc-hid: Intel-quickspi: switch first interrupt from level to edge detection
-
-Jonathan Denose (1):
-      HID: Kconfig: Fix build error from CONFIG_HID_HAPTIC
-
-Oleg Makarenko (1):
-      HID: quirks: Add ALWAYS_POLL quirk for VRS R295 steering wheel
-
-Stuart Hayhurst (1):
-      HID: logitech-hidpp: Add HIDPP_QUIRK_RESET_HI_RES_SCROLL
-
-Thadeu Lima de Souza Cascardo (1):
-      HID: multitouch: fix name of Stylus input devices
-
-Tristan Lobb (1):
-      HID: quirks: avoid Cooler Master MM712 dongle wakeup bug
-
-Vicki Pfau (3):
-      HID: core: Add printk_ratelimited variants to hid_warn() etc
-      HID: nintendo: Wait longer for initial probe
-      HID: nintendo: Rate limit IMU compensation message
-
-Xinpeng Sun (1):
-      HID: intel-thc-hid: intel-quicki2c: Fix wrong type casting
-
- drivers/hid/Kconfig                                |  2 +-
- drivers/hid/hid-cp2112.c                           | 27 +++++++++--
- drivers/hid/hid-debug.c                            |  2 +-
- drivers/hid/hid-ids.h                              |  4 ++
- drivers/hid/hid-input.c                            |  5 +-
- drivers/hid/hid-logitech-hidpp.c                   | 21 +++++++++
- drivers/hid/hid-multitouch.c                       | 28 ++++++-----
- drivers/hid/hid-nintendo.c                         |  6 +--
- drivers/hid/hid-quirks.c                           |  2 +
- .../intel-thc-hid/intel-quicki2c/pci-quicki2c.c    |  2 +-
- .../intel-thc-hid/intel-quickspi/pci-quickspi.c    |  6 +++
- .../intel-thc-hid/intel-quickspi/quickspi-dev.h    |  2 +
- .../intel-quickspi/quickspi-protocol.c             |  3 +-
- include/linux/hid.h                                | 11 +++++
- .../testing/selftests/hid/tests/test_multitouch.py | 55 ++++++++++++++++++++++
- 15 files changed, 151 insertions(+), 25 deletions(-)
-
--- 
-Jiri Kosina
-SUSE Labs
+Yours sincerely,
+Vincent Mailhol
 
 
