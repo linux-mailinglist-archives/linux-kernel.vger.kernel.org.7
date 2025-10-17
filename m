@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-858222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C048CBE952D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9926BE9530
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8DC84E8E08
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DDBD3A5641
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFFB336EE9;
-	Fri, 17 Oct 2025 14:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F08D336EF3;
+	Fri, 17 Oct 2025 14:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hwwn5hFQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WEV2F0HU"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0412D8795
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A07132C930
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760712450; cv=none; b=S699t4cMnidBgddab9vZDo/Y45JA3iAJ/oz0ItQP/FvLGefMe/xVTWAEfEy+DdUmhmmcbhZMbnemc7n+LOGj4q8/s9ITscvWZ6VETGFl3ieCo30ZBCETOmq2T9+7I4WDbdxGWbDGbuFntm7w1Dvqsfge1IxQbwno5IfEx4OejkU=
+	t=1760712450; cv=none; b=RhRAf/fifHl+sR/UpWfbH/F59MEuJKkNfllAJO4sTDcaetGqAxnLoEdAqujRZeokTp7UKE51YNZzNxmLDQ6Mueg8xcBe4Cg3u3zhKv6kwzpLXCHqAjCn3i0ZdQCnxJknw6+ICFQymbhX/hk+rpMsyCnPCMrgwjbR0Wt7M6O/Dq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760712450; c=relaxed/simple;
-	bh=Srk+Fr4TqyjLD7nJUa5pnoyjK2m8oW4zuu6Kvh8HhdE=;
+	bh=NwrBGbwiurA2rZyhLXqF+CXHY6SUzDcJCl6Zcy5y4pg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hWLS0fawxSEtxM4sOcCXafvQ4p6qyrCaKNSQryUMMbw73l5T9/d9wKQyLXfU+n9w07fT2o6/ubyWQNoBKwoHx4E4zkd583YIKtllarPUiXSiiiZSJlDcbTVSQNtaBFqK7xe/Jv7OuYO0sv7F4IPS178EE7DHbzxzxk1tPjONwXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hwwn5hFQ; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=tgoDnpDc4MwgSWlsHJkeQrgeeiWkISG2WTHJhwV0vdGaWNf9OkkUKPNQm2eHhsJNGq8pzMZ74klowqXOQr7/9rsQUtR/TyaKPYBj885n0so/HdsENuQXrGB3iuXyugbHYO8ggb1O9oQ5rfcegMkrIHqpwbuCTTsStABUY9pxZL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WEV2F0HU; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760712447;
+	s=mimecast20190719; t=1760712448;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=y+g39942jtLGJd3OsDmw3XB6JSqklKuGB9oYb6LS2jo=;
-	b=hwwn5hFQy6puOGuxkvIhyIuq9et7Yja0Pvu8lPQ2rxj998ZGqdq1ToT+4vr6a1qzo4zGxC
-	w7z1bOcpzBKuKoiFtlEO0o22K2H6ffhGo/SlTpwx8p3Pu2Ih9wOZ9hUuMlKRxbEwuSya/X
-	4TFfMeKfrTLa4D64nsrrD3oAY1YgkPQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	bh=0PTwm4egHkSEItopN4T5WsSS2MglJFP6Z4suby+DafY=;
+	b=WEV2F0HUxlgJNogondJ5BJSvcnL/xmhYPlrYrrQAlJAPmjMPF1fw7b03vGe9kzxGhkJr6g
+	0rw7G7jAT+fceItmW1GlOKG4vdI/C1iQvlZ8xu6Ujo1XFGMsgFZcIYoOsLx+qfS5XwZCZZ
+	EjtWQBVMvW6NZ/B+GIcnHQxMWRzklis=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-v_DwCMsAPQeD3eKnXiuP3w-1; Fri,
- 17 Oct 2025 10:47:22 -0400
-X-MC-Unique: v_DwCMsAPQeD3eKnXiuP3w-1
-X-Mimecast-MFC-AGG-ID: v_DwCMsAPQeD3eKnXiuP3w_1760712441
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-Nq-NJnGhNa6jIMjQaMxiiQ-1; Fri,
+ 17 Oct 2025 10:47:26 -0400
+X-MC-Unique: Nq-NJnGhNa6jIMjQaMxiiQ-1
+X-Mimecast-MFC-AGG-ID: Nq-NJnGhNa6jIMjQaMxiiQ_1760712445
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C1CBB1954210;
-	Fri, 17 Oct 2025 14:47:21 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 42E451956054;
+	Fri, 17 Oct 2025 14:47:25 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.32.24])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9D5601800452;
-	Fri, 17 Oct 2025 14:47:18 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 665C31800452;
+	Fri, 17 Oct 2025 14:47:21 +0000 (UTC)
 From: Tomas Glozar <tglozar@redhat.com>
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -67,9 +67,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
 	Wander Lairson Costa <wander@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
-Date: Fri, 17 Oct 2025 16:46:49 +0200
-Message-ID: <20251017144650.663238-4-tglozar@redhat.com>
+Subject: [PATCH 4/4] Documentation/rtla: Document --bpf-action option
+Date: Fri, 17 Oct 2025 16:46:50 +0200
+Message-ID: <20251017144650.663238-5-tglozar@redhat.com>
 In-Reply-To: <20251017144650.663238-1-tglozar@redhat.com>
 References: <20251017144650.663238-1-tglozar@redhat.com>
 Precedence: bulk
@@ -81,37 +81,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Add an example BPF action program that prints the measured latency to
-the tracefs buffer via bpf_printk().
+Add new option --bpf-action into common_timerlat_options.txt, including
+the format in which it takes the BPF program, and a reference to an
+example.
 
 Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 ---
- tools/tracing/rtla/sample/timerlat_bpf_action.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 tools/tracing/rtla/sample/timerlat_bpf_action.c
+ .../tools/rtla/common_timerlat_options.rst     | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/tools/tracing/rtla/sample/timerlat_bpf_action.c b/tools/tracing/rtla/sample/timerlat_bpf_action.c
-new file mode 100644
-index 000000000000..ac1be049a848
---- /dev/null
-+++ b/tools/tracing/rtla/sample/timerlat_bpf_action.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/bpf.h>
-+#include <bpf/bpf_tracing.h>
+diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
+index 1f5d024b53aa..1b7293ebc897 100644
+--- a/Documentation/tools/rtla/common_timerlat_options.rst
++++ b/Documentation/tools/rtla/common_timerlat_options.rst
+@@ -65,3 +65,21 @@
+         Set timerlat to run without workload, waiting for the user to dispatch a per-cpu
+         task that waits for a new period on the tracing/osnoise/per_cpu/cpu$ID/timerlat_fd.
+         See linux/tools/rtla/sample/timerlat_load.py for an example of user-load code.
 +
-+char LICENSE[] SEC("license") = "GPL";
++**--bpf-action** *bpf-program*
 +
-+struct trace_event_raw_timerlat_sample {
-+	unsigned long long timer_latency;
-+} __attribute__((preserve_access_index));
++        Loads a BPF program from an ELF file and executes it when a latency threshold is exceeded.
 +
-+SEC("tp/timerlat_action")
-+int action_handler(struct trace_event_raw_timerlat_sample *tp_args)
-+{
-+	bpf_printk("Latency: %lld\n", tp_args->timer_latency);
-+	return 0;
-+}
++        The BPF program must be a valid ELF file loadable with libbpf. The program must contain
++        a function named ``action_handler``, declared with ``SEC("tp/timerlat_action")`` for libbpf
++        to correctly detect the program type.
++
++        The program receives a ``struct trace_event_raw_timerlat_sample`` parameter
++        containing timerlat sample data.
++
++        A sample BPF action program is provided in ``tools/tracing/rtla/sample/timerlat_bpf_action.c``.
++        This example demonstrates how to create a BPF program that prints latency information when
++        thresholds are exceeded.
++
++        **Note**: BPF actions require BPF support to be available. If BPF is not available or disabled,
++        the tool will fall back to tracefs mode and BPF actions will not be supported.
 -- 
 2.51.0
 
