@@ -1,254 +1,182 @@
-Return-Path: <linux-kernel+bounces-857316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF006BE67F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:54:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D063ABE67E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E032A4FA337
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACAA3A86F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD5130F93D;
-	Fri, 17 Oct 2025 05:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="a2PQ3+8v"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90EF30DEBB;
+	Fri, 17 Oct 2025 05:53:29 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689ED256C9F;
-	Fri, 17 Oct 2025 05:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FFB256C9F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760680418; cv=none; b=gIUzVr67TZBAYzCqk35xNKMjtIT8nN79PcBU23YYp63S+ytHDKEbIXl3Qh5Yuj0llaGyGk4e8YRHiWqmt52AXltzRyClG7UP6CKmNBSLvAeGoUZTOMveHln52+Gzn87XhBws9PwlkiYqR0bCF0wVk/iTBYdZJtbI/nuX0Fp5hG0=
+	t=1760680409; cv=none; b=eaUXBdusnOLMfMtYEzrOeV8wfZB2yMf0EIQcgz9c2ykJSXHFHURdVgHRC38InC/VybmzmWiGad9MiyfxR15kAwoaGXXsCpxbJ+t7si9+uRWic+gYGRpg1a5LoPwccg86TozTqCQqhRebe2or3HB18wlUVuHBQS9CexMbeYKKUzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760680418; c=relaxed/simple;
-	bh=q9LRA4h3mJr3SEKt+t0E+rblVbMjhTzqT5dGm9ZJDKo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lKf4BqQ7HJ1PWAigMP2qkRB0ENKu38AaO6+Svk2/bdSiORnLI/mRzEzuPre/NBMJ0Mh0ao7TO1c5yznuOv2QeShS4dStKhX206TZUR9uY0oA1EqtQYkEhyaHDLPNC4eXD9AhxQfr6MC54TNP0+fwZ4eM8lWb+lCA4ZqePpk6NjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=a2PQ3+8v; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1760680404;
-	bh=LVADmxXBbozwcINYt1G5AcUgKaMNIsBCDxG/7Xs5sT0=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=a2PQ3+8v3zOQ09MzwRXm+dU1rjI8yEaOBWpIT/zDUrEG7klfuYnWJ9S/iBMhEOLS+
-	 2IT2O1l8FevZk38aIxEfSMQaRyvh63BTb0h8C9P3MnQ+mDB9XXswE4qI0k8xePxzg+
-	 HP3H9gsAanfBwZA3Qu7Xg7EvvQXI/jVfj1wPZz24=
-X-QQ-mid: zesmtpgz6t1760680399t70296d4a
-X-QQ-Originating-IP: 5oCZgJmoQ0FSZ5t6CA5RChKzD1Qy/s2qWWN8VRUBU8E=
-Received: from = ( [14.123.253.52])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 17 Oct 2025 13:53:16 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17574647453569216988
-EX-QQ-RecipientCnt: 14
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Fri, 17 Oct 2025 13:52:26 +0800
-Subject: [PATCH v3 2/2] riscv: dts: spacemit: add MusePi Pro board device
- tree
+	s=arc-20240116; t=1760680409; c=relaxed/simple;
+	bh=XetiEnBf6fhhagJkwInR6Z0Mdxufvs+PlRyxkO18LR0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ned079UgSfvtBFz9gSnxDroYc/qTM5iwsR0iNmaIsfRLD4n3x3Mx318z78hiG5EGkJkkrK/nlq3BaMQqI4orW4X8MtiNgcW0D5gM4Wu0klO5n4nX+mp8vw1U4A2PrYyjHmYqUGuHIxJjkCxD9uqHiAgY/IhOw3dF/P+gYw4IdGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-430afaea1beso19338635ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 22:53:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760680407; x=1761285207;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PxeGq6LImWjZn8Rv+eZo9WLRVgXI9gsmZFj3ZL46tDE=;
+        b=bzVeAyCqCuFAB6wGTUQhN49fDOZptc9vgc0We6kwPNPh1lFXI0tE1SQJu6dzVs7cVD
+         RPuOgzMtvZ0ffGnBXhiefx1XOG0+Z+oQAYiU8InsNJFkHTtZkLV61ZenGpCCMU7w5pGX
+         6KCsLwewbvwSLEwizfCzITmlv8phvOiI98p7IvebJp3tZjFAvIvL5iN58E9SYV4ENCMg
+         C5lRfEvhBxwdw2JSpxCbxYacIZzt8XX90hL+52cygD6XYz/liAce91kzir7J0GqvAoqK
+         lbVtCrtbjoMWhXoD+yA71GkPT6sFGKNTsFiuydFElSATenw8XwDoY2JoKux+ERNf3Nhy
+         TSmA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5v/VaybU/esZJe0eWZQ6ScLmmgT0DUzDCaqOE21u9n+Ja46ZvbftuiHi2bC/BsjmkDiwsqlWx1rs+6Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi3iwRqz07AyiqkNHXRarJwmkE+2n6/c3/5f1hPXriglViO97C
+	4PEGrSk/p6dSJQwH+cmlDmcXgZRY7dUtXb9+lHruHt+EaWzTHhvXQxEyHe0Yqq0yyKxoSzn5pur
+	bHzuj+G8g4pJzWMdqboLsMCPy4aljxbA/JoY4A1VKnSfDYN/wDgDPYNuGfgI=
+X-Google-Smtp-Source: AGHT+IGJmyPULx3aTsyStsmiq1s0hxUzH97HI/YcyFpd5i4Jys2HYqfvI0Nmb67N2PbR5ffOCiCJ0quIm25eQ85d9wqSSBs2/8kW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251017-k1-musepi-pro-dts-v3-2-40b05491699f@linux.spacemit.com>
-References: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
-In-Reply-To: <20251017-k1-musepi-pro-dts-v3-0-40b05491699f@linux.spacemit.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Yangyu Chen <cyy@cyyself.name>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760680388; l=4977;
- i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=q9LRA4h3mJr3SEKt+t0E+rblVbMjhTzqT5dGm9ZJDKo=;
- b=o/YWvFZZsuxra16nrUiXQOcg935Ah9M33JLr8e2ZbRUlXDjYsNgfZ8Y8pKmdFjao0hQIhJtM1
- Cbul26PFPoFAAkoo9+mefmrlpn93Bgzb6ShU4z/zed2iQPgFt9/zVSZ
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OIE+G1CPd2p357vwo7nZI0hcsRrwLJ81NMYhQ7+gG8fe/E3y1QYvudzM
-	QvWQBLoRvykHk/mnZ4VtIuj4g3a+rrnoE58LuRDUj4dgN/6l5eVZgbGLPf0XIoYBkJ/f6mT
-	NWEd0mwvZXtWQNogXzW8EDX25+3iaZ1nw4SKxST0JvyThrYvjIBWwRsPtH9xg3GhFKW76WP
-	uQ68USK+FtkaoUIq7onM43xWcdhUgcpdKQ6IpP4T2KW0rAyjD7Q0slng0DE6/bKiRoV2ZEd
-	B7KSCLa9iFhVh0QDVbLz0CIkrGGeL23Qw6HMoOTksqyfxEyeBRejXvKaqw472IAwOPZA3Kh
-	wtkIb917mKbQN+t/qWPqH1/fzZCUbxhd5fN9yAcbXjnukojemFlJ++mtVKtgOLQGTfTG/9f
-	jbimBNTepQBIyP52/CluaGsC6Ixf+A896f6iXmJdIi3Rv6MvAxfudtxuMWfCdQ0kYus3Bib
-	dbQE7ctP8u90AQODwO0sbQ5Whc0ygEP/wS7kq/7vilvZeble9IWD4wdYHZbg0lWtkHR1BkZ
-	5d0myOONiMPrYcuZuj7utcl97UEe5K5No9PukKacfn2aCdMtPH1f/+GA8XJzv8J0iIxCo6j
-	WMfBTN/davj+ayfJ8wl+KnH0k1flmGhTrV682V/LI9zf69GkMnYID2Lir7v7s6QGm1O33a7
-	Q+wPBk2clIn848fLZ5iDNGCPH+fW9TYIC921+zga5/+U7ABdm55ndpOFdKgOFm8e/t/5565
-	8PEdvy7/zZZ6X3dfZsMEWqymQ3tjdAbenGd3FPleIGCKW3CzCy6zDTVxN8mziCh8u0FyZ5n
-	iik5Tc6hfDkWzD31lWBU1mJh6qk93faWS8tZgtx/8aq1OgYB9Gxp+e3dilkOhwyTJf3cb65
-	Lrf2j1OpIAvexo1c9Tt8BcX+YEFoTaljlcZOE3f2jlH1JYXbVt3WnsZrHgOw5qIRWnbLb2e
-	Jd53Q5lENmpQCRfusV1ppLk2KfWljHPCtzOJwGHAoKTUSVXzx2EyMTRdXG6vSyuaH89nwjP
-	Z2PsOd2np7UxFNtAtJvyiKL/oDbQYl5gKGnE9ypGcFsCVTPOrMjOxGPnQdDajtwe/b1cmLO
-	y3KyGytm9AVZ0tI+Cs9gb0uxYuix1yHCaET4V7Ula5+TAGGG/RyoJGCz31S4QnD5an4W7XV
-	i3FMNJY8a3gETlTVeukXI/0MPQ7pO7g9lQjB
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+X-Received: by 2002:a05:6e02:2702:b0:42f:9574:7c1e with SMTP id
+ e9e14a558f8ab-430c52a253amr38189605ab.27.1760680406896; Thu, 16 Oct 2025
+ 22:53:26 -0700 (PDT)
+Date: Thu, 16 Oct 2025 22:53:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
+Subject: [syzbot] [net?] kernel BUG in set_ipsecrequest
+From: syzbot <syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add initial device tree support for the MusePi Pro board [1].
-The board is using the SpacemiT K1/M1 SoC.
+Hello,
 
-The device tree is adapted from the SpacemiT vendor tree [2].
+syzbot found the following issue on:
 
-Here's a refined list of its core features for consideration:
-  - SoC: SpacemiT M1/K1, 8-core 64-bit RISC-V with 2.0 TOPS AI power.
-         This suggests potential for light AI/ML workloads on-device.
-  - Memory: LPDDR4X @ 2400MT/s, available in 8GB & 16GB options.
-            Sufficient for various workloads.
-  - Storage: Onboard eMMC 5.1 (64GB/128GB options). M.2 M-Key for NVMe
-             SSD (2230 size), and a microSD slot (UHS-II) for expansion.
-             Good variety for boot and data.
-  - Display: HDMI 1.4 (1080P@60Hz) and 2-lane MIPI DSI FPC (1080P@60Hz).
-             Standard display options.
-  - Connectivity: Onboard Wi-Fi 6 & Bluetooth 5.2. A single Gigabit
-                  Ethernet port (RJ45). Given the stated markets,
-                  this should cover basic networking.
-  - USB: 4x USB 3.0 Type-A (host) and 1x USB 2.0 Type-C (device/OTG).
-         Decent host capabilities.
-  - Expansion: Full-size miniPCIe slot for assorted modules
-               (4G/5G, wireless etc.). A second M.2 M-Key (2230) for more
-               general PCIe devices (SSD, PCIe-to-SATA, comm boards).
-  - GPIO: Standard 40-pin GPIO interface, as expected for an SBC.
-  - MIPI: Includes 1x 4-lane MIPI CSI FPC and 2x MIPI DSI FPC interfaces
-          for cameras and displays.
-  - Clock: Onboard RTC with battery support.
+HEAD commit:    48a97ffc6c82 bpf: Consistently use bpf_rcu_lock_held() eve..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=144d0734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f7e5e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ecec58580000
 
-This minimal device tree enables booting into a serial console with UART
-output and a blinking LED.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/87ffd600eff3/disk-48a97ffc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/aa84f0e32430/vmlinux-48a97ffc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/16498048e16c/bzImage-48a97ffc.xz
 
-Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
-Link: https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
 
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+skbuff: skb_over_panic: text:ffffffff8a1fdd63 len:392 put:16 head:ffff888073664d00 data:ffff888073664d00 tail:0x188 end:0x180 dev:<NULL>
+------------[ cut here ]------------
+kernel BUG at net/core/skbuff.c:212!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6012 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:skb_panic+0x157/0x160 net/core/skbuff.c:212
+Code: c7 60 10 6e 8c 48 8b 74 24 08 48 8b 54 24 10 8b 0c 24 44 8b 44 24 04 4d 89 e9 50 55 41 57 41 56 e8 6e 54 f5 ff 48 83 c4 20 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003d5eb68 EFLAGS: 00010282
+RAX: 0000000000000088 RBX: dffffc0000000000 RCX: bc84b821dc35fd00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000180 R08: ffffc90003d5e867 R09: 1ffff920007abd0c
+R10: dffffc0000000000 R11: fffff520007abd0d R12: ffff8880720b7b50
+R13: ffff888073664d00 R14: ffff888073664d00 R15: 0000000000000188
+FS:  000055555b9e7500(0000) GS:ffff888125e0c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055555b9e7808 CR3: 000000007ead6000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ skb_over_panic net/core/skbuff.c:217 [inline]
+ skb_put+0x159/0x210 net/core/skbuff.c:2583
+ skb_put_zero include/linux/skbuff.h:2788 [inline]
+ set_ipsecrequest+0x73/0x680 net/key/af_key.c:3532
+ pfkey_send_migrate+0x11f2/0x1de0 net/key/af_key.c:3636
+ km_migrate+0x155/0x260 net/xfrm/xfrm_state.c:2838
+ xfrm_migrate+0x2020/0x2330 net/xfrm/xfrm_policy.c:4698
+ xfrm_do_migrate+0x796/0x900 net/xfrm/xfrm_user.c:3144
+ xfrm_user_rcv_msg+0x7a3/0xab0 net/xfrm/xfrm_user.c:3501
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:742
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2630
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
+ __sys_sendmsg net/socket.c:2716 [inline]
+ __do_sys_sendmsg net/socket.c:2721 [inline]
+ __se_sys_sendmsg net/socket.c:2719 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5fcd58eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe59dd1ab8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f5fcd7e5fa0 RCX: 00007f5fcd58eec9
+RDX: 0000000000000000 RSI: 0000200000000380 RDI: 0000000000000004
+RBP: 00007f5fcd611f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f5fcd7e5fa0 R14: 00007f5fcd7e5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:skb_panic+0x157/0x160 net/core/skbuff.c:212
+Code: c7 60 10 6e 8c 48 8b 74 24 08 48 8b 54 24 10 8b 0c 24 44 8b 44 24 04 4d 89 e9 50 55 41 57 41 56 e8 6e 54 f5 ff 48 83 c4 20 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003d5eb68 EFLAGS: 00010282
+RAX: 0000000000000088 RBX: dffffc0000000000 RCX: bc84b821dc35fd00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000180 R08: ffffc90003d5e867 R09: 1ffff920007abd0c
+R10: dffffc0000000000 R11: fffff520007abd0d R12: ffff8880720b7b50
+R13: ffff888073664d00 R14: ffff888073664d00 R15: 0000000000000188
+FS:  000055555b9e7500(0000) GS:ffff888125e0c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055555b9e7808 CR3: 000000007ead6000 CR4: 00000000003526f0
+
+
 ---
-Changelog in v3:
-- sort dts node
-- add ethernet alias
-- add emmc, pdma, and eth0 node (a squash of patches 3–5 from v2)
-- Link to v2: https://lore.kernel.org/all/20251010-k1-musepi-pro-dts-v2-2-6e1b491f6f3e@linux.spacemit.com/
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changelog in v2:
-- modify commit message
-- swap pinctrl-names and pinctrl-0 properties in uart0 node
-- rename model: "MusePi Pro" -> "SpacemiT MusePi Pro"
-- keep the dtb-$(CONFIG_ARCH_SPACEMIT) entries in alphabetical order
-- Link to v1: https://lore.kernel.org/all/20250928-k1-musepi-pro-dts-v1-2-5efcca0ce3ae@linux.spacemit.com/
----
- arch/riscv/boot/dts/spacemit/Makefile          |  1 +
- arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts | 78 ++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
-index 152832644870624d8fd77684ef33addb42b0baf3..942ecb38bea034ef5fbf2cef74e682ee0b6ad8f4 100644
---- a/arch/riscv/boot/dts/spacemit/Makefile
-+++ b/arch/riscv/boot/dts/spacemit/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
-+dtb-$(CONFIG_ARCH_SPACEMIT) += k1-musepi-pro.dtb
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
-diff --git a/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..590c9bdbdfda4d6ddd97a96e10fcaef0a75f3390
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-+ * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "k1.dtsi"
-+#include "k1-pinctrl.dtsi"
-+
-+/ {
-+	model = "SpacemiT MusePi Pro";
-+	compatible = "spacemit,musepi-pro", "spacemit,k1";
-+
-+	aliases {
-+		ethernet0 = &eth0;
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			label = "sys-led";
-+			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
-+	};
-+};
-+
-+&emmc {
-+	bus-width = <8>;
-+	mmc-hs400-1_8v;
-+	mmc-hs400-enhanced-strobe;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	status = "okay";
-+};
-+
-+&eth0 {
-+	phy-handle = <&rgmii0>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-0 = <&gmac0_cfg>;
-+	pinctrl-names = "default";
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <0>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii0: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&pdma {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_2_cfg>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-2.51.0
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
