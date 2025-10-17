@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-857947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24184BE8502
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA62FBE8517
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7C01AA46A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEEB1899C10
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E728343D89;
-	Fri, 17 Oct 2025 11:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4611343D92;
+	Fri, 17 Oct 2025 11:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hs9rnXkx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAKGPXcp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7047632ED3F;
-	Fri, 17 Oct 2025 11:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DCF343D89;
+	Fri, 17 Oct 2025 11:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700326; cv=none; b=ZSVX0vfDisJITw6OBIcF4Bh3KoED5G0yPhABt4Bza8HZ/veIznTIeh4Fu65zdS8JysunqNSKP8EYoo1kkEn04zsBPNSOMXDg9AXM9K0IUliH0nh8EJTdPmQzvetk/Pnw+rNnEbtegZTCcWIcQZv5qm+YYR/JWZoVRgXcd1qz+Us=
+	t=1760700383; cv=none; b=kysSkusLkzgxBrnk5LheDYCpvohbGtt5VnazHXhHIjGEwK73E+2YnO6WXDTRHa949Erk0R9FknquzsUXAWnn5cO/SzbnBifhSe8a/X9zo/b0DUwJJ4X0SImPtTWLzH4hI0dTXT7R6NVHgH/NMQD9VNxaf4584OijH3lVxQ+O1qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700326; c=relaxed/simple;
-	bh=rhmicNJZ4ZANfqK4EyUslfDMqZYqgCT0QFRgPraKr38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4tHoDG9ZQdEiCorZHmWkGyh95LyThJmubSlxBYp4ZylEq1HW8Yplc1ydJQZv+TlmiD2EdSkVQRiHmhpungIpFnfry9yvrBbZyJNxq5+KExDr819K4k1+ssvSskPW+/juKn/ggrH2HZHT6q+dLxbVZM+DNaR7OZUzBKXF7fBxg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hs9rnXkx; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=6NUdGt9MtwvZM8jFQHDsw1CCYzG2H7JFSs9BY7PdJqA=; b=Hs9rnXkxHjJhukQH8YKpfmx1MG
-	VZA60esTzih9n9wz+52eqcD59QOx+XDFIHyh7c+pophLHqgU4pS4pFhzbPljuZVWqPytPuzxcaLl7
-	S+E7SYSRSFwMybJrMhDmdTjSEfc00iD7BHmyfTmTRiICFGeQllh5SzKuMB3fgb9Ax4AAWWvj3Uavu
-	KjG5+YOXW8tPPa0//Qqm1AlGRYRbcs7Y3JxSsHqhWz2AGe38QnB6cYh9h9t3xtx3WZuOcipGJF8lQ
-	1baXzfSn292iNCLYPtUPcw5e9HmK8yNQQvOc+EEUeIP/k8jyFwFcGC+J6+je+9353wqrDfz3kSPye
-	pecvA4Gw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9ia1-00000007Web-1SpD;
-	Fri, 17 Oct 2025 11:25:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E1F4030023C; Fri, 17 Oct 2025 13:25:04 +0200 (CEST)
-Date: Fri, 17 Oct 2025 13:25:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrew Cooper <andrew.cooper@citrix.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
- regions
-Message-ID: <20251017112504.GE3245006@noisy.programming.kicks-ass.net>
-References: <20251017085938.150569636@linutronix.de>
- <20251017093030.253004391@linutronix.de>
- <adba2f37-85fc-45fa-b93b-9b86ab3493f3@citrix.com>
+	s=arc-20240116; t=1760700383; c=relaxed/simple;
+	bh=pPzUuwGvogXsvvUv9K+pic8Th4sHIWdVh+uLPnCifM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JAN9BcaIzewW62cwCWUxaiQrq9+S3e/+AxTddOQ0HFoUGTKjq9wdqaiHVOMS9QNOyjbTcp6m4Vr6MXtRscSYnnXkL6Vd9QfOlp9VPT/UYSbSXX1OFYKVdQ06vlueAve4+MA7C6u16fYDHoggxmT/XE/5SBLABuewb01Q4S7JgPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAKGPXcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C915CC4CEE7;
+	Fri, 17 Oct 2025 11:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760700382;
+	bh=pPzUuwGvogXsvvUv9K+pic8Th4sHIWdVh+uLPnCifM8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JAKGPXcpTbpaITsnF/iMnIYPT2LZAdmUxVKIXGQd1fL00dJ5T8wqO3rem4CutDXMT
+	 dzZK3xWiBflJxgLAqsUtE3nWKIHQ5q2KILVbaGwDURTZi/MCBTBTSkM5FWZPOXI2GV
+	 9cPSkc7Yp7XZJYbhSSyZNvc/TRmoFs51k001AYgJS9b2yoT7FG32tstUxsm4MV9eWw
+	 dsXzdEBZJ7T4YR688CmgstmYgO79Lo63SbHTmgUlnLwA6+kFr0Bkpkc1yecVR2fNuN
+	 tIhw/QEvp50XhnBNLzMbTgs0Ir4ebXR1HHbws7LcVIq+9KHMA9YDM84JWUl1421WZ9
+	 2T2mz56TkGY+A==
+From: Philipp Stanner <phasta@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v2] drm/sched: Add warning for removing hack in drm_sched_fini()
+Date: Fri, 17 Oct 2025 13:25:44 +0200
+Message-ID: <20251017112543.177674-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <adba2f37-85fc-45fa-b93b-9b86ab3493f3@citrix.com>
 
-On Fri, Oct 17, 2025 at 12:08:24PM +0100, Andrew Cooper wrote:
-> On 17/10/2025 11:09 am, Thomas Gleixner wrote:
-> > --- a/include/linux/uaccess.h
-> > +++ b/include/linux/uaccess.h
-> > +#define __scoped_masked_user_access(_mode, _uptr, _size, _elbl)					\
-> > +for (bool ____stop = false; !____stop; ____stop = true)						\
-> > +	for (typeof((_uptr)) _tmpptr = __scoped_user_access_begin(_mode, _uptr, _size, _elbl);	\
-> > +	     !____stop; ____stop = true)							\
-> > +		for (CLASS(masked_user_##_mode##_access, scope) (_tmpptr); !____stop;		\
-> > +		     ____stop = true)					\
-> > +			/* Force modified pointer usage within the scope */			\
-> > +			for (const typeof((_uptr)) _uptr = _tmpptr; !____stop; ____stop = true)	\
-> > +				if (1)
-> > +
-> 
-> Truly a thing of beauty.  At least the end user experience is nice.
-> 
-> One thing to be aware of is that:
-> 
->     scoped_masked_user_rw_access(ptr, efault) {
->         unsafe_get_user(rval, &ptr->rval, efault);
->         unsafe_put_user(wval, &ptr->wval, efault);
->     } else {
->         // unreachable
->     }
-> 
-> will compile.  Instead, I think you want the final line of the macro to
-> be "if (0) {} else" to prevent this.
-> 
-> 
-> While we're on the subject, can we find some C standards people to lobby.
-> 
-> C2Y has a proposal to introduce "if (int foo =" syntax to generalise the
-> for() loop special case.  Can we please see about fixing the restriction
-> of only allowing a single type per loop?   This example could be a
-> single loop if it weren't for that restriction.
+The assembled developers agreed at the X.Org Developers Conference 2025
+that the hack added for amdgpu in drm_sched_fini() shall be removed. It
+shouldn't be needed by amdgpu anymore.
 
-So elsewhere, Linus suggested to use a struct to get around that. See
-for example this lovely thing:
+As it's unclear whether all drivers really follow the life time rule of
+entities having to be torn down before their scheduler, it is reasonable
+to warn for a while before removing the hack.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=locking/core&id=1bc5d8cefd0d9768dc03c83140dd54c552bea470
+Add a warning in drm_sched_fini() that fires if an entity is still
+active.
+
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+---
+Changes in v2:
+  - Fix broken brackets.
+---
+ drivers/gpu/drm/scheduler/sched_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 46119aacb809..87ea373f266e 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1419,7 +1419,7 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+ 		struct drm_sched_rq *rq = sched->sched_rq[i];
+ 
+ 		spin_lock(&rq->lock);
+-		list_for_each_entry(s_entity, &rq->entities, list)
++		list_for_each_entry(s_entity, &rq->entities, list) {
+ 			/*
+ 			 * Prevents reinsertion and marks job_queue as idle,
+ 			 * it will be removed from the rq in drm_sched_entity_fini()
+@@ -1441,7 +1441,10 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+ 			 * drivers that keep entities alive for longer than
+ 			 * the scheduler.
+ 			 */
++			if (!s_entity->stopped)
++				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n");
+ 			s_entity->stopped = true;
++		}
+ 		spin_unlock(&rq->lock);
+ 		kfree(sched->sched_rq[i]);
+ 	}
+-- 
+2.49.0
 
 
