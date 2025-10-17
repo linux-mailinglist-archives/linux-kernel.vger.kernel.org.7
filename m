@@ -1,208 +1,160 @@
-Return-Path: <linux-kernel+bounces-857591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693DEBE731C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:35:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8302FBE7346
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76001AA1423
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:35:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9BD9561382
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775DE2C21E8;
-	Fri, 17 Oct 2025 08:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C332C0F9C;
+	Fri, 17 Oct 2025 08:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="KX+ZM8tE"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBURSOf1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CCE269AE9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB0E269AE9;
+	Fri, 17 Oct 2025 08:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760690063; cv=none; b=YWZ/ZI+4ileYwD+4tCFvUHY2RLrNHNNLSyqZ5SWgL5Nsd5C2UWjEZV3h8J6dQfJaxdINeKSeTR37CKMtaJ9STu600R9+PQJOSslCAxQ/LcrkOM7h69CCMlqf1dXuuVoPWXVYL+3mTOwPZss/hBVd8v6pAhNRYoxVa4H1L1hD8EY=
+	t=1760690068; cv=none; b=lZgoH4tR7H+8dDjgAlzdU1d3jN965ZtqitaU4RHr191gG5tTkQScDtKn2PIw8iRK+2hv7TsxwASPF0cYUwWdfiknMKEsw76rjZ0tC4kKvKTvTqY6vclIwUzEattWim4WflpBgTDgRRJEsQsyj5wVCzVPJhg55ojbWo8H7NH68Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760690063; c=relaxed/simple;
-	bh=rXUmxrGIqOAJYZ+/gxnEEhhhSgt5g34jwsL9bWpkQsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNCBrvXsTYDTbPzrjLn3yMh89ir8RZqGjPZCSQfr4wAGeLwsQF8UdxHfCV36lM6vIOA3HG4MA+imDpzQRf55OC0KZD9kFrHm70P/mb2QvKvE338FQMsRXr9nZEzMGd0TX4tI4O+Wrnmzzn6MJqCyaz5YBbyQX2+ZFFbQ0/NCdRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=KX+ZM8tE; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b62fcddfa21so1086948a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:34:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1760690061; x=1761294861; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zwWTDPTxdZ8sUmLlagbF37tgnT8oA3Q8eIsLoS6sVgo=;
-        b=KX+ZM8tEogSRJD2TpIDLVIrSqbhYcA+vD3yWyhHXavrTPJ50uNXZIF209RF+5KBP+c
-         vptBXmy9+ZaTFzLxMP9imLp0+Gk8dYEeYJgw2TSaiuT4rigb8T5zI8XX9Fdnqa7v50RB
-         QMT8GLrwlshe3NFEmI07o8sM2RP7JJJuecD4dBNc1tmY0svq+O8R9UU98GVOme67MBr7
-         GhPijiTiG7ncbKYQIIQpUJTaIaseHxnicwZj6UvXm3Ygc26j28tCOdHvTL+NuYpcmVjO
-         JQ7j4Dr6cQUJisLzwIo0xnaknINYr8Q8aUOx0zSIYRn348vj3YqTWcFYeEQcuhgFNYvv
-         whlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760690061; x=1761294861;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zwWTDPTxdZ8sUmLlagbF37tgnT8oA3Q8eIsLoS6sVgo=;
-        b=S1Ukbyw2S6Qr6uNLHYalM80cTkAFK5r2IR42ehhWUszHNM+j3WoLuAa3IUzfJcBy2s
-         c/ANUGfhCEvR/A8BZgutTF83TjKaCa+SBlPAaAOsFyG05AIc55srO4tcdqZEeZC6/3CJ
-         o0tojOEIZS+2fPD/9dhL4VV5AELbj4xagWYsp9HqCy7adq0Jgv2obUWsqb/B6B1O9S6/
-         cgia8PKxVBR37b5rNEU0jvAqP12YSsBmX00Ht0n/oj15m8j3AM7uilJ0IVvEbHRQsHbQ
-         sLeXAhqiS0RLlLSPilC4w8QRvd0VbIqWKP4oLTZd2rdNLhAk31/X2hlhAJoSQ3j5fA1p
-         xr2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMZZhV8cyKhxogjiGArK5aENCAIY4XvYmcGc4dBKdbGu5QgZ8zOpmgRntZSpC5gJLOdrldsCxz6dsGx6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcIHEtzT2LQkSdYhpJnnFx2IQPzPCsKpVsqNL0tEj9moP92Ybb
-	ExX716wexutQtxo6Kujpo74NooIbEmHqRt5vncnXDJhKvrrLZDz5wDHDayGAAKRnGaw4
-X-Gm-Gg: ASbGncuG8fpWK0SvuCkpfp/N9usFJWXz2PI+DR257lsEtieSKvKxxUczb93Tt6eQZ0N
-	uWS8c8sO79JHx5Dgo+i7cvN81jyx6fDtvsXFhxTkAXhFr7UoRNZB38kt7GoYPT4WJYTpKGgLu7h
-	F9NoTNb0iq99vTCCGZ4JHwmWhsNB+VmMUH+QVI9YQbh/7sVHyMDdcZ1AH6BVWTfopXqW7OHWkPX
-	waIox4XqSEdyHR5zo6MfDE/M5VnfPYBOlxc/F1DJ/UCmdbNC6lsBy1Yevd8OF0QNHrKXEFl82E+
-	Jh3d2MBQ3rwoiBDswYXzcYnmO4wg2OqKRro9SWmEv70bvAxZaWmhvu8AQnrLBWthmYcq8n5Tvzx
-	TM/y2YsiOVjsFpzCHkmmYxYR6ZqGEufUUxnGKaoN4kAA4uKtxTrKMXW7nv2wS/GSgkjf8Q+VzF7
-	XhWZXHv6ei1DQ+8w==
-X-Google-Smtp-Source: AGHT+IEnb6UjQcer/I5Rw31GyT+MdTerRyv2aeOuud+h9gNncxVu01d76QtKrkpwP6x0XkSdMK0XZw==
-X-Received: by 2002:a17:902:fc8e:b0:27d:c542:fe25 with SMTP id d9443c01a7336-290cb27c8e8mr37576595ad.41.1760690060687;
-        Fri, 17 Oct 2025 01:34:20 -0700 (PDT)
-Received: from sultan-box ([142.147.89.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290a382a927sm51595225ad.106.2025.10.17.01.34.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 01:34:20 -0700 (PDT)
-Date: Fri, 17 Oct 2025 01:34:16 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, mario.limonciello@amd.com,
-	richard.gong@amd.com, anson.tsao@amd.com,
-	Alexey Zagorodnikov <xglooom@gmail.com>
-Subject: Re: [PATCH v4 5/7] media: platform: amd: isp4 video node and buffers
- handling added
-Message-ID: <aPH_iHmPFWTrrOQE@sultan-box>
-References: <20250911100847.277408-1-Bin.Du@amd.com>
- <20250911100847.277408-6-Bin.Du@amd.com>
- <aNzP2LH0OwUkMtGb@sultan-box>
- <c28eb905-b578-4512-aa9c-37281d3a0ee4@amd.com>
- <51c24e3d-be89-44c9-8247-95fb776aed78@amd.com>
+	s=arc-20240116; t=1760690068; c=relaxed/simple;
+	bh=w3Jtbc7P9k3PPr7nIVh983//ubXEPnmSoqZwGmDBXrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DnP7yqwp9YyMui+OVDVRe7reKYIwHtMRh03O4iHwek7hvRDHlGNxS+niBb8L/iqFG7FS6oxIvWQLq4RAVgkXglkn7idTGDoGM/eJIMkk25thhgQ84fCeq4RewE2EF1Ce8beJq/uOdOpZf585d9wpQPHkiUkTI1PtjnEqHisH0/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBURSOf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F82C4CEF9;
+	Fri, 17 Oct 2025 08:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760690067;
+	bh=w3Jtbc7P9k3PPr7nIVh983//ubXEPnmSoqZwGmDBXrk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tBURSOf1n1gAe4wuT1WyYiBXXL0n4H1eV34vl60JDzY1kfH5x0va0pTUZzw46QfON
+	 44YdA+pobnFwaecgLz6QSBEVbPWsC5+Rd96IabcLUdGAzeqLqH+n3vCpvEuNfZ9qrO
+	 DWYY3kbxMoGvDtAyQYpfaBjeIrgs38GMRq7uGwS86DiM1aEsNdmvCrtQ+F3kVCYhNe
+	 g5fgrWwvl/cGqiaYTUFEj0gQ37qLq/S1Qr2fcudgvMJ0hluVJzJ9xBko2C0xcNLyWq
+	 gY1rLyNmgXbzQ4A/XtfuywKcILMUH8i6XMus/6tx/aiivjkzEkjK/XuqQjn9awXHF0
+	 vL93gvQw3wHiQ==
+Message-ID: <94ae58e4-4fd2-4c29-a060-986d84309f94@kernel.org>
+Date: Fri, 17 Oct 2025 10:34:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51c24e3d-be89-44c9-8247-95fb776aed78@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_SM_TCSRCC_8750 from m to
+ y
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Taniya Das <quic_tdas@quicinc.com>, Taniya Das
+ <taniya.das@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>,
+ linux-arm-msm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+ Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-kernel@vger.kernel.org
+References: <20251017-update_defconfig_tcsrcc_sm8750-v1-1-34b1b47a0bda@oss.qualcomm.com>
+ <30390038-0f90-48a4-befe-475cf88ba1fb@kernel.org>
+ <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
+ <90c8dda3-f753-43dc-8bb9-d03a808c8704@kernel.org>
+ <38b8468f-5006-46a3-a4ea-28e6692ef14a@quicinc.com>
+ <03ac36fb-a227-438e-bdf6-f787e26008b3@kernel.org>
+ <8580ae8e-50e9-481c-b9f3-125b6d1cb494@kernel.org>
+ <0a9874d4-29e4-477e-a675-c4534658f9d9@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <0a9874d4-29e4-477e-a675-c4534658f9d9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 16, 2025 at 04:13:47PM +0800, Du, Bin wrote:
-> On 10/11/2025 5:30 PM, Du, Bin wrote:
-> > On 10/1/2025 2:53 PM, Sultan Alsawaf wrote:
-> > > On Thu, Sep 11, 2025 at 06:08:45PM +0800, Bin Du wrote:
-> > > > +++ b/drivers/media/platform/amd/isp4/isp4.c
-> > > > @@ -178,6 +178,16 @@ static int isp4_capture_probe(struct
-> > > > platform_device *pdev)
-> > > >           goto err_isp4_deinit;
-> > > >       }
-> > > > +    ret = media_create_pad_link(&isp_dev->isp_sdev.sdev.entity,
-> > > > +                    0, &isp_dev->isp_sdev.isp_vdev.vdev.entity,
-> > > > +                    0,
-> > > > +                    MEDIA_LNK_FL_ENABLED |
-> > > > +                    MEDIA_LNK_FL_IMMUTABLE);
-> > > > +    if (ret) {
-> > > > +        dev_err(dev, "fail to create pad link %d\n", ret);
-> > > > +        goto err_isp4_deinit;
-> > > > +    }
-> > > > +
-> > > 
-> > > Two problems with this hunk:
-> > > 
-> > > 1. According to the comment in include/media/media-device.h [1],
-> > >     media_create_pad_link() should be called before
-> > > media_device_register():
-> > > 
-> > >      * So drivers need to first initialize the media device,
-> > > register any entity
-> > >      * within the media device, create pad to pad links and then
-> > > finally register
-> > >      * the media device by calling media_device_register() as a
-> > > final step.
-> > > 
-> > > 2. Missing call to media_device_unregister() on error when
-> > >     media_create_pad_link() fails.
-> > > 
-> > > Since the media_create_pad_link() will be moved before
-> > > media_device_register(),
-> > > we will need to clean up media_create_pad_link() when
-> > > media_device_register()
-> > > fails.
-> > > 
-> > > The clean-up function for media_create_pad_link() is
-> > > media_device_unregister().
-> > > According to the comment for media_device_unregister() [2], it is
-> > > safe to call
-> > > media_device_unregister() on an unregistered media device that is
-> > > initialized
-> > > (through media_device_init()).
-> > > 
-> > > In addition, this made me realize that there's no call to
-> > > media_device_cleanup()
-> > > in the entire driver too. This is the cleanup function for
-> > > media_device_init(),
-> > > so it should be called on error and on module unload.
-> > > 
-> > > To summarize, make the following changes:
-> > > 
-> > > 1. Move the media_create_pad_link() up, right before
-> > > media_device_register().
-> > > 
-> > > 2. When media_device_register() fails, clean up
-> > > media_create_pad_link() by
-> > >     calling media_device_unregister().
-> > > 
-> > > 3. Add a missing call to media_device_cleanup() on error and module
-> > > unload to
-> > >     clean up media_device_init().
-> > > 
-> > 
-> > Very clear guide, will follow your advice.
-> > 
-> > > >       platform_set_drvdata(pdev, isp_dev);
-> > > >       return 0;
+On 17/10/2025 10:15, Konrad Dybcio wrote:
+> On 10/17/25 8:54 AM, Krzysztof Kozlowski wrote:
+>> On 17/10/2025 07:56, Krzysztof Kozlowski wrote:
+>>> On 17/10/2025 07:49, Taniya Das wrote:
+>>>>
+>>>>
+>>>> On 10/17/2025 10:51 AM, Krzysztof Kozlowski wrote:
+>>>>> On 17/10/2025 07:16, Taniya Das wrote:
 > 
-> For 2, we found when media_device_register() fails, calling
-> media_device_unregister() won't clean up media_create_pad_link() because it
-> simply returns without doing anything(see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/mc/mc-device.c?h=v6.17-rc7#n797).
-> Therefore like other kernel drivers, we'd rather not call
-> media_device_unregister() in this scenario, it doesn't cause issues, but
-> it's not logically correct. Cleanup for media_create_pad_link() occurs
-> during error handling via isp4sd_deinit()->isp4vid_dev_deinit()->vb2_video_unregister_device()->...->media_entity_remove_link().
-> What do you think?
+> [...]
+> 
+>>>> We have tried booting up recently and and that is what we observed. The
+>>>> patch from 'm' to 'y' helps the UFS probe is successful and the rootfs
+>>>> is picked from ufs partitions. I will add these fail & success log
+>>>> snippets in the commit text.
+>>>
+>>> That's not enough. You need to explain why UFS fails. After explaining
+>>> this, I guess bug in UFS would be exposed thus that one should be fixed.
+>>> You just provided band-aid without fixing the real problem.
+>>>
+>>> NAK
+>>
+>>
+>> ... and to prove your analysis is wrong (because your setup is likely
+>> having issues) I even tested now linux next with defconfig. Works all
+>> fine on next-20251013. You did not share which kernel even has this
+>> issue, maybe some downstream tree?
+> 
+> Is there a chance you have the TCSR module packed in initramfs and
+> Taniya doesn't?
 
-Oh, good catch! You are right about media_device_unregister() not cleaning up
-media_create_pad_link().
+Of course that's a chance, since I have all modules packed. Why would
+someone pack UFS to initramfs but not its dependencies? It would never
+work, actually, nothing would work...
 
-But I don't see how vb2_video_unregister_device() ends up calling
-media_entity_remove_links().
+If initramfs does not have necessary modules, way to fix it is to add
+these modules, not make the symbol enabled.
 
-It looks like media_create_pad_link() is actually cleaned up via
-v4l2_device_unregister_subdev()->media_device_unregister_entity()->__media_device_unregister_entity()->__media_entity_remove_links()
-
-And I mentioned before to add a missing call to v4l2_device_unregister_subdev()
-on error, so it looks like that will cover the media_create_pad_link() cleanup
-and therefore you don't need to call media_device_unregister() in this scenario.
-
-Does that look correct?
-
-Sultan
+Best regards,
+Krzysztof
 
