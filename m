@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-858470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4943BEADDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:50:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C08BEAD2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A80745A81F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:43:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2AEFF35EF08
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECD32E03E3;
-	Fri, 17 Oct 2025 16:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2998B2C2345;
+	Fri, 17 Oct 2025 16:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Z+Z/lKsI"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MGg/QERm"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20292C325F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D02929B777
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760719383; cv=none; b=WPe6h4fhAu21gRwvbuo7lbDE+2OPZ7XuN9M/dzNSUvZ/LTXVXxd/bttkZPskb2SzG+gRcsSDzatKvl3tYCo4A3pf4yZPbglreHQam9yhG5+hWLqAPdo0taAlNnxzB72WF0G5zPHQJKWoAps7QZamf2EQwkQnXzVtRoosFXF7Fpk=
+	t=1760719384; cv=none; b=CqEpdF9oOeiY1ORX6pST2Gt8byMAtJhx54bBLzvylMzgtZ1NxWXuvfi0wvGcLWTo37/z7OwlevTKl5UVclO2B6O4qhbYUVtDtMau3f7QlcipLaIDqTpPzOC3K7F4uElzLIYjb+2oIjI397OIkS7R4nQ8NBAXwC6KEFHXSwcAz58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760719383; c=relaxed/simple;
-	bh=EbGOgWCx+khawQFOQHDAVhH9bYeArl+G3z9a0/QKsAI=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=W4fv4wAM/YMFAdK0EsdEXN8anS603iZxAtc1Lpj06CiUyH4AcVg5sfuCGVYvDXOWJxYANkj18P7X7eeegXa+hsQgTdv/fachiQ8/VNXHyC7w2/ox0dA1zUd9aE7OmBlyaSSMo3h1ep6xuu4FdMOnQO5WRiGcosfdJzo9VcUuR1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Z+Z/lKsI; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1760719384; c=relaxed/simple;
+	bh=qydNSCeSQ+E2GOjHdtY78InKMYtkzGBtuz7sO0dEZ9I=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Jmd7b868WGSkUIsmcF7rI2cfqWfKpDb1h8XSXzUsKNWbxLAkGMTXyUiMtKK15YMc/cF2cFrv6iPuUqwWc6Iw6CYVd+CHd3dIx1CWf36QN7n/Gli2o87aeq0jBaOrdXzf4lOVz4csWS6SVsuemmtW3cEzVIqzT/jwBT3GfWuLdQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MGg/QERm; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b5a8184144dso325600066b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:42:59 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b64cdbb949cso223233566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:43:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760719378; x=1761324178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Y6ZFTaO484vvvOp+LnE17zfufVeY7YudrTHPSJCX3w=;
-        b=Z+Z/lKsIvGlysfkJgc3/URezmV2UibNrUNu+dNfu4x7D3hIhaI488QQKohJSgHdwIW
-         AMydoUo0oP3CDDpHSp6nezXsQccvqLMVSyTBbaWl6PvKe3afdFVnHzk7/cpP1W2kPbpY
-         NoTyQJ/SQ9xLEv8cj5CZpsmiYZUVCWOhRCd3/izeCl2DbwIE/IZUC3w68XC/sFOt7Nif
-         3zyx1NwsJmYfXBC24TuO7/zJCwgZzBhMcsTAwEB+4v+vzLTWU8b4Y4kmyuf9q0bw3Eja
-         BqOsGK6wv/ASB4SEOoJCcCnck3XjCdgklzkEnJ+I3gtBwoXCbv146jJS0KH3DCHpraJ7
-         CCfA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760719380; x=1761324180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kjdz0rl5dcQU1vd/+CLrzz2F5z3RZpHi5RbDUNAW3S8=;
+        b=MGg/QERmv2PF2p0psuS2vdcJ6iF3FPKJiXN7Eg7dvw/K88Nih1dkak4mtftN0v+5d/
+         qOZEythEsIJh2bSkrL3Ax+4/dme3qarUlAmeK6HyAPdFuebtdA84wtqsoqGHKTo80UDq
+         Vk+ydTUMwb9pjjPiMPXzdliZ+Ag8F+iW2afgYGO9BKTfLKEugFvkCKqwV78fzdrM5PGm
+         CxZRCv2Ojw1iZ56LHEoiqkSb31LUc7FZ0ibOq3vHN8Sh+9Lp2Cl47D7Jqa5XneR7xqgF
+         BhRJPPA3xPQOtrvfUqMcF3x4TzVPw7xruTduTPJ+RN1g0sicBxgOSpavg9Epzk6uQ/LF
+         co7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760719378; x=1761324178;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Y6ZFTaO484vvvOp+LnE17zfufVeY7YudrTHPSJCX3w=;
-        b=U3l7c6NfY1q24WedMYZUxA7sC31+kYxgIsm+YyGzYY8VKt+6sm/OLgz/CfWfZ/0Ju7
-         8q3sjB7YtzxKTG32I37NjF/ZE0u0TAJi07p2AYXLVOryXirQJhaksTRFNcc+TtjVEkz1
-         yyEPe3orbMuwoomyav5ROOr7dj752dLKr3cAVg+wSc2diQeOFCc/t6pQCcKd6bW7CQOk
-         nRSom93CDgLVK6htf01aJAboxBZZATdXh8V8f9UfHwZE0XRzOPl0keIC2qGm7/T0acrj
-         JEpNgM/9pyvqBtvjDY/7rESJXJv36F7XowGMzBx1DeVwCLi6gYJovqgQ0hWTN/Q5NFzo
-         otBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhTCEPuusDZF9Byi5iAB5BfiS5Rgw4pXqAtgeOVt0tr1dSt3HB3ltPXnCdVYKQPbaCAnp2C2m9M5SPHvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE+evK80f+G7TlfhNgbWj0Fd6hJ4ukde9E416ZbCEuKsS0vRnP
-	LSqGB4uVxSNykOd7J3NdyK5gAU10V05dyigKFxtG7g9WgHw9AcpcT1AatBJ6ozjy4i6gd3b1nSu
-	nwOazbAc=
-X-Gm-Gg: ASbGncsr6KoaWO6gHj1N1EvBxunDzRFQmhQfvWQFitib7srmBOjfSfShZU8FEPZKM8M
-	KFfMa2rH/P6uRUW1KhmiTVFC78lArifh4vNcvW4youAdHrpHDz27XKxmIgv0maaXbx8HAFD+sP5
-	3TWa7gxP3G6UlkOMz+Gaw8pid17QnxoJv4C2/Kf7HNbeW0AcOfNMzospw/5260vDYa6NXx//9vN
-	PZGYerDxA+02ERHcimTL4jGM/MnbZtorlRy43x7iD0z4N18hsMYQatx3rXvNqnle2QtSAha18Bw
-	HBgNUdHuqYukWoHSt3cDtcWYhWwYpHXlwfwW8vN1ZAa4wYJscndGQnn97pXuuk1yZa7YJsuWYtR
-	uSIC4aojzzQdj+Gs2duezBOci72LUaFvp3in1vVKlhqnayVKgaeCIR/eVL+xGg2SdKcWyRRpcdq
-	c8CrDIhaDztvkWE1Wc23LdfSbjEBmpEjvSlTdx
-X-Google-Smtp-Source: AGHT+IFYmw9Y+CWdz19QjFSQJCJMdCKeKiZa3YQOd9OZPKNEuXldvogb8WZLSN/ZGoEzK5VTcC62+g==
-X-Received: by 2002:a17:907:c20:b0:b45:27e0:7f35 with SMTP id a640c23a62f3a-b64764e1c66mr519633766b.46.1760719378035;
-        Fri, 17 Oct 2025 09:42:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760719380; x=1761324180;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kjdz0rl5dcQU1vd/+CLrzz2F5z3RZpHi5RbDUNAW3S8=;
+        b=KO+LrL+xzkeuygfnnHTWl6ONO5ZMxhLSTsLQj6x1Kyv5QVzPdkbkVRbG2VeHPSaT0K
+         BbT8ffi3vRed49ZhrETcM8rd2k+hnO13/hJkmrVYbmVlz+0uhywllBALncNaaGvulLt/
+         jYjr+uN8o4S7tITgG/fUrVSP71wo7ku3EYjSy/CZ6d9Lqj29N3+r0TiDhP5zKh6UEeWU
+         yxXj6M0f7AUxZUUg8Oe9xRQQWxaBF8jmWEkA4DSr/gVKRS0V0+ybHr7L6sGS1EG8e54Y
+         i50WDnTMoDofmSZqTyKZDT2SZJ0waR/xLSlArjPUhTWaIuPrfd81JQbUISUqL8iFziH/
+         cxdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhBl+PojARssQ1W+BKhSThCm6DDu3gZmC9iPwWL2TqFJV14gKUsDMCVRzl2It3gsdoog6K3Z9F+8zep9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcfxPHC091iiflopYItMszNA+o+LPSQXBhmlvf89++g28nVTSC
+	U/bbVUycXA+DCyBUrWZEiHKK54B8H3Z4xSYgvaaZ1seiPozaMI1+hPH+U01Ez5SWTKY=
+X-Gm-Gg: ASbGncuKlpoMqUctF6AcjuVqKLiRbQ1+5y/k5m6crtoBbSpWNlAeOZGVtxxtSdHsDLA
+	E01OewpgVxWFrHHO/wbulyVBbXBoBvFM5QEiubAdRzND87VdDmcNPvQRWCjxiMQzAep08JYnXfT
+	uXnV+HNaB9e64SShP0b5mL309TaHQOjenzfRd9tJwEZt8B3DVODz0N2N3AKn+GLYOxaDGttDyJT
+	eEGy2HUiWufTxvNTBOJEykhkVjEOH3VfKgfnOa6wXLSWfsYDPBKKgGBwGASzsuy8DSYkk5ANDLT
+	0Jpvm6lawsq0u3U8SLg2+JOATXrtlBazD8kcDAvS9Sfv2oUjq9zr1tDXXlTseu/uq1JJO7D1asI
+	8d+zCz+dKTbyK/Je9jLQ6CAB8WxEUENcipl8uGqqv8UsuIvFP+RfAsVlSu3NMr86QLtGyPD1R2g
+	LvXSo+tsjv4zVb+KB+reWbWJE8Kw==
+X-Google-Smtp-Source: AGHT+IHXqefH327sMsO9RX5OelhEq9jJaKmV2JPysRJpgJrDsL478SviiAp8QmNSVRFVf+//woDFpg==
+X-Received: by 2002:a17:907:72d3:b0:b3b:4e6:46e6 with SMTP id a640c23a62f3a-b6472c6191dmr468392466b.1.1760719379781;
+        Fri, 17 Oct 2025 09:42:59 -0700 (PDT)
 Received: from localhost (mob-176-247-36-41.net.vodafone.it. [176.247.36.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb036846sm14971166b.54.2025.10.17.09.42.56
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4949998csm122158a12.38.2025.10.17.09.42.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:42:57 -0700 (PDT)
+        Fri, 17 Oct 2025 09:42:59 -0700 (PDT)
 From: Francesco Lavra <flavra@baylibre.com>
 To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Jonathan Cameron <jic23@kernel.org>,
@@ -79,66 +81,45 @@ To: Lorenzo Bianconi <lorenzo@kernel.org>,
 	Andy Shevchenko <andy@kernel.org>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] iio: imu: st_lsm6dsx: Decouple sensor ODR from FIFO batch data rate
-Date: Fri, 17 Oct 2025 18:42:53 +0200
-Message-Id: <20251017164255.1251060-1-flavra@baylibre.com>
+Subject: [PATCH v3 1/2] iio: imu: st_lsm6dsx: Fix measurement unit for odr struct member
+Date: Fri, 17 Oct 2025 18:42:54 +0200
+Message-Id: <20251017164255.1251060-2-flavra@baylibre.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251017164255.1251060-1-flavra@baylibre.com>
+References: <20251017164255.1251060-1-flavra@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2410; i=flavra@baylibre.com; h=from:subject; bh=EbGOgWCx+khawQFOQHDAVhH9bYeArl+G3z9a0/QKsAI=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBo8nH3tw8+nFc8mO5BnEJGdJ/joIXFe+sacU/oy n46BGq0NheJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaPJx9wAKCRDt8TtzzpQ2 X0T2DACtX3b4mY2q84kxLKrZkPbIcL7BFRGCz9y6co1vO8c+IaWc+yny1HRM3yOl+OqhDpGlFv9 6KHlI6u9C1NcTZMFjbpJZ6mOCcyzOsVQBeSqqiyQLc8KGfBkCKqyvApwfc31+2jgTreEyvFlXDq 2rrBMk43ZB9p8Eqr2NiGPEWfttxA/hEPDecpNscQQ1tuEEgzL72wsjS/Lh9Vl9Z/n/Ys+Z6Zq0V p1A4qTQqNlklbTqVApNk6Eilh3rPZ8T+HKrMwpN/oMOP8JVR4h56o8kNXxUUwYFuMa8mrRTpWjk odAIUgFF7vR8yeBAg90c5myDBLnMrcQVZdZXMDHKD8TmmCdhjJrXqk8ClnXHGjrzEEKNTn9GE7V G7gB5LzunmiLvRyICrjyYaJ8bQ4AkkcIEBor5dLWWa80quy84zXowhxVbU5K7BY++EFlPgyTVHf oL0NUxzALVfXb1Hq2l0RmV1+IKvTZRzwvjaxIgRzVCnJofkqBCA6qmfG6ZZNCQRWiygD8=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1061; i=flavra@baylibre.com; h=from:subject; bh=qydNSCeSQ+E2GOjHdtY78InKMYtkzGBtuz7sO0dEZ9I=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBo8nH+ESF9IxfWckt3q+TUtO1/qrjD/S281k3pT uSxV0F68iqJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaPJx/gAKCRDt8TtzzpQ2 X4n1DACXgY5C3cCEjzrMv9fEF/HyhzozhvaLM0G9cIDvj4nRNGRHlvbMXo+Zw+m366YGNxBPg+K FkRAFj/NwyGpAwkML/i+Ao1WFmQ6USjzMdSub/Xkq386RIBQz3T5Zuo6GELTmGc0YQM541wHLYP Ram2OPPWGWDLPdrt2mxt6JHAN7HXFOUMOeNnHNZVNUs0aiHsbBfovfUz/h3bPMnJ5qqYc3PPcG6 vU3cpqmzeTNVwl06CKk6ETwYCR3QjoBHiu1a+eI7sJ9zsi0yWJ3wzt4pZSDDQWQ/V3dGzyrHzN1 I/Sgs5oJRQw3jgfPajdZNzzLI2b4UrzmAvWetEa8Ah1eRUZZ1gC7S4q6Uaf+C5pJ9RMZdQuMmyJ uGyd4reZ2lzHokcQGr/p6bJqZipoLvxjrAKnp5S/jNg8/oc0oyCiylSjujSEWRlIro+SqNnGmv1 QIOvzq0Sej3Wc7Ugx0w4lddeBj1RcRry5UsvdqJ6R2putQTzvscGK9DGG8NB94GadGm7U=
 X-Developer-Key: i=flavra@baylibre.com; a=openpgp; fpr=8657854F953BDCA31EC314E6EDF13B73CE94365F
 Content-Transfer-Encoding: 8bit
 
-The rate at which accelerometer or gyroscope sensor samples are fed
-to the hardware FIFO (batch data rate, or BDR) does not have to
-coincide with the sensor sampling frequency (output data rate, or
-ODR); the only requirement is for the BDR to not be greater than
-the ODR. Having a BDR lower than the ODR is useful in cases where
-an application requires a high sampling rate for accurate detection
-of motion events (e.g. wakeup events), but wants to read sensor
-sample values from the device buffer at a lower data rate (e.g. to
-minimize the amount of I2C or SPI traffic and the rate of periodic
-interrupts).
-This change set amends the st_lsm6dsx IIO driver to support the above
-use case. The first commit is a trivial fix to the source code comment
-that indicates what measurement unit is used for the `odr` field of
-struct st_lsm6ds_sensor, while the second commit introduces a new
-`hwfifo_odr_mHz` field in the same struct to implement the new functionality.
+The `odr` field in struct st_lsm6dsx_sensor contains a data rate
+value expressed in mHz, not in Hz.
 
-Changes from v2 [2]:
- - fixed Fixes tag in patch 1/2
- - removed local variable from st_lsm6dsx_hwfifo_odr_show() (Lorenzo)
- - replaced multi-assignments with on assignment per line (Lorenzo)
- - added Acked-by tags to patches 1/2 and 2/2 (Lorenzo)
+Fixes: f8710f0357bc3 ("iio: imu: st_lsm6dsx: express odr in mHZ")
+Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+---
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v1 [1]:
- - added Fixes tag to patch 1/2 (Lorenzo)
- - in sysfs store handler, moved iio_device_claim_direct() call to beginning
-   of function (Lorenzo)
- - changed new struct st_lsm6dsx_sensor field name from `bdr` to
-   `hwfifo_odr_mHz` (Lorenzo, David)
- - replaced min_t() and max_t() calls with min() and max() (Andy)
- - added setting of buffer frequency equal to main frequency whenever the
-   latter is updated via sysfs (Jonathan)
- - miscellaneous stylistic modifications (Lorenzo, Andy, Jonathan)
-
-[1] https://lore.kernel.org/linux-iio/20251009173609.992452-1-flavra@baylibre.com/T/#u
-[2] https://lore.kernel.org/linux-iio/20251016172122.1220332-1-flavra@baylibre.com/T/#u
-
-Francesco Lavra (2):
-  iio: imu: st_lsm6dsx: Fix measurement unit for odr struct member
-  iio: imu: st_lsm6dsx: Decouple sensor ODR from FIFO batch data rate
-
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h       |  4 +-
- .../iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c    | 71 ++++++++++++++++---
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c  |  7 +-
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c  |  2 +
- 4 files changed, 73 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+index c225b246c8a5..bd366c6e282a 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+@@ -365,7 +365,7 @@ enum st_lsm6dsx_fifo_mode {
+  * @id: Sensor identifier.
+  * @hw: Pointer to instance of struct st_lsm6dsx_hw.
+  * @gain: Configured sensor sensitivity.
+- * @odr: Output data rate of the sensor [Hz].
++ * @odr: Output data rate of the sensor [mHz].
+  * @samples_to_discard: Number of samples to discard for filters settling time.
+  * @watermark: Sensor watermark level.
+  * @decimator: Sensor decimation factor.
 -- 
 2.39.5
 
