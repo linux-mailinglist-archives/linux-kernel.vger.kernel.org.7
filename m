@@ -1,416 +1,83 @@
-Return-Path: <linux-kernel+bounces-857686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E8CBE7B17
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:28:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC50BBE7B12
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE56D568FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996671AA2850
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC4F2D8DD4;
-	Fri, 17 Oct 2025 09:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="suwLOruR"
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA7732ED59;
+	Fri, 17 Oct 2025 09:11:54 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7335E31691F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A4132ED20;
+	Fri, 17 Oct 2025 09:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692304; cv=none; b=PwuWTnaus7x5kIhKS7e4FrvJNIolbFjo8m10qvViU9pvuzUwa7JkhMUklzWcYFX9hNdNx7YIYtDvZomaMy0YFroo2oDSFiuDIEJhxYw3Vmebdzp/VlS7mGUi4o3fNDTIHeOPmOoKNE4mZRPudCMrnc/HfhpC5R9672zULGNo+MQ=
+	t=1760692313; cv=none; b=pFbrMR+HkgDSMhXotaXOYsh9yowYJAr7PFWu1xQdSE+QUfGXKY28M/wqGCOY2TOvwYjeiyDUj3CnWrC2D/fIs4u+otaufSYGyulUCF4gOF4SvIlgJKCRUAfVbc3WcsgtWp55jizOEVu+3OA9JX4n1Pcd8Yha3BR6mub+thhCJbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760692304; c=relaxed/simple;
-	bh=jDNmrH9oV5nkGCy3Ijf3en6eclIB3X+9GBUJsrncXfs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NRlWgf2nZ/8fl/L7TkAIs/9LoNPz5ZdySKXuxwGib2Ri8cmEEdAgWAWq17A1xyYWd+SySfvy2S8030qd4OKQDNxRKXyYhI4HMp3yolYC4V3s2rsyfelZohm2TWBHU0Z0GuQVluOa6oiCz6Z7Pv7XT9xUQ0uPRt/H9tBSdHFC9RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=suwLOruR; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63cf0df1abbso1884803d50.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760692301; x=1761297101; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/1GYl/yk6Sam9fIBoG9SiK34nTP0Coo0lGyUV9dWqdQ=;
-        b=suwLOruR+T8VipgHqllDI4GA6sjkphTAMkThe4M+/WboInG/+oF+2+XN64/jQke9Jh
-         LHoxy1IcOqKt5B3rq3h1NKFDiKj6556ioFq4SVXkl3K8M+3yDH+9b9qvgLmtRURZplQJ
-         9K0wShrVxun/MwjSxQ5wV1ntujC2wYr1MBA0Wt5UTr17DYaJknApMaIS3/PFsMB3n+uo
-         Db6J+vni4Jd/aybVVxnvTvrDaPdHwlv3q0zLkVyjdDm+032fC2aSMUm8Seh0uc15FdYk
-         Xt1EQlzeNIu+wjj0VGZLAWy7PRSryVPBsnBhgIa+DCxHdPhhY94OTIGhOHFcJw6nx8vo
-         ScEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760692301; x=1761297101;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/1GYl/yk6Sam9fIBoG9SiK34nTP0Coo0lGyUV9dWqdQ=;
-        b=itgZrB/9GXLyLyVkxIZTlfsxyrqyyLg0AM0Mwm0rDn8HWTrKtQhw91xkHgd3PahORf
-         P1ikj0Q9l8UwhI+n2iQZNbgh8whRyoJnll8MPR5mQ8MGSWIR5+P/QLZxVcHu4E/yIVNg
-         l4iUKtOrHK0U1pteytzg6NwSw4a4HmMAoWO0F5bjH4sR0/O5HdRejUXfvICwhdhwOo7H
-         g4vi0jYXaUI26jmdovtOC5BghpPCsvUhfsY3cZ8gqbOvzMPHJlJnceRyuI5QfH60BR09
-         60ZtgL4qrgN9PeTl+LcRqEGDnZi7HRzyQe0pw5A5rEEfOnJWMk7ZYqOpqHj/cWaBfvSz
-         H9Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR1EsJz0VHEBL0IW3Kgs0M0BWcPGqpEW7mIqMehHqhb1vKcKhY/U+FZ637rvbIQgjmeXOKhb3wonSFbTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7k8/WZm4Dhlp8OOrZ4wLYp42IVQYPTJZhlQoh25XOZ8FRllfH
-	kc7jD+SvturXLLw51E1zKUjWoaUTyWjtg3Y5m7D3KXE5kdtWfiniNYG6OyXU/AjzvXf0fujGyIc
-	p+yNBpuetwTG61OL+WOV1CD1P6dljOI6aH9BXE8SsWw==
-X-Gm-Gg: ASbGncudkGGYqEYZQcmg3upDpS+fAcxu/fGF5UjWL7Lka5oZU9EoU21Pf5tOzRXYQjQ
-	GAEjio5l9o8zMGS9Du60oJlO4tFVKa1GZYUYNP2F82N5Zy96ieJMbLb3vEnNhrmcKAL7Vz07iCg
-	X5QsLmOwnfpSgNNU5FSGXvBFq/hqgHL0gnFS6oHF0t2NNOtCEBw1jhSiDfcfmiJXM5pTE6m1n7p
-	qG1U23kKEeK54aNJ4d3bX7U6tBmsuxXK/6q0Wi4e2h0LstOuPTozCITwWwZL42K4jAz4WH7
-X-Google-Smtp-Source: AGHT+IFLZ4nEbY8U1Ah0P65zbEh1FjU5spwfwgSTYseWxsnhjwkZWWax3YH1ox6L+1KmT+1tTJ7UvpXLIqSJVbTZxZ0=
-X-Received: by 2002:a05:690e:4192:b0:636:1b01:63df with SMTP id
- 956f58d0204a3-63e16168e5emr2752552d50.14.1760692301408; Fri, 17 Oct 2025
- 02:11:41 -0700 (PDT)
+	s=arc-20240116; t=1760692313; c=relaxed/simple;
+	bh=uYC2wxwAVvGgTVDNiX1Ux3FSlpVHASHy/4GGzQUT5Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cRt4PRDIhv227OyTaQKvD6goSXXjQTcVd85KBnC596zgWsjbKVkUbUiaKJzp7SDVDbXVA93AePSlDRj0bPRhFFuGssttrxWnhdMw7I87P0Tes1s7HzX8wXR8fQN99ZJjLGXIstAEeIygc0vZp6QG+krK6LBG34JWa8W0mLOouyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 1922DACBCB;
+	Fri, 17 Oct 2025 09:11:49 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 266B220026;
+	Fri, 17 Oct 2025 09:11:47 +0000 (UTC)
+Date: Fri, 17 Oct 2025 05:11:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, Luis
+ Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
+ Crystal Wood <crwood@redhat.com>, Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [PATCH v2 1/3] tools/rtla: Fix --on-threshold always triggering
+Message-ID: <20251017051146.5f6a8901@batman.local.home>
+In-Reply-To: <CAP4=nvSmJOdoO8q125sdzvR7ix1oVsNobSRtWb7ADUADdzEPiw@mail.gmail.com>
+References: <20251007095341.186923-1-tglozar@redhat.com>
+	<CAP4=nvSmJOdoO8q125sdzvR7ix1oVsNobSRtWb7ADUADdzEPiw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008201920.89575-4-beanhuo@iokpp.de> <202510100521.pnAPqTFK-lkp@intel.com>
- <eccb18abe33299edde64f96e0c3de88c4183cb78.camel@gmail.com>
-In-Reply-To: <eccb18abe33299edde64f96e0c3de88c4183cb78.camel@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 17 Oct 2025 11:11:05 +0200
-X-Gm-Features: AS18NWA13YCigGWxYOYCDJShDi86eKoyREH8N9l4JY9xKwqxKwxeG5LwjHlJHpk
-Message-ID: <CAPDyKFrsMxyD5ASGmsQ8658eBR0vHOSUqJ4axuSpAXuue6d5Uw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for
- UFS devices
-To: Bean Huo <huobean@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, avri.altman@wdc.com, avri.altman@sandisk.com, 
-	bvanassche@acm.org, alim.akhtar@samsung.com, jejb@linux.ibm.com, 
-	martin.petersen@oracle.com, can.guo@oss.qualcomm.com, beanhuo@micron.com, 
-	jens.wiklander@linaro.org, oe-kbuild-all@lists.linux.dev, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 266B220026
+X-Stat-Signature: 5zu4637dqwbigrce7tz44t9zi7po7orh
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18JqUHJ7tYvqNpnB7K/4WNZqdbys4aWpzc=
+X-HE-Tag: 1760692307-524040
+X-HE-Meta: U2FsdGVkX19UZ1LNtvfFurFTE7TZxISoxjyIuoNA6zajS1JWop0iJKFqJeH8IJWnxlrT1wMI9fqLNTZls8I5RitgDAK7vpSetWeaq0Mw/6xmj0TAbu8+c3yvCpCxyHz2aNI7SnESjFjude2+whM1F+x2OXLzNdxK+eMYQQqNf6um/52eoDVXxHIv2OetnSu93qvKAzNeGKglyX/Xiy3RTslJjer7tFRsqI/qaVmN82L4HP1NY/24tUk8LByZ7+hSlVYeZmDDTxkzsUK8P1wXl4XDp1p6eZiuRqR9cEOkf46u2cTDDzmZPsKkK24U2/8mhmsyy2Pj3EvaDGmMybMuqrHxD1biSzYnkodpgTIXwPK5qybDkcHJdw==
 
-On Fri, 10 Oct 2025 at 10:19, Bean Huo <huobean@gmail.com> wrote:
->
->
-> since the patch "rpmb: move rpmb_frame struct and constants to common header"
-> has been queued in mmc git tree, I didn't add it patch in scsi tree for this
-> version:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=next
->
->
-> do I need to add this queued patch for scsi tree as well?
+On Fri, 17 Oct 2025 09:38:04 +0200
+Tomas Glozar <tglozar@redhat.com> wrote:
+> 
+> It seems that this patchset containing fixes for recently merged RTLA
+> code consolidation [1] has no further comments. Could you take it?
+> (Unless you have any comments, of course.)
+> 
+> [1] https://lore.kernel.org/linux-trace-kernel/20250907022325.243930-1-crwood@redhat.com/T/
 
-I have just sent the patch to Linus to get included in rc2. Sorry, I
-failed to send it for rc1.
+I'll take a look at it next week. I added it to my "delegate" in Patchwork:
 
-That said, if you re-spin a version of the series that is based on rc2
-on Monday that should work, I think.
+  https://patchwork.kernel.org/project/linux-trace-kernel/list/?series=1008975
 
-Kind regards
-Uffe
+So hopefully, I don't forget.
 
->
->
-> Kind regards,
-> Bean
->
->
-> On Fri, 2025-10-10 at 05:36 +0800, kernel test robot wrote:
-> > Hi Bean,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on v6.17]
-> > [also build test ERROR on next-20251009]
-> > [cannot apply to mkp-scsi/for-next jejb-scsi/for-next char-misc/char-misc-
-> > testing char-misc/char-misc-next char-misc/char-misc-linus linus/master]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:
-> > https://github.com/intel-lab-lkp/linux/commits/Bean-Huo/scsi-ufs-core-Convert-string-descriptor-format-macros-to-enum/20251009-204745
-> > base:   v6.17
-> > patch link:
-> > https://lore.kernel.org/r/20251008201920.89575-4-beanhuo%40iokpp.de
-> > patch subject: [PATCH v4 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
-> > for UFS devices
-> > config: sh-randconfig-002-20251010
-> > (https://download.01.org/0day-ci/archive/20251010/202510100521.pnAPqTFK-lkp@in
-> > tel.com/config)
-> > compiler: sh4-linux-gcc (GCC) 15.1.0
-> > reproduce (this is a W=1 build):
-> > (https://download.01.org/0day-ci/archive/20251010/202510100521.pnAPqTFK-lkp@in
-> > tel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version
-> > of
-> > the same patch/commit), kindly add following tags
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes:
-> > > https://lore.kernel.org/oe-kbuild-all/202510100521.pnAPqTFK-lkp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    In file included from include/linux/byteorder/big_endian.h:5,
-> >                     from arch/sh/include/uapi/asm/byteorder.h:8,
-> >                     from arch/sh/include/asm/bitops.h:10,
-> >                     from include/linux/bitops.h:67,
-> >                     from include/linux/log2.h:12,
-> >                     from include/asm-generic/div64.h:55,
-> >                     from ./arch/sh/include/generated/asm/div64.h:1,
-> >                     from include/linux/math.h:6,
-> >                     from include/linux/math64.h:6,
-> >                     from include/linux/time.h:6,
-> >                     from include/linux/stat.h:19,
-> >                     from include/linux/module.h:13,
-> >                     from drivers/ufs/core/ufs-rpmb.c:13:
-> >    drivers/ufs/core/ufs-rpmb.c: In function 'ufs_rpmb_route_frames':
-> >    drivers/ufs/core/ufs-rpmb.c:72:39: error: invalid use of undefined type
-> > 'struct rpmb_frame'
-> >       72 |         req_type = be16_to_cpu(frm_out->req_resp);
-> >          |                                       ^~
-> >    include/uapi/linux/byteorder/big_endian.h:43:51: note: in definition of
-> > macro '__be16_to_cpu'
-> >       43 | #define __be16_to_cpu(x) ((__force __u16)(__be16)(x))
-> >          |                                                   ^
-> >    drivers/ufs/core/ufs-rpmb.c:72:20: note: in expansion of macro
-> > 'be16_to_cpu'
-> >       72 |         req_type = be16_to_cpu(frm_out->req_resp);
-> >          |                    ^~~~~~~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:75:14: error: 'RPMB_PROGRAM_KEY' undeclared
-> > (first use in this function)
-> >       75 |         case RPMB_PROGRAM_KEY:
-> >          |              ^~~~~~~~~~~~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:75:14: note: each undeclared identifier is
-> > reported only once for each function it appears in
-> >    drivers/ufs/core/ufs-rpmb.c:76:39: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       76 |                 if (req_len != sizeof(struct rpmb_frame) ||
-> > resp_len != sizeof(struct rpmb_frame))
-> >          |                                       ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:76:80: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       76 |                 if (req_len != sizeof(struct rpmb_frame) ||
-> > resp_len != sizeof(struct rpmb_frame))
-> >
-> > |
-> >    ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:79:14: error: 'RPMB_GET_WRITE_COUNTER'
-> > undeclared (first use in this function)
-> >       79 |         case RPMB_GET_WRITE_COUNTER:
-> >          |              ^~~~~~~~~~~~~~~~~~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:80:39: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       80 |                 if (req_len != sizeof(struct rpmb_frame) ||
-> > resp_len != sizeof(struct rpmb_frame))
-> >          |                                       ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:80:80: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       80 |                 if (req_len != sizeof(struct rpmb_frame) ||
-> > resp_len != sizeof(struct rpmb_frame))
-> >
-> > |
-> >    ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:84:14: error: 'RPMB_WRITE_DATA' undeclared
-> > (first use in this function)
-> >       84 |         case RPMB_WRITE_DATA:
-> >          |              ^~~~~~~~~~~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:85:38: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       85 |                 if (req_len % sizeof(struct rpmb_frame) || resp_len
-> > != sizeof(struct rpmb_frame))
-> >          |                                      ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:85:79: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       85 |                 if (req_len % sizeof(struct rpmb_frame) || resp_len
-> > != sizeof(struct rpmb_frame))
-> >
-> > |
-> >   ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:88:14: error: 'RPMB_READ_DATA' undeclared
-> > (first use in this function); did you mean 'D_REAL_DATA'?
-> >       88 |         case RPMB_READ_DATA:
-> >          |              ^~~~~~~~~~~~~~
-> >          |              D_REAL_DATA
-> >    drivers/ufs/core/ufs-rpmb.c:89:39: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       89 |                 if (req_len != sizeof(struct rpmb_frame) ||
-> > resp_len % sizeof(struct rpmb_frame))
-> >          |                                       ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:89:79: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >       89 |                 if (req_len != sizeof(struct rpmb_frame) ||
-> > resp_len % sizeof(struct rpmb_frame))
-> >
-> > |
-> >   ^~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c:109:43: error: invalid application of 'sizeof'
-> > to incomplete type 'struct rpmb_frame'
-> >      109 |                 memset(frm_resp, 0, sizeof(*frm_resp));
-> >          |                                           ^
-> >    drivers/ufs/core/ufs-rpmb.c:110:25: error: invalid use of undefined type
-> > 'struct rpmb_frame'
-> >      110 |                 frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
-> >          |                         ^~
-> >    drivers/ufs/core/ufs-rpmb.c:110:50: error: 'RPMB_RESULT_READ' undeclared
-> > (first use in this function)
-> >      110 |                 frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
-> >          |                                                  ^~~~~~~~~~~~~~~~
-> >    include/uapi/linux/byteorder/big_endian.h:42:51: note: in definition of
-> > macro '__cpu_to_be16'
-> >       42 | #define __cpu_to_be16(x) ((__force __be16)(__u16)(x))
-> >          |                                                   ^
-> >    drivers/ufs/core/ufs-rpmb.c:110:38: note: in expansion of macro
-> > 'cpu_to_be16'
-> >      110 |                 frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
-> >          |                                      ^~~~~~~~~~~
-> >    drivers/ufs/core/ufs-rpmb.c: At top level:
-> > > > drivers/ufs/core/ufs-rpmb.c:135:5: error: redefinition of 'ufs_rpmb_probe'
-> >      135 | int ufs_rpmb_probe(struct ufs_hba *hba)
-> >          |     ^~~~~~~~~~~~~~
-> >    In file included from drivers/ufs/core/ufs-rpmb.c:22:
-> >    drivers/ufs/core/ufshcd-priv.h:424:19: note: previous definition of
-> > 'ufs_rpmb_probe' with type 'int(struct ufs_hba *)'
-> >      424 | static inline int ufs_rpmb_probe(struct ufs_hba *hba)
-> >          |                   ^~~~~~~~~~~~~~
-> > > > drivers/ufs/core/ufs-rpmb.c:229:6: error: redefinition of
-> > > > 'ufs_rpmb_remove'
-> >      229 | void ufs_rpmb_remove(struct ufs_hba *hba)
-> >          |      ^~~~~~~~~~~~~~~
-> >    drivers/ufs/core/ufshcd-priv.h:428:20: note: previous definition of
-> > 'ufs_rpmb_remove' with type 'void(struct ufs_hba *)'
-> >      428 | static inline void ufs_rpmb_remove(struct ufs_hba *hba)
-> >          |                    ^~~~~~~~~~~~~~~
-> >
-> >
-> > vim +/ufs_rpmb_probe +135 drivers/ufs/core/ufs-rpmb.c
-> >
-> >    133
-> >    134  /* UFS RPMB device registration */
-> >  > 135  int ufs_rpmb_probe(struct ufs_hba *hba)
-> >    136  {
-> >    137          struct ufs_rpmb_dev *ufs_rpmb, *it, *tmp;
-> >    138          struct rpmb_dev *rdev;
-> >    139          u8 cid[16] = { };
-> >    140          int region;
-> >    141          u8 *sn;
-> >    142          u32 cap;
-> >    143          int ret;
-> >    144
-> >    145          if (!hba->ufs_rpmb_wlun || hba->dev_info.b_advanced_rpmb_en) {
-> >    146                  dev_info(hba->dev, "Skip OP-TEE RPMB registration\n");
-> >    147                  return -ENODEV;
-> >    148          }
-> >    149
-> >    150          /* Get the UNICODE serial number data */
-> >    151          sn = hba->dev_info.serial_number;
-> >    152          if (!sn) {
-> >    153                  dev_err(hba->dev, "Serial number not available\n");
-> >    154                  return -EINVAL;
-> >    155          }
-> >    156
-> >    157          INIT_LIST_HEAD(&hba->rpmbs);
-> >    158
-> >    159          /* Copy serial number into device ID (max 15 chars + NUL). */
-> >    160          strscpy(cid, sn);
-> >    161
-> >    162          struct rpmb_descr descr = {
-> >    163                  .type = RPMB_TYPE_UFS,
-> >    164                  .route_frames = ufs_rpmb_route_frames,
-> >    165                  .dev_id_len = sizeof(cid),
-> >    166                  .reliable_wr_count = hba->dev_info.rpmb_io_size,
-> >    167          };
-> >    168
-> >    169          for (region = 0; region < ARRAY_SIZE(hba-
-> > >dev_info.rpmb_region_size); region++) {
-> >    170                  cap = hba->dev_info.rpmb_region_size[region];
-> >    171                  if (!cap)
-> >    172                          continue;
-> >    173
-> >    174                  ufs_rpmb = devm_kzalloc(hba->dev, sizeof(*ufs_rpmb),
-> > GFP_KERNEL);
-> >    175                  if (!ufs_rpmb) {
-> >    176                          ret = -ENOMEM;
-> >    177                          goto err_out;
-> >    178                  }
-> >    179
-> >    180                  ufs_rpmb->hba = hba;
-> >    181                  ufs_rpmb->dev.parent = &hba->ufs_rpmb_wlun-
-> > >sdev_gendev;
-> >    182                  ufs_rpmb->dev.bus = &ufs_rpmb_bus_type;
-> >    183                  ufs_rpmb->dev.release = ufs_rpmb_device_release;
-> >    184                  dev_set_name(&ufs_rpmb->dev, "ufs_rpmb%d", region);
-> >    185
-> >    186                  /* Set driver data BEFORE device_register */
-> >    187                  dev_set_drvdata(&ufs_rpmb->dev, ufs_rpmb);
-> >    188
-> >    189                  ret = device_register(&ufs_rpmb->dev);
-> >    190                  if (ret) {
-> >    191                          dev_err(hba->dev, "Failed to register UFS RPMB
-> > device %d\n", region);
-> >    192                          put_device(&ufs_rpmb->dev);
-> >    193                          goto err_out;
-> >    194                  }
-> >    195
-> >    196                  /* Make CID unique for this region by appending region
-> > numbe */
-> >    197                  cid[sizeof(cid) - 1] = region;
-> >    198                  descr.dev_id = cid;
-> >    199                  descr.capacity = cap;
-> >    200
-> >    201                  /* Register RPMB device */
-> >    202                  rdev = rpmb_dev_register(&ufs_rpmb->dev, &descr);
-> >    203                  if (IS_ERR(rdev)) {
-> >    204                          dev_err(hba->dev, "Failed to register UFS RPMB
-> > device.\n");
-> >    205                          device_unregister(&ufs_rpmb->dev);
-> >    206                          ret = PTR_ERR(rdev);
-> >    207                          goto err_out;
-> >    208                  }
-> >    209
-> >    210                  ufs_rpmb->rdev = rdev;
-> >    211                  ufs_rpmb->region_id = region;
-> >    212
-> >    213                  list_add_tail(&ufs_rpmb->node, &hba->rpmbs);
-> >    214
-> >    215                  dev_info(hba->dev, "UFS RPMB region %d registered
-> > (capacity=%u)\n", region, cap);
-> >    216          }
-> >    217
-> >    218          return 0;
-> >    219  err_out:
-> >    220          list_for_each_entry_safe(it, tmp, &hba->rpmbs, node) {
-> >    221                  list_del(&it->node);
-> >    222                  device_unregister(&it->dev);
-> >    223          }
-> >    224
-> >    225          return ret;
-> >    226  }
-> >    227
-> >    228  /* UFS RPMB remove handler */
-> >  > 229  void ufs_rpmb_remove(struct ufs_hba *hba)
-> >    230  {
-> >    231          struct ufs_rpmb_dev *ufs_rpmb, *tmp;
-> >    232
-> >    233          if (list_empty(&hba->rpmbs))
-> >    234                  return;
-> >    235
-> >    236          /* Remove all registered RPMB devices */
-> >    237          list_for_each_entry_safe(ufs_rpmb, tmp, &hba->rpmbs, node) {
-> >    238                  dev_info(hba->dev, "Removing UFS RPMB region %d\n",
-> > ufs_rpmb->region_id);
-> >    239                  /* Remove from list first */
-> >    240                  list_del(&ufs_rpmb->node);
-> >    241                  /* Unregister device */
-> >    242                  device_unregister(&ufs_rpmb->dev);
-> >    243          }
-> >    244
-> >    245          dev_info(hba->dev, "All UFS RPMB devices unregistered\n");
-> >    246  }
-> >    247
-> >
->
+We need to start making you the maintainer too ;-)
+
+-- Steve
 
