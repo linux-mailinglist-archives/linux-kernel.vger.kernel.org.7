@@ -1,119 +1,158 @@
-Return-Path: <linux-kernel+bounces-858269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51809BE97A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:06:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DDDBE98BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58D61AA007E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:06:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B06F5813F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DD6336ED3;
-	Fri, 17 Oct 2025 15:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3322D8795;
+	Fri, 17 Oct 2025 15:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="E8IaqNfI"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HgsDgMKr"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3031A332917;
-	Fri, 17 Oct 2025 15:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99D3328F3
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713471; cv=none; b=sy3JG0+v0m0abRMgeUzfZqc191cwz34YzGlGaD1tRPT8Q90ob/zlEeEEYV2ufmrks8vnhptKK+urgcA/IXiqlfqCz+MyM2W5nN3P+jD1rgPs1Xr584Z4U7xcI0tupJM27oPrM19ymegKQ+lZJSO87UyKEFfM5ali18Huam3bfJQ=
+	t=1760713493; cv=none; b=HtqyCrJ+A/+2Y3kZYR588X0fDN5R8rSU+BGglVXYs17piJCppG9PA6iLAdsjKVsHBOGXWzK7F5f1GALc3wbvkf4CV95UtMKu46ya0HQGuNrupojQxMYXnTvQUcz49UXgGTrbIbeoR594Lncy2K9y7dHiwFZgbFAtmUovMwnGugI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713471; c=relaxed/simple;
-	bh=h+cFtCNZjm5oVOld1YdQrQM9D2eUkV7N5lgtdPUuNcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jApvZo/WK0Tt+HLnrvLo+TBtE+Vk0kWAJ9E5/DfkJlXM2w5dAwl5vebU8oZ7K+wUjpOma5VShjnEWDSXJ7miOkerWp3vBTifOfAyxcHAQpoaY02tmY72+qX3L87ae8ScI3iDMgs023etQYkIaFBCHlv5fifTfgPV37cOk3m8KYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=E8IaqNfI; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/w51uT33nvziBRi/h4QPWG8nuY0Qq+uvl5/Q7nsmkwY=; b=E8IaqNfIzoEoDLp3v5yNSsTVAY
-	lfEkHP8X+CO8QjHl/FV+ttq2CTNvfuoIh6giq0CAhKk+mEJ4whYlSViXc6W35wb7kl4x5emmuISWV
-	82XSzMhnLhSm+LiINFhXwDTZeztF3HCn9R0QdTaU7loz8NDfIL30tKM7bIRcvhR1R56SiKOnbep7k
-	B12rALuM1IBZ96pmidIrqabdjHA42qLDK9nCKQ1957f6Et15vlU/PbSEoUGbRhsX2zgidUKQ9W3zV
-	44NqPPcc09mwPbaC/50ur8ljPobEUmjKNeRbXlLmSVRiwU8fyAOuotx3fsdR0/GhhDPfuBszVB1xE
-	XRNHqp+w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38494)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v9m04-0000000082h-33VO;
-	Fri, 17 Oct 2025 16:04:12 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v9lzu-000000004O7-1HP8;
-	Fri, 17 Oct 2025 16:04:02 +0100
-Date: Fri, 17 Oct 2025 16:04:02 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Yao Zi <ziyao@disroot.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Frank <Frank.Sae@motor-comm.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
-	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] net: stmmac: Add glue driver for Motorcomm
- YT6801 ethernet controller
-Message-ID: <aPJa4u2OWhVGs58k@shell.armlinux.org.uk>
-References: <20251014164746.50696-2-ziyao@disroot.org>
- <20251014164746.50696-5-ziyao@disroot.org>
- <f1de6600-4de9-4914-95e6-8cdb3481e364@lunn.ch>
- <aPJMsNKwBYyrr-W-@pie>
- <81124574-48ab-4297-9a74-bba7df68b973@lunn.ch>
+	s=arc-20240116; t=1760713493; c=relaxed/simple;
+	bh=hraWcx9XM5C+NmD0sradBIZcS7r7jNi6BJAgJ8CCx/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nwQuKGGPmb6+JztSIQuvAiIf3CyHuhTJ3A0occ1EyXTrE+On9lXmeSDhOlv9FjCKXGhbnIV8vH9AuPwQWS3CHlwKT+lyE7GbfEhVx8pnDjjzhDyXlk00ENYUEFINjjwNYbBSzncW1VBlVf0MHUuU9U9mzNYBhLrPYOU+mOX4sKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HgsDgMKr; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ab724372-8efa-4642-8240-2f28d090d1c0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760713488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ipsUjbeu91dDs7Ml8KfMCH/cB+JE6gc+gafMQFlHgY=;
+	b=HgsDgMKryhNnwMN/ITSI0mJHUPe1aoHFEettJVOvu5MMft480FW6TcOIQaa72BlvM81e4i
+	BRsSKwH5txiZWj5M8cFMRqLtB0rcB4PJCSbMT6s6xtEvdawatH5R4wtdnpJiZ+qC5IIDJI
+	GqkU/Enizl55v/oaRojGF1O2kM4n6ps=
+Date: Fri, 17 Oct 2025 23:04:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81124574-48ab-4297-9a74-bba7df68b973@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: guard is_zero_pfn() calls
+ with pte_present()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ baohua@kernel.org, ioworker0@gmail.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Wei Yang <richard.weiyang@gmail.com>
+References: <20251017093847.36436-1-lance.yang@linux.dev>
+ <1937040d-5e70-4d9a-b77a-261bf0f4994e@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <1937040d-5e70-4d9a-b77a-261bf0f4994e@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 17, 2025 at 04:56:23PM +0200, Andrew Lunn wrote:
-> > Though it's still unclear the exact effect of the bit on the PHY since
-> > there's no public documentation, it's essential to deassert it in MAC
-> > code before registering and scanning the MDIO bus, or we could even not
-> > probe the PHY correctly.
-> > 
-> > For the motorcomm_reset_phy() performed in probe function, it happens
-> > before the registration of MDIO bus, and the PHY isn't probed yet, thus
-> > I think it should be okay.
+
+
+On 2025/10/17 22:51, David Hildenbrand wrote:
+> On 17.10.25 11:38, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> A non-present entry, like a swap PTE, contains completely different data
+>> (swap type and offset). pte_pfn() doesn't know this, so if we feed it a
+>> non-present entry, it will spit out a junk PFN.
+>>
+>> What if that junk PFN happens to match the zeropage's PFN by sheer
+>> chance? While really unlikely, this would be really bad if it did.
+>>
+>> So, let's fix this potential bug by ensuring all calls to is_zero_pfn()
+>> in khugepaged.c are properly guarded by a pte_present() check.
+>>
+>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Reviewed-by: Dev Jain <dev.jain@arm.com>
+>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> ---
+>> Applies against commit 0f22abd9096e in mm-new.
+>>
+>> v1 -> v2:
+>>   - Collect Reviewed-by from Dev, Wei and Baolin - thanks!
+>>   - Reduce a level of indentation (per Dev)
+>>   - https://lore.kernel.org/linux-mm/20251016033643.10848-1- 
+>> lance.yang@linux.dev/
+>>
+>>   mm/khugepaged.c | 29 ++++++++++++++++-------------
+>>   1 file changed, 16 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index d635d821f611..648d9335de00 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -516,7 +516,7 @@ static void release_pte_pages(pte_t *pte, pte_t 
+>> *_pte,
+>>           pte_t pteval = ptep_get(_pte);
+>>           unsigned long pfn;
+>> -        if (pte_none(pteval))
+>> +        if (!pte_present(pteval))
+>>               continue;
 > 
-> Since it resets more than the PHY, it probably should have a different
-> name, and maybe a comment describing what is actually resets.
+> 
+> Isn't it rather that if we would ever get a !pte_none() && ! 
+> pte_present() here, something would be deeply flawed?
+> 
+> I'd much rather spell that out and do here
+> 
+> VM_WARN_ON_ONCE(!pte_present(pteval));
+> 
+> keeping the original check.
 
-I want to back Andrew's comment here up very strongly.
+Right, it's much better to be loud with a VM_WARN if we see
+a weird PTE, as Dev also suggested :)
 
-You will not be the only one looking at this code. There are other
-people (e.g. me) who are looking at e.g. the core stmmac code, making
-changes to it, which impact the platform glue as well.
+> 
+> 
+>>           pfn = pte_pfn(pteval);
+>>           if (is_zero_pfn(pfn))
+>> @@ -690,17 +690,18 @@ static void 
+>> __collapse_huge_page_copy_succeeded(pte_t *pte,
+>>            address += nr_ptes * PAGE_SIZE) {
+>>           nr_ptes = 1;
+>>           pteval = ptep_get(_pte);
+>> -        if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>> +        if (pte_none(pteval) ||
+>> +            (pte_present(pteval) && is_zero_pfn(pte_pfn(pteval)))) {
+> 
+> This now seems to be a common pattern now :)
+> 
+> 
+> Should we have a simple helper
+> 
+> static inline void pte_none_or_zero(pte_t pte)
+> {
+>      if (pte_none(pte))
+>          return true;
+>      return pte_present(pte) && is_zero_pfn(pte_pfn(pte)
+> }
+> 
+> initially maybe local to this file?
 
-The platform glue needs to be understandable to those of us who don't
-have knowledge of your platform, so that we can make sense of it and
-know what it's actually doing, and thus be able to adapt it when we
-push out changes to the core that affect platform glue.
+And yeah, that logic is crying out for a new helper.
 
-Sadly, it seems 99.9% of platform glue is "dump it into the kernel
-and run away".
+Thanks!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
