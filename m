@@ -1,121 +1,243 @@
-Return-Path: <linux-kernel+bounces-858612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB61BEB484
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:53:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4B9BEB48A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A4A74251A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C831AA7FD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C44330317;
-	Fri, 17 Oct 2025 18:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9kjYzWk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2983081AD;
-	Fri, 17 Oct 2025 18:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F72D3314AE;
+	Fri, 17 Oct 2025 18:53:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E99E2877C2;
+	Fri, 17 Oct 2025 18:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760727168; cv=none; b=bjtfrTlv0cz5wjAxApqS9UT9T79218YVomFfdfq99z20lVLyz/no/AUl8Y7cDDUyU247mEA77/S3sSPTwz8OVjIV7E0y5Ac3pWxJoVic+HqMKFx3Rsca5qwRO93Eou45VlnBhJ3ADRxawrdEqem250LIn4i4KbArDbFW0huZczA=
+	t=1760727232; cv=none; b=HSRJDYOFbP2/dWBxe64elwsLXOPS+Q7jnjlK2/Go+TtpcrmPSQYgRJqtizy9LDc1gEvXf7zG5HN7EZtEPHMQiRKEdkPhCFFKf04NePkBHscrS3zdIbDFSfyIsXFQ5nGJ7rZeS/MJucFF6a2mbUKYXjaLUIUlRKpAvizCaWOctZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760727168; c=relaxed/simple;
-	bh=zaQR5SGMpqDsyH147zVmilmIxBOcceMdtiFddd0hMEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=s56L1FmpfncGMG3NQ5bAxCG8cn413Jzr09tyA6JFIMxFTpy17Fwx7yWaqiR8BP14bzx2nILzUIMpISrAdHizvQrL1v3GlJwgFrDJgEHdt486Ybcm0g57LLpg/Z5PdyonZK933lXzKE97EKNvdwmMyAc8QOEqwDKviGUq8P9LIhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9kjYzWk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB1DC4CEE7;
-	Fri, 17 Oct 2025 18:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760727168;
-	bh=zaQR5SGMpqDsyH147zVmilmIxBOcceMdtiFddd0hMEs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=C9kjYzWk4g2jXhmKqdvJnDt3sjR3zjl819WBuVw4VUdTogqYT6mblLUKZS7xi+2Eu
-	 pbRUyarG+EZo9fd5QAHepLdjSkv9KbE7snW92jl0x5iccOoGV4iJu/kETDok3TOY8e
-	 yWRUEaxmOLoPliNH2iG66dMzFcAr2WEaImiAHtGBJRbNqI98n7n7qcH3UiTxeJOIHv
-	 bI1cWj8nZ6zo3Rl+NOL/tzXMnt01MFYw3auBbXfLJEJtiHsysNtHjw8koJHUwwlSnq
-	 eYZkUo5JzkZ8Rm10AHKsBRD1qblPMTQFS8IsZF+EyLuiLOSSOKaBjgBvp/i4V5Pgnw
-	 Aor91GF8osVTA==
-Date: Fri, 17 Oct 2025 13:52:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: ilpo.jarvinen@linux.intel.com, bhelgaas@google.com, kw@linux.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	lucas.demarchi@intel.com, rafael.j.wysocki@intel.com,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-Message-ID: <20251017185246.GA1040948@bhelgaas>
+	s=arc-20240116; t=1760727232; c=relaxed/simple;
+	bh=PKXdSSCA3h6c9divuIMc0sHjO0iXWA3XidbmTDbmvqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QOhTolRM6mpSbgCCgF32BSOR/ZnvFUTPmIabYzht9IOS0vCPtQQ91xTi+TX0ru/m0C0/dJBPZ6dzsDIynShj48LRnPtenQ0PEjceNG8efCW7FbZtjOqEO1nMLXH5YH017aBrRmskeTmx/iMvl1YnYl8USYS/iN7DMjyxfC/Mk0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99EF51515;
+	Fri, 17 Oct 2025 11:53:40 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 709343F66E;
+	Fri, 17 Oct 2025 11:53:43 -0700 (PDT)
+Message-ID: <ad7c715d-227b-4f49-8f8b-fe4763c1cef6@arm.com>
+Date: Fri, 17 Oct 2025 19:53:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b144ae1b-8573-4a71-9eaa-d38f38e83f4a@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/29] arm_mpam: Add MPAM MSC register layout
+ definitions
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-10-james.morse@arm.com>
+ <20250911160031.000026c7@huawei.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <20250911160031.000026c7@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 11:52:58PM +0530, Bhanu Seshu Kumar Valluri wrote:
-> Hi,
+Hi Jonathan,
+
+On 11/09/2025 16:00, Jonathan Cameron wrote:
+> On Wed, 10 Sep 2025 20:42:49 +0000
+> James Morse <james.morse@arm.com> wrote:
 > 
-> I want to report that this PATCH also break PCI RC port on TI-AM64-EVM.
+>> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
+>> (MSCs) with an identity/configuration page.
+>>
+>> Add the definitions for these registers as offset within the page(s).
+
+> I'm not sure why some things ended up in this patch and others didn't.
+> MPAMCFG_EN for example isn't here.
+
+Things were added once I'd already written this, and I only updated it with 'new' features
+where they were actually useful for feature parity with resctrl/Intel-RDT.
+
+
+> If doing a separate 'register defines' patch I'd do the lot as of
+> the current spec.
+
+I've not done this because its a time sink for no benefit. The kernel doesn't use any of
+the 'missing' features. While I agree it would be nice if the list were up to date - it
+will become stale pretty quickly, so its not an achievable goal...
+
+
 > 
-> I did git bisect and it pointed to the a43ac325c7cb ("PCI: Set up bridge resources earlier")
+>>
+>> Link: https://developer.arm.com/documentation/ihi0099/latest/
 > 
-> Happy to help if any testing or logs are required.
-
-Thanks for the report!  Can you test this patch?
-
-  https://patch.msgid.link/20251014163602.17138-1-ilpo.jarvinen@linux.intel.com
-
-That patch is queued up as
-https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=469276c06aff
-and should appear in v6.18-rc2 on Sunday if all goes well.
-
-If that doesn't work, let us know and we'll debug this further.
-
-> echo 1 > /sys/bus/pci/rescan
-> [   37.170389] pci 0000:01:00.0: [104c:b010] type 00 class 0xff0000 PCIe Endpoint
-> [   37.177781] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x0000ffff]
-> [   37.183808] pci 0000:01:00.0: BAR 1 [mem 0x00000000-0x000001ff]
-> [   37.189843] pci 0000:01:00.0: BAR 2 [mem 0x00000000-0x000003ff]
-> [   37.195802] pci 0000:01:00.0: BAR 3 [mem 0x00000000-0x00003fff]
-> [   37.201768] pci 0000:01:00.0: BAR 4 [mem 0x00000000-0x0001ffff]
-> [   37.207715] pci 0000:01:00.0: BAR 5 [mem 0x00000000-0x000fffff]
-> [   37.214040] pci 0000:01:00.0: supports D1
-> [   37.218083] pci 0000:01:00.0: PME# supported from D0 D1 D3hot
-> [   37.231890] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: assigned
-> [   37.242890] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: can't assign; no space
-> [   37.251216] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: failed to assign
-> [   37.258309] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: can't assign; no space
-> [   37.265851] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: failed to assign
-> [   37.272896] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: can't assign; no space
-> [   37.280439] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: failed to assign
-> [   37.287459] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: can't assign; no space
-> [   37.294986] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: failed to assign
-> [   37.302011] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: can't assign; no space
-> [   37.309536] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: failed to assign
-> [   37.316595] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: releasing
-> [   37.323541] pci 0000:01:00.0: BAR 5 [mem 0x68100000-0x681fffff]: assigned
-> [   37.330400] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: can't assign; no space
-> [   37.337956] pci 0000:01:00.0: BAR 4 [mem size 0x00020000]: failed to assign
-> [   37.344960] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: can't assign; no space
-> [   37.352550] pci 0000:01:00.0: BAR 0 [mem size 0x00010000]: failed to assign
-> [   37.359578] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: can't assign; no space
-> [   37.367152] pci 0000:01:00.0: BAR 3 [mem size 0x00004000]: failed to assign
-> [   37.374192] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: can't assign; no space
-> [   37.381709] pci 0000:01:00.0: BAR 2 [mem size 0x00000400]: failed to assign
-> [   37.388720] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: can't assign; no space
-> [   37.396246] pci 0000:01:00.0: BAR 1 [mem size 0x00000200]: failed to assign
-> [   37.403795] pcieport 0000:00:00.0: of_irq_parse_pci: failed with rc=-22
-> [   37.410513] pci-endpoint-test 0000:01:00.0: enabling device (0000 -> 0002)
-> [   37.417796] pci-endpoint-test 0000:01:00.0: Cannot perform PCI test without BAR0
+> Maybe link a specific version? I'm not sure if I'm looking at is the same one
+> as you were when you wrote this. That will become worse over time.  I'm definitely
+> seeing extra bits in a number of registers.
 > 
+> I'm lazy enough not to go see if the cover letter calls out a version.
 > 
-> Regards,
-> Bhanu Seshu Kumar Valluri
+> Anyhow, various small things on ordering that would have made this easier to review
+> against the spec.
+
+
+
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+>> index 02e9576ece6b..109f03df46c2 100644
+>> --- a/drivers/resctrl/mpam_internal.h
+>> +++ b/drivers/resctrl/mpam_internal.h
+>> @@ -152,4 +152,271 @@ extern struct list_head mpam_classes;
+>>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>>  				   cpumask_t *affinity);
+>>  
+>> +/*
+>> + * MPAM MSCs have the following register layout. See:
+>> + * Arm Memory System Resource Partitioning and Monitoring (MPAM) System
+>> + * Component Specification.
+>> + * https://developer.arm.com/documentation/ihi0099/latest/
+> 
+> Maybe be friendly and give some section number references.
+
+Heh, linking to the 'latest' means those will change...
+
+
+> 
+>> + */
+>> +#define MPAM_ARCHITECTURE_V1    0x10
+>> +
+>> +/* Memory mapped control pages: */
+>> +/* ID Register offsets in the memory mapped page */
+>> +#define MPAMF_IDR		0x0000  /* features id register */
+>> +#define MPAMF_MSMON_IDR		0x0080  /* performance monitoring features */
+> 
+> Any reason this one is out of order with respect to the addresses?
+
+No - I must have been going mad!
+
+
+>> +#define MPAMF_IMPL_IDR		0x0028  /* imp-def partitioning */
+>> +#define MPAMF_CPOR_IDR		0x0030  /* cache-portion partitioning */
+>> +#define MPAMF_CCAP_IDR		0x0038  /* cache-capacity partitioning */
+>> +#define MPAMF_MBW_IDR		0x0040  /* mem-bw partitioning */
+>> +#define MPAMF_PRI_IDR		0x0048  /* priority partitioning */
+>> +#define MPAMF_CSUMON_IDR	0x0088  /* cache-usage monitor */
+>> +#define MPAMF_MBWUMON_IDR	0x0090  /* mem-bw usage monitor */
+>> +#define MPAMF_PARTID_NRW_IDR	0x0050  /* partid-narrowing */
+>> +#define MPAMF_IIDR		0x0018  /* implementer id register */
+>> +#define MPAMF_AIDR		0x0020  /* architectural id register */
+> 
+> These 3 as well. I'm not sure what the ordering is conveying but probably easier to just
+> to put them in address order.
+> 
+> There are some other cases of this below.
+
+... I reckon the ones in funny places were the ones that the original FVP supported
+i.e. only the mandatory ones, which wasn't particularly useful.
+
+
+
+>> +/* MPAMF_IIDR - MPAM implementation ID register */
+>> +#define MPAMF_IIDR_PRODUCTID	GENMASK(31, 20)
+>> +#define MPAMF_IIDR_PRODUCTID_SHIFT	20
+>> +#define MPAMF_IIDR_VARIANT	GENMASK(19, 16)
+>> +#define MPAMF_IIDR_VARIANT_SHIFT	16
+>> +#define MPAMF_IIDR_REVISON	GENMASK(15, 12)
+>> +#define MPAMF_IIDR_REVISON_SHIFT	12
+>> +#define MPAMF_IIDR_IMPLEMENTER	GENMASK(11, 0)
+>> +#define MPAMF_IIDR_IMPLEMENTER_SHIFT	0
+
+> I'd expect to see FIELD_GET/ PREP rather than use of shifts. Can we drop the defines?
+
+Sure,
+
+> Pick an order for reg field definitions. Until here they've been low to high.
+
+I think I've got that more consistent now...
+
+
+>> +/* Error conditions in accessing memory mapped registers */
+>> +#define MPAM_ERRCODE_NONE			0
+>> +#define MPAM_ERRCODE_PARTID_SEL_RANGE		1
+>> +#define MPAM_ERRCODE_REQ_PARTID_RANGE		2
+>> +#define MPAM_ERRCODE_MSMONCFG_ID_RANGE		3
+>> +#define MPAM_ERRCODE_REQ_PMG_RANGE		4
+>> +#define MPAM_ERRCODE_MONITOR_RANGE		5
+>> +#define MPAM_ERRCODE_INTPARTID_RANGE		6
+>> +#define MPAM_ERRCODE_UNEXPECTED_INTERNAL	7
+> 
+> Seems there are more in latest spec..
+
+Yup, it the frequent game of spot-the-difference.
+I've updated that as part of your other feedback.
+
+
+>> +
+>> +/*
+>> + * MSMON_CFG_CSU_CTL - Memory system performance monitor configure cache storage
+>> + *                    usage monitor control register
+>> + * MSMON_CFG_MBWU_CTL - Memory system performance monitor configure memory
+>> + *                     bandwidth usage monitor control register
+>> + */
+>> +#define MSMON_CFG_x_CTL_TYPE			GENMASK(7, 0)
+>> +#define MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L	BIT(15)
+>> +#define MSMON_CFG_x_CTL_MATCH_PARTID		BIT(16)
+>> +#define MSMON_CFG_x_CTL_MATCH_PMG		BIT(17)
+>> +#define MSMON_CFG_x_CTL_SCLEN			BIT(19)
+
+> On the spec I'm looking at this is reserved in CSU_CTL
+
+It's only defined for MSMON: "Value scaling enable",. I'll move it after the
+MSMON_CFG_MBWU_CTL_TYPE_MBWU define below.
+
+
+>> +#define MSMON_CFG_x_CTL_SUBTYPE			GENMASK(22, 20)
+>> +#define MSMON_CFG_x_CTL_OFLOW_FRZ		BIT(24)
+>> +#define MSMON_CFG_x_CTL_OFLOW_INTR		BIT(25)
+>> +#define MSMON_CFG_x_CTL_OFLOW_STATUS		BIT(26)
+>> +#define MSMON_CFG_x_CTL_CAPT_RESET		BIT(27)
+>> +#define MSMON_CFG_x_CTL_CAPT_EVNT		GENMASK(30, 28)
+>> +#define MSMON_CFG_x_CTL_EN			BIT(31)
+
+> I guess this combining of definitions will show some advante in common code
+> later but right now it seems confusing given not all bits are present in both.
+
+When I started these were the same!
+
+It is dealt with in common code, I don't think any of the bits that are different are
+used by the driver.
+
+
+
+Thanks,
+
+James
 
