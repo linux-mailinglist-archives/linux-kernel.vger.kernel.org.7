@@ -1,115 +1,123 @@
-Return-Path: <linux-kernel+bounces-858332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20EBBEA1E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AD3BEA240
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A4A1895503
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD311AE2C00
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2A0336EC0;
-	Fri, 17 Oct 2025 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881AA332908;
+	Fri, 17 Oct 2025 15:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE9ky3Jo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMluMiL5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AF2332905;
-	Fri, 17 Oct 2025 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00D6330B28;
+	Fri, 17 Oct 2025 15:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715625; cv=none; b=B8WI3UgXudfo7rEUngvKmvsvFv52QpNzOHCkgd9cEjsKfxlAK3zpE9hK6NqoQkqGjzFeE77rE/LM9JHen6pZz08w74HnzOAKPeW/Uw66FUVxKVikw4FuBb1bRgPY6xlZCMUBUFmJmQK4+bRAAb4DET39SqZtvXzbz0d4/tJbVAk=
+	t=1760715737; cv=none; b=cekGUNEalaSOoXxz6zITPw1Dxs3TDF75ge+iT99j/Jiil98jO6f+cJC+JtrZocjRe4lIgNTaIgYfd20dq3GUjnl/YRYIHiPW9XnaiUmIY6sJlCzFuNhBFdMHwVhm3xgp7bJE/MyCAbfwWW5eUVNK48bVWdeG1fLmhLNmyjy6mFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715625; c=relaxed/simple;
-	bh=tIBihhto3yHLjwCtkr7qZV1vif9bLZjjrf1fWoABO2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y4ZcBsueCSOvkjbIlJX29LHEGsG5F1OEFT+KOPJPBRbEEvfCL4LBc/1C1RkCJ6ObMmOOC3mGe9UqhbsNzcBNQBAwrFtW3oQmsdDcsngvKr7gu3ZL0mIC4iwM/zAZb8OlHfphaMJLClu4vKPJpuWPror7htTekc8aI7qlIzsA5MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE9ky3Jo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3103C4CEFE;
-	Fri, 17 Oct 2025 15:40:23 +0000 (UTC)
+	s=arc-20240116; t=1760715737; c=relaxed/simple;
+	bh=hH7dF9cQAKchmw5u3mniBQjr14Sz8+exCeFEIusrxh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RN6xWtLr7qlhqZh9Y95LkDEfgpUMBpsM9NwTbbaOKmjEc50t8wP3S0jlcKKne1btlzH4jj2NmBGgXJ+p194xkEd8msXKZcnMr3rK9+ekB/QCA0d1JX0sP0H/Uvod19RtbHa2RehKl9pdCmyU+GGN7wqdUGhorO04bf348RpkfEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMluMiL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1137CC113D0;
+	Fri, 17 Oct 2025 15:42:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760715624;
-	bh=tIBihhto3yHLjwCtkr7qZV1vif9bLZjjrf1fWoABO2o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NE9ky3Jo9NBq8B11m0/dr+zVBACQCkA0BR45t8ECLH0jrEoDwgmksvpGjSZWuzTgI
-	 nK5762ee42gfrrGGBl93EmOiwzW4AI7z5d6C+iEosL6Get7J3dJhIFJODA6VHtRNWJ
-	 Va498OpPMOMxoSG3Cycb1mlQXKaW6gxBrmA1KaEGCRh3vz0+tj44dOnbLe9q2V1eQx
-	 UKIqsnsxIkVd+Rw2C+R/kjVIdOrSufCBks8eFEURaoky2vJGxghl1ohuQ1ffuxXMpy
-	 79V4lgMduBgq1TOvGlLWeLUfN6Ahlwo/OmRpaT4hexC6hMjj0I/IRX1L9kg4ZTkBlE
-	 VNyGaLI4iLbiw==
-Message-ID: <a729eeda-22d8-4f3e-bb6b-0cd2f3a06d2a@kernel.org>
-Date: Sat, 18 Oct 2025 00:40:22 +0900
+	s=k20201202; t=1760715737;
+	bh=hH7dF9cQAKchmw5u3mniBQjr14Sz8+exCeFEIusrxh4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KMluMiL5QoCe7NxG9pTDm3lGLS/3U5xqQFUCnxWm0DoLLTuuUJadY6q0V3lhTUjsO
+	 gPBwjhIfAHmmhqf4CHufb+JXCBYBAmyym6CFW6SRyBDtiWwqU07+r3jWcY+Xt/tUhd
+	 YOdzbe45XsTy7ei8kWhzxU4stCxVOpssx9WHvH1veZoMjle8Ay3qD23l3qd7N/d7jf
+	 prACDTrxQAOnWMfoiDNG1gFHA1a7RzyCsz/zqzyA2tczpnjOQRqOJqEemnL1vOrcpF
+	 NL1ADDkF/ZRQsFuYew43aqmuVAM80DDEEmzBwfZUuTL+Ujniwg5GqEtdP+mVDWT/IO
+	 R3Y1XtUbvlHTA==
+Date: Fri, 17 Oct 2025 16:42:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Peter Wang <peter.wang@mediatek.com>,
+	Stanley Jhu <chu.stanley@gmail.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	kernel@collabora.com, linux-scsi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: ufs: mediatek,ufs: Add mt8196-ufshci
+ variant
+Message-ID: <20251017-remnant-spud-a2a21c2385e6@spud>
+References: <20251016-mt8196-ufs-v2-0-c373834c4e7a@collabora.com>
+ <20251016-mt8196-ufs-v2-1-c373834c4e7a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
- =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
- <20251017-spectacular-xanthic-swan-9427e8-mkl@pengutronix.de>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20251017-spectacular-xanthic-swan-9427e8-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 17/10/2025 at 22:53, Marc Kleine-Budde wrote:
-> On 13.10.2025 20:01:22, Vincent Mailhol wrote:
->> Following all the refactoring on the CAN netlink done in series [1],
->> [2] and [3], this is now time to finally introduce the CAN XL netlink
->> interface.
->>
->> Similarly to how CAN FD reuses the bittiming logic of Classical CAN,
->> CAN XL also reuses the entirety of CAN FD features, and, on top of
->> that, adds new features which are specific to CAN XL.
->>
->> Patch #1 adds a check in can_dev_dropped_skb() to drop CAN FD frames
->> when CAN FD is turned off.
->>
->> Patch #2 adds CAN_CTRLMODE_RESTRICTED. Note that contrary to the other
->> CAN_CTRL_MODE_XL_* that are introduced in the later patches, this
->> control mode is not specific to CAN XL. The nuance is that because
->> this restricted mode was only added in ISO 11898-1:2024, it is made
->> mandatory for CAN XL devices but optional for other protocols. This is
->> why this patch is added as a preparation before introducing the core
->> CAN XL logic.
-> 
-> What about merging patches 1+2 now?
-
-If patch 1 had to be squashed, it should probably be in patch 3
-"can: netlink: add initial CAN XL support". The MTU workaround as
-introduced in patch 1 does not share any of the logic of the
-CAN_CTRLMODE_RESTRICTED as introduced in patch 2. Patch 1 is really
-just a preparation for CAN XL. You could remove patch 2 from the
-series and it will still work (aside from missing one of ISO mandatory
-features). Remove patch 1, and the thing breaks apart because it is
-required by patch 3.
-
-If I were to squash 1 and 2, I am not sure how I would describe those
-two different changes in a single patch message.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GINMMiGuzGFK5NYP"
+Content-Disposition: inline
+In-Reply-To: <20251016-mt8196-ufs-v2-1-c373834c4e7a@collabora.com>
 
 
-Yours sincerely,
-Vincent Mailhol
+--GINMMiGuzGFK5NYP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 16, 2025 at 02:06:43PM +0200, Nicolas Frattaroli wrote:
+> The MediaTek MT8196 SoC contains the same UFS host controller interface
+> hardware as the MT8195 SoC. Add it as a variant of MT8195, and extend
+> its list of allowed clocks, as well as give it the previously absent
+> resets property.
+>=20
+> Also add examples for both MT8195 and the new MT8196, so that the
+> binding can be verified against examples for these two variants.
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
+I provided a review on v1 of this series yesterday, although I think
+after this v2 was posted.
+https://lore.kernel.org/all/20251016-kettle-clobber-2558d9c709de@spud/
+I believe all of my comments still apply.
+
+pw-bot: changes-requested
+
+Thanks,
+Conor.
+
+--GINMMiGuzGFK5NYP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPJjzwAKCRB4tDGHoIJi
+0nLnAQCslCfZeTa+X+DOAoIqdM8SHSTrhRFTAANagkMF0n4O0wD9GLihTxkbKovz
+a0mrB8+Q494nk9NX6yCVg7GZYid3yQE=
+=FIdn
+-----END PGP SIGNATURE-----
+
+--GINMMiGuzGFK5NYP--
 
