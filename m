@@ -1,175 +1,154 @@
-Return-Path: <linux-kernel+bounces-857773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DB0BE7E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE82ABE7E83
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCC05548237
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF982620BF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C04F2DC357;
-	Fri, 17 Oct 2025 09:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37562E22AB;
+	Fri, 17 Oct 2025 09:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVd+gr+2"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSMy7Vz9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04192DC34E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A54B2DE700
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760694835; cv=none; b=NS7gdF1HbvAs7suBnGay6CLnV3EzPqciXgUbWxeDS6JH918KF1757Qpac12Y/OxoWn7h4J4BXyCVPiNhfB45oaSzFJo5F2C4Tmp8hBwt5rehIuplmf6K//a634y4dt6m/gOpLknyL15qYmLMS0nVurZ5gnfwBhLLULkHzm1gD70=
+	t=1760694844; cv=none; b=dK458e6koeQq3KGm+jwtOC0U2NTwp8fJwPtwUghJCV38DwkNef25tuEdL4DCwE44dCXwVVIJ95fgZH6UODhgER95RylUOqJWRPo64iGRq3H6n6w6hNfAB9K2XFz9Xtxx4ECddI7O08pFhmwtAlWoZmH4l6YxVySA6/HQJYLBh18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760694835; c=relaxed/simple;
-	bh=SJKbAe0vpzUNEkwkegpehh3VBYpD3L5PhpvDwlgAtBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T8CfFL/TmVkbsmGHbm1J23zFkig92dsrpm5Wr/AP4hnQiuOr4r49VvbuB5U8q5KW3EonzlhuE/O8Pp2wouywDrdV9LLMiu9XTaH5r8g09hlJApmPzOGNLoaQOLKboZhydxjUH5l5g2sNODMGM2kT8Z+GySoh8WvQemCgizLX1n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVd+gr+2; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-33d463e79ddso94878a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760694833; x=1761299633; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kt/XeVFqD6Rzbs61qBcoYplbjOAGUFl2Umd5p/S7zyw=;
-        b=GVd+gr+2/vWT1j+L3T3lAhPo6+MXz2jjZIZm50qDrj4kiELUy43i2LlDxDgUAduKot
-         xSFvy852UL6+CowZLHjHDZhKuxlt4OtO+WNF/H0JYxAF7qZWLEjHa6VQtZ8hiIRjWaMh
-         uzuWacR9po9EOCsngPVu/rIZ/k2++xdE21EbTu+k43IiX/zsxv4REXtzFtHlDSD1eQI8
-         utuVZARIhrxdOyli4MwOPx38BD3gLYl+cKTGHA3Dh1f9FFKWEQ5YcLLmKewPa/xqq2ee
-         Jo6um8PfEhVWS4FsKymeq40qaO5yW1cYq11WMP4ibtEP8vrh5AeYK3dZCckMgIqETsTH
-         mAtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760694833; x=1761299633;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kt/XeVFqD6Rzbs61qBcoYplbjOAGUFl2Umd5p/S7zyw=;
-        b=gJ9iWbLZIKzWUSfQvooLC9vFNduHFdWLGg79Eqskdzs0mzZnkVTLIHLN8shEV3te7l
-         FxqibbtGKzHQrUaZTKWj9foeEjArUb+jvTD+zEz4YHLkydvTui3m8eNHRCi4Jw5aE9g8
-         jpzTWpFCZXqVU9wNyol40qhva32jyRnfakk7seQDZK8g+H9WU7hGRMy7WV5IHXg5Qbk9
-         aXTbLLZD9TpSj9/oElb2C3X1b7YFUbQHtjN2ss34reYW1lDCeiaX8jBbjzZtvfD6k7kO
-         TNONRlIkwRWZQVal0lbIZJfy1djv8QKPOdsdI2sGMwHN5DfqcThMA9EgI7MnF3I5V6l8
-         kznQ==
-X-Gm-Message-State: AOJu0YxzeVxWC+lN408zOEQl/GONxDtuqix+H5hht5g+NuHiLn1ZLb77
-	HHn/HBC3xNu/SvB9pPrp/bTMhJYDTRTcPV19dJ4+GQWnezPq5jhkro2o
-X-Gm-Gg: ASbGnctUhokS3gdIDUYA7jJqZptJgHvgDRdSNXEJHa/pYlndb2zoK+06p/m+wdwaR6t
-	d2gdfrJthxbd2Pkt7TpC8NW4yy0y18JUWdbxO3Rbvy+pSv4/no2L8UesjddKB6ZSdiBXU+VlIiG
-	jkjPUAGn7Eq9k9Moqzqylah71mAo3P9V7sDoF3bLkBLrtqlwLbxzvYjKKXio6kpkXxYUzYzCZ5/
-	VNMsBwao0vSBd7y0he5wvv+V/TfJaQKlJ0w270IJeyiKu3xhVmaSAlEai4UYMbAE9n7bRPI9Qse
-	RLZ0K/DTMIszAJpjTvz0G/jKJ+lEqSAsM9qgFhLgFkHee64vGBINNrdXXFqKaHjsNTa67X1ssCm
-	0KeO9D991lKnbrO7OSPl/bbKdp9L+HNUcPOv89eHtOiVdklwCvVidh5fUhwkPJAiCYoZoLn4JJs
-	0KOxE0fCO8Apx+z8hno3EmIjnrv8WN
-X-Google-Smtp-Source: AGHT+IESLqUj5tacW+LOLrtZkLLHSEgVkkYATroByIesNP3cZS7zmn/U3CpO/pPdJ85Sq056ceamOA==
-X-Received: by 2002:a17:90b:2ec7:b0:33b:6650:57c3 with SMTP id 98e67ed59e1d1-33bcf8ec60dmr3394842a91.21.1760694832944;
-        Fri, 17 Oct 2025 02:53:52 -0700 (PDT)
-Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bd79b2fdesm2371163a91.2.2025.10.17.02.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 02:53:52 -0700 (PDT)
-From: Hongru Zhang <zhanghongru06@gmail.com>
-X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
-To: paul@paul-moore.com
-Cc: linux-kernel@vger.kernel.org,
-	omosnace@redhat.com,
-	selinux@vger.kernel.org,
-	stephen.smalley.work@gmail.com,
-	zhanghongru06@gmail.com,
-	zhanghongru@xiaomi.com
-Subject: Re: [PATCH v3 2/2] selinux: improve bucket distribution uniformity of avc_hash()
-Date: Fri, 17 Oct 2025 17:53:42 +0800
-Message-ID: <20251017095342.1180797-1-zhanghongru@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <c77eac51a26a0248980027e9f3b3b564@paul-moore.com>
-References: <c77eac51a26a0248980027e9f3b3b564@paul-moore.com>
+	s=arc-20240116; t=1760694844; c=relaxed/simple;
+	bh=W5+0QfU+et/jmk6dv8dDZbEtFHejPJe/S2iTwGTeBuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FaQeJogZvdXGBPxdRYkkqeqJ2tusOHCNucYNvn1tswzhb08FkIhJx2tl/khmWflHjnpIGnfIRQvXWeMS0XgABDeTpmSGo9qkgWNgczSD1QFQ2Vc4hbsbMRj5nOD2RLcfHTSgJX1heqF2hQ5LA6L0oETNQI/nUIX2vbq/dSHsaaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSMy7Vz9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D212EC116D0
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760694843;
+	bh=W5+0QfU+et/jmk6dv8dDZbEtFHejPJe/S2iTwGTeBuw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nSMy7Vz9toIAs6m24dLgVSpDo12zo2Zpgid0GXKR7ZdYtK22fXqDZfdhgGsor3ZEm
+	 QVBEzZtDhO50EaS90m0jYcYdw9GWFQj6Oi2A4f5jW++rDo7LZP+5bZf5gg8t1dzZB8
+	 8YIpSYe2m4XaAWBGKiASQZVNdgGpc49rKszRJToKhtlOU3jdPH25ibogZRL/4qpAuG
+	 RnzP98PAvtHj96CXvVa9Zq8SA3g8Tpk2Der86RkcHmf83Fjz+LuyGmp1vjfTZvcdod
+	 VDyNHRJNcJVB1z29c7wRSWN88t349ScCTnKbOf7jYa7NcXHnpYrPmnEWXMxLnu3S9Z
+	 eHBGQx9jbZZ5Q==
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-426ed6f4db5so1651305f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:54:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXTZTU9/+S3zrirJ+1nUXL5811LdkC5QobF2PB28WzzUVZnfxF9ghndY7JsIwv1drVmx5BWr5ZJ3DFCxcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjJU8cCNI1JGdlpWqyy2dVhF/9Lm+OcasBOq4TbwpTgdixPtmK
+	vYiORnnnks3M+SCa2ObShXRA7m09JQxQITNpRfMJSL1a4rRbjiCGOU/3bEUVpsQ+0YOseu5qvZn
+	wTyy1ya8fc3DFg3CaQB7KbuyxficOKfc=
+X-Google-Smtp-Source: AGHT+IHWrBERRiDikiFyahVcvqfNC9E1jn/3Y03EAsRAoR98IYfMEnrhuQ7z+aUULromw32VTBS2YkPTqxGKuCZ57Tw=
+X-Received: by 2002:a05:6000:310c:b0:426:d51c:494a with SMTP id
+ ffacd0b85a97d-426fb9ac11fmr4831717f8f.24.1760694842381; Fri, 17 Oct 2025
+ 02:54:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251016012659.82998-1-fangyu.yu@linux.alibaba.com> <CAAhSdy2UcmoPLF0CGBrsF1bRdJe-X05YA7UQOVffxBjZTourMA@mail.gmail.com>
+In-Reply-To: <CAAhSdy2UcmoPLF0CGBrsF1bRdJe-X05YA7UQOVffxBjZTourMA@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Fri, 17 Oct 2025 17:53:50 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTS6FKdXhG3d944B+k8YLRw4JKLEnUtgeC2hDLUjLkhjbg@mail.gmail.com>
+X-Gm-Features: AS18NWCPe1Ej6e6BmrPjRcgTihokl613hBi-ZkMtdBKcGiBrCmQW5r-Nein1AIA
+Message-ID: <CAJF2gTS6FKdXhG3d944B+k8YLRw4JKLEnUtgeC2hDLUjLkhjbg@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: Read HGEIP CSR on the correct cpu
+To: Anup Patel <anup@brainfault.org>
+Cc: fangyu.yu@linux.alibaba.com, atish.patra@linux.dev, pjw@kernel.org, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	liujingqi@lanxincomputing.com, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On Sep 26, 2025 Hongru Zhang <zhanghongru06@gmail.com> wrote:
-> > 
-> > Under heavy stress testing (on an 8-core system sustaining over 50,000
-> > authentication events per second), sample once per second and take the
-> > mean of 1800 samples:
-> > 
-> > 1. Bucket utilization rate and length of longest chain
-> > +--------------------------+-----------------------------------------+
-> > |                          | bucket utilization rate / longest chain |
-> > |                          +--------------------+--------------------+
-> > |                          |      no-patch      |     with-patch     |
-> > +--------------------------+--------------------+--------------------+
-> > |  512 nodes,  512 buckets |      52.5%/7.5     |     58.2%/6.2      |
-> > +--------------------------+--------------------+--------------------+
-> > | 1024 nodes,  512 buckets |      68.9%/12.1    |     82.4%/8.9      |
-> > +--------------------------+--------------------+--------------------+
-> > | 2048 nodes,  512 buckets |      83.7%/19.4    |     94.8%/15.2     |
-> > +--------------------------+--------------------+--------------------+
-> > | 8192 nodes, 8192 buckets |      49.5%/11.4    |     61.9%/6.6      |
-> > +--------------------------+--------------------+--------------------+
-> > 
-> > 2. avc_search_node latency (total latency of hash operation and table
-> > lookup)
-> > +--------------------------+-----------------------------------------+
-> > |                          |   latency of function avc_search_node   |
-> > |                          +--------------------+--------------------+
-> > |                          |      no-patch      |     with-patch     |
-> > +--------------------------+--------------------+--------------------+
-> > |  512 nodes,  512 buckets |        87ns        |        79ns        |
-> > +--------------------------+--------------------+--------------------+
-> > | 1024 nodes,  512 buckets |        97ns        |        91ns        |
-> > +--------------------------+--------------------+--------------------+
-> > | 2048 nodes,  512 buckets |       118ns        |       110ns        |
-> > +--------------------------+--------------------+--------------------+
-> > | 8192 nodes, 8192 buckets |       106ns        |        94ns        |
-> > +--------------------------+--------------------+--------------------+
-> > 
-> > Although the multiplication in the new hash algorithm has higher overhead
-> > than the bitwise operations in the original algorithm, the data shows
-> > that the new algorithm achieves better distribution, reducing average
-> > lookup time. Consequently, the total latency of hashing and table lookup
-> > is lower than before.
-> > 
-> > Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
-> > Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+On Fri, Oct 17, 2025 at 2:59=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
+ote:
+>
+> On Thu, Oct 16, 2025 at 6:57=E2=80=AFAM <fangyu.yu@linux.alibaba.com> wro=
+te:
+> >
+> > From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> >
+> > When executing kvm_riscv_vcpu_aia_has_interrupts, the vCPU may have
+> > migrated and the IMSIC VS-file have not been updated yet, currently
+> > the HGEIP CSR should be read from the imsic->vsfile_cpu ( the pCPU
+> > before migration ) via on_each_cpu_mask, but this will trigger an
+> > IPI call and repeated IPI within a period of time is expensive in
+> > a many-core systems.
+> >
+> > Just let the vCPU execute and update the correct IMSIC VS-file via
+> > kvm_riscv_vcpu_aia_imsic_update may be a simple solution.
+> >
+> > Fixes: 4cec89db80ba ("RISC-V: KVM: Move HGEI[E|P] CSR access to IMSIC v=
+irtualization")
+> > Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 > > ---
-> >  security/selinux/avc.c | 17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> My understanding from previous iterations of this patch is that this new
-> hash function was AI generated and hasn't really gone through the any
-> rigorus analysis beyond the performance measurements above, is that
-> correct?  I'm not opposed to using AI to assist in patch development or
-> algorithm creation, especially if there is some acknowledgement in the
-> commit description, but I do hold the patches to the same standard as
-> any other proposed change.  For this reason, I would expect some third
-> party review of the hash function by someone with enough experience to
-> provide a reasonable analysis of the hash function in comparison to
-> other existing options.
-> 
-> ... and yes, I do recognize that the existing AVC hash function likely
-> did not have to go through the same level of scrutiny, but it has the
-> significant advantage of being a known quantity, problems and all.
-> 
-> If you want to change the AVC hash to something else with better
-> performance, I suggest sticking with a well known hash algorithm,
-> ideally one already present in the kernel; that is going to be the
-> quickest path towards acceptance.
+> >  arch/riscv/kvm/aia_imsic.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+> > index fda0346f0ea1..168c02ad0a78 100644
+> > --- a/arch/riscv/kvm/aia_imsic.c
+> > +++ b/arch/riscv/kvm/aia_imsic.c
+> > @@ -689,8 +689,12 @@ bool kvm_riscv_vcpu_aia_imsic_has_interrupt(struct=
+ kvm_vcpu *vcpu)
+> >          */
+> >
+> >         read_lock_irqsave(&imsic->vsfile_lock, flags);
+> > -       if (imsic->vsfile_cpu > -1)
+> > -               ret =3D !!(csr_read(CSR_HGEIP) & BIT(imsic->vsfile_hgei=
+));
+> > +       if (imsic->vsfile_cpu > -1) {
+> > +               if (imsic->vsfile_cpu !=3D smp_processor_id())
+>
+> Good catch !!!
+>
+> I agree with Guo Ren. We should use "vcpu->cpu" over here
+> instead of smp_processor_id(). Also, I think we should add
+> some comments for future reference. I will take care of this
+> at the time of merging this patch.
+>
+> Queued this as fixes for Linux-6.18
+Thx Anup, then Fangyu needn't update v2.
 
-Stephen initially suggested I refer to the jhash or MurmurHash3 algorithms
-in the kernel. In my previous testing, MurmurHash3 also achieved
-performance improvements compared to the original algorithm, so it's good.
+This patch also reveals the idea of our CSR_HGEIP design - Per-CPU access.
+Although arm64 & x86 don't have a similar problem by using a shared
+memory address map, it would be a complex hw design. The RISC-V
+CSR_HGEIP design is much simpler for hw, and vCPU migration on the
+pCPUs could tolerate one additional VM_enter/exit cost for an idle
+vcpu.
 
-I plan to move the MurmurHash3 implementation from avtab_hash() to a newly
-created file security/selinux/include/hash.h as a public function, which
-will be called by both avtab_hash() and avc_hash(). Is this ok?
+>
+> Thanks,
+> Anup
+>
+> > +                       ret =3D true;
+> > +               else
+> > +                       ret =3D !!(csr_read(CSR_HGEIP) & BIT(imsic->vsf=
+ile_hgei));
+> > +       }
+> >         read_unlock_irqrestore(&imsic->vsfile_lock, flags);
+> >
+> >         return ret;
+> > --
+> > 2.50.1
+> >
 
+
+
+--=20
+Best Regards
+ Guo Ren
 
