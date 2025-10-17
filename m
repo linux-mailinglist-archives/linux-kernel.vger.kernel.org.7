@@ -1,139 +1,185 @@
-Return-Path: <linux-kernel+bounces-858024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABC8BE89A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BBCBE89B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435D46202D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913CF622A1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7929C2E1F02;
-	Fri, 17 Oct 2025 12:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C8D32ABC6;
+	Fri, 17 Oct 2025 12:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MuqT940t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcDifW+C"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA619DF66
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BE12E1F02
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760704508; cv=none; b=ald8//NK9xp9B5S+Hir232t0kJjKEMSz8XmvYyFXIrxeXUv2n4niU9bxlOKNE9gQT37GV6dkLdNan85mz9UwC2DXBGHa3HimcR5T/pJibbl6JbKxugHKrV4vZ9hGErqeOVDtc9gN4FwJFqrWtE3IgTQmvJPKZB4Vf0z6ukBGilg=
+	t=1760704549; cv=none; b=pCi9Y+PSQUqmsoehAWb9hkG7y8oGw46sja+tw4Uf8SqfNGoNUq2oPCDkKpytAxq+auGtSkOC8dhyWDpKY3PEFgfQF6XHVw81mki2uuL3KGwLPoJh8YqkefAcSgf06mSbbRdxAOA1tOsu1mKB5+yneWpusRpxCWe+Xl+gDVmi/yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760704508; c=relaxed/simple;
-	bh=hooOmsIKnj5D8GAzQfDmrdxtW9sI7j7j97T+qU4bFO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQC+ebKjww3tgERdEspT0hF4TxiSJl+dCfWDPmFiZ6yGiecdQipY/GFEBtOKTlRyvZ5CsVF6mvfajyZDIeTfBf+prWuG1qlkW+feEK8XeHzb8FAOC4ecUpXzYatTF1+m0AoVleuy6tYoaj8+vQ5tvubtXEjXDFjxLFBmuhukLrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MuqT940t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760704503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Xkl9mNK4xtIyBibAQFYw8DQjKmVQW6nrzyawypmZes=;
-	b=MuqT940tFTZN3aZy+EjV5vLTKTDP+PSOfZMpLlpwckSNLlU5zcFvZkIfwlYF664MSnmg39
-	puYDcvd/wZHy3OsSURJ3Yjce3Y97IakDXGzNEycSnEVFLsHAcYFOwdifiDYv+kwdBb8hIQ
-	hxi5nEKhcv08t8Ryd48X09HiduhVKmE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-264-Q2xijE8oP6etRjV_EeZN9g-1; Fri,
- 17 Oct 2025 08:35:01 -0400
-X-MC-Unique: Q2xijE8oP6etRjV_EeZN9g-1
-X-Mimecast-MFC-AGG-ID: Q2xijE8oP6etRjV_EeZN9g_1760704500
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5ED0519560AD;
-	Fri, 17 Oct 2025 12:35:00 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.64.136])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C6ABA1800451;
-	Fri, 17 Oct 2025 12:34:56 +0000 (UTC)
-Date: Fri, 17 Oct 2025 09:34:55 -0300
-From: Wander Lairson Costa <wander@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
-	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>
-Subject: Re: [PATCH v2 2/3] rtla/tests: Extend action tests to 5s
-Message-ID: <f2opu4ftzneryyownttyf7rnt5tkmhjlooxkjzqht3kh4u2rms@in33hwth6z5f>
-References: <20251007095341.186923-1-tglozar@redhat.com>
- <20251007095341.186923-2-tglozar@redhat.com>
+	s=arc-20240116; t=1760704549; c=relaxed/simple;
+	bh=5ScMlkpNB3bO9rP0r5PtsUCVGh6+veBjgyd9l3hbzUk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tJJ6waxdxer2vmV5ir2W4BMBMcFHm+JfDrAniwvpe55n5g/EPJvpCZlLlnwOFHvSF543JuHaffqyHCKzGHlTTtjNIBMrXQ1IvVv1oQ8nepJlbwGqTZzcDTd/MKNdleg408mg3FOl7Br5fEnJ120mUkKEdUJHEDcDS+CfUk9MnT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcDifW+C; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so1372474f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760704546; x=1761309346; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z3ErgCZMqEpbnKuL5giuJkbnaVmFhSFBsDzPMv4Y24k=;
+        b=KcDifW+C4xv4mVIbrV2VtgtdfylQyjozqrobE9GfVnihZAbmhUDcXtKg5fndcIq6Zy
+         4MIm5biZyDAk38IwnkdmOOwaDYXmIinVU5Zxfe6CVDHA3Vhb7z8aKsJqXg0XtdNmsHvl
+         FkqFC535a0eEZM2LBpJxBCry/Yw3Rs4zksBsDiUmca+a0WypGb1J7TtL59sWYIPYuSKf
+         FcQ7077+KdH2A9mTa+YWD+s7WWSUxBX8+SVWGtAokb5nA2ufuHyxT1YCz9pXkUrHw7Pj
+         MyMxlO28rfdEzo/4zsFRwvFoBGLBCrRY4o0GbDt8zUHrsE/PM0J72n6BLsev23YW9tjW
+         ISVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760704546; x=1761309346;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3ErgCZMqEpbnKuL5giuJkbnaVmFhSFBsDzPMv4Y24k=;
+        b=qEghLNMbKivy8N9QItd9FLf5m3j6DZXFJUxE6uTaCPhuP8ypB9j/Mf4wUtaYbwGL8Q
+         4HLu1ifLPros67ab7nvPLJF6Cg+FIMaSJCbgdO0PQnjX8Dv999fy5I02lxpENgib6ahh
+         7h2qq0UNaVW/VTJo0ubWlLndEYSvs1B0+A0K/zIl1Kp6GMANVb5J3J3/7lcpaSV8ixta
+         aEHU35/EzNMieJpye9i8z88AJICfFzS/eVVCTOEz1VH8nUso+wyafw5E7GAt0r6/76eV
+         PgB/CeiNLeTpUVR8RCoffMoSeZWaQSTlkws17IRmsRo1SkcGYA0OX04Rzthu6rCNS7bq
+         pwlA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0saHH7vraPakIQ/ft3s73ePyFIdTAinIlCDS18YpcMSJy6ZcxJQOy4Ub5qGv3VJHXZeUygBaPHb/Rv3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgz5JWX6EMJi3DqYEYqIYZxT1675rT/XN7f6c3gypIqROH5ULq
+	PXOmDj6q/4hWDfw6Js3nLE/g9rhvAqmJns08SEk7ek2jPXa/xi/H/ubc
+X-Gm-Gg: ASbGncv6N2ard0xQUpQLeHwnozUTTtm8j0YKA3r/8asaB88OsFC88rV9gzMYLB+Sd0B
+	J1Uaua80AlvJeOQ7bHXpC47Zv7BZCtZn+6BZhv1KEiMqSS11IBJKPNs/HTTBRnnIw/2KBSgJCDh
+	+yaSQhEEBvK0HcKV+g8aFyGnfNTdgdW0QUgiohKodRNry0rtO3yUp78iOLI9dYBNsM6wXD+Op6t
+	agsZTonoNO214h0JiOPS98+xqZ68cxIGEwFYFVZDN9V9sLDcbJphlknJPfnCaagIGbcH6aK5pzV
+	/WGEDLjIe2eR96IeZx5B8NTfJ3LdtPZKmJrYPACiWf/jwGbw07oQt10c/Sh7BepRrwz9ra/0GBx
+	HCkBtq2tUyxvYXde9sD8o/xSY3N8UOo0ccKJXaUH0/afU+SCcO3xIIGr7thgtauc0YQAz2QD4uq
+	tQOpzYBKxyzGu3cw==
+X-Google-Smtp-Source: AGHT+IGtc3rElmlZjUCj5LU626fWOPul39pomQ3PRsSjDGqzZiz5b3XHgZGsVeR0STAL9AUxbbUF5w==
+X-Received: by 2002:a05:6000:2008:b0:3df:c5e3:55fe with SMTP id ffacd0b85a97d-42704d9895amr2580238f8f.29.1760704546153;
+        Fri, 17 Oct 2025 05:35:46 -0700 (PDT)
+Received: from [10.5.0.2] ([195.158.248.102])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe74sm39639352f8f.35.2025.10.17.05.35.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 05:35:45 -0700 (PDT)
+Message-ID: <ccd58e8103e912d0609fbc625f19ec18e605ad4a.camel@gmail.com>
+Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, Michael Hennerich	
+ <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Jonathan Cameron	 <jic23@kernel.org>, Andy
+ Shevchenko <andy@kernel.org>, Sean Anderson	 <sean.anderson@linux.dev>,
+ linux-spi@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-iio@vger.kernel.org
+Date: Fri, 17 Oct 2025 13:36:18 +0100
+In-Reply-To: <66f94eb6-15a9-457f-a7b8-47710652a34b@baylibre.com>
+References: 
+	<20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
+	 <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
+	 <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
+	 <409ad505-8846-443e-8d71-baca3c9aef21@sirena.org.uk>
+	 <12db0930458ceb596010655736b0a67a0ad0ae53.camel@gmail.com>
+	 <8c7bf62a-c5dc-4e4d-8059-8abea15ba94e@sirena.org.uk>
+	 <d9455d90-31ca-4be7-b17c-2b339e92f8a0@baylibre.com>
+	 <9024f05854dcc3cc59345c0a3de900f57c4730d9.camel@gmail.com>
+	 <ad929fe5-be03-4628-b95a-5c3523bae0c8@baylibre.com>
+	 <c4b5a42f5f1d3f577cb986946b642b4edc1300e9.camel@gmail.com>
+	 <66f94eb6-15a9-457f-a7b8-47710652a34b@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007095341.186923-2-tglozar@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Oct 07, 2025 at 11:53:40AM +0200, Tomas Glozar wrote:
-> In non-BPF mode, it takes up to 1 second for RTLA to notice that tracing
-> has been stopped. That means that action tests cannot have a 1 second
-> duration, as the SIGALRM will be racing with the threshold overflow.
-> 
-> Previously, non-BPF mode actions were buggy and always executed
-> the action, even when stopping on duration or SIGINT, preventing
-> this issue from manifesting. Now that this has been fixed, the tests
-> have become flaky, and this has to be adjusted.
-> 
-> Fixes: 4e26f84abfb ("rtla/tests: Add tests for actions")
-> Fixes: 05b7e10687c ("tools/rtla: Add remaining support for osnoise actions")
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  tools/tracing/rtla/tests/osnoise.t  | 4 ++--
->  tools/tracing/rtla/tests/timerlat.t | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/tracing/rtla/tests/osnoise.t b/tools/tracing/rtla/tests/osnoise.t
-> index e3c89d45a6bb..08196443fef1 100644
-> --- a/tools/tracing/rtla/tests/osnoise.t
-> +++ b/tools/tracing/rtla/tests/osnoise.t
-> @@ -39,9 +39,9 @@ check "hist stop at failed action" \
->  check "top stop at failed action" \
->  	"timerlat top -T 2 --on-threshold shell,command='echo -n abc; false' --on-threshold shell,command='echo -n defgh'" 2 "^abc" "defgh"
->  check "hist with continue" \
-> -	"osnoise hist -S 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
-> +	"osnoise hist -S 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
->  check "top with continue" \
-> -	"osnoise top -q -S 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
-> +	"osnoise top -q -S 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
->  check "hist with trace output at end" \
->  	"osnoise hist -d 1s --on-end trace" 0 "^  Saving trace to osnoise_trace.txt$"
->  check "top with trace output at end" \
-> diff --git a/tools/tracing/rtla/tests/timerlat.t b/tools/tracing/rtla/tests/timerlat.t
-> index b5d1e7260a9b..b550a6ae2445 100644
-> --- a/tools/tracing/rtla/tests/timerlat.t
-> +++ b/tools/tracing/rtla/tests/timerlat.t
-> @@ -60,9 +60,9 @@ check "hist stop at failed action" \
->  check "top stop at failed action" \
->  	"timerlat top -T 2 --on-threshold shell,command='echo -n 1; false' --on-threshold shell,command='echo -n 2'" 2 "^1ALL"
->  check "hist with continue" \
-> -	"timerlat hist -T 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
-> +	"timerlat hist -T 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
->  check "top with continue" \
-> -	"timerlat top -q -T 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
-> +	"timerlat top -q -T 2 -d 5s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
->  check "hist with trace output at end" \
->  	"timerlat hist -d 1s --on-end trace" 0 "^  Saving trace to timerlat_trace.txt$"
->  check "top with trace output at end" \
-> -- 
-> 2.51.0
-> 
+On Thu, 2025-10-16 at 10:25 -0500, David Lechner wrote:
+> On 10/16/25 4:08 AM, Nuno S=C3=A1 wrote:
+> > On Wed, 2025-10-15 at 13:38 -0500, David Lechner wrote:
+> > > On 10/15/25 11:43 AM, Nuno S=C3=A1 wrote:
+> > > > On Wed, 2025-10-15 at 11:15 -0500, David Lechner wrote:
+> > > > > On 10/15/25 10:18 AM, Mark Brown wrote:
+> > > > > > On Wed, Oct 15, 2025 at 03:43:09PM +0100, Nuno S=C3=A1 wrote:
+> > > > > > > On Wed, 2025-10-15 at 13:01 +0100, Mark Brown wrote:
+> > > > > > > > On Wed, Oct 15, 2025 at 11:16:01AM +0100, Nuno S=C3=A1 wrot=
+e:
+> > > > > > > > > On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
+>=20
+> ...
+>=20
+> > >=20
+> > > The AXI SPI Engine doesn't know how to do the quad SPI part yet thoug=
+h, so
+> > > it isn't something we could implement right now.
+> > >=20
+> > > If we tried to do it with spi-buses =3D <8>; then we would end up wit=
+h the
+> > > "interleaved" bits (or nibbles depending on the wiring) that requires=
+ the
+> > > extra IP block to sort out when using SPI offloading. Technically, we
+> > > could
+> >=20
+> > I think that extra block already exists today. I was thinking the idea =
+was
+> > just:
+> >=20
+> > // the case where we just have one channel with eg: 32 bits words (eg: =
+test
+> > patterns)=20
+> > struct spi_transfer example =3D {
+> > 	rx_buf =3D rx_buf;
+> > 	len =3D 1; /* 1 32bit words */
+>=20
+> This would still need to be len =3D 4; since there are 4 bytes in a
+> 32-bit word. (If this was tx with SPI_MULTI_BUS_MODE_MIRROR, then
+> len =3D 1 would be correct, but for striping, it is still the length
+> of all data combined).
 
-In general, my pupils dilate when I see time based synchronization.
-However, in this case, it seems harmless.
+Right, I was still thinking in the old stuff where the spi engine would alw=
+ays
+have len =3D 1 (which is nok)
 
-Reviewed-by: Wander Lairson Costa <wander@redhat.com>
+>=20
+> > 	/* 4 lanes which is actually quadspi */
+> > 	multi_bus_mode =3D SPI_MULTI_BUS_MODE_STRIPE;=20
+> > };
+>=20
+> This will work with the caveat that for non-offload case, the software=
+=20
+> will need to rearrange the bits in rx_buf into the correct order after
+> the spi_sync().
+>=20
+> For example, u8 *rx_buf will contain bits of the 32-bit word in the
+> following order:
+>=20
+> rx_buf[0] =3D b28 b24 b20 b16 b12 b8 b4 b0
+> rx_buf[1] =3D b29 b25 b21 b17 b13 b9 b5 b1
+> rx_buf[2] =3D b30 b26 b22 b18 b14 b10 b6 b2
+> rx_buf[3] =3D b31 b27 b23 b19 b15 b11 b7 b3
+>=20
+> The correct order of course would be (assuming little endian):
+>=20
+>=20
+> rx_buf[0] =3D b7 b6 b5 b4 b3 b2 b1 b0
 
+I know, that's what the ad4030 driver has to do.
+
+
+- Nuno S=C3=A1
 
