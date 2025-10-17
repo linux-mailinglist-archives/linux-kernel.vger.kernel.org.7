@@ -1,110 +1,325 @@
-Return-Path: <linux-kernel+bounces-858246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B498CBE965F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:00:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042E5BE9536
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA753620E3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:57:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7C5F035BDC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EA22F12B6;
-	Fri, 17 Oct 2025 14:57:18 +0000 (UTC)
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1FB3328E6;
+	Fri, 17 Oct 2025 14:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J9VrrRU/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2C020A5E5;
-	Fri, 17 Oct 2025 14:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0413328E5
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713038; cv=none; b=dnvJJWMaBNu9xYCPDoLSKAo0+1MwVdgOgLpD0A4Jn9Oug7HObShAVUPHJrNFUaejcIR2/pEsevzkPS0sn6xx0MOzGsDwrpG0LN8yjZIMnxX9tr7SCIjF3INvLs+WbCeSfm7k0Jeukhr9nsvXoWnWY2ZVvbr6+B6U4a/R6izxV2Q=
+	t=1760712471; cv=none; b=Y2RwC+Zf1TRas4HERVbFkiMfq1unXy0PQNkIzY4hC/HlSYloGmou4ZIXJUWZtPjPDPSqAJi8/X7uXDIORXKHjguQeAjOGmv8Zy9+Ocz4gLPnwgNmYxPeAixTSzmDKYRE+uqefY+f9neO2/00BUpJciSWs5UKEKVBmmkfsFHZdMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713038; c=relaxed/simple;
-	bh=e3mc8mzlkB9PwjVdtejEw8It9IQJRLvlgGVuPMXrDMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kYAPABRQHyWM3hXyXeTrE8tEYDxRfdD8R0Bc7B4golCeNI7VseT0VI9BljU/51HYNGBKCogt+ILWYI2i94wkyK8K7OkLVZsAHV9E6CbKfqXf3KiAFqPIk5hxr9t+Ly403ziLFzYBLo9QdworQnRsQNRM1936ebcKY4tEMtfKES4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id D59E389DCE;
-	Fri, 17 Oct 2025 16:47:27 +0200 (CEST)
-Date: Fri, 17 Oct 2025 16:47:27 +0200
-From: Gabriel Goller <g.goller@proxmox.com>
-To: "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Wrong source address selection in arp_solicit for forwarded packets
-Message-ID: <eykjh3y2bse2tmhn5rn2uvztoepkbnxpb7n2pvwq62pjetdu7o@r46lgxf4azz7>
-Mail-Followup-To: "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1760712471; c=relaxed/simple;
+	bh=DiyVdXABTrVQ08Fd2LFM1CVCN+GGwKGDZECsTWV1E3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mBORkb8FiNBD2NPFlnoR3ryP1Ebz3dLPUov2Mj0/OjaC0DDWaSC70UFqVHm6s32Ibo1D+cUGtWnq4WjwnKc6AKO47NNu5/RfZSjwbH01Ac5KoMrRW7VUhvq99Latap5UK4v0SbQ+yepyg4UVn1dP8BCsr1v1RmNDdrmr6B5YkT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J9VrrRU/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H8EA3P006211
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QiH2J+dIVcecXrrAGCkcTfZdS4TOBQ+cjT9NDaaTuF0=; b=J9VrrRU/jdbJq9bO
+	0EAk7acvt5zAn0ZR59QlF+A/Q6sJ6hGysgUBLOJNpFyYH5hoku1AQ7vdpigqUUKQ
+	Rm+70vC4PnW2Wmddofi1eEZNooEf1eeffMljto/pEOdgZ3l5f5DYUuHBJ30s54eE
+	Caf6AjtQO9quon4iMBrGB2J7+F+/9NlXMEAxoHn+rwaM8199FfxSTKqcfAZC9xGK
+	iSxcDik/1ObWfEE1zbFpICVyLn3u4CGMRytMtYQ4Xg4nFUs16nLIo8enaDh1/aZG
+	lr+n274IM3bv1A9bgfVy5Yf7YQnEnVfdPArXuAuCgGEcwIn9Nm7kD5ndBLjPNy9/
+	q+7X9w==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwxwj9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:47:48 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b55118e2d01so1420304a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:47:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760712468; x=1761317268;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QiH2J+dIVcecXrrAGCkcTfZdS4TOBQ+cjT9NDaaTuF0=;
+        b=A0vWf2TImQ6b6UlPmnnh+GyGpNOLJSGayaJNxgAdEzCsAUibQmh1FHYzWlU3OshqiI
+         pcqFZYn+9UaqszdsoL7moP5Ltm1pZqOUQF0Gk6PxRQMdsGw/NIH409JgBYNgZFHe4gv5
+         prvxerxiCXTJhOpYz28vPy/rDfjG9K1BM0rlJbVDSFMoZ5XUdyWAvSa1uDchweCFW4pG
+         ZXQkRPOXuaGQRBWyT+DPbblS+BkiAipjFWqQNsQ+sRCgGvak8RWkba61o6Vhw3EXmoG6
+         3QmcS1uOssl2EtNCW8kb9oiUuPMVdVancRkk1wa6uq9UW7K4KAmbYltTbhfjg8g5C4QF
+         thAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWYs2Bcs78jOWFpnl6izGDnWkjZ9F37Q86yCB6UymladH20njJrR0qP/VMjehX7ZZrKCk3x3dVXbFIyps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Qe6pENz9zJ0o+D7JMyQhYVeUJtYTOutt7wmfMwxU3VrEQz9f
+	ZOVm8abLu4WxXoO2sRfDfbp7p0z4pkzU8fOfHLXfJugQnAkWmrEjQRhC+WoQ+fwz9ziE8krvy+g
+	eU4W+o97OnOFzckE+mhNcHgGvJ+UKT5zJKDQV7BMgVZVsW9XfE3+zDPmGu5EJtYfhet0=
+X-Gm-Gg: ASbGncs+3blRO5khNJWDseETwFaJ7mz478HkR25rUXcZgMVIIM01YpF5wGTlB3SPoMz
+	JWxzenlKFydJQTS7/Eony25C07RBplIwagJqsmbRnpCnxbQ2UsbjypQvvBu232C+4dly/MaxB7R
+	kkcKVaz24tLURS1fGCpNP7SkQqcY4GB/k/9cQqLgmzTylvmPOHWYqbXNzMsoItlTSnrPRtHhVN6
+	5PGtFFBo489weFjWguCzi0crhbTmtngOyI9KTj7nZyNcEGF+Y2tJ7Cs6eJGPBYpihJFHklMpAFu
+	3059dCg4GsknqoOrik9rPw3FD7LqG5CXInyAzMPzmv5uDWVSYO+UOTQ1I5KhTBKSgV81bSZ55Us
+	WRuUIr6B6c53CDkhGVPmeWLkyuEy8EYwBeg==
+X-Received: by 2002:a17:902:cf42:b0:269:ed31:6c50 with SMTP id d9443c01a7336-290c9c896b0mr41632605ad.10.1760712467526;
+        Fri, 17 Oct 2025 07:47:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOjKbFTkJh0ezCxCdJ3kP6joxM9yMTBKLaFVhNRS3DcOSUHjMrOrZfMhR8o9cNnCg8mifCEA==
+X-Received: by 2002:a17:902:cf42:b0:269:ed31:6c50 with SMTP id d9443c01a7336-290c9c896b0mr41632325ad.10.1760712467017;
+        Fri, 17 Oct 2025 07:47:47 -0700 (PDT)
+Received: from [10.216.52.245] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099388dbasm66275665ad.47.2025.10.17.07.47.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 07:47:46 -0700 (PDT)
+Message-ID: <2c8e7d94-cacb-427f-02ec-ecc83a189479@oss.qualcomm.com>
+Date: Fri, 17 Oct 2025 20:17:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20241002-35-39f9a6
-X-Bm-Milter-Handled: 55990f41-d878-4baa-be0a-ee34c49e34d2
-X-Bm-Transport-Timestamp: 1760712443410
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v16 01/14] power: reset: reboot-mode: Synchronize list
+ traversal
+Content-Language: en-US
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel
+ <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Moritz Fischer <moritz.fischer@ettus.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik
+ <andre.draszik@linaro.org>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
+ <20251015-arm-psci-system_reset2-vendor-reboots-v16-1-b98aedaa23ee@oss.qualcomm.com>
+ <CACMJSeu_Y2Rra8x22kWN0B38jKZEwq7=B9C75zH18QdjDHAWqg@mail.gmail.com>
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+In-Reply-To: <CACMJSeu_Y2Rra8x22kWN0B38jKZEwq7=B9C75zH18QdjDHAWqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX/p+5SILVS6gV
+ Y2xGgki5iH4q6V35YPNYIu8AKiMqrXtqikuB5IvE7prrDuWWlXRVeVsbuWHgCmtGziBfI6VXrug
+ xpZ7M412Ji0/lx9qsSO3nEMGbkkTz9Bl054hTOCq9Aq19D3ZFu/FLjcSXPKXbr6X+KpggtUXx1x
+ xuJf3XKGFsn6hvZ2to8Rb892axMBbY4k4rbGj7r7VV2r1GxyREIkoejSyg+mf89i8kPcG9yHo/w
+ xAFk2JOoAQ4VcB2RQYWYVT9ITY0dzKl8MHnpgZongQ431v7KTMdOsxSYnh88VVrizKMm3iV3j7S
+ SIiq3X89llOS8pVrU8DihZKUXF44nTQjO29T9ChzhUywot+9QqTocGXvqHVJVV07MsWLCzfVVLO
+ yZ46PZLy/IcnGEew5aZxfIpb32lVPg==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68f25714 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=js1QHsEmXU4TG3GKDNEA:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-GUID: ggu1hsweNuC0G2X540t4lOTxxltInFbF
+X-Proofpoint-ORIG-GUID: ggu1hsweNuC0G2X540t4lOTxxltInFbF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
-Hi,
-I have a question about the arp solicit behavior:
 
-I have the following simple infrastructure with linux hosts where the ip
-addresses are configured on dummy interfaces and all other interfaces are
-unnumbered:
 
-   ┌────────┐     ┌────────┐     ┌────────┐  
-   │ node1  ├─────┤ node2  ├─────┤ node3  │  
-   │10.0.1.1│     │10.0.1.2│     │10.0.1.3│  
-   └────────┘     └────────┘     └────────┘  
+On 10/15/2025 8:02 PM, Bartosz Golaszewski wrote:
+> On Wed, 15 Oct 2025 at 06:38, Shivendra Pratap
+> <shivendra.pratap@oss.qualcomm.com> wrote:
+>>
+>> List traversals must be synchronized to prevent race conditions
+>> and data corruption. The reboot-mode list is not protected by a
+>> lock currently, which can lead to concurrent access and race.
+>>
+>> Introduce a mutex lock to guard all operations on the reboot-mode
+>> list and ensure thread-safe access. The change prevents unsafe
+>> concurrent access on reboot-mode list.
+>>
+>> Fixes: 4fcd504edbf7 ("power: reset: add reboot mode driver")
+>> Fixes: ca3d2ea52314 ("power: reset: reboot-mode: better compatibility with DT (replace ' ,/')")
+>>
+>> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+>> ---
+>>  drivers/power/reset/reboot-mode.c | 96 +++++++++++++++++++++------------------
+>>  include/linux/reboot-mode.h       |  4 ++
+>>  2 files changed, 57 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
+>> index fba53f638da04655e756b5f8b7d2d666d1379535..8fc3e14638ea757c8dc3808c240ff569cbd74786 100644
+>> --- a/drivers/power/reset/reboot-mode.c
+>> +++ b/drivers/power/reset/reboot-mode.c
+>> @@ -29,9 +29,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
+>>         if (!cmd)
+>>                 cmd = normal;
+>>
+>> -       list_for_each_entry(info, &reboot->head, list)
+>> -               if (!strcmp(info->mode, cmd))
+>> -                       return info->magic;
+>> +       scoped_guard(mutex, &reboot->rb_lock) {
+>> +               list_for_each_entry(info, &reboot->head, list)
+>> +                       if (!strcmp(info->mode, cmd))
+>> +                               return info->magic;
+>> +       }
+>>
+>>         /* try to match again, replacing characters impossible in DT */
+>>         if (strscpy(cmd_, cmd, sizeof(cmd_)) == -E2BIG)
+>> @@ -41,9 +43,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
+>>         strreplace(cmd_, ',', '-');
+>>         strreplace(cmd_, '/', '-');
+>>
+>> -       list_for_each_entry(info, &reboot->head, list)
+>> -               if (!strcmp(info->mode, cmd_))
+>> -                       return info->magic;
+>> +       scoped_guard(mutex, &reboot->rb_lock) {
+>> +               list_for_each_entry(info, &reboot->head, list)
+>> +                       if (!strcmp(info->mode, cmd_))
+>> +                               return info->magic;
+>> +       }
+>>
+>>         return 0;
+>>  }
+>> @@ -78,46 +82,50 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
+>>
+>>         INIT_LIST_HEAD(&reboot->head);
+>>
+>> -       for_each_property_of_node(np, prop) {
+>> -               if (strncmp(prop->name, PREFIX, len))
+>> -                       continue;
+>> -
+>> -               info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
+>> -               if (!info) {
+>> -                       ret = -ENOMEM;
+>> -                       goto error;
+>> -               }
+>> -
+>> -               if (of_property_read_u32(np, prop->name, &info->magic)) {
+>> -                       dev_err(reboot->dev, "reboot mode %s without magic number\n",
+>> -                               info->mode);
+>> -                       devm_kfree(reboot->dev, info);
+>> -                       continue;
+>> -               }
+>> -
+>> -               info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+>> -               if (!info->mode) {
+>> -                       ret =  -ENOMEM;
+>> -                       goto error;
+>> -               } else if (info->mode[0] == '\0') {
+>> -                       kfree_const(info->mode);
+>> -                       ret = -EINVAL;
+>> -                       dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
+>> -                               prop->name);
+>> -                       goto error;
+>> +       mutex_init(&reboot->rb_lock);
+>> +
+>> +       scoped_guard(mutex, &reboot->rb_lock) {
+>> +               for_each_property_of_node(np, prop) {
+>> +                       if (strncmp(prop->name, PREFIX, len))
+>> +                               continue;
+>> +
+>> +                       info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
+>> +                       if (!info) {
+>> +                               ret = -ENOMEM;
+>> +                               goto error;
+>> +                       }
+>> +
+>> +                       if (of_property_read_u32(np, prop->name, &info->magic)) {
+>> +                               dev_err(reboot->dev, "reboot mode %s without magic number\n",
+>> +                                       info->mode);
+>> +                               devm_kfree(reboot->dev, info);
+>> +                               continue;
+>> +                       }
+>> +
+>> +                       info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+>> +                       if (!info->mode) {
+>> +                               ret =  -ENOMEM;
+>> +                               goto error;
+>> +                       } else if (info->mode[0] == '\0') {
+>> +                               kfree_const(info->mode);
+>> +                               ret = -EINVAL;
+>> +                               dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
+>> +                                       prop->name);
+>> +                               goto error;
+>> +                       }
+>> +
+>> +                       list_add_tail(&info->list, &reboot->head);
+> 
+> This seems to be the only call that actually needs synchronization.
+> All of the above can be run outside the critical section.
 
-All nodes have routes configured and can ping each other. ipv4 forwarding is
-enabled on all nodes, so pinging from node1 to node3 should work. However, I'm
-encountering an issue where node2 does not send correct arp solicitation
-packets when forwarding icmp packets from node1 to node3.
+sure. will add it only around the required lines.
 
-For example, when pinging from node1 to node3, node2 sends out the
-following arp packet:
+> 
+>>                 }
+>>
+>> -               list_add_tail(&info->list, &reboot->head);
+>> -       }
+>> -
+>> -       reboot->reboot_notifier.notifier_call = reboot_mode_notify;
+>> -       register_reboot_notifier(&reboot->reboot_notifier);
+>> +               reboot->reboot_notifier.notifier_call = reboot_mode_notify;
+>> +               register_reboot_notifier(&reboot->reboot_notifier);
+>>
+>> -       return 0;
+>> +               return 0;
+>>
+>>  error:
+>> -       list_for_each_entry(info, &reboot->head, list)
+>> -               kfree_const(info->mode);
+>> +               list_for_each_entry(info, &reboot->head, list)
+>> +                       kfree_const(info->mode);
+>> +       }
+>>
+>>         return ret;
+>>  }
+>> @@ -133,8 +141,10 @@ int reboot_mode_unregister(struct reboot_mode_driver *reboot)
+>>
+>>         unregister_reboot_notifier(&reboot->reboot_notifier);
+>>
+>> -       list_for_each_entry(info, &reboot->head, list)
+>> -               kfree_const(info->mode);
+>> +       scoped_guard(mutex, &reboot->rb_lock) {
+>> +               list_for_each_entry(info, &reboot->head, list)
+>> +                       kfree_const(info->mode);
+>> +       }
+> 
+> Please destroy the mutex here.
 
-13:57:43.198959 bc:24:11:a4:f6:cd > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100),
-length 46: vlan 300, p 0, ethertype ARP (0x0806), Ethernet (len 6),
-IPv4 (len 4), Request who-has 10.0.1.3 tell 172.16.0.102, length 28
+sure thanks. will add destroy here.
 
-Here, 172.16.0.102 is an ip address configured on a different interface on
-node2. This request will never receive a response because `rp_filter=2`.
-
-node2 has the following (correct) routes installed:
-
-10.0.1.3 nhid 18 via 10.0.1.3 dev ens22 proto openfabric src 10.0.1.2 metric 20 onlink
-
-Since arp_announce is set to 0 (the default), arp_solicit selects the first
-interface with an ip address (inet_select_addr), which results in
-selecting the wrong source address (172.16.0.102) for the arp request.
-Because rp_filter is set to 2, we won't receive an answer to this arp
-packet, and the ping will fail unless we explicitly ping from node2 to
-node3.
-
-I'm wondering if it would be possible (and correct) to modify arp_solicit to
-perform a fib lookup to check if there's a route with an explicit source
-address (e.g., the route above using src 10.0.1.2) and use that address as the
-source address for the arp packet. Of course, this wouldn't be backward
-compatible, as some users might rely on the current interface ordering behavior
-(or the loopback interface being selected first), so it would need to be
-controlled via a sysctl configuration flag. Perhaps I'm missing something
-obvious here though.
-
-Any insights would be appreciated!
-
-Gabriel
-
+thanks,
+Shivendra
 
