@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-857288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8082BBE66AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B50ABE66D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 214EE4EE0D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8405E2B5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21D530C637;
-	Fri, 17 Oct 2025 05:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AE121D59C;
+	Fri, 17 Oct 2025 05:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNgIL4at"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXMH7hn7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2923EABC;
-	Fri, 17 Oct 2025 05:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D86233468F;
+	Fri, 17 Oct 2025 05:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760678968; cv=none; b=mRP/eLDTwqvgSca3MJwsJoHgqTRTkfY6K5YcZOoIJHNhjAFX+M9loaCyyzL94E4657kvIMS+J/4woHvwB0wrRpkUPn7HBti5ZHhvD5ZD4pbgTuX7vRPNGgnijwypEkVznfye92ecDZbdxxzDjJSndU3SIE2UHnn6iG2cnQvSMmI=
+	t=1760679131; cv=none; b=GcfS0kHC7pkwwX2XMRkC8tvFJBDnYcdk8wPp9ufQx+SzvFDg0To1JW3OSQa2DwGKaIW2xCi7hcJUPFlWHQuYAB/r32zanGe0WEIb42/HXuTsZ5n7VSMvlW3DbR5kwOXGtZ9dTqHFc8xIgW7Qc97Gb7Uih1Q8FlSe9jiKlR/D1jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760678968; c=relaxed/simple;
-	bh=4FONppQg2BLdwN/d+WJOotcyUnysRLJeHGxkiBtYy3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRWztYxEDR3RBCnZsd8nrYG2ocPAKWLeefD5eO/4+ZdEMdkhGV0cjijs7Gk1UuywjVSiXWG7BTxxTADUjmQy9pPS+AeMrq4EsHGFQTq945f+a7HGEZ8fZUBGw1bpEbYuLfXHHmS1CsIONXGPBpcddrJsKKWOiUTVG+FXRv+2VKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNgIL4at; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760678966; x=1792214966;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4FONppQg2BLdwN/d+WJOotcyUnysRLJeHGxkiBtYy3U=;
-  b=VNgIL4atGFHg6I+BYuqZBIxa4nbMVnD1E6p5yjMeeLGzvfNkWYiwgnpk
-   D/cgh/XZnU+pxgKL71bzG8+ydsS5/rDkgonTIwIhkrO6XxhttSUN605Ur
-   CZlq/NeGjEcjDES8cuTPLPZLZ3CwG726pFRMf92pToaC1K72gPqSHGkoH
-   F0H0ENMTkwO3PvFnreSEEJPilrvckAAfKqXMe0N8aM+aFHEamU+QzKm0p
-   0hCrGE2lWSqhVKezUct7QzANk8cmCkIr8xMGe9b3BlsasRg0xvXKa0xxo
-   PPJHaJBP8FRkHwybs9tDO4LuXqvg/CDJ/YcVdRISHaXk6iBFwBqCHbarM
-   A==;
-X-CSE-ConnectionGUID: KUobU3PJRPSiyTIW98dlcg==
-X-CSE-MsgGUID: M1DL7LHeQpGDicA41S/n0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="73556030"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="73556030"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 22:29:26 -0700
-X-CSE-ConnectionGUID: 2V3nfKtXQAa6e5ow4GMspw==
-X-CSE-MsgGUID: pWjESwP4SY6tOGwbr2mamg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="183052436"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 22:29:24 -0700
-Message-ID: <4385b47e-391e-460a-8646-a499747d738e@linux.intel.com>
-Date: Fri, 17 Oct 2025 13:29:22 +0800
+	s=arc-20240116; t=1760679131; c=relaxed/simple;
+	bh=OV1AjrdPFJ65x1uyW5xexn0OsRfhPacIT0WgaVlO9TA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WcElsT9hWSj8MdeQTia7fA/lWgV5bfEPUbA2fmiAs4Jo2mqXuZTpIBLWOSa7AzZ12ejWHAxuy19E+8HerDuMJviEyds4CbhlteFUcUlsudV6o51wHK4ENXyqAwtTKfxjixxMZO/I9hOSuat+oYCg94m6ApIRcVinFjJAn6GlFWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXMH7hn7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F3A1C4CEE7;
+	Fri, 17 Oct 2025 05:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760679130;
+	bh=OV1AjrdPFJ65x1uyW5xexn0OsRfhPacIT0WgaVlO9TA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mXMH7hn7t9bF4evf7iPbPkR1R+H4mM9cDRvMZf4U+xZr/1SJVcwsnB7BrwnnQE9uL
+	 7NQdrmdz/25BU73Fgi60Z71xVAkn7XSLtJhbcejTw2CW8PD+B/q8XcBy5IMElSlHN4
+	 b+DU4RMiJBBNr1zG41bubClIzVg2njffCx6fxVWLd1UQmHxEub1P1vP1UTYZ3bKbXw
+	 bKpoKdjr2Rp+osTr4mG+jfgVTOLEzndfahLFfrPPuBpevAG/7owhp6JitshobCOk5J
+	 QA0MvxPkFET5wQBQ/yPHk57iNF7QlwM+FjjLcC0gpBH5NzqUE7WwWbTF64FwxEG76Y
+	 F5CTEaAO6Jq3A==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org
+Subject: [PATCH 0/3] block: Enable proper MMIO memory handling for P2P DMA
+Date: Fri, 17 Oct 2025 08:31:57 +0300
+Message-ID: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] KVM: TDX: WARN if a SEAMCALL VM-Exit makes its way
- out to KVM
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kai Huang <kai.huang@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-References: <20251016182148.69085-1-seanjc@google.com>
- <20251016182148.69085-3-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20251016182148.69085-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251016-block-with-mmio-02acf4285427
+X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
+Changelog:
+v1:
+ * Reordered patches.
+ * Dropped patch which tried to unify unmap flow.
+ * Set MMIO flag separately for data and integrity payloads.
+v0: https://lore.kernel.org/all/cover.1760369219.git.leon@kernel.org/
 
+----------------------------------------------------------------------
 
-On 10/17/2025 2:21 AM, Sean Christopherson wrote:
-> WARN if KVM observes a SEAMCALL VM-Exit while running a TD guest, as the
-> TDX-Module is supposed to inject a #UD, per the "Unconditionally Blocked
-> Instructions" section of the TDX-Module base specification.
->
-> Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+This patch series improves block layer and NVMe driver support for MMIO
+memory regions, particularly for peer-to-peer (P2P) DMA transfers that
+go through the host bridge.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+The series addresses a critical gap where P2P transfers through the host
+bridge (PCI_P2PDMA_MAP_THRU_HOST_BRIDGE) were not properly marked as
+MMIO memory, leading to potential issues with:
 
+- Inappropriate CPU cache synchronization operations on MMIO regions
+- Incorrect DMA mapping/unmapping that doesn't respect MMIO semantics  
+- Missing IOMMU configuration for MMIO memory handling
+
+This work is extracted from the larger DMA physical API improvement
+series [1] and focuses specifically on block layer and NVMe requirements
+for MMIO memory support.
+
+Thanks
+
+[1] https://lore.kernel.org/all/cover.1757423202.git.leonro@nvidia.com/
+
+---
+Leon Romanovsky (3):
+      blk-mq-dma: migrate to dma_map_phys instead of map_page
+      nvme-pci: unmap MMIO pages with appropriate interface
+      block-dma: properly take MMIO path
+
+ block/blk-mq-dma.c            | 12 +++++++++---
+ drivers/nvme/host/pci.c       | 18 +++++++++++++-----
+ include/linux/bio-integrity.h |  1 +
+ include/linux/blk-integrity.h |  3 ++-
+ include/linux/blk-mq-dma.h    | 14 +++++++++++---
+ include/linux/blk_types.h     |  2 ++
+ 6 files changed, 38 insertions(+), 12 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251016-block-with-mmio-02acf4285427
+
+Best regards,
+--  
+Leon Romanovsky <leonro@nvidia.com>
 
 
