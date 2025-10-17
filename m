@@ -1,128 +1,135 @@
-Return-Path: <linux-kernel+bounces-857486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DBCBE6EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:28:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FC1BE6F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 871EB4E359D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:28:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42B054ED49A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105F30C37D;
-	Fri, 17 Oct 2025 07:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0231FE45D;
+	Fri, 17 Oct 2025 07:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VIz76RX4"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RhFD5Foi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75C523B0;
-	Fri, 17 Oct 2025 07:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94195186E2E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760686080; cv=none; b=qSJRDDu694Xy/v5EtoHt/x2N/dxyX87bn2AMxkgR+gOrGa+9TqANqN09YpwXfLzS2lWgEoXVRT/lYCY44mJH+LTJbZFFyLiWYjuEpAdTj368SWklx+Mih+eNrVSYy9eBb4QpCopLjRGyWX29vzpAZtOODAT/KQEUV7MbzvgPa54=
+	t=1760686216; cv=none; b=QS6EOgnzhunFUhiHWGmAh2au/a8lKaL3e07m8oVkrHPHlA7iHR/kR6nS4X5Sn9OcgpFXH+S0MKkQVmrR52Rj7ocEiHLOoJnSNW7tYWZ4bzOa7eOkIxqLPI09n3a12XFjA2sIF1EYRNsVm9Ktics7nzrDVMz0CZjh7ySJGRXP2SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760686080; c=relaxed/simple;
-	bh=CeYmHe2krBmRJ6wb9noy1AZ7ZcEqcmhOzbisZa/Zn0g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j+1678OaYS8dRpmCdSCqgbq7Haqvo9ALeFrPtVuRnBj00jqKJBhpyJyqr3VS8PIAxPUB9x49/Jc55IwXrSSXTifkp+FamKzrv4IhdCJi2xJA/wGGlBvHxmAbLkVD/nJx0BigT82XoJTHPomn9wxhgcuu0J1I5NvXGpEg/U/9kUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VIz76RX4; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1760686074;
-	bh=CeYmHe2krBmRJ6wb9noy1AZ7ZcEqcmhOzbisZa/Zn0g=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=VIz76RX4NyL2/lwkpiHUBHlniXsm88NzdohT42OCC6jZRkVCnmCAm4q1QezGJxiQF
-	 nqGCL0odsbY+KGW4RrQLUsHZucGbEgWn81mOIQ/51ojlQU5SXVg+kQiD4MYH9tfuBw
-	 V4VNH3h6CNDZ7QAhpn8X1sYr2VmvG6QJZ/YbGgj4tBgNwhz/PEqHcPFJ/QHfFNE5T2
-	 tUTed0LwGCB5RDYXq6Rukc9vgK+nLeSoCbzkVvzlDQKXStokEeve3blocwxA6qE7Fk
-	 wUscGyg7liKXOBf/W1insVDfobbK/YdlbH13XkV5IuebXQoQONRTSrDd+mkDQfdWsc
-	 x18V1qULiQjWw==
-Received: from [IPv6:2405:6e00:242d:9743:e1f6:2067:ab3d:5861] (unknown [120.20.206.235])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 651866477A;
-	Fri, 17 Oct 2025 15:27:51 +0800 (AWST)
-Message-ID: <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from
- round_rate() to determine_rate()
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Brian Masney <bmasney@redhat.com>, Iwona Winiarska
-	 <iwona.winiarska@intel.com>, Joel Stanley <joel@jms.id.au>, Maxime Ripard
-	 <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 17 Oct 2025 17:57:44 +1030
-In-Reply-To: <2025101759-runner-landing-374b@gregkh>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
-	 <aMatZAX6eFI1RmDH@redhat.com>
-	 <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
-	 <aPEZSY6RC-UVclxN@redhat.com>
-	 <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
-	 <2025101759-runner-landing-374b@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760686216; c=relaxed/simple;
+	bh=94q7hjUFhw+N6XCp7Xyj+iOAYOIaGt7n4W8/rmeaHOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GgAdc8cxqIlz64ectXPiy/m8r89Wf56ZvxrWp2CHpIUrOuHp8pCdd8i3R8E0ZamorEnjGQvpDL1sFW4fdOTGdotewWZIkhPCwVG86GqstnMYuzFJxp+59Al351sRBWVwevn6nI4yJ9TWGUlSMvpsbh1nIxm4mKVRzYKyGMittwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RhFD5Foi; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760686215; x=1792222215;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=94q7hjUFhw+N6XCp7Xyj+iOAYOIaGt7n4W8/rmeaHOc=;
+  b=RhFD5FoiXlMVZiRAg7szO9DCk8NkyyfyvxjAG/jKaVlKYE6LBjaP0Z39
+   6qPC/Pf2CGqr1eZqCcPmEAH0jGGyKwIbvJ3yUH1MoAQgP4/C5uzxfTqrL
+   mSAMb6bZ9ke5uDo2shy36AK7Ez4A/HuTLRqBrZKPMFbyviRzY1QFTcQJ8
+   /DQxzjwJTgTGgD4wfCK3TJ/u2gr2IxnJdm9uY0spfVXpnLFxOEwT01C3c
+   qWB5ie8AXkCiNKzSRsPmxEGIeNPzjbtCfvUeoZxi4sE8oz6fNBP6Qzatn
+   NDgyUdjAtV4CoPboZrKk6JkKoea+K31cavcAeiJKrjy2UsB9JVZHYTg2p
+   A==;
+X-CSE-ConnectionGUID: UjKcKfe4TRK1is7x9vzMuw==
+X-CSE-MsgGUID: h9S35Yf7RXazsEl0+RHpQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62796115"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="62796115"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 00:30:14 -0700
+X-CSE-ConnectionGUID: FjfG6+ENSBqjWfhcEE3+Tw==
+X-CSE-MsgGUID: INzcuHrrSuyWuqA7vQsI+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="206378759"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 17 Oct 2025 00:30:12 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v9eug-0005h3-1C;
+	Fri, 17 Oct 2025 07:30:10 +0000
+Date: Fri, 17 Oct 2025 15:28:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: XueBing Chen <chenxb_99091@126.com>, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	XueBing Chen <chenxb_99091@126.com>
+Subject: Re: [PATCH] lib/bsearch: add mutex protection for thread-safe binary
+ search
+Message-ID: <202510171538.n1mAFlu0-lkp@intel.com>
+References: <20251016090640.6331-1-chenxb_99091@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016090640.6331-1-chenxb_99091@126.com>
 
-On Fri, 2025-10-17 at 08:41 +0200, Greg Kroah-Hartman wrote:
-> On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
-> > Hi Greg,
-> >=20
-> > On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
-> > > Hi Andrew and Iwona,
-> > >=20
-> > > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
-> > > > Hi Brian,
-> > > >=20
-> > > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> > > > > Hi Iwona, Joel, and Andrew,
-> > > > >=20
-> > > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
-> > > > > > The round_rate() clk ops is deprecated, so migrate this
-> > > > > > driver from
-> > > > > > round_rate() to determine_rate() using the Coccinelle
-> > > > > > semantic patch
-> > > > > > appended to the "under-the-cut" portion of the patch.
-> > > > > >=20
-> > > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > > > >=20
-> > > > > Would it be possible to get this picked up for v6.18? I'd
-> > > > > like to remove
-> > > > > this API from drivers/clk in v6.19.
-> > > >=20
-> > > > My (strong) preference is that Iwona applies it, but I'll keep
-> > > > an eye
-> > > > out for any unusual delays.
-> > >=20
-> > > This patch wasn't picked up for v6.18. Any chance this can get
-> > > picked up
-> > > now for v6.19?
-> > >=20
-> > > I'm hoping to get this merged so that we can remove the
-> > > round_rate() clk
-> > > op from the clk core. The clk maintainer (Stephen) mentioned this
-> > > work
-> > > in his last pull to Linus.
-> > >=20
-> > > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel=
-.org/
-> >=20
-> > Are you happy to pick this up directly in Iwona's absence?
->=20
-> Why me?
+Hi XueBing,
 
-I figured that would be sensible since Iwona historically sent you PRs
-for the PECI subsystem.
+kernel test robot noticed the following build warnings:
 
-I'm open to other approaches though.
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on akpm-mm/mm-everything linus/master v6.18-rc1 next-20251016]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Andrew
+url:    https://github.com/intel-lab-lkp/linux/commits/XueBing-Chen/lib-bsearch-add-mutex-protection-for-thread-safe-binary-search/20251016-171911
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20251016090640.6331-1-chenxb_99091%40126.com
+patch subject: [PATCH] lib/bsearch: add mutex protection for thread-safe binary search
+config: arm-randconfig-r121-20251017 (https://download.01.org/0day-ci/archive/20251017/202510171538.n1mAFlu0-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251017/202510171538.n1mAFlu0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510171538.n1mAFlu0-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> lib/bsearch.c:34:1: sparse: sparse: symbol 'cmp_mutex' was not declared. Should it be static?
+
+vim +/cmp_mutex +34 lib/bsearch.c
+
+    15	
+    16	/*
+    17	 * bsearch - binary search an array of elements
+    18	 * @key: pointer to item being searched for
+    19	 * @base: pointer to first element to search
+    20	 * @num: number of elements
+    21	 * @size: size of each element
+    22	 * @cmp: pointer to comparison function
+    23	 *
+    24	 * This function does a binary search on the given array.  The
+    25	 * contents of the array should already be in ascending sorted order
+    26	 * under the provided comparison function.
+    27	 *
+    28	 * Note that the key need not have the same type as the elements in
+    29	 * the array, e.g. key could be a string and the comparison function
+    30	 * could compare the string with the struct's name field.  However, if
+    31	 * the key and elements in the array are of the same type, you can use
+    32	 * the same comparison function for both sort() and bsearch().
+    33	 */
+  > 34	DEFINE_MUTEX(cmp_mutex);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
