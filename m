@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-857503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142BDBE6F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:41:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DCEBE6F8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DFBC506D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:40:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E2C3835B124
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9063B239E63;
-	Fri, 17 Oct 2025 07:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajzyhNDC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF6923EA80;
+	Fri, 17 Oct 2025 07:40:57 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D802822173A;
-	Fri, 17 Oct 2025 07:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFC11EE019
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760686835; cv=none; b=I0l4rSQLr/yVEIxh22TygJm5vG7XlXIxp/K+g+tApzITFyW9qgDB+XThdgcBpj3WWjJV19+Luo5Pbhj9hcwgWReTpO7phrOsnPVy6nL2D0IheI2jkOCZM9HdkYmyV5uAUtf+s2zxsCnly4+83tRM5+6vFHLuBiJXmNTEJbAV8cA=
+	t=1760686857; cv=none; b=Oub5SyWzLhAyb5N3n1q2ou8vEMYXH2Z56/AB8fgS6kJmQgUKZ78Kd4Q2LlSs8ijG/Cj47fgXUOK2wwyu+D5X2AMmjqHuWvKDFrGRb7CyY3KTSeDBmBhwBtYC+5Zd/Ywec6NvcpzqCHauJ3NtwhSs9uRcFTdCmNeQAw4jqQPj054=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760686835; c=relaxed/simple;
-	bh=sb/nElh9KMN8mQVtbv98NeQoE2uRu5jwjS2h4VMCK1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vEVlY0l9cSoMxJAID/xiaTysNTuHCHRgeNJP8dopnHdkv3c7ZzACCvLxyrSl4RcCL9KoukvFkcn3BHEYWUAgvl/U7TV6+JU/0ufeRxQef91eYbSf79fPK9/au+9S7MDQ4BY3aW6GLhDp5xrO469CSGfvH6DxPOpMsdBrCWmq10k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajzyhNDC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F47C4CEE7;
-	Fri, 17 Oct 2025 07:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760686834;
-	bh=sb/nElh9KMN8mQVtbv98NeQoE2uRu5jwjS2h4VMCK1A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ajzyhNDCNv3tFpAGl/2kxzSDKoyY5sO4ci+57z4j0yIk54h1Eswl5xzKilAMuu6Px
-	 MfqtkkYeHXCaRWue658cKrOdLidcvjHBpnr4RFTdAWPgUKx8l56msfqEbN5I4vxFks
-	 pQH1Ey2qdh3Ucafbu7bRlZHWI3qQ+6KrNdivvqnpJd9SgUKZePb/DF8XokRWVjZjBg
-	 9jaaIayru7fdbwWU7HfIxC1fyq9PzdmP7ZnD6SSsLZQwLreYnOm8XfBbHoOiopuUPK
-	 Ip7sRCHriZ29HlqSVcJSVZhDoLHoObhuPKFcPJysZJrJqRVl/xkeab6NXUDzLF21VG
-	 3+9QDfc6qes1Q==
-Message-ID: <1ce0101b-e6ee-4914-8c41-215a2f1aacf4@kernel.org>
-Date: Fri, 17 Oct 2025 09:40:29 +0200
+	s=arc-20240116; t=1760686857; c=relaxed/simple;
+	bh=cLKqVn8Z2TBqSDRqJdQ7TokPZf5KyC181WbIfaA6di8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dKPZtrJlDhI7vOzTIJpaTBJr8EBjLoGZfIjSzAA2PnQjhtVm5HQIki1aMt0VzMZ+8T7iPGPOS1onmQMkyfDt/ElDb8ABgvhRVlxeD1MF9OiWojy4M7bhebyVaEa6Rc12PMDxZ0OrzpNfFJdiBZi3Y7YAnxLRaVJ0VZiwDmye12E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-55784771e9dso717684137.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:40:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760686854; x=1761291654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FsO/hn7ZxXSEVqf0RwtjiX3Woc/Jh2yXP3yIe9HcSiA=;
+        b=CMWanTGcpypHzfHJI+uiok24o6evtXBsqoRoJnOAT8syiyEnXlKf41t9rLqz8iwVs/
+         rcQYiJatjiVOUF+CYAtnoiebuna+buVG468e+Vlfp7AmCZo0bYLr3kXJ5F/VjAPgGJgS
+         GaJAun/0t8caMobonJRKR5jSzwDSHjiKmngUJKsMmNKMZ3uh0ccB8nsw/hgIL1LWicoX
+         wiiGZHNwqwdocUlkH5y8PxpndM3EApQAm87A9GI9px4ooH+IhLxS5UmlgVj6/n6Cz8T0
+         L9+LJTcPEBekPq5BbPV80nCaFilVIedQ3z02i+HodQq5ELScomtLJslNdBbrBclECu0A
+         ZZDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoTGv+Zd7yd9fLF+53v2udHtpYge0CJySOF1xuYaWSdBCz0KMopFyLVRSgGIDyq5eKZuRAneYJB3GLVPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYK3LVD4Nh/km4xOnlhMuPM6VQd0BtRVAQa/w/dTvzryiJOULr
+	L7lFUoPmjuFChW3O8wMHhI+8ZnX+n273TwWJBOnXUFa+1cXSnZ8Wr4ZK0cZmA1sz
+X-Gm-Gg: ASbGnctpaeisfq6bZCKgA9OTcoT5hLnGczg+Emb4TthSbkKG+tozqXJ5oLb3B3ZqYDc
+	5Wpjav4S9UhCnlQoyIi/6upOnRqvnFdD+GeNrXdmPM5tGFZfNDXvaZqaD/QZg4vHiaghWs02bHm
+	JFAFWqeCg+C+jOQDWo7S2GDDIz0e4J3dDV+ylaKawo95HD0SvnAygzrsVDhPwr1iKMfkLHmABgC
+	Dux3rCG9WxM5p1gIUCxrpRjc0apznVbPGq10g8qLZLkVg+PVn66DizHuqlc8S7rJ50CF2MApMVe
+	Chr/4vpymgND5Ut5Ikmby3lDo153VKrUriTE0UGF3txoSzHBIUnhGzX822pdgDv1bgQ0fCbQmNj
+	lKRzHaQA66I/jRjbXyCuqn0al3DbHJr9MSJRkbob/wRPzThfc4eJrTPQciBMHdxtu0CxOiqWxQ6
+	KnPDKLAm2gVVpDY8upZzQfaZ1UxxZ5+3HQcVtnqMZucg6oLGdM
+X-Google-Smtp-Source: AGHT+IHoTtJBnyNUc4B6I41Z3uwzX/v5As7PoOiyCKQJjX/BdsV3du+y+uZjXDcY3dj1FUK/b/nufQ==
+X-Received: by 2002:a05:6102:b11:b0:535:af8c:ba68 with SMTP id ada2fe7eead31-5d7dd6d76b9mr1144784137.33.1760686854364;
+        Fri, 17 Oct 2025 00:40:54 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-932bebf59fbsm189536241.11.2025.10.17.00.40.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 00:40:53 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-930d9fdeb96so478324241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:40:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBUmR0aid+7qKDfoCNpojv+fDPGyzq+LcWN7RHagZL4lYJYNqA87KTs4aQpVdT+exwVOFFiEWztp/eDQ8=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a13:b0:523:712d:4499 with SMTP id
+ ada2fe7eead31-5d7dd6a442emr1096341137.26.1760686853648; Fri, 17 Oct 2025
+ 00:40:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: rockchip: Add support for
- RV1126B
-To: Finley Xiao <finley.xiao@rock-chips.com>, heiko@sntech.de
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- ulf.hansson@linaro.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- zhangqing@rock-chips.com, sugar.zhang@rock-chips.com
-References: <20251017065646.320643-1-finley.xiao@rock-chips.com>
- <20251017065646.320643-2-finley.xiao@rock-chips.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251017065646.320643-2-finley.xiao@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251015142816.1274605-1-herve.codina@bootlin.com>
+ <20251015142816.1274605-3-herve.codina@bootlin.com> <aPHiAObA61OVf8mY@ninjato>
+ <20251017093649.2d5549e4@bootlin.com>
+In-Reply-To: <20251017093649.2d5549e4@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Oct 2025 09:40:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV0As4XKG0P0y+pJpTT82Bq8qpq2rHufeX4_q0j-eOPPA@mail.gmail.com>
+X-Gm-Features: AS18NWADsUKWogewe8kUaA0j69ci3ZpGRe2zEccgQpiOEHAKGQSGuqQNAabIlZg
+Message-ID: <CAMuHMdV0As4XKG0P0y+pJpTT82Bq8qpq2rHufeX4_q0j-eOPPA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/10/2025 08:56, Finley Xiao wrote:
->  
->        clocks:
->          minItems: 1
-> diff --git a/include/dt-bindings/power/rockchip,rv1126b-power.h b/include/dt-bindings/power/rockchip,rv1126b-power.h
-> new file mode 100644
-> index 000000000000..beb692bd8e72
-> --- /dev/null
-> +++ b/include/dt-bindings/power/rockchip,rv1126b-power.h
+Hi Herv=C3=A9,
 
+On Fri, 17 Oct 2025 at 09:37, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+> Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+> > On Wed, Oct 15, 2025 at 04:28:14PM +0200, Herve Codina (Schneider Elect=
+ric) wrote:
+> > > +static void rzn1_adc_vc_setup_conversion(struct rzn1_adc *rzn1_adc, =
+u32 ch,
+> > > +                                    int adc1_ch, int adc2_ch)
+> > > +{
+> > > +   u32 vc =3D 0;
+> > > +
+> > > +   if (adc1_ch !=3D -1)
+> > > +           vc |=3D RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNE=
+L_SEL(adc1_ch);
+> > > +
+> > > +   if (adc2_ch !=3D -1)
+> > > +           vc |=3D RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNE=
+L_SEL(adc2_ch);
+> >
+> > Are you open to either use an errno (maybe EACCES) or define something
+> > custom (maybe RZN1_ADC_NO_CHANNEL) instead of hardcoded -1? I think I
+> > like the latter a tad more.
+>
+> I prefer RZN1_ADC_NO_CHANNEL too instead of an error code and I will use
+> that instead of -1 in the next iteration.
 
-I don't see my comment addressed. You never responded. Please slow down
-with your postings and respond to comments.
+Or just -ENODEV or -ENOENT, and change the checks above to
+"if (adc1_ch >=3D 0)"?
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
