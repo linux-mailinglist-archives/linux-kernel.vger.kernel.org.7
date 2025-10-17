@@ -1,157 +1,87 @@
-Return-Path: <linux-kernel+bounces-858001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2F7BE8855
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BECBE8C5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C7162688A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5B3E626442
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D462E6125;
-	Fri, 17 Oct 2025 12:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHDf+r6b"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9572DF716
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B643469E3;
+	Fri, 17 Oct 2025 13:13:44 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A97F346A11;
+	Fri, 17 Oct 2025 13:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760702890; cv=none; b=rph+guHA1BPequKeuJS55XxL3SU/xWtOjVe2U3s/frZrrxZfIQlvoJzox7Gc3UYGkIToW33hMH6lmJoUYUdwIe8y1TCWs5KpahQmVUtA9b2QY8c5Oq281e55TQ+nWdxS2pZ8h5PIBE28wAKbq+Arm1heqb8HqUUeijvPdmKby1U=
+	t=1760706823; cv=none; b=RjH8HzFz/ODdwVIUizEZgiDz2Yt0RYeh+jHAPGGgMnT1lcV8lTcrQp23CLyNFyXrP/wlVxDtTuF93KQWXCxpBbtoiQl55lgqLCXFi/1l08mbfrTrBeWODahtxI08CwGwyJuAKti/YByXoY2U9ZdX3THOqiTRmSjE8zlpqhp7DL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760702890; c=relaxed/simple;
-	bh=pacw/ENbcv+KCNhsoYxWKd5E57eceNXFXgqAbXeIWAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tjnEqJGvQWXJBHYzGAF4FHl2FGCJuRWkveKwRah8R3ansfmq3Lua07nfPa4qw7DT0ScffJsYzhv+eE1RCzImLbL6iJujNg/4g5KhDhotWPguAXnpqYTARnXH4fmXOBzmM6M1MkO2+B7Zilj40Ypf14gcbZ+qysZBLz9y2N30LeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHDf+r6b; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b62ed9c3e79so1259202a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760702888; x=1761307688; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D1OQBcJjNvMdiwaszp4KDFRPLfNnLBhAgYvcBECQKgE=;
-        b=aHDf+r6bLAe2akeLxNcvR40L0o0J3ca95uI8CRwCJQ0G+EQw+IKeoKc0o3YOCU83Wt
-         SOqcx9BSx+rWzR4i3c0uPIL+JSwNE+sq1NhjlSPV/Tb/nswX6Qzxz2fy7hBjnbDIs9Q5
-         aI6Wzl8OI5C7K9qIH2qke0QvI4M00QnzncCtjyxcUdbO95Ke96Bxx8/wO1cAxmOi5vTU
-         HCW+XexCM4TzEo/0OD3DwvF6RYREDbcG05ROtCv/j3QbWc8D4FhEh3Thes2eTEGYc+jQ
-         37YTsSfMdC/HfVgKVw9nzZJd40m9OADp94fcm6YLMm3rygqoD193CCeH1kEyoNNj+nej
-         kAgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760702888; x=1761307688;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D1OQBcJjNvMdiwaszp4KDFRPLfNnLBhAgYvcBECQKgE=;
-        b=eHlVb1nRRaxsCcCvIfULwTXty8N1i3U/xeS2GB2K4yFVoczsLeX1hrhhjeIPDgL4KW
-         O6d64J5ORZ6gDArBqzwxMXmgR5cBFr/USM6X7kPBuVZFv7ps0zbCvHlK9z9TP1TfVgNN
-         yKQAnSQGbjhHEF+81BsF3EQD+SDFjBVtDJUACJowsrTVKsniKAxdVKlBdqIWKCtbA2L/
-         gBPDISZFNxxm8dA9YelXvypTyX5GX8Kk/BOQnQdDrzN6E7mqPSot1iib+iIgtG5cmMXh
-         5MnUuCF4/jF7MsjNYiCqgG8AiU1Q/D4z3GHplvSHkF4h+Xw4cKjRblZER5L8IVz6gJch
-         bBVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0HcgC6+ahaTwSsYs7Id3x1SYTm/FIpDuIwtLnN3O30Ji6yzP8UQwCkS7xXO0krSc56Ru26J97CqpLT6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbvj6cXufI1KRBRW9zxBfdZV1GsKjGensotiAfPc80VGjpUYNG
-	HjXQdATudvXROS/7a86mfC3ij/CtEw3Tk9jpxJRCMCUp94i/xaRKK3lF
-X-Gm-Gg: ASbGncuoTGQC7fWzFcZCcBGl85PtMqoK0NVw5EQHg0T7HrNebr7BVxSjQ7mcG0GC4gR
-	xMIxW4CcaoDZOvTq06X1a8jLygSRYsDARMk2kgTaAOnQIaAy/WBeQOtwLRBRNG4gtbhCbTaz8WN
-	SP/Xko36FmYCXKsYZk09nSJSS8fPRv3hMxy/goCGd982m5PHTLbZaAUE8DYTzc08AGImRnzqp7l
-	R1aYMYxG15j+KKgjHieQYLLPdwrep5/m8+JTK1KtEtDUKz4+jB2H5Djh2ItqLj66Aj8tXE4w3tR
-	0BhArj+pW6FF1juRlp1U0Gj0ICAcG/mwbWWZWPIuD34RDoKgJT1nDZ43IRG+IR1Mc8aiRE6yvBx
-	dQEV6RSHrStXCyijSJfRZ+QpfryzpD79z+HeutGcUfvzIeKcMnM6TkCSmpRFXqg==
-X-Google-Smtp-Source: AGHT+IFnsq6kZGk/fHm/e4FGVx4CFf8u3uhudH43GQxU6NT4qAtaZrIavqrUcVzL980LCDRQymv9AQ==
-X-Received: by 2002:a17:902:d50a:b0:27d:339c:4b0 with SMTP id d9443c01a7336-290cba4efb1mr43185145ad.35.1760702887862;
-        Fri, 17 Oct 2025 05:08:07 -0700 (PDT)
-Received: from CNSZTL-PC.lan ([2401:b60:5:2::a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a228a5b5csm5822966a12.13.2025.10.17.05.08.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 05:08:07 -0700 (PDT)
-Message-ID: <d9d14ce2-2e65-422e-95fb-eb30b128ad90@gmail.com>
-Date: Fri, 17 Oct 2025 20:08:03 +0800
+	s=arc-20240116; t=1760706823; c=relaxed/simple;
+	bh=QN+FTil0OtW06PC1H5D6pXDm5/rYU8ei/m/tw8aCc/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ly4DXYYVwvRwwa2ele3IOEPySa4LHmn5JHQ+q9Hr4uuZThgJN4lESA9M/orCN8663HYvYNWa35PH6OWNbcqogOO4MOCIoql5ulU0UURin+D6N1GeBjq70fb9B0uzOcvyy9SJQ4dSoBfQbt9jrPdX31xeWK1CubbT6Z20EQ2WbHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1v9kH3-000599-00; Fri, 17 Oct 2025 15:13:37 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id A624EC0256; Fri, 17 Oct 2025 14:11:20 +0200 (CEST)
+Date: Fri, 17 Oct 2025 14:11:20 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
+Message-ID: <aPIyaPuTXEfBPHme@alpha.franken.de>
+References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com>
+ <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com>
+ <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net>
+ <aO1sWdliSd03a2WC@alpha.franken.de>
+ <alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk>
+ <74ed2ce0-744a-264f-6042-df4bbec0f58e@linux.intel.com>
+ <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk>
+ <9f80ba5e-726b-ad68-b71f-ab23470bfa36@linux.intel.com>
+ <aPIfSvhqhc9wxzGi@alpha.franken.de>
+ <21079c94-cd49-bcd7-6f5d-7d5cd9d61432@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: fix eMMC corruption on NanoPC-T6
- with A3A444 chips
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Grzegorz Sterniczuk <grzegorz@sternicz.uk>, Jonas Karlman <jonas@kwiboo.se>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251017073954.130710-1-cnsztl@gmail.com>
- <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
-From: Tianling Shen <cnsztl@gmail.com>
-In-Reply-To: <7f0b1747-87eb-0b0b-6fb0-304811a4be21@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <21079c94-cd49-bcd7-6f5d-7d5cd9d61432@linux.intel.com>
 
-Hi Dragan,
-
-On 2025/10/17 18:25, Dragan Simic wrote:
-> Hello Tianling,
+On Fri, Oct 17, 2025 at 01:58:13PM +0300, Ilpo Järvinen wrote:
+> On Fri, 17 Oct 2025, Thomas Bogendoerfer wrote:
 > 
-> On Friday, October 17, 2025 09:39 CEST, Tianling Shen <cnsztl@gmail.com> wrote:
->> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
->>
->> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O errors and
->> corruption when using HS400 mode. Downgrade to HS200 mode to ensure
->> stable operation.
+> > On Tue, Oct 14, 2025 at 03:41:42PM +0300, Ilpo Järvinen wrote:
+> > > [...]
+> > > It was "good enough" only because the arch specific 
+> > > pcibios_enable_resources() was lacking the check for whether the resource 
+> > > truly got assigned or not. The PIIX4 driver must worked just fine without 
+> > > those IO resources which is what most drivers do despite using 
+> > > pci(m)_enable_device() and not pci_enable_device_mem() (the latter 
+> > > doesn't even seem to come with m variant).
+> > 
+> > will you send a v2 of the patch ?
 > 
-> Could you, please, provide more details about the troublesome eMMC
-> chip that gets identified as A3A444, i.e. what's the actual brand
-> and model?  Maybe you could send a picture of it?  It might also
-> help if you'd send the contents of "/sys/class/block/mmcblkX/device
-> /manfid" from your board (where "X" should equal two).
+> Without the the if ()? I can do that, I was unsure how people wanted to 
+> progress with this.
 
-Unfortunately I don't have this board nor this eMMC chip.
-I got the chip model from my friend, it's FORESEE FEMDNN256G-A3A44, 
-manfid is 0x0000d6.
+yes without the if(), thank you
 
-> 
-> I'm asking for that because I'd like to research it a bit further,
-> if possible, because some other eMMC chips that are also found on
-> the NanoPc-T6 seem to work fine in HS400 mode. [1]  It may be that
-> the A3A444 chip has some issues with the HS400 mode on its own,
-> i.e. the observed issues may not be caused by the board.
+Thomas.
 
-Yes, it should be caused by this eMMC chip.
-
-Thanks,
-Tianling.
-
-> 
-> [1] https://github.com/openwrt/openwrt/issues/18844
-> 
->> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
->> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
->> ---
->>   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->> index fafeabe9adf9..5f63f38f7326 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->> @@ -717,8 +717,7 @@ &sdhci {
->>   	no-sd;
->>   	non-removable;
->>   	max-frequency = <200000000>;
->> -	mmc-hs400-1_8v;
->> -	mmc-hs400-enhanced-strobe;
->> +	mmc-hs200-1_8v;
->>   	status = "okay";
->>   };
-> 
-
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
