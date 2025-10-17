@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-858294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338F2BE9DCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D39FBE9FE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 687825854A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:20:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95F84584B72
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1592F332EDB;
-	Fri, 17 Oct 2025 15:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D85C336EF8;
+	Fri, 17 Oct 2025 15:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEB+lmEg"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtE7O4cg"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C071E33290A
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37AD3328F2
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714353; cv=none; b=tuii0s1PX0bCzYNKR2KmYPfqJGSaYkKSTjqBjY18w7Ux6DtHb0aHTM3wskiTc8/HT53Ckdp05/JfQhVExcmgQz/hHIlQB+xJYEcX/+iLY6sVrz7AL/rS587S/DC02XDqJ+uD+cQ0tY7eN3wgkZANMwCEp/6IFdL7Q3P9krgdwzc=
+	t=1760714368; cv=none; b=C2VB9vlGmvY6Eq1QHXyusPQEWvxwiTTL6rdUCvN5VEq/UXrUo7zCd9T7Y7I8bZzz2AT0CHF+RjUs86yGfCLbUtSFfer9RCmvN1Db+mIK+arYQ2svEjSv7xpHLMLC+7Dr/1OgjO3807tcE85HZuuUg/oqRf2qN6tGHWBjjYlNrmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714353; c=relaxed/simple;
-	bh=Y3zs+7EWEpEspMjXG/tv7lz3qsoFqxSawHyRTh14OuU=;
+	s=arc-20240116; t=1760714368; c=relaxed/simple;
+	bh=/osEKnWe3mbTF3iLxYWox4eoxzoJvmAFu4soCr3U8BU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ogcYmYYDAk6SQFCDF6PfamvQWw0b6Yi0K++aKI4CZ8GZxhEsNMjyBuxCT684F+i1vtSS7Q2F8/SAGC5rPIKmNce06ldE2yKzbYXAVwPE+n2LGVTQaRNtL8/SUC4lH5mFW84EiV/xS6iI+3avspYXRjGkyk9gX5qhVkHoSTTsFNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEB+lmEg; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version:Content-Type; b=afOHBXU79JlrUnHd9asRQv/B2bXG+gjajN3KeMAJtdzJCJ705Ucc3bwMb2hf6NEXxg++/y7k+gtfICv5VdTziIaXuXySIg6LL9rmtfy6SMjGc9zbGl5PzPzdwmS1lQI5JL6xwRPi5C7bDridyAckp2Qc8V1v2XbI1lkHyrCaDv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GtE7O4cg; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7835321bc98so1999666b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:19:11 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-290d4d421f6so9348905ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760714351; x=1761319151; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760714365; x=1761319165; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eJTkF6pHkRbGTiu8sME46LOjNVi5j+piyfVUn5/1Bzo=;
-        b=cEB+lmEg8kNIvbXTdD56Ue+49eRAmYxVRZToWjjebKvwZzhm3ViLKMyMM/XmZmtiQO
-         QgNw7MSXaCSvokm6j8FkU0rrYH2llMjyHCubBPnkTx6wNZ45iMQwwpH0/EUyOogHPVeA
-         rPB7BZB+EjGFdVzi/vVxZuGtojcYDJCCLsZhUgZvrrAJd4Aom7H54lBvistq1o4Ba1CO
-         TNDf18lKqjatfmKnQtxGekDrtDgT6o3lsL1an0rTaN0NOJoRw7cNDpgPwJxKVjEYkdYL
-         VhrLxOayJIflwyjLEAf/dlKzFq34rzwgMF00mGN9jli0oJVk9CQAP8tYXQVrosxd+Hdr
-         F7Tg==
+        bh=ypV8vCzrTsVuGY3EOGhG77XH5/MdfxUEKyYPHv8FMv8=;
+        b=GtE7O4cgk1KAhOF09i2N5n8DnUFLJoRKD7T1kxKNi59WhwqByApft12o5zVwuuCLwp
+         3kUo6+APvf0pK963jxw/wfuyA/AJZ47c7DZGLCwLuiEtb5JQRp7hBOAz/7wvLExV+sv8
+         zeBXlDoj+tOQZzKpo3dzRMNim9mAgMaVFimswuOtSfrzJ7TK8sHITFgIBOHBWaYiS4aX
+         NQupAOpPBLKQazh4cTtNFK0L2qyo+zIoB35kMJn+ugsFWkwlr7SEXKKe+kTRln7snsBI
+         Keysawvk+Su+tiuvEt2ZplRwCJPl6XZ14nfniq6uHF6JHHoDIQXsO7e1OJXbTeO0/0oD
+         lNEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760714351; x=1761319151;
+        d=1e100.net; s=20230601; t=1760714365; x=1761319165;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eJTkF6pHkRbGTiu8sME46LOjNVi5j+piyfVUn5/1Bzo=;
-        b=CnE3g7ZURg88N6s8LsKTFgs4QwgEiP3pU6byEPdgrernmmEEC6wP4YirnR6ocUAHzK
-         Ztp+u30ET/stXPcVwmsyJVeAxdwDhxn70Wv9oMfvvSLJDRT/e9nsa9SW5y5Jha7q5yO9
-         7/cHdJgQ+fiOvVHW7Nb1/1a79f5VCa56LahvDm9h75LA1FKsQoltgUbWWqNF3oV5ZZmY
-         u1AQMy/maiSizWAaNyyLAxICmZAdAm7/Sso98UQYXaY8VcJLKdmMtaj06LFW35Dahl3M
-         uZhtUyaxbmMFPHKufGBxWuFCWKMwlhcBNIeyG5GNEHwIXRpLGWBlwNX+Kxnc4VI1dzCq
-         aPoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZNnvM+rUlVcx43LfLS65YR3fFoHCnT6Y98ny6GJX2I0qE3rWf//NMVvtZ8lAfBeJGvn2NoMmGHd/31/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWQ5ENTVFJ73t8HxcYYF4Ygt1MEKH4au4YoHzqbOM/8iGg9q83
-	xVLvhFqe/mbkoSyg8v7Lw7k/f4lw3CAH1hwg63pS3NtWzCubR7xqZLYS
-X-Gm-Gg: ASbGnct1RjzzH/IJLtQQ7WAKH0NejRYVeGcUsjym/EtoMsvYkk0jn8VGZnzBzfGl/Og
-	y8/rNJPdvGsQbdhzNHgR6Dcpv+jW0SgDweFDlJmEHUmVrORSAv5zUupWrmGWv5kvdTmEJ/gGCkv
-	c4TGc7JNqn/YMwase5f0aSVmK5u+I/KeARtotqrI3dHS4qEUKK8By3IlR5yx+rMrjKO7hPvx8rA
-	luw4SEwHrxpTF8t+CbCm6Ueu5dyXsQ3y/ck1Q8yBmFB8qBPq/80Xr/z/zJkitCKu6QYX2zxbvW5
-	G8UTeI5FXkfsw9rpuLEGruKkvJAYGYJpwO71CJO7jwGjvV56FVWeKmGsseVGKE6qiHmutQE1Cbb
-	cVsxOAoRmBuN4bOJHe8lwWeepoU59M9eM1Pwo1hKOQe+m1tHgrXnZypjBwuXnMBmfT6TIkFYE+9
-	exSClTaGMESuZYTZ51MxOG8w==
-X-Google-Smtp-Source: AGHT+IHOFgRPcJ1MQt4p4gojjUhnLxP/yD+ItR7pcwk09VIMA1XE/ri3q0HvKCSg10K8XvkIfs+w3w==
-X-Received: by 2002:a17:903:1a4c:b0:267:ba92:4d19 with SMTP id d9443c01a7336-290c99a8ed3mr52578495ad.0.1760714350743;
-        Fri, 17 Oct 2025 08:19:10 -0700 (PDT)
+        bh=ypV8vCzrTsVuGY3EOGhG77XH5/MdfxUEKyYPHv8FMv8=;
+        b=SWzWZtvrj+XYkoI360/jcarj+lddHwGiiezWruOQP8HVhOR4JR1U84FQx6NHRZKMIw
+         9DlHwPN3XbYY5JKpMK7XIBinOSNv3BMqvBrQcGI9Y8Ev82v4EnKG1A57po9Gm6CEiIZy
+         1Z0FF8TWV0aBMPWab/oxXxd1oerjRsygOslwiyiJeyAgvFR7vDDQohgPmnT0B/ydlXkb
+         vc5zBF5eZNAt2vUv16c6MhWZnT8hXf6iGacSoMKtp0AHaPpbqMPwe9U9EvfAAhgBXFis
+         YvceJC17vfAJ8PfOBX5+4jFbOrhTQ2sBfZ7tuoUB0WQMI07TtSlrczw5PxaRLASyF6je
+         FYRg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3eVrj8H0AQwqvKT1yCoQNaSIiI+YI8qCFF7MTLAHW6JENLqbMTBAZCEzrYCzqT9IdTudMJ2D04NAzaog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyczJLlCql9oK4XmLZNxE+bNFwo82UTapG8HbT3pvHdUKWbqyXD
+	Rsz8qybh2WmLWAGGaLry9C7B7yClPg3lrWUgujyVoUv/q+chpuEZ67YH
+X-Gm-Gg: ASbGnct7tscTBxKVWSi85d7wfmJ2MqhuUrabX4O03PxqesngDqc5oSOd6hrvDPzFNsx
+	+EgjxJO2S1XmWCIH2dTPF7u+S4hOrbxzEDpt11ohPh7e2VMbh4JA/HLkzrieaFB4d8rBwFlKzCv
+	xez2SVzoU4BZgcQPN/84CLmFUJcgQdEXUifLSTbqMR6D+Z/+vkuIeW93QvW8A73TdbfJITnAH2Z
+	iExsn/k/bHt15E2yfJ1MOki10Ofx+HGp1nFo9Rxd0Ikbhgyh7ZAhJXZwXEdc5JF25Ec0XFyD/3m
+	8WbovCBsmASKy98FafOx5F8MH9p3BSC72XEcnZYXRJQju63q5y6yt4ql5YLMuX+gNgB5fJc770g
+	JMXbOEMEha0Q5Kk6/Sg2uXp9fGKyDtvby3oMmZWt2JXVmMykflJbV6bgEPzFpJ8J1X1sLs7Ylmb
+	MH/E4UrbFCrYJPAT+H4MjQXw==
+X-Google-Smtp-Source: AGHT+IE1hfFHdVPrDeSlhIdBoaTiwvbReDsJmEBsFsJOoLMNH4uCgErVwW/AKE1pXjv0R63O/gY3eg==
+X-Received: by 2002:a17:903:b0e:b0:25c:d4b6:f111 with SMTP id d9443c01a7336-290cb65b633mr50748765ad.47.1760714364884;
+        Fri, 17 Oct 2025 08:19:24 -0700 (PDT)
 Received: from iku.. ([2401:4900:1c07:c7d3:fdc9:5e8f:28db:7f80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a756sm67193955ad.14.2025.10.17.08.18.53
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a756sm67193955ad.14.2025.10.17.08.19.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 08:19:10 -0700 (PDT)
+        Fri, 17 Oct 2025 08:19:24 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
@@ -93,9 +93,9 @@ Cc: netdev@vger.kernel.org,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	stable@vger.kernel.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/4] net: ravb: Make DBAT entry count configurable per-SoC
-Date: Fri, 17 Oct 2025 16:18:27 +0100
-Message-ID: <20251017151830.171062-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/4] net: ravb: Allocate correct number of queues based on SoC support
+Date: Fri, 17 Oct 2025 16:18:28 +0100
+Message-ID: <20251017151830.171062-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -110,16 +110,14 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The number of CDARq (Current Descriptor Address Register) registers is not
-fixed to 22 across all SoC variants. For example, the GBETH implementation
-uses only two entries. Hardcoding the value leads to incorrect resource
-allocation on such platforms.
+On SoCs that only support the best-effort queue and not the network
+control queue, calling alloc_etherdev_mqs() with fixed values for
+TX/RX queues is not appropriate. Use the nc_queues flag from the
+per-SoC match data to determine whether the network control queue
+is available, and fall back to a single TX/RX queue when it is not.
+This ensures correct queue allocation across all supported SoCs.
 
-Pass the DBAT entry count through the per-SoC hardware info struct and use
-it during probe instead of relying on a fixed constant. This ensures
-correct descriptor table sizing and initialization across different SoCs.
-
-Fixes: feab85c7ccea ("ravb: Add support for RZ/G2L SoC")
+Fixes: a92f4f0662bf ("ravb: Add nc_queue to struct ravb_hw_info")
 Cc: stable@vger.kernel.org
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
@@ -127,92 +125,31 @@ Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 v1->v2:
 - Added Reviewed-by tag from Niklas.
 ---
- drivers/net/ethernet/renesas/ravb.h      | 2 +-
- drivers/net/ethernet/renesas/ravb_main.c | 9 +++++++--
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 7b48060c250b..d65cd83ddd16 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1017,7 +1017,6 @@ enum CSR2_BIT {
- #define CSR2_CSUM_ENABLE (CSR2_RTCP4 | CSR2_RUDP4 | CSR2_RICMP4 | \
- 			  CSR2_RTCP6 | CSR2_RUDP6 | CSR2_RICMP6)
- 
--#define DBAT_ENTRY_NUM	22
- #define RX_QUEUE_OFFSET	4
- #define NUM_RX_QUEUE	2
- #define NUM_TX_QUEUE	2
-@@ -1062,6 +1061,7 @@ struct ravb_hw_info {
- 	u32 rx_max_frame_size;
- 	u32 rx_buffer_size;
- 	u32 rx_desc_size;
-+	u32 dbat_entry_num;
- 	unsigned aligned_tx: 1;
- 	unsigned coalesce_irqs:1;	/* Needs software IRQ coalescing */
- 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 9d3bd65b85ff..69d382e8757d 100644
+index 69d382e8757d..a200e205825a 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2694,6 +2694,7 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.rx_buffer_size = SZ_2K +
- 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-+	.dbat_entry_num = 22,
- 	.aligned_tx = 1,
- 	.gptp = 1,
- 	.nc_queues = 1,
-@@ -2717,6 +2718,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.rx_buffer_size = SZ_2K +
- 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-+	.dbat_entry_num = 22,
- 	.internal_delay = 1,
- 	.tx_counters = 1,
- 	.multi_irqs = 1,
-@@ -2743,6 +2745,7 @@ static const struct ravb_hw_info ravb_gen4_hw_info = {
- 	.rx_buffer_size = SZ_2K +
- 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-+	.dbat_entry_num = 22,
- 	.internal_delay = 1,
- 	.tx_counters = 1,
- 	.multi_irqs = 1,
-@@ -2769,6 +2772,7 @@ static const struct ravb_hw_info ravb_rzv2m_hw_info = {
- 	.rx_buffer_size = SZ_2K +
- 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
- 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
-+	.dbat_entry_num = 22,
- 	.multi_irqs = 1,
- 	.err_mgmt_irqs = 1,
- 	.gptp = 1,
-@@ -2794,6 +2798,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.rx_max_frame_size = SZ_8K,
- 	.rx_buffer_size = SZ_2K,
- 	.rx_desc_size = sizeof(struct ravb_rx_desc),
-+	.dbat_entry_num = 2,
- 	.aligned_tx = 1,
- 	.coalesce_irqs = 1,
- 	.tx_counters = 1,
-@@ -3025,7 +3030,7 @@ static int ravb_probe(struct platform_device *pdev)
- 	ravb_parse_delay_mode(np, ndev);
+@@ -2926,13 +2926,14 @@ static int ravb_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
+ 				     "failed to get cpg reset\n");
  
- 	/* Allocate descriptor base address table */
--	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
-+	priv->desc_bat_size = sizeof(struct ravb_desc) * info->dbat_entry_num;
- 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
- 					    &priv->desc_bat_dma, GFP_KERNEL);
- 	if (!priv->desc_bat) {
-@@ -3035,7 +3040,7 @@ static int ravb_probe(struct platform_device *pdev)
- 		error = -ENOMEM;
- 		goto out_rpm_put;
- 	}
--	for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
-+	for (q = RAVB_BE; q < info->dbat_entry_num; q++)
- 		priv->desc_bat[q].die_dt = DT_EOS;
++	info = of_device_get_match_data(&pdev->dev);
++
+ 	ndev = alloc_etherdev_mqs(sizeof(struct ravb_private),
+-				  NUM_TX_QUEUE, NUM_RX_QUEUE);
++				  info->nc_queues ? NUM_TX_QUEUE : 1,
++				  info->nc_queues ? NUM_RX_QUEUE : 1);
+ 	if (!ndev)
+ 		return -ENOMEM;
  
- 	/* Initialise HW timestamp list */
+-	info = of_device_get_match_data(&pdev->dev);
+-
+ 	ndev->features = info->net_features;
+ 	ndev->hw_features = info->net_hw_features;
+ 	ndev->vlan_features = info->vlan_features;
 -- 
 2.43.0
 
