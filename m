@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-857287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C0FBE66A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8082BBE66AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDBBD4F118A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:28:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 214EE4EE0D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F502E0901;
-	Fri, 17 Oct 2025 05:28:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD593346A4
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21D530C637;
+	Fri, 17 Oct 2025 05:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNgIL4at"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2923EABC;
+	Fri, 17 Oct 2025 05:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760678931; cv=none; b=p3GDfSwQqIj9Z7aFKTH4QlhccCUkJs7k9q0jueuHzHG+RfQDGM7UZF+Q3rAa7mRFoisWBj2FnEkpRZ/OldidwBFvoAWjYiMPKTIQgRe3NDiYJJ4zaARWgIQCnI52Z3emL17wC8NPB8+i6BklTMktFTBQYauxpdVFGVMEq3hVmZ0=
+	t=1760678968; cv=none; b=mRP/eLDTwqvgSca3MJwsJoHgqTRTkfY6K5YcZOoIJHNhjAFX+M9loaCyyzL94E4657kvIMS+J/4woHvwB0wrRpkUPn7HBti5ZHhvD5ZD4pbgTuX7vRPNGgnijwypEkVznfye92ecDZbdxxzDjJSndU3SIE2UHnn6iG2cnQvSMmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760678931; c=relaxed/simple;
-	bh=2hf81FSAJ5wiJa9oKpQ7QOJV6ebT8zsoD8S97gyRemA=;
+	s=arc-20240116; t=1760678968; c=relaxed/simple;
+	bh=4FONppQg2BLdwN/d+WJOotcyUnysRLJeHGxkiBtYy3U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aftTO3kuviXbDkM1IGsuS0/+3XvppszidElQ1eke/Ms9r26uy4tkS4j/Aplh/AUkDCVBYYEzpc+v2Otj5KSAgQ3ZIESX/ssAIFT5uGsBScfe2ZgapapJalhZjRzZf+iSgUyq4+GAkRD7gBcVrdxybOGitK2jEhUAUcpAhg5JEIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03909153B;
-	Thu, 16 Oct 2025 22:28:40 -0700 (PDT)
-Received: from [10.163.38.24] (unknown [10.163.38.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 341C53F66E;
-	Thu, 16 Oct 2025 22:28:43 -0700 (PDT)
-Message-ID: <78473937-9858-41c5-90b5-84c991d57692@arm.com>
-Date: Fri, 17 Oct 2025 10:58:41 +0530
+	 In-Reply-To:Content-Type; b=XRWztYxEDR3RBCnZsd8nrYG2ocPAKWLeefD5eO/4+ZdEMdkhGV0cjijs7Gk1UuywjVSiXWG7BTxxTADUjmQy9pPS+AeMrq4EsHGFQTq945f+a7HGEZ8fZUBGw1bpEbYuLfXHHmS1CsIONXGPBpcddrJsKKWOiUTVG+FXRv+2VKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNgIL4at; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760678966; x=1792214966;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4FONppQg2BLdwN/d+WJOotcyUnysRLJeHGxkiBtYy3U=;
+  b=VNgIL4atGFHg6I+BYuqZBIxa4nbMVnD1E6p5yjMeeLGzvfNkWYiwgnpk
+   D/cgh/XZnU+pxgKL71bzG8+ydsS5/rDkgonTIwIhkrO6XxhttSUN605Ur
+   CZlq/NeGjEcjDES8cuTPLPZLZ3CwG726pFRMf92pToaC1K72gPqSHGkoH
+   F0H0ENMTkwO3PvFnreSEEJPilrvckAAfKqXMe0N8aM+aFHEamU+QzKm0p
+   0hCrGE2lWSqhVKezUct7QzANk8cmCkIr8xMGe9b3BlsasRg0xvXKa0xxo
+   PPJHaJBP8FRkHwybs9tDO4LuXqvg/CDJ/YcVdRISHaXk6iBFwBqCHbarM
+   A==;
+X-CSE-ConnectionGUID: KUobU3PJRPSiyTIW98dlcg==
+X-CSE-MsgGUID: M1DL7LHeQpGDicA41S/n0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="73556030"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="73556030"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 22:29:26 -0700
+X-CSE-ConnectionGUID: 2V3nfKtXQAa6e5ow4GMspw==
+X-CSE-MsgGUID: pWjESwP4SY6tOGwbr2mamg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="183052436"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 22:29:24 -0700
+Message-ID: <4385b47e-391e-460a-8646-a499747d738e@linux.intel.com>
+Date: Fri, 17 Oct 2025 13:29:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,83 +66,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64/mm: Rename try_pgd_pgtable_alloc_init_mm
-To: Linu Cherian <linu.cherian@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yang Shi <yang@os.amperecomputing.com>
-References: <20251015112758.2701604-1-linu.cherian@arm.com>
- <20251015112758.2701604-3-linu.cherian@arm.com>
+Subject: Re: [PATCH v2 2/2] KVM: TDX: WARN if a SEAMCALL VM-Exit makes its way
+ out to KVM
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kai Huang <kai.huang@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>
+References: <20251016182148.69085-1-seanjc@google.com>
+ <20251016182148.69085-3-seanjc@google.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20251015112758.2701604-3-linu.cherian@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251016182148.69085-3-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15/10/25 4:57 PM, Linu Cherian wrote:
-> With BUG_ON in pgd_pgtable_alloc_init_mm moved up to higher layer,
-> gfp flags is the only difference between try_pgd_pgtable_alloc_init_mm
-> and pgd_pgtable_alloc_init_mm. Hence rename the "try" version
-> to pgd_pgtable_alloc_init_mm_gfp.
-> 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
-> ---
-> Changelog
-> v3:
-> * Update  pgd_pgtable_alloc_init_mm to make use of 
->   pgd_pgtable_alloc_init_mm_gfp
-> 
->  arch/arm64/mm/mmu.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 638cb4df31a9..80786d3167e7 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -559,7 +559,7 @@ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
->  }
->  
->  static phys_addr_t
-> -try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
-> +pgd_pgtable_alloc_init_mm_gfp(enum pgtable_type pgtable_type, gfp_t gfp)
->  {
->  	return __pgd_pgtable_alloc(&init_mm, gfp, pgtable_type);
->  }
-> @@ -567,7 +567,7 @@ try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
->  static phys_addr_t __maybe_unused
->  pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
->  {
-> -	return __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
-> +	return pgd_pgtable_alloc_init_mm_gfp(pgtable_type, GFP_PGTABLE_KERNEL);
->  }
->  
->  static phys_addr_t
-> @@ -594,7 +594,7 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
->  	pte_t *ptep;
->  	int i;
->  
-> -	pte_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PTE, gfp);
-> +	pte_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PTE, gfp);
->  	if (pte_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	ptep = (pte_t *)phys_to_virt(pte_phys);
-> @@ -639,7 +639,7 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
->  	pmd_t *pmdp;
->  	int i;
->  
-> -	pmd_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PMD, gfp);
-> +	pmd_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PMD, gfp);
->  	if (pmd_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	pmdp = (pmd_t *)phys_to_virt(pmd_phys);
 
-Renaming makes sense and LGTM.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+On 10/17/2025 2:21 AM, Sean Christopherson wrote:
+> WARN if KVM observes a SEAMCALL VM-Exit while running a TD guest, as the
+> TDX-Module is supposed to inject a #UD, per the "Unconditionally Blocked
+> Instructions" section of the TDX-Module base specification.
+>
+> Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+
 
