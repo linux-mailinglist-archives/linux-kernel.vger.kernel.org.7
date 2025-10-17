@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-857641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A602EBE7529
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D7FBE752F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F9F62595E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71DB0627033
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52462D77F5;
-	Fri, 17 Oct 2025 08:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6542DA753;
+	Fri, 17 Oct 2025 08:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y+5pZSdK"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="abupiNi+"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8912D837B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D49A2D7DFF
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760691400; cv=none; b=D2TqTOwjrElpGwy99lvOaabBywjIqkTVcF+UnEHNK/6/0sB1rHCh/okVdDKw4Lo9vmCzKJqjNJQamOuLrouZulaA17zk7ClEUXRIoDkY2Xr5tXUOcYbA1sC6+YQFrqBqacGFQeydxnGbn5JLsvYZOeU6XTmYR1mgrY/aoWDyuRQ=
+	t=1760691402; cv=none; b=D4IktntKsW7G730l4vuCgelO6/uR5HYSn4ofpF0hzzuHiNVGljAJ7ytdd7w3hDdbX1uDQAy4AVO4fBbtiDUzUJeYB+HiaLbUhvBT5kTHPIKwXzAoxHw4kPy2Afqc/nPJEfuonrylgolu6sO4YFjp1icGsuPFyfzk7FPL7yVGe0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760691400; c=relaxed/simple;
-	bh=xJ9ewBKmUOcp7y1OOXagWe0RLhZPnHfQRgccA5gcwCw=;
+	s=arc-20240116; t=1760691402; c=relaxed/simple;
+	bh=P19330s2rEI12H+hFUT0x7xmbf//n4xsYyxteQ0dyh0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G34H1VFd2vsXTdn9GJUPtW+Voz13RQeivR1VEwXIXH50Fz7YQ+SRbqtGS+SCqZb+k0QO20cQeYsxXrifPUtP/gOmtNRZqXsnCga1b7msFGFoEwnwmFxEJD0A5LsXRSyyDLk6NB+IjjVlFrBRsvQCVfD2A5147mEICitsqFww5e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y+5pZSdK; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=UFpG8dBS0JFDVTGi5g698E0XFS7Ik9T6u0y4XicnTOs9gLQHzxrzijBlUc2b70kDZU/8cHBs+1BUQ+8h2Yg7aCmPP9SaBI5rrdtOuIklln6+TOGmL63xEBV1NxUlT3jOfSmibFrm7NyfKVe6k1JQjB28e3HrWXGy63M9JO6IzEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=abupiNi+; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H8mImP008877
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:38 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59H8SNQc006081
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=HLTr0qwAyjy
-	py8cQSzVdRdWFvvEMv8L8lE7ajdfrlhc=; b=Y+5pZSdKuMh+SRNrogEKtF6KYjd
-	TozBO2qtdkfBE7Ztr9MWJ+4AwjifZWT1w2hmBY92nBjEaukcGdWWgiZQiC+PaSum
-	pqYIjsMZePaPWRdUf8PMghtFxrw2Rq1mSiVCRktkXKFn7w15EZwnhnpOVKvyQ3RP
-	/O4gHwPlSl7iwnZ0RTJFrCO2of/5ASDyP92Tp3NSkcMlkqjPGFyqY8uK+fcvl4XM
-	2SPIee9X6fu4ewNDouDsm3BZWExg6nlAtyWVdmVpGKUCFMQq3Lm2ybiefeDxP7qy
-	Yh0ytmOc/QaNXSSuUTChmI1Om0PjwElxQmTp/53+CndtQ6LtAz5XXSp4mrA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1aqrvr-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=Vp8Tre/TUw7
+	lskgMkX0Rr2AnYlSGvl2YlZcKg+3d5Ok=; b=abupiNi+KfcKfFL9GAyfvYz7rfd
+	uaS2UxF9ngg9P/2nIS/qYCvoG5pFP9quKmtM37Xk4E4FLdcbOwJJ5cSs5bWTY/An
+	MuX02IcpO/NHQ4LIpw19KGbwIh6PN+YFZ4JzYSpOVrNRk+GSKXHfU+mw7goD6fjR
+	2lVVeBu4Rs6tKMAc6JgWsYNEoPalaqzp4y58NMHk8wlbjxm8Dg9gmIcpCpqJZnCA
+	LobEtxDeW5rloLsO0p9FSfkCYxmHUnTQoxNqBeB0RfrxyxIJvCxsLipS1RkoUuC2
+	RSwYaEI7kqk4WKzTm/GNSxjiSHG0bTail0Kdn/w2yD+FoPHgCQL54z22viQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwwvp2-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:38 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-79a3c16b276so51882296d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:56:38 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:56:39 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-818bf399f8aso79571806d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:56:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760691397; x=1761296197;
+        d=1e100.net; s=20230601; t=1760691398; x=1761296198;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HLTr0qwAyjypy8cQSzVdRdWFvvEMv8L8lE7ajdfrlhc=;
-        b=xT+iBYlot8V+wK6s96FZiWw6QlfnhcW3ziWJXj75GuDXbJJQe103kY5IEriEQnUqKH
-         CCAF5h4bWBXjHcqp0+nQHBRFaISFRpIuA4zmUYUZjEnP5wPv1kv9nFFNzjPN48vMsM03
-         Dp9chJOgiZW5b5kuIZWHsA7erHjmsa5+l2GNNfz9I+CS+9v4t6qW882XbfCMoDV9XhhD
-         wNlYHKEjYMj/Na5A9ugcFeqVSLfoWsyE7bRHkLb3+qAWTEUEk5sUAFaTuc/ApQlq6cgA
-         9ScZMijgqXXmRNP8l/yRYSZiL+C8k+BEIevMnIouCepx4wuN2Zso9ibX/hoJM7tGgAL5
-         J+nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUl5V8Jo32vxYZSk7CHE2OT+ev2SotHv0iXR8DcdHaKk9B4jd7JVLAiEtCNbuOGEmA+GE1sqwT5xJB3x6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaP692RpqFZJhatLRNXc/Ixp2aL3hspBoqTYmHalfJo0bPOtOs
-	suFjrhaEEJYNukPeL0lmJh/ilaAZ8azFo1U+AlJGVLoec6s2HZ6mkR/saVksEo57z4MiZPujmjP
-	vxHiPll8jdu0w42gPtz31AWbrWX5El1h38/y1idiWH6WZJ6U1CfFPFZJ3xQ+8NtyU8dw=
-X-Gm-Gg: ASbGncsiTZeSFAeH9qCcvFDxo1VKg9rmlh9l/G2Jz2KZm9kgUvNjq3GtW2vqzp+R+O+
-	uad4ZOF+jfd7412xZsre1atJaGnbRwBs3b+c2C6I95Df1sgCfoeWito8UUqAUK1YpfaFtzSf6V2
-	3480UBw2uUI/3qghtHoxrqvs/Ov5nzh4tMw3pIySi3nH1FGRHdnrSsEu/y2ImYc83A/zFIx4t0X
-	BrHfrSdqWaPp6CCDicDktYYMU9c2fiO6yqcJUthFEVl1J09NjvT9pEJFcuRwUSp2mqhgeSl9Nz2
-	hHlKMdIvmhtv2uPMYKU6diLbvdMnWt7Dvbt1+JGKrNnr0WER/r6qAHyyJzHZHPHgVaqn+pNh4Yd
-	CXtbZC260UioJ
-X-Received: by 2002:ac8:7c54:0:b0:4da:3218:e8da with SMTP id d75a77b69052e-4e89d263059mr42429421cf.17.1760691396916;
-        Fri, 17 Oct 2025 01:56:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGiJl3aHFmjmNgCLDQr4OtAu7l19M62+p30JfjEUZEfWKYdayPHQpd/eRhXsqwlIUUFFwADg==
-X-Received: by 2002:ac8:7c54:0:b0:4da:3218:e8da with SMTP id d75a77b69052e-4e89d263059mr42429211cf.17.1760691396380;
-        Fri, 17 Oct 2025 01:56:36 -0700 (PDT)
+        bh=Vp8Tre/TUw7lskgMkX0Rr2AnYlSGvl2YlZcKg+3d5Ok=;
+        b=kPaXg5AxB2qI5jr0gVAZ9rFuOh73T9X8oxNG/IfVE/xKwp4cn9jCjmPF9VLMB54L8D
+         vUoFsuDORGFikmBnv3PEhH/yllXUA2M+gbAa1U0OdfReGNXd3eWCa0pYd3oC9xVUGIg7
+         Q0yaVM1fpE2ptlJChsABz3KDhGqzziZ9Ojul+CDUQUQrLVMuOgcpoI56tPs9r0THUOos
+         ZAElTZODCOdvn+pWgbhVbPNDS1nWLPvLYtsO3B5KCSWNWBr1l588+23t3+EbQtaVeKhJ
+         NqHvIEf8TjgB7fxBYTNoJ+p47JKIT8tvnBdV4sgVJOOTLyLnJ2zjh9SNySEHjSbGFE5o
+         dheA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTOVi4pn2nuPGg6+KaeopEm1UnOG89kr+cOf5nG5XocGb8xFsHqbVSBO0nOkC0oFOR2ajfMXcmQUR8RLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoZUHULLmx7JkqViIi+z91lAPKWai/w82Phx8KhBmYDyJj9Ldc
+	rG2SuBqTnYi1IloILKabxGGbYC7M35xghfphfg+7/ScEYOa4+TUc9F+bJtjcZ5iOx5vwluqKCk9
+	BlLjXhQV/qWtHBsM+w72Dq+VhoKUX4pFIh2H1ZmH04YeDokrMuYV6huYZqYwQB8Tl4Yw=
+X-Gm-Gg: ASbGncszTaqhaUjppAnZRM5MQcuqVnIz4Zu7IWwqO+z5dlqE/6fHtop2m7mTDHp+ncn
+	Pyi8KoE9rhoA1doSjDFCQVBzvCRJeZRA78shSWCMQKgxw/avXP40lkABmf8anatzSqBOW2ojHmf
+	WXn49Sw55OwCBkj+wnDsuViiyOEBEBlx1A3xnEpLLbPT2mqVVXrJ5UNRR4jgS8atNrhbLQA4Utt
+	zunU1hg3Kpp6eOxJSpeRK9/e+AqHWy2lE9rHjukFNo+3kiT74nD/ljAWhetMoP6uLQEiv3SuqpR
+	JKajtPMke9G7baUP+1Rgq1tQE24Go0mRZMS+JfTvHKp/JPsUDRSENI2X3TSqVuMnLzreEtsMtIq
+	X9ixEVfTajdsG
+X-Received: by 2002:a05:622a:14f:b0:4e8:91df:63bd with SMTP id d75a77b69052e-4e89d076cddmr41100561cf.0.1760691398294;
+        Fri, 17 Oct 2025 01:56:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6gPcL0Z+5GM2WlrbbQ7u4fSCPPFGZINJjyo6aTt08/qvGlm1JGSXEJpXOHTxKsT9HVs4i3g==
+X-Received: by 2002:a05:622a:14f:b0:4e8:91df:63bd with SMTP id d75a77b69052e-4e89d076cddmr41100391cf.0.1760691397817;
+        Fri, 17 Oct 2025 01:56:37 -0700 (PDT)
 Received: from debian ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711444d919sm70764985e9.14.2025.10.17.01.56.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4711444d919sm70764985e9.14.2025.10.17.01.56.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 01:56:35 -0700 (PDT)
+        Fri, 17 Oct 2025 01:56:37 -0700 (PDT)
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 To: broonie@kernel.org
 Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
         linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH 11/12] ASoC: qcom: q6asm-dai: Use guard() for spin locks
-Date: Fri, 17 Oct 2025 09:53:06 +0100
-Message-ID: <20251017085307.4325-12-srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 12/12] ASoC: qcom: q6asm: Use guard() for spin locks
+Date: Fri, 17 Oct 2025 09:53:07 +0100
+Message-ID: <20251017085307.4325-13-srinivas.kandagatla@oss.qualcomm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251017085307.4325-1-srinivas.kandagatla@oss.qualcomm.com>
 References: <20251017085307.4325-1-srinivas.kandagatla@oss.qualcomm.com>
@@ -98,147 +98,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68f204c6 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfXwgLGKLOurQLt
+ lPDjolvCuy7rgS5uSssQG03ij3a7BGee91SnykHvVLxA9px4AzxhXWzwKXn5okrfNfhwO8RTMuN
+ 3c+1ZBTpiSw+DqaJ9dvO7XWUoBjpT9Jv+ji044ItLgpYYia732qpixA1+DDjtItkGOHC0J+ub4a
+ vy5Kfbz9ferSFZYpU8yPd+yuBjU/BHQWAEYTnInZE+oxnRLYY9qf1SQr5lT/FfIdg8VqWKgJ89U
+ YtynAhqEsr5921zUhILuYTyZQUdeuR21cEw3FDLrVDqNV5PHormkaUoFjG1O56fdz5s0ZhOSEvo
+ VnVcTQ/HG8/k52UtvovzuE0pYKc2MHZWBGGkw7R6NylApWHxZnNNdt1mN9EDdE81x5v0KK7K5lN
+ ZfX8TSvdfRbMBpOpgV94r3bZBcRPxg==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68f204c7 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=xYGVKCReuHkqpmdgNokA:9 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: rFMm7HPfkh5ue0pxcIuxPxtjJpbv7Kmn
-X-Proofpoint-ORIG-GUID: rFMm7HPfkh5ue0pxcIuxPxtjJpbv7Kmn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfXy6SCcKKrveZ9
- Ry0nnigqtMFCOhcGOUf2hH83Q2PcJqU4oeOGrEHK1Er6uh/qvDZMDIPTcrLwYEgR9LSAU144lV3
- dOE/szfXtBhbto9VgFxcaE4cn1jJ6Mgif62x/VmNOAaEIRMYZPg9NP1uqP5lnNPf/E7Nib1LoJg
- zUOxJXwFgx87URmWNGwzESSvhMBhyekq3IkT294tpRRkFSoeLbb+Tu+b23TZyb/2RTqPJQ8hd0U
- /ft5k2wEj2MqgFUsAwLksckg8wFWFvHLj12/SSWQNf3WQVrgs6s4t7tgHzLEShQtkuc0mxorDW4
- h2emH8ok2d60s+X+1OeeILTibWvvX5ISgabgZatnzUpzit61S3Owne2HW5OPHenvmtdSqpToMUG
- Wxl+CsSSc55y2Lunb+FrWDlQOGC9MQ==
+ a=C-aEvXguSqPNF6A64mIA:9 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-GUID: or2IToP6aKVcpg-f2Bs_Rr1ppxVXr8y3
+X-Proofpoint-ORIG-GUID: or2IToP6aKVcpg-f2Bs_Rr1ppxVXr8y3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- adultscore=0 clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
 Clean up the code using guard() for spin locks.
+
 No functional changes, just cleanup.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+ sound/soc/qcom/qdsp6/q6asm.c | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index b616ce316d2f..665a5d1ec4cf 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -493,15 +493,15 @@ static void compress_event_handler(uint32_t opcode, uint32_t token,
+diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
+index 366fe8a8387f..7c9d1494e8b9 100644
+--- a/sound/soc/qcom/qdsp6/q6asm.c
++++ b/sound/soc/qcom/qdsp6/q6asm.c
+@@ -569,9 +569,8 @@ static struct audio_client *q6asm_get_audio_client(struct q6asm *a,
+ 						   int session_id)
  {
- 	struct q6asm_dai_rtd *prtd = priv;
- 	struct snd_compr_stream *substream = prtd->cstream;
+ 	struct audio_client *ac = NULL;
 -	unsigned long flags;
- 	u32 wflags = 0;
- 	uint64_t avail;
- 	uint32_t bytes_written, bytes_to_write;
- 	bool is_last_buffer = false;
  
-+	guard(spinlock_irqsave)(&prtd->lock);
-+
- 	switch (opcode) {
- 	case ASM_CLIENT_EVENT_CMD_RUN_DONE:
--		spin_lock_irqsave(&prtd->lock, flags);
- 		if (!prtd->bytes_sent) {
- 			q6asm_stream_remove_initial_silence(prtd->audio_client,
- 						    prtd->stream_id,
-@@ -512,11 +512,9 @@ static void compress_event_handler(uint32_t opcode, uint32_t token,
- 			prtd->bytes_sent += prtd->pcm_count;
- 		}
- 
--		spin_unlock_irqrestore(&prtd->lock, flags);
- 		break;
- 
- 	case ASM_CLIENT_EVENT_CMD_EOS_DONE:
--		spin_lock_irqsave(&prtd->lock, flags);
- 		if (prtd->notify_on_drain) {
- 			if (substream->partial_drain) {
- 				/*
-@@ -539,20 +537,16 @@ static void compress_event_handler(uint32_t opcode, uint32_t token,
- 		} else {
- 			prtd->state = Q6ASM_STREAM_STOPPED;
- 		}
--		spin_unlock_irqrestore(&prtd->lock, flags);
- 		break;
- 
- 	case ASM_CLIENT_EVENT_DATA_WRITE_DONE:
--		spin_lock_irqsave(&prtd->lock, flags);
- 
- 		bytes_written = token >> ASM_WRITE_TOKEN_LEN_SHIFT;
- 		prtd->copied_total += bytes_written;
- 		snd_compr_fragment_elapsed(substream);
- 
--		if (prtd->state != Q6ASM_STREAM_RUNNING) {
--			spin_unlock_irqrestore(&prtd->lock, flags);
-+		if (prtd->state != Q6ASM_STREAM_RUNNING)
- 			break;
--		}
- 
- 		avail = prtd->bytes_received - prtd->bytes_sent;
- 		if (avail > prtd->pcm_count) {
-@@ -581,7 +575,6 @@ static void compress_event_handler(uint32_t opcode, uint32_t token,
- 			q6asm_cmd_nowait(prtd->audio_client,
- 					 prtd->stream_id, CMD_EOS);
- 
--		spin_unlock_irqrestore(&prtd->lock, flags);
- 		break;
- 
- 	default:
-@@ -1031,17 +1024,14 @@ static int q6asm_dai_compr_pointer(struct snd_soc_component *component,
- {
- 	struct snd_compr_runtime *runtime = stream->runtime;
- 	struct q6asm_dai_rtd *prtd = runtime->private_data;
--	unsigned long flags;
- 	uint64_t temp_copied_total;
- 
--	spin_lock_irqsave(&prtd->lock, flags);
-+	guard(spinlock_irqsave)(&prtd->lock);
- 
- 	tstamp->copied_total = prtd->copied_total;
- 	temp_copied_total = tstamp->copied_total;
- 	tstamp->byte_offset = do_div(temp_copied_total, prtd->pcm_size);
- 
--	spin_unlock_irqrestore(&prtd->lock, flags);
--
- 	return 0;
+-	spin_lock_irqsave(&a->slock, flags);
++	guard(spinlock_irqsave)(&a->slock);
+ 	if ((session_id <= 0) || (session_id > MAX_SESSIONS)) {
+ 		dev_err(a->dev, "invalid session: %d\n", session_id);
+ 		goto err;
+@@ -586,7 +585,6 @@ static struct audio_client *q6asm_get_audio_client(struct q6asm *a,
+ 	ac = a->session[session_id];
+ 	kref_get(&ac->refcount);
+ err:
+-	spin_unlock_irqrestore(&a->slock, flags);
+ 	return ac;
  }
  
-@@ -1051,7 +1041,6 @@ static int q6asm_compr_copy(struct snd_soc_component *component,
+@@ -666,15 +664,13 @@ static int32_t q6asm_stream_callback(struct apr_device *adev,
+ 		client_event = ASM_CLIENT_EVENT_DATA_WRITE_DONE;
+ 		if (ac->io_mode & ASM_SYNC_IO_MODE) {
+ 			phys_addr_t phys;
+-			unsigned long flags;
+ 			int token = hdr->token & ASM_WRITE_TOKEN_MASK;
+ 
+-			spin_lock_irqsave(&ac->lock, flags);
++			guard(spinlock_irqsave)(&ac->lock);
+ 
+ 			port =  &ac->port[SNDRV_PCM_STREAM_PLAYBACK];
+ 
+ 			if (!port->buf) {
+-				spin_unlock_irqrestore(&ac->lock, flags);
+ 				ret = 0;
+ 				goto done;
+ 			}
+@@ -685,24 +681,21 @@ static int32_t q6asm_stream_callback(struct apr_device *adev,
+ 			    upper_32_bits(phys) != result->status) {
+ 				dev_err(ac->dev, "Expected addr %pa\n",
+ 					&port->buf[token].phys);
+-				spin_unlock_irqrestore(&ac->lock, flags);
+ 				ret = -EINVAL;
+ 				goto done;
+ 			}
+-			spin_unlock_irqrestore(&ac->lock, flags);
++			atomic_set(&port->hw_ptr, token + 1);
+ 		}
+ 		break;
+ 	case ASM_DATA_EVENT_READ_DONE_V2:
+ 		client_event = ASM_CLIENT_EVENT_DATA_READ_DONE;
+ 		if (ac->io_mode & ASM_SYNC_IO_MODE) {
+ 			struct asm_data_cmd_read_v2_done *done = data->payload;
+-			unsigned long flags;
+ 			phys_addr_t phys;
+ 
+-			spin_lock_irqsave(&ac->lock, flags);
++			guard(spinlock_irqsave)(&ac->lock);
+ 			port =  &ac->port[SNDRV_PCM_STREAM_CAPTURE];
+ 			if (!port->buf) {
+-				spin_unlock_irqrestore(&ac->lock, flags);
+ 				ret = 0;
+ 				goto done;
+ 			}
+@@ -715,11 +708,9 @@ static int32_t q6asm_stream_callback(struct apr_device *adev,
+ 					&port->buf[hdr->token].phys,
+ 					done->buf_addr_lsw,
+ 					done->buf_addr_msw);
+-				spin_unlock_irqrestore(&ac->lock, flags);
+ 				ret = -EINVAL;
+ 				goto done;
+ 			}
+-			spin_unlock_irqrestore(&ac->lock, flags);
+ 		}
+ 
+ 		break;
+@@ -1544,14 +1535,12 @@ EXPORT_SYMBOL_GPL(q6asm_write_async);
+ static void q6asm_reset_buf_state(struct audio_client *ac)
  {
- 	struct snd_compr_runtime *runtime = stream->runtime;
- 	struct q6asm_dai_rtd *prtd = runtime->private_data;
+ 	struct audio_port_data *port;
 -	unsigned long flags;
- 	u32 wflags = 0;
- 	uint64_t avail, bytes_in_flight = 0;
- 	void *dstn;
-@@ -1087,7 +1076,7 @@ static int q6asm_compr_copy(struct snd_soc_component *component,
- 			return -EFAULT;
- 	}
  
--	spin_lock_irqsave(&prtd->lock, flags);
-+	guard(spinlock_irqsave)(&prtd->lock);
- 
- 	bytes_in_flight = prtd->bytes_received - prtd->copied_total;
- 
-@@ -1113,8 +1102,6 @@ static int q6asm_compr_copy(struct snd_soc_component *component,
- 		prtd->bytes_sent += bytes_to_write;
- 	}
- 
--	spin_unlock_irqrestore(&prtd->lock, flags);
--
- 	return count;
+-	spin_lock_irqsave(&ac->lock, flags);
++	guard(spinlock_irqsave)(&ac->lock);
+ 	port = &ac->port[SNDRV_PCM_STREAM_PLAYBACK];
+ 	port->dsp_buf = 0;
+ 	port = &ac->port[SNDRV_PCM_STREAM_CAPTURE];
+ 	port->dsp_buf = 0;
+-	spin_unlock_irqrestore(&ac->lock, flags);
  }
  
+ static int __q6asm_cmd(struct audio_client *ac, uint32_t stream_id, int cmd,
 -- 
 2.51.0
 
