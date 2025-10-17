@@ -1,102 +1,399 @@
-Return-Path: <linux-kernel+bounces-858844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3E1BEBFF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739E4BEC012
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 01:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE5419C6FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4704E1AA66B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B726229ACF6;
-	Fri, 17 Oct 2025 23:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9552D63EF;
+	Fri, 17 Oct 2025 23:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pb1OVnQb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="FhO8GjoK"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1344F354AC3;
-	Fri, 17 Oct 2025 23:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCB923BF91;
+	Fri, 17 Oct 2025 23:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760743824; cv=none; b=Byxt3+2s3ex9FlzD4FMR2+tvZ73x3VuFR3iRNBK3hCK8qbiWKNYwt32Z3IzAidTPCiQW0+nUQCSJQjsSiRUKMzFrM72fD1//PIrq+TH3PocVPTFsOz5m+tyA/lYvQReXYmsMeNy5dTBvud3FWZyWQ7yrWHG7vlYRa7MLxwkaHbQ=
+	t=1760743940; cv=none; b=hb0UsoGyNi4sslNKlJTuma7aj5PWAmIZ92KVN6cNlIqq6fWkaFjoahj+V17TcTfnMsu/MLem0Nl6TVSTD8aS9giVzDsA1++6DpyMKBuDTTQcalrP++bGz6C2LOhUCzdtNRTzRd8OX6nBnrsTYmYDAIxHn0OlXUqTc2Uzh8XeJqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760743824; c=relaxed/simple;
-	bh=O43bnzlHzYWF3tohh8BdhIl4bku7eCG5WrTgzFJ6OQ0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fTpH4N/Bay4DXQI+AUVkBjm3Vri4cCf2fOFC/JDDhlmzHlVf3c2cOHvHXXHvuAolAd5dvMpG6MpCFZ8k+GKzXJq+Gdwzt1X4abKy3baiyeRPu25RAaUC2h7RDSE8Xn4mrmZddC03wIGx98ogedyAbialoaR/ndiIfLW01rVyX5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pb1OVnQb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79501C4CEE7;
-	Fri, 17 Oct 2025 23:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760743823;
-	bh=O43bnzlHzYWF3tohh8BdhIl4bku7eCG5WrTgzFJ6OQ0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Pb1OVnQbUFYdrBvUhhnGQWX+KiAMzNE7WQEaZeNxlqLbIgqQKIRRVhoD/oknE5+at
-	 /GSEs3/KKeVHhH3OosMBCoWH3enT5XgxODaD+6h0oOfFGTryPQ+4/eFQ7Q6SHmqVCE
-	 xiK/BLpyNqn3qY77/eGZksFSAAkjFYudcnZm9et3QtGxi59fxpSH316lZHNr5BKglc
-	 0SoulIJEncLPxLUNYyLl7KNAe76TULCn0N3wfxvYkVncRPU0I+4dH0SnTep87MuRGY
-	 VWK1yOdzPlgLn6l4oY26FmgY4uNoKIo2OaM+mRkHWKgxfOvtJCfEqUuHI/PmRA7/8h
-	 I3vRMezMKuTFw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34B0D39EFA5D;
-	Fri, 17 Oct 2025 23:30:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760743940; c=relaxed/simple;
+	bh=ZLNKyTtDA/ChmpiLa9ViAwheknJfaFjfciRSC4dm3DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HYBoY5H5/ksHDAY59SMyvzJfTW0Y8V+K2zmFnwVDqv6OIWm9gr0s9Sck5iJ3UzZYDukeEXSlghKbSFKtzRTbawzFi9Lay+jwjZ7YgxE9iANN+A/NeTkp6j+Q2EJAKI/uq8Xib2VZKmsYa7BzMp2N8cKUh2iXkYGvIq/dJKjdoSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=FhO8GjoK; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 280D65341279;
+	Sat, 18 Oct 2025 01:32:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1760743932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tqPWuoWvFyVqSUJEt2PcBhPV9rYSmY2YB6gu4jWs3qA=;
+	b=FhO8GjoK8jtaCoSAcn9bAlaY2vMaixjXvSmHz8f7AzvE1WLCb6LOD4za68MRtA7gSNXMXx
+	lTKAE6oRVi2iKbtLsYrhayDaW7evmgPCnKQK2LBwqkMva/ByscGKB1jGXyTzZ3BQ9cl77M
+	3oEQ+iznHE56QB0Eq7l9ZxZqEzJN6Qo=
+Message-ID: <d03ca3d6-cb36-4eeb-bbe2-9bd27b647a51@ixit.cz>
+Date: Sat, 18 Oct 2025 01:32:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for Pixel 3 and Pixel 3
+ XL
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+ Casey Connolly <casey@connolly.tech>, Joel Selvaraj <foss@joelselvaraj.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <20251005-pixel-3-v1-0-ab8b85f6133f@ixit.cz>
+ <20251005-pixel-3-v1-2-ab8b85f6133f@ixit.cz>
+ <2e4b995e-57ae-412f-ae88-c3708a5f67ee@oss.qualcomm.com>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <2e4b995e-57ae-412f-ae88-c3708a5f67ee@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [v4 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176074380701.2822953.14692637268674439157.git-patchwork-notify@kernel.org>
-Date: Fri, 17 Oct 2025 23:30:07 +0000
-References: <20251015021427.180757-1-jianpeng.chang.cn@windriver.com>
-In-Reply-To: <20251015021427.180757-1-jianpeng.chang.cn@windriver.com>
-To: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, wei.fang@nxp.com,
- xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alexandru.marginean@nxp.com, imx@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 15 Oct 2025 10:14:27 +0800 you wrote:
-> After applying the workaround for err050089, the LS1028A platform
-> experiences RCU stalls on RT kernel. This issue is caused by the
-> recursive acquisition of the read lock enetc_mdio_lock. Here list some
-> of the call stacks identified under the enetc_poll path that may lead to
-> a deadlock:
-> 
-> enetc_poll
->   -> enetc_lock_mdio
->   -> enetc_clean_rx_ring OR napi_complete_done
->      -> napi_gro_receive
->         -> enetc_start_xmit
->            -> enetc_lock_mdio
->            -> enetc_map_tx_buffs
->            -> enetc_unlock_mdio
->   -> enetc_unlock_mdio
+On 06/10/2025 14:41, Konrad Dybcio wrote:
+> On 10/5/25 3:16 PM, David Heidelberg via B4 Relay wrote:
+>> From: David Heidelberg <david@ixit.cz>
+>>
+>> This adds initial device tree support for the following phones:
+>>
+>>   - Google Pixel 3 (blueline)
+>>   - Google Pixel 3 XL (crosshatch)
+>>
+>> Both phone boards use the same identifiers and differ only slightly
+>> in their connected peripherals.
+>>
+>> Supported functionality includes:
+>>   - Debug UART
+>>   - UFS
+>>   - Charger
+>>   - USB-C (peripheral mode)
+>>   - Display (Pixel 3 only)
+>>
+>> GPIOs 0–3 and 81–84 are not accessible from the application CPUs,
+>> so they are marked as reserved to allow the Pixel 3 to boot.
+>>
+>> The rmtfs region is allocated using UIO, making it technically "dynamic."
+>>
+>> Its address and size can be read from sysfs:
+>>
+>> $ cat /sys/class/uio/uio0/name
+>> /sys/class/uio/uio0/maps/map0/addr
+>> 0x00000000f2701000
+>>
+>> $ cat /sys/class/uio/uio0/maps/map0/size
+>> 0x0000000000200000
+>>
+>> Like the OnePlus 6, the Pixel 3 requires 1 kB of reserved memory on either
+>> side of the rmtfs region to work around an XPU bug that would otherwise
+>> cause erroneous violations when accessing the rmtfs_mem region.
 > 
 > [...]
+> 
+>> +&gmu {
+>> +	status = "okay";
+>> +};
+> 
+> It's already enabled> +
+>> +&mdss {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dsi0 {
+>> +	status = "okay";
+>> +	vdda-supply = <&vdda_mipi_dsi0_1p2>;
+> 
+> 'status' should be last, with a \n before it
+> 
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			endpoint {
+> 
+> &mdss_dsi0_out {} instead
+> 
+>> +				remote-endpoint = <&panel_in>;
+>> +				data-lanes = <0 1 2 3>;
+>> +				qcom,te-source = "mdp_vsync_e";
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	panel@0 {
+>> +		compatible = "lg,sw43408";
+>> +		reg = <0>;
+>> +
+>> +		vddi-supply = <&vreg_l14a_1p88>;
+>> +		vpnl-supply = <&vreg_l28a_3p0>;
+>> +
+>> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&panel_reset_pins &panel_te_pin &panel_pmgpio_pins>;
+> 
+> property-n
+> property-names
+> 
+> in this order, please
+> 
+>> +
+>> +		port {
+>> +			panel_in: endpoint {
+>> +				remote-endpoint = <&mdss_dsi0_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss_dsi0_out {
+>> +	remote-endpoint = <&panel_in>;
+>> +	data-lanes = <0 1 2 3>;
+>> +};
+> 
+> (as mentioned above..)
+> 
+> [...]
+> 
+>> +		/* rmtfs lower guard */
+>> +		memory@f2700000 {
+>> +			reg = <0 0xf2700000 0 0x1000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		rmtfs_mem: memory@f2701000 {
+>> +			compatible = "qcom,rmtfs-mem";
+>> +			reg = <0 0xf2701000 0 0x200000>;
+>> +			no-map;
+>> +
+>> +			qcom,client-id = <1>;
+>> +			qcom,vmid = <15>;
+>> +		};
+>> +
+>> +		/* rmtfs upper guard */
+>> +		memory@f2901000 {
+>> +			reg = <0 0xf2901000 0 0x1000>;
+>> +			no-map;
+>> +		};
+> 
+> qcom,use-guard-pages instead
+> 
+> [...]
+> 
+>> +		vreg_l14a_1p88: ldo14 {
+>> +			regulator-min-microvolt = <1800000>;
+>> +			regulator-max-microvolt = <1800000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +			regulator-boot-on;
+>> +			/*
+>> +			 * We can't properly bring the panel back if it gets turned off
+>> +			 * so keep it's regulators always on for now.
+>> +			 */
+>> +			regulator-always-on;
+> 
+> Sounds like your panel driver is not sequencing things properly
+> 
+> [...]
+> 
+>> +&uart9 {
+>> +	label = "LS-UART1";
+> 
+> This is a 96boards-ism> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_1_dwc3 {
+>> +	dr_mode = "peripheral";
+> 
+> Are you sure?
 
-Here is the summary with links:
-  - [v4,net] net: enetc: fix the deadlock of enetc_mdio_lock
-    https://git.kernel.org/netdev/net/c/50bd33f6b392
+For now, the peripheral usb works, haven't tried to switch to host mode yet.
 
-You are awesome, thank you!
+> 
+> [...]
+> 
+>> +&usb_2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_2_dwc3 {
+>> +	dr_mode = "host";
+> 
+> Does the phone actually have something connected to both USB hosts?
+
+I assume not,
+
+Bus 001 Device 001: ID 1d6b:0002 Linux 6.16.7-sdm845 xhci-hcd xHCI Host 
+Controller
+Bus 002 Device 001: ID 1d6b:0003 Linux 6.16.7-sdm845 xhci-hcd xHCI Host 
+Controller
+
+I looked at the downstream description and it seems usb_2 was used only 
+on sda845 devkit.
+
+David
+
+> 
+> Would that be the weasel(?) security chip?
+> 
+> [...]
+> 
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-google-crosshatch.dts b/arch/arm64/boot/dts/qcom/sdm845-google-crosshatch.dts
+>> new file mode 100644
+>> index 0000000000000..dc9938ffc0ab8
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-google-crosshatch.dts
+>> @@ -0,0 +1,137 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "sdm845-google-common.dtsi"
+>> +
+>> +/ {
+>> +	model = "Google Pixel 3 XL";
+>> +	compatible = "google,crosshatch", "qcom,sdm845";
+>> +
+>> +	battery: battery {
+>> +		compatible = "simple-battery";
+>> +
+>> +		charge-full-design-microamp-hours = <3480000>;
+>> +		voltage-min-design-microvolt = <3600000>;
+>> +		voltage-max-design-microvolt = <4400000>;
+>> +	};
+>> +
+>> +	chosen {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		/* for u-boot */
+>> +		framebuffer: framebuffer@9d400000 {
+>> +			compatible = "simple-framebuffer";
+>> +			reg = <0 0x9d400000 0 (2960 * 1440 * 4)>;
+>> +			width = <1440>;
+>> +			height = <2960>;
+>> +			stride = <(1440 * 4)>;
+>> +			format = "a8r8g8b8";
+>> +		};
+>> +	};
+>> +
+>> +	reserved-memory {
+>> +		framebuffer_region@9d400000 {
+>> +			no-map;
+>> +			reg = <0 0x9d400000 0 0x02400000>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&gmu {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss {
+>> +	status = "okay";
+>> +};
+> 
+> I'm sure you can push some of this into -common
+> 
+>> +
+>> +&mdss_dsi0 {
+>> +	vdda-supply = <&vdda_mipi_dsi0_1p2>;
+>> +
+>> +	status = "okay";
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			endpoint {
+>> +				remote-endpoint = <&panel_in>;
+>> +				data-lanes = <0 1 2 3>;
+>> +				qcom,te-source = "mdp_vsync_e";
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	panel@0 {
+>> +		compatible = "samsung,s6e3ha8";
+>> +		reg = <0>;
+>> +
+>> +		vci-supply = <&vreg_l28a_3p0>; // downstream
+> 
+> which supply should /* upstream */ use then? :(
+> 
+> Konrad
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+David Heidelberg
 
 
