@@ -1,70 +1,97 @@
-Return-Path: <linux-kernel+bounces-857378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C039BE6AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:31:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7251FBE6A47
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8AD743B0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:21:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 400184F38D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99843115B9;
-	Fri, 17 Oct 2025 06:20:15 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8D530C37E;
+	Fri, 17 Oct 2025 06:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="M9nlVNFG"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1329F3101D5;
-	Fri, 17 Oct 2025 06:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647AB81720
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682015; cv=none; b=nvGPeE8ykP6XttQy/oTF4nEbYTWkRlVwEKfCAM7X4UBIyWAz/y54eKBVIGTclIP/g2V7GQpi0LxACV15hw+nxCai0KKCdQMxQtYib7L0R/iYvsJFHdNVzRM9gyE34+aD8Yxf9BvJmFcGSr3Zm2Eat9pgw97yz4j3ofE6VaC7768=
+	t=1760682260; cv=none; b=EedBvRCbMZwrf9yxYQ0gkcL0SOgu2ZgyOpQZ5t9G2KnQAVJwuPw1zNPJ33yTg2pVROz1Yn5CDl1od/70c6mRm83r0px5UndsQrbZjvrhfQA4MrtlyFKqpXQBRFhgIrxZy2s5q8o/J3EQLlFyZydg+sE5BOP529F36wHXiWuPEWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682015; c=relaxed/simple;
-	bh=uGakUfnEI2WHJMDC5Ou1Fjy/MVt0dyqZ03IOtgUdHhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVTJI3GGTlhaUGEzAan/tUNaynudC6JCHNXkG5OJUnJ8tLn2B1pE2IlreM/tBqSYX/P6Cc7my/Z3CN+HKzuo29vyAvZhl1BLRq7u2AUCwjw3K8si8sLjdtVv+Tu4hmD8DrL4+pLObPEjaXlhYnZJYxf6c7fyipfmuMs7O8k2hPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B951C227AAA; Fri, 17 Oct 2025 08:20:09 +0200 (CEST)
-Date: Fri, 17 Oct 2025 08:20:08 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 2/3] nvme-pci: unmap MMIO pages with appropriate
- interface
-Message-ID: <20251017062008.GB402@lst.de>
-References: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com> <20251017-block-with-mmio-v1-2-3f486904db5e@nvidia.com>
+	s=arc-20240116; t=1760682260; c=relaxed/simple;
+	bh=dCNbnzZaGTURzQcRM5MdxD+kKtITjSXEMqUN6a+7kTw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=U+6r9izXrKgnpJNPsTLiAzpmt3gMY9PyLrlZ1eu6TEyeYzbU/8gG2JdvRlgi6W8Ye16dHoAnzvEiDfL+ZsljcgAfMANOWUCt5yrpXUFpOWsXSyjcUg9FHtvGnRaQmeh9zl+LNNHOD902RT5tnmYr4vZYk/Ct5WgfHCtqIo+8ucI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=M9nlVNFG; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id; bh=9pnnaQM5xSMrFsb
+	0p+f4Y36hC8nYEX7zRftyen+UAt8=; b=M9nlVNFGZ3n9YlOp/CtMMUmgH7RwSfN
+	Ky9LcFiJlM3szc2MPCTMmWEXC3N4idviHF9FWMs01+iim0x8Th2sjE8Oq569fEzN
+	oXbuoic+NBqk9Dl5A6tY8z5VNVYTMYmoqUBXpVM7PoFzrY3DzZTszdyaVl1tXUkH
+	fmyXHCKpEh2A=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCkvCgD3dwhv4PFoULOHAA--.1374S2;
+	Fri, 17 Oct 2025 14:21:46 +0800 (CST)
+From: XueBing Chen <chenxb_99091@126.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-kernel@vger.kernel.org,
+	XueBing Chen <chenxb_99091@126.com>
+Subject: [PATCH] sched: Fix assignment in if condition in wait_task_inactive
+Date: Fri, 17 Oct 2025 14:21:33 +0800
+Message-Id: <20251017062133.48118-1-chenxb_99091@126.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:QCkvCgD3dwhv4PFoULOHAA--.1374S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruF1rZw18XFy7AF43Zr13urg_yoWDXrg_Aw
+	1UXF109w4Fyr9rZFWfXr4xWw1rt3yFyFy8uFs7ZFy8Xry0yrZ8XwsYvFyakw1fXasYvFy2
+	g3ZxWayDKwnrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRKfHjUUUUUU==
+X-CM-SenderInfo: hfkh05lebzmiizr6ij2wof0z/1tbiihXpxWjxnXGMeAABsz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017-block-with-mmio-v1-2-3f486904db5e@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Oct 17, 2025 at 08:31:59AM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Block layer maps MMIO memory through dma_map_phys() interface
-> with help of DMA_ATTR_MMIO attribute. There is a need to unmap
-> that memory with the appropriate unmap function, something which
-> wasn't possible before adding new REQ attribute to block layer in
-> previous patch.
+Fix checkpatch.pl ERROR: "do not use assignment in if condition"
 
-DMA_ATTR_MMIO only gets set in the following patch as far as I can
-tell.
+The code in wait_task_inactive() had an assignment inside an if condition,
+which violates the kernel coding style. This patch separates the assignment
+from the conditional check for better readability and maintainability.
 
-The more logical way would be to simply convert to dma_unmap_phys
-here and then add the flag in one go as suggested last round.
+Signed-off-by: XueBing Chen <chenxb_99091@126.com>
+---
+ kernel/sched/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 198d2dd45..2dae4cd53 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2305,7 +2305,8 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
+ 		running = task_on_cpu(rq, p);
+ 		queued = task_on_rq_queued(p);
+ 		ncsw = 0;
+-		if ((match = __task_state_match(p, match_state))) {
++		match = __task_state_match(p, match_state);
++		if (match) {
+ 			/*
+ 			 * When matching on p->saved_state, consider this task
+ 			 * still queued so it will wait.
+-- 
+2.17.1
 
 
