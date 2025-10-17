@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-857572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3085EBE72A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:28:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B89BE732E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8DA7F4FCB0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3CC61AA0C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7727F285CA4;
-	Fri, 17 Oct 2025 08:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="JOed2Jl5";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="MJdawN3Z"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1429BD81;
+	Fri, 17 Oct 2025 08:34:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEFA1D554;
-	Fri, 17 Oct 2025 08:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF792877F7
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689698; cv=none; b=f7/u3ShGZajfmgCuhw94sIY6oAgsPWMX9UTYuOu3zK+7flIBZxgJivj/ZHPJS1HvDZd8Yc261gRGG8ECEAXNVtWTKixZroHlVZ5twJ+nLYd47dGZI2ZSS6hDBSCq0K1NoI5mjYLR2iarj/W6pfeqlBftr+mv/H4v/cMAqKmiNcg=
+	t=1760690095; cv=none; b=df9Qn6SXWXLuiqWhwUSkAMfBgDXEJAHtAngpzuhG4tb6M9YEgQaInFFSd0B3VkLLVgzPgK81k58xUNr/jg8K6DQUKuMsXa61Pcl/fK7CnTAq2sinyNT3ux79v0SUAf88vaPWoxo0XJ0lDuIqxNc68KJtGXZ2Kwd8feOCDk3suwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689698; c=relaxed/simple;
-	bh=bv0MFcUJUgE4Ccd0jdtsICdcdAGTrf3WNaZSSKtj3Xg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cgqvi9aSl2W9VH6be4cLaAvpw82GUhSwVG3JBMo4UbpXdW+BUM1K6DDqPqxpa03bWNh9GF/OXzRvKjZn20bl9LvlfmHwjarqmTkU5tXGr3MNZjvXkdFDeauzkyIbMTONfL3aYAaZNQdVSp2W2aT0sgs0Y/zCQYPTRdbRyAJ8YEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=JOed2Jl5; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=MJdawN3Z; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1760689692; bh=bv0MFcUJUgE4Ccd0jdtsICdcdAGTrf3WNaZSSKtj3Xg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JOed2Jl5w5O8oKrfp80pNCtAPHaBwlEkxiw6BDuC6S+oS4UggBAH64MAr5AzaWoi7
-	 IbWdKSGwklfUBtCy5cGV2xMrPC5qjCLJjTjdZurqVk8gcSDvies2+MD321lLDvpGeI
-	 0oXT++vpnSZ9K8MpoAulQfStJkvIn4OfoxXI83BXU0DQ6PBEdNyFAnMZLG9qVH+zC2
-	 vlu9c8lm8XFa3MwY9gjJgsZeXQGfLzD0iaFjA+8CLaAcZ95nF60uXZq+K13Ft1Q0Ny
-	 bC1+Qd1zwYW9iyfvsMxdS+AVxEpf0NhJxw7NuVBOhRT7Lk2qRj8NUojdH5CRT7ecuG
-	 yQUS6niz5Zlpg==
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id 1FE08FB03;
-	Fri, 17 Oct 2025 10:28:12 +0200 (CEST)
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id DVy3VHxS0P9I; Fri, 17 Oct 2025 10:28:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1760689690; bh=bv0MFcUJUgE4Ccd0jdtsICdcdAGTrf3WNaZSSKtj3Xg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=MJdawN3ZhI76o167EpanWP/eB65PwH5DtEhCqgvQrlawmNNovbYjzl7uxXssu+vqU
-	 OeCS9xEKn7tf+lbVm/dcAKBLDG+BpQxqMKC++9R4SRUnsYoye6ExvyQlAawj/KR5zV
-	 HtHhnVdBDVckOvvWUjXExVow9LUEF4Z8vbAsYy9ABKSQhgpjgjMjVK34jzzSIrR7Gb
-	 4Ocr195uBDlaNtTpfJlEDI+Bddxr5MUKteRMNE2UV2eXy30K/szswo34n3JpIUc6l7
-	 P85hYHN664qpND0JB/91EnRJujZdp7sV+iGOxBONGMZ0RtvF50GJ7kv08vnevBhPf5
-	 ImuZ4DSLS7YKQ==
-From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Date: Fri, 17 Oct 2025 10:27:59 +0200
-Subject: [PATCH v2] drm/panel: visionox-rm69299: Depend on
- BACKLIGHT_CLASS_DEVICE
+	s=arc-20240116; t=1760690095; c=relaxed/simple;
+	bh=ZYFWlfVM9p4mPmv77EzBu7ebgttLvW0BaITgV2fZhFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IV02PK6vW/KwOQVijahFrm5H8SSOlJnKAqk8IzNR+i1YDt1SVCiKHoFmbO9F0PaeHfMZcRIL9Y1LLWHrKM8dHqJEv3Zu3626Li6NFjMugwdp6RVd4vCp5Hef7Jx4vp+ebXwTb9y3X0X9J2+MsT2pB64STJ4Wc7HCP9Y879T/ZqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9fv8-0001Er-AB; Fri, 17 Oct 2025 10:34:42 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v9fv7-0041up-1q;
+	Fri, 17 Oct 2025 10:34:41 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id A5037488DA2;
+	Fri, 17 Oct 2025 08:28:38 +0000 (UTC)
+Date: Fri, 17 Oct 2025 10:28:38 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
+	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
+	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
+ FD is off
+Message-ID: <20251017-determined-jackdaw-of-painting-e2ff64-mkl@pengutronix.de>
+References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
+ <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251017-visionox-rm69299-bl-v2-1-9dfa06606754@sigxcpu.org>
-X-B4-Tracking: v=1; b=H4sIAA7+8WgC/32NwQ6CMBBEf4Xs2TV0CcV68j8MhwIrbKKUtEpqS
- P/dinePbzLzZoPAXjjAudjA8ypB3JyBDgX0k51HRhkyA5VUq1Jp/FVcRP/QhozB7o4Na0tclZr
- 0AHm5eL5J3K3XNvMk4en8ez9Z1Tf971sVKhyq7qQay7UlfQkyxn55HZ0foU0pfQDJlfSFuAAAA
- A==
-X-Change-ID: 20251016-visionox-rm69299-bl-7e6a2e30626d
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- phone-devel <phone-devel@vger.kernel.org>, 
- Gustavo Padovan <gus@collabora.com>, "kernelci.org bot" <bot@kernelci.org>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1113; i=agx@sigxcpu.org;
- h=from:subject:message-id; bh=bv0MFcUJUgE4Ccd0jdtsICdcdAGTrf3WNaZSSKtj3Xg=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0VCYlFLUy9aQU5Bd0FJQVNXL2hsSksvT
- UhqQWNzbVlnQm84ZjRUY3JuRHc0RnArbEY2RTNvMEcyaDd3SWlYCjJ0TzRZRmFOcWp3R0dtK01T
- YTJKQWpNRUFBRUlBQjBXSVFSajlzemZsaUtkQ1NocktzTWx2NFpTU3Z6QjR3VUMKYVBIK0V3QUt
- DUkFsdjRaU1N2ekI0L3YxRUFDV2Y2R2p5YTlLMkJ4MUJLSU1BL21McTVIcm0zOERuVE9aY3l3Qw
- pKWnRibkJUdVBpQkRQdmlxaG9uODRzbG1GVzRZZUlISGdhTkRBdEp4MjdrZE1iSmhQbDhwZXhnb
- 0xxc3JJWFJ2CkhSdjBOZ096cVN5Vkx3b25mbjBkQTUwdmRXZWdadVZ5bjFKczJMOW03cis3NkpP
- dndGTXUwSitKMHp5U1FXV00KbmZ0ZTROSWRaZlB0eTRiNHl4QWRZZVdkbWE4V2dmR2pnMzUrRzR
- 6RjRmUE9Rb3ZTRUNLdWo1dDlrbEM4TUdVbApoK0FNWUVuR0JOazdPeHY5SVphVFI3YVhqbnc3NH
- lrWWRDSWJOSC9FbVNGQU1UU3lpWkVkcEtNN3JFT08wbU9XCnZ6NHU3ams4d3hpaWtKcTBHUjA4e
- lBBRm1XU3k4c1VTTmtTM29SbVg2K1p3ajBtZFUzYmUwZWFuMFc3V3pPSk8KZEdDRTZ2a01Na0pl
- dE0remduWFlvenJOVUc3VzQ1WkZhNHRnamNuREN6bFplUy8vazlSQmFWSjNDOTIraFJCUwp4QU4
- wZDA3WjZkelFZN3NSMFZUeVRDQWZrZ3hYcyszRDBHWXFDRjJJSGNsZnU2Y2hxbkllVEFEODBFR3
- htenJNCnN5Ty9qbi80cFpuYzFzazdMTDN0d0Zydi81VEZNQjZ6VTZ4VlhxOGlROWszU1lGUFdyY
- TFtdzVvbzVKOUp6SlYKS3NqQ3VqcXRVVDBINEU3RXRmMXVnUnRLNkhGNURCQ0s3bXpJQ0F1aWNU
- OHMzSEpUWDBmWkZ2RlNJeDF5UFFOdwphRitiNVBFRDhKV0VBQmVaUGpwRUNQZTUxOTZOSWpYbDF
- BVlNEWk9xS1FuRG9UWkV3bFJ3VFd2ckpubGhBTHlGCmd1aWo2QT09Cj1vcUhqCi0tLS0tRU5EIF
- BHUCBNRVNTQUdFLS0tLS0K
-X-Developer-Key: i=agx@sigxcpu.org; a=openpgp;
- fpr=0DB3932762F78E592F6522AFBB5A2C77584122D3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kzeksx7g66zyfwwf"
+Content-Disposition: inline
+In-Reply-To: <20251013-canxl-netlink-v1-1-f422b7e2729f@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-We handle backlight so need that dependency.
 
-Fixes: 49802972d116 ("drm/panel: visionox-rm69299: Add backlight support")
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
-Changes in v2:
-- Add Reported-by: kernelci.org bot <bot@kernelci.org>
-- Link to v1: https://lore.kernel.org/r/20251016-visionox-rm69299-bl-v1-1-d3b817ae5a26@sigxcpu.org
----
- drivers/gpu/drm/panel/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+--kzeksx7g66zyfwwf
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/9] can: dev: can_dev_dropped_skb: drop CAN FD skbs if
+ FD is off
+MIME-Version: 1.0
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 407c5f6a268b..59f5a31f3381 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -1112,6 +1112,7 @@ config DRM_PANEL_VISIONOX_RM69299
- 	tristate "Visionox RM69299"
- 	depends on OF
- 	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
- 	help
- 	  Say Y here if you want to enable support for Visionox
- 	  RM69299  DSI Video Mode panel.
+On 13.10.2025 20:01:23, Vincent Mailhol wrote:
+> Currently, the CAN FD skb validation logic is based on the MTU: the
+> interface is deemed FD capable if and only if its MTU is greater or
+> equal to CANFD_MTU.
+>=20
+> This logic is showing its limit with the introduction of CAN XL. For
+> example, consider the two scenarios below:
+>=20
+>   1. An interface configured with CAN FD on and CAN XL on
+>=20
+>   2. An interface configured with CAN FD off and CAN XL on
+>=20
+> In those two scenarios, the interfaces would have the same MTU:
+>=20
+>   CANXL_MTU
+>=20
+> making it impossible to differentiate which one has CAN FD turned on
+> and which one has it off.
+>=20
+> Because of the limitation, the only non-UAPI-breaking workaround is to
+> do the check at the device level using the can_priv->ctrlmode flags.
+> Unfortunately, the virtual interfaces (vcan, vxcan), which do not have
+> a can_priv, are left behind.
+>=20
+> Add a check on the CAN_CTRLMODE_FD flag in can_dev_dropped_skb() and
+> drop FD frames whenever the feature is turned off.
+>=20
+> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 
----
-base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
-change-id: 20251016-visionox-rm69299-bl-7e6a2e30626d
+What about merging both can_dev_dropped_skb() an
+can_dropped_invalid_skb() in the skb.c, so that there is no stub in the
+header file anymore.
 
-Best regards,
--- 
-Guido Günther <agx@sigxcpu.org>
+Someone (i.e. me) used can_dropped_invalid_skb() in a driver, that means
+the check for CAN_CTRLMODE_LISTENONLY is missing :/ (I'll send a fix).
 
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--kzeksx7g66zyfwwf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjx/jIACgkQDHRl3/mQ
+kZwAcAf+KYQBiRZQxXmER1iYmGFEJtTy42LYexZFEnNa9vBjwM/t8bkv36+fMctp
+dVWP92QmuWulv4ec9aN4n6e8TVw9DMtC+JnAKbdhE3itR/3FX0iHt5hTf4qV0Bve
+nvDvP3iBir41BJyFZswj3cdpatbnIM+nJtLeYz/t/xwkZdgMD/CiM2tfwW3mY1Cd
+Lf0F1AaUwKWVvoHGI/fHFfHC3bWaEBEu+BQ4ZC0Ek1slpwBqCGKVBgbSDSSHtBlO
+lDpDbGHDR2tYcfMPDLtRnbr9T/YVqr8KWbzkkvZw96Ve5FEl0JmANSAlanepsqdB
+94/lWHlDpWOReDgZWaFX6vfLRljMVA==
+=ylWo
+-----END PGP SIGNATURE-----
+
+--kzeksx7g66zyfwwf--
 
