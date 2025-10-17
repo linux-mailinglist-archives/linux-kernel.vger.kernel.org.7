@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-857421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DBFBE6C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83103BE6C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEAE919A1B02
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF65585127
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9B5311948;
-	Fri, 17 Oct 2025 06:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5672E30FC2C;
+	Fri, 17 Oct 2025 06:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/fwrg0v"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0+vrWH2"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FC52236F2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B27233704
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760683554; cv=none; b=tqTmAiDL1/NMUBNNzLwRwdn5m636UCbIjtAIcXJJJIN8k99jaYx0nN/DEkQplAwgUrF5UJgxOLuG83NluFKyixiB1Vj3e5YwPCuvUvpN2Lu9qr2/UcJf4l1WWiEe65nfSu018mmJ+eaWKDE4Eqv5qnb0Qw+P1zW89jEJzR7w9w8=
+	t=1760683551; cv=none; b=SkjC+bhwmyBxnanLS3RteNcUzvnVmBc6yxSi4kpQL+ahGVLqMreHMnCY9GBJo4pLv4ZHY71/HrbWPgAAdfTGO3cI1rIe5cNFwPWQm6L+ckHsi8b7jM8eYUm903OiN8xDSgkg7mfXdb41WApx86SlQaeF5WMdzifZNgIMGhE7rzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760683554; c=relaxed/simple;
-	bh=ZLH3av1Lf6WPtlvrbUqYje4yk116CuTGkXGsaAWaNvY=;
+	s=arc-20240116; t=1760683551; c=relaxed/simple;
+	bh=FYvJjju1WVaSiGZ+rPPQkrZA9117N9fCrf8pnzruHlg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rRKXnM13v22EzALcLr6vh1+c+LDOSZJccpbpAFEsK2KnnRqCNys7YHgMibQ9JYR61auYiLs1Q2mvyUAjzRIW7xgnkaSHY0E8wDqCmsowDhCd4rhXNB6L8/s9R08fujjgc31CPLgzTzxbGcxJflImVoHM98dVt693CH98OL5Xh5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/fwrg0v; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=UEu3SpWKD1GOLlfGQUyYbxwH6NuwwAwyuhh591+dpp8Vb+Bj8OtTNRpljP8cy0Nyq53NH37fnkrVDnQPj9bP2J9VcGjsd3D6vwzk7oj+aJZyoE0n2BDJ+EeZJBD2T5Y6VLRiT2QyBpl5f2fq2Fh5FUE1hSb4QHi4k2TkX48cxeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0+vrWH2; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-78118e163e5so2408829b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:45:52 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b6a225b7e9eso1108785a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760683552; x=1761288352; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760683549; x=1761288349; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IdshIMlRNJU3RJEsxCqgBNsG9buJVWf/bkHbjQKkwss=;
-        b=P/fwrg0vpZ1aNbMdSmU+PzI9lcPE9RK8OnNQdK6PwctUsC0pGjMxtffYJR0acuLE6y
-         MzuslzCfODLPbiLeeDoaRjC7s2G2RuKSdItJIyZ/A+EtwCIPjgH/epZAjF9HfHRHyYfJ
-         C2v3ufCVDXfmM7YfugwoKXWqkfuu5e1nbaTNETykVyctQwL6dJIDOPt3B1431PpkHAL4
-         pLhmsbyxHSNkXP5y1NudfU4gSCZvvggiYY6MryPEIs8R7UxQjb1u8L6KOZv9BiFut0/c
-         wkFIVUX6qzdjjEiS4V3iEy/WRHP8M9KZFc2aQ4+xz7S+VIZBZY7S8rhnknOE21SbRIY4
-         lVsw==
+        bh=/OTXlHG1bxvEhqF+MtL8+GAk+TyLUEMZOGcZpRcNlI8=;
+        b=N0+vrWH2KiVaSXwLjggSvWpLJc82iPNfw3euYD4UirU7w7bLhwOMSHiT8i/JCQeHna
+         iyJ2PfM6OL07cydWFXL78RBCrBqqCEnCWJaLOrpmAgr7PZj7LJeLQfj5jfUVKQpSCt2D
+         H3Kqw/d9krBPlxqj6qgOcjlnPKTJ89Px/TWkBHic5myGic5jtWW56tJf3zOMZqd/RyRl
+         KjU8Ddkzw7UxwJ08LzzUQJHUFbEVqp/rS7qwFstn5cga1GZkrZZON3+Gl0ayaEkiicMU
+         +KK9MD8YJ5TgsmwuHdz9KL7Rlk3er4bg+r9Wra9Tur1HEum1aO6al6zvOA3pQxwyHWnF
+         h9vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760683552; x=1761288352;
+        d=1e100.net; s=20230601; t=1760683549; x=1761288349;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IdshIMlRNJU3RJEsxCqgBNsG9buJVWf/bkHbjQKkwss=;
-        b=riCWMgnXD24uITiEpjSZbgRStoti1/eB0QqiOFOSUNoZX0ep83kQRCw1vkOJYfe0jH
-         BALGA/cAZu8QlMhMTugcdD41bxZhtR5DId+kVWKN9YLikK4F472qGwcNq36S1auwebXA
-         ISknsojn+fXidWQCejxyvxZL690O/nSP+qvGw/8ALGf9/Kc3OCUOtzVOiTwlYASRQHBg
-         KMSGegDKufbO1zoi+PB99ERR2c6IkDt3VVcp/aRzhMVyEP3YCHhkVkaUm+6A1pysX2ws
-         Rp9UeT7tXqyHouPwiAQN/6+JnKeHDjr0XZkFWbFzpuhnpXg/tBZm6b2mQF7ME2SeYdpH
-         HsZQ==
-X-Gm-Message-State: AOJu0Yzm5n6R1xM9xPx6rY5N21TwRZBKt6A1wTY4LgIs033rBaEnpQh0
-	kigHuOGWThFXDRRHoVWjXLYQlJ9ULaTosuUTSvmoWwoHzKFiSpRgQCDR
-X-Gm-Gg: ASbGncu5VJawysoHI0BM7a6+63R6oqyqTcVATqIdZ9MzLCquFQeRM5uG8q5mjdstF5b
-	07JJm5S1QZXbeDdJMezpMYo29XeyIOJNHFlWZ1QI98xlImLTD4ggddn5j24avqqeq3F8zdLiFdj
-	T8tNBaTA/PW+jGMxmDBgp4N45bDr4QMim7tw1z6J82szWT1AkA4vW5qV1Ic+cGwCHQfsSnAi6LW
-	hIB0/+p5iPJ2eDHuSjcCUCsy873c21GqEzG622MfybIffzm3QCH3yCVc9xkpDFh7PFsiV3CDPHK
-	vjV/jgW7kMPxcbATR/5eso+rcNnaUZ3BsJt5VUylm6ZswLjR/qsvB0WIJ8d1i8ZtePS03CTZU2S
-	Xy8qQ2CWTJLXAZWUffyIr0w0LEOEwT36Qg22GOnkKtNyqXYD8LUAyg2jBteyXxZ3cmx9spx6SEW
-	bLMf4=
-X-Google-Smtp-Source: AGHT+IFsyPzxxs80uuv3DSh602TaCVol8BZqwzAMzN7CXGrpFxd3J3/c9RZiykQ01q/KKGXKyCcwJA==
-X-Received: by 2002:a05:6a20:1a83:b0:334:a854:64a7 with SMTP id adf61e73a8af0-334a85464afmr2701069637.3.1760683551802;
-        Thu, 16 Oct 2025 23:45:51 -0700 (PDT)
+        bh=/OTXlHG1bxvEhqF+MtL8+GAk+TyLUEMZOGcZpRcNlI8=;
+        b=ISQrZov5sYqjEGXTKaQ9FAoB4YPfYyzGLcH43tOy8Tc52hRFEZx9L10moZ6M7Uvenn
+         RiDTHQ1sI8AtGPABsc8OCU2FM6ack4ZBvLklOECDd9NqJH7Vd+oH95BFnSpW+n4fl8sI
+         7+PKnbEEWYcUGJNoMF0oTsfR/C3s9Ez5IPUbB7/kXP77k3khbxjqr01/NSN0RuXaLjKC
+         w7HCyO5UYI5pJQfOt+XCl49No2wb+M2jyXL/KGd2EBK8H5H+7NwvcPLtfiHSKpDf2MeP
+         CzU/GYLCOSS1vS2avVjKIVwLmWLB+AyVXLkGJey4m4bulWO0+wLSfD13QFoNIQGF2UVf
+         TeJQ==
+X-Gm-Message-State: AOJu0YxnvtnRHBZoliLd7k2UwWW0uEoZkYG2+zccdYxdKi7K/zkyTxDj
+	e5kjRPCWYTIN57CNRss2wXnzw/kCyx4MNUDNMTxfgUhdvosmCE+w6DX9
+X-Gm-Gg: ASbGncu2RIJPNm2DdsPL3wQ4SwQ9KBcXOj0bEPG61aey1paPU1rth8/Ymyzr4yhtFY2
+	8q8IQ3Kn2Zr3EjIRManrnGXqVfFJJb/xGhCzbLkIpORSOSGb8+2NI4Twqb8lW9UTiLwWKOLT1W3
+	2LqO45yXA9PUzeAFva5JgvHQpdwKbOzRD26geHCcOkw0vc9D/CwSJ0eXSxT3ILBMpI90hVY3SkB
+	GrdEYISdkDogRp8Fg6ZtybW6CkWoqa1GiBuAZqcvdX3VJ/xRCfrXrXmRirmIZKm6UuZuyFRLTK7
+	6nj2DRUV3s5XvNXJHcIW4W+3It3jBTC6/3mR28iYFseyM5fv88tcTCO10RtPPhCogvUXIYQVs/0
+	v7xK22foqc59nVLe79I88ZWku5GBHHzVc8njvBthnO6ebdoWcI7jLBp4RUpjy80dMv//tH+BTS1
+	m3+j8=
+X-Google-Smtp-Source: AGHT+IHcXLWHNbzKsIB+C9Oh/hpylcx5d6i9aDz/MdYArA+TbwBPxFJyXT0U63tzhiO5gzo4vkuOVA==
+X-Received: by 2002:a17:903:11ce:b0:273:3f62:6eca with SMTP id d9443c01a7336-290c9ca804emr30281085ad.18.1760683549284;
+        Thu, 16 Oct 2025 23:45:49 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e1336sm24360687b3a.59.2025.10.16.23.45.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099afd74esm52471495ad.113.2025.10.16.23.45.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 23:45:50 -0700 (PDT)
+        Thu, 16 Oct 2025 23:45:48 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 8DDBB4528ADE; Fri, 17 Oct 2025 13:45:44 +0700 (WIB)
+	id B8F034528BFC; Fri, 17 Oct 2025 13:45:44 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -88,9 +88,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Andreas Koensgen <ajk@comnets.uni-bremen.de>,
 	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH net-next 1/2] net: nfc: Format userspace interface subsection headings
-Date: Fri, 17 Oct 2025 13:45:25 +0700
-Message-ID: <20251017064525.28836-3-bagasdotme@gmail.com>
+Subject: [PATCH net-next 2/2] net: 6pack: Demote "How to turn on 6pack support" section heading
+Date: Fri, 17 Oct 2025 13:45:26 +0700
+Message-ID: <20251017064525.28836-4-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251017064525.28836-2-bagasdotme@gmail.com>
 References: <20251017064525.28836-2-bagasdotme@gmail.com>
@@ -100,42 +100,35 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1301; i=bagasdotme@gmail.com; h=from:subject; bh=ZLH3av1Lf6WPtlvrbUqYje4yk116CuTGkXGsaAWaNvY=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkfnxw0OmArXbRC9PMe94q9n9c7ap7WabPsXVqmpbzxn eKEmI66jlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAExEWYHhN+veBwWaHtFtX3e0 2MplFO4LLtaoYb2uUJa+rVSUa407J8M//d2GPot45n/8N23t461REzO/b5U4Ptf0Z/5b2blue5p EeQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1064; i=bagasdotme@gmail.com; h=from:subject; bh=FYvJjju1WVaSiGZ+rPPQkrZA9117N9fCrf8pnzruHlg=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkfnxwUPzdpYU3+lm0tx07E8/eWPhZeNY3Ffk7Q+lczh f0etrhEdZSyMIhxMciKKbJMSuRrOr3LSORC+1pHmDmsTCBDGLg4BeAiGxgZ9pXxfn2fOvuMYbr3 88+b8v6I3UroLnkQeuFfcXzLt+bdixgZvq3+l+sxee2LV13GyyxXndI741XyXuYW80GbRZX5P8K msQEA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Subsection headings of "Userspace interface" is written in normal
-paragraph, all-capped. Properly format them as reST section headings.
+"How to turn on 6pack support" is a subsection of "Building and
+installing the 6pack driver". Yet, the former is in the same heading
+level as the latter as sections, making it listed in networking docs
+toctree.
+
+Demote it to subsection.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/networking/nfc.rst | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Documentation/networking/6pack.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/networking/nfc.rst b/Documentation/networking/nfc.rst
-index 9aab3a88c9b298..40173500614332 100644
---- a/Documentation/networking/nfc.rst
-+++ b/Documentation/networking/nfc.rst
-@@ -71,7 +71,8 @@ Userspace interface
- The userspace interface is divided in control operations and low-level data
- exchange operation.
+diff --git a/Documentation/networking/6pack.rst b/Documentation/networking/6pack.rst
+index bc5bf1f1a98fb7..66d5fd4fc82128 100644
+--- a/Documentation/networking/6pack.rst
++++ b/Documentation/networking/6pack.rst
+@@ -94,7 +94,7 @@ kernels may lead to a compilation error because the interface to a kernel
+ function has been changed in the 2.1.8x kernels.
  
--CONTROL OPERATIONS:
-+Control operations
-+------------------
+ How to turn on 6pack support:
+-=============================
++-----------------------------
  
- Generic netlink is used to implement the interface to the control operations.
- The operations are composed by commands and events, all listed below:
-@@ -100,7 +101,8 @@ relevant information such as the supported NFC protocols.
- All polling operations requested through one netlink socket are stopped when
- it's closed.
- 
--LOW-LEVEL DATA EXCHANGE:
-+Low-level data exchange
-+-----------------------
- 
- The userspace must use PF_NFC sockets to perform any data communication with
- targets. All NFC sockets use AF_NFC::
+ - In the linux kernel configuration program, select the code maturity level
+   options menu and turn on the prompting for development drivers.
 -- 
 An old man doll... just what I always wanted! - Clara
 
