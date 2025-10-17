@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-857905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F0DBE8327
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A40BE8336
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A941E5648FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:58:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73963567568
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B01329C47;
-	Fri, 17 Oct 2025 10:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41D8328B79;
+	Fri, 17 Oct 2025 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dBGHnBQz"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TTSL3Ywp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CC431770B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3463A329C7C;
+	Fri, 17 Oct 2025 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760698680; cv=none; b=HbACQ+nRSa30gWR7Cj+T2zkh/m1qIpwarZAY7HfnSAGvZIWnBH4BJIL6XgeTB07z9tp0eSrjQ/px128kKX4ua3M2CewucXn+f7m3Z+kRWEQcVHDvMGpmTgfaoKTdWQpytpkEqGU86a0NIzP/K7UgOcL90rPy0zU2yV5wuPKs6fc=
+	t=1760698703; cv=none; b=Quwr2LRHjL4ZBm1hHLOAUPnAzKSA2UHwowD+cCK/ubKVdgHXVZK3JMSJZeKIpcDOtTXz9Lg5ctmE2JM6qSJz++GQi0bQ4jMExtQ7PxDZ7wTCCHfVcHjT7RTWXzRJtEGHEzmXWKaB1NqhlSSP/knELbVpKby4Gt4/J42rH/pugfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760698680; c=relaxed/simple;
-	bh=eR16PUkc6dUUYhHIVoedj8Hgpyf6tQRjyt0eGaFiPcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6gbWqvzGz5UZti2rTDk+WZ/I7021GIoHU7U5GXFjuapsyZb1tXv4otdQFqkBtC0sqhcy8rkmIKP96Uagh9NldfR6d6lKFY+h2yCbnbV3hb1vHxstA5zI9EeliWYRAHf353SLPS2QjcUvHFHGAQX5DhwY6tKZzLQMrAW6/1aZq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dBGHnBQz; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-470ff2f6e56so54925e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 03:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760698677; x=1761303477; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mo4lGh1qylkyfZNtOOXID57CwW0befm2pIFirkm/dXY=;
-        b=dBGHnBQzuUYoJm2ns8/60/doR+krKUG8l/Qw9sFuI007LZLNRWgKyZEyICanST64M9
-         z1/V6PTE272zx7+h4xnMHdPOy3XIABcA7NxLSRjM9Vvq6cFx6RuOkVJ5ICOq6pCajgVb
-         fnqlKNmbJumnG94DZzoQJSLRn4pZzJpM5hpeTnyGzn+Hx0A2RXzQq40WWxEbfS6ot4fW
-         k57ao9gcAplt7IW8fg4YdH66V2nALiui/ZsDEtZNNixiEfIfsO/Gbpq0bl/Se2zJu1R/
-         293sNU7ghpeYAVNZJNHMqj6yxVoD3dULFg8snpL5Gsu6XRtSQ+5NjPvOlMP0JPRYU9k5
-         d6wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760698677; x=1761303477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mo4lGh1qylkyfZNtOOXID57CwW0befm2pIFirkm/dXY=;
-        b=jMI5iWYbDeBEqqypypmoXtagQv8NQPXuqoTS3RKFCAZYtBZD2TAMjPQD1fTqYit3pm
-         9oFnEdvdrrhwR6dBriaQvNnZ/fh4ph+y2NHJNGx1mrWrHgaomruGqZfwsyJzEXj0zCua
-         jN7cNJiURujRsuWR/5OkUvnUnsY64Ux6ql/khB9XZ0977Zbbp99ln0vgTtxsVCnx+mC3
-         DQoOg4qiytac8jR0Behl0IDY7Wyc0jIDulcVmFH56KmKvQvDcI1gFCRskgnOSXQJvVSC
-         F3oeXP8gaNQ8RU4kCciwLTsiGx6kyLOmLlinvo6recEoQVZ74EuNASo1zX8wGQltwI1R
-         oGAQ==
-X-Gm-Message-State: AOJu0YxVrXViLMjBKQ/3Ut6XL+2CWWaaCiGM8QF+uO9j3eXwhLDeMxzO
-	qw32CNgAIzCALey1BCmu2VVwdATV/eQzecrIyQGlyi42+Fe2GNhe+NNnAPAxn86gq8BQ2TrSKBN
-	RjiSYew==
-X-Gm-Gg: ASbGncts/EoulFNnDJGBShZt0EjfBcAowESOk9d9CXUDwZtFo3Xo5+e7oZVDKgOb82E
-	kzcJCoHBpCPkC+7ykv3eFYu1rnqZIcQGCssYEVZZYBRg/ar22VR9YhxEPpwihCeCDqaoNU/9BJM
-	4JDbQV6/MQ/594eeWNQNpMw7TUOQjs5qNHat5p8HdIVc3QHrB7l0yUv7s7erw14+nLqSwTJgQWv
-	wWPNYYwiV/MItXLIl0UenWADkNaK8mBcz7JBAUKLf0IOYd3SY7SlLY+Otw31pBdY4T8IIL3UkP+
-	fOrTJwrAfCTGmaL/62Mxk+LXaadrBun7Y8N7HMtVppz1fc1xBZq84dH2TxkiqUQS237D6Hqw31H
-	VzN+apDay9BKI28rWmSz/6ZXG4HV9I+qQUZ0C1bZBnBv7UluMlfNSpgqsc+YsLwLBwPtKDXitM4
-	5CtR56YDdhbgkzEFj4zLus45OKHCazJWLi3NX8R+nVhcK10HGn
-X-Google-Smtp-Source: AGHT+IHdsLkKcL/Bxy+rEkb9qWShVazjyHsRGsdQUHxxbtS9bFNnyuCxT3yLhLwXkstTJOH4J83LHQ==
-X-Received: by 2002:a05:600c:1790:b0:45b:9bcb:205 with SMTP id 5b1f17b1804b1-470ff2e9387mr4052525e9.5.1760698676935;
-        Fri, 17 Oct 2025 03:57:56 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm40279039f8f.22.2025.10.17.03.57.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 03:57:56 -0700 (PDT)
-Date: Fri, 17 Oct 2025 10:57:52 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jacob Pan <jacob.pan@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Zhang Yu <zhangyu1@linux.microsoft.com>,
-	Jean Philippe-Brucker <jean-philippe@linaro.org>,
-	Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH 0/2] SMMU v3 CMDQ fix and improvement
-Message-ID: <aPIhMGnzHiBkIEam@google.com>
-References: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+	s=arc-20240116; t=1760698703; c=relaxed/simple;
+	bh=ZVZghmxi9QE/MfK2mqwWcibyEGOnNbsyScZcEJvlyDo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iBLBo3TKdgC+aQVlVjk44yOCNtq4qgS9c+rrVihqWwb4EY3ek4CdZReknPNt8441A23FS9I82Ztqu4+OwKjj5XaaLVtU3l2HhET0jGQixfNddh48AaKwZJo5hNr/iZmUBSAqxwFfj4Vr7+WLsM+d0VjHuqz1ZNSYSxx89yxglM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TTSL3Ywp; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760698702; x=1792234702;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ZVZghmxi9QE/MfK2mqwWcibyEGOnNbsyScZcEJvlyDo=;
+  b=TTSL3YwpROcFUGTplcXfMl1ZEdnnZ3wrgPt1ajVko9AXDkwdgfJe33sK
+   knBeoIychhIQEmMmCSh62zcGR33QVawzOEVXOu4rcHJsDnnLsoc+bdYuU
+   FibERPPSDpnBisOPaZugHsa4UGrZgPtOFSFw30n8BV3eWft3VuTZoPMGc
+   bL2VtzhFadw51OxwzO6WClzngZJOkAiQDVHKE0hMRAfZqRH05ZJhVRqzE
+   NFymf28gRW8Ho62h2um2a8K7yorY6XsqwkRzP2Wc+X/wSVf8WexUnZS6K
+   Bi12+GHdy8I2qeJTU30f02/pvrvl5Q1+dN/De+nw0P4vfxlT00QmVhQDU
+   Q==;
+X-CSE-ConnectionGUID: y5bhJcDNS/u7U+eORze6bg==
+X-CSE-MsgGUID: JOymB36fSqmtmlEeWjGesg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="65521328"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="65521328"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 03:58:21 -0700
+X-CSE-ConnectionGUID: J9lZwTOsQOiDlwVC1TVtrA==
+X-CSE-MsgGUID: S/pj3kJZQFS1SIpJz1EHCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="182651716"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.123])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 03:58:17 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 17 Oct 2025 13:58:13 +0300 (EEST)
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, 
+    Guenter Roeck <linux@roeck-us.net>, Bjorn Helgaas <bhelgaas@google.com>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
+In-Reply-To: <aPIfSvhqhc9wxzGi@alpha.franken.de>
+Message-ID: <21079c94-cd49-bcd7-6f5d-7d5cd9d61432@linux.intel.com>
+References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com> <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com> <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net> <aO1sWdliSd03a2WC@alpha.franken.de> <alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk>
+ <74ed2ce0-744a-264f-6042-df4bbec0f58e@linux.intel.com> <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk> <9f80ba5e-726b-ad68-b71f-ab23470bfa36@linux.intel.com> <aPIfSvhqhc9wxzGi@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+Content-Type: multipart/mixed; boundary="8323328-1515501763-1760698693=:1052"
 
-On Wed, Sep 24, 2025 at 10:54:36AM -0700, Jacob Pan wrote:
-> Hi Will et al,
-> 
-> These two patches are derived from testing SMMU driver with smaller CMDQ
-> sizes where we see soft lockups.
-> 
-> This happens on HyperV emulated SMMU v3 as well as baremetal ARM servers
-> with artificially reduced queue size and microbenchmark to stress test
-> concurrency.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Is it possible to share what are the artificial sizes and does the HW/emulation
-support range invalidation (IRD3.RIL)?
+--8323328-1515501763-1760698693=:1052
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-I'd expect it would be really hard to overwhelm the command queue, unless the
-HW doesn't support range invalidation and/or the queue entries are close to
-the number of CPUs.
+On Fri, 17 Oct 2025, Thomas Bogendoerfer wrote:
 
-Thanks,
-Mostafa
+> On Tue, Oct 14, 2025 at 03:41:42PM +0300, Ilpo J=E4rvinen wrote:
+> > [...]
+> > It was "good enough" only because the arch specific=20
+> > pcibios_enable_resources() was lacking the check for whether the resour=
+ce=20
+> > truly got assigned or not. The PIIX4 driver must worked just fine witho=
+ut=20
+> > those IO resources which is what most drivers do despite using=20
+> > pci(m)_enable_device() and not pci_enable_device_mem() (the latter=20
+> > doesn't even seem to come with m variant).
+>=20
+> will you send a v2 of the patch ?
 
+Without the the if ()? I can do that, I was unsure how people wanted to=20
+progress with this.
 
-> 
-> Thanks,
-> 
-> Jacob 
-> 
-> 
-> Alexander Grest (1):
->   iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
-> 
-> Jacob Pan (1):
->   iommu/arm-smmu-v3: Fix CMDQ timeout warning
-> 
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 85 +++++++++------------
->  1 file changed, 35 insertions(+), 50 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+--=20
+ i.
+
+--8323328-1515501763-1760698693=:1052--
 
