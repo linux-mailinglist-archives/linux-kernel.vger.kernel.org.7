@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-857580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586BDBE730D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21107BE72F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A4B750426F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E9719C5A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C22BE02A;
-	Fri, 17 Oct 2025 08:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSxYK2kD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667442C1589;
+	Fri, 17 Oct 2025 08:32:20 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559D29A31D;
-	Fri, 17 Oct 2025 08:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D291E29A31D;
+	Fri, 17 Oct 2025 08:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689909; cv=none; b=Cw7VdikmW2nfjv3s3x69iXQKqX6x76h2EhdpQX6DWqvHyeJ+vqx8f9yXbAM0iSajFIwpHlzS2Cw3/ptwk63mRGtfekLvtkFGa77/eskzLhtfEA8PSa/Vx4rJW3Y1t0sJ14sF00oyW6D3qRzW7dAb1oClmLHz2cVMj3cMUSSPpYg=
+	t=1760689940; cv=none; b=XM321112OHnG9MJ8nvhQUnSb3zLB4jYmlXejRkn9OKkrzke79jvQLqk84qPRGnvjupGhfe1XQIROrauqIg9w5AJ94AY1zotnneTHeiSFYQVvmDU6y2S8msdpEYgrOK4ijfqej0VU35snOC5db80nBrXbTc6sOafFLAYBWRuJr+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689909; c=relaxed/simple;
-	bh=8JUiOrjDfOdA/96I1n2RoxKgJNH0r2C48Z5YYltnGhg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dBOiLDtZVGt29Ubh66K3Ek3jjd7T+G+S6+ELRlvNdKSOrjiuOOBEMLAbBwk3BcUsZKssvYPK/v/yg87Zrox/O8762emWQEgfjFnZ4/iqmAyEvOrzWd12RbxQgRWALgtgJKzdcEBoMdke4h3H+WhRyAupWqFGPcXJwCabe99peoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSxYK2kD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED015C4CEE7;
-	Fri, 17 Oct 2025 08:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760689908;
-	bh=8JUiOrjDfOdA/96I1n2RoxKgJNH0r2C48Z5YYltnGhg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=bSxYK2kDJV4zgONmPeuPitDLrbENAOcdwhHNI9fk2w0/zI5It/AVh5B3m2jkhK9S7
-	 geXRz55eImzmjpiK8aUGHgF8yVZhmi8zxkgihRCKnMIWmnCqMFPZMUomGx2keiu7H5
-	 TDWkfMaZgaKdT5MHSOx2Hxdy4ZoLUQGuBSytAwCdaVRGR9t5WY96tAUTsNsARIPvc4
-	 OW4xweUoJtc4gGXNhSkQg3OxGtfijv6DD9W0NDlgC8MimW8fVppaqm3rUS8FdJehf2
-	 nb8B/nVLpIqWKO4ZekSXkLFbOnMNF3onDdBkYeo+s/ZbYRqUkKh5JIYy6wGz8qdH3n
-	 6benPmRb8/eoA==
-Date: Fri, 17 Oct 2025 03:31:46 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1760689940; c=relaxed/simple;
+	bh=lKOf9JuIDX4uy3fcGx8kK8IIwOIACYdHYSQFsVoys3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gr7KoVzA9sfK0zNhS/VQmTGxvmwu0fSzzPPujIDHxA3PbTLvdkNqt9kbSFAILNTidnhvB3h4o5LCQP2dYR6xo/mBfXxJb3TqMaBWzCyuQncX7+yJvyrxXf/d1hwxQTho5HCDhWyFgnVHS4H+zsgiPaHnji83FhmLdWz+SEDqCoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id AE0C42C051C7;
+	Fri, 17 Oct 2025 10:32:07 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 8541A4A12; Fri, 17 Oct 2025 10:32:07 +0200 (CEST)
+Date: Fri, 17 Oct 2025 10:32:07 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-pci@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH] PCI/PM: Prevent runtime suspend before devices are fully
+ initialized
+Message-ID: <aPH_B7SiJ8KnIAwJ@wunner.de>
+References: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: sugar.zhang@rock-chips.com, krzysztof.kozlowski+dt@linaro.org, 
- linux-arm-kernel@lists.infradead.org, heiko@sntech.de, 
- mturquette@baylibre.com, conor+dt@kernel.org, huangtao@rock-chips.com, 
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-clk@vger.kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org
-To: Elaine Zhang <zhangqing@rock-chips.com>
-In-Reply-To: <20251017063107.1606965-5-zhangqing@rock-chips.com>
-References: <20251017063107.1606965-1-zhangqing@rock-chips.com>
- <20251017063107.1606965-5-zhangqing@rock-chips.com>
-Message-Id: <176068990653.1336490.3635831064787473495.robh@kernel.org>
-Subject: Re: [PATCH v2 4/5] dt-bindings: clock: Add support for rockchip
- pvtpll
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
 
+[cc += Ilpo]
 
-On Fri, 17 Oct 2025 14:31:06 +0800, Elaine Zhang wrote:
-> Add pvtpll documentation for rockchip.
+On Thu, Oct 16, 2025 at 03:53:35PM -0700, Brian Norris wrote:
+> PCI devices are created via pci_scan_slot() and similar, and are
+> promptly configured for runtime PM (pci_pm_init()). They are initially
+> prevented from suspending by way of pm_runtime_forbid(); however, it's
+> expected that user space may override this via sysfs [1].
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 98 +++++++++++++++++++
->  1 file changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> Now, sometime after initial scan, a PCI device receives its BAR
+> configuration (pci_assign_unassigned_bus_resources(), etc.).
 > 
+> If a PCI device is allowed to suspend between pci_scan_slot() and
+> pci_assign_unassigned_bus_resources(), then pci-driver.c will
+> save/restore incorrect BAR configuration for the device, and the device
+> may cease to function.
+> 
+> This behavior races with user space, since user space may enable runtime
+> PM [1] as soon as it sees the device, which may be before BAR
+> configuration.
+> 
+> Prevent suspending in this intermediate state by holding a runtime PM
+> reference until the device is fully initialized and ready for probe().
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Not sure if that is comprehensible by everybody.  The point is that
+unbound devices are left in D0 but are nevertheless allowed to
+(logically) runtime suspend.  And pci_pm_runtime_suspend() may call
+pci_save_state() while config space isn't fully initialized yet,
+or pci_pm_runtime_resume() may call pci_restore_state() (via
+pci_pm_default_resume_early()) and overwrite initialized config space
+with uninitialized data.
 
-yamllint warnings/errors:
+Have you actually seen this happen in practice?  Normally enumeration
+happens during subsys_initcall time, when user space isn't running yet.
+Hotplug may be an exception though.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb: pvtpll-core@20480000 (rockchip,rv1126b-core-pvtpll): compatible: ['rockchip,rv1126b-core-pvtpll', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb: pvtpll-npu@22080000 (rockchip,rv1126b-npu-pvtpll): compatible: ['rockchip,rv1126b-npu-pvtpll', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+Patch LGTM in principle, but adding Ilpo to cc who is refactoring PCI
+resource allocation and may judge whether this can actually happen.
 
-doc reference errors (make refcheckdocs):
+I think the code comments you're adding are a little verbose and a simple
+/* acquired in pci_pm_init() */ in pci_bus_add_device() may be sufficient.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251017063107.1606965-5-zhangqing@rock-chips.com
+Also, I think it is neither necessary nor useful to actually cc the e-mail
+to stable@vger.kernel.org if you include a stable designation in the
+patch.  I believe stable maintainers only pick up backports from that list,
+not patches intended for upstream.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Thanks,
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Lukas
 
