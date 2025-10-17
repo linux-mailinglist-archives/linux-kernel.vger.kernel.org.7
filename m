@@ -1,156 +1,107 @@
-Return-Path: <linux-kernel+bounces-858329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F541BEA983
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A8BBEA819
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED90943FAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A98C9454EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86A136CDF5;
-	Fri, 17 Oct 2025 15:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C886D332ED8;
+	Fri, 17 Oct 2025 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glaN3tjI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQz1Xnx2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03463335079;
-	Fri, 17 Oct 2025 15:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25981332903;
+	Fri, 17 Oct 2025 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715469; cv=none; b=IJbMOwEjWgV/zM0wz5Ew7u3RD/9eGisjWCFIVvT7H8/Gl/qsrJM0XKpywq/p5BXFJUiB4JRX4gH6zuiP0kaEqz6f8fwtvkfvmNsLud+g+fCfo5v0ev6qAh63LtIqHh0EmL00ZzZPJoJ7ijG03348eQjCmPltL+t0grmqOWVk5cI=
+	t=1760715614; cv=none; b=hoWkIYq6FuK2PAEyFHT3AyoMPkxX/pNS6AX3ubN3jAFOCRvmWHrJQ0+p1N86eGQFfSVq/2iCEaxKTzAiAkFu2FezPWJhsDdtffETkvlREleqMALIZ1sJGtBXkjMpiDa0YZVR0ljFsL3vVEYFlHVNlc8O6Xw9NmcZSTgQrS/Tz3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715469; c=relaxed/simple;
-	bh=fMtsEtk+yymjMrBDxyIo4cPm8zug+9QHbs06gVATPdw=;
+	s=arc-20240116; t=1760715614; c=relaxed/simple;
+	bh=IQkNW1F4nV6Vxf2WS9P9qIikl4xugxlZvh+MEW6AR3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKiD/tUm2YUbS67zf8Rn8fV0Xh8Vzm/UDwbwIf6aeJucFQH+jcWx1gflsM4jzAX14EyNl+YlcO4WXJsUQs5/uQ6FsU/ngceD08k4KfMIExa0hZz1iZBDrVHEHK+EgbKaufK4iIkLjWpSmJS8Mof4tHGBC15bH3Rme/0afmXKVRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glaN3tjI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517C7C4CEE7;
-	Fri, 17 Oct 2025 15:37:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxOZONIIPwQg39i6i9EgxUTXNAVf8bCHUi6WUjKC0MATqp39aLC9YnibIzWIAgJo30XPPjkJ94z7V1jbvVs3buw0vpgKq5Rs1AiR8N1+v6DTJzSdK6w9FBVjPkwItehbVKNizVC/VH+Lrz371HvdLER8S5oCCWyHzCmoGdhvPsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQz1Xnx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C725AC4CEE7;
+	Fri, 17 Oct 2025 15:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760715468;
-	bh=fMtsEtk+yymjMrBDxyIo4cPm8zug+9QHbs06gVATPdw=;
+	s=k20201202; t=1760715613;
+	bh=IQkNW1F4nV6Vxf2WS9P9qIikl4xugxlZvh+MEW6AR3c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=glaN3tjI9nSulUo1uDQTr6u/p7SSb0kvNXzx2Zp6DuspOMCnukW5J3S0lElQsi5ps
-	 NU7SnkAchBwn0irmQoYZSIpWoSv+3TbtNt64vMYO481yMyvMPzcpQx5t3VMgHBTJen
-	 yhmZRIYfVW59jRSrc/uakK1ie2xa6NeGwPCM2lcZV0luckrXKLeKBnLy5oZLoxMgeE
-	 nE8tsoajMLfPXrjbX5CC85UtPw+EVov/SnbBeW9yDHk1AvKLpY1AgL8tuGWDaqTD7R
-	 9dIbQtOT1pb+aP2DhguS+sCRD1Zm5OVChREj1YubPcGAhuLirGmqnHkQktgznRurqh
-	 J3MzLTnTQS+bw==
-Date: Fri, 17 Oct 2025 10:37:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Daniel Stone <daniel@fooishbar.org>, Frank Li <Frank.li@nxp.com>,
-	Sui Jingfeng <sui.jingfeng@linux.dev>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v5 2/2] accel: Add Arm Ethos-U NPU driver
-Message-ID: <20251017153746.GA1579747-robh@kernel.org>
-References: <20251016-ethos-v5-0-ba0aece0a006@kernel.org>
- <20251016-ethos-v5-2-ba0aece0a006@kernel.org>
- <aPHhXl6qdU1mMCNt@lstrano-desk.jf.intel.com>
+	b=MQz1Xnx2ndMO4J1MPHj1jpyr+DWmWgpPMl9nbXgnvW1QDZk1196EDbInzlMrQiRCq
+	 p5HkDiqkDwA2T00U2v6RVqpqELnlWHaafqOQbgcvm87n+pq8UkNMGs/NUwKqCVsIFm
+	 PUlu4grZXXs1jegNpRChwRAC6zMHmcFkof4/fD9Hh9oGexChzpO/mAaXf13eqFy56u
+	 FjbnHaH7bsIfBBoqHei1+XjmUF0kqINw7sXXRLALomHRWFc5Fgwm8Cnt3HVfhFiget
+	 079tpLQw0PP23ZLv8co1aHKSZi6B6t7m9b6WQuzYKBSXap51HWCLsQfCzwQQ94uJXl
+	 82yVTEAqmmJPQ==
+Date: Fri, 17 Oct 2025 05:40:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luigi De Matteis <ldematteis123@gmail.com>
+Subject: Re: [PATCH 06/14] sched_ext: Add a DL server for sched_ext tasks
+Message-ID: <aPJjXBifYNbXY0bI@slm.duckdns.org>
+References: <20251017093214.70029-1-arighi@nvidia.com>
+ <20251017093214.70029-7-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPHhXl6qdU1mMCNt@lstrano-desk.jf.intel.com>
+In-Reply-To: <20251017093214.70029-7-arighi@nvidia.com>
 
-On Thu, Oct 16, 2025 at 11:25:34PM -0700, Matthew Brost wrote:
-> On Thu, Oct 16, 2025 at 04:06:05PM -0500, Rob Herring (Arm) wrote:
-> > Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
-> > relatively simple interface with single command stream to describe
-> > buffers, operation settings, and network operations. It supports up to 8
-> > memory regions (though no h/w bounds on a region). The Ethos NPUs
-> > are designed to use an SRAM for scratch memory. Region 2 is reserved
-> > for SRAM (like the downstream driver stack and compiler). Userspace
-> > doesn't need access to the SRAM.
-
-Thanks for the review.
-
-[...]
-
-> > +static struct dma_fence *ethosu_job_run(struct drm_sched_job *sched_job)
-> > +{
-> > +	struct ethosu_job *job = to_ethosu_job(sched_job);
-> > +	struct ethosu_device *dev = job->dev;
-> > +	struct dma_fence *fence = NULL;
-> > +	int ret;
-> > +
-> > +	if (unlikely(job->base.s_fence->finished.error))
-> > +		return NULL;
-> > +
-> > +	fence = ethosu_fence_create(dev);
+On Fri, Oct 17, 2025 at 11:25:53AM +0200, Andrea Righi wrote:
+> From: Joel Fernandes <joelagnelf@nvidia.com>
 > 
-> Another reclaim issue: ethosu_fence_create allocates memory using
-> GFP_KERNEL. Since we're already in the DMA fence signaling path
-> (reclaim), this can lead to a deadlock.
+> sched_ext currently suffers starvation due to RT. The same workload when
+> converted to EXT can get zero runtime if RT is 100% running, causing EXT
+> processes to stall. Fix it by adding a DL server for EXT.
 > 
-> Without too much thought, you likely want to move this allocation to
-> ethosu_job_do_push, but before taking dev->sched_lock or calling
-> drm_sched_job_arm.
+> A kselftest is also provided later to verify:
 > 
-> We really should fix the DRM scheduler work queue to be tainted with
-> reclaim. If I recall correctly, we'd need to update the work queue
-> layer. Let me look into that—I've seen this type of bug several times,
-> and lockdep should be able to catch it.
-
-Likely the rocket driver suffers from the same issues...
-
+> ./runner -t rt_stall
+> ===== START =====
+> TEST: rt_stall
+> DESCRIPTION: Verify that RT tasks cannot stall SCHED_EXT tasks
+> OUTPUT:
+> TAP version 13
+> 1..1
+> ok 1 PASS: CFS task got more than 4.00% of runtime
 > 
-> > +	if (IS_ERR(fence))
-> > +		return fence;
-> > +
-> > +	if (job->done_fence)
-> > +		dma_fence_put(job->done_fence);
-> > +	job->done_fence = dma_fence_get(fence);
-> > +
-> > +	ret = pm_runtime_get_sync(dev->base.dev);
+> [ arighi: drop ->balance() now that pick_task() has an rf argument ]
 > 
-> I haven't looked at your PM design, but this generally looks quite
-> dangerous with respect to reclaim. For example, if your PM resume paths
-> allocate memory or take locks that allocate memory underneath, you're
-> likely to run into issues.
-> 
-> A better approach would be to attach a PM reference to your job upon
-> creation and release it upon job destruction. That would be safer and
-> save you headaches in the long run.
+> Cc: Luigi De Matteis <ldematteis123@gmail.com>
+> Co-developed-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-Our PM is nothing more than clock enable/disable and register init. 
+I don't see anything preventing this to come after patch 11 so that all
+sched_ext changes are at the end. Am I correct? That'd make applying the
+patches easier. All the debug and deadline changes can be applied to
+sched/core and I can pull that and apply sched_ext changes on top.
 
-If the runtime PM API doesn't work and needs special driver wrappers, 
-then I'm inclined to just not use it and manage clocks directly (as 
-that's all it is doing).
+Thanks.
 
-> 
-> This is what we do in Xe [1] [2].
-> 
-> Also, in general, this driver has been reviewed (RB’d), but it's not
-> great that I spotted numerous issues within just five minutes. I suggest
-> taking a step back and thoroughly evaluating everything this driver is
-> doing.
-
-Well, if it is hard to get simple drivers right, then it's a problem 
-with the subsystem APIs IMO.
-
-Rob
+-- 
+tejun
 
