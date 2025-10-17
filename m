@@ -1,149 +1,146 @@
-Return-Path: <linux-kernel+bounces-857943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CE3BE84D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:24:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3033BE847B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4D95C35C906
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:24:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A40C34EC9BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ADC3570B9;
-	Fri, 17 Oct 2025 11:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD44343D63;
+	Fri, 17 Oct 2025 11:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niyy5DtK"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0w22HeRq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yb2o+SyR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5DE34F48E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5B1339B5D;
+	Fri, 17 Oct 2025 11:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700124; cv=none; b=Inc7PBQV/N6OMkztGi71oKjU+k2nQpyDrCbZaVAMSYnClBcm04OyNKvksB+mzQxmWn4bfoiamHaVJRqdqUw1duHxbpiqIs2tKyojSbWaJKBwHPwDyOsb3YDdj79lSLRDETdfApue8bCyrBQoEDc1DgDt/q9oaECvmnYiilNLq0s=
+	t=1760700079; cv=none; b=bxcH9pZNsHb09X976ERCHJBmFmpSraQM60i4oushNjK5J8KQYPB8f8Nv9Oum7TQdruwVDqt9QAHJm+sHJttiU0vcBoddnpliB57H+jIpl8PoDQFYhrjRxhEuprFdoUUz5HVkgYD3eW7WgBu6l77dnvQLxCwxWMjomKE3qouWDg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700124; c=relaxed/simple;
-	bh=y613Fibuye7rvTibD+68qb4oNwl+ydXU9k6h+6Dna6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xz3DAS+fd3ER5yOohTE8wRb9u2YM906iXh0CPjsY5ziWAOePTUkxusP4xVGpJusZz4KP+3OJ4EYgs7QmlxTEzBMKjyMMqJF84qW8L4MaWQ3FHDT5IExqvKaXnu8PICPRmS3ZXckqTPZAzaZ+MMs4enjQPFlXTbC/5j2e50Z4wyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niyy5DtK; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b463f986f80so371573766b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760700121; x=1761304921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=07Toi2vUIU+MWGlot8kMIQ1ee07JBmL9YfZNkL4sfI0=;
-        b=niyy5DtK/jIqiA/dpFcGD8XGY2TG1/EBgwRWvMgT44+eZ5c40GsYOxjZWgK9xMx3oJ
-         Ub8ppWIKnhpL6mFxaHI7eVX8M+d7R9ThA3MaeUDMqPecxRXxCYqLewPINElPIZgufd4J
-         CxgiDjEBtHdlyczcz2/x+y10CmJmL+jiQFjudfTN64G1bJvHofnY5h4eZEPzRJhHQEPs
-         qwy4GzPp+9srKAdaOVD9o9ZAREt/yd7xn7kkDN5vjWKYb+yl8olWCqsDQRShre42SEEo
-         T+Pr/HabeP5C3YDNcyXxK8O8zBm8NGZNRB6EIJpdgDmERmtVOJ36eQCIFUSB1cBdtTOM
-         1umg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760700121; x=1761304921;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=07Toi2vUIU+MWGlot8kMIQ1ee07JBmL9YfZNkL4sfI0=;
-        b=DxAt1NhyvPyJWDLQhbBV0rYVK+4OgH8S3ku8ze95ETZWvbEHjVFN4rE92ZKNZjY2X+
-         C0QCPYy6D3UMT9u8mVY85Y5J/PgMjGYbEqWOk0wlFuhD3y93Ul9roIvSC34rqz4tuXL8
-         LEbcu0JGqPZJRzdTQF+1XJoIGl9cJW8q+EMZa6FLu8xy5QDV4qBkbQhvluSWLXcEPYLG
-         AHknZrki2ctkeKZRmFuTAGq4GI+XOaSOeTLi6QjweCyLvScv5BmdUYj5LOiIDHhGNdOG
-         Q3TeXMHWyRqDeKppCbYa9/Sp1NF983WeJlPP+dFFJT5PqAoLOcXi0Mg9V9H3nTkO72NP
-         BkzA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1DOahp7PwXkQKVvkvIdVDaN+1RrBu/Puk0R3HV7YOLMy7RI2cuiMI+I1dwGgIDQuq5kiOlrSZIYZ4Y1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpoDY+gJ+rJeyRX/Jy2nnYh3ifn0+Z4wLmnk1Xh8c4z3pXGQUw
-	6/JhPBdPBGkaiGMhCHoV/C9dRFTnU1tGeJe8UtKgtq45ExD5/5tWcStO
-X-Gm-Gg: ASbGnculWNiXAjoO2WfPFDFwSic7sr9phNrUw3fkAf+yquNUHCnFaMLGScmWxIRQBhZ
-	lzu342fAnIBzty6IK95a2HWS8+wb8D324SfPToOQ0R1sHx6g1+6V17HTasGkJGYVLw/D4j9nCl/
-	Al+uNtvLCOv/S1Dn+PmxSapPHjQIgmfYu8CBIzAvY6vLEUIgzbW+8Q/fueuqQUnpua2/TqUAZOz
-	mXid0rbbnqQQiqDJf2q360k+03/oet70kouFZE73h43mxFiLuye+J/KzKny4JzbVuLg5qgxVVco
-	YbEjEXmwDsKHScmIC5oM0TTFD1IWi66/g6dOcn141QTYU36x9ZDy/fkJzgPZRfZ5ZGHhVMIDJdO
-	Ce+JxOkxW3I86KiQj6vIbHkKOIk9XPSj8bS8RmGY0/o0tCswhuUsIVsEQvY9Ahygmw8c32lSl/D
-	6C4GwdYuaD8Ufw3u91jpHNGHjDFQkcvBXNnIAd5g==
-X-Google-Smtp-Source: AGHT+IFm4WIQFISVomrAFV51FZBLIpyrii3K7EFFJhRI3QtwYUrQCPmRYno3c3emRFDyrsQdPdKFXw==
-X-Received: by 2002:a17:907:7ea3:b0:b41:873d:e220 with SMTP id a640c23a62f3a-b6474f18597mr313933066b.50.1760700121004;
-        Fri, 17 Oct 2025 04:22:01 -0700 (PDT)
-Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccd1af35fsm788256166b.60.2025.10.17.04.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 04:22:00 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v2 8/8] arm64: dts: imx8ulp: add sim lpav node
-Date: Fri, 17 Oct 2025 04:20:25 -0700
-Message-ID: <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1760700079; c=relaxed/simple;
+	bh=0FvyCoHZIpX45PkbM8k1XpEvA39Z8N3BYjHT0VhQTKw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G2zd3/7Uothb6XAV8lMJ4f72QbtB9Wi68GWzbbJohCBLD9xhpjp0LqWSp9Qepst6NnBsI64hCveyzqJW6bPyaoLafS21ci6t8K6KPwx92Ux7lvOG3iIvLbz1+iBVLaBxjqFKy+xAPdq4DS2VXnpgss1ipAo+/gJLKQa0bRY7wUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0w22HeRq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yb2o+SyR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760700075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eZ5/2E9/kdHV6wKk13IMjV26fuC0EY7cU/moeac/r0k=;
+	b=0w22HeRqwsEaDWfFRcdym9ZdxujQL/SMlrRPuJJ8G0lW0VU+roLNqAQqn+5ddD4XHPvhCI
+	G8RfcOVLaDb522FTklVP+T9AWU7a2YUuU3/zS9de1315WWxBoHvU0Nj9QJ0h9Ke1JMi7Um
+	5yCRggrIaasOfxTCXZDvGcnXQN5DpN5DBZjhPihilyQSh9zfnpDA51OSo91RRi6YZ2ajDU
+	zq9nd/fL2MnY3jElVShCHCxnhdw8CHKx+HzZyOCYRxfE/8sQpHPMZx5+Owgr0vwuACBi4W
+	Im9zYuGn3kphxZ4bkop+xrUFJb6ZrY64lUNREC8dmKGqVpm3CuTHhMBvBTfxjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760700075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eZ5/2E9/kdHV6wKk13IMjV26fuC0EY7cU/moeac/r0k=;
+	b=yb2o+SyRVbqNJx1T2MjsSgrIjIm9/+bN/XuOD9YUNJmae1nSpVUZAsBLSIxLGfTfjAFqpz
+	FrlXldlLVbWUzqBA==
+To: Andrew Cooper <andrew.cooper@citrix.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org, Madhavan Srinivasan
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org, Paul Walmsley
+ <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, linux-s390@vger.kernel.org, Julia Lawall
+ <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Peter
+ Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
+ regions
+In-Reply-To: <adba2f37-85fc-45fa-b93b-9b86ab3493f3@citrix.com>
+References: <20251017085938.150569636@linutronix.de>
+ <20251017093030.253004391@linutronix.de>
+ <adba2f37-85fc-45fa-b93b-9b86ab3493f3@citrix.com>
+Date: Fri, 17 Oct 2025 13:21:14 +0200
+Message-ID: <871pn122qd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Fri, Oct 17 2025 at 12:08, Andrew Cooper wrote:
 
-Add DT node for the SIM LPAV module.
+> On 17/10/2025 11:09 am, Thomas Gleixner wrote:
+>> --- a/include/linux/uaccess.h
+>> +++ b/include/linux/uaccess.h
+>> +#define __scoped_masked_user_access(_mode, _uptr, _size, _elbl)					\
+>> +for (bool ____stop =3D false; !____stop; ____stop =3D true)						\
+>> +	for (typeof((_uptr)) _tmpptr =3D __scoped_user_access_begin(_mode, _up=
+tr, _size, _elbl);	\
+>> +	     !____stop; ____stop =3D true)							\
+>> +		for (CLASS(masked_user_##_mode##_access, scope) (_tmpptr); !____stop;=
+		\
+>> +		     ____stop =3D true)					\
+>> +			/* Force modified pointer usage within the scope */			\
+>> +			for (const typeof((_uptr)) _uptr =3D _tmpptr; !____stop; ____stop =
+=3D true)	\
+>> +				if (1)
+>> +
+>
+> Truly a thing of beauty.=C2=A0 At least the end user experience is nice.
+>
+> One thing to be aware of is that:
+>
+> =C2=A0=C2=A0=C2=A0 scoped_masked_user_rw_access(ptr, efault) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsafe_get_user(rval, &ptr->rv=
+al, efault);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsafe_put_user(wval, &ptr->wv=
+al, efault);
+> =C2=A0=C2=A0=C2=A0 } else {
+> =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 // unreachable
+> =C2=A0=C2=A0=C2=A0 }
+>
+> will compile.=C2=A0 Instead, I think you want the final line of the macro=
+ to
+> be "if (0) {} else" to prevent this.
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Duh. yes. But I can just remove the 'if (1)' completely. That's a
+leftover from some earlier iteration of this.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-index 13b01f3aa2a4..676535c3fc84 100644
---- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-@@ -776,6 +776,23 @@ edma2: dma-controller@2d800000 {
- 						"ch28", "ch29", "ch30", "ch31";
- 			};
- 
-+			sim_lpav: clock-controller@2da50000 {
-+				compatible = "fsl,imx8ulp-sim-lpav";
-+				reg = <0x2da50000 0x10000>;
-+				clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
-+					 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
-+					 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
-+				clock-names = "lpav_bus", "hifi_core", "hifi_plat";
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+
-+				sim_lpav_mux: mux-controller {
-+					compatible = "reg-mux";
-+					#mux-control-cells = <1>;
-+					mux-reg-masks = <0x8 0x00000200>;
-+				};
-+			};
-+
- 			cgc2: clock-controller@2da60000 {
- 				compatible = "fsl,imx8ulp-cgc2";
- 				reg = <0x2da60000 0x10000>;
--- 
-2.43.0
+> While we're on the subject, can we find some C standards people to lobby.
+>
+> C2Y has a proposal to introduce "if (int foo =3D" syntax to generalise the
+> for() loop special case.=C2=A0 Can we please see about fixing the restric=
+tion
+> of only allowing a single type per loop?=C2=A0=C2=A0 This example could b=
+e a
+> single loop if it weren't for that restriction.
 
+That'd be nice. But we can't have nice things, can we?
+
+Thanks,
+
+        tglx
 
