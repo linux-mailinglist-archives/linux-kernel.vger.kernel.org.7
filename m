@@ -1,180 +1,178 @@
-Return-Path: <linux-kernel+bounces-858511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05087BEB099
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:15:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E53BEB057
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 19:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6553B5566
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:10:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 958994EE6F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C647303A22;
-	Fri, 17 Oct 2025 17:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980C12FFFAA;
+	Fri, 17 Oct 2025 17:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d1t8nGVS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zVI+k4Z6"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24257302CA2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AC02FDC56
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760720978; cv=none; b=IAYhkYJoOVpkT6dfoJa+e0G18S7akfbrSd6XTxCcxqEi/OADxkSSZqU75fcqcqGZP9DIAP2vZoN+LFlJTnR7q/7zxnBq//HvaXdt+uN1P6FyW6HL8S0InlGXzpusDJExasac27+8rKXCu/eZ9rBRn0HA3J9eJGXScncXV2wQZuY=
+	t=1760721019; cv=none; b=sFXnL1TUKrXOxd+FDC24qoRoqfsadDyPR00rIeAqTYnmEfid+XdJG8WOEbmbR/d5Qgj9dcNLjz+1uq1m1gLKxbhU37Oo/0XLiftoxV4qE+FQbI+0nmwvvJVer7pBh2hTlKuepkK8CwTXa1FyhhRT+qF/7r97KvSJ0rzGq24MNRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760720978; c=relaxed/simple;
-	bh=FsAmFO8jrPuC9HJylbuiPP9BJvgaZSVRLKxlOwDDju8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DcxkgVfj76i9gOHXpTUA67wLR54M0/+pfXU7xan8sjY5u/2DolgFAUmHLi+XexZd5SAs5ytF3RHqzpHWzoj/LwCiOMyPDKPKAekYfBLNPlGmz3CEUT8GyrP+QDgixmANjW4FCLJOiwg52sA7ePyxxppnfs8aRuoGqjbzC54GBsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d1t8nGVS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59HGXELx025253
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:09:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ugvhCye14d4WMYIug1/zGBbRQsvBfvHQDJkjtw/ffv0=; b=d1t8nGVSWhSBFPCj
-	hhBDCnzqB9XG/t0Tt8rd66ySW+9QrkvAkwOWrqxy97X9OVzoBgwZ+EAvHPuVC897
-	W34o4aLhzzdJ1hfa7OTndabL+cWSS05hwH8A+QyWPpniKILFcx8bb+iOTPXhAEtq
-	sSJpKX8ygIeDtBAXO7IefKZMUJnjEZaYC9q2WA4VpoA2beM1jO8VRhDK3mvLJBQ4
-	wXMBUQjoyBQjvt/SwZZ5jVy4qmgM1FbnFLtj0xtgSAFtqNftj3O5e+ay5NQPtCY4
-	7/8jAaQtLh8/6vRMo+nfFQuayMIwvUqllnEEJGCoa9w+g655ETtI092E3ziHqZw4
-	mBIVAA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdkn2cu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 17:09:35 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-269880a7bd9so26700275ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:09:35 -0700 (PDT)
+	s=arc-20240116; t=1760721019; c=relaxed/simple;
+	bh=BCRpauX8EGhu4tSnjwT10f6Zoi0e1G8sa0Y+n+4d9jU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=X9LwA5TSulOhla1giGCcu9+hhL/Dt2uAgcioTUGqaCdkdxLraAxbzOzrfjg4V5D/UwltDQw3eP+ZH2uCOCkE8GO3QYNBeEhSuOhb0bNYrbRRVJT7uF2ZqxqdWF5pDsLBAzc0bKHaem5BNfA2d1wM4hFont9sI0tJFaPyJ4SH3yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zVI+k4Z6; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33428befbbaso2644526a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 10:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760721017; x=1761325817; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifJ61lnza1eEGqNIU2Rf5rvGvVu/vXThPUsXhboidrg=;
+        b=zVI+k4Z6Cy6sddsCxrfaxyq6+Q03PJPwFqVlMfjQPPGIxpoRG9h5SqhCTFLgJCmi+2
+         hNnjyXSjLLFLcLqFueZM4cGZYRwxmFddiAVLMt27k9KMzJJjB4J678mX3uDj1fFtA9B8
+         MKfAEVnSMkDwHbzOULeqjGIhPEIpKXcUTfUiq1EIo6g7w3zaPtAzblQKTtUCbw6SbIIl
+         6PETpKyyNd/CzBuzz2CYcUyMBXzELt+IU4yVdZ8/4nPirXrBlwRLe935YcYWQBROEbDk
+         amTQplxvAUcWesInqjkeieu+qAp3SurVA34XFn/Kxp2oSQ2PtWCiSfuKNrlzQoEHdc0w
+         1WMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760720975; x=1761325775;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ugvhCye14d4WMYIug1/zGBbRQsvBfvHQDJkjtw/ffv0=;
-        b=qeS0UkhgNTaOoPLXNwXEUowd2qtqSQOL2vSj9BMfRsusSkX9JL7GHJwUZQLQpcUVNd
-         A47Renqo2QmO+vOH4sjHf1/YgMYL/MQcSivH38W//mZ800isaKRiK+4P33A/C7yh9+ft
-         9YuWa3BPAtWxO2h8rr25dSNTMNbKqoT9X7aQn/4iumnZcOJltNU/ztdj3Iu7xj867kAv
-         xzcJEJuPuzqDfWTWFkroYHOWLKYOdeemh1DWDRHJcVXSisNGgeaZ9IkqpU0L7igTaTLw
-         05URGinvWX/W9w9Ns0E9Ps6x01OLd332xs87XfdE0D3GeZmOFA2iSv+jHCjkXCdj76Cf
-         hPkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtw9VZPv9PGK7C9M8+bKMs8yJRdRddpT+8S3X9yGhgGnX3vfnCepAsbAGrJpgTYkt4ngF9042rjgpLWBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUxH4xoDmot4KOqjQ+Zbgtd6UU2UALI0wKey3deFrX8mQFDBf4
-	LaDpWCLpvRP1gAjKDe1JarpyPvR/6JLE2eYkABlCQ5g+P+0x/Bhz/62FFuEfK/sY5lsWTtlnOzp
-	CIYdQ7aRKEe/QgXDafHnM0vx7JhouASs/nS4yraSTWl+rhzJhF7iwD9VvNHbgHNOKq8I=
-X-Gm-Gg: ASbGnctFqnGv212MkyY1PhooCNweLACW7wG+2/lHzxSdLqVkmwiBT6Gk41kBjP2sRMT
-	9jmWCWzj2HIoShvLsab2Vlr2pHajY9nM4b8TZRR/I75GH79kO0csop7bZLWcSOwDawZ6+V1BadS
-	vCRw+gxbt2DPJEAJCS6wVyZ4Wun/7BjKAykj1XXgxjond8voyfU0XT8cuYC2QxI4ri1b3NUtD2s
-	Kzvl4zPyy2Ofj7+0wovfOMx5MRuMP1NTbb9FqVQhFQ87l1WmLKj5BpJejXtIrQdBM+MtkSbVJx6
-	tOZzr04VEFCGo5FpzLgLuHUdTG/IQ/R//BoXDyjD17VkgDS6olgcJkzmP3rdO9K1+zQPXyLeYMO
-	rCPY8HV0BADtLnoWyi6hFq9Q=
-X-Received: by 2002:a17:902:dacd:b0:269:936c:88da with SMTP id d9443c01a7336-290cc2f852amr62490845ad.41.1760720974570;
-        Fri, 17 Oct 2025 10:09:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGiqLdkEXK76xjF+lHG7GlL+/MevbHd6v5Dd9DkIsG+DvsK4LIGFKBDF7/iLNW/xGjrgYInhw==
-X-Received: by 2002:a17:902:dacd:b0:269:936c:88da with SMTP id d9443c01a7336-290cc2f852amr62490335ad.41.1760720974024;
-        Fri, 17 Oct 2025 10:09:34 -0700 (PDT)
-Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471febc6sm173625ad.86.2025.10.17.10.09.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 10:09:33 -0700 (PDT)
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Date: Fri, 17 Oct 2025 22:38:34 +0530
-Subject: [PATCH 6/6] arm64: dts: qcom: qcs615-ride: Enable Adreno 612 GPU
+        d=1e100.net; s=20230601; t=1760721017; x=1761325817;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifJ61lnza1eEGqNIU2Rf5rvGvVu/vXThPUsXhboidrg=;
+        b=Ewtifld0nECj90mokt4/9M6ZvQms4nXwdLL9do/L0dC/foPZYUo+M5L77Eb7s8d+oI
+         HbLc1ejR82YhirOHpty2vJVSkD2o2V0PmglE4MgZ2zhupzaKNKyJbAyfOEvu00TaGPMJ
+         xTjT7QZjAIxEAcpdzbv+ANVjh42XeMZ6/1o6GCO+5fM88ccUxJ9kVtn259BESA+74/q/
+         Rzg5epYUguEjSnhvuUuxTLpHp7OpY7+CMWx30fb35UWq2k0wYf27SQnj4dnLMSoXyidG
+         LYWc+nHQ8MjBJ7vvyzI37mwkpvFMN3vFBcewE8NDeu7rDVkEmmIqDeZ6lef4b26Q/b+G
+         ZCiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiUX7/L821pPLCGYNiNqUcIDFmmwb67V9N6YBpAo01VVL45BzpyrKQSk+eJIN4VmTRVwSDdJ2rzsMBXNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5/qJdy2EPoNlz/TFiqie4bfLE6fgCHkPeuqUA/NI/JIcxWcge
+	X4/usNiBtjlYUC0gH436Xk9EQxuqR2RsaUgN1cJgpnibyvtlvKPzpSXxjZL567X5/tYyTzgwCH3
+	bQIaAPA==
+X-Google-Smtp-Source: AGHT+IEUYB0R7dtvKf9oX+a/EZzYYKzh3p3ExodHlnWKuRtJXwDliYrt7t1caDRrBgIsgz5MAIKuOjmjxVk=
+X-Received: from pjbgz13.prod.google.com ([2002:a17:90b:ecd:b0:33b:51fe:1a72])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c0e:b0:33b:c5de:6a4e
+ with SMTP id 98e67ed59e1d1-33bcf853711mr5333787a91.5.1760721017415; Fri, 17
+ Oct 2025 10:10:17 -0700 (PDT)
+Date: Fri, 17 Oct 2025 10:10:15 -0700
+In-Reply-To: <aPICkLKEMFI2OouB@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-qcs615-spin-2-v1-6-0baa44f80905@oss.qualcomm.com>
-References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
-In-Reply-To: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Jie Zhang <quic_jiezh@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760720932; l=854;
- i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=73CWnG48TkIMX2pCaTLVUDJXxssv+J43riXS1iBwvYI=;
- b=nYbp04cbP4hftA9E7CUSWYP36Iz5Pp9rqyCdQ7L53BtrrLH/j7EeRFlrwfHDDfCq0XnfsB/mH
- vYFmYZ7iBlUABbf1sXw0lQKLtcr/Fd4l/WlSK6g+9Gu/MBh9PdRNytm
-X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Proofpoint-ORIG-GUID: eTQg4YQwuOBDP2RTOUj23fs6Z61V34p0
-X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68f27850 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=Zg9b9eOPwfKYWhW-Nc0A:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: eTQg4YQwuOBDP2RTOUj23fs6Z61V34p0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXxAkUT6Vgc4Kh
- KmO/Zc/0qqz708oecYhENIEitXTgFZ52fjcJRscAYWqK6znRTZE2pKwQ3yGaK26q91ZI4up3uev
- EEvtBTpK4+62xC1Z+aMhU3siW/u82C5K5JwdUDIZe42uQmP6UyO8Y75fsCb9+NbX0uFf0ZT8+Yo
- QFsaqjgXa/dtTWGl//WCT7K0LQAjQJoQmerrn5wiqS74d0r4EC8X87/vzjzWPZ95/5zZW0cqJTX
- WiGHr0Kde/NIQJbHD8r136/G6cBMiFpN2Z8PCbDQbOGM1qzfckWyiAUXSV/CyVcK7E/iLaRgLX8
- H6H5IjAragRx+Wr6u1o777KHk8XJ6BWzR1KOGtEDZAD0YYsslaYA8BH5I1KqxG4b4XTVAGXLf+o
- 2FeQf0LknuvybAi6hWYm4qztaFS6wA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+Mime-Version: 1.0
+References: <20251010220403.987927-1-seanjc@google.com> <20251010220403.987927-3-seanjc@google.com>
+ <aPICkLKEMFI2OouB@intel.com>
+Message-ID: <aPJ4d3frVpRA7WKG@google.com>
+Subject: Re: [RFC PATCH 2/4] KVM: x86: Extract VMXON and EFER.SVME enablement
+ to kernel
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-coco@lists.linux.dev, kvm@vger.kernel.org, 
+	Dan Williams <dan.j.williams@intel.com>, Xin Li <xin@zytor.com>, 
+	Kai Huang <kai.huang@intel.com>, Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Jie Zhang <quic_jiezh@quicinc.com>
+On Fri, Oct 17, 2025, Chao Gao wrote:
+> > void vmx_emergency_disable_virtualization_cpu(void)
+> > {
+> > 	int cpu = raw_smp_processor_id();
+> > 	struct loaded_vmcs *v;
+> > 
+> >-	kvm_rebooting = true;
+> >-
+> >-	/*
+> >-	 * Note, CR4.VMXE can be _cleared_ in NMI context, but it can only be
+> >-	 * set in task context.  If this races with VMX is disabled by an NMI,
+> >-	 * VMCLEAR and VMXOFF may #UD, but KVM will eat those faults due to
+> >-	 * kvm_rebooting set.
+> >-	 */
+> >-	if (!(__read_cr4() & X86_CR4_VMXE))
+> >-		return;
+> >+	WARN_ON_ONCE(!virt_rebooting);
+> >+	virt_rebooting = true;
+> 
+> This is unnecessary as virt_rebooting has been set to true ...
+> 
+> >+static void x86_vmx_emergency_disable_virtualization_cpu(void)
+> >+{
+> >+	virt_rebooting = true;
+> 
+> ... here.
+> 
+> and ditto for SVM.
 
-Enable GPU for qcs615-ride platform and provide path for zap
-shader.
+Yeah, I wasn't sure what to do.  I agree it's redundant, but it's harmless,
+whereas not having virt_rebooting set would be Very Bad (TM).  I think you're
+probably right, and we should just assume we aren't terrible at programming.
+Setting the flag in KVM could even hide latent bugs, e.g. if code runs before
+x86_virt_invoke_kvm_emergency_callback().
 
-Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
-Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> >+	/*
+> >+	 * Note, CR4.VMXE can be _cleared_ in NMI context, but it can only be
+> >+	 * set in task context.  If this races with VMX being disabled via NMI,
+> >+	 * VMCLEAR and VMXOFF may #UD, but the kernel will eat those faults due
+> >+	 * to virt_rebooting being set.
+> >+	 */
+> >+	if (!(__read_cr4() & X86_CR4_VMXE))
+> >+		return;
+> >+
+> >+	x86_virt_invoke_kvm_emergency_callback();
+> >+
+> >+	x86_vmx_cpu_vmxoff();
+> >+}
+> >+
+> 
+> <snip>
+> 
+> >+void x86_virt_put_cpu(int feat)
+> >+{
+> >+	if (WARN_ON_ONCE(!this_cpu_read(virtualization_nr_users)))
+> >+		return;
+> >+
+> >+	if (this_cpu_dec_return(virtualization_nr_users) && !virt_rebooting)
+> >+		return;
+> 
+> any reason to check virt_rebooting here?
+> 
+> It seems unnecessary because both the emergency reboot case and shutdown case
+> work fine without it, and keeping it might prevent us from discovering real
+> bugs, e.g., KVM or TDX failing to decrease the refcount.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 705ea71b07a10aea82b5789e8ab9f757683f678a..a1c87b925bf0052c6876db96a2d6e3c3ab8037c3 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -288,6 +288,14 @@ vreg_l17a: ldo17 {
- 	};
- };
- 
-+&gpu {
-+	status = "okay";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/qcs615/a612_zap.mbn";
-+};
-+
- &pcie {
- 	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
+*sigh*
 
--- 
-2.51.0
+I simply misread my own code (and I suspect I pivoted on what I was doing).  I
+just spent ~10 minutes typing up various responses about how the emergency code
+needs to _force_ VMX/SVM off, but I kept overlooking the fact that the emergency
+hooks bypass the refcounting (which is obviously very intentional).  /facepalm
 
+So yeah, I agree that exempting the refcount on virt_rebooting is bad here.
+E.g. if kvm_shutdown() runs before tdx_shutdown(), then KVM will pull the rug
+out from under TDX, and hw/virt.c will attempt to disable virtualization twice.
+Which is "fine" thanks to the hardening, but gross and unnecessary.
+
+Thanks so much!
+
+> >+
+> >+	if (x86_virt_is_vmx() && feat == X86_FEATURE_VMX)
+> >+		x86_vmx_put_cpu();
+> >+	else if (x86_virt_is_svm() && feat == X86_FEATURE_SVM)
+> >+		x86_svm_put_cpu();
+> >+	else
+> >+		WARN_ON_ONCE(1);
+> >+}
+> >+EXPORT_SYMBOL_GPL(x86_virt_put_cpu);
 
