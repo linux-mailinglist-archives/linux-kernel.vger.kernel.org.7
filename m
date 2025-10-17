@@ -1,335 +1,335 @@
-Return-Path: <linux-kernel+bounces-858012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69138BE891A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3C1BE8914
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C57404ED2F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BF7400C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589792C11F5;
-	Fri, 17 Oct 2025 12:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CC732ABC7;
+	Fri, 17 Oct 2025 12:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="v5VKNJjU";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="lV630X8v"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YixIsK62"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B601F332EB4;
-	Fri, 17 Oct 2025 12:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760703708; cv=fail; b=e4H+8reb4DaXcqLvhq6SdURnn83tfLmbMY0aaJfPoCaknzksh2hTVWDFTINA+M0p0iW7AoZhH9zApfiZd2F3nSWCD6yXxcINC9oPizpssSaR7wgb55WjaDE9QNXp6ob0ekarXTTrrNjUNZbPOc8U60jES8WgqF6qrJbBYBBf+qw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760703708; c=relaxed/simple;
-	bh=XcV4Vnu6TzEg/uX7MkBvzydAYDy4LP+p9XXeNN2xiLU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dMqX0M+oJAIatunvclxKH8LwckvvFYOWGbeytUflsXKjt/Hn21cpSps5RNCIdTSjMkq9lC15QgYRjZDyG/XiWxm7nM83z6Lk0m9YOgZ2yxyU3ir/2kscy73fGdzl2q25iqxi2DimPs+urqTZOpK3IK2OPHVL3lJCfSacOruYav8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=v5VKNJjU; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=lV630X8v; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127837.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59H3PcOA3705879;
-	Fri, 17 Oct 2025 05:21:13 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=XcV4Vnu6TzEg/uX7MkBvzydAYDy4LP+p9XXeNN2xi
-	LU=; b=v5VKNJjUMGiuDO/wczIfk/Uv14789+oOpd4r59CP6YnDm1nbEEnRGfnKx
-	E0mlNkjgsVSybQ5BWSAuSQoAx4w7tGInPTN4aQXZhyYzqm5NIEn2olHp8HUuXFj/
-	iQi/fQEUFjdpvRlud4fR6mVCKOkS3S7ZqIFBx7v3IthCHsOclT+0I0YYp4gMdmLY
-	BWPyppD+RvU1HTgmH0lViVoTU7+kS/PmC/Vkr+X3AHLezwrfA5tLicVPc0fOUbho
-	6I1M/fdQQ5qSthyhmDfnR7Rhmp4Xe/e8GI+qHNYBvq6ssUExi9L/1OvrozQhupmv
-	ahLot+Xbs9+qFxig8cbiDSgkg7lbQ==
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11020097.outbound.protection.outlook.com [52.101.85.97])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 49u3umjb3x-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 05:21:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R6iqLB9zTBHIV9tgSzVoZkCz1BzgNBN6Y/Jtrvur7uRL81m7WjY3MRsGjbPMAw+RwwiCpAiQe+T7mkUExWNQwiQvfdaoLrKgQf0YL3gb2lD61N4esiMENGKoVaEbo2LYuUPeeqR6ZSDAtBRUDz5fwukIPW4t9LLZIzwtcZaET0RmVlAVSTP/P2JG108ky7Megn2bW0mq60JmOeApTjcTLDiqAJKJHnalBVyfnWCMWxC444c7h5gi7ViDTAD39Awu4IYonZNl8RFJno9w9SlKNxOS6HIRYzbLuRutzE8nnS4+9CyDTZaiQG9MjyU15kZUwysyr1Oe3xOBVxXfCMXuQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XcV4Vnu6TzEg/uX7MkBvzydAYDy4LP+p9XXeNN2xiLU=;
- b=Q+bGQs+rJCLOrCqYZmMOc5yOayjYaoRZ7LlUe+wBGGjY9BhhfHf3AFydholJabUFIeIA8CoaAQuZWXWrTOckkk/gwu//CTDZMhPnaKpyJ7nrwjLc+mzAT9smf8NkZnO1OPiUU4iSEYqRj/51EM3fjE1No8wDSFEXfqNsw6YJf16Fo5FOrSbkahNyeXLTT7CFWk4WrP1lymF+GMz2xsi/qDSBu7aRrq2QDXsOM8aR16xVGXlckRHRAWzFaR7TxvUB4irhD/BJ3WOFkFLV4EKqniu1w/39ELB2V5ike5OO4xrSuy36YpsHa9E9Jl2HEdhfe+Phq7oY/RELIsQLnbd9Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XcV4Vnu6TzEg/uX7MkBvzydAYDy4LP+p9XXeNN2xiLU=;
- b=lV630X8vngap4exa01fMgdHDBXn3ZSPppGxWYal3uMrJrk+IBVIIj9OT8eVelyobRzkQ1vJeq2mvGXz8bLYsL5K/8tL9FsP57ZdF3UDu6DYPdWfPwBPYdJLledQ17sZGRGyYMU2/iraMWyQaeWbVPie9NGv/hMIJflg+MDz/aoaDP+vCwAzeJVqFEmlsX6nTNTo5asZwwm0s/96eXahCI3GeV+jMgOrM4pFrQzKPHvfbPJ1r20lz2zCWOQlqrIFkhwMjM/cyjngV0SsThsJ5ahYjQgwmaMWc/TrkjEy1IW9wzxEgRK8/b9wkTHZqsqf3hAPCFTDH5729gP5pfAS0Ow==
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10) by IA1PR02MB10910.namprd02.prod.outlook.com
- (2603:10b6:208:59c::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 12:21:12 +0000
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054%5]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
- 12:21:11 +0000
-From: Jon Kohler <jon@nutanix.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Jonathan Corbet
-	<corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen
-	<dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, "H. Peter
- Anvin" <hpa@zytor.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Brendan Jackman
-	<jackmanb@google.com>,
-        "Ahmed S. Darwish" <darwi@linutronix.de>,
-        Alexandre
- Chartre <alexandre.chartre@oracle.com>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] x86/its: use Sapphire Rapids+ feature to opt out
-Thread-Topic: [PATCH v2] x86/its: use Sapphire Rapids+ feature to opt out
-Thread-Index: AQHcPv5fEvwBfNfs8061y/ytPB2UDrTFupgAgACIZwA=
-Date: Fri, 17 Oct 2025 12:21:08 +0000
-Message-ID: <C2A57B61-8E6A-4236-9F50-B0662C39272D@nutanix.com>
-References: <20251017011834.2941358-1-jon@nutanix.com>
- <9cf0e05b-00e6-4954-96d5-fafeb6e6397a@intel.com>
-In-Reply-To: <9cf0e05b-00e6-4954-96d5-fafeb6e6397a@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3826.700.81)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV8PR02MB10287:EE_|IA1PR02MB10910:EE_
-x-ms-office365-filtering-correlation-id: 78a86d8b-79e6-4850-7632-08de0d77a712
-x-proofpoint-crosstenant: true
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|10070799003|376014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ZHpYS0VxSjNOQXRobnJoVWJaeFlCMUlpUlRacnRXREs1U0pMVXlvY25pRzNR?=
- =?utf-8?B?V1FPcjIzbmZGenkyZ204STJodUcwZnRudENTZ0VxVlcyVDZjWm4vWGMvaUtn?=
- =?utf-8?B?NGFIYkR5SG1PL0ZBNDlGazBOZ0RvY2F6SFMrbXVLMzFZbEREN1o1ZzdGdndj?=
- =?utf-8?B?eXdVdUNwOXQ4YUI2eWhOR0plb1gyRS9yeE9ITUFtNDAvT2czOFhNRVFpYkhk?=
- =?utf-8?B?a2dha1NQNnFjRDlIRThFL29xN0g3aS84emlWK1ZndFRvR3RrZmRDN3ZjWm92?=
- =?utf-8?B?bWJaNjRZWXB3Y1ZYdWlDZlMzeFZwZ1hDSXR1elMwWmJGMHBWaGtGT24rMHhQ?=
- =?utf-8?B?WVlhMDU3ZVRPT0F3UGVkTUJuSHNYcnRKV1Ixb3N2TStJc0VjUVVEQnlwaG01?=
- =?utf-8?B?R0w2UnM1UDZUY1NscVc1WHlJOEVzYjhCbCt6VkdISVMyc3FnakhEOCsxVjRy?=
- =?utf-8?B?dHYvSHNqTlhOanN6Nnk5YzM2SW1PWlBjZHg0ZE1JWEIzVjBBeU1wR1lEazlx?=
- =?utf-8?B?Sm9EVUttcCtPbWJBN09mckxPQk9NYnpMSW81dnpiWDA4TERuOGpCWG9mN2pW?=
- =?utf-8?B?dTA3SmFwbjVpVVRjYzVQWHYwTkxiSlp1elNsMkhSREtNRThNVlJ2ZS9LTG5M?=
- =?utf-8?B?N0plNm4ySmY1UnF3MHBqRGlGbUZ5c0JBLzNPSzRkUzNBTnE1Vm0zWUFmLzFv?=
- =?utf-8?B?Uml6VUNNTkt1M3A0UEhBQUN6T2NGZktiOXpXTElpL0FUZE1WQTFGc0FTQy9I?=
- =?utf-8?B?VjRxNXllcjdYVDYzajJHSHNUbjFRSE00UW1BOWpDMVZOVVJIVGY3QjB5OEsx?=
- =?utf-8?B?YkdwSkR2WnRnbU8wc1piQmt4LzZWYTVBYmNSbEl5aXVMT1NWTlFXWUN4K3hQ?=
- =?utf-8?B?MkFGL1NrazNSYll1RVc4cTdJcFY5Z2IrRWxXWTRWc2pkMTFEYk8zdVo1ajJp?=
- =?utf-8?B?TkN5b3dwZTZCbDkrR2xwNytMalpELzMvcFZ2REhXSlQvamFlYzI5ZTNKSFht?=
- =?utf-8?B?ZFRUd0tVOFRsRi9XMDZWZ3BWN1BxekdEUkZ2N0JXTE1WZ1hwVHI4eXRjeEpY?=
- =?utf-8?B?M2FNcWF0S3dDRVRDSmpZdTR5VHh0akdhekYrWEdjTTNBWVdMZ3piWkgwdDJU?=
- =?utf-8?B?YjhWUVhKVjBoMGQzVzNyM0NNQTVLaHMwU00xb0hoWGRUUzFyaENKZlZNZGFV?=
- =?utf-8?B?UjNBVVVDYSszbHlROXFFUzhiTGxYRDRYMUg1TEF2cWRCMW42RVRYcldaVWUr?=
- =?utf-8?B?NDRBbkF5NFZPZ3hlY1V1MVIzdnJzUEVEMkJvZEJBOWtkK3BSYTZKU1J2MTlB?=
- =?utf-8?B?M2MramtDSGVvTmtPKzJxa0x1RnZiejhwM21ySHpNOEwyZTVSWWxvWFJmSXV5?=
- =?utf-8?B?N1JqQVZaZnRFQXJvcjVOQmU0SGNiT3E4UnVzMXFjQndyRzJRdWtRYll2V0Fj?=
- =?utf-8?B?MUVhNzVmYnlHU1IzeDZtc3VkU1pwKzg5RWJnVzNvbDhPWENRVmppeFE3UE94?=
- =?utf-8?B?dS9yQVYycUxqRG1lY1ZldVN3eWlRTER2d2poMjFBNFFHemY1OHBnVm52dlVD?=
- =?utf-8?B?V0dUeXVYL3NEWi9RanZ4MVpob2ZuTTh4aWo2ZmpFS2FhbmRFNFhQL1ZrU1Bu?=
- =?utf-8?B?MmZCZzN5R3lTeUtlSGRuNktlY0NucnV6R01STWh6aXdGcDhod2RLUjRWby9S?=
- =?utf-8?B?Z1hUWUxoZGhmc3VKQXNUOUNsZ01aODRYTnNCa0dyUjZkTXBCWUxkcW9LU1Jo?=
- =?utf-8?B?OU8zVFFOakJQMnBTYkt4Z3haZTNRck5TbWtBcE1yVU5rVm1CdUtpRmM2V0Y5?=
- =?utf-8?B?UzZ5SFc5QVExbklrVmJ6cUZzSWxoQ3gxUHB3ZUNzN2NPQVpSdkJHdW1rdGJp?=
- =?utf-8?B?SGUrekdvZnpNK1UvQkdnOVVFcVR6R3BnektKcjJmVkp5bGp2UWdvTHhvQncw?=
- =?utf-8?B?dkxOUVRJQS9kaXJWaE13NnFscWRoaVkyYnJhYjlZUUZLZXZrUkhiTHcrcFJp?=
- =?utf-8?B?QXV1ZHByS1BuR1dPZ0h0aGZWODRaa3lzSmczZi9YcU9Ud1FpWlo3SVBDR2to?=
- =?utf-8?Q?OxlPrT?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(10070799003)(376014)(366016)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NGdHdHlHdVRGYllSeThuQjJTbE1oNU04cExaekgvanJrV0lMSnNpQ1drVFU2?=
- =?utf-8?B?KzlWV2M3ZzFFcDAxOCsxeGNDaHpyRmJhNkRNQ1ZkcTFnV0lZTVkvYXR3cFR0?=
- =?utf-8?B?YW5XME01cDJqRTAvcVRrWVVXMXFYVC9OQjZNZE5WUlgwTTI3UTIwdFVZaTU3?=
- =?utf-8?B?aWc5bkczblhZYTNQdkFlNWdCbVU1L09MWW51TWhuSEQ4aGUrN1F3VEJUMHdo?=
- =?utf-8?B?eU9qeGVzUk5ydEVRNCtCcTNQZnZWVEE1c280WnVsS1FlcHFoWGF3RkdqeTls?=
- =?utf-8?B?ajQ4VWpKcTQ3S0tDM083YVlvenVOYktoMS9UbjMvaUpPbXNkdjI0T1U5Y2t2?=
- =?utf-8?B?MDRwUHl6M1RLcUVWc0ZNWnpQMVZJbythTzNVbHhnbkNGb2hGMVBLTWNKUEtr?=
- =?utf-8?B?Sm1uVHh0U05FNTQ3OENwei9rdFBVL2lGUjlEMWtHQ3g1SFZnazk2ZkFaWUVO?=
- =?utf-8?B?Q25BenI4dXk5YnR2SXBhTWdaSExqMVlRVHN0QTkyeVZqOGQzQ25qQjd0LzhO?=
- =?utf-8?B?NmlucUVTd05tRTVtVWtsU3VHcTJlVVlvSUFhd2EvV3k3R2JWL09JTW4zbkNx?=
- =?utf-8?B?emJRK20wWUh0R3dNNkRvN1A5OHEzQ01jZGZKQmQ2US93V3ZMWjYwU1FxQkV2?=
- =?utf-8?B?RUVOblNGbEkrOUIzYmJhTWNiVHpJVmo1QnBnV2oyRTFHbFVKWGJVdFUranFN?=
- =?utf-8?B?QXlsTk1oSkpDQlB3cGgwWG13WllmeS8xTURZTDltY1QrbG4rYzhmd21TVWNQ?=
- =?utf-8?B?RHI2QnlKN0hhajc4MWgvWFJaUW5PeXd6K0dhSlpkZWFGb1hYeVpPdjdWT0Nz?=
- =?utf-8?B?NEdYMDdTSnVaZ21UdXZIaE9hRXgwMWUxWnF0QjF4NVV5QkRNQW01WGh0VDJ5?=
- =?utf-8?B?VXFtT2l1ckI4azBXbk9CU0doNU1ZUG1POFYrZ1FIdkx6YmhsRGh6cmhidDFi?=
- =?utf-8?B?SHIwcXlpb2poK0dPaTFyS0RQYjBsYVIwVnVtVzNSYjZsR05jRkorVXAzYnZX?=
- =?utf-8?B?K0dwbkhCUFArc2RNRWlaR2I1WEFKZlpDbElwU0M3WjRjc2l0OUdlRDlaaEpN?=
- =?utf-8?B?SWRXY0pIZlNpMmU5RzlSQ09rdVltVEpBZEdCVW11dmxyNms2Y0dPMEdvTGpq?=
- =?utf-8?B?R0JxK2c2Q2VlOGl1RkZlRkJGd2F1MllBbXpqUG9mWlkzdTJJZmZLSVZ2RHRs?=
- =?utf-8?B?aHYyOW13YlNYVnR6MkxuUjhEUE5PaU9xU3FXR2ZYbEZMZ1JSS3Bpb1BETWQ0?=
- =?utf-8?B?bitVRVU5SlA0QW1OWE9Sby9lSkd6bEhYeENnRHQzaVVEa0JWNll1cWpjZEF0?=
- =?utf-8?B?N1BxVkhUTTAvcTBNaWd5Y2lRWWVITHQ5MlFoUGVkeHZjU2ZpT3BjV0Q2aXlO?=
- =?utf-8?B?ZngzRG5BTmwwQlNsTklvb0QrVXl5ZkhySnAwbFd4TnhZN2NpSlpVbzRyTi8r?=
- =?utf-8?B?RnU5VGhrMmxrbDJBZVVQQnNIbmJUT3IwUmpJRldYbVRCVUNVRnFjaHpxeEI2?=
- =?utf-8?B?VHFPY2JUWG5xYWIrLzI0MGZaT3hTN3pSSU56QzFaWHhnMVJRZE9SQUFINWJQ?=
- =?utf-8?B?ZFA1TGlHcW1kWUZBUUdVUGs5dXdNYTNwYXdXd1djRnp1Y0VPeGlCeVRJT0Er?=
- =?utf-8?B?OFhndUlFZ25QTGI0ZE12QWlLNUFSd1hrQW1LT3dWdkR2Qlh0bFhkdWlZLy9k?=
- =?utf-8?B?aWhIRER6SytaT3E3aGVMeERkaUROanUyUmRraUZrUjRvRWhWYTBYZGhZcXR0?=
- =?utf-8?B?QlhUNWxuTTh0Q283ZURPOUVkOS95cS9tMVZrRjQ5eGg1ZnRjRE9BVTJDZWov?=
- =?utf-8?B?eUhVQ2VPY2xadnFwdk5YZVU1T08xYU9XOHY1VlRLK2NBM1VTczRTUDI2cm5R?=
- =?utf-8?B?USsrRkxWODN6Tk1lbjZrOExHUktvNHBiVXRLbGlRaGZ2TURMazUxNk5TTGVz?=
- =?utf-8?B?SzVkSHdaNXdpQU8rWlpFSUUyYVJSUDJoWk85b29FT2lRQ3Ztc25jb3d3Ly95?=
- =?utf-8?B?OVExWHhISW1jbUZid3pBMWNnWVNvamY5TXNKc1l5am1TSmN2djdjaGdSWGhs?=
- =?utf-8?B?UWpsQnRRcDdzSENMdXNpRnN2ZmhSWHVxSmRZekVSY3FjOThHaFB5WTIwNUlN?=
- =?utf-8?B?WjhOR0x1OGNra1VVbkRSSUR1TnAyVzVpS29kbVZid2FSdVhtWWRUalk1SGxI?=
- =?utf-8?B?bzZrS2RtY2NwY2pTNENVeGVtczVocnhRbVd5V3FncG9aOFhTVVJOdWZOYzdp?=
- =?utf-8?B?QTVad3JHSFRSYUUzbU1wWnBDM3BnPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EDF341B5C05C1B42B0F73CA4ABD3AD44@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EFF2E091E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 12:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760703684; cv=none; b=Ui5CoT//RG06oRjR6Paf3+2tGpU/hGtd/TL9ZLltece2AjAluHeVTKoINhg/MXDJxxgUBnIXi5LT58i/arRSs+8+S5bEezPgi5ljiL7G+G1ap4vlF4n5xVR2bz5A3kVYxJFV4k7Vg7Gbm/aE3Rz7ZDH1kIC2yIJTohjoNoz2jN8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760703684; c=relaxed/simple;
+	bh=oF4rSMa84XiUMrFMQ8CCeEKgVEFBG4leS+kqpiZpjrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lfJ4844ulII7KzMscEQCGv+P0IHj+8lQpVgLy9xqeyOHwZ6lb5vu3CsVpr3CKENpz1MMPWFk79qjePFJ3cF+7SKyJqa88AnD9hDvhJSYumoJPYxT+ZTDGVHo5sHo9yXrkrJsa+xyqY9BzpX2B7UqzT64dWgtbIkZ62VUoCHBG98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YixIsK62; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b57bffc0248so1283131a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 05:21:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760703681; x=1761308481; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jBoeFdlwNuRD0x8J8jqumWLa4C5c647eqsgbDy2o1WI=;
+        b=YixIsK62npnqRDBZMKDC4yoAO372N4IOhCESrBw7SBqIPME7VAPkYpOVDVCEtohwNb
+         PK2u4oqcngVDGW09PBotx8MbmJuwGvc3z4ubnwpvBkqTrF6ZxydxnyGfsd91VyD9PvuF
+         VJ1W12Gurluxy3pB8bPXTV6SagCVUaX0xC8TK3/JoPSoovRNUAqzJuAwDb63kcuNEA9U
+         Zd/QFdSyR8U/Id3uS29caApyuuTNL3ja8a5rQ89AD1OhG3nGOyeGdLgLvKC8VOAN72SQ
+         5DX0OIyGj0sG7TxPkAG0b178/MpYYXqNxDKJjo/sY2BK4umzmButatc+6CcV3AySO3BB
+         PO7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760703681; x=1761308481;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jBoeFdlwNuRD0x8J8jqumWLa4C5c647eqsgbDy2o1WI=;
+        b=hVroUAIWGdNUmz3Lg/HJb40fAqetVyunWlVpntq6ZsfZi28imM5Nyp3OLdi08/vMuG
+         sr9WKL66tMLlCsEe9sNkQomvprier0wNoSZHi8UEAvK/IHhgnn9t/4AqMdY4IZO5ny2f
+         tEiG3DgsE6053L2ec5YnIm2nUFN4pKqOdUKQru9pmV4zhz/5e1mY0tb2pDTAx2sSNV4L
+         i6nB9ZyQlC4yJ/2ZvR5iUmNnptfyJjabnn/RNj0ZE/bHvBhmdTXVm82YytMkyVXDivze
+         5Hjn0z467wYwKAP9TjVyyzgcWDVHUupGtIbqph0+R0xdVxmh3S1yl8L+rSmXj1UeEV1e
+         9uLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGkk6x9nxvFQQQqukqRCIX1lFyXA6IE3kU/+QKXuGSJVrW+MktzA6m3ufIKh1wnkLtlQ0MRe7NOfo/hZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLwDi+NPzgyqAhbSwI0iyO0Aw1hJgYrSPr0e3HXFlJv7YZ/tT2
+	ZerBFbayCdFmJTnJwtq/nPtImSIheU+sM6KWEGjglUzI/6rXC25ANVgr
+X-Gm-Gg: ASbGncuaGbIZmHm0/NDwPAe+o4oN9lKVoagRK/hHZgRUCN/R3TLsDKF21V6F+9yfdS7
+	9/OQUDSlXrxrcjKJmSOz6G1uKDPMdV0kpWsinDav0pdT4NribQXfduWbYd68boLUvoeAGtQDbQq
+	bpKzg4Xt7pVTQg+C73okaV8roYmu+8el73qE1SJp5H+s+5veXzdj4VXXT+umddN5QrTxRVbkHQa
+	kUVPYXbhjIxL4BTdl9+aBWNQ40yatmuSxJeu0X/c4obBNL9V/7980H6+hO7kJRmb7n9iMQu20h+
+	LH8n4pide79qsLfg9lIYyXkhNc2+P/UUYZkTnVWkE/Dl9/I74PwID5z3xYjmWylGyYM0NRq6+bM
+	Qaay9XtDQ98gYHli6OPura8P2ym0B30ctxKjWFU7+/Fd3BAhlQXwwrlP+vtp6mf6FG5Cg/3f8eE
+	zqK35/Hq4fIcSPg1U8YSH/l1u/jG+a7BEoV3brKMAEq7UO8qO+z9Zmxx2tC1Yok+mFF3Q+b0Gi
+X-Google-Smtp-Source: AGHT+IFL6v2XqQkA/lfaEqWZGlAj4AIcqlDCBw+g5JGkN430aHE/DTJbG5oBfoCOSziU7X7UqZjiRA==
+X-Received: by 2002:a17:902:f64b:b0:262:f975:fcba with SMTP id d9443c01a7336-290c68e2eeemr41869345ad.9.1760703681317;
+        Fri, 17 Oct 2025 05:21:21 -0700 (PDT)
+Received: from ?IPV6:240f:c0ff:0:4:546b:8a06:6998:55b1? ([2408:80e0:41fc:0:5299:8a06:6998:55b1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a90csm62964205ad.19.2025.10.17.05.21.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 05:21:20 -0700 (PDT)
+Message-ID: <c87d11a7-b4dd-463e-b40a-188fd2219b3b@gmail.com>
+Date: Fri, 17 Oct 2025 20:21:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78a86d8b-79e6-4850-7632-08de0d77a712
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2025 12:21:08.7943
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pSHtbq5TzTp6Kb0kIyY4CGjYvUY/O8lA2QgOP/aj8BYwy0EIN1RDgpV9bDkPNZbQkpeNAuZujnvJGiWgzTravNB5Nea28w/zxI0USRpp8Kg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR02MB10910
-X-Authority-Analysis: v=2.4 cv=foDRpV4f c=1 sm=1 tr=0 ts=68f234b9 cx=c_pps
- a=WbwzdlnB7+o+U6PX47Rpew==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=0kUYKlekyDsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=QyXUC8HyAAAA:8 a=XtGoufa9yYzQQCPStKYA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: BZtHp4DCgCCqsj8XvZ9GkvMTH1k85R0t
-X-Proofpoint-ORIG-GUID: BZtHp4DCgCCqsj8XvZ9GkvMTH1k85R0t
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE3MDA5MSBTYWx0ZWRfX2aAN7Vsvp3jS
- r3+cZIqX+TZsVXuqCrWJgNPC4tJrC4a72mF8rUvk+RC01jttP4PrpZpS8QSYasMkcS0UVWCVl2N
- bl44geXZOT8ZNNaUkkkdk7Oj4sZRw/47kZSBRSDNf6IYAs40EzE36fOnb1aB1BPW92bOmJXEruL
- eEVYNr9UrRvWeUHrl/LiEfOMomVgYDS12JhJjrl4U3NXNpNUd9wXiznBsnL5XyQVZji88x9cjEC
- mWU5Fu3t3LImanepyAQw5fnoHCFQG6nq1AtfX4AojJ4E8d+GwWR+1aGeDzwEQ/jKGEucjwiKcUS
- 6Ve0rhqlYkhuAywTbhGzW2T3dnSd6CnVXTpFToOYpS0+LULGuQKE7o4V14dak/UQY1CWaAXceiL
- O+zt/CVzwjvGjN8k0RY/eKdvgOuuCQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] avoid hv timer fallback to sw timer if delay
+ exceeds period
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yu chen <chen.yu@easystack.com>,
+ dongxu zhang <dongxu.zhang@easystack.com>
+References: <20251013125117.87739-1-fuqiang.wng@gmail.com>
+ <aO2LV-ipewL59LC6@google.com>
+From: fuqiang wang <fuqiang.wng@gmail.com>
+In-Reply-To: <aO2LV-ipewL59LC6@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-DQoNCj4gT24gT2N0IDE3LCAyMDI1LCBhdCAxMjoxMuKAr0FNLCBEYXZlIEhhbnNlbiA8ZGF2ZS5o
-YW5zZW5AaW50ZWwuY29tPiB3cm90ZToNCj4gDQo+ICEtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfA0KPiAgQ0FVVElPTjog
-RXh0ZXJuYWwgRW1haWwNCj4gDQo+IHwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIQ0KPiANCj4gT24gMTAvMTYvMjUgMTg6
-MTgsIEpvbiBLb2hsZXIgd3JvdGU6DQo+PiArICogaGFyZHdhcmUsIGV4Y2VwdCBpbiB0aGUgc2l0
-dWF0aW9uIHdoZXJlIHRoZSBndWVzdCBpcyBwcmVzZW50ZWQNCj4+ICsgKiB3aXRoIGEgZmVhdHVy
-ZSB0aGF0IG9ubHkgZXhpc3RzIGluIG5vbi12dWxuZXJhYmxlIGhhcmR3YXJlLg0KPj4gKi8NCj4+
-IC0gaWYgKGJvb3RfY3B1X2hhcyhYODZfRkVBVFVSRV9IWVBFUlZJU09SKSkNCj4+ICsgaWYgKGJv
-b3RfY3B1X2hhcyhYODZfRkVBVFVSRV9IWVBFUlZJU09SKSAmJg0KPj4gKyAgICAhYm9vdF9jcHVf
-aGFzKFg4Nl9GRUFUVVJFX0JVU19MT0NLX0RFVEVDVCkpDQo+PiByZXR1cm4gdHJ1ZTsNCj4gDQo+
-IFRoaXMgc2VlbXMgbGlrZSBhIGhhY2sgaW4gaXRzIHB1cmVzdCBmb3JtLiBFdmVuIHdvcnNlLCBp
-dCdzIGFuDQo+IF91bmNvbW1lbnRlZF8gaGFjay4NCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3IGFu
-ZCBjb21tZW50cywgRGF2ZS4NCg0KWWVzLCBpdCBpcyBhIGhhY2ssIEkgY291bGQgZG8gYSBiZXR0
-ZXIgam9iIG9uIHRoaXMsIEnigJl2ZSBwcm9wb3NlZA0KYW5vdGhlciBwYXNzIGF0IHRoZSBib3R0
-b20uIFNlZSBiZWxvdyBmb3IgbW9yZSBkZXRhaWwuIEnigJltDQpob3Bpbmcgd2UgY2FuIHdvcmsg
-b24gc29tZXRoaW5nIGJldHRlciBiZWZvcmUgd2UNCmNvbXBsZXRlbHkgcHV0IHRoaXMgb3V0IHRv
-IHBhc3R1cmUuDQoNCj4gVGhpcyBpcyBfbGl0ZXJhbGx5XyB3aGF0IElUU19OTyBpcyBmb3IuDQoN
-Ck5vdCBxdWl0ZSwgYXMgSVRTX05PIGlzIGZvciB0aGUgVk1NIHRvIGRyaXZlIHRoZSBvcHRfb3V0
-IHdvcmtmbG93Lg0KU2FtZSB3aXRoIEJISV9DVFJMOyBob3dldmVyLCBJ4oCZbGwgZXhwbGFpbiBi
-ZWxvdyB3aHkgdGhpcyBpcyBhIHByb2JsZW0NCmZvciBkaXN0cmlidXRpb25zIGFuZCBndWVzdHMu
-DQoNCj4gU28gaXQncyBhIHByZXR0eSBzdHJvbmcgTkFLIGZyb20gbWUgb24gdGhpcyBvbmUuIE5v
-IHRoYW5rcy4gSWYgeW91IHRoaW5rDQo+IHRoaXMgaXMgdXNlZnVsLCBpdCdzIGEgZ3JlYXQgdGhp
-bmcgdG8gY2FycnkgaW4gYSBsb2NhbCBrZXJuZWwgZm9yaywgYnV0DQo+IGl0IGhhcyBubyBwbGFj
-ZSBpbiBtYWlubGluZS4NCg0KSSB1bmRlcnN0YW5kIHdoeSB5b3XigJlkIE5BSyB0aGlzIHJldmlz
-aW9uIG9mIHRoZSBwYXRjaCwgYnV0IEnigJlkIGxvdmUNCnRvIGhhdmUgYSBzbGlnaHRseSBsb25n
-ZXIgZGlzY3Vzc2lvbiBvbiB3aGF0IHdlIGNvdWxkIGRvIHRvIHNvbHZlDQp0aGUgcHJvYmxlbSBk
-cml2aW5nIHRoaXMgY29tbWl0Lg0KDQpUaGlzIGlzbuKAmXQgZm9yIG91ciBwcm9kdWN0cy9rZXJu
-ZWxzLCBidXQgcmF0aGVyIGd1ZXN0IGtlcm5lbHMNCmZyb20gZGlzdHJpYnV0aW9ucyB0aGF0IHJ1
-biBvbiBvdXIgKG9yIGFueW9uZSBlbHNl4oCZcykgdmlydHVhbGl6YXRpb24NCnByb2R1Y3RzLiBJ
-4oCZbGwgYWRtaXQgSSBjb3VsZCBpbXByb3ZlIHRoZSBjb21taXQgbWVzc2FnZSB0byByZWZsZWN0
-DQp0aGUgZHJpdmVyIGZvciB0aGlzLCB0aGF04oCZcyB3aGF0IEkgZ2V0IGZvciB3b3JraW5nIGxh
-dGUgOikgbXkgYXBvbG9naWVzDQoNCkhlcmXigJlzIHRoZSBkZWFsOg0KV2l0aCBJVFMgb24gU1BS
-LCB3ZSBzZWUgdXAgdG8gYSB+M3ggcmVncmVzc2lvbiBpbiBTQVDigJlzDQpQQk9mZmxpbmUgYmVu
-Y2htYXJrIHRvb2wgaW4gYSBtZXRyaWMgdGhhdCB0aGV5IGNhbGwg4oCYY3B1dGltZeKAmS4gRnJv
-bQ0KdGhlIGVuZC11c2VycyBwZXJzcGVjdGl2ZSwgdGhpcyBoYXBwZW5zIG91dCBvZiBub3doZXJl
-IHdoZW4gdGhleQ0KdXBkYXRlIHRvIHRoZSBJVFMtZW5hYmxlZCB2ZXJzaW9uIG9mIFNMRVMga2Vy
-bmVsLg0KDQpJbiB0aGF0IGJlbmNobWFyaywgaXQgdHJhY2tzIGFsbCBzb3J0cyBvZiBzdHVmZiwg
-aW5jbHVkaW5nIHRoZSBjdW11bGF0aXZlDQp0aW1lIHNwZW50IG9mIGFsbCBjYWxscyBpbiB0aGVp
-ciDigJhpbmRleHNlcnZlcuKAmSBwcm9jZXNzLiBUaGUgaWRlYSBiZWluZw0KdGhhdCB0aGV5IHdh
-bnQgdG8gdHJhY2sgYm90aCBkYXRhYmFzZSAvIGFwcCByZXNwb25zZSB0aW1lIGFzIHdlbGwNCmFz
-IHRoZSBhc3NvY2lhdGVkIGNvc3Qgb24gdGhlIHN5c3RlbS4NCg0KVGhlIHByb2JsZW0gaXMgdGhh
-dCBhIGd1ZXN0IGtlcm5lbCBjYW4gbm90IGNvbnRyb2wgd2hhdCB0aGUgVk1NDQpjb25maWd1cmF0
-aW9uIGlzLCB3aGljaCBpcyB3aGF0IHRoZSBvcmlnaW5hbCBJVFMgY29tbWl0IHBvaW50cyBvdXQs
-DQphbmQgdGhlIGVuZCB1c2VyIHdpbGwgYXV0b21hdGljYWxseSBzZWUgdGhpcyByZWdyZXNzaW9u
-IHdoZW4gdGhleQ0KZGVwbG95L3VwZGF0ZSB0aGVpciBrZXJuZWwgb24gYSBWTU0gdGhhdCBtYXkg
-bm90IGhhdmUgSVRTX05PDQoNCkkgYW0gZ29pbmcgdG8gc2VuZCBwYXRjaGVzIGZvciBRRU1VIHRv
-IGFkZCBJVFNfTk8gdG9kYXksIGJ1dA0KdGhhdCBkb2VzbuKAmXQgaGVscCBhbnlvbmUgaW4gdGhp
-cyBzaXR1YXRpb24sIHdobyB3aWxsIGhpdCB0aGlzIHJlZ3Jlc3Npb24NCm9uIGhhcmR3YXJlIHRo
-YXQgSW50ZWwgaGFzIGRvY3VtZW50ZWQgYXMgdW5pbXBhY3RlZC4NCg0KTm93LCB0aGUgY291bnRl
-ciBmb3IgdGhhdCBpcyB0aGF0IHdl4oCZcmUgYWxzbyBsb29raW5nIGF0IEJISV9DVFJMDQppbiB0
-aGUga2VybmVsIGNvZGUsIGJ1dCBhcyB0aGUgY29tbWl0IG1zZyBub3RlZCwgdGhhdCBkaWRu4oCZ
-dCBhcHBlYXINCmluIFFFTVUgYXQgbGVhc3QgdW50aWwgOS4yLCB3aGljaCBpcyBzdGlsbCBmYWly
-bHkgcmVjZW50IGNvZGUuIEV2ZW4NCnRoZW4sIGl0IHdvdWxkIHN0aWxsIGhhdmUgdG8gYmUgY29u
-ZmlndXJlZCBhcyBwYXJ0IG9mIHRoZSB2aXJ0IHN0YWNrDQphbmQgaXNu4oCZdCBhbiDigJxhdXRv
-bWF0aWPigJ0gZ2l2ZW4ganVzdCBib290aW5nIGEgU1BSIG1vZGVsIFZNIG9uIGENClNQUisrIGhv
-c3Qgd2l0aCB0aGUgZml4ZWQgdXAgUUVNVS4NCg0KVGhlIGVudGlyZSBwb2ludCAoYXQgbGVhc3Qg
-dGhhdCBJIGNhbiBmaWd1cmUgZnJvbSB0aGUgZG9jcyBhbmQgb3JpZ2luYWwNCmNvbW1pdCkgb2Yg
-aGF2aW5nIHRoZSBkZWZhdWx0IGVuYWJsZW1lbnQgaXMgdGhhdCBpbiB0aGUgbWlncmF0aW9uDQpw
-b29sIHNjZW5hcmlvIHRoYXQgSW50ZWwgaGFzIGRvY3VtZW50ZWQsIHdoZXJlIGp1c3QgbG9va2lu
-ZyBhdA0KZUlCUlMgZW5hYmxlbWVudCB3b3VsZG7igJl0IGJlIHN1ZmZpY2llbnQgYmVjYXVzZSBp
-dCB3b3VsZCBiZQ0KcG9zc2libGUgYSBndWVzdCB3aXRoICpvbmx5KiBlSUJSUywgZXZlbiB3aGVu
-IHN0YXJ0ZWQgb24gU1BSLA0KdG8gYmUgY29uZmlndXJlZCBpbiBzdWNoIGEgd2F5IHdoZXJlIGl0
-IGRpZG7igJl0IGhhdmUgYW55IFNQUisrDQpmZWF0dXJlcywgYW5kIHRoZW4gYmUgbWlncmF0ZWQg
-dG8gYW4gaW1wYWN0ZWQgKGUuZy4gSUNYKSBob3N0DQphdCBhIGxhdGVyIHBvaW50Lg0KDQpEaXN0
-cm9zIGNhbiBhY2NvbXBsaXNoIHRoZSBleGFjdCBzYW1lIHRoaW5nIGluIHRoZSBndWVzdCwgd2l0
-aG91dA0KVk1NIG1vZGlmaWNhdGlvbnMgYnkgc2ltcGx5IGxvb2tpbmcgYXQgc29tZXRoaW5nIHRo
-YXQgaXMgZXhjbHVzaXZlIHRvDQpTUFIrKywgYW5kIGtub3cgdGhhdCBhbnkgc2FuZSBWTU0gd291
-bGQgbm90IChvciBjb3VsZCBub3QpDQphbGxvdyBhIGd1ZXN0IHdpdGggaGlnaGVyIGxldmVsIGZl
-YXR1cmVzIGFjdGl2ZSB0byBtaWdyYXRlIHRvIGEgbG93ZXINCmxldmVsIGhvc3QuDQoNClRoYXQg
-YWxsIHNhaWQsIHRoYXQgaXMgbm90IHdoYXQgaW5kaXJlY3QtdGFyZ2V0LXNlbGVjdGlvbi5yc3Qg
-c2F5cy4NClRoZSBkb2NzIHNheXMgdGhhdCB0aGUgcmVhc29uIHdoeSB0aGlzIGlzIG9uIGJ5IGRl
-ZmF1bHQgaXM6DQoJQWxsIGd1ZXN0cyBkZXBsb3kgSVRTIG1pdGlnYXRpb24gYnkgZGVmYXVsdCwg
-aXJyZXNwZWN0aXZlIG9mDQoJZUlCUlMgZW51bWVyYXRpb24gYW5kIEZhbWlseS9Nb2RlbCBvZiB0
-aGUgZ3Vlc3QuIFRoaXMgaXMNCgliZWNhdXNlIGVJQlJTIGZlYXR1cmUgY291bGQgYmUgaGlkZGVu
-IGZyb20gYSBndWVzdC4NCg0KVXNpbmcgdGhhdCBkb2N1bWVudGF0aW9uIHRvIGltcHJvdmUgbXkg
-YXBwcm9hY2gsIGhvdyBhYm91dA0KdGhpcyBpbnN0ZWFkLCB3aGVyZSBBKSB3ZSBoYXZlIGJldHRl
-ciBjb2RlIGNvbW1lbnRzIGFuZCBCKSB3ZQ0KYWxzbyBjaGVjayBlSUJSUyBlbmFibGVtZW50PyAN
-Cg0Kc3RhdGljIGJvb2wgX19pbml0IHZ1bG5lcmFibGVfdG9faXRzKHU2NCB4ODZfYXJjaF9jYXBf
-bXNyKQ0Kew0KLi4uDQoJLyoNCgkgKiBTb21lIGh5cGVydmlzb3JzIGRvIG5vdCBleHBvc2UgSVRT
-X05PIG9yIEJISV9DVFJMIHRvIGd1ZXN0cy4NCgkgKiBXZSBjYW4gbmV2ZXJ0aGVsZXNzIGluZmVy
-IHRoYXQgdGhlIHVuZGVybHlpbmcgQ1BVIGlzIHVuYWZmZWN0ZWQNCgkgKiBieSBjaGVja2luZyBm
-b3Igb3RoZXIgZmVhdHVyZXMgdGhhdCBvbmx5IGV4aXN0IG9uIHVuYWZmZWN0ZWQNCgkgKiBoYXJk
-d2FyZSBhbmQgYnkgcmVxdWlyaW5nIHRoYXQgZUlCUlMgaXMgcHJlc2VudGVkIHRvIHRoZSBndWVz
-dC4NCgkgKiBJZiB0aGVzZSBjb25kaXRpb25zIGFyZSBtZXQsIHRoZSBoeXBlcnZpc29yIGNhbm5v
-dCBtaWdyYXRlIHRoZQ0KCSAqIGd1ZXN0IHRvIHZ1bG5lcmFibGUgaGFyZHdhcmUgd2l0aG91dCBj
-aGFuZ2luZyB0aGUgYWR2ZXJ0aXNlZA0KCSAqIGZlYXR1cmUgc2V0LiBVc2UgYnVzIGxvY2sgZGV0
-ZWN0aW9uIChpbnRyb2R1Y2VkIG9uIFNhcHBoaXJlDQoJICogUmFwaWRzKSBhcyBzdWNoIGEgcHJv
-eHkgZmVhdHVyZS4gVGhpcyBpcyBhbiBpbnRlbnRpb25hbA0KCSAqIHdvcmthcm91bmQgZm9yIG5v
-bi11cGdyYWRlZCBoeXBlcnZpc29ycyB0byBhdm9pZCB1bm5lY2Vzc2FyeQ0KCSAqIHBlcmZvcm1h
-bmNlIHJlZ3Jlc3Npb25zIG9uIHN5c3RlbXMgdGhhdCBhcmUgbm90IHZ1bG5lcmFibGUuDQoJICov
-DQoJaWYgKGJvb3RfY3B1X2hhcyhYODZfRkVBVFVSRV9IWVBFUlZJU09SKSAmJg0KCQl4ODZfYXJj
-aF9jYXBfbXNyICYgQVJDSF9DQVBfSUJSU19BTEwgJiYNCgkJIWJvb3RfY3B1X2hhcyhYODZfRkVB
-VFVSRV9CVVNfTE9DS19ERVRFQ1QpKQ0KCQlyZXR1cm4gZmFsc2U7DQoJDQoJLyoNCgkgKiBJZiBh
-IFZNTSBkaWQgbm90IGV4cG9zZSBJVFNfTk8gYW5kIGRvZXMgbm90IGV4cG9zZSBlSUJSUyBvcg0K
-CSAqIG90aGVyIGltbXVuaXR5IGJpdHMsIGFzc3VtZSB0aGF0IGEgZ3Vlc3QgY291bGQgYmUgcnVu
-bmluZyBvbg0KCSAqIGEgdnVsbmVyYWJsZSBoYXJkd2FyZSBvciBtYXkgbWlncmF0ZSB0byBzdWNo
-IGhhcmR3YXJlLg0KCSAqLw0KCWlmIChib290X2NwdV9oYXMoWDg2X0ZFQVRVUkVfSFlQRVJWSVNP
-UikpDQoJCXJldHVybiB0cnVlOw0KLi4uDQp9
+
+
+On 10/14/25 7:29 AM, Sean Christopherson wrote:
+> On Wed, Oct 01, 2025, fuqiang wang wrote:
+>> When the guest uses the APIC periodic timer, if the delay exceeds the
+>> period, the delta will be negative.
+> 
+> IIUC, by "delay" you mean the time it takes for KVM to get (back) to
+> advance_periodic_target_expiration().  If that's correct, I think it would be
+> clearer to word this as:
+> 
+>    When the guest uses the APIC periodic timer, if the next period has already
+>    expired, e.g. due to the period being smaller than the delay in processing
+>    the timer, the delta will be negative.
+> 
+
+Indeed, this explanation is much clearer. I will adopt it in the next version
+patch.
+
+>> nsec_to_cycles() may then convert this
+>> delta into an absolute value larger than guest_l1_tsc, resulting in a
+>> negative tscdeadline. Since the hv timer supports a maximum bit width of
+>> cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
+>> switch to the sw timer.
+>>
+>> Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
+>> <=> hrtimer dance to common x86"), if the guest is using the sw timer
+>> before blocking, it will continue to use the sw timer after being woken up,
+>> and will not switch back to the hv timer until the relevant APIC timer
+>> register is reprogrammed.  Since the periodic timer does not require
+>> frequent APIC timer register programming, the guest may continue to use the
+>> software timer for an extended period.
+>>
+>> The reproduction steps and patch verification results at link [1].
+>>
+>> [1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
+>>
+>> Fixes: 98c25ead5eda ("KVM: VMX: Move preemption timer <=> hrtimer dance to common x86")
+
+Yes, it's better, I will fix it.
+
+> 
+> I'm pretty sure this should be:
+> 
+>    Fixes: d8f2f498d9ed ("x86/kvm: fix LAPIC timer drift when guest uses periodic mode")
+> 
+> because that's where the bug with tsdeadline (incorrectly) wrapping was introduced.
+> The aforementioned commit exacerbated (and likely exposed?) the bug, but AFAICT
+> that commit itself didn't introduce any bugs (related to this issue).
+> 
+>> Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
+>> ---
+>>   arch/x86/kvm/lapic.c | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+>> index 5fc437341e03..afd349f4d933 100644
+>> --- a/arch/x86/kvm/lapic.c
+>> +++ b/arch/x86/kvm/lapic.c
+>> @@ -2036,6 +2036,9 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+>>   	u64 tscl = rdtsc();
+>>   	ktime_t delta;
+>>   
+>> +	u64 delta_cycles_u;
+>> +	u64 delta_cycles_s;
+>> +
+>>   	/*
+>>   	 * Synchronize both deadlines to the same time source or
+>>   	 * differences in the periods (caused by differences in the
+>> @@ -2047,8 +2050,11 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+>>   		ktime_add_ns(apic->lapic_timer.target_expiration,
+>>   				apic->lapic_timer.period);
+>>   	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
+>> +	delta_cycles_u = nsec_to_cycles(apic->vcpu, abs(delta));
+>> +	delta_cycles_s = delta > 0 ? delta_cycles_u : -delta_cycles_u;
+>> +
+>>   	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
+>> -		nsec_to_cycles(apic->vcpu, delta);
+>> +		delta_cycles_s;
+> 
+> This isn't quite correct either.  E.g. if delta is negative while L1 TSC is tiny,
+> then subtracting the delta will incorrectly result the deadline wrapping too.
+> Very, very, theoretically, L1 TSC could even be '0', e.g. due to a weird offset
+> for L1, so I don't think subtracting is ever safe.  Heh, of course we're hosed
+> in that case no matter what since KVM treats tscdeadline==0 as "not programmed".
+> 
+> Anyways, can't we just skip adding negative value?  Whether or not the TSC deadline
+> has expired is mostly a boolean value; for the vast majority of code it doesn't
+> matter exactly when the timer expired.
+
+I don’t think this patch will cause tscdeadline to wrap around to zero, because
+the system is unlikely to start a timer when the guest tsc is zero and have it
+expire immediately. However, keeping the logic to skip adding negative values is
+a good idea, seems like there’s no downside.
+
+> 
+> The only code that cares is __kvm_wait_lapic_expire(), and the only downside to
+> setting tscdeadline=L1.TSC is that adjust_lapic_timer_advance() won't adjust as
+> aggressively as it probably should.
+
+I am not sure which type of timers should use the "advanced tscdeadline hrtimer
+expiration feature".
+
+I list the history of this feature.
+
+1. Marcelo first introduce this feature, only support the tscdeadline sw timer.
+2. Yunhong introduce vmx preemption timer(hv), only support for tscdeadline.
+3. Liwanpeng extend the hv timer to oneshot and period timers.
+4. Liwanpeng extend this feature to hv timer.
+5. Sean and liwanpeng fix some BUG extend this feature to hv period/oneshot timer.
+
+[1] d0659d946be0("KVM: x86: add option to advance tscdeadline hrtimer expiration")
+     Marcelo Tosatti     Dec 16 2014
+[2] ce7a058a2117("KVM: x86: support using the vmx preemption timer for tsc deadline timer")
+     Yunhong Jiang       Jun 13 2016
+[3] 8003c9ae204e("KVM: LAPIC: add APIC Timer periodic/oneshot mode VMX preemption timer support")
+     liwanpeng           Oct 24 2016
+[4] c5ce8235cffa("KVM: VMX: Optimize tscdeadline timer latency")
+     liwanpeng           May 29 2018
+[5] ee66e453db13("KVM: lapic: Busy wait for timer to expire when using hv_timer")
+     Sean Christopherson Apr 16 2019
+
+     d981dd15498b("KVM: LAPIC: Accurately guarantee busy wait for timer to expire when using hv_timer")
+     liwanpeng           Apr 28 2021
+
+Now, timers supported for this feature includes:
+- sw: tscdeadline
+- hv: all (tscdeadline, oneshot, period)
+
+====
+IMHO
+====
+
+1. for period timer
+===================
+
+I think for periodic timers emulation, the expiration time is already adjusted
+to compensate for the delays introduced by timer emulation, so don't need this
+feature to adjust again. But after use the feature, the first timer expiration
+may be relatively accurate.
+
+E.g., At time 0, start a periodic task (period: 10,000 ns) with a simulated
+delay of 100 ns.
+
+With this feature enabled and reasonably accurate prediction, the expiration
+time set seen by the guest are: 10000, 20000, 30000...
+
+With this feature not enabled, the expiration times set: 10100, 20100, 30100...
+
+But IMHO, for periodic timers, accuracy of the period seems to be the main
+concern, because it does not frequently start and stop. The incorrect period
+caused by the first timer expiration can be ignored.
+
+2. for oneshot timer
+====================
+
+In [1], Marcelo treated oneshot and tscdeadline differently. Shouldn’t the
+behavior of these two timers be similar? Unlike periodic timers, both oneshot
+and tscdeadline timers set a specific expiration time, and what the guest cares
+about is whether the expiration time is accurate. Moreover, this feature is
+mainly intended to mitigate the latency introduced by timer virtualization.
+Since software timers have higher latency compared to hardware virtual timers,
+the need for this feature is actually more urgent for software timers. However,
+in the current implementation, the feature is applied to hv oneshot/period
+timers, but not to sw oneshot/period timers.
+
+===============
+Summary of IMHO
+===============
+
+The feature should be applied to the following timer types:
+sw/hv tscdeadline and sw/hv oneshot
+
+should not be applied to:
+sw/hv period
+
+However, so far I haven’t found any discussion on the mailing lists regarding
+the commits summarized above. Please let me know if I’ve overlooked something.
+
+> 
+> Ha!  That's essentially what update_target_expiration() already does:
+> 
+> 	now = ktime_get();
+> 	remaining = ktime_sub(apic->lapic_timer.target_expiration, now);
+> 	if (ktime_to_ns(remaining) < 0)
+> 		remaining = 0;
+> 
+> E.g.
+> 
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index 0ae7f913d782..2fb03a8a9ae9 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -2131,18 +2131,26 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+>          ktime_t delta;
+>   
+>          /*
+> -        * Synchronize both deadlines to the same time source or
+> -        * differences in the periods (caused by differences in the
+> -        * underlying clocks or numerical approximation errors) will
+> -        * cause the two to drift apart over time as the errors
+> -        * accumulate.
+> +        * Use kernel time as the time source for both deadlines so that they
+> +        * stay synchronized.  Computing each deadline independently will cause
+> +        * the two deadlines to drift apart over time as differences in the
+> +        * periods accumulate, e.g. due to differences in the underlying clocks
+> +        * or numerical approximation errors.
+>           */
+>          apic->lapic_timer.target_expiration =
+>                  ktime_add_ns(apic->lapic_timer.target_expiration,
+>                                  apic->lapic_timer.period);
+>          delta = ktime_sub(apic->lapic_timer.target_expiration, now);
+> -       apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
+> -               nsec_to_cycles(apic->vcpu, delta);
+> +
+> +       /*
+> +        * Don't adjust the TSC deadline if the next period has already expired,
+> +        * e.g. due to software overhead resulting in delays larger than the
+> +        * period.  Blindly adding a negative delta could cause the deadline to
+> +        * become excessively large due to the deadline being an unsigned value.
+> +        */
+> +       apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl);
+> +       if (delta > 0)
+> +               apic->lapic_timer.tscdeadline += nsec_to_cycles(apic->vcpu, delta);
+>   }
+>   
+>   static void start_sw_period(struct kvm_lapic *apic)
+
+Thank you for your patient explanations and for helping me make the revisions. I
+will update this in the next patch version.
+
+Regards,
+fuqiang
 
