@@ -1,145 +1,195 @@
-Return-Path: <linux-kernel+bounces-857495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7CABE6F56
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:37:56 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6462BE6F4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B64D507736
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:37:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2BA0D35AF98
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B82922C339;
-	Fri, 17 Oct 2025 07:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E208422D4FF;
+	Fri, 17 Oct 2025 07:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q7+xXmnG"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPBAypuL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62DB22ACEF;
-	Fri, 17 Oct 2025 07:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129561FE45D;
+	Fri, 17 Oct 2025 07:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760686632; cv=none; b=N6vHNcNP/jdWQIXhR1t9i5SPhKC7E90eyeMP/gQ3hMUGlufwm2TKngDyhqIepDvHVwbgV8rWIE5PBgTJ6yam0NyQJ5NC5ogS4NhFqEb2a6I2XgEXnV4qPdDIoxM0Nijn+Cmh7KVwvMwDUMfz90qHVzSKYkWriOmVGCw3SID5Gk0=
+	t=1760686637; cv=none; b=olqh2K95AHbDqwOPQGCUzGwvwlSUYt6w+k7kq1mTxgUMovCionVwMofDHwzzY3HdC9tfobonbxPCYRynJmd+tIthucb+DsfzBDvBsJDbkglWgtI/QBxF/OZzkabDobBup6r7NNeP0TjbHwRsW43HtE/Y1bkXq1yU/HIIrMcV4wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760686632; c=relaxed/simple;
-	bh=XpEL9oM2Q6hwqTx+Q2i/5Z/FDYFR+6KRpvMuvhq7Ovc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kmwkL2h84DR01O8MK/tMlwNWYISLzXQrByl04L+xznMYWDSKzGd8ISD3ziGJDm/LtI0Bag08dwyV0vNo4tPOyupoW0eqz5x5sHQOh47P2lS3yMS4DWgyKkcy9cY6CXqZRvR/f7X3QqToWdx0qQtEcO86dRm0nFTsV0jX3H2fo9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q7+xXmnG; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 08F134E40B36;
-	Fri, 17 Oct 2025 07:37:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D1541606DB;
-	Fri, 17 Oct 2025 07:37:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2422D102F2292;
-	Fri, 17 Oct 2025 09:36:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760686626; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=JOW8UJxO9T39NNPi0vwW+ahsGyVdO2TbKfHgdJqSrmc=;
-	b=Q7+xXmnGjsfONNO7RdknAoYKUvJSWKc4No9/CaTnR+6x1/wcnOkyN3tXGBBPl2hyRnJGUx
-	qVVIYdVa+r1AZfhKTo9/ua63VWU9FhiDbTIi0X7aNxn263z93ss1F9Ppz3gyDWCGcLjMst
-	zBUzMbxH7bhYx9AUVOCbVbCzoPW4JXAe6jVFAiau8X84me/SSVCTt/iapCLUkYT/1N2SLG
-	xR1V/y3hoVmns6bWCnln/0QJGnM2f6G+zhz8WyFVX30Pj/BKHa+5gqzwTuG5JX9j4IGnq8
-	KNwSs0bKdlyF+7srNcovElUXd8GFvxDsBqQQhBNhBnhB7jofpx5jngCXx4d8pg==
-Date: Fri, 17 Oct 2025 09:36:49 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-Message-ID: <20251017093649.2d5549e4@bootlin.com>
-In-Reply-To: <aPHiAObA61OVf8mY@ninjato>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	<20251015142816.1274605-3-herve.codina@bootlin.com>
-	<aPHiAObA61OVf8mY@ninjato>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760686637; c=relaxed/simple;
+	bh=OPpq1V+xteVgsOqjoTTVev2nL2f4yYSk2DnKGXI5Mjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WSNtwVKoGrI66hdzUvX4EEUB0PjzGnrwgZ1UyMGjH13Q+tKSPac7BR1281EXzd05s1HF/FlEgUqU4FATCjwkSrsgZp4WarzO1Rs8cjvM8uxY3OOvQr5a1sPyDKVvisHMh7CES+IohVNTA9oHodzHKw4HZpydM4AOM/jDhdxQpq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPBAypuL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B65C4CEE7;
+	Fri, 17 Oct 2025 07:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760686636;
+	bh=OPpq1V+xteVgsOqjoTTVev2nL2f4yYSk2DnKGXI5Mjg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UPBAypuLH797C3QOEZOSs8Xz02CRwoRnKrJ4ooDD6pCR/J95GEdwdRd170EYeoYNN
+	 C/DBpVWStVA9XS5VKlY7V8mcp9JoSHZ7cwe/E2iSADTYxG8cEN3aFr0iPE2lcmRwHI
+	 ORT/nCIPIQZVD7Drj0IwEI6k+hWzb0Jw/fbu4LNcEnu4vET606q26xIXmQVEJQapqY
+	 aI77aLrXJVCRKvhuFjXXFGXOmYc67vv991l3vPqXGeSNJ9AbIREsLViRdFOCZODCPt
+	 wqHj1vjZRVf7UO5EPEdrzU/BrEjoneVluqN2rmPK3Zt33deJXxbSo8zSgC/CgjJ2D2
+	 nbKB4RoabIOAQ==
+Message-ID: <f38f652a-929d-4db9-9ac8-98a52def5e15@kernel.org>
+Date: Fri, 17 Oct 2025 09:37:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_SM_TCSRCC_8750 from m to
+ y
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+ Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+ linux-arm-msm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+ Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-kernel@vger.kernel.org
+References: <20251017-update_defconfig_tcsrcc_sm8750-v1-1-34b1b47a0bda@oss.qualcomm.com>
+ <30390038-0f90-48a4-befe-475cf88ba1fb@kernel.org>
+ <37f54b76-a274-4ce2-aaa9-88ba0eb84199@oss.qualcomm.com>
+ <90c8dda3-f753-43dc-8bb9-d03a808c8704@kernel.org>
+ <38b8468f-5006-46a3-a4ea-28e6692ef14a@quicinc.com>
+ <03ac36fb-a227-438e-bdf6-f787e26008b3@kernel.org>
+ <8580ae8e-50e9-481c-b9f3-125b6d1cb494@kernel.org>
+ <f07fa7fe-b89d-4d1c-9ac8-be5ecbf1ded0@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <f07fa7fe-b89d-4d1c-9ac8-be5ecbf1ded0@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
-
-On Fri, 17 Oct 2025 08:28:16 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-
-> Hi Herve,
+On 17/10/2025 08:57, Taniya Das wrote:
 > 
-> On Wed, Oct 15, 2025 at 04:28:14PM +0200, Herve Codina (Schneider Electric) wrote:
-> > The Renesas RZ/N1 ADC controller is the ADC controller available in the
-> > Renesas RZ/N1 SoCs family. It can use up to two internal ACD cores (ADC1  
 > 
-> ADC cores
+> On 10/17/2025 12:24 PM, Krzysztof Kozlowski wrote:
+>> On 17/10/2025 07:56, Krzysztof Kozlowski wrote:
+>>> On 17/10/2025 07:49, Taniya Das wrote:
+>>>>
+>>>>
+>>>> On 10/17/2025 10:51 AM, Krzysztof Kozlowski wrote:
+>>>>> On 17/10/2025 07:16, Taniya Das wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 10/17/2025 10:00 AM, Krzysztof Kozlowski wrote:
+>>>>>>> On 16/10/2025 20:53, Taniya Das wrote:
+>>>>>>>> The TCSR clock controller is required  during boot to provide the ref
+>>>>>>>> clocks to the UFS controller. Setting CONFIG_SM_TCSRCC_8750 to y ensures
+>>>>>>>> the UFS driver successfully probe and initialize the device.
+>>>>>>>>
+>>>>>>>> Without this change, the UFS subsystem fails to mount as a usable file
+>>>>>>>> system during boot.
+>>>>>>>
+>>>>>>>
+>>>>>>> That's not what I observed. UFS works fine, especially that it is a
+>>>>>>> module, so no, this is not a desired change and explanation is not only
+>>>>>>> insufficient but actually incorrect.
+>>>>>>>
+>>>>>>
+>>>>>> Krzysztof, on Pakala MTP we are observing the below issue and it
+>>>>>> requires the module of tscrcc to be loaded explicitly. This patch also
+>>>>>> aligns to how it is on all other targets.
+>>>>>>
+>>>>>> /soc@0/phy@1d80000: Failed to get clk index: 2 ret: -517
+>>>>>> [   10.496570] ufshcd-qcom 1d84000.ufs: freq-table-hz property not specified
+>>>>>> [   10.503660] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
+>>>>>> find vdd-hba-supply regulator, assuming enabled
+>>>>>> [   10.514548] ufshcd-qcom 1d84000.ufs: ufshcd_populate_vreg: Unable to
+>>>>>> find vccq2-supply regulator, assuming enabled
+>>>>>> [   10.565955] platform 1d80000.phy: deferred probe pending: (reason
+>>>>>> unknown)
+>>>>>> [   10.573078] platform 1d84000.ufs: deferred probe pending:
+>>>>>> ufshcd-qcom: ufshcd_pltfrm_init() failed
+>>>>>>
+>>>>>
+>>>>>
+>>>>> I don't and I am testing regularly, so I assume you have incorrect
+>>>>> config. Maybe I have incorrect one (which works), but then commit msg is
+>>>>> incomplete - you must explain the bug and provide proof that this is the
+>>>>> correct fix for it.
+>>>>>
+>>>>
+>>>> We have tried booting up recently and and that is what we observed. The
+>>>> patch from 'm' to 'y' helps the UFS probe is successful and the rootfs
+>>>> is picked from ufs partitions. I will add these fail & success log
+>>>> snippets in the commit text.
+>>>
+>>> That's not enough. You need to explain why UFS fails. After explaining
+>>> this, I guess bug in UFS would be exposed thus that one should be fixed.
+>>> You just provided band-aid without fixing the real problem.
+>>>
+>>> NAK
+>>
+>>
+>> ... and to prove your analysis is wrong (because your setup is likely
+>> having issues) I even tested now linux next with defconfig. Works all
+>> fine on next-20251013. You did not share which kernel even has this
+>> issue, maybe some downstream tree?
+>>
+> 
+> I have added how the commandline looks like for the test. Are you using
+> using the ramdisk as your rootfs?
 
-Yes, indeed.
-
-> 
-> > and ADC2) those internal cores are not directly accessed but are handled
-> > through ADC controller virtual channels.
-> > 
-> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>  
-> 
-> Very high level review.
-> 
-> > +/*                  ADC1 ADC2
-> > + * RZ/N1D, BGA 400   y    y
-> > + * RZ/N1D, BGA 324   y    n
-> > + * RZ/N1S, BGA 324   y    n
-> > + * RZ/N1S, BGA 196   y    n
-> > + * RZ/N1L, BGA 196   y    n
-> > + */  
-> 
-> I think this table can go. N1D is the only variant supported by Linux
-> because others have no SDRAM controller. Maybe a comment after the
-> copyright is helpful stating that the second ADC core is utilized when
-> the adc2-* bindings are supplied?
-
-Yes, with only RZ/N1D supported, this table doesn't bring any additional
-information.
-
-As you suggested, I will add information about ADC cores in the header
-part of this .c file.
-
-> 
-> > +static void rzn1_adc_vc_setup_conversion(struct rzn1_adc *rzn1_adc, u32 ch,
-> > +					 int adc1_ch, int adc2_ch)
-> > +{
-> > +	u32 vc = 0;
-> > +
-> > +	if (adc1_ch != -1)
-> > +		vc |= RZN1_ADC_VC_ADC1_ENABLE | RZN1_ADC_VC_ADC1_CHANNEL_SEL(adc1_ch);
-> > +
-> > +	if (adc2_ch != -1)
-> > +		vc |= RZN1_ADC_VC_ADC2_ENABLE | RZN1_ADC_VC_ADC2_CHANNEL_SEL(adc2_ch);  
-> 
-> Are you open to either use an errno (maybe EACCES) or define something
-> custom (maybe RZN1_ADC_NO_CHANNEL) instead of hardcoded -1? I think I
-> like the latter a tad more.
-
-I prefer RZN1_ADC_NO_CHANNEL too instead of an error code and I will use
-that instead of -1 in the next iteration.
+Of course not. I am using full UFS rootfs. What test would be with
+ramdisk with rootfs?
 
 Best regards,
-Hervé
+Krzysztof
 
