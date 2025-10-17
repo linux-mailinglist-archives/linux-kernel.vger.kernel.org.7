@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-858817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDC5BEBEC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:28:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32252BEBECA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC69E4EBC96
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:28:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D47173540E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F012D8370;
-	Fri, 17 Oct 2025 22:28:18 +0000 (UTC)
-Received: from vulcan.kevinlocke.name (vulcan.kevinlocke.name [107.191.43.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B692D6E49;
+	Fri, 17 Oct 2025 22:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="is6msNhq"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC17C25F984
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.191.43.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB6354AE8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760740097; cv=none; b=GQrWcMWsF4ymG2bRT2cNlb0zXGeQ5l8rQziT0SXcYHEKR2/JryZV3CpmDO19lMPJA2fQg7LB7q8VhcADf+bmzvt1sEe0JTIB5fiPo85NReMX6zKl5rHcDx81v5Y9jYqEXRqDZi3KMVKHplGtQiyag1MGl0xxfsgL4I7kVsUMZaE=
+	t=1760740259; cv=none; b=MJASrtUCFO1diz4d/0Rb5Rtw/88/zh2rIhOYTcOaf7YZ0mlBUCpv+Ra/7C5A+uc6IBH5BLBdeMfn5zsrcDIoPy/78vzqzUL5yU5kqk4eovM7MFBvba49MIg+p3gu7+BhgmUCRfKCKvlPB3zTcXBPRAX8Y3tdT2QACE192pdWVU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760740097; c=relaxed/simple;
-	bh=ij6MUkJ9dU7E4kMTI/ySrTPmiZRkB6bStcg4mIU9zX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IbivH7CaE7O0mQOciPy9nxV1R8yI+Gdl4ya/VAC9c/IK3c8Zo89HgmUkC2gqSYTQBGp0/68+EoT/a+UNSYBODA3xGX3ZdqvA6GTLhfcbACTGDx4RPM+yFYDPU5N7JEtZ2qkO1oFyekT8J2VugGhDxwTnGj5Rw+z4u/GwmhvbQ8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kevinlocke.name; spf=pass smtp.mailfrom=kevinlocke.name; arc=none smtp.client-ip=107.191.43.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kevinlocke.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kevinlocke.name
-Received: from kevinolos.kevinlocke.name (unknown [IPv6:2607:24c0:2300:9fc5:8482:3d29:9ba1:1a9d])
-	(Authenticated sender: kevin@kevinlocke.name)
-	by vulcan.kevinlocke.name (Postfix) with ESMTPSA id D76A045610B5;
-	Fri, 17 Oct 2025 22:28:13 +0000 (UTC)
-Received: by kevinolos.kevinlocke.name (Postfix, from userid 1000)
-	id 382D21300146; Fri, 17 Oct 2025 16:28:12 -0600 (MDT)
-Date: Fri, 17 Oct 2025 16:28:12 -0600
-From: Kevin Locke <kevin@kevinlocke.name>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: remove unnecessary x suffix in test strings
-Message-ID: <aPLC_HdznsRcJbjk@kevinlocke.name>
-Mail-Followup-To: Kevin Locke <kevin@kevinlocke.name>,
-	David Laight <david.laight.linux@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	linux-kernel@vger.kernel.org
-References: <20251016214707.5c3d373b@pumpkin>
- <a1fb08a30cbd6682e3ca218447573d4c62034003.1760658427.git.kevin@kevinlocke.name>
- <20251017151256.111f2669@pumpkin>
+	s=arc-20240116; t=1760740259; c=relaxed/simple;
+	bh=coMsoCZvoHbuI23XThH1BMIfJtV8x1r7cZz+hCzRR5I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PU3aHzxfJwTOnzDCy+xyI7rSEQGqQuB0vtXwZ7jE4m+BVYLNN7SBufAw00+d0qexpZCMP3Bl/G8JA1MheU0PjWnvGc8MnPfX+YwowUcQmfDhMidn9beKccrPaVIcxfjrKImE/TaWpr/mrjhNXZ2VgW+Yt91oR5gIX93/0xPFGWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=is6msNhq; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28bd8b3fa67so23091525ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760740257; x=1761345057; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1aGvnCfkCxuG7nRHD5qS3K0Ns2/mfOtufedzaaye1sE=;
+        b=is6msNhqyFq7lsWi2gi9bkEIarskO6dC2FOUHkmGJcw4/fe+R2PL7Wht2cCSCDcw0S
+         6DXYysCHLmnENIQwYxuRAiKvtb7Qcj+2lQQYLapYocBCyyOTkPUw5F3bWIBOo6y32Fdj
+         nKJx7G10osH3l7YdE5SV5MuIZJGsI3twYkUBkILz+MiZ2MU27SC5En72SHPLtUA3IbhM
+         8PR6aOVILGRNk8iLORtzIXd52X2CJSt7VQMJ8X5BiDFbpKbEoZxMGSO/+j2rz5g3BR2N
+         9CktZnTvI5hQ+rasVFPGEFODcsTMBf/HnCwEr3jZTI5NGZiPMrgUGs0wYcb7luRjH+11
+         TY6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760740257; x=1761345057;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1aGvnCfkCxuG7nRHD5qS3K0Ns2/mfOtufedzaaye1sE=;
+        b=TW6ztcQPQ8lCM8+LV4oK/a3i1RUHtZfMHVri1aX0Sk9BJocgGEGy1HbAz2F+wuNjAF
+         QvknNqtA9AAd1FGr7Io5MpGr+v8TCeCpodL3iYFdYfTPnaosbZHrSkFIkh8y/MpIu6nh
+         N8DCaSVJ9ztebwcoAR6HnjMbhhtjfbDBEPRGXElr/+64IVTZEUA6EhEgcWMzfbHmu/Bu
+         DnU/e7Wf5V7CjdDAjt5g9atogdXJwhsWMten95WuCXx21o1yO85s7YS81WmzmNywgY1s
+         /o6XOcCylYjMXI1KFkFJ8yW/2Wl6aRAQ/BZ7wyyir5NnxZZIS/HKKJ76wKN6Kavt0E88
+         EjOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmzKr6hkH8C7OMmmSk6IXS39SkW4m9F7xGGDz87afE5ItSYQh2dyTOFPudNdJarn+dW63FbYxqCylsxLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTlaN/RQEMuY+Ik9NE+lcJ5qSylG0c9zGcZwRv0NtbBy9WRkL3
+	u2HGet1HzKijdHTH3j8kAugY/iXf40UTjwq4RwCbK2jvH/ZP/eQp0d8RzgOAEYpPIh8Yxb1AVGc
+	LDW5Pcg==
+X-Google-Smtp-Source: AGHT+IHuhlr6TeDMM+a8D4kE0RCHmOBllgF8IF7LrOLrHYShECDzzqQ+4s+GJlaM19IdbjQW26f4OH4XTqk=
+X-Received: from plho8.prod.google.com ([2002:a17:903:23c8:b0:290:d4c5:90ad])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d485:b0:28e:c75e:61d9
+ with SMTP id d9443c01a7336-290caf83210mr63165865ad.38.1760740256772; Fri, 17
+ Oct 2025 15:30:56 -0700 (PDT)
+Date: Fri, 17 Oct 2025 22:30:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017151256.111f2669@pumpkin>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251017223053.2415243-1-jthies@google.com>
+Subject: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when disconnected
+From: Jameson Thies <jthies@google.com>
+To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
+	gregkh@linuxfoundation.org, akuchynski@chromium.org, 
+	abhishekpandit@chromium.org, sebastian.reichel@collabora.com, kenny@panix.com, 
+	linux-pm@vger.kernel.org, stable@vger.kernel.org, 
+	Jameson Thies <jthies@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2025-10-17 at 15:12 +0100, David Laight wrote:
-> On Thu, 16 Oct 2025 17:47:09 -0600 Kevin Locke <kevin@kevinlocke.name> wrote:
->> Remove the "x" suffixes which unnecessarily complicate the code.
-> 
-> The problems arise when $1 is (say) "-x", a simple LR parser will treat
-> [ -x = -x ] as a check for the file "=" being executable and then give
-> a syntax error for the second -x.
-> I can't imagine why shellcheck should warn about a leading x (or any other
-> character) provided field splitting is disabled (eg by "").
-> The leading x has definitely been needed in the past.
+The ucsi_psy_get_current_max function defaults to 0.1A when it is not
+clear how much current the partner device can support. But this does
+not check the port is connected, and will report 0.1A max current when
+nothing is connected. Update ucsi_psy_get_current_max to report 0A when
+there is no connection.
 
-Yep, it definitely has been.  The rationale on the wiki is that it's
-not necessary for modern shells (and presumably that it unnecessarily
-complicates the code): https://www.shellcheck.net/wiki/SC2268
-However, it notes Zsh had issues as recently as 2015, which is not as
-old as I would have expected.
+v2 changes:
+- added cc stable tag to commit message
 
-> POSIX does require the three argument 'test' look for the middle argument
-> being an operator - but there might be historic shells that don't so that.
-> OTOH you are probably looking for code from the early 1980s!
-> But the POSIX spec (last time I read it) does point out the problems
-> with arbitrary strings being treated as operators causing complex expressions
-> be mis-parsed - which a leading x fixes.
+Fixes: af833e7f7db3 ("usb: typec: ucsi: psy: Set current max to 100mA for BC 1.2 and Default")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jameson Thies <jthies@google.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Tested-by: Kenneth R. Crudup <kenny@panix.com>
+---
+ drivers/usb/typec/ucsi/psy.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Good point.  I just reread it and can confirm that the current version
-still notes issues mitigated by the X prefix with "historical shells"
-and with greater than 4 argument cases:
-https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
+diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
+index 62a9d68bb66d..8ae900c8c132 100644
+--- a/drivers/usb/typec/ucsi/psy.c
++++ b/drivers/usb/typec/ucsi/psy.c
+@@ -145,6 +145,11 @@ static int ucsi_psy_get_current_max(struct ucsi_connector *con,
+ {
+ 	u32 pdo;
+ 
++	if (!UCSI_CONSTAT(con, CONNECTED)) {
++		val->intval = 0;
++		return 0;
++	}
++
+ 	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
+ 	case UCSI_CONSTAT_PWR_OPMODE_PD:
+ 		if (con->num_pdos > 0) {
 
->> I think they are safe to
->> remove to clean up the code a bit.  Here's a patch to do just that,
->> which can be applied on top of my previous patch.
->> 
->> Since -o is an XSI extension to POSIX, I've stuck with ||, but I think
->> you are right that x would not be required in that case either.
-> 
-> I'm not sure there are any common shells that don't support -o and -a.
-> They get used quite a lot.
-> I'm pretty sure they were supported by the pre-POSIX System-V shells
-> (or the /bin/[ program they ran).
+base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
+-- 
+2.51.0.858.gf9c4a03a3a-goog
 
-You are probably right.  I still remember when Debian policy allowed
-them and posh added support in 2007/2008:
-https://lists.debian.org/debian-devel/2006/11/msg00710.html
-(I was corrected by Clint Adams about -a and -o being XSI extensions
-some years before then when I noted posh lacked support, which is
-probably why I still remember it.)
-
-I find && and || more readable, but I'm open to changing it if you
-feel strongly.
-
-Do I understand correctly that you are in favor of using the x prefix?
-I have a slight preference for leaving it off, but I'm open to adding
-it if you (or others) feel strongly.
-
-Thanks for the interesting discussion,
-Kevin
 
