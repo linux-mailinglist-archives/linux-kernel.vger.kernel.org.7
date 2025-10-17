@@ -1,132 +1,90 @@
-Return-Path: <linux-kernel+bounces-857546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B49BE7131
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:14:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F64BE7119
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A8B535BAA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09213ACA03
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203A127B32C;
-	Fri, 17 Oct 2025 08:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Isezijib"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41CD26D4C2;
+	Fri, 17 Oct 2025 08:14:06 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99A4272E71;
-	Fri, 17 Oct 2025 08:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E9C334693
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760688869; cv=none; b=OZT2EfLULVl/afTnEhSPDoWo9qk85zgTDRwoQS/9dXKhxr+UF1TeLH1QLFpm6N/29+vdaQy/fBQ5aYrgyCGHGnB+CNJTfo///Zp9K1JGqq6Yw0Ycrdoj8L/NeocB+W0eNl03hfVrK0J2CPyPyBPGcjyaA9Y89Zno25MgKDcFyl4=
+	t=1760688846; cv=none; b=D1jAV0e8yC9o9K/VbE9blLD1pdHIVIoBFYlHYOnExm2kHE7wpynUjCTVEQe57160Adt5bo6mnwK/AN8uBNqZaKcVhP9TdptJjoZhJbIq15LsJ2BLm9nBQO1GNddIeimWpn9mAqui+boivvUfI1rwbgaapDGlL6GXpjnOtiuwhko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760688869; c=relaxed/simple;
-	bh=bLLF7pXnroAzoxCACwBuR51ZVSysgYA8p6ZxfKRG/c0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RU4pGQ7yl1wyHTxhVnM5Ys2K18rkbu12f42KgWr4IGk8QAt3Vy9XNcZXevXAEjLn97fWtEmlgkpfjidKhyNp67VW/1rUW7YhjgRvR3SLGIwzTAef50EABGwq2HLmOgWtnrstDw7kDx1jZDdE0NUg+3JZSf9b1KjIHvGi2LwYJKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Isezijib; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:2112:eb18:6ce9:5a39:76a2])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B7C6B1E33;
-	Fri, 17 Oct 2025 10:12:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760688765;
-	bh=bLLF7pXnroAzoxCACwBuR51ZVSysgYA8p6ZxfKRG/c0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Isezijib5jCA15pS9llY+/Jjx/HQSX3bp9jQvBydKLBKBYzYn3b6vhoWl32edbRS/
-	 7lmihndSwnuZbQV+c2UMSGUn+HsxLGMGIRGLwxqn7QHOV14CxhQPSAywXzau0Tqi4p
-	 Oh0Yb3jO7uUlz4RNRBombIwMQRMvPVnkYs9JZpDc=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Fri, 17 Oct 2025 13:43:50 +0530
-Subject: [PATCH 2/2] media: i2c: imx219: Simplify imx219_get_binning()
- function
+	s=arc-20240116; t=1760688846; c=relaxed/simple;
+	bh=x+KsmDkThTG2V7geklGyoU6ybQOjwVPAriMvuDbcayU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eYJ4QWhvyRCDpX0wFOEgjV2pqLdHWQNpk4JtrzzntguhlFa5a+8bHGArrC59ivO5ZF3SyqnclTtG5sU5vMKI5yE2PRA1MX72NelKxMCpZ1j90M0nXisSntXK1y7Jt8gEmUT7NarV8gabDxeaxpW2JgVWcXIhQNuGVq7pLyRf/aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3b76fe44ab3111f0a38c85956e01ac42-20251017
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:af7cda80-b4c6-46ce-bbe4-d4c8ec9ffdd7,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:2e1847c0b96745a96810794bc074a1b7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:5,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 3b76fe44ab3111f0a38c85956e01ac42-20251017
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1929928010; Fri, 17 Oct 2025 16:13:58 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: syzbot+4b717071f1eecb2972df@syzkaller.appspotmail.com
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] jfs: test syz test
+Date: Fri, 17 Oct 2025 16:13:55 +0800
+Message-Id: <d5067a639f2341e6cce0a48f810c22d2e36c33a8.1760688719.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <68f1c794.a00a0220.361615.000f.GAE@google.com>
+References: <68f1c794.a00a0220.361615.000f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-imx219-1080p-v1-2-9173d5a47a0c@ideasonboard.com>
-References: <20251017-imx219-1080p-v1-0-9173d5a47a0c@ideasonboard.com>
-In-Reply-To: <20251017-imx219-1080p-v1-0-9173d5a47a0c@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans Verkuil <hverkuil@kernel.org>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- =?utf-8?q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1387;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=bLLF7pXnroAzoxCACwBuR51ZVSysgYA8p6ZxfKRG/c0=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBo8frPWqQaztPUJfPqg51uYx8mzvFjGkEpByfBF
- ZNK6Wq6BGKJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaPH6zwAKCRBD3pH5JJpx
- RbAYD/9SrUJjZaryC15JIFZUaHeCH/uYMD3KPWjDC9vl9fzW3xXIeTpHd+GPUMQNFWMcr3YsI7n
- o39pKsR6K2luImh3TtNfN4xv/++Xp8DvxuZiwnwg6EK2LsFoZz1ktMSTY+AlZ7OH+qLiCVvf1Qk
- x/ZmpYO74uVeUSbGPPM/8zwa5r3CZMQYdirxFk8xCbTGJP2mw7j7NSBc0POAhpOqGgbQKjp94A9
- 1PDKEKv3tAPtCd+VheTB8nMslhk1ps1dEFoJB0HTrpqJpwYq/PTQSwGuLws+LGwys6z9DrEljtg
- PX2FJEufXJ/hWj3SCmG6e3Dhqy2zLjNn5dON950rl4eDV5TmNfvdnbgajHKbToOJcf8HZPou142
- SWY1S03oXq408s6ChsipdVanYei6yX8iTSGLOVtNR/QQRXTpIZrw/g80XwYqUDZKZvOzVSlglJE
- 6Zq8vr+swhAazr+JS+yfh5r+cr63ru/JEAWa23TOtPsTbWkMfhnTZyxilAUTThDokYk4G1UrvE/
- ED7YeLyaYfAoL08KaSBV4TB81nQwH33Ua1eLOUUkOy96YIx/qfWMW6VlSbDxBCqhuEl2z1eAA5W
- uzQYG2U+Oox9LgSSnoZyBz1fCpUwksxY3w9YhpN3uDe0/9NbjGEkyk6rHM7VUQpnCK6lJW//Utw
- 7j19DBtszu4pI+A==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+Content-Transfer-Encoding: 8bit
 
-In imx219_set_pad_format() there is now a constraint to enforce hbin ==
-vbin. So, simplify the logic in imx219_get_binning() function by
-removing dead code that handles the case where hbin != vbin.
-
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/i2c/imx219.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index 300935b1ef2497050fe2808e4ceedda389a75b50..48efdcd2a8f96b678f9819223e0f9895fb4025ea 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -409,24 +409,14 @@ static void imx219_get_binning(struct v4l2_subdev_state *state, u8 *bin_h,
- 	u32 hbin = crop->width / format->width;
- 	u32 vbin = crop->height / format->height;
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index cdfa699cd7c8..9d26c5dc4efd 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1435,6 +1435,11 @@ dbAllocAG(struct bmap * bmp, int agno, s64 nblocks, int l2nb, s64 * results)
+ 			blkno &= ~(MAXL1SIZE - 1);
+ 		else		/* bmp->db_aglevel == 0 */
+ 			blkno &= ~(MAXL0SIZE - 1);
++		
++		if (unlikely(budmin < 0)) {
++   			WARN_ON_ONCE(1);
++    			budmin = 0;
++		}		
  
--	*bin_h = IMX219_BINNING_NONE;
--	*bin_v = IMX219_BINNING_NONE;
--
--	/*
--	 * Use analog binning only if both dimensions are binned, as it crops
--	 * the other dimension.
--	 */
- 	if (hbin == 2 && vbin == 2) {
- 		*bin_h = IMX219_BINNING_X2_ANALOG;
- 		*bin_v = IMX219_BINNING_X2_ANALOG;
--
--		return;
-+	} else {
-+		*bin_h = IMX219_BINNING_NONE;
-+		*bin_v = IMX219_BINNING_NONE;
- 	}
- 
--	if (hbin == 2)
--		*bin_h = IMX219_BINNING_X2;
--	if (vbin == 2)
--		*bin_v = IMX219_BINNING_X2;
- }
- 
- static inline u32 imx219_get_rate_factor(struct v4l2_subdev_state *state)
-
+ 		blkno +=
+ 		    ((s64) (ti - le32_to_cpu(dcp->leafidx))) << budmin;
 -- 
-2.51.0
+2.25.1
 
 
