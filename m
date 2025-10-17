@@ -1,41 +1,64 @@
-Return-Path: <linux-kernel+bounces-858249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F275BE96A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:01:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18104BE9187
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D04BA4E7F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:58:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26CCA4FFEC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC27239591;
-	Fri, 17 Oct 2025 14:58:48 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B9536CDEA;
+	Fri, 17 Oct 2025 14:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ImgBn9wH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73031337111;
-	Fri, 17 Oct 2025 14:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6898636999C;
+	Fri, 17 Oct 2025 14:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713128; cv=none; b=sUtDclJrqM3B0Rhm5HIWoWmrOmOar8cO8GunJGZkCQ7/zARHKUjxskn00dq+KTpvMJ4Qxd3QOTHq8OszAUIY6Qv1jriciR0R3gTWui7bkeJSnnTQT0nRYamStOp3/IfffWwmx9Z6Jdtr9urgyQVII4CD17+g6xc0ZdNTSehWans=
+	t=1760709861; cv=none; b=RirryaYFcAyA5+bnhUCGrxVjd/tO6W/SCcqf3Fz1qrhcwZHKWe7VtZsT0PcVsjIo8pUIcwy12IwSzPR5Lie9E7t9gS5MNvUHS2x1POzEEXJUDxSeGExM/yaZm20aGU21wJnptLSy+uZOBoKnAI5cKdBocglHCsk+DSAQWMQA+rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713128; c=relaxed/simple;
-	bh=2Z5mLw6kXfd8YBgerFh+G4yOPV50JSC6+w5LZmuRvu4=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:To:
-	 In-Reply-To:Content-Type; b=tjnWm4aZhodm5iZt4i1Fdcjt1Xf1REsRZG7eLK7H4xj2wOHPTzh4P6yXpVZTEbxXTkKUWsAwt6xDbnvB1Bzwp0grnTkzvz+tU9yw/ft20ON49MtuB1T5RdoIAyOLus0CGjYyG177viUIbO1dSI8SBoUyh7yNvpdDSHs1wcQIlv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1v9krf-00000000vfB-2vpU;
-	Fri, 17 Oct 2025 15:51:27 +0200
-Message-ID: <ad3b910a-ff83-4738-888b-5432d09de073@maciej.szmigiero.name>
-Date: Fri, 17 Oct 2025 15:51:22 +0200
+	s=arc-20240116; t=1760709861; c=relaxed/simple;
+	bh=zImbbLQtHWT5qAjudmbkPv6OvBzWWvNQvNB3Kj7AC9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EXjD0uJMhMwl86iV4z+ETfouOKTWgw3j+y4W9jQqvFslonM7KUndcGlKlNKZgkfV+Br6W2Au33eJy9MsecW46PSf5K+Hm4FpXM6cjuo+vUoJrIp4yYgaSMjt41CBcqJOu8GProF2iMAEo7bhc84+ypME53X445BBrBB0mYNSqGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ImgBn9wH; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760709859; x=1792245859;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zImbbLQtHWT5qAjudmbkPv6OvBzWWvNQvNB3Kj7AC9Y=;
+  b=ImgBn9wHvX75Mb3Ee2AxrA16hM5Csig0RFnp3Znzq/V+xlXA0M1KC2ED
+   ARZQ3lU6IAtDhb9nNL5UMG29W93QOKCTaLsBldRzQ7+RRCJFlr2MXnRQT
+   kHwgjU87qwEZugHTV04u3agHVYoIf2IRmouuAsZvi7/gyg7st5hLwbZKr
+   H86k0ibRVo+UBeYHTcAii5li55OjEZdl2bt5gUFxBvKn87I8Ni8gqMvM8
+   43/L2HcXcIMHe/ULJpw1ZxtchP4mpv/PYKwj2QqIHYdPelBmEVPt3QLON
+   w5Laaltcwu0AePkcicJhKMbAk3hrAiFd2U0cQ1dzh8/+oDObLd0Y45qm/
+   Q==;
+X-CSE-ConnectionGUID: iDZllMWiQbCUQo9zzrfKvA==
+X-CSE-MsgGUID: gsEAowMgSIi78jF8lLR03A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="85537267"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="85537267"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 07:04:03 -0700
+X-CSE-ConnectionGUID: BXCfA1OMS9q+V2oQKWT6Iw==
+X-CSE-MsgGUID: n9Tg+uD6ThuCOxKonfJsQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; 
+   d="scan'208";a="182441817"
+Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.108.40]) ([10.125.108.40])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 07:04:02 -0700
+Message-ID: <aedb4d0f-8361-4366-9513-b01db6e9c7ae@intel.com>
+Date: Fri, 17 Oct 2025 07:02:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,93 +66,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] KVM: selftests: Test TPR / CR8 sync and interrupt
- masking
-Cc: Naveen N Rao <naveen@kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>,
- Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
- Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <90ea0b66874d676b93be43e9bf89a9a831323107.1758647049.git.maciej.szmigiero@oracle.com>
- <pssrvpxpo7ncvfkgunuwbenztcw4p4d3aavvbmgzcr23fg7biy@aeylu42ii3k6>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Content-Language: en-US, pl-PL
-To: Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>
-Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
- xsFNBFpGusUBEADXUMM2t7y9sHhI79+2QUnDdpauIBjZDukPZArwD+sDlx5P+jxaZ13XjUQc
- 6oJdk+jpvKiyzlbKqlDtw/Y2Ob24tg1g/zvkHn8AVUwX+ZWWewSZ0vcwp7u/LvA+w2nJbIL1
- N0/QUUdmxfkWTHhNqgkNX5hEmYqhwUPozFR0zblfD/6+XFR7VM9yT0fZPLqYLNOmGfqAXlxY
- m8nWmi+lxkd/PYqQQwOq6GQwxjRFEvSc09m/YPYo9hxh7a6s8hAP88YOf2PD8oBB1r5E7KGb
- Fv10Qss4CU/3zaiyRTExWwOJnTQdzSbtnM3S8/ZO/sL0FY/b4VLtlZzERAraxHdnPn8GgxYk
- oPtAqoyf52RkCabL9dsXPWYQjkwG8WEUPScHDy8Uoo6imQujshG23A99iPuXcWc/5ld9mIo/
- Ee7kN50MOXwS4vCJSv0cMkVhh77CmGUv5++E/rPcbXPLTPeRVy6SHgdDhIj7elmx2Lgo0cyh
- uyxyBKSuzPvb61nh5EKAGL7kPqflNw7LJkInzHqKHDNu57rVuCHEx4yxcKNB4pdE2SgyPxs9
- 9W7Cz0q2Hd7Yu8GOXvMfQfrBiEV4q4PzidUtV6sLqVq0RMK7LEi0RiZpthwxz0IUFwRw2KS/
- 9Kgs9LmOXYimodrV0pMxpVqcyTepmDSoWzyXNP2NL1+GuQtaTQARAQABzTBNYWNpZWogUy4g
- U3ptaWdpZXJvIDxtYWlsQG1hY2llai5zem1pZ2llcm8ubmFtZT7CwZQEEwEIAD4CGwMFCwkI
- BwIGFQoJCAsCBBYCAwECHgECF4AWIQRyeg1N257Z9gOb7O+Ef143kM4JdwUCZ7BxhgUJD0w7
- wQAKCRCEf143kM4JdwHlD/9Ef793d6Q3WkcapGZLg1hrUg+S3d1brtJSKP6B8Ny0tt/6kjc2
- M8q4v0pY6rA/tksIbBw6ZVZNCoce0w3/sy358jcDldh/eYotwUCHQzXl2IZwRT2SbmEoJn9J
- nAOnjMCpMFRyBC1yiWzOR3XonLFNB+kWfTK3fwzKWCmpcUkI5ANrmNiDFPcsn+TzfeMV/CzT
- FMsqVmr+TCWl29QB3U0eFZP8Y01UiowugS0jW/B/zWYbWo2FvoOqGLRUWgQ20NBXHlV5m0qa
- wI2Isrbos1kXSl2TDovT0Ppt+66RhV36SGA2qzLs0B9LO7/xqF4/xwmudkpabOoH5g3T20aH
- xlB0WuTJ7FyxZGnO6NL9QTxx3t86FfkKVfTksKP0FRKujsOxGQ1JpqdazyO6k7yMFfcnxwAb
- MyLU6ZepXf/6LvcFFe0oXC+ZNqj7kT6+hoTkZJcxynlcxSRzRSpnS41MRHJbyQM7kjpuVdyQ
- BWPdBnW0bYamlsW00w5XaR+fvNr4fV0vcqB991lxD4ayBbYPz11tnjlOwqnawH1ctCy5rdBY
- eTC6olpkmyUhrrIpTgEuxNU4GvnBK9oEEtNPC/x58AOxQuf1FhqbHYjz8D2Pyhso8TwS7NTa
- Z8b8o0vfsuqd3GPJKMiEhLEgu/io2KtLG10ynfh0vDBDQ7bwKoVlqC3It87AzQRaRrwiAQwA
- xnVmJqeP9VUTISps+WbyYFYlMFfIurl7tzK74bc67KUBp+PHuDP9p4ZcJUGC3UZJP85/GlUV
- dE1NairYWEJQUB7bpogTuzMI825QXIB9z842HwWfP2RW5eDtJMeujzJeFaUpmeTG9snzaYxY
- N3r0TDKj5dZwSIThIMQpsmhH2zylkT0jH7kBPxb8IkCQ1c6wgKITwoHFjTIO0B75U7bBNSDp
- XUaUDvd6T3xd1Fz57ujAvKHrZfWtaNSGwLmUYQAcFvrKDGPB5Z3ggkiTtkmW3OCQbnIxGJJw
- /+HefYhB5/kCcpKUQ2RYcYgCZ0/WcES1xU5dnNe4i0a5gsOFSOYCpNCfTHttVxKxZZTQ/rxj
- XwTuToXmTI4Nehn96t25DHZ0t9L9UEJ0yxH2y8Av4rtf75K2yAXFZa8dHnQgCkyjA/gs0ujG
- wD+Gs7dYQxP4i+rLhwBWD3mawJxLxY0vGwkG7k7npqanlsWlATHpOdqBMUiAR22hs02FikAo
- iXNgWTy7ABEBAAHCwXwEGAEIACYCGwwWIQRyeg1N257Z9gOb7O+Ef143kM4JdwUCZ7BxrgUJ
- D0w6ggAKCRCEf143kM4Jd55ED/9M47pnUYDVoaa1Xu4dVHw2h0XhBS/svPqb80YtjcBVgRp0
- PxLkI6afwteLsjpDgr4QbjoF868ctjqs6p/M7+VkFJNSa4hPmCayU310zEawO4EYm+jPRUIJ
- i87pEmygoN4ZnXvOYA9lkkbbaJkYB+8rDFSYeeSjuez0qmISbzkRVBwhGXQG5s5Oyij2eJ7f
- OvtjExsYkLP3NqmsODWj9aXqWGYsHPa7NpcLvHtkhtc5+SjRRLzh/NWJUtgFkqNPfhGMNwE8
- IsgCYA1B0Wam1zwvVgn6yRcwaCycr/SxHZAR4zZQNGyV1CA+Ph3cMiL8s49RluhiAiDqbJDx
- voSNR7+hz6CXrAuFnUljMMWiSSeWDF+qSKVmUJIFHWW4s9RQofkF8/Bd6BZxIWQYxMKZm4S7
- dKo+5COEVOhSyYthhxNMCWDxLDuPoiGUbWBu/+8dXBusBV5fgcZ2SeQYnIvBzMj8NJ2vDU2D
- m/ajx6lQA/hW0zLYAew2v6WnHFnOXUlI3hv9LusUtj3XtLV2mf1FHvfYlrlI9WQsLiOE5nFN
- IsqJLm0TmM0i8WDnWovQHM8D0IzI/eUc4Ktbp0fVwWThP1ehdPEUKGCZflck5gvuU8yqE55r
- VrUwC3ocRUs4wXdUGZp67sExrfnb8QC2iXhYb+TpB8g7otkqYjL/nL8cQ8hdmg==
-Disposition-Notification-To: "Maciej S. Szmigiero"
- <mail@maciej.szmigiero.name>
-In-Reply-To: <pssrvpxpo7ncvfkgunuwbenztcw4p4d3aavvbmgzcr23fg7biy@aeylu42ii3k6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2] x86/its: use Sapphire Rapids+ feature to opt out
+To: Jon Kohler <jon@nutanix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
+ <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Brian Gerst <brgerst@gmail.com>, Brendan Jackman <jackmanb@google.com>,
+ "Ahmed S. Darwish" <darwi@linutronix.de>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251017011834.2941358-1-jon@nutanix.com>
+ <9cf0e05b-00e6-4954-96d5-fafeb6e6397a@intel.com>
+ <C2A57B61-8E6A-4236-9F50-B0662C39272D@nutanix.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <C2A57B61-8E6A-4236-9F50-B0662C39272D@nutanix.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Sender: mhej@vps-ovh.mhejs.net
 
-On 25.09.2025 12:43, Naveen N Rao wrote:
-> On Tue, Sep 23, 2025 at 07:32:14PM +0200, Maciej S. Szmigiero wrote:
->> From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
->>
->> Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
->> * TPR is 0 on reset,
->> * TPR, PPR and CR8 are equal inside the guest,
->> * TPR and CR8 read equal by the host after a VMExit
->> * TPR borderline values set by the host correctly mask interrupts in the
->> guest.
->>
->> These hopefully will catch the most obvious cases of improper TPR sync or
->> interrupt masking.
->>
->> Do these tests both in x2APIC and xAPIC modes.
->> The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
->> bit of exercise too.
->>
->> Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-> 
-> Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
-> 
+On 10/17/25 05:21, Jon Kohler wrote:
+> Using that documentation to improve my approach, how about
+> this instead, where A) we have better code comments and B) we
+> also check eIBRS enablement? 
 
-Was this patch picked up or are there any other review comments here?
-I can't seem to find it in any KVM upstream tree.
+No thanks.
 
-Thanks,
-Maciej
-
+Sounds like you are doing the right thing and fixing the hypervisor
+that's not exposing thing that it should.
 
