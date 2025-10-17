@@ -1,84 +1,601 @@
-Return-Path: <linux-kernel+bounces-858088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2350ABE8D79
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:29:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A71BE8D7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED396E2C16
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:29:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05A6E4F9D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67BD350D66;
-	Fri, 17 Oct 2025 13:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02E6350D51;
+	Fri, 17 Oct 2025 13:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p7FlZSQc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0oOt3xZi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="RJa/ifiJ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78B4350D4B;
-	Fri, 17 Oct 2025 13:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F5D350D4C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760707745; cv=none; b=iSKhbVlxBu7rri7GU7vkOG33l51OcniR0QZw5NAxwuKjzerlNzDYO1IRiMkoRFa7gWxegQ010BNP/ICgK/sDmj33T4XEsiMhCSRbGGlmvHrbFPB6VTVd2s8qchnRq8oLXkIwGiGuhd+RxkW2ElqZZshGZOmINBCt46VcrCMxi30=
+	t=1760707760; cv=none; b=CVIJcWmb4NL3m97mCsCkn5LhZ+bzPK1wgaI6kU7/Ol+zEyAB5QNrpU3hqqkKPnQ4u6kOVcuMmR/m+sQ1fmbzY9/2CJXn/mvLkKhlYQkbHVgiGMKQX5b8fVzykxurMuzYlX6orb4nnjplGlKRpCklMzt9L2DQxltO5xFMezj6R6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760707745; c=relaxed/simple;
-	bh=FCb6l5ObniXxTIJOJBll3JU9Fu/sYJFKIcRGtHY6frc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Nx1Gz8cKwFfl1iAxk71sCSOu5HYDSB2xhAYYIuMK89j5bN527l2HJ65ctPkzZ02LG93zlFhoREz3UTOipxjPyepWecwmwSOv/1Qbuj7vPDS18PuxGxm3tp21OhSRoXn8ADFzi/cOMIptNVV2HwU2BFplJGALrhDg+J7mjbqzplQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p7FlZSQc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0oOt3xZi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760707740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCb6l5ObniXxTIJOJBll3JU9Fu/sYJFKIcRGtHY6frc=;
-	b=p7FlZSQcAvWYom6XD4RC1BVusPQNBd77BuXglxpg+DCDbQRSihlZad8s8KkFq8GzZ5iZIe
-	2HrVaHGAht83q1/fXEHKj72H9MFP1752bzcQKbS3B/bO6sZlyWs8G+h895amFBLurzAry5
-	0QxOLP6shaQDSAdcons0opzYr3pnqDtXzimvuHl5c5f3b9wAj0eg8TArIxrwc4vnbIw8YH
-	1nwqaBQyHsT92OTeqb0azRGz05XF3UNvI9Rqzjeu7rrGY1rDd8y0/ZhnVQPjTGLHkHJi8N
-	7PX/F07JCYIFyWiBOOYu2u8+piT2Iw6UkCct//Ed9ip/LG5WMAokADy2EDPvEA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760707740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCb6l5ObniXxTIJOJBll3JU9Fu/sYJFKIcRGtHY6frc=;
-	b=0oOt3xZiIZOnwlVFS3EqsCKSMb5+HZD9ZLIItx6umf2eU145EyuqLUWvc0JOH6XIQPhxLJ
-	5ZcJL149p74D26DA==
-To: Charles Mirabile <cmirabil@redhat.com>
-Cc: alex@ghiti.fr, aou@eecs.berkeley.edu, cmirabil@redhat.com,
- conor+dt@kernel.org, devicetree@vger.kernel.org, dramforever@live.com,
- krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, lzampier@redhat.com, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, samuel.holland@sifive.com,
- zhangxincheng@ultrarisc.com
-Subject: Re: [PATCH v5 3/3] irqchip/plic: add support for UltraRISC DP1000 PLIC
-In-Reply-To: <20251016195902.338629-1-cmirabil@redhat.com>
-References: <87h5vy20o9.ffs@tglx> <20251016195902.338629-1-cmirabil@redhat.com>
-Date: Fri, 17 Oct 2025 15:28:59 +0200
-Message-ID: <87plalzmg4.ffs@tglx>
+	s=arc-20240116; t=1760707760; c=relaxed/simple;
+	bh=jDvEri/FAcBfexrVtmmDKAZxVn4pzuYaSViWH47OGws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=to0Xuh9MpnTb0WSU//+Pgfe50OU6V0wLWq2Y2M23IOE23qlKx7R8S+ap0CFFcpLzstBNNWwMe3/fScqMS9aLzTJg059MaPu27JlI9SGe63TxpFKk2+WRzrn+KcpCEsjx0cCNRbwevr0uj5/gqY4b4xqJl1WAqw1yZzF/4OwlrCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=RJa/ifiJ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63c09ff13aeso3369363a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1760707757; x=1761312557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fET2hkrSNswYRbNxi6KN02Ke+wf0IlqXuVRnwWg4juA=;
+        b=RJa/ifiJ4F3CuOC2ptFLTxd9Pd+aJ8jZAgR5vf9Bx1fcdoT1Cnb6qpTKA2yxX6Mrmv
+         AnGQHt+/0T69JDXX8S2knJHtn2nx+FMVIYWlR2XvJrTjb/DImoGKJ4fZxIRxyznfA5eH
+         K170O8o95BCjoLNqTq/rIrXgUYxA1/u/J1ZDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760707757; x=1761312557;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fET2hkrSNswYRbNxi6KN02Ke+wf0IlqXuVRnwWg4juA=;
+        b=Hp00GacFyQsZf0K8G0nj9YXbxDChOJ3ZW6qDGiCU6OcLINiNVQFS5L0XLs3qpipDvU
+         UBHyrT8LwOgwaGLUyU2tNtqAND1D1wSDoIabtODmQXZvkzX08UPZCV44Sv+gFtLPPsdq
+         /kdJGkNAPr3BvGL8nRz23XfroMYILdeV4wNPmLzgLbpWchK7FBahev2YyIzmWCg0kVAl
+         XEq/fp2xu+RzZtcDS8FfXE/g5/Pbsr5vGfn9Yv0sB8P488ccmtSSr1r/FA1GHNUKBN5f
+         C3A+XMUdNXItKUrfrOXIFFFGDCdGu6vbH0fFH0BvUjeZ1+EtIwyHcTCI1MJycm/euQPC
+         5fmg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/REFcT0aQUNrhYWuZ8P1dx5UBlw/YDdrNW+2quU8SU/BsSIs56zQGMbAJ0AY6y+mKUlXAzwaP91YmKWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzobBlYgeZRxhXCGRDo/c4gXHX/1KUgFnnv4s1XuAM0WhPA/SMd
+	gqlXh45N7/Nusuq461NkOHFqnLmipA/7DneQgYshDtriDZ8iHFuRpU3K22hXi9g/IAz03XBclel
+	hluTz
+X-Gm-Gg: ASbGnct/6aR8iZj2u08fNrLysNo8qCCI6WYx/LF+eT1a6X1bqi/pb4LNhx+KdpqIqjJ
+	F74Vl13A5rl4k1TZ4Qq4Klz5YhD4DeHUv39iL1H1EsZNnii7THJxhJJWFd5q5s6dC9dbyq6YBma
+	/0YGwCWzYlq1EGh/rz2Bo8Ce8gVBb3hKjCYr2z0eOogkXYXor9hAjfZhYcPPOZjKLcDyER8ZLUc
+	4l5CYoKft/KhqBsHldpvjx/toVm6zqpxtBEVYZx34wWBkIrM/dQo/fytsVodVsypwqbCZq1oxDv
+	N6IswWRPdhYjafJUwHZv/ujHwaEqc4ni7vmPzygXKAF7dAhd+awmG6YwsUrAKYBrgVnybtEkPfW
+	2NiCMsq3UhweFRGB+of+mabo/7V8FQA+tntYU1YYGCw3S3rwzxPtQi34CPWTkDkfZp0DUbaAB0x
+	5sCX8CnquUgvA=
+X-Google-Smtp-Source: AGHT+IGC0waoIIokthDkcGRnbTZDBEhB0/+m+SeCSjAI8kt0udo5OAvlv2YDFKlF0a/DkvjLbTH2NQ==
+X-Received: by 2002:a05:6402:34c5:b0:63c:1e15:b9fb with SMTP id 4fb4d7f45d1cf-63c1f6b4d28mr3703786a12.22.1760707756440;
+        Fri, 17 Oct 2025 06:29:16 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5235e7ebsm18437185a12.1.2025.10.17.06.29.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 06:29:15 -0700 (PDT)
+Date: Fri, 17 Oct 2025 15:29:11 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
+Message-ID: <aPJEp50rf2u6VrqB@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
+X-Operating-System: Linux phenom 6.12.38+deb13-amd64 
 
-On Thu, Oct 16 2025 at 15:58, Charles Mirabile wrote:
-> On Thu, Oct 16, 2025 at 07:53:26PM +0200, Thomas Gleixner wrote:
-> What do you think about the attached patch (it should be not corrupt :^)
-> I think I adressed your concerns, and I ran it through clang-format too.
->
-> I folded everything into one diff for ease of review, but when we send it
-> officially there will be a separate patch for the caching refactor.
+On Tue, Sep 02, 2025 at 10:32:38AM +0200, Maxime Ripard wrote:
+> In order to enable drivers to fill their initial state from the hardware
+> state, we need to provide an alternative atomic_reset helper.
+> 
+> This helper relies on each state having its own atomic_state_readout()
+> hooks. Each component will thus be able to fill the initial state based
+> on what they can figure out from the hardware.
+> 
+> It also allocates a dummy drm_atomic_state to glue the whole thing
+> together so atomic_state_readout implementations can still figure out
+> the state of other related entities.
+> 
+> Link: https://lore.kernel.org/dri-devel/CAKMK7uHtqHy_oz4W7F+hmp9iqp7W5Ra8CxPvJ=9BwmvfU-O0gg@mail.gmail.com/
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-Looks about right and it's a net win for everyone due to the suspend
-path cleanup.
+First reply more covering your code logic, 2nd one with more the design
+questions you've raised on irc.
+
+> +/**
+> + * drm_atomic_build_readout_state - Creates an initial state from the hardware
+> + * @dev: DRM device to build the state for
+> + *
+> + * This function allocates a &struct drm_atomic_state, calls the
+> + * atomic_readout_state callbacks, and fills the global state old states
+> + * by what the callbacks returned.
+> + *
+> + * Returns:
+> + *
+> + * A partially initialized &struct drm_atomic_state on success, an error
+> + * pointer otherwise.
+> + */
+> +static struct drm_atomic_state *
+> +drm_atomic_build_readout_state(struct drm_device *dev)
+> +{
+> +	struct drm_connector_list_iter conn_iter;
+> +	struct drm_atomic_state *state;
+> +	struct drm_mode_config *config =
+> +		&dev->mode_config;
+> +	struct drm_connector *connector;
+> +	struct drm_printer p =
+> +		drm_info_printer(dev->dev);
+> +	struct drm_encoder *encoder;
+> +	struct drm_plane *plane;
+> +	struct drm_crtc *crtc;
+> +	int ret;
+> +
+> +	drm_dbg_kms(dev, "Starting to build atomic state from hardware state.\n");
+> +
+> +	state = drm_atomic_state_alloc(dev);
+> +	if (WARN_ON(!state))
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	state->connectors = kcalloc(config->num_connector, sizeof(*state->connectors), GFP_KERNEL);
+> +	if (WARN_ON(!state->connectors)) {
+> +		ret = -ENOMEM;
+> +		goto err_state_put;
+> +	}
+> +
+> +	state->private_objs = kcalloc(count_private_obj(dev), sizeof(*state->private_objs), GFP_KERNEL);
+> +	if (WARN_ON(!state->private_objs)) {
+> +		ret = -ENOMEM;
+> +		goto err_state_put;
+> +	}
+> +
+> +	drm_for_each_crtc(crtc, dev) {
+> +		const struct drm_crtc_funcs *crtc_funcs =
+> +			crtc->funcs;
+> +		struct drm_crtc_state *crtc_state;
+> +
+> +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->name);
+> +
+> +		if (crtc_funcs->atomic_readout_state) {
+> +			crtc_state = crtc_funcs->atomic_readout_state(crtc);
+> +		} else if (crtc_funcs->reset) {
+
+I'm very cautious about this fallback to existing hooks. I'm assuming this
+is to make rolling out fastboot support easier, and often resetting planes
+or similar gets you there faster. But:
+
+- Resetting planes (which is about the only case where I think just using
+  ->reset makes sense) means you break the boot-splash, which isn't great.
+  It means you can avoid the modeset, but you're still flickering.
+
+- Experience from atomic support and converting existing driver suggests
+  this will be more pain than benefits. I've tried that there, felt like a
+  great idea, mostly people complained that it made the conversion brittle
+  for not much gain.
+
+If you do decide fallback for a specific driver it's pretty easy to
+implement reset without flickering by doing what i915 does for cases where
+trying to capture the full state is too much work:
+
+- You have some fastboot taint flags in your states that you set when
+  stuff is on, but in an undefined way. You only try to figure out as much
+  as you need to have all the knowledge about resources that are in use
+  (like clocks).
+
+- Upon first modeset you force a modeset on any crtc with such flagged
+  states. You also put your hw reset code into a special path in your
+  atomic_disable callback.
+
+- The state compare function also short-circuits comparison for state
+  that's not faithfully read out when such a flag is set.
+
+This way you get flicker-free boot-up (if your boot-splash renders the
+same image as your fw/bootloader, which at least on x86/acpi is doable
+with fw calls to the right image), and it's still fairly clean fastboot
+modeset overall.
+
+Cheers, Sima
+
+> +			crtc_funcs->reset(crtc);
+> +
+> +			/*
+> +			 * We don't want to set crtc->state field yet. Let's save and clear it up.
+> +			 */
+> +			crtc_state = crtc->state;
+> +			crtc->state = NULL;
+> +		} else {
+> +			drm_warn(dev, "No CRTC readout or reset implementation.");
+> +			continue;
+> +		}
+> +
+> +		if (WARN_ON(IS_ERR(crtc_state))) {
+> +			ret = PTR_ERR(crtc_state);
+> +			goto err_state_put;
+> +		}
+> +
+> +		drm_atomic_set_old_crtc_state(state, crtc, crtc_state);
+> +	}
+> +
+> +	drm_connector_list_iter_begin(dev, &conn_iter);
+> +	drm_for_each_connector_iter(connector, &conn_iter) {
+> +		const struct drm_connector_funcs *conn_funcs =
+> +			connector->funcs;
+> +		struct drm_connector_state *conn_state;
+> +
+> +		drm_dbg_kms(dev, "Initializing Connector %s state.\n", connector->name);
+> +
+> +		if (conn_funcs->atomic_readout_state) {
+> +			conn_state = conn_funcs->atomic_readout_state(connector, state);
+> +		} else if (conn_funcs->reset) {
+> +			conn_funcs->reset(connector);
+> +
+> +			/*
+> +			 * We don't want to set connector->state field yet. Let's save and clear it
+> +			 * up.
+> +			 */
+> +			conn_state = connector->state;
+> +			connector->state = NULL;
+> +		} else {
+> +			drm_warn(dev, "No Connector readout or reset implementation.");
+> +			continue;
+> +		}
+> +
+> +		if (WARN_ON(IS_ERR(conn_state))) {
+> +			ret = PTR_ERR(conn_state);
+> +			goto err_state_put;
+> +		}
+> +
+> +		drm_atomic_set_old_connector_state(state, connector, conn_state);
+> +	}
+> +	drm_connector_list_iter_end(&conn_iter);
+> +
+> +	WARN_ON(state->num_connector != config->num_connector);
+> +
+> +	drm_for_each_encoder(encoder, dev) {
+> +		struct drm_connector_state *enc_conn_state;
+> +		struct drm_crtc_state *enc_crtc_state;
+> +		struct drm_bridge *bridge;
+> +
+> +		/*
+> +		 * It works a bit differently for bridges. Because they are
+> +		 * using a drm_private_state, and because
+> +		 * drm_atomic_private_obj_init() asks for its initial state when
+> +		 * initializing, instead of doing it later on through a reset
+> +		 * call like the other entities, we can't have reset xor
+> +		 * readout.
+> +		 *
+> +		 * We'll need a mandatory reset to create that initial, blank,
+> +		 * state, and then readout will fill that state later on if the
+> +		 * driver implements it.
+> +		 *
+> +		 * This also means we don't need to call the readout state
+> +		 * function if we don't have the bridge enabled (ie, if no
+> +		 * drm_connector_state->best_encoder points to bridge->encoder,
+> +		 * and / or if drm_connector_state->crtc is NULL).
+> +		 *
+> +		 * In such a case, we would get the blank state reset created
+> +		 * during registration.
+> +		 */
+> +
+> +		enc_conn_state = find_connector_state_for_encoder(state, encoder);
+> +		if (!enc_conn_state)
+> +			continue;
+> +
+> +		enc_crtc_state = drm_atomic_get_old_crtc_state(state, enc_conn_state->crtc);
+> +		if (!enc_crtc_state)
+> +			continue;
+> +
+> +		list_for_each_entry(bridge, &encoder->bridge_chain, chain_node) {
+> +			const struct drm_bridge_funcs *bridge_funcs = bridge->funcs;
+> +			struct drm_bridge_state *bridge_state;
+> +
+> +			bridge_state = drm_bridge_get_current_state(bridge);
+> +			if (WARN_ON(!bridge_state)) {
+> +				ret = -EINVAL;
+> +				goto err_state_put;
+> +			}
+> +
+> +			if (bridge_funcs->atomic_readout_state) {
+> +				ret = bridge_funcs->atomic_readout_state(bridge,
+> +									 bridge_state,
+> +									 enc_crtc_state,
+> +									 enc_conn_state);
+> +				if (WARN_ON(ret))
+> +					goto err_state_put;
+> +			}
+> +
+> +			drm_atomic_set_old_bridge_state(state, bridge, bridge_state);
+> +		}
+> +	}
+> +
+> +	drm_for_each_plane(plane, dev) {
+> +		const struct drm_plane_funcs *plane_funcs =
+> +			plane->funcs;
+> +		struct drm_plane_state *plane_state;
+> +
+> +		drm_dbg_kms(dev, "Initializing Plane %s state.\n", plane->name);
+> +
+> +		if (plane_funcs->atomic_readout_state) {
+> +			plane_state = plane_funcs->atomic_readout_state(plane, state);
+> +		} else if (plane_funcs->reset) {
+> +			plane_funcs->reset(plane);
+> +
+> +			/*
+> +			 * We don't want to set conn->state field yet. Let's save and clear it up.
+> +			 */
+> +			plane_state = plane->state;
+> +			plane->state = NULL;
+> +		} else {
+> +			drm_warn(dev, "No plane readout or reset implementation.");
+> +			continue;
+> +		}
+> +
+> +		if (WARN_ON(IS_ERR(plane_state))) {
+> +			ret = PTR_ERR(plane_state);
+> +			goto err_state_put;
+> +		}
+> +
+> +		drm_atomic_set_old_plane_state(state, plane, plane_state);
+> +	}
+> +
+> +	drm_atomic_print_old_state(state, &p);
+> +
+> +	return state;
+> +
+> +err_state_put:
+> +	drm_atomic_state_put(state);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +/**
+> + * drm_atomic_helper_readout_state - Builds an initial state from hardware state
+> + * @dev: DRM device to build the state for
+> + *
+> + * This function creates the initial state for all the entities on a
+> + * @dev. Drivers can use this as their
+> + * &drm_mode_config_helper_funcs.atomic_reset callback to implement
+> + * hardware state readout suppport.
+> + */
+> +void drm_atomic_helper_readout_state(struct drm_device *dev)
+> +{
+> +	struct drm_atomic_state *state;
+> +
+> +	state = drm_atomic_build_readout_state(dev);
+> +	if (IS_ERR(state))
+> +		return;
+> +
+> +	drm_atomic_helper_install_readout_state(state);
+> +	drm_atomic_state_put(state);
+> +}
+> +EXPORT_SYMBOL(drm_atomic_helper_readout_state);
+>  
+>  /**
+>   * DOC: overview
+>   *
+>   * This helper library provides implementations of check and commit functions on
+> diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
+> index 82180760032d3490d63fe83136465d2c26551d08..96d38a49be501a0090457cbe96135f82bb1358b5 100644
+> --- a/drivers/gpu/drm/drm_mode_config.c
+> +++ b/drivers/gpu/drm/drm_mode_config.c
+> @@ -26,10 +26,11 @@
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_file.h>
+>  #include <drm/drm_framebuffer.h>
+>  #include <drm/drm_managed.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_mode_config.h>
+>  #include <drm/drm_modeset_helper_vtables.h>
+>  #include <drm/drm_print.h>
+>  #include <linux/dma-resv.h>
+>  
+> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
+> index 53382fe93537bbcda9cee8827bc95de9a515efb5..47902a9181727a08581fb808faabe67d92a755cf 100644
+> --- a/include/drm/drm_atomic_helper.h
+> +++ b/include/drm/drm_atomic_helper.h
+> @@ -45,10 +45,11 @@
+>  
+>  struct drm_atomic_state;
+>  struct drm_private_obj;
+>  struct drm_private_state;
+>  
+> +void drm_atomic_helper_readout_state(struct drm_device *dev);
+>  int drm_atomic_helper_check_modeset(struct drm_device *dev,
+>  				struct drm_atomic_state *state);
+>  int drm_atomic_helper_check_wb_connector_state(struct drm_connector *connector,
+>  					       struct drm_atomic_state *state);
+>  int drm_atomic_helper_check_plane_state(struct drm_plane_state *plane_state,
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 8d9d4fd078e72977677fd992d725261232754e3e..15b63053f01869786831936ba28b7efc1e55e2e8 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -490,10 +490,31 @@ struct drm_bridge_funcs {
+>  	 * The @atomic_post_disable callback is optional.
+>  	 */
+>  	void (*atomic_post_disable)(struct drm_bridge *bridge,
+>  				    struct drm_atomic_state *state);
+>  
+> +	/**
+> +	 * @atomic_readout_state:
+> +	 *
+> +	 * Initializes,this bridge atomic state.
+> +	 *
+> +	 * It's meant to be used by drivers that wants to implement fast
+> +	 * / flicker-free boot and allows to initialize the atomic state
+> +	 * from the hardware state left by the firmware.
+> +	 *
+> +	 * It's used at initialization time, so drivers must make sure
+> +	 * that the power state is sensible when accessing the hardware.
+> +	 *
+> +	 * RETURNS:
+> +	 *
+> +	 * 0 on success, an error code otherwise.
+> +	 */
+> +	int (*atomic_readout_state)(struct drm_bridge *bridge,
+> +				    struct drm_bridge_state *bridge_state,
+> +				    struct drm_crtc_state *crtc_state,
+> +				    struct drm_connector_state *conn_state);
+> +
+>  	/**
+>  	 * @atomic_duplicate_state:
+>  	 *
+>  	 * Duplicate the current bridge state object (which is guaranteed to be
+>  	 * non-NULL).
+> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> index 8f34f4b8183d83dccd3e820a444fbf74fb6c16f2..f68bd9627c085c6d2463b847aaa245ccc651f27b 100644
+> --- a/include/drm/drm_connector.h
+> +++ b/include/drm/drm_connector.h
+> @@ -1464,10 +1464,36 @@ struct drm_connector_funcs {
+>  	 * when a connector is being hot-unplugged for drivers that support
+>  	 * connector hotplugging (e.g. DisplayPort MST).
+>  	 */
+>  	void (*destroy)(struct drm_connector *connector);
+>  
+> +	/**
+> +	 * @atomic_readout_state:
+> +	 *
+> +	 * Allocates, initializes, and returns an atomic state for this
+> +	 * connector.
+> +	 *
+> +	 * It's meant to be used by drivers that wants to implement fast
+> +	 * / flicker-free boot and allows to initialize the atomic state
+> +	 * from the hardware state left by the firmware.
+> +	 *
+> +	 * It's used at initialization time, so drivers must make sure
+> +	 * that the power state is sensible when accessing the hardware.
+> +	 *
+> +	 * The drm_atomic_state being passed is not fully filled. Only
+> +	 * the CRTC state are there when this hooks is called, and only
+> +	 * their old state. The only safe operation one can do on this
+> +	 * state in this hook is calling
+> +	 * drm_atomic_get_old_crtc_state().
+> +	 *
+> +	 * RETURNS:
+> +	 *
+> +	 * An atomic state on success, an error pointer otherwise.
+> +	 */
+> +	struct drm_connector_state *(*atomic_readout_state)(struct drm_connector *connector,
+> +							    struct drm_atomic_state *state);
+> +
+>  	/**
+>  	 * @atomic_duplicate_state:
+>  	 *
+>  	 * Duplicate the current atomic state for this connector and return it.
+>  	 * The core and helpers guarantee that any atomic state duplicated with
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index caa56e039da2a748cf40ebf45b37158acda439d9..c462bd9b2f7d3ae08e669463717002e5f78122fe 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -613,10 +613,29 @@ struct drm_crtc_funcs {
+>  	 * 0 on success or a negative error code on failure.
+>  	 */
+>  	int (*set_property)(struct drm_crtc *crtc,
+>  			    struct drm_property *property, uint64_t val);
+>  
+> +	/**
+> +	 * @atomic_readout_state:
+> +	 *
+> +	 * Allocates, initializes, and returns an atomic state for this
+> +	 * CRTC.
+> +	 *
+> +	 * It's meant to be used by drivers that wants to implement fast
+> +	 * / flicker-free boot and allows to initialize the atomic state
+> +	 * from the hardware state left by the firmware.
+> +	 *
+> +	 * It's used at initialization time, so drivers must make sure
+> +	 * that the power state is sensible when accessing the hardware.
+> +	 *
+> +	 * RETURNS:
+> +	 *
+> +	 * An atomic state on success, an error pointer otherwise.
+> +	 */
+> +	struct drm_crtc_state *(*atomic_readout_state)(struct drm_crtc *crtc);
+> +
+>  	/**
+>  	 * @atomic_duplicate_state:
+>  	 *
+>  	 * Duplicate the current atomic state for this CRTC and return it.
+>  	 * The core and helpers guarantee that any atomic state duplicated with
+> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> index 01479dd94e76a8389a0c9e9d6744400aa2291064..691a267c857a228f674ef02a63fb6d1ff9e379a8 100644
+> --- a/include/drm/drm_plane.h
+> +++ b/include/drm/drm_plane.h
+> @@ -378,10 +378,37 @@ struct drm_plane_funcs {
+>  	 * 0 on success or a negative error code on failure.
+>  	 */
+>  	int (*set_property)(struct drm_plane *plane,
+>  			    struct drm_property *property, uint64_t val);
+>  
+> +	/**
+> +	 * @atomic_readout_state:
+> +	 *
+> +	 * Allocates, initializes, and returns an atomic state for this
+> +	 * plane.
+> +	 *
+> +	 * It's meant to be used by drivers that wants to implement fast
+> +	 * / flicker-free boot and allows to initialize the atomic state
+> +	 * from the hardware state left by the firmware.
+> +	 *
+> +	 * It's used at initialization time, so drivers must make sure
+> +	 * that the power state is sensible when accessing the hardware.
+> +	 *
+> +	 * The drm_atomic_state being passed is not fully filled. Only
+> +	 * the CRTC and connector states are there when this hooks is
+> +	 * called, and only their old state. The only safe operation one
+> +	 * can do on this state in this hook is calling
+> +	 * drm_atomic_get_old_crtc_state() and
+> +	 * drm_atomic_get_old_connector_state().
+> +	 *
+> +	 * RETURNS:
+> +	 *
+> +	 * An atomic state on success, an error pointer otherwise.
+> +	 */
+> +	struct drm_plane_state *(*atomic_readout_state)(struct drm_plane *plane,
+> +							struct drm_atomic_state *state);
+> +
+>  	/**
+>  	 * @atomic_duplicate_state:
+>  	 *
+>  	 * Duplicate the current atomic state for this plane and return it.
+>  	 * The core and helpers guarantee that any atomic state duplicated with
+> 
+> -- 
+> 2.50.1
+> 
+
+-- 
+Simona Vetter
+Software Engineer
+http://blog.ffwll.ch
 
