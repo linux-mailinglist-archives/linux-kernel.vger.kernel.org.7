@@ -1,112 +1,340 @@
-Return-Path: <linux-kernel+bounces-857150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493C7BE609D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DEDBE60A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538C03A27F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D60547F5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA3419D082;
-	Fri, 17 Oct 2025 01:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871B22147E5;
+	Fri, 17 Oct 2025 01:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKZPOCYZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AmCX05WU"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012027.outbound.protection.outlook.com [40.107.200.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876C8C120
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760664926; cv=none; b=C0ZBSbLnV7czpXoCOvcptPAg1i6sIhRl0wPr4HkdYGf+no4YMYOpJ7wqE2OM9qCzpIO7c+eXKYWpC6nYF2LAi2jUA7Ca9dW4rsH/n/mYhMwq1rl7aIzr44mf44yiP+VQcYaoixCkx9wSRV9NUFv66be5O8u/8CA1XgkEkHKFD8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760664926; c=relaxed/simple;
-	bh=joXtVh3UwYtLByf8UHsqtv6L5nl+MB4hmfuzd1U4UxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BaIp0IBcgpmc+L9ZPFHW2CHbQ+WhV6syq7EXZfqB39QZaK1TJXunvLl5XiufC5mJ3/0xhVxFUBDo2GwG5XYr9kBHbYi2HwNvCY/7gaOOU9b8SWfs8wTNbWg0sxZJJrJHH6TT9cVIPg1qH3HW46C7ovzzqcyqV+2QBL5MwwzbmnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKZPOCYZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9211EC4CEF1;
-	Fri, 17 Oct 2025 01:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760664925;
-	bh=joXtVh3UwYtLByf8UHsqtv6L5nl+MB4hmfuzd1U4UxQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pKZPOCYZqLnM+s0tdMVkwSA8mRl6LK0kIJ2R1Zk47attKGZNEYjAQT1cPyoVpiqn5
-	 DiiR2C8HIZYC2vTaNnOBAQoDLeBBNUXbRpU8NSnlR6IyBNRRo5ZKLPa5G6DbvaRjly
-	 d62zA2TDp0F3Izc9RRLbAuRbNDKrigUdXrVHkVboSUNxRhrFfLTkX4W71Y8YIwcjJi
-	 d8VX04xfxygqE6YawnDzx/9sMGA1TB0JlGZ2WTMWM14gbWWIqaxMyZfwjya90gLv3o
-	 A/Xb+tAVf3TydkNwh6ltpdAdVogGdM3D7CzwP4eyCzJsRJKWgFO2nixfTiuyfNYxw0
-	 ZPOvyJH87JNOw==
-From: SeongJae Park <sj@kernel.org>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ye Liu <liuye@kylinos.cn>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/mm/page_owner_sort: add help option support
-Date: Thu, 16 Oct 2025 18:35:22 -0700
-Message-ID: <20251017013523.112897-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <51f86d0e-e9dc-42ef-baee-0dfdd39b7cab@linux.dev>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75019C120;
+	Fri, 17 Oct 2025 01:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760664978; cv=fail; b=i9uqh+qKJS4S18TQxaFn5og1n6Ay/9hMd0BzHsAxI/Z0urlP84co8NTc/JRyOnYgB5VRhG833ZF9X85kc3165OWR3mDm1loGQQnYUejfsyZ+uB+yzqZ4tbJ8VtcRDboRKPHBkvCqsV237zmnRJanEiTpRTgRH1NkJoU32CEMrSU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760664978; c=relaxed/simple;
+	bh=ljDzPrrLCFCTlVvbh6rSDIdFc2+ylW6SXepDjmO4uzk=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=m82DXo/C5+pRpEm6t9nVCGx27RFLtE2ksuruvoeOLzObi15X+Xko0AuCciFi3HMIlcDsdWtngNOI8j/hTIj+IUkBRAWUYJ6CPBpGsN+GwVFVn6zD+4cB6axLui6lSvirZ1W/8wgEyYa3u8OrfgxjeWwJNKUhZjPUhWDx1NCZra8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AmCX05WU; arc=fail smtp.client-ip=40.107.200.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sdkumR4jRwgvGBZR/vCEDilm5gz1ace3VRdUxN9inov4kPflLB/40X4HcSvTB1zDdjRKmXsV0dC5KR73mFyS//1PiokjMvhKQgMxKLYVwz/M08TUf5L8fZEdFBy3vUO7daEYdZeYP+QQ0Glz2HFzn29kkbQj+6ImA/8fnGLPaQHIsft9/MzXiPVluLVDFZse13t2Io7q7kSxzfjjCDbyyTIft4h8e0nRGiSurF73+K4FtnvjCZnlUUAj48YoBGFFRiLXCJjA30ERIx4X1D2rneoHOeC90BHcBw0bCHCAIr1u0SR3JSNeXAkV4zTekhQBujeU8HTFERF9t7Ek+tlXAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=azec3H7JZHl5Wlav5n08mAbjtG0j/Jw1xCkLxfMsY40=;
+ b=tXPq0eMsOqaczZE+9+/3dZb1TvoysxKGrJOaoclJlZ+4i+VAOrzNWdxmdBGyd2wWqfBE4EsAdE/klTVWhxS9oZ+ZfYq65mVNF27OgBg3DNpQsOyLRO+DF+KFD/uTbApwoJFTe/v8foJcP4QXdCd9ZI94CWyflxm9Q0AHTZ02lYyn5RC+zzB3ZN6YTeS+k1IX9mL56y4P7DvLI1dSc6K5rmoIqE6avYXnfiejIu0krjY8yziD1YmFi8dOxxb2YpJTBuw6dbBWaWOv1+uLtxbV3dvUfrMeDmaXuk/t9rpf2R4gR8Cu84Fv+d1LlLlTIeNiAnZf5wtCr1xYMwKaw3EDAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=azec3H7JZHl5Wlav5n08mAbjtG0j/Jw1xCkLxfMsY40=;
+ b=AmCX05WUKuMH/xz6tcwQK5dQ2CrXSLjvhN+DbVcKTracbCKd4RxveOhmm2Lwp0zo4mdAx+VxqhJ2vNw5kM/aydZP8+Q4O0aMI7Nv6HZ2hrH5oSyeRyfSkVO/FZUszf44etH+yxVA2TxJT7y58CYYpa1BFlib9TjY5albMgKpUqFKUs2IqwFWO/Vn4+CGgPHSHCwCXxAfo3KbPOu/vb+owoG9ZZEiCaCPtcfJe7SmRqeHxBUZRE/lf6enyeGRUAPUSzgl5dR9HU74+J3mpsfLmW1pZorO5uiY2Qd4DhMV/sYOf31EyJEk1dZEhlaqE6pu60QGeD81NrzPVrTVPQN7fg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by MN6PR12MB8514.namprd12.prod.outlook.com (2603:10b6:208:474::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
+ 2025 01:36:13 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 01:36:13 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 10:36:10 +0900
+Message-Id: <DDK7N52VX059.202D7SPGFV8A9@nvidia.com>
+To: "Daniel del Castillo" <delcastillodelarosadaniel@gmail.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, "Alexandre Courbot" <acourbot@nvidia.com>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>
+Cc: <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 1/2] nova-core: Solve mentions of `CoherentAllocation`
+ improvements [COHA]
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251015194936.121586-1-delcastillodelarosadaniel@gmail.com>
+In-Reply-To: <20251015194936.121586-1-delcastillodelarosadaniel@gmail.com>
+X-ClientProxiedBy: TYCP286CA0264.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:455::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MN6PR12MB8514:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd4bb30f-210d-40e3-b664-08de0d1d8e9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?THpQQzdFNmlTVGU5OE5UaFNhbVRqU2cvY0pYSUNVUml2Mm5rSVg0QmladHRo?=
+ =?utf-8?B?U29aeEJHeEVwa0h2MHYweXA2aktZSCt6djV4cjBvTUJEV01pN2dJbkM5SFJO?=
+ =?utf-8?B?Ty9kUFE2clMrR2hHVGxzOWhEMWw3ZEU0MVpNQ2x1Tlc2K21kUjZaeDBBemNU?=
+ =?utf-8?B?RkpodC9kZ3JBZDUxZk52aWloUXVBeXgrOWtnQ3FEU1JFN054Q1Z4YmpqbVkz?=
+ =?utf-8?B?aFlBaThtSjFjeXc5UC9WWXE3RlI2T1llcHZLYjVjVFJ6eTMzTWlZbGhnRlY0?=
+ =?utf-8?B?TE9vSmJhM3kvMlpaUldZaThqMjNDRU1yMXBxMmtvRWhpMlkwcUE4ZWkvV2xU?=
+ =?utf-8?B?M05US2daRTNQZU9FTm0vdHJRVEg2N05CTjlGQVo1eTlGajdQZy9VeWQ1T2pn?=
+ =?utf-8?B?WHFXemhsa1k4RUFVWFp1M2p1eTBYNHVwZmRpRVhmRzM0ZUNxVmtrNlZiR0wr?=
+ =?utf-8?B?V2VLMFNub1hLUWJiRmtqZzFYZ2h5NW4rT1hFTmQvNlBHV3hEN1Y5dTZ3VnhT?=
+ =?utf-8?B?TUlteXJ3SXQ4SjRjNytmQklDaHNxM2hXeUhaM2JTU0Mvazh6UnpteVIzVHNW?=
+ =?utf-8?B?aVBQT2JCRGpSdGJPV0tOUU9wOERwazgrTXk3eXRudjVoQldvaXZaRzcyTjNv?=
+ =?utf-8?B?VWE3TmxJYUR2S2I0WTdVdXd5OUh4Y1hqZ0prUGZ1R0RXL0JLZnBMUDNaNXRO?=
+ =?utf-8?B?T1NpcnNPTjVOM0xDY3g3VzUvaW1kQ1RKTDhxRktrM2R0M0VRc0p5RVBiVmJE?=
+ =?utf-8?B?R0VkaU1XMWhDSDZwN0ZxNG1jOHhxR2Y1LzUzT0h1eHpyNjVwaDZqWVdvcEU2?=
+ =?utf-8?B?TVNOOUp6TVp3Q0F2NTBGZEd2YklFaVB4OVZlaTZmZW1xR08rUFAxK3FrRER0?=
+ =?utf-8?B?VGZYNE5zcFUxdjhaRnFpRXZYTGV5YmRIdlh2Z1l4S0lJMWIxV2JOK29NTVI3?=
+ =?utf-8?B?TWNwQy9lK0x3YjF5ajBkMVRMS1ZSejFZYWlCN3RJZWVLUUNCVFVONS9tRG5o?=
+ =?utf-8?B?OFY2OGV6MU03OGRkL3MvMmEvaXlDWVdDdFBPT25VdlJPa2NPMENtcEJqcHNw?=
+ =?utf-8?B?eFZPMi8reHNUT3BUVDZGVm4xay9BRkJQbHRXTWNWUTZpWURLR21IZmtUOGdi?=
+ =?utf-8?B?RkxmendkekNCc1pHNzBESDhSUGNCNk5CbFFDNCt6cC9zaDJYWE1tL0V3QXNY?=
+ =?utf-8?B?cDNTNkpXN2g3THFwdTY1YWx1TExRbUtsbFF4NTlNTnFrVUplNnd3RXU2M2I4?=
+ =?utf-8?B?b0hhb1FjS2ZvN3JnenNwa1JFNlUzdjk3ZGNzTWcxbnZHR1ZBbXdXTStNbnZM?=
+ =?utf-8?B?eURPRmZ6U3RXRjBreTJkcExQQjdmamE0b3FnUlJiNGlmdFJFNDRZNlJxZ21k?=
+ =?utf-8?B?UFVReGF4UVl0L2lUSTM5S1RvbllDaEF4NGpZUEY4b2IrQjRsZ2FETFhIcUZo?=
+ =?utf-8?B?SkQxZkIySWUwNVdOL1VGdVg1Wk5CSUNRUDdZQ1JlNlBva1JXMGt2Yk1QSEFB?=
+ =?utf-8?B?T3VNSDZOTGsxRzNSbUgzekJvUkNhT3NCSkNWc1djVlJid0N0Y3V5M2NHUk1X?=
+ =?utf-8?B?aVFhclFRQ3RpK2pZNHhMUnFDOGFBTGM4Z3VmMGlUVXgvRHgxS2JpUUVKNnVh?=
+ =?utf-8?B?S2ZmazBtZWVFNk5XNFZadWZGVzBRdXJYUFNCdXJTZFdPaHdVMUI5dmtZRkE2?=
+ =?utf-8?B?d2ZuS3FneFdGdzJiMCtGVnExSnJKcCtoMGVXKy9Ha2lFcTFLTm5jWjB3SHYw?=
+ =?utf-8?B?MlZ5RWpyMzF5OW4vSGtRcVlCbkhOV1h2T3VNSDZrQTBKdVB1b0NRQktUbWZQ?=
+ =?utf-8?B?czArcHcxS0tDNWJJa0E3UDdPY3Y5ektJd1dBV1MxYXg3WUtScTRNNmdFKy9X?=
+ =?utf-8?B?ckVyZ3pUQzFVV0RKN2xIM0JCZ01hZ2p3N2xYZEVHNHdmUjhCZENtQytJL0Np?=
+ =?utf-8?Q?Ocplx2HJEGbB0Em09mycyujDOCAn9fUe?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UTA1SmdpMGk2UmIzR1k4eWs2SzVyWkduWnhvamp6M1drQVJCcWlSdWhXYlZ1?=
+ =?utf-8?B?MnNmSGxJRThlSWZ6SFR6bXkwR0RNR25yTk5UV2lZVk5Ud3M3S05mS1BBZXlj?=
+ =?utf-8?B?RmhmVEVBRG1waFVvRTVHOW56QmNYMEphZXVmRjBrWS9Gdnp1bkltcVNqQlhP?=
+ =?utf-8?B?SHBFNWx3ZGhDWC8rcElEeWRCK1RhRTdyb3kwN2xwNFBYcXVtOHpzSi9iQThI?=
+ =?utf-8?B?SzZzUVk3aDJ3elFEZHY2UUlTbzB0OVJDZzJsRTd6ZVlFcVBqWUNnS0loTytB?=
+ =?utf-8?B?c2VjRHorTmlXWGV1N0w2U2YvKzFyY0FFcTdLUHJkQWVlUWRmS0xZZHFRRWJm?=
+ =?utf-8?B?Q3VDTUVVVDZPNkdwQWdMU3hNcW9NYUllWThmQTgrTkg4YlQzWjVxZG9jRTE1?=
+ =?utf-8?B?K0ZQSW56QitQT0RsTUNVS3RlOXRrMllrR2RmeXE0ZkF3aWg3Um93SGEvRGdG?=
+ =?utf-8?B?UDJ4RmlhRnhxN2tPbm43UUZ1NFEwUjhpR3JuaGtUZ08rcjZod3hCR25sZ2Jw?=
+ =?utf-8?B?VTZISnNvemVhQWVqVlpIdCtvR1puQ1IvTVI1amRMMG9YV2puSGtQaituNExr?=
+ =?utf-8?B?VG5nK1BDbnlWY0x4ZGdVa2RTK0hHVnU2YzV3K2Y4b0RqemY4Z082MWwrTG1o?=
+ =?utf-8?B?NENVZTJGSysvTTR4RkZzOTlnYUxmdjBTQWp5UWdJTjlQSmpLa2RFN2RXVDVX?=
+ =?utf-8?B?LzB2bEQrcWhMdlVLOXNxZUVpemhIaFYzUS9SZkttL240RWJWN09GeVdQYnZG?=
+ =?utf-8?B?c0FRYmxUSG40WHVRc0ZrVmtiVGxPNlUwYlcyZzh5TlpPOCszWTRnNjZ1Qzl5?=
+ =?utf-8?B?N3VhM09xN1Q1SG5KVjN6bGlROEd0TW9wL0dFb1BnTERJUXg3SWk0cVdrZGJJ?=
+ =?utf-8?B?TWg0RTdLTXgwQzFBVEViT0hLZWt6dHc5eHZacnpCRVFRYlZZcEMvV0R5c1lt?=
+ =?utf-8?B?d3B6TmtHNFRaOUlHTG1mbExjb3Z5MnFyZzZjSW9mY1F2RHJPbVduMmdheXl6?=
+ =?utf-8?B?elFVNFJVb1JDalN6RjBLT1greHFwcE8yTWpYVEhVZnJmUG5La1NSb1RlMmRw?=
+ =?utf-8?B?RHlGQnFBMUEvNjd5MzFFeDI5QmRuTnZZbGpVSFB1VzY0U0JHaFVwUlRscE5a?=
+ =?utf-8?B?QUxvcFo5T3JCMTk0TkNaT1NtUW1zdGdXODZNektQd1grZEwzUk9JSUx3UnBO?=
+ =?utf-8?B?UlVGamg2RWdBdVFabUFDUUJpTVF1ZEVuRmNRNHNVY0lFUy9hbjR1OEp1enQ4?=
+ =?utf-8?B?SFhQcmp3NmlYKzYxUkU3QzRqSmp0d2QyTTZRWUxDQ2xaOEtvcytqeUpVWllu?=
+ =?utf-8?B?TmtTUEgyejNnczJ0UzZYNm81bERReTAyaEM3VUMrZXVXcE9sZTVpZVhteW1k?=
+ =?utf-8?B?NnNETENQR2F1RWRuWjBnNnZORHlSc21Zd1N0SzY5Z2xsZGkvcEdSWGdJbUgz?=
+ =?utf-8?B?azh6bGNWakgrSXZrandmZ3FpUUV2K1FKNENCRkdqb3NBWDdPeEJKRXVNOGtr?=
+ =?utf-8?B?MnN1U1BPTEdLQXMrTitXckg3K2UvaWtZRVRBVHlJc0crWG0yU2MrelBBWlBt?=
+ =?utf-8?B?aGxSRXFaMHZUNnNOYStUaWxlSnRMZmdKKzdaZlZDT2MzcG81NTVVbHRmM0ZV?=
+ =?utf-8?B?SzhSVEEzVFJwSTEyZE0xS3R3M3VpUmVVY3FsK1doTmR5NHpDdHEyL2cxRmxC?=
+ =?utf-8?B?U3J3TFJaait3cFRoUFBpRDBIZ24rakU3MHIvTnplTU5CbXlvdTJUN21hMEg0?=
+ =?utf-8?B?L3RPOEFSNCt5WitSbGxJOHd0Y2dRS3VwdUlZc2I4V3E1dG9iN1hncGFuMmVX?=
+ =?utf-8?B?WXNjV3lRcllnZ2dIQlNXZmMrdGRTdm9uVTdVaERCNG8xd3V6UGgwbHZMZzZ5?=
+ =?utf-8?B?bnU5ZEdTUlBZTC9QTWVXcVlUaVltZW5XN2s5MjgwZXBQbFJXTWUxRGhoZVo1?=
+ =?utf-8?B?UzFBRUxraGZ2ZzFLRGlsckk1RlJFUmQvZllqczlKZjlLdi9iRUljMXFmZy9F?=
+ =?utf-8?B?Nm42dWl0U2lHM0k5SWNCak1NaEVyRWNVTVQ3TlpGUHNJaFdVR3hETWRSSUtU?=
+ =?utf-8?B?cTdPZG42aDJrODVuYmlTcWpqSG1BMGFHbkUrVUNmb2RKd29vZC8xanI2UkNo?=
+ =?utf-8?B?a1hIdW5wb0pZb3FJZmZ2eE9ndHRwUjJvNzBYdEsxVUEvT1FmdWJOWXRxV0JH?=
+ =?utf-8?Q?DXpFKEDMAkVEB7im/Q+JZ8idRqQ6H7WSxiaee4OgCAiT?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd4bb30f-210d-40e3-b664-08de0d1d8e9f
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 01:36:13.2639
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4cDnjSZxfjLVJw0aINTKVXWA3TQzy23Pd1YIvoD3PQneHrZQ6pkK3Z5eUcEOFTTcZol+vGsAVEbB3EwqkPsQ6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8514
 
-On Fri, 17 Oct 2025 09:19:09 +0800 Ye Liu <ye.liu@linux.dev> wrote:
+On Thu Oct 16, 2025 at 4:49 AM JST, Daniel del Castillo wrote:
+> This patch solves the existing mentions of COHA, a task
+> in the Nova task list about improving the `CoherentAllocation` API.
+> I confirmed by talking to Alexandre Courbot, that the reading/writing
+> methods in `CoherentAllocation` can never be safe, so
+> this patch doesn't actually change `CoherentAllocation`, but rather
+> tries to solve the existing references to [COHA].
 
-> 
-> 
-> 在 2025/10/17 04:10, SeongJae Park 写道:
-> > On Thu, 16 Oct 2025 13:49:25 +0800 Ye Liu <ye.liu@linux.dev> wrote:
-> > 
-> >> From: Ye Liu <liuye@kylinos.cn>
-> >>
-> >> Add -h/--help option to display usage information and improve code style.
-> > 
-> > Looks good to me, though I have a trivial comment below.
-> > 
-> >>
-> >> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> >> ---
-> >>  tools/mm/page_owner_sort.c | 10 +++++++---
-> >>  1 file changed, 7 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/tools/mm/page_owner_sort.c b/tools/mm/page_owner_sort.c
-> >> index 880e36df0c11..202eafed66a9 100644
-> >> --- a/tools/mm/page_owner_sort.c
-> >> +++ b/tools/mm/page_owner_sort.c
-> >> @@ -669,14 +669,15 @@ int main(int argc, char **argv)
-> >>  		{ "pid", required_argument, NULL, 1 },
-> >>  		{ "tgid", required_argument, NULL, 2 },
-> >>  		{ "name", required_argument, NULL, 3 },
-> >> -		{ "cull",  required_argument, NULL, 4 },
-> >> -		{ "sort",  required_argument, NULL, 5 },
-> >> +		{ "cull", required_argument, NULL, 4 },
-> >> +		{ "sort", required_argument, NULL, 5 },
-> > 
-> > Seems unnecessary changes.
-> The spacing changes fix inconsistent formatting in longopts array.
-> Since the format fixes are simple and in the same context, I put them together.
+This mention of background discussions should be in the comment part of
+your commit (below the `---`).
 
-Thank you for clarifying.
+>
+> Signed-off-by: Daniel del Castillo <delcastillodelarosadaniel@gmail.com>
+> ---
+>  drivers/gpu/nova-core/dma.rs            |  20 ++---
+>  drivers/gpu/nova-core/firmware/fwsec.rs | 104 ++++++++++--------------
+>  2 files changed, 50 insertions(+), 74 deletions(-)
+>
+> diff --git a/drivers/gpu/nova-core/dma.rs b/drivers/gpu/nova-core/dma.rs
+> index 94f44bcfd748..639a99cf72c4 100644
+> --- a/drivers/gpu/nova-core/dma.rs
+> +++ b/drivers/gpu/nova-core/dma.rs
+> @@ -25,21 +25,11 @@ pub(crate) fn new(dev: &device::Device<device::Bound>=
+, len: usize) -> Result<Sel
+>      }
+> =20
+>      pub(crate) fn from_data(dev: &device::Device<device::Bound>, data: &=
+[u8]) -> Result<Self> {
+> -        Self::new(dev, data.len()).map(|mut dma_obj| {
+> -            // TODO[COHA]: replace with `CoherentAllocation::write()` on=
+ce available.
+> -            // SAFETY:
+> -            // - `dma_obj`'s size is at least `data.len()`.
+> -            // - We have just created this object and there is no other =
+user at this stage.
+> -            unsafe {
+> -                core::ptr::copy_nonoverlapping(
+> -                    data.as_ptr(),
+> -                    dma_obj.dma.start_ptr_mut(),
+> -                    data.len(),
+> -                );
+> -            }
+> -
+> -            dma_obj
+> -        })
+> +        let mut dma_obj =3D Self::new(dev, data.len())?;
+> +        // SAFETY: We have just created this object and there is no othe=
+r user at this stage.
+> +        unsafe { dma_obj.write(data, 0)? };
+> +
+> +        Ok(dma_obj)
 
-> If you insist on removing these changes, I will drop them in the next version.
+Can you preserve the use of `map`? This removes the need for the
+temporary variable.
 
-I have no strong opinion, plese do whatever you prefer :)
+<snip>
+>  /// The FWSEC microcode, extracted from the BIOS and to be run on the GS=
+P falcon.
+> @@ -260,32 +245,38 @@ fn new_fwsec(dev: &Device<device::Bound>, bios: &Vb=
+ios, cmd: FwsecCommand) -> Re
+> =20
+>          // Find the DMEM mapper section in the firmware.
+>          for i in 0..hdr.entry_count as usize {
+> -            let app: &FalconAppifV1 =3D
+>              // SAFETY: we have exclusive access to `dma_object`.
+> -            unsafe {
+> +            let app: &FalconAppifV1 =3D unsafe {
+>                  transmute(
+>                      &dma_object,
+> -                    hdr_offset + hdr.header_size as usize + i * hdr.entr=
+y_size as usize
+> +                    hdr_offset + hdr.header_size as usize + i * hdr.entr=
+y_size as usize,
+>                  )
+>              }?;
+> =20
+>              if app.id !=3D NVFW_FALCON_APPIF_ID_DMEMMAPPER {
+>                  continue;
+>              }
+> +            let dmem_base =3D app.dmem_base;
+> =20
+>              // SAFETY: we have exclusive access to `dma_object`.
+>              let dmem_mapper: &mut FalconAppifDmemmapperV3 =3D unsafe {
+> -                transmute_mut(
+> -                    &mut dma_object,
+> -                    (desc.imem_load_size + app.dmem_base) as usize,
+> -                )
+> +                transmute_mut(&mut dma_object, (desc.imem_load_size + dm=
+em_base) as usize)
+>              }?;
+> =20
+> +            dmem_mapper.init_cmd =3D match cmd {
+> +                FwsecCommand::Frts {
+> +                    frts_addr: _,
+> +                    frts_size: _,
 
+Can the `{ .. }` syntax be used here?
 
-Thanks,
-SJ
+> +                } =3D> NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS,
+> +                FwsecCommand::Sb =3D> NVFW_FALCON_APPIF_DMEMMAPPER_CMD_S=
+B,
+> +            };
+> +            let cmd_in_buffer_offset =3D dmem_mapper.cmd_in_buffer_offse=
+t;
+> +
+>              // SAFETY: we have exclusive access to `dma_object`.
+>              let frts_cmd: &mut FrtsCmd =3D unsafe {
+>                  transmute_mut(
+>                      &mut dma_object,
+> -                    (desc.imem_load_size + dmem_mapper.cmd_in_buffer_off=
+set) as usize,
+> +                    (desc.imem_load_size + cmd_in_buffer_offset) as usiz=
+e,
+>                  )
+>              }?;
+> =20
+> @@ -296,24 +287,19 @@ fn new_fwsec(dev: &Device<device::Bound>, bios: &Vb=
+ios, cmd: FwsecCommand) -> Re
+>                  size: 0,
+>                  flags: 2,
+>              };
+> -
+> -            dmem_mapper.init_cmd =3D match cmd {
+> -                FwsecCommand::Frts {
+> -                    frts_addr,
+> -                    frts_size,
+> -                } =3D> {
+> -                    frts_cmd.frts_region =3D FrtsRegion {
+> -                        ver: 1,
+> -                        hdr: size_of::<FrtsRegion>() as u32,
+> -                        addr: (frts_addr >> 12) as u32,
+> -                        size: (frts_size >> 12) as u32,
+> -                        ftype: NVFW_FRTS_CMD_REGION_TYPE_FB,
+> -                    };
+> -
+> -                    NVFW_FALCON_APPIF_DMEMMAPPER_CMD_FRTS
+> -                }
+> -                FwsecCommand::Sb =3D> NVFW_FALCON_APPIF_DMEMMAPPER_CMD_S=
+B,
+> -            };
+> +            if let FwsecCommand::Frts {
+> +                frts_addr,
+> +                frts_size,
+> +            } =3D cmd
+> +            {
+> +                frts_cmd.frts_region =3D FrtsRegion {
+> +                    ver: 1,
+> +                    hdr: size_of::<FrtsRegion>() as u32,
+> +                    addr: (frts_addr >> 12) as u32,
+> +                    size: (frts_size >> 12) as u32,
+> +                    ftype: NVFW_FRTS_CMD_REGION_TYPE_FB,
+> +                };
+> +            }
 
-[...]
+I liked that the original code updated both `init_cmd` and `frts_region`
+in the same match block. I understand it might be difficult to preserve
+due to the borrowing rules, but can you try to preserve it if that's
+possible at all?
 
