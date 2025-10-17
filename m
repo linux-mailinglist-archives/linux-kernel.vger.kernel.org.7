@@ -1,123 +1,164 @@
-Return-Path: <linux-kernel+bounces-857407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6EDBE6BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE386BE6B87
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 08:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B7D628032
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 798AE1899C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F1E30F933;
-	Fri, 17 Oct 2025 06:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE48E30F959;
+	Fri, 17 Oct 2025 06:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UNcwvPdK"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RkIfJyIf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED83730FC20
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9882C30DEA4
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760682997; cv=none; b=fpkX+9R4halIRLWa+NgN3+eJVoPBwganHmyTAxECCGzTfuGTBtic3BhPqBzK4pDgNVFh2APvILNyU5UWXTG1Jrh7g6EaW4o2A5+S5MtImfcOWLktFBpE7rDOq+53w7iCtvVXTmcLOEQfjrb0htows5IiwPo5IEBYNsQD8Su5ZVQ=
+	t=1760683044; cv=none; b=YS2U1RhsfLjv0FvlxkNeMR5Oi9Ddh/nPkowAmrjKhN3ZNHojaVHG07Rrw133RG1h8MEWFUtdBKUyY4g8WvQc3rag0VfBGXbpkv2UQ6zpBi3aNUJvJpnQhasDX599IeHq3bruhpc2goGPFom8ElYzmeJeXfN6FwAWjaAof8/lBNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760682997; c=relaxed/simple;
-	bh=STcBceaCHdIlXSeKQ6i20Wg9ICYTLWWg9f/Od09MSeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rr58mFaad2hjuzhT/rbaHEqaKiYf1tUEtri2YDtSk28j3YaAQv/pRIHKT+q+JCzrPwL/7hxRINnZqj90CXhHvCjuiEciQFXv6wfBr6/tTlnSRh50ry82HetPnEFfLEUQq1SrYx/x8/uo4EnMKLYnUy1DHrV0/empiR9yCcX7oog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UNcwvPdK; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=STcB
-	ceaCHdIlXSeKQ6i20Wg9ICYTLWWg9f/Od09MSeg=; b=UNcwvPdK/NlaTng2xkLa
-	oPaSIIl0DS2CV3aHTQMFzIqxIwBkI2tuxmu2Mn9zE4Qn9gXJeZ5sgvSF9bxtSQaY
-	AXaxkIjys7NyFuhWlXo3/1tt6gjjInxCvEdH66WZHWclvjrUvSX5T+bO9D+zj+H3
-	oCNTbPtVQMf8l2rRlYoxRpA1SxF/J48FFjthQnupWvgZEtodDaUF/6IWQeb3m2mS
-	wkwM3Wklfn9AdfKlCh09LdAPtUxv15M6dVhn8dboC8PYZ4VM+/j1xTq/Rzk6VG47
-	Bc4ZKUDGvSLFB+AbeWnC4fdw3TryCGCXh7GWlnEDD4qx8pDecO3wC0Lt4rfjhucC
-	JQ==
-Received: (qmail 4113514 invoked from network); 17 Oct 2025 08:36:31 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2025 08:36:31 +0200
-X-UD-Smtp-Session: l3s3148p1@4GZF9FRBPuYujntM
-Date: Fri, 17 Oct 2025 08:36:31 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 3/4] ARM: dts: renesas: r9a06g032: Add the ADC device
-Message-ID: <aPHj77kAxEmEEPmW@ninjato>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
- <20251015142816.1274605-4-herve.codina@bootlin.com>
+	s=arc-20240116; t=1760683044; c=relaxed/simple;
+	bh=Qcu0voj9hrdgpiqdCK/DfKpmv0s/dp2/CJDxI3jdNgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iye8u0j+wUvyIKZkkavfgl8v/wSqwF6dLUt80o2jd7s8452ZBJyJLVAHTRJvn7RJtnsDpCVcQX9w5EinfmvoVNjtsGKIWCh6dM1KGQwSbX8L2EVMiGEcZx8zZtHB4+wQ0UvCjOLcPK6BivAE01ir271g7J/xupQkprvhpF4qp+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RkIfJyIf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760683041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gVPEUhTlcmrU4AY2xyJSB7iLHlzuDEXvJ647Y8pZBhw=;
+	b=RkIfJyIf0QIqMLgu98KxOXKUqGhtxUHR8+OcvMrf188xq6fy/ETES9AdAn8PJ7f8OKCl9N
+	VWRX8fbeiwJRWjoX2JLAhRboN84U/W0sba1kH4Kb2hGc1VI+pyv7yrAmfX+CP7nbDoYGSv
+	N/O69ptzNy/ykQKfeLmgZPItxTBwgdk=
+Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
+ [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-QVcU-WDVMGu4Lu54wiE6Dg-1; Fri, 17 Oct 2025 02:37:20 -0400
+X-MC-Unique: QVcU-WDVMGu4Lu54wiE6Dg-1
+X-Mimecast-MFC-AGG-ID: QVcU-WDVMGu4Lu54wiE6Dg_1760683039
+Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-63e0da26ae3so1752565d50.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 23:37:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760683039; x=1761287839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gVPEUhTlcmrU4AY2xyJSB7iLHlzuDEXvJ647Y8pZBhw=;
+        b=uAksjm4jGkFMqDz3195ZGxRwA1v+6MJmQK7qIQ4BxIAzaMWzoqieCVZP1Mw4wJHqCO
+         Yl/dvxOl24FqYpVfjaoSc7uNzwSyCA++lt3mjfyYfsu+YA8j+taG8iPZflnGBidBPxZe
+         kyn65g+hu5O/ccVDmlOZWod7Qq/pQb55q8W4NhiSN+oL3+Fytjh1XMA/tWWZpT9GAWDb
+         k91if0+Yv/SmiGgUAR0DL2vhJ9AXJXN0aGaDf1Qh7AeiqAb1qnr4gOOkAnz4ozrjZ1dH
+         XYEEzevsLx8Flc+bsXt7Q1adtkaYXdHth5P8ycqZcw85xdGvWwyfi4ZFxr0E2j8BDPqr
+         P4+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXpbBGiU8CeeSAEVeKuxf4vfN4eSVTccupRuIFn5/LvENvGLKx01H8X/BVAMt6MNTyySPpU/XTiEpvOwCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRBrX4gU2RQKGFs9b3jGRFWqf/+v6LUdjbyrpnUEwRZB5UJxM7
+	reL6kzE3a93Y4o4pmd9B9COr1p71AIm+YCOlR18RVyO8dhviscdqV+x5/qKDec82SvPNzNxoafc
+	oeXlMG7EYn1IrM1g1NL7zhlwiyhaZoP+8oJ3H6m1PpUv7szuEr53RcwgRfR/Ul6eH0Oxp976K0M
+	swxoS4EzkiwD1nZRykxZcHCHSbyH8THf/ePoOf7gMm
+X-Gm-Gg: ASbGncu5ZJKmi8DZtAbe86dBtOj2IIiqmZLkmsVAsXE9f3pAtujJdpVlGrHrmgl8LbW
+	ER1yJBqLablf4ZxOPdIsy2f+akbSNFGm47sWpJwr2J1k08oqmV75kjvZpOpiJOvftraAayqesI8
+	STVW20k5RnEzfOt7IMJXCk4W1K5u6i0cDutSAfe9N26iHTJ40TPvw3zlNuHvcyVYzqicgEazba8
+	rg3nCFfb5SgFaCgtRvN4L92Hiepzz9S+iDJp0gtxV4=
+X-Received: by 2002:a05:690e:c4c:b0:63e:1031:9a28 with SMTP id 956f58d0204a3-63e161c5ff7mr2014941d50.54.1760683039538;
+        Thu, 16 Oct 2025 23:37:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtSwoSEs4kt9mguC8Oet1mtmXNRNZhiqdqTsuW1zufshaYk2wOu+hAd6ufjfhx4GwL1lz6B7sR9Ovqj8JADE0=
+X-Received: by 2002:a05:690e:c4c:b0:63e:1031:9a28 with SMTP id
+ 956f58d0204a3-63e161c5ff7mr2014934d50.54.1760683039161; Thu, 16 Oct 2025
+ 23:37:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="434UvbnTmnzbTDnb"
-Content-Disposition: inline
-In-Reply-To: <20251015142816.1274605-4-herve.codina@bootlin.com>
-
-
---434UvbnTmnzbTDnb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251015023020-mutt-send-email-mst@kernel.org>
+ <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
+ <20251015030313-mutt-send-email-mst@kernel.org> <CAJaqyWfRmhXM8eV+=wMVKgrc8SJ98OTtBCtNDJj8ZRUM5Y9Nmg@mail.gmail.com>
+ <CAO55csx2rbjxEZk5K3aKcZ501KY3Zfs8ThEQHFqQ1ZB9RSXECA@mail.gmail.com>
+ <20251015040722-mutt-send-email-mst@kernel.org> <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
+ <CACGkMEuPPFLH1YqTx03fV9N=Rx3aYXK0HMUDpZu-CvO1NYRRQA@mail.gmail.com>
+ <20251016014328-mutt-send-email-mst@kernel.org> <CACGkMEtXWLicmszjkzOhX8Ta=LdGgsDahRUKDEVzBVG8am5vgg@mail.gmail.com>
+ <20251016022131-mutt-send-email-mst@kernel.org> <CAJaqyWe--Hho9EdweqkC-h9=t5vhY0cbAN9uAw=hATpkSMbsEg@mail.gmail.com>
+In-Reply-To: <CAJaqyWe--Hho9EdweqkC-h9=t5vhY0cbAN9uAw=hATpkSMbsEg@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Fri, 17 Oct 2025 08:36:41 +0200
+X-Gm-Features: AS18NWCFqqjar2lhKjBeI0da8CX2K34WY0phDemf1POFD9rfn-8zzoZgAK5KT4o
+Message-ID: <CAJaqyWdEY6KaVbBn5LJhkz7h6kytFg8-b8iXnc9N54L+q_Yrbw@mail.gmail.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea DE <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 04:28:15PM +0200, Herve Codina (Schneider Electric)=
- wrote:
-> The ADC available in the r9a06g032 SoC can use up to two internal ACD
-> cores (ADC1 and ADC2) those internal cores are handled through ADC
-> controller virtual channels.
->=20
-> Describe this device.
->=20
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
+On Thu, Oct 16, 2025 at 8:25=E2=80=AFAM Eugenio Perez Martin
+<eperezma@redhat.com> wrote:
+>
+> On Thu, Oct 16, 2025 at 8:22=E2=80=AFAM Michael S. Tsirkin <mst@redhat.co=
+m> wrote:
+> >
+> > On Thu, Oct 16, 2025 at 02:03:57PM +0800, Jason Wang wrote:
+> > > On Thu, Oct 16, 2025 at 1:45=E2=80=AFPM Michael S. Tsirkin <mst@redha=
+t.com> wrote:
+> > > >
+> > > > On Thu, Oct 16, 2025 at 01:39:58PM +0800, Jason Wang wrote:
+> > > > > > >
+> > > > > > > Not exactly bufferize, record.  E.g. we do not need to send
+> > > > > > > 100 messages to enable/disable promisc mode - together they
+> > > > > > > have no effect.
+> > > > >
+> > > > > Note that there's a case that multiple commands need to be sent, =
+e.g
+> > > > > set rx mode. And assuming not all the commands are the best effor=
+t,
+> > > > > kernel VDUSE still needs to wait for the usersapce at least for a
+> > > > > while.
+> > > >
+> > > > Not wait, record. Generate 1st command, after userspace consumed it=
+ -
+> > > > generate and send second command and so on.
+> > >
+> > > Right, that's what I asked in another thread, we still need a timeout
+> > > here.
+> >
+> > we do not need a timeout.
+> >
+> > > Then I think it would not be too much difference whether it is
+> > > VDUSE or CVQ that will fail or break the device. Conceptually, VDUSE
+> > > can only advertise NEEDS_RESET since it's a device implementation.
+> > > VDUSE can not simply break the device as it requires synchronization
+> > > which is not easy.
+> > >
+> > > > But for each bit of data, at most one command has to be sent,
+> > > > we do not care if guest tweaked rx mode 3 times, we only care about
+> > > > the latest state.
+> > >
+> > > Yes, but I want to know what's best when VDUSE meets userspace timeou=
+t.
+> > >
+> > > Thanks
+> >
+> >
+> > userspace should manage its own timeouts.
+> >
+>
+> Can we just apply the patch 2/2 of this RFC directly and apply the
+> VDUSE CVQ on top then? What are we missing to do it?
+>
 
-Looks good given the current bindings. Despite clock-names will need an upd=
-ate:
+Even better, can we just revert commit 56e71885b0349 ("vduse:
+Temporarily fail if control queue feature requested") ?
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---434UvbnTmnzbTDnb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjx4+8ACgkQFA3kzBSg
-KbYlVA//brX4gPpHtvlI8akGOMW7khm3j/dmpEerFqmJolr4GeRKas8XfaLSiSfu
-M65DY6Bk9vmADWxn/Zi37aREbr5oR2URCZJK8GAfSkRZDUl7xrxvZm49l00fWggI
-EikQnmqB30n1oESTlEjEQ5gn5T0qjA6VZbn0LOhuZQw3Et/egtNCOA2ZxYuoSf5U
-jLAS7h10To+LChI0OZng9bIamK+M5yYMSTTdiWuCCKySlhj4Oo7EQ5Xnqx0bZUNb
-HDdrzklOP6xSBNfHatdb0wBfHhAPbd4ZHj5NPMLTlRMbM/fD6XhpWkH/R9Hzp00/
-AoZ7dMylpEqvP9DJJwXAmTX+v9NHcHrx+y2yorCCSVB+VdPFYYO0jGyMNe0+tBBw
-4KWepTaesh2jTFnWIB4lVPa+ecnoG8LcQ9H/X/15bdZ6tnREdBhmL1kOWfpxJihU
-Y9AGUvRUADtCJATFdXqH8i8lRLidVcLUCXk79+brUptXHFnKWPC9I1SC/a8NiYEO
-5lkLvndHgkdE/H+alrK735T6fmZ76VWEgP/KkmMEmCVsQ8i/nfMiKnx68VuCZRZR
-UISWVOXbGC1gQGQEj1aynYhs3OQB85PUhzZ42CVRafsU9lx8ENfTeNNi7gog6cwc
-k6j5MKzdA+2n3D1K+sgWJhma3H7zX+GhAmjvOi5LL2M4fs4iKR8=
-=pqT9
------END PGP SIGNATURE-----
-
---434UvbnTmnzbTDnb--
 
