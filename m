@@ -1,212 +1,251 @@
-Return-Path: <linux-kernel+bounces-858793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8858ABEBDA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:53:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7038DBEBDB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 23:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9AC3B9190
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:53:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACCA0400632
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 21:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E852E0938;
-	Fri, 17 Oct 2025 21:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F902D97B9;
+	Fri, 17 Oct 2025 21:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fL7PBinz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zIaVQe5R"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D2D274B23;
-	Fri, 17 Oct 2025 21:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB7824C68B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 21:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760737986; cv=none; b=b4FYa94mhqrhLz69P0AqeBAsrcwlqE21ftStH/g8SiJtCjMJMFiMi/n2oUlV3NU4dVZX4jqjGLJlR+hVaAUMqRF0mwT/f6hxb8jBTXkQc20yzJ27L6kbkC4mE/Queu0XVt4EKA9sfzEX6rZ/Bmp5wzExVozBm/sHX/VW/MUhiX4=
+	t=1760738021; cv=none; b=ngwDlRVDZAvIDXG5aN7VRLZB1jPhC9p+Wsos0Ev3fYIGqNR9OlAywd6cGWahhsY0fVa1TEIekotzgxn9IXxmYIXPr3tMSBCm8TvRy4GkSdeUM4HV38upoZZ3Do58v9sIFXn028RIT8q3xtyufSqSqSBQ5t0G2hqzNfaXs7KKTSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760737986; c=relaxed/simple;
-	bh=zyGbZ1+GnK72NuqMDFHhZ9T6LjTvTkdjx+8fwG4y/SE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Npbjz7T6P5lbPh2pWgUa4EW+KQPrgNxxLnKjEZKoYC9z5RqRr2ZCnyVWMuORnHvFlZg7Yp5ndaUeE1O7Z8gTd5Dvw0ttNp58evTb9WLUPCGsFs6j3vl0in/cmwRzdQwnH59MSv3HwlU4D/8BqPmUyRTHUvPf1hNcv4Yeb02Sk2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fL7PBinz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F19C4CEF9;
-	Fri, 17 Oct 2025 21:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760737986;
-	bh=zyGbZ1+GnK72NuqMDFHhZ9T6LjTvTkdjx+8fwG4y/SE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=fL7PBinzUgT69Wen5GTnUelk0bmeINX+aPph4Hfz1n7kg5W2N5sAPHs1i+ogfYceE
-	 P903tkxmaW+1wySVKjrdIeWF1ZpGRAijLbflTXFenLqTkZ//PjVA+LKRYCXY0CfykQ
-	 tlGU3zy/QKtU4lQa/ktNZXOma+tJVtIFeTo76PVlw4g8uRSHe0AupSVdxYvxqVisRd
-	 f/cPIVHII04Sq4PzsKFW3VmyvC+m5Q03l+atCIXOUta9u7XAQgNYtNAKUChTK4hxBt
-	 ey8h0/uVhW0eyNICKNrg8gchtexer2yBmmvRFH7VzykSkK+wnOQN3qF83bjv9Jcxlu
-	 1/tsErfVSxiQg==
-Date: Fri, 17 Oct 2025 16:53:04 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1760738021; c=relaxed/simple;
+	bh=UIlnOch9wMHrGIbDDvJK/KgLmSG3kMGN7kKkng+aP/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oep931XcdgysR+6kz+RkQlfi4ZL6i0qATMu8XxAIqcS1YYXOKloRNuh53405fXzmuAQibPEeSuaxKdrTcU1BhTQdX8x6eleg6Am5gnVGH3ZHMmETd6Q8ovIsYB5s+hFKXb4uD44KB9HZGGFFtjtGx5LIZ5T5lDxy62T7ga3X9ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zIaVQe5R; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290d48e9f1fso30435ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760738017; x=1761342817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lhu1FJE3o7a7slPawypKrYLVKmRa2jcCvhmHsGFEkKA=;
+        b=zIaVQe5Ry+/VzmF8JM+OkroKJdF3KkuQJKGpeTR0htfhRVMC5YmVj9Y5lvlgw2h1Gd
+         JUS2WB7K8bJfpcQF3SP2jDiiKkZ3ypHxfQ0epF/9jrx3ZkU9tPV6pAxwldYgiyCFr/WX
+         c+VTVOmTNhL8BR9KoQZ2iiIEmBmoh6+vTaAAnOrj3MIUQORniBCmdbnCLf0sI3EHsCLE
+         bTkTMlmMBBGHOHaRQNbyS3UtQmIcJ3aAJM8tq/ElYcOoSS6MiAfDARt/VgfDgXCFLCcl
+         MS7Q7GlYOgzB0B+MytALR1jEOcarPMT3TNzEoAAayaGzh2JHWH1Sp+ttPq1wKaL5Fqsi
+         6UKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760738017; x=1761342817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lhu1FJE3o7a7slPawypKrYLVKmRa2jcCvhmHsGFEkKA=;
+        b=BhA3TyMXR2u04Jws70QFjZw0YbioxjMnJmFurkU046ukazURU49vi8+zJefvmvzzYW
+         xdTRzaMjBiKlLh69LU35sZy+GD3M28bnQ8luAi6OqI0aiBzCNfCiudW92Ils+VJUYImB
+         bi3NffHOT1jOTgu7hxOhHC7CViwtK9lqcVeMyZM5EbtlOWDMpCbbzfPiXTODTeG0j2B+
+         S+Q2A2cVeOixYG4agomx+eidWyziLrWw5nHOBg9Yv+fYfMFEPSRiHnCIAPSiQAXg2/YW
+         k3ejTg2T+fGj/M4jRU8ZgsPBwRVDOEyQMKqIvBY25sram4NAktAPAoOWJYgHnPf/hmky
+         kerQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4+bJ7Y2oIUSBLVhKQa45kqas4zts7dCUhW8pD6wsaq7uEtRCCZQZhuHDndSuzRg4dChNDJbDdykFIMBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza4mUGE+sYuFA3FWKbMNsEqOQGZuBNj7Z1D3xJQZK4gCcoQUR8
+	0NpTQutyJ5KBbYPx6N2GjPkiWYIw7r1Yt2WNn45aJZp3HeAROFFQij1tkb5QEg+gO6cJl8IdjjG
+	dEC8WLa7t5bOzHPaR8o4CcESKNYqAkEN21KqNpI0n
+X-Gm-Gg: ASbGncvs2SQNJDyKut4FMGbbj7pbnr6MRRuX1MmGdnvbthrpAfSiVnn1CCeiUVcnwX/
+	TRnjpjeU6ryHTdxDBILyXSq7Ef9iu28dlduDkJzK5HgvoSSeoiKkRXZOfibC9SsYQyng2ufXszR
+	brGi30v7wcc1xClxl8RxBPKeNH0AOkP1MhzBn3zVFtfbls33up1BftBzn02kugqUcZjVI7R2Rvr
+	gXGsaSiZrG8t4OalBK/C2YsEJ4ihhMXV4dPkNSwq5zIIfV0blNdO4cq97wX/SfWBySHajo=
+X-Google-Smtp-Source: AGHT+IHmiYWWoKGzhCftgUdfhUqWcdQwpSIhAHzu4GGeJICMEicdD1aeJu4r+l9eMiR8qEw767/n2UE4sdWtgdbxtJ0=
+X-Received: by 2002:a17:903:37c3:b0:26a:8171:daf8 with SMTP id
+ d9443c01a7336-29087a16bacmr19268955ad.8.1760738016568; Fri, 17 Oct 2025
+ 14:53:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Simona Vetter <simona@ffwll.ch>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- linux-kernel@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- devicetree@vger.kernel.org, Marijn Suijten <marijn.suijten@somainline.org>, 
- Jie Zhang <quic_jiezh@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
- Qingqing Zhou <quic_qqzhou@quicinc.com>, David Airlie <airlied@gmail.com>, 
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Bjorn Andersson <andersson@kernel.org>, freedreno@lists.freedesktop.org, 
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-In-Reply-To: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
-References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
-Message-Id: <176073765649.419746.11033982562850186565.robh@kernel.org>
-Subject: Re: [PATCH 0/6] Support for Adreno 612 GPU - Respin
+References: <20251017165753.206608-1-irogers@google.com> <6ffbfa494002d3ed85a160c2f2a6e1881dfdd304.camel@intel.com>
+In-Reply-To: <6ffbfa494002d3ed85a160c2f2a6e1881dfdd304.camel@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 17 Oct 2025 14:53:25 -0700
+X-Gm-Features: AS18NWAMlJReP3U2HQK5VZKL5WjliRppJkXqeUDi3l6eJ-KfM0rhUVdMqf1DaEo
+Message-ID: <CAP-5=fUi+oF8kzjYguDz6yjLVL-crFKrLGw7=3jgUeFik_p-_g@mail.gmail.com>
+Subject: Re: [PATCH v1] perf parse-events: Make X modifier more respectful of groups
+To: "Falcon, Thomas" <thomas.falcon@intel.com>
+Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "acme@kernel.org" <acme@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
+	"namhyung@kernel.org" <namhyung@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, 
+	"dapeng1.mi@linux.intel.com" <dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 17, 2025 at 10:55=E2=80=AFAM Falcon, Thomas <thomas.falcon@inte=
+l.com> wrote:
+>
+> On Fri, 2025-10-17 at 09:57 -0700, Ian Rogers wrote:
+> > Events with an X modifier were reordered within a group, for example
+> > slots was made the leader in:
+> > ```
+> > $ perf record -e '{cpu/mem-stores/ppu,cpu/slots/uX}' -- sleep 1
+> > ```
+> >
+> > Fix by making `dont_regroup` evsels always use their index for
+> > sorting. Make the cur_leader, when fixing the groups, be that of
+> > `dont_regroup` evsel so that the `dont_regroup` evsel doesn't become
+> > a
+> > leader.
+> >
+> > On a tigerlake this patch corrects this and meets expectations in:
+> > ```
+> > $ perf stat -e '{cpu/mem-stores/,cpu/slots/uX}' -a -- sleep 0.1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >         83,458,652      cpu/mem-stores/
+> >      2,720,854,880      cpu/slots/uX
+> >
+> >        0.103780587 seconds time elapsed
+> >
+> > $ perf stat -e 'slots,slots:X' -a -- sleep 0.1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >        732,042,247      slots                (48.96%)
+> >        643,288,155      slots:X              (51.04%)
+> >
+> >        0.102731018 seconds time elapsed
+> > ```
+> >
+>
+> Hi Ian, just confirming the results on an Alder Lake:
+>
+> % sudo ./perf stat -e '{cpu_core/mem-stores/,cpu_core/slots/uX}' -a --
+> sleep 0.1
+>
+>  Performance counter stats for 'system wide':
+>
+>         23,097,346      cpu_core/mem-stores/
+>        666,910,974      cpu_core/slots/uX
+>
+>        0.101369982 seconds time elapsed
+>
+>  % sudo ./perf stat -e 'slots,slots:X' -a -- sleep 0.1
+>
+>  Performance counter stats for 'system wide':
+>
+>      1,775,555,180      cpu_core/slots/
+> (50.08%)
+>      1,910,073,872      cpu_core/slots/X
+> (49.92%)
+>
+>        0.101368283 seconds time elapsed
+>
+> Tested-by: Thomas Falcon <thomas.falcon@intel.com>
 
-On Fri, 17 Oct 2025 22:38:28 +0530, Akhil P Oommen wrote:
-> This is a respin of an old series [1] that aimed to add support for
-> Adreno 612 GPU found in SM6150/QCS615 chipsets. In this version, we
-> have consolidated the previously separate series for DT and driver
-> support, along with some significant rework.
-> 
-> Regarding A612 GPU, it falls under ADRENO_6XX_GEN1 family and is a cut
-> down version of A615 GPU. A612 has a new IP called Reduced Graphics
-> Management Unit or RGMU, a small state machine which helps to toggle
-> GX GDSC (connected to CX rail) to implement the IFPC feature. Unlike a
-> full-fledged GMU, the RGMU does not support features such as clock
-> control, resource voting via RPMh, HFI etc. Therefore, we require linux
-> clock driver support similar to gmu-wrapper implementations to control
-> gpu core clock and GX GDSC.
-> 
-> In this series, the description of RGMU hardware in devicetree is more
-> complete than in previous version. However, the RGMU core is not
-> initialized from the driver as there is currently no need for it. We do
-> perform a dummy load of RGMU firmware (now available in linux-firmware)
-> to ensure that enabling RGMU core in the future won't break backward
-> compatibility for users.
-> 
-> Due to significant changes compared to the old series, all R-b tags have
-> been dropped. Please review with fresh eyes.
-> 
-> Last 3 patches are for Bjorn and the rest are for Rob Clark for pick up.
-> 
-> [1] Driver: https://lore.kernel.org/lkml/20241213-a612-gpu-support-v3-1-0e9b25570a69@quicinc.com/
->     Devicetree: https://lore.kernel.org/lkml/fu4rayftf3i4arf6l6bzqyzsctomglhpiniljkeuj74ftvzlpo@vklca2giwjlw/
-> 
-> To: Rob Clark <robin.clark@oss.qualcomm.com>
-> To: Sean Paul <sean@poorly.run>
-> To: Konrad Dybcio <konradybcio@kernel.org>
-> To: Dmitry Baryshkov <lumag@kernel.org>
-> To: Abhinav Kumar <abhinav.kumar@linux.dev>
-> To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> To: Marijn Suijten <marijn.suijten@somainline.org>
-> To: David Airlie <airlied@gmail.com>
-> To: Simona Vetter <simona@ffwll.ch>
-> To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> To: Maxime Ripard <mripard@kernel.org>
-> To: Thomas Zimmermann <tzimmermann@suse.de>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Bjorn Andersson <andersson@kernel.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: freedreno@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
-> Akhil P Oommen (2):
->       dt-bindings: display/msm: gpu: Document A612 GPU
->       dt-bindings: display/msm/gmu: Document A612 RGMU
-> 
-> Jie Zhang (3):
->       drm/msm/a6xx: Add support for Adreno 612
->       arm64: dts: qcom: qcs615: Add gpu and rgmu nodes
->       arm64: dts: qcom: qcs615-ride: Enable Adreno 612 GPU
-> 
-> Qingqing Zhou (1):
->       arm64: dts: qcom: qcs615: add the GPU SMMU node
-> 
->  .../devicetree/bindings/display/msm/gmu.yaml       |  98 +++++++++++---
->  .../devicetree/bindings/display/msm/gpu.yaml       |  31 ++++-
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts           |   8 ++
->  arch/arm64/boot/dts/qcom/sm6150.dtsi               | 139 ++++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |  16 +++
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c              |  87 ++++++++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 143 ++++++++++++++++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h              |   1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c        |   3 +-
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c            |   1 +
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h            |  16 ++-
->  11 files changed, 511 insertions(+), 32 deletions(-)
-> ---
-> base-commit: cb6649f6217c0331b885cf787f1d175963e2a1d2
-> change-id: 20251015-qcs615-spin-2-ed45b0deb998
-> 
-> Best regards,
-> --
-> Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> 
-> 
-> 
+I found an issue when the slots event is injected and will look at it in v2=
+:
+```
+$ perf stat -v -e 'topdown-retiring' -a -- sleep 0.1
+Using CPUID GenuineIntel-6-8D-1
+topdown-retiring -> cpu/topdown-retiring/
+WARNING: events were regrouped to match PMUs
+evlist after sorting/fixing: '{slots,topdown-retiring}'
+Control descriptor is not initialized
+perf: util/evsel.c:2028: get_group_fd: Assertion `!(!leader->core.fd)' fail=
+ed.
+Aborted
+```
 
+Thanks,
+Ian
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: cb6649f6217c0331b885cf787f1d175963e2a1d2 (use --merge-base to override)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com:
-
-arch/arm64/boot/dts/qcom/sm6115p-lenovo-j606f.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/sm6115p-lenovo-j606f.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[89, 13], [89, 4], [2, 150], [2, 76], [89, 7], [89, 10]]
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: gpu@5900000 (qcom,adreno-07000200): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: gpu@5900000 (qcom,adreno-07000200): False schema does not allow [[86, 8], [86, 0], [29, 19], [29, 87], [86, 3], [86, 6]]
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[111, 13], [111, 4], [48, 150], [48, 76], [111, 7], [111, 10]]
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[101, 13], [101, 4], [2, 150], [2, 76], [101, 7], [101, 10]]
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/sm4250-oneplus-billie2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow ['core', 'iface', 'mem_iface', 'alt_mem_iface', 'gmu', 'xo']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-arch/arm64/boot/dts/qcom/sm4250-oneplus-billie2.dtb: gpu@5900000 (qcom,adreno-610.0): False schema does not allow [[87, 13], [87, 4], [44, 150], [44, 76], [87, 7], [87, 10]]
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml
-
-
-
-
-
+> Thanks,
+> Tom
+>
+> > Closes:
+> > https://lore.kernel.org/lkml/18f20d38-070c-4e17-bc90-cf7102e1e53d@linux=
+.intel.com/
+> > Fixes: 035c17893082 ("perf parse-events: Add 'X' modifier to exclude
+> > an event from being regrouped")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/parse-events.c | 16 ++++++++++------
+> >  1 file changed, 10 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-
+> > events.c
+> > index 3aec86aebdc6..1a5da93f4094 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -1973,14 +1973,18 @@ static int evlist__cmp(void *_fg_idx, const
+> > struct list_head *l, const struct li
+> >        * event's index is used. An index may be forced for events
+> > that
+> >        * must be in the same group, namely Intel topdown events.
+> >        */
+> > -     if (*force_grouped_idx !=3D -1 &&
+> > arch_evsel__must_be_in_group(lhs)) {
+> > +     if (lhs->dont_regroup) {
+> > +             lhs_sort_idx =3D lhs_core->idx;
+> > +     } else if (*force_grouped_idx !=3D -1 &&
+> > arch_evsel__must_be_in_group(lhs)) {
+> >               lhs_sort_idx =3D *force_grouped_idx;
+> >       } else {
+> >               bool lhs_has_group =3D lhs_core->leader !=3D lhs_core ||
+> > lhs_core->nr_members > 1;
+> >
+> >               lhs_sort_idx =3D lhs_has_group ? lhs_core->leader->idx
+> > : lhs_core->idx;
+> >       }
+> > -     if (*force_grouped_idx !=3D -1 &&
+> > arch_evsel__must_be_in_group(rhs)) {
+> > +     if (rhs->dont_regroup) {
+> > +             rhs_sort_idx =3D rhs_core->idx;
+> > +     } else if (*force_grouped_idx !=3D -1 &&
+> > arch_evsel__must_be_in_group(rhs)) {
+> >               rhs_sort_idx =3D *force_grouped_idx;
+> >       } else {
+> >               bool rhs_has_group =3D rhs_core->leader !=3D rhs_core ||
+> > rhs_core->nr_members > 1;
+> > @@ -2078,10 +2082,10 @@ static int
+> > parse_events__sort_events_and_fix_groups(struct list_head *list)
+> >        */
+> >       idx =3D 0;
+> >       list_for_each_entry(pos, list, core.node) {
+> > -             const struct evsel *pos_leader =3D evsel__leader(pos);
+> > +             struct evsel *pos_leader =3D evsel__leader(pos);
+> >               const char *pos_pmu_name =3D pos->group_pmu_name;
+> >               const char *cur_leader_pmu_name;
+> > -             bool pos_force_grouped =3D force_grouped_idx !=3D -1 &&
+> > +             bool pos_force_grouped =3D force_grouped_idx !=3D -1 &&
+> > !pos->dont_regroup &&
+> >                       arch_evsel__must_be_in_group(pos);
+> >
+> >               /* Reset index and nr_members. */
+> > @@ -2095,8 +2099,8 @@ static int
+> > parse_events__sort_events_and_fix_groups(struct list_head *list)
+> >                * groups can't span PMUs.
+> >                */
+> >               if (!cur_leader || pos->dont_regroup) {
+> > -                     cur_leader =3D pos;
+> > -                     cur_leaders_grp =3D &pos->core;
+> > +                     cur_leader =3D pos_leader;
+> > +                     cur_leaders_grp =3D &cur_leader->core;
+> >                       if (pos_force_grouped)
+> >                               force_grouped_leader =3D pos;
+> >               }
+>
 
