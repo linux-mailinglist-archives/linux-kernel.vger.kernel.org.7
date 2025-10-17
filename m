@@ -1,170 +1,194 @@
-Return-Path: <linux-kernel+bounces-857515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A48BE6FE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:46:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460FABE7007
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91F3C35B369
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:46:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0E145062E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D0925CC74;
-	Fri, 17 Oct 2025 07:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="P9FNiTIH"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5519425783B;
+	Fri, 17 Oct 2025 07:46:55 +0000 (UTC)
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023086.outbound.protection.outlook.com [40.107.44.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6653D2550D5;
-	Fri, 17 Oct 2025 07:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687149; cv=none; b=h/0jkkbCHuCQNPTI1z98WT9OnMLz0fUrriGOWc3UbdwS/ZCadYfgvicOEevLEk0H1ATs0ZxqGUnRJ0MeTVImQkzLQk0zP3ccIn8sLSvttriWT/+LzrRGJwngUQ50ey1m49cjTNSej6fhRxmoHkrSjmb9YpN1Tmow3mamKVyKmA0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687149; c=relaxed/simple;
-	bh=Xy8tQ6z9q1+b8QlGnXUAhw4J1Hdss29/peYK3Rr/gWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KnP7AiHzsENFWL2rqRKLDrU9L40GRPZNWDPYZ4EC8B/0ObaEHm5snphIKGwrZrDrQAi0rgBKmzFRSpqAptO2LG4FskuRIGOlcW2XXE1ZHBkotYvYCkSf79sx755kuvzTnmAY6uq+E5I8PFXCWZupM7sNBwKIvwA7TsV1V6K6c7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=P9FNiTIH; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=NYSt968XvTx34dKez/5OXfwcS9OE8mZYevsTppAeHLE=;
-	b=P9FNiTIH+9BnY/d+q/cBGWYFxm+qmm+QWc34kaTtLlFB0lgg7rjxI1gt4wIVlERd9sYNeCxq6
-	A7NLU79HKAKZjb5kNLFEUHCCvsYPri3N9jKItNY8eCNaaXbOU7bZkoP2DAlKj4S16c69+HZPFF5
-	bYmRwZJYd0DGflIMPFgxhRY=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cnxgk1xtBzLlVc;
-	Fri, 17 Oct 2025 15:45:22 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id BB2D4180042;
-	Fri, 17 Oct 2025 15:45:43 +0800 (CST)
-Received: from [10.174.177.19] (10.174.177.19) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 17 Oct 2025 15:45:42 +0800
-Message-ID: <ecd158c4-5af7-415c-9d29-d5ec8fec49a2@huawei.com>
-Date: Fri, 17 Oct 2025 15:45:41 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE43A22DFA4;
+	Fri, 17 Oct 2025 07:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760687214; cv=fail; b=glRHPfh3jsLS+AuiKeNeNFBqvwSXL81vms+DyM5YER7dIBDbWciYqjmxCEDgMc6LFQjJKoB8JuPNd+qVJ43mr1lTcutZVltJ1jgmz1wFL5uEbXEHYXZ2VAKyuYmHbHSec3w3cWi9JQwPDiPDPO5FfQGfPH8vKiZAdaknUWRhUQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760687214; c=relaxed/simple;
+	bh=JPG6SSLyC+ESJkrFc7geu05/G7tmErO1dkT1ix/vxSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hId6n3NB74zzpW8epdw+qYMmlfF6tqSo/o6PS+x5Q4VUmzSTvAZzUpFJG4NpdTqwMiCm99vgB7SA+wSM1xTIzHHzWYyhoPlvEZHPvBFjBUD2XwXP2O8hIDQ4gHOjvrk5pWBvtOyvJ0tDPGwuIBPtEdHALdTI52f2LPDX3jWYFv8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MefhjDH69cDTBz+cR9FGToLAEaMj++sdAbVtactKzfO6WIb8Q4NUpq6qCPjcvrzQy/Ceywp9xfCyY3uOQShl1ZyhIaL+e72JlajOmjP0J+BUtK8p/Ln4/coyV6GTeCYgd2VnaxeVwavyBz4Rffi19cLvnItIAlcuAS6BvAJk3JUUzjJFqG7Okxe2kZ8slp3ExNy+O7bDe3H6sUzH16sG7uO+jNOTJxTzuOOXuIGTAyxx9JZEbVGPOGFanN047C1v60T5Wwzmmxv9p1DwIOAzkUMKgLYs9trZ25zHW8lLXCzyUo9oYZ+hnLny/hNA7Ex3Xw/D0Hiz2yMXVe6aAA0mUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3tvxCvy53Nd2u9uv4h1/Z8p3w7ai/Crv2fKXgAl5unM=;
+ b=MMpFr3k+eIMxoh3T+w4TaTjCpmaPdLv1SL6aLq2UByd/D+mLY5t+kgXGkeRxdc7XHwuPur2+mjURJXF10rQbwsgP5h/YvWCJDHut4vdW1UHnS170SZhkoYcP07aCUwExWk1jbWpWfUSght8es7bxcySR2Q1UcajKvADuji7iRpAO30xDBPeaTfDP5gZrKTC0QX577z7MB2PRwuEE27PQCgEP3Fjh7xAREag57pxUZGxtHN9tcS1hLzwH/vvsZW+4ly+X/k+EWLyiRZ8dAN9sUEkazQd0iamLVTBjyxg1CBQZNE82C9UBxKOCCix/yunCU0JbfzPTVEmwhhv3pj01PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from PSBPR02CA0003.apcprd02.prod.outlook.com (2603:1096:301::13) by
+ TYSPR06MB6315.apcprd06.prod.outlook.com (2603:1096:400:40f::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.12; Fri, 17 Oct 2025 07:46:49 +0000
+Received: from TY2PEPF0000AB8A.apcprd03.prod.outlook.com
+ (2603:1096:301:0:cafe::a) by PSBPR02CA0003.outlook.office365.com
+ (2603:1096:301::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.13 via Frontend Transport; Fri,
+ 17 Oct 2025 07:46:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB8A.mail.protection.outlook.com (10.167.253.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Fri, 17 Oct 2025 07:46:47 +0000
+Received: from localhost.localdomain (unknown [172.16.64.196])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 838E341C0152;
+	Fri, 17 Oct 2025 15:46:46 +0800 (CST)
+From: Gary Yang <gary.yang@cixtech.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	cix-kernel-upstream@cixtech.com,
+	Gary Yang <gary.yang@cixtech.com>
+Subject: [PATCH v4 0/3] Add pinctrl support for Sky1
+Date: Fri, 17 Oct 2025 15:46:43 +0800
+Message-ID: <20251017074646.3344924-1-gary.yang@cixtech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net/smc: fix general protection fault in
- __smc_diag_dump
-To: Kuniyuki Iwashima <kuniyu@google.com>
-CC: <alibuda@linux.alibaba.com>, <davem@davemloft.net>,
-	<dust.li@linux.alibaba.com>, <edumazet@google.com>,
-	<guwen@linux.alibaba.com>, <horms@kernel.org>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-s390@vger.kernel.org>, <mjambigi@linux.ibm.com>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <sidraya@linux.ibm.com>,
-	<tonylu@linux.alibaba.com>, <wenjia@linux.ibm.com>, <yuehaibing@huawei.com>,
-	<zhangchangzhong@huawei.com>
-References: <20251017024827.3137512-1-wangliang74@huawei.com>
- <20251017055106.3603987-1-kuniyu@google.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <20251017055106.3603987-1-kuniyu@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB8A:EE_|TYSPR06MB6315:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 1e88dfc2-370d-462f-b202-08de0d5153ae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?j+1UliJsvAyf76joDycBlTR0+ZNISm8udGi1yu/BaSzaoxSUeKzQtNFrI/9L?=
+ =?us-ascii?Q?9bCAcjJOw+s+KvLP8xgwSFy5fP5HFM9+4oW+ZZg98UIOi3eoCp2Z/lyckydR?=
+ =?us-ascii?Q?A3yC1x7i74gFIv2Oc5Q3JVSkb1g9dTcVwMT+KnoBzh/rS/59MPVA6rxWpBgO?=
+ =?us-ascii?Q?jY7yXZ7pQejfOd3+Iq03l/2NaOQe0kTDGxixqOVsW71CR+pkpD9ZQK2Uor6s?=
+ =?us-ascii?Q?u0hmg0IKoZiSAbgTCDN1VBoMlTW3YBKG4uk/Igynnhsa6edJrYV4P1OYBvTd?=
+ =?us-ascii?Q?yvpZANj0t709jtNORdT8SFFJ1yBCNW10ISV+UuzUlQijeF+TvXLyaw19G4Cq?=
+ =?us-ascii?Q?wd5Bp+F2OxlHAJYS7Yi2U6jbK8Qxuf2VhsBIgBhDDS3k6SQvCGJ0iuUYEQQ8?=
+ =?us-ascii?Q?+osNLdqBvOSUb6lbrDEjrX08d2T3hW2JDwSXIp5SMMg8Znv9XhNQibhFZvJZ?=
+ =?us-ascii?Q?fda/RHqnk2h95GD+iLERv8uwQMMCoBCLT22aymisPezQYmLmTr7KHo8306HB?=
+ =?us-ascii?Q?6jIwpLRzdeHeJ7mA0/V2CLrWUxlFeqi0A0rrNl9vzzLI9fvLu06d2/6Xyc5x?=
+ =?us-ascii?Q?eNzKno194CBiyfE07WQFKWQz3DQRi4IZBrkjoJPxS2zNHo/5V3BuW6SwkDSJ?=
+ =?us-ascii?Q?0OucFTiZWEEi+ZUq9o+cVq3Aep0DL4Hxi/Vj0DH8SoM3ICmG28hEsiG4bmxk?=
+ =?us-ascii?Q?H9Eeq5HeISB4zwJbgl/ltvrlpIhXpcfidyhl56PfwfBvF5oifCbjp9Vz2Of9?=
+ =?us-ascii?Q?WE2bJIIzsVCTvKg0Ok5lsrryK7KM0O1QbzKw1VevEahu7rZeRGrAJJ1EKz2n?=
+ =?us-ascii?Q?DmeMZXk7+cbl0nVLZQBan+ODYDxxc2jl2gKD+YaP0X+S/ZBCS0Yz/5s3Chq/?=
+ =?us-ascii?Q?2jdIdwljuSigrpU7ekOeVc+QSSOPnFUdyInIP3E7DDRju3Rc0vu1a1MAB5i+?=
+ =?us-ascii?Q?JDPkcBsBcc63iu6GfacDTeM/VoD619CsB6FCMquB7PJIWoYm+uBOJDdkGXVf?=
+ =?us-ascii?Q?n0klrqNscGSKpScrwpLJQkIv16uxN2uKJJG7cQv9u6g0KCgV+hBk8dAup5qq?=
+ =?us-ascii?Q?fPpoOLcgCojVtpCb4MnYj2WxZqfuuE+nR6KJNyl7X9FDBkswOkc/wjHHK+QP?=
+ =?us-ascii?Q?0qvNsl2r5f3xfU8EuFVoexiD7cFXCNI9dS9TY7Ul/rqq8eF+jgLxw1NAMF1m?=
+ =?us-ascii?Q?1RLKmBy/gq3wqjqgcmMZ6uamD5F89pkhIobj0avXupJRnoDUIGttA+RBKqv0?=
+ =?us-ascii?Q?TmSCiTZo7udWCX4qdAFUcSodi+TFpDlYKTKxWOt/vQrscOAuEHhLxeblOCEL?=
+ =?us-ascii?Q?7XmbbxgqgtfclpSmhuSLlGOb+eF+wL7H9dENINCjrNgjoPBjLMe4jgrc1XL7?=
+ =?us-ascii?Q?9FiRXvCdCyonZRIYlH9H6/qLIj29fRvQrdptLqhteDyvnvfVmn6NrXFfKKIf?=
+ =?us-ascii?Q?Jo5UhFTbg74k5nhELuFkygx6LuBLLNTwjUNCkYjWTPtym+ogPL1dwK90UAuL?=
+ =?us-ascii?Q?GGTNujECEyfdo8FO9GyG483dkVuGL++84iggDDFjqeT35WUk4ewdEsmPHbJQ?=
+ =?us-ascii?Q?Hxo63wC8Mn0jp0M0gWs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 07:46:47.8035
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e88dfc2-370d-462f-b202-08de0d5153ae
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	TY2PEPF0000AB8A.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6315
+
+Patch 1: Add dt-binding doc for pinctrl on Sky1
+Patch 2: Add pin-controller driver for sky1
+Patch 3: Add pinctrl nodes for sky1
+
+changes for v4:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=cix,sky1-pinctrl.yaml
+scripts/checkpatch.pl 000*.patch
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- support driver_strength = <8> (mA)
+- Fix dt-bindings style
 
 
-在 2025/10/17 13:48, Kuniyuki Iwashima 写道:
-> From: Wang Liang <wangliang74@huawei.com>
-> Date: Fri, 17 Oct 2025 10:48:27 +0800
->> The syzbot report a crash:
->>
->>    Oops: general protection fault, probably for non-canonical address 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
->>    KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead0000001f]
->>    CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PREEMPT(full)
->>    Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
->>    RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
->>    RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c:89
->>    Call Trace:
->>     <TASK>
->>     smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
->>     smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
->>     netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
->>     __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
->>     netlink_dump_start include/linux/netlink.h:341 [inline]
->>     smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
->>     __sock_diag_cmd net/core/sock_diag.c:249 [inline]
->>     sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
->>     netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
->>     netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->>     netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
->>     netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
->>     sock_sendmsg_nosec net/socket.c:714 [inline]
->>     __sock_sendmsg net/socket.c:729 [inline]
->>     ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
->>     ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
->>     __sys_sendmsg+0x16d/0x220 net/socket.c:2700
->>     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>     do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
->>     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>     </TASK>
->>
->> The process like this:
->>
->>                 (CPU1)              |             (CPU2)
->>    ---------------------------------|-------------------------------
->>    inet_create()                    |
->>      // init clcsock to NULL        |
->>      sk = sk_alloc()                |
->>                                     |
->>      // unexpectedly change clcsock |
->>      inet_init_csk_locks()          |
->>                                     |
->>      // add sk to hash table        |
->>      smc_inet_init_sock()           |
->>        smc_sk_init()                |
->>          smc_hash_sk()              |
->>                                     | // traverse the hash table
->>                                     | smc_diag_dump_proto
->>                                     |   __smc_diag_dump()
->>                                     |     // visit wrong clcsock
->>                                     |     smc_diag_msg_common_fill()
->>      // alloc clcsock               |
->>      smc_create_clcsk               |
->>        sock_create_kern             |
->>
->> With CONFIG_DEBUG_LOCK_ALLOC=y, the smc->clcsock is unexpectedly changed
->> in inet_init_csk_locks(). The INET_PROTOSW_ICSK flag is no need by smc,
->> just remove it.
->>
->> After removing the INET_PROTOSW_ICSK flag, this patch alse revert
->> commit 6fd27ea183c2 ("net/smc: fix lacks of icsk_syn_mss with IPPROTO_SMC")
->> to avoid casting smc_sock to inet_connection_sock.
->>
->> Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
->> Tested-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
-> nit: looks like this diff is not tested by syzbot, you may
-> want to send diff to syzbot.
->
+Changes for v3:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=cix,sky1-pinctrl.yaml
+scripts/checkpatch.pl 000*.patch
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- Re-order the patch set, and move dt-bindings to the 1st patch.
+- Refine the pinctrl driver with SKY_PINFUNCTION macro
+- Fix warnings when make dt_binding_check
 
-Thank you for the reminder!
+Changes for v2:
+- restructure the pinctrl driver to support pinmux=<..>
+- redefine pinmux macros
+- move header file from dt-bindings to dts
+- fix the code-style issues
 
-I just sent this diff to syzbot, and the test return OK:
-https://lore.kernel.org/netdev/b76f348d-61d3-404b-81c6-57621a14046b@huawei.com/T/#t
+Gary Yang (3):
+  dt-bindings: pinctrl: Add cix,sky1-pinctrl
+  pinctrl: cix: Add pin-controller support for sky1
+  arm64: dts: cix: Add pinctrl nodes for sky1
 
-------
-Best regards
-Wang Liang
+ .../bindings/pinctrl/cix,sky1-pinctrl.yaml    |  94 +++
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  32 +
+ arch/arm64/boot/dts/cix/sky1-pinfunc.h        | 418 +++++++++++++
+ arch/arm64/boot/dts/cix/sky1.dtsi             |  10 +
+ drivers/pinctrl/Kconfig                       |   1 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/cix/Kconfig                   |  14 +
+ drivers/pinctrl/cix/Makefile                  |   4 +
+ drivers/pinctrl/cix/pinctrl-sky1-base.c       | 573 ++++++++++++++++++
+ drivers/pinctrl/cix/pinctrl-sky1.c            | 559 +++++++++++++++++
+ drivers/pinctrl/cix/pinctrl-sky1.h            |  48 ++
+ 11 files changed, 1754 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/cix/sky1-pinfunc.h
+ create mode 100644 drivers/pinctrl/cix/Kconfig
+ create mode 100644 drivers/pinctrl/cix/Makefile
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1-base.c
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1.c
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1.h
 
->> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> Change itself looks good.
->
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
->
-> Thanks!
+-- 
+2.49.0
+
 
