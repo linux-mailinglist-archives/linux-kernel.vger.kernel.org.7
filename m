@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-858603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DE2BEB43F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:51:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3936BEB442
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 20:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 577504E62EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C266A6E0290
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B086033290F;
-	Fri, 17 Oct 2025 18:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNDqKKbA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3558F32F743
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 18:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA00332EBD;
+	Fri, 17 Oct 2025 18:51:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3DE330317;
+	Fri, 17 Oct 2025 18:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760727057; cv=none; b=ljaZbJf4mFE9D9P47BQc5XWVZ/xsEq/zL8QqEBS0FWBmwsoNisheKV8b/1XQ1ahvknLh8yG4c1JfCtxz/3DsWUS9G4v3HrneAmKn+4tLM6aRBggEayTkzFep5hh63e4mq8JIw7U3r2ls9kx6GsPFzzU8D4p5sWCQW8tKhDBM7hc=
+	t=1760727065; cv=none; b=kVJR62NVuk8rhF3uay3CBp9Jcv24ppUTcOH4mxLimpHlq0VoazcK10mKWfvyCqYPejXNTZBYuHICJ9oz2HMHdyKru0W+nqNa/ZqIXDGv+J9ntPQMWe+ga4UMvi+I2QgdgQrqN2YQ68tIB93MMfH1rJZyUQEbfqLLF0u4Gah8QXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760727057; c=relaxed/simple;
-	bh=0+vEWMKWbps2YeElfwqAEuh/g61xJ4w7S1g5dke3YkA=;
+	s=arc-20240116; t=1760727065; c=relaxed/simple;
+	bh=YfiRpGgU2CZk4F1dt+WoaR4ShjX7Rc+Ykz1eP6X1Lng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRJi+3d2aHcPIOP07P/p9XETaBtHluQA2QRlQArj/qxtinELS8NN15CyDJsDy/k9EljHto1PdY1TkiD0gY04w6sqbjddAHfLiDiGhaxt4gaAodruQA3LoMC8M5CW7AEFD5jyaU7H8vdAve35ZjYb+hfxKqFK6UHNEMNbIIO0yRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNDqKKbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B13C4CEFE;
-	Fri, 17 Oct 2025 18:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760727056;
-	bh=0+vEWMKWbps2YeElfwqAEuh/g61xJ4w7S1g5dke3YkA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lNDqKKbAGUbYEmN3FGOKxNT5kFN+ACTYMkfjFIswbYy6bLRzX90a/DN34/Mu5wePT
-	 ufpnhP2WXzoRZapkFjLRbYBeNOGA6SAluCXrms6pDx4zmacKhgicR2yFSsij/ErT1u
-	 Bp9squ7fEtomXVYPiG9c6epVBSN+ISzRcxZ/Sw5eW79YPawL33GPIQDxE38ne46zUx
-	 oeZkSN5Ixyl86X5DvXwEtxh7fkdu6M5xihrxgNmiikG8AeQ33+m32A1E0g8+i1N9yQ
-	 B7zk6xyIOjRGs4AHvgnFe4MVAOcZq/StzqqM7NNzyX6RgOrHkxsr3+ekqFMWod2RWU
-	 GX94P/m5Qf1bQ==
-Message-ID: <42f0ccf4-c4cf-46c2-a412-55a1e74279cb@kernel.org>
-Date: Fri, 17 Oct 2025 13:50:54 -0500
+	 In-Reply-To:Content-Type; b=hPYm6PCCgoXRiole9IMEt8BUSs8GmfsHnnC/+pngBfUROTpTRRD/mJoR8VOtlT5yW3Y15UjS6aGieXJQjjZ+gS11RHC0TVbbn9HdaM9XUPNV3Pb8g0KlAJc67Ak4e18z8iv2Fl3mQ7OgpjeSf6751LVp/NEkXSENq15MnLmOGIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D9021515;
+	Fri, 17 Oct 2025 11:50:54 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75A823F6A8;
+	Fri, 17 Oct 2025 11:50:56 -0700 (PDT)
+Message-ID: <0a96d2d9-e548-4362-ae23-856d1d44548b@arm.com>
+Date: Fri, 17 Oct 2025 19:50:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,609 +41,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/amdxdna: Support firmware debug buffer
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
-References: <20251016203016.819441-1-lizhi.hou@amd.com>
- <19415004-ed31-4388-ba40-deb63767c31b@amd.com>
- <72f7dad1-d589-3807-43bf-7c8274008a82@amd.com>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <72f7dad1-d589-3807-43bf-7c8274008a82@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 06/29] ACPI / MPAM: Parse the MPAM table
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-7-james.morse@arm.com>
+ <20250911141726.00002f0c@huawei.com>
+ <334e0e8b-3f30-48b7-896f-0b31111d2b41@arm.com>
+ <20250926154806.0000609e@huawei.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <20250926154806.0000609e@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi Jonathan,
+
+On 26/09/2025 15:48, Jonathan Cameron wrote:
+>>>> +	char uid[16];
+>>>> +	u32 acpi_id;
+>>>> +
+>>>> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
+>>>> +		return 0;
+>>>> +
+>>>> +	if (table->revision < 1)
+>>>> +		return 0;
+>>>> +
+>>>> +	table_end = (char *)table + table->length;
+>>>> +
+>>>> +	while (table_offset < table_end) {
+>>>> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+>>>> +		table_offset += tbl_msc->length;
+>>>> +
+>>>> +		if (table_offset > table_end) {
+>>>> +			pr_debug("MSC entry overlaps end of ACPI table\n");
+>>>> +			break;  
+>>
+>>> That this isn't considered an error is a bit subtle and made me wonder
+>>> if there was a use of uninitialized pdev (there isn't because err == 0)  
+>>
+>> Its somewhat a philosophical arguement. I don't expect the kernel to have to validate
+>> these tables, they're not provided by the user and there quickly becomes a point where
+>> you have to trust them, and they have to be correct.
+
+> Potential buffer overrun is to me always worth error out screaming, but I get your
+> broader point.   Maybe just make it a pr_err()
+
+Sure, done.
 
 
+>> At the other extreme is the asusmption the table is line-noise and we should check
+>> everything to avoid out of bounds accesses. Dave wanted the diagnostic messages on these.
+>>
+>> As this is called from an initcall, the best you get is an inexplicable print message.
+>> (what should we say - update your firmware?)
+> 
+> Depends on whether you can lean hard on the firmware team. Much easier
+> for me if I can tell them the board doesn't boot because they got it wrong.
+> 
+> That would have been safer if we had this upstream in advance of hardware, but indeed
+> a little high risk today as who knows what borked tables are out there.
+> 
+> Personal preference though is to error out on things like this and handle the papering
+> over at the top level.  Don't put extra effort into checking tables are invalid
+> but if we happen to notice as part of code safety stuff like sizes then good to scream
+> about it.
+> 
+>>
+>>
+>> Silently failing in this code is always safe as the driver has a count of the number of
+>> MSC, and doesn't start accessing the hardware until its found them all.
+>> (this is because to find the system wide minimum value - and its not worth starting if
+>>  its not possible to finish).
+>>
+>>
+>>> Why not return here?  
+>>
+>> Just because there was no other return in the loop, and I hate surprise returns.
+>>
+>> I'll change it if it avoids thinking about how that platform_device_put() gets skipped!
+>>
+>>
+>>>   
+>>>> +		}
+>>>> +
+>>>> +		/*
+>>>> +		 * If any of the reserved fields are set, make no attempt to
+>>>> +		 * parse the MSC structure. This MSC will still be counted,
+>>>> +		 * meaning the MPAM driver can't probe against all MSC, and
+>>>> +		 * will never be enabled. There is no way to enable it safely,
+>>>> +		 * because we cannot determine safe system-wide partid and pmg
+>>>> +		 * ranges in this situation.
+>>>> +		 */  
+>>
+>>> This is decidedly paranoid. I'd normally expect the architecture to be based
+>>> on assumption that is fine for old software to ignore new fields.  ACPI itself
+>>> has fairly firm rules on this (though it goes wrong sometimes :)  
+>>
+>> Yeah - the MPAM table isn't properly structured as subtables. I don't see how they are
+>> going to extend it if they need to.
+>>
+>> The paranoia is that anything set in these reserved fields probably indicates something
+>> the driver needs to know about: a case in point is the way PCC was added.
+>>
+>> I'd much prefer we skip creation of MSC devices that have properties we don't understand.
+>> acpi_mpam_count_msc() still counts them - which means the driver never finds all the MSC,
+>> and never touches the hardware.
+>>
+>> MPAM isn't a critical feature, its better that it be disabled than make things worse.
+>> (the same attitude holds with the response to the MPAM error interrupt - reset everything
+>>  and pack up shop. This is bettern than accidentally combining important/unimportant
+>>  tasks)
+>>
+>>
+>>> I'm guessing there is something out there that made this necessary though so
+>>> keep it if you actually need it.  
+>>
+>> It's a paranoid/violent reaction to the way PCC was added - without something like this,
+>> that would have led to the OS trying to map the 0 page and poking around in it - never
+>> likely to go well.
+>>
+>> Doing this does let them pull another PCC without stable kernels going wrong.
+>> Ultimately I think they'll need to replace the table with one that is properly structured.
+>> For now - this is working with what we have.
 
-On 10/16/2025 4:31 PM, Lizhi Hou wrote:
-> 
-> On 10/16/25 13:54, Mario Limonciello wrote:
->> On 10/16/25 3:30 PM, Lizhi Hou wrote:
->>> To collect firmware debug information, the userspace application 
->>> allocates
->>> a AMDXDNA_BO_DEV buffer object through DRM_IOCTL_AMDXDNA_CREATE_BO.
->>> Then it associates the buffer with the hardware context through
->>> DRM_IOCTL_AMDXDNA_CONFIG_HWCTX which requests firmware to bind the 
->>> buffer
->>> through a mailbox command. The firmware then writes the debug data into
->>> this buffer. The buffer can be mapped into userspace so that
->>> applications can retrieve and analyze the firmware debug information.
->>
->> Let me ask a high level question.  Do we really want all userspace to 
->> always have access to this debug information?  Could this leak 
->> information between processes potentially?
-> 
-> The buffer is allocated by the application and bound to the hardware 
-> context. Thus,  the debug data is per hardware context (per 
-> application). Only the process who owns the hardware context will have 
-> access to the debug information.  So there is not leak to other process.
-> 
->>
->> Two ideas:
->>
->> 1) I wonder if this is better placed in debugfs files.
-> The debug bo is per process. The application allocates and owns the 
-> buffer and only the debug data for this application will be output to 
-> this buffer.  So debugfs might not fit here.
->> 2) If this architecture does make sense - what are your thoughts on 
->> tying the ability to use it to kernel lockdown?
-> 
-> I do not fully understand the question. This feature is useful for 
-> application debugging. And it is also required for a sanity test of xrt 
-> tools. Hopefully this helps. :)
-> 
-> 
-Thanks, that helps.  I have one small comment below.
+> Fair enough. I'm too lazy / behind with reviews to go scream via our channels about
+> problems here.  Paranoia it is.  Maybe we'll end up backporting some 'fixes' that
+> ignore nicely added fields with appropriate control bits to turn them on.
+> So be it if that happens.
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
-> Thanks,
-> 
-> Lizhi
-> 
->>
+Yup - I'm expecting to at least backport "ignore this feature" patches when the table gets
+changed. It's not how its supposed to work, but the missing subtable header wasn't caught
+until it was too late.
+MPAM isn't a critical feature, so it shouldn't matter too much if old kernels on new
+hardware can't use it.
+
+
+>>>> +		if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc->reserved2) {
+>>>> +			pr_err_once("Unrecognised MSC, MPAM not usable\n");
+>>>> +			pr_debug("MSC.%u: reserved field set\n", tbl_msc->identifier);
+>>>> +			continue;
+>>>> +		}
+>>>> +
+>>>> +		if (!tbl_msc->mmio_size) {
+>>>> +			pr_debug("MSC.%u: marked as disabled\n", tbl_msc->identifier);
+>>>> +			continue;
+>>>> +		}
+>>>> +
+>>>> +		if (decode_interface_type(tbl_msc, &iface)) {
+>>>> +			pr_debug("MSC.%u: unknown interface type\n", tbl_msc->identifier);
+>>>> +			continue;
+>>>> +		}
+>>>> +
+>>>> +		next_res = 0;
+>>>> +		next_prop = 0;
+>>>> +		memset(res, 0, sizeof(res));
+>>>> +		memset(props, 0, sizeof(props));
+>>>> +
+>>>> +		pdev = platform_device_alloc("mpam_msc", tbl_msc->identifier);  
 >>>
->>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
->>> ---
->>>   drivers/accel/amdxdna/TODO              |   1 -
->>>   drivers/accel/amdxdna/aie2_ctx.c        | 116 ++++++++++++++++++++++--
->>>   drivers/accel/amdxdna/aie2_message.c    |  31 ++++++-
->>>   drivers/accel/amdxdna/aie2_msg_priv.h   |  13 +++
->>>   drivers/accel/amdxdna/aie2_pci.c        |   1 +
->>>   drivers/accel/amdxdna/aie2_pci.h        |   3 +
->>>   drivers/accel/amdxdna/amdxdna_ctx.c     |  39 +++++++-
->>>   drivers/accel/amdxdna/amdxdna_ctx.h     |  16 +++-
->>>   drivers/accel/amdxdna/amdxdna_gem.c     |   3 +
->>>   drivers/accel/amdxdna/amdxdna_gem.h     |   6 ++
->>>   drivers/accel/amdxdna/amdxdna_pci_drv.c |   3 +-
->>>   drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
->>>   drivers/accel/amdxdna/npu1_regs.c       |   1 +
->>>   drivers/accel/amdxdna/npu4_regs.c       |   1 +
->>>   14 files changed, 221 insertions(+), 14 deletions(-)
+>>> https://lore.kernel.org/all/20241009124120.1124-13-shiju.jose@huawei.com/
+>>> was a proposal to add a DEFINE_FREE() to clean these up.  Might be worth a revisit.
+>>> Then Greg was against the use it was put to and asking for an example of where
+>>> it helped.  Maybe this is that example.
 >>>
->>> diff --git a/drivers/accel/amdxdna/TODO b/drivers/accel/amdxdna/TODO
->>> index ad8ac6e315b6..0e4bbebeaedf 100644
->>> --- a/drivers/accel/amdxdna/TODO
->>> +++ b/drivers/accel/amdxdna/TODO
->>> @@ -1,2 +1 @@
->>>   - Add debugfs support
->>> -- Add debug BO support
->>> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/ 
->>> amdxdna/aie2_ctx.c
->>> index ab4d66f1325d..63450b7773ac 100644
->>> --- a/drivers/accel/amdxdna/aie2_ctx.c
->>> +++ b/drivers/accel/amdxdna/aie2_ctx.c
->>> @@ -226,11 +226,10 @@ aie2_sched_resp_handler(void *handle, void 
->>> __iomem *data, size_t size)
->>>   }
->>>     static int
->>> -aie2_sched_nocmd_resp_handler(void *handle, void __iomem *data, 
->>> size_t size)
->>> +aie2_sched_drvcmd_resp_handler(void *handle, void __iomem *data, 
->>> size_t size)
->>>   {
->>>       struct amdxdna_sched_job *job = handle;
->>>       int ret = 0;
->>> -    u32 status;
->>>         if (unlikely(!data))
->>>           goto out;
->>> @@ -240,8 +239,7 @@ aie2_sched_nocmd_resp_handler(void *handle, void 
->>> __iomem *data, size_t size)
->>>           goto out;
->>>       }
->>>   -    status = readl(data);
->>> -    XDNA_DBG(job->hwctx->client->xdna, "Resp status 0x%x", status);
->>> +    job->drv_cmd->result = readl(data);
->>>     out:
->>>       aie2_sched_notify(job);
->>> @@ -314,8 +312,18 @@ aie2_sched_job_run(struct drm_sched_job *sched_job)
->>>       kref_get(&job->refcnt);
->>>       fence = dma_fence_get(job->fence);
->>>   -    if (unlikely(!cmd_abo)) {
->>> -        ret = aie2_sync_bo(hwctx, job, aie2_sched_nocmd_resp_handler);
->>> +    if (job->drv_cmd) {
->>> +        switch (job->drv_cmd->opcode) {
->>> +        case SYNC_DEBUG_BO:
->>> +            ret = aie2_sync_bo(hwctx, job, 
->>> aie2_sched_drvcmd_resp_handler);
->>> +            break;
->>> +        case ATTACH_DEBUG_BO:
->>> +            ret = aie2_config_debug_bo(hwctx, job, 
->>> aie2_sched_drvcmd_resp_handler);
->>> +            break;
->>> +        default:
->>> +            ret = -EINVAL;
->>> +            break;
->>> +        }
->>>           goto out;
->>>       }
->>>   @@ -766,6 +774,74 @@ static int aie2_hwctx_cu_config(struct 
->>> amdxdna_hwctx *hwctx, void *buf, u32 size
->>>       return ret;
->>>   }
->>>   +static void aie2_cmd_wait(struct amdxdna_hwctx *hwctx, u64 seq)
->>> +{
->>> +    struct dma_fence *out_fence = aie2_cmd_get_out_fence(hwctx, seq);
->>> +
->>> +    if (!out_fence) {
->>> +        XDNA_ERR(hwctx->client->xdna, "Failed to get fence");
->>> +        return;
->>> +    }
->>> +
->>> +    dma_fence_wait_timeout(out_fence, false, MAX_SCHEDULE_TIMEOUT);
->>> +    dma_fence_put(out_fence);
->>> +}
->>> +
->>> +static int aie2_hwctx_cfg_debug_bo(struct amdxdna_hwctx *hwctx, u32 
->>> bo_hdl,
->>> +                   bool attach)
->>> +{
->>> +    struct amdxdna_client *client = hwctx->client;
->>> +    struct amdxdna_dev *xdna = client->xdna;
->>> +    struct amdxdna_drv_cmd cmd = { 0 };
->>> +    struct amdxdna_gem_obj *abo;
->>> +    u64 seq;
->>> +    int ret;
->>> +
->>> +    abo = amdxdna_gem_get_obj(client, bo_hdl, AMDXDNA_BO_DEV);
->>> +    if (!abo) {
->>> +        XDNA_ERR(xdna, "Get bo %d failed", bo_hdl);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    if (attach) {
->>> +        if (abo->assigned_hwctx != AMDXDNA_INVALID_CTX_HANDLE) {
->>> +            ret = -EBUSY;
->>> +            goto put_obj;
->>> +        }
->>> +        cmd.opcode = ATTACH_DEBUG_BO;
->>> +    } else {
->>> +        if (abo->assigned_hwctx != hwctx->id) {
->>> +            ret = -EINVAL;
->>> +            goto put_obj;
->>> +        }
->>> +        cmd.opcode = DETACH_DEBUG_BO;
->>> +    }
->>> +
->>> +    ret = amdxdna_cmd_submit(client, &cmd, AMDXDNA_INVALID_BO_HANDLE,
->>> +                 &bo_hdl, 1, hwctx->id, &seq);
->>> +    if (ret) {
->>> +        XDNA_ERR(xdna, "Submit command failed");
->>> +        goto put_obj;
->>> +    }
->>> +
->>> +    aie2_cmd_wait(hwctx, seq);
->>> +    if (cmd.result) {
->>> +        XDNA_ERR(xdna, "Response failure 0x%x", cmd.result);
->>> +        goto put_obj;
->>> +    }
->>> +
->>> +    if (attach)
->>> +        abo->assigned_hwctx = hwctx->id;
->>> +    else
->>> +        abo->assigned_hwctx = AMDXDNA_INVALID_CTX_HANDLE;
->>> +
->>> +    XDNA_DBG(xdna, "Config debug BO %d to %s", bo_hdl, hwctx->name);
->>> +
->>> +put_obj:
->>> +    amdxdna_gem_put_obj(abo);
->>> +    return ret;
->>> +}
->>> +
->>>   int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 
->>> value, void *buf, u32 size)
->>>   {
->>>       struct amdxdna_dev *xdna = hwctx->client->xdna;
->>> @@ -775,14 +851,40 @@ int aie2_hwctx_config(struct amdxdna_hwctx 
->>> *hwctx, u32 type, u64 value, void *bu
->>>       case DRM_AMDXDNA_HWCTX_CONFIG_CU:
->>>           return aie2_hwctx_cu_config(hwctx, buf, size);
->>>       case DRM_AMDXDNA_HWCTX_ASSIGN_DBG_BUF:
->>> +        return aie2_hwctx_cfg_debug_bo(hwctx, (u32)value, true);
->>>       case DRM_AMDXDNA_HWCTX_REMOVE_DBG_BUF:
->>> -        return -EOPNOTSUPP;
->>> +        return aie2_hwctx_cfg_debug_bo(hwctx, (u32)value, false);
->>>       default:
->>>           XDNA_DBG(xdna, "Not supported type %d", type);
->>>           return -EOPNOTSUPP;
->>>       }
->>>   }
->>>   +int aie2_hwctx_sync_debug_bo(struct amdxdna_hwctx *hwctx, u32 
->>> debug_bo_hdl)
->>> +{
->>> +    struct amdxdna_client *client = hwctx->client;
->>> +    struct amdxdna_dev *xdna = client->xdna;
->>> +    struct amdxdna_drv_cmd cmd = { 0 };
->>> +    u64 seq;
->>> +    int ret;
->>> +
->>> +    cmd.opcode = SYNC_DEBUG_BO;
->>> +    ret = amdxdna_cmd_submit(client, &cmd, AMDXDNA_INVALID_BO_HANDLE,
->>> +                 &debug_bo_hdl, 1, hwctx->id, &seq);
->>> +    if (ret) {
->>> +        XDNA_ERR(xdna, "Submit command failed");
->>> +        return ret;
->>> +    }
->>> +
->>> +    aie2_cmd_wait(hwctx, seq);
->>> +    if (cmd.result) {
->>> +        XDNA_ERR(xdna, "Response failure 0x%x", cmd.result);
->>> +        return ret;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>   static int aie2_populate_range(struct amdxdna_gem_obj *abo)
->>>   {
->>>       struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
->>> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/ 
->>> amdxdna/aie2_message.c
->>> index 4660e8297ed8..0ec1dc6fe668 100644
->>> --- a/drivers/accel/amdxdna/aie2_message.c
->>> +++ b/drivers/accel/amdxdna/aie2_message.c
->>> @@ -749,7 +749,7 @@ int aie2_sync_bo(struct amdxdna_hwctx *hwctx, 
->>> struct amdxdna_sched_job *job,
->>>       int ret = 0;
->>>         req.src_addr = 0;
->>> -    req.dst_addr = abo->mem.dev_addr - hwctx->client->dev_heap- 
->>> >mem.dev_addr;
->>> +    req.dst_addr = amdxdna_dev_bo_offset(abo);
->>>       req.size = abo->mem.size;
->>>         /* Device to Host */
->>> @@ -773,3 +773,32 @@ int aie2_sync_bo(struct amdxdna_hwctx *hwctx, 
->>> struct amdxdna_sched_job *job,
->>>         return 0;
->>>   }
->>> +
->>> +int aie2_config_debug_bo(struct amdxdna_hwctx *hwctx, struct 
->>> amdxdna_sched_job *job,
->>> +             int (*notify_cb)(void *, void __iomem *, size_t))
->>> +{
->>> +    struct mailbox_channel *chann = hwctx->priv->mbox_chann;
->>> +    struct amdxdna_gem_obj *abo = to_xdna_obj(job->bos[0]);
->>> +    struct amdxdna_dev *xdna = hwctx->client->xdna;
->>> +    struct config_debug_bo_req req;
->>> +    struct xdna_mailbox_msg msg;
->>> +
->>> +    if (job->drv_cmd->opcode == ATTACH_DEBUG_BO)
->>> +        req.config = DEBUG_BO_REGISTER;
->>> +    else
->>> +        req.config = DEBUG_BO_UNREGISTER;
->>> +
->>> +    req.offset = amdxdna_dev_bo_offset(abo);
->>> +    req.size = abo->mem.size;
->>> +
->>> +    XDNA_DBG(xdna, "offset 0x%llx size 0x%llx config %d",
->>> +         req.offset, req.size, req.config);
->>> +
->>> +    msg.handle = job;
->>> +    msg.notify_cb = notify_cb;
->>> +    msg.send_data = (u8 *)&req;
->>> +    msg.send_size = sizeof(req);
->>> +    msg.opcode = MSG_OP_CONFIG_DEBUG_BO;
->>> +
->>> +    return xdna_mailbox_send_msg(chann, &msg, TX_TIMEOUT);
->>> +}
->>> diff --git a/drivers/accel/amdxdna/aie2_msg_priv.h b/drivers/accel/ 
->>> amdxdna/aie2_msg_priv.h
->>> index 6df9065b13f6..6a5c70bff5e9 100644
->>> --- a/drivers/accel/amdxdna/aie2_msg_priv.h
->>> +++ b/drivers/accel/amdxdna/aie2_msg_priv.h
->>> @@ -18,6 +18,7 @@ enum aie2_msg_opcode {
->>>       MSG_OP_CONFIG_CU                   = 0x11,
->>>       MSG_OP_CHAIN_EXEC_BUFFER_CF        = 0x12,
->>>       MSG_OP_CHAIN_EXEC_DPU              = 0x13,
->>> +    MSG_OP_CONFIG_DEBUG_BO             = 0x14,
->>>       MSG_OP_MAX_XRT_OPCODE,
->>>       MSG_OP_SUSPEND                     = 0x101,
->>>       MSG_OP_RESUME                      = 0x102,
->>> @@ -365,4 +366,16 @@ struct sync_bo_req {
->>>   struct sync_bo_resp {
->>>       enum aie2_msg_status    status;
->>>   } __packed;
->>> +
->>> +struct config_debug_bo_req {
->>> +    __u64    offset;
->>> +    __u64    size;
->>> +#define DEBUG_BO_UNREGISTER 0
->>> +#define DEBUG_BO_REGISTER   1
-
-Why are these defines placed in the middle of the struct?  Is it because 
-they're indicating the options for 'config'?
-
-This seems like a weird place.  I think they should be placed before the 
-struct and instead have a comment indicating they're possible options.
-
->>> +    __u32    config;
->>> +} __packed;
->>> +
->>> +struct config_debug_bo_resp {
->>> +    enum aie2_msg_status    status;
->>> +} __packed;
->>>   #endif /* _AIE2_MSG_PRIV_H_ */
->>> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/ 
->>> amdxdna/aie2_pci.c
->>> index cfca4e456b61..f48045318dc0 100644
->>> --- a/drivers/accel/amdxdna/aie2_pci.c
->>> +++ b/drivers/accel/amdxdna/aie2_pci.c
->>> @@ -1004,6 +1004,7 @@ const struct amdxdna_dev_ops aie2_ops = {
->>>       .hwctx_init = aie2_hwctx_init,
->>>       .hwctx_fini = aie2_hwctx_fini,
->>>       .hwctx_config = aie2_hwctx_config,
->>> +    .hwctx_sync_debug_bo = aie2_hwctx_sync_debug_bo,
->>>       .cmd_submit = aie2_cmd_submit,
->>>       .hmm_invalidate = aie2_hmm_invalidate,
->>>       .get_array = aie2_get_array,
->>> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/ 
->>> amdxdna/aie2_pci.h
->>> index 34bc35479f42..243ac21d50c1 100644
->>> --- a/drivers/accel/amdxdna/aie2_pci.h
->>> +++ b/drivers/accel/amdxdna/aie2_pci.h
->>> @@ -287,11 +287,14 @@ int aie2_cmdlist_multi_execbuf(struct 
->>> amdxdna_hwctx *hwctx,
->>>                      int (*notify_cb)(void *, void __iomem *, size_t));
->>>   int aie2_sync_bo(struct amdxdna_hwctx *hwctx, struct 
->>> amdxdna_sched_job *job,
->>>            int (*notify_cb)(void *, void __iomem *, size_t));
->>> +int aie2_config_debug_bo(struct amdxdna_hwctx *hwctx, struct 
->>> amdxdna_sched_job *job,
->>> +             int (*notify_cb)(void *, void __iomem *, size_t));
->>>     /* aie2_hwctx.c */
->>>   int aie2_hwctx_init(struct amdxdna_hwctx *hwctx);
->>>   void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx);
->>>   int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 
->>> value, void *buf, u32 size);
->>> +int aie2_hwctx_sync_debug_bo(struct amdxdna_hwctx *hwctx, u32 
->>> debug_bo_hdl);
->>>   void aie2_hwctx_suspend(struct amdxdna_client *client);
->>>   int aie2_hwctx_resume(struct amdxdna_client *client);
->>>   int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct 
->>> amdxdna_sched_job *job, u64 *seq);
->>> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/ 
->>> amdxdna/amdxdna_ctx.c
->>> index 868ca369e0a0..d18182c59668 100644
->>> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
->>> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
->>> @@ -328,6 +328,38 @@ int amdxdna_drm_config_hwctx_ioctl(struct 
->>> drm_device *dev, void *data, struct dr
->>>       return ret;
->>>   }
->>>   +int amdxdna_hwctx_sync_debug_bo(struct amdxdna_client *client, u32 
->>> debug_bo_hdl)
->>> +{
->>> +    struct amdxdna_dev *xdna = client->xdna;
->>> +    struct amdxdna_hwctx *hwctx;
->>> +    struct amdxdna_gem_obj *abo;
->>> +    struct drm_gem_object *gobj;
->>> +    int ret, idx;
->>> +
->>> +    if (!xdna->dev_info->ops->hwctx_sync_debug_bo)
->>> +        return -EOPNOTSUPP;
->>> +
->>> +    gobj = drm_gem_object_lookup(client->filp, debug_bo_hdl);
->>> +    if (!gobj)
->>> +        return -EINVAL;
->>> +
->>> +    abo = to_xdna_obj(gobj);
->>> +    guard(mutex)(&xdna->dev_lock);
->>> +    idx = srcu_read_lock(&client->hwctx_srcu);
->>> +    hwctx = xa_load(&client->hwctx_xa, abo->assigned_hwctx);
->>> +    if (!hwctx) {
->>> +        ret = -EINVAL;
->>> +        goto unlock_srcu;
->>> +    }
->>> +
->>> +    ret = xdna->dev_info->ops->hwctx_sync_debug_bo(hwctx, 
->>> debug_bo_hdl);
->>> +
->>> +unlock_srcu:
->>> +    srcu_read_unlock(&client->hwctx_srcu, idx);
->>> +    drm_gem_object_put(gobj);
->>> +    return ret;
->>> +}
->>> +
->>>   static void
->>>   amdxdna_arg_bos_put(struct amdxdna_sched_job *job)
->>>   {
->>> @@ -393,6 +425,7 @@ void amdxdna_sched_job_cleanup(struct 
->>> amdxdna_sched_job *job)
->>>   }
->>>     int amdxdna_cmd_submit(struct amdxdna_client *client,
->>> +               struct amdxdna_drv_cmd *drv_cmd,
->>>                  u32 cmd_bo_hdl, u32 *arg_bo_hdls, u32 arg_bo_cnt,
->>>                  u32 hwctx_hdl, u64 *seq)
->>>   {
->>> @@ -406,6 +439,8 @@ int amdxdna_cmd_submit(struct amdxdna_client 
->>> *client,
->>>       if (!job)
->>>           return -ENOMEM;
->>>   +    job->drv_cmd = drv_cmd;
->>> +
->>>       if (cmd_bo_hdl != AMDXDNA_INVALID_BO_HANDLE) {
->>>           job->cmd_bo = amdxdna_gem_get_obj(client, cmd_bo_hdl, 
->>> AMDXDNA_BO_CMD);
->>>           if (!job->cmd_bo) {
->>> @@ -413,8 +448,6 @@ int amdxdna_cmd_submit(struct amdxdna_client 
->>> *client,
->>>               ret = -EINVAL;
->>>               goto free_job;
->>>           }
->>> -    } else {
->>> -        job->cmd_bo = NULL;
->>>       }
->>>         ret = amdxdna_arg_bos_lookup(client, job, arg_bo_hdls, 
->>> arg_bo_cnt);
->>> @@ -508,7 +541,7 @@ static int amdxdna_drm_submit_execbuf(struct 
->>> amdxdna_client *client,
->>>           }
->>>       }
->>>   -    ret = amdxdna_cmd_submit(client, cmd_bo_hdl, arg_bo_hdls,
->>> +    ret = amdxdna_cmd_submit(client, NULL, cmd_bo_hdl, arg_bo_hdls,
->>>                    args->arg_count, args->hwctx, &args->seq);
->>>       if (ret)
->>>           XDNA_DBG(xdna, "Submit cmds failed, ret %d", ret);
->>> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/ 
->>> amdxdna/amdxdna_ctx.h
->>> index 7cd7a55936f0..cbe60efbe60b 100644
->>> --- a/drivers/accel/amdxdna/amdxdna_ctx.h
->>> +++ b/drivers/accel/amdxdna/amdxdna_ctx.h
->>> @@ -95,6 +95,17 @@ struct amdxdna_hwctx {
->>>   #define drm_job_to_xdna_job(j) \
->>>       container_of(j, struct amdxdna_sched_job, base)
->>>   +enum amdxdna_job_opcode {
->>> +    SYNC_DEBUG_BO,
->>> +    ATTACH_DEBUG_BO,
->>> +    DETACH_DEBUG_BO,
->>> +};
->>> +
->>> +struct amdxdna_drv_cmd {
->>> +    enum amdxdna_job_opcode    opcode;
->>> +    u32            result;
->>> +};
->>> +
->>>   struct amdxdna_sched_job {
->>>       struct drm_sched_job    base;
->>>       struct kref        refcnt;
->>> @@ -106,6 +117,7 @@ struct amdxdna_sched_job {
->>>       struct dma_fence    *out_fence;
->>>       bool            job_done;
->>>       u64            seq;
->>> +    struct amdxdna_drv_cmd    *drv_cmd;
->>>       struct amdxdna_gem_obj    *cmd_bo;
->>>       size_t            bo_cnt;
->>>       struct drm_gem_object    *bos[] __counted_by(bo_cnt);
->>> @@ -143,9 +155,11 @@ void amdxdna_sched_job_cleanup(struct 
->>> amdxdna_sched_job *job);
->>>   void amdxdna_hwctx_remove_all(struct amdxdna_client *client);
->>>   int amdxdna_hwctx_walk(struct amdxdna_client *client, void *arg,
->>>                  int (*walk)(struct amdxdna_hwctx *hwctx, void *arg));
->>> +int amdxdna_hwctx_sync_debug_bo(struct amdxdna_client *client, u32 
->>> debug_bo_hdl);
->>>     int amdxdna_cmd_submit(struct amdxdna_client *client,
->>> -               u32 cmd_bo_hdls, u32 *arg_bo_hdls, u32 arg_bo_cnt,
->>> +               struct amdxdna_drv_cmd *drv_cmd, u32 cmd_bo_hdls,
->>> +               u32 *arg_bo_hdls, u32 arg_bo_cnt,
->>>                  u32 hwctx_hdl, u64 *seq);
->>>     int amdxdna_cmd_wait(struct amdxdna_client *client, u32 hwctx_hdl,
->>> diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/ 
->>> amdxdna/amdxdna_gem.c
->>> index 7f91863c3f24..61e0136c21a8 100644
->>> --- a/drivers/accel/amdxdna/amdxdna_gem.c
->>> +++ b/drivers/accel/amdxdna/amdxdna_gem.c
->>> @@ -962,6 +962,9 @@ int amdxdna_drm_sync_bo_ioctl(struct drm_device 
->>> *dev,
->>>       XDNA_DBG(xdna, "Sync bo %d offset 0x%llx, size 0x%llx\n",
->>>            args->handle, args->offset, args->size);
->>>   +    if (args->direction == SYNC_DIRECT_FROM_DEVICE)
->>> +        ret = amdxdna_hwctx_sync_debug_bo(abo->client, args->handle);
->>> +
->>>   put_obj:
->>>       drm_gem_object_put(gobj);
->>>       return ret;
->>> diff --git a/drivers/accel/amdxdna/amdxdna_gem.h b/drivers/accel/ 
->>> amdxdna/amdxdna_gem.h
->>> index ae29db94a9d3..f79fc7f3c93b 100644
->>> --- a/drivers/accel/amdxdna/amdxdna_gem.h
->>> +++ b/drivers/accel/amdxdna/amdxdna_gem.h
->>> @@ -7,6 +7,7 @@
->>>   #define _AMDXDNA_GEM_H_
->>>     #include <linux/hmm.h>
->>> +#include "amdxdna_pci_drv.h"
->>>     struct amdxdna_umap {
->>>       struct vm_area_struct        *vma;
->>> @@ -62,6 +63,11 @@ static inline void amdxdna_gem_put_obj(struct 
->>> amdxdna_gem_obj *abo)
->>>       drm_gem_object_put(to_gobj(abo));
->>>   }
->>>   +static inline u64 amdxdna_dev_bo_offset(struct amdxdna_gem_obj *abo)
->>> +{
->>> +    return abo->mem.dev_addr - abo->client->dev_heap->mem.dev_addr;
->>> +}
->>> +
->>>   void amdxdna_umap_put(struct amdxdna_umap *mapp);
->>>     struct drm_gem_object *
->>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/ 
->>> amdxdna/amdxdna_pci_drv.c
->>> index 696fdac8ad3c..3599e713bfcb 100644
->>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>> @@ -28,9 +28,10 @@ MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
->>>    * 0.0: Initial version
->>>    * 0.1: Support getting all hardware contexts by 
->>> DRM_IOCTL_AMDXDNA_GET_ARRAY
->>>    * 0.2: Support getting last error hardware error
->>> + * 0.3: Support firmware debug buffer
->>>    */
->>>   #define AMDXDNA_DRIVER_MAJOR        0
->>> -#define AMDXDNA_DRIVER_MINOR        2
->>> +#define AMDXDNA_DRIVER_MINOR        3
->>>     /*
->>>    * Bind the driver base on (vendor_id, device_id) pair and later 
->>> use the
->>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/ 
->>> amdxdna/amdxdna_pci_drv.h
->>> index 626beebf730e..c99477f5e454 100644
->>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
->>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
->>> @@ -55,6 +55,7 @@ struct amdxdna_dev_ops {
->>>       int (*hwctx_init)(struct amdxdna_hwctx *hwctx);
->>>       void (*hwctx_fini)(struct amdxdna_hwctx *hwctx);
->>>       int (*hwctx_config)(struct amdxdna_hwctx *hwctx, u32 type, u64 
->>> value, void *buf, u32 size);
->>> +    int (*hwctx_sync_debug_bo)(struct amdxdna_hwctx *hwctx, u32 
->>> debug_bo_hdl);
->>>       void (*hmm_invalidate)(struct amdxdna_gem_obj *abo, unsigned 
->>> long cur_seq);
->>>       int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct 
->>> amdxdna_sched_job *job, u64 *seq);
->>>       int (*get_aie_info)(struct amdxdna_client *client, struct 
->>> amdxdna_drm_get_info *args);
->>> diff --git a/drivers/accel/amdxdna/npu1_regs.c b/drivers/accel/ 
->>> amdxdna/npu1_regs.c
->>> index e4f6dac7d00f..10124cccb102 100644
->>> --- a/drivers/accel/amdxdna/npu1_regs.c
->>> +++ b/drivers/accel/amdxdna/npu1_regs.c
->>> @@ -46,6 +46,7 @@
->>>     const struct rt_config npu1_default_rt_cfg[] = {
->>>       { 2, 1, AIE2_RT_CFG_INIT }, /* PDI APP LOAD MODE */
->>> +    { 4, 1, AIE2_RT_CFG_INIT }, /* Debug BO */
->>>       { 1, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
->>>       { 0 },
->>>   };
->>> diff --git a/drivers/accel/amdxdna/npu4_regs.c b/drivers/accel/ 
->>> amdxdna/npu4_regs.c
->>> index 9f2e33182ec6..e1da882420ec 100644
->>> --- a/drivers/accel/amdxdna/npu4_regs.c
->>> +++ b/drivers/accel/amdxdna/npu4_regs.c
->>> @@ -63,6 +63,7 @@
->>>     const struct rt_config npu4_default_rt_cfg[] = {
->>>       { 5, 1, AIE2_RT_CFG_INIT }, /* PDI APP LOAD MODE */
->>> +    { 10, 1, AIE2_RT_CFG_INIT }, /* DEBUG BUF */
->>>       { 1, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
->>>       { 2, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
->>>       { 3, 1, AIE2_RT_CFG_CLK_GATING }, /* Clock gating on */
+>>> If you do want to do that, I'd factor out a bunch of the stuff here as a helper
+>>> so we can have the clean ownership pass of a return_ptr().  
+>>> Similar to what Shiju did here (this is the usecase for platform device that
+>>> Greg didn't like).
+>>> https://lore.kernel.org/all/20241009124120.1124-14-shiju.jose@huawei.com/
+>>>
+>>> Even without that I think factoring some of this out and hence being able to
+>>> do returns on errors and put the if (err) into the loop would be a nice
+>>> improvement to readability.  
 >>
+>> If you think its more readable I'll structure it like that.
+> 
+> The refactor yes. I'd keep clear of the the DEFINE_FREE() unless you have
+> some spare time ;)
 
+spare what?
+
+
+
+Thanks,
+
+James
 
