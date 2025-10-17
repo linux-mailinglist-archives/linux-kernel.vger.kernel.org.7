@@ -1,123 +1,85 @@
-Return-Path: <linux-kernel+bounces-857676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA6BBE78EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF871BE7644
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54B8635B969
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:17:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE0B62431A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F623128AC;
-	Fri, 17 Oct 2025 09:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041BE2D4B68;
+	Fri, 17 Oct 2025 09:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="TDHHYTVF"
-Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.155.198.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RqjwpDQ6"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84282D8364;
-	Fri, 17 Oct 2025 09:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.155.198.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DFA26CE36
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692208; cv=none; b=fj56YZChjOx9s0rmE1zWwicaBmJUhtfbg/K6RtZJpyGGgP2O1eo7gteIarMByMfJ4OouyPPvySBYVNlQJHHx7XMhgXYbDOjlFiwZkbCEb0AyZGskURBYrKK6Mr2lJK3fPmqTYY8QWceoUCx03oblnEUoQQdL8SnrxotmEAiIpyE=
+	t=1760691919; cv=none; b=JNqsuVt2RaabhuWGmaCnHKou8Qzm+MqDF+4wnpH9Yu/LGCFjhSIIjb+MgRw9ioFdiHp0/OjtRGXz67RRC1QI9s36ltEbFHyrzLYDY7trV4Ejss+ROQAJ0qOO3tPioNNN4MKrYcsPMW+N5J9qNPWvSAXnmSqsIw3KUDEuHO0svzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760692208; c=relaxed/simple;
-	bh=yl3b4LmnXx4PUqRFiBdVyHGjv/Tx0DQfBmYRZDcHOpU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mEiSLSSteKKy5Zpwqvj+c/1kRS7XKCsBgx2E5HDcshdGqDbhYZulhdiWDqHlA7joJfgLgEnteRf2zAUPbU6otD+etcU16J0Q6I2wXtKLBLabLQ/gCA7/bLhljL50Z9ZQKqyknMPw5mvZ3zfnPu64R2OBVSjaRZbAoi7kNITgNHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=TDHHYTVF; arc=none smtp.client-ip=35.155.198.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1760691919; c=relaxed/simple;
+	bh=zMs/mIehTFFTGYenlsWc/vYS2ZTq9wvDlsNcyl4uvK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fe4SgaAQAhDwAPlP5sBsvqRr2UnWnG/vgfS/HDNsKs69ntaebTsEM/t30WYtnPp/ohC6q70kGFt+SCUmQKf93oJ2YwDb66rEXU+edvR9Fz7HXtb5nPOTqt+oviNU2EJihaN+DILOfT0SrDCZwxMGBQPTDBP4Bu+5nDQdhnDRYiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RqjwpDQ6; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57e03279bfeso1939349e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1760692206; x=1792228206;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=E4OUqotVxmJdhB1gbpqxpPI4rqJuz83w3Cv7MkFecSs=;
-  b=TDHHYTVFfC+Qkj76LKB3Dqv8gGZ1Lw/mhaSEg6zxzhQnWOMSvR/1XUmU
-   Xx+OFk51i8cp0ZuGWTF7W3PEARiwNvu9HuUkoc3jArAVM2NF2mBFOHsgZ
-   eQejKf5wIuSmL218TQ3ZgzYBarj3v8YO6tA3k/HJ8ZNrypKkKQr+SVpvi
-   Mvjm7tPvoGJuktsHc+KjMth3WzwczTxBuObCHrZT0W8yOXqxV4k+OKwZJ
-   ZTb4q0uclKLyP0IJuBxI24j9lHYGXQeiLzfWV3WehSFIK94PFG1JSsQeD
-   qT+nKpnVWbKPmV8gQ7ltKEyywbnL8sajj26Nd4FU8zttaYHGfYncT08CG
-   A==;
-X-CSE-ConnectionGUID: wnJP2PD6SsWvHOC2E7864w==
-X-CSE-MsgGUID: /oZTbnMLTqyi3Uzjmvyqkg==
-X-IronPort-AV: E=Sophos;i="6.19,236,1754956800"; 
-   d="scan'208";a="4957006"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 09:10:06 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.236:28011]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.51:2525] with esmtp (Farcaster)
- id 73a06a93-9e80-4b97-b4cb-537cfd7530ab; Fri, 17 Oct 2025 09:10:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 73a06a93-9e80-4b97-b4cb-537cfd7530ab
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 17 Oct 2025 09:10:05 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 17 Oct 2025
- 09:09:50 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <jdike@addtoit.com>, <richard@nod.at>,
-	<anton.ivanov@cambridgegreys.com>, <dave.hansen@linux.intel.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <x86@kernel.org>, <hpa@zytor.com>,
-	<tony.luck@intel.com>, <qiuxu.zhuo@intel.com>, <mchehab@kernel.org>,
-	<james.morse@arm.com>, <rric@kernel.org>, <harry.wentland@amd.com>,
-	<sunpeng.li@amd.com>, <alexander.deucher@amd.com>,
-	<christian.koenig@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-	<evan.quan@amd.com>, <james.qian.wang@arm.com>, <liviu.dudau@arm.com>,
-	<mihail.atanassov@arm.com>, <brian.starkey@arm.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <robdclark@gmail.com>, <sean@poorly.run>,
-	<jdelvare@suse.com>, <linux@roeck-us.net>, <fery@cypress.com>,
-	<dmitry.torokhov@gmail.com>, <agk@redhat.com>, <snitzer@redhat.com>,
-	<dm-devel@redhat.com>, <rajur@chelsio.com>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <peppe.cavallaro@st.com>, <alexandre.torgue@st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <malattia@linux.it>,
-	<hdegoede@redhat.com>, <mgross@linux.intel.com>, <intel-linux-scu@intel.com>,
-	<artur.paszkiewicz@intel.com>, <jejb@linux.ibm.com>,
-	<martin.petersen@oracle.com>, <sakari.ailus@linux.intel.com>, <clm@fb.com>,
-	<josef@toxicpanda.com>, <dsterba@suse.com>, <xiang@kernel.org>,
-	<chao@kernel.org>, <jack@suse.com>, <tytso@mit.edu>,
-	<adilger.kernel@dilger.ca>, <dushistov@mail.ru>,
-	<luc.vanoostenryck@gmail.com>, <rostedt@goodmis.org>, <pmladek@suse.com>,
-	<sergey.senozhatsky@gmail.com>, <andriy.shevchenko@linux.intel.com>,
-	<linux@rasmusvillemoes.dk>, <minchan@kernel.org>, <ngupta@vflare.org>,
-	<akpm@linux-foundation.org>, <kuznet@ms2.inr.ac.ru>,
-	<yoshfuji@linux-ipv6.org>, <pablo@netfilter.org>, <kadlec@netfilter.org>,
-	<fw@strlen.de>, <jmaloy@redhat.com>, <ying.xue@windriver.com>,
-	<willy@infradead.org>, <farbere@amazon.com>, <sashal@kernel.org>,
-	<ruanjinjie@huawei.com>, <David.Laight@ACULAB.COM>,
-	<herve.codina@bootlin.com>, <Jason@zx2c4.com>, <keescook@chromium.org>,
-	<kbusch@kernel.org>, <nathan@kernel.org>, <bvanassche@acm.org>,
-	<ndesaulniers@google.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-um@lists.infradead.org>,
-	<linux-edac@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-	<freedreno@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<platform-driver-x86@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-	<linux-staging@lists.linux.dev>, <linux-btrfs@vger.kernel.org>,
-	<linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
-	<linux-sparse@vger.kernel.org>, <linux-mm@kvack.org>,
-	<netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-	<tipc-discussion@lists.sourceforge.net>
-CC: Linus Torvalds <torvalds@linux-foundation.org>, David Laight
-	<David.Laight@aculab.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: [PATCH v2 14/27 5.10.y] minmax: add a few more MIN_T/MAX_T users
-Date: Fri, 17 Oct 2025 09:05:06 +0000
-Message-ID: <20251017090519.46992-15-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251017090519.46992-1-farbere@amazon.com>
-References: <20251017090519.46992-1-farbere@amazon.com>
+        d=linaro.org; s=google; t=1760691914; x=1761296714; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VvEYPMJTqteoPb0SvAUiCzFuqyHNEnMlHD+3V0pCfZ8=;
+        b=RqjwpDQ6bJ9hLbWrV6ciOjNBDf0vGpx7tCD/eO5Pw291CDkR3G0BeTUbYIAvniKWZG
+         txNTsGHtHndtFY2YpVp6o0Etp1ucjjTRsjb2Y3cQb0BNkMwraDQd6C1G4Ygw2Pc+rMRp
+         7ZTgarB6njAV1d+JWzKjoJh7pX5YTndSD94NsSijG7H4zDrQDf7kPXAbIHzffq+BDgF3
+         2rZedGRycL0AuRpnYJSUiSoN5z4lcEGZ70aThyoZEnYb/lHQ25c35om8pR97CpOd6jpO
+         PPa/3N6s/IU5yXoCCydxVdlprD9ITjxh+6acOOi4+YvDClSl+DSbSxd0A64DJ0fnbopj
+         AsBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760691914; x=1761296714;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VvEYPMJTqteoPb0SvAUiCzFuqyHNEnMlHD+3V0pCfZ8=;
+        b=nR5lFUwYTvtsHPvBu+Dgjk/F5Olv1rwivOlafHR0/Do8IicKw6W1xLLAc4dOLPM9I3
+         zKV8sfykIxsfaypZ3JXXvYgKz+6Fv9LOTNER1Z8lwN6n0KyPUHD6Xw8Yp8+2ly4Nbqdc
+         kWNTBKdesxFvwB5jD7aznJ9tAO2bX5AI+IhAE+ThSti1dAeACxmuqJhtWJHBb1XnNoPU
+         W768Ydlyxczfxkm0sE11PSt8lfZxo+ngTfcmfzuT+5oBC94oKiWMuX/E48uVBaM8sC31
+         UCPz/eGyR2VKLB1vJRZY6N4LzqM6JoraXyTTvCkz8LR7QFEYBdU5OqZ/GOLjwpK2S0Tt
+         cabw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWyNJ7H0b4IIodXnwcIQf/pjwAzJQn0KYJezqkYLyLTQI2LIfjqxLTh2PjAKUrGbI8zz7AAuGfiSK9OfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZIf0r06te4EUdPRKZc/F8GCHdakEaSvVS6xtXFtEqSIwrXLs6
+	kYVRHa52HtGv/LLPN23GfFKolmLbNoIhV87nDc7GTDPLyjmYzEMeKhfc0H01QY6JXwg=
+X-Gm-Gg: ASbGncs70P4fsyTnUzQ8eP4uQTS4ZsNuUGu3X7sQv6pru8VWOJilYp/jJKnsd5UN496
+	yyck4Sx1CGEpwRgr3AgbQQMWheT4CITF9MU4/KE3XEiPAfXXovDS6z83/r14ioLuxPbFSMAGsjU
+	RG0j7B7FoQcRvpMtLHWC1cK7dLZwTPuB6YBAA+iJIiE31GESHlQt7Cx3+/FssiyBq6oJSovQn2D
+	dzoBK/Vt0Q8wdhFD6rkV/YUxcYe1OsuXpKZMwengwD6siCqPAyOzPo1rf5Esqgzab2D5mQ/JFdv
+	taH7gyUD8VmW6xSPm6PfvbxSOnx6zkqcVRk0y6W3MWW0/l/ljKcbUNgIYhbvXoA5r73er4iDxeO
+	vmlxoI0xjsadxtuu6sSs6Q01QOzAeHSTibXBbLXiqpdpRLXSrtvdVnY1OKCOL4S06QeVaSBLHAV
+	Ko/4krxJ/+Kqb+SrA4H/eHCtfLgGNGmd1f2CksYRKhOvDgTXHSoA==
+X-Google-Smtp-Source: AGHT+IHCKSBIJLwVNLbjb9Qu7KQoZY5S2lKEGkPSQ4sD+VQWJFaZm3oKS+GT8xzA9169PzxaV15SCQ==
+X-Received: by 2002:a05:6512:b95:b0:57f:6da2:69ec with SMTP id 2adb3069b0e04-591d8384334mr1048629e87.3.1760691910151;
+        Fri, 17 Oct 2025 02:05:10 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59092ed98c1sm6922128e87.26.2025.10.17.02.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 02:05:09 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v6.18-rc2
+Date: Fri, 17 Oct 2025 11:05:07 +0200
+Message-ID: <20251017090508.78726-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -125,172 +87,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWB003.ant.amazon.com (10.13.138.115) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+Hi Linus,
 
-[ Upstream commit 4477b39c32fdc03363affef4b11d48391e6dc9ff ]
+Here's a pull-request with an MMC patch intended for v6.18-rc2. Note that, this
+isn't a fix for a regression, but instead helps us to avoid sharing an immutable
+branch between our git trees. I was planning to send it before rc1, but I didn't
+make it.
 
-Commit 3a7e02c040b1 ("minmax: avoid overly complicated constant
-expressions in VM code") added the simpler MIN_T/MAX_T macros in order
-to avoid some excessive expansion from the rather complicated regular
-min/max macros.
+Details about the highlights are as usual found in the signed tag.
 
-The complexity of those macros stems from two issues:
+Please pull this in!
 
- (a) trying to use them in situations that require a C constant
-     expression (in static initializers and for array sizes)
+Kind regards
+Ulf Hansson
 
- (b) the type sanity checking
 
-and MIN_T/MAX_T avoids both of these issues.
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-Now, in the whole (long) discussion about all this, it was pointed out
-that the whole type sanity checking is entirely unnecessary for
-min_t/max_t which get a fixed type that the comparison is done in.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-But that still leaves min_t/max_t unnecessarily complicated due to
-worries about the C constant expression case.
+are available in the Git repository at:
 
-However, it turns out that there really aren't very many cases that use
-min_t/max_t for this, and we can just force-convert those.
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.18-rc1
 
-This does exactly that.
+for you to fetch changes up to 7e8242405b94ceac6db820de7d4fd9318cbc1219:
 
-Which in turn will then allow for much simpler implementations of
-min_t()/max_t().  All the usual "macros in all upper case will evaluate
-the arguments multiple times" rules apply.
+  rpmb: move rpmb_frame struct and constants to common header (2025-10-13 13:18:03 +0200)
 
-We should do all the same things for the regular min/max() vs MIN/MAX()
-cases, but that has the added complexity of various drivers defining
-their own local versions of MIN/MAX, so that needs another level of
-fixes first.
+----------------------------------------------------------------
+MMC core:
+ - Move rpmb_frame struct and constants to rpmb common header
 
-Link: https://lore.kernel.org/all/b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com/
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
- arch/x86/mm/pgtable.c                             | 2 +-
- drivers/edac/sb_edac.c                            | 4 ++--
- drivers/gpu/drm/drm_color_mgmt.c                  | 2 +-
- drivers/md/dm-integrity.c                         | 2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
- fs/erofs/zdata.h                                  | 2 +-
- net/ipv4/proc.c                                   | 2 +-
- net/ipv6/proc.c                                   | 2 +-
- 8 files changed, 9 insertions(+), 9 deletions(-)
+----------------------------------------------------------------
+Bean Huo (1):
+      rpmb: move rpmb_frame struct and constants to common header
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 204b25ee26f0..27e8e3d6be48 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -107,7 +107,7 @@ static inline void pgd_list_del(pgd_t *pgd)
- #define UNSHARED_PTRS_PER_PGD				\
- 	(SHARED_KERNEL_PMD ? KERNEL_PGD_BOUNDARY : PTRS_PER_PGD)
- #define MAX_UNSHARED_PTRS_PER_PGD			\
--	max_t(size_t, KERNEL_PGD_BOUNDARY, PTRS_PER_PGD)
-+	MAX_T(size_t, KERNEL_PGD_BOUNDARY, PTRS_PER_PGD)
- 
- 
- static void pgd_set_mm(pgd_t *pgd, struct mm_struct *mm)
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index 1522d4aa2ca6..714020e7405a 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -109,8 +109,8 @@ static const u32 knl_interleave_list[] = {
- 	0x104, 0x10c, 0x114, 0x11c,   /* 20-23 */
- };
- #define MAX_INTERLEAVE							\
--	(max_t(unsigned int, ARRAY_SIZE(sbridge_interleave_list),	\
--	       max_t(unsigned int, ARRAY_SIZE(ibridge_interleave_list),	\
-+	(MAX_T(unsigned int, ARRAY_SIZE(sbridge_interleave_list),	\
-+	       MAX_T(unsigned int, ARRAY_SIZE(ibridge_interleave_list),	\
- 		     ARRAY_SIZE(knl_interleave_list))))
- 
- struct interleave_pkg {
-diff --git a/drivers/gpu/drm/drm_color_mgmt.c b/drivers/gpu/drm/drm_color_mgmt.c
-index 138ff34b31db..4bc671484c05 100644
---- a/drivers/gpu/drm/drm_color_mgmt.c
-+++ b/drivers/gpu/drm/drm_color_mgmt.c
-@@ -421,7 +421,7 @@ int drm_plane_create_color_properties(struct drm_plane *plane,
- {
- 	struct drm_device *dev = plane->dev;
- 	struct drm_property *prop;
--	struct drm_prop_enum_list enum_list[max_t(int, DRM_COLOR_ENCODING_MAX,
-+	struct drm_prop_enum_list enum_list[MAX_T(int, DRM_COLOR_ENCODING_MAX,
- 						       DRM_COLOR_RANGE_MAX)];
- 	int i, len;
- 
-diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-index 07a7b4e51f0e..7fa3bf74747d 100644
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -2431,7 +2431,7 @@ static void do_journal_write(struct dm_integrity_c *ic, unsigned write_start,
- 				    unlikely(from_replay) &&
- #endif
- 				    ic->internal_hash) {
--					char test_tag[max_t(size_t, HASH_MAX_DIGESTSIZE, MAX_TAG_SIZE)];
-+					char test_tag[MAX_T(size_t, HASH_MAX_DIGESTSIZE, MAX_TAG_SIZE)];
- 
- 					integrity_sector_checksum(ic, sec + ((l - j) << ic->sb->log2_sectors_per_block),
- 								  (char *)access_journal_data(ic, i, l), test_tag);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b8581a711514..e6fa2782d28f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2267,7 +2267,7 @@ static void stmmac_dma_interrupt(struct stmmac_priv *priv)
- 	u32 channels_to_check = tx_channel_count > rx_channel_count ?
- 				tx_channel_count : rx_channel_count;
- 	u32 chan;
--	int status[max_t(u32, MTL_MAX_TX_QUEUES, MTL_MAX_RX_QUEUES)];
-+	int status[MAX_T(u32, MTL_MAX_TX_QUEUES, MTL_MAX_RX_QUEUES)];
- 
- 	/* Make sure we never check beyond our status buffer. */
- 	if (WARN_ON_ONCE(channels_to_check > ARRAY_SIZE(status)))
-diff --git a/fs/erofs/zdata.h b/fs/erofs/zdata.h
-index 68c9b29fc0ca..d10df3f6c700 100644
---- a/fs/erofs/zdata.h
-+++ b/fs/erofs/zdata.h
-@@ -182,7 +182,7 @@ static inline void z_erofs_onlinepage_endio(struct page *page)
- }
- 
- #define Z_EROFS_VMAP_ONSTACK_PAGES	\
--	min_t(unsigned int, THREAD_SIZE / 8 / sizeof(struct page *), 96U)
-+	MIN_T(unsigned int, THREAD_SIZE / 8 / sizeof(struct page *), 96U)
- #define Z_EROFS_VMAP_GLOBAL_PAGES	2048
- 
- #endif
-diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
-index 80d13d8f982d..94fbba052b49 100644
---- a/net/ipv4/proc.c
-+++ b/net/ipv4/proc.c
-@@ -43,7 +43,7 @@
- #include <net/sock.h>
- #include <net/raw.h>
- 
--#define TCPUDP_MIB_MAX max_t(u32, UDP_MIB_MAX, TCP_MIB_MAX)
-+#define TCPUDP_MIB_MAX MAX_T(u32, UDP_MIB_MAX, TCP_MIB_MAX)
- 
- /*
-  *	Report socket allocation statistics [mea@utu.fi]
-diff --git a/net/ipv6/proc.c b/net/ipv6/proc.c
-index bbff3e02e302..929981a8fe98 100644
---- a/net/ipv6/proc.c
-+++ b/net/ipv6/proc.c
-@@ -27,7 +27,7 @@
- #include <net/ipv6.h>
- 
- #define MAX4(a, b, c, d) \
--	max_t(u32, max_t(u32, a, b), max_t(u32, c, d))
-+	MAX_T(u32, MAX_T(u32, a, b), MAX_T(u32, c, d))
- #define SNMP_MIB_MAX MAX4(UDP_MIB_MAX, TCP_MIB_MAX, \
- 			IPSTATS_MIB_MAX, ICMP_MIB_MAX)
- 
--- 
-2.47.3
-
+ drivers/mmc/core/block.c | 42 ------------------------------------------
+ include/linux/rpmb.h     | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 42 deletions(-)
 
