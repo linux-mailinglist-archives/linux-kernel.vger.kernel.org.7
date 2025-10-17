@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-858450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8844BEAEDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:58:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798AFBEAB86
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F639472B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:30:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5CD635F571
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B4A296BC2;
-	Fri, 17 Oct 2025 16:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EA02BEC30;
+	Fri, 17 Oct 2025 16:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPSE2VfI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr/DQxOU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13392299950;
-	Fri, 17 Oct 2025 16:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AC3286D55;
+	Fri, 17 Oct 2025 16:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760718531; cv=none; b=Kos5PacNqWnqoOt7+Luwe3uT5RKYGgm9MXWjNxuB62aR4RJ3NEetHyZYbN8hmQugy1iOVOEzEsu/0QrIReUX6rkmUc4JqWi/pgmgkQqS0mn0USwEeIDg7okkVSHnT54tr8IaUdJ71ACNBzJukLex6803mYqACkn10dhO+RPcyAM=
+	t=1760718556; cv=none; b=fCQTi4DQHctMWAoltoZzwwhB1suYm66duCVrQKzwMaf7JakV7obWGAkZY3eiBgeAkXQVuQQwE4nFKfrk7tue6FPN/v/D7jLlBRSFUmVQBea/p3/kR0J1jZat1FnZct7MQgFCmCISKANFX4KWJgopoN4C+C36J/cxyje7PDvy+I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760718531; c=relaxed/simple;
-	bh=Una6ZwWE3tWlRlTrxOgpKjKjFn4SWggaefOFaE2LkIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGmaU9Q6/7pTXM9Om0w6TypRhhyuXSb14osaXUpl39LrG7WZS85uBltJgcaLs5Ok1hTNSeNTY02lv1XUPznSy1MwXGM2e0bbaaoA4pC1Hgnw4Fr9pU/+UBmQxzdF7LkTjKzTQO9O3PKFr7jRtSgLraCtv3na5DukyVDAAI/eMVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPSE2VfI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21174C4CEE7;
-	Fri, 17 Oct 2025 16:28:47 +0000 (UTC)
+	s=arc-20240116; t=1760718556; c=relaxed/simple;
+	bh=cxH8AEVNPDIQjHrSAWaXBFonbMHNK+hNSZlmONSJ1Lc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WHJBuUza3LLTEQCVJMEXGl2DfT0mDktC0OhuZNfVczZiLzNBs/6pxvndefmAuP0Hxk/j1R2A4/3WykMTyoJcuAZrn11eh8Goy1Avv/YzJY4rMG8ZcNleQHWF2Pc01rAXLtQENjenFUCsr2CAYxBQJJagCn8qIeO0In2z3zBck5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr/DQxOU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB29C4CEFE;
+	Fri, 17 Oct 2025 16:29:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760718530;
-	bh=Una6ZwWE3tWlRlTrxOgpKjKjFn4SWggaefOFaE2LkIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bPSE2VfIerOM/Uiu3H7RQmBdk4NecpNTc5oyBHdsxzQcHPScUq3qLvVnimuCoIWvN
-	 jwepGfCzzj0iwk3E7R+79A9GL8P1pT+07w92mZe1atRfviiKKBJ1TOKUfv4H3HZLB9
-	 89WuHrm3G4qcSQdBBV2DP6kEDhXPPz3TC28qC/ysEQS9NCgaCdQmq+kZymxxOWxXRE
-	 Big+c6310OvKEvFQYavnu/iB2BXApjo7H1sXV/j7vHdx3m1cNKBojqwax+Mw7VGb8R
-	 gzLlNRbfur6DwiCmZHqwG0+aWpBhpSEK9srmc3D3BYeYU4rP+n/lorSLfuWlyvi5qG
-	 oeD7PZlkZNXKw==
-Date: Fri, 17 Oct 2025 17:28:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 04/11] ASoC: cs530x: Remove unused struct members and
- constants
-Message-ID: <4663ea33-d468-4088-a20b-f0910a4a8c4e@sirena.org.uk>
-References: <20251017161543.214235-1-vitalyr@opensource.cirrus.com>
- <20251017161543.214235-5-vitalyr@opensource.cirrus.com>
+	s=k20201202; t=1760718555;
+	bh=cxH8AEVNPDIQjHrSAWaXBFonbMHNK+hNSZlmONSJ1Lc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Nr/DQxOUdu88qzYrbJUCP5f1PCgoSOkIdWC93VkPf32uAFWaBitVvaw1yZqG8XyU0
+	 ap/rvH2rkoQ2IYesoAMG72rFZ24LLXBgWp+j36SoTB/PDk02bfp0GSSXSdsJyz5QHv
+	 P62CuDLE166Zyz5Q3a8v6MNFkVazxjnMy3c9fyBy6k3DrwVEozUh40FY5HrFcr65Yr
+	 rQhJenn1bOw7tTMMM3NL0PgC9fKu0ZM8PdELy7n99o6sULWghet/meuEed6XbFL31E
+	 +ZIGs45QtrW7iQEWFPhF64p6DF+Lk1gOYYdsGrWhEXRDWUDRBJ9/MXThNFGipxJ5Fk
+	 1mOZoWGJx8ALQ==
+Message-ID: <009c8e5e-02d3-4017-bb84-e3a8f01b9dc9@kernel.org>
+Date: Fri, 17 Oct 2025 18:29:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9LoEsAyJsV+yPBG/"
-Content-Disposition: inline
-In-Reply-To: <20251017161543.214235-5-vitalyr@opensource.cirrus.com>
-X-Cookie: Androphobia:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Benson Leung <bleung@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ linux-kselftest@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>,
+ Dan Williams <dan.j.williams@intel.com>
+References: <20251016054204.1523139-1-tzungbi@kernel.org>
+ <20251016054204.1523139-6-tzungbi@kernel.org>
+ <20251016123149.GA88213@nvidia.com> <aPGryj-V5PQZRtoI@google.com>
+ <20251017134916.GK3901471@nvidia.com> <aPJp3hP44n96Rug9@tzungbi-laptop>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <aPJp3hP44n96Rug9@tzungbi-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/17/25 6:07 PM, Tzung-Bi Shih wrote:
+> Imagining:
+> - Driver X provides the res1.
+> - Driver Y provides the res2.
+> - Driver Z provides the chardev /dev/zzz.  The file operations use res1
+>   and res2.
+> - A userspace program opened /dev/zzz.
+> 
+> In the approach, what is .remove() of driver X supposed to do when driver X
+> is unbinding (e.g. due to device unplug)?
 
---9LoEsAyJsV+yPBG/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are use-cases for revocable, but this example is a bit too generic:
 
-On Fri, Oct 17, 2025 at 05:15:31PM +0100, Vitaly Rodionov wrote:
+Drivers don't just share device resources with other random drivers, they
+usually have a defined relationship through a bus.
 
->  /* Register Fields */
-> =20
-> -/* REVID */
-> -#define CS530X_MTLREVID			GENMASK(3, 0)
-> -#define CS530X_AREVID			GENMASK(7, 4)
-> -
+For instance, if you have a driver on the platform bus and another driver
+connected through the auxiliary bus, there is a defined lifetime: The auxiliary
+device has to be unbound before its parent device.
 
-It seems a bit unhelpful to remove register definitions merely because
-they are removed, so long as they're correct they might come in handly
-for something in the future.  I'm not sure if the datasheet for these
-parts is public...
+This means that as long as you are in a scope where your auxiliary device is
+bound, it is safe to use a device resource from that parent without further checks.
 
---9LoEsAyJsV+yPBG/
-Content-Type: application/pgp-signature; name="signature.asc"
+The goal should always be to proof to be in such a scope when accessing device
+resources (in Rust we can let the compiler ensure this at compile time :).
 
------BEGIN PGP SIGNATURE-----
+However, there are rare (yet valid) cases where such a scope can't be
+guaranteed. DRM has such cases, and, unfortunately, MISC device seems to be
+another one.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjybrwACgkQJNaLcl1U
-h9DB0Qf+Ipy6d5unq9Go1Am6/MXTFAQKjbiqT/Qa/ldOrOlBcbVF+FWe4g7LRqL6
-o5RE17K0+szsubDch53wxEPdXDxoBl84meOrnrmDn+caILU6cVlezSvHC2Ix8t7E
-uXyZx9gEGmDz4WidqDDHULwfR+/5VWZe03EDdRLpePcCGmYjt/wcuRUMaa/+Jex+
-sqNXREfMR31hl1RJ7e4CVz+YjsTy+jlbufRJLdfqv8gl2G99PXmHLNowHAf32A7F
-3E6D9SbzcsB5839mMQUA6rTxJAqMNFs6ElTwJJsQyMcmvGAvZ1a4NjIKbxk79l+O
-+hq+KCfJIrMaGyktXIns6PSVfvyooQ==
-=WrE8
------END PGP SIGNATURE-----
-
---9LoEsAyJsV+yPBG/--
+I know the reasons why DRM has to have this design, I'm not sure about MISC
+device though. Unless there's a good reason, I think MISC device should be
+"fenced" instead.
 
