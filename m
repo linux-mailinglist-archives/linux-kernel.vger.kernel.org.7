@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-858368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B615BEA9CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:19:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55671BEA9A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA5685C024B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470ED964022
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45F425F994;
-	Fri, 17 Oct 2025 16:02:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B973E275B06;
+	Fri, 17 Oct 2025 16:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHoSw/PZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0778625D209
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD5726E717;
+	Fri, 17 Oct 2025 16:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760716957; cv=none; b=AHv7k5Kvy7QnfMA/CNep8ltzNtKhwSzP9tHVSpvfBH+9+yseDE5RH2s8g77NCIeG84x0FwU4QMo2hZXtcu4V2fPlqKFWP+5HT1GqHc1CYh98LnEiD/HepjQZ6ORUflEGf0oy5J7YNcLAU5+Xpp68TsQt56EX26z0z/FO0CYZN6k=
+	t=1760716964; cv=none; b=KUNYRsttCcXZwm7O4tWXcLvOzY9F/D1sFzJtPlIvl2WS6xP8dGqfJhATx1LW0Qqf9jdpLC8GSb6t1Zbi/kEAMezlmo2+UKHggiUWi0tb6Tp0dtpLCh7wDHn9Rko+DFhZ0oYH6C2/4nORPYYlGuoE4rI5EOFgKmjqg3r+jT+hCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760716957; c=relaxed/simple;
-	bh=7pnwO9ocWsSmARWhWORudDHyt94U84Wbc7RgQgo5MQg=;
+	s=arc-20240116; t=1760716964; c=relaxed/simple;
+	bh=xojrpFlz1LFNv97U0p6wiXyxxqPnBp1q0KSfoha5XPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSL2cK/UBXdsSOCLUPneqmE6HoE1aOLxJ0bvHtVWX1tdPyYWaCctM4wSJHMH3zuY5MsqfQd4qQ/iAz7LWMdBKwD9720Rzz3KY3nSKZSbHWtm2DA3QY7RQDfJ+hlrIc77k94OT97jJWWXmWXSC3Yqq5cf/XNBwCZkUtgtIgSreI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9muM-0003ML-Jf; Fri, 17 Oct 2025 18:02:22 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v9muL-0045FL-2X;
-	Fri, 17 Oct 2025 18:02:21 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 767D1489404;
-	Fri, 17 Oct 2025 16:02:21 +0000 (UTC)
-Date: Fri, 17 Oct 2025 18:02:21 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
-	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
-Message-ID: <20251017-spirited-ruby-carp-5d7fe9-mkl@pengutronix.de>
-References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
- <20251017-spectacular-xanthic-swan-9427e8-mkl@pengutronix.de>
- <a729eeda-22d8-4f3e-bb6b-0cd2f3a06d2a@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B154F9uOvNxv5ebOnrypo3h/x7dbeE2iwQmYCmfkS77N6WPSLIzqr7Dkr8hOUmTjTh/BsgYgm7IqMH6WxER/q8r9d+7mgAE8unSsIefqtPg/c+A7q0fWqULtVxgGgc5bzqA/DP6m+YhlaM8rWr2z7FxonOmjkgmcpF7sty3WjTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHoSw/PZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91458C4CEE7;
+	Fri, 17 Oct 2025 16:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760716963;
+	bh=xojrpFlz1LFNv97U0p6wiXyxxqPnBp1q0KSfoha5XPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LHoSw/PZokmUd2Wc0/IYOV1WttAmj1Ak5JnKJdEt0h3QSQBtfIxDIQgkomsBc5l1n
+	 el08IFWZToc9N5U0hSwBjvv342efsu0yc9Pu/pyZduyk7DUre0EMfyqYvky97Rtbyr
+	 UwxD7s+NEdOCv2uCjfPi0bvGrM/DCp7rLM2p78bga74zGKcvBiuQ2hJgghXCYTpYBt
+	 YhCluy32wjj8x2k1Wgl7X5llmtwOzeZd6aZV0HdwChvfpoNyeERpOl/Yxr5Ldz5WCX
+	 G6O4HPO/muoUrNzAuvYRoJYtif8/ypWig3+XayEUkcGrrvIhW15CsBBBr3vrcDr9RS
+	 SE7KW+1EMRJgA==
+Date: Fri, 17 Oct 2025 17:02:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Gary Yang <gary.yang@cixtech.com>
+Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	cix-kernel-upstream@cixtech.com
+Subject: Re: [PATCH v4 3/3] arm64: dts: cix: Add pinctrl nodes for sky1
+Message-ID: <20251017-expectant-tingly-95cd6d57962c@spud>
+References: <20251017074646.3344924-1-gary.yang@cixtech.com>
+ <20251017074646.3344924-4-gary.yang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,86 +59,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vvbf7cai7jwked76"
+	protocol="application/pgp-signature"; boundary="H64nj9AQoov3hoOl"
 Content-Disposition: inline
-In-Reply-To: <a729eeda-22d8-4f3e-bb6b-0cd2f3a06d2a@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20251017074646.3344924-4-gary.yang@cixtech.com>
 
 
---vvbf7cai7jwked76
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--H64nj9AQoov3hoOl
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
-MIME-Version: 1.0
 
-On 18.10.2025 00:40:22, Vincent Mailhol wrote:
-> On 17/10/2025 at 22:53, Marc Kleine-Budde wrote:
-> > On 13.10.2025 20:01:22, Vincent Mailhol wrote:
-> >> Following all the refactoring on the CAN netlink done in series [1],
-> >> [2] and [3], this is now time to finally introduce the CAN XL netlink
-> >> interface.
-> >>
-> >> Similarly to how CAN FD reuses the bittiming logic of Classical CAN,
-> >> CAN XL also reuses the entirety of CAN FD features, and, on top of
-> >> that, adds new features which are specific to CAN XL.
-> >>
-> >> Patch #1 adds a check in can_dev_dropped_skb() to drop CAN FD frames
-> >> when CAN FD is turned off.
-> >>
-> >> Patch #2 adds CAN_CTRLMODE_RESTRICTED. Note that contrary to the other
-> >> CAN_CTRL_MODE_XL_* that are introduced in the later patches, this
-> >> control mode is not specific to CAN XL. The nuance is that because
-> >> this restricted mode was only added in ISO 11898-1:2024, it is made
-> >> mandatory for CAN XL devices but optional for other protocols. This is
-> >> why this patch is added as a preparation before introducing the core
-> >> CAN XL logic.
-> >=20
-> > What about merging patches 1+2 now?
->=20
-> If patch 1 had to be squashed,
+On Fri, Oct 17, 2025 at 03:46:46PM +0800, Gary Yang wrote:
+> +#define DS_LEVEL0	2
+> +#define DS_LEVEL1	3
+> +#define DS_LEVEL2	5
+> +#define DS_LEVEL3	6
+> +#define DS_LEVEL4	8
+> +#define DS_LEVEL5	9
+> +#define DS_LEVEL6	11
+> +#define DS_LEVEL7	12
+> +#define DS_LEVEL8	13
+> +#define DS_LEVEL9	14
+> +#define DS_LEVEL10	17
+> +#define DS_LEVEL11	18
+> +#define DS_LEVEL12	20
+> +#define DS_LEVEL13	21
+> +#define DS_LEVEL14	23
+> +#define DS_LEVEL15	24
 
-Sorry - I was offering you to take patches 1+2 into can-next-testing
-now.
+All of these just hide the amperage, please drop them.
 
-> it should probably be in patch 3
-> "can: netlink: add initial CAN XL support". The MTU workaround as
-> introduced in patch 1 does not share any of the logic of the
-> CAN_CTRLMODE_RESTRICTED as introduced in patch 2. Patch 1 is really
-> just a preparation for CAN XL. You could remove patch 2 from the
-> series and it will still work (aside from missing one of ISO mandatory
-> features). Remove patch 1, and the thing breaks apart because it is
-> required by patch 3.
->=20
-> If I were to squash 1 and 2, I am not sure how I would describe those
-> two different changes in a single patch message.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---vvbf7cai7jwked76
+--H64nj9AQoov3hoOl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjyaIgACgkQDHRl3/mQ
-kZw5dgf9Hl7TWYBa57CItoz+e98AvXno7s92zcIQYCJ0ZIb7Dr9hGNETjfYPzZsc
-AI5QN1BrjNsTRkJGOHfr58+zE1rMlXvrpgHqfUnlBsi1XaKDvxj9989j3vS8FN6J
-ej7IzmHkp/V/SDbkaeEgDW7LyPmSOgu0P2BjMqkAdgza61zt8eRxOiao68o9AhiX
-AnqZA75DB6dtiq9qP0C9pCYpYBWDTsn88QEGodgP5W7PRMXPVc4/YQB2F6Jp+8iJ
-gaJg8f33wUm9wzukB9Oxegu0dg8SrXaSFjsjrxTRnFfBbUOlA6YKTFtL9hA0uFT5
-B6dslMxtlKnKxn/7KmSrfb3K4db2CQ==
-=elj5
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPJonwAKCRB4tDGHoIJi
+0iOeAQDyBaIb9gA3BPzuk30EVWGx8N+rGqa+2Z8gxw7jelG+/QD8DPxps1C5UQBi
+wFmCW5uuw60FSmq8tcTuX3dEPar0jgQ=
+=Z8KD
 -----END PGP SIGNATURE-----
 
---vvbf7cai7jwked76--
+--H64nj9AQoov3hoOl--
 
