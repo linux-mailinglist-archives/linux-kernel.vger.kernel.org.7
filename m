@@ -1,216 +1,215 @@
-Return-Path: <linux-kernel+bounces-857293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B3ABE66EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:33:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E122BE66F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 060B54F8064
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851FA5E7337
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 05:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3068030F546;
-	Fri, 17 Oct 2025 05:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D3030BBA2;
+	Fri, 17 Oct 2025 05:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tk1dafpy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LGRSOt3c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC033468F;
-	Fri, 17 Oct 2025 05:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760679142; cv=none; b=uEOFgB07Y6RgacSh9zrt/SkA/sya50fjH1VxBVBMjqfr7e9v8mEZPrUfts25JZymToI8IGo0oX+ckLUlWy/38TSOPEU7/R0nzlVVi0XBPalnbB96xJIKkJjHrhdcGErwK13uqbn5sDmPVCz1GwUXebllaNqwtRHT3yVyIcQjbxw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760679142; c=relaxed/simple;
-	bh=+4Tk3wM6BSkHKqGN1nHxd6sRm5b99SgBMl22sbkCveo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H5THlw6iRz08hCxgUrrk41UqE/N1d7fi3ncOedrmFS04bURWG7jzkFnNUpRnpB3VpVEs/XnB4FK7Uyc5SIqBIPJWCyhQXldBkxXpLXDcXpDy2I0IQPgBpXl1DrupP+UKg1ble0sVsZpOExATkkiosZOvnz3plQR0gdnL2TqCpFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tk1dafpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77D1AC4CEE7;
-	Fri, 17 Oct 2025 05:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760679142;
-	bh=+4Tk3wM6BSkHKqGN1nHxd6sRm5b99SgBMl22sbkCveo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Tk1dafpyL1RMMBd6Ph1HYZxwP+qDCKOxCLp7P/HuNWsWsa/1m7wol3XDVAqLQPPZH
-	 EBHuvQ0Z3Q9ltRVYXN53ZDnAXDttR9HpPSEsHas5SSUCZ28nm2n4wH7IN34WOvebtm
-	 39nDTFr25MtWNaxk2z/rGmIlyKnCOU1Fbzkey3OAeVsq6WQIeaaq0vRVQvBo8gfFO7
-	 bbBry4lOFz4HBUV2eNU/lH3PeXwmUavOPfqkTj1yW4DB8piFLU1D8gzcLEhjDdxBoa
-	 qTDm9im5eWpHrcv5HehK6MAEdzzaNfdQff37cC9LwjEpjwB/XY2n/EfV0E/bW2rXps
-	 NzjVs0apSQyRw==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: [PATCH 3/3] block-dma: properly take MMIO path
-Date: Fri, 17 Oct 2025 08:32:00 +0300
-Message-ID: <20251017-block-with-mmio-v1-3-3f486904db5e@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com>
-References: <20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC63333468F;
+	Fri, 17 Oct 2025 05:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760679182; cv=fail; b=gCifksNI6yr4jr1VbgHdgO/fcZFLqpQzHy4ymqL2mruHaSjg8Cbf4RpHYpoTOFK67drkvTqcyQdOrp9m3T++jX9nG7NiQuf+nsiuGy3EUK4mnJ/58PaV35ZAwlp52upGFLV4QyspaopIfnxsoDAaxUS2PbZBRSkENYlIP85xQpg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760679182; c=relaxed/simple;
+	bh=BDHtloOBjbHTccgbueB6zSFm3uhhhABMRwwL5YZyTUQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KHqMYanxmZPTVBeByVjAkERYf7GCVdWe0SCYOLx+vY4EyHsr9r2vHIG7++LRzyflG67KHuC9jTM4uWDdMVZ+lyliJE5Fi5++pKa+XmOAVYxyhnMoxdBjipuFAVgbTjphWkFLpGIRKEWuJFlm1KaJKoNbhtXWt/yPc3cxfm15D8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LGRSOt3c; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760679181; x=1792215181;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=BDHtloOBjbHTccgbueB6zSFm3uhhhABMRwwL5YZyTUQ=;
+  b=LGRSOt3cHOg50GKarZVZxnq5TqHVGPPezfD0IUQ7r1XHs3n9hBhhcEMz
+   C9i2Y9R8pmmOVsOV6lyuTyAFJg0UUKSBFH8M3OR7zWyTmZWsbzX4t+iYP
+   97udmvLjx7pZcrPQWSsib34dI9vZrOvJL1WkfSCo9lXfaeq1I4huGvu64
+   yDfbhUQvrsJy4KWIp3hkipuGvgW1jxWHSOlhRg9qH0pwE18zJOxmeBQ9s
+   /TpZ/rqjmPfC6FX+QvENyVv+d+SVaIljpvuMStxl4c//6hEdhgKk8EppU
+   APV/Dq0y9Wx2jp8/PCmAAibm8dqmhHMyQxYv+zQht3T08Coq0GynYTFua
+   w==;
+X-CSE-ConnectionGUID: d49y1otKTsquZv9BFuJrYQ==
+X-CSE-MsgGUID: bLoo1VfuS2qxayYdnUpmjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="62921874"
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
+   d="scan'208";a="62921874"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 22:33:00 -0700
+X-CSE-ConnectionGUID: OW2wGyV3SQWTga1zyzw/sg==
+X-CSE-MsgGUID: ciRKDfH+Sx+PTOx/e81eXA==
+X-ExtLoop1: 1
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 22:33:00 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 16 Oct 2025 22:32:59 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 16 Oct 2025 22:32:59 -0700
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.22) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 16 Oct 2025 22:32:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p+xL3P9yf5koRve4QQofbmwOzLyLWtjFtjA5W9nPTgRY2byVTmEJ7/6vzwhfRfZPPCcUgdQwfD87T6qMawAW7vUbogdMi5WLI6EO/rvdPayJboLvs2iWWxvvBfWrWeWtP6RqvrOBFzj8JIR2NFJ10948xQwi4aGt0aj5rVTNgjBtd2h0RLaaozjqh1KKUgWfMstchVo8QqPylYnuJ0wf/Z8H8ShZJ+pEvENWQ5avZv+xoARpUmYxAQ2sgK2SnlVjK1nr2m1LYfue1iA0JKiZw6KJJxQVvysEqRtQ/Y7/Ycpcdh9im5IZGNdarUMEOIZ28yxhratzYtj8AFSEF/TfBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vU14fMuQ9vc4Nc9pY7dSrHMWkoBsKki3qga7TtHSTng=;
+ b=MXAa26jvSqSZ2E8C4nVnzu37G6bj/9TqpfNc+g1RiJWPYHic9DMYs13SsBcLwTGtFhFkPnuA3Dg+CvLWrUQam1aSfpRC5KHL/LHlRdGWFlQcYgz/ItDqKD1V/2pqJiwXHN60wB9KARKey6uRcHimsZctYjF/EUaalWvjdsGI88og3gGcQbxk1DXLn1pPDBWk7PSoH4fa+jkMDHddjGGo8C/myQ/MotnfWubcHxXOVKLTCEQU5DLvzXBsGz/fxZwWAOPbyDumBgyGGuwGuJi2MpanuSTUEsnBydeXe9MA1bAUBvowIjgpsgtSa7MDFS8xq/xNU4xckYAoVpMYacJpYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by CH3PR11MB8706.namprd11.prod.outlook.com (2603:10b6:610:1d1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
+ 2025 05:32:52 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
+ 05:32:51 +0000
+Date: Fri, 17 Oct 2025 13:32:41 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov"
+	<kas@kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
+	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Yan Zhao
+	<yan.y.zhao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe
+	<rick.p.edgecombe@intel.com>, Hou Wenlong <houwenlong.hwl@antgroup.com>
+Subject: Re: [PATCH v4 2/4] KVM: x86: Leave user-return notifier registered
+ on reboot/shutdown
+Message-ID: <aPHU+RZKwCK0BK7t@intel.com>
+References: <20251016222816.141523-1-seanjc@google.com>
+ <20251016222816.141523-3-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251016222816.141523-3-seanjc@google.com>
+X-ClientProxiedBy: KU3P306CA0013.MYSP306.PROD.OUTLOOK.COM
+ (2603:1096:d10:15::18) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|CH3PR11MB8706:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10d071d6-a8bf-4592-c027-08de0d3e9d6a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qN0l81I0+7CXTmGsxJhFO/7UpPDHsTfBbkM5DhWKMURbpQksHYFM5YMNwMgd?=
+ =?us-ascii?Q?tha0H1guY8TMbprkMAh2FiCIaa8Ksf/D4hvjVBahBV7jZ7jLJrc8PUAJ70mo?=
+ =?us-ascii?Q?rKKCzfQAYviFG+gVSMgLgcg+l1m+ydynyqr6CjVU1+RwECC97VPe4sod6B8z?=
+ =?us-ascii?Q?1xewY+ciYC+R+ZzjD8ve1kgtFamnJXkDVOAMfILFNtrgtBeIOnNklZvpCral?=
+ =?us-ascii?Q?dW6VttRmM6KvPpwKp4Q2F9SbxX4rPR3w378v7SaNMMKiODlQTMEjIo/Ivrvq?=
+ =?us-ascii?Q?QvJd+msUJteUUH0YQLfY5G+3mtzNBDRrjLsDO8HIC9epoFt5pwXJ2hj8zWju?=
+ =?us-ascii?Q?RVsxiOpAx1mw+A8pWkI0s9IVugOGcyG1vf5DBKzy1jNNCZyLBuPmyIQS6rdv?=
+ =?us-ascii?Q?JPJVDXX9b1RWxNHhOG3g4ykSIYpCz5M/oN1/EOYtjZEnJBT92gQN3SGir+fB?=
+ =?us-ascii?Q?iPOHz2ZGo4N8g4SkPnV7ptjML2F7g5KhITtAgLeBpQ6EZANFkyFST/pV6LTk?=
+ =?us-ascii?Q?EUdQYGgYIoZG1INEtPh9XF8KNkcmhTz8yGg2iSCu1Vv+6aDgQ9iaIceiMyKY?=
+ =?us-ascii?Q?IOQa0VHtuYB5yqRs3v9bxFdJNuE4YLzECLHNy9Cba+kaPuYqxK6A6ET4nihw?=
+ =?us-ascii?Q?qClMEJk5UlL5Ts7hjzcad9YZTwqxreaLW2+dMdrV+cYQDkhgh/xzN0tyjKZq?=
+ =?us-ascii?Q?N0DbdaPXOJOlyCXJzOags9L7lH30/ImqL879GsoMBk20HQypNWhP/YO7SwHf?=
+ =?us-ascii?Q?u/S/oKq2mfcjpB/AxrJpMIB81bZoaYd3NUToL+/4NmK7xAwKGsjCOdckTnBx?=
+ =?us-ascii?Q?X/kK3Yy7LyI/v87lBNEh7eNfp0UXOwR66zij6A/wxfnWs0LQTIotrUvHHR/+?=
+ =?us-ascii?Q?433GxPvag2o45IAZniXicn9BcPEOVp6mq8+a7Ot95Ya5fgvdOHmf9mNo/HRT?=
+ =?us-ascii?Q?Ct2En9l1N1+f6HN2/fpkxgAS3pHm1mud4FiXPb9Kt2xkyKtZPEW2R4A8xoLb?=
+ =?us-ascii?Q?BtoYe3Bn8G0IRKp3lzAvREtgsmwv23N5t7VXPVk211vYAdsEWfBWOv/w50O+?=
+ =?us-ascii?Q?EV0hKlLHDdNFLK7PRBcRE+dzblyWk/YptSO+HAQlFmaC4HHXkYkmbeR3f4Qx?=
+ =?us-ascii?Q?Xgqizhf1kbXX9dixrXaBQUU0TIVKFCmnVu+Gb0ywHvpD+i39lDDuyvyPdwT+?=
+ =?us-ascii?Q?vB1PhLMEVyy0KmNSnu5Y3y+EuxPq8HwvdSZ8/tc58xjtJ6y9bKSZAuGl+rad?=
+ =?us-ascii?Q?Ax/Vvt1iR85wqlaFuacHBF2W4bbPxDiEOydgc1jViQ8GCAe//3YoQbq2L6xc?=
+ =?us-ascii?Q?gawAVVbTH3neV3zlrzi7D6yVOhR1Q200XGp06nOxQKWIia8xoHuMDxmeg6zT?=
+ =?us-ascii?Q?SXsqC/P8BRfeKrsiZbIMKuDSU94n3L0wpuMz6f+xBaH4PSFPw3ElI+YpUIJl?=
+ =?us-ascii?Q?C3TchDxbIMBFb4OTEOyF1KCAvLJIAZgo?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AMD0bRtwrhazqc+MwbJPLj+lXh/0S9VTZg/GNK+COwJJy3NzITzLIT/soHu3?=
+ =?us-ascii?Q?zhzfbJt/5gmR/7ZotcC3ecRfhG61JZs+HyJTWikt6Xq6UAc2buAZQNkaIKAl?=
+ =?us-ascii?Q?RybPABqar78iF3cDlThwLC8fh85KbA4sfA8zqaEGVi74ZX8InF9iXJLDGaAK?=
+ =?us-ascii?Q?BdMIgcqvGn5LbyHDwzk4p8hI0JxDlKgm/ZFnIrv4g3yqoApe+1FeMG6bgNkM?=
+ =?us-ascii?Q?tQJ4wGCF0h055XO61NY044F3E5p9jcM0gGQSTfbgwGSooqX61e0XAPGE/8HH?=
+ =?us-ascii?Q?gH16SmyjZCnXOSBxOAlP7nCegessZu4DHOe2gx7xtNS8X3WyeiNNJCZCNwG0?=
+ =?us-ascii?Q?8zvcERfsto3Ve1mvPko2YOGovJsapr2xq8X1zk5d+qA40ngv+B23JRSbrSI2?=
+ =?us-ascii?Q?q2T/xnNKPHdlcF1JbHUU2UWVwfuOjW2Mcig9N63itarbUeGQ9+404lSi8jzp?=
+ =?us-ascii?Q?L6qX7VnmWsrVClLWMY07WMLQDjgeGvGNIsecd30BUXoubLFmkYb2YK5O5Peg?=
+ =?us-ascii?Q?a6T9JCFoIq8MXT15UKxGkyNwEvxqLGgX36gyaEF1iXHYdiN4OkTmfNBEaJ92?=
+ =?us-ascii?Q?aN6Y+ugqZ/Xohs1XkevWfvJLeCjBh9V/F667EisgC3gICnnX/zGHM2+ha6RA?=
+ =?us-ascii?Q?C9/MEkmxTCqg4RJuiA3Sj3sNoDAPMPYeo1nfrs4R8CsgzjPgsNUWo3S2tPff?=
+ =?us-ascii?Q?hUdPz8OJILIxgxxJlExnsH+Tx/eU8STpV/uUXVpn16eayLJ5oNHiRDyEaIip?=
+ =?us-ascii?Q?vyesLQw+wya29TcyOjfBuU57xXJnyY3XYuLah55/SB69/kRfVkfeM8LgYm8o?=
+ =?us-ascii?Q?RVbH3v2Nex2GXDCkU4swsJ4qKcavbAZkCHBHnsbQmWt9T4y3SH3N+/pIQbQW?=
+ =?us-ascii?Q?vjFGQPxF8ky/ufAUWleK9Ff9VIpuVXsYW1ih7G6+p90e12J9IFZ/V+1PPBeo?=
+ =?us-ascii?Q?3hRPRTe08YGVobaUI0CjiXFRryQarQobdYHWBcaeShcjvLNlhCKUTi2e8nXV?=
+ =?us-ascii?Q?jyYcl/DtfDYWbYUzkXAI65laS943pTT/8D+JvYmhwYs5XTzMEwaJFOnT+FxX?=
+ =?us-ascii?Q?Fb50Mzcgizs3Ys7XgMKvdr+alJIN4XeGnoN87KPfumh9eWQbWGIyViozaSv9?=
+ =?us-ascii?Q?zZe5YFHzKcfLYXUUq8Oc69E/wuf+9peCUwdci6ZBkgXxxjQbk79CFAyY6/7h?=
+ =?us-ascii?Q?phlUtZOKkgAIZHUviQRCdBPt4qgYvPkiqMtgvsEhR+nDAEhMPryJebTK4Z3I?=
+ =?us-ascii?Q?b2BDo+EN9Jkbwnn7PPSp+Hl8WjMYmqmYfJyJRgbvyBAsP1eB8Cr4QMnLMaiy?=
+ =?us-ascii?Q?iRMcEuL9CQVj7ek/tzmyczDmAdiH2XLyBoVzsayCE9Rpm0nJKGr5Plx/Y6mN?=
+ =?us-ascii?Q?uQWHIb4muPZqM31yTvqCkDTHXcHSH2kxaLYk2haUgZVVAB6GhVo7YOB8O9Bk?=
+ =?us-ascii?Q?bY7XChnyV3/KMsqZvqJL6O+aqZVJduoHdw2lXCUqdh3U3L0fdo/BYKN4YYVy?=
+ =?us-ascii?Q?KJQ/Nhcg2jKDghqcju2+eIqCqOU/Ruwb5deqfDCgcQnCq/DHwP4s9zN94e0R?=
+ =?us-ascii?Q?nvZKintQg+cZX8vTIJExs+NVc/dKv2rBUNsJ86jx?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10d071d6-a8bf-4592-c027-08de0d3e9d6a
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 05:32:51.8314
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v8PdwHOx4l+s+Spr+0PVdrA2EPAlsIAxRcoxGLifk9xU7WW8MHADMfIXXqNGU1g2y/vUq67iRKn0Ip+h8BIfAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8706
+X-OriginatorOrg: intel.com
 
-From: Leon Romanovsky <leonro@nvidia.com>
+> bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
+>@@ -14363,6 +14377,11 @@ module_init(kvm_x86_init);
+> 
+> static void __exit kvm_x86_exit(void)
+> {
+>+	int cpu;
+>+
+>+	for_each_possible_cpu(cpu)
+>+		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
 
-Make sure that CPU is not synced and IOMMU is configured to take
-MMIO path by providing newly introduced DMA_ATTR_MMIO attribute.
+Is it OK to reference user_return_msrs during kvm.ko unloading? IIUC,
+user_return_msrs has already been freed during kvm-{intel,amd}.ko unloading.
+See:
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- block/blk-mq-dma.c            | 10 ++++++++--
- include/linux/bio-integrity.h |  1 +
- include/linux/blk-integrity.h |  3 ++-
- include/linux/blk-mq-dma.h    | 14 +++++++++++---
- include/linux/blk_types.h     |  2 ++
- 5 files changed, 24 insertions(+), 6 deletions(-)
+vmx_exit/svm_exit()
+  -> kvm_x86_vendor_exit()
+       -> free_percpu(user_return_msrs);
 
-diff --git a/block/blk-mq-dma.c b/block/blk-mq-dma.c
-index 4ba7b0323da4..e1f460da95d7 100644
---- a/block/blk-mq-dma.c
-+++ b/block/blk-mq-dma.c
-@@ -94,7 +94,7 @@ static bool blk_dma_map_direct(struct request *req, struct device *dma_dev,
- 		struct blk_dma_iter *iter, struct phys_vec *vec)
- {
- 	iter->addr = dma_map_phys(dma_dev, vec->paddr, vec->len,
--			rq_dma_dir(req), 0);
-+			rq_dma_dir(req), iter->iter.attrs);
- 	if (dma_mapping_error(dma_dev, iter->addr)) {
- 		iter->status = BLK_STS_RESOURCE;
- 		return false;
-@@ -116,7 +116,7 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
- 
- 	do {
- 		error = dma_iova_link(dma_dev, state, vec->paddr, mapped,
--				vec->len, dir, 0);
-+				vec->len, dir, iter->iter.attrs);
- 		if (error)
- 			break;
- 		mapped += vec->len;
-@@ -184,6 +184,12 @@ static bool blk_dma_map_iter_start(struct request *req, struct device *dma_dev,
- 		 * P2P transfers through the host bridge are treated the
- 		 * same as non-P2P transfers below and during unmap.
- 		 */
-+		if (iter->iter.is_integrity)
-+			bio_integrity(req->bio)->bip_flags |= BIP_MMIO;
-+		else
-+			req->cmd_flags |= REQ_MMIO;
-+		iter->iter.attrs |= DMA_ATTR_MMIO;
-+		fallthrough;
- 	case PCI_P2PDMA_MAP_NONE:
- 		break;
- 	default:
-diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-index 851254f36eb3..b77b2cfb7b0f 100644
---- a/include/linux/bio-integrity.h
-+++ b/include/linux/bio-integrity.h
-@@ -14,6 +14,7 @@ enum bip_flags {
- 	BIP_CHECK_REFTAG	= 1 << 6, /* reftag check */
- 	BIP_CHECK_APPTAG	= 1 << 7, /* apptag check */
- 	BIP_P2P_DMA		= 1 << 8, /* using P2P address */
-+	BIP_MMIO		= 1 << 9, /* contains MMIO memory */
- };
- 
- struct bio_integrity_payload {
-diff --git a/include/linux/blk-integrity.h b/include/linux/blk-integrity.h
-index b659373788f6..34648d6c14d7 100644
---- a/include/linux/blk-integrity.h
-+++ b/include/linux/blk-integrity.h
-@@ -33,7 +33,8 @@ static inline bool blk_rq_integrity_dma_unmap(struct request *req,
- 		size_t mapped_len)
- {
- 	return blk_dma_unmap(req, dma_dev, state, mapped_len,
--			bio_integrity(req->bio)->bip_flags & BIP_P2P_DMA);
-+			bio_integrity(req->bio)->bip_flags & BIP_P2P_DMA,
-+			bio_integrity(req->bio)->bip_flags & BIP_MMIO);
- }
- 
- int blk_rq_count_integrity_sg(struct request_queue *, struct bio *);
-diff --git a/include/linux/blk-mq-dma.h b/include/linux/blk-mq-dma.h
-index 51829958d872..916ca1deaf2c 100644
---- a/include/linux/blk-mq-dma.h
-+++ b/include/linux/blk-mq-dma.h
-@@ -10,6 +10,7 @@ struct blk_map_iter {
- 	struct bio			*bio;
- 	struct bio_vec			*bvecs;
- 	bool				is_integrity;
-+	unsigned int			attrs;
- };
- 
- struct blk_dma_iter {
-@@ -49,19 +50,25 @@ static inline bool blk_rq_dma_map_coalesce(struct dma_iova_state *state)
-  * @state:	DMA IOVA state
-  * @mapped_len: number of bytes to unmap
-  * @is_p2p:	true if mapped with PCI_P2PDMA_MAP_BUS_ADDR
-+ * @is_mmio:	true if mapped with PCI_P2PDMA_MAP_THRU_HOST_BRIDGE
-  *
-  * Returns %false if the callers need to manually unmap every DMA segment
-  * mapped using @iter or %true if no work is left to be done.
-  */
- static inline bool blk_dma_unmap(struct request *req, struct device *dma_dev,
--		struct dma_iova_state *state, size_t mapped_len, bool is_p2p)
-+		struct dma_iova_state *state, size_t mapped_len, bool is_p2p,
-+		bool is_mmio)
- {
- 	if (is_p2p)
- 		return true;
- 
- 	if (dma_use_iova(state)) {
-+		unsigned int attrs = 0;
-+
-+		if (is_mmio)
-+			attrs = DMA_ATTR_MMIO;
- 		dma_iova_destroy(dma_dev, state, mapped_len, rq_dma_dir(req),
--				 0);
-+				 attrs);
- 		return true;
- 	}
- 
-@@ -72,7 +79,8 @@ static inline bool blk_rq_dma_unmap(struct request *req, struct device *dma_dev,
- 		struct dma_iova_state *state, size_t mapped_len)
- {
- 	return blk_dma_unmap(req, dma_dev, state, mapped_len,
--				req->cmd_flags & REQ_P2PDMA);
-+			     req->cmd_flags & REQ_P2PDMA,
-+			     req->cmd_flags & REQ_MMIO);
- }
- 
- #endif /* BLK_MQ_DMA_H */
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 8e8d1cc8b06c..9affa3b2d047 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -382,6 +382,7 @@ enum req_flag_bits {
- 	__REQ_FS_PRIVATE,	/* for file system (submitter) use */
- 	__REQ_ATOMIC,		/* for atomic write operations */
- 	__REQ_P2PDMA,		/* contains P2P DMA pages */
-+	__REQ_MMIO,		/* contains MMIO memory */
- 	/*
- 	 * Command specific flags, keep last:
- 	 */
-@@ -415,6 +416,7 @@ enum req_flag_bits {
- #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
- #define REQ_ATOMIC	(__force blk_opf_t)(1ULL << __REQ_ATOMIC)
- #define REQ_P2PDMA	(__force blk_opf_t)(1ULL << __REQ_P2PDMA)
-+#define REQ_MMIO	(__force blk_opf_t)(1ULL << __REQ_MMIO)
- 
- #define REQ_NOUNMAP	(__force blk_opf_t)(1ULL << __REQ_NOUNMAP)
- 
-
--- 
-2.51.0
-
+>+
+>t 	WARN_ON_ONCE(static_branch_unlikely(&kvm_has_noapic_vcpu));
+> }
+> module_exit(kvm_x86_exit);
+>-- 
+>2.51.0.858.gf9c4a03a3a-goog
+>
+>
 
