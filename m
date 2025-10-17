@@ -1,133 +1,147 @@
-Return-Path: <linux-kernel+bounces-858055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E91BE8B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A5ABE8BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F36407EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9D31AA51AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61B3331A64;
-	Fri, 17 Oct 2025 13:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC656331A59;
+	Fri, 17 Oct 2025 13:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9heAzin"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tMDLw6cH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DWuiRtD9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FEA3314A4
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 13:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0C42DE713;
+	Fri, 17 Oct 2025 13:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760706297; cv=none; b=sz96PnCf/2EXCyaQeOB/Kx2FAMGWIgXmwJvig3EhixctgkKTlKK//N5GTt7qo+0JTFuwXWAgjTsvOTkMQFNfcnDU2wax7cWLNFHtRjsmVMI1P0WxCkvZbJPQIvS9h1ZzMHgJFJj5nkB5yAk+53c2DjjvACAhPtHSQOrHBVrozVM=
+	t=1760706348; cv=none; b=l1yob46mKyTmSiCKPrvyNyGQ6noARmebN93mtQA97nBlB3JgBbKxOBdN5bvwZKiLp0F99V+B9XT5YuXAYMbz8fEKyRQ+/XcGhZKb/Ma8RkL8uI+4RHLh2AwjxONS2GkwdaDE4n+YpsW/PRKkJPkiqWqc/tgLpvhk01haGBT2kwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760706297; c=relaxed/simple;
-	bh=45mXk3vW1QoAnyjK4Nd0ASLRTO5e22FNrn8YEgJAgCM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hyvkoPHWllfAMBPblvFF6/01n2VAMyGqVA/5o3iSeTX5XNfOQwMkMzv5d63+U5irvphZoeo8KE2YEVX//meKn+5KlF+RzDcxBzpjbecTs8baM6z/afQC+6r/7tgvlKIS0GBhQ8UYcGHbrKU0cujeV27lGU0n4yuAo9jjyVYATvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9heAzin; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-426ce339084so1816504f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 06:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760706294; x=1761311094; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QsGulBtXOolWogbv37P9kOPn3EPzZ7HWeVFTvLjVVtA=;
-        b=M9heAzinbWs6Rws/XraRiYASpesShCyWMFYu3Ulftwtmb8EKhO1Cg3XmpkqIluR/1E
-         0A2rNY/+AhKaiXftu0BmP2ymAuKimHzsi/H4teFi91493IWupZSZZ62fc92UgtPWDccI
-         UzzPUz8dEjWv4I+sbnuF+vpbs76iOXmq8SXWo/dpVbu3IE14neNkx+/D6O60EEdRf6hc
-         srW5cprOSSsWHget1JX8jbm+8SMNnfQjoOR3J0jCFFKK4D61zovbTG8nTtEHYgPjUXfX
-         HqYtShRJsQo4MfxYrjxFYmTw0uweC7OrwWC5+dNs+Kis/eI1tFQfDEPtnnsc86E2oHyj
-         expA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760706294; x=1761311094;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QsGulBtXOolWogbv37P9kOPn3EPzZ7HWeVFTvLjVVtA=;
-        b=LlvpOOmMAH6aL6T2TWjsZEIDJUX/mNg3FjJwSq1MA4jRMZTXWa7dfsJ5PQUp22VAWv
-         eZ2qVE8C43B3F5SpoFDimZiQVN0ezbDAhdf7l2BOboJDq3mEFMCBUa84CIwwwdLis1nk
-         nk4Z94zKbN981I7XoMxNwgYV0thFdTTJfL2ysNdcjLReh5x2oRjN9urKuuNx5hwX3wwZ
-         P+7eEDODg4/PZDCSf9dk8d95yg0ygWplzEMEh55HVntPDwqMZMUoeC3/JZ/BI3VC7utt
-         6l18yWtozyN7Zb0YtHX4PL/NLzjvhNrPbOMWn1ARCk1vXl6m21t0P4FYVCEFNI9JEv+A
-         Io8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIBELdEPQWbnbBlNJYtx2TwFHuU1pIBRKrrCR98GfOKbY/CBI3mVsPyRxdQ1n5tOyS8Xpzauiw56wV98M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH5jYBIIHz4uEIIw8OzPyAXt3glxUXNsu/jlqOVGM+O/pHjM41
-	wBf1aDKd3n2Gpi7PsyhyZZkGZNw6LMcx65TnUpQ3lSBQ7INV/vD/N2erWHX5cY5nLkJt+cPKGt0
-	3vjmKS4ReB546ZNB17g==
-X-Google-Smtp-Source: AGHT+IHmxuUy/higL8bMvF0u1RF+TfLvGKbJRuFXq91cThOSrZ5KPNHsS9I5kFewP7afvF/ZcVPnLKvl0oA6dKw=
-X-Received: from wmbgx4.prod.google.com ([2002:a05:600c:8584:b0:46e:1fc1:6636])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:40ce:b0:427:6a8:532a with SMTP id ffacd0b85a97d-42706a8535dmr1784522f8f.31.1760706293678;
- Fri, 17 Oct 2025 06:04:53 -0700 (PDT)
-Date: Fri, 17 Oct 2025 13:04:52 +0000
-In-Reply-To: <20251016125544.15559-1-dakr@kernel.org>
+	s=arc-20240116; t=1760706348; c=relaxed/simple;
+	bh=zEz9ga+C3NjrrB+uajYQC/2V9em72t3wQWjrmGwWgyE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dl9Whw7Y8g5Xe8B1Nsz8AXO188MJgsQAE5Azyh+5OLUz4uWVIv0M6YZ6NCBUkp+xo2+awPm4W2spi8tnOUIf03CCI7/OOGfFjBdUkh0CxR850i3xnSiqe4Q69OncMuWFI3xPhiZmawJOnUlRXEmZHJ+Xas6wX5sJsARBL/SE9Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tMDLw6cH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DWuiRtD9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760706345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPtEh82id2JnaP5JMh/vbCgClw5ZFVRwFNHrSzBjt1M=;
+	b=tMDLw6cHx2JEMIytXTYHequZeGQSavqZnuyx2RiVKGr3QbmobXCb9DfmPyPvlHzahvLEgg
+	LtQxqNUYasgpfkE1fkXCyx3FiL7jVJJaBm8Eik+56H4sgfjZPoOfgVgdDjzsmstFdW3rBB
+	qZTFix9vLUy+kOmLyTV6d0eQ5ZimXv4epxqYN2rTK2dMkW2dYbBJInyOwAP32D2ci5uKHc
+	CpJIXOBsbIaAJ674NPJ/nHzFop9E4HOZgsY21HSTdEkGson6e/0Z5zPF3sZVIEEYzqoT1N
+	qKfi2b+CVWJsFOEa8Vb3MVQ2KCAawBchzODnOqjksQQCVj1RbgDLuVqr1g/K5A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760706345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPtEh82id2JnaP5JMh/vbCgClw5ZFVRwFNHrSzBjt1M=;
+	b=DWuiRtD97Bun9qnHe9Qehx7Rf5DsXdqkJAcpPEWlhBIs2pUDJ4jWkGMaoWPPth2XW86csp
+	4HIBpvjemIyMLQCg==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-trace-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
+ Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v2 10/20] rv: Add Hybrid Automata monitor type
+In-Reply-To: <4d27225b5a38210a40efcdb8eb778ca0ec3808f1.camel@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+ <20250919140954.104920-11-gmonaco@redhat.com> <87ldl9x6h7.fsf@yellow.woof>
+ <4d27225b5a38210a40efcdb8eb778ca0ec3808f1.camel@redhat.com>
+Date: Fri, 17 Oct 2025 15:05:44 +0200
+Message-ID: <87frbhwudz.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251016125544.15559-1-dakr@kernel.org>
-Message-ID: <aPI-9GoI7ZsNCpQr@google.com>
-Subject: Re: [PATCH] rust: driver: let probe() return impl PinInit<Self, Error>
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	acourbot@nvidia.com, ira.weiny@intel.com, leon@kernel.org, 
-	daniel.almeida@collabora.com, bhelgaas@google.com, kwilczynski@kernel.org, 
-	abdiel.janulgue@gmail.com, robin.murphy@arm.com, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-pm@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Thu, Oct 16, 2025 at 02:55:28PM +0200, Danilo Krummrich wrote:
-> The driver model defines the lifetime of the private data stored in (and
-> owned by) a bus device to be valid from when the driver is bound to a
-> device (i.e. from successful probe()) until the driver is unbound from
-> the device.
-> 
-> This is already taken care of by the Rust implementation of the driver
-> model. However, we still ask drivers to return a Result<Pin<KBox<Self>>>
-> from probe().
-> 
-> Unlike in C, where we do not have the concept of initializers, but
-> rather deal with uninitialized memory, drivers can just return an
-> impl PinInit<Self, Error> instead.
-> 
-> This contributed to more clarity to the fact that a driver returns it's
-> device private data in probe() and the Rust driver model owns the data,
-> manages the lifetime and - considering the lifetime - provides (safe)
-> accessors for the driver.
-> 
-> Hence, let probe() functions return an impl PinInit<Self, Error> instead
-> of Result<Pin<KBox<Self>>>.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
-> Depends on a minor pin-init patch [1] (Benno will send it to the list
-> soon). A branch with this patch and the pin-init dependency is available
-> in [2].
-> 
-> [1] https://github.com/Rust-for-Linux/pin-init/pull/86/commits
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=probe_return
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> Alright, this is the simplest way I could think to represent clocks, still it
+> seems confusing.
+>
+> Let's start from guards (invariants are not special but I'm trying to do
+> something to keep precision), the value of a clock is the time that passed since
+> the last reset, as that's when the value is set to 0. Storing that timestamp and
+> just comparing the difference whenever you need to know the valuation of said
+> clock seemed the most straightforward thing to me. The clock representation
+> doesn't include the guard constraint, that is validated during the event using
+> the current valuation (i.e. now - reset_time).
+>
+> What is important to note is that, at time of reset, you don't know what guard
+> is going to fire, you may as well have a state with event A asking for clk<10
+> and event B requiring clk<20, also the guard may be in a later state and may
+> depend on the path.
+>
+> Invariants are bound to the form clk < N, and get "armed" when we reach the
+> state, from there we know exactly when the invariant is going to expire, so we
+> can save that (very important when using the timer wheel). Note here that the
+> expiration isn't exactly N from now, but it's the valuation of the clock (reset
+> might have occurred a few states earlier, see the nomiss case) subtracted by N,
+> this is what the "passed" means later.
+>
+> That said, I couldn't think of a simpler implementation but any suggestion is
+> welcome, of course.
 
-Overall LGTM.
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Ok, now things start to make sense. Thanks for the explanation.
 
->  impl Device<CoreInternal> {
->      /// Store a pointer to the bound driver's private data.
-> -    pub fn set_drvdata(&self, data: impl ForeignOwnable) {
-> +    pub fn set_drvdata<T: 'static>(&self, data: impl PinInit<T, Error>) -> Result {
-> +        let data = KBox::pin_init(data, GFP_KERNEL)?;
+At least to me, using the same variable to store different time values
+is a bit confusing.
 
-Perhaps the gfp flags should be an argument set_drvdata?
+Is it possible that we always store the timestamp of the last clock reset?
 
-Alice
+The invariant bound value (N) is fixed for each state, so we can have
+the bound value in ha_verify_invariants() instead. For example, the
+Python script can generate something like
+
+static inline bool ha_verify_invariants(struct ha_monitor *ha_mon,
+                                       enum states curr_state, enum events event,
+                                       enum states next_state, u64 time_ns)
+{
+       if (curr_state == enqueued_stall)
+               return ha_check_invariant_jiffy(ha_mon, threshold_jiffies, time_ns);
+       return true;
+}
+
+Is that possible?
+
+> Kinda, it would solve the problem for this specific subtraction, but racing
+> handlers could still lead to problems although the subtraction is "correct".
+>
+> Since this is the only time the env storage needs to be an atomic_t and it's
+> fairly rare (only complicated models require calling this function at all,
+> others are happy with READ_ONCE/WRITE_ONCE) I didn't want to change the storage
+> implementation for some perceived safety.
+>
+> I wrote that comment exactly to motivate why we aren't using atomic_t, but I
+> should probably reword that. Does this make sense to you?
+
+I think if we always store the timestamp since last reset, we can get
+rid of this function. Let's see how that discussion go..
+
+> As mentioned before, this is true for the stall case, where the reset occurred
+> when reaching the state with the invariant (passed is close to 0), if you look
+> at the nomiss case, reset happens before being ready (its invariant would have
+> passed close to 0), but the same invariant is enforced in running, here we will
+> see a passed far from 0 and need to take that into account when setting the
+> invariant.
+
+Make sense, thanks!
+
+Nam
 
