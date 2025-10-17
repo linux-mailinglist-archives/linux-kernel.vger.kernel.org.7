@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-858420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AA3BEAA28
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:21:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F68BBEAB5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7471AA28B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:21:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 772075A7B2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D38C296BC2;
-	Fri, 17 Oct 2025 16:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C042BE64A;
+	Fri, 17 Oct 2025 16:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="XmsHA4iR"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IwxTMPHP"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E705C287246
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94A72BE043
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717841; cv=none; b=NG9p9NOEb3YfyHsOBQeRPGykP6sBHcVL46tPvlOL+NHuZvr5sLu3Gb1nvLvLm9UKO4pUSKpNLN1Plc64vE98ARKson7f4vqbKOV9Xa58LE5s8jW99SHqWzIgxbxnKnIl3bnKTyKx52PjHFMXvPdt9z06imioy5Elzeeb6iX9epc=
+	t=1760717876; cv=none; b=lO2uQKw1sa71rJ7xRgQQNsUBaWJPlNEj6JWUcb9WzW2I5dLytNRqT4yUANep8tNMv47ZtKX3jN/v8JbOSRyoJ52R+8ZRAhKAY3xzxS6Z4pdWFcMmF1/2/ujlAgAJ6QivxkAfBpnzLbYX7wS4JNsk7aCF2IvwuZe1agLO2VmQKg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717841; c=relaxed/simple;
-	bh=pPbWyGESoeFda9PL7qjMzI+KDFiJUk2WW07WgvOC0eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twCFdWsmKn+ZxxfO/XsTQrbaUJZHeaIR00va5pAlUgU6rO7S8t/6vQ4EpFZnMI2VxWCcUiVR1p0yBGHQT2ERMticoSNCk0rNnie8AfKh+V+/8dcf6rMO+I9NS3jS7hpQc6EhgUYHLv5D0T+eAVwYzO/1CWw7onAMRv1pdLrSPzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=XmsHA4iR; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-430cadec5deso5715335ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760717839; x=1761322639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SE59U9D9FBD2TsP2y/MjrBzEhIdNihINvSqWeLt6f7A=;
-        b=XmsHA4iRMCoUXkqoAhZz91mStbZj7/xZ0iyoONrFgdOm+jKx2lxaEn9Bc9f0rGxOuf
-         9TISpV5P6qO8uTPgf6zJCqv+r8fhg8OVHCKf6oJGNjc16iBIiZt11YPTbnFmz5Xe+5kK
-         IXUHAFPnBwQ7CbtyhIULtonUKMoPq0CMgcCRSo2Kojsn+wp4m+bCSRXg7Hy0QftbjPHP
-         RXvTCpWz5U0Xp2XxOlKCSMfgi9TQQIm4V9f2ItyBVPkqA00asRhSutVjKgSy4vVfcBDH
-         nQyIKlJZDPZ1c8LrumBep6Im4uutjqMDVxG6UV0fOiRHzuXkaVCe0yTODZhTSn8kN1xX
-         JMuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760717839; x=1761322639;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SE59U9D9FBD2TsP2y/MjrBzEhIdNihINvSqWeLt6f7A=;
-        b=nNyqqODQghFO0UcYiFWncFmILHuGx9hkjtCbMoVAl8IkDPA8OB3odU+hsQroFFyjif
-         IVwKobqGvCe08nflAu2WcJO/9IuimNvdlkQBA3t/naGFK8Jk3beokAPcR/jeN+Yp3S7O
-         a49G3wYqZAmNOqdDDdJicC5HGrVuv6r8YoOHFojiKGrAtw2rK2OpSksZnUqUpMkwWSKt
-         umkVVktjPX5ZwlBv12A7uceftnZK6qBnFQfvyyzROGDUhgKvDNJyFstHKHm3kHzA1BsV
-         aY4ijmsDX4r6gvhax+vSatzPEqIsOBZhlanXSdCnu0nuuvOrT7hi8AZlKrLEFpFSh8/k
-         +fhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrAJZ4ayJpwk5RS7B3WYq31QMixAVbY+MMNdu5hnakCV4X/pa3S5AglndeHRDBkAQk0OoiLqQBW0NdNqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQPNnt8J6N+SPdp3bYhIqUuhv4o+10onOvbe0t//UMqTML3/Hn
-	K1E0vk//rSO3omLS/O7tidEvtWbfW/cYffV1XzIVy9C/N3CDzZGB215DUGXEIjr/U0k=
-X-Gm-Gg: ASbGnctbOfSP1q86hiMKbFh0u2uKzsggIVBGRzjRuXzlmDma7pXfwk9zCpff9do51+W
-	BeLp43603a/vVxk5mTpnjl0oE2YeqcYVUG1/5e375ad2Z0zL+Q/NJxidbBA1RnhiXEhVUpFtGxW
-	r6MUDy0Cwph2fqvTCmftP4SJx0XDEL0opp7I2o+UegQDbtIFELrPVVlr9a1DwY/EA+qFegmJeCt
-	1toKgt3iIM+8JFid7BaeYGG8GcDKEPf2PeFp3nLc9Jopn40M11q2mqYyGADz+GYJvgqrPyLG/Tl
-	fkl6HUVD0Q3cdwPLD4VA1uw/fI+V/RbNgmQeCxI0+aDQ2s+LwD0ZhYaFvLHxkj0xLXGnk5IGKXu
-	43tbxax7S83RuPK+bOwgECf2zzDa1ZEA/DTxU0OMGLYZUUv3xfMMnZfTnAFD/o3R7/QBPvO5w2W
-	8rsg==
-X-Google-Smtp-Source: AGHT+IE/MHK6bGWFUML6lB8EABvgh/StOgVAz5yCP4m6sZL2slTHOrBxRy/hwICm8V+ly8yQelL67Q==
-X-Received: by 2002:a05:6e02:b44:b0:430:ae1a:3375 with SMTP id e9e14a558f8ab-430c529df57mr60456845ab.26.1760717838760;
-        Fri, 17 Oct 2025 09:17:18 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5a8a979ab14sm8576173.65.2025.10.17.09.17.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 09:17:18 -0700 (PDT)
-Date: Fri, 17 Oct 2025 11:17:17 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Atish Patra <atish.patra@linux.dev>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/4] RISC-V: KVM: Add separate source for forwarded SBI
- extensions
-Message-ID: <20251017-68a09a4da911ec4eec058592@orel>
-References: <20251017155925.361560-1-apatel@ventanamicro.com>
- <20251017155925.361560-3-apatel@ventanamicro.com>
+	s=arc-20240116; t=1760717876; c=relaxed/simple;
+	bh=1P1bwBTWzLOJltHycHFOccxdgbEub2QWko/CziZANik=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=thrqsYGwlsrhXidYV9LUV80OTE6Nusbsysi4Bs345lFwcYLbn1w1n4UXfmyL0KghZtAOZfGSAco6UiMK1TIBQ6wqnMAk/mEJJ6+vex9Co6RGkgZCFOpzKGW1mTvpg8FZa4LPDfMoLVXWENhx7aCiOc0bANbarAGRVIkWNfJA0A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IwxTMPHP; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 56DB71A1483;
+	Fri, 17 Oct 2025 16:17:53 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2646B606DB;
+	Fri, 17 Oct 2025 16:17:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC7E4102F235B;
+	Fri, 17 Oct 2025 18:17:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760717872; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=1P1bwBTWzLOJltHycHFOccxdgbEub2QWko/CziZANik=;
+	b=IwxTMPHPI3n3K92jlFcSRgmV1VK3liXEyKuYGmdF0ACyvkl7bxD1ytXgfgRfPDxTRm4mml
+	Pwk7ZNXgWtBe190lFcEmo74e1VwNhD1SGFM8GVpZOuQhcmomxhNsSbJwi+HlsCkWqrnD6Y
+	TXsoo5R1DXCmw3PRMuOON0AQ7G0iUzYcG5nL0pkmNZVjJTCPN0a5OaYU8nIuN+a8EO4Wo1
+	N+0g7Ldh6iwZFjheo/xftDr4cRsB61nvbO8/4mF08pO3098Y1nJsEuanYU6M661SV/dmpt
+	uwt8Tk7npYIV9KVv0gj19Q9L3kdaolfM5YEhMSA9g+ym28E/aLpHIK5JIiyvaw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017155925.361560-3-apatel@ventanamicro.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 18:17:45 +0200
+Message-Id: <DDKQE4TIEXYJ.12G2WBT0R8UE4@bootlin.com>
+Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert "drm/display: bridge_connector: get/put the
+ stored bridges"
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.1
+References: <20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v1-1-81d6984c5361@bootlin.com>
+In-Reply-To: <20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v1-1-81d6984c5361@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 17, 2025 at 09:29:23PM +0530, Anup Patel wrote:
-> Add a separate source vcpu_sbi_forward.c for SBI extensions
-> which are entirely forwarded to KVM user-space.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/kvm/Makefile           |  1 +
->  arch/riscv/kvm/vcpu_sbi_base.c    | 12 ------------
->  arch/riscv/kvm/vcpu_sbi_forward.c | 27 +++++++++++++++++++++++++++
->  arch/riscv/kvm/vcpu_sbi_replace.c |  7 -------
->  4 files changed, 28 insertions(+), 19 deletions(-)
->  create mode 100644 arch/riscv/kvm/vcpu_sbi_forward.c
+Hello,
+
+On Thu Oct 16, 2025 at 4:53 PM CEST, Luca Ceresoli wrote:
+> This reverts commit 2be300f9a0b6f6b0ae2a90be97e558ec0535be54.
 >
+> The commit being reverted moved all the bridge_connector->bridge_*
+> assignments to just before the final successful return in order to handle
+> the bridge refcounting in a clean way.
+>
+> This introduced a bug, because a bit before the successful return
+> drmm_connector_hdmi_cec_register() is called, which calls funcs->init()
+> which is drm_bridge_connector_hdmi_cec_init() which needs
+> bridge_connector->bridge_hdmi_cec to be set.
+>
+> The reported bug may be fixed in a relatively simple way, but other simil=
+ar
+> patterns are potentially present, so just revert the offending commit. A
+> different approach will be implemented.
+>
+> Fixes: 2be300f9a0b6 ("drm/display: bridge_connector: get/put the stored b=
+ridges")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/all/336fbfdd-c424-490e-b5d1-8ee84043dc80@=
+samsung.com/
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Closes: https://lore.kernel.org/r/CA+G9fYuKHp3QgPKjgFY3TfkDdh5Vf=3DAe5pCW=
++eU41Bu=3DD7th2g@mail.gmail.com
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Please ignore this series. I have sent v2 with this exact same patch, plus
+two patches re-adding the reverted feature without the same bug:
+
+https://lore.kernel.org/lkml/20251017-drm-bridge-alloc-getput-bridge-connec=
+tor-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com/
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
