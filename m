@@ -1,78 +1,170 @@
-Return-Path: <linux-kernel+bounces-858307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CD2BEA1AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833ECBE9F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 406C75A2125
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:31:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE29E18890D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8A22F12D2;
-	Fri, 17 Oct 2025 15:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2493328FE;
+	Fri, 17 Oct 2025 15:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qs8Zeo+b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="dcRJGFVr"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF22F1946C8;
-	Fri, 17 Oct 2025 15:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715075; cv=none; b=JeJ0XxSI7pu/c68WvYCJmrsOLXaqyaaHZ29Qx263wWBqcvh0KMgCDdta1Lzrb9G5HXxdP9ehYHUclIn1EVaOt25DOTuXnkbHFB+7MD/H9OgCCzQzfcu5HrjsvImzuqNMeAp3XPPSQI6G+Ms0kzl0Sh5Vhj9dXv4YQnEnQhh1+xA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715075; c=relaxed/simple;
-	bh=LTkDNHaQ/jmxgU5fMe/ssd+JUgAQiQs37x3P5Ma5Tk0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ju8ExfJgqaiE9BRKEDluIQBp2xVGZDlJb1SAFMQOWgfKWwY47n5VJ6AWXueoLXUJ6NCoWN9CtuRgNCiJBna9A4y6mjP1uenQS84blTrFr0pLv77bBYX+a6qfxW7JFO/If/iPkuyoAalTzuKdFyeJftSTbQ0FM6LRusRlrWAn/TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qs8Zeo+b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE29C116B1;
-	Fri, 17 Oct 2025 15:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760715075;
-	bh=LTkDNHaQ/jmxgU5fMe/ssd+JUgAQiQs37x3P5Ma5Tk0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qs8Zeo+bxqK0ndWsTUrBN3db+UR8sokHyHMYNSFw9gWKVJZnMSMdvweCvKTFVxPRK
-	 tpot5sh7ye6Xzd9w6lGFTjMjJZJ8Q23wwIlUAjcRHtSJgzcPGn/C7nqQUH+Xop7eHe
-	 Zg9I9lKgnSpV1r0mEocB98RGdS7AT49cdZ25l8+JijgY4kcdSy5V74ABoRiCie6Fv9
-	 2rpSGQi7E9IuVSAlnlPerzFXJEYTzNUMzgUDe8WYHdsOLllVnyTkWLhCivQsQj8anT
-	 CdkuCnIDc/i8skVkbdziHEyBYjMLvFPFhdon9ghO5NLp+U9UFFi65naz9DxxqlM/8B
-	 cnvUfudnMaeKA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E4839EF978;
-	Fri, 17 Oct 2025 15:31:00 +0000 (UTC)
-Subject: Re: [GIT PULL] sound fixes for 6.18-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <87a51p60fz.wl-tiwai@suse.de>
-References: <87a51p60fz.wl-tiwai@suse.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87a51p60fz.wl-tiwai@suse.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.18-rc2
-X-PR-Tracked-Commit-Id: 2a786348004b34c5f61235d51c40c1c718b1f8f9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1422424187a548c24825645410fb7f691c2df47f
-Message-Id: <176071505946.2669258.14636742343060777290.pr-tracker-bot@kernel.org>
-Date: Fri, 17 Oct 2025 15:30:59 +0000
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1F13370FB;
+	Fri, 17 Oct 2025 15:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760715131; cv=pass; b=tHZaRMTPCIQd+CGbTNhL60Bk21KXMz3TerJ8P5on6DA2U1ukXX8Z3TH1STKHUNryElhh0IkdjRfM5lyIbJo0IahzUHbrq8sT/naiP/NTVz0cz8ZY78+hcMwdfTR1k9v7um7V5cJozgrhrddlkTF22UZxeNNSlTPjKhEIqfydp9k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760715131; c=relaxed/simple;
+	bh=unvPGOFriIHpUd82ExLn3Mme5GmCeuM02RDXIWOXQD4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=n32r7/64xriwcUsg7gGhYW9b1Vpqro3CGbgdRMpJTDgINe7ahkP6V3pYmi1ygtrRFmCAOGh3hoRDbGmsYWD26wR0tQsDo7sbYHXsE8F/wGzE/7Yx+/iZpenocmvwo0NGEg/6MwL3ztYxK9dizwPGlc1qLc2+kxtM2vKscJ/sjQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=dcRJGFVr; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760715099; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c4cU1iyQ+Ldu7go/75NsLMcc895EysOzW9pPYMezdD/MCDBTPomGNy/uWJ+bgeTjT1obaPdxQ4sNYdYmVKnVNBci9PQIE++MXOD60PApvrwczh22YRj0vzlv7yCNiV3YN1fBo6NKy0okE4Alh5lxk4ioCVYJ8BzOEYBcoI8AvSg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760715099; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5kCSOGJcwbOC+7+5BLR+gRNJdgGMuPaf20hsggRiPEw=; 
+	b=FgeIcvHv9U6SUV9dE+nY+V2+u7r4znOqrJK5wIizK8lz4uykVEkdZrVJPLNmA6D2V0wDB+NTPyCg0xsuqdg24HnvTfMcdIypuLrbBA8+pwkuQsG2ivNuWwLIoK6TnwBi2TMA0eqs+5ZpRHBNPZDX4MXtfBd5wDAUmH4Ac1Xn53c=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760715099;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
+	bh=5kCSOGJcwbOC+7+5BLR+gRNJdgGMuPaf20hsggRiPEw=;
+	b=dcRJGFVr87gKIRNY9cqyB1Pde29JDLQJFEqztQwXYYASI1ZGZaIrFxNmV89JpIsr
+	/W90DLOR2KhXfrKfQlX25SMmfViqCAOjs8zHh8DYLKcLAnNGm2y0IA5wignMKKiXPHn
+	Ejg6ZbvEQI+gf1I9Br+M9i7TaqIYMx3r3mVZrTfQ=
+Received: by mx.zohomail.com with SMTPS id 1760715097932797.8703392963683;
+	Fri, 17 Oct 2025 08:31:37 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Fri, 17 Oct 2025 17:31:08 +0200
+Subject: [PATCH v8 1/5] dt-bindings: gpu: mali-valhall-csf: add
+ mediatek,mt8196-mali variant
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251017-mt8196-gpufreq-v8-1-98fc1cc566a1@collabora.com>
+References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
+In-Reply-To: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>, 
+ Liviu Dudau <liviu.dudau@arm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.3
 
-The pull request you sent on Fri, 17 Oct 2025 16:57:04 +0200:
+The Mali-based GPU on the MediaTek MT8196 SoC uses a separate MCU to
+control the power and frequency of the GPU. This is modelled as a power
+domain and clock provider.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.18-rc2
+It lets us omit the OPP tables from the device tree, as those can now be
+enumerated at runtime from the MCU.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1422424187a548c24825645410fb7f691c2df47f
+Add the necessary schema logic to handle what this SoC expects in terms
+of clocks and power-domains.
 
-Thank you!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+ .../bindings/gpu/arm,mali-valhall-csf.yaml         | 37 +++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+index 613040fdb444..860691ce985e 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+@@ -45,7 +45,9 @@ properties:
+     minItems: 1
+     items:
+       - const: core
+-      - const: coregroup
++      - enum:
++          - coregroup
++          - stacks
+       - const: stacks
+ 
+   mali-supply: true
+@@ -110,6 +112,27 @@ allOf:
+         power-domain-names: false
+       required:
+         - mali-supply
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mediatek,mt8196-mali
++    then:
++      properties:
++        mali-supply: false
++        sram-supply: false
++        operating-points-v2: false
++        power-domains:
++          maxItems: 1
++        power-domain-names: false
++        clocks:
++          maxItems: 2
++        clock-names:
++          items:
++            - const: core
++            - const: stacks
++      required:
++        - power-domains
+ 
+ examples:
+   - |
+@@ -145,5 +168,17 @@ examples:
+             };
+         };
+     };
++  - |
++    gpu@48000000 {
++        compatible = "mediatek,mt8196-mali", "arm,mali-valhall-csf";
++        reg = <0x48000000 0x480000>;
++        clocks = <&gpufreq 0>, <&gpufreq 1>;
++        clock-names = "core", "stacks";
++        interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH 0>,
++                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH 0>,
++                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH 0>;
++        interrupt-names = "job", "mmu", "gpu";
++        power-domains = <&gpufreq>;
++    };
+ 
+ ...
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.51.0
+
 
