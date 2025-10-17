@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-858289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933ABBE9AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:20:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9770BEA2D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44501899185
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:18:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1EAB5A3836
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A1B3328EC;
-	Fri, 17 Oct 2025 15:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B50536CE17;
+	Fri, 17 Oct 2025 15:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jwqyoWRU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nc1VWl3u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA474332ED8;
-	Fri, 17 Oct 2025 15:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6127B2F12D2;
+	Fri, 17 Oct 2025 15:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714195; cv=none; b=UqSJQZM6u1Qyf7NPJcfhS+R/z0OcwRvDxVTqdAWvKSGXSYOrRgExXj6uaMpYZJYSOvQUv1+kx+Xx563eAkpuf5vsT8ARdD7NClmMI/oRqiPtSunyzUpd27UWScChDk5J0DNs2QF86VNPSA1AsMJJvcTvOOb5ibgFDLV23Z1VY18=
+	t=1760715186; cv=none; b=rWXyp90GoCvhATymUkJ5epyIL178sOk3prvPg/23kJtsbjidW5YNR1Pp3+ReiJoO0AI+xtQTUrNxf5CcWhJej5bEmUE+luUA0OVsg13akXvlzpF3g9U6C1pBtLfDVc7JGhd/O6s4+kMesGigrZWoXy6BNnPacw2JvULiwOh4znQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714195; c=relaxed/simple;
-	bh=zB6NQKAjEfE6ojK2N7oLUveOdqM4KiUuJTG2WkOexVc=;
+	s=arc-20240116; t=1760715186; c=relaxed/simple;
+	bh=LiKIWFDNYNNAES7eZnL2gzfDuBzjxqEOphFOwMWdHrE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jfY/cc7zCVvWFJ6ehnWY1ExQ0Dpy8EcqFMuHb4J0wndoEW6CExJSN68UtVxSnDUgAFdrKHtWWrfow0meOJGH3/hd4+b/Y80x8fOrAwzPvQURAHTdTKpobWsiODO/AQiS8jzVGS4KwVTLph0mjCsqxaq3W9ZN5gDcpg41bnS37oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jwqyoWRU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288B2C4CEF9;
-	Fri, 17 Oct 2025 15:16:35 +0000 (UTC)
+	 MIME-Version; b=XtLfKRC6OD4HGP+7bxygdvauXLkHZJUsh0fBtUh38lgqu171T/BFKQ6yKjB/qUFAafxshIUgxZsZywbBZRcoe3BdrHY2N3uor+We/X1tGgnnW3Qk+hbuY3l/esCyJ6mm2vVMng01NwX2mT3Qa/agOUX7D5qCz08hFUPK5237UEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nc1VWl3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B5BC4CEE7;
+	Fri, 17 Oct 2025 15:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760714195;
-	bh=zB6NQKAjEfE6ojK2N7oLUveOdqM4KiUuJTG2WkOexVc=;
+	s=korg; t=1760715184;
+	bh=LiKIWFDNYNNAES7eZnL2gzfDuBzjxqEOphFOwMWdHrE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jwqyoWRUMorT8ndxQ9T5UQLPX9mS25FifV2NDrMmc5f+wFxKC1nd+t+OV4ErMOEtY
-	 umgmMR3Mi2jLuxxFqMq/Hagt/rP1leKHQZ0KkhrljGx+4Qhw+odXCPCS+o0/OUobYb
-	 bqn6wlZV2GlJcfKFwG/HoSEPBzovfAuYaSBcdT8g=
+	b=nc1VWl3uSn0+5q4pOFcb70EJbz+FWE9fpH94zJEWKW8u9mUZ3/GaF1Oacm7pDR5XY
+	 FghuHkKA3YjOqExtEZBU7oxL6NNx/sHh5SwODlifkdoaMIm9PYyh61EgyXQyhansHe
+	 rxJAa2J3AZy2GJg4bY3J9fhaqVLNC6DBgJ7YNzz8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -62,12 +62,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-perf-users@vger.kernel.org,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 059/277] perf python: split Clang options when invoking Popen
-Date: Fri, 17 Oct 2025 16:51:06 +0200
-Message-ID: <20251017145149.299711559@linuxfoundation.org>
+Subject: [PATCH 6.17 095/371] perf python: split Clang options when invoking Popen
+Date: Fri, 17 Oct 2025 16:51:10 +0200
+Message-ID: <20251017145205.376305398@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251017145147.138822285@linuxfoundation.org>
-References: <20251017145147.138822285@linuxfoundation.org>
+In-Reply-To: <20251017145201.780251198@linuxfoundation.org>
+References: <20251017145201.780251198@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -135,7 +135,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 649550e9b7aa8..abb567de3e8a9 100644
+index dd289d15acfd6..9cae2c472f4ad 100644
 --- a/tools/perf/util/setup.py
 +++ b/tools/perf/util/setup.py
 @@ -1,6 +1,7 @@
@@ -145,9 +145,9 @@ index 649550e9b7aa8..abb567de3e8a9 100644
 +import shlex
  
  cc = getenv("CC")
- 
-@@ -16,7 +17,9 @@ cc_is_clang = b"clang version" in Popen([cc, "-v"], stderr=PIPE).stderr.readline
- src_feature_tests  = getenv('srctree') + '/tools/build/feature'
+ assert cc, "Environment variable CC not set"
+@@ -22,7 +23,9 @@ assert srctree, "Environment variable srctree, for the Linux sources, not set"
+ src_feature_tests  = f'{srctree}/tools/build/feature'
  
  def clang_has_option(option):
 -    cc_output = Popen([cc, cc_options + option, path.join(src_feature_tests, "test-hello.c") ], stderr=PIPE).stderr.readlines()
