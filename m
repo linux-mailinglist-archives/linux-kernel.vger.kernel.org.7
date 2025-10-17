@@ -1,139 +1,95 @@
-Return-Path: <linux-kernel+bounces-858146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79E6BE91F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:14:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ECCBE9205
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362956238AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310D1623A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167E132C92B;
-	Fri, 17 Oct 2025 14:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E4E2F6931;
+	Fri, 17 Oct 2025 14:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Su/2IPOE"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cdn77.com header.i=@cdn77.com header.b="tdvhWsDN"
+Received: from mail-internal.sh.cz (mail-internal.sh.cz [95.168.196.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEE832C94B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF2132C946;
+	Fri, 17 Oct 2025 14:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.168.196.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760710463; cv=none; b=O5Mwn1SvUPHuBXZjn3ge9tFzvXB54dl5dSLGqs91WlV2z0ZPVs+qO9/tzYgrH7IgOeWoReLxSV+jPLFoiVGRcVfP6qOGjSx27tMUqFak7HhY2ofOxNRwhwPOs/E5TWHtBY27zTBoa/2AIozdm4kYRoea/YlNwfdra2mjHqHArZI=
+	t=1760710535; cv=none; b=c7UGeH/bY21tC+Sw/o18e7CAI5nkRW7bHi7CY2r602wE2hhvfdShykDdr81+OEMAM2prftV1Sl+5+hk7ac9twESvOdZ2M7sX8E1NF41gq0IGBqS5/0sQQBl4cZ71GPXXZ+S4Z5onWVG9EgiktwTkHXRLllLL1yncVe9RLcBQRsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760710463; c=relaxed/simple;
-	bh=959p6xV6CKeeWXiRtPPtRMLL/TFd0b3Xs25RXyKYag0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KMcKzOc/IzzRFuW0b71SeRb/40CVPMVgO0n7wi61yKDBZRlU00ZBu0L/hMyqezQYrfOvL4IIsb/lyMeHqRmgDsLUlyzw06268q1d82RmOllp+nnCtIloGI8ghI7UXPxphlUJVlBC+/gB61UJBmC5KH65pvv0aCPb/SG6VJ4Sfzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Su/2IPOE; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47114a40161so19708485e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 07:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760710460; x=1761315260; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FTLnHbprIsxNg0GlvOz1rxX1RAjfsFXOqHQiYRq25LI=;
-        b=Su/2IPOElTtM+RsiQFMRs14hcKxioX7VfmNMd9Wuywrv8kjPCSJROetHVRUc9PhL2I
-         ZjpamG/lE1Ugc0wWzT9ea9ryyVtx17N93Es7t2N2ZupCvSUQQ4BX5UNujWZck9SJoR7q
-         W0QntK1fjnEpyAYA8Q34ed3VaoKiA8s4bzr5BES39aOL+4KzAcjAK2GMPPmbdKlJBdee
-         grP8XDSLyGfaItUt6ripBXvyaBjV4bLCiV7qeau9gC7AfjJ8zVxxQy6cyQy6OFLeQUFV
-         m8fuHnlvJgVRx/g2mdKfuCLgmlOr3OR5ADf1tOZR1OHehThLS7ESA71EksyUqROC8bYa
-         buhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760710460; x=1761315260;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FTLnHbprIsxNg0GlvOz1rxX1RAjfsFXOqHQiYRq25LI=;
-        b=V1U88ehylzHQYqkUlxvJFhy9SrypNVD8L9Qqq7I0onAdbMmycfC4oJnxNSeh258w4s
-         HbyyAcqRIIT1WYfR068oJKh5+PU9ku9Rqa4BUFRt29MXfYMBawUF+uzcPZX4jjYsqwn0
-         B1/XOM1EJnelMafn49ffrjkC1B7mVSu9z52T5rdsywre/J9g1KMSurnxcg4moeAIF3TN
-         BHkopydQTNPjdVTLaCCkGD2JU4E8Z06+7DECZnLh2nYtBWSiuSIhUkuaakde5dYnKc3h
-         yUNloGUEn44j22FdLnHD/ifMTYwvpdWsb2ziARS/IlEaGffb0jZd/Qrhpinn5Q1Ks71L
-         ithA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPUYQ2RTaU4aMxJq5kCTbc4P1zhQN7/QwC6QnWdKFIhZHwwU+XBbjqzrxMpWGrOVabfks/1tKHMSZ/UkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHindKpeH2DcZgYKozJNdzohTfxUOn4KVCym4V5xCxK/JupMIM
-	CEvCkKgVABk8ed3p/DuRg9SfOsMuRdOO7skc54X0qAq3xjqsOwghvv5b
-X-Gm-Gg: ASbGncs5gT7zXPhgFgzAqJH8tlKd8TIUpaHGTZv+Eb7iuOH0fa/x0wOHU0cvq0GK7dU
-	1suh8E0wxvAc6EOKIRf1DhE2nZTM6FXvcMn7+iL/IGlXvIdo6D5CK0cG5SIhQb9vhjLaCooQkbY
-	A2x4qxYSV/7wFm/HSn9LVj8osAsIMPaK4ow33KNO8QYE+6cdAYxcfOwKLyDUjNiimL3GcTTmLlT
-	wGqsJl0XUmlxnepW0Hlp+zQNX8CMbwQmlNr4Let7ZQ4BhOsh5XoV8Ue8KLhKss0m7llaXnqY+OV
-	YX0/Dot+rWiQ2Z4b1mtjCZ0cDXMI9eDWGg6RUKYH/RgEnfBLAW+mRkvDG/oT++8DVnCZZndZmKg
-	1YDJoFdJenwWbHccehofRDF3uW1xP1glt5wYpX2Q8Biw6E/npBXKhVsUxJ/BAkvIVFRw+e77Jbd
-	FxbUCvbbITioW3H8R57i0=
-X-Google-Smtp-Source: AGHT+IF2EM7mT5D52gnp+VTbfiNcarttRakEXF5/pBTZwv3B+9i+o/ZbwXxFScc6ahCV+wEMQcYNyg==
-X-Received: by 2002:a05:600c:821a:b0:46f:b42e:e3a0 with SMTP id 5b1f17b1804b1-4711791dc89mr26441555e9.41.1760710459832;
-        Fri, 17 Oct 2025 07:14:19 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47114423862sm87177925e9.1.2025.10.17.07.14.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 07:14:19 -0700 (PDT)
-Message-ID: <014f2380e9261a1449214907a149f11267acdd11.camel@gmail.com>
-Subject: Re: [PATCH v5 4/7] iio: adc: ad4030: Use BIT macro to improve code
- readability
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- 	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org, michael.hennerich@analog.com, nuno.sa@analog.com, 
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
- robh@kernel.org, 	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, 
-	marcelo.schmitt1@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 17 Oct 2025 15:14:52 +0100
-In-Reply-To: <ec78fd7e4348e2cbc99ae08004c48b7ea238ecf7.1760479760.git.marcelo.schmitt@analog.com>
-References: <cover.1760479760.git.marcelo.schmitt@analog.com>
-	 <ec78fd7e4348e2cbc99ae08004c48b7ea238ecf7.1760479760.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	s=arc-20240116; t=1760710535; c=relaxed/simple;
+	bh=th2Qlh3fS77eQJ9bDXg4SvSNkkzZckDQ2+t5qOAP2rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FsPH7ngDxZe9T9skBtAjnj/TxXtVbOmRlsCIzfJcE283gK4K14/7p6I+E1l2Lm5iSCneKYrHcA9e4/urDFrat/dr5SjVRyu8z7ZAQBzpLGo1DaKHpD7fjI0mt0AfTXz6F/BSPgM2uE1X2m1o2Kf6huCAMcZJVTrTwn61Firni5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cdn77.com; spf=pass smtp.mailfrom=cdn77.com; dkim=pass (1024-bit key) header.d=cdn77.com header.i=@cdn77.com header.b=tdvhWsDN; arc=none smtp.client-ip=95.168.196.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cdn77.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cdn77.com
+DKIM-Signature: a=rsa-sha256; t=1760710521; x=1761315321; s=dkim2019; d=cdn77.com; c=relaxed/relaxed; v=1; bh=hXKmsIldz9QqYvJfYTeLTtnXwnXEkz/LZjkPfMe+5tU=; h=From:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References;
+   b=tdvhWsDNZNEBUQVAGiA636NnpXjvHTM0mSiKJ7hu0tD0wLe+t5u4QDuvcZwAoljucA7Bs2X79ohRhxiyDhYXzpNV4YUowA5rVY1X0FCI9c7RK7esjmL+/vtgzzzcejrku8m9ovqqTZpd0AFTCvDuVi6kBmisQnv4io5unuFgn8Y=
+Received: from [192.168.88.20] ([188.75.189.151])
+        by mail.sh.cz (14.2.0 build 9 ) with ASMTP (SSL) id 202510171615201074;
+        Fri, 17 Oct 2025 16:15:20 +0200
+Message-ID: <209038ea-e4fa-423c-a488-a86194cd5b04@cdn77.com>
+Date: Fri, 17 Oct 2025 16:15:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memcg: net: track network throttling due to memcg memory
+ pressure
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Tejun Heo <tj@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Matyas Hurtik <matyas.hurtik@cdn77.com>, Simon Horman <horms@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>, Wei Wang <weibunny@meta.com>,
+ netdev@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+References: <20251016013116.3093530-1-shakeel.butt@linux.dev>
+ <59163049-5487-45b4-a7aa-521b160fdebd@cdn77.com>
+ <pwy7qfx3afnadkjtemftqyrufhhexpw26srxfeilel5uhbywtt@cjvaean56txc>
+Content-Language: en-US
+From: Daniel Sedlak <daniel.sedlak@cdn77.com>
+In-Reply-To: <pwy7qfx3afnadkjtemftqyrufhhexpw26srxfeilel5uhbywtt@cjvaean56txc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CTCH: RefID="str=0001.0A2D0333.68F24F79.0006,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0"; Spam="Unknown"; VOD="Unknown"
 
-On Tue, 2025-10-14 at 19:21 -0300, Marcelo Schmitt wrote:
-> Use BIT macro to make the list of average modes more readable.
->=20
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Link:
-> https://lore.kernel.org/linux-iio/CAHp75Vfu-C3Hd0ZXTj4rxEgRe_O84cfo6jiRCP=
-FxZJnYrvROWQ@mail.gmail.com/
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
+On 10/16/25 6:02 PM, Shakeel Butt wrote:
+> On Thu, Oct 16, 2025 at 12:42:19PM +0200, Daniel Sedlak wrote:
+>> On 10/16/25 3:31 AM, Shakeel Butt wrote:
+>> I am curious how the future work will unfold. If you need help with future
+>> developments I can help you, we have hundreds of servers where this
+>> throttling is happening.
+> 
+> I think first thing I would like to know if this patch is a good start
+> for your use-case of observability and debugging.What else do you need
+> for sufficient support for your use-case?
 
-I don't find the link particular useful in here. Seems redundant with the
-Suggested-by tag. Anyways:
+Yes, it is a good start, we can now hook this easily into our monitoring 
+system and detect affected servers more easily.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> I imagine that would be
+> tracepoints to extract more information on the source of the throttling.
+> If you don't mind, can you take a stab at that?
 
-> =C2=A0drivers/iio/adc/ad4030.c | 8 +++++---
-> =C2=A01 file changed, 5 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-> index 4393160c7c77..b2847fd90271 100644
-> --- a/drivers/iio/adc/ad4030.c
-> +++ b/drivers/iio/adc/ad4030.c
-> @@ -233,9 +233,11 @@ struct ad4030_state {
-> =C2=A0}
-> =C2=A0
-> =C2=A0static const int ad4030_average_modes[] =3D {
-> -	1, 2, 4, 8, 16, 32, 64, 128,
-> -	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
-> -	65536,
-> +	BIT(0),					/* No
-> averaging/oversampling */
-> +	BIT(1), BIT(2), BIT(3), BIT(4),		/* 2 to 16 */
-> +	BIT(5), BIT(6), BIT(7), BIT(8),		/* 32 to 256 */
-> +	BIT(9), BIT(10), BIT(11), BIT(12),	/* 512 to 4096 */
-> +	BIT(13), BIT(14), BIT(15), BIT(16),	/* 8192 to 65536 */
-> =C2=A0};
-> =C2=A0
-> =C2=A0static int ad4030_enter_config_mode(struct ad4030_state *st)
+We have some tracepoints that we have used for debugging this. We would 
+like to upstream them, if that makes sense to you?
+
+Thanks!
+Daniel
+
 
