@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-857471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F365DBE6E37
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:08:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913ADBE6E3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 956AA421BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:08:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 328B734C140
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 07:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C772C3112C0;
-	Fri, 17 Oct 2025 07:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B12311947;
+	Fri, 17 Oct 2025 07:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rgsYIWjC"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fsT2Isd9"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B997D311964;
-	Fri, 17 Oct 2025 07:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1518C310625;
+	Fri, 17 Oct 2025 07:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760684877; cv=none; b=JOhqBwJwAvLGrKXAVeJnh973wAkNC8UC3lm/5jagsX3HyCvq+7KNXXFRrcyzE7Z/938/U84TySLeD4F/iiA3mG2ErDDnb8u7cAXBzyWmguLzNsBNIQQvAwA7xizeWv+J5xNR8K0fgeLx/CjYq2TFTWK3KcQL2JNmyumCrop0bMI=
+	t=1760684884; cv=none; b=LzcNxTLZlsp/Y7tGOx1tWwVK/nPuqprpqZ4b3odt9NWiiwNEw5Pui6gDSPBRtF4AcmFg+w+4cIgtcq1LItEf5FAg0ItDIITyaVgcRgnuVEtSIF2D2dHBcZOmP3NvyJpwN/mnnZLmGfX5c+WVFomnjLZ7aWCBCmRWoFfZNakaeF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760684877; c=relaxed/simple;
-	bh=1rQjANCw0GG/0GagKqVML6Dp0C5BnCQd2hliZ49kQ6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ikh2OkL7h3jMeknKi41xo5q2172hCkcmlLbEruc5gydPrPZptG5KpSC85jcBELNmIJMul+C8QbHWuKk08Fg2nWu4r40dartBSgT4ph5SbHKxBfWALns2qSXWRS+3szwmYB2VUZfkhaesWXR8Ya/VDkx4mJYInIVuicwillZ5o3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rgsYIWjC; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1760684884; c=relaxed/simple;
+	bh=c+p2EOnfSjgU7eznQF3IOv148U2gld7mSGFhtiFvcO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oalc8oupdeAANqsvsEYxYgooAF0PEpQDumSQs9f9wZFLqDi/dgOWLkEgMpbimnhqOi3N+B9mPd0WjxSTuttJKlSQK9R+6f/eQ5UbmK8v/zl3s71gzwuRQmuyQfo2WBycGMVzfgLUw9GJK7VK1m9nU8Eh1vO1G3k7PIEbTcottKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fsT2Isd9; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=E9Mc7eaN8RwyhVS+MOtoHI5EJvtYvI3FnmigMRZw8tY=; b=rgsYIWjCpUUQMaztkjs1gRYNLp
-	4ncuAsp4khyiRNERV52kElIhL3ZRNKwIVv/dsMZesZVSxZB5tXZLQiaf4TitXtQ2x8DIfvVOluAe3
-	mOyqSiHv1GmP4fHAxeKlNr6bFFloPstFvt63eIq8lqUrXbxw/mBa93E8Vj7qJoHdaWNc1RA9iYoHi
-	7B5v0amrfq8AwPUYqFAtxi154cuQLj/gJGS4ASIj+a4gs9ugVZnH4zxfpMitbHGkjza1FEYrIQzIZ
-	aQ/VUl0LEuxI8lCvPNxq+aGrvA0wUaEl9Su75PjLOaMhN967ZtKmQyZbek+QEqjJccJSKprU8qWT4
-	egRbL81A==;
+	bh=VBx1ZOxv1Kov0BXvIk+Fax9Fpj20VkMMtF1vJ/HqGVs=; b=fsT2Isd9m3wxuuHcjEOaHlpCLR
+	3nZcQ9yx4fWNDf4V318PFvEw9yR9/s8ssEtlT18DBAPu6VFqRdpD5zIpisuULnOl2R/oapPRxlaP1
+	Y4zJ/bMj3jB2ORKzSquK55H3CIPcSuChH2vi2+QOVDuCdjSp5BAuIEgfMWka5T5O9DygaZ+Qpqc1p
+	gtief+HSzxrhespy+kYiiKAGy6BVBvWEuoIeg/qwETxpc5HvkTeURzclm8ghTfHNFcbIzgAV7cviZ
+	1JTaFmccMWti86MgerG4v15I8AByfqwtVgoeezIOxio8idr+AjNL/GWWAH/LWrBsUWlvBvbpmeXX1
+	iPfnstng==;
 Received: from [50.53.43.113] (helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v9eZ8-00000006vs9-0ewi;
-	Fri, 17 Oct 2025 07:07:54 +0000
+	id 1v9eZG-00000006vtE-3Ati;
+	Fri, 17 Oct 2025 07:08:02 +0000
 From: Randy Dunlap <rdunlap@infradead.org>
 To: linux-kernel@vger.kernel.org
 Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Lai Jiangshan <laijs@cn.fujitsu.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] ring-buffer: fix kernel-doc format to avoid a warning
-Date: Fri, 17 Oct 2025 00:07:53 -0700
-Message-ID: <20251017070753.1638717-1-rdunlap@infradead.org>
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Joel Granados <joel.granados@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] sysctl: fix kernel-doc format warning
+Date: Fri, 17 Oct 2025 00:08:02 -0700
+Message-ID: <20251017070802.1639215-1-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,33 +62,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Format the kernel-doc for RINGBUF_TYPE_DATA_TYPE_LEN_MAX correctly
-to prevent a kernel-doc warning:
+Describe the "type" struct member using '@type' to avoid a kernel-doc
+warning:
 
-Warning: include/linux/ring_buffer.h:61 Enum value
- 'RINGBUF_TYPE_DATA_TYPE_LEN_MAX' not described in enum 'ring_buffer_type'
+Warning: include/linux/sysctl.h:178 Incorrect use of kernel-doc format:
+ * enum type - Enumeration to differentiate between ctl target types
 
-Fixes: 334d4169a659 ("ring_buffer: compressed event header")
+Fixes: 2f2665c13af4 ("sysctl: replace child with an enumeration")
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
-Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-trace-kernel@vger.kernel.org
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Joel Granados <joel.granados@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- include/linux/ring_buffer.h |    2 +-
+ include/linux/sysctl.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20251016.orig/include/linux/ring_buffer.h
-+++ linux-next-20251016/include/linux/ring_buffer.h
-@@ -43,7 +43,7 @@ struct ring_buffer_event {
-  *				 array[0] = top (28 .. 59) bits
-  *				 size = 8 bytes
-  *
-- * <= @RINGBUF_TYPE_DATA_TYPE_LEN_MAX:
-+ * @RINGBUF_TYPE_DATA_TYPE_LEN_MAX:
-  *				Data record
-  *				 If type_len is zero:
-  *				  array[0] holds the actual length
+--- linux-next-20251016.orig/include/linux/sysctl.h
++++ linux-next-20251016/include/linux/sysctl.h
+@@ -176,7 +176,7 @@ struct ctl_table_header {
+ 	struct ctl_node *node;
+ 	struct hlist_head inodes; /* head for proc_inode->sysctl_inodes */
+ 	/**
+-	 * enum type - Enumeration to differentiate between ctl target types
++	 * @type: Enumeration to differentiate between ctl target types
+ 	 * @SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considerations
+ 	 * @SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Used to identify a permanently
+ 	 *                                       empty directory target to serve
 
