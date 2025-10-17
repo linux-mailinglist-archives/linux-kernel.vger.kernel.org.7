@@ -1,139 +1,95 @@
-Return-Path: <linux-kernel+bounces-857924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DDDBE841A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:10:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE786BE8420
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCF41AA33E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9693A58026C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3633A009;
-	Fri, 17 Oct 2025 11:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D568233A021;
+	Fri, 17 Oct 2025 11:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cIzL5Ck/"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVYgzf7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F3333CEB1
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 11:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24933322523;
+	Fri, 17 Oct 2025 11:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760699400; cv=none; b=XZmXQf3lzb6ElIZUJ/Vu92v7/soY14ubQW4MMZMpJ7Mog2tW8/jS3/i9RcJOZPZ9wV6lbgJiZ5U6RQ50CezYlzOP36SieJvjJbPhlyENj0QvAT1+TUAwNWcOCaKWmOzGq96qtd8UlyOQDq6Q6SnYTzyzMcmG2lLFpqa9M/LBXko=
+	t=1760699393; cv=none; b=DjzFma0S4p02HnT1lLoZC44l34fcg8eAOezJcJx2WelG9oJbz0QBazdKxdCMbjKoXRhSrQZuqZLvsm91d2wSeNmGE3Ax9mxvZRWobuT2B7EQX2Fx2waGr2HohQ0PWxMDBg49nHwN6/t5wRwobSMEyVuRch47jU8GLNMtzfsBfAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760699400; c=relaxed/simple;
-	bh=jJ3sJSfGGDZPPWMFLprjMHiW/EllfBTeLQIZoh/ZyxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uZuUWxLfzY9PzW/wxY/TPWD7ki0S8KekG41uZFgWb09KTBecZuHXt0oT++KZdmtxONHPQwDPD0gH91bsJ0C/8/LnQZBUdHK1fEu8n/MxOPLLw3Kv31BJ1SsI42aTdMK8a7TecJbc2yowtZ8vMUXhJqEjD1aqXwfg/fRSr9VhiCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cIzL5Ck/; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57a604fecb4so2151109e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760699396; x=1761304196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJ3sJSfGGDZPPWMFLprjMHiW/EllfBTeLQIZoh/ZyxI=;
-        b=cIzL5Ck/8wNnAqKxninMiulfKB+lAxTj8XIrxSS+iiRAcsawulROWtwlmJks4eMX9H
-         atmf234J/YT3RmK7vU6F8DHOb661sc5v1x6O27o/8H5Ud4eJ+uKzOUoLd3SiHzsDSoiD
-         Kw7nffjX5GxU3YxFgGapg00/9VfD5zTt3HlBXmYSa2FVUHznEGuu6Dapc53yohmiHPZu
-         cMYJ0nbkoanZnpgE+Dl2sbronm9lea2LLe2sp5JI6TyEdED8TZYU+cnNbW+geOKTtnlS
-         PXfPn0ctDbcz87Yg8BZWOxVmmbHqtg5vALxJcsXpl75RYQCV6NhyXHVMcII87hMVt6zs
-         T2ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760699396; x=1761304196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jJ3sJSfGGDZPPWMFLprjMHiW/EllfBTeLQIZoh/ZyxI=;
-        b=aQtDmlbUeYCNIZid2X1aiaaLl55EZw/YNZi5Z6xeHujGxnZFrAAcwIUcH9FRQgNY1p
-         VihggOCDWpDeP72hikHId/165TvOUDkV0/ZAk6gvTuXluy4xeAHUtdlprbMnFycWSB4s
-         YkVHsZ5zFTQ9XgBvCW/uCqQJZJhOo4hpqo57toAOHUc9QHAjM0o/uPIFPtJ+2+VKMrRe
-         qNGTvAOokEBIl2qy6d4cV1/0FAPq53k6qSFyL68Hg/BgzsMWoE1aPFiQZsD/OpSopOvA
-         z4m8YxZWLt3Lb/kUB3eIHZ2BSmfD65XO3jf95ycDXTZErnS3zTYpMCVEbEoZh8GJsXB+
-         ZNLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrpOcXN/AsQTG7wCsQOjGbtA6IxyinWnOXN3gjVYN3B2+D/Zhk6YHuWwcVePjIzWlR6VLCb19aSBx+gB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhTwzHHgAfUHsf/kvfJ33TOxtEERWGHOctp5B7yY+XEe5wmwum
-	xdZoS5HhwXbOelSr+noyjR6ISKOzuGPpvSRpO0oAlu/Magjwlcg6Fq456Lp8GZPxvQpOEPXd9rA
-	CeVnqCY6EoMeUGH7WJW6Ah6TU2NLEuHb3wVyVi9aet8OqwoiWTYpuIk1oCg==
-X-Gm-Gg: ASbGncvW3Br9bHC6msKcExUp5pAZcjtFWiyFPD2o7uY/W0jXKvkbihQYHldCjIURzcr
-	yWg8wQEYg7zhUTm0ZbrKngxAbCN47h5oW4gNzJaq8PoU/wrVEP7mgya2flea3akOBAXDjHd+Nx0
-	qUc7gYzXeZScjhlIFH9E8xI8t9kDA7NrMjRTLb9zPlMMINu4r2gXSH6oIcytv0/1kWFzN6wwW+S
-	cQy1z+8G5u6fPyntiOS101IfhqAW4F+PoeChN6AbsDO5CzbJO+E1oPHHZl5THsHJvznCkULqqkV
-	OP8dwh24uncU8NwL
-X-Google-Smtp-Source: AGHT+IHAQb+PujZ3FlhVbP/5obfB82tUK18MuZgZkVjEsCxRPkQtT5FNrzDdnND37AsMEzZd7iYSCgmCJUb3JOw9GHc=
-X-Received: by 2002:a05:6512:1324:b0:563:3ac3:1ec1 with SMTP id
- 2adb3069b0e04-591d857942amr1167284e87.54.1760699396306; Fri, 17 Oct 2025
- 04:09:56 -0700 (PDT)
+	s=arc-20240116; t=1760699393; c=relaxed/simple;
+	bh=B+EuQS2MVzxcLVb34Ndtuh1lzX9fiI4+iBqedQ60U8o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=qHBhZ7pRwHYqQE5H9IoHJqh/Ubvx1AKj6zv7QRRhkq9KJ/RQi77piY1OkNcF6/wOjO8/K9LeSSft6qXVJTrgjSv8LcpQM0Xkc6yeC55ZGLCtOeliTox4NErujXtEyZMeknydH9LXcFjnvf7Hvvhj0Z1KpUUPPG9xyPr3sOt9RZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVYgzf7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF333C4CEE7;
+	Fri, 17 Oct 2025 11:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760699392;
+	bh=B+EuQS2MVzxcLVb34Ndtuh1lzX9fiI4+iBqedQ60U8o=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=AVYgzf7mflp06nhE6PBC3Ecf5DK6RVQzPAzk5eoFDKXxKpf+rZU+1Lb4ALl5ef3mx
+	 xK2mdBZyaolA095jlRNuvzyNnEd/XrA1kx+FGLQduK8BKgt3OhyRvLXLDwngl2f8/U
+	 UuTklmlFUMI+zRd9L7bfSphZ6uDQ9RZzEkd4cfK4VpRA+DkXwH23LBMeUwLi61Hs/5
+	 AF5Zcc4ln/HB0gJF59ItgCcOXxYb9LmplNFgK94OXwfzbXPO+rX79mlS4lfGJknjgS
+	 wR3a7xcszk0oGyc3kRVMXQfEnBQPNEX02IULTXe/1m7vQY8w2iAGyDq5PJAbxlXt/f
+	 7ulRXw0OXfqqQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
- <20251015205919.12678-6-wsa+renesas@sang-engineering.com> <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
- <aPEAx8ZGHBcWZKJF@shikoro> <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
- <aPIfF-3SgzW5V_gs@shikoro>
-In-Reply-To: <aPIfF-3SgzW5V_gs@shikoro>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 17 Oct 2025 13:09:44 +0200
-X-Gm-Features: AS18NWA8jH3FhagHn3D8_Lt6AEhdFJCJ9BjuVsTGnGPGq3eRCDcchI99tLK0230
-Message-ID: <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if possible
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-renesas-soc@vger.kernel.org, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org, 
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 Oct 2025 13:09:46 +0200
+Message-Id: <DDKJUBOP0MTE.1ZMM4KXC64447@kernel.org>
+To: "Zhi Wang" <zhiw@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 3/5] rust: pci: add a helper to query configuration
+ space size
+Cc: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+ <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+ <targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+ <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+References: <20251016210250.15932-1-zhiw@nvidia.com>
+ <20251016210250.15932-4-zhiw@nvidia.com>
+In-Reply-To: <20251016210250.15932-4-zhiw@nvidia.com>
 
-On Fri, Oct 17, 2025 at 12:48=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
->
-> > > Interesting topic. In fact, I think we should make RESET_GPIO bool. I
-> > > think the fallback mechanism of the core should work without any modu=
-le
-> > > loading infrastructure. It should be there whenever possible.
-> > >
-> >
-> > You have not said *why*. How is this different from any other device
-> > whose driver is only loaded when actually needed?
->
-> ? I just did that, but let me repeat:
->
-> I think the fallback mechanism of the core should work without any
-> module loading infrastructure. It should be there whenever possible.
->
+On Thu Oct 16, 2025 at 11:02 PM CEST, Zhi Wang wrote:
+> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> index 77a8eb39ad32..34729c6f5665 100644
+> --- a/rust/kernel/pci.rs
+> +++ b/rust/kernel/pci.rs
+> @@ -514,6 +514,12 @@ pub fn pci_class(&self) -> Class {
+>          // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
+`.
+>          Class::from_raw(unsafe { (*self.as_raw()).class })
+>      }
+> +
+> +    /// Returns the size of configuration space.
+> +    pub fn cfg_size(&self) -> i32 {
+> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
+`.
+> +        unsafe { (*self.as_raw()).cfg_size }
+> +    }
+>  }
 
-It's not really a fallback, is it? This is the path we'll always take
-if the driver requests a reset control on a firmware node which has a
-reset-gpios property. If the driver goes with the gpiod API, it will
-get a regular descriptor. It's deterministic enough to not warrant the
-term "fallback".
+This should probably return an enum type:
 
-> I might add that module loading infrastructure might be broken in
-> userspace. Been there. Also, some drivers might need their reset early?
->
-
-Then I believe the platform's config should make sure the driver is
-built-in. I don't think it makes sense to just cram it into the kernel
-image for the few users it currently has.
-
-> Looking more into it, I can't find any 'request_module'. Am I
-> overlooking something? The fallback feature is only present if the user
-> loads the driver manually? If that is true, it would make it rather
-> useless IMHO because consumer drivers cannot rely on it. I must be
-> missing something...
->
-
-The reset-gpio driver has a MODULE_DEVICE_TABLE().
-
-Bart
+	enum ConfigSize {
+		Normal =3D 256,
+		Extended =3D 4096,
+	}
 
