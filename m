@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-858239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8189BE95A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:55:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B1EBE95C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 244AF35BBA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0AA73A2169
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE59A45C0B;
-	Fri, 17 Oct 2025 14:55:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D19337107;
-	Fri, 17 Oct 2025 14:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26303337117;
+	Fri, 17 Oct 2025 14:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgHAatfd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3E43370E3;
+	Fri, 17 Oct 2025 14:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760712910; cv=none; b=qZWp2zZKjlVrWxDAeblxXGyV+4oFx1wSN1nvS0EsTI+y3J8qxmE4otUyndc7EJ58once5vTZfB+TgeOkTuoGr4o0Jo6hhiqHzTy+vqDxjCvOP1122IwgqRDCBXzThEcekk3TPsGVVPzo9QRShcKA8NR2kqgJEVN2xJHeNnYRbLQ=
+	t=1760712930; cv=none; b=jKfIAQM3FzQRrx8A3z7twP08LvXQpfZ0qQSLrOCSwMC44GzDxYGzTO9aasmCAo30X0YNxkffOrbJeHAQ2aCb7lsFAQ2q/cw9Vyox3sUFQ0i6GhSUxzlwMwj3YVGBLkZVVrZI/KLXiJ0LfRvuyHp/4P2/vDzL0fd5l82dgQksYYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760712910; c=relaxed/simple;
-	bh=Vp8HhGM8KTiB8jGFS7+z9LvVlE4Sj+m2pqa3oGGzWCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sBcCkYrHyoFPCTd6YZj8Pq+yYD8jsx00erVUZAuja1ttPoQE0+nYa1gei+5nZ36EvdtF677mmGhcIIevX2JeuZYn0WaREseR7bz7AJcPVmIRKUOGw2YJNnRATTEbZ//mmTfdC/xDeX3OjuUMO809VDhWjzM0h0V8RiNy5tYEPSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 522A7153B;
-	Fri, 17 Oct 2025 07:55:00 -0700 (PDT)
-Received: from [10.57.36.104] (unknown [10.57.36.104])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C9463F66E;
-	Fri, 17 Oct 2025 07:55:03 -0700 (PDT)
-Message-ID: <461fa23f-9add-40e5-a0d0-759030e7c70b@arm.com>
-Date: Fri, 17 Oct 2025 15:55:01 +0100
+	s=arc-20240116; t=1760712930; c=relaxed/simple;
+	bh=PCaqwR3FrPveBxpG0SiQiCQ1dGPGjj4SmBsWgcfkSHo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=KmNUZijvmMzj7U7pgqCdk9wD9FQo6k3k7kfUX6J/cqPXfWa2J1rorrS5G2GkyQ7y9oTry5yBv1fgbbcn9N8n6VryyA58TqbKB37HtnaqmmHqjifLYmQfB6ozRMTJWWZYh1rg0R9lrYqYwd+4rdnzghfbM9y/B1/mz9MeN94UVxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgHAatfd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B461C4CEE7;
+	Fri, 17 Oct 2025 14:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760712930;
+	bh=PCaqwR3FrPveBxpG0SiQiCQ1dGPGjj4SmBsWgcfkSHo=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=GgHAatfdrKE77D+DcoidEjG0OGVF1IcheyKIkv/PXGiNwtoIMOYnqZ0WozK/qDVah
+	 twF6ICE65fmQJPih239VbsTlqI+wJq1cozjm19ZnIYnhOJh/JghxSoaj0NLaHy8x1w
+	 0UCblsIK5zwku1AJnE202qv41g7s9yXNLKpDIuSQ5dIJuwtkGBio8fQrd1t1tIDnYu
+	 BY/6+3bgkaK7aAFHcj29Xuqlz2oIu9CgR9yH41BNIrDU/9PIh4dVeHtW1ugOvslgQK
+	 2ECmOLZblRDM3IP4wAaVAr4hEnbnIwJ1IaW+hupUOf/nnZavA9KS+vLXIiy7JcrwSZ
+	 jJ/ueUD6leyeg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v11 00/42] arm64: Support for Arm CCA in KVM
-To: kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
- Vishal Annapurve <vannapurve@google.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250820145606.180644-1-steven.price@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Fri, 17 Oct 2025 16:55:25 +0200
+Message-Id: <DDKON3JTFU2F.LN0UZ1ZKWNFV@kernel.org>
+Subject: Re: [PATCH 6/7] rust: debugfs: support binary large objects for
+ ScopedDir
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251003222729.322059-1-dakr@kernel.org>
+ <20251003222729.322059-7-dakr@kernel.org> <aPI9-_6k4ZUKtA1C@google.com>
+In-Reply-To: <aPI9-_6k4ZUKtA1C@google.com>
 
-Hi all,
+On Fri Oct 17, 2025 at 3:00 PM CEST, Alice Ryhl wrote:
+> On Sat, Oct 04, 2025 at 12:26:43AM +0200, Danilo Krummrich wrote:
+>> Add support for creating binary debugfs files via ScopedDir. This
+>> mirrors the existing functionality for Dir, but without producing an
+>> owning handle -- files are automatically removed when the associated
+>> Scope is dropped.
+>>=20
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>> ---
+>>  rust/kernel/debugfs.rs | 45 ++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 45 insertions(+)
+>>=20
+>> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+>> index 3c3bbcc126ef..0eb1719e4953 100644
+>> --- a/rust/kernel/debugfs.rs
+>> +++ b/rust/kernel/debugfs.rs
+>> @@ -531,6 +531,20 @@ pub fn read_only_file<T: Writer + Send + Sync + 'st=
+atic>(&self, name: &CStr, dat
+>>          self.create_file(name, data, &T::FILE_OPS)
+>>      }
+>> =20
+>> +    /// Creates a read-only binary file in this directory.
+>> +    ///
+>> +    /// The file's contents are produced by invoking [`BinaryWriter::wr=
+ite_to_slice`].
+>> +    ///
+>> +    /// This function does not produce an owning handle to the file. Th=
+e created file is removed
+>> +    /// when the [`Scope`] that this directory belongs to is dropped.
+>> +    pub fn read_binary_file<T: BinaryWriter + Send + Sync + 'static>(
+>> +        &self,
+>> +        name: &CStr,
+>> +        data: &'data T,
+>> +    ) {
+>> +        self.create_file(name, data, &T::FILE_OPS)
+>
+> Why isn't <T as MyTrait> need here when it's needed for the other
+> methods?
 
-v6.18-rc1 is out, so I've rebased and refreshed the series. Branches are
-below:
+It's not needed for write_binary_file() I think, but read_write_binary_file=
+()
+needs it because:
 
-kernel: https://gitlab.arm.com/linux-arm/linux-cca cca-host/v11
-kvmtool: https://gitlab.arm.com/linux-arm/kvmtool-cca cca/v9
+	fn read_write_binary_file<T: BinaryWriter + BinaryReader + Send + Sync + '=
+static>()
 
-However I'm not going to spam you all with the patches because there are
-some significant changes that are still to be worked out which Marc has
-pointed out (thanks for the review!). Specifically:
-
- * We've agreed that the uAPI should be more like "normal" KVM. So
-   rather than expose the underlying operations (create RECs, init
-   RIPAS, populate memory, activate), the VMM should set this up 'as
-   normal' (but using the guestmem_fd capabilities to mark the memory
-   private) and then on first vcpu run the realm should be configured,
-   RIPAS set based on the memslots/guestmem_fd and any data written in
-   the guestmem_fd populated into the realm.
-
-   The upshot of which is that a VMM will require only minimal changes
-   to support CCA, and the ordering requirements (for attestation of
-   setting up the realm will be handled by KVM).
-
-   Since this is a big change in the uAPI it's going to take a while to
-   prototype and figure out all the details, so please bear with me
-   while I work on an updated version.
-
- * There are issues with the PMU handling where the host is not provided
-   with as much flexibility it should. For the PMU it's not possible for
-   the host to maintain a PMU counter while the realm is executing. This
-   means that sensible uses like getting an overflow interrupt on the
-   cycle counter break with the use of a realm. This, however, will
-   require a spec update to fix as the RMM will need to in some cases
-   emulate the PMU registers.
-
- * The GIC handling is also more restrictive then it should be. Although
-   the host is responsible for emulating the GIC, it is unable to set
-   trap bits, restricting the host's ability to do this. There is
-   concern that this could limit the ability to implement hardware
-   workarounds in the future. Again a spec update is needed to fix this.
-
-However, changes that you can see (in the branch) include:
-
- * Fixing the naming of various symbols. There were previously a lot of
-   instances of "rme" in functions which were not directly related to
-   the hardware extension. These are now renamed to "rmi" reflecting
-   that they are part of the interface to the RMM.
-   (This is the only change affecting kvmtool, although it is also
-   binary compatible)
-
- * The code now checks with the hardware feature (RME) before probing
-   for RMI.
-
- * There is now an allowlist for CAPs rather than individually disabling
-   the ones known to be an issue with realms. (This also simplified the
-   code, dropping one patch).
-
- * Fixes for the vgic handling: make sure the VGIC v4 state is
-   synchronised and only populate valid lrs.
-
- * A few other minor updates from reviews, and some minor changes from
-   rebasing.
-
-Thanks,
-Steve
-
+So, just &T::FILE_OPS is ambiguous, because it implements BinaryReadFile,
+BinaryWriteFile and BinaryReadWriteFile.
 
