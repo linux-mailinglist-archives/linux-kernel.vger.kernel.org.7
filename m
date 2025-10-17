@@ -1,207 +1,396 @@
-Return-Path: <linux-kernel+bounces-858365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EB8BEA742
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E595BEA9DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 18:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1DF31885822
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6774B746C0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0843D2773F1;
-	Fri, 17 Oct 2025 16:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9882E2253EC;
+	Fri, 17 Oct 2025 16:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sEhuEtYy"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013067.outbound.protection.outlook.com [40.93.196.67])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IVNweFUp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7814B26E6EA;
-	Fri, 17 Oct 2025 16:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760716869; cv=fail; b=NPFwjSq2mFgaE4KPMn8SdGnPX+anf0rZjk3RKy0XjQngQTaEVH+bxscR96cW8gl8z/Z3Rw8SQ2HkXufTrwsXxQmbc7jdfCryn08B7dotCEJBl1Y0rqCxIekX83sXFRCmDMJAtah5FnmhfZcTVJ8W2+4hpUQ4leK8bmh/5juWJbA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760716869; c=relaxed/simple;
-	bh=GakEOaYFf1LH4iIydkZYUTvtk97EUfutGNLKdHDPghI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hrzgm/q+JqrNu1H3A+yCRILLk4bWO+MFEtgIh1/9isYq8ZnLOm8uFg4up595tlOiNomjuK5yrpskqUcbFsw8PPx9/XtFC62o2rIOfeF8rR0CqjjZCEzmXnlYk/oVcc9Fm5Fc61KCqb+MYx7KjWyhspZIxh4zlPEMTF2SjUFi+3Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sEhuEtYy; arc=fail smtp.client-ip=40.93.196.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m3jFsuGPVx0bitpaVgd9TTjdTV8XKZ+9Ww3d7fiJK9TnOmtsHhk4HbX9aB6E3H/qpBTCnGb1CIrNpgbo46p8Ytz4AwH8xEOAd3dy4Vx2NoMDWKBib3iomOEnKj++g07/b9J+LdK/pt6yMgpufXuEPT14P81KPR9sMV02UaakL9T1i9Z7y6tNGl5BB3VitTVl3AbwWdKCdqJx+NGzcdiDY6s0X6GGxi+TJLsrWqEhwe5idh8MeWJWB1V3MHqgKh+35GIm62A9IpqvQFQMQA1exJ1fsl3w7JuYMSS+S7JpROER7fn89L94bmcPvy2qjhUp0o9rkVeZBmHATP/kwtEnVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y82xXlZCCoWv3AoNxPuBst7fTgDKzhDGPAn+Kop7zYo=;
- b=axukzX1XduhM2fAflbh4qt9SSQoQ2umhUlxZBP89bOmboD6VM/wVvOG+KoazJmGS/0wZDrkFtvspxCPdKmnaelIcKAq69T7Aw8A2CJIK0xrpfqLZc0RubuIvaZEeZdhSAjF8ZkBqojaH9a0Y1HimU14fMApAGmXbrruWZ6HavTSCXa9+AWitoPwv1Cx4BsbOivcDFLqUIvAZ8+Fq1cRFFDn5Ekda+TB21+Uw+M+nspSTv+EqSHflvGx7Vz2/DqIDzqRoUSZbkvKBGGwuo8pYbvxkdcjiKJieyP5Bbe0Bk7co6CQ9MTQPCrxkS+kuUlNn5/23R8ueqHR2YYhR0hRHUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y82xXlZCCoWv3AoNxPuBst7fTgDKzhDGPAn+Kop7zYo=;
- b=sEhuEtYyzNwULX5+Nc/c6rJPVRbjxiVIF9Q3713xNNVhu7hzqCmnM2njJPC9wKh1lLo/sB0q/PpI+g55uMSGzUdOzDUi4Z0eo6CqdnIKKbgs2DquI2zujWzcEy57He5FYsaJtW5waoXmjq+J1M6f/96n2gTbYKAjlzKNHGvIlrMHc3UW2OQ/GrFkHPt/Iqy5xHtPCpr1pNu0GRfOGzhtCfppV2QcxG40K75oIkGszeBawVLbJGUcXrasY1PQ63qPKMbfpc4cYvqcqHh87W49uPqH5/YscghEq1m1KREni8D1Gs266eLNq/EBjl//7Fboo9jrQ4DVfnAny3uy5DMWTw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by MW4PR12MB7237.namprd12.prod.outlook.com (2603:10b6:303:22a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
- 2025 16:01:03 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
- 16:01:03 +0000
-Date: Fri, 17 Oct 2025 13:01:01 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v5 9/9] vfio/pci: Add dma-buf export support for MMIO
- regions
-Message-ID: <20251017160101.GO3901471@nvidia.com>
-References: <cover.1760368250.git.leon@kernel.org>
- <72ecaa13864ca346797e342d23a7929562788148.1760368250.git.leon@kernel.org>
- <20251016235332.GA265079@nvidia.com>
- <20251017054007.GB6199@unreal>
- <20251017155850.GN3901471@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017155850.GN3901471@nvidia.com>
-X-ClientProxiedBy: SN6PR2101CA0014.namprd21.prod.outlook.com
- (2603:10b6:805:106::24) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6405327A907
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 16:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760716896; cv=none; b=m1AwISgrKoQraXutbBZFntYexy78VYZCPJlmqi43Ate3m2OyF9yGa7j64sxduoTYtYjxVI4N/3NU8upP4AyshmNXrLM2FgHE8y/KaT/TputIEPeSS+DmZvESNSGIBNIujxIoc5ASGhCmVJlUeoYQ4KF+tVlQpleDWKVmwG7UHpA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760716896; c=relaxed/simple;
+	bh=HoeiLfIrc5U2hWrVckbtfuJXGVRkimJ+ztFECOU/pEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6zEcHhCqXCjj5S8AYyeSRkN49Fcy3/6mJIiWnokVQ99//kJ/v8QKWT+dxr8MU8Mah2jkv6/MQcMZlzq/lKOLPx9m/3nRhEnLL+yfvruLPxCjenxzevGYhQ3xYhYojJvHcRKoZ2mE91b5SsUgnPC9+FxHi16rfWgl/G/oPj0aA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IVNweFUp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760716893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PIkjHtG8K2O56AwzyHsc10sFHSt5l26FlguwiupKYTA=;
+	b=IVNweFUp1awBlbwYn1nED7oo6LGDwoHglTZ+q+RV+rzX6qUB24PNRQeqsPM/XUPFnziGYI
+	OQArqvUu26MkxnGj+VHcySDDUmDEENvfDmOGKvco6tIrWqqRu3LJfXeBB6UrFSLEmxMxEK
+	jYjzTTuN5Z7f4x27gDsfVu1GXVHd1zE=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-lLNGq-PjP2u2wKHCc3ZtOQ-1; Fri, 17 Oct 2025 12:01:32 -0400
+X-MC-Unique: lLNGq-PjP2u2wKHCc3ZtOQ-1
+X-Mimecast-MFC-AGG-ID: lLNGq-PjP2u2wKHCc3ZtOQ_1760716891
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7a153ba0009so3521279b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:01:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760716891; x=1761321691;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PIkjHtG8K2O56AwzyHsc10sFHSt5l26FlguwiupKYTA=;
+        b=Y3nTXz86Mv/orUiblIghmHNiVoQjhoYVwAxnO4c6IpkCYHtI6KyKB02S5KXB2ca3wx
+         gbmQjsJnYdxrCETpjXu/EBcPeujL4c0CRqq4oBuwluaJXje8XeBgbAle3ZmzrP/bnUYg
+         6ecg/8TuclLFeImmBV0Eikzdoas6XkUIbc9JLBRG/bdge+CUFZFu8//DgW+8Fw5mIX2r
+         L3o9/HumvOl3yVrHhDs9aDrfEdbji6eEF9TblXduo2LEibTDCRfvX4UA099s7Q3WKLDK
+         AHZtb1Owvn6Aoy1xIMEZyHWN1zpkBIPSO40brIE0zR2mlCcdXkYINdkHUeIqSjjyG6P3
+         SBgA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0hsIPaiPR4aH2LC0Y5tn4PRMBxrS9YAk+zjjgXJy/JYCiDUmlB3pdn+niwpAbdN12C/shaP0Uc0U1QMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjZdROxxOav7ObZWhNoQ1SOHdCgCMqrwPLZT4ofEQAkAmO8u3X
+	cpA2xp6PM3/5M+1s2Qd5XF53LI8D2d6BglBPZU0cr3IebCqS9XG8Lh0F+ycZOtC/1/CxfVbQIo5
+	tCkZCSR5TGYPHHpxZ8XMFtCumMsdIU1G8FuZWsMWsDZIVLqTe4eMgMKtY68n/CKNcmw==
+X-Gm-Gg: ASbGncuTWGiM3S34HmDrdDH4isfAEDoewIWFc7Ps/tLwB9OHm3LjVpYqRHNJ1bENd+p
+	zvq6+AlnQwpLgT7Vv8M8kYRHL+nYXVuLmslX29UAfsKlHI7KFu09OH/RAMKvkseN/UqdgXiTNTw
+	KqR4bHZWAb+GfLQ2RKrcZpFaTfZWm6vtNlnXPO35Y2BJMooL7lWNlZUkC4tULlRenxdu/7TLewr
+	s+TxIG7tnSDyotukKEJgCZKtedYmUNKbLNjnszBMF346FEP1vWzuW30vgny6EO1Idd3MyOkZDGJ
+	y94wbd3Bivglel13xKEuhfbx9TxumPxUF8K2nErr4BqRJ1F2ac/5rLelIVs04Q2f88wa9wqMuI7
+	47N22UOnZUFztRKOZu2KNFk3akQFqmyUOp3soe9k=
+X-Received: by 2002:a05:6a00:813:b0:781:2069:1eea with SMTP id d2e1a72fcca58-7a220d41244mr5674185b3a.24.1760716890614;
+        Fri, 17 Oct 2025 09:01:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEV+vF1WeoqYbB1sX6jUBw8yccaOQtpuaHsR9tjJiwRF9RrFequccajAP9k3CeRwHGbg0rrtw==
+X-Received: by 2002:a05:6a00:813:b0:781:2069:1eea with SMTP id d2e1a72fcca58-7a220d41244mr5674068b3a.24.1760716889494;
+        Fri, 17 Oct 2025 09:01:29 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b0606f0sm26765866b3a.15.2025.10.17.09.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 09:01:28 -0700 (PDT)
+Date: Sat, 18 Oct 2025 00:01:22 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <20251017160122.iqpowv6q2mxahlbj@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+ <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+ <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251003171932.pxzaotlafhwqsg5v@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aOJrNHcQPD7bgnfB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20251005153956.zofernclbbva3xt6@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aOPCAzx0diQy7lFN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <aOTkVmyEV8i_eQx6@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|MW4PR12MB7237:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4155e212-d03a-4d0f-841c-08de0d965f8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lH1mN6ye+aIC3KjEo2L2o6rOhp96eiRtLcFlMlpCyUnfvCUeJa4qHEhYdcZf?=
- =?us-ascii?Q?y331eYoRRMw3g2HbwlNrGnskKwVC4RHKODe2yU8X1GeGhwmVv1HH5vr0IrEo?=
- =?us-ascii?Q?6BNO2QewT00Nf2UaZPwb/OaLBdc+xUAOmL3JZEgbYdSi1OTGxs7U+C4OStaB?=
- =?us-ascii?Q?GrUQEaQpxOKffZg7G9uiBoPQ3SUa6wjFdTQcJFd6oB64n7qIuQg9mO7Xl6Il?=
- =?us-ascii?Q?FOwkXkzPjZyQXUK445u2GK0ajbZMvKkS7pBBazk7WPftW7l8PUS6sgllOmzg?=
- =?us-ascii?Q?KUsX2oFjaPanRBR983xvL4U30YlycrIeRUeNB/wN0gpCXZnXPxkk7aoQkZO0?=
- =?us-ascii?Q?ajTxGmlhMJ/5l/ThJlZ+BOxT6u64ddze56TRAFexgDZINPXPkEBKve2PS1BB?=
- =?us-ascii?Q?CM0+dLqxKaEyUDQXmecHM757sTSI1iis4USqYs5owqWnjO87j0Q3VXdYEQch?=
- =?us-ascii?Q?HwhPphELrhLCWxU0pIPp2AbTuVLJQUS71cEpVjFA0DzT46urv66ToD5ogi68?=
- =?us-ascii?Q?+IdqPRITVrhX+2UCATkiP1GX4eaJ1qyvSRXe6lmVUEx053ihW0mmwQsUJxrQ?=
- =?us-ascii?Q?19LHWhWZb4PXktIU3ZBuRbIxlPZ4+JINnCfYULDybw0fNQb4HQV6OmLUGsm9?=
- =?us-ascii?Q?yRPDAERTbR7oLQAAY040tdfMK9HrrCkvBSS9ERZVqZfhAoPyHL8o+SDYM4s2?=
- =?us-ascii?Q?KpLOivo8xeupZzRKYlT4qTWNNPtOqi18R631O5SLwtTbbE09GqNXO68CvVp+?=
- =?us-ascii?Q?SoXPhF1fs7/0fFuqMlo7dFd6zZ7s34pZEeFaQa7n1XgY7FkytSctBsXmp31K?=
- =?us-ascii?Q?yKcA2kns02b4EKRsHpEV8EAo2MsxjKL1a5Xi9GmzONn/6W7ldHl8rcSDYBlr?=
- =?us-ascii?Q?AbMj0twZQkE2Uu90FQeRuPgKRAZQIcSimOlb1WGA3eX958NyPKPYSn7lyWl/?=
- =?us-ascii?Q?yov0owrMWbgjSwuSBGEmCBR0OU7EHGNDjQftL/VRes7rzU80vkpPnko+9l6C?=
- =?us-ascii?Q?JqvCFOrGOYpo6bty3Xt9IgYRm/NgjR20Xrs+aqgH845irXaJW1AKdaZOPVUn?=
- =?us-ascii?Q?/0H5NjysFNpSjwuw/kUk6B7P2RaKTTlqXYu2Fa3kDzCulvu0jtX+FZB47eXz?=
- =?us-ascii?Q?I4P9JuIMUCHuIV4Z9cr+4S4Wo0qiORzgZHeoiqlp9ulumQwGBN/ifeEHUZrQ?=
- =?us-ascii?Q?1KWSSWl8YQmeHMRVPMw09IrWql+3BiG5OyWdmhsOkabpxremEg2KH+2c5CA9?=
- =?us-ascii?Q?2M/gsYYmncZqGC0qlS+69aNScatx7JHmnf2DHT1hgNlFUFND8qOABGQNzO2Y?=
- =?us-ascii?Q?B4v88iqQD8nju7I0ja3BzXFLdfcanei6MdOieycYrePZkMO71AMW4p0TPsI6?=
- =?us-ascii?Q?3Cj6p9sVAqpOzfUOORriKPTi1FnDH7UsswLMOdi0RHF2Rex2oVqrBs5HIggH?=
- =?us-ascii?Q?dNhU+sBnVlSg3k9XR87rqZmqVAUZoXej?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kBu9N7hZGGARp37UosIoW//cgPBrRqdAZA+mqc+l5/94XwDqWRqpo4/POhX6?=
- =?us-ascii?Q?ZZ9824nQntoxhlAmeYlWBWMiN49uw+YpAtwVqziJ4XgDaRpl363/7vytMIn+?=
- =?us-ascii?Q?7tXVk53dPXpXYfS56vPTMf2iKSCY2qeQH6AXkn3W2zcXofZd4nyuS2YXO9if?=
- =?us-ascii?Q?mtOVScR33LaWhwIRdXwuULx+HR+WD6HnqGpilDVUYna9ZYYiALGrr61gLeKt?=
- =?us-ascii?Q?PK62+xyEKaiWAGP6iTiWSpZZT1PCdbbHkP7LRwPEGJWq8soytl8kMR7oQ2Bz?=
- =?us-ascii?Q?NVz/gA/kP52BCDE4ieAMLpbA4U7+PlYO2YVZtipqvR0+NxrotWzxTY2Fr2DF?=
- =?us-ascii?Q?ze9kjcIcsXrEAqtNOw4bDfnk/PXVCFQFuH1B/6feR1NvrfzgkK0wJNjhuLUR?=
- =?us-ascii?Q?GnKsrJfT8b2mx+AgxLqDTfbOIVYS2SVug+HWH1O4oM7FSFkDIf7SSEYc7NSI?=
- =?us-ascii?Q?MicdlyB2kLQzoK13fTKSztcPmVAbPAj2Xogsggb0FGRMdX5DC3YheBL3yUSp?=
- =?us-ascii?Q?iuERtwhWKPTDXRvFTOOw6o+/FhQkBLLfQcKUdz4I5tm18GbZpbtdueS5bGZc?=
- =?us-ascii?Q?XyxLcPsI8Y4Oh8bJp5d+bqkqLWV7kD5UZ6SnxJJYF28AKOPd0BnC4zEoBo5u?=
- =?us-ascii?Q?u3igsTttS14LBJYdzi1OI2i6WUpfcgPQucQei1vozXYjcjMdTJcprTswYUeD?=
- =?us-ascii?Q?51LdXJqurdOVvWn6gix8i3w49t/ZE00viBs/p5uq4Yp+n8IGkq5BKMNsJAie?=
- =?us-ascii?Q?1UQx2BiETHkUncI22lYKhx3SxRIJBq8rLZhF/4nhM1qp1Vt0eDmnFkjxp+hJ?=
- =?us-ascii?Q?cQR7A2DhYfzVDiHzHiwM4AKfU2XLYIZh1J94D2K4c58KUsGqO7rNpCtlh6wR?=
- =?us-ascii?Q?T90e66/hWenRUf6FZWg8YMW3E+U9i11vI43P8EoQ8D1DtZOat3y84s8ezf1o?=
- =?us-ascii?Q?vi6eV7LSUTvimz9eCJ5yAN8FviJOnl4pdRA5MsZ9KfZPat9w3r3nD6D/NUWe?=
- =?us-ascii?Q?B49wmSRynmwxOxfVgR9QlYFDL5hSq/B4BkAK2VAkzc9qrq5L4fDsZeoiQGG1?=
- =?us-ascii?Q?4rW+AwmlD+UJEQdfJTavha48z1pS/mORBALUcEZuw2/JDD9ZcjCUy+2shyQM?=
- =?us-ascii?Q?K/wGTPgAr4bZeRJHg0RRAbfLCnT36BfYLl857WOCJ87ukgftkSslk4AzYLzz?=
- =?us-ascii?Q?nYINUwtGLXnsHauByAvtxJnGa2h2mfwHEvo73seue55UseO6rprfGwGiyRwt?=
- =?us-ascii?Q?glEO6GII+SaUZL+vMy9T5S8v46Mn4zy40upCQwxQrC9NMEs7Ri6sXB7scg9l?=
- =?us-ascii?Q?qp4Q4hCA1d5Bv4auG2H74kXDOZwZMeNS0okh+CvLPABJVzoQjIFJkjbbf2TE?=
- =?us-ascii?Q?V8CaAz3OJMEPSkdU22Cb4qbldxDBi/q9KUrxxy+XODloTiQ4MkC2fCdl4TMD?=
- =?us-ascii?Q?aQoxrhWNpgHI+TUb97/YP4pCvY7EaUp7yefBEZkIU43grZHC3qJOz7rrnkY7?=
- =?us-ascii?Q?xwSSVAxTxLTqD2NaqfbGkSdatDfwhwaLrHYiU7cRBFh3YYeWUMYUFObbL5qh?=
- =?us-ascii?Q?cb4+9B0IaDFLxqXN+BGNIUFIQBsY4yzhUuVPM8AQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4155e212-d03a-4d0f-841c-08de0d965f8a
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 16:01:03.3858
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ePKq45QTNlb4TNCVnqQR7loqjURQiQSxnhbuExu1lF6dfCbBR5wDwPyM6le85jcH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7237
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOTkVmyEV8i_eQx6@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-On Fri, Oct 17, 2025 at 12:58:50PM -0300, Jason Gunthorpe wrote:
-> On Fri, Oct 17, 2025 at 08:40:07AM +0300, Leon Romanovsky wrote:
-> > > > +static void vfio_pci_dma_buf_detach(struct dma_buf *dmabuf,
-> > > > +				    struct dma_buf_attachment *attachment)
-> > > > +{
-> > > > +	kfree(attachment->priv);
-> > > > +}
+On Tue, Oct 07, 2025 at 03:28:46PM +0530, Ojaswin Mujoo wrote:
+> On Mon, Oct 06, 2025 at 06:50:03PM +0530, Ojaswin Mujoo wrote:
+> > On Sun, Oct 05, 2025 at 11:39:56PM +0800, Zorro Lang wrote:
+> > > On Sun, Oct 05, 2025 at 06:27:24PM +0530, Ojaswin Mujoo wrote:
+> > > > On Sat, Oct 04, 2025 at 01:19:32AM +0800, Zorro Lang wrote:
+> > > > > On Thu, Oct 02, 2025 at 11:26:45PM +0530, Ojaswin Mujoo wrote:
+> > > > > > On Sun, Sep 28, 2025 at 09:19:24PM +0800, Zorro Lang wrote:
+> > > > > > > On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
+> > > > > > > > Implement atomic write support to help fuzz atomic writes
+> > > > > > > > with fsx.
+> > > > > > > > 
+> > > > > > > > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > > > > > > Reviewed-by: John Garry <john.g.garry@oracle.com>
+> > > > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > > > > > > ---
+> > > > > > > 
+> > > > > > > Hmm... this patch causes more regular fsx test cases fail on old kernel,
+> > > > > > > (e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
+> > > > > > > to disable "atomic write" automatically if it's not supported by current
+> > > > > > > system?
+> > > > > > 
+> > > > > > Hi Zorro, 
+> > > > > > Sorry for being late, I've been on vacation this week.
+> > > > > > 
+> > > > > > Yes so by design we should be automatically disabling atomic writes when
+> > > > > > they are not supported by the stack but seems like the issue is that
+> > > > > > when we do disable it we print some extra messages to stdout/err which
+> > > > > > show up in the xfstests output causing failure.
+> > > > > > 
+> > > > > > I can think of 2 ways around this:
+> > > > > > 
+> > > > > > 1. Don't print anything and just silently drop atomic writes if stack
+> > > > > > doesn't support them.
+> > > > > > 
+> > > > > > 2. Make atomic writes as a default off instead of default on feature but
+> > > > > > his loses a bit of coverage as existing tests wont get atomic write
+> > > > > > testing free of cost any more.
+> > > > > 
+> > > > > Hi Ojaswin,
+> > > > > 
+> > > > > Please have a nice vacation :)
+> > > > > 
+> > > > > It's not the "extra messages" cause failure, those "quiet" failures can be fixed
+> > > > > by:
+> > > > 
+> > > > Oh okay got it.
+> > > > 
+> > > > > 
+> > > > > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > > > > index bdb87ca90..0a035b37b 100644
+> > > > > --- a/ltp/fsx.c
+> > > > > +++ b/ltp/fsx.c
+> > > > > @@ -1847,8 +1847,9 @@ int test_atomic_writes(void) {
+> > > > >         struct statx stx;
+> > > > >  
+> > > > >         if (o_direct != O_DIRECT) {
+> > > > > -               fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> > > > > -                               "disabling!\n");
+> > > > > +               if (!quiet)
+> > > > > +                       fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> > > > > +                                       "disabling!\n");
+> > > > >                 return 0;
+> > > > >         }
+> > > > >  
+> > > > > @@ -1867,8 +1868,9 @@ int test_atomic_writes(void) {
+> > > > >                 return 1;
+> > > > >         }
+> > > > >  
+> > > > > -       fprintf(stderr, "main: IO Stack does not support "
+> > > > > -                       "atomic writes, disabling!\n");
+> > > > > +       if (!quiet)
+> > > > > +               fprintf(stderr, "main: IO Stack does not support "
+> > > > > +                               "atomic writes, disabling!\n");
+> > > > >         return 0;
+> > > > >  }
+> > > > 
+> > > > > 
+> > > > > But I hit more read or write failures e.g. [1], this failure can't be
+> > > > > reproduced with FSX_AVOID=-a. Is it a atomic write bug or an unexpected
+> > > > > test failure?
+> > > > > 
+> > > > > Thanks,
+> > > > > Zorro
+> > > > > 
+> > > > 
+> > > > <...>
+> > > > 
+> > > > > +244(244 mod 256): SKIPPED (no operation)
+> > > > > +245(245 mod 256): FALLOC   0x695c5 thru 0x6a2e6	(0xd21 bytes) INTERIOR
+> > > > > +246(246 mod 256): MAPWRITE 0x5ac00 thru 0x5b185	(0x586 bytes)
+> > > > > +247(247 mod 256): WRITE    0x31200 thru 0x313ff	(0x200 bytes)
+> > > > > +248(248 mod 256): SKIPPED (no operation)
+> > > > > +249(249 mod 256): TRUNCATE DOWN	from 0x78242 to 0xf200	******WWWW
+> > > > > +250(250 mod 256): FALLOC   0x65000 thru 0x66f26	(0x1f26 bytes) PAST_EOF
+> > > > > +251(251 mod 256): WRITE    0x45400 thru 0x467ff	(0x1400 bytes) HOLE	***WWWW
+> > > > > +252(252 mod 256): SKIPPED (no operation)
+> > > > > +253(253 mod 256): SKIPPED (no operation)
+> > > > > +254(254 mod 256): MAPWRITE 0x4be00 thru 0x4daee	(0x1cef bytes)
+> > > > > +255(255 mod 256): MAPREAD  0xc000 thru 0xcae9	(0xaea bytes)
+> > > > > +256(  0 mod 256): READ     0x3e000 thru 0x3efff	(0x1000 bytes)
+> > > > > +257(  1 mod 256): SKIPPED (no operation)
+> > > > > +258(  2 mod 256): INSERT 0x45000 thru 0x45fff	(0x1000 bytes)
+> > > > > +259(  3 mod 256): ZERO     0x1d7d5 thru 0x1f399	(0x1bc5 bytes)	******ZZZZ
+> > > > > +260(  4 mod 256): TRUNCATE DOWN	from 0x4eaef to 0x11200	******WWWW
+> > > > > +261(  5 mod 256): WRITE    0x43000 thru 0x43fff	(0x1000 bytes) HOLE	***WWWW
+> > > > > +262(  6 mod 256): WRITE    0x2200 thru 0x31ff	(0x1000 bytes)
+> > > > > +263(  7 mod 256): WRITE    0x15000 thru 0x15fff	(0x1000 bytes)
+> > > > > +264(  8 mod 256): WRITE    0x2e400 thru 0x2e7ff	(0x400 bytes)
+> > > > > +265(  9 mod 256): COPY 0xd000 thru 0xdfff	(0x1000 bytes) to 0x1d800 thru 0x1e7ff	******EEEE
+> > > > > +266( 10 mod 256): CLONE 0x2a000 thru 0x2afff	(0x1000 bytes) to 0x21000 thru 0x21fff
+> > > > > +267( 11 mod 256): MAPREAD  0x31000 thru 0x31d0a	(0xd0b bytes)
+> > > > > +268( 12 mod 256): SKIPPED (no operation)
+> > > > > +269( 13 mod 256): WRITE    0x25000 thru 0x25fff	(0x1000 bytes)
+> > > > > +270( 14 mod 256): SKIPPED (no operation)
+> > > > > +271( 15 mod 256): MAPREAD  0x30000 thru 0x30577	(0x578 bytes)
+> > > > > +272( 16 mod 256): PUNCH    0x1a267 thru 0x1c093	(0x1e2d bytes)
+> > > > > +273( 17 mod 256): MAPREAD  0x1f000 thru 0x1f9c9	(0x9ca bytes)
+> > > > > +274( 18 mod 256): WRITE    0x40800 thru 0x40dff	(0x600 bytes)
+> > > > > +275( 19 mod 256): SKIPPED (no operation)
+> > > > > +276( 20 mod 256): MAPWRITE 0x20600 thru 0x22115	(0x1b16 bytes)
+> > > > > +277( 21 mod 256): MAPWRITE 0x3d000 thru 0x3ee5a	(0x1e5b bytes)
+> > > > > +278( 22 mod 256): WRITE    0x2ee00 thru 0x2efff	(0x200 bytes)
+> > > > > +279( 23 mod 256): WRITE    0x76200 thru 0x769ff	(0x800 bytes) HOLE
+> > > > > +280( 24 mod 256): SKIPPED (no operation)
+> > > > > +281( 25 mod 256): SKIPPED (no operation)
+> > > > > +282( 26 mod 256): MAPREAD  0xa000 thru 0xa5e7	(0x5e8 bytes)
+> > > > > +283( 27 mod 256): SKIPPED (no operation)
+> > > > > +284( 28 mod 256): SKIPPED (no operation)
+> > > > > +285( 29 mod 256): SKIPPED (no operation)
+> > > > > +286( 30 mod 256): SKIPPED (no operation)
+> > > > > +287( 31 mod 256): COLLAPSE 0x11000 thru 0x11fff	(0x1000 bytes)
+> > > > > +288( 32 mod 256): COPY 0x5d000 thru 0x5dfff	(0x1000 bytes) to 0x4ca00 thru 0x4d9ff
+> > > > > +289( 33 mod 256): TRUNCATE DOWN	from 0x75a00 to 0x1e400
+> > > > > +290( 34 mod 256): MAPREAD  0x1c000 thru 0x1d802	(0x1803 bytes)	***RRRR***
+> > > > > +Log of operations saved to "/mnt/xfstests/test/junk.fsxops"; replay with --replay-ops
+> > > > > +Correct content saved for comparison
+> > > > > +(maybe hexdump "/mnt/xfstests/test/junk" vs "/mnt/xfstests/test/junk.fsxgood")
+> > > > > 
+> > > > > Thanks,
+> > > > > Zorro
+> > > > 
+> > > > Hi Zorro, just to confirm is this on an older kernel that doesnt support
+> > > > RWF_ATOMIC or on a kernle that does support it.
 > > > 
-> > > If the caller fails to call map then it leaks the iova.
+> > > I tested on linux 6.16 and current latest linux v6.17+ (will be 6.18-rc1 later).
+> > > About the RWF_ATOMIC flag in my system:
+> > > 
+> > > # grep -rsn RWF_ATOMIC /usr/include/
+> > > /usr/include/bits/uio-ext.h:51:#define RWF_ATOMIC       0x00000040 /* Write is to be issued with torn-write
+> > > /usr/include/linux/fs.h:424:#define RWF_ATOMIC  ((__kernel_rwf_t)0x00000040)
+> > > /usr/include/linux/fs.h:431:                     RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
+> > > /usr/include/xfs/linux.h:236:#ifndef RWF_ATOMIC
+> > > /usr/include/xfs/linux.h:237:#define RWF_ATOMIC ((__kernel_rwf_t)0x00000040)
 > > 
-> > I'm relying on dmabuf code and documentation:
+> > Hi Zorro, thanks for checking this. So correct me if im wrong but I
+> > understand that you have run this test on an atomic writes enabled 
+> > kernel where the stack also supports atomic writes.
 > > 
-> >    926 /**
-> >    927  * dma_buf_dynamic_attach - Add the device to dma_buf's attachments list
-> > ...   
-> >    932  *
-> >    933  * Returns struct dma_buf_attachment pointer for this attachment. Attachments
-> >    934  * must be cleaned up by calling dma_buf_detach().
+> > Looking at the bad data log:
 > > 
-> > Successful call to vfio_pci_dma_buf_attach() MUST be accompanied by call
-> > to vfio_pci_dma_buf_detach(), so as far as dmabuf implementation follows
-> > it, there is no leak.
+> > 	+READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/xfstests/test/junk
+> > 	+OFFSET      GOOD    BAD     RANGE
+> > 	+0x1c000     0x0000  0xcdcd  0x0
+> > 	+operation# (mod 256) for the bad data may be 205
+> > 
+> > We see that 0x0000 was expected but we got 0xcdcd. Now the operation
+> > that caused this is indicated to be 205, but looking at that operation:
+> > 
+> > +205(205 mod 256): ZERO     0x6dbe6 thru 0x6e6aa	(0xac5 bytes)
+> > 
+> > This doesn't even overlap the range that is bad. (0x1c000 to 0x1c00f).
+> > Infact, it does seem like an unlikely coincidence that the actual data
+> > in the bad range is 0xcdcd which is something xfs_io -c "pwrite" writes
+> > to default (fsx writes random data in even offsets and operation num in
+> > odd).
+> > 
+> > I am able to replicate this but only on XFS but not on ext4 (atleast not
+> > in 20 runs).  I'm trying to better understand if this is a test issue or
+> > not. Will keep you update.
+> > 
+> > I'm not sure how this will affect the upcoming release, if you want
+> > shall I send a small patch to make the atomic writes feature default off
+> > instead of default on till we root cause this?
+> > 
+> > Regards,
+> > Ojaswin
 > 
-> It leaks the ivoa because there is no dma_iova_destroy() unless you
-> call unmap. detach is not unmap and unmap is not mandatory to call.
+> Hi Zorro,
+> 
+> So I'm able to narrow down the opoerations and replicate it via the
+> following replay file:
+> 
+> # -----
+> # replay.fsxops
+> # -----
+> write_atomic 0x57000 0x1000 0x69690
+> write_atomic 0x66000 0x1000 0x4de00
+> write_atomic 0x18000 0x1000 0x2c800
+> copy_range 0x20000 0x1000 0xe00 0x70e00
+> write_atomic 0x18000 0x1000 0x70e00
+> copy_range 0x21000 0x1000 0x23000 0x74218
+> truncate 0x0 0x11200 0x4daef *
+> write_atomic 0x43000 0x1000 0x11200 *
+> write_atomic 0x15000 0x1000 0x44000
+> copy_range 0xd000 0x1000 0x1d800 0x44000
+> mapread 0x1c000 0x1803 0x1e400 *
+> 
+> 
+> Command: ./ltp/fsx -N 10000 -o 8192 -l 500000 -r 4096 -t 512 -w 512 -Z -FKuHzI --replay-ops replay.fsxops $MNT/junk
+> 
+> $MNT/junk is always opened O_TRUNC and is an on an XFS FS where the
+> disk is non-atomic so all RWF_ATOMIC writes are software emulated.
+> 
+> Here are the logs generated for this run:
+> 
+> Seed set to 1
+> main: filesystem does not support exchange range, disabling!
+> 
+> READ BAD DATA: offset = 0x1c000, size = 0x1803, fname = /mnt/test/junk
+> OFFSET      GOOD    BAD     RANGE
+> 0x1d000     0x0000  0xf322  0x0
+> operation# (mod 256) for the bad data may be 243
+> 0x1d001     0x0000  0x22f3  0x1
+> operation# (mod 256) for the bad data may be 243
+> 0x1d002     0x0000  0xf391  0x2
+> operation# (mod 256) for the bad data may be 243
+> 0x1d003     0x0000  0x91f3  0x3
+> <... a few more such lines ..>
+> 
+> LOG DUMP (11 total operations):
+> openat(AT_FDCWD, "/mnt/test/junk.fsxops", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 7
+> 1(  1 mod 256): WRITE    0x57000 thru 0x57fff   (0x1000 bytes) HOLE     ***WWWW ATOMIC
+> 2(  2 mod 256): WRITE    0x66000 thru 0x66fff   (0x1000 bytes) HOLE ATOMIC
+> 3(  3 mod 256): WRITE    0x18000 thru 0x18fff   (0x1000 bytes) ATOMIC
+> 4(  4 mod 256): COPY 0x20000 thru 0x20fff       (0x1000 bytes) to 0xe00 thru 0x1dff
+> 5(  5 mod 256): WRITE    0x18000 thru 0x18fff   (0x1000 bytes) ATOMIC
+> 6(  6 mod 256): COPY 0x21000 thru 0x21fff       (0x1000 bytes) to 0x23000 thru 0x23fff
+> 7(  7 mod 256): TRUNCATE DOWN   from 0x67000 to 0x11200 ******WWWW
+> 8(  8 mod 256): WRITE    0x43000 thru 0x43fff   (0x1000 bytes) HOLE     ***WWWW ATOMIC
+> 9(  9 mod 256): WRITE    0x15000 thru 0x15fff   (0x1000 bytes) ATOMIC
+> 10( 10 mod 256): COPY 0xd000 thru 0xdfff        (0x1000 bytes) to 0x1d800 thru 0x1e7ff
+> 11( 11 mod 256): MAPREAD  0x1c000 thru 0x1d802  (0x1803 bytes)  ***RRRR***
+> Log of operations saved to "/mnt/test/junk.fsxops"; replay with --replay-ops
+> Correct content saved for comparison
+> (maybe hexdump "/mnt/test/junk" vs "/mnt/test/junk.fsxgood")
+> +++ exited with 110 +++
+> 
+> We can see that the bad data is detected in the final MAPREAD operation
+> and and bad offset is at 0x1d000. If we look at the operations dump
+> above its clear that none of the operations should be modifying the
+> 0x1d000 so we should have been reading 0s but yet we see some junk data
+> there in the file:
+> 
+> $ hexdump /mnt/test/junk -s 0x1c000 -n0x1020
+> 001c000 0000 0000 0000 0000 0000 0000 0000 0000
+> *
+> 001d000 22f3 91f3 7ff3 3af3 39f3 23f3 6df3 c2f3
+> 001d010 c5f3 f6f3 a6f3 1ef3 58f3 40f3 32f3 5ff3
+> 001d020
+> 
+> Another thing to not is that I can't reproduce the above on scsi-debug
+> device.  @Darrick, @John, could this be an issue in kernel?
 
-Though putting iova free in detach is problematic for the hot-unplug
-case. In that instance we need to ensure the iova is cleaned up prior
-to returning from vfio's remove(). detached is called on the importers
-timeline but unmap is required to be called in move_notify..
+Hi Ojaswin,
 
-So I guess some kind of flag to trigger the unmap after cleanup to
-free the iova?
+If we can be sure this's a kernel bug, rather than a fstests (patch) issue, I think we
+can merge this patchset to expose this bug. Does this make sense to you and others?
 
-Jason
+Thanks,
+Zorro
+
+> 
+> Regards,
+> ojaswin
+> > 
+> > > 
+> > > Thanks,
+> > > Zorro
+> > > 
+> > > > 
+> > > > Regards,
+> > > > ojaswin
+> > > > 
+> > > 
+> 
+
 
