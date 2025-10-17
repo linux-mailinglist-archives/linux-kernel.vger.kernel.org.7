@@ -1,100 +1,135 @@
-Return-Path: <linux-kernel+bounces-857946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C30BE84EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24184BE8502
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 13:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EC36238DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7C01AA46A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E33343D8F;
-	Fri, 17 Oct 2025 11:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E728343D89;
+	Fri, 17 Oct 2025 11:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riBoFF8m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hs9rnXkx"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CF3343D62;
-	Fri, 17 Oct 2025 11:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7047632ED3F;
+	Fri, 17 Oct 2025 11:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700304; cv=none; b=uwufEdONJznjr8bFmrURM4IW+E+S/np7qXH923L/nhtp1o8zyc4GCKM33G0Qrly0BJeT3VWcgUFZz9bshydO/xrKZkY5Xg3g6HM/T3Vr5YuvGdMb9J6wu2ApRgR1CdGvaxETLwSmR9t9Vn1eiEkKMyBnIqf5ZZYkRk90i8zTytU=
+	t=1760700326; cv=none; b=ZSVX0vfDisJITw6OBIcF4Bh3KoED5G0yPhABt4Bza8HZ/veIznTIeh4Fu65zdS8JysunqNSKP8EYoo1kkEn04zsBPNSOMXDg9AXM9K0IUliH0nh8EJTdPmQzvetk/Pnw+rNnEbtegZTCcWIcQZv5qm+YYR/JWZoVRgXcd1qz+Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700304; c=relaxed/simple;
-	bh=Oha5M5RT2nW2MzZklI9wS7QllDX3Iir9ry2TjWilqqc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UeRMayI+p0G93PiZDWzstnwFHuSI6i0a4prQb5tdA3uQvMT0peB1+NqDanF13lOJgRh7EU8ZX805jOykLUd0Ub4+kPArETtGC8MFpo/aZMojgN3tYaFWOZm4ElB+tRFRHQ46Ebk0vnYDhiIMjGCY+JHk2rRxe4ujl1NpsP93QOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riBoFF8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A735C4CEE7;
-	Fri, 17 Oct 2025 11:25:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760700304;
-	bh=Oha5M5RT2nW2MzZklI9wS7QllDX3Iir9ry2TjWilqqc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=riBoFF8m0IcwZ+37LWZ9Kck4w0akHJzJVv7yYIxm0Fk8dSrg4j4K38bYDy99GWGYC
-	 J/xmAsajaw9OaKqCLeOv6Walg3iGIPnpzmNNxlvfiEtN0Ei08Vk5NyJR+EpnYuI3fJ
-	 Isr2v7iiBXOY0NnkQ5vnwAZqrZCw3sBNRtdoI3mEK74++fQfoMOEDlDdigjHjympjJ
-	 GU8vjsdfjhPmKyS3wwEWENJOqTpBy/alzbSTyXtZUn++6fZWnDqbLI2OttmDNXtoZF
-	 ugApFpcYV1uHfyMll8Vq9165mHODLDwJXT4eaw2hrzsrNI3JM46p6tU5uQxhsXai0O
-	 RvslakHm7ZigA==
-From: Mark Brown <broonie@kernel.org>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, 
- =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
- linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Colin Ian King <coking@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251016153000.9142-1-coking@nvidia.com>
-References: <20251016153000.9142-1-coking@nvidia.com>
-Subject: Re: [PATCH][next] spi: aspeed: fix spelling mistake "triming" ->
- "trimming"
-Message-Id: <176070030059.36285.11703430965734905306.b4-ty@kernel.org>
-Date: Fri, 17 Oct 2025 12:25:00 +0100
+	s=arc-20240116; t=1760700326; c=relaxed/simple;
+	bh=rhmicNJZ4ZANfqK4EyUslfDMqZYqgCT0QFRgPraKr38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4tHoDG9ZQdEiCorZHmWkGyh95LyThJmubSlxBYp4ZylEq1HW8Yplc1ydJQZv+TlmiD2EdSkVQRiHmhpungIpFnfry9yvrBbZyJNxq5+KExDr819K4k1+ssvSskPW+/juKn/ggrH2HZHT6q+dLxbVZM+DNaR7OZUzBKXF7fBxg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hs9rnXkx; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=6NUdGt9MtwvZM8jFQHDsw1CCYzG2H7JFSs9BY7PdJqA=; b=Hs9rnXkxHjJhukQH8YKpfmx1MG
+	VZA60esTzih9n9wz+52eqcD59QOx+XDFIHyh7c+pophLHqgU4pS4pFhzbPljuZVWqPytPuzxcaLl7
+	S+E7SYSRSFwMybJrMhDmdTjSEfc00iD7BHmyfTmTRiICFGeQllh5SzKuMB3fgb9Ax4AAWWvj3Uavu
+	KjG5+YOXW8tPPa0//Qqm1AlGRYRbcs7Y3JxSsHqhWz2AGe38QnB6cYh9h9t3xtx3WZuOcipGJF8lQ
+	1baXzfSn292iNCLYPtUPcw5e9HmK8yNQQvOc+EEUeIP/k8jyFwFcGC+J6+je+9353wqrDfz3kSPye
+	pecvA4Gw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v9ia1-00000007Web-1SpD;
+	Fri, 17 Oct 2025 11:25:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E1F4030023C; Fri, 17 Oct 2025 13:25:04 +0200 (CEST)
+Date: Fri, 17 Oct 2025 13:25:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrew Cooper <andrew.cooper@citrix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	kernel test robot <lkp@intel.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
+ regions
+Message-ID: <20251017112504.GE3245006@noisy.programming.kicks-ass.net>
+References: <20251017085938.150569636@linutronix.de>
+ <20251017093030.253004391@linutronix.de>
+ <adba2f37-85fc-45fa-b93b-9b86ab3493f3@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-2a268
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <adba2f37-85fc-45fa-b93b-9b86ab3493f3@citrix.com>
 
-On Thu, 16 Oct 2025 16:30:00 +0100, Colin Ian King wrote:
-> There is a spelling mistake in a dev_warn message. Fix it.
+On Fri, Oct 17, 2025 at 12:08:24PM +0100, Andrew Cooper wrote:
+> On 17/10/2025 11:09 am, Thomas Gleixner wrote:
+> > --- a/include/linux/uaccess.h
+> > +++ b/include/linux/uaccess.h
+> > +#define __scoped_masked_user_access(_mode, _uptr, _size, _elbl)					\
+> > +for (bool ____stop = false; !____stop; ____stop = true)						\
+> > +	for (typeof((_uptr)) _tmpptr = __scoped_user_access_begin(_mode, _uptr, _size, _elbl);	\
+> > +	     !____stop; ____stop = true)							\
+> > +		for (CLASS(masked_user_##_mode##_access, scope) (_tmpptr); !____stop;		\
+> > +		     ____stop = true)					\
+> > +			/* Force modified pointer usage within the scope */			\
+> > +			for (const typeof((_uptr)) _uptr = _tmpptr; !____stop; ____stop = true)	\
+> > +				if (1)
+> > +
+> 
+> Truly a thing of beauty.  At least the end user experience is nice.
+> 
+> One thing to be aware of is that:
+> 
+>     scoped_masked_user_rw_access(ptr, efault) {
+>         unsafe_get_user(rval, &ptr->rval, efault);
+>         unsafe_put_user(wval, &ptr->wval, efault);
+>     } else {
+>         // unreachable
+>     }
+> 
+> will compile.  Instead, I think you want the final line of the macro to
+> be "if (0) {} else" to prevent this.
 > 
 > 
+> While we're on the subject, can we find some C standards people to lobby.
+> 
+> C2Y has a proposal to introduce "if (int foo =" syntax to generalise the
+> for() loop special case.  Can we please see about fixing the restriction
+> of only allowing a single type per loop?   This example could be a
+> single loop if it weren't for that restriction.
 
-Applied to
+So elsewhere, Linus suggested to use a struct to get around that. See
+for example this lovely thing:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: aspeed: fix spelling mistake "triming" -> "trimming"
-      commit: d77daa49085b067137d0adbe3263f75a7ee13a1b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=locking/core&id=1bc5d8cefd0d9768dc03c83140dd54c552bea470
 
 
