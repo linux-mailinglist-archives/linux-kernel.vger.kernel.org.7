@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-858818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32252BEBECA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:31:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08CB3BEBED9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 00:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D47173540E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:31:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7DAA0355A15
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 22:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B692D6E49;
-	Fri, 17 Oct 2025 22:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497462BE64F;
+	Fri, 17 Oct 2025 22:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="is6msNhq"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T175oJAm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB6354AE8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 22:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF05354AEA;
+	Fri, 17 Oct 2025 22:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760740259; cv=none; b=MJASrtUCFO1diz4d/0Rb5Rtw/88/zh2rIhOYTcOaf7YZ0mlBUCpv+Ra/7C5A+uc6IBH5BLBdeMfn5zsrcDIoPy/78vzqzUL5yU5kqk4eovM7MFBvba49MIg+p3gu7+BhgmUCRfKCKvlPB3zTcXBPRAX8Y3tdT2QACE192pdWVU8=
+	t=1760740382; cv=none; b=nFmTzVy63zEkyWZkoOf/diINLx3MMDQDDFB4/qoaJIxj3GiBypsIHZPNSAgSBifoxBRlgLnk85gi5Cj+zWbOhQTLiZIzy/tDHGGJ4pio9xL2qcJxDW9e5zF3pP8CTMqezocwv5StiE+z7tsDDbAunWXQ89rI11CC+j53MTTeCx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760740259; c=relaxed/simple;
-	bh=coMsoCZvoHbuI23XThH1BMIfJtV8x1r7cZz+hCzRR5I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PU3aHzxfJwTOnzDCy+xyI7rSEQGqQuB0vtXwZ7jE4m+BVYLNN7SBufAw00+d0qexpZCMP3Bl/G8JA1MheU0PjWnvGc8MnPfX+YwowUcQmfDhMidn9beKccrPaVIcxfjrKImE/TaWpr/mrjhNXZ2VgW+Yt91oR5gIX93/0xPFGWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=is6msNhq; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28bd8b3fa67so23091525ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760740257; x=1761345057; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1aGvnCfkCxuG7nRHD5qS3K0Ns2/mfOtufedzaaye1sE=;
-        b=is6msNhqyFq7lsWi2gi9bkEIarskO6dC2FOUHkmGJcw4/fe+R2PL7Wht2cCSCDcw0S
-         6DXYysCHLmnENIQwYxuRAiKvtb7Qcj+2lQQYLapYocBCyyOTkPUw5F3bWIBOo6y32Fdj
-         nKJx7G10osH3l7YdE5SV5MuIZJGsI3twYkUBkILz+MiZ2MU27SC5En72SHPLtUA3IbhM
-         8PR6aOVILGRNk8iLORtzIXd52X2CJSt7VQMJ8X5BiDFbpKbEoZxMGSO/+j2rz5g3BR2N
-         9CktZnTvI5hQ+rasVFPGEFODcsTMBf/HnCwEr3jZTI5NGZiPMrgUGs0wYcb7luRjH+11
-         TY6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760740257; x=1761345057;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1aGvnCfkCxuG7nRHD5qS3K0Ns2/mfOtufedzaaye1sE=;
-        b=TW6ztcQPQ8lCM8+LV4oK/a3i1RUHtZfMHVri1aX0Sk9BJocgGEGy1HbAz2F+wuNjAF
-         QvknNqtA9AAd1FGr7Io5MpGr+v8TCeCpodL3iYFdYfTPnaosbZHrSkFIkh8y/MpIu6nh
-         N8DCaSVJ9ztebwcoAR6HnjMbhhtjfbDBEPRGXElr/+64IVTZEUA6EhEgcWMzfbHmu/Bu
-         DnU/e7Wf5V7CjdDAjt5g9atogdXJwhsWMten95WuCXx21o1yO85s7YS81WmzmNywgY1s
-         /o6XOcCylYjMXI1KFkFJ8yW/2Wl6aRAQ/BZ7wyyir5NnxZZIS/HKKJ76wKN6Kavt0E88
-         EjOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmzKr6hkH8C7OMmmSk6IXS39SkW4m9F7xGGDz87afE5ItSYQh2dyTOFPudNdJarn+dW63FbYxqCylsxLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTlaN/RQEMuY+Ik9NE+lcJ5qSylG0c9zGcZwRv0NtbBy9WRkL3
-	u2HGet1HzKijdHTH3j8kAugY/iXf40UTjwq4RwCbK2jvH/ZP/eQp0d8RzgOAEYpPIh8Yxb1AVGc
-	LDW5Pcg==
-X-Google-Smtp-Source: AGHT+IHuhlr6TeDMM+a8D4kE0RCHmOBllgF8IF7LrOLrHYShECDzzqQ+4s+GJlaM19IdbjQW26f4OH4XTqk=
-X-Received: from plho8.prod.google.com ([2002:a17:903:23c8:b0:290:d4c5:90ad])
- (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d485:b0:28e:c75e:61d9
- with SMTP id d9443c01a7336-290caf83210mr63165865ad.38.1760740256772; Fri, 17
- Oct 2025 15:30:56 -0700 (PDT)
-Date: Fri, 17 Oct 2025 22:30:53 +0000
+	s=arc-20240116; t=1760740382; c=relaxed/simple;
+	bh=nlCO+kBfcVlCQ2VZ3wQCeZqCVn7zxJEtRAWM2dzn8qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZxQijDMpIlsdmz6an9xbew9/IRJLA7nPabmjDLAblCfO2bVNLNTMVIznnTkVSCjR0TZrGVTU4a59oPiL3oeL9ObZjv2G/b9ufQuDMWW7vDoJSWAllpBC9ibKCKddmN8kKEzwzTIF0Dl9dr7XRPuM82TAvH6TrhTAYdSfslAjE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T175oJAm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DDAC4CEE7;
+	Fri, 17 Oct 2025 22:33:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760740382;
+	bh=nlCO+kBfcVlCQ2VZ3wQCeZqCVn7zxJEtRAWM2dzn8qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T175oJAmn9OLZStM0Q6oEncixzNUfsg4s2doGLjQNoIgzT/hLslZQD/JYhLz1SVYb
+	 MxOMSUR4NrnYenIwwWoXkQQufXxk6HjFVQpvHjQFLV5UwG1y5RSbqbWzc1XVw3LI0I
+	 +v4abW7ixTQMWGGt+FZF3tUNg5jBbsmb1Z66O8/CdI0S/EtPyvwEaxM9PzllZhjckw
+	 mfPUEWKj3ZczQm/DtTunj4Z8Ut/LhQDtn1ds9QvF3O2M+HgL1Z8J4LlWgHtyVw0LLI
+	 WbZ7zp0yeh9ArQ423GW8xtDAih0Me/SWCCGrjGalJkc7ArM1EF7KzKgky862nsbvfx
+	 /fw+FIejgJ7Lg==
+Date: Fri, 17 Oct 2025 22:33:00 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v3 0/6] Hyper-V: Implement hypervisor core collection
+Message-ID: <20251017223300.GB632885@liuwe-devbox-debian-v2.local>
+References: <20251006224208.1060990-1-mrathor@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251017223053.2415243-1-jthies@google.com>
-Subject: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when disconnected
-From: Jameson Thies <jthies@google.com>
-To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
-	gregkh@linuxfoundation.org, akuchynski@chromium.org, 
-	abhishekpandit@chromium.org, sebastian.reichel@collabora.com, kenny@panix.com, 
-	linux-pm@vger.kernel.org, stable@vger.kernel.org, 
-	Jameson Thies <jthies@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006224208.1060990-1-mrathor@linux.microsoft.com>
 
-The ucsi_psy_get_current_max function defaults to 0.1A when it is not
-clear how much current the partner device can support. But this does
-not check the port is connected, and will report 0.1A max current when
-nothing is connected. Update ucsi_psy_get_current_max to report 0A when
-there is no connection.
+On Mon, Oct 06, 2025 at 03:42:02PM -0700, Mukesh Rathor wrote:
+[...]
+> Mukesh Rathor (6):
+>   x86/hyperv: Rename guest crash shutdown function
+>   hyperv: Add two new hypercall numbers to guest ABI public header
+>   hyperv: Add definitions for hypervisor crash dump support
+>   x86/hyperv: Add trampoline asm code to transition from hypervisor
+>   x86/hyperv: Implement hypervisor RAM collection into vmcore
+>   x86/hyperv: Enable build of hypervisor crashdump collection files
+> 
 
-v2 changes:
-- added cc stable tag to commit message
+Applied to hyperv-next. Thanks.
 
-Fixes: af833e7f7db3 ("usb: typec: ucsi: psy: Set current max to 100mA for BC 1.2 and Default")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jameson Thies <jthies@google.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Tested-by: Kenneth R. Crudup <kenny@panix.com>
----
- drivers/usb/typec/ucsi/psy.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
-index 62a9d68bb66d..8ae900c8c132 100644
---- a/drivers/usb/typec/ucsi/psy.c
-+++ b/drivers/usb/typec/ucsi/psy.c
-@@ -145,6 +145,11 @@ static int ucsi_psy_get_current_max(struct ucsi_connector *con,
- {
- 	u32 pdo;
- 
-+	if (!UCSI_CONSTAT(con, CONNECTED)) {
-+		val->intval = 0;
-+		return 0;
-+	}
-+
- 	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
- 	case UCSI_CONSTAT_PWR_OPMODE_PD:
- 		if (con->num_pdos > 0) {
-
-base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
--- 
-2.51.0.858.gf9c4a03a3a-goog
-
+>  arch/x86/hyperv/Makefile        |   6 +
+>  arch/x86/hyperv/hv_crash.c      | 642 ++++++++++++++++++++++++++++++++
+>  arch/x86/hyperv/hv_init.c       |   1 +
+>  arch/x86/hyperv/hv_trampoline.S | 101 +++++
+>  arch/x86/include/asm/mshyperv.h |  13 +
+>  arch/x86/kernel/cpu/mshyperv.c  |   5 +-
+>  include/hyperv/hvgdk_mini.h     |   2 +
+>  include/hyperv/hvhdk_mini.h     |  55 +++
+>  8 files changed, 823 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/x86/hyperv/hv_crash.c
+>  create mode 100644 arch/x86/hyperv/hv_trampoline.S
+> 
+> -- 
+> 2.36.1.vfs.0.0
+> 
 
