@@ -1,446 +1,416 @@
-Return-Path: <linux-kernel+bounces-857690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FE7BE7BC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E8CBE7B17
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 11:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DD5F580647
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:24:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE56D568FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 09:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7BA3321CF;
-	Fri, 17 Oct 2025 09:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC4F2D8DD4;
+	Fri, 17 Oct 2025 09:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="qObsKY+x"
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="suwLOruR"
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D182D94A0;
-	Fri, 17 Oct 2025 09:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7335E31691F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 09:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760692328; cv=none; b=JrUUcEDoq93RlmSDxP+fBTC4kHmNWCm9B/dw6Gjc/1jlvq6TSA45OAKmkmzSNp+75ev4djLho4+Ul09Pccro7UVI9tTwCz9ruf0kNjjQnio3jfnoBEm6W6krTbrX8Uc3QeYRp3PaRrU9kJgb8/lcitbw9uPoQadGsfyjoaEKCW8=
+	t=1760692304; cv=none; b=PwuWTnaus7x5kIhKS7e4FrvJNIolbFjo8m10qvViU9pvuzUwa7JkhMUklzWcYFX9hNdNx7YIYtDvZomaMy0YFroo2oDSFiuDIEJhxYw3Vmebdzp/VlS7mGUi4o3fNDTIHeOPmOoKNE4mZRPudCMrnc/HfhpC5R9672zULGNo+MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760692328; c=relaxed/simple;
-	bh=Bsf/CFaPhX5d78usVbawAxCdAb6tZOE2paxGRBcz/uM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TvUSDXQy/IiTyxzHd/OCs8M1/PRqIt9aC59FnmkYhnv9mgaZ6e17JFPFK6GoS0n6tMjhfpOmLKJYGwjLfmR5FLPo55W20YMaiWZOGxECDH0PFqnRM0xLLYOHk/WuYKKWTM08BVnCe6+HKFzrMGu06gJ8nFClLMH5UGnp3XGuSoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=qObsKY+x; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=GR4TYOxILkj2V5x3l1mHGIRwyu/oYGdO6Gs/VoTL4yM=;
-	b=qObsKY+xvHY/dxj0JwDIvjRbMCBO8ejD3xm52MMtlOjiRnSH9QFuaiaNEkfcPj6Q/xCDqSB2w
-	GwC2CRtJrCsm6vN3uq55r5HZYN+pJJN7oxbMcfyCQrWJUDw/hOKcI61eFjUYRl5VHiHck3QV6w6
-	bb4jJiu/wKIbWXsLWqIANZI=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cnzbJ5GRXzKm5G;
-	Fri, 17 Oct 2025 17:11:40 +0800 (CST)
-Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2916D1A016C;
-	Fri, 17 Oct 2025 17:12:02 +0800 (CST)
-Received: from huawei.com (10.90.31.46) by dggpemf500015.china.huawei.com
- (7.185.36.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 17 Oct
- 2025 17:12:01 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<herbert@gondor.apana.org.au>, <shameerkolothum@gmail.com>,
-	<jonathan.cameron@huawei.com>
-CC: <linux-crypto@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>,
-	<liulongfang@huawei.com>
-Subject: [PATCH v10 2/2] hisi_acc_vfio_pci: adapt to new migration configuration
-Date: Fri, 17 Oct 2025 17:10:57 +0800
-Message-ID: <20251017091057.3770403-3-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20251017091057.3770403-1-liulongfang@huawei.com>
-References: <20251017091057.3770403-1-liulongfang@huawei.com>
+	s=arc-20240116; t=1760692304; c=relaxed/simple;
+	bh=jDNmrH9oV5nkGCy3Ijf3en6eclIB3X+9GBUJsrncXfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NRlWgf2nZ/8fl/L7TkAIs/9LoNPz5ZdySKXuxwGib2Ri8cmEEdAgWAWq17A1xyYWd+SySfvy2S8030qd4OKQDNxRKXyYhI4HMp3yolYC4V3s2rsyfelZohm2TWBHU0Z0GuQVluOa6oiCz6Z7Pv7XT9xUQ0uPRt/H9tBSdHFC9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=suwLOruR; arc=none smtp.client-ip=74.125.224.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63cf0df1abbso1884803d50.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 02:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760692301; x=1761297101; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/1GYl/yk6Sam9fIBoG9SiK34nTP0Coo0lGyUV9dWqdQ=;
+        b=suwLOruR+T8VipgHqllDI4GA6sjkphTAMkThe4M+/WboInG/+oF+2+XN64/jQke9Jh
+         LHoxy1IcOqKt5B3rq3h1NKFDiKj6556ioFq4SVXkl3K8M+3yDH+9b9qvgLmtRURZplQJ
+         9K0wShrVxun/MwjSxQ5wV1ntujC2wYr1MBA0Wt5UTr17DYaJknApMaIS3/PFsMB3n+uo
+         Db6J+vni4Jd/aybVVxnvTvrDaPdHwlv3q0zLkVyjdDm+032fC2aSMUm8Seh0uc15FdYk
+         Xt1EQlzeNIu+wjj0VGZLAWy7PRSryVPBsnBhgIa+DCxHdPhhY94OTIGhOHFcJw6nx8vo
+         ScEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760692301; x=1761297101;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/1GYl/yk6Sam9fIBoG9SiK34nTP0Coo0lGyUV9dWqdQ=;
+        b=itgZrB/9GXLyLyVkxIZTlfsxyrqyyLg0AM0Mwm0rDn8HWTrKtQhw91xkHgd3PahORf
+         P1ikj0Q9l8UwhI+n2iQZNbgh8whRyoJnll8MPR5mQ8MGSWIR5+P/QLZxVcHu4E/yIVNg
+         l4iUKtOrHK0U1pteytzg6NwSw4a4HmMAoWO0F5bjH4sR0/O5HdRejUXfvICwhdhwOo7H
+         g4vi0jYXaUI26jmdovtOC5BghpPCsvUhfsY3cZ8gqbOvzMPHJlJnceRyuI5QfH60BR09
+         60ZtgL4qrgN9PeTl+LcRqEGDnZi7HRzyQe0pw5A5rEEfOnJWMk7ZYqOpqHj/cWaBfvSz
+         H9Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR1EsJz0VHEBL0IW3Kgs0M0BWcPGqpEW7mIqMehHqhb1vKcKhY/U+FZ637rvbIQgjmeXOKhb3wonSFbTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7k8/WZm4Dhlp8OOrZ4wLYp42IVQYPTJZhlQoh25XOZ8FRllfH
+	kc7jD+SvturXLLw51E1zKUjWoaUTyWjtg3Y5m7D3KXE5kdtWfiniNYG6OyXU/AjzvXf0fujGyIc
+	p+yNBpuetwTG61OL+WOV1CD1P6dljOI6aH9BXE8SsWw==
+X-Gm-Gg: ASbGncudkGGYqEYZQcmg3upDpS+fAcxu/fGF5UjWL7Lka5oZU9EoU21Pf5tOzRXYQjQ
+	GAEjio5l9o8zMGS9Du60oJlO4tFVKa1GZYUYNP2F82N5Zy96ieJMbLb3vEnNhrmcKAL7Vz07iCg
+	X5QsLmOwnfpSgNNU5FSGXvBFq/hqgHL0gnFS6oHF0t2NNOtCEBw1jhSiDfcfmiJXM5pTE6m1n7p
+	qG1U23kKEeK54aNJ4d3bX7U6tBmsuxXK/6q0Wi4e2h0LstOuPTozCITwWwZL42K4jAz4WH7
+X-Google-Smtp-Source: AGHT+IFLZ4nEbY8U1Ah0P65zbEh1FjU5spwfwgSTYseWxsnhjwkZWWax3YH1ox6L+1KmT+1tTJ7UvpXLIqSJVbTZxZ0=
+X-Received: by 2002:a05:690e:4192:b0:636:1b01:63df with SMTP id
+ 956f58d0204a3-63e16168e5emr2752552d50.14.1760692301408; Fri, 17 Oct 2025
+ 02:11:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500015.china.huawei.com (7.185.36.143)
+References: <20251008201920.89575-4-beanhuo@iokpp.de> <202510100521.pnAPqTFK-lkp@intel.com>
+ <eccb18abe33299edde64f96e0c3de88c4183cb78.camel@gmail.com>
+In-Reply-To: <eccb18abe33299edde64f96e0c3de88c4183cb78.camel@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 17 Oct 2025 11:11:05 +0200
+X-Gm-Features: AS18NWA13YCigGWxYOYCDJShDi86eKoyREH8N9l4JY9xKwqxKwxeG5LwjHlJHpk
+Message-ID: <CAPDyKFrsMxyD5ASGmsQ8658eBR0vHOSUqJ4axuSpAXuue6d5Uw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for
+ UFS devices
+To: Bean Huo <huobean@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, avri.altman@wdc.com, avri.altman@sandisk.com, 
+	bvanassche@acm.org, alim.akhtar@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, can.guo@oss.qualcomm.com, beanhuo@micron.com, 
+	jens.wiklander@linaro.org, oe-kbuild-all@lists.linux.dev, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On new platforms greater than QM_HW_V3, the migration region has been
-relocated from the VF to the PF. The VF's own configuration space is
-restored to the complete 64KB, and there is no need to divide the
-size of the BAR configuration space equally. The driver should be
-modified accordingly to adapt to the new hardware device.
+On Fri, 10 Oct 2025 at 10:19, Bean Huo <huobean@gmail.com> wrote:
+>
+>
+> since the patch "rpmb: move rpmb_frame struct and constants to common header"
+> has been queued in mmc git tree, I didn't add it patch in scsi tree for this
+> version:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=next
+>
+>
+> do I need to add this queued patch for scsi tree as well?
 
-On the older hardware platform QM_HW_V3, the live migration configuration
-region is placed in the latter 32K portion of the VF's BAR2 configuration
-space. On the new hardware platform QM_HW_V4, the live migration
-configuration region also exists in the same 32K area immediately following
-the VF's BAR2, just like on QM_HW_V3.
+I have just sent the patch to Linus to get included in rc2. Sorry, I
+failed to send it for rc1.
 
-However, access to this region is now controlled by hardware. Additionally,
-a copy of the live migration configuration region is present in the PF's
-BAR2 configuration space. On the new hardware platform QM_HW_V4, when an
-older version of the driver is loaded, it behaves like QM_HW_V3 and uses
-the configuration region in the VF, ensuring that the live migration
-function continues to work normally. When the new version of the driver is
-loaded, it directly uses the configuration region in the PF. Meanwhile,
-hardware configuration disables the live migration configuration region
-in the VF's BAR2: reads return all 0xF values, and writes are silently
-ignored.
+That said, if you re-spin a version of the series that is based on rc2
+on Monday that should work, I think.
 
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-Reviewed-by: Shameer Kolothum <shameerkolothum@gmail.com>
----
- .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 205 ++++++++++++------
- .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |  21 ++
- 2 files changed, 165 insertions(+), 61 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-index fde33f54e99e..55233e62cb1d 100644
---- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-+++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-@@ -125,6 +125,72 @@ static int qm_get_cqc(struct hisi_qm *qm, u64 *addr)
- 	return 0;
- }
- 
-+static int qm_get_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
-+			   struct acc_vf_data *vf_data)
-+{
-+	struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
-+	struct device *dev = &qm->pdev->dev;
-+	u32 eqc_addr, aeqc_addr;
-+	int ret;
-+
-+	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL) {
-+		eqc_addr = QM_EQC_DW0;
-+		aeqc_addr = QM_AEQC_DW0;
-+	} else {
-+		eqc_addr = QM_EQC_PF_DW0;
-+		aeqc_addr = QM_AEQC_PF_DW0;
-+	}
-+
-+	/* QM_EQC_DW has 7 regs */
-+	ret = qm_read_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
-+	if (ret) {
-+		dev_err(dev, "failed to read QM_EQC_DW\n");
-+		return ret;
-+	}
-+
-+	/* QM_AEQC_DW has 7 regs */
-+	ret = qm_read_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
-+	if (ret) {
-+		dev_err(dev, "failed to read QM_AEQC_DW\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qm_set_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
-+			   struct acc_vf_data *vf_data)
-+{
-+	struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
-+	struct device *dev = &qm->pdev->dev;
-+	u32 eqc_addr, aeqc_addr;
-+	int ret;
-+
-+	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL) {
-+		eqc_addr = QM_EQC_DW0;
-+		aeqc_addr = QM_AEQC_DW0;
-+	} else {
-+		eqc_addr = QM_EQC_PF_DW0;
-+		aeqc_addr = QM_AEQC_PF_DW0;
-+	}
-+
-+	/* QM_EQC_DW has 7 regs */
-+	ret = qm_write_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
-+	if (ret) {
-+		dev_err(dev, "failed to write QM_EQC_DW\n");
-+		return ret;
-+	}
-+
-+	/* QM_AEQC_DW has 7 regs */
-+	ret = qm_write_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
-+	if (ret) {
-+		dev_err(dev, "failed to write QM_AEQC_DW\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
- {
- 	struct device *dev = &qm->pdev->dev;
-@@ -167,20 +233,6 @@ static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
- 		return ret;
- 	}
- 
--	/* QM_EQC_DW has 7 regs */
--	ret = qm_read_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
--	if (ret) {
--		dev_err(dev, "failed to read QM_EQC_DW\n");
--		return ret;
--	}
--
--	/* QM_AEQC_DW has 7 regs */
--	ret = qm_read_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw, 7);
--	if (ret) {
--		dev_err(dev, "failed to read QM_AEQC_DW\n");
--		return ret;
--	}
--
- 	return 0;
- }
- 
-@@ -239,20 +291,6 @@ static int qm_set_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
- 		return ret;
- 	}
- 
--	/* QM_EQC_DW has 7 regs */
--	ret = qm_write_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
--	if (ret) {
--		dev_err(dev, "failed to write QM_EQC_DW\n");
--		return ret;
--	}
--
--	/* QM_AEQC_DW has 7 regs */
--	ret = qm_write_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw, 7);
--	if (ret) {
--		dev_err(dev, "failed to write QM_AEQC_DW\n");
--		return ret;
--	}
--
- 	return 0;
- }
- 
-@@ -522,6 +560,10 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
- 		return ret;
- 	}
- 
-+	ret = qm_set_xqc_regs(hisi_acc_vdev, vf_data);
-+	if (ret)
-+		return ret;
-+
- 	ret = hisi_qm_mb(qm, QM_MB_CMD_SQC_BT, qm->sqc_dma, 0, 0);
- 	if (ret) {
- 		dev_err(dev, "set sqc failed\n");
-@@ -589,6 +631,10 @@ static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
- 	vf_data->vf_qm_state = QM_READY;
- 	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
- 
-+	ret = qm_get_xqc_regs(hisi_acc_vdev, vf_data);
-+	if (ret)
-+		return ret;
-+
- 	ret = vf_qm_read_data(vf_qm, vf_data);
- 	if (ret)
- 		return ret;
-@@ -1186,34 +1232,52 @@ static int hisi_acc_vf_qm_init(struct hisi_acc_vf_core_device *hisi_acc_vdev)
- {
- 	struct vfio_pci_core_device *vdev = &hisi_acc_vdev->core_device;
- 	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
-+	struct hisi_qm *pf_qm = hisi_acc_vdev->pf_qm;
- 	struct pci_dev *vf_dev = vdev->pdev;
-+	u32 val;
- 
--	/*
--	 * ACC VF dev BAR2 region consists of both functional register space
--	 * and migration control register space. For migration to work, we
--	 * need access to both. Hence, we map the entire BAR2 region here.
--	 * But unnecessarily exposing the migration BAR region to the Guest
--	 * has the potential to prevent/corrupt the Guest migration. Hence,
--	 * we restrict access to the migration control space from
--	 * Guest(Please see mmap/ioctl/read/write override functions).
--	 *
--	 * Please note that it is OK to expose the entire VF BAR if migration
--	 * is not supported or required as this cannot affect the ACC PF
--	 * configurations.
--	 *
--	 * Also the HiSilicon ACC VF devices supported by this driver on
--	 * HiSilicon hardware platforms are integrated end point devices
--	 * and the platform lacks the capability to perform any PCIe P2P
--	 * between these devices.
--	 */
-+	val = readl(pf_qm->io_base + QM_MIG_REGION_SEL);
-+	if (pf_qm->ver > QM_HW_V3 && (val & QM_MIG_REGION_EN))
-+		hisi_acc_vdev->drv_mode = HW_ACC_MIG_PF_CTRL;
-+	else
-+		hisi_acc_vdev->drv_mode = HW_ACC_MIG_VF_CTRL;
- 
--	vf_qm->io_base =
--		ioremap(pci_resource_start(vf_dev, VFIO_PCI_BAR2_REGION_INDEX),
--			pci_resource_len(vf_dev, VFIO_PCI_BAR2_REGION_INDEX));
--	if (!vf_qm->io_base)
--		return -EIO;
-+	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_PF_CTRL) {
-+		/*
-+		 * On hardware platforms greater than QM_HW_V3, the migration function
-+		 * register is placed in the BAR2 configuration region of the PF,
-+		 * and each VF device occupies 8KB of configuration space.
-+		 */
-+		vf_qm->io_base = pf_qm->io_base + QM_MIG_REGION_OFFSET +
-+				 hisi_acc_vdev->vf_id * QM_MIG_REGION_SIZE;
-+	} else {
-+		/*
-+		 * ACC VF dev BAR2 region consists of both functional register space
-+		 * and migration control register space. For migration to work, we
-+		 * need access to both. Hence, we map the entire BAR2 region here.
-+		 * But unnecessarily exposing the migration BAR region to the Guest
-+		 * has the potential to prevent/corrupt the Guest migration. Hence,
-+		 * we restrict access to the migration control space from
-+		 * Guest(Please see mmap/ioctl/read/write override functions).
-+		 *
-+		 * Please note that it is OK to expose the entire VF BAR if migration
-+		 * is not supported or required as this cannot affect the ACC PF
-+		 * configurations.
-+		 *
-+		 * Also the HiSilicon ACC VF devices supported by this driver on
-+		 * HiSilicon hardware platforms are integrated end point devices
-+		 * and the platform lacks the capability to perform any PCIe P2P
-+		 * between these devices.
-+		 */
- 
-+		vf_qm->io_base =
-+			ioremap(pci_resource_start(vf_dev, VFIO_PCI_BAR2_REGION_INDEX),
-+				pci_resource_len(vf_dev, VFIO_PCI_BAR2_REGION_INDEX));
-+		if (!vf_qm->io_base)
-+			return -EIO;
-+	}
- 	vf_qm->fun_type = QM_HW_VF;
-+	vf_qm->ver = pf_qm->ver;
- 	vf_qm->pdev = vf_dev;
- 	mutex_init(&vf_qm->mailbox_lock);
- 
-@@ -1250,6 +1314,28 @@ static struct hisi_qm *hisi_acc_get_pf_qm(struct pci_dev *pdev)
- 	return !IS_ERR(pf_qm) ? pf_qm : NULL;
- }
- 
-+static size_t hisi_acc_get_resource_len(struct vfio_pci_core_device *vdev,
-+					unsigned int index)
-+{
-+	struct hisi_acc_vf_core_device *hisi_acc_vdev =
-+			hisi_acc_drvdata(vdev->pdev);
-+
-+	/*
-+	 * On the old HW_ACC_MIG_VF_CTRL mode device, the ACC VF device
-+	 * BAR2 region encompasses both functional register space
-+	 * and migration control register space.
-+	 * only the functional region should be report to Guest.
-+	 */
-+	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL)
-+		return (pci_resource_len(vdev->pdev, index) >> 1);
-+	/*
-+	 * On the new HW device, the migration control register
-+	 * has been moved to the PF device BAR2 region.
-+	 * The VF device BAR2 is entirely functional register space.
-+	 */
-+	return pci_resource_len(vdev->pdev, index);
-+}
-+
- static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
- 					size_t count, loff_t *ppos,
- 					size_t *new_count)
-@@ -1260,8 +1346,9 @@ static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
- 
- 	if (index == VFIO_PCI_BAR2_REGION_INDEX) {
- 		loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
--		resource_size_t end = pci_resource_len(vdev->pdev, index) / 2;
-+		resource_size_t end;
- 
-+		end = hisi_acc_get_resource_len(vdev, index);
- 		/* Check if access is for migration control region */
- 		if (pos >= end)
- 			return -EINVAL;
-@@ -1282,8 +1369,9 @@ static int hisi_acc_vfio_pci_mmap(struct vfio_device *core_vdev,
- 	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
- 	if (index == VFIO_PCI_BAR2_REGION_INDEX) {
- 		u64 req_len, pgoff, req_start;
--		resource_size_t end = pci_resource_len(vdev->pdev, index) / 2;
-+		resource_size_t end;
- 
-+		end = hisi_acc_get_resource_len(vdev, index);
- 		req_len = vma->vm_end - vma->vm_start;
- 		pgoff = vma->vm_pgoff &
- 			((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
-@@ -1330,7 +1418,6 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_device *core_vdev, unsigned int
- 	if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
- 		struct vfio_pci_core_device *vdev =
- 			container_of(core_vdev, struct vfio_pci_core_device, vdev);
--		struct pci_dev *pdev = vdev->pdev;
- 		struct vfio_region_info info;
- 		unsigned long minsz;
- 
-@@ -1345,12 +1432,7 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_device *core_vdev, unsigned int
- 		if (info.index == VFIO_PCI_BAR2_REGION_INDEX) {
- 			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
- 
--			/*
--			 * ACC VF dev BAR2 region consists of both functional
--			 * register space and migration control register space.
--			 * Report only the functional region to Guest.
--			 */
--			info.size = pci_resource_len(pdev, info.index) / 2;
-+			info.size = hisi_acc_get_resource_len(vdev, info.index);
- 
- 			info.flags = VFIO_REGION_INFO_FLAG_READ |
- 					VFIO_REGION_INFO_FLAG_WRITE |
-@@ -1521,7 +1603,8 @@ static void hisi_acc_vfio_pci_close_device(struct vfio_device *core_vdev)
- 	hisi_acc_vf_disable_fds(hisi_acc_vdev);
- 	mutex_lock(&hisi_acc_vdev->open_mutex);
- 	hisi_acc_vdev->dev_opened = false;
--	iounmap(vf_qm->io_base);
-+	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL)
-+		iounmap(vf_qm->io_base);
- 	mutex_unlock(&hisi_acc_vdev->open_mutex);
- 	vfio_pci_core_close_device(core_vdev);
- }
-diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-index 91002ceeebc1..d287abe3dd31 100644
---- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-+++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-@@ -59,6 +59,26 @@
- #define ACC_DEV_MAGIC_V1	0XCDCDCDCDFEEDAACC
- #define ACC_DEV_MAGIC_V2	0xAACCFEEDDECADEDE
- 
-+#define QM_MIG_REGION_OFFSET		0x180000
-+#define QM_MIG_REGION_SIZE		0x2000
-+
-+#define QM_SUB_VERSION_ID		0x100210
-+#define QM_EQC_PF_DW0			0x1c00
-+#define QM_AEQC_PF_DW0			0x1c20
-+
-+/**
-+ * On HW_ACC_MIG_VF_CTRL mode, the configuration domain supporting live
-+ * migration functionality is located in the latter 32KB of the VF's BAR2.
-+ * The Guest is only provided with the first 32KB of the VF's BAR2.
-+ * On HW_ACC_MIG_PF_CTRL mode, the configuration domain supporting live
-+ * migration functionality is located in the PF's BAR2, and the entire 64KB
-+ * of the VF's BAR2 is allocated to the Guest.
-+ */
-+enum hw_drv_mode {
-+	HW_ACC_MIG_VF_CTRL = 0,
-+	HW_ACC_MIG_PF_CTRL,
-+};
-+
- struct acc_vf_data {
- #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
- 	/* QM match information */
-@@ -125,6 +145,7 @@ struct hisi_acc_vf_core_device {
- 	struct pci_dev *vf_dev;
- 	struct hisi_qm *pf_qm;
- 	struct hisi_qm vf_qm;
-+	int drv_mode;
- 	/*
- 	 * vf_qm_state represents the QM_VF_STATE register value.
- 	 * It is set by Guest driver for the ACC VF dev indicating
--- 
-2.33.0
-
+>
+>
+> Kind regards,
+> Bean
+>
+>
+> On Fri, 2025-10-10 at 05:36 +0800, kernel test robot wrote:
+> > Hi Bean,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on v6.17]
+> > [also build test ERROR on next-20251009]
+> > [cannot apply to mkp-scsi/for-next jejb-scsi/for-next char-misc/char-misc-
+> > testing char-misc/char-misc-next char-misc/char-misc-linus linus/master]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >
+> > url:
+> > https://github.com/intel-lab-lkp/linux/commits/Bean-Huo/scsi-ufs-core-Convert-string-descriptor-format-macros-to-enum/20251009-204745
+> > base:   v6.17
+> > patch link:
+> > https://lore.kernel.org/r/20251008201920.89575-4-beanhuo%40iokpp.de
+> > patch subject: [PATCH v4 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
+> > for UFS devices
+> > config: sh-randconfig-002-20251010
+> > (https://download.01.org/0day-ci/archive/20251010/202510100521.pnAPqTFK-lkp@in
+> > tel.com/config)
+> > compiler: sh4-linux-gcc (GCC) 15.1.0
+> > reproduce (this is a W=1 build):
+> > (https://download.01.org/0day-ci/archive/20251010/202510100521.pnAPqTFK-lkp@in
+> > tel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version
+> > of
+> > the same patch/commit), kindly add following tags
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Closes:
+> > > https://lore.kernel.org/oe-kbuild-all/202510100521.pnAPqTFK-lkp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    In file included from include/linux/byteorder/big_endian.h:5,
+> >                     from arch/sh/include/uapi/asm/byteorder.h:8,
+> >                     from arch/sh/include/asm/bitops.h:10,
+> >                     from include/linux/bitops.h:67,
+> >                     from include/linux/log2.h:12,
+> >                     from include/asm-generic/div64.h:55,
+> >                     from ./arch/sh/include/generated/asm/div64.h:1,
+> >                     from include/linux/math.h:6,
+> >                     from include/linux/math64.h:6,
+> >                     from include/linux/time.h:6,
+> >                     from include/linux/stat.h:19,
+> >                     from include/linux/module.h:13,
+> >                     from drivers/ufs/core/ufs-rpmb.c:13:
+> >    drivers/ufs/core/ufs-rpmb.c: In function 'ufs_rpmb_route_frames':
+> >    drivers/ufs/core/ufs-rpmb.c:72:39: error: invalid use of undefined type
+> > 'struct rpmb_frame'
+> >       72 |         req_type = be16_to_cpu(frm_out->req_resp);
+> >          |                                       ^~
+> >    include/uapi/linux/byteorder/big_endian.h:43:51: note: in definition of
+> > macro '__be16_to_cpu'
+> >       43 | #define __be16_to_cpu(x) ((__force __u16)(__be16)(x))
+> >          |                                                   ^
+> >    drivers/ufs/core/ufs-rpmb.c:72:20: note: in expansion of macro
+> > 'be16_to_cpu'
+> >       72 |         req_type = be16_to_cpu(frm_out->req_resp);
+> >          |                    ^~~~~~~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:75:14: error: 'RPMB_PROGRAM_KEY' undeclared
+> > (first use in this function)
+> >       75 |         case RPMB_PROGRAM_KEY:
+> >          |              ^~~~~~~~~~~~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:75:14: note: each undeclared identifier is
+> > reported only once for each function it appears in
+> >    drivers/ufs/core/ufs-rpmb.c:76:39: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       76 |                 if (req_len != sizeof(struct rpmb_frame) ||
+> > resp_len != sizeof(struct rpmb_frame))
+> >          |                                       ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:76:80: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       76 |                 if (req_len != sizeof(struct rpmb_frame) ||
+> > resp_len != sizeof(struct rpmb_frame))
+> >
+> > |
+> >    ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:79:14: error: 'RPMB_GET_WRITE_COUNTER'
+> > undeclared (first use in this function)
+> >       79 |         case RPMB_GET_WRITE_COUNTER:
+> >          |              ^~~~~~~~~~~~~~~~~~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:80:39: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       80 |                 if (req_len != sizeof(struct rpmb_frame) ||
+> > resp_len != sizeof(struct rpmb_frame))
+> >          |                                       ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:80:80: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       80 |                 if (req_len != sizeof(struct rpmb_frame) ||
+> > resp_len != sizeof(struct rpmb_frame))
+> >
+> > |
+> >    ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:84:14: error: 'RPMB_WRITE_DATA' undeclared
+> > (first use in this function)
+> >       84 |         case RPMB_WRITE_DATA:
+> >          |              ^~~~~~~~~~~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:85:38: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       85 |                 if (req_len % sizeof(struct rpmb_frame) || resp_len
+> > != sizeof(struct rpmb_frame))
+> >          |                                      ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:85:79: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       85 |                 if (req_len % sizeof(struct rpmb_frame) || resp_len
+> > != sizeof(struct rpmb_frame))
+> >
+> > |
+> >   ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:88:14: error: 'RPMB_READ_DATA' undeclared
+> > (first use in this function); did you mean 'D_REAL_DATA'?
+> >       88 |         case RPMB_READ_DATA:
+> >          |              ^~~~~~~~~~~~~~
+> >          |              D_REAL_DATA
+> >    drivers/ufs/core/ufs-rpmb.c:89:39: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       89 |                 if (req_len != sizeof(struct rpmb_frame) ||
+> > resp_len % sizeof(struct rpmb_frame))
+> >          |                                       ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:89:79: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >       89 |                 if (req_len != sizeof(struct rpmb_frame) ||
+> > resp_len % sizeof(struct rpmb_frame))
+> >
+> > |
+> >   ^~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c:109:43: error: invalid application of 'sizeof'
+> > to incomplete type 'struct rpmb_frame'
+> >      109 |                 memset(frm_resp, 0, sizeof(*frm_resp));
+> >          |                                           ^
+> >    drivers/ufs/core/ufs-rpmb.c:110:25: error: invalid use of undefined type
+> > 'struct rpmb_frame'
+> >      110 |                 frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
+> >          |                         ^~
+> >    drivers/ufs/core/ufs-rpmb.c:110:50: error: 'RPMB_RESULT_READ' undeclared
+> > (first use in this function)
+> >      110 |                 frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
+> >          |                                                  ^~~~~~~~~~~~~~~~
+> >    include/uapi/linux/byteorder/big_endian.h:42:51: note: in definition of
+> > macro '__cpu_to_be16'
+> >       42 | #define __cpu_to_be16(x) ((__force __be16)(__u16)(x))
+> >          |                                                   ^
+> >    drivers/ufs/core/ufs-rpmb.c:110:38: note: in expansion of macro
+> > 'cpu_to_be16'
+> >      110 |                 frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
+> >          |                                      ^~~~~~~~~~~
+> >    drivers/ufs/core/ufs-rpmb.c: At top level:
+> > > > drivers/ufs/core/ufs-rpmb.c:135:5: error: redefinition of 'ufs_rpmb_probe'
+> >      135 | int ufs_rpmb_probe(struct ufs_hba *hba)
+> >          |     ^~~~~~~~~~~~~~
+> >    In file included from drivers/ufs/core/ufs-rpmb.c:22:
+> >    drivers/ufs/core/ufshcd-priv.h:424:19: note: previous definition of
+> > 'ufs_rpmb_probe' with type 'int(struct ufs_hba *)'
+> >      424 | static inline int ufs_rpmb_probe(struct ufs_hba *hba)
+> >          |                   ^~~~~~~~~~~~~~
+> > > > drivers/ufs/core/ufs-rpmb.c:229:6: error: redefinition of
+> > > > 'ufs_rpmb_remove'
+> >      229 | void ufs_rpmb_remove(struct ufs_hba *hba)
+> >          |      ^~~~~~~~~~~~~~~
+> >    drivers/ufs/core/ufshcd-priv.h:428:20: note: previous definition of
+> > 'ufs_rpmb_remove' with type 'void(struct ufs_hba *)'
+> >      428 | static inline void ufs_rpmb_remove(struct ufs_hba *hba)
+> >          |                    ^~~~~~~~~~~~~~~
+> >
+> >
+> > vim +/ufs_rpmb_probe +135 drivers/ufs/core/ufs-rpmb.c
+> >
+> >    133
+> >    134  /* UFS RPMB device registration */
+> >  > 135  int ufs_rpmb_probe(struct ufs_hba *hba)
+> >    136  {
+> >    137          struct ufs_rpmb_dev *ufs_rpmb, *it, *tmp;
+> >    138          struct rpmb_dev *rdev;
+> >    139          u8 cid[16] = { };
+> >    140          int region;
+> >    141          u8 *sn;
+> >    142          u32 cap;
+> >    143          int ret;
+> >    144
+> >    145          if (!hba->ufs_rpmb_wlun || hba->dev_info.b_advanced_rpmb_en) {
+> >    146                  dev_info(hba->dev, "Skip OP-TEE RPMB registration\n");
+> >    147                  return -ENODEV;
+> >    148          }
+> >    149
+> >    150          /* Get the UNICODE serial number data */
+> >    151          sn = hba->dev_info.serial_number;
+> >    152          if (!sn) {
+> >    153                  dev_err(hba->dev, "Serial number not available\n");
+> >    154                  return -EINVAL;
+> >    155          }
+> >    156
+> >    157          INIT_LIST_HEAD(&hba->rpmbs);
+> >    158
+> >    159          /* Copy serial number into device ID (max 15 chars + NUL). */
+> >    160          strscpy(cid, sn);
+> >    161
+> >    162          struct rpmb_descr descr = {
+> >    163                  .type = RPMB_TYPE_UFS,
+> >    164                  .route_frames = ufs_rpmb_route_frames,
+> >    165                  .dev_id_len = sizeof(cid),
+> >    166                  .reliable_wr_count = hba->dev_info.rpmb_io_size,
+> >    167          };
+> >    168
+> >    169          for (region = 0; region < ARRAY_SIZE(hba-
+> > >dev_info.rpmb_region_size); region++) {
+> >    170                  cap = hba->dev_info.rpmb_region_size[region];
+> >    171                  if (!cap)
+> >    172                          continue;
+> >    173
+> >    174                  ufs_rpmb = devm_kzalloc(hba->dev, sizeof(*ufs_rpmb),
+> > GFP_KERNEL);
+> >    175                  if (!ufs_rpmb) {
+> >    176                          ret = -ENOMEM;
+> >    177                          goto err_out;
+> >    178                  }
+> >    179
+> >    180                  ufs_rpmb->hba = hba;
+> >    181                  ufs_rpmb->dev.parent = &hba->ufs_rpmb_wlun-
+> > >sdev_gendev;
+> >    182                  ufs_rpmb->dev.bus = &ufs_rpmb_bus_type;
+> >    183                  ufs_rpmb->dev.release = ufs_rpmb_device_release;
+> >    184                  dev_set_name(&ufs_rpmb->dev, "ufs_rpmb%d", region);
+> >    185
+> >    186                  /* Set driver data BEFORE device_register */
+> >    187                  dev_set_drvdata(&ufs_rpmb->dev, ufs_rpmb);
+> >    188
+> >    189                  ret = device_register(&ufs_rpmb->dev);
+> >    190                  if (ret) {
+> >    191                          dev_err(hba->dev, "Failed to register UFS RPMB
+> > device %d\n", region);
+> >    192                          put_device(&ufs_rpmb->dev);
+> >    193                          goto err_out;
+> >    194                  }
+> >    195
+> >    196                  /* Make CID unique for this region by appending region
+> > numbe */
+> >    197                  cid[sizeof(cid) - 1] = region;
+> >    198                  descr.dev_id = cid;
+> >    199                  descr.capacity = cap;
+> >    200
+> >    201                  /* Register RPMB device */
+> >    202                  rdev = rpmb_dev_register(&ufs_rpmb->dev, &descr);
+> >    203                  if (IS_ERR(rdev)) {
+> >    204                          dev_err(hba->dev, "Failed to register UFS RPMB
+> > device.\n");
+> >    205                          device_unregister(&ufs_rpmb->dev);
+> >    206                          ret = PTR_ERR(rdev);
+> >    207                          goto err_out;
+> >    208                  }
+> >    209
+> >    210                  ufs_rpmb->rdev = rdev;
+> >    211                  ufs_rpmb->region_id = region;
+> >    212
+> >    213                  list_add_tail(&ufs_rpmb->node, &hba->rpmbs);
+> >    214
+> >    215                  dev_info(hba->dev, "UFS RPMB region %d registered
+> > (capacity=%u)\n", region, cap);
+> >    216          }
+> >    217
+> >    218          return 0;
+> >    219  err_out:
+> >    220          list_for_each_entry_safe(it, tmp, &hba->rpmbs, node) {
+> >    221                  list_del(&it->node);
+> >    222                  device_unregister(&it->dev);
+> >    223          }
+> >    224
+> >    225          return ret;
+> >    226  }
+> >    227
+> >    228  /* UFS RPMB remove handler */
+> >  > 229  void ufs_rpmb_remove(struct ufs_hba *hba)
+> >    230  {
+> >    231          struct ufs_rpmb_dev *ufs_rpmb, *tmp;
+> >    232
+> >    233          if (list_empty(&hba->rpmbs))
+> >    234                  return;
+> >    235
+> >    236          /* Remove all registered RPMB devices */
+> >    237          list_for_each_entry_safe(ufs_rpmb, tmp, &hba->rpmbs, node) {
+> >    238                  dev_info(hba->dev, "Removing UFS RPMB region %d\n",
+> > ufs_rpmb->region_id);
+> >    239                  /* Remove from list first */
+> >    240                  list_del(&ufs_rpmb->node);
+> >    241                  /* Unregister device */
+> >    242                  device_unregister(&ufs_rpmb->dev);
+> >    243          }
+> >    244
+> >    245          dev_info(hba->dev, "All UFS RPMB devices unregistered\n");
+> >    246  }
+> >    247
+> >
+>
 
