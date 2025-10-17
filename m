@@ -1,110 +1,166 @@
-Return-Path: <linux-kernel+bounces-858162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784BFBE9281
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:20:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E65BE92DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 16:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192B01AA2BAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:21:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55BFA567CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 14:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F300339705;
-	Fri, 17 Oct 2025 14:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6EA339715;
+	Fri, 17 Oct 2025 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jnc3onl5"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Czgf+Zii"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C893396F2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 14:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B9C339702;
+	Fri, 17 Oct 2025 14:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760710852; cv=none; b=Vna+6Mkdp8q4z04g8MRshFkB9QvfaP6IoJpPER6FArS2Q0MOgktUnYtO7I+fEiCPvB6V/a3XnijMXHO/gP+NrA1/1fCJTtkyuzxJXe0GXlZj8UjmzfOVLxe5mca9kv6HaaaMtQ4PyiAnWIt0xGCvK7soAenV6gJxi0TY8TvFkAs=
+	t=1760710894; cv=none; b=Mgf82hvqUG9qsFl3t/UEmmKT6AMsjbax1vQUD5upAVtB+Tv8DUw2gx+eazMxIJbTLnePhE/0Mx5zamXCV8kCbmswH3iKvFOuwv0+eAdH96nlsDsKjVsN4VRXzYv6EiwohX6nODMW34ouhvSrKPS+2p++WUQKgfMJyY+bHozuCYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760710852; c=relaxed/simple;
-	bh=NHEs4deoFlHNHXkObarOXeyfQfRJx+3wPu4wvN9SSQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axe7BCI7460AS0vQklJVzk2TPoIN/eyi/Tlh/k99D5oc9dmgirtgaLyLiNg0VVq2nLB45yZqg+RqDDEpWkuki5QN4jyHVAsRgu+bfLYvwEVtBdZSOleiij0xX+FqcTRoWMC0O8TqO66UlmCRcXHZRjj6mwJ0jogOqWHd0lhSAEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jnc3onl5; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B27951A1446;
-	Fri, 17 Oct 2025 14:20:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 85520606DB;
-	Fri, 17 Oct 2025 14:20:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ECD4C102F235A;
-	Fri, 17 Oct 2025 16:20:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760710847; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=WP8xAx5y5Q+en2HjpM/S//PGC9EOcpc+v4pYyxBt5tg=;
-	b=jnc3onl5q+49Om+bXyHOC5NwC2Wq1Sp3mVfoUEzYrSf06fXpl/VIG61k8Zk3lvCTrBRr/f
-	M7XIlnCscTv9n1hcM13FaOKfsHB2jRY0/ADO291zejogtuE3qHpxohZQI8G2w3d9/Fxvdm
-	+HGDKtozbLTrUgJMM9uPUAV+EUG5CmvijeoB2fnR+eAzPewiYPq152g4Yh/qI7UDDvj2RA
-	8g4jAtjXJYQcySMcVaMKBPVD+lw906WDo+xMTA3L/wzKilBilw+WmBtA8yY2ANFLFc2XTd
-	OIUcKjahGT1LY2uCjJ0fxfYT9oqdozYGZPY13DEyoH6EES5eMtw59csC5sTH8A==
-Message-ID: <fb45668f-e13b-4a90-b0aa-e989e19b3c37@bootlin.com>
-Date: Fri, 17 Oct 2025 16:20:39 +0200
+	s=arc-20240116; t=1760710894; c=relaxed/simple;
+	bh=OHRE0uUg2nN5buzbZtL3nz9GjqwMqeEhTwMOzl5rZ3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wj641gN+mR9nzi0dNISGVuctTPT7isuikvoTlUMb6whMncU2MIEHJIlVUblbrA/0HRA3jxrAQ2pe/E/cChtn+wNne4oTl+sNY+aZmbVoiQIx8uLjPLDoghpGBDV+6NREii2mb9hCb1+nbJU2ll5zkC5/t7wmUk782MIVXWtUndM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Czgf+Zii; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59HCfA62010243;
+	Fri, 17 Oct 2025 14:21:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=3jXNHNgCV3IkdKIXbAH1GuYsgBTZvN
+	+r4fugYXz/4yw=; b=Czgf+Ziiczod3T9wWISgJVeBgMqPkvRF6Rl5CXbNvfgL4t
+	B5rEpGk2TpXPIxYsZASLhxcBMrLooHKwolfrQW6dziAl84haSrfmhrwUE6m7Uh2N
+	awxpBc9cLrO9t7TtTscg0WjmE2ub3UFGcHJf5Fb/fTjox2PJXBjEfXf5Hl+3NpVN
+	goSUERSYkpK5Fraq4csTEseKosnwFyO+HxGa4zIgesghYU7/K4e4/Wlr3HF/WYP2
+	ER1LESnnJUxZtB7Ndkkc7KGLXcVhahFUyA0MLk6RBV/SGuyTk+mA/BurNlEGQh/R
+	5fQffy/Ugiu2BhsNvEbHkU5bJtOXPuZiah5g95pg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qewuk6bj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 14:21:18 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59HEBUbc006904;
+	Fri, 17 Oct 2025 14:21:17 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qewuk6bf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 14:21:17 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59HD1YB2015002;
+	Fri, 17 Oct 2025 14:21:16 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r3sjwew8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 Oct 2025 14:21:16 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59HELF5f44564756
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 Oct 2025 14:21:15 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 101C52009B;
+	Fri, 17 Oct 2025 14:21:15 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C805620099;
+	Fri, 17 Oct 2025 14:21:12 +0000 (GMT)
+Received: from Gautams-MacBook-Pro.local (unknown [9.43.28.209])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 17 Oct 2025 14:21:12 +0000 (GMT)
+Date: Fri, 17 Oct 2025 19:51:03 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Howard Chu <howardchu95@gmail.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] perf python: Add PMU argument to parse_metrics
+Message-ID: <aPJQz475v3OmCqEl@Gautams-MacBook-Pro.local>
+References: <20251016222228.2926870-1-irogers@google.com>
+ <20251016222228.2926870-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 5/5] net: phy: dp83td510: add MSE interface
- support for 10BASE-T1L
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Kory Maincent <kory.maincent@bootlin.com>, Nishanth Menon <nm@ti.com>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
- Roan van Dijk <roan@protonic.nl>
-References: <20251017104732.3575484-1-o.rempel@pengutronix.de>
- <20251017104732.3575484-6-o.rempel@pengutronix.de>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251017104732.3575484-6-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016222228.2926870-2-irogers@google.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3vyHl5SNsbVIZLWzszTQqzhaHm7mQSP1
+X-Authority-Analysis: v=2.4 cv=Kr1AGGWN c=1 sm=1 tr=0 ts=68f250de cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8 a=BEo7XnksbjeIKY7Z5mUA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: RHXD2D7xegmEeMPsc1wu5OID3hrfLdge
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX/DAkEZqALFLA
+ ewzwr/jnjt7RpDNaShotjOf/t8xgQ6jnBwqmyAk7/AoqsXsFO1UrFBWo0838pXQ4Ruq3mX3Gxul
+ VWO7S5E2No/uU4GgkHR6mxn0JqlROz4gMw7hQx63sOrRrtJVY1JJDMxjBnWU6J2DtQKmXqiGTrZ
+ N6YOSqnoj8gGuyYdelsDCQ8eSj0z9W7Gn1zuc2EvzFjEDtgf0p04shvGaq8GcIkyoUUVD94xw2l
+ NLcgPQzJs5CVhM9u5wVHA0/zYudVDmtbyAl/H+zznlaj//DmLifUG82ikRfhbsVQpAJrZ4e3WDo
+ nUhCWMdCTkkX1CT3b6g6FBVcvYkaf4p+Y8lXxzD04g3LrHsysxIe0t8th6fk7EiXnDVFWqnOf+k
+ 6mTH9XZRK1B0ovNNPhpkSA5OnA7umw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-17_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
-Hi Oleksij,
-
-On 17/10/2025 12:47, Oleksij Rempel wrote:
-> Implement get_mse_capability() and get_mse_snapshot() for the DP83TD510E
-> to expose its Mean Square Error (MSE) register via the new PHY MSE
-> UAPI.
+On Thu, Oct 16, 2025 at 03:22:27PM -0700, Ian Rogers wrote:
+> Add an optional PMU argument to parse_metrics to allow restriction of
+> the particular metrics to be opened. If no argument is provided then
+> all metrics with the given name/group are opened
 > 
-> The DP83TD510E does not document any peak MSE values; it only exposes
-> a single average MSE register used internally to derive SQI. This
-> implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-> LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-> refresh interval/number of symbols are estimated from 10BASE-T1L
-> symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/python.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> For 10BASE-T1L deployments, SQI is a reliable indicator of link
-> modulation quality once the link is established, but it does not
-> indicate whether autonegotiation pulses will be correctly received
-> in marginal conditions. MSE provides a direct measurement of slicer
-> error rate that can be used to evaluate if autonegotiation is likely
-> to succeed under a given cable length and condition. In practice,
-> testing such scenarios often requires forcing a fixed-link setup to
-> isolate MSE behaviour from the autonegotiation process.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 779fe1280a56..fa5e4270d182 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -2051,7 +2051,7 @@ static PyObject *pyrf__parse_events(PyObject *self, PyObject *args)
+>  
+>  static PyObject *pyrf__parse_metrics(PyObject *self, PyObject *args)
+>  {
+> -	const char *input;
+> +	const char *input, *pmu = NULL;
+>  	struct evlist evlist = {};
+>  	PyObject *result;
+>  	PyObject *pcpus = NULL, *pthreads = NULL;
+> @@ -2059,14 +2059,14 @@ static PyObject *pyrf__parse_metrics(PyObject *self, PyObject *args)
+>  	struct perf_thread_map *threads;
+>  	int ret;
+>  
+> -	if (!PyArg_ParseTuple(args, "s|OO", &input, &pcpus, &pthreads))
+> +	if (!PyArg_ParseTuple(args, "s|sOO", &input, &pmu, &pcpus, &pthreads))
+>  		return NULL;
+>  
+>  	threads = pthreads ? ((struct pyrf_thread_map *)pthreads)->threads : NULL;
+>  	cpus = pcpus ? ((struct pyrf_cpu_map *)pcpus)->cpus : NULL;
+>  
+>  	evlist__init(&evlist, cpus, threads);
+> -	ret = metricgroup__parse_groups(&evlist, /*pmu=*/"all", input,
+> +	ret = metricgroup__parse_groups(&evlist, pmu ?: "all", input,
+>  					/*metric_no_group=*/ false,
+>  					/*metric_no_merge=*/ false,
+>  					/*metric_no_threshold=*/ true,
+> -- 
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Maxime
-
+Acked-by: Gautam Menghani <gautam@linux.ibm.com>
 
