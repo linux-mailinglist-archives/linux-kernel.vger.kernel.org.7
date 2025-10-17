@@ -1,134 +1,292 @@
-Return-Path: <linux-kernel+bounces-857143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EB2BE6076
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:19:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B180ABE6088
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 03:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EA831A66367
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:19:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99E864EB0EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 01:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0951421B185;
-	Fri, 17 Oct 2025 01:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCF12236E3;
+	Fri, 17 Oct 2025 01:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="imTp//37"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zUFAXwOb"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8237165F13
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EC521C19E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 01:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760663962; cv=none; b=LvBP4gay7YK5IPTzoKV40FDbN621qRUHKdcTgA8ieaNNZwS0StMrYHw4Y8luVsqgTpk0t3R/A3X7loM1sFPM4KLewcQfhTVUYVKzylxhErqsvSu+iz/KQzqJD9liuOggvwDIUgA7HUjSgQ7OMRyOLklNEyRnWcV6Omv1tEqt9h8=
+	t=1760664397; cv=none; b=lonWDYCkYd1u/MG79FUeTGuNj+44hylV9+7wWzaLm8IHAvDCCisoRw7CYqAS+xjmsp9+E2xRa2WGpMwxVRXDJYPgXXykY5fDuhhUBwicobdXmWspgfsyOBdagtPIa6MjQpkuHcTl5ZhGoDR/q3HprLfejl50+s27x3O66gnf474=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760663962; c=relaxed/simple;
-	bh=yC2fpAkcfnlz7vqXLATDdo4o+VVgv83RVVb90YGoSWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QPNYXno8O3ZvknQHOKq9IQq7ps+O9JusxAFHXLu8BfhO54/UU8mryzE9e7x9FVtKQYlH4LnG+XzlF2KcZzYZLiQFL3vy5tQjje7UjiUuYM6K4DdMBZnaUHxOLv44UNEm6rYVgBgnXqO+T/4yzAYKNzYo/lHdxSQQeCCF7YUfBSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=imTp//37; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <51f86d0e-e9dc-42ef-baee-0dfdd39b7cab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760663954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8GdIKXKSuyoQ2I8o+Rbq8hN819PD6bayvqWnle+WNBA=;
-	b=imTp//3755IrNDCBBNh+hP7nBOKNj+g3rU0OfOwdNwRYq7dnSjQkADbbgS7uGpGkm6vTse
-	MIhzcPlu+Jw+G2bTUVX2bPyPPNzDOuAEwmwtzV00isvxhy7cXYPfc2yBFdmxMVx4gm3F+2
-	XmMNLjwILu2ktOoE2KtPPW+J3PyLDJE=
-Date: Fri, 17 Oct 2025 09:19:09 +0800
+	s=arc-20240116; t=1760664397; c=relaxed/simple;
+	bh=L8goSy0mCfbNYD9NH8iLoywsSWGUd85reHgk72ACCb0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cVn6sBI/wFwUI+1A3CDOLgsxj2B6ujckK7/Sq7RbwbboWKmKOEyMhvFOYjLA8qam914NJiGTVvdw5qyJ9pHrT7G89W0fyGAXS5ak9gihtNDMB5v5Gv5yvtaVY6GNi5ioAW8j/+O+D16hdsdXvnSxzrRb+E8Icu8Xj1wiKWN1Od4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zUFAXwOb; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f2466eeb5so1683384b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 18:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760664395; x=1761269195; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+j1Q9uHuP/v3a0srhPD8Cb5JpHL5lf27N6y4qanBqGY=;
+        b=zUFAXwOb+m6LeeR8XHIZ0wXkqRwEW8953AtrQbWsvy5S8JXal04KDxCtj12PuvVGAN
+         20vwdzGr7NCBOOqXkNVy1WjgY7DrMwVJjROHSSTY3+08mtMUVqcX1OfTjeSYKPdqPRTN
+         nQfGVAfA/XqVvrl7BYF1GrRuMYFxxJjrkjk2RhaP+sQa6n9MH30u995fBnxVaOcRzECr
+         Kun7hFDG63B3YuYgMZ8sAL/5m4vm7Qe+M/MqX7utS4kv+rPILh6IUoklIcmr7jE4TLcp
+         w48PQVcbF5e71MFd875JngbvI74ux9NnsSqfaPPYKN8yOPWRj3owOfwRhekwqXN+XJV1
+         r0cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760664395; x=1761269195;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+j1Q9uHuP/v3a0srhPD8Cb5JpHL5lf27N6y4qanBqGY=;
+        b=F4xvR7rgSPP83chYKCPcQYr10hjp4m6oAmX8HvSq1Ct+j2MoJRDFv61jZYytukRZ3a
+         uUWtkjpdfSh/wMG6KcKI9pMzoZAuJtEIpWCu34sopwFrg8GNBGqtNxwl//miKNOp8viZ
+         39UNxX/VWMBHm7XYTcnwlr6OMlu0GQHWRB4B4WGhOEJ/+kULpdW8lndtGBgqK2CV8J2C
+         v1JAM3+0SeRJP7r5Xa+ObhWv29e4qO1tEImIIEdBShXKw6sOJJUPea8MvMQZcU7xDfAa
+         sGQ6dB3Q3uXN9Cj3wON6pR6WStitjKWOJJ6yLJixZfy+BF4jyIVN3ChZZ72BaT3u4qBY
+         35Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUUAVEKHci5n4C5qXpLbIcov2ZeOnuWuZLAewHPrVcs7BZNgnSmfUzlUaPKlXe1Uhb6i9nV92cvOZHfw54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCZ+nrLMGvQQbjziuvVhPZSl0TxHHxOoqUqszr22/e5AJKIVKj
+	g4lvE5DIVCDpGUxC+rhEnJR0TdsO5GT+J8CHoLNDG/2NUg3EYmLRTUxE7xbHM5m10l1TG6wwebJ
+	z0fQX2VG702f9EQ==
+X-Google-Smtp-Source: AGHT+IF9WKhakeHmEI55UHHxr4qLhlFzl6C0HLU83cEAqNCYxeOqqWtaEkS+pQ4DOXaLCFMH7w0wH1iIPJjZIA==
+X-Received: from pfgt20.prod.google.com ([2002:a05:6a00:1394:b0:792:f698:fda2])
+ (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:1410:b0:77f:2b7d:edf1 with SMTP id d2e1a72fcca58-7a220a98d14mr2299469b3a.16.1760664395281;
+ Thu, 16 Oct 2025 18:26:35 -0700 (PDT)
+Date: Thu, 16 Oct 2025 18:25:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] tools/mm/page_owner_sort: add help option support
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Ye Liu <liuye@kylinos.cn>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251016201051.67097-1-sj@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ye Liu <ye.liu@linux.dev>
-In-Reply-To: <20251016201051.67097-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251017012614.3631351-1-joshwash@google.com>
+Subject: [PATCH net-next] gve: Consolidate and persist ethtool ring changes
+From: Joshua Washington <joshwash@google.com>
+To: netdev@vger.kernel.org
+Cc: Ankit Garg <nktgrg@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Jordan Rhee <jordanrhee@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Joshua Washington <joshwash@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Ziwei Xiao <ziweixiao@google.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+From: Ankit Garg <nktgrg@google.com>
 
+Refactor the ethtool ring parameter configuration logic to address two
+issues: unnecessary queue resets and lost configuration changes when
+the interface is down.
 
-在 2025/10/17 04:10, SeongJae Park 写道:
-> On Thu, 16 Oct 2025 13:49:25 +0800 Ye Liu <ye.liu@linux.dev> wrote:
-> 
->> From: Ye Liu <liuye@kylinos.cn>
->>
->> Add -h/--help option to display usage information and improve code style.
-> 
-> Looks good to me, though I have a trivial comment below.
-> 
->>
->> Signed-off-by: Ye Liu <liuye@kylinos.cn>
->> ---
->>  tools/mm/page_owner_sort.c | 10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/mm/page_owner_sort.c b/tools/mm/page_owner_sort.c
->> index 880e36df0c11..202eafed66a9 100644
->> --- a/tools/mm/page_owner_sort.c
->> +++ b/tools/mm/page_owner_sort.c
->> @@ -669,14 +669,15 @@ int main(int argc, char **argv)
->>  		{ "pid", required_argument, NULL, 1 },
->>  		{ "tgid", required_argument, NULL, 2 },
->>  		{ "name", required_argument, NULL, 3 },
->> -		{ "cull",  required_argument, NULL, 4 },
->> -		{ "sort",  required_argument, NULL, 5 },
->> +		{ "cull", required_argument, NULL, 4 },
->> +		{ "sort", required_argument, NULL, 5 },
-> 
-> Seems unnecessary changes.
-The spacing changes fix inconsistent formatting in longopts array.
-Since the format fixes are simple and in the same context, I put them together.
-If you insist on removing these changes, I will drop them in the next version.> 
->> +		{ "help", no_argument, NULL, 'h' },
->>  		{ 0, 0, 0, 0},
->>  	};
->>  
->>  	compare_flag = COMP_NO_FLAG;
->>  
->> -	while ((opt = getopt_long(argc, argv, "admnpstP", longopts, NULL)) != -1)
->> +	while ((opt = getopt_long(argc, argv, "admnpstPh", longopts, NULL)) != -1)
->>  		switch (opt) {
->>  		case 'a':
->>  			compare_flag |= COMP_ALLOC;
->> @@ -702,6 +703,9 @@ int main(int argc, char **argv)
->>  		case 'n':
->>  			compare_flag |= COMP_COMM;
->>  			break;
->> +		case 'h':
->> +			usage();
->> +			exit(0);
->>  		case 1:
->>  			filter = filter | FILTER_PID;
->>  			fc.pids = parse_nums_list(optarg, &fc.pids_size);
->> -- 
->> 2.43.0
-> 
-> If you remove the unnecessary changes, please feel free to add below:
-> 
-> Reviewed-by: SeongJae Park <sj@kernel.org>
-> 
-> 
-> Thanks,
-> SJ
+Previously, `gve_set_ringparam` could trigger multiple queue
+destructions and recreations for a single command, as different settings
+(e.g., header split, ring sizes) were applied one by one. Furthermore,
+if the interface was down, any changes made via ethtool were discarded
+instead of being saved for the next time the interface was brought up.
 
+This patch centralizes the configuration logic. Individual functions
+like `gve_set_hsplit_config` are modified to only validate and stage
+changes in a temporary config struct.
+
+The main `gve_set_ringparam` function now gathers all staged changes
+and applies them as a single, combined configuration:
+1.  If the interface is up, it calls `gve_adjust_config` once.
+2.  If the interface is down, it saves the settings directly to the
+    driver's private struct, ensuring they persist and are used when
+    the interface is brought back up.
+
+Signed-off-by: Ankit Garg <nktgrg@google.com>
+Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+Reviewed-by: Jordan Rhee <jordanrhee@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Joshua Washington <joshwash@google.com>
+---
+ drivers/net/ethernet/google/gve/gve.h         |  3 +-
+ drivers/net/ethernet/google/gve/gve_ethtool.c | 86 +++++++++----------
+ drivers/net/ethernet/google/gve/gve_main.c    | 17 ++--
+ 3 files changed, 51 insertions(+), 55 deletions(-)
+
+diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
+index bceaf9b05cb4..ac325ab0f5c0 100644
+--- a/drivers/net/ethernet/google/gve/gve.h
++++ b/drivers/net/ethernet/google/gve/gve.h
+@@ -1249,7 +1249,8 @@ void gve_rx_start_ring_gqi(struct gve_priv *priv, int idx);
+ void gve_rx_stop_ring_gqi(struct gve_priv *priv, int idx);
+ u16 gve_get_pkt_buf_size(const struct gve_priv *priv, bool enable_hplit);
+ bool gve_header_split_supported(const struct gve_priv *priv);
+-int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split);
++int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split,
++			  struct gve_rx_alloc_rings_cfg *rx_alloc_cfg);
+ /* rx buffer handling */
+ int gve_buf_ref_cnt(struct gve_rx_buf_state_dqo *bs);
+ void gve_free_page_dqo(struct gve_priv *priv, struct gve_rx_buf_state_dqo *bs,
+diff --git a/drivers/net/ethernet/google/gve/gve_ethtool.c b/drivers/net/ethernet/google/gve/gve_ethtool.c
+index d0a223250845..b030a84b678c 100644
+--- a/drivers/net/ethernet/google/gve/gve_ethtool.c
++++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
+@@ -537,34 +537,6 @@ static void gve_get_ringparam(struct net_device *netdev,
+ 		kernel_cmd->tcp_data_split = ETHTOOL_TCP_DATA_SPLIT_DISABLED;
+ }
+ 
+-static int gve_adjust_ring_sizes(struct gve_priv *priv,
+-				 u16 new_tx_desc_cnt,
+-				 u16 new_rx_desc_cnt)
+-{
+-	struct gve_tx_alloc_rings_cfg tx_alloc_cfg = {0};
+-	struct gve_rx_alloc_rings_cfg rx_alloc_cfg = {0};
+-	int err;
+-
+-	/* get current queue configuration */
+-	gve_get_curr_alloc_cfgs(priv, &tx_alloc_cfg, &rx_alloc_cfg);
+-
+-	/* copy over the new ring_size from ethtool */
+-	tx_alloc_cfg.ring_size = new_tx_desc_cnt;
+-	rx_alloc_cfg.ring_size = new_rx_desc_cnt;
+-
+-	if (netif_running(priv->dev)) {
+-		err = gve_adjust_config(priv, &tx_alloc_cfg, &rx_alloc_cfg);
+-		if (err)
+-			return err;
+-	}
+-
+-	/* Set new ring_size for the next up */
+-	priv->tx_desc_cnt = new_tx_desc_cnt;
+-	priv->rx_desc_cnt = new_rx_desc_cnt;
+-
+-	return 0;
+-}
+-
+ static int gve_validate_req_ring_size(struct gve_priv *priv, u16 new_tx_desc_cnt,
+ 				      u16 new_rx_desc_cnt)
+ {
+@@ -584,34 +556,62 @@ static int gve_validate_req_ring_size(struct gve_priv *priv, u16 new_tx_desc_cnt
+ 	return 0;
+ }
+ 
++static int gve_set_ring_sizes_config(struct gve_priv *priv, u16 new_tx_desc_cnt,
++				     u16 new_rx_desc_cnt,
++				     struct gve_tx_alloc_rings_cfg *tx_alloc_cfg,
++				     struct gve_rx_alloc_rings_cfg *rx_alloc_cfg)
++{
++	if (new_tx_desc_cnt == priv->tx_desc_cnt &&
++	    new_rx_desc_cnt == priv->rx_desc_cnt)
++		return 0;
++
++	if (!priv->modify_ring_size_enabled) {
++		dev_err(&priv->pdev->dev, "Modify ring size is not supported.\n");
++		return -EOPNOTSUPP;
++	}
++
++	if (gve_validate_req_ring_size(priv, new_tx_desc_cnt, new_rx_desc_cnt))
++		return -EINVAL;
++
++	tx_alloc_cfg->ring_size = new_tx_desc_cnt;
++	rx_alloc_cfg->ring_size = new_rx_desc_cnt;
++	return 0;
++}
++
+ static int gve_set_ringparam(struct net_device *netdev,
+ 			     struct ethtool_ringparam *cmd,
+ 			     struct kernel_ethtool_ringparam *kernel_cmd,
+ 			     struct netlink_ext_ack *extack)
+ {
++	struct gve_tx_alloc_rings_cfg tx_alloc_cfg = {0};
++	struct gve_rx_alloc_rings_cfg rx_alloc_cfg = {0};
+ 	struct gve_priv *priv = netdev_priv(netdev);
+-	u16 new_tx_cnt, new_rx_cnt;
+ 	int err;
+ 
+-	err = gve_set_hsplit_config(priv, kernel_cmd->tcp_data_split);
++	gve_get_curr_alloc_cfgs(priv, &tx_alloc_cfg, &rx_alloc_cfg);
++	err = gve_set_hsplit_config(priv, kernel_cmd->tcp_data_split,
++				    &rx_alloc_cfg);
+ 	if (err)
+ 		return err;
+ 
+-	if (cmd->tx_pending == priv->tx_desc_cnt && cmd->rx_pending == priv->rx_desc_cnt)
+-		return 0;
++	err = gve_set_ring_sizes_config(priv, cmd->tx_pending, cmd->rx_pending,
++					&tx_alloc_cfg, &rx_alloc_cfg);
++	if (err)
++		return err;
+ 
+-	if (!priv->modify_ring_size_enabled) {
+-		dev_err(&priv->pdev->dev, "Modify ring size is not supported.\n");
+-		return -EOPNOTSUPP;
++	if (netif_running(priv->dev)) {
++		err = gve_adjust_config(priv, &tx_alloc_cfg, &rx_alloc_cfg);
++		if (err)
++			return err;
++	} else {
++		/* Set ring params for the next up */
++		priv->header_split_enabled = rx_alloc_cfg.enable_header_split;
++		priv->rx_cfg.packet_buffer_size =
++			rx_alloc_cfg.packet_buffer_size;
++		priv->tx_desc_cnt = tx_alloc_cfg.ring_size;
++		priv->rx_desc_cnt = rx_alloc_cfg.ring_size;
+ 	}
+-
+-	new_tx_cnt = cmd->tx_pending;
+-	new_rx_cnt = cmd->rx_pending;
+-
+-	if (gve_validate_req_ring_size(priv, new_tx_cnt, new_rx_cnt))
+-		return -EINVAL;
+-
+-	return gve_adjust_ring_sizes(priv, new_tx_cnt, new_rx_cnt);
++	return 0;
+ }
+ 
+ static int gve_user_reset(struct net_device *netdev, u32 *flags)
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 1be1b1ef31ee..29845e8f3c0d 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -2058,12 +2058,10 @@ bool gve_header_split_supported(const struct gve_priv *priv)
+ 		priv->queue_format == GVE_DQO_RDA_FORMAT && !priv->xdp_prog;
+ }
+ 
+-int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split)
++int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split,
++			  struct gve_rx_alloc_rings_cfg *rx_alloc_cfg)
+ {
+-	struct gve_tx_alloc_rings_cfg tx_alloc_cfg = {0};
+-	struct gve_rx_alloc_rings_cfg rx_alloc_cfg = {0};
+ 	bool enable_hdr_split;
+-	int err = 0;
+ 
+ 	if (tcp_data_split == ETHTOOL_TCP_DATA_SPLIT_UNKNOWN)
+ 		return 0;
+@@ -2081,14 +2079,11 @@ int gve_set_hsplit_config(struct gve_priv *priv, u8 tcp_data_split)
+ 	if (enable_hdr_split == priv->header_split_enabled)
+ 		return 0;
+ 
+-	gve_get_curr_alloc_cfgs(priv, &tx_alloc_cfg, &rx_alloc_cfg);
+-
+-	rx_alloc_cfg.enable_header_split = enable_hdr_split;
+-	rx_alloc_cfg.packet_buffer_size = gve_get_pkt_buf_size(priv, enable_hdr_split);
++	rx_alloc_cfg->enable_header_split = enable_hdr_split;
++	rx_alloc_cfg->packet_buffer_size =
++		gve_get_pkt_buf_size(priv, enable_hdr_split);
+ 
+-	if (netif_running(priv->dev))
+-		err = gve_adjust_config(priv, &tx_alloc_cfg, &rx_alloc_cfg);
+-	return err;
++	return 0;
+ }
+ 
+ static int gve_set_features(struct net_device *netdev,
 -- 
-Thanks,
-Ye Liu
+2.51.0.858.gf9c4a03a3a-goog
 
 
