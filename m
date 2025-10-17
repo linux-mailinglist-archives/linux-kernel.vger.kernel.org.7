@@ -1,147 +1,186 @@
-Return-Path: <linux-kernel+bounces-857235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DCB2BE645D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED130BE6485
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 06:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD43A4E4DE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:12:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B66E24E18E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 04:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6F7305E05;
-	Fri, 17 Oct 2025 04:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AC0221F1A;
+	Fri, 17 Oct 2025 04:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TzkJ+3LA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBW8AnPz"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3242AD11;
-	Fri, 17 Oct 2025 04:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910C71A9FB8
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 04:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760674368; cv=none; b=kvyaFpy1NXXcAZLzlaOLm66CK9riokE108Fvr8nTHfixNN5ljntQglzygrhacVky3Ddpm3EAbOzOpsh7NUCo8Wu4Vhl81o55XXdKe2+j1vdACvUMvjwKiZ5eBMzRWyK3CqyWRW0kv4AERklkBVHQJ4M0B0nA+VAj1omtFqjE1Yc=
+	t=1760675014; cv=none; b=DvBt7P43qOIe/BGIgFImdoCK4KXWEiEdgYsmJBYNH2Xrym72AVrIf/dwGQCWZVa7BJA9+d5RHY+Wt1e3yMbIC3iW91rDtbrPyN3hvod3lgg5tptLWPvbdhbbwiHTgWBdnA6uINwJ72/Us4ZVH+jfa0YZMXCsDPnG8uy9udsUQOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760674368; c=relaxed/simple;
-	bh=hYkGoyxObAZMkPUODWRYEdH0mS3RYWvDDsEe9eA2yhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YExRo1sZnTHmeBe1yLUWjVYal+4XeQZr1Gtfu9Wkrt/lFnfaJ+mrs5i9oiPPpJn6FD+KuYZbsFlGYxRbwX70G57aIgct7UOUJS/IT+nDvau7QyDEy25xMvltlE0wUrtqNXrP7V0khCxxXY7J75iInWV9NiR4d3gPrJROKlVH1KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TzkJ+3LA; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760674368; x=1792210368;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=hYkGoyxObAZMkPUODWRYEdH0mS3RYWvDDsEe9eA2yhI=;
-  b=TzkJ+3LASPBfUQEEfT3U5ox1qNktvIl2rm0Om4TO1qcKuTfeiKnnQEcl
-   VnJ+MbUeZTLebkHepGyF7sFBaiLFZLB/FPyIYQN0mumTgjZwvwFgDUtw1
-   CAGFvpK7ZpbZG3LPjOOg6OGsqf30iyUa5dZHbArXTecBz27t5dTQ7+O3R
-   681YGk4bwjjSmVh+63QQdpxENlMPnt9hkv/D2ahmrp49ZINSSbI9KjYq9
-   +ffFPcNvZqv6tyxU6bxflYqY83naoM6+j/0WubEPorkfOMy6HlR/ObQEa
-   oE6hinaLApVy+FHODpAUDAPWowouEs5hWZoZxo9ILsfRCU8OwGLn/qOD4
-   A==;
-X-CSE-ConnectionGUID: 3LYe2hX/QACncK9VXG9Egg==
-X-CSE-MsgGUID: JttQz1rNSPOExT/hKGJ8/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11584"; a="73995373"
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="73995373"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 21:12:47 -0700
-X-CSE-ConnectionGUID: xsH9jIuRR3Gau3wYS5TeUg==
-X-CSE-MsgGUID: /pcRtdIuSZKsIgdMAxuLBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; 
-   d="scan'208";a="181766910"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.108.3]) ([10.125.108.3])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2025 21:12:46 -0700
-Message-ID: <9cf0e05b-00e6-4954-96d5-fafeb6e6397a@intel.com>
-Date: Thu, 16 Oct 2025 21:12:46 -0700
+	s=arc-20240116; t=1760675014; c=relaxed/simple;
+	bh=xlTdYn3ctaCUjwm/bvJufu9sD/yMlLPgVKinrC/dKzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j9T6zXgwUbFGEN/lzHmiSq409Ll+7IMGvleSMsEk02i9aQDQsBlaiRkcBCG3hnUIZ7VdVq7c0y1Jp5b1UlaiPTxa+Z9R/PUheUAe7guFFRykequLdVtu7QBldcXnPueD53rIp+xMIV9NmHn0e5JpVKJuKW8YJTkIyNZQkzIA3II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBW8AnPz; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-330469eb750so2053906a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 21:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760675012; x=1761279812; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1LD4bJtaXgmuHvhblZcw2cHe5FWG+R07TopH1OUOIo=;
+        b=NBW8AnPz+hbH4/HO5YOBRc3Yjnv1tWdFqSxgniJU1Dwvn1AcrNgTvEuo1eAYASIoQF
+         GSpXsfWEf7YxtxiqLTAnVnVNy3dZS/7sl0jCrjl/cQvdE0Wjqx+tx0hIkvbOSPrE2OTu
+         DRGQoxeLXDZbt8LM6VbT9JGtW0ygFoXBJCgNATbqbIL8OcIG/c+H8xwBXdv74kFV6SgA
+         KJhvpKl1KdbyHWgqp1zUMCR19OSxQV40xsx22E+RKI8gPDa7J0aZ9MU46/RLuRtt9ZYC
+         yqXhPpfo/8cQqzIZuTCpG4MzfS0X2ingfEp1TiWt7umxd6h0TWdIzNoa3gkLuL5OhS6k
+         INbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760675012; x=1761279812;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O1LD4bJtaXgmuHvhblZcw2cHe5FWG+R07TopH1OUOIo=;
+        b=OkXgaX1x+QajqBFvlRQL5eZC+LP3ZYAj2aPi6EjFOFkpCe/a1h+uKMQcMU9+5fNWfs
+         Xi/u8zAR9tc4xY9jqvUF7MdbLU6c0kRV3FQK31Wjh6T81SiUbx6Iqe/DHOIgW7L+E00Z
+         8sjsYWh1fQfz7Xg94ua1eFK6XhK3lDDMAl8VGpoQXSlFrB1698Vs9C2QWL3I20nvWr29
+         J4XfhqB5vC3XGMyKE4W0F0Bmo0cFCme/P2Et/ZGKJDSyDOFmDrRT1BrKM2VNzc3dbHp1
+         14kkDiKUwGR51mAhY9nr+Esznh6SGcZG8pbiGY6LtfWPDVYBSlf1+ay0kHbdMVzptMmu
+         2RBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJz8ZvEUEtLw8XMEZp4YniI+inU26BW4MBkhITVhGTX/j975iWAO+dT/A+4AQGbNjBc7tGl9Rpm7TzX44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWf7o5xrqFpPm2H0Q0YsPWzEdWPUiRPJrGuNu9euOMUUKrYhuY
+	EElGGLtIliZ6o6a7Xn6f6/WbJ+852Gie17oAhxkgNmj2Mjesfns/4xMS
+X-Gm-Gg: ASbGncudGiXnmmF0y9jggrwZxtc06JdubH0lf1MBXt10z2VnJk7FwH6SLNG5MJWZKY0
+	4meKMGABu09xruYXDMOD2fK+pKn2RdMo/JGb5B9y1c70LJ36Z7XZ85qprNV75RuYzDXYEh7PrOD
+	zWMPEppRQYnFPI1Atk9M/Z7GgJKdEBh0DaimRMc3qheftQ/0PlZOvlpUmt6SXICVtURbRvwCk3o
+	msWXzcwpLV1XJMRaQYk2MF6ZHtAnFtCI3SqJI4LjT7R9uYGCbnjqOZahxJ7wGqUv9jIYdU1Ckmd
+	nk+1bwQA1dHSZQNnsmCSs4ZwP2y14YfgFLfddGnEfpAJ9nVTjUOaJ+/oI+MldFS5+1pZzGK0Z53
+	m64XhNX2SWj0FYyA3uZnmdttovLgp0KecHZZ0CGJXKo+ORD5m54IkHltyqCuSQZtR7cnjSSojv5
+	rfwBgCuf1hose3m0clPhztb3WREeIii19as/paYJj/lfo/NU4gcjGSonrIWtUbMpg4i3mGVYwza
+	DIk85vcEg==
+X-Google-Smtp-Source: AGHT+IHf/fkMawdLEFWrxmlDZmQ5xGwA8hncSDzmuHZwevx77yhLGUBDFp3M4+pUOvAJ23AfWMIQvg==
+X-Received: by 2002:a17:90b:4f:b0:335:28ee:eeaf with SMTP id 98e67ed59e1d1-33bcf8faabcmr2469604a91.29.1760675011886;
+        Thu, 16 Oct 2025 21:23:31 -0700 (PDT)
+Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33be54cad3esm245557a91.12.2025.10.16.21.23.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Oct 2025 21:23:31 -0700 (PDT)
+From: alistair23@gmail.com
+X-Google-Original-From: alistair.francis@wdc.com
+To: chuck.lever@oracle.com,
+	hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-nfs@vger.kernel.org
+Cc: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	kch@nvidia.com,
+	hare@suse.de,
+	alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: [PATCH v4 0/7] nvme-tcp: Support receiving KeyUpdate requests
+Date: Fri, 17 Oct 2025 14:23:05 +1000
+Message-ID: <20251017042312.1271322-1-alistair.francis@wdc.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/its: use Sapphire Rapids+ feature to opt out
-To: Jon Kohler <jon@nutanix.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
- Brendan Jackman <jackmanb@google.com>, "Ahmed S. Darwish"
- <darwi@linutronix.de>, Alexandre Chartre <alexandre.chartre@oracle.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251017011834.2941358-1-jon@nutanix.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251017011834.2941358-1-jon@nutanix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/16/25 18:18, Jon Kohler wrote:
-> +	 * hardware, except in the situation where the guest is presented
-> +	 * with a feature that only exists in non-vulnerable hardware.
->  	 */
-> -	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR) &&
-> +	    !boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
->  		return true;
+From: Alistair Francis <alistair.francis@wdc.com>
 
-This seems like a hack in its purest form. Even worse, it's an
-_uncommented_ hack.
+The TLS 1.3 specification allows the TLS client or server to send a
+KeyUpdate. This is generally used when the sequence is about to
+overflow or after a certain amount of bytes have been encrypted.
 
-This is _literally_ what ITS_NO is for.
+The TLS spec doesn't mandate the conditions though, so a KeyUpdate
+can be sent by the TLS client or server at any time. This includes
+when running NVMe-OF over a TLS 1.3 connection.
 
-So it's a pretty strong NAK from me on this one. No thanks. If you think
-this is useful, it's a great thing to carry in a local kernel fork, but
-it has no place in mainline.
+As such Linux should be able to handle a KeyUpdate event, as the
+other NVMe side could initiate a KeyUpdate.
+
+Upcoming WD NVMe-TCP hardware controllers implement TLS support
+and send KeyUpdate requests.
+
+This series builds on top of the existing TLS EKEYEXPIRED work,
+which already detects a KeyUpdate request. We can now pass that
+information up to the NVMe layer (target and host) and then pass
+it up to userspace.
+
+Userspace (ktls-utils) will need to save the connection state
+in the keyring during the initial handshake. The kernel then
+provides the key serial back to userspace when handling a
+KeyUpdate. Userspace can use this to restore the connection
+information and then update the keys, this final process
+is similar to the initial handshake.
+
+This series depends on the recvmsg() kernel patch:
+https://lore.kernel.org/linux-nvme/2cbe1350-0bf5-4487-be33-1d317cb73acf@suse.de/T/#mf56283228ae6c93e37dfbf1c0f6263910217cd80
+
+ktls-utils (tlshd) userspace patches are available at:
+https://lore.kernel.org/kernel-tls-handshake/CAKmqyKNpFhPtM8HAkgRMKQA8_N7AgoeqaSTe2=0spPnb+Oz2ng@mail.gmail.com/T/#mb277f5c998282666d0f41cc02f4abf516fcc4e9c
+
+Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
+
+Based-on: 2cbe1350-0bf5-4487-be33-1d317cb73acf@suse.de
+
+v4:
+ - Don't stop the keep-alive timer
+ - Remove any support for sending a KeyUpdate
+ - Add tls_client_keyupdate_psk()' and 'tls_server_keyupdate_psk()'
+ - Code cleanups
+ - Change order of patches
+v3:
+ - Rebase on the recvmsg() workflow patch
+ - Add debugfs support for the host
+ - Don't cancel an ongoing request
+ - Ensure a request is destructed on completion
+v2:
+ - Change "key-serial" to "session-id"
+ - Fix reported build failures
+ - Drop tls_clear_err() function
+ - Stop keep alive timer during KeyUpdate
+ - Drop handshake message decoding in the NVMe layer
+
+Alistair Francis (7):
+  net/handshake: Store the key serial number on completion
+  net/handshake: Define handshake_sk_destruct_req
+  net/handshake: Ensure the request is destructed on completion
+  net/handshake: Support KeyUpdate message types
+  nvme-tcp: Support KeyUpdate
+  nvme-tcp: Allow userspace to trigger a KeyUpdate with debugfs
+  nvmet-tcp: Support KeyUpdate
+
+ Documentation/netlink/specs/handshake.yaml |  20 +-
+ Documentation/networking/tls-handshake.rst |   2 +
+ drivers/nvme/host/tcp.c                    | 150 ++++++++++++--
+ drivers/nvme/target/tcp.c                  | 216 ++++++++++++++-------
+ include/net/handshake.h                    |  12 +-
+ include/uapi/linux/handshake.h             |  14 ++
+ net/handshake/genl.c                       |   5 +-
+ net/handshake/request.c                    |  18 ++
+ net/handshake/tlshd.c                      |  96 ++++++++-
+ net/sunrpc/svcsock.c                       |   4 +-
+ net/sunrpc/xprtsock.c                      |   4 +-
+ 11 files changed, 455 insertions(+), 86 deletions(-)
+
+-- 
+2.51.0
+
 
