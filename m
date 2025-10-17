@@ -1,152 +1,209 @@
-Return-Path: <linux-kernel+bounces-858281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-858282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B239BE9D8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:28:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400A4BE9957
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 17:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4BB6E7E1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:14:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B97BA35D15F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 15:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C503328E3;
-	Fri, 17 Oct 2025 15:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0FD2F692B;
+	Fri, 17 Oct 2025 15:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="foes8srf"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WRGG8VsL"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E831B337112
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998D8337112
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 15:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760714011; cv=none; b=fxENerlRynH3/hr3W3CHFZPNvjAPXbzsKiPFV9sbq6fj98fxI96PzSRtPSEbfAZ7XRXA/UhGeusdhljjkrw31fbS43mNgLwauw/pP1CVKLuEQDxY5saH08eZXWahNRPCAC8b+rC4GfC/+k5/enkLVGA+kMGs5XO9NaMX0kp4rTs=
+	t=1760714017; cv=none; b=iJcE1RfSGJWXOBJF3TansyBBTLhh73EJXmBpC0fxV+oSpcrb/tFe1zAHB9YHpdtUyHPgO09CEADm9khIJ6tP25zDmlhrpTIDxp7u8bi7A/PR8F4OmeimiGoX4lYUIMqNTLxIwvCn9SBNCvwGggwdGlRRandhCrv0yYWtTaeKuhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760714011; c=relaxed/simple;
-	bh=h1vSaeMkrN6H8hwYfVzjt+o4IKkESrHOBhkN1Xl16MM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lPDtbl3Q1yC65xaWtubSUTrtF+vdB5tD7iRGax21vP0C2oevtoWzMMxCM8+HPHRyHPEmse2cYYkC0XM9aOEShIkOPdS/TV3xMw+gJFbWkQMektgfgiTlLTkEQpk7AXUqKos1KqUP3Us/zWVJr1qnlRabEczZcVOCC2xWLT2OP/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=foes8srf; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-58877f30cd4so6737e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:13:29 -0700 (PDT)
+	s=arc-20240116; t=1760714017; c=relaxed/simple;
+	bh=giNbJg6fQci1ggj093iRNITcX3JLQrm3IigJqYtGpNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mi9Bf6yC2crkXQM/N+wAet97Lhtez+HlISn/LmT1J1XqQ29EP+5ggvhprAsTEqEt3UAmZWX6IwlEBK/631D0Y4CkuMGKkTxo4L8dXWAg8oLge58XIYc89f5GmETi3IV8gVO67myBMuhxjczGpelpF3+re6xpjPjEBCNooNoajlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WRGG8VsL; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47114a40161so20502785e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 08:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760714008; x=1761318808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rSsE1dDRHw3HK9cZwjvWv+2rdYfMTeH9WPkRsLkpr8c=;
-        b=foes8srf5tsDu+qKgdbD8IqSRYpCOcycJQDQyWj/JzSgxF8J1QHriMY7U3ahktkx/j
-         0kMihX5EX1U7b+4iYrnqREvvascY4nuww1RQ8JsA+uIRqaVZceSUOuBRHwaOJ1xapA0G
-         u2pARSrhx+3GhdXvB7itizzpYkbrNQ4iC9uGNW1JMNj+LPpcyDayXj6GqjfhC1D+f4JI
-         tOKZNa0eG/UiPp5qZjkTdZyBv5HXRB6RGwJs81LgXBuG4xq/hQrVo5a8JrB8yBwey6gp
-         wp+IlooHtZW+FrHMdWhz2mRT6VdEegVus4KTGP7y1rMa+pHRReWS4wzc1z1iUtYzuOrs
-         +bnA==
+        d=suse.com; s=google; t=1760714014; x=1761318814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAqRSzJq3nW7dmbcqoRXO+cq6eesO6HDoZRngQ9qdT0=;
+        b=WRGG8VsLA+pWEVtdHDyewAyQkuH37nD217+mNVCEWwdlJyp3XJ5rt1AoBraY16252W
+         38l5xlq3POQ8RAqPTO/vkGWaDIIjIwGmN4TAqfnPPbBL+cgMITYKYhwVfm9kjYYWh9N1
+         avkFW5hmT10/XFOpJjP9klTge3fN6S5X3wa2R2CarUnDWMd43DrI4kQ42rhKSo6gUuuO
+         dT4ps0uRwP3TPQA404DaBX3NavPvbcrPsqFaWOGIiTsqmSMOupYIzki/VUGIN647Q7nv
+         U/fhmCtW/WfZ0yfl/R1L7j13HT4GDGtuRhHee8GnPIKv3vGFiSGGlZPh8w3HQ7qLqvxi
+         O5RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760714008; x=1761318808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rSsE1dDRHw3HK9cZwjvWv+2rdYfMTeH9WPkRsLkpr8c=;
-        b=faxMjes0YzHTTLKi5F+aKArnyVS5HBE9RX0byHqr7JawFzeCWI4Gn/ibn4yj1UCKrs
-         l6r/AT4rdA+6Rd+1/4av7iyYu9h8yxuFue39wBb8SeAxBDu3l2xCjcE42jdwRv92iNy0
-         Q5+V4bnvqoY3lpOUETRlRYlAv+xTy5n3WCFMB/NjpGgmVeKdKKj1o4Pe/rtH40R4J2kf
-         3cmJ7RwIRt4OMs3CKJ3iau++5KI80vdTz/mfE9nWftaP9DXwpPkh2CZZ5EbH8W1NTbqy
-         AyyeD8nSt5eQoKv4/KA1axG62z1ldQzjgwkc7MMAVXlRCa5Rc5CGfdQyXXRwfLdLAK4d
-         ilgw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+TmeTEDJ0yC1lW6i/v5Ou1Ws2Hy/1vOC/msNn76zWQ8HIDjJuUOZ6XRfgUiWIzRO8TZSod0OcD5sJ75s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwh6IfY9M2Dr6ogX25E4t2b539Oo/DrcoHl1ybcwE8rj1HZVS4
-	aH2J38l8UefhGi0k/w/2CasSLnFTGKVLojfwehplkQSKWRrcdZOXNrsufjC2efatH4XJAkmefbA
-	YF/h4a3I5doKfW0a2+2xUBFKZPcGpS7HOb1isjBNL
-X-Gm-Gg: ASbGncsgBuM5j5kv33ooziUOCLIALADIr+YalDIrWj54r8u18qVNRSZGqJIsT7lnsrE
-	S1fJ93jQrW4d03/Icda9RFQMqDhfwr7fxmFzbxg1jvNgOikVTSN+ekH3aWQZWwGNaglichJVYJH
-	bWDurN8QZAhvg3O8BHgEx/hrvkCiSWsOl4gIZrQl91l9LGeDcGPbzGncBshgsewnBvUbLTA6UQ+
-	RqSS5hMysKbs3QFyIzXXgeKVyEmCTOBRACmY1VyQY6JyPilSzd6Tvd6mtDcIA==
-X-Google-Smtp-Source: AGHT+IG2yYV1soOtTVbTodBl20gDiFrFLFitvWrizx0r35BbLhSYj1Ej+lir5/F2pMqQChZwo3lfBx+k+TttDJiVSEc=
-X-Received: by 2002:ac2:5617:0:b0:591:c7a5:2d1f with SMTP id
- 2adb3069b0e04-591c9ff1e5fmr900210e87.5.1760714007654; Fri, 17 Oct 2025
- 08:13:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760714014; x=1761318814;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zAqRSzJq3nW7dmbcqoRXO+cq6eesO6HDoZRngQ9qdT0=;
+        b=MF3FvGKfmlMXY/utH68l3zheuOh9W4RObkx6x8mdFi75JqTf7NMgk8Yw22rcgL3b6N
+         0/wogsa4gsfh1bu5zP5HjuztME9uTEo6+ySAgLzyBge5zB5DguAYvSbE3KDRtUaPbwu4
+         yfD4V9rC16GTOq5rfQDRPvkwtz/2Mx/42s8BktK9CtXoTIwTeI8laUdwDqwkImHUxKoi
+         75yDrg/qcCHTYzTH+4Wi642BANF5HuYiFEr6YitGc+V/vkIzjYNt4w1dWfOht3dCXyMH
+         lrwjxOftQBW8xCRilBuwB7ugKmvKVtPVxfG8x/XuCBHqXTHongt34nuN2jqEtpM0ObA2
+         AGhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXN+5JA0YKm0C4JaNh2wOvKFkELvn3LEDTTF+c9J3HfHu5TcVgB3VuoMEIOca0FtlKe7YXSAKA7okQ3yA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwscDuQ7NejGjxCjhzFht5/zMVoACcJcLvmQxFUHLVIjgcSIl0z
+	oFrtEfRGVP6kFMj6irLPxZTa80z019t7+6uixRWLMRkEZyuOXKQmf39uXroKoAl78+k=
+X-Gm-Gg: ASbGncvVbzTqZs4saQ0eHRvQd3zfsObv9+8rL8Nyvi3nJnVo4us3S5RCw3DPgbc9e7v
+	Les7LjkxEcUjNstS5fU/W0YWLcEVFkv4kVXU5uonJCMe5p4OJPFAvk33306vBoRkqseCyerDf73
+	bP7G1e+2O26iltTVy+j/k9XwVWsHQlkTrKO9aa/dPNoxIK2rWGqihYUAX4SZU1VIlc+rtb4WIET
+	tA5gpRMl7vjUTtLQnOHkctf8VIEuPPtC851gf0SmFVPx8uivVVB2yh23J34f2VrUyJ2utpRNFQh
+	TS8nptasJJyxWDmveNGF9Iu9sK52cwNVnS5gOlfZn7lyOWP5J903pQuYIlFxiP9RnGlIh66HLdM
+	F+/M00H4TvlTCzmb2v/iZFmbl0am74ILTO2i9Yu2GhK2Qrpj9WFB0NCJDhMtV0V7S/ZVPnzX5G5
+	439JD1UF+5IDXCD5rgIBUeSazZIXwUXRSwJZoOJQ==
+X-Google-Smtp-Source: AGHT+IEZr89WG9t9OZyL37lU4AQbgkUjLhOy4o+GbkY+fEnEvobO180kf4++0OZHlxwfDq/kBvXvTg==
+X-Received: by 2002:a05:600c:5009:b0:46e:50ce:a353 with SMTP id 5b1f17b1804b1-471178788f0mr27511195e9.14.1760714013781;
+        Fri, 17 Oct 2025 08:13:33 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.142.122])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144b5c34sm95442415e9.10.2025.10.17.08.13.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Oct 2025 08:13:33 -0700 (PDT)
+Message-ID: <1c73c8b2-02ad-44ab-ba9b-44b12f3e09fd@suse.com>
+Date: Fri, 17 Oct 2025 18:13:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016063657.81064-1-byungchul@sk.com> <20251016072132.GA19434@system.software.com>
- <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com>
-In-Reply-To: <8d833a3f-ae18-4ea6-9092-ddaa48290a63@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 17 Oct 2025 08:13:14 -0700
-X-Gm-Features: AS18NWDrNTee2iN7Yt-3RFBdnvbfwlm0owIMUwyA6-MIhPexgaRgEJJMm-KEnqI
-Message-ID: <CAHS8izMdwiijk_15NgecSOi_VD3M7cx5M0XLAWxQqWnZgJksjg@mail.gmail.com>
-Subject: Re: [PATCH net-next] page_pool: check if nmdesc->pp is !NULL to
- confirm its usage as pp for net_iov
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Byungchul Park <byungchul@sk.com>, axboe@kernel.dk, kuba@kernel.org, pabeni@redhat.com, 
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org, hawk@kernel.org, 
-	ilias.apalodimas@linaro.org, sdf@fomichev.me, dw@davidwei.uk, 
-	ap420073@gmail.com, dtatulea@nvidia.com, toke@redhat.com, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kernel_team@skhynix.com, max.byungchul.park@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 08/56] x86/bugs: Reset SSB mitigations
+To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Graf <graf@amazon.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-9-david.kaplan@amd.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20251013143444.3999-9-david.kaplan@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 5:32=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 10/16/25 08:21, Byungchul Park wrote:
-> > On Thu, Oct 16, 2025 at 03:36:57PM +0900, Byungchul Park wrote:
-> >> ->pp_magic field in struct page is current used to identify if a page
-> >> belongs to a page pool.  However, ->pp_magic will be removed and page
-> >> type bit in struct page e.g. PGTY_netpp should be used for that purpos=
-e.
-> >>
-> >> As a preparation, the check for net_iov, that is not page-backed, shou=
-ld
-> >> avoid using ->pp_magic since net_iov doens't have to do with page type=
-.
-> >> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to =
-a
-> >> page pool, by making sure nmdesc->pp is NULL otherwise.
-> >>
-> >> For page-backed netmem, just leave unchanged as is, while for net_iov,
-> >> make sure nmdesc->pp is initialized to NULL and use nmdesc->pp for the
-> >> check.
-> >
-> > IIRC,
-> >
-> > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
->
-> Pointing out a problem in a patch with a fix doesn't qualify to
-> me as "suggested-by", you don't need to worry about that.
->
-> Did you get the PGTY bits merged? There is some uneasiness about
-> this patch as it does nothing good by itself, it'd be much better
-> to have it in a series finalising the page_pool conversion. And
-> I don't think it simplify merging anyhow, hmm?
->
 
-+1 honestly.
 
-If you want to 'extract the networking bits' into its own patch,  let
-it be a patch series where this is a patch doing pre-work, and the
-next patches in the series are adding the page_flag.
+On 10/13/25 17:33, David Kaplan wrote:
+> Add function to reset SSB mitigations back to their boot-time defaults.
+> 
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> ---
+>   arch/x86/kernel/cpu/bugs.c | 24 ++++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 4ca46f58e384..cc7b1b67d22d 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -380,6 +380,16 @@ static void x86_amd_ssb_disable(void)
+>   		wrmsrq(MSR_AMD64_LS_CFG, msrval);
+>   }
+>   
+> +static void x86_amd_ssb_enable(void)
+> +{
+> +	u64 msrval = x86_amd_ls_cfg_base;
+> +
+> +	if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
+> +		wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, 0);
+> +	else if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+> +		wrmsrl(MSR_AMD64_LS_CFG, msrval);
 
-I don't want added netmem_is_net_iov checks unnecessarily tbh. These
-checks are bad and only used when absolutely necessary, so let the
-patch series that adds them also do something useful (i.e. add the
-page flag), if possible. But I honestly think this patch was almost
-good as-is:
+nit: No need for the local msrval variable, just pass x86_amd_ls_cfg_base.
 
-https://lore.kernel.org/all/20250729110210.48313-1-byungchul@sk.com/
+> +}
+> +
+>   #undef pr_fmt
+>   #define pr_fmt(fmt)	"MDS: " fmt
+>   
+> @@ -2672,6 +2682,17 @@ static void __init ssb_apply_mitigation(void)
+>   	}
+>   }
+>   
+> +#ifdef CONFIG_DYNAMIC_MITIGATIONS
+> +static void ssb_reset_mitigation(void)
+> +{
+> +	setup_clear_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
+> +	x86_spec_ctrl_base &= ~SPEC_CTRL_SSBD;
+> +	nossb = false;
+> +	ssb_mode = IS_ENABLED(CONFIG_MITIGATION_SSB) ?
+> +		SPEC_STORE_BYPASS_AUTO : SPEC_STORE_BYPASS_NONE;
+> +}
+> +#endif
+> +
+>   #undef pr_fmt
+>   #define pr_fmt(fmt)     "Speculation prctl: " fmt
+>   
+> @@ -2916,6 +2937,8 @@ void x86_spec_ctrl_setup_ap(void)
+>   
+>   	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
+>   		x86_amd_ssb_disable();
+> +	else
+> +		x86_amd_ssb_enable();
 
-You just need to address Jakub's review comments and resubmit? Not
-sure why we want to split, but if you want let it be a patch series
-that does something useful.
+Does it mean SSB hasn't been working correctly up until now since 
+_enable function has been missing?
 
---=20
-Thanks,
-Mina
+<snip>
 
