@@ -1,113 +1,58 @@
-Return-Path: <linux-kernel+bounces-857815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BFCBE800D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:14:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C3DBE7F23
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 12:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321136E0538
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:12:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EB6F4E0543
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 10:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F906322C81;
-	Fri, 17 Oct 2025 10:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A2E311978;
+	Fri, 17 Oct 2025 10:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b="dquGaOQJ"
-Received: from sienna.cherry.relay.mailchannels.net (sienna.cherry.relay.mailchannels.net [23.83.223.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="GWBbr7dx"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87840322C97;
-	Fri, 17 Oct 2025 10:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.165
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760695768; cv=pass; b=Jm63g1IYlnUKbX7Gfb2JEaCYVXZGH4WijD4owroOOPTVEoGYdAn7uAB6FAly48XSwG9rV4m6qOqmEuwpIvjqj1ZX+HGukzLUUG7ZvkG11VztBWihvl1Rln+jUuMypS6S73gtqezgSJ0vHH01RJOswFPAWplMveEhZ8puea7AL6I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760695768; c=relaxed/simple;
-	bh=JCf9+BIVt/3dAPNMzv6qmO3EfmD/eUtnNliLYOf6oI4=;
-	h=From:To:Cc:Subject:Message-ID:In-Reply-To:References:MIME-Version:
-	 Date; b=XYMT+swBz3lOoSBElKJZVnKOY1oa72g+21zcB8GJNHZnip3qvkuXZNAxU0B2eKg5SavXev5xo++8sEmNGADMQqvVwoDEAcEfw3kCF/5+nf0B10YYgjumbaLAeURmNRWAjhpvzeO9key5RyobY+o4Bv4EUekTT6bhOiOF/nNqnqo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com; spf=pass smtp.mailfrom=rootcommit.com; dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b=dquGaOQJ; arc=pass smtp.client-ip=23.83.223.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 266F06C1FA2;
-	Fri, 17 Oct 2025 10:02:34 +0000 (UTC)
-Received: from fr-int-smtpout18.hostinger.io (trex-green-5.trex.outbound.svc.cluster.local [100.116.100.136])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 18B856C2079;
-	Fri, 17 Oct 2025 10:02:31 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1760695353; a=rsa-sha256;
-	cv=none;
-	b=47EyyEKQnI0TgEXkP+KaoKBRVN3THrt1Hw2+4i/c9A0be8OOMacShCS5IcJRnwo3gO1SEy
-	j5wxGjhpufJZ0EzzphVR0rFL/NHwHBTPr68nkEk3TLiHjIwIGyqAP0Y5wTdx+wgfbJ6+mW
-	poMNQa7KQMKmL022lvxvpf8U8sfB9fj1mZAmVzRw0wL0YmeUBDS/nW7Kleo0z3T/FDmtlJ
-	25kaTH/vlTvk/Ns30IwNFKTD3XtOkgHCep2cJSQMiv7L5p8DBghKwwBnUtr3FrSagHEkSF
-	cEIENGwLh7Z9xhjhuJFTfKj45H9KdlMGFw2jMfnFRw1Dw1/z/aHv6OG0I1KflQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1760695353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=INLfLanNrxPT8zZfl4wJScpkqHE8+TQnHHl9RjngRPU=;
-	b=pcqnvVptgS4/Pat+gdc00QGJR2YyQk3kS4DnaufmLm05GSJQ+upSdE04buWQxnM06y2x6l
-	jf6b8Qa/k7x5G6mtiqQoFgT5n8CNXQ5paiFUkBmmp449AseRu4BZ9MHe86M0AnEG8ouBdw
-	XsytIsJh+pEdoRR53+OBlitXSPwd/oYkOCMrBIviuAW4gBULTWbrGBa+q15aRlVcjVjuth
-	qEvpNS0DmUZw+NnrSH1/ef0yKwbULo9eRnjCPI8WpooPUZ5AasHJb0MXEkjuMLUAcHSfRY
-	HVqzQVh76LfDC93EJBAHkxrqPDt55/exZxspMjxcAoSat59dMBOW/RJSKH4vpg==
-ARC-Authentication-Results: i=1;
-	rspamd-645b74df65-b2gqj;
-	auth=pass smtp.auth=hostingeremail
- smtp.mailfrom=michael.opdenacker@rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId:
- hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Thoughtful-Zesty: 4925f2f243cb1525_1760695353949_1738770027
-X-MC-Loop-Signature: 1760695353948:450799911
-X-MC-Ingress-Time: 1760695353948
-Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
- [148.222.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.116.100.136 (trex/7.1.3);
-	Fri, 17 Oct 2025 10:02:33 +0000
-Received: from localhost.localdomain (unknown [IPv6:2001:861:4450:d360:2f55:e31:2877:ead4])
-	(Authenticated sender: michael.opdenacker@rootcommit.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cp0jt6bm4z1yVn;
-	Fri, 17 Oct 2025 10:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
-	s=hostingermail-a; t=1760695347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=INLfLanNrxPT8zZfl4wJScpkqHE8+TQnHHl9RjngRPU=;
-	b=dquGaOQJ50FuM7nM1sHO4ZKdjfqy1yDixC7SDNjV6UsVxpz11jxtBIYTccQGNTzanQ6jQg
-	BGjF4WVVOIbCSjETaOXvEvnwsBFU+Ob5gISMMpgEHxtQBmXgJRc29M2Mu9/tdu3P3q+d+J
-	79WJ1Rkd56ApYmlmwMSUbfpLwDL2xANQrgqvA3hMKu2ubY7dR5Od0Fi/jhV8MqM+Z4NqDa
-	JA7cBUwHePhqsm7OtGJg3Wibk4HTbKdCcTygPnA+Xla52qQ5caHaNLQFbgh8yRvFOX9PTb
-	SJp3CDvrZ6W0ZgbEGMD3ZnrcEc9wj382BSfTP3WNMldys70E0hvJpKO0k/6w9g==
-From: michael.opdenacker@rootcommit.com
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Yixun Lan <dlan@gentoo.org>
-Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>,
-	netdev@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] net: spacemit: compile k1_emac driver as built-in by default
-Message-ID: <20251017100106.3180482-3-michael.opdenacker@rootcommit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251017100106.3180482-1-michael.opdenacker@rootcommit.com>
-References: <20251017100106.3180482-1-michael.opdenacker@rootcommit.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8126FA50;
+	Fri, 17 Oct 2025 10:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760695636; cv=none; b=RDY8qud40dCOi6Tb1WQtEH2oc3VnPf+zKGrNjwzHYmdQfI97iqpGNnr808+C9KEZnnh1oOsnoeknthsnL/0+PBaKolqV1Pft/oY4O/0OvK5xxRD+QjwAp8hoIvxQOolIClzcLcePfwimrb2pJGthy024YL4NYdL+PZsncAD9MGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760695636; c=relaxed/simple;
+	bh=pCxoDg4oKfpaxDEhq3czLpI63RXiTrJNP3Ao/8pEw08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZFJR7fggmwlTAZb6sVHezN01OxNdL4WYNkd27DBuFhcrUS7NQeer8KpyQ/oreiIUf2x6UP1n24Eve2TM+3EgZUT6bV8TH/mW6LZOc2HXqktpMJaS2mba9ffHV0KwvFWVZeXIl1x9agDS3GS1ouJ5bePGy61Zgnk5lShSXDddDa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=GWBbr7dx; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from debian (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 4153D4076726;
+	Fri, 17 Oct 2025 10:07:09 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 4153D4076726
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1760695629;
+	bh=PZUBjANI3Z1kimm/2Mkhpax3Z/gvFLkoOAmxwGxn2n8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GWBbr7dxM26+E6a0e53oL6RoV6Ut8I+3AWbWXIJX+EVlkqmVdd3ysIXjtzx3up1lO
+	 U6DjF41QqzmjQSh3QUs+QBUvMZq+kZmusm+SHsFApVmXzFtfbAWBpkbRQGR7hdcJq2
+	 0Vh2ftgXQqgRqYBO9iU2WksxCCShd/f+0gGSYC9A=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	Po-Hao Huang <phhuang@realtek.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH rtw-next v3 0/9] wifi: rtw89: improvements for USB part
+Date: Fri, 17 Oct 2025 13:03:02 +0300
+Message-ID: <20251017100658.66581-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,32 +60,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Date: Fri, 17 Oct 2025 10:02:26 +0000 (UTC)
-X-CM-Envelope: MS4xfE6wcYjsPboHb55vSh1fH6aAWNprdRcSXrdFEIWCopkxczg0fg2oi4JZPXzc17U5fumSNVpTQ8GaIZON2ODWTprzV/SxzxeWxfEWpBdLQlVustMLg1B4 2E0aVkcpL22tFkCW+q4brCQZgjglw8+hW8ijuQ3LjCEHFFNj/MLKvibvf12FqDvdjs7+hGGLstgVYb7ndMW6Tc4U5/PK6tOv8tFM/vEDLVETlLQXgGPIY0qS tMULin+Mbyl2H0Ew/sba+/10YOYSa11413QPUJbvsZIW75r4f1a1fv5ybKbR0maxYoVPICqBcLbM32/WeTXJ1dApTQ6m7VGpvkYrPg+c1Kn9lo0Bt79/7jlM jcteHgroEZ5+ATgAnxmL0a4qDakovt8sGmr0Elzn3WPwqbNX8O8iKaA3o1zltND/hHL0db6jBCiIKTlwCsVwtNnpI11j6eLz3Phb4D9O7AVnWd4pGoHUxDv8 zwPKO2q1g0VD8zjs1aFIIiAWCXNGMbhNTdVvftsqS04neH4yUtvS516o93DY8YSmd+kWiVoq1mBTLcSXCXaoTMS9Af/DwfBv7Bt53WGVj1Kc3D9aUosUiFBr V83j3WnUctOYwGQah0sySMk0lM0ZuqxUSb2OOOVH7j2LYw==
-X-CM-Analysis: v=2.4 cv=Lflu6Sfi c=1 sm=1 tr=0 ts=68f21433 a=/5xBaVTRis1tCxhfvtIJdg==:617 a=xqWC_Br6kY4A:10 a=d70CFdQeAAAA:8 a=WyZDyWQnYPSBde5YxlwA:9 a=NcxpMcIZDGm-g932nG_k:22
-X-AuthUser: michael.opdenacker@rootcommit.com
 
-From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+The first two patches concern memory leak issues found during testing.
 
-Supports booting boards on NFS filesystems, without going
-through an initramfs.
+The third and the fourth one do some extra small changes.
 
-Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
----
- drivers/net/ethernet/spacemit/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The other ones implement TX completion functionality missing for the USB
+part of rtw89 driver, suggested by Bitterblue Smith [1].  This will allow
+handling TX wait skbs and the ones flagged with IEEE80211_TX_CTL_REQ_TX_STATUS
+correctly.
 
-diff --git a/drivers/net/ethernet/spacemit/Kconfig b/drivers/net/ethernet/spacemit/Kconfig
-index 85ef61a9b4ef..7fe1b2a308d1 100644
---- a/drivers/net/ethernet/spacemit/Kconfig
-+++ b/drivers/net/ethernet/spacemit/Kconfig
-@@ -18,7 +18,7 @@ config SPACEMIT_K1_EMAC
- 	depends on ARCH_SPACEMIT || COMPILE_TEST
- 	depends on MFD_SYSCON
- 	depends on OF
--	default m if ARCH_SPACEMIT
-+	default y if ARCH_SPACEMIT
- 	select PHYLIB
- 	help
- 	  This driver supports the Ethernet MAC in the SpacemiT K1 SoC.
+rtw89 has several ways of handling TX status report events.  The first one
+is based on RPP feature which is used by PCIe HCI.  The other one depends
+on firmware sending a corresponding C2H message, quite similar to what
+rtw88 has.  RTL8851BU vendor driver [2] was taken for reference.
+
+[1]: https://lore.kernel.org/linux-wireless/0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com/
+[2]: https://github.com/fofajardo/rtl8851bu.git
+
+Series has been tested to work with RTL8851BU (USB) for TX report
+functionality - I've been able to test only V0 format of C2H message, and
+RTL8852BE (PCIe) devices for other things (mainly that the changes have
+not unexpectedly influenced th PCIe part).
+
+Changelog.
+
+v3: - add new 6/9 and 8/9 patches based on previous feedback
+    - further changelog below --- in the patches
+
+v2: https://lore.kernel.org/linux-wireless/20251002200857.657747-1-pchelkin@ispras.ru/
+    - add new 3/7 and 4/7 patches prepared due feedback to previous comments
+      or developed in process
+    - further changelog below --- in the patches
+
+v1: https://lore.kernel.org/linux-wireless/20250920132614.277719-1-pchelkin@ispras.ru/
+
+Fedor Pchelkin (8):
+  wifi: rtw89: usb: use common error path for skbs in
+    rtw89_usb_rx_handler()
+  wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
+  wifi: rtw89: usb: use ieee80211_free_txskb() where appropriate
+  wifi: rtw89: refine rtw89_core_tx_wait_complete()
+  wifi: rtw89: implement C2H TX report handler
+  wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
+  wifi: rtw89: provide TX reports for management frames
+  wifi: rtw89: process TX wait skbs for USB via C2H handler
+
+Ping-Ke Shih (1):
+  wifi: rtw89: fill TX descriptor of FWCMD in shortcut
+
+ drivers/net/wireless/realtek/rtw89/core.c | 61 +++++++++++++-------
+ drivers/net/wireless/realtek/rtw89/core.h | 40 +++++++++----
+ drivers/net/wireless/realtek/rtw89/fw.c   |  4 +-
+ drivers/net/wireless/realtek/rtw89/fw.h   | 41 ++++++++++++++
+ drivers/net/wireless/realtek/rtw89/mac.c  | 65 +++++++++++++++++++++
+ drivers/net/wireless/realtek/rtw89/mac.h  | 69 +++++++++++++++++++++++
+ drivers/net/wireless/realtek/rtw89/pci.c  |  2 +-
+ drivers/net/wireless/realtek/rtw89/pci.h  |  4 --
+ drivers/net/wireless/realtek/rtw89/txrx.h |  6 +-
+ drivers/net/wireless/realtek/rtw89/usb.c  | 41 +++++++++++---
+ 10 files changed, 288 insertions(+), 45 deletions(-)
+
+-- 
+2.51.0
+
 
