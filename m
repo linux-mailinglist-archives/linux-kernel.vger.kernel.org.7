@@ -1,163 +1,508 @@
-Return-Path: <linux-kernel+bounces-857079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-857080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56B0BE5DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:11:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F673BE5DCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 02:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1030A4E61C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0325548666
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Oct 2025 00:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D265B1487F6;
-	Fri, 17 Oct 2025 00:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E1847F77;
+	Fri, 17 Oct 2025 00:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="35Ul1jOa"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=0la.ch header.i=@0la.ch header.b="CRSMA2sr";
+	dkim=permerror (0-bit key) header.d=0la.ch header.i=@0la.ch header.b="74DE7Asd"
+Received: from mail.0la.ch (mail.0la.ch [78.47.82.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8613FCC
-	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D871758B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 Oct 2025 00:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.82.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760659894; cv=none; b=N7+IrbBpr7UN9an3cUSq7990fbS11RIR9L3LoaUivxXK2EerMpSh4qbjjJz4Dp3Anjzq+BDnbNxX4gE60RvCToIKVn308V8eJxs52FQ9Dml2XTqKPTOTG08Nm2ESevYQA/ds7sXxCC7urlEjGdOuHc1HTImr9mevbvBOIU4n5PM=
+	t=1760659937; cv=none; b=UvhrpldYuwuAXwaVv1MnebExvClCtHNKgRChGeLnEa9Rhu14nLoCKkFBa2SEbT3ZjMGDpVpHOFBX9ktPKZWC9Tj/4TxXN65idxAfetX+kjleh/p/d7LqcR50foJqsBlIDJl+GKGQiuebusSpFH/+Twps3wP3pJemQeX/Y1LM5EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760659894; c=relaxed/simple;
-	bh=9qQ/Kaq1PQi1iQEGpE/Y4pRBJHUu5desBrWzjzYMp1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkDQrkb1OCiFpEtkkrDf+KTeDfj3AImsjoVcDchf+sbaLUISe8wdOZ4soqghXIgJlNS2sF6tYa/4E7f/qwOr5wRpnQ5VsLKec+54VMbPDEmcQwdOmuqKYdcFZl2d4auzzKmxxtiGZ4q85xlx2lyydt0Iuay+bOqgq9HLUu/fw9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=35Ul1jOa; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-78118e163e5so2220446b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 17:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760659892; x=1761264692; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6rdlnJ4bFVxMl/yRGUabSawyz7mEAHOSqjDImE5CoEM=;
-        b=35Ul1jOaA8k6hSHM5pY5yRZMWRSaezWC9IvE2E1zA0yZsrOIeLiCJ9UoouboPAor+Q
-         QTj3LFgL+BTtibQRft9CfKT4etURCans9Yw5OoOtzvgVw3oBcl6gtkaE4UFDc8agcdW1
-         8V53SOx364gb6q7Wfi2zRka72O4+aRzNd3FM0tX5EkWOKDrekRYZOkzaHt5BitYWlAYi
-         RZdsh45/0AhFUUdMXpE/2TnjjlkCsKc7bCEP7W8yjYH3Pi0CKVgxtJOrf4/qx/ExOcWn
-         AJZqpfLS16IJ0K2ueYpNTi6xWw96n51egktTVi4N8oe9Gug6K7pPc3C08M+57U/dUfIm
-         lEUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760659892; x=1761264692;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6rdlnJ4bFVxMl/yRGUabSawyz7mEAHOSqjDImE5CoEM=;
-        b=sGf1ocr2TMZwEgc4K67NBUSMOx2iJtmpC19kjLkCPtbxMT0nk8DmyJx/khs9ZgCENL
-         kX/0U1jIuOA8a+OaknQ5VcC+tJT9R8pA5Tk2NBDaT7KPwR8tpA0d8pii/cs2MBstSxB2
-         wwXqwgV4nheLlYrN2mVLPwn0OWoleo2/RH4pcuCuMg+YHBJIhO0ZyO0avYmkLs+tgj2Y
-         g+5fPRlzwMfJIo+qSL8oe1ttzY5WSMNsRKrwNhAyVp9fVxrLwNxaDBbIiifnNcMXYwRQ
-         WJDHTgRhrWm5aTK1cpXymCBquMGL/4rPFqkS0XBb6d7mg37S97skF7x0RDSO+VWGp//v
-         5I7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Azak0ZYCpdd0ZzwpGAQBRq3HFG3XJpYv2lIyfXMF5gsZ0BeC6rWhapF7GvUYOe0uBuAIRv3JtllitBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/+eVnEZa7m2oyDrjecVaO9YTGl9pq1LEpQ5D9qeXXvVRskyv6
-	ZpxNpeQRp/PkAXQrbZncZt7fK8t1pH9uTDYuCRtfoatiCg1l1LYRCXlUM8wIAxW3wHOHaZQe2OL
-	jqzJVW7dS
-X-Gm-Gg: ASbGncvSg9sc9grG3bmpBujOpk7jo6g9NzdWkulWenv+yFDt/d1SQhA8OUrweyFvV1S
-	Qd0lp7WlEFAX6s+aHoqET3LH1VPjZm5KP08qoAgF1GYliavA35vcVl1kQOVZcL0/u7dKPqaTG0s
-	N8TyRzeYGTGFuGCptlCGXuOucK1zRPinMhA29uY9HzlMKBBxJozCuszdHytNIdAqvZmrZBo6IS8
-	hivSagDjzLzoe6wEXsu/abDRmnXcoZ8A0QyxJncRKyXVdnyYYp7eq8/eAPLons0AE2gDZzoUSHH
-	ahUjWDSBP0K+hHi8mYHSEQKWE9se/k3ybTrYJiknzDBfI69RsDBuEM94EHzq6YkkeiOD3J44OXa
-	5Yse6+FoS/Wd6Vlbx23Xan2KnRnTni8AxQZEH6rqLV0WormuaEzBAFZ60Ng4S732mcnrGgIG07p
-	VWTG63SJswyatTGQVub18DbFKURzpE0dsXGsOkPqFCD/I=
-X-Google-Smtp-Source: AGHT+IF/mLPPhwDZ9pM3tExE2bPuXwl/05sO0pJ0F8y1gYSwfK180J5bWJ1YL2l1fjSo1vLni9n+LA==
-X-Received: by 2002:a17:90b:5110:b0:32e:4716:d551 with SMTP id 98e67ed59e1d1-33bc9b8f4e7mr2440735a91.6.1760659891842;
-        Thu, 16 Oct 2025 17:11:31 -0700 (PDT)
-Received: from google.com (232.92.83.34.bc.googleusercontent.com. [34.83.92.232])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33ba9270049sm1592080a91.0.2025.10.16.17.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 17:11:30 -0700 (PDT)
-Date: Fri, 17 Oct 2025 00:11:26 +0000
-From: Benson Leung <bleung@google.com>
-To: Jameson Thies <jthies@google.com>
-Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	bleung@chromium.org, gregkh@linuxfoundation.org,
-	akuchynski@chromium.org, abhishekpandit@chromium.org,
-	sebastian.reichel@collabora.com, kenny@panix.com,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] usb: typec: ucsi: Report power supply change on
- sink path change
-Message-ID: <aPGJrjG6nsRQune_@google.com>
-References: <20251016235909.2092917-1-jthies@google.com>
- <20251016235909.2092917-4-jthies@google.com>
+	s=arc-20240116; t=1760659937; c=relaxed/simple;
+	bh=UGQUnFTT0mHyN9+g9nGHRs5iogYYsKmSL/v8F1rA7J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jlk5fkV1P2RA+ID8XaLE6QcGJvz2+4cy8tDOXgmQf/aG+G4Sr0tGe0eNiIE56AMEPA7WBd1aklCrkgsO5dRvYbqx2RNhHS2P0JLTvCnAn22QJ5ajlmCfWHFdQRcC0pgekA0cuMGWul2RvXKozAz6Kgld2aLvUbrhiwbGh6M1ckQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0la.ch; spf=pass smtp.mailfrom=0la.ch; dkim=pass (2048-bit key) header.d=0la.ch header.i=@0la.ch header.b=CRSMA2sr; dkim=permerror (0-bit key) header.d=0la.ch header.i=@0la.ch header.b=74DE7Asd; arc=none smtp.client-ip=78.47.82.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0la.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0la.ch
+DKIM-Signature: v=1; a=rsa-sha256; s=202502r; d=0la.ch; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1760659914; bh=juWvknxGjD8WNehliL9uvH9
+	pf3MR6BH2IEGA4vqZTps=; b=CRSMA2srz4amAArAFp9DIQZZNzEALPIak3HjgAon1j3/CQ34Yp
+	Wc60kVlbFLDqMQDX4YzA9dcMRzG0i+Sy7597ZkDI1XZnC79v07sa3E1wHKBlmwS7v3vEXzjy9pw
+	fqGPl6GnXBE+a+Hn8RhJlPH6TUw3y9oe9wJGkBNzUf7k7zJ+NWDPcyUuawV+vdRnFgkzDs2CQyN
+	2px3NzlxkBvSOHA0dyEvA2IwXck0nPpuG7U2U3nsf89ALPCIm4+UXP/hBhuNSHLvl/uq0bqo/cs
+	RR3ByorIZVds5FmcfM+5QdJiAVwZ2TDDoZXvxU8uKrFw9x+1UR5ZGEAHu91Vrp8s70Q==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202502e; d=0la.ch; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1760659914; bh=juWvknxGjD8WNehliL9uvH9
+	pf3MR6BH2IEGA4vqZTps=; b=74DE7AsdkWxLmfUJN8v6qsh+yRCrAAEY+8y8LLtnMomdAmPdRj
+	2AisXExOSG///iqZgba9tVKl+UOJeTeVVOCQ==;
+Message-ID: <db384f6a-a2a5-4979-92c6-9a13a1a54b5b@0la.ch>
+Date: Fri, 17 Oct 2025 02:11:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fNlBXg0mnG7NeY4w"
-Content-Disposition: inline
-In-Reply-To: <20251016235909.2092917-4-jthies@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] drm/edid: parse DRM VESA dsc bpp target
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Yaroslav Bolyukin
+ <iam@lach.pw>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Wayne Lin <Wayne.Lin@amd.com>, amd-gfx@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20251016001038.13611-2-iam@lach.pw>
+ <20251016001038.13611-4-iam@lach.pw>
+ <3abc1087618c822e5676e67a3ec2e64e506dc5ec@intel.com>
+ <adb2c2bd-a38e-4a40-ba1c-dcc7ad707727@0la.ch> <aPFZecm3PKaCpMXi@intel.com>
+ <8a45cbe8-a0ed-473c-b830-1194c30d9414@0la.ch> <aPF32XpVst5mPVz7@intel.com>
+Content-Language: en-US
+From: Yaroslav <iam@0la.ch>
+In-Reply-To: <aPF32XpVst5mPVz7@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2025-10-17 00:55, Ville Syrjälä wrote:
+> On Fri, Oct 17, 2025 at 12:24:53AM +0200, Yaroslav wrote:
+>>
+>>
+>> On 2025-10-16 22:45, Ville Syrjälä wrote:
+>>> On Thu, Oct 16, 2025 at 07:11:48PM +0200, Yaroslav wrote:
+>>>> On 2025-10-16 18:36, Jani Nikula wrote:
+>>>>    > On Thu, 16 Oct 2025, Yaroslav Bolyukin <iam@lach.pw> wrote:
+>>>>    >> As per DisplayID v2.0 Errata E9 spec "DSC pass-through timing support"
+>>>>    >> VESA vendor-specific data block may contain target DSC bits per pixel
+>>>>    >> fields
+>>>>    >
+>>>>    > Thanks for the patch.
+>>>>
+>>>> Thanks for the quick review! :D
+>>>>
+>>>>    > I think there's just too much going on in a single patch. Should
+>>>>    > probably be split to several patches:
+>>>>    >
+>>>>    > - rename drm_parse_vesa_mso_data() to drm_parse_vesa_specific_block()
+>>>>    >
+>>>>    > - handle DSC pass-through parts in the above, including the macros for
+>>>>    >    parsing that (but nothing about timing here yet), and adding to
+>>>>    >    display_info
+>>>>    >
+>>>>    > - note that the above would be needed to backport mso support for 7 byte
+>>>>    >    vendor blocks to stable!
+>>>>
+>>>> Sorry, can you elaborate? Right now stable kernel just ignores
+>>>> everything going after 5th byte, so it "supports 7 byte blocks" by
+>>>> ignoring them.
+>>>>
+>>>>    > - Add the detailed timing parsing in a separate patch
+>>>>    >
+>>>> I'll split the patch as requested
+>>>>    >>
+>>>>    >> Signed-off-by: Yaroslav Bolyukin <iam@lach.pw>
+>>>>    >> ---
+>>>>    >>   drivers/gpu/drm/drm_displayid_internal.h |  8 ++++
+>>>>    >>   drivers/gpu/drm/drm_edid.c               | 61 ++++++++++++++++--------
+>>>>    >>   include/drm/drm_connector.h              |  6 +++
+>>>>    >>   include/drm/drm_modes.h                  | 10 ++++
+>>>>    >>   4 files changed, 64 insertions(+), 21 deletions(-)
+>>>>    >>
+>>>>    >> diff --git a/drivers/gpu/drm/drm_displayid_internal.h
+>>>> b/drivers/gpu/drm/drm_displayid_internal.h
+>>>>    >> index 957dd0619f5c..d008a98994bb 100644
+>>>>    >> --- a/drivers/gpu/drm/drm_displayid_internal.h
+>>>>    >> +++ b/drivers/gpu/drm/drm_displayid_internal.h
+>>>>    >> @@ -97,6 +97,10 @@ struct displayid_header {
+>>>>    >>   	u8 ext_count;
+>>>>    >>   } __packed;
+>>>>    >>
+>>>>    >> +#define DISPLAYID_BLOCK_REV				GENMASK(2, 0)
+>>>>    >> +#define DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT	BIT(3)
+>>>>    >> +#define DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES	GENMASK(6, 4)
+>>>>    >
+>>>>    > These two are related to the rev of struct
+>>>>    > displayid_detailed_timing_block only, and should probably be defined
+>>>>    > next to it.
+>>>>
+>>>> BLOCK_REV is handled identically for all the displayid block types
+>>>> afaik, and DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES is unrelated to the
+>>>> timings block, I didn't want to spread the masks around the file, but
+>>>> will do if you think that's better.
+>>>>
+>>>>    >> +
+>>>>    >>   struct displayid_block {
+>>>>    >>   	u8 tag;
+>>>>    >>   	u8 rev;
+>>>>    >> @@ -144,12 +148,16 @@ struct displayid_formula_timing_block {
+>>>>    >>
+>>>>    >>   #define DISPLAYID_VESA_MSO_OVERLAP	GENMASK(3, 0)
+>>>>    >>   #define DISPLAYID_VESA_MSO_MODE		GENMASK(6, 5)
+>>>>    >> +#define DISPLAYID_VESA_DSC_BPP_INT	GENMASK(5, 0)
+>>>>    >> +#define DISPLAYID_VESA_DSC_BPP_FRACT	GENMASK(3, 0)
+>>>>    >>
+>>>>    >>   struct displayid_vesa_vendor_specific_block {
+>>>>    >>   	struct displayid_block base;
+>>>>    >>   	u8 oui[3];
+>>>>    >>   	u8 data_structure_type;
+>>>>    >>   	u8 mso;
+>>>>    >> +	u8 dsc_bpp_int;
+>>>>    >> +	u8 dsc_bpp_fract;
+>>>>    >>   } __packed;
+>>>>    >>
+>>>>    >>   /*
+>>>>    >> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+>>>>    >> index e2e85345aa9a..6e42e55b41f9 100644
+>>>>    >> --- a/drivers/gpu/drm/drm_edid.c
+>>>>    >> +++ b/drivers/gpu/drm/drm_edid.c
+>>>>    >> @@ -6524,8 +6524,8 @@ static void drm_get_monitor_range(struct
+>>>> drm_connector *connector,
+>>>>    >>   		    info->monitor_range.min_vfreq, info->monitor_range.max_vfreq);
+>>>>    >>   }
+>>>>    >>
+>>>>    >> -static void drm_parse_vesa_mso_data(struct drm_connector *connector,
+>>>>    >> -				    const struct displayid_block *block)
+>>>>    >> +static void drm_parse_vesa_specific_block(struct drm_connector
+>>>> *connector,
+>>>>    >> +					  const struct displayid_block *block)
+>>>>    >>   {
+>>>>    >>   	struct displayid_vesa_vendor_specific_block *vesa =
+>>>>    >>   		(struct displayid_vesa_vendor_specific_block *)block;
+>>>>    >> @@ -6541,7 +6541,7 @@ static void drm_parse_vesa_mso_data(struct
+>>>> drm_connector *connector,
+>>>>    >>   	if (oui(vesa->oui[0], vesa->oui[1], vesa->oui[2]) != VESA_IEEE_OUI)
+>>>>    >>   		return;
+>>>>    >>
+>>>>    >> -	if (sizeof(*vesa) != sizeof(*block) + block->num_bytes) {
+>>>>    >> +	if (block->num_bytes < 5) {
+>>>>    >>   		drm_dbg_kms(connector->dev,
+>>>>    >>   			    "[CONNECTOR:%d:%s] Unexpected VESA vendor block size\n",
+>>>>    >>   			    connector->base.id, connector->name);
+>>>>    >> @@ -6564,28 +6564,40 @@ static void drm_parse_vesa_mso_data(struct
+>>>> drm_connector *connector,
+>>>>    >>   		break;
+>>>>    >>   	}
+>>>>    >>
+>>>>    >> -	if (!info->mso_stream_count) {
+>>>>    >> -		info->mso_pixel_overlap = 0;
+>>>>    >> -		return;
+>>>>    >> -	}
+>>>>    >> +	info->mso_pixel_overlap = 0;
+>>>>    >
+>>>>    > Nitpick, I kind of like having this in the else path below instead of
+>>>>    > first setting it to 0 and then setting it again to something else.
+>>>>    >>>
+>>>>    >> -	info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP,
+>>>> vesa->mso);
+>>>>    >> -	if (info->mso_pixel_overlap > 8) {
+>>>>    >> -		drm_dbg_kms(connector->dev,
+>>>>    >> -			    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
+>>>>    >> -			    connector->base.id, connector->name,
+>>>>    >> -			    info->mso_pixel_overlap);
+>>>>    >> -		info->mso_pixel_overlap = 8;
+>>>>    >> +	if (info->mso_stream_count) {
+>>>>    >> +		info->mso_pixel_overlap = FIELD_GET(DISPLAYID_VESA_MSO_OVERLAP,
+>>>> vesa->mso);
+>>>>    >> +		if (info->mso_pixel_overlap > 8) {
+>>>>    >> +			drm_dbg_kms(connector->dev,
+>>>>    >> +				    "[CONNECTOR:%d:%s] Reserved MSO pixel overlap value %u\n",
+>>>>    >> +				    connector->base.id, connector->name,
+>>>>    >> +				    info->mso_pixel_overlap);
+>>>>    >> +			info->mso_pixel_overlap = 8;
+>>>>    >> +		}
+>>>>    >>   	}
+>>>>    >>
+>>>>    >>   	drm_dbg_kms(connector->dev,
+>>>>    >>   		    "[CONNECTOR:%d:%s] MSO stream count %u, pixel overlap %u\n",
+>>>>    >>   		    connector->base.id, connector->name,
+>>>>    >>   		    info->mso_stream_count, info->mso_pixel_overlap);
+>>>>    >
+>>>>    > Not sure we want to debug log this unless info->mso_stream_count !=
+>>>>    > 0. This is a rare feature.
+>>>>    >
+>>>>    > Side note, we seem to be lacking the check for
+>>>>    > data_structure_type. Probably my bad. I'm not asking you to fix it, but
+>>>>    > hey, if you're up for it, another patch is welcome! ;)
+>>>> I see, MSO overlap/stream count shouldn't be parsed for eDP, I'll do it.
+>>>> Is that what you meant by "note that the above would be needed to
+>>>> backport mso support for 7 byte vendor blocks to stable!"?
+>>>>    >> +
+>>>>    >> +	if (block->num_bytes < 7) {
+>>>>    >> +		/* DSC bpp is optional */
+>>>>    >> +		return;
+>>>>    >> +	}
+>>>>    >> +
+>>>>    >> +	info->dp_dsc_bpp = FIELD_GET(DISPLAYID_VESA_DSC_BPP_INT,
+>>>> vesa->dsc_bpp_int) << 4 |
+>>>>    >> +			   FIELD_GET(DISPLAYID_VESA_DSC_BPP_FRACT, vesa->dsc_bpp_fract);
+>>>>    >> +
+>>>>    >> +	drm_dbg_kms(connector->dev,
+>>>>    >> +		    "[CONNECTOR:%d:%s] DSC bits per pixel %u\n",
+>>>>    >> +		    connector->base.id, connector->name,
+>>>>    >> +		    info->dp_dsc_bpp);
+>>>>    >>   }
+>>>>    >>
+>>>>    >> -static void drm_update_mso(struct drm_connector *connector,
+>>>>    >> -			   const struct drm_edid *drm_edid)
+>>>>    >> +static void drm_update_vesa_specific_block(struct drm_connector
+>>>> *connector,
+>>>>    >> +					   const struct drm_edid *drm_edid)
+>>>>    >>   {
+>>>>    >>   	const struct displayid_block *block;
+>>>>    >>   	struct displayid_iter iter;
+>>>>    >> @@ -6593,7 +6605,7 @@ static void drm_update_mso(struct
+>>>> drm_connector *connector,
+>>>>    >>   	displayid_iter_edid_begin(drm_edid, &iter);
+>>>>    >>   	displayid_iter_for_each(block, &iter) {
+>>>>    >>   		if (block->tag == DATA_BLOCK_2_VENDOR_SPECIFIC)
+>>>>    >> -			drm_parse_vesa_mso_data(connector, block);
+>>>>    >> +			drm_parse_vesa_specific_block(connector, block);
+>>>>    >>   	}
+>>>>    >>   	displayid_iter_end(&iter);
+>>>>    >>   }
+>>>>    >> @@ -6630,6 +6642,7 @@ static void drm_reset_display_info(struct
+>>>> drm_connector *connector)
+>>>>    >>   	info->mso_stream_count = 0;
+>>>>    >>   	info->mso_pixel_overlap = 0;
+>>>>    >>   	info->max_dsc_bpp = 0;
+>>>>    >> +	info->dp_dsc_bpp = 0;
+>>>>    >>
+>>>>    >>   	kfree(info->vics);
+>>>>    >>   	info->vics = NULL;
+>>>>    >> @@ -6753,7 +6766,7 @@ static void update_display_info(struct
+>>>> drm_connector *connector,
+>>>>    >>   	if (edid->features & DRM_EDID_FEATURE_RGB_YCRCB422)
+>>>>    >>   		info->color_formats |= DRM_COLOR_FORMAT_YCBCR422;
+>>>>    >>
+>>>>    >> -	drm_update_mso(connector, drm_edid);
+>>>>    >> +	drm_update_vesa_specific_block(connector, drm_edid);
+>>>>    >>
+>>>>    >>   out:
+>>>>    >>   	if (drm_edid_has_internal_quirk(connector, EDID_QUIRK_NON_DESKTOP)) {
+>>>>    >> @@ -6784,7 +6797,8 @@ static void update_display_info(struct
+>>>> drm_connector *connector,
+>>>>    >>
+>>>>    >>   static struct drm_display_mode *drm_mode_displayid_detailed(struct
+>>>> drm_device *dev,
+>>>>    >>   							    const struct displayid_detailed_timings_1 *timings,
+>>>>    >> -							    bool type_7)
+>>>>    >> +							    bool type_7,
+>>>>    >> +							    int rev)
+>>>>    >
+>>>>    > If we added struct displayid_detailed_timing_block *block parameter
+>>>>    > (between dev and timings), the function could figure it all out from
+>>>>    > there instead of having to pass several parameters. Dunno which is
+>>>>    > cleaner. It's also not neat to pass rev as int, when it's really data
+>>>>    > that has to be parsed.
+>>>>
+>>>> I agree, just didn't like passing both the block and struct from the
+>>>> block (timings param), but it should be fine, I'll redo it.
+>>>>
+>>>>    >>   {
+>>>>    >>   	struct drm_display_mode *mode;
+>>>>    >>   	unsigned int pixel_clock = (timings->pixel_clock[0] |
+>>>>    >> @@ -6805,6 +6819,10 @@ static struct drm_display_mode
+>>>> *drm_mode_displayid_detailed(struct drm_device *d
+>>>>    >>   	if (!mode)
+>>>>    >>   		return NULL;
+>>>>    >>
+>>>>    >> +	if (type_7 && FIELD_GET(DISPLAYID_BLOCK_REV, rev) >= 1)
+>>>>    >> +		mode->dsc_passthrough_timings_support =
+>>>>    >> +			!!(rev & DISPLAYID_BLOCK_PASSTHROUGH_TIMINGS_SUPPORT);
+>>>>    >
+>>>>    > I wonder if it would make life easier all around if we just filled the
+>>>>    > dp_dsc_bpp in the mode itself, instead of having a flag and having to
+>>>>    > look it up separately?
+>>>>
+>>>> They are stored in the separate blocks, and vesa vendor specific block
+>>>> can be located after the timings blocks, meaning to do that we need to
+>>>> iterate over all the mode blocks again and parse their timings support
+>>>> flag from rev again to fill this data. I don't like this either, but
+>>>> seems like this is the most logical implementation.
+>>>>
+>>>> We also have max_dsc_bpp declared in display_mode, and it should be
+>>>> related to this.
+>>>>
+>>>> It also won't help with the fact that it is hard to handle mode flag for
+>>>> the modes created at runtime (see AMDGPU patch). I believe there should
+>>>> be a fancier way to do this, but this anin't it.
+>>>>
+>>>> I still have troubles understanding why does this flag need to exist, as
+>>>> far as I can see, every device with passthrough timings doesn't have
+>>>> both modes using them and not using them, and the implementation doesn't
+>>>> look good due to this fact.
+>>>
+>>> This looks like it would need to be handled in the same as the
+>>> "420 only" stuff. But since this doesn't use the VIC it's going to
+>>> be even more annoying. Basically you'd have to store the pass-through
+>>> timings in eg. display info and then check against that list whenever
+>>> you have to figure out if the mode you're looking at is one of these
+>>> pass through modes.
+>>
+>> Except right now DRM_IOCTL_MODE_SETCRTC allows userspace to create
+>> arbitrary drm_display_mode struct value (I have no idea if that even
+>> works,
+> 
+> That is how it always works. The requested mode always comes straight
+> from userspace, not from the kernel. Thats' why you need to do the
+> lookup. And that is exactly what we do for the "420 only" stuff, and
+> to figure out what VIC to put into the AVI infoframe.
+> 
+> But those all previous cases were a bit easier since it's all based
+> on the VIC/CEA modes list, so we can do the lookup against a fixed
+> list. With this stuff you have to generate the list from the
+> DisplayID somewhere.
 
---fNlBXg0mnG7NeY4w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is unclear to me how should matching work for this case, as far as I 
+can see, SteamVR sometimes doesn't use proper frame_rate (E.g creating 
+mode with 120.0 FPS, while we only have 120.023836 FPS in EDID), and it 
+should still use fixed bpp in that case. Given mode from userspace, 
+should we search for the smallest edid-declared mode that fits mode 
+passed by user? But how should edid-declared mode list be sorted in this 
+case? Is this even correct behavior, given there is no defenition for 
+that in the spec, and no known hardware to test how this implementation 
+would behave?
 
-On Thu, Oct 16, 2025 at 11:59:09PM +0000, Jameson Thies wrote:
-> Update the UCSI interface driver to report a power supply change when
-> the PPM sets the Sink Path Change bit.
->=20
-> Signed-off-by: Jameson Thies <jthies@google.com>
+>> but as far as I can see nothing prevents that in amdgpu driver
+>> implementation), and for that case there needs to be an exception in
+>> case if all the modes are passthru, because then passed mode should use
+>> dsc_bpp value regardless (i.e device only supports passthru)?
+>>
+>> This behavior is not declared by spec, but based on my testing I can
+>> only assume that this flag is only a hint, and no hardware supports both
+>> modes with fixed dsc_bpp value and without it.
+>>
+>> And with Jani Nikula's suggestion there is a matter of which dsc_bpp
+>> value to use, as with proposed move of this value to the mode itself, in
+>> theory there might be different values for the modes, even if during
+>> edid parsing only one value (from VESA vendor specific block) might appear.
+> 
+> Adding anything to the kernel modes is pretty much pointless. The
+> parsed modes are just there to be passed to userspace, and then any
+> additional info you stuff in there is immediately lost. The only way
+> to preserve it would be extend the uapi with new data and have it be
+> routed back in by userspace. But then you get into the whole "old
+> userspace might not like new stuff" issue which is why the kernel eg.
+> hides the stereo 3D stuff from userspace unless userspace explicitly
+> says it knows what to do with it.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Makes sense. Then what about this, slightly incorrect, yet 
+implementation which would work for every known current hardware using 
+dsc passthru flag - do it as before (patch v3), by applying fixed dsc 
+bpp value to every mode used, but ONLY if device specified this flag on 
+every mode declared in edid?
 
+Right now it is unclear to me what to do for the corner-cases such as 
+not every mode having this flag and userspace requesting mode that was 
+not present in edid, nothing about that is said in the DisplayID spec 
+(maybe there is some other spec to follow?), and no other hardware 
+implementing this part of spec to understand how it would behave.
 
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 2 +-
->  drivers/usb/typec/ucsi/ucsi.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 7b718049d0d1..cad3913bd7f9 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -1293,7 +1293,7 @@ static void ucsi_handle_connector_change(struct wor=
-k_struct *work)
->  	if (change & UCSI_CONSTAT_CAM_CHANGE)
->  		ucsi_partner_task(con, ucsi_check_altmodes, 1, HZ);
-> =20
-> -	if (change & UCSI_CONSTAT_BC_CHANGE)
-> +	if (change & (UCSI_CONSTAT_BC_CHANGE | UCSI_CONSTAT_SINK_PATH_CHANGE))
->  		ucsi_port_psy_changed(con);
-> =20
->  	if (con->ucsi->version >=3D UCSI_VERSION_2_1 &&
-> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-> index cce93af7461b..35993bc34d4d 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.h
-> +++ b/drivers/usb/typec/ucsi/ucsi.h
-> @@ -382,6 +382,7 @@ struct ucsi_cable_property {
->  #define UCSI_CONSTAT_BC_CHANGE			BIT(9)
->  #define UCSI_CONSTAT_PARTNER_CHANGE		BIT(11)
->  #define UCSI_CONSTAT_POWER_DIR_CHANGE		BIT(12)
-> +#define UCSI_CONSTAT_SINK_PATH_CHANGE		BIT(13)
->  #define UCSI_CONSTAT_CONNECT_CHANGE		BIT(14)
->  #define UCSI_CONSTAT_ERROR			BIT(15)
-> =20
-> --=20
-> 2.51.0.858.gf9c4a03a3a-goog
->=20
+Postponing proper handling of this flag until there is any device where 
+this implementation won't work.
 
---fNlBXg0mnG7NeY4w
-Content-Type: application/pgp-signature; name="signature.asc"
+>> It just feels too fragile and incomplete.
+>>>> On VivePro2 there is a HID command to switch between display modes:
+>>>> modes without dsc_bpp are grouped, and two of the of the high resolution
+>>>> modes have different dsc_bpp_x16 values on them. I believe it is just
+>>>> this flag is redundant, as there are no devices in the wild having set
+>>>> dsc_bpp, and the flag unset, but I try to follow the spec, and here we are.
+>>>>
+>>>>    >> +
+>>>>    >>   	/* resolution is kHz for type VII, and 10 kHz for type I */
+>>>>    >>   	mode->clock = type_7 ? pixel_clock : pixel_clock * 10;
+>>>>    >>   	mode->hdisplay = hactive;
+>>>>    >> @@ -6846,7 +6864,7 @@ static int
+>>>> add_displayid_detailed_1_modes(struct drm_connector *connector,
+>>>>    >>   	for (i = 0; i < num_timings; i++) {
+>>>>    >>   		struct displayid_detailed_timings_1 *timings = &det->timings[i];
+>>>>    >>
+>>>>    >> -		newmode = drm_mode_displayid_detailed(connector->dev, timings,
+>>>> type_7);
+>>>>    >> +		newmode = drm_mode_displayid_detailed(connector->dev, timings,
+>>>> type_7, block->rev);
+>>>>    >>   		if (!newmode)
+>>>>    >>   			continue;
+>>>>    >>
+>>>>    >> @@ -6893,7 +6911,8 @@ static int add_displayid_formula_modes(struct
+>>>> drm_connector *connector,
+>>>>    >>   	struct drm_display_mode *newmode;
+>>>>    >>   	int num_modes = 0;
+>>>>    >>   	bool type_10 = block->tag == DATA_BLOCK_2_TYPE_10_FORMULA_TIMING;
+>>>>    >> -	int timing_size = 6 + ((formula_block->base.rev & 0x70) >> 4);
+>>>>    >> +	int timing_size = 6 +
+>>>>    >> +		FIELD_GET(DISPLAYID_BLOCK_DESCRIPTOR_PAYLOAD_BYTES,
+>>>> formula_block->base.rev);
+>>>>    >
+>>>>    > I think this is an unrelated change. Probably something we want, but
+>>>>    > should not be in the same patch with the rest.
+>>>>
+>>>> I'll split the patches, would it be ok to have it in the same patchset?
+>>>> Same question for mso data_structure_type.
+>>>>
+>>>>    >>
+>>>>    >>   	/* extended blocks are not supported yet */
+>>>>    >>   	if (timing_size != 6)
+>>>>    >> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+>>>>    >> index 8f34f4b8183d..01640fcf7464 100644
+>>>>    >> --- a/include/drm/drm_connector.h
+>>>>    >> +++ b/include/drm/drm_connector.h
+>>>>    >> @@ -837,6 +837,12 @@ struct drm_display_info {
+>>>>    >>   	 */
+>>>>    >>   	u32 max_dsc_bpp;
+>>>>    >>
+>>>>    >> +	/**
+>>>>    >> +	 * @dp_dsc_bpp: DP Display-Stream-Compression (DSC) timing's target
+>>>>    >> +	 * DSC bits per pixel in 6.4 fixed point format. 0 means undefined.
+>>>>    >> +	 */
+>>>>    >> +	u16 dp_dsc_bpp;
+>>>>    >
+>>>>    > It's slightly annoying that we have max_dsc_bpp which is int, and
+>>>>    > dp_dsc_bpp, which is 6.4 fixed point. The drm_dp_helper.c uses _x16
+>>>>    > suffix for the 6.4 bpp, so maybe do the same here, dp_dsc_bpp_x16?
+>>>>
+>>>> Yep, didn't notice we already have bpp value in display_info.
+>>>>
+>>>>    >> +
+>>>>    >>   	/**
+>>>>    >>   	 * @vics: Array of vics_len VICs. Internal to EDID parsing.
+>>>>    >>   	 */
+>>>>    >> diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
+>>>>    >> index b9bb92e4b029..312e5c03af9a 100644
+>>>>    >> --- a/include/drm/drm_modes.h
+>>>>    >> +++ b/include/drm/drm_modes.h
+>>>>    >> @@ -417,6 +417,16 @@ struct drm_display_mode {
+>>>>    >>   	 */
+>>>>    >>   	enum hdmi_picture_aspect picture_aspect_ratio;
+>>>>    >>
+>>>>    >> +	/**
+>>>>    >> +	 * @dsc_passthrough_timing_support:
+>>>>    >> +	 *
+>>>>    >> +	 * Indicates whether this mode timing descriptor is supported
+>>>>    >> +	 * with specific target DSC bits per pixel only.
+>>>>    >> +	 *
+>>>>    >> +	 * VESA vendor-specific data block shall exist with the relevant
+>>>>    >> +	 * DSC bits per pixel declaration when this flag is set to true.
+>>>>    >> +	 */
+>>>>    >> +	bool dsc_passthrough_timings_support;
+>>>>    >>   };
+>>>>    >>
+>>>>    >>   /**
+>>>>
+>>>> Regards,
+>>>>
+>>>> Lach
+>>>
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCaPGJrgAKCRBzbaomhzOw
-wmyRAP4qaYGumR/0N01XkF9UwvhoHVmf95YivCn2pzq/dyTTSwD9E9LvRCPYKeaM
-kvdNAAOULTjT4h0VUuKVJ93sTEh0LQM=
-=N62/
------END PGP SIGNATURE-----
-
---fNlBXg0mnG7NeY4w--
 
